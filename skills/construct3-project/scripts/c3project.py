@@ -18,6 +18,11 @@ SKILL = "construct3-project"
 SKILL_DIR = Path(__file__).resolve().parent.parent
 LOWER = str.lower  # expressions are case-insensitive: scrolly, SCROLLY and ScrollY are one name
 
+# An agent's harness cuts tool output somewhere between ten and thirty thousand
+# characters, not always at the end and not always saying so. The scripts stop
+# below that by themselves and say how to ask for the rest.
+LIMIT = 10_000
+
 # The editor numbers these in document order, sub-events included, one
 # sequence per sheet. A variable, comment or include takes no number of its
 # own: the margin leaves it blank and Find files it under the next numbered
@@ -60,6 +65,31 @@ def stop_with_a_sentence(script: str, findings: Findings) -> None:
         os._exit(2)     # sys.exit would raise inside the hook and print a second traceback
 
     sys.excepthook = stopped
+
+
+def utf8_output() -> None:
+    """The harness reads a script's pipe as UTF-8. A piped Python on Windows
+    writes the ANSI code page instead: under cp936 Chinese names and comments
+    arrive as mojibake, and cp1252 cannot encode them at all. An encoding the
+    caller chose with PYTHONIOENCODING is kept, without the crash."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            if "PYTHONIOENCODING" in os.environ:
+                stream.reconfigure(errors="replace")
+            else:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+
+
+def fitting(lines: list[str], limit: int) -> int:
+    """How many of lines print within limit characters; all of them when limit is 0."""
+    if not limit:
+        return len(lines)
+    used = 0
+    for n, line in enumerate(lines):
+        used += len(line) + 1
+        if used > limit:
+            return n
+    return len(lines)
 
 
 def load(path: Path):
@@ -198,6 +228,9 @@ def argument_parser(description: str, epilog: str) -> argparse.ArgumentParser:
     ap.add_argument("--locale", default="en-US",
                     help="schema locale, one of `languages` in data/c3-schemas/_index.json; ids are the same in "
                          "every locale, names and wording differ (default: en-US)")
+    ap.add_argument("--limit", type=int, default=LIMIT, metavar="CHARS",
+                    help=f"stop after about this many characters and say how to get the rest, since a harness "
+                         f"cuts longer tool output; 0 prints everything (default: {LIMIT})")
     return ap
 
 
@@ -218,6 +251,7 @@ class Project:
         self.functions_object: str = self.data.get("functionsName", "Functions")
 
         self._schema_cache: dict[tuple[str, str], dict | None] = {}
+        self._addon_names: dict[str, dict[str, str]] = {}
         self.index = load(rag / "data" / "c3-schemas" / "_index.json")
         if not self.schemas.is_dir():
             sys.exit(f"no schemas for --locale {locale}; the clone has: {', '.join(self.index.get('languages', []))}")
@@ -267,17 +301,24 @@ class Project:
         return out
 
     # --- schemas ----------------------------------------------------------------------
+    def addon_names(self, kind: str) -> dict[str, str]:
+        """Schema id by squashed id and display name, in the locale and in en-US:
+        '8 Direction', 'EightDir' and '八方向' are eightdir."""
+        if kind not in self._addon_names:
+            by_name = {}
+            for locale in {self.locale, "en-US"}:
+                names_file = self.rag / "data" / "c3-schemas" / locale / "_index.json"
+                if names_file.exists():
+                    for k, v in load(names_file).get(kind, {}).items():
+                        by_name[squash(v.get("name", k))] = k
+            self._addon_names[kind] = {**by_name, **{squash(k): k for k in self.index.get(kind, {})}}
+        return self._addon_names[kind]
+
     def addon_hint(self, kind: str, addon_id: str) -> str | None:
         """The id the editor uses for what the project calls addon_id, found through
         the display name ('Array' is Arr, '8 Direction' is EightDir) or a near id."""
         ids = self.index.get(kind, {})
-        by_name = {}
-        for locale in {self.locale, "en-US"}:
-            names_file = self.rag / "data" / "c3-schemas" / locale / "_index.json"
-            if names_file.exists():
-                for k, v in load(names_file).get(kind, {}).items():
-                    by_name[squash(v.get("name", k))] = k
-        table = {**by_name, **{squash(k): k for k in ids}}
+        table = self.addon_names(kind)
         hit = table.get(squash(addon_id))
         if hit is None:
             near = difflib.get_close_matches(squash(addon_id), list(table), n=1, cutoff=0.75)

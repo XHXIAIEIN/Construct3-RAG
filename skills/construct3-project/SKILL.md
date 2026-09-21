@@ -39,13 +39,16 @@ exists and a name they reject does not.
 | Script | Use |
 |--------|-----|
 | `scripts/lookup_ace.py OBJECT [WORD ...]` | Conditions, actions and expressions of an object of the project, of `System`, or of a plugin or behavior, each with its parameters and the JSON to write |
-| `scripts/print_sheet.py [SHEET ...]` | A sheet as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only |
+| `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only |
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:` |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
 
 Each prints its options and examples with `--help`. `--locale zh-CN` switches
-names and wording to Chinese; ids are the same in every locale.
+names and wording to Chinese; ids are the same in every locale. A harness cuts
+long tool output without saying where, so each script stops at about 10 000
+characters and its last line says how to get the rest; `--limit 0` prints
+everything, for a file or a pipe.
 
 ## Look an ACE up before writing it
 
@@ -69,9 +72,18 @@ action tween-two-properties - Tween (two properties) [behavior Tween, tween]  <i
 An object of the project searches its plugin, the ACEs every world object
 shares and its behaviors under the names they have on the object. A plugin
 or behavior by id or display name (`"8 Direction" speed`) needs no project.
-Add a word to narrow a long list; `condition`, `action` and `expression` are
-words too. Copy the `write:` line and replace the values; an expression
-prints the way it is reached, `Coin.Tween.Progress(tags)`.
+A word is matched as written, not by meaning, against the id and the names
+and against where the ACE lives: the behavior, the category, `condition`,
+`action`, `expression`. `System timer` finds nothing and lists the
+categories; `System time` lists *Every X seconds*, *Wait* and `dt`.
+
+Copy the `write:` line and replace the values. `<new sid>` is a 15-digit
+number the project does not use yet; the checker reports a repeat. An
+expression prints the way it is reached, `Coin.Tween.Progress(tags)`. What
+the line does not show is in
+`Construct3-RAG/prompts/references/hand-editing-project-files.md`: read it
+before writing a function or custom action block or a call of one, a
+`projectfile` parameter, or a family's behavior through a member type.
 
 ## Read a sheet as events
 
@@ -90,7 +102,9 @@ python scripts/print_sheet.py Game
 Read a sheet this way before and after an edit: a wrong pick or a missing
 branch shows in ten lines of events and hides in three hundred lines of JSON.
 Read an official example the same way, `--project
-<Construct-Example-Projects>/example-projects/template-snake`.
+<Construct-Example-Projects>/example-projects/template-snake`. A long sheet
+prints in parts: run the command its last line gives, or ask for a range,
+`--events 40-80`, which starts with the events the range sits in.
 
 The numbers are the editor's: the margin of the event sheet and the
 **Where** column of its Find results. Talk to the user in these numbers, not

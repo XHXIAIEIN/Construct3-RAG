@@ -143,6 +143,13 @@ def test_every_file_the_skill_names_is_in_it():
             assert (SKILL / rel).is_file(), f"{doc.name} names {rel}"
 
 
+def test_every_file_of_the_clone_the_skill_names_exists():
+    """A copy of the skill reaches these through the project's Construct3-RAG line; a rename here breaks them in silence."""
+    for doc in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
+        for rel in set(re.findall(r"Construct3-RAG/([\w./-]+\.\w+)", doc.read_text(encoding="utf-8"))):
+            assert (REPO / rel).is_file(), f"{doc.name} names Construct3-RAG/{rel}"
+
+
 # --- installing the skill in a game project ---------------------------------------------------
 def test_install_copies_the_skill_and_writes_the_block_with_the_clones_path(tmp_path):
     root = new_project(tmp_path / "game")
@@ -302,6 +309,24 @@ def test_stand_in_project_passes_without_warnings(built):
     assert [line for line in out.splitlines() if line.startswith("warning:") and "Pillow" not in line] == []
 
 
+def test_checker_prints_the_findings_that_fit_and_counts_the_rest(project):
+    def misspell_every_action(sheet):
+        def walk(rows):
+            for ev in rows:
+                for action in ev.get("actions", []):
+                    if "id" in action:
+                        action["id"] += "-x"
+                walk(ev.get("children", []))
+        walk(sheet["events"])
+    edit(project, SHEET, misspell_every_action)
+    code, out = check(project, "--limit", "600")
+    lines = out.splitlines()
+    assert code == 1 and re.fullmatch(r"\d+ problem\(s\)", lines[-1])
+    assert re.fullmatch(r"\.\.\. and \d+ more problems; fix these and run again \(--limit 0 prints all\)", lines[-2])
+    code, everything = check(project, "--limit", "0")
+    assert code == 1 and "more problems" not in everything and len(everything) > len(out)
+
+
 def test_generator_exits_with_the_checkers_findings(project):
     """One command builds and checks, so a finding cannot be skipped by forgetting the second."""
     source = project / "tools" / "build_project.py"
@@ -342,6 +367,57 @@ def test_print_follows_the_locale(built):
     assert code == 0 and "System: 场景开始" in out
 
 
+def test_print_stops_at_the_limit_and_names_the_part_that_continues(built):
+    """A harness cuts long output without saying where; the script stops at an event and says how to go on."""
+    code, whole = tool(built, "print_sheet", "Game")
+    parts, events = [], "1-"
+    while events:
+        code, out = tool(built, "print_sheet", "Game", "--events", events, "--limit", "900")
+        assert code == 0 and len(out) < 1500, out
+        parts.append(out)
+        last = out.splitlines()[-1]
+        events = re.search(r"--events (\d+-)", last).group(1) if last.startswith("-- stopped at the limit") else None
+    assert len(parts) > 1 and parts[0].startswith("== Game: events 1-")
+    printed = {line for part in parts for line in part.splitlines() if "[context]" not in line}
+    assert [line for line in whole.splitlines()[1:] if line not in printed] == []
+
+
+def test_print_of_a_part_starts_with_the_events_it_sits_in(built):
+    code, out = tool(built, "print_sheet", "Game", "--events", "9")
+    assert code == 0
+    assert out.splitlines()[:3] == ["== Game: events 9-9 of 9; a [context] row is an event these sit in, without its actions",
+                                    "   8 group Restart  [context]", "   9   System: Coin.Count = 0"]
+    assert "Touch: On touched" not in out
+
+
+@pytest.mark.parametrize("events, said", [("40-", "has 9 events"), ("x", "40-80, 40- or 40"), ("5-2", "ends before it starts")])
+def test_print_refuses_a_range_it_cannot_read(built, events, said):
+    code, out = tool(built, "print_sheet", "Game", "--events", events)
+    assert code == 1 and said in out
+
+
+def test_print_without_a_name_lists_the_sheets_that_do_not_fit(project):
+    shutil.copy(project / SHEET, project / "eventSheets" / "Menu.json")
+    edit(project, "project.c3proj", lambda data: data["eventSheets"]["items"].append("Menu"))
+    code, out = tool(project, "print_sheet", "--limit", "900")
+    assert code == 0
+    assert "2 event sheets" in out and re.search(r"Game +9 events +\d+ characters", out) and "-> " not in out
+    code, out = tool(project, "print_sheet")
+    assert code == 0 and "== Game\n" in out and "== Menu\n" in out
+
+
+def test_scripts_write_utf8_and_survive_a_code_page_that_cannot(built):
+    """A piped Python on Windows writes the ANSI code page: mojibake under cp936, a crash under cp1252."""
+    script = built / INSTALLED / "scripts" / "print_sheet.py"
+    for codec, want in ((None, "场景开始"), ("cp1252", "System: ")):
+        env = {k: v for k, v in os.environ.items() if k not in ("PYTHONIOENCODING", "PYTHONUTF8")}
+        env.update({"PYTHONIOENCODING": codec} if codec else {})
+        p = subprocess.run([sys.executable, str(script), "Game", "--locale", "zh-CN", "--rag", str(REPO)],
+                           cwd=built, env=env, capture_output=True)
+        assert p.returncode == 0, p.stdout + p.stderr
+        assert want in p.stdout.decode(codec or "utf-8")
+
+
 # --- looking an ACE up -------------------------------------------------------------------
 def test_ace_lookup_reaches_a_behavior_through_the_object(built):
     code, out = tool(built, "lookup_ace", "Coin", "tween", "two")
@@ -380,6 +456,46 @@ def test_ace_lookup_needs_no_project_and_takes_a_display_name(tmp_path):
 def test_ace_lookup_offers_the_nearest_id(built):
     code, out = tool(built, "lookup_ace", "System", "wiat")
     assert code != 0 and "closest: wait" in out
+
+
+def test_ace_lookup_does_not_take_a_near_name_for_the_addon(tmp_path):
+    """`Platform` is the behavior; a near match used to read it as the plugin Platform Info."""
+    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
+    code, out = tool(tmp_path, "lookup_ace", "Platform", "jump", "strength")
+    assert code == 0 and "action set-jump-strength" in out and "platforminfo" not in out
+    code, out = tool(tmp_path, "lookup_ace", "Platfrom")
+    assert code == 1 and "closest: platform" in out
+
+
+def test_ace_lookup_takes_a_category_for_a_word(built):
+    """The word an agent thinks of is the category more often than the id: time, not every-x-seconds."""
+    code, out = tool(built, "lookup_ace", "System", "time")
+    assert code == 0 and "condition  every-x-seconds " in out and "action     wait " in out
+    code, out = tool(built, "lookup_ace", "System", "time", "condition")
+    assert "condition compare-time - Compare time" in out and "by category, not by name: every-x-seconds" in out
+    code, out = tool(built, "lookup_ace", "System", "timer")
+    assert code == 1 and "categories, each a word too:" in out and " time," in out
+
+
+def test_ace_lookup_by_name_is_not_widened_by_a_category(tmp_path):
+    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
+    code, out = tool(tmp_path, "lookup_ace", "Physics", "force")
+    assert code == 0 and out.count("  write: ") == 3
+    assert "by category, not by name: apply-impulse" in out
+
+
+def test_ace_lookup_lists_the_entries_that_have_some_of_the_words(built):
+    code, out = tool(built, "lookup_ace", "Coin", "tween", "position")
+    assert code == 1 and "nothing under Coin has every word of 'tween position'" in out
+    assert "action     set-position " in out and "[behavior Tween, tween]" in out
+
+
+def test_ace_lookup_counts_per_category_what_does_not_fit(built):
+    code, out = tool(built, "lookup_ace", "System")
+    assert code == 0 and len(out) < 2000
+    assert "Entries per category:" in out and "loops 5" in out and "add a word" in out
+    code, out = tool(built, "lookup_ace", "System", "--limit", "0")
+    assert code == 0 and "expression dt " in out
 
 
 # --- finding the schemas ---------------------------------------------------------------
