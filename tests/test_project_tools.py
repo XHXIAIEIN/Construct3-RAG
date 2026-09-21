@@ -137,6 +137,13 @@ def test_ace_lookup_marks_shared_triggers_and_writes_expressions(built):
     assert "write: Coin.Tween.Progress(tags)  -> number" in out
 
 
+def test_ace_lookup_words_may_name_the_behavior_and_the_kind(built):
+    code, out = check(built, "--ace", "Coin", "tween", "condition", "playing")
+    assert code == 0
+    assert [line.split(" - ")[0] for line in out.splitlines() if " - " in line and not line.startswith(" ")] == [
+        "condition is-playing", "condition is-any-playing"]
+
+
 def test_ace_lookup_lists_briefly_when_many_match(built):
     code, out = check(built, "--ace", "System", "layer")
     assert code == 0 and "add a word to narrow them" in out and "write:" not in out

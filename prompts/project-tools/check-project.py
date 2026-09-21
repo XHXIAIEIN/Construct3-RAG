@@ -472,7 +472,9 @@ def ace_lookup(target: str, words: list[str]) -> None:
     for owner, behavior, s in sources:
         for kind in kinds:
             for it in s.get(kind, []):
-                hay = squash(" ".join(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")))
+                # A word may also name where the ACE lives: the behavior, the addon, "condition".
+                hay = squash(" ".join([*(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")),
+                                       behavior or "", s.get("id", ""), s.get("name", ""), kind]))
                 if all(squash(w) in hay for w in words):
                     found.append((owner, behavior, s.get("id", ""), kind, it))
     if not found:

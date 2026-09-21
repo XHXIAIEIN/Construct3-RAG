@@ -103,10 +103,11 @@ The first argument is an object of the project, which searches its plugin,
 the ACEs every world object shares and its behaviors under the names they
 have on the object; `System`; or a plugin or behavior by id or display name
 (`--ace "8 Direction" speed`), which needs no project. Every further word
-must occur in the id, the list name or the script name. More than six
-matches print one line each; six or fewer print in full, with `<isTrigger>`,
-`<isLooping>` and `<not invertible>` where the editor's rules depend on
-them. An expression prints the way it is reached:
+must occur in the id, the list name or the script name, or name where the
+ACE lives: the behavior, the addon, `condition`, `action` or `expression`.
+More than six matches print one line each; six or fewer print in full, with
+`<isTrigger>`, `<isLooping>` and `<not invertible>` where the editor's rules
+depend on them. An expression prints the way it is reached:
 `Coin.Tween.Progress(tags)`. Copy the `write:` line into a helper of the
 generator and replace the values.
 
