@@ -140,7 +140,10 @@ python scripts/edit_sheet.py Game plan.json
 ```
 
 Every number is an event number of the sheet as it prints now, whatever the
-operations above it do, so one print serves a whole plan.
+operations above it do, so one print serves a whole plan. An event replaced
+by one event keeps its number for the operations below. Its sub-events go
+with it: write the ones to keep into the `"events"` that replace it, or
+`move` them out in an operation above.
 
 - New events: `"before": N` goes above event N and the comments about it,
   `"after": N` below it and its sub-events, `"into": N` among its
