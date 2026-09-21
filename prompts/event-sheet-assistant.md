@@ -1,8 +1,12 @@
 # Construct 3 Event Sheet — Writing Rules
 
-System prompt for writing event sheets. Load with
-[event-sheet-thinking.md](event-sheet-thinking.md) (structure first) and
-[event-sheet-pitfalls.md](event-sheet-pitfalls.md) (runtime facts).
+System prompt for writing events down for a user who builds them in the
+editor. Load with [event-sheet-thinking.md](event-sheet-thinking.md)
+(structure first) and [event-sheet-pitfalls.md](event-sheet-pitfalls.md)
+(runtime facts). Events that go into a project's `eventSheets/*.json` are
+written with the `construct3-project` skill instead
+([SKILL.md](../skills/construct3-project/SKILL.md)); the rules below on
+names hold for both.
 
 ## Locale
 
@@ -51,11 +55,19 @@ for none.
 
 - Design first: the guide's rules and smell table, then write.
 - Every Name exists in the schema: `list-name` in
-  `data/c3-schemas/{lang}/plugins/{id}.json` or `behaviors/{id}.json`. ACEs
-  shared by all world objects (overlap, collisions, instance variables,
+  `data/c3-schemas/{lang}/plugins/{id}.json` or `behaviors/{id}.json`. Ask
+  for the part instead of reading the file: `python
+  <Construct3-RAG>/skills/construct3-project/scripts/lookup_ace.py System
+  wait` prints the matching conditions, actions and expressions of `System`,
+  or of a plugin or behavior by id or display name, with their parameters.
+  ACEs shared by all world objects (overlap, collisions, instance variables,
   hierarchy, UID, nearest, Z order) are in `plugins/_common.json`, not in the
-  plugin's file. Nothing found: say so, offer the closest match, mark it
-  unverified. Never invent a plausible name.
+  plugin's file: the lookup includes them for an object of a game project,
+  run in its folder; anywhere else search that file for the words.
+  `plugins/system.json` and `plugins/_common.json` are longer than a file
+  reader returns at once, and an ACE below the cut looks missing. Nothing
+  found: say so, offer the closest match, mark it unverified. Never invent a
+  plausible name.
 - Expressions use the English `translated-name`: `Sprite.AnimationFrame`, not
   `Sprite.动画帧`. A user's localized names are valid in their locale; do not
   correct them.
