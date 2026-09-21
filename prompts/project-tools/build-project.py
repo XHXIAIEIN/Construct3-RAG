@@ -6,20 +6,24 @@ families, layouts, event sheets and the parts of project.c3proj that list them.
 Run it in a project the editor created and saved as a folder, so that
 project.c3proj already has its uniqueId, icons and scripts. The generated
 files replace the previous ones; files the editor owns (uistate, icons,
-scripts) are left alone.
+scripts) are left alone. It ends by running check-project.py, which sits next
+to it, on what it wrote, and exits with the checker's code: the project is
+ready for the editor when the last line starts with `ok:`.
 
 The game below is a stand-in: coins appear, a tap collects one, the score
 counts up, and when the last coin is gone the layout restarts. Replace
 build_images(), build_object_types(), build_layouts(), build_event_sheet() and
-the addon list in build_project(); keep the helpers, or grow them from the
-schemas in Construct3-RAG/data/c3-schemas/ when the game needs an ACE they do
-not cover. The encodings are the ones the editor writes; see
+the addon list in build_project(); keep the helpers, or grow them from
+`python tools/check-project.py --ace <object> <words>`, which prints an ACE
+with the JSON to write, when the game needs one they do not cover. The
+encodings are the ones the editor writes; see
 Construct3-RAG/prompts/references/hand-editing-project-files.md.
 """
 import json
 import math
 import random
 import struct
+import subprocess
 import sys
 import zlib
 from pathlib import Path
@@ -627,4 +631,12 @@ def build_all() -> None:
 
 if __name__ == "__main__":
     build_all()
-    print("done")
+    # Generating without checking is how a project reaches the editor with a mistake
+    # the checker names in one line; the two always run together.
+    checker = Path(__file__).with_name("check-project.py")
+    if not checker.exists():
+        sys.exit(f"generated, not checked: {checker.name} is not in {checker.parent}; copy it from "
+                 f"Construct3-RAG/prompts/project-tools/ and run it")
+    print("generated; checking")
+    sys.stdout.flush()
+    sys.exit(subprocess.run([sys.executable, str(checker), str(ROOT)]).returncode)

@@ -38,10 +38,13 @@ def built(tmp_path_factory) -> Path:
     (root / "tools").mkdir()
     for name in ("build-project.py", "check-project.py"):
         shutil.copy(TOOLS / name, root / "tools" / name)
-    # What the editor leaves after "Save as project folder", reduced to the keys the generator reads.
+    # What the editor leaves after "Save as project folder", reduced to the keys the generator reads,
+    # and the block's path line, which is how the checker the generator ends with finds the schemas.
     (root / "project.c3proj").write_text(json.dumps({"uniqueId": "test", "properties": {}}), encoding="utf-8")
+    (root / "AGENTS.md").write_text(f"# Construct 3\n\n- Construct3-RAG: {REPO.as_posix()}\n", encoding="utf-8")
     code, out = run(root, "build-project.py")
     assert code == 0, out
+    assert out.splitlines()[0] == "generated; checking" and out.splitlines()[-1].startswith("ok:")
     return root
 
 
@@ -96,6 +99,23 @@ def test_stand_in_project_passes_without_warnings(built):
     assert code == 0, out
     assert out.startswith("ok:") or "\nok:" in out
     assert [line for line in out.splitlines() if line.startswith("warning:") and "Pillow" not in line] == []
+
+
+def test_generator_exits_with_the_checkers_findings(project):
+    """One command builds and checks, so a finding cannot be skipped by forgetting the second."""
+    source = project / "tools" / "build-project.py"
+    source.write_text(source.read_text(encoding="utf-8").replace(
+        'return cond("on-touched-object", "Touch", {"object": obj, "type": "start"})',
+        'return cond("on-touched-object", "Touch", {"object": obj, "type": "\\"start\\""})'), encoding="utf-8")
+    code, out = run(project, "build-project.py")
+    assert code == 1
+    assert "generated; checking" in out and 'write it bare, "start"' in out
+
+
+def test_generator_without_the_checker_says_so(project):
+    (project / "tools" / "check-project.py").unlink()
+    code, out = run(project, "build-project.py")
+    assert code != 0 and "generated, not checked" in out
 
 
 def test_outline_numbers_events_as_the_editor_does(built):
