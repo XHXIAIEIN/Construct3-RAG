@@ -60,15 +60,19 @@ python -m compileall -q skills
 ```
 
 The tests install the skill in a temporary project and run the copy, and
-they pin the format's constraints offline. The reference validator needs
-network:
+they pin the format's constraints offline.
+
+When the frontmatter of a `SKILL.md` changes, or the specification does, run
+the reference validator as well. It fetches code from GitHub and runs it:
 
 ```bash
 uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref" skills-ref validate skills/construct3-project
 ```
 
-It checks the frontmatter only: the fields, the name against the folder,
-the lengths. Whether the skill helps is what the evals measure.
+If the session does not allow that, report it as not run; the tests pin the
+same constraints. It checks the frontmatter only: the fields, the name
+against the folder, the lengths. Whether the skill helps is what the evals
+measure.
 
 ## Evals
 
@@ -87,11 +91,18 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 | `run_trigger_eval.py` | Trigger rates from `claude -p`, on Windows too |
 
 ```bash
-git worktree add --detach <folder outside the clone>/rag-old HEAD      # before the change
+# before the change
+git worktree add --detach <folder outside the clone>/rag-old HEAD
 python skills/construct3-project/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-old.json --examples <example-projects>
+# after the change
+python skills/construct3-project/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-new.json --examples <example-projects>
+python skills/construct3-project/evals/sweep_outputs.py --compare .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-old.json .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-new.json
 python skills/construct3-project/evals/make_fixtures.py <folder outside the clone>/iteration-N --arms with_skill old_skill --old-clone <folder outside the clone>/rag-old
+# after each run has reported
 python skills/construct3-project/evals/trace.py <transcript>.jsonl --out <run folder>
+# after the last run of the iteration
 python skills/construct3-project/evals/grade.py .local/docs/evidence/skill-evals/construct3-project/iteration-N
+# after a change to the description
 python skills/construct3-project/evals/run_trigger_eval.py skills/construct3-project/evals/train_queries.json --project <game with .claude/skills>
 ```
 
