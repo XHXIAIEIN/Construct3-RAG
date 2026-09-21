@@ -471,3 +471,66 @@ The two projects whose block still names it, `new project - Doubao` and its
 copy, are small-model test outputs that no agent works in again, and they
 keep their old block. Nothing else in this repository or in the other game
 projects named the file.
+
+## Update 2026-09-22: Gotchas cut to what the tools do not say, and two rows of the block merged
+
+The Gotchas of `SKILL.md` had not changed since the first commit, and no
+iteration had tested one of them. Four of the eight repeated what the agent
+is told at the moment it matters: `behaviorType` and the path of a
+behavior's expression are in the `write:` line of `lookup_ace.py`, the
+spelling of an addon id and the project's object behind a plugin name are
+in the checker's finding, and the place of *Else* and what cannot be
+inverted are findings with the repair. All of them are also in
+`references/checker-rules.md` or `references/generating-a-project.md`, a
+second and third copy to keep in step with the checker.
+
+- Taken out: `behaviorType`, addon ids, *Else* and inversion.
+- Shortened: how a parameter is written, which now names the type
+  `lookup_ace.py` prints beside it.
+- Kept: one trigger per branch, whose repair is a change of structure;
+  names, since a name changed late changes every event that uses it; what
+  an added instance variable or behavior asks of the layouts.
+- Moved: what the checker cannot see, to "Check after every change", under
+  the step that ends at `ok:`.
+
+Iteration 7, Claude Haiku 4.5 subagents, two runs per case and arm, the
+previous skill (6a0b9c6, from a worktree) as the baseline, read with
+`evals/trace.py`. Means of two runs; lost calls per run:
+
+| Case, version | Assertions | Tokens | Seconds | Tool calls | Lost calls |
+|---------------|------------|--------|---------|------------|------------|
+| add-countdown, previous | 7/7, 7/7 | 67 834 | 145 | 21.5 | 3, 5 |
+| add-countdown, shortened | 7/7, 7/7 | 64 330 | 134 | 22.5 | 5, 2 |
+| fix-load-errors, previous | 8/8, 8/8 | 64 543 | 136 | 23 | 4, 2 |
+| fix-load-errors, shortened | 8/8, 8/8 | 56 252 | 78 | 14 | 2, 0 |
+
+No lost call of the shortened arm comes from a rule that was taken out:
+they are lookup words that matched nothing, guessed shapes of a plan
+operation, and a wrong ACE id or parameter key, each refused with the right
+one. The result is "not worse", no more: two runs per cell, and the same
+previous text ran fix-load-errors in 58 K tokens and 97 s in iteration 5.
+The two cases never write an addon id, name an object or add an instance
+variable, so those rules were not exercised in either arm.
+
+Iteration 6 is the same layout started with a prompt that named the
+project's `AGENTS.md` and not the skill. Four of its eight runs never opened
+`SKILL.md`, in both arms, against none of 18 in iterations 3 to 5, whose
+prompt names it; all eight passed every assertion, and the ones that skipped
+it edited the JSON with Edit or a script of their own. It says nothing about
+the Gotchas and is kept as a first count of how often the block alone leads
+a small model to the skill.
+
+In `assets/game-project-block.md` the two rows that sent to
+`Construct3-RAG/AGENTS.md` section 2 are one row, and so are the two that
+sent to the hand-editing reference. The block is in every session of a game
+project; what it routes to is unchanged. Not measured: the eval prompt names
+`SKILL.md` itself, and four runs of the other prompt cannot show what two
+rows do.
+
+### Re-evaluate when
+
+- The block alone is to lead to the skill more often: move its row up or
+  word it as the first step, and count `read_skill_md` over runs started
+  with the prompt of iteration 6.
+- A project shows a wrong `behaviorType`, addon id or *Else* that the
+  finding did not repair in one round: the rule goes back, with the case.
