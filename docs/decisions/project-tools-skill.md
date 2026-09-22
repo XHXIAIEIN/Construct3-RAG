@@ -634,7 +634,7 @@ Four of the turns they lost were the tools' doing.
 - A container's format was searched for under `objectTypes/` and in the
   example folders and given up on. A container is a row of `project.c3proj`
   and has no file; the template has `container()` and writes the key, and
-  `hand-editing-project-files.md` gives the row with the counts behind it.
+  `hand-editing-project-files.md` gives the row.
 
 The miss of the lookup also moved from stderr to stdout. Both logs show
 what stderr costs a PowerShell reader: `2>&1` turns each line into an

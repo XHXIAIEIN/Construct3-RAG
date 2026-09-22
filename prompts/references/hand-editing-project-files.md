@@ -11,11 +11,12 @@ is documented in `Construct3-Clipboard/docs/clipboard-format.md`.
 
 ## Encodings
 
-Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
-2026-09-14) and in official example projects.
+Each rule was read from the editor's loaders, from files it saved or from
+the official examples; the evidence is in
+`docs/decisions/checker-editor-load-rules.md`, "the evidence behind the
+hand-editing reference".
 
 - Comparison parameters are integers: 0 `=`, 1 `≠`, 2 `<`, 3 `≤`, 4 `>`, 5 `≥`.
-  Order: `data/c3-lang/en-US.json`, `ui/dialogs/parameters/controls/comparison`.
 - String parameters carry their quotes: `"tag": "\"attack\""`. `layer` is an
   index string `"2"` or a quoted name `"\"Graphics\""`. `create-hierarchy` is a
   JSON boolean. Inverted conditions carry `"isInverted": true`.
@@ -26,33 +27,25 @@ Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
   value is not an error to the editor: it silently keeps the default. A key
   is its key code as a JSON number (`"key": 32`); a string stops the load
   with `expected finite number`. A JSON string `"false"` in a boolean
-  parameter reads as true. [editor bundle `projectResources.js`, parameter
-  loaders, r495.2, 2026-09-21; the 1238 Keyboard `key` parameters in the
-  official examples are all numbers]
+  parameter reads as true.
 - `plugin-id`, `behaviorId` and the `id` of a `usedAddons` entry are the
   editor's spelling, exactly: `originalId` in `data/c3-schemas/_index.json`.
   `Arr` is Array, `Json` JSON, `TiledBg` Tiled Background, `EightDir`
   8 Direction, `Sin` Sine; `solid`, `scrollto`, `jumpthru`, `bound`, `wrap`,
-  `destroy` and `gamepad` are lowercase. [same source: the addon table is a
-  map keyed by id, `missing plugin id` otherwise]
+  `destroy` and `gamepad` are lowercase. Any other spelling stops the load
+  with `missing plugin id`.
 - An event variable's `initialValue` is text whatever its `type`: `"0"`,
   `"hello"` without inner quotes, and for a boolean `"true"` or `"false"`,
-  lowercase. The editor reads a boolean by comparing the text to `"true"`,
-  in the editor and again when it exports, so a JSON `false` or `true`, a
-  `"True"` or a `"1"` all read as false, and a number text that does not
-  parse reads as 0. A function parameter's `initialValue` may also be a JSON
-  number; anything else stops the load with `invalid type of initialValue`.
-  [editor bundle `projectResources.js`, variable and parameter loaders, read
-  2026-09-22; the 303 boolean variables and 74 boolean parameters of the
-  official examples are all `"true"` or `"false"`]
+  lowercase. The editor reads a boolean by comparing the text to `"true"`:
+  a JSON `false` or `true`, a `"True"` and a `"1"` all read as false. A
+  number text that does not parse reads as 0. A function parameter's
+  `initialValue` may also be a JSON number; anything else stops the load
+  with `invalid type of initialValue`.
 - A layout instance's `instanceVariables` map holds JSON values by type:
   `{"hp": 3, "dead": false, "label": "a"}`, no text around a number or a
-  boolean. [official examples: 12 450 numbers, 6970 booleans, 1934 strings,
-  no other form]
-- An instance's `world.angle` is in radians: 270 degrees is `4.7124`, and
-  the largest angle in any official example is 2π. `math.radians` in a
-  generator, `Angle` in events stays in degrees. [official examples: 6053
-  non-zero instance angles, all within 2π]
+  boolean.
+- An instance's `world.angle` is in radians: 270 degrees is `4.7124`.
+  `math.radians` in a generator; `Angle` in events stays in degrees.
 - Function call: `{"callFunction": "name", "sid": N, "parameters": ["expr", ...]}`.
   Function block: `functionCopyPicked` (boolean) and `functionParameters`
   entries with `name`, `type`, `initialValue`, `comment`, `sid`.
@@ -61,50 +54,36 @@ Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
   `function*` keys as a function block; `functionCopyPicked` is *Copy all
   picked*. Call: `{"customAction": "name", "objectClass": "<row object>", "sid": N}`,
   with `"parameters": ["expr", ...]` exactly when the block declares
-  parameters, plus `"customActionObjectClass": "<family>"` when the row object
-  is a member type and the block belongs to the family. In every official
-  example the row object owns a block of that name itself; the family key
-  appears only where a member with its own override calls the family block.
-  [152 blocks and 333 calls across the example projects, 2026-09-17; family
-  key: custom-action-overrides; the member-without-override call form is
-  inferred from it and loads in the editor, mergeGame r502, 2026-09-17]
+  parameters. Add `"customActionObjectClass": "<family>"` when the row
+  object is a member type and the block belongs to the family; it is only
+  needed where the member overrides the block and calls the family's.
 - A `projectfile` parameter is the bare file name for a file at the root
-  (`"file": "DefaultProfile.json"`, official examples); the editor writes a
-  file inside a subfolder as `"file": {"path": "data/enemy.json"}`. The
-  hand-written bare name `"enemy.json"` loaded and was rewritten to the
-  object form on save. [observed: mergeGame r502, 2026-09-17]
+  (`"file": "DefaultProfile.json"`) and `"file": {"path": "data/enemy.json"}`
+  for a file in a subfolder; a bare name for a subfolder file loads and is
+  rewritten to the object form on save.
 - A family is `families/<Name>.json` (`name`, `plugin-id`, `sid`,
   `instanceVariables`, `behaviorTypes`, `effectTypes`, `members`), listed
   under `families` in `project.c3proj` like an object type. A container has
   no file: `project.c3proj` holds `"containers": [{"members": ["TankBase",
-  "TankTurret"]}]`, its members object type names. Saves up to r263 add
-  `"selectMode": "normal"`, the editor's Select mode; saves from r342 on
-  leave it out. Nothing under `objectTypes/` names a container. [153 family
-  files in 82 official examples, 159 container rows in 85, every member an
-  object type, `selectMode` in the 110 rows saved r184 to r263 and in none
-  of the 49 saved r342 to r470; 2026-09-22]
-- A family instance variable can be written through a member type
-  (`"objectClass": "enemyBase"`, `"instance-variable": "hp"` with `hp`
-  declared on family `EnemyGroup`); the editor loads it and the runtime
-  applies it. [observed: mergeGame r502, 2026-09-17]
-- Parameters an ACE gained in a later release may be omitted; the editor fills
-  defaults on load. Every official example that uses `pick-nearestfurthest`
-  (saved r184 to r437) writes only `which`, `x`, `y`; the r495.2 schema also
-  lists `z` and `pick-all-tied`.
+  "TankTurret"]}]`, its members object type names, no `selectMode`. Nothing
+  under `objectTypes/` names a container.
+- A family instance variable can be written through a member type:
+  `"objectClass": "enemyBase"`, `"instance-variable": "hp"` with `hp`
+  declared on family `EnemyGroup`.
+- Parameters an ACE gained in a later release may be omitted; the editor
+  fills defaults on load. `pick-nearestfurthest` loads with `which`, `x`,
+  `y` alone, though the schema also lists `z` and `pick-all-tied`.
 - `sid`: 15-digit integer, unique across the whole project. `uid`: unique
   across all layouts. Files: UTF-8 with raw non-ASCII, tab indent, LF, no
   trailing newline. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
-  reproduces the editor's output byte for byte (roundtrip checked on mergeGame).
+  reproduces the editor's output byte for byte.
 - A behavior declared on a family is used through a member type with the
   family's behavior name: `"objectClass": "DragonHead", "behaviorType":
   "Physics"` where only family `Parts` declares Physics. The member's layout
   instances carry the family behavior's properties block as if it were their
-  own. [example: drag-on, r466]
-- Instance `world` entries write Z elevation as `"z"` with a `"depth"` key
-  from r472 (`"zElevation"` in r466); layers keep `zElevation`. An empty
-  layout saved by r502 has `sampling` and `ambientLight` and no
-  `scene-graphs-folder-root`. [examples: pixel-data-reader r472, drag-on r466;
-  observed: new project r502, 2026-09-17]
+  own.
+- Instance `world` entries write Z elevation as `"z"` with a `"depth"` key;
+  layers keep `zElevation`.
 
 ## Naming an event to the user
 
@@ -122,19 +101,16 @@ read the sheet that way before and after an edit.
 
 ## Checks before handing over
 
-Without the editor: JSON parses; every `objectClass`, instance variable and
-behavior name exists, families included; `sid` and `uid` are unique; every ACE
-`id` and parameter key is present in `data/c3-schemas/` (shared world ACEs in
-`plugins/_common.json`); every called function is defined with the right
-parameter count; every object created at runtime has a template instance in
-some layout; and the rules the editor applies on opening: one trigger per
-branch and none inside a function or custom action, nothing inverted that
-cannot be, *Else* only after a plain event, names the editor keeps and does
-not reserve (the table in
-`skills/construct3-project/references/checker-rules.md`). The skill's
-`scripts/check_project.py` runs these checks on a project folder: from the
+Run the skill's `scripts/check_project.py` on the project folder, from the
 copy installed in the project, `.agents/skills/construct3-project/`, or in
-place here with `--project <folder>`.
+place here with `--project <folder>`. It checks that the JSON parses; that
+every `objectClass`, instance variable and behavior name exists, families
+included; that `sid` and `uid` are unique; that every ACE `id` and parameter
+key is in `data/c3-schemas/`; that every called function is defined with
+the right parameter count; that every object created at runtime has a
+template instance in some layout; and the rules the editor applies on
+opening, the table in
+`skills/construct3-project/references/checker-rules.md`.
 
 What the checks cannot answer is what the game does: which instances a
 condition picks, what order triggers fire in, what a tick later looks like.
