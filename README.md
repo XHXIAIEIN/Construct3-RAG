@@ -13,7 +13,7 @@ git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct
 python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-They put this clone, the repositories it reads and the `MyGame` project together in `$HOME/Construct3`, and install the `construct3-project` skill in `MyGame` with its `AGENTS.md` and `CLAUDE.md`. Whatever is already there is left as it is, so the two are safe to run again; `--help` lists the flags. In `cmd.exe`, write `%USERPROFILE%` for `$HOME`.
+They put this clone, the repositories it reads and the `MyGame` project together in `$HOME/Construct3`, and install the `construct3-project` skill in `MyGame` with its `AGENTS.md` and `CLAUDE.md`. Whatever is already there is left as it is, so the two are safe to run again; `--help` lists the flags. In `cmd.exe`, write `%USERPROFILE%` for `$HOME`. To keep everything somewhere else, write that folder into both commands in place of `$HOME/Construct3`.
 
 Then read `MyGame/AGENTS.md`.
 

@@ -13,7 +13,7 @@ git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct
 python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-它们把这个 clone、它要读的仓库和 `MyGame` 项目放在同一个 `$HOME/Construct3` 里，并把 `construct3-project` skill 连同 `AGENTS.md` 和 `CLAUDE.md` 装进 `MyGame`。已经存在的都原样保留，所以这两条可以重复运行；`--help` 列出参数。`cmd.exe` 里把 `$HOME` 写成 `%USERPROFILE%`。
+它们把这个 clone、它要读的仓库和 `MyGame` 项目放在同一个 `$HOME/Construct3` 里，并把 `construct3-project` skill 连同 `AGENTS.md` 和 `CLAUDE.md` 装进 `MyGame`。已经存在的都原样保留，所以这两条可以重复运行；`--help` 列出参数。`cmd.exe` 里把 `$HOME` 写成 `%USERPROFILE%`。想放在别处，就把两条命令里的 `$HOME/Construct3` 一起换成那个文件夹。
 
 之后读 `MyGame/AGENTS.md`。
 
