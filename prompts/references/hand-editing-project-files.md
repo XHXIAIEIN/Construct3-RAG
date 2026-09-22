@@ -136,9 +136,6 @@ not reserve (the table in
 copy installed in the project, `.agents/skills/construct3-project/`, or in
 place here with `--project <folder>`.
 
-On editor.construct.net (observed r495.2, 2026-09-15): a guest session is
-capped at 25 events and a verified free account at 50; families are a paid
-feature, so a project using them cannot be previewed without a licensed
-account. `#open=<example-id>` opens official examples; opening a project from
-an arbitrary URL through `#open=` did not work in that test. Ask the user to
-open and preview instead, and tell them what to look at.
+What the checks cannot answer is what the game does: which instances a
+condition picks, what order triggers fire in, what a tick later looks like.
+Ask the user to open the project and preview it, and say what to look at.
