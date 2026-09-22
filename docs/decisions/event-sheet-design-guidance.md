@@ -680,3 +680,57 @@ dropped is here.
 | A blend mode only touches the object's own quad | WaterSort: sheared liquid past the tube bottom stayed visible next to a cavity-sized mask |
 | Particles given a Sprite spawn real instances | WaterSort, Splash and Drop |
 | Local Storage is keyed by `uniqueId` | c3runtime.js exported Sep 2026 |
+
+## Update 2026-09-22: the studio's project habits
+
+The style prompt's *Project* section grew from five lines on layouts,
+folders and sheets to the object and project habits of the studio cohort,
+after the user named several from memory (a collision object apart from its
+graphics, one-colour helper sprites, a viewport-sized Fader, blend modes and
+effects for light, object folders) and asked what else the cohort does.
+Survey: `.local/docs/evidence/example-style-survey/survey_objects.py`,
+`survey_tech.py`, `survey_tech2.py` and their JSON, over the 221 studio
+projects (`cohorts.json`), the other 303 for contrast. The user's
+`arcanigma` is not in the clone.
+
+| Habit | Studio, of 221 | The other 303 |
+|-------|----------------|---------------|
+| Collision and graphics named as a pair (`PlayerCollision` + `PlayerGraphics` 57, `+ PlayerAnimations` 7) | 75 pairs; linked at runtime by *On created*: set position, *Add child* in 48, hierarchy in the layout 10, Pin 10, container without a link 2, nothing found 5 | 1 pair |
+| Invisible Sprite with a movement behavior and a visible child | 44 projects | 2 |
+| Tilemap with Solid | 76 | 6 |
+| `GroundCollision`, `GroundCollider`, `LevelCollision` | 8 | 0 |
+| Hierarchy (a parent in a layout) / Pin | 99 / 26 projects | 30 / 11 |
+| Invisible Sprites | 548 types in 175 projects; frames 16×16 in 184, 32×32 in 39, 64×64 in 32; one colour 217, two 77; behaviors Tween 96, Timer 68, Scroll To 43, Platform 31, Solid 12; names `GameManager` 58, `Camera` 30, `TeleportTrigger` 8, `Trigger` 4, `FinishLine` 3, `SpawnPoint` 2, `GameTimer` 2 | 130 in 46 |
+| What events do with a zone or trigger type | *On collision* 29, *On created* 16, boolean instance variable 16, *Is overlapping* 14 | |
+| `GameManager` and the like | actions *Start timer* 77, *Tween value* 45, *Stop timer* 13; Timer on 46, Tween on 43; no custom action block on any | |
+| Scroll To host | a type named `Camera` 28, `PlayerCollision` 24, another 6 | |
+| Fader | 109 in 84 projects; Tiled Background 92, Sprite 9; Tween 88; instance the viewport's size 89; layers `UI` 31, `Fader` 29, `Fade` 9; actions *Tween opacity* 289, *Set opacity* 16; after *On tweens finished*: *Go to layout* 7, *Restart layout* 5 | 28 in 27 |
+| Light and shadow types | 167 in 83 projects; Sprite 116; blend *Additive* 28; effects Glow 22, Blur 12, Dodge 6; one colour 55; `PlayerShadow` 11; layer blends *Destination out* 18, *Destination in* 8 over the whole cohort; `Mask` layer in 22, `Holder` with *Force own texture* 15 | 54 in 24; the `shadowlight` plugin 10 |
+| Object folders | 38 projects; 18 of the 26 with 40+ types, 20 of 87 with 20 to 39, 0 of 108 under 20; root empty in 35; depth 1 in 25; names `System` 19, `Player` 18, `Global` 17, `World` 16, `UI` 14, `UserInterface` 13, `Interactable` 12, `Credits` 11, `MainMenu` 6, `Logic` 5 | 16 |
+| Plugins, share of projects | Sprite 100%, Tiled Background 83%, Keyboard 80%, SpriteFont 68%, Gamepad 46%, Particles 43%, Tilemap 42%, Text 27%, 9-patch 25%, Touch 24%, Audio 9%; SpriteFont without Text 150, Text without SpriteFont 59, both 0 | Text 72%, SpriteFont 15% |
+| Behaviors, share of projects | Tween 92%, Timer 57%, Solid 49%, Fade 43%, Sine 41%, Platform 28%, Bullet 27%, Scroll To 26%, Rotate 23%, Flash 23%, LOS 17%, 8 Direction 13%, Pin 12%, MoveTo 11%, Physics 5%, Pathfinding 3% | Tween 17%, Timer 9% |
+| *Default controls* on a movement behavior | off 99 instances, on 11; *Simulate control* in 38% of projects | on 43, off 34 |
+| Object effects, share of projects | HSL adjust 21%, Glow 10% each direction, Warp object 10%, Blur 10% each direction | HSL adjust 4% |
+| Global objects (Sprite, text, 9-patch) | 7 projects | 3 |
+| `ObjectRepository` layout | 86% | 7% |
+| Sheets per project | one 194, two 12, three or more 15, all of those with about 70 types or more (`GameEvents`, `MenuEvents`, `PlayerEvents`, `EnemyEvents`, `SoundEvents`, `CreditsEvents`) | one sheet 60% named `Event sheet 1` |
+| Viewport | 320×180 128, 1920×1080 49, 640×360 8; layout equal to the viewport in 103 | 854×480 112, 640×480 60 |
+| Sampling / fullscreen / pixel rounding | nearest 163, trilinear 56; letterbox integer scale 115, letterbox scale 106; pixel rounding off 150, on 71 | trilinear 252; letterbox scale 285 |
+| Layers | per layout two 80, three 35, four 25; names `Background` 174, `World` 127, `UI` 86, `HUD` 70, `Fader` 62, `Tutorial` 39, `Foreground` 35, `Mask` 22, `Effects` 21; parallax 0 in 97 projects (`UI` 47, `Fader` 35, `HUD` 29, `Tutorial` 17); layer effects Fog 30, Blur 22, Pixellate 9 | one layer 180 |
+| Families / containers / timelines | 59 / 72 / 33 projects; family names `ZOrder` 5, `ZOrderables` 4, `Enemies` 3; container sizes two 69, three 48 | 23 / 13 / 86 |
+| Player instance variables | `hp` 4, `maxHp` 4, `dead` 3, `LastX` 3, `ZOrder` 3 | |
+| ACEs by share of projects | *Else* 89%, *On start of layout* 85%, *Tween one property* 81%, *Set animation* 77%, *Restart layout* 71%, *Create object* 71%, *Every tick* 70%, *Add child* 55%, *Start timer* 54%, *Wait* 52%, *Is playing* 51%, *On tweens finished* 49%, *Reset global variables* 46%, *Simulate control* 38% | |
+
+What the section says and what it leaves out:
+
+- The line "an invisible Sprite carrying its behaviors and custom actions"
+  is gone: no `GameManager`, `GameTimer` or `Spawner` in the cohort owns a
+  custom action block. It holds the Timers and value Tweens the sheet reads.
+- "Folders from about thirty types" became forty: the 20 to 39 bucket is
+  one in four, the 40+ bucket two in three.
+- The per-screen sheets were stated as the norm; 194 of 221 have one sheet.
+  The section now gives the size at which the split starts.
+- Audio is in 19 projects; the examples ship without sound, so the section
+  says nothing about it.
+- The cohort's helper sprite is 16×16, not the 32×32 the user recalled;
+  both are one colour.
