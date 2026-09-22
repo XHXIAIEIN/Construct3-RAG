@@ -194,6 +194,9 @@ class Checker:
                     self.check_name(f"{kind} {name}", "behavior", b["name"], True)
                 for v in t.get("instanceVariables", []):
                     self.check_name(f"{kind} {name}", "instance variable", v["name"], False)
+                    if v.get("type") not in VARIABLE_TYPES:
+                        self.err(f"{kind} {name}: instance variable {v['name']}: type {v.get('type')!r} is not "
+                                 f"number, string or boolean; the editor's Text type is written \"string\"")
         for a in p.data.get("usedAddons", []):
             if a.get("type") in ("plugin", "behavior"):
                 self.check_addon_id(a["type"] + "s", a["id"], "project.c3proj usedAddons")
@@ -280,7 +283,7 @@ class Checker:
         for iv, value in inst.get("instanceVariables", {}).items():
             if iv not in ivars:
                 self.err(f"{where}: {t} has no instance variable {iv}")
-            elif not JSON_TYPES[ivar_types[iv]](value):
+            elif ivar_types[iv] in JSON_TYPES and not JSON_TYPES[ivar_types[iv]](value):
                 self.err(f"{where}: {t} instance variable {iv} = {value!r}; a {ivar_types[iv]} is written as "
                          f"{JSON_EXAMPLES[ivar_types[iv]]} here, a JSON value, not text")
         angle = inst.get("world", {}).get("angle", 0)

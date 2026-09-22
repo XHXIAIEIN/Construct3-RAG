@@ -40,6 +40,7 @@ How each was read from the editor and confirmed:
 | An action does not write a constant | `event variable X is constant` |
 | An ease is a built-in id such as `easeoutback`, unless the project has custom eases | the tween keeps no ease and fails later |
 | An event variable's or a function parameter's `initialValue` is text, a boolean's `"true"` or `"false"` in lowercase; a parameter may also carry a JSON number | a boolean is read by comparing the text to `"true"`, so `false`, `true`, `"True"` and `"1"` all read as false; another JSON type in a parameter stops the load with `invalid type of initialValue` |
+| An instance variable's `type` is `number`, `string` or `boolean`; the editor's Text type is `string` | not measured: the checker itself used to stop with `missing key 'text'` |
 | A layout instance writes an instance variable as a JSON value of its type: `1`, `"a"`, `true` | a text `"1"` on a number reads through `parseFloat`, a boolean on a number reads as 0 |
 | A layout instance's `world.angle` is in radians, within a full turn | an angle written in degrees turns the instance some other way; every official example stays within 2π |
 
