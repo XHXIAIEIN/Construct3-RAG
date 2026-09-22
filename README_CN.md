@@ -25,8 +25,6 @@ python Construct3-RAG/scripts/bootstrap.py --project MyGame
 | [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、特效和主题的模板与文档 | `data/c3-ts-defs/sdk/` 是类型接口，这里说明怎么用。 |
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档的 Markdown 版 | 概念和操作说明。 |
 
-"同级目录"指与本仓库并列的目录。路径和选项见 [docs/guide/quick-start.md](docs/guide/quick-start.md)。
-
 ## 数据文件
 
 无需安装。选择一个语言目录，`en-US` 或 `zh-CN`，直接读取。所有路径基于 `data/`。
@@ -71,7 +69,7 @@ python Construct3-RAG/scripts/bootstrap.py --project MyGame
 
 先读 [`AGENTS.md`](AGENTS.md)，它给出事实查找流程、事件表设计流程和改代码的规则。要帮用户写事件表，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)、[`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 和 [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 一起作为 system prompt 加载：前者用 Construct 的方式决定结构（拾取、族、容器、`Else`），中间一份规定输出格式和名称核对，后者是带出处、凭直觉容易写错的运行时事实。[`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) 是官方示例的书写风格（文件夹、事件组及其变量、注释、命名、界面文案），用于把事件写进项目时。只在特定场景才需要的内容放在 `prompts/references/`，由这几份文件按需指引，平时不进上下文。
 
-在游戏项目里工作的 agent 不会自己找到这个仓库，Construct 写在项目里的 `llm-context.md` 也不指向这里。把两者连起来的是 [`construct3-project`](skills/construct3-project/SKILL.md) skill：一个 [Agent Skills](https://agentskills.io) 格式的文件夹，里面是 ACE 查询、事件表打印、事件表编辑、检查器和生成器模板。如果你是 agent 并且知道这个仓库，在改第一条事件之前先看项目里有没有它的副本。没有就在项目文件夹里运行 `python <本仓库>/skills/construct3-project/scripts/install.py`：它把 skill 复制到 `.agents/skills/`，项目的指令文件都没有指向本仓库时，把 [`prompts/game-project-AGENTS.md`](prompts/game-project-AGENTS.md) 说明的那段块加进项目的 `AGENTS.md`，其他文件不动。用一句话告诉用户它写了什么。规则见 `AGENTS.md` 第 4 节。
+游戏项目里的 agent 通过 [`construct3-project`](skills/construct3-project/SKILL.md) skill 到达本仓库：一个 [Agent Skills](https://agentskills.io) 格式的文件夹，里面是 ACE 查询、事件表打印、事件表编辑、检查器和生成器模板。顶部的两条命令会安装它；项目里没有它时的规则见 `AGENTS.md` 第 4 节。
 
 ## 查找服务（可选）
 
