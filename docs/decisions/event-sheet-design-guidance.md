@@ -688,8 +688,8 @@ folders and sheets to the object and project habits of the studio cohort,
 after the user named several from memory (a collision object apart from its
 graphics, one-colour helper sprites, a viewport-sized Fader, blend modes and
 effects for light, object folders) and asked what else the cohort does.
-Survey: `.local/docs/evidence/example-style-survey/survey_objects.py`,
-`survey_tech.py`, `survey_tech2.py` and their JSON, over the 221 studio
+Survey: `.local/docs/evidence/example-style-survey/survey_objects.py` and
+`survey_tech.py` with their JSON, over the 221 studio
 projects (`cohorts.json`), the other 303 for contrast. The user's
 `arcanigma` is not in the clone.
 
@@ -709,7 +709,7 @@ projects (`cohorts.json`), the other 303 for contrast. The user's
 | Object folders | 38 projects; 18 of the 26 with 40+ types, 20 of 87 with 20 to 39, 0 of 108 under 20; root empty in 35; depth 1 in 25; names `System` 19, `Player` 18, `Global` 17, `World` 16, `UI` 14, `UserInterface` 13, `Interactable` 12, `Credits` 11, `MainMenu` 6, `Logic` 5 | 16 |
 | Plugins, share of projects | Sprite 100%, Tiled Background 83%, Keyboard 80%, SpriteFont 68%, Gamepad 46%, Particles 43%, Tilemap 42%, Text 27%, 9-patch 25%, Touch 24%, Audio 9%; SpriteFont without Text 150, Text without SpriteFont 59, both 0 | Text 72%, SpriteFont 15% |
 | Behaviors, share of projects | Tween 92%, Timer 57%, Solid 49%, Fade 43%, Sine 41%, Platform 28%, Bullet 27%, Scroll To 26%, Rotate 23%, Flash 23%, LOS 17%, 8 Direction 13%, Pin 12%, MoveTo 11%, Physics 5%, Pathfinding 3% | Tween 17%, Timer 9% |
-| *Default controls* on a movement behavior | off 99 instances, on 11; *Simulate control* in 38% of projects | on 43, off 34 |
+| *Default controls* on a movement behavior | off on 99 types (142 instances), on 11 (15); *Simulate control* in 38% of projects | on 43 types, off 34 |
 | Object effects, share of projects | HSL adjust 21%, Glow 10% each direction, Warp object 10%, Blur 10% each direction | HSL adjust 4% |
 | Global objects (Sprite, text, 9-patch) | 7 projects | 3 |
 | `ObjectRepository` layout | 86% | 7% |
