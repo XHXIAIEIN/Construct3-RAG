@@ -12,10 +12,8 @@ mechanic, a fix, a behavior, a variable, a timer, an animation, an edit to
 eventSheets/*.json. Do not answer it from memory.
 
 1. Before opening a project file, read
-   `.agents/skills/construct3-project/SKILL.md`. Its scripts print an event
-   sheet as events, look an ACE up with the JSON to write, change a sheet
-   from a plan, check the project and generate one from a script; eventSheets/
-   is read and changed through them. If that folder is missing,
+   `.agents/skills/construct3-project/SKILL.md`: eventSheets/ is read and
+   changed through its scripts. If that folder is missing,
    Construct3-RAG/AGENTS.md section 4 installs it. Then run
    `python .agents/skills/construct3-project/scripts/check_project.py` once:
    it stops with what to fix when the path above does not reach the clone or
@@ -25,7 +23,6 @@ eventSheets/*.json. Do not answer it from memory.
 
 | Doing | Read first |
 |-------|------------|
-| Anything, at the start of the session | Construct3-RAG/AGENTS.md |
 | Deciding what the events are | Construct3-RAG/prompts/event-sheet-thinking.md |
 | Writing a plugin, behavior, ACE, effect or script name, or looking for how an official example does it | Construct3-RAG/AGENTS.md section 2 |
 | Writing an addon: a new plugin, behavior, effect or theme for the Addon Manager, not an event that uses one | Construct3-Manual/Construct3-Addon-SDK/index.md, then a sample under Construct-Addon-SDK/ |
