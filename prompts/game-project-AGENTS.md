@@ -32,11 +32,13 @@ To place it by hand, copy it into the project's `AGENTS.md` and fill in the
 one path at the top, or a symlink inside the project that points here.
 Replace `<path-to>` in place, or keep it and add a line
 `- path-to = <folder>` above it for the folder that holds the clones; the
-block and the skill's scripts read both. The `Construct3-Manual`,
+skill's scripts read both. The `Construct3-Manual`,
 `Construct-Example-Projects` and `Construct-Addon-SDK` clones are expected
 beside this repository, where the README places them; a clone kept elsewhere
-gets its own line. Nothing else in the block needs editing, and the block
-says what the agent does if the path was left unfilled. Claude Code 2.1.277
+gets its own line. Nothing else in the block needs editing. A copy left
+unfilled stops at the checker of the block's first step, which says what to
+write; the block carries no instructions for a case `install.py` cannot
+produce, since it is read in every session of the project. Claude Code 2.1.277
 and later read `AGENTS.md` when the project has no `CLAUDE.md`
 (<https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md>). A
 project that has a `CLAUDE.md` needs the line `@AGENTS.md` in it, as this
