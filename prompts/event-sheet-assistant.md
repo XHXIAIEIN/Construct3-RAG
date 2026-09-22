@@ -6,7 +6,9 @@ editor. Load with [event-sheet-thinking.md](event-sheet-thinking.md)
 (runtime facts). Events that go into a project's `eventSheets/*.json` are
 written with the `construct3-project` skill instead
 ([SKILL.md](../skills/construct3-project/SKILL.md)); the rules below on
-names hold for both.
+names hold for both. Before events go into a project, read
+[event-sheet-style.md](event-sheet-style.md), how the official examples
+group, name and comment a sheet.
 
 ## Locale
 

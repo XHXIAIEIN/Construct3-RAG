@@ -434,10 +434,15 @@ class Plan:
 
 
 # --- checking, writing, reporting -----------------------------------------------------------------
+REFUSED_STYLE = ("comment", "run")     # the style kinds of check_project.check_style a plan may not add
+
+
 def findings_of(project: c3.Project, args, sheets: dict | None) -> tuple[check_project.Checker, c3.Findings]:
     """The project checked, with a sheet that is not on disk yet in the place of the one that is."""
     fresh = c3.Findings()
-    checker = check_project.Checker(c3.Project(project.root, project.rag, args.locale, fresh), sheets=sheets)
+    # Style warnings on: what a plan adds is the agent's own writing, and only the
+    # warnings new after the plan are printed, so the sheet's older events stay quiet.
+    checker = check_project.Checker(c3.Project(project.root, project.rag, args.locale, fresh), sheets=sheets, style=True)
     checker.check()
     return checker, fresh
 
@@ -498,7 +503,8 @@ def main() -> int:
                  + ("; it holds <new sid>: leave \"sid\" out, every new entry gets one" if "<new sid>" in text else ""))
 
     before, found_before = findings_of(project, args, None)
-    plan = Plan(sheet, set(before.sids) | set(before.ace_sids))
+    existing = set(before.sids) | set(before.ace_sids)      # the sheet's events before the plan; the rest it creates
+    plan = Plan(sheet, set(existing))
     try:
         if not operations:
             raise PlanError(f"{args.plan} holds no operation; a plan is a list such as "
@@ -511,6 +517,14 @@ def main() -> int:
     after, found_after = findings_of(project, args, {args.sheet: plan.sheet})
     known = {unnumbered(e) for e in found_before.errors}
     added = [e for e in found_after.errors if unnumbered(e) not in known]
+    # An event the plan created, without a comment above it or with eight actions in a row
+    # and no comment action, is refused like a problem: the fix is one comment, and a
+    # warning was not acted on in half the small-model runs of 2026-09-22
+    # (event-sheet-design-guidance.md). An event the plan moved or extended is the user's;
+    # a finding on it prints as a warning below.
+    known_style = {unnumbered(m) for _, m in found_before.style}
+    added += [m for kind, m in found_after.style if kind in REFUSED_STYLE and unnumbered(m) not in known_style
+              and (sid := re.search(r"\(sid (\d+)\)", m)) and int(sid.group(1)) not in existing]
     if added:
         # The event number of a finding is one the sheet would have; the plan's author knows the operation.
         sid_in = [re.search(r"\(sid (\d+)\)", e) for e in added]
@@ -547,8 +561,9 @@ def main() -> int:
         if room is None or room > 0:
             print("\n".join(lines))
             room = None if room is None else room - sum(len(line) + 1 for line in lines)
+    known_warnings = {unnumbered(w) for w in found_before.warnings}
     for w in found_after.warnings:
-        if w not in found_before.warnings:
+        if unnumbered(w) not in known_warnings:
             print(f"warning: {w}")
     if on_disk.replace("\r\n", "\n") != json.dumps(sheet, indent="\t", ensure_ascii=False) and not args.dry_run:
         print(f"note: {path.name} was not laid out as the editor writes it (tabs, LF); it is now, so its diff is the whole file")

@@ -34,7 +34,6 @@ How each was read from the editor and confirmed:
 | A plugin or behavior id is spelled as the editor spells it: `Arr`, `Json`, `TiledBg`, `EightDir`, `Sin`, `solid` | `missing plugin id` |
 | An object or family name is not `self`, `true`, `false`, `system` or a system expression (`Floor`, `Time`, `Random`, `Max`) | `name is reserved` |
 | `Self` stands only in a parameter of an object's own condition or action; in a System one (*For each ordered*, *Pick by comparison*, *Set variable*) it names nothing, and the finding writes the expression with the object the ACE names | `Invalid use of 'self'` |
-| `Self` stands only in a parameter of an object's own condition or action; in a System one (*For each ordered*, *Pick by comparison*, *Set variable*) it names nothing, and the finding writes the expression with the object the ACE names | `Invalid use of 'self'` |
 | A name has no spaces or punctuation; an instance variable name starts with a letter | the editor renames it silently, and the events that use it fail with `cannot find object` |
 | An instance variable, behavior or effect is not named like another one on the object or its families, nor like an expression of the object (`Angle`, `Width`, `Count`, `Text`) | `name already in object class namespace` |
 | A key is a key code, a JSON number | `expected finite number` |
@@ -66,6 +65,27 @@ Find files it under the next numbered event, so the nine locals above event
 from 1. `scripts/print_sheet.py --outline Game` prints the numbering of a
 sheet with each event's sid, which is what to search the JSON for,
 unnumbered rows in parentheses.
+
+## Style, with `--style`
+
+Three warnings the editor never raises, for a project the agent wrote: the
+generator template passes `--style`. `edit_sheet.py` holds the events a plan
+creates to them, never the sheet's older events: the first two, whose fix
+is one comment, refuse the plan like a problem; the third, and any finding
+on an event the plan moved or extended, is a warning under its output. Each names the event and says what to write.
+
+| Warning | Threshold | Over the 524 official examples |
+|---------|-----------|-------------------------------|
+| N actions in a row without a comment action | 8 or more | 113 in 50 projects; the studio games step a block every 3 actions at the median, 6 at the 90th percentile |
+| no comment above it (a top-level event, function or custom action with actions or sub-events) | none, variables between allowed | 1184 in 278 projects; 93% of the studio games' top-level events have one, the rest are Scirra's feature demos and external games |
+| sub-events N levels deep, every leaf calling one function | 3 levels, 3 or more leaves | 3, in shifting-dungeon, template-ladder-climbing, wall-walking |
+
+The three sheets small models wrote for the evidence set (Doubao snake,
+DeepSeek Water Sort) raise 21, 4 and 1; 16 and 7; 4 and 2. The survey behind
+the thresholds is `Construct3-RAG/docs/decisions/event-sheet-design-guidance.md`,
+2026-09-22. A style warning is never an error: the editor accepts all three,
+and an official example may carry one. What the shape should be instead is
+`Construct3-RAG/prompts/event-sheet-style.md`.
 
 ## What it does not see
 

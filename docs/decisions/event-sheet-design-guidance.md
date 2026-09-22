@@ -272,3 +272,106 @@ wants it otherwise. `project-tools/` and its `README.md`, named above, are
 `skills/construct3-project/`, and the template's block is
 `skills/construct3-project/assets/game-project-block.md`. The reasons are in
 `project-tools-skill.md`.
+
+## Update 2026-09-22: the authoring style of the example corpus
+
+The prompts said what the events are (the guide), which runtime facts to
+respect (the pitfalls) and where groups and sheets go ("Layout of the
+sheet"). Nothing said how a sheet reads once written: what is named how,
+where a variable is declared, what a comment says and where, how objects are
+foldered, how the branches of a decision are laid out. A sheet from a small
+model showed the cost (Doubao snake project, 2026-09-22): twelve state
+globals at the top of the sheet (`touchSX`, `foodX`, `tailUID`, `nextX`), a
+`ResetGame` function of 28 actions without a comment, and a swipe read as a
+tree three sub-events deep with a `SetDir(n)` call at each leaf. Every
+name was valid and the checker passed it.
+
+### Evidence
+
+A survey of the 524 projects in `Construct-Example-Projects` at `3c31b236`
+("Update example projects for r476", 2026-03-10; `savedWithRelease` 16800
+to 47200), read as JSON with the scripts kept in
+`.local/docs/evidence/example-style-survey/` (`survey_style.py`,
+`survey_cohort.py`, `render_sheet.py`, their outputs and `cohort-output.txt`).
+Two cohorts, told apart by the credits comment at the top of the sheets: 221
+projects by Viridino Studios and its successor Forsteri Studios (the demo
+games and game templates, median 35 to 57 events) and 303 others, Scirra's feature examples and a few external games (median
+2 events). The style below is the studio cohort's; where
+the periods differ, r400 and later is quoted.
+
+| Question | Count |
+|----------|-------|
+| Comments per event, median per project | 1.0 (studio), 0.78 (other); 38 projects have none, all under 10 events |
+| Event preceded by a comment, by depth (studio) | 93% at top level, 89%, 74%, 65% one, two, three levels down |
+| Comment shape | 93% end with a period, 91% are one sentence, median 48 characters; `#` prefix 31, coloured 51 of 12,958 |
+| Comment actions inside action lists | 5,117 in 252 projects; of 837 studio blocks with 8+ actions, 799 have one; longest uncommented run median 3, p90 6 |
+| Group description field used | 55 of 1,855 studio groups |
+| Groups | 2,160 in 239 projects; every top-level event in a group in 209 of them; studio: 29 loose top-level events against 4,164 in groups; depth 0/1/2/3: 1,609/475/63/13 |
+| Group titles | Title Case with spaces 369, PascalCase 39 in r400+ (PascalCase 336 to 0 before r300) |
+| Order inside a group | variables first in 202 of 240 groups with variables; functions and custom actions before events in 246 of 400 |
+| Variable placement (studio) | 1,288 global, 602 group-local (303 const, 168 plain, 131 static), 316 block-local, 220 function-local; 17 of the 27 projects with 80+ events have more locals than globals |
+| Globals by use (r400+, 447) | constants read from one group 104, from 2+ groups 45; state read from one group 75, from 2+ groups 210; unused 13 |
+| Variable comments | r400+: 854 of 922; before r300: 0 of 717 (a comment event above the variable instead) |
+| Constant names | UPPER 397, UPPER_SNAKE 355 of 802 (studio); prefixes CHAIN_, CAR_, PLAYER_, BGM_, CAM_, SFX_, MINO_ |
+| Other variable names (r400+) | camelCase 409, PascalCase 47 |
+| Function names (r400+) | camelCase 362, PascalCase 29; description filled 534 of 956, equal to the comment above in 495 |
+| Custom actions | 179 in 26 projects, 172 on a type, 7 on a family; names with spaces 93, PascalCase 58; described 162 of 163 (studio) |
+| Boolean instance variables | plain adjective or participle 120+47+22, `is`/`has`/`can` prefix 13 |
+| Object type names (studio) | PascalCase 5,371 of 5,733; `Text*` 289 of 440 text objects, `Arr*` 40 of 66 arrays, `Dict*` 19 of 20; behaviors renamed 328 of 2,549 |
+| Families | 153; PascalCase 147; plural 98 |
+| Tags | tween PascalCase 2,163 of 2,240; timer PascalCase 471 of 525 |
+| `ObjectRepository` layout | 191 of 221 studio projects, no event sheet in all 191, first in the list 109, second 79 |
+| Object folders | 54 projects; 37 of 72 with 30+ types, 15 of 20 with 60+; names System 23, Player 22, Global 18, UI 17, World 16; depth 1/2/3/4: 278/133/56/14 |
+| Layers | `Background` 165, `World` 125, `UI` 86, `HUD` 70, `Fader` 62 (studio); parallax 0,0 on 390 layers |
+| Manager objects | `GameManager` Sprite with Timer or Tween 68, `Camera` Sprite with Scroll To 32; `Fader` Tiled Background with Tween 56 |
+| Conditions (studio) | evaluate-expression 1,412, for-each 564, compare-instance-variable 426, is-boolean-instance-variable-set 402, pick-by-comparison 392, is-overlapping 362, pick-by-evaluate 355, pick-children 339, on-collision 329, pick-by-unique-id 173 (104 inside functions), pick-parent 65, pick-all 31, pick-nearest 22 |
+| Trigger blocks | 3,880 of 14,214; 999 with filter conditions in the block, 958 with sub-events |
+| Else | 1,779 (studio 1,586); with conditions 792 (studio 753); preceded by a comment 66% (studio); chains of 2+ 152 |
+| Sub-event depth below the event (studio) | 0: 48%, 1: 32%, 2: 13%, 3: 4.7%, 4+: 2.4% |
+| Phase gates (a block with conditions, no actions, sub-events) | 1,307 (studio); groups inactive at start 28 |
+| UI text | `replace(Self.Text, "###", ...)` in 21 projects; literal strings sentence case 139, Title Case 39, all caps 28; labels end `: ` |
+
+### Options
+
+1. Extend `event-sheet-thinking.md`. Rejected: it is 2,690 words, above the
+   trim threshold this record set on 2026-09-15, and its subject is what the
+   events are, not how the sheet reads.
+2. A separate prompt, `prompts/event-sheet-style.md`, routed from the guide
+   (header, "Layout of the sheet", step 3), the assistant prompt, `AGENTS.md`
+   sections 3 and 7, both READMEs and the generator reference of the skill.
+   Chosen.
+3. Checker warnings for the three habits (an action list of 8+ without a
+   comment action; a state global referenced from one group only; a branch
+   tree 3+ sub-events deep whose leaves call one function). Not built: the
+   checker reports what the editor refuses, and a warning is a product
+   choice for the skill with its own sweep over the examples
+   (`skills/AGENTS.md`). The thresholds above are what such warnings would
+   use; on the studio corpus the first would fire on 38 of 837 blocks.
+
+### Decision
+
+Option 2. `prompts/event-sheet-style.md` (1,949 words): project layout
+(`ObjectRepository`, folders, layers, manager objects, sheets), the sheet
+top to bottom, groups as modules (order, which variables are global, the
+block-local temporary, the gate event, decoupled input), comments (one per
+event, comment actions every three to five actions, descriptions equal to the
+comment), names, the events' shape (filters in the trigger, flat branches or
+one expression, else-if chains, hierarchy and ID joins, UID as function
+parameter), UI text, and a table of the three habits with their replacement.
+The pitfalls file lost a bullet that was committed twice (`Self` in a System
+condition).
+
+Not done: no agent run compares a sheet written with and without the style
+file, on the snake project or another; that is the test. The skill's
+`generating-a-project.md` gained one pointer bullet without an eval
+iteration (`skills/AGENTS.md` counts a reference change as one). The
+game-project block was not changed; it reaches the style file through the
+guide.
+
+### Re-evaluate when
+
+- A small model given the style file still writes the three habits. Then
+  option 3, the checker warnings, with the thresholds measured here.
+- Scirra's own conventions diverge from the studios' in a new example set.
+  The survey scripts rerun on the clone; the cohort split is by the credits
+  comment.

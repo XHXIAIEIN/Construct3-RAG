@@ -92,12 +92,16 @@ def events(sheet: dict) -> dict:
     """The stand-in sheet by role, so a test reads as what it breaks."""
     rows = sheet["events"]
     groups = {e["title"]: e for e in rows if e["eventType"] == "group"}
+
+    def first_block(group):    # the comment above it is the group's first child
+        return next(e for e in group["children"] if e["eventType"] == "block")
     return {
-        "setup": groups["Setup"]["children"][0],
-        "loop": groups["Setup"]["children"][0]["children"][0],
+        "setup": first_block(groups["Setup"]),
+        "loop": first_block(groups["Setup"])["children"][0],
         "input_group": groups["Input"],
-        "input": groups["Input"]["children"][0],
+        "input": first_block(groups["Input"]),
         "restart": groups["Restart"],
+        "restart_block": first_block(groups["Restart"]),
         "collect": next(e for e in rows if e["eventType"] == "custom-ace-block"),
         "add_score": next(e for e in rows if e["eventType"] == "function-block"),
     }
@@ -349,7 +353,7 @@ def test_outline_numbers_events_as_the_editor_does(built):
     rows = [line.split("[sid")[0].rstrip() for line in out.splitlines()]
     assert code == 0
     assert rows[:4] == ["== Game", "   (1) // Coins. Tap a coin to collect it; when the last one is gone the layout restarts.",
-                        "   (1) number score = 0", "   (1) number COIN_COUNT = 6"]
+                        "   (1) // Settings.", "   (1) number COIN_COUNT = 6"]
     assert "   1 group Setup" in rows and "   2   System:on-start-of-layout" in rows
 
 
@@ -393,8 +397,9 @@ def test_print_stops_at_the_limit_and_names_the_part_that_continues(built):
 def test_print_of_a_part_starts_with_the_events_it_sits_in(built):
     code, out = tool(built, "print_sheet", "Game", "--events", "9")
     assert code == 0
-    assert out.splitlines()[:3] == ["== Game: events 9-9 of 9; a [context] row is an event these sit in, without its actions",
-                                    "   8 group Restart  [context]", "   9   System: Coin.Count = 0"]
+    assert out.splitlines()[:4] == ["== Game: events 9-9 of 9; a [context] row is an event these sit in, without its actions",
+                                    "   8 group Restart  [context]", "       // Restart when the last coin is gone.",
+                                    "   9   System: Coin.Count = 0"]
     assert "Touch: On touched" not in out
 
 
@@ -525,7 +530,7 @@ def all_events(root: Path) -> list[dict]:
 
 
 SET_TIME = {"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Time: " & timeLeft'}}
-TIMER = {"eventType": "group", "title": "Timer", "children": [{
+TIMER = {"eventType": "group", "title": "Timer", "children": [{"eventType": "comment", "text": "Count down."}, {
     "eventType": "block",
     "conditions": [{"id": "every-x-seconds", "objectClass": "System", "parameters": {"interval-seconds": "1"}}],
     "actions": [{"id": "subtract-from-eventvar", "objectClass": "System", "parameters": {"variable": "timeLeft", "value": "1"}}]}]}
@@ -543,10 +548,10 @@ def test_plan_puts_events_in_by_the_numbers_the_sheet_has_now(project):
     assert out.splitlines()[0] == "Game: 4 operations, 9 events before and 12 now, 8 new sids"
     assert out.splitlines()[-1].startswith("ok:")
     sheet = printed(project)
-    assert "     global constant number COIN_COUNT = 6\n     global number timeLeft = 30\n   1 group Setup" in sheet
+    assert "     global number score = 0\n     global number timeLeft = 30\n   1 group Setup" in sheet
     assert '-> ScoreText: Set text to "Score: 0"\n           -> ScoreText: Set text to "Time: " & timeLeft' in sheet
     assert "   4       (every tick)\n               -> Coin: Set scale to 1.5" in sheet
-    assert "     // Countdown.\n  11 group Timer\n  12   System: Every 1 seconds" in sheet
+    assert "     // Countdown.\n  11 group Timer\n       // Count down.\n  12   System: Every 1 seconds" in sheet
     assert check(project)[0] == 0
 
 
@@ -561,7 +566,7 @@ def test_plan_writes_what_the_editor_writes(project):
     assert (variable["initialValue"], variable["isConstant"]) == ("0", False)
     group = next(ev for ev in events if ev.get("title") == "Timer")
     assert list(group) == ["eventType", "disabled", "title", "description", "isActiveOnStart", "children", "sid"]
-    condition = group["children"][0]["conditions"][0]
+    condition = next(e for e in group["children"] if e["eventType"] == "block")["conditions"][0]
     assert list(condition) == ["id", "objectClass", "sid", "parameters"] and len(str(condition["sid"])) == 15
     raw = (project / SHEET).read_bytes()
     assert b"\r" not in raw and not raw.endswith(b"\n") and b'\n\t\t{\n\t\t\t"eventType"' in raw
@@ -647,11 +652,11 @@ def test_plan_moves_replaces_and_removes(project):
 
 
 def test_an_event_replaced_by_one_without_a_sid_keeps_its_own(project):
-    was = events(json.loads((project / SHEET).read_text(encoding="utf-8")))["restart"]["children"][0]["sid"]
+    was = events(json.loads((project / SHEET).read_text(encoding="utf-8")))["restart_block"]["sid"]
     code, out = plan(project, {"replace": 9, "events": [{"eventType": "block", "conditions": [], "actions": [
         {"id": "restart-layout", "objectClass": "System"}]}]})
     assert code == 0, out
-    assert events(json.loads((project / SHEET).read_text(encoding="utf-8")))["restart"]["children"][0]["sid"] == was
+    assert events(json.loads((project / SHEET).read_text(encoding="utf-8")))["restart_block"]["sid"] == was
 
 
 def test_an_event_replaced_by_one_keeps_its_number_for_the_operations_below(project):
@@ -680,7 +685,8 @@ def test_before_an_event_is_above_the_comments_about_it(project):
     assert plan(project, {"before": 9, "events": [{"eventType": "comment", "text": "All coins gone."}]})[0] == 0
     code, out = plan(project, {"before": 9, "events": [{"eventType": "block", "conditions": [], "actions": []}]})
     assert code == 0, out
-    assert "   9   (every tick)\n       // All coins gone.\n  10   System: Coin.Count = 0" in printed(project)
+    assert ("   9   (every tick)\n       // All coins gone.\n       // Restart when the last coin is gone.\n"
+            "  10   System: Coin.Count = 0") in printed(project)
 
 
 def test_a_sid_the_project_uses_is_replaced(project):
@@ -1010,3 +1016,70 @@ def test_committed_schemas_mark_what_the_editor_treats_as_a_trigger(rel, ace_id)
         data = json.loads((REPO / "data" / "c3-schemas" / locale / rel).read_text(encoding="utf-8"))
         entry = next(c for c in data["conditions"] if c["id"] == ace_id)
         assert entry.get("isTrigger") is True, (locale, rel, ace_id)
+
+
+# --- style, with --style: the three habits of small models, as warnings ----------------------------
+STYLE_ACTIONS = [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{i}"'}} for i in range(8)]
+
+
+def test_stand_in_project_passes_the_style_check(built):
+    """The template is the shape the style asks for, so a generated project starts clean."""
+    code, out = check(built, "--style")
+    assert code == 0, out
+    assert [line for line in out.splitlines() if line.startswith("warning:") and "Pillow" not in line] == []
+
+
+def test_style_findings_come_only_when_asked(project):
+    def drop_the_comment_above_input(sheet):
+        rows = events(sheet)["input_group"]["children"]
+        rows[:] = [r for r in rows if r["eventType"] != "comment"]
+    edit(project, SHEET, drop_the_comment_above_input)
+    code, out = check(project)
+    assert code == 0 and "no comment above it" not in out
+    code, out = check(project, "--style")
+    assert code == 0 and re.search(r"warning: sheet Game event 5 \(sid \d+\): no comment above it", out), out
+
+
+def test_style_names_a_long_run_of_actions(project):
+    edit(project, SHEET, lambda s: events(s)["setup"]["actions"].extend(STYLE_ACTIONS))
+    code, out = check(project, "--style")
+    assert code == 0 and "event 2 (sid" in out and "9 actions in a row without a comment action" in out, out
+    edit(project, SHEET, lambda s: events(s)["setup"]["actions"].insert(4, {"type": "comment", "text": "Reset the text."}))
+    assert "actions in a row" not in check(project, "--style")[1]
+
+
+def test_style_names_a_tree_of_one_call(project):
+    def test(n):
+        return cond("compare-two-values", params={"first-value": str(n), "comparison": 0, "second-value": "1"})
+
+    def leaf(n):
+        return block([test(n)], [{"callFunction": "AddScore", "parameters": [str(n)]}])
+    tree = block([test(1)], [], [block([test(2)], [], [leaf(1), leaf(2)]), block([cond("else")], [], [leaf(3), leaf(4)])])
+    fresh = iter(range(900_000_000_000_001, 900_000_000_000_099))
+
+    def own_sids(ev):      # the test helpers give every row sid 1 or 2; the checker wants them distinct
+        ev["sid"] = next(fresh)
+        for c in ev["conditions"]:
+            c["sid"] = next(fresh)
+        for k in ev.get("children", []):
+            own_sids(k)
+    own_sids(tree)
+    edit(project, SHEET, lambda s: events(s)["input"].update(children=[tree]))
+    code, out = check(project, "--style")
+    assert code == 0 and "event 5 (sid" in out and "sub-events 3 levels deep, every leaf calling AddScore" in out, out
+
+
+def test_plan_refuses_new_events_without_their_comments(project):
+    """The user's own uncommented event stays quiet; what the plan adds needs its comment above and,
+    past eight actions, a comment action among them, or nothing is written."""
+    edit(project, SHEET, lambda s: events(s)["input_group"]["children"].pop(0))
+    before = (project / SHEET).read_bytes()
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS}]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert "operation 1: sheet Game event 10 (sid" in out
+    assert "8 actions in a row without a comment action" in out and "no comment above it" in out
+    assert "event 5 (sid" not in out and out.splitlines()[-1] == "the plan adds 2 problem(s) to the project; nothing was written"
+    stepped = STYLE_ACTIONS[:4] + [{"type": "comment", "text": "Then the rest."}] + STYLE_ACTIONS[4:]
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the time."},
+                                                    {"eventType": "block", "conditions": [], "actions": stepped}]})
+    assert code == 0 and "warning:" not in out and out.splitlines()[-1].startswith("ok:"), out
