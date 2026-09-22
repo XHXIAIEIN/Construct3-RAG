@@ -33,6 +33,8 @@ How each was read from the editor and confirmed:
 | *Else* is the first condition of an event that directly follows a plain event: not a trigger, not a loop, not a group or a variable, only comments between | `An Else condition cannot be placed here`, before preview and export |
 | A plugin or behavior id is spelled as the editor spells it: `Arr`, `Json`, `TiledBg`, `EightDir`, `Sin`, `solid` | `missing plugin id` |
 | An object or family name is not `self`, `true`, `false`, `system` or a system expression (`Floor`, `Time`, `Random`, `Max`) | `name is reserved` |
+| `Self` stands only in a parameter of an object's own condition or action; in a System one (*For each ordered*, *Pick by comparison*, *Set variable*) it names nothing, and the finding writes the expression with the object the ACE names | `Invalid use of 'self'` |
+| `Self` stands only in a parameter of an object's own condition or action; in a System one (*For each ordered*, *Pick by comparison*, *Set variable*) it names nothing, and the finding writes the expression with the object the ACE names | `Invalid use of 'self'` |
 | A name has no spaces or punctuation; an instance variable name starts with a letter | the editor renames it silently, and the events that use it fail with `cannot find object` |
 | An instance variable, behavior or effect is not named like another one on the object or its families, nor like an expression of the object (`Angle`, `Width`, `Count`, `Text`) | `name already in object class namespace` |
 | A key is a key code, a JSON number | `expected finite number` |
