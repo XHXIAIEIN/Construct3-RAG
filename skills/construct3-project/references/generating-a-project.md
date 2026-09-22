@@ -113,12 +113,17 @@ habits; they are what made rerunning safe in Water Sort.
   picked one by one: `units(n)` for a size, `snap(v)` for a coordinate,
   `anchor("top-left", w, h, ox, oy)` for a HUD element held against an
   edge or corner, `MARGIN` inside the viewport, with the instance's origin
-  passed so the point returned is the one the file stores. `UNIT` follows
-  the viewport (8 px for pixel art, 32 px otherwise) and `TOUCH` is the
-  smallest object a finger taps at that viewport; a tapped sprite is at
-  least `TOUCH` wide. The middle of the screen is the game's; the HUD lives
-  on the edges. The counts behind the grid are in
-  `Construct3-RAG/prompts/event-sheet-style.md`, *Project*.
+  passed so the point returned is the one the file stores. A HUD label is
+  `hud_text(type, text, where, longest=...)`: its box fits its longest text
+  and reads towards the side it hangs on. Repeated items, hearts or stars,
+  are `row(where, n, w, h)`, spaced so they never touch. The UI layer's
+  instances go through `no_overlap()`, which stops the run naming two
+  boxes that meet or one past the viewport. `UNIT` follows the viewport
+  (8 px for pixel art, 32 px otherwise) and `TOUCH` is the smallest object
+  a finger taps at that viewport; a tapped sprite is at least `TOUCH` wide.
+  The middle of the screen is the game's; the HUD lives on the edges. The
+  counts behind the grid are in `Construct3-RAG/prompts/event-sheet-style.md`,
+  *Project*.
 - Family variables and behaviors are declared on the family and set on every
   member instance; the checker reports the instance that lacks one. A family
   is `family(name, plugin_id, members, ...)` in `build_object_types()` and

@@ -868,6 +868,44 @@ is anchored on, a `row()` helper for repeated items, and a generation-time
 guard on the UI layer that names the two boxes that overlap. Measured
 against this iteration as the baseline.
 
+### Iteration 16: the same case, the template with hud_text, row and no_overlap
+
+The template gained `hud_text(type, text, where, longest=...)`, a label
+whose box is 0.6 em a character of its longest text, rounded up to a unit,
+aligned to the side it hangs on; `row(where, n, w, h, gap=1)`, n boxes a
+unit apart held as one; and `no_overlap(instances)`, which exits the
+generator naming two HUD boxes that meet or one past the viewport, called
+on the UI layer in the stand-in. The stand-in's score box went from 416 to
+192 px. Same case, same prompt, Haiku 4.5, three runs per arm;
+`old_skill` is the iteration-15 template (`2405e9d`). Evidence:
+`.local/docs/evidence/skill-evals/construct3-project/iteration-16/`.
+
+| Arm | Of 9 | Overlapping runs | Tokens | Seconds | Lost calls |
+|-----|------|------------------|--------|---------|------------|
+| with_skill (3 runs) | 8, 9, 8 | 0 of 3 | 76 867 | 152 | 5.0 |
+| old_skill (3 runs) | 6, 8, 6 | 3 of 3 | 73 981 | 130 | 3.7 |
+
+No run of the new template overlaps or leaves the viewport; every one used
+`hud_text` (boxes of 160 or 192 px, the timer aligned right) and `row`, and
+the button is `TOUCH` wide in all three. The guard fired two or three times
+in every new-template run, always "ScoreText overlaps Heart": the top edge
+of a 720 px viewport does not hold a 192 px score, a 352 px row of three
+hearts and a 160 px timer with their margins, and the model moved the hearts
+down a row each time until the run passed. That loop is the lost-call
+difference between the arms (5.0 against 3.7) and the extra 22 seconds. The
+two with_skill runs at 8 fail the held-to-an-edge assertion on that second
+row of hearts, whose box top is 112, half a unit under the text row: the
+assertion reads "top centre" as touching the top margin, the runs read it as
+the top area; the assertion was left as written. With the old template two
+of three runs still stack the hearts on each other and all three lay the
+416 px score and timer boxes across one another, as in iteration 15.
+
+Decision: keep the three helpers and the guard. What the eval leaves open:
+a `stack()` or a `dy` convention for a second row, so the guard's loop has
+a one-step answer; and whether a 720 px portrait viewport should carry
+three HUD groups on one edge at all, which is the design prompt's question,
+not the template's.
+
 ### Re-evaluate when
 
 - An eval run shows off-grid placement in a generated project, or the

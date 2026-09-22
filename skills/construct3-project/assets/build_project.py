@@ -76,16 +76,57 @@ def anchor(where: str, w: float, h: float, ox: float = 0, oy: float = 0, dx: flo
     the left or top lands on the grid; one held to the right, the bottom or the middle
     sits exactly MARGIN from that edge, or exactly centred, which is what the eye checks
     there. The centre of the screen is where the game is; the HUD lives on the edges."""
-    vert, _, horiz = where.partition("-") if "-" in where else (where, "", where)
-    if where in ("left", "right"):
-        vert, horiz = "middle", where
-    elif where in ("top", "bottom"):
-        vert, horiz = where, "middle"
-    elif where == "center":
-        vert, horiz = "middle", "middle"
+    vert, horiz = sides(where)
     x = {"left": MARGIN, "middle": (VIEW_W - w) / 2, "right": VIEW_W - MARGIN - w}[horiz]
     y = {"top": MARGIN, "middle": (VIEW_H - h) / 2, "bottom": VIEW_H - MARGIN - h}[vert]
     return int(round(x + units(dx) + ox * w)), int(round(y + units(dy) + oy * h))
+
+
+def sides(where: str) -> tuple[str, str]:
+    """An anchor name as (top|middle|bottom, left|middle|right)."""
+    if where == "center":
+        return "middle", "middle"
+    if where in ("left", "right"):
+        return "middle", where
+    if where in ("top", "bottom"):
+        return where, "middle"
+    vert, _, horiz = where.partition("-")
+    if vert not in ("top", "bottom") or horiz not in ("left", "right"):
+        sys.exit(f"anchor {where!r}: one of top-left, top, top-right, left, center, right, bottom-left, bottom, bottom-right")
+    return vert, horiz
+
+
+def row(where: str, n: int, w: float, h: float, gap: float = 1, ox: float = 0.5, oy: float = 0.5,
+        dx: float = 0, dy: float = 0) -> list[tuple[int, int]]:
+    """n boxes of w x h side by side, `gap` units apart, the row as a whole held by anchor():
+    three hearts top centre are row("top", 3, TOUCH, TOUCH). Returns each box's origin
+    point, (ox, oy) as for anchor(), so the items never touch, whatever their size."""
+    step = w + units(gap)
+    x0, y0 = anchor(where, n * step - units(gap), h, 0, 0, dx, dy)
+    return [(int(round(x0 + i * step + ox * w)), int(round(y0 + oy * h))) for i in range(n)]
+
+
+def no_overlap(instances: list, where: str = "layer UI") -> None:
+    """Stops the generator when two of these instances' boxes overlap or one reaches past the
+    viewport: a HUD is read at a glance, so nothing on it hides behind anything else. Called
+    on the UI layer in build_layouts(); a layer whose art is meant to stack is not passed."""
+    boxes = []
+    for inst in instances:
+        w = inst.get("world")
+        if w:
+            left = w["x"] - w.get("originX", 0) * w["width"]
+            top = w["y"] - w.get("originY", 0) * w["height"]
+            boxes.append((inst["type"], left, top, left + w["width"], top + w["height"]))
+    for kind, l, t, r, b in boxes:
+        if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H:
+            sys.exit(f"{where}: {kind} ({l:g},{t:g})-({r:g},{b:g}) reaches past the {VIEW_W}x{VIEW_H} viewport; "
+                     f"place it with anchor() or row(), which keep it MARGIN inside the edge")
+    for i, a in enumerate(boxes):
+        for b in boxes[i + 1:]:
+            if min(a[3], b[3]) - max(a[1], b[1]) > 0 and min(a[4], b[4]) - max(a[2], b[2]) > 0:
+                sys.exit(f"{where}: {a[0]} ({a[1]:g},{a[2]:g})-({a[3]:g},{a[4]:g}) overlaps {b[0]} "
+                         f"({b[1]:g},{b[2]:g})-({b[3]:g},{b[4]:g}); size a label to its text with hud_text(), "
+                         f"space repeated items with row(), or hold one of them to another edge")
 
 
 # --- ids ----------------------------------------------------------------------
@@ -694,6 +735,20 @@ def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, siz
                     world(x, y, w, h, 0, 0), ivars, behaviors)
 
 
+def hud_text(otype: str, text: str, where: str, size: float = 32, longest: str | None = None, bold: bool = True,
+             dx: float = 0, dy: float = 0, ivars=None, behaviors=None) -> dict:
+    """A HUD label held against an edge or corner by anchor(). Its box is as wide as its
+    longest text (about 0.6 em a character, rounded up to a unit) and the text is aligned to
+    the side the box hangs on, so a right-hand label grows leftwards and two labels on one
+    edge never meet. `longest` is the widest text the label shows at runtime, "Score: 999"
+    for a label that starts as "Score: 0"."""
+    w = math.ceil(len(longest or text) * size * 0.6 / UNIT) * UNIT
+    h = math.ceil(size * 1.5 / UNIT) * UNIT
+    halign = {"left": "left", "middle": "center", "right": "right"}[sides(where)[1]]
+    x, y = anchor(where, w, h, 0, 0, dx, dy)
+    return text_inst(otype, text, x, y, w, h, size=size, halign=halign, bold=bold, ivars=ivars, behaviors=behaviors)
+
+
 # The properties block a layout instance writes for a behavior, keyed by the name
 # the behavior has on the object (beh_def's name; the key changes with it). The
 # keys are the schema's `properties` (behaviors/<id>.json), the values the ones
@@ -737,10 +792,12 @@ def build_layouts() -> dict[str, dict]:
         layer("Game"),
         layer("UI", parallax=0),
     ], sheet="Game")
-    # The HUD sits against an edge, MARGIN inside it, sized in units; the middle of the screen is the game's.
-    w, h = units(13), units(2)
-    game["layers"][2]["instances"].append(
-        text_inst("ScoreText", "Score: 0", *anchor("top-left", w, h), w, h, size=32, bold=True))
+    # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
+    # row(), anything else by anchor(); the middle of the screen is the game's. no_overlap()
+    # stops the run when two HUD boxes meet or one leaves the viewport.
+    ui = game["layers"][2]["instances"]
+    ui.append(hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"))
+    no_overlap(ui)
     # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
     objects = layout("Objects", [layer("Objects")], sheet=None)
     objects["layers"][0]["instances"].append(
