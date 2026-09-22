@@ -87,10 +87,13 @@ is a warning, and not raised inside a function.
    stable across releases; the bundle is minified, so they are located by
    their message strings.
 3. Drive the real editor and read its error. It is the only complete oracle.
-   A guest session is capped at 25 events and a free account at 50, `#open=`
-   does not take an arbitrary URL, and a folder project opens through a native
-   dialog (`prompts/references/hand-editing-project-files.md`). It cannot be
-   the default path.
+   On editor.construct.net, observed r495.2 on 2026-09-15, a session without
+   a licence is capped at a few dozen events and cannot preview a project
+   that uses families, `#open=` takes an example id and not an arbitrary URL,
+   and a folder project opens through a native dialog. It cannot be the
+   default path. These are limits on the oracle, not on what a project may
+   contain, and they are kept out of the prompts the agent reads: a model
+   told an editor caps events trims the sheet it was asked to write.
 
 ## Decision
 
