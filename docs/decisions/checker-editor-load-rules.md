@@ -157,3 +157,33 @@ syntax, argument counts and types; checking `function`, `template` and
 and a game project gets them through `install.py` instead of a copy in
 `tools/`. The rules, the messages and the output are the same
 (`project-tools-skill.md`).
+
+## Update 2026-09-22: the evidence behind the hand-editing reference
+
+`prompts/references/hand-editing-project-files.md` states each file encoding
+as a rule and nothing else. A model writing a sheet has no use for the count
+behind a rule, and a release number in a rule reads as a version to target.
+What each rule was read from is here.
+
+Sources: editor-written files (the mergeGame project, `savedWithRelease:
+50000`, 2026-09-14; a new project saved by r502, 2026-09-17), the official
+example projects, the editor bundle `projectResources.js` of r495.2, and
+`data/c3-lang/en-US.json`.
+
+| Rule | Evidence |
+|------|----------|
+| Comparison parameters are the integers 0 to 5 | The order of `ui/dialogs/parameters/controls/comparison` in the language pack |
+| A key is a JSON number | Parameter loader, `expected finite number`; the 1238 Keyboard `key` parameters in the examples are all numbers |
+| A quoted combo keeps the default; a `"false"` string in a boolean parameter reads as true | Parameter loaders, r495.2, 2026-09-21 |
+| Addon ids are the editor's spelling | The addon table is a map keyed by id, `missing plugin id` otherwise |
+| Event variable `initialValue` is text; a boolean is `"true"` or `"false"` | The row of 2026-09-22 in the table above; the getter runs in the editor and again on export |
+| Instance variables are JSON values by type | Examples: 12 450 numbers, 6970 booleans, 1934 strings, no other form |
+| `world.angle` is radians | The row of 2026-09-22 in the table above |
+| Custom action block and call form | 152 blocks and 333 calls across the examples, 2026-09-17. In every example the row object owns a block of the name itself; `customActionObjectClass` appears in custom-action-overrides only, where a member with its own override calls the family block. The call through a member without an override is inferred from that and loaded in mergeGame, r502 |
+| `projectfile` is a bare name at the root, `{"path": ...}` in a subfolder | Examples write the bare name; the editor writes the object form for a subfolder; a hand-written bare `"enemy.json"` loaded and was rewritten to the object form on save, mergeGame r502, 2026-09-17 |
+| Family file keys; a container is a row of `project.c3proj` without `selectMode` | 153 family files in 82 examples, 159 container rows in 85, every member an object type; `"selectMode": "normal"` in the 110 rows saved r184 to r263 and in none of the 49 saved r342 to r470 |
+| A family instance variable written through a member type | Loaded and applied at runtime, mergeGame r502, 2026-09-17 |
+| Parameters an ACE gained later may be omitted | Every example using `pick-nearestfurthest`, saved r184 to r437, writes `which`, `x`, `y`; the r495.2 schema also lists `z` and `pick-all-tied` |
+| `json.dumps(obj, indent="\t", ensure_ascii=False)` reproduces the editor's bytes | Roundtrip on mergeGame |
+| A family's behavior used through a member type | drag-on, r466: `DragonHead` with `"behaviorType": "Physics"`, declared on family `Parts` only |
+| Instances write `z` with `depth`, layers `zElevation` | pixel-data-reader, r472, writes `z` and `depth`; drag-on, r466, writes `zElevation`. An empty layout saved by r502 has `sampling` and `ambientLight` and no `scene-graphs-folder-root` |
