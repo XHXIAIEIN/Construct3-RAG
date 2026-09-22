@@ -75,7 +75,7 @@ Start with [`AGENTS.md`](AGENTS.md): the fact lookup procedure, the event sheet 
 
 An agent working inside a game project does not find this repository on its own, and the `llm-context.md` Construct writes there does not point here. What connects the two is the [`construct3-project`](skills/construct3-project/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the sheet editor, the checker and the generator template. If you are the agent and know this repository, check before the first event sheet edit whether the project holds a copy of it. If not, run `python <this repository>/skills/construct3-project/scripts/install.py` in the project folder: it copies the skill to `.agents/skills/`, adds the block described in [`prompts/game-project-AGENTS.md`](prompts/game-project-AGENTS.md) to the project's `AGENTS.md` when no instruction file there names this repository, and changes nothing else. Tell the user in one sentence what it wrote. `AGENTS.md` section 4 has the rule.
 
-## Search service (optional)
+## Lookup service (optional)
 
 ```bash
 pip install -r src/requirements.txt
@@ -99,7 +99,7 @@ prompts/                LLM system prompts
   references/           Loaded on demand
 skills/                 Agent Skills, installed into a game project
   construct3-project/   ACE lookup, sheet printer, sheet editor, checker, generator template
-src/                    Optional search service, own .env (see src/AGENTS.md)
+src/                    Optional lookup service, own .env (see src/AGENTS.md)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite
 docs/guide/             User docs

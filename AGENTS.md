@@ -3,7 +3,7 @@
 ## 1. What this repository is
 
 Bilingual Construct 3 reference data under `data/`, read directly, plus an
-optional lookup and search service in `src/`, and an agent skill in
+optional lookup service in `src/`, and an agent skill in
 `skills/` that carries the project tools (ACE lookup, sheet printer, sheet
 editor, checker, generator template) into a game project. Version and
 counts: `data/c3-schemas/_index.json`, never hardcoded.
