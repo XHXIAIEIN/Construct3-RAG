@@ -568,3 +568,41 @@ its number (`edit-sheet-script.md`, the update of the same day).
   trace for what it opened instead.
 - A project shows a wrong `behaviorType`, addon id or *Else* that the
   finding did not repair in one round: the rule goes back, with the case.
+
+## Update 2026-09-22: the first step runs the checker once
+
+A session that starts from the block has nothing that shows whether the
+`Construct3-RAG:` line reaches the clone or the installed copy is current;
+both surface later, as a script that stops. The first step of the block now
+ends with one command, `check_project.py`, whose exit says both, and whose
+findings are the state of the project. Its cost on the largest official
+example is 0.3 s and 3 500 characters, on an empty project 100.
+
+Iteration 13 repeats iteration 9: the same two cases, the same prompt that
+names the project's `AGENTS.md` and not the skill, Claude Haiku 4.5, four
+runs per case, `.local/docs/evidence/skill-evals/construct3-project/iteration-13/`.
+
+| | Iteration 9 | Iteration 13 |
+|---|---|---|
+| Read `SKILL.md` | 8 of 8 | 6 of 8 |
+| Ran the checker within the first four calls | not asked | 5 of 8 |
+| Assertions | all but one | all |
+| add-countdown: tokens, seconds, calls, lost | 72 632, 180, 31.3, 1.8 | 63 476, 163, 22.3, 2.3 |
+| fix-load-errors: tokens, seconds, calls, lost | 66 281, 143, 27.5, 4.8 | 56 502, 109, 15.0, 3.5 |
+
+The two runs that did not open `SKILL.md` are both fix-load-errors: they
+ran the command the block spells out, read its findings, and fixed the
+project through `edit_sheet.py` all the same, 8 of 8 assertions each. The
+three that ran the checker late are add-countdown runs that opened the sheet
+or `SKILL.md` first and checked at the end; one of them (`with_skill_3`)
+read `Game.json` before anything of the skill, as in iteration 6. The
+command in the step, not the sentence about it, is what the runs followed.
+
+Cost fell in both cases, about a tenth of the tokens and a third of the
+calls; with four runs a cell and the deviations of iteration 9 (tokens
+±7 000, calls ±11) this is "not more", not a measured saving.
+
+### Re-evaluate when
+
+- A run reaches `check_project.py` only at the end: read where the command
+  of step 1 was in its context when it opened the first project file.
