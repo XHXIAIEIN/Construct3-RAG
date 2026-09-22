@@ -434,7 +434,7 @@ class Plan:
 
 
 # --- checking, writing, reporting -----------------------------------------------------------------
-REFUSED_STYLE = ("comment", "run")     # the style kinds of check_project.check_style a plan may not add
+REFUSED_STYLE = ("comment", "run", "cases")     # the style kinds of check_project.check_style a plan may not add
 
 
 def findings_of(project: c3.Project, args, sheets: dict | None) -> tuple[check_project.Checker, c3.Findings]:
@@ -517,8 +517,9 @@ def main() -> int:
     after, found_after = findings_of(project, args, {args.sheet: plan.sheet})
     known = {unnumbered(e) for e in found_before.errors}
     added = [e for e in found_after.errors if unnumbered(e) not in known]
-    # An event the plan created, without a comment above it or with eight actions in a row
-    # and no comment action, is refused like a problem: the fix is one comment, and a
+    # An event the plan created, without a comment above it, with eight actions in a row
+    # and no comment action, or with case sub-events and no comment above any of them, is
+    # refused like a problem: the fix is one comment, and a
     # warning was not acted on in half the small-model runs of 2026-09-22
     # (event-sheet-design-guidance.md). An event the plan moved or extended is the user's;
     # a finding on it prints as a warning below.

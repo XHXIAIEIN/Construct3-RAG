@@ -107,6 +107,7 @@ def frames_of(folder, prefix=""):
 
 STYLE_RUN = 8      # actions in a row without a comment action
 STYLE_TREE = 3     # sub-event levels below an event, when every leaf calls the same function
+STYLE_LADDER = 5   # sibling events of one shape, their conditions and actions the same, only the values differ
 
 
 class Holder(NamedTuple):
@@ -746,6 +747,8 @@ class Checker:
         for ev in events:
             if ev.get("eventType") == "variable":
                 scope[ev["name"]] = ev
+        ladders = self.ladders(events) if self.style else {}
+        numbered: dict[int, list[tuple[int, str]]] = {}
         previous = None
         for i, ev in enumerate(events):
             et = ev.get("eventType")
@@ -754,6 +757,11 @@ class Checker:
             w = f"{where} event {counter[0] + (et not in NUMBERED)} (sid {ev.get('sid', '?')})"
             if self.style and et in ("block", "function-block", "custom-ace-block"):
                 self.check_style(ev, w, events, i, depth)
+            if id(ev) in ladders:
+                rungs = numbered.setdefault(ladders[id(ev)][0], [])
+                rungs.append((counter[0], w))
+                if len(rungs) == ladders[id(ev)][1]:
+                    self.check_ladder(rungs)
             if et == "variable":
                 self.check_variable(ev, w, "variable")
             elif et in ("comment", "include"):
@@ -787,17 +795,18 @@ class Checker:
 
     # --- style, with --style ------------------------------------------------------------
     def check_style(self, ev: dict, where: str, siblings: list, i: int, depth: int) -> None:
-        """Three habits of sheets written by small models, each with the shape the
+        """Habits of sheets written by small models, each with the shape the
         official examples give it instead. Warnings, never errors: the editor
-        accepts all three. The thresholds sit past the 90th percentile of the
+        accepts them all. The thresholds sit past the 90th percentile of the
         studio examples, where a run of actions without a comment is 3 at the
         median and 6 at the 90th percentile, branches go two sub-events deep in
-        93% of events, and 93% of top-level events have a comment above them
-        (docs/decisions/event-sheet-design-guidance.md, 2026-09-22).
-        edit_sheet.py refuses a plan whose new events raise the first two, whose
-        fix is one comment, and prints the third; check_project.py reports all
-        three over the whole project when asked, which suits a project the agent
-        wrote."""
+        93% of events, 93% of top-level events have a comment above them, and
+        of the events with two or more case sub-events 84% have a comment above
+        at least one case (docs/decisions/event-sheet-design-guidance.md,
+        2026-09-22). edit_sheet.py refuses a plan whose new events raise the
+        ones whose fix is one comment, and prints the others; check_project.py
+        reports them all over the whole project when asked, which suits a
+        project the agent wrote. A ladder of sibling events is check_ladder."""
         actions = ev.get("actions", [])
         run = longest = 0
         for a in actions:
@@ -816,6 +825,12 @@ class Checker:
                 style("comment", f"{where}: no comment above it; the official examples put a one-sentence comment "
                                  f"above every top-level event, saying what it does or which case it is, "
                                  '{"eventType": "comment", "text": "..."} as the event before it')
+        cases = [j for j, k in enumerate(ev.get("children", []))
+                 if k.get("eventType") == "block" and (k.get("actions") or k.get("children"))]
+        if len(cases) >= 2 and not any(j > 0 and ev["children"][j - 1].get("eventType") == "comment" for j in cases):
+            style("cases", f"{where}: none of its {len(cases)} case sub-events has a comment above it; the official "
+                           f"examples put a one-sentence comment above each case, saying which case it is, "
+                           '{"eventType": "comment", "text": "..."} as the event before each')
         if depth == 0 and self.tree_depth(ev) >= STYLE_TREE:
             leaves = self.leaves(ev)
             called = {a["callFunction"] for leaf in leaves for a in leaf.get("actions", []) if "callFunction" in a}
@@ -824,6 +839,35 @@ class Checker:
                 style("tree", f"{where}: sub-events {self.tree_depth(ev)} levels deep, every leaf calling "
                               f"{called.pop()}; the official examples write the cases as sibling sub-events with a "
                               f"comment each, or compute the value in one expression")
+
+    @staticmethod
+    def shape(ev: dict) -> tuple:
+        """An event's conditions and actions by their ACE, without their values."""
+        return (ev.get("isOrBlock", False),
+                tuple((c.get("objectClass"), c.get("id"), c.get("isInverted", False)) for c in ev.get("conditions", [])),
+                tuple((a.get("objectClass"), a.get("id")) for a in ev.get("actions", [])),
+                len([k for k in ev.get("children", []) if k.get("eventType") == "block"]))
+
+    def ladders(self, events: list) -> dict[int, tuple[int, int]]:
+        """The sibling blocks that share their shape with STYLE_LADDER or more others, by
+        id, each mapped to its ladder's number and size. One event per option,
+        building or state, only the numbers changed, is a table transcribed into
+        events; the studio examples reach five such siblings in 32 places of 20 of their 219
+        projects, input ladders (a key per action) and else-if chains among them."""
+        of_shape: dict[tuple, list[dict]] = {}
+        for ev in events:
+            if ev.get("eventType") == "block" and (ev.get("actions") or ev.get("children")):
+                of_shape.setdefault(self.shape(ev), []).append(ev)
+        return {id(ev): (n, len(evs)) for n, evs in enumerate(of_shape.values()) if len(evs) >= STYLE_LADDER
+                for ev in evs}
+
+    def check_ladder(self, rungs: list[tuple[int, str]]) -> None:
+        others = ", ".join(str(n) for n, _ in rungs[1:])
+        self.p.findings.style_finding(
+            "ladder", f"{rungs[0][1]}: with events {others}, the same conditions and actions {len(rungs)} times over, "
+                      f"differing only in their values; the official examples write such cases once, over what "
+                      f"differs: an instance variable of the object touched, a family, a Dictionary loaded from a "
+                      f"project file, or the value in one expression")
 
     @staticmethod
     def tree_depth(ev: dict) -> int:
@@ -967,9 +1011,11 @@ def main() -> int:
     ap.add_argument("--style", action="store_true",
                     help="also warn where a sheet departs from the authoring style of the official examples: "
                          f"{STYLE_RUN} or more actions in a row without a comment action, a top-level event with "
-                         f"no comment above it, sub-events {STYLE_TREE} levels deep whose leaves all call one "
-                         "function. For a project the agent wrote; edit_sheet.py refuses a plan whose new events "
-                         "raise the first two and warns on the third")
+                         f"no comment above it, an event none of whose case sub-events has a comment above it, "
+                         f"sub-events {STYLE_TREE} levels deep whose leaves all call one function, and "
+                         f"{STYLE_LADDER} or more sibling events of the same conditions and actions with other "
+                         "values. For a project the agent wrote; edit_sheet.py refuses a plan whose new events "
+                         "raise the first three and warns on the other two")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()

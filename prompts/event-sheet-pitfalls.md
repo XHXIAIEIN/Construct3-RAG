@@ -289,6 +289,16 @@ first.
   system-reference/system-expressions.md "Viewport", "Layout";
   plugins/system.json: every `Viewport*` expression has a `layer` parameter]
 
+## Animation
+
+- *Set animation* to the animation already playing does nothing, even when
+  set to play from the beginning. An `anim` variable compared before every
+  *Set animation*, to keep the animation from restarting, guards against
+  nothing: set the animation from the state in one event, and *Start
+  animation* from the beginning when a restart is wanted. [manual:
+  plugin-reference/sprite.md "Set animation"; observed: RaftSurvivor, ten
+  events each comparing `anim` before *Set animation*, 2026-09-22]
+
 ## Rendering
 
 - A blend mode such as *Destination in* only touches the pixels under the

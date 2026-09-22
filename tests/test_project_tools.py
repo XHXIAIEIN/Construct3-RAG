@@ -1306,7 +1306,7 @@ def test_committed_schemas_mark_what_the_editor_treats_as_a_trigger(rel, ace_id)
         assert entry.get("isTrigger") is True, (locale, rel, ace_id)
 
 
-# --- style, with --style: the three habits of small models, as warnings ----------------------------
+# --- style, with --style: the habits of small models, as warnings ----------------------------------
 STYLE_ACTIONS = [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{i}"'}} for i in range(8)]
 
 
@@ -1355,6 +1355,60 @@ def test_style_names_a_tree_of_one_call(project):
     edit(project, SHEET, lambda s: events(s)["input"].update(children=[tree]))
     code, out = check(project, "--style")
     assert code == 0 and "event 5 (sid" in out and "sub-events 3 levels deep, every leaf calling AddScore" in out, out
+
+
+def with_own_sids(ev: dict, start: int) -> dict:
+    """The test helpers give every row sid 1 or 2; the checker wants them distinct."""
+    fresh = iter(range(start, start + 500))
+
+    def give(e):
+        e["sid"] = next(fresh)
+        for c in e.get("conditions", []):
+            c["sid"] = next(fresh)
+        for k in e.get("children", []):
+            give(k)
+        return e
+    return give(ev)
+
+
+def case(n: int) -> dict:
+    return block([cond("compare-two-values", params={"first-value": str(n), "comparison": 0, "second-value": "1"})],
+                 [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{n}"'}}])
+
+
+def test_style_names_cases_with_no_comment_above_any(project):
+    edit(project, SHEET, lambda s: events(s)["input"].update(
+        children=[with_own_sids(case(n), 910_000_000_000_000 + 10 * n) for n in (1, 2)]))
+    code, out = check(project, "--style")
+    assert code == 0 and re.search(r"event 5 \(sid \d+\): none of its 2 case sub-events has a comment above it", out), out
+    edit(project, SHEET, lambda s: events(s)["input"]["children"].insert(0, {"eventType": "comment", "text": "First."}))
+    assert "case sub-events" not in check(project, "--style")[1]
+
+
+def test_style_names_a_ladder_of_one_shape(project):
+    def rungs(n):
+        return [with_own_sids(case(i), 920_000_000_000_000 + 10 * i) for i in range(1, n + 1)]
+    edit(project, SHEET, lambda s: events(s)["input"].update(children=rungs(5)))
+    code, out = check(project, "--style")
+    assert code == 0 and re.search(r"event 6 \(sid \d+\): with events 7, 8, 9, 10, the same conditions and actions "
+                                   r"5 times over", out), out
+    edit(project, SHEET, lambda s: events(s)["input"].update(children=rungs(4)))
+    assert "times over" not in check(project, "--style")[1]
+
+
+def test_plan_refuses_new_cases_without_a_comment(project):
+    """An event the plan creates with case sub-events needs a comment above at least one case, like
+    the comment above itself; cases the plan puts under the user's own event only warn."""
+    before = (project / SHEET).read_bytes()
+    cases = [{"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS[:1]} for _ in range(2)]
+    parent = {"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS[:1], "children": cases}
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, parent]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert "none of its 2 case sub-events has a comment above it" in out
+    assert out.splitlines()[-1] == "the plan adds 1 problem(s) to the project; nothing was written"
+    parent["children"] = [{"eventType": "comment", "text": "First."}, *cases]
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, parent]})
+    assert code == 0 and "warning:" not in out and out.splitlines()[-1].startswith("ok:"), out
 
 
 def test_plan_refuses_new_events_without_their_comments(project):
