@@ -650,3 +650,33 @@ note. The sweep of the scripts over the 524 examples and the raft game shows
 - The ladder fires on input maps in a project the agent wrote and the agent
   rewrites them into a table: the message then needs the key-per-action
   exception spelled out.
+
+## Update 2026-09-22: the pitfalls keep their sources, this record the counts
+
+Each pitfall ends with its source, and several sources had grown into a
+tally over the examples or a retelling of the session that found the
+pitfall. A model reading the sheet has no use for either, and a release
+number in a source reads as a version to target. The bullets now end with
+the page, the file, the example id or the project and date; what they
+dropped is here.
+
+| Pitfall | What was behind it |
+|---------|--------------------|
+| *Wait* does not stop a loop | `Wait` with `loopindex` in 14 example projects, arcade-shooter and layout-transition among them |
+| *Wait for previous actions* waits only for asynchronous actions | 72 example projects use it; avalanche's Stalagmite sheet (knock-back tween, wait, 8 Direction re-enabled) and Credits (fader tween, wait, go to layout) |
+| Deactivating a group does not pause | 50 example projects toggle groups; 9 pause, every one with *Set time scale* 0 |
+| A *Wait* with *Use time scale* on never ends at time scale 0 | airborne-explorer, In-Game Menu: time scale 0, then object time scale 1 on Fader and GameManager |
+| `lerp` needs no time of its own when the factor comes from the engine | 123 of 490 example projects use `lerp`, 2026-09-17 |
+| A local variable in a group is visible to every event at its level | galactic-blocks, group Controls sets `StoredY` in its second event and declares it in its fifteenth |
+| `Self` in a System condition or action | `.invalid-self` in `projectResources.js` r495.2; the Doubao snake project, event 45 |
+| One trigger per branch, none inside a function | `projectResources.js` r495.2; Water Sort (DeepSeek) had `Tube: On tweens finished` inside the functions `StartPour` and `FinishPour` |
+| Hierarchy children may live on another layer | WaterSort: Liquid on layer Liquid under Tube on layer Tubes |
+| `ChildCount` counts every child whatever its type | WaterSort: the top unit lost its flat edge while pouring once a Stream was added to the Tube |
+| *Destroy* does not detach a child until the end of the top-level event | c3runtime.js exported Sep 2026; WaterSort: an emptied tube whose Mask was just destroyed read as "has children", so CheckWin never showed the win text |
+| Timers and tweens round their end to a tick each | WaterSort: the tube snapped to its end tilt for one frame when the last unit's drain began before the unit above it was destroyed |
+| A data object in a container is picked through the family | mergeGame, enemyBase with EnemyStats |
+| Shared logic on the caller's picks is a custom action | mergeGame: `applyStats` and `attack` moved from copy-picked functions to `Bases` custom actions |
+| *Set animation* to the playing animation does nothing | RaftSurvivor: ten events each comparing `anim` before *Set animation* |
+| A blend mode only touches the object's own quad | WaterSort: sheared liquid past the tube bottom stayed visible next to a cavity-sized mask |
+| Particles given a Sprite spawn real instances | WaterSort, Splash and Drop |
+| Local Storage is keyed by `uniqueId` | c3runtime.js exported Sep 2026 |

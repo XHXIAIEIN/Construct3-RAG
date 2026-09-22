@@ -30,7 +30,7 @@ first.
   "hp"` hits the right enemy's sheet. Use it instead of a growing list of
   family instance variables when stats come from a data file. [manual:
   project-primitives/objects/containers.md "data storage objects";
-  observed: mergeGame, enemyBase + EnemyStats, 2026-09-17]
+  observed: mergeGame, 2026-09-17]
 - Sub-events run after the parent's actions, so a change made there (collisions
   re-enabled) is visible to the sub-event's conditions. [manual:
   project-primitives/events/sub-events.md]
@@ -40,29 +40,25 @@ first.
   a child, so a lifted parent can be drawn above everything while its parts
   stay under an outline. [releases: beta.json, "hierarchy information not
   duplicated properly if connections were setup between instances in
-  different layers"; observed: WaterSort, Liquid on layer Liquid under Tube on
-  layer Tubes, 2026-09-17, unverified at runtime]
+  different layers"; observed: WaterSort, 2026-09-17, unverified at runtime]
 - *ChildCount*, *Compare child count* and *Has children* count every attached
   child whatever its type. A second child type on the same parent (a Stream
   added to the pouring Tube) shifts every count that meant one type. Get the
   top index from *Pick children* plus *Pick highest* on that type, or count in
   a *For each* over the picked children. [manual:
   plugin-reference/common-features/common-expressions.md "ChildCount",
-  common-conditions.md "Compare child count"; observed: WaterSort, the top
-  unit lost its flat edge while pouring, 2026-09-17]
+  common-conditions.md "Compare child count"; observed: WaterSort, 2026-09-17]
 - *Destroy* does not detach a child from its parent. The instance is only
   released at the end of the top-level event, and until then *Compare child
   count*, *Has children*, `ChildCount` and *Pick children* still see it.
   Destroying a child in one sub-event and counting children in the next
-  sub-event of the same trigger counts the destroyed one, so an emptied tube
-  whose Mask was just destroyed reads as "has children". Count the type you
+  sub-event of the same trigger counts the destroyed one. Count the type you
   mean with *Pick children* plus `PickedCount`, or do the count from a
   later top-level event. [manual: system-reference/system-actions.md "Unload
   images" note "destroying objects does not really release them until the
-  end of the next top-level event"; runtime: exported c3runtime.js (Sep
-  2026), `DestroyInstance` marks the instance and defers, `GetChildCount`
-  is `GetChildren().length`; observed: WaterSort CheckWin never showed the
-  win text, 2026-09-17]
+  end of the next top-level event"; runtime: exported c3runtime.js,
+  `DestroyInstance` defers, `GetChildCount` is `GetChildren().length`;
+  observed: WaterSort, 2026-09-17]
 
 ## Triggers and Else
 
@@ -74,10 +70,8 @@ first.
   several triggers. The editor refuses the whole project otherwise, with
   `cannot add another trigger to event branch`. [manual:
   project-primitives/events/how-events-work.md "Triggers", sub-events.md
-  "Triggers in sub-events"; editor bundle `projectResources.js` r495.2,
-  function blocks report a trigger; observed: Water Sort (DeepSeek), `Tube:
-  On tweens finished` inside functions `StartPour` and `FinishPour`,
-  2026-09-17]
+  "Triggers in sub-events"; editor bundle `projectResources.js`, function
+  blocks report a trigger; observed: Water Sort (DeepSeek), 2026-09-17]
 - *On collision with another object*, Timer *On timer* and the Gamepad
   button conditions are triggers to the editor, green arrow and every rule
   above, although the runtime tests them in sheet order each tick. The schema
@@ -130,8 +124,7 @@ first.
   project-primitives/events/functions.md "functions with no return type are
   essentially custom actions"; project-primitives/events/custom-actions.md
   "Picking", "Family custom actions"; example: custom-action-overrides;
-  observed: mergeGame `applyStats` and `attack` moved from copy-picked
-  functions to `Bases` custom actions, 2026-09-17]
+  observed: mergeGame, 2026-09-17]
 - Parameters are bare identifiers in expressions: `Self.X + OffsetX`. Prefer
   `posX` over `x` for legibility. [example: 3d-castle-maze, function OffsetHand]
 
@@ -153,9 +146,7 @@ first.
   the instance in place for the rest of that tick. Logic that assumes the
   schedule (a sum of heights that is "always at least one unit", a count of
   children) jumps for that tick; derive state from *Is playing* and from the
-  instance whose tween it is. [observed: WaterSort, the tube snapping to its
-  end tilt for one frame when the last unit's drain began before the unit
-  above it was destroyed, 2026-09-18]
+  instance whose tween it is. [observed: WaterSort, 2026-09-18]
 
 ## Wait and time scale
 
@@ -164,8 +155,8 @@ first.
   that iteration's picked instances. A staggered effect is `Wait 0.1 *
   loopindex`; a loop that must pause between iterations is a Timer or a
   function called from *On timer*. [manual:
-  system-reference/system-actions.md "Wait"; examples: `Wait` with
-  `loopindex` in 14 projects, arcade-shooter, layout-transition among them]
+  system-reference/system-actions.md "Wait"; examples: arcade-shooter,
+  layout-transition]
 - *Wait for previous actions* (the manual's "Wait for previous actions to
   complete") waits only for asynchronous actions, marked with an icon in the
   editor: Tween actions, AJAX requests, Local Storage, *Snapshot canvas*.
@@ -173,21 +164,19 @@ first.
   A function call counts only when the function is marked *Asynchronous* and
   itself ends with *Wait for previous actions*. [manual:
   system-reference/system-actions.md "Wait for previous actions to complete",
-  project-primitives/events/functions.md "Asynchronous functions"; examples:
-  avalanche Stalagmite (knock-back tween, wait, 8 Direction re-enabled) and
-  Credits (fader tween, wait, go to layout); 72 projects]
+  project-primitives/events/functions.md "Asynchronous functions"; example:
+  avalanche, sheets Stalagmite and Credits]
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.
   The wait that resumes the game, and the UI tweens shown while paused, run
   on their own clock: *Use time scale* off, *Set object time scale* 1 on the
   fader, the buttons and the manager object. [manual:
   system-reference/system-actions.md "Wait", "Set object time scale";
-  example: airborne-explorer In-Game Menu, time scale 0 then object time
-  scale 1 on Fader and GameManager]
+  example: airborne-explorer, In-Game Menu]
 - Deactivating a group stops its events, including its triggers, and
   nothing else: behaviors, timers and tweens started by it keep running. It
   turns a phase off; it does not pause. [manual:
-  system-reference/system-actions.md "Set group active"; examples: 50
-  projects toggle groups; 9 pause, every one with *Set time scale* 0]
+  system-reference/system-actions.md "Set group active"; examples: every
+  pause is *Set time scale* 0]
 - A hit stop is *Set time scale* 0.1, *Wait*, *Set time scale* 1 in one
   block; a smooth ramp is a *Tween (value)* on any object read into *Set
   time scale* while *Is playing*. [examples: segmented-boss-fight BossHeath;
@@ -200,20 +189,20 @@ first.
   a System condition or action, *For each ordered* included, there is no such
   object and the editor refuses to open the project: `Invalid use of 'self'`.
   Write the object: order *For each SnakeBody* by `SnakeBody.IID`, not
-  `Self.IID`. [editor: `projectResources.js`, `.invalid-self`, r495.2;
-  observed: Doubao snake project, event 45, 2026-09-22]
+  `Self.IID`. [editor bundle `projectResources.js`, `.invalid-self`;
+  observed: Doubao snake project, 2026-09-22]
 - `lerp(Self.X, Target.X, 0.1)` moves a different fraction per second at
   different framerates and ignores the time scale. When the third argument is a
   constant and the first is last tick's result, write `lerp(a, b, 1 - f^dt)`
-  with `f` in (0, 1); `f * dt` is the common approximation and the tutorial
-  the manual links says it is not exact. The same holds for `anglelerp`.
+  with `f` in (0, 1); `f * dt` is the common approximation and is not
+  exact. The same holds for `anglelerp`.
   [manual: system-reference/system-expressions.md "dt", linking the
   delta-time tutorial, section "Lerp"; examples: magic-feather, surface-jump]
 - `lerp` needs no time of its own when the factor comes from the engine:
   `Self.Tween.Value("Attack")` in labyrinth, a timeline value, `unlerp` of a
   slider thumb, `Car.Speed / Car.MaxSpeed` in abductractor. Those are
   mappings, not tweens, and there is nothing to replace. [examples: labyrinth,
-  abductractor, plus 123 of 490 example projects using `lerp`, 2026-09-17]
+  abductractor]
 - `lerp` and `unlerp` do not clamp: `lerp(0, 100, 1.5)` is 150, and `unlerp`
   of a value outside its range goes past 0 or 1. Remap with
   `lerp(lo, hi, unlerp(a, b, v))` and wrap it in `clamp` when `v` can leave
@@ -241,8 +230,7 @@ first.
   then read it in the others; it resets to its initial value every time the
   scope is entered unless static. [manual:
   project-primitives/events/variables.md "Local variables", "Static and
-  constant variables"; example: galactic-blocks, group Controls sets
-  `StoredY` in its second event and declares it in its fifteenth]
+  constant variables"; example: galactic-blocks, group Controls, `StoredY`]
 - *Set mesh point* in *Relative* mode adds to the point's current position,
   not to its default, so a per-tick derivation accumulates. Derive with
   *Absolute* and normalised coordinates (0..1 across the object box, which may
@@ -296,8 +284,8 @@ first.
   *Set animation*, to keep the animation from restarting, guards against
   nothing: set the animation from the state in one event, and *Start
   animation* from the beginning when a restart is wanted. [manual:
-  plugin-reference/sprite.md "Set animation"; observed: RaftSurvivor, ten
-  events each comparing `anim` before *Set animation*, 2026-09-22]
+  plugin-reference/sprite.md "Set animation"; observed: RaftSurvivor,
+  2026-09-22]
 
 ## Rendering
 
@@ -307,8 +295,7 @@ first.
   own texture* or the blend hits the whole screen. Size the mask to cover
   everything it must erase, or keep the content inside its box. [manual:
   project-primitives/layers.md "Force own texture"; example:
-  mask-effect-puzzle (layer HiddenWorld); observed: WaterSort, sheared liquid
-  past the tube bottom stayed visible next to a cavity-sized mask, 2026-09-17]
+  mask-effect-puzzle, layer HiddenWorld; observed: WaterSort, 2026-09-17]
 
 ## Tween
 
@@ -339,8 +326,8 @@ first.
   *On created* fires for each, and they are not children of the emitter (the
   example parents them by hand). Per-particle state such as a colour frame
   comes from *On created* plus *Pick nearest* emitter, read from the emitter's
-  instance variable. [example: child-particles; observed: WaterSort Splash
-  and Drop, 2026-09-17, unverified at runtime]
+  instance variable. [example: child-particles; observed: WaterSort,
+  2026-09-17, unverified at runtime]
 
 ## Storage and preview
 
@@ -356,7 +343,7 @@ first.
   project's `uniqueId`, so it survives closing the preview and is separate
   per project. A tool that rewrites `project.c3proj` must keep `uniqueId`
   or the saved data is orphaned. [runtime: exported c3runtime.js
-  `_GetProjectStorage`, Sep 2026; manual:
+  `_GetProjectStorage`; manual:
   scripting/scripting-reference/interfaces/istorage.md "unique to the
   specific project"]
 
