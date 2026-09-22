@@ -38,8 +38,54 @@ ROOT = Path(__file__).resolve().parent.parent
 random.seed(20170328)
 
 VIEW_W, VIEW_H = 720, 1280
-COIN_SIZE = 96
+
+# --- placement grid -------------------------------------------------------------------
+# Every position and size is a whole number of UNITs, so that a layout reads as cells, not as
+# numbers chosen one by one. The official examples align to 8 px at 320x180 (three quarters of
+# their x, five sixths of their widths) and to 32 px at 1920x1080 (half of their x, three
+# fifths of their widths); a HUD element sits 0, one or two units from the viewport edge
+# (Construct3-RAG/docs/decisions/event-sheet-design-guidance.md, placement survey 2026-09-22).
+UNIT = 8 if VIEW_H <= 360 else 32          # the grid; a pixel-art viewport gets the small one
+MARGIN = UNIT                              # the HUD's distance from the viewport edge
+# The smallest object a finger taps: 48 dp on Android, 44 pt on iOS (Apple HIG, Accessibility;
+# Android accessibility help; WCAG 2.5.5). The viewport's shorter side is shown across a
+# phone's ~360 dp, so 48 dp is 48 * shorter side / 360 viewport px, rounded up to a unit:
+# 24 at 320x180, 96 at 720x1280, 160 at 1920x1080.
+TOUCH = math.ceil(48 * min(VIEW_W, VIEW_H) / 360 / UNIT) * UNIT
+
+COIN_SIZE = TOUCH                          # a coin is tapped, so it is never smaller than a finger
 COIN_COUNT = 6
+
+
+def units(n: float) -> int:
+    """n grid units in pixels: units(3) is 96 at UNIT 32."""
+    return int(round(n * UNIT))
+
+
+def snap(v: float) -> int:
+    """v moved to the nearest grid line."""
+    return int(round(v / UNIT)) * UNIT
+
+
+def anchor(where: str, w: float, h: float, ox: float = 0, oy: float = 0, dx: float = 0, dy: float = 0) -> tuple[int, int]:
+    """The (x, y) of a w x h box held against the viewport edge named by `where`, MARGIN
+    inside it: "top-left", "top", "top-right", "left", "center", "right", "bottom-left",
+    "bottom", "bottom-right". The point returned is the box's origin (ox, oy), 0 for its
+    top-left corner, 0.5 for its centre, so pass the instance's origin. dx and dy shift it
+    by whole units along the axes, for a second element beside the first. A box held to
+    the left or top lands on the grid; one held to the right, the bottom or the middle
+    sits exactly MARGIN from that edge, or exactly centred, which is what the eye checks
+    there. The centre of the screen is where the game is; the HUD lives on the edges."""
+    vert, _, horiz = where.partition("-") if "-" in where else (where, "", where)
+    if where in ("left", "right"):
+        vert, horiz = "middle", where
+    elif where in ("top", "bottom"):
+        vert, horiz = where, "middle"
+    elif where == "center":
+        vert, horiz = "middle", "middle"
+    x = {"left": MARGIN, "middle": (VIEW_W - w) / 2, "right": VIEW_W - MARGIN - w}[horiz]
+    y = {"top": MARGIN, "middle": (VIEW_H - h) / 2, "bottom": VIEW_H - MARGIN - h}[vert]
+    return int(round(x + units(dx) + ox * w)), int(round(y + units(dy) + oy * h))
 
 
 # --- ids ----------------------------------------------------------------------
@@ -691,12 +737,15 @@ def build_layouts() -> dict[str, dict]:
         layer("Game"),
         layer("UI", parallax=0),
     ], sheet="Game")
+    # The HUD sits against an edge, MARGIN inside it, sized in units; the middle of the screen is the game's.
+    w, h = units(13), units(2)
     game["layers"][2]["instances"].append(
-        text_inst("ScoreText", "Score: 0", 24, 24, 400, 48, size=32, bold=True))
+        text_inst("ScoreText", "Score: 0", *anchor("top-left", w, h), w, h, size=32, bold=True))
     # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
     objects = layout("Objects", [layer("Objects")], sheet=None)
     objects["layers"][0]["instances"].append(
-        sprite_inst("Coin", 100, 100, COIN_SIZE, COIN_SIZE, ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN)))
+        sprite_inst("Coin", *anchor("top-left", COIN_SIZE, COIN_SIZE, 0.5, 0.5), COIN_SIZE, COIN_SIZE,
+                    ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN)))
     return {"Game": game, "Objects": objects}
 
 

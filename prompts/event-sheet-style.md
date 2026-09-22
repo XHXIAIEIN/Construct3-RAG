@@ -107,6 +107,20 @@ change history, or how the author got there; no `#`, colours or BBCode.
 - Pixel art at a 320×180 viewport, *Nearest* sampling, *Letterbox integer
   scale*; otherwise 1920×1080 and *Trilinear*. A one-screen game's layout
   is the viewport's size.
+- Positions and sizes on a grid: 8 px at 320×180 (three quarters of the
+  examples' x and five sixths of their widths sit on it), 32 px at
+  1920×1080 (half of their x, three fifths of their widths). Whole numbers,
+  angle 0 unless the object is meant to lean. The HUD is on the parallax-0
+  layer, held against a corner or an edge, one unit inside it (the
+  examples' edge offsets are 0, one unit or two); the middle of the screen
+  is the game's. A game shown on a TV keeps graphics 5% inside every edge
+  (EBU R95). A tapped object is at least a finger wide: 48 dp (Android
+  accessibility help), 44 pt (Apple HIG, *Accessibility*, the iOS default
+  control size), 44 px (WCAG 2.5.5), which is 48 × the viewport's shorter
+  side / 360 in viewport pixels, a phone showing that side across about
+  360 dp: 24 px at 320×180, 160 px at 1920×1080, with 8 dp between two
+  targets. The generator template holds these as `UNIT`, `MARGIN`, `TOUCH`
+  and `anchor()`.
 - One `ObjectRepository` layout, no event sheet, one instance of every type
   the events create; nothing else there. No global objects.
 - One sheet, `MainCode`, until about sixty types. Beyond that `GameEvents`,
