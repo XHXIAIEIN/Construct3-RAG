@@ -19,7 +19,10 @@ eventSheets/*.json. Do not answer it from memory.
    sheet as events, look an ACE up with the JSON to write, change a sheet
    from a plan, check the project and generate one from a script; eventSheets/
    is read and changed through them. If that folder is missing,
-   Construct3-RAG/AGENTS.md section 4 installs it.
+   Construct3-RAG/AGENTS.md section 4 installs it. Then run
+   `python .agents/skills/construct3-project/scripts/check_project.py` once:
+   it stops with what to fix when the path above does not reach the clone or
+   the copy is behind it, and its findings are the state of the project.
 2. Before the first event, name or edit, read the file for what you are
    doing; each one says what to read next.
 

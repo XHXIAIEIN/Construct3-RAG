@@ -57,11 +57,15 @@ reader who has only the URL.
 The block is a router. Its first step sends to the installed `SKILL.md`
 before any project file is opened; as a row of the table, a small model
 passed it over in half the runs and edited the sheet's JSON by hand
-(`docs/decisions/project-tools-skill.md`). Each row of the table then names
+(`docs/decisions/project-tools-skill.md`). The same step runs
+`check_project.py` once: a wrong `Construct3-RAG:` path or a copy behind
+the clone stops there with what to fix, instead of surfacing later as a
+script that cannot find the schemas. It takes well under a second and prints
+the findings, at most 10 000 characters. Each row of the table then names
 the one file that owns that task, and the details live there, so a change to
 a tool or a data path is made once.
-It loads nothing at startup; the agent reads each file when the work calls
-for it. If it keeps skipping them, add one line at the end:
+The block loads nothing else at startup; the agent reads each file when the
+work calls for it. If it keeps skipping them, add one line at the end:
 `@<path-to>/Construct3-RAG/prompts/event-sheet-thinking.md`. Claude Code
 inlines that file into every session of the project, at the cost of its full
 length each time; other tools ignore the line.
