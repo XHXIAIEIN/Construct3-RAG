@@ -345,12 +345,22 @@ class Checker:
                 self.err(f"{obj}: {label} collides with the expression {obj}.{key}; rename it")
 
     # --- event sheets: expressions and parameters -------------------------------------------
-    def check_expr(self, where: str, expr, scope: dict) -> None:
+    def check_expr(self, where: str, expr, scope: dict, owner: str | None = None,
+                   stand_in: str | None = None) -> None:
+        """owner: the object of the condition or action the expression belongs to;
+        Self names it, so Self in a System parameter names nothing, and the editor
+        stops with 'Invalid use of self'. stand_in: the object a System parameter
+        of the same ACE names, the one to write instead of Self."""
         p = self.p
         if not isinstance(expr, str):
             return
         text = STRING_LITERAL.sub('""', expr)
         scope_lower = {LOWER(k) for k in scope}
+        if owner == "System" and any(LOWER(m.group(0)) == "self" for m in IDENT.finditer(text)):
+            fixed = re.sub(r"\bself\b", stand_in, expr, flags=re.I) if stand_in else None
+            hint = f"; write {fixed!r}" if fixed else "; name the object instead"
+            self.err(f"{where}: Self names the object of the condition or action, and here that is System; "
+                     f"the editor stops with \"Invalid use of 'self'\"{hint}")
         for m in MEMBER.finditer(text):
             obj, member, sub = m.group(1), m.group(2), m.group(3)
             if LOWER(obj) == "self" or NUMBER.fullmatch(obj):   # a decimal such as 0.5 is not a member access
@@ -414,8 +424,9 @@ class Checker:
         return self._eases
 
     def check_param(self, where: str, key: str, value, ptype: str, items: dict | None, obj: str, scope: dict,
-                    writes: bool = False) -> None:
-        """writes: the parameter belongs to an action, which assigns the variable it names."""
+                    writes: bool = False, stand_in: str | None = None) -> None:
+        """writes: the parameter belongs to an action, which assigns the variable it names.
+        stand_in: the object an "object" parameter of the same ACE names."""
         p = self.p
         if ptype == "cmp":
             if value not in (0, 1, 2, 3, 4, 5) or isinstance(value, bool):
@@ -464,7 +475,7 @@ class Checker:
                 if unquote(value) not in self.layers:
                     self.err(f"{where}: no layer named {unquote(value)!r} in any layout")
             else:
-                self.check_expr(f"{where} {key}", value, scope)
+                self.check_expr(f"{where} {key}", value, scope, obj, stand_in)
         elif ptype == "layout":
             if value not in self.layouts:
                 self.err(f"{where}: no layout named {value!r}{bare(value, self.layouts) or closest(value, self.layouts)}")
@@ -477,7 +488,7 @@ class Checker:
                 if anims is not None and LOWER(unquote(value)) not in anims:
                     self.err(f"{where}: {obj} has no animation {unquote(value)!r}")
             else:
-                self.check_expr(f"{where} {key}", value, scope)
+                self.check_expr(f"{where} {key}", value, scope, obj, stand_in)
         elif ptype == "projectfile":
             name = value["path"] if isinstance(value, dict) else value
             if not (p.root / "files" / name).exists() and not list((p.root / "files").rglob(Path(name).name)):
@@ -492,7 +503,7 @@ class Checker:
             if not isinstance(value, str):
                 self.err(f"{where}: {key} should be an expression string, not {value!r}")
             else:
-                self.check_expr(f"{where} {key}", value, scope)
+                self.check_expr(f"{where} {key}", value, scope, obj, stand_in)
 
     # --- event sheets: conditions and actions -------------------------------------------------
     def ace_hint(self, kind: str, ace: dict) -> str:
@@ -560,11 +571,13 @@ class Checker:
         for k in schema_params:
             if k not in params:
                 self.warn(f"{where}: parameter {k} is omitted; the editor fills its default")
+        named = [v for k, v in params.items() if schema_params.get(k, {}).get("type") == "object"]
+        stand_in = named[0] if len(named) == 1 and named[0] in p.plugin_of else None
         for k, v in params.items():
             if k not in schema_params:
                 continue
             self.check_param(where, k, v, schema_params[k]["type"], schema_params[k].get("items"), obj, scope,
-                             writes=kind == "actions")
+                             writes=kind == "actions", stand_in=stand_in)
         if ace_id == "create-object" and obj == "System":
             self.created.add(params.get("object-to-create"))
         if ace_id == "set-eventvar-value" and (scope.get(params.get("variable")) or {}).get("type") == "boolean":

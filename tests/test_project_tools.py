@@ -863,6 +863,24 @@ def test_action_cannot_write_a_constant(project):
     assert "COIN_COUNT is a constant and an action cannot change it" in findings(project, change)
 
 
+def test_self_in_a_system_parameter_names_the_object_to_write(project):
+    """Self is the object of the condition or action; in a System one it is nothing (editor: Invalid use of 'self')."""
+    def change(s):
+        events(s)["restart"]["children"].append(
+            block([cond("for-each-ordered", "System", {"object": "Coin", "expression": "Self.value", "order": "ascending"})],
+                  [{"id": "set-eventvar-value", "objectClass": "System", "sid": 5,
+                    "parameters": {"variable": "score", "value": "score + Self.value"}}]))
+    out = findings(project, change)
+    assert "condition 1 System:for-each-ordered expression: Self names the object of the condition or action, "            "and here that is System; the editor stops with \"Invalid use of 'self'\"; write 'Coin.value'" in out
+    assert "action 1 System:set-eventvar-value value: Self names the object" in out
+    assert "name the object instead" in out
+
+
+def test_self_in_an_objects_own_parameter_passes(project):
+    out = findings(project, lambda s: events(s)["collect"]["actions"][0]["parameters"].update(**{"end-x": "Self.X"}))
+    assert "Self" not in out, out
+
+
 def test_ease_is_a_builtin_id(project):
     out = findings(project, lambda s: events(s)["collect"]["actions"][0]["parameters"].update(ease="ease-in-back"))
     assert "ease='ease-in-back' is not a built-in ease; closest: easeinback" in out
