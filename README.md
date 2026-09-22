@@ -8,7 +8,7 @@ The Construct version and dataset counts live in [`data/c3-schemas/_index.json`]
 
 ## Set up from this link
 
-Prepare what is missing: the clones, the game project, its `AGENTS.md`. The clones can live anywhere; the project's `AGENTS.md` records where. Run in the folder that holds the clones:
+In the folder that holds the clones:
 
 ```bash
 git clone https://github.com/XHXIAIEIN/Construct3-RAG
