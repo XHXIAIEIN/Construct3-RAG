@@ -76,7 +76,7 @@
         "The UI layer of the Game layout holds at least three instances besides ScoreText, of at least two types: the timer text, the pause button, the lives",
         "Every instance on the UI layer has whole-number x, y, width and height",
         "Every instance on the UI layer has a width and a height in multiples of the 32 px grid unit of the 720x1280 viewport",
-        "Every type on the UI layer is held against the viewport: its box has a left or right edge 32 px inside the viewport's, or is centred, and a top or bottom edge 32 px inside, or is centred",
+        "Every type on the UI layer is held against the viewport: its box has a left or right edge 32 px inside the viewport's, or is centred, and a top or bottom edge 32 px inside, or is centred, or its top one unit under another type's box that is held to the top or bottom",
         "Every box on the UI layer lies inside the viewport",
         "No two boxes on the UI layer overlap: a row of hearts is spaced by its width or more, the timer text does not reach into the score text",
         "The pause button is at least 96 px wide and high, a finger at this viewport",

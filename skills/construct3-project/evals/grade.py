@@ -257,12 +257,16 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
     def held(lo: float, hi: float, size: float) -> bool:
         return abs(lo - MARGIN) <= 0.5 or abs(hi - (size - MARGIN)) <= 0.5 or abs((lo + hi) / 2 - size / 2) <= 0.5
 
+    kinds = {kind: box([i for i in hud if i["type"] == kind]) for kind in sorted({i["type"] for i in hud})}
     loose = []
-    for kind in sorted({i["type"] for i in hud}):
-        l, t, r, b = box([i for i in hud if i["type"] == kind])
-        if not (held(l, r, VIEW_W) and held(t, b, VIEW_H)):
+    for kind, (l, t, r, b) in kinds.items():
+        # A second row: its top one unit under a box of another type that is itself held to the top or bottom.
+        stacked = any(abs(t - (ob + UNIT)) <= 0.5 and held(ot, ob, VIEW_H)
+                      for other, (ol, ot, orr, ob) in kinds.items() if other != kind)
+        if not (held(l, r, VIEW_W) and (held(t, b, VIEW_H) or stacked)):
             loose.append(f"{kind} box ({l:g},{t:g})-({r:g},{b:g})")
-    results.append((bool(hud) and not loose, f"boxes neither {MARGIN} px inside an edge nor centred: {loose or 'none'}"))
+    results.append((bool(hud) and not loose, f"boxes neither {MARGIN} px inside an edge, nor centred, nor one unit "
+                                             f"under a held box: {loose or 'none'}"))
 
     boxes = [(i["type"], *box([i])) for i in hud]
     outside = [f"{k} ({l:g},{t:g})-({r:g},{b:g})" for k, l, t, r, b in boxes if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H]
