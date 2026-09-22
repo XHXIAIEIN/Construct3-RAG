@@ -22,9 +22,11 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import statistics
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 SKILL = Path(__file__).resolve().parent.parent
@@ -213,8 +215,88 @@ def grade_find_in_a_long_sheet(run: Path) -> list[tuple[bool, str]]:
             unchanged(run)]
 
 
+VIEW_W, VIEW_H, UNIT, MARGIN, TOUCH = 720, 1280, 32, 32, 96      # the stand-in's viewport and its grid
+HUD_LAYERS = {"ui", "hud"}
+
+
+def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
+    """The HUD the run added through the generator: on the UI layer, whole numbers, sizes in
+    units, every type's box held against an edge or centred, the tapped button a finger wide,
+    and tools/build_project.py the source of layouts/Game.json."""
+    project = run / "project"
+    code, out = checker(project)
+    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else (out.splitlines() or [''])[-1]}")]
+    try:
+        layout = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return results + [(False, "layouts/Game.json is not readable JSON")] * 6
+    hud = [inst for layer in layout.get("layers", []) if layer.get("name", "").lower() in HUD_LAYERS
+           for inst in layer.get("instances", []) if "world" in inst]
+    added = [i for i in hud if i["type"] != "ScoreText"]
+    kinds = sorted({i["type"] for i in added})
+    listed = ", ".join(f"{i['type']}@({i['world']['x']},{i['world']['y']} {i['world']['width']}x{i['world']['height']})"
+                       for i in hud) or "no instance on a layer named UI or HUD"
+    results.append((len(added) >= 3 and len(kinds) >= 2, f"{len(added)} added instance(s) of {kinds}: {listed}"))
+
+    def whole(v) -> bool:
+        return isinstance(v, (int, float)) and float(v).is_integer()
+
+    fractions = [i["type"] for i in hud if not all(whole(i["world"][k]) for k in ("x", "y", "width", "height"))]
+    results.append((bool(hud) and not fractions, f"fractional coordinates or sizes on: {fractions or 'none'}"))
+    off = [f"{i['type']} {i['world']['width']}x{i['world']['height']}" for i in hud
+           if not all(whole(i["world"][k]) and int(i["world"][k]) % UNIT == 0 for k in ("width", "height"))]
+    results.append((bool(hud) and not off, f"sizes not in {UNIT} px units: {off or 'none'}"))
+
+    def box(insts: list) -> tuple[float, float, float, float]:
+        lefts = [i["world"]["x"] - i["world"].get("originX", 0) * i["world"]["width"] for i in insts]
+        tops = [i["world"]["y"] - i["world"].get("originY", 0) * i["world"]["height"] for i in insts]
+        rights = [l + i["world"]["width"] for l, i in zip(lefts, insts)]
+        bottoms = [t + i["world"]["height"] for t, i in zip(tops, insts)]
+        return min(lefts), min(tops), max(rights), max(bottoms)
+
+    def held(lo: float, hi: float, size: float) -> bool:
+        return abs(lo - MARGIN) <= 0.5 or abs(hi - (size - MARGIN)) <= 0.5 or abs((lo + hi) / 2 - size / 2) <= 0.5
+
+    loose = []
+    for kind in sorted({i["type"] for i in hud}):
+        l, t, r, b = box([i for i in hud if i["type"] == kind])
+        if not (held(l, r, VIEW_W) and held(t, b, VIEW_H)):
+            loose.append(f"{kind} box ({l:g},{t:g})-({r:g},{b:g})")
+    results.append((bool(hud) and not loose, f"boxes neither {MARGIN} px inside an edge nor centred: {loose or 'none'}"))
+
+    boxes = [(i["type"], *box([i])) for i in hud]
+    outside = [f"{k} ({l:g},{t:g})-({r:g},{b:g})" for k, l, t, r, b in boxes if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H]
+    results.append((bool(hud) and not outside, f"boxes reaching past the viewport: {outside or 'none'}"))
+    overlaps = [f"{a[0]} ({a[1]:g},{a[2]:g})-({a[3]:g},{a[4]:g}) and {b[0]} ({b[1]:g},{b[2]:g})-({b[3]:g},{b[4]:g})"
+                for n, a in enumerate(boxes) for b in boxes[n + 1:]
+                if min(a[3], b[3]) - max(a[1], b[1]) > 0.5 and min(a[4], b[4]) - max(a[2], b[2]) > 0.5]
+    results.append((bool(hud) and not overlaps, f"overlapping boxes: {overlaps or 'none'}"))
+
+    button = [i for i in added if re.search(r"pause|button|btn", i["type"], re.I)]
+    small = [f"{i['type']} {i['world']['width']}x{i['world']['height']}" for i in button
+             if min(i["world"]["width"], i["world"]["height"]) < TOUCH]
+    results.append((bool(button) and not small,
+                    f"button(s) {[i['type'] for i in button] or 'none found by name'}; under {TOUCH} px: {small or 'none'}"))
+
+    with tempfile.TemporaryDirectory() as tmp:
+        copy = Path(tmp) / "game"
+        shutil.copytree(project, copy, ignore=shutil.ignore_patterns("__pycache__"))
+        try:
+            p = subprocess.run([sys.executable, "tools/build_project.py"], cwd=copy, capture_output=True, text=True,
+                               encoding="utf-8", timeout=180, env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+            same = ((copy / "layouts" / "Game.json").read_bytes().replace(b"\r\n", b"\n")
+                    == (project / "layouts" / "Game.json").read_bytes().replace(b"\r\n", b"\n"))
+            said = (f"rerun exit {p.returncode}; layouts/Game.json {'identical' if same else 'differs'}"
+                    + ("" if p.returncode == 0 else ": " + (p.stdout + p.stderr).strip().splitlines()[-1]))
+            results.append((p.returncode == 0 and same, said))
+        except (OSError, subprocess.TimeoutExpired) as e:
+            results.append((False, f"rerun of tools/build_project.py: {type(e).__name__}: {e}"))
+    return results
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
-           "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet}
+           "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
+           "lay-out-the-hud": grade_lay_out_the_hud}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")

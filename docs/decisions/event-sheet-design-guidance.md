@@ -827,9 +827,46 @@ rounded up to a unit: 24 at 320×180, 96 at 720×1280, 160 at 1920×1080),
 score text is `anchor("top-left", units(13), units(2))` and its coin
 `TOUCH` wide. `prompts/event-sheet-style.md`, *Project*, one bullet;
 `references/generating-a-project.md`, one habit; a test pins the constants,
-the anchors and the generated HUD position. No checker change. Not
-measured: whether a small model given the template places better than
-before; that is a skill-eval iteration (`skills/AGENTS.md`, *Evals*).
+the anchors and the generated HUD position. No checker change.
+
+### Iteration 15: lay-out-the-hud, Haiku 4.5, three runs per arm
+
+A fifth eval case, `lay-out-the-hud`, fixture `coins-generator`: the
+stand-in with its generator in `tools/`, each arm's project written by its
+own template (`make_fixtures.py` runs it once), the task a timer text top
+right, a tapped pause button bottom right and three hearts top centre,
+through the generator. `with_skill` is the template above, `old_skill` the
+one of `527d67c`. Every run read SKILL.md, changed the generator and reran
+it; every run's first rerun failed on a missing button image, then passed.
+Evidence: `.local/docs/evidence/skill-evals/construct3-project/iteration-15/`.
+
+| Arm | Assertions passed, of 7 | Of 9 | Tokens | Seconds | Lost calls |
+|-----|--------------------------|------|--------|---------|------------|
+| with_skill (3 runs) | 7, 6, 7 | 8, 6, 8 | 72 973 | 135 | 1.7 |
+| old_skill (3 runs) | 4, 4, 4 | 5, 5, 5 | 71 225 | 118 | 2.3 |
+
+The seven assertions written before the runs: checker passes, three new
+instances of two types, whole numbers, sizes in units, every type's box held
+to an edge or centred, the button a finger wide, the generator the source.
+The old template fails the same three every time: sizes of 40, 48, 60 and 64
+px, margins of 20 and 24, a 60 or 64 px button. The new template passes
+them, with one run placing the hearts' centre on the top margin so that half
+of each heart lies above the viewport.
+
+Two assertions were added after the layouts of the first runs were read,
+and both arms regraded: every box inside the viewport, and no two boxes
+overlapping. Every run of both arms overlaps. With the new template the
+overlap is structural: the score and the timer are each `units(13)` wide
+because the stand-in's score text is, and two 416 px boxes do not fit
+side by side in 720 px; the hearts, 96 px wide, are placed 32 or 64 px
+apart. With the old template the 400 px score box runs under the hearts.
+So the grid, the margin and the touch size are followed once they are
+constants and a helper; what the template does not hold, a box sized to its
+text and a row spaced by its item, the model does not do. Next change: a
+HUD text helper that sizes the box to its text and aligns it to the side it
+is anchored on, a `row()` helper for repeated items, and a generation-time
+guard on the UI layer that names the two boxes that overlap. Measured
+against this iteration as the baseline.
 
 ### Re-evaluate when
 
