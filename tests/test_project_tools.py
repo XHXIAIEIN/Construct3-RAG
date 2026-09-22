@@ -1325,11 +1325,24 @@ def test_template_places_the_hud_on_the_grid(built):
     assert t.anchor("bottom", 96, 96, 0.5, 0.5) == (360, 1280 - 32 - 48)   # centred, its bottom edge MARGIN up
     assert t.anchor("center", 96, 96, 0.5, 0.5) == (360, 640)
     assert t.anchor("top-left", 96, 96, 0.5, 0.5, dx=3) == (32 + 96 + 48, 32 + 48)
+    # A row of three fingers' width, one unit apart, centred on the top edge: 352 px wide from x 184.
+    assert t.row("top", 3, 96, 96) == [(232, 80), (360, 80), (488, 80)]
+    # A label's box fits its longest text (8 x 32 x 0.6 = 154 -> 160) and reads towards the side it hangs on.
+    timer = t.hud_text("TimerText", "Time: 30", "top-right")
+    assert (timer["world"]["x"], timer["world"]["y"], timer["world"]["width"], timer["world"]["height"]) == (528, 32, 160, 64)
+    assert timer["properties"]["horizontal-alignment"] == "right"
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
     score = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "ScoreText")["world"]
-    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 32, 416, 64)
+    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 32, 192, 64)
     for k in ("x", "y", "width", "height"):
         assert score[k] % t.UNIT == 0, k
+    # Two HUD boxes that meet, or one past the viewport, stop the generator and name them.
+    with pytest.raises(SystemExit, match=r"ScoreText \(32,32\)-\(224,96\) overlaps TimerText"):
+        t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"),
+                      t.hud_text("TimerText", "Time: 30", "top-left")])
+    with pytest.raises(SystemExit, match="reaches past the 720x1280 viewport"):
+        t.no_overlap([t.sprite_inst("Coin", 32, 32, 96, 96)])
+    t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"), timer])
 
 
 def test_stand_in_project_passes_the_style_check(built):

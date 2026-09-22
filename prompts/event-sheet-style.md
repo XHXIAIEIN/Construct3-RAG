@@ -119,8 +119,11 @@ change history, or how the author got there; no `#`, colours or BBCode.
   control size), 44 px (WCAG 2.5.5), which is 48 × the viewport's shorter
   side / 360 in viewport pixels, a phone showing that side across about
   360 dp: 24 px at 320×180, 160 px at 1920×1080, with 8 dp between two
-  targets. The generator template holds these as `UNIT`, `MARGIN`, `TOUCH`
-  and `anchor()`.
+  targets. A label's box is as wide as its longest text and reads towards
+  the edge it hangs on; a row of hearts is spaced by a unit; nothing on the
+  HUD overlaps or leaves the viewport. The generator template holds these
+  as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`, `hud_text()`, `row()` and
+  `no_overlap()`.
 - One `ObjectRepository` layout, no event sheet, one instance of every type
   the events create; nothing else there. No global objects.
 - One sheet, `MainCode`, until about sixty types. Beyond that `GameEvents`,
