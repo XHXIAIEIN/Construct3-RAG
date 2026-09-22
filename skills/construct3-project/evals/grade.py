@@ -282,6 +282,21 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
     results.append((bool(button) and not small,
                     f"button(s) {[i['type'] for i in button] or 'none found by name'}; under {TOUCH} px: {small or 'none'}"))
 
+    def plugin_of(kind: str) -> str | None:
+        try:
+            return json.loads((project / "objectTypes" / f"{kind}.json").read_text(encoding="utf-8")).get("plugin-id")
+        except (OSError, ValueError):
+            return None
+
+    lives = [i for i in added if plugin_of(i["type"]) == "Sprite" and i not in button]
+    per_type: dict[str, int] = {}
+    for i in lives:
+        per_type[i["type"]] = per_type.get(i["type"], 0) + 1
+    three = [k for k, n in per_type.items() if n >= 3]
+    wide = sorted({i["type"] for i in lives if i["world"]["width"] >= 3 * i["world"]["height"] - 0.5})
+    results.append((bool(three or wide), f"sprite instances besides the button, by type: {per_type or 'none'}; "
+                                          f"three of one type: {three or 'none'}; three times as wide as high: {wide or 'none'}"))
+
     with tempfile.TemporaryDirectory() as tmp:
         copy = Path(tmp) / "game"
         shutil.copytree(project, copy, ignore=shutil.ignore_patterns("__pycache__"))
