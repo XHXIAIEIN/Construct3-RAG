@@ -83,7 +83,10 @@ habits; they are what made rerunning safe in Water Sort.
 - Constants once, at the top, and a global constant in the sheet for every
   number an event reads; a tunable value has one place to change. What a
   behavior owns (a Sine period, a particle rate) is an instance property set
-  in `build_layouts()`, not an event.
+  in `build_layouts()`, not an event. The template holds the properties
+  block of the common behaviors (`SINE`, `BULLET`, `PLATFORM` ...) with the
+  editor's keys; one it lacks is copied from an instance of an official
+  example, under the behavior's name on that object (`"Sine"`, not `"Sin"`).
 - `random.seed(...)` before the first `sid()`: a rerun then produces the same
   ids and the diff shows only what changed.
 - One helper per ACE, named for what it does, its parameters in the
@@ -107,7 +110,12 @@ habits; they are what made rerunning safe in Water Sort.
 - Every runtime-created type has a template instance in a layout that never
   runs (`Objects` in the stand-in).
 - Family variables and behaviors are declared on the family and set on every
-  member instance; the checker reports the instance that lacks one.
+  member instance; the checker reports the instance that lacks one. A family
+  is `family(name, plugin_id, members, ...)` in `build_object_types()` and
+  gets `families/<name>.json`; a container, object types created, destroyed
+  and picked together, is `container([...])` there and has no file of its
+  own: it is a row of `project.c3proj`'s `containers`. Neither has a schema
+  or an example folder to search; the helpers are their format.
 - A custom action on the object or family for logic that runs on the caller's
   picked instances; a function only for a return value or for logic that
   picks its own instances. Inside a family's block, write the family's name.

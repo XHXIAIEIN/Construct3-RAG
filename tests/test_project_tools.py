@@ -432,6 +432,57 @@ def test_checker_prints_the_findings_that_fit_and_counts_the_rest(project):
     assert code == 1 and "more problems" not in everything and len(everything) > len(out)
 
 
+def test_template_behavior_blocks_hold_the_schemas_keys():
+    """A behavior the template has no block for is guessed from the schema, whose
+    properties carry no values, or copied from an example: the blocks here are the
+    editor's key sets, checked against the schemas, with a combo value from its items."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
+    template = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(template)
+    blocks = {"TWEEN": "tween", "TIMER": "timer", "SOLID": "solid", "SINE": "sin", "FADE": "fade", "FLASH": "flash",
+              "BULLET": "bullet", "EIGHT_DIR": "eightdir", "PLATFORM": "platform", "MOVE_TO": "moveto",
+              "ROTATE": "rotate", "PIN": "pin", "DRAG_DROP": "dragndrop", "SCROLL_TO": "scrollto",
+              "DESTROY_OUTSIDE": "destroy", "BOUND_TO_LAYOUT": "bound", "LINE_OF_SIGHT": "los"}
+    for const, behavior in blocks.items():
+        schema = json.loads((REPO / "data" / "c3-schemas" / "en-US" / "behaviors" / f"{behavior}.json")
+                            .read_text(encoding="utf-8"))
+        props = schema.get("properties") or {}
+        (name, block), = getattr(template, const).items()
+        assert list(block) == ["properties"], const
+        assert list(block["properties"]) == list(props), f"{const}: {list(block['properties'])} != {list(props)}"
+        for key, value in block["properties"].items():
+            if "items" in props[key]:
+                assert value in props[key]["items"], f"{const}.{key} = {value!r}"
+            else:
+                assert isinstance(value, (bool, int, float, str)), f"{const}.{key}"
+        assert " " not in name and name[0].isalnum(), name
+
+
+def test_stand_in_project_holds_a_string_variable_as_the_editor_writes_it(built):
+    coin = json.loads((built / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
+    assert [(v["name"], v["type"]) for v in coin["instanceVariables"]] == [("value", "number"), ("kind", "string")]
+    objects = json.loads((built / "layouts" / "Objects.json").read_text(encoding="utf-8"))
+    assert objects["layers"][0]["instances"][0]["instanceVariables"] == {"value": 1, "kind": "gold"}
+
+
+def test_stand_in_project_writes_containers_where_the_editor_reads_them(project):
+    """A container is a row of project.c3proj, not a file: a Doubao run searched objectTypes/
+    and the example folders for its format and gave up. The helper writes what saves from
+    r342 on hold, members alone, and the checker reads the row."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
+    template = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(template)
+    assert template.container(["Coin", "ScoreText"]) == {"members": ["Coin", "ScoreText"]}
+    proj = json.loads((project / "project.c3proj").read_text(encoding="utf-8"))
+    assert proj["containers"] == [] and list(proj).index("containers") < list(proj).index("layouts")
+    out = findings(project, lambda p: p["containers"].append({"members": ["Coin", "ScoreText"]}), "project.c3proj")
+    assert out.startswith("ok:"), out
+    out = findings(project, lambda p: p["containers"].append({"members": ["Coin", "Wallet"]}), "project.c3proj")
+    assert "container ['Coin', 'Wallet']: member Wallet is not an object type" in out
+
+
 def test_generator_exits_with_the_checkers_findings(project):
     """One command builds and checks, so a finding cannot be skipped by forgetting the second."""
     source = project / "tools" / "build_project.py"
@@ -610,6 +661,38 @@ def test_ace_lookup_counts_per_category_what_does_not_fit(built):
     assert "Entries per category:" in out and "loops 5" in out and "add a word" in out
     code, out = tool(built, "lookup_ace", "System", "--limit", "0")
     assert code == 0 and "expression dt " in out
+
+
+def test_ace_lookup_points_a_shared_ace_to_an_object(built, tmp_path):
+    """Pick nearest/furthest is every world object's, not System's. A miss under System or
+    under a plugin used to look like the ACE did not exist; a Doubao run concluded so and
+    picked by lowest distance instead."""
+    code, out = tool(built, "lookup_ace", "System", "nearest")
+    assert code == 1 and "nothing under System has every word of 'nearest'" in out
+    assert "shared by every world object, looked up on one of them (lookup_ace.py <Object> nearest)" in out
+    assert "condition  pick-nearestfurthest " in out
+    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
+    code, out = tool(tmp_path, "lookup_ace", "Sprite", "overlapping")
+    assert code == 1 and "is-overlapping-another-object" in out and "not under Sprite" in out
+    code, out = tool(built, "lookup_ace", "Coin", "nearest")
+    assert code == 0 and "write: {\"id\": \"pick-nearestfurthest\", \"objectClass\": \"Coin\"" in out
+    code, out = tool(built, "lookup_ace", "System", "wiat")
+    assert "shared by every world object" not in out
+
+
+def test_ace_lookup_prints_a_miss_on_stdout(built):
+    """The miss and what comes near are the answer. On stderr, a harness that shows stdout
+    alone printed nothing, and PowerShell wrapped each line in a NativeCommandError record,
+    which is how two Doubao runs read it."""
+    env = dict(os.environ, PYTHONIOENCODING="utf-8")
+    p = subprocess.run([sys.executable, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), "Sprite", "color"],
+                       cwd=built, env=env, capture_output=True, text=True, encoding="utf-8")
+    assert p.returncode == 1
+    assert p.stdout.startswith("nothing under Sprite has every word of 'color'\n") and "set-default-color" in p.stdout
+    assert p.stderr == ""
+    p = subprocess.run([sys.executable, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), "Sprte"],
+                       cwd=built, env=env, capture_output=True, text=True, encoding="utf-8")
+    assert p.returncode == 1 and p.stdout == "" and "is not an object of this project" in p.stderr
 
 
 # --- changing a sheet from a plan ---------------------------------------------------------------
@@ -1138,6 +1221,17 @@ def test_a_world_angle_beyond_a_full_turn_is_named_as_degrees(project):
     out = findings(project, lambda lay: lay["layers"][0]["instances"][0]["world"].update(angle=270),
                    "layouts/Objects.json")
     assert "Coin world angle 270 is more than a full turn; the file stores radians, 270 degrees is 4.7124" in out
+
+
+def test_an_instance_variable_type_outside_the_three_is_named(project):
+    """The editor's Text type is written "string". A type "text" used to stop the checker
+    with `missing key 'text'`, a sentence about the wrong thing."""
+    def change(t):
+        t["instanceVariables"][1]["type"] = "text"
+    out = findings(project, change, "objectTypes/Coin.json")
+    assert "stopped at" not in out
+    assert ("object type Coin: instance variable kind: type 'text' is not number, string or boolean; "
+            "the editor's Text type is written \"string\"") in out
 
 
 def test_missing_key_stops_with_a_sentence(project):

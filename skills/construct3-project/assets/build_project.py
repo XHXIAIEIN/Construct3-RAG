@@ -571,22 +571,30 @@ def nonworld_type(name: str, plugin_id: str, ivars: list = ()) -> dict:
 
 def family(name: str, plugin_id: str, members: list, ivars: list = (), behaviors: list = ()) -> dict:
     """Instance variables and behaviors declared here are the members'; a member's
-    layout instances carry them as their own."""
+    layout instances carry them as their own. Written to families/<name>.json."""
     return {"name": name, "plugin-id": plugin_id, "sid": sid(), "instanceVariables": list(ivars),
             "behaviorTypes": list(behaviors), "effectTypes": [], "members": list(members)}
 
 
-def build_object_types() -> tuple[dict, dict]:
+def container(members: list) -> dict:
+    """Object types whose instances are created, destroyed and picked together, a
+    tank base with its turret. A container has no file of its own: it is a row of
+    project.c3proj's "containers", and its members are object types, not families."""
+    return {"members": list(members)}
+
+
+def build_object_types() -> tuple[dict, dict, list]:
     types = {
         "Coin": sprite_type("Coin", [animation("Default", [frame(COIN_SIZE, COIN_SIZE)])],
-                            ivars=[ivar_def("value", "number",
-                                            "Points it is worth.")],
+                            ivars=[ivar_def("value", "number", "Points it is worth."),
+                                   ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
                             behaviors=[beh_def("Tween")]),
         "ScoreText": text_type("ScoreText"),
         "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True}),
     }
     families = {}
-    return types, families
+    containers = []
+    return types, families, containers
 
 
 # --- layouts -------------------------------------------------------------------------------
@@ -640,8 +648,41 @@ def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, siz
                     world(x, y, w, h, 0, 0), ivars, behaviors)
 
 
+# The properties block a layout instance writes for a behavior, keyed by the name
+# the behavior has on the object (beh_def's name; the key changes with it). The
+# keys are the schema's `properties` (behaviors/<id>.json), the values the ones
+# official examples hold; change a value, not a key. A behavior missing here:
+# copy the block from an instance of an official example that has it, under the
+# behavior's name on that object, not its id ("Sine", not "Sin").
 TWEEN = {"Tween": {"properties": {"enabled": True}}}
 TIMER = {"Timer": {"properties": {}}}
+SOLID = {"Solid": {"properties": {"enabled": True, "use-instance-tags": True, "tags": ""}}}
+SINE = {"Sine": {"properties": {"movement": "horizontal", "wave": "sine", "period": 4, "period-random": 0,
+                                "period-offset": 0, "period-offset-random": 0, "magnitude": 50,
+                                "magnitude-random": 0, "enabled": True, "live-preview": False}}}
+FADE = {"Fade": {"properties": {"fade-in-time": 0, "wait-time": 0, "fade-out-time": 1, "destroy": True,
+                                "enabled": True, "live-preview": False}}}
+FLASH = {"Flash": {"properties": {}}}
+BULLET = {"Bullet": {"properties": {"speed": 400, "acceleration": 0, "gravity": 0, "bounce-off-solids": False,
+                                    "set-angle": True, "step": False, "enabled": True}}}
+EIGHT_DIR = {"8Direction": {"properties": {"max-speed": 200, "acceleration": 600, "deceleration": 500,
+                                           "directions": "dir-8", "set-angle": "smooth", "allow-sliding": True,
+                                           "default-controls": True, "enabled": True}}}
+PLATFORM = {"Platform": {"properties": {"max-speed": 330, "acceleration": 1500, "deceleration": 1500,
+                                        "jump-strength": 650, "gravity": 1500, "max-fall-speed": 1000,
+                                        "double-jump": False, "jump-sustain": 0, "default-controls": True,
+                                        "enabled": True}}}
+MOVE_TO = {"MoveTo": {"properties": {"max-speed": 200, "acceleration": 600, "deceleration": 600, "rotate-speed": 0,
+                                     "set-angle": False, "stop-on-solids": False, "enabled": True}}}
+ROTATE = {"Rotate": {"properties": {"speed": 90, "acceleration": 0, "rotation-type": "2d", "enabled": True,
+                                    "live-preview": False}}}
+PIN = {"Pin": {"properties": {"destroy": False}}}
+DRAG_DROP = {"DragDrop": {"properties": {"axes": "both", "enabled": True}}}
+SCROLL_TO = {"ScrollTo": {"properties": {"enabled": True}}}
+DESTROY_OUTSIDE = {"DestroyOutsideLayout": {"properties": {"region": "layout"}}}
+BOUND_TO_LAYOUT = {"BoundToLayout": {"properties": {"bound-by": "edge", "region": "layout"}}}
+LINE_OF_SIGHT = {"LineOfSight": {"properties": {"obstacles": "solids", "range": 512, "cone-of-view": 90,
+                                                "use-collision-cells": True}}}
 
 
 def build_layouts() -> dict[str, dict]:
@@ -655,12 +696,13 @@ def build_layouts() -> dict[str, dict]:
     # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
     objects = layout("Objects", [layer("Objects")], sheet=None)
     objects["layers"][0]["instances"].append(
-        sprite_inst("Coin", 100, 100, COIN_SIZE, COIN_SIZE, ivars={"value": 1}, behaviors=dict(TWEEN)))
+        sprite_inst("Coin", 100, 100, COIN_SIZE, COIN_SIZE, ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN)))
     return {"Game": game, "Objects": objects}
 
 
 # --- project.c3proj -------------------------------------------------------------------------
-def build_project(existing: dict, types: dict, families: dict, layouts: dict, sheets: list) -> dict:
+def build_project(existing: dict, types: dict, families: dict, containers: list, layouts: dict,
+                  sheets: list) -> dict:
     """Only the keys this script owns change; uniqueId, icons, scripts and properties stay."""
     p = dict(existing)
     p["name"] = "Coins"
@@ -676,6 +718,7 @@ def build_project(existing: dict, types: dict, families: dict, layouts: dict, sh
     ]
     p["objectTypes"] = {"items": list(types), "subfolders": []}
     p["families"] = {"items": list(families), "subfolders": []}
+    p["containers"] = list(containers)
     p["layouts"] = {"items": list(layouts), "subfolders": []}
     p["eventSheets"] = {"items": sheets, "subfolders": []}
     p["viewportWidth"] = VIEW_W
@@ -691,7 +734,7 @@ def build_all() -> None:
         sys.exit(
             f"{c3proj} not found: create the project in the editor and save it as a folder first")
     build_images()
-    types, families = build_object_types()
+    types, families, containers = build_object_types()
     for name, t in types.items():
         write_json(f"objectTypes/{name}.json", t)
     for name, f in families.items():
@@ -704,7 +747,7 @@ def build_all() -> None:
     with c3proj.open(encoding="utf-8") as f:
         existing = json.load(f)
     write_json("project.c3proj", build_project(
-        existing, types, families, layouts, [sheet["name"]]))
+        existing, types, families, containers, layouts, [sheet["name"]]))
 
 
 if __name__ == "__main__":

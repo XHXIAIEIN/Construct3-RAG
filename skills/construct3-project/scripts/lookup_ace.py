@@ -82,6 +82,18 @@ def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]
     return sources
 
 
+def shared_matches(p: c3.Project, words: list[str]) -> list[tuple[str, dict]]:
+    """The ACEs of plugins/_common.json that have every word in their names."""
+    out = []
+    for kind in KINDS:
+        for it in p.common.get(kind, []):
+            names = squash(" ".join([*(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")),
+                                     kind, it.get("category", "")]))
+            if all(squash(w) in names for w in words):
+                out.append((kind, it))
+    return out
+
+
 def brief(owner: str, behavior: str | None, addon: str, kind: str, it: dict) -> str:
     title = it.get("list-name") or it.get("translated-name")
     via = f" [behavior {behavior}, {addon}]" if behavior else f" [{addon}]"
@@ -152,18 +164,27 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
                        for e in entries), key=lambda x: (-x[0], -x[1]))
         some = [e for _, n, e in some if n]
         entries = [e[1:] for e in entries]
-        print(f"nothing under {target} has every word of {' '.join(words)!r}", file=sys.stderr)
+        # The miss is the answer, on stdout like a hit: a harness that shows stdout alone
+        # would print nothing, and PowerShell wraps every stderr line in an error record.
+        print(f"nothing under {target} has every word of {' '.join(words)!r}")
+        shared = [] if any(s is p.common for _, _, s in sources) else shared_matches(p, words)
+        if shared:
+            # Pick nearest/furthest, Is overlapping, Set position ... are not System's and not
+            # the plugin's: every world object has them, so they are looked up on an object.
+            print("shared by every world object, looked up on one of them (lookup_ace.py <Object> "
+                  f"{' '.join(words)}), not under {target}:")
+            for kind, it in shared:
+                print("  " + brief("<object>", None, "_common", kind, it))
         if some:
-            print("entries with some of them, the most first:", file=sys.stderr)
+            print("entries with some of them, the most first:")
             for e in some[:12]:
-                print("  " + brief(*e), file=sys.stderr)
+                print("  " + brief(*e))
             if len(some) > 12:
-                print(f"  ... and {len(some) - 12} more", file=sys.stderr)
+                print(f"  ... and {len(some) - 12} more")
         else:
             near = closest(" ".join(words), [e[5]["id"] for e in entries], n=6)
             categories = sorted({e[5].get("category", "") for e in entries} - {""})
-            print((near.lstrip("; ") + "\n" if near else "") + f"categories, each a word too: {', '.join(categories)}",
-                  file=sys.stderr)
+            print((near.lstrip("; ") + "\n" if near else "") + f"categories, each a word too: {', '.join(categories)}")
         return 1
 
     if len(found) <= 6:
