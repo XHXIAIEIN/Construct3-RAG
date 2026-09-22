@@ -41,7 +41,18 @@ and later read `AGENTS.md` when the project has no `CLAUDE.md`
 (<https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md>). A
 project that has a `CLAUDE.md` needs the line `@AGENTS.md` in it, as this
 repository's has; under an earlier version, a project without one needs a
-`CLAUDE.md` that holds that line. `claude --version` prints the version.
+`CLAUDE.md` that holds that line. `install.py` writes that line when it
+writes the block: it creates `CLAUDE.md` with it, or appends it to one that
+lacks it. `claude --version` prints the version.
+
+## Before the project exists
+
+`scripts/bootstrap.py --project <folder>` in this repository covers the
+machine that has only the clone: it clones the three repositories above
+beside it when they are missing, creates the folder as an empty project,
+copied from the `Construct3-New-Project` repository, when it does not
+exist, and runs `install.py`. The README's first section gives it to a
+reader who has only the URL.
 
 The block is a router. Its first step sends to the installed `SKILL.md`
 before any project file is opened; as a row of the table, a small model

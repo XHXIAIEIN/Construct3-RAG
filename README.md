@@ -6,6 +6,17 @@ Structured, bilingual reference data for [Construct 3](https://www.construct.net
 
 The Construct version and dataset counts live in [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json). [The update workflow](.github/workflows/update.yml) opens a pull request when Scirra ships a new stable release.
 
+## Set up from this link
+
+Prepare what is missing: the clones, the game project, its `AGENTS.md`. The clones can live anywhere; the project's `AGENTS.md` records where. Run in the folder that holds the clones:
+
+```bash
+git clone https://github.com/XHXIAIEIN/Construct3-RAG
+python Construct3-RAG/scripts/bootstrap.py --project MyGame
+```
+
+The second command clones the related repositories that are missing, creates `MyGame` as an empty project when it does not exist, installs the `construct3-project` skill and writes `AGENTS.md` and `CLAUDE.md`. `--project` may name an existing project; `--beside` puts the clones elsewhere; `--dry-run`, `--no-examples`. Safe to run again. Then read the project's `AGENTS.md`.
+
 ## Related repositories
 
 This repository holds the machine-readable data. The prose, the project sources, and the SDK live elsewhere:

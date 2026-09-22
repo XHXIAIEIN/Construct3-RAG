@@ -6,6 +6,17 @@
 
 Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json) 为准。Scirra 发布新的稳定版后，[更新工作流](.github/workflows/update.yml)会自动提出 pull request。
 
+## 从这个链接开始
+
+缺什么就准备什么：仓库的 clone、游戏项目、它的 `AGENTS.md`。clone 放在哪里都可以，项目的 `AGENTS.md` 记录位置。在存放 clone 的文件夹里运行：
+
+```bash
+git clone https://github.com/XHXIAIEIN/Construct3-RAG
+python Construct3-RAG/scripts/bootstrap.py --project MyGame
+```
+
+第二条命令 clone 缺少的相关仓库；`MyGame` 不存在时创建为空项目，安装 `construct3-project` skill，写入 `AGENTS.md` 和 `CLAUDE.md`。`--project` 可以指向已有项目；`--beside` 把 clone 放到别处；`--dry-run`、`--no-examples`。可重复运行。之后读项目的 `AGENTS.md`。
+
 ## 相关仓库
 
 本仓库只保存机器可读的数据。文字说明、项目源文件和 SDK 在这些仓库：

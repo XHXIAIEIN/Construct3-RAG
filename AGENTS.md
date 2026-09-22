@@ -93,12 +93,18 @@ block of `prompts/game-project-AGENTS.md` in its instruction file, whose
   python <this repository>/skills/construct3-project/scripts/install.py
   ```
 
-  It copies the skill, and adds the block to the project's `AGENTS.md` when
-  no instruction file there names this repository, with the path filled in.
-  It changes no other file. Say in one sentence what it wrote, then read the
-  installed `SKILL.md`. `--into .claude/skills` for Claude Code,
-  `--into .trae/skills` for TRAE; `--no-block` when the user keeps the
-  instruction files to themselves; `--dry-run` to see first.
+  It copies the skill, adds the block to the project's `AGENTS.md` when
+  no instruction file there names this repository, with the path filled in,
+  and the line `@AGENTS.md` to `CLAUDE.md`. It changes no other file. Say
+  in one sentence what it wrote, then read the installed `SKILL.md`.
+  `--into .claude/skills` for Claude Code, `--into .trae/skills` for TRAE;
+  `--no-block` when the user keeps the instruction files to themselves;
+  `--dry-run` to see first.
+- The sibling clones are missing, or there is no game project yet:
+  `python <this repository>/scripts/bootstrap.py --project <folder>` clones
+  what is missing beside this repository, creates the folder as an empty
+  project when it does not exist, and runs `install.py` on it. The README's
+  first section gives the two commands for a machine that has only the URL.
 - An installed copy says when it differs from `skills/construct3-project/`
   here and prints the command that refreshes it. Run it.
 - The user does not want it in the project: remove the copy, run the
