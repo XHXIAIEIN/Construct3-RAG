@@ -17,7 +17,7 @@ python Construct3-RAG/scripts/bootstrap.py --project MyGame
 
 ## 相关仓库
 
-本仓库只保存机器可读的数据。文字说明、项目源文件和 SDK 是另外三个仓库，`bootstrap.py` 会把它们 clone 到本仓库旁边：
+另外三个仓库，`bootstrap.py` 会把它们 clone 到本仓库旁边：
 
 | 仓库 | 内容 | 与本仓库的关系 |
 |---|---|---|
