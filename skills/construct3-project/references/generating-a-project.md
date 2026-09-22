@@ -120,7 +120,13 @@ habits; they are what made rerunning safe in Water Sort.
   the same edge is `dy` in units on the same call, `dy=3` under a 2-unit
   label. The UI layer's instances go through `no_overlap()`, which stops
   the run naming two boxes that meet, with the `dy` that clears them, or
-  one past the viewport. `UNIT` follows the viewport
+  one past the viewport. A value shown as a bar, health, fuel, progress, a
+  row of hearts, is `hud_bar(frame, fill, where, length)`: a frame and,
+  inside it, a fill whose origin is its left edge, both Tiled Backgrounds
+  from `bar_types()` and `bar_images()` (9-patches with `caps=True`); the
+  sheet sets the fill in the one place the value changes,
+  `set_width(fill, bar_width(value, maximum, LENGTH))`, or slides it with
+  `tween_width()`. `UNIT` follows the viewport
   (8 px for pixel art, 32 px otherwise) and `TOUCH` is the smallest object
   a finger taps at that viewport; a tapped sprite is at least `TOUCH` wide.
   The middle of the screen is the game's; the HUD lives on the edges. The

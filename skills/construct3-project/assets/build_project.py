@@ -211,6 +211,19 @@ def write_png(rel: str, w: int, h: int, pixel) -> None:
                      + chunk(b"IDAT", zlib.compress(bytes(raw), 9)) + chunk(b"IEND", b""))
 
 
+def bar_images(frame_name: str, fill_name: str, frame_rgb=(40, 44, 58), fill_rgb=(90, 200, 120), caps: bool = False) -> None:
+    """The 16x16 images of bar_types(): one colour each; with `caps` a 2 px darker border, the
+    margin a 9-patch keeps at any length. A painted fill replaces the fill's image with the painting."""
+    for name, rgb in ((frame_name, frame_rgb), (fill_name, fill_rgb)):
+        dark = tuple(c // 2 for c in rgb)
+
+        def pixel(x, y, rgb=rgb, dark=dark):
+            edge = caps and (x < 2 or y < 2 or x >= 14 or y >= 14)
+            return (*(dark if edge else rgb), 255)
+
+        write_png(f"{name.lower()}.png", 16, 16, pixel)
+
+
 def build_images() -> None:
     r = COIN_SIZE / 2
 
@@ -518,6 +531,21 @@ def tween2(obj: str, tag: str, prop: str, end_x: str, end_y: str, time: str, eas
         "destroy-on-complete": "yes" if destroy else "no", "loop": "no", "ping-pong": "no", "repeat-count": "1"}, beh=beh)
 
 
+def set_width(obj: str, width: str) -> dict:
+    return act("set-width", obj, {"width": width})
+
+
+def bar_width(value: str, maximum: str, length: float) -> str:
+    """The width of a bar's fill: value over maximum of length, clamped, so the fill never
+    grows past its frame: bar_width("hp", "HP_MAX", 380)."""
+    return f"clamp({value} / {maximum}, 0, 1) * {length:g}"
+
+
+def tween_width(obj: str, tag: str, width: str, time: str = "0.25", ease: str = "easeinoutsine", beh: str = "Tween") -> dict:
+    """Slides a fill to a new width instead of jumping: tween_width("HpFill", "hp", bar_width("hp", "HP_MAX", 380))."""
+    return tween1(obj, tag, "offsetWidth", width, time, ease, beh=beh)
+
+
 def tween_value(obj: str, tag: str, start: str, end: str, time: str, ease: str = "easeinoutsine", beh: str = "Tween") -> dict:
     """Read it back with Obj.Tween.Value("tag") while is_playing; for what Tween has no property for."""
     return act("tween-value", obj, {
@@ -661,6 +689,29 @@ def text_type(name: str, ivars: list = (), behaviors: list = ()) -> dict:
             "instanceVariables": list(ivars), "behaviorTypes": list(behaviors), "effectTypes": []}
 
 
+def image_type(name: str, plugin_id: str, w: int, h: int, ox: float = 0.5, oy: float = 0.5,
+               ivars: list = (), behaviors: list = ()) -> dict:
+    """Tiled Background ("TiledBg") or 9-patch ("NinePatch"): one image, images/<name lower>.png,
+    no animations. The keys are the editor's (berry-harvester ProgressBar, car-selection-screen
+    StatusBar)."""
+    image = {"width": w, "height": h, "originX": ox, "originY": oy, "originalSource": "", "exportFormat": "lossless",
+             "exportQuality": 0.8, "imageSpriteId": image_id(), "useCollisionPoly": True}
+    if plugin_id == "TiledBg":
+        image["tag"] = ""
+    return {"name": name, "plugin-id": plugin_id, "sid": sid(), "isGlobal": False, "instanceVariables": list(ivars),
+            "behaviorTypes": list(behaviors), "effectTypes": [], "image": image}
+
+
+def bar_types(frame_name: str, fill_name: str, caps: bool = False, tween: bool = True) -> dict:
+    """The two object types of a bar for hud_bar(): Tiled Backgrounds of a 16x16 image each,
+    which Set width repeats and never stretches, so a painted fill is revealed; 9-patches when
+    `caps`, whose corners keep their size at any length. The fill carries Tween for
+    tween_width(). Images: bar_images() in build_images()."""
+    plugin = "NinePatch" if caps else "TiledBg"
+    return {frame_name: image_type(frame_name, plugin, 16, 16),
+            fill_name: image_type(fill_name, plugin, 16, 16, 0, 0.5, behaviors=[beh_def("Tween")] if tween else [])}
+
+
 def single_global_type(name: str, plugin_id: str, properties: dict) -> dict:
     """Touch, Keyboard, Mouse, Audio, AdvancedRandom, LocalStorage: one instance, not placed in a layout."""
     return {"name": name, "plugin-id": plugin_id, "sid": sid(),
@@ -765,6 +816,52 @@ def hud_text(otype: str, text: str, where: str, size: float = 32, longest: str |
     return text_inst(otype, text, x, y, w, h, size=size, halign=halign, bold=bold, ivars=ivars, behaviors=behaviors)
 
 
+def origin_name(ox: float, oy: float) -> str:
+    """The "origin" property of a Tiled Background or 9-patch for an (ox, oy) origin."""
+    v = {0: "top", 0.5: "", 1: "bottom"}[oy]
+    h = {0: "left", 0.5: "", 1: "right"}[ox]
+    return "-".join(p for p in (v, h) if p) or "center"
+
+
+def tiledbg_inst(otype: str, x: float, y: float, w: float, h: float, ox: float = 0, oy: float = 0.5,
+                 ivars=None, behaviors=None) -> dict:
+    """A Tiled Background instance; the properties are the editor's (berry-harvester ProgressBar)."""
+    return instance(otype, {"initially-visible": True, "origin": origin_name(ox, oy), "wrap-horizontal": "repeat",
+                            "wrap-vertical": "repeat", "image-offset-x": 0, "image-offset-y": 0, "image-scale-x": 1,
+                            "image-scale-y": 1, "image-angle": 0, "enable-tile-randomization": False, "x-random": 1,
+                            "y-random": 1, "angle-random": 1, "blend-margin-x": 0.1, "blend-margin-y": 0.1},
+                    world(x, y, w, h, ox, oy), ivars, behaviors)
+
+
+def ninepatch_inst(otype: str, x: float, y: float, w: float, h: float, ox: float = 0, oy: float = 0.5, margin: int = 2,
+                   edges: str = "stretch", fill: str = "stretch", ivars=None, behaviors=None) -> dict:
+    """A 9-patch instance; `margin` is the border its corners keep, in image pixels (car-selection-screen StatusBar)."""
+    return instance(otype, {"left-margin": margin, "right-margin": margin, "top-margin": margin, "bottom-margin": margin,
+                            "edges": edges, "fill": fill, "initially-visible": True, "origin": origin_name(ox, oy),
+                            "seams": "overlap"},
+                    world(x, y, w, h, ox, oy), ivars, behaviors)
+
+
+def hud_bar(frame_name: str, fill_name: str, where: str, length: float, height: float = 0, inset: float = 2,
+            caps: bool = False, dx: float = 0, dy: float = 0) -> tuple[dict, dict]:
+    """A bar held to an edge or corner by anchor(): a frame `length` px wide and, `inset` px
+    inside it, a fill with its origin on the left edge, so that a width set from a value grows
+    it rightwards and never past the frame. Types from bar_types(), images from bar_images(),
+    both with the same `caps`. The sheet sets the fill from the value, in the one place the
+    value changes:
+        set_width(fill, bar_width("hp", "HP_MAX", HP_BAR_LENGTH))
+    or slides it there with tween_width(); HP_BAR_LENGTH = length - 2 * inset is a constant of
+    the sheet. A count of icons is a bar too: the fill `count * icon` wide over a frame that
+    shows the empty icon. Returns (frame instance, fill instance)."""
+    height = height or units(1)
+    cx, cy = anchor(where, length, height, 0.5, 0.5, dx, dy)
+    make = ninepatch_inst if caps else tiledbg_inst
+    frame_inst = make(frame_name, cx, cy, length, height, 0.5, 0.5)
+    fill_inst = make(fill_name, cx - length / 2 + inset, cy, length - 2 * inset, height - 2 * inset, 0, 0.5,
+                     behaviors=dict(TWEEN))
+    return frame_inst, fill_inst
+
+
 # The properties block a layout instance writes for a behavior, keyed by the name
 # the behavior has on the object (beh_def's name; the key changes with it). The
 # keys are the schema's `properties` (behaviors/<id>.json), the values the ones
@@ -813,6 +910,9 @@ def build_layouts() -> dict[str, dict]:
     # stops the run when two HUD boxes meet or one leaves the viewport.
     ui = game["layers"][2]["instances"]
     ui.append(hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"))
+    # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
+    # types from bar_types() and images from bar_images(), and the sheet sets the fill with
+    # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
     no_overlap(ui)
     # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
     objects = layout("Objects", [layer("Objects")], sheet=None)
@@ -823,21 +923,32 @@ def build_layouts() -> dict[str, dict]:
 
 
 # --- project.c3proj -------------------------------------------------------------------------
+ADDON_NAMES = {"TiledBg": "Tiled Background", "NinePatch": "9-patch", "Spritefont2": "Sprite font", "EightDir": "8 Direction",
+               "Sin": "Sine", "DragnDrop": "Drag & Drop", "ScrollTo": "Scroll To", "MoveTo": "Move To", "LOS": "Line of sight",
+               "destroy": "Destroy outside layout", "bound": "Bound to layout", "solid": "Solid", "wrap": "Wrap",
+               "jumpthru": "Jump-thru", "AdvancedRandom": "Advanced Random", "LocalStorage": "Local Storage"}
+
+
+def used_addons(types: dict, families: dict) -> list:
+    """project.c3proj's usedAddons, from the plugins and behaviors the types and families use:
+    the editor refuses a type whose plugin is not listed, and a type added later is then
+    listed by this rerun. The name is the editor's display name for the ids it knows, the
+    id otherwise."""
+    plugins, behaviors = [], []
+    for t in list(types.values()) + list(families.values()):
+        if t["plugin-id"] not in plugins:
+            plugins.append(t["plugin-id"])
+        for b in t.get("behaviorTypes", []):
+            if b["behaviorId"] not in behaviors:
+                behaviors.append(b["behaviorId"])
+    return ([{"type": "plugin", "id": i, "name": ADDON_NAMES.get(i, i), "author": "Scirra", "bundled": False} for i in plugins]
+            + [{"type": "behavior", "id": i, "name": ADDON_NAMES.get(i, i), "author": "Scirra", "bundled": False} for i in behaviors])
 def build_project(existing: dict, types: dict, families: dict, containers: list, layouts: dict,
                   sheets: list) -> dict:
     """Only the keys this script owns change; uniqueId, icons, scripts and properties stay."""
     p = dict(existing)
     p["name"] = "Coins"
-    p["usedAddons"] = [
-        {"type": "plugin", "id": "Sprite", "name": "Sprite",
-            "author": "Scirra", "bundled": False},
-        {"type": "plugin", "id": "Text", "name": "Text",
-            "author": "Scirra", "bundled": False},
-        {"type": "plugin", "id": "Touch", "name": "Touch",
-            "author": "Scirra", "bundled": False},
-        {"type": "behavior", "id": "Tween", "name": "Tween",
-            "author": "Scirra", "bundled": False},
-    ]
+    p["usedAddons"] = used_addons(types, families)
     p["objectTypes"] = {"items": list(types), "subfolders": []}
     p["families"] = {"items": list(families), "subfolders": []}
     p["containers"] = list(containers)

@@ -1037,14 +1037,50 @@ grader gained the forms the runs used: `set-eventvar-value`, an amount
 handed to a function, a Tween of `offsetWidth` or `offsetScaleX`, a
 gradient revealed by a frame strip, a border painted into the image.
 
+### Iteration 20: the bar as one call
+
+The template gained the mechanical form of the reference:
+`hud_bar(frame, fill, where, length, caps=False)`, a frame held by
+`anchor()` and, two pixels inside it, a fill with origin (0, 0.5), both
+Tiled Backgrounds from `bar_types()` and `bar_images()`, 9-patches with
+`caps=True`, the type and instance JSON copied key for key from
+berry-harvester `ProgressBar` and car-selection-screen `StatusBar`;
+`bar_width(value, maximum, length)`, `clamp(value / maximum, 0, 1) *
+length`; `set_width()` and `tween_width()` (Tween *Width*, whose key is
+`offsetWidth`); one comment line in `build_layouts()` showing the call.
+`project.c3proj`'s `usedAddons` is now derived from the types and
+families, because the checker refused the first bar for a plugin the
+hard-coded list did not name. A test pins the geometry, the expression,
+the plugins and every instance property against the schema; both kinds
+generate and pass the checker in a temporary project.
+
+Same three cases, same prompts, Haiku 4.5, three runs per arm; `old_skill`
+is `1301445`, which already holds the reference, the table row and the
+pitfalls, so the prose is the same in both arms and the helpers are the
+only difference. Two grader gaps found on this iteration's files were
+closed before grading both arms: an amount handed to a function whose
+call is a `callFunction` row, and the comparison operator counted as a
+literal. Regraded with them, iteration 19's with_skill column reads 6, 8,
+9 and 7, 7, 7 (mean 0.919), its old column is unchanged. Evidence:
+`.local/docs/evidence/skill-evals/construct3-project/iteration-20/`.
+
+| Case | with_skill | old_skill | What the files show |
+|------|------------|-----------|---------------------|
+| show-hp-as-a-bar (of 9) | 9, 9, 9 | 8, 8, 4 | all three new-template runs call `hud_bar`: a 380×28 Tiled Background fill at origin 0 in a 384×32 frame, `clamp(hp / HP_MAX, 0, 1) * 380`, Tween 0.25 s; all three old runs are Sprites at origin 0.5, one of them after reading the reference; one old run's generator is broken |
+| reveal-the-gradient (of 7) | 7, 7, 7 | 6, 7, 6 | two new runs put the gradient into `hud_bar`'s Tiled Background fill, the third built the same pair by hand at origin 0; old: two Sprites of the gradient stretched by width, one cover at origin 1 that read the reference |
+| lives-as-hearts (of 7) | 7, 7, 7 | 7, 7, 7 | no run used `hud_bar` for hearts; all six are five Sprite instances with an index, picked against the count |
+
+Means: with_skill 1.0, old_skill 0.882; lost calls 3.9 against 4.7, 194
+against 225 seconds, tokens equal. On the two bar cases the helper was
+taken up in five runs of six and every one of those has the fill's origin
+on its left edge, which the prose, read or not, had not achieved in any
+run of iterations 19 and 20 without it.
+
 ### Re-evaluate when
 
-- A `hud_bar(type, where, length, ...)` helper is written: a Tiled
-  Background fill with origin (0, 0.5) inside a frame, `LENGTH` a constant
-  of the sheet, the width action and its Tween emitted by the helper. That
-  is the mechanical form of the reference, and iteration 20 would measure
-  it against this template on the same three cases.
-- The hearts grader meets a second run that counts empties up: then the
+- A bar case with real caps art arrives: `caps=True` is generated and
+  checked but no run has chosen it.
+- The hearts grader meets a run that counts empties up: then the
   assertion reads "the count changes by one", either way.
 
 ### Re-evaluate when

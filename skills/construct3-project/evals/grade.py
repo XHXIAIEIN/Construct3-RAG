@@ -417,7 +417,7 @@ def steps_by(rows: list, names: set[str], amount: str) -> list:
     holder = re.compile("|".join(map(re.escape, holders)) or r"$^")
     # A function handed the amount: `AddHealth(10)` whose body adds its parameter.
     passed = any(number.search(values([a])) for ev, _ in rows for a in ev.get("actions", [])
-                 if a.get("id") in ("call-function", "call-custom-action"))
+                 if "callFunction" in a or a.get("id") in ("call-function", "call-custom-action"))
     out = []
     for a in value_actions(rows, names):
         text = values([a])
@@ -652,7 +652,9 @@ def grade_lives_as_hearts(run: Path) -> list[tuple[bool, str]]:
     for ev, _ in rows:
         for c in ev.get("conditions", []):
             if pat.search(values([c])):
-                literal_compares |= set(re.findall(r"(?<![\w.])\d+(?![\w.])", values([c])))
+                # The operator is a number too ("comparison": 4 is "greater or equal"); only the operands count.
+                operands = " | ".join(str(v) for k, v in c.get("parameters", {}).items() if k != "comparison")
+                literal_compares |= set(re.findall(r"(?<![\w.])\d+(?![\w.])", operands))
     literal_compares -= {"0", "1"}
     results.append((bool(lives) and len(literal_compares) <= 2, f"literal numbers the count is compared with: {sorted(literal_compares) or 'none'}"))
     texts = [i for i in hud if i["type"] in ("ScoreText", "TimerText") or plugin_id(project, i["type"]) == "Text"]
