@@ -37,7 +37,11 @@ project, and the block for the project's instruction file.
   10 000 characters, with a last line that says how to get the rest: a
   harness cuts longer output, not always at the end and not always saying
   so. A miss lists what comes near. A name that is not spelled out is
-  refused with the nearest ones, not taken for one of them.
+  refused with the nearest ones, not taken for one of them. It all prints on
+  stdout, a miss and a note as much as a hit: PowerShell wraps a line of
+  stderr in an error record, and a harness that shows stdout alone shows
+  nothing. Only what stops the run before it answers, an unusable flag, a
+  project or clone that was not found, goes to stderr with the exit code.
 - A script that changes a project file checks the result before it writes
   it, writes the whole file or nothing, in the editor's layout (tabs, LF, no
   newline at the end, the editor's keys in the editor's order), and has
