@@ -37,6 +37,10 @@ exists and a name they reject does not.
 - The project has no `.git`: run `git init` in it before the first edit, so
   that every change to the sheets can be seen and undone. Commit when the
   user asks.
+- Nothing here needs the Construct editor. The scripts read and write the
+  project files, and `check_project.py` applies the rules the editor applies
+  when it opens a project; a project it passes is ready for the editor. Do
+  not stop to ask for the editor, and do not report its absence as a limit.
 
 ## Scripts
 
