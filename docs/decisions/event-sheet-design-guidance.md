@@ -533,9 +533,39 @@ the comment; `check_project.py --style` still reports all three. Not
 measured: whether a Haiku run given the refusal writes the comment or gives
 up. That is the next iteration.
 
+### Iteration 12: add-countdown against the refusal, Haiku 4.5, three runs
+
+Same fixture, prompt and skill path as iteration 11, the working tree at
+`11ad3a9`, `with_skill` three times; runs and traces in
+`.local/docs/evidence/skill-evals/construct3-project/iteration-12/`.
+
+| Run | Assertions | Tokens | Seconds | Tool calls, lost | Plans refused | Style findings in the final sheet |
+|-----|-----------:|-------:|--------:|-----------------:|--------------:|----------------------------------:|
+| with_skill | 7/7 | 55 807 | 116.9 | 19, 2 | 1 (`trigger-once` for `trigger-once-while-true`) | 0 |
+| with_skill_2 | 7/7 | 61 808 | 164.0 | 20, 2 | 1 (`set` on `actions`) | 0 |
+| with_skill_3 | 7/7 | 74 391 | 238.0 | 26, 3 | 3 (`set` on `actions`; an operation with `event`, `into` and `events`; `compare-eventvar` on a Sprite) | 0 |
+
+The style refusal never fired: every plan of the three runs carried a
+comment above each created event from its first draft, so the question
+the iteration asked, write the comment or give up, has no instance. What
+changed against iteration 11, where the two with-skill runs left one and
+three findings: `SKILL.md` now says the plan is refused without the
+comment and its plan example carries one. Which of the two did it cannot
+be told apart here; the observable result is three sheets that pass
+`--style`, against none of two. Every refused plan was a guessed operation
+shape or ACE id, answered with the form to use, and the run corrected it
+on the next try; none abandoned the task.
+
+Not a style matter, seen in the sheets: the third run subtracts from the
+countdown under `Every 1 seconds` without setting the text, so the time
+shown only moves when the score does (assertion 5 holds, since the action
+that sets the text writes both); the second run reads "1.5x" as `Set
+scale` to 1.5 on a coin the sheet sizes nowhere. An assertion for "the
+displayed time changes every second" would catch the first.
+
 ### Not done
 
-- The next iteration: a Haiku run against the refusal.
+- A run in which the refusal fires; three runs did not produce one.
 - The trigger evaluation of the description, for lack of a signed-in client.
 - Warnings for the pile of globals: no heuristic passes the corpus.
 - The pitfalls file (4 850 tokens) was not split into a core and a
