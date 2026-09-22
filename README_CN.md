@@ -8,7 +8,7 @@ Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schem
 
 ## 从这个链接开始
 
-缺什么就准备什么：仓库的 clone、游戏项目、它的 `AGENTS.md`。clone 放在哪里都可以，项目的 `AGENTS.md` 记录位置。在存放 clone 的文件夹里运行：
+在存放 clone 的文件夹里运行：
 
 ```bash
 git clone https://github.com/XHXIAIEIN/Construct3-RAG
