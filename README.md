@@ -17,7 +17,7 @@ The second command clones the related repositories, creates `MyGame` as an empty
 
 ## Related repositories
 
-This repository holds the machine-readable data. The prose, the project sources, and the SDK live elsewhere:
+This repository holds the machine-readable data. The prose, the project sources and the SDK are three repositories that `bootstrap.py` clones beside this one:
 
 | Repository | What it holds | How it fits |
 |---|---|---|
