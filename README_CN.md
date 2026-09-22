@@ -21,7 +21,7 @@ python Construct3-RAG/scripts/bootstrap.py --project MyGame
 
 | 仓库 | 内容 | 与本仓库的关系 |
 |---|---|---|
-| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档的 Markdown 版 | ACE、行为、设置各是做什么的；这里的 schema 只给名称和参数。 |
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档的 Markdown 版 | `data/c3-schemas/` 是名称和参数，这里说明它们做什么。 |
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 示例浏览器中的全部示例，以文件夹项目形式保存 | `data/c3-examples/` 是元数据，这里是源文件。 |
 | [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、特效和主题的模板与文档 | `data/c3-ts-defs/sdk/` 是类型接口，这里说明怎么用。 |
 
