@@ -664,3 +664,54 @@ change, 319 after.
 - A run copies a behavior block from an example under the id: the sentence
   in `generating-a-project.md` did not reach it; consider a `--properties`
   flag on the lookup that prints the block from an example.
+
+## Update 2026-09-22: what the block costs a session, and iteration 14
+
+The block is read in every session of every game project, by every model.
+Three of its parts were weighed against that:
+
+- The five lines on an unfilled `<path-to>`: gone. `install.py` fills the
+  path in, so a block it wrote explained a placeholder that was not in it and
+  sent the agent to `$CONSTRUCT3_RAG`, which the scripts read by themselves. A
+  hand-copied block left unfilled stops at `check_project.py`, the command of
+  the first step (`tests/test_project_tools.py`, an unfilled block says how to
+  point at the clone). One line is left: never guess this path.
+- The table row `Anything, at the start of the session |
+  Construct3-RAG/AGENTS.md`: gone. It sent every session to 9 469 characters
+  written for someone changing this repository; the two sections a game
+  project needs, the ACE lookup and the event sheet SOP, are two other rows of
+  the same table.
+- The list in step 1 of what the scripts do: cut, then put back by iteration
+  14, below.
+
+2 433 characters to 2 153.
+
+Iteration 14 repeats iteration 13 with the block cut in the second and third
+place at once: the same two cases, the same prompt that names the project's
+`AGENTS.md` and not the skill, Claude Haiku 4.5, four runs per case,
+`.local/docs/evidence/skill-evals/construct3-project/iteration-14/`.
+
+| | Iteration 13 | Iteration 14 |
+|---|---|---|
+| Assertions | all | all |
+| Read `SKILL.md` | 6 of 8 | 4 of 8 |
+| Changed the sheet with `edit_sheet.py` | 6 of 8 | 3 of 8 |
+| Ran the checker as the first script | 5 of 8 | 7 of 8 |
+| Tokens, seconds, calls, lost | 59 989, 136, 18.6, 2.9 | 60 628, 132, 21.1, 1.6 |
+
+Every run of both iterations passed every assertion, and the cost is the same
+within a deviation. What moved is what the runs read: `edit_sheet.py` was used
+by every run that opened `SKILL.md` and by none that did not, in both
+iterations, so the one number that decides the rest is how many open it, and
+it fell with the list that said what they would find there. The row, which the
+same runs no longer had, cost nothing: the checker, the step's own command,
+was reached earlier without it.
+
+The list is back. What stays cut is the row and the unfilled-path lines.
+
+Not verified: the row's saving. A subagent of this session starts under this
+repository and inherits its `CLAUDE.md` and `AGENTS.md`, so the file the row
+pointed at was in its context whether the row named it or not; both iterations
+ran that way, which makes them comparable to each other and blind to what the
+row costs a session that does not inherit it. The 9 469 characters are counted
+from the file, not from a run.
