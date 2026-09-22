@@ -104,19 +104,50 @@ change history, or how the author got there; no `#`, colours or BBCode.
 
 ## Project
 
+- Pixel art at a 320×180 viewport, *Nearest* sampling, *Letterbox integer
+  scale*; otherwise 1920×1080 and *Trilinear*. A one-screen game's layout
+  is the viewport's size.
 - One `ObjectRepository` layout, no event sheet, one instance of every type
-  the events create; nothing else there.
-- Object folders from about thirty types: one per screen (`MainMenu`,
-  `Game`, `Credits`) plus `Global` for Keyboard, Audio, AJAX, the arrays and
-  `Fader`; under the game folder by role (`Player`, `Enemies`, `UI`, `Props`,
-  `Pickups`, `Effects`, `Zones`, `Managers`). Two levels is the norm.
-- Layers bottom to top: `Background`, `World`, `HUD` at parallax 0, `Fader`.
-- A subsystem without a world object is an invisible Sprite carrying its
-  behaviors and custom actions: `GameManager` with Timer or Tween, `Camera`
-  with Scroll To. `Fader` is a Tiled Background with Tween on the top layer.
-- Sheets `GameEvents`, `MenuEvents`, `CreditsEvents` per screen; subsystems
-  (`PlayerEvents`, `EnemyEvents`, `SoundEvents`) included; `Globals` for
-  shared variables.
+  the events create; nothing else there. No global objects.
+- One sheet, `MainCode`, until about sixty types. Beyond that `GameEvents`,
+  `MenuEvents`, `CreditsEvents` per screen; subsystems (`PlayerEvents`,
+  `EnemyEvents`, `SoundEvents`) included; `Globals` for shared variables.
+- Object folders from about forty types, every type inside one and the
+  root empty: `System` (managers, camera, fader, input), `Player`, `World`,
+  `UI`, `Interactable`, `Global`, and one per extra screen (`MainMenu`,
+  `Credits`). One level. Below forty the list stays flat.
+- Layers bottom to top: `Background`, `World`, `UI` or `HUD` at parallax 0,
+  `Fader`; `Tutorial` on a layer of its own. Two or three per layout.
+- Collision apart from graphics. `PlayerCollision` is an invisible
+  one-colour Sprite carrying Platform or 8 Direction; `PlayerGraphics`
+  holds the animations and no behavior. The two are a container, and
+  *PlayerCollision: On created* sets the graphics' position and *Add child*
+  (X, Y, destroy with parent). Enemies the same, `EnemyCollision` with
+  `EnemyAnimations`. Ground is a Tilemap with Solid (`GroundCollision`)
+  under the art (`Background`, a Tiled Background); a shadow is a child
+  Sprite (`PlayerShadow`). Hierarchy, not Pin.
+- Movement behaviors run with *Default controls* off; the input events
+  call *Simulate control*.
+- What has no picture is a 16×16 one-colour Sprite, invisible, stretched
+  over its area when it has one: `GameManager` holding the Timers and value
+  Tweens the sheet reads; `Camera` with Scroll To (or Scroll To on
+  `PlayerCollision`); `Trigger`, `TeleportTrigger`, `FinishLine`,
+  `SpawnPoint`, `InvisibleWall` with Solid, tested with *On collision* or
+  *Is overlapping* and told apart by an instance variable.
+- `Fader`: a one-colour Tiled Background the size of the viewport on the
+  top layer, Tween opacity; *On tweens finished*: *Go to layout* or
+  *Restart layout*.
+- A light is a one-colour Sprite with *Additive* blend, soft-edged by a Glow
+  or Blur effect; darkness is a `Darkness` sprite or layer with
+  *Destination out* holes, on a layer with *Force own texture*.
+- Text is a SpriteFont in two games of three, the Text plugin in the third,
+  never both in one project.
+- Feel comes from behaviors: Tween on almost everything, Timer, Sine, Fade,
+  Flash, Rotate, Bullet, Particles; the effects used are HSL adjust, Glow,
+  Blur, Warp object.
+- Families for Z order (`ZOrderables`) and enemies; containers for the
+  collision and graphics pair and for an enemy with its parts. The player's
+  instance variables are `hp`, `maxHp`, `dead`.
 
 ## UI text
 
