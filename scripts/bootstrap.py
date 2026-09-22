@@ -83,7 +83,11 @@ def new_project(template: Path, target: Path, dry_run: bool) -> str:
     data = json.loads(proj.read_text(encoding="utf-8"))
     data["name"], data["uniqueId"] = target.name, unique_id()
     proj.write_text(json.dumps(data, indent="\t", ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
-    return f"{target.name}: created from {template.name} at {target}"
+    line = f"{target.name}: created from {template.name} at {target}"
+    if git():
+        subprocess.run(["git", "init", "-q"], cwd=target, check=False)
+        line += ", git initialised"
+    return line
 
 
 def main() -> int:

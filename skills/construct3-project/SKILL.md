@@ -34,6 +34,9 @@ exists and a name they reject does not.
   the user in one sentence what was installed.
 - A line `this copy of the construct3-project skill differs from the clone's`:
   run the command it prints, then repeat yours.
+- The project has no `.git`: run `git init` in it before the first edit, so
+  that every change to the sheets can be seen and undone. Commit when the
+  user asks.
 
 ## Scripts
 
