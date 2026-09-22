@@ -303,6 +303,22 @@ def test_bootstrap_creates_the_project_from_the_template_and_installs_the_skill(
     assert (game / "AGENTS.md").read_text(encoding="utf-8") == block
 
 
+def test_bootstrap_puts_a_named_project_beside_the_clones_whatever_the_directory(tmp_path):
+    """The README's `--project MyGame` is a name, and a name goes where the clones are: a user or an
+    agent that runs the command from somewhere else gets one set of folders, not a second one."""
+    beside = siblings(tmp_path / "GitHub")
+    tmpl = str(template(tmp_path / "tmpl"))
+    elsewhere = tmp_path / "Desktop"
+    elsewhere.mkdir()
+    code, out = bootstrap(elsewhere, "--beside", str(beside), "--template", tmpl, "--project", "MyGame")
+    assert code == 0, out
+    assert (beside / "MyGame" / "project.c3proj").is_file() and not (elsewhere / "MyGame").exists()
+    # a path spelt out is still read from the directory the command was run in
+    code, out = bootstrap(elsewhere, "--beside", str(beside), "--template", tmpl, "--project", "./Other")
+    assert code == 0, out
+    assert (elsewhere / "Other" / "project.c3proj").is_file() and not (beside / "Other").exists()
+
+
 def test_bootstrap_leaves_a_folder_that_is_not_a_project(tmp_path):
     beside = siblings(tmp_path / "GitHub")
     (tmp_path / "docs").mkdir()
@@ -672,20 +688,22 @@ def test_ace_lookup_counts_per_category_what_does_not_fit(built):
 
 
 def test_ace_lookup_points_a_shared_ace_to_an_object(built, tmp_path):
-    """Pick nearest/furthest is every world object's, not System's. A miss under System or
-    under a plugin used to look like the ACE did not exist; a Doubao run concluded so and
-    picked by lowest distance instead."""
+    """Pick nearest/furthest is every world object's, not System's, and so is Set color. The
+    shared entry is the answer and comes first: printed after a line saying nothing was found,
+    one Doubao run picked by lowest distance instead, another took a Sprite to have no color
+    action and went to the manual, which does not list the shared ACEs either, to confirm it."""
     code, out = tool(built, "lookup_ace", "System", "nearest")
-    assert code == 1 and "nothing under System has every word of 'nearest'" in out
-    assert "shared by every world object, looked up on one of them (lookup_ace.py <Object> nearest)" in out
-    assert "condition  pick-nearestfurthest " in out
+    assert code == 0 and out.startswith("every world object has these, in plugins/_common.json")
+    assert "write: {\"id\": \"pick-nearestfurthest\", \"objectClass\": \"<Object>\"" in out
+    assert "lookup_ace.py <Object> nearest writes its name in" in out
     shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
-    code, out = tool(tmp_path, "lookup_ace", "Sprite", "overlapping")
-    assert code == 1 and "is-overlapping-another-object" in out and "not under Sprite" in out
+    code, out = tool(tmp_path, "lookup_ace", "Sprite", "color")
+    assert code == 0 and out.startswith("every world object has these") and "set-default-color" in out
+    assert "nothing under" not in out
     code, out = tool(built, "lookup_ace", "Coin", "nearest")
     assert code == 0 and "write: {\"id\": \"pick-nearestfurthest\", \"objectClass\": \"Coin\"" in out
     code, out = tool(built, "lookup_ace", "System", "wiat")
-    assert "shared by every world object" not in out
+    assert code == 1 and "every world object has these" not in out
 
 
 def test_ace_lookup_prints_a_miss_on_stdout(built):
@@ -693,10 +711,10 @@ def test_ace_lookup_prints_a_miss_on_stdout(built):
     alone printed nothing, and PowerShell wrapped each line in a NativeCommandError record,
     which is how two Doubao runs read it."""
     env = dict(os.environ, PYTHONIOENCODING="utf-8")
-    p = subprocess.run([sys.executable, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), "Sprite", "color"],
+    p = subprocess.run([sys.executable, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), "Sprite", "aniamtion"],
                        cwd=built, env=env, capture_output=True, text=True, encoding="utf-8")
     assert p.returncode == 1
-    assert p.stdout.startswith("nothing under Sprite has every word of 'color'\n") and "set-default-color" in p.stdout
+    assert p.stdout.startswith("nothing under Sprite has every word of 'aniamtion'\n") and "set-animation" in p.stdout
     assert p.stderr == ""
     p = subprocess.run([sys.executable, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), "Sprte"],
                        cwd=built, env=env, capture_output=True, text=True, encoding="utf-8")

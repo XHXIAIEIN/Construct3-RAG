@@ -23,9 +23,23 @@ command block they were given and skipping a row of a table.
 
 ## Decision
 
-- The README opens with a section of two commands: clone this repository,
-  then `python Construct3-RAG/scripts/bootstrap.py --project MyGame`. Both
-  READMEs carry it, before the data.
+- The README opens with a section of two commands: clone this repository
+  into `$HOME/Construct3`, then run
+  `$HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame`.
+  Both READMEs carry it, before the data. The folder is written out rather
+  than left to the working directory, because the working directory is what
+  varies between sessions: a clone that lands somewhere new gives
+  `bootstrap.py` a new `ROOT.parent` and a second set of clones, 1.4 GB of
+  siblings beside a 2.4 GB repository, and neither side looks for the set
+  that already exists. Written out, running the commands again stops at
+  `git clone`, which refuses a folder that holds files. `~` is not the
+  spelling: PowerShell hands it to Git unexpanded and Git makes a folder
+  named `~` in the working directory. `$HOME` is expanded by PowerShell,
+  bash and zsh; `cmd.exe` has `%USERPROFILE%`.
+- `--project` takes a name or a path. A bare `MyGame` is created beside the
+  clones, so that the two commands gather everything in one folder from any
+  directory; a path spelt out — a separator, a drive, `~`, `.` — is read
+  from the working directory, as a path is everywhere else.
 - `scripts/bootstrap.py` clones the three repositories beside this one when
   they are missing, `Construct-Example-Projects` with `--depth 1` (its
   history is 475 MiB packed; one commit is what the skill reads), creates
@@ -57,7 +71,17 @@ folder with its own name and id and the skill installed in it; a second run
 changes nothing and fetches nothing; a folder with files that is not a
 project is left as it is; `--dry-run` names the four clones it would make
 and writes nothing; the template is cloned from a local repository given
-as a URL. Run live against the editor's r495.2 empty project on this
+as a URL; `--project MyGame` run from another directory lands beside the
+clones and `--project ./Other` does not.
+
+The shell behaviour behind the written-out path, on Windows 11 with Git for
+Windows: `git clone <url> ~/c3tilde/x` from PowerShell created a folder
+named `~` in the working directory, while `$HOME/Construct3` reached
+`C:\Users\<user>/Construct3` from both PowerShell and Git Bash and
+`%USERPROFILE%` reached it from `cmd.exe`; `git clone` creates the
+intermediate folders of a target path. The clones measured beside this
+repository: `Construct-Example-Projects` 1.2 GB with its shallow history,
+`Construct3-Manual` 175 MB, `Construct-Addon-SDK` 2.4 MB. Run live against the editor's r495.2 empty project on this
 machine: the created project passes `check_project.py` (`ok: 0 object
 types, 0 families, 1 layouts, 1 sheets`).
 
