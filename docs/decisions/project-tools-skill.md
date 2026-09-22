@@ -642,9 +642,11 @@ error record with `CategoryInfo` and `FullyQualifiedErrorId` around it, and
 a harness that shows stdout alone would have shown nothing. The miss is the
 answer to the question asked, so it prints where a hit does; the exit code
 still says 1, and a usage error, an unknown object or a missing clone, stays
-on stderr. The drift note of every script is a diagnostic and stays there;
-the log shows it wrapped the same way on every run of a stale copy, which
-is a reason to install the skill through `bootstrap.py`, not to move it.
+on stderr. The note that the installed copy differs from the clone's moved
+with it, on the maintainer's decision: the checker already printed it as a
+warning among its findings, the other three scripts printed it on stderr,
+and the log shows it wrapped the same way on every call of a stale copy. It
+is now the first line of every script's output while the copy is stale.
 
 Sweep, `.local/docs/evidence/doubao-logs/sweep-old.json` against
 `sweep-new.json`, 2066 runs over the 524 official examples and the nine

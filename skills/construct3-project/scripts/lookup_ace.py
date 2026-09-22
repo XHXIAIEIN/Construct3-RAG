@@ -241,7 +241,7 @@ def main() -> int:
     project = c3.Project.open(args, findings, needs_project=False)
     drift = c3.skill_drift(project.rag)
     if drift:
-        print(f"note: {drift}", file=sys.stderr)
+        print(f"note: {drift}")
     return ace_lookup(project, args.object, args.words, args.limit)
 
 
