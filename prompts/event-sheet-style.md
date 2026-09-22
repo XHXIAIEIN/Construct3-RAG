@@ -7,17 +7,21 @@ Studios; the counts behind every rule are in
 `docs/decisions/event-sheet-design-guidance.md`). A sheet the user already
 keeps has conventions of its own: follow those where they exist.
 
-## Three habits to avoid
+## Five habits to avoid
 
-`edit_sheet.py` refuses a plan whose new events show the first two, and
-warns on the third; `check_project.py --style` reports all three over a
-project the agent wrote. Fix the shape, not the warning.
+`check_project.py --style` reports the last four over a project the agent
+wrote; `edit_sheet.py` refuses a plan whose new events add the long block or
+the uncommented cases, whose fix is one comment, and warns on the tree and
+the ladder. The pile of globals has no mechanical form and stays here. Fix
+the shape, not the warning.
 
 | Habit | The examples instead |
 |-------|----------------------|
 | State globals piled at the top of the sheet: `touchSX`, `foodX`, `tailUID`, `nextX` | Only what several groups read is global. State one group owns is that group's first children: a static local for what outlives the tick (`touchStartX` in `Player Controls`), a plain local for what is recomputed each tick. A value one event computes and reads is a local of that event, set in an unconditioned sub-event. What describes an instance is its instance variable (`dir` on the head), not a global. A link to an instance is *Pick children* or a condition, not a stored UID |
 | A block of 20 actions with nothing between them | A comment action every three to five actions, `Clear the board.`, `Create the head.`, `Show the start panel.`, and the block stays one block |
 | A decision as a tree three sub-events deep, one call per leaf | One gate event with the shared conditions, then the cases as flat sibling sub-events, each with its comment, `Else` with conditions as the else-if; or one expression when the outcomes differ only by a number, `(round(angle(x0, y0, Touch.X, Touch.Y) / 90) % 4 + 4) % 4` |
+| The same event five times over with other values: one per option, per building, per state, `wood < 4`, `wood < 8`, `wood < 12` | One event over what differs: the option's instance variables (`costWood`, `kind`), a family, a Dictionary loaded from a project file, the state's name inside the animation name |
+| Cases as sub-events with no comment on any of them | A comment above each case, saying which case it is: `Player is on the floor.`, `Otherwise, end the slide.` |
 
 ## The shape
 

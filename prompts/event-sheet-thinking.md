@@ -40,7 +40,7 @@ the clone.
    hierarchy or family. Add an instance variable only when no condition can
    answer the question.
 2. **The engine owns the state it already has.** Position, overlap, dragging,
-   tween progress, animation frame, parent and child all have conditions and
+   tween progress, animation name and frame, parent and child all have conditions and
    expressions. A boolean mirroring one (`occupied`, `isDragging`) drifts as
    soon as instances move, and every event that writes it is a place to
    forget. Store only what nothing can ask (level, score, where a drag
@@ -94,6 +94,7 @@ program transcribed into events even when no picking smell shows.
 | One thing after another inside one interaction: knock back, then re-enable; fade out, then go to layout | *Wait* and *Wait for previous actions* in the same block; the picked instances are kept | A flag set now and a Timer or `On any finished` elsewhere to finish the sequence |
 | Reacting to a state any instance may reach, whoever started it | Timer *On timer*; Tween *On any finished* | A *Wait* that assumes one caller |
 | HUD and UI that stay on screen while the layout scrolls | A layer with parallax 0, 0; *Global* on that layer when every layout shows the same HUD | Every-tick *Set position* from `ViewportLeft`/`ViewportTop` |
+| A panel, menu or popup opened and closed as a whole | Its own layer, *Initially visible* off: *Set layer visible*; to fade it, *Set layer opacity* from a *Tween (value)* on a manager object (airborne-explorer, `MenuUI` and `ShopUI`; eventide, `PauseUI`) | *Set visible* on each of its objects, in every event that opens or closes it |
 | A set of objects treated alike | Family; instance variables and behaviors declared on the family | Duplicate event blocks per object type |
 | Objects that belong together | Container (created, destroyed and picked together); hierarchy for parent-relative position | UID variables, or every-tick position copying |
 
@@ -106,9 +107,10 @@ file", plugin-reference/json.md, plugin-reference/advanced-random.md
 project-primitives/events/functions.md,
 project-primitives/events/custom-actions.md,
 project-primitives/events/groups.md, system-reference/system-actions.md
-"Set group active", "Set time scale", "Set object time scale", "Wait", "Wait
-for previous actions to complete", project-primitives/layers.md "Parallax",
-"Global layers", project-primitives/objects/families.md,
+"Set group active", "Set time scale", "Set object time scale", "Set layer
+visible", "Set layer opacity", "Wait", "Wait for previous actions to
+complete", project-primitives/layers.md "Parallax", "Global layers",
+"Initially visible", project-primitives/objects/families.md,
 project-primitives/objects/containers.md; the pause, hit-stop and wait rows
 are sourced in the pitfalls, "Wait and time scale"]
 
