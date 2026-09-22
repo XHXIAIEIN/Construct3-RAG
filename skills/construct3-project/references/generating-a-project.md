@@ -42,10 +42,14 @@ relations, an official example with the same behaviors, the Native first and
 Feel tables, the layout of the sheet. Then:
 
 1. Write the design into the generator: the constants at the top, the
-   objects and their variables and behaviors, the layouts, the groups of the
-   event sheet in the order the guide gives (Setup, Input, ..., Restart).
+   objects and their variables and behaviors, the layouts, then the event
+   sheet one group at a time, a `module_*()` function per group in the order
+   the guide gives (Setup, Input, ..., Restart). Write one module, run the
+   generator, read the sheet it printed, then write the next; a game of ten
+   groups is ten short runs, not one long one.
 2. Run the generator until its last line starts with `ok:`. It ends by
-   running the checker on what it wrote and exits with the checker's code:
+   running the checker with `--style` on what it wrote and exits with the
+   checker's code:
 
    ```bash
    python tools/build_project.py
@@ -109,8 +113,37 @@ habits; they are what made rerunning safe in Water Sort.
   picks its own instances. Inside a family's block, write the family's name.
 - Locals declared as children of a function block are not in scope for the
   block's own actions; put the actions that read them in a child block.
-- Comments in the sheet (`comment(...)`) say what a group is for and which
-  fact a block relies on; they are what the user reads in the editor.
+- A group is a `module(title, events=[...], variables=[...],
+  procedures=[...])`: it lays the group out as the official examples do,
+  variables first, then functions and custom actions, then events. A
+  top-level event is `event("What it does.", conds, acts)`, a function or
+  custom action `procedure("What it does.", func(...))`, both with the
+  comment the examples put above every event; the description of a
+  procedure is the same sentence. A variable one group reads is declared in
+  its module, not at the top of the sheet.
+- A long block is `steps(("Reset the score.", [...]), ("Clear the board.",
+  [...]))`: a comment action, then three to five actions, per batch. A
+  decision is `cases(gate, [("Case one.", conds, acts), ("Otherwise.",
+  None, acts)])`: one gate event, flat sibling cases with a comment each,
+  `None` for Else. The checker's `--style` warns where a sheet departs from
+  these three shapes; the names, folders, layers and `ObjectRepository`
+  layout it cannot check are in
+  `Construct3-RAG/prompts/event-sheet-style.md`.
+
+  ```python
+  def module_player() -> dict:
+      return module("Player",
+          variables=[var("P_SPEED", "number", 200, "Run speed.", const=True)],
+          procedures=[*procedure("Jump when on the floor.", custom_action("Player", "Jump", [...]))],
+          events=[
+              *event("Jump.", [on_key("Space")], [call_custom("Player", "Jump")]),
+              cases([on_touch_end()], [
+                  ("Swipe right: dash.", [cmp2("Touch.X - touchStartX", GT, "SWIPE")], [call_custom("Player", "Dash")]),
+                  ("Swipe left: slow.", [cmp2("touchStartX - Touch.X", GT, "SWIPE")], [call_custom("Player", "Slow")]),
+                  ("Otherwise a tap: jump.", None, [call_custom("Player", "Jump")]),
+              ]),
+          ])
+  ```
 
 ## Keeping the editor's changes
 

@@ -143,21 +143,34 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
 
 def part(rows: list[Row], first: int, last: int | None, room: int | None) -> tuple[list[str], int | None]:
     """The lines of the rows numbered first to last, the first of them under the
-    heads of the rows it sits in, cut before the row that would pass room
-    characters. Returns the lines and the number printing stopped before."""
-    lines: list[str] = []
-    shown: set[int] = set()
-    used = 0
+    heads of the rows it sits in, cut before the event that would pass room
+    characters. The rows of one event number print together, the comments and
+    variables above an event with it, so the number printing stopped before is
+    always past the first: a continuation from it advances. Returns the lines
+    and that number, None when the range was printed whole."""
+    # The rows of one event number, its comments and variables and then the event.
+    groups: list[tuple[int, list[Row]]] = []
     for row in rows:
         if row.number < first or (last is not None and row.number > last):
             continue
-        new = [line + ("  [context]" if i == 0 else "") for a in row.above if id(a) not in shown
-               for i, line in enumerate(a.head)] + row.head + row.body
-        used += sum(len(line) + 1 for line in new)
-        if room is not None and lines and used > room:
-            return lines, row.number
-        shown.update(id(a) for a in (*row.above, row))
+        if groups and groups[-1][0] == row.number:
+            groups[-1][1].append(row)
+        else:
+            groups.append((row.number, [row]))
+    lines: list[str] = []
+    shown: set[int] = set()
+    used = 0
+    for number, group in groups:
+        new: list[str] = []
+        for row in group:
+            new += [line + ("  [context]" if i == 0 else "") for a in row.above if id(a) not in shown
+                    for i, line in enumerate(a.head)] + row.head + row.body
+            shown.update(id(a) for a in (*row.above, row))
+        size = sum(len(line) + 1 for line in new)
+        if room is not None and lines and used + size > room:
+            return lines, number
         lines += new
+        used += size
     return lines, None
 
 

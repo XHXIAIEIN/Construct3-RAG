@@ -31,11 +31,14 @@ NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
 
 
 class Findings:
-    """Errors fail the run; warnings are printed and do not. Each is kept once."""
+    """Errors fail the run; warnings are printed and do not. Each is kept once.
+    A style finding is a warning that also keeps its kind, so that edit_sheet.py
+    can refuse a plan for the kinds whose fix is one comment."""
 
     def __init__(self) -> None:
         self.errors: list[str] = []
         self.warnings: list[str] = []
+        self.style: list[tuple[str, str]] = []      # (kind, message), kind one of run, comment, tree
 
     def err(self, msg: str) -> None:
         if msg not in self.errors:
@@ -44,6 +47,11 @@ class Findings:
     def warn(self, msg: str) -> None:
         if msg not in self.warnings:
             self.warnings.append(msg)
+
+    def style_finding(self, kind: str, msg: str) -> None:
+        if msg not in self.warnings:
+            self.style.append((kind, msg))
+        self.warn(msg)
 
 
 def stop_with_a_sentence(script: str, findings: Findings) -> None:

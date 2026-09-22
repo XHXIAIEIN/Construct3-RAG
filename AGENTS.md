@@ -71,6 +71,9 @@ Interactions, data storage, timing, animation: read and follow
   tween or table rebuilt from variables: redesign.
 - A runtime fact learned from a project goes into
   `prompts/event-sheet-pitfalls.md`, with its source.
+- Events written into a project or a generator follow
+  `prompts/event-sheet-style.md`: how the official examples organise, name
+  and comment a sheet.
 
 ## 4. Use from another project
 
@@ -160,7 +163,7 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | Install and run | `docs/guide/quick-start.md` |
 | HTTP API | `docs/guide/api-reference.md` |
 | Data files and fields | `docs/guide/data-format.md` |
-| Event sheet design, worked case, sourced pitfalls | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md`, `docs/decisions/event-sheet-design-guidance.md` |
+| Event sheet design, worked case, sourced pitfalls, the examples' authoring style | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md`, `prompts/event-sheet-style.md`, `docs/decisions/event-sheet-design-guidance.md` |
 | Slot case as a program, hand-editing project JSON | `prompts/references/` |
 | ACE lookup, sheet printer, sheet editor, checker and generator template for a game project; changing and evaluating them | `skills/construct3-project/SKILL.md`, `skills/AGENTS.md` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
