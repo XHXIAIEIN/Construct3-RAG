@@ -73,6 +73,69 @@ def check_common_coverage(categories: dict[str, dict[str, list[dict]]], lang_com
         )
 
 
+# ── Shared world-instance properties ─────────────────────────────────────
+
+# The properties every world instance has. Their text is in the language
+# pack, but under ``ui.bars.properties.instance``: the ``plugins._common``
+# entry a plugin's properties would come from carries ACE text only, so the
+# export used to leave ``_common`` with an empty properties dict.
+#
+# ``lang`` is the path to the text, ``written`` the key of the instance in a
+# project file and the unit when the properties bar shows another one. Where
+# the two disagree the file wins, and a reader that has only the bar's text
+# writes degrees into a field of radians. The keys and their values were
+# measured over the 33 225 world instances of the official examples
+# (docs/decisions/common-instance-properties.md); the names match
+# ``IWorldInstance`` of ``data/c3-ts-defs/``.
+#
+# Rows of the bar that are not stored on the instance are left out: Layer and
+# Z index are its place in the layout, Instance variables, Behaviors and
+# Effects have blocks of their own. The origin is in the world block but has
+# no row, being set per animation frame; docs/guide/data-format.md has it.
+COMMON_PROPERTIES: tuple[tuple[str, tuple[str, ...], str], ...] = (
+    ("x", ("position", "x"), "world.x"),
+    ("y", ("position", "y"), "world.y"),
+    ("z", ("position", "z"), "world.z, or world.zElevation in a project saved before r470"),
+    ("width", ("size", "width"), "world.width"),
+    ("height", ("size", "height"), "world.height"),
+    ("depth", ("size", "depth"), "world.depth, 3D only"),
+    ("angle", ("angle",), "world.angle, in radians; the properties bar shows degrees"),
+    ("color", ("color",), "world.color, [r, g, b, a] from 0 to 1, white [1, 1, 1, 1] for none"),
+    ("opacity", ("opacity",), "world.color[3], from 0 to 1; there is no opacity key"),
+    ("blendMode", ("blend-mode",), 'world.blendMode, a name such as "additive"; absent is normal'),
+    ("uid", ("uid",), "uid, beside world"),
+    ("tags", ("tags",), "tags, beside world"),
+)
+
+
+def build_common_properties(lang_text: dict) -> dict[str, dict[str, str]]:
+    """Return ``{id: {name, desc, written}}`` for the shared world-instance
+    properties, in the language of ``lang_text`` (one pack's ``text``).
+
+    Raises ``ValueError`` when the pack has no text at a path the table
+    names, so that a row renamed or dropped upstream stops the export
+    instead of exporting a property without its name.
+    """
+    instance = lang_text.get("ui", {}).get("bars", {}).get("properties", {}).get("instance", {})
+    out: dict[str, dict[str, str]] = {}
+    missing: list[str] = []
+    for prop_id, path, written in COMMON_PROPERTIES:
+        entry: dict = instance
+        for part in path:
+            entry = entry.get(part, {}) if isinstance(entry, dict) else {}
+        if not isinstance(entry, dict) or not entry.get("name"):
+            missing.append("ui.bars.properties.instance." + ".".join(path))
+            continue
+        out[prop_id] = {"name": entry["name"], "desc": entry.get("desc", ""), "written": written}
+    if missing:
+        raise ValueError(
+            "language pack has no text for shared instance properties: "
+            + ", ".join(missing)
+            + ". Update COMMON_PROPERTIES in src/ingest/common_aces.py against the current release."
+        )
+    return out
+
+
 # ── Editor bundle extraction ─────────────────────────────────────────────
 
 
