@@ -125,8 +125,9 @@ first.
   essentially custom actions"; project-primitives/events/custom-actions.md
   "Picking", "Family custom actions"; example: custom-action-overrides;
   observed: mergeGame, 2026-09-17]
-- Parameters are bare identifiers in expressions: `Self.X + OffsetX`. Prefer
-  `posX` over `x` for legibility. [example: 3d-castle-maze, function OffsetHand]
+- Parameters are bare identifiers in expressions: `Self.X + OffsetX`, not
+  `Functions.OffsetX` or `Self.OffsetX`. [example: 3d-castle-maze, function
+  OffsetHand]
 
 ## Timer
 
