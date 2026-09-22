@@ -688,19 +688,19 @@ folders and sheets to the object and project habits of the studio cohort,
 after the user named several from memory (a collision object apart from its
 graphics, one-colour helper sprites, a viewport-sized Fader, blend modes and
 effects for light, object folders) and asked what else the cohort does.
-Survey: `.local/docs/evidence/example-style-survey/survey_objects.py` and
-`survey_tech.py` with their JSON, over the 221 studio
+Survey: `.local/docs/evidence/example-style-survey/survey_project.py`, one
+pass per project, and its JSON, over the 221 studio
 projects (`cohorts.json`), the other 303 for contrast. The user's
 `arcanigma` is not in the clone.
 
 | Habit | Studio, of 221 | The other 303 |
 |-------|----------------|---------------|
 | Collision and graphics named as a pair (`PlayerCollision` + `PlayerGraphics` 57, `+ PlayerAnimations` 7) | 75 pairs; linked at runtime by *On created*: set position, *Add child* in 48, hierarchy in the layout 10, Pin 10, container without a link 2, nothing found 5 | 1 pair |
-| Invisible Sprite with a movement behavior and a visible child | 44 projects | 2 |
+| Invisible Sprite with a movement behavior and a visible child in the layout | 25 projects | 2 |
 | Tilemap with Solid | 76 | 6 |
 | `GroundCollision`, `GroundCollider`, `LevelCollision` | 8 | 0 |
 | Hierarchy (a parent in a layout) / Pin | 99 / 26 projects | 30 / 11 |
-| Invisible Sprites | 548 types in 175 projects; frames 16×16 in 184, 32×32 in 39, 64×64 in 32; one colour 217, two 77; behaviors Tween 96, Timer 68, Scroll To 43, Platform 31, Solid 12; names `GameManager` 58, `Camera` 30, `TeleportTrigger` 8, `Trigger` 4, `FinishLine` 3, `SpawnPoint` 2, `GameTimer` 2 | 130 in 46 |
+| Invisible Sprites without a movement behavior | 494 types in 155 projects; frames 16×16 in 180, 32×32 in 36, 64×64 in 32; one colour 168, two 74; behaviors Tween 74, Timer 57, Scroll To 31, Solid 11; names `GameManager` 58, `Camera` 30, `TeleportTrigger` 8, `Trigger` 4, `FinishLine` 3, `SpawnPoint` 2, `GameTimer` 2 | 130 in 46 |
 | What events do with a zone or trigger type | *On collision* 29, *On created* 16, boolean instance variable 16, *Is overlapping* 14 | |
 | `GameManager` and the like | actions *Start timer* 77, *Tween value* 45, *Stop timer* 13; Timer on 46, Tween on 43; no custom action block on any | |
 | Scroll To host | a type named `Camera` 28, `PlayerCollision` 24, another 6 | |
