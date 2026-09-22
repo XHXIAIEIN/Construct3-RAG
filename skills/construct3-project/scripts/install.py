@@ -5,9 +5,10 @@
 Copies the skill's folder from the Construct3-RAG clone into the project's
 skills directory, and adds the Construct 3 block to the project's AGENTS.md
 when no instruction file there names the clone yet, with the clone's path
-filled in. Run again, it refreshes every copy the project holds and leaves
-the instruction files alone. The clone is the source: run from an installed
-copy, it hands over to the clone's own install.py.
+filled in, and the line `@AGENTS.md` to CLAUDE.md. Run again, it refreshes
+every copy the project holds and leaves the instruction files alone. The
+clone is the source: run from an installed copy, it hands over to the clone's
+own install.py.
 """
 import argparse
 import re
@@ -94,9 +95,16 @@ def add_block(project: Path, rag: Path, skill_path: str, dry_run: bool) -> list[
     did = "added" if before.strip() else "created with"
     notes.append(f"AGENTS.md: {'would be ' if dry_run else ''}{did} the Construct 3 block, "
                  f"Construct3-RAG: {rag.as_posix()}")
+    # Claude Code before 2.1.277 reads CLAUDE.md only, and any version reads it
+    # instead of AGENTS.md when both exist: one line there leads to the block.
     claude = project / "CLAUDE.md"
-    if claude.exists() and "@AGENTS.md" not in claude.read_text(encoding="utf-8"):
-        notes.append("CLAUDE.md: Claude Code reads it instead of AGENTS.md; add the line @AGENTS.md to it")
+    had = claude.read_text(encoding="utf-8") if claude.exists() else ""
+    if "@AGENTS.md" not in had:
+        if not dry_run:
+            claude.write_text((had.rstrip("\n") + "\n\n" if had.strip() else "") + "@AGENTS.md\n",
+                              encoding="utf-8", newline="\n")
+        notes.append(f"CLAUDE.md: {'would be ' if dry_run else ''}{'added' if had.strip() else 'created with'} "
+                     f"the line @AGENTS.md, which Claude Code follows to the block")
     return notes
 
 
@@ -130,7 +138,8 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="Install the construct3-project skill in a Construct 3 game project, or refresh the copies it "
                     "holds, from the Construct3-RAG clone this script sits in. Adds the Construct 3 block to the "
-                    "project's AGENTS.md when no instruction file there names the clone yet. Safe to run again.",
+                    "project's AGENTS.md when no instruction file there names the clone yet, and the line @AGENTS.md "
+                    "to CLAUDE.md. Safe to run again.",
         epilog="examples:\n"
                "  python install.py                          into the project found from the current directory\n"
                "  python install.py --project ../MyGame --into .claude/skills\n"

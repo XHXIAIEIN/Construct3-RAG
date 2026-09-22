@@ -238,6 +238,103 @@ def test_install_outside_a_project_says_what_to_pass(tmp_path):
     assert code != 0 and "--project" in out and "Traceback" not in out
 
 
+def test_install_leads_claude_code_to_the_block_through_claude_md(tmp_path):
+    """Claude Code reads CLAUDE.md when it exists; a novice's project has none, or one without the line."""
+    root = new_project(tmp_path / "game")
+    code, out = install(root)
+    assert code == 0 and "CLAUDE.md: created with the line @AGENTS.md" in out
+    assert (root / "CLAUDE.md").read_text(encoding="utf-8") == "@AGENTS.md\n"
+    root = new_project(tmp_path / "other")
+    (root / "CLAUDE.md").write_text("# Mine\n", encoding="utf-8")
+    code, out = install(root)
+    assert code == 0 and "CLAUDE.md: added the line @AGENTS.md" in out
+    assert (root / "CLAUDE.md").read_text(encoding="utf-8") == "# Mine\n\n@AGENTS.md\n"
+    code, out = install(root)
+    assert "CLAUDE.md" not in out
+
+
+# --- bootstrapping a machine from the clone alone ---------------------------------------------
+def bootstrap(root: Path, *args: str) -> tuple[int, str]:
+    return run(root, REPO / "scripts" / "bootstrap.py", *args)
+
+
+def template(folder: Path) -> Path:
+    """The empty project as its repository holds it, reduced to the keys the checker reads."""
+    folder.mkdir(parents=True)
+    (folder / "project.c3proj").write_text(json.dumps({
+        "name": "New project", "uniqueId": "he3qe448adg", "properties": {},
+        "layouts": {"items": ["Layout 1"], "subfolders": []},
+        "eventSheets": {"items": ["Event sheet 1"], "subfolders": []}}), encoding="utf-8")
+    (folder / "layouts").mkdir()
+    (folder / "layouts" / "Layout 1.json").write_text(json.dumps({"name": "Layout 1", "layers": [], "sid": 1}), encoding="utf-8")
+    (folder / "eventSheets").mkdir()
+    (folder / "eventSheets" / "Event sheet 1.json").write_text(json.dumps({"name": "Event sheet 1", "events": [], "sid": 2}), encoding="utf-8")
+    return folder
+
+
+def siblings(folder: Path) -> Path:
+    for name in ("Construct3-Manual", "Construct-Addon-SDK", "Construct-Example-Projects"):
+        (folder / name).mkdir(parents=True)
+        (folder / name / "README.md").write_text("", encoding="utf-8")
+    return folder
+
+
+def test_bootstrap_creates_the_project_from_the_template_and_installs_the_skill(tmp_path):
+    beside = siblings(tmp_path / "GitHub")
+    game = tmp_path / "MyGame"
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--template", str(template(tmp_path / "tmpl")),
+                          "--project", str(game))
+    assert code == 0, out
+    assert out.count("already at") == 3 and f"MyGame: created from tmpl at {game}" in out
+    assert out.rstrip().splitlines()[-1] == f"ok: read {INSTALLED}/SKILL.md"
+    proj = json.loads((game / "project.c3proj").read_text(encoding="utf-8"))
+    assert proj["name"] == "MyGame" and re.fullmatch(r"[a-z0-9]{11}", proj["uniqueId"]) and proj["uniqueId"] != "he3qe448adg"
+    assert (game / INSTALLED / "SKILL.md").is_file()
+    assert f"- Construct3-RAG: {REPO.as_posix()}" in (game / "AGENTS.md").read_text(encoding="utf-8")
+    assert (game / "CLAUDE.md").read_text(encoding="utf-8") == "@AGENTS.md\n"
+    # the clones are not beside the Construct3-RAG clone here, so the block gets a line for each
+    block = (game / "AGENTS.md").read_text(encoding="utf-8")
+    assert f"- Construct3-Manual: {(beside / 'Construct3-Manual').as_posix()}" in block
+    assert block.index("- Construct3-RAG:") < block.index("- Construct3-Manual:") < block.index("Anything that changes")
+    # a second run finds everything in place
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--project", str(game))
+    assert code == 0 and "already current" in out and "created from" not in out
+    assert (game / "AGENTS.md").read_text(encoding="utf-8") == block
+
+
+def test_bootstrap_leaves_a_folder_that_is_not_a_project(tmp_path):
+    beside = siblings(tmp_path / "GitHub")
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "notes.txt").write_text("", encoding="utf-8")
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--template", str(template(tmp_path / "tmpl")),
+                          "--project", str(tmp_path / "docs"))
+    assert code == 1 and "is not empty and holds no project.c3proj" in out
+    assert sorted(p.name for p in (tmp_path / "docs").iterdir()) == ["notes.txt"]
+
+
+def test_bootstrap_dry_run_says_the_clones_it_would_make(tmp_path):
+    code, out = bootstrap(tmp_path, "--beside", str(tmp_path / "GitHub"), "--project", str(tmp_path / "MyGame"),
+                          "--dry-run")
+    assert code == 0 and "nothing was done" in out, out
+    assert out.count("would run git clone") == 4 and "--depth 1 https://github.com/Scirra/Construct-Example-Projects" in out
+    assert not (tmp_path / "GitHub").exists() and not (tmp_path / "MyGame").exists()
+
+
+@pytest.mark.skipif(shutil.which("git") is None, reason="git is not installed")
+def test_bootstrap_clones_the_template_repository_beside_the_clone(tmp_path):
+    source = template(tmp_path / "src" / "Construct3-New-Project")
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@t"]
+    subprocess.run([*git, "init", "-q"], cwd=source, check=True)
+    subprocess.run([*git, "add", "."], cwd=source, check=True)
+    subprocess.run([*git, "commit", "-q", "-m", "empty project"], cwd=source, check=True)
+    beside = siblings(tmp_path / "GitHub")
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--template", source.as_uri(),
+                          "--project", str(tmp_path / "MyGame"))
+    assert code == 0, out
+    assert (beside / "Construct3-New-Project" / "project.c3proj").is_file()
+    assert (tmp_path / "MyGame" / "project.c3proj").is_file() and not (tmp_path / "MyGame" / ".git").exists()
+
+
 def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):
     script = project / INSTALLED / "scripts" / "print_sheet.py"
     script.write_text(script.read_text(encoding="utf-8") + "\n# edited\n", encoding="utf-8")
