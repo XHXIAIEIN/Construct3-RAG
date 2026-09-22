@@ -65,6 +65,9 @@ def seed_load_errors(root: Path) -> None:
     collect = next(e for e in rows if e["eventType"] == "custom-ace-block")
     add_score = next(e for e in rows if e["eventType"] == "function-block")
 
+    def first_block(group: dict) -> dict:    # the comment above it is the group's first child
+        return next(e for e in group["children"] if e["eventType"] == "block")
+
     tween, call = collect["actions"]
     collect["actions"] = [tween]                # a trigger inside a custom action
     collect["children"] = [{
@@ -74,10 +77,10 @@ def seed_load_errors(root: Path) -> None:
         "actions": [call],
         "sid": 622222222222222,
     }]
-    groups["Input"]["children"][0]["conditions"][0]["parameters"]["type"] = "\"start\""   # a quoted combo value
+    first_block(groups["Input"])["conditions"][0]["parameters"]["type"] = "\"start\""   # a quoted combo value
     del tween["behaviorType"]                                                             # a behavior action without it
     next(a for a in add_score["actions"] if a.get("id") == "set-text")["id"] = "set-txt"  # a misspelt id
-    groups["Setup"]["children"][0]["conditions"][0]["isInverted"] = True                  # an inverted trigger
+    first_block(groups["Setup"])["conditions"][0]["isInverted"] = True                  # an inverted trigger
     path.write_text(json.dumps(sheet, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
 
 

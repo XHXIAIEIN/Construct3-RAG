@@ -13,12 +13,16 @@ project is ready for the editor when the last line starts with `ok:`.
 
 The game below is a stand-in: coins appear, a tap collects one, the score
 counts up, and when the last coin is gone the layout restarts. Replace
-build_images(), build_object_types(), build_layouts(), build_event_sheet() and
-the addon list in build_project(); keep the helpers, or grow them from the
-skill's `scripts/lookup_ace.py <object> <words>`, which prints an ACE with the
-JSON to write, when the game needs one they do not cover. The encodings are
-the ones the editor writes; see
+build_images(), build_object_types(), build_layouts(), the module_*()
+functions of the event sheet and the addon list in build_project(); keep the
+helpers, or grow them from the skill's `scripts/lookup_ace.py <object>
+<words>`, which prints an ACE with the JSON to write, when the game needs one
+they do not cover. The encodings are the ones the editor writes; see
 Construct3-RAG/prompts/references/hand-editing-project-files.md.
+
+The sheet is written a group at a time: one module_*() per group, laid out as
+the official examples lay a group out (module, event, procedure, steps, cases
+below). Write one, run this file, read the sheet it printed, then the next.
 """
 import json
 import math
@@ -179,6 +183,59 @@ def group(title: str, children: list, description: str = "", active: bool = True
 
 def comment(text: str) -> dict:
     return {"eventType": "comment", "text": text}
+
+
+def flat(rows: list) -> list:
+    """Rows and lists of rows, what event() and procedure() return, as one list."""
+    out: list = []
+    for r in rows:
+        out.extend(r if isinstance(r, list) else [r])
+    return out
+
+
+def event(text: str, conds: list, acts: list, children: list | None = None, or_block: bool = False) -> list:
+    """A top-level event as the official examples write one: a one-sentence comment
+    above the block, saying what it does or which case it is."""
+    return [comment(text), block(conds, acts, children, or_block)]
+
+
+def procedure(text: str, proc: dict) -> list:
+    """A function or custom action with the comment above it; its description is the same sentence."""
+    if not proc.get("functionDescription"):
+        proc["functionDescription"] = text
+    return [comment(text), proc]
+
+
+def module(title: str, events: list, variables: list | None = None, procedures: list | None = None,
+           active: bool = True) -> dict:
+    """A group laid out as the official examples lay one out: the variables only this
+    group reads (a constant with the group's prefix, a static local for state that
+    outlives the tick), then its functions and custom actions, then its events.
+    Entries may be rows or the row pairs event() and procedure() return."""
+    return group(title, list(variables or []) + flat(procedures or []) + flat(events), active=active)
+
+
+def steps(*batches: tuple) -> list:
+    """The actions of a long block in labelled batches: each (label, actions) becomes
+    a comment action and its three to five actions, the way the official examples
+    step a block. Eight actions in a row without one is a style warning of the checker."""
+    out: list = []
+    for label, acts in batches:
+        out.append({"type": "comment", "text": label})
+        out.extend(acts)
+    return out
+
+
+def cases(gate: list, branches: list, acts: list | None = None) -> dict:
+    """A decision as the official examples write one: one event with the shared
+    conditions, then the cases as flat sub-events, each (text, conds, acts) under its
+    comment. conds None is the Else of the case before it; a list that starts with
+    else_() an else-if. Not a tree three sub-events deep with one call at every leaf."""
+    kids: list = []
+    for text, conds, case_acts in branches:
+        kids.append(comment(text))
+        kids.append(block([else_()] if conds is None else conds, case_acts))
+    return block(gate, acts or [], kids)
 
 
 def param(name: str, ptype: str, init="0", comment: str = "") -> dict:
@@ -407,43 +464,63 @@ def on_touched(obj: str) -> dict:
 
 
 # --- the event sheet -------------------------------------------------------------------
+# One function per group, in play order. A game grows a group at a time: write a
+# module, run the generator, read the sheet it printed, then write the next.
+def module_setup() -> dict:
+    return module("Setup", events=[
+        event("Deal the coins and show the empty score.",
+              [on_start()], [set_text("ScoreText", q("Score: 0"))], children=[
+                  block([for_loop("i", "0", "COIN_COUNT - 1")], [
+                      create("Coin", "Game", f"random({COIN_SIZE}, LayoutWidth - {COIN_SIZE})",
+                             f"random({COIN_SIZE * 2}, LayoutHeight - {COIN_SIZE})"),
+                      set_ivar("Coin", "value", "choose(1, 5)"),
+                  ]),
+              ]),
+    ])
+
+
+def module_input() -> dict:
+    return module("Input", events=[
+        event("A touched coin collects itself.", [on_touched("Coin")], [call_custom("Coin", "Collect")]),
+    ])
+
+
+def scoring() -> list:
+    """What the groups call: a custom action for what acts on the caller's picked
+    instances, a function for a value or for logic that picks its own."""
+    return [
+        *procedure("Shrink the coin away and score it.", custom_action("Coin", "Collect", [
+            tween2("Coin", "collect", "size", "0", "0", "0.25", "easeinback", destroy=True),
+            call("AddScore", "Coin.value"),
+        ])),
+        *procedure("Add points and show the score.", func("AddScore", [
+            add_var("score", "points"),
+            set_text("ScoreText", q("Score: ") + " & score"),
+        ], params=[param("points", "number", 0)])),
+    ]
+
+
+def module_restart() -> dict:
+    return module("Restart", events=[
+        event("Restart when the last coin is gone.",
+              [cmp2("Coin.Count", EQ, "0"), trigger_once()], [wait("1"), restart_layout()]),
+    ])
+
+
 def build_event_sheet() -> dict:
+    """What the sheet covers, the constants under Settings, the state the groups share,
+    then the groups; a variable one group owns is declared in that module instead."""
     events = [
         comment("Coins. Tap a coin to collect it; when the last one is gone the layout restarts.\n"
                 "The touched coin is the trigger's pick: Collect runs on it and nothing else."),
+        comment("Settings."),
+        var("COIN_COUNT", "number", COIN_COUNT, "Coins dealt at the start.", const=True),
+        comment("Gameplay variables."),
         var("score", "number", 0, "Points collected this round."),
-        var("COIN_COUNT", "number", COIN_COUNT,
-            "Coins dealt at the start.", const=True),
-
-        group("Setup", [
-            block([on_start()], [set_text("ScoreText", q("Score: 0"))], children=[
-                block([for_loop("i", "0", "COIN_COUNT - 1")], [
-                    create("Coin", "Game", f"random({COIN_SIZE}, LayoutWidth - {COIN_SIZE})",
-                           f"random({COIN_SIZE * 2}, LayoutHeight - {COIN_SIZE})"),
-                    set_ivar("Coin", "value", "choose(1, 5)"),
-                ]),
-            ]),
-        ]),
-
-        group("Input", [
-            block([on_touched("Coin")], [call_custom("Coin", "Collect")]),
-        ]),
-
-        custom_action("Coin", "Collect", [
-            tween2("Coin", "collect", "size", "0", "0",
-                   "0.25", "easeinback", destroy=True),
-            call("AddScore", "Coin.value"),
-        ], description="Shrink away and score."),
-
-        func("AddScore", [
-            add_var("score", "points"),
-            set_text("ScoreText", q("Score: ") + " & score"),
-        ], params=[param("points", "number", 0)]),
-
-        group("Restart", [
-            block([cmp2("Coin.Count", EQ, "0"), trigger_once()],
-                  [wait("1"), restart_layout()]),
-        ]),
+        module_setup(),
+        module_input(),
+        *scoring(),
+        module_restart(),
     ]
     return {"name": "Game", "events": events, "sid": sid()}
 
@@ -643,4 +720,6 @@ if __name__ == "__main__":
                  "its scripts/check_project.py")
     print("generated; checking")
     sys.stdout.flush()
-    sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT)]).returncode)
+    # --style: the agent wrote every event, so the readability warnings of the official
+    # examples' style apply to all of them.
+    sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
