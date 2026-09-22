@@ -4,7 +4,7 @@
 
 Structured, bilingual reference data for [Construct 3](https://www.construct.net): plugins, behaviors, ACEs, effects, example projects, scripting interfaces, and the raw language packs. Everything under `data/` is committed JSON and `.d.ts` that a script or an LLM can read directly. An optional service adds keyword lookup on top.
 
-The Construct version and dataset counts live in [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json). [The update workflow](.github/workflows/update.yml) opens a pull request when Scirra ships a new stable release.
+The Construct version and dataset counts live in [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json).
 
 ## Set up from this link
 

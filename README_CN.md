@@ -4,7 +4,7 @@
 
 [Construct 3](https://www.construct.net) 的结构化双语参考数据：插件、行为、ACE、特效、示例项目、脚本接口和原始语言包。`data/` 下的内容都是已提交的 JSON 和 `.d.ts`，脚本或 LLM 可以直接读取。可选服务在数据之上提供关键词查找。
 
-Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json) 为准。Scirra 发布新的稳定版后，[更新工作流](.github/workflows/update.yml)会自动提出 pull request。
+Construct 版本和数据数量以 [`data/c3-schemas/_index.json`](data/c3-schemas/_index.json) 为准。
 
 ## 从这个链接开始
 
