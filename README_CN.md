@@ -6,14 +6,14 @@
 
 ## 从这个链接开始
 
-在存放 clone 的文件夹里运行：
-
 ```bash
-git clone https://github.com/XHXIAIEIN/Construct3-RAG
-python Construct3-RAG/scripts/bootstrap.py --project MyGame
+git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct3-RAG
+python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-第二条命令 clone 相关仓库，把 `MyGame` 创建为空项目，安装 `construct3-project` skill 并写入 `AGENTS.md` 和 `CLAUDE.md`；已有的都跳过，`--help` 列出它的参数。之后读项目的 `AGENTS.md`。
+两条命令都把文件夹写全：无论在哪个目录运行，clone 都落在同一处；再运行一次会停在 `git clone`，它不会 clone 进已经存在的文件夹。换成别的文件夹也可以，只要每次都是同一个；`cmd.exe` 里 `$HOME` 写作 `%USERPROFILE%`。
+
+第二条命令 clone 相关仓库，在它们旁边把 `MyGame` 创建为空项目，安装 `construct3-project` skill 并写入 `AGENTS.md` 和 `CLAUDE.md`；已有的都跳过，`--help` 列出它的参数。之后读项目的 `AGENTS.md`。
 
 ## 相关仓库
 

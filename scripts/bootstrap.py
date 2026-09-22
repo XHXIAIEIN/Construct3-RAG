@@ -1,9 +1,9 @@
 """Set a machine up from this clone alone: the sibling repositories, a game
 project, and the skill inside it.
 
-    python scripts/bootstrap.py                       # clone what is missing beside this repository
-    python scripts/bootstrap.py --project ../MyGame   # ... and install the skill in that project;
-                                                      # a folder that does not exist yet gets the empty project
+    python scripts/bootstrap.py                     # clone what is missing beside this repository
+    python scripts/bootstrap.py --project MyGame    # ... and install the skill in MyGame beside them;
+                                                    # a folder that does not exist yet gets the empty project
 
 Clones Construct3-Manual, Construct-Example-Projects, Construct-Addon-SDK and
 the empty project into the folder that holds this repository, each one only
@@ -90,6 +90,16 @@ def new_project(template: Path, target: Path, dry_run: bool) -> str:
     return line
 
 
+def game_folder(given: str, folder: Path) -> Path:
+    """Where `--project` points. A bare name is a name, and a name goes beside
+    the clones, whatever directory the command was run from; the README's
+    `--project MyGame` means the same folder from a game project, from the
+    desktop or from here. A path spelt out — a separator, a drive letter, `~`,
+    `.` — is read from the current directory, as a path is anywhere else."""
+    spelt_out = given.startswith(("~", ".")) or any(c in given for c in "/\\:")
+    return Path(given).expanduser().resolve() if spelt_out else (folder / given).resolve()
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -97,11 +107,13 @@ def main() -> int:
                     "does not exist yet, and install the construct3-project skill in it. Safe to run again.",
         epilog="examples:\n"
                "  python scripts/bootstrap.py                          the siblings only\n"
-               "  python scripts/bootstrap.py --project ../MyGame      siblings, then the skill in MyGame;\n"
-               "                                                       MyGame is created when it does not exist\n"
+               "  python scripts/bootstrap.py --project MyGame         siblings, then the skill in MyGame,\n"
+               "                                                       created beside them when it does not exist\n"
                "  python scripts/bootstrap.py --project ../MyGame --into .claude/skills\n\n"
                "exit codes: 0 done, 1 a clone or the project failed; the line says what to run by hand")
-    ap.add_argument("--project", metavar="FOLDER", help="the game project; created from the empty project when missing")
+    ap.add_argument("--project", metavar="NAME|FOLDER",
+                    help="the game project, created from the empty project when missing. A name goes beside the "
+                         "clones; a path is read from the current directory")
     ap.add_argument("--into", metavar="DIR", help="skills directory inside the project, passed to install.py")
     ap.add_argument("--beside", metavar="FOLDER",
                     help="where the clones go (default: the folder that holds this repository, where the block "
@@ -119,7 +131,7 @@ def main() -> int:
     wanted = dict(SIBLINGS)
     if args.no_examples:
         wanted.pop("Construct-Example-Projects")
-    project = Path(args.project).expanduser().resolve() if args.project else None
+    project = game_folder(args.project, folder) if args.project else None
     template = folder / TEMPLATE[0]
     if args.template and Path(args.template).expanduser().is_dir():
         template = Path(args.template).expanduser().resolve()

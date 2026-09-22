@@ -6,14 +6,14 @@ Structured, bilingual reference data for [Construct 3](https://www.construct.net
 
 ## Set up from this link
 
-In the folder that holds the clones:
-
 ```bash
-git clone https://github.com/XHXIAIEIN/Construct3-RAG
-python Construct3-RAG/scripts/bootstrap.py --project MyGame
+git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct3-RAG
+python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-The second command clones the related repositories, creates `MyGame` as an empty project and installs the `construct3-project` skill with its `AGENTS.md` and `CLAUDE.md`, skipping whatever is already there; `--help` lists its flags. Then read the project's `AGENTS.md`.
+The folder is written out in both commands: the clones land in one place whatever directory the commands are run from, and a second run stops at `git clone`, which will not clone into a folder that is already there. Another folder does as well, as long as it is the same one every time; `cmd.exe` spells `$HOME` as `%USERPROFILE%`.
+
+The second command clones the related repositories, creates `MyGame` beside them as an empty project and installs the `construct3-project` skill with its `AGENTS.md` and `CLAUDE.md`, skipping whatever is already there; `--help` lists its flags. Then read the project's `AGENTS.md`.
 
 ## Related repositories
 
