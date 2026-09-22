@@ -84,7 +84,7 @@ program transcribed into events even when no picking smell shows.
 | Smooth follow of a target that keeps moving: camera, cursor, aim angle | `lerp(a, b, 1 - f^dt)` (`anglelerp` for angles) in `Every tick`; the target is read fresh each tick and nothing finishes | A Tween restarted every tick; `lerp(a, b, 0.1)` with a constant factor, which is framerate-dependent |
 | A value derived from another live value: colour from health, zoom from speed, a slider position | `lerp(lo, hi, t)` with `t` from `unlerp`, a ratio, `Tween.Value(tag)` or a timeline; no time of its own | A variable holding the mapped value, updated from several events |
 | Continuous motion toward a target or along a heading | MoveTo, Bullet, Pathfinding, Platform, 8 Direction | `Set X`/`Set Y` from your own velocity variables |
-| Repeating or periodic movement, flashing, fading out | Sine, Flash, Fade, Rotate | Hand-written oscillation |
+| Repeating or periodic movement, flashing, fading out | Sine, Flash, Rotate; a fade is a Tween on Opacity | Hand-written oscillation; the Fade behavior, superseded |
 | Level data, loot tables, stat curves, any lookup table | Array or Dictionary project file (Project Bar: *New - Array / Dictionary*), loaded at start with AJAX *Request project file* then *Load* from `AJAX.LastData`; nested or hand-written data through the JSON plugin | Per-level instance variables, `level1Hp`, chained conditions or nested ternaries that encode the table in expressions |
 | Weighted random, seeded random, noise | Advanced Random: probability tables, `Weighted`, `Seed`, `Classic2d` | A cascade of `random()` comparisons with hand-tuned thresholds |
 | Data that survives a reload | Local Storage: *Set item*, *Get item*, *On item get* | Globals, which reset on reload; the Persist behavior, which keeps instances across layout changes, not across sessions |
@@ -116,6 +116,18 @@ Two checks before choosing: a Timer is state with transitions, list them
 (pitfalls, "Timer"); an Array *Load* reads Construct's own JSON layout, so the
 file comes from the Array editor, not a hand-written JSON (the JSON plugin
 reads those).
+
+A behavior that exists can still be the wrong one. An existing project may
+keep a superseded feature; a new one takes what replaced it. Fade is a fixed
+series of opacity tweens, so it is a *Tween (one property)* on Opacity. Pin
+is a hierarchy, *Add child* on the parent, which holds up where chains of
+pinned objects do not. The Solid behavior's own *Tags* property is instance
+tags, which is what *Use instance tags* turns on by default. Z axis scale
+*Normalized* is deprecated rather than superseded: a new project is
+*Regular*, where Z is a co-ordinate on the same scale as X and Y, and 3D
+sizes read as they look.
+[manual: tips-and-guides/superseded-features.md,
+tips-and-guides/deprecated-features.md]
 
 ## Feel
 

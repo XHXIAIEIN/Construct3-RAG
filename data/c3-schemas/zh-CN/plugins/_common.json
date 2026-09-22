@@ -2078,5 +2078,66 @@
       "returnType": "string"
     }
   ],
-  "properties": {}
+  "properties": {
+    "x": {
+      "name": "X",
+      "desc": "此实例在场景中的X坐标，以像素为单位。",
+      "written": "world.x"
+    },
+    "y": {
+      "name": "Y",
+      "desc": "此实例在场景中的Y坐标，以像素为单位。",
+      "written": "world.y"
+    },
+    "z": {
+      "name": "Z",
+      "desc": "在场景的 Z 坐标位置，以像素为单位。",
+      "written": "world.z, or world.zElevation in a project saved before r470"
+    },
+    "width": {
+      "name": "宽度",
+      "desc": "此实例对象的宽度，以像素为单位。负数将进行垂直翻转。",
+      "written": "world.width"
+    },
+    "height": {
+      "name": "高度",
+      "desc": "此实例对象的高度，以像素为单位。负数将进行垂直翻转。",
+      "written": "world.height"
+    },
+    "depth": {
+      "name": "深度",
+      "desc": "此实例的深度，以像素为单位。",
+      "written": "world.depth, 3D only"
+    },
+    "angle": {
+      "name": "角度",
+      "desc": "此实例的旋转角度。角度增加时，相对于 0 度向右顺时针旋转。",
+      "written": "world.angle, in radians; the properties bar shows degrees"
+    },
+    "color": {
+      "name": "颜色",
+      "desc": "应用于这个实例的颜色。",
+      "written": "world.color, [r, g, b, a] from 0 to 1, white [1, 1, 1, 1] for none"
+    },
+    "opacity": {
+      "name": "不透明度",
+      "desc": "此实例的不透明度，从 0 (透明) 到 100 (不透明)。",
+      "written": "world.color[3], from 0 to 1; there is no opacity key"
+    },
+    "blendMode": {
+      "name": "混合模式",
+      "desc": "将对象与背景混合。如果添加了滤镜，会应用到最后一个效果。",
+      "written": "world.blendMode, a name such as \"additive\"; absent is normal"
+    },
+    "uid": {
+      "name": "UID",
+      "desc": "所选的实例对象唯一识别码(UID)。",
+      "written": "uid, beside world"
+    },
+    "tags": {
+      "name": "标签",
+      "desc": "用于匹配不同实例的标签，使用空格分隔多个标签。",
+      "written": "tags, beside world"
+    }
+  }
 }

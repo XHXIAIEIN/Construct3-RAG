@@ -2078,5 +2078,66 @@
       "returnType": "string"
     }
   ],
-  "properties": {}
+  "properties": {
+    "x": {
+      "name": "X",
+      "desc": "The X co-ordinate of this instance in the layout, in pixels.",
+      "written": "world.x"
+    },
+    "y": {
+      "name": "Y",
+      "desc": "The Y co-ordinate of this instance in the layout, in pixels.",
+      "written": "world.y"
+    },
+    "z": {
+      "name": "Z",
+      "desc": "The Z co-ordinate of this instance in the layout, in pixels.",
+      "written": "world.z, or world.zElevation in a project saved before r470"
+    },
+    "width": {
+      "name": "Width",
+      "desc": "The width of this instance, in pixels.",
+      "written": "world.width"
+    },
+    "height": {
+      "name": "Height",
+      "desc": "The height of this instance, in pixels.",
+      "written": "world.height"
+    },
+    "depth": {
+      "name": "Depth",
+      "desc": "The depth of this instance, in pixels.",
+      "written": "world.depth, 3D only"
+    },
+    "angle": {
+      "name": "Angle",
+      "desc": "The angle of this instance, in degrees, relative to 0 degrees facing right and increasing clockwise.",
+      "written": "world.angle, in radians; the properties bar shows degrees"
+    },
+    "color": {
+      "name": "Color",
+      "desc": "The color to apply to this instance.",
+      "written": "world.color, [r, g, b, a] from 0 to 1, white [1, 1, 1, 1] for none"
+    },
+    "opacity": {
+      "name": "Opacity",
+      "desc": "The opacity of this instance, from 0 (transparent) to 100 (opaque).",
+      "written": "world.color[3], from 0 to 1; there is no opacity key"
+    },
+    "blendMode": {
+      "name": "Blend mode",
+      "desc": "How to blend the object with the background. If effects are used, applied for last effect.",
+      "written": "world.blendMode, a name such as \"additive\"; absent is normal"
+    },
+    "uid": {
+      "name": "UID",
+      "desc": "The unique identifier (UID) of the selected instance.",
+      "written": "uid, beside world"
+    },
+    "tags": {
+      "name": "Tags",
+      "desc": "A list of space separated tags.",
+      "written": "tags, beside world"
+    }
+  }
 }
