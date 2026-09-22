@@ -20,6 +20,8 @@ project or the clone was not found. Exit 2: a project file lacks a key the
 editor always writes, and the run stopped there.
 """
 import difflib
+import json
+import math
 import re
 import sys
 import unicodedata
@@ -40,6 +42,12 @@ except ImportError:
 # taken in the object's namespace, where instance variables, behaviors, effects
 # and the plugin's expressions live side by side, compared without case.
 NAME_DROPS = set(".。,，\"“”(（)）?？:：\\/;*|'-`!¬£$%^&+=<>{}[]@#~­​")
+VARIABLE_TYPES = ("number", "string", "boolean")
+# how a layout instance writes the value of an instance variable of each type
+JSON_TYPES = {"number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
+              "string": lambda v: isinstance(v, str), "boolean": lambda v: isinstance(v, bool)}
+JSON_EXAMPLES = {"number": "a number such as 1", "string": "text such as \"a\"", "boolean": "true or false"}
+FULL_TURN = 2 * math.pi + 1e-6      # the largest world angle the official examples hold is 2π
 RESERVED_NAMES = {"self", "true", "false", "system", "con", "prn", "aux", "nul",
                   *(f"com{i}" for i in range(1, 10)), *(f"lpt{i}" for i in range(1, 10))}
 
@@ -268,9 +276,17 @@ class Checker:
             self.err(f"{where}: instance of unknown type {t}{closest(t or '', p.types)}")
             return
         ivars = p.ivars_of(t)
-        for iv in inst.get("instanceVariables", {}):
+        ivar_types = p.ivar_types_of(t)
+        for iv, value in inst.get("instanceVariables", {}).items():
             if iv not in ivars:
                 self.err(f"{where}: {t} has no instance variable {iv}")
+            elif not JSON_TYPES[ivar_types[iv]](value):
+                self.err(f"{where}: {t} instance variable {iv} = {value!r}; a {ivar_types[iv]} is written as "
+                         f"{JSON_EXAMPLES[ivar_types[iv]]} here, a JSON value, not text")
+        angle = inst.get("world", {}).get("angle", 0)
+        if isinstance(angle, (int, float)) and abs(angle) > FULL_TURN:
+            self.err(f"{where}: {t} world angle {angle} is more than a full turn; the file stores radians, "
+                     f"{angle} degrees is {math.radians(angle):.4f}")
         for iv in ivars - set(inst.get("instanceVariables", {})):
             self.err(f"{where}: {t} instance has no value for instance variable {iv}")
         behs = p.behaviors_of(t)
@@ -663,6 +679,37 @@ class Checker:
             return Holder(f"the {kind} {ev.get('functionName') or ev.get('aceName')}", False)
         return Holder(describe(triggers[0]), True) if triggers else None
 
+    def check_variable(self, var: dict, where: str, what: str) -> None:
+        """An event variable or a function parameter: its type is one of three and its
+        initialValue is text, as the editor writes it. The editor reads a boolean by
+        comparing the text to "true", in the editor and again on export, so a JSON
+        true or a "True" reads as false; a function parameter may also carry a
+        number, anything else stops the load with 'invalid type of initialValue'."""
+        name, vtype, value = var.get("name"), var.get("type"), var.get("initialValue")
+        w = f"{where}: {what} {name}"
+        if vtype not in VARIABLE_TYPES:
+            self.err(f"{w}: type {vtype!r} is not number, string or boolean")
+            return
+        if what == "parameter" and isinstance(value, (int, float)) and not isinstance(value, bool):
+            value = str(value)
+        if not isinstance(value, str):
+            if vtype == "boolean":
+                self.err(f"{w}: initialValue should be the text \"true\" or \"false\", not {value!r}; "
+                         f"the editor compares the text to \"true\", so a JSON boolean reads as false")
+            else:
+                self.err(f"{w}: initialValue should be text, {json.dumps(str(value if value is not None else ''))}, "
+                         f"not {value!r}; the editor stores every initial value as text")
+        elif vtype == "boolean" and value not in ("true", "false"):
+            self.err(f"{w}: initialValue {value!r} should be \"true\" or \"false\", lowercase; "
+                     f"the editor compares the text to \"true\" and reads anything else as false")
+        elif vtype == "number":
+            try:
+                finite = math.isfinite(float(value))
+            except ValueError:
+                finite = False
+            if not finite:
+                self.err(f"{w}: initialValue {value!r} is not a number; the editor reads it as 0")
+
     def check_block(self, ev: dict, scope: dict, where: str) -> None:
         for i, c in enumerate(ev.get("conditions", []), 1):
             self.check_ace("conditions", c, scope, f"{where} condition {i}")
@@ -705,7 +752,7 @@ class Checker:
             if self.style and et in ("block", "function-block", "custom-ace-block"):
                 self.check_style(ev, w, events, i, depth)
             if et == "variable":
-                pass
+                self.check_variable(ev, w, "variable")
             elif et in ("comment", "include"):
                 if et == "include" and ev["includeSheet"] not in self.sheets:
                     self.err(f"{w}: included sheet {ev['includeSheet']} does not exist"
@@ -718,6 +765,7 @@ class Checker:
                 fscope = dict(scope)
                 for param in ev["functionParameters"]:
                     fscope[param["name"]] = param
+                    self.check_variable(param, w, "parameter")
                 label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
                 if et == "custom-ace-block" and ev["objectClass"] not in self.p.plugin_of:
                     self.err(f"{w}: custom action {label} belongs to unknown object {ev['objectClass']}")
