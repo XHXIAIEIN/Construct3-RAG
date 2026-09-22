@@ -13,7 +13,8 @@ up with the JSON to write, read a sheet as the editor words it, change it
 from a plan, check the project before the editor opens it, generate a whole
 project from Python.
 They read the schemas of the Construct3-RAG clone, so a name they accept
-exists and a name they reject does not.
+exists and a name they reject does not. None of it needs the editor open: a
+project the checker passes is ready for it.
 
 ## Before the first command
 
@@ -34,13 +35,8 @@ exists and a name they reject does not.
   the user in one sentence what was installed.
 - A line `this copy of the construct3-project skill differs from the clone's`:
   run the command it prints, then repeat yours.
-- The project has no `.git`: run `git init` in it before the first edit, so
-  that every change to the sheets can be seen and undone. Commit when the
-  user asks.
-- Nothing here needs the Construct editor. The scripts read and write the
-  project files, and `check_project.py` applies the rules the editor applies
-  when it opens a project; a project it passes is ready for the editor. Do
-  not stop to ask for the editor, and do not report its absence as a limit.
+- The project has no `.git`: `git init` in it before the first edit, so that
+  every change can be seen and undone. Commit when the user asks.
 
 ## Scripts
 
