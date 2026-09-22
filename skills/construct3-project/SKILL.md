@@ -81,6 +81,9 @@ A word is matched as written, not by meaning, against the id and the names
 and against where the ACE lives: the behavior, the category, `condition`,
 `action`, `expression`. `System timer` finds nothing and lists the
 categories; `System time` lists *Every X seconds*, *Wait* and `dt`.
+*Pick nearest/furthest*, *Is overlapping*, *Set position* are every world
+object's, not System's: `System nearest` finds nothing and names them as
+shared, to be looked up on an object, `Coin nearest`.
 
 Copy the `write:` line and replace the values. Leave `"sid": <new sid>` out
 of a plan for `edit_sheet.py`, which gives every new entry one; in a hand

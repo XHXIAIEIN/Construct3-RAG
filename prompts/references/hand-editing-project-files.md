@@ -73,6 +73,16 @@ Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
   file inside a subfolder as `"file": {"path": "data/enemy.json"}`. The
   hand-written bare name `"enemy.json"` loaded and was rewritten to the
   object form on save. [observed: mergeGame r502, 2026-09-17]
+- A family is `families/<Name>.json` (`name`, `plugin-id`, `sid`,
+  `instanceVariables`, `behaviorTypes`, `effectTypes`, `members`), listed
+  under `families` in `project.c3proj` like an object type. A container has
+  no file: `project.c3proj` holds `"containers": [{"members": ["TankBase",
+  "TankTurret"]}]`, its members object type names. Saves up to r263 add
+  `"selectMode": "normal"`, the editor's Select mode; saves from r342 on
+  leave it out. Nothing under `objectTypes/` names a container. [153 family
+  files in 82 official examples, 159 container rows in 85, every member an
+  object type, `selectMode` in the 110 rows saved r184 to r263 and in none
+  of the 49 saved r342 to r470; 2026-09-22]
 - A family instance variable can be written through a member type
   (`"objectClass": "enemyBase"`, `"instance-variable": "hp"` with `hp`
   declared on family `EnemyGroup`); the editor loads it and the runtime
