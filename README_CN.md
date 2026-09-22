@@ -15,7 +15,7 @@ git clone https://github.com/XHXIAIEIN/Construct3-RAG
 python Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-第二条命令 clone 缺少的相关仓库；`MyGame` 不存在时创建为空项目，安装 `construct3-project` skill，写入 `AGENTS.md` 和 `CLAUDE.md`。`--project` 可以指向已有项目；`--beside` 把 clone 放到别处；`--dry-run`、`--no-examples`。可重复运行。之后读项目的 `AGENTS.md`。
+第二条命令 clone 缺少的相关仓库；`MyGame` 不存在时创建为空项目；安装 `construct3-project` skill 并写入 `AGENTS.md` 和 `CLAUDE.md`。已有项目同样适用。可重复运行，`--help` 列出选项。之后读项目的 `AGENTS.md`。
 
 ## 相关仓库
 

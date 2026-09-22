@@ -15,7 +15,7 @@ git clone https://github.com/XHXIAIEIN/Construct3-RAG
 python Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-The second command clones the related repositories that are missing, creates `MyGame` as an empty project when it does not exist, installs the `construct3-project` skill and writes `AGENTS.md` and `CLAUDE.md`. `--project` may name an existing project; `--beside` puts the clones elsewhere; `--dry-run`, `--no-examples`. Safe to run again. Then read the project's `AGENTS.md`.
+The second command clones the related repositories that are missing, creates `MyGame` as an empty project when it does not exist, and installs the `construct3-project` skill with its `AGENTS.md` and `CLAUDE.md`. An existing project works the same way. Safe to run again; `--help` lists the options. Then read the project's `AGENTS.md`.
 
 ## Related repositories
 
