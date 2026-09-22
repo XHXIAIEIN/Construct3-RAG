@@ -96,6 +96,7 @@ change history, or how the author got there; no `#`, colours or BBCode.
 | Other variable | camelCase; a boolean is the state as an adjective or participle, no `is` | `gameOver`, `killCount`, `dead`, `climbing`, `tutorial` |
 | Function | camelCase, verb first | `spawnEnemy`, `computeLighting`, `gameOver` |
 | Custom action | a verb phrase with spaces, on the object it acts on, in that object's group | `Create trail`, `Teleport to Node`, `Die` |
+| Function parameter | a word that reads bare in an expression (`Self.X + OffsetX`), so `posX` over `x`; the examples split evenly between camelCase and PascalCase | `PositionX`, `Duration`, `volumeTweak`, `enemyUid` |
 | Timer or Tween tag | PascalCase, verb and noun; a timer that stands for a state is named for it and tested with *Is timer running* | `ShowFader`, `TeleportCooldown`; `dashing`, `dashCooldown` |
 | Animation | PascalCase; one animation per kind when one type stands for several | `Idle`, `Walk`, `Walking0`; `Treasures`, `Pathfinder` |
 | Group | Title Case with spaces, description empty | `Player Controls`, `Sort Z-Order` |
