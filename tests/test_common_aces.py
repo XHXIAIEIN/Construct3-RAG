@@ -8,6 +8,8 @@ import pytest
 from src.ingest.common_aces import (
     ACE_TYPES,
     COMMON_ACES_PATH,
+    COMMON_PROPERTIES,
+    build_common_properties,
     check_common_coverage,
     extract_common_aces,
     load_common_aces,
@@ -183,3 +185,46 @@ def test_exported_common_schema_is_typed_and_structurally_identical_across_local
         ]
 
     assert shape(files["en-US"]) == shape(files["zh-CN"])
+
+
+# ── shared world-instance properties ─────────────────────────────────────
+
+
+@pytest.mark.parametrize("locale", LOCALES)
+def test_shared_properties_are_named_in_every_locale(locale):
+    """Their text is under ui.bars.properties.instance; the plugins._common
+    entry of the language pack has ACE text only, which is why the export
+    left the properties empty."""
+    pack = json.loads((ROOT / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))
+    assert "properties" not in pack["text"]["plugins"]["_common"]
+    built = build_common_properties(pack["text"])
+    assert [p for p, _, _ in COMMON_PROPERTIES] == list(built)
+    for prop_id, entry in built.items():
+        assert entry["name"] and entry["written"], prop_id
+
+
+def test_build_stops_when_the_pack_has_no_text_for_a_property():
+    with pytest.raises(ValueError, match="ui.bars.properties.instance.color"):
+        build_common_properties({"ui": {"bars": {"properties": {"instance": {}}}}})
+
+
+def test_exported_common_schema_carries_the_instance_properties():
+    """An id is the key a project file holds, as it is for a plugin's own
+    properties, and `written` says where, the properties bar and the file
+    disagreeing on the angle and the opacity
+    (docs/decisions/common-instance-properties.md)."""
+    files = {
+        locale: json.loads(
+            (ROOT / "data" / "c3-schemas" / locale / "plugins" / "_common.json").read_text(encoding="utf-8")
+        )["properties"]
+        for locale in LOCALES
+    }
+    for locale, props in files.items():
+        assert list(props) == [p for p, _, _ in COMMON_PROPERTIES], locale
+        assert props["color"]["written"].startswith("world.color, [r, g, b, a]")
+        assert "radians" in props["angle"]["written"]
+        assert props["opacity"]["written"].startswith("world.color[3]")
+    # written and the ids are structural: identical in every locale, the text is not.
+    assert {k: v["written"] for k, v in files["en-US"].items()} == \
+           {k: v["written"] for k, v in files["zh-CN"].items()}
+    assert files["en-US"]["color"]["desc"] != files["zh-CN"]["color"]["desc"]
