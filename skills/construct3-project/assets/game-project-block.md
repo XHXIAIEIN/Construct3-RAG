@@ -4,11 +4,8 @@
 
 Construct3-Manual, Construct-Example-Projects and Construct-Addon-SDK are
 cloned beside it; add a line like the one above for any that is elsewhere.
-`<path-to>` stands for the folder a `path-to = ...` line above gives. If
-the path reads `<path-to>` and no such line exists, the block was copied
-unfilled: use `$CONSTRUCT3_RAG` if it is set, otherwise ask the user where
-the clone is and offer to fill the line in. Do not guess a path, and do not
-go on from memory.
+Never guess this path: the checker in step 1 stops when it does not reach
+the clone, and says what to write.
 
 Anything that changes what the game does is event sheet work: a new
 mechanic, a fix, a behavior, a variable, a timer, an animation, an edit to
