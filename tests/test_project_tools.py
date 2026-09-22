@@ -290,6 +290,7 @@ def test_bootstrap_creates_the_project_from_the_template_and_installs_the_skill(
     proj = json.loads((game / "project.c3proj").read_text(encoding="utf-8"))
     assert proj["name"] == "MyGame" and re.fullmatch(r"[a-z0-9]{11}", proj["uniqueId"]) and proj["uniqueId"] != "he3qe448adg"
     assert (game / INSTALLED / "SKILL.md").is_file()
+    assert (game / ".git").is_dir() and "git initialised" in out
     assert f"- Construct3-RAG: {REPO.as_posix()}" in (game / "AGENTS.md").read_text(encoding="utf-8")
     assert (game / "CLAUDE.md").read_text(encoding="utf-8") == "@AGENTS.md\n"
     # the clones are not beside the Construct3-RAG clone here, so the block gets a line for each
