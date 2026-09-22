@@ -333,7 +333,10 @@ def test_bootstrap_clones_the_template_repository_beside_the_clone(tmp_path):
                           "--project", str(tmp_path / "MyGame"))
     assert code == 0, out
     assert (beside / "Construct3-New-Project" / "project.c3proj").is_file()
-    assert (tmp_path / "MyGame" / "project.c3proj").is_file() and not (tmp_path / "MyGame" / ".git").exists()
+    assert (tmp_path / "MyGame" / "project.c3proj").is_file()
+    # the copy is a repository of its own, not the template's
+    log = subprocess.run(["git", "log", "--oneline"], cwd=tmp_path / "MyGame", capture_output=True, text=True)
+    assert log.returncode != 0 or log.stdout.strip() == ""
 
 
 def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):
