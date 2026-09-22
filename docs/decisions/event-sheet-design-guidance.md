@@ -272,3 +272,284 @@ wants it otherwise. `project-tools/` and its `README.md`, named above, are
 `skills/construct3-project/`, and the template's block is
 `skills/construct3-project/assets/game-project-block.md`. The reasons are in
 `project-tools-skill.md`.
+
+## Update 2026-09-22: the authoring style of the example corpus
+
+The prompts said what the events are (the guide), which runtime facts to
+respect (the pitfalls) and where groups and sheets go ("Layout of the
+sheet"). Nothing said how a sheet reads once written: what is named how,
+where a variable is declared, what a comment says and where, how objects are
+foldered, how the branches of a decision are laid out. A sheet from a small
+model showed the cost (Doubao snake project, 2026-09-22): twelve state
+globals at the top of the sheet (`touchSX`, `foodX`, `tailUID`, `nextX`), a
+`ResetGame` function of 28 actions without a comment, and a swipe read as a
+tree three sub-events deep with a `SetDir(n)` call at each leaf. Every
+name was valid and the checker passed it.
+
+### Evidence
+
+A survey of the 524 projects in `Construct-Example-Projects` at `3c31b236`
+("Update example projects for r476", 2026-03-10; `savedWithRelease` 16800
+to 47200), read as JSON with the scripts kept in
+`.local/docs/evidence/example-style-survey/` (`survey_style.py`,
+`survey_cohort.py`, `render_sheet.py`, their outputs and `cohort-output.txt`).
+Two cohorts, told apart by the credits comment at the top of the sheets: 221
+projects by Viridino Studios and its successor Forsteri Studios (the demo
+games and game templates, median 35 to 57 events) and 303 others, Scirra's feature examples and a few external games (median
+2 events). The style below is the studio cohort's; where
+the periods differ, r400 and later is quoted.
+
+| Question | Count |
+|----------|-------|
+| Comments per event, median per project | 1.0 (studio), 0.78 (other); 38 projects have none, all under 10 events |
+| Event preceded by a comment, by depth (studio) | 93% at top level, 89%, 74%, 65% one, two, three levels down |
+| Comment shape | 93% end with a period, 91% are one sentence, median 48 characters; `#` prefix 31, coloured 51 of 12,958 |
+| Comment actions inside action lists | 5,117 in 252 projects; of 837 studio blocks with 8+ actions, 799 have one; longest uncommented run median 3, p90 6 |
+| Group description field used | 55 of 1,855 studio groups |
+| Groups | 2,160 in 239 projects; every top-level event in a group in 209 of them; studio: 29 loose top-level events against 4,164 in groups; depth 0/1/2/3: 1,609/475/63/13 |
+| Group titles | Title Case with spaces 369, PascalCase 39 in r400+ (PascalCase 336 to 0 before r300) |
+| Order inside a group | variables first in 202 of 240 groups with variables; functions and custom actions before events in 246 of 400 |
+| Variable placement (studio) | 1,288 global, 602 group-local (303 const, 168 plain, 131 static), 316 block-local, 220 function-local; 17 of the 27 projects with 80+ events have more locals than globals |
+| Globals by use (r400+, 447) | constants read from one group 104, from 2+ groups 45; state read from one group 75, from 2+ groups 210; unused 13 |
+| Variable comments | r400+: 854 of 922; before r300: 0 of 717 (a comment event above the variable instead) |
+| Constant names | UPPER 397, UPPER_SNAKE 355 of 802 (studio); prefixes CHAIN_, CAR_, PLAYER_, BGM_, CAM_, SFX_, MINO_ |
+| Other variable names (r400+) | camelCase 409, PascalCase 47 |
+| Function names (r400+) | camelCase 362, PascalCase 29; description filled 534 of 956, equal to the comment above in 495 |
+| Custom actions | 179 in 26 projects, 172 on a type, 7 on a family; names with spaces 93, PascalCase 58; described 162 of 163 (studio) |
+| Boolean instance variables | plain adjective or participle 120+47+22, `is`/`has`/`can` prefix 13 |
+| Object type names (studio) | PascalCase 5,371 of 5,733; `Text*` 289 of 440 text objects, `Arr*` 40 of 66 arrays, `Dict*` 19 of 20; behaviors renamed 328 of 2,549 |
+| Families | 153; PascalCase 147; plural 98 |
+| Tags | tween PascalCase 2,163 of 2,240; timer PascalCase 471 of 525 |
+| `ObjectRepository` layout | 191 of 221 studio projects, no event sheet in all 191, first in the list 109, second 79 |
+| Object folders | 54 projects; 37 of 72 with 30+ types, 15 of 20 with 60+; names System 23, Player 22, Global 18, UI 17, World 16; depth 1/2/3/4: 278/133/56/14 |
+| Layers | `Background` 165, `World` 125, `UI` 86, `HUD` 70, `Fader` 62 (studio); parallax 0,0 on 390 layers |
+| Manager objects | `GameManager` Sprite with Timer or Tween 68, `Camera` Sprite with Scroll To 32; `Fader` Tiled Background with Tween 56 |
+| Conditions (studio) | evaluate-expression 1,412, for-each 564, compare-instance-variable 426, is-boolean-instance-variable-set 402, pick-by-comparison 392, is-overlapping 362, pick-by-evaluate 355, pick-children 339, on-collision 329, pick-by-unique-id 173 (104 inside functions), pick-parent 65, pick-all 31, pick-nearest 22 |
+| Trigger blocks | 3,880 of 14,214; 999 with filter conditions in the block, 958 with sub-events |
+| Else | 1,779 (studio 1,586); with conditions 792 (studio 753); preceded by a comment 66% (studio); chains of 2+ 152 |
+| Sub-event depth below the event (studio) | 0: 48%, 1: 32%, 2: 13%, 3: 4.7%, 4+: 2.4% |
+| Phase gates (a block with conditions, no actions, sub-events) | 1,307 (studio); groups inactive at start 28 |
+| UI text | `replace(Self.Text, "###", ...)` in 21 projects; literal strings sentence case 139, Title Case 39, all caps 28; labels end `: ` |
+
+### Options
+
+1. Extend `event-sheet-thinking.md`. Rejected: it is 2,690 words, above the
+   trim threshold this record set on 2026-09-15, and its subject is what the
+   events are, not how the sheet reads.
+2. A separate prompt, `prompts/event-sheet-style.md`, routed from the guide
+   (header, "Layout of the sheet", step 3), the assistant prompt, `AGENTS.md`
+   sections 3 and 7, both READMEs and the generator reference of the skill.
+   Chosen.
+3. Checker warnings for the three habits (an action list of 8+ without a
+   comment action; a state global referenced from one group only; a branch
+   tree 3+ sub-events deep whose leaves call one function). Not built: the
+   checker reports what the editor refuses, and a warning is a product
+   choice for the skill with its own sweep over the examples
+   (`skills/AGENTS.md`). The thresholds above are what such warnings would
+   use; on the studio corpus the first would fire on 38 of 837 blocks.
+
+### Decision
+
+Option 2. `prompts/event-sheet-style.md` (1,949 words): project layout
+(`ObjectRepository`, folders, layers, manager objects, sheets), the sheet
+top to bottom, groups as modules (order, which variables are global, the
+block-local temporary, the gate event, decoupled input), comments (one per
+event, comment actions every three to five actions, descriptions equal to the
+comment), names, the events' shape (filters in the trigger, flat branches or
+one expression, else-if chains, hierarchy and ID joins, UID as function
+parameter), UI text, and a table of the three habits with their replacement.
+The pitfalls file lost a bullet that was committed twice (`Self` in a System
+condition).
+
+Not done: no agent run compares a sheet written with and without the style
+file, on the snake project or another; that is the test. The skill's
+`generating-a-project.md` gained one pointer bullet without an eval
+iteration (`skills/AGENTS.md` counts a reference change as one). The
+game-project block was not changed; it reaches the style file through the
+guide.
+
+### Re-evaluate when
+
+- A small model given the style file still writes the three habits. Then
+  option 3, the checker warnings, with the thresholds measured here.
+- Scirra's own conventions diverge from the studios' in a new example set.
+  The survey scripts rerun on the clone; the cohort split is by the credits
+  comment.
+
+## Update 2026-09-22: the two skill-creation guides, heading by heading; the style checks
+
+The user asked that the event sheet prompts be held against
+<https://agentskills.io/skill-creation/best-practices> and
+<https://agentskills.io/skill-creation/optimizing-descriptions> (read in
+full the same day), with one concern: 13 000 tokens of prose across
+`event-sheet-thinking.md` (4 500), `event-sheet-pitfalls.md` (4 850),
+`event-sheet-style.md` (3 200 before this update) and
+`event-sheet-assistant.md` (1 000) is a load a small model will not carry,
+and the three habits of the morning's update needed a mechanical form.
+
+### Evidence
+
+- What small models read. The 28 Haiku 4.5 runs of iterations 1 to 10 of
+  the skill (`.local/docs/evidence/skill-evals/construct3-project/`,
+  `trace.txt` of each) opened `SKILL.md` in 25 and a design prompt in 4,
+  all four on `add-countdown`, the one case that asks for a mechanic; none
+  on `fix-load-errors`. The checker ran in every run that edited a sheet,
+  because `edit_sheet.py` runs it. What reaches a small model is the tool's
+  output, not the prose; the prose reaches the model that knows it needs
+  it.
+- Which habits have a mechanical form. Five heuristics were run over the
+  524 examples and the game projects before any checker code was written
+  (`.local/docs/evidence/example-style-survey/`, `style_lint_dry.py`, and
+  the two variants below):
+
+  | Heuristic | Official examples | Doubao snake | Kept |
+  |-----------|-------------------|--------------|------|
+  | 8+ actions in a row without a comment action | 113 in 50 projects; studio median run 3, p90 6 | 4 | yes |
+  | top-level event with no comment above it | 1184 in 278 projects; 93% of studio top-level events commented, demonoire 81, poplab 27, kiwi-story 25 | 21 | yes |
+  | sub-events 3+ deep, every leaf calling one function | 3 in 3 projects | 1 (the swipe) | yes |
+  | state global read from one group only, in 2 or fewer events | 284 in 140 projects, template-snake 7 | 2 | no: cannot be told from a legitimate global |
+  | state global referenced inside one top-level event only | 226 in 116 projects | 2 (`foodX`, `foodY`) | no: same |
+  | top-level event outside every group where groups exist | 40 in 12 projects | 0 | no: low value |
+
+  The pile of globals, the habit the user named first, has no mechanical
+  form that passes the official corpus; it stays prose, with the
+  replacement shapes in the style file's first table.
+- The trigger loop of the descriptions guide cannot run: `claude -p`
+  answers `Failed to authenticate: OAuth session expired and could not be
+  refreshed`, as on 2026-09-21 and 2026-09-22 morning.
+- Comment frames. The 10 502 comments of the studio cohort (clone
+  `3c31b236`, `.local/docs/evidence/style-checks/measure_comment_frames.py`,
+  rerun 2026-09-22 with the same counts): median 8 words, ninetieth
+  percentile 18; 257 (2.4%) have a second sentence. By first word:
+  imperative 4 634 (44%), the case as a statement 3 162 (30%, `However,
+  if` 176 among them), `If`, `When` or `Once` 1 519 (14%), what a variable
+  holds 472 (4.5%), an adverb first 363 (3.5%), `Otherwise` 124 (1.2%),
+  other 228. A reason is a clause of the same sentence: `so the` 134, `to
+  prevent` 56, `since` 48, `to make sure` 47, `to avoid` 23, `because` 12.
+  These are the rows of the style file's comment table.
+
+### Best practices, heading by heading
+
+| Heading | Finding | Action |
+|---------|---------|--------|
+| Start from real expertise | The style file was synthesised from the corpus, the habits from the small-model projects on disk | none |
+| Refine with real execution | The style file was not run by any agent; the checker warnings were run over 524 examples and 9 game projects before being kept | the measurements above; a Haiku iteration below |
+| Add what the agent lacks, omit what it knows | The first style file carried 40 survey counts a reader cannot act on | counts moved to this record; the file went from 1 950 to 1 020 words |
+| Design coherent units | Design, runtime facts, output format, style: four files, each one question | none |
+| Aim for moderate detail | The style file described conventions the examples show; a small model pattern-matches a template better than prose | a 25-line sheet in `print_sheet.py` wording replaces three sections |
+| Structure large skills with progressive disclosure | The pointers said what the file is, not when to read it ("is how the official examples..."); the guide asks for the trigger | every pointer to the style file is now "before events go into a project or a generator, read..."; `SKILL.md` names it at the point where the check loop ends |
+| Match specificity to fragility | The three habits were prose | the shapes are prescribed by the checker and the generator helpers; naming and folders stay guidance |
+| Provide defaults, not menus | The generator template had `block()` and `group()` only; a group's layout was the agent's to invent | `module()`, `event()`, `procedure()`, `steps()`, `cases()` make the examples' shape the default |
+| Favor procedures over declarations | The style file declared conventions | "one function per group, run, read, next" in the generator reference; the habits table says what to do instead |
+| Gotchas | The guide keeps gotchas where the agent reads them before the situation; a small model does not open a style file to check itself | the three habits are checker warnings, which every editing run prints; `SKILL.md` Gotchas unchanged, by the 2026-09-22 rule that Gotchas hold what the tools do not say |
+| Templates for output format | None for a sheet | the sheet in "The shape"; the stand-in generator rewritten with the helpers |
+| Checklists for multi-step workflows | Generating a whole sheet in one run is the failure mode the user described (long blocks, no structure) | the generator reference: a `module_*()` per group, written and checked one at a time |
+| Validation loops | `edit_sheet.py` already checks what a plan writes | style warnings ride in that loop; only the new events are held to them |
+| Plan-validate-execute | The plan is the JSON file; the checker validates it before it lands | none |
+| Bundling reusable scripts | The survey scripts serve the maintainer, not the agent | kept in `.local/`, not the skill |
+
+### Optimizing descriptions, heading by heading
+
+| Heading | Finding | Action |
+|---------|---------|--------|
+| How skill triggering works | "Agents only consult skills for tasks beyond what they can handle alone": a small model believes it can write events alone, so the prose is skipped and the tool is not | the change of lever above |
+| Writing effective descriptions | `SKILL.md`'s description, 683 characters, imperative second sentence; the prompt files have no description, their "description" is the block's table row and the pointer sentences | pointers rewritten as when-clauses; the description unchanged, by the rule that it changes on train-set failures only |
+| Designing trigger eval queries | 12 train, 8 validation, near misses, two languages | none |
+| Testing, running multiple times, the loop, applying the result | Not runnable: the client is signed out | not run; the queries stand |
+
+### Changes
+
+- `check_project.py --style`: the three warnings, `STYLE_RUN = 8`,
+  `STYLE_TREE = 3`, each naming the event and the JSON to write. Off by
+  default: a user's project is not held to the agent's style.
+- `edit_sheet.py`: the checker runs with style on, and the warnings new
+  after the plan are printed, compared without their event numbers, so an
+  insert above the user's uncommented events does not re-list them.
+- `assets/build_project.py`: `module()`, `event()`, `procedure()`,
+  `steps()`, `cases()`, `flat()`; the stand-in sheet as `module_setup()`,
+  `module_input()`, `scoring()`, `module_restart()`, constants under
+  `Settings.`; the final check passes `--style`.
+- `prompts/event-sheet-style.md` rewritten: the habits table first, then
+  the sheet template, then comments, names, project and UI text.
+- Pointers in `event-sheet-thinking.md`, `event-sheet-assistant.md`,
+  `SKILL.md`; `generating-a-project.md` "Writing the generator";
+  `checker-rules.md` "Style, with `--style`" and its duplicated `Self` row
+  removed; `skills/AGENTS.md` rule for style findings.
+- Tests: the stand-in passes `--style` clean; each warning on a broken
+  stand-in; a plan reports the style of what it adds and not of the user's
+  events; `make_fixtures.seed_load_errors` and four print expectations
+  follow the template's new comments.
+- `print_sheet.py`, found by those tests: a part cut at `--limit` could
+  stop before the event whose comments and variables it had just printed,
+  and the continuation it named started at the same event, forever. The
+  rows of one event number now print together and a part stops only before
+  a later number. With the old template no test reached the case; the
+  stand-in's new comment rows did.
+
+Old against new over 2 050 runs, the final scripts against the commit
+before (`.local/docs/evidence/style-checks/sweep-old.json`,
+`sweep-new4.json`, `classify_sweep.py`): no `check`, `edit` or `lookup`
+run differs; 215 `print` and `outline` runs differ, 122 by the script path
+in their last line only, which names the checkout that printed (192
+characters shorter, confirmed by a diff of template-snake), 93 by that and
+by the part fix: runs cut at `--limit`, whose part now ends before a later
+event number and prints 19 to 554 characters less, exit code unchanged. No
+run prints more than 10 000 characters. The last change to `edit_sheet.py`,
+the refusal, changed no run: `sweep-new3.json` and `sweep-new4.json` are
+identical. `check_project.py --style` over the examples: the table above.
+
+### Iteration 11: add-countdown, Haiku 4.5, two runs per arm
+
+Fixtures outside the clone (`make_fixtures.py`), `with_skill` the working
+tree with the style warnings, `old_skill` a worktree of the commit before
+(42ec5d5), prompts as `skills/AGENTS.md`, Evals, gives them. Runs in
+`.local/docs/evidence/skill-evals/construct3-project/iteration-11/`;
+`benchmark.json` and the traces were read.
+
+| Arm | Assertions | Tokens | Seconds | Tool calls, lost | Style warnings in the final sheet |
+|-----|-----------:|-------:|--------:|-----------------:|----------------------------------:|
+| old_skill | 6/7 | 56 198 | 76.6 | 18, 3 | 2 (the two new Timer events have no comment) |
+| old_skill_2 | 7/7 | 59 438 | 95.6 | 17, 3 | 2 (same) |
+| with_skill | 7/7 | 70 574 | 160.8 | 34, 4 | 1 (wrote `// Restart when time runs out.` and `// Countdown the timer each second.`, the second above the group instead of the event) |
+| with_skill_2 | 7/7 | 62 575 | 122.9 | 25, 7 | 3 (three new events, none commented) |
+
+Both with-skill transcripts hold the warnings (`warning: sheet Game event`
+four and three times); neither old-skill transcript does. One run acted on
+them, one did not. The failed assertion of `old_skill` is the known one
+(the `Collect` text left without the time). Two runs per arm: counts, not a
+spread; the with-skill runs cost more calls, and this iteration cannot say
+whether the warnings or chance did that.
+
+The re-evaluation clause below was met on the first try, so the step it
+names was taken the same day: `edit_sheet.py` refuses a plan whose created
+events, those with a sid the sheet did not hold before, raise the two
+findings whose fix is one comment (no comment above a top-level event;
+eight actions in a row without a comment action), printed like problems
+with the JSON to write and `nothing was written`; an event the plan moved
+or extended is the user's, and a finding on it prints as a warning; the
+tree finding stays a warning everywhere, because flattening a decision is a
+design change the plan's author must make. `SKILL.md` says so and its plan example carries
+the comment; `check_project.py --style` still reports all three. Not
+measured: whether a Haiku run given the refusal writes the comment or gives
+up. That is the next iteration.
+
+### Not done
+
+- The next iteration: a Haiku run against the refusal.
+- The trigger evaluation of the description, for lack of a signed-in client.
+- Warnings for the pile of globals: no heuristic passes the corpus.
+- The pitfalls file (4 850 tokens) was not split into a core and a
+  reference; no run has shown a wrong answer that a section-level
+  "when to read" would have fixed.
+
+### Re-evaluate when
+
+- A Haiku run given the refusal abandons the task or loops on it: then the
+  refusal costs more than the habit, and the two findings go back to
+  warnings, with the run as evidence.
+- A capable model's plans are refused often: count the refusals in the
+  traces of the next iterations; a comment is one row, so more than one
+  refusal per run means the message does not say what to write.
+- The official corpus gains projects whose style differs: rerun
+  `measure_style.py`; the thresholds are constants at the top of
+  `check_project.py`.

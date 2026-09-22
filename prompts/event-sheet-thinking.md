@@ -2,8 +2,11 @@
 
 Decides what the events are before any is written. [event-sheet-assistant.md](event-sheet-assistant.md)
 says how to write one down; [event-sheet-pitfalls.md](event-sheet-pitfalls.md)
-lists the runtime facts intuition gets wrong. Run every draft through the smell
-table below before showing it.
+lists the runtime facts intuition gets wrong. Before the events go into a
+project or a generator, read [event-sheet-style.md](event-sheet-style.md):
+how the official examples organise, name and comment a sheet, and the three
+habits the checker warns on. Run every draft through the smell table below
+before showing it.
 
 A sheet that links objects through UID variables, resets picking with
 `Pick all`, copies picked results into variables and branches on the numbers,
@@ -136,7 +139,9 @@ behavior-reference/flash.md, project-primitives/timelines.md]
 ## Layout of the sheet
 
 The official examples split the same way every time (groups in 237 of 432,
-several sheets in 48, includes in 14).
+several sheets in 48, includes in 14). What goes inside a group, and how it
+is named and commented, is [event-sheet-style.md](event-sheet-style.md),
+read before writing into a project.
 
 - One layout: one sheet. Groups by subsystem, named as the examples name them:
   *Setup* (`On start of layout`), *Player*, *Controls*, *Camera*, *Tutorial*,
@@ -193,7 +198,9 @@ One hit means redesign, not patch.
    `Is overlapping another object`, narrowing conditions, then `Else`.
 3. Walk the Native first and Feel tables: for each delay, motion, table,
    phase, sequence or effect in the draft, name the built-in that owns it.
-   Place the events by "Layout of the sheet".
+   Place the events by "Layout of the sheet"; when they go into a project,
+   group, name and comment them as [event-sheet-style.md](event-sheet-style.md)
+   says.
 4. Read the manual page for each mechanism you are about to use.
 5. Draft, then run the smell table and the pitfalls.
 6. Only then verify names, with `lookup_ace.py` as

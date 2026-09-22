@@ -97,6 +97,10 @@ def frames_of(folder, prefix=""):
         yield from frames_of(sub, prefix)
 
 
+STYLE_RUN = 8      # actions in a row without a comment action
+STYLE_TREE = 3     # sub-event levels below an event, when every leaf calls the same function
+
+
 class Holder(NamedTuple):
     """What holds the trigger of an event branch."""
     name: str       # "Touch:on-touched-object", or "the function AddScore"
@@ -113,10 +117,12 @@ class Checker:
     earlier one collected: the layers and template instances of the layouts,
     the functions and groups of every sheet."""
 
-    def __init__(self, p: c3.Project, limit: int = 0, sheets: dict[str, dict] | None = None) -> None:
+    def __init__(self, p: c3.Project, limit: int = 0, sheets: dict[str, dict] | None = None,
+                 style: bool = False) -> None:
         self.p = p
         self.limit = limit
         self.unsaved = sheets or {}     # edit_sheet.py checks a sheet before it writes it
+        self.style = style              # the three readability warnings of check_style, off unless asked
         self.err, self.warn = p.err, p.warn
         self.layouts: dict[str, dict] = {}
         self.sheets: dict[str, dict] = {}
@@ -677,23 +683,27 @@ class Checker:
                 continue
             self.check_ace("actions", a, scope, w)
 
-    def walk(self, events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None) -> None:
+    def walk(self, events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None,
+             depth: int = 0) -> None:
         """A local declared in a list of sibling events is visible to every event of
         that list, whatever the order, and to their sub-events; not to the parent's
         own actions. So the list's variables enter the scope first, and a block is
         checked before its children are walked. scope maps a name to the variable
         event or function parameter that declares it. counter holds the sheet's
-        running event number, above what holds the trigger of this branch."""
+        running event number, above what holds the trigger of this branch, depth
+        how many sub-event levels down this list is (a group's children are 0)."""
         scope = dict(scope)
         for ev in events:
             if ev.get("eventType") == "variable":
                 scope[ev["name"]] = ev
         previous = None
-        for ev in events:
+        for i, ev in enumerate(events):
             et = ev.get("eventType")
             if et in NUMBERED:
                 counter[0] += 1
             w = f"{where} event {counter[0] + (et not in NUMBERED)} (sid {ev.get('sid', '?')})"
+            if self.style and et in ("block", "function-block", "custom-ace-block"):
+                self.check_style(ev, w, events, i, depth)
             if et == "variable":
                 pass
             elif et in ("comment", "include"):
@@ -713,15 +723,66 @@ class Checker:
                     self.err(f"{w}: custom action {label} belongs to unknown object {ev['objectClass']}")
                 self.check_block(ev, fscope, f"{w} {label}")
                 self.walk(ev.get("children", []), fscope, where, counter,
-                          self.check_structure(ev, f"{w} {label}", above, previous))
+                          self.check_structure(ev, f"{w} {label}", above, previous), depth + 1)
             elif et == "block":
                 self.check_block(ev, scope, w)
-                self.walk(ev.get("children", []), scope, where, counter, self.check_structure(ev, w, above, previous))
+                self.walk(ev.get("children", []), scope, where, counter, self.check_structure(ev, w, above, previous),
+                          depth + 1)
             elif et != "script":
                 self.err(f"{w}: unknown eventType {et!r}; the editor knows block, group, variable, comment, include, "
                          f"function-block, custom-ace-block and script")
             if et != "comment":
                 previous = ev
+
+    # --- style, with --style ------------------------------------------------------------
+    def check_style(self, ev: dict, where: str, siblings: list, i: int, depth: int) -> None:
+        """Three habits of sheets written by small models, each with the shape the
+        official examples give it instead. Warnings, never errors: the editor
+        accepts all three. The thresholds sit past the 90th percentile of the
+        studio examples, where a run of actions without a comment is 3 at the
+        median and 6 at the 90th percentile, branches go two sub-events deep in
+        93% of events, and 93% of top-level events have a comment above them
+        (docs/decisions/event-sheet-design-guidance.md, 2026-09-22).
+        edit_sheet.py refuses a plan whose new events raise the first two, whose
+        fix is one comment, and prints the third; check_project.py reports all
+        three over the whole project when asked, which suits a project the agent
+        wrote."""
+        actions = ev.get("actions", [])
+        run = longest = 0
+        for a in actions:
+            run = 0 if a.get("type") == "comment" else run + 1
+            longest = max(longest, run)
+        style = self.p.findings.style_finding
+        if longest >= STYLE_RUN:
+            style("run", f"{where}: {longest} actions in a row without a comment action; the official examples step a "
+                         f"long block with a comment action every three to five actions, "
+                         '{"type": "comment", "text": "What the next actions do."}')
+        if depth == 0 and (actions or ev.get("children")):
+            j = i - 1
+            while j >= 0 and siblings[j].get("eventType") == "variable":     # locals declared above the event
+                j -= 1
+            if j < 0 or siblings[j].get("eventType") != "comment":
+                style("comment", f"{where}: no comment above it; the official examples put a one-sentence comment "
+                                 f"above every top-level event, saying what it does or which case it is, "
+                                 '{"eventType": "comment", "text": "..."} as the event before it')
+        if depth == 0 and self.tree_depth(ev) >= STYLE_TREE:
+            leaves = self.leaves(ev)
+            called = {a["callFunction"] for leaf in leaves for a in leaf.get("actions", []) if "callFunction" in a}
+            if len(leaves) >= 3 and len(called) == 1 and \
+                    all(any("callFunction" in a for a in leaf.get("actions", [])) for leaf in leaves):
+                style("tree", f"{where}: sub-events {self.tree_depth(ev)} levels deep, every leaf calling "
+                              f"{called.pop()}; the official examples write the cases as sibling sub-events with a "
+                              f"comment each, or compute the value in one expression")
+
+    @staticmethod
+    def tree_depth(ev: dict) -> int:
+        kids = [k for k in ev.get("children", []) if k.get("eventType") == "block"]
+        return 1 + max((Checker.tree_depth(k) for k in kids), default=0) if kids else 0
+
+    @staticmethod
+    def leaves(ev: dict) -> list[dict]:
+        kids = [k for k in ev.get("children", []) if k.get("eventType") == "block"]
+        return [leaf for k in kids for leaf in Checker.leaves(k)] if kids else [ev]
 
     def declared_functions(self, events: list) -> None:
         """Functions and custom actions are visible from every sheet, so collect them first."""
@@ -849,8 +910,15 @@ def main() -> int:
         "examples:\n"
         "  python scripts/check_project.py\n"
         "  python scripts/check_project.py --project ../OtherGame\n\n"
+        "  python scripts/check_project.py --style        # a project the agent wrote\n\n"
         "exit codes: 0 no errors (warnings do not fail the run), 1 findings or project/clone not found,\n"
         "2 a project file lacks a key the editor always writes and the run stopped there")
+    ap.add_argument("--style", action="store_true",
+                    help="also warn where a sheet departs from the authoring style of the official examples: "
+                         f"{STYLE_RUN} or more actions in a row without a comment action, a top-level event with "
+                         f"no comment above it, sub-events {STYLE_TREE} levels deep whose leaves all call one "
+                         "function. For a project the agent wrote; edit_sheet.py refuses a plan whose new events "
+                         "raise the first two and warns on the third")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()
@@ -859,7 +927,7 @@ def main() -> int:
     drift = c3.skill_drift(project.rag)
     if drift:
         findings.warn(drift)
-    return Checker(project, args.limit).run()
+    return Checker(project, args.limit, style=args.style).run()
 
 
 if __name__ == "__main__":

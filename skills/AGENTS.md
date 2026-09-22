@@ -46,7 +46,10 @@ project, and the block for the project's instruction file.
 - English only; `--locale` switches the schema wording, not the tool's.
 - A check becomes an error after the two steps in
   `construct3-project/references/checker-rules.md`: the editor's message,
-  then a run over the official examples that adds no finding.
+  then a run over the official examples that adds no finding. A style
+  finding, one the editor accepts, is a warning behind `--style` and in what
+  `edit_sheet.py` adds, never an error; its threshold comes from a
+  measurement over the official examples, recorded with the finding.
 - A change to a script is compared, old against new, over every official
   example and the game projects: exit code, stdout and stderr
   (`construct3-project/evals/sweep_outputs.py`). A restructure shows no

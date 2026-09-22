@@ -202,12 +202,6 @@ first.
   Write the object: order *For each SnakeBody* by `SnakeBody.IID`, not
   `Self.IID`. [editor: `projectResources.js`, `.invalid-self`, r495.2;
   observed: Doubao snake project, event 45, 2026-09-22]
-- `Self` is the object of the condition or action the expression sits in. In
-  a System condition or action, *For each ordered* included, there is no such
-  object and the editor refuses to open the project: `Invalid use of 'self'`.
-  Write the object: order *For each SnakeBody* by `SnakeBody.IID`, not
-  `Self.IID`. [editor: `projectResources.js`, `.invalid-self`, r495.2;
-  observed: Doubao snake project, event 45, 2026-09-22]
 - `lerp(Self.X, Target.X, 0.1)` moves a different fraction per second at
   different framerates and ignores the time scale. When the third argument is a
   constant and the first is last tick's result, write `lerp(a, b, 1 - f^dt)`

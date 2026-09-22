@@ -42,7 +42,7 @@ exists and a name they reject does not.
 | `scripts/lookup_ace.py OBJECT [WORD ...]` | Conditions, actions and expressions of an object of the project, of `System`, or of a plugin or behavior, each with its parameters and the JSON to write |
 | `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only, `--show N` for one event as JSON |
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed; checked before anything is written |
-| `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:` |
+| `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds three readability warnings from the official examples' style, for a project the agent wrote |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
 
@@ -129,6 +129,7 @@ are.
   {"event": 2, "add-actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": "\"Time: \" & timeLeft"}}]},
   {"event": 7, "action": 2, "set": {"parameters": {"text": "\"Score: \" & score & \"  Time: \" & timeLeft"}}},
   {"after": 8, "events": [{"eventType": "group", "title": "Timer", "children": [
+    {"eventType": "comment", "text": "Count the time down each second."},
     {"eventType": "block",
      "conditions": [{"id": "every-x-seconds", "objectClass": "System", "parameters": {"interval-seconds": "1"}}],
      "actions": [{"id": "subtract-from-eventvar", "objectClass": "System", "parameters": {"variable": "timeLeft", "value": "1"}}]}]}]}
@@ -166,8 +167,15 @@ Nothing is written unless the whole plan holds. The sheet it makes is checked
 as `check_project.py` checks, and a problem the plan would add is printed
 under its operation, with the file left as it was; a problem that was there
 before does not stop it. It ends with the changed events as the editor words
-them, under their new numbers, and the checker's last line. `--dry-run` does
-all of that and writes nothing.
+them, under their new numbers, and the checker's last line. A new
+top-level event, function or custom action needs a one-sentence comment
+above it, `{"eventType": "comment", "text": "..."}` in the same `events`
+list, and a run of eight actions needs a comment action, `{"type":
+"comment", "text": "..."}`, among them: a plan that adds one without is
+refused like a problem, with the place and the JSON to write. A decision
+written as sub-events three levels deep is a `warning:` under the output;
+write the cases as sibling sub-events instead. The user's older events are
+not held to this. `--dry-run` does all of that and writes nothing.
 
 ## Check after every change
 
@@ -184,9 +192,11 @@ all of that and writes nothing.
 `ok:` is about the files, not the game. The checker cannot run the events:
 which instances a condition picks, what order triggers fire in and what a
 tick later looks like are the preview's to judge. Design with
-`Construct3-RAG/prompts/event-sheet-thinking.md` first; a runtime fact the
-preview teaches goes into `Construct3-RAG/prompts/event-sheet-pitfalls.md`
-with its source.
+`Construct3-RAG/prompts/event-sheet-thinking.md` first, and before events go
+into a sheet read `Construct3-RAG/prompts/event-sheet-style.md`, the shape
+the official examples give a sheet, which the style warnings enforce only in
+part; a runtime fact the preview teaches goes into
+`Construct3-RAG/prompts/event-sheet-pitfalls.md` with its source.
 
 Exit code 2 and `stopped at`: a file lacks a key the editor always writes.
 Compare it with a file `assets/build_project.py` generates or with an
@@ -199,8 +209,10 @@ let through.
 When the agent owns the project and the user reviews it in the editor, write
 it as one Python generator instead of JSON by hand. Read
 [references/generating-a-project.md](references/generating-a-project.md)
-before writing it: set-up in the editor, the build and check loop, the habits
-that keep a rerun safe.
+before writing it: set-up in the editor, the build and check loop, one
+function per group of the sheet, the habits that keep a rerun safe. The
+generator checks what it wrote with `--style`, so every event is held to the
+style of the official examples.
 
 ## Gotchas
 
