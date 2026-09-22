@@ -945,6 +945,31 @@ Decision: keep `dy` and the guard's number; `stack()` is not needed. Open:
 the "Lives: 3" run shows the assertions do not pin the hearts; a check on
 the sprite count would, at the price of reading the task into the grader.
 
+### Iteration 18: the sprite count pinned
+
+A tenth assertion: the lives are sprites, three instances of one Sprite
+type (the plugin id of `objectTypes/<type>.json`) or one Sprite at least
+three times as wide as high, the button excluded; a label saying Lives does
+not count. Over the eighteen archived runs of iterations 15 to 17 it fails
+exactly one, the "Lives: 3" run. The template is unchanged since
+`fd3c9fa`, so this iteration has one arm, four runs, and measures the
+current template on the tightened case rather than a change. Evidence:
+`.local/docs/evidence/skill-evals/construct3-project/iteration-18/`.
+
+| Arm | Of 10 | Guard hits | Tokens | Seconds | Lost calls |
+|-----|-------|------------|--------|---------|------------|
+| with_skill (4 runs) | 10, 10, 10, 10 | 1, 1, 1, 1 | 78 820 | 123 | 4.3 |
+
+Every run drew three 96 px hearts, met the guard once on the crowded top
+edge, wrote `dy=3` and passed on the rerun; the four layouts are the same to
+the pixel except one whose hearts are 16 px apart instead of `row()`'s
+unit. The lost calls are the guard hit, the missing button image on the
+first rerun, and one or two Edits that did not match the generator's text.
+Across the four iterations of this case the with-template pass rate went
+7 of 7, 8 of 9, 9 of 9, 10 of 10 as the assertions grew, and lost calls
+1.7, 5.0, 3.0, 4.3: the guard costs one rerun per run on this viewport,
+which the record of iteration 16 leaves as the design prompt's question.
+
 ### Re-evaluate when
 
 - An eval run shows off-grid placement in a generated project, or the

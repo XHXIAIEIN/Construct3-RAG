@@ -80,6 +80,7 @@
         "Every box on the UI layer lies inside the viewport",
         "No two boxes on the UI layer overlap: a row of hearts is spaced by its width or more, the timer text does not reach into the score text",
         "The pause button is at least 96 px wide and high, a finger at this viewport",
+        "The lives are sprites: three instances of one Sprite type, or one Sprite at least three times as wide as high; a text saying Lives does not count",
         "tools/build_project.py is the source: rerun in a copy, it writes the same layouts/Game.json"
       ]
     }
