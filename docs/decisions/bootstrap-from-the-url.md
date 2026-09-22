@@ -35,7 +35,12 @@ command block they were given and skipping a row of a table.
   `git clone`, which refuses a folder that holds files. `~` is not the
   spelling: PowerShell hands it to Git unexpanded and Git makes a folder
   named `~` in the working directory. `$HOME` is expanded by PowerShell,
-  bash and zsh; `cmd.exe` has `%USERPROFILE%`.
+  bash and zsh; `cmd.exe` has `%USERPROFILE%`. What the folder is written
+  out in matters, not which folder it is: a user who keeps repositories
+  elsewhere writes theirs into both commands, or clones where they please
+  and runs `bootstrap.py` from that clone, which is where the siblings go.
+  `$HOME/Construct3` is the filled-in default for the reader this section
+  is for, who has the URL and no preference.
 - `--project` takes a name or a path. A bare `MyGame` is created beside the
   clones, so that the two commands gather everything in one folder from any
   directory; a path spelt out — a separator, a drive, `~`, `.` — is read
