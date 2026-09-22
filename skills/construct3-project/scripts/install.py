@@ -105,6 +105,11 @@ def add_block(project: Path, rag: Path, skill_path: str, dry_run: bool) -> list[
                               encoding="utf-8", newline="\n")
         notes.append(f"CLAUDE.md: {'would be ' if dry_run else ''}{'added' if had.strip() else 'created with'} "
                      f"the line @AGENTS.md, which Claude Code follows to the block")
+    # The block records the clone for this project alone, and nothing here writes outside the
+    # project: the next project starts with no record of the clone anywhere on the machine.
+    notes.append(f"memory: keep 'Construct3-RAG: {rag.as_posix()}' where your client stores notes between "
+                 f"sessions. The next project starts without this block, and an agent that cannot find "
+                 f"this clone clones it and the repositories beside it again")
     return notes
 
 
