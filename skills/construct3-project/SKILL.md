@@ -81,9 +81,13 @@ A word is matched as written, not by meaning, against the id and the names
 and against where the ACE lives: the behavior, the category, `condition`,
 `action`, `expression`. `System timer` finds nothing and lists the
 categories; `System time` lists *Every X seconds*, *Wait* and `dt`.
-*Pick nearest/furthest*, *Is overlapping*, *Set position* are every world
-object's, not System's: `System nearest` finds nothing and names them as
-shared, to be looked up on an object, `Coin nearest`.
+*Pick nearest/furthest*, *Is overlapping*, *Set color* are every world
+object's, not System's and not the plugin's: `System nearest` and
+`Sprite color` print them under "every world object has these", with
+`<Object>` where the object's name goes. Run it on an object of the project,
+`Coin nearest`, to get the name written in. When no name has every word, a
+parameter counts: `Tween color` finds *Tween (one property)*, whose property
+`offsetColor` is Color.
 
 Copy the `write:` line and replace the values. Leave `"sid": <new sid>` out
 of a plan for `edit_sheet.py`, which gives every new entry one; in a hand
@@ -198,7 +202,10 @@ not held to this. `--dry-run` does all of that and writes nothing.
 `ok:` is about the files, not the game. The checker cannot run the events:
 which instances a condition picks, what order triggers fire in and what a
 tick later looks like are the preview's to judge. Design with
-`Construct3-RAG/prompts/event-sheet-thinking.md` first, and before events go
+`Construct3-RAG/prompts/event-sheet-thinking.md` first, which also says what
+a new project takes instead of a superseded feature (a Tween on Opacity for
+Fade, a hierarchy for Pin, instance tags for the Solid behavior's own), and
+before events go
 into a sheet read `Construct3-RAG/prompts/event-sheet-style.md`, the shape
 the official examples give a sheet, which the style warnings enforce only in
 part; a runtime fact the preview teaches goes into
