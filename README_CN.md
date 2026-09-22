@@ -6,14 +6,16 @@
 
 ## 从这个链接开始
 
+两条命令照原样运行，在哪个目录都可以：
+
 ```bash
 git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct3-RAG
 python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-两条命令都把文件夹写全：无论在哪个目录运行，clone 都落在同一处；再运行一次会停在 `git clone`，它不会 clone 进已经存在的文件夹。换成别的文件夹也可以，只要每次都是同一个；`cmd.exe` 里 `$HOME` 写作 `%USERPROFILE%`。
+它们把这个 clone、它要读的仓库和 `MyGame` 项目放在同一个 `$HOME/Construct3` 里，并把 `construct3-project` skill 连同 `AGENTS.md` 和 `CLAUDE.md` 装进 `MyGame`。已经存在的都原样保留，所以这两条可以重复运行；`--help` 列出参数。`cmd.exe` 里把 `$HOME` 写成 `%USERPROFILE%`。
 
-第二条命令 clone 相关仓库，在它们旁边把 `MyGame` 创建为空项目，安装 `construct3-project` skill 并写入 `AGENTS.md` 和 `CLAUDE.md`；已有的都跳过，`--help` 列出它的参数。之后读项目的 `AGENTS.md`。
+之后读 `MyGame/AGENTS.md`。
 
 ## 相关仓库
 
