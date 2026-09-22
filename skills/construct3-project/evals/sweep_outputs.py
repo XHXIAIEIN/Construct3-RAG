@@ -44,7 +44,8 @@ PLAN = [{"into": 0, "events": [
         {"id": "add-to-eventvar", "objectClass": "System", "parameters": {"variable": "SweepProbe", "value": "1"}}]}]}]
 LOOKUPS = [["System"], ["System", "wait"], ["System", "action"], ["System", "expression"], ["System", "every"],
            ["System", "timer"], ["System", "for", "each"], ["Sprite"], ["Sprite", "scale", "size"],
-           ["Sprite", "animation"], ["Text", "set"], ["8 Direction", "speed"], ["Tween"], ["Tween", "two"],
+           ["Sprite", "animation"], ["Sprite", "color"], ["Sprite", "aniamtion"], ["Text", "set"],
+           ["8 Direction", "speed"], ["Tween"], ["Tween", "two"], ["Tween", "color"],
            ["Platform", "jump"], ["Array"], ["Arr", "push"], ["Json", "get"], ["Keyboard"], ["Touch", "touched"],
            ["Audio", "play"], ["LocalStorage"], ["Timer"], ["Physics", "force"], ["NoSuchAddon"]]
 

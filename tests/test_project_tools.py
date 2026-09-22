@@ -706,6 +706,17 @@ def test_ace_lookup_points_a_shared_ace_to_an_object(built, tmp_path):
     assert code == 1 and "every world object has these" not in out
 
 
+def test_ace_lookup_finds_a_word_in_a_parameter(built):
+    """Tween Color, which the event sheet guidance names, is Tween (one property) with the
+    property offsetColor: the word is a combo value, and the names alone answer that Tween
+    has no color. A parameter counts only when no name has every word."""
+    code, out = tool(built, "lookup_ace", "Tween", "color")
+    assert code == 0 and "no name under Tween has every word of 'color'" in out
+    assert "tween-one-property" in out and "offsetColor" in out
+    code, out = tool(built, "lookup_ace", "Tween", "pause")
+    assert code == 0 and "pause-tweens" in out and "no name under Tween" not in out
+
+
 def test_ace_lookup_prints_a_miss_on_stdout(built):
     """The miss and what comes near are the answer. On stderr, a harness that shows stdout
     alone printed nothing, and PowerShell wrapped each line in a NativeCommandError record,
