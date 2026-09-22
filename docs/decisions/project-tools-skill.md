@@ -606,3 +606,59 @@ calls; with four runs a cell and the deviations of iteration 9 (tokens
 
 - A run reaches `check_project.py` only at the end: read where the command
   of step 1 was in its context when it opened the first project file.
+
+## Update 2026-09-22: what two Doubao runs read into the tools
+
+Two Doubao sessions on one raft survival game worked from the installed
+skill in PowerShell 5; their logs and screenshots are in `.local/doubao/`.
+Four of the turns they lost were the tools' doing.
+
+- `lookup_ace.py System nearest` and `lookup_ace.py Sprite color` answered
+  "nothing under ... has every word", and each run took the answer for the
+  fact: the first wrote that this version has no *Pick nearest* and picked
+  by lowest distance; the second wrote that a Sprite cannot be coloured at
+  runtime and designed one object per colour. Both ACEs are every world
+  object's, in `plugins/_common.json`, which the lookup joins only under an
+  object of the project. A miss under System or a plugin now searches
+  `_common` as well and prints what it finds as shared, with the command
+  that looks it up on an object. Under an object nothing changes.
+- A text instance variable written as `"type": "text"` stopped the checker
+  with `missing key 'text'`, a sentence about its own table; the run read
+  the checker's source to find out. The checker names the variable and the
+  three types, as it does for an event variable.
+- The properties block of a behavior the template did not carry (Sine,
+  MoveTo) was guessed: the file `sine.json` for id `sin`, the block under
+  the id instead of the name on the object. The template carries the blocks
+  of seventeen behaviors, a test holds their keys to the schemas, and
+  `generating-a-project.md` says where a missing one is copied from.
+- A container's format was searched for under `objectTypes/` and in the
+  example folders and given up on. A container is a row of `project.c3proj`
+  and has no file; the template has `container()` and writes the key, and
+  `hand-editing-project-files.md` gives the row with the counts behind it.
+
+The miss of the lookup also moved from stderr to stdout. Both logs show
+what stderr costs a PowerShell reader: `2>&1` turns each line into an
+error record with `CategoryInfo` and `FullyQualifiedErrorId` around it, and
+a harness that shows stdout alone would have shown nothing. The miss is the
+answer to the question asked, so it prints where a hit does; the exit code
+still says 1, and a usage error, an unknown object or a missing clone, stays
+on stderr. The drift note of every script is a diagnostic and stays there;
+the log shows it wrapped the same way on every run of a stale copy, which
+is a reason to install the skill through `bootstrap.py`, not to move it.
+
+Sweep, `.local/docs/evidence/doubao-logs/sweep-old.json` against
+`sweep-new.json`, 2066 runs over the 524 official examples and the nine
+game projects: `check` and `edit` identical in every run, so the two new
+rules add no finding to the corpus; `lookup System timer` is the one run
+whose output moved, 316 characters from stderr to stdout; the 217 `print`
+and `outline` runs that differ do so by the path line alone, 184 characters
+longer on the old side's scratch checkout. Suite 317 passed before the
+change, 319 after.
+
+### Re-evaluate when
+
+- A run answers a miss with "does not exist" again: read whether it saw
+  the shared line, and whether the ACE was under a behavior instead.
+- A run copies a behavior block from an example under the id: the sentence
+  in `generating-a-project.md` did not reach it; consider a `--properties`
+  flag on the lookup that prints the block from an example.
