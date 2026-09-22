@@ -970,6 +970,83 @@ Across the four iterations of this case the with-template pass rate went
 1.7, 5.0, 3.0, 4.3: the guard costs one rerun per run on this viewport,
 which the record of iteration 16 leaves as the design prompt's question.
 
+## Update 2026-09-23: bars, gauges and life counters
+
+The user listed six ways to build a progress bar by the art a game has
+(a plain colour resized; two images and a mask; a container with a 9-patch
+fill; everything 9-patch; a count of icons tiled; a ring by mesh or by
+segments and a mask) and asked for them to be verified, the choice itself
+left to the agent.
+
+### Evidence
+
+The corpus, `.local/docs/evidence/example-style-survey/survey_bars.py`
+(clone `3c31b236`): 89 objects named bar, meter, heart, life, energy,
+power or progress in 55 examples, 37 Sprites, 27 Tiled Backgrounds, 4
+9-patches, 2 form-control progress bars, the rest text, and the events on
+them. What they do, with the expressions and the ids, is
+`prompts/references/progress-bars.md`. In short: one property from one
+expression, `Set width to value / max × LENGTH` clamped; the origin on the
+edge the bar grows from in every filling bar, (1, 0.5) on the one cover
+that hides from the right; Tween *Width* for a change; a Tiled Background
+for a colour, a pattern or a painting to reveal, because *Set width*
+repeats it and never stretches it; a 9-patch for caps, which the manual's
+own page names as the progress-bar case; two Tiled Backgrounds for a count
+of hearts, `Set width to 8 * HeathPoints` over the empty row; *Source
+atop* on a layer with its own texture for a fill drawn only where the
+container's art is. No example drives a ring by mesh; the corpus's masks
+by blend mode are light and darkness, not bars.
+
+Three eval cases, fixture `coins-generator`, the approach left open:
+`show-hp-as-a-bar` (no art, hp 40 plus 10 a coin, capped, sliding),
+`reveal-the-gradient` (a 384×32 gradient the generator draws, to be
+revealed and not stretched) and `lives-as-hearts` (five hearts emptying
+from the right, six later by one number). Graded from the files: the
+variable and its step, the width or frame set from it with a maximum, the
+origin on the growing edge, a frame around the fill, the Tween, the
+gradient object's plugin against its width actions, the hearts driven by
+the count and not by an event per heart. Iteration 19, Haiku 4.5, three
+runs per arm; `with_skill` reaches a clone with the reference, the thinking
+table's row and two pitfalls, `old_skill` the clone at `bca019a` without
+them; the template is the same in both. Evidence:
+`.local/docs/evidence/skill-evals/construct3-project/iteration-19/`.
+
+| Case | with_skill | old_skill | What failed |
+|------|------------|-----------|-------------|
+| show-hp-as-a-bar (of 9) | 6, 7, 9 | 8, 7, 8 | the fill's origin 0.5 in four runs of six, so the bar grows from its middle; one run adds the coin's value instead of 10; one scales the fill and never reads a maximum; one has no frame |
+| reveal-the-gradient (of 7) | 7, 6, 7 | 6, 6, 6 | old: two Sprites of the gradient stretched by width, one cover at the wrong end; new: three frame strips of eleven cuts, the frame set from hp; one adds the coin's value |
+| lives-as-hearts (of 7) | 7, 5, 7 | 7, 7, 7 | one run counts empties up instead of lives down and empties hearts by a boolean set in a loop, which the grader's literal reading fails |
+
+Means: with_skill 0.891, old_skill 0.903, 89 906 against 91 458 tokens,
+252 against 269 seconds, lost calls 6.6 against 6.1. No run of either arm
+opened `event-sheet-thinking.md`, the reference or the pitfalls: the
+transcripts hold no Read of them. The arms therefore differ in nothing the
+model saw, and the gradient column, three reveals against none, is chance
+at three runs, not the reference. Every bar run met `no_overlap()` on its
+own fill inside its frame, was told to move the fill down, and worked
+around it by leaving the bar out of the check.
+
+### Decision
+
+The reference stays: it is the corpus's answer, sourced, for a reader who
+asks. It does not reach a small model through the prompt chain, as
+`skills/AGENTS.md` says of prose. `no_overlap()` now lets a box wholly
+inside another pass, a fill in its frame or an icon on its panel, with a
+test; the guard's loop on every bar run was the template's fault. The
+grader gained the forms the runs used: `set-eventvar-value`, an amount
+handed to a function, a Tween of `offsetWidth` or `offsetScaleX`, a
+gradient revealed by a frame strip, a border painted into the image.
+
+### Re-evaluate when
+
+- A `hud_bar(type, where, length, ...)` helper is written: a Tiled
+  Background fill with origin (0, 0.5) inside a frame, `LENGTH` a constant
+  of the sheet, the width action and its Tween emitted by the helper. That
+  is the mechanical form of the reference, and iteration 20 would measure
+  it against this template on the same three cases.
+- The hearts grader meets a second run that counts empties up: then the
+  assertion reads "the count changes by one", either way.
+
 ### Re-evaluate when
 
 - An eval run shows off-grid placement in a generated project, or the

@@ -110,21 +110,32 @@ def row(where: str, n: int, w: float, h: float, gap: float = 1, ox: float = 0.5,
 
 def no_overlap(instances: list, where: str = "layer UI") -> None:
     """Stops the generator when two of these instances' boxes overlap or one reaches past the
-    viewport: a HUD is read at a glance, so nothing on it hides behind anything else. Called
-    on the UI layer in build_layouts(); a layer whose art is meant to stack is not passed."""
+    viewport: a HUD is read at a glance, so nothing on it hides behind anything else. A box
+    wholly inside another is a layer on purpose, a bar's fill in its frame or an icon on its
+    panel, and passes, unless the outer one is a label, which anything on top of it hides.
+    Called on the UI layer in build_layouts(); a layer whose art is meant to stack is not
+    passed."""
     boxes = []
     for inst in instances:
         w = inst.get("world")
         if w:
             left = w["x"] - w.get("originX", 0) * w["width"]
             top = w["y"] - w.get("originY", 0) * w["height"]
-            boxes.append((inst["type"], left, top, left + w["width"], top + w["height"]))
-    for kind, l, t, r, b in boxes:
+            boxes.append((inst["type"], left, top, left + w["width"], top + w["height"], "text" in inst.get("properties", {})))
+    for kind, l, t, r, b, _ in boxes:
         if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H:
             sys.exit(f"{where}: {kind} ({l:g},{t:g})-({r:g},{b:g}) reaches past the {VIEW_W}x{VIEW_H} viewport; "
                      f"place it with anchor() or row(), which keep it MARGIN inside the edge")
+
+    def layered(inner: tuple, outer: tuple) -> bool:
+        """inner wholly inside outer, and outer not a label: a label under another label is hidden."""
+        return (not outer[5] and outer[1] <= inner[1] and outer[2] <= inner[2]
+                and inner[3] <= outer[3] and inner[4] <= outer[4])
+
     for i, a in enumerate(boxes):
         for b in boxes[i + 1:]:
+            if layered(a, b) or layered(b, a):
+                continue
             if min(a[3], b[3]) - max(a[1], b[1]) > 0 and min(a[4], b[4]) - max(a[2], b[2]) > 0:
                 dy = math.ceil((a[4] + UNIT - b[2]) / UNIT)
                 sys.exit(f"{where}: {a[0]} ({a[1]:g},{a[2]:g})-({a[3]:g},{a[4]:g}) overlaps {b[0]} "

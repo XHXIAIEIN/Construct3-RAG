@@ -290,6 +290,21 @@ first.
 
 ## Rendering
 
+- *Set width* stretches a Sprite's whole image, repeats a Tiled Background's,
+  and on a 9-patch stretches or tiles the middle while the corners keep their
+  size. A bar with a painted fill is therefore a Tiled Background, which
+  shows a cut of the painting below its own width, and a bar with caps is a
+  9-patch, whose width must stay positive. [manual:
+  plugin-reference/tiled-background.md "display an image in a repeating
+  pattern"; plugin-reference/9-patch.md "a Sprite object, which just stretches
+  its entire image", "useful for representing things like progress bars";
+  reference: references/progress-bars.md]
+- A bar grows from its origin. Every filling bar in the examples has its
+  origin on the edge it grows from, (0, 0) or (0, 0.5); a cover that hides
+  from the right has (1, 0.5); a 0.5 origin grows both ways from the middle.
+  [examples: berry-harvester ProgressBar, jetpack FuelBar, flatland-golf
+  PowerBarCover, test-your-might MightLevelBar (0.5, 1)]
+
 - A blend mode such as *Destination in* only touches the pixels under the
   object's own quad: a mask sprite the size of the shape it reveals leaves
   everything outside its bounding box untouched, and the layer needs *Force
