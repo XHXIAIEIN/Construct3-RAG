@@ -1354,6 +1354,38 @@ def test_template_places_the_hud_on_the_grid(built):
     t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"), timer])
 
 
+def test_template_bar_grows_from_its_left_edge_inside_its_frame():
+    """hud_bar() is the reference's bar as one call: a Tiled Background fill, origin on the left,
+    inset in a frame held by anchor(); its width comes from bar_width(), clamped to the frame;
+    the instance properties are the editor's, every key in the plugin's schema."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
+    t = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(t)
+    frame, fill = t.hud_bar("HpFrame", "HpFill", "top-left", 384, dy=3)
+    assert (frame["world"]["x"], frame["world"]["y"], frame["world"]["width"], frame["world"]["height"]) == (224, 144, 384, 32)
+    assert (fill["world"]["x"], fill["world"]["y"], fill["world"]["width"], fill["world"]["height"]) == (34, 144, 380, 28)
+    assert (fill["world"]["originX"], fill["world"]["originY"], fill["properties"]["origin"]) == (0, 0.5, "left")
+    assert frame["properties"]["origin"] == "center" and "Tween" in fill["behaviors"]
+    t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"), frame, fill])
+    assert t.bar_width("hp", "HP_MAX", 380) == "clamp(hp / HP_MAX, 0, 1) * 380"
+    tween = t.tween_width("HpFill", "hp", t.bar_width("hp", "HP_MAX", 380))
+    assert tween["id"] == "tween-one-property" and tween["parameters"]["property"] == "offsetWidth"
+    assert t.set_width("HpFill", "1")["id"] == "set-width"
+    types = t.bar_types("HpFrame", "HpFill")
+    assert [types[k]["plugin-id"] for k in ("HpFrame", "HpFill")] == ["TiledBg", "TiledBg"]
+    assert types["HpFill"]["image"]["originX"] == 0 and types["HpFill"]["behaviorTypes"][0]["behaviorId"] == "Tween"
+    # project.c3proj lists every plugin and behavior the types use, so a bar added later is not refused for its addon.
+    assert [(a["type"], a["id"], a["name"]) for a in t.used_addons(types, {})] == [("plugin", "TiledBg", "Tiled Background"), ("behavior", "Tween", "Tween")]
+    caps_frame, caps_fill = t.hud_bar("HpFrame", "HpFill", "top-left", 384, caps=True)
+    assert t.bar_types("HpFrame", "HpFill", caps=True)["HpFill"]["plugin-id"] == "NinePatch"
+    assert caps_fill["properties"]["left-margin"] == 2 and caps_fill["properties"]["origin"] == "left"
+    for inst, plugin in ((fill, "tiledbg"), (caps_fill, "ninepatch")):
+        schema = json.loads((REPO / "data" / "c3-schemas" / "en-US" / "plugins" / f"{plugin}.json").read_text(encoding="utf-8"))
+        unknown = set(inst["properties"]) - set(schema.get("properties") or {})
+        assert not unknown, (plugin, unknown)
+
+
 def test_stand_in_project_passes_the_style_check(built):
     """The template is the shape the style asks for, so a generated project starts clean."""
     code, out = check(built, "--style")
