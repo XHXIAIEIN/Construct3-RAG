@@ -2,7 +2,13 @@
 
 This document records structural findings that should survive individual code
 changes. It distinguishes completed cleanup from work that still needs an
-explicit design decision.
+explicit design decision. It covers the lookup service and the data pipeline;
+the records for the project skill, the prompts and the schema data are indexed
+in [`../AGENTS.md`](../AGENTS.md).
+
+`LITE_MODE`, `scripts/setup.py --full` and the other full-mode names below
+belong to the optional Qdrant mode removed on 2026-09-22. What the service does
+today is in [`remove-qdrant-full-mode.md`](remove-qdrant-full-mode.md).
 
 ## Completed in the current refactor
 
@@ -60,6 +66,9 @@ available evidence.
 
 ## Stage-one product baseline and boundary correction
 
+The mode this section measures was removed on 2026-09-22; it stands as the
+evidence that removal rests on.
+
 [`query-understanding-stage-one-baseline.md`](query-understanding-stage-one-baseline.md)
 records the 72-query r495 gold set, the pre-change current/literal reports, the
 post-change comparison, evidence paths, and remaining experiment plan.
@@ -82,6 +91,9 @@ Implemented product decisions:
   `Array 保存` cascade, `_common` leakage, and unknown-plugin substring matches.
 
 ## Stage-two live semantic evaluation
+
+The mode this section measures was removed on 2026-09-22; it stands as the
+evidence that removal rests on.
 
 [`query-understanding-stage-two-semantic-evaluation.md`](query-understanding-stage-two-semantic-evaluation.md)
 ran the comparison the stage-one record required: limited collections, fixed
@@ -117,9 +129,6 @@ Decisions established by that record:
   readiness;
 - the `semantic_fallback` route stays as the name of the query class Direct
   Lookup declines.
-
-The sections above describe the evaluation of a mode that no longer exists;
-they stand as the evidence it was removed on.
 
 ## SOP and module-boundary refactor
 
