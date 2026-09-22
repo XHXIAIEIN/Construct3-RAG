@@ -109,6 +109,16 @@ habits; they are what made rerunning safe in Water Sort.
   object (`Angle`, `Width`, `Count`).
 - Every runtime-created type has a template instance in a layout that never
   runs (`Objects` in the stand-in).
+- Positions and sizes are whole units of the placement grid, never numbers
+  picked one by one: `units(n)` for a size, `snap(v)` for a coordinate,
+  `anchor("top-left", w, h, ox, oy)` for a HUD element held against an
+  edge or corner, `MARGIN` inside the viewport, with the instance's origin
+  passed so the point returned is the one the file stores. `UNIT` follows
+  the viewport (8 px for pixel art, 32 px otherwise) and `TOUCH` is the
+  smallest object a finger taps at that viewport; a tapped sprite is at
+  least `TOUCH` wide. The middle of the screen is the game's; the HUD lives
+  on the edges. The counts behind the grid are in
+  `Construct3-RAG/prompts/event-sheet-style.md`, *Project*.
 - Family variables and behaviors are declared on the family and set on every
   member instance; the checker reports the instance that lacks one. A family
   is `family(name, plugin_id, members, ...)` in `build_object_types()` and

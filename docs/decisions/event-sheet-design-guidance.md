@@ -734,3 +734,108 @@ What the section says and what it leaves out:
   says nothing about it.
 - The cohort's helper sprite is 16×16, not the 32×32 the user recalled;
   both are one colour.
+
+## Update 2026-09-22: placement on a grid, and the art routes not taken
+
+The user asked how an agent with no art direction from the user should lay
+a prototype out, so that a small model stops choosing positions, sizes and
+scales one number at a time, and whether CC0 assets (Kenney's packs, the
+editor's bundled asset library, game-icons.net, Open Doodles, Open Peeps),
+an effects reference (effect.kitlangton.com) and sfxr should be brought in.
+
+### Evidence
+
+Placement, over the 524 examples by viewport
+(`.local/docs/evidence/example-style-survey/survey_placement.py`, clone
+`3c31b236`; a layout is one-screen when it is the viewport's size):
+
+| Viewport | Instances | x on 8 / 16 / 32 | width on 8 / 16 / 32 | Angle 0 | Edge offsets of top-left-origin instances, one-screen layouts |
+|----------|-----------|-------------------|-----------------------|---------|---------------------------------------------------------------|
+| 320×180 | 15 355 | 74% / 38% / 22% | 85% / 67% / 22% | 70% | 0 ×152, 8 ×22, 64 ×13, 4 ×10 |
+| 1920×1080 | 3 767 | 70% / 61% / 52% | 76% / 69% / 60% | 91% | 0 ×330, 32 ×17, 64 ×14, 16 ×9 |
+| 854×480 and 640×480 (Construct 2 era) | 2 348 | 25% and 16% on 8; a quarter of the coordinates are fractions | | | |
+
+So the examples lean on a grid without obeying one: a warning for an
+off-grid instance would fire in most official projects, and by the rule in
+`skills/AGENTS.md` (a style check passes the corpus) the grid cannot be a
+checker finding. It can be the generator's default, where a small model
+fills cells instead of choosing coordinates.
+
+Sizes for a finger, from the primary sources, read 2026-09-22: Android
+accessibility help, "touch targets at least 48x48dp, separated by 8dp of
+space or more"; Apple HIG, *Accessibility*, default control size 44×44 pt
+on iOS (minimum 28×28), about 12 pt of padding around a bezelled element;
+WCAG 2.5.5 Target Size (Enhanced), 44 by 44 CSS pixels. Broadcast safe
+areas, EBU R95 (March 2016 errata): action safe 3.5%, graphics safe 5% at
+top, bottom and sides. A phone shows the viewport's shorter side across
+about 360 dp, so 48 dp is 48 × shorter side / 360 viewport pixels.
+
+The editor's bundled asset library, read from the editor's own cache
+(`C3_assetBrowserData`, IndexedDB) and the Asset Browser code: 137 free
+packs, 136 of them Kenney zips, 48 942 files, 236 MB; each pack keeps the
+folder layout its author chose (`Tilemap/` sheets beside `Tiles/` singles,
+or neither). The list (`getpurchases.ashx`) and every download
+(`downloadpurchase.ashx`, `downloadfile.ashx`) take the account token; a
+request without one answers 400. Scirra's *Bundled Free Assets License*
+(construct.net/en/game-assets/asset-licenses) allows them inside Construct
+only and forbids redistribution as part of templates; the same files are
+CC0 at kenney.nl. The Asset Browser imports an asset as a new object type
+(manual, *Asset Browser Bar*); it does not replace the image of an object
+the agent already wrote. Four of the 524 examples credit Kenney, for the UI,
+Top Down Shooter and Racing packs; none uses the 1-Bit Pack.
+
+Existing skills, read the same day: gamedev-skills `game-ui-ux` (anchor
+elements to edges and corners, choose a reference resolution, inset from the
+safe area, focus navigation, a screen stack; no numbers), fcsouza
+`ui-ux-game` (designers' principles, patterns, 44 px targets), gamedev-skills
+`create-game-assets` and `level-design` (an art pipeline; geometry derived
+from player metrics). OpenAI's `game-ui-frontend` (one HUD cluster, the
+centre clear, HUD under a quarter of the viewport) is quoted by a listing
+site and was not found in `openai/skills`. None gives a game's placement as
+data a generator can hold; two principles, anchors and the inset, were
+taken.
+
+### Options
+
+1. A checker warning for an off-grid position or size. Rejected: the corpus
+   fails it.
+2. Grid constants and an `anchor()` helper in the generator template, the
+   stand-in laid out with them, and one *Project* bullet in the style
+   prompt with the counts and the sources. Chosen.
+3. An index of the editor's 137 bundled packs, so the agent could name a
+   pack and leave room for it. Dropped: the agent cannot fetch them, and the
+   editor's import creates new types rather than filling the agent's
+   placeholders, so the two halves never meet. The route that would work,
+   a generator writing frames from a CC0 zip into `images/`, is a
+   different feature and was not built.
+4. Installing a third-party UI skill beside this one. Rejected: what they
+   hold is prose the style prompt now states in two lines, and a skill that
+   installs other skills is not the user's to accept. A game project that
+   needs menus, focus navigation or gamepad flow may add `game-ui-ux`
+   itself.
+5. game-icons.net (CC BY 3.0, attribution, SVG to rasterise), Open Doodles
+   and Open Peeps (CC0 web illustration), effect.kitlangton.com (a SwiftUI
+   playground), sfxr (jsfxr, Unlicense, a Node CLI; whether a folder
+   project takes a WAV in `sounds/` is unverified). Not taken up.
+
+### Decision
+
+`assets/build_project.py`: `UNIT` (8 px when the viewport is 360 high or
+less, else 32), `MARGIN` (one unit), `TOUCH` (48 dp at the viewport,
+rounded up to a unit: 24 at 320×180, 96 at 720×1280, 160 at 1920×1080),
+`units()`, `snap()`, `anchor(where, w, h, ox, oy, dx, dy)`. The stand-in's
+score text is `anchor("top-left", units(13), units(2))` and its coin
+`TOUCH` wide. `prompts/event-sheet-style.md`, *Project*, one bullet;
+`references/generating-a-project.md`, one habit; a test pins the constants,
+the anchors and the generated HUD position. No checker change. Not
+measured: whether a small model given the template places better than
+before; that is a skill-eval iteration (`skills/AGENTS.md`, *Evals*).
+
+### Re-evaluate when
+
+- An eval run shows off-grid placement in a generated project, or the
+  helpers unused: the prose is then not reaching the model and the
+  helpers need to be the only way the template places anything.
+- The example clone updates: rerun `survey_placement.py`.
+- A game project needs real art at generation time: the CC0 zip route
+  (option 3, second half) is the one to design, with tile size as the unit.

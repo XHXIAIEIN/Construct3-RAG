@@ -1310,6 +1310,28 @@ def test_committed_schemas_mark_what_the_editor_treats_as_a_trigger(rel, ace_id)
 STYLE_ACTIONS = [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{i}"'}} for i in range(8)]
 
 
+def test_template_places_the_hud_on_the_grid(built):
+    """anchor() returns the origin point of a box held MARGIN inside the viewport edge, on the
+    grid; the stand-in's HUD text and its tapped coin come from it, so a generated layout starts
+    aligned and a small model fills cells instead of choosing coordinates."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
+    t = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(t)
+    assert (t.VIEW_W, t.VIEW_H, t.UNIT, t.MARGIN, t.TOUCH) == (720, 1280, 32, 32, 96)
+    assert t.units(13) == 416 and t.snap(100) == 96 and t.snap(112) == 128
+    assert t.anchor("top-left", 416, 64) == (32, 32)
+    assert t.anchor("top-right", 416, 64) == (720 - 32 - 416, 32)          # its right edge MARGIN from the viewport's
+    assert t.anchor("bottom", 96, 96, 0.5, 0.5) == (360, 1280 - 32 - 48)   # centred, its bottom edge MARGIN up
+    assert t.anchor("center", 96, 96, 0.5, 0.5) == (360, 640)
+    assert t.anchor("top-left", 96, 96, 0.5, 0.5, dx=3) == (32 + 96 + 48, 32 + 48)
+    game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
+    score = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "ScoreText")["world"]
+    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 32, 416, 64)
+    for k in ("x", "y", "width", "height"):
+        assert score[k] % t.UNIT == 0, k
+
+
 def test_stand_in_project_passes_the_style_check(built):
     """The template is the shape the style asks for, so a generated project starts clean."""
     code, out = check(built, "--style")
