@@ -245,7 +245,7 @@ def main() -> int:
     project = c3.Project.open(args, findings)
     drift = c3.skill_drift(project.rag)
     if drift:
-        print(f"note: {drift}", file=sys.stderr)
+        print(f"note: {drift}")
 
     sheets = project.load_listed("eventSheets")
     for name in args.sheets:
