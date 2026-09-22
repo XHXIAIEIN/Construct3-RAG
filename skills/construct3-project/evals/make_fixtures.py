@@ -92,7 +92,7 @@ def digest(project: Path) -> dict:
 
     out: dict = {p.relative_to(project).as_posix(): hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
                  for p in sorted(project.rglob("*"))
-                 if p.is_file() and p.name != "AGENTS.md" and not {".agents", "__pycache__"} & set(p.parts)}
+                 if p.is_file() and p.name != "AGENTS.md" and not {".agents", "__pycache__", "tools"} & set(p.parts)}
     for path in sorted((project / "eventSheets").rglob("*.json")):
         if not path.name.endswith(".uistate.json"):
             sheet = json.loads(path.read_text(encoding="utf-8"))
@@ -143,10 +143,19 @@ def main() -> int:
                 (target.parent / "outputs").mkdir()
                 if case["fixture"] == "coins-load-errors":
                     seed_load_errors(target)
-                (target.parent / "fixture.json").write_text(json.dumps(digest(target), indent=2), encoding="utf-8")
                 installer = next((script for prefix, script in installers.items() if arm.startswith(prefix)), None)
                 if installer:
                     run(str(installer), "--project", str(target), cwd=target)
+                if case["fixture"] == "coins-generator":
+                    # The game keeps its generator, the template of the arm's own skill, run once so the
+                    # files are that template's: the task is a change to tools/build_project.py and a rerun.
+                    if not installer:
+                        sys.exit(f"{case['name']} needs a skill: its generator checks with the skill's checker; "
+                                 f"lay it out with with_... and old_... arms only")
+                    (target / "tools").mkdir()
+                    shutil.copy(installer.parent.parent / "assets" / "build_project.py", target / "tools" / "build_project.py")
+                    run("tools/build_project.py", cwd=target)
+                (target.parent / "fixture.json").write_text(json.dumps(digest(target), indent=2), encoding="utf-8")
                 print(target)
     return 0
 
