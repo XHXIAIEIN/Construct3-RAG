@@ -1346,6 +1346,11 @@ def test_template_places_the_hud_on_the_grid(built):
     assert t.hud_text("TimerText", "Time: 30", "top-left", dy=3)["world"]["y"] == 128
     with pytest.raises(SystemExit, match="reaches past the 720x1280 viewport"):
         t.no_overlap([t.sprite_inst("Coin", 32, 32, 96, 96)])
+    # A fill inside its frame is a layer on purpose, not a collision: the eighteen bar runs of
+    # iteration 19 all met the guard here and worked around it.
+    frame = t.sprite_inst("HpFrame", 32 + 192, 128 + 16, 384, 32)
+    fill = t.sprite_inst("HpFill", 32 + 96, 128 + 16, 192, 32)
+    t.no_overlap([frame, fill])
     t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"), timer])
 
 

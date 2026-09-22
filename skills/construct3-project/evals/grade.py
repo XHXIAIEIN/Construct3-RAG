@@ -86,7 +86,7 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
     names = re.compile("|".join(map(re.escape, timers)) or r"$^", re.I)
 
     ticking = [(ev, above, a) for ev, above in rows for a in ev.get("actions", [])
-               if a.get("id") in ("subtract-from-eventvar", "add-to-eventvar", "set-eventvar") and names.search(values([a]))]
+               if a.get("id") in ("subtract-from-eventvar", "add-to-eventvar", "set-eventvar-value") and names.search(values([a]))]
     per_second, seen = False, "no action writes a countdown variable"
     for ev, above, a in ticking:
         conds = conditions_over(ev, above)
@@ -313,9 +313,366 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
+WIDTH_ACTIONS = {"set-width", "set-size", "set-scale"}
+TWEEN_SIZE = {"width", "size", "scale", "offsetwidth", "offsetscalex"}      # the Tween combo's keys, lower-cased
+
+
+def hud_instances(project: Path) -> list:
+    try:
+        layout = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    return [inst for layer in layout.get("layers", []) if layer.get("name", "").lower() in HUD_LAYERS
+            for inst in layer.get("instances", []) if "world" in inst]
+
+
+def box_of(inst: dict) -> tuple[float, float, float, float]:
+    w = inst["world"]
+    left = w["x"] - w.get("originX", 0) * w["width"]
+    top = w["y"] - w.get("originY", 0) * w["height"]
+    return left, top, left + w["width"], top + w["height"]
+
+
+def contains(outer: tuple, inner: tuple, slack: float = 1) -> bool:
+    return (outer[0] - slack <= inner[0] and outer[1] - slack <= inner[1]
+            and outer[2] + slack >= inner[2] and outer[3] + slack >= inner[3])
+
+
+def plugin_id(project: Path, kind: str) -> str | None:
+    try:
+        return json.loads((project / "objectTypes" / f"{kind}.json").read_text(encoding="utf-8")).get("plugin-id")
+    except (OSError, ValueError):
+        return None
+
+
+def frames_of(project: Path, kind: str) -> int:
+    try:
+        anims = json.loads((project / "objectTypes" / f"{kind}.json").read_text(encoding="utf-8")).get("animations")
+    except (OSError, ValueError):
+        return 0
+    return sum(len(a.get("frames", [])) for a in anims.get("items", [])) if isinstance(anims, dict) else 0
+
+
+def sheet_rows(project: Path) -> list:
+    """Every event of every sheet with the events above it; [] when none is readable."""
+    rows = []
+    for path in sorted((project / "eventSheets").glob("*.json")):
+        if path.name.endswith(".uistate.json"):
+            continue
+        try:
+            rows += list(walk(json.loads(path.read_text(encoding="utf-8"))["events"]))
+        except (OSError, ValueError, KeyError):
+            pass
+    return rows
+
+
+def variables_starting_at(rows: list, initial: str) -> set[str]:
+    names = {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and str(ev.get("initialValue")) == initial}
+    return names
+
+
+def ivars_starting_at(project: Path, initial) -> set[str]:
+    """Instance variables whose initial value on the type, or whose value on a layout
+    instance, is `initial`."""
+    names = set()
+    for path in (project / "objectTypes").glob("*.json"):
+        try:
+            for v in json.loads(path.read_text(encoding="utf-8")).get("instanceVariables", []):
+                if str(v.get("initialValue")) == str(initial):
+                    names.add(v["name"])
+        except (OSError, ValueError):
+            pass
+    for path in (project / "layouts").glob("*.json"):
+        try:
+            layout = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        for layer in layout.get("layers", []):
+            for inst in layer.get("instances", []):
+                for k, v in inst.get("instanceVariables", {}).items():
+                    if str(v) == str(initial):
+                        names.add(k)
+    return names
+
+
+SET_VALUE = {"add-to-eventvar", "add-to-instvar", "subtract-from-eventvar", "subtract-from-instvar",
+             "set-eventvar-value", "set-instvar-value"}
+
+
+def value_actions(rows: list, names: set[str], ids: set[str] = SET_VALUE) -> list:
+    pat = re.compile("|".join(map(re.escape, names)) or r"$^")
+    return [a for ev, _ in rows for a in ev.get("actions", []) if a.get("id") in ids and pat.search(values([a]))]
+
+
+def constants_at(rows: list, initial: str) -> set[str]:
+    return {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and str(ev.get("initialValue")) == initial}
+
+
+def steps_by(rows: list, names: set[str], amount: str) -> list:
+    """Actions that move one of the names by `amount`: a literal, a variable holding it, or the
+    same with the sign in the action (`Add -1`, `Subtract 1`, `Set x - 1`)."""
+    magnitude = amount.lstrip("-")
+    holders = constants_at(rows, amount) | constants_at(rows, magnitude)
+    number = re.compile(r"(?<![\w.])-?" + re.escape(magnitude) + r"(?![\w.])")
+    holder = re.compile("|".join(map(re.escape, holders)) or r"$^")
+    # A function handed the amount: `AddHealth(10)` whose body adds its parameter.
+    passed = any(number.search(values([a])) for ev, _ in rows for a in ev.get("actions", [])
+                 if a.get("id") in ("call-function", "call-custom-action"))
+    out = []
+    for a in value_actions(rows, names):
+        text = values([a])
+        if number.search(text) or holder.search(text) or (passed and re.search(r"[+-]\s*[A-Za-z_]\w*", text)):
+            out.append(a)
+    return out
+
+
+def aliases_of(rows: list, names: set[str]) -> set[str]:
+    """The names plus every variable set from one of them: `lives` set to `MAX_LIVES`."""
+    out = set(names)
+    pat = re.compile("|".join(map(re.escape, names)) or r"$^")
+    for ev, _ in rows:
+        for a in ev.get("actions", []):
+            p = a.get("parameters", {})
+            if a.get("id") in ("set-eventvar-value", "set-instvar-value") and pat.search(str(p.get("value", ""))):
+                out.add(p.get("variable") or p.get("instance-variable") or "")
+    return {n for n in out if n}
+
+
+def width_drivers(rows: list, names: set[str]) -> dict[str, list]:
+    """Objects whose width an action sets from one of the names, by object, with the actions."""
+    pat = re.compile("|".join(map(re.escape, names)) or r"$^")
+    out: dict[str, list] = {}
+    for ev, _ in rows:
+        for a in ev.get("actions", []):
+            params = a.get("parameters", {})
+            is_width = a.get("id") in WIDTH_ACTIONS or (a.get("id") == "tween-one-property"
+                                                       and str(params.get("property", "")).lower() in TWEEN_SIZE)
+            if is_width and pat.search(values([a])):
+                out.setdefault(a.get("objectClass"), []).append(a)
+    return out
+
+
+def generator_is_source(run: Path) -> tuple[bool, str]:
+    project = run / "project"
+    with tempfile.TemporaryDirectory() as tmp:
+        copy = Path(tmp) / "game"
+        shutil.copytree(project, copy, ignore=shutil.ignore_patterns("__pycache__"))
+        try:
+            p = subprocess.run([sys.executable, "tools/build_project.py"], cwd=copy, capture_output=True, text=True,
+                               encoding="utf-8", timeout=180, env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+        except (OSError, subprocess.TimeoutExpired) as e:
+            return False, f"rerun of tools/build_project.py: {type(e).__name__}: {e}"
+        same = ((copy / "layouts" / "Game.json").read_bytes().replace(b"\r\n", b"\n")
+                == (project / "layouts" / "Game.json").read_bytes().replace(b"\r\n", b"\n"))
+        said = f"rerun exit {p.returncode}; layouts/Game.json {'identical' if same else 'differs'}"
+        if p.returncode:
+            said += ": " + ((p.stdout + p.stderr).strip().splitlines() or ["?"])[-1]
+        return p.returncode == 0 and same, said
+
+
+def checker_line(project: Path) -> tuple[bool, str]:
+    code, out = checker(project)
+    lines = out.splitlines() or [""]
+    return code == 0, f"exit {code}: {lines[0] if code else lines[-1]}"
+
+
+def grade_show_hp_as_a_bar(run: Path) -> list[tuple[bool, str]]:
+    project = run / "project"
+    results = [checker_line(project)]
+    rows = sheet_rows(project)
+    hp = aliases_of(rows, variables_starting_at(rows, "40") | ivars_starting_at(project, 40))
+    adds10 = steps_by(rows, hp, "10")
+    results.append((bool(hp) and bool(adds10), f"variables at 40: {sorted(hp) or 'none'}; actions adding 10: {len(adds10)}"))
+    pat = re.compile("|".join(map(re.escape, hp)) or r"$^")
+    capped = [a for ev, _ in rows for a in ev.get("actions", []) if pat.search(values([a]))
+              and re.search(r"\b(min|clamp)\s*\(", values([a]))]
+    compared = [c for ev, _ in rows for c in ev.get("conditions", []) if pat.search(values([c])) and re.search(r"(?<![\d.])100(?![\d.])", values([c]))]
+    results.append((bool(hp) and bool(capped or compared), f"min/clamp on it: {len(capped)}; comparisons with 100: {len(compared)}"))
+    drivers = width_drivers(rows, hp)
+    with_max = {k: v for k, v in drivers.items() if any(re.search(r"(?<![\d.])100(?![\d.])|max|/", values([a])) for a in v)}
+    results.append((bool(with_max), f"width set from hp: {sorted(drivers) or 'none'}; with a maximum: {sorted(with_max) or 'none'}"))
+    hud = hud_instances(project)
+    fill = next((i for i in hud if i["type"] in with_max), None) or next((i for i in hud if i["type"] in drivers), None)
+    ox = fill["world"].get("originX", 0) if fill else None
+    results.append((fill is not None and ox in (0, 1), f"fill {fill['type'] if fill else 'none on the UI layer'} originX {ox}"))
+    frame = next((i for i in hud if fill and i is not fill and i["type"] != fill["type"] and contains(box_of(i), box_of(fill))), None)
+    results.append((frame is not None, f"frame around the fill: {frame['type'] if frame else 'none'}"))
+    slides = [a for a in sum(drivers.values(), []) if a.get("id") == "tween-one-property"
+              or (a.get("id") in WIDTH_ACTIONS and re.search(r"lerp\s*\(.*\bdt\b", values([a])))]
+    results.append((bool(slides), f"sliding actions on the fill: {[a.get('id') for a in slides] or 'none'}"))
+    score = next((i for i in hud if i["type"] == "ScoreText"), None)
+    under = frame is not None and score is not None and box_of(frame)[1] >= box_of(score)[3] - 0.5
+    inside = frame is not None and box_of(frame)[0] >= 0 and box_of(frame)[1] >= 0 and box_of(frame)[2] <= VIEW_W and box_of(frame)[3] <= VIEW_H
+    results.append((under and inside, f"frame box {box_of(frame) if frame else None}, score bottom {box_of(score)[3] if score else None}"))
+    results.append(generator_is_source(run))
+    return results
+
+
+def gradient_images(project: Path) -> set[str]:
+    """Object types whose first image runs from one colour to another left to right."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return set()
+    out = set()
+    for png in (project / "images").glob("*.png"):
+        try:
+            with Image.open(png) as im:
+                im = im.convert("RGB")
+                w, h = im.size
+                if w < 16:
+                    continue
+                left = [im.getpixel((x, h // 2)) for x in range(0, max(1, w // 10))]
+                right = [im.getpixel((x, h // 2)) for x in range(w - max(1, w // 10), w)]
+                l = [sum(c[i] for c in left) / len(left) for i in range(3)]
+                r = [sum(c[i] for c in right) / len(right) for i in range(3)]
+                if sum(abs(a - b) for a, b in zip(l, r)) > 120:
+                    out.add(png.stem.split("-")[0].lower())
+        except OSError:
+            pass
+    return out
+
+
+def painted_border(project: Path, kind: str) -> list[str]:
+    """Images of the type whose outermost rows are dark while the middle row is not: a frame
+    painted into the picture instead of a second object."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return []
+    out = []
+    for png in (project / "images").glob(f"{kind.lower()}*.png"):
+        try:
+            with Image.open(png) as im:
+                im = im.convert("RGB")
+                w, h = im.size
+                if w < 8 or h < 8:
+                    continue
+                def row(y: int) -> float:
+                    return sum(sum(im.getpixel((x, y))) for x in range(w)) / w
+                if max(row(0), row(h - 1)) + 60 < row(h // 2):
+                    out.append(png.name)
+        except OSError:
+            pass
+    return out
+
+
+def grade_reveal_the_gradient(run: Path) -> list[tuple[bool, str]]:
+    project = run / "project"
+    results = [checker_line(project)]
+    rows = sheet_rows(project)
+    hp = aliases_of(rows, variables_starting_at(rows, "40") | ivars_starting_at(project, 40))
+    adds = steps_by(rows, hp, "10")
+    results.append((bool(hp) and bool(adds), f"variables at 40: {sorted(hp) or 'none'}; actions adding 10: {len(adds)}"))
+    hud = hud_instances(project)
+    grads = gradient_images(project)
+    shown = [i for i in hud if i["type"].lower() in grads]
+    results.append((bool(shown), f"gradient images: {sorted(grads) or 'none'}; shown on the UI layer by: {sorted({i['type'] for i in shown}) or 'none'}"))
+    drivers = width_drivers(rows, hp)
+    all_width = {a.get("objectClass") for ev, _ in rows for a in ev.get("actions", []) if a.get("id") in WIDTH_ACTIONS
+                 or (a.get("id") == "tween-one-property" and str(a.get("parameters", {}).get("property", "")).lower() in TWEEN_SIZE)}
+    verdicts = []
+    ok = False
+    hp_pat = re.compile("|".join(map(re.escape, hp)) or r"$^")
+    for i in shown:
+        kind, plug = i["type"], plugin_id(project, i["type"])
+        framed = [a for ev, _ in rows for a in ev.get("actions", []) if a.get("objectClass") == kind
+                  and a.get("id") in ("set-animation-frame", "set-animation") and hp_pat.search(values([a]))]
+        if kind in all_width:
+            if plug == "TiledBg":
+                ok = True; verdicts.append(f"{kind}: Tiled Background set by width, a cut of the painting")
+            else:
+                verdicts.append(f"{kind}: {plug} set by width, stretched")
+        elif frames_of(project, kind) >= 2 and framed:
+            ok = True; verdicts.append(f"{kind}: a strip of {frames_of(project, kind)} frames, the frame set from hp")
+        else:
+            cover = [j for j in hud if j["type"] in all_width and j is not i and j["world"].get("originX") == 1
+                     and box_of(i)[0] - 1 <= box_of(j)[0] and box_of(j)[2] <= box_of(i)[2] + 1]
+            atop = [j for j in hud if j["type"] in all_width and j["world"].get("blendMode") in ("source-atop", "source-in", "destination-in")]
+            if cover:
+                ok = True; verdicts.append(f"{kind} static, covered from the right by {cover[0]['type']}")
+            elif atop:
+                ok = True; verdicts.append(f"{kind} static, {atop[0]['type']} drawn {atop[0]['world']['blendMode']} over it")
+            else:
+                verdicts.append(f"{kind} static and nothing reveals it")
+    results.append((ok and not any("stretched" in v for v in verdicts), "; ".join(verdicts) or "no gradient object"))
+    framed_from_hp = {a.get("objectClass") for ev, _ in rows for a in ev.get("actions", [])
+                      if a.get("id") in ("set-animation-frame", "set-animation") and hp_pat.search(values([a]))}
+    readers = set(drivers) | framed_from_hp
+    results.append((bool(readers), f"objects whose width or frame is set from hp: {sorted(readers) or 'none'}"))
+    frame = None
+    painted = []
+    for i in shown:
+        frame = next((j for j in hud if j is not i and j["type"] != i["type"] and contains(box_of(j), box_of(i))), None)
+        if frame:
+            break
+        painted += painted_border(project, i["type"])
+    results.append((frame is not None or bool(painted),
+                    f"frame around the gradient: {frame['type'] if frame else 'no object'}; border painted into the image: {painted or 'none'}"))
+    results.append(generator_is_source(run))
+    return results
+
+
+def grade_lives_as_hearts(run: Path) -> list[tuple[bool, str]]:
+    project = run / "project"
+    results = [checker_line(project)]
+    rows = sheet_rows(project)
+    lives = aliases_of(rows, variables_starting_at(rows, "5") | ivars_starting_at(project, 5))
+    subs = [a for a in steps_by(rows, lives, "1") if a.get("id").startswith("subtract") or "-" in values([a])]
+    results.append((bool(lives) and bool(subs), f"variables at 5: {sorted(lives) or 'none'}; actions taking 1: {len(subs)}"))
+    pat = re.compile("|".join(map(re.escape, lives)) or r"$^")
+    by_width = width_drivers(rows, lives)
+    # A count of icons on a Sprite whose frame is the count, or on instances picked against it: the
+    # count itself, a loop index compared with it, or an index variable compared with what a
+    # function was handed.
+    by_frame = [a for ev, _ in rows for a in ev.get("actions", []) if a.get("id") in ("set-animation-frame", "set-animation") and pat.search(values([a]))]
+    SHOWS = ("destroy", "set-visible", "set-animation-frame", "set-animation", "set-opacity")
+    by_pick = [(ev, c) for ev, _ in rows for c in ev.get("conditions", [])
+               if c.get("id") in ("pick-by-evaluate", "compare-instance-variable", "evaluate-expression", "compare-eventvar", "compare-two-values")
+               and (pat.search(values([c])) or re.search(r"index|idx|slot|loopindex", values([c]) + str(c.get("parameters", {}).get("instance-variable", "")), re.I))
+               and any(a.get("id") in SHOWS for a in ev.get("actions", []))]
+    how = [k for k, v in (("width", by_width), ("frame", by_frame), ("pick", by_pick)) if v]
+    results.append((bool(how), f"driven by the count through: {how or 'nothing'}"))
+    hud = hud_instances(project)
+    hearts = [i for i in hud if re.search(r"heart|life|lives", i["type"], re.I)]
+    kinds = sorted({i["type"] for i in hearts})
+    empty = []
+    for kind in kinds:
+        others = [i for i in hud if i["type"] != kind and any(contains(box_of(i), box_of(h), 2) or contains(box_of(h), box_of(i), 2) for h in hearts if h["type"] == kind)]
+        if others:
+            empty.append(f"{kind}: under it {sorted({o['type'] for o in others})}")
+        if frames_of(project, kind) >= 2:
+            empty.append(f"{kind}: {frames_of(project, kind)} frames")
+    picked_shows = [ev for ev, c in by_pick if any(a.get("id") in ("set-animation-frame", "set-animation", "set-opacity", "set-visible") for a in ev.get("actions", []))]
+    picked_destroys = [ev for ev, c in by_pick if any(a.get("id") == "destroy" for a in ev.get("actions", []))]
+    if picked_shows:
+        empty.append("picked hearts are shown empty, not destroyed")
+    results.append((bool(empty) and not (picked_destroys and not picked_shows), "; ".join(empty) or f"no empty state found for {kinds or 'no heart type'}"))
+    literal_compares = set()
+    for ev, _ in rows:
+        for c in ev.get("conditions", []):
+            if pat.search(values([c])):
+                literal_compares |= set(re.findall(r"(?<![\w.])\d+(?![\w.])", values([c])))
+    literal_compares -= {"0", "1"}
+    results.append((bool(lives) and len(literal_compares) <= 2, f"literal numbers the count is compared with: {sorted(literal_compares) or 'none'}"))
+    texts = [i for i in hud if i["type"] in ("ScoreText", "TimerText") or plugin_id(project, i["type"]) == "Text"]
+    if hearts:
+        boxes_ = [box_of(i) for i in hearts]
+        l, t, r, b = min(x[0] for x in boxes_), min(x[1] for x in boxes_), max(x[2] for x in boxes_), max(x[3] for x in boxes_)
+        centred = abs((l + r) / 2 - VIEW_W / 2) <= 0.5
+        inside = l >= 0 and t >= 0 and r <= VIEW_W and b <= VIEW_H
+        clear = not any(min(r, box_of(x)[2]) - max(l, box_of(x)[0]) > 0.5 and min(b, box_of(x)[3]) - max(t, box_of(x)[1]) > 0.5 for x in texts)
+        results.append((centred and inside and clear, f"hearts box ({l:g},{t:g})-({r:g},{b:g}) centred {centred}, inside {inside}, clear of text {clear}"))
+    else:
+        results.append((False, "no heart instance on the UI layer"))
+    results.append(generator_is_source(run))
+    return results
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
-           "lay-out-the-hud": grade_lay_out_the_hud}
+           "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
+           "reveal-the-gradient": grade_reveal_the_gradient, "lives-as-hearts": grade_lives_as_hearts}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")
