@@ -238,6 +238,18 @@ def test_install_outside_a_project_says_what_to_pass(tmp_path):
     assert code != 0 and "--project" in out and "Traceback" not in out
 
 
+def test_install_asks_the_agent_to_remember_where_the_clone_is(tmp_path):
+    """The block records the clone for this project and nothing records it for the machine, since
+    install.py writes inside the project only. A project that starts without a block leaves the
+    agent's own memory as the one place the clone can be found again."""
+    root = new_project(tmp_path / "game")
+    code, out = install(root)
+    assert code == 0 and f"memory: keep 'Construct3-RAG: {REPO.as_posix()}'" in out
+    # the project now names the clone itself, and the line would be noise on every refresh
+    code, out = install(root)
+    assert code == 0 and "memory:" not in out
+
+
 def test_install_leads_claude_code_to_the_block_through_claude_md(tmp_path):
     """Claude Code reads CLAUDE.md when it exists; a novice's project has none, or one without the line."""
     root = new_project(tmp_path / "game")
