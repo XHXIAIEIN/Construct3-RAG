@@ -485,7 +485,7 @@ def main() -> int:
     project = c3.Project.open(args, findings)
     drift = c3.skill_drift(project.rag)
     if drift:
-        print(f"note: {drift}", file=sys.stderr)
+        print(f"note: {drift}")
 
     path = project.listed_files("eventSheets").get(args.sheet)
     if path is None:
