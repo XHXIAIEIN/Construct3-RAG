@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 from src.ingest.c3_fetcher import C3Fetcher, _cache_expired
+from src.ingest.common_aces import COMMON_PROPERTIES
 
 
 @pytest.fixture
@@ -151,6 +152,7 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
             "behaviors": {"platform": {"name": "Platform",
                                        "actions": {"set-speed": {"list-name": "Set speed"}}}},
             "effects": {"blur": {"name": "Blur"}},
+            **_instance_properties(),
         }},
         "zh-CN": {"text": {
             "plugins": {"sprite": {"name": "精灵",
@@ -163,6 +165,7 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
             "behaviors": {"platform": {"name": "平台",
                                        "actions": {"set-speed": {"list-name": "设置速度"}}}},
             "effects": {"blur": {"name": "模糊"}},
+            **_instance_properties(),
         }},
     }
     effects = [{"id": "blur", "category": "blur", "parameters": []}]
@@ -206,10 +209,24 @@ def _export_with(fetcher, texts):
         return fetcher.export_schemas()
 
 
+def _instance_properties() -> dict:
+    """What a pack holds for the shared world-instance properties. A real one
+    has it under ui.bars.properties.instance, not in its _common entry, which
+    is why the export reads both; a pack missing a path stops the export
+    (tests/test_common_aces.py)."""
+    instance: dict = {}
+    for prop_id, path, _ in COMMON_PROPERTIES:
+        node = instance
+        for part in path[:-1]:
+            node = node.setdefault(part, {})
+        node[path[-1]] = {"name": prop_id.title(), "desc": f"The {prop_id} of this instance."}
+    return {"ui": {"bars": {"properties": {"instance": instance}}}}
+
+
 def _common_texts(en_actions, zh_actions):
     return {
-        "en-US": {"text": {"plugins": {"_common": {"actions": en_actions}}}},
-        "zh-CN": {"text": {"plugins": {"_common": {"actions": zh_actions}}}},
+        "en-US": {"text": {"plugins": {"_common": {"actions": en_actions}}, **_instance_properties()}},
+        "zh-CN": {"text": {"plugins": {"_common": {"actions": zh_actions}}, **_instance_properties()}},
     }
 
 

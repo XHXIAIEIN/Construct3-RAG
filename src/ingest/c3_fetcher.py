@@ -29,6 +29,7 @@ from pathlib import Path
 from src.ingest.common_aces import (
     COMMON_ADDON_ID,
     COMMON_ADDON_NAME,
+    build_common_properties,
     check_common_coverage,
     load_common_aces,
 )
@@ -306,8 +307,13 @@ class C3Fetcher:
 
                                 plugin_json[ace_type_plural].append(entry)
 
-                    # Properties — keep CDN dict structure {prop_id: {name, desc, ...}}
-                    plugin_json["properties"] = lp.get("properties", {})
+                    # Properties — keep CDN dict structure {prop_id: {name, desc, ...}}.
+                    # _common has none of its own: what every world instance
+                    # has is the properties bar's text, under ui.bars.
+                    plugin_json["properties"] = (
+                        build_common_properties(text) if plugin_id == COMMON_ADDON_ID
+                        else lp.get("properties", {})
+                    )
 
                     out_path = out_dir / f"{pid_lower}.json"
                     out_path.write_text(

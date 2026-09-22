@@ -128,6 +128,7 @@ Structural fields are the same in every locale, so an ACE can be matched by
 | `initial-value` | Initial text of a text property, when the CDN records one. |
 | `link-text` | Label of a link property, for example `Edit` on the Sprite animations entry. |
 | `separator` | Separator string of a composite property, such as `, ` for a 3D offset. |
+| `written` | `_common.json` only: where the value is in a project file, and its unit when the properties bar shows another one. |
 
 Property types are not exported. The language pack is the only CDN source
 for properties, and it carries text only.
@@ -142,6 +143,21 @@ the same fields as a plugin file, including parameter `type`, combo `items`
 and the editor `category` (`collisions`, `hierarchy`, `instance-variables`
 ...); its structure comes from the editor bundle, see
 `docs/dev/data-pipeline.md`.
+
+`_common.json` also carries the properties every world instance has, which
+the properties bar groups under *Common*: position, size, angle, colour,
+opacity, blend mode, UID and tags. Their text is the properties bar's, and
+each entry's `written` field says where the value is in a project file,
+because the two do not always agree: the bar shows an angle in degrees and
+an opacity from 0 to 100, while a layout file stores `world.angle` in
+radians and keeps the opacity in the fourth component of `world.color`.
+`world.originX` and `world.originY` are in the file as well, the origin
+normalized to the image (0.5 centres it, and a value outside 0 to 1 places
+it outside the image), but they have no properties bar row: the origin is
+set per animation frame in the animations editor. Rows that are not stored
+on the instance are left out; the layer and the Z index are its place in the
+layout, and instance variables, behaviors and effects have blocks of their
+own. See `docs/decisions/common-instance-properties.md`.
 
 ### Worked example
 
