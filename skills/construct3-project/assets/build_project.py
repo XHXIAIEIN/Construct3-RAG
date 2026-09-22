@@ -72,7 +72,9 @@ def anchor(where: str, w: float, h: float, ox: float = 0, oy: float = 0, dx: flo
     inside it: "top-left", "top", "top-right", "left", "center", "right", "bottom-left",
     "bottom", "bottom-right". The point returned is the box's origin (ox, oy), 0 for its
     top-left corner, 0.5 for its centre, so pass the instance's origin. dx and dy shift it
-    by whole units along the axes, for a second element beside the first. A box held to
+    by whole units along the axes: a second element beside the first is dx, a second row
+    under a 2-unit label is dy=3, one unit of air between them, and no_overlap() prints
+    the dy that clears a box that is in the way. A box held to
     the left or top lands on the grid; one held to the right, the bottom or the middle
     sits exactly MARGIN from that edge, or exactly centred, which is what the eye checks
     there. The centre of the screen is where the game is; the HUD lives on the edges."""
@@ -124,9 +126,12 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
     for i, a in enumerate(boxes):
         for b in boxes[i + 1:]:
             if min(a[3], b[3]) - max(a[1], b[1]) > 0 and min(a[4], b[4]) - max(a[2], b[2]) > 0:
+                dy = math.ceil((a[4] + UNIT - b[2]) / UNIT)
                 sys.exit(f"{where}: {a[0]} ({a[1]:g},{a[2]:g})-({a[3]:g},{a[4]:g}) overlaps {b[0]} "
-                         f"({b[1]:g},{b[2]:g})-({b[3]:g},{b[4]:g}); size a label to its text with hud_text(), "
-                         f"space repeated items with row(), or hold one of them to another edge")
+                         f"({b[1]:g},{b[2]:g})-({b[3]:g},{b[4]:g}). Move {b[0]} down {dy} units: dy={dy} on its "
+                         f"anchor(), row() or hud_text() call, on top of any dy it has, puts its top one unit under "
+                         f"{a[0]}. Or size a label to its text with hud_text(), space repeated items with row(), "
+                         f"or hold one of them to another edge.")
 
 
 # --- ids ----------------------------------------------------------------------

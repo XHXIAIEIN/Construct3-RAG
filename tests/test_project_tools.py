@@ -1337,9 +1337,13 @@ def test_template_places_the_hud_on_the_grid(built):
     for k in ("x", "y", "width", "height"):
         assert score[k] % t.UNIT == 0, k
     # Two HUD boxes that meet, or one past the viewport, stop the generator and name them.
-    with pytest.raises(SystemExit, match=r"ScoreText \(32,32\)-\(224,96\) overlaps TimerText"):
+    with pytest.raises(SystemExit, match=r"ScoreText \(32,32\)-\(224,96\) overlaps TimerText .* Move TimerText down 3 units: dy=3"):
         t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"),
                       t.hud_text("TimerText", "Time: 30", "top-left")])
+    # The dy the guard names puts the second label's top one unit under the first.
+    t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"),
+                  t.hud_text("TimerText", "Time: 30", "top-left", dy=3)])
+    assert t.hud_text("TimerText", "Time: 30", "top-left", dy=3)["world"]["y"] == 128
     with pytest.raises(SystemExit, match="reaches past the 720x1280 viewport"):
         t.no_overlap([t.sprite_inst("Coin", 32, 32, 96, 96)])
     t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"), timer])

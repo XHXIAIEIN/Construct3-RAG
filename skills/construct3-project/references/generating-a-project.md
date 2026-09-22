@@ -116,9 +116,11 @@ habits; they are what made rerunning safe in Water Sort.
   passed so the point returned is the one the file stores. A HUD label is
   `hud_text(type, text, where, longest=...)`: its box fits its longest text
   and reads towards the side it hangs on. Repeated items, hearts or stars,
-  are `row(where, n, w, h)`, spaced so they never touch. The UI layer's
-  instances go through `no_overlap()`, which stops the run naming two
-  boxes that meet or one past the viewport. `UNIT` follows the viewport
+  are `row(where, n, w, h)`, spaced so they never touch. A second row on
+  the same edge is `dy` in units on the same call, `dy=3` under a 2-unit
+  label. The UI layer's instances go through `no_overlap()`, which stops
+  the run naming two boxes that meet, with the `dy` that clears them, or
+  one past the viewport. `UNIT` follows the viewport
   (8 px for pixel art, 32 px otherwise) and `TOUCH` is the smallest object
   a finger taps at that viewport; a tapped sprite is at least `TOUCH` wide.
   The middle of the screen is the game's; the HUD lives on the edges. The

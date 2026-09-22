@@ -906,6 +906,45 @@ a one-step answer; and whether a 720 px portrait viewport should carry
 three HUD groups on one edge at all, which is the design prompt's question,
 not the template's.
 
+### Iteration 17: the guard names the dy
+
+The `dy` convention over `stack()`: `dy` is a parameter the three placing
+helpers already take, in units, and `no_overlap()` now ends its message
+with the number, "Move Heart down 3 units: dy=3 on its anchor(), row() or
+hud_text() call ... puts its top one unit under ScoreText", computed as the
+units that clear the box in the way with one unit of air. `stack()` would
+have removed the loop by construction but needed a box abstraction that
+`hud_text()` (an instance) and `row()` (points) do not share, and one more
+form for the model to learn. The held-to-an-edge assertion now also accepts
+a box whose top is one unit under a box of another type that is held to the
+top or bottom; over the archived iterations 15 and 16 it changes no run's
+verdict (the iteration-16 second rows sat half a unit under the text, not
+one). Same case, same prompt, Haiku 4.5, three runs per arm; `old_skill`
+is the iteration-16 template (`42b36f3`). Evidence:
+`.local/docs/evidence/skill-evals/construct3-project/iteration-17/`.
+
+| Arm | Of 9 | Guard hits | Tokens | Seconds | Lost calls |
+|-----|------|------------|--------|---------|------------|
+| with_skill (3 runs) | 9, 9, 9 | 0, 1, 1 | 75 490 | 120 | 3.0 |
+| old_skill (3 runs) | 8, 7, 7 | 1, 1, 2 | 81 882 | 181 | 3.7 |
+
+Told the number, both runs that met the guard wrote `dy=3` and passed on
+the next rerun: the hearts' box top is 128, one unit under the 96 px text
+row, in both. Not told, the three old-template runs guessed: 96 (touching
+the text, no air), 128 with 80 px hearts, 70 with 48 px hearts, and two of
+them shrank the hearts or the button below a unit to make room. The
+new-template run that met no guard put "Lives: 3" as a centred label
+between the score and the timer instead of three hearts: nine of nine by
+the assertions, which count instances and types, not the sprite the user
+asked for. Against iteration 16 the new template's lost calls fell from 5.0
+to 3.0 and its time from 152 to 120 seconds; the remaining lost calls are
+the missing button image on the first rerun and an Edit that did not match,
+neither about placement.
+
+Decision: keep `dy` and the guard's number; `stack()` is not needed. Open:
+the "Lives: 3" run shows the assertions do not pin the hearts; a check on
+the sprite count would, at the price of reading the task into the grader.
+
 ### Re-evaluate when
 
 - An eval run shows off-grid placement in a generated project, or the
