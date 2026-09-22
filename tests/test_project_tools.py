@@ -207,7 +207,8 @@ def test_install_without_the_block_says_how_the_scripts_find_the_clone(tmp_path)
     root = new_project(tmp_path / "game")
     code, out = install(root, "--no-block")
     assert code == 0 and not (root / "AGENTS.md").exists()
-    assert f"CONSTRUCT3_RAG={REPO.as_posix()}" in out and "--rag" in out
+    assert f"--rag {REPO.as_posix()}" in out and "CONSTRUCT3_RAG" in out
+    assert "where your client stores notes between sessions" in out   # the one record left, as with the block
     (root / "CLAUDE.md").write_text(f"- Construct3-RAG: {REPO.as_posix()}\n", encoding="utf-8")
     code, out = install(root, "--no-block")
     assert code == 0 and "CONSTRUCT3_RAG" not in out

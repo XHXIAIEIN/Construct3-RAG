@@ -108,8 +108,7 @@ def add_block(project: Path, rag: Path, skill_path: str, dry_run: bool) -> list[
     # The block records the clone for this project alone, and nothing here writes outside the
     # project: the next project starts with no record of the clone anywhere on the machine.
     notes.append(f"memory: keep 'Construct3-RAG: {rag.as_posix()}' where your client stores notes between "
-                 f"sessions. The next project starts without this block, and an agent that cannot find "
-                 f"this clone clones it and the repositories beside it again")
+                 f"sessions; the next project starts without this block")
     return notes
 
 
@@ -121,8 +120,9 @@ def unnamed_clone(project: Path, rag: Path) -> list[str]:
         found = c3.rag_line(text)
         if found and c3.is_clone(Path(found)):
             return []
-    return [f"no instruction file of the project names the clone, and --no-block adds none: the scripts find it "
-            f"through CONSTRUCT3_RAG={rag.as_posix()} or --rag {rag.as_posix()}"]
+    return [f"no instruction file of the project names the clone, and --no-block adds none: the scripts take "
+            f"--rag {rag.as_posix()} or CONSTRUCT3_RAG set to it; keep that path where your client stores "
+            f"notes between sessions"]
 
 
 def earlier_tools(project: Path, skill_path: str) -> list[str]:
