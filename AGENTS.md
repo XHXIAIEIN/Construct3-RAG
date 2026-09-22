@@ -44,7 +44,10 @@ Answer from the data. An ACE missing from the schema does not exist.
 | What a field means before writing an event or a script | `data/AGENTS.md`; full reference `docs/guide/data-format.md` |
 
 Structural fields (`id`, `scriptName`, `category`, `params.*.type`) are
-identical across locales. How to structure an interaction is section 3.
+identical across locales. To the user, an ACE is its `display-text` in
+their language ("Array: Set value at 0 to 1", "数组: 设置数组 0 值为 1"), with the
+object's name and the parameters in words; ids and any internal notation
+stay in the data and the tools. How to structure an interaction is section 3.
 `POST /search` on the running service returns the same data
 (`docs/guide/api-reference.md`).
 

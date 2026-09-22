@@ -50,6 +50,13 @@ project, and the block for the project's instruction file.
   finding, one the editor accepts, is a warning behind `--style` and in what
   `edit_sheet.py` adds, never an error; its threshold comes from a
   measurement over the official examples, recorded with the finding.
+- Guidance meant for a small model goes where that model reads: the line a
+  script prints (a finding that names the event and the JSON to write) or
+  the generator's helpers, which make the good shape the default. Prose
+  reaches only the model that knows it needs it, so a prompt keeps a
+  when-clause pointer, not the rule. A habit with no mechanical form that
+  passes the official corpus stays prose. Evidence: the runs read in
+  `docs/decisions/event-sheet-design-guidance.md`, "What small models read".
 - A change to a script is compared, old against new, over every official
   example and the game projects: exit code, stdout and stderr
   (`construct3-project/evals/sweep_outputs.py`). A restructure shows no
