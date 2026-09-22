@@ -11,6 +11,11 @@ list name or the script name, or name where the ACE lives: the behavior, the
 addon, its category (`time`, `loops`, `size-position`), `condition`, `action`
 or `expression`. A word is matched as written, not by meaning: `every`,
 `seconds` or the category `time` finds *Every X seconds*, `timer` does not.
+When no name has every word, a parameter name or a value of a combo parameter
+counts: `Tween color` finds *Tween (one property)*, whose property
+`offsetColor` is Color. Looked up on a plugin or a behavior, the ACEs every
+world object shares are printed too, *Set color* and *Is overlapping* among
+them; they are in `plugins/_common.json`, not in the plugin's own file.
 
 The schema files run to thousands of lines, more than most tools read at
 once, and an ACE below the cut looks as if it did not exist; this prints the
@@ -137,6 +142,7 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, w
 def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
     sources = sources_of(p, target)
     entries = []        # (its names, its names and category, owner, behavior, addon, kind, entry)
+    param_text = []     # parameter names and combo values, in step with entries
     written = {}        # (behavior, addon, expression id) -> the name it is written under
     for owner, behavior, s in sources:
         written.update({(behavior, s.get("id", ""), ace): name for ace, name in p.expression_names(s).items()})
@@ -146,6 +152,11 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
                 names = squash(" ".join([*(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")),
                                          behavior or "", s.get("id", ""), s.get("name", ""), kind]))
                 entries.append((names, names + " " + squash(it.get("category", "")), owner, behavior, s.get("id", ""), kind, it))
+                params = it.get("params") or {}
+                # Tween Color is Tween (one property) with the property offsetColor: the word is a
+                # combo value, and a search of the names alone answers that Tween has no color.
+                param_text.append(squash(" ".join([*params, *(str(v) for spec in params.values()
+                                                              for v in (spec.get("items") or {}).values())])))
     if not entries:
         sys.exit(f"the clone has no schema for {target}, a third-party addon: nothing to look up")
     # By name first, so that a category which shares a word with a name does not
@@ -159,6 +170,31 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         found, by_category = [e[2:] for e, w in zip(entries, wider) if w], []
 
     if not found:
+        query = " ".join(words)
+        # Pick nearest/furthest, Is overlapping, Set color ... are not System's and not the
+        # plugin's: every world object has them, so they are looked up on an object.
+        shared = [] if any(s is p.common for _, _, s in sources) else shared_matches(p, words)
+        in_params = [e[2:] for e, t in zip(entries, param_text) if all(squash(w) in t for w in words)]
+        if shared or in_params:
+            # The entry before the miss: a model that stops at the first line read "nothing under
+            # Sprite has every word of 'color'" as a Sprite having no color action, and went to
+            # the manual, which does not list the shared ACEs either, to confirm it.
+            if shared:
+                print("every world object has these, in plugins/_common.json rather than in its own plugin:")
+                for kind, it in shared:
+                    # <Object>, not the <object> a parameter of that type is written with.
+                    print("\n".join(in_full("<Object>", None, "_common", kind, it)))
+                print(f"<Object> is any object of the project; lookup_ace.py <Object> {query} writes its name in")
+            if in_params:
+                print(f"no name under {target} has every word of {query!r}; a parameter of these takes it as a value:")
+                if len(in_params) <= 6:
+                    for e in in_params:
+                        print("\n".join(in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)))
+                else:
+                    for e in in_params[:20]:
+                        print("  " + brief(*e))
+                    print(f"{len(in_params)} entries; add a word to narrow them, six or fewer print with the JSON to write")
+            return 0
         # The most words first, a word in a name before a word in a category.
         some = sorted(((sum(squash(w) in e[0] for w in words), sum(squash(w) in e[1] for w in words), e[2:])
                        for e in entries), key=lambda x: (-x[0], -x[1]))
@@ -166,15 +202,7 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         entries = [e[1:] for e in entries]
         # The miss is the answer, on stdout like a hit: a harness that shows stdout alone
         # would print nothing, and PowerShell wraps every stderr line in an error record.
-        print(f"nothing under {target} has every word of {' '.join(words)!r}")
-        shared = [] if any(s is p.common for _, _, s in sources) else shared_matches(p, words)
-        if shared:
-            # Pick nearest/furthest, Is overlapping, Set position ... are not System's and not
-            # the plugin's: every world object has them, so they are looked up on an object.
-            print("shared by every world object, looked up on one of them (lookup_ace.py <Object> "
-                  f"{' '.join(words)}), not under {target}:")
-            for kind, it in shared:
-                print("  " + brief("<object>", None, "_common", kind, it))
+        print(f"nothing under {target} has every word of {query!r}")
         if some:
             print("entries with some of them, the most first:")
             for e in some[:12]:
