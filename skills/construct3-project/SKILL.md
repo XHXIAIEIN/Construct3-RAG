@@ -220,6 +220,11 @@ style of the official examples.
   it. An expression parameter is a string holding an expression: a number is
   `"100"`, a text carries inner quotes, `"\"hello\""`. Every other type is
   bare, or a JSON number or boolean: `"start"`, never `"\"start\""`.
+- A variable's `initialValue` is text: `"0"`, and `"true"` or `"false"` for
+  a boolean, which the editor reads by comparing to `"true"`. A layout
+  instance writes its instance variables as JSON values (`1`, `true`) and
+  its `world.angle` in radians. Angles in events are degrees, 0 faces right
+  and they grow clockwise; the origin is the top-left and Y grows downwards.
 - One trigger per event and per branch of sub-events. A function or a custom
   action counts as one and holds none: react to *On tween finished* in a
   top-level event of its own that calls the next function.

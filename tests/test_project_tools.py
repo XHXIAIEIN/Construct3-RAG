@@ -996,6 +996,49 @@ def test_instance_without_uid_is_reported_not_raised(project):
     assert "instance of Coin has no integer uid" in out
 
 
+def test_a_boolean_variable_holds_the_text_true_or_false(project):
+    """The editor compares the text to "true", so a JSON boolean or "True" reads as false."""
+    def change(sheet):
+        sheet["events"].insert(0, {"eventType": "variable", "name": "paused", "type": "boolean", "initialValue": False,
+                                   "comment": "", "isStatic": False, "isConstant": False, "sid": 900000000000001})
+        sheet["events"].insert(1, {"eventType": "variable", "name": "muted", "type": "boolean", "initialValue": "True",
+                                   "comment": "", "isStatic": False, "isConstant": False, "sid": 900000000000002})
+    out = findings(project, change)
+    assert 'variable paused: initialValue should be the text "true" or "false", not False' in out
+    assert 'variable muted: initialValue \'True\' should be "true" or "false", lowercase' in out
+
+
+def test_a_number_variable_holds_text_and_a_parameter_may_hold_a_number(project):
+    def change(sheet):
+        events(sheet)["add_score"]["functionParameters"][0]["initialValue"] = 5
+        for ev in sheet["events"]:
+            if ev.get("eventType") == "variable" and ev["name"] == "score":
+                ev["initialValue"] = 0
+    out = findings(project, change)
+    assert 'variable score: initialValue should be text, "0", not 0' in out
+    assert "parameter points" not in out
+
+
+def test_a_boolean_parameter_written_as_a_json_boolean_is_named(project):
+    def change(sheet):
+        events(sheet)["add_score"]["functionParameters"].append(
+            {"name": "loud", "type": "boolean", "initialValue": True, "comment": "", "sid": 900000000000003})
+    out = findings(project, change)
+    assert 'parameter loud: initialValue should be the text "true" or "false", not True' in out
+
+
+def test_an_instance_writes_its_variable_as_a_json_value(project):
+    out = findings(project, lambda lay: lay["layers"][0]["instances"][0]["instanceVariables"].update(value="1"),
+                   "layouts/Objects.json")
+    assert "Coin instance variable value = '1'; a number is written as a number such as 1 here" in out
+
+
+def test_a_world_angle_beyond_a_full_turn_is_named_as_degrees(project):
+    out = findings(project, lambda lay: lay["layers"][0]["instances"][0]["world"].update(angle=270),
+                   "layouts/Objects.json")
+    assert "Coin world angle 270 is more than a full turn; the file stores radians, 270 degrees is 4.7124" in out
+
+
 def test_missing_key_stops_with_a_sentence(project):
     def change(s):
         del events(s)["add_score"]["functionParameters"]

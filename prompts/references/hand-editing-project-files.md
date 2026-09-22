@@ -35,6 +35,24 @@ Observed in editor-written files (mergeGame, `savedWithRelease: 50000`,
   8 Direction, `Sin` Sine; `solid`, `scrollto`, `jumpthru`, `bound`, `wrap`,
   `destroy` and `gamepad` are lowercase. [same source: the addon table is a
   map keyed by id, `missing plugin id` otherwise]
+- An event variable's `initialValue` is text whatever its `type`: `"0"`,
+  `"hello"` without inner quotes, and for a boolean `"true"` or `"false"`,
+  lowercase. The editor reads a boolean by comparing the text to `"true"`,
+  in the editor and again when it exports, so a JSON `false` or `true`, a
+  `"True"` or a `"1"` all read as false, and a number text that does not
+  parse reads as 0. A function parameter's `initialValue` may also be a JSON
+  number; anything else stops the load with `invalid type of initialValue`.
+  [editor bundle `projectResources.js`, variable and parameter loaders, read
+  2026-09-22; the 303 boolean variables and 74 boolean parameters of the
+  official examples are all `"true"` or `"false"`]
+- A layout instance's `instanceVariables` map holds JSON values by type:
+  `{"hp": 3, "dead": false, "label": "a"}`, no text around a number or a
+  boolean. [official examples: 12 450 numbers, 6970 booleans, 1934 strings,
+  no other form]
+- An instance's `world.angle` is in radians: 270 degrees is `4.7124`, and
+  the largest angle in any official example is 2π. `math.radians` in a
+  generator, `Angle` in events stays in degrees. [official examples: 6053
+  non-zero instance angles, all within 2π]
 - Function call: `{"callFunction": "name", "sid": N, "parameters": ["expr", ...]}`.
   Function block: `functionCopyPicked` (boolean) and `functionParameters`
   entries with `name`, `type`, `initialValue`, `comment`, `sid`.

@@ -223,13 +223,17 @@ first.
   `-1`. An index that steps backwards wraps with `(n % max + max) % max`.
   [manual: project-primitives/events/expressions.md "%"; cheat sheet "Useful
   expressions and formulas", Wrapping around a number]
-- Angles are degrees, 0 faces right and they increase clockwise, so 90 points
-  down. Some expressions return -180..180 and others 0..360: compare angles
-  with `anglediff`, *Is between angles* or *Is clockwise from*, never with
-  `<`, and normalise with `(a + 360) % 360` only where a value must land in
-  0..360. [manual: system-reference/system-expressions.md "Math";
-  system-reference/system-conditions.md "Is between angles"; cheat sheet
-  "Coordinate system"]
+- There is no null or undefined: an expression is a number or a text, and
+  what is missing reads as the number 0. `Array.At` outside the array,
+  `Dictionary.Get` of a key that is not there, `Functions.ReturnValue` when
+  nothing set it and a Timer's `CurrentTime` after a one-off timer fired all
+  give 0, `Array.IndexOf` gives -1, `int("33xx")` is 33 and `int("xx33")` is
+  0. So `= 0` cannot tell an empty slot from a missing one: ask *Has key*,
+  *Contains value* or `Array.Width` first, or `Dictionary.GetDefault(key,
+  fallback)`. [manual: plugin-reference/array.md "At", "IndexOf";
+  plugin-reference/dictionary.md "Get", "GetDefault", "Has key";
+  plugin-reference/function.md "ReturnValue"; behavior-reference/timer.md
+  "CurrentTime"; system-reference/system-expressions.md "int", "float"]
 
 - A local variable placed as a sub-event or in a group is visible to every
   event at its level, whichever comes first, and to their sub-events; not to
@@ -244,6 +248,46 @@ first.
   *Absolute* and normalised coordinates (0..1 across the object box, which may
   be exceeded); texture -1 leaves the texture position alone. [manual:
   plugin-reference/common-features/common-actions.md "Set mesh point"]
+
+## Coordinates and angles
+
+- The origin (0, 0) is the top-left of the layout and Y grows downwards:
+  up is `Y - n`, gravity pulls towards +Y, and the top of the screen is the
+  smallest Y. [manual: tips-and-guides/common-conventions.md "Units"]
+- Angles are degrees, 0 faces right and they increase clockwise, so 90 points
+  down, 180 left and 270 (or -90) up; 360 is 0 again, so a bullet fired at
+  360 goes right, and `random(360)` is a full turn. `sin`, `cos` and `angle`
+  take and return degrees. Some expressions return -180..180 and others
+  0..360: compare angles with `anglediff`, *Is between angles* or *Is
+  clockwise from*, never with `<`, and normalise with `(a + 360) % 360` only
+  where a value must land in 0..360. [manual:
+  tips-and-guides/common-conventions.md "Units";
+  system-reference/system-expressions.md "Math";
+  system-reference/system-conditions.md "Is between angles"]
+- A sprite is drawn facing right at angle 0. Art painted pointing up appears
+  turned a quarter clockwise the moment *Set angle towards position* runs:
+  paint it facing right, or add the same 90 in every *Set angle*, never a
+  correction per event. [consequence of the same convention; Rotate's speed
+  is positive clockwise: manual behavior-reference/rotate.md "Speed"]
+- A Bullet's angle of motion and the object's angle are two values; they
+  move together only while the behavior's *Set angle* property is on, and
+  8 Direction and Car have the same property. At speed 0 the angle of motion
+  is 0 and cannot be set: set the speed first, then the angle. [manual:
+  behavior-reference/bullet.md "Set angle", "Set angle of motion",
+  "AngleOfMotion"; behavior-reference/8-direction.md "Set angle"]
+- The origin is image point 0 and the point X, Y and rotation refer to; the
+  editor puts it at the centre (`originX`, `originY` 0.5 in the layout
+  file), so a sprite at the layout's edge shows half. Position by an image
+  point (*Spawn another object* takes one) for a muzzle or a hinge, and move
+  the origin in the image editor, not by an offset in events. [manual:
+  interface/animations-editor.md "Image points"; official example layouts]
+- `ViewportLeft`, `ViewportWidth` and the rest take a layer, since a
+  parallaxed or scaled layer sees a different rectangle: write
+  `ViewportLeft("HUD")`. `LayoutWidth` is the whole layout,
+  `ViewportWidth(layer)` the part on screen in layout coordinates, and
+  `OriginalViewportWidth` the project's *Viewport size* property. [manual:
+  system-reference/system-expressions.md "Viewport", "Layout";
+  plugins/system.json: every `Viewport*` expression has a `layer` parameter]
 
 ## Rendering
 
