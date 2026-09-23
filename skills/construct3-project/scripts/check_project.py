@@ -71,16 +71,25 @@ PROJECT_ALSO = {"sampling": ("linear", "point")}    # older ids the editor maps 
 # there. The 2930 Sprite and 785 Shape3D types of the official examples all have
 # one, and no other plugin there does.
 ANIMATED_PLUGINS = ("Sprite", "Shape3D")
+# A layer's blend mode, read as it opens: the editor's own map, "xor" is not in it.
+BLEND_MODES = ("normal", "additive", "copy", "destination-over", "source-in", "destination-in",
+               "source-out", "destination-out", "source-atop", "destination-atop", "lighten",
+               "darken", "multiply", "screen")
+# The numbers the editor reads out of a layer and a world instance as it places it.
+LAYER_NUMBERS = ("parallaxX", "parallaxY", "scaleRate")
+WORLD_NUMBERS = ("x", "y", "width", "height", "originX", "originY")
 # Below this release the editor reads an object type from objectTypes\<name in
 # lower case>.json, the layout of a project from 2016, and finds nothing.
 FOLDER_PROJECT_RELEASE = 30900
 
 # Object and behavior names may start with a digit (3DCamera, 8Direction), so a
 # token is any run of word characters and numeric literals are skipped by value.
+# Word characters are Unicode ones: the editor takes names in any script, and an
+# ASCII class skips them, or cuts a mixed name down to its ASCII part.
 # Sprite(2).X picks an instance by IID; the index is checked as an expression.
-IDENT = re.compile(r"[A-Za-z0-9_]+")
+IDENT = re.compile(r"\w+")
 NUMBER = re.compile(r"\d+(\.\d+)?(e[+-]?\d+)?", re.I)
-MEMBER = re.compile(r"([A-Za-z0-9_]+)(?:\([^()]*\))?\s*\.\s*([A-Za-z0-9_]+)(?:\s*\.\s*([A-Za-z0-9_]+))?")
+MEMBER = re.compile(r"(\w+)(?:\([^()]*\))?\s*\.\s*(\w+)(?:\s*\.\s*(\w+))?")
 STRING_LITERAL = re.compile(r'"(?:[^"]|"")*"')
 
 
@@ -432,14 +441,53 @@ class Checker:
         if anims is not None and initial is not None and LOWER(initial) not in anims:
             self.err(f"{where}: {t} has no animation {initial!r} for initial-animation")
 
+    def check_number(self, where: str, what: str, value, least: float | None = None) -> bool:
+        """A value the editor reads through its finite-number assertion. Text in
+        place of a number stops the open with the assertion and nothing else."""
+        if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(value):
+            self.err(f"{where}: {what} is {value!r}; the editor reads it as a number and stops with "
+                     f'"TypeError: expected finite number"')
+            return False
+        if least is not None and value < least:
+            self.err(f"{where}: {what} is {value}; the editor refuses anything below {least}")
+            return False
+        return True
+
     def walk_layers(self, where: str, layer_list: list) -> None:
         for layer in layer_list:
-            self.layers.add(layer["name"])
+            name = layer.get("name")
+            here = f"{where} layer {name}"
+            if not (isinstance(name, str) and name):
+                self.err(f"{where}: a layer is named {name!r}; the editor reads a layer name as text and "
+                         f'stops with "TypeError: expected string"')
+            else:
+                self.layers.add(name)
+            for what in LAYER_NUMBERS:
+                self.check_number(here, what, layer.get(what))
+            if layer.get("blendMode") not in BLEND_MODES:
+                self.err(f"{here}: blendMode is {layer.get('blendMode')!r}; the editor stops with "
+                         f'"invalid blend mode". Write "blendMode": "normal", or one of '
+                         f"{', '.join(BLEND_MODES[1:])}")
+            if not isinstance(layer.get("instances"), list):
+                self.err(f"{here}: instances is {layer.get('instances')!r}; the editor walks the list as it "
+                         f'opens the layer. A layer with nothing on it writes "instances": []')
             self.check_effects(layer.get("effectTypes", []))
-            for inst in layer.get("instances", []):
+            for inst in layer.get("instances", []) if isinstance(layer.get("instances"), list) else []:
                 self.world_types.add(inst.get("type"))
-                self.check_instance(f"{where} layer {layer['name']}", inst)
+                self.check_world(here, inst)
+                self.check_instance(here, inst)
             self.walk_layers(where, layer.get("subLayers", []))
+
+    def check_world(self, where: str, inst: dict) -> None:
+        """Where and how big an instance is on the layer. The editor reads the
+        block before it reads the instance's own properties."""
+        world = inst.get("world")
+        if not isinstance(world, dict):
+            self.err(f"{where}: {inst.get('type')} has no world block; an instance on a layer carries "
+                     f'"world": {{"x": 0, "y": 0, "width": 32, "height": 32, "originX": 0.5, "originY": 0.5}}')
+            return
+        for what in WORLD_NUMBERS:
+            self.check_number(f"{where}: {inst.get('type')}", f"world.{what}", world.get(what))
 
     def check_layouts(self) -> None:
         p = self.p
@@ -447,6 +495,15 @@ class Checker:
         self.sheets = {**p.load_listed("eventSheets"), **self.unsaved}
         for lname, lay in self.layouts.items():
             self.collect_sids(lay)
+            if not (isinstance(lay.get("name"), str) and lay["name"]):
+                self.err(f"layout {lname}: the file says \"name\": {lay.get('name')!r}; the editor reads it "
+                         f"as text and stops with \"TypeError: expected string\"")
+            for what in ("width", "height"):
+                self.check_number(f"layout {lname}", what, lay.get(what), 2)
+            if not isinstance(lay.get("layers"), list):
+                self.err(f"layout {lname}: layers is {lay.get('layers')!r}; the editor walks the list as it "
+                         f"opens the layout, before it reads anything on it")
+                continue
             self.walk_layers(f"layout {lname}", lay["layers"])
             for inst in lay.get("nonworld-instances", []):
                 self.check_instance(f"layout {lname}", inst)
@@ -925,9 +982,11 @@ class Checker:
         of the events with two or more case sub-events 84% have a comment above
         at least one case (docs/decisions/event-sheet-design-guidance.md,
         2026-09-22). edit_sheet.py refuses a plan whose new events raise the
-        ones whose fix is one comment, and prints the others; check_project.py
+        ones whose fix is one comment or one deleted condition, and prints the others; check_project.py
         reports them all over the whole project when asked, which suits a
-        project the agent wrote. A ladder of sibling events is check_ladder."""
+        project the agent wrote. Every tick beside another condition is in 25 of
+        the examples' 432 Every tick events, and small models open most events
+        with it. A ladder of sibling events is check_ladder."""
         actions = ev.get("actions", [])
         run = longest = 0
         for a in actions:
@@ -938,6 +997,12 @@ class Checker:
             style("run", f"{where}: {longest} actions in a row without a comment action; the official examples step a "
                          f"long block with a comment action every three to five actions, "
                          '{"type": "comment", "text": "What the next actions do."}')
+        conditions = ev.get("conditions", [])
+        others = [c for c in conditions if (c.get("objectClass"), c.get("id")) != ("System", "every-tick")]
+        if not ev.get("isOrBlock") and others and len(others) < len(conditions):
+            style("tick", f"{where}: Every tick beside {len(others)} other condition(s) changes nothing, an event "
+                          f"without a trigger is tested every tick already; the official examples write Every tick "
+                          f"only as an event's one condition. Remove it")
         if depth == 0 and (actions or ev.get("children")):
             j = i - 1
             while j >= 0 and siblings[j].get("eventType") == "variable":     # locals declared above the event
@@ -1017,6 +1082,14 @@ class Checker:
             self.declared_groups(ev.get("children", []))
 
     def check_sheets(self) -> None:
+        for sname, sheet in self.sheets.items():
+            if not (isinstance(sheet.get("name"), str) and sheet["name"]):
+                self.err(f"sheet {sname}: the file says \"name\": {sheet.get('name')!r}; the editor reads it "
+                         f"as text and stops with \"invalid event sheet name\"")
+            if not isinstance(sheet.get("events"), list):
+                self.err(f"sheet {sname}: events is {sheet.get('events')!r}; an empty sheet writes "
+                         f"\"events\": []")
+        self.sheets = {n: s for n, s in self.sheets.items() if isinstance(s.get("events"), list)}
         for sheet in self.sheets.values():
             self.collect_sids(sheet)
         for sheet in self.sheets.values():
@@ -1133,10 +1206,11 @@ def main() -> int:
                     help="also warn where a sheet departs from the authoring style of the official examples: "
                          f"{STYLE_RUN} or more actions in a row without a comment action, a top-level event with "
                          f"no comment above it, an event none of whose case sub-events has a comment above it, "
+                         f"Every tick beside another condition, "
                          f"sub-events {STYLE_TREE} levels deep whose leaves all call one function, and "
                          f"{STYLE_LADDER} or more sibling events of the same conditions and actions with other "
                          "values. For a project the agent wrote; edit_sheet.py refuses a plan whose new events "
-                         "raise the first three and warns on the other two")
+                         "raise the first four and warns on the other two")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()

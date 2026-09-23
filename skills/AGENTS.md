@@ -48,6 +48,13 @@ project, and the block for the project's instruction file.
   `--dry-run`. `edit_sheet.py` is the one that does; what the editor writes
   per kind of event is counted in `docs/decisions/edit-sheet-script.md`.
 - English only; `--locale` switches the schema wording, not the tool's.
+- A rule about what a project file must hold is read from the editor's loader
+  as a whole call chain, not from the one message a user pasted: the next
+  assertion in the same function costs another round trip through them. What
+  the editor writes into every project is measured from the official examples,
+  and `tests/test_project_tools.py` compares the generated project with that
+  measurement, so a key missing from the generator fails here instead of in
+  the editor.
 - A check becomes an error after the two steps in
   `construct3-project/references/checker-rules.md`: the editor's message,
   then a run over the official examples that adds no finding. A style

@@ -566,6 +566,94 @@ def test_checker_names_what_the_editor_reads_before_it_opens_a_file(project, cha
         assert said in out, out
 
 
+EXAMPLES = REPO.parent / "Construct-Example-Projects" / "example-projects"
+# Keys the generated project does not write, with the reason the editor opens
+# without them: both loaders return from the project's own loader when the key is
+# missing (projectResources.js, sPn and G7s), and a generated project has no
+# project files and no timeline.
+GENERATOR_LEAVES_OUT = {"project": {"rootFileFolders", "timelines"}}
+
+
+def always_written(root: Path) -> dict[str, set[str]]:
+    """The keys every example project carries at each level: what the editor
+    writes whatever the project. A level is a file kind, or a block inside one."""
+    seen: dict[str, list[set[str]]] = {}
+
+    def note(level, d):
+        seen.setdefault(level, []).append(set(d))
+
+    def layers(ls):
+        for layer in ls:
+            note("layer", layer)
+            for inst in layer.get("instances", []):
+                note("instance", inst)
+                if isinstance(inst.get("world"), dict):
+                    note("world", inst["world"])
+            layers(layer.get("subLayers", []))
+
+    for f in root.glob("*/project.c3proj"):
+        d = json.loads(f.read_text(encoding="utf-8"))
+        note("project", d)
+        note("properties", d.get("properties", {}))
+    for kind, level in (("layouts", "layout"), ("eventSheets", "sheet"), ("objectTypes", "objectType")):
+        for f in root.glob(f"*/{kind}/*.json"):
+            if f.name.endswith(".uistate.json"):
+                continue
+            d = json.loads(f.read_text(encoding="utf-8"))
+            note(level, d)
+            if level == "layout":
+                layers(d.get("layers", []))
+    return {level: set.intersection(*files) for level, files in seen.items()}
+
+
+@pytest.mark.skipif(not EXAMPLES.is_dir(), reason="the Construct-Example-Projects clone is not beside this one")
+def test_generated_project_carries_what_the_editor_writes_into_every_project(built):
+    """The comparison that finds a missing key before the editor does: the official
+    examples are 524 projects the editor saved, so a key in every one of them is one
+    the editor writes whatever the project holds. Twice the generated project was
+    opened and refused for a key that was missing here and present in all of them."""
+    always = always_written(EXAMPLES)
+    project = json.loads((built / "project.c3proj").read_text(encoding="utf-8"))
+    missing = {"project": always["project"] - set(project) - GENERATOR_LEAVES_OUT["project"],
+               "properties": always["properties"] - set(project["properties"])}
+    for level, kind in (("layout", "layouts"), ("sheet", "eventSheets"), ("objectType", "objectTypes")):
+        for f in sorted((built / kind).glob("*.json")):
+            d = json.loads(f.read_text(encoding="utf-8"))
+            missing[f"{kind}/{f.name}"] = always[level] - set(d)
+            for layer in d.get("layers", []) if level == "layout" else []:
+                missing[f"{f.name} layer {layer['name']}"] = always["layer"] - set(layer)
+                for inst in layer["instances"]:
+                    missing[f"{f.name} {inst['type']}"] = (always["instance"] - set(inst)) | {
+                        f"world.{k}" for k in always["world"] - set(inst.get("world", {}))}
+    assert {where: sorted(keys) for where, keys in missing.items() if keys} == {}
+
+
+@pytest.mark.parametrize("rel, change, said", [
+    ("layouts/Game.json", lambda d: d.pop("name"), 'layout Game: the file says "name": None'),
+    ("layouts/Game.json", lambda d: d.pop("width"), "layout Game: width is None"),
+    ("layouts/Game.json", lambda d: d.update(height=1), "height is 1; the editor refuses anything below 2"),
+    ("layouts/Game.json", lambda d: d.pop("layers"), "layout Game: layers is None"),
+    ("layouts/Game.json", lambda d: d["layers"][0].pop("name"), "a layer is named None"),
+    ("layouts/Game.json", lambda d: d["layers"][0].pop("parallaxX"), "parallaxX is None"),
+    ("layouts/Game.json", lambda d: d["layers"][0].pop("scaleRate"), "scaleRate is None"),
+    ("layouts/Game.json", lambda d: d["layers"][0].update(blendMode="glow"), '"invalid blend mode"'),
+    ("layouts/Game.json", lambda d: d["layers"][0].pop("instances"), 'writes "instances": []'),
+    ("layouts/Objects.json", lambda d: d["layers"][0]["instances"][0].pop("world"),
+     "Coin has no world block"),
+    ("layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].pop("originY"),
+     "world.originY is None"),
+    ("layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x="10"),
+     "world.x is '10'"),
+    ("eventSheets/Game.json", lambda d: d.pop("name"), 'sheet Game: the file says "name": None'),
+    ("eventSheets/Game.json", lambda d: d.pop("events"), 'sheet Game: events is None'),
+])
+def test_checker_names_what_the_editor_reads_out_of_a_layout_or_a_sheet(project, rel, change, said):
+    """Every one of these stops the open with a type and no place: the layout and
+    layer loaders assert as they read (docs/decisions/checker-editor-load-rules.md)."""
+    out = findings(project, change, rel)
+    assert said in out, out
+
+
 def test_a_sprite_without_its_animations_folder_is_named(project):
     """The editor reads the folder as it opens the type: "TypeError: expected object"."""
     out = findings(project, lambda t: t.pop("animations"), "objectTypes/Coin.json")
@@ -1217,6 +1305,20 @@ def test_bare_text_value_is_told_to_add_the_quotes(project):
     assert "identifier 'Hello' is not a variable" in out and 'a text value carries inner quotes: "\\"Hello\\""' in out
 
 
+def test_names_outside_ascii_are_checked_like_the_others(project):
+    """The editor takes names in any script; an undeclared one stops it with "unknown
+    expression" as it opens the project. A mixed name is one name, not its ASCII part."""
+    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="速度 + 1"))
+    assert "identifier '速度' is not a variable, parameter or system expression" in out
+    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="Coin.高度"))
+    assert "Coin.高度 is neither an expression nor an instance variable of Coin" in out
+    edit(project, SHEET, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text='"Score: 0"'))
+    code, out = plan(project, {"before": 1, "events": [{"eventType": "variable", "name": "目标y坐标", "initialValue": 30}]},
+                     {"event": 2, "add-actions": [{"id": "set-text", "objectClass": "ScoreText",
+                                                   "parameters": {"text": "目标y坐标 + 1"}}]})
+    assert code == 0, out
+
+
 def test_plugin_name_in_an_expression_names_the_object(project):
     out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="Sprite.Count"))
     assert "unknown object Sprite in expression; Sprite is the plugin, the object of it here is Coin" in out
@@ -1522,6 +1624,31 @@ def test_style_names_a_ladder_of_one_shape(project):
                                    r"5 times over", out), out
     edit(project, SHEET, lambda s: events(s)["input"].update(children=rungs(4)))
     assert "times over" not in check(project, "--style")[1]
+
+
+def test_style_names_every_tick_beside_another_condition(project):
+    tick = cond("every-tick")
+    test = cond("compare-two-values", params={"first-value": "1", "comparison": 0, "second-value": "1"})
+    edit(project, SHEET, lambda s: events(s)["input"].update(children=[with_own_sids(
+        block([tick, test], STYLE_ACTIONS[:1]), 930_000_000_000_000)]))
+    code, out = check(project, "--style")
+    assert code == 0 and re.search(r"event 6 \(sid \d+\): Every tick beside 1 other condition\(s\) changes nothing", out), out
+    edit(project, SHEET, lambda s: events(s)["input"].update(children=[with_own_sids(
+        block([tick], STYLE_ACTIONS[:1]), 930_000_000_000_000)]))
+    assert "Every tick beside" not in check(project, "--style")[1]
+
+
+def test_plan_refuses_a_new_every_tick_beside_another_condition(project):
+    before = (project / SHEET).read_bytes()
+    test = {"id": "compare-two-values", "objectClass": "System",
+            "parameters": {"first-value": "1", "comparison": 0, "second-value": "1"}}
+    ev = {"eventType": "block", "conditions": [{"id": "every-tick", "objectClass": "System"}, test],
+          "actions": STYLE_ACTIONS[:1]}
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, ev]})
+    assert code == 1 and (project / SHEET).read_bytes() == before and "Every tick beside 1 other" in out, out
+    ev["conditions"] = [test]
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, ev]})
+    assert code == 0 and "warning:" not in out, out
 
 
 def test_plan_refuses_new_cases_without_a_comment(project):
