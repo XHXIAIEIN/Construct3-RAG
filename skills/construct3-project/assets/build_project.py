@@ -943,10 +943,42 @@ def used_addons(types: dict, families: dict) -> list:
                 behaviors.append(b["behaviorId"])
     return ([{"type": "plugin", "id": i, "name": ADDON_NAMES.get(i, i), "author": "Scirra", "bundled": False} for i in plugins]
             + [{"type": "behavior", "id": i, "name": ADDON_NAMES.get(i, i), "author": "Scirra", "bundled": False} for i in behaviors])
+# What the editor reads out of project.c3proj before it opens a single file of
+# the project, and asserts as it reads: a project that lacks one of these opens
+# as "TypeError: expected string", which names neither the key nor the file.
+# The editor writes them into every project it saves, so they are filled in only
+# when the folder was not saved by the editor; savedWithRelease decides where an
+# object type is read from and is left as the editor wrote it.
+PROJECT_DEFAULTS = {"projectFormatVersion": 1, "savedWithRelease": 49502, "runtime": "c3",
+                    "useWorker": "auto", "bundleAddons": False, "functionsName": "Functions",
+                    "autosaveData": None}
+PROPERTY_DEFAULTS = {"description": "", "version": "1.0.0.0", "autoIncrementVersion": False,
+                     "author": "", "authorEmail": "", "authorWebsite": "", "appId": "",
+                     "pixelRounding": False, "zAxisScale": "regular", "fov": 0.7853981633974483,
+                     "useLoaderLayout": False, "fullscreenMode": "letterbox-scale",
+                     "fullscreenQuality": "high", "viewportFit": "auto",
+                     "backgroundColor": [0, 0, 0, 0], "splashColor": [1, 1, 1, 0],
+                     "useThemeColor": False, "themeColor": [1, 1, 1, 0], "webgpu": "auto",
+                     "multitexturing": "auto", "gpuPreference": "high-performance",
+                     "framerateMode": "vsync", "fixedFramerate": 30, "sampling": "trilinear",
+                     "downscaling": "medium", "renderingMode": "auto",
+                     "anisotropicFiltering": "auto", "zNear": 10, "zFar": 100000,
+                     "maxSpriteSheetSize": 2048, "loaderStyle": "splash", "preloadSounds": True,
+                     "uidAllocationMode": "increment", "cordovaiOSScheme": "app",
+                     "cordovaAndroidScheme": "https", "exportFileStructure": "folders",
+                     "scriptsType": "module"}
+
+
 def build_project(existing: dict, types: dict, families: dict, containers: list, layouts: dict,
                   sheets: list) -> dict:
-    """Only the keys this script owns change; uniqueId, icons, scripts and properties stay."""
+    """Only the keys this script owns change; uniqueId, icons, scripts and the
+    properties the project already has stay."""
     p = dict(existing)
+    for key, value in PROJECT_DEFAULTS.items():
+        p.setdefault(key, value)
+    p["properties"] = dict(p.get("properties") or {})
+    for key, value in PROPERTY_DEFAULTS.items():
+        p["properties"].setdefault(key, value)
     p["name"] = "Coins"
     p["usedAddons"] = used_addons(types, families)
     p["objectTypes"] = {"items": list(types), "subfolders": []}

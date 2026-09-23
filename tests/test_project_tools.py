@@ -46,7 +46,8 @@ def install(root: Path, *args: str) -> tuple[int, str]:
 
 
 def new_project(root: Path) -> Path:
-    """What the editor leaves after "Save as project folder", reduced to the keys the generator reads."""
+    """A project folder the editor never saved: the generator fills the keys the
+    editor reads on open, so what it leaves is what the editor would have."""
     root.mkdir(parents=True, exist_ok=True)
     (root / "project.c3proj").write_text(json.dumps({"uniqueId": "test", "properties": {}}), encoding="utf-8")
     return root
@@ -518,6 +519,45 @@ def test_stand_in_project_writes_containers_where_the_editor_reads_them(project)
     assert out.startswith("ok:"), out
     out = findings(project, lambda p: p["containers"].append({"members": ["Coin", "Wallet"]}), "project.c3proj")
     assert "container ['Coin', 'Wallet']: member Wallet is not an object type" in out
+
+
+def test_stand_in_project_opens_in_the_editor(built):
+    """The editor reads the whole properties block before it reads a file of the
+    project, and asserts each value as it goes: a project.c3proj kept down to the
+    keys the tools read opens as "TypeError: expected string" and names neither."""
+    proj = json.loads((built / "project.c3proj").read_text(encoding="utf-8"))
+    assert proj["projectFormatVersion"] == 1 and proj["runtime"] == "c3"
+    # below r309 the editor reads an object type from objectTypes/<name in lower case>.json
+    assert proj["savedWithRelease"] >= 30900
+    assert isinstance(proj["viewportWidth"], int) and isinstance(proj["viewportHeight"], int)
+    props = proj["properties"]
+    for key in ("description", "version", "author", "authorEmail", "authorWebsite", "appId"):
+        assert isinstance(props[key], str), key
+    assert props["fullscreenMode"] == "letterbox-scale" and props["fullscreenQuality"] == "high"
+    assert props["orientations"] == "portrait" and props["sampling"] == "trilinear"
+    assert props["downscaling"] == "medium" and props["loaderStyle"] == "splash"
+
+
+@pytest.mark.parametrize("change, said", [
+    (lambda p: p["properties"].pop("description"),
+     'description is missing or not text'),
+    (lambda p: p["properties"].pop("author") or p["properties"].pop("appId"),
+     'author, appId are missing or not text'),
+    (lambda p: p["properties"].pop("loaderStyle"), 'no "loaderStyle"'),
+    (lambda p: p["properties"].update(orientations="vertical"),
+     "orientations 'vertical' is not one of any, portrait, landscape"),
+    (lambda p: p["properties"].update(sampling="linear"), None),       # the editor maps the older id
+    (lambda p: p.update(viewportWidth="720"), "viewportWidth is '720'"),
+    (lambda p: p.update(projectFormatVersion=2), "projectFormatVersion is 2"),
+    (lambda p: p.pop("savedWithRelease"), r"looks for objectTypes\coin.json in lower case"),
+    (lambda p: p.update(savedWithRelease=24402), "savedWithRelease 24402 is below r309"),
+])
+def test_checker_names_what_the_editor_reads_before_it_opens_a_file(project, change, said):
+    out = findings(project, change, "project.c3proj")
+    if said is None:
+        assert out.startswith("ok:"), out
+    else:
+        assert said in out, out
 
 
 def test_generator_exits_with_the_checkers_findings(project):

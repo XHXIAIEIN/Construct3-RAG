@@ -51,6 +51,25 @@ FULL_TURN = 2 * math.pi + 1e-6      # the largest world angle the official examp
 RESERVED_NAMES = {"self", "true", "false", "system", "con", "prn", "aux", "nul",
                   *(f"com{i}" for i in range(1, 10)), *(f"lpt{i}" for i in range(1, 10))}
 
+# project.c3proj. Opening a project reads the whole properties block before it
+# reads a single file of the project, and each of these is asserted as it is
+# read: a missing one throws "TypeError: expected string" and a wrong one names
+# the property. The value sets are the editor's; the defaults are what it
+# writes into a new project.
+PROJECT_TEXT = {"description": "", "version": "1.0.0.0", "author": "", "authorEmail": "",
+                "authorWebsite": "", "appId": ""}
+PROJECT_OPTIONS = {"fullscreenMode": ("letterbox-scale", "letterbox-integer-scale", "scale-inner",
+                                      "integer-scale-inner", "scale-outer", "integer-scale-outer", "off"),
+                   "fullscreenQuality": ("high", "low"),
+                   "orientations": ("any", "portrait", "landscape"),
+                   "sampling": ("trilinear", "bilinear", "nearest"),
+                   "downscaling": ("medium", "low", "high"),
+                   "loaderStyle": ("splash", "progress-logo", "progress", "percent", "none")}
+PROJECT_ALSO = {"sampling": ("linear", "point")}    # older ids the editor maps as it reads them
+# Below this release the editor reads an object type from objectTypes\<name in
+# lower case>.json, the layout of a project from 2016, and finds nothing.
+FOLDER_PROJECT_RELEASE = 30900
+
 # Object and behavior names may start with a digit (3DCamera, 8Direction), so a
 # token is any run of word characters and numeric literals are skipped by value.
 # Sprite(2).X picks an instance by IID; the index is checked as an expression.
@@ -149,6 +168,7 @@ class Checker:
         self._eases: set[str] = set()
 
     def check(self) -> None:
+        self.check_project_file()
         self.check_names()
         self.check_images()
         self.check_layouts()
@@ -162,6 +182,69 @@ class Checker:
     def run(self) -> int:
         self.check()
         return self.report()
+
+    # --- project.c3proj -----------------------------------------------------------------
+    def check_project_file(self) -> None:
+        """What the editor reads before it opens a single file of the project. A
+        hand-written project.c3proj that keeps only the keys the tools read opens
+        as `TypeError: expected string`, a message that names neither the key nor
+        the file; the editor writes all of these into every project it saves."""
+        data = self.p.data
+        props = data.get("properties")
+        if not isinstance(props, dict):
+            self.err("project.c3proj: no \"properties\" block; copy the one from a project the editor saved, "
+                     "or from an empty project of the Construct3-New-project clone")
+            props = {}
+        missing = [k for k in PROJECT_TEXT if not isinstance(props.get(k), str)]
+        if missing:
+            written = ", ".join(f'"{k}": {json.dumps(PROJECT_TEXT[k])}' for k in missing)
+            self.err(f"project.c3proj properties: {', '.join(missing)} "
+                     f"{'is' if len(missing) == 1 else 'are'} missing or not text; the editor reads every "
+                     f"property as it opens the project and stops with \"TypeError: expected string\" before "
+                     f"it names a file. Write {written}")
+        for key, options in PROJECT_OPTIONS.items():
+            value = props.get(key)
+            if value is None:
+                rest = ", ".join(options[1:])
+                self.err(f"project.c3proj properties: no \"{key}\"; the editor reads it on open and stops. "
+                         f"Write \"{key}\": \"{options[0]}\", or "
+                         f"{rest if len(options) == 2 else 'one of ' + rest}")
+            elif value not in options and value not in PROJECT_ALSO.get(key, ()):
+                self.err(f"project.c3proj properties: {key} {value!r} is not one of "
+                         f"{', '.join(options)}; the editor stops with \"invalid {key}\"")
+        for key in ("viewportWidth", "viewportHeight"):
+            value = data.get(key)
+            if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(value) or value < 2:
+                self.err(f"project.c3proj: {key} is {value!r}; the editor reads it as a number of at least 2 "
+                         f"and stops with \"invalid {'viewport width' if key.endswith('Width') else 'viewport height'}\"")
+        fmt = data.get("projectFormatVersion")
+        if fmt is not None and (not isinstance(fmt, int) or fmt > 1):
+            self.err(f"project.c3proj: projectFormatVersion is {fmt!r}; the editor refuses anything above 1 with "
+                     f"\"project from a future version of C3\". Write \"projectFormatVersion\": 1")
+        self.check_saved_with_release()
+
+    def check_saved_with_release(self) -> None:
+        """The release decides where the editor looks for an object type: under
+        r309 it reads objectTypes\\<name in lower case>.json, the layout of a
+        project from 2016, and a project without the key is read as r86."""
+        release = self.p.data.get("savedWithRelease")
+        if not isinstance(release, int) or isinstance(release, bool):
+            self.err(f"project.c3proj: savedWithRelease is {release!r}; without the release the editor reads the "
+                     f"project as r86 and looks for objectTypes\\{'coin' if 'Coin' in self.p.types else 'name'}"
+                     f".json in lower case. Write \"savedWithRelease\": 49502, or the release the editor that "
+                     f"saved the project shows; a release newer than the editor opening it asks the user first")
+            return
+        if release < FOLDER_PROJECT_RELEASE:
+            # by the name the folder holds, not by Path.exists(): a Windows file
+            # system answers for Coin.json when the editor asks for coin.json
+            folder = self.p.root / "objectTypes"
+            have = {f.name for f in folder.glob("*.json")} if folder.is_dir() else set()
+            wrong = [n for n in self.p.types if f"{n.lower()}.json" not in have]
+            if wrong:
+                self.err(f"project.c3proj: savedWithRelease {release} is below r309, so the editor reads an object "
+                         f"type from objectTypes/<name in lower case>.json; {', '.join(sorted(wrong)[:3])} "
+                         f"{'has' if len(wrong) == 1 else 'have'} no such file. Write the release that saved the "
+                         f"project, for example \"savedWithRelease\": 49502")
 
     # --- names, addon ids, families -----------------------------------------------------
     def check_name(self, where: str, what: str, name: str, is_object: bool) -> None:
