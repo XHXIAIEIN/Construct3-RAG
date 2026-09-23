@@ -16,21 +16,27 @@ first.
   world instead of adding an `isMoving` flag. [manual: plugin-reference/sprite.md
   "Set collisions enabled"; scripting/scripting-reference/object-interfaces/iworldinstance.md
   `isCollisionEnabled`]
-- A family and its member type are picked separately. Narrowing `Piece` never
-  narrows `Pieces`. Use that to hold two lists of one type in one event, and
-  refer to the name the caller narrowed (see Functions). [manual:
+- A type and its family are picked separately: narrowing Sprite `Piece` never
+  narrows its family `Pieces`. Use that for two picks of one type in one
+  event, and refer to the name the caller narrowed (see Functions). [manual:
   project-primitives/objects/families.md "Picking families in events"]
 - Container members are created, destroyed and picked together; hierarchy
   children are not picked with their parent, use *Pick children*. [manual:
   project-primitives/objects/containers.md; plugin-reference/common-features/common-conditions.md
   "Hierarchy"]
+- A container belongs to an object type, and picking a family never picks
+  it: with `HPBar` in `Enemy`'s container, `On clicked Enemies` then
+  `HPBar: Set width` sets every bar. Pick the type from the family in a
+  sub-event, `Enemy: Pick by unique ID Enemies.UID`, and the container comes
+  with it; one such sub-event per member type, under `For each Enemies` when
+  several are picked. The same bridge reaches a second family of the
+  instance, whose variables and behaviors the first family's events cannot
+  see. [Construct-bugs#7485, open; example: elemental-conveyors event 35,
+  `Draggable` picked by `Base.UID`]
 - A data object (Dictionary, JSON) in a container gives each instance its own
-  copy, and picking the world member through a family picks that copy too:
-  `EnemyGroup: Is overlapping AttackRange` then `EnemyStats: Subtract from
-  "hp"` hits the right enemy's sheet. Use it instead of a growing list of
-  family instance variables when stats come from a data file. [manual:
-  project-primitives/objects/containers.md "data storage objects";
-  observed: mergeGame, 2026-09-17]
+  copy, picked with its type as above. Use it instead of a growing list of
+  instance variables when stats come from a data file. [manual:
+  project-primitives/objects/containers.md "data storage objects"]
 - Sub-events run after the parent's actions, so a change made there (collisions
   re-enabled) is visible to the sub-event's conditions. [manual:
   project-primitives/events/sub-events.md]

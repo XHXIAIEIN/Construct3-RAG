@@ -674,7 +674,7 @@ dropped is here.
 | `ChildCount` counts every child whatever its type | WaterSort: the top unit lost its flat edge while pouring once a Stream was added to the Tube |
 | *Destroy* does not detach a child until the end of the top-level event | c3runtime.js exported Sep 2026; WaterSort: an emptied tube whose Mask was just destroyed read as "has children", so CheckWin never showed the win text |
 | Timers and tweens round their end to a tick each | WaterSort: the tube snapped to its end tilt for one frame when the last unit's drain began before the unit above it was destroyed |
-| A data object in a container is picked through the family | mergeGame, enemyBase with EnemyStats |
+| A family pick does not pick the container; pick the type by the family's UID | Construct-bugs#7485 (open), its repro and the UID workaround; elemental-conveyors event 35. Replaces "a data object in a container is picked through the family", recorded from mergeGame and contradicted by the issue's repro |
 | Shared logic on the caller's picks is a custom action | mergeGame: `applyStats` and `attack` moved from copy-picked functions to `Bases` custom actions |
 | *Set animation* to the playing animation does nothing | RaftSurvivor: ten events each comparing `anim` before *Set animation* |
 | A blend mode only touches the object's own quad | WaterSort: sheared liquid past the tube bottom stayed visible next to a cavity-sized mask |
