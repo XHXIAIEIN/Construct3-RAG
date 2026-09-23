@@ -35,8 +35,9 @@ SIBLINGS = {
     "Construct-Addon-SDK": ("https://github.com/Scirra/Construct-Addon-SDK", False),
     "Construct-Example-Projects": ("https://github.com/Scirra/Construct-Example-Projects", True),
 }
-# The project the editor saves for File > New, kept as its own repository so
-# that a project can start without the editor. Copied, never used in place.
+# The project the editor saves for Project > New, kept as its own repository so
+# that a project can start without the editor. Copied, never used in place, and
+# without the repository's own README, which describes the template, not the game.
 TEMPLATE = ("Construct3-New-Project", "https://github.com/XHXIAIEIN/Construct3-New-Project")
 
 
@@ -73,12 +74,13 @@ def new_project(template: Path, target: Path, dry_run: bool) -> str:
         return f"{target.name}: would copy {template} to {target} once it is cloned"
     if not (template / "project.c3proj").exists():
         return (f"{target.name}: not created; {template} holds no project.c3proj. Clone "
-                f"{TEMPLATE[1]} there, or save an empty project from the editor as {target}")
+                f"{TEMPLATE[1]} there, pass --template <folder> naming an empty project the editor saved, "
+                f"or save an empty project from the editor as {target}")
     if target.exists() and any(target.iterdir()):
         return f"{target.name}: {target} is not empty and holds no project.c3proj; pass an empty or new folder"
     if dry_run:
         return f"{target.name}: would copy {template} to {target}"
-    shutil.copytree(template, target, ignore=shutil.ignore_patterns(".git"), dirs_exist_ok=True)
+    shutil.copytree(template, target, ignore=shutil.ignore_patterns(".git", "README.md"), dirs_exist_ok=True)
     proj = target / "project.c3proj"
     data = json.loads(proj.read_text(encoding="utf-8"))
     data["name"], data["uniqueId"] = target.name, unique_id()

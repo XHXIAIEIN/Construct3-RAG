@@ -283,6 +283,7 @@ def template(folder: Path) -> Path:
     (folder / "layouts" / "Layout 1.json").write_text(json.dumps({"name": "Layout 1", "layers": [], "sid": 1}), encoding="utf-8")
     (folder / "eventSheets").mkdir()
     (folder / "eventSheets" / "Event sheet 1.json").write_text(json.dumps({"name": "Event sheet 1", "events": [], "sid": 2}), encoding="utf-8")
+    (folder / "README.md").write_text("# Construct3-New-Project\n", encoding="utf-8")
     return folder
 
 
@@ -304,6 +305,7 @@ def test_bootstrap_creates_the_project_from_the_template_and_installs_the_skill(
     proj = json.loads((game / "project.c3proj").read_text(encoding="utf-8"))
     assert proj["name"] == "MyGame" and re.fullmatch(r"[a-z0-9]{11}", proj["uniqueId"]) and proj["uniqueId"] != "he3qe448adg"
     assert (game / INSTALLED / "SKILL.md").is_file()
+    assert not (game / "README.md").exists()
     assert (game / ".git").is_dir() and "git initialised" in out
     assert f"- Construct3-RAG: {REPO.as_posix()}" in (game / "AGENTS.md").read_text(encoding="utf-8")
     assert (game / "CLAUDE.md").read_text(encoding="utf-8") == "@AGENTS.md\n"
@@ -367,6 +369,17 @@ def test_bootstrap_clones_the_template_repository_beside_the_clone(tmp_path):
     # the copy is a repository of its own, not the template's
     log = subprocess.run(["git", "log", "--oneline"], cwd=tmp_path / "MyGame", capture_output=True, text=True)
     assert log.returncode != 0 or log.stdout.strip() == ""
+
+
+@pytest.mark.skipif(shutil.which("git") is None, reason="git is not installed")
+def test_bootstrap_names_the_way_round_a_template_it_cannot_clone(tmp_path):
+    beside = siblings(tmp_path / "GitHub")
+    missing = (tmp_path / "nowhere" / "Construct3-New-Project").as_uri()
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--template", missing,
+                          "--project", str(tmp_path / "MyGame"))
+    assert code == 1 and "Construct3-New-Project: git clone failed" in out
+    assert "MyGame: not created" in out and "--template <folder>" in out
+    assert not (tmp_path / "MyGame").exists()
 
 
 def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):

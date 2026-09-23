@@ -15,6 +15,8 @@ python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 
 They put this clone, the repositories it reads and the `MyGame` project together in `$HOME/Construct3`, and install the `construct3-project` skill in `MyGame` with its `AGENTS.md` and `CLAUDE.md`. Whatever is already there is left as it is, so the two are safe to run again; `--help` lists the flags. In `cmd.exe`, write `%USERPROFILE%` for `$HOME`. To keep everything somewhere else, write that folder into both commands in place of `$HOME/Construct3`.
 
+`MyGame` starts as a copy of [XHXIAIEIN/Construct3-New-Project](https://github.com/XHXIAIEIN/Construct3-New-Project), the empty project the editor saves for **Project** > **New**. To start from an empty project saved on this machine instead, add `--template <that folder>` to the second command.
+
 Then read `MyGame/AGENTS.md`.
 
 ## Related repositories
