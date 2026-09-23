@@ -1337,6 +1337,20 @@ def test_names_outside_ascii_are_checked_like_the_others(project):
     assert code == 0, out
 
 
+def test_a_groups_local_is_not_seen_from_a_sibling_group(project):
+    """A local declared in one group is out of scope in the next; the editor opens the
+    project with "unknown expression" on every use there."""
+    def change(sheet):
+        ev = events(sheet)
+        ev["input_group"]["children"].insert(0, {"eventType": "variable", "name": "拾取距离", "type": "number",
+                                                 "initialValue": "40", "comment": "", "isStatic": False,
+                                                 "isConstant": False, "sid": 4})
+        ev["restart_block"]["actions"].append({"id": "set-text", "objectClass": "ScoreText", "sid": 5,
+                                               "parameters": {"text": "拾取距离 + 1"}})
+    out = findings(project, change)
+    assert "identifier '拾取距离' is not a variable, parameter or system expression" in out
+
+
 def test_plugin_name_in_an_expression_names_the_object(project):
     out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="Sprite.Count"))
     assert "unknown object Sprite in expression; Sprite is the plugin, the object of it here is Coin" in out
