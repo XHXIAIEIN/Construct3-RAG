@@ -45,7 +45,7 @@ project the checker passes is ready for it.
 | `scripts/lookup_ace.py OBJECT [WORD ...]` | Conditions, actions and expressions of an object of the project, of `System`, or of a plugin or behavior, each with its parameters and the JSON to write |
 | `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only, `--show N` for one event as JSON |
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed; checked before anything is written |
-| `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds five readability warnings from the official examples' style, for a project the agent wrote |
+| `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds six readability warnings from the official examples' style, for a project the agent wrote |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
 

@@ -33,12 +33,12 @@ NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
 class Findings:
     """Errors fail the run; warnings are printed and do not. Each is kept once.
     A style finding is a warning that also keeps its kind, so that edit_sheet.py
-    can refuse a plan for the kinds whose fix is one comment."""
+    can refuse a plan for the kinds whose fix is one comment or one deleted condition."""
 
     def __init__(self) -> None:
         self.errors: list[str] = []
         self.warnings: list[str] = []
-        self.style: list[tuple[str, str]] = []      # (kind, message), kind one of run, comment, tree
+        self.style: list[tuple[str, str]] = []      # (kind, message), kind one of check_project.check_style's
 
     def err(self, msg: str) -> None:
         if msg not in self.errors:
