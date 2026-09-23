@@ -113,3 +113,28 @@ types, 0 families, 1 layouts, 1 sheets`).
 - A clone over a slow connection: `Construct-Example-Projects` is 744 MB
   checked out even shallow. `--no-examples` skips it; the block's table row
   for official examples then leads nowhere until it is cloned.
+
+## Update 2026-09-23: the empty project is kept in this repository
+
+The user's decision: the empty project lives in `data/c3-new-project/`, and
+`bootstrap.py` copies it from there. A new project needs no clone and no
+network, and the copy takes a fraction of a second. `--template <folder>`
+still names another empty project; it no longer takes a URL, and the
+`Construct3-New-Project` repository is not read.
+
+The files are the editor's own. On 2026-09-23 the r495.2 editor created a
+project with **Project** > **New** (defaults, Event sheet start) and saved it
+with **Save as project folder**, driven by Playwright with the folder picker
+answered by a folder of the browser's private file system. The editor's
+`*.uistate.json` and `layouts/uistate/` are left out; it writes them again on
+the next save. Two such saves differ only in their random `sid`s. A project
+copied from it opens in the editor, and the checker passes it.
+
+Refreshing the files by that script was tried and dropped. Over sixteen
+runs the editor sometimes closed the New project dialog without making a
+project, a run then took up to three minutes, and two runs that reported
+success saved 13 files instead of 14. A template that can come out short
+without saying so is worse than one refreshed by hand: when a release
+changes what the editor writes, save a new empty project from the editor as
+a folder over `data/c3-new-project/`, leave out the `*.uistate.json`, and
+check that `savedWithRelease` moved.

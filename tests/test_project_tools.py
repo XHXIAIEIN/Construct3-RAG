@@ -273,7 +273,7 @@ def bootstrap(root: Path, *args: str) -> tuple[int, str]:
 
 
 def template(folder: Path) -> Path:
-    """The empty project as its repository holds it, reduced to the keys the checker reads."""
+    """An empty project reduced to the keys the checker reads."""
     folder.mkdir(parents=True)
     (folder / "project.c3proj").write_text(json.dumps({
         "name": "New project", "uniqueId": "he3qe448adg", "properties": {},
@@ -283,7 +283,6 @@ def template(folder: Path) -> Path:
     (folder / "layouts" / "Layout 1.json").write_text(json.dumps({"name": "Layout 1", "layers": [], "sid": 1}), encoding="utf-8")
     (folder / "eventSheets").mkdir()
     (folder / "eventSheets" / "Event sheet 1.json").write_text(json.dumps({"name": "Event sheet 1", "events": [], "sid": 2}), encoding="utf-8")
-    (folder / "README.md").write_text("# Construct3-New-Project\n", encoding="utf-8")
     return folder
 
 
@@ -305,7 +304,6 @@ def test_bootstrap_creates_the_project_from_the_template_and_installs_the_skill(
     proj = json.loads((game / "project.c3proj").read_text(encoding="utf-8"))
     assert proj["name"] == "MyGame" and re.fullmatch(r"[a-z0-9]{11}", proj["uniqueId"]) and proj["uniqueId"] != "he3qe448adg"
     assert (game / INSTALLED / "SKILL.md").is_file()
-    assert not (game / "README.md").exists()
     assert (game / ".git").is_dir() and "git initialised" in out
     assert f"- Construct3-RAG: {REPO.as_posix()}" in (game / "AGENTS.md").read_text(encoding="utf-8")
     assert (game / "CLAUDE.md").read_text(encoding="utf-8") == "@AGENTS.md\n"
@@ -349,36 +347,33 @@ def test_bootstrap_dry_run_says_the_clones_it_would_make(tmp_path):
     code, out = bootstrap(tmp_path, "--beside", str(tmp_path / "GitHub"), "--project", str(tmp_path / "MyGame"),
                           "--dry-run")
     assert code == 0 and "nothing was done" in out, out
-    assert out.count("would run git clone") == 4 and "--depth 1 https://github.com/Scirra/Construct-Example-Projects" in out
+    assert out.count("would run git clone") == 3 and "--depth 1 https://github.com/Scirra/Construct-Example-Projects" in out
     assert not (tmp_path / "GitHub").exists() and not (tmp_path / "MyGame").exists()
 
 
-@pytest.mark.skipif(shutil.which("git") is None, reason="git is not installed")
-def test_bootstrap_clones_the_template_repository_beside_the_clone(tmp_path):
-    source = template(tmp_path / "src" / "Construct3-New-Project")
-    git = ["git", "-c", "user.name=t", "-c", "user.email=t@t"]
-    subprocess.run([*git, "init", "-q"], cwd=source, check=True)
-    subprocess.run([*git, "add", "."], cwd=source, check=True)
-    subprocess.run([*git, "commit", "-q", "-m", "empty project"], cwd=source, check=True)
+def test_bootstrap_copies_the_committed_empty_project(tmp_path):
+    """Without --template the project is the editor's empty project kept in data/, copied
+    offline, with its own name and id, and the checker passes it."""
     beside = siblings(tmp_path / "GitHub")
-    code, out = bootstrap(tmp_path, "--beside", str(beside), "--template", source.as_uri(),
-                          "--project", str(tmp_path / "MyGame"))
+    game = tmp_path / "MyGame"
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--project", str(game))
     assert code == 0, out
-    assert (beside / "Construct3-New-Project" / "project.c3proj").is_file()
-    assert (tmp_path / "MyGame" / "project.c3proj").is_file()
-    # the copy is a repository of its own, not the template's
-    log = subprocess.run(["git", "log", "--oneline"], cwd=tmp_path / "MyGame", capture_output=True, text=True)
-    assert log.returncode != 0 or log.stdout.strip() == ""
+    assert "git clone" not in out and f"MyGame: created from c3-new-project at {game}" in out
+    proj = json.loads((game / "project.c3proj").read_text(encoding="utf-8"))
+    kept = json.loads((REPO / "data" / "c3-new-project" / "project.c3proj").read_text(encoding="utf-8"))
+    assert proj["name"] == "MyGame" and proj["uniqueId"] != kept["uniqueId"]
+    same = lambda d: {k: v for k, v in d.items() if k not in ("name", "uniqueId")}  # noqa: E731
+    assert same(proj) == same(kept)
+    code, out = check(game)
+    assert code == 0 and out.rstrip().splitlines()[-1].startswith("ok:"), out
 
 
-@pytest.mark.skipif(shutil.which("git") is None, reason="git is not installed")
-def test_bootstrap_names_the_way_round_a_template_it_cannot_clone(tmp_path):
+def test_bootstrap_names_the_way_round_a_template_that_is_not_a_project(tmp_path):
     beside = siblings(tmp_path / "GitHub")
-    missing = (tmp_path / "nowhere" / "Construct3-New-Project").as_uri()
-    code, out = bootstrap(tmp_path, "--beside", str(beside), "--template", missing,
+    (tmp_path / "empty").mkdir()
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--template", str(tmp_path / "empty"),
                           "--project", str(tmp_path / "MyGame"))
-    assert code == 1 and "Construct3-New-Project: git clone failed" in out
-    assert "MyGame: not created" in out and "--template <folder>" in out
+    assert code == 1 and "MyGame: not created" in out and "--template <folder>" in out
     assert not (tmp_path / "MyGame").exists()
 
 
