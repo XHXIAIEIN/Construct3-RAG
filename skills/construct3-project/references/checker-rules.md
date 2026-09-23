@@ -118,6 +118,10 @@ editor and the preview judge those; the Water Sort observations in
 `Construct3-RAG/prompts/event-sheet-pitfalls.md` came from previewing, not
 from the checker. Expression syntax, argument counts and types, and
 `function`, `template` and `audiofile` parameters are not checked either.
+The editor checks expressions as it opens the project: `scripts/open_in_editor.py`
+prints its message, `Type mismatch: - does not work with 'string' and
+'number'` for a local text variable that hides a number of the same name
+under another case.
 
 ## How the rules were confirmed
 

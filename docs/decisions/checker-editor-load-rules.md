@@ -250,3 +250,34 @@ had passed it. Both are errors now, after the two steps of
   plugin file's `commonAces`
   (`docs/decisions/common-aces-from-editor-bundle.md`); over the examples,
   none of 7811 uses of a shared condition or action falls outside it.
+
+## Update 2026-09-24: the agent opens the project before handing it over
+
+The editor checks what the checker does not: the types of an expression.
+A local text variable that differed from a global number constant only by
+case hid it, `LAYERS - 1` was read on the text, and the editor refused the
+project with `Type mismatch: - does not work with 'string' and 'number'`,
+naming the sheet, event and condition, after the checker had passed it.
+Each such case cost a round trip through the user.
+
+The opener moved from `evals/` to `scripts/`, so it ships with the skill,
+and the check loop of `SKILL.md` gained a step: after `ok:`, run
+`scripts/open_in_editor.py`; `opened` is the hand-over, `failed` prints the
+editor's dialog and the exception it logged. `generating-a-project.md` and
+`hand-editing-project-files.md` carry the same step.
+
+- Reproduced on a copy of `data/c3-new-project` with the case above: the
+  checker ends with `ok:`, the opener prints the editor's dialog with
+  `Event sheet 1, event 2, condition 1`, the number `print_sheet.py` gives
+  the same event. The unchanged template prints `opened`. Both in about
+  13 seconds, r495.2 and, with `--release r502`, the r502 beta.
+- Without a PATH it opens the project the current directory is in, as the
+  other scripts find theirs. It starts Playwright's Chromium, else Edge,
+  else Chrome, so a Windows machine needs `pip install playwright` and no
+  browser download. A dialog with a **Not now** button (a newer beta on
+  offer) is declined and not read as a failure.
+- The checker stays offline and first: it names every finding at once, the
+  editor one dialog at a time. The opener needs a network connection and
+  Playwright; when either is missing it exits 2 and says to ask the user to
+  open the project and paste the dialog's text, which is the step it
+  replaces.

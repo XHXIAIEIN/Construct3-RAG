@@ -73,7 +73,7 @@ python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 
 先读 [`AGENTS.md`](AGENTS.md)，它给出事实查找流程、事件表设计流程和改代码的规则。要帮用户写事件表，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)、[`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 和 [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 一起作为 system prompt 加载：前者用 Construct 的方式决定结构（拾取、族、容器、`Else`），中间一份规定输出格式和名称核对，后者是带出处、凭直觉容易写错的运行时事实。[`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) 是官方示例的书写风格（文件夹、事件组及其变量、注释、命名、界面文案），用于把事件写进项目时。只在特定场景才需要的内容放在 `prompts/references/`，由这几份文件按需指引，平时不进上下文。
 
-游戏项目里的 agent 通过 [`construct3-project`](skills/construct3-project/SKILL.md) skill 到达本仓库：一个 [Agent Skills](https://agentskills.io) 格式的文件夹，里面是 ACE 查询、事件表打印、事件表编辑、检查器和生成器模板。顶部的两条命令会安装它；项目里没有它时的规则见 `AGENTS.md` 第 4 节。
+游戏项目里的 agent 通过 [`construct3-project`](skills/construct3-project/SKILL.md) skill 到达本仓库：一个 [Agent Skills](https://agentskills.io) 格式的文件夹，里面是 ACE 查询、事件表打印、事件表编辑、检查器、编辑器打开验证和生成器模板。顶部的两条命令会安装它；项目里没有它时的规则见 `AGENTS.md` 第 4 节。
 
 ## 查找服务（可选）
 
@@ -98,7 +98,7 @@ data/                   已提交的参考数据，直接读取
 prompts/                LLM system prompt
   references/           按需加载
 skills/                 Agent Skills，安装到游戏项目里
-  construct3-project/   ACE 查询、事件表打印、事件表编辑、检查器、生成器模板
+  construct3-project/   ACE 查询、事件表打印、事件表编辑、检查器、编辑器打开验证、生成器模板
 src/                    可选查找服务，自带 .env（见 src/AGENTS.md）
 scripts/                安装、数据刷新、版本检查
 tests/                  离线 pytest 套件
