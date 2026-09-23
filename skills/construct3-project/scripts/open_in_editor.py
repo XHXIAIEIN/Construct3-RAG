@@ -2,7 +2,7 @@
 editor's message when it does not.
 
     python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--steps] [--release rNNN]
-                                     [--shots DIR] [--out RESULTS.json] [--jobs 2] [--timeout 90] [--headed]
+                                     [--shots DIR] [--out RESULTS.json] [--jobs 2] [--headed]
 
 Run it when check_project.py ends with ok:. The checker reads the files; the
 editor also reads the events, and refuses a project for what the checker does
@@ -17,7 +17,7 @@ in a browser of its own: Playwright's Chromium, else Microsoft Edge, else
 Google Chrome. Where it has not, or with --steps, it writes the project as
 .tmp/open-in-editor.c3p in the project folder and prints the same steps for
 whatever browser tool the agent has: one that opens a page, runs JavaScript
-in it and puts a file on a file input. The editor loads in about 20 seconds.
+in it and puts a file on a file input. A project takes about 10 seconds.
 
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
@@ -56,61 +56,58 @@ instead, the project is not opened yet
 EDITOR = "https://editor.construct.net/"
 # Playwright's own build first, then a browser a Windows or Mac machine already has.
 CHANNELS = (None, "msedge", "chrome")
-INPUT_ID = "c3-open-project"
 # Inside the project, where check_project.py does not look and the editor does not write.
 SCRATCH = ".tmp"
 
-# Returns null until the editor has loaded and no dialog is open, then the window
-# title: a file dropped while the welcome dialog closes is ignored. It closes the
-# dialogs the editor shows on start, keeps what the editor logs as an error, and
-# adds a file input: a file put on it is dropped on the editor, which handles a
-# synthetic drop like a file dragged from the desktop. The same function serves
-# the script and an agent's browser tool.
-SETUP_JS = """() => {
-  if (!document.getElementById('mainMenuButton')) return null;
-  document.querySelector('a.noThanksLink')?.click();
-  for (const b of document.querySelectorAll('dialog[open] button'))
-    if (['OK', 'Not now'].includes(b.innerText.trim())) b.click();
-  if (document.querySelector('dialog[open]')) return null;
-  if (!window.__c3OpenErrors) {
-    window.__c3OpenErrors = [];
-    const log = console.error.bind(console);
-    console.error = (...a) => { window.__c3OpenErrors.push(a.map(String).join(' ').slice(0, 600)); log(...a); };
+# The page side, the same for the script and for an agent's browser tool. Each
+# function waits inside the page, so a tool calls it once instead of polling.
+#
+# SETUP waits until the editor has loaded and no dialog has been open for 2 seconds,
+# closing the ones it shows on start: a file dropped while the welcome dialog closes
+# is ignored, and the update offers come a moment after the menu. Then it keeps what
+# the editor logs as an error and puts a file input at the top of the page. A file
+# put on that input is dropped on the editor, which handles a synthetic drop like a
+# file dragged from the desktop, and the editor's answer is awaited in the page.
+SETUP_JS = r"""async () => {
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id !== 'progressDialog');
+  const text = d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500);
+  for (let calm = 0, i = 0; calm < 4; i++) {
+    if (i > 120) return 'not ready: ' + (open().map(text).join(' | ') || 'the editor did not load');
+    await wait(500);
+    document.querySelector('a.noThanksLink')?.click();
+    open().forEach(d => d.querySelector('ui-close-button, .okButton')?.click());
+    calm = document.getElementById('mainMenuButton') && !open().length ? calm + 1 : 0;
   }
-  let input = document.getElementById('%(id)s');
-  if (!input) {
-    input = document.createElement('input');
-    input.type = 'file';
-    input.id = '%(id)s';
-    input.setAttribute('aria-label', 'Project to open');
-    input.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:2147483647;background:#fff';
-    document.body.append(input);
-  }
-  input.onchange = () => {
+  const errors = [], log = console.error.bind(console);
+  console.error = (...a) => { errors.push(a.map(String).join(' ').slice(0, 600)); log(...a); };
+  const start = document.title, input = document.createElement('input');
+  input.type = 'file';
+  input.setAttribute('aria-label', 'Project to open');
+  input.style.cssText = 'position:fixed;left:8px;top:8px;z-index:2147483647;background:#fff';
+  document.body.prepend(input);
+  input.onchange = () => window.__c3Open = (async () => {
     const dt = new DataTransfer();
     dt.items.add(input.files[0]);
     input.remove();
     const target = document.elementFromPoint(innerWidth / 2, innerHeight / 2) || document.body;
     for (const type of ['dragenter', 'dragover', 'drop'])
       target.dispatchEvent(new DragEvent(type, {bubbles: true, cancelable: true, dataTransfer: dt}));
-  };
-  return document.title;
-}""" % {"id": INPUT_ID}
-
-# A dialog with a "Not now" button is an offer, such as a newer beta release, not
-# about the project: it is declined and left out.
-STATE_JS = """() => {
-  const offer = d => [...d.querySelectorAll('button')].some(b => b.innerText.trim() === 'Not now');
-  const open = [...document.querySelectorAll('dialog[open]')].filter(d => d.id !== 'progressDialog');
-  for (const d of open.filter(offer))
-    [...d.querySelectorAll('button')].find(b => b.innerText.trim() === 'Not now').click();
-  return {
-    title: document.title,
-    opening: !!document.querySelector('dialog#progressDialog[open]'),
-    dialogs: open.filter(d => !offer(d)).map(d => d.innerText.trim().replace(/\\s+/g, ' ').slice(0, 1500)),
-    errors: (window.__c3OpenErrors || []).filter(e => e.includes('Exception')),
-  };
+    for (let i = 0; i < 180; i++) {
+      await wait(500);
+      if (!document.querySelector('dialog#progressDialog[open]') && (open().length || document.title !== start)) {
+        await wait(1500);
+        const dialogs = open().map(text);
+        return {opened: !dialogs.length && document.title !== start, title: document.title, dialogs,
+                errors: errors.filter(e => e.includes('Exception'))};
+      }
+    }
+    return {opened: false, timeout: true, title: document.title, dialogs: open().map(text), errors};
+  })();
+  return 'ready';
 }"""
+
+RESULT_JS = "async () => await window.__c3Open ?? 'no file on the input yet: put the .c3p on it first'"
 
 NEXT = ("next: the editor's message names the place, `Game, event 12, condition 1` is event 12 of sheet Game "
         "as scripts/print_sheet.py numbers it. Fix it, run scripts/check_project.py, then this script again. "
@@ -163,27 +160,28 @@ def write_c3p(project: Path) -> Path:
 
 def steps(project: Path, editor: str, why: str) -> str:
     c3p = write_c3p(project)
-    return f"""{why}; open the project with a browser tool of this session instead, one that opens a page,
-runs JavaScript in it and puts a file on a file input:
-1. Open {editor} in a new tab.
-2. Run this function in the page; a tool that takes an expression gets it called, `(...)()`.
-   It returns null while the editor loads, about 20 seconds: run it again until it returns the
-   window title, and keep that.
-{SETUP_JS}
-3. Put this file on the file input labelled "Project to open", at the bottom left of the page, with
-   the tool's upload action (a tool that waits for a file chooser gets one by clicking the input):
+    tail = f" Git ignores {c3p.parent}; delete it when you are done." if c3p != project else ""
+    return f"""{why}. Open it with a browser tool of this session that runs JavaScript in a page and puts
+a file on a file input, in five calls; each function waits in the page, so call it once:
+1. Open {editor} in a new page, in an isolated context if the tool has one.
+2. Run SETUP in it (a tool that takes an expression gets it called: `(...)()`). It returns "ready".
+3. Put this file on the input labelled "Project to open", the first element of the page, with the
+   tool's upload action; a tool that waits for a file chooser gets one by clicking the input:
    {c3p}
-4. Every 3 seconds run this function, until `opening` is false and either `dialogs` holds something
-   or `title` differs from the one of step 2:
-{STATE_JS}
-   A new title and no dialog: the project opened. A dialog: it did not; its text names the sheet,
-   event and condition at fault, and `errors` holds the exception the editor logged.
+4. Run RESULT. It returns {{opened, title, dialogs, errors}}. opened true is the hand-over.
+   Otherwise the dialog names the place and errors holds the exception the editor logged.
    {NEXT.removeprefix("next: ")}
 Without such a tool, ask the user to open the project in Construct 3 and paste the text of the
-dialog it shows.""" + (f" Git ignores {c3p.parent}; delete it when you are done." if c3p != project else "")
+dialog it shows.{tail}
+
+SETUP:
+{SETUP_JS}
+
+RESULT:
+{RESULT_JS}"""
 
 
-async def open_one(browser, editor: str, project: Path, timeout: float, shot: Path | None) -> dict:
+async def open_one(browser, editor: str, project: Path, shot: Path | None) -> dict:
     body = pack(project)
     # A new context is a new profile: the editor starts with its welcome dialog and no open project.
     ctx = await browser.new_context(viewport={"width": 1400, "height": 900})
@@ -191,43 +189,25 @@ async def open_one(browser, editor: str, project: Path, timeout: float, shot: Pa
         page = await ctx.new_page()
         try:
             response = await page.goto(editor, wait_until="load", timeout=120_000)
-            if response and response.status >= 400:
-                raise EditorNotLoaded(f"{editor} answered HTTP {response.status}")
-            await page.wait_for_selector("#mainMenuButton", timeout=120_000)
-        except EditorNotLoaded:
-            raise
         except Exception as e:  # Playwright raises its own TimeoutError and network errors alike
             raise EditorNotLoaded(str(e).splitlines()[0]) from e
-        start_title = None
-        for _ in range(30):
-            start_title = await page.evaluate(SETUP_JS)
-            if start_title:
-                break
-            await page.wait_for_timeout(1000)
-        else:
-            state = await page.evaluate(STATE_JS)
-            raise EditorNotLoaded("a dialog stays open: " + " | ".join(state["dialogs"]))
-
+        if response and response.status >= 400:
+            raise EditorNotLoaded(f"{editor} answered HTTP {response.status}")
+        ready = await page.evaluate(SETUP_JS)
+        if ready != "ready":
+            raise EditorNotLoaded(ready)
         started = time.monotonic()
-        await page.set_input_files(f"#{INPUT_ID}", files=[
-            {"name": "project.c3p", "mimeType": "application/zip", "buffer": body}])
-        state = {"title": start_title, "opening": True, "dialogs": [], "errors": []}
-        while time.monotonic() - started < timeout:
-            await page.wait_for_timeout(1000)
-            state = await page.evaluate(STATE_JS)
-            if not state["opening"] and (state["dialogs"] or state["title"] != start_title):
-                await page.wait_for_timeout(2000)  # an error dialog can follow the title by a moment
-                state = await page.evaluate(STATE_JS)
-                break
+        await page.get_by_label("Project to open").set_input_files(
+            files=[{"name": "project.c3p", "mimeType": "application/zip", "buffer": body}])
+        result = await page.evaluate(RESULT_JS)
         if shot:
             await page.screenshot(path=str(shot))
     finally:
         await ctx.close()
 
-    opened = state["title"] != start_title and not state["dialogs"]
-    status = "opened" if opened else "timeout" if state["opening"] or not state["dialogs"] else "failed"
-    return {"project": str(project), "status": status, "title": state["title"], "dialogs": state["dialogs"],
-            "exception": next(iter(state["errors"]), ""), "seconds": round(time.monotonic() - started, 1)}
+    status = "opened" if result["opened"] else "timeout" if result.get("timeout") else "failed"
+    return {"project": str(project), "status": status, "title": result["title"], "dialogs": result["dialogs"],
+            "exception": next(iter(result["errors"]), ""), "seconds": round(time.monotonic() - started, 1)}
 
 
 def report(result: dict) -> list[str]:
@@ -236,8 +216,8 @@ def report(result: dict) -> list[str]:
     lines = [f"{result['status']:<8} {result['project']}"]
     lines += [f"  editor: {d}" for d in result["dialogs"]]
     if result["status"] == "timeout":
-        lines.append(f"  editor: no dialog, and the title is still {result['title']!r}; "
-                     f"--timeout 180 waits longer, --shots DIR saves what the editor shows")
+        lines.append(f"  editor: no answer in 90 seconds, the title is {result['title']!r}; "
+                     f"--shots DIR saves what the editor shows")
     if result["exception"]:
         lines.append(f"  exception: {result['exception'].splitlines()[0]}")
     return lines
@@ -266,7 +246,7 @@ async def run(projects: list[Path], editor: str, args) -> list[dict]:
             nonlocal printed
             async with gate:
                 shot = args.shots / f"{i:03d}-{project.name}.png" if args.shots else None
-                result = await open_one(browser, editor, project, args.timeout, shot)
+                result = await open_one(browser, editor, project, shot)
                 results.append(result)
                 text = "\n".join(report(result))
                 if not args.limit or printed + len(text) <= args.limit:
@@ -298,7 +278,6 @@ def main() -> int:
     ap.add_argument("--out", type=Path, help="write every result, dialogs and exceptions included, as JSON")
     ap.add_argument("--shots", type=Path, help="save a screenshot of the editor per project into this folder")
     ap.add_argument("--jobs", type=int, default=2, help="projects open at once (default 2)")
-    ap.add_argument("--timeout", type=float, default=90, help="seconds to wait for one project to open (default 90)")
     ap.add_argument("--headed", action="store_true", help="show the browser window")
     ap.add_argument("--limit", type=int, default=c3.LIMIT, metavar="CHARS",
                     help=f"stop printing results after about this many characters, since a harness cuts longer "
