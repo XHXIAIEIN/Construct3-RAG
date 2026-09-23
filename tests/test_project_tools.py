@@ -551,6 +551,12 @@ def test_stand_in_project_opens_in_the_editor(built):
     (lambda p: p.update(projectFormatVersion=2), "projectFormatVersion is 2"),
     (lambda p: p.pop("savedWithRelease"), r"looks for objectTypes\coin.json in lower case"),
     (lambda p: p.update(savedWithRelease=24402), "savedWithRelease 24402 is below r309"),
+    (lambda p: p.pop("containers"), 'containers is None'),
+    (lambda p: p.update(containers={}), '"TypeError: expected array"'),
+    (lambda p: p.pop("eventSheets"), 'no "eventSheets"'),
+    (lambda p: p.pop("layouts"), '"layouts": {"items": ["Game", "Objects"], "subfolders": []}'),
+    (lambda p: p["objectTypes"].pop("subfolders"), "objectTypes: subfolders is None"),
+    (lambda p: p["eventSheets"].update(items="Game"), "eventSheets: items is 'Game'"),
 ])
 def test_checker_names_what_the_editor_reads_before_it_opens_a_file(project, change, said):
     out = findings(project, change, "project.c3proj")
