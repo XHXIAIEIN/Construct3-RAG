@@ -654,6 +654,24 @@ def test_checker_names_what_the_editor_reads_out_of_a_layout_or_a_sheet(project,
     assert said in out, out
 
 
+@pytest.mark.parametrize("change, said", [
+    (lambda ev, d: ev.pop("conditions"), 'conditions is None'),
+    (lambda ev, d: ev.pop("actions"), 'actions is None'),
+    (lambda ev, d: ev.update(children={}), "children is {}"),
+    (lambda ev, d: d["events"].append({"eventType": "script", "script": 5}), '"invalid script data"'),
+    (lambda ev, d: d["events"].append("hello"), "an event is 'hello'"),
+    (lambda ev, d: d["events"].append({"eventType": "group", "title": "Empty"}), None),
+])
+def test_checker_names_the_lists_the_editor_walks_inside_a_sheet(project, change, said):
+    """A block loops over its conditions and actions without looking first; a group
+    without children is read and left empty, so it is not a finding."""
+    out = findings(project, lambda sheet: change(events(sheet)["input"], sheet))
+    if said is None:
+        assert out.startswith("ok:"), out
+    else:
+        assert said in out, out
+
+
 def test_a_sprite_without_its_animations_folder_is_named(project):
     """The editor reads the folder as it opens the type: "TypeError: expected object"."""
     out = findings(project, lambda t: t.pop("animations"), "objectTypes/Coin.json")

@@ -50,6 +50,7 @@ How each was read from the editor and confirmed:
 | A layer has a `name`, `parallaxX`, `parallaxY`, `scaleRate`, a `blendMode` the editor knows, and an `instances` array, empty when nothing is on it | `TypeError: expected finite number`, `invalid blend mode` |
 | An instance on a layer carries `world` with `x`, `y`, `width`, `height`, `originX` and `originY` | `TypeError: expected finite number` |
 | An event sheet has a `name` and an `events` array | `TypeError: expected string`, `invalid event sheet name` |
+| Every event is an object with an `eventType` the editor knows; a block, a function block and a custom action block have a `conditions` and an `actions` array, empty when they have none; a script event's `script` is text or a list of lines; `children`, when the key is there, is a list | `TypeError: expected object`, `invalid event type`, `invalid script data` |
 | A layout instance's `world.angle` is in radians, within a full turn | an angle written in degrees turns the instance some other way; every official example stays within 2π |
 
 *Trigger once* or *Every X seconds* in a triggered branch is a warning: the
@@ -93,7 +94,7 @@ output. Each names the event and says what to write.
 | N actions in a row without a comment action | 8 or more | 113 in 50 projects; the studio games step a block every 3 actions at the median, 6 at the 90th percentile |
 | no comment above it (a top-level event, function or custom action with actions or sub-events) | none, variables between allowed | 1184 in 278 projects; 93% of the studio games' top-level events have one, the rest are Scirra's feature demos and external games |
 | none of its N case sub-events has a comment above it (an event with two or more sub-events that have actions or sub-events, no comment above any) | 2 or more cases | 435 in 116 projects; of the studio games' 1605 events with cases, 84% have a comment above at least one, and 75% of the 4382 cases have their own |
-| Every tick beside N other condition(s) changes nothing (a block that is not an OR block) | 1 other condition | 25 of the 432 Every tick events, in 21 projects; the other 407 are an event's one condition |
+| Every tick beside N other condition(s) changes nothing (a block that is not an OR block) | 1 other condition | rare; the examples write Every tick as an event's one condition |
 | sub-events N levels deep, every leaf calling one function | 3 levels, 3 or more leaves | 3, in shifting-dungeon, template-ladder-climbing, wall-walking |
 | with events ..., the same conditions and actions N times over (sibling events of one shape, their values ignored) | 5 or more | 47 in 31 projects; 32 in 20 studio games, input ladders, a key per action, and else-if chains among them |
 

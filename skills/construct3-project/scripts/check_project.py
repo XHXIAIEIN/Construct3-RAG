@@ -912,6 +912,23 @@ class Checker:
                 continue
             self.check_ace("actions", a, scope, w)
 
+    def check_event_lists(self, ev: dict, et, where: str) -> None:
+        """What the editor walks as it reads an event. A block and its two
+        relatives loop over conditions and actions without looking first, so a
+        block that carries neither stops the open where the sheet is named and
+        the event is not."""
+        if et in ("block", "function-block", "custom-ace-block"):
+            for what in ("conditions", "actions"):
+                if not isinstance(ev.get(what), list):
+                    self.err(f"{where}: {what} is {ev.get(what)!r}; the editor walks both lists as it reads the "
+                             f'event. An event with none writes "{what}": []')
+        if et == "script" and not isinstance(ev.get("script"), (str, list)):
+            self.err(f"{where}: script is {ev.get('script')!r}; the editor stops with \"invalid script data\". "
+                     f"Write the code as text, or as a list with a line per item")
+        if "children" in ev and not isinstance(ev["children"], list):
+            self.err(f"{where}: children is {ev['children']!r}; sub-events are a list, and an event with none "
+                     f"leaves the key out")
+
     def walk(self, events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None,
              depth: int = 0) -> None:
         """A local declared in a list of sibling events is visible to every event of
@@ -922,6 +939,10 @@ class Checker:
         running event number, above what holds the trigger of this branch, depth
         how many sub-event levels down this list is (a group's children are 0)."""
         scope = dict(scope)
+        bad = [ev for ev in events if not isinstance(ev, dict)]
+        if bad:
+            self.err(f"{where}: an event is {bad[0]!r}; every event is an object with an eventType")
+            events = [ev for ev in events if isinstance(ev, dict)]
         for ev in events:
             if ev.get("eventType") == "variable":
                 scope[ev["name"]] = ev
@@ -933,6 +954,7 @@ class Checker:
             if et in NUMBERED:
                 counter[0] += 1
             w = f"{where} event {counter[0] + (et not in NUMBERED)} (sid {ev.get('sid', '?')})"
+            self.check_event_lists(ev, et, w)
             if self.style and et in ("block", "function-block", "custom-ace-block"):
                 self.check_style(ev, w, events, i, depth)
             if id(ev) in ladders:
@@ -949,7 +971,7 @@ class Checker:
                 elif et == "include" and where == f"sheet {ev['includeSheet']}":
                     self.err(f"{w}: a sheet cannot include itself")
             elif et == "group":
-                self.walk(ev["children"], scope, where, counter, above)
+                self.walk(ev.get("children") or [], scope, where, counter, above)
             elif et in ("function-block", "custom-ace-block"):
                 fscope = dict(scope)
                 for param in ev["functionParameters"]:
@@ -984,9 +1006,8 @@ class Checker:
         2026-09-22). edit_sheet.py refuses a plan whose new events raise the
         ones whose fix is one comment or one deleted condition, and prints the others; check_project.py
         reports them all over the whole project when asked, which suits a
-        project the agent wrote. Every tick beside another condition is in 25 of
-        the examples' 432 Every tick events, and small models open most events
-        with it. A ladder of sibling events is check_ladder."""
+        project the agent wrote. Every tick beside another condition adds
+        nothing: an event without a trigger is tested every tick. A ladder of sibling events is check_ladder."""
         actions = ev.get("actions", [])
         run = longest = 0
         for a in actions:
@@ -1066,20 +1087,25 @@ class Checker:
         return [leaf for k in kids for leaf in Checker.leaves(k)] if kids else [ev]
 
     def declared_functions(self, events: list) -> None:
-        """Functions and custom actions are visible from every sheet, so collect them first."""
+        """Functions and custom actions are visible from every sheet, so collect them
+        first. An event that is not an object is reported by walk(), which numbers it."""
         for ev in events:
+            if not isinstance(ev, dict):
+                continue
             et = ev.get("eventType")
             if et == "function-block":
                 self.functions[ev["functionName"]] = len(ev["functionParameters"])
             elif et == "custom-ace-block":
                 self.custom_actions[(ev["objectClass"], ev["aceName"])] = len(ev["functionParameters"])
-            self.declared_functions(ev.get("children", []))
+            self.declared_functions(ev.get("children") or [])
 
     def declared_groups(self, events: list) -> None:
         for ev in events:
+            if not isinstance(ev, dict):
+                continue
             if ev.get("eventType") == "group":
                 self.group_titles.add(ev["title"])
-            self.declared_groups(ev.get("children", []))
+            self.declared_groups(ev.get("children") or [])
 
     def check_sheets(self) -> None:
         for sname, sheet in self.sheets.items():
@@ -1097,7 +1123,7 @@ class Checker:
             self.declared_groups(sheet["events"])
         # A global declared at the top level of any sheet is visible from every sheet.
         globals_ = {ev["name"]: ev for s in self.sheets.values() for ev in s["events"]
-                    if ev.get("eventType") == "variable"}
+                    if isinstance(ev, dict) and ev.get("eventType") == "variable"}
         for sname, sheet in self.sheets.items():
             self.walk(sheet["events"], globals_, f"sheet {sname}", [0])
 
