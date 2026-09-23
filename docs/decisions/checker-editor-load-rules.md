@@ -209,3 +209,25 @@ example projects, the editor bundle `projectResources.js` of r495.2, and
 | `json.dumps(obj, indent="\t", ensure_ascii=False)` reproduces the editor's bytes | Roundtrip on mergeGame |
 | A family's behavior used through a member type | drag-on, r466: `DragonHead` with `"behaviorType": "Physics"`, declared on family `Parts` only |
 | Instances write `z` with `depth`, layers `zElevation` | pixel-data-reader, r472, writes `z` and `depth`; drag-on, r466, writes `zElevation`. An empty layout saved by r502 has `sampling` and `ambientLight` and no `scene-graphs-folder-root` |
+
+## Update 2026-09-23: the eval opens projects in the editor
+
+`skills/construct3-project/evals/open_in_editor.py` does option 3 for the
+evals, without the user. It starts its own Chromium through Playwright,
+opens `https://editor.construct.net/` in a fresh profile, and drops the
+project on it as a `.c3p`, the way a user drops a file from the desktop.
+The editor then either shows the project's name in the window title or
+says in a dialog why it did not open, and logs the exception with the
+loader's stack.
+
+Checked on a project the editor itself saved, which opens; on a generated
+project that passes the checker, which opens; and on the same kind of project
+with an empty `properties` block, which fails with `TypeError: expected
+string`, the message the user reported.
+
+The checker stays the judge inside a game project: the default path is
+offline, and the editor needs a network connection, a browser and a
+Playwright install. What changes is the eval. "Passes the checker" and
+"opens in the editor" can now be compared over every run, and a project the
+checker passes and the editor refuses gives the next row of the table
+without a round trip through the user.
