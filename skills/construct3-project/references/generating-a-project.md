@@ -151,14 +151,14 @@ habits; they are what made rerunning safe in Water Sort.
 - A group is a `module(title, events=[...], variables=[...],
   procedures=[...])`: it lays the group out as the official examples do,
   variables first, then functions and custom actions, then events. A
-  top-level event is `event("What it does.", conds, acts)`, a function or
-  custom action `procedure("What it does.", func(...))`, both with the
+  top-level event is `event("What it does", conds, acts)`, a function or
+  custom action `procedure("What it does", func(...))`, both with the
   comment the examples put above every event; the description of a
   procedure is the same sentence. A variable one group reads is declared in
   its module, not at the top of the sheet.
-- A long block is `steps(("Reset the score.", [...]), ("Clear the board.",
+- A long block is `steps(("Reset the score", [...]), ("Clear the board",
   [...]))`: a comment action, then three to five actions, per batch. A
-  decision is `cases(gate, [("Case one.", conds, acts), ("Otherwise.",
+  decision is `cases(gate, [("Case one", conds, acts), ("Otherwise",
   None, acts)])`: one gate event, flat sibling cases with a comment each,
   `None` for Else. The checker's `--style` warns where a sheet departs from
   these three shapes; the names, folders, layers and `ObjectRepository`
@@ -168,14 +168,14 @@ habits; they are what made rerunning safe in Water Sort.
   ```python
   def module_player() -> dict:
       return module("Player",
-          variables=[var("P_SPEED", "number", 200, "Run speed.", const=True)],
-          procedures=[*procedure("Jump when on the floor.", custom_action("Player", "Jump", [...]))],
+          variables=[var("P_SPEED", "number", 200, "Run speed", const=True)],
+          procedures=[*procedure("Jump when on the floor", custom_action("Player", "Jump", [...]))],
           events=[
-              *event("Jump.", [on_key("Space")], [call_custom("Player", "Jump")]),
+              *event("Jump", [on_key("Space")], [call_custom("Player", "Jump")]),
               cases([on_touch_end()], [
-                  ("Swipe right: dash.", [cmp2("Touch.X - touchStartX", GT, "SWIPE")], [call_custom("Player", "Dash")]),
-                  ("Swipe left: slow.", [cmp2("touchStartX - Touch.X", GT, "SWIPE")], [call_custom("Player", "Slow")]),
-                  ("Otherwise a tap: jump.", None, [call_custom("Player", "Jump")]),
+                  ("Swipe right: dash", [cmp2("Touch.X - touchStartX", GT, "SWIPE")], [call_custom("Player", "Dash")]),
+                  ("Swipe left: slow", [cmp2("touchStartX - Touch.X", GT, "SWIPE")], [call_custom("Player", "Slow")]),
+                  ("Otherwise a tap: jump", None, [call_custom("Player", "Jump")]),
               ]),
           ])
   ```

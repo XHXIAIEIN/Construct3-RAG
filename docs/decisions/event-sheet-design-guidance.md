@@ -1124,3 +1124,23 @@ style file's habit table has the row.
 
 - *Every tick* shows up in an OR block, where it makes the whole event true
   every tick: the check skips OR blocks.
+
+## Update 2026-09-23: comments without a closing period
+
+### Evidence
+
+93% of the examples' comments end with a period (the comment shape row
+above). The user chose to leave it out.
+
+### Decision
+
+A comment, a variable's comment and a function's description end without a
+period; a second sentence keeps the period between the two.
+`prompts/event-sheet-style.md` states the rule and its examples drop the
+period; the generator template, `generating-a-project.md` and `SKILL.md`
+follow. The checker does not look at punctuation.
+
+### Re-evaluate when
+
+- A user's sheet ends its comments with periods: the style file already
+  says a sheet's own conventions win.
