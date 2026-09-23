@@ -645,5 +645,10 @@
       "name": "Web export",
       "desc": "Properties that only apply to web exports."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

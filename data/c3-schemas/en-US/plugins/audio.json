@@ -1654,5 +1654,10 @@
       "name": "Roll-off factor",
       "desc": "How quickly the volume is reduced as sources move away."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

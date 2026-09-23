@@ -4190,5 +4190,10 @@
         "VI": "越南语"
       }
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

@@ -3,8 +3,9 @@
     "file": "main.js",
     "url": "https://editor.construct.net/main.js",
     "block": "the function that registers plugins._common in the editor bundle",
+    "plugins": "plugins/allEditorPlugins.js, the constructor of each built-in plugin",
     "release": "r495.2",
-    "extracted": "2026-09-18",
+    "extracted": "2026-09-23",
     "script": "scripts/extract_common_aces.py"
   },
   "categories": {
@@ -1690,6 +1691,2295 @@
           "returnType": "string"
         }
       ]
+    }
+  },
+  "requires": {
+    "conditions": {
+      "is-within-angle": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "is-clockwise-from": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "is-between-angles": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "is-visible": [
+        [
+          "AddCommonAppearanceACEs"
+        ],
+        [
+          "editor:is-visible"
+        ]
+      ],
+      "compare-opacity": [
+        [
+          "AddCommonAppearanceACEs"
+        ]
+      ],
+      "is-effect-enabled": [
+        [
+          "SetSupportsEffects"
+        ]
+      ],
+      "compare-instance-variable": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "is-boolean-instance-variable-set": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "pick-highestlowest": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "pick-by-unique-id": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "has-tags": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "on-created": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "on-destroyed": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "on-instance-signal": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "compare-x": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "compare-y": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "is-on-screen": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "is-outside-layout": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "pick-nearestfurthest": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "compare-z-elevation": [
+        [
+          "SetSupportsZElevation"
+        ]
+      ],
+      "compare-width": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "compare-height": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "compare-depth": [
+        [
+          "AddCommonSizeACEs",
+          "SetIs3D"
+        ]
+      ],
+      "is-on-layer": [
+        [
+          "AddCommonZOrderACEs"
+        ]
+      ],
+      "pick-topbottom": [
+        [
+          "AddCommonZOrderACEs"
+        ]
+      ],
+      "on-collision-with-another-object": [
+        [
+          "editor:on-collision-with-another-object"
+        ]
+      ],
+      "is-overlapping-another-object": [
+        [
+          "editor:on-collision-with-another-object"
+        ]
+      ],
+      "is-overlapping-at-offset": [
+        [
+          "editor:on-collision-with-another-object"
+        ]
+      ],
+      "on-hierarchy-ready": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "has-parent": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "has-children": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "pick-parent": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "pick-children": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "pick-nth-child": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "compare-child-count": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "is-focused": [
+        [
+          "editor:is-focused"
+        ]
+      ],
+      "is-enabled": [
+        [
+          "editor:is-enabled"
+        ]
+      ]
+    },
+    "actions": {
+      "set-angle": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "rotate-clockwise": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "rotate-counter-clockwise": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "rotate-toward-angle": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "rotate-toward-position": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "set-angle-toward-position": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "set-quaternion": [
+        [
+          "AddCommon3DRotationACEs"
+        ]
+      ],
+      "set-rotation-euler": [
+        [
+          "AddCommon3DRotationACEs"
+        ]
+      ],
+      "set-visible": [
+        [
+          "AddCommonAppearanceACEs"
+        ],
+        [
+          "editor:is-visible"
+        ]
+      ],
+      "set-opacity": [
+        [
+          "AddCommonAppearanceACEs"
+        ]
+      ],
+      "set-default-color": [
+        [
+          "AddCommonAppearanceACEs",
+          "SetSupportsColor"
+        ]
+      ],
+      "set-sampling": [
+        [
+          "SetSupportsChangingSampling"
+        ]
+      ],
+      "set-effect-enabled": [
+        [
+          "SetSupportsEffects"
+        ]
+      ],
+      "set-effect-parameter": [
+        [
+          "SetSupportsEffects"
+        ]
+      ],
+      "set-instvar-value": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "add-to-instvar": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "subtract-from-instvar": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "set-boolean-instvar": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "toggle-boolean-instvar": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "destroy": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "change-tags": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "set-from-json": [
+        [
+          "!SetIsSingleGlobal",
+          "SetPluginType!=object"
+        ]
+      ],
+      "instance-signal": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "instance-wait-for-signal": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "set-x": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "set-y": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "set-position": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "set-position-to-another-object": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "move-forward": [
+        [
+          "AddCommonPositionACEs",
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "move-at-angle": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "set-position-3d": [
+        [
+          "SetSupportsZElevation"
+        ]
+      ],
+      "set-z-elevation": [
+        [
+          "SetSupportsZElevation"
+        ]
+      ],
+      "set-width": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "set-height": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "set-size": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "set-depth": [
+        [
+          "AddCommonSizeACEs",
+          "SetIs3D"
+        ]
+      ],
+      "set-size-3d": [
+        [
+          "AddCommonSizeACEs",
+          "SetIs3D"
+        ]
+      ],
+      "move-to-top": [
+        [
+          "AddCommonZOrderACEs"
+        ]
+      ],
+      "move-to-bottom": [
+        [
+          "AddCommonZOrderACEs"
+        ]
+      ],
+      "move-to-layer": [
+        [
+          "AddCommonZOrderACEs"
+        ]
+      ],
+      "move-to-object": [
+        [
+          "AddCommonZOrderACEs"
+        ]
+      ],
+      "add-child": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "remove-child": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "remove-from-parent": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "set-mesh-size": [
+        [
+          "editor:set-mesh-size"
+        ]
+      ],
+      "set-mesh-point": [
+        [
+          "editor:set-mesh-size"
+        ]
+      ],
+      "set-css-style": [
+        [
+          "editor:is-visible"
+        ]
+      ],
+      "set-elem-attribute": [
+        [
+          "editor:is-visible"
+        ]
+      ],
+      "remove-elem-attribute": [
+        [
+          "editor:is-visible"
+        ]
+      ],
+      "set-focused": [
+        [
+          "editor:is-focused"
+        ]
+      ],
+      "set-unfocused": [
+        [
+          "editor:is-focused"
+        ]
+      ],
+      "set-enabled": [
+        [
+          "editor:is-enabled"
+        ]
+      ]
+    },
+    "expressions": {
+      "angle": [
+        [
+          "AddCommonAngleACEs"
+        ]
+      ],
+      "quaternion-x": [
+        [
+          "AddCommon3DRotationACEs"
+        ]
+      ],
+      "quaternion-y": [
+        [
+          "AddCommon3DRotationACEs"
+        ]
+      ],
+      "quaternion-z": [
+        [
+          "AddCommon3DRotationACEs"
+        ]
+      ],
+      "quaternion-w": [
+        [
+          "AddCommon3DRotationACEs"
+        ]
+      ],
+      "rotation-x": [
+        [
+          "AddCommon3DRotationACEs"
+        ]
+      ],
+      "rotation-y": [
+        [
+          "AddCommon3DRotationACEs"
+        ]
+      ],
+      "rotation-z": [
+        [
+          "AddCommon3DRotationACEs"
+        ]
+      ],
+      "color-value": [
+        [
+          "AddCommonAppearanceACEs",
+          "SetSupportsColor"
+        ]
+      ],
+      "opacity": [
+        [
+          "AddCommonAppearanceACEs"
+        ]
+      ],
+      "count": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "pickedcount": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "uid": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "iid": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "asjson": [
+        [
+          "!SetIsSingleGlobal",
+          "SetPluginType!=object"
+        ]
+      ],
+      "objecttypename": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "get-tags": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "get-tags-count": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "get-tag-at": [
+        [
+          "!SetIsSingleGlobal"
+        ]
+      ],
+      "x": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "y": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "dt": [
+        [
+          "AddCommonPositionACEs"
+        ]
+      ],
+      "z": [
+        [
+          "SetSupportsZElevation"
+        ]
+      ],
+      "total-z": [
+        [
+          "SetSupportsZElevation"
+        ]
+      ],
+      "z-elevation": [
+        [
+          "SetSupportsZElevation"
+        ]
+      ],
+      "total-z-elevation": [
+        [
+          "SetSupportsZElevation"
+        ]
+      ],
+      "width": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "height": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "bboxleft": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "bboxtop": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "bboxback": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "bboxright": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "bboxbottom": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "bboxfront": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "bboxmidx": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "bboxmidy": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "bboxmidz": [
+        [
+          "AddCommonSizeACEs"
+        ]
+      ],
+      "depth": [
+        [
+          "AddCommonSizeACEs",
+          "SetIs3D"
+        ]
+      ],
+      "layernumber": [
+        [
+          "AddCommonZOrderACEs"
+        ]
+      ],
+      "layername": [
+        [
+          "AddCommonZOrderACEs"
+        ]
+      ],
+      "zindex": [
+        [
+          "AddCommonZOrderACEs"
+        ]
+      ],
+      "parent-uid": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "child-count": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "all-child-count": [
+        [
+          "AddCommonSceneGraphACEs"
+        ]
+      ],
+      "mesh-columns": [
+        [
+          "editor:set-mesh-size"
+        ]
+      ],
+      "mesh-rows": [
+        [
+          "editor:set-mesh-size"
+        ]
+      ],
+      "template-name": [
+        [
+          "editor:template-name"
+        ]
+      ]
+    }
+  },
+  "plugins": {
+    "AdvancedRandom": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "advert": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "AJAX": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Arr": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Audio": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "BBCMicroBit": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "BinaryData": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Bluetooth": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Browser": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Button": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": true,
+      "editor:is-focused": true,
+      "editor:is-visible": true,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "C2WebSocket": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Camera3D": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": true,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Clipboard": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "ConstructGameServices": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "CORDOVAIAP": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Cryptography": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "CSV": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Date": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Dictionary": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "DrawingCanvas": {
+      "AddCommon3DRotationACEs": true,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": true,
+      "editor:template-name": false
+    },
+    "Facebook": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "filechooser": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": true,
+      "editor:is-focused": true,
+      "editor:is-visible": true,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "FileSystem": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Flowchart": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Function": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "gamecenter": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "gamepad": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "GameRecorder": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Geolocation": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "googleplay": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "HTMLElement": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": true,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "iframe": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": true,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "InstantGames": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Internationalization": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Json": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Keyboard": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "List": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": true,
+      "editor:is-focused": true,
+      "editor:is-visible": true,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "LocalStorage": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "MIDI": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Model3D": {
+      "AddCommon3DRotationACEs": true,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": true,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": true,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "Mouse": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Multiplayer": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "NinePatch": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "NodeWebkit": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Particles": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "PlatformInfo": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "progressbar": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": true,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "pubcenter": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "qrcode": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "ScirraArcadeV4": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "shadowlight": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "Shape3D": {
+      "AddCommon3DRotationACEs": true,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": true,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": true,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "Share": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "sliderbar": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": true,
+      "editor:is-focused": true,
+      "editor:is-visible": true,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "SpeechRecognition": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "SpeechSynthesis": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Sprite": {
+      "AddCommon3DRotationACEs": true,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": true,
+      "editor:set-mesh-size": true,
+      "editor:template-name": true
+    },
+    "Spritefont2": {
+      "AddCommon3DRotationACEs": true,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "SVGPicture": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "system": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Text": {
+      "AddCommon3DRotationACEs": true,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": true,
+      "editor:template-name": true
+    },
+    "TextBox": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": true,
+      "editor:is-focused": true,
+      "editor:is-visible": true,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "TiledBg": {
+      "AddCommon3DRotationACEs": true,
+      "AddCommonAngleACEs": true,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": true,
+      "editor:template-name": true
+    },
+    "Tilemap": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": true
+    },
+    "Timeline": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Touch": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Twitter": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "UserMedia": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "video": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": true,
+      "AddCommonZOrderACEs": true,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupportsChangingSampling": true,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": true,
+      "SetSupportsZElevation": true,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "win8": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "XboxLive": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": true,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "XML": {
+      "AddCommon3DRotationACEs": false,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": false,
+      "AddCommonPositionACEs": false,
+      "AddCommonSceneGraphACEs": false,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": false,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "object",
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": false,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
     }
   }
 }

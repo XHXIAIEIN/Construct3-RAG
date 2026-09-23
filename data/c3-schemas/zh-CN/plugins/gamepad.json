@@ -571,5 +571,10 @@
       "name": "模拟死区",
       "desc": "如果虚拟摇杆的方向值(0-100)低于此范围则作为0返回，以进行平滑输入。"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

@@ -877,12 +877,24 @@ def test_ace_lookup_points_a_shared_ace_to_an_object(built, tmp_path):
     assert "lookup_ace.py <Object> nearest writes its name in" in out
     shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
     code, out = tool(tmp_path, "lookup_ace", "Sprite", "color")
-    assert code == 0 and out.startswith("every world object has these") and "set-default-color" in out
+    assert code == 0 and out.startswith("Sprite has these, in plugins/_common.json") and "set-default-color" in out
     assert "nothing under" not in out
     code, out = tool(built, "lookup_ace", "Coin", "nearest")
     assert code == 0 and "write: {\"id\": \"pick-nearestfurthest\", \"objectClass\": \"Coin\"" in out
     code, out = tool(built, "lookup_ace", "System", "wiat")
     assert code == 1 and "every world object has these" not in out
+
+
+def test_ace_lookup_leaves_out_the_shared_aces_the_plugin_does_not_get(built, tmp_path):
+    """lookup_ace.py Text color printed Set color, which the editor refuses on a Text: of
+    plugins/_common.json a plugin gets what its schema lists under commonAces."""
+    code, out = tool(built, "lookup_ace", "ScoreText", "color")
+    assert code == 0 and "set-font-color" in out and "set-default-color" not in out
+    code, out = tool(built, "lookup_ace", "ScoreText", "opacity")
+    assert code == 0 and "set-opacity" in out
+    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
+    code, out = tool(tmp_path, "lookup_ace", "Text", "default", "color")
+    assert code == 1 and "set-default-color" not in out
 
 
 def test_ace_lookup_finds_a_word_in_a_parameter(built):
@@ -1306,6 +1318,43 @@ def test_script_name_in_place_of_the_id(project):
 def test_misspelt_id_lists_the_nearest(project):
     out = findings(project, lambda s: events(s)["setup"]["actions"][0].update(id="set-txt"))
     assert "closest: set-text" in out
+
+
+def test_a_shared_ace_the_plugin_does_not_get_is_refused(project):
+    """Set color is in plugins/_common.json, but the editor gives it only to a plugin that
+    supports colour, and Text does not: it refused the LiquidVolume project with "missing
+    action id 'set-default-color'". Text's colour is Set font color."""
+    def change(sheet):
+        setup = events(sheet)["setup"]
+        setup["actions"][0].update(id="set-default-color", parameters={"color": "rgbEx(100, 0, 0)"})
+        setup["actions"].append({"id": "set-opacity", "objectClass": "ScoreText", "sid": 900000000000003,
+                                 "parameters": {"opacity": "50"}})
+    out = findings(project, change)
+    assert "Text has no action set-default-color: it is in plugins/_common.json, but the editor gives it only "            "to plugins that ask for it, not to Text" in out
+    assert "closest: set-font-color" in out
+    assert "set-opacity" not in out
+
+
+def test_a_shared_expression_the_plugin_does_not_get_is_named(project):
+    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="ScoreText.ColorValue"))
+    assert "ScoreText.ColorValue is neither an expression nor an instance variable of ScoreText" in out
+    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="ScoreText.Opacity"))
+    assert "ScoreText.Opacity" not in out
+
+
+@pytest.mark.parametrize("name", ["mid", "Max"])
+def test_a_variable_named_like_a_system_expression_is_refused(project, name):
+    """A local mid passed as Functions.areaBelow(mid) is read as the text function mid(), and the
+    editor refused the LiquidVolume project with "Invalid expressions ... parameter 0 does not
+    take 'string'". The comparison ignores case, as the editor's reading of names does."""
+    def change(sheet):
+        setup = events(sheet)["setup"]
+        setup.setdefault("children", []).insert(0, {
+            "eventType": "variable", "name": name, "type": "number", "initialValue": "0", "comment": "",
+            "isStatic": False, "isConstant": False, "sid": 900000000000004})
+    out = findings(project, change)
+    assert f"variable {name}: the name is that of the system expression {name.lower()}" in out
+    assert f"rename it, for example {name}Value" in out
 
 
 def test_unknown_parameter_lists_the_real_ones(project):

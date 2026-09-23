@@ -37,7 +37,9 @@ Fields that decide correctness:
   the locale; match the two files by `id`.
 - `properties` carry text only. Effects have `parameters` (`float`,
   `percent`, `color`) and no ACEs.
-- A world object's full ACE list is its plugin file plus `plugins/_common.json`.
+- A world object's full ACE list is its plugin file plus the part of
+  `plugins/_common.json` its plugin file lists under `commonAces`. Text has
+  no `set-default-color`; the editor refuses one on a Text.
 - So is its property list. The `properties` of `_common.json` are what every
   world instance has, each with a `written` field for where it is in a
   project file: the properties bar and the file disagree on more than one,

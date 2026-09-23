@@ -806,5 +806,10 @@
       "name": "安卓应用ID",
       "desc": "谷歌Google Play控制台 游戏服务中的应用ID。安卓设备需要填写"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

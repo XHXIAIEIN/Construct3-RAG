@@ -15,7 +15,10 @@ When no name has every word, a parameter name or a value of a combo parameter
 counts: `Tween color` finds *Tween (one property)*, whose property
 `offsetColor` is Color. Looked up on a plugin or a behavior, the ACEs every
 world object shares are printed too, *Set color* and *Is overlapping* among
-them; they are in `plugins/_common.json`, not in the plugin's own file.
+them; they are in `plugins/_common.json`, not in the plugin's own file. Of
+those, a plugin gets only the ones its schema lists under `commonAces`: Text
+has no *Set color*, the editor refuses it there, and its colour is *Set font
+color*.
 
 The schema files run to thousands of lines, more than most tools read at
 once, and an ACE below the cut looks as if it did not exist; this prints the
@@ -69,9 +72,10 @@ def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]
     if obj == "System" or LOWER(target) == "system":
         return [("System", None, p.system)]
     if obj:
-        sources = [(obj, None, p.schema("plugins", p.plugin_of[obj]) or {})]
+        own = p.schema("plugins", p.plugin_of[obj]) or {}
+        sources = [(obj, None, own)]
         if "singleglobal-inst" not in p.types.get(obj, {}):     # Keyboard, Touch, Audio: nothing of a world object
-            sources.append((obj, None, p.common))
+            sources.append((obj, None, p.common_of(own)))
         return sources + [(obj, name, p.schema("behaviors", b) or {}) for name, b in p.behaviors_of(obj).items()]
     sources = []
     for kind in ("plugins", "behaviors"):
@@ -87,11 +91,16 @@ def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]
     return sources
 
 
-def shared_matches(p: c3.Project, words: list[str]) -> list[tuple[str, dict]]:
-    """The ACEs of plugins/_common.json that have every word in their names."""
+def shared_matches(p: c3.Project, words: list[str], plugins: list[dict]) -> list[tuple[str, dict]]:
+    """The ACEs of plugins/_common.json that have every word in their names and
+    that one of `plugins` gets; any of them when `plugins` is empty (a behavior)."""
     out = []
+    shared = [p.common_of(s) for s in plugins] or [p.common]
     for kind in KINDS:
+        allowed = {it["id"] for s in shared for it in s.get(kind, [])}
         for it in p.common.get(kind, []):
+            if it["id"] not in allowed:
+                continue
             names = squash(" ".join([*(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")),
                                      kind, it.get("category", "")]))
             if all(squash(w) in names for w in words):
@@ -173,18 +182,23 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         query = " ".join(words)
         # Pick nearest/furthest, Is overlapping, Set color ... are not System's and not the
         # plugin's: every world object has them, so they are looked up on an object.
-        shared = [] if any(s is p.common for _, _, s in sources) else shared_matches(p, words)
+        # A plugin with no shared ACEs at all (System, Keyboard) points to the world objects that have them.
+        plugins = [s for _, _, s in sources if s.get("type") == "plugin" and s.get("id") != "_common"
+                   and any(p.common_of(s).get(kind) for kind in KINDS)]
+        shared = [] if any(s.get("id") == "_common" for _, _, s in sources) else shared_matches(p, words, plugins)
         in_params = [e[2:] for e, t in zip(entries, param_text) if all(squash(w) in t for w in words)]
         if shared or in_params:
             # The entry before the miss: a model that stops at the first line read "nothing under
             # Sprite has every word of 'color'" as a Sprite having no color action, and went to
             # the manual, which does not list the shared ACEs either, to confirm it.
             if shared:
-                print("every world object has these, in plugins/_common.json rather than in its own plugin:")
+                print(f"{target} has these, in plugins/_common.json rather than in its own plugin:" if plugins
+                      else "every world object has these, in plugins/_common.json rather than in its own plugin:")
                 for kind, it in shared:
                     # <Object>, not the <object> a parameter of that type is written with.
                     print("\n".join(in_full("<Object>", None, "_common", kind, it)))
-                print(f"<Object> is any object of the project; lookup_ace.py <Object> {query} writes its name in")
+                print(f"<Object> is {'a ' + target + ' object' if plugins else 'any object'} of the project; "
+                      f"lookup_ace.py <Object> {query} writes its name in")
             if in_params:
                 print(f"no name under {target} has every word of {query!r}; a parameter of these takes it as a value:")
                 if len(in_params) <= 6:

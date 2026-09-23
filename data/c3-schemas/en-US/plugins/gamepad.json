@@ -571,5 +571,10 @@
       "name": "Analog deadzone",
       "desc": "Analog stick values (0-100) below this range are returned as zero to smooth the input."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

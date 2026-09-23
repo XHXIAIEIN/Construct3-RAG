@@ -543,7 +543,7 @@ class Checker:
         expressions = p.expressions_of(plugin)
         members = p.families[obj].get("members", []) if obj in p.families else [obj]
         if any(m in self.world_types for m in members):
-            expressions |= p.common_expressions
+            expressions |= p.common_expressions_of(plugin)
         for key, label in declared.items():
             if key in expressions and " of family " not in label:
                 self.err(f"{obj}: {label} collides with the expression {obj}.{key}; rename it")
@@ -593,7 +593,7 @@ class Checker:
             plugin = p.schema("plugins", p.plugin_of[obj])
             if plugin is None:
                 continue
-            known = p.expressions_of(plugin) | p.common_expressions
+            known = p.expressions_of(plugin) | p.common_expressions_of(plugin)
             known |= {LOWER(v) for v in p.ivars_of(obj)}
             if LOWER(member) not in known:
                 # Platform.Speed is reached as Player.Platform.Speed, through the behavior's name on the object.
@@ -760,8 +760,11 @@ class Checker:
         entry = p.ace_entry(kind, ace)
         if entry is None:
             owner = p.behaviors_of(obj)[ace["behaviorType"]] if "behaviorType" in ace else p.plugin_of[obj]
+            shared = "behaviorType" not in ace and obj != "System" and                 any(it["id"] == ace_id for it in (p.common or {}).get(kind, []))
             self.err(f"{where}: {owner} has no {kind[:-1]} {ace_id}"
-                     + ("" if "behaviorType" in ace or obj == "System" else " (not in _common either)")
+                     + (f": it is in plugins/_common.json, but the editor gives it only to plugins that ask for "
+                        f"it, not to {owner}, and does not open the project" if shared
+                        else "" if "behaviorType" in ace or obj == "System" else " (not in _common either)")
                      + self.ace_hint(kind, ace))
             return
         schema_params = entry.get("params") or {}
@@ -869,6 +872,14 @@ class Checker:
         number, anything else stops the load with 'invalid type of initialValue'."""
         name, vtype, value = var.get("name"), var.get("type"), var.get("initialValue")
         w = f"{where}: {what} {name}"
+        if what == "variable" and isinstance(name, str) and LOWER(name) in self.p.system_expression_names:
+            # A local mid passed as Functions.areaBelow(mid) is read as the text function mid(), and
+            # the editor refuses the project; none of the 2697 variables of the official examples
+            # shares a system expression's name.
+            self.err(f"{w}: the name is that of the system expression {LOWER(name)}, which wins inside an "
+                     f"expression: {name} there is read as {LOWER(name)}(), not as the variable, and the editor "
+                     f"refuses the project (\"Invalid expressions ... parameter 0 does not take 'string'\" for a "
+                     f"local mid); rename it, for example {name}Value, where it is declared and where it is used")
         if vtype not in VARIABLE_TYPES:
             self.err(f"{w}: type {vtype!r} is not number, string or boolean")
             return

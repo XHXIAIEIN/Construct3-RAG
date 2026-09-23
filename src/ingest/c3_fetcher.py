@@ -32,6 +32,7 @@ from src.ingest.common_aces import (
     build_common_properties,
     check_common_coverage,
     load_common_aces,
+    load_common_availability,
 )
 
 
@@ -188,6 +189,10 @@ class C3Fetcher:
             common_aces = load_common_aces()
             check_common_coverage(common_aces, en_common)
             aces_data["plugins"] = {**aces_data["plugins"], COMMON_ADDON_ID: common_aces}
+        # Which of them each built-in plugin gets: Text has no set-default-color.
+        # A plugin the extract does not know gets no list, and a reader
+        # offers it every shared ACE as before.
+        common_of = load_common_availability()
 
         type_map = {"plugins": "plugin", "behaviors": "behavior"}
         # The root index is language neutral. Each locale directory gets its
@@ -235,6 +240,8 @@ class C3Fetcher:
                         "expressions": [],
                         "properties": {},
                     }
+                    if addon_type == "plugins" and plugin_id in common_of:
+                        plugin_json["commonAces"] = common_of[plugin_id]
 
                     for category, ace_types in categories.items():
                         for ace_type_plural in ("conditions", "actions", "expressions"):

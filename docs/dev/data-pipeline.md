@@ -65,7 +65,11 @@ Each plugin/behavior file uses CDN field names:
 not on any CDN endpoint: the editor registers the shared ACEs in `main.js`,
 and `scripts/extract_common_aces.py` copies that block into
 `src/ingest/common_aces.json` in the `allAces` shape, with the release it was
-taken from. The export stops when the language pack names a shared ACE or
+taken from. The same script records which plugin gets which shared ACE: the
+guards of that block (`AddCommonAppearanceACEs`, `SetSupportsColor` ...) as
+`requires`, and the flags each built-in plugin's constructor sets in
+`plugins/allEditorPlugins.js` as `plugins`. The export writes the result into
+each plugin file as `commonAces`. The export stops when the language pack names a shared ACE or
 parameter the file does not define; rerun the script, review the diff and
 commit it with the data. See `docs/decisions/common-aces-from-editor-bundle.md`.
 

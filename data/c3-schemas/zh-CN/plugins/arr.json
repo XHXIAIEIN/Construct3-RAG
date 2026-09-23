@@ -711,5 +711,38 @@
       "name": "元素",
       "desc": "数组中的初始元素数量。如果数量为0，表示数组为空，无法储存数据。"
     }
+  },
+  "commonAces": {
+    "conditions": [
+      "compare-instance-variable",
+      "is-boolean-instance-variable-set",
+      "pick-highestlowest",
+      "pick-by-unique-id",
+      "has-tags",
+      "on-created",
+      "on-destroyed",
+      "on-instance-signal"
+    ],
+    "actions": [
+      "set-instvar-value",
+      "add-to-instvar",
+      "subtract-from-instvar",
+      "set-boolean-instvar",
+      "toggle-boolean-instvar",
+      "destroy",
+      "change-tags",
+      "instance-signal",
+      "instance-wait-for-signal"
+    ],
+    "expressions": [
+      "count",
+      "pickedcount",
+      "uid",
+      "iid",
+      "objecttypename",
+      "get-tags",
+      "get-tags-count",
+      "get-tag-at"
+    ]
   }
 }

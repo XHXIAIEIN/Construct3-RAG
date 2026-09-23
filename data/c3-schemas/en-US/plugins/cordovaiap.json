@@ -306,5 +306,10 @@
       "name": "Validator URL",
       "desc": "Optional URL of receipt validation service to verify purchases with."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

@@ -732,5 +732,10 @@
         "bar": "菜单条"
       }
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

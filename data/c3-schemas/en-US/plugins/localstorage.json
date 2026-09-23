@@ -445,5 +445,10 @@
       "name": "In-memory only",
       "desc": "Enable to only store data in memory for the current pageload only."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

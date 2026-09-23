@@ -6,8 +6,9 @@ the checker let through, or before adding a rule.
 ## Against the schemas and the project
 
 For every condition and action: the object or family exists, the behavior is
-on it, the ACE id is in the plugin's, the behavior's or the shared world
-object schema, the parameter keys are the schema's, a combo value is one of
+on it, the ACE id is in the plugin's, the behavior's or the part of the
+shared world object schema the plugin's `commonAces` lists, the parameter
+keys are the schema's, a combo value is one of
 its items, a comparison is an integer 0 to 5, a boolean is a JSON boolean.
 Expressions are scanned for object, behavior, expression, instance variable,
 function, global, local and parameter names, case-insensitively, as the
@@ -33,6 +34,8 @@ How each was read from the editor and confirmed:
 | *Else* is the first condition of an event that directly follows a plain event: not a trigger, not a loop, not a group or a variable, only comments between | `An Else condition cannot be placed here`, before preview and export |
 | A plugin or behavior id is spelled as the editor spells it: `Arr`, `Json`, `TiledBg`, `EightDir`, `Sin`, `solid` | `missing plugin id` |
 | An object or family name is not `self`, `true`, `false`, `system` or a system expression (`Floor`, `Time`, `Random`, `Max`) | `name is reserved` |
+| A global or local variable is not named like a system expression (`mid`, `max`, `len`), compared without case: inside an expression the name reads as the system expression | `Invalid expressions ... parameter 0 does not take 'string'`, for a local `mid` passed to a function |
+| A shared ACE of `plugins/_common.json` is used only on a plugin whose `commonAces` lists it: Text has no `set-default-color`, its colour is `set-font-color` | `missing action id 'set-default-color'` |
 | `Self` stands only in a parameter of an object's own condition or action; in a System one (*For each ordered*, *Pick by comparison*, *Set variable*) it names nothing, and the finding writes the expression with the object the ACE names | `Invalid use of 'self'` |
 | A name has no spaces or punctuation; an instance variable name starts with a letter | the editor renames it silently, and the events that use it fail with `cannot find object` |
 | An instance variable, behavior or effect is not named like another one on the object or its families, nor like an expression of the object (`Angle`, `Width`, `Count`, `Text`) | `name already in object class namespace` |

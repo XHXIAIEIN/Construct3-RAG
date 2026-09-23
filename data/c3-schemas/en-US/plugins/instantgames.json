@@ -732,5 +732,10 @@
         "bar": "Bar"
       }
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

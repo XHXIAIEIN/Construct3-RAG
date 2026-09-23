@@ -202,7 +202,7 @@ first.
   expression: a local number `mid` passed as `Functions.areaBelow(mid)` is
   read as the text function `mid()`, and the editor refuses the whole
   project with `Invalid expressions ... parameter 0 does not take
-  'string'`. The checker passes it. Name variables so no system
+  'string'`. `check_project.py` refuses such a name. Name variables so no system
   expression shares the name (`probe`, not `mid`; not `left`, `right`,
   `len`, `find`, `max`, `min`, `abs`, `round`). [plugins/system.json,
   expression `mid`; observed: LiquidVolume, r495.2 editor, 2026-09-23]
@@ -319,8 +319,9 @@ first.
   `plugins/_common.json` and printed by `lookup_ace.py Text color`, is
   refused by the editor on a Text with `missing action id
   'set-default-color'`, and the project does not open. Text's colour is
-  its font colour, *Set font color* (`set-font-color`). The checker passes
-  the refused one. [plugins/text.json `set-font-color`; observed:
+  its font colour, *Set font color* (`set-font-color`). A plugin file lists
+  the shared ACEs it gets under `commonAces`, and `lookup_ace.py` and
+  `check_project.py` follow it. [plugins/text.json `set-font-color`; observed:
   LiquidVolume, r495.2 editor, 2026-09-23]
 - *Set width* stretches a Sprite's whole image, repeats a Tiled Background's,
   and on a 9-patch stretches or tiles the middle while the corners keep their

@@ -217,5 +217,10 @@
       "name": "App secret",
       "desc": "App Secret在创建应用程序后Facebook为您提供。 仅必要提交分数！"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

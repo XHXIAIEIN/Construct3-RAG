@@ -38,7 +38,7 @@ No install needed. Pick a locale, `en-US` or `zh-CN`, and read. All paths are un
 | `c3-schemas/_index.json` | Version, locales, and every plugin, behavior, and effect with its file path and ACE counts. Language neutral |
 | `c3-schemas/{locale}/_index.json` | Addon names in that language, keyed by the same ids |
 | `c3-schemas/{locale}/plugins/{id}.json` | Conditions, actions, expressions, properties |
-| `c3-schemas/{locale}/plugins/_common.json` | ACEs every world object shares: overlap, collisions, instance variables, hierarchy, UID, Z order. Exported once, not repeated per plugin |
+| `c3-schemas/{locale}/plugins/_common.json` | ACEs every world object shares: overlap, collisions, instance variables, hierarchy, UID, Z order. Exported once, not repeated per plugin; each plugin file lists the ones it gets under `commonAces` |
 | `c3-schemas/{locale}/behaviors/{id}.json` | Behavior ACEs |
 | `c3-schemas/{locale}/effects/{id}.json` | Effect parameters and categories |
 | `c3-examples/{locale}/{id}.json` | Example name, description, tags, used addons, open URL |

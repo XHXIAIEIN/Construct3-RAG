@@ -758,5 +758,10 @@
       "name": "Default camera Z",
       "desc": "The camera Z position where a 2D view will display at 100% scale."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

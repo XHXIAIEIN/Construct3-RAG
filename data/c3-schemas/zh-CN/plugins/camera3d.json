@@ -758,5 +758,10 @@
       "name": "默认相机 Z",
       "desc": "2D视图中，相机在100%缩放比中的相机位置。"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

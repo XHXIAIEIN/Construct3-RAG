@@ -306,5 +306,10 @@
       "name": "验证服务器地址(可选)",
       "desc": "订单验证的服务器地址，用于验证是否完成购买。"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }
