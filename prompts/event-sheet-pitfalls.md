@@ -286,6 +286,17 @@ first.
 
 ## Animation
 
+- Image point index 0 is the origin; the first image point added is index
+  1, and `ImagePointCount` does not count the origin. A loop over every
+  image point runs from 1 to `ImagePointCount`, `ImagePointX(loopindex)`;
+  starting at 0 reads the origin and misses the last point. A name,
+  `ImagePointX("P1")`, reads the same point whatever the order. [manual:
+  interface/animations-editor.md "the first image point (number 0) is
+  always the origin"; scripting/scripting-reference/plugin-interfaces/sprite.md
+  "getImagePointX"; plugin-reference/sprite.md "ImagePointX" says only
+  zero-based. observed: r495.2 preview, a Sprite at X 400, 100 px wide,
+  origin centred, points P1 and P2 at its left and right edges:
+  `ImagePointCount` 2, index 0 400, 1 350, 2 450, 2026-09-23]
 - *Set animation* to the animation already playing does nothing, even when
   set to play from the beginning. An `anim` variable compared before every
   *Set animation*, to keep the animation from restarting, guards against
