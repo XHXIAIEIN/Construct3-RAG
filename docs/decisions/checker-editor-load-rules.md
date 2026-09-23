@@ -62,6 +62,8 @@ The rules themselves were read from the editor's project model,
 | no message: a boolean `initialValue` that is not the text `"true"` reads as false (added 2026-09-22) | The variable loader copies `initialValue` as it is and the getter is `"true" === value`, in the editor and in the export step; a function parameter's loader takes a string or a number and throws `invalid type of initialValue` for anything else. The user reported a Doubao project whose boolean global the editor would not take; its file now holds `"false"`. The checker requires text for every variable and parameter, `"true"` or `"false"` for a boolean, a finite number for a number. In the official examples the 303 boolean variables and 74 boolean parameters are all `"true"` or `"false"`. |
 | no message: a layout instance variable of the wrong JSON type, an instance angle in degrees (added 2026-09-22) | The instance loader reads a number through `parseFloat` and a boolean through `"true" === text` or `Boolean(value)`, so a wrong type is taken silently; `world.angle` is radians, and the 6053 non-zero angles of the examples all stay within 2π. The checker requires the JSON type of the declared variable type and an angle within a full turn. |
 | not measured: an instance variable `type` outside `number`, `string`, `boolean` (added 2026-09-22) | A Doubao run wrote `"type": "text"` for a text variable, the editor's name for the type in its UI, and the checker stopped with `missing key 'text'` from its own type table, a sentence about the wrong thing that cost the run a read of the checker's source. The checker now names the variable and the three types, as it does for event variables, and the value check skips a type it does not know. What the editor does with such a file is not measured; the 1225 instance variables of the official examples are all one of the three, and the sweep adds no finding. |
+| `TypeError: expected string` (added 2026-09-23) | Opening a project reads the whole `properties` block before it reads a file of the project, and asserts each value as it reads it: `description`, `version`, `author`, `authorEmail`, `authorWebsite` and `appId` are text, `fullscreenMode`, `fullscreenQuality`, `orientations`, `sampling`, `downscaling` and `loaderStyle` are one of the editor's values, and the viewport is a number of at least 2. The user opened a project generated for the skill evals and got the message with no file and no key in it; `projectResources.js` reads it in `d$`, the first call being `this.j(s.description)`. A `project.c3proj` written by hand, or reduced to the keys the tools read, has none of them. The generator fills them when the folder was not saved by the editor. |
+| no message: an object type file that is not found (added 2026-09-23) | `savedWithRelease` decides where an object type is read from: below r309 it is `objectTypes/<name in lower case>.json`, and a project without the key is read as r86. 249 of the 524 examples are older than r309 and all of them hold the lower-case files. |
 | `An Else condition cannot be placed here` (language pack, shown before preview and export) | Else is the first condition of a block that is not an OR block and has no trigger; the sibling before it, comments skipped, is a block without a trigger or a loop and is not a lone Else. |
 
 The manual states the first two: `project-primitives/events/how-events-work.md`
@@ -75,6 +77,13 @@ written into the checker. None of them breaks a rule: 493 passed before and
 seconds* inside a triggered branch do occur (abductractor, demonoire,
 template-ladder-climbing; tank-movement has one inside a function), so that
 is a warning, and not raised inside a function.
+
+The two rules of 2026-09-23 were measured the same way: over the 524 examples
+and the two game projects, 2041 runs of the four scripts, no check run changed
+its exit code or its output (`evals/sweep_outputs.py`). The check for the
+lower-case object type file reads the names the folder holds rather than
+asking the file system for one: on Windows `Coin.json` answers for `coin.json`
+and the rule would never fire.
 
 ## Options
 

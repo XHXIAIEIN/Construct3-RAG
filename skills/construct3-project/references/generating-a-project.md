@@ -20,9 +20,13 @@ overwrites the files it produces.
 1. In Construct, create the project (**Menu** > **Project** > **New**) and
    save it as a folder (**Menu** > **Project** > **Save As** > **Save as
    project folder**). `project.c3proj` now has the `uniqueId`, icons and
-   scripts the generator keeps. The editor's `Layout 1` and `Event sheet 1`
-   are left in place but no longer listed once the generator has run; delete
-   the two files or give the generated ones those names.
+   scripts the generator keeps. A folder the editor never saved holds none of
+   the properties it reads before it opens a file; the generator fills those
+   with the editor's defaults, and the game's own values are set in the
+   Properties Bar with the project selected in the Project Bar. The editor's
+   `Layout 1` and `Event sheet 1` are left in place but no longer listed once
+   the generator has run; delete the two files or give the generated ones
+   those names.
 2. Copy `assets/build_project.py` to `tools/build_project.py` in the project.
    The generator belongs to the game and is committed with it; the checker
    stays in the skill.

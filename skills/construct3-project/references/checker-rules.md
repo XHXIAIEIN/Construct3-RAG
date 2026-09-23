@@ -42,6 +42,8 @@ How each was read from the editor and confirmed:
 | An event variable's or a function parameter's `initialValue` is text, a boolean's `"true"` or `"false"` in lowercase; a parameter may also carry a JSON number | a boolean is read by comparing the text to `"true"`, so `false`, `true`, `"True"` and `"1"` all read as false; another JSON type in a parameter stops the load with `invalid type of initialValue` |
 | An instance variable's `type` is `number`, `string` or `boolean`; the editor's Text type is `string` | not measured: the checker itself used to stop with `missing key 'text'` |
 | A layout instance writes an instance variable as a JSON value of its type: `1`, `"a"`, `true` | a text `"1"` on a number reads through `parseFloat`, a boolean on a number reads as 0 |
+| `project.c3proj` keeps the properties the editor writes: `description`, `version`, `author`, `authorEmail`, `authorWebsite`, `appId`, `fullscreenMode`, `fullscreenQuality`, `orientations`, `sampling`, `downscaling`, `loaderStyle`, and a viewport of at least 2 | `TypeError: expected string`, before the editor names a file |
+| `savedWithRelease` is the release that saved the project; below r309 the editor reads an object type from `objectTypes/<name in lower case>.json` | no message: the object type file is not found |
 | A layout instance's `world.angle` is in radians, within a full turn | an angle written in degrees turns the instance some other way; every official example stays within 2π |
 
 *Trigger once* or *Every X seconds* in a triggered branch is a warning: the
