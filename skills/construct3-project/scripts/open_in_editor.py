@@ -1,26 +1,27 @@
 """Open a project in the Construct 3 editor and print whether it opens, or the
 editor's message when it does not.
 
-    python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--release rNNN] [--shots DIR]
-                                     [--out RESULTS.json] [--jobs 2] [--timeout 90] [--headed]
+    python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--steps] [--release rNNN]
+                                     [--shots DIR] [--out RESULTS.json] [--jobs 2] [--timeout 90] [--headed]
 
 Run it when check_project.py ends with ok:. The checker reads the files; the
 editor also reads the events, and refuses a project for what the checker does
-not see, a type mismatch in an expression among them. The project is opened
-in https://editor.construct.net/ in a browser of its own, with a fresh profile,
-the way a user drops a .c3p onto the editor: the window title turns to the
-project's name, or a dialog says why it did not open, with the exception the
-editor logged. The project is handed to the page from memory, not uploaded,
-and nothing is written to it.
+not see, a type mismatch in an expression among them. The project goes to
+https://editor.construct.net/ the way a user drops a .c3p onto it: the window
+title turns to the project's name, or a dialog says why it did not open, with
+the exception the editor logged. The file is handed to the page in the
+browser, not uploaded to a server.
+
+Where Python has Playwright (pip install playwright), the script does it all
+in a browser of its own: Playwright's Chromium, else Microsoft Edge, else
+Google Chrome. Where it has not, or with --steps, it writes the project as
+.tmp/open-in-editor.c3p in the project folder and prints the same steps for
+whatever browser tool the agent has: one that opens a page, runs JavaScript
+in it and puts a file on a file input. The editor loads in about 20 seconds.
 
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
 above them: every project.c3proj below it is opened.
-
-It needs Playwright (pip install playwright) and a network connection. It
-starts Playwright's Chromium, else Microsoft Edge, else Google Chrome, so
-`python -m playwright install chromium` is needed only on a machine with
-neither. The editor loads in about 20 seconds; a project takes 25 in all.
 """
 from __future__ import annotations
 
@@ -37,8 +38,8 @@ import c3project as c3
 
 EPILOG = """examples:
   python scripts/open_in_editor.py
-  python scripts/open_in_editor.py --project "D:/Games/Snake"
-  python scripts/open_in_editor.py --release r495-2 --shots shots
+  python scripts/open_in_editor.py --steps
+  python scripts/open_in_editor.py --project "D:/Games/Snake" --release r502
   python scripts/open_in_editor.py <eval iteration folder> --jobs 3 --out opened.json
 
 output, one entry per project:
@@ -48,15 +49,53 @@ output, one entry per project:
     exception: <the first line of the exception the editor logged>
 
 exit codes: 0 every project opened; 1 at least one did not; 2 no project
-found, Playwright or a browser missing, or the editor did not load
+found, or the editor did not load; 3 the steps for a browser tool were printed
+instead, the project is not opened yet
 """
 
 EDITOR = "https://editor.construct.net/"
-# Served by a route on the editor's own origin: a page on a public origin may
-# not fetch from localhost, so a local file server would be refused.
-PROJECT_URL = EDITOR + "__open_in_editor__/project.c3p"
 # Playwright's own build first, then a browser a Windows or Mac machine already has.
 CHANNELS = (None, "msedge", "chrome")
+INPUT_ID = "c3-open-project"
+# Inside the project, where check_project.py does not look and the editor does not write.
+SCRATCH = ".tmp"
+
+# Returns null until the editor has loaded and no dialog is open, then the window
+# title: a file dropped while the welcome dialog closes is ignored. It closes the
+# dialogs the editor shows on start, keeps what the editor logs as an error, and
+# adds a file input: a file put on it is dropped on the editor, which handles a
+# synthetic drop like a file dragged from the desktop. The same function serves
+# the script and an agent's browser tool.
+SETUP_JS = """() => {
+  if (!document.getElementById('mainMenuButton')) return null;
+  document.querySelector('a.noThanksLink')?.click();
+  for (const b of document.querySelectorAll('dialog[open] button'))
+    if (['OK', 'Not now'].includes(b.innerText.trim())) b.click();
+  if (document.querySelector('dialog[open]')) return null;
+  if (!window.__c3OpenErrors) {
+    window.__c3OpenErrors = [];
+    const log = console.error.bind(console);
+    console.error = (...a) => { window.__c3OpenErrors.push(a.map(String).join(' ').slice(0, 600)); log(...a); };
+  }
+  let input = document.getElementById('%(id)s');
+  if (!input) {
+    input = document.createElement('input');
+    input.type = 'file';
+    input.id = '%(id)s';
+    input.setAttribute('aria-label', 'Project to open');
+    input.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:2147483647;background:#fff';
+    document.body.append(input);
+  }
+  input.onchange = () => {
+    const dt = new DataTransfer();
+    dt.items.add(input.files[0]);
+    input.remove();
+    const target = document.elementFromPoint(innerWidth / 2, innerHeight / 2) || document.body;
+    for (const type of ['dragenter', 'dragover', 'drop'])
+      target.dispatchEvent(new DragEvent(type, {bubbles: true, cancelable: true, dataTransfer: dt}));
+  };
+  return document.title;
+}""" % {"id": INPUT_ID}
 
 # A dialog with a "Not now" button is an offer, such as a newer beta release, not
 # about the project: it is declined and left out.
@@ -67,19 +106,10 @@ STATE_JS = """() => {
     [...d.querySelectorAll('button')].find(b => b.innerText.trim() === 'Not now').click();
   return {
     title: document.title,
-    dialogs: open.filter(d => !offer(d)).map(d => d.innerText.trim().replace(/\\s+/g, ' ').slice(0, 1500)),
     opening: !!document.querySelector('dialog#progressDialog[open]'),
+    dialogs: open.filter(d => !offer(d)).map(d => d.innerText.trim().replace(/\\s+/g, ' ').slice(0, 1500)),
+    errors: (window.__c3OpenErrors || []).filter(e => e.includes('Exception')),
   };
-}"""
-
-# A synthetic drop is handled like a file dropped from the desktop.
-DROP_JS = """async (url) => {
-  const buf = await (await fetch(url)).arrayBuffer();
-  const dt = new DataTransfer();
-  dt.items.add(new File([buf], 'project.c3p'));
-  const target = document.elementFromPoint(innerWidth / 2, innerHeight / 2) || document.body;
-  for (const type of ['dragenter', 'dragover', 'drop'])
-    target.dispatchEvent(new DragEvent(type, {bubbles: true, cancelable: true, dataTransfer: dt}));
 }"""
 
 NEXT = ("next: the editor's message names the place, `Game, event 12, condition 1` is event 12 of sheet Game "
@@ -112,41 +142,76 @@ def pack(project: Path) -> bytes:
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
         for f in sorted(project.rglob("*")):
-            if f.is_file() and ".git" not in f.relative_to(project).parts:
-                z.write(f, f.relative_to(project).as_posix())
+            rel = f.relative_to(project)
+            if f.is_file() and rel.parts[0] not in (".git", SCRATCH):
+                z.write(f, rel.as_posix())
     return buf.getvalue()
+
+
+def write_c3p(project: Path) -> Path:
+    """The project as a file a browser tool can put on the page, in a folder Git leaves alone."""
+    if project.is_file():
+        return project
+    scratch = project / SCRATCH
+    scratch.mkdir(exist_ok=True)
+    if not (scratch / ".gitignore").exists():
+        (scratch / ".gitignore").write_text("*\n", encoding="utf-8")
+    c3p = scratch / "open-in-editor.c3p"
+    c3p.write_bytes(pack(project))
+    return c3p
+
+
+def steps(project: Path, editor: str, why: str) -> str:
+    c3p = write_c3p(project)
+    return f"""{why}; open the project with a browser tool of this session instead, one that opens a page,
+runs JavaScript in it and puts a file on a file input:
+1. Open {editor} in a new tab.
+2. Run this function in the page; a tool that takes an expression gets it called, `(...)()`.
+   It returns null while the editor loads, about 20 seconds: run it again until it returns the
+   window title, and keep that.
+{SETUP_JS}
+3. Put this file on the file input labelled "Project to open", at the bottom left of the page, with
+   the tool's upload action (a tool that waits for a file chooser gets one by clicking the input):
+   {c3p}
+4. Every 3 seconds run this function, until `opening` is false and either `dialogs` holds something
+   or `title` differs from the one of step 2:
+{STATE_JS}
+   A new title and no dialog: the project opened. A dialog: it did not; its text names the sheet,
+   event and condition at fault, and `errors` holds the exception the editor logged.
+   {NEXT.removeprefix("next: ")}
+Without such a tool, ask the user to open the project in Construct 3 and paste the text of the
+dialog it shows.""" + (f" Git ignores {c3p.parent}; delete it when you are done." if c3p != project else "")
 
 
 async def open_one(browser, editor: str, project: Path, timeout: float, shot: Path | None) -> dict:
     body = pack(project)
-    console: list[str] = []
     # A new context is a new profile: the editor starts with its welcome dialog and no open project.
-    # Its service worker would answer the project fetch before the route could.
-    ctx = await browser.new_context(service_workers="block", viewport={"width": 1400, "height": 900})
+    ctx = await browser.new_context(viewport={"width": 1400, "height": 900})
     try:
-        await ctx.route(PROJECT_URL, lambda r: r.fulfill(status=200, body=body, content_type="application/zip"))
         page = await ctx.new_page()
-        page.on("console", lambda m: m.type == "error" and console.append(m.text[:600]))
-        page.on("pageerror", lambda e: console.append(f"pageerror: {e}"[:600]))
         try:
             response = await page.goto(editor, wait_until="load", timeout=120_000)
             if response and response.status >= 400:
                 raise EditorNotLoaded(f"{editor} answered HTTP {response.status}")
-            await page.wait_for_selector("a.noThanksLink", timeout=120_000)
+            await page.wait_for_selector("#mainMenuButton", timeout=120_000)
         except EditorNotLoaded:
             raise
         except Exception as e:  # Playwright raises its own TimeoutError and network errors alike
             raise EditorNotLoaded(str(e).splitlines()[0]) from e
-        await page.click("a.noThanksLink")
-        await page.wait_for_timeout(500)
-        for button in await page.query_selector_all("dialog[open] button"):
-            if (await button.inner_text()).strip() == "OK":
-                await button.click()
-        start_title = (await page.evaluate(STATE_JS))["title"]
+        start_title = None
+        for _ in range(30):
+            start_title = await page.evaluate(SETUP_JS)
+            if start_title:
+                break
+            await page.wait_for_timeout(1000)
+        else:
+            state = await page.evaluate(STATE_JS)
+            raise EditorNotLoaded("a dialog stays open: " + " | ".join(state["dialogs"]))
 
         started = time.monotonic()
-        await page.evaluate(DROP_JS, PROJECT_URL)
-        state = {"title": start_title, "dialogs": [], "opening": True}
+        await page.set_input_files(f"#{INPUT_ID}", files=[
+            {"name": "project.c3p", "mimeType": "application/zip", "buffer": body}])
+        state = {"title": start_title, "opening": True, "dialogs": [], "errors": []}
         while time.monotonic() - started < timeout:
             await page.wait_for_timeout(1000)
             state = await page.evaluate(STATE_JS)
@@ -161,9 +226,8 @@ async def open_one(browser, editor: str, project: Path, timeout: float, shot: Pa
 
     opened = state["title"] != start_title and not state["dialogs"]
     status = "opened" if opened else "timeout" if state["opening"] or not state["dialogs"] else "failed"
-    exception = next((c for c in console if "Exception" in c or c.startswith("pageerror")), "")
     return {"project": str(project), "status": status, "title": state["title"], "dialogs": state["dialogs"],
-            "exception": exception, "seconds": round(time.monotonic() - started, 1), "console": console}
+            "exception": next(iter(state["errors"]), ""), "seconds": round(time.monotonic() - started, 1)}
 
 
 def report(result: dict) -> list[str]:
@@ -226,17 +290,19 @@ def main() -> int:
                          "else the one the current directory is in)")
     ap.add_argument("--project", metavar="FOLDER",
                     help="the folder that holds project.c3proj (default: found from the current directory upward)")
-    ap.add_argument("--limit", type=int, default=c3.LIMIT, metavar="CHARS",
-                    help=f"stop printing results after about this many characters, since a harness cuts longer "
-                         f"tool output; --out keeps them all, 0 prints everything (default: {c3.LIMIT})")
+    ap.add_argument("--steps", action="store_true",
+                    help="print the steps for a browser tool of the agent's instead of opening the project here")
     ap.add_argument("--release", metavar="rNNN",
                     help="open in this release of the editor, as its URL spells it: r502, r495-2 "
                          "(default: the current stable release, the one the user gets)")
-    ap.add_argument("--out", type=Path, help="write every result, dialogs and console errors included, as JSON")
+    ap.add_argument("--out", type=Path, help="write every result, dialogs and exceptions included, as JSON")
     ap.add_argument("--shots", type=Path, help="save a screenshot of the editor per project into this folder")
     ap.add_argument("--jobs", type=int, default=2, help="projects open at once (default 2)")
     ap.add_argument("--timeout", type=float, default=90, help="seconds to wait for one project to open (default 90)")
     ap.add_argument("--headed", action="store_true", help="show the browser window")
+    ap.add_argument("--limit", type=int, default=c3.LIMIT, metavar="CHARS",
+                    help=f"stop printing results after about this many characters, since a harness cuts longer "
+                         f"tool output; --out keeps them all, 0 prints everything (default: {c3.LIMIT})")
     args = ap.parse_args()
 
     if args.paths:
@@ -249,27 +315,37 @@ def main() -> int:
         print(f"no project.c3proj or .c3p found under {where}; run this in the project folder or pass "
               f"--project <folder>", file=sys.stderr)
         return 2
-    try:
-        import playwright  # noqa: F401
-    except ImportError:
-        print("Playwright is missing: pip install playwright. Without it, ask the user to open the project "
-              "in Construct 3 and paste the text of the dialog it shows.", file=sys.stderr)
-        return 2
-    if args.shots:
-        args.shots.mkdir(parents=True, exist_ok=True)
     editor = f"{EDITOR}{args.release.strip('/')}/" if args.release else EDITOR
 
+    # A browser tool opens one project at a time, as the agent's own step.
+    why = "not opened here (--steps)" if args.steps else None
+    if not why:
+        try:
+            import playwright  # noqa: F401
+        except ImportError:
+            why = "Python has no Playwright here"
+    if why and len(projects) > 1:
+        print(f"{why}, and {len(projects)} projects were found; name one with --project", file=sys.stderr)
+        return 2
+    if why:
+        print(steps(projects[0], editor, why))
+        return 3
+
+    if args.shots:
+        args.shots.mkdir(parents=True, exist_ok=True)
     try:
         results = asyncio.run(run(projects, editor, args))
     except NoBrowser as e:
-        print(f"no browser to run the editor in ({e}); python -m playwright install chromium installs one",
+        if len(projects) == 1:
+            print(steps(projects[0], editor, f"Playwright found no browser to start ({e})"))
+            return 3
+        print(f"Playwright found no browser to start ({e}); python -m playwright install chromium installs one",
               file=sys.stderr)
         return 2
     except EditorNotLoaded as e:
         print(f"the editor did not load from {editor}: {e}. Check the network connection and --release, and "
               f"run again; without a connection, ask the user to open the project in Construct 3 and paste the "
-              f"text of the dialog it shows.",
-              file=sys.stderr)
+              f"text of the dialog it shows.", file=sys.stderr)
         return 2
     unprinted = sum(1 for r in results if r.pop("unprinted", False))
     if args.out:

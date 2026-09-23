@@ -266,18 +266,38 @@ and the check loop of `SKILL.md` gained a step: after `ok:`, run
 editor's dialog and the exception it logged. `generating-a-project.md` and
 `hand-editing-project-files.md` carry the same step.
 
-- Reproduced on a copy of `data/c3-new-project` with the case above: the
-  checker ends with `ok:`, the opener prints the editor's dialog with
-  `Event sheet 1, event 2, condition 1`, the number `print_sheet.py` gives
-  the same event. The unchanged template prints `opened`. Both in about
-  13 seconds, r495.2 and, with `--release r502`, the r502 beta.
-- Without a PATH it opens the project the current directory is in, as the
-  other scripts find theirs. It starts Playwright's Chromium, else Edge,
-  else Chrome, so a Windows machine needs `pip install playwright` and no
-  browser download. A dialog with a **Not now** button (a newer beta on
-  offer) is declined and not read as a failure.
-- The checker stays offline and first: it names every finding at once, the
-  editor one dialog at a time. The opener needs a network connection and
-  Playwright; when either is missing it exits 2 and says to ask the user to
-  open the project and paste the dialog's text, which is the step it
-  replaces.
+The check does not require Playwright. Agents come with different browser
+tools (Chrome DevTools, Playwright or Claude in Chrome as MCP servers, an
+editor's built-in browser), and the Python package is on no machine by
+default. So the page side is two JavaScript functions, and the script is
+one way of running them:
+
+- `SETUP_JS` returns null until the editor has loaded and no dialog is
+  open, then the window title: a file dropped while the welcome dialog
+  closes is ignored. It closes the welcome dialog, keeps what the
+  editor logs with `console.error`, and adds a file input labelled "Project
+  to open" whose file is dropped on the editor. Putting a file on an input
+  is what every upload action does, so no fetch, route or local server is
+  needed, and the file never leaves the browser.
+- `STATE_JS` returns the title, whether the progress dialog is open, the
+  open dialogs, declining an offer with a **Not now** button, and the
+  logged exceptions.
+- Where Python has Playwright, the script runs both in Playwright's
+  Chromium, else Edge, else Chrome. Where it has not, or with `--steps`, it
+  writes the project to `.tmp/open-in-editor.c3p` in the project folder,
+  with a `.gitignore` of `*` beside it, prints the two functions with the
+  steps around them, and exits 3. `pack` leaves `.tmp/` out.
+
+Verified on copies of `data/c3-new-project`: unchanged, it opens; with the
+case above, the checker ends with `ok:` and the editor reports `Event sheet
+1, event 2, condition 1`, the number `print_sheet.py` gives the same event;
+with an empty `properties` block, `Failed to open project` and the logged
+`TypeError: expected string`. Each through the script in r495.2, and each
+by following the printed steps in Edge with nothing but opening the page,
+running the printed functions as text and setting the file on the input
+found by its label; the unchanged copy also opens in the r502 beta with
+`--release r502`. The MCP browser tools themselves were not reachable from
+the session that wrote this and are not tested.
+
+The checker stays offline and first: it names every finding at once, the
+editor one dialog at a time.

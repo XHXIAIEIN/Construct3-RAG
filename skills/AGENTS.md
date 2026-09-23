@@ -28,8 +28,8 @@ sheet editor, checker, editor opener and generator template for a Construct
   repository is written `Construct3-RAG/<path>`, as the block in the game
   project writes it; a relative link out of the folder breaks in a copy.
 - Scripts use the standard library (Pillow is optional; `open_in_editor.py`
-  needs Playwright and a network connection, and says so when either is
-  missing, with what to ask the user instead), take everything from flags,
+  uses Playwright where Python has it, and otherwise prints its check as
+  steps for the agent's own browser tool), take everything from flags,
   never prompt, print `--help` with examples and exit codes, and say in
   every error what to write or run next. They find the project from
   the current directory upward and this repository through the project's
