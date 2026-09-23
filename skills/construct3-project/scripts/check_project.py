@@ -217,11 +217,36 @@ class Checker:
             if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(value) or value < 2:
                 self.err(f"project.c3proj: {key} is {value!r}; the editor reads it as a number of at least 2 "
                          f"and stops with \"invalid {'viewport width' if key.endswith('Width') else 'viewport height'}\"")
+        self.check_project_index()
         fmt = data.get("projectFormatVersion")
         if fmt is not None and (not isinstance(fmt, int) or fmt > 1):
             self.err(f"project.c3proj: projectFormatVersion is {fmt!r}; the editor refuses anything above 1 with "
                      f"\"project from a future version of C3\". Write \"projectFormatVersion\": 1")
         self.check_saved_with_release()
+
+    def check_project_index(self) -> None:
+        """The lists project.c3proj keeps of what the project holds. The editor
+        walks each one's items and subfolders as it opens, and reads containers as
+        an array before it has read a file, so a list that is missing rather than
+        empty stops the open with a type and nothing else."""
+        data = self.p.data
+        for key in ("objectTypes", "families", "layouts", "eventSheets"):
+            block = data.get(key)
+            if not isinstance(block, dict):
+                folder = self.p.root / key
+                found = sorted(f.stem for f in folder.glob("*.json")) if folder.is_dir() else []
+                self.err(f"project.c3proj: no \"{key}\"; the editor reads the list before it reads a file and "
+                         f"stops with \"TypeError: expected object\". Write \"{key}\": "
+                         f"{{\"items\": {json.dumps(found)}, \"subfolders\": []}}")
+                continue
+            for part in ("items", "subfolders"):
+                if not isinstance(block.get(part), list):
+                    self.err(f"project.c3proj {key}: {part} is {block.get(part)!r}; the editor walks both lists "
+                             f"as it opens the project. Write \"{part}\": []")
+        if not isinstance(data.get("containers"), list):
+            self.err(f"project.c3proj: containers is {data.get('containers')!r}; the editor reads it as an array "
+                     f"before it has read a file and stops with \"TypeError: expected array\". A project with no "
+                     f"container writes \"containers\": []")
 
     def check_saved_with_release(self) -> None:
         """The release decides where the editor looks for an object type: under
