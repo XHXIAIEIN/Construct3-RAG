@@ -208,7 +208,7 @@ class Checker:
         props = data.get("properties")
         if not isinstance(props, dict):
             self.err("project.c3proj: no \"properties\" block; copy the one from a project the editor saved, "
-                     "or from an empty project of the Construct3-New-project clone")
+                     "or from an empty project of the Construct3-New-Project clone")
             props = {}
         missing = [k for k in PROJECT_TEXT if not isinstance(props.get(k), str)]
         if missing:
