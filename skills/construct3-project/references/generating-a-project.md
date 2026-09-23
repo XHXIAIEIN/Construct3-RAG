@@ -67,8 +67,8 @@ Feel tables, the layout of the sheet. Then:
    generator, not the JSON, and run both again.
 4. Hand over: ask the user to open the folder (**Menu** > **Project** >
    **Open**, the local project folder option) and to preview, and say what
-   to look at. When `open_in_editor.py` could not run, ask for the text of
-   any dialog the editor shows on opening as well.
+   to look at. When no tool of the session could open it, ask for the text
+   of any dialog the editor shows on opening as well.
 5. What the preview shows that the checker cannot (an instance picked twice,
    a tween and a timer ending a tick apart, a mask that leaves a corner
    uncovered) is a runtime fact. Fix the generator, and when the fact would
