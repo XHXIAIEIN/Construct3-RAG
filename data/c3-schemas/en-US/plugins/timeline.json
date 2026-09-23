@@ -501,5 +501,10 @@
       "returnType": "number"
     }
   ],
-  "properties": {}
+  "properties": {},
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
+  }
 }

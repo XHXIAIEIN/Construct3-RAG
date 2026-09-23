@@ -261,6 +261,7 @@ class Project:
         self._schema_cache: dict[tuple[str, str], dict | None] = {}
         self._addon_names: dict[str, dict[str, str]] = {}
         self._expression_names: dict[tuple[str, str], dict[str, str]] = {}
+        self._common_of: dict[str, dict] = {}
         self.index = load(rag / "data" / "c3-schemas" / "_index.json")
         if not self.schemas.is_dir():
             sys.exit(f"no schemas for --locale {locale}; the clone has: {', '.join(self.index.get('languages', []))}")
@@ -370,6 +371,28 @@ class Project:
     def expressions_of(self, schema: dict | None) -> set[str]:
         return {LOWER(name) for name in self.expression_names(schema).values()}
 
+    def common_of(self, plugin: dict) -> dict:
+        """The part of plugins/_common.json the editor gives this plugin: the ids
+        its `commonAces` lists. Text has no set-default-color, Array no X, and the
+        editor refuses a project that uses one. A schema without the list, from
+        an older export, gets all of them."""
+        allowed = plugin.get("commonAces")
+        if allowed is None or not self.common:
+            return self.common or {}
+        if plugin["id"] not in self._common_of:
+            self._common_of[plugin["id"]] = {
+                **self.common,
+                **{kind: [it for it in self.common.get(kind, []) if it["id"] in allowed.get(kind, [])]
+                   for kind in ("conditions", "actions", "expressions")}}
+        return self._common_of[plugin["id"]]
+
+    def common_expressions_of(self, plugin: dict | None) -> set[str]:
+        """The shared expressions a plugin has, as they are written, lower case."""
+        if plugin is None:
+            return self.common_expressions
+        ids = {it["id"] for it in self.common_of(plugin).get("expressions", [])}
+        return {LOWER(name) for ace, name in self.expression_names(self.common).items() if ace in ids}
+
     # --- object types and families ----------------------------------------------------
     def families_of(self, obj: str) -> list[str]:
         return [f for f, d in self.families.items() if obj in d.get("members", [])]
@@ -432,7 +455,7 @@ class Project:
         own = self.schema("plugins", self.plugin_of[obj])
         if own is None:
             return []       # a third-party plugin: its own ACEs cannot be told from a wrong id
-        return [own] if obj == "System" else [own, self.common]
+        return [own] if obj == "System" else [own, self.common_of(own)]
 
     def ace_entry(self, kind: str, ace: dict) -> dict | None:
         return next((it for s in self.ace_sources(ace) for it in s.get(kind, []) if it["id"] == ace.get("id")), None)

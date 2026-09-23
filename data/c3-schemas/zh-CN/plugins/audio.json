@@ -1654,5 +1654,10 @@
       "name": "启用多标签",
       "desc": "允许使用多标签管理声音播放，用空格分隔。"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

@@ -560,5 +560,10 @@
       "name": "替换系统内置的随机数",
       "desc": "使用此插件生成的PRNG随机种子，替换系统内置的随机数。"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

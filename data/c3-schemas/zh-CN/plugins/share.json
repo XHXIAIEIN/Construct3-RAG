@@ -140,5 +140,10 @@
     }
   ],
   "expressions": [],
-  "properties": {}
+  "properties": {},
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
+  }
 }

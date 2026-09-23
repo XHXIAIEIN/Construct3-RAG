@@ -217,5 +217,10 @@
       "name": "App secret",
       "desc": "The App Secret Facebook gives you after creating an app. Only necessary for submitting scores!"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

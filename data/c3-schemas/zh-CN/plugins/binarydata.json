@@ -517,5 +517,38 @@
         "big": "Big"
       }
     }
+  },
+  "commonAces": {
+    "conditions": [
+      "compare-instance-variable",
+      "is-boolean-instance-variable-set",
+      "pick-highestlowest",
+      "pick-by-unique-id",
+      "has-tags",
+      "on-created",
+      "on-destroyed",
+      "on-instance-signal"
+    ],
+    "actions": [
+      "set-instvar-value",
+      "add-to-instvar",
+      "subtract-from-instvar",
+      "set-boolean-instvar",
+      "toggle-boolean-instvar",
+      "destroy",
+      "change-tags",
+      "instance-signal",
+      "instance-wait-for-signal"
+    ],
+    "expressions": [
+      "count",
+      "pickedcount",
+      "uid",
+      "iid",
+      "objecttypename",
+      "get-tags",
+      "get-tags-count",
+      "get-tag-at"
+    ]
   }
 }

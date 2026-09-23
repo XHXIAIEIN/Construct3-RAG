@@ -279,5 +279,10 @@
       "name": "Enable LED display",
       "desc": "Whether to enable updating the LED display."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

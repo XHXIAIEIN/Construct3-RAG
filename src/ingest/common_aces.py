@@ -40,6 +40,13 @@ def load_common_aces(path: Path = COMMON_ACES_PATH) -> dict[str, dict[str, list[
     return data["categories"]
 
 
+def load_common_availability(path: Path = COMMON_ACES_PATH) -> dict[str, dict[str, list[str]]]:
+    """``{plugin id: {ace_type: [shared ACE ids]}}`` for the built-in plugins,
+    from the requirements and plugin flags of the committed extract."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return {plugin: common_aces_of(flags, data["requires"]) for plugin, flags in data["plugins"].items()}
+
+
 def check_common_coverage(categories: dict[str, dict[str, list[dict]]], lang_common: dict) -> None:
     """Raise ``ValueError`` when the language pack has shared ACEs or params
     the structural file does not define.
@@ -273,29 +280,14 @@ def extract_common_aces(main_js: str, lang_common: dict) -> dict[str, dict[str, 
 
     result: dict[str, dict[str, list[dict]]] = {}
     seen: dict[tuple[str, str], dict] = {}
-    for match in re.finditer(r'\{id:"([a-z0-9-]+)",', body):
-        literal = _literal_at(body, match.start())
-        if "scriptName:" not in literal and "expressionName:" not in literal:
-            continue  # a parameter literal such as {id:"x",type:"number"}
-        ace = _js_literal_to_json(literal)
+    for start, ace_type, ace in _registrations(body, lang_ids):
         ace_id = ace["id"]
-        if "expressionName" in ace:
-            ace_type = "expressions"
-        elif ace_id in lang_ids["conditions"] and ace_id not in lang_ids["actions"]:
-            ace_type = "conditions"
-        elif ace_id in lang_ids["actions"] and ace_id not in lang_ids["conditions"]:
-            ace_type = "actions"
-        else:
-            raise ValueError(f"cannot tell whether {ace_id!r} is a condition or an action")
-        if ace_id not in lang_ids[ace_type]:
-            continue
-
         key = (ace_type, ace_id)
         if key in seen:
             _assert_same_params(seen[key], ace)
             continue
         category = next(
-            (name for pos, name in reversed(category_at) if pos < match.start()), None,
+            (name for pos, name in reversed(category_at) if pos < start), None,
         )
         if category is None:
             raise ValueError(f"no category call precedes {ace_type}/{ace_id} in the _common block")
@@ -316,6 +308,27 @@ def extract_common_aces(main_js: str, lang_common: dict) -> dict[str, dict[str, 
     return result
 
 
+def _registrations(body: str, lang_ids: dict[str, set[str]]):
+    """Yield ``(offset, ace_type, ace)`` for each ACE registered in ``body``
+    whose id the language pack lists under that type."""
+    for match in re.finditer(r'\{id:"([a-z0-9-]+)",', body):
+        literal = _literal_at(body, match.start())
+        if "scriptName:" not in literal and "expressionName:" not in literal:
+            continue  # a parameter literal such as {id:"x",type:"number"}
+        ace = _js_literal_to_json(literal)
+        ace_id = ace["id"]
+        if "expressionName" in ace:
+            ace_type = "expressions"
+        elif ace_id in lang_ids["conditions"] and ace_id not in lang_ids["actions"]:
+            ace_type = "conditions"
+        elif ace_id in lang_ids["actions"] and ace_id not in lang_ids["conditions"]:
+            ace_type = "actions"
+        else:
+            raise ValueError(f"cannot tell whether {ace_id!r} is a condition or an action")
+        if ace_id in lang_ids[ace_type]:
+            yield match.start(), ace_type, ace
+
+
 def _assert_same_params(first: dict, other: dict) -> None:
     def shape(ace: dict) -> list[tuple]:
         return [
@@ -328,3 +341,224 @@ def _assert_same_params(first: dict, other: dict) -> None:
             f"{first['id']!r} is registered twice with different parameters: "
             f"{shape(first)} vs {shape(other)}"
         )
+
+
+# ── Which shared ACEs a plugin gets ──────────────────────────────────────
+#
+# The editor registers a shared ACE on a plugin only when the plugin's info
+# asks for it: set-default-color needs AddCommonAppearanceACEs and
+# SetSupportsColor, Text calls only the first, and the editor then refuses a
+# project that uses it on a Text with "missing action id". The block of
+# plugins._common wraps each group in a guard on the info, ``i.mcs()&&(...)``.
+# A guard is named through the info class, whose setter writes the field the
+# getter reads, and window.SDK.IPluginInfo, whose public method calls that
+# setter. A guard with no public method (collisions, mesh, the DOM elements)
+# is named after the first ACE it registers, ``editor:<id>``. The built-in
+# plugins call the same setters in plugins/allEditorPlugins.js.
+
+INFO_CLASS_ANCHOR = "plugin type 'object' cannot use common ACEs"
+SDK_INFO_ANCHOR = "window.SDK.IPluginInfo=class{"
+PLUGIN_INFO_RE = re.compile(r"(?:const ([\w$]+)=)?this\.p=[\w$]+\.m\((?:self|globalThis)\.v,([\w$]+)\)")
+
+
+def _group_end(source: str, start: int) -> int:
+    """Return the offset just past the bracket that closes ``source[start]``."""
+    closing = {"(": ")", "[": "]", "{": "}"}
+    stack: list[str] = []
+    quote: str | None = None
+    i = start
+    while i < len(source):
+        ch = source[i]
+        if quote:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == quote:
+                quote = None
+        elif ch in "\"'`":
+            quote = ch
+        elif ch in closing:
+            stack.append(closing[ch])
+        elif ch in ")]}":
+            if not stack or stack.pop() != ch:
+                raise ValueError(f"unbalanced {ch!r} at offset {i}")
+            if not stack:
+                return i + 1
+        i += 1
+    raise ValueError(f"unterminated group at offset {start}")
+
+
+def _top_level(body: str) -> list[bool]:
+    """For each offset of a constructor body ``{...}``, whether it lies in the
+    body's own statements rather than in a call's arguments or a closure."""
+    flags = [False] * len(body)
+    depth = 0
+    quote: str | None = None
+    i = 0
+    while i < len(body):
+        ch = body[i]
+        flags[i] = depth == 1 and quote is None
+        if quote:
+            if ch == "\\":
+                i += 1
+            elif ch == quote:
+                quote = None
+        elif ch in "\"'`":
+            quote = ch
+        elif ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth -= 1
+        i += 1
+    return flags
+
+
+def _js_value(token: str) -> bool | str:
+    token = token.strip()
+    if token == "!0":
+        return True
+    if token == "!1":
+        return False
+    if len(token) >= 2 and token[0] in "\"'" and token[-1] == token[0]:
+        return token[1:-1]
+    raise ValueError(f"not a literal: {token!r}")
+
+
+def _info_class(main_js: str) -> tuple[dict[str, str], dict[str, str], dict[str, bool | str]]:
+    """``(setter -> field, getter -> field, field -> initial value)`` of the
+    editor's plugin info class, the one that refuses shared ACEs on an
+    object-type plugin."""
+    anchor = main_js.find(INFO_CLASS_ANCHOR)
+    if anchor == -1:
+        raise ValueError(f"no {INFO_CLASS_ANCHOR!r} in main.js: the plugin info class moved")
+    text = main_js[main_js.rfind("class ", 0, anchor):anchor]
+    initial: dict[str, bool | str] = {}
+    for m in re.finditer(r'(?:this\.|[{;])(#?[\w$]+)=(!0|!1|"[^"]*")', text):
+        initial.setdefault(m.group(1), _js_value(m.group(2)))
+    setters = {m.group(1): m.group(2) for m in re.finditer(
+        r'(?<=\})([\w$]+)\(\w?\)\{(?:[^{}]*?,)?this\.(#?[\w$]+)=[^{}]*\}', text)}
+    getters = {m.group(1): m.group(2) for m in re.finditer(
+        r'(?<=\})([\w$]+)\(\)\{return this\.(#?[\w$]+)\}', text)}
+    return setters, getters, initial
+
+
+def _sdk_names(main_js: str) -> dict[str, str]:
+    """Internal setter -> public method of window.SDK.IPluginInfo."""
+    anchor = main_js.find(SDK_INFO_ANCHOR)
+    if anchor == -1:
+        raise ValueError(f"no {SDK_INFO_ANCHOR!r} in main.js")
+    start = anchor + len(SDK_INFO_ANCHOR) - 1
+    text = main_js[start:_group_end(main_js, start)]
+    return {m.group(2): m.group(1) for m in re.finditer(
+        r'([A-Z]\w*)\([\w,]*\)\{[\w$]+\.get\(this\)\.([\w$]+)\(', text)}
+
+
+def _common_guards(main_js: str, lang_common: dict) -> tuple[list[tuple[int, str, dict]], list[tuple[int, int, str, str]]]:
+    """The registrations of the _common block and its guards, each guard as
+    ``(start, end, requirement, field of the info class)``."""
+    anchors = [m.start() for m in re.finditer(re.escape(BUNDLE_ANCHOR), main_js)]
+    if len(anchors) != 1:
+        raise ValueError(f"expected one {BUNDLE_ANCHOR} anchor in main.js, found {len(anchors)}")
+    params = re.match(r"function\(([\w$]+),([\w$]+)\)", main_js[main_js.rfind("function(", 0, anchors[0]):])
+    if params is None:
+        raise ValueError("the _common block does not take (registrar, plugin info)")
+    _, body = _function_body(main_js, anchors[0])
+    lang_ids = {ace_type: set(lang_common.get(ace_type, {})) for ace_type in ACE_TYPES}
+    registrations = list(_registrations(body, lang_ids))
+
+    setters, getters, _ = _info_class(main_js)
+    sdk = _sdk_names(main_js)
+    public = {field: sdk[setter] for setter, field in setters.items() if setter in sdk}
+    guards = []
+    info = re.escape(params.group(2))
+    for m in re.finditer(rf'(?:"([\w-]+)"(!==|===))?(?<![\w$.]){info}\.([\w$]+)\(\)(&&|\|\|)', body):
+        start = m.end()
+        # i.x()&&(t.$(...),t.Qcs(...)) guards the group, i.x()&&t.Jcs(...) one call.
+        end = _group_end(body, start if body[start] == "(" else body.index("(", start))
+        field = getters.get(m.group(3))
+        if field is None:
+            raise ValueError(f"guard {m.group(0)!r} reads no field of the plugin info class")
+        name = public.get(field) or "editor:" + next(
+            (ace["id"] for pos, _, ace in registrations if start <= pos < end), m.group(3))
+        negate = m.group(4) == "||"
+        if m.group(1) is not None:
+            equal = (m.group(2) == "===") != negate
+            requirement = f"{name}{'=' if equal else '!='}{m.group(1)}"
+        else:
+            requirement = ("!" if negate else "") + name
+        guards.append((start, end, requirement, field))
+    return registrations, guards
+
+
+def extract_common_requirements(main_js: str, lang_common: dict) -> dict[str, dict[str, list[list[str]]]]:
+    """``{ace_type: {ace_id: [[requirement, ...], ...]}}`` for the shared ACEs.
+
+    A plugin gets an ACE when every requirement of one of its lists holds; an
+    ACE has two lists when the block registers it twice (``is-visible`` for
+    world objects and again for DOM elements). A requirement is a flag name,
+    ``!name`` for a flag that must be false, or ``name=value`` and
+    ``name!=value`` for a text flag, the plugin type.
+    """
+    registrations, guards = _common_guards(main_js, lang_common)
+    result: dict[str, dict[str, list[list[str]]]] = {t: {} for t in ACE_TYPES}
+    for pos, ace_type, ace in registrations:
+        needs = [req for start, end, req, _ in guards if start <= pos < end]
+        result[ace_type].setdefault(ace["id"], []).append(needs)
+    return result
+
+
+def extract_plugin_flags(main_js: str, plugins_js: str, lang_common: dict) -> dict[str, dict[str, bool | str]]:
+    """``{plugin id: {flag: value}}`` for the built-in plugins, over the flags
+    the requirements name.
+
+    ``plugins_js`` is plugins/allEditorPlugins.js, where each plugin builds its
+    info in its constructor: ``const t=this.p=X.m(self.v,ID);t.k(...),t.Qt(!0)``.
+    A flag the constructor does not set keeps the info class's initial value.
+    """
+    _, guards = _common_guards(main_js, lang_common)
+    setters, _, initial = _info_class(main_js)
+    name_of = {field: req.lstrip("!").split("!=")[0].split("=")[0] for _, _, req, field in guards}
+
+    plugins: dict[str, dict[str, bool | str]] = {}
+    for m in PLUGIN_INFO_RE.finditer(plugins_js):
+        ids = list(re.finditer(rf'(?<![\w$.]){re.escape(m.group(2))}="([^"]+)"', plugins_js[:m.start()]))
+        if not ids:
+            raise ValueError(f"cannot resolve the plugin id at offset {m.start()} of allEditorPlugins.js")
+        plugin_id = ids[-1].group(1)
+        if plugin_id in plugins:
+            raise ValueError(f"plugin {plugin_id!r} is defined twice in allEditorPlugins.js")
+        receiver = re.escape(m.group(1)) if m.group(1) else r"this\.p"
+        body_start = plugins_js.rfind("constructor(){", 0, m.start()) + len("constructor()")
+        body = plugins_js[body_start:_group_end(plugins_js, body_start)]
+        top = _top_level(body)
+        flags = {name: initial.get(field, False) for field, name in name_of.items()}
+        for call in re.finditer(rf'(?<![\w$.]){receiver}\.([\w$]+)\(', body):
+            field = setters.get(call.group(1))
+            if field not in name_of or not top[call.start()]:
+                continue
+            args = body[call.end():_group_end(body, call.end() - 1) - 1]
+            flags[name_of[field]] = _js_value(args) if args else True
+        plugins[plugin_id] = dict(sorted(flags.items()))
+    return dict(sorted(plugins.items(), key=lambda kv: kv[0].lower()))
+
+
+def requirement_holds(requirement: str, flags: dict[str, bool | str]) -> bool:
+    if "!=" in requirement:
+        name, value = requirement.split("!=", 1)
+        return flags.get(name) != value
+    if "=" in requirement:
+        name, value = requirement.split("=", 1)
+        return flags.get(name) == value
+    if requirement.startswith("!"):
+        return not flags.get(requirement[1:], False)
+    return bool(flags.get(requirement, False))
+
+
+def common_aces_of(flags: dict[str, bool | str],
+                   requires: dict[str, dict[str, list[list[str]]]]) -> dict[str, list[str]]:
+    """The shared ACE ids, per type, that a plugin with ``flags`` gets."""
+    return {
+        ace_type: [ace_id for ace_id, options in requires.get(ace_type, {}).items()
+                   if any(all(requirement_holds(r, flags) for r in option) for option in options)]
+        for ace_type in ACE_TYPES
+    }

@@ -138,7 +138,16 @@ Conditions, actions, and expressions that every world object has, such as
 `Pick children`, `Move to top`, `X`, and `UID`, are exported once
 to `plugins/_common.json` and are not repeated in each plugin file. The
 complete ACE list of a Sprite is its own file plus `_common.json`. The
-lookup service merges the two; a direct reader must open both. The file has
+lookup service merges the two; a direct reader must open both. Not every
+plugin gets every shared ACE: the editor registers a group only for a plugin
+whose info asks for it, so a Text has no `set-default-color` and an Array no
+`set-x`. A plugin file lists the ids it gets under `commonAces`, by type:
+
+```json
+"commonAces": {"conditions": ["compare-instance-variable", ...], "actions": [...], "expressions": [...]}
+```
+
+An id missing there is refused by the editor on that plugin. The file has
 the same fields as a plugin file, including parameter `type`, combo `items`
 and the editor `category` (`collisions`, `hierarchy`, `instance-variables`
 ...); its structure comes from the editor bundle, see

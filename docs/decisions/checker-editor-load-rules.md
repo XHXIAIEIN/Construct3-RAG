@@ -231,3 +231,22 @@ Playwright install. What changes is the eval. "Passes the checker" and
 "opens in the editor" can now be compared over every run, and a project the
 checker passes and the editor refuses gives the next row of the table
 without a round trip through the user.
+
+## Update 2026-09-23: two rules from the LiquidVolume project
+
+The r495.2 editor refused the LiquidVolume project twice where the checker
+had passed it. Both are errors now, after the two steps of
+`skills/construct3-project/references/checker-rules.md`.
+
+- A local number `mid` passed as `Functions.areaBelow(mid)` was read as the
+  system expression `mid()`: `Invalid expressions ... parameter 0 does not
+  take 'string'`. None of the 2697 event variables of the 524 official
+  examples has the name of a system expression of `plugins/system.json`,
+  compared without case, so the checker refuses every such name, not only
+  the one whose arguments break. A name that loads, `time` for instance,
+  still reads the system value instead of the variable.
+- Set color on a Text: `missing action id 'set-default-color'`. Which shared
+  ACE a plugin gets is read from the editor bundle and exported as each
+  plugin file's `commonAces`
+  (`docs/decisions/common-aces-from-editor-bundle.md`); over the examples,
+  none of 7811 uses of a shared condition or action falls outside it.

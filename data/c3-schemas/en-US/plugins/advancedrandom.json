@@ -560,5 +560,10 @@
       "name": "Replace system random",
       "desc": "Replace the system random with this plugin's seeded PRNG."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

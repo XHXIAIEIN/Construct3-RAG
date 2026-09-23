@@ -715,5 +715,10 @@
       "name": "允许鼠标输入",
       "desc": "允许使用鼠标单击模拟单点触控，这对测试很有用。"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

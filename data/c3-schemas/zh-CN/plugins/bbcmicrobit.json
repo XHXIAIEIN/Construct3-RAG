@@ -279,5 +279,10 @@
       "name": "启用 LED 显示屏",
       "desc": "是否启用LED显示屏模块。"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

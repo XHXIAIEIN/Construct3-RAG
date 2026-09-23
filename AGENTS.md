@@ -35,7 +35,7 @@ Answer from the data. An ACE missing from the schema does not exist.
 | Addon names in one language | `data/c3-schemas/{locale}/_index.json` |
 | ACEs of a plugin | `data/c3-schemas/{locale}/plugins/{id}.json` |
 | ACEs of a behavior | `data/c3-schemas/{locale}/behaviors/{id}.json` |
-| ACEs shared by every world object: overlap, collisions, instance variables, hierarchy, UID, Z order | `data/c3-schemas/{locale}/plugins/_common.json`, in addition to the plugin file |
+| ACEs shared by every world object: overlap, collisions, instance variables, hierarchy, UID, Z order | `data/c3-schemas/{locale}/plugins/_common.json`, in addition to the plugin file, whose `commonAces` lists the ones that plugin gets |
 | Effect parameters | `data/c3-schemas/{locale}/effects/{id}.json` |
 | JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the `.d.ts` under the plugin or behavior directory of the same name |
 | Types for an addon under development | editor `data/c3-ts-defs/sdk/`, runtime `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones |

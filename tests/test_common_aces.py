@@ -11,8 +11,12 @@ from src.ingest.common_aces import (
     COMMON_PROPERTIES,
     build_common_properties,
     check_common_coverage,
+    common_aces_of,
     extract_common_aces,
+    extract_common_requirements,
+    extract_plugin_flags,
     load_common_aces,
+    load_common_availability,
 )
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -155,6 +159,107 @@ def test_extract_requires_exactly_one_anchor():
         extract_common_aces(BUNDLE + BUNDLE, LANG)
 
 
+# ── which shared ACEs a plugin gets ──────────────────────────────────────
+
+# The shape of r495.2: the info class holds the flags (a setter writes the field
+# a getter reads), window.SDK.IPluginInfo names the setters, the _common block
+# guards each group on a getter, and a built-in plugin calls the setters in its
+# constructor.
+INFO = (
+    'class extends Q.l{#c=!1;constructor(t){super(),this.ty="object",this.sg=!1,this.ap=!1,this.col=!1,this.ang=!1}'
+    'k(t){this.n=t}Jt(t){Q.bp(t),this.ty=t}MF(){return this.ty}it(t){this.sg=!!t}UF(){return this.sg}'
+    'oi(){this.ap=!0}mcs(){return this.ap}ti(t){this.col=!!t}Eoe(){return this.col}li(){this.ang=!0}'
+    'fcs(){return this.ang}ir(){this.#c=!0}Mcs(){return this.#c}'
+    'Kcs(){if("object"===this.ty&&this.ap)throw new Error("plugin type \'object\' cannot use common ACEs")}}'
+    '{const Ak=new WeakMap;window.SDK.IPluginInfo=class{constructor(t){Ak.set(this,t)}'
+    'SetPluginType(t){Ak.get(this).Jt(t)}SetIsSingleGlobal(t){Ak.get(this).it(t)}'
+    'AddCommonAppearanceACEs(){Ak.get(this).oi()}SetSupportsColor(t){Ak.get(this).ti(t)}'
+    'AddCommonAngleACEs(){Ak.get(this).li()}}}'
+)
+GUARDED = (
+    'uR.Xcs=function(t,i){uR.u.o("plugins._common");'
+    'i.fcs()&&(t.$("angle"),t.tds({id:"angle",c2id:-1,expressionName:"Angle",returnType:"number"})),'
+    'i.mcs()&&(t.$("appearance"),t.Qcs({id:"is-visible",c2id:-9,scriptName:"IsVisible"}),'
+    'i.Eoe()&&(t.Jcs({id:"set-default-color",scriptName:"SetDefaultColor",params:[{id:"color",type:"number"}]})),'
+    't.Jcs({id:"set-visible",scriptName:"SetVisible"})),'
+    'i.UF()||(t.$("misc"),t.Jcs({id:"destroy",c2id:-9,scriptName:"Destroy"}),'
+    '"object"!==i.MF()&&t.tds({id:"asjson",c2id:-19,expressionName:"AsJSON",returnType:"string"})),'
+    'i.Mcs()&&(t.$("collisions"),t.Qcs({id:"is-overlapping-another-object",c2id:1,scriptName:"IsOverlapping",'
+    'params:[{id:"object",type:"object"}]})),'
+    'i.mcs()||(t.$("appearance"),t.Qcs({id:"is-visible",scriptName:"IsVisible"}))};'
+)
+GUARDED_LANG = {
+    "aceCategories": {"angle": "Angle", "appearance": "Appearance", "misc": "Misc", "collisions": "Collisions"},
+    "conditions": {"is-visible": {}, "is-overlapping-another-object": {}},
+    "actions": {"set-default-color": {}, "set-visible": {}, "destroy": {}},
+    "expressions": {"angle": {}, "asjson": {}},
+}
+PLUGINS = (
+    '{const a=self.t,b="Sprite",c=a.h.Sprite=class extends a.l{constructor(){super(),a.u.o("plugins."+b.toLowerCase());'
+    'const t=this.p=a.m(self.v,b);t.k("Sprite"),t.Jt("world"),t.li(),t.oi(),t.ti(!0),t.ir(),'
+    't.gi([new a.P("combo","x",{wi:function(t){t.ti(!1)}})])}}}'
+    '{const a=self.t,d="Text",c=a.h.Text=class extends a.l{constructor(){super(),a.u.o("plugins.text");'
+    'const t=this.p=a.m(self.v,d);t.Jt("world"),t.li(),t.oi()}}}'
+    '{const a=self.t,e="Keyboard",c=a.h.Keyboard=class extends a.l{constructor(){super(),a.u.o("plugins.keyboard"),'
+    'this.p=a.m(self.v,e),this.p.it(!0)}}}'
+    '{const a=self.t,f="Arr",c=a.h.Arr=class extends a.l{constructor(){super(),a.u.o("plugins.arr");'
+    'const t=this.p=a.m(self.v,f);t.k("Array")}}}'
+)
+
+
+def test_requirements_follow_the_guards_of_the_block():
+    requires = extract_common_requirements(INFO + GUARDED, GUARDED_LANG)
+    assert requires["expressions"]["angle"] == [["AddCommonAngleACEs"]]
+    assert requires["actions"]["set-default-color"] == [["AddCommonAppearanceACEs", "SetSupportsColor"]]
+    # A guard without a public setter is named after the first ACE it registers.
+    assert requires["conditions"]["is-overlapping-another-object"] == [["editor:is-overlapping-another-object"]]
+    assert requires["actions"]["destroy"] == [["!SetIsSingleGlobal"]]
+    assert requires["expressions"]["asjson"] == [["!SetIsSingleGlobal", "SetPluginType!=object"]]
+    # Registered twice: either list gives it.
+    assert requires["conditions"]["is-visible"] == [["AddCommonAppearanceACEs"], ["!AddCommonAppearanceACEs"]]
+
+
+def test_plugin_flags_are_what_the_constructor_sets_at_its_own_level():
+    flags = extract_plugin_flags(INFO + GUARDED, PLUGINS, GUARDED_LANG)
+    assert list(flags) == ["Arr", "Keyboard", "Sprite", "Text"]
+    # t.ti(!1) inside a property's callback is not the plugin's.
+    assert flags["Sprite"]["SetSupportsColor"] is True
+    assert flags["Sprite"]["editor:is-overlapping-another-object"] is True
+    assert flags["Text"]["SetSupportsColor"] is False and flags["Text"]["AddCommonAppearanceACEs"] is True
+    assert flags["Keyboard"]["SetIsSingleGlobal"] is True
+    assert flags["Arr"]["SetPluginType"] == "object"
+
+
+def test_a_plugin_gets_the_shared_aces_whose_requirements_hold():
+    requires = extract_common_requirements(INFO + GUARDED, GUARDED_LANG)
+    flags = extract_plugin_flags(INFO + GUARDED, PLUGINS, GUARDED_LANG)
+    text = common_aces_of(flags["Text"], requires)
+    assert "set-default-color" not in text["actions"] and "set-visible" in text["actions"]
+    assert "set-default-color" in common_aces_of(flags["Sprite"], requires)["actions"]
+    assert common_aces_of(flags["Keyboard"], requires) == {
+        "conditions": ["is-visible"], "actions": [], "expressions": []}
+    arr = common_aces_of(flags["Arr"], requires)
+    assert "destroy" in arr["actions"] and "asjson" not in arr["expressions"]
+
+
+def test_committed_extract_gives_text_no_set_color():
+    """Observed: the r495.2 editor refused a project with Set color on a Text
+    ("missing action id 'set-default-color'"); Text's colour is Set font color."""
+    available = load_common_availability()
+    assert "set-default-color" not in available["Text"]["actions"]
+    assert "color-value" not in available["Text"]["expressions"]
+    assert "set-default-color" in available["Sprite"]["actions"]
+    assert available["Keyboard"] == {"conditions": [], "actions": [], "expressions": []}
+    assert "set-x" not in available["Arr"]["actions"] and "destroy" in available["Arr"]["actions"]
+
+
+def test_committed_extract_requirements_cover_every_shared_ace():
+    data = json.loads(COMMON_ACES_PATH.read_text(encoding="utf-8"))
+    structural = _structural_index(data["categories"])
+    assert {(t, ace_id) for t in ACE_TYPES for ace_id in data["requires"][t]} == set(structural)
+    assert data["_source"]["plugins"].startswith("plugins/allEditorPlugins.js")
+
+
 # ── exported data ────────────────────────────────────────────────────────
 
 
@@ -228,3 +333,20 @@ def test_exported_common_schema_carries_the_instance_properties():
     assert {k: v["written"] for k, v in files["en-US"].items()} == \
            {k: v["written"] for k, v in files["zh-CN"].items()}
     assert files["en-US"]["color"]["desc"] != files["zh-CN"]["color"]["desc"]
+
+def test_exported_plugins_list_the_shared_aces_they_get():
+    """commonAces is structural: the same in every locale, what the committed
+    extract gives the plugin, and every id in it is one of plugins/_common.json."""
+    available = load_common_availability()
+    schemas = ROOT / "data" / "c3-schemas"
+    common = json.loads((schemas / "en-US" / "plugins" / "_common.json").read_text(encoding="utf-8"))
+    ids = {t: {a["id"] for a in common[t]} for t in ACE_TYPES}
+    index = json.loads((schemas / "_index.json").read_text(encoding="utf-8"))["plugins"]
+    for plugin_id, entry in index.items():
+        if plugin_id == "_common":
+            continue
+        en, zh = (json.loads((schemas / locale / entry["file"]).read_text(encoding="utf-8")) for locale in LOCALES)
+        assert en["commonAces"] == zh["commonAces"], plugin_id
+        assert en["commonAces"] == available[entry["originalId"]], plugin_id
+        for t in ACE_TYPES:
+            assert set(en["commonAces"][t]) <= ids[t], (plugin_id, t)

@@ -715,5 +715,10 @@
       "name": "Use mouse input",
       "desc": "Use mouse clicks as single-touch input (useful for testing)."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

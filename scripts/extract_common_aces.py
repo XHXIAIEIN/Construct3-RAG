@@ -4,6 +4,10 @@
 The ACEs shared by every world object are not in allAces.json; the editor
 registers them in main.js. This script fetches the bundle, cuts out that block
 and stores it in the allAces shape the exporter merges with the language pack.
+The block registers each group only for a plugin whose info asks for it, so
+the file also keeps what each shared ACE requires and, from
+plugins/allEditorPlugins.js, what each built-in plugin's info sets: Text gets
+no set-default-color.
 Run it when scripts/init.py stops with "language pack names shared ACEs that
 common_aces.json does not define", then review the diff and commit the file.
 
@@ -13,7 +17,7 @@ necessarily C3_VERSION. The file records the version it was taken from.
 
 Usage:
     python scripts/extract_common_aces.py
-    python scripts/extract_common_aces.py --main-js path/to/main.js   # local copy
+    python scripts/extract_common_aces.py --main-js path/to/main.js --plugins-js path/to/allEditorPlugins.js --release r495.2
 """
 import argparse
 import json
@@ -39,12 +43,17 @@ from src.ingest.common_aces import (
     COMMON_ADDON_ID,
     check_common_coverage,
     extract_common_aces,
+    extract_common_requirements,
+    extract_plugin_flags,
 )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Extract shared ACE definitions from main.js")
     parser.add_argument("--main-js", type=Path, help="Use a local main.js instead of fetching it")
+    parser.add_argument("--plugins-js", type=Path,
+                        help="Use a local plugins/allEditorPlugins.js instead of fetching it")
+    parser.add_argument("--release", help="The release the local copies were saved from, for _source")
     parser.add_argument("--output", type=Path, default=COMMON_ACES_PATH)
     args = parser.parse_args()
 
@@ -60,13 +69,19 @@ def main() -> None:
 
     if args.main_js:
         main_js = args.main_js.read_text(encoding="utf-8", errors="replace")
-        source_version = "local file " + args.main_js.name
+        source_version = args.release or "local file " + args.main_js.name
     else:
         main_js = fetcher.fetch_raw("main.js").decode("utf-8", errors="replace")
         source_version = fetcher.get_latest_stable_version()
+    if args.plugins_js:
+        plugins_js = args.plugins_js.read_text(encoding="utf-8", errors="replace")
+    else:
+        plugins_js = fetcher.fetch_raw("plugins/allEditorPlugins.js").decode("utf-8", errors="replace")
 
     categories = extract_common_aces(main_js, lang_common)
     check_common_coverage(categories, lang_common)
+    requires = extract_common_requirements(main_js, lang_common)
+    plugins = extract_plugin_flags(main_js, plugins_js, lang_common)
 
     counts = {t: sum(len(c.get(t, [])) for c in categories.values()) for t in ACE_TYPES}
     payload = {
@@ -74,16 +89,21 @@ def main() -> None:
             "file": "main.js",
             "url": f"{settings.schema.cdn_base}/main.js",
             "block": "the function that registers plugins._common in the editor bundle",
+            "plugins": "plugins/allEditorPlugins.js, the constructor of each built-in plugin",
             "release": source_version,
             "extracted": date.today().isoformat(),
             "script": "scripts/extract_common_aces.py",
         },
         "categories": categories,
+        # {ace type: {id: [[requirement, ...], ...]}}: one list must hold entirely.
+        "requires": requires,
+        # {plugin id: {flag: value}}, the flags the requirements name.
+        "plugins": plugins,
     }
     args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"{args.output}: {len(categories)} categories, "
           + ", ".join(f"{n} {t}" for t, n in counts.items())
-          + f" (from {source_version})")
+          + f", {len(plugins)} plugins (from {source_version})")
 
 
 if __name__ == "__main__":

@@ -38,7 +38,7 @@ python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 | `c3-schemas/_index.json` | 版本、语言列表，以及每个插件、行为、特效的文件路径和 ACE 数量。不含本地化名称 |
 | `c3-schemas/{locale}/_index.json` | 该语言下的插件、行为、特效名称，键与根索引相同 |
 | `c3-schemas/{locale}/plugins/{id}.json` | 条件、动作、表达式、属性 |
-| `c3-schemas/{locale}/plugins/_common.json` | 所有世界对象共有的 ACE：重叠、碰撞、实例变量、层级、UID、Z 序。只导出一次，不在各插件文件中重复 |
+| `c3-schemas/{locale}/plugins/_common.json` | 所有世界对象共有的 ACE：重叠、碰撞、实例变量、层级、UID、Z 序。只导出一次，不在各插件文件中重复；各插件文件在 `commonAces` 中列出自己拥有的那些 |
 | `c3-schemas/{locale}/behaviors/{id}.json` | 行为 ACE |
 | `c3-schemas/{locale}/effects/{id}.json` | 特效参数和分类 |
 | `c3-examples/{locale}/{id}.json` | 示例名称、描述、标签、使用的插件、打开链接 |

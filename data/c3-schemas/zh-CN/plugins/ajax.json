@@ -326,5 +326,10 @@
       "returnType": "string"
     }
   ],
-  "properties": {}
+  "properties": {},
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
+  }
 }

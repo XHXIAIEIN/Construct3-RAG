@@ -645,5 +645,10 @@
       "name": "网页端",
       "desc": "仅适用于网页端的属性。"
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }

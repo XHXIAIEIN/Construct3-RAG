@@ -806,5 +806,10 @@
       "name": "Application ID (android)",
       "desc": "The application ID from Game services in the Google Play Console. Required for Android."
     }
+  },
+  "commonAces": {
+    "conditions": [],
+    "actions": [],
+    "expressions": []
   }
 }
