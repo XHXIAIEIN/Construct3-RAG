@@ -66,6 +66,11 @@ PROJECT_OPTIONS = {"fullscreenMode": ("letterbox-scale", "letterbox-integer-scal
                    "downscaling": ("medium", "low", "high"),
                    "loaderStyle": ("splash", "progress-logo", "progress", "percent", "none")}
 PROJECT_ALSO = {"sampling": ("linear", "point")}    # older ids the editor maps as it reads them
+# Plugins whose object type carries an animations folder: the editor reads it as
+# it opens the type and stops with "TypeError: expected object" when it is not
+# there. The 2930 Sprite and 785 Shape3D types of the official examples all have
+# one, and no other plugin there does.
+ANIMATED_PLUGINS = ("Sprite", "Shape3D")
 # Below this release the editor reads an object type from objectTypes\<name in
 # lower case>.json, the layout of a project from 2016, and finds nothing.
 FOLDER_PROJECT_RELEASE = 30900
@@ -170,6 +175,7 @@ class Checker:
     def check(self) -> None:
         self.check_project_file()
         self.check_names()
+        self.check_animations()
         self.check_images()
         self.check_layouts()
         for obj in list(self.p.types) + list(self.p.families):
@@ -335,6 +341,13 @@ class Checker:
             self.err(f"missing image {rel}")
         elif Image is not None and Image.open(path).size != (width, height):
             self.err(f"{rel}: the object type says {width}x{height}, the file is {Image.open(path).size}")
+
+    def check_animations(self) -> None:
+        for name, t in self.p.types.items():
+            if t.get("plugin-id") in ANIMATED_PLUGINS and not isinstance(t.get("animations"), dict):
+                self.err(f"object type {name}: a {t['plugin-id']} carries an animations folder and the editor "
+                         f"reads it as it opens the type. Write \"animations\": {{\"items\": [{{\"name\": "
+                         f"\"Default\", \"frames\": [...], \"sid\": <n>}}], \"subfolders\": []}}")
 
     def check_images(self) -> None:
         if Image is None:

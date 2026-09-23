@@ -45,6 +45,7 @@ How each was read from the editor and confirmed:
 | `project.c3proj` keeps the properties the editor writes: `description`, `version`, `author`, `authorEmail`, `authorWebsite`, `appId`, `fullscreenMode`, `fullscreenQuality`, `orientations`, `sampling`, `downscaling`, `loaderStyle`, and a viewport of at least 2 | `TypeError: expected string`, before the editor names a file |
 | `savedWithRelease` is the release that saved the project; below r309 the editor reads an object type from `objectTypes/<name in lower case>.json` | no message: the object type file is not found |
 | `project.c3proj` keeps the lists of what the project holds: `objectTypes`, `families`, `layouts` and `eventSheets` with an `items` and a `subfolders` array each, and `containers` as an array, empty when the project has none | `TypeError: expected object`, `TypeError: expected array` |
+| A `Sprite` or a `Shape3D` object type carries an `animations` folder | `TypeError: expected object` |
 | A layout instance's `world.angle` is in radians, within a full turn | an angle written in degrees turns the instance some other way; every official example stays within 2π |
 
 *Trigger once* or *Every X seconds* in a triggered branch is a warning: the
