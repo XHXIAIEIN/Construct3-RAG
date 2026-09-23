@@ -1151,6 +1151,31 @@ def test_new_sid_left_in_a_plan_is_named(project):
     assert code == 1 and 'leave "sid" out' in out
 
 
+# --- opening the project in the editor -------------------------------------------------------
+def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in(project, tmp_path):
+    """Offline: finding the project and packing it; opening it needs the network and Playwright."""
+    (project / ".git").mkdir()
+    (project / ".git" / "HEAD").write_text("ref: refs/heads/main", encoding="utf-8")
+    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--help")
+    assert code == 0 and "exit codes:" in out and "--release" in out, out
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    # the clone's copy: an installed one falls back to the project it is installed in
+    code, out = run(empty, SKILL / "scripts" / "open_in_editor.py")
+    assert code == 2 and "no project.c3proj or .c3p found" in out and "--project" in out, out
+
+    sys.path.insert(0, str(project / INSTALLED / "scripts"))
+    try:
+        import open_in_editor
+    finally:
+        sys.path.pop(0)
+    assert open_in_editor.find_projects([project.parent]) == [project.resolve()]
+    import io
+    import zipfile
+    names = zipfile.ZipFile(io.BytesIO(open_in_editor.pack(project))).namelist()
+    assert "project.c3proj" in names and SHEET in names and not any(n.startswith(".git/") for n in names)
+
+
 # --- finding the schemas ---------------------------------------------------------------
 @pytest.mark.parametrize("lines", [
     "- Construct3-RAG: {rag}",

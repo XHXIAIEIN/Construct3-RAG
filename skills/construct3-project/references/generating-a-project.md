@@ -62,17 +62,19 @@ Feel tables, the layout of the sheet. Then:
    Warnings do not fail the run; read them anyway, a generated project should
    have none. Then read the sheet once as events, `python
    scripts/print_sheet.py`, before anyone opens the editor.
-3. Hand over. The agent cannot open the editor: ask the user to open the
-   folder (**Menu** > **Project** > **Open**, the local project folder
-   option) and to preview, and say what to look at. A load error names the
-   event variable, object or parameter at fault; paste it back and fix the
-   generator, not the JSON.
-4. What the preview shows that the checker cannot (an instance picked twice,
+3. Open it, `python scripts/open_in_editor.py`, until it prints `opened`.
+   A `failed` names the sheet, event and parameter at fault: fix the
+   generator, not the JSON, and run both again.
+4. Hand over: ask the user to open the folder (**Menu** > **Project** >
+   **Open**, the local project folder option) and to preview, and say what
+   to look at. When `open_in_editor.py` could not run, ask for the text of
+   any dialog the editor shows on opening as well.
+5. What the preview shows that the checker cannot (an instance picked twice,
    a tween and a timer ending a tick apart, a mask that leaves a corner
    uncovered) is a runtime fact. Fix the generator, and when the fact would
    trip the next agent, add it to
    `Construct3-RAG/prompts/event-sheet-pitfalls.md` with its source.
-5. Commit the generator with the files it produced; the diff of the
+6. Commit the generator with the files it produced; the diff of the
    generated JSON is the review of the change.
 
 The project's README explains the objects, the groups, the constants and how

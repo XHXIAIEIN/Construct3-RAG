@@ -5,7 +5,7 @@
 Bilingual Construct 3 reference data under `data/`, read directly, plus an
 optional lookup service in `src/`, and an agent skill in
 `skills/` that carries the project tools (ACE lookup, sheet printer, sheet
-editor, checker, generator template) into a game project. Version and
+editor, checker, editor opener, generator template) into a game project. Version and
 counts: `data/c3-schemas/_index.json`, never hardcoded.
 
 Priorities, in order: exact addon, ACE and scripting lookup; citable
@@ -174,7 +174,7 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | Data files and fields | `docs/guide/data-format.md` |
 | Event sheet design, worked case, sourced pitfalls, the examples' authoring style | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md`, `prompts/event-sheet-style.md`, `docs/decisions/event-sheet-design-guidance.md` |
 | Slot case as a program, hand-editing project JSON, bars and life counters by the art they have | `prompts/references/` |
-| ACE lookup, sheet printer, sheet editor, checker and generator template for a game project; changing and evaluating them | `skills/construct3-project/SKILL.md`, `skills/AGENTS.md` |
+| ACE lookup, sheet printer, sheet editor, checker, editor opener and generator template for a game project; changing and evaluating them | `skills/construct3-project/SKILL.md`, `skills/AGENTS.md` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |

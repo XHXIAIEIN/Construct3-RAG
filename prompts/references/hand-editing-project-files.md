@@ -112,6 +112,11 @@ template instance in some layout; and the rules the editor applies on
 opening, the table in
 `skills/construct3-project/references/checker-rules.md`.
 
+Once it passes, open the project with the skill's
+`scripts/open_in_editor.py`, which prints `opened`, or the editor's own
+message naming the sheet, event and parameter it refused; an expression
+whose types do not fit is caught there, not by the checker.
+
 What the checks cannot answer is what the game does: which instances a
 condition picks, what order triggers fire in, what a tick later looks like.
 Ask the user to open the project and preview it, and say what to look at.

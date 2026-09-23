@@ -73,7 +73,7 @@ The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `d
 
 Start with [`AGENTS.md`](AGENTS.md): the fact lookup procedure, the event sheet design procedure, and the rules for changing the code. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md), [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) and [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) together as the system prompt: structure in Construct terms (picking, families, containers, `Else`), output format and name verification, and sourced runtime facts that intuition gets wrong. [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) is the authoring style of the official examples (folders, groups and their variables, comments, names, UI text), for events written into a project. Each points to `prompts/references/` for material needed only sometimes, so that stays out of context until a task calls for it.
 
-An agent inside a game project reaches this repository through the [`construct3-project`](skills/construct3-project/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the sheet editor, the checker and the generator template. The two commands at the top install it; `AGENTS.md` section 4 has the rule for a project that lacks it.
+An agent inside a game project reaches this repository through the [`construct3-project`](skills/construct3-project/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the sheet editor, the checker, the editor opener and the generator template. The two commands at the top install it; `AGENTS.md` section 4 has the rule for a project that lacks it.
 
 ## Lookup service (optional)
 
@@ -98,7 +98,7 @@ data/                   Committed reference data, read directly
 prompts/                LLM system prompts
   references/           Loaded on demand
 skills/                 Agent Skills, installed into a game project
-  construct3-project/   ACE lookup, sheet printer, sheet editor, checker, generator template
+  construct3-project/   ACE lookup, sheet printer, sheet editor, checker, editor opener, generator template
 src/                    Optional lookup service, own .env (see src/AGENTS.md)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite

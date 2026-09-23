@@ -7,8 +7,8 @@ source. A game project holds a copy of it, made and refreshed by the skill's
 `scripts/install.py`, and the copy reports when it differs from the source.
 
 `construct3-project/` is the one skill here: the ACE lookup, sheet printer,
-sheet editor, checker and generator template for a Construct 3 folder
-project, and the block for the project's instruction file.
+sheet editor, checker, editor opener and generator template for a Construct
+3 folder project, and the block for the project's instruction file.
 
 ## Rules
 
@@ -27,9 +27,11 @@ project, and the block for the project's instruction file.
 - Paths inside the skill are relative to its folder. A file of this
   repository is written `Construct3-RAG/<path>`, as the block in the game
   project writes it; a relative link out of the folder breaks in a copy.
-- Scripts use the standard library (Pillow is optional), take everything
-  from flags, never prompt, print `--help` with examples and exit codes, and
-  say in every error what to write or run next. They find the project from
+- Scripts use the standard library (Pillow is optional; `open_in_editor.py`
+  needs Playwright and a network connection, and says so when either is
+  missing, with what to ask the user instead), take everything from flags,
+  never prompt, print `--help` with examples and exit codes, and say in
+  every error what to write or run next. They find the project from
   the current directory upward and this repository through the project's
   `Construct3-RAG:` line; what they share is in `scripts/c3project.py`.
 - What a script prints is read by a harness, not a terminal. It is UTF-8
@@ -108,7 +110,6 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 | `trace.py` | What a run did, from its transcript: every tool call, the ones it lost, `trace.json` |
 | `grade.py` | `grading.json` per run with the evidence, `benchmark.json` per iteration: mean and deviation per case and arm (`<arm>_2` is a second run of `<arm>`), and the difference between arms |
 | `sweep_outputs.py` | What the scripts print over every example and game project, a dry run of a small plan included, recorded and compared |
-| `open_in_editor.py` | Whether each project opens in the editor at editor.construct.net, and the editor's message when it does not; needs Playwright and a network connection |
 | `train_queries.json`, `validation_queries.json` | Trigger queries, a fixed 60/40 split; near misses as the negatives |
 | `run_trigger_eval.py` | Trigger rates from `claude -p`, on Windows too |
 
@@ -124,7 +125,7 @@ python skills/construct3-project/evals/make_fixtures.py <folder outside the clon
 python skills/construct3-project/evals/trace.py <transcript>.jsonl --out <run folder>
 # after the last run of the iteration
 python skills/construct3-project/evals/grade.py .local/docs/evidence/skill-evals/construct3-project/iteration-N
-python skills/construct3-project/evals/open_in_editor.py .local/docs/evidence/skill-evals/construct3-project/iteration-N --out .local/docs/evidence/skill-evals/construct3-project/iteration-N/opened.json
+python skills/construct3-project/scripts/open_in_editor.py .local/docs/evidence/skill-evals/construct3-project/iteration-N --out .local/docs/evidence/skill-evals/construct3-project/iteration-N/opened.json
 # after a change to the description
 python skills/construct3-project/evals/run_trigger_eval.py skills/construct3-project/evals/train_queries.json --project <game with .claude/skills>
 ```
