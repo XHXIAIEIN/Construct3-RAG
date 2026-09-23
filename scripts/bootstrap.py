@@ -35,10 +35,9 @@ SIBLINGS = {
     "Construct-Addon-SDK": ("https://github.com/Scirra/Construct-Addon-SDK", False),
     "Construct-Example-Projects": ("https://github.com/Scirra/Construct-Example-Projects", True),
 }
-# The project the editor saves for Project > New, kept as its own repository so
-# that a project can start without the editor. Copied, never used in place, and
-# without the repository's own README, which describes the template, not the game.
-TEMPLATE = ("Construct3-New-Project", "https://github.com/XHXIAIEIN/Construct3-New-Project")
+# The project the editor saves for Project > New, so that a project can start
+# without the editor. Copied, never used in place.
+TEMPLATE = ROOT / "data" / "c3-new-project"
 
 
 def git() -> str | None:
@@ -70,17 +69,14 @@ def unique_id() -> str:
 def new_project(template: Path, target: Path, dry_run: bool) -> str:
     """The empty project copied to target with its own name and uniqueId. A
     folder that already holds files and is not a project is left alone."""
-    if dry_run and not template.exists():
-        return f"{target.name}: would copy {template} to {target} once it is cloned"
     if not (template / "project.c3proj").exists():
-        return (f"{target.name}: not created; {template} holds no project.c3proj. Clone "
-                f"{TEMPLATE[1]} there, pass --template <folder> naming an empty project the editor saved, "
-                f"or save an empty project from the editor as {target}")
+        return (f"{target.name}: not created; {template} holds no project.c3proj. Pass --template <folder> "
+                f"naming an empty project the editor saved, or save an empty project from the editor as {target}")
     if target.exists() and any(target.iterdir()):
         return f"{target.name}: {target} is not empty and holds no project.c3proj; pass an empty or new folder"
     if dry_run:
         return f"{target.name}: would copy {template} to {target}"
-    shutil.copytree(template, target, ignore=shutil.ignore_patterns(".git", "README.md"), dirs_exist_ok=True)
+    shutil.copytree(template, target, ignore=shutil.ignore_patterns(".git"), dirs_exist_ok=True)
     proj = target / "project.c3proj"
     data = json.loads(proj.read_text(encoding="utf-8"))
     data["name"], data["uniqueId"] = target.name, unique_id()
@@ -120,9 +116,8 @@ def main() -> int:
     ap.add_argument("--beside", metavar="FOLDER",
                     help="where the clones go (default: the folder that holds this repository, where the block "
                          "expects them)")
-    ap.add_argument("--template", metavar="FOLDER|URL",
-                    help=f"where the empty project comes from: a folder, or a repository cloned beside this one "
-                         f"(default: {TEMPLATE[1]})")
+    ap.add_argument("--template", metavar="FOLDER",
+                    help=f"the empty project to copy (default: {TEMPLATE.relative_to(ROOT).as_posix()})")
     ap.add_argument("--no-examples", action="store_true", help="skip Construct-Example-Projects (the largest clone)")
     ap.add_argument("--dry-run", action="store_true", help="say what would be done, do nothing")
     args = ap.parse_args()
@@ -134,14 +129,7 @@ def main() -> int:
     if args.no_examples:
         wanted.pop("Construct-Example-Projects")
     project = game_folder(args.project, folder) if args.project else None
-    template = folder / TEMPLATE[0]
-    if args.template and Path(args.template).expanduser().is_dir():
-        template = Path(args.template).expanduser().resolve()
-    elif project and not (project / "project.c3proj").exists():
-        # The empty project is fetched only when a project is to be made from it.
-        url = args.template or TEMPLATE[1]
-        template = folder / url.rstrip("/").rsplit("/", 1)[-1].removesuffix(".git")
-        wanted[template.name] = (url, True)
+    template = Path(args.template).expanduser().resolve() if args.template else TEMPLATE
     for name, (url, shallow) in wanted.items():
         line = clone(name, url, shallow, folder, args.dry_run)
         failed |= "not cloned" in line or "failed" in line
@@ -166,7 +154,7 @@ def main() -> int:
     lines = (p.stdout + p.stderr).rstrip("\n").splitlines()
     if not p.returncode and folder != ROOT.parent:
         # Before install.py's last line, "ok: read ...", which stays the last line of the run.
-        lines.insert(-1, name_clones(project, folder, [n for n in wanted if n != template.name]))
+        lines.insert(-1, name_clones(project, folder, list(wanted)))
     print("\n".join(lines))
     return 1 if failed or p.returncode else 0
 

@@ -52,8 +52,7 @@ lacks it. `claude --version` prints the version.
 `scripts/bootstrap.py --project <folder>` in this repository covers the
 machine that has only the clone: it clones the three repositories above
 beside it when they are missing, creates the folder as an empty project,
-copied from the `Construct3-New-Project` repository, when it does not
-exist, and runs `install.py`. The README's first section gives it to a
+copied from `data/c3-new-project`, when it does not exist, and runs `install.py`. The README's first section gives it to a
 reader who has only the URL.
 
 The block is a router. Its first step sends to the installed `SKILL.md`
