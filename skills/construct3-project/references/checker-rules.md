@@ -46,6 +46,10 @@ How each was read from the editor and confirmed:
 | `savedWithRelease` is the release that saved the project; below r309 the editor reads an object type from `objectTypes/<name in lower case>.json` | no message: the object type file is not found |
 | `project.c3proj` keeps the lists of what the project holds: `objectTypes`, `families`, `layouts` and `eventSheets` with an `items` and a `subfolders` array each, and `containers` as an array, empty when the project has none | `TypeError: expected object`, `TypeError: expected array` |
 | A `Sprite` or a `Shape3D` object type carries an `animations` folder | `TypeError: expected object` |
+| A layout has a `name`, a `width` and a `height` of at least 2, and a `layers` array | `TypeError: expected string`, `expected finite number`, `invalid layout width` |
+| A layer has a `name`, `parallaxX`, `parallaxY`, `scaleRate`, a `blendMode` the editor knows, and an `instances` array, empty when nothing is on it | `TypeError: expected finite number`, `invalid blend mode` |
+| An instance on a layer carries `world` with `x`, `y`, `width`, `height`, `originX` and `originY` | `TypeError: expected finite number` |
+| An event sheet has a `name` and an `events` array | `TypeError: expected string`, `invalid event sheet name` |
 | A layout instance's `world.angle` is in radians, within a full turn | an angle written in degrees turns the instance some other way; every official example stays within 2π |
 
 *Trigger once* or *Every X seconds* in a triggered branch is a warning: the
@@ -76,10 +80,11 @@ unnumbered rows in parentheses.
 
 ## Style, with `--style`
 
-Five warnings the editor never raises, for a project the agent wrote: the
+Six warnings the editor never raises, for a project the agent wrote: the
 generator template passes `--style`. `edit_sheet.py` holds the events a plan
-creates to them, never the sheet's older events: the first three, whose fix
-is one comment, refuse the plan like a problem; the other two, and any
+creates to them, never the sheet's older events: the first four, whose fix
+is one comment or one deleted condition, refuse the plan like a problem; the
+other two, and any
 finding on an event the plan moved or extended, are warnings under its
 output. Each names the event and says what to write.
 
@@ -88,6 +93,7 @@ output. Each names the event and says what to write.
 | N actions in a row without a comment action | 8 or more | 113 in 50 projects; the studio games step a block every 3 actions at the median, 6 at the 90th percentile |
 | no comment above it (a top-level event, function or custom action with actions or sub-events) | none, variables between allowed | 1184 in 278 projects; 93% of the studio games' top-level events have one, the rest are Scirra's feature demos and external games |
 | none of its N case sub-events has a comment above it (an event with two or more sub-events that have actions or sub-events, no comment above any) | 2 or more cases | 435 in 116 projects; of the studio games' 1605 events with cases, 84% have a comment above at least one, and 75% of the 4382 cases have their own |
+| Every tick beside N other condition(s) changes nothing (a block that is not an OR block) | 1 other condition | 25 of the 432 Every tick events, in 21 projects; the other 407 are an event's one condition |
 | sub-events N levels deep, every leaf calling one function | 3 levels, 3 or more leaves | 3, in shifting-dungeon, template-ladder-climbing, wall-walking |
 | with events ..., the same conditions and actions N times over (sibling events of one shape, their values ignored) | 5 or more | 47 in 31 projects; 32 in 20 studio games, input ladders, a key per action, and else-if chains among them |
 
@@ -96,7 +102,7 @@ DeepSeek Water Sort) raise 21, 4 and 1; 16 and 7; 4 and 2 of the first three
 kinds; the Doubao raft game of 204 events (RaftSurvivor) raises 24 uncommented
 case events and 6 ladders of 5 to 9 events. The survey behind the thresholds
 is `Construct3-RAG/docs/decisions/event-sheet-design-guidance.md`, 2026-09-22.
-A style warning is never an error: the editor accepts all five, and an
+A style warning is never an error: the editor accepts all six, and an
 official example may carry one. What the shape should be instead is
 `Construct3-RAG/prompts/event-sheet-style.md`.
 

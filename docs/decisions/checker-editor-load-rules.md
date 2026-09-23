@@ -65,6 +65,7 @@ The rules themselves were read from the editor's project model,
 | `TypeError: expected string` (added 2026-09-23) | Opening a project reads the whole `properties` block before it reads a file of the project, and asserts each value as it reads it: `description`, `version`, `author`, `authorEmail`, `authorWebsite` and `appId` are text, `fullscreenMode`, `fullscreenQuality`, `orientations`, `sampling`, `downscaling` and `loaderStyle` are one of the editor's values, and the viewport is a number of at least 2. The user opened a project generated for the skill evals and got the message with no file and no key in it; `projectResources.js` reads it in `d$`, the first call being `this.j(s.description)`. A `project.c3proj` written by hand, or reduced to the keys the tools read, has none of them. The generator fills them when the folder was not saved by the editor. |
 | `TypeError: expected array`, `TypeError: expected object` (added 2026-09-23) | `QAn` reads the lists project.c3proj keeps before it has read a file: `containers` is an array (`tPn`, `hN`), and `objectTypes`, `families`, `layouts` and `eventSheets` are objects whose `items` and `subfolders` it walks. A missing list is not an empty one: 71 of the 140 eval artifacts had no `containers`, and the user hit it on the second open, after the properties were filled in. The rule was written from the call list of `QAn` rather than from the message, so that the rest of the sequence is covered at once: `rootFileFolders`, `models3d`, `timelines` and `flowcharts` return early when they are missing, and `name`, `uniqueId`, `firstLayout` and `functionsName` are read without an assertion. |
 | `TypeError: expected object` on an object type (added 2026-09-23) | The animations folder of an animated plugin is read as the type opens (`KR`, `_tt`). Which plugins are animated is the editor's flag and not in the schemas; in the examples only `Sprite` and `Shape3D` carry the folder, and all 2930 Sprite and 785 Shape3D types have one. |
+| `TypeError: expected finite number`, `invalid blend mode`, `invalid layout width` (added 2026-09-23) | The rest of the open, read the same way: `fon` calls the layout's `BO` and `d$` (`name`, `width`, `height` through `jM`/`_M`, at least 2) and `AU(a.layers)`; each layer's `Son` reads `name`, `parallaxX`, `parallaxY`, `scaleRate` through `ye`, `blendMode` against the editor's map, and walks `instances`; a world instance's `BO` reads `world.x`, `y`, `width`, `height`, `originX`, `originY` through `ye`; an event sheet's `BO` reads `name` and walks `events`. A key that is read behind `hasOwnProperty` (`sampling`, `vpX`, `zElevation`, `subLayers`, `angle`, `effectTypes`, `nonworld-instances`) is not required. A layout or sheet name with spaces or punctuation is filtered rather than refused, so it stays out of the checker. The keys were also counted over the examples: all 2615 layers, 32519 instances, 898 layouts and 549 sheets carry every one. |
 | no message: an object type file that is not found (added 2026-09-23) | `savedWithRelease` decides where an object type is read from: below r309 it is `objectTypes/<name in lower case>.json`, and a project without the key is read as r86. 249 of the 524 examples are older than r309 and all of them hold the lower-case files. |
 | `An Else condition cannot be placed here` (language pack, shown before preview and export) | Else is the first condition of a block that is not an OR block and has no trigger; the sibling before it, comments skipped, is a block without a trigger or a loop and is not a lone Else. |
 
@@ -80,7 +81,16 @@ seconds* inside a triggered branch do occur (abductractor, demonoire,
 template-ladder-climbing; tank-movement has one inside a function), so that
 is a warning, and not raised inside a function.
 
-The two rules of 2026-09-23 were measured the same way: over the 524 examples
+The rules of 2026-09-23 came one editor message at a time until the third
+open; from then on they were read from the loader's whole call chain, and the
+keys every one of the 524 examples carries were counted at each level (project,
+properties, layout, layer, instance, world, sheet, object type). The generated
+project was compared with that count, which is now
+`test_generated_project_carries_what_the_editor_writes_into_every_project`. It
+leaves out `rootFileFolders` and `timelines`, the two keys the examples all have
+and the loader returns without.
+
+The rules of 2026-09-23 were measured the same way: over the 524 examples
 and the two game projects, 2041 runs of the four scripts, no check run changed
 its exit code or its output (`evals/sweep_outputs.py`). The check for the
 lower-case object type file reads the names the folder holds rather than
