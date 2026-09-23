@@ -312,6 +312,35 @@ first.
   everything it must erase, or keep the content inside its box. [manual:
   project-primitives/layers.md "Force own texture"; example:
   mask-effect-puzzle, layer HiddenWorld; observed: WaterSort, 2026-09-17]
+- A Text object wraps at its own width and draws only the lines that fit its
+  height. Text longer than the box sized for the placeholder gains a line
+  that is cut off, and with centre or bottom vertical alignment the lines
+  already shown move up as it does. Size the box for the longest text at the
+  font size and line height, or after *Set text* resize it from
+  `Self.TextHeight` plus a margin, with the width fixed: `TextWidth` and
+  `TextHeight` measure the text as wrapped inside the current box, so
+  `TextWidth` never grows the box past its width. Both are current in the
+  action right after *Set text*. Check what else moves the lines before
+  choosing the size:
+  - Origin: a resize keeps the origin still and grows the box away from it.
+    With a top origin the first line stays put; with a centre origin the
+    box grows both ways and the first line moves even under top alignment.
+    Put the origin on the edge the text must keep, as a bar keeps the edge
+    it grows from.
+  - Wrapping: *Word* breaks only at spaces and hyphens, so Chinese,
+    Japanese or Korean text needs *CJK*, which breaks between characters
+    and wraps CJK punctuation properly. The same string takes a
+    different number of lines under each mode; size for the mode set.
+  - Direction and horizontal alignment decide the edge a line starts from:
+    an RTL or right-aligned text widened with a left origin moves.
+    [inference from the manual's property descriptions, unverified at
+    runtime]
+
+  [manual: plugin-reference/text.md "Wrapping", "Vertical alignment",
+  "Text direction", "Origin", "TextWidth"; examples: text-based-adventure
+  `Set height to min(Self.TextHeight + 4, 644)`, flowchart-questionnaire
+  sizes a background from `TextWidth + 10`, `TextHeight + 10`; observed:
+  2026-09-23]
 
 ## Tween
 
