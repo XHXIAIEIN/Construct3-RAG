@@ -1091,3 +1091,36 @@ run of iterations 19 and 20 without it.
 - The example clone updates: rerun `survey_placement.py`.
 - A game project needs real art at generation time: the CC0 zip route
   (option 3, second half) is the one to design, with tile size as the unit.
+
+## Update 2026-09-23: names outside ASCII, and Every tick beside other conditions
+
+Feedback on sheets small models wrote with the skill installed: a project
+with non-English names that the editor opened with "unknown expression",
+and *Every tick* added to most events beside other conditions.
+
+### Evidence
+
+- Construct puts no limit on the script of a name. A local variable is in
+  scope for the events at its level and below them (manual, Event
+  Variables); "unknown expression" on a bare name means it is out of scope
+  or never declared.
+- The checker read identifiers as `[A-Za-z0-9_]+`. A name outside ASCII was
+  never looked up, and a name mixing scripts was cut to its ASCII part and
+  reported wrongly. The patterns are now Unicode word characters; an
+  editor-saved project with such names passes, an undeclared one is
+  reported, and the official examples raise no new finding.
+- The conditions of an event without a trigger are tested every tick, so
+  *Every tick* beside them changes nothing. The official examples write it
+  as an event's one condition.
+
+### Decision
+
+`check_project.py --style` has a sixth kind, `tick`: *Every tick* beside
+another condition, in a block that is not an OR block. `edit_sheet.py`
+refuses it on events a plan creates: the fix is one deleted condition. The
+style file's habit table has the row.
+
+### Re-evaluate when
+
+- *Every tick* shows up in an OR block, where it makes the whole event true
+  every tick: the check skips OR blocks.

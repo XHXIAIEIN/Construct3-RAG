@@ -434,7 +434,7 @@ class Plan:
 
 
 # --- checking, writing, reporting -----------------------------------------------------------------
-REFUSED_STYLE = ("comment", "run", "cases")     # the style kinds of check_project.check_style a plan may not add
+REFUSED_STYLE = ("comment", "run", "cases", "tick")     # the style kinds of check_project.check_style a plan may not add
 
 
 def findings_of(project: c3.Project, args, sheets: dict | None) -> tuple[check_project.Checker, c3.Findings]:
