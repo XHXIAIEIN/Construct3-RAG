@@ -1168,7 +1168,8 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
     c3p = project / ".tmp" / "open-in-editor.c3p"
     assert code == 3 and str(c3p) in out and 'labelled "Project to open"' in out, out
     assert (project / ".tmp" / ".gitignore").read_text(encoding="utf-8") == "*\n"
-    assert len(re.findall(r"^\(\) => \{$", out, re.M)) == 2 and "https://editor.construct.net/" in out
+    assert "\nSETUP:\nasync () => {\n" in out and "\nRESULT:\nasync () => await window.__c3Open" in out
+    assert "https://editor.construct.net/" in out
 
     import io
     import zipfile
