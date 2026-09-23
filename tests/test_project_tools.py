@@ -566,6 +566,12 @@ def test_checker_names_what_the_editor_reads_before_it_opens_a_file(project, cha
         assert said in out, out
 
 
+def test_a_sprite_without_its_animations_folder_is_named(project):
+    """The editor reads the folder as it opens the type: "TypeError: expected object"."""
+    out = findings(project, lambda t: t.pop("animations"), "objectTypes/Coin.json")
+    assert "object type Coin: a Sprite carries an animations folder" in out
+
+
 def test_generator_exits_with_the_checkers_findings(project):
     """One command builds and checks, so a finding cannot be skipped by forgetting the second."""
     source = project / "tools" / "build_project.py"
