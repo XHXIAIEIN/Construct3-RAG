@@ -599,7 +599,7 @@ def on_touched(obj: str) -> dict:
 # module, run the generator, read the sheet it printed, then write the next.
 def module_setup() -> dict:
     return module("Setup", events=[
-        event("Deal the coins and show the empty score.",
+        event("Deal the coins and show the empty score",
               [on_start()], [set_text("ScoreText", q("Score: 0"))], children=[
                   block([for_loop("i", "0", "COIN_COUNT - 1")], [
                       create("Coin", "Game", f"random({COIN_SIZE}, LayoutWidth - {COIN_SIZE})",
@@ -612,7 +612,7 @@ def module_setup() -> dict:
 
 def module_input() -> dict:
     return module("Input", events=[
-        event("A touched coin collects itself.", [on_touched("Coin")], [call_custom("Coin", "Collect")]),
+        event("A touched coin collects itself", [on_touched("Coin")], [call_custom("Coin", "Collect")]),
     ])
 
 
@@ -620,11 +620,11 @@ def scoring() -> list:
     """What the groups call: a custom action for what acts on the caller's picked
     instances, a function for a value or for logic that picks its own."""
     return [
-        *procedure("Shrink the coin away and score it.", custom_action("Coin", "Collect", [
+        *procedure("Shrink the coin away and score it", custom_action("Coin", "Collect", [
             tween2("Coin", "collect", "size", "0", "0", "0.25", "easeinback", destroy=True),
             call("AddScore", "Coin.value"),
         ])),
-        *procedure("Add points and show the score.", func("AddScore", [
+        *procedure("Add points and show the score", func("AddScore", [
             add_var("score", "points"),
             set_text("ScoreText", q("Score: ") + " & score"),
         ], params=[param("points", "number", 0)])),
@@ -633,7 +633,7 @@ def scoring() -> list:
 
 def module_restart() -> dict:
     return module("Restart", events=[
-        event("Restart when the last coin is gone.",
+        event("Restart when the last coin is gone",
               [cmp2("Coin.Count", EQ, "0"), trigger_once()], [wait("1"), restart_layout()]),
     ])
 
@@ -643,11 +643,11 @@ def build_event_sheet() -> dict:
     then the groups; a variable one group owns is declared in that module instead."""
     events = [
         comment("Coins. Tap a coin to collect it; when the last one is gone the layout restarts.\n"
-                "The touched coin is the trigger's pick: Collect runs on it and nothing else."),
-        comment("Settings."),
-        var("COIN_COUNT", "number", COIN_COUNT, "Coins dealt at the start.", const=True),
-        comment("Gameplay variables."),
-        var("score", "number", 0, "Points collected this round."),
+                "The touched coin is the trigger's pick: Collect runs on it and nothing else"),
+        comment("Settings"),
+        var("COIN_COUNT", "number", COIN_COUNT, "Coins dealt at the start", const=True),
+        comment("Gameplay variables"),
+        var("score", "number", 0, "Points collected this round"),
         module_setup(),
         module_input(),
         *scoring(),

@@ -139,7 +139,7 @@ are.
   {"event": 2, "add-actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": "\"Time: \" & timeLeft"}}]},
   {"event": 7, "action": 2, "set": {"parameters": {"text": "\"Score: \" & score & \"  Time: \" & timeLeft"}}},
   {"after": 8, "events": [{"eventType": "group", "title": "Timer", "children": [
-    {"eventType": "comment", "text": "Count the time down each second."},
+    {"eventType": "comment", "text": "Count the time down each second"},
     {"eventType": "block",
      "conditions": [{"id": "every-x-seconds", "objectClass": "System", "parameters": {"interval-seconds": "1"}}],
      "actions": [{"id": "subtract-from-eventvar", "objectClass": "System", "parameters": {"variable": "timeLeft", "value": "1"}}]}]}]}

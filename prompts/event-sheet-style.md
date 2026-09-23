@@ -19,44 +19,44 @@ warning.
 | Habit | The examples instead |
 |-------|----------------------|
 | State globals piled at the top of the sheet: `touchSX`, `foodX`, `tailUID`, `nextX` | Only what several groups read is global. State one group owns is that group's first children: a static local for what outlives the tick (`touchStartX` in `Player Controls`), a plain local for what is recomputed each tick. A value one event computes and reads is a local of that event, set in an unconditioned sub-event. What describes an instance is its instance variable (`dir` on the head), not a global. A link to an instance is *Pick children* or a condition, not a stored UID |
-| A block of 20 actions with nothing between them | A comment action every three to five actions, `Clear the board.`, `Create the head.`, `Show the start panel.`, and the block stays one block |
+| A block of 20 actions with nothing between them | A comment action every three to five actions, `Clear the board`, `Create the head`, `Show the start panel`, and the block stays one block |
 | A decision as a tree three sub-events deep, one call per leaf | One gate event with the shared conditions, then the cases as flat sibling sub-events, each with its comment, `Else` with conditions as the else-if; or one expression when the outcomes differ only by a number, `(round(angle(x0, y0, Touch.X, Touch.Y) / 90) % 4 + 4) % 4` |
 | The same event five times over with other values: one per option, per building, per state, `wood < 4`, `wood < 8`, `wood < 12` | One event over what differs: the option's instance variables (`costWood`, `kind`), a family, a Dictionary loaded from a project file, the state's name inside the animation name |
 | `Every tick` beside an event's other conditions: `Every tick`, `Player: Platform is on floor` | The other conditions alone: an event without a trigger is tested every tick already. `Every tick` is an event's one condition, where it reads as "always" |
-| Cases as sub-events with no comment on any of them | A comment above each case, saying which case it is: `Player is on the floor.`, `Otherwise, end the slide.` |
+| Cases as sub-events with no comment on any of them | A comment above each case, saying which case it is: `Player is on the floor`, `Otherwise, end the slide` |
 
 ## The shape
 
-A sheet as `print_sheet.py` prints one. Constants under `Settings.`, shared
-state under `Gameplay variables.`, then one group per subsystem in play
+A sheet as `print_sheet.py` prints one. Constants under `Settings`, shared
+state under `Gameplay variables`, then one group per subsystem in play
 order (`Setup`, `Tutorial`, `Player`, `Enemies`, `Camera`, `HUD`, `Game Over`,
 `Restart`), every event in a group, a comment above every event.
 
 ```
      // Coins. Tap a coin to collect it; when the last one is gone the layout restarts.
-     // Settings.
-     global constant number COIN_COUNT = 6          // Coins dealt at the start.
-     // Gameplay variables.
-     global number score = 0                        // Points collected this round.
+     // Settings
+     global constant number COIN_COUNT = 6          // Coins dealt at the start
+     // Gameplay variables
+     global number score = 0                        // Points collected this round
    1 group Setup
-       // Deal the coins and show the empty score.
+       // Deal the coins and show the empty score
    2   System: On start of layout
            -> ScoreText: Set text to "Score: 0"
-           -> // Deal the coins.
+           -> // Deal the coins
            -> ...
    3 group Player
-       static number touchStartX = 0                // Where the swipe began.
-       // Only while the player can act.
+       static number touchStartX = 0                // Where the swipe began
+       // Only while the player can act
    4   Player: NOT Is dead
        System: Is tutorial (inverted)
-         // Jump.
+         // Jump
    5     Keyboard: On Space pressed
              -> Player: Jump()
-         // Dash.
+         // Dash
    6     Keyboard: On Right pressed
              -> Player: Dash()
-       // Shrink the coin away and score it.
-   7   Coin: Collect()             (custom action, description "Shrink the coin away and score it.")
+       // Shrink the coin away and score it
+   7   Coin: Collect()             (custom action, description "Shrink the coin away and score it")
 ```
 
 Inside a group: its variables, then its functions and custom actions, then
@@ -69,23 +69,25 @@ almost every event in the examples.
 The examples' 10,500 comments are one sentence of eight words at the
 median, eighteen at the ninetieth percentile; one in forty has a second
 sentence. A comment names the things of the game (the player, the wall, the
-trail), never the ACE: `Turn the player left.`, not `Set angle to Self.Angle
-- 90`. Written in the user's language.
+trail), never the ACE: `Turn the player left`, not `Set angle to Self.Angle
+- 90`. Written in the user's language. No period at the end, where the
+examples put one: a second sentence keeps the period between the two, and a
+variable's comment and a function's description end the same way.
 
 | Above | Frame | From the examples |
 |-------|-------|-------------------|
-| An event that does something | Imperative verb, object, then the qualifier that makes it exact: `but only if`, `while`, `based on`, `by` when the mechanism is not obvious | `Move the player forward, but only if there's no wall in front of it.` `Update the sky texture offset while the "Offset" tag is being played.` `Turn the player left by changing its angle.` |
-| A branch | The case as a statement, or `If ..., ...` | `Player is on the floor.` `Car arrived at waypoint.` `If the random number is lower or equal to the flower spawn rate, turn the decoration object into a flower.` |
-| An `Else` | `Otherwise, ...` or `However, if ...` naming the remaining case | `Otherwise, end the slide.` `However, if the trail is not the most recent one, it's also a crash.` |
-| An event whose reason is not obvious | The reason as a clause of the same sentence: `so the`, `to prevent`, `to make sure`, `since`, `to avoid` | `Once the player is done turning, round its angle to avoid undesired floating values like "89.99999999999999".` `Move the foam on top of the water to prevent Z fighting.` |
-| A one-shot or a per-tick event | `Once ...` or `Constantly ...` first | `Once the player is done moving, round its position.` `Constantly update the pixellate effect, so it matches the canvas resolution.` |
-| A variable | What it holds, in game terms, with its unit or range; a boolean as `Whether ...` or a question | `How long it takes for the player to turn.` `How fast the player falls.` `Ranges from 0 to 1 and increases with time.` `Whether or not the screen was touched at least one time.` |
-| A batch inside a long block (a comment action) | The step's verb; `Also ...` for a step that belongs with the one before | `Store the player's previous Z elevation.` `Display a victory text.` `Also disable the blur mask.` |
-| A section of globals or of inputs | A noun with a period | `Settings.` `Gameplay variables.` `Keyboard inputs.` |
-| The sheet | One line on what it covers | `This is the main gameplay event sheet. Each game component has a dedicated event sheet.` |
+| An event that does something | Imperative verb, object, then the qualifier that makes it exact: `but only if`, `while`, `based on`, `by` when the mechanism is not obvious | `Move the player forward, but only if there's no wall in front of it` `Update the sky texture offset while the "Offset" tag is being played` `Turn the player left by changing its angle` |
+| A branch | The case as a statement, or `If ..., ...` | `Player is on the floor` `Car arrived at waypoint` `If the random number is lower or equal to the flower spawn rate, turn the decoration object into a flower` |
+| An `Else` | `Otherwise, ...` or `However, if ...` naming the remaining case | `Otherwise, end the slide` `However, if the trail is not the most recent one, it's also a crash` |
+| An event whose reason is not obvious | The reason as a clause of the same sentence: `so the`, `to prevent`, `to make sure`, `since`, `to avoid` | `Once the player is done turning, round its angle to avoid undesired floating values like "89.99999999999999"` `Move the foam on top of the water to prevent Z fighting` |
+| A one-shot or a per-tick event | `Once ...` or `Constantly ...` first | `Once the player is done moving, round its position` `Constantly update the pixellate effect, so it matches the canvas resolution` |
+| A variable | What it holds, in game terms, with its unit or range; a boolean as `Whether ...` or a question | `How long it takes for the player to turn` `How fast the player falls` `Ranges from 0 to 1 and increases with time` `Whether or not the screen was touched at least one time` |
+| A batch inside a long block (a comment action) | The step's verb; `Also ...` for a step that belongs with the one before | `Store the player's previous Z elevation` `Display a victory text` `Also disable the blur mask` |
+| A section of globals or of inputs | A noun | `Settings` `Gameplay variables` `Keyboard inputs` |
+| The sheet | One line on what it covers | `This is the main gameplay event sheet. Each game component has a dedicated event sheet` |
 
 The same sentence is the description of a function or custom action. The
-examples never write the ACE restated (`Set score to 0.`), a `TODO`, a
+examples never write the ACE restated (`Set score to 0`), a `TODO`, a
 change history, or how the author got there; no `#`, colours or BBCode.
 
 ## Names

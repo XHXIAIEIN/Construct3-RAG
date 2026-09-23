@@ -700,7 +700,7 @@ def test_outline_numbers_events_as_the_editor_does(built):
     rows = [line.split("[sid")[0].rstrip() for line in out.splitlines()]
     assert code == 0
     assert rows[:4] == ["== Game", "   (1) // Coins. Tap a coin to collect it; when the last one is gone the layout restarts.",
-                        "   (1) // Settings.", "   (1) number COIN_COUNT = 6"]
+                        "   (1) // Settings", "   (1) number COIN_COUNT = 6"]
     assert "   1 group Setup" in rows and "   2   System:on-start-of-layout" in rows
 
 
@@ -745,7 +745,7 @@ def test_print_of_a_part_starts_with_the_events_it_sits_in(built):
     code, out = tool(built, "print_sheet", "Game", "--events", "9")
     assert code == 0
     assert out.splitlines()[:4] == ["== Game: events 9-9 of 9; a [context] row is an event these sit in, without its actions",
-                                    "   8 group Restart  [context]", "       // Restart when the last coin is gone.",
+                                    "   8 group Restart  [context]", "       // Restart when the last coin is gone",
                                     "   9   System: Coin.Count = 0"]
     assert "Touch: On touched" not in out
 
@@ -1074,10 +1074,10 @@ def test_an_event_that_is_gone_names_the_operation_that_took_it(project, operati
 
 
 def test_before_an_event_is_above_the_comments_about_it(project):
-    assert plan(project, {"before": 9, "events": [{"eventType": "comment", "text": "All coins gone."}]})[0] == 0
+    assert plan(project, {"before": 9, "events": [{"eventType": "comment", "text": "All coins gone"}]})[0] == 0
     code, out = plan(project, {"before": 9, "events": [{"eventType": "block", "conditions": [], "actions": []}]})
     assert code == 0, out
-    assert ("   9   (every tick)\n       // All coins gone.\n       // Restart when the last coin is gone.\n"
+    assert ("   9   (every tick)\n       // All coins gone\n       // Restart when the last coin is gone\n"
             "  10   System: Coin.Count = 0") in printed(project)
 
 
