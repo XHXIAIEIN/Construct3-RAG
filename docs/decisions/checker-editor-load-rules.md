@@ -386,21 +386,24 @@ A passing check now ends its `ok:` line with the command:
 python .agents/skills/construct3-project/scripts/open_in_editor.py`. The
 path is the one that runs from the current directory, with `--project`
 only where the opener would find another project. The line still starts
-with `ok:`. `edit_sheet.py` ends a plan with the same line, and a dry run
-without the command, since nothing was written.
+with `ok:`. The generator runs the checker, so it prints the same line.
+`edit_sheet.py` ends a plan with the plain `ok:`: a plan is one step of the
+work, and a line printed after every step is read as routine.
 
-Measured against the commit before (`iteration-22`, Haiku, three runs per
-arm, every assertion passing in both):
+Measured on Haiku, every assertion passing in every arm. `iteration-22`
+against the commit before, three runs per arm, with the command after every
+plan as well:
 
 | Case | Opened, with the line | Opened, without |
 |------|-----------------------|-----------------|
 | `lay-out-the-hud`, generator | 3 of 3 | 0 of 3 |
 | `add-countdown`, plans | 1 of 3 | 1 of 3 |
 
-The generator prints the line once, as the last thing it does. A hand edit
-prints it after every plan, three to six times a run, while the work goes
-on, and the two runs that skipped the open had read it after their final
-check as well. The difference fits a line that is new once and routine by
-the fourth time, but three runs cannot tell that from chance. Open:
-whether `edit_sheet.py` should leave the command to the check that closes
-the work, measured on `add-countdown`.
+The generator prints the line once, as the last thing it does. The plans
+printed it three to six times a run, while the work went on, and the two
+runs that skipped the open had read it after their final check as well.
+`iteration-23` took the command out of the plans' line, four runs per arm
+of `add-countdown`: opened 3 of 4, against 2 of 4 with the command after
+every plan. Every run ran `check_project.py`. The one that did not open ran
+it between two plans and ended on a plan, whose line no longer names the
+open; `SKILL.md` counts a plan's `ok:` as the check.

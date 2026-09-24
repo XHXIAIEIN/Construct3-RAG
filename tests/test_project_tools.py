@@ -965,7 +965,7 @@ def test_plan_puts_events_in_by_the_numbers_the_sheet_has_now(project):
                      {"after": 8, "events": [{"eventType": "comment", "text": "Countdown."}, TIMER]})
     assert code == 0, out
     assert out.splitlines()[0] == "Game: 4 operations, 9 events before and 12 now, 8 new sids"
-    assert out.splitlines()[-1].startswith("ok:")
+    assert out.splitlines()[-1].startswith("ok:") and "open_in_editor" not in out     # the closing check names it
     sheet = printed(project)
     assert "     global number score = 0\n     global number timeLeft = 30\n   1 group Setup" in sheet
     assert '-> ScoreText: Set text to "Score: 0"\n           -> ScoreText: Set text to "Time: " & timeLeft' in sheet

@@ -1224,7 +1224,8 @@ class Checker:
 
     def ok_line(self, then_open: bool = True) -> str:
         """An agent takes the last line of a passing check for the end of the
-        work, so the line names the step after it (edit_sheet.py's dry run has none)."""
+        work, so the line names the step after it. edit_sheet.py prints it without:
+        a plan is one step of the work, not its end."""
         p = self.p
         line = (f"ok: {len(p.types)} object types, {len(p.families)} families, {len(self.layouts)} layouts, "
                 f"{len(self.sheets)} sheets, {len(self.sids) + len(self.ace_sids)} sids, {len(self.uids)} uids, "
