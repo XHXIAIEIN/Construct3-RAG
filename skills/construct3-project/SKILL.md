@@ -1,7 +1,7 @@
 ---
 name: construct3-project
 description: Check, read, look up and generate the JSON of a Construct 3 folder project (project.c3proj, eventSheets, layouts, objectTypes, families) against the Construct3-RAG schemas and the rules the Construct 3 editor applies when it opens a project. Use this skill whenever you write or edit an event sheet or any other project file of a Construct 3 game, need the exact id, parameters and JSON of a condition, action or expression, want to read an event sheet or an official example as events instead of JSON, generate a whole project from a script, or the editor refuses to open or preview a project, even if the user only says "add a mechanic", "fix this event" or pastes an editor error.
-compatibility: Requires Python 3.10+ and a local clone of Construct3-RAG, whose data/c3-schemas the scripts read. Pillow is optional and only compares image sizes. Opening the project in the editor takes a network connection and either Playwright or a browser tool of the agent.
+compatibility: Requires Python 3.10+ and a local clone of Construct3-RAG, whose data/c3-schemas the scripts read. Pillow is optional and only compares image sizes. Opening the project in the editor takes a network connection and Edge, Chrome or Chromium, or a browser tool of the agent.
 metadata:
   source: https://github.com/XHXIAIEIN/Construct3-RAG
 ---
@@ -47,7 +47,7 @@ opened once before it is handed over.
 | `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only, `--show N` for one event as JSON |
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed; checked before anything is written |
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds six readability warnings from the official examples' style, for a project the agent wrote |
-| `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. Where Python has no Playwright, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
+| `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
 
@@ -203,9 +203,9 @@ not held to this. `--dry-run` does all of that and writes nothing.
    the hand-over. `failed` prints the editor's dialog, which names the
    place as `Game, event 12, condition 1`, event 12 of sheet Game as
    `print_sheet.py` numbers it: fix it as a finding and go back to step 2.
-   Exit code 3: the script did not open it itself and printed the steps for
-   a browser tool of this session instead, one that opens a page, runs
-   JavaScript and puts a file on a file input. Follow them with the tool at
+   Exit code 3: the machine has no Edge, Chrome or Chromium, and the script
+   printed the steps for a browser tool of this session instead, one that
+   opens a page, runs JavaScript and puts a file on a file input. Follow them with the tool at
    hand; the dialog reads the same. With no such tool, ask the user to open
    the project folder in Construct 3 and paste the text of the dialog it
    shows.

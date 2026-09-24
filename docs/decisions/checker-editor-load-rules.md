@@ -266,62 +266,69 @@ and the check loop of `SKILL.md` gained a step: after `ok:`, run
 editor's dialog and the exception it logged. `generating-a-project.md` and
 `hand-editing-project-files.md` carry the same step.
 
-The check does not require Playwright. Agents come with different browser
-tools (Chrome DevTools, Playwright or Claude in Chrome as MCP servers, an
-editor's built-in browser), and the Python package is on no machine by
-default. So the page side is two JavaScript functions, and the script is
-one way of running them.
+The check asks nothing of the agent but running the script, and no package
+of it. Agents come with different browser tools (Chrome DevTools,
+Playwright or Claude in Chrome as MCP servers, an editor's built-in
+browser) or none, and a Python package such as Playwright is on no machine
+by default; Edge is on every Windows machine, and Chrome on most others. So
+the script starts that browser headless and drives it over the DevTools
+protocol with the standard library: a WebSocket client of some sixty lines,
+`Runtime.evaluate` for the two page functions below, `DOM.setFileInputFiles`
+for the file. Nothing in it reads the screen: the answer is the page's own
+title, dialogs and logged errors.
 
-With a browser tool, every call is a round trip through the model, and
-every character of a function is written by it. The editor itself is
-quick: its menu is there about 3 seconds after the page loads, and it
-answers about 4 seconds after the drop, with an occasional start of 10
-seconds or more that is the editor's own. What the agent waits on is its
-own calls, so the design keeps them few and keeps the one written before
-the import short:
+Measured per phase, the editor is quick: its menu is there about 3 seconds
+after the page loads, and it answers about 4 seconds after the drop. What
+costs is the rest. Through an agent's browser tool, every call is a round
+trip through the model: in one run through Chrome DevTools MCP, the page
+had loaded after 2 seconds, SETUP started after 12.7, the file was put on
+the input at 18.9 and the answer came at 23.8, about 4 seconds of it the
+editor's and the rest the model's. Through the script, the editor's
+scripts, some megabytes, are the cost: a page in a profile that has
+cached them opens a project in about 4 seconds, script and browser start
+included, and a page without that cache takes 10 to 40. A context of its
+own per page has no disk cache, so each page is in the default context of
+a profile the script keeps in `.tmp/editor-browser` of the (first)
+project, about 80 MB. Three projects in parallel tabs of it took 9
+seconds.
 
 - `SETUP_JS` keeps what the editor logs with `console.error`, puts a file
   input labelled "Project to open" first in the page, and closes the
   dialogs the editor shows on start, by their close or OK button in any
   language, until a file is put on the input. A modal dialog hides the rest
-  of the page from a snapshot, and the update offers, the editor's generic
-  Confirm dialog with a localised **Not now**, come a few seconds after the
-  menu. It returns `ready` once the menu is there and no dialog is open.
-  The file is dropped when no dialog has been open for a second: a drop
-  while the welcome dialog closes is ignored. The editor's own **Open file**
-  button uses a file picker that no upload action fills (Chrome DevTools
-  MCP: "clicking it did not trigger a file chooser"), hence the input.
-  Putting a file on an input is what every upload action does, so no
-  fetch, route or local server is needed, and the file never leaves the
-  browser.
+  of the page from an accessibility snapshot, and the update offers, the
+  editor's generic Confirm dialog with a localised **Not now**, come a few
+  seconds after the menu. It returns `ready` once the menu is there and no
+  dialog is open. The file is dropped when no dialog has been open for a
+  second: a drop while the welcome dialog closes is ignored. The editor's
+  own **Open file** button uses a file picker that no upload action fills
+  (Chrome DevTools MCP: "clicking it did not trigger a file chooser"),
+  hence the input. Putting a file on an input is what every upload action
+  does, so no fetch, route or local server is needed, and the file never
+  leaves the browser.
 - `RESULT_JS` waits for the drop, then for the answer: `opened`, the
   title, the open dialogs and the logged exceptions. An upload action
   accepts a path that does not exist and hands the page a file of no
   bytes, which the editor calls an invalid `.c3p`; RESULT says the path
   does not exist instead.
-- The printed steps take three rounds: open the page; SETUP and a
-  snapshot in one message; the upload and RESULT in one message. RESULT
-  waits for the file, so a harness that runs the last two at once still
-  gets the answer.
-- Where Python has Playwright, the script runs both in Playwright's
-  Chromium, else Edge, else Chrome, three projects in about 10 seconds.
-  Where it has not, or with `--steps`, it writes the project to
-  `.tmp/open-in-editor.c3p` in the project folder, with a `.gitignore` of
-  `*` beside it, prints the steps and the two functions, and exits 3.
-  `pack` leaves `.tmp/` out.
+- With no Edge, Chrome or Chromium, or with `--steps`, the script writes
+  the project to `.tmp/open-in-editor.c3p`, with a `.gitignore` of `*`
+  beside it, prints the two functions in three rounds of tool calls (open
+  the page; SETUP and a snapshot; the upload and RESULT), and exits 3.
+  RESULT waits for the file, so a harness that runs the last two at once
+  still gets the answer. `pack` leaves `.tmp/` out.
 
 Verified on copies of `data/c3-new-project`: unchanged, it opens; with the
 case above, the checker ends with `ok:` and the editor reports `Event sheet
 1, event 2, condition 1`, the number `print_sheet.py` gives the same event;
 with an empty `properties` block, `Failed to open project` and the logged
-`TypeError: expected string`. All three through the script in r495.2, and
-through Chrome DevTools MCP following the printed steps in isolated
-contexts of a Chrome whose editor runs in Chinese, as is a path that does
-not exist; the dialog comes back in Chinese with the place in English,
-`Event sheet 1, event 2, condition 1`. One such run, from the printed steps
-to the answer, took 24 seconds. The unchanged copy also opens in the r502
-beta with `--release r502`. Playwright MCP and Claude in Chrome were not
-reachable from the session and are not tested.
+`TypeError: expected string`. All three through the script with Edge and
+with Chrome, and through Chrome DevTools MCP following the printed steps in
+isolated contexts of a Chrome whose editor runs in Chinese, as is a path
+that does not exist; the dialog comes back in Chinese with the place in
+English, `Event sheet 1, event 2, condition 1`. The unchanged copy also
+opens in the r502 beta with `--release r502`. Playwright MCP and Claude in
+Chrome were not reachable from the session and are not tested.
 
 The checker stays offline and first: it names every finding at once, the
 editor one dialog at a time.

@@ -1,8 +1,8 @@
 """Open a project in the Construct 3 editor and print whether it opens, or the
 editor's message when it does not.
 
-    python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--steps] [--release rNNN]
-                                     [--shots DIR] [--out RESULTS.json] [--jobs 2] [--headed]
+    python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--release rNNN] [--browser EXE]
+                                     [--steps] [--shots DIR] [--out RESULTS.json] [--jobs 2] [--headed]
 
 Run it when check_project.py ends with ok:. The checker reads the files; the
 editor also reads the events, and refuses a project for what the checker does
@@ -12,12 +12,15 @@ title turns to the project's name, or a dialog says why it did not open, with
 the exception the editor logged. The file is handed to the page in the
 browser, not uploaded to a server.
 
-Where Python has Playwright (pip install playwright), the script does it all
-in a browser of its own: Playwright's Chromium, else Microsoft Edge, else
-Google Chrome. Where it has not, or with --steps, it writes the project as
-.tmp/open-in-editor.c3p in the project folder and prints the same steps for
-whatever browser tool the agent has: one that opens a page, runs JavaScript
-in it and puts a file on a file input. A project takes about 10 seconds.
+It starts the Microsoft Edge, Google Chrome or Chromium the machine has,
+headless, with a profile of its own in .tmp/editor-<browser>, and drives it
+over the DevTools protocol with Python's standard library: no package to
+install and nothing asked of the agent. The first run fills the profile's
+cache, about 80 MB, in 20 to 40 seconds; each later one takes about 4. With
+no such browser, or with --steps, it writes the project as
+.tmp/open-in-editor.c3p in the project folder and prints the same check as
+steps for a browser tool of the agent: one that opens a page, runs
+JavaScript in it and puts a file on a file input.
 
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
@@ -26,20 +29,28 @@ above them: every project.c3proj below it is opened.
 from __future__ import annotations
 
 import argparse
-import asyncio
+import base64
 import io
 import json
+import os
+import shutil
+import socket
+import subprocess
 import sys
+import threading
 import time
+import urllib.parse
+import urllib.request
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import c3project as c3
 
 EPILOG = """examples:
   python scripts/open_in_editor.py
-  python scripts/open_in_editor.py --steps
   python scripts/open_in_editor.py --project "D:/Games/Snake" --release r502
+  python scripts/open_in_editor.py --steps
   python scripts/open_in_editor.py <eval iteration folder> --jobs 3 --out opened.json
 
 output, one entry per project:
@@ -49,15 +60,14 @@ output, one entry per project:
     exception: <the first line of the exception the editor logged>
 
 exit codes: 0 every project opened; 1 at least one did not; 2 no project
-found, or the editor did not load; 3 the steps for a browser tool were printed
-instead, the project is not opened yet
+found, or the editor did not load; 3 no browser here, or --steps: the steps
+for a browser tool were printed instead, the project is not opened yet
 """
 
 EDITOR = "https://editor.construct.net/"
-# Playwright's own build first, then a browser a Windows or Mac machine already has.
-CHANNELS = (None, "msedge", "chrome")
 # Inside the project, where check_project.py does not look and the editor does not write.
 SCRATCH = ".tmp"
+TIMEOUT = 200   # seconds a DevTools call may take: SETUP and RESULT wait inside the page
 
 # The page side, the same for the script and for an agent's browser tool. With a
 # tool, every call is a round trip through the model and every character of a
@@ -118,10 +128,6 @@ NEXT = ("next: the editor's message names the place, `Game, event 12, condition 
 
 
 class EditorNotLoaded(Exception):
-    pass
-
-
-class NoBrowser(Exception):
     pass
 
 
@@ -186,29 +192,193 @@ RESULT:
 {RESULT_JS}"""
 
 
-async def open_one(browser, editor: str, project: Path, shot: Path | None) -> dict:
-    body = pack(project)
-    # A new context is a new profile: the editor starts with its welcome dialog and no open project.
-    ctx = await browser.new_context(viewport={"width": 1400, "height": 900})
-    try:
-        page = await ctx.new_page()
+class DevToolsError(Exception):
+    pass
+
+
+def browser_path() -> str | None:
+    """The Edge, Chrome or Chromium of this machine, where their installers put them."""
+    places: list[Path] = []
+    if sys.platform == "win32":
+        for base in ("PROGRAMFILES(X86)", "PROGRAMFILES", "LOCALAPPDATA"):
+            if os.environ.get(base):
+                places += [Path(os.environ[base], "Microsoft/Edge/Application/msedge.exe"),
+                           Path(os.environ[base], "Google/Chrome/Application/chrome.exe")]
+    elif sys.platform == "darwin":
+        places += [Path("/Applications", app, "Contents/MacOS", name) for app, name in (
+            ("Google Chrome.app", "Google Chrome"), ("Microsoft Edge.app", "Microsoft Edge"),
+            ("Chromium.app", "Chromium"))]
+    for place in places:
+        if place.is_file():
+            return str(place)
+    names = ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser", "microsoft-edge", "chrome")
+    return next(filter(None, map(shutil.which, names)), None)
+
+
+class WebSocket:
+    """The client end of RFC 6455, as much as the DevTools protocol needs: text
+    frames out, masked, and whole messages in."""
+
+    def __init__(self, url: str) -> None:
+        u = urllib.parse.urlsplit(url)
+        self.sock = socket.create_connection((u.hostname, u.port), timeout=TIMEOUT)
+        key = base64.b64encode(os.urandom(16)).decode()
+        self.sock.sendall((f"GET {u.path} HTTP/1.1\r\nHost: {u.hostname}:{u.port}\r\nUpgrade: websocket\r\n"
+                           f"Connection: Upgrade\r\nSec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\n\r\n"
+                           ).encode())
+        self.buf = b""
+        while b"\r\n\r\n" not in self.buf:
+            self.buf += self._recv()
+        status, self.buf = self.buf.split(b"\r\n\r\n", 1)
+        if b" 101 " not in status.split(b"\r\n")[0]:
+            raise DevToolsError(status.split(b"\r\n")[0].decode(errors="replace"))
+
+    def _recv(self) -> bytes:
+        chunk = self.sock.recv(65536)
+        if not chunk:
+            raise DevToolsError("the browser closed the connection")
+        return chunk
+
+    def _read(self, n: int) -> bytes:
+        while len(self.buf) < n:
+            self.buf += self._recv()
+        data, self.buf = self.buf[:n], self.buf[n:]
+        return data
+
+    def send(self, text: str) -> None:
+        data, mask = text.encode(), os.urandom(4)
+        n = len(data)
+        size = bytes([0x80 | n]) if n < 126 else bytes([0xFE]) + n.to_bytes(2, "big") if n < 65536 \
+            else bytes([0xFF]) + n.to_bytes(8, "big")
+        self.sock.sendall(b"\x81" + size + mask + bytes(b ^ mask[i % 4] for i, b in enumerate(data)))
+
+    def receive(self) -> str:
+        parts = []
+        while True:
+            b0, b1 = self._read(2)
+            n = b1 & 0x7F
+            if n > 125:
+                n = int.from_bytes(self._read(2 if n == 126 else 8), "big")
+            data = self._read(n)
+            if b0 & 0x0F == 0x8:
+                raise DevToolsError("the browser closed the connection")
+            if b0 & 0x0F in (0x0, 0x1, 0x2):
+                parts.append(data)
+                if b0 & 0x80:
+                    return b"".join(parts).decode()
+
+    def close(self) -> None:
+        self.sock.close()
+
+
+class DevTools:
+    """One DevTools connection, to the browser or to a page. Calls wait for their
+    own answer; the events a page sends meanwhile are skipped."""
+
+    def __init__(self, url: str) -> None:
+        self.ws, self.last, self.lock = WebSocket(url), 0, threading.Lock()
+
+    def call(self, method: str, **params) -> dict:
+        with self.lock:
+            self.last += 1
+            self.ws.send(json.dumps({"id": self.last, "method": method, "params": params}))
+            while True:
+                message = json.loads(self.ws.receive())
+                if message.get("id") == self.last:
+                    if "error" in message:
+                        raise DevToolsError(f"{method}: {message['error'].get('message')}")
+                    return message["result"]
+
+    def evaluate(self, expression: str, by_value: bool = True):
+        r = self.call("Runtime.evaluate", expression=expression, awaitPromise=True, returnByValue=by_value)
+        if "exceptionDetails" in r:
+            d = r["exceptionDetails"]
+            raise DevToolsError(d.get("exception", {}).get("description") or d.get("text", "exception"))
+        return r["result"].get("value") if by_value else r["result"]
+
+
+class Browser:
+    """The machine's browser with a profile of its own and a DevTools port the
+    system picks, written by the browser to DevToolsActivePort in the profile.
+
+    The profile is kept between runs. The editor is some megabytes of scripts,
+    and a page in the profile reads them from its disk cache: a run then takes
+    about 4 seconds against 20 to 40 from a cold profile, and a context of its
+    own per page, which has no disk cache, is cold every time."""
+
+    def __init__(self, exe: str, profile: Path, headed: bool) -> None:
+        self.profile = profile
+        profile.mkdir(parents=True, exist_ok=True)
+        (profile / "DevToolsActivePort").unlink(missing_ok=True)   # a port file left from an earlier run
+        args = [exe, f"--user-data-dir={profile}", "--remote-debugging-port=0", "--no-first-run",
+                "--no-default-browser-check", "--window-size=1400,900", "about:blank"]
+        self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"],
+                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        port_file = profile / "DevToolsActivePort"
+        for _ in range(150):
+            if port_file.is_file() and port_file.read_text().strip():
+                break
+            if self.proc.poll() is not None:
+                raise DevToolsError(f"{exe} exited with code {self.proc.returncode}")
+            time.sleep(0.2)
+        else:
+            self.close()
+            raise DevToolsError(f"{exe} opened no DevTools port in 30 seconds")
+        self.port = int(port_file.read_text().split()[0])
+        with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/json/version", timeout=10) as r:
+            self.devtools = DevTools(json.load(r)["webSocketDebuggerUrl"])
+
+    def page(self, url: str) -> tuple[str, DevTools]:
+        target = self.devtools.call("Target.createTarget", url=url)["targetId"]
+        return target, DevTools(f"ws://127.0.0.1:{self.port}/devtools/page/{target}")
+
+    def close(self) -> None:
+        self.proc.terminate()
         try:
-            response = await page.goto(editor, wait_until="load", timeout=120_000)
-        except Exception as e:  # Playwright raises its own TimeoutError and network errors alike
-            raise EditorNotLoaded(str(e).splitlines()[0]) from e
-        if response and response.status >= 400:
-            raise EditorNotLoaded(f"{editor} answered HTTP {response.status}")
-        ready = await page.evaluate(SETUP_JS)
+            self.proc.wait(10)
+        except subprocess.TimeoutExpired:
+            self.proc.kill()
+
+
+def load(page: DevTools, editor: str) -> None:
+    """Until the editor's page has loaded. A new page starts as about:blank, whose
+    readyState is complete too, and its context goes away as the editor loads."""
+    where = ["", "", 0]
+    for _ in range(300):
+        try:
+            where = page.evaluate("[location.href, document.readyState, "
+                                  "performance.getEntriesByType('navigation')[0]?.responseStatus || 0]")
+        except DevToolsError:
+            pass
+        if where[0].startswith("chrome-error:"):
+            raise EditorNotLoaded(f"{editor} could not be reached")
+        if where[0].startswith(editor) and where[1] == "complete":
+            break
+        time.sleep(0.2)
+    else:
+        raise EditorNotLoaded(f"{editor} did not finish loading in 60 seconds")
+    if where[2] >= 400:
+        raise EditorNotLoaded(f"{editor} answered HTTP {where[2]}")
+
+
+def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: Path | None) -> dict:
+    staged.write_bytes(pack(project))
+    target, page = browser.page(editor)
+    try:
+        load(page, editor)
+        ready = page.evaluate(f"({SETUP_JS})()")
         if ready != "ready":
             raise EditorNotLoaded(ready)
         started = time.monotonic()
-        await page.get_by_label("Project to open").set_input_files(
-            files=[{"name": "project.c3p", "mimeType": "application/zip", "buffer": body}])
-        result = await page.evaluate(RESULT_JS)
+        field = page.evaluate("document.querySelector('input[aria-label=\"Project to open\"]')", by_value=False)
+        page.call("DOM.setFileInputFiles", files=[str(staged)], objectId=field["objectId"])
+        result = page.evaluate(f"({RESULT_JS})()")
         if shot:
-            await page.screenshot(path=str(shot))
+            shot.write_bytes(base64.b64decode(page.call("Page.captureScreenshot")["data"]))
     finally:
-        await ctx.close()
+        page.ws.close()
+        browser.devtools.call("Target.closeTarget", targetId=target)
+        staged.unlink(missing_ok=True)
 
     if isinstance(result, str):
         result = {"opened": False, "title": "", "dialogs": [], "errors": [result]}
@@ -230,42 +400,33 @@ def report(result: dict) -> list[str]:
     return lines
 
 
-async def launch(p, headless: bool):
-    missing = []
-    for channel in CHANNELS:
-        try:
-            return await p.chromium.launch(headless=headless, channel=channel)
-        except Exception as e:  # Playwright raises a plain Error for a missing executable
-            missing.append(f"{channel or 'chromium'}: {str(e).splitlines()[0]}")
-    raise NoBrowser("; ".join(missing))
-
-
-async def run(projects: list[Path], editor: str, args) -> list[dict]:
-    from playwright.async_api import async_playwright
-
+def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
+    first = projects[0] if projects[0].is_dir() else projects[0].parent
+    # One profile per browser: Chrome does not load a profile Edge has written.
+    browser = Browser(exe, first / SCRATCH / f"editor-{Path(exe).stem.lower()}", args.headed)
     results: list[dict] = []
     printed = 0     # characters; results are printed as they come, until --limit
-    gate = asyncio.Semaphore(args.jobs)
-    async with async_playwright() as p:
-        browser = await launch(p, headless=not args.headed)
+    lock = threading.Lock()
 
-        async def one(i: int, project: Path) -> None:
-            nonlocal printed
-            async with gate:
-                shot = args.shots / f"{i:03d}-{project.name}.png" if args.shots else None
-                result = await open_one(browser, editor, project, shot)
-                results.append(result)
-                text = "\n".join(report(result))
-                if not args.limit or printed + len(text) <= args.limit:
-                    print(text, flush=True)
-                    printed += len(text) + 1
-                else:
-                    result["unprinted"] = True
+    def one(i: int, project: Path) -> None:
+        nonlocal printed
+        shot = args.shots / f"{i:03d}-{project.name}.png" if args.shots else None
+        result = open_one(browser, editor, project, browser.profile / f"project-{i}.c3p", shot)
+        with lock:
+            results.append(result)
+            text = "\n".join(report(result))
+            if not args.limit or printed + len(text) <= args.limit:
+                print(text, flush=True)
+                printed += len(text) + 1
+            else:
+                result["unprinted"] = True
 
-        try:
-            await asyncio.gather(*(one(i, pr) for i, pr in enumerate(projects)))
-        finally:
-            await browser.close()
+    try:
+        with ThreadPoolExecutor(max(1, args.jobs)) as pool:
+            for future in [pool.submit(one, i, pr) for i, pr in enumerate(projects)]:
+                future.result()
+    finally:
+        browser.close()
     return sorted(results, key=lambda r: r["project"])
 
 
@@ -279,6 +440,8 @@ def main() -> int:
                     help="the folder that holds project.c3proj (default: found from the current directory upward)")
     ap.add_argument("--steps", action="store_true",
                     help="print the steps for a browser tool of the agent's instead of opening the project here")
+    ap.add_argument("--browser", metavar="EXE",
+                    help="the Chromium-based browser to start (default: Edge, Chrome or Chromium where installed)")
     ap.add_argument("--release", metavar="rNNN",
                     help="open in this release of the editor, as its URL spells it: r502, r495-2 "
                          "(default: the current stable release, the one the user gets)")
@@ -304,12 +467,8 @@ def main() -> int:
     editor = f"{EDITOR}{args.release.strip('/')}/" if args.release else EDITOR
 
     # A browser tool opens one project at a time, as the agent's own step.
-    why = "not opened here (--steps)" if args.steps else None
-    if not why:
-        try:
-            import playwright  # noqa: F401
-        except ImportError:
-            why = "Python has no Playwright here"
+    exe = args.browser or browser_path()
+    why = "not opened here (--steps)" if args.steps else None if exe else "no Edge, Chrome or Chromium found here"
     if why and len(projects) > 1:
         print(f"{why}, and {len(projects)} projects were found; name one with --project", file=sys.stderr)
         return 2
@@ -320,18 +479,15 @@ def main() -> int:
     if args.shots:
         args.shots.mkdir(parents=True, exist_ok=True)
     try:
-        results = asyncio.run(run(projects, editor, args))
-    except NoBrowser as e:
-        if len(projects) == 1:
-            print(steps(projects[0], editor, f"Playwright found no browser to start ({e})"))
-            return 3
-        print(f"Playwright found no browser to start ({e}); python -m playwright install chromium installs one",
-              file=sys.stderr)
-        return 2
+        results = run(projects, editor, exe, args)
     except EditorNotLoaded as e:
-        print(f"the editor did not load from {editor}: {e}. Check the network connection and --release, and "
-              f"run again; without a connection, ask the user to open the project in Construct 3 and paste the "
-              f"text of the dialog it shows.", file=sys.stderr)
+        print(f"the editor did not load: {e}. Check the network connection and --release, and run again; "
+              f"without a connection, ask the user to open the project in Construct 3 and paste the text of the "
+              f"dialog it shows.", file=sys.stderr)
+        return 2
+    except (DevToolsError, OSError) as e:
+        print(f"{exe} could not be driven: {e}. Pass another browser with --browser, or --steps to open the "
+              f"project with a browser tool of this session.", file=sys.stderr)
         return 2
     unprinted = sum(1 for r in results if r.pop("unprinted", False))
     if args.out:
