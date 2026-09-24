@@ -416,7 +416,10 @@ difference is not the one the step aimed at: five of the six runs of the
 previous `SKILL.md` ended on the checker as well, and two of its three that
 did not open had read the command as their checker's last line. What the new
 step adds may be its second half, the pointer to that line. Six runs per arm
-do not separate 5 of 6 from 3 of 6.
+do not separate 5 of 6 from 3 of 6, and the next batch shows it:
+`iteration-25` ran this `SKILL.md` in both arms, twelve runs, and 2 of them
+opened the project. How often a run opens it swings more between batches
+than between the versions measured here.
 
 Opening the project does not check what the task asked for. In three runs
 of `iteration-24`, one of them the previous `SKILL.md`'s, one of the two
