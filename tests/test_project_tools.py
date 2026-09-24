@@ -1043,6 +1043,27 @@ def test_plan_sets_the_values_of_an_event_and_removes_an_action(project):
     assert code == 1 and "\"set\" changes values, not 'actions'" in out
 
 
+def test_plan_names_an_older_form_of_a_text_it_left_alone(project):
+    """Eval runs changed the score text at the start and left the one in AddScore, event 7, as it was."""
+    both = '"Score: " & score & "  Time: " & round(time)'
+    code, out = plan(project, {"event": 2, "action": 1, "set": {"parameters": {"text": both}}}, flags=("--dry-run",))
+    assert code == 0, out
+    note = [line for line in out.splitlines() if line.startswith("note: event")]
+    assert note == ['note: event 7 action 2 (ScoreText set-text) still has text "Score: " & score, which this plan '
+                    f'writes elsewhere as {both}; if both show the same thing, change it too: '
+                    + json.dumps({"event": 7, "action": 2, "set": {"parameters": {"text": both}}})], out
+    code, out = plan(project, {"event": 2, "action": 1, "set": {"parameters": {"text": both}}},
+                     {"event": 7, "action": 2, "set": {"parameters": {"text": both}}}, flags=("--dry-run",))
+    assert code == 0 and "note: event" not in out, out
+    code, out = plan(project, {"event": 2, "action": 1, "set": {"parameters": {"text": '"Tap the coins"'}}},
+                     flags=("--dry-run",))
+    assert code == 0 and "note: event" not in out, out     # another text, not an older form of it
+    code, out = plan(project, {"event": 2, "action": 1, "set": {"parameters": {"text": '"Score: 0  Time: 30"'}}},
+                     {"event": 5, "add-actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": both}}]},
+                     flags=("--dry-run",))
+    assert code == 0 and [line for line in out.splitlines() if line.startswith("note: event")] == note, out
+
+
 def test_set_takes_no_key_of_the_plans_own_making(project):
     """Two eval runs wrote {"event": 2, "set": {"inverted": false}}: the key stayed in the sheet and changed nothing."""
     before = (project / SHEET).read_bytes()
