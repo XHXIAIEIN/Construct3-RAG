@@ -24,7 +24,7 @@ JavaScript in it and puts a file on a file input.
 
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
-above them: every project.c3proj below it is opened.
+above them: every project.c3proj and .c3p below it is opened, .tmp/ left out.
 """
 from __future__ import annotations
 
@@ -54,7 +54,7 @@ EPILOG = """examples:
   python scripts/open_in_editor.py <eval iteration folder> --jobs 3 --out opened.json
 
 output, one entry per project:
-  opened   <project>  (<window title>)
+  opened   <project>  (<window title>, <the editor it opened in>)
   failed   <project>
     editor: <the dialog's text, which names the sheet, event and parameter at fault>
     exception: <the first line of the exception the editor logged>
@@ -65,9 +65,12 @@ for a browser tool were printed instead, the project is not opened yet
 """
 
 EDITOR = "https://editor.construct.net/"
+BETA = EDITOR + "beta"      # redirects to the latest beta release, /r503/ as of 2026-09-24
 # Inside the project, where check_project.py does not look and the editor does not write.
 SCRATCH = ".tmp"
-TIMEOUT = 200   # seconds a DevTools call may take: SETUP and RESULT wait inside the page
+# Seconds a DevTools call may take. SETUP waits in the page up to 45 for the editor,
+# RESULT up to 30 for the drop and 45 for the answer; every other call answers at once.
+CALL, SETUP_WAIT, RESULT_WAIT = 10, 55, 85
 
 # The page side, the same for the script and for an agent's browser tool. With a
 # tool, every call is a round trip through the model and every character of a
@@ -102,8 +105,9 @@ SETUP_JS = r"""async () => {
     for (const type of ['dragenter', 'dragover', 'drop'])
       document.body.dispatchEvent(new DragEvent(type, {bubbles: true, cancelable: true, dataTransfer: dt}));
   };
-  for (let n = 0; n < 300 && !ok(); n++) await w(200);
-  return ok() ? 'ready' : 'not ready: the editor did not load';
+  for (let n = 0; n < 225 && !ok(); n++) await w(200);
+  return ok() ? 'ready' : 'not ready: ' + (open().map(d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 300))
+    .join(' | ') || (document.getElementById('mainMenuButton') ? 'no dialog' : 'no menu after 45 seconds'));
 }"""
 
 # RESULT waits for the drop, then for the editor's answer: the title turns to the
@@ -112,9 +116,9 @@ SETUP_JS = r"""async () => {
 RESULT_JS = r"""async () => {
   const w = t => new Promise(r => setTimeout(r, t)), start = () => window.__c3Title;
   const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog');
-  for (let n = 0; start() === undefined; n++) { if (n > 300) return 'no file on the input: put the .c3p on it'; await w(200); }
+  for (let n = 0; start() === undefined; n++) { if (n > 150) return 'no file on the input: put the .c3p on it'; await w(200); }
   if (start() === null) return 'the file on the input is empty: its path does not exist';
-  for (let n = 0; n < 360; n++, await w(250))
+  for (let n = 0; n < 180; n++, await w(250))
     if (!document.querySelector('#progressDialog[open]') && (open().length || document.title != start())) break;
   await w(1500);
   const dialogs = open().map(d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500));
@@ -122,9 +126,10 @@ RESULT_JS = r"""async () => {
           errors: window.__c3Errors.filter(x => x.includes('Exception')).map(x => x.slice(0, 600))};
 }"""
 
-NEXT = ("next: the editor's message names the place, `Game, event 12, condition 1` is event 12 of sheet Game "
-        "as scripts/print_sheet.py numbers it. Fix it, run scripts/check_project.py, then this script again. "
-        "When the checker passed what the editor refused, tell the user the message: the checker lacks that rule.")
+NEXT = ("next: a message that names a place, `Game, event 12, condition 1`, is event 12 of sheet Game as "
+        "scripts/print_sheet.py numbers it: fix it, run scripts/check_project.py, then this script again, and "
+        "when the checker had passed it, tell the user the message, since the checker lacks that rule. Missing "
+        "addons are installed in the editor, not written into the files: tell the user which.")
 
 
 class EditorNotLoaded(Exception):
@@ -138,7 +143,26 @@ def find_projects(paths: list[Path]) -> list[Path]:
             found.append(path)
         elif path.is_dir():
             found += sorted(p.parent for p in path.rglob("project.c3proj") if ".git" not in p.parts)
+            found += sorted(p for p in path.rglob("*.c3p") if not {".git", SCRATCH} & set(p.parts))
     return list(dict.fromkeys(p.resolve() for p in found))
+
+
+def saved_release(project: Path) -> int:
+    """savedWithRelease of project.c3proj, 50200 for r502, 49502 for r495.2; 0 when unreadable."""
+    try:
+        if project.is_file():
+            with zipfile.ZipFile(project) as z:
+                text = z.read("project.c3proj")
+        else:
+            text = (project / "project.c3proj").read_bytes()
+        return int(json.loads(text).get("savedWithRelease", 0))
+    except (OSError, KeyError, ValueError, zipfile.BadZipFile):
+        return 0
+
+
+# The release the page loaded its scripts from: editor.construct.net/r495-2/...
+RELEASE_JS = r"""(performance.getEntriesByType('resource').map(e => e.name).join(' ')
+  .match(/editor\.construct\.net\/r(\d+)(?:-(\d+))?\//) || []).slice(1).map(n => Number(n || 0))"""
 
 
 def pack(project: Path) -> bytes:
@@ -221,7 +245,7 @@ class WebSocket:
 
     def __init__(self, url: str) -> None:
         u = urllib.parse.urlsplit(url)
-        self.sock = socket.create_connection((u.hostname, u.port), timeout=TIMEOUT)
+        self.sock = socket.create_connection((u.hostname, u.port), timeout=CALL)
         key = base64.b64encode(os.urandom(16)).decode()
         self.sock.sendall((f"GET {u.path} HTTP/1.1\r\nHost: {u.hostname}:{u.port}\r\nUpgrade: websocket\r\n"
                            f"Connection: Upgrade\r\nSec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\n\r\n"
@@ -278,19 +302,23 @@ class DevTools:
     def __init__(self, url: str) -> None:
         self.ws, self.last, self.lock = WebSocket(url), 0, threading.Lock()
 
-    def call(self, method: str, **params) -> dict:
+    def call(self, method: str, wait: float = CALL, **params) -> dict:
         with self.lock:
             self.last += 1
-            self.ws.send(json.dumps({"id": self.last, "method": method, "params": params}))
-            while True:
-                message = json.loads(self.ws.receive())
-                if message.get("id") == self.last:
-                    if "error" in message:
-                        raise DevToolsError(f"{method}: {message['error'].get('message')}")
-                    return message["result"]
+            self.ws.sock.settimeout(wait)
+            try:
+                self.ws.send(json.dumps({"id": self.last, "method": method, "params": params}))
+                while True:
+                    message = json.loads(self.ws.receive())
+                    if message.get("id") == self.last:
+                        if "error" in message:
+                            raise DevToolsError(f"{method}: {message['error'].get('message')}")
+                        return message["result"]
+            except socket.timeout:
+                raise DevToolsError(f"{method}: no answer in {wait:g} seconds") from None
 
-    def evaluate(self, expression: str, by_value: bool = True):
-        r = self.call("Runtime.evaluate", expression=expression, awaitPromise=True, returnByValue=by_value)
+    def evaluate(self, expression: str, by_value: bool = True, wait: float = CALL):
+        r = self.call("Runtime.evaluate", wait, expression=expression, awaitPromise=True, returnByValue=by_value)
         if "exceptionDetails" in r:
             d = r["exceptionDetails"]
             raise DevToolsError(d.get("exception", {}).get("description") or d.get("text", "exception"))
@@ -307,44 +335,59 @@ class Browser:
     own per page, which has no disk cache, is cold every time."""
 
     def __init__(self, exe: str, profile: Path, headed: bool) -> None:
-        self.profile = profile
+        self.profile, self.proc = profile, None
         profile.mkdir(parents=True, exist_ok=True)
-        (profile / "DevToolsActivePort").unlink(missing_ok=True)   # a port file left from an earlier run
-        args = [exe, f"--user-data-dir={profile}", "--remote-debugging-port=0", "--no-first-run",
-                "--no-default-browser-check", "--window-size=1400,900", "about:blank"]
-        self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"],
-                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         port_file = profile / "DevToolsActivePort"
-        for _ in range(150):
-            if port_file.is_file() and port_file.read_text().strip():
-                break
-            if self.proc.poll() is not None:
-                raise DevToolsError(f"{exe} exited with code {self.proc.returncode}")
-            time.sleep(0.2)
-        else:
+        # A run that was stopped leaves its browser running on the profile, and a
+        # second browser on it hands over to the first and exits: take that one over.
+        url = self.devtools_url(port_file)
+        if not url:
+            port_file.unlink(missing_ok=True)
+            args = [exe, f"--user-data-dir={profile}", "--remote-debugging-port=0", "--no-first-run",
+                    "--no-default-browser-check", "--window-size=1400,900", "about:blank"]
+            self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"],
+                                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            for _ in range(75):
+                url = self.devtools_url(port_file)
+                if url or self.proc.poll() is not None:
+                    break
+                time.sleep(0.2)
+        if not url:
             self.close()
-            raise DevToolsError(f"{exe} opened no DevTools port in 30 seconds")
+            raise DevToolsError(f"{exe} opened no DevTools port in 15 seconds")
         self.port = int(port_file.read_text().split()[0])
-        with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/json/version", timeout=10) as r:
-            self.devtools = DevTools(json.load(r)["webSocketDebuggerUrl"])
+        self.devtools = DevTools(url)
+
+    @staticmethod
+    def devtools_url(port_file: Path) -> str | None:
+        try:
+            port = int(port_file.read_text().split()[0])
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/json/version", timeout=2) as r:
+                return json.load(r)["webSocketDebuggerUrl"]
+        except (OSError, ValueError, IndexError, KeyError):
+            return None
 
     def page(self, url: str) -> tuple[str, DevTools]:
         target = self.devtools.call("Target.createTarget", url=url)["targetId"]
         return target, DevTools(f"ws://127.0.0.1:{self.port}/devtools/page/{target}")
 
     def close(self) -> None:
-        self.proc.terminate()
         try:
-            self.proc.wait(10)
-        except subprocess.TimeoutExpired:
-            self.proc.kill()
+            self.devtools.call("Browser.close", wait=5)
+        except (AttributeError, DevToolsError, OSError):   # no connection yet, or already closed
+            pass
+        if self.proc:
+            try:
+                self.proc.wait(10)
+            except subprocess.TimeoutExpired:
+                self.proc.kill()
 
 
 def load(page: DevTools, editor: str) -> None:
     """Until the editor's page has loaded. A new page starts as about:blank, whose
     readyState is complete too, and its context goes away as the editor loads."""
     where = ["", "", 0]
-    for _ in range(300):
+    for _ in range(150):
         try:
             where = page.evaluate("[location.href, document.readyState, "
                                   "performance.getEntriesByType('navigation')[0]?.responseStatus || 0]")
@@ -352,27 +395,39 @@ def load(page: DevTools, editor: str) -> None:
             pass
         if where[0].startswith("chrome-error:"):
             raise EditorNotLoaded(f"{editor} could not be reached")
-        if where[0].startswith(editor) and where[1] == "complete":
+        if where[0].startswith(EDITOR) and where[1] == "complete":     # /beta redirects to its release
             break
         time.sleep(0.2)
     else:
-        raise EditorNotLoaded(f"{editor} did not finish loading in 60 seconds")
+        raise EditorNotLoaded(f"{editor} did not finish loading in 30 seconds")
     if where[2] >= 400:
         raise EditorNotLoaded(f"{editor} answered HTTP {where[2]}")
 
 
-def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: Path | None) -> dict:
+def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: Path | None,
+             pinned: bool) -> dict:
+    """In the editor at `editor`; unless the release is pinned, a project saved by a
+    newer release than that editor's, which it refuses as saved in a newer version,
+    is opened in the latest beta instead."""
     staged.write_bytes(pack(project))
     target, page = browser.page(editor)
     try:
         load(page, editor)
-        ready = page.evaluate(f"({SETUP_JS})()")
+        saved, (major, minor) = saved_release(project), (page.evaluate(RELEASE_JS) + [0, 0])[:2]
+        if not pinned and major and saved > major * 100 + minor:
+            page.ws.close()
+            browser.devtools.call("Target.closeTarget", targetId=target)
+            editor = BETA
+            target, page = browser.page(editor)
+            load(page, editor)
+        editor = page.evaluate("location.origin + location.pathname")
+        ready = page.evaluate(f"({SETUP_JS})()", wait=SETUP_WAIT)
         if ready != "ready":
             raise EditorNotLoaded(ready)
         started = time.monotonic()
         field = page.evaluate("document.querySelector('input[aria-label=\"Project to open\"]')", by_value=False)
         page.call("DOM.setFileInputFiles", files=[str(staged)], objectId=field["objectId"])
-        result = page.evaluate(f"({RESULT_JS})()")
+        result = page.evaluate(f"({RESULT_JS})()", wait=RESULT_WAIT)
         if shot:
             shot.write_bytes(base64.b64decode(page.call("Page.captureScreenshot")["data"]))
     finally:
@@ -384,16 +439,19 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
         result = {"opened": False, "title": "", "dialogs": [], "errors": [result]}
     status = "opened" if result["opened"] else "failed" if result["dialogs"] or result["errors"] else "timeout"
     return {"project": str(project), "status": status, "title": result["title"], "dialogs": result["dialogs"],
-            "exception": next(iter(result["errors"]), ""), "seconds": round(time.monotonic() - started, 1)}
+            "exception": next(iter(result["errors"]), ""), "editor": editor,
+            "seconds": round(time.monotonic() - started, 1)}
 
 
 def report(result: dict) -> list[str]:
+    if result["status"] == "error":
+        return [f"error    {result['project']}: {result['exception']}"]
     if result["status"] == "opened":
-        return [f"opened   {result['project']}  ({result['title']})"]
+        return [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
     lines = [f"{result['status']:<8} {result['project']}"]
     lines += [f"  editor: {d}" for d in result["dialogs"]]
     if result["status"] == "timeout":
-        lines.append(f"  editor: no answer in 90 seconds, the title is {result['title']!r}; "
+        lines.append(f"  editor: no answer in 45 seconds, the title is {result['title']!r}; "
                      f"--shots DIR saves what the editor shows")
     if result["exception"]:
         lines.append(f"  exception: {result['exception'].splitlines()[0]}")
@@ -411,7 +469,12 @@ def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
     def one(i: int, project: Path) -> None:
         nonlocal printed
         shot = args.shots / f"{i:03d}-{project.name}.png" if args.shots else None
-        result = open_one(browser, editor, project, browser.profile / f"project-{i}.c3p", shot)
+        try:
+            result = open_one(browser, editor, project, browser.profile / f"project-{i}.c3p", shot,
+                              bool(args.release))
+        except (EditorNotLoaded, DevToolsError, OSError) as e:
+            result = {"project": str(project), "status": "error", "title": "", "dialogs": [],
+                      "exception": str(e), "editor": editor, "seconds": 0}
         with lock:
             results.append(result)
             text = "\n".join(report(result))
@@ -444,7 +507,8 @@ def main() -> int:
                     help="the Chromium-based browser to start (default: Edge, Chrome or Chromium where installed)")
     ap.add_argument("--release", metavar="rNNN",
                     help="open in this release of the editor, as its URL spells it: r502, r495-2 "
-                         "(default: the current stable release, the one the user gets)")
+                         "(default: the current stable release, the one the user gets, or the latest beta for a "
+                         "project a newer release saved)")
     ap.add_argument("--out", type=Path, help="write every result, dialogs and exceptions included, as JSON")
     ap.add_argument("--shots", type=Path, help="save a screenshot of the editor per project into this folder")
     ap.add_argument("--jobs", type=int, default=2, help="projects open at once (default 2)")
@@ -493,6 +557,11 @@ def main() -> int:
     if args.out:
         args.out.write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")
     failed = [r for r in results if r["status"] != "opened"]
+    if all(r["status"] == "error" for r in results):
+        print("the editor did not load for any project. Check the network connection and --release, and run "
+              "again; without a connection, ask the user to open the project in Construct 3 and paste the text "
+              "of the dialog it shows.", file=sys.stderr)
+        return 2
     if unprinted:
         print(f"{unprinted} results not printed: --out FILE keeps every one, --limit 0 prints them")
     print(f"{len(results) - len(failed)} of {len(results)} opened" + (f"; full results in {args.out}" if args.out else ""))
