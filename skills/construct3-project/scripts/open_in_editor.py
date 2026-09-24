@@ -59,55 +59,58 @@ CHANNELS = (None, "msedge", "chrome")
 # Inside the project, where check_project.py does not look and the editor does not write.
 SCRATCH = ".tmp"
 
-# The page side, the same for the script and for an agent's browser tool. Each
-# function waits inside the page, so a tool calls it once instead of polling.
+# The page side, the same for the script and for an agent's browser tool. With a
+# tool, every call is a round trip through the model and every character of a
+# function is written by it, so SETUP, which comes before the import, is short, and
+# the waiting happens in the page.
 #
-# SETUP waits until the editor has loaded and no dialog has been open for 2 seconds,
-# closing the ones it shows on start: a file dropped while the welcome dialog closes
-# is ignored, and the update offers come a moment after the menu. Then it keeps what
-# the editor logs as an error and puts a file input at the top of the page. A file
-# put on that input is dropped on the editor, which handles a synthetic drop like a
-# file dragged from the desktop, and the editor's answer is awaited in the page.
+# SETUP keeps what the editor logs as an error, puts a file input first in the page
+# and closes the dialogs the editor shows on start, by their close or OK button in
+# any language, until a file is put on the input: a modal dialog hides the rest of
+# the page from a snapshot, and the update offers come a few seconds after the
+# menu. It returns once the menu is there and no dialog is open, about 3 seconds
+# after the page loads. The editor's own Open button uses a file picker no tool
+# can fill, hence the input. Its file is dropped on the editor when no dialog has
+# been open for a second, since a drop while the welcome dialog closes is ignored;
+# the editor handles a synthetic drop like a file dragged from the desktop.
+# __c3Title keeps the title at the drop, null for a file with no bytes: the upload
+# action of a tool accepts a path that does not exist and hands the page nothing.
 SETUP_JS = r"""async () => {
-  const wait = ms => new Promise(r => setTimeout(r, ms));
-  const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id !== 'progressDialog');
-  const text = d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500);
-  for (let calm = 0, i = 0; calm < 4; i++) {
-    if (i > 120) return 'not ready: ' + (open().map(text).join(' | ') || 'the editor did not load');
-    await wait(500);
-    document.querySelector('a.noThanksLink')?.click();
-    open().forEach(d => d.querySelector('ui-close-button, .okButton')?.click());
-    calm = document.getElementById('mainMenuButton') && !open().length ? calm + 1 : 0;
-  }
-  const errors = [], log = console.error.bind(console);
-  console.error = (...a) => { errors.push(a.map(String).join(' ').slice(0, 600)); log(...a); };
-  const start = document.title, input = document.createElement('input');
-  input.type = 'file';
-  input.setAttribute('aria-label', 'Project to open');
-  input.style.cssText = 'position:fixed;left:8px;top:8px;z-index:2147483647;background:#fff';
-  document.body.prepend(input);
-  input.onchange = () => window.__c3Open = (async () => {
-    const dt = new DataTransfer();
-    dt.items.add(input.files[0]);
-    input.remove();
-    const target = document.elementFromPoint(innerWidth / 2, innerHeight / 2) || document.body;
+  const w = t => new Promise(r => setTimeout(r, t)), e = window.__c3Errors = [], log = console.error.bind(console);
+  const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog');
+  const ok = () => document.getElementById('mainMenuButton') && !open().length;
+  console.error = (...a) => { e.push(a.map(String).join(' ')); log(...a); };
+  const keep = setInterval(() => { document.querySelector('a.noThanksLink')?.click();
+    open().forEach(d => d.querySelector('ui-close-button, .okButton')?.click()); }, 200);
+  const i = document.createElement('input');
+  i.type = 'file'; i.ariaLabel = 'Project to open'; document.body.prepend(i);
+  i.onchange = async () => {
+    if (!i.files[0].size) return window.__c3Title = null;
+    for (let calm = 0; calm < 5; await w(200)) calm = ok() ? calm + 1 : 0;
+    clearInterval(keep); window.__c3Title = document.title;
+    const dt = new DataTransfer(); dt.items.add(i.files[0]); i.remove();
     for (const type of ['dragenter', 'dragover', 'drop'])
-      target.dispatchEvent(new DragEvent(type, {bubbles: true, cancelable: true, dataTransfer: dt}));
-    for (let i = 0; i < 180; i++) {
-      await wait(500);
-      if (!document.querySelector('dialog#progressDialog[open]') && (open().length || document.title !== start)) {
-        await wait(1500);
-        const dialogs = open().map(text);
-        return {opened: !dialogs.length && document.title !== start, title: document.title, dialogs,
-                errors: errors.filter(e => e.includes('Exception'))};
-      }
-    }
-    return {opened: false, timeout: true, title: document.title, dialogs: open().map(text), errors};
-  })();
-  return 'ready';
+      document.body.dispatchEvent(new DragEvent(type, {bubbles: true, cancelable: true, dataTransfer: dt}));
+  };
+  for (let n = 0; n < 300 && !ok(); n++) await w(200);
+  return ok() ? 'ready' : 'not ready: the editor did not load';
 }"""
 
-RESULT_JS = "async () => await window.__c3Open ?? 'no file on the input yet: put the .c3p on it first'"
+# RESULT waits for the drop, then for the editor's answer: the title turns to the
+# project's name, or a dialog says why it did not open. A dialog can follow the
+# title by a moment, hence the last wait.
+RESULT_JS = r"""async () => {
+  const w = t => new Promise(r => setTimeout(r, t)), start = () => window.__c3Title;
+  const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog');
+  for (let n = 0; start() === undefined; n++) { if (n > 300) return 'no file on the input: put the .c3p on it'; await w(200); }
+  if (start() === null) return 'the file on the input is empty: its path does not exist';
+  for (let n = 0; n < 360; n++, await w(250))
+    if (!document.querySelector('#progressDialog[open]') && (open().length || document.title != start())) break;
+  await w(1500);
+  const dialogs = open().map(d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500));
+  return {opened: !dialogs.length && document.title != start(), title: document.title, dialogs,
+          errors: window.__c3Errors.filter(x => x.includes('Exception')).map(x => x.slice(0, 600))};
+}"""
 
 NEXT = ("next: the editor's message names the place, `Game, event 12, condition 1` is event 12 of sheet Game "
         "as scripts/print_sheet.py numbers it. Fix it, run scripts/check_project.py, then this script again. "
@@ -162,15 +165,17 @@ def steps(project: Path, editor: str, why: str) -> str:
     c3p = write_c3p(project)
     tail = f" Git ignores {c3p.parent}; delete it when you are done." if c3p != project else ""
     return f"""{why}. Open it with a browser tool of this session that runs JavaScript in a page and puts
-a file on a file input, in five calls; each function waits in the page, so call it once:
+a file on a file input, in three rounds of calls; the page does the waiting, so make each call once:
 1. Open {editor} in a new page, in an isolated context if the tool has one.
-2. Run SETUP in it (a tool that takes an expression gets it called: `(...)()`). It returns "ready".
-3. Put this file on the input labelled "Project to open", the first element of the page, with the
-   tool's upload action; a tool that waits for a file chooser gets one by clicking the input:
+2. In one message: run SETUP in that page (a tool that takes an expression gets it called:
+   `(...)()`), then take a snapshot of it. SETUP returns "ready" about 3 seconds after the page
+   loads, and the snapshot lists the input "Project to open" first; if it does not, take it again.
+3. In one message: put this file on that input with the tool's upload action (a tool that waits
+   for a file chooser gets one by clicking the input), then run RESULT:
    {c3p}
-4. Run RESULT. It returns {{opened, title, dialogs, errors}}. opened true is the hand-over.
-   Otherwise the dialog names the place and errors holds the exception the editor logged.
-   {NEXT.removeprefix("next: ")}
+   RESULT returns {{opened, title, dialogs, errors}} a few seconds after the upload. opened true
+   is the hand-over. Otherwise the dialog names the place and errors holds the exception the
+   editor logged. {NEXT.removeprefix("next: ")}
 Without such a tool, ask the user to open the project in Construct 3 and paste the text of the
 dialog it shows.{tail}
 
@@ -205,7 +210,9 @@ async def open_one(browser, editor: str, project: Path, shot: Path | None) -> di
     finally:
         await ctx.close()
 
-    status = "opened" if result["opened"] else "timeout" if result.get("timeout") else "failed"
+    if isinstance(result, str):
+        result = {"opened": False, "title": "", "dialogs": [], "errors": [result]}
+    status = "opened" if result["opened"] else "failed" if result["dialogs"] or result["errors"] else "timeout"
     return {"project": str(project), "status": status, "title": result["title"], "dialogs": result["dialogs"],
             "exception": next(iter(result["errors"]), ""), "seconds": round(time.monotonic() - started, 1)}
 

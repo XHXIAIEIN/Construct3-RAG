@@ -1166,9 +1166,9 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
 
     code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps")
     c3p = project / ".tmp" / "open-in-editor.c3p"
-    assert code == 3 and str(c3p) in out and 'labelled "Project to open"' in out, out
+    assert code == 3 and str(c3p) in out and 'the input "Project to open"' in out, out
     assert (project / ".tmp" / ".gitignore").read_text(encoding="utf-8") == "*\n"
-    assert "\nSETUP:\nasync () => {\n" in out and "\nRESULT:\nasync () => await window.__c3Open" in out
+    assert "\nSETUP:\nasync () => {\n" in out and "\nRESULT:\nasync () => {\n" in out
     assert "https://editor.construct.net/" in out
 
     import io
