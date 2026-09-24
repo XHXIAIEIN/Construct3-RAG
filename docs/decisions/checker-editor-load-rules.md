@@ -318,17 +318,43 @@ seconds.
   RESULT waits for the file, so a harness that runs the last two at once
   still gets the answer. `pack` leaves `.tmp/` out.
 
+Three more things the runs taught:
+
+- A project saved by a newer release than the stable editor is refused as
+  "saved in a newer version". The script reads `savedWithRelease`, compares
+  it with the release the page loaded its scripts from, and opens such a
+  project in `editor.construct.net/beta`, which redirects to the latest
+  beta. `--release` pins one instead.
+- Waits are sized to what was measured, not to the worst case: 30 seconds
+  for the page, 45 for the editor's menu, 30 for the drop, 45 for the
+  answer, 10 for any other call. A slow case fails with its message and
+  the next run, on a warm cache, passes.
+- A run that is stopped from outside leaves its browser running on the
+  profile, and a second browser started on the same profile hands over to
+  it and exits. The script first tries the port the profile records and,
+  when a browser answers there, uses it; it ends every run with
+  `Browser.close`. A project whose page fails is reported as `error` and
+  the others go on.
+
 Verified on copies of `data/c3-new-project`: unchanged, it opens; with the
 case above, the checker ends with `ok:` and the editor reports `Event sheet
 1, event 2, condition 1`, the number `print_sheet.py` gives the same event;
 with an empty `properties` block, `Failed to open project` and the logged
-`TypeError: expected string`. All three through the script with Edge and
-with Chrome, and through Chrome DevTools MCP following the printed steps in
-isolated contexts of a Chrome whose editor runs in Chinese, as is a path
-that does not exist; the dialog comes back in Chinese with the place in
-English, `Event sheet 1, event 2, condition 1`. The unchanged copy also
-opens in the r502 beta with `--release r502`. Playwright MCP and Claude in
-Chrome were not reachable from the session and are not tested.
+`TypeError: expected string`; a `.c3p` that uses a third-party behavior
+gets `Missing addons` with its name. Through the script with Edge and
+Chrome, headless and with a window, under Python 3.10 and 3.14, and in an
+editor set to Simplified Chinese (`c3-user-settings.language` in its
+localforage), where the dialogs come back in Chinese and the place stays
+`Event sheet 1, event 2, condition 1`. Through Chrome DevTools MCP
+following the printed steps, and with a path that does not exist.
+Playwright MCP and Claude in Chrome were not reachable from the session.
+
+On real projects, copied first: fourteen game projects the agents and the
+user made, two of them `.c3p`. Thirteen open, nine of them in the latest
+beta, since r500 to r502 saved them. The one that does not is a small model's Water Sort, on
+`cannot add another trigger to event branch`, where the checker reports
+the same fault among 52 findings. Nine of them in parallel, the first
+from a cold profile, took 69 seconds.
 
 The checker stays offline and first: it names every finding at once, the
 editor one dialog at a time.
