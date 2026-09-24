@@ -406,4 +406,19 @@ runs that skipped the open had read it after their final check as well.
 of `add-countdown`: opened 3 of 4, against 2 of 4 with the command after
 every plan. Every run ran `check_project.py`. The one that did not open ran
 it between two plans and ended on a plan, whose line no longer names the
-open; `SKILL.md` counts a plan's `ok:` as the check.
+open, since `SKILL.md` counted a plan's `ok:` as the check.
+
+Step 2 of the check loop in `SKILL.md` now runs the checker after a plan
+that ended with `ok:` too, and says that its last line names the next step.
+`iteration-24`, six runs per arm of `add-countdown`: opened 5 of 6, against
+3 of 6, at 169 against 207 seconds and 64 000 against 67 000 tokens. The
+difference is not the one the step aimed at: five of the six runs of the
+previous `SKILL.md` ended on the checker as well, and two of its three that
+did not open had read the command as their checker's last line. What the new
+step adds may be its second half, the pointer to that line. Six runs per arm
+do not separate 5 of 6 from 3 of 6.
+
+Opening the project does not check what the task asked for. In three runs
+of `iteration-24`, one of them the previous `SKILL.md`'s, one of the two
+actions that set the score text still wrote the score alone; the checker
+and the editor both passed them.

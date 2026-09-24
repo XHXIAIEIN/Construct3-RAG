@@ -193,8 +193,8 @@ not held to this. `--dry-run` does all of that and writes nothing.
 
 1. Change a sheet with `edit_sheet.py`, edit another project file, or rerun
    the generator.
-2. Run `python scripts/check_project.py`; a plan that ended with `ok:` has
-   done it.
+2. Run `python scripts/check_project.py`, after a plan that ended with `ok:`
+   too: the work ends on this command, whose last line names the next step.
 3. Fix every line it prints, all of them in one plan: each names its place,
    `sheet Game event 15 action 2`, and says what to write where it can.
    Warnings do not fail the run; a project an agent wrote should have none.
