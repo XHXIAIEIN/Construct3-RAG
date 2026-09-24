@@ -1205,7 +1205,8 @@ class Checker:
         when there are problems too, and says how many it left out."""
         p = self.p
         warnings, errors = [f"warning: {w}" for w in p.findings.warnings], p.findings.errors
-        room = max(self.limit - 300, 3)                                         # less the closing lines
+        closing = 300 + (0 if errors else len(self.ok_line()))                  # the cut notes and the last line
+        room = max(self.limit - closing, 3)
         cut = self.limit and c3.fitting(warnings + errors, room) < len(warnings + errors)
         shares = (room // 3 if errors else room, room - room // 3) if cut else (0, 0)       # 0 is no limit
         for lines, share, rest in ((warnings, shares[0], "warnings"),
@@ -1221,11 +1222,27 @@ class Checker:
         print(self.ok_line())
         return 0
 
-    def ok_line(self) -> str:
+    def ok_line(self, then_open: bool = True) -> str:
+        """An agent takes the last line of a passing check for the end of the
+        work, so the line names the step after it (edit_sheet.py's dry run has none)."""
         p = self.p
-        return (f"ok: {len(p.types)} object types, {len(p.families)} families, {len(self.layouts)} layouts, "
+        line = (f"ok: {len(p.types)} object types, {len(p.families)} families, {len(self.layouts)} layouts, "
                 f"{len(self.sheets)} sheets, {len(self.sids) + len(self.ace_sids)} sids, {len(self.uids)} uids, "
                 f"{len(self.functions)} functions, {len(self.custom_actions)} custom actions")
+        if not then_open:
+            return line
+        return f"{line}; next, open it in the editor, which also reads the expressions: {open_command(p.root)}"
+
+
+def open_command(root: Path) -> str:
+    """open_in_editor.py for root, as it runs from the current directory."""
+    def quoted(s: str) -> str:
+        return f'"{s}"' if " " in s else s
+    script = Path(__file__).resolve().parent / "open_in_editor.py"
+    cwd = Path.cwd()
+    shown = script.relative_to(cwd).as_posix() if script.is_relative_to(cwd) else script.as_posix()
+    where = "" if c3.find_project(None) == root.resolve() else f" --project {quoted(root.resolve().as_posix())}"
+    return f"python {quoted(shown)}{where}"
 
 
 def main() -> int:
