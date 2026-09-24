@@ -15,8 +15,9 @@ browser, not uploaded to a server.
 It starts the Microsoft Edge, Google Chrome or Chromium the machine has,
 headless, with a profile of its own in .tmp/editor-<browser>, and drives it
 over the DevTools protocol with Python's standard library: no package to
-install and nothing asked of the agent. The first run fills the profile's
-cache, about 80 MB, in 20 to 40 seconds; each later one takes about 4. With
+install and nothing asked of the agent. The profile keeps the editor's
+scripts cached, about 15 MB and at most 100: the first run takes 7 to 40
+seconds, each later one 4 to 7. .tmp/ holds a .gitignore of *. With
 no such browser, or with --steps, it writes the project as
 .tmp/open-in-editor.c3p in the project folder and prints the same check as
 steps for a browser tool of the agent: one that opens a page, runs
@@ -178,15 +179,20 @@ def pack(project: Path) -> bytes:
     return buf.getvalue()
 
 
+def scratch(folder: Path) -> Path:
+    """.tmp/ of a project folder, with a .gitignore of * so that nothing in it is committed."""
+    path = folder / SCRATCH
+    path.mkdir(exist_ok=True)
+    if not (path / ".gitignore").exists():
+        (path / ".gitignore").write_text("*\n", encoding="utf-8")
+    return path
+
+
 def write_c3p(project: Path) -> Path:
-    """The project as a file a browser tool can put on the page, in a folder Git leaves alone."""
+    """The project as a file a browser tool can put on the page."""
     if project.is_file():
         return project
-    scratch = project / SCRATCH
-    scratch.mkdir(exist_ok=True)
-    if not (scratch / ".gitignore").exists():
-        (scratch / ".gitignore").write_text("*\n", encoding="utf-8")
-    c3p = scratch / "open-in-editor.c3p"
+    c3p = scratch(project) / "open-in-editor.c3p"
     c3p.write_bytes(pack(project))
     return c3p
 
@@ -325,6 +331,16 @@ class DevTools:
         return r["result"].get("value") if by_value else r["result"]
 
 
+# What the browser would add to the profile besides the editor's cache: Edge
+# downloads components (entity extraction, language models, 30 MB and more) and
+# installs its built-in extensions afresh on every start, and the GPU writes
+# shader caches. The disk cache is capped; the editor's scripts take about 20 MB
+# a release.
+QUIET = ("--no-first-run", "--no-default-browser-check", "--disable-extensions", "--disable-component-update",
+         "--disable-background-networking", "--disable-sync", "--disable-gpu-shader-disk-cache",
+         "--disk-cache-size=104857600")
+
+
 class Browser:
     """The machine's browser with a profile of its own and a DevTools port the
     system picks, written by the browser to DevToolsActivePort in the profile.
@@ -337,14 +353,16 @@ class Browser:
     def __init__(self, exe: str, profile: Path, headed: bool) -> None:
         self.profile, self.proc = profile, None
         profile.mkdir(parents=True, exist_ok=True)
+        for staged in profile.glob("project-*.c3p"):    # left by a run that was stopped
+            staged.unlink(missing_ok=True)
         port_file = profile / "DevToolsActivePort"
         # A run that was stopped leaves its browser running on the profile, and a
         # second browser on it hands over to the first and exits: take that one over.
         url = self.devtools_url(port_file)
         if not url:
             port_file.unlink(missing_ok=True)
-            args = [exe, f"--user-data-dir={profile}", "--remote-debugging-port=0", "--no-first-run",
-                    "--no-default-browser-check", "--window-size=1400,900", "about:blank"]
+            args = [exe, f"--user-data-dir={profile}", "--remote-debugging-port=0", *QUIET,
+                    "--window-size=1400,900", "about:blank"]
             self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"],
                                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             for _ in range(75):
@@ -381,6 +399,8 @@ class Browser:
                 self.proc.wait(10)
             except subprocess.TimeoutExpired:
                 self.proc.kill()
+        # A session file per run, never restored.
+        shutil.rmtree(self.profile / "Default" / "Sessions", ignore_errors=True)
 
 
 def load(page: DevTools, editor: str) -> None:
@@ -461,7 +481,7 @@ def report(result: dict) -> list[str]:
 def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
     first = projects[0] if projects[0].is_dir() else projects[0].parent
     # One profile per browser: Chrome does not load a profile Edge has written.
-    browser = Browser(exe, first / SCRATCH / f"editor-{Path(exe).stem.lower()}", args.headed)
+    browser = Browser(exe, scratch(first) / f"editor-{Path(exe).stem.lower()}", args.headed)
     results: list[dict] = []
     printed = 0     # characters; results are printed as they come, until --limit
     lock = threading.Lock()

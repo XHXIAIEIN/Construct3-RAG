@@ -336,6 +336,19 @@ Three more things the runs taught:
   `Browser.close`. A project whose page fails is reported as `error` and
   the others go on.
 
+What the profile keeps, measured over repeated runs: started plainly, Edge
+filled it to 71 MB, more than half of it components it downloads (entity
+extraction, language detection) and built-in extensions it installs
+afresh, 35 files a start. Started with `--disable-extensions`,
+`--disable-component-update`, `--disable-background-networking`,
+`--disable-sync`, `--disable-gpu-shader-disk-cache` and a disk cache of
+100 MB, it holds the editor's cache alone, 15 MB after five runs, and a
+run adds only what the cache replaces; the session file each run writes is
+removed at the end, and so is a staged `.c3p` a stopped run left. The
+runs took the same time with and without the flags. `.tmp/` gets a
+`.gitignore` of `*` whichever path creates it, so a project under Git
+shows nothing new after a run.
+
 Verified on copies of `data/c3-new-project`: unchanged, it opens; with the
 case above, the checker ends with `ok:` and the editor reports `Event sheet
 1, event 2, condition 1`, the number `print_sheet.py` gives the same event;
