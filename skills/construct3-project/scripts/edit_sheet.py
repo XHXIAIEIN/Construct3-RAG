@@ -452,6 +452,53 @@ def unnumbered(finding: str) -> str:
     return re.sub(r" event \d+ ", " event ", finding)
 
 
+LEADING_TEXT = re.compile(r'\s*"((?:[^"]|"")+)"')
+
+
+def actions_in(events: list, span: dict | None = None):
+    """(event number, action number, action) for every action on an object, sub-events included."""
+    for ev in events:
+        for j, action in enumerate(ev.get("actions", []), 1):
+            if "id" in action and "objectClass" in action:
+                yield span[id(ev)][0] if span else 0, j, action
+        yield from actions_in(ev.get("children", []), span)
+
+
+def left_alone(original: list, events: list, span: dict) -> list[str]:
+    """Actions the plan did not touch that write an older form of a text the plan
+    now writes elsewhere: the same action on the same object, the parameter opening
+    with the same words. A display changed in some of its places and not in the
+    others passes the checker and the editor, and shows the old text in the game."""
+    before = {a["sid"]: a.get("parameters", {}) for _, _, a in actions_in(original) if "sid" in a}
+    written: dict[tuple, set[str]] = {}
+    kept = []
+    for n, j, a in actions_in(events, span):
+        params, old = a.get("parameters", {}), before.get(a.get("sid"))
+        if params == old:
+            kept.append((n, j, a))
+            continue
+        for key, value in params.items():
+            if isinstance(value, str) and (old is None or old.get(key) != value):
+                written.setdefault((a["objectClass"], a["id"], key), set()).add(value)
+    def lead(text: str) -> str | None:
+        m = LEADING_TEXT.match(text)
+        return m and m.group(1)
+
+    notes = []
+    for n, j, a in kept:
+        for key, value in a.get("parameters", {}).items():
+            if not isinstance(value, str) or not lead(value):
+                continue
+            # A plan may also write a fixed start text, "Score: 0  Time: 30": only the values that open alike count.
+            alike = {v for v in written.get((a["objectClass"], a["id"], key), ()) if lead(v) == lead(value)}
+            if len(alike) == 1 and value not in alike:
+                wrote = alike.pop()
+                notes.append(f"note: event {n} action {j} ({a['objectClass']} {a['id']}) still has {key} {value}, "
+                             f"which this plan writes elsewhere as {wrote}; if both show the same thing, change it too: "
+                             + json.dumps({"event": n, "action": j, "set": {"parameters": {key: wrote}}}, ensure_ascii=False))
+    return notes
+
+
 def main() -> int:
     ap = c3.argument_parser(
         "Change an event sheet from a plan, a JSON file of operations addressed by the editor's event numbers: "
@@ -566,6 +613,8 @@ def main() -> int:
     for w in found_after.warnings:
         if unnumbered(w) not in known_warnings:
             print(f"warning: {w}")
+    for note in left_alone(sheet["events"], plan.sheet["events"], span):
+        print(note)
     if on_disk.replace("\r\n", "\n") != json.dumps(sheet, indent="\t", ensure_ascii=False) and not args.dry_run:
         print(f"note: {path.name} was not laid out as the editor writes it (tabs, LF); it is now, so its diff is the whole file")
     if found_after.errors:

@@ -172,6 +172,32 @@ calls on average, against 14 to 23 calls in iteration 7. Four runs do not
 show how often a plan now takes the path; the tests and the replayed plan
 show that it holds.
 
+## Update 2026-09-25: a text the plan changed in one place and left in another
+
+In `add-countdown` the score text is set in two places, at the start of the
+layout and in `AddScore`. Five of 40 Haiku runs of iterations 21 to 25
+changed the first and left the second showing the score without the time.
+The checker and the editor pass such a sheet; the game shows the old text
+after the first coin.
+
+A plan now ends with a `note:` for each action it did not touch that writes
+an older form of a text the plan writes elsewhere: the same action on the
+same object, the parameter opening with the same quoted words, and one value
+of the plan's that opens alike. The note names the event and action and
+gives the operation that changes it too. A plan that also writes a fixed
+start text, `"Score: 0  Time: 30"`, still gets it: only the values that open
+alike count.
+
+`iteration-25`, six runs per arm, did not measure it. The note printed in no
+run: one run of the new arm left `AddScore` as it was, and its plan wrote the
+fixed start text beside the live one, which the first version of the rule
+took for two different texts and skipped. The rule above is the corrected
+one. Replayed on the plans saved from iterations 21 to 25, it prints on the
+plans of three runs that left the text (the other two kept no plan file),
+on one first plan whose run changed `AddScore` in its next plan, and on no
+other. Over the official examples, 14 of 565 sheets hold two actions it
+could pair.
+
 ## Re-evaluate when
 
 - A sheet changed by a plan does not open in the editor: the message, then
@@ -179,8 +205,8 @@ show that it holds.
 - A stray key turns up in a sheet from a hand edit: a checker warning for a
   key the editor never writes for that kind of event, after a run over the
   examples that adds no finding.
-- Plans keep missing a second place that needs the same change: print the
-  whole sheet after a plan, not only what changed, and measure it on
-  add-countdown.
+- Runs that read the note still leave the second place, or runs miss a
+  second place the note cannot pair: print the whole sheet after a plan,
+  not only what changed, and measure it on add-countdown.
 - An agent needs to address a variable, a comment or an include, which have
   no number: a place by sid.
