@@ -460,6 +460,13 @@ def test_stand_in_project_passes_without_warnings(built):
     assert [line for line in out.splitlines() if line.startswith("warning:") and "Pillow" not in line] == []
 
 
+def test_a_passing_check_ends_with_the_command_that_opens_the_project(built):
+    code, out = check(built)
+    assert code == 0 and out.splitlines()[-1].endswith(f"python {INSTALLED}/scripts/open_in_editor.py"), out
+    code, out = run(built.parent, SKILL / "scripts" / "check_project.py", "--rag", str(REPO), "--project", str(built))
+    assert code == 0 and out.splitlines()[-1].endswith(f"open_in_editor.py --project {built.resolve().as_posix()}"), out
+
+
 def test_checker_prints_the_findings_that_fit_and_counts_the_rest(project):
     def misspell_every_action(sheet):
         def walk(rows):
@@ -1114,6 +1121,7 @@ def test_dry_run_checks_and_shows_and_writes_nothing(project):
     code, out = plan(project, {"before": 1, "events": [{"eventType": "variable", "name": "timeLeft"}]}, flags=("--dry-run",))
     assert code == 0 and (project / SHEET).read_bytes() == before
     assert "global number timeLeft = 0" in out and out.splitlines()[-1] == "dry run: nothing was written"
+    assert "open_in_editor" not in out     # nothing to open yet
 
 
 @pytest.mark.parametrize("operation, said", [

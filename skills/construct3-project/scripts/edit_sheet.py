@@ -572,7 +572,7 @@ def main() -> int:
         print(f"{len(found_after.errors)} problem(s) were in the project before this plan and still are: "
               f"check_project.py lists them")
     else:
-        print(after.ok_line())
+        print(after.ok_line(then_open=not args.dry_run))
     if args.dry_run:
         print("dry run: nothing was written")
     return 0

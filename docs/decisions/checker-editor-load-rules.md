@@ -371,3 +371,36 @@ from a cold profile, took 69 seconds.
 
 The checker stays offline and first: it names every finding at once, the
 editor one dialog at a time.
+
+## Update 2026-09-24: a passing check names the open
+
+The step in `SKILL.md` alone did not make agents open the project. In six
+Haiku runs of the skill (evidence `iteration-21`), the two runs of
+`fix-load-errors`, whose prompt says "so it opens", opened it; of the four
+runs whose prompt says nothing about the editor, two did. Both that did not
+stopped at the checker's `ok:`, or the generator's, and told the user the
+project was "ready to open in the editor". The two projects did open.
+
+A passing check now ends its `ok:` line with the command:
+`ok: ...; next, open it in the editor, which also reads the expressions:
+python .agents/skills/construct3-project/scripts/open_in_editor.py`. The
+path is the one that runs from the current directory, with `--project`
+only where the opener would find another project. The line still starts
+with `ok:`. `edit_sheet.py` ends a plan with the same line, and a dry run
+without the command, since nothing was written.
+
+Measured against the commit before (`iteration-22`, Haiku, three runs per
+arm, every assertion passing in both):
+
+| Case | Opened, with the line | Opened, without |
+|------|-----------------------|-----------------|
+| `lay-out-the-hud`, generator | 3 of 3 | 0 of 3 |
+| `add-countdown`, plans | 1 of 3 | 1 of 3 |
+
+The generator prints the line once, as the last thing it does. A hand edit
+prints it after every plan, three to six times a run, while the work goes
+on, and the two runs that skipped the open had read it after their final
+check as well. The difference fits a line that is new once and routine by
+the fourth time, but three runs cannot tell that from chance. Open:
+whether `edit_sheet.py` should leave the command to the check that closes
+the work, measured on `add-countdown`.
