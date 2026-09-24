@@ -206,6 +206,15 @@ first.
   expression shares the name (`probe`, not `mid`; not `left`, `right`,
   `len`, `find`, `max`, `min`, `abs`, `round`). [plugins/system.json,
   expression `mid`; observed: LiquidVolume, r495.2 editor, 2026-09-23]
+- Variable names are matched without regard to case, and the nearest scope
+  wins: a local string `layers` declared in an event hides the global
+  constant `LAYERS` in that event and its sub-events, so `LAYERS - 1` there
+  is read on the string and the editor refuses the whole project with `Type
+  mismatch: - does not work with 'string' and 'number'`, naming the
+  sub-event. `check_project.py` does not catch it. Give a local a name that
+  differs from every variable in scope by more than its case (`layerJson`
+  beside `LAYERS`). [observed: LiquidVolume, r502 editor, 2026-09-24, `Lab,
+  event 85, condition 1`]
 - `lerp(Self.X, Target.X, 0.1)` moves a different fraction per second at
   different framerates and ignores the time scale. When the third argument is a
   constant and the first is last tick's result, write `lerp(a, b, 1 - f^dt)`
@@ -338,6 +347,12 @@ first.
   [examples: berry-harvester ProgressBar, jetpack FuelBar, flatland-golf
   PowerBarCover, test-your-might MightLevelBar (0.5, 1)]
 
+- Drawing Canvas *Fill polygon* draws nothing when two consecutive points of
+  the polygon coincide, a closing point that repeats the first one included;
+  the rest of the sheet runs on and no error is logged. Add a closing point
+  only when it is a point of its own, or count the points in a variable and
+  loop over that. [observed: LiquidVolume, r502 preview, 2026-09-24: the pool
+  polygon closed by a vertex equal to P1 left every container empty]
 - A blend mode such as *Destination in* only touches the pixels under the
   object's own quad: a mask sprite the size of the shape it reveals leaves
   everything outside its bounding box untouched, and the layer needs *Force
