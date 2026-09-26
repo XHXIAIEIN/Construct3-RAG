@@ -66,9 +66,9 @@ contracts from `src.interfaces.http` and the lookup from `src.lookup`.
 
 `src.settings.load_settings()` accepts an explicit environment mapping and
 repository root, returning a frozen tree of path, Schema, and runtime groups.
-Every field has a runtime reader. It does not load dotenv or
-probe external services; every process entry point (`src.api`, each
-`scripts/*.py`) calls `load_dotenv()` itself first.
+Every field has a runtime reader. It reads no `.env` file and probes no
+external service; the schema version is the one `data/c3-schemas/_index.json`
+records.
 
 ## Dependency direction
 
@@ -161,11 +161,8 @@ and effect sections, and provide a parseable bilingual JSON file for every
 manifest entry. Each locale directory also carries an `_index.json` with
 display names; it must list exactly the manifest's ids, and
 `schema_index.py` reads it to match effect names in queries. The runtime
-reads the committed dataset when it is complete and matches `C3_VERSION`; a
-generated export in the cache is read only while it matches that version and
-the committed copy does not, which is the window between raising the version
-and refreshing `data/`. A same-version cache never shadows committed data.
-Explicit path overrides remain explicit.
+reads the committed dataset, or the directory `C3_SCHEMA_DIR` names. A refresh
+replaces `data/` itself, so the cache is never read at query time.
 
 No ordinary import or query refreshes the CDN. `scripts/init.py` fetches,
 exports into the cache, and replaces the `data/` directories; the update

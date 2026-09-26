@@ -11,9 +11,9 @@ no set-default-color.
 Run it when scripts/init.py stops with "language pack names shared ACEs that
 common_aces.json does not define", then review the diff and commit the file.
 
-The CDN serves main.js only at its root (the current stable release), so the
-extracted block matches the version reported in versions.json, not
-necessarily C3_VERSION. The file records the version it was taken from.
+The CDN serves main.js only at its root, so the block comes from the latest
+stable release in versions.json, and so does the language pack it is checked
+against. The file records the version it was taken from.
 
 Usage:
     python scripts/extract_common_aces.py
@@ -28,15 +28,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv(ROOT / "src" / ".env")
-except ImportError:
-    pass
-
 from src.settings import load_settings
-from src.ingest.c3_fetcher import C3Fetcher
+from src.ingest.c3_fetcher import C3Fetcher, latest_stable_version
 from src.ingest.common_aces import (
     ACE_TYPES,
     COMMON_ACES_PATH,
@@ -58,8 +51,9 @@ def main() -> None:
     args = parser.parse_args()
 
     settings = load_settings()
+    latest = latest_stable_version(settings.schema.cdn_base)
     fetcher = C3Fetcher(
-        version=settings.schema.version,
+        version=latest,
         base_url=settings.schema.cdn_base,
         cache_dir=settings.schema.cache_dir,
     )
@@ -72,7 +66,7 @@ def main() -> None:
         source_version = args.release or "local file " + args.main_js.name
     else:
         main_js = fetcher.fetch_raw("main.js").decode("utf-8", errors="replace")
-        source_version = fetcher.get_latest_stable_version()
+        source_version = latest
     if args.plugins_js:
         plugins_js = args.plugins_js.read_text(encoding="utf-8", errors="replace")
     else:

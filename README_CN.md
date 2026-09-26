@@ -99,7 +99,7 @@ prompts/                LLM system prompt
   references/           按需加载
 skills/                 Agent Skills，安装到游戏项目里
   construct3-project/   ACE 查询、事件表打印、事件表编辑、检查器、编辑器打开验证、生成器模板
-src/                    可选查找服务，自带 .env（见 src/AGENTS.md）
+src/                    可选查找服务（见 src/AGENTS.md）
 scripts/                安装、数据刷新、版本检查
 tests/                  离线 pytest 套件
 docs/guide/             使用者文档

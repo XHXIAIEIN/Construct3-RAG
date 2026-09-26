@@ -6,7 +6,7 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from src.ingest.c3_fetcher import C3Fetcher, _cache_expired
+from src.ingest.c3_fetcher import C3Fetcher, _cache_expired, latest_stable_version
 from src.ingest.common_aces import COMMON_PROPERTIES
 
 
@@ -47,15 +47,21 @@ def test_handles_bom(fetcher):
         assert result == mock_data
 
 
-def test_get_latest_version(fetcher):
+def test_latest_stable_version():
     """Detect latest stable version from versions.json."""
     mock_versions = [
         {"branchName": "Beta", "releaseName": "r477"},
         {"branchName": "Stable", "releaseName": "r476"},
         {"branchName": "LTS", "releaseName": "r449.3"},
     ]
-    with patch.object(fetcher, "_http_get", return_value=json.dumps(mock_versions).encode()):
-        assert fetcher.get_latest_stable_version() == "r476"
+    with patch("src.ingest.c3_fetcher._http_get", return_value=json.dumps(mock_versions).encode()):
+        assert latest_stable_version() == "r476"
+
+
+def test_latest_stable_version_without_stable_fails():
+    with patch("src.ingest.c3_fetcher._http_get", return_value=b"[]"):
+        with pytest.raises(LookupError):
+            latest_stable_version()
 
 
 def test_cache_expired_old_file(tmp_path):

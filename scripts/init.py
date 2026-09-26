@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Refresh the committed Construct 3 data from the CDN.
 
-Fetches the release named by C3_VERSION (or --version), exports schemas,
+Fetches the latest stable release (or --version), exports schemas,
 example metadata, language packs and TypeScript definitions into the cache,
 then replaces the matching directories under data/. The runtime reads data/,
 so the refresh shows in `git diff` before it is committed. The update
@@ -18,26 +18,19 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv(ROOT / "src" / ".env")
-except ImportError:
-    pass
-
 from src.lookup.schema_layout import schema_counts
 
 
 def main():
     parser = argparse.ArgumentParser(description="Refresh data/ from the Construct 3 CDN")
-    parser.add_argument("--version", type=str, help="C3 version override (for example rNNN)")
+    parser.add_argument("--version", type=str, help="Release to fetch (default: latest stable on the CDN)")
     args = parser.parse_args()
 
     from src.settings import load_settings
-    from src.ingest.c3_fetcher import C3Fetcher
+    from src.ingest.c3_fetcher import C3Fetcher, latest_stable_version
 
     settings = load_settings()
-    version = args.version or settings.schema.version
+    version = args.version or latest_stable_version(settings.schema.cdn_base)
     print(f"Refreshing Construct3-RAG data from Construct 3 {version}")
     print(f"CDN: {settings.schema.cdn_base}")
     print()

@@ -9,13 +9,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv(Path(__file__).parent / ".env")
-except ImportError:
-    pass
-
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
 

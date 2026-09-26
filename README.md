@@ -99,7 +99,7 @@ prompts/                LLM system prompts
   references/           Loaded on demand
 skills/                 Agent Skills, installed into a game project
   construct3-project/   ACE lookup, sheet printer, sheet editor, checker, editor opener, generator template
-src/                    Optional lookup service, own .env (see src/AGENTS.md)
+src/                    Optional lookup service (see src/AGENTS.md)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite
 docs/guide/             User docs

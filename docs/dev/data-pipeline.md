@@ -21,7 +21,7 @@ finds them.
 
 ### Cache Strategy
 
-- Cache directory: `.cache/c3-cdn/{C3_VERSION}/`
+- Cache directory: `.cache/c3-cdn/{release}/`
 - Expiry: every Wednesday 08:00 Beijing time (aligned with Scirra's Tuesday UK evening releases)
 - Within one cache period, each endpoint is fetched at most once
 - `force=True` bypasses cache
@@ -95,13 +95,15 @@ ACEs present in `allAces.json` but absent from `zh-CN` lang file are deprecated:
 
 ## Version Update
 
-When Construct 3 releases a new version:
+`data/c3-schemas/_index.json` records the release `data/` holds.
+`scripts/check_c3_version.py` compares it with the latest stable release in
+the CDN's `versions.json`. When Construct 3 releases a new version:
 
 ```bash
-# Fetch the release, export into the cache, replace data/
-python scripts/init.py --version <release>
+# Fetch the latest stable release (or --version <release>), replace data/
+python scripts/init.py
 
-# Review, then commit data/ together with the C3_VERSION default
+# Review, then commit data/
 git diff --stat data/
 ```
 
@@ -109,5 +111,4 @@ git diff --stat data/
 `data/`: it replaces `c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`
 whole, leaving cache markers behind. `scripts/init.py` and the update workflow
 both call it, so generated and committed layouts stay identical. The workflow
-also rewrites the `C3_VERSION` default in `src/settings/__init__.py` before
-the refresh and opens a pull request with the result.
+opens a pull request with the result.
