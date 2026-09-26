@@ -11,7 +11,7 @@ def test_default_setup_uses_local_schema_without_cdn(monkeypatch):
     calls: list[tuple] = []
     monkeypatch.setattr(sys, "argv", ["setup.py", "--skip-deps"])
     monkeypatch.setattr(setup, "check_python", lambda: None)
-    monkeypatch.setattr(setup, "fetch_cdn", lambda version=None: calls.append(("cdn", version)))
+    monkeypatch.setattr(setup, "refresh", lambda version=None: calls.append(("cdn", version)))
     monkeypatch.setattr(setup, "report_local_schema", lambda: calls.append(("local",)))
     monkeypatch.setattr(
         setup,
@@ -32,7 +32,7 @@ def test_explicit_refresh_fetches_before_lookup_server(monkeypatch):
         sys, "argv", ["setup.py", "--skip-deps", "--refresh-data"]
     )
     monkeypatch.setattr(setup, "check_python", lambda: None)
-    monkeypatch.setattr(setup, "fetch_cdn", lambda version=None: calls.append(("cdn", version)))
+    monkeypatch.setattr(setup, "refresh", lambda version=None: calls.append(("cdn", version)))
     monkeypatch.setattr(setup, "report_local_schema", lambda: calls.append(("local",)))
     monkeypatch.setattr(
         setup,
