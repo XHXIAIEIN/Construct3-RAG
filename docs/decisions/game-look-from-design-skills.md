@@ -310,6 +310,33 @@ contrast of labels, the text sizes and the pixel-art settings. An icon is
 the user's art or a real asset; until one arrives, a stand-in of one colour
 or a plain shape in a role of the palette, as the coin is.
 
+## Iteration 23: the template without `pixel_art()`, three runs
+
+The two art cases again, `with_skill` three times on the template as
+committed, the `old_skill` runs of iteration 21 the baseline. Evidence:
+`.local/docs/evidence/skill-evals/construct3-project/iteration-23/`.
+
+| Case | old_skill (iteration 21) | with_skill |
+|------|--------------------------|------------|
+| lay-out-the-hud (of 10) | 10, 10, 10 | 10, 10, 10 |
+| lives-as-hearts (of 7) | 7, 7, 7 | 7, 6, 7 |
+
+| Mean per run | lay-out-the-hud, old / new | lives-as-hearts, old / new |
+|--------------|----------------------------|----------------------------|
+| Tool calls, lost | 15.0, 3.3 / 17.7, 3.3 | 28.7, 6.0 / 47.3, 6.7 |
+| Seconds | 76 / 80 | 178 / 241 |
+
+The one miss is the grader's: that run declares `lives` at 0 and sets it
+to 5 on start of layout, which the assertion on a variable starting at 5
+does not follow; the count and the hearts work. The runs drew stand-ins,
+circles, squares and bars, every image 96×96 and every colour a role of
+`PALETTE`; neither the colour check nor the contrast check fired, the
+roles being there to draw with. One pause button is again a square of
+`panel` alone on the background. The hearts runs cost more calls than the
+baseline, one of them 73 against the others' 29 and 40; three runs do not
+say whether that is the template or the spread, which iteration 21 put at
+25 to 34 on the old one.
+
 ## Re-evaluate when
 
 - A run of a case that asks for art adds colours with `painted=True` to art
@@ -326,7 +353,7 @@ or a plain shape in a role of the palette, as the coin is.
   checks that worked in iteration 22, the box on the grid and 3:1 against
   the backdrop, go with it, not with art the template draws.
 - A HUD sprite of one colour that does not show on the background, as the
-  pause button of iteration 22 drawn in `panel`: a check of the UI layer's
+  pause buttons of iterations 22 and 23 drawn in `panel`: a check of the UI layer's
   images against the layer behind, in `no_overlap()`, that lets a bar's
   frame through.
 - The example clone updates: rerun the two survey scripts; the numbers in
