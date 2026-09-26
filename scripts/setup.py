@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT))
 
 from src.lookup.schema_layout import schema_counts, schema_version
 from src.settings import load_settings
+from scripts.init import refresh
 
 SETTINGS = load_settings()
 
@@ -38,37 +39,6 @@ def install_deps():
     req_file = ROOT / "src" / "requirements.txt"
     print(f"[deps] Installing from {req_file.name}...")
     run([sys.executable, "-m", "pip", "install", "-r", str(req_file), "-q"])
-    print("  OK")
-
-
-def fetch_cdn(version: str | None = None):
-    """Refresh data/ from the CDN; the runtime reads data/, not the cache."""
-    print("[cdn] Fetching Construct 3 CDN data...")
-    from src.ingest.c3_fetcher import C3Fetcher, latest_stable_version
-
-    ver = version or latest_stable_version(SETTINGS.schema.cdn_base)
-    fetcher = C3Fetcher(
-        version=ver,
-        base_url=SETTINGS.schema.cdn_base,
-        cache_dir=SETTINGS.schema.cache_dir,
-    )
-
-    aces = fetcher.fetch_all_aces()
-    targets = fetcher.export_to_data(SETTINGS.paths.data_dir)
-
-    total_aces = sum(
-        len(cat.get(t, []))
-        for section in aces.values()
-        for cats in section.values()
-        for cat in cats.values()
-        for t in ("conditions", "actions", "expressions")
-    )
-    counts = schema_counts(targets["c3-schemas"])
-    print(
-        f"  {ver}: {total_aces} ACEs, {counts['plugins']} plugins, "
-        f"{counts['behaviors']} behaviors, {counts['effects']} effects"
-    )
-    print(f"  Refreshed {SETTINGS.paths.data_dir}; review with git diff before committing.")
     print("  OK")
 
 
@@ -117,7 +87,7 @@ def main():
     if not args.skip_deps:
         install_deps()
     if args.refresh_data or args.version:
-        fetch_cdn(args.version)
+        refresh(args.version)
     else:
         report_local_schema()
 

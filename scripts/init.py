@@ -21,16 +21,13 @@ sys.path.insert(0, str(ROOT))
 from src.lookup.schema_layout import schema_counts
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Refresh data/ from the Construct 3 CDN")
-    parser.add_argument("--version", type=str, help="Release to fetch (default: latest stable on the CDN)")
-    args = parser.parse_args()
-
+def refresh(version: str | None = None) -> None:
+    """Fetch one release, the latest stable by default, and replace data/."""
     from src.settings import load_settings
     from src.ingest.c3_fetcher import C3Fetcher, latest_stable_version
 
     settings = load_settings()
-    version = args.version or latest_stable_version(settings.schema.cdn_base)
+    version = version or latest_stable_version(settings.schema.cdn_base)
     print(f"Refreshing Construct3-RAG data from Construct 3 {version}")
     print(f"CDN: {settings.schema.cdn_base}")
     print()
@@ -86,6 +83,12 @@ def main():
     print(f"  Data:  {settings.paths.data_dir}")
     print(f"{'='*50}")
     print("\nReview with `git diff --stat data/`, then commit.")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Refresh data/ from the Construct 3 CDN")
+    parser.add_argument("--version", type=str, help="Release to fetch (default: latest stable on the CDN)")
+    refresh(parser.parse_args().version)
 
 
 if __name__ == "__main__":
