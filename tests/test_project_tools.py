@@ -1667,6 +1667,89 @@ def test_template_bar_grows_from_its_left_edge_inside_its_frame():
         assert not unknown, (plugin, unknown)
 
 
+def template_module(**replace: str):
+    """assets/build_project.py as a module, its source changed by `replace` first
+    (VIEW="VIEW_W, VIEW_H = 320, 180" for another viewport)."""
+    import types
+    source = (SKILL / "assets" / "build_project.py").read_text(encoding="utf-8")
+    view = replace.get("VIEW")
+    if view:
+        assert "VIEW_W, VIEW_H = 720, 1280" in source
+        source = source.replace("VIEW_W, VIEW_H = 720, 1280", view)
+    t = types.ModuleType("build_project")
+    t.__file__ = str(SKILL / "assets" / "build_project.py")
+    exec(compile(source, t.__file__, "exec"), t.__dict__)
+    return t
+
+
+def png_pixels(path: Path) -> list[list[tuple]]:
+    """The RGBA rows of a PNG the template wrote: 8-bit RGBA, one IDAT, filter 0 on every row."""
+    import struct
+    import zlib
+    data = path.read_bytes()
+    w, h = struct.unpack(">II", data[16:24])
+    idat = data.index(b"IDAT")
+    raw = zlib.decompress(data[idat + 4:idat + 4 + struct.unpack(">I", data[idat - 4:idat])[0]])
+    rows = [raw[y * (4 * w + 1) + 1:(y + 1) * (4 * w + 1)] for y in range(h)]
+    return [[tuple(r[4 * x:4 * x + 4]) for x in range(w)] for r in rows]
+
+
+def test_template_draws_only_the_colours_of_its_palette(built, tmp_path):
+    """Every pixel the generator draws that shows is a colour of PALETTE: a new object reuses the
+    game's colours or names the role a new one plays, and the message says which role is nearest."""
+    t = template_module()
+    t.ROOT = tmp_path
+    for row in png_pixels(built / "images" / "coin-default-000.png"):
+        assert {px[:3] for px in row if px[3]} <= set(t.PALETTE.values())
+    t.write_png("half.png", 2, 1, lambda x, y: (*t.PALETTE["danger"], 128 if x else 255))   # alpha is free
+    t.write_png("clear.png", 1, 1, lambda x, y: (1, 2, 3, 0))                                # a pixel that does not show
+    assert png_pixels(tmp_path / "images" / "half.png") == [[(220, 70, 70, 255), (220, 70, 70, 128)]]
+    with pytest.raises(SystemExit, match=r"images/heart.png: \(230, 40, 60\) at \(1,0\) is no colour of PALETTE, "
+                                         r"nor are 1 more of its colours; the nearest is danger \(220, 70, 70\)\. "
+                                         r"Draw with rgb\('danger'\), or add the colour to PALETTE"):
+        t.write_png("heart.png", 3, 1, lambda x, y: [(0, 0, 0, 0), (230, 40, 60, 255), (9, 9, 9, 255)][x])
+    assert not (tmp_path / "images" / "heart.png").exists()
+    t.write_png("gradient.png", 2, 1, lambda x, y: (x * 200, 100, 0, 255), painted=True)     # a painting keeps its colours
+    with pytest.raises(SystemExit, match=r"'crimson' is no role of PALETTE, which has background, panel"):
+        t.rgb("crimson")
+    t.bar_images("HpFrame", "HpFill", caps=True)
+    edge, middle = png_pixels(tmp_path / "images" / "hpfill.png")[0][0], png_pixels(tmp_path / "images" / "hpfill.png")[8][8]
+    assert (edge[:3], middle[:3]) == (t.PALETTE["outline"], t.PALETTE["good"])
+
+
+def test_template_labels_read_on_what_is_behind_them():
+    """A label is FONT at a size of TEXT_SIZE in a role of PALETTE, and one that reads below
+    4.5:1 on its backdrop, 3:1 from the title size up (WCAG 2.2, 1.4.3), stops the run with the
+    roles that would read there."""
+    t = template_module()
+    assert round(t.contrast((255, 255, 255), (0, 0, 0)), 2) == 21 and t.contrast((30, 34, 48), (30, 34, 48)) == 1
+    score = t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999")
+    assert (score["properties"]["font"], score["properties"]["size"], score["properties"]["color"]) == ("Arial", 32, [1, 1, 1, 1])
+    t.PALETTE["dim"] = (120, 130, 150)                                   # 4.1:1 on the background
+    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 130, 150\) on background \(30, 34, 48\) reads 4\.1:1; "
+                                         r"text of size 32 needs 4\.5:1\. Roles that read on background: text, reward, good;"):
+        t.hud_text("TimerText", "Time: 30", "top-right", color="dim")
+    banner = t.hud_text("WinText", "YOU WIN", "center", size=t.TEXT_SIZE["title"], color="dim")   # 3:1 is enough for a title
+    assert banner["properties"]["size"] == 64 and banner["properties"]["color"][:3] == [120 / 255, 130 / 255, 150 / 255]
+    with pytest.raises(SystemExit, match=r"LivesText: text \(255, 255, 255\) on reward \(240, 190, 60\) reads 1\.7:1; .* Roles that read on reward: background, panel, outline;"):
+        t.hud_text("LivesText", "Lives", "top", on="reward")
+    game = t.layout("Game", [t.layer("Background", transparent=False), t.layer("UI", parallax=0)], sheet="Game")
+    assert [layer["backgroundColor"] for layer in game["layers"]] == [t.rgba(t.PALETTE["background"]), [1, 1, 1, 1]]
+
+
+def test_template_samples_a_pixel_art_viewport_nearest_and_scales_it_by_whole_numbers():
+    """The viewport decides the art: at 360 px high or less the grid is 8 px, the text sizes follow
+    it and the project samples Nearest at a whole-number scale, as every official example at that
+    size samples and 116 of 159 scale; a larger viewport keeps what the project has."""
+    t = template_module()
+    p = t.build_project({"properties": {}}, {}, {}, [], {}, [])
+    assert (t.PIXEL_ART, p["properties"]["sampling"], p["properties"]["fullscreenMode"]) == (False, "trilinear", "letterbox-scale")
+    small = template_module(VIEW="VIEW_W, VIEW_H = 320, 180")
+    assert (small.UNIT, small.TOUCH, small.PIXEL_ART, small.TEXT_SIZE) == (8, 24, True, {"body": 8, "title": 16})
+    p = small.build_project({"properties": {"sampling": "trilinear"}}, {}, {}, [], {}, [])
+    assert (p["properties"]["sampling"], p["properties"]["fullscreenMode"]) == ("nearest", "letterbox-integer-scale")
+
+
 def test_stand_in_project_passes_the_style_check(built):
     """The template is the shape the style asks for, so a generated project starts clean."""
     code, out = check(built, "--style")

@@ -138,6 +138,18 @@ habits; they are what made rerunning safe in Water Sort.
   The middle of the screen is the game's; the HUD lives on the edges. The
   counts behind the grid are in `Construct3-RAG/prompts/event-sheet-style.md`,
   *Project*.
+- Colours are roles of `PALETTE`, named once at the top with the game's own
+  colours. The images `write_png()` draws, the labels and the layers take
+  them by role through `rgb()`, and a pixel of any other colour stops the
+  run with the nearest role: a new object reuses the game's colours or adds
+  one under the role it plays. A painting, a gradient or a photograph,
+  passes `painted=True`. The template draws stand-ins, one colour or a plain
+  shape each, and leaves the art to the user or to real assets. A label is
+  `TEXT_SIZE["body"]`, a banner `TEXT_SIZE["title"]`, in `FONT`;
+  `hud_text()` stops the run on a colour that reads below 4.5:1 on what is
+  behind it, 3:1 for a title, and names the roles that would read there. A
+  viewport 360 px high or less is pixel art: `PIXEL_ART` has the project
+  sample *Nearest* at a whole-number scale.
 - Family variables and behaviors are declared on the family and set on every
   member instance; the checker reports the instance that lacks one. A family
   is `family(name, plugin_id, members, ...)` in `build_object_types()` and

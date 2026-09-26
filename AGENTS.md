@@ -174,6 +174,7 @@ python tests/eval_query_quality.py --strategy all --split all --output query-qua
 | Data files and fields | `docs/guide/data-format.md` |
 | Event sheet design, worked case, sourced pitfalls, the examples' authoring style | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md`, `prompts/event-sheet-style.md`, `docs/decisions/event-sheet-design-guidance.md` |
 | Slot case as a program, hand-editing project JSON, bars and life counters by the art they have | `prompts/references/` |
+| The look of a generated game: colours by role, text, pixel art, and what other design skills do | `prompts/event-sheet-style.md` (*Project*), `docs/decisions/game-look-from-design-skills.md` |
 | ACE lookup, sheet printer, sheet editor, checker, editor opener and generator template for a game project; changing and evaluating them | `skills/construct3-project/SKILL.md`, `skills/AGENTS.md` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
