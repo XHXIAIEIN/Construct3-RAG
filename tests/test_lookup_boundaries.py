@@ -2,76 +2,24 @@
 
 from __future__ import annotations
 
-import ast
 import json
 import subprocess
 import sys
 from pathlib import Path
 
 from src.lookup.examples_index import ExamplesIndex as CanonicalExamplesIndex
-from src.lookup.schema_index import SchemaIndex as CanonicalSchemaIndex
-from src.lookup.scripting_index import ScriptingIndex as CanonicalScriptingIndex
-from src.lookup.service import LookupEngine as CanonicalLookupEngine
 from src.lookup.term_index import TermIndex as CanonicalTermIndex
-from src.lookup.indexes import (
-    ExamplesIndex as IndexFacadeExamplesIndex,
-    SchemaIndex as IndexFacadeSchemaIndex,
-    ScriptingIndex as IndexFacadeScriptingIndex,
-    TermIndex as IndexFacadeTermIndex,
-)
-from src.rag.lookup import (
-    ExamplesIndex as LegacyExamplesIndex,
-    LookupEngine as LegacyLookupEngine,
-    SchemaIndex as LegacySchemaIndex,
-    ScriptingIndex as LegacyScriptingIndex,
-    TermIndex as LegacyTermIndex,
-    SCHEMA_DIR as LegacySchemaDir,
-)
 
 
 ROOT = Path(__file__).resolve().parents[1]
-LOOKUP_DIR = ROOT / "src" / "lookup"
 
 
-def test_legacy_and_indexes_facades_export_canonical_types():
-    assert LegacyLookupEngine is CanonicalLookupEngine
-    assert LegacySchemaIndex is CanonicalSchemaIndex
-    assert LegacyScriptingIndex is CanonicalScriptingIndex
-    assert LegacyTermIndex is CanonicalTermIndex
-    assert LegacyExamplesIndex is CanonicalExamplesIndex
-    assert IndexFacadeSchemaIndex is CanonicalSchemaIndex
-    assert IndexFacadeScriptingIndex is CanonicalScriptingIndex
-    assert IndexFacadeTermIndex is CanonicalTermIndex
-    assert IndexFacadeExamplesIndex is CanonicalExamplesIndex
-    assert LegacySchemaIndex().schema_dir == LegacySchemaDir
-
-
-def test_canonical_lookup_has_no_reverse_rag_imports():
-    forbidden = ("src.rag",)
-    violations = []
-    for path in sorted(LOOKUP_DIR.glob("*.py")):
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom) and node.module:
-                modules = [node.module]
-            elif isinstance(node, ast.Import):
-                modules = [alias.name for alias in node.names]
-            else:
-                continue
-            for module in modules:
-                if module.startswith(forbidden):
-                    violations.append(f"{path.name}:{node.lineno}:{module}")
-    assert violations == []
-
-
-def test_direct_canonical_import_stays_free_of_runtime_modules():
+def test_lookup_runs_from_an_injected_schema_dir_without_settings():
     script = """
 import sys
 from pathlib import Path
 from src.lookup.service import LookupEngine
 from src.lookup.schema_index import SchemaIndex
-assert 'src.rag' not in sys.modules
-assert 'src.rag.lookup' not in sys.modules
 try:
     SchemaIndex()
 except TypeError:
@@ -80,7 +28,7 @@ else:
     raise AssertionError('canonical SchemaIndex must require an injected path')
 engine = LookupEngine(schema_dir=Path('data/c3-schemas'))
 assert engine.try_lookup('Sprite 有哪些 action') is not None
-assert 'src.rag' not in sys.modules
+assert 'src.settings' not in sys.modules
 """
     subprocess.run(
         [sys.executable, "-c", script],

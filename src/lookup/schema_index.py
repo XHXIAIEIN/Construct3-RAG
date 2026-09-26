@@ -18,15 +18,6 @@ from src.lookup.schema_layout import (
 
 logger = logging.getLogger(__name__)
 
-_default_schema_dir: Path | None = None
-
-
-def configure_schema_default(schema_dir: Path) -> None:
-    """Bind the legacy no-argument constructor at a composition boundary."""
-    global _default_schema_dir
-    _default_schema_dir = Path(schema_dir)
-
-
 def _is_ascii_identifier_char(char: str) -> bool:
     return char == "_" or "0" <= char <= "9" or "a" <= char.lower() <= "z"
 
@@ -155,16 +146,8 @@ def _merge_bilingual(en: dict, zh: dict) -> dict:
 class SchemaIndex:
     """Lazy index of version-matched plugin, behavior, and effect names."""
 
-    def __init__(self, schema_dir: Path | None = None):
-        resolved_schema_dir = (
-            Path(schema_dir) if schema_dir is not None else _default_schema_dir
-        )
-        if resolved_schema_dir is None:
-            raise TypeError(
-                "SchemaIndex requires schema_dir when used outside the "
-                "src.rag.lookup compatibility facade"
-            )
-        self._schema_dir = resolved_schema_dir
+    def __init__(self, schema_dir: Path):
+        self._schema_dir = Path(schema_dir)
         self._plugins: dict[str, dict] = {}
         self._behaviors: dict[str, dict] = {}
         self._name_map: dict[str, tuple[str, bool]] = {}

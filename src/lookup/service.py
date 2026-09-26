@@ -1,8 +1,7 @@
 """Canonical deterministic Lookup service.
 
-The service is independent from HTTP, ``src.rag``, and runtime configuration.
-Callers either inject a Schema directory explicitly or let a compatibility
-composition root configure one through :func:`configure_lookup_defaults`.
+The service is independent from HTTP and runtime configuration; callers
+inject the schema directory.
 """
 
 from __future__ import annotations
@@ -22,33 +21,7 @@ from src.lookup.scripting_index import ScriptingIndex
 from src.lookup.term_index import TermIndex
 
 
-TraceSink = Callable[[str, str], None]
 AliasProvider = Callable[[], Iterable[Any]]
-
-
-def _noop_trace(message: str, phase: str = "info") -> None:
-    """Default trace sink when the canonical service is used directly."""
-
-
-_default_schema_dir: Path | None = None
-_default_trace: TraceSink = _noop_trace
-_default_alias_provider: AliasProvider = lambda: ACE_DIRECTED_ALIASES
-
-
-def configure_lookup_defaults(
-    *,
-    schema_dir: Path | None = None,
-    trace: TraceSink | None = None,
-    directed_aliases_provider: AliasProvider | None = None,
-) -> None:
-    """Configure legacy defaults at an outer composition boundary."""
-    global _default_schema_dir, _default_trace, _default_alias_provider
-    if schema_dir is not None:
-        _default_schema_dir = Path(schema_dir)
-    if trace is not None:
-        _default_trace = trace
-    if directed_aliases_provider is not None:
-        _default_alias_provider = directed_aliases_provider
 
 
 class LookupEngine(LookupHandlers):
@@ -56,33 +29,21 @@ class LookupEngine(LookupHandlers):
 
     def __init__(
         self,
-        schema_dir: Path | None = None,
+        schema_dir: Path,
         terms: list[dict[str, Any]] | None = None,
         *,
-        trace: TraceSink | None = None,
         directed_aliases_provider: AliasProvider | None = None,
     ) -> None:
-        resolved_schema_dir = Path(schema_dir) if schema_dir is not None else _default_schema_dir
-        if resolved_schema_dir is None:
-            raise TypeError(
-                "LookupEngine requires schema_dir when used outside the "
-                "src.rag.lookup compatibility facade"
-            )
-
-        self._trace = trace or _default_trace
         self._directed_aliases_provider = (
-            directed_aliases_provider or _default_alias_provider
+            directed_aliases_provider or (lambda: ACE_DIRECTED_ALIASES)
         )
-        self.schema_index = SchemaIndex(resolved_schema_dir)
+        self.schema_index = SchemaIndex(Path(schema_dir))
         self.term_index = TermIndex(terms=terms)
         if not self.term_index.is_loaded:
             self.term_index.load_from_schema(self.schema_index)
         self.examples_index = ExamplesIndex()
         self.scripting_index = ScriptingIndex()
-        self.classifier = IntentClassifier(
-            schema_index=self.schema_index,
-            trace=self._trace,
-        )
+        self.classifier = IntentClassifier(schema_index=self.schema_index)
 
     def try_lookup(self, query: str) -> LookupResponse | None:
         """Return a structured direct hit, or ``None`` when the lookup declines the query."""

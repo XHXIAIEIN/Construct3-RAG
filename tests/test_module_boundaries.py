@@ -7,18 +7,13 @@ from unittest.mock import MagicMock
 import pytest
 
 from src.application.models import SearchCommand, SearchExecution
+from src.interfaces.http.models import SearchRequest
 from src.application.search import (
     InvalidSearchRequestError,
     SearchStage,
     SearchWorkflow,
     detect_language,
 )
-from src.domain.lookup import LookupIntent as DomainLookupIntent
-from src.interfaces.http.models import SearchRequest as HttpSearchRequest
-from src.observability.trace import _trace as canonical_trace
-from src.rag.lookup import LookupIntent as LegacyLookupIntent
-from src.domain.api import SearchRequest
-from src.rag._trace import _trace as legacy_trace
 
 
 _SRC_ROOT = Path(__file__).parents[1] / "src"
@@ -70,17 +65,11 @@ def _module_imports(module: str, path: Path, known: set[str]) -> set[str]:
     return targets
 
 
-def test_legacy_model_exports_point_to_domain_contracts():
-    assert LegacyLookupIntent is DomainLookupIntent
-    assert SearchRequest is HttpSearchRequest
-    assert legacy_trace is canonical_trace
-
-
 @pytest.mark.parametrize(
     ("package", "forbidden"),
     [
-        ("application", ("src.rag", "src.ingest")),
-        ("lookup", ("src.rag", "src.ingest")),
+        ("application", ("src.ingest",)),
+        ("lookup", ("src.ingest",)),
     ],
 )
 def test_canonical_packages_do_not_import_compatibility_or_maintenance_layers(

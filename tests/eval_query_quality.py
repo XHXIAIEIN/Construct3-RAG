@@ -1495,6 +1495,35 @@ def _comparison(current: dict[str, Any], literal: dict[str, Any]) -> dict[str, A
     }
 
 
+def _lookup_module() -> Any:
+    """Bind the lookup to expansion tables the strategies can swap per run.
+
+    The engine reads directed aliases through a provider, so replacing
+    ``ACE_DIRECTED_ALIASES`` here takes effect on the next lookup. The synonym
+    and category tables have no consumer and stay empty.
+    """
+    import types
+
+    import jieba
+
+    from src.locale.resources import ACE_DIRECTED_ALIASES
+    from src.lookup import LookupEngine
+    from src.settings import load_settings
+
+    module = types.SimpleNamespace(
+        ACE_SYNONYMS=[],
+        ACE_CATEGORY_EXPAND=frozenset(),
+        ACE_DIRECTED_ALIASES=ACE_DIRECTED_ALIASES,
+        SCHEMA_DIR=load_settings().schema.directory,
+        jieba=jieba,
+    )
+    module.LookupEngine = lambda schema_dir: LookupEngine(
+        schema_dir=schema_dir,
+        directed_aliases_provider=lambda: module.ACE_DIRECTED_ALIASES,
+    )
+    return module
+
+
 def _schema_metadata(lookup_module: Any) -> dict[str, Any]:
     index_path = Path(lookup_module.SCHEMA_DIR) / "_index.json"
     version = ""
@@ -1661,7 +1690,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not cases:
         raise FixtureError(f"No {args.split!r} cases selected from {fixture}")
 
-    import src.rag.lookup as lookup_module
+    lookup_module = _lookup_module()
 
     strategies = (
         ["current", "literal"] if args.strategy == "all" else [args.strategy]

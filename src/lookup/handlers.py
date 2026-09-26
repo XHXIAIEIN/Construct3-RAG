@@ -30,7 +30,6 @@ class LookupHandlers:
     schema_index: SchemaIndex
     term_index: TermIndex
     examples_index: ExamplesIndex
-    _trace: Callable[[str, str], None]
     _directed_aliases_provider: Callable[[], Iterable[Any]]
 
     def _execute(self, intent: LookupIntent) -> tuple[str, list[LookupMatch]]:
@@ -285,7 +284,6 @@ class LookupHandlers:
                     expanded.get(addition, 0.0),
                     rule.weight,
                 )
-            self._trace(f"Directed alias: {rule.rule_id}", "lookup")
         return expanded
 
     def _format_ace_search(

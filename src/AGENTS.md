@@ -6,12 +6,12 @@ ingestion that writes `data/`.
 ## Dependency Direction
 
 Transport code maps HTTP data into application commands. Application workflows
-depend on domain data and injected ports. Lookup, ingestion, and observability
-are implementation packages behind those boundaries.
+depend on domain data and injected ports. Lookup and ingestion are
+implementation packages behind those boundaries.
 
-Keep Direct Lookup independent of ingestion. Compatibility modules may
-re-export canonical implementations, but canonical packages must not import
-their legacy `rag/` facades.
+Keep Direct Lookup independent of ingestion and of `settings/`: callers inject
+the schema directory. Each type has one import path; there are no re-export
+modules.
 
 ## Rules
 
@@ -38,7 +38,7 @@ their legacy `rag/` facades.
 
 | File | Purpose |
 |------|---------|
-| `api.py` | Thin FastAPI composition root and compatibility exports |
+| `api.py` | Thin FastAPI composition root |
 
 ## Packages
 
@@ -74,8 +74,7 @@ canonical `execute()` workflow.
 ### `domain/`
 
 Stable transport-independent lookup dataclasses. Domain modules must not load
-data or FastAPI routes. `domain/api.py` is a legacy re-export of the canonical
-DTOs in `interfaces/http/models.py`.
+data or FastAPI routes.
 
 ### `lookup/`
 
@@ -92,7 +91,6 @@ Canonical offline Direct Lookup implementation:
 | `scripting_index.py` | Scripting API index |
 | `term_index.py` | Curated terminology index built through public schema contracts |
 | `examples_index.py` | Example lookup and public fallback-tag queries |
-| `indexes.py` | Compatibility re-exports only |
 
 Indexes expose public loading and query contracts. Callers must not inspect
 another index's private fields.
@@ -120,24 +118,6 @@ the latest stable release unless `--version` names another.
 `settings/__init__.py` reads that version through
 `src.lookup.schema_layout.schema_version`, so `settings` depends on that
 one leaf of `lookup/`; nothing in `lookup/` depends back on `settings`.
-
-### `observability/`
-
-`trace.py` is the canonical request-local trace implementation shared by the
-application, retrieval, and compatibility layers.
-
-### `rag/`
-
-Legacy import facades only:
-
-| File | Purpose |
-|------|---------|
-| `lookup.py` | Configured compatibility facade for `lookup/` and legacy exports |
-| `_trace.py` | Compatibility re-export of `observability/trace.py` |
-| `messages.py` | Remaining lookup compatibility text templates |
-
-New implementation code belongs in the canonical packages above. Do not add
-business logic to these facades.
 
 ### `locale/`
 
