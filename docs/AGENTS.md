@@ -45,6 +45,7 @@ The project skill and the prompts:
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON |
 | `checker-editor-load-rules.md` | Which of the editor's load rules the checker applies, and where they were read from |
 | `event-sheet-design-guidance.md` | The event sheet prompts, the authoring style taken from the examples, and their evaluations |
+| `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |
 
 The lookup service:

@@ -671,10 +671,90 @@ def grade_lives_as_hearts(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
+SKY = (0x8E, 0xCA, 0xE6)
+
+
+def contrast(a: tuple, b: tuple) -> float:
+    """The contrast ratio of two RGB colours, 1 to 21 (WCAG 2.2, relative luminance)."""
+    def luminance(c: tuple) -> float:
+        lin = [v / 255 / 12.92 if v / 255 <= 0.04045 else ((v / 255 + 0.055) / 1.055) ** 2.4 for v in c]
+        return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+    hi, lo = sorted((luminance(a), luminance(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def rgb255(colour: list) -> tuple:
+    return tuple(round(c * 255) for c in colour[:3])
+
+
+def one_colour(project: Path, kind: str) -> tuple | None:
+    """The colour of a type whose first image shows one colour, else None."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return None
+    for png in sorted((project / "images").glob(f"{kind.lower()}*.png")):
+        try:
+            with Image.open(png) as im:
+                shown = {c[:3] for n, c in (im.convert("RGBA").getcolors(1 << 20) or []) if c[3] == 255}
+        except OSError:
+            continue
+        return next(iter(shown)) if len(shown) == 1 else None
+    return None
+
+
+def grade_readable_on_a_light_background(run: Path) -> list[tuple[bool, str]]:
+    project = run / "project"
+    results = [checker_line(project)]
+    try:
+        layout = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return results + [(False, "layouts/Game.json is not readable JSON")] * 5
+    back = next((layer for layer in layout.get("layers", []) if layer.get("name", "").lower() == "background"), None)
+    colour = rgb255(back["backgroundColor"]) if back else None
+    light = bool(back) and not back.get("isTransparent", True) and all(abs(a - b) <= 40 for a, b in zip(colour, SKY))
+    results.append((light, f"Background layer {colour}, transparent {back.get('isTransparent') if back else None}"))
+    hud = hud_instances(project)
+    texts = [i for i in hud if plugin_id(project, i["type"]) == "Text"]
+    left = [i for i in texts if re.search(r"left", str(i["properties"].get("text", "")), re.I)
+            and "6" in str(i["properties"].get("text", ""))]
+    rows = sheet_rows(project)
+    changed = {a.get("parameters", {}).get("variable") or a.get("parameters", {}).get("instance-variable")
+               for ev, _ in rows for a in ev.get("actions", []) if a.get("id") in SET_VALUE}
+    setters = [a for ev, _ in rows for a in ev.get("actions", []) if a.get("id") == "set-text"
+               and a.get("objectClass") in {i["type"] for i in left}]
+    counted = [a for a in setters if re.search(r"\.Count\b", values([a]))
+               or set(re.findall(r"[A-Za-z_]\w*", values([a]))) & {c for c in changed if c}]
+    results.append((bool(left) and bool(counted), f"labels starting Left 6: {[i['type'] for i in left] or 'none'}; "
+                                                  f"set-text from the coins left: {len(counted)} of {len(setters)}"))
+    score = next((i for i in texts if i["type"] == "ScoreText"), None)
+    if left:
+        l, t, r, b = box_of(left[0])
+        off = score is None or not (min(r, box_of(score)[2]) - max(l, box_of(score)[0]) > 0.5
+                                    and min(b, box_of(score)[3]) - max(t, box_of(score)[1]) > 0.5)
+        placed = l >= 0 and t >= 0 and r <= VIEW_W and b <= VIEW_H and r >= VIEW_W * 3 / 4 and t <= VIEW_H / 4 and off
+        results.append((placed, f"{left[0]['type']} box ({l:g},{t:g})-({r:g},{b:g}), clear of ScoreText {off}"))
+    else:
+        results.append((False, "no Left label on the UI layer"))
+    verdicts, ok = [], bool(texts) and colour is not None
+    for i in texts:
+        fg = rgb255(i["properties"].get("color", [1, 1, 1, 1]))
+        panel = next((one_colour(project, j["type"]) for j in hud if j is not i and plugin_id(project, j["type"]) != "Text"
+                      and contains(box_of(j), box_of(i)) and one_colour(project, j["type"])), None)
+        behind = panel or colour
+        ratio = contrast(fg, behind) if behind else 0
+        ok = ok and ratio >= 4.5
+        verdicts.append(f"{i['type']} {fg} on {'panel ' if panel else ''}{behind}: {ratio:.1f}:1")
+    results.append((ok, "; ".join(verdicts) or "no Text on the UI layer"))
+    results.append(generator_is_source(run))
+    return results
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
-           "reveal-the-gradient": grade_reveal_the_gradient, "lives-as-hearts": grade_lives_as_hearts}
+           "reveal-the-gradient": grade_reveal_the_gradient, "lives-as-hearts": grade_lives_as_hearts,
+           "readable-on-a-light-background": grade_readable_on_a_light_background}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")

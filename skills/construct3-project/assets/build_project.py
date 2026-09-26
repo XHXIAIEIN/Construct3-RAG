@@ -13,8 +13,9 @@ project is ready for the editor when the last line starts with `ok:`.
 
 The game below is a stand-in: coins appear, a tap collects one, the score
 counts up, and when the last coin is gone the layout restarts. Replace
-build_images(), build_object_types(), build_layouts(), the module_*()
-functions of the event sheet and the addon list in build_project(); keep the
+PALETTE with the game's colours by role, build_images(),
+build_object_types(), build_layouts(), the module_*() functions of the
+event sheet and the name and orientation in build_project(); keep the
 helpers, or grow them from the skill's `scripts/lookup_ace.py <object>
 <words>`, which prints an ACE with the JSON to write, when the game needs one
 they do not cover. The encodings are the ones the editor writes; see
@@ -55,6 +56,30 @@ TOUCH = math.ceil(48 * min(VIEW_W, VIEW_H) / 360 / UNIT) * UNIT
 
 COIN_SIZE = TOUCH                          # a coin is tapped, so it is never smaller than a finger
 COIN_COUNT = 6
+
+# --- look -----------------------------------------------------------------------------
+# Decided once, here, as named values: each colour by the role it plays, the text sizes, the
+# font. Every image the generator draws, every label and every layer takes its colour from
+# PALETTE by role, and write_png() stops the run on a pixel of any other colour, so a new
+# object reuses the game's colours or names the role a new one plays. The official pixel-art
+# examples keep to few colours with hard edges, 9 covering 95% of a project's opaque pixels
+# and 35 its whole art at the median, and their text to one or two colours in two sizes
+# (Construct3-RAG/docs/decisions/game-look-from-design-skills.md).
+PALETTE = {
+    "background": (30, 34, 48),        # behind everything; labels are read against it
+    "panel": (40, 44, 58),             # a bar's frame, a panel behind HUD items
+    "outline": (16, 18, 26),           # edges: a 9-patch's border
+    "text": (255, 255, 255),           # labels
+    "reward": (240, 190, 60),          # what the player collects: the coin
+    "reward_shade": (170, 120, 30),    # its rim
+    "good": (90, 200, 120),            # a value going well: a bar's fill
+    "danger": (220, 70, 70),           # what hurts or is lost
+}
+FONT = "Arial"                             # one font for every label
+TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
+# 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
+# as every official example at that size samples and 116 of 159 scale (build_project()).
+PIXEL_ART = UNIT == 8
 
 
 def units(n: float) -> int:
@@ -195,12 +220,41 @@ EQ, NE, LT, LE, GT, GE = 0, 1, 2, 3, 4, 5
 # --- images ----------------------------------------------------------------------
 # Stand-in art without Pillow: a PNG from an RGBA function. Real projects draw with
 # Pillow or ship files; the file names below are the ones the editor expects.
-def write_png(rel: str, w: int, h: int, pixel) -> None:
+def rgb(role: str) -> tuple[int, int, int]:
+    """The colour of a role of PALETTE: rgb("danger")."""
+    if role not in PALETTE:
+        sys.exit(f"{role!r} is no role of PALETTE, which has {', '.join(PALETTE)}; "
+                 f"add the colour to PALETTE under the role it plays")
+    return PALETTE[role]
+
+
+def rgba(colour: tuple, alpha: float = 1) -> list:
+    """An RGB colour as a layout writes one: channels from 0 to 1, whole ones as integers."""
+    return [c // 255 if c in (0, 255) else c / 255 for c in colour] + [alpha]
+
+
+def write_png(rel: str, w: int, h: int, pixel, painted: bool = False) -> None:
+    """images/<rel> from an RGBA function of (x, y). Every pixel that shows is a colour of
+    PALETTE, its alpha free; painted=True is for a picture meant to hold its own colours, a
+    gradient or a photograph, and skips that check."""
     raw = bytearray()
+    colours = set(PALETTE.values())
+    stray: dict = {}
     for y in range(h):
         raw.append(0)
         for x in range(w):
-            raw.extend(pixel(x, y))
+            px = tuple(pixel(x, y))
+            if not painted and px[3] and px[:3] not in colours:
+                stray.setdefault(px[:3], (x, y))
+            raw.extend(px)
+    if stray:
+        first, (x, y) = next(iter(stray.items()))
+        near = min(PALETTE, key=lambda k: sum((a - b) ** 2 for a, b in zip(PALETTE[k], first)))
+        others = f", nor are {len(stray) - 1} more of its colours" if len(stray) > 1 else ""
+        sys.exit(f"images/{rel}: {first} at ({x},{y}) is no colour of PALETTE{others}; the nearest is "
+                 f"{near} {PALETTE[near]}. Draw with rgb({near!r}), or add the colour to PALETTE under the "
+                 f"role it plays; a picture meant to hold its own colours, a gradient or a photograph, is "
+                 f"write_png(..., painted=True)")
 
     def chunk(tag: bytes, data: bytes) -> bytes:
         return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
@@ -211,15 +265,15 @@ def write_png(rel: str, w: int, h: int, pixel) -> None:
                      + chunk(b"IDAT", zlib.compress(bytes(raw), 9)) + chunk(b"IEND", b""))
 
 
-def bar_images(frame_name: str, fill_name: str, frame_rgb=(40, 44, 58), fill_rgb=(90, 200, 120), caps: bool = False) -> None:
-    """The 16x16 images of bar_types(): one colour each; with `caps` a 2 px darker border, the
-    margin a 9-patch keeps at any length. A painted fill replaces the fill's image with the painting."""
-    for name, rgb in ((frame_name, frame_rgb), (fill_name, fill_rgb)):
-        dark = tuple(c // 2 for c in rgb)
-
-        def pixel(x, y, rgb=rgb, dark=dark):
+def bar_images(frame_name: str, fill_name: str, frame_role: str = "panel", fill_role: str = "good",
+               caps: bool = False) -> None:
+    """The 16x16 images of bar_types(), one role of PALETTE each; with `caps` a 2 px border in
+    "outline", the margin a 9-patch keeps at any length. A painted fill replaces the fill's
+    image with the painting, drawn with painted=True."""
+    for name, role in ((frame_name, frame_role), (fill_name, fill_role)):
+        def pixel(x, y, role=role):
             edge = caps and (x < 2 or y < 2 or x >= 14 or y >= 14)
-            return (*(dark if edge else rgb), 255)
+            return (*rgb("outline" if edge else role), 255)
 
         write_png(f"{name.lower()}.png", 16, 16, pixel)
 
@@ -231,7 +285,7 @@ def build_images() -> None:
         d = math.hypot(x + 0.5 - r, y + 0.5 - r)
         if d > r:
             return (0, 0, 0, 0)
-        return (240, 190, 60, 255) if d < r - 8 else (170, 120, 30, 255)
+        return (*rgb("reward"), 255) if d < r - 8 else (*rgb("reward_shade"), 255)
 
     write_png("coin-default-000.png", COIN_SIZE, COIN_SIZE, coin)
 
@@ -752,11 +806,14 @@ def build_object_types() -> tuple[dict, dict, list]:
 
 
 # --- layouts -------------------------------------------------------------------------------
-def layer(name: str, bg=(255, 255, 255), transparent: bool = True, parallax: float = 1) -> dict:
-    """parallax 0 for a HUD layer that stays put while the layout scrolls."""
+def layer(name: str, bg: str | None = None, transparent: bool = True, parallax: float = 1) -> dict:
+    """parallax 0 for a HUD layer that stays put while the layout scrolls. bg is the role of
+    PALETTE an opaque layer fills with, "background" unless named; a transparent layer keeps
+    the editor's white, which it never draws."""
+    fill = rgb(bg or "background") if bg or not transparent else (255, 255, 255)
     return {"name": name, "overriden": 0, "subLayers": [], "instances": [], "sid": sid(), "effectTypes": [],
             "isInitiallyVisible": True, "isInitiallyInteractive": True, "isHTMLElementsLayer": False,
-            "color": [1, 1, 1, 1], "backgroundColor": [c / 255 for c in bg] + [1], "isTransparent": transparent,
+            "color": [1, 1, 1, 1], "backgroundColor": rgba(fill), "isTransparent": transparent,
             "sampling": "auto", "parallaxX": parallax, "parallaxY": parallax, "scaleRate": 1, "forceOwnTexture": False,
             "renderingMode": "3d", "drawOrder": "z-order", "useRenderCells": False, "blendMode": "normal",
             "zElevation": 0, "global": False}
@@ -793,27 +850,57 @@ def sprite_inst(otype: str, x: float, y: float, w: float, h: float, anim: str = 
                     world(x, y, w, h), ivars, behaviors)
 
 
-def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, size: float = 24,
-              halign: str = "left", bold: bool = False, ivars=None, behaviors=None) -> dict:
-    return instance(otype, {"text": text, "enable-bbcode": False, "font": "Arial", "size": size, "line-height": 0,
-                            "bold": bold, "italic": False, "color": [1, 1, 1, 1], "horizontal-alignment": halign,
+def contrast(a: tuple, b: tuple) -> float:
+    """The contrast ratio of two RGB colours, from 1 to 21 (WCAG 2.2, relative luminance)."""
+    def luminance(rgb_: tuple) -> float:
+        lin = [c / 255 / 12.92 if c / 255 <= 0.04045 else ((c / 255 + 0.055) / 1.055) ** 2.4 for c in rgb_]
+        return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+    hi, lo = sorted((luminance(a), luminance(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def readable(otype: str, color: str, on: str, size: float) -> None:
+    """Stops the run when a label in `color` does not read on `on`, both roles of PALETTE: text
+    needs 4.5:1 against what is behind it, 3:1 from TEXT_SIZE["title"] up (WCAG 2.2, 1.4.3)."""
+    need = 3 if size >= TEXT_SIZE["title"] else 4.5
+    ratio = contrast(rgb(color), rgb(on))
+    if ratio < need:
+        fits = [role for role in PALETTE if role != on and contrast(PALETTE[role], PALETTE[on]) >= need]
+        sys.exit(f"{otype}: {color} {PALETTE[color]} on {on} {PALETTE[on]} reads {ratio:.1f}:1; text of size "
+                 f"{size:g} needs {need:g}:1. Roles that read on {on}: {', '.join(fits) or 'none'}; or put the "
+                 f"label on a panel whose role it reads on and pass it as on=")
+
+
+def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, size: float | None = None,
+              halign: str = "left", bold: bool = False, color: str = "text", on: str = "background",
+              ivars=None, behaviors=None) -> dict:
+    """A Text in FONT at a size of TEXT_SIZE, its colour the role `color` of PALETTE; `on` is
+    the role of what lies behind it, which it must read on (readable())."""
+    size = size or TEXT_SIZE["body"]
+    readable(otype, color, on, size)
+    return instance(otype, {"text": text, "enable-bbcode": False, "font": FONT, "size": size, "line-height": 0,
+                            "bold": bold, "italic": False, "color": rgba(rgb(color)), "horizontal-alignment": halign,
                             "vertical-alignment": "center", "wrapping": "word", "text-direction": "ltr",
                             "icon-set": -1, "initially-visible": True, "origin": "top-left", "read-aloud": False},
                     world(x, y, w, h, 0, 0), ivars, behaviors)
 
 
-def hud_text(otype: str, text: str, where: str, size: float = 32, longest: str | None = None, bold: bool = True,
-             dx: float = 0, dy: float = 0, ivars=None, behaviors=None) -> dict:
+def hud_text(otype: str, text: str, where: str, size: float | None = None, longest: str | None = None,
+             bold: bool = True, color: str = "text", on: str = "background", dx: float = 0, dy: float = 0,
+             ivars=None, behaviors=None) -> dict:
     """A HUD label held against an edge or corner by anchor(). Its box is as wide as its
     longest text (about 0.6 em a character, rounded up to a unit) and the text is aligned to
     the side the box hangs on, so a right-hand label grows leftwards and two labels on one
     edge never meet. `longest` is the widest text the label shows at runtime, "Score: 999"
-    for a label that starts as "Score: 0"."""
+    for a label that starts as "Score: 0". The size is TEXT_SIZE["body"] unless a banner
+    asks for TEXT_SIZE["title"]; color and on are roles of PALETTE, as for text_inst()."""
+    size = size or TEXT_SIZE["body"]
     w = math.ceil(len(longest or text) * size * 0.6 / UNIT) * UNIT
     h = math.ceil(size * 1.5 / UNIT) * UNIT
     halign = {"left": "left", "middle": "center", "right": "right"}[sides(where)[1]]
     x, y = anchor(where, w, h, 0, 0, dx, dy)
-    return text_inst(otype, text, x, y, w, h, size=size, halign=halign, bold=bold, ivars=ivars, behaviors=behaviors)
+    return text_inst(otype, text, x, y, w, h, size=size, halign=halign, bold=bold, color=color, on=on,
+                     ivars=ivars, behaviors=behaviors)
 
 
 def origin_name(ox: float, oy: float) -> str:
@@ -901,13 +988,15 @@ LINE_OF_SIGHT = {"LineOfSight": {"properties": {"obstacles": "solids", "range": 
 
 def build_layouts() -> dict[str, dict]:
     game = layout("Game", [
-        layer("Background", bg=(30, 34, 48), transparent=False),
+        layer("Background", transparent=False),
         layer("Game"),
         layer("UI", parallax=0),
     ], sheet="Game")
     # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
     # row(), anything else by anchor(); the middle of the screen is the game's. no_overlap()
-    # stops the run when two HUD boxes meet or one leaves the viewport.
+    # stops the run when two HUD boxes meet or one leaves the viewport. A label is
+    # TEXT_SIZE["body"] in rgb("text"), a banner TEXT_SIZE["title"], and hud_text() stops the
+    # run on a colour that does not read on what is behind it.
     ui = game["layers"][2]["instances"]
     ui.append(hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"))
     # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
@@ -988,6 +1077,11 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
     p["eventSheets"] = {"items": sheets, "subfolders": []}
     p["viewportWidth"] = VIEW_W
     p["viewportHeight"] = VIEW_H
+    if PIXEL_ART:
+        # The viewport decides the art: pixel art sampled Nearest stays crisp, and scaled by
+        # whole numbers every pixel stays square.
+        p["properties"]["sampling"] = "nearest"
+        p["properties"]["fullscreenMode"] = "letterbox-integer-scale"
     p["firstLayout"] = "Game"
     p["properties"]["orientations"] = "portrait"
     return p

@@ -111,6 +111,17 @@ change history, or how the author got there; no `#`, colours or BBCode.
 - Pixel art at a 320×180 viewport, *Nearest* sampling, *Letterbox integer
   scale*; otherwise 1920×1080 and *Trilinear*. A one-screen game's layout
   is the viewport's size.
+- Colours by role, and few of them. The median pixel-art project draws its
+  art in 35 colours, 9 of them covering 95% of its opaque pixels, with hard
+  edges; each colour is there for something: the player, what hurts, what is
+  collected, the panels, the text. Labels come in one to three colours,
+  white in two of three, and in two sizes, rarely more than four. Every
+  label reads 4.5:1 against what is behind it, 3:1 from the title size up
+  (WCAG 2.2, 1.4.3). All 159 studio projects at 360 px or less sample
+  *Nearest*, 116 of them at *Letterbox integer scale*. The generator
+  template holds these as `PALETTE` and `rgb()`, the colour check of
+  `write_png()`, `FONT` and `TEXT_SIZE`, the contrast check of `hud_text()`,
+  and `PIXEL_ART`.
 - Positions and sizes on a grid: 8 px at 320×180 (three quarters of the
   examples' x and five sixths of their widths sit on it), 32 px at
   1920×1080 (half of their x, three fifths of their widths). Whole numbers,
