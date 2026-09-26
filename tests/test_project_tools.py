@@ -108,6 +108,11 @@ def events(sheet: dict) -> dict:
     }
 
 
+def warnings(out: str) -> list[str]:
+    """The checker's warning lines, less the notice that Pillow, which is optional, is missing."""
+    return [line for line in out.splitlines() if line.startswith("warning:") and "Pillow is not installed" not in line]
+
+
 def findings(root: Path, change, rel: str = SHEET) -> str:
     edit(root, rel, change)
     code, out = check(root)
@@ -531,7 +536,7 @@ def test_stand_in_project_writes_containers_where_the_editor_reads_them(project)
     proj = json.loads((project / "project.c3proj").read_text(encoding="utf-8"))
     assert proj["containers"] == [] and list(proj).index("containers") < list(proj).index("layouts")
     out = findings(project, lambda p: p["containers"].append({"members": ["Coin", "ScoreText"]}), "project.c3proj")
-    assert out.startswith("ok:"), out
+    assert warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
     out = findings(project, lambda p: p["containers"].append({"members": ["Coin", "Wallet"]}), "project.c3proj")
     assert "container ['Coin', 'Wallet']: member Wallet is not an object type" in out
 
@@ -576,7 +581,7 @@ def test_stand_in_project_opens_in_the_editor(built):
 def test_checker_names_what_the_editor_reads_before_it_opens_a_file(project, change, said):
     out = findings(project, change, "project.c3proj")
     if said is None:
-        assert out.startswith("ok:"), out
+        assert warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
     else:
         assert said in out, out
 
@@ -682,7 +687,7 @@ def test_checker_names_the_lists_the_editor_walks_inside_a_sheet(project, change
     without children is read and left empty, so it is not a finding."""
     out = findings(project, lambda sheet: change(events(sheet)["input"], sheet))
     if said is None:
-        assert out.startswith("ok:"), out
+        assert warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
     else:
         assert said in out, out
 
@@ -1265,7 +1270,7 @@ def test_every_x_seconds_inside_a_function_is_not_flagged(project):
     """A function called every tick is an ordinary place for it (official example tank-movement)."""
     def change(s):
         events(s)["add_score"].update(children=[block([cond("every-x-seconds", params={"interval-seconds": "1"})])])
-    assert "warning:" not in findings(project, change)
+    assert warnings(findings(project, change)) == []
 
 
 # --- Else ----------------------------------------------------------------------------------------
@@ -1858,7 +1863,7 @@ def test_plan_refuses_a_new_every_tick_beside_another_condition(project):
     assert code == 1 and (project / SHEET).read_bytes() == before and "Every tick beside 1 other" in out, out
     ev["conditions"] = [test]
     code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, ev]})
-    assert code == 0 and "warning:" not in out, out
+    assert code == 0 and warnings(out) == [], out
 
 
 def test_plan_refuses_new_cases_without_a_comment(project):
@@ -1873,7 +1878,7 @@ def test_plan_refuses_new_cases_without_a_comment(project):
     assert out.splitlines()[-1] == "the plan adds 1 problem(s) to the project; nothing was written"
     parent["children"] = [{"eventType": "comment", "text": "First."}, *cases]
     code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, parent]})
-    assert code == 0 and "warning:" not in out and out.splitlines()[-1].startswith("ok:"), out
+    assert code == 0 and warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
 
 
 def test_plan_refuses_new_events_without_their_comments(project):
@@ -1889,4 +1894,4 @@ def test_plan_refuses_new_events_without_their_comments(project):
     stepped = STYLE_ACTIONS[:4] + [{"type": "comment", "text": "Then the rest."}] + STYLE_ACTIONS[4:]
     code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the time."},
                                                     {"eventType": "block", "conditions": [], "actions": stepped}]})
-    assert code == 0 and "warning:" not in out and out.splitlines()[-1].startswith("ok:"), out
+    assert code == 0 and warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
