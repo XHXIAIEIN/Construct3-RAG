@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Historical lookup smoke diagnostic — not the product quality gold set.
+"""Lookup smoke run by plugin and ACE id — not the product quality gold set.
 
-This intentionally keeps its legacy bare-ID checks for compatibility. Product
-quality, stable identities, ranking, routing, and expansion attribution live in
-``tests/eval_query_quality.py`` and ``tests/fixtures/query_gold.jsonl``.
+Product quality, stable identities, ranking, routing, and expansion
+attribution live in ``tests/eval_query_quality.py`` and
+``tests/fixtures/query_gold.jsonl``.
 
 Usage:
     python tests/eval_lookup.py

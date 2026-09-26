@@ -9,7 +9,6 @@ from .models import (
     LookupItemResult,
     LookupMatchResult,
     LookupSection,
-    PluginInfo,
     SearchRequest,
     SearchResponse,
 )
@@ -23,7 +22,6 @@ __all__ = [
     "LookupItemResult",
     "LookupMatchResult",
     "LookupSection",
-    "PluginInfo",
     "SearchRequest",
     "SearchResponse",
 ]
