@@ -16,14 +16,13 @@ The project follows four dependency rules:
 1. Data contracts do not load files, configuration, models, or services.
 2. Application workflows depend on typed ports, never adapter internals.
 3. No import and no query reaches the network or loads a model.
-4. Historical import paths are facades only; canonical modules never depend on
-   a compatibility facade.
+4. Each type has one import path; there are no re-export modules.
 
 ## Source layout
 
 ```text
 src/
-  api.py                         FastAPI composition root and public re-exports
+  api.py                         FastAPI composition root
   interfaces/http/
     models.py                    Pydantic request/response contracts
     presenters.py                Search/health outcome -> HTTP DTO mapping
@@ -35,7 +34,6 @@ src/
     health.py                    Typed health aggregation
   domain/
     lookup.py                    Lookup intent/match/result records
-    api.py                       Legacy re-export of interfaces/http/models.py
   lookup/
     service.py                   Canonical deterministic LookupEngine
     intent.py                    Conservative query classification
@@ -46,7 +44,6 @@ src/
     term_index.py                Translation-term index
     examples_index.py            Example metadata index
     scripting_index.py           Script API index
-    indexes.py                   Legacy index re-exports only
   ingest/
     c3_fetcher.py                CDN fetch, cache, schema/example/lang export
     common_aces.py               Shared world-object ACEs from common_aces.json
@@ -54,15 +51,10 @@ src/
     catalog.json                 Query vocabulary, grammar, and aliases per locale
     resources.py                 Catalog validation, merging, and format adapters
   settings/__init__.py           Immutable, grouped settings loader
-  observability/trace.py        Optional request-local diagnostics
-  rag/
-    lookup.py                    Historical Lookup facade
-    _trace.py                    Historical trace facade
-    messages.py                  Remaining lookup compatibility text templates
 ```
 
-`src/domain/api.py` is also a compatibility re-export. New code imports HTTP
-contracts from `src.interfaces.http` and the lookup from `src.lookup`.
+HTTP contracts are imported from `src.interfaces.http`, the lookup from
+`src.lookup`.
 
 `src.settings.load_settings()` accepts an explicit environment mapping and
 repository root, returning a frozen tree of path, Schema, and runtime groups.
@@ -136,8 +128,7 @@ query
 ```
 
 The service is independent from runtime configuration. `src.api` injects the
-selected Schema path; the historical `src.rag.lookup` facade supplies the same
-default only for legacy callers.
+schema path; `LookupEngine` and `SchemaIndex` have no default.
 
 Direct Lookup is deliberately conservative:
 
@@ -167,16 +158,3 @@ replaces `data/` itself, so the cache is never read at query time.
 No ordinary import or query refreshes the CDN. `scripts/init.py` fetches,
 exports into the cache, and replaces the `data/` directories; the update
 workflow runs the same script.
-
-## Compatibility policy
-
-Compatibility facades preserve established imports while callers migrate:
-
-| Historical path | Canonical path |
-|---|---|
-| `src.domain.api` | `src.interfaces.http.models` |
-| `src.rag.lookup` | `src.lookup` |
-| `src.rag._trace` | `src.observability.trace` |
-
-Facades may bind legacy defaults or names, but canonical modules must not import
-them. Compatibility is checked by object-identity and import-boundary tests.

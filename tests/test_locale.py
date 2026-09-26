@@ -71,7 +71,7 @@ def test_catalog_references_canonical_consumers_not_compatibility_facades():
     legacy_consumers = sorted(
         consumer
         for consumer in consumers
-        if consumer.startswith("src.rag.") or consumer == "src.api._clean_content"
+        if consumer == "src.api._clean_content"
     )
     assert legacy_consumers == []
 

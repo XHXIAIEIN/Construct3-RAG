@@ -13,31 +13,14 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
 
 from src.application.health import build_health_outcome
-from src.application.search import (
-    InvalidSearchRequestError,
-    SearchWorkflow,
-    detect_language,
-)
+from src.application.search import InvalidSearchRequestError, SearchWorkflow
 from src.settings import load_settings
-from src.interfaces.http.models import (
-    ACELocaleResult,
-    ACEParam,
-    DebugInfo,
-    HealthResponse,
-    LookupDebug,
-    LookupItemResult,
-    LookupMatchResult,
-    LookupSection,
-    PluginInfo,
-    SearchRequest,
-    SearchResponse,
-)
+from src.interfaces.http.models import HealthResponse, SearchRequest, SearchResponse
 from src.interfaces.http.presenters import (
     present_health_outcome,
     present_search_outcome,
     request_to_command,
 )
-from src.observability.trace import _trace_local
 
 SETTINGS = load_settings()
 
@@ -85,7 +68,6 @@ def health() -> HealthResponse:
 
 @app.post("/search", response_model=SearchResponse, response_model_exclude_none=True)
 def search(request: SearchRequest) -> SearchResponse:
-    _trace_local.events = []
     try:
         outcome = _search_workflow().execute(request_to_command(request))
         return present_search_outcome(outcome)
@@ -93,21 +75,4 @@ def search(request: SearchRequest) -> SearchResponse:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
-# Compatibility alias for callers that imported the previous private helper.
-_detect_lang = detect_language
-
-
-__all__ = [
-    "app",
-    "SearchRequest",
-    "SearchResponse",
-    "HealthResponse",
-    "PluginInfo",
-    "ACEParam",
-    "ACELocaleResult",
-    "LookupMatchResult",
-    "LookupItemResult",
-    "LookupSection",
-    "LookupDebug",
-    "DebugInfo",
-]
+__all__ = ["app"]

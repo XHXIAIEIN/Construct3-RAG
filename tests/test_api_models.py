@@ -4,7 +4,7 @@ from pydantic import ValidationError
 
 from src.application.models import SearchCommand, SearchOutcome
 from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
-from src.api import (
+from src.interfaces.http.models import (
     ACELocaleResult,
     LookupDebug,
     LookupItemResult,

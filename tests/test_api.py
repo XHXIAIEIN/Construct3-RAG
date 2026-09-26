@@ -96,7 +96,7 @@ def test_health_says_how_to_get_missing_schema_data(client, tmp_path):
 
 def test_search_routes_to_lookup(client):
     c, lookup = client
-    from src.rag.lookup import LookupResponse as LR, LookupIntent, LookupMatch, ACELocale
+    from src.domain.lookup import LookupResponse as LR, LookupIntent, LookupMatch, ACELocale
     intent = LookupIntent(
         intent_type="ace_list", plugin_id="sprite", ace_type="actions", tier=1,
         confidence=0.85,
@@ -140,7 +140,7 @@ def test_search_lookup_miss_returns_no_lookup_section(client):
 @pytest.mark.parametrize("context", ["legacy context without matches", ""])
 def test_context_only_lookup_is_not_a_lookup_section(client, context):
     c, lookup = client
-    from src.rag.lookup import LookupIntent, LookupResponse
+    from src.domain.lookup import LookupIntent, LookupResponse
 
     lookup.try_lookup.return_value = LookupResponse(
         intent=LookupIntent(intent_type="term_translate", term="Destroy", tier=1),
@@ -157,7 +157,7 @@ def test_context_only_lookup_is_not_a_lookup_section(client, context):
 
 def test_debug_reports_the_lookup_intent_and_timing(client):
     c, lookup = client
-    from src.rag.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
+    from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
 
     lookup.try_lookup.return_value = LookupResponse(
         intent=LookupIntent(

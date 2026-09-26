@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import re
-from collections.abc import Callable
 from typing import Optional
 
 import jieba
@@ -33,10 +32,6 @@ from src.locale.resources import (
 from src.lookup.schema_index import SchemaIndex
 
 logger = logging.getLogger(__name__)
-
-
-def _noop_trace(message: str, phase: str = "info") -> None:
-    """Default trace sink for the transport-independent classifier."""
 
 
 _LIST_PATTERNS = [re.compile(pattern, re.IGNORECASE) for pattern in LIST_QUERY_PATTERNS]
@@ -68,17 +63,8 @@ class IntentClassifier:
     def __init__(
         self,
         schema_index: SchemaIndex,
-        trace: Callable[[str, str], None] | None = None,
     ):
         self.schema = schema_index
-        self._trace = trace or _noop_trace
-
-    def _display_name(self, plugin_id: str, is_behavior: bool) -> str:
-        """Return human-readable name_en for a plugin/behavior ID."""
-        data = self.schema.get_schema(plugin_id, is_behavior)
-        if data:
-            return data.get("name_en", plugin_id)
-        return plugin_id
 
     def classify(self, query: str) -> Optional[LookupIntent]:
         """
@@ -99,51 +85,28 @@ class IntentClassifier:
         intent = self._rule_based(query)
         if intent:
             logger.info(f"[Lookup] rule hit: {intent.intent_type} plugin={intent.plugin_id}")
-            name = self._display_name(intent.plugin_id, intent.is_behavior)
-            self._trace(
-                f"Exact match: {intent.intent_type} · {name} conf={intent.confidence:.2f}",
-                "lookup",
-            )
             return intent
 
         if self._requires_semantic_fallback(query):
-            self._trace("Direct lookup skipped for semantic-style query", "lookup")
             return None
 
         # Example-find detection
         intent = self._detect_example_find(query)
         if intent:
             logger.info(f"[Lookup] example_find hit: tags={intent.matched_tags}")
-            self._trace(
-                f"Example lookup: tags={intent.matched_tags} conf={intent.confidence:.2f}",
-                "lookup",
-            )
             return intent
 
-        self._trace("Exact match missed", "lookup")
 
         # Keyword inference (plugin + topic → ace_search)
         intent = self._keyword_infer(query)
         if intent:
             if intent.intent_type == "semantic_fallback":
-                self._trace(
-                    f"Entity parsed but topic falls back: {intent.plugin_id}",
-                    "lookup",
-                )
                 return intent
             logger.info(
                 f"[Lookup] topic hit: ace_search plugin={intent.plugin_id} "
                 f"ace_type={intent.ace_type} filter={intent.filter_term}"
             )
-            name = self._display_name(intent.plugin_id, intent.is_behavior)
-            self._trace(
-                f"Keyword search: {name} conf={intent.confidence:.2f}",
-                "lookup",
-            )
-            if intent.filter_term:
-                self._trace(f"Keywords: {intent.filter_term}", "lookup")
             return intent
-        self._trace("Keyword search missed", "lookup")
 
         effect = self.schema.find_effect_in_query(query)
         if effect:
@@ -329,10 +292,6 @@ class IntentClassifier:
 
         compact_topic = re.sub(r"\s+", "", filter_term).lower()
         if compact_topic in AMBIGUOUS_BARE_TOPICS_ZH_EN:
-            self._trace(
-                f"Ambiguous bare topic '{filter_term}' falls back",
-                "lookup",
-            )
             return LookupIntent(
                 intent_type="semantic_fallback",
                 plugin_id=plugin_id,

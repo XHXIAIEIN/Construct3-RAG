@@ -7,9 +7,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.rag.lookup import (
-    SchemaIndex, TermIndex, IntentClassifier, LookupEngine,
-    LookupIntent, ExamplesIndex,
+from src.domain.lookup import LookupIntent
+from src.lookup import (
+    SchemaIndex, TermIndex, IntentClassifier, LookupEngine, ExamplesIndex,
 )
 
 
@@ -550,7 +550,7 @@ class TestACEExampleAttach:
                 {"title": "Tween Demo", "slug": "tween-demo", "genres": ["animation"], "behaviors": ["Tween"]},
             ]
         }), encoding="utf-8")
-        engine = LookupEngine()
+        engine = make_engine()
         engine.examples_index = ExamplesIndex(index_path=index_file)
         intent = LookupIntent(
             intent_type="ace_list",
