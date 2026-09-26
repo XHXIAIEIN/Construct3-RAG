@@ -4,23 +4,15 @@
 Usage:
     python scripts/setup.py                 # install deps, start the lookup server
     python scripts/setup.py --refresh-data  # explicitly refresh Construct data
-    python scripts/setup.py --version <release>  # use a specific C3 version
+    python scripts/setup.py --version <release>  # refresh data/ from a specific release
 """
 import argparse
-import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
-
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv(ROOT / "src" / ".env")
-except ImportError:
-    pass
 
 from src.lookup.schema_layout import schema_counts, schema_version
 from src.settings import load_settings
@@ -52,9 +44,9 @@ def install_deps():
 def fetch_cdn(version: str | None = None):
     """Refresh data/ from the CDN; the runtime reads data/, not the cache."""
     print("[cdn] Fetching Construct 3 CDN data...")
-    from src.ingest.c3_fetcher import C3Fetcher
+    from src.ingest.c3_fetcher import C3Fetcher, latest_stable_version
 
-    ver = version or SETTINGS.schema.version
+    ver = version or latest_stable_version(SETTINGS.schema.cdn_base)
     fetcher = C3Fetcher(
         version=ver,
         base_url=SETTINGS.schema.cdn_base,
@@ -84,7 +76,7 @@ def report_local_schema():
     """Report the already available deterministic lookup dataset."""
     schema_dir = SETTINGS.schema.directory
     counts = schema_counts(schema_dir)
-    actual_version = schema_version(schema_dir) or SETTINGS.schema.version
+    actual_version = schema_version(schema_dir) or "unknown version"
     print("[data] Using existing local Construct schema (no CDN request)")
     print(
         f"  {actual_version}: {counts['plugins']} plugins, "
@@ -94,17 +86,14 @@ def report_local_schema():
     print("  Use --refresh-data to refresh it explicitly.")
 
 
-def start_server(port: int = 8765, version: str | None = None):
+def start_server(port: int = 8765):
     print(f"[server] Starting API server on port {port}...")
     print(f"  Playground: http://localhost:{port}/playground")
     print(f"  Health:     http://localhost:{port}/health")
     print()
-    server_env = os.environ.copy()
-    if version:
-        server_env["C3_VERSION"] = version
     run([sys.executable, "-m", "uvicorn", "src.api:app",
          "--host", "0.0.0.0", "--port", str(port), "--reload"],
-        cwd=str(ROOT), env=server_env)
+        cwd=str(ROOT))
 
 
 def main():
@@ -114,7 +103,7 @@ def main():
         action="store_true",
         help="Explicitly refresh the versioned Construct CDN dataset",
     )
-    parser.add_argument("--version", type=str, help="C3 version (default: from .env)")
+    parser.add_argument("--version", type=str, help="Refresh data/ from this release")
     parser.add_argument("--skip-deps", action="store_true", help="Skip pip install")
     parser.add_argument("--port", type=int, default=SETTINGS.runtime.server_port, help="Server port")
     args = parser.parse_args()
@@ -132,7 +121,7 @@ def main():
     else:
         report_local_schema()
 
-    start_server(args.port, version=args.version)
+    start_server(args.port)
 
 
 if __name__ == "__main__":

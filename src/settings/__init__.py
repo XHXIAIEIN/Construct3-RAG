@@ -1,9 +1,9 @@
 """Typed, side-effect-controlled application settings.
 
 Importing this module only defines immutable data structures and parsers.
-Call :func:`load_settings` explicitly to read an environment mapping and select
-the local schema directory. Dotenv loading is a process entry-point concern
-(``src.api``, each ``scripts/*.py``) and is intentionally absent here.
+Call :func:`load_settings` explicitly to read an environment mapping. The
+Construct release is the one the schema directory's ``_index.json`` records;
+a data refresh asks the CDN for its target instead.
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
-from src.lookup.schema_layout import select_schema_dir
+from src.lookup.schema_layout import schema_version
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,8 +27,6 @@ class SchemaSettings:
     version: str
     cdn_base: str
     cache_dir: Path
-    bundled_dir: Path
-    generated_dir: Path
     directory: Path
 
 
@@ -67,7 +65,7 @@ def load_settings(
 
     ``environ=None`` reads the current process environment. Passing an empty
     mapping deliberately ignores it, which keeps tests and library callers
-    deterministic. The only filesystem inspection is local schema selection.
+    deterministic. The only filesystem read is the schema manifest's version.
     """
     source = os.environ if environ is None else environ
     root = Path(base_dir) if base_dir is not None else Path(__file__).parent.parent.parent
@@ -75,23 +73,13 @@ def load_settings(
 
     paths = PathSettings(base_dir=root, data_dir=data_dir)
 
-    version = _string(source, "C3_VERSION", "r495.2")
-    cache_dir = _path(source, "C3_CACHE_DIR", root / ".cache" / "c3-cdn")
-    bundled_dir = data_dir / "c3-schemas"
-    generated_dir = cache_dir / version / "schemas"
     explicit_schema = source.get("C3_SCHEMA_DIR")
+    directory = Path(explicit_schema) if explicit_schema else data_dir / "c3-schemas"
     schema = SchemaSettings(
-        version=version,
+        version=schema_version(directory),
         cdn_base=_string(source, "C3_CDN_BASE", "https://editor.construct.net"),
-        cache_dir=cache_dir,
-        bundled_dir=bundled_dir,
-        generated_dir=generated_dir,
-        directory=select_schema_dir(
-            generated=generated_dir,
-            bundled=bundled_dir,
-            expected_version=version,
-            explicit=Path(explicit_schema) if explicit_schema else None,
-        ),
+        cache_dir=_path(source, "C3_CACHE_DIR", root / ".cache" / "c3-cdn"),
+        directory=directory,
     )
 
     runtime = RuntimeSettings(

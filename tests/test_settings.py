@@ -17,12 +17,9 @@ def test_default_settings_are_grouped_and_immutable(tmp_path):
     assert isinstance(settings, AppSettings)
     assert settings.paths.base_dir == tmp_path
     assert settings.paths.data_dir == tmp_path / "data"
-    assert settings.schema.version == "r495.2"
+    assert settings.schema.version == ""
     assert settings.schema.cache_dir == tmp_path / ".cache" / "c3-cdn"
-    assert settings.schema.generated_dir == (
-        tmp_path / ".cache" / "c3-cdn" / "r495.2" / "schemas"
-    )
-    assert settings.schema.directory == settings.schema.bundled_dir
+    assert settings.schema.directory == tmp_path / "data" / "c3-schemas"
     assert settings.runtime.server_port == 8765
 
     with pytest.raises(FrozenInstanceError):
@@ -33,7 +30,6 @@ def test_environment_overrides_are_parsed_once(tmp_path):
     cache_dir = tmp_path / "cache"
     settings = load_settings(
         environ={
-            "C3_VERSION": "r999",
             "C3_CDN_BASE": "https://cdn.example.invalid",
             "C3_CACHE_DIR": str(cache_dir),
             "RAG_SERVER_PORT": "9876",
@@ -41,10 +37,8 @@ def test_environment_overrides_are_parsed_once(tmp_path):
         base_dir=tmp_path,
     )
 
-    assert settings.schema.version == "r999"
     assert settings.schema.cdn_base == "https://cdn.example.invalid"
     assert settings.schema.cache_dir == cache_dir
-    assert settings.schema.generated_dir == cache_dir / "r999" / "schemas"
     assert settings.runtime.server_port == 9876
 
 
@@ -57,6 +51,15 @@ def test_explicit_schema_override_always_wins(tmp_path):
     )
 
     assert settings.schema.directory == explicit
+
+
+def test_version_is_the_one_the_committed_data_records():
+    import json
+
+    manifest = json.loads(
+        (Path(__file__).parent.parent / "data" / "c3-schemas" / "_index.json").read_text(encoding="utf-8")
+    )
+    assert load_settings(environ={}).schema.version == manifest["version"]
 
 
 def test_invalid_integer_setting_fails(tmp_path):

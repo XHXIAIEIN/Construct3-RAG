@@ -74,18 +74,36 @@ def _cache_expired(cache_path: Path) -> bool:
     return mtime < last_wed
 
 
+def _http_get(url: str) -> bytes:
+    """Fetch URL with browser User-Agent (CDN returns 403 without it)."""
+    req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        return resp.read()
+
+
+def _strip_bom(raw: bytes) -> bytes:
+    """Remove UTF-8 BOM if present."""
+    return raw[3:] if raw[:3] == b"\xef\xbb\xbf" else raw
+
+
+def latest_stable_version(base_url: str = "https://editor.construct.net") -> str:
+    """Return the release name of the newest Stable build in versions.json."""
+    url = f"{base_url.rstrip('/')}/versions.json"
+    for v in json.loads(_strip_bom(_http_get(url))):
+        if v.get("branchName") == "Stable":
+            return v["releaseName"]
+    raise LookupError(f"{url} lists no Stable release")
+
+
 class C3Fetcher:
     """Fetch and cache Construct 3 CDN data."""
 
     def __init__(
         self,
-        version: str | None = None,
+        version: str,
         base_url: str = "https://editor.construct.net",
         cache_dir: Path | None = None,
     ):
-        if version is None:
-            from src.settings import load_settings
-            version = load_settings().schema.version
         self.version = version
         self.base_url = base_url.rstrip("/")
         if cache_dir is None:
@@ -132,16 +150,6 @@ class C3Fetcher:
             cache_path.parent.mkdir(parents=True, exist_ok=True)
             cache_path.write_bytes(raw)
         return json.loads(self._strip_bom(raw))
-
-    def get_latest_stable_version(self) -> str:
-        """Query versions.json for the latest stable release name."""
-        url = f"{self.base_url}/versions.json"
-        raw = self._http_get(url)
-        versions = json.loads(self._strip_bom(raw))
-        for v in versions:
-            if v.get("branchName") == "Stable":
-                return v["releaseName"]
-        return self.version
 
     # ── Schema export (per-language, CDN-native field names) ─────────────
 

@@ -112,12 +112,13 @@ not on the CDN endpoints it reads; `common_aces.py` loads them from
 ### `settings/`
 
 `__init__.py` owns `load_settings()` and the immutable, grouped `AppSettings`
-tree. It loads no dotenv file and probes nothing but the local schema
-directory; every process entry point (`src.api`, each `scripts/*.py`) calls
-`load_dotenv()` itself before calling `load_settings()`.
+tree. It reads the process environment and nothing else but the version in
+the schema directory's `_index.json`, which is the release the service
+reports. There is no `.env` file and no version setting: a refresh fetches
+the latest stable release unless `--version` names another.
 
-`settings/__init__.py` selects the schema directory through
-`src.lookup.schema_layout.select_schema_dir`, so `settings` depends on that
+`settings/__init__.py` reads that version through
+`src.lookup.schema_layout.schema_version`, so `settings` depends on that
 one leaf of `lookup/`; nothing in `lookup/` depends back on `settings`.
 
 ### `observability/`

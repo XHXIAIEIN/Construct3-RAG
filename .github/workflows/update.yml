@@ -22,60 +22,34 @@ jobs:
           python-version: '3.12'
 
       # The lookup-only requirements: src.settings imports the lookup package,
-      # which needs jieba, and python-dotenv alone is not enough.
+      # which needs jieba.
       - name: Install lookup-only deps
         run: pip install -r src/requirements.txt
 
+      # data/c3-schemas/_index.json records the release data/ holds.
       - name: Check for new version
         id: check
         run: |
           python -c "
-          import sys, json, urllib.request
+          import sys
           sys.path.insert(0, '.')
           from src.settings import load_settings
-          C3_VERSION = load_settings().schema.version
-          req = urllib.request.Request(
-              'https://editor.construct.net/versions.json',
-              headers={'User-Agent': 'Mozilla/5.0'}
-          )
-          versions = json.loads(urllib.request.urlopen(req, timeout=30).read())
-          latest = next((v['releaseName'] for v in versions if v.get('branchName') == 'Stable'), C3_VERSION)
-          print(f'current={C3_VERSION}')
-          print(f'latest={latest}')
-          changed = latest != C3_VERSION
-          print(f'changed={str(changed).lower()}')
-          # Set outputs
+          from src.ingest.c3_fetcher import latest_stable_version
+          current = load_settings().schema.version
+          latest = latest_stable_version()
+          outputs = [f'current={current}', f'latest={latest}', f'changed={str(latest != current).lower()}']
+          print(*outputs, sep=chr(10))
           with open('$GITHUB_OUTPUT', 'a') as f:
-              f.write(f'current={C3_VERSION}\n')
-              f.write(f'latest={latest}\n')
-              f.write(f'changed={str(changed).lower()}\n')
+              print(*outputs, sep=chr(10), file=f)
           " || echo "changed=false" >> $GITHUB_OUTPUT
 
       - name: Fetch new data
         if: steps.check.outputs.changed == 'true'
-        env:
-          C3_VERSION: ${{ steps.check.outputs.latest }}
         run: |
           echo "Updating from ${{ steps.check.outputs.current }} to ${{ steps.check.outputs.latest }}"
-
-          # Update the default version. src/settings/__init__.py owns the
-          # C3_VERSION default. Fail loudly if the pattern is not found so
-          # the sync PR cannot ship a stale default.
-          python - "$C3_VERSION" <<'PYEOF'
-          import re, sys, pathlib
-          ver = sys.argv[1]
-          p = pathlib.Path("src/settings/__init__.py")
-          src = p.read_text()
-          pattern = r"""(_string\(source,\s*["']C3_VERSION["'],\s*["'])r[\w.-]+(['"])"""
-          src, n = re.subn(pattern, lambda m: m.group(1) + ver + m.group(2), src)
-          if n != 1:
-              sys.exit(f"expected one C3_VERSION default in {p}, found {n}")
-          p.write_text(src)
-          PYEOF
-
           # Same refresh a developer runs locally: export into the cache,
           # then replace data/c3-schemas, c3-examples, c3-lang and c3-ts-defs.
-          python scripts/init.py --version "$C3_VERSION"
+          python scripts/init.py --version "${{ steps.check.outputs.latest }}"
 
       - name: Create Pull Request
         if: steps.check.outputs.changed == 'true'
