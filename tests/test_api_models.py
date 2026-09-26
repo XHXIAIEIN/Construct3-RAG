@@ -10,7 +10,6 @@ from src.interfaces.http.models import (
     LookupItemResult,
     LookupMatchResult,
     LookupSection,
-    PluginInfo,
     SearchRequest,
 )
 from src.interfaces.http.presenters import present_search_outcome

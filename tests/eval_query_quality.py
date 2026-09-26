@@ -470,44 +470,23 @@ def _entity_matches(expected: Any, actual: Any, engine: Any) -> bool:
 
 @contextlib.contextmanager
 def _expansion_policy(lookup_module: Any, strategy: str) -> Iterator[dict[str, Any]]:
-    original_synonyms = getattr(lookup_module, "ACE_SYNONYMS", [])
-    original_categories = getattr(lookup_module, "ACE_CATEGORY_EXPAND", frozenset())
-    original_directed_aliases = getattr(lookup_module, "ACE_DIRECTED_ALIASES", ())
+    original = lookup_module.ACE_DIRECTED_ALIASES
     if strategy == "literal":
-        lookup_module.ACE_SYNONYMS = []
-        lookup_module.ACE_CATEGORY_EXPAND = frozenset()
         lookup_module.ACE_DIRECTED_ALIASES = ()
     try:
-        yield {
-            "synonyms": lookup_module.ACE_SYNONYMS,
-            "categories": lookup_module.ACE_CATEGORY_EXPAND,
-            "directed_aliases": lookup_module.ACE_DIRECTED_ALIASES,
-        }
+        yield {"directed_aliases": lookup_module.ACE_DIRECTED_ALIASES}
     finally:
-        lookup_module.ACE_SYNONYMS = original_synonyms
-        lookup_module.ACE_CATEGORY_EXPAND = original_categories
-        lookup_module.ACE_DIRECTED_ALIASES = original_directed_aliases
+        lookup_module.ACE_DIRECTED_ALIASES = original
 
 
 @contextlib.contextmanager
-def _temporary_expansions(
-    lookup_module: Any,
-    synonyms: Any,
-    categories: Any,
-    directed_aliases: Any,
-) -> Iterator[None]:
-    old_synonyms = lookup_module.ACE_SYNONYMS
-    old_categories = lookup_module.ACE_CATEGORY_EXPAND
-    old_directed_aliases = lookup_module.ACE_DIRECTED_ALIASES
-    lookup_module.ACE_SYNONYMS = synonyms
-    lookup_module.ACE_CATEGORY_EXPAND = categories
+def _temporary_aliases(lookup_module: Any, directed_aliases: Any) -> Iterator[None]:
+    old = lookup_module.ACE_DIRECTED_ALIASES
     lookup_module.ACE_DIRECTED_ALIASES = directed_aliases
     try:
         yield
     finally:
-        lookup_module.ACE_SYNONYMS = old_synonyms
-        lookup_module.ACE_CATEGORY_EXPAND = old_categories
-        lookup_module.ACE_DIRECTED_ALIASES = old_directed_aliases
+        lookup_module.ACE_DIRECTED_ALIASES = old
 
 
 def _captured_lookup(engine: Any, query: str) -> tuple[Any, Any, float]:
@@ -614,90 +593,23 @@ def _expansion_diagnostics(
     empty = {
         "count": 0,
         "term_addition_count": 0,
-        "category_result_addition_count": 0,
         "result_addition_count": 0,
         "directed_alias_term_addition_count": 0,
-        "legacy_synonym_term_addition_count": 0,
         "sources": [],
     }
     if strategy == "literal" or intent is None or intent.intent_type != "ace_search":
         return empty
 
     base_words = _base_filter_words(lookup_module, intent.filter_term)
-    expanded_words = set(base_words)
-    synonym_sources: list[dict[str, Any]] = []
-    for synonym_set in policy["synonyms"]:
-        normalised_set = {str(value).lower() for value in synonym_set}
-        trigger_terms = sorted(expanded_words & normalised_set)
-        if not trigger_terms:
-            continue
-        added_terms = sorted(normalised_set - expanded_words)
-        if added_terms:
-            synonym_sources.append(
-                {
-                    "type": "ace_synonyms",
-                    "trigger_terms": trigger_terms,
-                    "added_terms": added_terms,
-                }
-            )
-            expanded_words.update(normalised_set)
-
-    with _temporary_expansions(lookup_module, [], frozenset(), ()):
+    with _temporary_aliases(lookup_module, ()):
         _, literal_matches = engine._execute(intent)
-    with _temporary_expansions(
-        lookup_module, policy["synonyms"], frozenset(), ()
-    ):
-        _, synonym_only_matches = engine._execute(intent)
-    with _temporary_expansions(
-        lookup_module, policy["synonyms"], policy["categories"], ()
-    ):
-        _, legacy_full_matches = engine._execute(intent)
-
     literal_results = _diagnostic_results(literal_matches, intent, engine)
-    synonym_only_results = _diagnostic_results(synonym_only_matches, intent, engine)
-    legacy_full_results = _diagnostic_results(legacy_full_matches, intent, engine)
     literal_keys = {result["stable_key"] for result in literal_results}
-    synonym_only_keys = {result["stable_key"] for result in synonym_only_results}
-    actual_direct_results = [
-        result
+    actual_keys = {
+        result["stable_key"]
         for result in actual_results
         if result["collection"] in {"plugins", "behaviors"}
-    ]
-    actual_keys = {result["stable_key"] for result in actual_direct_results}
-
-    synonym_result_keys = [
-        result["stable_key"]
-        for result in synonym_only_results
-        if result["stable_key"] not in literal_keys
-    ]
-    synonym_rank_changes = _rank_changes(literal_results, synonym_only_results)
-    legacy_synonym_observed = bool(synonym_result_keys or synonym_rank_changes)
-    if synonym_sources and legacy_synonym_observed:
-        for source in synonym_sources:
-            source["observed_result_effect"] = True
-        synonym_sources[-1]["added_result_keys"] = synonym_result_keys
-        synonym_sources[-1]["rank_changes"] = synonym_rank_changes
-    elif synonym_sources:
-        # Compatibility constants can still exist without being consumed by
-        # production.  Do not count or attribute them without an observed delta.
-        synonym_sources = []
-
-    category_added = [
-        result for result in legacy_full_results
-        if result["stable_key"] not in synonym_only_keys
-    ]
-    categories: dict[str, list[str]] = {}
-    for result in category_added:
-        category = result["category"] or "unknown"
-        categories.setdefault(category, []).append(result["stable_key"])
-    category_sources = [
-        {
-            "type": "ace_category_expand",
-            "category": category,
-            "added_result_keys": keys,
-        }
-        for category, keys in sorted(categories.items())
-    ]
+    }
 
     directed_sources: list[dict[str, Any]] = []
     directed_added_terms: set[str] = set()
@@ -709,15 +621,9 @@ def _expansion_diagnostics(
             str(value).lower() for value in rule.additions
         } - base_words
         directed_added_terms.update(added_terms)
-        with _temporary_expansions(
-            lookup_module,
-            policy["synonyms"],
-            policy["categories"],
-            (rule,),
-        ):
+        with _temporary_aliases(lookup_module, (rule,)):
             _, rule_matches = engine._execute(intent)
         rule_results = _diagnostic_results(rule_matches, intent, engine)
-        legacy_keys = {result["stable_key"] for result in legacy_full_results}
         directed_sources.append(
             {
                 "type": "ace_directed_alias",
@@ -729,24 +635,19 @@ def _expansion_diagnostics(
                 "added_result_keys": [
                     result["stable_key"]
                     for result in rule_results
-                    if result["stable_key"] not in legacy_keys
+                    if result["stable_key"] not in literal_keys
                 ],
-                "rank_changes": _rank_changes(legacy_full_results, rule_results),
+                "rank_changes": _rank_changes(literal_results, rule_results),
             }
         )
 
-    legacy_term_count = len(expanded_words - base_words) if legacy_synonym_observed else 0
     directed_term_count = len(directed_added_terms)
-    category_count = len(category_added)
-    all_result_additions = actual_keys - literal_keys
     return {
-        "count": legacy_term_count + directed_term_count + category_count,
-        "term_addition_count": legacy_term_count + directed_term_count,
-        "category_result_addition_count": category_count,
-        "result_addition_count": len(all_result_additions),
+        "count": directed_term_count,
+        "term_addition_count": directed_term_count,
+        "result_addition_count": len(actual_keys - literal_keys),
         "directed_alias_term_addition_count": directed_term_count,
-        "legacy_synonym_term_addition_count": legacy_term_count,
-        "sources": synonym_sources + category_sources + directed_sources,
+        "sources": directed_sources,
     }
 
 
@@ -1411,8 +1312,6 @@ def _run_strategy(
     return {
         "strategy": strategy,
         "policy": {
-            "ace_synonym_sets": len(policy["synonyms"]),
-            "ace_category_count": len(policy["categories"]),
             "ace_directed_alias_count": len(policy["directed_aliases"]),
             "entity_resolution": True,
             "jieba": True,
@@ -1496,11 +1395,10 @@ def _comparison(current: dict[str, Any], literal: dict[str, Any]) -> dict[str, A
 
 
 def _lookup_module() -> Any:
-    """Bind the lookup to expansion tables the strategies can swap per run.
+    """Bind the lookup to a directed-alias table the strategies can swap per run.
 
     The engine reads directed aliases through a provider, so replacing
-    ``ACE_DIRECTED_ALIASES`` here takes effect on the next lookup. The synonym
-    and category tables have no consumer and stay empty.
+    ``ACE_DIRECTED_ALIASES`` here takes effect on the next lookup.
     """
     import types
 
@@ -1511,8 +1409,6 @@ def _lookup_module() -> Any:
     from src.settings import load_settings
 
     module = types.SimpleNamespace(
-        ACE_SYNONYMS=[],
-        ACE_CATEGORY_EXPAND=frozenset(),
         ACE_DIRECTED_ALIASES=ACE_DIRECTED_ALIASES,
         SCHEMA_DIR=load_settings().schema.directory,
         jieba=jieba,
@@ -1719,10 +1615,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "hit_at_k": "case-level all-required stable-key groups within top K",
                 "mrr": "reciprocal rank of the first required stable-key group hit",
                 "ndcg_at_5": "graded relevance: must/substitute=2, independent allowed alternative=1",
-                "expansion_count": (
-                    "observed legacy synonym terms, triggered directed-alias terms, "
-                    "plus results added directly by category expansion"
-                ),
+                "expansion_count": "terms added by the directed aliases the query triggered",
                 "cold_latency": "LookupEngine construction plus the first selected query",
                 "warm_latency": (
                     "one repeat of every selected query after the full first pass initialized local paths"

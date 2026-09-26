@@ -37,14 +37,6 @@ class SearchRequest(BaseModel):
         return value
 
 
-class PluginInfo(BaseModel):
-    """Compatibility model retained for existing API consumers."""
-
-    id: str
-    name: str
-    name_localized: str = ""
-
-
 class ACEParam(BaseModel):
     name: str
     type: str = "any"
@@ -146,7 +138,6 @@ __all__ = [
     "LookupItemResult",
     "LookupMatchResult",
     "LookupSection",
-    "PluginInfo",
     "SearchMode",
     "SearchRequest",
     "SearchResponse",

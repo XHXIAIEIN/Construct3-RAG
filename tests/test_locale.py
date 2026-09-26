@@ -61,28 +61,6 @@ def test_every_catalog_resource_explains_origin_usage_and_coverage():
             assert (repo_root / test_path).is_file(), reference
 
 
-def test_catalog_references_canonical_consumers_not_compatibility_facades():
-    resources = list(_catalog_resources())
-    consumers = {
-        consumer
-        for resource in resources
-        for consumer in resource["consumers"]
-    }
-    legacy_consumers = sorted(
-        consumer
-        for consumer in consumers
-        if consumer == "src.api._clean_content"
-    )
-    assert legacy_consumers == []
-
-    sources = {
-        source
-        for resource in resources
-        for source in resource["source"]
-    }
-    assert "contract:src.api._clean_content" not in sources
-
-
 def test_gold_provenance_references_existing_case_ids():
     fixture = Path(__file__).with_name("fixtures") / "query_gold.jsonl"
     case_ids = {
