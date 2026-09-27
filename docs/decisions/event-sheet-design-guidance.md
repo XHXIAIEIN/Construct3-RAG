@@ -79,8 +79,12 @@ have failed three assertions. The case now accepts a Timer started for 30
 seconds under *On start of layout* with *On timer* restarting the layout; a
 reference solution scores 8 of 8 and, cut to 3 seconds, counts 3, 2, 1, 0
 and 3 again in preview. The verdicts of the 56 archived runs are unchanged.
-The plan example in `SKILL.md` is this countdown, a global under *Every 1
-seconds* without a reset, which is the form the runs wrote.
+The plan example in `SKILL.md` and in `edit_sheet.py --help` was this
+countdown, a global under *Every 1 seconds* without a reset, the form every
+run wrote: the case measured the copy of the example more than the skill's
+guidance. The example is now a best score, a global kept across restarts
+on purpose, raised to `max(best, score)` when a round ends, so how to count
+down is left to `event-sheet-thinking.md` and the pitfalls.
 
 ## The authoring style
 

@@ -506,12 +506,12 @@ def main() -> int:
         "get their sids and the keys the editor always writes. The result is checked before it is written; a plan "
         "that adds a problem changes nothing.",
         "a plan:\n"
-        '  [{"before": 1, "events": [{"eventType": "variable", "name": "timeLeft", "initialValue": "30"}]},\n'
-        '   {"event": 2, "add-actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": "timeLeft"}}]},\n'
+        '  [{"before": 1, "events": [{"eventType": "variable", "name": "best", "initialValue": "0"}]},\n'
+        '   {"event": 9, "add-actions": [{"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "best", "value": "max(best, score)"}}]},\n'
         '   {"event": 7, "action": 2, "set": {"parameters": {"text": "\\"Score: \\" & score"}}},\n'
         '   {"event": 5, "condition": 1, "set": {"isInverted": null}}, {"event": 6, "action": 3, "remove": true},\n'
         '   {"into": 3, "events": [{"eventType": "block", "conditions": [...], "actions": [...]}]},\n'
-        '   {"after": 8, "events": [{"eventType": "group", "title": "Timer", "children": [...]}]},\n'
+        '   {"after": 8, "events": [{"eventType": "group", "title": "HUD", "children": [...]}]},\n'
         '   {"move": 7, "after": 6}, {"replace": 5, "events": [...]}, {"remove": 4}]\n'
         "Every number is one of the sheet as print_sheet.py prints it now, and as a finding of check_project.py\n"
         "names it: event 5 condition 1. \"into\": 0 is the end of the sheet.\n\n"
