@@ -345,3 +345,12 @@ project's files by `scripts/check_look.py`:
 A tween, a shake or a squash moves an object off the grid while it plays;
 the rule holds its rest position. `motion.hit` is open: this record says
 Flash, the study of published games says a colour set for 0.05 to 0.1 s.
+
+## Update 2026-09-27: the hit and the shadow's angle
+
+The user decided both open rules. A hit sets the object's colour to white
+or `danger` for 0.05 to 0.1 s with a size punch, as the three studios of
+`published-game-visual-language.md` do, in place of the Flash behavior of
+*Motion and type* above. The shadow stays at 45°, down and to the right.
+The manifest marks both `adopted`; neither has a check, and the hit has no
+helper in the template yet.

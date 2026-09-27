@@ -9,7 +9,7 @@
   ],
   "status": {
     "enforced": "held by the template, and a check stops the generator's run when it is broken",
-    "adopted": "decided by the user and held by the template; no check",
+    "adopted": "decided by the user; held by the template where it names a template value, else for the generator to follow; no check",
     "open": "the template holds a value the user has not chosen yet",
     "proposed": "evidence only; not in the template",
     "rejected": "tried or considered and turned down; do not reintroduce"
@@ -103,11 +103,10 @@
     },
     {
       "id": "shadow.angle",
-      "status": "open",
-      "says": "The shadow's direction, degrees clockwise from rightwards.",
+      "status": "adopted",
+      "says": "The shadow's direction, degrees clockwise from rightwards: down and to the right.",
       "template": "SHAPE_STYLE['shadow_angle']",
-      "value": "45",
-      "options": [20, 45, 64, 90, 135, 225]
+      "value": "45"
     },
     {
       "id": "palette.greys",
@@ -132,9 +131,8 @@
     },
     {
       "id": "motion.hit",
-      "status": "open",
-      "says": "How a hit shows.",
-      "options": ["the Flash behavior (greybox-blockout.md)", "a colour set for 0.05 to 0.1 s with a size punch (published-game-visual-language.md)"]
+      "status": "adopted",
+      "says": "A hit sets the object's colour to white or danger for 0.05 to 0.1 s, with a size punch; not the Flash behavior."
     },
     {
       "id": "juice.functions",
