@@ -68,9 +68,10 @@ def outline_rows(events: list, counter: list[int], above: tuple = ()) -> Iterato
         yield from outline_rows(ev.get("children", []), counter, (*above, row))
 
 
-def script_lines(script: list | str) -> int:
-    """The lines of a script: the editor stores them as a list or as one string with newlines."""
-    return len(script.splitlines()) if isinstance(script, str) else len(script)
+def script_head(script: list | str) -> str:
+    """A script as one row: the editor stores its lines as a list or as one string with newlines."""
+    n = len(script.splitlines()) if isinstance(script, str) else len(script)
+    return f"script, {n} line{'' if n == 1 else 's'}"
 
 
 def wording(p: c3.Project, kind: str, ace: dict) -> str:
@@ -85,7 +86,7 @@ def wording(p: c3.Project, kind: str, ace: dict) -> str:
     if ace.get("type") == "comment":
         return "// " + str(ace.get("text", "")).split("\n")[0]
     if ace.get("type") == "script":
-        return f"script, {script_lines(ace.get('script', []))} lines"
+        return script_head(ace.get("script", []))
     params = args_ if isinstance(args_, dict) else {}
     entry = p.ace_entry(kind, ace) if obj in p.plugin_of else None
     if not entry or not entry.get("display-text"):
@@ -122,7 +123,7 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
         elif et == "include":
             head = [f"{number}{pad}include {ev.get('includeSheet', '')}"]
         elif et == "script":
-            head = [f"{number}{pad}script, {script_lines(ev.get('script', []))} lines"]
+            head = [f"{number}{pad}{script_head(ev.get('script', []))}"]
         elif et == "group":
             head = [f"{number}{pad}group {ev.get('title', '')}"
                     + ("" if ev.get("isActiveOnStart", True) else " (inactive on start)")]

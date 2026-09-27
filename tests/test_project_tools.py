@@ -786,12 +786,13 @@ def test_print_counts_the_lines_of_a_script_stored_either_way(project):
     """The editor keeps a script as a list of lines or as one string with newlines; the official examples use both."""
     lines = ["const coin = runtime.objects.Coin.getFirstInstance();", "coin.x += 10;"]
     def add(sheet):
-        for script in (lines, "\n".join(lines)):
+        for script in (lines, "\n".join(lines), lines[:1], lines[0]):
             sheet["events"] += [{"eventType": "script", "script": script},
                                 {"eventType": "block", "conditions": [], "actions": [{"type": "script", "script": script}]}]
     edit(project, SHEET, add)
     code, out = tool(project, "print_sheet", "Game")
-    assert code == 0 and out.count("script, 2 lines") == 4 and "script, 67 lines" not in out, out
+    assert code == 0 and out.count("script, 2 lines") == 4 and out.count("script, 1 line\n") == 4, out
+    assert "script, 67 lines" not in out and "script, 1 lines" not in out, out
 
 
 def test_scripts_write_utf8_and_survive_a_code_page_that_cannot(built):
