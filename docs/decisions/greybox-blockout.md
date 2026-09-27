@@ -2,8 +2,8 @@
 
 Date: 2026-09-26
 Schema: Construct 3 r495.2
-Status: draft for the user's review; the outline and the shadow are
-implemented, the rest is not
+Status: implemented in the generator template; the rendered stand-in, the
+reach and the Haiku iteration are not verified yet
 
 ## Problem
 
@@ -159,7 +159,7 @@ saturation keeps the hierarchy.
    it, one more thing a small model writes wrong; drawing the shadow into
    the image needs nothing at run time.
 
-## Decision (proposed)
+## Decision
 
 ### The vocabulary
 
@@ -282,14 +282,11 @@ screen keeps one focus at a time with the HUD on the edges.
 
 ### What changes in the template
 
-In place: `shape()` for the three shapes with `SHAPE_STYLE`'s outline and
-shadow, `drawn()` for their frames, `frame()` with a collision polygon, and
-the coin stand-in drawn by them. To come: `PALETTE`, `bar_images()`,
-`layer()`'s fill, `tiledbg_inst()` for offsets; helpers for the four
-patterns and the checker backdrop; `BEATS` with its
-checks and printed curve; a reach function from the Platform properties.
-`event-sheet-style.md`, *Project*, and `generating-a-project.md` get the
-vocabulary in a few lines each. Tests pin each check and its message.
+`shape()` draws the three shapes with `SHAPE_STYLE`'s outline and shadow,
+`drawn()` gives their frames and `frame()` a collision polygon; the update
+of 2026-09-27 below lists the rest. `event-sheet-style.md`, *Project*, and
+`generating-a-project.md` carry the vocabulary in a few lines each. Tests
+pin each check and its message.
 
 ## Verification planned
 
@@ -396,3 +393,43 @@ games, so a squash acts on the art pinned to an invisible mask. The
 generator stops on a squash of an object whose behavior collides, and
 `check_look.py` reports one. `motion.squash` is adopted and
 `motion.squash-art` enforced.
+
+## Update 2026-09-27: the rest of the draft in the template
+
+The user asked for the template to follow the draft. What changed:
+
+- `PALETTE` is the table under "Contrast of the proposed values", plus
+  `flash`. `check_palette()` stops the run when `canvas` and `canvas_alt`
+  pass 1.2:1 or `solid` falls under 3:1 on `canvas_alt`. `shape()` stops on
+  an accent, a role that is a hue rather than a grey (`accent()`), drawn
+  without its outline, and on an outlined fill under 3:1 against `ink`.
+  Labels default to `ink` read against `canvas_alt`, the darker cell;
+  `layer()` fills with `canvas`; a bar is an `ink` fill in a `solid` frame.
+- `PATTERNS` holds the four patterns. `pattern(name, kind)` draws a one-unit
+  tile: the checker in cells of `UNIT / 2`, the stripes at 45 degrees, one
+  pair a unit. `pattern_type()` declares its Tiled Background,
+  `backdrop()` lays the checker from the layout's origin, and `area()`
+  places the others on grid cells, refusing the checker and caution or
+  hazard stripes whose shorter side passes a quarter of the viewport's.
+  `tiledbg_inst()` writes `image-offset = -corner mod tile` for a pattern:
+  the runtime subtracts the offset from the texture coordinate (read from
+  the Tiled Background plugin of a published export's `c3main.js`), so
+  every piece lines up with the layout.
+- `BEATS`, `beat()` and `pace()` hold the pacing rules of *Pacing*; the
+  climax may be followed by the exit as well as a rest. The generator
+  prints the curve, one line a beat, above `generated; checking`. The
+  stand-in plays its beats as rounds: `ROUND_COINS` holds each round's
+  coins, a global `beat` counts the round across the restart, and the
+  round after the exit is the intro again.
+- `jump_reach()` and `jump()` give a gap's band from `PLATFORM` by the
+  approximation of *Level design*: 286 px, about 8.9 units, with the
+  template's values. The bands wait on a preview.
+- `look-manifest.json`: `palette.greys`, `colour.accent-outline`,
+  `backdrop.checker`, `pattern.areas` and `pacing.beats` are enforced,
+  `level.reach` adopted; the five-level world and the restart times of
+  `published-game-visual-language.md` stay proposed as `pacing.worlds`.
+
+Not done: the number at the title size with its label in `dim` (*Motion and
+type*), which changes the HUD the eval cases grade; camera-zone helpers;
+Sine bobbing for pickups. The eval case `readable-on-a-light-background`
+asks to lighten a dark background the template no longer has.

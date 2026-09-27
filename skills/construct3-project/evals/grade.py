@@ -32,7 +32,7 @@ from pathlib import Path
 SKILL = Path(__file__).resolve().parent.parent
 REPO = SKILL.parent.parent
 CASES = {c["name"]: c for c in json.loads((Path(__file__).parent / "evals.json").read_text(encoding="utf-8"))["evals"]}
-ORIGINAL_GLOBALS = {"score", "COIN_COUNT"}
+ORIGINAL_GLOBALS = {"score", "COIN_COUNT", "ROUND_COINS", "beat"}   # the stand-in's, before and after BEATS
 SIZE_ACTIONS = {"set-size", "set-scale", "set-width", "set-height"}
 TWEEN_ENDS = {"on-tweens-finished", "on-any-tweens-finished"}
 

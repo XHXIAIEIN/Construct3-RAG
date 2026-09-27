@@ -62,7 +62,9 @@ def built(tmp_path_factory) -> Path:
     shutil.copy(SKILL / "assets" / "build_project.py", root / "tools" / "build_project.py")
     code, out = run(root, "tools/build_project.py")
     assert code == 0, out
-    assert out.splitlines()[0] == "generated; checking" and out.splitlines()[-1].startswith("ok:")
+    lines = out.splitlines()
+    # the pacing curve of BEATS, one line a beat, then the check
+    assert lines[0].startswith("beat 1 intro") and lines[6] == "generated; checking" and lines[-1].startswith("ok:")
     return root
 
 
@@ -563,11 +565,128 @@ def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
     assert (f["width"], f["height"], f["originX"]) == (42, 32, 26 / 42)
 
     style.update(outline=False, shadow=False)
-    f = template.shape("off.png", "triangle", 32, 32, "reward")
+    f = template.shape("off.png", "triangle", 32, 32, "solid")
     w, h, px = read_png(tmp_path / "images" / "off.png")
-    assert (w, h) == (32, 32) and {p[:3] for row in px for p in row if p[3]} == {fill}
+    assert (w, h) == (32, 32) and {p[:3] for row in px for p in row if p[3]} == {template.rgb("solid")}
     f = template.shape("one.png", "rect", 32, 32, "reward", outline=True)
     assert read_png(tmp_path / "images" / "one.png")[2][0][0] == (*ink, 255)
+
+
+def test_template_draws_an_accent_with_its_outline_and_a_fill_the_outline_shows_on(tmp_path):
+    """An accent loses to the backdrop on value and shows by its ink outline, so it is never drawn
+    without one; a fill too near the ink hides its own outline."""
+    t = template_module()
+    t.ROOT = tmp_path
+    with pytest.raises(SystemExit, match=r"spike.png: danger is an accent, .* draw it with its outline, or in a grey role"):
+        t.shape("spike.png", "triangle", 32, 32, "danger", outline=False)
+    t.shape("wall.png", "rect", 32, 32, "solid", outline=False)                  # a grey may go without
+    t.shape("player.png", "rect", 32, 64, "ink")                                 # the player is ink, its outline too
+    with pytest.raises(SystemExit, match=r"shade.png: its dim fill reads 2\.\d:1 against its ink outline, which needs "
+                                         r"3:1 to show; fill it in one of canvas, canvas_alt, solid, reward, danger, flash"):
+        t.shape("shade.png", "rect", 32, 32, "dim")
+
+
+def test_template_palette_keeps_the_ratios_of_the_blockout():
+    """The draft's greys: the backdrop's two at most 1.2:1, structure 3:1 on the darker; the run
+    stops on a palette that loses either, naming the role to move."""
+    t = template_module()
+    ratios = {pair: round(t.contrast(t.rgb(pair[0]), t.rgb(pair[1])), 2) for pair in (
+        ("canvas", "canvas_alt"), ("solid", "canvas_alt"), ("ink", "solid"), ("ink", "reward"), ("ink", "danger"))}
+    assert ratios == {("canvas", "canvas_alt"): 1.16, ("solid", "canvas_alt"): 3.11, ("ink", "solid"): 4.32,
+                      ("ink", "reward"): 10.45, ("ink", "danger"): 3.98}
+    t.check_palette()
+    assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger"]
+    t.PALETTE["canvas_alt"] = (200, 200, 200)
+    with pytest.raises(SystemExit, match=r"PALETTE: canvas .* and canvas_alt .* are 1\.\d\d:1; the backdrop's two greys "
+                                         r"stay at most 1\.2:1"):
+        t.check_palette()
+    t.PALETTE.update(canvas_alt=(228, 228, 228), solid=(160, 160, 160))
+    with pytest.raises(SystemExit, match=r"PALETTE: solid \(160, 160, 160\) on canvas_alt .* reads 2\.\d\d:1; structure "
+                                         r"needs 3:1 .* Darken solid"):
+        t.check_palette()
+
+
+def test_template_patterns_tile_by_the_unit_and_meet_without_a_seam(tmp_path):
+    """An area is a Tiled Background of one of four patterns; its image offset is minus its
+    corner modulo the tile, which the runtime subtracts from the texture coordinate, so every
+    piece lines up with the layout. The checker is the backdrop's alone, the high-contrast
+    stripes strips and small zones."""
+    t = template_module()
+    t.ROOT = tmp_path
+    for name, kind in (("Backdrop", "checker"), ("Ledge", "low"), ("Door", "caution"), ("Lava", "hazard")):
+        t.pattern(name, kind)
+        px = png_pixels(tmp_path / "images" / f"{name.lower()}.png")
+        assert (len(px), len(px[0])) == (32, 32)
+        assert {p[:3] for row in px for p in row} == {t.rgb(role) for role in t.PATTERNS[kind]}
+        assert {p[3] for row in px for p in row} == {255}
+    checker = png_pixels(tmp_path / "images" / "backdrop.png")
+    assert checker[0][0][:3] == checker[16][16][:3] == t.rgb("canvas") and checker[0][16][:3] == t.rgb("canvas_alt")
+    stripes = png_pixels(tmp_path / "images" / "lava.png")
+    assert all(stripes[y][x] == stripes[(y + 1) % 32][(x - 1) % 32] for y in range(32) for x in range(32))  # 45 degrees
+    assert t.pattern_type("Lava")["image"]["width"] == 32 and t.pattern_type("Lava")["plugin-id"] == "TiledBg"
+    lava = t.area("Lava", 3, 20, 8, 2)
+    assert (lava["world"]["x"], lava["world"]["y"], lava["world"]["width"], lava["world"]["height"]) == (96, 640, 256, 64)
+    assert (lava["properties"]["image-offset-x"], lava["properties"]["image-offset-y"]) == (0, 0)
+    off = t.tiledbg_inst("Lava", 100, 50, 64, 64, 0.5, 0.5)                   # corner (68, 18)
+    assert (off["properties"]["image-offset-x"], off["properties"]["image-offset-y"]) == (28, 14)
+    assert all(((x - 68) - 28) % 32 == x % 32 for x in range(68, 132))      # texture x = (local - offset) / tile
+    assert t.tiledbg_inst("HpFill", 100, 50, 64, 64)["properties"]["image-offset-x"] == 0   # a bar is no pattern
+    back = t.backdrop("Backdrop")
+    assert (back["world"]["x"], back["world"]["y"], back["world"]["width"], back["world"]["height"]) == (0, 0, 720, 1280)
+    with pytest.raises(SystemExit, match=r"area\('Backdrop'\): the checker is empty space, the backdrop alone"):
+        t.area("Backdrop", 0, 0, 4, 4)
+    with pytest.raises(SystemExit, match=r"area\('Lava'\): 10x6 cells of hazard stripes; .* keep the shorter side to 5 cells"):
+        t.area("Lava", 0, 0, 10, 6)
+    t.area("Ledge", 0, 0, 10, 6)                                             # low stripes may cover more
+    with pytest.raises(SystemExit, match=r"backdrop\('Door'\): the backdrop is the checker"):
+        t.backdrop("Door")
+    with pytest.raises(SystemExit, match=r"area\('Wall'\): not a pattern"):
+        t.area("Wall", 0, 0, 1, 1)
+
+
+@pytest.mark.parametrize("change, said", [
+    (lambda b: b[0].update(intensity=1), "beat 1 intro is at 1; the first beat is at 0"),
+    (lambda b: b[3].update(type="practice"), "beat 3 practice at 2 is followed by practice; a beat of 2 or more is "
+                                             "followed by a rest"),
+    (lambda b: b[3].update(holds=""), "beat 4 rest holds nothing; a rest holds a pickup or a checkpoint"),
+    (lambda b: b[2].update(mechanics=["tap", "swipe"]), "beat 3 practice combines tap, swipe, but swipe has had no "
+                                                         "teach of its own"),
+    (lambda b: b[1].update(type="climax"), "the climax is beat 2 climax, beat 5 climax; a game has one climax, in "
+                                           "its last third, beats 5 to 6"),
+    (lambda b: b[4].update(intensity=1), "the last third averages 0.5 and the first 0.5; the game rises"),
+    (lambda b: b[5].update(type="finale"), "beat 6 finale at 0; a beat is one of intro, teach"),
+])
+def test_template_pace_stops_a_curve_that_breaks_a_rule(change, said):
+    t = template_module()
+    beats = [dict(b) for b in t.BEATS]
+    assert t.pace(beats)[4] == "beat 5 climax      3 |###| tap"
+    change(beats)
+    with pytest.raises(SystemExit) as stop:
+        t.pace(beats)
+    assert said in str(stop.value)
+
+
+def test_template_deals_the_coins_of_each_beat_round_after_round(built):
+    t = template_module()
+    sheet = json.loads((built / "eventSheets" / "Game.json").read_text(encoding="utf-8"))
+    rounds = next(v for v in sheet["events"] if v.get("name") == "ROUND_COINS")
+    assert rounds["initialValue"] == ",".join(str(b["coins"]) for b in t.BEATS) == "1,3,6,2,10,1"
+    code, out = tool(built, "print_sheet", "Game")
+    assert 'For "i" from 0 to int(tokenat(ROUND_COINS, beat, ",")) - 1' in out
+    assert 'Set beat to (beat + 1) % tokencount(ROUND_COINS, ",")' in out
+
+
+def test_template_measures_a_gap_against_the_players_reach():
+    """The reach from PLATFORM's properties: 650 px/s, gravity 1500, no sustain, 330 px/s rise
+    141 px and stay 0.87 s in the air, 286 px or 8.9 units across; a gap is easy to half of it,
+    hard from eight tenths, and past nine tenths the run stops."""
+    t = template_module()
+    assert round(t.jump_reach()) == 286 and t.jump_reach(200) == 0
+    assert [t.jump(g) for g in (4, 6, 8)] == ["easy", "medium", "hard"]
+    assert t.jump(4, rise=4) == "medium" and t.jump(5, rise=4) == "hard"     # landing higher shortens the fall
+    with pytest.raises(SystemExit, match=r"a gap of 9 units rising 0 is past the player's reach of 8\.9 units .* keep a "
+                                         r"gap to 8 units at most"):
+        t.jump(9)
 
 
 def test_stand_in_project_holds_a_string_variable_as_the_editor_writes_it(built):
@@ -772,8 +891,8 @@ def test_outline_numbers_events_as_the_editor_does(built):
     code, out = tool(built, "print_sheet", "--outline", "Game")
     rows = [line.split("[sid")[0].rstrip() for line in out.splitlines()]
     assert code == 0
-    assert rows[:4] == ["== Game", "   (1) // Coins. Tap a coin to collect it; when the last one is gone the layout restarts.",
-                        "   (1) // Settings", "   (1) number COIN_COUNT = 6"]
+    assert rows[:4] == ["== Game", "   (1) // Coins. Tap a coin to collect it; when the last one is gone the next round starts.",
+                        "   (1) // Settings", "   (1) string ROUND_COINS = 1,3,6,2,10,1"]
     assert "   1 group Setup" in rows and "   2   System:on-start-of-layout" in rows
 
 
@@ -781,7 +900,7 @@ def test_print_words_the_sheet_as_the_editor_does(built):
     code, out = tool(built, "print_sheet", "Game")
     assert code == 0
     assert "   5   Touch: On touched Coin (start)\n       Coin: NOT Is any Tween playing\n           -> Coin: Collect()" in out
-    assert "     global constant number COIN_COUNT = 6" in out
+    assert "     global constant string ROUND_COINS = 1,3,6,2,10,1" in out
     assert "   7 function AddScore(points: number)\n         -> System: Add points to score" in out
     assert "   9   System: Coin.Count = 0\n       System: Trigger once" in out
 
@@ -818,7 +937,7 @@ def test_print_of_a_part_starts_with_the_events_it_sits_in(built):
     code, out = tool(built, "print_sheet", "Game", "--events", "9")
     assert code == 0
     assert out.splitlines()[:4] == ["== Game: events 9-9 of 9; a [context] row is an event these sit in, without its actions",
-                                    "   8 group Restart  [context]", "       // Restart when the last coin is gone",
+                                    "   8 group Restart  [context]", "       // Start the next round when the last coin is gone",
                                     "   9   System: Coin.Count = 0"]
     assert "Touch: On touched" not in out
 
@@ -1038,7 +1157,7 @@ def test_plan_puts_events_in_by_the_numbers_the_sheet_has_now(project):
     assert out.splitlines()[0] == "Game: 4 operations, 9 events before and 12 now, 8 new sids"
     assert out.splitlines()[-1].startswith("ok:") and "open_in_editor" not in out     # the closing check names it
     sheet = printed(project)
-    assert "     global number score = 0\n     global number timeLeft = 30\n   1 group Setup" in sheet
+    assert "     global number beat = 0\n     global number timeLeft = 30\n   1 group Setup" in sheet
     assert '-> ScoreText: Set text to "Score: 0"\n           -> ScoreText: Set text to "Time: " & timeLeft' in sheet
     assert "   4       (every tick)\n               -> Coin: Set scale to 1.5" in sheet
     assert "     // Countdown.\n  11 group Timer\n       // Count down.\n  12   System: Every 1 seconds" in sheet
@@ -1107,7 +1226,7 @@ def test_a_finding_names_the_place_a_plan_changes(project):
 
 def test_plan_sets_the_values_of_an_event_and_removes_an_action(project):
     code, out = plan(project, {"event": 8, "set": {"title": "Over", "isActiveOnStart": False}},
-                     {"event": 9, "action": 1, "remove": True})
+                     {"event": 9, "action": 2, "remove": True})
     assert code == 0, out
     sheet = printed(project)
     assert "   8 group Over (inactive on start)" in sheet and "Wait 1 seconds" not in sheet
@@ -1153,13 +1272,13 @@ def test_plan_moves_replaces_and_removes(project):
     code, out = tool(project, "print_sheet", "Game", "--show", "9")
     restart = json.loads(out)
     assert code == 0 and [c["id"] for c in restart["conditions"]] == ["compare-two-values", "trigger-once-while-true"]
-    restart["actions"] = restart["actions"][1:]                                 # no wait before the restart
+    restart["actions"] = [a for a in restart["actions"] if a["id"] != "wait"]   # no wait before the restart
     sids = {c["sid"] for c in restart["conditions"]}
     code, out = plan(project, {"replace": 9, "events": [restart]}, {"move": 7, "before": 6}, {"remove": 4})
     assert code == 0, out
     sheet = printed(project)
     assert sheet.index("function AddScore") < sheet.index("custom action Coin.Collect") and "group Input" not in sheet
-    assert "System: Trigger once\n           -> System: Restart layout" in sheet
+    assert '% tokencount(ROUND_COINS, ",")\n           -> System: Restart layout' in sheet
     assert sids <= {c.get("sid") for ev in all_events(project) for c in ev.get("conditions", [])}, "a replaced event keeps the sids it is given"
 
 
@@ -1197,7 +1316,7 @@ def test_before_an_event_is_above_the_comments_about_it(project):
     assert plan(project, {"before": 9, "events": [{"eventType": "comment", "text": "All coins gone"}]})[0] == 0
     code, out = plan(project, {"before": 9, "events": [{"eventType": "block", "conditions": [], "actions": []}]})
     assert code == 0, out
-    assert ("   9   (every tick)\n       // All coins gone\n       // Restart when the last coin is gone\n"
+    assert ("   9   (every tick)\n       // All coins gone\n       // Start the next round when the last coin is gone\n"
             "  10   System: Coin.Count = 0") in printed(project)
 
 
@@ -1411,8 +1530,8 @@ def test_action_cannot_write_a_constant(project):
     def change(s):
         events(s)["add_score"]["actions"].append(
             {"id": "set-eventvar-value", "objectClass": "System", "sid": 5,
-             "parameters": {"variable": "COIN_COUNT", "value": "3"}})
-    assert "COIN_COUNT is a constant and an action cannot change it" in findings(project, change)
+             "parameters": {"variable": "ROUND_COINS", "value": '"3"'}})
+    assert "ROUND_COINS is a constant and an action cannot change it" in findings(project, change)
 
 
 def test_self_in_a_system_parameter_names_the_object_to_write(project):
@@ -1797,20 +1916,21 @@ def test_template_draws_only_the_colours_of_its_palette(built, tmp_path):
     t.ROOT = tmp_path
     for row in png_pixels(built / "images" / "coin-default-000.png"):
         assert {px[:3] for px in row if px[3]} <= set(t.PALETTE.values())
-    t.write_png("half.png", 2, 1, lambda x, y: (*t.PALETTE["danger"], 128 if x else 255))   # alpha is free
+    t.write_png("half.png", 2, 1, lambda x, y: (*t.PALETTE["danger"], 128 if x else 255))   # the shadow's alpha
     t.write_png("clear.png", 1, 1, lambda x, y: (1, 2, 3, 0))                                # a pixel that does not show
-    assert png_pixels(tmp_path / "images" / "half.png") == [[(220, 70, 70, 255), (220, 70, 70, 128)]]
+    assert png_pixels(tmp_path / "images" / "half.png") == [[(226, 59, 46, 255), (226, 59, 46, 128)]]
     with pytest.raises(SystemExit, match=r"images/heart.png: \(230, 40, 60\) at \(1,0\) is no colour of PALETTE, "
-                                         r"nor are 1 more of its colours; the nearest is danger \(220, 70, 70\)\. "
+                                         r"nor are 1 more of its colours; the nearest is danger \(226, 59, 46\)\. "
                                          r"Draw with rgb\('danger'\), or add the colour to PALETTE"):
         t.write_png("heart.png", 3, 1, lambda x, y: [(0, 0, 0, 0), (230, 40, 60, 255), (9, 9, 9, 255)][x])
     assert not (tmp_path / "images" / "heart.png").exists()
     t.write_png("gradient.png", 2, 1, lambda x, y: (x * 200, 100, 0, 255), painted=True)     # a painting keeps its colours
-    with pytest.raises(SystemExit, match=r"'crimson' is no role of PALETTE, which has background, panel"):
+    with pytest.raises(SystemExit, match=r"'crimson' is no role of PALETTE, which has canvas, canvas_alt, solid"):
         t.rgb("crimson")
     t.bar_images("HpFrame", "HpFill", caps=True)
     edge, middle = png_pixels(tmp_path / "images" / "hpfill.png")[0][0], png_pixels(tmp_path / "images" / "hpfill.png")[8][8]
-    assert (edge[:3], middle[:3]) == (t.PALETTE["outline"], t.PALETTE["good"])
+    assert (edge[:3], middle[:3]) == (t.PALETTE["ink"], t.PALETTE["ink"])
+    assert png_pixels(tmp_path / "images" / "hpframe.png")[8][8][:3] == t.PALETTE["solid"]
 
 
 def test_template_labels_read_on_what_is_behind_them():
@@ -1820,17 +1940,20 @@ def test_template_labels_read_on_what_is_behind_them():
     t = template_module()
     assert round(t.contrast((255, 255, 255), (0, 0, 0)), 2) == 21 and t.contrast((30, 34, 48), (30, 34, 48)) == 1
     score = t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999")
-    assert (score["properties"]["font"], score["properties"]["size"], score["properties"]["color"]) == ("Arial", 32, [1, 1, 1, 1])
-    t.PALETTE["dim"] = (120, 130, 150)                                   # 4.1:1 on the background
-    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 130, 150\) on background \(30, 34, 48\) reads 4\.1:1; "
-                                         r"text of size 32 needs 4\.5:1\. Roles that read on background: text, reward, good, flash;"):
+    assert (score["properties"]["font"], score["properties"]["size"], score["properties"]["color"]) == \
+        ("Arial", 32, t.rgba(t.PALETTE["ink"]))
+    t.hud_text("TimerText", "Time: 30", "top-right", color="dim")          # 5.4:1 on the backdrop's darker cell
+    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.5:1 there
+    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(228, 228, 228\) reads 3\.5:1; "
+                                         r"text of size 32 needs 4\.5:1\. Roles that read on canvas_alt: ink;"):
         t.hud_text("TimerText", "Time: 30", "top-right", color="dim")
     banner = t.hud_text("WinText", "YOU WIN", "center", size=t.TEXT_SIZE["title"], color="dim")   # 3:1 is enough for a title
-    assert banner["properties"]["size"] == 64 and banner["properties"]["color"][:3] == [120 / 255, 130 / 255, 150 / 255]
-    with pytest.raises(SystemExit, match=r"LivesText: text \(255, 255, 255\) on reward \(240, 190, 60\) reads 1\.7:1; .* Roles that read on reward: background, panel, outline;"):
-        t.hud_text("LivesText", "Lives", "top", on="reward")
+    assert banner["properties"]["size"] == 64 and banner["properties"]["color"][:3] == [120 / 255] * 3
+    with pytest.raises(SystemExit, match=r"LivesText: flash \(255, 255, 255\) on reward \(245, 197, 24\) reads 1\.\d:1; "
+                                         r".* Roles that read on reward: ink;"):
+        t.hud_text("LivesText", "Lives", "top", color="flash", on="reward")
     game = t.layout("Game", [t.layer("Background", transparent=False), t.layer("UI", parallax=0)], sheet="Game")
-    assert [layer["backgroundColor"] for layer in game["layers"]] == [t.rgba(t.PALETTE["background"]), [1, 1, 1, 1]]
+    assert [layer["backgroundColor"] for layer in game["layers"]] == [t.rgba(t.PALETTE["canvas"]), [1, 1, 1, 1]]
 
 
 def test_template_samples_a_pixel_art_viewport_nearest_and_scales_it_by_whole_numbers():
@@ -1894,7 +2017,7 @@ def test_template_keeps_alpha_pure_and_shapes_on_the_grid(tmp_path):
 
 def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     code, out = tool(project, "check_look")
-    assert code == 0 and out.splitlines()[-1].startswith("ok: 2 images, 1 world instances on a 32 px grid, "
+    assert code == 0 and out.splitlines()[-1].startswith("ok: 3 images, 2 world instances on a 32 px grid, "
                                                           "1 runtime creations"), out
     t = template_module()
     t.ROOT = project

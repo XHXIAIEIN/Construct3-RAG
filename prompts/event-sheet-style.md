@@ -122,6 +122,15 @@ change history, or how the author got there; no `#`, colours or BBCode.
   template holds these as `PALETTE` and `rgb()`, the colour check of
   `write_png()`, `FONT` and `TEXT_SIZE`, the contrast check of `hud_text()`,
   and `PIXEL_ART`.
+- Until the art arrives, a generated game is a blockout: value carries the
+  hierarchy, from a light checker backdrop through a solid grey to ink, and
+  two accents mark what is collected and what hurts, each shown by its ink
+  outline. A rectangle is the player or structure, a circle what is
+  collected, a triangle what hurts; an area or an edge is a striped Tiled
+  Background, and objects stay flat. A level is a run of beats, each asking
+  one thing, with a rest after every hard one. The generator template holds
+  these as `PALETTE`, `shape()`, `PATTERNS`, `area()`, `backdrop()` and
+  `BEATS`; the record is `docs/decisions/greybox-blockout.md`.
 - Positions and sizes on a grid: 8 px at 320×180 (three quarters of the
   examples' x and five sixths of their widths sit on it), 32 px at
   1920×1080 (half of their x, three fifths of their widths). Whole numbers,

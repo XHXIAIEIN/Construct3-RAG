@@ -172,6 +172,30 @@ habits; they are what makes rerunning safe.
   behind it, 3:1 for a title, and names the roles that would read there. A
   viewport 360 px high or less is pixel art: `PIXEL_ART` has the project
   sample *Nearest* at a whole-number scale.
+- The stand-in's look is a blockout. `PALETTE` holds two canvas greys,
+  `solid`, `dim`, `ink`, the accents `reward` and `danger`, and `flash`;
+  keep the roles and change values only. `check_palette()` stops the run
+  when the backdrop's greys pass 1.2:1 or `solid` falls under 3:1 on them,
+  and `shape()` stops on an accent drawn without its outline or a fill
+  under 3:1 against the ink. The player is an ink rectangle, structure a
+  solid one, a pickup a circle, a hazard a triangle. The backdrop is the
+  checker, `backdrop("Backdrop")` on a layer at parallax 1, its cells two to
+  a unit: it is the ruler, so draw no grid. An area or an edge is
+  `area(type, col, row, cols, rows)` of a type whose tile `pattern(name,
+  kind)` drew in `build_images()` and `pattern_type(name)` declares: `low`
+  stripes for a harmless special surface, `caution` for what moves or
+  triggers, `hazard` for what hurts, the last two on strips and small zones
+  only. `tiledbg_inst()` offsets a pattern so neighbouring pieces meet
+  without a seam.
+- `BEATS` paces the game: one beat per camera zone of a level, or per
+  round, wave or window of time in a one-screen game, as the stand-in's
+  rounds are. A beat is `beat(type, intensity, mechanics, holds=...)` plus
+  the game's own fields. `pace()` stops the run on a curve that breaks a
+  rule and prints it, one line a beat, above `generated; checking`; read it
+  before the checker's lines. In a platformer, measure each gap and step up
+  with `jump(gap, rise)` in units: it says easy, medium or hard against the
+  reach `jump_reach()` computes from `PLATFORM`, and stops past nine tenths
+  of it. The reach is an approximation; confirm it in a preview.
 - Family variables and behaviors are declared on the family and set on every
   member instance; the checker reports the instance that lacks one. A family
   is `family(name, plugin_id, members, ...)` in `build_object_types()` and

@@ -12,9 +12,9 @@ check_project.py on what it wrote and exits with the checker's code: the
 project is ready for the editor when the last line starts with `ok:`.
 
 The game below is a stand-in: coins appear, a tap collects one, the score
-counts up, and when the last coin is gone the layout restarts. Replace
-PALETTE with the game's colours by role, SHAPE_STYLE with its outline and
-shadow, build_images(),
+counts up, and when the last coin is gone the next round starts, one round a
+beat of BEATS. Replace PALETTE with the game's colours by role, SHAPE_STYLE
+with its outline and shadow, BEATS with its pacing, build_images(),
 build_object_types(), build_layouts(), the module_*() functions of the
 event sheet and the name and orientation in build_project(); keep the
 helpers, or grow them from the skill's `scripts/lookup_ace.py <object>
@@ -56,7 +56,6 @@ MARGIN = UNIT                              # the HUD's distance from the viewpor
 TOUCH = math.ceil(48 * min(VIEW_W, VIEW_H) / 360 / UNIT) * UNIT
 
 COIN_SIZE = TOUCH                          # a coin is tapped, so it is never smaller than a finger
-COIN_COUNT = 6
 
 # --- look -----------------------------------------------------------------------------
 # Decided once, here, as named values: each colour by the role it plays, the text sizes, the
@@ -66,14 +65,20 @@ COIN_COUNT = 6
 # examples keep to few colours with hard edges, 9 covering 95% of a project's opaque pixels
 # and 35 its whole art at the median, and their text to one or two colours in two sizes
 # (Construct3-RAG/docs/decisions/game-look-from-design-skills.md).
+# The stand-in is a blockout: value carries the hierarchy, greys from the canvas to ink, and two
+# accents for what must be noticed wherever the eye is. An accent loses to its background on
+# value and shows by the ink outline round it, so shape() draws an accent with its outline, and
+# check_palette() stops the run on greys that lose the ratios below
+# (Construct3-RAG/docs/decisions/greybox-blockout.md). A game adds a third accent only for a role
+# the two do not cover, a goal for instance.
 PALETTE = {
-    "background": (30, 34, 48),        # behind everything; labels are read against it
-    "panel": (40, 44, 58),             # a bar's frame, a panel behind HUD items
-    "outline": (16, 18, 26),           # edges: a 9-patch's border
-    "text": (255, 255, 255),           # labels
-    "reward": (240, 190, 60),          # what the player collects: the coin
-    "good": (90, 200, 120),            # a value going well: a bar's fill
-    "danger": (220, 70, 70),           # what hurts or is lost
+    "canvas": (244, 244, 244),         # the backdrop's light cells; an opaque layer's fill
+    "canvas_alt": (228, 228, 228),     # the backdrop's dark cells, at most 1.2:1 from canvas
+    "solid": (128, 128, 128),          # structure, at least 3:1 on the backdrop; a bar's frame
+    "dim": (90, 90, 90),               # a secondary label
+    "ink": (28, 28, 28),               # the player, outlines, shadows, labels, a bar's fill
+    "reward": (245, 197, 24),          # what the player collects: the coin
+    "danger": (226, 59, 46),           # what hurts or is lost
     "flash": (255, 255, 255),          # the fill of an object for the instant it is hit
 }
 # The outline and the cast shadow of every image shape() draws, one switch for the game. They
@@ -86,12 +91,12 @@ PALETTE = {
 SHAPE_STYLE = {
     "outline": True,
     "outline_width": max(1, UNIT // 4),                      # px, inside the edge
-    "outline_role": "outline",
+    "outline_role": "ink",
     "shadow": True,
     "shadow_distance": round(0.027 * min(VIEW_W, VIEW_H)),   # px: 2.7% of the shorter side
     "shadow_angle": 45,                                      # degrees clockwise from rightwards: 90 is down
     "shadow_opacity": 0.5,
-    "shadow_role": "outline",
+    "shadow_role": "ink",
 }
 # A hit shows as a colour for an instant: the shape's second frame, drawn by hit_frame() in the
 # role below with the same outline and shadow, shown by hit_flash() for `seconds` of real time.
@@ -117,6 +122,30 @@ TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner titl
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
 # as every official example at that size samples and 116 of 159 scale (build_project()).
 PIXEL_ART = UNIT == 8
+
+# --- pacing ---------------------------------------------------------------------------
+# The order in which the game asks things of the player, one beat at a time: a camera zone of a
+# level, or in a one-screen game like this one a round, a wave or a window of time. A beat has a
+# type, an intensity from 0 to 3, the mechanics it asks for alone or together, and for a rest
+# what it holds; anything else in it is the game's own, here the coins a round deals. pace()
+# stops the run on a curve that breaks the rules of Construct3-RAG/docs/decisions/
+# greybox-blockout.md, *Pacing*, and prints the curve, one line a beat.
+BEAT_TYPES = ("intro", "teach", "practice", "twist", "rest", "climax", "exit")
+
+
+def beat(kind: str, intensity: int, mechanics: tuple = (), holds: str = "", **game) -> dict:
+    """One beat of BEATS: beat("rest", 0, holds="pickup", coins=2)."""
+    return {"type": kind, "intensity": intensity, "mechanics": list(mechanics), "holds": holds, **game}
+
+
+BEATS = [
+    beat("intro", 0, ["tap"], coins=1),
+    beat("teach", 1, ["tap"], coins=3),
+    beat("practice", 2, ["tap"], coins=6),
+    beat("rest", 0, ["tap"], holds="pickup", coins=2),
+    beat("climax", 3, ["tap"], coins=10),
+    beat("exit", 0, ["tap"], coins=1),
+]
 
 
 def units(n: float) -> int:
@@ -207,6 +236,83 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
                          f"or hold one of them to another edge.")
 
 
+def pace(beats: list) -> list[str]:
+    """Stops the generator on a curve of BEATS that breaks a rule of pacing, else returns it as one
+    line a beat, which build_all() prints. The rules: the first beat is at 0; a beat of 2 or more
+    is followed by a rest, which holds a pickup or a checkpoint, or the climax by the exit; a
+    mechanic is taught alone in a teach before a beat combines it; one climax, in the last third;
+    the last third more intense on average than the first."""
+    if not beats:
+        sys.exit("BEATS is empty: give the game at least an intro, beat(\"intro\", 0)")
+    names = [f"beat {i + 1} {b['type']}" for i, b in enumerate(beats)]
+    for name, b in zip(names, beats):
+        if b["type"] not in BEAT_TYPES or b["intensity"] not in (0, 1, 2, 3):
+            sys.exit(f"BEATS: {name} at {b['intensity']!r}; a beat is one of {', '.join(BEAT_TYPES)} at an "
+                     f"intensity of 0, 1, 2 or 3")
+    if beats[0]["intensity"]:
+        sys.exit(f"BEATS: {names[0]} is at {beats[0]['intensity']}; the first beat is at 0, its entry safe and the "
+                 f"goal or its direction in view")
+    taught: set = set()
+    for i, (name, b) in enumerate(zip(names, beats)):
+        if b["type"] == "rest" and b["holds"] not in ("pickup", "checkpoint"):
+            sys.exit(f"BEATS: {name} holds {b['holds'] or 'nothing'}; a rest holds a pickup or a checkpoint, "
+                     f"holds=\"pickup\" or holds=\"checkpoint\"")
+        if b["type"] == "teach" and len(b["mechanics"]) == 1:
+            taught.update(b["mechanics"])
+        untaught = [m for m in b["mechanics"] if m not in taught] if len(b["mechanics"]) > 1 else []
+        if untaught:
+            sys.exit(f"BEATS: {name} combines {', '.join(b['mechanics'])}, but {', '.join(untaught)} has had no "
+                     f"teach of its own; put beat(\"teach\", 1, [{untaught[0]!r}]) before it")
+        if b["intensity"] >= 2:
+            after = beats[i + 1]["type"] if i + 1 < len(beats) else None
+            if after != "rest" and not (b["type"] == "climax" and after == "exit"):
+                sys.exit(f"BEATS: {name} at {b['intensity']} is followed by {after or 'nothing'}; a beat of 2 or "
+                         f"more is followed by a rest that holds a pickup or a checkpoint, the climax by a rest or "
+                         f"the exit, so the player breathes before the next ask")
+    k = max(1, round(len(beats) / 3))
+    climaxes = [i for i, b in enumerate(beats) if b["type"] == "climax"]
+    if len(climaxes) != 1 or climaxes[0] < len(beats) - k:
+        where = ", ".join(names[i] for i in climaxes) or "none"
+        sys.exit(f"BEATS: the climax is {where}; a game has one climax, in its last third, beats "
+                 f"{len(beats) - k + 1} to {len(beats)} here")
+    first = sum(b["intensity"] for b in beats[:k]) / k
+    last = sum(b["intensity"] for b in beats[-k:]) / k
+    if last <= first:
+        sys.exit(f"BEATS: the last third averages {last:g} and the first {first:g}; the game rises towards its end, "
+                 f"so raise a late beat or lower an early one")
+    return [f"{name:<18} {b['intensity']} |{'#' * b['intensity']:<3}| {', '.join(b['mechanics'])}"
+            + (f"; holds a {b['holds']}" if b["holds"] else "") for name, b in zip(names, beats)]
+
+
+def jump_reach(rise: float = 0, platform: dict | None = None) -> float:
+    """How far across, in px, the Platform behavior of `platform` (PLATFORM unless given) carries
+    the player at full speed landing `rise` px higher than it took off, lower when negative; 0
+    when it cannot rise that high. Its max speed times its air time, from the manual's units:
+    jump strength v px/s, gravity g px/s², jump sustain s ms, so the jump rises v·s + v²/2g and
+    stays in the air s + v/g + √(2(height - rise)/g). The approximation leaves out acceleration,
+    the max fall speed and the frame steps: confirm the reach in a preview before trusting the
+    bands of jump()."""
+    p = (platform or PLATFORM)["Platform"]["properties"]
+    v, g, s = p["jump-strength"], p["gravity"], p["jump-sustain"] / 1000
+    height = v * s + v * v / (2 * g)
+    if rise > height:
+        return 0
+    return p["max-speed"] * (s + v / g + math.sqrt(2 * (height - rise) / g))
+
+
+def jump(gap: float, rise: float = 0, platform: dict | None = None) -> str:
+    """How hard a gap of `gap` units is, landing `rise` units higher: "easy" up to half the
+    player's reach, "medium", "hard" from eight tenths; the run stops past nine tenths, where
+    the approximation of jump_reach() leaves no margin. Check every gap and step up of a level
+    with it where build_layouts() places them."""
+    reach = jump_reach(units(rise), platform) / UNIT
+    if not reach or gap > 0.9 * reach:
+        sys.exit(f"a gap of {gap:g} units rising {rise:g} is past the player's reach of {reach:.1f} units at that "
+                 f"rise; keep a gap to {math.floor(0.9 * reach)} units at most, or raise the Platform's max speed "
+                 f"or jump strength in PLATFORM")
+    return "easy" if gap <= reach / 2 else "hard" if gap >= 0.8 * reach else "medium"
+
+
 # --- ids ----------------------------------------------------------------------
 _used_sids: set[int] = set()
 _used_images: set[int] = set()
@@ -270,6 +376,27 @@ def rgba(colour: tuple, alpha: float = 1) -> list:
     return [c // 255 if c in (0, 255) else c / 255 for c in colour] + [alpha]
 
 
+def accent(role: str) -> bool:
+    """Whether a role of PALETTE is a hue, not a grey: an accent, which shows by its outline."""
+    c = rgb(role)
+    return max(c) - min(c) > 32
+
+
+def check_palette() -> None:
+    """Stops the run when PALETTE's greys lose the ratios the look stands on (WCAG 2.2 contrast):
+    the backdrop's two at most 1.2:1, so the checker reads as texture and not as things;
+    structure at least 3:1 on the darker of them, so it shows without an outline (1.4.11)."""
+    ratio = contrast(rgb("canvas"), rgb("canvas_alt"))
+    if ratio > 1.2:
+        sys.exit(f"PALETTE: canvas {PALETTE['canvas']} and canvas_alt {PALETTE['canvas_alt']} are {ratio:.2f}:1; the "
+                 f"backdrop's two greys stay at most 1.2:1, so the checker reads as texture, not as things. Bring "
+                 f"canvas_alt nearer canvas")
+    ratio = contrast(rgb("solid"), rgb("canvas_alt"))
+    if ratio < 3:
+        sys.exit(f"PALETTE: solid {PALETTE['solid']} on canvas_alt {PALETTE['canvas_alt']} reads {ratio:.2f}:1; "
+                 f"structure needs 3:1 on the backdrop to show without an outline (WCAG 2.2, 1.4.11). Darken solid")
+
+
 def alphas() -> set[int]:
     """The alpha values a drawn image may hold: clear, opaque, and the shadow of SHAPE_STYLE."""
     return {0, 255, round(255 * SHAPE_STYLE["shadow_opacity"])}
@@ -316,15 +443,15 @@ def write_png(rel: str, w: int, h: int, pixel, painted: bool = False) -> None:
                      + chunk(b"IDAT", zlib.compress(bytes(raw), 9)) + chunk(b"IEND", b""))
 
 
-def bar_images(frame_name: str, fill_name: str, frame_role: str = "panel", fill_role: str = "good",
+def bar_images(frame_name: str, fill_name: str, frame_role: str = "solid", fill_role: str = "ink",
                caps: bool = False) -> None:
     """The 16x16 images of bar_types(), one role of PALETTE each; with `caps` a 2 px border in
-    "outline", the margin a 9-patch keeps at any length. A painted fill replaces the fill's
+    "ink", the margin a 9-patch keeps at any length. A painted fill replaces the fill's
     image with the painting, drawn with painted=True."""
     for name, role in ((frame_name, frame_role), (fill_name, fill_role)):
         def pixel(x, y, role=role):
             edge = caps and (x < 2 or y < 2 or x >= 14 or y >= 14)
-            return (*rgb("outline" if edge else role), 255)
+            return (*rgb("ink" if edge else role), 255)
 
         write_png(f"{name.lower()}.png", 16, 16, pixel)
 
@@ -371,6 +498,14 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
                  f"so give it units(n) or TOUCH, {math.ceil(w / UNIT) * UNIT}x{math.ceil(h / UNIT) * UNIT} here")
     style = SHAPE_STYLE
     edge = style["outline_width"] if (style["outline"] if outline is None else outline) else 0
+    if not edge and accent(role):
+        sys.exit(f"{rel}: {role} is an accent, which loses to the backdrop on value and shows by the outline round "
+                 f"it; draw it with its outline, or in a grey role")
+    ratio = contrast(rgb(role), rgb(style["outline_role"]))
+    if edge and role != style["outline_role"] and ratio < 3:
+        fits = [r for r in PALETTE if contrast(PALETTE[r], rgb(style["outline_role"])) >= 3]
+        sys.exit(f"{rel}: its {role} fill reads {ratio:.1f}:1 against its {style['outline_role']} outline, which needs "
+                 f"3:1 to show; fill it in one of {', '.join(fits)}")
     dx, dy = shadow_offset() if (style["shadow"] if shadow is None else shadow) else (0, 0)
     left, top = max(0, -dx), max(0, -dy)
     iw, ih = w + abs(dx), h + abs(dy)
@@ -417,7 +552,41 @@ def drawn(rel: str) -> dict:
     return FRAMES[rel]
 
 
+# Objects are flat; an area or an edge carries a pattern, a Tiled Background, which repeats its
+# image at any size without stretching it. Four patterns, each two roles of PALETTE and one job.
+# A red triangle is one hazard, a red-striped area a hazardous region; a yellow circle is a
+# pickup, a yellow-striped strip a door or a plate.
+PATTERNS = {
+    "checker": ("canvas", "canvas_alt"),   # empty space, and the ruler: the backdrop only
+    "low": ("solid", "dim"),               # a surface special and harmless: a one-way platform, a safe zone
+    "caution": ("reward", "ink"),          # what moves, triggers or blocks on a condition: a door, a plate
+    "hazard": ("danger", "ink"),           # an area that hurts: lava, a kill zone
+}
+PATTERN_OF: dict[str, str] = {}            # the pattern of each type pattern() drew, by type name
+TILES: dict[str, int] = {}                 # its tile in px, which tiledbg_inst() aligns to the layout
+
+
+def pattern(name: str, kind: str) -> None:
+    """images/<name lower>.png: a one-unit tile of the pattern `kind` of PATTERNS for the Tiled
+    Background type `name`, pattern_type(name). The checker is cells of UNIT / 2, two to a unit,
+    so the backdrop counts units; the stripes run at 45 degrees, a pair to the unit, and join
+    across tiles."""
+    if kind not in PATTERNS:
+        sys.exit(f"pattern({name!r}, {kind!r}): the patterns are {', '.join(PATTERNS)}")
+    a, b = PATTERNS[kind]
+    half = UNIT // 2
+    if kind == "checker":
+        def pixel(x, y):
+            return (*rgb(a if (x // half + y // half) % 2 == 0 else b), 255)
+    else:
+        def pixel(x, y):
+            return (*rgb(a if (x + y) % UNIT < half else b), 255)
+    write_png(f"{name.lower()}.png", UNIT, UNIT, pixel)
+    PATTERN_OF[name], TILES[name] = kind, UNIT
+
+
 def build_images() -> None:
+    pattern("Backdrop", "checker")
     shape("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward")
     hit_frame("coin-default-000.png")
 
@@ -840,9 +1009,9 @@ def on_touched(obj: str) -> dict:
 # module, run the generator, read the sheet it printed, then write the next.
 def module_setup() -> dict:
     return module("Setup", events=[
-        event("Deal the coins and show the empty score",
+        event("Deal this round's coins and show the empty score",
               [on_start()], [set_text("ScoreText", q("Score: 0"))], children=[
-                  block([for_loop("i", "0", "COIN_COUNT - 1")], [
+                  block([for_loop("i", "0", f"int(tokenat(ROUND_COINS, beat, {q(',')})) - 1")], [
                       create("Coin", "Game", f"{grid_random(0, VIEW_W - COIN_SIZE)} + {COIN_SIZE // 2}",
                              f"{grid_random(snap(1.5 * COIN_SIZE), VIEW_H - COIN_SIZE)} + {COIN_SIZE // 2}"),
                       set_ivar("Coin", "value", "choose(1, 5)"),
@@ -878,8 +1047,9 @@ def scoring() -> list:
 
 def module_restart() -> dict:
     return module("Restart", events=[
-        event("Restart when the last coin is gone",
-              [cmp2("Coin.Count", EQ, "0"), trigger_once()], [wait("1"), restart_layout()]),
+        event("Start the next round when the last coin is gone",
+              [cmp2("Coin.Count", EQ, "0"), trigger_once()],
+              [set_var("beat", f"(beat + 1) % tokencount(ROUND_COINS, {q(',')})"), wait("1"), restart_layout()]),
     ])
 
 
@@ -887,12 +1057,14 @@ def build_event_sheet() -> dict:
     """What the sheet covers, the constants under Settings, the state the groups share,
     then the groups; a variable one group owns is declared in that module instead."""
     events = [
-        comment("Coins. Tap a coin to collect it; when the last one is gone the layout restarts.\n"
+        comment("Coins. Tap a coin to collect it; when the last one is gone the next round starts.\n"
                 "The touched coin is the trigger's pick: Collect runs on it and nothing else"),
         comment("Settings"),
-        var("COIN_COUNT", "number", COIN_COUNT, "Coins dealt at the start", const=True),
+        var("ROUND_COINS", "string", ",".join(str(b["coins"]) for b in BEATS),
+            "Coins dealt in each round, one round a beat of the generator's BEATS", const=True),
         comment("Gameplay variables"),
         var("score", "number", 0, "Points collected this round"),
+        var("beat", "number", 0, "The round being played, from 0; a global keeps it across the restart"),
         module_setup(),
         module_input(),
         *scoring(),
@@ -963,6 +1135,14 @@ def bar_types(frame_name: str, fill_name: str, caps: bool = False, tween: bool =
             fill_name: image_type(fill_name, plugin, 16, 16, 0, 0.5, behaviors=[beh_def("Tween")] if tween else [])}
 
 
+def pattern_type(name: str) -> dict:
+    """The Tiled Background type of the pattern pattern() drew for `name` in build_images();
+    area() and backdrop() place it."""
+    if name not in PATTERN_OF:
+        sys.exit(f"pattern_type({name!r}): draw its tile first with pattern({name!r}, kind) in build_images()")
+    return image_type(name, "TiledBg", TILES[name], TILES[name], 0, 0)
+
+
 def single_global_type(name: str, plugin_id: str, properties: dict) -> dict:
     """Touch, Keyboard, Mouse, Audio, AdvancedRandom, LocalStorage: one instance, not placed in a layout."""
     return {"name": name, "plugin-id": plugin_id, "sid": sid(),
@@ -994,6 +1174,7 @@ def build_object_types() -> tuple[dict, dict, list]:
                             ivars=[ivar_def("value", "number", "Points it is worth."),
                                    ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
                             behaviors=[beh_def("Tween")]),
+        "Backdrop": pattern_type("Backdrop"),
         "ScoreText": text_type("ScoreText"),
         "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True}),
     }
@@ -1005,9 +1186,9 @@ def build_object_types() -> tuple[dict, dict, list]:
 # --- layouts -------------------------------------------------------------------------------
 def layer(name: str, bg: str | None = None, transparent: bool = True, parallax: float = 1) -> dict:
     """parallax 0 for a HUD layer that stays put while the layout scrolls. bg is the role of
-    PALETTE an opaque layer fills with, "background" unless named; a transparent layer keeps
+    PALETTE an opaque layer fills with, "canvas" unless named; a transparent layer keeps
     the editor's white, which it never draws."""
-    fill = rgb(bg or "background") if bg or not transparent else (255, 255, 255)
+    fill = rgb(bg or "canvas") if bg or not transparent else (255, 255, 255)
     return {"name": name, "overriden": 0, "subLayers": [], "instances": [], "sid": sid(), "effectTypes": [],
             "isInitiallyVisible": True, "isInitiallyInteractive": True, "isHTMLElementsLayer": False,
             "color": [1, 1, 1, 1], "backgroundColor": rgba(fill), "isTransparent": transparent,
@@ -1105,10 +1286,11 @@ def readable(otype: str, color: str, on: str, size: float) -> None:
 
 
 def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, size: float | None = None,
-              halign: str = "left", bold: bool = False, color: str = "text", on: str = "background",
+              halign: str = "left", bold: bool = False, color: str = "ink", on: str = "canvas_alt",
               ivars=None, behaviors=None) -> dict:
     """A Text in FONT at a size of TEXT_SIZE, its colour the role `color` of PALETTE; `on` is
-    the role of what lies behind it, which it must read on (readable())."""
+    the role of what lies behind it, which it must read on (readable()): the backdrop's darker
+    cell unless a panel is behind it."""
     size = size or TEXT_SIZE["body"]
     readable(otype, color, on, size)
     return instance(otype, {"text": text, "enable-bbcode": False, "font": FONT, "size": size, "line-height": 0,
@@ -1119,7 +1301,7 @@ def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, siz
 
 
 def hud_text(otype: str, text: str, where: str, size: float | None = None, longest: str | None = None,
-             bold: bool = True, color: str = "text", on: str = "background", dx: float = 0, dy: float = 0,
+             bold: bool = True, color: str = "ink", on: str = "canvas_alt", dx: float = 0, dy: float = 0,
              ivars=None, behaviors=None) -> dict:
     """A HUD label held against an edge or corner by anchor(). Its box is as wide as its
     longest text (about 0.6 em a character, rounded up to a unit) and the text is aligned to
@@ -1145,12 +1327,44 @@ def origin_name(ox: float, oy: float) -> str:
 
 def tiledbg_inst(otype: str, x: float, y: float, w: float, h: float, ox: float = 0, oy: float = 0.5,
                  ivars=None, behaviors=None) -> dict:
-    """A Tiled Background instance; the properties are the editor's (berry-harvester ProgressBar)."""
+    """A Tiled Background instance; the properties are the editor's (berry-harvester ProgressBar).
+    A pattern of pattern() is offset by minus its box's corner, modulo its tile: tiling starts at
+    the instance's own corner, the runtime shifts the image by the offset, and so every piece of
+    one pattern lines up with the layout and two of them meet without a seam."""
+    tile = TILES.get(otype)
+    off_x, off_y = (round(-(x - ox * w)) % tile, round(-(y - oy * h)) % tile) if tile else (0, 0)
     return instance(otype, {"initially-visible": True, "origin": origin_name(ox, oy), "wrap-horizontal": "repeat",
-                            "wrap-vertical": "repeat", "image-offset-x": 0, "image-offset-y": 0, "image-scale-x": 1,
+                            "wrap-vertical": "repeat", "image-offset-x": off_x, "image-offset-y": off_y, "image-scale-x": 1,
                             "image-scale-y": 1, "image-angle": 0, "enable-tile-randomization": False, "x-random": 1,
                             "y-random": 1, "angle-random": 1, "blend-margin-x": 0.1, "blend-margin-y": 0.1},
                     world(x, y, w, h, ox, oy), ivars, behaviors)
+
+
+def area(otype: str, col: int, row: int, cols: int, rows: int, ivars=None, behaviors=None) -> dict:
+    """An area or an edge in the pattern type `otype` of pattern_type(), covering cols x rows grid
+    cells from cell (col, row): a one-way platform in low stripes, a door in caution stripes, lava
+    in hazard stripes. The high-contrast stripes cover strips and small zones, their shorter side
+    a quarter of the viewport's at most; the checker is the backdrop's alone, backdrop()."""
+    kind = PATTERN_OF.get(otype)
+    if not kind:
+        sys.exit(f"area({otype!r}): not a pattern; draw it with pattern({otype!r}, kind) in build_images() and give "
+                 f"it pattern_type({otype!r}) in build_object_types()")
+    if kind == "checker":
+        sys.exit(f"area({otype!r}): the checker is empty space, the backdrop alone; place it with backdrop({otype!r})")
+    most = min(VIEW_W, VIEW_H) // 4 // UNIT
+    if kind in ("caution", "hazard") and min(cols, rows) > most:
+        sys.exit(f"area({otype!r}): {cols}x{rows} cells of {kind} stripes; these cover strips and small zones, never "
+                 f"a backdrop, so keep the shorter side to {most} cells, a quarter of the viewport's")
+    return tiledbg_inst(otype, units(col), units(row), units(cols), units(rows), 0, 0, ivars, behaviors)
+
+
+def backdrop(otype: str, width: int = VIEW_W, height: int = VIEW_H) -> dict:
+    """The checker of pattern `otype` behind everything: one Tiled Background from the layout's
+    origin over `width` x `height`, the layout's size, on a layer at parallax 1, so its cells are
+    the ruler that sizes and distances are counted in. It replaces a grid: never both."""
+    if PATTERN_OF.get(otype) != "checker":
+        sys.exit(f"backdrop({otype!r}): the backdrop is the checker; draw it with pattern({otype!r}, \"checker\")")
+    return tiledbg_inst(otype, 0, 0, width, height, 0, 0)
 
 
 def ninepatch_inst(otype: str, x: float, y: float, w: float, h: float, ox: float = 0, oy: float = 0.5, margin: int = 2,
@@ -1225,10 +1439,13 @@ def build_layouts() -> dict[str, dict]:
         layer("Game"),
         layer("UI", parallax=0),
     ], sheet="Game")
+    # The checker behind everything is the ruler: two cells a unit. An area or an edge in a
+    # pattern is area(type, col, row, cols, rows) on the Game layer.
+    game["layers"][0]["instances"].append(backdrop("Backdrop"))
     # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
     # row(), anything else by anchor(); the middle of the screen is the game's. no_overlap()
     # stops the run when two HUD boxes meet or one leaves the viewport. A label is
-    # TEXT_SIZE["body"] in rgb("text"), a banner TEXT_SIZE["title"], and hud_text() stops the
+    # TEXT_SIZE["body"] in rgb("ink"), a banner TEXT_SIZE["title"], and hud_text() stops the
     # run on a colour that does not read on what is behind it.
     ui = game["layers"][2]["instances"]
     ui.append(hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"))
@@ -1329,6 +1546,9 @@ def build_all() -> None:
     if not c3proj.exists():
         sys.exit(
             f"{c3proj} not found: create the project in the editor and save it as a folder first")
+    check_palette()
+    for line in pace(BEATS):
+        print(line)
     build_images()
     types, families, containers = build_object_types()
     for name, t in types.items():

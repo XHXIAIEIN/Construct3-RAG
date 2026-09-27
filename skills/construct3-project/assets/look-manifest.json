@@ -110,19 +110,39 @@
     },
     {
       "id": "palette.greys",
-      "status": "proposed",
-      "says": "Two canvas greys, one solid grey, dim, ink and two accents; the player in ink. The template still holds the dark palette.",
-      "value": {"canvas": "#F4F4F4", "canvas_alt": "#E4E4E4", "solid": "#808080", "dim": "#5A5A5A", "ink": "#1C1C1C", "reward": "#F5C518", "danger": "#E23B2E"}
+      "status": "enforced",
+      "strict": true,
+      "says": "Two canvas greys, one solid grey, dim, ink and two accents, plus the hit's flash; the player in ink. The backdrop's greys at most 1.2:1, solid at least 3:1 on the darker of them.",
+      "template": "{role: '#%02X%02X%02X' % colour for role, colour in PALETTE.items()}",
+      "value": "{'canvas': '#F4F4F4', 'canvas_alt': '#E4E4E4', 'solid': '#808080', 'dim': '#5A5A5A', 'ink': '#1C1C1C', 'reward': '#F5C518', 'danger': '#E23B2E', 'flash': '#FFFFFF'}",
+      "helpers": "check_palette()"
+    },
+    {
+      "id": "colour.accent-outline",
+      "status": "enforced",
+      "strict": true,
+      "says": "An accent, a role that is a hue and not a grey, loses to the backdrop on value and is drawn with its ink outline; every outlined fill reads at least 3:1 against the ink.",
+      "template": "[role for role in PALETTE if accent(role)]",
+      "value": "['reward', 'danger']",
+      "helpers": "accent(), shape()"
     },
     {
       "id": "backdrop.checker",
-      "status": "proposed",
-      "says": "The transparency checker as the backdrop and the ruler, cells of UNIT / 2, its two greys at most 1.2:1."
+      "status": "enforced",
+      "strict": true,
+      "says": "The transparency checker behind everything, one Tiled Background from the layout's origin, cells of UNIT / 2 in canvas and canvas_alt; it is the ruler, in place of a grid, and no area elsewhere.",
+      "template": "PATTERNS['checker']",
+      "value": "('canvas', 'canvas_alt')",
+      "helpers": "pattern(), pattern_type(), backdrop()"
     },
     {
       "id": "pattern.areas",
-      "status": "proposed",
-      "says": "Areas and edges carry a pattern, objects stay flat: low stripes, caution stripes, hazard stripes, tiled without a seam."
+      "status": "enforced",
+      "strict": true,
+      "says": "Objects stay flat; an area or an edge is a Tiled Background of a pattern: low stripes for a harmless special surface, caution stripes for what moves or triggers, hazard stripes for what hurts. Stripes at 45 degrees, a one-unit tile, offset so pieces meet without a seam; the caution and hazard stripes cover strips and small zones, their shorter side a quarter of the viewport's at most.",
+      "template": "{kind: roles for kind, roles in PATTERNS.items() if kind != 'checker'}",
+      "value": "{'low': ('solid', 'dim'), 'caution': ('reward', 'ink'), 'hazard': ('danger', 'ink')}",
+      "helpers": "pattern(), area(), tiledbg_inst()"
     },
     {
       "id": "motion.squash",
@@ -164,8 +184,25 @@
     },
     {
       "id": "pacing.beats",
+      "status": "enforced",
+      "strict": true,
+      "says": "BEATS gives each camera zone, or each round, wave or window of a one-screen game, a type and an intensity from 0 to 3. The first beat at 0; a beat of 2 or more followed by a rest that holds a pickup or a checkpoint, the climax by a rest or the exit; a mechanic taught alone before a beat combines it; one climax, in the last third; the last third more intense than the first. The generator prints the curve, one line a beat.",
+      "template": "BEAT_TYPES",
+      "value": "('intro', 'teach', 'practice', 'twist', 'rest', 'climax', 'exit')",
+      "helpers": "beat(), pace()"
+    },
+    {
+      "id": "level.reach",
+      "status": "adopted",
+      "says": "Every gap and step up of a level is measured against the player's reach from the Platform properties: easy up to half of it, hard from eight tenths, and the run stops past nine tenths. The reach is an approximation not yet measured in a preview.",
+      "template": "round(jump_reach())",
+      "value": "286",
+      "helpers": "jump_reach(), jump()"
+    },
+    {
+      "id": "pacing.worlds",
       "status": "proposed",
-      "says": "Zones typed intro, teach, practice, twist, rest, climax, exit with an intensity 0 to 3; five short levels a world; failure restarts within about 1 s."
+      "says": "Five short levels a world, an ordinary victory in about 1 to 2 s, a world's in 4 to 6 s, failure restarting within about 1 s."
     },
     {
       "id": "shadow.soft",
@@ -184,8 +221,10 @@
     }
   ],
   "deliver": [
-    "Copy assets/build_project.py to the project's tools/ and rewrite only the game: PALETTE's values by role, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
+    "Copy assets/build_project.py to the project's tools/ and rewrite only the game: PALETTE's values by role, BEATS, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
     "Keep SHAPE_STYLE and the helpers. Draw every stand-in with shape() in whole units and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
+    "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area or an edge is area() of a pattern(), the backdrop the checker's backdrop().",
+    "Write BEATS for the game's zones or rounds, and read the curve the generator prints; measure every gap of a platformer level with jump().",
     "Give every object that can be hit a hit_frame() after its shape and the Tween behavior, and show a hit with hit(obj), last in its block; never the Flash behavior.",
     "Squash a landing and a jump with squash(art, \"land\") and squash(art, \"jump\"), on the art pinned to the collision mask, never on the mask.",
     "Pass painted=True only for a picture meant to hold its own colours and soft edges.",
