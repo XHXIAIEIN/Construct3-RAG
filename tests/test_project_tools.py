@@ -782,6 +782,18 @@ def test_print_without_a_name_lists_the_sheets_that_do_not_fit(project):
     assert code == 0 and "== Game\n" in out and "== Menu\n" in out
 
 
+def test_print_counts_the_lines_of_a_script_stored_either_way(project):
+    """The editor keeps a script as a list of lines or as one string with newlines; the official examples use both."""
+    lines = ["const coin = runtime.objects.Coin.getFirstInstance();", "coin.x += 10;"]
+    def add(sheet):
+        for script in (lines, "\n".join(lines)):
+            sheet["events"] += [{"eventType": "script", "script": script},
+                                {"eventType": "block", "conditions": [], "actions": [{"type": "script", "script": script}]}]
+    edit(project, SHEET, add)
+    code, out = tool(project, "print_sheet", "Game")
+    assert code == 0 and out.count("script, 2 lines") == 4 and "script, 67 lines" not in out, out
+
+
 def test_scripts_write_utf8_and_survive_a_code_page_that_cannot(built):
     """A piped Python on Windows writes the ANSI code page: mojibake under cp936, a crash under cp1252."""
     script = built / INSTALLED / "scripts" / "print_sheet.py"
