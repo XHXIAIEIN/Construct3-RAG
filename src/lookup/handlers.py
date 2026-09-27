@@ -141,6 +141,7 @@ class LookupHandlers:
         example_records = self.examples_index.search(
             [example_tag],
             max_results=3,
+            names=[schema.get("name_en", "")],
         )
         example_line = ExamplesIndex.format_for_ace(example_records)
         if example_line:
@@ -218,6 +219,7 @@ class LookupHandlers:
         example_records = self.examples_index.search(
             [example_tag],
             max_results=3,
+            names=[schema.get("name_en", "")],
         )
         example_line = ExamplesIndex.format_for_ace(example_records)
         if example_line:
@@ -580,13 +582,25 @@ class LookupHandlers:
         lines.append("\n[Source: 1] Construct 3 CDN translation terms")
         return "\n".join(lines), matches
 
+    def _addon_display_names(self, tags: list[str]) -> list[str]:
+        """English names of the addons an example tag names: Arr is Array."""
+        names = []
+        for tag in tags:
+            resolved = self.schema_index.resolve_name(tag.split("-", 1)[-1])
+            if resolved:
+                schema = self.schema_index.get_schema(*resolved) or {}
+                names.append(schema.get("name_en", ""))
+        return [name for name in names if name]
+
     def _format_example_find(
         self,
         intent: LookupIntent,
     ) -> tuple[str, list[LookupMatch]]:
+        tags = intent.matched_tags or []
         results = self.examples_index.search(
-            intent.matched_tags or [],
+            tags,
             max_results=5,
+            names=self._addon_display_names(tags),
         )
         if not results and intent.filter_term:
             results = self.examples_index.search_fallback(

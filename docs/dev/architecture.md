@@ -145,8 +145,9 @@ Direct Lookup is deliberately conservative:
   predicate or an act; a noun topic searches all three;
 - examples, terms, script APIs, properties, and ACEs retain typed identities.
 - example projects that use an addon come ordered by how much they are about
-  it: named for it, described as showing it, tagged Feature example, fewest
-  addons in use; never by file name.
+  it: named for it, described as showing it (whole words, so Platform is not
+  "platforms"), tagged Feature example or Barebones template, fewest addons in
+  use; never by file name.
 
 The four repositories expose public loading/iteration/search methods. Callers
 do not inspect another repository's private dictionaries.

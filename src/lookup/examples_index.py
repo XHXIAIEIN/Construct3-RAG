@@ -11,6 +11,9 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+# Example tags for a project built to show one feature, not a game.
+_MINIMAL_DEMO_TAGS = frozenset({"Feature example", "Barebones template"})
+
 
 class ExamplesIndex:
     """Build and query an addon/tag index without a generated side file."""
@@ -117,24 +120,41 @@ class ExamplesIndex:
         )
 
     @staticmethod
-    def _compact(text: str) -> str:
-        """Lower case without separators, so File System matches FileSystem."""
-        return re.sub(r"[^a-z0-9]", "", text.lower())
+    def _name_pattern(names: list[str]) -> re.Pattern[str] | None:
+        """Whole words of each name, so Platform matches "platform game" but
+        not "platforms" or "Platformer", and FileSystem matches "File system"."""
+        alternatives = []
+        for name in names:
+            words = name.split() if " " in name else re.findall(
+                r"[A-Z]?[a-z0-9]+|[A-Z]+(?![a-z])", name
+            )
+            if words:
+                joined = r"[\s_-]*".join(re.escape(w.lower()) for w in words)
+                alternatives.append(rf"\b{joined}\b")
+        return re.compile("|".join(alternatives)) if alternatives else None
 
-    def search(self, tags: list[str], max_results: int = 5) -> list[dict[str, Any]]:
+    def search(
+        self,
+        tags: list[str],
+        max_results: int = 5,
+        names: list[str] | None = None,
+    ) -> list[dict[str, Any]]:
         """Find examples matching any tag, the ones about the addon first.
 
-        Ranked by tag overlap, then by whether the name or the description
-        names the addon, then Feature example, then fewer addons in use, so
-        a focused demo comes before a game that merely uses the addon.
+        Ranked by tag overlap, then by whether the name, then the
+        description, names the addon as a whole word (its id from the tag
+        or a display name in *names*), then a Feature example or Barebones
+        template, then fewer addons in use, so a focused demo comes before a
+        game that merely uses the addon.
         """
         if not tags:
             return []
-        addons = [
-            self._compact(tag.split("-", 1)[1])
+        addon_names = [
+            tag.split("-", 1)[1]
             for tag in tags
             if tag.lower().startswith(("plugin-", "behavior-", "effect-"))
         ]
+        pattern = self._name_pattern([*addon_names, *(names or [])])
         scores: dict[str, dict[str, Any]] = {}
         for tag in tags:
             for record in self._index.get(self._tag_key(tag), []):
@@ -145,15 +165,16 @@ class ExamplesIndex:
                     scores[slug] = {"record": record, "score": 0}
                 scores[slug]["score"] += 1
 
+        def names_addon(text: str) -> bool:
+            return bool(pattern and pattern.search(text.lower()))
+
         def rank(item: dict[str, Any]) -> tuple:
             record = item["record"]
-            named = self._compact(f"{record.get('title', '')} {record['slug']}")
-            described = self._compact(record.get("description", ""))
             return (
                 -item["score"],
-                not any(addon in named for addon in addons),
-                not any(addon in described for addon in addons),
-                "Feature example" not in record.get("genres", []),
+                not names_addon(f"{record.get('title', '')} {record['slug']}"),
+                not names_addon(record.get("description", "")),
+                not _MINIMAL_DEMO_TAGS & set(record.get("genres", [])),
                 record.get("addon_count", 0),
                 record["slug"],
             )

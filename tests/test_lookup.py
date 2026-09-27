@@ -537,6 +537,15 @@ class TestExamplesIndex:
         results = self.index.search(["behavior-Nonexistent99999"])
         assert results == []
 
+    def test_addon_names_match_whole_words(self):
+        """Platform is not platforms or Platformer; FileSystem is File system; Arr takes Array."""
+        pattern = ExamplesIndex._name_pattern(["Platform"])
+        assert pattern.search("a simple platform game")
+        assert not pattern.search("mesh platforms")
+        assert not pattern.search("rotating platformer")
+        assert ExamplesIndex._name_pattern(["FileSystem"]).search("file system text editor")
+        assert ExamplesIndex._name_pattern(["Arr", "Array"]).search("an array-based engine")
+
     def test_format_for_ace_context(self):
         records = [
             {"title": "Cave Bridge", "slug": "cave-bridge", "genres": ["adventure"], "behaviors": ["Tween"]},
