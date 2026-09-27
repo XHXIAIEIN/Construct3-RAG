@@ -43,7 +43,7 @@ How each was read from the editor and confirmed:
 | An action does not write a constant | `event variable X is constant` |
 | An ease is a built-in id such as `easeoutback`, unless the project has custom eases | the tween keeps no ease and fails later |
 | An event variable's or a function parameter's `initialValue` is text, a boolean's `"true"` or `"false"` in lowercase; a parameter may also carry a JSON number | a boolean is read by comparing the text to `"true"`, so `false`, `true`, `"True"` and `"1"` all read as false; another JSON type in a parameter stops the load with `invalid type of initialValue` |
-| An instance variable's `type` is `number`, `string` or `boolean`; the editor's Text type is `string` | not measured: the checker itself used to stop with `missing key 'text'` |
+| An instance variable's `type` is `number`, `string` or `boolean`; the editor's Text type is `string` | not measured |
 | A layout instance writes an instance variable as a JSON value of its type: `1`, `"a"`, `true` | a text `"1"` on a number reads through `parseFloat`, a boolean on a number reads as 0 |
 | `project.c3proj` keeps the properties the editor writes: `description`, `version`, `author`, `authorEmail`, `authorWebsite`, `appId`, `fullscreenMode`, `fullscreenQuality`, `orientations`, `sampling`, `downscaling`, `loaderStyle`, and a viewport of at least 2 | `TypeError: expected string`, before the editor names a file |
 | `savedWithRelease` is the release that saved the project; below r309 the editor reads an object type from `objectTypes/<name in lower case>.json` | no message: the object type file is not found |
@@ -76,8 +76,8 @@ event number is the editor's: the one in the margin of the event sheet and
 in the **Where** column of Find results. Blocks, groups and function blocks
 are counted per sheet in document order, sub-events included. A variable,
 comment or include has no number of its own: the margin leaves it blank and
-Find files it under the next numbered event, so the nine locals above event
-15 of the Water Sort sheet are `Event 15` too. Conditions and actions count
+Find files it under the next numbered event, so the locals right above
+event 15 are `Event 15` too. Conditions and actions count
 from 1. `scripts/print_sheet.py --outline Game` prints the numbering of a
 sheet with each event's sid, which is what to search the JSON for,
 unnumbered rows in parentheses.
@@ -101,11 +101,7 @@ output. Each names the event and says what to write.
 | sub-events N levels deep, every leaf calling one function | 3 levels, 3 or more leaves | 3, in shifting-dungeon, template-ladder-climbing, wall-walking |
 | with events ..., the same conditions and actions N times over (sibling events of one shape, their values ignored) | 5 or more | 47 in 31 projects; 32 in 20 studio games, input ladders, a key per action, and else-if chains among them |
 
-The three sheets small models wrote for the evidence set (Doubao snake,
-DeepSeek Water Sort) raise 21, 4 and 1; 16 and 7; 4 and 2 of the first three
-kinds; the Doubao raft game of 204 events (RaftSurvivor) raises 24 uncommented
-case events and 6 ladders of 5 to 9 events. The survey behind the thresholds
-is `Construct3-RAG/docs/decisions/event-sheet-design-guidance.md`, 2026-09-22.
+Why these thresholds: `Construct3-RAG/docs/decisions/event-sheet-design-guidance.md`.
 A style warning is never an error: the editor accepts all six, and an
 official example may carry one. What the shape should be instead is
 `Construct3-RAG/prompts/event-sheet-style.md`.
@@ -114,7 +110,7 @@ official example may carry one. What the shape should be instead is
 
 What happens at runtime: which instances a condition picks, what order
 triggers fire in, whether an expression means what the comment says. The
-editor and the preview judge those; the Water Sort observations in
+editor and the preview judge those; the observations in
 `Construct3-RAG/prompts/event-sheet-pitfalls.md` came from previewing, not
 from the checker. Expression syntax, argument counts and types, and
 `function`, `template` and `audiofile` parameters are not checked either.

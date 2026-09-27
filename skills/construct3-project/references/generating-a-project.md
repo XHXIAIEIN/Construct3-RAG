@@ -85,7 +85,7 @@ that running the generator discards edits made in the editor.
 ## Writing the generator
 
 The stand-in game in `assets/build_project.py` shows the shape. Keep these
-habits; they are what made rerunning safe in Water Sort.
+habits; they are what makes rerunning safe.
 
 - Constants once, at the top, and a global constant in the sheet for every
   number an event reads; a tunable value has one place to change. What a
@@ -191,5 +191,5 @@ editor has touched, copy them to `.trash/<date>/<relative path>` (untracked
 projects) or commit (tracked projects). `json.dumps(obj, indent="\t",
 ensure_ascii=False)` written with `newline="\n"` and no trailing newline is
 the editor's own file layout, so what the editor saves over a generated
-project differs only where it changed something (roundtrip checked on
-mergeGame, r502).
+project differs only where it changed something (roundtrip checked with
+the r502 editor).

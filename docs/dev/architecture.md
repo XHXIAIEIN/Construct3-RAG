@@ -86,9 +86,9 @@ Explicit maintenance path:
 scripts/init.py -----> ingest/c3_fetcher.py -----> data/
 ```
 
-Static boundary tests reject `lookup -> rag` and `application -> ingest`, keep
-the module graph acyclic, and check that importing the service loads no model
-or vector package.
+Static boundary tests keep `application` and `lookup` from importing
+`ingest`, keep the module graph acyclic, and check that importing the service
+loads no model or vector package.
 
 ## Search SOP
 
@@ -158,3 +158,14 @@ replaces `data/` itself, so the cache is never read at query time.
 No ordinary import or query refreshes the CDN. `scripts/init.py` fetches,
 exports into the cache, and replaces the `data/` directories; the update
 workflow runs the same script.
+
+## Known limits
+
+- The CDN export and the lookup's bilingual projection are separate
+  representations of the schemas. Unify them only with byte-for-byte parity
+  of the committed schemas and of the lookup's answers.
+- The lookup still renders an English Markdown context string beside its
+  typed matches (`context=true`). Removing it changes the API; do it with a
+  version bump.
+- A declined query and an empty lookup produce the same response: neither
+  has a `lookup` section.

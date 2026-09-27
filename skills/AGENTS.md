@@ -48,8 +48,8 @@ sheet editor, checker, editor opener and generator template for a Construct
 - A script that changes a project file checks the result before it writes
   it, writes the whole file or nothing, in the editor's layout (tabs, LF, no
   newline at the end, the editor's keys in the editor's order), and has
-  `--dry-run`. `edit_sheet.py` is the one that does; what the editor writes
-  per kind of event is counted in `docs/decisions/edit-sheet-script.md`.
+  `--dry-run`. `edit_sheet.py` is the one that does; the keys the editor
+  writes per kind of event, in order, are its templates.
 - English only; `--locale` switches the schema wording, not the tool's.
 - A rule about what a project file must hold is read from the editor's loader
   as a whole call chain, not from the one message a user pasted: the next

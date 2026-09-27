@@ -40,7 +40,7 @@ release directory returns 404.
 1. Parse `main.js` during every export. No committed file, but each export
    downloads 1.4 MB of minified code, the parse depends on the anchor and the
    literal shape surviving minification, and the root bundle is the current
-   stable release, not necessarily `C3_VERSION`.
+   stable release, not necessarily the one `data/` holds.
 2. Extract the block once into `src/ingest/common_aces.json` with a script,
    commit it with its source, and have the exporter merge it like an
    `allAces.json` entry. The default export stays offline and deterministic;
@@ -75,43 +75,33 @@ Two consequences outside `_common.json`:
 
 ## Which plugin gets which shared ACE
 
-Added 2026-09-23. The r495.2 editor refused the LiquidVolume project with
-`missing action id 'set-default-color'`: Set color on a Text. `_common.json`
-listed it for every world object, so `lookup_ace.py` offered it and
-`check_project.py` passed it.
+Not every world object gets every shared ACE: the editor refuses *Set
+color* on a Text with `missing action id 'set-default-color'`. The block
+registers each group behind a guard on the plugin's info, so the extraction
+reads both sides from the editor:
 
-The block registers each group behind a guard on the plugin's info,
-`i.mcs()&&(...)`, and `set-default-color` behind a second one inside it. The
-schema carried no flag to tell plugins apart, so the extraction reads them
-from the editor:
-
-- the guards of the `_common` block, named through the plugin info class
-  (the one that throws `plugin type 'object' cannot use common ACEs`: a
-  setter writes the field a getter reads) and `window.SDK.IPluginInfo`,
-  whose public methods call those setters. A guard with no public method
-  (collisions, mesh, DOM elements, templates) is named `editor:<first ACE
-  it registers>`;
+- the guards of the `_common` block, named through the public methods of
+  `window.SDK.IPluginInfo` that set them (`AddCommonAppearanceACEs`,
+  `SetSupportsColor` ...). A guard with no public method (collisions, mesh,
+  DOM elements, templates) is named `editor:<first ACE it registers>`;
 - the setters each built-in plugin calls in its constructor in
   `plugins/allEditorPlugins.js`, at the constructor's own level, so that a
   call inside a property callback does not count.
 
 `common_aces.json` keeps both, `requires` per ACE and `plugins` per plugin,
 and the export writes each plugin's resolved ids as `commonAces`. Text
-calls `AddCommonAppearanceACEs` but not `SetSupportsColor`.
-
-Checked over the 524 official examples: 7811 uses of a shared condition or
-action on a built-in plugin, none outside that plugin's `commonAces`. The 29
-that look like one are the plugin's own ACE of the same id (`set-size` of
-Array, `set-position` of 3D Camera, `set-effect-parameter` of Audio), which
-the checker finds first.
+calls `AddCommonAppearanceACEs` but not `SetSupportsColor`. No official
+example uses a shared condition or action outside its plugin's
+`commonAces`; a plugin's own ACE of the same id (`set-size` of Array) is
+found first.
 
 ## Re-evaluate when
 
 - `scripts/init.py` stops with the coverage error after a release: run the
   extraction script, review the diff, commit it with the data sync.
-- The info class stops throwing that message, `window.SDK.IPluginInfo` is
-  renamed, or a plugin's constructor stops building its info as
-  `this.p=X.m(self.v,ID)`: the script fails on the anchor or on the plugin id.
+- `window.SDK.IPluginInfo` is renamed, or a plugin's constructor stops
+  building its info the way the script expects: it fails on the anchor or
+  on the plugin id.
 - The anchor or the literal shape disappears from `main.js`. The script then
   fails on the anchor count or on JSON conversion; option 1 is not a fallback,
   the block has to be located again.

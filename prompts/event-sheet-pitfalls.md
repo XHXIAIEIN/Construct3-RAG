@@ -4,7 +4,7 @@ Runtime facts that general programming intuition gets wrong. Read with
 [event-sheet-thinking.md](event-sheet-thinking.md) before writing events. Each
 bullet ends with its source: a manual page under `Construct3-Manual/`, a schema
 file, an official example id, a page of the community cheat sheet at
-fed-4.gitbook.io/c3-cheat-sheets, or an observation (project, date). No
+fed-4.gitbook.io/c3-cheat-sheets, or an observation in a game project with its date. No
 source, no entry. Editing `eventSheets/*.json`, `layouts/*.json` or clipboard JSON by hand?
 Read [references/hand-editing-project-files.md](references/hand-editing-project-files.md)
 first.
@@ -46,14 +46,14 @@ first.
   a child, so a lifted parent can be drawn above everything while its parts
   stay under an outline. [releases: beta.json, "hierarchy information not
   duplicated properly if connections were setup between instances in
-  different layers"; observed: WaterSort, 2026-09-17, unverified at runtime]
+  different layers"; observed in a game project, 2026-09-17, unverified at runtime]
 - *ChildCount*, *Compare child count* and *Has children* count every attached
-  child whatever its type. A second child type on the same parent (a Stream
-  added to the pouring Tube) shifts every count that meant one type. Get the
+  child whatever its type. A second child type on the same parent shifts
+  every count that meant one type. Get the
   top index from *Pick children* plus *Pick highest* on that type, or count in
   a *For each* over the picked children. [manual:
   plugin-reference/common-features/common-expressions.md "ChildCount",
-  common-conditions.md "Compare child count"; observed: WaterSort, 2026-09-17]
+  common-conditions.md "Compare child count"; observed in a game project, 2026-09-17]
 - *Destroy* does not detach a child from its parent. The instance is only
   released at the end of the top-level event, and until then *Compare child
   count*, *Has children*, `ChildCount` and *Pick children* still see it.
@@ -64,7 +64,7 @@ first.
   images" note "destroying objects does not really release them until the
   end of the next top-level event"; runtime: exported c3runtime.js,
   `DestroyInstance` defers, `GetChildCount` is `GetChildren().length`;
-  observed: WaterSort, 2026-09-17]
+  observed in a game project, 2026-09-17]
 
 ## Triggers and Else
 
@@ -77,7 +77,7 @@ first.
   `cannot add another trigger to event branch`. [manual:
   project-primitives/events/how-events-work.md "Triggers", sub-events.md
   "Triggers in sub-events"; editor bundle `projectResources.js`, function
-  blocks report a trigger; observed: Water Sort (DeepSeek), 2026-09-17]
+  blocks report a trigger; observed in a game project, 2026-09-17]
 - *On collision with another object*, Timer *On timer* and the Gamepad
   button conditions are triggers to the editor, green arrow and every rule
   above, although the runtime tests them in sheet order each tick. The schema
@@ -114,7 +114,7 @@ first.
   top-level actions: a `Set value` on the local there makes the editor
   reject the whole project at load with "cannot find event variable".
   Compute the locals in a child block placed after the declarations
-  instead. [observed: waterGames, r502 editor, 2026-09-17]
+  instead. [observed in a game project, r502 editor, 2026-09-17]
 - Without *Copy picked* a function runs with every object reset to all picked:
   "modify this sprite" modifies every instance. [manual:
   interface/dialogs/function.md "Copy picked"]
@@ -130,7 +130,7 @@ first.
   project-primitives/events/functions.md "functions with no return type are
   essentially custom actions"; project-primitives/events/custom-actions.md
   "Picking", "Family custom actions"; example: custom-action-overrides;
-  observed: mergeGame, 2026-09-17]
+  observed in a game project, 2026-09-17]
 - Parameters are bare identifiers in expressions: `Self.X + OffsetX`, not
   `Functions.OffsetX` or `Self.OffsetX`. [example: 3d-castle-maze, function
   OffsetHand]
@@ -144,8 +144,8 @@ first.
 - A timer is state you start and stop: list every transition before choosing it
   (settled: start or stop by overlap; picked up: stop; displaced: stop). A `dt`
   countdown gated by an overlap condition has no transitions but needs
-  *compare + For each* to dispatch. Both are valid. [observed: mergeGame,
-  2026-09-15]
+  *compare + For each* to dispatch. Both are valid. [observed in a game
+  project, 2026-09-15]
 - Timers and tweens each round their end to the first tick at or past it,
   counted from their own start. A tween started by *On timer* at `D` and a
   timer set for `D + T` where `T` is the tween's length do not end together:
@@ -153,7 +153,7 @@ first.
   the instance in place for the rest of that tick. Logic that assumes the
   schedule (a sum of heights that is "always at least one unit", a count of
   children) jumps for that tick; derive state from *Is playing* and from the
-  instance whose tween it is. [observed: WaterSort, 2026-09-18]
+  instance whose tween it is. [observed in a game project, 2026-09-18]
 
 ## Wait and time scale
 
@@ -195,26 +195,25 @@ first.
 - `Self` is the object of the condition or action the expression sits in. In
   a System condition or action, *For each ordered* included, there is no such
   object and the editor refuses to open the project: `Invalid use of 'self'`.
-  Write the object: order *For each SnakeBody* by `SnakeBody.IID`, not
-  `Self.IID`. [editor bundle `projectResources.js`, `.invalid-self`;
-  observed: Doubao snake project, 2026-09-22]
+  Write the object: order *For each Segment* by `Segment.IID`, not
+  `Self.IID`. [editor message `Invalid use of 'self'`; observed in a game
+  project, 2026-09-22]
 - A local or global variable named like a system expression loses to the
-  expression: a local number `mid` passed as `Functions.areaBelow(mid)` is
+  expression: a local number `mid` passed as `Functions.Measure(mid)` is
   read as the text function `mid()`, and the editor refuses the whole
   project with `Invalid expressions ... parameter 0 does not take
   'string'`. `check_project.py` refuses such a name. Name variables so no system
   expression shares the name (`probe`, not `mid`; not `left`, `right`,
   `len`, `find`, `max`, `min`, `abs`, `round`). [plugins/system.json,
-  expression `mid`; observed: LiquidVolume, r495.2 editor, 2026-09-23]
+  expression `mid`; observed in a game project, r495.2 editor, 2026-09-23]
 - Variable names are matched without regard to case, and the nearest scope
-  wins: a local string `layers` declared in an event hides the global
-  constant `LAYERS` in that event and its sub-events, so `LAYERS - 1` there
+  wins: a local string `count` declared in an event hides the global
+  constant `COUNT` in that event and its sub-events, so `COUNT - 1` there
   is read on the string and the editor refuses the whole project with `Type
   mismatch: - does not work with 'string' and 'number'`, naming the
   sub-event. `check_project.py` does not catch it. Give a local a name that
-  differs from every variable in scope by more than its case (`layerJson`
-  beside `LAYERS`). [observed: LiquidVolume, r502 editor, 2026-09-24, `Lab,
-  event 85, condition 1`]
+  differs from every variable in scope by more than its case (`countText`
+  beside `COUNT`). [observed in a game project, r502 editor, 2026-09-24]
 - `lerp(Self.X, Target.X, 0.1)` moves a different fraction per second at
   different framerates and ignores the time scale. When the third argument is a
   constant and the first is last tick's result, write `lerp(a, b, 1 - f^dt)`
@@ -319,8 +318,8 @@ first.
   *Set animation*, to keep the animation from restarting, guards against
   nothing: set the animation from the state in one event, and *Start
   animation* from the beginning when a restart is wanted. [manual:
-  plugin-reference/sprite.md "Set animation"; observed: RaftSurvivor,
-  2026-09-22]
+  plugin-reference/sprite.md "Set animation"; observed in a game
+  project, 2026-09-22]
 
 ## Rendering
 
@@ -330,8 +329,8 @@ first.
   'set-default-color'`, and the project does not open. Text's colour is
   its font colour, *Set font color* (`set-font-color`). A plugin file lists
   the shared ACEs it gets under `commonAces`, and `lookup_ace.py` and
-  `check_project.py` follow it. [plugins/text.json `set-font-color`; observed:
-  LiquidVolume, r495.2 editor, 2026-09-23]
+  `check_project.py` follow it. [plugins/text.json `set-font-color`;
+  observed in a game project, r495.2 editor, 2026-09-23]
 - *Set width* stretches a Sprite's whole image, repeats a Tiled Background's,
   and on a 9-patch stretches or tiles the middle while the corners keep their
   size. A bar with a painted fill is therefore a Tiled Background, which
@@ -351,15 +350,15 @@ first.
   the polygon coincide, a closing point that repeats the first one included;
   the rest of the sheet runs on and no error is logged. Add a closing point
   only when it is a point of its own, or count the points in a variable and
-  loop over that. [observed: LiquidVolume, r502 preview, 2026-09-24: the pool
-  polygon closed by a vertex equal to P1 left every container empty]
+  loop over that. [observed in a game project, r502 preview, 2026-09-24]
 - A blend mode such as *Destination in* only touches the pixels under the
   object's own quad: a mask sprite the size of the shape it reveals leaves
   everything outside its bounding box untouched, and the layer needs *Force
   own texture* or the blend hits the whole screen. Size the mask to cover
   everything it must erase, or keep the content inside its box. [manual:
   project-primitives/layers.md "Force own texture"; example:
-  mask-effect-puzzle, layer HiddenWorld; observed: WaterSort, 2026-09-17]
+  mask-effect-puzzle, layer HiddenWorld; observed in a game project,
+  2026-09-17]
 - A Text object wraps at its own width and draws only the lines that fit its
   height. Text longer than the box sized for the placeholder gains a line
   that is cut off, and with centre or bottom vertical alignment the lines
@@ -419,8 +418,8 @@ first.
   *On created* fires for each, and they are not children of the emitter (the
   example parents them by hand). Per-particle state such as a colour frame
   comes from *On created* plus *Pick nearest* emitter, read from the emitter's
-  instance variable. [example: child-particles; observed: WaterSort,
-  2026-09-17, unverified at runtime]
+  instance variable. [example: child-particles; observed in a game
+  project, 2026-09-17, unverified at runtime]
 
 ## Storage and preview
 
@@ -430,8 +429,8 @@ first.
   layout is skipped whenever the game layout is previewed, and the save
   appears not to work. Read the save in the sheet of the layout that needs
   it, gated by a global such as `loaded`, and build from the trigger.
-  [manual: overview/testing-projects.md "Preview project"; observed:
-  WaterSort, 2026-09-18]
+  [manual: overview/testing-projects.md "Preview project"; observed in a
+  game project, 2026-09-18]
 - Local Storage is an IndexedDB database named `c3-localstorage-` plus the
   project's `uniqueId`, so it survives closing the preview and is separate
   per project. A tool that rewrites `project.c3proj` must keep `uniqueId`

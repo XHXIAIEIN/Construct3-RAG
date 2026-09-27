@@ -18,16 +18,15 @@ modules.
 - Direct Lookup and the FastAPI service are optional, and the service is
   Direct Lookup only: no model, no database, no network during import or a
   query.
-- Removed: the Qdrant full mode with its embeddings, reranker and vector
-  ingestion (`docs/decisions/remove-qdrant-full-mode.md`); QueryExpander,
-  Lookup Tier 2/3, Semantic Chain/HyDE (`docs/decisions/refactoring-audit.md`).
-  Vector or model retrieval belongs in a repository of its own that reads
-  `data/`; it does not return here.
+- Vector or model retrieval belongs in a repository of its own that reads
+  `data/`; it does not return here (`docs/decisions/remove-qdrant-full-mode.md`).
+  Undirected synonym groups and whole-category expansion were removed too:
+  they chained words together, so `Array 保存` returned *Load*. One directed,
+  scoped, single-hop alias remains, with a rule ID.
 - Bad result: check data quality, field weights, routing and product scope
-  before adding keywords, prompts or a model layer. A new keyword, prompt or
-  model starts from a failing case with a checkable expected result;
-  query-understanding changes start with
-  `docs/decisions/query-understanding-refactor-requirements.md`.
+  before adding keywords, prompts or a model layer. A new keyword, alias or
+  rule starts from a failing case in `tests/fixtures/query_gold.jsonl`, and
+  `tests/eval_query_quality.py` runs before and after it.
 - Public API change: `interfaces/http/models.py`, docs and compatibility
   tests in one change. Internal structures promise no compatibility.
 - Schema layout (`en-US`, `zh-CN`): `lookup/schema_layout.py` owns it.

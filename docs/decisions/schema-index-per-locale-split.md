@@ -22,7 +22,6 @@ Construct3-Clipboard (default branches only):
 | `src/schema_layout.py` | `version`, `languages`, `file` |
 | `src/lookup/schema_index.py` | `originalId`; effect `name_en` and `name_zh` for query matching |
 | `tests/eval_query_quality.py` | `version` |
-| `tests/semantic_eval/cli.py` | whole-file SHA-256, regenerated for each live run |
 
 Every other `name_en` and `name_zh` in the code base is a field of the
 in-memory bilingual merge built from the per-locale schema files, not of the

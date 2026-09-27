@@ -12,9 +12,7 @@ is documented in `Construct3-Clipboard/docs/clipboard-format.md`.
 ## Encodings
 
 Each rule was read from the editor's loaders, from files it saved or from
-the official examples; the evidence is in
-`docs/decisions/checker-editor-load-rules.md`, "the evidence behind the
-hand-editing reference".
+the official examples (`docs/decisions/checker-editor-load-rules.md`).
 
 - Comparison parameters are integers: 0 `=`, 1 `≠`, 2 `<`, 3 `≤`, 4 `>`, 5 `≥`.
 - String parameters carry their quotes: `"tag": "\"attack\""`. `layer` is an

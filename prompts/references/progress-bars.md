@@ -1,10 +1,7 @@
 # Bars, gauges and life counters
 
 How the official examples show a number as a bar, a gauge or a row of icons,
-and which object the art calls for. Read from the 89 objects named bar, meter,
-heart, life, energy, power or progress in 55 examples and the events that drive
-them (`.local/docs/evidence/example-style-survey/survey_bars.py`, clone
-`3c31b236`, 2026-09-23). Design first with
+and which object the art calls for. Design first with
 [event-sheet-thinking.md](../event-sheet-thinking.md); this page is the row
 "a number shown as a bar" opened up.
 
