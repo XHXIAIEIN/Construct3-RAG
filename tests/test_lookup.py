@@ -563,7 +563,7 @@ class TestExamplesIndex:
         assert resp is not None
         assert resp.query_type == "lookup_example_find"
         assert result_keys(resp)[0] == (
-            "examples", "", "example", "3d-file-explorer"
+            "examples", "", "example", "file-system-text-editor"
         )
 
 

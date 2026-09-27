@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -74,8 +75,10 @@ class ExamplesIndex:
             record = {
                 "title": data.get("name", path.stem),
                 "slug": data.get("id", path.stem),
+                "description": data.get("description", ""),
                 "genres": data.get("tags", []),
                 "behaviors": addons.get("behaviors", []),
+                "addon_count": sum(len(names) for names in addons.values()),
             }
             for addon_type, prefix in (
                 ("plugins", "plugin"),
@@ -113,10 +116,25 @@ class ExamplesIndex:
             max_results=max_results,
         )
 
+    @staticmethod
+    def _compact(text: str) -> str:
+        """Lower case without separators, so File System matches FileSystem."""
+        return re.sub(r"[^a-z0-9]", "", text.lower())
+
     def search(self, tags: list[str], max_results: int = 5) -> list[dict[str, Any]]:
-        """Find examples matching any tag, ranked by overlap count."""
+        """Find examples matching any tag, the ones about the addon first.
+
+        Ranked by tag overlap, then by whether the name or the description
+        names the addon, then Feature example, then fewer addons in use, so
+        a focused demo comes before a game that merely uses the addon.
+        """
         if not tags:
             return []
+        addons = [
+            self._compact(tag.split("-", 1)[1])
+            for tag in tags
+            if tag.lower().startswith(("plugin-", "behavior-", "effect-"))
+        ]
         scores: dict[str, dict[str, Any]] = {}
         for tag in tags:
             for record in self._index.get(self._tag_key(tag), []):
@@ -126,7 +144,21 @@ class ExamplesIndex:
                 if slug not in scores:
                     scores[slug] = {"record": record, "score": 0}
                 scores[slug]["score"] += 1
-        ranked = sorted(scores.values(), key=lambda item: item["score"], reverse=True)
+
+        def rank(item: dict[str, Any]) -> tuple:
+            record = item["record"]
+            named = self._compact(f"{record.get('title', '')} {record['slug']}")
+            described = self._compact(record.get("description", ""))
+            return (
+                -item["score"],
+                not any(addon in named for addon in addons),
+                not any(addon in described for addon in addons),
+                "Feature example" not in record.get("genres", []),
+                record.get("addon_count", 0),
+                record["slug"],
+            )
+
+        ranked = sorted(scores.values(), key=rank)
         return [item["record"] for item in ranked[:max_results]]
 
     @staticmethod
