@@ -50,9 +50,11 @@ An effect name with an effect word (`Bulge effect`, `膨胀特效`) returns the
 effect under `matches.<effect id>.effects`, its parameters in `params`. An
 effect name alone is declined: Screen and Color are ordinary words too.
 
-A how-to, comparison or concept question is not a lookup. The service declines
-it: the response has no `lookup` section, and the manual and the example
-projects are the caller's to read (`AGENTS.md` section 2).
+A solution, tutorial, comparison or concept question is not a lookup. The
+service declines it: the response has no `lookup` section, and the manual and
+the example projects are the caller's to read (`AGENTS.md` section 2). A
+question word does not decide: `怎么检测Sprite碰撞` names an addon and an ACE
+topic and is answered like `Sprite碰撞`.
 
 ### Response
 

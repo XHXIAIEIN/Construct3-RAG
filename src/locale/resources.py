@@ -157,12 +157,6 @@ HOWTO_SOFT_SKIP_ZH: frozenset[str] = frozenset(
         _QUERY["howto"]["soft_skip"]["values"], "query.howto.soft_skip.values"
     )
 )
-HOWTO_PRE_LOOKUP_FALLBACK_ZH_EN: frozenset[str] = frozenset(
-    _merged_localized_list(
-        _QUERY["howto"]["pre_lookup_fallback"]["values"],
-        "query.howto.pre_lookup_fallback.values",
-    )
-)
 DECLINE_MARKERS_EN: tuple[str, ...] = tuple(
     marker.casefold()
     for marker in _merged_localized_list(
@@ -244,11 +238,16 @@ AMBIGUOUS_BARE_TOPICS_ZH_EN: frozenset[str] = frozenset(
 
 @dataclass(frozen=True, slots=True)
 class DirectedAliasRule:
-    """One single-hop alias with explicit scope and ranking weight."""
+    """One single-hop alias with explicit scope and ranking weight.
+
+    ``exclude_ids`` names ACEs in the scope that the trigger never means,
+    though their names contain it.
+    """
 
     rule_id: str
     triggers: frozenset[str]
     additions: frozenset[str]
+    exclude_ids: frozenset[str]
     plugin_ids: frozenset[str]
     ace_types: frozenset[str]
     weight: float
@@ -275,6 +274,7 @@ ACE_DIRECTED_ALIASES: tuple[DirectedAliasRule, ...] = tuple(
             for locale in raw["enabled_locales"]
             for term in raw["additions"][locale]
         ),
+        exclude_ids=frozenset(raw["exclude_ids"]),
         plugin_ids=frozenset(raw["plugin_ids"]),
         ace_types=frozenset(raw["ace_types"]),
         weight=float(raw["weight"]),
@@ -304,7 +304,6 @@ __all__ = [
     "EXAMPLE_QUERY_KEYWORDS_ZH_EN",
     "GENERIC_QUERY_WORDS_EN",
     "HOWTO_HARD_SKIP_ZH",
-    "HOWTO_PRE_LOOKUP_FALLBACK_ZH_EN",
     "HOWTO_SOFT_SKIP_ZH",
     "LIST_QUERY_PATTERNS",
     "QUERY_PARTICLE_SPLIT_PATTERN_ZH",

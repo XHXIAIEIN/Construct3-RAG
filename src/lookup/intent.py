@@ -23,7 +23,6 @@ from src.locale.resources import (
     EXAMPLE_QUERY_KEYWORDS_ZH_EN,
     GENERIC_QUERY_WORDS_EN,
     HOWTO_HARD_SKIP_ZH,
-    HOWTO_PRE_LOOKUP_FALLBACK_ZH_EN,
     HOWTO_SOFT_SKIP_ZH,
     LIST_QUERY_PATTERNS,
     QUERY_PARTICLE_SPLIT_PATTERN_ZH,
@@ -116,7 +115,6 @@ class IntentClassifier:
         q_lower = query.lower()
         return (
             any(marker in query for marker in HOWTO_HARD_SKIP_ZH)
-            or any(marker in query for marker in HOWTO_PRE_LOOKUP_FALLBACK_ZH_EN)
             or any(marker in q_lower for marker in DECLINE_MARKERS_EN)
         )
 
@@ -298,7 +296,9 @@ class IntentClassifier:
                 tier=1,
                 confidence=0.90,
             )
-        filter_term = " ".join(remaining_tokens)
+        # The topic is what the ACE names must hold: question words and
+        # single characters such as 让 are the phrasing, not the topic.
+        filter_term = " ".join(useful_tokens)
 
         compact_topic = re.sub(r"\s+", "", filter_term).lower()
         if compact_topic in AMBIGUOUS_BARE_TOPICS_ZH_EN:

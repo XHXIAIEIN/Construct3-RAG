@@ -136,8 +136,10 @@ Direct Lookup is deliberately conservative:
 - exact entity spans win over substring guesses;
 - tutorial, comparison, concept, and solution requests are declined: the
   response carries no `lookup` section, and reading the manual or the examples
-  is the caller's;
-- directed aliases are scoped, single-hop, and deterministic;
+  is the caller's; a question word alone (怎么, 如何, 怎样) declines nothing;
+- directed aliases are scoped, single-hop, and deterministic; a rule may also
+  name the ACEs in its scope that its trigger never means, such as the Z-order
+  actions for a bare move;
 - `_common` ACEs are searched only for those the plugin's `commonAces` lists;
 - a topic narrows the ACE types only when it names one or is phrased as a
   predicate or an act; a noun topic searches all three;

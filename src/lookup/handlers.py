@@ -274,9 +274,11 @@ class LookupHandlers:
         filter_words: set[str],
         plugin_id: str,
         ace_type: str,
-    ) -> dict[str, float]:
-        """Return original terms and weighted one-hop aliases for this scope."""
+    ) -> tuple[dict[str, float], set[str]]:
+        """Return original terms and weighted one-hop aliases for this scope,
+        and the ACE ids the triggered rules rule out."""
         expanded = dict.fromkeys(filter_words, 1.0)
+        excluded: set[str] = set()
         for rule in ACE_DIRECTED_ALIASES:
             if plugin_id not in rule.plugin_ids or ace_type not in rule.ace_types:
                 continue
@@ -290,7 +292,8 @@ class LookupHandlers:
                     expanded.get(addition, 0.0),
                     rule.weight,
                 )
-        return expanded
+            excluded |= rule.exclude_ids
+        return expanded, excluded
 
     def _format_ace_search(
         self,
@@ -345,7 +348,7 @@ class LookupHandlers:
             schemas_to_search
         ):
             for ace_type in ace_types:
-                scoped_words = self._scoped_filter_words(
+                scoped_words, excluded_ids = self._scoped_filter_words(
                     filter_words,
                     source_id,
                     ace_type,
@@ -353,6 +356,8 @@ class LookupHandlers:
                 for item_order, item in enumerate(
                     current_schema.get(ace_type, [])
                 ):
+                    if item.get("id") in excluded_ids:
+                        continue
                     names = (
                         item.get("name_zh", "").lower(),
                         item.get("name_en", "").lower(),

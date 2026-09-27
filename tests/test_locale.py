@@ -90,8 +90,9 @@ def test_query_grammar_patterns_are_anchored_and_compilable():
 
 def test_howto_hard_and_soft_markers_have_distinct_routing_semantics():
     assert HOWTO_HARD_SKIP_ZH.isdisjoint(HOWTO_SOFT_SKIP_ZH)
-    assert "怎么实现" in HOWTO_HARD_SKIP_ZH
-    assert "怎么" in HOWTO_SOFT_SKIP_ZH
+    assert "实现" in HOWTO_HARD_SKIP_ZH
+    # A question word is phrasing: it never declines on its own.
+    assert {"怎么", "如何", "怎样"} <= HOWTO_SOFT_SKIP_ZH
 
 
 def test_directed_aliases_are_scoped_weighted_single_hop_rules():

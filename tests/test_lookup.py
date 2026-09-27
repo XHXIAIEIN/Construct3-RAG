@@ -366,7 +366,7 @@ class TestKeywordInfer:
         assert ("plugins", "_common", "condition", "pick-by-unique-id") in result_keys(resp)
 
     def test_array_sort(self):
-        """Array sorting resolves to the exact r495 action."""
+        """Array sorting resolves to the Sort action."""
         engine = make_engine()
         resp = engine.try_lookup("Array 排序")
         assert resp is not None
@@ -385,11 +385,10 @@ class TestKeywordInfer:
         keys = result_keys(resp)
         assert ("plugins", "sprite", "action", "set-animation") in keys[:5]
 
-    def test_no_keyword_fallthrough(self):
-        """'Sprite 是什么' contains skip word → should NOT trigger ace_search."""
+    def test_concept_question_is_declined(self):
+        """'Sprite 是什么' asks for a definition, not an ACE."""
         engine = make_engine()
-        resp = engine.try_lookup("Sprite 是什么")
-        assert resp is None  # falls through to RAG
+        assert engine.try_lookup("Sprite 是什么") is None
 
     def test_array_find_returns_contains_and_indexof(self):
         """Finding a value in an Array answers with Contains value and IndexOf."""
@@ -401,15 +400,20 @@ class TestKeywordInfer:
         assert ("plugins", "arr", "condition", "contains-value") in keys[:3]
         assert ("plugins", "arr", "expression", "indexof") in keys[:3]
 
-    def test_array_save_falls_through(self):
-        """Array has no save ACE; save must not cascade to Load/Set from JSON."""
+    def test_array_save_is_declined(self):
+        """Save on an Array is Download, AsJSON or Set at X; one word cannot pick, and never Load."""
         engine = make_engine()
         assert engine.try_lookup("Array 保存") is None
 
-    def test_compound_howto_with_plugin_falls_through(self):
-        """A step-by-step collision question is not a direct ACE request."""
+    def test_collision_howto_answers_like_the_topic(self):
+        """'怎么检测' is phrasing: detecting a collision is the shared collision condition."""
         engine = make_engine()
-        assert engine.try_lookup("怎么检测Sprite碰撞") is None
+        resp = engine.try_lookup("怎么检测Sprite碰撞")
+        assert resp is not None
+        assert resp.intent.ace_type == "conditions"
+        assert result_keys(resp)[0] == (
+            "plugins", "_common", "condition", "on-collision-with-another-object"
+        )
 
     def test_compact_mixed_plugin_topic_hits_lookup(self):
         """CJK can delimit an ASCII plugin without accepting identifier substrings."""
@@ -438,28 +442,44 @@ class TestKeywordInfer:
         assert ("plugins", "text", "action", "set-text") in keys[:5]
         assert ("plugins", "_common", "action", "set-visible") not in keys
 
-    def test_sprite_move_falls_through(self):
-        """A bare move topic is too ambiguous for a structural direct answer."""
+    def test_sprite_move_answers_with_position_actions(self):
+        """A bare move is a change of position; the Z-order actions named 移动到… are not it."""
         engine = make_engine()
-        assert engine.try_lookup("精灵移动") is None
+        z_order = {"move-to-top", "move-to-bottom", "move-to-layer", "move-to-object"}
+        for query in ("精灵移动", "怎么让精灵移动", "Sprite move"):
+            resp = engine.try_lookup(query)
+            assert resp is not None, query
+            keys = result_keys(resp)
+            assert ("plugins", "_common", "action", "move-forward") in keys[:3], query
+            assert ("plugins", "_common", "action", "move-at-angle") in keys[:3], query
+            assert not z_order & {key[3] for key in keys}, query
 
-    def test_zenyang_fallthrough(self):
-        """'怎样用数组存储数据' — '怎样' is also a how-to word → should fall through."""
-        engine = make_engine()
-        resp = engine.try_lookup("怎样用数组存储数据")
-        assert resp is None  # falls through to RAG
+    def test_sprite_move_to_layer_keeps_the_z_order_action(self):
+        """Naming the layer is no longer a bare move: the rule does not fire."""
+        resp = make_engine().try_lookup("Sprite 移动到其他图层")
+        assert resp is not None
+        assert ("plugins", "_common", "action", "move-to-layer") in result_keys(resp)[:3]
 
-    def test_howto_fallthrough(self):
-        """'怎么做一个平台跳跃游戏？' is a how-to → should NOT trigger ace_search."""
+    def test_array_store_answers_with_write_actions(self):
+        """Storing data in an Array is writing values, whichever question word asks it."""
         engine = make_engine()
-        resp = engine.try_lookup("怎么做一个平台跳跃游戏？")
-        assert resp is None  # falls through to RAG
+        for query in ("怎样用数组存储数据", "怎么用数组存储数据", "如何用数组存储数据"):
+            resp = engine.try_lookup(query)
+            assert resp is not None, query
+            keys = result_keys(resp)
+            assert ("plugins", "arr", "action", "set-at-x") in keys[:5], query
+            assert ("plugins", "arr", "action", "push") in keys[:5], query
+            assert ("plugins", "arr", "expression", "asjson") not in keys, query
 
-    def test_general_howto_fallthrough(self):
-        """'如何实现存档系统？' is a general how-to → should NOT trigger ace_search."""
+    def test_game_howto_is_declined(self):
+        """'怎么做一个平台跳跃游戏？' asks for a whole game, not an ACE."""
         engine = make_engine()
-        resp = engine.try_lookup("如何实现存档系统？")
-        assert resp is None  # falls through to RAG
+        assert engine.try_lookup("怎么做一个平台跳跃游戏？") is None
+
+    def test_implement_question_is_declined(self):
+        """'如何实现存档系统？' asks for a solution; 系统 is not the System plugin here."""
+        engine = make_engine()
+        assert engine.try_lookup("如何实现存档系统？") is None
 
     def test_behavior_topic(self):
         """'Platform 跳跃' → ace_search on platform behavior."""
@@ -474,7 +494,7 @@ class TestKeywordInfer:
         """Query with ACE keyword but no plugin → should not trigger."""
         engine = make_engine()
         resp = engine.try_lookup("碰撞检测")
-        assert resp is None  # no plugin name → falls through
+        assert resp is None  # no addon names the object
 
     def test_classifier_keeps_every_ace_type_for_a_noun_topic(self):
         """Collision names no ACE type: Sprite has collision conditions and actions."""

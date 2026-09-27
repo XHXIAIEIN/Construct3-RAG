@@ -81,7 +81,8 @@
         "source": [
           "schema:r495 ACE type actions",
           "gold:topic-ace-mixed-07",
-          "gold:ambiguous-verb-display-zh-05"
+          "gold:ambiguous-verb-display-zh-05",
+          "gold:howto-store-zh-01"
         ],
         "consumers": [
           "src.lookup.intent.IntentClassifier"
@@ -128,7 +129,8 @@
             "重置",
             "调整",
             "切换",
-            "发送"
+            "发送",
+            "存储"
           ]
         }
       },
@@ -379,11 +381,12 @@
     },
     "howto": {
       "hard_skip": {
-        "purpose": "Force solution, concept, comparison, and tutorial requests out of Direct Lookup.",
+        "purpose": "Force solution, concept, comparison, and tutorial requests out of Direct Lookup. A question word alone (怎么, 如何, 怎样) declines nothing.",
         "source": [
           "gold:translation-negative-zh-01",
           "gold:declined-zh-01",
-          "gold:declined-zh-03"
+          "gold:declined-zh-03",
+          "gold:howto-collision-mixed-01"
         ],
         "consumers": [
           "src.lookup.intent.IntentClassifier._declines"
@@ -403,8 +406,7 @@
             "原理",
             "介绍",
             "怎么做",
-            "怎么实现",
-            "怎么检测",
+            "实现",
             "步骤",
             "流程",
             "教程"
@@ -414,7 +416,9 @@
       "soft_skip": {
         "purpose": "Remove conversational how-to words from a topic after an exact Schema entity is known.",
         "source": [
-          "gold:ambiguous-verb-find-zh-11"
+          "gold:ambiguous-verb-find-zh-11",
+          "gold:howto-store-zh-01",
+          "gold:howto-store-zh-02"
         ],
         "consumers": [
           "src.lookup.intent.IntentClassifier._keyword_infer"
@@ -428,28 +432,6 @@
           "zh-CN": [
             "如何",
             "怎么",
-            "怎样"
-          ]
-        }
-      },
-      "pre_lookup_fallback": {
-        "purpose": "Block broad how-to forms before inference while preserving bounded 怎么 queries.",
-        "source": [
-          "gold:declined-zh-01",
-          "gold:ambiguous-verb-get-zh-10",
-          "gold:ambiguous-verb-find-zh-11"
-        ],
-        "consumers": [
-          "src.lookup.intent.IntentClassifier._declines"
-        ],
-        "tests": [
-          "tests/test_lookup.py",
-          "tests/fixtures/query_gold.jsonl"
-        ],
-        "values": {
-          "en-US": [],
-          "zh-CN": [
-            "如何",
             "怎样"
           ]
         }
@@ -657,7 +639,7 @@
         "purpose": "Prevent underspecified verbs from guessing one of several structurally valid ACEs.",
         "source": [
           "gold:ambiguous-verb-save-mixed-01",
-          "gold:ambiguous-verb-move-zh-07"
+          "gold:declined-edge-zh-04"
         ],
         "consumers": [
           "src.lookup.intent.IntentClassifier._keyword_infer"
@@ -668,13 +650,11 @@
         ],
         "values": {
           "en-US": [
-            "save",
-            "move"
+            "save"
           ],
           "zh-CN": [
             "保存",
-            "存档",
-            "移动"
+            "存档"
           ]
         }
       }
@@ -716,6 +696,7 @@
             "可见"
           ]
         },
+        "exclude_ids": [],
         "plugin_ids": [
           "_common"
         ],
@@ -758,11 +739,114 @@
             "包含"
           ]
         },
+        "exclude_ids": [],
         "plugin_ids": [
           "arr"
         ],
         "ace_types": [
           "conditions"
+        ],
+        "weight": 0.8,
+        "exact": false,
+        "allow_chaining": false
+      },
+      "world.action.move-to-position": {
+        "purpose": "A bare move topic asks for a change of position: add the shared position actions and rule out the Z-order actions whose names also say move (移动到图层顶部, Move to top); a query that names the layer or the top is not bare and keeps them.",
+        "source": [
+          "gold:ambiguous-verb-move-zh-07",
+          "gold:howto-move-zh-01",
+          "schema:data/c3-schemas/{locale}/plugins/_common.json"
+        ],
+        "consumers": [
+          "src.lookup.handlers.LookupHandlers._scoped_filter_words",
+          "tests/test_query_gold.py"
+        ],
+        "tests": [
+          "tests/test_lookup.py::test_sprite_move_answers_with_position_actions"
+        ],
+        "enabled_locales": [
+          "en-US",
+          "zh-CN"
+        ],
+        "triggers": {
+          "en-US": [
+            "move"
+          ],
+          "zh-CN": [
+            "移动"
+          ]
+        },
+        "additions": {
+          "en-US": [
+            "move forward",
+            "move at angle",
+            "set position"
+          ],
+          "zh-CN": [
+            "向前移动",
+            "向角度移动",
+            "设置位置"
+          ]
+        },
+        "exclude_ids": [
+          "move-to-top",
+          "move-to-bottom",
+          "move-to-layer",
+          "move-to-object"
+        ],
+        "plugin_ids": [
+          "_common"
+        ],
+        "ace_types": [
+          "actions"
+        ],
+        "weight": 0.8,
+        "exact": true,
+        "allow_chaining": false
+      },
+      "arr.action.store-to-write": {
+        "purpose": "Storing data in an Array is writing a value: bridge the store topic to Set at X/XY/XYZ, Push and Insert, whose names say set, push and insert.",
+        "source": [
+          "gold:howto-store-zh-01",
+          "gold:howto-store-zh-02",
+          "schema:data/c3-schemas/{locale}/plugins/arr.json"
+        ],
+        "consumers": [
+          "src.lookup.handlers.LookupHandlers._scoped_filter_words",
+          "tests/test_query_gold.py"
+        ],
+        "tests": [
+          "tests/test_lookup.py::test_array_store_answers_with_write_actions"
+        ],
+        "enabled_locales": [
+          "zh-CN"
+        ],
+        "triggers": {
+          "en-US": [
+            "store"
+          ],
+          "zh-CN": [
+            "存储"
+          ]
+        },
+        "additions": {
+          "en-US": [
+            "set at",
+            "push",
+            "insert"
+          ],
+          "zh-CN": [
+            "设置x",
+            "推入",
+            "插入"
+          ]
+        },
+        "exclude_ids": [],
+        "plugin_ids": [
+          "arr"
+        ],
+        "ace_types": [
+          "actions"
         ],
         "weight": 0.8,
         "exact": false,
