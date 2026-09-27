@@ -421,6 +421,19 @@ first.
   instance variable. [example: child-particles; observed in a game
   project, 2026-09-17, unverified at runtime]
 
+## Restarting a layout
+
+- *Restart layout* and *Go to layout* bring the layout's instances back as
+  placed and keep every global variable, and every static local, at its
+  current value. A countdown, score or count a round starts from is still at
+  its end value when the layout runs again: a 30 second countdown that
+  restarted the layout at 0 is 0 on the next run. Set such a value under
+  *On start of layout*, or run *Reset global variables* (with *Reset static*
+  for static locals) where the game starts over. [manual:
+  system-reference/system-actions.md "Restart layout", "Go to layout",
+  "Reset global variables"; project-primitives/events/variables.md "Static
+  and constant variables"]
+
 ## Storage and preview
 
 - *Preview* (F5, the toolbar button) starts from the layout open in the

@@ -1277,19 +1277,19 @@ def test_plan_sets_the_values_of_an_event_and_removes_an_action(project):
 def test_plan_names_an_older_form_of_a_text_it_left_alone(project):
     """Eval runs changed the score text at the start and left the one in AddScore, event 7, as it was."""
     both = '"Score: " & score & "  Time: " & round(time)'
-    code, out = plan(project, {"event": 2, "action": 1, "set": {"parameters": {"text": both}}}, flags=("--dry-run",))
+    code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": both}}}, flags=("--dry-run",))
     assert code == 0, out
     note = [line for line in out.splitlines() if line.startswith("note: event")]
     assert note == ['note: event 7 action 2 (ScoreText set-text) still has text "Score: " & score, which this plan '
                     f'writes elsewhere as {both}; if both show the same thing, change it too: '
                     + json.dumps({"event": 7, "action": 2, "set": {"parameters": {"text": both}}})], out
-    code, out = plan(project, {"event": 2, "action": 1, "set": {"parameters": {"text": both}}},
+    code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": both}}},
                      {"event": 7, "action": 2, "set": {"parameters": {"text": both}}}, flags=("--dry-run",))
     assert code == 0 and "note: event" not in out, out
-    code, out = plan(project, {"event": 2, "action": 1, "set": {"parameters": {"text": '"Tap the coins"'}}},
+    code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": '"Tap the coins"'}}},
                      flags=("--dry-run",))
     assert code == 0 and "note: event" not in out, out     # another text, not an older form of it
-    code, out = plan(project, {"event": 2, "action": 1, "set": {"parameters": {"text": '"Score: 0  Time: 30"'}}},
+    code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": '"Score: 0  Time: 30"'}}},
                      {"event": 5, "add-actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": both}}]},
                      flags=("--dry-run",))
     assert code == 0 and [line for line in out.splitlines() if line.startswith("note: event")] == note, out
@@ -1385,7 +1385,7 @@ def test_dry_run_checks_and_shows_and_writes_nothing(project):
     ({"after": 8, "events": [{"conditions": [], "actions": []}]}, "An event with conditions and actions is a 'block'"),
     ({"event": 2, "add-actions": [{"objectClass": "Coin"}]}, "has no 'id'"),
     ({"event": 1, "add-actions": [SET_TIME]}, "event 1 is a group, which has no actions"),
-    ({"event": 2, "add-actions": [SET_TIME], "position": 5}, "position is 1 to 2"),
+    ({"event": 2, "add-actions": [SET_TIME], "position": 5}, "position is 1 to 3"),
     ({"into": 5, "events": [{"eventType": "variable", "name": "n", "type": "int"}]}, "'number', 'string' or 'boolean'"),
     ({"move": 1, "into": 3}, "event 3 is event 1 or inside it"),
 ])
@@ -1604,12 +1604,12 @@ def test_behavior_action_without_behavior_type_names_the_behavior(project):
 
 
 def test_script_name_in_place_of_the_id(project):
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0].update(id="SetText"))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1].update(id="SetText"))
     assert "Text has no action SetText" in out and "the id is 'set-text'" in out
 
 
 def test_misspelt_id_lists_the_nearest(project):
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0].update(id="set-txt"))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1].update(id="set-txt"))
     assert "closest: set-text" in out
 
 
@@ -1619,7 +1619,7 @@ def test_a_shared_ace_the_plugin_does_not_get_is_refused(project):
     action id 'set-default-color'". Text's colour is Set font color."""
     def change(sheet):
         setup = events(sheet)["setup"]
-        setup["actions"][0].update(id="set-default-color", parameters={"color": "rgbEx(100, 0, 0)"})
+        setup["actions"][1].update(id="set-default-color", parameters={"color": "rgbEx(100, 0, 0)"})
         setup["actions"].append({"id": "set-opacity", "objectClass": "ScoreText", "sid": 900000000000003,
                                  "parameters": {"opacity": "50"}})
     out = findings(project, change)
@@ -1629,9 +1629,9 @@ def test_a_shared_ace_the_plugin_does_not_get_is_refused(project):
 
 
 def test_a_shared_expression_the_plugin_does_not_get_is_named(project):
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="ScoreText.ColorValue"))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="ScoreText.ColorValue"))
     assert "ScoreText.ColorValue is neither an expression nor an instance variable of ScoreText" in out
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="ScoreText.Opacity"))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="ScoreText.Opacity"))
     assert "ScoreText.Opacity" not in out
 
 
@@ -1651,12 +1651,12 @@ def test_a_variable_named_like_a_system_expression_is_refused(project, name):
 
 
 def test_unknown_parameter_lists_the_real_ones(project):
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(value='"x"'))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(value='"x"'))
     assert "unknown parameter value; the parameters are: text" in out
 
 
 def test_behavior_expression_without_the_behavior_name(project):
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="Coin.Progress"))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="Coin.Progress"))
     assert "Coin.Progress is neither an expression nor an instance variable of Coin" in out
     assert "it is an expression of a behavior: Coin.Tween.Progress" in out
 
@@ -1669,18 +1669,18 @@ def test_quoted_combo_value_is_told_to_drop_the_quotes(project):
 
 
 def test_bare_text_value_is_told_to_add_the_quotes(project):
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="Hello"))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="Hello"))
     assert "identifier 'Hello' is not a variable" in out and 'a text value carries inner quotes: "\\"Hello\\""' in out
 
 
 def test_names_outside_ascii_are_checked_like_the_others(project):
     """The editor takes names in any script; an undeclared one stops it with "unknown
     expression" as it opens the project. A mixed name is one name, not its ASCII part."""
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="速度 + 1"))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="速度 + 1"))
     assert "identifier '速度' is not a variable, parameter or system expression" in out
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="Coin.高度"))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="Coin.高度"))
     assert "Coin.高度 is neither an expression nor an instance variable of Coin" in out
-    edit(project, SHEET, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text='"Score: 0"'))
+    edit(project, SHEET, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text='"Score: 0"'))
     code, out = plan(project, {"before": 1, "events": [{"eventType": "variable", "name": "目标y坐标", "initialValue": 30}]},
                      {"event": 2, "add-actions": [{"id": "set-text", "objectClass": "ScoreText",
                                                    "parameters": {"text": "目标y坐标 + 1"}}]})
@@ -1702,7 +1702,7 @@ def test_a_groups_local_is_not_seen_from_a_sibling_group(project):
 
 
 def test_plugin_name_in_an_expression_names_the_object(project):
-    out = findings(project, lambda s: events(s)["setup"]["actions"][0]["parameters"].update(text="Sprite.Count"))
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="Sprite.Count"))
     assert "unknown object Sprite in expression; Sprite is the plugin, the object of it here is Coin" in out
 
 
@@ -2169,7 +2169,7 @@ def test_style_findings_come_only_when_asked(project):
 def test_style_names_a_long_run_of_actions(project):
     edit(project, SHEET, lambda s: events(s)["setup"]["actions"].extend(STYLE_ACTIONS))
     code, out = check(project, "--style")
-    assert code == 0 and "event 2 (sid" in out and "9 actions in a row without a comment action" in out, out
+    assert code == 0 and "event 2 (sid" in out and "10 actions in a row without a comment action" in out, out
     edit(project, SHEET, lambda s: events(s)["setup"]["actions"].insert(4, {"type": "comment", "text": "Reset the text."}))
     assert "actions in a row" not in check(project, "--style")[1]
 

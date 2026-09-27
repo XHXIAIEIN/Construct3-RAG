@@ -39,8 +39,9 @@ order (`Setup`, `Tutorial`, `Player`, `Enemies`, `Camera`, `HUD`, `Game Over`,
      // Gameplay variables
      global number score = 0                        // Points collected this round
    1 group Setup
-       // Deal the coins and show the empty score
+       // Empty the score and deal the coins
    2   System: On start of layout
+           -> System: Set score to 0
            -> ScoreText: Set text to "Score: 0"
            -> // Deal the coins
            -> ...

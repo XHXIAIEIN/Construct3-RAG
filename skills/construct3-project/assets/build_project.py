@@ -1009,8 +1009,10 @@ def on_touched(obj: str) -> dict:
 # module, run the generator, read the sheet it printed, then write the next.
 def module_setup() -> dict:
     return module("Setup", events=[
-        event("Deal this round's coins and show the empty score",
-              [on_start()], [set_text("ScoreText", q("Score: 0"))], children=[
+        # Restart layout keeps every global variable: a value the round starts from is set here,
+        # before any text shows it.
+        event("Empty the score and deal this round's coins",
+              [on_start()], [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))], children=[
                   block([for_loop("i", "0", f"int(tokenat(ROUND_COINS, beat, {q(',')})) - 1")], [
                       create("Coin", "Game", f"{grid_random(0, VIEW_W - COIN_SIZE)} + {COIN_SIZE // 2}",
                              f"{grid_random(snap(1.5 * COIN_SIZE), VIEW_H - COIN_SIZE)} + {COIN_SIZE // 2}"),

@@ -58,6 +58,18 @@ form that passes the official examples stays prose. A pile of state globals,
 the first habit the user named, is one: no heuristic tells it from a
 legitimate global.
 
+A global that a round starts from is the case in point. *Restart layout*
+keeps global variables, so a countdown that restarts the layout at 0 is 0
+on the next run unless something sets it back. In iterations 21 to 27 of
+`add-countdown`, on the stand-in before it had rounds, 1 of 48 runs set it
+back. In iteration 29, on the stand-in with rounds, 3 of 4 did with the
+previous template and 4 of 4 with the stand-in that sets `score` back under
+*On start of layout*; that difference is within chance, and the skill
+changed between the iterations as well, so what moved the rate is not
+isolated. The reset comes before the text that shows the score: one run
+rewrote that text to read `score` and `timeLeft` above the resets, which
+shows the last round's values at the start of the next.
+
 ## The authoring style
 
 The style file describes one cohort of the official examples: the demo
