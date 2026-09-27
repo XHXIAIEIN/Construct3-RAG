@@ -2,7 +2,8 @@
 
 Date: 2026-09-26
 Schema: Construct 3 r495.2
-Status: draft for the user's review; nothing below is implemented
+Status: draft for the user's review; the outline and the shadow are
+implemented, the rest is not
 
 ## Problem
 
@@ -59,7 +60,11 @@ On 2026-09-26, over five mock-ups:
   within the system.
 - The backdrop is the grey-and-white checkerboard that image editors show
   for transparency.
-- Cast shadows looked wrong, and the overall contrast needed designing.
+- Soft translucent cast shadows looked wrong, and the overall contrast
+  needed designing.
+- On 2026-09-27, over an A/B mock-up and a grid of angles and opacities: a
+  hard shadow at half opacity with an outline of a quarter unit, both
+  drawn into the images, with one switch for the game.
 - The whole should look interesting and designed, not only functional.
 - Level zoning follows a grid and camera zones, placed from a director's
   view that controls the rhythm of tension and rest.
@@ -125,6 +130,9 @@ saturation keeps the hierarchy.
   properties, written as 0 by `tiledbg_inst()` today. Tiling starts at the
   object's own corner, so two neighbouring pieces of a pattern join without
   a seam only when their offsets align the pattern to the layout.
+- None of the 89 effects in `data/c3-schemas/_index.json` draws an outline
+  or a drop shadow. Published Construct games use a third-party effect for
+  them, or an offset copy of each shape tinted dark.
 - Sine, Tween and Flash are behaviors in `data/c3-schemas/_index.json`;
   Shadow Light is a plugin with a Shadow caster behavior, shown in the
   official `shadows-*` examples.
@@ -137,15 +145,19 @@ saturation keeps the hierarchy.
    measured not to reach a small model (`event-sheet-design-guidance.md`,
    "What small models read").
 3. **A fixed vocabulary, values and checks in the template.** Chosen, below.
-4. **Drop shadows and a light top edge on every object.** Tried in mock-up
-   and turned down: a shadow needs a surface to fall on, and the backdrop
-   says there is none; a translucent shadow over the checker reads as a
-   smear.
+4. **Soft drop shadows and a light top edge on every object.** Tried in
+   mock-up and turned down: a translucent, blurred shadow over the checker
+   reads as a smear. A hard one reads as a sticker lifted off the page.
 5. **Depth layers in parallax, each farther one lighter.** Offered as a
    reading of "onion skin"; the user meant the transparency checker.
 6. **Shadow Light in every game.** Real shadows are right where light is a
    mechanic of a top-down game; as a default they are a cost with no role.
    Left for a game that asks for it.
+7. **The shadow as a copy of each object on a layer below.** Overlapping
+   shadows would not darken at layer opacity 50%, and the direction would
+   hold under rotation. Each object then needs a twin kept in step with
+   it, one more thing a small model writes wrong; drawing the shadow into
+   the image needs nothing at run time.
 
 ## Decision (proposed)
 
@@ -164,12 +176,27 @@ are Tiled Backgrounds with a pattern. A triangle and a circle get collision
 polygons of their shape; `frame()` writes a rectangle today, and a spike's
 empty corners would hurt.
 
-Every object carries an ink outline of `max(1, UNIT / 16)` px, 1 px at
-320×180 and 2 px at 1920×1080: the look of vector shapes on a transparent
-canvas, and the separator the accents need. No cast shadows. The one
-exception is a height cue in a top-down game: a flat ellipse of `ink` at
-about 25% alpha on the ground under anything airborne, the distance between
-the thing and its shadow being its height.
+Every object carries an ink outline and a hard cast shadow, drawn into its
+image by `shape()` from one table, `SHAPE_STYLE`, which turns either off or
+changes it for the game; `shape(..., outline=False, shadow=False)` does so
+for one image.
+
+| Value | Default | Source |
+|-------|---------|--------|
+| Outline width | `max(1, UNIT / 4)` px, inside the edge: 8 px at 1920×1080, 2 px at 320×180 | [author] bakes 4 px into a 74 px sprite; [author] about 0.75% of the short side |
+| Shadow offset | 2.7% of the viewport's shorter side | Median of [author]'s 12 games with a shadow |
+| Shadow angle | 45°, down and to the right | [author]'s majority, [author]'s slime |
+| Shadow opacity | 0.5 | [game]; the range seen is 0.25 to 1 |
+| Shadow colour | `ink` | |
+
+The outline lies inside the edge, so a shape keeps its size on the grid.
+The shadow widens the image on its side; the frame's origin and collision
+polygon stay on the shape, and an instance is written at the image's size.
+Drawn into the image, a shadow turns with a rotating sprite and darkens
+where two shadows overlap; a sprite that rotates is drawn without one. In a
+top-down game, anything airborne gets a flat ellipse of `ink` at about 25%
+alpha on the ground under it instead, the distance between the two being
+its height.
 
 ### The values
 
@@ -255,9 +282,11 @@ screen keeps one focus at a time with the HUD on the edges.
 
 ### What changes in the template
 
-`PALETTE`, `bar_images()`, the coin stand-in, `layer()`'s fill, `frame()`
-for polygons, `tiledbg_inst()` for offsets; new helpers for the three shapes,
-the four patterns, the outline and the checker backdrop; `BEATS` with its
+In place: `shape()` for the three shapes with `SHAPE_STYLE`'s outline and
+shadow, `drawn()` for their frames, `frame()` with a collision polygon, and
+the coin stand-in drawn by them. To come: `PALETTE`, `bar_images()`,
+`layer()`'s fill, `tiledbg_inst()` for offsets; helpers for the four
+patterns and the checker backdrop; `BEATS` with its
 checks and printed curve; a reach function from the Platform properties.
 `event-sheet-style.md`, *Project*, and `generating-a-project.md` get the
 vocabulary in a few lines each. Tests pin each check and its message.

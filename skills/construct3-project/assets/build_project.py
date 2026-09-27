@@ -13,7 +13,8 @@ project is ready for the editor when the last line starts with `ok:`.
 
 The game below is a stand-in: coins appear, a tap collects one, the score
 counts up, and when the last coin is gone the layout restarts. Replace
-PALETTE with the game's colours by role, build_images(),
+PALETTE with the game's colours by role, SHAPE_STYLE with its outline and
+shadow, build_images(),
 build_object_types(), build_layouts(), the module_*() functions of the
 event sheet and the name and orientation in build_project(); keep the
 helpers, or grow them from the skill's `scripts/lookup_ace.py <object>
@@ -71,9 +72,25 @@ PALETTE = {
     "outline": (16, 18, 26),           # edges: a 9-patch's border
     "text": (255, 255, 255),           # labels
     "reward": (240, 190, 60),          # what the player collects: the coin
-    "reward_shade": (170, 120, 30),    # its rim
     "good": (90, 200, 120),            # a value going well: a bar's fill
     "danger": (220, 70, 70),           # what hurts or is lost
+}
+# The outline and the cast shadow of every image shape() draws, one switch for the game. They
+# are drawn into the image: Construct's own effects have neither (none of the 89 of
+# data/c3-schemas/_index.json does), and a third-party effect stays out of the template. The
+# outline lies inside the shape's edge, so the shape keeps its size on the grid; the shadow is
+# a hard copy of the shape, offset, and widens the image on its side. Being in the image, a
+# shadow turns with a rotating sprite and darkens where two shadows overlap: draw such a sprite
+# with shape(..., shadow=False). Values: Construct3-RAG/docs/decisions/greybox-blockout.md.
+SHAPE_STYLE = {
+    "outline": True,
+    "outline_width": max(1, UNIT // 4),                      # px, inside the edge
+    "outline_role": "outline",
+    "shadow": True,
+    "shadow_distance": round(0.027 * min(VIEW_W, VIEW_H)),   # px: 2.7% of the shorter side
+    "shadow_angle": 45,                                      # degrees clockwise from rightwards: 90 is down
+    "shadow_opacity": 0.5,
+    "shadow_role": "outline",
 }
 FONT = "Arial"                             # one font for every label
 TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
@@ -278,16 +295,72 @@ def bar_images(frame_name: str, fill_name: str, frame_role: str = "panel", fill_
         write_png(f"{name.lower()}.png", 16, 16, pixel)
 
 
+SHAPES = ("rect", "circle", "triangle")
+FRAMES: dict[str, dict] = {}               # the frame of each image shape() drew, by file name
+
+
+def inside(kind: str, w: float, h: float, x: float, y: float, inset: float = 0) -> bool:
+    """Whether (x, y) lies in a w x h shape at least `inset` px from its edge: a rectangle,
+    the ellipse it holds, or the triangle standing on its bottom edge."""
+    if kind == "rect":
+        return min(x, w - x, y, h - y) >= inset
+    if kind == "circle":
+        rx, ry = w / 2 - inset, h / 2 - inset
+        return rx > 0 and ry > 0 and ((x - w / 2) / rx) ** 2 + ((y - h / 2) / ry) ** 2 <= 1
+    corners = ((w / 2, 0), (w, h), (0, h))
+    for (ax, ay), (bx, by) in zip(corners, corners[1:] + corners[:1]):
+        if ((bx - ax) * (y - ay) - (by - ay) * (x - ax)) / math.hypot(bx - ax, by - ay) < inset:
+            return False
+    return True
+
+
+def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: float = 0.5,
+          outline: bool | None = None, shadow: bool | None = None) -> dict:
+    """images/<rel>: a flat `kind` of SHAPES, w x h px in the colour of `role`, with the outline
+    and shadow of SHAPE_STYLE unless outline or shadow says otherwise for this image. Returns
+    the frame for sprite_type(), kept in FRAMES[rel] as well: its origin is (ox, oy) of the
+    shape, its collision polygon the shape's, and its size the image's, the shadow included,
+    which is the size an instance of it is written at (drawn(rel))."""
+    if kind not in SHAPES:
+        sys.exit(f"{rel}: {kind!r} is no shape; shape() draws {', '.join(SHAPES)}")
+    style = SHAPE_STYLE
+    edge = style["outline_width"] if (style["outline"] if outline is None else outline) else 0
+    dx = dy = 0
+    if style["shadow"] if shadow is None else shadow:
+        angle = math.radians(style["shadow_angle"])
+        dx, dy = round(style["shadow_distance"] * math.cos(angle)), round(style["shadow_distance"] * math.sin(angle))
+    left, top = max(0, -dx), max(0, -dy)
+    iw, ih = w + abs(dx), h + abs(dy)
+    alpha = round(255 * style["shadow_opacity"])
+
+    def pixel(x, y):
+        px, py = x + 0.5 - left, y + 0.5 - top
+        if inside(kind, w, h, px, py):
+            return (*rgb(role if inside(kind, w, h, px, py, edge) else style["outline_role"]), 255)
+        if (dx or dy) and inside(kind, w, h, px - dx, py - dy):
+            return (*rgb(style["shadow_role"]), alpha)
+        return (0, 0, 0, 0)
+
+    write_png(rel, iw, ih, pixel)
+    corners = {"rect": [(0, 0), (1, 0), (1, 1), (0, 1)], "triangle": [(0.5, 0), (1, 1), (0, 1)],
+               "circle": [(0.5 + math.cos(a) / 2, 0.5 + math.sin(a) / 2)
+                          for a in (i * math.pi / 8 for i in range(16))]}[kind]
+    poly = [round(v, 4) for cx, cy in corners for v in ((left + cx * w) / iw, (top + cy * h) / ih)]
+    FRAMES[rel] = frame(iw, ih, (left + ox * w) / iw, (top + oy * h) / ih, poly)
+    return FRAMES[rel]
+
+
+def drawn(rel: str) -> dict:
+    """The frame shape() drew as images/<rel>: sprite_type() takes it, and an instance of it is
+    drawn(rel)["width"] x drawn(rel)["height"]."""
+    if rel not in FRAMES:
+        sys.exit(f"images/{rel} was not drawn: draw it with shape({rel!r}, ...) in build_images(), "
+                 f"which runs before build_object_types()")
+    return FRAMES[rel]
+
+
 def build_images() -> None:
-    r = COIN_SIZE / 2
-
-    def coin(x, y):
-        d = math.hypot(x + 0.5 - r, y + 0.5 - r)
-        if d > r:
-            return (0, 0, 0, 0)
-        return (*rgb("reward"), 255) if d < r - 8 else (*rgb("reward_shade"), 255)
-
-    write_png("coin-default-000.png", COIN_SIZE, COIN_SIZE, coin)
+    shape("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward")
 
 
 # --- event sheet: conditions, actions, blocks ------------------------------------------
@@ -711,10 +784,13 @@ def build_event_sheet() -> dict:
 
 
 # --- object types --------------------------------------------------------------------
-def frame(w: int, h: int, ox: float = 0.5, oy: float = 0.5) -> dict:
+def frame(w: int, h: int, ox: float = 0.5, oy: float = 0.5, poly: list | None = None) -> dict:
+    """poly: the collision polygon as x, y pairs from 0 to 1 across the image; the whole image
+    unless given. An image of shape() has its frame from drawn()."""
     return {"width": w, "height": h, "originX": ox, "originY": oy, "originalSource": "",
             "exportFormat": "lossless", "exportQuality": 0.8, "fileType": "image/png", "imageSpriteId": image_id(),
-            "collisionPoly": {"points": [0, 0, 1, 0, 1, 1, 0, 1]}, "useCollisionPoly": True, "duration": 1, "tag": ""}
+            "collisionPoly": {"points": poly or [0, 0, 1, 0, 1, 1, 0, 1]}, "useCollisionPoly": True, "duration": 1,
+            "tag": ""}
 
 
 def animation(name: str, frames: list, speed: float = 0) -> dict:
@@ -793,7 +869,7 @@ def container(members: list) -> dict:
 
 def build_object_types() -> tuple[dict, dict, list]:
     types = {
-        "Coin": sprite_type("Coin", [animation("Default", [frame(COIN_SIZE, COIN_SIZE)])],
+        "Coin": sprite_type("Coin", [animation("Default", [drawn("coin-default-000.png")])],
                             ivars=[ivar_def("value", "number", "Points it is worth."),
                                    ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
                             behaviors=[beh_def("Tween")]),
@@ -1005,8 +1081,9 @@ def build_layouts() -> dict[str, dict]:
     no_overlap(ui)
     # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
     objects = layout("Objects", [layer("Objects")], sheet=None)
+    coin = drawn("coin-default-000.png")
     objects["layers"][0]["instances"].append(
-        sprite_inst("Coin", *anchor("top-left", COIN_SIZE, COIN_SIZE, 0.5, 0.5), COIN_SIZE, COIN_SIZE,
+        sprite_inst("Coin", *anchor("top-left", COIN_SIZE, COIN_SIZE, 0.5, 0.5), coin["width"], coin["height"],
                     ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN)))
     return {"Game": game, "Objects": objects}
 

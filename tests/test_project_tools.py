@@ -513,6 +513,57 @@ def test_template_behavior_blocks_hold_the_schemas_keys():
         assert " " not in name and name[0].isalnum(), name
 
 
+def read_png(path: Path) -> tuple[int, int, list]:
+    """Width, height and rows of RGBA tuples of a PNG that write_png() made: 8-bit RGBA, filter 0."""
+    import struct
+    import zlib
+    data = path.read_bytes()
+    w, h = struct.unpack(">II", data[16:24])
+    idat, pos = b"", 8
+    while pos < len(data):
+        n, = struct.unpack(">I", data[pos:pos + 4])
+        if data[pos + 4:pos + 8] == b"IDAT":
+            idat += data[pos + 8:pos + 8 + n]
+        pos += 12 + n
+    raw = zlib.decompress(idat)
+    rows = [raw[y * (4 * w + 1) + 1:(y + 1) * (4 * w + 1)] for y in range(h)]
+    return w, h, [[tuple(r[4 * x:4 * x + 4]) for x in range(w)] for r in rows]
+
+
+def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
+    """Construct's effects have no outline or drop shadow, so shape() draws them into the image
+    from SHAPE_STYLE: the outline inside the shape, which keeps its size, the shadow outside it,
+    which widens the image on its side and stays out of the collision polygon and the origin."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
+    template = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(template)
+    template.ROOT = tmp_path
+    style = template.SHAPE_STYLE
+    style.update(outline_width=4, shadow_distance=10, shadow_angle=90, shadow_opacity=0.5)
+    ink, fill = template.rgb(style["outline_role"]), template.rgb("reward")
+
+    f = template.shape("on.png", "rect", 64, 32, "reward")
+    w, h, px = read_png(tmp_path / "images" / "on.png")
+    assert (w, h) == (f["width"], f["height"]) == (64, 42)
+    assert px[0][0] == (*ink, 255) and px[3][3] == (*ink, 255) and px[4][4] == (*fill, 255)
+    assert px[40][32] == (*template.rgb(style["shadow_role"]), 128)
+    assert (f["originX"], f["originY"]) == (0.5, 16 / 42)
+    assert max(f["collisionPoly"]["points"][1::2]) == round(32 / 42, 4)
+    assert template.drawn("on.png") is f
+
+    style.update(shadow_angle=180)
+    f = template.shape("left.png", "circle", 32, 32, "reward")
+    assert (f["width"], f["height"], f["originX"]) == (42, 32, 26 / 42)
+
+    style.update(outline=False, shadow=False)
+    f = template.shape("off.png", "triangle", 32, 32, "reward")
+    w, h, px = read_png(tmp_path / "images" / "off.png")
+    assert (w, h) == (32, 32) and {p[:3] for row in px for p in row if p[3]} == {fill}
+    f = template.shape("one.png", "rect", 32, 32, "reward", outline=True)
+    assert read_png(tmp_path / "images" / "one.png")[2][0][0] == (*ink, 255)
+
+
 def test_stand_in_project_holds_a_string_variable_as_the_editor_writes_it(built):
     coin = json.loads((built / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
     assert [(v["name"], v["type"]) for v in coin["instanceVariables"]] == [("value", "number"), ("kind", "string")]

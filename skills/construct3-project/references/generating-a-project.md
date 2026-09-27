@@ -145,7 +145,13 @@ habits; they are what makes rerunning safe.
   run with the nearest role: a new object reuses the game's colours or adds
   one under the role it plays. A painting, a gradient or a photograph,
   passes `painted=True`. The template draws stand-ins, one colour or a plain
-  shape each, and leaves the art to the user or to real assets. A label is
+  shape each, and leaves the art to the user or to real assets. A stand-in
+  is `shape(file, kind, w, h, role)` in `build_images()`: a rectangle,
+  circle or triangle with the outline and cast shadow of `SHAPE_STYLE`
+  drawn into the image, since Construct's effects have neither. The type
+  takes `drawn(file)` as its frame and an instance is that frame's size,
+  the shadow included; a sprite that rotates is drawn with `shadow=False`.
+  A label is
   `TEXT_SIZE["body"]`, a banner `TEXT_SIZE["title"]`, in `FONT`;
   `hud_text()` stops the run on a colour that reads below 4.5:1 on what is
   behind it, 3:1 for a title, and names the roles that would read there. A
