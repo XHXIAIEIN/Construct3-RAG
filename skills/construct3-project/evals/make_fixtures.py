@@ -70,8 +70,10 @@ def seed_load_errors(root: Path) -> None:
     def first_block(group: dict) -> dict:    # the comment above it is the group's first child
         return next(e for e in group["children"] if e["eventType"] == "block")
 
-    tween, call, *flash = collect["actions"]
-    collect["actions"] = [tween, *flash]        # a trigger inside a custom action
+    call = next(a for a in collect["actions"] if a.get("callFunction") == "AddScore")
+    tween = next(a for a in collect["actions"] if isinstance(a.get("parameters"), dict)
+                 and a["parameters"].get("tags") == '"collect"')
+    collect["actions"] = [a for a in collect["actions"] if a is not call]   # a trigger inside a custom action
     collect["children"] = [{
         "eventType": "block",
         "conditions": [{"id": "on-tweens-finished", "objectClass": "Coin", "sid": 611111111111111,

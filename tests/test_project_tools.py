@@ -108,6 +108,12 @@ def events(sheet: dict) -> dict:
     }
 
 
+def collect_tween(sheet: dict) -> dict:
+    """The tween that shrinks a collected coin away, the last action of Collect."""
+    return next(a for a in events(sheet)["collect"]["actions"]
+                if isinstance(a.get("parameters"), dict) and a["parameters"].get("tags") == '"collect"')
+
+
 def findings(root: Path, change, rel: str = SHEET) -> str:
     edit(root, rel, change)
     code, out = check(root)
@@ -774,7 +780,7 @@ def test_outline_numbers_events_as_the_editor_does(built):
 def test_print_words_the_sheet_as_the_editor_does(built):
     code, out = tool(built, "print_sheet", "Game")
     assert code == 0
-    assert "   5   Touch: On touched Coin (start)\n           -> Coin: Collect()" in out
+    assert "   5   Touch: On touched Coin (start)\n       Coin: NOT Is any Tween playing\n           -> Coin: Collect()" in out
     assert "     global constant number COIN_COUNT = 6" in out
     assert "   7 function AddScore(points: number)\n         -> System: Add points to score" in out
     assert "   9   System: Coin.Count = 0\n       System: Trigger once" in out
@@ -1088,13 +1094,14 @@ def test_a_finding_names_the_place_a_plan_changes(project):
     code, out = plan(project,
                      {"event": 2, "condition": 1, "set": {"isInverted": False}},
                      {"event": 5, "condition": 1, "set": {"parameters": {"type": "start"}}},
-                     {"event": 6, "action": 1, "set": {"behaviorType": "Tween"}},
+                     {"event": 6, "action": 9, "set": {"behaviorType": "Tween"}},
                      {"event": 8, "action": 2, "set": {"id": "set-text"}},
                      {"move": 7, "after": 6})
     assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
-    sheet = events(json.loads((project / SHEET).read_text(encoding="utf-8")))
+    raw = json.loads((project / SHEET).read_text(encoding="utf-8"))
+    sheet = events(raw)
     assert "isInverted" not in sheet["setup"]["conditions"][0], "the editor writes isInverted only when it is true"
-    assert list(sheet["collect"]["actions"][0])[:4] == ["id", "objectClass", "sid", "behaviorType"]
+    assert list(collect_tween(raw))[:4] == ["id", "objectClass", "sid", "behaviorType"]
     assert "Coin: On Tween \"collect\" finished\n         -> Functions: Call AddScore(Coin.value)" in printed(project)
 
 
@@ -1422,18 +1429,18 @@ def test_self_in_a_system_parameter_names_the_object_to_write(project):
 
 
 def test_self_in_an_objects_own_parameter_passes(project):
-    out = findings(project, lambda s: events(s)["collect"]["actions"][0]["parameters"].update(**{"end-x": "Self.X"}))
+    out = findings(project, lambda s: collect_tween(s)["parameters"].update(**{"end-x": "Self.X"}))
     assert "Self" not in out, out
 
 
 def test_ease_is_a_builtin_id(project):
-    out = findings(project, lambda s: events(s)["collect"]["actions"][0]["parameters"].update(ease="ease-in-back"))
+    out = findings(project, lambda s: collect_tween(s)["parameters"].update(ease="ease-in-back"))
     assert "ease='ease-in-back' is not a built-in ease; closest: easeinback" in out
 
 
 # --- messages that say what to write instead ----------------------------------------------
 def test_behavior_action_without_behavior_type_names_the_behavior(project):
-    out = findings(project, lambda s: events(s)["collect"]["actions"][0].pop("behaviorType"))
+    out = findings(project, lambda s: collect_tween(s).pop("behaviorType"))
     assert 'it belongs to the behavior Tween: add "behaviorType": "Tween"' in out
 
 
@@ -1938,7 +1945,14 @@ def test_template_shows_a_hit_as_a_frame_of_the_flash_colour(built, tmp_path):
     show, pause, back = t.hit_flash("Coin")
     assert (show["parameters"], back["parameters"]) == ({"frame-number": '"hit"'}, {"frame-number": "0"})
     assert pause["parameters"] == {"seconds": "0.08", "use-timescale": False}
+    squash, back = t.size_punch("Coin")
+    assert squash["parameters"] == {"width": "Self.ImageWidth * 0.8", "height": "Self.ImageHeight * 1.2"}
+    assert (back["behaviorType"], back["parameters"]["tags"], back["parameters"]["end-x"], back["parameters"]["time"],
+            back["parameters"]["ease"]) == ("Tween", '"punch"', "Self.ImageWidth", "0.25", "easeoutback")
+    assert [a["id"] for a in t.hit("Coin")] == ["set-size", "tween-two-properties", "set-animation-frame", "wait",
+                                                "set-animation-frame"]
     code, out = tool(built, "print_sheet")
+    assert 'Coin: Set size to (Self.ImageWidth * 0.8, Self.ImageHeight * 1.2)' in out
     assert 'Coin: Set animation frame to "hit"' in out and "System: Wait 0.08 seconds (use time scale: False)" in out, out
     t.ROOT = tmp_path
     with pytest.raises(SystemExit, match=r"hit_frame\('ball.png'\): draw the frame first"):

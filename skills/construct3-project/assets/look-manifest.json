@@ -125,6 +125,14 @@
       "says": "Areas and edges carry a pattern, objects stay flat: low stripes, caution stripes, hazard stripes, tiled without a seam."
     },
     {
+      "id": "motion.hit-punch",
+      "status": "adopted",
+      "says": "With the flash, a hit squashes the object to 0.8 of its image's width and 1.2 of its height at once and tweens it back over 0.25 s with easeoutback. hit() gives both.",
+      "template": "(SIZE_PUNCH['width'], SIZE_PUNCH['height'], SIZE_PUNCH['seconds'], SIZE_PUNCH['ease'])",
+      "value": "(0.8, 1.2, 0.25, 'easeoutback')",
+      "helpers": "size_punch(), hit()"
+    },
+    {
       "id": "motion.squash",
       "status": "proposed",
       "says": "Set the impact size at once, then return to rest over 0.5 s with easeoutelastic."
@@ -133,7 +141,7 @@
       "id": "motion.hit",
       "status": "enforced",
       "strict": true,
-      "says": "A hit shows the shape's hit frame, filled in the flash role with the same outline and shadow, for 0.08 s of real time, then frame 0; never the Flash behavior. The size punch belongs to motion.squash.",
+      "says": "A hit shows the shape's hit frame, filled in the flash role with the same outline and shadow, for 0.08 s of real time, then frame 0; never the Flash behavior.",
       "template": "HIT_FLASH['seconds']",
       "value": "0.08",
       "helpers": "hit_frame(), hit_flash(), beh_def()",
@@ -173,7 +181,7 @@
   "deliver": [
     "Copy assets/build_project.py to the project's tools/ and rewrite only the game: PALETTE's values by role, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
     "Keep SHAPE_STYLE and the helpers. Draw every stand-in with shape() in whole units and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
-    "Give every object that can be hit a hit_frame() after its shape, and show a hit with hit_flash(obj), last in its block; never the Flash behavior.",
+    "Give every object that can be hit a hit_frame() after its shape and the Tween behavior, and show a hit with hit(obj), last in its block; never the Flash behavior.",
     "Pass painted=True only for a picture meant to hold its own colours and soft edges.",
     "Do not decide a rule whose status is open; ask the user, or keep the template's value."
   ],

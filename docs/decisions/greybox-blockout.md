@@ -367,3 +367,17 @@ slow motion does not stretch it, and return to frame 0. The coin's `Collect`
 uses it. `beh_def("Flash")` stops the generator, and `check_look.py` reports
 a type or family that holds the Flash behavior. The size punch stays with
 `motion.squash`, which is proposed.
+
+## Update 2026-09-27: the size punch
+
+The user asked for the hit's size punch in the template as well.
+`size_punch(obj)` sets the object to 0.8 of its image's width and 1.2 of its
+height, then tweens it back to the image's size over 0.25 s with
+`easeoutback`, under the tag `punch`: the hit squash of [author]'s merge
+(`published-game-visual-language.md`), the one hit squash the study found,
+held in `SIZE_PUNCH`. `hit(obj)` gives the punch and the flash together. The
+rest size is the image's, which `shape_inst()` writes. The coin's `Collect`
+scores, shows the hit, and shrinks the coin away once the punch is over; the
+tap that starts it now requires that no tween is playing on the coin, so a
+coin already being collected is not collected twice. `motion.squash`, for
+landing and jumping, stays proposed.

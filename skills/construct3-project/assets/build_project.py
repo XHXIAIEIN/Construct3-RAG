@@ -100,6 +100,10 @@ SHAPE_STYLE = {
 # or danger. An object's colour in Construct multiplies its image, so it cannot turn a yellow
 # shape white; a frame can.
 HIT_FLASH = {"role": "flash", "seconds": 0.08}
+# With the colour, the size: set at once to a squash of the image's size, then tweened back to
+# it, the hit squash of [author]'s merge (0.8 x 1.2 over 0.25 s). size_punch() shows it, hit()
+# shows both.
+SIZE_PUNCH = {"width": 0.8, "height": 1.2, "seconds": 0.25, "ease": "easeoutback"}
 FONT = "Arial"                             # one font for every label
 TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
@@ -623,6 +627,21 @@ def hit_flash(obj: str) -> list:
             act("set-animation-frame", obj, {"frame-number": "0"})]
 
 
+def size_punch(obj: str, tween: str = "Tween") -> list:
+    """The actions that squash obj to SIZE_PUNCH's share of its image's size and tween it back
+    under the tag "punch". The rest size is the image's, the size shape_inst() writes; obj
+    needs the Tween behavior, named `tween` on it."""
+    return [act("set-size", obj, {"width": f"Self.ImageWidth * {SIZE_PUNCH['width']:g}",
+                                  "height": f"Self.ImageHeight * {SIZE_PUNCH['height']:g}"}),
+            tween2(obj, "punch", "size", "Self.ImageWidth", "Self.ImageHeight", f"{SIZE_PUNCH['seconds']:g}",
+                   SIZE_PUNCH["ease"], beh=tween)]
+
+
+def hit(obj: str, tween: str = "Tween") -> list:
+    """A hit: the size punch, then the colour flash, whose wait makes it last in its block."""
+    return [*size_punch(obj, tween), *hit_flash(obj)]
+
+
 def grid_random(lo: int, hi: int) -> str:
     """An expression for a random whole-UNIT position from lo to hi px, both on the grid: an
     object created at runtime starts on the grid like one placed in a layout."""
@@ -801,7 +820,9 @@ def module_setup() -> dict:
 
 def module_input() -> dict:
     return module("Input", events=[
-        event("A touched coin collects itself", [on_touched("Coin")], [call_custom("Coin", "Collect")]),
+        event("A touched coin collects itself, once", [on_touched("Coin"), cond("is-any-playing", "Coin", beh="Tween",
+                                                                           inverted=True)],
+              [call_custom("Coin", "Collect")]),
     ])
 
 
@@ -809,11 +830,12 @@ def scoring() -> list:
     """What the groups call: a custom action for what acts on the caller's picked
     instances, a function for a value or for logic that picks its own."""
     return [
-        *procedure("Shrink the coin away and score it", custom_action("Coin", "Collect", [
-            tween2("Coin", "collect", "size", "0", "0", "0.25", "easeinback", destroy=True),
-            call("AddScore", "Coin.value"),
-            *hit_flash("Coin"),
-        ])),
+        *procedure("Score the coin, show the hit, then shrink it away", custom_action("Coin", "Collect", steps(
+            ("Score it, then show the hit", [call("AddScore", "Coin.value"), *hit("Coin")]),
+            ("Shrink it away once the punch is over", [
+                wait(f"{SIZE_PUNCH['seconds'] - HIT_FLASH['seconds']:g}", use_timescale=False),
+                tween2("Coin", "collect", "size", "0", "0", "0.25", "easeinback", destroy=True)]),
+        ))),
         *procedure("Add points and show the score", func("AddScore", [
             add_var("score", "points"),
             set_text("ScoreText", q("Score: ") + " & score"),
