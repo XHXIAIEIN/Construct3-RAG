@@ -47,7 +47,7 @@ opened once before it is handed over.
 | `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only, `--show N` for one event as JSON |
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed; checked before anything is written |
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds six readability warnings from the official examples' style, for a project the agent wrote |
-| `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
+| `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then runs it for 5 seconds and prints the runtime's errors, each with its event. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
 
@@ -199,10 +199,15 @@ not held to this. `--dry-run` does all of that and writes nothing.
    `sheet Game event 15 action 2`, and says what to write where it can.
    Warnings do not fail the run; a project an agent wrote should have none.
 4. Repeat until the last line starts with `ok:`.
-5. Open it in the editor: `python scripts/open_in_editor.py`. `opened` is
-   the hand-over. `failed` prints the editor's dialog, which names the
-   place as `Game, event 12, condition 1`, event 12 of sheet Game as
-   `print_sheet.py` numbers it: fix it as a finding and go back to step 2.
+5. Open and preview it in the editor:
+   `python scripts/open_in_editor.py --preview`. `opened` with
+   `preview: ... no errors` is the hand-over. `failed` prints the editor's
+   dialog, which names the place as `Game, event 12, condition 1`, event 12
+   of sheet Game as `print_sheet.py` numbers it; a `runtime:` line names it
+   as `Event sheet 1, event 3, action 1`. Fix either as a finding and go
+   back to step 2. The preview runs the layout the editor opens on for 5
+   seconds without input: it catches what breaks on start, not what a
+   player does later.
    Exit code 3: the machine has no Edge, Chrome or Chromium, and the script
    printed the steps for a browser tool of this session instead, one that
    opens a page, runs JavaScript and puts a file on a file input. Follow them with the tool at

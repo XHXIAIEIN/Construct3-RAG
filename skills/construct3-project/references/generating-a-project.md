@@ -62,9 +62,10 @@ Feel tables, the layout of the sheet. Then:
    Warnings do not fail the run; read them anyway, a generated project should
    have none. Then read the sheet once as events, `python
    scripts/print_sheet.py`, before anyone opens the editor.
-3. Open it, `python scripts/open_in_editor.py`, until it prints `opened`.
-   A `failed` names the sheet, event and parameter at fault: fix the
-   generator, not the JSON, and run both again.
+3. Open and preview it, `python scripts/open_in_editor.py --preview`, until
+   it prints `opened` and `preview: ... no errors`. A `failed` or a
+   `runtime:` line names the sheet and event at fault: fix the generator,
+   not the JSON, and run both again.
 4. Hand over: ask the user to open the folder (**Menu** > **Project** >
    **Open**, the local project folder option) and to preview, and say what
    to look at. When no tool of the session could open it, ask for the text

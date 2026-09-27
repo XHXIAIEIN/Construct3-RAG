@@ -2,7 +2,8 @@
 editor's message when it does not.
 
     python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--release rNNN] [--browser EXE]
-                                     [--steps] [--shots DIR] [--out RESULTS.json] [--jobs 2] [--headed]
+                                     [--preview [SECONDS]] [--steps] [--shots DIR] [--out RESULTS.json]
+                                     [--jobs 2] [--headed]
 
 Run it when check_project.py ends with ok:. The checker reads the files; the
 editor also reads the events, and refuses a project for what the checker does
@@ -22,6 +23,10 @@ no such browser, or with --steps, it writes the project as
 .tmp/open-in-editor.c3p in the project folder and prints the same check as
 steps for a browser tool of the agent: one that opens a page, runs
 JavaScript in it and puts a file on a file input.
+
+With --preview it then runs a preview, F5 in the editor, for some seconds and
+prints the layout it started on and what the runtime reported: uncaught
+exceptions and console errors, each with the event it came from.
 
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
@@ -51,16 +56,19 @@ import c3project as c3
 EPILOG = """examples:
   python scripts/open_in_editor.py
   python scripts/open_in_editor.py --project "D:/Games/Snake" --release r502
+  python scripts/open_in_editor.py --preview
   python scripts/open_in_editor.py --steps
   python scripts/open_in_editor.py <eval iteration folder> --jobs 3 --out opened.json
 
 output, one entry per project:
   opened   <project>  (<window title>, <the editor it opened in>)
+    preview: layout '<name>', runtime in the worker, 1 error      with --preview
+    runtime: <the first line of each error; --out keeps the stack>
   failed   <project>
     editor: <the dialog's text, which names the sheet, event and parameter at fault>
     exception: <the first line of the exception the editor logged>
 
-exit codes: 0 every project opened; 1 at least one did not; 2 no project
+exit codes: 0 every project opened, and with --preview ran without errors; 1 at least one did not; 2 no project
 found, or the editor did not load; 3 no browser here, or --steps: the steps
 for a browser tool were printed instead, the project is not opened yet
 """
@@ -127,10 +135,35 @@ RESULT_JS = r"""async () => {
           errors: window.__c3Errors.filter(x => x.includes('Exception')).map(x => x.slice(0, 600))};
 }"""
 
+# The preview's runtime is private, but it runs C3.Runtime.prototype.Tick every
+# frame: wrapped once, the next tick hands over `this`, whose GetIRuntime() is the
+# scripting API, and the method is put back. Evaluated in the preview page and in
+# each of its workers; null where the runtime is not, which is most of them.
+# After skymen/c3cli (MIT), src/preview.ts.
+RUNTIME_JS = r"""(async () => {
+  if (typeof C3 === 'undefined' || !C3.Runtime || typeof C3.Runtime.prototype.Tick !== 'function') return null;
+  const proto = C3.Runtime.prototype, orig = proto.Tick;
+  return await new Promise(resolve => {
+    const timer = setTimeout(() => { proto.Tick = orig; resolve({layout: null}); }, 3000);
+    proto.Tick = function (...args) {
+      proto.Tick = orig; clearTimeout(timer);
+      resolve({layout: this.GetIRuntime().layout.name});
+      return orig.apply(this, args);
+    };
+  });
+})()"""
+
+OPEN_DIALOGS_JS = r"""[...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog')
+  .map(d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500))"""
+
 NEXT = ("next: a message that names a place, `Game, event 12, condition 1`, is event 12 of sheet Game as "
         "scripts/print_sheet.py numbers it: fix it, run scripts/check_project.py, then this script again, and "
         "when the checker had passed it, tell the user the message, since the checker lacks that rule. Missing "
         "addons are installed in the editor, not written into the files: tell the user which.")
+NEXT_PREVIEW = ("next: a runtime error names its place, `Event sheet 1, event 3, action 1` for a script in an event, "
+                "numbered as scripts/print_sheet.py numbers it: fix it and run this again with --preview. The preview "
+                "starts on the layout the editor shows after opening, as F5 does: firstLayout, or the one the editor "
+                "last left open in project.uistate.json.")
 
 
 class EditorNotLoaded(Exception):
@@ -307,24 +340,32 @@ class DevTools:
 
     def __init__(self, url: str) -> None:
         self.ws, self.last, self.lock = WebSocket(url), 0, threading.Lock()
+        self.events: list[dict] = []    # only a connection that enables a domain gets any
 
-    def call(self, method: str, wait: float = CALL, **params) -> dict:
+    def call(self, method: str, wait: float = CALL, session: str | None = None, **params) -> dict:
+        """`session` addresses a target attached to this one, a page's worker."""
         with self.lock:
             self.last += 1
             self.ws.sock.settimeout(wait)
+            request = {"id": self.last, "method": method, "params": params}
+            if session:
+                request["sessionId"] = session
             try:
-                self.ws.send(json.dumps({"id": self.last, "method": method, "params": params}))
+                self.ws.send(json.dumps(request))
                 while True:
                     message = json.loads(self.ws.receive())
                     if message.get("id") == self.last:
                         if "error" in message:
                             raise DevToolsError(f"{method}: {message['error'].get('message')}")
                         return message["result"]
+                    if "method" in message:
+                        self.events.append(message)
             except socket.timeout:
                 raise DevToolsError(f"{method}: no answer in {wait:g} seconds") from None
 
-    def evaluate(self, expression: str, by_value: bool = True, wait: float = CALL):
-        r = self.call("Runtime.evaluate", wait, expression=expression, awaitPromise=True, returnByValue=by_value)
+    def evaluate(self, expression: str, by_value: bool = True, wait: float = CALL, session: str | None = None):
+        r = self.call("Runtime.evaluate", wait, session, expression=expression, awaitPromise=True,
+                      returnByValue=by_value)
         if "exceptionDetails" in r:
             d = r["exceptionDetails"]
             raise DevToolsError(d.get("exception", {}).get("description") or d.get("text", "exception"))
@@ -361,7 +402,10 @@ class Browser:
         url = self.devtools_url(port_file)
         if not url:
             port_file.unlink(missing_ok=True)
-            args = [exe, f"--user-data-dir={profile}", "--remote-debugging-port=0", *QUIET,
+            # IndexedDB sits 80 characters deep in the profile; past MAX_PATH it fails
+            # and the preview hangs. \\?\ lifts the limit for the browser's own files.
+            data = f"\\\\?\\{profile.resolve()}" if sys.platform == "win32" else profile
+            args = [exe, f"--user-data-dir={data}", "--remote-debugging-port=0", *QUIET,
                     "--window-size=1400,900", "about:blank"]
             self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"],
                                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -424,8 +468,69 @@ def load(page: DevTools, editor: str) -> None:
         raise EditorNotLoaded(f"{editor} answered HTTP {where[2]}")
 
 
+def message_text(event: dict) -> str | None:
+    """An uncaught exception or a console.error of a Runtime event, else None."""
+    p = event["params"]
+    if event["method"] == "Runtime.exceptionThrown":
+        d = p["exceptionDetails"]
+        return d.get("exception", {}).get("description") or d.get("text", "exception")
+    if event["method"] == "Runtime.consoleAPICalled" and p["type"] in ("error", "assert"):
+        args = [str(a.get("value", a.get("description", ""))) for a in p["args"]]
+        styles = args[0].count("%c") if args else 0     # the runtime styles its messages: "%cEvent sheet 1", css
+        return " ".join([args[0].replace("%c", ""), *args[1 + styles:]]) if args else ""
+    return None
+
+
+def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float) -> dict:
+    """Preview the layout the editor shows, F5 as the user would press it, let it run
+    for `seconds`, then read what the runtime reported.
+
+    Nothing listens while it runs: Runtime.enable hands over what a page or worker
+    logged before it, so the preview page and its workers, the runtime in one of
+    them, are attached once at the end."""
+    target, page = editor
+    for kind in ("rawKeyDown", "keyUp"):
+        page.call("Input.dispatchKeyEvent", type=kind, key="F5", code="F5", windowsVirtualKeyCode=116)
+    window = None
+    for _ in range(80):
+        window = next((t for t in browser.devtools.call("Target.getTargets")["targetInfos"]
+                       if t["type"] == "page" and t.get("openerId") == target), None)
+        dialogs = page.evaluate(OPEN_DIALOGS_JS)
+        if window or dialogs:
+            break
+        time.sleep(0.25)
+    if not window:
+        return {"started": False, "layout": None, "runtime": None,
+                "errors": dialogs or ["no preview window in 20 seconds"]}
+    time.sleep(seconds)
+    win = DevTools(f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}")
+    try:
+        win.call("Target.setAutoAttach", autoAttach=True, waitForDebuggerOnStart=False, flatten=True)
+        sessions = [None] + [e["params"]["sessionId"] for e in win.events
+                             if e["method"] == "Target.attachedToTarget"
+                             and e["params"]["targetInfo"]["type"] == "worker"]
+        win.events.clear()
+        found, where = None, None
+        for session in sessions:
+            got = win.evaluate(RUNTIME_JS, wait=6, session=session)
+            if got and not found:
+                found, where = got, "worker" if session else "page"
+            win.call("Runtime.enable", session=session)
+        win.evaluate("0")       # an answer after every replayed message
+        errors = [text[:600] for text in map(message_text, win.events) if text]
+    finally:
+        win.ws.close()
+        browser.devtools.call("Target.closeTarget", targetId=window["targetId"])
+    if not found:
+        errors.insert(0, "the preview window opened but no runtime was found in it")
+    elif not found["layout"]:
+        errors.insert(0, "the runtime loaded but did not tick for 3 seconds")
+    return {"started": bool(found and found["layout"]), "layout": found and found["layout"], "runtime": where,
+            "errors": errors}
+
+
 def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: Path | None,
-             pinned: bool) -> dict:
+             pinned: bool, seconds: float | None) -> dict:
     """In the editor at `editor`; unless the release is pinned, a project saved by a
     newer release than that editor's, which it refuses as saved in a newer version,
     is opened in the latest beta instead."""
@@ -450,24 +555,39 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
         result = page.evaluate(f"({RESULT_JS})()", wait=RESULT_WAIT)
         if shot:
             shot.write_bytes(base64.b64decode(page.call("Page.captureScreenshot")["data"]))
+        if isinstance(result, str):
+            result = {"opened": False, "title": "", "dialogs": [], "errors": [result]}
+        ran = None
+        if result["opened"] and seconds is not None:
+            try:
+                ran = preview(browser, (target, page), seconds)
+            except DevToolsError as e:
+                ran = {"started": False, "layout": None, "runtime": None, "errors": [f"the preview stopped answering: {e}"]}
     finally:
         page.ws.close()
         browser.devtools.call("Target.closeTarget", targetId=target)
         staged.unlink(missing_ok=True)
 
-    if isinstance(result, str):
-        result = {"opened": False, "title": "", "dialogs": [], "errors": [result]}
     status = "opened" if result["opened"] else "failed" if result["dialogs"] or result["errors"] else "timeout"
     return {"project": str(project), "status": status, "title": result["title"], "dialogs": result["dialogs"],
             "exception": next(iter(result["errors"]), ""), "editor": editor,
-            "seconds": round(time.monotonic() - started, 1)}
+            "seconds": round(time.monotonic() - started, 1), **({"preview": ran} if ran else {})}
 
 
 def report(result: dict) -> list[str]:
     if result["status"] == "error":
         return [f"error    {result['project']}: {result['exception']}"]
     if result["status"] == "opened":
-        return [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
+        lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
+        ran = result.get("preview")
+        if ran and ran["started"]:
+            n = len(ran["errors"])
+            lines.append(f"  preview: layout {ran['layout']!r}, runtime in the {ran['runtime']}, "
+                         f"{n or 'no'} error{'' if n == 1 else 's'}")
+            lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
+        elif ran:
+            lines += [f"  preview did not run: {e}" for e in ran["errors"]]
+        return lines
     lines = [f"{result['status']:<8} {result['project']}"]
     lines += [f"  editor: {d}" for d in result["dialogs"]]
     if result["status"] == "timeout":
@@ -491,7 +611,7 @@ def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
         shot = args.shots / f"{i:03d}-{project.name}.png" if args.shots else None
         try:
             result = open_one(browser, editor, project, browser.profile / f"project-{i}.c3p", shot,
-                              bool(args.release))
+                              bool(args.release), args.preview)
         except (EditorNotLoaded, DevToolsError, OSError) as e:
             result = {"project": str(project), "status": "error", "title": "", "dialogs": [],
                       "exception": str(e), "editor": editor, "seconds": 0}
@@ -529,6 +649,9 @@ def main() -> int:
                     help="open in this release of the editor, as its URL spells it: r502, r495-2 "
                          "(default: the current stable release, the one the user gets, or the latest beta for a "
                          "project a newer release saved)")
+    ap.add_argument("--preview", type=float, nargs="?", const=5, metavar="SECONDS",
+                    help="once it opened, preview the layout the editor shows for this long (default 5) and print "
+                         "the layout, the uncaught exceptions and the console errors of the runtime")
     ap.add_argument("--out", type=Path, help="write every result, dialogs and exceptions included, as JSON")
     ap.add_argument("--shots", type=Path, help="save a screenshot of the editor per project into this folder")
     ap.add_argument("--jobs", type=int, default=2, help="projects open at once (default 2)")
@@ -558,6 +681,9 @@ def main() -> int:
         return 2
     if why:
         print(steps(projects[0], editor, why))
+        if args.preview is not None:
+            print("\n--preview is not part of these steps: once it opened, press F5 in the editor page and read the "
+                  "console of the preview window it opens.")
         return 3
 
     if args.shots:
@@ -576,7 +702,7 @@ def main() -> int:
     unprinted = sum(1 for r in results if r.pop("unprinted", False))
     if args.out:
         args.out.write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")
-    failed = [r for r in results if r["status"] != "opened"]
+    failed = [r for r in results if r["status"] != "opened" or r.get("preview", {}).get("errors")]
     if all(r["status"] == "error" for r in results):
         print("the editor did not load for any project. Check the network connection and --release, and run "
               "again; without a connection, ask the user to open the project in Construct 3 and paste the text "
@@ -584,9 +710,12 @@ def main() -> int:
         return 2
     if unprinted:
         print(f"{unprinted} results not printed: --out FILE keeps every one, --limit 0 prints them")
-    print(f"{len(results) - len(failed)} of {len(results)} opened" + (f"; full results in {args.out}" if args.out else ""))
-    if failed:
+    done = "opened" if args.preview is None else "opened and ran without errors"
+    print(f"{len(results) - len(failed)} of {len(results)} {done}" + (f"; full results in {args.out}" if args.out else ""))
+    if any(r["status"] != "opened" for r in failed):
         print(NEXT)
+    if any(r.get("preview", {}).get("errors") for r in failed):
+        print(NEXT_PREVIEW)
     return 1 if failed else 0
 
 

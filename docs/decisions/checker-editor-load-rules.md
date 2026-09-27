@@ -425,3 +425,44 @@ Opening the project does not check what the task asked for. In three runs
 of `iteration-24`, one of them the previous `SKILL.md`'s, one of the two
 actions that set the score text still wrote the score alone; the checker
 and the editor both passed them.
+
+
+## Update 2026-09-27: the open previews the project
+
+A project that opens can still fail on its first tick: a script that reads
+a missing instance, an event that sets a property of nothing. The editor
+reports those only once the project runs, so `open_in_editor.py --preview`
+presses F5 after the open, lets the preview run for 5 seconds and prints the
+layout it started on and each uncaught exception and console error. A
+script's exception names its place as `Event sheet 1, event 3, action 1`,
+the numbering `print_sheet.py` uses. Step 5 of `SKILL.md`, step 3 of
+`generating-a-project.md` and the command a passing check prints carry the
+flag.
+
+The approach follows skymen/c3cli (MIT), a Node and Playwright tool that
+drives the editor. Its preview wraps `C3.Runtime.prototype.Tick` once to
+reach the runtime; the script does the same over the DevTools protocol, with
+the browser it already starts and no package. Nothing listens while the
+preview runs: `Runtime.enable` hands over what a page or worker logged
+before it, so the preview page and its workers, attached through
+`Target.setAutoAttach`, are read once at the end. F5 previews the layout the
+editor opens on: `firstLayout` for a project without `project.uistate.json`,
+which is every generated one, else the one the editor left open.
+
+Measured on 2026-09-27, r495-2 and r503: official examples, the user's game
+projects, a `.c3p`, the runtime in a worker and in the page, three previews
+in parallel; an open with a 3-second preview takes about 10 seconds. A
+project whose start event throws reports both errors with their event. The
+observation of 2026-09-15 in Options, that a session without a licence
+cannot preview a project with families, does not hold: examples with
+families and projects far over the event cap previewed as a guest. Over the
+524 examples and three game projects, 496 of 2045 script runs print
+differently, each the last line of a passing check, 42 characters longer;
+the sweep is `.local/docs/evidence/skill-evals/construct3-project/iteration-27/`.
+
+A profile path over about 177 characters put the profile's IndexedDB past
+Windows' MAX_PATH; the preview page then stopped answering. The browser now
+gets its profile as a `\\?\` path.
+
+The preview runs without input. It catches what breaks on start, not what a
+player does later.

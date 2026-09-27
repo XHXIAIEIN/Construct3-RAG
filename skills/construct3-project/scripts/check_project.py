@@ -1232,18 +1232,19 @@ class Checker:
                 f"{len(self.functions)} functions, {len(self.custom_actions)} custom actions")
         if not then_open:
             return line
-        return f"{line}; next, open it in the editor, which also reads the expressions: {open_command(p.root)}"
+        return (f"{line}; next, open and preview it in the editor, which also reads the expressions and runs "
+                f"the events: {open_command(p.root)}")
 
 
 def open_command(root: Path) -> str:
-    """open_in_editor.py for root, as it runs from the current directory."""
+    """open_in_editor.py --preview for root, as it runs from the current directory."""
     def quoted(s: str) -> str:
         return f'"{s}"' if " " in s else s
     script = Path(__file__).resolve().parent / "open_in_editor.py"
     cwd = Path.cwd()
     shown = script.relative_to(cwd).as_posix() if script.is_relative_to(cwd) else script.as_posix()
     where = "" if c3.find_project(None) == root.resolve() else f" --project {quoted(root.resolve().as_posix())}"
-    return f"python {quoted(shown)}{where}"
+    return f"python {quoted(shown)}{where} --preview"
 
 
 def main() -> int:

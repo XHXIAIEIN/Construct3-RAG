@@ -462,9 +462,10 @@ def test_stand_in_project_passes_without_warnings(built):
 
 def test_a_passing_check_ends_with_the_command_that_opens_the_project(built):
     code, out = check(built)
-    assert code == 0 and out.splitlines()[-1].endswith(f"python {INSTALLED}/scripts/open_in_editor.py"), out
+    assert code == 0 and out.splitlines()[-1].endswith(f"python {INSTALLED}/scripts/open_in_editor.py --preview"), out
     code, out = run(built.parent, SKILL / "scripts" / "check_project.py", "--rag", str(REPO), "--project", str(built))
-    assert code == 0 and out.splitlines()[-1].endswith(f"open_in_editor.py --project {built.resolve().as_posix()}"), out
+    assert code == 0 and out.splitlines()[-1].endswith(
+        f"open_in_editor.py --project {built.resolve().as_posix()} --preview"), out
 
 
 def test_checker_prints_the_findings_that_fit_and_counts_the_rest(project):
@@ -1202,6 +1203,9 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
     assert (project / ".tmp" / ".gitignore").read_text(encoding="utf-8") == "*\n"
     assert "\nSETUP:\nasync () => {\n" in out and "\nRESULT:\nasync () => {\n" in out
     assert "https://editor.construct.net/" in out
+
+    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps", "--preview")
+    assert code == 3 and out.rstrip().endswith("read the console of the preview window it opens."), out
 
     import io
     import zipfile
