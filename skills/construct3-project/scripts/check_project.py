@@ -91,6 +91,10 @@ IDENT = re.compile(r"\w+")
 NUMBER = re.compile(r"\d+(\.\d+)?(e[+-]?\d+)?", re.I)
 MEMBER = re.compile(r"(\w+)(?:\([^()]*\))?\s*\.\s*(\w+)(?:\s*\.\s*(\w+))?")
 STRING_LITERAL = re.compile(r'"(?:[^"]|"")*"')
+# C-style operators the expression parser refuses, with the Construct operator for each. A lone !
+# has none: the editor calls it an unknown character, and the test is written as a comparison.
+C_OPERATORS = {"==": "=", "!=": "<>", "&&": "&", "||": "|"}
+C_OPERATOR = re.compile(r"==|!=|&&|\|\||!")
 
 
 def editor_name(name: str, is_object: bool) -> str:
@@ -560,6 +564,22 @@ class Checker:
             return
         text = STRING_LITERAL.sub('""', expr)
         scope_lower = {LOWER(k) for k in scope}
+        found = [m.group(0) for m in C_OPERATOR.finditer(text)]
+        if found:
+            # Rewrite outside the string literals only: "a == b" as text is valid.
+            parts, last = [], 0
+            for lit in STRING_LITERAL.finditer(expr):
+                parts += [C_OPERATOR.sub(lambda m: C_OPERATORS.get(m.group(0), m.group(0)), expr[last:lit.start()]),
+                          lit.group(0)]
+                last = lit.end()
+            parts.append(C_OPERATOR.sub(lambda m: C_OPERATORS.get(m.group(0), m.group(0)), expr[last:]))
+            fixed = "".join(parts)
+            ops = list(dict.fromkeys(found))
+            hint = (f"; write {fixed!r}" if "!" not in found
+                    else "; = compares, <> is not equal, & is and, | is or, and a negation is a comparison with 0")
+            self.err(f"{where}: {', '.join(ops)} {'is not an operator' if len(ops) == 1 else 'are not operators'} "
+                     f"of Construct expressions; the editor stops with "
+                     f"\"Syntax error\"{hint}")
         if owner == "System" and any(LOWER(m.group(0)) == "self" for m in IDENT.finditer(text)):
             fixed = re.sub(r"\bself\b", stand_in, expr, flags=re.I) if stand_in else None
             hint = f"; write {fixed!r}" if fixed else "; name the object instead"

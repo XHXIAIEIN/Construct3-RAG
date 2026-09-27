@@ -39,6 +39,7 @@ How each was read from the editor and confirmed:
 | `Self` stands only in a parameter of an object's own condition or action; in a System one (*For each ordered*, *Pick by comparison*, *Set variable*) it names nothing, and the finding writes the expression with the object the ACE names | `Invalid use of 'self'` |
 | A name has no spaces or punctuation; an instance variable name starts with a letter | the editor renames it silently, and the events that use it fail with `cannot find object` |
 | An instance variable, behavior or effect is not named like another one on the object or its families, nor like an expression of the object (`Angle`, `Width`, `Count`, `Text`) | `name already in object class namespace` |
+| An expression uses Construct's operators: `=` compares, `<>` is not equal, `&` is and, `\|` is or; `==`, `!=`, `&&`, `\|\|` and `!` stand only inside a text literal | `Syntax error: '=' can't go here`, `Syntax error: Unknown character` |
 | A key is a key code, a JSON number | `expected finite number` |
 | An action does not write a constant | `event variable X is constant` |
 | An ease is a built-in id such as `easeoutback`, unless the project has custom eases | the tween keeps no ease and fails later |
@@ -112,7 +113,7 @@ What happens at runtime: which instances a condition picks, what order
 triggers fire in, whether an expression means what the comment says. The
 editor and the preview judge those; the observations in
 `Construct3-RAG/prompts/event-sheet-pitfalls.md` came from previewing, not
-from the checker. Expression syntax, argument counts and types, and
+from the checker. Expression syntax beyond those operators, argument counts and types, and
 `function`, `template` and `audiofile` parameters are not checked either.
 The editor checks expressions as it opens the project: `scripts/open_in_editor.py`
 prints its message, `Type mismatch: - does not work with 'string' and

@@ -52,6 +52,13 @@ Option 2 as the default, and option 3 as the step after it.
   rule at a time and reads the finding, and compares the generated project
   with the keys every official example carries at each level.
 - A missing key stops the run with one sentence, never a traceback.
+- Expression syntax is the editor's parser, not its loader, so the one
+  syntax rule was read by opening a project: of `==`, `!=`, `&&`, `||`, `!`,
+  `<>`, `&`, `|` and `"a == b"` as text, the editor refused the first five
+  with `Syntax error` and took the rest. No official example writes one of
+  the five outside a text literal. A Haiku eval run had written
+  `Coin.value == 5 ? 1.5 : 1`, which the checker passed and the editor
+  refused.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from

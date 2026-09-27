@@ -1592,6 +1592,23 @@ def test_self_in_an_objects_own_parameter_passes(project):
     assert "Self" not in out, out
 
 
+def test_c_style_operators_are_refused_with_the_construct_ones(project):
+    """The editor's parser refuses ==, !=, &&, || and ! ("Syntax error"); inside a text literal they are text."""
+    def change(s):
+        events(s)["add_score"]["actions"] += [
+            {"id": "set-eventvar-value", "objectClass": "System", "sid": 5 + i,
+             "parameters": {"variable": "score", "value": value}}
+            for i, value in enumerate(['points == 5 ? 5 : 1', 'points != 5 & score || 1',
+                                       '!points', 'points = 5 ? 1 : 0', 'len("a == b") <> 0 | 1'])]
+    out = findings(project, change)
+    assert "value: == is not an operator of Construct expressions; the editor stops with \"Syntax error\"; " \
+           "write 'points = 5 ? 5 : 1'" in out
+    assert "value: !=, || are not operators of Construct expressions; the editor stops with \"Syntax error\"; " \
+           "write 'points <> 5 & score | 1'" in out
+    assert "value: ! is not an operator" in out and "a negation is a comparison with 0" in out
+    assert out.count("of Construct expressions") == 3, out
+
+
 def test_ease_is_a_builtin_id(project):
     out = findings(project, lambda s: collect_tween(s)["parameters"].update(ease="ease-in-back"))
     assert "ease='ease-in-back' is not a built-in ease; closest: easeinback" in out
