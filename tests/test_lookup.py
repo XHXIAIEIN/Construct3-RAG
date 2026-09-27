@@ -376,14 +376,19 @@ class TestKeywordInfer:
         )
 
     def test_sprite_animation(self):
-        """The verb 播放 asks for an action, so animation actions come first."""
+        """Playing an animation is Set animation, then Start; Stop is the opposite."""
         engine = make_engine()
         resp = engine.try_lookup("Sprite 播放 动画")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
         assert resp.intent.ace_type == "actions"
         keys = result_keys(resp)
-        assert ("plugins", "sprite", "action", "set-animation") in keys[:5]
+        assert keys[:2] == [
+            ("plugins", "sprite", "action", "set-animation"),
+            ("plugins", "sprite", "action", "start-animation"),
+        ]
+        stop = make_engine().try_lookup("Sprite 停止播放")
+        assert result_keys(stop)[0] == ("plugins", "sprite", "action", "stop-animation")
 
     def test_concept_question_is_declined(self):
         """'Sprite 是什么' asks for a definition, not an ACE."""

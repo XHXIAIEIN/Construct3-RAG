@@ -851,6 +851,52 @@
         "weight": 0.8,
         "exact": false,
         "allow_chaining": false
+      },
+      "sprite.action.play-to-set-animation": {
+        "purpose": "Playing a Sprite animation is Set animation, which switches to it and plays, and then Start, which resumes a stopped one. The short list names split play and animation (停止播放, 设置动画), so without the bridge every animation action matches one word and file order puts Stop first.",
+        "source": [
+          "gold:howto-play-animation-zh-01",
+          "gold:howto-play-animation-en-01",
+          "schema:data/c3-schemas/{locale}/plugins/sprite.json"
+        ],
+        "consumers": [
+          "src.lookup.handlers.LookupHandlers._scoped_filter_words",
+          "tests/test_query_gold.py"
+        ],
+        "tests": [
+          "tests/test_lookup.py::test_sprite_animation"
+        ],
+        "enabled_locales": [
+          "en-US",
+          "zh-CN"
+        ],
+        "triggers": {
+          "en-US": [
+            "play"
+          ],
+          "zh-CN": [
+            "播放"
+          ]
+        },
+        "additions": {
+          "en-US": [
+            "set animation"
+          ],
+          "zh-CN": [
+            "设置动画",
+            "开始播放"
+          ]
+        },
+        "exclude_ids": [],
+        "plugin_ids": [
+          "sprite"
+        ],
+        "ace_types": [
+          "actions"
+        ],
+        "weight": 0.8,
+        "exact": false,
+        "allow_chaining": false
       }
     }
   }
