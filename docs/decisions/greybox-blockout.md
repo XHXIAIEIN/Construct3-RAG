@@ -26,10 +26,7 @@ small model gets them by default.
 
 ### What the user decided
 
-From six reference images (engine blockouts under a world-aligned grid, a
-grey figure among grey cubes, a level-design page on judging distance to
-floating blocks, a tactical map of hatched zones and striped thresholds),
-five mock-ups, an A/B of the shadow and a grid of its angles and opacities:
+Over reference blockouts and mock-ups of the stand-in:
 
 - Value carries the hierarchy; colour is kept for what must be noticed
   wherever the eye is. Deep black and white with greys between, and a few
