@@ -211,7 +211,8 @@ def grade_find_in_a_long_sheet(run: Path) -> list[tuple[bool, str]]:
             (108 in numbers and "showgameover" in answer.lower() and bool(re.search(r"restart", answer, re.I)), said),
             (all(re.search(word, answer, re.I) for word in ("player", "success", "fail")),
              "stated: " + ", ".join(w for w in ("player", "success", "fail") if re.search(w, answer, re.I))),
-            (bool(numbers) and all(102 <= n <= 108 for n in numbers), said),
+            # 87 to 91 abduct the player's tractor, the other way to game over; naming them is no error.
+            (bool(numbers) and all(102 <= n <= 108 or 87 <= n <= 91 for n in numbers), said),
             unchanged(run)]
 
 
@@ -703,6 +704,36 @@ def one_colour(project: Path, kind: str) -> tuple | None:
     return None
 
 
+def colours_of(project: Path, kind: str) -> set[tuple]:
+    """The opaque colours of a type's first image; empty when it has none or PIL is missing."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return set()
+    for png in sorted((project / "images").glob(f"{kind.lower()}*.png")):
+        try:
+            with Image.open(png) as im:
+                return {c[:3] for n, c in (im.convert("RGBA").getcolors(1 << 20) or []) if c[3] == 255}
+        except OSError:
+            continue
+    return set()
+
+
+def background_colours(layout: dict, project: Path) -> tuple[set[tuple], str]:
+    """What the viewport shows behind the game: the image of an instance on the Background layer that
+    covers the viewport (the template's backdrop), else the layer's colour when it is opaque."""
+    back = next((layer for layer in layout.get("layers", []) if layer.get("name", "").lower() == "background"), None)
+    if back is None:
+        return set(), "no Background layer"
+    cover = next((i for i in reversed(back.get("instances", []))
+                  if contains(box_of(i), (0, 0, VIEW_W, VIEW_H)) and colours_of(project, i["type"])), None)
+    if cover:
+        return colours_of(project, cover["type"]), f"{cover['type']} covering the viewport"
+    if back.get("isTransparent", True):
+        return set(), "a transparent Background layer and nothing covering the viewport"
+    return {rgb255(back["backgroundColor"])}, "the Background layer's colour"
+
+
 def grade_readable_on_a_light_background(run: Path) -> list[tuple[bool, str]]:
     project = run / "project"
     results = [checker_line(project)]
@@ -710,14 +741,14 @@ def grade_readable_on_a_light_background(run: Path) -> list[tuple[bool, str]]:
         layout = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return results + [(False, "layouts/Game.json is not readable JSON")] * 5
-    back = next((layer for layer in layout.get("layers", []) if layer.get("name", "").lower() == "background"), None)
-    colour = rgb255(back["backgroundColor"]) if back else None
-    light = bool(back) and not back.get("isTransparent", True) and all(abs(a - b) <= 40 for a, b in zip(colour, SKY))
-    results.append((light, f"Background layer {colour}, transparent {back.get('isTransparent') if back else None}"))
+    # The template's backdrop covers the layer: its colour alone is never seen.
+    shown, source = background_colours(layout, project)
+    light = bool(shown) and all(abs(a - b) <= 40 for colour in shown for a, b in zip(colour, SKY))
+    results.append((light, f"{source}: {sorted(shown) or 'no colour'}"))
     hud = hud_instances(project)
     texts = [i for i in hud if plugin_id(project, i["type"]) == "Text"]
-    left = [i for i in texts if re.search(r"left", str(i["properties"].get("text", "")), re.I)
-            and "6" in str(i["properties"].get("text", ""))]
+    # The first round deals fewer coins than six; the label starts from the count, not a number.
+    left = [i for i in texts if re.search(r"left", str(i["properties"].get("text", "")), re.I)]
     rows = sheet_rows(project)
     changed = {a.get("parameters", {}).get("variable") or a.get("parameters", {}).get("instance-variable")
                for ev, _ in rows for a in ev.get("actions", []) if a.get("id") in SET_VALUE}
@@ -725,7 +756,7 @@ def grade_readable_on_a_light_background(run: Path) -> list[tuple[bool, str]]:
                and a.get("objectClass") in {i["type"] for i in left}]
     counted = [a for a in setters if re.search(r"\.Count\b", values([a]))
                or set(re.findall(r"[A-Za-z_]\w*", values([a]))) & {c for c in changed if c}]
-    results.append((bool(left) and bool(counted), f"labels starting Left 6: {[i['type'] for i in left] or 'none'}; "
+    results.append((bool(left) and bool(counted), f"labels saying Left: {[i['type'] for i in left] or 'none'}; "
                                                   f"set-text from the coins left: {len(counted)} of {len(setters)}"))
     score = next((i for i in texts if i["type"] == "ScoreText"), None)
     if left:
@@ -736,15 +767,15 @@ def grade_readable_on_a_light_background(run: Path) -> list[tuple[bool, str]]:
         results.append((placed, f"{left[0]['type']} box ({l:g},{t:g})-({r:g},{b:g}), clear of ScoreText {off}"))
     else:
         results.append((False, "no Left label on the UI layer"))
-    verdicts, ok = [], bool(texts) and colour is not None
+    verdicts, ok = [], bool(texts) and bool(shown)
     for i in texts:
         fg = rgb255(i["properties"].get("color", [1, 1, 1, 1]))
         panel = next((one_colour(project, j["type"]) for j in hud if j is not i and plugin_id(project, j["type"]) != "Text"
                       and contains(box_of(j), box_of(i)) and one_colour(project, j["type"])), None)
-        behind = panel or colour
-        ratio = contrast(fg, behind) if behind else 0
+        behind = {panel} if panel else shown
+        ratio = min((contrast(fg, b) for b in behind), default=0)
         ok = ok and ratio >= 4.5
-        verdicts.append(f"{i['type']} {fg} on {'panel ' if panel else ''}{behind}: {ratio:.1f}:1")
+        verdicts.append(f"{i['type']} {fg} on {'panel ' if panel else ''}{sorted(behind)}: {ratio:.1f}:1")
     results.append((ok, "; ".join(verdicts) or "no Text on the UI layer"))
     results.append(generator_is_source(run))
     return results
