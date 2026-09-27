@@ -5,7 +5,11 @@
 
 Conditions and actions are worded from the schema's display-text, in the
 locale of --locale, at about a quarter of the JSON's length. It reads any
-folder project, an official example included.
+folder project, an official example included. An event without conditions
+reads (every tick) at the top of the sheet, in a group or not, and (runs
+with its parent) as a sub-event, which runs each time the event it sits in
+runs: once per call in a function, once per trigger under a trigger (the
+manual's project-primitives/events/sub-events).
 
 A row's number is the count of blocks, groups, function blocks and custom
 action blocks before it in the sheet, sub-events included, plus one: the
@@ -105,9 +109,12 @@ def wording(p: c3.Project, kind: str, ace: dict) -> str:
     return f"{obj}: {'NOT ' if ace.get('isInverted') else ''}{text}"
 
 
-def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = ()) -> Iterator[Row]:
-    """The sheet as the editor shows it, with the editor's event numbers."""
+def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (),
+               top: bool = True) -> Iterator[Row]:
+    """The sheet as the editor shows it, with the editor's event numbers. top: every
+    row above these is a group, so an event without conditions runs every tick."""
     pad = "  " * len(above)
+    unconditional = "(every tick)" if top else "(runs with its parent)"
     for ev in events:
         et = ev.get("eventType")
         if et in NUMBERED:
@@ -140,11 +147,11 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
             joiner = "OR " if ev.get("isOrBlock") else ""
             head = [f"{number if i == 0 else '     '}{pad}{joiner if i else ''}{line}"
                     + (" [disabled]" if ev.get("disabled") and i == 0 else "")
-                    for i, line in enumerate(lines or ["(every tick)"])]
+                    for i, line in enumerate(lines or [unconditional])]
             body = [f"     {pad}    -> {wording(p, 'actions', a)}" for a in ev.get("actions", [])]
         row = Row(counter[0] if et in NUMBERED else counter[0] + 1, head, body, above)
         yield row
-        yield from sheet_rows(p, ev.get("children", []), counter, (*above, row))
+        yield from sheet_rows(p, ev.get("children", []), counter, (*above, row), top and et == "group")
 
 
 def part(rows: list[Row], first: int, last: int | None, room: int | None) -> tuple[list[str], int | None]:

@@ -910,6 +910,29 @@ def test_print_words_the_sheet_as_the_editor_does(built):
     assert "   9   System: Coin.Count = 0\n       System: Trigger once" in out
 
 
+def test_print_says_every_tick_only_where_an_event_without_conditions_runs_every_tick(project):
+    """At the top of the sheet or in a group there, an event without conditions runs every tick. As a
+    sub-event it runs when the event it sits in runs, once a touch under a trigger, once a call in a
+    function: read as every tick, it is per-tick logic that is not there."""
+    set_scale = {"id": "set-scale", "objectClass": "Coin", "parameters": {"scale": "1.5"}}
+    def add(sheet):
+        rows = events(sheet)
+        rows["input"].setdefault("children", []).insert(0, block([], [set_scale]))
+        rows["add_score"].setdefault("children", []).insert(0, block([], [set_scale]))
+        sheet["events"] += [block([], [set_scale]),
+                            {"eventType": "group", "title": "Idle", "children": [block([], [set_scale])]}]
+    edit(project, SHEET, add)
+    code, out = tool(project, "print_sheet", "Game")
+    assert code == 0, out
+    assert "   5   Touch: On touched Coin (start)\n" in out
+    assert "   6     (runs with its parent)\n             -> Coin: Set scale to 1.5" in out
+    assert "   8 function AddScore(points: number)\n" in out
+    assert "   9   (runs with its parent)\n           -> Coin: Set scale to 1.5" in out
+    assert "  12 (every tick)\n         -> Coin: Set scale to 1.5" in out
+    assert "  13 group Idle\n  14   (every tick)\n           -> Coin: Set scale to 1.5" in out
+    assert out.count("(every tick)") == 2 and out.count("(runs with its parent)") == 2, out
+
+
 def test_print_follows_the_locale(built):
     code, out = tool(built, "print_sheet", "Game", "--locale", "zh-CN")
     assert code == 0 and "System: 场景开始" in out
@@ -1176,7 +1199,7 @@ def test_plan_puts_events_in_by_the_numbers_the_sheet_has_now(project):
     sheet = printed(project)
     assert "     global number beat = 0\n     global number timeLeft = 30\n   1 group Setup" in sheet
     assert '-> ScoreText: Set text to "Score: 0"\n           -> ScoreText: Set text to "Time: " & timeLeft' in sheet
-    assert "   4       (every tick)\n               -> Coin: Set scale to 1.5" in sheet
+    assert "   4       (runs with its parent)\n               -> Coin: Set scale to 1.5" in sheet
     assert "     // Countdown.\n  11 group Timer\n       // Count down.\n  12   System: Every 1 seconds" in sheet
     assert check(project)[0] == 0
 
