@@ -73,9 +73,6 @@ CASES = [
     # === Translation ===
     Case("翻译 Destroy", expect_intent="term_translate"),
 
-    # === Properties (TODO: "属性" keyword not routed to prop_list) ===
-    # Case("Platform 属性", expect_plugin="platform", expect_intent="prop_list"),
-
     # === Literal structural match (not a synonym requirement) ===
     Case("Sprite 重叠", expect_plugin="sprite",
          expect_ids=["is-overlapping-another-object"]),
