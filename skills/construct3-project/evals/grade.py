@@ -80,7 +80,7 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
                (not warnings, warnings[0] if warnings else "no warning line")]
     events = sheet_of(project)
     if events is None:
-        return results + [(False, "eventSheets/Game.json is not readable JSON")] * 5
+        return results + [(False, "eventSheets/Game.json is not readable JSON")] * 6
     rows = list(walk(events))
     timers = [ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and ev["name"] not in ORIGINAL_GLOBALS]
     names = re.compile("|".join(map(re.escape, timers)) or r"$^", re.I)
@@ -122,6 +122,25 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
     have = {ev.get("sid") for ev, _ in rows}
     lost = [s for s in original if s not in have]
     results.append((bool(original) and not lost, f"{len(original) - len(lost)} of {len(original)} original event sids present"))
+
+    # Restart layout keeps global variables (Construct3-Manual system-reference/system-actions.md): a countdown
+    # set only by its declaration is still 0 once the layout has restarted, and never runs 30 seconds again.
+    holders = {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and str(ev.get("initialValue")) == "30"}
+
+    def starts_over(a: dict) -> bool:
+        p = a.get("parameters", {})
+        value = str(p.get("value", "")).strip()
+        return a.get("id") == "reset-global-variables" or (
+            a.get("id") == "set-eventvar-value" and p.get("variable") in timers
+            and (value in ("30", "30.0") or (value in holders and value != p.get("variable"))))
+
+    on_start = [a for ev, above in rows if any(c.get("id") == "on-start-of-layout" for c in conditions_over(ev, above))
+                for a in ev.get("actions", []) if starts_over(a)]
+    at_restart = [a for a in (hit or {}).get("actions", []) if starts_over(a)]
+    results.append((bool(on_start or at_restart),
+                    "set back under On start of layout" if on_start else "set back in the restart on the countdown"
+                    if at_restart else f"{timers} set back nowhere: after the first restart it is still 0"
+                    if timers else "no countdown variable"))
     return results
 
 
@@ -672,7 +691,7 @@ def grade_lives_as_hearts(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
-SKY = (0x8E, 0xCA, 0xE6)
+NAVY = (0x02, 0x30, 0x47)
 
 
 def contrast(a: tuple, b: tuple) -> float:
@@ -734,17 +753,18 @@ def background_colours(layout: dict, project: Path) -> tuple[set[tuple], str]:
     return {rgb255(back["backgroundColor"])}, "the Background layer's colour"
 
 
-def grade_readable_on_a_light_background(run: Path) -> list[tuple[bool, str]]:
+def grade_readable_on_a_dark_background(run: Path) -> list[tuple[bool, str]]:
     project = run / "project"
     results = [checker_line(project)]
     try:
         layout = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return results + [(False, "layouts/Game.json is not readable JSON")] * 5
-    # The template's backdrop covers the layer: its colour alone is never seen.
+    # The template's backdrop covers the layer: its colour alone is never seen. Its labels are dark ink on
+    # light grey, so the navy is what puts readability at stake.
     shown, source = background_colours(layout, project)
-    light = bool(shown) and all(abs(a - b) <= 40 for colour in shown for a, b in zip(colour, SKY))
-    results.append((light, f"{source}: {sorted(shown) or 'no colour'}"))
+    dark = bool(shown) and all(abs(a - b) <= 40 for colour in shown for a, b in zip(colour, NAVY))
+    results.append((dark, f"{source}: {sorted(shown) or 'no colour'}"))
     hud = hud_instances(project)
     texts = [i for i in hud if plugin_id(project, i["type"]) == "Text"]
     # The first round deals fewer coins than six; the label starts from the count, not a number.
@@ -785,7 +805,7 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
            "reveal-the-gradient": grade_reveal_the_gradient, "lives-as-hearts": grade_lives_as_hearts,
-           "readable-on-a-light-background": grade_readable_on_a_light_background}
+           "readable-on-a-dark-background": grade_readable_on_a_dark_background}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")

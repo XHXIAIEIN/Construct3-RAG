@@ -255,8 +255,9 @@ value it names drift apart.
   looks designed is the user's call on the running game, and the reach
   bands wait on a measured jump.
 - No small-model iteration has run on this template. The eval case
-  `readable-on-a-light-background` asks to lighten a dark background the
-  template no longer has.
+  `readable-on-a-dark-background` asks for a navy backdrop, on which the
+  labels' `ink` reads 1.4:1: `readable()` stops the generator, and the case
+  grades what the model does with that stop.
 - Not in the template: a number at the title size with its label in `dim`,
   which changes the HUD the eval cases grade; camera-zone helpers; Sine
   bobbing for pickups; the juice functions, camera-zone fields and
