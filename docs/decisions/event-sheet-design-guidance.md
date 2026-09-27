@@ -70,6 +70,18 @@ isolated. The reset comes before the text that shows the score: one run
 rewrote that text to read `score` and `timeLeft` above the resets, which
 shows the last round's values at the start of the next.
 
+Update 2026-09-28. A preview of an iteration-27 run with the countdown cut to
+3 seconds: the first start reads 3, every later one 0, and the layout
+restarted 144 times in 10 seconds. None of the 56 archived runs used a
+Timer, although `prompts/event-sheet-thinking.md` names the Timer behavior
+for a countdown, and the case graded only the variable: a Timer run would
+have failed three assertions. The case now accepts a Timer started for 30
+seconds under *On start of layout* with *On timer* restarting the layout; a
+reference solution scores 8 of 8 and, cut to 3 seconds, counts 3, 2, 1, 0
+and 3 again in preview. The verdicts of the 56 archived runs are unchanged.
+The plan example in `SKILL.md` is this countdown, a global under *Every 1
+seconds* without a reset, which is the form the runs wrote.
+
 ## The authoring style
 
 The style file describes one cohort of the official examples: the demo

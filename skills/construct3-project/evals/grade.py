@@ -83,7 +83,15 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
         return results + [(False, "eventSheets/Game.json is not readable JSON")] * 6
     rows = list(walk(events))
     timers = [ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and ev["name"] not in ORIGINAL_GLOBALS]
-    names = re.compile("|".join(map(re.escape, timers)) or r"$^", re.I)
+    # The Timer behavior is the other way, the one event-sheet-thinking.md names for a countdown: started for 30
+    # seconds, restarting on On timer, the time left read from its expressions.
+    holders = {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and str(ev.get("initialValue")) == "30"}
+    acts = [(a, conditions_over(ev, above)) for ev, above in rows for a in ev.get("actions", [])]
+    started = [a for a, conds in acts if a.get("id") == "start-timer"
+               and str(a.get("parameters", {}).get("duration", "")).strip() in {"30", "30.0", *holders}]
+    tags = {str(a["parameters"].get("tag", "")) for a in started}
+    names = re.compile("|".join([*map(re.escape, timers), r"\b(?:Duration|CurrentTime|TotalTime|NormalizedProgress)\s*\("])
+                       if timers or started else r"$^", re.I)
 
     ticking = [(ev, above, a) for ev, above in rows for a in ev.get("actions", [])
                if a.get("id") in ("subtract-from-eventvar", "add-to-eventvar", "set-eventvar-value") and names.search(values([a]))]
@@ -96,12 +104,17 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
         if any(values([c]).strip() in ("1", "1.0") for c in every) or re.search(r"\bdt\b", values([a]), re.I):
             per_second = True
             break
+    if not per_second and started:
+        per_second, seen = True, f"Timer started for {started[0]['parameters']['duration']} seconds, tag {sorted(tags)}"
     results.append((per_second, seen))
 
     restarts = [(ev, above) for ev, above in rows if any(a.get("id") == "restart-layout" for a in ev.get("actions", []))]
-    hit = next((ev for ev, above in restarts if names.search(values(conditions_over(ev, above)))), None)
+    hit = next((ev for ev, above in restarts if names.search(values(conditions_over(ev, above)))
+                or any(c.get("id") == "on-timer" and str(c.get("parameters", {}).get("tag", "")) in tags
+                       for c in conditions_over(ev, above))), None)
     results.append((hit is not None, f"restart-layout under {values(hit['conditions'])}" if hit else
-                    f"{len(restarts)} event(s) restart the layout, none reads {timers or 'a countdown variable'}"))
+                    f"{len(restarts)} event(s) restart the layout, none reads {timers or 'a countdown variable'}"
+                    + (f" or is On timer {sorted(tags)}" if tags else "")))
 
     texts = [(a, conditions_over(ev, above)) for ev, above in rows for a in ev.get("actions", [])
              if a.get("id") == "set-text" and a.get("objectClass") == "ScoreText"]
@@ -125,8 +138,7 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
 
     # Restart layout keeps global variables (Construct3-Manual system-reference/system-actions.md): a countdown
     # set only by its declaration is still 0 once the layout has restarted, and never runs 30 seconds again.
-    holders = {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and str(ev.get("initialValue")) == "30"}
-
+    # A Timer started under On start of layout starts over with it: Start timer on a running tag restarts it.
     def starts_over(a: dict) -> bool:
         p = a.get("parameters", {})
         value = str(p.get("value", "")).strip()
@@ -134,13 +146,13 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
             a.get("id") == "set-eventvar-value" and p.get("variable") in timers
             and (value in ("30", "30.0") or (value in holders and value != p.get("variable"))))
 
-    on_start = [a for ev, above in rows if any(c.get("id") == "on-start-of-layout" for c in conditions_over(ev, above))
-                for a in ev.get("actions", []) if starts_over(a)]
+    on_start = [a for a, conds in acts if any(c.get("id") == "on-start-of-layout" for c in conds)
+                and (starts_over(a) or a in started)]
     at_restart = [a for a in (hit or {}).get("actions", []) if starts_over(a)]
     results.append((bool(on_start or at_restart),
                     "set back under On start of layout" if on_start else "set back in the restart on the countdown"
                     if at_restart else f"{timers} set back nowhere: after the first restart it is still 0"
-                    if timers else "no countdown variable"))
+                    if timers else "no countdown variable and no Timer started for 30 seconds on start"))
     return results
 
 

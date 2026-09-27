@@ -6,17 +6,17 @@
       "name": "add-countdown",
       "fixture": "coins",
       "prompt": "in my coins game i want a 30 second countdown. show it next to the score in the same text (like \"Score: 3  Time: 27\") and when it reaches 0 restart the layout. also coins that are worth 5 should be 1.5x the size of the others so you can tell them apart. the project folder is <project> , its all in eventSheets/Game.json i think",
-      "expected_output": "eventSheets/Game.json edited by hand: a countdown variable that loses one per second, ScoreText showing score and time, a restart at 0 after which the countdown starts over at 30, since Restart layout keeps global variables, coins of value 5 made 1.5 times larger, and a project the checker passes.",
+      "expected_output": "eventSheets/Game.json edited by hand: a 30 second countdown, a Timer behavior started on start of layout or a variable that loses one per second, ScoreText showing score and time, a restart at 0 after which the countdown starts over at 30, since Restart layout keeps global variables, coins of value 5 made 1.5 times larger, and a project the checker passes.",
       "files": [],
       "assertions": [
         "check_project.py of the clone exits 0 on the edited project",
         "check_project.py prints no warning",
-        "The countdown loses one per second: it is subtracted under Every X seconds with 1, or by dt every tick",
-        "An event restarts the layout under a condition that reads the countdown variable",
+        "The countdown loses one per second: a Timer started for 30 seconds, or a variable subtracted under Every X seconds with 1, or by dt every tick",
+        "An event restarts the layout under a condition that reads the countdown: the variable, the Timer's expressions, or On timer with the countdown's tag",
         "Every action that sets ScoreText's text after the start writes both the score and the time",
         "An action on Coin makes the coins of value 5 larger: a size or scale action that reads value",
         "Every event of the original sheet is still in it, by sid",
-        "The countdown starts over after the restart: it is set back to 30 under On start of layout or in the event that restarts on it, or Reset global variables runs there; Restart layout keeps global variables"
+        "The countdown starts over after the restart: the Timer is started under On start of layout, or the variable is set back to 30 there or in the event that restarts on it, or Reset global variables runs there; Restart layout keeps global variables"
       ]
     },
     {
