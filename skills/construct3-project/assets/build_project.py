@@ -74,6 +74,7 @@ PALETTE = {
     "reward": (240, 190, 60),          # what the player collects: the coin
     "good": (90, 200, 120),            # a value going well: a bar's fill
     "danger": (220, 70, 70),           # what hurts or is lost
+    "flash": (255, 255, 255),          # the fill of an object for the instant it is hit
 }
 # The outline and the cast shadow of every image shape() draws, one switch for the game. They
 # are drawn into the image: Construct's own effects have neither (none of the 89 of
@@ -92,6 +93,13 @@ SHAPE_STYLE = {
     "shadow_opacity": 0.5,
     "shadow_role": "outline",
 }
+# A hit shows as a colour for an instant: the shape's second frame, drawn by hit_frame() in the
+# role below with the same outline and shadow, shown by hit_flash() for `seconds` of real time.
+# Not the Flash behavior, which blinks the object's opacity: a colour set for 0.05 to 0.1 s is
+# what the studios of Construct3-RAG/docs/decisions/published-game-visual-language.md use, white
+# or danger. An object's colour in Construct multiplies its image, so it cannot turn a yellow
+# shape white; a frame can.
+HIT_FLASH = {"role": "flash", "seconds": 0.08}
 FONT = "Arial"                             # one font for every label
 TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
@@ -312,6 +320,7 @@ def bar_images(frame_name: str, fill_name: str, frame_role: str = "panel", fill_
 SHAPES = ("rect", "circle", "triangle")
 FRAMES: dict[str, dict] = {}               # the frame of each image shape() drew, by file name
 PADS: dict[str, tuple[int, int]] = {}      # where the shape starts inside that image, past its shadow
+DRAWN_AS: dict[str, tuple] = {}            # the arguments each image was drawn with, for hit_frame()
 
 
 def shadow_offset() -> tuple[int, int]:
@@ -370,7 +379,21 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
     poly = [round(v, 4) for cx, cy in corners for v in ((left + cx * w) / iw, (top + cy * h) / ih)]
     FRAMES[rel] = frame(iw, ih, (left + ox * w) / iw, (top + oy * h) / ih, poly)
     PADS[rel] = (left, top)
+    DRAWN_AS[rel] = (kind, w, h, ox, oy, outline, shadow)
     return FRAMES[rel]
+
+
+def hit_frame(rel: str) -> dict:
+    """The hit frame of the shape drawn as images/<rel>, "coin-default-000.png": the same shape,
+    outline and shadow, filled in HIT_FLASH's role, drawn as the next frame's file and tagged
+    "hit". Put it after the shape's frame in the animation; hit_flash() shows it."""
+    if rel not in DRAWN_AS or not rel.endswith("-000.png"):
+        sys.exit(f"hit_frame({rel!r}): draw the frame first with shape({rel!r}, ...), named <type>-<animation>-000.png")
+    kind, w, h, ox, oy, outline, shadow = DRAWN_AS[rel]
+    hit = rel[:-len("000.png")] + "001.png"
+    f = shape(hit, kind, w, h, HIT_FLASH["role"], ox, oy, outline, shadow)
+    f["tag"] = "hit"
+    return f
 
 
 def drawn(rel: str) -> dict:
@@ -384,6 +407,7 @@ def drawn(rel: str) -> dict:
 
 def build_images() -> None:
     shape("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward")
+    hit_frame("coin-default-000.png")
 
 
 # --- event sheet: conditions, actions, blocks ------------------------------------------
@@ -590,6 +614,15 @@ def create(obj: str, layer: str, x: str, y: str) -> dict:
                                            "create-hierarchy": False, "template-name": q("")})
 
 
+def hit_flash(obj: str) -> list:
+    """The actions that show obj's hit frame for HIT_FLASH["seconds"], then its rest frame 0.
+    The wait is in real time, so slow motion does not stretch the flash. Put them last in a
+    block: the actions after a wait run once it is over."""
+    return [act("set-animation-frame", obj, {"frame-number": q("hit")}),
+            wait(str(HIT_FLASH["seconds"]), use_timescale=False),
+            act("set-animation-frame", obj, {"frame-number": "0"})]
+
+
 def grid_random(lo: int, hi: int) -> str:
     """An expression for a random whole-UNIT position from lo to hi px, both on the grid: an
     object created at runtime starts on the grid like one placed in a layout."""
@@ -779,6 +812,7 @@ def scoring() -> list:
         *procedure("Shrink the coin away and score it", custom_action("Coin", "Collect", [
             tween2("Coin", "collect", "size", "0", "0", "0.25", "easeinback", destroy=True),
             call("AddScore", "Coin.value"),
+            *hit_flash("Coin"),
         ])),
         *procedure("Add points and show the score", func("AddScore", [
             add_var("score", "points"),
@@ -834,6 +868,9 @@ def ivar_def(name: str, vtype: str, desc: str = "") -> dict:
 
 def beh_def(behavior_id: str, name: str | None = None) -> dict:
     """name is what events refer to; two Sine behaviors on one object need two names."""
+    if behavior_id == "Flash":
+        sys.exit(f"{name or behavior_id}: a hit shows as a colour, not the Flash behavior's blinking; draw the "
+                 f"object's hit frame with hit_frame() and show it with hit_flash(obj) in the sheet")
     return {"behaviorId": behavior_id, "name": name or behavior_id, "sid": sid()}
 
 
@@ -898,7 +935,7 @@ def container(members: list) -> dict:
 
 def build_object_types() -> tuple[dict, dict, list]:
     types = {
-        "Coin": sprite_type("Coin", [animation("Default", [drawn("coin-default-000.png")])],
+        "Coin": sprite_type("Coin", [animation("Default", [drawn("coin-default-000.png"), drawn("coin-default-001.png")])],
                             ivars=[ivar_def("value", "number", "Points it is worth."),
                                    ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
                             behaviors=[beh_def("Tween")]),

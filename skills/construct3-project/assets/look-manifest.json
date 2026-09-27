@@ -131,8 +131,13 @@
     },
     {
       "id": "motion.hit",
-      "status": "adopted",
-      "says": "A hit sets the object's colour to white or danger for 0.05 to 0.1 s, with a size punch; not the Flash behavior."
+      "status": "enforced",
+      "strict": true,
+      "says": "A hit shows the shape's hit frame, filled in the flash role with the same outline and shadow, for 0.08 s of real time, then frame 0; never the Flash behavior. The size punch belongs to motion.squash.",
+      "template": "HIT_FLASH['seconds']",
+      "value": "0.08",
+      "helpers": "hit_frame(), hit_flash(), beh_def()",
+      "confirm": "check_look.py: motion.hit"
     },
     {
       "id": "juice.functions",
@@ -168,6 +173,7 @@
   "deliver": [
     "Copy assets/build_project.py to the project's tools/ and rewrite only the game: PALETTE's values by role, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
     "Keep SHAPE_STYLE and the helpers. Draw every stand-in with shape() in whole units and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
+    "Give every object that can be hit a hit_frame() after its shape, and show a hit with hit_flash(obj), last in its block; never the Flash behavior.",
     "Pass painted=True only for a picture meant to hold its own colours and soft edges.",
     "Do not decide a rule whose status is open; ask the user, or keep the template's value."
   ],

@@ -354,3 +354,16 @@ or `danger` for 0.05 to 0.1 s with a size punch, as the three studios of
 *Motion and type* above. The shadow stays at 45°, down and to the right.
 The manifest marks both `adopted`; neither has a check, and the hit has no
 helper in the template yet.
+
+## Update 2026-09-27: the hit in the template
+
+An object's colour in Construct multiplies its image, so Set color cannot
+turn a yellow shape white, and the Set color effect would recolour the baked
+shadow with it. The hit is therefore a frame: `hit_frame()` draws the
+shape's second frame with the same outline and shadow, filled in the new
+`flash` role of `PALETTE` and tagged `hit`; `hit_flash(obj)` gives the three
+actions that show it for `HIT_FLASH["seconds"]`, 0.08 s of real time so that
+slow motion does not stretch it, and return to frame 0. The coin's `Collect`
+uses it. `beh_def("Flash")` stops the generator, and `check_look.py` reports
+a type or family that holds the Flash behavior. The size punch stays with
+`motion.squash`, which is proposed.

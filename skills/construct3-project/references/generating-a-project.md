@@ -156,7 +156,11 @@ habits; they are what makes rerunning safe.
   stops the run on a world instance off the grid, and an object created at
   runtime goes to `grid_random(lo, hi)`, never a raw `random()`. A drawn
   image holds three alpha values, clear, opaque and the shadow's, and a
-  clear pixel is written with no colour under it. A label is
+  clear pixel is written with no colour under it. A hit shows as a colour:
+  `hit_frame(file)` draws the shape's second frame in the `flash` role,
+  tagged `hit`, and `hit_flash(obj)` gives the actions that show it for
+  `HIT_FLASH["seconds"]` and return to frame 0, last in their block, as the
+  coin's `Collect` does. The Flash behavior stops the run. A label is
   `TEXT_SIZE["body"]`, a banner `TEXT_SIZE["title"]`, in `FONT`;
   `hud_text()` stops the run on a colour that reads below 4.5:1 on what is
   behind it, 3:1 for a title, and names the roles that would read there. A

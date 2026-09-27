@@ -1816,7 +1816,7 @@ def test_template_labels_read_on_what_is_behind_them():
     assert (score["properties"]["font"], score["properties"]["size"], score["properties"]["color"]) == ("Arial", 32, [1, 1, 1, 1])
     t.PALETTE["dim"] = (120, 130, 150)                                   # 4.1:1 on the background
     with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 130, 150\) on background \(30, 34, 48\) reads 4\.1:1; "
-                                         r"text of size 32 needs 4\.5:1\. Roles that read on background: text, reward, good;"):
+                                         r"text of size 32 needs 4\.5:1\. Roles that read on background: text, reward, good, flash;"):
         t.hud_text("TimerText", "Time: 30", "top-right", color="dim")
     banner = t.hud_text("WinText", "YOU WIN", "center", size=t.TEXT_SIZE["title"], color="dim")   # 3:1 is enough for a title
     assert banner["properties"]["size"] == 64 and banner["properties"]["color"][:3] == [120 / 255, 130 / 255, 150 / 255]
@@ -1852,7 +1852,7 @@ def test_look_manifest_matches_the_template():
             assert eval(rule["template"], vars(t)) == eval(rule["value"], vars(t)), rule["id"]
         if rule["status"] == "open":
             assert rule.get("options"), rule["id"]
-        for name in re.findall(r"(\w+)\(\)", rule.get("template", "")):
+        for name in re.findall(r"(\w+)\(\)", rule.get("template", "") + rule.get("helpers", "")):
             assert callable(getattr(t, name, None)), (rule["id"], name)
     assert {r["id"] for r in manifest["rules"] if r.get("strict")} >= {
         "alpha.pure", "grid.shape-size", "grid.world-placement", "grid.runtime-spawn"}
@@ -1886,7 +1886,7 @@ def test_template_keeps_alpha_pure_and_shapes_on_the_grid(tmp_path):
 
 def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     code, out = tool(project, "check_look")
-    assert code == 0 and out.splitlines()[-1].startswith("ok: 1 images, 1 world instances on a 32 px grid, "
+    assert code == 0 and out.splitlines()[-1].startswith("ok: 2 images, 1 world instances on a 32 px grid, "
                                                           "1 runtime creations"), out
     t = template_module()
     t.ROOT = project
@@ -1917,6 +1917,34 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     assert lines[-1].startswith("4 findings:")
     code, out = tool(project, "check_look", "--painted", "glow.png")
     assert "glow.png" not in out and out.splitlines()[-1].startswith("3 findings:")
+    edit(project, "objectTypes/Coin.json", lambda d: d["behaviorTypes"].append(
+        {"behaviorId": "Flash", "name": "Flash", "sid": 633333333333333}))
+    code, out = tool(project, "check_look", "--painted", "glow.png")
+    assert "motion.hit: Coin has the Flash behavior Flash; a hit shows as a colour for an instant" in out
+
+
+def test_template_shows_a_hit_as_a_frame_of_the_flash_colour(built, tmp_path):
+    """A hit is the shape's second frame, the same outline and shadow filled in HIT_FLASH's role
+    and tagged "hit", shown for HIT_FLASH["seconds"] of real time and then frame 0 again; the
+    Flash behavior stops the run."""
+    rest = png_pixels(built / "images" / "coin-default-000.png")
+    hit = png_pixels(built / "images" / "coin-default-001.png")
+    t = template_module()
+    middle = len(rest) // 3
+    assert rest[middle][middle][:3] == t.PALETTE["reward"] and hit[middle][middle][:3] == t.PALETTE["flash"]
+    assert [[p[3] for p in row] for row in rest] == [[p[3] for p in row] for row in hit]     # same shape and shadow
+    coin = json.loads((built / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
+    assert [f["tag"] for f in coin["animations"]["items"][0]["frames"]] == ["", "hit"]
+    show, pause, back = t.hit_flash("Coin")
+    assert (show["parameters"], back["parameters"]) == ({"frame-number": '"hit"'}, {"frame-number": "0"})
+    assert pause["parameters"] == {"seconds": "0.08", "use-timescale": False}
+    code, out = tool(built, "print_sheet")
+    assert 'Coin: Set animation frame to "hit"' in out and "System: Wait 0.08 seconds (use time scale: False)" in out, out
+    t.ROOT = tmp_path
+    with pytest.raises(SystemExit, match=r"hit_frame\('ball.png'\): draw the frame first"):
+        t.hit_frame("ball.png")
+    with pytest.raises(SystemExit, match=r"Blink: a hit shows as a colour, not the Flash behavior's blinking"):
+        t.beh_def("Flash", "Blink")
 
 
 def test_stand_in_project_passes_the_style_check(built):

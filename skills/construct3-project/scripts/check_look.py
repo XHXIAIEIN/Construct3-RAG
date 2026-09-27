@@ -15,6 +15,9 @@ layouts and event sheets the editor would load and checks:
                         whole UNITs, the other side being the shadow's
   grid.runtime-spawn    an object created at runtime is not placed at a raw
                         random(): the template's grid_random() rounds it
+  motion.hit            no object type or family has the Flash behavior: a
+                        hit shows as a colour, the template's hit_frame() and
+                        hit_flash()
 
 UNIT is 8 for a viewport 360 px high or less, else 32, as in the template.
 A layer at parallax 0 is the HUD, held to the viewport's edges, and is not
@@ -198,6 +201,20 @@ def check_spawn(root: Path, out: list[str]) -> int:
     return read
 
 
+def check_hit(root: Path, out: list[str]) -> None:
+    """motion.hit over objectTypes/ and families/."""
+    for kind in ("objectTypes", "families"):
+        for path in sorted((root / kind).rglob("*.json")):
+            if path.name.endswith(".uistate.json"):
+                continue
+            item = c3.load(path)
+            for b in item.get("behaviorTypes", []):
+                if b.get("behaviorId") == "Flash":
+                    out.append(f"motion.hit: {item.get('name', path.stem)} has the Flash behavior "
+                               f"{b.get('name')}; a hit shows as a colour for an instant: draw a hit frame with "
+                               f"hit_frame() and show it with hit_flash(), then remove the behavior")
+
+
 def main() -> int:
     c3.utf8_output()
     ap = c3.argument_parser(__doc__.split("\n\n")[0], "examples:\n"
@@ -219,6 +236,7 @@ def main() -> int:
     images = check_alpha(root, args.painted, out)
     instances = check_grid(root, unit, out)
     creates = check_spawn(root, out)
+    check_hit(root, out)
     shown = c3.fitting(out, args.limit)
     for line in out[:shown]:
         print(line)
