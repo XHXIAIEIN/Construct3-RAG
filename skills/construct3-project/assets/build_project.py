@@ -100,10 +100,18 @@ SHAPE_STYLE = {
 # or danger. An object's colour in Construct multiplies its image, so it cannot turn a yellow
 # shape white; a frame can.
 HIT_FLASH = {"role": "flash", "seconds": 0.08}
-# With the colour, the size: set at once to a squash of the image's size, then tweened back to
-# it, the hit squash of [author]'s merge (0.8 x 1.2 over 0.25 s). size_punch() shows it, hit()
-# shows both.
-SIZE_PUNCH = {"width": 0.8, "height": 1.2, "seconds": 0.25, "ease": "easeoutback"}
+# Squash and stretch: the size set at once to a share of the image's size, held, then tweened
+# back to it. [author]'s recipes: a hit (merge), a landing and a jump; squash(obj, kind) shows
+# one, hit() a hit's with its colour. Squash what is drawn, never the object that collides: a
+# Platform or Solid object that grows sinks into the floor. The art is a second object pinned
+# to an invisible collision mask, with its origin at its feet, shape(..., oy=1).
+SQUASH = {
+    "hit": {"width": 0.8, "height": 1.2, "hold": 0, "seconds": 0.25, "ease": "easeoutback"},
+    "land": {"width": 1.2, "height": 0.8, "hold": 0, "seconds": 0.5, "ease": "easeoutelastic"},
+    "jump": {"width": 0.7, "height": 1.3, "hold": 0.2, "seconds": 0.75, "ease": "easeoutelastic"},
+}
+# the behaviors whose object collides, by behaviorId; squash() stops the run on one of them
+COLLIDING = ("Platform", "EightDir", "Physics", "Car", "solid", "jumpthru")
 FONT = "Arial"                             # one font for every label
 TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
@@ -627,19 +635,44 @@ def hit_flash(obj: str) -> list:
             act("set-animation-frame", obj, {"frame-number": "0"})]
 
 
-def size_punch(obj: str, tween: str = "Tween") -> list:
-    """The actions that squash obj to SIZE_PUNCH's share of its image's size and tween it back
-    under the tag "punch". The rest size is the image's, the size shape_inst() writes; obj
-    needs the Tween behavior, named `tween` on it."""
-    return [act("set-size", obj, {"width": f"Self.ImageWidth * {SIZE_PUNCH['width']:g}",
-                                  "height": f"Self.ImageHeight * {SIZE_PUNCH['height']:g}"}),
-            tween2(obj, "punch", "size", "Self.ImageWidth", "Self.ImageHeight", f"{SIZE_PUNCH['seconds']:g}",
-                   SIZE_PUNCH["ease"], beh=tween)]
+SQUASHED: set[str] = set()                 # the objects squash() acts on, checked in build_all()
+
+
+def squash(obj: str, kind: str, tween: str = "Tween") -> list:
+    """The actions of a squash of SQUASH, "hit", "land" or "jump": stop the squash obj is in,
+    set its size to the kind's share of its image's size, hold it, and tween it back under the
+    tag "squash". The rest size is the image's, the size shape_inst() writes. obj is the art,
+    not the object that collides, and needs the Tween behavior, named `tween` on it; a hold
+    waits, so the actions go last in their block.
+
+        event("Squash the art on landing", [cond("on-landed", "Player", beh="Platform")],
+              squash("PlayerArt", "land"))"""
+    if kind not in SQUASH:
+        sys.exit(f"squash({obj!r}, {kind!r}): the kinds are {', '.join(SQUASH)}; add one to SQUASH")
+    k = SQUASH[kind]
+    SQUASHED.add(obj)
+    return [act("stop-tweens", obj, {"tags": q("squash")}, beh=tween),
+            act("set-size", obj, {"width": f"Self.ImageWidth * {k['width']:g}",
+                                  "height": f"Self.ImageHeight * {k['height']:g}"}),
+            *([wait(f"{k['hold']:g}", use_timescale=False)] if k["hold"] else []),
+            tween2(obj, "squash", "size", "Self.ImageWidth", "Self.ImageHeight", f"{k['seconds']:g}",
+                   k["ease"], beh=tween)]
+
+
+def squash_the_art(types: dict, families: dict) -> None:
+    """Stops the run when squash() acts on an object that collides: its box grows into the floor."""
+    for obj in sorted(SQUASHED):
+        item = types.get(obj) or families.get(obj) or {}
+        hits = [b["behaviorId"] for b in item.get("behaviorTypes", []) if b["behaviorId"] in COLLIDING]
+        if hits:
+            sys.exit(f"squash({obj!r}): {obj} has {', '.join(hits)} and collides, so a squash moves its collision "
+                     f"box; squash its art instead, a second object drawn with shape(..., oy=1) and pinned to "
+                     f"{obj} with add_child(), and keep {obj} invisible")
 
 
 def hit(obj: str, tween: str = "Tween") -> list:
-    """A hit: the size punch, then the colour flash, whose wait makes it last in its block."""
-    return [*size_punch(obj, tween), *hit_flash(obj)]
+    """A hit: the squash of SQUASH["hit"], then the colour flash, whose wait makes it last in its block."""
+    return [*squash(obj, "hit", tween), *hit_flash(obj)]
 
 
 def grid_random(lo: int, hi: int) -> str:
@@ -833,7 +866,7 @@ def scoring() -> list:
         *procedure("Score the coin, show the hit, then shrink it away", custom_action("Coin", "Collect", steps(
             ("Score it, then show the hit", [call("AddScore", "Coin.value"), *hit("Coin")]),
             ("Shrink it away once the punch is over", [
-                wait(f"{SIZE_PUNCH['seconds'] - HIT_FLASH['seconds']:g}", use_timescale=False),
+                wait(f"{SQUASH['hit']['seconds'] - HIT_FLASH['seconds']:g}", use_timescale=False),
                 tween2("Coin", "collect", "size", "0", "0", "0.25", "easeinback", destroy=True)]),
         ))),
         *procedure("Add points and show the score", func("AddScore", [
@@ -1306,6 +1339,7 @@ def build_all() -> None:
     for name, lay in layouts.items():
         write_json(f"layouts/{name}.json", lay)
     sheet = build_event_sheet()
+    squash_the_art(types, families)
     write_json(f"eventSheets/{sheet['name']}.json", sheet)
     with c3proj.open(encoding="utf-8") as f:
         existing = json.load(f)

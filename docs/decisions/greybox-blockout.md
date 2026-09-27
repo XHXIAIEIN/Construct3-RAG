@@ -381,3 +381,18 @@ scores, shows the hit, and shrinks the coin away once the punch is over; the
 tap that starts it now requires that no tween is playing on the coin, so a
 coin already being collected is not collected twice. `motion.squash`, for
 landing and jumping, stays proposed.
+
+## Update 2026-09-27: landing and jump squash
+
+The user asked for the landing and jump squash. `SQUASH` holds three kinds,
+each [author]'s recipe from `published-game-visual-language.md`: a hit, 0.8 ×
+1.2 back in 0.25 s `easeoutback`; a landing, 1.2 × 0.8 back in 0.5 s
+`easeoutelastic`; a jump, 0.7 × 1.3 held 0.2 s, back in 0.75 s
+`easeoutelastic`. `squash(obj, kind)` stops the squash the object is in,
+sets the size, holds it and tweens back under the tag `squash`; the earlier
+punch is its `hit` kind. A Platform or Solid object that grows moves its
+collision box into the floor, and [author] separates the two in 13 of 18
+games, so a squash acts on the art pinned to an invisible mask. The
+generator stops on a squash of an object whose behavior collides, and
+`check_look.py` reports one. `motion.squash` is adopted and
+`motion.squash-art` enforced.

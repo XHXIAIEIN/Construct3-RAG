@@ -1094,7 +1094,7 @@ def test_a_finding_names_the_place_a_plan_changes(project):
     code, out = plan(project,
                      {"event": 2, "condition": 1, "set": {"isInverted": False}},
                      {"event": 5, "condition": 1, "set": {"parameters": {"type": "start"}}},
-                     {"event": 6, "action": 9, "set": {"behaviorType": "Tween"}},
+                     {"event": 6, "action": 10, "set": {"behaviorType": "Tween"}},
                      {"event": 8, "action": 2, "set": {"id": "set-text"}},
                      {"move": 7, "after": 6})
     assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
@@ -1859,7 +1859,8 @@ def test_look_manifest_matches_the_template():
             assert eval(rule["template"], vars(t)) == eval(rule["value"], vars(t)), rule["id"]
         if rule["status"] == "open":
             assert rule.get("options"), rule["id"]
-        for name in re.findall(r"(\w+)\(\)", rule.get("template", "") + rule.get("helpers", "")):
+        named = rule.get("helpers", "") + ("" if "value" in rule else rule.get("template", ""))
+        for name in re.findall(r"(\w+)\(\)", named):
             assert callable(getattr(t, name, None)), (rule["id"], name)
     assert {r["id"] for r in manifest["rules"] if r.get("strict")} >= {
         "alpha.pure", "grid.shape-size", "grid.world-placement", "grid.runtime-spawn"}
@@ -1928,6 +1929,33 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
         {"behaviorId": "Flash", "name": "Flash", "sid": 633333333333333}))
     code, out = tool(project, "check_look", "--painted", "glow.png")
     assert "motion.hit: Coin has the Flash behavior Flash; a hit shows as a colour for an instant" in out
+    edit(project, "objectTypes/Coin.json", lambda d: d["behaviorTypes"].append(
+        {"behaviorId": "solid", "name": "Solid", "sid": 644444444444444}))
+    code, out = tool(project, "check_look", "--painted", "glow.png")
+    assert ("motion.squash-art: sheet Game: Coin is squashed but has solid, so its collision box grows into the "
+            "floor; squash its art") in out
+
+
+def test_template_squashes_the_art_on_a_hit_a_landing_and_a_jump():
+    """A squash stops the one the object is in, sets a share of the image's size, holds it for a
+    jump, and tweens back under "squash"; one acting on an object that collides stops the run."""
+    t = template_module()
+    stop, squash, back = t.squash("Coin", "hit")
+    assert stop == {**stop, "id": "stop-tweens", "behaviorType": "Tween", "parameters": {"tags": '"squash"'}}
+    assert squash["parameters"] == {"width": "Self.ImageWidth * 0.8", "height": "Self.ImageHeight * 1.2"}
+    assert (back["parameters"]["tags"], back["parameters"]["end-x"], back["parameters"]["time"],
+            back["parameters"]["ease"]) == ('"squash"', "Self.ImageWidth", "0.25", "easeoutback")
+    _, land, back = t.squash("PlayerArt", "land")
+    assert land["parameters"]["width"] == "Self.ImageWidth * 1.2" and back["parameters"]["ease"] == "easeoutelastic"
+    _, jump, hold, back = t.squash("PlayerArt", "jump")
+    assert (jump["parameters"]["height"], hold["parameters"]["seconds"], back["parameters"]["time"]) == \
+        ("Self.ImageHeight * 1.3", "0.2", "0.75")
+    with pytest.raises(SystemExit, match=r"squash\('PlayerArt', 'spin'\): the kinds are hit, land, jump"):
+        t.squash("PlayerArt", "spin")
+    t.squash_the_art({"PlayerArt": {"behaviorTypes": [t.beh_def("Tween")]}}, {})
+    with pytest.raises(SystemExit, match=r"squash\('Player'\): Player has Platform and collides, .* squash its art"):
+        t.squash("Player", "land")
+        t.squash_the_art({"Player": {"behaviorTypes": [t.beh_def("Platform"), t.beh_def("Tween")]}}, {})
 
 
 def test_template_shows_a_hit_as_a_frame_of_the_flash_colour(built, tmp_path):
@@ -1945,12 +1973,8 @@ def test_template_shows_a_hit_as_a_frame_of_the_flash_colour(built, tmp_path):
     show, pause, back = t.hit_flash("Coin")
     assert (show["parameters"], back["parameters"]) == ({"frame-number": '"hit"'}, {"frame-number": "0"})
     assert pause["parameters"] == {"seconds": "0.08", "use-timescale": False}
-    squash, back = t.size_punch("Coin")
-    assert squash["parameters"] == {"width": "Self.ImageWidth * 0.8", "height": "Self.ImageHeight * 1.2"}
-    assert (back["behaviorType"], back["parameters"]["tags"], back["parameters"]["end-x"], back["parameters"]["time"],
-            back["parameters"]["ease"]) == ("Tween", '"punch"', "Self.ImageWidth", "0.25", "easeoutback")
-    assert [a["id"] for a in t.hit("Coin")] == ["set-size", "tween-two-properties", "set-animation-frame", "wait",
-                                                "set-animation-frame"]
+    assert [a["id"] for a in t.hit("Coin")] == ["stop-tweens", "set-size", "tween-two-properties",
+                                                "set-animation-frame", "wait", "set-animation-frame"]
     code, out = tool(built, "print_sheet")
     assert 'Coin: Set size to (Self.ImageWidth * 0.8, Self.ImageHeight * 1.2)' in out
     assert 'Coin: Set animation frame to "hit"' in out and "System: Wait 0.08 seconds (use time scale: False)" in out, out

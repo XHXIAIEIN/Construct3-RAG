@@ -18,6 +18,9 @@ layouts and event sheets the editor would load and checks:
   motion.hit            no object type or family has the Flash behavior: a
                         hit shows as a colour, the template's hit_frame() and
                         hit_flash()
+  motion.squash-art     a squash, a size set to a share of the image's size,
+                        acts on the drawn art, not on an object whose
+                        behavior collides
 
 UNIT is 8 for a viewport 360 px high or less, else 32, as in the template.
 A layer at parallax 0 is the HUD, held to the viewport's edges, and is not
@@ -201,6 +204,37 @@ def check_spawn(root: Path, out: list[str]) -> int:
     return read
 
 
+COLLIDING = ("Platform", "EightDir", "Physics", "Car", "solid", "jumpthru")
+
+
+def colliding_items(root: Path) -> dict[str, list[str]]:
+    """Object types and families by name, with the behaviors that make them collide."""
+    found = {}
+    for kind in ("objectTypes", "families"):
+        for path in sorted((root / kind).rglob("*.json")):
+            if not path.name.endswith(".uistate.json"):
+                item = c3.load(path)
+                ids = [b.get("behaviorId") for b in item.get("behaviorTypes", []) if b.get("behaviorId") in COLLIDING]
+                if ids:
+                    found[item.get("name", path.stem)] = ids
+    return found
+
+
+def check_squash(root: Path, out: list[str]) -> None:
+    """motion.squash-art over eventSheets/."""
+    colliding = colliding_items(root)
+    for path in sorted((root / "eventSheets").rglob("*.json")):
+        if path.name.endswith(".uistate.json"):
+            continue
+        sheet = c3.load(path)
+        for a in actions_of(sheet.get("events", [])):
+            obj = a.get("objectClass")
+            if a.get("id") == "set-size" and obj in colliding and "ImageWidth" in str(a.get("parameters", {})):
+                out.append(f"motion.squash-art: sheet {sheet.get('name', path.stem)}: {obj} is squashed but has "
+                           f"{', '.join(colliding[obj])}, so its collision box grows into the floor; squash its art, "
+                           f"a second object drawn with shape(..., oy=1) and pinned to {obj}")
+
+
 def check_hit(root: Path, out: list[str]) -> None:
     """motion.hit over objectTypes/ and families/."""
     for kind in ("objectTypes", "families"):
@@ -237,6 +271,7 @@ def main() -> int:
     instances = check_grid(root, unit, out)
     creates = check_spawn(root, out)
     check_hit(root, out)
+    check_squash(root, out)
     shown = c3.fitting(out, args.limit)
     for line in out[:shown]:
         print(line)
