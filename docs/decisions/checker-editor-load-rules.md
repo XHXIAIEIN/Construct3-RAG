@@ -59,6 +59,21 @@ Option 2 as the default, and option 3 as the step after it.
   the five outside a text literal. A Haiku eval run had written
   `Coin.value == 5 ? 1.5 : 1`, which the checker passed and the editor
   refused.
+- The 91 projects of the eval runs and the game folders that passed the
+  checker on 2026-09-28 were opened in the editor. Three failed: a variable
+  written by hand without `comment`, and two snapshots whose listed icons
+  were not on disk. Probes that took one text key out of each event kind
+  of the stand-in, one at a time, found three more keys the editor needs
+  and the checker did not ask for (a comment's `text`, a group's
+  `description`, a variable's `comment`), and that `functionReturnType`
+  and `aceType` stop the open when missing or outside `none`, `number`,
+  `string`, `any` and `action`. A function parameter's `comment` and a
+  custom action's `functionReturnType`, `functionDescription` and
+  `functionCategory` may be left out. Every official example writes all
+  five; the sweep changed no finding. The remaining refusal is an
+  expression type mismatch, which the checker does not read.
+- `open_in_editor.py --jobs 3` timed out on 7 of the 91 with "no answer in
+  85 seconds"; each opened alone.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from

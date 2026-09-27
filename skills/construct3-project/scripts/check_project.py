@@ -43,6 +43,14 @@ except ImportError:
 # and the plugin's expressions live side by side, compared without case.
 NAME_DROPS = set(".。,，\"“”(（)）?？:：\\/;*|'-`!¬£$%^&+=<>{}[]@#~­​")
 VARIABLE_TYPES = ("number", "string", "boolean")
+# Event keys the editor reads as text and stops on when missing, with its message.
+EVENT_TEXT = (("comment", "text", "Cannot read properties of undefined (reading 'endsWith')"),
+              ("group", "description", "expected string"),
+              ("variable", "comment", "expected string"))
+FUNCTION_RETURN_TYPES = ("none", "number", "string", "any")
+# rootFileFolders kind -> the folder the editor saves its files in, as the official examples hold them.
+ROOT_FILE_FOLDERS = {"general": "files", "icon": "icons", "sound": "sounds", "music": "music",
+                     "font": "fonts", "script": "scripts"}
 # how a layout instance writes the value of an instance variable of each type
 JSON_TYPES = {"number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
               "string": lambda v: isinstance(v, str), "boolean": lambda v: isinstance(v, bool)}
@@ -959,6 +967,17 @@ class Checker:
         if "children" in ev and not isinstance(ev["children"], list):
             self.err(f"{where}: children is {ev['children']!r}; sub-events are a list, and an event with none "
                      f"leaves the key out")
+        # Text the editor reads without a default; an empty one is written "".
+        for kind, key, message in EVENT_TEXT:
+            if et == kind and not isinstance(ev.get(key), str):
+                self.err(f"{where}: the {kind} has {key} {ev.get(key)!r}; write \"{key}\": \"\" when it has none, "
+                         f"the editor reads it as text and stops with \"{message}\"")
+        if et == "function-block" and ev.get("functionReturnType") not in FUNCTION_RETURN_TYPES:
+            self.err(f"{where}: functionReturnType {ev.get('functionReturnType')!r} is not one of "
+                     f"{', '.join(FUNCTION_RETURN_TYPES)}; the editor stops with \"function has wrong return type\"")
+        if et == "custom-ace-block" and ev.get("aceType") != "action":
+            self.err(f"{where}: aceType {ev.get('aceType')!r} should be \"action\", the one kind of custom ACE; "
+                     f"the editor stops with \"invalid ACE type\"")
 
     def walk(self, events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None,
              depth: int = 0) -> None:
@@ -1196,10 +1215,14 @@ class Checker:
 
     def check_files_and_addons(self) -> None:
         p = self.p
-        for name, folder in folder_items(p.data.get("rootFileFolders", {}).get("general", {})):
-            fname = name["name"] if isinstance(name, dict) else name
-            if not (p.root / "files" / folder / fname).exists():
-                self.err(f"project file {fname} is listed in project.c3proj but missing from files/{folder}")
+        # The editor opens every listed file and stops with "missing file path 'icons\icon-16.png'".
+        for kind, directory in ROOT_FILE_FOLDERS.items():
+            for name, folder in folder_items(p.data.get("rootFileFolders", {}).get(kind, {})):
+                fname = name["name"] if isinstance(name, dict) else name
+                if not (p.root / directory / folder / fname).exists():
+                    shown = (Path(directory) / folder / fname).as_posix()
+                    self.err(f"{kind} file {fname} is listed in project.c3proj but {shown} is missing; the editor "
+                             f"stops with \"missing file path\". Add the file, or take it out of rootFileFolders")
 
         addon_ids = {a["id"] for a in p.data.get("usedAddons", [])}
 

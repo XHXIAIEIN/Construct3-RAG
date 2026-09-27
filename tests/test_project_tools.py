@@ -857,7 +857,7 @@ def test_checker_names_what_the_editor_reads_out_of_a_layout_or_a_sheet(project,
     (lambda ev, d: ev.update(children={}), "children is {}"),
     (lambda ev, d: d["events"].append({"eventType": "script", "script": 5}), '"invalid script data"'),
     (lambda ev, d: d["events"].append("hello"), "an event is 'hello'"),
-    (lambda ev, d: d["events"].append({"eventType": "group", "title": "Empty"}), None),
+    (lambda ev, d: d["events"].append({"eventType": "group", "title": "Empty", "description": ""}), None),
 ])
 def test_checker_names_the_lists_the_editor_walks_inside_a_sheet(project, change, said):
     """A block loops over its conditions and actions without looking first; a group
@@ -1590,6 +1590,33 @@ def test_self_in_a_system_parameter_names_the_object_to_write(project):
 def test_self_in_an_objects_own_parameter_passes(project):
     out = findings(project, lambda s: collect_tween(s)["parameters"].update(**{"end-x": "Self.X"}))
     assert "Self" not in out, out
+
+
+def test_event_text_keys_return_type_and_ace_type_are_the_editors(project):
+    """Opened in the editor, each of these stops the project; the checker passed them before."""
+    def change(s):
+        rows = s["events"]
+        next(e for e in rows if e["eventType"] == "variable").pop("comment")
+        events(s)["restart"].pop("description")
+        next(e for e in events(s)["restart"]["children"] if e["eventType"] == "comment").pop("text")
+        events(s)["add_score"]["functionReturnType"] = "void"
+        events(s)["collect"]["aceType"] = "condition"
+    out = findings(project, change)
+    assert "has comment None; write \"comment\": \"\" when it has none, the editor reads it as text and stops " \
+           "with \"expected string\"" in out
+    assert "the group has description None" in out
+    assert "the comment has text None" in out and "reading 'endsWith'" in out
+    assert "functionReturnType 'void' is not one of none, number, string, any" in out
+    assert "aceType 'condition' should be \"action\"" in out
+
+
+def test_a_listed_root_file_exists_in_its_folder(project):
+    """The editor opens every file rootFileFolders lists: "missing file path 'icons\\icon-16.png'"."""
+    def change(d):
+        d.setdefault("rootFileFolders", {}).setdefault("icon", {"items": [], "subfolders": []})["items"].append(
+            {"name": "icon-512.png", "type": "image/png", "sid": 7, "icon-info": {"purpose": "app-icon"}})
+    out = findings(project, change, "project.c3proj")
+    assert "icon file icon-512.png is listed in project.c3proj but icons/icon-512.png is missing" in out, out
 
 
 def test_c_style_operators_are_refused_with_the_construct_ones(project):
