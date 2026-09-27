@@ -2,7 +2,6 @@
 
 Date: 2026-09-27
 Schema: Construct 3 r495.2; sampled exports span older Construct 2 and Construct 3 releases
-Status: research record; candidate template values below are not implemented
 
 ## Problem
 
@@ -39,17 +38,6 @@ exports, decoded event sheets, image contact sheets, generated statistics and
 the three author-level reading notes. None of those third-party exports or
 derived image sheets is required to use the repository.
 
-Evidence snapshot hashes:
-
-| File or set | SHA-256 |
-|-------------|---------|
-| Sorted hashes of 38 `manifest.json` files | `350adb2adac85da4e83c682547a0ec59776cedcf0dbe04cecf11fb56d141d3f0` |
-| `stats/stats.json` | `fa499bd366f5685fb456243e972f78324978bbfeab8124ca025fdb162a4919ca` |
-| `stats/compare_authors.txt` | `5bbd1f73fc9e8a0e63611df880eacaf758c4fdeec905307b7af9d2f60951e6d2` |
-| `reports/[author].md` | `9319a7b0856c0bfd7c6bc4a22c9d1535170e9d5e05774410d7b4d064db556b62` |
-| `reports/[author].md` | `7fbddaf3681e8f480bd1519b2f460e7c7cecb6478e5662e9e705014d2676188d` |
-| `reports/[author].md` | `14625ecdf63386de96dfc36b1da67c4557b63ef1a8f9d84a579c3781ab5ab333` |
-
 ### Shared visual construction
 
 All three authors use white source images as tintable material. White accounts
@@ -58,7 +46,7 @@ effects receive color at runtime; characters more often keep finished colors.
 This separates shape vocabulary from a world palette and lets one asset set
 support many level themes.
 
-Outlines are much heavier than the draft greybox value of `UNIT / 16`:
+Outlines are heavy:
 
 - [author] commonly bakes a 4 px black edge into geometry around 74 px high.
 - [author] applies a 10–16 px outline to a whole 1080p game layer.
@@ -182,19 +170,21 @@ finished assets and studio-specific palettes out of the template.
 
 ## Decision
 
-Use the structural rules as evidence for the next greybox experiment. Do not
-copy characters, skins, fonts, shaders, exact palettes, advertisements or
-progression systems.
+Transfer the structural rules. Do not copy characters, skins, fonts, shaders,
+exact palettes, advertisements or progression systems.
 
-Test these candidate defaults before changing the generator template:
+The generator template holds these, as `greybox-blockout.md` records:
 
-- outline width: 0.75% of the viewport short edge;
+- outline: `UNIT / 4`, drawn into the image;
 - checker contrast: at most 1.2;
-- optional hard shadow: one scene direction, 2–2.7% short-edge offset and
-  0.5–0.75 opacity;
-- squash recovery: set the impact size immediately, then return over 0.5 s
-  with `easeoutelastic`;
-- hit color: set white or danger color for 0.05–0.1 s instead of using Flash;
+- hard shadow: one scene direction at 45°, 2.7% short-edge offset, 0.5
+  opacity, drawn into the image;
+- squash: the impact size set at once, then a Size tween back, [author]'s hit,
+  landing and jump recipes;
+- hit color: a white frame for 0.08 s instead of Flash.
+
+Proposed, not in the template:
+
 - juice functions: screen shake, size impact, slow motion and zoom impact;
 - shake magnitudes: proportional tiers around 0.3%, 1%, 2.8% and 5% of the
   viewport short edge;
@@ -203,17 +193,16 @@ Test these candidate defaults before changing the generator template:
 - pacing: five short levels per world, ordinary victory around 1–2 s, world
   victory around 4–6 s, and failure restart around 0.75–1 s.
 
-Keep the draft’s light neutral direction until a mock-up shows that the
-[author]-style mid-grey ground improves readability. A hard shadow also remains
-a visual experiment, not an approved default.
+The template keeps a light neutral ground until a mock-up shows that a
+[author]-style mid-grey ground improves readability.
 
 Use `python -m scripts.reference_games` to reproduce the analysis. Keep all
 downloaded exports and derived images in the ignored local workspace.
 
 ## Re-evaluate when
 
-- A live Construct preview compares the outline and shadow candidates at both
-  the design resolution and a small embedded size.
+- A live Construct preview of the template's outline and shadow, at both the
+  design resolution and a small embedded size, reads worse than the mock-ups.
 - Audio timing and real input latency can be measured alongside the event data.
 - A future Construct release changes the export format, Tween property order or
   runtime reference table.

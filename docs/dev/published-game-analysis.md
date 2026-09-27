@@ -99,8 +99,9 @@ Add a public source, stable output folder and author to
 groups so aggregate statistics do not assign one implementation to the wrong
 studio.
 
-Regenerate the local reports, inspect errors in each `manifest.json`, and record
-the sample size and evidence hashes in the decision that uses the data.
+Regenerate the local reports, inspect errors in each `manifest.json`, and state
+the sample size in the decision that uses the data; hashes and raw counts stay
+in the evidence folder.
 
 ## Interpret the evidence
 

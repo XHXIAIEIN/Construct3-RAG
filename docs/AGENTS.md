@@ -52,9 +52,9 @@ The project skill and the prompts:
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
 | `event-sheet-design-guidance.md` | The event sheet prompts, the style checks and the generator's placement helpers |
-| `published-game-visual-language.md` | Which visual, motion, camera and pacing rules repeated across 38 published Construct games, and which candidate greybox values still need a preview |
+| `published-game-visual-language.md` | Which visual, motion, camera and pacing rules repeated across 38 published Construct games, and which of them the template took |
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
-| `greybox-blockout.md` | Draft: the blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
+| `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |
 
 The lookup service:
