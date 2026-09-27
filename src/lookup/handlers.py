@@ -88,8 +88,20 @@ class LookupHandlers:
             return "\n".join(contexts), all_matches
 
         ace_type = ace_types[0] if ace_types else intent.ace_type
-        items = schema.get(ace_type, [])
-        if not items:
+        # The complete list is the addon's own ACEs, then the shared ones its
+        # commonAces lists from _common.json, keyed there.
+        sources: list[tuple[str, str, list[dict]]] = [
+            (intent.plugin_id, schema.get("name_zh", ""), schema.get(ace_type, []))
+        ]
+        if schema.get("commonAces"):
+            common_schema = self.schema_index.get_schema("_common", False)
+            if common_schema:
+                sources.append((
+                    "_common",
+                    common_schema.get("name_zh", ""),
+                    self._plugin_common_aces(common_schema, schema).get(ace_type, []),
+                ))
+        if not any(items for _, _, items in sources):
             return "", []
 
         singular = {
@@ -106,35 +118,36 @@ class LookupHandlers:
         lines = []
         zh_pairs: list[tuple[str, str]] = []
         matches: list[LookupMatch] = []
-        for item in items:
-            name_en = item.get("name_en", "")
-            name_zh = item.get("name_zh", "")
-            description = item.get("description_en", "") or item.get(
-                "description_zh", ""
-            )
-            params = item.get("params", [])
-            signature = (
-                format_condition_sig(name_en, params)
-                if ace_type == "conditions"
-                else f"{name_en}({format_params(params)})"
-            )
-            lines.append(f"{prefix}: {signature}: {description}")
-            if name_zh and name_zh != name_en:
-                zh_pairs.append((name_en, name_zh))
-            matches.append(
-                match_from_item(
-                    item,
-                    singular.get(ace_type, ace_type),
-                    intent.plugin_id,
-                    plugin_zh,
-                    name_en,
-                    name_zh,
-                    params,
-                    collection=(
-                        "behaviors" if intent.is_behavior else "plugins"
-                    ),
+        for source_id, source_zh, items in sources:
+            for item in items:
+                name_en = item.get("name_en", "")
+                name_zh = item.get("name_zh", "")
+                description = item.get("description_en", "") or item.get(
+                    "description_zh", ""
                 )
-            )
+                params = item.get("params", [])
+                signature = (
+                    format_condition_sig(name_en, params)
+                    if ace_type == "conditions"
+                    else f"{name_en}({format_params(params)})"
+                )
+                lines.append(f"{prefix}: {signature}: {description}")
+                if name_zh and name_zh != name_en:
+                    zh_pairs.append((name_en, name_zh))
+                matches.append(
+                    match_from_item(
+                        item,
+                        singular.get(ace_type, ace_type),
+                        source_id,
+                        source_zh,
+                        name_en,
+                        name_zh,
+                        params,
+                        collection=(
+                            "behaviors" if intent.is_behavior else "plugins"
+                        ),
+                    )
+                )
 
         lines.append(build_zh_line(plugin_en, plugin_zh, zh_pairs))
         example_tag = self._get_example_tag(schema, intent)

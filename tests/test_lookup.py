@@ -272,6 +272,8 @@ class TestLookupEngine:
         )
         assert "A:" in resp.context  # compact action prefix
         assert "zh:" in resp.context  # zh mapping line
+        # The shared actions Sprite's commonAces lists are part of its list.
+        assert ("plugins", "_common", "action", "destroy") in result_keys(resp)
 
     def test_prop_list(self):
         engine = make_engine()

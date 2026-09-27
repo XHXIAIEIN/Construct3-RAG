@@ -49,11 +49,16 @@ def _key(spec: dict[str, Any]) -> tuple[str, ...]:
 
 
 def _schema_list_size(case: dict[str, Any]) -> int:
-    """How many entries the listed sections of the entity's schema file hold."""
+    """How many entries the listed sections of the entity hold: its own schema
+    file plus the shared ACEs its ``commonAces`` lists from ``_common.json``."""
     entity = case["expected_entity"]
     folder = "behaviors" if entity["kind"] == "behavior" else "plugins"
     schema = json.loads((SCHEMAS / folder / f"{entity['id']}.json").read_text(encoding="utf-8"))
-    return sum(len(schema.get(section, [])) for section in case["expected_ace_types"])
+    common = schema.get("commonAces", {})
+    return sum(
+        len(schema.get(section, [])) + len(common.get(section, []))
+        for section in case["expected_ace_types"]
+    )
 
 
 def _entity(engine: LookupEngine, intent: LookupIntent | None, response: LookupResponse | None) -> dict[str, str] | None:
