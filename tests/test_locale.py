@@ -15,7 +15,6 @@ from src.locale.resources import (
     HOWTO_HARD_SKIP_ZH,
     HOWTO_SOFT_SKIP_ZH,
     LIST_QUERY_PATTERNS,
-    SCOPED_ACE_TYPE_RULES_ZH_EN,
     SUPPORTED_LOCALES,
     TRANSLATE_QUERY_PATTERNS,
 )
@@ -28,8 +27,6 @@ def test_catalog_stores_localized_values_side_by_side():
     for resource in CATALOG["query"]["ace_types"].values():
         assert set(resource["aliases"]) == locale_keys
         assert set(resource["intent_keywords"]) == locale_keys
-    for rule in CATALOG["query"]["scoped_ace_type_rules"].values():
-        assert set(rule["terms"]) == locale_keys
 
 
 def _catalog_resources():
@@ -41,7 +38,6 @@ def _catalog_resources():
     yield query["example_keywords"]
     yield from query["tokenization"].values()
     yield from query["ambiguity"].values()
-    yield from query["scoped_ace_type_rules"].values()
     yield from CATALOG["expansion"]["directed_aliases"].values()
 
 
@@ -82,7 +78,6 @@ def test_ace_intent_resources_only_target_supported_structural_types():
     supported = {"conditions", "actions", "expressions", "properties"}
     assert set(ACE_INTENT_KEYWORDS) == supported
     assert set(ACE_TYPE_ALIASES.values()) == supported
-    assert all(set(rule.ace_types) <= supported for rule in SCOPED_ACE_TYPE_RULES_ZH_EN)
 
 
 def test_query_grammar_patterns_are_anchored_and_compilable():

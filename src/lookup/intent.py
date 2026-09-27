@@ -27,7 +27,6 @@ from src.locale.resources import (
     HOWTO_SOFT_SKIP_ZH,
     LIST_QUERY_PATTERNS,
     QUERY_PARTICLE_SPLIT_PATTERN_ZH,
-    SCOPED_ACE_TYPE_RULES_ZH_EN,
     TRANSLATE_QUERY_PATTERNS,
 )
 from src.lookup.schema_index import SchemaIndex
@@ -318,16 +317,7 @@ class IntentClassifier:
                 topic_tokens.update(seg for seg in jieba.lcut(token, cut_all=True) if len(seg) >= 2)
 
         # 6. Infer ACE types from topic tokens (narrow search if possible)
-        topic_lower = {token.lower() for token in topic_tokens}
-        ace_types = []
-        for rule in SCOPED_ACE_TYPE_RULES_ZH_EN:
-            if rule.plugin_id not in (None, plugin_id):
-                continue
-            if rule.terms & topic_lower:
-                ace_types = list(rule.ace_types)
-                break
-        if not ace_types:
-            ace_types = _infer_ace_types(topic_tokens)
+        ace_types = _infer_ace_types(topic_tokens)
         if not ace_types:
             ace_types = ["conditions", "actions", "expressions"]
 

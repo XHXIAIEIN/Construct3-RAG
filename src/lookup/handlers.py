@@ -253,13 +253,21 @@ class LookupHandlers:
         return value
 
     @staticmethod
-    def _supports_common_aces(schema: dict, is_behavior: bool) -> bool:
-        if is_behavior:
-            return False
-        property_ids = {
-            prop.get("id", "") for prop in schema.get("properties", [])
+    def _plugin_common_aces(common_schema: dict, schema: dict) -> dict:
+        """The part of `_common` the plugin's `commonAces` lists, by ACE type."""
+        plugin_common = {
+            key: value
+            for key, value in common_schema.items()
+            if key not in ("conditions", "actions", "expressions")
         }
-        return "initially-visible" in property_ids
+        for ace_type, ace_ids in schema.get("commonAces", {}).items():
+            listed = set(ace_ids)
+            plugin_common[ace_type] = [
+                item
+                for item in common_schema.get(ace_type, [])
+                if item.get("id") in listed
+            ]
+        return plugin_common
 
     def _scoped_filter_words(
         self,
@@ -323,10 +331,12 @@ class LookupHandlers:
         schemas_to_search: list[tuple[str, dict, bool]] = [
             (intent.plugin_id, schema, intent.is_behavior)
         ]
-        if self._supports_common_aces(schema, intent.is_behavior):
+        if schema.get("commonAces"):
             common_schema = self.schema_index.get_schema("_common", False)
             if common_schema:
-                schemas_to_search.append(("_common", common_schema, False))
+                schemas_to_search.append(
+                    ("_common", self._plugin_common_aces(common_schema, schema), False)
+                )
 
         candidates: list[
             tuple[float, int, int, int, int, int, str, dict, str, dict]
@@ -343,19 +353,24 @@ class LookupHandlers:
                 for item_order, item in enumerate(
                     current_schema.get(ace_type, [])
                 ):
-                    name_text = " ".join(
-                        (
-                            item.get("name_zh", ""),
-                            item.get("name_en", ""),
-                        )
-                    ).lower()
+                    names = (
+                        item.get("name_zh", "").lower(),
+                        item.get("name_en", "").lower(),
+                    )
                     matched_words = [
-                        word for word in scoped_words if word in name_text
+                        word
+                        for word in scoped_words
+                        if any(word in name for name in names)
                     ]
                     if not matched_words:
                         continue
+                    # Where the word sits in the name that holds it, so a
+                    # long Chinese name does not push the English one back.
                     first_position = min(
-                        name_text.find(word) for word in matched_words
+                        name.find(word)
+                        for word in matched_words
+                        for name in names
+                        if word in name
                     )
                     candidates.append(
                         (
@@ -384,9 +399,9 @@ class LookupHandlers:
             key=lambda candidate: (
                 -candidate[0],
                 -candidate[1],
+                candidate[4],
                 candidate[2],
                 candidate[3],
-                candidate[4],
                 candidate[5],
             )
         )

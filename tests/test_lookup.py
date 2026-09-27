@@ -345,17 +345,25 @@ class TestKeywordInfer:
     """Test narrow entity-plus-topic lookup without broad category expansion."""
 
     def test_sprite_collision(self):
-        """A literal collision topic returns the shared World collision condition."""
+        """A collision topic returns the shared condition and Sprite's own action."""
         engine = make_engine()
         resp = engine.try_lookup("Sprite 碰撞")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
-        assert result_keys(resp)[0] == (
+        keys = result_keys(resp)
+        assert keys[0] == (
             "plugins", "_common", "condition",
             "on-collision-with-another-object",
         )
-        assert ("plugins", "sprite", "condition", "is-animation-playing") \
-            not in result_keys(resp)
+        assert ("plugins", "sprite", "action", "set-collisions-enabled") in keys
+
+    def test_common_aces_follow_the_plugin_list(self):
+        """Shared ACEs come from the plugin's commonAces, not from being a world object."""
+        engine = make_engine()
+        assert engine.try_lookup("文本碰撞") is None
+        resp = engine.try_lookup("Array UID")
+        assert resp is not None
+        assert ("plugins", "_common", "condition", "pick-by-unique-id") in result_keys(resp)
 
     def test_array_sort(self):
         """Array sorting resolves to the exact r495 action."""
@@ -368,14 +376,14 @@ class TestKeywordInfer:
         )
 
     def test_sprite_animation(self):
-        """A scoped animation topic surfaces animation actions only."""
+        """The verb 播放 asks for an action, so animation actions come first."""
         engine = make_engine()
         resp = engine.try_lookup("Sprite 播放 动画")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
+        assert resp.intent.ace_type == "actions"
         keys = result_keys(resp)
         assert ("plugins", "sprite", "action", "set-animation") in keys[:5]
-        assert ("plugins", "sprite", "action", "set-blend-mode") not in keys
 
     def test_no_keyword_fallthrough(self):
         """'Sprite 是什么' contains skip word → should NOT trigger ace_search."""
@@ -383,17 +391,15 @@ class TestKeywordInfer:
         resp = engine.try_lookup("Sprite 是什么")
         assert resp is None  # falls through to RAG
 
-    def test_array_find_howto_hits_lookup(self):
-        """Natural-language Array search ranks IndexOf without unrelated World picks."""
+    def test_array_find_returns_contains_and_indexof(self):
+        """Finding a value in an Array answers with Contains value and IndexOf."""
         engine = make_engine()
         resp = engine.try_lookup("怎么在数组中查找特定数字")
         assert resp is not None
         assert resp.intent.plugin_id == "arr"
         keys = result_keys(resp)
+        assert ("plugins", "arr", "condition", "contains-value") in keys[:3]
         assert ("plugins", "arr", "expression", "indexof") in keys[:3]
-        assert (
-            "plugins", "_common", "condition", "pick-by-unique-id"
-        ) not in keys
 
     def test_array_save_falls_through(self):
         """Array has no save ACE; save must not cascade to Load/Set from JSON."""
@@ -470,12 +476,13 @@ class TestKeywordInfer:
         resp = engine.try_lookup("碰撞检测")
         assert resp is None  # no plugin name → falls through
 
-    def test_classifier_returns_narrow_collision_intent(self):
+    def test_classifier_keeps_every_ace_type_for_a_noun_topic(self):
+        """Collision names no ACE type: Sprite has collision conditions and actions."""
         c = make_classifier()
         intent = c.classify("Sprite 碰撞")
         assert intent is not None
         assert intent.intent_type == "ace_search"
-        assert intent.ace_type == "conditions"
+        assert intent.ace_type == "conditions,actions,expressions"
         assert "碰撞" in intent.filter_term
 
 

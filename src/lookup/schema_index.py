@@ -33,6 +33,7 @@ def _merge_bilingual(en: dict, zh: dict) -> dict:
         "description_zh": zh.get("description", ""),
         "plugin_type": en.get("type", "plugin"),
         "aceCategories": list(en.get("aceCategories", {}).keys()),
+        "commonAces": en.get("commonAces", {}),
     }
 
     for ace_type in ("conditions", "actions", "expressions"):

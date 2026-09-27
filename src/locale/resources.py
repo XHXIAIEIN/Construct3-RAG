@@ -99,9 +99,6 @@ for _name, _resource in _QUERY["tokenization"].items():
 for _name, _resource in _QUERY["ambiguity"].items():
     _validate_metadata(_resource, f"query.ambiguity.{_name}")
     _localized(_resource["values"], f"query.ambiguity.{_name}.values")
-for _rule_id, _rule in _QUERY["scoped_ace_type_rules"].items():
-    _validate_metadata(_rule, f"query.scoped_ace_type_rules.{_rule_id}")
-    _localized(_rule["terms"], f"query.scoped_ace_type_rules.{_rule_id}.terms")
 
 _DIRECTED_ALIAS_DATA = CATALOG["expansion"]["directed_aliases"]
 for _rule_id, _rule in _DIRECTED_ALIAS_DATA.items():
@@ -246,32 +243,6 @@ AMBIGUOUS_BARE_TOPICS_ZH_EN: frozenset[str] = frozenset(
 
 
 @dataclass(frozen=True, slots=True)
-class ScopedAceTypeRule:
-    """One ACE type override with locale-merged terms and a stable ID."""
-
-    rule_id: str
-    plugin_id: str | None
-    terms: frozenset[str]
-    ace_types: tuple[str, ...]
-
-
-SCOPED_ACE_TYPE_RULES_ZH_EN: tuple[ScopedAceTypeRule, ...] = tuple(
-    ScopedAceTypeRule(
-        rule_id=rule_id,
-        plugin_id=raw["plugin_id"],
-        terms=frozenset(
-            term.casefold()
-            for term in _merged_localized_list(
-                raw["terms"], f"query.scoped_ace_type_rules.{rule_id}.terms"
-            )
-        ),
-        ace_types=tuple(raw["ace_types"]),
-    )
-    for rule_id, raw in _QUERY["scoped_ace_type_rules"].items()
-)
-
-
-@dataclass(frozen=True, slots=True)
 class DirectedAliasRule:
     """One single-hop alias with explicit scope and ranking weight."""
 
@@ -337,7 +308,6 @@ __all__ = [
     "HOWTO_SOFT_SKIP_ZH",
     "LIST_QUERY_PATTERNS",
     "QUERY_PARTICLE_SPLIT_PATTERN_ZH",
-    "SCOPED_ACE_TYPE_RULES_ZH_EN",
     "SUPPORTED_LOCALES",
     "TRANSLATE_QUERY_PATTERNS",
 ]

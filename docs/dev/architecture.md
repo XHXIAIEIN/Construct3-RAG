@@ -138,7 +138,9 @@ Direct Lookup is deliberately conservative:
   response carries no `lookup` section, and reading the manual or the examples
   is the caller's;
 - directed aliases are scoped, single-hop, and deterministic;
-- `_common` ACEs are searched only for compatible World-like objects;
+- `_common` ACEs are searched only for those the plugin's `commonAces` lists;
+- a topic narrows the ACE types only when it names one or is phrased as a
+  predicate or an act; a noun topic searches all three;
 - examples, terms, script APIs, properties, and ACEs retain typed identities.
 
 The four repositories expose public loading/iteration/search methods. Callers

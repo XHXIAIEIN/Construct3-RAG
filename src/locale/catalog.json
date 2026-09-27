@@ -21,11 +21,11 @@
   "query": {
     "ace_types": {
       "conditions": {
-        "purpose": "Recognize explicit condition aliases and narrow Chinese topics to condition ACE names.",
+        "purpose": "Recognize explicit condition aliases and narrow predicate topics, such as 正在, 比较 or 是否, to condition ACE names. A noun topic narrows nothing.",
         "source": [
           "schema:r495 ACE type conditions",
-          "gold:topic-ace-zh-02",
-          "gold:topic-ace-zh-03"
+          "gold:topic-ace-mixed-09",
+          "gold:ambiguous-verb-find-zh-11"
         ],
         "consumers": [
           "src.lookup.intent.IntentClassifier"
@@ -62,9 +62,6 @@
             "测试",
             "点击",
             "重叠",
-            "碰撞",
-            "可见",
-            "跳跃",
             "包含",
             "判断",
             "筛选",
@@ -80,11 +77,11 @@
         }
       },
       "actions": {
-        "purpose": "Recognize explicit action aliases and narrow action-oriented topics to action ACE names.",
+        "purpose": "Recognize explicit action aliases and narrow topics phrased as an act, such as 设置, 播放 or 暂停, to action ACE names. A noun topic narrows nothing.",
         "source": [
           "schema:r495 ACE type actions",
           "gold:topic-ace-mixed-07",
-          "gold:ambiguous-verb-request-zh-14"
+          "gold:ambiguous-verb-display-zh-05"
         ],
         "consumers": [
           "src.lookup.intent.IntentClassifier"
@@ -115,8 +112,6 @@
             "删除",
             "创建",
             "恢复",
-            "效果",
-            "模式",
             "清空",
             "移动",
             "修改",
@@ -138,7 +133,7 @@
         }
       },
       "expressions": {
-        "purpose": "Recognize explicit expression aliases and narrow value-reading topics to expression ACE names.",
+        "purpose": "Recognize explicit expression aliases and narrow value-computing topics, such as 返回, 转换 or 查找, to expression ACE names. 获取 and 读取 also name asynchronous actions and narrow nothing.",
         "source": [
           "schema:r495 ACE type expressions",
           "gold:ambiguous-verb-find-zh-11"
@@ -162,34 +157,14 @@
         "intent_keywords": {
           "en-US": [],
           "zh-CN": [
-            "获取",
             "返回",
-            "单位",
-            "坐标",
-            "时间",
-            "像素",
-            "字符串",
-            "索引",
-            "数量",
             "转换",
-            "每秒",
-            "之间",
-            "宽度",
-            "高度",
             "计算",
-            "获得",
-            "范围",
-            "读取",
             "查找",
             "搜索",
             "找到",
             "检索",
             "筛选",
-            "位置",
-            "角度",
-            "速度",
-            "长度",
-            "大小",
             "取值",
             "提取",
             "统计",
@@ -703,130 +678,6 @@
           ]
         }
       }
-    },
-    "scoped_ace_type_rules": {
-      "array-find-expression": {
-        "purpose": "Resolve Array find/index topics to expressions instead of overlapping condition keywords.",
-        "source": [
-          "gold:ambiguous-verb-find-zh-11",
-          "schema:data/c3-schemas/{locale}/plugins/arr.json"
-        ],
-        "consumers": [
-          "src.lookup.intent.IntentClassifier._keyword_infer"
-        ],
-        "tests": [
-          "tests/test_lookup.py",
-          "tests/fixtures/query_gold.jsonl"
-        ],
-        "plugin_id": "arr",
-        "ace_types": [
-          "expressions"
-        ],
-        "terms": {
-          "en-US": [
-            "find",
-            "index"
-          ],
-          "zh-CN": [
-            "查找",
-            "搜索"
-          ]
-        }
-      },
-      "local-storage-get-action": {
-        "purpose": "Resolve Local storage get-item topics to the asynchronous action rather than expressions.",
-        "source": [
-          "gold:ambiguous-verb-get-mixed-09",
-          "schema:data/c3-schemas/{locale}/plugins/localstorage.json"
-        ],
-        "consumers": [
-          "src.lookup.intent.IntentClassifier._keyword_infer"
-        ],
-        "tests": [
-          "tests/test_lookup.py",
-          "tests/fixtures/query_gold.jsonl"
-        ],
-        "plugin_id": "localstorage",
-        "ace_types": [
-          "actions"
-        ],
-        "terms": {
-          "en-US": [
-            "get",
-            "item"
-          ],
-          "zh-CN": [
-            "获取"
-          ]
-        }
-      },
-      "collision-jump-condition": {
-        "purpose": "Prefer condition ACEs for collision and jump trigger topics across exact entities.",
-        "source": [
-          "gold:topic-ace-zh-02",
-          "gold:topic-ace-zh-03"
-        ],
-        "consumers": [
-          "src.lookup.intent.IntentClassifier._keyword_infer"
-        ],
-        "tests": [
-          "tests/test_lookup.py",
-          "tests/fixtures/query_gold.jsonl"
-        ],
-        "plugin_id": null,
-        "ace_types": [
-          "conditions"
-        ],
-        "terms": {
-          "en-US": [
-            "collision",
-            "jump"
-          ],
-          "zh-CN": [
-            "碰撞",
-            "跳跃"
-          ]
-        }
-      },
-      "common-action-topics": {
-        "purpose": "Prefer action ACEs for observed imperative topics whose words overlap other ACE types.",
-        "source": [
-          "gold:topic-ace-en-04",
-          "gold:topic-ace-mixed-08",
-          "gold:ambiguous-verb-request-en-13"
-        ],
-        "consumers": [
-          "src.lookup.intent.IntentClassifier._keyword_infer"
-        ],
-        "tests": [
-          "tests/test_lookup.py",
-          "tests/fixtures/query_gold.jsonl"
-        ],
-        "plugin_id": null,
-        "ace_types": [
-          "actions"
-        ],
-        "terms": {
-          "en-US": [
-            "animation",
-            "parse",
-            "typewriter",
-            "pause",
-            "volume",
-            "request",
-            "load",
-            "save",
-            "move",
-            "item",
-            "permission"
-          ],
-          "zh-CN": [
-            "音量",
-            "请求",
-            "权限"
-          ]
-        }
-      }
     }
   },
   "expansion": {
@@ -873,6 +724,48 @@
         ],
         "weight": 0.8,
         "exact": true,
+        "allow_chaining": false
+      },
+      "arr.condition.find-to-contains": {
+        "purpose": "Bridge a Chinese find topic on Array to the contains-value condition, whose name says contain rather than find.",
+        "source": [
+          "gold:ambiguous-verb-find-zh-11",
+          "schema:data/c3-schemas/{locale}/plugins/arr.json"
+        ],
+        "consumers": [
+          "src.lookup.handlers.LookupHandlers._scoped_filter_words",
+          "tests/test_query_gold.py"
+        ],
+        "tests": [
+          "tests/test_lookup.py::test_array_find_returns_contains_and_indexof"
+        ],
+        "enabled_locales": [
+          "zh-CN"
+        ],
+        "triggers": {
+          "en-US": [
+            "find"
+          ],
+          "zh-CN": [
+            "查找"
+          ]
+        },
+        "additions": {
+          "en-US": [
+            "contains"
+          ],
+          "zh-CN": [
+            "包含"
+          ]
+        },
+        "plugin_ids": [
+          "arr"
+        ],
+        "ace_types": [
+          "conditions"
+        ],
+        "weight": 0.8,
+        "exact": false,
         "allow_chaining": false
       }
     }

@@ -21,8 +21,8 @@ modules.
 - Vector or model retrieval belongs in a repository of its own that reads
   `data/`; it does not return here (`docs/decisions/remove-qdrant-full-mode.md`).
   Undirected synonym groups and whole-category expansion were removed too:
-  they chained words together, so `Array 保存` returned *Load*. One directed,
-  scoped, single-hop alias remains, with a rule ID.
+  they chained words together, so `Array 保存` returned *Load*. What remains are
+  directed, scoped, single-hop aliases, each with a rule ID.
 - Bad result: check data quality, field weights, routing and product scope
   before adding keywords, prompts or a model layer. A new keyword, alias or
   rule starts from a failing case in `tests/fixtures/query_gold.jsonl`;
