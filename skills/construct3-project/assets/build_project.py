@@ -250,18 +250,32 @@ def rgba(colour: tuple, alpha: float = 1) -> list:
     return [c // 255 if c in (0, 255) else c / 255 for c in colour] + [alpha]
 
 
+def alphas() -> set[int]:
+    """The alpha values a drawn image may hold: clear, opaque, and the shadow of SHAPE_STYLE."""
+    return {0, 255, round(255 * SHAPE_STYLE["shadow_opacity"])}
+
+
 def write_png(rel: str, w: int, h: int, pixel, painted: bool = False) -> None:
     """images/<rel> from an RGBA function of (x, y). Every pixel that shows is a colour of
-    PALETTE, its alpha free; painted=True is for a picture meant to hold its own colours, a
-    gradient or a photograph, and skips that check."""
+    PALETTE, its alpha one of alphas(); painted=True is for a picture meant to hold its own
+    colours and soft edges, a gradient or a photograph, and skips both checks. A clear pixel
+    is written as (0, 0, 0, 0) whatever the function returns: a colour hidden under alpha 0
+    bleeds into the edge when the image is scaled with linear sampling."""
     raw = bytearray()
     colours = set(PALETTE.values())
+    allowed = alphas()
     stray: dict = {}
     for y in range(h):
         raw.append(0)
         for x in range(w):
             px = tuple(pixel(x, y))
-            if not painted and px[3] and px[:3] not in colours:
+            if not px[3]:
+                px = (0, 0, 0, 0)
+            elif not painted and px[3] not in allowed:
+                sys.exit(f"images/{rel}: alpha {px[3]} at ({x},{y}); a drawn image is clear, opaque or the shadow's "
+                         f"{round(255 * SHAPE_STYLE['shadow_opacity'])}, so its edges stay hard. A picture meant "
+                         f"to hold soft edges is write_png(..., painted=True)")
+            elif not painted and px[:3] not in colours:
                 stray.setdefault(px[:3], (x, y))
             raw.extend(px)
     if stray:
@@ -297,6 +311,14 @@ def bar_images(frame_name: str, fill_name: str, frame_role: str = "panel", fill_
 
 SHAPES = ("rect", "circle", "triangle")
 FRAMES: dict[str, dict] = {}               # the frame of each image shape() drew, by file name
+PADS: dict[str, tuple[int, int]] = {}      # where the shape starts inside that image, past its shadow
+
+
+def shadow_offset() -> tuple[int, int]:
+    """The (dx, dy) in px of SHAPE_STYLE's shadow from its shape."""
+    angle = math.radians(SHAPE_STYLE["shadow_angle"])
+    d = SHAPE_STYLE["shadow_distance"]
+    return round(d * math.cos(angle)), round(d * math.sin(angle))
 
 
 def inside(kind: str, w: float, h: float, x: float, y: float, inset: float = 0) -> bool:
@@ -316,19 +338,19 @@ def inside(kind: str, w: float, h: float, x: float, y: float, inset: float = 0) 
 
 def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: float = 0.5,
           outline: bool | None = None, shadow: bool | None = None) -> dict:
-    """images/<rel>: a flat `kind` of SHAPES, w x h px in the colour of `role`, with the outline
+    """images/<rel>: a flat `kind` of SHAPES, w x h px in whole units, in the colour of `role`, with the outline
     and shadow of SHAPE_STYLE unless outline or shadow says otherwise for this image. Returns
     the frame for sprite_type(), kept in FRAMES[rel] as well: its origin is (ox, oy) of the
     shape, its collision polygon the shape's, and its size the image's, the shadow included,
     which is the size an instance of it is written at (drawn(rel))."""
     if kind not in SHAPES:
         sys.exit(f"{rel}: {kind!r} is no shape; shape() draws {', '.join(SHAPES)}")
+    if w % UNIT or h % UNIT:
+        sys.exit(f"{rel}: {w}x{h} is not whole units of {UNIT} px; a shape covers whole cells of the grid, "
+                 f"so give it units(n) or TOUCH, {math.ceil(w / UNIT) * UNIT}x{math.ceil(h / UNIT) * UNIT} here")
     style = SHAPE_STYLE
     edge = style["outline_width"] if (style["outline"] if outline is None else outline) else 0
-    dx = dy = 0
-    if style["shadow"] if shadow is None else shadow:
-        angle = math.radians(style["shadow_angle"])
-        dx, dy = round(style["shadow_distance"] * math.cos(angle)), round(style["shadow_distance"] * math.sin(angle))
+    dx, dy = shadow_offset() if (style["shadow"] if shadow is None else shadow) else (0, 0)
     left, top = max(0, -dx), max(0, -dy)
     iw, ih = w + abs(dx), h + abs(dy)
     alpha = round(255 * style["shadow_opacity"])
@@ -347,6 +369,7 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
                           for a in (i * math.pi / 8 for i in range(16))]}[kind]
     poly = [round(v, 4) for cx, cy in corners for v in ((left + cx * w) / iw, (top + cy * h) / ih)]
     FRAMES[rel] = frame(iw, ih, (left + ox * w) / iw, (top + oy * h) / ih, poly)
+    PADS[rel] = (left, top)
     return FRAMES[rel]
 
 
@@ -567,6 +590,12 @@ def create(obj: str, layer: str, x: str, y: str) -> dict:
                                            "create-hierarchy": False, "template-name": q("")})
 
 
+def grid_random(lo: int, hi: int) -> str:
+    """An expression for a random whole-UNIT position from lo to hi px, both on the grid: an
+    object created at runtime starts on the grid like one placed in a layout."""
+    return f"{UNIT} * floor(random({lo // UNIT}, {hi // UNIT + 1}))"
+
+
 def wait(seconds: str, use_timescale: bool = True) -> dict:
     return act("wait", "System", {"seconds": seconds, "use-timescale": use_timescale})
 
@@ -729,8 +758,8 @@ def module_setup() -> dict:
         event("Deal the coins and show the empty score",
               [on_start()], [set_text("ScoreText", q("Score: 0"))], children=[
                   block([for_loop("i", "0", "COIN_COUNT - 1")], [
-                      create("Coin", "Game", f"random({COIN_SIZE}, LayoutWidth - {COIN_SIZE})",
-                             f"random({COIN_SIZE * 2}, LayoutHeight - {COIN_SIZE})"),
+                      create("Coin", "Game", f"{grid_random(0, VIEW_W - COIN_SIZE)} + {COIN_SIZE // 2}",
+                             f"{grid_random(snap(1.5 * COIN_SIZE), VIEW_H - COIN_SIZE)} + {COIN_SIZE // 2}"),
                       set_ivar("Coin", "value", "choose(1, 5)"),
                   ]),
               ]),
@@ -926,6 +955,42 @@ def sprite_inst(otype: str, x: float, y: float, w: float, h: float, anim: str = 
                     world(x, y, w, h), ivars, behaviors)
 
 
+def shape_inst(otype: str, rel: str, col: int, row: int, ivars=None, behaviors=None,
+               collisions: bool = True) -> dict:
+    """An instance of the shape shape() drew as images/<rel>, its top-left corner on the grid
+    cell (col, row): the shape covers whole cells, the shadow hangs off it, and the instance
+    is written at the image's size with the frame's origin, as the editor shows it."""
+    f, (left, top) = drawn(rel), PADS[rel]
+    x = col * UNIT - left + f["originX"] * f["width"]
+    y = row * UNIT - top + f["originY"] * f["height"]
+    return instance(otype, {"initially-visible": True, "initial-animation": "Default", "initial-frame": 0,
+                            "enable-collisions": collisions, "live-preview": False},
+                    world(x, y, f["width"], f["height"], f["originX"], f["originY"]), ivars, behaviors)
+
+
+def on_grid(instances: list, where: str) -> None:
+    """Stops the generator when an instance of a world layer does not start on the grid: its
+    box's left and top, or its shape's past a shadow on the left or top, are whole UNITs.
+    The HUD is held to the viewport's edges by anchor() instead and is not passed; a rotated
+    instance is skipped, its box being no longer the one written."""
+    dx, dy = shadow_offset()
+    pads_x, pads_y = {0, max(0, -dx)}, {0, max(0, -dy)}
+
+    def fits(v: float, pads: set) -> bool:
+        return any(abs((v + p) / UNIT - round((v + p) / UNIT)) < 1e-6 for p in pads)
+
+    for inst in instances:
+        w = inst.get("world")
+        if not w or w.get("angle"):
+            continue
+        left = w["x"] - w.get("originX", 0) * w["width"]
+        top = w["y"] - w.get("originY", 0) * w["height"]
+        if not (fits(left, pads_x) and fits(top, pads_y)):
+            sys.exit(f"{where}: {inst['type']} starts at ({left:g},{top:g}), off the {UNIT} px grid. Place a shape "
+                     f"with shape_inst(type, image, col, row), which puts its corner on cell (col, row), and "
+                     f"anything else with units() or snap()")
+
+
 def contrast(a: tuple, b: tuple) -> float:
     """The contrast ratio of two RGB colours, from 1 to 21 (WCAG 2.2, relative luminance)."""
     def luminance(rgb_: tuple) -> float:
@@ -1079,12 +1144,15 @@ def build_layouts() -> dict[str, dict]:
     # types from bar_types() and images from bar_images(), and the sheet sets the fill with
     # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
     no_overlap(ui)
+    # Everything outside the HUD starts on the grid: a shape by shape_inst() on a cell, one
+    # created at runtime at grid_random(); on_grid() stops the run on an instance that does not.
+    on_grid(game["layers"][1]["instances"], "layer Game")
     # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
     objects = layout("Objects", [layer("Objects")], sheet=None)
-    coin = drawn("coin-default-000.png")
     objects["layers"][0]["instances"].append(
-        sprite_inst("Coin", *anchor("top-left", COIN_SIZE, COIN_SIZE, 0.5, 0.5), coin["width"], coin["height"],
-                    ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN)))
+        shape_inst("Coin", "coin-default-000.png", MARGIN // UNIT, MARGIN // UNIT,
+                   ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN)))
+    on_grid(objects["layers"][0]["instances"], "layout Objects")
     return {"Game": game, "Objects": objects}
 
 

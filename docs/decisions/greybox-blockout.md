@@ -311,3 +311,37 @@ vocabulary in a few lines each. Tests pin each check and its message.
   for it, or the game is past the blockout.
 - Real art arrives, from the user, a kit of the examples or an image model:
   the blockout gives way, and its grids and pacing stay.
+
+## Update 2026-09-27: the manifest, pure alpha and the grid
+
+The user asked for the look as metadata an agent can hand a model and
+confirm against, and for two strict rules: a clean alpha channel, and
+objects locked to one grid instead of drifting.
+
+`skills/construct3-project/assets/look-manifest.json` lists every rule of
+this record with a status: `enforced` when a check stops the generator,
+`adopted` when the user decided it and the template holds it, `open` when
+the template holds a value the user has not chosen, `proposed`, and
+`rejected`. A rule the template holds names the symbol and the value, and
+`tests/test_project_tools.py` fails when the two drift apart. Its
+`deliver` steps are what a model writing the generator is given; its
+`confirm` steps are what the agent runs on the result.
+
+The strict rules, enforced where the generator writes and confirmed on the
+project's files by `scripts/check_look.py`:
+
+- `alpha.pure`: `write_png()` writes a clear pixel as (0, 0, 0, 0) and stops
+  on an alpha other than 0, 255 and the shadow's. A colour under alpha 0
+  bleeds into the edge when linear sampling scales the image.
+- `grid.shape-size`: `shape()` stops on a size that is not whole units.
+- `grid.world-placement`: `shape_inst()` places a shape by the cell of its
+  top-left corner, whatever side the shadow hangs on; `on_grid()` stops on
+  a world instance whose box does not start on the grid. The HUD keeps
+  `anchor()`: 720 and 1080 are not whole units of 32, so an edge-held box
+  sits MARGIN from the edge, not on the grid.
+- `grid.runtime-spawn`: `grid_random()` gives a random whole-unit position;
+  the stand-in's coins use it, where they used a raw `random()` before.
+
+A tween, a shake or a squash moves an object off the grid while it plays;
+the rule holds its rest position. `motion.hit` is open: this record says
+Flash, the study of published games says a colour set for 0.05 to 0.1 s.

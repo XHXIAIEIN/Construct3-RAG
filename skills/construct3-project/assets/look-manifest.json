@@ -1,0 +1,182 @@
+{
+  "name": "greybox-blockout",
+  "version": 1,
+  "about": "The stand-in look of a generated game: what the generator template holds, what stops its run, what the user has decided and what is still open. An agent hands the model the deliver steps and runs the confirm steps on what comes back.",
+  "template": "assets/build_project.py",
+  "decisions": [
+    "Construct3-RAG/docs/decisions/greybox-blockout.md",
+    "Construct3-RAG/docs/decisions/published-game-visual-language.md"
+  ],
+  "status": {
+    "enforced": "held by the template, and a check stops the generator's run when it is broken",
+    "adopted": "decided by the user and held by the template; no check",
+    "open": "the template holds a value the user has not chosen yet",
+    "proposed": "evidence only; not in the template",
+    "rejected": "tried or considered and turned down; do not reintroduce"
+  },
+  "grid": {
+    "UNIT": "8 when the viewport is 360 px high or less, else 32",
+    "world": "every instance outside the HUD starts on a whole UNIT, and a shape covers whole cells",
+    "hud": "held against the viewport's edges by anchor(), MARGIN inside them"
+  },
+  "rules": [
+    {
+      "id": "alpha.pure",
+      "status": "enforced",
+      "strict": true,
+      "says": "A drawn image holds three alpha values: 0, 255 and the shadow's. A clear pixel is (0, 0, 0, 0), with no colour hidden under it to bleed into the edge when the image is scaled.",
+      "template": "write_png(), alphas()",
+      "confirm": "check_look.py: alpha.pure"
+    },
+    {
+      "id": "grid.shape-size",
+      "status": "enforced",
+      "strict": true,
+      "says": "A shape is whole UNITs wide and high; its shadow hangs outside those cells.",
+      "template": "shape()",
+      "confirm": "check_look.py: grid.world-placement"
+    },
+    {
+      "id": "grid.world-placement",
+      "status": "enforced",
+      "strict": true,
+      "says": "An instance of a world layer starts on the grid: a shape is placed by the grid cell of its top-left corner.",
+      "template": "shape_inst(), on_grid(), units(), snap()",
+      "confirm": "check_look.py: grid.world-placement"
+    },
+    {
+      "id": "grid.runtime-spawn",
+      "status": "enforced",
+      "strict": true,
+      "says": "An object created at runtime starts on the grid: its position is a random whole number of UNITs, never a raw random().",
+      "template": "grid_random()",
+      "confirm": "check_look.py: grid.runtime-spawn"
+    },
+    {
+      "id": "colour.palette-only",
+      "status": "enforced",
+      "strict": true,
+      "says": "Every pixel that shows is a colour of PALETTE, named by the role it plays.",
+      "template": "PALETTE, rgb(), write_png()"
+    },
+    {
+      "id": "text.contrast",
+      "status": "enforced",
+      "strict": true,
+      "says": "A label reads 4.5:1 against what is behind it, a title 3:1 (WCAG 2.2, 1.4.3).",
+      "template": "readable(), hud_text()"
+    },
+    {
+      "id": "pixel-art.sampling",
+      "status": "enforced",
+      "strict": true,
+      "says": "A viewport 360 px high or less samples Nearest at a whole-number scale.",
+      "template": "PIXEL_ART, build_project()"
+    },
+    {
+      "id": "outline.width",
+      "status": "adopted",
+      "says": "An ink outline inside every shape's edge.",
+      "template": "SHAPE_STYLE['outline_width']",
+      "value": "max(1, UNIT // 4)"
+    },
+    {
+      "id": "shadow.form",
+      "status": "adopted",
+      "says": "A hard cast shadow: one unblurred copy of the shape, one direction for the whole scene.",
+      "template": "SHAPE_STYLE['shadow']",
+      "value": "True"
+    },
+    {
+      "id": "shadow.distance",
+      "status": "adopted",
+      "says": "The shadow's offset, 2.7% of the viewport's shorter side.",
+      "template": "SHAPE_STYLE['shadow_distance']",
+      "value": "round(0.027 * min(VIEW_W, VIEW_H))"
+    },
+    {
+      "id": "shadow.opacity",
+      "status": "adopted",
+      "says": "The shadow at half opacity.",
+      "template": "SHAPE_STYLE['shadow_opacity']",
+      "value": "0.5"
+    },
+    {
+      "id": "shadow.angle",
+      "status": "open",
+      "says": "The shadow's direction, degrees clockwise from rightwards.",
+      "template": "SHAPE_STYLE['shadow_angle']",
+      "value": "45",
+      "options": [20, 45, 64, 90, 135, 225]
+    },
+    {
+      "id": "palette.greys",
+      "status": "proposed",
+      "says": "Two canvas greys, one solid grey, dim, ink and two accents; the player in ink. The template still holds the dark palette.",
+      "value": {"canvas": "#F4F4F4", "canvas_alt": "#E4E4E4", "solid": "#808080", "dim": "#5A5A5A", "ink": "#1C1C1C", "reward": "#F5C518", "danger": "#E23B2E"}
+    },
+    {
+      "id": "backdrop.checker",
+      "status": "proposed",
+      "says": "The transparency checker as the backdrop and the ruler, cells of UNIT / 2, its two greys at most 1.2:1."
+    },
+    {
+      "id": "pattern.areas",
+      "status": "proposed",
+      "says": "Areas and edges carry a pattern, objects stay flat: low stripes, caution stripes, hazard stripes, tiled without a seam."
+    },
+    {
+      "id": "motion.squash",
+      "status": "proposed",
+      "says": "Set the impact size at once, then return to rest over 0.5 s with easeoutelastic."
+    },
+    {
+      "id": "motion.hit",
+      "status": "open",
+      "says": "How a hit shows.",
+      "options": ["the Flash behavior (greybox-blockout.md)", "a colour set for 0.05 to 0.1 s with a size punch (published-game-visual-language.md)"]
+    },
+    {
+      "id": "juice.functions",
+      "status": "proposed",
+      "says": "Screen shake, size impact, slow motion at time scale 0.1 to 0.2, zoom impact; shake magnitudes in tiers of the viewport's shorter side."
+    },
+    {
+      "id": "camera.zones",
+      "status": "proposed",
+      "says": "Camera regions as level data: zoom, zoom speed, X/Y locks, X/Y offsets, target, local game speed."
+    },
+    {
+      "id": "pacing.beats",
+      "status": "proposed",
+      "says": "Zones typed intro, teach, practice, twist, rest, climax, exit with an intensity 0 to 3; five short levels a world; failure restarts within about 1 s."
+    },
+    {
+      "id": "shadow.soft",
+      "status": "rejected",
+      "says": "A blurred translucent cast shadow reads as a smear on the checker."
+    },
+    {
+      "id": "depth.parallax-layers",
+      "status": "rejected",
+      "says": "Lighter parallax layers for depth."
+    },
+    {
+      "id": "copy.studio-assets",
+      "status": "rejected",
+      "says": "Characters, finished art, fonts, exact palettes and third-party effects of the reference games."
+    }
+  ],
+  "deliver": [
+    "Copy assets/build_project.py to the project's tools/ and rewrite only the game: PALETTE's values by role, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
+    "Keep SHAPE_STYLE and the helpers. Draw every stand-in with shape() in whole units and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
+    "Pass painted=True only for a picture meant to hold its own colours and soft edges.",
+    "Do not decide a rule whose status is open; ask the user, or keep the template's value."
+  ],
+  "confirm": [
+    "python tools/build_project.py: the last line starts with ok:",
+    "python <skill>/scripts/check_look.py --project <folder>: the last line starts with ok:",
+    "python <skill>/scripts/open_in_editor.py --project <folder>: opened",
+    "The look itself is the user's call on a screenshot; no script scores it."
+  ]
+}

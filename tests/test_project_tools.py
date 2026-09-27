@@ -1839,6 +1839,86 @@ def test_template_samples_a_pixel_art_viewport_nearest_and_scales_it_by_whole_nu
     assert (p["properties"]["sampling"], p["properties"]["fullscreenMode"]) == ("nearest", "letterbox-integer-scale")
 
 
+def test_look_manifest_matches_the_template():
+    """assets/look-manifest.json is what an agent hands a model and confirms against: every value
+    it names in the template is the template's, and every status is one it defines."""
+    manifest = json.loads((SKILL / "assets" / "look-manifest.json").read_text(encoding="utf-8"))
+    t = template_module()
+    ids = [r["id"] for r in manifest["rules"]]
+    assert len(ids) == len(set(ids))
+    for rule in manifest["rules"]:
+        assert rule["status"] in manifest["status"], rule["id"]
+        if rule["status"] in ("enforced", "adopted", "open") and "value" in rule:
+            assert eval(rule["template"], vars(t)) == eval(rule["value"], vars(t)), rule["id"]
+        if rule["status"] == "open":
+            assert rule.get("options"), rule["id"]
+        for name in re.findall(r"(\w+)\(\)", rule.get("template", "")):
+            assert callable(getattr(t, name, None)), (rule["id"], name)
+    assert {r["id"] for r in manifest["rules"] if r.get("strict")} >= {
+        "alpha.pure", "grid.shape-size", "grid.world-placement", "grid.runtime-spawn"}
+
+
+def test_template_keeps_alpha_pure_and_shapes_on_the_grid(tmp_path):
+    """A drawn image is clear, opaque or the shadow's alpha, with nothing under a clear pixel; a
+    shape covers whole cells and is placed by its cell; on_grid() stops a world instance off it."""
+    t = template_module()
+    t.ROOT = tmp_path
+    t.write_png("clear.png", 1, 1, lambda x, y: (1, 2, 3, 0))
+    assert png_pixels(tmp_path / "images" / "clear.png") == [[(0, 0, 0, 0)]]
+    with pytest.raises(SystemExit, match=r"images/soft.png: alpha 37 at \(0,0\); a drawn image is clear, opaque "
+                                         r"or the shadow's 128"):
+        t.write_png("soft.png", 1, 1, lambda x, y: (*t.PALETTE["danger"], 37))
+    t.write_png("glow.png", 1, 1, lambda x, y: (1, 2, 3, 37), painted=True)
+    with pytest.raises(SystemExit, match=r"box.png: 40x32 is not whole units of 32 px; .* 64x32 here"):
+        t.shape("box.png", "rect", 40, 32, "reward")
+    t.SHAPE_STYLE.update(shadow_angle=225)                          # a shadow up and to the left
+    t.shape("box.png", "rect", 64, 32, "reward")
+    inst = t.shape_inst("Box", "box.png", 3, 5)
+    w = inst["world"]
+    left, top = w["x"] - w["originX"] * w["width"], w["y"] - w["originY"] * w["height"]
+    assert (left + t.PADS["box.png"][0], top + t.PADS["box.png"][1]) == (96, 160)
+    t.on_grid([inst], "layer Game")
+    inst["world"]["x"] += 5
+    with pytest.raises(SystemExit, match=r"layer Game: Box starts at .* off the 32 px grid. Place a shape with shape_inst"):
+        t.on_grid([inst], "layer Game")
+    assert t.grid_random(0, 624) == "32 * floor(random(0, 20))"
+
+
+def test_check_look_passes_the_stand_in_and_names_each_fault(project):
+    code, out = tool(project, "check_look")
+    assert code == 0 and out.splitlines()[-1].startswith("ok: 1 images, 1 world instances on a 32 px grid, "
+                                                          "1 runtime creations"), out
+    t = template_module()
+    t.ROOT = project
+    t.write_png("smudge.png", 2, 1, lambda x, y: [(9, 9, 9, 0), (*t.PALETTE["danger"], 128)][x])
+    t.write_png("glow.png", 1, 1, lambda x, y: (*t.PALETTE["danger"], 37), painted=True)
+    import struct
+    import zlib
+
+    def chunk(tag, data):
+        return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+    (project / "images" / "dirty.png").write_bytes(      # a clear pixel with a colour under it
+        bytes([0x89]) + b"PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0))
+        + chunk(b"IDAT", zlib.compress(bytes([0, 9, 9, 9, 0]))) + chunk(b"IEND", b""))
+    edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x=50))
+
+    def raw_random(sheet):
+        text = json.dumps(sheet).replace("32 * floor(random(0, 20)) + 48", "random(96, 624)")
+        sheet.clear()
+        sheet.update(json.loads(text))
+    edit(project, "eventSheets/Game.json", raw_random)
+    code, out = tool(project, "check_look")
+    lines = out.splitlines()
+    assert code == 1, out
+    assert "alpha.pure: images/dirty.png has 1 clear pixels that hold a colour, the first at (0,0)" in out
+    assert re.search(r"alpha.pure: images/glow.png has alpha 37 at \(0,0\); the project's shadow is 128.*--painted glow.png", out)
+    assert re.search(r"grid.world-placement: layout Objects layer Objects: Coin at \(\d+,\d+\) \d+x\d+ is off the 32 px grid", out)
+    assert "grid.runtime-spawn: sheet Game: create Coin at x = random(96, 624), a raw random()" in out
+    assert lines[-1].startswith("4 findings:")
+    code, out = tool(project, "check_look", "--painted", "glow.png")
+    assert "glow.png" not in out and out.splitlines()[-1].startswith("3 findings:")
+
+
 def test_stand_in_project_passes_the_style_check(built):
     """The template is the shape the style asks for, so a generated project starts clean."""
     code, out = check(built, "--style")

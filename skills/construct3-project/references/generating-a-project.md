@@ -151,7 +151,12 @@ habits; they are what makes rerunning safe.
   drawn into the image, since Construct's effects have neither. The type
   takes `drawn(file)` as its frame and an instance is that frame's size,
   the shadow included; a sprite that rotates is drawn with `shadow=False`.
-  A label is
+  A shape is whole units wide and high, and `shape_inst(type, file, col,
+  row)` places it by the grid cell of its top-left corner; `on_grid()`
+  stops the run on a world instance off the grid, and an object created at
+  runtime goes to `grid_random(lo, hi)`, never a raw `random()`. A drawn
+  image holds three alpha values, clear, opaque and the shadow's, and a
+  clear pixel is written with no colour under it. A label is
   `TEXT_SIZE["body"]`, a banner `TEXT_SIZE["title"]`, in `FONT`;
   `hud_text()` stops the run on a colour that reads below 4.5:1 on what is
   behind it, 3:1 for a title, and names the roles that would read there. A

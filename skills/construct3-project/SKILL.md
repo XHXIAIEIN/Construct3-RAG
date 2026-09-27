@@ -49,7 +49,9 @@ opened once before it is handed over.
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds six readability warnings from the official examples' style, for a project the agent wrote |
 | `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then runs it for 5 seconds and prints the runtime's errors, each with its event. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
+| `scripts/check_look.py` | The strict look rules on a generated project's files: pure alpha, world instances and runtime creations on the grid; exit 0 when the last line starts with `ok:` |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
+| `assets/look-manifest.json` | The template's look as data: each rule's status (enforced, adopted, open, proposed, rejected), value and check, what to hand a model and what to confirm |
 
 Each prints its options and examples with `--help`. `--locale zh-CN` switches
 names and wording to Chinese; ids are the same in every locale. A harness cuts
@@ -242,6 +244,11 @@ before writing it: set-up in the editor, the build and check loop, one
 function per group of the sheet, the habits that keep a rerun safe. The
 generator checks what it wrote with `--style`, so every event is held to the
 style of the official examples.
+
+When another model writes the generator, give it the `deliver` steps of
+`assets/look-manifest.json`, then run its `confirm` steps on the result,
+`scripts/check_look.py` among them. A rule whose status is `open` is the
+user's to decide.
 
 ## Gotchas
 
