@@ -7,21 +7,16 @@ inject the schema directory.
 from __future__ import annotations
 
 import time
-from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any
 
 from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
-from src.locale.resources import ACE_DIRECTED_ALIASES
 from src.lookup.examples_index import ExamplesIndex
 from src.lookup.handlers import LookupHandlers
 from src.lookup.intent import IntentClassifier
 from src.lookup.schema_index import SchemaIndex
 from src.lookup.scripting_index import ScriptingIndex
 from src.lookup.term_index import TermIndex
-
-
-AliasProvider = Callable[[], Iterable[Any]]
 
 
 class LookupEngine(LookupHandlers):
@@ -31,12 +26,7 @@ class LookupEngine(LookupHandlers):
         self,
         schema_dir: Path,
         terms: list[dict[str, Any]] | None = None,
-        *,
-        directed_aliases_provider: AliasProvider | None = None,
     ) -> None:
-        self._directed_aliases_provider = (
-            directed_aliases_provider or (lambda: ACE_DIRECTED_ALIASES)
-        )
         self.schema_index = SchemaIndex(Path(schema_dir))
         self.term_index = TermIndex(terms=terms)
         if not self.term_index.is_loaded:

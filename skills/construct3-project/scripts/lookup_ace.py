@@ -20,6 +20,10 @@ those, a plugin gets only the ones its schema lists under `commonAces`: Text
 has no *Set color*, the editor refuses it there, and its colour is *Set font
 color*.
 
+OBJECT may also be an effect by id or display name (`Bulge`, `Glow
+horizontal`): that prints the effect and its parameters, those with every
+WORD when words are given. Effects have parameters, no ACEs.
+
 The schema files run to thousands of lines, more than most tools read at
 once, and an ACE below the cut looks as if it did not exist; this prints the
 part that was asked for. Six matches or fewer print in full, each parameter
@@ -84,10 +88,11 @@ def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]
             behavior = "<behavior name on the object>" if kind == "behaviors" else None
             sources.append(("<object>", behavior, p.schema(kind, addon) or {}))
     if not sources:
-        names = [v.get("name", k) for kind in ("plugins", "behaviors")
+        names = [v.get("name", k) for kind in ("plugins", "behaviors", "effects")
                  for k, v in c3.load(p.schemas / "_index.json").get(kind, {}).items()]
-        sys.exit(f"{target!r} is not an object of this project, System, or the id or display name of a plugin or "
-                 f"behavior" + closest(target, [*p.plugin_of, *names, *p.index["plugins"], *p.index["behaviors"]]))
+        sys.exit(f"{target!r} is not an object of this project, System, or the id or display name of a plugin, "
+                 f"behavior or effect" + closest(target, [*p.plugin_of, *names, *p.index["plugins"],
+                                                           *p.index["behaviors"], *p.index["effects"]]))
     return sources
 
 
@@ -146,6 +151,39 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, w
             else WRITING.get(spec["type"], ("", "expression string"))[1]
         lines.append(f"    {key:<22} {spec['type']:<10} {how}")
     return lines
+
+
+def effects_of(p: c3.Project, target: str) -> list[str]:
+    """The ids of the effects `target` names, when it names no object, System, plugin or behavior.
+    One name can be two effects: the zh-CN pack calls both Brightness and Lighten 亮度."""
+    if LOWER(target) == "system" or p.objects_lower.get(LOWER(target)):
+        return []
+    if any(p.addon_names(kind).get(squash(target)) for kind in ("plugins", "behaviors")):
+        return []
+    ids = []
+    for locale in dict.fromkeys((p.locale, "en-US")):
+        names = c3.load(p.rag / "data" / "c3-schemas" / locale / "_index.json").get("effects", {})
+        ids += [k for k, v in names.items() if squash(target) in (squash(k), squash(v.get("name", "")))]
+    return list(dict.fromkeys(ids))
+
+
+def effect_lookup(p: c3.Project, effect_id: str, words: list[str]) -> int:
+    effect = p.schema("effects", effect_id) or {}
+    params = effect.get("parameters", [])
+    print(f"effect {effect_id} - {effect.get('name', effect_id)} [{effect.get('category', '')}]")
+    print(f"  {effect.get('description', '')}")
+    if not params:
+        print("  no parameters")
+        return 0
+    chosen = [q for q in params
+              if all(squash(w) in squash(q.get("id", "") + q.get("name", "")) for w in words)]
+    missed = not chosen
+    if missed:
+        print(f"no parameter of {effect_id} has every word of {' '.join(words)!r}; its parameters:")
+        chosen = params
+    for q in chosen:
+        print(f"    {q.get('id', ''):<22} {q.get('type', ''):<10} {q.get('name', '')}: {q.get('desc', '')}")
+    return 1 if missed else 0
 
 
 def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
@@ -268,11 +306,13 @@ def main() -> int:
         "  python scripts/lookup_ace.py System wait\n"
         "  python scripts/lookup_ace.py System time            a category: Every X seconds, Wait, dt, time ...\n"
         "  python scripts/lookup_ace.py \"8 Direction\" speed    a plugin or behavior by id or display name\n"
-        "  python scripts/lookup_ace.py Coin tween condition   a word may be condition, action or expression\n\n"
+        "  python scripts/lookup_ace.py Coin tween condition   a word may be condition, action or expression\n"
+        "  python scripts/lookup_ace.py Bulge                  an effect by id or display name: its parameters\n\n"
         "exit codes: 0 found, 1 no entry has every word (those with some are listed), OBJECT is unknown (the\n"
         "nearest names are listed), or the clone was not found")
     ap.add_argument("object", metavar="OBJECT",
-                    help="an object type or family of the project, System, or a plugin or behavior id or display name")
+                    help="an object type or family of the project, System, a plugin or behavior id or display "
+                         "name, or an effect id or display name")
     ap.add_argument("words", nargs="*", metavar="WORD",
                     help="every word must occur in the id, the list name or the script name, or name the "
                          "behavior, the addon, the category, or the kind: condition, action, expression")
@@ -284,6 +324,9 @@ def main() -> int:
     drift = c3.skill_drift(project.rag)
     if drift:
         print(f"note: {drift}")
+    effects = effects_of(project, args.object)
+    if effects:
+        return max(effect_lookup(project, effect, args.words) for effect in effects)
     return ace_lookup(project, args.object, args.words, args.limit)
 
 

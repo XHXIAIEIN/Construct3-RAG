@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
-from typing import Any
-
 import jieba
 
 from src.domain.lookup import ACELocale, LookupIntent, LookupMatch
+from src.locale.resources import ACE_DIRECTED_ALIASES
 from src.lookup.examples_index import ExamplesIndex
 from src.lookup.formatting import (
     ACE_PREFIX,
@@ -30,7 +28,6 @@ class LookupHandlers:
     schema_index: SchemaIndex
     term_index: TermIndex
     examples_index: ExamplesIndex
-    _directed_aliases_provider: Callable[[], Iterable[Any]]
 
     def _execute(self, intent: LookupIntent) -> tuple[str, list[LookupMatch]]:
         """Execute one classified intent and return context plus typed matches."""
@@ -41,6 +38,7 @@ class LookupHandlers:
             "ace_search": self._format_ace_search,
             "term_translate": self._format_term_translate,
             "example_find": self._format_example_find,
+            "effect_detail": self._format_effect_detail,
         }
         handler = handlers.get(intent.intent_type)
         return handler(intent) if handler is not None else ("", [])
@@ -271,7 +269,7 @@ class LookupHandlers:
     ) -> dict[str, float]:
         """Return original terms and weighted one-hop aliases for this scope."""
         expanded = dict.fromkeys(filter_words, 1.0)
-        for rule in self._directed_aliases_provider():
+        for rule in ACE_DIRECTED_ALIASES:
             if plugin_id not in rule.plugin_ids or ace_type not in rule.ace_types:
                 continue
             triggered = bool(filter_words & rule.triggers)
@@ -590,3 +588,48 @@ class LookupHandlers:
             if record.get("slug")
         ]
         return ExamplesIndex.format_for_find(results), matches
+
+    def _format_effect_detail(
+        self,
+        intent: LookupIntent,
+    ) -> tuple[str, list[LookupMatch]]:
+        effect_ids = [
+            tag.removeprefix("effect-")
+            for tag in intent.matched_tags
+            if tag.startswith("effect-")
+        ] or [intent.plugin_id]
+        lines: list[str] = []
+        matches: list[LookupMatch] = []
+        for effect_id in effect_ids:
+            effect = self.schema_index.get_effect(effect_id)
+            if effect is None:
+                continue
+            params = effect["params"]
+            lines.append(
+                f"[Effect] {effect['name_en']} ({effect['name_zh']}): "
+                f"{effect['description_en']}"
+            )
+            lines.extend(
+                f"  {param['name_en']} ({param['name_zh']}, {param['type']}): "
+                f"{param['desc_en']}"
+                for param in params
+            )
+            if not params:
+                lines.append("  no parameters")
+            matches.append(
+                LookupMatch(
+                    ace_id=effect_id,
+                    ace_type="effect",
+                    plugin_id=effect_id,
+                    collection="effects",
+                    en=ACELocale(
+                        name=effect["name_en"], desc=effect["description_en"]
+                    ),
+                    zh=ACELocale(
+                        name=effect["name_zh"], desc=effect["description_zh"]
+                    ),
+                    category=effect["category"],
+                    params=params,
+                )
+            )
+        return "\n".join(lines), matches

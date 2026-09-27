@@ -121,7 +121,7 @@ dictionaries.
 ```text
 query
   -> IntentClassifier
-  -> named handler (ACE list/detail/search, properties, term, example)
+  -> named handler (ACE list/detail/search, properties, effect, term, example)
   -> LookupMatch records
   -> optional compatibility context renderer
   -> LookupResponse

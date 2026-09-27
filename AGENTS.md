@@ -63,7 +63,7 @@ prints the matching conditions, actions and expressions of `System`, of a
 plugin or behavior by id or display name, or, run in a game project, of one
 of its objects with its behaviors, each with its parameters and the JSON to
 write (`skills/construct3-project/SKILL.md`, "Look an ACE up before writing
-it").
+it"). Given an effect's id or name, it prints the effect's parameters.
 
 ## 3. SOP: design event sheet logic
 
@@ -162,7 +162,7 @@ decision.
 python scripts/setup.py                       # lookup server
 python scripts/init.py                        # refresh CDN data, export schemas
 python -m uvicorn src.api:app --port 8765     # server only
-python tests/eval_query_quality.py --strategy all --split all --output query-quality.json
+python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 ```
 
 ## 7. Where to read more

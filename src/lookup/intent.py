@@ -15,7 +15,9 @@ from src.locale.resources import (
     AMBIGUOUS_BARE_TOPICS_ZH_EN,
     AMBIGUOUS_PLUGIN_IDS_EN,
     CJK_ASCII_BOUNDARY_PATTERN,
+    DECLINE_MARKERS_EN,
     DETAIL_QUERY_PATTERNS,
+    EFFECT_QUERY_KEYWORDS_ZH_EN,
     ENTITY_ROLE_SUFFIX_PATTERN_ZH_EN,
     ENTITY_ROLE_TOKEN_PATTERN_ZH_EN,
     EXAMPLE_QUERY_KEYWORDS_ZH_EN,
@@ -26,7 +28,6 @@ from src.locale.resources import (
     LIST_QUERY_PATTERNS,
     QUERY_PARTICLE_SPLIT_PATTERN_ZH,
     SCOPED_ACE_TYPE_RULES_ZH_EN,
-    SEMANTIC_FALLBACK_MARKERS_EN,
     TRANSLATE_QUERY_PATTERNS,
 )
 from src.lookup.schema_index import SchemaIndex
@@ -69,9 +70,10 @@ class IntentClassifier:
     def classify(self, query: str) -> Optional[LookupIntent]:
         """
         Classify a query using explicit grammar and versioned schema names.
-        Returns LookupIntent if matched. None, or the ``semantic_fallback``
-        intent, declines: the query asks for a reading of the manual or the
-        examples, which is the caller's, not for a lookup.
+        Returns LookupIntent if matched. None, or the ``declined`` intent,
+        declines: the query asks for a reading of the manual or the examples,
+        which is the caller's, not for a lookup. A ``declined`` intent keeps
+        the entity it recognised.
         """
         # Explicit translation is checked before conceptual blockers because
         # valid phrases such as "数组英文是什么" contain "是什么".
@@ -87,7 +89,7 @@ class IntentClassifier:
             logger.info(f"[Lookup] rule hit: {intent.intent_type} plugin={intent.plugin_id}")
             return intent
 
-        if self._requires_semantic_fallback(query):
+        if self._declines(query):
             return None
 
         # Example-find detection
@@ -100,7 +102,7 @@ class IntentClassifier:
         # Keyword inference (plugin + topic → ace_search)
         intent = self._keyword_infer(query)
         if intent:
-            if intent.intent_type == "semantic_fallback":
+            if intent.intent_type == "declined":
                 return intent
             logger.info(
                 f"[Lookup] topic hit: ace_search plugin={intent.plugin_id} "
@@ -108,25 +110,34 @@ class IntentClassifier:
             )
             return intent
 
-        effect = self.schema.find_effect_in_query(query)
-        if effect:
-            effect_id, _, _ = effect
-            return LookupIntent(
-                intent_type="semantic_fallback",
-                plugin_id=effect_id,
-                entity_kind="effect",
-                tier=1,
-                confidence=0.95,
-            )
-        return None
+        return self._detect_effect(query)
 
     @staticmethod
-    def _requires_semantic_fallback(query: str) -> bool:
+    def _declines(query: str) -> bool:
         q_lower = query.lower()
         return (
             any(marker in query for marker in HOWTO_HARD_SKIP_ZH)
             or any(marker in query for marker in HOWTO_PRE_LOOKUP_FALLBACK_ZH_EN)
-            or any(marker in q_lower for marker in SEMANTIC_FALLBACK_MARKERS_EN)
+            or any(marker in q_lower for marker in DECLINE_MARKERS_EN)
+        )
+
+    def _detect_effect(self, query: str) -> Optional[LookupIntent]:
+        """An effect name answers with its parameters when the query says it means an effect."""
+        effect = self.schema.find_effect_in_query(query)
+        if effect is None:
+            return None
+        effect_ids, _, _ = effect
+        # Names such as Screen, Color and 亮度 are ordinary words; without an
+        # effect word the query keeps the entity and declines.
+        q_lower = query.casefold()
+        names_an_effect = any(word in q_lower for word in EFFECT_QUERY_KEYWORDS_ZH_EN)
+        return LookupIntent(
+            intent_type="effect_detail" if names_an_effect else "declined",
+            plugin_id=effect_ids[0],
+            entity_kind="effect",
+            matched_tags=[f"effect-{effect_id}" for effect_id in effect_ids],
+            tier=1,
+            confidence=0.95,
         )
 
     @staticmethod
@@ -293,7 +304,7 @@ class IntentClassifier:
         compact_topic = re.sub(r"\s+", "", filter_term).lower()
         if compact_topic in AMBIGUOUS_BARE_TOPICS_ZH_EN:
             return LookupIntent(
-                intent_type="semantic_fallback",
+                intent_type="declined",
                 plugin_id=plugin_id,
                 is_behavior=is_behavior,
                 tier=1,

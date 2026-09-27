@@ -151,7 +151,11 @@ class SchemaIndex:
         self._plugins: dict[str, dict] = {}
         self._behaviors: dict[str, dict] = {}
         self._name_map: dict[str, tuple[str, bool]] = {}
-        self._effect_name_map: dict[str, str] = {}
+        # One name can belong to several effects: the zh-CN pack calls both
+        # Brightness and Lighten 亮度.
+        self._effect_name_map: dict[str, list[str]] = {}
+        self._effect_files: dict[str, str] = {}
+        self._effects: dict[str, dict] = {}
         self._loaded = False
 
     @property
@@ -219,8 +223,10 @@ class SchemaIndex:
 
         # The root index only lists effect ids; display names come from each
         # locale index so a query can name an effect in either language.
-        for effect_id in index_data.get("effects", {}):
-            self._effect_name_map[effect_id.lower()] = effect_id
+        for effect_id, entry in index_data.get("effects", {}).items():
+            self._register_effect_name(effect_id, effect_id)
+            if isinstance(entry, dict) and entry.get("file"):
+                self._effect_files[effect_id] = str(entry["file"])
         for locale in SCHEMA_LOCALES:
             if not locale_index_path(self._schema_dir, locale).is_file():
                 continue
@@ -230,10 +236,10 @@ class SchemaIndex:
                 logger.error("[SchemaIndex] Invalid %s locale index: %s", locale, exc)
                 continue
             for effect_id, entry in locale_sections["effects"].items():
-                self._effect_name_map.setdefault(effect_id.lower(), effect_id)
+                self._register_effect_name(effect_id, effect_id)
                 name = entry.get("name", "")
                 if isinstance(name, str) and name:
-                    self._effect_name_map[name.lower()] = effect_id
+                    self._register_effect_name(name, effect_id)
 
         if not self._plugins and not self._behaviors:
             logger.error(
@@ -246,6 +252,11 @@ class SchemaIndex:
             len(self._behaviors),
             len(self._name_map),
         )
+
+    def _register_effect_name(self, name: str, effect_id: str) -> None:
+        ids = self._effect_name_map.setdefault(name.lower(), [])
+        if effect_id not in ids:
+            ids.append(effect_id)
 
     # Compatibility for callers that used the historical private loader.
     _load = ensure_loaded
@@ -314,12 +325,14 @@ class SchemaIndex:
         _, negative_start, end, plugin_id, is_behavior = max(candidates)
         return plugin_id, is_behavior, -negative_start, end
 
-    def find_effect_in_query(self, query: str) -> tuple[str, int, int] | None:
-        """Find a versioned effect name without making it a Direct Lookup hit."""
+    def find_effect_in_query(
+        self, query: str
+    ) -> tuple[tuple[str, ...], int, int] | None:
+        """Find the longest effect name in ``query``: every effect of that name, and its span."""
         self.ensure_loaded()
         query_lower = query.lower()
-        candidates: list[tuple[int, int, int, str]] = []
-        for registered, effect_id in self._effect_name_map.items():
+        candidates: list[tuple[int, int, int, tuple[str, ...]]] = []
+        for registered, effect_ids in self._effect_name_map.items():
             start = query_lower.find(registered)
             if start < 0:
                 continue
@@ -334,11 +347,51 @@ class SchemaIndex:
                 )
                 if not (left_ok and right_ok):
                     continue
-            candidates.append((len(registered), -start, end, effect_id))
+            candidates.append((len(registered), -start, end, tuple(effect_ids)))
         if not candidates:
             return None
-        _, negative_start, end, effect_id = max(candidates)
-        return effect_id, -negative_start, end
+        _, negative_start, end, effect_ids = max(candidates)
+        return effect_ids, -negative_start, end
+
+    def get_effect(self, effect_id: str) -> dict | None:
+        """Return one effect with its parameters, English and Chinese side by side."""
+        self.ensure_loaded()
+        if effect_id in self._effects:
+            return self._effects[effect_id]
+        relative = self._effect_files.get(effect_id)
+        if relative is None:
+            return None
+        records: dict[str, dict] = {}
+        for locale in SCHEMA_LOCALES:
+            path = self._schema_dir / locale / relative
+            try:
+                records[locale] = json.loads(path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError) as exc:
+                logger.error("[SchemaIndex] Failed to load %s: %s", path, exc)
+                return None
+        en, zh = records["en-US"], records["zh-CN"]
+        zh_params = {param.get("id"): param for param in zh.get("parameters", [])}
+        effect = {
+            "id": effect_id,
+            "name_en": en.get("name", effect_id),
+            "name_zh": zh.get("name", ""),
+            "description_en": en.get("description", ""),
+            "description_zh": zh.get("description", ""),
+            "category": en.get("category", ""),
+            "params": [
+                {
+                    "id": param.get("id", ""),
+                    "type": param.get("type", ""),
+                    "name_en": param.get("name", ""),
+                    "name_zh": zh_params.get(param.get("id"), {}).get("name", ""),
+                    "desc_en": param.get("desc", ""),
+                    "desc_zh": zh_params.get(param.get("id"), {}).get("desc", ""),
+                }
+                for param in en.get("parameters", [])
+            ],
+        }
+        self._effects[effect_id] = effect
+        return effect
 
     def get_schema(
         self,

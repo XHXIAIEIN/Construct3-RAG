@@ -407,11 +407,11 @@
         "purpose": "Force solution, concept, comparison, and tutorial requests out of Direct Lookup.",
         "source": [
           "gold:translation-negative-zh-01",
-          "gold:semantic-fallback-zh-01",
-          "gold:semantic-fallback-zh-03"
+          "gold:declined-zh-01",
+          "gold:declined-zh-03"
         ],
         "consumers": [
-          "src.lookup.intent.IntentClassifier._requires_semantic_fallback"
+          "src.lookup.intent.IntentClassifier._declines"
         ],
         "tests": [
           "tests/test_lookup.py",
@@ -460,12 +460,12 @@
       "pre_lookup_fallback": {
         "purpose": "Block broad how-to forms before inference while preserving bounded 怎么 queries.",
         "source": [
-          "gold:semantic-fallback-zh-01",
+          "gold:declined-zh-01",
           "gold:ambiguous-verb-get-zh-10",
           "gold:ambiguous-verb-find-zh-11"
         ],
         "consumers": [
-          "src.lookup.intent.IntentClassifier._requires_semantic_fallback"
+          "src.lookup.intent.IntentClassifier._declines"
         ],
         "tests": [
           "tests/test_lookup.py",
@@ -479,15 +479,15 @@
           ]
         }
       },
-      "semantic_fallback_markers": {
+      "decline_markers": {
         "purpose": "Keep English workflow, explanation, and comparison phrasing out of Direct Lookup.",
         "source": [
           "gold:translation-negative-en-03",
-          "gold:semantic-fallback-en-04",
-          "gold:semantic-fallback-en-06"
+          "gold:declined-en-04",
+          "gold:declined-en-06"
         ],
         "consumers": [
-          "src.lookup.intent.IntentClassifier._requires_semantic_fallback"
+          "src.lookup.intent.IntentClassifier._declines"
         ],
         "tests": [
           "tests/fixtures/query_gold.jsonl"
@@ -512,8 +512,8 @@
     "example_keywords": {
       "purpose": "Detect requests for committed official example projects after semantic-style blockers.",
       "source": [
-        "gold:example-effect-en-01",
-        "gold:example-effect-zh-02"
+        "gold:example-find-en-01",
+        "gold:example-find-zh-02"
       ],
       "consumers": [
         "src.lookup.intent.IntentClassifier._detect_example_find"
@@ -532,6 +532,33 @@
           "案例",
           "样例",
           "模板"
+        ]
+      }
+    },
+    "effect_keywords": {
+      "purpose": "Require an explicit effect word before an effect name becomes an effect lookup: names such as Screen, Color and 亮度 are ordinary words.",
+      "source": [
+        "gold:effect-detail-zh-01",
+        "gold:effect-detail-en-02",
+        "gold:effect-detail-negative-en-04",
+        "schema:data/c3-schemas/{locale}/_index.json effects"
+      ],
+      "consumers": [
+        "src.lookup.intent.IntentClassifier._detect_effect"
+      ],
+      "tests": [
+        "tests/test_lookup.py",
+        "tests/fixtures/query_gold.jsonl"
+      ],
+      "values": {
+        "en-US": [
+          "effect",
+          "shader"
+        ],
+        "zh-CN": [
+          "特效",
+          "效果",
+          "着色器"
         ]
       }
     },
@@ -584,7 +611,7 @@
         "purpose": "Identify Schema IDs that are also ordinary English words and need a meaningful topic.",
         "source": [
           "gold:entity-ambiguity-en-02",
-          "gold:fallback-edge-zh-01"
+          "gold:declined-edge-zh-01"
         ],
         "consumers": [
           "src.lookup.intent.IntentClassifier._keyword_infer"
@@ -615,7 +642,7 @@
       "generic_query_words": {
         "purpose": "Define generic words that cannot disambiguate an ordinary-word plugin ID.",
         "source": [
-          "gold:fallback-edge-mixed-02",
+          "gold:declined-edge-mixed-02",
           "contract:false-direct prevention"
         ],
         "consumers": [
@@ -813,7 +840,7 @@
         ],
         "consumers": [
           "src.lookup.handlers.LookupHandlers._scoped_filter_words",
-          "tests/eval_query_quality.py"
+          "tests/test_query_gold.py"
         ],
         "tests": [
           "tests/test_lookup.py::test_sprite_display_uses_directed_common_alias",

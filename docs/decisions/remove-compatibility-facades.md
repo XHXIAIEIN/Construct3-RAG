@@ -25,9 +25,8 @@ retrieval pipeline had no element that used them.
   `configure_lookup_defaults()` and `configure_schema_default()` are gone.
 - `src/observability/`, the `trace` parameters and every `_trace()` call are
   gone; `logger.info` in the classifier stays.
-- The evaluator binds its own alias table and passes it to `LookupEngine` as
-  the directed-alias provider. Its report is unchanged: `current` 72/72,
-  `literal` 71/72, before and after.
+- The gold set passed unchanged before and after. It runs in pytest now
+  (`query-gold-in-pytest.md`).
 - The playground keeps only the confidence badge styles.
 
 ## Re-evaluate when

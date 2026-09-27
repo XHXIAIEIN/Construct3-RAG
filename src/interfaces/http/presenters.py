@@ -75,8 +75,9 @@ def _present_lookup(
         for match in result.matches:
             name = match.script_name if include_scripts else match.en.name
             grouped_names.setdefault(match.ace_type, []).append(name)
-        if not any(grouped_names.values()):
-            return None
+    # Properties, effects, terms and examples have no ACE names to list; they
+    # are answered with the full matches rather than an empty section.
+    if is_list and any(grouped_names.get(kind) for kind in ("condition", "action", "expression")):
         return LookupSection(
             conditions=grouped_names.get("condition") or None,
             actions=grouped_names.get("action") or None,

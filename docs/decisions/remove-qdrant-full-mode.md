@@ -63,9 +63,9 @@ Option 4.
   section.
 - `GET /health`: `status` (`ok` or `unavailable`), `schema_ready`, `message`.
 - `SearchStage`: `initialize`, `lookup`, `respond`.
-- The `semantic_fallback` route name stays inside the lookup: it names the
-  class of query Direct Lookup declines, and the 72-row gold set pins such
-  queries. The response to one has no `lookup` section.
+- A query Direct Lookup declines gets a response with no `lookup` section.
+  Inside the lookup that class is the `declined` intent
+  (`query-gold-in-pytest.md`).
 
 This broke the `construct3-copilot` bridge, which sent `mode=semantic` and
 filters.

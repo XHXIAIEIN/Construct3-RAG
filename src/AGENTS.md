@@ -25,8 +25,8 @@ modules.
   scoped, single-hop alias remains, with a rule ID.
 - Bad result: check data quality, field weights, routing and product scope
   before adding keywords, prompts or a model layer. A new keyword, alias or
-  rule starts from a failing case in `tests/fixtures/query_gold.jsonl`, and
-  `tests/eval_query_quality.py` runs before and after it.
+  rule starts from a failing case in `tests/fixtures/query_gold.jsonl`;
+  `tests/test_query_gold.py` runs the set.
 - Public API change: `interfaces/http/models.py`, docs and compatibility
   tests in one change. Internal structures promise no compatibility.
 - Schema layout (`en-US`, `zh-CN`): `lookup/schema_layout.py` owns it.

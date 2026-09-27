@@ -42,9 +42,13 @@ Default: `http://localhost:8765`
 
 | Mode | Output |
 |------|--------|
-| `list` | ACE names grouped by type |
+| `list` | ACE names grouped by type; a hit with no ACE names (properties, an effect, a term, an example, a script member) returns full match objects |
 | `lookup` | Full match objects |
 | `auto` | The same as `lookup` |
+
+An effect name with an effect word (`Bulge effect`, `膨胀特效`) returns the
+effect under `matches.<effect id>.effects`, its parameters in `params`. An
+effect name alone is declined: Screen and Color are ordinary words too.
 
 A how-to, comparison or concept question is not a lookup. The service declines
 it: the response has no `lookup` section, and the manual and the example

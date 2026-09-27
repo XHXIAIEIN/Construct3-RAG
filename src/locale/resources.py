@@ -166,17 +166,23 @@ HOWTO_PRE_LOOKUP_FALLBACK_ZH_EN: frozenset[str] = frozenset(
         "query.howto.pre_lookup_fallback.values",
     )
 )
-SEMANTIC_FALLBACK_MARKERS_EN: tuple[str, ...] = tuple(
+DECLINE_MARKERS_EN: tuple[str, ...] = tuple(
     marker.casefold()
     for marker in _merged_localized_list(
-        _QUERY["howto"]["semantic_fallback_markers"]["values"],
-        "query.howto.semantic_fallback_markers.values",
+        _QUERY["howto"]["decline_markers"]["values"],
+        "query.howto.decline_markers.values",
     )
 )
 EXAMPLE_QUERY_KEYWORDS_ZH_EN: tuple[str, ...] = tuple(
     keyword.casefold()
     for keyword in _merged_localized_list(
         _QUERY["example_keywords"]["values"], "query.example_keywords.values"
+    )
+)
+EFFECT_QUERY_KEYWORDS_ZH_EN: tuple[str, ...] = tuple(
+    keyword.casefold()
+    for keyword in _merged_localized_list(
+        _QUERY["effect_keywords"]["values"], "query.effect_keywords.values"
     )
 )
 
@@ -318,8 +324,10 @@ __all__ = [
     "CATALOG",
     "CATALOG_PATH",
     "CJK_ASCII_BOUNDARY_PATTERN",
+    "DECLINE_MARKERS_EN",
     "DETAIL_QUERY_PATTERNS",
     "DirectedAliasRule",
+    "EFFECT_QUERY_KEYWORDS_ZH_EN",
     "ENTITY_ROLE_SUFFIX_PATTERN_ZH_EN",
     "ENTITY_ROLE_TOKEN_PATTERN_ZH_EN",
     "EXAMPLE_QUERY_KEYWORDS_ZH_EN",
@@ -330,7 +338,6 @@ __all__ = [
     "LIST_QUERY_PATTERNS",
     "QUERY_PARTICLE_SPLIT_PATTERN_ZH",
     "SCOPED_ACE_TYPE_RULES_ZH_EN",
-    "SEMANTIC_FALLBACK_MARKERS_EN",
     "SUPPORTED_LOCALES",
     "TRANSLATE_QUERY_PATTERNS",
 ]

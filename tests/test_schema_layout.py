@@ -125,8 +125,8 @@ def test_effect_names_resolve_from_locale_indexes(tmp_path):
 
     index = SchemaIndex(_make_schema(tmp_path / "schemas"))
 
-    assert index.find_effect_in_query("加一个模糊特效") == ("blur", 3, 5)
-    assert index.find_effect_in_query("add blur effect") == ("blur", 4, 8)
+    assert index.find_effect_in_query("加一个模糊特效") == (("blur",), 3, 5)
+    assert index.find_effect_in_query("add blur effect") == (("blur",), 4, 8)
 
 
 def test_schema_is_complete_rejects_empty_manifest_section(tmp_path):
@@ -155,5 +155,5 @@ def test_bundled_schema_is_self_contained_and_loadable():
     resolved = index.resolve_name("Sprite")
     assert resolved == ("sprite", False)
     assert index.get_schema("sprite", is_behavior=False)
-    assert index.find_effect_in_query("像素化") == ("pixellate", 0, 3)
-    assert index.find_effect_in_query("Pixellate") == ("pixellate", 0, 9)
+    assert index.find_effect_in_query("像素化") == (("pixellate",), 0, 3)
+    assert index.find_effect_in_query("Pixellate") == (("pixellate",), 0, 9)

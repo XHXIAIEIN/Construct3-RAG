@@ -1110,6 +1110,18 @@ def test_ace_lookup_finds_a_word_in_a_parameter(built):
     assert code == 0 and "pause-tweens" in out and "no name under Tween" not in out
 
 
+def test_ace_lookup_prints_an_effect_with_its_parameters(built):
+    """An effect has parameters and no ACEs. The zh-CN pack names both Brightness and
+    Lighten 亮度, so that name prints both rather than the one a table kept last."""
+    code, out = tool(built, "lookup_ace", "Bulge")
+    assert code == 0 and out.startswith("effect bulge - Bulge [distortion]")
+    assert "radius" in out and "scale" in out and "percent" in out
+    code, out = tool(built, "lookup_ace", "Bulge", "radius")
+    assert code == 0 and "radius" in out and "scale" not in out
+    code, out = tool(built, "lookup_ace", "亮度", "--locale", "zh-CN")
+    assert code == 0 and "effect brightness" in out and "effect lighten" in out and "no parameters" in out
+
+
 def test_ace_lookup_prints_a_miss_on_stdout(built):
     """The miss and what comes near are the answer. On stderr, a harness that shows stdout
     alone printed nothing, and PowerShell wrapped each line in a NativeCommandError record,

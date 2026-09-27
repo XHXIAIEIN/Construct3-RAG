@@ -206,7 +206,7 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
     assert zh["effects"]["blur"] == {"name": "模糊", "file": "effects/blur.json"}
 
     assert schema_is_complete(schemas_dir)
-    assert SchemaIndex(schemas_dir).find_effect_in_query("模糊") == ("blur", 0, 2)
+    assert SchemaIndex(schemas_dir).find_effect_in_query("模糊") == (("blur",), 0, 2)
 
 
 def _export_with(fetcher, texts):

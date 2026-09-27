@@ -127,6 +127,32 @@ def test_search_routes_to_lookup(client):
     lookup.try_lookup.assert_called_once_with("列出 Sprite 的 action")
 
 
+def test_list_mode_answers_an_effect_with_its_matches(client):
+    """List mode names ACEs; an effect has none, and a hit must not come back as an empty section."""
+    c, lookup = client
+    from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
+
+    lookup.try_lookup.return_value = LookupResponse(
+        intent=LookupIntent(intent_type="effect_detail", plugin_id="bulge", entity_kind="effect", tier=1),
+        matches=[
+            LookupMatch(
+                ace_id="bulge",
+                ace_type="effect",
+                plugin_id="bulge",
+                collection="effects",
+                en=ACELocale(name="Bulge"),
+                params=[{"id": "radius", "type": "percent", "name_en": "Radius", "desc_en": "Radius of the bulge."}],
+            )
+        ],
+        query_type="lookup_effect_detail",
+    )
+
+    data = c.post("/search", json={"query": "Bulge effect", "mode": "list"}).json()
+
+    [effect] = data["lookup"]["matches"]["bulge"]["effects"]
+    assert effect["params"] == [{"name": "Radius", "type": "percent", "desc": "Radius of the bulge."}]
+
+
 def test_search_lookup_miss_returns_no_lookup_section(client):
     c, lookup = client
     lookup.try_lookup.return_value = None

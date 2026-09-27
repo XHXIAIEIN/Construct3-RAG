@@ -312,8 +312,7 @@ class TestLookupEngine:
         engine = make_engine()
         assert engine.try_lookup("翻译 DefinitelyNotATerm999") is None
 
-    def test_rag_fallthrough(self):
-        """Non-lookup queries should return None."""
+    def test_solution_question_is_declined(self):
         engine = make_engine()
         resp = engine.try_lookup("如何实现存档系统？")
         assert resp is None
@@ -640,3 +639,38 @@ class TestLookupResponseStructure:
         resp = engine.try_lookup("Sprite 有哪些 action")
         assert isinstance(resp.context, str)
         assert len(resp.context) > 0
+
+
+# ---------------------------------------------------------------------------
+# TestEffectLookup
+# ---------------------------------------------------------------------------
+
+class TestEffectLookup:
+    def test_effect_answers_with_its_parameters_in_both_languages(self):
+        resp = make_engine().try_lookup("膨胀特效有哪些参数")
+        assert resp is not None
+        assert resp.query_type == "lookup_effect_detail"
+        [match] = resp.matches
+        assert (match.collection, match.ace_type, match.ace_id) == ("effects", "effect", "bulge")
+        assert (match.en.name, match.zh.name) == ("Bulge", "膨胀")
+        assert [(p["id"], p["type"], p["name_zh"]) for p in match.params] == [
+            ("radius", "percent", "半径"),
+            ("scale", "percent", "强度"),
+        ]
+
+    def test_a_name_two_effects_share_returns_both(self):
+        resp = make_engine().try_lookup("亮度效果的参数")
+        assert resp is not None
+        assert [m.ace_id for m in resp.matches] == ["brightness", "lighten"]
+
+    def test_an_effect_without_parameters_says_so(self):
+        resp = make_engine().try_lookup("Lighten effect")
+        assert resp is not None
+        assert resp.matches[0].params == []
+        assert "no parameters" in resp.context
+
+    def test_an_effect_name_without_an_effect_word_is_declined(self):
+        engine = make_engine()
+        assert engine.try_lookup("screen width") is None
+        intent = engine.classifier.classify("screen width")
+        assert (intent.intent_type, intent.entity_kind) == ("declined", "effect")
