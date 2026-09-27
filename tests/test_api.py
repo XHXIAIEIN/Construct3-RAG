@@ -153,6 +153,29 @@ def test_list_mode_answers_an_effect_with_its_matches(client):
     assert effect["params"] == [{"name": "Radius", "type": "percent", "desc": "Radius of the bulge."}]
 
 
+def test_properties_are_grouped_under_properties(client):
+    c, lookup = client
+    from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
+
+    lookup.try_lookup.return_value = LookupResponse(
+        intent=LookupIntent(intent_type="prop_list", plugin_id="sprite", ace_type="properties", tier=1),
+        matches=[
+            LookupMatch(
+                ace_id="initial-animation",
+                ace_type="property",
+                plugin_id="sprite",
+                collection="plugins",
+                en=ACELocale(name="Initial animation"),
+            )
+        ],
+        query_type="lookup_prop_list",
+    )
+
+    groups = c.post("/search", json={"query": "Sprite properties list"}).json()["lookup"]["matches"]["sprite"]
+
+    assert list(groups) == ["properties"]
+
+
 def test_search_lookup_miss_returns_no_lookup_section(client):
     c, lookup = client
     lookup.try_lookup.return_value = None

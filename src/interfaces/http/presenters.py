@@ -43,6 +43,10 @@ def present_health_outcome(outcome: HealthOutcome) -> HealthResponse:
     )
 
 
+# The schema's own section names: a property list is "properties".
+_GROUP_KEYS = {"property": "properties"}
+
+
 def _convert_params(raw_params: list[dict]) -> list[ACEParam]:
     return [
         ACEParam(
@@ -116,7 +120,7 @@ def _present_lookup(
         payload = response_match.to_dict(lang if include_localized else "")
         plugin_id = payload.pop("plugin_id", match.plugin_id)
         ace_type = payload.pop("ace_type", "other")
-        group_key = ace_type if ace_type.endswith("s") else f"{ace_type}s"
+        group_key = _GROUP_KEYS.get(ace_type, f"{ace_type}s")
         grouped_matches.setdefault(plugin_id, {}).setdefault(group_key, []).append(
             LookupItemResult.model_validate(payload)
         )

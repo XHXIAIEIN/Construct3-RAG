@@ -121,11 +121,14 @@ are omitted from the response.
 }
 ```
 
-The grouping keys carry the stable `plugin_id` and plural `ace_type`; each item
-carries `ace_id`. `is_trigger` and `is_async` are always present; expressions
-carry `return_type` instead. `relevance` is the number of query keywords the
-ACE name matched; it is omitted when the handler did not score, as in `list`
-mode. With `lang=zh`, the localized value is added under `name.zh`:
+The grouping keys carry the stable `plugin_id` and plural `ace_type`
+(`conditions`, `actions`, `expressions`, `properties`, `effects`,
+`examples`, `script_apis`, and `plugins` for a translated addon name); each
+item carries `ace_id`. `is_trigger` and
+`is_async` are always present; expressions carry `return_type` instead.
+`relevance` is the number of query keywords the ACE name matched; it is
+omitted when the handler did not score, as in `list` mode. With `lang=zh`, the
+localized value is added under `name.zh`:
 
 ```json
 {

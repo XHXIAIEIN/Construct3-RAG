@@ -2,7 +2,9 @@
 
 Each case says whether the service answers (``hit``) or declines (``miss``),
 and for an answer which intent, entity and results it must give. A result is
-named by its stable key: collection, plugin id, ACE type, ACE id.
+named by its stable key: collection, plugin id, ACE type, ACE id. A
+``complete_list`` case must return the whole list, counted from the schema
+file of the release in ``data/``, so no case states a release's list sizes.
 """
 
 from __future__ import annotations
@@ -19,12 +21,13 @@ from src.settings import load_settings
 
 
 GOLD = Path(__file__).with_name("fixtures") / "query_gold.jsonl"
+SCHEMAS = GOLD.parents[2] / "data" / "c3-schemas" / "en-US"
 KEY = ("collection", "plugin_id", "ace_type", "ace_id")
 DEFAULT_WITHIN = 5
 FIELDS = {
     "id", "query", "locale", "task_family", "expected_lookup", "expected_intent",
     "expected_entity", "expected_ace_types", "must_results", "forbidden_results",
-    "min_results", "max_results", "source_path", "rationale",
+    "min_results", "max_results", "complete_list", "source_path", "rationale",
 }
 SINGULAR = {"conditions": "condition", "actions": "action", "expressions": "expression", "properties": "property"}
 
@@ -43,6 +46,14 @@ def engine() -> LookupEngine:
 
 def _key(spec: dict[str, Any]) -> tuple[str, ...]:
     return tuple(spec[field] for field in KEY)
+
+
+def _schema_list_size(case: dict[str, Any]) -> int:
+    """How many entries the listed sections of the entity's schema file hold."""
+    entity = case["expected_entity"]
+    folder = "behaviors" if entity["kind"] == "behavior" else "plugins"
+    schema = json.loads((SCHEMAS / folder / f"{entity['id']}.json").read_text(encoding="utf-8"))
+    return sum(len(schema.get(section, [])) for section in case["expected_ace_types"])
 
 
 def _entity(engine: LookupEngine, intent: LookupIntent | None, response: LookupResponse | None) -> dict[str, str] | None:
@@ -79,6 +90,10 @@ def test_every_case_uses_only_the_documented_fields_and_a_unique_id():
         assert case["rationale"].strip(), case["id"]
         if case["expected_lookup"] == "hit":
             assert case.get("expected_intent") and case.get("must_results"), case["id"]
+        if case.get("complete_list"):
+            # The size comes from the entity's schema file, never from the case.
+            assert case["expected_entity"]["kind"] in {"plugin", "behavior"}, case["id"]
+            assert case.get("expected_ace_types") and "min_results" not in case, case["id"]
 
 
 def test_every_source_path_exists():
@@ -122,7 +137,7 @@ def test_gold_case(engine: LookupEngine, case: dict[str, Any]) -> None:
     for spec in case.get("must_results", []):
         options = [_key(spec), *(_key(alt) for alt in spec.get("alternatives", []))]
         best = min((ranks[o] for o in options if o in ranks), default=None)
-        within = spec.get("within_top_k", DEFAULT_WITHIN)
+        within = len(keys) if case.get("complete_list") else spec.get("within_top_k", DEFAULT_WITHIN)
         assert best is not None and best <= within, f"{_key(spec)} not within {within}: {shown}"
 
     for spec in case.get("forbidden_results", []):
@@ -134,3 +149,5 @@ def test_gold_case(engine: LookupEngine, case: dict[str, Any]) -> None:
         assert len(keys) >= case["min_results"], shown
     if "max_results" in case:
         assert len(keys) <= case["max_results"], shown
+    if case.get("complete_list"):
+        assert len(keys) == _schema_list_size(case), shown

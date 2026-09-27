@@ -17,9 +17,11 @@ The pytest suite is offline: it needs no service, no model and no network.
 answers (`hit`) or declines (`miss`); for an answer, the intent, the entity,
 the ACE types, and the results it must and must not give, each by its stable
 key (collection, plugin id, ACE type, ACE id) within a rank, five unless
-`within_top_k` says otherwise. `source_path` names the data that settles the
-case and `rationale` says why. A declined query that still names an addon
-keeps it as `expected_entity`.
+`within_top_k` says otherwise. A `complete_list` case must return the whole
+list, and the test counts it from the entity's schema file, so a case never
+states how long a list is in one release. `source_path` names the data that
+settles the case and `rationale` says why. A declined query that still names
+an addon keeps it as `expected_entity`.
 
 A new keyword, alias or routing rule starts from a failing case here.
 
