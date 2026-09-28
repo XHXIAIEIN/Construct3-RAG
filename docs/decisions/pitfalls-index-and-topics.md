@@ -30,8 +30,17 @@ kept across *Restart layout*, a 44 pt line in a 46 px Text box, *Wait 0*
 after *Create object*), one Haiku run per task on the single file and one on
 the index. Every run on the index opened the topic file its task needed,
 from the when-to-read line, and every run in both arms avoided the pitfall.
-The runs on the index read about 7 % fewer tokens. Runs and grading:
-`.local/docs/evidence/pitfalls-split-2026-09-28/`.
+The runs on the index read about 7 % fewer tokens.
+
+Picking and Triggers and Else were then tried as topic files too, on three
+tasks hinging on them (a family's container, a tween finished inside a
+function, *Else* per instance). No run opened either topic file: "when the
+events pick" and "when they use a trigger" hold for every sheet, and the
+agent took the conclusion line as the whole fact. On the tween task the line
+kept the prohibition and lost the fix the full entry gives, and the run built
+a sequence that destroys the gem before its tween ends. Tokens did not move.
+Runs and grading: `.local/docs/evidence/pitfalls-split-2026-09-28/` and
+`pitfalls-split-2026-09-29/`.
 
 ## Decision
 
@@ -39,7 +48,7 @@ Option 3. `prompts/event-sheet-pitfalls.md` keeps its path, its opening
 rules, and Picking and Triggers and Else in full, since nearly every sheet
 needs them. Each other group is a `###` heading, a when-to-read line linking
 `prompts/pitfalls/<topic>.md`, and one conclusion line per entry in the
-topic file's order. The index is about 15.5 KB.
+topic file's order. The index is about 17 KB.
 
 A new entry goes into its group's topic file with its source, and its
 conclusion into the index. `tests/test_prompts.py` fails when a topic file
@@ -48,7 +57,8 @@ differ in number, or when an entry has no source.
 
 ## Re-evaluate when
 
-- The index passes about 15 KB again: move Picking and Triggers and Else to
-  topic files and keep their conclusion lines.
+- The index passes about 20 KB: shorten conclusion lines, or merge groups
+  that are always read together. Picking and Triggers and Else stay in full;
+  as conclusion lines they are not opened.
 - An eval shows an agent writing a pitfall's topic without opening its file:
   reword that group's when-to-read line first.
