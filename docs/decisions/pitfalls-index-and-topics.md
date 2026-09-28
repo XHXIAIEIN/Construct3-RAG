@@ -35,14 +35,11 @@ The runs on the index read about 7 % fewer tokens. Runs and grading:
 
 ## Decision
 
-Option 3. `prompts/event-sheet-pitfalls.md` keeps its path and its opening
-rules. Each group is a `###` heading, a when-to-read line linking
+Option 3. `prompts/event-sheet-pitfalls.md` keeps its path, its opening
+rules, and Picking and Triggers and Else in full, since nearly every sheet
+needs them. Each other group is a `###` heading, a when-to-read line linking
 `prompts/pitfalls/<topic>.md`, and one conclusion line per entry in the
-topic file's order. Picking and Triggers and Else, which nearly every sheet
-needs, are groups like the others: kept in full they took the index to
-15.8 KB, and as conclusion lines it is about 10 KB. The eval above ran with
-those two in full; no run has yet measured whether an agent opens their
-topic files.
+topic file's order. The index is about 15.5 KB.
 
 A new entry goes into its group's topic file with its source, and its
 conclusion into the index. `tests/test_prompts.py` fails when a topic file
@@ -51,7 +48,7 @@ differ in number, or when an entry has no source.
 
 ## Re-evaluate when
 
-- The index passes about 15 KB: shorten conclusion lines, or merge groups
-  that are always read together.
+- The index passes about 15 KB again: move Picking and Triggers and Else to
+  topic files and keep their conclusion lines.
 - An eval shows an agent writing a pitfall's topic without opening its file:
   reword that group's when-to-read line first.

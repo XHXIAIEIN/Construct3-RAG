@@ -1,7 +1,7 @@
 """The shape of the event sheet pitfalls: an index and its topic files.
 
-The index gives every group one conclusion line per pitfall, pointing at
-the topic file under
+The index keeps Picking and Triggers and Else in full and gives every other
+group one conclusion line per pitfall, pointing at the topic file under
 prompts/pitfalls/ that holds the pitfall with its cases and its source.
 """
 import re

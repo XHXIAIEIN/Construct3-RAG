@@ -9,43 +9,133 @@ source, no entry. Editing `eventSheets/*.json`, `layouts/*.json` or clipboard JS
 Read [references/hand-editing-project-files.md](references/hand-editing-project-files.md)
 first.
 
-Each group is one line per pitfall, its conclusion. When the events touch
-what a group names, open its topic file for the cases and the sources before
-writing them.
+Picking and Triggers and Else come up in almost every event sheet and are
+here in full. Every other group is one line per pitfall, its conclusion;
+when the events touch what a group names, open its topic file for the
+cases and the sources before writing them.
+
+## Picking
+
+- Collisions disabled = the instance fails every overlap and collision test, in
+  both directions. Use it to take a dragged or tweening instance out of the
+  world instead of adding an `isMoving` flag. [manual: plugin-reference/sprite.md
+  "Set collisions enabled"; scripting/scripting-reference/object-interfaces/iworldinstance.md
+  `isCollisionEnabled`]
+- A type and its family are picked separately: narrowing Sprite `Piece` never
+  narrows its family `Pieces`. Use that for two picks of one type in one
+  event, and refer to the name the caller narrowed (see [Functions](pitfalls/functions.md)). [manual:
+  project-primitives/objects/families.md "Picking families in events"]
+- Container members are created, destroyed and picked together; hierarchy
+  children are not picked with their parent, use *Pick children*. [manual:
+  project-primitives/objects/containers.md; plugin-reference/common-features/common-conditions.md
+  "Hierarchy"]
+- A container belongs to an object type, and picking a family never picks
+  it: with `HPBar` in `Enemy`'s container, `On clicked Enemies` then
+  `HPBar: Set width` sets every bar. Pick the type from the family in a
+  sub-event, `Enemy: Pick by unique ID Enemies.UID`, and the container comes
+  with it; one such sub-event per member type, under `For each Enemies` when
+  several are picked. The same bridge reaches a second family of the
+  instance, whose variables and behaviors the first family's events cannot
+  see. [Construct-bugs#7485, open; example: elemental-conveyors event 35,
+  `Draggable` picked by `Base.UID`]
+- *Pick children* picks only among the child type's instances already
+  picked, and a child type in the parent's container is narrowed as soon as
+  the parent is. In `Piece: On drop`, `PieceArt` sits in `Piece`'s container
+  and is already the dragged piece's art, so `Pieces: Pick children
+  PieceArt` finds nothing on the piece under it. Give the child type a family
+  of its own, `Arts` with the one member `PieceArt`, and pick children of
+  the family: its picks are kept apart from the container's. [runtime:
+  exported c3runtime.js r503, `AnySDK.PickChildren` keeps the child class's
+  current picks unless they are all of it, then applies the result to the
+  child's container; observed in a game project, r503 preview, 2026-09-28:
+  the merge target's body was not picked until the pick went through a
+  one-member family]
+- A data object (Dictionary, JSON) in a container gives each instance its own
+  copy, picked with its type as above. Use it instead of a growing list of
+  instance variables when stats come from a data file. [manual:
+  project-primitives/objects/containers.md "data storage objects"]
+- Sub-events run after the parent's actions, so a change made there (collisions
+  re-enabled) is visible to the sub-event's conditions. [manual:
+  project-primitives/events/sub-events.md]
+
+- Hierarchy children may live on a different layer than their parent; the
+  connection is per instance, not per layer. A child on a lower layer stays
+  a child, so a lifted parent can be drawn above everything while its parts
+  stay under an outline. [releases: beta.json, "hierarchy information not
+  duplicated properly if connections were setup between instances in
+  different layers"; observed in a game project, 2026-09-17, unverified at runtime]
+- *ChildCount*, *Compare child count* and *Has children* count every attached
+  child whatever its type. A second child type on the same parent shifts
+  every count that meant one type. Get the
+  top index from *Pick children* plus *Pick highest* on that type, or count in
+  a *For each* over the picked children. [manual:
+  plugin-reference/common-features/common-expressions.md "ChildCount",
+  common-conditions.md "Compare child count"; observed in a game project, 2026-09-17]
+- *Destroy* does not detach a child from its parent. The instance is only
+  released at the end of the top-level event, and until then *Compare child
+  count*, *Has children*, `ChildCount` and *Pick children* still see it.
+  Destroying a child in one sub-event and counting children in the next
+  sub-event of the same trigger counts the destroyed one. Count the type you
+  mean with *Pick children* plus `PickedCount`, or do the count from a
+  later top-level event. [manual: system-reference/system-actions.md "Unload
+  images" note "destroying objects does not really release them until the
+  end of the next top-level event"; runtime: exported c3runtime.js,
+  `DestroyInstance` defers, `GetChildCount` is `GetChildren().length`;
+  observed in a game project, 2026-09-17]
+
+## Triggers and Else
+
+- One trigger per event, and one per branch of sub-events: no event above a
+  trigger may hold another. A function and a custom action count as the
+  trigger of their branch, so no trigger goes inside one: a function that
+  starts a tween cannot hold the tween's *On finished*. That is a top-level
+  event of its own, which calls the next function. Only an OR block lists
+  several triggers. The editor refuses the whole project otherwise, with
+  `cannot add another trigger to event branch`. [manual:
+  project-primitives/events/how-events-work.md "Triggers", sub-events.md
+  "Triggers in sub-events"; editor bundle `projectResources.js`, function
+  blocks report a trigger; observed in a game project, 2026-09-17]
+- *On collision with another object*, Timer *On timer* and the Gamepad
+  button conditions are triggers to the editor, green arrow and every rule
+  above, although the runtime tests them in sheet order each tick. The schema
+  marks them `isTrigger` with `isFakeTrigger`. [Addon SDK guide
+  defining-aces.md "isFakeTrigger"; schema: plugins/_common.json,
+  behaviors/timer.json]
+- A trigger, a loop, *Else*, *Trigger once* and the conditions that only pick
+  (*Pick all*, *Pick by comparison*, *Pick last created*, *Pick
+  nearest/furthest*, *Pick children*) cannot be inverted; "not on collision"
+  is *Is overlapping* inverted. The schema says
+  which: `isTrigger`, `isLooping`, `isInvertible: false`. [manual:
+  project-primitives/events/conditions.md "Inverting conditions"; editor
+  bundle, `condition not invertible`]
+- *Trigger once* and *Every X seconds* do nothing useful under a trigger:
+  they are tested only in the tick the trigger fires, and the editor does not
+  offer them there. [Addon SDK guide defining-aces.md
+  "isCompatibleWithTriggers"; schema: `isCompatibleWithTriggers: false`]
+- A trigger can fire with several instances picked. Timer *On timer* does when
+  timers elapse in the same tick; a *Pick nearest* or a function call written
+  for one instance then runs once. Add *For each* after such triggers. [manual:
+  behavior-reference/timer.md, note under "On timer"]
+- Else is decided per block: it runs only if the previous sibling ran for no
+  instance. Three picked, one passing, and Else does not run for the other two.
+  Per-instance branching is a second event with the inverted condition, or the
+  default-then-override pattern. [manual: system-reference/system-conditions.md
+  "Else"]
+- Else does not narrow; it starts from the parent's picks. It cannot directly
+  follow a trigger block, only a normal sub-event inside one. [same]
+- Touch *On tap* skips a tap released within 666 ms and 25 px of the tap
+  before it: that one fires *On double-tap* instead, and the tap after it is
+  single again. A button on *On tap object* loses every second press of a
+  player tapping fast. A button that counts every press reacts to *On touched
+  object* (start), or also to *On double-tap object*. A tap is itself a
+  release within 333 ms and 15 px of the touch start. [manual:
+  plugin-reference/touch.md "On tap", "On double-tap"; runtime: exported
+  c3runtime.js r503, `ShouldTriggerTap`; observed in a game project, r503
+  preview, 2026-09-28: 7 mouse clicks 0.3 s apart on the button made 4
+  pieces, 8 clicks 0.7 s apart made 8; on *On touched object* (start), 7
+  clicks 0.3 s apart made 7]
 
 ## Topics
-
-### Picking
-
-Read [pitfalls/picking.md](pitfalls/picking.md) when the events narrow
-instances: families, containers, hierarchy children, overlap and collision
-tests, or sub-events that rely on the parent's picks.
-
-- Collisions disabled fails every overlap and collision test; use it instead of an `isMoving` flag.
-- A type and its family are picked separately: narrowing one never narrows the other.
-- Container members are created, destroyed and picked together; hierarchy children need *Pick children*.
-- Picking a family never picks a type's container: pick the type by `UID` in a sub-event first.
-- *Pick children* picks only among the child type's current picks, which its container may have narrowed; pick through a one-member family.
-- A Dictionary or JSON in a container gives each instance its own copy.
-- Sub-events run after the parent's actions and see what they changed.
-- A hierarchy child may sit on another layer than its parent and stays its child.
-- `ChildCount`, *Compare child count* and *Has children* count children of every type.
-- A destroyed child still counts as a child until the top-level event ends.
-
-### Triggers and Else
-
-Read [pitfalls/triggers-and-else.md](pitfalls/triggers-and-else.md) when
-the events use a trigger, a function or custom action, *Else*, an inverted
-condition, *Trigger once*, *Every X seconds* or Touch taps.
-
-- One trigger per branch of events, and a function or custom action is its branch's trigger; the editor refuses the project otherwise.
-- *On collision*, Timer *On timer* and Gamepad buttons are triggers to the editor, although tested every tick.
-- Triggers, loops, *Else*, *Trigger once* and the conditions that only pick cannot be inverted.
-- *Trigger once* and *Every X seconds* do nothing useful under a trigger.
-- A trigger can fire with several instances picked: add *For each* after it.
-- *Else* runs only if the previous sibling ran for no instance; it does not branch per instance.
-- *Else* does not narrow, and cannot directly follow a trigger block.
-- Touch *On tap* skips a fast second tap, which fires *On double-tap*; a button that counts presses uses *On touched object*.
 
 ### Functions
 
@@ -183,6 +273,6 @@ observation beats intuition, intuition is not an entry. Would the agent get it
 wrong without the line? If not, do not add it.
 
 The bullet goes into the topic file of its group, and the group here gets
-its conclusion as one line, in the same place in the order. A fact that
-fits no group gets a topic file of its own and a group here that says when
-to read it.
+its conclusion as one line, in the same place in the order. Picking and
+Triggers and Else take the whole bullet here. A fact that fits no group gets
+a topic file of its own and a group here that says when to read it.
