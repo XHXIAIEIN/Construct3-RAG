@@ -133,9 +133,12 @@ or size Text, draw bars, Drawing Canvas polygons or blend modes.
 ### Tween
 
 Read [pitfalls/tween.md](pitfalls/tween.md) when a tween must drive
-something Tween has no property for.
+something Tween has no property for, when a tween's end starts the next
+step, or when several animations share one property.
 
 - A value tween read under *Is playing* drives what Tween cannot address, a full 360° turn included.
+- *On finished* runs before *Destroy on complete* destroys the instance, and *On any finished* runs for that tween too.
+- `Tween.Value(tag)` reads 0 once the tween ends: animate a channel as what is left of it, from the full amount to 0.
 
 ### Creating objects
 
