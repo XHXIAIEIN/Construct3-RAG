@@ -162,10 +162,6 @@
       "name": "Multiplayer",
       "file": "plugins/multiplayer.json"
     },
-    "nodewebkit": {
-      "name": "NW.js",
-      "file": "plugins/nodewebkit.json"
-    },
     "particles": {
       "name": "Particles",
       "file": "plugins/particles.json"
@@ -718,10 +714,6 @@
       "name": "Vignette",
       "file": "effects/vignette.json"
     },
-    "warp": {
-      "name": "Warp",
-      "file": "effects/warp.json"
-    },
     "warpobject": {
       "name": "Warp object",
       "file": "effects/warpobject.json"
@@ -733,10 +725,6 @@
     "warplayout": {
       "name": "Warp layout",
       "file": "effects/warplayout.json"
-    },
-    "warpmask": {
-      "name": "Warp mask",
-      "file": "effects/warpmask.json"
     },
     "warpradial": {
       "name": "Warp radial",

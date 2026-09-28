@@ -47,6 +47,7 @@ src/
   ingest/
     c3_fetcher.py                CDN fetch, cache, schema/example/lang export
     common_aces.py               Shared world-object ACEs from common_aces.json
+    deprecated_addons.py         Plugins and behaviors the editor bundles mark deprecated
   locale/
     catalog.json                 Query vocabulary, grammar, and aliases per locale
     resources.py                 Catalog validation, merging, and format adapters

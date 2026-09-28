@@ -285,13 +285,6 @@
       "actions": 24,
       "expressions": 53
     },
-    "nodewebkit": {
-      "originalId": "NodeWebkit",
-      "file": "plugins/nodewebkit.json",
-      "conditions": 13,
-      "actions": 31,
-      "expressions": 20
-    },
     "particles": {
       "originalId": "Particles",
       "file": "plugins/particles.json",
@@ -1014,10 +1007,6 @@
       "file": "effects/vignette.json",
       "category": "color"
     },
-    "warp": {
-      "file": "effects/warp.json",
-      "category": "distortion"
-    },
     "warpobject": {
       "file": "effects/warpobject.json",
       "category": "distortion"
@@ -1029,10 +1018,6 @@
     "warplayout": {
       "file": "effects/warplayout.json",
       "category": "distortion"
-    },
-    "warpmask": {
-      "file": "effects/warpmask.json",
-      "category": "mask"
     },
     "warpradial": {
       "file": "effects/warpradial.json",

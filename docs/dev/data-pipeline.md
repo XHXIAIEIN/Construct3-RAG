@@ -9,6 +9,7 @@
 | Effects | `editor.construct.net/{ver}/effects/allEffects.json` | JSON | Each C3 release |
 | Example metadata | `editor.construct.net/{ver}/media/example-project-data.json` | JSON | Each C3 release |
 | Shared world-object ACEs | `editor.construct.net/main.js`, extracted by `scripts/extract_common_aces.py` into `src/ingest/common_aces.json` | JSON | When a release adds a shared ACE |
+| Deprecated plugins and behaviors | `editor.construct.net/{ver}/main.js`, `plugins/allEditorPlugins.js`, `behaviors/allEditorBehaviors.js`, read by `src/ingest/deprecated_addons.py` | JS | Each C3 release |
 
 The manual, the Addon SDK samples and the example projects are separate clones
 (`Construct3-Manual`, `Construct-Addon-SDK`, `Construct-Example-Projects`).
@@ -87,11 +88,24 @@ file exists as valid JSON under both `en-US` and `zh-CN`, and each locale's
 
 ### Deprecation Filter
 
-ACEs present in `allAces.json` but absent from `zh-CN` lang file are deprecated:
-- **Plugin-level**: plugins without zh-CN translation are skipped entirely
-- **ACE-level**: Individual ACEs removed from zh-CN (e.g. `Browser/devicepixelratio` → replaced by `PlatformInfo/device-pixel-ratio`) → skipped
+The editor hides a deprecated addon or ACE from its dialogs and keeps loading
+projects that use it. `C3Fetcher.export_schemas()` leaves out:
 
-`C3Fetcher.export_schemas()` applies it, so the committed schemas never hold a deprecated ACE.
+- **Plugins and behaviors** whose editor constructor calls
+  `SetIsDeprecated(true)`. `src/ingest/deprecated_addons.py` finds the minified
+  name of that call in `main.js` and reads it from each constructor in
+  `allEditorPlugins.js` and `allEditorBehaviors.js`. An addon of `allAces.json`
+  the bundle does not construct stops the export. An addon the zh-CN pack does
+  not name is left out too, since every locale file takes its ACE list from
+  that pack.
+- **Effects** with `"is-deprecated": true` in `allEffects.json`.
+- **ACEs** absent from the zh-CN pack (e.g. `Browser/devicepixelratio`,
+  replaced by `PlatformInfo/device-pixel-ratio`). This is not the editor's
+  `isDeprecated` flag, and the two disagree on 28 ACEs of r495.2.
+
+The export clears its schema directory first, so what it leaves out does not
+survive from an earlier export of the same release. See
+`docs/decisions/deprecated-addons-from-editor.md`.
 
 ## Version Update
 

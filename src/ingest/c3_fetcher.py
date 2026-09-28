@@ -13,10 +13,14 @@ Endpoints:
     plugins/pluginList.json      — plugin ID → path mapping
     behaviors/behaviorList.json  — behavior ID → path mapping
     versions.json                — all release versions
+    main.js, plugins/allEditorPlugins.js, behaviors/allEditorBehaviors.js
+                                 — editor bundles, read for SetIsDeprecated
 
 The shared world-object ACEs (``plugins/_common``) are not on any of these
 endpoints; ``export_schemas`` reads them from ``common_aces.json`` next to
 ``src/ingest/common_aces.py``, which explains how that file is produced.
+Which addons are deprecated is read from the editor bundles on every export;
+``src/ingest/deprecated_addons.py`` explains how.
 """
 import json
 import logging
@@ -34,6 +38,7 @@ from src.ingest.common_aces import (
     load_common_aces,
     load_common_availability,
 )
+from src.ingest.deprecated_addons import ADDON_KINDS, deprecated_ids, extract_deprecation
 
 
 logger = logging.getLogger(__name__)
@@ -53,6 +58,9 @@ ENDPOINTS = {
     "behavior_list": "behaviors/behaviorList.json",
     "offline":       "offline.json",
     "autocomplete":  "media/autocomplete-data.json",
+    "main_js":       "main.js",
+    "plugin_js":     "plugins/allEditorPlugins.js",
+    "behavior_js":   "behaviors/allEditorBehaviors.js",
 }
 
 
@@ -180,11 +188,24 @@ class C3Fetcher:
         marker = schemas_dir / ".exported"
         if marker.exists() and not _cache_expired(marker):
             return schemas_dir
+        # export_to_data copies the whole directory, so a file an earlier
+        # export wrote for an addon this one leaves out would reach data/.
+        if schemas_dir.exists():
+            shutil.rmtree(schemas_dir)
 
         aces_data = self.fetch_all_aces()
         lang_texts = {
             "en-US": self.fetch_lang("en-US").get("text", {}),
             "zh-CN": self.fetch_lang("zh-CN").get("text", {}),
+        }
+
+        # An addon the editor marks deprecated is hidden from its Add object
+        # and Add behavior dialogs; it is left out here whether or not the
+        # language packs still translate it.
+        addon_flags = self.fetch_addon_deprecation()
+        deprecated = {
+            kind: deprecated_ids(addon_flags[kind], set(aces_data.get(kind, {})), kind)
+            for kind in ADDON_KINDS
         }
 
         # _common is exported through the same loop as every plugin so its
@@ -227,7 +248,10 @@ class C3Fetcher:
                 # index has always carried (docs/decisions/schema-index-per-locale-split.md).
                 fallback_name = COMMON_ADDON_NAME if plugin_id == COMMON_ADDON_ID else plugin_id
 
-                # Skip deprecated addons (absent from zh-CN lang)
+                if plugin_id in deprecated[addon_type]:
+                    continue
+                # Every locale file takes its ACE list from the zh-CN pack
+                # (the check below), so an addon the pack lacks would have none.
                 zh_p = lang_texts["zh-CN"].get(addon_type, {}).get(pid_lower, {})
                 if not zh_p:
                     continue
@@ -356,13 +380,16 @@ class C3Fetcher:
                 index_data[section][pid_lower] = index_entry
 
         # ── Effects ───────────────────────────────────────────────────────
-        effects_raw = self.fetch_effects()
+        # allEffects.json flags the effects the Add effect dialog hides.
+        effects = [
+            data for data in (item.get("json", item) for item in self.fetch_effects())
+            if not data.get("is-deprecated")
+        ]
         for lang, text in lang_texts.items():
             out_dir = schemas_dir / lang / "effects"
             out_dir.mkdir(parents=True, exist_ok=True)
             l_effects = text.get("effects", {})
-            for item in effects_raw:
-                data = item.get("json", item)
+            for data in effects:
                 eid = data.get("id", "")
                 l_fx = l_effects.get(eid, {})
                 if not l_fx:
@@ -397,8 +424,7 @@ class C3Fetcher:
 
             # Index effects
             if lang == "en-US":
-                for item in effects_raw:
-                    data = item.get("json", item)
+                for data in effects:
                     eid = data.get("id", "")
                     if l_effects.get(eid):
                         index_data["effects"][eid] = {
@@ -674,6 +700,16 @@ class C3Fetcher:
         """Fetch all effect definitions."""
         data = self.fetch(ENDPOINTS["effects"])
         return data.get("all", data) if isinstance(data, dict) else data
+
+    def fetch_addon_deprecation(self) -> dict[str, dict[str, bool]]:
+        """``{"plugins": {id: deprecated}, "behaviors": {...}}`` from the
+        editor bundles, for every addon they construct."""
+        main_js = self.fetch_raw(ENDPOINTS["main_js"]).decode("utf-8", errors="replace")
+        bundles = {"plugins": ENDPOINTS["plugin_js"], "behaviors": ENDPOINTS["behavior_js"]}
+        return {
+            kind: extract_deprecation(main_js, self.fetch_raw(path).decode("utf-8", errors="replace"), kind)
+            for kind, path in bundles.items()
+        }
 
     def fetch_examples(self) -> list:
         """Fetch example project metadata list."""

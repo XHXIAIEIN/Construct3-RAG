@@ -176,6 +176,7 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
     }
     effects = [{"id": "blur", "category": "blur", "parameters": []}]
     with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
+         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)), \
          patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]), \
          patch.object(fetcher, "fetch_effects", return_value=effects), \
          patch.object(fetcher, "fetch_examples", return_value=[]):
@@ -209,9 +210,15 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
     assert SchemaIndex(schemas_dir).find_effect_in_query("模糊") == (("blur",), 0, 2)
 
 
+def _editor_flags(aces: dict, deprecated: tuple[str, ...] = ()) -> dict:
+    """What the editor bundles say of these addons: only ``deprecated`` are."""
+    return {kind: {addon: addon in deprecated for addon in aces.get(kind, {})}
+            for kind in ("plugins", "behaviors")}
+
+
 def _export_with(fetcher, texts):
     aces = {"plugins": {}, "behaviors": {}}
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces),          patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]),          patch.object(fetcher, "fetch_effects", return_value=[]),          patch.object(fetcher, "fetch_examples", return_value=[]):
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces),          patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)),          patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]),          patch.object(fetcher, "fetch_effects", return_value=[]),          patch.object(fetcher, "fetch_examples", return_value=[]):
         return fetcher.export_schemas()
 
 
@@ -292,6 +299,7 @@ def test_export_marks_every_condition_the_editor_treats_as_a_trigger(fetcher):
         "behaviors": {"timer": {"name": "Timer", "conditions": {"on-timer": {"list-name": "On timer"}}}},
     }}
     with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
+         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)), \
          patch.object(fetcher, "fetch_lang", return_value=text), \
          patch.object(fetcher, "fetch_effects", return_value=[]), \
          patch.object(fetcher, "fetch_examples", return_value=[]):
@@ -308,6 +316,65 @@ def test_export_marks_every_condition_the_editor_treats_as_a_trigger(fetcher):
         "every-tick": {},
         "on-timer": {"isTrigger": True, "isFakeTrigger": True},
     }
+
+
+def test_export_leaves_out_what_the_editor_deprecates_though_translated(fetcher):
+    """NW.js and the old Warp are still in both language packs; the editor's
+    flags, not the packs, keep them out of every file and index."""
+    from src.lookup.schema_layout import schema_is_complete
+
+    aces = {
+        "plugins": {pid: {"general": {"conditions": [], "actions": [{"id": "act", "scriptName": "Act"}],
+                                      "expressions": []}}
+                    for pid in ("Sprite", "NodeWebkit")},
+        "behaviors": {"Platform": {"general": {"conditions": [], "actions": [{"id": "act", "scriptName": "Act"}],
+                                               "expressions": []}}},
+    }
+    effects = [
+        {"json": {"id": "blur", "category": "blur", "parameters": []}},
+        {"json": {"id": "warp", "category": "distortion", "is-deprecated": True, "parameters": []}},
+    ]
+
+    def pack(suffix: str) -> dict:
+        addon = lambda name: {"name": name + suffix, "actions": {"act": {"list-name": "Act" + suffix}}}
+        return {"text": {
+            "plugins": {"sprite": addon("Sprite"), "nodewebkit": addon("NW.js")},
+            "behaviors": {"platform": addon("Platform")},
+            "effects": {"blur": {"name": "Blur" + suffix}, "warp": {"name": "Warp" + suffix}},
+        }}
+
+    texts = {"en-US": pack(""), "zh-CN": pack(" 中")}
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
+         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces, ("NodeWebkit",))), \
+         patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]), \
+         patch.object(fetcher, "fetch_effects", return_value=effects), \
+         patch.object(fetcher, "fetch_examples", return_value=[]):
+        schemas_dir = fetcher.export_schemas()
+
+    root = json.loads((schemas_dir / "_index.json").read_text(encoding="utf-8"))
+    assert set(root["plugins"]) == {"sprite"}
+    assert set(root["behaviors"]) == {"platform"}
+    assert set(root["effects"]) == {"blur"}
+    for locale in ("en-US", "zh-CN"):
+        index = json.loads((schemas_dir / locale / "_index.json").read_text(encoding="utf-8"))
+        assert (set(index["plugins"]), set(index["effects"])) == ({"sprite"}, {"blur"})
+        assert not (schemas_dir / locale / "plugins" / "nodewebkit.json").exists()
+        assert not (schemas_dir / locale / "effects" / "warp.json").exists()
+    assert schema_is_complete(schemas_dir)
+
+
+def test_export_stops_when_the_editor_bundle_does_not_construct_an_addon(fetcher):
+    """An addon of allAces.json the bundle does not build may be deprecated
+    or not; the export stops instead of guessing."""
+    aces = {"plugins": {"Sprite": {}}, "behaviors": {}}
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
+         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags({})), \
+         patch.object(fetcher, "fetch_lang", return_value={"text": {}}), \
+         patch.object(fetcher, "fetch_effects", return_value=[]), \
+         patch.object(fetcher, "fetch_examples", return_value=[]):
+        with pytest.raises(ValueError, match="constructs no plugin Sprite"):
+            fetcher.export_schemas()
+    assert not (fetcher.cache_dir / "schemas" / ".exported").exists()
 
 
 def test_export_stops_when_language_pack_names_an_unknown_common_ace(fetcher):

@@ -162,10 +162,6 @@
       "name": "多人联机",
       "file": "plugins/multiplayer.json"
     },
-    "nodewebkit": {
-      "name": "NW.js",
-      "file": "plugins/nodewebkit.json"
-    },
     "particles": {
       "name": "粒子",
       "file": "plugins/particles.json"
@@ -718,10 +714,6 @@
       "name": "暗角",
       "file": "effects/vignette.json"
     },
-    "warp": {
-      "name": "变形",
-      "file": "effects/warp.json"
-    },
     "warpobject": {
       "name": "对象扭曲",
       "file": "effects/warpobject.json"
@@ -733,10 +725,6 @@
     "warplayout": {
       "name": "场景扭曲",
       "file": "effects/warplayout.json"
-    },
-    "warpmask": {
-      "name": "扭曲蒙版",
-      "file": "effects/warpmask.json"
     },
     "warpradial": {
       "name": "径向扭曲",
