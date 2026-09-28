@@ -164,6 +164,7 @@ group turned off to pause.
 
 - *Wait* does not stop a loop: the remaining iterations run on in the same tick.
 - *Wait for previous actions* waits only for asynchronous actions.
+- A *Wait* holds back only the rest of its own block and its sub-events; sibling events run at once.
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.
 - *Wait 0* resumes at the start of the next tick, not at the end of the event or sheet; leave it out.
 - Deactivating a group stops its events, not its behaviors, timers or tweens: it does not pause.

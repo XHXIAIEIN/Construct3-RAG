@@ -19,6 +19,14 @@ Sources and the rule for adding an entry are in the index,
   system-reference/system-actions.md "Wait for previous actions to complete",
   project-primitives/events/functions.md "Asynchronous functions"; example:
   avalanche, sheets Stalagmite and Credits]
+- A *Wait* holds back only the actions after it in its own block and that
+  block's sub-events. A sibling event, or the next sub-event of the same
+  parent, runs at once: a *Wait for previous actions* alone in sub-event 1,
+  with *Destroy* in sub-event 2, destroys before the tween ends. Put the
+  async action, the wait and what follows in one action list. [manual:
+  system-reference/system-actions.md "Wait", "Wait for previous actions to
+  complete": "before continuing on to the next action or sub-events. Other
+  events continue to run in the meantime."]
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.
   The wait that resumes the game, and the UI tweens shown while paused, run
   on their own clock: *Use time scale* off, *Set object time scale* 1 on the
