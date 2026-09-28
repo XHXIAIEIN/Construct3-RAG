@@ -2437,3 +2437,40 @@ def test_plan_refuses_new_events_without_their_comments(project):
     code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the time."},
                                                     {"eventType": "block", "conditions": [], "actions": stepped}]})
     assert code == 0 and warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
+
+
+def test_plan_names_the_group_its_uncommented_events_are_in(project):
+    """A comment above a new group is not one above the events in it. The refusal names the group
+    and each event's entry in its children, and no operation: the file has no such event number yet."""
+    before = (project / SHEET).read_bytes()
+    rows = [{"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS[:1]} for _ in range(2)]
+    timer = {"eventType": "group", "title": "Timer", "children": rows}
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Count the time down."}, timer]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    refused = [line for line in out.splitlines() if "no comment above it" in line]
+    assert [re.search(r'entry \d in the "children" of group "Timer"', line)[0] for line in refused] == \
+        ['entry 1 in the "children" of group "Timer"', 'entry 2 in the "children" of group "Timer"'], out
+    assert all(line.startswith("operation 1: ") for line in refused) and '"before"' not in out, out
+    timer["children"] = [{"eventType": "comment", "text": "Take a second off."}, rows[0],
+                         {"eventType": "comment", "text": "Show what is left."}, rows[1]]
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Count the time down."}, timer]})
+    assert code == 0 and warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
+
+
+def test_style_names_the_operation_that_comments_an_event_in_a_group(project):
+    """On disk the finding carries the operation that puts the comment in the group's children.
+    A plan that inserts above the user's uncommented event moves its entry and prints no warning."""
+    edit(project, SHEET, lambda s: events(s)["input_group"]["children"].pop(0))
+    code, out = plan(project, {"before": 5, "events": [{"eventType": "comment", "text": "Show the time."},
+                                                      {"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS[:1]}]})
+    assert code == 0 and warnings(out) == [], out
+    code, out = check(project, "--style")
+    found = [w for w in warnings(out) if "no comment above it" in w]
+    assert len(found) == 1 and found[0].startswith("warning: sheet Game event 6 (sid"), out
+    assert 'This one is entry 3 in the "children" of group "Input"' in found[0], out
+    op = json.loads(found[0][found[0].index('{"before"'):])
+    assert op == {"before": 6, "events": [{"eventType": "comment", "text": "..."}]}, found
+    op["events"][0]["text"] = "A touched coin collects itself, once."
+    code, out = plan(project, op)
+    assert code == 0 and warnings(out) == [], out
+    assert "no comment above it" not in check(project, "--style")[1]

@@ -3,8 +3,9 @@
     python evals/sweep_outputs.py OUT.json --examples FOLDER [--projects FOLDER ...] [--limit 0] [--scripts DIR]
     python evals/sweep_outputs.py --compare OLD.json NEW.json
 
-The first form runs check_project.py, print_sheet.py, print_sheet.py
---outline and a dry run of edit_sheet.py with a small plan on every folder
+The first form runs check_project.py with and without --style,
+print_sheet.py, print_sheet.py --outline and a dry run of edit_sheet.py
+with a small plan on every folder
 project under --examples (the example-projects folder of the
 Construct-Example-Projects clone) and on each --projects folder, and a fixed
 list of lookups, and writes exit code, a hash of stdout and of stderr and
@@ -36,7 +37,8 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-COMMANDS = {"check": ["check_project.py"], "print": ["print_sheet.py"], "outline": ["print_sheet.py", "--outline"]}
+COMMANDS = {"check": ["check_project.py"], "style": ["check_project.py", "--style"], "print": ["print_sheet.py"],
+            "outline": ["print_sheet.py", "--outline"]}
 # A plan every project takes: a comment, a variable and an event that uses it, at the end of its first sheet.
 PLAN = [{"into": 0, "events": [
     {"eventType": "comment", "text": "sweep"}, {"eventType": "variable", "name": "SweepProbe"},

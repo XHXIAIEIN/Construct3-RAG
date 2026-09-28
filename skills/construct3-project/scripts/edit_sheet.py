@@ -437,8 +437,8 @@ class Plan:
 REFUSED_STYLE = ("comment", "run", "cases", "tick")     # the style kinds of check_project.check_style a plan may not add
 
 
-def findings_of(project: c3.Project, args, sheets: dict | None) -> tuple[check_project.Checker, c3.Findings]:
-    """The project checked, with a sheet that is not on disk yet in the place of the one that is."""
+def findings_of(project: c3.Project, args, sheets: dict) -> tuple[check_project.Checker, c3.Findings]:
+    """The project checked, with the sheet of the plan, before or after it, in the place of its file."""
     fresh = c3.Findings()
     # Style warnings on: what a plan adds is the agent's own writing, and only the
     # warnings new after the plan are printed, so the sheet's older events stay quiet.
@@ -448,8 +448,9 @@ def findings_of(project: c3.Project, args, sheets: dict | None) -> tuple[check_p
 
 
 def unnumbered(finding: str) -> str:
-    """A finding without its event number, which an insert above it changes; the sid stays."""
-    return re.sub(r" event \d+ ", " event ", finding)
+    """A finding without its event number and its place among its group's children,
+    which an insert above it changes; the sid stays."""
+    return re.sub(r" entry \d+ in ", " entry in ", re.sub(r" event \d+ ", " event ", finding))
 
 
 LEADING_TEXT = re.compile(r'\s*"((?:[^"]|"")+)"')
@@ -549,7 +550,8 @@ def main() -> int:
         sys.exit(f"{args.plan} is not valid JSON, line {e.lineno} column {e.colno}: {e.msg}"
                  + ("; it holds <new sid>: leave \"sid\" out, every new entry gets one" if "<new sid>" in text else ""))
 
-    before, found_before = findings_of(project, args, None)
+    # The sheet checked as a plan's sheet on both sides, so that a finding is worded alike before and after.
+    before, found_before = findings_of(project, args, {args.sheet: sheet})
     existing = set(before.sids) | set(before.ace_sids)      # the sheet's events before the plan; the rest it creates
     plan = Plan(sheet, set(existing))
     try:

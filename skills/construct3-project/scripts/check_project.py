@@ -197,6 +197,7 @@ class Checker:
         self._eases: set[str] = set()
         self.deprecated_uses: dict[str, list[str]] = {}      # warning -> where each use is
         self.global_ids: set[int] = set()     # the top-level variables of every sheet
+        self.numbers_on_disk = True      # whether the sheet being walked is the file, whose numbers a plan can name
 
     def check(self) -> None:
         self.check_project_file()
@@ -1062,14 +1063,15 @@ class Checker:
                      f"the editor stops with \"invalid ACE type\"")
 
     def walk(self, events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None,
-             depth: int = 0) -> None:
+             depth: int = 0, group: dict | None = None) -> None:
         """A local declared in a list of sibling events is visible to every event of
         that list, whatever the order, and to their sub-events; not to the parent's
         own actions. So the list's variables enter the scope first, and a block is
         checked before its children are walked. scope maps a name to the variable
         event or function parameter that declares it. counter holds the sheet's
         running event number, above what holds the trigger of this branch, depth
-        how many sub-event levels down this list is (a group's children are 0)."""
+        how many sub-event levels down this list is (a group's children are 0),
+        group the group whose children the list is."""
         scope = dict(scope)
         bad = [ev for ev in events if not isinstance(ev, dict)]
         if bad:
@@ -1089,7 +1091,7 @@ class Checker:
             w = f"{where} event {counter[0] + (et not in NUMBERED)} (sid {ev.get('sid', '?')})"
             self.check_event_lists(ev, et, w)
             if self.style and et in ("block", "function-block", "custom-ace-block"):
-                self.check_style(ev, w, events, i, depth)
+                self.check_style(ev, w, events, i, depth, group, counter[0])
             if id(ev) in ladders:
                 rungs = numbered.setdefault(ladders[id(ev)][0], [])
                 rungs.append((counter[0], w))
@@ -1104,7 +1106,7 @@ class Checker:
                 elif et == "include" and where == f"sheet {ev['includeSheet']}":
                     self.err(f"{w}: a sheet cannot include itself")
             elif et == "group":
-                self.walk(ev.get("children") or [], scope, where, counter, above)
+                self.walk(ev.get("children") or [], scope, where, counter, above, group=ev)
             elif et in ("function-block", "custom-ace-block"):
                 fscope = dict(scope)
                 for param in ev["functionParameters"]:
@@ -1128,7 +1130,8 @@ class Checker:
                 previous = ev
 
     # --- style, with --style ------------------------------------------------------------
-    def check_style(self, ev: dict, where: str, siblings: list, i: int, depth: int) -> None:
+    def check_style(self, ev: dict, where: str, siblings: list, i: int, depth: int, group: dict | None,
+                    n: int) -> None:
         """Habits of sheets written by small models, each with the shape the
         official examples give it instead. Warnings, never errors: the editor
         accepts them all. The thresholds sit past the 90th percentile of the
@@ -1162,10 +1165,21 @@ class Checker:
             j = i - 1
             while j >= 0 and siblings[j].get("eventType") == "variable":     # locals declared above the event
                 j -= 1
-            if j < 0 or siblings[j].get("eventType") != "comment":
+            commented = j >= 0 and siblings[j].get("eventType") == "comment"
+            comment = '{"eventType": "comment", "text": "..."}'
+            if not commented and group is None:
                 style("comment", f"{where}: no comment above it; the official examples put a one-sentence comment "
                                  f"above every top-level event, saying what it does or which case it is, "
-                                 '{"eventType": "comment", "text": "..."} as the event before it')
+                                 f"{comment} as the event before it")
+            elif not commented:
+                # Small models took "top-level" for the sheet's own list and put the comment
+                # above the group, plan after plan (event-sheet-design-guidance.md): name the list it goes into.
+                on_disk = f'; edit_sheet.py puts it there with {{"before": {n}, "events": [{comment}]}}'
+                style("comment", f"{where}: no comment above it; the official examples put a one-sentence comment "
+                                 f"above every top-level event, the events directly in a group included, saying "
+                                 f"what it does or which case it is. This one is entry {i + 1} in the \"children\" "
+                                 f"of group {json.dumps(group.get('title'), ensure_ascii=False)}: {comment} goes "
+                                 f"into that list before it" + (on_disk if self.numbers_on_disk else ""))
         cases = [j for j, k in enumerate(ev.get("children", []))
                  if k.get("eventType") == "block" and (k.get("actions") or k.get("children"))]
         if len(cases) >= 2 and not any(j > 0 and ev["children"][j - 1].get("eventType") == "comment" for j in cases):
@@ -1260,6 +1274,8 @@ class Checker:
                     if isinstance(ev, dict) and ev.get("eventType") == "variable"}
         self.global_ids = {id(ev) for ev in globals_.values()}
         for sname, sheet in self.sheets.items():
+            # A plan's sheet has numbers the file does not have yet: no operation can address them.
+            self.numbers_on_disk = sname not in self.unsaved
             self.walk(sheet["events"], globals_, f"sheet {sname}", [0])
 
     def check_calls(self) -> None:

@@ -116,6 +116,18 @@ default. `edit_sheet.py` refuses a plan whose new events raise `comment`,
 author must make. With the refusal stated in `SKILL.md` and its plan example
 carrying a comment, runs wrote the comment from the first draft.
 
+For `comment`, the events directly in a group are top-level events, and
+small models do not read them so. In iteration 29 of `add-countdown`, two
+Haiku runs put a comment above a new group and not above the events in it;
+`edit_sheet.py` refused 10 and 8 of their plans, and every retry left an
+event of the group without its comment. The finding called those events
+top-level and named them by numbers the file did not have yet. For an event
+directly in a group it now names the group and the event's entry in its
+`children`, the list the comment goes into, and under
+`check_project.py --style` the `edit_sheet.py` operation that puts it there.
+A refused plan gets no operation: its numbers are the ones the sheet would
+have.
+
 Comments, variable comments and function descriptions end without a period,
 by the user's choice; a second sentence keeps the period between the two.
 The checker does not look at punctuation.
