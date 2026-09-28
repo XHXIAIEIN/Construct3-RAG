@@ -127,7 +127,8 @@ first.
   plugin-reference/touch.md "On tap", "On double-tap"; runtime: exported
   c3runtime.js r503, `ShouldTriggerTap`; observed in a game project, r503
   preview, 2026-09-28: 7 mouse clicks 0.3 s apart on the button made 4
-  pieces, 8 clicks 0.7 s apart made 8]
+  pieces, 8 clicks 0.7 s apart made 8; on *On touched object* (start), 7
+  clicks 0.3 s apart made 7]
 
 ## Functions
 
