@@ -75,8 +75,10 @@ Interactions, data storage, timing, animation: read and follow
 
 - UID links between objects, `Pick all` to reset picking, or a timer,
   tween or table rebuilt from variables: redesign.
-- A runtime fact learned from a project goes into
-  `prompts/event-sheet-pitfalls.md`, with its source.
+- A runtime fact learned from a project goes into the topic file of its
+  group under `prompts/pitfalls/`, with its source, and its conclusion goes
+  into `prompts/event-sheet-pitfalls.md` as one line ("Adding an entry"
+  there).
 - Events written into a project or a generator follow
   `prompts/event-sheet-style.md`: how the official examples organise, name
   and comment a sheet.
@@ -175,7 +177,7 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | Install and run | `docs/guide/quick-start.md` |
 | HTTP API | `docs/guide/api-reference.md` |
 | Data files and fields | `docs/guide/data-format.md` |
-| Event sheet design, worked case, sourced pitfalls, the examples' authoring style | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md`, `prompts/event-sheet-style.md`, `docs/decisions/event-sheet-design-guidance.md` |
+| Event sheet design, worked case, sourced pitfalls, the examples' authoring style | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md` and its topic files in `prompts/pitfalls/`, `prompts/event-sheet-style.md`, `docs/decisions/event-sheet-design-guidance.md` |
 | Published-game visual language, motion statistics and the reproducible analyzer | `docs/decisions/published-game-visual-language.md`, `docs/dev/published-game-analysis.md`, `scripts/reference_games/` |
 | Slot case as a program, hand-editing project JSON, bars and life counters by the art they have | `prompts/references/` |
 | The look of a generated game: colours by role, text, pixel art, and what other design skills do | `prompts/event-sheet-style.md` (*Project*), `docs/decisions/game-look-from-design-skills.md` |

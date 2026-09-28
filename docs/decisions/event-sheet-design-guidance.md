@@ -27,7 +27,8 @@ project.
 | File | Answers |
 |------|---------|
 | `prompts/event-sheet-thinking.md` | What the events are: the picking model, the native shape per interaction, the smell table, the layout of a sheet, feel |
-| `prompts/event-sheet-pitfalls.md` | Runtime facts intuition gets wrong, each with its source |
+| `prompts/event-sheet-pitfalls.md` | Runtime facts intuition gets wrong: Picking and Triggers and Else in full, every other pitfall as a one-line conclusion under a when-to-read line |
+| `prompts/pitfalls/` | One file per topic of the index, each pitfall with its cases and its source |
 | `prompts/event-sheet-assistant.md` | Output format and name verification |
 | `prompts/event-sheet-style.md` | How the official examples organise, name and comment a sheet |
 | `prompts/references/` | Material needed only sometimes: the slot case as a program, hand-editing project JSON, bars and life counters |

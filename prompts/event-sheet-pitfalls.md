@@ -9,6 +9,11 @@ source, no entry. Editing `eventSheets/*.json`, `layouts/*.json` or clipboard JS
 Read [references/hand-editing-project-files.md](references/hand-editing-project-files.md)
 first.
 
+Picking and Triggers and Else come up in almost every event sheet and are
+here in full. Every other group is one line per pitfall, its conclusion;
+when the events touch what a group names, open its topic file for the
+cases and the sources before writing them.
+
 ## Picking
 
 - Collisions disabled = the instance fails every overlap and collision test, in
@@ -18,7 +23,7 @@ first.
   `isCollisionEnabled`]
 - A type and its family are picked separately: narrowing Sprite `Piece` never
   narrows its family `Pieces`. Use that for two picks of one type in one
-  event, and refer to the name the caller narrowed (see Functions). [manual:
+  event, and refer to the name the caller narrowed (see [Functions](pitfalls/functions.md)). [manual:
   project-primitives/objects/families.md "Picking families in events"]
 - Container members are created, destroyed and picked together; hierarchy
   children are not picked with their parent, use *Pick children*. [manual:
@@ -130,470 +135,137 @@ first.
   pieces, 8 clicks 0.7 s apart made 8; on *On touched object* (start), 7
   clicks 0.3 s apart made 7]
 
-## Functions
+## Topics
 
-- Function local variables declared as children of the function block are
-  in scope for its sub-events, but NOT for the function block's own
-  top-level actions: a `Set value` on the local there makes the editor
-  reject the whole project at load with "cannot find event variable".
-  Compute the locals in a child block placed after the declarations
-  instead. [observed in a game project, r502 editor, 2026-09-17]
-- Without *Copy picked* a function runs with every object reset to all picked:
-  "modify this sprite" modifies every instance. [manual:
-  interface/dialogs/function.md "Copy picked"]
-- With *Copy picked*, type and family picks are copied separately. A function
-  that writes `Bases.*` acts on whatever `Bases` happened to hold, even if the
-  caller narrowed `base`. Shared logic that only acts on the caller's picked
-  instances of one object and returns nothing is a *custom action* on that
-  object or family, not a function: it runs on exactly the instances of its
-  object the caller picked, and a family custom action called through a member
-  type runs the family block on that member's picked instances. Inside a family
-  block write the family name (`Bases.X`); the member type is not carried in
-  and `base.X` reads the first of all instances. [manual:
-  project-primitives/events/functions.md "functions with no return type are
-  essentially custom actions"; project-primitives/events/custom-actions.md
-  "Picking", "Family custom actions"; example: custom-action-overrides;
-  observed in a game project, 2026-09-17]
-- Parameters are bare identifiers in expressions: `Self.X + OffsetX`, not
-  `Functions.OffsetX` or `Self.OffsetX`. [example: 3d-castle-maze, function
-  OffsetHand]
+### Functions
 
-## Timer
+Read [pitfalls/functions.md](pitfalls/functions.md) when the events define
+or call a function or a custom action.
 
-- *Start timer* on an existing tag restarts it. After *Stop*, or after a *Once*
-  timer fires, its expressions return 0. Remaining time is
-  `Duration(tag) - CurrentTime(tag)`; `CurrentTime` resets at every *On timer*.
-  [manual: behavior-reference/timer.md]
-- A timer is state you start and stop: list every transition before choosing it
-  (settled: start or stop by overlap; picked up: stop; displaced: stop). A `dt`
-  countdown gated by an overlap condition has no transitions but needs
-  *compare + For each* to dispatch. Both are valid. [observed in a game
-  project, 2026-09-15]
-- Timers and tweens each round their end to the first tick at or past it,
-  counted from their own start. A tween started by *On timer* at `D` and a
-  timer set for `D + T` where `T` is the tween's length do not end together:
-  they overlap by a tick or leave a tick's gap, and *Destroy on complete* leaves
-  the instance in place for the rest of that tick. Logic that assumes the
-  schedule (a sum of heights that is "always at least one unit", a count of
-  children) jumps for that tick; derive state from *Is playing* and from the
-  instance whose tween it is. [observed in a game project, 2026-09-18]
+- Function locals are out of scope for the function block's own top-level actions.
+- Without *Copy picked* a function runs with every object reset to all picked.
+- With *Copy picked*, type and family picks are copied separately; logic on the caller's picks is a custom action.
+- Parameters are bare identifiers in expressions: `OffsetX`, not `Functions.OffsetX`.
 
-## Wait and time scale
+### Timer
 
-- *Wait* does not stop a loop: the remaining iterations run on in the same
-  tick, and the actions after the *Wait* run later, once per iteration, with
-  that iteration's picked instances. A staggered effect is `Wait 0.1 *
-  loopindex`; a loop that must pause between iterations is a Timer or a
-  function called from *On timer*. [manual:
-  system-reference/system-actions.md "Wait"; examples: arcade-shooter,
-  layout-transition]
-- *Wait for previous actions* (the manual's "Wait for previous actions to
-  complete") waits only for asynchronous actions, marked with an icon in the
-  editor: Tween actions, AJAX requests, Local Storage, *Snapshot canvas*.
-  Anything else before it is already done.
-  A function call counts only when the function is marked *Asynchronous* and
-  itself ends with *Wait for previous actions*. [manual:
-  system-reference/system-actions.md "Wait for previous actions to complete",
-  project-primitives/events/functions.md "Asynchronous functions"; example:
-  avalanche, sheets Stalagmite and Credits]
+Read [pitfalls/timer.md](pitfalls/timer.md) when the events use the Timer
+behavior.
+
+- *Start timer* on an existing tag restarts it; after *Stop* or a *Once* timer's end its expressions return 0.
+- A timer is state you start and stop: list every transition before choosing it.
+- A timer and a tween scheduled to end together end a tick apart.
+
+### Wait and time scale
+
+Read [pitfalls/wait-and-time-scale.md](pitfalls/wait-and-time-scale.md)
+when the events use *Wait*, *Wait for previous actions*, time scale, or a
+group turned off to pause.
+
+- *Wait* does not stop a loop: the remaining iterations run on in the same tick.
+- *Wait for previous actions* waits only for asynchronous actions.
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.
-  The wait that resumes the game, and the UI tweens shown while paused, run
-  on their own clock: *Use time scale* off, *Set object time scale* 1 on the
-  fader, the buttons and the manager object. [manual:
-  system-reference/system-actions.md "Wait", "Set object time scale";
-  example: airborne-explorer, In-Game Menu]
-- *Wait 0* resumes at the start of the next tick, not at the end of the
-  event or the sheet: before behaviors and every event of that tick, after
-  the current tick has run all its events and been drawn. The rest of the
-  event, in an included sheet or a function alike, runs one frame late, with
-  the picks saved at the *Wait* minus destroyed instances, and with function
-  parameters and function locals restored. It runs at time scale 0 too, and
-  a layout change drops it. *Wait for previous actions* with nothing to wait
-  for resumes at the same point. Leave *Wait 0* out: a created instance is
-  pickable from the next top-level event and a destroyed one gone by then
-  (see Creating objects); initialise in *On created* or the creating event,
-  pass `UID`, put the dependent step in a later top-level event or trigger.
-  Ashley's tutorial still says "until the end of the event sheet", which is
-  Construct 2 wording. [runtime: exported c3runtime.js r503, `Wait` calls
-  `AddScheduledWait`, `RunScheduledWaits` is called only from
-  `Step_BeforePreTick`, ahead of `Step_RunEventsEtc` and `Render`;
-  `ScheduledWait._Init` saves SOL, parameters and locals;
-  `ClearAllScheduledWaits` on layout end; read from source, not observed.
-  Ashley: "rarely any need to use Wait 0 seconds", forum
-  construct-2/general-discussion-17/wait-59374; *Wait for previous actions*
-  "always runs at the end of the tick", Scirra/Construct-bugs#3948;
-  construct.net tutorial system-wait-action-63, updated 2019]
-- Deactivating a group stops its events, including its triggers, and
-  nothing else: behaviors, timers and tweens started by it keep running. It
-  turns a phase off; it does not pause. [manual:
-  system-reference/system-actions.md "Set group active"; examples: every
-  pause is *Set time scale* 0]
-- A hit stop is *Set time scale* 0.1, *Wait*, *Set time scale* 1 in one
-  block; a smooth ramp is a *Tween (value)* on any object read into *Set
-  time scale* while *Is playing*. [examples: segmented-boss-fight BossHeath;
-  samuroof Credits `Camera.Tween.Value("TimeScaleChange")`; eventide
-  `1 - PauseUI.Tween.Progress("ShowPause")`]
+- *Wait 0* resumes at the start of the next tick, not at the end of the event or sheet; leave it out.
+- Deactivating a group stops its events, not its behaviors, timers or tweens: it does not pause.
+- A hit stop is *Set time scale* 0.1, *Wait*, *Set time scale* 1; a smooth ramp is a value tween.
 
-## Expressions
+### Expressions
 
-- `Self` is the object of the condition or action the expression sits in. In
-  a System condition or action, *For each ordered* included, there is no such
-  object and the editor refuses to open the project: `Invalid use of 'self'`.
-  Write the object: order *For each Segment* by `Segment.IID`, not
-  `Self.IID`. [editor message `Invalid use of 'self'`; observed in a game
-  project, 2026-09-22]
-- A local or global variable named like a system expression loses to the
-  expression: a local number `mid` passed as `Functions.Measure(mid)` is
-  read as the text function `mid()`, and the editor refuses the whole
-  project with `Invalid expressions ... parameter 0 does not take
-  'string'`. `check_project.py` refuses such a name. Name variables so no system
-  expression shares the name (`probe`, not `mid`; not `left`, `right`,
-  `len`, `find`, `max`, `min`, `abs`, `round`). [plugins/system.json,
-  expression `mid`; observed in a game project, r495.2 editor, 2026-09-23]
-- Variable names are matched without regard to case, and the nearest scope
-  wins: a local string `count` declared in an event hides the global
-  constant `COUNT` in that event and its sub-events, so `COUNT - 1` there
-  is read on the string and the editor refuses the whole project with `Type
-  mismatch: - does not work with 'string' and 'number'`, naming the
-  sub-event. `check_project.py` refuses a local or parameter named like a
-  variable of another type in scope. Give a local a name that
-  differs from every variable in scope by more than its case (`countText`
-  beside `COUNT`). [observed in a game project, r502 editor, 2026-09-24]
-- `lerp(Self.X, Target.X, 0.1)` moves a different fraction per second at
-  different framerates and ignores the time scale. When the third argument is a
-  constant and the first is last tick's result, write `lerp(a, b, 1 - f^dt)`
-  with `f` in (0, 1); `f * dt` is the common approximation and is not
-  exact. The same holds for `anglelerp`.
-  [manual: system-reference/system-expressions.md "dt", linking the
-  delta-time tutorial, section "Lerp"; examples: magic-feather, surface-jump]
-- `lerp` needs no time of its own when the factor comes from the engine:
-  `Self.Tween.Value("Attack")` in labyrinth, a timeline value, `unlerp` of a
-  slider thumb, `Car.Speed / Car.MaxSpeed` in abductractor. Those are
-  mappings, not tweens, and there is nothing to replace. [examples: labyrinth,
-  abductractor]
-- `lerp` and `unlerp` do not clamp: `lerp(0, 100, 1.5)` is 150, and `unlerp`
-  of a value outside its range goes past 0 or 1. Remap with
-  `lerp(lo, hi, unlerp(a, b, v))` and wrap it in `clamp` when `v` can leave
-  `[a, b]`. [manual: system-reference/system-expressions.md "lerp", "unlerp",
-  "clamp"; cheat sheet "Useful expressions and formulas", Remapping a range]
-- `%` is the remainder and keeps the sign of the left operand, so `-1 % 5` is
-  `-1`. An index that steps backwards wraps with `(n % max + max) % max`.
-  [manual: project-primitives/events/expressions.md "%"; cheat sheet "Useful
-  expressions and formulas", Wrapping around a number]
-- There is no null or undefined: an expression is a number or a text, and
-  what is missing reads as the number 0. `Array.At` outside the array,
-  `Dictionary.Get` of a key that is not there, `Functions.ReturnValue` when
-  nothing set it and a Timer's `CurrentTime` after a one-off timer fired all
-  give 0, `Array.IndexOf` gives -1, `int("33xx")` is 33 and `int("xx33")` is
-  0. So `= 0` cannot tell an empty slot from a missing one: ask *Has key*,
-  *Contains value* or `Array.Width` first, or `Dictionary.GetDefault(key,
-  fallback)`. [manual: plugin-reference/array.md "At", "IndexOf";
-  plugin-reference/dictionary.md "Get", "GetDefault", "Has key";
-  plugin-reference/function.md "ReturnValue"; behavior-reference/timer.md
-  "CurrentTime"; system-reference/system-expressions.md "int", "float"]
+Read [pitfalls/expressions.md](pitfalls/expressions.md) when writing
+expressions or naming and placing variables.
 
-- A local variable placed as a sub-event or in a group is visible to every
-  event at its level, whichever comes first, and to their sub-events; not to
-  the parent's own actions. Set it in a sibling block with no conditions,
-  then read it in the others; it resets to its initial value every time the
-  scope is entered unless static. [manual:
-  project-primitives/events/variables.md "Local variables", "Static and
-  constant variables"; example: galactic-blocks, group Controls, `StoredY`]
-- *Set mesh point* in *Relative* mode adds to the point's current position,
-  not to its default, so a per-tick derivation accumulates. Derive with
-  *Absolute* and normalised coordinates (0..1 across the object box, which may
-  be exceeded); texture -1 leaves the texture position alone. [manual:
-  plugin-reference/common-features/common-actions.md "Set mesh point"]
+- `Self` has no object in a System condition or action, and the editor refuses the project.
+- A variable named like a system expression (`mid`, `left`, `max`) is read as the expression.
+- Variable names ignore case and the nearest scope wins: a local `count` hides a global `COUNT`.
+- `lerp(a, b, 0.1)` each tick depends on the framerate: write `lerp(a, b, 1 - f^dt)`.
+- `lerp` needs no time of its own when the factor comes from the engine, such as a tween's value.
+- `lerp` and `unlerp` do not clamp.
+- `%` keeps the sign of the left operand: `-1 % 5` is `-1`.
+- There is no null: what is missing reads as 0, so ask *Has key* or the size first.
+- A local variable at sub-event level is visible to its siblings, not to the parent's own actions.
+- *Set mesh point* in *Relative* mode adds to the current position, so a per-tick derivation accumulates.
 
-## Coordinates and angles
+### Coordinates and angles
 
-- The origin (0, 0) is the top-left of the layout and Y grows downwards:
-  up is `Y - n`, gravity pulls towards +Y, and the top of the screen is the
-  smallest Y. [manual: tips-and-guides/common-conventions.md "Units"]
-- Angles are degrees, 0 faces right and they increase clockwise, so 90 points
-  down, 180 left and 270 (or -90) up; 360 is 0 again, so a bullet fired at
-  360 goes right, and `random(360)` is a full turn. `sin`, `cos` and `angle`
-  take and return degrees. Some expressions return -180..180 and others
-  0..360: compare angles with `anglediff`, *Is between angles* or *Is
-  clockwise from*, never with `<`, and normalise with `(a + 360) % 360` only
-  where a value must land in 0..360. [manual:
-  tips-and-guides/common-conventions.md "Units";
-  system-reference/system-expressions.md "Math";
-  system-reference/system-conditions.md "Is between angles"]
-- A sprite is drawn facing right at angle 0. Art painted pointing up appears
-  turned a quarter clockwise the moment *Set angle towards position* runs:
-  paint it facing right, or add the same 90 in every *Set angle*, never a
-  correction per event. [consequence of the same convention; Rotate's speed
-  is positive clockwise: manual behavior-reference/rotate.md "Speed"]
-- A Bullet's angle of motion and the object's angle are two values; they
-  move together only while the behavior's *Set angle* property is on, and
-  8 Direction and Car have the same property. At speed 0 the angle of motion
-  is 0 and cannot be set: set the speed first, then the angle. [manual:
-  behavior-reference/bullet.md "Set angle", "Set angle of motion",
-  "AngleOfMotion"; behavior-reference/8-direction.md "Set angle"]
-- The origin is image point 0 and the point X, Y and rotation refer to; the
-  editor puts it at the centre (`originX`, `originY` 0.5 in the layout
-  file), so a sprite at the layout's edge shows half. Position by an image
-  point (*Spawn another object* takes one) for a muzzle or a hinge, and move
-  the origin in the image editor, not by an offset in events. [manual:
-  interface/animations-editor.md "Image points"; official example layouts]
-- `ViewportLeft`, `ViewportWidth` and the rest take a layer, since a
-  parallaxed or scaled layer sees a different rectangle: write
-  `ViewportLeft("HUD")`. `LayoutWidth` is the whole layout,
-  `ViewportWidth(layer)` the part on screen in layout coordinates, and
-  `OriginalViewportWidth` the project's *Viewport size* property. [manual:
-  system-reference/system-expressions.md "Viewport", "Layout";
-  plugins/system.json: every `Viewport*` expression has a `layer` parameter]
+Read [pitfalls/coordinates-and-angles.md](pitfalls/coordinates-and-angles.md)
+when the events place, move or rotate objects or read the viewport.
 
-## Animation
+- The origin (0, 0) is the top-left of the layout and Y grows downwards.
+- Angles are degrees, 0 faces right, clockwise; compare them with `anglediff`, never `<`.
+- A sprite is drawn facing right at angle 0: paint art facing right.
+- A Bullet's angle of motion and the object's angle are two values; at speed 0 the first cannot be set.
+- The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
+- `ViewportLeft` and the rest take a layer; `LayoutWidth` and `ViewportWidth(layer)` differ.
 
-- Image point index 0 is the origin; the first image point added is index
-  1, and `ImagePointCount` does not count the origin. A loop over every
-  image point runs from 1 to `ImagePointCount`, `ImagePointX(loopindex)`;
-  starting at 0 reads the origin and misses the last point. A name,
-  `ImagePointX("P1")`, reads the same point whatever the order. [manual:
-  interface/animations-editor.md "the first image point (number 0) is
-  always the origin"; scripting/scripting-reference/plugin-interfaces/sprite.md
-  "getImagePointX"; plugin-reference/sprite.md "ImagePointX" says only
-  zero-based. observed: r495.2 preview, a Sprite at X 400, 100 px wide,
-  origin centred, points P1 and P2 at its left and right edges:
-  `ImagePointCount` 2, index 0 400, 1 350, 2 450, 2026-09-23]
-- *Set animation* to the animation already playing does nothing, even when
-  set to play from the beginning. An `anim` variable compared before every
-  *Set animation*, to keep the animation from restarting, guards against
-  nothing: set the animation from the state in one event, and *Start
-  animation* from the beginning when a restart is wanted. [manual:
-  plugin-reference/sprite.md "Set animation"; observed in a game
-  project, 2026-09-22]
-- Frames used as looks rather than as an animation need the animation's
-  *Speed* at 0. A one-frame animation at the default speed 5 shows no
-  motion, but give it more frames and every created instance plays through
-  them and stops on the last, whatever *Set frame* chose. [observed in a
-  game project, r503 preview, 2026-09-28: frames 0 to 2 of a non-looping
-  animation at speed 5, every enemy ended on frame 2 until speed was 0]
-- *Set frame* to a frame of another image size resizes the instance by the
-  ratio of the two images, keeping its scale, and swaps in the new frame's
-  collision polygon, origin included. A frame drawn wider with transparent
-  margins therefore widens what the instance overlaps: a boss frame of
-  three lanes' width is hit by every lane's range without a change to the
-  targeting events. [runtime: exported c3runtime.js r503, Sprite
-  `_OnFrameChanged` scales width and height by new/old image size and calls
-  `SetSourceCollisionPoly`; observed in a game project, r503 preview,
-  2026-09-28: a 72 px enemy set to a 520×216 frame became 260×108 and
-  overlapped three 40 px lane ranges]
+### Animation
 
-## Rendering
+Read [pitfalls/animation.md](pitfalls/animation.md) when the events use
+image points, animations or frames.
 
-- A Text object has no *Set color*: `set-default-color`, listed in
-  `plugins/_common.json` and printed by `lookup_ace.py Text color`, is
-  refused by the editor on a Text with `missing action id
-  'set-default-color'`, and the project does not open. Text's colour is
-  its font colour, *Set font color* (`set-font-color`). A plugin file lists
-  the shared ACEs it gets under `commonAces`, and `lookup_ace.py` and
-  `check_project.py` follow it. [plugins/text.json `set-font-color`;
-  observed in a game project, r495.2 editor, 2026-09-23]
-- *Set width* stretches a Sprite's whole image, repeats a Tiled Background's,
-  and on a 9-patch stretches or tiles the middle while the corners keep their
-  size. A bar with a painted fill is therefore a Tiled Background, which
-  shows a cut of the painting below its own width, and a bar with caps is a
-  9-patch, whose width must stay positive. [manual:
-  plugin-reference/tiled-background.md "display an image in a repeating
-  pattern"; plugin-reference/9-patch.md "a Sprite object, which just stretches
-  its entire image", "useful for representing things like progress bars";
-  reference: references/progress-bars.md]
-- A bar grows from its origin. Every filling bar in the examples has its
-  origin on the edge it grows from, (0, 0) or (0, 0.5); a cover that hides
-  from the right has (1, 0.5); a 0.5 origin grows both ways from the middle.
-  [examples: berry-harvester ProgressBar, jetpack FuelBar, flatland-golf
-  PowerBarCover, test-your-might MightLevelBar (0.5, 1)]
+- Image point 0 is the origin; the first point added is 1, and `ImagePointCount` leaves out the origin.
+- *Set animation* to the animation already playing does nothing.
+- Frames used as looks rather than as an animation need the animation's *Speed* at 0.
+- *Set frame* to a frame of another image size resizes the instance and swaps its collision polygon.
 
-- Drawing Canvas *Fill polygon* draws nothing when two consecutive points of
-  the polygon coincide, a closing point that repeats the first one included;
-  the rest of the sheet runs on and no error is logged. Add a closing point
-  only when it is a point of its own, or count the points in a variable and
-  loop over that. [observed in a game project, r502 preview, 2026-09-24]
-- A blend mode such as *Destination in* only touches the pixels under the
-  object's own quad: a mask sprite the size of the shape it reveals leaves
-  everything outside its bounding box untouched, and the layer needs *Force
-  own texture* or the blend hits the whole screen. Size the mask to cover
-  everything it must erase, or keep the content inside its box. [manual:
-  project-primitives/layers.md "Force own texture"; example:
-  mask-effect-puzzle, layer HiddenWorld; observed in a game project,
-  2026-09-17]
-- A Text object wraps at its own width and draws only the lines that fit its
-  height. Text longer than the box sized for the placeholder gains a line
-  that is cut off, and with centre or bottom vertical alignment the lines
-  already shown move up as it does. Size the box for the longest text at the
-  font size and line height, or after *Set text* resize it from
-  `Self.TextHeight` plus a margin, with the width fixed: `TextWidth` and
-  `TextHeight` measure the text as wrapped inside the current box, so
-  `TextWidth` never grows the box past its width. Both are current in the
-  action right after *Set text*. Check what else moves the lines before
-  choosing the size:
-  - Origin: a resize keeps the origin still and grows the box away from it.
-    With a top origin the first line stays put; with a centre origin the
-    box grows both ways and the first line moves even under top alignment.
-    Put the origin on the edge the text must keep, as a bar keeps the edge
-    it grows from.
-  - Wrapping: *Word* breaks only at spaces and hyphens, so Chinese,
-    Japanese or Korean text needs *CJK*, which breaks between characters
-    and wraps CJK punctuation properly. The same string takes a
-    different number of lines under each mode; size for the mode set.
-  - Direction and horizontal alignment decide the edge a line starts from:
-    an RTL or right-aligned text widened with a left origin moves.
-    [inference from the manual's property descriptions, unverified at
-    runtime]
+### Rendering
 
-  [manual: plugin-reference/text.md "Wrapping", "Vertical alignment",
-  "Text direction", "Origin", "TextWidth"; examples: text-based-adventure
-  `Set height to min(Self.TextHeight + 4, 644)`, flowchart-questionnaire
-  sizes a background from `TextWidth + 10`, `TextHeight + 10`; observed:
-  2026-09-23]
-- A single line taller than its Text box is not hidden: it draws with the
-  bottom of the glyphs cut off at the box edge. Size is in points, so a
-  line needs about `size × 4/3 × 1.2` pixels of height; a 44 pt bold price
-  in a 46 px tall box lost the bottom of its digits. A *Set font size* at
-  runtime, such as a bigger critical hit number, needs the box sized for
-  the largest size. [manual: plugin-reference/text.md "Size"; observed in
-  a game project, 2026-09-28]
+Read [pitfalls/rendering.md](pitfalls/rendering.md) when the events colour
+or size Text, draw bars, Drawing Canvas polygons or blend modes.
 
-## Tween
+- A Text object has no *Set color*; its colour is *Set font color*, or the project does not open.
+- *Set width* stretches a Sprite, repeats a Tiled Background and stretches a 9-patch's middle.
+- A bar grows from its origin: put the origin on the edge it grows from.
+- Drawing Canvas *Fill polygon* draws nothing when two consecutive points coincide.
+- A blend mode touches only the pixels under the object's own quad, and the layer needs *Force own texture*.
+- A Text object draws only the lines that fit its height: size the box for the longest text.
+- A single line taller than its Text box draws with the bottom of its glyphs cut off.
 
-- A value tween drives what Tween cannot address: *Tween (value)* with start,
-  end and time, then an event *Is playing "tag"* with *Set effect parameter*,
-  *Set Z height* or *Set angle* to `Self.Tween.Value("tag")`. The tween owns
-  the clock and the ease; the action just reads it. Use it for a full turn: a
-  one-property angle tween to `Self.Angle + 360` does not turn, a value tween
-  from `Self.Angle` to `Self.Angle + 360` applied with *Set angle* does.
-  [manual: behavior-reference/tween.md "Tween (value)", "Value"; example:
-  abductractor ("ReduceLuminosity", "SmashCorn"); the angle case:
-  github.com/Scirra/Construct-feature-requests/issues/547, closed expired]
+### Tween
 
-## Creating objects
+Read [pitfalls/tween.md](pitfalls/tween.md) when a tween must drive
+something Tween has no property for.
 
-- *Create object* picks only the new instance, plus the created children when
-  *Create hierarchy* is on; container siblings are created too. Whether the new
-  instance is also picked in its families is undocumented. To act on it through
-  the family, use *System: Pick last created* with the family in a sub-event;
-  the manual names that as the way to pick a created instance from its family.
-  [manual: system-reference/system-actions.md "Create object";
-  system-reference/system-conditions.md "Pick last created"]
-- *Create object* is a System action: it runs once per event, however many
-  instances are picked, and `Slot.X` in its parameters reads the first
-  picked one. A custom action is run once with all the caller's picks, so
-  `Slot: Spawn enemy` over three picked slots creates one enemy, at the
-  first slot. To create one per picked instance, put *For each* among the
-  custom action block's conditions (or the event's), or use the object's
-  own *Spawn another object*. [manual: system-reference/system-conditions.md
-  "For Each" "force the event to apply once per instance";
-  project-primitives/events/custom-actions.md "Picking"; observed in a game
-  project, r503 preview, 2026-09-28: a custom action on 3 picked slots
-  created 1 instance, 3 once the block held *For each*]
-- A runtime-created instance takes its properties from an existing instance or
-  the named template. Keep one template instance per runtime-created object in
-  a layout that never runs. [same; creation with zero instances anywhere is
-  unverified]
-- A Particles object given a Sprite as its *Object* spawns real instances:
-  *On created* fires for each, and they are not children of the emitter (the
-  example parents them by hand). Per-particle state such as a colour frame
-  comes from *On created* plus *Pick nearest* emitter, read from the emitter's
-  instance variable. [example: child-particles; observed in a game
-  project, 2026-09-17, unverified at runtime]
-- A created instance is picked in its own event and that event's
-  sub-events, and *Pick by unique ID* finds it anywhere; no other condition
-  (*Pick all*, *Pick random*, *Compare instance variable*, overlap) finds it
-  among all instances until the top-level event that created it has ended,
-  or the outermost trigger. A function called after the creating function in
-  the same event does not see the new instances. Create and initialise in one
-  event, pass `UID` to functions, or pick from a later top-level event or
-  trigger; *Wait 0* is not needed and runs a tick later (see Wait and time
-  scale). [Ashley in Scirra/Construct-bugs#3554 (2019) and #5178 (2021);
-  runtime: exported c3runtime.js r503, `EventSheet.Run` calls
-  `FlushPendingInstances()` after each top-level event, `_ExecuteTrigger`
-  after the outermost trigger]
+- A value tween read under *Is playing* drives what Tween cannot address, a full 360° turn included.
 
-## Restarting a layout
+### Creating objects
 
-- *Restart layout* and *Go to layout* bring the layout's instances back as
-  placed and keep every global variable, and every static local, at its
-  current value. A countdown, score or count a round starts from is still at
-  its end value when the layout runs again: a global countdown that
-  restarted the layout at 0 is 0 on the next run, which restarts it again
-  every tick. Set such a value under *On start of layout*, or run *Reset
-  global variables* (with *Reset static* for static locals) where the game
-  starts over. A countdown is better a Timer on an object of the layout,
-  started under *On start of layout*: the restart recreates the object
-  with no timer running, and nothing is left to set back. [manual:
-  system-reference/system-actions.md "Restart layout", "Go to layout",
-  "Reset global variables"; project-primitives/events/variables.md "Static
-  and constant variables"; behavior-reference/timer.md; observed in preview,
-  2026-09-28]
+Read [pitfalls/creating-objects.md](pitfalls/creating-objects.md) when the
+events create or spawn instances, or a Particles object spawns a Sprite.
 
-## Storage and preview
+- *Create object* picks only the new instance; reach it through a family with *Pick last created*.
+- *Create object* runs once per event, however many instances are picked.
+- A runtime-created instance copies an existing instance or template: keep one per object in a layout that never runs.
+- A Particles object given a Sprite spawns real instances that are not the emitter's children.
+- A created instance is found outside its own event only by UID, until the top-level event ends.
 
-- *Preview* (F5, the toolbar button) starts from the layout open in the
-  editor, not from the project's first layout; only *Preview project* uses
-  that. A loader layout that reads Local Storage and then goes to the game
-  layout is skipped whenever the game layout is previewed, and the save
-  appears not to work. Read the save in the sheet of the layout that needs
-  it, gated by a global such as `loaded`, and build from the trigger.
-  [manual: overview/testing-projects.md "Preview project"; observed in a
-  game project, 2026-09-18]
-- Local Storage is an IndexedDB database named `c3-localstorage-` plus the
-  project's `uniqueId`, so it survives closing the preview and is separate
-  per project. A tool that rewrites `project.c3proj` must keep `uniqueId`
-  or the saved data is orphaned. [runtime: exported c3runtime.js
-  `_GetProjectStorage`; manual:
-  scripting/scripting-reference/interfaces/istorage.md "unique to the
-  specific project"]
-- A web export looks for an update only when the page loads: on each
-  navigation its service worker fetches `offline.json`, downloads a newer
-  version in the background and posts *On update found* and *On update
-  ready* about 3 seconds later. A tab left open never learns of a deploy,
-  and *Reload*, like the player's own refresh, switches to the new files
-  only while no other tab of the game is open. Prompt from *On update
-  ready* and let the player reload; testing it takes loading the old
-  version once after the new one is deployed. [manual:
-  plugin-reference/browser.md "On update ready", "Reload"; runtime:
-  exported sw.js, `UpdateCheck` runs from the `fetch` handler for
-  `navigate` requests, `PostBroadcastMessage` delays 3000 ms,
-  `GetCacheNameToUse` keeps the old cache while `clients.matchAll()` finds
-  more than one; r503 export, 2026-09-28]
-- File System writes only through a picker tag, never a free path. The known
-  folder tags (`<documents>`, `<desktop>`, `<saved-games>`, ...) exist only in
-  the Windows WebView2, macOS WKWebView and Linux CEF exports; in preview and
-  in a browser *Has picker tag* is false for all of them. Gate on the plugin's
-  own *Desktop features supported*, *Has picker tag*, then *Is supported*,
-  not on Platform Info's OS (Chrome on Windows is on Windows and has no known
-  folders), and give each branch its fallback. [manual:
-  plugin-reference/filesystem.md "Accessing known folders"; construct.net
-  tutorial "Exporting to Windows with the WebView2 wrapper"]
-- No tag names the Construct project folder. `<app>` and `<web-resource>` are
-  the exported executable's folder and its `www`, and may be read-only (e.g.
-  Program Files). Saves go to `<current-app-data>`, or `<saved-games>` on
-  Windows only; `<saved-games>`, `<screenshots>` and `<roaming-app-data>` are
-  unsupported on macOS and Linux. With the macOS App Sandbox on, the known
-  folders are the app's container, not the user's Finder folders. [manual:
-  plugin-reference/filesystem.md "Known folders table", "macOS App Sandbox"]
-- In a browser the plugin needs desktop Chromium (not Firefox or Safari), a
-  picker only opens in a user input trigger, and writing again to a file
-  opened earlier prompts for permission. A save picker erases the chosen file,
-  so write with folder path "" and do not read it; *Start in* sets only the
-  folder the dialog opens at. The picker tag is remembered across sessions:
-  *Has picker tag* at start lets a *Save* button rewrite the same file without
-  a dialog. [manual: plugin-reference/filesystem.md "Browser permissions
-  model", "Show save file picker"; example: file-system-text-editor]
-- Android and iOS (Cordova) exports are not in the plugin's support list; the
-  WKWebView extension covers macOS only. Treat File System as unavailable
-  there: save with Local Storage, hand a file to the user with Share's *Add
-  file*, since *Invoke download* does not work in a mobile app. Enable each
-  route by its own condition, as taking-screenshots does with *Is sharing
-  files supported* and *Is supported*. Not verified on a device. [manual:
-  plugin-reference/filesystem.md "Browser/platform support";
-  plugin-reference/browser.md "Invoke download"; example: taking-screenshots]
+### Restarting a layout
+
+Read [pitfalls/restarting-a-layout.md](pitfalls/restarting-a-layout.md)
+when the events restart a layout or go to one, such as a new round.
+
+- *Restart layout* and *Go to layout* keep every global variable and static local at its current value.
+
+### Storage and preview
+
+Read [pitfalls/storage-and-preview.md](pitfalls/storage-and-preview.md)
+when the project saves data, has a loader layout, is exported for the web
+or uses File System.
+
+- *Preview* starts from the layout open in the editor, so a loader layout is skipped.
+- Local Storage is keyed by the project's `uniqueId`, which a rewritten `project.c3proj` must keep.
+- A web export looks for an update only when the page loads.
+- File System writes only through a picker tag; the known folders exist only in desktop exports.
+- No tag names the Construct project folder; saves go to `<current-app-data>`.
+- In a browser File System needs desktop Chromium and a user input trigger, and a save picker erases the file.
+- Android and iOS exports have no File System: save with Local Storage and hand files over with Share.
 
 ## Adding an entry
 
 One bullet: fact, consequence, source. Manual wording beats an observation, an
 observation beats intuition, intuition is not an entry. Would the agent get it
 wrong without the line? If not, do not add it.
+
+The bullet goes into the topic file of its group, and the group here gets
+its conclusion as one line, in the same place in the order. Picking and
+Triggers and Else take the whole bullet here. A fact that fits no group gets
+a topic file of its own and a group here that says when to read it.

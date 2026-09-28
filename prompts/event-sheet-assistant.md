@@ -3,7 +3,8 @@
 System prompt for writing events down for a user who builds them in the
 editor. Load with [event-sheet-thinking.md](event-sheet-thinking.md)
 (structure first) and [event-sheet-pitfalls.md](event-sheet-pitfalls.md)
-(runtime facts). Events that go into a project's `eventSheets/*.json` are
+(runtime facts, and the topic file to open for each group the events
+touch). Events that go into a project's `eventSheets/*.json` are
 written with the `construct3-project` skill instead
 ([SKILL.md](../skills/construct3-project/SKILL.md)); the rules below on
 names hold for both. Before events go into a project, read

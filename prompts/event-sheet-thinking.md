@@ -2,7 +2,8 @@
 
 Decides what the events are before any is written. [event-sheet-assistant.md](event-sheet-assistant.md)
 says how to write one down; [event-sheet-pitfalls.md](event-sheet-pitfalls.md)
-lists the runtime facts intuition gets wrong. Before the events go into a
+lists the runtime facts intuition gets wrong, one line each, and says which
+topic file under `pitfalls/` to open for the ones the events touch. Before the events go into a
 project or a generator, read [event-sheet-style.md](event-sheet-style.md):
 how the official examples organise, name and comment a sheet, and the three
 habits the checker warns on. Run every draft through the smell table below
@@ -80,7 +81,7 @@ program transcribed into events even when no picking smell shows.
 |------|-----|-----|
 | A delay, a countdown, a cooldown | Timer behavior: *Start timer*, *On timer*, `Duration(tag) - CurrentTime(tag)` | An instance variable decremented by `dt` and compared every tick |
 | A fixed-duration move, scale, fade, colour change: known start, known end, known time | Tween behavior: *Tween (one/two/three properties)*, *On any finished* | A progress variable stepped by `dt`, fed to `lerp` and checked for 1 |
-| A fixed-duration change of something Tween has no property for: an effect parameter, a behavior property, Z height, a full 360° turn | *Tween (value)*, then *Is playing* with *Set …* to `Self.Tween.Value(tag)` (pitfalls, "Tween") | The same progress variable, or a one-property angle tween asked for a full turn |
+| A fixed-duration change of something Tween has no property for: an effect parameter, a behavior property, Z height, a full 360° turn | *Tween (value)*, then *Is playing* with *Set …* to `Self.Tween.Value(tag)` ([pitfalls: Tween](pitfalls/tween.md)) | The same progress variable, or a one-property angle tween asked for a full turn |
 | Smooth follow of a target that keeps moving: camera, cursor, aim angle | `lerp(a, b, 1 - f^dt)` (`anglelerp` for angles) in `Every tick`; the target is read fresh each tick and nothing finishes | A Tween restarted every tick; `lerp(a, b, 0.1)` with a constant factor, which is framerate-dependent |
 | A value derived from another live value: colour from health, zoom from speed, a slider position | `lerp(lo, hi, t)` with `t` from `unlerp`, a ratio, `Tween.Value(tag)` or a timeline; no time of its own | A variable holding the mapped value, updated from several events |
 | Continuous motion toward a target or along a heading | MoveTo, Bullet, Pathfinding, Platform, 8 Direction | `Set X`/`Set Y` from your own velocity variables |
@@ -113,10 +114,10 @@ visible", "Set layer opacity", "Wait", "Wait for previous actions to
 complete", project-primitives/layers.md "Parallax", "Global layers",
 "Initially visible", project-primitives/objects/families.md,
 project-primitives/objects/containers.md; the pause, hit-stop and wait rows
-are sourced in the pitfalls, "Wait and time scale"]
+are sourced in [pitfalls: Wait and time scale](pitfalls/wait-and-time-scale.md)]
 
 Two checks before choosing: a Timer is state with transitions, list them
-(pitfalls, "Timer"); an Array *Load* reads Construct's own JSON layout, so the
+([pitfalls: Timer](pitfalls/timer.md)); an Array *Load* reads Construct's own JSON layout, so the
 file comes from the Array editor, not a hand-written JSON (the JSON plugin
 reads those).
 
@@ -191,7 +192,7 @@ One hit means redesign, not patch.
 | A boolean such as `occupied`, `busy` written from several events | State mirroring a condition | `Is overlapping another object`, `Is dragging`, `Is playing` |
 | Custom actions named `attach`, `detach`, `sync` that write two variables | Two copies of one fact | One source, usually the engine's |
 | `Pick by unique ID` for the object the trigger already picked | Re-picking what is picked | Delete the condition |
-| `For each` before actions that already run per picked instance | A redundant loop | Delete it, unless a function call or a pick by one instance's position follows (see pitfalls) |
+| `For each` before actions that already run per picked instance | A redundant loop | Delete it, unless a function call or a pick by one instance's position follows (see [pitfalls: Triggers and Else](event-sheet-pitfalls.md#triggers-and-else)) |
 | `Every tick` stepping a progress variable by `dt` and feeding it to `lerp` between fixed ends | A tween written by hand, with its own "finished" bookkeeping. `lerp` toward a moving target, or from a value the engine owns, is not this | Tween behavior, *On any finished* |
 | Per-level numbers in variable names, expression constants or a ladder of `Compare` blocks | A lookup table transcribed into events | Array or Dictionary project file, loaded once; Advanced Random for weights |
 | A global `state` or `paused` compared at the top of many events | A phase switch or a pause written as a flag | A Group and *Set group active*; *Set time scale* for pause; a layout of its own for another screen |
@@ -217,7 +218,9 @@ One hit means redesign, not patch.
    group, name and comment them as [event-sheet-style.md](event-sheet-style.md)
    says.
 4. Read the manual page for each mechanism you are about to use.
-5. Draft, then run the smell table and the pitfalls.
+5. Draft, then run the smell table and the
+   [pitfalls](event-sheet-pitfalls.md), with the topic file of every group
+   the draft touches.
 6. Only then verify names, with `lookup_ace.py` as
    [event-sheet-assistant.md](event-sheet-assistant.md) says; shared
    world-object ACEs are in `plugins/_common.json`.
