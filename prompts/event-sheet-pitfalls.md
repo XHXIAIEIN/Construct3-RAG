@@ -33,6 +33,18 @@ first.
   instance, whose variables and behaviors the first family's events cannot
   see. [Construct-bugs#7485, open; example: elemental-conveyors event 35,
   `Draggable` picked by `Base.UID`]
+- *Pick children* picks only among the child type's instances already
+  picked, and a child type in the parent's container is narrowed as soon as
+  the parent is. In `Piece: On drop`, `PieceArt` sits in `Piece`'s container
+  and is already the dragged piece's art, so `Pieces: Pick children
+  PieceArt` finds nothing on the piece under it. Give the child type a family
+  of its own, `Arts` with the one member `PieceArt`, and pick children of
+  the family: its picks are kept apart from the container's. [runtime:
+  exported c3runtime.js r503, `AnySDK.PickChildren` keeps the child class's
+  current picks unless they are all of it, then applies the result to the
+  child's container; observed in a game project, r503 preview, 2026-09-28:
+  the merge target's body was not picked until the pick went through a
+  one-member family]
 - A data object (Dictionary, JSON) in a container gives each instance its own
   copy, picked with its type as above. Use it instead of a growing list of
   instance variables when stats come from a data file. [manual:
