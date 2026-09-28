@@ -1,6 +1,6 @@
 # The Pitfalls Are an Index with Topic Files
 
-Date: 2026-09-28
+Date: 2026-09-29
 
 ## Problem
 
@@ -12,6 +12,13 @@ so every task paid for all 72 entries while one used two or three groups.
 A table of links is not enough: the file holds facts that intuition gets
 wrong, so the agent does not know which one it needs. It has to see that
 each pitfall exists without opening anything.
+
+Once split, the index kept growing, by about 30 entries between 2026-09-20
+and 2026-09-29. The instructions sent every lesson a preview taught to the
+pitfalls, so the index also collected how a project file is written, what
+the editor's preview starts from, how a script drives a preview, and how art
+should be painted. None of those changes the events an agent writes, and
+each one costs every task a line.
 
 ## Options
 
@@ -50,6 +57,27 @@ needs them. Each other group is a `###` heading, a when-to-read line linking
 `prompts/pitfalls/<topic>.md`, and one conclusion line per entry in the
 topic file's order. The index is about 17 KB.
 
+A pitfall is a runtime behaviour of events that changes which events an
+agent writes: without the line, the agent would write them wrong. Other
+lessons have their own homes, named in the index's "Adding an entry" and in
+every place that routes a lesson (the root `AGENTS.md`, the
+`construct3-project` skill's `SKILL.md`, `generating-a-project.md` and
+`checker-rules.md`):
+
+| Lesson | Home |
+|--------|------|
+| How a project file is written | `prompts/references/hand-editing-project-files.md`, or a checker rule when a script can test it |
+| What the editor, the preview or a script driving them does | `skills/construct3-project/references/`, `editor-and-preview.md` for the preview |
+| How the game looks, its art and colours | `prompts/event-sheet-style.md` *Project*, or the look documents in the root `AGENTS.md` |
+
+By that test, where the preview starts and how a script drags in it went to
+`editor-and-preview.md`, and the Local Storage key that a rewritten
+`project.c3proj` must keep went to `hand-editing-project-files.md`; the
+group they left is now *Storage and export*. A sprite drawn facing right
+stays: given art that faces up, the agent writes every *Set angle* wrong
+without it. An entry the checker also enforces stays too, since the prompts
+serve as a system prompt where no checker runs.
+
 A new entry goes into its group's topic file with its source, and its
 conclusion into the index. `tests/test_prompts.py` fails when a topic file
 is not linked, when a group's conclusion lines and the topic file's entries
@@ -57,8 +85,12 @@ differ in number, or when an entry has no source.
 
 ## Re-evaluate when
 
-- The index passes about 20 KB: shorten conclusion lines, or merge groups
-  that are always read together. Picking and Triggers and Else stay in full;
-  as conclusion lines they are not opened.
+- The index passes about 20 KB: first move out what fails the scope test,
+  then shorten conclusion lines, or merge groups that are always read
+  together. Picking and Triggers and Else stay in full; as conclusion lines
+  they are not opened.
 - An eval shows an agent writing a pitfall's topic without opening its file:
   reword that group's when-to-read line first.
+- An agent repeats a mistake that a moved lesson describes, because it did
+  not read the lesson's new home: bring the lesson back, or point to it from
+  where that agent does read.

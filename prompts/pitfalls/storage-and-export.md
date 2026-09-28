@@ -1,23 +1,8 @@
-# Event Sheet Pitfalls: Storage and preview
+# Event Sheet Pitfalls: Storage and export
 
 Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md).
 
-- *Preview* (F5, the toolbar button) starts from the layout open in the
-  editor, not from the project's first layout; only *Preview project* uses
-  that. A loader layout that reads Local Storage and then goes to the game
-  layout is skipped whenever the game layout is previewed, and the save
-  appears not to work. Read the save in the sheet of the layout that needs
-  it, gated by a global such as `loaded`, and build from the trigger.
-  [manual: overview/testing-projects.md "Preview project"; observed in a
-  game project, 2026-09-18]
-- Local Storage is an IndexedDB database named `c3-localstorage-` plus the
-  project's `uniqueId`, so it survives closing the preview and is separate
-  per project. A tool that rewrites `project.c3proj` must keep `uniqueId`
-  or the saved data is orphaned. [runtime: exported c3runtime.js
-  `_GetProjectStorage`; manual:
-  scripting/scripting-reference/interfaces/istorage.md "unique to the
-  specific project"]
 - A web export looks for an update only when the page loads: on each
   navigation its service worker fetches `offline.json`, downloads a newer
   version in the background and posts *On update found* and *On update
@@ -63,9 +48,3 @@ Sources and the rule for adding an entry are in the index,
   files supported* and *Is supported*. Not verified on a device. [manual:
   plugin-reference/filesystem.md "Browser/platform support";
   plugin-reference/browser.md "Invoke download"; example: taking-screenshots]
-- A drag dispatched from a script into a preview page moves nothing with
-  `pointermove` alone: the runtime reads `pointerrawupdate` where the browser
-  has it, so send one before each `pointermove`; `pointerdown` and
-  `pointerup` work as they are. Coordinates are the page's CSS pixels, not
-  the pixels of a screenshot taken at a device scale factor. [observed in a
-  game project, r503 preview in Chrome, 2026-09-29]

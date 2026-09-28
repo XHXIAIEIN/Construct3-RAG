@@ -73,8 +73,11 @@ Feel tables, the layout of the sheet. Then:
 5. What the preview shows that the checker cannot (an instance picked twice,
    a tween and a timer ending a tick apart, a mask that leaves a corner
    uncovered) is a runtime fact. Fix the generator, and when the fact would
-   trip the next agent, add it to
-   `Construct3-RAG/prompts/event-sheet-pitfalls.md` with its source.
+   trip the next agent, record it with its source where it changes that
+   agent's work: `Construct3-RAG/prompts/event-sheet-pitfalls.md` when it
+   changes which events are written, `editor-and-preview.md` beside this
+   file when it is about the editor or the preview, and the places its
+   "Adding an entry" section names for a file format or the look.
 6. Commit the generator with the files it produced; the diff of the
    generated JSON is the review of the change.
 
