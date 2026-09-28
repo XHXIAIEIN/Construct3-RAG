@@ -106,6 +106,16 @@ first.
   "Else"]
 - Else does not narrow; it starts from the parent's picks. It cannot directly
   follow a trigger block, only a normal sub-event inside one. [same]
+- Touch *On tap* skips a tap released within 666 ms and 25 px of the tap
+  before it: that one fires *On double-tap* instead, and the tap after it is
+  single again. A button on *On tap object* loses every second press of a
+  player tapping fast. A button that counts every press reacts to *On touched
+  object* (start), or also to *On double-tap object*. A tap is itself a
+  release within 333 ms and 15 px of the touch start. [manual:
+  plugin-reference/touch.md "On tap", "On double-tap"; runtime: exported
+  c3runtime.js r503, `ShouldTriggerTap`; observed in a game project, r503
+  preview, 2026-09-28: 7 mouse clicks 0.3 s apart on the button made 4
+  pieces, 8 clicks 0.7 s apart made 8]
 
 ## Functions
 
@@ -179,6 +189,27 @@ first.
   fader, the buttons and the manager object. [manual:
   system-reference/system-actions.md "Wait", "Set object time scale";
   example: airborne-explorer, In-Game Menu]
+- *Wait 0* resumes at the start of the next tick, not at the end of the
+  event or the sheet: before behaviors and every event of that tick, after
+  the current tick has run all its events and been drawn. The rest of the
+  event, in an included sheet or a function alike, runs one frame late, with
+  the picks saved at the *Wait* minus destroyed instances, and with function
+  parameters and function locals restored. It runs at time scale 0 too, and
+  a layout change drops it. *Wait for previous actions* with nothing to wait
+  for resumes at the same point. Leave *Wait 0* out: a created instance is
+  pickable from the next top-level event and a destroyed one gone by then
+  (see Creating objects); initialise in *On created* or the creating event,
+  pass `UID`, put the dependent step in a later top-level event or trigger.
+  Ashley's tutorial still says "until the end of the event sheet", which is
+  Construct 2 wording. [runtime: exported c3runtime.js r503, `Wait` calls
+  `AddScheduledWait`, `RunScheduledWaits` is called only from
+  `Step_BeforePreTick`, ahead of `Step_RunEventsEtc` and `Render`;
+  `ScheduledWait._Init` saves SOL, parameters and locals;
+  `ClearAllScheduledWaits` on layout end; read from source, not observed.
+  Ashley: "rarely any need to use Wait 0 seconds", forum
+  construct-2/general-discussion-17/wait-59374; *Wait for previous actions*
+  "always runs at the end of the tick", Scirra/Construct-bugs#3948;
+  construct.net tutorial system-wait-action-63, updated 2019]
 - Deactivating a group stops its events, including its triggers, and
   nothing else: behaviors, timers and tweens started by it keep running. It
   turns a phase off; it does not pause. [manual:
@@ -321,6 +352,22 @@ first.
   animation* from the beginning when a restart is wanted. [manual:
   plugin-reference/sprite.md "Set animation"; observed in a game
   project, 2026-09-22]
+- Frames used as looks rather than as an animation need the animation's
+  *Speed* at 0. A one-frame animation at the default speed 5 shows no
+  motion, but give it more frames and every created instance plays through
+  them and stops on the last, whatever *Set frame* chose. [observed in a
+  game project, r503 preview, 2026-09-28: frames 0 to 2 of a non-looping
+  animation at speed 5, every enemy ended on frame 2 until speed was 0]
+- *Set frame* to a frame of another image size resizes the instance by the
+  ratio of the two images, keeping its scale, and swaps in the new frame's
+  collision polygon, origin included. A frame drawn wider with transparent
+  margins therefore widens what the instance overlaps: a boss frame of
+  three lanes' width is hit by every lane's range without a change to the
+  targeting events. [runtime: exported c3runtime.js r503, Sprite
+  `_OnFrameChanged` scales width and height by new/old image size and calls
+  `SetSourceCollisionPoly`; observed in a game project, r503 preview,
+  2026-09-28: a 72 px enemy set to a 520×216 frame became 260×108 and
+  overlapped three 40 px lane ranges]
 
 ## Rendering
 
@@ -418,6 +465,17 @@ first.
   the manual names that as the way to pick a created instance from its family.
   [manual: system-reference/system-actions.md "Create object";
   system-reference/system-conditions.md "Pick last created"]
+- *Create object* is a System action: it runs once per event, however many
+  instances are picked, and `Slot.X` in its parameters reads the first
+  picked one. A custom action is run once with all the caller's picks, so
+  `Slot: Spawn enemy` over three picked slots creates one enemy, at the
+  first slot. To create one per picked instance, put *For each* among the
+  custom action block's conditions (or the event's), or use the object's
+  own *Spawn another object*. [manual: system-reference/system-conditions.md
+  "For Each" "force the event to apply once per instance";
+  project-primitives/events/custom-actions.md "Picking"; observed in a game
+  project, r503 preview, 2026-09-28: a custom action on 3 picked slots
+  created 1 instance, 3 once the block held *For each*]
 - A runtime-created instance takes its properties from an existing instance or
   the named template. Keep one template instance per runtime-created object in
   a layout that never runs. [same; creation with zero instances anywhere is
@@ -428,6 +486,18 @@ first.
   comes from *On created* plus *Pick nearest* emitter, read from the emitter's
   instance variable. [example: child-particles; observed in a game
   project, 2026-09-17, unverified at runtime]
+- A created instance is picked in its own event and that event's
+  sub-events, and *Pick by unique ID* finds it anywhere; no other condition
+  (*Pick all*, *Pick random*, *Compare instance variable*, overlap) finds it
+  among all instances until the top-level event that created it has ended,
+  or the outermost trigger. A function called after the creating function in
+  the same event does not see the new instances. Create and initialise in one
+  event, pass `UID` to functions, or pick from a later top-level event or
+  trigger; *Wait 0* is not needed and runs a tick later (see Wait and time
+  scale). [Ashley in Scirra/Construct-bugs#3554 (2019) and #5178 (2021);
+  runtime: exported c3runtime.js r503, `EventSheet.Run` calls
+  `FlushPendingInstances()` after each top-level event, `_ExecuteTrigger`
+  after the outermost trigger]
 
 ## Restarting a layout
 
@@ -463,6 +533,19 @@ first.
   `_GetProjectStorage`; manual:
   scripting/scripting-reference/interfaces/istorage.md "unique to the
   specific project"]
+- A web export looks for an update only when the page loads: on each
+  navigation its service worker fetches `offline.json`, downloads a newer
+  version in the background and posts *On update found* and *On update
+  ready* about 3 seconds later. A tab left open never learns of a deploy,
+  and *Reload*, like the player's own refresh, switches to the new files
+  only while no other tab of the game is open. Prompt from *On update
+  ready* and let the player reload; testing it takes loading the old
+  version once after the new one is deployed. [manual:
+  plugin-reference/browser.md "On update ready", "Reload"; runtime:
+  exported sw.js, `UpdateCheck` runs from the `fetch` handler for
+  `navigate` requests, `PostBroadcastMessage` delays 3000 ms,
+  `GetCacheNameToUse` keeps the old cache while `clients.matchAll()` finds
+  more than one; r503 export, 2026-09-28]
 - File System writes only through a picker tag, never a free path. The known
   folder tags (`<documents>`, `<desktop>`, `<saved-games>`, ...) exist only in
   the Windows WebView2, macOS WKWebView and Linux CEF exports; in preview and
