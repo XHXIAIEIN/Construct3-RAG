@@ -485,6 +485,7 @@
           "desc": "已连接的游戏手柄的索引值。"
         }
       },
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

@@ -1891,6 +1891,7 @@
       "category": "size-position",
       "translated-name": "视距高度",
       "description": "获取相对于图层的Z坐标。",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {
@@ -1899,6 +1900,7 @@
       "category": "size-position",
       "translated-name": "整体视距高度",
       "description": "基于当前图层的Z坐标，计算整体的Z坐标总值。",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

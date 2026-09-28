@@ -418,7 +418,8 @@
       "category": "layout",
       "list-name": "设备支持滤镜",
       "display-text": "设备支持滤镜",
-      "description": "检测当前设备是否支持着色器效果并且可以在游戏中显示。"
+      "description": "检测当前设备是否支持着色器效果并且可以在游戏中显示。",
+      "isDeprecated": true
     },
     {
       "id": "for",
@@ -775,7 +776,8 @@
       "category": "special-conditions",
       "list-name": "在移动设备运行",
       "display-text": "在移动设备运行",
-      "description": "如果在移动设备上观看，则为True。 这是一个估计，可能不完全准确。"
+      "description": "如果在移动设备上观看，则为True。 这是一个估计，可能不完全准确。",
+      "isDeprecated": true
     },
     {
       "id": "else",
@@ -816,7 +818,8 @@
             "scirra-arcade": "Construct Arcade"
           }
         }
-      }
+      },
+      "isDeprecated": true
     },
     {
       "id": "on-start-of-layout",
@@ -2645,6 +2648,7 @@
       "category": "display",
       "translated-name": "窗口宽度",
       "description": "窗口宽度，用于显示游戏窗口区域的宽度。",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {
@@ -2653,6 +2657,7 @@
       "category": "display",
       "translated-name": "窗口高度",
       "description": "窗口高度，用于显示游戏窗口区域的高度。",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {
@@ -3915,6 +3920,7 @@
       "category": "system",
       "translated-name": "渲染器",
       "description": "获取当前渲染器的名称。返回 'canvas2d' 或 'webgl' 或 'webgpu'。",
+      "isDeprecated": true,
       "returnType": "string"
     },
     {
@@ -3971,6 +3977,7 @@
       "category": "system",
       "translated-name": "渲染器详情",
       "description": "获取描述渲染硬件的字符串（如果有）。",
+      "isDeprecated": true,
       "returnType": "string"
     },
     {
@@ -4655,6 +4662,7 @@
           "desc": "蓝色值，0-255"
         }
       },
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

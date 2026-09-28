@@ -24,6 +24,14 @@ OBJECT may also be an effect by id or display name (`Bulge`, `Glow
 horizontal`): that prints the effect and its parameters, those with every
 WORD when words are given. Effects have parameters, no ACEs.
 
+What the editor has deprecated is named so, from
+`Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`: a deprecated
+plugin, behavior or effect given as OBJECT (`NW.js`) prints that it is one; a
+deprecated ACE the schema kept prints after the current ones, marked
+<deprecated>, with the current ACE of the same name when there is one; a
+deprecated ACE the schema left out is listed when it has every word, so that
+an id from an old project does not read as a typo.
+
 The schema files run to thousands of lines, more than most tools read at
 once, and an ACE below the cut looks as if it did not exist; this prints the
 part that was asked for. Six matches or fewer print in full, each parameter
@@ -88,6 +96,13 @@ def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]
             behavior = "<behavior name on the object>" if kind == "behaviors" else None
             sources.append(("<object>", behavior, p.schema(kind, addon) or {}))
     if not sources:
+        retired = p.deprecated_addon_named(target)
+        if retired:
+            # An answer, not a failure to run: on stdout, like a miss.
+            kind, addon_id, entry = retired
+            print(f"{entry.get('originalId', addon_id)} ({entry.get('name', addon_id)}) is a deprecated "
+                  f"{kind[:-1]}: {c3.DEPRECATED}. The clone has no schema for it; do not add it to a project")
+            sys.exit(1)
         names = [v.get("name", k) for kind in ("plugins", "behaviors", "effects")
                  for k, v in c3.load(p.schemas / "_index.json").get(kind, {}).items()]
         sys.exit(f"{target!r} is not an object of this project, System, or the id or display name of a plugin, "
@@ -117,18 +132,23 @@ def brief(owner: str, behavior: str | None, addon: str, kind: str, it: dict) -> 
     title = it.get("list-name") or it.get("translated-name")
     via = f" [behavior {behavior}, {addon}]" if behavior else f" [{addon}]"
     params = it.get("params") or {}
-    return f"{kind[:-1]:<10} {it['id']:<34} {title}{via}" + (f"  ({', '.join(params)})" if params else "")
+    return (f"{kind[:-1]:<10} {it['id']:<34} {title}{via}" + (f"  ({', '.join(params)})" if params else "")
+            + ("  <deprecated>" if it.get("isDeprecated") else ""))
 
 
 def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, written: str | None = None) -> list[str]:
     """written: the name an expression has in a project file, English in every locale."""
     title = it.get("list-name") or it.get("translated-name")
     flags = [f for f in ("isTrigger", "isLooping", "isAsync") if it.get(f)] + \
-            (["not invertible"] if it.get("isInvertible") is False else [])
+            (["not invertible"] if it.get("isInvertible") is False else []) + \
+            (["deprecated"] if it.get("isDeprecated") else [])
     via = f" [behavior {behavior}, {addon}]" if behavior else f" [{addon}]"
     params = it.get("params") or {}
     lines = [f"{kind[:-1]} {it['id']} - {title}{via}" + (f"  <{', '.join(flags)}>" if flags else ""),
              f"  {it.get('description', '')}"]
+    if it.get("isDeprecated"):
+        lines.append(f"  deprecated: {c3.DEPRECATED}"
+                     + (f"; the current {kind[:-1]} of the same name is {it['current']}" if it.get("current") else ""))
     if kind == "expressions":
         call = f"({', '.join(params)})" if params else ""
         path = f"{owner}.{behavior}." if behavior else ("" if owner == "System" else f"{owner}.")
@@ -186,6 +206,28 @@ def effect_lookup(p: c3.Project, effect_id: str, words: list[str]) -> int:
     return 1 if missed else 0
 
 
+def retired_note(p: c3.Project, sources: list[tuple[str, str | None, dict]], words: list[str]) -> list[str]:
+    """The deprecated ACEs of these addons that the schema left out and that have
+    every word, for a project that still uses one. None without words."""
+    hits = []
+    for _, behavior, s in sources if words else []:
+        if not s:
+            continue
+        kept = {(kind, it["id"]) for kind in KINDS for it in s.get(kind, [])}
+        for kind in KINDS:
+            for ace_id, entry in p.deprecated_aces(f"{s.get('type')}s", s.get("id", ""), kind).items():
+                title = entry.get("list-name") or entry.get("translated-name") or ace_id
+                names = squash(" ".join([ace_id, title, behavior or "", s.get("id", ""), s.get("name", ""), kind]))
+                if (kind, ace_id) not in kept and all(squash(w) in names for w in words):
+                    hits.append(f"  {kind[:-1]:<10} {ace_id:<34} {title} [{s.get('id', '')}]"
+                                + (f"  current of the same name: {entry['current']}" if entry.get("current") else ""))
+    hits = list(dict.fromkeys(hits))
+    if not hits:
+        return []
+    return ["deprecated, and not in the schema: Construct 3 no longer offers these and keeps them only so that "
+            "old projects open", *hits[:6]] + ([f"  ... and {len(hits) - 6} more"] if len(hits) > 6 else [])
+
+
 def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
     sources = sources_of(p, target)
     entries = []        # (its names, its names and category, owner, behavior, addon, kind, entry)
@@ -195,6 +237,9 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         written.update({(behavior, s.get("id", ""), ace): name for ace, name in p.expression_names(s).items()})
         for kind in KINDS:
             for it in s.get(kind, []):
+                if it.get("isDeprecated"):
+                    current = p.deprecated_aces(f"{s.get('type')}s", s.get("id", ""), kind).get(it["id"], {}).get("current")
+                    it = {**it, "current": current} if current else it
                 # A word may also name where the ACE lives: the behavior, the addon, "condition".
                 names = squash(" ".join([*(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")),
                                          behavior or "", s.get("id", ""), s.get("name", ""), kind]))
@@ -205,7 +250,14 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
                 param_text.append(squash(" ".join([*params, *(str(v) for spec in params.values()
                                                               for v in (spec.get("items") or {}).values())])))
     if not entries:
+        obj = p.objects_lower.get(LOWER(target))
+        retired = p.deprecated_addon("plugins", p.plugin_of[obj]) if obj else None
+        if retired:
+            print(f"{target} is a {retired.get('originalId')} ({retired.get('name')}) object, a deprecated plugin: "
+                  f"{c3.DEPRECATED}. The clone has no schema for it: nothing to look up")
+            return 1
         sys.exit(f"the clone has no schema for {target}, a third-party addon: nothing to look up")
+    retired_lines = retired_note(p, sources, words)
     # By name first, so that a category which shares a word with a name does not
     # turn six entries printed in full into a list: `Physics force` is the three
     # Apply force actions, and the rest of the category `forces` is named below them.
@@ -215,9 +267,13 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
     by_category = [e[2:] for e, n, w in zip(entries, named, wider) if w and not n]
     if not found or len(found) > 6:
         found, by_category = [e[2:] for e, w in zip(entries, wider) if w], []
+    found.sort(key=lambda e: bool(e[4].get("isDeprecated")))     # the current ones first
 
     if not found:
         query = " ".join(words)
+        # A deprecated id of an old project would otherwise read as a typo.
+        for line in retired_lines:
+            print(line)
         # Pick nearest/furthest, Is overlapping, Set color ... are not System's and not the
         # plugin's: every world object has them, so they are looked up on an object.
         # A plugin with no shared ACEs at all (System, Keyboard) points to the world objects that have them.
@@ -273,11 +329,15 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         if by_category:
             print(f"by category, not by name: {', '.join(e[4]['id'] for e in by_category[:20])}"
                   + (" ..." if len(by_category) > 20 else ""))
+        for line in retired_lines:
+            print(line)
         return 0
     lines = [brief(*e) for e in found]
     if c3.fitting(lines, limit) == len(lines):
         print("\n".join(lines))
         print(f"{len(found)} entries; add a word to narrow them, six or fewer print with the JSON to write")
+        for line in retired_lines:
+            print(line)
         return 0
     print(f"{len(found)} entries, more than fit {limit} characters (--limit). Entries per category:")
     for kind in KINDS:
@@ -307,9 +367,10 @@ def main() -> int:
         "  python scripts/lookup_ace.py System time            a category: Every X seconds, Wait, dt, time ...\n"
         "  python scripts/lookup_ace.py \"8 Direction\" speed    a plugin or behavior by id or display name\n"
         "  python scripts/lookup_ace.py Coin tween condition   a word may be condition, action or expression\n"
-        "  python scripts/lookup_ace.py Bulge                  an effect by id or display name: its parameters\n\n"
+        "  python scripts/lookup_ace.py Bulge                  an effect by id or display name: its parameters\n"
+        "  python scripts/lookup_ace.py Mouse set-cursor-style an id from an old project: deprecated, and the current one\n\n"
         "exit codes: 0 found, 1 no entry has every word (those with some are listed), OBJECT is unknown (the\n"
-        "nearest names are listed), or the clone was not found")
+        "nearest names are listed) or deprecated, or the clone was not found")
     ap.add_argument("object", metavar="OBJECT",
                     help="an object type or family of the project, System, a plugin or behavior id or display "
                          "name, or an effect id or display name")

@@ -1,7 +1,8 @@
 """What the scripts of this skill share: finding the project and the
 Construct3-RAG clone, reading the files project.c3proj lists, the schemas,
-the object model (types, families, behaviors, instance variables) and the
-schema entry behind a condition or an action.
+the object model (types, families, behaviors, instance variables), the
+schema entry behind a condition or an action, and what the editor has
+deprecated.
 
 Not a command. check_project.py, print_sheet.py and lookup_ace.py import it
 from the folder they sit in.
@@ -28,6 +29,10 @@ LIMIT = 10_000
 # own: the margin leaves it blank and Find files it under the next numbered
 # event, so every row's number is the count of numbered rows before it plus one.
 NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
+
+# What a deprecated addon or ACE is, in the words of the Addon SDK reference
+# (SetIsDeprecated, isDeprecated, is-deprecated).
+DEPRECATED = "Construct 3 no longer offers it and keeps it only so that old projects open"
 
 
 class Findings:
@@ -262,6 +267,7 @@ class Project:
         self._addon_names: dict[str, dict[str, str]] = {}
         self._expression_names: dict[tuple[str, str], dict[str, str]] = {}
         self._common_of: dict[str, dict] = {}
+        self._deprecated: dict[str, dict] = {}
         self.index = load(rag / "data" / "c3-schemas" / "_index.json")
         if not self.schemas.is_dir():
             sys.exit(f"no schemas for --locale {locale}; the clone has: {', '.join(self.index.get('languages', []))}")
@@ -348,8 +354,13 @@ class Project:
             if self._schema_cache[key] is None:
                 # An addon the project lists under another author is a third-party one: no schema, no hint.
                 third_party = self.used_addons.get(addon_id, {}).get("author", "Scirra") != "Scirra"
-                hint = None if third_party else self.addon_hint(kind, addon_id)
-                if hint:
+                retired = None if third_party else self.deprecated_addon(kind, addon_id)
+                hint = None if third_party or retired else self.addon_hint(kind, addon_id)
+                if retired:
+                    unchecked = "its parameters are" if kind == "effects" else "its ACEs and properties are"
+                    self.warn(f"{kind[:-1]} {addon_id} ({retired.get('name', addon_id)}) is deprecated: "
+                              f"{DEPRECATED}; {unchecked} not checked")
+                elif hint:
                     self.err(f"{kind[:-1]} id {addon_id!r} does not exist: the editor's id is {hint!r}")
                 else:
                     self.warn(f"no schema for {kind[:-1]} {addon_id}: its ACEs and properties are not checked")
@@ -392,6 +403,59 @@ class Project:
             return self.common_expressions
         ids = {it["id"] for it in self.common_of(plugin).get("expressions", [])}
         return {LOWER(name) for ace, name in self.expression_names(self.common).items() if ace in ids}
+
+    # --- what the editor has deprecated -----------------------------------------------
+    def deprecated(self, locale: str | None = None) -> dict:
+        """{locale}/_deprecated.json: every addon and ACE the editor has deprecated,
+        whether the schema kept it or not. Empty for a clone exported without it."""
+        locale = locale or self.locale
+        if locale not in self._deprecated:
+            path = self.rag / "data" / "c3-schemas" / locale / "_deprecated.json"
+            self._deprecated[locale] = load(path) if path.exists() else {}
+        return self._deprecated[locale]
+
+    def deprecated_addon(self, kind: str, addon_id: str) -> dict | None:
+        return self.deprecated().get("addons", {}).get(kind, {}).get(addon_id.lower())
+
+    def deprecated_addon_named(self, name: str) -> tuple[str, str, dict] | None:
+        """(kind, id, entry) of the deprecated plugin, behavior or effect with this
+        id or display name, in the locale or in en-US: 'NW.js' is nodewebkit."""
+        for kind in ("plugins", "behaviors", "effects"):
+            for locale in dict.fromkeys((self.locale, "en-US")):
+                for addon_id, entry in self.deprecated(locale).get("addons", {}).get(kind, {}).items():
+                    spellings = {squash(addon_id), squash(entry.get("originalId", addon_id)), squash(entry.get("name", ""))}
+                    if squash(name) in spellings:
+                        return kind, addon_id, self.deprecated_addon(kind, addon_id) or entry
+        return None
+
+    def deprecated_aces(self, addon_kind: str, addon_id: str, ace_kind: str, locale: str | None = None) -> dict[str, dict]:
+        """ACE id -> entry of the addon's deprecated conditions, actions or expressions."""
+        return (self.deprecated(locale).get("aces", {}).get(addon_kind, {})
+                .get(addon_id.lower(), {}).get(ace_kind, {}))
+
+    def deprecated_expressions(self, addon_kind: str, addon_id: str) -> dict[str, tuple[str, dict]]:
+        """Written name, lower case -> (ACE id, entry) of the addon's deprecated
+        expressions. The written name is the English one in every locale."""
+        english = self.deprecated_aces(addon_kind, addon_id, "expressions", "en-US")
+        entries = self.deprecated_aces(addon_kind, addon_id, "expressions")
+        return {LOWER(e.get("translated-name", ace)): (ace, entries.get(ace, e)) for ace, e in english.items()}
+
+    def deprecated_entry(self, kind: str, ace: dict) -> tuple[str, dict] | None:
+        """(addon id, entry) when a condition or action is one the editor has
+        deprecated, whether the schema kept it or not."""
+        obj = ace.get("objectClass")
+        if obj not in self.plugin_of:
+            return None
+        if "behaviorType" in ace:
+            behavior_id = self.behaviors_of(obj).get(ace["behaviorType"])
+            owners = [("behaviors", behavior_id)] if behavior_id else []
+        else:
+            owners = [("plugins", self.plugin_of[obj])] + ([] if obj == "System" else [("plugins", "_common")])
+        for addon_kind, addon_id in owners:
+            entry = self.deprecated_aces(addon_kind, addon_id, kind).get(ace.get("id"))
+            if entry:
+                return addon_id, entry
+        return None
 
     # --- object types and families ----------------------------------------------------
     def families_of(self, obj: str) -> list[str]:

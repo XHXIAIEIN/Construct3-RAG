@@ -106,8 +106,9 @@ not on the CDN endpoints it reads; `common_aces.py` loads them from
 `common_aces.json`, an extract of the editor bundle kept next to it, and
 `export_schemas()` merges that entry like any plugin. Which plugins and
 behaviors are deprecated is not on them either; `deprecated_addons.py` reads
-it from the editor bundles on every export, and the export leaves those
-addons out.
+it from the editor bundles on every export, the export leaves those addons
+out, and it writes `{locale}/_deprecated.json` with every deprecated addon
+and ACE for the skill's scripts to name.
 
 ### `settings/`
 

@@ -18,7 +18,9 @@ a record in `docs/decisions/`.
 
 ## 2. SOP: answer a Construct 3 fact question
 
-Answer from the data. An ACE missing from the schema does not exist.
+Answer from the data. An ACE missing from the schema does not exist, unless
+`data/c3-schemas/{locale}/_deprecated.json` lists it: the editor deprecated
+it, still opens old projects that use it, and a new project should not.
 
 1. Id: `data/c3-schemas/_index.json` under `plugins`, `behaviors` or
    `effects`; the entry gives `file` and ACE counts. Localized name to id:
@@ -37,6 +39,7 @@ Answer from the data. An ACE missing from the schema does not exist.
 | ACEs of a behavior | `data/c3-schemas/{locale}/behaviors/{id}.json` |
 | ACEs shared by every world object: overlap, collisions, instance variables, hierarchy, UID, Z order | `data/c3-schemas/{locale}/plugins/_common.json`, in addition to the plugin file, whose `commonAces` lists the ones that plugin gets |
 | Effect parameters | `data/c3-schemas/{locale}/effects/{id}.json` |
+| Whether an addon or ACE is deprecated, and the current ACE of the same name | `data/c3-schemas/{locale}/_deprecated.json`; a deprecated ACE the schema kept also has `isDeprecated` |
 | JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the `.d.ts` under the plugin or behavior directory of the same name |
 | Types for an addon under development | editor `data/c3-ts-defs/sdk/`, runtime `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones |
 | Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python skills/construct3-project/scripts/print_sheet.py --project <example folder>` |

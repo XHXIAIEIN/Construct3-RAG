@@ -1,4 +1,4 @@
-# Deprecated Addons From the Editor
+# Deprecated Addons and ACEs From the Editor
 
 Date: 2026-09-28
 Schema: Construct 3 r495.2
@@ -101,29 +101,57 @@ Removed from `data/c3-schemas/`: `plugins/nodewebkit.json`,
 `effects/warp.json` and `effects/warpmask.json` in both locales, and their
 index entries.
 
-## ACEs keep the zh-CN rule
+## Deprecated ACEs, and the list the tools read
 
 An ACE is still left out when the zh-CN pack lacks it. `allAces.json` has the
-editor's flag, `isDeprecated`, and at r495.2 the two disagree on 28 ACEs
-outside the deprecated addons:
+editor's flag, `isDeprecated` (Addon SDK, `guide/defining-aces.md`), and at
+r495.2 the two disagree on 28 ACEs outside the deprecated addons:
 
-- 15 flagged and translated, so exported: System `windowwidth`,
-  `windowheight`, `effects-are-supported`, `is-on-mobile-device`,
-  `is-on-platform`, `renderer`, `rendererdetail`, `rgb`; Gamepad
-  `lastbutton`; 3D shape `compare-z-height`, `set-z-height`, `z-height`; Pin
-  `pin-to-object`; and in `_common`, `z-elevation` and `total-z-elevation`.
+- 15 flagged and translated, so kept: System `windowwidth`, `windowheight`,
+  `effects-are-supported`, `is-on-mobile-device`, `is-on-platform`,
+  `renderer`, `rendererdetail`, `rgb`; Gamepad `lastbutton`; 3D shape
+  `compare-z-height`, `set-z-height`, `z-height`; Pin `pin-to-object`; and in
+  `_common`, `z-elevation` and `total-z-elevation`.
 - 13 not flagged and untranslated, so missing: the Construct Game Services
   expressions such as `get-total-achievements`, which exist in r495.2.
 
-Switching ACEs to the flag trades differently from addons. Counting
-conditions and actions only, 31 official examples use a flagged ACE that is
-exported today (`pin-to-object` in 14, `set-z-height` in 9,
-`effects-are-supported` in 9), and 14 already use one the rule drops, such as
-Mouse `set-cursor-style`. For those the checker reports a missing ACE in a
-project the editor opens, and the sheet printer has no text to show. Keeping
-deprecated ACEs with a flag that lookups hide and the checker names would fit
-the editor better; it changes the lookup, the checker and the printer, and is
-a decision of its own.
+The 15 stay in the schema, flagged `isDeprecated`. Counting conditions and
+actions only, 31 official examples use one of them (`pin-to-object` in 14,
+`set-z-height` in 9, `effects-are-supported` in 9); dropped, each use would
+read to the checker as a missing ACE and to the sheet printer as a row it
+cannot word.
+
+`{locale}/_deprecated.json` lists what the editor has deprecated, kept in the
+schema or not: 8 plugins, 2 effects and 166 ACEs at r495.2, with their names
+and descriptions, English where a pack has no text. `current` names the
+addon's ACE of the same kind and English name that is not deprecated and is
+in the schema, when there is exactly one: 21 of the 166, such as
+`pin-to-object-properties` for `pin-to-object` and `sort2` for Array `sort`.
+The editor has no other link from a deprecated ACE to its successor; the
+packs' descriptions name none. The skill's scripts read the list:
+
+- `lookup_ace.py` says a deprecated addon given as OBJECT is one instead of
+  calling it unknown, prints a kept deprecated ACE after the current ones,
+  marked and with `current`, and lists a left-out one that has every word.
+- `check_project.py` makes a deprecated addon, ACE or expression a warning,
+  once per ACE or expression at its first use with the count of the others.
+  The editor opens those projects, so by `checker-rules.md` they are no
+  errors; the left-out ones were. Over the 524 official examples the checker
+  passes 508 instead of 493: the 15 failed only on deprecated ACEs, Mouse
+  `set-cursor-style`, Audio `advanced-audio-supported`, Multiplayer
+  `sync-object`, System `set-minimum-framerate` and Browser `ExecJS` among
+  them.
+- `print_sheet.py` ends a deprecated condition or action with `[deprecated]`.
+
+A model writing from memory repeats a deprecated expression: one small-model
+game in the sweep uses `rgb` eleven times. A warning per use pushed 15 of its
+errors out of the report cut to `--limit`. With one warning per expression,
+and problems taking the room the warnings leave instead of a fixed two
+thirds, 2 are left out, the report being 180 characters over the limit. The
+old and new output of every script over the examples and the game projects
+is in `.local/docs/evidence/skill-evals/construct3-project/deprecated-list-2026-09-28/`.
+
+`POST /search` does not read the list; it answers from the schema as before.
 
 ## Re-evaluate when
 

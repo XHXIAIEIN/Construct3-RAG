@@ -49,6 +49,7 @@ refuses the directory spelling. See
   _index.json                  — language-neutral index (plugin/behavior/effect counts, originalId)
   en-US/_index.json            — English names + file paths, same ids as the root index
   zh-CN/_index.json            — Chinese equivalent
+  en-US/_deprecated.json       — deprecated addons and ACEs, kept in the schema or not
   en-US/plugins/sprite.json       — English Sprite ACE definitions
   zh-CN/plugins/sprite.json       — Chinese Sprite ACE definitions
   en-US/behaviors/platform.json   — English Platform behavior ACEs
@@ -73,7 +74,7 @@ Each plugin/behavior file uses CDN field names:
 - Conditions/actions: `list-name`, `display-text`, `description`
 - Expressions: `translated-name`, `description`
 - Params: `{param_id: {type, name, desc}}` (object keyed by param id)
-- Structural fields from allAces: `scriptName`, `isTrigger`, `isFakeTrigger`, `isLooping`, `isInvertible`, `isCompatibleWithTriggers`, `isAsync`, `returnType`, `category`. `isTrigger` is also written for a CDN `isFakeTrigger` or `isFastTrigger`, since the editor holds all three to the same rules
+- Structural fields from allAces: `scriptName`, `isTrigger`, `isFakeTrigger`, `isLooping`, `isInvertible`, `isCompatibleWithTriggers`, `isAsync`, `isDeprecated`, `returnType`, `category`. `isTrigger` is also written for a CDN `isFakeTrigger` or `isFastTrigger`, since the editor holds all three to the same rules
 
 `plugins/_common.json` goes through the same merge. Its structural side is
 not on any CDN endpoint: the editor registers the shared ACEs in `main.js`,
@@ -114,9 +115,13 @@ projects that use it. `C3Fetcher.export_schemas()` leaves out:
 - **Effects** with `"is-deprecated": true` in `allEffects.json`.
 - **ACEs** absent from the zh-CN pack (e.g. `Browser/devicepixelratio`,
   replaced by `PlatformInfo/device-pixel-ratio`). This is not the editor's
-  `isDeprecated` flag, and the two disagree on 28 ACEs of r495.2.
+  `isDeprecated` flag, and the two disagree on 28 ACEs of r495.2. A deprecated
+  ACE the pack still names is kept and written with `isDeprecated: true`.
 
-The export clears its schema directory first, so what it leaves out does not
+`{locale}/_deprecated.json` lists every deprecated addon and ACE, kept or
+not, with the current ACE of the same name where there is exactly one;
+`deprecated_list()` in `src/ingest/deprecated_addons.py` builds it. The
+export clears its schema directory first, so what it leaves out does not
 survive from an earlier export of the same release. See
 `docs/decisions/deprecated-addons-from-editor.md`.
 

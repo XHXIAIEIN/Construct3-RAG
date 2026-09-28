@@ -8,6 +8,7 @@ Committed Construct 3 reference data. Readable without the API.
 | `c3-schemas/_index.json` | Plugin, behavior, and effect index. Language neutral. |
 | `c3-schemas/{locale}/_index.json` | Display names for that locale, keyed by the same ids |
 | `c3-schemas/{locale}/` | Schema files per locale (`en-US`, `zh-CN`): `plugins/`, `behaviors/`, `effects/` |
+| `c3-schemas/{locale}/_deprecated.json` | What the editor has deprecated: addons and ACEs, kept in the schema or not |
 | `c3-examples/{locale}/` | Example projects: name, description, tags, used-addons, open URL |
 | `c3-lang/{locale}.json` | Raw CDN language pack, pretty printed. Source text behind the schemas; diff it between releases. |
 | `c3-ts-defs/autocomplete-data.json` | Scripting class to method and property listings |
@@ -32,6 +33,11 @@ Fields that decide correctness:
   keeps out of a triggered branch.
 - `isAsync` marks an awaitable action, `returnType` an expression's type;
   `scriptName` is the JavaScript name.
+- `isDeprecated` marks an ACE the editor no longer offers and keeps only so
+  that old projects open; a new event does not use it.
+  `{locale}/_deprecated.json` lists it with the current ACE of the same name,
+  and lists the deprecated ones the schema left out, and the deprecated
+  addons, which have no schema file.
 - An expression's `translated-name` is localized like any other text. The
   name a project file holds is the `en-US` one, `AnimationFrame`, whatever
   the locale; match the two files by `id`.

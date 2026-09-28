@@ -41,6 +41,7 @@ No install needed. Pick a locale, `en-US` or `zh-CN`, and read. All paths are un
 | `c3-schemas/{locale}/plugins/_common.json` | ACEs every world object shares: overlap, collisions, instance variables, hierarchy, UID, Z order. Exported once, not repeated per plugin; each plugin file lists the ones it gets under `commonAces` |
 | `c3-schemas/{locale}/behaviors/{id}.json` | Behavior ACEs |
 | `c3-schemas/{locale}/effects/{id}.json` | Effect parameters and categories |
+| `c3-schemas/{locale}/_deprecated.json` | Plugins, behaviors, effects and ACEs the editor has deprecated, whether the schema kept them or not, with the current ACE of the same name where there is one |
 | `c3-examples/{locale}/{id}.json` | Example name, description, tags, used addons, open URL |
 | `c3-lang/{locale}.json` | Raw CDN language pack, one string per line, for diffing releases and translations |
 | `c3-ts-defs/autocomplete-data.json` | Scripting class to methods and properties |

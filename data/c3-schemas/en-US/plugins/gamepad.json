@@ -485,6 +485,7 @@
           "desc": "Index of the gamepad."
         }
       },
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

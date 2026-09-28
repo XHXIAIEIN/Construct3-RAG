@@ -1145,6 +1145,24 @@ def test_ace_lookup_prints_an_effect_with_its_parameters(built):
     assert code == 0 and "effect brightness" in out and "effect lighten" in out and "no parameters" in out
 
 
+def test_ace_lookup_names_what_the_editor_has_deprecated(tmp_path):
+    """A deprecated addon is said to be one, not listed as unknown; a deprecated ACE the
+    schema kept comes after the current ones; one it left out is named, so that an id
+    from an old project does not read as a typo."""
+    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
+    code, out = tool(tmp_path, "lookup_ace", "NW.js")
+    assert code == 1 and out.startswith("NodeWebkit (NW.js) is a deprecated plugin: Construct 3 no longer offers it")
+    code, out = tool(tmp_path, "lookup_ace", "Warp")
+    assert code == 1 and out.startswith("warp (Warp) is a deprecated effect")
+    code, out = tool(tmp_path, "lookup_ace", "Pin", "pin", "to", "object")
+    assert code == 0 and out.index("action pin-to-object-properties") < out.index("action pin-to-object - ")
+    assert "<deprecated>" in out and "the current action of the same name is pin-to-object-properties" in out
+    code, out = tool(tmp_path, "lookup_ace", "Mouse", "set-cursor-style")
+    assert code == 0 and out.startswith("action set-cursor-style2 - Set cursor style")
+    assert re.search(r"action +set-cursor-style +Set cursor style \[mouse\]  current of the same name: "
+                     r"set-cursor-style2", out), out
+
+
 def test_ace_lookup_prints_a_miss_on_stdout(built):
     """The miss and what comes near are the answer. On stderr, a harness that shows stdout
     alone printed nothing, and PowerShell wrapped each line in a NativeCommandError record,
@@ -1767,6 +1785,38 @@ def test_third_party_addon_stays_a_warning(project):
     out = findings(project, lambda t: t.update({"plugin-id": "Spriter"}), "objectTypes/ScoreText.json")
     assert "warning: no schema for plugin Spriter" in out
     assert out.rstrip().splitlines()[-1].startswith("ok:"), out     # its ACEs pass unchecked
+
+
+def test_a_deprecated_addon_is_named_so(project):
+    """NW.js has no schema, like a third-party addon, but the editor still opens a project with it."""
+    edit(project, "project.c3proj", lambda p: p["usedAddons"].append(
+        {"type": "plugin", "id": "NodeWebkit", "name": "NW.js", "author": "Scirra", "bundled": False}))
+    out = findings(project, lambda t: t.update({"plugin-id": "NodeWebkit"}), "objectTypes/ScoreText.json")
+    assert "warning: plugin NodeWebkit (NW.js) is deprecated: Construct 3 no longer offers it" in out
+    assert out.rstrip().splitlines()[-1].startswith("ok:"), out
+
+
+def test_a_deprecated_ace_or_expression_warns_once_at_its_first_use(project):
+    """The editor opens a project that uses them, so they are no error, but a new event
+    should not. One warning each, at the first use: a model writing from memory repeats
+    `rgb`, and a line for every use pushed the project's errors out of the report."""
+    def change(s):
+        events(s)["add_score"]["actions"] += [
+            {"id": "set-minimum-framerate", "objectClass": "System", "sid": 910000000001,
+             "parameters": {"minimum-fps": "30"}},
+            {"id": "set-eventvar-value", "objectClass": "System", "sid": 910000000002,
+             "parameters": {"variable": "score", "value": "rgb(1, 2, 3)"}},
+            {"id": "set-eventvar-value", "objectClass": "System", "sid": 910000000003,
+             "parameters": {"variable": "score", "value": "rgb(4, 5, 6) + unixtime"}}]
+    out = findings(project, change)
+    assert out.rstrip().splitlines()[-1].startswith("ok:"), out
+    said = warnings(out)
+    rgb = [w for w in said if "rgb is a deprecated expression of System" in w]
+    assert len(rgb) == 1 and rgb[0].endswith("; used 1 more time after this"), said
+    assert any("action set-minimum-framerate of System is deprecated" in w
+               and "its parameters are not checked" in w for w in said), said
+    assert any("unixtime is a deprecated expression of System" in w for w in said), said
+    assert "System: set-minimum-framerate (minimum-fps: 30) [deprecated]" in tool(project, "print_sheet", "Game")[1]
 
 
 def rename_type(root: Path, old: str, new: str) -> None:

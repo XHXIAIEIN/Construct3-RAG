@@ -19,7 +19,11 @@ called functions and custom actions must exist, with the right parameter
 count. Uids, and the sids of events, variables, object types and instances,
 must be unique; a condition or action that shares a sid is a warning, since
 the editor tolerates what its own paste leaves behind. A missing schema (a
-third-party addon) is a warning, and its ACEs pass unchecked.
+third-party addon) is a warning, and its ACEs pass unchecked. So is what the
+editor has deprecated, from `Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`:
+an addon, and an ACE or expression, once each at its first use with the count
+of the others, and the current ACE of the same name when there is one. The
+editor opens a project that uses them, and a new event should not.
 
 ## The rules the editor applies on opening and before preview
 
@@ -72,8 +76,9 @@ name (`Array` is `Arr`), the project's object behind a plugin name in an
 expression (`JSON.Get` is `Levels.Get`), a combo value written with inner
 quotes, a text value written without them. A file that lacks a key the editor
 always writes stops the run with the key and the place, exit code 2. A long
-report prints the findings that fit 10 000 characters, a third of them
-warnings, and counts the rest: fix those and run again, or pass `--limit 0`.
+report prints the findings that fit 10 000 characters, warnings in at most a
+third of them and problems in the rest, and counts what it left out: fix
+those and run again, or pass `--limit 0`.
 
 A finding in an event sheet is placed as `sheet Game event 15 action 2`. The
 event number is the editor's: the one in the margin of the event sheet and
@@ -126,8 +131,8 @@ under another case.
 ## How the rules were confirmed
 
 Run over the official example projects (saved r184 to r502) with the r495.2
-schemas on 2026-09-21, the checker passed 493 of 524. The rest fail on ACEs
-and parameters that a later release renamed, on layers and animations the
+schemas on 2026-09-28, the checker passes 508 of 524. The rest fail on
+parameters that a later release changed, on layers and animations the
 examples name but no longer have, and on duplicate sids in r184 projects;
 each is a real finding, not a false one. None of them breaks an editor rule
 of the table above, which is how each rule was confirmed before it became an

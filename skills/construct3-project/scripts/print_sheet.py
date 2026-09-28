@@ -4,7 +4,8 @@
                                   [--project FOLDER] [--rag FOLDER] [--locale en-US]
 
 Conditions and actions are worded from the schema's display-text, in the
-locale of --locale, at about a quarter of the JSON's length. It reads any
+locale of --locale, at about a quarter of the JSON's length; one the editor
+has deprecated ends in [deprecated], and the schema may not word it. It reads any
 folder project, an official example included. An event without conditions
 reads (every tick) at the top of the sheet, in a group or not, and (runs
 with its parent) as a sub-event, which runs each time the event it sits in
@@ -106,6 +107,8 @@ def wording(p: c3.Project, kind: str, ace: dict) -> str:
             shown.append(str(value))
         text = re.sub(r"\[/?[bi]\]", "", entry["display-text"]).replace("{my}", ace.get("behaviorType", ""))
         text = re.sub(r"\{(\d+)\}", lambda m: shown[int(m.group(1))] if int(m.group(1)) < len(shown) else "…", text)
+    if obj in p.plugin_of and p.deprecated_entry(kind, ace):
+        text += " [deprecated]"
     return f"{obj}: {'NOT ' if ace.get('isInverted') else ''}{text}"
 
 

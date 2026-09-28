@@ -47,7 +47,8 @@ LOOKUPS = [["System"], ["System", "wait"], ["System", "action"], ["System", "exp
            ["Sprite", "animation"], ["Sprite", "color"], ["Sprite", "aniamtion"], ["Text", "set"],
            ["8 Direction", "speed"], ["Tween"], ["Tween", "two"], ["Tween", "color"],
            ["Platform", "jump"], ["Array"], ["Arr", "push"], ["Json", "get"], ["Keyboard"], ["Touch", "touched"],
-           ["Audio", "play"], ["LocalStorage"], ["Timer"], ["Physics", "force"], ["NoSuchAddon"]]
+           ["Audio", "play"], ["LocalStorage"], ["Timer"], ["Physics", "force"], ["NoSuchAddon"],
+           ["NW.js"], ["Mouse", "set-cursor-style"]]
 
 
 def run(scripts: Path, args: list[str], extra: list[str]) -> dict:

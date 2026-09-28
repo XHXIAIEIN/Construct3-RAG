@@ -48,7 +48,8 @@
             "bar-style": "小节方式"
           }
         }
-      }
+      },
+      "isDeprecated": true
     },
     {
       "id": "pin-to-object-distance",

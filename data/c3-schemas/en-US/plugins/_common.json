@@ -1891,6 +1891,7 @@
       "category": "size-position",
       "translated-name": "ZElevation",
       "description": "Get the Z position relative to its layer.",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {
@@ -1899,6 +1900,7 @@
       "category": "size-position",
       "translated-name": "TotalZElevation",
       "description": "Get the total Z position taking in to account the layer Z elevation.",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

@@ -13,6 +13,7 @@ data/
   c3-schemas/
     _index.json                    version, languages, plugins, behaviors, effects
     {locale}/_index.json           addon names in that language, same ids
+    {locale}/_deprecated.json      what the editor has deprecated
     {locale}/plugins/{id}.json     conditions, actions, expressions, properties
     {locale}/plugins/_common.json  ACEs shared by every world object
     {locale}/behaviors/{id}.json   behavior ACEs
@@ -73,6 +74,41 @@ Each locale directory carries the names for that language in
 Use the root index to enumerate addons and counts. Use the locale index to
 turn a localized name into an id without opening every schema file.
 
+## Deprecated addons and ACEs
+
+The editor hides a deprecated addon or ACE from its dialogs and keeps
+loading the projects that use it. A deprecated addon has no schema file, and
+a deprecated ACE is in its addon's file only when the zh-CN pack still names
+it, flagged `isDeprecated`. `{locale}/_deprecated.json` lists them all, so an
+id from an old project can be told from one that never existed:
+
+```json
+{
+  "version": "...",
+  "language": "en-US",
+  "addons": {
+    "plugins": { "nodewebkit": { "originalId": "NodeWebkit", "name": "NW.js", "description": "..." } },
+    "behaviors": {},
+    "effects": { "warp": { "name": "Warp", "description": "..." } }
+  },
+  "aces": {
+    "plugins": {
+      "mouse": { "actions": { "set-cursor-style": { "list-name": "Set cursor style", "description": "...", "current": "set-cursor-style2" } } },
+      "system": { "expressions": { "rgb": { "translated-name": "rgb", "description": "..." } } }
+    },
+    "behaviors": { "pin": { "actions": { "pin-to-object": { "list-name": "Pin to object", "description": "...", "current": "pin-to-object-properties" } } } }
+  }
+}
+```
+
+Addon keys are the lowercase ids of the index. `current` is the addon's ACE
+of the same kind and English name that is not deprecated and is in the
+schema, when there is exactly one. The editor carries no other link from a
+deprecated ACE to its successor. Text a locale's pack lacks is the English.
+The flags come from the editor: `SetIsDeprecated` in the plugin and behavior
+bundles, `is-deprecated` in `allEffects.json`, `isDeprecated` in
+`allAces.json` (`docs/decisions/deprecated-addons-from-editor.md`).
+
 ## Plugin and behavior files
 
 Each file describes one addon. Field names match the official CDN.
@@ -103,6 +139,7 @@ Each file describes one addon. Field names match the official CDN.
 | `isInvertible` | conditions | `false` where the editor does not allow invert: `Else`, `Trigger once` and the conditions that only pick, such as `Pick all`, `Pick by comparison`, `Pick nearest/furthest` and `Pick children`. Absent means invertible, unless the condition is a trigger or a loop. |
 | `isCompatibleWithTriggers` | conditions | `false` for `Else`, `Trigger once` and `Every X seconds`, which the editor keeps out of a triggered branch. Absent means compatible. |
 | `isAsync` | actions | `true` for actions that can be awaited. Absent otherwise. |
+| `isDeprecated` | all | `true` for an ACE the editor no longer offers and keeps only so that old projects open, such as System `rgb` and Pin `pin-to-object`. Absent otherwise. `{locale}/_deprecated.json` names the current ACE of the same name. |
 | `returnType` | expressions | `number`, `string`, or `any`. |
 
 Structural fields are the same in every locale, so an ACE can be matched by

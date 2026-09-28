@@ -14,13 +14,16 @@ packs carry no such flag, so the export reads it from the editor bundles:
   each addon's constructor, ``this.p=X.m(self.v,ID)`` followed by calls on
   ``this.p`` such as ``this.p.Fs(!0)``.
 
-Effects need none of this: ``allEffects.json`` has ``is-deprecated``.
+Effects need none of this: ``allEffects.json`` has ``is-deprecated``, and
+ACEs have ``isDeprecated`` in ``allAces.json`` and in ``common_aces.json``.
+``deprecated_list`` gathers all of it into ``{locale}/_deprecated.json``, so a
+reader can tell a deprecated id from one that never existed.
 """
 from __future__ import annotations
 
 import re
 
-from src.ingest.common_aces import _group_end, _js_value, _top_level
+from src.ingest.common_aces import ACE_TYPES, _group_end, _js_value, _top_level
 
 ADDON_KINDS = ("plugins", "behaviors")
 
@@ -100,3 +103,88 @@ def deprecated_ids(flags: dict[str, bool], addon_ids: set[str], kind: str) -> se
             + "; cannot tell whether it is deprecated"
         )
     return {addon_id for addon_id in addon_ids if flags[addon_id]}
+
+
+def deprecated_list(
+    aces: dict[str, dict],
+    retired: dict[str, set[str]],
+    retired_effects: list[dict],
+    texts: dict[str, dict],
+    version: str,
+) -> dict[str, dict]:
+    """``{locale: contents of {locale}/_deprecated.json}``.
+
+    ``aces`` is ``{"plugins": ..., "behaviors": ...}`` in the ``allAces.json``
+    shape, ``_common`` included; ``retired`` the addon ids the editor marks
+    deprecated; ``retired_effects`` the ``allEffects.json`` entries with
+    ``is-deprecated``; ``texts`` the ``text`` of each language pack.
+
+    The list holds every deprecated addon and every deprecated ACE of the
+    other addons, whether the schema kept it or not. Text a locale's pack
+    lacks is taken from en-US. ``current`` names the addon's ACE of the same
+    kind and English name that is not deprecated and is in the schema, when
+    there is exactly one: ``pin-to-object`` has ``pin-to-object-properties``.
+    """
+    en, zh = texts["en-US"], texts["zh-CN"]
+    out = {
+        lang: {
+            "version": version,
+            "language": lang,
+            "addons": {"plugins": {}, "behaviors": {}, "effects": {}},
+            "aces": {"plugins": {}, "behaviors": {}},
+        }
+        for lang in texts
+    }
+
+    def text(lang: str, *path: str) -> dict:
+        def walk(root: dict) -> dict:
+            for key in path:
+                root = root.get(key, {}) if isinstance(root, dict) else {}
+            return root if isinstance(root, dict) else {}
+        return walk(texts[lang]) or walk(en)
+
+    for kind in ADDON_KINDS:
+        for addon_id in sorted(retired.get(kind, ()), key=str.lower):
+            for lang in texts:
+                t = text(lang, kind, addon_id.lower())
+                out[lang]["addons"][kind][addon_id.lower()] = {
+                    "originalId": addon_id,
+                    "name": t.get("name", addon_id),
+                    "description": t.get("description", ""),
+                }
+        for addon_id, categories in sorted(aces.get(kind, {}).items(), key=lambda kv: kv[0].lower()):
+            if addon_id in retired.get(kind, ()):
+                continue
+            pid = addon_id.lower()
+            for ace_type in ACE_TYPES:
+                name_key = "translated-name" if ace_type == "expressions" else "list-name"
+                items = [a for c in categories.values() for a in c.get(ace_type, [])]
+                en_aces = en.get(kind, {}).get(pid, {}).get(ace_type, {})
+                in_schema = zh.get(kind, {}).get(pid, {}).get(ace_type, {})
+
+                def english(ace_id: str) -> str:
+                    return str(en_aces.get(ace_id, {}).get(name_key, "")).lower()
+
+                live: dict[str, list[str]] = {}
+                for a in items:
+                    if not a.get("isDeprecated") and in_schema.get(a["id"]) and english(a["id"]):
+                        live.setdefault(english(a["id"]), []).append(a["id"])
+                for a in items:
+                    if not a.get("isDeprecated"):
+                        continue
+                    same = live.get(english(a["id"]), []) if english(a["id"]) else []
+                    for lang in texts:
+                        t = text(lang, kind, pid, ace_type, a["id"])
+                        entry = {name_key: t.get(name_key, a["id"]), "description": t.get("description", "")}
+                        if len(same) == 1:
+                            entry["current"] = same[0]
+                        out[lang]["aces"][kind].setdefault(pid, {}).setdefault(ace_type, {})[a["id"]] = entry
+
+    for effect in sorted(retired_effects, key=lambda e: e.get("id", "")):
+        for lang in texts:
+            t = text(lang, "effects", effect["id"])
+            out[lang]["addons"]["effects"][effect["id"]] = {
+                "name": t.get("name", effect["id"]),
+                "description": t.get("description", ""),
+            }
+    return out

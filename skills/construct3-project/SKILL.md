@@ -61,7 +61,9 @@ everything, for a file or a pipe.
 
 ## Look an ACE up before writing it
 
-An ACE missing from the schema does not exist. `plugins/system.json` and
+An ACE missing from the schema does not exist, unless the lookup says it is
+deprecated: the editor still opens a project that uses it, and a new event
+should not. `plugins/system.json` and
 `plugins/_common.json` run to thousands of lines, more than most file tools
 return at once, and an ACE below the cut looks missing. Ask for the part:
 

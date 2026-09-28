@@ -192,6 +192,7 @@ class Checker:
         self.pending_calls: list[tuple] = []
         self.created: set[str] = set()
         self._eases: set[str] = set()
+        self.deprecated_uses: dict[str, list[str]] = {}      # warning -> where each use is
 
     def check(self) -> None:
         self.check_project_file()
@@ -205,6 +206,18 @@ class Checker:
         self.check_calls()
         self.check_uniqueness()
         self.check_files_and_addons()
+        self.warn_deprecated()
+
+    def deprecated_use(self, where: str, what: str) -> None:
+        self.deprecated_uses.setdefault(what, []).append(where)
+
+    def warn_deprecated(self) -> None:
+        """One warning per deprecated ACE or expression, at its first use: a model
+        writing from memory repeats `rgb` a dozen times, and a line for each would
+        push the project's errors out of the report."""
+        for what, wheres in self.deprecated_uses.items():
+            more = len(wheres) - 1
+            self.warn(f"{wheres[0]}: {what}" + (f"; used {more} more time{'s' if more > 1 else ''} after this" if more else ""))
 
     def run(self) -> int:
         self.check()
@@ -614,15 +627,24 @@ class Checker:
                 bs = p.schema("behaviors", behs[LOWER(member)])
                 if bs is None:
                     continue
-                if sub is None or LOWER(sub) not in p.expressions_of(bs):
+                retired = p.deprecated_expressions("behaviors", behs[LOWER(member)]).get(LOWER(sub or ""))
+                if retired:
+                    self.deprecated_use(where, self.deprecated_expression(f"{obj}.{member}.{sub}", behs[LOWER(member)], retired))
+                elif sub is None or LOWER(sub) not in p.expressions_of(bs):
                     self.err(f"{where}: {obj}.{member}.{sub or ''} is not an expression of behavior "
                              f"{behs[LOWER(member)]}")
                 continue
             plugin = p.schema("plugins", p.plugin_of[obj])
             if plugin is None:
                 continue
-            known = p.expressions_of(plugin) | p.common_expressions_of(plugin)
-            known |= {LOWER(v) for v in p.ivars_of(obj)}
+            ivars = {LOWER(v) for v in p.ivars_of(obj)}
+            retired = p.deprecated_expressions("plugins", p.plugin_of[obj]).get(LOWER(member))
+            if retired is None and LOWER(member) in p.common_expressions_of(plugin):
+                retired = p.deprecated_expressions("plugins", "_common").get(LOWER(member))
+            if retired and LOWER(member) not in ivars:
+                self.deprecated_use(where, self.deprecated_expression(f"{obj}.{member}", p.plugin_of[obj], retired))
+                continue
+            known = p.expressions_of(plugin) | p.common_expressions_of(plugin) | ivars
             if LOWER(member) not in known:
                 # Platform.Speed is reached as Player.Platform.Speed, through the behavior's name on the object.
                 owner = next((name for name, b in p.behaviors_of(obj).items()
@@ -636,7 +658,13 @@ class Checker:
                 continue
             if text[:m.start()].rstrip().endswith(".") or text[m.end():].lstrip().startswith("."):
                 continue
-            if LOWER(name) in p.system_expressions or LOWER(name) in scope_lower:
+            if LOWER(name) in scope_lower:
+                continue
+            retired = p.deprecated_expressions("plugins", "system").get(LOWER(name))
+            if retired:
+                self.deprecated_use(where, self.deprecated_expression(name, "System", retired))
+                continue
+            if LOWER(name) in p.system_expressions:
                 continue
             if LOWER(name) in p.objects_lower and text[m.end():].lstrip().startswith("("):
                 continue
@@ -646,6 +674,13 @@ class Checker:
             elif text.strip() == name:
                 hint += f"; a text value carries inner quotes: \"\\\"{name}\\\"\""
             self.err(f"{where}: identifier {name!r} is not a variable, parameter or system expression{hint}")
+
+    @staticmethod
+    def deprecated_expression(written: str, owner: str, retired: tuple[str, dict]) -> str:
+        """The warning for an expression the editor has deprecated: it still opens the project."""
+        _, entry = retired
+        return (f"{written} is a deprecated expression of {owner}: {c3.DEPRECATED}"
+                + (f"; the current expression of the same name is {entry['current']}" if entry.get("current") else ""))
 
     def builtin_eases(self) -> set[str]:
         """Ids of the built-in eases, the keys the editor's language pack labels."""
@@ -786,6 +821,17 @@ class Checker:
         if not p.ace_sources(ace):
             return      # no schema for this addon: warned about once, nothing to check against
         entry = p.ace_entry(kind, ace)
+        retired = p.deprecated_entry(kind, ace)
+        if retired:
+            # The editor opens a project that uses it, so this is no error, but a new event should not.
+            owner, dep = retired
+            owner = "System" if owner == "system" else owner
+            self.deprecated_use(where, f"{kind[:-1]} {ace_id} of {owner} is deprecated: {c3.DEPRECATED}"
+                                + ("" if entry else ", and its parameters are not checked")
+                                + (f"; the current {kind[:-1]} of the same name is {dep['current']}"
+                                   if dep.get("current") else ""))
+            if entry is None:
+                return
         if entry is None:
             owner = p.behaviors_of(obj)[ace["behaviorType"]] if "behaviorType" in ace else p.plugin_of[obj]
             shared = "behaviorType" not in ace and obj != "System" and                 any(it["id"] == ace_id for it in (p.common or {}).get(kind, []))
@@ -1244,14 +1290,19 @@ class Checker:
 
     def report(self) -> int:
         """Warnings, then problems, then the line that says how it went. A report
-        longer than --limit prints what fits of each, warnings in a third of it
-        when there are problems too, and says how many it left out."""
+        longer than --limit prints what fits of each, warnings in at most a third
+        of it when there are problems too, the problems in the rest, and says how
+        many it left out."""
         p = self.p
         warnings, errors = [f"warning: {w}" for w in p.findings.warnings], p.findings.errors
         closing = 300 + (0 if errors else len(self.ok_line()))                  # the cut notes and the last line
         room = max(self.limit - closing, 3)
         cut = self.limit and c3.fitting(warnings + errors, room) < len(warnings + errors)
-        shares = (room // 3 if errors else room, room - room // 3) if cut else (0, 0)       # 0 is no limit
+        shares = (0, 0)                                                         # 0 is no limit
+        if cut:
+            of_warnings = room // 3 if errors else room
+            used = sum(len(w) + 1 for w in warnings[:max(c3.fitting(warnings, of_warnings), 1)])
+            shares = (of_warnings, max(room - used, 1))
         for lines, share, rest in ((warnings, shares[0], "warnings"),
                                    (errors, shares[1], "problems; fix these and run again")):
             fit = max(c3.fitting(lines, share), 1)

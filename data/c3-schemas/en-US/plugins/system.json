@@ -418,7 +418,8 @@
       "category": "layout",
       "list-name": "Effects are supported",
       "display-text": "Effects are supported",
-      "description": "True if shader effects are supported and can be displayed in the game."
+      "description": "True if shader effects are supported and can be displayed in the game.",
+      "isDeprecated": true
     },
     {
       "id": "for",
@@ -775,7 +776,8 @@
       "category": "special-conditions",
       "list-name": "Is on mobile device",
       "display-text": "Is on mobile device",
-      "description": "True if being viewed on a mobile device.  This is an estimate and may not be perfectly accurate."
+      "description": "True if being viewed on a mobile device.  This is an estimate and may not be perfectly accurate.",
+      "isDeprecated": true
     },
     {
       "id": "else",
@@ -816,7 +818,8 @@
             "windows-10-app": "Windows 10 app"
           }
         }
-      }
+      },
+      "isDeprecated": true
     },
     {
       "id": "on-start-of-layout",
@@ -2645,6 +2648,7 @@
       "category": "display",
       "translated-name": "WindowWidth",
       "description": "Width of the window area used to display the game.",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {
@@ -2653,6 +2657,7 @@
       "category": "display",
       "translated-name": "WindowHeight",
       "description": "Height of the window area used to display the game.",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {
@@ -3915,6 +3920,7 @@
       "category": "system",
       "translated-name": "Renderer",
       "description": "Get a string describing the renderer (returns \"canvas2d\" or \"webgl\").",
+      "isDeprecated": true,
       "returnType": "string"
     },
     {
@@ -3971,6 +3977,7 @@
       "category": "system",
       "translated-name": "RendererDetail",
       "description": "Get a string describing the rendering hardware, if available.",
+      "isDeprecated": true,
       "returnType": "string"
     },
     {
@@ -4655,6 +4662,7 @@
           "desc": "Blue value, 0-255"
         }
       },
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

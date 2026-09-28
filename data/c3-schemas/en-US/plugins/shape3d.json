@@ -48,7 +48,8 @@
           "name": "Z height",
           "desc": "The Z height to compare to."
         }
-      }
+      },
+      "isDeprecated": true
     },
     {
       "id": "is-face-visible",
@@ -111,7 +112,8 @@
           "name": "Z height",
           "desc": "The Z height of the shape to set."
         }
-      }
+      },
+      "isDeprecated": true
     },
     {
       "id": "set-face-visible",
@@ -243,6 +245,7 @@
       "category": "3d-shape",
       "translated-name": "ZHeight",
       "description": "The current Z height of the shape.",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

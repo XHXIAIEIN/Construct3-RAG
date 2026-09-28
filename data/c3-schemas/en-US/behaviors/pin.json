@@ -48,7 +48,8 @@
             "bar-style": "Bar style"
           }
         }
-      }
+      },
+      "isDeprecated": true
     },
     {
       "id": "pin-to-object-distance",

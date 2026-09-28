@@ -46,7 +46,7 @@ from src.ingest.common_aces import (
     load_common_aces,
     load_common_availability,
 )
-from src.ingest.deprecated_addons import ADDON_KINDS, deprecated_ids, extract_deprecation
+from src.ingest.deprecated_addons import ADDON_KINDS, deprecated_ids, deprecated_list, extract_deprecation
 
 
 logger = logging.getLogger(__name__)
@@ -200,8 +200,8 @@ class C3Fetcher:
           - params: name, desc, items (object keyed by param id)
 
         Structure fields from allAces (scriptName, isTrigger, isFakeTrigger,
-        isLooping, isInvertible, isCompatibleWithTriggers, isAsync, returnType,
-        params[].type) are merged in.
+        isLooping, isInvertible, isCompatibleWithTriggers, isAsync, isDeprecated,
+        returnType, params[].type) are merged in.
 
         Directory layout:
             schemas/en-US/plugins/sprite.json
@@ -209,6 +209,7 @@ class C3Fetcher:
             schemas/en-US/behaviors/platform.json
             schemas/en-US/effects/alphaclamp.json
             schemas/en-US/_index.json   (localized names + file paths)
+            schemas/en-US/_deprecated.json  (what the editor has deprecated)
             schemas/_index.json         (language-neutral: ids, files, counts)
 
         Returns the schemas root directory path.
@@ -370,6 +371,10 @@ class C3Fetcher:
                                     entry["isCompatibleWithTriggers"] = False
                                 if ace.get("isAsync"):
                                     entry["isAsync"] = True
+                                # A deprecated ACE the zh-CN pack still names is
+                                # kept, flagged, so that a reader can avoid it.
+                                if ace.get("isDeprecated"):
+                                    entry["isDeprecated"] = True
                                 if ace.get("returnType"):
                                     entry["returnType"] = ace["returnType"]
 
@@ -410,10 +415,8 @@ class C3Fetcher:
 
         # ── Effects ───────────────────────────────────────────────────────
         # allEffects.json flags the effects the Add effect dialog hides.
-        effects = [
-            data for data in (item.get("json", item) for item in self.fetch_effects())
-            if not data.get("is-deprecated")
-        ]
+        all_effects = [item.get("json", item) for item in self.fetch_effects()]
+        effects = [data for data in all_effects if not data.get("is-deprecated")]
         for lang, text in lang_texts.items():
             out_dir = schemas_dir / lang / "effects"
             out_dir.mkdir(parents=True, exist_ok=True)
@@ -519,6 +522,17 @@ class C3Fetcher:
         )
         for lang, data in locale_index.items():
             (schemas_dir / lang / "_index.json").write_text(
+                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8",
+            )
+
+        # ── Write _deprecated.json (one per locale) ───────────────────────
+        retired = deprecated_list(
+            aces_data, deprecated,
+            [data for data in all_effects if data.get("is-deprecated")],
+            lang_texts, self.version,
+        )
+        for lang, data in retired.items():
+            (schemas_dir / lang / "_deprecated.json").write_text(
                 json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8",
             )
 

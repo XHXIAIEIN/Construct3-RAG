@@ -48,7 +48,8 @@
           "name": "形状高度",
           "desc": "比较形状在Z轴方向的高度。"
         }
-      }
+      },
+      "isDeprecated": true
     },
     {
       "id": "is-face-visible",
@@ -111,7 +112,8 @@
           "name": "形状高度",
           "desc": "要设置的形状的Z轴高度。"
         }
-      }
+      },
+      "isDeprecated": true
     },
     {
       "id": "set-face-visible",
@@ -243,6 +245,7 @@
       "category": "3d-shape",
       "translated-name": "形状高度",
       "description": "形状在 Z 轴上的高度。视角从 100 的高度向下看。",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

@@ -414,6 +414,64 @@ def test_export_leaves_out_what_the_editor_deprecates_though_translated(fetcher)
     assert schema_is_complete(schemas_dir)
 
 
+def test_export_lists_what_the_editor_deprecates_per_locale(fetcher):
+    """{locale}/_deprecated.json holds the deprecated addons and every deprecated ACE,
+    kept in the schema or not; a kept one is flagged in its file as well."""
+    aces = {
+        "plugins": {
+            "Mouse": {"general": {"conditions": [], "expressions": [], "actions": [
+                {"id": "set-cursor-style", "scriptName": "SetCursor", "isDeprecated": True},
+                {"id": "set-cursor-style2", "scriptName": "SetCursor2"},
+                {"id": "old-hint", "scriptName": "OldHint", "isDeprecated": True},
+            ]}},
+            "NodeWebkit": {"general": {"conditions": [], "actions": [], "expressions": []}},
+        },
+        "behaviors": {},
+    }
+    effects = [{"json": {"id": "warp", "category": "distortion", "is-deprecated": True, "parameters": []}},
+               {"json": {"id": "blur", "category": "blur", "parameters": []}}]
+    actions = {"set-cursor-style": "Set cursor style", "set-cursor-style2": "Set cursor style", "old-hint": "Old hint"}
+
+    def pack(zh: bool) -> dict:
+        own = {k: v for k, v in actions.items() if not (zh and k == "set-cursor-style")}   # dropped from zh-CN
+        return {"text": {
+            "plugins": {"mouse": {"name": "鼠标" if zh else "Mouse",
+                                  "actions": {k: {"list-name": ("中 " if zh else "") + v} for k, v in own.items()}},
+                        "nodewebkit": {"name": "NW.js", "description": "Desktop"}},
+            "effects": {"blur": {"name": "Blur"}, "warp": {"name": "扭曲" if zh else "Warp"}},
+        }}
+
+    texts = {"en-US": pack(False), "zh-CN": pack(True)}
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
+         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces, ("NodeWebkit",))), \
+         patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]), \
+         patch.object(fetcher, "fetch_effects", return_value=effects), \
+         patch.object(fetcher, "fetch_examples", return_value=[]):
+        schemas_dir = fetcher.export_schemas()
+
+    en = json.loads((schemas_dir / "en-US" / "_deprecated.json").read_text(encoding="utf-8"))
+    zh = json.loads((schemas_dir / "zh-CN" / "_deprecated.json").read_text(encoding="utf-8"))
+    assert (en["version"], en["language"], zh["language"]) == (fetcher.version, "en-US", "zh-CN")
+    assert en["addons"] == {
+        "plugins": {"nodewebkit": {"originalId": "NodeWebkit", "name": "NW.js", "description": "Desktop"}},
+        "behaviors": {},
+        "effects": {"warp": {"name": "Warp", "description": ""}},
+    }
+    assert zh["addons"]["effects"]["warp"]["name"] == "扭曲"
+    assert en["aces"]["plugins"]["mouse"]["actions"] == {
+        "set-cursor-style": {"list-name": "Set cursor style", "description": "", "current": "set-cursor-style2"},
+        "old-hint": {"list-name": "Old hint", "description": ""},
+    }
+    # zh-CN has no text for the one it dropped: the English stands in.
+    assert zh["aces"]["plugins"]["mouse"]["actions"]["set-cursor-style"]["list-name"] == "Set cursor style"
+    assert zh["aces"]["plugins"]["mouse"]["actions"]["old-hint"]["list-name"] == "中 Old hint"
+
+    mouse = json.loads((schemas_dir / "en-US" / "plugins" / "mouse.json").read_text(encoding="utf-8"))
+    assert {a["id"]: a.get("isDeprecated", False) for a in mouse["actions"]} == {
+        "set-cursor-style2": False, "old-hint": True,
+    }
+
+
 def test_export_stops_when_the_editor_bundle_does_not_construct_an_addon(fetcher):
     """An addon of allAces.json the bundle does not build may be deprecated
     or not; the export stops instead of guessing."""
