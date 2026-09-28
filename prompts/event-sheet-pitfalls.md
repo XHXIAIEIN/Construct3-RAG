@@ -211,7 +211,8 @@ first.
   constant `COUNT` in that event and its sub-events, so `COUNT - 1` there
   is read on the string and the editor refuses the whole project with `Type
   mismatch: - does not work with 'string' and 'number'`, naming the
-  sub-event. `check_project.py` does not catch it. Give a local a name that
+  sub-event. `check_project.py` refuses a local or parameter named like a
+  variable of another type in scope. Give a local a name that
   differs from every variable in scope by more than its case (`countText`
   beside `COUNT`). [observed in a game project, r502 editor, 2026-09-24]
 - `lerp(Self.X, Target.X, 0.1)` moves a different fraction per second at

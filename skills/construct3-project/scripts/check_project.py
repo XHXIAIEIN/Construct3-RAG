@@ -99,10 +99,13 @@ IDENT = re.compile(r"\w+")
 NUMBER = re.compile(r"\d+(\.\d+)?(e[+-]?\d+)?", re.I)
 MEMBER = re.compile(r"(\w+)(?:\([^()]*\))?\s*\.\s*(\w+)(?:\s*\.\s*(\w+))?")
 STRING_LITERAL = re.compile(r'"(?:[^"]|"")*"')
-# C-style operators the expression parser refuses, with the Construct operator for each. A lone !
-# has none: the editor calls it an unknown character, and the test is written as a comparison.
-C_OPERATORS = {"==": "=", "!=": "<>", "&&": "&", "||": "|"}
-C_OPERATOR = re.compile(r"==|!=|&&|\|\||!")
+# C-style operators the expression parser refuses, with the Construct operator for each; the power
+# of JavaScript's ** is ^, which in C would be exclusive or. A lone ! has none: the editor calls it
+# an unknown character, and the test is written as a comparison.
+C_OPERATORS = {"==": "=", "!=": "<>", "&&": "&", "||": "|", "**": "^"}
+C_OPERATOR = re.compile(r"==|!=|&&|\|\||\*\*|!")
+# What a local that would hide an outer variable of another type can be called instead.
+SHADOW_SUFFIX = {"string": "Text", "number": "Value", "boolean": "Flag"}
 
 
 def editor_name(name: str, is_object: bool) -> str:
@@ -193,6 +196,7 @@ class Checker:
         self.created: set[str] = set()
         self._eases: set[str] = set()
         self.deprecated_uses: dict[str, list[str]] = {}      # warning -> where each use is
+        self.global_ids: set[int] = set()     # the top-level variables of every sheet
 
     def check(self) -> None:
         self.check_project_file()
@@ -712,7 +716,20 @@ class Checker:
             eases = self.builtin_eases()
             if isinstance(value, str) and eases and value not in eases and not p.data.get("eases"):
                 self.err(f"{where}: {key}={value!r} is not a built-in ease{closest(value, eases)}")
-        elif ptype in ("audiofile", "tilemapbrush", "function", "model3d", "template", "objecteffect"):
+        elif ptype == "audiofile":
+            # The editor looks the name up among the sound and music files, without the extension and
+            # in any case, and refuses the project on any other value: "missing file '0'".
+            stems = [Path(n["name"] if isinstance(n, dict) else n).stem
+                     for kind in ("sound", "music")
+                     for n, _ in folder_items(p.data.get("rootFileFolders", {}).get(kind, {}))]
+            name = unquote(value) if is_literal(value) else value
+            if not isinstance(name, str) or LOWER(name) not in {LOWER(s) for s in stems}:
+                near = closest(Path(name).stem, stems) if isinstance(name, str) else ""
+                listed = f"; the project has {', '.join(stems[:8])}" if stems else "; the project has none"
+                self.err(f"{where}: {key}={value!r} is not a sound or music file of the project; the editor stops "
+                         f"with \"missing file {name!r}\". Write the file's name without its extension"
+                         + (near or listed))
+        elif ptype in ("tilemapbrush", "function", "model3d", "template", "objecteffect"):
             return
         elif ptype == "object":
             if value not in p.plugin_of or value == "System":
@@ -977,6 +994,25 @@ class Checker:
             if not finite:
                 self.err(f"{w}: initialValue {value!r} is not a number; the editor reads it as 0")
 
+    def check_shadow(self, var: dict, scope: dict, where: str) -> None:
+        """Names match without case and the nearest scope wins, so a local string count
+        hides a global number COUNT in its event and sub-events: COUNT - 1 there is read
+        on the text and the editor refuses the project with "Type mismatch: - does not
+        work with 'string' and 'number'". A same-typed local only hides the outer value,
+        which the editor accepts. None of the 565 sheets of the official examples
+        declares a local named like a variable already in scope."""
+        name = var.get("name")
+        if not isinstance(name, str):
+            return
+        outer = next((v for k, v in scope.items() if LOWER(k) == LOWER(name)), None)
+        if outer is None or outer is var or id(var) in self.global_ids or outer.get("type") == var.get("type"):
+            return
+        self.err(f"{where}: {var.get('type')} {name} has the name of the {outer.get('type')} variable {outer['name']} "
+                 f"once case is ignored, and it hides it here and in the sub-events; an expression that means "
+                 f"{outer['name']} reads {name}, and the editor refuses the project with \"Type mismatch\" "
+                 f"(\"- does not work with 'string' and 'number'\" for a text local beside a number); rename it, "
+                 f"for example {name}{SHADOW_SUFFIX.get(var.get('type'), 'Local')}")
+
     def check_block(self, ev: dict, scope: dict, where: str) -> None:
         for i, c in enumerate(ev.get("conditions", []), 1):
             self.check_ace("conditions", c, scope, f"{where} condition {i}")
@@ -1041,6 +1077,7 @@ class Checker:
             events = [ev for ev in events if isinstance(ev, dict)]
         for ev in events:
             if ev.get("eventType") == "variable":
+                self.check_shadow(ev, scope, f"{where} variable {ev['name']}")
                 scope[ev["name"]] = ev
         ladders = self.ladders(events) if self.style else {}
         numbered: dict[int, list[tuple[int, str]]] = {}
@@ -1071,6 +1108,7 @@ class Checker:
             elif et in ("function-block", "custom-ace-block"):
                 fscope = dict(scope)
                 for param in ev["functionParameters"]:
+                    self.check_shadow(param, fscope, f"{w} parameter {param['name']}")
                     fscope[param["name"]] = param
                     self.check_variable(param, w, "parameter")
                 label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
@@ -1220,6 +1258,7 @@ class Checker:
         # A global declared at the top level of any sheet is visible from every sheet.
         globals_ = {ev["name"]: ev for s in self.sheets.values() for ev in s["events"]
                     if isinstance(ev, dict) and ev.get("eventType") == "variable"}
+        self.global_ids = {id(ev) for ev in globals_.values()}
         for sname, sheet in self.sheets.items():
             self.walk(sheet["events"], globals_, f"sheet {sname}", [0])
 

@@ -39,14 +39,16 @@ How each was read from the editor and confirmed:
 | A plugin or behavior id is spelled as the editor spells it: `Arr`, `Json`, `TiledBg`, `EightDir`, `Sin`, `solid` | `missing plugin id` |
 | An object or family name is not `self`, `true`, `false`, `system` or a system expression (`Floor`, `Time`, `Random`, `Max`) | `name is reserved` |
 | A global or local variable is not named like a system expression (`mid`, `max`, `len`), compared without case: inside an expression the name reads as the system expression | `Invalid expressions ... parameter 0 does not take 'string'`, for a local `mid` passed to a function |
+| A local variable or function parameter is not named like a variable of another type already in scope, compared without case: the nearest scope wins, so a text `count` hides a number `COUNT` in its event and sub-events | `Type mismatch: - does not work with 'string' and 'number'`, for `COUNT - 1` below a text local `count` |
 | A shared ACE of `plugins/_common.json` is used only on a plugin whose `commonAces` lists it: Text has no `set-default-color`, its colour is `set-font-color` | `missing action id 'set-default-color'` |
 | `Self` stands only in a parameter of an object's own condition or action; in a System one (*For each ordered*, *Pick by comparison*, *Set variable*) it names nothing, and the finding writes the expression with the object the ACE names | `Invalid use of 'self'` |
 | A name has no spaces or punctuation; an instance variable name starts with a letter | the editor renames it silently, and the events that use it fail with `cannot find object` |
 | An instance variable, behavior or effect is not named like another one on the object or its families, nor like an expression of the object (`Angle`, `Width`, `Count`, `Text`) | `name already in object class namespace` |
-| An expression uses Construct's operators: `=` compares, `<>` is not equal, `&` is and, `\|` is or; `==`, `!=`, `&&`, `\|\|` and `!` stand only inside a text literal | `Syntax error: '=' can't go here`, `Syntax error: Unknown character` |
+| An expression uses Construct's operators: `=` compares, `<>` is not equal, `&` is and, `\|` is or, `^` is power; `==`, `!=`, `&&`, `\|\|`, `**` and `!` stand only inside a text literal | `Syntax error: '=' can't go here`, `Syntax error: '*' can't go here`, `Syntax error: Unknown character` |
 | A comment event carries `text`, a group `description`, an event variable `comment`, each as text, `""` when empty | `Cannot read properties of undefined (reading 'endsWith')`, `expected string` |
 | A function's `functionReturnType` is `none`, `number`, `string` or `any`; a custom action's `aceType` is `action` | `function has wrong return type`, `invalid ACE type` |
 | Every file `rootFileFolders` lists is on disk: `general` in `files/`, `icon` in `icons/`, `sound` in `sounds/`, `music` in `music/`, `font` in `fonts/`, `script` in `scripts/` | `missing file path 'icons\icon-16.png'` |
+| A sound parameter (*Play*, *Play at object*) names a sound or music file the project lists, without its extension, in any case: `SFX1` for `sfx1.webm` | `missing file '0'`, `missing file 'sfx1.webm'` |
 | A key is a key code, a JSON number | `expected finite number` |
 | An action does not write a constant | `event variable X is constant` |
 | An ease is a built-in id such as `easeoutback`, unless the project has custom eases | the tween keeps no ease and fails later |
@@ -122,11 +124,10 @@ triggers fire in, whether an expression means what the comment says. The
 editor and the preview judge those; the observations in
 `Construct3-RAG/prompts/event-sheet-pitfalls.md` came from previewing, not
 from the checker. Expression syntax beyond those operators, argument counts and types, and
-`function`, `template` and `audiofile` parameters are not checked either.
-The editor checks expressions as it opens the project: `scripts/open_in_editor.py`
-prints its message, `Type mismatch: - does not work with 'string' and
-'number'` for a local text variable that hides a number of the same name
-under another case.
+`function` and `template` parameters are not checked either.
+The editor checks the types in an expression as it opens the project, and
+`scripts/open_in_editor.py` prints its message, such as `Type mismatch: -
+does not work with 'string' and 'number'`.
 
 ## How the rules were confirmed
 

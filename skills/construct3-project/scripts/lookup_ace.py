@@ -71,6 +71,15 @@ WRITING = {
     "timeline": ('"<timeline>"', "bare timeline name"),
     "flowchart": ('"<flowchart>"', "bare flowchart name"),
     "template": ('"\\"\\""', "expression string, the template name in inner quotes, \"\\\"\\\"\" for none"),
+    "audiofile": ('"<sound>"', "bare name of a sound or music file of the project, without its extension"),
+    "function": ('"<function>"', "bare name of a function of the project"),
+    "tilemapbrush": ('{"objectClassName": "<tilemap>", "brushName": "<brush>"}', "a brush of a Tilemap object"),
+    "objecteffect": ('"\\"\\""', "expression string, the effect's name in inner quotes: \"\\\"AdjustHSL\\\"\""),
+    "layereffect": ('"\\"\\""', "expression string, the effect's name in inner quotes: \"\\\"AdjustHSL\\\"\""),
+    "layouteffect": ('"\\"\\""', "expression string, the effect's name in inner quotes: \"\\\"AdjustHSL\\\"\""),
+    "objectinsttags": ('"\\"\\""', "expression string, the tags in inner quotes"),
+    "objectname": ('"\\"\\""', "expression string, the object type's name as text: \"\\\"Enemy\\\"\""),
+    "model3d-animation-string": ('"\\"\\""', "expression string, the animation name in inner quotes"),
 }
 
 

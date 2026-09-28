@@ -1584,6 +1584,38 @@ def test_key_written_as_a_name(project):
     assert code == 1 and "should be a key code" in out and "expected finite number" in out
 
 
+@pytest.mark.parametrize("value, refused", [
+    ("Pop", False), ("POP", False), ('"Pop"', False), ("0", True), ("Pop.webm", True), ("Popp", True)])
+def test_a_sound_is_named_as_a_sound_or_music_file(project, value, refused):
+    """The editor opened a copy of the audio-scheduling example with its sound written SFX1 for sfx1.webm, and with
+    it in inner quotes, and refused "0", "sfx1.webm" and a name it has not: "missing file '0'"."""
+    (project / "objectTypes" / "Audio.json").write_text(json.dumps({
+        "name": "Audio", "plugin-id": "Audio", "sid": 3,
+        "singleglobal-inst": {"type": "Audio", "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
+    (project / "sounds").mkdir(exist_ok=True)
+    (project / "sounds" / "pop.webm").write_bytes(b"")
+
+    def project_file(p):
+        p["objectTypes"]["items"].append("Audio")
+        p["usedAddons"].append({"type": "plugin", "id": "Audio", "name": "Audio", "author": "Scirra", "bundled": False})
+        p.setdefault("rootFileFolders", {})["sound"] = {"items": [
+            {"name": "pop.webm", "type": "audio/webm; codecs=opus", "sid": 5, "file-info": {"purpose": "none"}}],
+            "subfolders": []}
+    edit(project, "project.c3proj", project_file)
+    out = findings(project, lambda s: events(s)["add_score"]["actions"].append(
+        {"id": "play", "objectClass": "Audio", "sid": 6, "parameters": {
+            "audio-file": value, "loop": "not-looping", "volume": "0", "stereo-pan": "0", "tag-optional": '""'}}))
+    assert ("is not a sound or music file of the project" in out) == refused, out
+    if refused:
+        assert "Write the file's name without its extension; " + ("the project has pop" if value == "0"
+                                                                    else "closest: pop") in out, out
+
+
+def test_lookup_writes_a_sound_bare(built):
+    code, out = tool(built, "lookup_ace", "Audio", "play-at-object")
+    assert code == 0 and '"audio-file": "<sound>"' in out and "without its extension" in out, out
+
+
 def test_action_cannot_write_a_constant(project):
     def change(s):
         events(s)["add_score"]["actions"].append(
@@ -1638,20 +1670,24 @@ def test_a_listed_root_file_exists_in_its_folder(project):
 
 
 def test_c_style_operators_are_refused_with_the_construct_ones(project):
-    """The editor's parser refuses ==, !=, &&, || and ! ("Syntax error"); inside a text literal they are text."""
+    """The editor's parser refuses ==, !=, &&, ||, ** and ! ("Syntax error"); inside a text literal they are
+    text. ^ is Construct's power: 2 ^ 3 ran as 8 in a preview."""
     def change(s):
         events(s)["add_score"]["actions"] += [
             {"id": "set-eventvar-value", "objectClass": "System", "sid": 5 + i,
              "parameters": {"variable": "score", "value": value}}
             for i, value in enumerate(['points == 5 ? 5 : 1', 'points != 5 & score || 1',
-                                       '!points', 'points = 5 ? 1 : 0', 'len("a == b") <> 0 | 1'])]
+                                       '!points', 'points = 5 ? 1 : 0', 'len("a == b") <> 0 | 1',
+                                       'points ** 2', 'points ^ 2 + len("2 ** 3")'])]
     out = findings(project, change)
     assert "value: == is not an operator of Construct expressions; the editor stops with \"Syntax error\"; " \
            "write 'points = 5 ? 5 : 1'" in out
     assert "value: !=, || are not operators of Construct expressions; the editor stops with \"Syntax error\"; " \
            "write 'points <> 5 & score | 1'" in out
     assert "value: ! is not an operator" in out and "a negation is a comparison with 0" in out
-    assert out.count("of Construct expressions") == 3, out
+    assert "value: ** is not an operator of Construct expressions; the editor stops with \"Syntax error\"; " \
+           "write 'points ^ 2'" in out
+    assert out.count("of Construct expressions") == 4, out
 
 
 def test_ease_is_a_builtin_id(project):
@@ -1710,6 +1746,25 @@ def test_a_variable_named_like_a_system_expression_is_refused(project, name):
     out = findings(project, change)
     assert f"variable {name}: the name is that of the system expression {name.lower()}" in out
     assert f"rename it, for example {name}Value" in out
+
+
+def test_a_local_that_hides_a_variable_of_another_type_by_case_is_refused(project):
+    """A local string count hid the global constant COUNT, and COUNT - 1 below it stopped the editor
+    with "Type mismatch: - does not work with 'string' and 'number'". A same-typed local, or one
+    whose name differs by more than case, is accepted."""
+    def change(sheet):
+        children = events(sheet)["setup"].setdefault("children", [])
+        children.insert(0, {"eventType": "variable", "name": "SCORE", "type": "string", "initialValue": "",
+                            "comment": "", "isStatic": False, "isConstant": False, "sid": 900000000000005})
+        events(sheet)["add_score"]["functionParameters"].append(
+            {"name": "Score", "type": "number", "initialValue": "0", "comment": "", "sid": 900000000000006})
+        children.insert(0, {"eventType": "variable", "name": "scoreText", "type": "string", "initialValue": "",
+                            "comment": "", "isStatic": False, "isConstant": False, "sid": 900000000000007})
+    out = findings(project, change)
+    assert "variable SCORE: string SCORE has the name of the number variable score once case is ignored" in out
+    assert "rename it, for example SCOREText" in out
+    assert "parameter Score" not in out
+    assert "scoreText" not in out
 
 
 def test_unknown_parameter_lists_the_real_ones(project):

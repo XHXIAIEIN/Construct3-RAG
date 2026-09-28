@@ -59,6 +59,20 @@ Option 2 as the default, and option 3 as the step after it.
   the five outside a text literal. A Haiku eval run had written
   `Coin.value == 5 ? 1.5 : 1`, which the checker passed and the editor
   refused.
+- JavaScript's power `**` was probed the same way on 2026-09-28: `2 ** 3`,
+  `2**3` and `x ** 2` stopped the editor with `Syntax error: '*' can't go
+  here`, and a preview ran `2 ^ 3` as 8 and `2 ^ -1` as 0.5, so `^` is
+  power, not C's exclusive or, and stays allowed. No official example
+  writes `**` outside a text literal; 32 parameters write `^`.
+- A sound parameter was probed on copies of the audio-scheduling example,
+  whose sound file is `sfx1.webm` and whose events write `SFX1`. The editor
+  opened `SFX1` and `"SFX1"` in inner quotes, and refused `0`, `sfx1.webm`
+  and `Missing` with `missing file '<value>'`. `0` was what `lookup_ace.py`
+  wrote for a parameter type it had no entry for, and the checker skipped
+  the type. The 277 sound parameters of the official examples all name a
+  listed file without its extension, and the sweep changed no finding.
+  `lookup_ace.py` now also writes a function, a tilemap brush, an effect,
+  tags, an object name and a 3D animation the way the examples do.
 - The 91 projects of the eval runs and the game folders that passed the
   checker on 2026-09-28 were opened in the editor. Three failed: a variable
   written by hand without `comment`, and two snapshots whose listed icons
@@ -70,8 +84,19 @@ Option 2 as the default, and option 3 as the step after it.
   `string`, `any` and `action`. A function parameter's `comment` and a
   custom action's `functionReturnType`, `functionDescription` and
   `functionCategory` may be left out. Every official example writes all
-  five; the sweep changed no finding. The remaining refusal is an
-  expression type mismatch, which the checker does not read.
+  five; the sweep changed no finding.
+- The one type mismatch among the 91 came from a local text variable named
+  like a number variable in scope, under another case: names match without
+  case and the nearest scope wins, so the number's expression read the
+  text. The checker now refuses a local or function parameter named like a
+  variable of another type in scope. None of the 565 sheets of the official
+  examples declares one, and the sweep changed no finding. A same-typed
+  local only hides the outer value, which the editor accepts. Type
+  inference for the rest of an expression was not built: it needs a real
+  expression parser, operator rules probed in the editor one by one and
+  no new finding over the examples, to catch what the editor opener already
+  reports; it is worth building when an open fails on a mismatch the
+  shadowing rule does not explain.
 - `open_in_editor.py --jobs 3` timed out on 7 of the 91 with "no answer in
   85 seconds"; each opened alone.
 
