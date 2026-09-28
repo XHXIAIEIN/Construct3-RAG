@@ -63,3 +63,9 @@ Sources and the rule for adding an entry are in the index,
   files supported* and *Is supported*. Not verified on a device. [manual:
   plugin-reference/filesystem.md "Browser/platform support";
   plugin-reference/browser.md "Invoke download"; example: taking-screenshots]
+- A drag dispatched from a script into a preview page moves nothing with
+  `pointermove` alone: the runtime reads `pointerrawupdate` where the browser
+  has it, so send one before each `pointermove`; `pointerdown` and
+  `pointerup` work as they are. Coordinates are the page's CSS pixels, not
+  the pixels of a screenshot taken at a device scale factor. [observed in a
+  game project, r503 preview in Chrome, 2026-09-29]

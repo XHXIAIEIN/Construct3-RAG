@@ -75,3 +75,17 @@ Sources and the rule for adding an entry are in the index,
   runtime, such as a bigger critical hit number, needs the box sized for
   the largest size. [manual: plugin-reference/text.md "Size"; observed in
   a game project, 2026-09-28]
+- *Move to top* moves only the instance it runs on. A hierarchy's children
+  keep their places in the Z order, so a dragged piece whose parent went to
+  the top still draws its body, face and label under the pieces created after
+  it. Pick the children (*Pick children*) and move every part to the top,
+  bottom part first, as the parts should stack. [manual:
+  plugin-reference/common-features/common-actions.md "Move to top", "top of
+  its current layer"; observed in a game project, r503 preview, 2026-09-29]
+- *Set color* is a tint: each channel of the image is multiplied by the
+  colour, white restoring the original. A part drawn in white takes the
+  colour exactly and black outlines stay black, but white highlights are
+  tinted too, so a piece coloured by level is drawn with a white fill and its
+  highlights on a separate child that keeps its colour. [manual:
+  plugin-reference/common-features/common-actions.md "Set color"; observed
+  in a game project, r503 preview, 2026-09-29]

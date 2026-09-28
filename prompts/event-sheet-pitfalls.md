@@ -129,6 +129,8 @@ or size Text, draw bars, Drawing Canvas polygons or blend modes.
 - A blend mode touches only the pixels under the object's own quad, and the layer needs *Force own texture*.
 - A Text object draws only the lines that fit its height: size the box for the longest text.
 - A single line taller than its Text box draws with the bottom of its glyphs cut off.
+- *Move to top* leaves a hierarchy's children where they were: move each part.
+- *Set color* multiplies: draw a tinted part white and keep highlights on an untinted child.
 
 ### Tween
 
@@ -172,6 +174,7 @@ or uses File System.
 - No tag names the Construct project folder; saves go to `<current-app-data>`.
 - In a browser File System needs desktop Chromium and a user input trigger, and a save picker erases the file.
 - Android and iOS exports have no File System: save with Local Storage and hand files over with Share.
+- A scripted drag in preview needs `pointerrawupdate` before each `pointermove`, in CSS pixels.
 
 ## Adding an entry
 
