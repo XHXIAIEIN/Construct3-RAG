@@ -47,11 +47,10 @@ an effect's `addon.json`: hidden from Add effect, kept in existing projects.
 `allEffects.json`, which the export already reads, has it on `warp` and
 `warpmask` and on no other effect.
 
-Where the bundles come from. The r495.2 release directory is `r495-2/`, with
-a dash; its `main.js`, `allEditorPlugins.js`, `allEditorBehaviors.js` and
-`offline.json` are byte-identical to the copies at the CDN root. The fetcher
-asks for `r495.2/`, gets 404 and falls back to the root, as it does for
-`allAces.json`, so the flags and the ACEs come from the same build.
+Where the bundles come from. Each release serves `main.js`,
+`allEditorPlugins.js` and `allEditorBehaviors.js` in the same directory as its
+`allAces.json`, `r495-2/` for r495.2 (`cdn-release-directory.md`). The fetcher
+reads all of them there, so the flags and the ACEs come from the same build.
 
 What depends on the three ids. The gold set, the tests, the prompts and the
 skill do not name them. None of the 524 official examples uses NW.js or
@@ -76,7 +75,8 @@ schema for that effect.
 Option 2. `src/ingest/deprecated_addons.py` finds the setter behind
 `SetIsDeprecated` in each SDK class of `main.js` and reads it from every
 constructor in the bundle; `C3Fetcher.fetch_addon_deprecation()` fetches the
-three files through the same cache and fallback as `allAces.json`.
+three files from the release directory, through the same cache as
+`allAces.json`.
 `export_schemas()` leaves out an addon the editor marks deprecated and an
 effect with `is-deprecated`. An addon of `allAces.json` the bundle does not
 construct stops the export, so a bundle of another shape fails the update
@@ -134,5 +134,6 @@ a decision of its own.
   class was renamed or restructured.
 - Scirra publishes addon deprecation on a JSON endpoint: read it there and
   drop the bundle read.
-- The fetcher requests `r{release}-{patch}/` for a patch release: the root
-  fallback described above no longer applies.
+- A release directory stops serving the bundles: the fetch stops with a 404.
+  Reading them from the CDN root instead would take the flags from whatever
+  release is stable then (`cdn-release-directory.md`).

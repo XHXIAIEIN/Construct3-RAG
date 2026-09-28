@@ -11,9 +11,10 @@ no set-default-color.
 Run it when scripts/init.py stops with "language pack names shared ACEs that
 common_aces.json does not define", then review the diff and commit the file.
 
-The CDN serves main.js only at its root, so the block comes from the latest
-stable release in versions.json, and so does the language pack it is checked
-against. The file records the version it was taken from.
+The block comes from the latest stable release in versions.json, read from
+that release's own CDN directory (r495-2/ for r495.2), and so does the
+language pack it is checked against. The file records the version it was
+taken from.
 
 Usage:
     python scripts/extract_common_aces.py
@@ -81,7 +82,7 @@ def main() -> None:
     payload = {
         "_source": {
             "file": "main.js",
-            "url": f"{settings.schema.cdn_base}/main.js",
+            "url": fetcher.url("main.js"),
             "block": "the function that registers plugins._common in the editor bundle",
             "plugins": "plugins/allEditorPlugins.js, the constructor of each built-in plugin",
             "release": source_version,

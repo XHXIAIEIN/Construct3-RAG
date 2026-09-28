@@ -2,6 +2,7 @@
 import json
 import os
 import time
+import urllib.error
 import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
@@ -47,6 +48,54 @@ def test_handles_bom(fetcher):
         assert result == mock_data
 
 
+@pytest.mark.parametrize("version, directory", [("r495.2", "r495-2"), ("r503", "r503")])
+def test_fetch_reads_the_release_directory_and_caches_under_the_release_name(tmp_path, version, directory):
+    """A patch release is served under a dash (r495-2/); the cache keeps the dot."""
+    fetcher = C3Fetcher(version=version, cache_dir=tmp_path)
+    requested = []
+
+    def cdn(url: str) -> bytes:
+        requested.append(url)
+        return b"{}" if url.endswith(".json") else b"// main.js"
+
+    with patch.object(fetcher, "_http_get", side_effect=cdn):
+        fetcher.fetch("plugins/allAces.json")
+        fetcher.fetch_raw("main.js")
+
+    assert requested == [
+        f"https://editor.construct.net/{directory}/plugins/allAces.json",
+        f"https://editor.construct.net/{directory}/main.js",
+    ]
+    assert fetcher.cache_dir == tmp_path / version
+    assert (tmp_path / version / "plugins_allAces.json").exists()
+
+
+@pytest.mark.parametrize("method", ["fetch", "fetch_raw"])
+def test_a_missing_release_file_stops_instead_of_reading_the_root(tmp_path, method):
+    """The root serves the current stable release; a 404 must not pull it in."""
+    fetcher = C3Fetcher(version="r495.2", cache_dir=tmp_path)
+    requested = []
+
+    def cdn(url: str) -> bytes:
+        requested.append(url)
+        raise urllib.error.HTTPError(url, 404, "Not Found", None, None)
+
+    with patch.object(fetcher, "_http_get", side_effect=cdn):
+        with pytest.raises(FileNotFoundError, match="r495-2/plugins/allEditorPlugins.js returned 404"):
+            getattr(fetcher, method)("plugins/allEditorPlugins.js")
+
+    assert requested == ["https://editor.construct.net/r495-2/plugins/allEditorPlugins.js"]
+    assert not (fetcher.cache_dir / "plugins_allEditorPlugins.js").exists()
+
+
+@pytest.mark.parametrize("version", ["r495-2", "495.2", "latest", ""])
+def test_release_is_named_as_versions_json_names_it(tmp_path, version):
+    """The directory's spelling would label data/ and the cache with a release
+    versions.json never names."""
+    with pytest.raises(ValueError, match="r495.2"):
+        C3Fetcher(version=version, cache_dir=tmp_path)
+
+
 def test_latest_stable_version():
     """Detect latest stable version from versions.json."""
     mock_versions = [
@@ -54,8 +103,10 @@ def test_latest_stable_version():
         {"branchName": "Stable", "releaseName": "r476"},
         {"branchName": "LTS", "releaseName": "r449.3"},
     ]
-    with patch("src.ingest.c3_fetcher._http_get", return_value=json.dumps(mock_versions).encode()):
+    with patch("src.ingest.c3_fetcher._http_get", return_value=json.dumps(mock_versions).encode()) as cdn:
         assert latest_stable_version() == "r476"
+    # The one file at the CDN root, not under a release.
+    cdn.assert_called_once_with("https://editor.construct.net/versions.json")
 
 
 def test_latest_stable_version_without_stable_fails():

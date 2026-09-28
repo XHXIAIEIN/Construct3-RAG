@@ -12,9 +12,16 @@ Endpoints:
     media/example-project-data.json      — example project metadata
     plugins/pluginList.json      — plugin ID → path mapping
     behaviors/behaviorList.json  — behavior ID → path mapping
-    versions.json                — all release versions
+    versions.json                — the current Beta, Stable and LTS releases
     main.js, plugins/allEditorPlugins.js, behaviors/allEditorBehaviors.js
                                  — editor bundles, read for SetIsDeprecated
+
+Every endpoint but versions.json is served per release, in a directory named
+after the release with the dot of a patch release written as a dash: r495.2
+is ``r495-2/``, r503 is ``r503/``. The root serves whichever release is stable
+now, so it is never read for a release's files: a 404 in the release
+directory stops the fetch instead of mixing in another release. The cache
+stays keyed by the release name, ``{cache_dir}/r495.2/``.
 
 The shared world-object ACEs (``plugins/_common``) are not on any of these
 endpoints; ``export_schemas`` reads them from ``common_aces.json`` next to
@@ -24,6 +31,7 @@ Which addons are deprecated is read from the editor bundles on every export;
 """
 import json
 import logging
+import re
 import shutil
 import urllib.error
 import urllib.request
@@ -45,8 +53,11 @@ logger = logging.getLogger(__name__)
 
 _USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/145.0.0.0"
 _BEIJING = timezone(timedelta(hours=8))
+# A release as versions.json names it: r503, r495.2.
+_RELEASE_NAME = re.compile(r"r\d+(?:\.\d+)?")
 
 # CDN endpoint paths — update here if Scirra changes URL structure.
+# versions.json is at the CDN root; every other path is under the release directory.
 ENDPOINTS = {
     "versions":      "versions.json",
     "plugin_aces":   "plugins/allAces.json",
@@ -96,11 +107,16 @@ def _strip_bom(raw: bytes) -> bytes:
 
 def latest_stable_version(base_url: str = "https://editor.construct.net") -> str:
     """Return the release name of the newest Stable build in versions.json."""
-    url = f"{base_url.rstrip('/')}/versions.json"
+    url = f"{base_url.rstrip('/')}/{ENDPOINTS['versions']}"
     for v in json.loads(_strip_bom(_http_get(url))):
         if v.get("branchName") == "Stable":
             return v["releaseName"]
     raise LookupError(f"{url} lists no Stable release")
+
+
+def release_directory(version: str) -> str:
+    """The CDN directory of a release: ``r495.2`` is served under ``r495-2/``."""
+    return version.replace(".", "-")
 
 
 class C3Fetcher:
@@ -112,6 +128,12 @@ class C3Fetcher:
         base_url: str = "https://editor.construct.net",
         cache_dir: Path | None = None,
     ):
+        # The name labels data/ and keys the cache; r495-2, the directory's
+        # spelling, would label the data with a release versions.json never names.
+        if not _RELEASE_NAME.fullmatch(version):
+            raise ValueError(
+                f"release {version!r}: write it as versions.json names it, such as r503 or r495.2"
+            )
         self.version = version
         self.base_url = base_url.rstrip("/")
         if cache_dir is None:
@@ -131,30 +153,37 @@ class C3Fetcher:
         """Remove UTF-8 BOM if present."""
         return raw[3:] if raw[:3] == b"\xef\xbb\xbf" else raw
 
+    def url(self, path: str) -> str:
+        """The CDN URL of ``path`` in this release's directory."""
+        return f"{self.base_url}/{release_directory(self.version)}/{path}"
+
+    def _download(self, path: str) -> bytes:
+        """Fetch ``path`` from this release's directory, never from the root.
+
+        Raises ``FileNotFoundError`` on a 404: the root copy belongs to the
+        current stable release, which need not be this one.
+        """
+        url = self.url(path)
+        logger.info(f"[CDN] Fetching {url}")
+        try:
+            return self._http_get(url)
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                raise FileNotFoundError(f"{url} returned 404: the CDN has no {path} for {self.version}") from e
+            raise
+
     def fetch(self, path: str, force: bool = False) -> dict | list:
         """Fetch a JSON endpoint, using local cache if fresh.
 
         Args:
-            path: Relative path under the version URL (e.g. "plugins/allAces.json")
+            path: Relative path under the release directory (e.g. "plugins/allAces.json")
             force: Skip cache and always fetch from CDN
         """
         cache_path = self.cache_dir / path.replace("/", "_")
         if not force and cache_path.exists() and not _cache_expired(cache_path):
             raw = cache_path.read_bytes()
         else:
-            url = f"{self.base_url}/{self.version}/{path}"
-            logger.info(f"[CDN] Fetching {url}")
-            try:
-                raw = self._http_get(url)
-            except urllib.error.HTTPError as e:
-                if e.code == 404:
-                    # Patch versions (e.g. r476.2) don't have their own CDN
-                    # directory; fall back to the root path (latest stable).
-                    fallback_url = f"{self.base_url}/{path}"
-                    logger.warning(f"[CDN] 404 for {url}, falling back to {fallback_url}")
-                    raw = self._http_get(fallback_url)
-                else:
-                    raise
+            raw = self._download(path)
             cache_path.parent.mkdir(parents=True, exist_ok=True)
             cache_path.write_bytes(raw)
         return json.loads(self._strip_bom(raw))
@@ -543,17 +572,7 @@ class C3Fetcher:
         cache_path = self.cache_dir / path.replace("/", "_")
         if not force and cache_path.exists() and not _cache_expired(cache_path):
             return cache_path.read_bytes()
-        url = f"{self.base_url}/{self.version}/{path}"
-        logger.info(f"[CDN] Fetching {url}")
-        try:
-            raw = self._http_get(url)
-        except urllib.error.HTTPError as e:
-            if e.code == 404:
-                fallback_url = f"{self.base_url}/{path}"
-                logger.warning(f"[CDN] 404 for {url}, falling back to {fallback_url}")
-                raw = self._http_get(fallback_url)
-            else:
-                raise
+        raw = self._download(path)
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         cache_path.write_bytes(raw)
         return raw

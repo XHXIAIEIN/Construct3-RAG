@@ -41,8 +41,10 @@ Data and schemas:
 |--------|-----------------|
 | `common-aces-from-editor-bundle.md` | Where the structural side of `plugins/_common.json` comes from, and which plugin gets which shared ACE |
 | `common-instance-properties.md` | The properties every world instance carries, and where a project file writes them |
+| `deprecated-addons-from-editor.md` | Which addons and effects the export leaves out as deprecated, and where the flags come from |
 | `schema-index-per-locale-split.md` | Why display names live in the per-locale index rather than the root one |
 | `version-from-data-manifest.md` | Why the Construct release is read from `data/` and not from a setting |
+| `cdn-release-directory.md` | Which CDN directory a release is fetched from, and why the root is never read for it |
 
 The project skill and the prompts:
 

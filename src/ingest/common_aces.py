@@ -3,11 +3,12 @@
 ``allAces.json`` covers plugins and behaviors only. The shared conditions,
 actions and expressions (``compare-instance-variable``, ``pick-children``,
 ``set-visible``, ``X`` ...) are registered inside the editor bundle
-``main.js``, which the CDN serves only at its root, not under a release
-directory. Parsing a minified bundle on every export would tie the schema to
-whatever release the root happens to serve, so the block is extracted once by
-``scripts/extract_common_aces.py`` into ``common_aces.json`` next to this
-module, in the same shape as one ``allAces.json`` plugin entry:
+``main.js``, which the CDN serves in each release's directory. Parsing them
+on every export would make every release's export depend on each shared ACE
+literal and its guard keeping their minified shape, so the block is
+extracted once by ``scripts/extract_common_aces.py`` into
+``common_aces.json`` next to this module, in the same shape as one
+``allAces.json`` plugin entry:
 
     {category: {"conditions": [...], "actions": [...], "expressions": [...]}}
 

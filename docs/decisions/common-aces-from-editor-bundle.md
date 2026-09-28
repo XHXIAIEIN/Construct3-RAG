@@ -31,16 +31,16 @@ t.Qcs({id:"compare-instance-variable",c2id:-7,scriptName:"CompareInstanceVar",
 ```
 
 All 136 shared ACEs of the r495.2 language pack are there, with 147
-parameters, 16 of them combos whose `items` match the pack. The bundle is
-served only at the CDN root, `https://editor.construct.net/main.js`; the
-release directory returns 404.
+parameters, 16 of them combos whose `items` match the pack. Each release
+serves its own bundle in its CDN directory,
+`https://editor.construct.net/r495-2/main.js` for r495.2
+(`cdn-release-directory.md`).
 
 ## Options
 
-1. Parse `main.js` during every export. No committed file, but each export
-   downloads 1.4 MB of minified code, the parse depends on the anchor and the
-   literal shape surviving minification, and the root bundle is the current
-   stable release, not necessarily the one `data/` holds.
+1. Parse `main.js` during every export. No committed file, but every export
+   would depend on the anchor and the literal shape surviving minification,
+   not only an export whose language pack adds a shared ACE.
 2. Extract the block once into `src/ingest/common_aces.json` with a script,
    commit it with its source, and have the exporter merge it like an
    `allAces.json` entry. The default export stays offline and deterministic;
@@ -50,9 +50,10 @@ release directory returns 404.
 
 ## Decision
 
-Option 2. `scripts/extract_common_aces.py` fetches the bundle, cuts out the
-block after the anchor and writes `src/ingest/common_aces.json`; the file
-records the release it came from. `C3Fetcher.export_schemas()` loads it and
+Option 2. `scripts/extract_common_aces.py` fetches the bundle of the latest
+stable release from that release's directory, cuts out the block after the
+anchor and writes `src/ingest/common_aces.json`; the file records the release
+it came from. `C3Fetcher.export_schemas()` loads it and
 feeds `_common` through the same loop as every plugin, so `_common.json` has
 the same structural fields as any plugin file: real `type`, `items` labelled
 per locale, `initialValue`, `scriptName`, the editor category, `isTrigger`

@@ -8,8 +8,12 @@
 | Language (en/zh) | `editor.construct.net/{ver}/loader/lang/precompiled-{lang}.json` | JSON | Each C3 release |
 | Effects | `editor.construct.net/{ver}/effects/allEffects.json` | JSON | Each C3 release |
 | Example metadata | `editor.construct.net/{ver}/media/example-project-data.json` | JSON | Each C3 release |
-| Shared world-object ACEs | `editor.construct.net/main.js`, extracted by `scripts/extract_common_aces.py` into `src/ingest/common_aces.json` | JSON | When a release adds a shared ACE |
+| Shared world-object ACEs | `editor.construct.net/{ver}/main.js` of the latest stable release, extracted by `scripts/extract_common_aces.py` into `src/ingest/common_aces.json` | JSON | When a release adds a shared ACE |
 | Deprecated plugins and behaviors | `editor.construct.net/{ver}/main.js`, `plugins/allEditorPlugins.js`, `behaviors/allEditorBehaviors.js`, read by `src/ingest/deprecated_addons.py` | JS | Each C3 release |
+
+`{ver}` is the release's CDN directory: the release name, with the dot of a
+patch release written as a dash, `r495-2` for r495.2. `versions.json`, which
+names the current Beta, Stable and LTS releases, is the one file at the root.
 
 The manual, the Addon SDK samples and the example projects are separate clones
 (`Construct3-Manual`, `Construct-Addon-SDK`, `Construct-Example-Projects`).
@@ -20,9 +24,18 @@ finds them.
 
 `src/ingest/c3_fetcher.py` fetches and caches CDN data.
 
+### Release Directory
+
+Every file of a release comes from its own directory, `r495-2/` for r495.2.
+If that directory returns 404, the fetch stops: the root serves whichever
+release is stable now, so reading it would mix releases under one name.
+`C3Fetcher` takes the release as `versions.json` names it, `r495.2`, and
+refuses the directory spelling. See
+`docs/decisions/cdn-release-directory.md`.
+
 ### Cache Strategy
 
-- Cache directory: `.cache/c3-cdn/{release}/`
+- Cache directory: `.cache/c3-cdn/{release}/`, keyed by the release name (`r495.2`), not the directory
 - Expiry: every Wednesday 08:00 Beijing time (aligned with Scirra's Tuesday UK evening releases)
 - Within one cache period, each endpoint is fetched at most once
 - `force=True` bypasses cache
