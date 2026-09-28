@@ -34,3 +34,16 @@ Sources and the rule for adding an entry are in the index,
   exported c3runtime.js r503, Tween `Exps.Value` returns
   `GetTweenIncludingWaitingForRelease(tag)` or 0, `_FinishTriggers` calls
   `ReleaseTween`; observed in a game project, r503 preview, 2026-09-29]
+- A one-property or two-property tween changes its property by the step of
+  each tick, not by setting it to the eased value: the properties are named
+  `offsetX`, `offsetWidth` and so on, and the runtime calls `OffsetWidth(change)`.
+  A *Set width* or *Set X* made while such a tween plays is kept, and the rest
+  of the tween's change is added on top, so the tween ends off its end value
+  by what the *Set* moved it. An event that places the same property while
+  the tween may still run, a level setup that sets a bar's width during the
+  bar's own tween, needs *NOT Is playing "tag"* in front of it, or a *Stop*
+  of the tween. [runtime: exported c3runtime.js r503, Tween property track
+  `"offsetWidth"` setter calls `t.OffsetWidth(e)` with the tick's change;
+  observed in a game project, r503 preview, 2026-09-29: a progress bar
+  tweened from 416 to 20 px over 0.55 s, set to 20 by the next level's setup
+  at 0.6 s of the tween's 0.67 s, ended at 2 px]

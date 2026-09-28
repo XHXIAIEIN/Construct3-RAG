@@ -139,6 +139,7 @@ step, or when several animations share one property.
 - A value tween read under *Is playing* drives what Tween cannot address, a full 360° turn included.
 - *On finished* runs before *Destroy on complete* destroys the instance, and *On any finished* runs for that tween too.
 - `Tween.Value(tag)` reads 0 once the tween ends: animate a channel as what is left of it, from the full amount to 0.
+- A property tween adds each tick's change: a *Set* on that property while it plays is kept and the tween's rest lands on top; guard it with *NOT Is playing*.
 
 ### Creating objects
 
