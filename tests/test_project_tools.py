@@ -999,6 +999,31 @@ def test_print_counts_the_lines_of_a_script_stored_either_way(project):
     assert "script, 67 lines" not in out and "script, 1 lines" not in out, out
 
 
+def test_print_marks_what_the_editor_has_disabled(project):
+    """The editor skips a disabled condition or action and runs the event without it. Printed like the others,
+    a disabled NOT condition was read as a check the event still makes. The event's own marker ends the line
+    of its first condition, so it names the event."""
+    def disable(sheet):
+        rows = events(sheet)
+        rows["input"]["conditions"][1]["disabled"] = True         # an inverted condition
+        rows["input"]["actions"][0]["disabled"] = True            # a custom action
+        rows["add_score"]["actions"][0]["disabled"] = True        # an action with an id
+        rows["restart"]["disabled"] = True
+        rows["restart_block"]["disabled"] = True
+        rows["restart_block"]["conditions"][0]["disabled"] = True
+    edit(project, SHEET, disable)
+    for locale in ("en-US", "zh-CN"):
+        code, out = tool(project, "print_sheet", "Game", "--locale", locale)
+        assert code == 0, out
+        assert out.count(" [disabled]") == 4 and out.count(" [event disabled]") == 2, out
+    code, out = tool(project, "print_sheet", "Game")
+    assert "   5   Touch: On touched Coin (start)\n       Coin: NOT Is any Tween playing [disabled]\n" \
+           "           -> Coin: Collect() [disabled]" in out
+    assert "   7 function AddScore(points: number)\n         -> System: Add points to score [disabled]" in out
+    assert "   8 group Restart [event disabled]\n" in out
+    assert "   9   System: Coin.Count = 0 [disabled] [event disabled]\n       System: Trigger once\n" in out
+
+
 def test_scripts_write_utf8_and_survive_a_code_page_that_cannot(built):
     """A piped Python on Windows writes the ANSI code page: mojibake under cp936, a crash under cp1252."""
     script = built / INSTALLED / "scripts" / "print_sheet.py"
@@ -1290,6 +1315,15 @@ def test_plan_sets_the_values_of_an_event_and_removes_an_action(project):
     assert "   8 group Over (inactive on start)" in sheet and "Wait 1 seconds" not in sheet
     code, out = plan(project, {"event": 9, "set": {"actions": []}})
     assert code == 1 and "\"set\" changes values, not 'actions'" in out
+
+
+def test_plan_shows_a_condition_or_action_it_disables_as_disabled(project):
+    code, out = plan(project, {"event": 5, "condition": 2, "set": {"disabled": True}},
+                     {"event": 7, "action": 1, "set": {"disabled": True}})
+    assert code == 0, out
+    assert "       Coin: NOT Is any Tween playing [disabled]\n" in out
+    assert "         -> System: Add points to score [disabled]\n" in out
+    assert events(json.loads((project / SHEET).read_text(encoding="utf-8")))["input"]["conditions"][1]["disabled"] is True
 
 
 def test_plan_names_an_older_form_of_a_text_it_left_alone(project):
