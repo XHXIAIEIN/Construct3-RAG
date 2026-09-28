@@ -47,3 +47,18 @@ Sources and the rule for adding an entry are in the index,
   observed in a game project, r503 preview, 2026-09-29: a progress bar
   tweened from 416 to 20 px over 0.55 s, set to 20 by the next level's setup
   at 0.6 s of the tween's 0.67 s, ended at 2 px]
+- *Stop* does not zero a channel at once: the stopped tween goes on a list
+  that is released at the end of the tick, and `Value(tag)`, `Progress` and
+  `Time` still read it for the rest of that tick. Events after the *Stop* in
+  the same tick see the value it stopped at, and the channel reads 0 from
+  the next tick. Stopping one channel and starting another in the same
+  action list therefore draws one frame with both, which blends a crouch
+  into the jump that releases it rather than popping back to rest. A new
+  tween started under the same tag is found first, so a *Stop* followed by
+  a restart reads the new tween at once. [runtime: exported c3runtime.js
+  r503, Tween `StopTweens` calls `ReleaseTween`, which moves the tween to
+  `_waitingForReleaseTweens`, emptied in `Tick2`; `Exps.Value` reads
+  `GetTweenIncludingWaitingForRelease`, whose list puts active tweens
+  first; observed in a game project, r503 preview, 2026-09-29: a crouch
+  channel stopped as the jump squash started read 1 in that frame, 0 in
+  the next]
