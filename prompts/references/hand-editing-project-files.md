@@ -75,6 +75,13 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
   across all layouts. Files: UTF-8 with raw non-ASCII, tab indent, LF, no
   trailing newline. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
   reproduces the editor's output byte for byte.
+- Local Storage is an IndexedDB database named `c3-localstorage-` plus the
+  project's `uniqueId`, so it survives closing the preview and is separate
+  per project. A tool that rewrites `project.c3proj` must keep `uniqueId`
+  or the saved data is orphaned. [runtime: exported c3runtime.js
+  `_GetProjectStorage`; manual:
+  scripting/scripting-reference/interfaces/istorage.md "unique to the
+  specific project"]
 - A behavior declared on a family is used through a member type with the
   family's behavior name: `"objectClass": "DragonHead", "behaviorType":
   "Physics"` where only family `Parts` declares Physics. The member's layout

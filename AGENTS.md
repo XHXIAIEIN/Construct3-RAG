@@ -75,10 +75,12 @@ Interactions, data storage, timing, animation: read and follow
 
 - UID links between objects, `Pick all` to reset picking, or a timer,
   tween or table rebuilt from variables: redesign.
-- A runtime fact learned from a project goes into the topic file of its
-  group under `prompts/pitfalls/`, with its source, and its conclusion goes
-  into `prompts/event-sheet-pitfalls.md` as one line ("Adding an entry"
-  there).
+- A runtime behaviour of events learned from a project, one that changes
+  which events are written, goes into the topic file of its group under
+  `prompts/pitfalls/`, with its source, and its conclusion goes into
+  `prompts/event-sheet-pitfalls.md` as one line. A lesson about the project
+  file format, the editor, the preview or the look goes where "Adding an
+  entry" there says.
 - Events written into a project or a generator follow
   `prompts/event-sheet-style.md`: how the official examples organise, name
   and comment a sheet.

@@ -252,26 +252,33 @@ when the events restart a layout or go to one, such as a new round.
 
 - *Restart layout* and *Go to layout* keep every global variable and static local at its current value.
 
-### Storage and preview
+### Storage and export
 
-Read [pitfalls/storage-and-preview.md](pitfalls/storage-and-preview.md)
-when the project saves data, has a loader layout, is exported for the web
-or uses File System.
+Read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md)
+when the project saves data, is exported for the web or uses File System.
 
-- *Preview* starts from the layout open in the editor, so a loader layout is skipped.
-- Local Storage is keyed by the project's `uniqueId`, which a rewritten `project.c3proj` must keep.
 - A web export looks for an update only when the page loads.
 - File System writes only through a picker tag; the known folders exist only in desktop exports.
 - No tag names the Construct project folder; saves go to `<current-app-data>`.
 - In a browser File System needs desktop Chromium and a user input trigger, and a save picker erases the file.
 - Android and iOS exports have no File System: save with Local Storage and hand files over with Share.
-- A scripted drag in preview needs `pointerrawupdate` before each `pointermove`, in CSS pixels.
 
 ## Adding an entry
 
+A pitfall is a runtime behaviour of events that changes which events an
+agent writes: without the line, the agent would write them wrong. A lesson
+that does not change the events goes elsewhere:
+
+- How a project file is written: [references/hand-editing-project-files.md](references/hand-editing-project-files.md),
+  or a rule of the `construct3-project` skill's checker when a script can
+  test it.
+- What the editor, the preview or a script driving them does: the
+  `construct3-project` skill's references, such as [editor-and-preview.md](../skills/construct3-project/references/editor-and-preview.md).
+- How the game looks, its art and its colours: [event-sheet-style.md](event-sheet-style.md),
+  *Project*, or the look documents listed in the root `AGENTS.md`.
+
 One bullet: fact, consequence, source. Manual wording beats an observation, an
-observation beats intuition, intuition is not an entry. Would the agent get it
-wrong without the line? If not, do not add it.
+observation beats intuition, intuition is not an entry.
 
 The bullet goes into the topic file of its group, and the group here gets
 its conclusion as one line, in the same place in the order. Picking and

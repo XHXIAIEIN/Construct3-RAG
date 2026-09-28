@@ -122,8 +122,9 @@ official example may carry one. What the shape should be instead is
 What happens at runtime: which instances a condition picks, what order
 triggers fire in, whether an expression means what the comment says. The
 editor and the preview judge those; the observations in
-`Construct3-RAG/prompts/event-sheet-pitfalls.md` came from previewing, not
-from the checker. Expression syntax beyond those operators, argument counts and types, and
+`Construct3-RAG/prompts/event-sheet-pitfalls.md` and in
+`editor-and-preview.md` beside this file came from previewing, not from the
+checker. Expression syntax beyond those operators, argument counts and types, and
 `function` and `template` parameters are not checked either.
 The editor checks the types in an expression as it opens the project, and
 `scripts/open_in_editor.py` prints its message, such as `Type mismatch: -

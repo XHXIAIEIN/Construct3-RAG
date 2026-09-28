@@ -208,7 +208,10 @@ not held to this. `--dry-run` does all of that and writes nothing.
    as `Event sheet 1, event 3, action 1`. Fix either as a finding and go
    back to step 2. The preview runs the layout the editor opens on for 5
    seconds without input: it catches what breaks on start, not what a
-   player does later.
+   player does later. Read
+   [references/editor-and-preview.md](references/editor-and-preview.md)
+   before previewing a game that starts on another layout, or before
+   driving the preview with input from a script.
    Exit code 3: the machine has no Edge, Chrome or Chromium, and the script
    printed the steps for a browser tool of this session instead, one that
    opens a page, runs JavaScript and puts a file on a file input. Follow them with the tool at
@@ -225,8 +228,13 @@ Fade, a hierarchy for Pin, instance tags for the Solid behavior's own), and
 before events go
 into a sheet read `Construct3-RAG/prompts/event-sheet-style.md`, the shape
 the official examples give a sheet, which the style warnings enforce only in
-part; a runtime fact the preview teaches goes into
-`Construct3-RAG/prompts/event-sheet-pitfalls.md` with its source.
+part. What the preview teaches goes where it changes the next agent's work,
+with its source: a runtime behaviour that changes which events are written
+into `Construct3-RAG/prompts/event-sheet-pitfalls.md`, how a project file is
+written into `Construct3-RAG/prompts/references/hand-editing-project-files.md`,
+what the editor or the preview does into
+[references/editor-and-preview.md](references/editor-and-preview.md), and
+how the game looks into `Construct3-RAG/prompts/event-sheet-style.md`.
 
 Exit code 2 and `stopped at`: a file lacks a key the editor always writes.
 Compare it with a file `assets/build_project.py` generates or with an
