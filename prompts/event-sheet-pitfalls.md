@@ -389,6 +389,13 @@ first.
   `Set height to min(Self.TextHeight + 4, 644)`, flowchart-questionnaire
   sizes a background from `TextWidth + 10`, `TextHeight + 10`; observed:
   2026-09-23]
+- A single line taller than its Text box is not hidden: it draws with the
+  bottom of the glyphs cut off at the box edge. Size is in points, so a
+  line needs about `size × 4/3 × 1.2` pixels of height; a 44 pt bold price
+  in a 46 px tall box lost the bottom of its digits. A *Set font size* at
+  runtime, such as a bigger critical hit number, needs the box sized for
+  the largest size. [manual: plugin-reference/text.md "Size"; observed in
+  a game project, 2026-09-28]
 
 ## Tween
 
