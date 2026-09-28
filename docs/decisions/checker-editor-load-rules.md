@@ -97,8 +97,6 @@ Option 2 as the default, and option 3 as the step after it.
   no new finding over the examples, to catch what the editor opener already
   reports; it is worth building when an open fails on a mismatch the
   shadowing rule does not explain.
-- `open_in_editor.py --jobs 3` timed out on 7 of the 91 with "no answer in
-  85 seconds"; each opened alone.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from
@@ -134,6 +132,15 @@ action 1`, the numbering `print_sheet.py` uses.
   seconds; cold, 10 to 40. Background features are switched off, so the
   profile holds the editor's cache alone. The profile path is passed as a
   `\\?\` path: past about 177 characters its IndexedDB exceeded MAX_PATH.
+- `--jobs` opens each project in a window of its own. Tabs of one window
+  are hidden except the front one, headless as well: their timers fire once
+  a second and their animation frames not at all. An editor in such a tab
+  stayed at "Opening (0%)" past the 85 seconds the script waits for its
+  answer, and the project was reported as an error that opened when run
+  alone. Over the 84 eval projects with `--preview 5 --jobs 3`, tabs gave 6
+  such errors, each on a hidden page; windows gave none in three runs, the
+  same answer per project each time, in 5 minutes against 9. The results
+  are in `.local/docs/evidence/skill-evals/construct3-project/opened-2026-09-28/`.
 - The preview wraps the runtime's tick once to reach it, as skymen/c3cli
   (MIT) does, and reads the preview page and its workers once at the end.
   It runs without input: it catches what breaks on start, not what a player

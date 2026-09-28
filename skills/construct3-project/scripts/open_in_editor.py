@@ -430,7 +430,11 @@ class Browser:
             return None
 
     def page(self, url: str) -> tuple[str, DevTools]:
-        target = self.devtools.call("Target.createTarget", url=url)["targetId"]
+        """A page in a window of its own. In a shared window every tab but the front
+        one is hidden, headless too: its timers fire once a second, its animation
+        frames not at all, and an editor there could sit at "Opening (0%)" for longer
+        than RESULT waits."""
+        target = self.devtools.call("Target.createTarget", url=url, newWindow=True)["targetId"]
         return target, DevTools(f"ws://127.0.0.1:{self.port}/devtools/page/{target}")
 
     def close(self) -> None:
