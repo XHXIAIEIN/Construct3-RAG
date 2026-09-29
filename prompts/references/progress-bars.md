@@ -51,7 +51,7 @@ the corpus uses it for a file transfer, not in a game HUD.
 
 On the UI layer at parallax 0, the fill and its frame in one place; the
 frame's size in grid units and the fill's `LENGTH` a constant of the sheet
-(`prompts/event-sheet-style.md`, *Project*). In a generator this page is one
+([new-project.md](new-project.md)). In a generator this page is one
 call: `hud_bar(frame, fill, where, length)` of the skill's template places
 the frame by `anchor()` and the fill inside it with its origin on the left,
 `bar_types()` and `bar_images()` make the two Tiled Backgrounds (9-patches

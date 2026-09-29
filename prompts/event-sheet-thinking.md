@@ -135,49 +135,16 @@ tips-and-guides/deprecated-features.md]
 
 ## Feel
 
-The same rule for what the player notices first. Each row is what the
-official examples do.
-
-| Need | Use | Example |
-|------|-----|---------|
-| Screen shake on impact | Scroll To *Shake*, *Reducing magnitude*, duration tied to the effect (`Timeline.TotalTime(tag)`) | cave-bridge, three-cups |
-| Hit stop, slow motion | *Set time scale* 0.1, *Wait*, *Set time scale* 1; a *Tween (value)* driving *Set time scale* for a smooth ramp | segmented-boss-fight, samuroof, eventide |
-| Squash, pop, bounce on impact | Tween *Size* or *X Scale*/*Y Scale* from `On collision`, *Ping pong* for a pop that returns, an *In Back* ease for a wind-up | gold-mining, cannon-launch, gravity-portal |
-| Hit feedback | Flash *Flash* from `On collision`; Tween *Color* to `rgbEx(...)` and back | bewitched-torches, turret-predictive-aim; pinball, shifting-dungeon |
-| A choreographed sequence over several objects: opening, level clear, a bridge rebuilding | Timeline *Play*, *Set instance* for runtime-created objects | cave-bridge, 17 examples |
-| Camera that follows, clamped to a zone | Scroll To on the target when plain following is enough; System *Scroll to position* with `lerp(scrollx, clamp(target, zone edges), …)` every tick for bounds and smoothing | dynamic-camera-system |
-| Fade between layouts | A *Fader* sprite on the parallax-0 layer, Tween opacity, *Wait for previous actions*, *Go to layout* | avalanche, airborne-explorer |
-
-[manual: behavior-reference/scroll-to.md "Shake",
-system-reference/system-actions.md "Set time scale", behavior-reference/tween.md,
-behavior-reference/flash.md, project-primitives/timelines.md]
+Screen shake, hit stop, squash, hit flash, a choreographed sequence, a
+following camera, a fade between layouts: the official examples' recipe for
+each is in [references/feel.md](references/feel.md). Read it when generating
+a game, or before writing events for any of these.
 
 ## Layout of the sheet
 
-The official examples split the same way every time (groups in 237 of 432,
-several sheets in 48, includes in 14). What goes inside a group, and how it
-is named and commented, is [event-sheet-style.md](event-sheet-style.md),
-read before writing into a project.
-
-- One layout: one sheet. Groups by subsystem, named as the examples name them:
-  *Setup* (`On start of layout`), *Player*, *Controls*, *Camera*, *Tutorial*,
-  *Game over*, *Restart* (the restart key and *Restart layout*).
-- A second layout: each screen gets its own sheet (*Menu*, *Game*,
-  *Credits*); levels share one (samuroof: Level1 to Level5 use *Game*). A
-  subsystem several screens need, or one that outgrows the sheet, moves to
-  its own sheet (*Player*, *Enemies*, *HUD*, *Camera*, *Effects*, *Sound*) and
-  the screen's sheet includes it (kiwi-story: eMain includes nine).
-- Globals are project-wide wherever they are declared. Declare them on one
-  sheet (*Globals*) so they can be found; kiwi-story, samuroof and
-  kitty-katcher do.
-- A group that starts inactive is for a phase that begins later: tutorial,
-  a boss enabled on entry, debug tools (19 examples). Deactivating a group
-  stops its events and nothing else, so it is not a pause.
-
-[manual: project-primitives/events/groups.md, includes.md, event-sheets.md
-"share events between layouts", variables.md "Global variables"; examples:
-kiwi-story, samuroof, airborne-explorer, family-tree, labyrinth; survey of
-Construct-Example-Projects, 2026-09-18]
+Generating a project, or adding a layout, layer, event sheet, group or
+object type to one: read [references/new-project.md](references/new-project.md)
+first, how the examples split the sheets and groups and build the rest.
 
 ## Smell table
 
@@ -212,11 +179,12 @@ One hit means redesign, not patch.
    editor words it, at about a quarter of the length.
    The drop pattern in `family-tree` and `alchemist` is `On drop`, a sub-event
    `Is overlapping another object`, narrowing conditions, then `Else`.
-3. Walk the Native first and Feel tables: for each delay, motion, table,
-   phase, sequence or effect in the draft, name the built-in that owns it.
-   Place the events by "Layout of the sheet"; when they go into a project,
-   group, name and comment them as [event-sheet-style.md](event-sheet-style.md)
-   says.
+3. Walk the Native first table, and the [Feel](references/feel.md) table
+   for an effect it names: for each delay, motion, table, phase, sequence or
+   effect in the draft, name the built-in that owns it. Place a new sheet,
+   group or object type by [references/new-project.md](references/new-project.md);
+   when the events go into a project, group, name and comment them as
+   [event-sheet-style.md](event-sheet-style.md) says.
 4. Read the manual page for each mechanism you are about to use.
 5. Draft, then run the smell table and the
    [pitfalls](event-sheet-pitfalls.md), with the topic file of every group
@@ -227,36 +195,7 @@ One hit means redesign, not patch.
 
 ## Worked case: pieces on a slot grid
 
-`Slot` sprites form a grid. `Piece` (Drag & Drop, Tween) sits on slots; family
-`Pieces` has the single member `Piece` and carries `level`, `startX`, `startY`.
-Drop on an empty slot moves in; on a same-level piece merges; on another piece
-swaps; anywhere else returns.
-
-```
-Piece: On drag start
-  -> Piece: Move to top; Set startX to Self.X; Set startY to Self.Y;
-     Set collisions disabled
-Piece: On drop
-  -> Piece (Drag & Drop): Set disabled
-  System: Pick Slot overlapping point (Piece.X, Piece.Y)
-    Slot: Is overlapping Pieces
-      System: Compare two values  Pieces.level = Piece.level
-        -> Pieces: Set level to Pieces.level + 1; Piece: Destroy
-      Else
-        -> Pieces: Tween position to (Piece.startX, Piece.startY)
-           Piece: Tween position to (Slot.X, Slot.Y)
-    Else
-      -> Piece: Tween position to (Slot.X, Slot.Y)
-  Else
-    -> Piece: Tween position to (Self.startX, Self.startY)
-Piece (Tween): On any finished
-  -> Piece (Drag & Drop): Set enabled; Piece: Set collisions enabled
-(no condition)                -> Slot: Set frame to 0
-Slot: Is overlapping Pieces   -> Slot: Set frame to 1
-```
-
-`Piece` is the dropped piece for the whole trigger; `Pieces` is whatever else
-is on the target slot. No UID, no `Pick all`, no global. The same interaction
-written as a transcribed program, with each smell named, is in
-[references/worked-case-slot-grid.md](references/worked-case-slot-grid.md);
-read it when a draft has hit the smell table and you need to see the mapping.
+Dragging pieces onto slots or a grid, to merge, swap, move or return them,
+or a draft that hit the smell table: read
+[references/worked-case-slot-grid.md](references/worked-case-slot-grid.md),
+the interaction written natively and then as a transcribed program.

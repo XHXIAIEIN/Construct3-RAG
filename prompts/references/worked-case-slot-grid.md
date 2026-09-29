@@ -1,8 +1,47 @@
-# Worked case: the slot grid as a transcribed program
+# Worked case: pieces on a slot grid
 
-Companion to the worked case in [../event-sheet-thinking.md](../event-sheet-thinking.md).
-Read it when a draft has hit the smell table and you want to see which
-construct each smell came from. The native version is in the guide.
+One interaction written twice: natively, then as the transcribed program an
+agent tends to draft first, with each smell named. Read it when the events
+drag pieces onto slots or a grid to merge, swap, move or return them, or
+when a draft has hit the smell table of
+[../event-sheet-thinking.md](../event-sheet-thinking.md) and you want to see
+which construct each smell came from.
+
+## Native
+
+`Slot` sprites form a grid. `Piece` (Drag & Drop, Tween) sits on slots; family
+`Pieces` has the single member `Piece` and carries `level`, `startX`, `startY`.
+Drop on an empty slot moves in; on a same-level piece merges; on another piece
+swaps; anywhere else returns.
+
+```
+Piece: On drag start
+  -> Piece: Move to top; Set startX to Self.X; Set startY to Self.Y;
+     Set collisions disabled
+Piece: On drop
+  -> Piece (Drag & Drop): Set disabled
+  System: Pick Slot overlapping point (Piece.X, Piece.Y)
+    Slot: Is overlapping Pieces
+      System: Compare two values  Pieces.level = Piece.level
+        -> Pieces: Set level to Pieces.level + 1; Piece: Destroy
+      Else
+        -> Pieces: Tween position to (Piece.startX, Piece.startY)
+           Piece: Tween position to (Slot.X, Slot.Y)
+    Else
+      -> Piece: Tween position to (Slot.X, Slot.Y)
+  Else
+    -> Piece: Tween position to (Self.startX, Self.startY)
+Piece (Tween): On any finished
+  -> Piece (Drag & Drop): Set enabled; Piece: Set collisions enabled
+(no condition)                -> Slot: Set frame to 0
+Slot: Is overlapping Pieces   -> Slot: Set frame to 1
+```
+
+`Piece` is the dropped piece for the whole trigger; `Pieces` is whatever else
+is on the target slot. No UID, no `Pick all`, no global. The same interaction
+written as a transcribed program, with each smell named, follows.
+
+## As a transcribed program
 
 Same interaction: `Slot` grid, `Piece` with Drag & Drop and Tween, drop to
 move, merge, swap, or return.

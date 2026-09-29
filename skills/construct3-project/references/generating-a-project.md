@@ -42,8 +42,10 @@ overwrites the files it produces.
 ## Build, check, open
 
 Design first, as `Construct3-RAG/prompts/event-sheet-thinking.md` says:
-relations, an official example with the same behaviors, the Native first and
-Feel tables, the layout of the sheet. Then:
+relations, an official example with the same behaviors, the Native first
+table, the Feel table of `Construct3-RAG/prompts/references/feel.md`, and the
+sheets, groups and objects of
+`Construct3-RAG/prompts/references/new-project.md`. Then:
 
 1. Write the design into the generator: the constants at the top, the
    objects and their variables and behaviors, the layouts, then the event
@@ -140,8 +142,8 @@ habits; they are what makes rerunning safe.
   (8 px for pixel art, 32 px otherwise) and `TOUCH` is the smallest object
   a finger taps at that viewport; a tapped sprite is at least `TOUCH` wide.
   The middle of the screen is the game's; the HUD lives on the edges. The
-  counts behind the grid are in `Construct3-RAG/prompts/event-sheet-style.md`,
-  *Project*.
+  counts behind the grid are in
+  `Construct3-RAG/prompts/references/new-project.md`.
 - Colours are roles of `PALETTE`, named once at the top with the game's own
   colours. The images `write_png()` draws, the labels and the layers take
   them by role through `rgb()`, and a pixel of any other colour stops the
@@ -224,9 +226,10 @@ habits; they are what makes rerunning safe.
   decision is `cases(gate, [("Case one", conds, acts), ("Otherwise",
   None, acts)])`: one gate event, flat sibling cases with a comment each,
   `None` for Else. The checker's `--style` warns where a sheet departs from
-  these three shapes; the names, folders, layers and `ObjectRepository`
-  layout it cannot check are in
-  `Construct3-RAG/prompts/event-sheet-style.md`.
+  these three shapes. What it cannot check: the names, in
+  `Construct3-RAG/prompts/event-sheet-style.md`, and the folders, layers and
+  `ObjectRepository` layout, in
+  `Construct3-RAG/prompts/references/new-project.md`.
 
   ```python
   def module_player() -> dict:
