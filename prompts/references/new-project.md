@@ -110,9 +110,9 @@ Construct-Example-Projects, 2026-09-18]
   *Destination out* holes, on a layer with *Force own texture*.
 - Text is a SpriteFont in two games of three, the Text plugin in the third,
   never both in one project.
-- Feel comes from behaviors: Tween on almost everything, Timer, Sine, Fade,
-  Flash, Rotate, Bullet, Particles; the effects used are HSL adjust, Glow,
-  Blur, Warp object.
+- Feel comes from behaviors: Tween on almost everything, a fade included
+  (Tween on Opacity), Timer, Sine, Flash, Rotate, Bullet, Particles; the
+  effects used are HSL adjust, Glow, Blur, Warp object.
 - Families for Z order (`ZOrderables`) and enemies; containers for the
   collision and graphics pair and for an enemy with its parts. The player's
   instance variables are `hp`, `maxHp`, `dead`.
