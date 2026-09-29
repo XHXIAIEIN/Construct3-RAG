@@ -40,3 +40,12 @@ Sources and the rule for adding an entry are in the index,
   `OriginalViewportWidth` the project's *Viewport size* property. [manual:
   system-reference/system-expressions.md "Viewport", "Layout";
   plugins/system.json: every `Viewport*` expression has a `layer` parameter]
+- Drag & Drop moves the dragged instance only when the pointer moves: it
+  sets the position to the pointer minus the grab offset, and a tick without
+  movement writes nothing. A *Set position* on the dragged instance holds
+  while the finger rests and is overwritten by the next move, so a look that
+  trails or lifts above the finger belongs on a child the events position,
+  and the dragged instance stays the one drops and overlaps are judged by.
+  [runtime: exported c3runtime.js r503, `Behaviors.DragnDrop` `_OnMove`,
+  called from the `pointermove` dispatch only; observed in a game project,
+  r503 preview, 2026-09-29]
