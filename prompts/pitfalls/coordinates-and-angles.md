@@ -45,11 +45,20 @@ Sources and the rule for adding an entry are in the index,
   original viewport too: a HUD placed at the top of the viewport stays at
   the top of the design area, not at the top of a taller screen, and the
   layout beyond the viewport shows on the sides. Pin an edge HUD with the
-  Anchor behavior on that layer; paint the area outside the layout with
-  background objects that reach past it, not with events. [manual:
+  Anchor behavior on that layer. A backdrop that must reach the screen's
+  sides takes Anchor with *Left edge* Viewport left and *Right edge*
+  Viewport right: the right edge resizes it to the screen's width, so it
+  is laid out a little wider than the viewport, not thousands of pixels
+  past the layout. A shaking camera moves the viewport, and 20 px past each
+  side covers a shake of 8. Anchor moves a left edge without resizing, so a
+  piece that grows to one side only, its other end fixed, is set under
+  *On start of layout* OR Browser *On resized*: width to `Self.BBoxRight -
+  ViewportLeft(layer) + 20`, then X to `ViewportLeft(layer) - 20`. [manual:
   behavior-reference/anchor.md; observed in a game project, a 430×932
   portrait export switched to *Scale outer* and shown at 560×380 and
-  300×700 in Chrome, 2026-09-30]
+  300×700 in Chrome, 2026-09-30; the Anchor backdrop and the one-sided
+  piece previewed at 900×500 and 330×800 and after a resize, r504,
+  2026-09-30]
 - Drag & Drop moves the dragged instance only when the pointer moves: it
   sets the position to the pointer minus the grab offset, and a tick without
   movement writes nothing. A *Set position* on the dragged instance holds
