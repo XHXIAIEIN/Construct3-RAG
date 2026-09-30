@@ -20,6 +20,19 @@ Sources and the rule for adding an entry are in the index,
   pattern"; plugin-reference/9-patch.md "a Sprite object, which just stretches
   its entire image", "useful for representing things like progress bars";
   reference: references/progress-bars.md]
+- A Tiled Background's *Set image X scale* and *Set image Y scale* take a
+  percentage, while the layout file writes the same property as a fraction:
+  `"image-scale-x": 0.3333` in `layouts/` is `33.33` in an event, and an
+  event that writes `Self.Width / Self.ImageWidth` shrinks the tile a
+  hundredfold. *Set image Y offset* moves the image down as the offset
+  grows, so a pattern that flows upward takes a falling offset, such as
+  `P - time * speed % P`, where the wrap `P` is a whole number of tile
+  periods, which also keeps the offset small as the manual asks. [manual:
+  plugin-reference/tiled-background.md "stretching ... by a percentage",
+  "wrapping the image offset back to 0"; observed in a game project, r504
+  preview, 2026-10-01: a scale of width ÷ image width read 0.0019 through
+  the script interface, and screenshots 0.12 s apart showed the chevrons
+  moving down while the offset grew]
 - A bar grows from its origin. Every filling bar in the examples has its
   origin on the edge it grows from, (0, 0) or (0, 0.5); a cover that hides
   from the right has (1, 0.5); a 0.5 origin grows both ways from the middle.
