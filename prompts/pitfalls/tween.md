@@ -23,6 +23,20 @@ Sources and the rule for adding an entry are in the index,
   when `GetDestroyInstanceOnComplete()`; observed in a game project, r503
   preview, 2026-09-29: sparks spawned from `On Tween "collapse" finished` at
   the shrunk enemy's position, its container's hitbox still picked]
+- Starting a tween on a property (position, size, angle, opacity, any but
+  *Tween (value)*) stops every tween already running on that property of the
+  instance, whatever its tags. A stopped tween never finishes: no *On
+  finished*, and no *Destroy on complete*. A death tween that shrinks the
+  instance to 0 and destroys it is cancelled by any later size tween, a
+  landing squash for one, and the instance stays for good. Let a Timer on
+  the instance, or a *Wait*, destroy it and leave the tween only the look;
+  or keep every other size tween off a dying instance. [runtime: exported
+  c3runtime.js r504, Tween `CreateTween` calls `ReleaseTweens(property)`
+  unless `Maps.IsValueId`; observed in a game project, r504 preview,
+  2026-10-01: an enemy killed while still falling started `die collapse`
+  (size to 0, destroy on complete), its landing squash started a size tween
+  0.15 s later, the collapse was gone from `allTweens()` at once, and the
+  enemy stayed at full size with collisions off until the stage was stuck]
 - `Tween.Value(tag)` reads 0 once the tween has finished, not its end value:
   a finished tween is released, and the expression returns 0 when no tween
   of the tag is left. A state that must hold (a piece kept enlarged while it
