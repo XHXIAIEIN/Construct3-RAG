@@ -97,9 +97,25 @@ Sources and the rule for adding an entry are in the index,
   every frame, 175 texture uploads a second at 144 Hz, most of the Text
   cost of the whole game. *Set text* to the string already shown costs
   nothing: the runtime compares and returns. Animate a number with things
-  that move the finished texture (position, angle, opacity), and change
-  the font size once.
+  that move the finished texture (position, angle, opacity), or draw it
+  with a Sprite Font and tween its *Scale*, which redraws nothing: after
+  that change the same game redrew no damage number and no countdown.
   *Set resolution mode* to *Fixed* only stops redraws caused by the display
   scale, not by the font size. [manual: plugin-reference/text.md "Set
   resolution mode"; observed in a game project, r504 export, runtime
   `_SetText` source and a counter on `_OnBeforeRender`, 2026-09-30]
+
+- A Sprite Font draws each character as its whole cell of the image and
+  moves on by the character's width from *Spacing data*, so a glyph is
+  drawn against the left edge of its cell, and an outline that reaches
+  past that width into the next cell stays whole: the next character is
+  drawn over it. Its colour and *Set color* tint every pixel, the outline
+  as well; bake each colour into its own image, one object per colour, as
+  white and gold damage numbers take two. A character that would end past
+  the box's width is not drawn, and a line taller than the box is drawn
+  from the top instead of centred: size the box for the longest text at
+  the largest scale a pop tween reaches. [manual:
+  plugin-reference/sprite-font.md "Re-coloring SpriteFonts", "Sprite
+  font"; editor r504 `plugins/general/spritefont/spritefontText.js`
+  `Draw`, `_LayoutText`; observed in a game project, r504 preview,
+  2026-09-30]

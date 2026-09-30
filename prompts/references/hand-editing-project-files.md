@@ -72,7 +72,10 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
   fills defaults on load. `pick-nearestfurthest` loads with `which`, `x`,
   `y` alone, though the schema also lists `z` and `pick-all-tied`.
 - `sid`: 15-digit integer, unique across the whole project. `uid`: unique
-  across all layouts. Files: UTF-8 with raw non-ASCII, tab indent, LF, no
+  across all layouts and the single-global object types, whose one
+  instance keeps its `uid` in `objectTypes/<Name>.json` (the Timeline
+  controller among them): a new layout instance numbered from the highest
+  layout uid alone can collide with it. Files: UTF-8 with raw non-ASCII, tab indent, LF, no
   trailing newline. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
   reproduces the editor's output byte for byte.
 - Local Storage is an IndexedDB database named `c3-localstorage-` plus the
@@ -87,6 +90,19 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
   "Physics"` where only family `Parts` declares Physics. The member's layout
   instances carry the family behavior's properties block as if it were their
   own.
+- A Sprite Font is `"plugin-id": "Spritefont2"` with an `image` block in
+  its object type file, as a Tiled Background has, the picture at
+  `images/<lowercase name>.png`, and a `usedAddons` entry `{"type":
+  "plugin", "id": "Spritefont2", "name": "Sprite font", "author":
+  "Scirra", "bundled": false}`. Its layout instance holds `text`,
+  `enable-bbcode`, `character-width`, `character-height`,
+  `character-set`, `spacing-data`, `scale`, `character-spacing`,
+  `line-height`, `horizontal-alignment`, `vertical-alignment`, `wrapping`,
+  `initially-visible`, `origin` and `read-aloud`. `spacing-data` is a
+  string holding JSON, `"[[25,\".\"],[53,\"0123456789\"]]"`, or `""`
+  for none. [examples: animated-spritefont-effects, 3d-castle-maze
+  `TextFont`; a game project the editor r504 opened and previewed,
+  2026-09-30]
 - Instance `world` entries write Z elevation as `"z"` with a `"depth"` key;
   layers keep `zElevation`.
 

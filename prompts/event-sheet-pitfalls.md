@@ -162,7 +162,8 @@ or size Text, draw bars, Drawing Canvas polygons or blend modes.
 - A single line taller than its Text box draws with the bottom of its glyphs cut off.
 - *Move to top* leaves a hierarchy's children where they were: move each part.
 - *Set color* multiplies: draw a tinted part white and keep highlights on an untinted child.
-- Changing a Text's font size redraws and re-uploads its texture: animate position, angle or opacity, not the size, every tick.
+- Changing a Text's font size redraws and re-uploads its texture: animate position, angle or opacity, or use a Sprite Font and tween its scale.
+- A Sprite Font draws whole cells and tints its outline with its colour: draw glyphs left in the cell, one image per colour, a box that fits the largest scale.
 
 ### Tween
 
