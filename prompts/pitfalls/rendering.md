@@ -97,8 +97,8 @@ Sources and the rule for adding an entry are in the index,
   every frame, 175 texture uploads a second at 144 Hz, most of the Text
   cost of the whole game. *Set text* to the string already shown costs
   nothing: the runtime compares and returns. Animate a number with things
-  that move the finished texture (position, angle, opacity) or with a
-  Sprite Font, whose scale does not redraw, and change the font size once.
+  that move the finished texture (position, angle, opacity), and change
+  the font size once.
   *Set resolution mode* to *Fixed* only stops redraws caused by the display
   scale, not by the font size. [manual: plugin-reference/text.md "Set
   resolution mode"; observed in a game project, r504 export, runtime
