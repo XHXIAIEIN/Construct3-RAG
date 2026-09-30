@@ -509,7 +509,7 @@ def test_template_behavior_blocks_hold_the_schemas_keys():
     spec.loader.exec_module(template)
     blocks = {"TWEEN": "tween", "TIMER": "timer", "SOLID": "solid", "SINE": "sin", "FLASH": "flash",
               "BULLET": "bullet", "EIGHT_DIR": "eightdir", "PLATFORM": "platform", "MOVE_TO": "moveto",
-              "ROTATE": "rotate", "PIN": "pin", "DRAG_DROP": "dragndrop", "SCROLL_TO": "scrollto",
+              "ROTATE": "rotate", "DRAG_DROP": "dragndrop", "SCROLL_TO": "scrollto",
               "DESTROY_OUTSIDE": "destroy", "BOUND_TO_LAYOUT": "bound", "LINE_OF_SIGHT": "los"}
     for const, behavior in blocks.items():
         schema = json.loads((REPO / "data" / "c3-schemas" / "en-US" / "behaviors" / f"{behavior}.json")

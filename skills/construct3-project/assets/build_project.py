@@ -1424,7 +1424,6 @@ MOVE_TO = {"MoveTo": {"properties": {"max-speed": 200, "acceleration": 600, "dec
                                      "set-angle": False, "stop-on-solids": False, "enabled": True}}}
 ROTATE = {"Rotate": {"properties": {"speed": 90, "acceleration": 0, "rotation-type": "2d", "enabled": True,
                                     "live-preview": False}}}
-PIN = {"Pin": {"properties": {"destroy": False}}}
 DRAG_DROP = {"DragDrop": {"properties": {"axes": "both", "enabled": True}}}
 SCROLL_TO = {"ScrollTo": {"properties": {"enabled": True}}}
 DESTROY_OUTSIDE = {"DestroyOutsideLayout": {"properties": {"region": "layout"}}}
