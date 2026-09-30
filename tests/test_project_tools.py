@@ -1435,6 +1435,8 @@ def test_dry_run_checks_and_shows_and_writes_nothing(project):
     ({"after": 8, "event": [TIMER]}, "an operation is one of"),
     ({"after": 8, "events": [{"eventType": "group"}]}, "a group needs 'title'"),
     ({"after": 8, "events": [{"conditions": [], "actions": []}]}, "An event with conditions and actions is a 'block'"),
+    ({"after": 8, "events": [{**TIMER, "subEvents": [TIMER]}]}, "'subEvents' is not a key of a group"),
+    ({"after": 8, "events": [{**TIMER, "sub-events": [TIMER]}]}, "sub-events are its 'children'"),
     ({"event": 2, "add-actions": [{"objectClass": "Coin"}]}, "has no 'id'"),
     ({"event": 1, "add-actions": [SET_TIME]}, "event 1 is a group, which has no actions"),
     ({"event": 2, "add-actions": [SET_TIME], "position": 5}, "position is 1 to 3"),

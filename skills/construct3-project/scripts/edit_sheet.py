@@ -82,6 +82,8 @@ ACES = {"id": [("id", NEEDED), ("objectClass", NEEDED), ("sid", SID), ("behavior
         "callFunction": [("callFunction", NEEDED), ("sid", SID), ("parameters", IF_GIVEN)],
         "customAction": [("customAction", NEEDED), ("objectClass", NEEDED), ("customActionObjectClass", IF_GIVEN),
                          ("sid", SID), ("disabled", IF_GIVEN), ("parameters", IF_GIVEN)]}
+# Keys the examples write on a few events only: a bookmark, a comment's colours.
+RARE_KEYS = {"block": ("bookmark",), "function-block": ("bookmark",), "comment": ("background-color", "text-color")}
 HOLDS_EVENTS = ("block", "group", "function-block", "custom-ace-block")
 PLACES = ("after", "before", "into")
 
@@ -169,6 +171,12 @@ def new_event(ev, where: str) -> dict:
         raise PlanError(f"{where}: eventType is {kind!r}; it is one of {', '.join(EVENTS)}. An event with conditions "
                         f"and actions is a 'block'")
     out = filled(ev, EVENTS[kind], f"{where}, a {kind}")
+    known = [key for key, _ in EVENTS[kind]] + list(RARE_KEYS.get(kind, ()))
+    for key in ev:
+        if key not in known:        # the editor drops a key it does not know, and what it held with it
+            raise PlanError(f"{where}: {key!r} is not a key of a {kind}, which has: {', '.join(known)}"
+                            + c3.closest(key, known, n=1)
+                            + ("; its sub-events are its 'children'" if "children" in known else ""))
     for key in ("conditions", "actions"):
         if key in out:
             out[key] = [new_ace(a, f"{where} {key[:-1]} {i}") for i, a in enumerate(as_list(out[key], f"{where} {key}"), 1)]
