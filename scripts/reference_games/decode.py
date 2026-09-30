@@ -1,6 +1,6 @@
 """Decode a published Construct 3 export into readable event sheets and a project summary.
 
-    python -m scripts.reference_games decode [author]-slime [more folder names]
+    python -m scripts.reference_games decode <folder> [more folder names]
 
 Writes the ignored workspace's ``decoded/<game>/``: ``sheets/<sheet>.txt``, ``summary.json``, ``summary.md`` and
 ``aces.jsonl`` (one line per condition or action, for statistics across games).

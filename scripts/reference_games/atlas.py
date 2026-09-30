@@ -1,6 +1,6 @@
 """Tile a game's image atlases into one PNG and measure its palette.
 
-    python -m scripts.reference_games atlas [author]-slime [more folder names]
+    python -m scripts.reference_games atlas <folder> [more folder names]
 
 Writes ``decoded/<game>/images.png`` (atlases on a mid-grey checker, each scaled to fit a
 512 px cell) and ``decoded/<game>/palette.json`` (the most common opaque colours after

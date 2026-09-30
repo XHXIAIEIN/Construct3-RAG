@@ -8,10 +8,11 @@ It writes all downloaded and generated material under the ignored
 Use it for comparative research. Do not commit or redistribute downloaded game
 files, fonts, images, decoded event sheets or contact sheets.
 
-Public files may contain stable source slugs, author names already shown on the
-source sites, aggregate counts and content hashes. Keep resolved download URLs,
-query parameters, CDN identifiers, local paths, manifests and run metadata in
-the ignored evidence directory.
+Nothing that identifies a studied game belongs in a tracked file: no game or
+author name, source slug, download URL, query parameter, CDN identifier, local
+path, manifest or run metadata. The game list, `catalog.json`, is one of these
+and lives in the ignored evidence directory. Aggregate rules go into records
+without saying which games they came from.
 
 ## Run the study
 
@@ -21,8 +22,8 @@ Run the complete catalog from the repository root:
 python -m scripts.reference_games all
 ```
 
-This downloads the exports listed in
-`scripts/reference_games/catalog.json`, decodes them, builds image contact
+This downloads the exports listed in the local
+`.local/docs/evidence/c3-reference-games/catalog.json`, decodes them, builds image contact
 sheets and writes the aggregate reports.
 
 Run one stage when the downloads already exist:
@@ -37,9 +38,9 @@ Restrict download, decode or atlas generation by passing sources or folder
 names:
 
 ```bash
-python -m scripts.reference_games fetch kind:[author]-slime kind:[author]/[game]
-python -m scripts.reference_games decode [author]-slime [author]__[game]
-python -m scripts.reference_games atlas [author]-slime
+python -m scripts.reference_games fetch <kind>:<id> <kind>:<id>
+python -m scripts.reference_games decode <folder> <folder>
+python -m scripts.reference_games atlas <folder>
 ```
 
 Atlas generation requires Pillow. Fetching, decoding and statistics use the
@@ -51,6 +52,7 @@ The analyzer creates this local structure:
 
 ```text
 .local/docs/evidence/c3-reference-games/
+├── catalog.json
 ├── downloads/<game>/
 │   └── manifest.json
 ├── decoded/<game>/
@@ -94,8 +96,8 @@ when the runtime reference table cannot be recovered.
 
 ## Update the catalog
 
-Add a public source, stable output folder and author to
-`scripts/reference_games/catalog.json`. Keep collaborations as separate author
+Add a source, an output folder and an author to the local `catalog.json`, a
+list of `{"source", "folder", "author"}` objects. Keep collaborations as separate author
 groups so aggregate statistics do not assign one implementation to the wrong
 studio.
 

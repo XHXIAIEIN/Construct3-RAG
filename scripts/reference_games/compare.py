@@ -1,4 +1,4 @@
-"""Compare the three authors on the numbers in stats/stats.json.
+"""Compare the authors on the numbers in stats/stats.json.
 
     python -m scripts.reference_games report
 
@@ -9,10 +9,8 @@ from __future__ import annotations
 import json
 import statistics
 from collections import Counter, defaultdict
-from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[2]
-ROOT = REPO / ".local" / "docs" / "evidence" / "c3-reference-games"
+from .catalog import WORKSPACE as ROOT, load_catalog
 
 
 def share(counter: Counter, n: int = 6) -> str:
@@ -22,7 +20,7 @@ def share(counter: Counter, n: int = 6) -> str:
 
 def main() -> None:
     games = json.loads((ROOT / "stats" / "stats.json").read_text(encoding="utf-8"))
-    entries = json.loads(Path(__file__).with_name("catalog.json").read_text(encoding="utf-8"))
+    entries = load_catalog()
     authors = {entry["folder"]: entry["author"] for entry in entries}
     groups: dict[str, list[str]] = defaultdict(list)
     for g in games:

@@ -11,16 +11,15 @@ small model can reproduce with plain shapes. "Polished" or "juicy" does not
 say which objects get outlines, how long a squash lasts, or when a level
 releases tension.
 
-[author], [author] and [author] publish small Construct games whose web
-exports carry those choices as object data, event-sheet constants and effect
-parameters. The question: which choices repeat across the three, which
-belong to one author, and which can become theme-neutral defaults without
-copying characters or finished art.
+Several authors publish small Construct games whose web exports carry those
+choices as object data, event-sheet constants and effect parameters. The
+question: which choices repeat across the authors, which belong to one, and
+which can become theme-neutral defaults without copying characters or
+finished art.
 
 ## Evidence
 
-38 public web exports from public sites, listed in
-`scripts/reference_games/catalog.json` and decoded by
+38 public web exports, listed in a local game list and decoded by
 `python -m scripts.reference_games` (`docs/dev/published-game-analysis.md`).
 Eleven older or heavily minified exports keep object names, variables and
 constants but not ACE names; claims about actions leave them out. The

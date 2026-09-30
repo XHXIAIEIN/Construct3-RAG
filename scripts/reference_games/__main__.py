@@ -2,23 +2,16 @@
 from __future__ import annotations
 
 import argparse
-import json
 import subprocess
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[2]
-WORKSPACE = REPO / ".local" / "docs" / "evidence" / "c3-reference-games"
-CATALOG = Path(__file__).with_name("catalog.json")
-
-
-def catalog() -> list[dict[str, str]]:
-    return json.loads(CATALOG.read_text(encoding="utf-8"))
+from .catalog import REPO, WORKSPACE, load_catalog
 
 
 def downloaded(names: list[str] | None = None) -> list[Path]:
     root = WORKSPACE / "downloads"
-    wanted = names or [entry["folder"] for entry in catalog()]
+    wanted = names or [entry["folder"] for entry in load_catalog()]
     return [root / name for name in wanted if (root / name / "manifest.json").exists()]
 
 
@@ -42,7 +35,7 @@ def main() -> None:
         parser.error("The all stage uses the complete catalog and does not accept item filters.")
 
     if args.stage in ("fetch", "all"):
-        sources = args.items or [entry["source"] for entry in catalog()]
+        sources = args.items or [entry["source"] for entry in load_catalog()]
         run_module("fetch", sources)
 
     if args.stage in ("decode", "atlas", "all"):

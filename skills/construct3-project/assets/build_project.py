@@ -100,13 +100,12 @@ SHAPE_STYLE = {
 }
 # A hit shows as a colour for an instant: the shape's second frame, drawn by hit_frame() in the
 # role below with the same outline and shadow, shown by hit_flash() for `seconds` of real time.
-# Not the Flash behavior, which blinks the object's opacity: a colour set for 0.05 to 0.1 s is
-# what the studios of Construct3-RAG/docs/decisions/published-game-visual-language.md use, white
-# or danger. An object's colour in Construct multiplies its image, so it cannot turn a yellow
-# shape white; a frame can.
+# Not the Flash behavior, which blinks the object's opacity: a colour set for 0.05 to 0.1 s, white
+# or danger, reads as a hit. An object's colour in Construct multiplies its image, so it cannot
+# turn a yellow shape white; a frame can.
 HIT_FLASH = {"role": "flash", "seconds": 0.08}
 # Squash and stretch: the size set at once to a share of the image's size, held, then tweened
-# back to it. [author]'s recipes: a hit (merge), a landing and a jump; squash(obj, kind) shows
+# back to it. Recipes: a hit, a landing and a jump; squash(obj, kind) shows
 # one, hit() a hit's with its colour. Squash what is drawn, never the object that collides: a
 # Platform or Solid object that grows sinks into the floor. The art is a second object pinned
 # to an invisible collision mask, with its origin at its feet, shape(..., oy=1).

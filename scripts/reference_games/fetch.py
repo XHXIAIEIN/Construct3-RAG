@@ -1,14 +1,15 @@
 """Download the files of a published Construct game for study: data, scripts, images, fonts.
 
-Audio and video are skipped. A source is ``kind:<slug>`` or ``kind:<user>/<game>``.
+Audio and video are skipped. A source is ``<kind>:<id>``; the workspace's ``resolvers.py`` turns
+it into the base URL of the game's files and a referer.
 
-    python -m scripts.reference_games fetch kind:[author]-slime kind:[author]/[game]
+    python -m scripts.reference_games fetch <kind>:<id> [more sources]
 
 Each game lands in the ignored reference-game workspace with a ``manifest.json``.
 """
 from __future__ import annotations
 
-import html
+import importlib.util
 import json
 import re
 import sys
@@ -40,38 +41,15 @@ def get(url: str, referer: str | None = None, timeout: int = 30) -> bytes:
         return resp.read()
 
 
-def unescape_js(s: str) -> str:
-    return s.encode("utf-8").decode("unicode_escape", "replace") if "\\u" in s else s
-
-
-def source_a_base(slug: str) -> tuple[str, str]:
-    page = get(f"https://example.invalid/").decode("utf-8", "replace")
-    m = re.search(r'\\?"file\\?":\{\\?"content\\?":\\?"(https:[^"\\]*(?:\\u002F[^"\\]*)*)', page)
-    if not m:
-        raise RuntimeError("no file.content in the source page")
-    wrapper = unescape_js(m.group(1))
-    inner = get(wrapper, referer="https://example.invalid/").decode("utf-8", "replace")
-    g = re.search(r'"gameUri"\s*:\s*"([^"]+)"', inner)
-    if not g:
-        raise RuntimeError("no gameUri in the source wrapper")
-    uri = g.group(1).replace("\\/", "/")
-    base = uri.split("?", 1)[0]
-    base = base[: base.rfind("/") + 1]
-    return base, "https://example.invalid/"
-
-
-def source_b_base(path: str) -> tuple[str, str]:
-    user, game = path.split("/", 1)
-    page = get(f"https://example.invalid/").decode("utf-8", "replace")
-    page = html.unescape(page)
-    m = re.search(r"https://example/html/\d+/[^\"'\s<>]*?index\.html", page)
-    if not m:
-        m = re.search(r"https://example/html/\d+/[^\"'\s<>]+", page)
-    if not m:
-        raise RuntimeError("no example.invalid game frame in the page")
-    url = m.group(0)
-    base = url[: url.rfind("/") + 1] if url.endswith(".html") else url.rstrip("/") + "/"
-    return base, f"https://example.invalid/"
+def resolve(source: str) -> tuple[str, str]:
+    """Base URL of a game's files and the referer to send, from the workspace's ``resolvers.py``."""
+    path = WORKSPACE / "resolvers.py"
+    if not path.exists():
+        raise SystemExit(f"No source resolvers at {path}; create it locally, it is not part of the repository.")
+    spec = importlib.util.spec_from_file_location("reference_game_resolvers", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.resolve(source, get)
 
 
 def image_refs(data_text: str) -> set[str]:
@@ -79,12 +57,11 @@ def image_refs(data_text: str) -> set[str]:
 
 
 def fetch(source: str) -> dict:
-    kind, rest = source.split(":", 1)
-    name = rest.replace("/", "__")
+    name = source.split(":", 1)[1].replace("/", "__")
     out = DOWNLOADS / name
     out.mkdir(parents=True, exist_ok=True)
     manifest: dict = {"source": source, "files": {}, "skipped": [], "errors": []}
-    base, referer = source_a_base(rest) if kind == "kind_a" else source_b_base(rest)
+    base, referer = resolve(source)
     manifest["base"] = base
 
     def save(rel: str) -> bytes | None:

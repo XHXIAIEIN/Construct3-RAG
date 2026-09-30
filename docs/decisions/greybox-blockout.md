@@ -45,7 +45,7 @@ Over reference blockouts and mock-ups of the stand-in:
 - The look is metadata an agent can hand a model and confirm against, with
   two strict rules: a clean alpha channel, and objects locked to one grid.
 
-The outline, shadow, hit and squash values come from the published games in
+The outline, shadow, hit and squash values come from the evidence in
 `published-game-visual-language.md`.
 
 ### Contrast of the values
@@ -125,7 +125,7 @@ outline around them and understood by their hue.
    object then needs a twin kept in step with it, one more thing a small
    model writes wrong; drawn into the image, the shadow needs nothing at run
    time.
-8. **The Flash behavior for a hit.** None of the studios uses it for hits,
+8. **The Flash behavior for a hit.** The evidence shows none using it for hits,
    and it blinks the whole image, shadow included.
 
 ## Decision

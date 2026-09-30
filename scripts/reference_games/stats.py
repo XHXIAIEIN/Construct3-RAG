@@ -4,7 +4,7 @@ effects, viewports, background and tint colours, animations.
     python -m scripts.reference_games report
 
 Writes ``stats/stats.md`` (per author and per game) and ``stats/stats.json``.
-Authors come from ``catalog.json`` in this package.
+Authors come from the workspace's ``catalog.json``.
 """
 from __future__ import annotations
 
@@ -13,8 +13,8 @@ import re
 from collections import Counter, defaultdict
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[2]
-ROOT = REPO / ".local" / "docs" / "evidence" / "c3-reference-games"
+from .catalog import WORKSPACE as ROOT, load_catalog
+
 DECODED = ROOT / "decoded"
 OUT = ROOT / "stats"
 
@@ -103,7 +103,7 @@ def hist(values: list[float], edges: list[float]) -> str:
 
 
 def main() -> None:
-    entries = json.loads(Path(__file__).with_name("catalog.json").read_text(encoding="utf-8"))
+    entries = load_catalog()
     authors = {entry["folder"]: entry["author"] for entry in entries}
     games = {}
     for folder in sorted(DECODED.iterdir()):
