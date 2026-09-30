@@ -507,7 +507,7 @@ def test_template_behavior_blocks_hold_the_schemas_keys():
     spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
     template = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(template)
-    blocks = {"TWEEN": "tween", "TIMER": "timer", "SOLID": "solid", "SINE": "sin", "FADE": "fade", "FLASH": "flash",
+    blocks = {"TWEEN": "tween", "TIMER": "timer", "SOLID": "solid", "SINE": "sin", "FLASH": "flash",
               "BULLET": "bullet", "EIGHT_DIR": "eightdir", "PLATFORM": "platform", "MOVE_TO": "moveto",
               "ROTATE": "rotate", "PIN": "pin", "DRAG_DROP": "dragndrop", "SCROLL_TO": "scrollto",
               "DESTROY_OUTSIDE": "destroy", "BOUND_TO_LAYOUT": "bound", "LINE_OF_SIGHT": "los"}

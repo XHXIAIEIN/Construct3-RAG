@@ -1410,8 +1410,6 @@ SOLID = {"Solid": {"properties": {"enabled": True, "use-instance-tags": True, "t
 SINE = {"Sine": {"properties": {"movement": "horizontal", "wave": "sine", "period": 4, "period-random": 0,
                                 "period-offset": 0, "period-offset-random": 0, "magnitude": 50,
                                 "magnitude-random": 0, "enabled": True, "live-preview": False}}}
-FADE = {"Fade": {"properties": {"fade-in-time": 0, "wait-time": 0, "fade-out-time": 1, "destroy": True,
-                                "enabled": True, "live-preview": False}}}
 FLASH = {"Flash": {"properties": {}}}
 BULLET = {"Bullet": {"properties": {"speed": 400, "acceleration": 0, "gravity": 0, "bounce-off-solids": False,
                                     "set-angle": True, "step": False, "enabled": True}}}
