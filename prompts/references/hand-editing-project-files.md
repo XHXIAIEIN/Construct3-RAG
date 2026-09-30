@@ -65,6 +65,15 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
   no file: `project.c3proj` holds `"containers": [{"members": ["TankBase",
   "TankTurret"]}]`, its members object type names, no `selectMode`. Nothing
   under `objectTypes/` names a container.
+- The editor saves some lists of `project.c3proj` sorted, and an entry
+  appended at the end comes back moved in the diff of its next save.
+  `usedAddons` holds plugins, then behaviors, then effects, each sorted by
+  `id` in code point order, uppercase before lowercase: `AJAX` before
+  `AdvancedRandom`, `Touch` before `gamepad`. A container's `members` are
+  sorted without regard to case: `enemyHpText` before `EnemyStats`. Insert a
+  new entry where the sort puts it. [observed: Merge Game, r504, October
+  2026: a save moved `Timeline`, `Spritefont2` and `Anchor` from the end of
+  `usedAddons` into place and `CardFace` ahead of `CardShadow`]
 - A family instance variable can be written through a member type:
   `"objectClass": "enemyBase"`, `"instance-variable": "hp"` with `hp`
   declared on family `EnemyGroup`.

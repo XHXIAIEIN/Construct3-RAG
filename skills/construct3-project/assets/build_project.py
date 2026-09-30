@@ -1165,8 +1165,10 @@ def family(name: str, plugin_id: str, members: list, ivars: list = (), behaviors
 def container(members: list) -> dict:
     """Object types whose instances are created, destroyed and picked together, a
     tank base with its turret. A container has no file of its own: it is a row of
-    project.c3proj's "containers", and its members are object types, not families."""
-    return {"members": list(members)}
+    project.c3proj's "containers", and its members are object types, not families.
+    The editor saves the members sorted without regard to case, so they are written
+    that way and a save in the editor leaves the row as it is."""
+    return {"members": sorted(members, key=str.lower)}
 
 
 def build_object_types() -> tuple[dict, dict, list]:
@@ -1474,7 +1476,9 @@ def used_addons(types: dict, families: dict) -> list:
     """project.c3proj's usedAddons, from the plugins and behaviors the types and families use:
     the editor refuses a type whose plugin is not listed, and a type added later is then
     listed by this rerun. The name is the editor's display name for the ids it knows, the
-    id otherwise."""
+    id otherwise. The editor saves plugins before behaviors, each sorted by id in code
+    point order (uppercase before lowercase), so the list is written that way and a save
+    in the editor does not reorder it."""
     plugins, behaviors = [], []
     for t in list(types.values()) + list(families.values()):
         if t["plugin-id"] not in plugins:
@@ -1482,8 +1486,8 @@ def used_addons(types: dict, families: dict) -> list:
         for b in t.get("behaviorTypes", []):
             if b["behaviorId"] not in behaviors:
                 behaviors.append(b["behaviorId"])
-    return ([{"type": "plugin", "id": i, "name": ADDON_NAMES.get(i, i), "author": "Scirra", "bundled": False} for i in plugins]
-            + [{"type": "behavior", "id": i, "name": ADDON_NAMES.get(i, i), "author": "Scirra", "bundled": False} for i in behaviors])
+    return ([{"type": "plugin", "id": i, "name": ADDON_NAMES.get(i, i), "author": "Scirra", "bundled": False} for i in sorted(plugins)]
+            + [{"type": "behavior", "id": i, "name": ADDON_NAMES.get(i, i), "author": "Scirra", "bundled": False} for i in sorted(behaviors)])
 # What the editor reads out of project.c3proj before it opens a single file of
 # the project, and asserts as it reads: a project that lacks one of these opens
 # as "TypeError: expected string", which names neither the key nor the file.
