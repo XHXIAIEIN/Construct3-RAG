@@ -95,6 +95,12 @@ Scirra's feature examples, the rest, are mostly one or two events and have
 no style to learn. The survey scripts are kept under
 `.local/docs/evidence/example-style-survey/`.
 
+One rule departs from the examples: a text built from two or more values
+is a `StringSub` template. No example calls `StringSub`; they chain `&`.
+The user chose the template on 2026-09-30, reviewing the readouts of small
+bug-report projects: `StringSub("X = {0}    Y = {1}", ...)` reads as the line
+on screen, where a chain splits it into quoted fragments between values.
+
 ## Style checks
 
 `check_project.py --style` reports six kinds, each with the event and the

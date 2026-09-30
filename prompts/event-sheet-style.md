@@ -124,6 +124,14 @@ are `"Score: " & score`. The copy lives in the Text object with a `###`
 placeholder, filled by `replace(Self.Text, "###", value)`, coloured with
 BBCode.
 
+A text that events build from two or more values is one `StringSub`
+template, not a chain of `&`: `StringSub("X = {0}    Y = {1}", round(Box.X),
+round(Box.Y))`, with `newline` passed as a value where the text breaks a
+line, `StringSub("Level {0}{1}Score: {2}", level, newline, score)`. The
+examples never call `StringSub`; this repository does, because the template
+reads as the text it shows. [manual: system-reference/system-expressions.md
+"StringSub"]
+
 To see the whole of it before writing, print an example: `python
 <Construct3-RAG>/skills/construct3-project/scripts/print_sheet.py --project
 <Construct-Example-Projects>/example-projects/samuroof Game`; labyrinth,
