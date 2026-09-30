@@ -57,6 +57,7 @@ or call a function or a custom action.
 - Function locals are out of scope for the function block's own top-level actions.
 - Without *Copy picked* a function runs with every object reset to all picked.
 - With *Copy picked*, type and family picks are copied separately; logic on the caller's picks is a custom action.
+- A custom action runs once with all the caller's picks: a System condition in it reads the first, so put *For each* first when it decides per instance.
 - Parameters are bare identifiers in expressions: `OffsetX`, not `Functions.OffsetX`.
 - A function without parameters is called without parentheses: `Functions.name`, not `Functions.name()`.
 
@@ -196,6 +197,7 @@ instance, or control a timeline by tags, keyframes or playback rate.
 - *On keyframe reached* sees the previous tick's pose: *Wait 0* before reading where the keyframe put the instance.
 - A negative playback rate rewinds to 0 and finishes there; set it positive again before the next *Resume*.
 - A timeline stopped at its end ignores *Resume* at any rate: *Set time* just before the end, then rewind.
+- A copy started this tick reads `Time` 0 while *Is playing* is true: test *Is playing* to know a move is under way.
 - With *Use system timescale* on, the default, a hit stop slows the timeline too.
 
 ### Creating objects

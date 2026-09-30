@@ -110,6 +110,15 @@ custom ease are written in the project files is in
   preview, 2026-09-30: a sword pose held at the end of its 0.36 s stayed put
   while events set rate −2 and *Resume*d it, and after *Set time* 0.359 the same actions took it back to 0
   in 0.18 s]
+- A copy that *Resume* or *Play* starts is playing at once, but its playhead
+  reads 0 until the timeline ticks it: an event later in the same tick, or
+  an action resumed after a *Wait*, sees `Time` 0 with *Is playing* true.
+  To ask whether a move is under way, test *Is playing*; `Time > 0` misses a
+  move started this tick. [observed in a game project, r504 preview,
+  2026-10-01: a pose timeline resumed in one event read `Time` 0 in a later
+  event of the same tick, which took it for idle and did not take it back
+  under a new move; sampled after that tick, the copy read `Time` 0 and
+  *Is playing* true]
 - A timeline follows the system time scale when its *Use system timescale*
   is on, the default: *Set time scale* 0.1 for a hit stop slows it with
   everything else, and a strike stops at the moment it lands. Its playback
