@@ -30,3 +30,12 @@ that changes which events are written goes to
   `layoutToCssPx`. [preview: ILayer.d.ts `layerToCssPx`; observed in a game
   project, r504 preview in Edge, 2026-09-30: a weapon dragged onto a piece
   and a piece onto a battle slot landed where the events put them]
+- Two fingers at once go through `Input.dispatchTouchEvent` after
+  `Emulation.setTouchEmulationEnabled`, which Touch and Drag & Drop both
+  read. Every event lists all the fingers still down, each with its `id`: a
+  `touchStart` that puts a second finger down repeats the first, and a
+  `touchMove` gives each finger's place. One finger can then hold a button
+  while another drags an instance. [observed in a game project, r504 preview
+  in Edge, 2026-10-01: a finger held the buy button and bought six cards,
+  then a second finger, added in a `touchStart` listing both, dragged a
+  piece]
