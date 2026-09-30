@@ -44,6 +44,9 @@ Sources and the rule for adding an entry are in the index,
   pickable from the next top-level event and a destroyed one gone by then
   (see [Creating objects](creating-objects.md)); initialise in *On created* or the creating event,
   pass `UID`, put the dependent step in a later top-level event or trigger.
+  It is right where a trigger fires before the tick finishes what it
+  reports, as *On keyframe reached* does before the keyframe's values are
+  written (see [Timeline](timeline.md)).
   Ashley's tutorial still says "until the end of the event sheet", which is
   Construct 2 wording. [runtime: exported c3runtime.js r503, `Wait` calls
   `AddScheduledWait`, `RunScheduledWaits` is called only from

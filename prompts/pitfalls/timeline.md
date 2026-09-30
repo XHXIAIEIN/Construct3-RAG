@@ -73,6 +73,19 @@ custom ease are written in the project files is in
   "TimelineTags"; runtime: r504 preview, `Cnds.OnKeyframeReached` only
   compares the reached keyframe's tags; observed in a game project, r504
   preview, 2026-09-30]
+- *On keyframe reached* runs before the track writes that tick's values:
+  in the trigger the instance still holds the previous tick's pose, part of
+  the way into the segment that ends at the keyframe. To act on where the
+  keyframe puts it, such as launching a copy from a sword held overhead, put
+  *Wait 0* before the actions that read the pose; they run at the start of
+  the next tick, after the keyframe pose was applied and drawn. This is the
+  case *Wait 0* is for (see [Wait and time scale](wait-and-time-scale.md)).
+  [runtime: exported c3runtime.js r504, `TrackState.Interpolate` calls
+  `MaybeTriggerKeyframeReachedConditions`, which fires the triggers
+  synchronously through `OnKeyframeReached`, before the property tracks'
+  `Interpolate`; observed in a game project, r504 preview, 2026-10-01: a
+  sprite created at a sword's position in the trigger started 12 px off the
+  pose drawn at the keyframe, and after *Wait 0* matched it within 1 px]
 - A negative playback rate plays a timeline back to 0, where it finishes:
   *Set playback rate* −3 on a windup cancelled midway takes the pose back
   smoothly, and a relative timeline ends with its offsets gone. Set a

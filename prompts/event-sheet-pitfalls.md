@@ -77,7 +77,7 @@ group turned off to pause.
 - *Wait for previous actions* waits only for asynchronous actions.
 - A *Wait* holds back only the rest of its own block and its sub-events; sibling events run at once.
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.
-- *Wait 0* resumes at the start of the next tick, not at the end of the event or sheet; leave it out.
+- *Wait 0* resumes at the start of the next tick, not at the end of the event or sheet; leave it out, unless a trigger fires before the tick applies what it reports.
 - Deactivating a group stops its events, not its behaviors, timers or tweens: it does not pause.
 - A hit stop is *Set time scale* 0.1, *Wait*, *Set time scale* 1; a smooth ramp is a value tween.
 
@@ -191,6 +191,7 @@ instance, or control a timeline by tags, keyframes or playback rate.
 - *Stop* rewinds to 0, *Pause* holds, and a finished timeline ignores both *Stop* and *Resume*: *Set time* 0 before replaying.
 - *Set time* pauses and never fires *On keyframe reached*.
 - *On keyframe reached* picks nothing: pick the instance back from the UID in `Timeline.TimelineTags`.
+- *On keyframe reached* sees the previous tick's pose: *Wait 0* before reading where the keyframe put the instance.
 - A negative playback rate rewinds to 0 and finishes there; set it positive again before the next *Resume*.
 - A timeline stopped at its end ignores *Resume* at any rate: *Set time* just before the end, then rewind.
 - With *Use system timescale* on, the default, a hit stop slows the timeline too.
