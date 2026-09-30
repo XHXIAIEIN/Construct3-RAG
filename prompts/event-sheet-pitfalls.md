@@ -176,7 +176,7 @@ Read [pitfalls/expressions.md](pitfalls/expressions.md) when writing
 expressions or naming and placing variables.
 
 - `Self` has no object in a System condition or action, and the editor refuses the project.
-- A variable named like a system expression (`mid`, `left`, `max`) is read as the expression.
+- A variable or function parameter named like a system expression (`mid`, `left`, `max`, `round`) is read as the expression.
 - Variable names ignore case and the nearest scope wins: a local `count` hides a global `COUNT`.
 - `lerp(a, b, 0.1)` each tick depends on the framerate: write `lerp(a, b, 1 - f^dt)`.
 - `lerp` needs no time of its own when the factor comes from the engine, such as a tween's value.
