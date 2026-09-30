@@ -187,6 +187,7 @@ instance, or control a timeline by tags, keyframes or playback rate.
 - *Set time* pauses and never fires *On keyframe reached*.
 - *On keyframe reached* picks nothing: pick the instance back from the UID in `Timeline.TimelineTags`.
 - A negative playback rate rewinds to 0 and finishes there; set it positive again before the next *Resume*.
+- A timeline stopped at its end ignores *Resume* at any rate: *Set time* just before the end, then rewind.
 - With *Use system timescale* on, the default, a hit stop slows the timeline too.
 
 ### Creating objects

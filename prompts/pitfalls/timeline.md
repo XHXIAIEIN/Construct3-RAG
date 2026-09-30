@@ -83,6 +83,20 @@ custom ease are written in the project files is in
   by the sign of the rate; observed in a game project, r504 preview,
   2026-09-30: a slash stopped at 0.206 s, set to −3, was back at 0 and
   finished 0.08 s later]
+- A timeline that played forward to its end and stopped there cannot be
+  *Resume*d backwards: while it is not playing the runtime counts it as
+  playing forward whatever its playback rate, and a forward timeline at its
+  total time cannot resume. To take back a pose held at the end, *Set time*
+  to `TotalTime(tag) - 0.001` first, then set a negative rate and *Resume*;
+  the 1 ms moves a relative track by what its last segment covers in that
+  time, nothing under an ease that flattens at the end. A timeline still
+  playing takes the negative rate and *Resume* directly. [runtime: exported
+  c3runtime.js r504, `TimelineState.IsForwardPlayBack` returns
+  `!IsPlaying() || playbackRate > 0`, `_CanResume` returns false when
+  forward and `GetTime() >= GetTotalTime()`; observed in a game project, r504
+  preview, 2026-09-30: a sword pose held at the end of its 0.36 s stayed put
+  while events set rate −2 and *Resume*d it, and after *Set time* 0.359 the same actions took it back to 0
+  in 0.18 s]
 - A timeline follows the system time scale when its *Use system timescale*
   is on, the default: *Set time scale* 0.1 for a hit stop slows it with
   everything else, and a strike stops at the moment it lands. Its playback
