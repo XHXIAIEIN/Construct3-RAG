@@ -91,6 +91,7 @@ program transcribed into events even when no picking smell shows.
 | Data that survives a reload | Local Storage: *Set item*, *Get item*, *On item get* | Globals, which reset on reload; the Persist behavior, which keeps instances across layout changes, not across sessions |
 | Logic shared by several events | Functions with parameters and return values; a *custom action* on the object or family when it acts on picked instances | The same action block pasted into several events |
 | A slice of the sheet that only runs in one phase: tutorial, a boss's AI, debug tools | A Group, off at start when the phase is later, *Set group active* at the transition. Only events stop: behaviors, timers and tweens in it run on | A global mode variable that every event in the slice compares |
+| Which controls to offer: on-screen buttons for touch, keys and mouse on a desktop | Touch with *Use mouse input* off; *On any touch start* sets a global to touch, Mouse *On any click* or Keyboard *On any key pressed* to desktop, and the global shows the touch-controls layer and activates its group (detecting-input-method, decided once on a title screen; left active in play, the same triggers follow a change of device; Gamepad *On any button pressed* adds a pad). It picks a scheme, not a gesture: a drag that differs under a finger tests *Mouse button is down* per tick, which also works with *Use mouse input* on ([pitfalls: Input](pitfalls/input.md)) | Touch triggers with *Use mouse input* on, which fire for a click as well |
 | Pause, slow motion, hit stop | *Set time scale* 0 (pause) or 0.1 (hit stop, slow motion); *Set object time scale* 1 on the UI that must keep moving; *Use time scale* off on the wait that ends it | A `paused` global checked in every event; behaviors disabled one by one |
 | One thing after another inside one interaction: knock back, then re-enable; fade out, then go to layout | *Wait* and *Wait for previous actions* in the same block; the picked instances are kept | A flag set now and a Timer or `On any finished` elsewhere to finish the sequence |
 | Reacting to a state any instance may reach, whoever started it | Timer *On timer*; Tween *On any finished* | A *Wait* that assumes one caller |
@@ -108,7 +109,8 @@ file", plugin-reference/json.md, plugin-reference/advanced-random.md
 "Probability tables", plugin-reference/local-storage.md,
 project-primitives/events/functions.md,
 project-primitives/events/custom-actions.md,
-project-primitives/events/groups.md, system-reference/system-actions.md
+project-primitives/events/groups.md, plugin-reference/touch.md "Use mouse
+input", system-reference/system-actions.md
 "Set group active", "Set time scale", "Set object time scale", "Set layer
 visible", "Set layer opacity", "Wait", "Wait for previous actions to
 complete", project-primitives/layers.md "Parallax", "Global layers",

@@ -199,6 +199,14 @@ when the events place, move or rotate objects or read the viewport.
 - `ViewportLeft` and the rest take a layer; `LayoutWidth` and `ViewportWidth(layer)` differ.
 - Drag & Drop moves the instance only on pointer moves: put a trailing or lifted look on a child.
 
+### Input
+
+Read [pitfalls/input.md](pitfalls/input.md) when the events use Mouse and
+Touch together, or must tell a finger from a mouse.
+
+- Mouse ignores fingers: tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
+- Touch with *Use mouse input* on fires for clicks too: detect the input method with it off.
+
 ### Animation
 
 Read [pitfalls/animation.md](pitfalls/animation.md) when the events use
