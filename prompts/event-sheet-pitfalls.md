@@ -26,6 +26,7 @@ tests, or sub-events that rely on the parent's picks.
 - Container members are created, destroyed and picked together; hierarchy children are not picked with their parent: use *Pick children*.
 - Picking a family never picks a type's container: pick the type from the family in a sub-event, `Enemy: Pick by unique ID Enemies.UID`, one per member type.
 - *Pick children* picks only among the child type's current picks, which its container may have narrowed: give the child type a family of its own with the one member, and pick through it.
+- *Pick parent* with *Own* looks one level up only: a grandparent needs *All*, or the event silently picks nothing.
 - A Dictionary or JSON in a container gives each instance its own copy: use it instead of a growing list of instance variables.
 - Sub-events run after the parent's actions, so their conditions see what those actions changed.
 - A hierarchy child may sit on another layer than its parent and stays its child: a lifted parent can be drawn above everything while its parts stay under an outline.

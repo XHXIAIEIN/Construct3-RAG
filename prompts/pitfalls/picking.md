@@ -37,6 +37,16 @@ Sources and the rule for adding an entry are in the index,
   child's container; observed in a game project, r503 preview, 2026-09-28:
   the merge target's body was not picked until the pick went through a
   one-member family]
+- *Pick parent* with *Which* set to *Own* looks one level up only. With
+  `base → view → body`, `Bodies: Pick parent base (own)` picks nothing,
+  because `body`'s own parent is `view`, and the event's actions never run
+  without an error. Set *Which* to *All* whenever the parent you name is
+  not the direct one; *Pick children* with *All* is the same the other
+  way down. [manual: plugin-reference/common-features/common-conditions.md
+  "Pick parent"; observed in a game project, r504 preview, 2026-09-30: a
+  deploy flag cleared from `On Tween "hop" finished` through `Pick parent
+  base (own)` stayed set, and the piece never started attacking until the
+  pick was changed to *All*]
 - A data object (Dictionary, JSON) in a container gives each instance its own
   copy, picked with its type as above. Use it instead of a growing list of
   instance variables when stats come from a data file. [manual:
