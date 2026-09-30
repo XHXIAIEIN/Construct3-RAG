@@ -207,6 +207,26 @@ Touch together, or must tell a finger from a mouse.
 - Mouse ignores fingers: tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too: detect the input method with it off.
 
+### Audio
+
+Read [pitfalls/audio.md](pitfalls/audio.md) when the events schedule
+sounds, change their rate, volume or effects, or keep music on a beat.
+
+- With *Use worker* on, scheduled sounds jitter by a message delay: set it to *No* for sample-accurate scheduling.
+- The audio clock stands still until the first release, click or key: start music when `CurrentTime` moves, not on a touch.
+- `PlaybackTime` of a scheduled sound runs ahead by its lead: build a beat grid from `CurrentTime` and integer steps.
+- *Set playback rate* retunes every instance with the tag: give each play a one-off tag.
+- A sound uses the effect chain of its first tag; an action on `"a b"` acts on each tag.
+- *Set effect parameter* cancels the ramp still running: merge overlapping ducks into one release.
+- Gain effect values are dB ramped linearly; compressor parameters cannot change after it is added.
+- Delay `mix` is 0 to 100 and scales only the echoes: first echo = mix × feedback.
+- *Fade volume* also reaches instances scheduled but not started.
+- On resume every suspended sound restarts at once: *Stop all* in *On resumed* and restart the schedule.
+- Stereo pan folds a stereo sound's channels: peaks rise and coinciding loud sounds clip without a limiter.
+- Dictionary *Set key* ignores a missing key: write with *Add key*.
+- A sound is heard `OutputLatency` after its scheduled time.
+- A WebM Opus file encoded to an exact length decodes to that length at 48 kHz in Chrome.
+
 ### Animation
 
 Read [pitfalls/animation.md](pitfalls/animation.md) when the events use
