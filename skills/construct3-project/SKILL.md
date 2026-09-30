@@ -234,7 +234,7 @@ into `Construct3-RAG/prompts/event-sheet-pitfalls.md`, how a project file is
 written into `Construct3-RAG/prompts/references/hand-editing-project-files.md`,
 what the editor or the preview does into
 [references/editor-and-preview.md](references/editor-and-preview.md), and
-how the game looks into `Construct3-RAG/prompts/event-sheet-style.md`.
+how the game looks into `Construct3-RAG/prompts/references/new-project.md`.
 
 Exit code 2 and `stopped at`: a file lacks a key the editor always writes.
 Compare it with a file `assets/build_project.py` generates or with an

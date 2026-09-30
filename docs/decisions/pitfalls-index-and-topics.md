@@ -68,7 +68,7 @@ every place that routes a lesson (the root `AGENTS.md`, the
 |--------|------|
 | How a project file is written | `prompts/references/hand-editing-project-files.md`, or a checker rule when a script can test it |
 | What the editor, the preview or a script driving them does | `skills/construct3-project/references/`, `editor-and-preview.md` for the preview |
-| How the game looks, its art and colours | `prompts/event-sheet-style.md` *Project*, or the look documents in the root `AGENTS.md` |
+| How the game looks, its art and colours | `prompts/references/new-project.md`, or the look documents in the root `AGENTS.md` |
 
 By that test, where the preview starts and how a script drags in it went to
 `editor-and-preview.md`, and the Local Storage key that a rewritten

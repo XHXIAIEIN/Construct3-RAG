@@ -276,8 +276,8 @@ that does not change the events goes elsewhere:
   test it.
 - What the editor, the preview or a script driving them does: the
   `construct3-project` skill's references, such as [editor-and-preview.md](../skills/construct3-project/references/editor-and-preview.md).
-- How the game looks, its art and its colours: [event-sheet-style.md](event-sheet-style.md),
-  *Project*, or the look documents listed in the root `AGENTS.md`.
+- How the game looks, its art and its colours: [references/new-project.md](references/new-project.md),
+  or the look documents listed in the root `AGENTS.md`.
 
 One bullet: fact, consequence, source. Manual wording beats an observation, an
 observation beats intuition, intuition is not an entry.
