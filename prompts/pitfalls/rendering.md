@@ -89,3 +89,17 @@ Sources and the rule for adding an entry are in the index,
   highlights on a separate child that keeps its colour. [manual:
   plugin-reference/common-features/common-actions.md "Set color"; observed
   in a game project, r503 preview, 2026-09-29]
+- A Text object draws its text into a texture of its own, and a new text
+  or a new font size redraws and re-uploads that texture on the next frame.
+  *Set font size* every tick during a pop tween therefore redraws the text
+  and uploads a new texture every frame, at the device's full resolution;
+  in a merge game each damage number that popped this way was redrawn
+  every frame, 175 texture uploads a second at 144 Hz, most of the Text
+  cost of the whole game. *Set text* to the string already shown costs
+  nothing: the runtime compares and returns. Animate a number with things
+  that move the finished texture (position, angle, opacity) or with a
+  Sprite Font, whose scale does not redraw, and change the font size once.
+  *Set resolution mode* to *Fixed* only stops redraws caused by the display
+  scale, not by the font size. [manual: plugin-reference/text.md "Set
+  resolution mode"; observed in a game project, r504 export, runtime
+  `_SetText` source and a counter on `_OnBeforeRender`, 2026-09-30]
