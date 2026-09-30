@@ -199,6 +199,7 @@ Read [pitfalls/creating-objects.md](pitfalls/creating-objects.md) when the
 events create or spawn instances, or a Particles object spawns a Sprite.
 
 - *Create object* picks only the new instance; reach it through a family with *Pick last created*.
+- A part in both the parent's container and its template hierarchy is created once: put it in both to have it picked with the parent and follow it.
 - *Create object* runs once per event, however many instances are picked.
 - A runtime-created instance copies an existing instance or template: keep one per object in a layout that never runs.
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.

@@ -10,6 +10,13 @@ Sources and the rule for adding an entry are in the index,
   the manual names that as the way to pick a created instance from its family.
   [manual: system-reference/system-actions.md "Create object";
   system-reference/system-conditions.md "Pick last created"]
+- A type that is both in the parent's container and among its children in the
+  template's hierarchy is created once when the parent is created with
+  *Create hierarchy* on: the container sibling and the hierarchy child are the
+  same new instance. Put a part in both to have it picked with the parent and
+  moved with it. [observed in a game project, r504 preview, 2026-09-30: a
+  `Card` template with four parts in its container and its hierarchy, created
+  six times, left six instances of each part]
 - *Create object* is a System action: it runs once per event, however many
   instances are picked, and `Slot.X` in its parameters reads the first
   picked one. A custom action is run once with all the caller's picks, so
