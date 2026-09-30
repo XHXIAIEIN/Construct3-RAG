@@ -49,13 +49,20 @@ a sequence that destroys the gem before its tween ends. Tokens did not move.
 Runs and grading: `.local/docs/evidence/pitfalls-split-2026-09-28/` and
 `pitfalls-split-2026-09-29/`.
 
+By 2026-09-30 the index was 19.5 KB again, 8 KB of it the two inline groups,
+whose entries carry long sources and observations. The two groups became
+topic files a second time, with a change that answers the failure above:
+each conclusion line keeps the fix and not only the prohibition.
+
 ## Decision
 
-Option 3. `prompts/event-sheet-pitfalls.md` keeps its path, its opening
-rules, and Picking and Triggers and Else in full, since nearly every sheet
-needs them. Each other group is a `###` heading, a when-to-read line linking
+Option 3. `prompts/event-sheet-pitfalls.md` keeps its path and its opening
+rules. Each group is a `###` heading, a when-to-read line linking
 `prompts/pitfalls/<topic>.md`, and one conclusion line per entry in the
-topic file's order. The index is about 17 KB.
+topic file's order, Picking and Triggers and Else included. A conclusion
+keeps the fix: "a tween's *On finished* is a top-level event of its own
+that calls the next function", not only "no trigger inside a function". The
+index is about 14.5 KB.
 
 A pitfall is a runtime behaviour of events that changes which events an
 agent writes: without the line, the agent would write them wrong. Other
@@ -87,8 +94,12 @@ differ in number, or when an entry has no source.
 
 - The index passes about 20 KB: first move out what fails the scope test,
   then shorten conclusion lines, or merge groups that are always read
-  together. Picking and Triggers and Else stay in full; as conclusion lines
-  they are not opened.
+  together.
+- An agent writes a sheet that breaks a Picking or Triggers and Else entry
+  whose fix its conclusion line states: the two groups are read by
+  nearly every sheet and are not opened, so bring the entry back in full
+  and cut elsewhere. No run has yet measured the two groups as conclusion
+  lines that keep the fix.
 - An eval shows an agent writing a pitfall's topic without opening its file:
   reword that group's when-to-read line first.
 - An agent repeats a mistake that a moved lesson describes, because it did

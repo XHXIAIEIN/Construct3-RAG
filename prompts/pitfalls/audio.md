@@ -75,9 +75,13 @@ where Web Audio lives).
 - *Stereo pan* goes through a `StereoPannerNode`, which on a stereo sound
   folds one channel into the other: at ±20 the near channel gets the far one
   at cos(0.4π) ≈ 0.31, so a file limited to −3 dBFS can peak near −1 dBFS,
-  and two loud sounds on the same grid point add over 0 dBFS. With no master
-  limiter, keep loud transients off each other's grid point (one replaces the
-  other) rather than trusting per-file ceilings. [runtime: main.js
+  and two loud sounds on the same grid point add over 0 dBFS. A transient
+  that is the same in both channels rises by 1 + sin(|pan| × 90°): 1.3 dB at
+  ±10, 2.3 dB at ±20, 3.2 dB at ±30. With no master limiter, keep loud
+  transients off each other's grid point (one replaces the other) rather than
+  trusting per-file ceilings, and narrow the pan of the loudest sounds: ±10
+  instead of ±20 gave a −3 dBFS kill the same headroom as a −4 dBFS file
+  ceiling, which would have cost it 0.5 dB of loudness. [runtime: main.js
   `createStereoPanner` per instance; Web Audio spec, StereoPannerNode
   stereo-input algorithm; observed in an offline mix of a game project's
   rules, 2026-09-30]
