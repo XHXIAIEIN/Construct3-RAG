@@ -90,6 +90,43 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
 - Instance `world` entries write Z elevation as `"z"` with a `"depth"` key;
   layers keep `zElevation`.
 
+## Timelines and custom eases
+
+Read from the editor's project loader and saver (`projectResources.js`,
+r504), the official example `blacksmith-forge` and a game project the editor
+r504 opened and previewed on 2026-09-30.
+
+- A timeline is `timelines/<name>.json`, listed by name under `timelines`
+  `items` in `project.c3proj`. A custom ease (the **Eases** folder, which the
+  editor calls transitions) is `timelines/transitions/<name>.json`, listed
+  under the first subfolder of `timelines`, the one without a `name`; a
+  subfolder with a `name` is a timeline folder.
+- A custom ease file is `{"name", "linear": false, "purpose": "any",
+  "transitionKeyframes": [...]}`. Each keyframe is `x`, `y`, the start anchor
+  `sax`, `say` and the end anchor `eax`, `eay` as offsets from the keyframe,
+  `se` and `ee` for whether each anchor is used, and `sm` `"cubic"` or
+  `"linear"`. The first keyframe is (0, 0) with its end anchor off, the last
+  (1, 1) with its start anchor off, as the runtime's built-in eases are
+  written. A timeline keyframe or a Tween action names it by its bare name.
+- The Timeline controller is a single-global object type, `"plugin-id":
+  "Timeline"`, with a `usedAddons` entry `{"type": "plugin", "id":
+  "Timeline", "name": "Timeline controller", "author": "Scirra", "bundled":
+  false}`.
+- An instance track names one instance in a layout, `worldInstance` its uid
+  and `objectType` its type, and `project` the project's `uniqueId`. A
+  template instance in a layout that never runs works: *Set instance* puts
+  the runtime instance in its place. `id` is the track ID that *Set
+  instance* names.
+- A property keyframe keeps `value` and `rValue`, read in relative mode, and
+  `aValue`, read in absolute mode. Angles are radians; an `angle` addon
+  gives the direction of the segment that starts at that keyframe,
+  `closest`, `clockwise` or `anti-clockwise`, and extra `revolutions`. Its
+  `ease` is a built-in ease id or a custom ease's name.
+- The editor's *Use system timescale* is saved as `ignoreSystemTimescale`,
+  and the name is inverted: `true` follows the system time scale, `false`
+  ignores it, and a file without the key follows it. The export writes the
+  key's value to the runtime's `useSystemTimescale`.
+
 ## Naming an event to the user
 
 The JSON has no event numbers; the editor does. Its margin and its Find

@@ -174,6 +174,21 @@ step, or when several animations share one property.
 - *Stop* releases a tween at the end of the tick: `Value(tag)` reads the stopped value until then.
 - A property tween adds each tick's change: a *Set* on that property while it plays is kept and the tween's rest lands on top; guard it with *NOT Is playing*.
 
+### Timeline
+
+Read [pitfalls/timeline.md](pitfalls/timeline.md) when the events play a
+timeline on instances created at runtime, layer several timelines on one
+instance, or control a timeline by tags, keyframes or playback rate.
+
+- A relative track adds each tick's step from 0: keyframe values are offsets from the pose at play start, so moves that start and end at 0 layer and repeat without drifting.
+- *Set instance* covers the next *Play* only and one *Play* starts a copy per picked instance with the same tags: set one instance at a time and tag each copy with its UID.
+- A copy is found by the timeline's name contained in the copy's name: keep no timeline name inside another's.
+- *Stop* rewinds to 0, *Pause* holds, and a finished timeline ignores both *Stop* and *Resume*: *Set time* 0 before replaying.
+- *Set time* pauses and never fires *On keyframe reached*.
+- *On keyframe reached* picks nothing: pick the instance back from the UID in `Timeline.TimelineTags`.
+- A negative playback rate rewinds to 0 and finishes there; set it positive again before the next *Resume*.
+- With *Use system timescale* on, the default, a hit stop slows the timeline too.
+
 ### Creating objects
 
 Read [pitfalls/creating-objects.md](pitfalls/creating-objects.md) when the
