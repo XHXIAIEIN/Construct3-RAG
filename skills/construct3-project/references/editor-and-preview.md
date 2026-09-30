@@ -21,3 +21,12 @@ that changes which events are written goes to
   `pointerup` work as they are. Coordinates are the page's CSS pixels, not
   the pixels of a screenshot taken at a device scale factor. [observed in a
   game project, r503 preview in Chrome, 2026-09-29]
+- Mouse input sent through the DevTools protocol, `Input.dispatchMouseEvent`
+  with `mousePressed`, a run of `mouseMoved` carrying `buttons: 1` and
+  `mouseReleased`, drags a Drag & Drop instance and fires its *On drop*
+  without any pointer event of the page's own; the browser raises the
+  pointer events itself. Aim it with the layer's `layerToCssPx(x, y)`,
+  which turns a layer position into those CSS pixels; `ILayer` has no
+  `layoutToCssPx`. [preview: ILayer.d.ts `layerToCssPx`; observed in a game
+  project, r504 preview in Edge, 2026-09-30: a weapon dragged onto a piece
+  and a piece onto a battle slot landed where the events put them]
