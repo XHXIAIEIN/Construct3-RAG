@@ -376,10 +376,11 @@ class DevTools:
 # downloads components (entity extraction, language models, 30 MB and more) and
 # installs its built-in extensions afresh on every start, and the GPU writes
 # shader caches. The disk cache is capped; the editor's scripts take about 20 MB
-# a release.
+# a release. --mute-audio keeps a preview's sound off the user's speakers: the
+# audio graph still runs, so a game timed by its audio clock plays as it would.
 QUIET = ("--no-first-run", "--no-default-browser-check", "--disable-extensions", "--disable-component-update",
          "--disable-background-networking", "--disable-sync", "--disable-gpu-shader-disk-cache",
-         "--disk-cache-size=104857600")
+         "--disk-cache-size=104857600", "--mute-audio")
 
 
 class Browser:
