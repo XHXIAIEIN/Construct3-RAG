@@ -8,6 +8,14 @@ Sources and the rule for adding an entry are in the index,
   world instead of adding an `isMoving` flag. [manual: plugin-reference/sprite.md
   "Set collisions enabled"; scripting/scripting-reference/object-interfaces/iworldinstance.md
   `isCollisionEnabled`]
+- The other side of that: the slot a dragged or tweening instance will land
+  on reads empty until it lands, the slot it is flying back to included. The
+  drop events expect that; an event that fills empty slots on its own, a buy
+  button or a spawn, puts a new instance there, and the returning one lands on
+  top of it. Let such an event wait while any instance is being dragged or its
+  landing tween is playing. [observed in a game project, r504 preview,
+  2026-10-01: a piece dropped back on its slot, the buy button pressed within
+  its 0.2 s snap, the bought weapon landed on the piece]
 - A type and its family are picked separately: narrowing Sprite `Piece` never
   narrows its family `Pieces`. Use that for two picks of one type in one
   event, and refer to the name the caller narrowed (see [Functions](functions.md)). [manual:

@@ -22,6 +22,7 @@ instances: families, containers, hierarchy children, overlap and collision
 tests, or sub-events that rely on the parent's picks.
 
 - Collisions disabled fails every overlap and collision test in both directions: use it to take a dragged or tweening instance out of the world, not an `isMoving` flag.
+- The slot a dragged or tweening instance will land on reads empty until it lands: an event that fills empty slots on its own waits for it.
 - A type and its family are picked separately: narrowing `Piece` never narrows `Pieces`; refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together; hierarchy children are not picked with their parent: use *Pick children*.
 - Picking a family never picks a type's container: pick the type from the family in a sub-event, `Enemy: Pick by unique ID Enemies.UID`, one per member type.
@@ -57,6 +58,7 @@ or call a function or a custom action.
 - Without *Copy picked* a function runs with every object reset to all picked.
 - With *Copy picked*, type and family picks are copied separately; logic on the caller's picks is a custom action.
 - Parameters are bare identifiers in expressions: `OffsetX`, not `Functions.OffsetX`.
+- A function without parameters is called without parentheses: `Functions.name`, not `Functions.name()`.
 
 ### Timer
 

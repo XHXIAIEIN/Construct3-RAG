@@ -28,3 +28,9 @@ Sources and the rule for adding an entry are in the index,
 - Parameters are bare identifiers in expressions: `Self.X + OffsetX`, not
   `Functions.OffsetX` or `Self.OffsetX`. [example: 3d-castle-maze, function
   OffsetHand]
+- A function without parameters is called in an expression without
+  parentheses: `Functions.settling`, not `Functions.settling()`. The empty
+  pair makes the editor refuse the whole project with `Syntax error: ')'
+  can't go here`, naming each condition that holds it, and
+  `check_project.py` lets it through. [observed in a game project, r504
+  editor, 2026-10-01]
