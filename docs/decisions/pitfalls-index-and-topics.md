@@ -102,7 +102,10 @@ differ in number, or when an entry has no source.
   (three tasks, three runs each, Haiku 4.5, 2026-09-30) broke none: eight
   opened a topic file, all three tween runs wrote the tween's *On finished*
   as its own top-level event, and all three family runs picked through the
-  type (`.local/docs/evidence/pitfalls-fix-lines-2026-09-30/`).
+  type (`.local/docs/evidence/pitfalls-fix-lines-2026-09-30/`). The line
+  does not replace the file: with `pitfalls/triggers-and-else.md` deleted,
+  three tween runs gave one top-level *On finished*, one *Wait* route with
+  format errors and one trigger nested in the function.
 - An eval shows an agent writing a pitfall's topic without opening its file:
   reword that group's when-to-read line first.
 - An agent repeats a mistake that a moved lesson describes, because it did
