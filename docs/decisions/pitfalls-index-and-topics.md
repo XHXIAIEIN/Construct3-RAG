@@ -98,8 +98,11 @@ differ in number, or when an entry has no source.
 - An agent writes a sheet that breaks a Picking or Triggers and Else entry
   whose fix its conclusion line states: the two groups are read by
   nearly every sheet and are not opened, so bring the entry back in full
-  and cut elsewhere. No run has yet measured the two groups as conclusion
-  lines that keep the fix.
+  and cut elsewhere. Nine runs on the conclusion lines that keep the fix
+  (three tasks, three runs each, Haiku 4.5, 2026-09-30) broke none: eight
+  opened a topic file, all three tween runs wrote the tween's *On finished*
+  as its own top-level event, and all three family runs picked through the
+  type (`.local/docs/evidence/pitfalls-fix-lines-2026-09-30/`).
 - An eval shows an agent writing a pitfall's topic without opening its file:
   reword that group's when-to-read line first.
 - An agent repeats a mistake that a moved lesson describes, because it did
