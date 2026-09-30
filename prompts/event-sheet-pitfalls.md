@@ -107,6 +107,7 @@ when the events place, move or rotate objects or read the viewport.
 - A Bullet's angle of motion and the object's angle are two values; at speed 0 the first cannot be set.
 - The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
 - `ViewportLeft` and the rest take a layer; `LayoutWidth` and `ViewportWidth(layer)` differ.
+- *Scale outer* keeps a parallax-0 HUD centred on the design area: pin screen-edge HUD with Anchor.
 - Drag & Drop moves the instance only on pointer moves: put a trailing or lifted look on a child.
 
 ### Input

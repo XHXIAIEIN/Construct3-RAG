@@ -40,6 +40,16 @@ Sources and the rule for adding an entry are in the index,
   `OriginalViewportWidth` the project's *Viewport size* property. [manual:
   system-reference/system-expressions.md "Viewport", "Layout";
   plugins/system.json: every `Viewport*` expression has a `layer` parameter]
+- Under *Scale outer* the screen shows more than the *Viewport size* on its
+  longer side, split evenly, and a parallax 0, 0 layer is centred on the
+  original viewport too: a HUD placed at the top of the viewport stays at
+  the top of the design area, not at the top of a taller screen, and the
+  layout beyond the viewport shows on the sides. Pin an edge HUD with the
+  Anchor behavior on that layer; paint the area outside the layout with
+  background objects that reach past it, not with events. [manual:
+  behavior-reference/anchor.md; observed in a game project, a 430×932
+  portrait export switched to *Scale outer* and shown at 560×380 and
+  300×700 in Chrome, 2026-09-30]
 - Drag & Drop moves the dragged instance only when the pointer moves: it
   sets the position to the pointer minus the grab offset, and a tick without
   movement writes nothing. A *Set position* on the dragged instance holds
