@@ -154,6 +154,10 @@ Rules:
   turns those into a public cross-reference on that issue's timeline, which
   cannot be taken back. A source line in a document may use the short form;
   only commits, issues and PRs are parsed.
+- `.agents/hooks/guard_exported_data.py` blocks a hand edit under the
+  `data/` folders that `scripts/init.py` replaces, since the next refresh
+  would drop it. A client that runs hooks calls it before an edit; Claude
+  Code registers it in `.claude/settings.json`.
 
 Before finishing, plus the checks in the touched directories' `AGENTS.md`:
 
@@ -192,3 +196,4 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |
+| Delegating an ACE lookup or check to a Claude Code sub-agent | `.claude/agents/ace-lookup.md` |
