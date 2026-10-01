@@ -404,8 +404,12 @@ class Browser:
         if not url:
             port_file.unlink(missing_ok=True)
             # IndexedDB sits 80 characters deep in the profile; past MAX_PATH it fails
-            # and the preview hangs. \\?\ lifts the limit for the browser's own files.
-            data = f"\\\\?\\{profile.resolve()}" if sys.platform == "win32" else profile
+            # and the preview hangs. \\?\ lifts the limit for the browser's own files,
+            # but with it the browser writes no cookie file, and a login to the editor
+            # is gone at the next start: only a profile path that needs it gets it.
+            data = profile.resolve()
+            if sys.platform == "win32" and len(str(data)) > 150:
+                data = f"\\\\?\\{data}"
             args = [exe, f"--user-data-dir={data}", "--remote-debugging-port=0", *QUIET,
                     "--window-size=1400,900", "about:blank"]
             self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"],
