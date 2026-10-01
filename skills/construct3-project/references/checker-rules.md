@@ -111,7 +111,7 @@ output. Each names the event and says what to write.
 | Every tick beside N other condition(s) changes nothing (a block that is not an OR block) | 1 other condition | rare; the examples write Every tick as an event's one condition |
 | sub-events N levels deep, every leaf calling one function | 3 levels, 3 or more leaves | 3, in shifting-dungeon, template-ladder-climbing, wall-walking |
 | with events ..., the same conditions and actions N times over (sibling events of one shape, their values ignored) | 5 or more | 47 in 31 projects; 32 in 20 studio games, input ladders, a key per action, and else-if chains among them |
-| counts seconds by hand (Every N seconds subtracting N from a variable in the same event) | the amount equals the interval | none; the one example that subtracts every N seconds counts coins out. Every add-countdown run of the skill's evals wrote it, 60 of 60 |
+| counts seconds by hand (Every N seconds taking N off a variable in the same event: Subtract N, Add -N or Set v to v - N) | the amount equals the interval | none; the one example that subtracts every N seconds counts coins out. 73 of the 155 eval and small-model projects wrote it, every add-countdown run among them |
 
 Why these thresholds: `Construct3-RAG/docs/decisions/event-sheet-design-guidance.md`.
 A style warning is never an error: the editor accepts all seven, and an

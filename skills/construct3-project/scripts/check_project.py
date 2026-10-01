@@ -164,6 +164,7 @@ def frames_of(folder, prefix=""):
 STYLE_RUN = 8      # actions in a row without a comment action
 STYLE_TREE = 3     # sub-event levels below an event, when every leaf calls the same function
 STYLE_LADDER = 5   # sibling events of one shape, their conditions and actions the same, only the values differ
+COUNTDOWN_ON_INSTANCE = ("subtract-from-instvar", "add-to-instvar", "set-instvar-value")
 
 
 class Holder(NamedTuple):
@@ -1204,29 +1205,49 @@ class Checker:
                               f"{called.pop()}; the official examples write the cases as sibling sub-events with a "
                               f"comment each, or compute the value in one expression")
 
+    @staticmethod
+    def seconds_taken(a: dict, interval: float) -> str | None:
+        """The variable an action takes `interval` off, in any of the three spellings small
+        models write: Subtract N, Add -N, Set v to v - N; None for any other action."""
+        params = a.get("parameters")
+        if not isinstance(params, dict):
+            return None
+        aid, value = a.get("id"), params.get("value")
+        name = params.get("instance-variable" if aid in COUNTDOWN_ON_INSTANCE else "variable")
+        if aid in ("subtract-from-eventvar", "subtract-from-instvar"):
+            return name if number_of(value) == interval else None
+        if aid in ("add-to-eventvar", "add-to-instvar"):
+            return name if number_of(value) == -interval else None
+        if aid in ("set-eventvar-value", "set-instvar-value") and isinstance(value, str):
+            m = re.fullmatch(r"\s*(?:\w+\s*\.\s*)?(\w+)\s*-\s*([\d.]+)\s*", value)
+            if m and m.group(1).lower() == str(name).lower() and number_of(m.group(2)) == interval:
+                return name
+        return None
+
     def check_countdown(self, ev: dict, where: str, conditions: list, actions: list) -> None:
-        """Every N seconds subtracting N from a variable: the variable counts seconds, a
-        timer kept by hand. Every add-countdown run of the skill's evals wrote it, and
-        none of the 524 official examples; the one that subtracts every N seconds counts
-        coins, not time. A global counted this way keeps its value across Restart layout,
-        so the next round starts at 0 (event-sheet-design-guidance.md, 2026-09-28).
-        Subtracting dt is left alone: the examples count cooldowns that way."""
+        """Every N seconds taking N off a variable: the variable counts seconds, a timer
+        kept by hand. Of the 155 eval and small-model projects, 73 wrote it, as Subtract 1
+        (60), Add -1 (12) or Set v to v - 1 (1); none of the 524 official examples does,
+        and the one that subtracts every N seconds counts coins, not time. A global
+        counted this way keeps its value across Restart layout, so the next round starts
+        at 0 (event-sheet-design-guidance.md, 2026-09-28). Subtracting dt is left alone:
+        the examples count cooldowns that way."""
         every = [c for c in conditions if (c.get("objectClass"), c.get("id")) == ("System", "every-x-seconds")]
         if not every or ev.get("isOrBlock"):
             return
         interval = (every[0].get("parameters") or {}).get("interval-seconds")
+        if number_of(interval) is None:
+            return
         for a in actions:
-            params = a.get("parameters")
-            if a.get("id") not in ("subtract-from-eventvar", "subtract-from-instvar") or not isinstance(params, dict) \
-                    or number_of(interval) is None or number_of(params.get("value")) != number_of(interval):
+            name = self.seconds_taken(a, number_of(interval))
+            if name is None:
                 continue
-            on_instance = a["id"] == "subtract-from-instvar"
+            on_instance = a["id"] in COUNTDOWN_ON_INSTANCE
             owner = a.get("objectClass", "<Object>") if on_instance else "<Object>"
-            name = params.get("instance-variable" if on_instance else "variable")
             start = json.dumps({"id": "start-timer", "objectClass": owner, "behaviorType": "Timer",
                                 "parameters": {"duration": "<seconds>", "type": "once", "tag": '"countdown"'}})
             self.p.findings.style_finding(
-                "countdown", f"{where}: {name} counts seconds by hand, {params['value']} off every {interval} seconds"
+                "countdown", f"{where}: {name} counts seconds by hand, {number_of(interval):g} off every {interval} seconds"
                              + ("" if on_instance else "; a global keeps its value across Restart layout, so the next "
                                                        "round starts where this one ended") +
                              f". The Timer behavior counts time: add it to "
@@ -1454,7 +1475,7 @@ def main() -> int:
                          f"Every tick beside another condition, "
                          f"sub-events {STYLE_TREE} levels deep whose leaves all call one function, "
                          f"{STYLE_LADDER} or more sibling events of the same conditions and actions with other "
-                         "values, and Every N seconds subtracting N from a variable, a countdown the Timer "
+                         "values, and Every N seconds taking N off a variable, a countdown the Timer "
                          "behavior keeps. For a project the agent wrote; edit_sheet.py refuses a plan whose new "
                          "events raise the first four and warns on the other three")
     args = ap.parse_args()

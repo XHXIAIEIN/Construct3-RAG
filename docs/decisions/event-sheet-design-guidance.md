@@ -124,7 +124,7 @@ was run over the official examples before it was kept.
 | `tick` | *Every tick* beside another condition outside an OR block | an event without a trigger is tested every tick anyway |
 | `tree` | sub-events 3 levels deep whose leaves all call one function | a decision flattened into sub-events with one call at each leaf |
 | `ladder` | 5 or more sibling events of one shape, values aside | input ladders and else-if chains legitimately reach it, so it stays a warning |
-| `countdown` | *Every N seconds* subtracting N from a variable in the same event | the variable counts seconds; no official example does it, the one that subtracts every N seconds counts coins |
+| `countdown` | *Every N seconds* taking N off a variable in the same event: *Subtract* N, *Add* -N or *Set* v to v - N | the variable counts seconds; no official example does it, the one that subtracts every N seconds counts coins |
 
 A user's project is not held to the agent's style, so `--style` is off by
 default. `edit_sheet.py` refuses a plan whose new events raise `comment`,
