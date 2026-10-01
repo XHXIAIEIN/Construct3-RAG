@@ -11,8 +11,9 @@ python scripts/export_project.py --to export/web --bump
 ```
 
 The script opens the project in the editor of the release that saved it,
-exports it to Web (HTML5) as a zip with Offline support, and unpacks the zip
-into `--to`, replacing what was there.
+exports it to Web (HTML5) as a zip with Offline support, Deduplicate images
+and Optimize images on, and unpacks the zip into `--to`, replacing what was
+there.
 
 The version: `--bump` takes the export already in `--to` and adds one to its
 last number, or takes the project's Version when that is greater;

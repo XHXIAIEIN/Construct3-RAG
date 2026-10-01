@@ -15,7 +15,8 @@ left as it is. --attach uses a browser of the user's own instead, already logged
 
 The project goes to the editor of the release that saved it, savedWithRelease of
 project.c3proj, since an older one refuses it. The editor exports a zip with
-Offline support on and the other options as it remembers them; the zip replaces
+Offline support, Deduplicate images and Optimize images on and the other
+options as it remembers them; the zip replaces
 the contents of --to. The export carries the version given by --version or
 --bump, else the project's, with Auto-increment version off in the copy handed to
 the editor, and that version is written into project.c3proj when it differs.
@@ -323,12 +324,15 @@ def open_project(page, project: Path, staged: Path) -> None:
     raise Stop(f"the project did not open in {oe.RESULT_WAIT + 60} seconds: {result}")
 
 
-# The export options: a zip, with Offline support, which lets players get an update
+# The export options: a zip, with Offline support, which lets players get an update,
+# and the images deduplicated and optimized, which makes the download smaller
 OPTIONS_JS = r"""(() => {
   const to = document.getElementById('exportTo');
   if (to.value !== 'zip') { to.value = 'zip'; to.dispatchEvent(new Event('change', {bubbles: true})); }
-  const offline = document.getElementById('exportOfflineSupport');
-  if (!offline.checked) offline.click();
+  for (const id of ['exportOfflineSupport', 'exportDeduplicateImages', 'exportOptimizeImages']) {
+    const box = document.getElementById(id);
+    if (!box.checked) box.click();
+  }
 })()"""
 
 # The report's download link is a blob URL: read it into the page, then fetch it in parts
