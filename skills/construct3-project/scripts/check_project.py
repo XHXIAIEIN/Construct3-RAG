@@ -145,6 +145,14 @@ def bare(value, options) -> str:
     return ""
 
 
+def number_of(value) -> float | None:
+    """A parameter written as a plain number, "1" or 1.0; None for any other expression."""
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def frames_of(folder, prefix=""):
     for anim in folder.get("items", []):
         for i, fr in enumerate(anim["frames"]):
@@ -1161,6 +1169,7 @@ class Checker:
             style("tick", f"{where}: Every tick beside {len(others)} other condition(s) changes nothing, an event "
                           f"without a trigger is tested every tick already; the official examples write Every tick "
                           f"only as an event's one condition. Remove it")
+        self.check_countdown(ev, where, conditions, actions)
         if depth == 0 and (actions or ev.get("children")):
             j = i - 1
             while j >= 0 and siblings[j].get("eventType") == "variable":     # locals declared above the event
@@ -1194,6 +1203,37 @@ class Checker:
                 style("tree", f"{where}: sub-events {self.tree_depth(ev)} levels deep, every leaf calling "
                               f"{called.pop()}; the official examples write the cases as sibling sub-events with a "
                               f"comment each, or compute the value in one expression")
+
+    def check_countdown(self, ev: dict, where: str, conditions: list, actions: list) -> None:
+        """Every N seconds subtracting N from a variable: the variable counts seconds, a
+        timer kept by hand. Every add-countdown run of the skill's evals wrote it, and
+        none of the 524 official examples; the one that subtracts every N seconds counts
+        coins, not time. A global counted this way keeps its value across Restart layout,
+        so the next round starts at 0 (event-sheet-design-guidance.md, 2026-09-28).
+        Subtracting dt is left alone: the examples count cooldowns that way."""
+        every = [c for c in conditions if (c.get("objectClass"), c.get("id")) == ("System", "every-x-seconds")]
+        if not every or ev.get("isOrBlock"):
+            return
+        interval = (every[0].get("parameters") or {}).get("interval-seconds")
+        for a in actions:
+            params = a.get("parameters")
+            if a.get("id") not in ("subtract-from-eventvar", "subtract-from-instvar") or not isinstance(params, dict) \
+                    or number_of(interval) is None or number_of(params.get("value")) != number_of(interval):
+                continue
+            on_instance = a["id"] == "subtract-from-instvar"
+            owner = a.get("objectClass", "<Object>") if on_instance else "<Object>"
+            name = params.get("instance-variable" if on_instance else "variable")
+            start = json.dumps({"id": "start-timer", "objectClass": owner, "behaviorType": "Timer",
+                                "parameters": {"duration": "<seconds>", "type": "once", "tag": '"countdown"'}})
+            self.p.findings.style_finding(
+                "countdown", f"{where}: {name} counts seconds by hand, {params['value']} off every {interval} seconds"
+                             + ("" if on_instance else "; a global keeps its value across Restart layout, so the next "
+                                                       "round starts where this one ended") +
+                             f". The Timer behavior counts time: add it to "
+                             f"{owner if on_instance else 'the object that shows the time (<Object> below)'}, start it where "
+                             f"the count starts, {start}, end the count in Timer On timer \"countdown\", and show "
+                             f"ceil({owner}.Timer.Duration(\"countdown\") - {owner}.Timer.CurrentTime(\"countdown\"))")
+            return
 
     @staticmethod
     def shape(ev: dict) -> tuple:
@@ -1412,10 +1452,11 @@ def main() -> int:
                          f"{STYLE_RUN} or more actions in a row without a comment action, a top-level event with "
                          f"no comment above it, an event none of whose case sub-events has a comment above it, "
                          f"Every tick beside another condition, "
-                         f"sub-events {STYLE_TREE} levels deep whose leaves all call one function, and "
+                         f"sub-events {STYLE_TREE} levels deep whose leaves all call one function, "
                          f"{STYLE_LADDER} or more sibling events of the same conditions and actions with other "
-                         "values. For a project the agent wrote; edit_sheet.py refuses a plan whose new events "
-                         "raise the first four and warns on the other two")
+                         "values, and Every N seconds subtracting N from a variable, a countdown the Timer "
+                         "behavior keeps. For a project the agent wrote; edit_sheet.py refuses a plan whose new "
+                         "events raise the first four and warns on the other three")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()

@@ -46,7 +46,7 @@ opened once before it is handed over.
 | `scripts/lookup_ace.py OBJECT [WORD ...]` | Conditions, actions and expressions of an object of the project, of `System`, or of a plugin or behavior, each with its parameters and the JSON to write; or an effect by id or name, with its parameters |
 | `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only, `--show N` for one event as JSON |
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed; checked before anything is written |
-| `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds six readability warnings from the official examples' style, for a project the agent wrote |
+| `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds seven warnings from the official examples' style, for a project the agent wrote |
 | `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then runs it for 5 seconds and prints the runtime's errors, each with its event. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
 | `scripts/export_project.py` | Export the project to Web (HTML5) in the editor and unpack the zip into `--to`; `--bump` or `--version` sets the version the export carries and writes it into project.c3proj. The editor exports for an account with a subscription only: the script waits in a window of its own for the user to log in, or `--attach` works in a browser the user has open and is logged in to |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
@@ -131,6 +131,23 @@ The numbers are the editor's: the margin of the event sheet and the
 in JSON line numbers, and read a screenshot or a pasted Find result back the
 same way. `--outline` adds each event's sid, the string to search the JSON
 for.
+
+## Built-ins before variables
+
+Before a variable, an *Every tick* or an *Every X seconds* for a mechanic,
+write the built-in that already keeps it:
+
+- A delay, a countdown, a cooldown: the Timer behavior, *Start timer* and
+  *On timer*; the time left is `Duration(tag) - CurrentTime(tag)`.
+- A move, scale, fade or colour change over a known time: the Tween behavior
+  and *On any finished*.
+- One step after another inside one interaction: *Wait* in the same block.
+- A phase that switches a slice of the sheet on and off: a group and *Set
+  group active*; a pause is *Set time scale* 0.
+- A panel or popup: a layer of its own and *Set layer visible*.
+
+The rest, with what each replaces, is the Native first table of
+`Construct3-RAG/prompts/event-sheet-thinking.md`.
 
 ## Change a sheet with a plan
 

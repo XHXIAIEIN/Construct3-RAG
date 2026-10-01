@@ -87,6 +87,15 @@ guidance. The example is now a best score, a global kept across restarts
 on purpose, raised to `max(best, score)` when a round ends, so how to count
 down is left to `event-sheet-thinking.md` and the pitfalls.
 
+Update 2026-10-01. Iteration 30 confirmed it: no run opened
+`event-sheet-thinking.md`, 0 of 6 used a Timer. The route to the Timer is
+now in what the runs read. `SKILL.md` has a section, "Built-ins before
+variables", of five lines from the Native first table, and
+`check_project.py --style` has a `countdown` kind, below. Over the 60
+archived `add-countdown` runs of iterations 21 to 30 it fires on every one,
+and on no official example or game project; nothing else the checker prints
+changed. Whether runs then write a Timer is not measured yet.
+
 ## The authoring style
 
 The style file describes one cohort of the official examples: the demo
@@ -103,7 +112,7 @@ on screen, where a chain splits it into quoted fragments between values.
 
 ## Style checks
 
-`check_project.py --style` reports six kinds, each with the event and the
+`check_project.py --style` reports seven kinds, each with the event and the
 JSON to write. The thresholds come from the studio cohort, and each check
 was run over the official examples before it was kept.
 
@@ -115,12 +124,13 @@ was run over the official examples before it was kept.
 | `tick` | *Every tick* beside another condition outside an OR block | an event without a trigger is tested every tick anyway |
 | `tree` | sub-events 3 levels deep whose leaves all call one function | a decision flattened into sub-events with one call at each leaf |
 | `ladder` | 5 or more sibling events of one shape, values aside | input ladders and else-if chains legitimately reach it, so it stays a warning |
+| `countdown` | *Every N seconds* subtracting N from a variable in the same event | the variable counts seconds; no official example does it, the one that subtracts every N seconds counts coins |
 
 A user's project is not held to the agent's style, so `--style` is off by
 default. `edit_sheet.py` refuses a plan whose new events raise `comment`,
 `run`, `cases` or `tick`, whose fix is one comment or one deleted condition.
-`tree` and `ladder` stay warnings: fixing them is a design change the plan's
-author must make. With the refusal stated in `SKILL.md` and its plan example
+`tree`, `ladder` and `countdown` stay warnings: fixing them is a design
+change the plan's author must make. With the refusal stated in `SKILL.md` and its plan example
 carrying a comment, runs wrote the comment from the first draft.
 
 For `comment`, the events directly in a group are top-level events, and
@@ -134,6 +144,15 @@ directly in a group it now names the group and the event's entry in its
 `check_project.py --style` the `edit_sheet.py` operation that puts it there.
 A refused plan gets no operation: its numbers are the ones the sheet would
 have.
+
+`countdown` is the one smell of `event-sheet-thinking.md` that small models
+were seen writing and that has a mechanical form the official examples pass.
+Measured over the 524 examples and the 149 eval and small-model projects on
+2026-10-01: subtracting `dt` from a variable appears in 33 examples, cooldowns
+among them, so it is not a finding; a variable named for a UID appears in 20
+examples; `Pick all` on the trigger's object inside a triggered branch
+appears in 6 examples and in no run, nor does *Pick by unique ID* on it. Those
+stay prose in the smell table until a run writes them.
 
 Comments, variable comments and function descriptions end without a period,
 by the user's choice; a second sentence keeps the period between the two.
@@ -179,6 +198,9 @@ is two lines of the style prompt).
   refused kinds go back to warnings, with the run as evidence.
 - A capable model's plans are refused more than once per run: the message
   does not say what to write.
+- `add-countdown` runs still count seconds by hand with the `countdown`
+  warning under their plan: a warning is not enough; make the generator's
+  helper or the refusal carry the Timer.
 - The official examples change: rerun the survey scripts; the thresholds
   are constants at the top of `check_project.py`.
 - A game needs real art at generation time: design a generator that writes

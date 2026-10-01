@@ -2444,6 +2444,22 @@ def test_plan_refuses_a_new_every_tick_beside_another_condition(project):
     assert code == 0 and warnings(out) == [], out
 
 
+def test_style_names_a_countdown_kept_by_hand(project):
+    """Every 1 seconds, subtract 1 from a global: what every add-countdown run wrote. The plan goes
+    through with the warning under it, which names the Timer actions to write instead; subtracting
+    another amount every N seconds counts things, not time, and passes."""
+    every = {"id": "every-x-seconds", "objectClass": "System", "parameters": {"interval-seconds": "1"}}
+    tick = {"id": "subtract-from-eventvar", "objectClass": "System", "parameters": {"variable": "score", "value": "1"}}
+    ev = {"eventType": "block", "conditions": [every], "actions": [tick]}
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Count down."}, ev]}, flags=("--dry-run",))
+    assert code == 0 and "score counts seconds by hand, 1 off every 1 seconds; a global keeps its value across " \
+                         "Restart layout" in out, out
+    assert '"id": "start-timer"' in out and 'ceil(<Object>.Timer.Duration("countdown")' in out
+    tick["parameters"]["value"] = "2"
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Count down."}, ev]}, flags=("--dry-run",))
+    assert code == 0 and "counts seconds by hand" not in out, out
+
+
 def test_plan_refuses_new_cases_without_a_comment(project):
     """An event the plan creates with case sub-events needs a comment above at least one case, like
     the comment above itself; cases the plan puts under the user's own event only warn."""
