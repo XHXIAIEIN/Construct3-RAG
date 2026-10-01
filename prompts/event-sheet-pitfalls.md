@@ -155,10 +155,12 @@ image points, animations or frames.
 ### Rendering
 
 Read [pitfalls/rendering.md](pitfalls/rendering.md) when the events colour
-or size Text, draw bars, Drawing Canvas polygons or blend modes.
+or size Text, scale or scroll a Tiled Background's image, draw bars,
+Drawing Canvas polygons or blend modes.
 
 - A Text object has no *Set color*; its colour is *Set font color*, or the project does not open.
 - *Set width* stretches a Sprite, repeats a Tiled Background and stretches a 9-patch's middle.
+- A Tiled Background's image scale is a percentage in events and a fraction in the layout file, and a growing Y offset moves the image down: multiply the fraction by 100, and scroll upward with a falling offset.
 - A bar grows from its origin: put the origin on the edge it grows from.
 - Drawing Canvas *Fill polygon* draws nothing when two consecutive points coincide.
 - A blend mode touches only the pixels under the object's own quad, and the layer needs *Force own texture*.
@@ -192,7 +194,7 @@ instance, or control a timeline by tags, keyframes or playback rate.
 - *Set instance* covers the next *Play* only and one *Play* starts a copy per picked instance with the same tags: set one instance at a time and tag each copy with its UID.
 - A copy is found by the timeline's name contained in the copy's name: keep no timeline name inside another's.
 - *Stop* rewinds to 0, *Pause* holds, and a finished timeline ignores both *Stop* and *Resume*: *Set time* 0 before replaying.
-- *Stop* moves no instance: a relative track stopped midway leaves the offset it reached, and later timelines on that instance add to it. *Set time* 0 interpolates from the old time at once, so *Set time* 0 then *Stop* puts it back. [runtime source, r504 `TimelineState.Stop`/`SetTime`; a weapon swapped mid-swing kept a 55° tilt, game project 2026-10-01]
+- *Stop* leaves a relative track's offset on the instance: *Set time* 0, then *Stop*, to take it back.
 - *Set time* pauses and never fires *On keyframe reached*.
 - *On keyframe reached* picks nothing: pick the instance back from the UID in `Timeline.TimelineTags`.
 - *On keyframe reached* sees the previous tick's pose: *Wait 0* before reading where the keyframe put the instance.

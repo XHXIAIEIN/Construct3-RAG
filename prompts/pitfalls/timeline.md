@@ -45,8 +45,7 @@ custom ease are written in the project files is in
   inside another's when both play on the same object. [runtime: exported
   c3runtime.js r504, `TimelineManager.GetTimelineOfTemplateForInstances`
   tests `t.GetName().includes(e.GetName())`; not reproduced]
-- *Stop* puts the playhead back to 0 and applies it, so a relative timeline
-  stopped midway takes its offsets back; a timeline that has already finished
+- *Stop* puts the playhead back to 0; a timeline that has already finished
   ignores *Stop* and keeps its end pose. *Pause* keeps the pose where it is.
   *Resume* does nothing once a non-looping timeline has reached its end:
   move the playhead back with *Set time* first. [runtime: r504 preview,
@@ -55,6 +54,13 @@ custom ease are written in the project files is in
   is false when the time is at the total time; observed in a game project,
   r504 preview, 2026-09-30: the second slash only started after *Set time*
   0 moved the playhead off the end]
+- *Stop* moves no instance: a relative track stopped midway leaves the
+  offset it reached on the instance, and later timelines on that instance
+  add to it. *Set time* 0 interpolates from the old time to 0 at once, which
+  takes the offset back, so *Set time* 0 then *Stop* returns the instance to
+  its pose before the play. [runtime source, r504 `TimelineState.Stop` and
+  `SetTime`; observed in a game project, r504 preview, 2026-10-01: a weapon
+  swapped mid-swing kept a 55° tilt]
 - *Set time* pauses a playing timeline where it puts it, and on one that
   was just played in the same action list it takes it off the schedule and
   applies the pose, which creates an instance's copy without playing it. It
