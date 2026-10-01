@@ -193,8 +193,7 @@ instance, or control a timeline by tags, keyframes or playback rate.
 - A relative track adds each tick's step from 0: keyframe values are offsets from the pose at play start, so moves that start and end at 0 layer and repeat without drifting.
 - *Set instance* covers the next *Play* only and one *Play* starts a copy per picked instance with the same tags: set one instance at a time and tag each copy with its UID.
 - A copy is found by the timeline's name contained in the copy's name: keep no timeline name inside another's.
-- *Stop* rewinds to 0, *Pause* holds, and a finished timeline ignores both *Stop* and *Resume*: *Set time* 0 before replaying.
-- *Stop* leaves a relative track's offset on the instance: *Set time* 0, then *Stop*, to take it back.
+- *Stop* rewinds to 0 and takes a relative track's offsets back, *Pause* holds, and a finished timeline ignores both *Stop* and *Resume* and keeps its offsets: *Set time* 0 before replaying or putting the instance back.
 - *Set time* pauses and never fires *On keyframe reached*.
 - *On keyframe reached* picks nothing: pick the instance back from the UID in `Timeline.TimelineTags`.
 - *On keyframe reached* sees the previous tick's pose: *Wait 0* before reading where the keyframe put the instance.

@@ -45,22 +45,23 @@ custom ease are written in the project files is in
   inside another's when both play on the same object. [runtime: exported
   c3runtime.js r504, `TimelineManager.GetTimelineOfTemplateForInstances`
   tests `t.GetName().includes(e.GetName())`; not reproduced]
-- *Stop* puts the playhead back to 0; a timeline that has already finished
-  ignores *Stop* and keeps its end pose. *Pause* keeps the pose where it is.
-  *Resume* does nothing once a non-looping timeline has reached its end:
-  move the playhead back with *Set time* first. [runtime: r504 preview,
-  Timeline plugin `StopTimeline` calls `Reset()`, `PauseTimeline` calls
-  `Stop()`; `TimelineState.Reset` returns when `IsComplete()`, `_CanResume`
-  is false when the time is at the total time; observed in a game project,
-  r504 preview, 2026-09-30: the second slash only started after *Set time*
-  0 moved the playhead off the end]
-- *Stop* moves no instance: a relative track stopped midway leaves the
-  offset it reached on the instance, and later timelines on that instance
-  add to it. *Set time* 0 interpolates from the old time to 0 at once, which
-  takes the offset back, so *Set time* 0 then *Stop* returns the instance to
-  its pose before the play. [runtime source, r504 `TimelineState.Stop` and
-  `SetTime`; observed in a game project, r504 preview, 2026-10-01: a weapon
-  swapped mid-swing kept a 55° tilt]
+- *Stop* puts the playhead back to 0 and applies it in the same tick, so a
+  relative timeline stopped midway takes its offsets back, also while it is
+  paused, set by *Set time*, playing backwards or layered with another
+  relative timeline on the instance. A timeline that has already finished
+  ignores *Stop* and keeps its end pose, with a relative track's offsets
+  left on the instance: *Set time* 0 takes them back. *Pause* keeps the
+  pose where it is. *Resume* does nothing once a non-looping timeline has
+  reached its end: move the playhead back with *Set time* first. [runtime:
+  r504 preview, Timeline plugin `StopTimeline` calls `Reset()`,
+  `PauseTimeline` calls `Stop()`; `TimelineState.Reset` returns when
+  `IsComplete()`, `_CanResume` is false when the time is at the total time;
+  observed in a game project, r504 preview, 2026-09-30: the second slash
+  only started after *Set time* 0 moved the playhead off the end; observed
+  in a minimal project, r495.2 and r504 preview, 2026-10-01: a relative X
+  track at +121 px and an angle track at −57°, on a hierarchy child too,
+  read 0 in the tick of *Stop* from each of those states, and a finished
+  one kept +484 px after *Stop* and read 0 after *Set time* 0]
 - *Set time* pauses a playing timeline where it puts it, and on one that
   was just played in the same action list it takes it off the schedule and
   applies the pose, which creates an instance's copy without playing it. It
