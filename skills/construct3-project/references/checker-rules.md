@@ -50,7 +50,7 @@ How each was read from the editor and confirmed:
 | Every file `rootFileFolders` lists is on disk: `general` in `files/`, `icon` in `icons/`, `sound` in `sounds/`, `music` in `music/`, `font` in `fonts/`, `script` in `scripts/` | `missing file path 'icons\icon-16.png'` |
 | A sound parameter (*Play*, *Play at object*) names a sound or music file the project lists, without its extension, in any case: `SFX1` for `sfx1.webm` | `missing file '0'`, `missing file 'sfx1.webm'` |
 | A key is a key code, a JSON number | `expected finite number` |
-| An action does not write a constant | `event variable X is constant` |
+| An action does not write a constant. The editor finds a variable by its name without case, taking the nearest declaration and, within one list of events, the first: with a constant `PHASE` declared above a variable `phase`, *Add 1 to phase* writes `PHASE`, and the finding says to rename `phase` | `event variable phase is constant` |
 | An ease is a built-in id such as `easeoutback`, unless the project has custom eases | the tween keeps no ease and fails later |
 | An event variable's or a function parameter's `initialValue` is text, a boolean's `"true"` or `"false"` in lowercase; a parameter may also carry a JSON number | a boolean is read by comparing the text to `"true"`, so `false`, `true`, `"True"` and `"1"` all read as false; another JSON type in a parameter stops the load with `invalid type of initialValue` |
 | An instance variable's `type` is `number`, `string` or `boolean`; the editor's Text type is `string` | not measured |

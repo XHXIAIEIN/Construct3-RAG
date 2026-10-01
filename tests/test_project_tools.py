@@ -1684,6 +1684,39 @@ def test_action_cannot_write_a_constant(project):
     assert "ROUND_COINS is a constant and an action cannot change it" in findings(project, change)
 
 
+def number_variable(name: str, constant: bool, sid: int) -> dict:
+    return {"eventType": "variable", "name": name, "type": "number", "initialValue": "0", "comment": "",
+            "isStatic": False, "isConstant": constant, "sid": sid}
+
+
+@pytest.mark.parametrize("globals_, local, written, refused", [
+    (["PHASE", "phase"], None, "phase", "global constant PHASE"),
+    (["phase", "PHASE"], None, "phase", None),
+    (["phase", "PHASE"], None, "PHASE", None),
+    (["phase"], "PHASE", "phase", "local constant PHASE"),
+    (["PHASE"], "phase", "PHASE", None),
+])
+def test_an_action_writes_the_variable_the_editor_finds_without_case(project, globals_, local, written, refused):
+    """A constant PHASE declared above a variable phase made Add 1 to phase stop the editor with
+    "event variable phase is constant": it finds a name without case, the nearest declaration
+    first and, among the variables of one list of events, the first. Each case was opened in
+    the editor (r495.2, 2026-10-02); the ones without a finding opened."""
+    def change(sheet):
+        sheet["events"][0:0] = [number_variable(n, n == "PHASE", 900000000000010 + i) for i, n in enumerate(globals_)]
+        block = events(sheet)["setup"]
+        if local:
+            block.setdefault("children", []).insert(0, number_variable(local, local == "PHASE", 900000000000020))
+            block = block["children"][1]
+        block["actions"].append({"id": "add-to-eventvar", "objectClass": "System", "sid": 900000000000021,
+                                 "parameters": {"variable": written, "value": "1"}})
+    out = findings(project, change)
+    if refused:
+        assert f"{written} is read as the {refused}" in out
+        assert f"'event variable {written} is constant'. Rename the variable {written}" in out
+    else:
+        assert "constant" not in out, out
+
+
 def test_self_in_a_system_parameter_names_the_object_to_write(project):
     """Self is the object of the condition or action; in a System one it is nothing (editor: Invalid use of 'self')."""
     def change(s):

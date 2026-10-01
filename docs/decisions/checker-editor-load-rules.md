@@ -97,6 +97,21 @@ Option 2 as the default, and option 3 as the step after it.
   no new finding over the examples, to catch what the editor opener already
   reports; it is worth building when an open fails on a mismatch the
   shadowing rule does not explain.
+- A generated benchmark project declared a global constant `PHASE` above a
+  global variable `phase` and wrote *Add 1 to phase*; the checker passed it
+  and the editor refused it with `event variable phase is constant`. The
+  loader binds a variable parameter through the same search an expression
+  uses: the event's own function parameters, then the parameters and
+  variables of each enclosing event from the nearest out, then the top-level
+  variables of every sheet, each list in its order, and the first name that
+  matches without case wins; the loader does not refuse two names that
+  differ only in case. Five probes opened as that order predicts: the
+  constant first refused, the variable first opened whichever case the
+  action wrote, a local constant refused over a global variable and a local
+  variable opened over a global constant. The checker now resolves a
+  variable parameter in that order, so it also passes the two probes that
+  opened, which it had refused. The official examples and the game folders
+  print as before.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from

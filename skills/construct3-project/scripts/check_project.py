@@ -167,6 +167,18 @@ STYLE_LADDER = 5   # sibling events of one shape, their conditions and actions t
 COUNTDOWN_ON_INSTANCE = ("subtract-from-instvar", "add-to-instvar", "set-instvar-value")
 
 
+def declarations(events: list):
+    """Every variable and function parameter declared in a list of events and its sub-events."""
+    for ev in events:
+        if not isinstance(ev, dict):
+            continue
+        if ev.get("eventType") == "variable":
+            yield ev
+        yield from ev.get("functionParameters") or []
+        if isinstance(ev.get("children"), list):
+            yield from declarations(ev["children"])
+
+
 class Holder(NamedTuple):
     """What holds the trigger of an event branch."""
     name: str       # "Touch:on-touched-object", or "the function AddScore"
@@ -206,6 +218,7 @@ class Checker:
         self._eases: set[str] = set()
         self.deprecated_uses: dict[str, list[str]] = {}      # warning -> where each use is
         self.global_ids: set[int] = set()     # the top-level variables of every sheet
+        self.variable_names: set[str] = set()     # every variable and parameter name, as written
         self.numbers_on_disk = True      # whether the sheet being walked is the file, whose numbers a plan can name
 
     def check(self) -> None:
@@ -757,11 +770,20 @@ class Checker:
             if ivar not in p.ivars_of(target):
                 self.err(f"{where}: {target} has no instance variable {ivar!r}{closest(ivar or '', p.ivars_of(target))}")
         elif ptype in ("eventvar", "eventvarbool", "eventvarany"):
-            if value not in scope:
+            var = self.variable_named(value, scope)
+            if var is None:
                 self.err(f"{where}: variable {value!r} is not in scope{bare(value, scope) or closest(value, scope)}")
-            elif ptype == "eventvarbool" and scope[value]["type"] != "boolean":
+            elif ptype == "eventvarbool" and var["type"] != "boolean":
                 self.err(f"{where}: variable {value!r} is not a boolean")
-            elif writes and scope[value].get("isConstant"):
+            elif writes and var.get("isConstant") and var["name"] != value and value in self.variable_names:
+                kind = "global" if id(var) in self.global_ids else "local"
+                self.err(f"{where}: {value} is read as the {kind} constant {var['name']}: the editor finds a "
+                         f"variable by its name without case, taking the nearest declaration and, within one list "
+                         f"of events, the first, so the action writes {var['name']} and the editor stops with "
+                         f"'event variable {value} is constant'. Rename the variable {value}, here and wherever "
+                         f"it is declared and used, so that it differs from {var['name']} by more than case, "
+                         f"for example {value}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
+            elif writes and var.get("isConstant"):
                 self.err(f"{where}: {value} is a constant and an action cannot change it; "
                          f"the editor stops with 'event variable {value} is constant'")
         elif ptype == "layer":
@@ -888,7 +910,8 @@ class Checker:
                              writes=kind == "actions", stand_in=stand_in)
         if ace_id == "create-object" and obj == "System":
             self.created.add(params.get("object-to-create"))
-        if ace_id == "set-eventvar-value" and (scope.get(params.get("variable")) or {}).get("type") == "boolean":
+        if ace_id == "set-eventvar-value" and \
+                (self.variable_named(params.get("variable"), scope) or {}).get("type") == "boolean":
             self.err(f"{where}: Set value on boolean {params['variable']}; use Set boolean")
 
     def check_structure(self, ev: dict, where: str, above: Holder | None, previous: dict | None) -> Holder | None:
@@ -1014,7 +1037,7 @@ class Checker:
         name = var.get("name")
         if not isinstance(name, str):
             return
-        outer = next((v for k, v in scope.items() if LOWER(k) == LOWER(name)), None)
+        outer = self.variable_named(name, scope)
         if outer is None or outer is var or id(var) in self.global_ids or outer.get("type") == var.get("type"):
             return
         self.err(f"{where}: {var.get('type')} {name} has the name of the {outer.get('type')} variable {outer['name']} "
@@ -1022,6 +1045,29 @@ class Checker:
                  f"{outer['name']} reads {name}, and the editor refuses the project with \"Type mismatch\" "
                  f"(\"- does not work with 'string' and 'number'\" for a text local beside a number); rename it, "
                  f"for example {name}{SHADOW_SUFFIX.get(var.get('type'), 'Local')}")
+
+    @staticmethod
+    def variable_named(name, scope: dict) -> dict | None:
+        """The variable the editor binds a name to, compared without case. declare
+        keeps the scope in the editor's order of search."""
+        if not isinstance(name, str):
+            return None
+        return next((v for k, v in scope.items() if LOWER(k) == LOWER(name)), None)
+
+    @staticmethod
+    def declare(scope: dict, var: dict, outer: set[str]) -> None:
+        """Bring a variable into scope as the editor searches it: the event's own function
+        parameters, then the variables of each enclosing list from the nearest out, then
+        the top-level variables of every sheet, each list in its order, and the first name
+        that matches without case wins. So a variable drops the outer ones of its name, and
+        a later one of its own list that matches it is never found. outer: the names the
+        scope held before this list."""
+        name = var.get("name")
+        if not isinstance(name, str):
+            return
+        for k in [k for k in scope if k in outer and LOWER(k) == LOWER(name)]:
+            del scope[k]
+        scope.setdefault(name, var)
 
     def check_block(self, ev: dict, scope: dict, where: str) -> None:
         for i, c in enumerate(ev.get("conditions", []), 1):
@@ -1077,7 +1123,8 @@ class Checker:
         that list, whatever the order, and to their sub-events; not to the parent's
         own actions. So the list's variables enter the scope first, and a block is
         checked before its children are walked. scope maps a name to the variable
-        event or function parameter that declares it. counter holds the sheet's
+        event or function parameter that declares it, in the order declare keeps; a
+        sheet's own top-level variables are there before its walk. counter holds the sheet's
         running event number, above what holds the trigger of this branch, depth
         how many sub-event levels down this list is (a group's children are 0),
         group the group whose children the list is."""
@@ -1086,10 +1133,11 @@ class Checker:
         if bad:
             self.err(f"{where}: an event is {bad[0]!r}; every event is an object with an eventType")
             events = [ev for ev in events if isinstance(ev, dict)]
+        outer = set(scope)
         for ev in events:
-            if ev.get("eventType") == "variable":
+            if ev.get("eventType") == "variable" and id(ev) not in self.global_ids:
                 self.check_shadow(ev, scope, f"{where} variable {ev['name']}")
-                scope[ev["name"]] = ev
+                self.declare(scope, ev, outer)
         ladders = self.ladders(events) if self.style else {}
         numbered: dict[int, list[tuple[int, str]]] = {}
         previous = None
@@ -1118,9 +1166,10 @@ class Checker:
                 self.walk(ev.get("children") or [], scope, where, counter, above, group=ev)
             elif et in ("function-block", "custom-ace-block"):
                 fscope = dict(scope)
+                outer = set(fscope)
                 for param in ev["functionParameters"]:
                     self.check_shadow(param, fscope, f"{w} parameter {param['name']}")
-                    fscope[param["name"]] = param
+                    self.declare(fscope, param, outer)
                     self.check_variable(param, w, "parameter")
                 label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
                 if et == "custom-ace-block" and ev["objectClass"] not in self.p.plugin_of:
@@ -1331,9 +1380,13 @@ class Checker:
             self.declared_functions(sheet["events"])
             self.declared_groups(sheet["events"])
         # A global declared at the top level of any sheet is visible from every sheet.
-        globals_ = {ev["name"]: ev for s in self.sheets.values() for ev in s["events"]
-                    if isinstance(ev, dict) and ev.get("eventType") == "variable"}
-        self.global_ids = {id(ev) for ev in globals_.values()}
+        tops = [ev for s in self.sheets.values() for ev in s["events"]
+                if isinstance(ev, dict) and ev.get("eventType") == "variable"]
+        globals_: dict = {}
+        for ev in tops:
+            self.declare(globals_, ev, set())
+        self.global_ids = {id(ev) for ev in tops}
+        self.variable_names = {v.get("name") for s in self.sheets.values() for v in declarations(s["events"])}
         for sname, sheet in self.sheets.items():
             # A plan's sheet has numbers the file does not have yet: no operation can address them.
             self.numbers_on_disk = sname not in self.unsaved
