@@ -149,6 +149,11 @@ Rules:
 - Docs and tests change with the behavior. README: data first, service
   second, English and Chinese identical. `docs/dev/architecture.md`
   describes only what runs. Test totals stay out of docs.
+- A commit message or PR text names an issue of another repository in
+  words or as a URL in backticks, never as `owner/repo#N` or `#N`: GitHub
+  turns those into a public cross-reference on that issue's timeline, which
+  cannot be taken back. A source line in a document may use the short form;
+  only commits, issues and PRs are parsed.
 
 Before finishing, plus the checks in the touched directories' `AGENTS.md`:
 
