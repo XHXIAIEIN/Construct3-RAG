@@ -153,7 +153,10 @@ Tests are not scanned, since the suite fails on its own.
 
 `C3Fetcher.export_to_data()` is the one place that maps the cache onto
 `data/`: it replaces `c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`
-whole, leaving cache markers behind. `scripts/init.py` and the update workflow
+whole, leaving cache markers behind. The TypeScript definitions are written
+as the CDN ships them, some with CRLF; `.gitattributes` stores every text
+file as LF, so a refresh changes only what the release changed
+(`docs/decisions/lf-line-endings.md`). `scripts/init.py` and the update workflow
 both call it, so generated and committed layouts stay identical. The workflow
 opens a pull request with the result and the `schema_diff.py` report, against
 the data on `main`, as its body. It enables auto-merge only when the report
