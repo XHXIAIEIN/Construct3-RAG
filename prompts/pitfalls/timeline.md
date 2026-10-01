@@ -92,7 +92,10 @@ custom ease are written in the project files is in
   synchronously through `OnKeyframeReached`, before the property tracks'
   `Interpolate`; observed in a game project, r504 preview, 2026-10-01: a
   sprite created at a sword's position in the trigger started 12 px off the
-  pose drawn at the keyframe, and after *Wait 0* matched it within 1 px]
+  pose drawn at the keyframe, and after *Wait 0* matched it within 1 px;
+  reported as Scirra/Construct-bugs#9291, open, 2026-10-01: in the trigger
+  `Time` reads the keyframe's time while a discrete track still holds the
+  value before the keyframe]
 - A negative playback rate plays a timeline back to 0, where it finishes:
   *Set playback rate* −3 on a windup cancelled midway takes the pose back
   smoothly, and a relative timeline ends with its offsets gone. Set a
