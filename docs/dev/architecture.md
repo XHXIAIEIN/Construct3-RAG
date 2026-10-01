@@ -167,7 +167,8 @@ replaces `data/` itself, so the cache is never read at query time.
 
 No ordinary import or query refreshes the CDN. `scripts/init.py` fetches,
 exports into the cache, and replaces the `data/` directories; the update
-workflow runs the same script.
+workflow runs the same script, then `scripts/schema_diff.py` for the body of
+its pull request.
 
 ## Known limits
 

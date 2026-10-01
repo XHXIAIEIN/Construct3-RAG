@@ -51,6 +51,14 @@ jobs:
           # then replace data/c3-schemas, c3-examples, c3-lang and c3-ts-defs.
           python scripts/init.py --version "${{ steps.check.outputs.latest }}"
 
+      # What the release changed, against the data on main, as the PR body.
+      # needs_review is true when a prompt, the skill, the code or a doc quotes
+      # an id the release removed, deprecated or changed in a breaking way.
+      - name: Report schema changes
+        if: steps.check.outputs.changed == 'true'
+        id: diff
+        run: python scripts/schema_diff.py --base HEAD --output "$RUNNER_TEMP/schema-diff.md" --github-output
+
       - name: Create Pull Request
         if: steps.check.outputs.changed == 'true'
         id: pr
@@ -59,12 +67,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "sync Construct 3 ${{ steps.check.outputs.latest }}"
           title: "sync Construct 3 ${{ steps.check.outputs.latest }}"
-          body: "${{ steps.check.outputs.current }} → ${{ steps.check.outputs.latest }}"
+          body-path: ${{ runner.temp }}/schema-diff.md
           branch: c3-${{ steps.check.outputs.latest }}
           delete-branch: true
 
+      # A release that touches what the repository quotes waits for a person.
       - name: Enable auto-merge for PR
-        if: steps.pr.outputs.pull-request-number != ''
+        if: steps.pr.outputs.pull-request-number != '' && steps.diff.outputs.needs_review != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}

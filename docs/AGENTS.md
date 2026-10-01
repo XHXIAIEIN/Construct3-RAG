@@ -45,6 +45,7 @@ Data and schemas:
 | `schema-index-per-locale-split.md` | Why display names live in the per-locale index rather than the root one |
 | `version-from-data-manifest.md` | Why the Construct release is read from `data/` and not from a setting |
 | `cdn-release-directory.md` | Which CDN directory a release is fetched from, and why the root is never read for it |
+| `release-schema-diff.md` | What the update pull request reports about a release, and when it waits for a person instead of merging itself |
 
 The project skill and the prompts:
 

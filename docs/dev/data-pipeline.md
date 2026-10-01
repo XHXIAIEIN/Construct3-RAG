@@ -135,12 +135,27 @@ the CDN's `versions.json`. When Construct 3 releases a new version:
 # Fetch the latest stable release (or --version <release>), replace data/
 python scripts/init.py
 
-# Review, then commit data/
-git diff --stat data/
+# What the release changed against the committed data, and which tracked
+# files quote an id it broke; review them, then commit data/
+python scripts/schema_diff.py
 ```
+
+`scripts/schema_diff.py` compares two schema snapshots, each a folder or a git
+revision, by the structural fields of the primary locale: addons and ACEs
+added, removed or deprecated, and per ACE the parameters (added, removed,
+retyped, combo items) and the flags `scriptName`, `isTrigger`, `isLooping`,
+`isInvertible`, `isCompatibleWithTriggers`, `isAsync` and `returnType`. A
+removal, a deprecation, or a change an event written for the old release can
+trip on (a parameter removed, added or retyped, a combo item gone, a flag that
+had a value and changed) is watched: the script lists every quoted or
+backticked mention of the id in tracked prompts, skill files, code and docs.
+Tests are not scanned, since the suite fails on its own.
 
 `C3Fetcher.export_to_data()` is the one place that maps the cache onto
 `data/`: it replaces `c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`
 whole, leaving cache markers behind. `scripts/init.py` and the update workflow
 both call it, so generated and committed layouts stay identical. The workflow
-opens a pull request with the result.
+opens a pull request with the result and the `schema_diff.py` report, against
+the data on `main`, as its body. It enables auto-merge only when the report
+watches no mentioned id; otherwise the pull request waits for a person. See
+`docs/decisions/release-schema-diff.md`.
