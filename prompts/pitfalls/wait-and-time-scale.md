@@ -67,3 +67,30 @@ Sources and the rule for adding an entry are in the index,
   time scale* while *Is playing*. [examples: segmented-boss-fight BossHeath;
   samuroof Credits `Camera.Tween.Value("TimeScaleChange")`; eventide
   `1 - PauseUI.Tween.Progress("ShowPause")`]
+- Two such hit stops that overlap (a critical hit that also kills, two
+  lanes resolving in one tick) each restore the time scale when their own
+  *Wait* ends, so the shorter one cuts the longer short. Record the latest
+  deadline in a variable, `max(until, wallclocktime + stopTime)`, and
+  after the *Wait* set the time scale to 1 only when `wallclocktime` has
+  reached it; `wallclocktime` ignores the time scale, `time` does not.
+  [manual: system-reference/system-expressions.md "wallclocktime";
+  observed in a game project, r504 preview, 2026-10-02: a 0.05 s crit stop
+  and a 0.08 s kill stop in one tick lasted 0.05 s before the fix and
+  0.08 s after]
+- Scroll To *Shake* replaces the shake that is running: magnitude, start
+  and end are overwritten, so a 3 px tombstone shake 0.45 s after an 8 px
+  kill shake ends the kill shake, and a 3 px splash shake in the same tick
+  as the kill shake wins by running later. Gate it behind the remaining
+  magnitude, `mag × max(0, 1 − (time − start) / duration)`, kept in
+  variables, and call *Shake* only when the new magnitude is not smaller.
+  The shake's magnitude is also multiplied by `min(object time scale, 1)`
+  and its window divided by it: during a 0.1 hit stop it shakes at a tenth
+  and effectively starts when the stop ends; *Set object time scale* 1 on
+  the camera object keeps it at full strength through the stop. [runtime:
+  exported c3runtime.js r504, scrollto `Acts.Shake` calls
+  `SetShakeMagnitude`, `SetShakeStart`, `SetShakeEnd` unconditionally;
+  `Tick2` computes `mag × min(n, 1)` and `(end − start) / n` with `n` the
+  instance's time scale; observed in a game project, r504 preview,
+  2026-10-02: an axe kill shook 3 px before the gate and 7 px after, and
+  with the camera's time scale at 1 the 12 px boss shake peaked at 10 px
+  inside the 0.1 s stop]

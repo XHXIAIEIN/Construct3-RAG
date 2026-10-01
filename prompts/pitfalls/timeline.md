@@ -129,6 +129,17 @@ custom ease are written in the project files is in
   event of the same tick, which took it for idle and did not take it back
   under a new move; sampled after that tick, the copy read `Time` 0 and
   *Is playing* true]
+- A negative playback rate fires *On keyframe reached* for every tagged
+  keyframe it passes on the way back, with the same tags as the forward
+  pass: a cheer rewound at −4 re-ran its `catch` and `jump` events, and a
+  raise rewound re-fired its spark burst. An event that must run only on
+  the forward pass tests a flag the rewinding event sets (`cheerBack`) and
+  the forward *Resume* clears; the playback rate cannot be read from the
+  keyframe trigger. [runtime: exported c3runtime.js r504,
+  `TrackState.MaybeTriggerKeyframeReachedConditions` has an `else` branch
+  for `!IsForwardPlayBack()` that calls `OnKeyframeReached` for the
+  keyframe at or above the new time; observed in a game project, r504
+  preview, 2026-10-02]
 - A timeline follows the system time scale when its *Use system timescale*
   is on, the default: *Set time scale* 0.1 for a hit stop slows it with
   everything else, and a strike stops at the moment it lands. Its playback
