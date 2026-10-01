@@ -39,6 +39,24 @@ that changes which events are written goes to
   in Edge, 2026-10-01: a finger held the buy button and bought six cards,
   then a second finger, added in a `touchStart` listing both, dragged a
   piece]
+- A preview run for five seconds without input shows that the layout
+  starts; it says nothing about an event that waits for a drop, a merge or
+  a deployment. Such an event is verified by sending the input (the
+  bullets above) and reading instance state every few frames until the
+  flow has run through, then it is handed over. [observed in a game
+  project, r504 preview, 2026-09-30: a *Pick parent* with *Own* that could
+  not reach a grandparent passed the five-second preview and left a piece
+  idle on its battle slot at the first drag by hand]
+- `open_in_editor.py` starts the browser with `--mute-audio`, so a
+  preview's sound stays off the user's speakers; a script of the agent's
+  own that starts a browser does the same. The audio graph and
+  `Audio.CurrentTime` run as before; only the output device is silent. A
+  sound is heard or measured by recording it in the page: connect a
+  `MediaStreamAudioDestinationNode` beside the context's destination,
+  record its stream with `MediaRecorder`, and analyse the file, or read an
+  `AnalyserNode` on the same point. [source: `open_in_editor.py`, the
+  comment at `--mute-audio`; the user's rule, 2026-09-30, that a test must
+  not play sound through their speakers]
 - A browser started with `--user-data-dir=\\?\<path>`, the prefix that lifts
   MAX_PATH, writes no cookie file, so a third-party login (GitHub) is gone at
   the next start; `open_in_editor.py` adds the prefix only to a long path.

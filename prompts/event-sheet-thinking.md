@@ -138,9 +138,12 @@ tips-and-guides/deprecated-features.md]
 ## Feel
 
 Screen shake, hit stop, squash, hit flash, a choreographed sequence, a
-following camera, a fade between layouts: the official examples' recipe for
-each is in [references/feel.md](references/feel.md). Read it when generating
-a game, or before writing events for any of these.
+following camera, a fade between layouts, a keyframed motion such as a
+weapon swing, effects layered on one body, a dragged thing that lags: the
+recipe for each is in [references/feel.md](references/feel.md). Which
+sounds play, when and how loud, and how a placeholder file is made and
+checked, is in [references/sound.md](references/sound.md). Read them when
+generating a game, or before writing events for any of these.
 
 ## Layout of the sheet
 
