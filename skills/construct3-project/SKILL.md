@@ -48,11 +48,9 @@ opened once before it is handed over.
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed; checked before anything is written |
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds seven warnings from the official examples' style, for a project the agent wrote |
 | `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then runs it for 5 seconds and prints the runtime's errors, each with its event. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
-| `scripts/export_project.py` | Export the project to Web (HTML5) in the editor and unpack the zip into `--to`; `--bump` or `--version` sets the version the export carries and writes it into project.c3proj. The editor exports for an account with a subscription only: the script waits in a window of its own for the user to log in, or `--attach` works in a browser the user has open and is logged in to |
+| `scripts/export_project.py` | Export the project to Web (HTML5) in the editor into `--to`, `--bump` raising its version. The editor exports for a subscribed account, which the user logs in to: read [references/export-project.md](references/export-project.md) before the first export of a project, when the script stops, or before passing `--attach` |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
-| `scripts/check_look.py` | The strict look rules on a generated project's files: pure alpha, world instances and runtime creations on the grid, no Flash behavior; exit 0 when the last line starts with `ok:` |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
-| `assets/look-manifest.json` | The template's look as data: each rule's status (enforced, adopted, open, proposed, rejected), value and check, what to hand a model and what to confirm |
 
 Each prints its options and examples with `--help`. `--locale zh-CN` switches
 names and wording to Chinese; ids are the same in every locale. A harness cuts
@@ -81,20 +79,9 @@ action tween-two-properties - Tween (two properties) [behavior Tween, tween]  <i
     ease                   ease       bare id of a built-in ease: noease, easeinoutsine, easeoutback ...
 ```
 
-An object of the project searches its plugin, the ACEs every world object
-shares and its behaviors under the names they have on the object. A plugin
-or behavior by id or display name (`"8 Direction" speed`) needs no project.
-A word is matched as written, not by meaning, against the id and the names
-and against where the ACE lives: the behavior, the category, `condition`,
-`action`, `expression`. `System timer` finds nothing and lists the
-categories; `System time` lists *Every X seconds*, *Wait* and `dt`.
-*Pick nearest/furthest*, *Is overlapping*, *Set color* are every world
-object's, not System's and not the plugin's: `System nearest` and
-`Sprite color` print them under "every world object has these", with
-`<Object>` where the object's name goes. Run it on an object of the project,
-`Coin nearest`, to get the name written in. When no name has every word, a
-parameter counts: `Tween color` finds *Tween (one property)*, whose property
-`offsetColor` is Color.
+*Pick nearest/furthest*, *Is overlapping* and *Set color* belong to every
+world object, not to System or the plugin. Look them up on an object of the
+project, `Coin nearest`, which prints them with the object's name written in.
 
 Copy the `write:` line and replace the values. Leave `"sid": <new sid>` out
 of a plan for `edit_sheet.py`, which gives every new entry one; in a hand
@@ -236,12 +223,8 @@ not held to this. `--dry-run` does all of that and writes nothing.
    [references/editor-and-preview.md](references/editor-and-preview.md)
    before previewing a game that starts on another layout, or before
    driving the preview with input from a script.
-   Exit code 3: the machine has no Edge, Chrome or Chromium, and the script
-   printed the steps for a browser tool of this session instead, one that
-   opens a page, runs JavaScript and puts a file on a file input. Follow them with the tool at
-   hand; the dialog reads the same. With no such tool, ask the user to open
-   the project folder in Construct 3 and paste the text of the dialog it
-   shows.
+   Exit code 3: the machine has no browser the script can drive; follow the
+   steps it printed instead.
 
 `ok:` is about the files, not the game. The checker cannot run the events:
 which instances a condition picks, what order triggers fire in and what a
@@ -252,13 +235,8 @@ Fade, a hierarchy for Pin, instance tags for the Solid behavior's own), and
 before events go
 into a sheet read `Construct3-RAG/prompts/event-sheet-style.md`, the shape
 the official examples give a sheet, which the style warnings enforce only in
-part. What the preview teaches goes where it changes the next agent's work,
-with its source: a runtime behaviour that changes which events are written
-into `Construct3-RAG/prompts/event-sheet-pitfalls.md`, how a project file is
-written into `Construct3-RAG/prompts/references/hand-editing-project-files.md`,
-what the editor or the preview does into
-[references/editor-and-preview.md](references/editor-and-preview.md), and
-how the game looks into `Construct3-RAG/prompts/references/new-project.md`.
+part. What the preview teaches goes, with its source, where "Adding an
+entry" of `Construct3-RAG/prompts/event-sheet-pitfalls.md` says.
 
 Exit code 2 and `stopped at`: a file lacks a key the editor always writes.
 Compare it with a file `assets/build_project.py` generates or with an
@@ -280,20 +258,6 @@ When another model writes the generator, give it the `deliver` steps of
 `assets/look-manifest.json`, then run its `confirm` steps on the result,
 `scripts/check_look.py` among them. A rule whose status is `open` is the
 user's to decide.
-
-## Export a release
-
-```bash
-python scripts/export_project.py --to export/web --bump
-```
-
-The editor exports, in a window the script opens or with `--attach` in a
-browser the user has open, and the zip replaces `--to`; the version it
-carries goes into `project.c3proj`. The editor exports for an account with a
-subscription only, and the user logs in in that window. Read
-[references/export-project.md](references/export-project.md) before the
-first export of a project, when the script stops, or before passing
-`--attach`.
 
 ## Gotchas
 

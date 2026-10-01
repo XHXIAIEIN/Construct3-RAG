@@ -74,9 +74,16 @@ Each of these was a failure seen in an eval run or a game project.
   version has no such ACE" when the ACE was every world object's.
 - An object name is an exact id or display name, or the run stops with the
   nearest ones: a near match once read `Platform` as Platform Info.
-- The Gotchas of `SKILL.md` hold only what no tool says at the moment it
-  matters. What a finding or a lookup already prints was taken out, and the
-  runs did no worse without it.
+- `SKILL.md` holds what every activation needs and no tool says at the
+  moment it matters. What a script prints when it is needed, or what one
+  kind of task needs, is a line that says when to read a reference. Taken
+  out on this rule, and the runs did no worse without them: Gotchas a
+  finding or a lookup already prints; then the lookup's word matching, the
+  export steps, the browser-tool fallback of exit code 3 and where a lesson
+  goes, about 570 tokens (iteration 35, Haiku, `add-countdown` and
+  `fix-load-errors`, three runs an arm: 47 of 48 assertions against 48 of
+  48, the one miss a `replace` that dropped the sids of the sub-events it
+  rewrote, as in runs before the change).
 
 ## Open
 
@@ -100,3 +107,6 @@ Each of these was a failure seen in an eval run or a game project.
   folder in `install.py --help` and `AGENTS.md` section 4.
 - A project shows a wrong `behaviorType`, addon id or *Else* that the
   finding did not repair in one round: the Gotcha goes back, with the case.
+- Runs look a behavior's ACE up under System (`System tween two properties`)
+  and lose the call: the miss under System names the behavior and an object
+  of the project that has it.
