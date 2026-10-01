@@ -1055,19 +1055,47 @@ class Checker:
         return next((v for k, v in scope.items() if LOWER(k) == LOWER(name)), None)
 
     @staticmethod
-    def declare(scope: dict, var: dict, outer: set[str]) -> None:
+    def declare(scope: dict, var: dict, outer: dict) -> dict | None:
         """Bring a variable into scope as the editor searches it: the event's own function
         parameters, then the variables of each enclosing list from the nearest out, then
         the top-level variables of every sheet, each list in its order, and the first name
         that matches without case wins. So a variable drops the outer ones of its name, and
-        a later one of its own list that matches it is never found. outer: the names the
-        scope held before this list."""
+        a later one of its own list that matches it is never found: that earlier one is
+        returned. outer: the scope as it was before this list."""
         name = var.get("name")
         if not isinstance(name, str):
-            return
-        for k in [k for k in scope if k in outer and LOWER(k) == LOWER(name)]:
+            return None
+        for k in [k for k in scope if LOWER(k) == LOWER(name) and outer.get(k) is scope[k]]:
             del scope[k]
-        scope.setdefault(name, var)
+        earlier = Checker.variable_named(name, scope)
+        if earlier is None:
+            scope[name] = var
+        return earlier
+
+    def enter(self, scope: dict, var: dict, outer: dict, where: str, first: str) -> None:
+        """Declare a local or a function parameter and check its name against its own
+        list and, when the list has no other of that name, against the outer scope."""
+        earlier = self.declare(scope, var, outer)
+        if earlier is None:
+            self.check_shadow(var, outer, where)
+        else:
+            self.check_declared_once(var, earlier, where, first)
+
+    def check_declared_once(self, var: dict, earlier: dict, where: str, first: str) -> None:
+        """The editor's own dialogs never let two variables of one scope share a name
+        without case. A file that has them opens, and every use of either name reaches
+        the first one. first: where that one is, as a phrase."""
+        name, other = var["name"], earlier["name"]
+        if other == name:
+            self.err(f"{where}: {name} is declared again; the first {name} is {first}, and the editor finds "
+                     f"every use of the name as that one, so this declaration is never read or written. Delete it"
+                     + ("; a global is visible from every sheet" if id(var) in self.global_ids else ""))
+            return
+        constant = (f"; an action that writes {name} stops the editor with \"event variable {name} is constant\""
+                    if earlier.get("isConstant") else "")
+        self.err(f"{where}: {name} has the name of {other}, {first}, once case is ignored; the editor finds "
+                 f"every use of either name as {other}, so {name} is never read or written{constant}. Rename it "
+                 f"and its uses, for example {name}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
 
     def check_block(self, ev: dict, scope: dict, where: str) -> None:
         for i, c in enumerate(ev.get("conditions", []), 1):
@@ -1133,11 +1161,11 @@ class Checker:
         if bad:
             self.err(f"{where}: an event is {bad[0]!r}; every event is an object with an eventType")
             events = [ev for ev in events if isinstance(ev, dict)]
-        outer = set(scope)
+        outer = dict(scope)
         for ev in events:
             if ev.get("eventType") == "variable" and id(ev) not in self.global_ids:
-                self.check_shadow(ev, scope, f"{where} variable {ev['name']}")
-                self.declare(scope, ev, outer)
+                self.enter(scope, ev, outer, f"{where} variable {ev['name']}",
+                           "declared above it in the same list of events")
         ladders = self.ladders(events) if self.style else {}
         numbered: dict[int, list[tuple[int, str]]] = {}
         previous = None
@@ -1166,10 +1194,10 @@ class Checker:
                 self.walk(ev.get("children") or [], scope, where, counter, above, group=ev)
             elif et in ("function-block", "custom-ace-block"):
                 fscope = dict(scope)
-                outer = set(fscope)
+                outer = dict(fscope)
                 for param in ev["functionParameters"]:
-                    self.check_shadow(param, fscope, f"{w} parameter {param['name']}")
-                    self.declare(fscope, param, outer)
+                    self.enter(fscope, param, outer, f"{w} parameter {param['name']}",
+                               "an earlier parameter of the same function")
                     self.check_variable(param, w, "parameter")
                 label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
                 if et == "custom-ace-block" and ev["objectClass"] not in self.p.plugin_of:
@@ -1380,12 +1408,16 @@ class Checker:
             self.declared_functions(sheet["events"])
             self.declared_groups(sheet["events"])
         # A global declared at the top level of any sheet is visible from every sheet.
-        tops = [ev for s in self.sheets.values() for ev in s["events"]
+        tops = [(sname, ev) for sname, s in self.sheets.items() for ev in s["events"]
                 if isinstance(ev, dict) and ev.get("eventType") == "variable"]
+        self.global_ids = {id(ev) for _, ev in tops}
+        sheet_of = {id(ev): sname for sname, ev in tops}
         globals_: dict = {}
-        for ev in tops:
-            self.declare(globals_, ev, set())
-        self.global_ids = {id(ev) for ev in tops}
+        for sname, ev in tops:
+            earlier = self.declare(globals_, ev, {})
+            if earlier is not None:
+                self.check_declared_once(ev, earlier, f"sheet {sname} variable {ev['name']}",
+                                         f"declared at the top level of sheet {sheet_of[id(earlier)]}")
         self.variable_names = {v.get("name") for s in self.sheets.values() for v in declarations(s["events"])}
         for sname, sheet in self.sheets.items():
             # A plan's sheet has numbers the file does not have yet: no operation can address them.

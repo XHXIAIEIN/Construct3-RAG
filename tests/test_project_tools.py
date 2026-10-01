@@ -1700,7 +1700,7 @@ def test_an_action_writes_the_variable_the_editor_finds_without_case(project, gl
     """A constant PHASE declared above a variable phase made Add 1 to phase stop the editor with
     "event variable phase is constant": it finds a name without case, the nearest declaration
     first and, among the variables of one list of events, the first. Each case was opened in
-    the editor (r495.2, 2026-10-02); the ones without a finding opened."""
+    the editor (r495.2, 2026-10-02); the ones without this finding opened."""
     def change(sheet):
         sheet["events"][0:0] = [number_variable(n, n == "PHASE", 900000000000010 + i) for i, n in enumerate(globals_)]
         block = events(sheet)["setup"]
@@ -1715,6 +1715,38 @@ def test_an_action_writes_the_variable_the_editor_finds_without_case(project, gl
         assert f"'event variable {written} is constant'. Rename the variable {written}" in out
     else:
         assert "constant" not in out, out
+
+
+@pytest.mark.parametrize("where, names, expected", [
+    ("globals", ["lives", "lives"], "sheet Game variable lives: lives is declared again; the first lives is "
+                                    "declared at the top level of sheet Game"),
+    ("globals", ["PHASE", "phase"], "sheet Game variable phase: phase has the name of PHASE, declared at the top "
+                                    "level of sheet Game, once case is ignored"),
+    ("locals", ["step", "STEP"], "variable STEP: STEP has the name of step, declared above it in the same list "
+                                 "of events, once case is ignored; the editor finds every use of either name as "
+                                 "step, so STEP is never read or written. Rename it and its uses, for example "
+                                 "STEPValue"),
+    ("parameters", ["amount", "Amount"], "parameter Amount: Amount has the name of amount, an earlier parameter "
+                                         "of the same function, once case is ignored"),
+])
+def test_two_variables_of_one_scope_with_one_name_are_refused(project, where, names, expected):
+    """The editor's dialogs refuse a second variable named like one of its scope, case aside; a file
+    that has two opens, and every use of the name reaches the first (opened in r495.2, 2026-10-02).
+    A small model declared its globals at the top of both of its sheets."""
+    def change(sheet):
+        if where == "parameters":
+            events(sheet)["add_score"]["functionParameters"] += [
+                {"name": n, "type": "number", "initialValue": "0", "comment": "", "sid": 900000000000030 + i}
+                for i, n in enumerate(names)]
+            return
+        declared = [number_variable(n, n == "PHASE", 900000000000030 + i) for i, n in enumerate(names)]
+        if where == "globals":
+            sheet["events"][0:0] = declared
+        else:
+            events(sheet)["setup"].setdefault("children", [])[0:0] = declared
+    out = findings(project, change)
+    assert expected in out, out
+    assert out.count("never read or written") == 1, out
 
 
 def test_self_in_a_system_parameter_names_the_object_to_write(project):

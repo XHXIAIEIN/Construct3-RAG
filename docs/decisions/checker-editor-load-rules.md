@@ -112,6 +112,14 @@ Option 2 as the default, and option 3 as the step after it.
   variable parameter in that order, so it also passes the two probes that
   opened, which it had refused. The official examples and the game folders
   print as before.
+- Two variables of one scope whose names match without case are an error at
+  the second declaration, although the editor opens such a file: every use
+  of the name reaches the first, so the second is never read or written,
+  and the editor's variable dialog refuses the name (`The name X is already
+  used in this scope`). A global and a local pair, each declared twice in
+  one list, opened in the editor. No official example declares one; the
+  sweep added eight findings, all in one small model's project, which
+  declares its globals at the top of both of its sheets.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from
