@@ -22,8 +22,15 @@ sheet editor, checker, editor opener and generator template for a Construct
 - `name` is the folder's name, lowercase with hyphens. `description` says
   what the skill does and when to use it, at most 1024 characters, on one
   line and without `: `, so that a client with a plain frontmatter parser
-  reads it too. `SKILL.md` stays under 500 lines; what is needed only
-  sometimes goes to `references/`, and `SKILL.md` says when to read it.
+  reads it too.
+- `SKILL.md` stays under 500 lines and the 5000 tokens the specification
+  recommends for what loads on activation. Every run reads all of it before
+  its first command, so it holds only what every activation needs and no
+  script says at the moment it matters. A new script or feature gets one
+  row in the table of scripts and, when it needs more, one sentence saying
+  when to read its file in `references/`; what a script prints when it is
+  needed is not repeated. Evidence: `docs/decisions/project-tools-skill.md`,
+  "What holds the design in place".
 - Paths inside the skill are relative to its folder. A file of this
   repository is written `Construct3-RAG/<path>`, as the block in the game
   project writes it; a relative link out of the folder breaks in a copy.
