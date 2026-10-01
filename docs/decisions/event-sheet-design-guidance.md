@@ -94,7 +94,28 @@ variables", of five lines from the Native first table, and
 `check_project.py --style` has a `countdown` kind, below. Over the 60
 archived `add-countdown` runs of iterations 21 to 30 it fires on every one,
 and on no official example or game project; nothing else the checker prints
-changed. Whether runs then write a Timer is not measured yet.
+changed.
+
+Update 2026-10-02. Iterations 33 and 34 of `add-countdown`, Haiku, three
+runs an arm. In iteration 33, the change against the commit before it,
+every run with the change read the new section, all six runs scored 8 of 8
+and none used a Timer. The runs with the change wrote *Add* -1 and *Set*
+v to v - 1, which the warning did not read yet, so it fired on none of
+them; it reads the three spellings since. In iteration 34 the warning
+showed under the plan of each run, one to three times, and no run acted on
+it: each went on to `check_project.py` without `--style`, which ends in
+`ok:`. No run of the nine since the change used a Timer.
+
+A Timer would not be faster. Timed per runtime tick in the preview
+(`.local/docs/evidence/timer-vs-dt-2026-10-01/`): one countdown costs the
+same either way, within the 0.1 ms the worker's clock resolves. With 10 000
+instances each counting its own period, a Timer per instance costs 1.7 ms a
+tick against 0.7 ms for subtracting `dt` in events, about half of it the
+behavior's own tick and half *On timer*, which is tested every tick for
+every instance. What the Timer gives one countdown is a value that starts
+over with the layout, and all nine runs set the global back under *On
+start of layout*, as the case asks. So the countdown stays a warning: a
+refusal would hold up a form that works, for no gain in speed.
 
 ## The authoring style
 
@@ -198,9 +219,9 @@ is two lines of the style prompt).
   refused kinds go back to warnings, with the run as evidence.
 - A capable model's plans are refused more than once per run: the message
   does not say what to write.
-- `add-countdown` runs still count seconds by hand with the `countdown`
-  warning under their plan: a warning is not enough; make the generator's
-  helper or the refusal carry the Timer.
+- A run that counts seconds by hand also leaves the global where the last
+  round ended, the warning under its plan: the warning is not enough for
+  the case where it matters; make `edit_sheet.py` refuse that pair.
 - The official examples change: rerun the survey scripts; the thresholds
   are constants at the top of `check_project.py`.
 - A game needs real art at generation time: design a generator that writes
