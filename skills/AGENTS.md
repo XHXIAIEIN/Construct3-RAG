@@ -55,9 +55,9 @@ sheet editor, checker, editor opener and generator template for a Construct
   as a whole call chain, not from the one message a user pasted: the next
   assertion in the same function costs another round trip through them. What
   the editor writes into every project is measured from the official examples,
-  and `tests/test_project_tools.py` compares the generated project with that
-  measurement, so a key missing from the generator fails here instead of in
-  the editor.
+  and `tests/test_skill_build_project.py` compares the generated project with
+  that measurement, so a key missing from the generator fails here instead of
+  in the editor.
 - A check becomes an error after the two steps in
   `construct3-project/references/checker-rules.md`: the editor's message,
   then a run over the official examples that adds no finding. A style
@@ -79,7 +79,7 @@ sheet editor, checker, editor opener and generator template for a Construct
 ## Checks
 
 ```bash
-python -m pytest tests/test_project_tools.py -q
+python -m pytest tests -q -k test_skill_
 python -m compileall -q skills
 ```
 

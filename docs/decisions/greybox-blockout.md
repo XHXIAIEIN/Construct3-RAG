@@ -246,8 +246,8 @@ this record with a status: `enforced` when a check stops the generator,
 `rejected`. Its `deliver` steps are what a model writing the generator is
 given, its `confirm` steps what the agent runs on the result, among them
 `scripts/check_look.py`, which confirms the strict rules on the project's
-files. `tests/test_project_tools.py` fails when a rule and the template
-value it names drift apart.
+files. `tests/test_skill_build_project.py` fails when a rule and the
+template value it names drift apart.
 
 ## Open
 

@@ -42,7 +42,7 @@ def run(*cmd: str, cwd: Path) -> str:
 
 
 def stand_in(root: Path) -> Path:
-    """The generated game, as tests/test_project_tools.py builds it, with the
+    """The generated game, as tests/conftest.py builds it, with the
     generator and the skill taken out again: each arm installs its own. The
     seed holds what the editor would not write itself; the generator fills the
     rest of project.c3proj, so the fixture opens in the editor."""

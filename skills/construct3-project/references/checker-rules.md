@@ -140,8 +140,8 @@ parameters that a later release changed, on layers and animations the
 examples name but no longer have, and on duplicate sids in r184 projects;
 each is a real finding, not a false one. None of them breaks an editor rule
 of the table above, which is how each rule was confirmed before it became an
-error. `Construct3-RAG/tests/test_project_tools.py` generates the stand-in
-game, breaks it one rule at a time and reads the finding.
+error. `Construct3-RAG/tests/test_skill_check_project.py` breaks the
+stand-in game one rule at a time and reads the finding.
 
 A new rule takes the same two steps: find the editor's message in its
 project model, run the rule over the official examples, and only then make

@@ -48,9 +48,10 @@ Option 2 as the default, and option 3 as the step after it.
   `isLooping`, `isInvertible: false` and `isCompatibleWithTriggers: false`.
   *On collision*, *On timer* and the Gamepad button conditions were missing
   the flag before.
-- `tests/test_project_tools.py` generates the stand-in project, breaks it one
-  rule at a time and reads the finding, and compares the generated project
-  with the keys every official example carries at each level.
+- `tests/test_skill_check_project.py` breaks the stand-in project one rule at
+  a time and reads the finding; `tests/test_skill_build_project.py` compares
+  the generated project with the keys every official example carries at each
+  level.
 - A missing key stops the run with one sentence, never a traceback.
 - Expression syntax is the editor's parser, not its loader, so the one
   syntax rule was read by opening a project: of `==`, `!=`, `&&`, `||`, `!`,
