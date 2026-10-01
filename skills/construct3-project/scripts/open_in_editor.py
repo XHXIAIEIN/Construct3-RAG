@@ -282,9 +282,9 @@ class WebSocket:
     """The client end of RFC 6455, as much as the DevTools protocol needs: text
     frames out, masked, and whole messages in."""
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, timeout: float = CALL) -> None:
         u = urllib.parse.urlsplit(url)
-        self.sock = socket.create_connection((u.hostname, u.port), timeout=CALL)
+        self.sock = socket.create_connection((u.hostname, u.port), timeout=timeout)
         key = base64.b64encode(os.urandom(16)).decode()
         self.sock.sendall((f"GET {u.path} HTTP/1.1\r\nHost: {u.hostname}:{u.port}\r\nUpgrade: websocket\r\n"
                            f"Connection: Upgrade\r\nSec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\n\r\n"
@@ -338,8 +338,10 @@ class DevTools:
     """One DevTools connection, to the browser or to a page. Calls wait for their
     own answer; the events a page sends meanwhile are skipped."""
 
-    def __init__(self, url: str) -> None:
-        self.ws, self.last, self.lock = WebSocket(url), 0, threading.Lock()
+    def __init__(self, url: str, timeout: float = CALL) -> None:
+        """`timeout` is for the handshake: a browser debugged from chrome://inspect holds it until
+        the user allows the connection."""
+        self.ws, self.last, self.lock = WebSocket(url, timeout), 0, threading.Lock()
         self.events: list[dict] = []    # only a connection that enables a domain gets any
 
     def call(self, method: str, wait: float = CALL, session: str | None = None, **params) -> dict:
