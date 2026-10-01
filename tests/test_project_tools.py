@@ -1498,6 +1498,30 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
     assert not any(n.startswith((".git/", ".tmp/")) for n in names), names
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="MAX_PATH is Windows'")
+def test_open_in_editor_keeps_the_preview_indexeddb_inside_max_path(tmp_path):
+    """The browser opens no IndexedDB whose folder path, \\\\?\\ counted, reaches MAX_PATH: a
+    preview on a profile past 189 characters stopped answering (observed in Edge, 2026-10-01).
+    A long profile goes by its 8.3 short name where the volume keeps one; one still too deep
+    is refused before the preview."""
+    sys.path.insert(0, str(SKILL / "scripts"))
+    try:
+        import open_in_editor as oe
+    finally:
+        sys.path.pop(0)
+    assert not oe.too_deep("\\\\?\\" + "C:\\" + "x" * 186) and oe.too_deep("\\\\?\\" + "C:\\" + "x" * 187)
+    assert oe.user_data_dir(tmp_path) == str(tmp_path.resolve())
+    deep = tmp_path / ("y" * 100) / ("z" * 100) / ".tmp" / "editor-msedge"
+    deep.mkdir(parents=True)
+    data = oe.user_data_dir(deep)
+    assert len(data) <= 150 or data == "\\\\?\\" + str(deep.resolve()), data
+
+    project = tmp_path / "p"
+    project.mkdir()
+    code, out = run(project, SKILL / "scripts" / "open_in_editor.py", "--help")
+    assert code == 0 and "--profile FOLDER" in out, out
+
+
 # --- finding the schemas ---------------------------------------------------------------
 @pytest.mark.parametrize("lines", [
     "- Construct3-RAG: {rag}",

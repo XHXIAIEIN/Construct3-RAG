@@ -62,3 +62,13 @@ that changes which events are written goes to
   the next start; `open_in_editor.py` adds the prefix only to a long path.
   [observed in Edge 155, 2026-10-01: a cookie set through the DevTools
   protocol was on disk without the prefix and not with it]
+- The browser opens no IndexedDB whose folder path reaches MAX_PATH, counted
+  as a string with the `\\?\` prefix, so the prefix does not lift this one.
+  The preview's is `Default\IndexedDB\https_preview.construct.net_0.indexeddb.leveldb`
+  below the profile, which leaves 193 characters for the profile as passed,
+  the prefix included; past that the preview page stops answering.
+  `open_in_editor.py` passes a long profile by its 8.3 short name where the
+  volume keeps one, and refuses the preview of one still too deep, naming
+  `--profile`. [observed in Edge, 2026-10-01: a profile of 189 characters
+  plus the prefix previewed, one of 190 hung at `Target.setAutoAttach`; the
+  same project at a short path ran]

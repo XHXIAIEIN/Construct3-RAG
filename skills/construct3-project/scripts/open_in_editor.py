@@ -3,7 +3,7 @@ editor's message when it does not.
 
     python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--release rNNN] [--browser EXE]
                                      [--preview [SECONDS]] [--steps] [--shots DIR] [--out RESULTS.json]
-                                     [--jobs 2] [--headed]
+                                     [--jobs 2] [--headed] [--profile FOLDER]
 
 Run it when check_project.py ends with ok:. The checker reads the files; the
 editor also reads the events, and refuses a project for what the checker does
@@ -26,7 +26,10 @@ JavaScript in it and puts a file on a file input.
 
 With --preview it then runs a preview, F5 in the editor, for some seconds and
 prints the layout it started on and what the runtime reported: uncaught
-exceptions and console errors, each with the event it came from.
+exceptions and console errors, each with the event it came from. On Windows the
+preview needs the profile within about 190 characters; a deeper project, on a
+volume without 8.3 short names, is refused with how to pass --profile, a
+shorter folder for it.
 
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
@@ -385,6 +388,34 @@ QUIET = ("--no-first-run", "--no-default-browser-check", "--disable-extensions",
          "--disk-cache-size=104857600", "--mute-audio")
 
 
+# The browser opens no IndexedDB whose folder path reaches MAX_PATH, measured as a
+# string: \\?\ does not lift this limit and counts against it. Without IndexedDB the
+# preview page stops answering. The deepest folder is the preview's, this far below
+# the profile.
+INDEXEDDB = len(r"\Default\IndexedDB\https_preview.construct.net_0.indexeddb.leveldb")
+MAX_PATH = 260
+
+
+def user_data_dir(profile: Path) -> str:
+    r"""The profile as --user-data-dir. A long Windows path goes by its 8.3 short name
+    where the volume keeps one, else with \\?\, which lets the browser write files past
+    MAX_PATH but stops it writing a cookie file: a login to the editor is then gone at
+    the next start, so only a path that needs the prefix gets it."""
+    data = str(profile.resolve())
+    if sys.platform != "win32" or len(data) <= 150:     # the files of IndexedDB stay inside MAX_PATH
+        return data
+    import ctypes
+    buffer = ctypes.create_unicode_buffer(32768)
+    if 0 < ctypes.windll.kernel32.GetShortPathNameW(data, buffer, len(buffer)) < len(buffer):
+        data = min(data, buffer.value, key=len)
+    return data if len(data) <= 150 else "\\\\?\\" + data
+
+
+def too_deep(data: str) -> bool:
+    """Whether the preview's IndexedDB fits below a profile passed as `data`."""
+    return sys.platform == "win32" and len(data) + INDEXEDDB >= MAX_PATH
+
+
 class Browser:
     """The machine's browser with a profile of its own and a DevTools port the
     system picks, written by the browser to DevToolsActivePort in the profile.
@@ -397,6 +428,7 @@ class Browser:
     def __init__(self, exe: str, profile: Path, headed: bool) -> None:
         self.profile, self.proc = profile, None
         profile.mkdir(parents=True, exist_ok=True)
+        self.data = user_data_dir(profile)
         for staged in profile.glob("project-*.c3p"):    # left by a run that was stopped
             staged.unlink(missing_ok=True)
         port_file = profile / "DevToolsActivePort"
@@ -405,14 +437,7 @@ class Browser:
         url = self.devtools_url(port_file)
         if not url:
             port_file.unlink(missing_ok=True)
-            # IndexedDB sits 80 characters deep in the profile; past MAX_PATH it fails
-            # and the preview hangs. \\?\ lifts the limit for the browser's own files,
-            # but with it the browser writes no cookie file, and a login to the editor
-            # is gone at the next start: only a profile path that needs it gets it.
-            data = profile.resolve()
-            if sys.platform == "win32" and len(str(data)) > 150:
-                data = f"\\\\?\\{data}"
-            args = [exe, f"--user-data-dir={data}", "--remote-debugging-port=0", *QUIET,
+            args = [exe, f"--user-data-dir={self.data}", "--remote-debugging-port=0", *QUIET,
                     "--window-size=1400,900", "about:blank"]
             self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"],
                                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -569,7 +594,13 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
         if isinstance(result, str):
             result = {"opened": False, "title": "", "dialogs": [], "errors": [result]}
         ran = None
-        if result["opened"] and seconds is not None:
+        if result["opened"] and seconds is not None and too_deep(browser.data):
+            most = MAX_PATH - 1 - INDEXEDDB
+            ran = {"started": False, "layout": None, "runtime": None, "errors": [
+                f"the browser profile {browser.data} is {len(browser.data)} characters long, and the preview's "
+                f"IndexedDB needs it at most {most}: copy the project to a shorter folder, or pass --profile "
+                f"<a folder of at most {most - len('/editor-chromium')} characters>"]}
+        elif result["opened"] and seconds is not None:
             try:
                 ran = preview(browser, (target, page), seconds)
             except DevToolsError as e:
@@ -612,7 +643,7 @@ def report(result: dict) -> list[str]:
 def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
     first = projects[0] if projects[0].is_dir() else projects[0].parent
     # One profile per browser: Chrome does not load a profile Edge has written.
-    browser = Browser(exe, scratch(first) / f"editor-{Path(exe).stem.lower()}", args.headed)
+    browser = Browser(exe, (args.profile or scratch(first)) / f"editor-{Path(exe).stem.lower()}", args.headed)
     results: list[dict] = []
     printed = 0     # characters; results are printed as they come, until --limit
     lock = threading.Lock()
@@ -663,6 +694,9 @@ def main() -> int:
     ap.add_argument("--preview", type=float, nargs="?", const=5, metavar="SECONDS",
                     help="once it opened, preview the layout the editor shows for this long (default 5) and print "
                          "the layout, the uncaught exceptions and the console errors of the runtime")
+    ap.add_argument("--profile", type=Path, metavar="FOLDER",
+                    help="keep the browser profile in FOLDER/editor-<browser> instead of the project's .tmp/, for a "
+                         "project too deep for the preview's IndexedDB, which it then names")
     ap.add_argument("--out", type=Path, help="write every result, dialogs and exceptions included, as JSON")
     ap.add_argument("--shots", type=Path, help="save a screenshot of the editor per project into this folder")
     ap.add_argument("--jobs", type=int, default=2, help="projects open at once (default 2)")

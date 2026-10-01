@@ -130,8 +130,12 @@ action 1`, the numbering `print_sheet.py` uses.
 - The browser profile lives in `.tmp/editor-browser` of the project, with a
   `.gitignore` of `*`. With the editor's scripts cached a run takes about 4
   seconds; cold, 10 to 40. Background features are switched off, so the
-  profile holds the editor's cache alone. The profile path is passed as a
-  `\\?\` path: past about 177 characters its IndexedDB exceeded MAX_PATH.
+  profile holds the editor's cache alone. Past about 177 characters the
+  files of its IndexedDB exceed MAX_PATH, so a longer profile path is passed
+  by its 8.3 short name, else as a `\\?\` path. The browser still opens no
+  IndexedDB whose folder path, prefix counted, reaches MAX_PATH: a profile
+  too deep for the preview's is refused before the preview, and `--profile`
+  puts it in a shorter folder.
 - `--jobs` opens each project in a window of its own. Tabs of one window
   are hidden except the front one, headless as well: their timers fire once
   a second and their animation frames not at all. An editor in such a tab
