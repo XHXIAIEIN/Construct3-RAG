@@ -1,8 +1,7 @@
 # What the editor and the preview do
 
 Read this before previewing a project that starts on a layout other than the
-one open in the editor, before driving a preview with input from a script, or
-before changing how `scripts/export_project.py` drives the editor.
+one open in the editor, or before driving a preview with input from a script.
 A lesson from the editor, the preview or a script driving them goes here with
 its source, one bullet each: fact, consequence, source. A runtime behaviour
 that changes which events are written goes to
@@ -40,51 +39,8 @@ that changes which events are written goes to
   in Edge, 2026-10-01: a finger held the buy button and bought six cards,
   then a second finger, added in a `touchStart` listing both, dragged a
   piece]
-
-## Exporting
-
-- The editor exports a project over the Free edition's limits only for an
-  account with a subscription; the Free edition stops at the platform's
-  *Next* with "This project exceeds the Free Edition limit for events". The
-  account shows at the top right, `#userAccountWrap`: the name, or Guest,
-  and before it `#userLicenseType`, "Free edition", which a subscription
-  hides with `display: none` while its text stays. An editor that has just
-  loaded shows the last name with the badge hidden for a second or two, then
-  Guest, so a check waits for a state that holds. [observed in a game
-  project, r504 editor in Edge, 2026-10-01]
-- The login lives in the open page only. With an account logged in, no
-  cookie of construct.net, no Local Storage, Session Storage or IndexedDB
-  entry of the editor or of account.construct.net holds it, and the editor
-  shows Guest after a reload or a restart of the browser. A script keeps the
-  page: it never reloads it, closes the project instead of the browser, and
-  a run goes on in the page a run before left. [observed in a game project,
-  r504 editor in Edge, 2026-10-01]
-- A browser started with `--user-data-dir=\?\<path>`, the prefix that lifts
+- A browser started with `--user-data-dir=\\?\<path>`, the prefix that lifts
   MAX_PATH, writes no cookie file, so a third-party login (GitHub) is gone at
   the next start; `open_in_editor.py` adds the prefix only to a long path.
   [observed in Edge 155, 2026-10-01: a cookie set through the DevTools
   protocol was on disk without the prefix and not with it]
-- `editor.construct.net/` can serve an older release from the service
-  worker's cache, r495.2 where r504 was current, and it refuses a project a
-  newer one saved ("saved in r504, and you are currently using r495.2"). Open
-  `editor.construct.net/r<major>[-<minor>]/` from `savedWithRelease`.
-  [observed in a game project, Edge, 2026-10-01]
-- *Project > Export > Web (HTML5) > Next* opens `exportStandardOptionsDialog`:
-  `#exportTo` (zip or folder), `#exportOfflineSupport`, the image and minify
-  options. Its *Next* exports and opens `webExportReportDialog`, whose
-  download link is a `blob:` URL; a click on it in a driven browser saved no
-  file and closed the dialog. Fetch the blob in the page and read it out in
-  base64 parts instead. [observed in a game project, r504 editor in Edge,
-  2026-10-01]
-- An export carries the project's Version. With *Auto-increment version* on,
-  the editor raises the project's last number after the export, so a project
-  saved after a hand export is one ahead of its export; a copy with the
-  option off exports the version it holds. [inferred from one hand export,
-  0.1.0.4 exported and 0.1.0.5 saved; observed through the script, 2026-10-01]
-- A browser whose remote debugging is turned on at
-  `chrome://inspect/#remote-debugging` answers 404 to `/json/version` and 403
-  to a connection to a tab; its address is in the user data folder's
-  `DevToolsActivePort`, and a tab is driven through `Target.attachToTarget`
-  with `flatten` on the browser's connection. The browser may hold the
-  handshake until the user allows the connection. [observed in Chrome and
-  Chrome Beta, 2026-10-01]

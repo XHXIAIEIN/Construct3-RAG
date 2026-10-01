@@ -264,6 +264,20 @@ When another model writes the generator, give it the `deliver` steps of
 `scripts/check_look.py` among them. A rule whose status is `open` is the
 user's to decide.
 
+## Export a release
+
+```bash
+python scripts/export_project.py --to export/web --bump
+```
+
+The editor exports, in a window the script opens or with `--attach` in a
+browser the user has open, and the zip replaces `--to`; the version it
+carries goes into `project.c3proj`. The editor exports for an account with a
+subscription only, and the user logs in in that window. Read
+[references/export-project.md](references/export-project.md) before the
+first export of a project, when the script stops, or before passing
+`--attach`.
+
 ## Gotchas
 
 - A parameter is written by its type, which `lookup_ace.py` prints beside
