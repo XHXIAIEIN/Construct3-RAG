@@ -139,6 +139,7 @@ sounds, change their rate, volume or effects, or keep music on a beat.
 - Delay `mix` is 0 to 100 and scales only the echoes: first echo = mix × feedback.
 - *Fade volume* also reaches instances scheduled but not started.
 - On resume every suspended sound restarts at once: *Stop all* in *On resumed* and restart the schedule.
+- *Play by name* looks a sound up by its folder path, `Board/spawn`: keep sounds played by computed names out of folders.
 - Stereo pan folds a stereo sound's channels, +2.3 dB at ±20: narrow the pan of loud sounds and keep them off each other's grid point.
 - Dictionary *Set key* ignores a missing key: write with *Add key*.
 - A sound is heard `OutputLatency` after its scheduled time.

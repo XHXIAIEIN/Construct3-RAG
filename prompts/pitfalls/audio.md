@@ -89,6 +89,19 @@ where Web Audio lives).
   nothing otherwise; *Add key* creates or overwrites. Write gates and counters
   with *Add key*. [runtime: c3runtime.js `SetKey(t,e){this._data.has(t)&&...}`,
   `AddKey`]
+- The runtime keys a sound by its path below the Sounds or Music folder,
+  without the extension: a file in the folder `Board` is `Board/spawn`, and
+  *Play by name* with `"spawn"` finds nothing and plays nothing, with no
+  error. A game that builds sound names in expressions keeps those files at
+  the top of the folder, or puts the folder path in every name, matched in
+  case. Timelines are not keyed this way:
+  *Play by name* finds a timeline in a folder by its bare name. [runtime:
+  c3runtime.js `PlayByName` calls `GetProjectAudioFileUrl`, whose
+  `_audioFiles` map held `"Board/spawn"`, and `GetTimelineByName` reads
+  `_timelinesByName` by the lowercased bare name; observed in a game
+  project, r504 preview, 2026-10-02: after sounds moved into folders,
+  `GetProjectAudioFileUrl("spawn")` returned null while
+  `GetTimelineByName("SwordIdle")` found the timeline in its folder]
 - A sound is heard at its scheduled time plus `Audio.OutputLatency`, for
   immediate plays too. [runtime: c3runtime.js `OutputLatency`, main.js tick
   reports `outputLatency`; observed 0.04 s in a headless Chrome r504
