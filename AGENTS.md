@@ -154,10 +154,6 @@ Rules:
   turns those into a public cross-reference on that issue's timeline, which
   cannot be taken back. A source line in a document may use the short form;
   only commits, issues and PRs are parsed.
-- `.agents/hooks/guard_exported_data.py` blocks a hand edit under the
-  `data/` folders that `scripts/init.py` replaces, since the next refresh
-  would drop it. A client that runs hooks calls it before an edit; Claude
-  Code registers it in `.claude/settings.json`.
 
 Before finishing, plus the checks in the touched directories' `AGENTS.md`:
 
