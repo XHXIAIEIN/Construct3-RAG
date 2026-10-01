@@ -192,6 +192,7 @@ instance, or control a timeline by tags, keyframes or playback rate.
 - *Set instance* covers the next *Play* only and one *Play* starts a copy per picked instance with the same tags: set one instance at a time and tag each copy with its UID.
 - A copy is found by the timeline's name contained in the copy's name: keep no timeline name inside another's.
 - *Stop* rewinds to 0, *Pause* holds, and a finished timeline ignores both *Stop* and *Resume*: *Set time* 0 before replaying.
+- *Stop* moves no instance: a relative track stopped midway leaves the offset it reached, and later timelines on that instance add to it. *Set time* 0 interpolates from the old time at once, so *Set time* 0 then *Stop* puts it back. [runtime source, r504 `TimelineState.Stop`/`SetTime`; a weapon swapped mid-swing kept a 55° tilt, game project 2026-10-01]
 - *Set time* pauses and never fires *On keyframe reached*.
 - *On keyframe reached* picks nothing: pick the instance back from the UID in `Timeline.TimelineTags`.
 - *On keyframe reached* sees the previous tick's pose: *Wait 0* before reading where the keyframe put the instance.
