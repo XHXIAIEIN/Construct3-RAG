@@ -78,7 +78,7 @@ group turned off to pause.
 
 - *Wait* does not stop a loop: the remaining iterations run on in the same tick.
 - *Wait for previous actions* waits only for asynchronous actions.
-- Two overlapping *Wait*-based hit stops cut each other short: keep the latest `wallclocktime` deadline and restore the time scale only once it has passed.
+- Two overlapping *Wait*-based hit stops cut each other short: count the stops under way and restore the time scale when the count is back to 0; a `wallclocktime` deadline runs on another clock than the *Wait* and leaves the game slowed.
 - Scroll To *Shake* replaces the running shake and is scaled by the object's time scale: gate it behind the remaining magnitude, and set the camera object's time scale to 1 to shake through a hit stop.
 - A *Wait* holds back only the rest of its own block and its sub-events; sibling events run at once.
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.

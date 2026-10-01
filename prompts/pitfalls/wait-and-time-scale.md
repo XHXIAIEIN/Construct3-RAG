@@ -69,14 +69,24 @@ Sources and the rule for adding an entry are in the index,
   `1 - PauseUI.Tween.Progress("ShowPause")`]
 - Two such hit stops that overlap (a critical hit that also kills, two
   lanes resolving in one tick) each restore the time scale when their own
-  *Wait* ends, so the shorter one cuts the longer short. Record the latest
-  deadline in a variable, `max(until, wallclocktime + stopTime)`, and
-  after the *Wait* set the time scale to 1 only when `wallclocktime` has
-  reached it; `wallclocktime` ignores the time scale, `time` does not.
-  [manual: system-reference/system-expressions.md "wallclocktime";
+  *Wait* ends, so the shorter one cuts the longer short. Count the stops
+  under way in a variable: add 1 before the *Wait*, subtract 1 after it,
+  and set the time scale to 1 only when the count is back to 0. Do not
+  compare a `wallclocktime` deadline after the *Wait* instead: an unscaled
+  *Wait* runs on the runtime's wall time, the sum of each tick's clamped
+  `dt` taken at the start of the tick, while `wallclocktime` is
+  `Date.now()` read mid-tick, so a stop called a few milliseconds into a
+  busy tick sees its deadline not yet reached when its *Wait* ends, and
+  the time scale stays at 0.1 until the next hit stop. [manual:
+  system-reference/system-expressions.md "wallclocktime"; runtime: exported
+  c3runtime.js r504, `wallclocktime` returns `(Date.now() -
+  GetStartTime()) / 1e3`, `Wait` with *Use time scale* off calls
+  `InitWallTimer`, `_wallTime` adds `_dt1`, clamped to `_maxDt` 1/30;
   observed in a game project, r504 preview, 2026-10-02: a 0.05 s crit stop
-  and a 0.08 s kill stop in one tick lasted 0.05 s before the fix and
-  0.08 s after]
+  and a 0.08 s kill stop in one tick lasted 0.05 s with no deadline and
+  0.08 s with one; a 0.08 s stop called 8 to 16 ms into a tick stayed at
+  0.1 in 20 of 20 runs with the `wallclocktime` deadline and in 0 of 20
+  with the count, which still lasted 0.08 s for the overlapping pair]
 - Scroll To *Shake* replaces the shake that is running: magnitude, start
   and end are overwritten, so a 3 px tombstone shake 0.45 s after an 8 px
   kill shake ends the kill shake, and a 3 px splash shake in the same tick
