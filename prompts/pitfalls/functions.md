@@ -42,6 +42,6 @@ Sources and the rule for adding an entry are in the index,
 - A function without parameters is called in an expression without
   parentheses: `Functions.settling`, not `Functions.settling()`. The empty
   pair makes the editor refuse the whole project with `Syntax error: ')'
-  can't go here`, naming each condition that holds it, and
-  `check_project.py` lets it through. [observed in a game project, r504
-  editor, 2026-10-01]
+  can't go here`, naming each condition that holds it; `check_project.py`
+  refuses it. [observed in a game project, r504 editor, 2026-10-01; in a
+  minimal project, r504 editor, 2026-10-02]

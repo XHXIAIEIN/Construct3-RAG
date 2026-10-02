@@ -121,6 +121,16 @@ Option 2 as the default, and option 3 as the step after it.
   one list, opened in the editor. No official example declares one; the
   sweep added eight findings, all in one small model's project, which
   declares its globals at the top of both of its sheets.
+- Two expression rules were added after a game project met them and minimal
+  projects reproduced them in the r504 editor on 2026-10-02, each beside a
+  corrected copy that opened. A function parameter named like a system
+  expression is read as that expression, as a variable is: a parameter
+  `round` in `"第 " & round & " 轮"` stopped the editor with `'round' does
+  not accept 0 parameters`. A function without parameters called with an
+  empty pair, `Functions.settling()`, stopped it with `Syntax error: ')'
+  can't go here`. None of the 1028 function parameters of the official
+  examples is named like a system expression and none of their sheets
+  writes the empty pair; the sweep changed no output.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from

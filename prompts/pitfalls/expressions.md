@@ -16,11 +16,12 @@ Sources and the rule for adding an entry are in the index,
   'string'`. `check_project.py` refuses such a name. Name variables so no system
   expression shares the name (`probe`, not `mid`; not `left`, `right`,
   `len`, `find`, `max`, `min`, `abs`, `round`). A function parameter is
-  read the same way, and the checker does not refuse it: a parameter
-  `round` used as `"第 " & round & " 轮"` stops the editor with `'round' does
-  not accept 0 parameters` (`roundNo` opens). [plugins/system.json,
-  expression `mid`; observed in a game project, r495.2 editor, 2026-09-23;
-  the parameter case observed in a game project, r504 editor, 2026-09-30]
+  read the same way, and the checker refuses it too: a parameter `round`
+  used as `"第 " & round & " 轮"` stops the editor with `'round' does not
+  accept 0 parameters` (`roundNo` opens). [plugins/system.json, expression
+  `mid`; observed in a game project, r495.2 editor, 2026-09-23; the
+  parameter case observed in a game project, r504 editor, 2026-09-30; both
+  in minimal projects, r504 editor, 2026-10-02]
 - Variable names are matched without regard to case, and the nearest scope
   wins: a local string `count` declared in an event hides the global
   constant `COUNT` in that event and its sub-events, so `COUNT - 1` there

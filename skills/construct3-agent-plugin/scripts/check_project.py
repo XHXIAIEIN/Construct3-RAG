@@ -97,6 +97,7 @@ FOLDER_PROJECT_RELEASE = 30900
 # Sprite(2).X picks an instance by IID; the index is checked as an expression.
 IDENT = re.compile(r"\w+")
 NUMBER = re.compile(r"\d+(\.\d+)?(e[+-]?\d+)?", re.I)
+EMPTY_CALL = re.compile(r"\s*\(\s*\)")
 MEMBER = re.compile(r"(\w+)(?:\([^()]*\))?\s*\.\s*(\w+)(?:\s*\.\s*(\w+))?")
 STRING_LITERAL = re.compile(r'"(?:[^"]|"")*"')
 # C-style operators the expression parser refuses, with the Construct operator for each; the power
@@ -640,6 +641,11 @@ class Checker:
             if LOWER(obj) == LOWER(p.functions_object):
                 if LOWER(member) not in {LOWER(f) for f in self.functions}:
                     self.err(f"{where}: {obj}.{member} is not a defined function")
+                elif EMPTY_CALL.match(text, m.end(2)):
+                    # No official example writes an empty pair; the editor stops at it (r504, 2026-10-02).
+                    self.err(f"{where}: {obj}.{member}() has an empty pair of parentheses; the editor stops with "
+                             f"\"Syntax error: ')' can't go here\". A function without parameters is called "
+                             f"without them: {obj}.{member}")
                 continue
             obj = p.objects_lower.get(LOWER(obj))
             if obj is None or obj == "System":
@@ -996,14 +1002,17 @@ class Checker:
         number, anything else stops the load with 'invalid type of initialValue'."""
         name, vtype, value = var.get("name"), var.get("type"), var.get("initialValue")
         w = f"{where}: {what} {name}"
-        if what == "variable" and isinstance(name, str) and LOWER(name) in self.p.system_expression_names:
+        if isinstance(name, str) and LOWER(name) in self.p.system_expression_names:
             # A local mid passed as Functions.areaBelow(mid) is read as the text function mid(), and
-            # the editor refuses the project; none of the 2697 variables of the official examples
-            # shares a system expression's name.
+            # a parameter round in "第 " & round & " 轮" as round() with no argument; the editor
+            # refuses the project either way (r504, 2026-10-02). None of the 2697 variables and
+            # 1028 function parameters of the official examples shares a system expression's name.
+            said = ("\"Invalid expressions ... parameter 0 does not take 'string'\" for a local mid"
+                    if what == "variable" else "\"'round' does not accept 0 parameters\" for a parameter round")
             self.err(f"{w}: the name is that of the system expression {LOWER(name)}, which wins inside an "
-                     f"expression: {name} there is read as {LOWER(name)}(), not as the variable, and the editor "
-                     f"refuses the project (\"Invalid expressions ... parameter 0 does not take 'string'\" for a "
-                     f"local mid); rename it, for example {name}Value, where it is declared and where it is used")
+                     f"expression: {name} there is read as {LOWER(name)}(), not as the {what}, and the editor "
+                     f"refuses the project ({said}); rename it, for example {name}Value, where it is declared "
+                     f"and where it is used")
         if vtype not in VARIABLE_TYPES:
             self.err(f"{w}: type {vtype!r} is not number, string or boolean")
             return

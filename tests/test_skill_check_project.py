@@ -443,6 +443,35 @@ def test_a_variable_named_like_a_system_expression_is_refused(project, name):
     assert f"rename it, for example {name}Value" in out
 
 
+def test_a_function_parameter_named_like_a_system_expression_is_refused(project):
+    """A parameter round used as "第 " & round & " 轮" stopped the editor with "'round' does not
+    accept 0 parameters" (r504, 2026-10-02); roundNo opened."""
+    def change(sheet):
+        events(sheet)["add_score"]["functionParameters"].append(
+            {"name": "round", "type": "number", "initialValue": "0", "comment": "", "sid": 900000000000008})
+    out = findings(project, change)
+    assert "parameter round: the name is that of the system expression round" in out
+    assert "not as the parameter" in out
+
+
+def test_a_call_with_an_empty_pair_of_parentheses_is_refused(project):
+    """Functions.settling() stopped the editor with "Syntax error: ')' can't go here" (r504,
+    2026-10-02); Functions.settling opened."""
+    def change(sheet):
+        sheet["events"].append({
+            "functionName": "settling", "functionDescription": "", "functionCategory": "",
+            "functionReturnType": "number", "functionCopyPicked": False, "functionIsAsync": False,
+            "functionParameters": [], "eventType": "function-block", "conditions": [], "actions": [],
+            "sid": 900000000000009})
+        events(sheet)["setup"]["actions"][1]["parameters"].update(text="Functions.settling()")
+    out = findings(project, change)
+    assert "Functions.settling() has an empty pair of parentheses" in out
+    assert "called without them: Functions.settling" in out
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(
+        text="Functions.settling"))
+    assert "empty pair" not in out
+
+
 def test_a_local_that_hides_a_variable_of_another_type_by_case_is_refused(project):
     """A local string count hid the global constant COUNT, and COUNT - 1 below it stopped the editor
     with "Type mismatch: - does not work with 'string' and 'number'". A same-typed local, or one
