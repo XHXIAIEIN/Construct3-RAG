@@ -1,5 +1,9 @@
 """open_in_editor.py: handing the project to the editor."""
+import itertools
 import sys
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
@@ -67,6 +71,54 @@ def opener():
     finally:
         sys.path.pop(0)
     return oe
+
+
+def test_open_in_editor_closes_the_start_up_window_once_when_projects_open_at_once(tmp_path, monkeypatch):
+    """--jobs 2: both jobs found the browser's start-up window among the targets before either
+    closed it, and the second close failed its project with "Target.closeTarget: No target with
+    given id found" (timer-1 to timer-3, 2026-10-03). The first page to open closes it, once."""
+    oe = opener()
+    created = threading.Barrier(2)
+
+    class Browser:
+        """The browser end of DevTools: the window it started with and a page per createTarget.
+        A list of the targets is out of date by the time it arrives, as over a socket."""
+
+        def __init__(self) -> None:
+            self.pages, self.closed = {"start-up": "about:blank"}, []
+            self.ids, self.lock = itertools.count(), threading.Lock()
+
+        def call(self, method: str, wait: float = oe.CALL, session: str | None = None, **params) -> dict:
+            if method == "Target.createTarget":
+                with self.lock:
+                    target = f"page-{next(self.ids)}"
+                    self.pages[target] = params["url"]
+                created.wait(5)     # both projects have a page before either goes on
+                return {"targetId": target}
+            if method == "Target.getTargets":
+                infos = [{"targetId": t, "type": "page", "url": url} for t, url in self.pages.items()]
+                time.sleep(0.2)
+                return {"targetInfos": infos}
+            if method == "Target.closeTarget":
+                with self.lock:
+                    if self.pages.pop(params["targetId"], None) is None:
+                        raise oe.DevToolsError("Target.closeTarget: No target with given id found")
+                    self.closed.append(params["targetId"])
+                return {"success": True}
+            raise AssertionError(method)
+
+    browser = Browser()
+    profile = tmp_path / "editor-msedge"
+    profile.mkdir()
+    (profile / "DevToolsActivePort").write_text("9222\n/devtools/browser/1", encoding="utf-8")
+    monkeypatch.setattr(oe.Browser, "devtools_url", staticmethod(lambda port_file: "ws://127.0.0.1:9222/devtools/browser/1"))
+    monkeypatch.setattr(oe, "DevTools", lambda url, timeout=oe.CALL: browser if "/browser/" in url else object())
+
+    driven = oe.Browser("msedge.exe", profile, headed=False)
+    with ThreadPoolExecutor(2) as pool:
+        opened = list(pool.map(lambda _: driven.page(oe.EDITOR)[0], range(2)))
+    assert browser.closed == ["start-up"], browser.closed
+    assert sorted(browser.pages) == sorted(opened), browser.pages
 
 
 def test_open_in_editor_keeps_the_results_and_screenshots_in_the_project_by_default(tmp_path):

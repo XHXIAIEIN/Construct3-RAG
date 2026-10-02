@@ -520,6 +520,10 @@ class Browser:
             raise DevToolsError(f"{exe} opened no DevTools port in 15 seconds")
         self.port = int(port_file.read_text().split()[0])
         self.devtools = DevTools(url)
+        # The window the browser started with, closed by the first page that opens.
+        self.blank = [t["targetId"] for t in self.devtools.call("Target.getTargets")["targetInfos"]
+                      if t["type"] == "page" and t["url"] == "about:blank"]
+        self.lock = threading.Lock()
 
     @staticmethod
     def devtools_url(port_file: Path) -> str | None:
@@ -536,10 +540,15 @@ class Browser:
         frames not at all, and an editor there could sit at "Opening (0%)" for longer
         than RESULT waits."""
         target = self.devtools.call("Target.createTarget", url=url, newWindow=True)["targetId"]
-        # The window the browser started with is no longer needed once another is open.
-        for t in self.devtools.call("Target.getTargets")["targetInfos"]:
-            if t["type"] == "page" and t["url"] == "about:blank" and t["targetId"] != target:
-                self.devtools.call("Target.closeTarget", targetId=t["targetId"])
+        # The window the browser started with is no longer needed once another is open. Pages
+        # opened at once would each find it in the list of targets; only the first closes it.
+        with self.lock:
+            blank, self.blank = self.blank, []
+        for t in blank:
+            try:
+                self.devtools.call("Target.closeTarget", targetId=t)
+            except DevToolsError:   # a --headed window the user closed already
+                pass
         return target, DevTools(f"ws://127.0.0.1:{self.port}/devtools/page/{target}")
 
     def close(self) -> None:
