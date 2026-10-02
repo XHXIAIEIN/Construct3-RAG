@@ -76,12 +76,14 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   its `.tmp/preview/` and lists the recordings it finds there.
 - The run's output tells the agent what the page does for the user, so the
   agent points the user to it: a part that looks wrong comes back as a task.
-- The review page follows a technical drawing: ruled panels with notes in
-  small monospace type, a title block, blue for what the page marks and red
+- The review page follows a technical drawing: compact ruled panels,
+  collapsible recording details, blue for what the page marks and red
   for what failed, the selected part dimensioned on the timeline and the
   marks for its ends over the playhead, line icons whose tooltips name their
-  keys. A path shows by its last part, the whole path in its tooltip and
-  copied by a click; the task for the agent keeps paths whole, since the
+  keys. Repeated instructions live in tooltips; one selection hint stays
+  visible until a part is selected. This keeps the preview and watched values
+  in view without shrinking their type. A path shows by its last part, the
+  whole path in its tooltip and copied by a click; the task for the agent keeps paths whole, since the
   agent opens the files by them. It loads no font or script from the
   network, so it opens offline as the recording does.
 - A run starts from a first launch: the browser profile is kept between runs

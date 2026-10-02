@@ -24,25 +24,23 @@
       --blue: #82a9ee; --blue-tint: #18243a; --blue-mid: #2c4670; --red: #ef7c74; --red-tint: #3a1d1c;
     }
   }
-  * { box-sizing: border-box; scrollbar-width: none; }
-  *::-webkit-scrollbar { display: none; }
+  * { box-sizing: border-box; }
   [hidden] { display: none !important; }
   body { margin: 0; background: var(--paper); color: var(--ink); font: 13px/1.45 var(--sans); }
   .mono, code { font-family: var(--mono); }
   svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; flex: none; }
 
-  .board { padding: 16px; display: grid; gap: 12px; align-items: start; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); }
+  .board { padding: 10px; display: grid; gap: 8px; align-items: start; grid-template-columns: minmax(0, 1fr) minmax(260px, 320px); }
   .board > .opening { grid-column: 1 / -1; }
-  .col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
   @media (max-width: 900px) { .board { grid-template-columns: minmax(0, 1fr); } }
 
   /* A panel: a title and a note in small type, ruled off from what it holds. */
   .panel { border: 1px solid var(--rule); background: var(--paper); min-width: 0; }
-  .panel > header { display: flex; align-items: stretch; border-bottom: 1px solid var(--rule); min-height: 30px; }
-  .panel > header h2 { margin: 0; padding: 0 12px; display: flex; align-items: center; font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .panel > header { display: flex; align-items: stretch; border-bottom: 1px solid var(--rule); min-height: 28px; }
+  .panel > header h2 { margin: 0; padding: 0 8px; display: flex; align-items: center; font-size: 13px; font-weight: 600; white-space: nowrap; }
   .panel > header .meta { margin-left: auto; padding: 0 10px; align-self: center; min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 11px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .body { padding: 12px; }
-  .note { padding: 8px 12px; border-top: 1px solid var(--hair); font: 11px/1.5 var(--mono); color: var(--muted); }
+  .body { padding: 8px; }
   .label { font: 11px/1.2 var(--mono); color: var(--muted); }
 
   button, select, textarea { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--hair); border-radius: 0; }
@@ -57,8 +55,7 @@
   /* A: the window, its controls and the timeline. */
   .frame { display: flex; justify-content: center; background: var(--frame); }
   .frame img { max-width: 100%; max-height: 64vh; display: block; }
-  .controls { display: flex; gap: 6px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
-  .caption { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+  .controls { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
   /* From the top: the marks above the playhead, the selected part's dimension line, the
      steps, the frames and the ruler. */
   .timeline { position: relative; margin-top: 6px; padding: 48px 0 16px; cursor: pointer; touch-action: none; user-select: none; }
@@ -92,7 +89,7 @@
 
   /* B: the steps, each with its outcome. */
   ol { list-style: none; margin: 0; padding: 0; }
-  ol li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; padding: 7px 12px; border-bottom: 1px solid var(--hair); cursor: pointer; }
+  ol li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; padding: 5px 8px; border-bottom: 1px solid var(--hair); cursor: pointer; }
   ol li:nth-child(even) { background: var(--zebra); }
   ol li:last-child { border-bottom: 0; }
   ol li.empty { display: block; cursor: default; }
@@ -105,8 +102,8 @@
 
   /* C: the watched values at the frame shown. */
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-  th { text-align: left; font: 11px var(--mono); color: var(--muted); font-weight: 400; padding: 6px 12px; border-bottom: 1px solid var(--hair); }
-  td { padding: 6px 12px; border-bottom: 1px solid var(--hair); vertical-align: top; word-break: break-word; }
+  th { text-align: left; font: 11px var(--mono); color: var(--muted); font-weight: 400; padding: 4px 8px; border-bottom: 1px solid var(--hair); }
+  td { padding: 4px 8px; border-bottom: 1px solid var(--hair); vertical-align: top; word-break: break-word; }
   tbody tr:nth-child(even) td { background: var(--zebra); }
   tbody tr:last-child td { border-bottom: 0; }
   td:first-child { width: 40%; }
@@ -117,27 +114,34 @@
 
   /* D: the selected part, copied as a task for an agent. */
   #part-empty { margin: 0; color: var(--muted); }
-  .facts { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 18px; }
   .facts b { display: block; font: 13px var(--mono); font-weight: 500; margin-top: 2px; font-variant-numeric: tabular-nums; }
   .facts .bad b { color: var(--red); }
-  .field { display: block; margin-top: 12px; }
+  .field { display: block; margin-top: 8px; }
   .field textarea { display: block; width: 100%; margin-top: 4px; padding: 6px 8px; resize: vertical; }
-  .send { display: flex; gap: 6px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .send { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
   #copied { font: 11px var(--mono); color: var(--blue); margin-left: 6px; }
   #copied.bad { color: var(--red); }
-  details { margin-top: 12px; }
+  details { margin-top: 8px; }
   details summary { font: 11px var(--mono); color: var(--muted); cursor: pointer; }
   details textarea { display: block; width: 100%; margin-top: 6px; padding: 8px; font: 11px/1.5 var(--mono); color: var(--muted); }
 
-  /* The title block: what this page is of. */
-  .titleblock { border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr; }
-  .titleblock div { padding: 6px 10px; border-top: 1px solid var(--rule); min-width: 0; }
-  .titleblock div:first-child { border-top: 0; }
+  .recording-info { margin: 0; border: 1px solid var(--rule); }
+  .recording-info > summary { padding: 6px 8px; color: var(--ink); font: 12px var(--sans); overflow-wrap: anywhere; }
+  .titleblock { display: grid; grid-template-columns: 1fr 1fr; }
+  .titleblock div { padding: 5px 8px; border-top: 1px solid var(--hair); min-width: 0; }
   .titleblock .wide { grid-column: 1 / -1; }
-  .titleblock div:nth-child(odd):not(.wide) { border-left: 1px solid var(--rule); }
-  .titleblock h1 { margin: 2px 0 0; font-size: 16px; font-weight: 600; word-break: break-word; }
-  .titleblock b { display: block; margin-top: 2px; font-weight: 500; word-break: break-all; }
-  .titleblock b.mono { font-size: 12px; }
+  .titleblock b { display: block; margin-top: 2px; font-weight: 500; overflow-wrap: anywhere; }
+  .titleblock b.mono { font-size: 11px; }
+  #steps { max-height: 38vh; overflow-y: auto; }
+  .watch-table { max-height: 30vh; overflow-y: auto; }
+  .watch-table thead { position: sticky; top: 0; background: var(--paper); }
+  @media (max-width: 600px) {
+    .board { padding: 6px; gap: 6px; }
+    .panel > header { flex-wrap: wrap; }
+    .panel > header .meta { font-size: 10px; padding: 4px 8px; }
+    .frame img { max-height: 52vh; }
+  }
   [title*="Click to copy"] { cursor: copy; }
   .copied::after { content: " copied"; color: var(--blue); font: 11px var(--mono); }
 
@@ -149,7 +153,7 @@
   .recordings:empty { display: none; }
   .recordings li .what { font-family: var(--mono); }
   .recordings li.link { display: block; padding: 0; }
-  .recordings li.link a { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; padding: 7px 12px; color: inherit; text-decoration: none; }
+  .recordings li.link a { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; padding: 5px 8px; color: inherit; text-decoration: none; }
   .recordings li.link a:hover .what { text-decoration: underline; }
   .opening.index .recordings { margin-top: 0; max-width: none; border: 0; }
   .opening.index .body { padding: 0; }
@@ -174,13 +178,9 @@
 </svg>
   <div class="board">
     <section class="panel opening" id="opening" hidden>
-      <header><h2 id="opening-title">No recording on this page</h2><span class="meta" id="opening-meta">recording review</span></header>
+      <header><h2 id="opening-title">Open recording</h2><span class="meta" id="opening-meta">recording review</span></header>
       <div class="body">
-        <p id="opening-help">scripts/preview_project.py writes this page beside each recording with the recording in
-          it, as <code>NN-NAME.html</code> in <code>.tmp/preview/</code> of the game project, and
-          <code>index.html</code> there lists them all: open one of those. Or choose a folder here: the game project,
-          its <code>.tmp/preview/</code>, or the folder of one recording. Edge and Chrome open the chooser in that
-          folder the next time; the files stay in this browser.</p>
+        <p id="opening-help">Open a game project or recording folder.</p>
         <button id="choose" class="ink"><svg class="i"><use href="#i-folder"/></svg>Choose a folder</button>
         <input type="file" id="pick" webkitdirectory hidden>
         <p id="pick-error" role="status"></p>
@@ -190,7 +190,7 @@
 
     <div class="col" data-run hidden>
     <section class="panel">
-      <header><h2>Preview window</h2><span class="meta" id="clock"></span></header>
+      <header><h2>Preview</h2><span class="meta" id="clock"></span></header>
       <div class="body">
         <div class="frame"><img id="frame" alt="the preview window at this moment"></div>
         <div class="controls">
@@ -200,8 +200,7 @@
           <button class="icon" id="next" aria-label="Frame after" title="Frame after (Right arrow)"><svg class="i"><use href="#i-next"/></svg></button>
           <select id="speed" aria-label="Speed" title="Speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select>
         </div>
-        <div class="caption"><span class="label">Steps above, frames below, time in ms</span><span class="label">Shift+drag selects a part</span></div>
-        <div class="timeline" id="timeline" aria-label="Timeline">
+        <div class="timeline" id="timeline" aria-label="Timeline" title="Time in ms · Shift+drag to select · [ / ] to set start / end">
           <div class="spans" id="spans"></div>
           <div class="frames" id="frames"></div>
           <div class="ruler" id="ruler"></div>
@@ -218,16 +217,15 @@
     </section>
 
     <section class="panel">
-      <header><h2>Selected part</h2><span class="meta" id="part-meta">a task for an agent</span></header>
+      <header><h2>Selected part</h2></header>
       <div class="body">
-        <p id="part-empty">No part selected. Shift+drag on the timeline, Shift+click a
-          step, or start and end one at the frame shown with [ and ].</p>
+        <p id="part-empty">Shift+drag the timeline to select.</p>
         <div id="part-tools" hidden>
           <div class="facts" id="facts"></div>
-          <label class="field"><span class="label">What to find out (optional)</span>
-            <textarea id="note" rows="2" placeholder="such as: the coin should land on the counter, here it stops in the air"></textarea></label>
+          <label class="field"><span class="label">Question (optional)</span>
+            <textarea id="note" rows="1" placeholder="What should happen here?"></textarea></label>
           <div class="send">
-            <button class="ink" id="copy"><svg class="i"><use href="#i-copy"/></svg>Copy for the agent</button>
+            <button class="icon ink" id="copy" aria-label="Copy task for agent" title="Copy task for agent"><svg class="i"><use href="#i-copy"/></svg></button>
             <button class="icon" id="part-play" aria-pressed="false" aria-label="Play the part" title="Play the part">
               <svg class="i i-play"><use href="#i-play-part"/></svg><svg class="i i-pause"><use href="#i-pause"/></svg></button>
             <button class="icon" id="part-clear" aria-label="Clear the selection" title="Clear the selection (Esc)"><svg class="i"><use href="#i-clear"/></svg></button>
@@ -242,18 +240,17 @@
     <div class="col" data-run hidden>
     <section class="panel">
       <header><h2>Steps</h2><span class="meta" id="steps-meta"></span></header>
-      <ol id="steps"></ol>
-      <div class="note">Click a step to go to it, Shift+click to select the part it ran.</div>
+      <ol id="steps" title="Click to jump · Shift+click to select"></ol>
     </section>
 
     <section class="panel">
       <header><h2>Watched values</h2><span class="meta" id="watch-meta"></span></header>
-      <table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody id="watch"></tbody></table>
-      <div class="note">&#9679; changed since the frame before.</div>
+      <div class="watch-table"><table><thead><tr><th>Name</th><th title="● changed since the previous frame">Value</th></tr></thead><tbody id="watch"></tbody></table></div>
     </section>
 
-    <section class="titleblock">
-      <div class="wide"><span class="label">Title</span><h1 id="tb-title"></h1></div>
+    <details class="recording-info">
+      <summary id="tb-title">Recording details</summary>
+      <div class="titleblock">
       <div><span class="label">Frames</span><b class="mono" id="tb-frames"></b></div>
       <div><span class="label">Video</span><b class="mono" id="tb-video"></b></div>
       <div><span class="label">Steps</span><b class="mono" id="tb-steps"></b></div>
@@ -261,7 +258,8 @@
       <div><span class="label">Project</span><b class="mono" id="tb-project"></b></div>
       <div><span class="label">Recording folder</span><b class="mono" id="tb-folder"></b></div>
       <div class="wide" id="tb-index"><span class="label">Every recording</span><b class="mono"><a href="index.html">index.html</a></b></div>
-    </section>
+      </div>
+    </details>
     </div>
   </div>
 <script>
@@ -340,7 +338,7 @@ function start(data, src) {
   for (const el of document.querySelectorAll("[data-run]")) el.hidden = false;
   document.title = `${timeline.name}: recording review`;
   const failed = steps.filter(s => !s.ok).length, errors = steps.reduce((n, s) => n + s.errors.length, 0);
-  $("tb-title").textContent = `${timeline.name}: recording review`;
+  $("tb-title").textContent = `${timeline.name} · Details`;
   $("tb-frames").textContent = `${frames.length} in ${ms(end)}`;
   $("tb-video").textContent = timeline.video ? timeline.video.split(/[\\/]/).pop() : "none";
   $("tb-steps").textContent = `${steps.length}` + (failed ? `, ${failed} failed` : "");
@@ -420,6 +418,7 @@ function go(i) {
   for (const name of names) {
     const tr = document.createElement("tr");
     tr.className = before && show(before.watch?.[name]) !== show(f.watch[name]) ? "changed" : "";
+    if (tr.className) tr.title = "Changed since the previous frame";
     tr.innerHTML = "<td></td><td></td>";
     tr.children[0].textContent = name;
     tr.children[1].textContent = show(f.watch[name]);
@@ -555,7 +554,7 @@ $("copy").onclick = async () => {
   try {
     await navigator.clipboard.writeText(text);
     $("copied").className = "";
-    $("copied").textContent = "Copied. Paste it into the agent's chat.";
+    $("copied").textContent = "Copied";
   } catch (e) {     // a browser that keeps the clipboard from a local file
     $("part-text").open = true;
     $("brief").select();
