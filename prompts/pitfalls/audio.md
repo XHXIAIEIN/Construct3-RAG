@@ -62,9 +62,15 @@ where Web Audio lives).
   `C3AudioDelayFX` node graph and `SetParam` cases 0, 4, 5]
 - *Fade volume* ramps the gain linearly from its current value and also
   reaches instances scheduled but not started yet, so a layer faded in just
-  before its next scheduled pass starts that pass faded in. [runtime: main.js
-  instance `FadeVolume`, `linearRampToValueAtTime`, and `FadeVolume` over
-  `audioInstancesMatchingTags`]
+  before its next scheduled pass starts that pass faded in, and a one-shot
+  scheduled ahead is cancelled by fading its one-off tag to -100 dB before
+  it starts. [runtime: main.js instance `FadeVolume`,
+  `linearRampToValueAtTime`, and `FadeVolume` over
+  `audioInstancesMatchingTags`; observed in a game project, r504 export in
+  headless Edge 155, 2026-10-02: a play scheduled 0.5 s ahead and faded to
+  -100 dB in the same tick, two frames later, or before its file had ever
+  played, recorded at the noise floor, -130 dB against -29 dB unfaded, with
+  the fade ending in stop or in keep playing; *Stop* cancelled it too]
 - Suspending (tab hidden, app backgrounded) stops each source and records its
   position; resuming restarts all of them at once, scheduled sounds included,
   and a scheduled one resumes ahead by its lead. A game that schedules on a
@@ -109,5 +115,8 @@ where Web Audio lives).
 - In Chrome 155, a WebM Opus file encoded to an exact length (ffmpeg
   `libopus`, 96 kb/s) decodes with `decodeAudioData` to exactly the source's
   sample count at 48 kHz, and one sample short at 44.1 kHz; the encoder's
-  pre-skip is removed. Loops re-scheduled on a grid do not depend on it.
-  [observed with a test page, Chrome 155, 2026-09-30]
+  pre-skip is removed. Loops re-scheduled on a grid do not depend on it. A
+  mono file decodes to one channel, so it takes half the decoded memory of
+  the same length in stereo, 192 KB a second at 48 kHz. [observed with a
+  test page, Chrome 155, 2026-09-30; mono: Edge 155, 2026-10-02, a 64 kb/s
+  mono stem decoded to 1 channel of 998,400 samples]

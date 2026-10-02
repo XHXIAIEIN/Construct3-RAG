@@ -62,6 +62,20 @@ Sources and the rule for adding an entry are in the index,
   plugin-reference/dictionary.md "Get", "GetDefault", "Has key";
   plugin-reference/function.md "ReturnValue"; behavior-reference/timer.md
   "CurrentTime"; system-reference/system-expressions.md "int", "float"]
+- JSON `Type(path)` reads `"undefined"` for a path that is not there and
+  `"array"`, `"object"`, `"number"`, `"string"`, `"boolean"` or `"null"`
+  otherwise, so an expression can choose by presence where *Has key* only
+  works as a condition: `"layers." & name & (RunData.Type("layers." & name &
+  ".alt") = "array" ? ".alt" : ".main")`. [runtime: exported c3runtime.js
+  r504, JSON `_GetTypeOf` returns `_JSONTypeOf` of the value, `typeof`
+  for anything but null and arrays]
+- *For* runs from its start index to its end index inclusive, and counts
+  down when the end is below the start: `For 0 to count - 1` over an empty
+  list runs for 0 and -1, and `For first to last` with `first` past `last`
+  runs backwards over indexes nobody asked for. Put `count > 0`, or `first
+  <= last`, among the same event's conditions before the loop. [runtime:
+  exported c3runtime.js r504, `_For` takes the `--e` branch when the end is
+  below the start]
 
 - A local variable placed as a sub-event or in a group is visible to every
   event at its level, whichever comes first, and to their sub-events; not to

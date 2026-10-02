@@ -99,6 +99,8 @@ expressions or naming and placing variables.
 - `lerp` and `unlerp` do not clamp.
 - `%` keeps the sign of the left operand: `-1 % 5` is `-1`.
 - There is no null: what is missing reads as 0, so ask *Has key* or the size first.
+- JSON `Type(path)` is `"undefined"` for a missing path: test presence inside an expression with it.
+- *For* counts down when its end is below its start: test the count, or start ≤ end, before `For 0 to count - 1`.
 - A local variable at sub-event level is visible to its siblings, not to the parent's own actions.
 - *Set mesh point* in *Relative* mode adds to the current position, so a per-tick derivation accumulates.
 
@@ -137,13 +139,13 @@ sounds, change their rate, volume or effects, or keep music on a beat.
 - *Set effect parameter* cancels the ramp still running: merge overlapping ducks into one release.
 - Gain effect values are dB ramped linearly; compressor parameters cannot change after it is added.
 - Delay `mix` is 0 to 100 and scales only the echoes: first echo = mix × feedback.
-- *Fade volume* also reaches instances scheduled but not started.
+- *Fade volume* also reaches instances scheduled but not started: fading a one-off tag to -100 dB cancels a play scheduled ahead.
 - On resume every suspended sound restarts at once: *Stop all* in *On resumed* and restart the schedule.
 - *Play by name* looks a sound up by its folder path, `Board/spawn`: keep sounds played by computed names out of folders.
 - Stereo pan folds a stereo sound's channels, +2.3 dB at ±20: narrow the pan of loud sounds and keep them off each other's grid point.
 - Dictionary *Set key* ignores a missing key: write with *Add key*.
 - A sound is heard `OutputLatency` after its scheduled time.
-- A WebM Opus file encoded to an exact length decodes to that length at 48 kHz in Chrome.
+- A WebM Opus file encoded to an exact length decodes to that length at 48 kHz in Chrome, and a mono file to one channel.
 
 ### Animation
 
