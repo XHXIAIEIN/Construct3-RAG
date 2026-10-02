@@ -79,11 +79,13 @@ EVENTS = {
 PARAMETER = [("name", NEEDED), ("type", "number"), ("initialValue", None), ("comment", ""), ("sid", SID)]
 ACES = {"id": [("id", NEEDED), ("objectClass", NEEDED), ("sid", SID), ("behaviorType", IF_GIVEN), ("disabled", IF_GIVEN),
                ("parameters", IF_GIVEN), ("isInverted", IF_GIVEN)],
-        "callFunction": [("callFunction", NEEDED), ("sid", SID), ("parameters", IF_GIVEN)],
+        "callFunction": [("callFunction", NEEDED), ("sid", SID), ("parameters", IF_GIVEN), ("disabled", IF_GIVEN)],
         "customAction": [("customAction", NEEDED), ("objectClass", NEEDED), ("customActionObjectClass", IF_GIVEN),
                          ("sid", SID), ("disabled", IF_GIVEN), ("parameters", IF_GIVEN)]}
 # Keys the examples write on a few events only: a bookmark, a comment's colours.
 RARE_KEYS = {"block": ("bookmark",), "function-block": ("bookmark",), "comment": ("background-color", "text-color")}
+# The keys of a comment row and a script among the actions.
+ROWS = {"comment": ("type", "text", "background-color", "text-color"), "script": ("type", "script", "language")}
 HOLDS_EVENTS = ("block", "group", "function-block", "custom-ace-block")
 PLACES = ("after", "before", "into")
 
@@ -148,16 +150,27 @@ def assign(entry: dict, values: dict, name: str, fixed: tuple[str, ...]) -> None
     in_order(entry)
 
 
+def known_keys(given: dict, known: list, where: str, what: str) -> None:
+    """Refuse a key the editor does not read; it would drop the key with its value."""
+    for key in given:
+        if key not in known:
+            raise PlanError(f"{where}: {key!r} is not a key of {what}, which has: {', '.join(known)}"
+                            + c3.closest(key, known, n=1) + "; the editor would drop it with its value")
+
+
 def new_ace(ace, where: str) -> dict:
     if not isinstance(ace, dict):
         raise PlanError(f"{where} is {json.dumps(ace)[:60]}, not an object")
-    if ace.get("type") in ("comment", "script"):
+    if ace.get("type") in ROWS:
+        known_keys(ace, list(ROWS[ace["type"]]), where, f"a {ace['type']} row")
         return dict(ace)
     kind = next((k for k in ACES if k in ace), None)
     if kind is None:
         raise PlanError(f"{where} has no 'id': write it as the write: line of lookup_ace.py gives it, "
                         f'{{"id": ..., "objectClass": ..., "parameters": {{...}}}}; a function call is '
                         f'{{"callFunction": "name", "parameters": ["expression", ...]}}')
+    known_keys(ace, [key for key, _ in ACES[kind]], where,
+               {"id": "a condition or action", "callFunction": "a function call", "customAction": "a custom action"}[kind])
     return filled(ace, ACES[kind], where)
 
 
