@@ -252,6 +252,8 @@ that does not change the events goes elsewhere:
   test it.
 - What the editor, the preview or a script driving them does: the
   `construct3-agent-plugin` skill's references, such as [editor-and-preview.md](../skills/construct3-agent-plugin/references/editor-and-preview.md).
+- How a change is checked by playing it: the cases, the scene, what to read:
+  [verifying-a-change.md](../skills/construct3-agent-plugin/references/verifying-a-change.md).
 - How the game looks, its art and its colours: [references/new-project.md](references/new-project.md),
   or the look documents listed in the root `AGENTS.md`.
 

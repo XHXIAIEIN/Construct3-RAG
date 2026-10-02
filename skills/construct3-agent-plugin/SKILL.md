@@ -233,6 +233,9 @@ not held to this. `--dry-run` does all of that and writes nothing.
    instances they should. What a player does, a drag, a merge, a jump, is
    checked by playing it: `python scripts/preview_project.py PLAN.json`,
    with a plan that does it and waits `until` the result holds. Read
+   [references/verifying-a-change.md](references/verifying-a-change.md)
+   before writing the plan: the cases to play, how to reach each scene and
+   what to read, by kind of game. Read
    [references/editor-and-preview.md](references/editor-and-preview.md)
    before previewing a game that starts on another layout, or before
    driving the preview with input from a script.
