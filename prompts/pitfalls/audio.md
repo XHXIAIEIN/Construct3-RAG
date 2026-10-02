@@ -49,11 +49,24 @@ where Web Audio lives).
   of the first ramp. Overlapping ducks must be merged into one release time,
   not released with a *Wait* each. [runtime: main.js `SetAudioParam`,
   `cancelScheduledValues(0)`]
-- The gain effect's parameter is in dB and ramps on the linear gain: use a
-  linear ramp, an exponential one to silence throws. The compressor's
-  parameters cannot change after it is added (`SetParam` is empty).
-  [runtime: main.js `C3AudioGainFX.SetParam` uses `DbToLinear`,
+- The gain effect's parameter is in dB and ramps on the linear gain. The
+  compressor's parameters cannot change after it is added (`SetParam` is
+  empty). [runtime: main.js `C3AudioGainFX.SetParam` uses `DbToLinear`,
   `C3AudioCompressorFX.SetParam`]
+- An exponential ramp to 0 throws, for every parameter of every effect: Web
+  Audio's `exponentialRampToValueAtTime` refuses a target of 0, and each
+  such *Set effect parameter* logs `RangeError ... should not be in the
+  range (-1.40130e-45, 1.40130e-45)` and leaves the parameter where it was.
+  Zero comes from more than an explicit 0: the dry path of a `mix` of 100
+  (its gain is `1 - mix`), and a value computed
+  from an expression that can reach 0, such as `from * (to / from) ^ p`
+  with a large negative `p`. Ramp such a parameter linearly, or keep the
+  value above 0 with `max(value, floor)`. [runtime: main.js
+  `SetAudioParam` case 2; the filter, delay, convolution, ring modulator
+  and distortion effects' `SetParam` set the dry gain to `1 - t`; observed in a game project, r504 preview, 2026-10-02:
+  a low-pass frequency computed as `from * (to / from) ^ stageP`, with
+  `stageP` near -20000 after a test raised an enemy's hp above the
+  stage's total, logged one RangeError per call]
 - The delay effect's `mix` is a percentage, 0 to 100, in *Add delay effect*
   and in *Set effect parameter* alike; its wet path carries the dry signal,
   so the dry level stays 1 and `mix` scales only the echoes: the first echo

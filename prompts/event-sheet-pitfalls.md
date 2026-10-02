@@ -138,7 +138,8 @@ sounds, change their rate, volume or effects, or keep music on a beat.
 - *Set playback rate* retunes every instance with the tag: give each play a one-off tag.
 - A sound uses the effect chain of its first tag; an action on `"a b"` acts on each tag.
 - *Set effect parameter* cancels the ramp still running: merge overlapping ducks into one release.
-- Gain effect values are dB ramped linearly; compressor parameters cannot change after it is added.
+- Gain effect values are dB ramped on the linear gain; compressor parameters cannot change after it is added.
+- An exponential ramp to 0 throws, the dry path of a 100 % mix included: ramp linearly or keep the value above 0.
 - Delay `mix` is 0 to 100 and scales only the echoes: first echo = mix × feedback.
 - *Fade volume* also reaches instances scheduled but not started: fading a one-off tag to -100 dB cancels a play scheduled ahead.
 - On resume every suspended sound restarts at once: *Stop all* in *On resumed* and restart the schedule.

@@ -65,6 +65,17 @@ that changes which events are written goes to
   (448, 304) lay outside the 430x932 the run had set, and the screenshots
   were still 430x932; without the override, the second connection's headed
   screenshot was 645x1398 at 150 %]
+- A state a plan writes through `runtime` to set a scene up, an enemy's hp
+  or a piece's level, bypasses the events that keep the values tied to it,
+  and the game's own expressions then compute values the events never
+  produce: runtime errors that follow are the plan's, not the change's.
+  Write the tied values with it, or reach the scene by playing, and rerun
+  the same steps without the write before blaming the events. [observed in
+  a game project, r504 preview, 2026-10-02: an enemy's hp set to 10^6
+  through a JSON instance's `setJsonDataCopy`, above the stage total the
+  events add up as enemies spawn, drove a progress ratio near -20000 and a
+  low-pass frequency computed from it to 0; the same steps without the
+  write logged no error]
 - A preview run for five seconds without input shows that the layout
   starts; it says nothing about an event that waits for a drop, a merge or
   a deployment. Such an event is verified by playing it, a plan of
