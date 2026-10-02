@@ -162,3 +162,20 @@ def test_open_in_editor_prints_the_state_the_game_left():
 def test_open_in_editor_says_when_the_state_was_not_read():
     lines = opened_with({"state": {"error": "TypeError: c3probe is undefined\n    at <anonymous>"}})
     assert lines[2:] == ["  state: not read: TypeError: c3probe is undefined"], lines
+
+
+def test_install_addon_reads_addon_json_before_the_editor(tmp_path):
+    """A .c3addon whose addon.json the editor could not read is refused here, with what to fix."""
+    import zipfile
+    oe = opener()
+    good, folder, broken = tmp_path / "good.c3addon", tmp_path / "folder.c3addon", tmp_path / "broken.c3addon"
+    with zipfile.ZipFile(good, "w") as z:
+        z.writestr("addon.json", '{"id": "MyFx", "type": "effect", "name": "My Fx", "version": "1.0.0.0"}')
+    with zipfile.ZipFile(folder, "w") as z:
+        z.writestr("MyFx/addon.json", "{}")
+    with zipfile.ZipFile(broken, "w") as z:
+        z.writestr("addon.json", '{"id": "MyFx",}')
+    assert oe.addon_json(good)["type"] == "effect"
+    assert "zip the files of the addon, not its folder" in oe.addon_json(folder)
+    assert "not valid JSON" in oe.addon_json(broken)
+    assert "not a zip file" in oe.addon_json(tmp_path / "missing.c3addon")

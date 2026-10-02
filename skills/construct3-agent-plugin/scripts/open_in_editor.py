@@ -40,6 +40,12 @@ Every result, the error stacks and the state included, goes to
 .tmp/shots/; the last line names both. Read a cut-off result there instead of
 running the project again.
 
+With --install-addon FILE.c3addon it first installs the addon into the editor of
+the browser profile, as a user drops it on the editor and clicks Install, or
+Update over an installed copy, in whatever language the editor shows; the profile keeps it for every later run. A
+project that uses a custom plugin, behavior or effect opens only after that.
+An addon the editor refuses stops the run with its message and exception.
+
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
 above them: every project.c3proj and .c3p below it is opened, .tmp/ left out.
@@ -73,9 +79,14 @@ EPILOG = """examples:
   python scripts/open_in_editor.py --preview
   python scripts/open_in_editor.py --preview 10 --state Player Enemy
   python scripts/open_in_editor.py --steps
+  python scripts/open_in_editor.py --install-addon MyEffect.c3addon --preview
   python scripts/open_in_editor.py <eval iteration folder> --jobs 3 --out opened.json
 
-output, one entry per project:
+output, one entry per addon with --install-addon, then one per project:
+  installed <addon>  (<name> <version>, <type>)
+  refused  <addon>
+    editor: <the dialog's text>
+    exception: <what the editor logged, "invalid addon json" for an addon.json it does not take>
   opened   <project>  (<window title>, <the editor it opened in>)
     warning: <a notice the editor showed over the opened project, deprecated features: tell the user>
     preview: layout '<name>', runtime in the worker, 600 ticks in 4.2 s, 1 error      with --preview
@@ -90,7 +101,8 @@ output, one entry per project:
     editor: <the dialog's text, which names the sheet, event and parameter at fault>
     exception: <the first line of the exception the editor logged>
 
-exit codes: 0 every project opened, and with --preview ran without errors; 1 at least one did not; 2 no project
+exit codes: 0 every project opened, and with --preview ran without errors; 1 at least one did not, or an
+--install-addon was refused; 2 no project
 found, or the editor did not load; 3 no browser here, or --steps: the steps
 for a browser tool were printed instead, the project is not opened yet
 """
@@ -163,6 +175,32 @@ RESULT_JS = r"""async () => {
           errors: window.__c3Errors.filter(x => x.includes('Exception')).map(x => x.slice(0, 600))};
 }"""
 
+# INSTALL answers the dialogs a dropped .c3addon brings, after SETUP put it on the
+# input: the confirmation (#addonConfirmInstallDialog) by its OK button, Install,
+# and the question over an installed copy (#confirmDialog) by its confirm button,
+# Update; then the first other dialog is the editor's answer, "Addon install
+# finished" or "Failed to install the addon", told apart by the error the editor
+# logs when it refuses. Ids and classes, not the buttons' words, so that an editor
+# in any language is answered.
+INSTALL_JS = r"""async () => {
+  const w = t => new Promise(r => setTimeout(r, t));
+  const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog');
+  const text = d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500);
+  for (let n = 0; window.__c3Title === undefined; n++) { if (n > 150) return 'no file on the input'; await w(200); }
+  if (window.__c3Title === null) return 'the file on the input is empty: its path does not exist';
+  for (let n = 0; n < 240; n++, await w(250)) {
+    const d = open()[0];
+    if (!d) continue;
+    const go = d.id == 'addonConfirmInstallDialog' ? d.querySelector('.okButton')
+      : d.id == 'confirmDialog' ? d.querySelector('.confirmButton') : null;
+    if (go) { go.click(); await w(500); continue; }
+    const errors = window.__c3Errors.filter(x => /addon/i.test(x)).map(x => x.slice(0, 600)), answer = text(d);
+    d.querySelector('ui-close-button, .okButton')?.click();
+    return {installed: !errors.length, dialog: answer, errors};
+  }
+  return 'no answer from the editor in 60 seconds';
+}"""
+
 # Evaluated in the preview page and in each of its workers, it leaves `c3probe` where
 # the game runs and answers true there, null elsewhere, false when the runtime did
 # not tick; references/reading-the-runtime.md declares what it reads. The ticks and
@@ -183,6 +221,10 @@ NEXT_PREVIEW = ("next: a runtime error names its place, `Event sheet 1, event 3,
                 "numbered as scripts/print_sheet.py numbers it: fix it and run this again with --preview. The preview "
                 "starts on the layout the editor shows after opening, as F5 does: firstLayout, or the one the editor "
                 "last left open in project.uistate.json.")
+
+
+class AddonRefused(Exception):
+    """An --install-addon the editor did not install; its message is printed."""
 
 
 class EditorNotLoaded(Exception):
@@ -774,6 +816,57 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
             "seconds": round(time.monotonic() - started, 1), **({"preview": ran} if ran else {})}
 
 
+def addon_json(addon: Path) -> dict | str:
+    """The addon.json of a .c3addon, or what is wrong with it, before the editor reads it."""
+    try:
+        with zipfile.ZipFile(addon) as z:
+            raw = z.read("addon.json")
+    except KeyError:
+        return "no addon.json at the root of the zip: zip the files of the addon, not its folder"
+    except (OSError, zipfile.BadZipFile) as e:
+        return f"not a zip file: {e}"
+    try:
+        data = json.loads(raw.decode("utf-8-sig"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as e:
+        return f"addon.json is not valid JSON: {e}"
+    return data if isinstance(data, dict) else "addon.json is not a JSON object"
+
+
+def install_addon(browser: Browser, editor: str, addon: Path) -> dict:
+    """Drop the addon on the editor of the profile and answer its dialogs."""
+    found = addon_json(addon)
+    if isinstance(found, str):
+        return {"addon": str(addon), "status": "refused", "dialog": "", "exception": found}
+    target, page = browser.page(editor)
+    try:
+        load(page, editor)
+        ready = page.evaluate(f"({SETUP_JS})()", wait=SETUP_WAIT)
+        if ready != "ready":
+            raise EditorNotLoaded(ready)
+        field = page.evaluate("document.querySelector('input[aria-label=\"Project to open\"]')", by_value=False)
+        page.call("DOM.setFileInputFiles", files=[str(addon)], objectId=field["objectId"])
+        result = page.evaluate(f"({INSTALL_JS})()", wait=RESULT_WAIT)
+    finally:
+        page.ws.close()
+        browser.devtools.call("Target.closeTarget", targetId=target)
+    if isinstance(result, str):
+        result = {"installed": False, "dialog": "", "errors": [result]}
+    return {"addon": str(addon), "status": "installed" if result["installed"] else "refused",
+            "name": found.get("name", ""), "version": found.get("version", ""), "type": found.get("type", ""),
+            "dialog": result["dialog"], "exception": next(iter(result["errors"]), "")}
+
+
+def addon_report(result: dict) -> list[str]:
+    if result["status"] == "installed":
+        return [f"installed {result['addon']}  ({result['name']} {result['version']}, {result['type']})"]
+    lines = [f"refused  {result['addon']}"]
+    if result["dialog"]:
+        lines.append(f"  editor: {result['dialog']}")
+    if result["exception"]:
+        lines.append(f"  exception: {result['exception'].splitlines()[0]}")
+    return lines
+
+
 def report(result: dict) -> list[str]:
     if result["status"] == "error":
         return [f"error    {result['project']}: {result['exception']}"]
@@ -819,6 +912,17 @@ def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
     # One profile per browser: Chrome does not load a profile Edge has written.
     browser = Browser(exe, (args.profile or scratch(first)) / f"editor-{Path(exe).stem.lower()}", args.headed)
     results: list[dict] = []
+    for addon in args.install_addon:
+        try:
+            done = install_addon(browser, editor, addon)
+        except (EditorNotLoaded, DevToolsError, OSError) as e:
+            done = {"addon": str(addon), "status": "refused", "dialog": "", "exception": str(e)}
+        print("\n".join(addon_report(done)), flush=True)
+        if done["status"] != "installed":
+            browser.close()
+            print("the addon was not installed, so no project was opened: fix addon.json or the file the "
+                  "exception names, zip the addon again and run again")
+            raise AddonRefused
     printed = 0     # characters; results are printed as they come, until --limit
     lock = threading.Lock()
 
@@ -875,6 +979,9 @@ def main() -> int:
                     help="at the end of the preview (5 seconds unless --preview says), print the global variables, "
                          f"the instance count of every object type, and the first {STATE_MAX} instances of each TYPE "
                          "named, as the project spells it; --out keeps them as JSON")
+    ap.add_argument("--install-addon", type=Path, nargs="+", default=[], metavar="FILE",
+                    help="install these .c3addon files into the editor of the browser profile before opening the "
+                         "project, which keeps them for later runs; an addon the editor refuses stops the run")
     ap.add_argument("--profile", type=Path, metavar="FOLDER",
                     help="keep the browser profile in FOLDER/editor-<browser> instead of the project's .tmp/, for a "
                          "project too deep for the preview's IndexedDB, which it then names")
@@ -909,6 +1016,9 @@ def main() -> int:
     if why and len(projects) > 1:
         print(f"{why}, and {len(projects)} projects were found; name one with --project", file=sys.stderr)
         return 2
+    if why and args.install_addon:
+        print(f"{why}: drop {', '.join(map(str, args.install_addon))} on the editor in the browser tool's page and "
+              f"click Install, then follow these steps.")
     if why:
         print(steps(projects[0], editor, why))
         if args.preview is not None:
@@ -921,8 +1031,17 @@ def main() -> int:
 
     args.out, args.shots = kept(args.out, args.shots, projects[0] if projects[0].is_dir() else projects[0].parent)
     args.shots.mkdir(parents=True, exist_ok=True)
+    missing = [a for a in args.install_addon if not a.is_file()]
+    if missing:
+        print(f"no file {', '.join(map(str, missing))}: pass the .c3addon's path", file=sys.stderr)
+        return 2
+    # The browser takes a file input's path from its own working directory.
+    args.install_addon = [a.resolve() for a in args.install_addon]
+    args.profile = args.profile and args.profile.resolve()
     try:
         results = run(projects, editor, exe, args)
+    except AddonRefused:
+        return 1
     except EditorNotLoaded as e:
         print(f"the editor did not load: {e}. Check the network connection and --release, and run again; "
               f"without a connection, ask the user to open the project in Construct 3 and paste the text of the "
