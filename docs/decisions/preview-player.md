@@ -69,11 +69,15 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   the steps and watched values of that part, how to investigate and what to
   report. The timeline holds the project's and the frames' paths, so a page
   opened without its recording, from a folder the user chooses, writes the
-  same task.
-- The review page is drawn as a technical sheet: lettered panels, labels in
-  small monospace type, blue for what the page marks and red for what failed,
-  line icons whose tooltips name their keys. It loads no font or script from
-  the network, so it opens offline as the recording does.
+  same task. A page cannot start the browser's folder chooser at a path,
+  only at a folder the user chose before, so the page takes the game project
+  or its `.tmp/preview/` and lists the recordings it finds there.
+- The review page follows a technical drawing: ruled panels with notes in
+  small monospace type, a title block, blue for what the page marks and red
+  for what failed, the selected part dimensioned on the timeline and the
+  marks for its ends over the playhead, line icons whose tooltips name their
+  keys. It loads no font or script from the network, so it opens offline as
+  the recording does.
 - A run starts from a first launch: the browser profile is kept between runs
   for its cache, and with it the preview's Local Storage and IndexedDB, where
   a game keeps its save, so one run's save changed the next run's start.

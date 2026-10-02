@@ -30,33 +30,15 @@
   .mono, code { font-family: var(--mono); }
   svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; flex: none; }
 
-  /* The sheet: a frame with its zones numbered along the edges, as on a drawing. */
-  .sheet { margin: 16px; min-height: calc(100vh - 32px); display: grid; grid-template: 18px 1fr 18px / 18px minmax(0, 1fr) 18px; border: 1px solid var(--rule); }
-  .zones { display: flex; font: 10px/1 var(--mono); color: var(--muted); }
-  .zones span { flex: 1; display: flex; align-items: center; justify-content: center; }
-  .zones.top, .zones.bottom { grid-column: 2; }
-  .zones.top span + span, .zones.bottom span + span { border-left: 1px solid var(--rule); }
-  .zones.left, .zones.right { flex-direction: column; grid-row: 2; }
-  .zones.left span + span, .zones.right span + span { border-top: 1px solid var(--rule); }
-  .zones.top { grid-row: 1; } .zones.bottom { grid-row: 3; } .zones.left { grid-column: 1; } .zones.right { grid-column: 3; }
-  .board { grid-area: 2 / 2; border: 1px solid var(--rule); padding: 20px; display: grid; gap: 20px; align-items: start;
-           grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); grid-template-rows: auto 1fr auto;
-           grid-template-areas: "window steps" "window watch" "part title"; }
+  .board { padding: 16px; display: grid; gap: 12px; align-items: start; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); }
   .board > .opening { grid-column: 1 / -1; }
-  @media (max-width: 900px) {
-    .board { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "window" "part" "steps" "watch" "title"; }
-  }
-  @media (max-width: 640px) {
-    .sheet { margin: 0; min-height: 0; border: 0; display: block; }
-    .zones { display: none; }
-    .board { border: 0; padding: 16px; }
-  }
+  .col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  @media (max-width: 900px) { .board { grid-template-columns: minmax(0, 1fr); } }
 
-  /* A panel: a black tab with its letter, a title and a note in small type. */
+  /* A panel: a title and a note in small type, ruled off from what it holds. */
   .panel { border: 1px solid var(--rule); background: var(--paper); min-width: 0; }
   .panel > header { display: flex; align-items: stretch; border-bottom: 1px solid var(--rule); min-height: 30px; }
-  .panel > header .tab { width: 30px; display: flex; align-items: center; justify-content: center; background: var(--ink); color: var(--paper); font-weight: 600; }
-  .panel > header h2 { margin: 0; padding: 0 10px; display: flex; align-items: center; font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .panel > header h2 { margin: 0; padding: 0 12px; display: flex; align-items: center; font-size: 14px; font-weight: 600; white-space: nowrap; }
   .panel > header .meta { margin-left: auto; padding: 0 10px; align-self: center; min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 11px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .body { padding: 12px; }
   .note { padding: 8px 12px; border-top: 1px solid var(--hair); font: 11px/1.5 var(--mono); color: var(--muted); }
@@ -66,7 +48,7 @@
   button, select { height: 30px; cursor: pointer; }
   button.icon { width: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
   button:hover, select:hover { border-color: var(--rule); }
-  button:focus-visible, select:focus-visible, textarea:focus-visible, .timeline:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+  button:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
   button.ink { background: var(--ink); border-color: var(--ink); color: var(--paper); display: inline-flex; gap: 8px; align-items: center; padding: 0 12px; font-weight: 600; }
   button[aria-pressed="true"] .i-play, button:not([aria-pressed="true"]) .i-pause { display: none; }
   select { font: 12px var(--mono); padding: 0 4px; }
@@ -75,9 +57,10 @@
   .frame { display: flex; justify-content: center; background: var(--frame); }
   .frame img { max-width: 100%; max-height: 64vh; display: block; }
   .controls { display: flex; gap: 6px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
-  .controls .gap { width: 10px; }
   .caption { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
-  .timeline { position: relative; margin-top: 6px; padding-bottom: 16px; cursor: pointer; touch-action: none; user-select: none; outline: none; }
+  /* From the top: the marks above the playhead, the selected part's dimension line, the
+     steps, the frames and the ruler. */
+  .timeline { position: relative; margin-top: 6px; padding: 48px 0 16px; cursor: pointer; touch-action: none; user-select: none; }
   .timeline.edge { cursor: ew-resize; }
   .spans, .frames, .ruler { position: relative; }
   .spans { height: 14px; background: var(--zebra); }
@@ -91,11 +74,20 @@
   .ruler i { position: absolute; top: 0; width: 1px; height: 3px; background: var(--muted); }
   .ruler i.major { height: 6px; background: var(--rule); }
   .ruler b { position: absolute; top: 8px; transform: translateX(-50%); font: 10px/1 var(--mono); font-weight: 400; color: var(--muted); white-space: nowrap; }
-  .playhead { position: absolute; top: -4px; bottom: 16px; width: 1.5px; margin-left: -0.75px; background: var(--ink); pointer-events: none; }
+  .playhead { position: absolute; top: 24px; bottom: 16px; width: 1.5px; margin-left: -0.75px; background: var(--ink); pointer-events: none; }
   .playhead::before { content: ""; position: absolute; top: -1px; left: -3.25px; border: 4px solid transparent; border-top: 5px solid var(--ink); border-bottom: 0; }
-  .selection { position: absolute; top: -4px; bottom: 16px; min-width: 2px; margin-left: -1px; background: color-mix(in srgb, var(--blue) 14%, transparent); border: 0 solid var(--blue); border-width: 0 1.5px; pointer-events: none; }
-  .selection::before, .selection::after { content: ""; position: absolute; top: 0; width: 5px; height: 9px; background: var(--blue); }
-  .selection::before { left: -3.25px; } .selection::after { right: -3.25px; }
+  .marks { position: absolute; top: 0; display: flex; cursor: default; }
+  .marks button { width: 26px; height: 22px; }
+  .marks button + button { border-left: 0; }
+  .timeline.playing .marks { visibility: hidden; }
+  /* The selected part, dimensioned as on a drawing: a line between its two edges with
+     its length on it, the edges drawn down through the lanes, the rest washed out. */
+  .shade { position: absolute; top: 48px; height: 24px; background: color-mix(in srgb, var(--paper) 62%, transparent); pointer-events: none; }
+  .selection { position: absolute; top: 28px; bottom: 16px; min-width: 1px; border: 0 solid var(--blue); border-width: 0 1px; pointer-events: none; }
+  .selection::before { content: ""; position: absolute; top: 7px; left: 0; right: 0; height: 1px; background: var(--blue); }
+  .selection span { position: absolute; z-index: 1; top: 0; left: 50%; transform: translateX(-50%); padding: 0 5px; background: var(--paper); font: 10px/14px var(--mono); color: var(--blue); white-space: nowrap; }
+  .selection span.right { left: 100%; transform: none; }
+  .selection span.left { left: auto; right: 100%; transform: none; }
 
   /* B: the steps, each with its outcome. */
   ol { list-style: none; margin: 0; padding: 0; }
@@ -124,8 +116,7 @@
 
   /* D: the selected part, copied as a task for an agent. */
   #part-empty { margin: 0; color: var(--muted); }
-  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); border: 1px solid var(--hair); }
-  .facts div { padding: 6px 10px; border-right: 1px solid var(--hair); margin-right: -1px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 28px; }
   .facts b { display: block; font: 13px var(--mono); font-weight: 500; margin-top: 2px; font-variant-numeric: tabular-nums; }
   .facts .bad b { color: var(--red); }
   .field { display: block; margin-top: 12px; }
@@ -137,8 +128,8 @@
   details summary { font: 11px var(--mono); color: var(--muted); cursor: pointer; }
   details textarea { display: block; width: 100%; margin-top: 6px; padding: 8px; font: 11px/1.5 var(--mono); color: var(--muted); }
 
-  /* The title block: what this sheet is of. */
-  .titleblock { grid-area: title; border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr; }
+  /* The title block: what this page is of. */
+  .titleblock { border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr; }
   .titleblock div { padding: 6px 10px; border-top: 1px solid var(--rule); min-width: 0; }
   .titleblock div:first-child { border-top: 0; }
   .titleblock .wide { grid-column: 1 / -1; }
@@ -151,6 +142,10 @@
   .opening .body p { margin: 0 0 14px; color: var(--muted); max-width: 640px; }
   .opening code { font-size: 12px; color: var(--ink); }
   #pick-error { color: var(--red); font: 11px var(--mono); margin: 10px 0 0; }
+  #pick-error:empty { display: none; }
+  .recordings { margin-top: 14px; border: 1px solid var(--hair); max-width: 640px; }
+  .recordings:empty { display: none; }
+  .recordings li .what { font-family: var(--mono); }
 </style>
 </head>
 <body>
@@ -168,27 +163,24 @@
   <symbol id="i-bad" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></symbol>
   <symbol id="i-folder" viewBox="0 0 16 16"><path d="M1.8 4h4.4l1.5 1.5h6.5v7.5H1.8z"/></symbol>
 </svg>
-<div class="sheet">
-  <div class="zones top"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
-  <div class="zones left"><span>A</span><span>B</span><span>C</span><span>D</span></div>
-  <div class="zones right"><span>A</span><span>B</span><span>C</span><span>D</span></div>
-  <div class="zones bottom"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
   <div class="board">
     <section class="panel opening" id="opening" hidden>
-      <header><b class="tab">A</b><h2>No recording on this page</h2><span class="meta">recording review</span></header>
+      <header><h2>No recording on this page</h2><span class="meta">recording review</span></header>
       <div class="body">
         <p>scripts/preview_project.py writes this page beside each recording with the recording in it, as
-          <code>NN-NAME.html</code> in <code>.tmp/preview/</code> of the game project: open that one. Or choose the
-          folder of a recording here, the one that holds <code>timeline.json</code> and the frames; the files stay in
-          this browser.</p>
-        <button id="choose" class="ink"><svg class="i"><use href="#i-folder"/></svg>Choose a recording folder</button>
+          <code>NN-NAME.html</code> in <code>.tmp/preview/</code> of the game project: open that one. Or choose a
+          folder here: the game project, its <code>.tmp/preview/</code>, or the folder of one recording. Edge and
+          Chrome open the chooser in that folder the next time; the files stay in this browser.</p>
+        <button id="choose" class="ink"><svg class="i"><use href="#i-folder"/></svg>Choose a folder</button>
         <input type="file" id="pick" webkitdirectory hidden>
         <p id="pick-error" role="status"></p>
+        <ol class="recordings" id="recordings"></ol>
       </div>
     </section>
 
-    <section class="panel" style="grid-area: window" data-run hidden>
-      <header><b class="tab">A</b><h2>Preview window</h2><span class="meta" id="clock"></span></header>
+    <div class="col" data-run hidden>
+    <section class="panel">
+      <header><h2>Preview window</h2><span class="meta" id="clock"></span></header>
       <div class="body">
         <div class="frame"><img id="frame" alt="the preview window at this moment"></div>
         <div class="controls">
@@ -197,35 +189,26 @@
           <button class="icon" id="prev" aria-label="Frame before" title="Frame before (Left arrow)"><svg class="i"><use href="#i-prev"/></svg></button>
           <button class="icon" id="next" aria-label="Frame after" title="Frame after (Right arrow)"><svg class="i"><use href="#i-next"/></svg></button>
           <select id="speed" aria-label="Speed" title="Speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select>
-          <span class="gap"></span>
-          <button class="icon" id="from" aria-label="Start the part here" title="Start the part here ( [ )"><svg class="i"><use href="#i-from"/></svg></button>
-          <button class="icon" id="to" aria-label="End the part here" title="End the part here ( ] )"><svg class="i"><use href="#i-to"/></svg></button>
         </div>
         <div class="caption"><span class="label">Steps above, frames below, time in ms</span><span class="label">Shift+drag selects a part</span></div>
-        <div class="timeline" id="timeline" role="slider" tabindex="0" aria-label="Time">
-          <div class="selection" id="selection" hidden></div>
+        <div class="timeline" id="timeline" aria-label="Timeline">
           <div class="spans" id="spans"></div>
           <div class="frames" id="frames"></div>
           <div class="ruler" id="ruler"></div>
+          <div class="shade" id="shade-before" hidden></div>
+          <div class="shade" id="shade-after" hidden></div>
+          <div class="selection" id="selection" hidden><span id="selection-length"></span></div>
           <div class="playhead" id="playhead"></div>
+          <div class="marks" id="marks">
+            <button class="icon" id="from" aria-label="Start the part here" title="Start the part here ( [ )"><svg class="i"><use href="#i-from"/></svg></button>
+            <button class="icon" id="to" aria-label="End the part here" title="End the part here ( ] )"><svg class="i"><use href="#i-to"/></svg></button>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="panel" style="grid-area: steps" data-run hidden>
-      <header><b class="tab">B</b><h2>Steps</h2><span class="meta" id="steps-meta"></span></header>
-      <ol id="steps"></ol>
-      <div class="note">Click a step to go to it, Shift+click to select the part it ran.</div>
-    </section>
-
-    <section class="panel" style="grid-area: watch" data-run hidden>
-      <header><b class="tab">C</b><h2>Watched values</h2><span class="meta" id="watch-meta"></span></header>
-      <table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody id="watch"></tbody></table>
-      <div class="note">&#9679; changed since the frame before.</div>
-    </section>
-
-    <section class="panel" style="grid-area: part" data-run hidden>
-      <header><b class="tab">D</b><h2>Selected part</h2><span class="meta" id="part-meta">a task for an agent</span></header>
+    <section class="panel">
+      <header><h2>Selected part</h2><span class="meta" id="part-meta">a task for an agent</span></header>
       <div class="body">
         <p id="part-empty">No part selected. Shift+drag on the timeline, Shift+click a
           step, or start and end one at the frame shown with [ and ].</p>
@@ -244,8 +227,22 @@
         </div>
       </div>
     </section>
+    </div>
 
-    <section class="titleblock" data-run hidden>
+    <div class="col" data-run hidden>
+    <section class="panel">
+      <header><h2>Steps</h2><span class="meta" id="steps-meta"></span></header>
+      <ol id="steps"></ol>
+      <div class="note">Click a step to go to it, Shift+click to select the part it ran.</div>
+    </section>
+
+    <section class="panel">
+      <header><h2>Watched values</h2><span class="meta" id="watch-meta"></span></header>
+      <table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody id="watch"></tbody></table>
+      <div class="note">&#9679; changed since the frame before.</div>
+    </section>
+
+    <section class="titleblock">
       <div class="wide"><span class="label">Title</span><h1 id="tb-title"></h1></div>
       <div><span class="label">Frames</span><b class="mono" id="tb-frames"></b></div>
       <div><span class="label">Video</span><b class="mono" id="tb-video"></b></div>
@@ -254,8 +251,8 @@
       <div class="wide"><span class="label">Project</span><b class="mono" id="tb-project"></b></div>
       <div class="wide"><span class="label">Recording folder</span><b class="mono" id="tb-folder"></b></div>
     </section>
+    </div>
   </div>
-</div>
 <script>
 let timeline = /*TIMELINE*/null;
 const $ = id => document.getElementById(id);
@@ -292,7 +289,12 @@ function drawRuler() {
     }
   }
 }
-addEventListener("resize", drawRuler);
+addEventListener("resize", () => {
+  drawRuler();
+  if (!frames.length) return;
+  go(at);
+  if (part) select(part.a, part.b);
+});
 
 // Shows a recording: its timeline, and where each frame's file is.
 function start(data, src) {
@@ -366,8 +368,9 @@ function go(i) {
   $("clock").textContent = `${ms(f.t)} / ${ms(end)} · frame ${at + 1}/${frames.length}`;
   $("watch-meta").textContent = `at ${ms(f.t)}`;
   $("playhead").style.left = at_(f.t);
-  $("timeline").setAttribute("aria-valuenow", Math.round(f.t * 1000));
-  $("timeline").setAttribute("aria-valuetext", ms(f.t));
+  // The marks sit centred over the playhead, kept inside the timeline at its two ends.
+  const wide = $("timeline").clientWidth, marks = $("marks").offsetWidth;
+  $("marks").style.left = `${Math.min(Math.max(0, wide * f.t / end - marks / 2), wide - marks)}px`;
   const current = steps.filter(s => s.start <= f.t).pop();     // the step this frame belongs to
   for (const s of steps) {
     s.li.classList.toggle("active", s === current);
@@ -394,6 +397,7 @@ function play(on, through) {
   };
   press("play", on && !through, on && !through ? "Pause" : "Play");
   press("part-play", on && !!through, on && through ? "Pause" : "Play the part");
+  $("timeline").classList.toggle("playing", on);
   clearTimeout(timer);
   if (!on) return;
   const first = through ? through.a : 0, last = through ? through.b : frames.length - 1;
@@ -412,14 +416,20 @@ function select(a, b) {
   part = a == null || !frames.length ? null : {a: Math.min(a, b), b: Math.max(a, b)};
   $("part-tools").hidden = !part;
   $("part-empty").hidden = !!part;
-  $("selection").hidden = !part;
+  for (const id of ["selection", "shade-before", "shade-after"]) $(id).hidden = !part;
   $("copied").textContent = "";
-  $("part-meta").textContent = "a task for an agent";
   if (!part) return;
   const first = frames[part.a], last = frames[part.b], count = part.b - part.a + 1;
   $("selection").style.left = at_(first.t);
   $("selection").style.width = at_(last.t - first.t);
-  $("part-meta").textContent = `${Math.round(first.t * 1000)}–${ms(last.t)}`;
+  $("shade-before").style.cssText = `left: 0; width: ${at_(first.t)}`;
+  $("shade-after").style.cssText = `left: ${at_(last.t)}; right: 0`;
+  // The length sits on the dimension line, or beside it where the part is too narrow to hold it.
+  const length = $("selection-length"), wide = $("timeline").clientWidth;
+  length.textContent = ms(last.t - first.t);
+  length.className = "";
+  if (length.offsetWidth + 12 > $("selection").offsetWidth)
+    length.className = $("selection").offsetLeft + $("selection").offsetWidth + length.offsetWidth < wide ? "right" : "left";
   const ran = stepsIn(first.t, last.t), errors = ran.reduce((n, s) => n + s.errors.length, 0);
   const facts = [["From", ms(first.t)], ["To", ms(last.t)], ["Length", ms(last.t - first.t)], ["Frames", count],
                  ["Steps", ran.length ? [...new Set([ran[0].step, ran.at(-1).step])].join("–") : "none"],
@@ -517,6 +527,9 @@ $("copy").onclick = async () => {
 $("note").addEventListener("input", () => { $("brief").value = brief(); $("copied").textContent = ""; });
 $("part-play").onclick = () => playing ? play(false) : play(true, part);
 $("part-clear").onclick = () => select(null);
+// The marks over the playhead are pressed, not the timeline under them, and take no focus from a click.
+$("marks").addEventListener("pointerdown", e => e.stopPropagation());
+$("marks").addEventListener("mousedown", e => e.preventDefault());
 // A start after the part's end runs it to the last frame, an end before its start from the first.
 $("from").onclick = () => { play(false); select(at, part && part.b >= at ? part.b : frames.length - 1); };
 $("to").onclick = () => { play(false); select(part && part.a <= at ? part.a : 0, at); };
@@ -528,8 +541,11 @@ const box = () => $("timeline").getBoundingClientRect();
 const frameAtX = x => frameAt(end * Math.min(Math.max(0, (x - box().left) / box().width), 1));
 const edgeAt = x => part && ["a", "b"].find(k => Math.abs(x - box().left - box().width * frames[part[k]].t / end) <= 6);
 let drag = null;
+// The keys work on the whole page, so the timeline takes no focus, and a button clicked
+// before it gives its focus up, so that Shift draws no focus ring.
 $("timeline").addEventListener("pointerdown", e => {
   play(false);
+  document.activeElement?.blur();
   $("timeline").setPointerCapture(e.pointerId);
   const edge = edgeAt(e.clientX);
   drag = edge ? {edge} : e.shiftKey ? {from: at, x: e.clientX, anchor: frameAtX(e.clientX)} : {};
@@ -572,34 +588,102 @@ document.addEventListener("keydown", e => {
   else if (e.key === "Escape" && part) select(null);
 });
 
-// Without a recording in it, the page opens one from a folder the user chooses: the
-// folder of one recording, its timeline.json and frames. The files stay in the browser.
-$("choose").onclick = () => $("pick").click();
-$("pick").onchange = async () => {
-  const files = [...$("pick").files], found = files.filter(f => f.name === "timeline.json");
-  const folders = found.map(f => f.webkitRelativePath.split("/").slice(-2, -1)[0]);
-  $("pick").value = "";
+// Without a recording in it, the page opens one from a folder the user chooses: the game
+// project, its .tmp/preview, or one recording's folder, which holds timeline.json and the
+// frames. A folder with several recordings lists them. Edge and Chrome remember the folder
+// under the picker's id and start there the next time; the files stay in the browser.
+$("choose").onclick = async () => {
   $("pick-error").textContent = "";
-  if (found.length != 1) {
-    $("pick-error").textContent = found.length ? `That folder holds ${found.length} recordings: choose one of `
-      + `${folders.join(", ")}.` : "That folder has no timeline.json: choose the folder of one recording, such as "
-      + ".tmp/preview/02-merge in the game project.";
+  if (!window.showDirectoryPicker) return $("pick").click();
+  let folder;
+  try {
+    folder = await showDirectoryPicker({id: "c3-recordings", mode: "read"});
+  } catch (e) {     // the chooser was closed
     return;
   }
+  offer(await recordingsIn(folder));
+};
+
+// A recording is {name, timeline: File, files(): Map of file name to File}.
+async function recordingsIn(folder) {
+  const one = async dir => {
+    try {
+      const timeline = await (await dir.getFileHandle("timeline.json")).getFile();
+      return {name: dir.name, timeline, files: async () => {
+        const files = new Map();
+        for await (const [name, handle] of dir.entries()) if (handle.kind === "file") files.set(name, await handle.getFile());
+        return files;
+      }};
+    } catch (e) {     // no timeline.json in it
+      return null;
+    }
+  };
+  const under = async dir => {
+    const found = [];
+    for await (const handle of dir.values()) if (handle.kind === "directory") found.push(await one(handle));
+    return found.filter(Boolean);
+  };
+  const here = await one(folder);
+  if (here) return [here];
+  const found = await under(folder);
+  if (found.length) return found;
+  try {
+    return await under(await (await folder.getDirectoryHandle(".tmp")).getDirectoryHandle("preview"));
+  } catch (e) {     // not a game project with recordings
+    return [];
+  }
+}
+
+$("pick").onchange = () => {
+  const folders = new Map();
+  for (const f of $("pick").files) {
+    const dir = f.webkitRelativePath.replace(/[^/]*$/, "");
+    if (!folders.has(dir)) folders.set(dir, new Map());
+    folders.get(dir).set(f.name, f);
+  }
+  $("pick").value = "";
+  offer([...folders].filter(([, files]) => files.has("timeline.json"))
+    .map(([dir, files]) => ({name: dir.split("/").at(-2), timeline: files.get("timeline.json"), files: async () => files})));
+};
+
+// Opens the one recording found, or lists them to choose from.
+async function offer(found) {
+  $("recordings").innerHTML = "";
+  if (!found.length) {
+    $("pick-error").textContent = "No recording there: choose the game project, its .tmp/preview, or one recording's "
+      + "folder, the one that holds timeline.json.";
+    return;
+  }
+  if (found.length == 1) return openRecording(found[0]);
+  found.sort((a, b) => a.name.localeCompare(b.name));
+  for (const r of found) {
+    const li = document.createElement("li");
+    li.innerHTML = `${icon("play")}<div><div class="what"></div><small></small></div>`;
+    li.querySelector(".what").textContent = r.name;
+    li.onclick = () => openRecording(r);
+    $("recordings").appendChild(li);
+    r.timeline.text().then(text => {
+      const data = JSON.parse(text), n = data.frames.length, failed = data.steps.filter(s => !s.ok).length;
+      li.querySelector("small").textContent = `${plural(n, "frame")} in ${ms(n ? data.frames[n - 1].t : 0)}`
+        + ` · ${plural(data.steps.length, "step")}` + (failed ? `, ${failed} failed` : "");
+    }).catch(() => { li.querySelector("small").textContent = "timeline.json does not read as a recording"; });
+  }
+}
+
+async function openRecording(r) {
   let data;
   try {
-    data = JSON.parse(await found[0].text());
+    data = JSON.parse(await r.timeline.text());
     if (!Array.isArray(data.frames)) throw new Error("no frames");
   } catch (e) {
-    $("pick-error").textContent = `${folders[0]}/timeline.json is not a recording of preview_project.py: ${e.message}.`;
+    $("pick-error").textContent = `${r.name}/timeline.json is not a recording of preview_project.py: ${e.message}.`;
     return;
   }
-  const inside = found[0].webkitRelativePath.replace(/[^/]*$/, ""), urls = new Map();
-  for (const f of files)
-    if (f.webkitRelativePath.startsWith(inside)) urls.set(f.webkitRelativePath.slice(inside.length), URL.createObjectURL(f));
+  const urls = new Map();
+  for (const [name, file] of await r.files()) urls.set(name, URL.createObjectURL(file));
   picked = true;
   start(data, file => urls.get(file) || "");
-};
+}
 
 if (timeline) start(timeline, frameSrc);
 else $("opening").hidden = false;
