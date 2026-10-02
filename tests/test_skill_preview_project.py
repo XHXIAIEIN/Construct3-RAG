@@ -66,6 +66,34 @@ def test_preview_project_reads_a_step_of_code_and_a_key_as_the_page_needs_them()
     assert pp.key_event("F13") is None
 
 
+def test_preview_project_waits_until_the_window_has_taken_the_viewport(monkeypatch):
+    """The browser answers the emulation before the page resizes: a size read at once
+    was the window's own, 778x511, while the runtime aimed in 430x932."""
+    pp = module()
+
+    class Page:
+        def __init__(self, sizes):
+            self.sizes, self.calls = sizes, []
+
+        def call(self, method, **params):
+            self.calls.append((method, params))
+
+        def evaluate(self, expression):
+            got = self.sizes.pop(0) if len(self.sizes) > 1 else self.sizes[0]
+            if isinstance(got, Exception):
+                raise got
+            return got
+
+    monkeypatch.setattr(pp.time, "sleep", lambda s: None)
+    page = Page([pp.oe.DevToolsError("Cannot find context"), [778, 511], [778, 511], [430, 932]])
+    assert pp.emulate(page, [430, 932]) == (430, 932)
+    assert page.calls == [("Emulation.setDeviceMetricsOverride",
+                           {"width": 430, "height": 932, "deviceScaleFactor": 1, "mobile": False})]
+    monkeypatch.setattr(pp, "RESIZE", 0.05)
+    assert pp.emulate(Page([[778, 511]]), [430, 932]) == (778, 511)
+    assert pp.emulate(Page([pp.oe.DevToolsError("Cannot find context")]), [430, 932]) is None
+
+
 def test_preview_project_reports_each_step_with_the_errors_it_caused():
     """One line per step; a runtime error under the step it followed; a failed step
     ends the list and says why."""

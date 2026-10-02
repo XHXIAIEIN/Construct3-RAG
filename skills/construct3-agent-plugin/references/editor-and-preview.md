@@ -41,6 +41,30 @@ that changes which events are written goes to
   in Edge, 2026-10-01: a finger held the buy button and bought six cards,
   then a second finger, added in a `touchStart` listing both, dragged a
   piece]
+- `Emulation.setDeviceMetricsOverride` answers before the page has resized:
+  `innerWidth` and `innerHeight` read right after it can still be the
+  window's own size, for up to 0.4 seconds, while the runtime already places
+  its layers in the new viewport. A target checked against that size is
+  refused although `layerToCssPx` aimed it right; wait until the page reports
+  the override's size before reading anything sized by it.
+  `scripts/preview_project.py` waits, and stops the run when the size does
+  not come. [observed in a popup opened with `window.open` and an r504 preview of a
+  game project, Edge headless, 2026-10-02: a plan with a 430x932 viewport
+  reported the window 778x511 and refused a piece at (215, 554); one probe
+  in four read 778x511 at once, and 430x932 0.38 s later]
+- An emulated size belongs to the page, not to the DevTools connection that
+  set it, and closing any connection that set one clears it: the window goes
+  back to its own size in the middle of a run, while the screenshots of the
+  connection that set it still come out at the emulated size. A second
+  connection that takes screenshots sets the override all the same, since
+  without one a headed window captures at the display's scale, and stays open
+  until the window closes; `scripts/preview_project.py` keeps its recorder's
+  open that way. [observed in an r504 preview of a game project and a popup
+  opened with `window.open`, Edge headless and headed, 2026-10-02: once a
+  recording's connection closed, the page reported 778x511, a piece aimed at
+  (448, 304) lay outside the 430x932 the run had set, and the screenshots
+  were still 430x932; without the override, the second connection's headed
+  screenshot was 645x1398 at 150 %]
 - A preview run for five seconds without input shows that the layout
   starts; it says nothing about an event that waits for a drop, a merge or
   a deployment. Such an event is verified by playing it, a plan of

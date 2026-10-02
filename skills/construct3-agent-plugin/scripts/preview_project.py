@@ -108,6 +108,8 @@ STEPS = ("tap", "hold", "drag", "key", "wait", "until", "js", "state", "shot", "
 FIELDS = {"tap": set(), "hold": {"seconds"}, "drag": {"to", "seconds"}, "key": {"seconds"}, "wait": set(),
           "until": {"timeout"}, "js": {"timeout"}, "state": set(), "shot": set(), "record": {"watch"}}
 PRESS = {"hold": 0.5, "drag": 0.4, "key": 0.1}
+# Seconds the preview window gets to take the plan's viewport.
+RESIZE = 5
 # Where the editor serves a preview, and where a game's saves live.
 PREVIEW = "https://preview.construct.net"
 # The page that reviews a recording, its timeline put where it says TIMELINE.
@@ -273,6 +275,7 @@ class Game:
         self.win, self.live, self.touch, self.size, self.url, self.viewport = win, live, touch, size, url, viewport
         self.project = project
         self.recording: tuple[str, Recorder, Path] | None = None
+        self.recorded: list[Recorder] = []      # finished, their connections closed after the window (Recorder)
 
     def record(self, name: str, video: Path, watch: dict[str, str]) -> None:
         self.recording = (name, Recorder(self.url, video.with_suffix(""), self.viewport, watch, self.project), video)
@@ -282,7 +285,12 @@ class Game:
         if not self.recording:
             return ""
         (name, recorder, video), self.recording = self.recording, None
+        self.recorded.append(recorder)
         return f"recorded {name}: {recorder.finish(name, video)}"
+
+    def close(self) -> None:
+        for recorder in self.recorded:
+            recorder.page.ws.close()
 
     def run(self, js: str, wait: float = 60):
         return self.win.evaluate(js, wait=wait, session=self.live)
@@ -335,8 +343,10 @@ class Recorder(threading.Thread):
     """Screenshots of the window, one after another, on a connection of its own while
     the steps run, each with the values the record step watches, read right after it.
     The browser's screencast sends no frame, or a strip, once the window's size is
-    emulated. An emulated size holds for the connection that set it, so this one
-    sets the plan's viewport again."""
+    emulated. This connection emulates the plan's viewport too, since one without an
+    emulated size of its own takes a headed window's screenshots at the display's
+    scale; and it stays open until the window closes, since closing a connection
+    that emulated a size clears the size for the page, the steps' connection included."""
 
     def __init__(self, url: str, folder: Path, viewport: list[int] | None, watch: dict[str, str],
                  project: Path) -> None:
@@ -396,7 +406,6 @@ class Recorder(threading.Thread):
         to print about them."""
         self.done.set()
         self.join(10)
-        self.page.ws.close()
         frames = self.frames
         if not frames:
             return f"no frames: the window answered no screenshot; {self.folder} is empty"
@@ -492,9 +501,23 @@ def make_video(frames: list[Path], seconds: list[float], video: Path) -> str | N
     return str(gif)
 
 
-def emulate(page: oe.DevTools, viewport: list[int]) -> None:
+def emulate(page: oe.DevTools, viewport: list[int]) -> tuple[int, int] | None:
+    """Give the window the plan's viewport, and the size the page then reports, None
+    when it answered nothing. The browser answers before the page has resized, by as
+    much as 0.4 s: a size read at once can be the window's own while the runtime
+    already places its layers in the viewport."""
     page.call("Emulation.setDeviceMetricsOverride", width=viewport[0], height=viewport[1], deviceScaleFactor=1,
               mobile=False)
+    size, end = None, time.monotonic() + RESIZE
+    while time.monotonic() < end:
+        try:
+            size = tuple(page.evaluate("[innerWidth, innerHeight]"))
+        except oe.DevToolsError:    # the preview page replaced its document while loading
+            pass
+        if size == tuple(viewport):
+            break
+        time.sleep(0.05)
+    return size
 
 
 class StepFailed(Exception):
@@ -597,12 +620,18 @@ def play(plan: dict, shots: Path, project: Path):
         if isinstance(started, list):
             return {"started": False, "layout": None, "runtime": None, "errors": started, "steps": []}
         window, win = started
-        touch = bool(plan.get("touch"))
+        touch, view = bool(plan.get("touch")), plan.get("viewport")
         steps: list[dict] = []
+        game = None
         try:
-            if plan.get("viewport"):
-                emulate(win, plan["viewport"])
-            size = tuple(win.evaluate("[innerWidth, innerHeight]"))     # a headed window loses its frame's share
+            if view:
+                size = emulate(win, view)
+                if size != tuple(view):
+                    return {"started": False, "layout": None, "runtime": None, "steps": [], "errors": [
+                        f"the preview window did not take the viewport {view[0]}x{view[1]} in {RESIZE} seconds; "
+                        f"it reports {'nothing' if size is None else f'{size[0]}x{size[1]}'}"]}
+            else:
+                size = tuple(win.evaluate("[innerWidth, innerHeight]"))     # a headed window loses its frame's share
             if touch:
                 win.call("Emulation.setTouchEmulationEnabled", enabled=True, maxTouchPoints=5)
             win.call("Emulation.setFocusEmulationEnabled", enabled=True)    # keys reach a page in the background
@@ -621,7 +650,7 @@ def play(plan: dict, shots: Path, project: Path):
             win.evaluate("0")
             before = oe.runtime_errors(win)
             game = Game(win, session, touch, size, f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}",
-                        plan.get("viewport"), project)
+                        view, project)
             began = time.monotonic()
             for n, step in enumerate(plan["steps"], 1):
                 done = {"step": n, "line": step_line(n, step), "ok": True}
@@ -649,6 +678,8 @@ def play(plan: dict, shots: Path, project: Path):
         finally:
             win.ws.close()
             browser.devtools.call("Target.closeTarget", targetId=window["targetId"])
+            if game:
+                game.close()
         return {"started": True, "layout": snap["layout"], "runtime": "worker" if session else "page",
                 "seconds": round(seconds, 1), "viewport": list(size), "touch": touch,
                 "errors": before, "steps": steps, "planned": len(plan["steps"]), "recorded": recorded}
