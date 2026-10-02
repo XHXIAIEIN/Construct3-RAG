@@ -135,6 +135,22 @@ custom ease are written in the project files is in
   event of the same tick, which took it for idle and did not take it back
   under a new move; sampled after that tick, the copy read `Time` 0 and
   *Is playing* true]
+- Do not rewind a copy whose playhead reads 0, even when *Is playing* is
+  true because it was resumed earlier in the same tick. A negative rate set
+  before it starts makes it start backwards from its total time, and a
+  relative track then takes its end pose as already applied: it subtracts
+  that pose on the way back to 0, and the offset stays on the instance for
+  good. Rewind only when `Time > 0`; otherwise *Set time* 0, which takes the
+  copy off the schedule without moving the instance. [runtime: exported
+  c3runtime.js r504, `TrackState.SetInitialState` starts at
+  `GetLocalTotalTime()` when the timeline is not playing forward, and
+  `NumericInterpolationAdapterForTimeline.SetInitialState` sets a relative
+  track's last value to `GetValueAtTime()` instead of 0; observed in a game
+  project, r504 preview, 2026-10-02: a rest pose ending at +40° was resumed
+  and, later in the same tick, rewound at −2 by an event that tested
+  *Is playing*; each time the sword was left 40° off, 80° after two stage
+  clears, and with the `Time > 0` test and *Set time* 0 no sword drifted
+  over the same run]
 - A negative playback rate fires *On keyframe reached* for every tagged
   keyframe it passes on the way back, with the same tags as the forward
   pass: a cheer rewound at −4 re-ran its `catch` and `jump` events, and a

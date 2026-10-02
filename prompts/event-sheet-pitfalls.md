@@ -207,6 +207,7 @@ instance, or control a timeline by tags, keyframes or playback rate.
 - A negative playback rate rewinds to 0 and finishes there; set it positive again before the next *Resume*.
 - A timeline stopped at its end ignores *Resume* at any rate: *Set time* just before the end, then rewind.
 - A copy started this tick reads `Time` 0 while *Is playing* is true: test *Is playing* to know a move is under way.
+- Rewinding a copy that reads `Time` 0 starts it backwards from its end and leaves a relative track off by its end pose: rewind only when `Time > 0`, else *Set time* 0.
 - With *Use system timescale* on, the default, a hit stop slows the timeline too.
 
 ### Creating objects
