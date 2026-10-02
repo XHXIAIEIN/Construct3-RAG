@@ -65,7 +65,7 @@ EPILOG = """examples:
 
 output, one entry per project:
   opened   <project>  (<window title>, <the editor it opened in>)
-    preview: layout '<name>', runtime in the worker, 1 error      with --preview
+    preview: layout '<name>', runtime in the worker, 600 ticks in 4.2 s, 1 error      with --preview
     runtime: <the first line of each error; --out keeps the stack>
   failed   <project>
     editor: <the dialog's text, which names the sheet, event and parameter at fault>
@@ -142,15 +142,18 @@ RESULT_JS = r"""async () => {
 # frame: wrapped once, the next tick hands over `this`, whose GetIRuntime() is the
 # scripting API, and the method is put back. Evaluated in the preview page and in
 # each of its workers; null where the runtime is not, which is most of them.
+# The ticks and the wall time are the runtime's own: the window loads for part of
+# the preview's seconds, so a 5-second preview runs the game about 4.
 # After skymen/c3cli (MIT), src/preview.ts.
 RUNTIME_JS = r"""(async () => {
   if (typeof C3 === 'undefined' || !C3.Runtime || typeof C3.Runtime.prototype.Tick !== 'function') return null;
   const proto = C3.Runtime.prototype, orig = proto.Tick;
   return await new Promise(resolve => {
-    const timer = setTimeout(() => { proto.Tick = orig; resolve({layout: null}); }, 3000);
+    const timer = setTimeout(() => { proto.Tick = orig; resolve({layout: null, ticks: null, wallTime: null}); }, 3000);
     proto.Tick = function (...args) {
       proto.Tick = orig; clearTimeout(timer);
-      resolve({layout: this.GetIRuntime().layout.name});
+      const rt = this.GetIRuntime();
+      resolve({layout: rt.layout.name, ticks: rt.tickCount, wallTime: rt.wallTime});
       return orig.apply(this, args);
     };
   });
@@ -562,7 +565,7 @@ def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float) -> d
     elif not found["layout"]:
         errors.insert(0, "the runtime loaded but did not tick for 3 seconds")
     return {"started": bool(found and found["layout"]), "layout": found and found["layout"], "runtime": where,
-            "errors": errors}
+            "ticks": found and found.get("ticks"), "wallTime": found and found.get("wallTime"), "errors": errors}
 
 
 def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: Path | None,
@@ -624,7 +627,8 @@ def report(result: dict) -> list[str]:
         ran = result.get("preview")
         if ran and ran["started"]:
             n = len(ran["errors"])
-            lines.append(f"  preview: layout {ran['layout']!r}, runtime in the {ran['runtime']}, "
+            ticks = f"{ran['ticks']} ticks in {ran['wallTime']:.1f} s, " if ran.get("ticks") is not None else ""
+            lines.append(f"  preview: layout {ran['layout']!r}, runtime in the {ran['runtime']}, {ticks}"
                          f"{n or 'no'} error{'' if n == 1 else 's'}")
             lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
         elif ran:

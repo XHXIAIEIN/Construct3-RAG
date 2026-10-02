@@ -60,3 +60,26 @@ def test_open_in_editor_keeps_the_preview_indexeddb_inside_max_path(tmp_path):
     project.mkdir()
     code, out = run(project, SKILL / "scripts" / "open_in_editor.py", "--help")
     assert code == 0 and "--profile FOLDER" in out, out
+
+
+def opened_with(preview: dict) -> list[str]:
+    sys.path.insert(0, str(SKILL / "scripts"))
+    try:
+        import open_in_editor as oe
+    finally:
+        sys.path.pop(0)
+    return oe.report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
+                      "editor": "https://editor.construct.net/", "dialogs": [], "exception": "",
+                      "preview": {"started": True, "layout": "Game", "runtime": "worker", "errors": [], **preview}})
+
+
+def test_open_in_editor_reports_how_long_the_game_ran_in_the_preview():
+    """A 5 s preview ran the game 3.7 to 4.7 s, once 0.7 s: the window loads first. The line
+    says what the runtime ran, ticks and its own wall time (measured 2026-10-02, r504)."""
+    lines = opened_with({"ticks": 597, "wallTime": 4.3545})
+    assert lines[1] == "  preview: layout 'Game', runtime in the worker, 597 ticks in 4.4 s, no errors", lines
+
+
+def test_open_in_editor_leaves_the_ticks_out_when_the_runtime_gave_none():
+    lines = opened_with({"ticks": None, "wallTime": None})
+    assert lines[1] == "  preview: layout 'Game', runtime in the worker, no errors", lines

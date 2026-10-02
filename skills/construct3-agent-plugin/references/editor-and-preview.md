@@ -47,6 +47,13 @@ that changes which events are written goes to
   project, r504 preview, 2026-09-30: a *Pick parent* with *Own* that could
   not reach a grandparent passed the five-second preview and left a piece
   idle on its battle slot at the first drag by hand]
+- A headless preview ticks at the display's rate, as a visible one does, but
+  the window loads for part of the preview's seconds: `--preview 5` runs the
+  game about 4 seconds, and once ran it under one. The `preview:` line gives
+  the runtime's own ticks and wall time; an event that waits for a time
+  longer than that has not run. Pass more seconds for it. [observed in
+  official examples and a game project, r504 preview in Edge and Chrome,
+  headless and headed, 2026-10-02]
 - `open_in_editor.py` starts the browser with `--mute-audio`, so a
   preview's sound stays off the user's speakers; a script of the agent's
   own that starts a browser does the same. The audio graph and
