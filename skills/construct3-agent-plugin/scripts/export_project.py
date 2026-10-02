@@ -1,7 +1,7 @@
 """Export a folder project to Web (HTML5) in the Construct 3 editor and unpack it into a folder.
 
     python scripts/export_project.py [--to FOLDER] [--version X | --bump] [--attach PORT|URL|FILE]
-                                     [--project FOLDER] [--dry-run]
+                                     [--slow] [--project FOLDER] [--dry-run]
 
 The Free edition does not export a project over its limits, so the editor needs an
 account with a subscription. The editor keeps its login in the open page only: it is
@@ -67,11 +67,22 @@ load; 3 no Edge, Chrome or Chromium here
 
 LOGIN_WAIT = 300        # seconds the user has to log in
 EXPORT_WAIT = 300       # seconds the editor has to export
+UI_WAIT = 30            # seconds a menu item or a dialog has to appear
 CHUNK = 3 << 20         # bytes of the zip read from the page per call
+SLOW = 3                # how much longer the pauses between clicks are with --slow or after a missed step
+pace = 1.0
 
 
 class Stop(Exception):
     """The export did not finish; the message says what the user sees and does next."""
+
+
+class Missed(Stop):
+    """A menu item or a dialog did not come, as when the editor is slower than the pauses."""
+
+
+def pause(seconds: float) -> None:
+    time.sleep(seconds * pace)
 
 
 # --- the browser ----------------------------------------------------------------------
@@ -241,7 +252,7 @@ def wait_for_login(page) -> str:
 
 def click(page, x: float, y: float) -> None:
     page.call("Input.dispatchMouseEvent", type="mouseMoved", x=x, y=y)
-    time.sleep(0.1)
+    pause(0.1)
     for kind in ("mousePressed", "mouseReleased"):
         page.call("Input.dispatchMouseEvent", type=kind, x=x, y=y, button="left", clickCount=1)
 
@@ -269,21 +280,22 @@ DISMISS_JS = r"""[...document.querySelectorAll('dialog[open]')].filter(d => d.id
 
 
 def press(page, scope: str, text: str, settle: float = 0.3) -> None:
-    for _ in range(50):
+    deadline = time.time() + UI_WAIT
+    while time.time() < deadline:
         at = page.evaluate(f"{FIND_JS}({json.dumps(scope)}, {json.dumps(text)})")
         if at:
             click(page, *at)
-            time.sleep(settle)
+            pause(settle)
             return
         time.sleep(0.2)
-    raise Stop(f"no '{text}' in the editor; it shows {json.dumps(page.evaluate(DIALOG_JS))}")
+    raise Missed(f"no '{text}' in the editor; it shows {json.dumps(page.evaluate(DIALOG_JS))}")
 
 
 def open_menu(page) -> None:
     at = page.evaluate("(() => { const r = document.getElementById('mainMenuButton').getBoundingClientRect(); "
                        "return [r.x + r.width / 2, r.y + r.height / 2]; })()")
     click(page, *at)
-    time.sleep(0.3)
+    pause(0.3)
 
 
 def project_title(project: Path) -> str:
@@ -299,7 +311,8 @@ def close_project(page, project: Path) -> None:
     open_menu(page)
     press(page, "menu", "Project", 0.2)
     press(page, "menu", "Close project", 0.3)
-    for _ in range(50):     # the editor asks to save a project it holds as changed
+    deadline = time.time() + UI_WAIT
+    while time.time() < deadline:   # the editor asks to save a project it holds as changed
         if not page.evaluate("document.title").startswith(project_title(project)):
             return
         if page.evaluate(FIND_JS + "('dialog', \"Don't save\")"):
@@ -350,13 +363,11 @@ def export(page) -> bytes:
     press(page, "menu", "Export", 0.5)
     press(page, "dialog", "Web (HTML5)", 0.2)
     press(page, "dialog", "Next", 0.3)
-    for _ in range(50):     # until then the Next found is the one just pressed
-        dialog = page.evaluate(DIALOG_JS)
-        if dialog and dialog["id"] == "exportStandardOptionsDialog":
-            break
+    deadline = time.time() + UI_WAIT
+    while (dialog := page.evaluate(DIALOG_JS)) is None or dialog["id"] != "exportStandardOptionsDialog":
+        if time.time() > deadline:      # until then the Next found is the one just pressed
+            raise Missed(f"the export options did not open; the editor shows {json.dumps(dialog)}")
         time.sleep(0.2)
-    else:
-        raise Stop(f"the export options did not open; the editor shows {json.dumps(dialog)}")
     page.evaluate(OPTIONS_JS)
     press(page, "dialog", "Next", 0.3)
     for _ in range(EXPORT_WAIT * 2):
@@ -374,6 +385,16 @@ def export(page) -> bytes:
     page.evaluate("delete window.__exportZip")
     press(page, "dialog", "OK", 0.5)
     return data
+
+
+def slow_down(page) -> None:
+    """Pauses SLOW times longer, and the editor back to no menu and no dialog."""
+    global pace
+    pace = SLOW
+    for kind in ("keyDown", "keyUp"):
+        page.call("Input.dispatchKeyEvent", type=kind, key="Escape", code="Escape", windowsVirtualKeyCode=27)
+    page.evaluate(DISMISS_JS)
+    pause(1)
 
 
 # --- versions and files ---------------------------------------------------------------
@@ -452,7 +473,14 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
         show_window(b, target, "normal")
     print(f"logged in as {wait_for_login(page)}, exporting {version}", flush=True)
     open_project(page, project, staged)
-    data = export(page)
+    try:
+        data = export(page)
+    except Missed as e:
+        if pace >= SLOW:
+            raise
+        print(f"{e}; trying again with longer pauses", flush=True)
+        slow_down(page)
+        data = export(page)
     # Close the project, so that this editor and one the user has open elsewhere do not both
     # change it. The script's own window is minimized and keeps its login for the next run; in the
     # user's browser a tab the script opened is closed and the user's own is left on the start page
@@ -487,6 +515,9 @@ def main() -> int:
     ap.add_argument("--attach", metavar="PORT|URL|FILE",
                     help="export in a Chrome or Edge the user has open and is logged in to, not in a window "
                          "of the script's own (see below)")
+    ap.add_argument("--slow", action="store_true",
+                    help=f"pauses {SLOW} times longer between clicks from the start, for a slow machine or "
+                         f"network; without it a step the editor missed is tried once more this way")
     ap.add_argument("--dry-run", action="store_true",
                     help="print the version, the editor and the folder, and open nothing")
     args = ap.parse_args()
@@ -506,6 +537,9 @@ def main() -> int:
         print(f"would export {version} in {editor_url(project)} into {folder}; project.c3proj version "
               f"{project_version(project)}{f' -> {version}' if version != project_version(project) else ''}")
         return 0
+    if args.slow:
+        global pace
+        pace = SLOW
     exe = None if args.attach else (oe.browser_path())
     if not args.attach and not exe:
         print("no Edge, Chrome or Chromium found here; export in the editor by hand, or pass --attach",

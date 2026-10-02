@@ -47,6 +47,11 @@ closes it after the export.
 - Exit 1, `not exported:` and the reason: the window or tab stays as it is.
   Do what it names (log in, allow the connection, close the dialog) and run
   the same command again.
+- `trying again with longer pauses`: a menu item or dialog did not come
+  within 30 seconds, as on a slow machine or network. The script closes
+  what is open and runs the export once more with pauses three times as
+  long. When that run stops too, or on a machine already known to be slow,
+  pass `--slow`, which uses the longer pauses from the start.
 - Exit 2: a bad flag, project or editor page.
 - Exit 3: no Edge, Chrome or Chromium. Export by hand in the editor, or
   attach to a browser.
