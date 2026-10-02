@@ -343,11 +343,23 @@ def uid() -> int:
 
 
 def write_json(rel: str, obj) -> None:
-    """Tab indent, LF, raw UTF-8, no trailing newline: byte for byte what the editor saves."""
+    """Tab indent, LF, raw UTF-8, no trailing newline, whole floats as ints: byte for byte
+    what the editor saves."""
     path = ROOT / rel
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="\n") as f:
-        f.write(json.dumps(obj, indent="\t", ensure_ascii=False))
+        f.write(json.dumps(shortest(obj), indent="\t", ensure_ascii=False))
+
+
+def shortest(obj):
+    """Numbers in the shortest form the editor writes them in: 284.0 as 284, -0.0 as 0."""
+    if isinstance(obj, float) and obj.is_integer():
+        return int(obj)
+    if isinstance(obj, dict):
+        return {k: shortest(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [shortest(v) for v in obj]
+    return obj
 
 
 def q(s: str) -> str:
@@ -1218,7 +1230,10 @@ def instance(otype: str, properties: dict, world_: dict | None, ivars: dict | No
     """ivars must list every instance variable of the type and its families; behaviors
     every behavior, as {name: {"properties": {...}}}."""
     inst = {"type": otype, "properties": properties, "uid": uid(), "sid": sid(), "tags": "",
-            "instanceVariables": ivars or {}, "behaviors": behaviors or {}, "showing": True, "locked": False}
+            "instanceVariables": ivars or {}, "behaviors": behaviors or {}}
+    if world_ is not None:
+        inst["materialSurfaceType"] = "smooth"
+    inst |= {"showing": True, "locked": False}
     if world_ is not None:
         inst["world"] = world_
     return inst

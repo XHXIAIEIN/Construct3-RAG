@@ -74,6 +74,23 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
   new entry where the sort puts it. [observed: Merge Game, r504, October
   2026: a save moved `Timeline`, `Spritefont2` and `Anchor` from the end of
   `usedAddons` into place and `CardFace` ahead of `CardShadow`]
+- The editor rewrites every layout instance it saves in one key order and
+  number form, and a hand edit that departs from them comes back changed in
+  the diff of the next save. An instance's keys run `type`, `properties`,
+  `uid`, `sid`, `tags`, `instanceVariables`, `behaviors`, `effects`,
+  `materialSurfaceType`, `sceneGraphData`, `showing`, `locked`, `world`;
+  those of `world` run `x`, `y`, `width`, `height`, `originX`, `originY`,
+  `color`, `z`, `angle`, `blendMode`; `properties` follow the order the
+  plugin declares them in. A world instance without `materialSurfaceType`
+  gets `"smooth"`, whatever its plugin and whether or not it has effects;
+  a nonworld instance gets none. Numbers are written in their shortest
+  form: `284.0` becomes `284`, `215.250` becomes `215.25`, `-0.0` becomes
+  `0`, so a generator writes a whole float as an int. [observed: Merge
+  Game, r504, October 2026: Download a copy of a layout with `effects` and
+  `sceneGraphData` after `world`, `materialSurfaceType` removed from
+  Sprite, Tiled Background, 9-patch and Sprite font instances, and
+  `"y": 284.0` came back byte for byte as the editor had last saved it; a
+  folder save made the same changes]
 - A family instance variable can be written through a member type:
   `"objectClass": "enemyBase"`, `"instance-variable": "hp"` with `hp`
   declared on family `EnemyGroup`.

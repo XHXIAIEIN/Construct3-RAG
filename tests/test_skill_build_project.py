@@ -564,3 +564,19 @@ def test_template_shows_a_hit_as_a_frame_of_the_flash_colour(built, tmp_path):
         t.hit_frame("ball.png")
     with pytest.raises(SystemExit, match=r"Blink: a hit shows as a colour, not the Flash behavior's blinking"):
         t.beh_def("Flash", "Blink")
+
+
+def test_template_writes_instances_in_the_editors_key_order_and_number_form(tmp_path):
+    """The editor saves a world instance with materialSurfaceType between its effects and
+    showing, and every number in its shortest form; anything else comes back changed in the
+    diff of the next save."""
+    t = template_module()
+    t.ROOT = tmp_path
+    inst = t.instance("Wall", {}, t.world(108, 284.0, 35, 96, angle=-0.0))
+    assert list(inst) == ["type", "properties", "uid", "sid", "tags", "instanceVariables", "behaviors",
+                          "materialSurfaceType", "showing", "locked", "world"]
+    assert inst["materialSurfaceType"] == "smooth"
+    assert "materialSurfaceType" not in t.instance("Data", {}, None)
+    t.write_json("i.json", inst)
+    text = (tmp_path / "i.json").read_text(encoding="utf-8")
+    assert '"y": 284,' in text and '"angle": 0' in text and ".0" not in text
