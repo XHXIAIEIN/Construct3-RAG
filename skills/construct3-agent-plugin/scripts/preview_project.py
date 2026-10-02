@@ -42,7 +42,8 @@ Steps, each an object with one of these keys, and "note" for a label:
                                 and always the frames, NN-NAME/0001.jpg ...; false stops it.
                                 watch is {"label": EXPRESSION, ...}, read at every frame. The
                                 recording leaves NN-NAME.html to review it: the frames, the steps
-                                that ran and the watched values, frame by frame; and
+                                that ran and the watched values, frame by frame, and a part
+                                selected there copied as a task for an agent; and
                                 NN-NAME/timeline.json with the same
 
 TARGET is where to press, the middle of an instance's bounding box:
@@ -261,12 +262,13 @@ class Game:
     that runs the game for code."""
 
     def __init__(self, win: oe.DevTools, live: str | None, touch: bool, size: tuple[int, int], url: str,
-                 viewport: list[int] | None) -> None:
+                 viewport: list[int] | None, project: Path) -> None:
         self.win, self.live, self.touch, self.size, self.url, self.viewport = win, live, touch, size, url, viewport
+        self.project = project
         self.recording: tuple[str, Recorder, Path] | None = None
 
     def record(self, name: str, video: Path, watch: dict[str, str]) -> None:
-        self.recording = (name, Recorder(self.url, video.with_suffix(""), self.viewport, watch), video)
+        self.recording = (name, Recorder(self.url, video.with_suffix(""), self.viewport, watch, self.project), video)
 
     def stop_recording(self) -> str:
         """What the recording that ran made, or "" when none ran."""
@@ -329,9 +331,10 @@ class Recorder(threading.Thread):
     emulated. An emulated size holds for the connection that set it, so this one
     sets the plan's viewport again."""
 
-    def __init__(self, url: str, folder: Path, viewport: list[int] | None, watch: dict[str, str]) -> None:
+    def __init__(self, url: str, folder: Path, viewport: list[int] | None, watch: dict[str, str],
+                 project: Path) -> None:
         super().__init__(daemon=True)
-        self.folder, self.frames, self.steps, self.done = folder, [], [], threading.Event()
+        self.folder, self.project, self.frames, self.steps, self.done = folder, project, [], [], threading.Event()
         self.first = threading.Event()
         shutil.rmtree(folder, ignore_errors=True)
         folder.mkdir(parents=True)
@@ -393,7 +396,8 @@ class Recorder(threading.Thread):
         start = frames[0]["t"]
         seconds = [max(b["t"] - a["t"], 0.001) for a, b in zip(frames, frames[1:])] + [0.05]
         made = make_video([self.folder / f["file"] for f in frames], seconds, video)
-        timeline = {"name": name, "folder": self.folder.name, "video": made,
+        timeline = {"name": name, "folder": self.folder.name, "path": self.folder.resolve().as_posix(),
+                    "project": self.project.resolve().as_posix(), "video": made,
                     "frames": [{**f, "t": round(f["t"] - start, 3)} for f in frames],
                     "steps": [{**s, "start": round(s["start"] - start, 3), "end": round(s["end"] - start, 3)}
                               for s in self.steps]}
@@ -546,7 +550,7 @@ def screenshot(game: Game, path: Path) -> str:
     return str(path)
 
 
-def play(plan: dict, shots: Path):
+def play(plan: dict, shots: Path, project: Path):
     """The `then` of open_in_editor.open_one: preview the project and run the plan."""
     def run(browser: oe.Browser, target: str, page: oe.DevTools) -> dict:
         if not plan.get("keep_saves"):     # a game reads its save on start, so the profile's would carry over
@@ -579,7 +583,7 @@ def play(plan: dict, shots: Path):
             win.evaluate("0")
             before = oe.runtime_errors(win)
             game = Game(win, session, touch, size, f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}",
-                        plan.get("viewport"))
+                        plan.get("viewport"), project)
             began = time.monotonic()
             for n, step in enumerate(plan["steps"], 1):
                 done = {"step": n, "line": step_line(n, step), "ok": True}
@@ -687,7 +691,7 @@ def main() -> int:
         return 2
     try:
         result = oe.open_one(browser, editor, project, browser.profile / "project-play.c3p", None, bool(args.release),
-                             play(plan, shots))
+                             play(plan, shots, project))
     except oe.EditorNotLoaded as e:
         print(f"the editor did not load: {e}. Check the network connection and --release, and run again.",
               file=sys.stderr)

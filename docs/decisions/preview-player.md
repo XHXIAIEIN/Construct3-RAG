@@ -62,6 +62,14 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   ran and the errors on one clock; the agent gets the watched values' changes
   printed, the user a page beside the frames that plays them, steps through
   them and jumps to a step.
+- What the user sees go wrong reaches the agent as a part of the recording.
+  The user selects it on the page and copies it as a task for an agent that
+  starts cold: what to find out, in their words or a default question, the
+  project, the frames by absolute path (the agent opens a frame as a file),
+  the steps and watched values of that part, how to investigate and what to
+  report. The timeline holds the project's and the frames' paths, so a page
+  opened without its recording, from a folder the user chooses, writes the
+  same task.
 - A run starts from a first launch: the browser profile is kept between runs
   for its cache, and with it the preview's Local Storage and IndexedDB, where
   a game keeps its save, so one run's save changed the next run's start.
