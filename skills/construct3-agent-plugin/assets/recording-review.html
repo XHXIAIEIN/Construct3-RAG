@@ -1,0 +1,233 @@
+<!doctype html>
+<!-- A recording of scripts/preview_project.py, frame by frame beside the steps that
+     ran and the values the record step watched. The script copies this page next to
+     the recording's folder and puts its timeline where TIMELINE is. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recording review</title>
+<style>
+  :root {
+    --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #e2e2dc; --tick: #c9c9c2;
+    --accent: #3b5bdb; --active: #e7ecff; --bad: #c92a2a; --bad-bg: #fff0f0; --changed: #fff4d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615; --panel: #1f1f1d; --text: #ececea; --muted: #9a9a94; --line: #33332f; --tick: #4a4a45;
+      --accent: #8ea2ff; --active: #262c45; --bad: #ff8787; --bad-bg: #3a1f1f; --changed: #3b3420;
+    }
+  }
+  * { box-sizing: border-box; scrollbar-width: none; }
+  *::-webkit-scrollbar { display: none; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, sans-serif; }
+  header { padding: 12px 16px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+  header h1 { font-size: 16px; margin: 0; }
+  header span { color: var(--muted); }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 380px); gap: 16px; padding: 16px; align-items: start; }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+  .frame { display: flex; justify-content: center; background: #000; border-radius: 4px; }
+  .frame img { max-width: 100%; max-height: 68vh; display: block; }
+  .controls { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  button, select { font: inherit; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--text); cursor: pointer; }
+  .clock { color: var(--muted); font-variant-numeric: tabular-nums; margin-left: auto; }
+  .timeline { position: relative; margin-top: 12px; padding-bottom: 18px; cursor: pointer; touch-action: none; user-select: none; outline: none; }
+  .timeline:focus-visible { box-shadow: 0 0 0 2px var(--accent); border-radius: 4px; }
+  .spans, .frames, .ruler { position: relative; }
+  .spans { height: 14px; }
+  .spans i { position: absolute; top: 0; height: 14px; min-width: 2px; background: var(--accent); opacity: 0.55; border-radius: 2px; box-shadow: inset -1px 0 0 var(--panel); }
+  .spans i.bad { background: var(--bad); opacity: 0.8; }
+  .spans i.active { opacity: 1; }
+  .frames { height: 8px; margin-top: 4px; }
+  .frames i { position: absolute; top: 0; width: 1px; height: 8px; background: var(--tick); }
+  .ruler { height: 10px; border-top: 1px solid var(--line); }
+  .ruler i { position: absolute; top: 0; width: 1px; height: 4px; background: var(--tick); }
+  .ruler i.major { height: 9px; background: var(--muted); }
+  .ruler b { position: absolute; top: 10px; transform: translateX(-50%); font: 11px/1 system-ui, sans-serif; font-weight: 400; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .playhead { position: absolute; top: -2px; bottom: 14px; width: 2px; margin-left: -1px; background: var(--text); pointer-events: none; }
+  aside { display: flex; flex-direction: column; gap: 16px; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  section h2 { font-size: 13px; margin: 0; padding: 8px 12px; border-bottom: 1px solid var(--line); color: var(--muted); font-weight: 600; }
+  ol { list-style: none; margin: 0; padding: 0; }
+  ol li { padding: 6px 12px; border-bottom: 1px solid var(--line); cursor: pointer; }
+  ol li:last-child { border-bottom: 0; }
+  ol li.active { background: var(--active); }
+  ol li.bad { color: var(--bad); }
+  ol li small { display: block; color: var(--muted); word-break: break-word; font-variant-numeric: tabular-nums; }
+  ol li .error { color: var(--bad); background: var(--bad-bg); border-radius: 4px; padding: 2px 6px; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  td { padding: 6px 12px; border-bottom: 1px solid var(--line); vertical-align: top; word-break: break-word; }
+  tr:last-child td { border-bottom: 0; }
+  td:first-child { color: var(--muted); width: 40%; }
+  tr.changed td { background: var(--changed); }
+  .empty { padding: 8px 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header><h1 id="name"></h1><span id="summary"></span></header>
+<main>
+  <div class="stage">
+    <div class="frame"><img id="frame" alt="the preview window at this moment"></div>
+    <div class="controls">
+      <button id="play" title="Space">Play</button>
+      <button id="prev" title="Left arrow: the frame before">&lsaquo;</button>
+      <button id="next" title="Right arrow: the frame after">&rsaquo;</button>
+      <select id="speed" aria-label="Speed"><option>0.25</option><option>0.5</option><option selected>1</option><option>2</option></select>
+      <span class="clock" id="clock"></span>
+    </div>
+    <div class="timeline" id="timeline" role="slider" tabindex="0" aria-label="Time">
+      <div class="spans" id="spans"></div>
+      <div class="frames" id="frames"></div>
+      <div class="ruler" id="ruler"></div>
+      <div class="playhead" id="playhead"></div>
+    </div>
+  </div>
+  <aside>
+    <section><h2>Steps</h2><ol id="steps"></ol></section>
+    <section><h2>Watched values at this frame</h2><table id="watch"></table></section>
+  </aside>
+</main>
+<script>
+const timeline = /*TIMELINE*/null;
+const $ = id => document.getElementById(id);
+const frames = timeline.frames, steps = timeline.steps;
+const end = frames.length ? frames[frames.length - 1].t + 0.05 : 0.05;
+const ms = t => `${Math.round(t * 1000)} ms`;
+const at_ = t => `${100 * t / end}%`;
+const show = v => typeof v === "string" ? v : JSON.stringify(v);
+let at = 0, playing = false, timer = null;
+
+$("name").textContent = timeline.name;
+document.title = `${timeline.name}: recording review`;
+$("summary").textContent = `${frames.length} frames in ${ms(end)}` + (timeline.video ? ` · ${timeline.video.split(/[\\/]/).pop()}` : "");
+
+// The ruler: a labelled tick every major interval, small ones between, the interval
+// the shortest that leaves a label about 70 pixels at the ruler's width.
+function drawRuler() {
+  const fit = Math.max(2, Math.floor($("ruler").clientWidth / 70));
+  const major = [10, 20, 50, 100, 200, 250, 500, 1000, 2000, 5000, 10000, 30000].find(m => end * 1000 / m <= fit)
+    || 60000;
+  const minor = {20: 5, 200: 50, 2000: 500}[major] || major / 5;
+  $("ruler").innerHTML = "";
+  for (let t = 0; t <= end * 1000 + 0.5; t += minor) {
+    const tick = document.createElement("i"), isMajor = Math.abs(t / major - Math.round(t / major)) < 1e-6;
+    tick.style.left = at_(t / 1000);
+    tick.className = isMajor ? "major" : "";
+    $("ruler").appendChild(tick);
+    if (isMajor) {
+      const label = document.createElement("b");
+      label.style.left = at_(t / 1000);
+      label.textContent = `${Math.round(t)} ms`;
+      $("ruler").appendChild(label);
+    }
+  }
+}
+drawRuler();
+addEventListener("resize", drawRuler);
+for (const f of frames) {
+  const tick = document.createElement("i");
+  tick.style.left = at_(f.t);
+  $("frames").appendChild(tick);
+}
+
+steps.forEach(s => {
+  const start = Math.max(0, s.start), span = `${ms(start)} – ${ms(s.end)} (${ms(s.end - start)})`;
+  const li = document.createElement("li");
+  li.className = s.ok ? "" : "bad";
+  li.innerHTML = `<div></div><small></small>`;
+  li.firstChild.textContent = s.line + (s.ok ? "" : ": FAILED");
+  li.children[1].textContent = span + (s.said ? ` · ${s.said}` : "");
+  for (const e of s.errors) {
+    const d = document.createElement("div");
+    d.className = "error";
+    d.textContent = e.split("\n")[0];
+    li.appendChild(d);
+  }
+  li.onclick = () => { play(false); go(frameAt(start)); };
+  s.li = li;
+  $("steps").appendChild(li);
+  const bar = document.createElement("i");
+  bar.className = s.ok && !s.errors.length ? "" : "bad";
+  bar.style.left = at_(start);
+  bar.style.width = at_(s.end - start);
+  bar.title = `${s.line}\n${span}`;
+  s.bar = bar;
+  $("spans").appendChild(bar);
+});
+if (!steps.length) $("steps").innerHTML = `<li class="empty">No step ran while recording.</li>`;
+
+function frameAt(t) {
+  let i = 0;
+  while (i + 1 < frames.length && frames[i + 1].t <= t) i++;
+  return i;
+}
+
+function go(i) {
+  if (!frames.length) return;
+  at = Math.min(Math.max(0, i), frames.length - 1);
+  const f = frames[at], before = frames[at - 1];
+  $("frame").src = `${timeline.folder}/${f.file}`;
+  $("clock").textContent = `${ms(f.t)} / ${ms(end)} · frame ${at + 1}/${frames.length}`;
+  $("playhead").style.left = at_(f.t);
+  $("timeline").setAttribute("aria-valuenow", Math.round(f.t * 1000));
+  $("timeline").setAttribute("aria-valuetext", ms(f.t));
+  const current = steps.filter(s => s.start <= f.t).pop();     // the step this frame belongs to
+  for (const s of steps) {
+    s.li.classList.toggle("active", s === current);
+    s.bar.classList.toggle("active", s === current);
+  }
+  const names = Object.keys(f.watch || {});
+  $("watch").innerHTML = names.length ? "" : `<tr><td class="empty" colspan="2">The record step watched nothing.</td></tr>`;
+  for (const name of names) {
+    const tr = document.createElement("tr");
+    tr.className = before && show(before.watch?.[name]) !== show(f.watch[name]) ? "changed" : "";
+    tr.innerHTML = "<td></td><td></td>";
+    tr.children[0].textContent = name;
+    tr.children[1].textContent = show(f.watch[name]);
+    $("watch").appendChild(tr);
+  }
+}
+
+function play(on) {
+  playing = on;
+  $("play").textContent = on ? "Pause" : "Play";
+  clearTimeout(timer);
+  if (!on) return;
+  if (at >= frames.length - 1) go(0);
+  const tick = () => {
+    if (!playing) return;
+    if (at >= frames.length - 1) return play(false);
+    const wait = (frames[at + 1].t - frames[at].t) * 1000 / Number($("speed").value);
+    timer = setTimeout(() => { go(at + 1); tick(); }, wait);
+  };
+  tick();
+}
+
+// Pressing or dragging on the timeline shows the frame at that moment.
+const seekTo = e => {
+  const box = $("timeline").getBoundingClientRect();
+  go(frameAt(end * Math.min(Math.max(0, (e.clientX - box.left) / box.width), 1)));
+};
+$("timeline").addEventListener("pointerdown", e => {
+  play(false);
+  $("timeline").setPointerCapture(e.pointerId);
+  seekTo(e);
+});
+$("timeline").addEventListener("pointermove", e => { if (e.buttons) seekTo(e); });
+
+$("play").onclick = () => play(!playing);
+$("prev").onclick = () => { play(false); go(at - 1); };
+$("next").onclick = () => { play(false); go(at + 1); };
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "SELECT") return;
+  if (e.key === " ") { e.preventDefault(); play(!playing); }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); play(false); go(at - 1); }
+  else if (e.key === "ArrowRight") { e.preventDefault(); play(false); go(at + 1); }
+  else if (e.key === "Home") { play(false); go(0); }
+  else if (e.key === "End") { play(false); go(frames.length - 1); }
+});
+go(0);
+</script>
+</body>
+</html>

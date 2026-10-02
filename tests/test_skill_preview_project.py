@@ -22,16 +22,19 @@ def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
     plan = project / "plan.json"
     plan.write_text(json.dumps({"speed": 2, "steps": [
         {"tapp": "Button"}, {"drag": "Piece 0"}, {"key": "F13"}, {"wait": -1}, {"shot": "a b"},
-        {"tap": "Button", "seconds": 1}, {"until": "true", "timout": 3}, {"record": "a b"}, {"record": False}]}),
+        {"tap": "Button", "seconds": 1}, {"until": "true", "timout": 3}, {"record": "a b"}, {"record": False},
+        {"record": "r", "watch": {"coins": 3}}, {"record": False, "watch": {"coins": "1"}}], "keep_saves": True}),
         encoding="utf-8")
     code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "plan.json")
     assert code == 2, out
     for expected in ("the plan has 'speed'", "step 1 has none of", "closest: tap", 'step 2 (drag) needs "to"',
                      "step 3 (key): 'F13'", "step 4 (wait) takes seconds", "step 5 (shot) takes a file name",
                      "step 6 (tap) has 'seconds'", "step 7 (until) has 'timout'; closest: timeout",
-                     "step 8 (record) takes a file name of letters, digits, - and _, or false to stop"):
+                     "step 8 (record) takes a file name of letters, digits, - and _, or false to stop",
+                     'step 10 (record): watch is {"label": "EXPRESSION", ...}',
+                     'step 11 (record): watch is {"label": "EXPRESSION", ...} on a step that starts'):
         assert expected in out, (expected, out)
-    assert "step 9" not in out, out     # false stops a recording
+    assert "step 9" not in out and "has 'keep_saves'" not in out, out     # false stops a recording
     assert not (project / ".tmp" / "preview").exists()
 
     code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "--help")
@@ -89,3 +92,16 @@ def test_preview_project_joins_a_recording_into_a_gif_without_ffmpeg(tmp_path, m
     assert made == str(tmp_path / "02-merge.gif")
     with image.open(made) as gif:
         assert gif.n_frames == 2 and gif.info["duration"] == 250
+
+
+def test_preview_project_prints_how_the_watched_values_changed():
+    """The agent reviews a recording from these lines: each change once, with its time."""
+    pp = module()
+    frames = [{"t": 0.0, "watch": {"coins": 40, "y": None}}, {"t": 0.5, "watch": {"coins": 40, "y": 662}},
+              {"t": 0.9, "watch": {"coins": 30, "y": 662}}]
+    frames += [{"t": 1 + i / 10, "watch": {"coins": 30, "y": 600 - i}} for i in range(9)]
+    assert pp.watch_lines(frames) == [
+        "watch coins: 40 at 0 ms, 30 at 900 ms",
+        "watch y: null at 0 ms, 662 at 500 ms, 600 at 1000 ms, 599 at 1100 ms, 598 at 1200 ms, 597 at 1300 ms, "
+        "596 at 1400 ms, 595 at 1500 ms, and 3 more in timeline.json"]
+    assert pp.watch_lines([{"t": 0.0}]) == []

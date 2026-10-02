@@ -23,6 +23,8 @@ plan is JSON, the steps run in order, and a step that fails stops the run:
 viewport  CSS pixels of the preview window, [width, height]; a phone's, 430 x 932,
           for a game designed for one (default: the window the editor opens)
 touch     taps, holds and drags as touches instead of the mouse (default: false)
+keep_saves  start from what earlier runs saved, Local Storage and IndexedDB, instead of
+          from a first launch (default: false); the browser profile keeps them
 
 Steps, each an object with one of these keys, and "note" for a label:
   tap TARGET                    press and release
@@ -35,9 +37,13 @@ Steps, each an object with one of these keys, and "note" for a label:
   js CODE                       run JavaScript against the runtime and print what it returns
   state [TYPE ...]              the globals, every type's count, the named types' instances
   shot NAME                     a screenshot, NN-NAME.png in --shots
-  record NAME                   record the window from here to the next record step or the end
+  record NAME, watch            record the window from here to the next record step or the end
                                 of the plan, as NN-NAME.mp4 with ffmpeg, NN-NAME.gif with Pillow,
-                                and always the frames, NN-NAME/0001.jpg ...; false stops it
+                                and always the frames, NN-NAME/0001.jpg ...; false stops it.
+                                watch is {"label": EXPRESSION, ...}, read at every frame. The
+                                recording leaves NN-NAME.html to review it: the frames, the steps
+                                that ran and the watched values, frame by frame; and
+                                NN-NAME/timeline.json with the same
 
 TARGET is where to press, the middle of an instance's bounding box:
   "Button"                      the first instance of an object type, as the project spells it
@@ -92,8 +98,12 @@ the project did not open; 2 the plan, the project or the editor could not be use
 
 STEPS = ("tap", "hold", "drag", "key", "wait", "until", "js", "state", "shot", "record")
 FIELDS = {"tap": set(), "hold": {"seconds"}, "drag": {"to", "seconds"}, "key": {"seconds"}, "wait": set(),
-          "until": {"timeout"}, "js": {"timeout"}, "state": set(), "shot": set(), "record": set()}
+          "until": {"timeout"}, "js": {"timeout"}, "state": set(), "shot": set(), "record": {"watch"}}
 PRESS = {"hold": 0.5, "drag": 0.4, "key": 0.1}
+# Where the editor serves a preview, and where a game's saves live.
+PREVIEW = "https://preview.construct.net"
+# The page that reviews a recording, its timeline put where it says TIMELINE.
+REVIEW = (c3.SKILL_DIR / "assets" / "recording-review.html").read_text(encoding="utf-8")
 
 # Left in the session that runs the game, after the probe: where a target is on the
 # page, and what a step's code returns, as JSON. layerToCssPx gives the client
@@ -180,8 +190,8 @@ def check_plan(plan) -> tuple[dict, list[str]]:
         plan = {"steps": plan}
     if not isinstance(plan, dict) or not isinstance(plan.get("steps"), list) or not plan["steps"]:
         return {}, ['the plan is {"steps": [...]} or a list of steps, with at least one step']
-    for extra in set(plan) - {"steps", "viewport", "touch"}:
-        problems.append(f"the plan has {extra!r}; it takes steps, viewport and touch")
+    for extra in set(plan) - {"steps", "viewport", "touch", "keep_saves"}:
+        problems.append(f"the plan has {extra!r}; it takes steps, viewport, touch and keep_saves")
     view = plan.get("viewport")
     if view is not None and not (isinstance(view, list) and len(view) == 2 and all(isinstance(n, int) and n > 0
                                                                                    for n in view)):
@@ -218,6 +228,11 @@ def check_plan(plan) -> tuple[dict, list[str]]:
                                                or kind == "record" and value is False):
             problems.append(f"step {n} ({kind}) takes a file name of letters, digits, - and _"
                             + (", or false to stop" if kind == "record" else ""))
+        watch = step.get("watch") if kind == "record" else None
+        if watch is not None and not (value and isinstance(watch, dict) and watch and all(
+                isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in watch.items())):
+            problems.append(f"step {n} (record): watch is {{\"label\": \"EXPRESSION\", ...}} on a step that starts "
+                            f"a recording")
         for field in ("seconds", "timeout"):
             if field in step and not (isinstance(step[field], (int, float)) and step[field] >= 0):
                 problems.append(f"step {n} ({kind}): {field} is a number of seconds")
@@ -250,15 +265,15 @@ class Game:
         self.win, self.live, self.touch, self.size, self.url, self.viewport = win, live, touch, size, url, viewport
         self.recording: tuple[str, Recorder, Path] | None = None
 
-    def record(self, name: str, video: Path) -> None:
-        self.recording = (name, Recorder(self.url, video.with_suffix(""), self.viewport), video)
+    def record(self, name: str, video: Path, watch: dict[str, str]) -> None:
+        self.recording = (name, Recorder(self.url, video.with_suffix(""), self.viewport, watch), video)
 
     def stop_recording(self) -> str:
         """What the recording that ran made, or "" when none ran."""
         if not self.recording:
             return ""
         (name, recorder, video), self.recording = self.recording, None
-        return f"recorded {name}: {recorder.finish(video)}"
+        return f"recorded {name}: {recorder.finish(name, video)}"
 
     def run(self, js: str, wait: float = 60):
         return self.win.evaluate(js, wait=wait, session=self.live)
@@ -309,42 +324,98 @@ class Game:
 
 class Recorder(threading.Thread):
     """Screenshots of the window, one after another, on a connection of its own while
-    the steps run. The browser's screencast sends no frame, or a strip, once the
-    window's size is emulated. An emulated size holds for the connection that set
-    it, so this one sets the plan's viewport again."""
+    the steps run, each with the values the record step watches, read right after it.
+    The browser's screencast sends no frame, or a strip, once the window's size is
+    emulated. An emulated size holds for the connection that set it, so this one
+    sets the plan's viewport again."""
 
-    def __init__(self, url: str, folder: Path, viewport: list[int] | None) -> None:
+    def __init__(self, url: str, folder: Path, viewport: list[int] | None, watch: dict[str, str]) -> None:
         super().__init__(daemon=True)
-        self.folder, self.times, self.done = folder, [], threading.Event()
+        self.folder, self.frames, self.steps, self.done = folder, [], [], threading.Event()
         shutil.rmtree(folder, ignore_errors=True)
         folder.mkdir(parents=True)
         self.page = oe.DevTools(url)
         if viewport:
             emulate(self.page, viewport)
+        self.session, self.watch = None, None
+        if watch:
+            self.session = self.game_session()
+            body = ", ".join(f"[{json.dumps(name)}, await read(async () => ({expression}))]"
+                             for name, expression in watch.items())
+            self.watch = ("(async () => { const runtime = c3probe.runtime, vars = c3play.vars;\n"
+                          "  const read = async f => { try { return c3play.plain(await f()); }"
+                          " catch (e) { return `error: ${e.message}`; } };\n"
+                          f"  return Object.fromEntries([{body}]); }})()")
         self.start()
+
+    def game_session(self) -> str | None:
+        """The page or the worker where the probe was left: the same globals as the
+        steps see, through this connection."""
+        self.page.call("Target.setAutoAttach", autoAttach=True, waitForDebuggerOnStart=False, flatten=True)
+        workers = [e["params"]["sessionId"] for e in self.page.events if e["method"] == "Target.attachedToTarget"
+                   and e["params"]["targetInfo"]["type"] == "worker"]
+        for session in [None, *workers]:
+            try:
+                if self.page.evaluate("typeof c3probe === 'object'", wait=3, session=session):
+                    return session
+            except oe.DevToolsError:
+                pass
+        return None
 
     def run(self) -> None:
         try:
             while not self.done.is_set():
                 taken = time.monotonic()
                 shot = self.page.call("Page.captureScreenshot", format="jpeg", quality=70, optimizeForSpeed=True)
-                (self.folder / f"{len(self.times) + 1:04d}.jpg").write_bytes(base64.b64decode(shot["data"]))
-                self.times.append(taken)
+                frame = {"file": f"{len(self.frames) + 1:04d}.jpg", "t": taken}
+                if self.watch:
+                    try:
+                        frame["watch"] = self.page.evaluate(self.watch, wait=5, session=self.session)
+                    except oe.DevToolsError as e:
+                        frame["watch"] = {"error": str(e).splitlines()[0]}
+                (self.folder / frame["file"]).write_bytes(base64.b64decode(shot["data"]))
+                self.frames.append(frame)
         except (oe.DevToolsError, OSError):     # the window closed
             return
 
-    def finish(self, video: Path) -> str:
-        """Stop, and make the frames a video: what to print about it."""
+    def finish(self, name: str, video: Path) -> str:
+        """Stop, and leave the frames, the timeline, a video and the review page: what
+        to print about them."""
         self.done.set()
         self.join(10)
         self.page.ws.close()
-        frames = sorted(self.folder.glob("*.jpg"))[:len(self.times)]
+        frames = self.frames
         if not frames:
             return f"no frames: the window answered no screenshot; {self.folder} is empty"
-        seconds = [max(b - a, 0.001) for a, b in zip(self.times, self.times[1:])] + [0.05]
-        made = make_video(frames, seconds, video)
-        return (f"{len(frames)} frames in {sum(seconds):.1f} s, {made or 'no ffmpeg or Pillow here to join them'}; "
-                f"frames in {self.folder}")
+        start = frames[0]["t"]
+        seconds = [max(b["t"] - a["t"], 0.001) for a, b in zip(frames, frames[1:])] + [0.05]
+        made = make_video([self.folder / f["file"] for f in frames], seconds, video)
+        timeline = {"name": name, "folder": self.folder.name, "video": made,
+                    "frames": [{**f, "t": round(f["t"] - start, 3)} for f in frames],
+                    "steps": [{**s, "start": round(s["start"] - start, 3), "end": round(s["end"] - start, 3)}
+                              for s in self.steps]}
+        (self.folder / "timeline.json").write_text(json.dumps(timeline, ensure_ascii=False, indent=1), encoding="utf-8")
+        page = video.with_suffix(".html")
+        data = json.dumps(timeline, ensure_ascii=False).replace("</", "<\\/")     # no </script> inside the script
+        page.write_text(REVIEW.replace("/*TIMELINE*/null", data), encoding="utf-8")
+        lines = [f"{len(frames)} frames in {sum(seconds):.1f} s, {made or 'no ffmpeg or Pillow here to join them'}",
+                 f"review {page}; frames and timeline.json in {self.folder}"]
+        return "\n    ".join(lines + watch_lines(timeline["frames"]))
+
+
+def watch_lines(frames: list[dict]) -> list[str]:
+    """How each watched value changed over the recording, at most eight changes each."""
+    lines = []
+    for name in frames[0].get("watch") or {}:
+        changes, last = [], object()
+        for f in frames:
+            value = json.dumps((f.get("watch") or {}).get(name), ensure_ascii=False)
+            if value != last:
+                changes.append(f"{value if len(value) <= 40 else value[:37] + '...'} at {round(f['t'] * 1000)} ms")
+                last = value
+        more = f", and {len(changes) - 8} more in timeline.json" if len(changes) > 8 else ""
+        lines.append(f"watch {name}: " + ", ".join(changes[:8]) + more)
+    return lines
 
 
 def make_video(frames: list[Path], seconds: list[float], video: Path) -> str | None:
@@ -462,7 +533,7 @@ def do_step(game: Game, step: dict, n: int, shots: Path) -> tuple[str, dict | No
     if kind == "record":
         said = game.stop_recording()
         if value:
-            game.record(value, shots / f"{n:02d}-{value}")
+            game.record(value, shots / f"{n:02d}-{value}", step.get("watch") or {})
         return "; ".join(filter(None, [said, "recording" if value else ""])), None
     return screenshot(game, shots / f"{n:02d}-{value}.png"), None
 
@@ -475,6 +546,8 @@ def screenshot(game: Game, path: Path) -> str:
 def play(plan: dict, shots: Path):
     """The `then` of open_in_editor.open_one: preview the project and run the plan."""
     def run(browser: oe.Browser, target: str, page: oe.DevTools) -> dict:
+        if not plan.get("keep_saves"):     # a game reads its save on start, so the profile's would carry over
+            page.call("Storage.clearDataForOrigin", origin=PREVIEW, storageTypes="local_storage,indexeddb")
         started = oe.start_preview(browser, target, page)
         if isinstance(started, list):
             return {"started": False, "layout": None, "runtime": None, "errors": started, "steps": []}
@@ -502,10 +575,12 @@ def play(plan: dict, shots: Path):
                     pass
             win.evaluate("0")
             before = oe.runtime_errors(win)
-            game = Game(win, session, touch, size, f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}", plan.get("viewport"))
+            game = Game(win, session, touch, size, f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}",
+                        plan.get("viewport"))
             began = time.monotonic()
             for n, step in enumerate(plan["steps"], 1):
                 done = {"step": n, "line": step_line(n, step), "ok": True}
+                started_at = time.monotonic()
                 try:
                     done["said"], extra = do_step(game, step, n, shots)
                     done.update(extra or {})
@@ -518,6 +593,9 @@ def play(plan: dict, shots: Path):
                 win.evaluate("0", session=session)      # the errors the step caused have arrived
                 done["errors"] = oe.runtime_errors(win)
                 steps.append(done)
+                if game.recording:      # its timeline places the step
+                    game.recording[1].steps.append({k: done[k] for k in ("step", "line", "ok", "said", "errors")}
+                                                   | {"start": started_at, "end": time.monotonic()})
                 if not done["ok"]:
                     break
             seconds = time.monotonic() - began

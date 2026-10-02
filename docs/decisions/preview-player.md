@@ -57,6 +57,15 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   The browser's screencast cannot do it: with the window's size emulated it
   sends no frame, or a strip. Construct's Video Recorder plugin records the
   canvas with its sound, but only in a project that has the object.
+- A recording is for reviewing what happened. Its `watch` expressions are
+  read with every frame, and `timeline.json` puts the frames, the steps that
+  ran and the errors on one clock; the agent gets the watched values' changes
+  printed, the user a page beside the frames that plays them, steps through
+  them and jumps to a step.
+- A run starts from a first launch: the browser profile is kept between runs
+  for its cache, and with it the preview's Local Storage and IndexedDB, where
+  a game keeps its save, so one run's save changed the next run's start.
+  `keep_saves` keeps them for a returning player.
 - The runtime is reached through `assets/runtime-probe.js`, the same file
   `open_in_editor.py --state` and an agent's own script use, documented in
   `references/reading-the-runtime.md`.
