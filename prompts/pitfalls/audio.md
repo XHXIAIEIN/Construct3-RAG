@@ -30,7 +30,8 @@ where Web Audio lives).
   the Play call, not from its start, so it runs ahead by the scheduling lead.
   Compute a beat grid from `CurrentTime` minus a stored start time, and test
   grid points by integer step numbers, never by `%` on float seconds.
-  [runtime: main.js `Play()` sets `_playStartTime` at the call]
+  [runtime: main.js `Play()` sets `_playStartTime` at the call; reported as
+  Scirra/Construct-bugs#9290, open]
 - *Set playback rate* changes every instance whose tags match, including
   sounds still ringing from earlier plays: a pitch per play needs a one-off
   tag per play (`"sfx p" & Serial`), and no rate action when the rate is 1.
@@ -77,7 +78,7 @@ where Web Audio lives).
   grid handles *On resumed* with *Stop all* and a fresh start of its
   schedule; *Stop* in *On suspended* does not help. [runtime: main.js
   `_SetSuspended` calls each instance's `SetSuspended`; `Stop()` leaves
-  `_resumeMe`]
+  `_resumeMe`; the *Stop* case reported as Scirra/Construct-bugs#9289, open]
 - *Stereo pan* goes through a `StereoPannerNode`, which on a stereo sound
   folds one channel into the other: at ±20 the near channel gets the far one
   at cos(0.4π) ≈ 0.31, so a file limited to −3 dBFS can peak near −1 dBFS,

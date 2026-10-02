@@ -1444,7 +1444,8 @@ class Checker:
         for t in self.created:
             if t in p.types and t not in self.templates:
                 self.warn(f"{t} is created at runtime but has no instance in any layout: "
-                          f"it is created with default properties")
+                          f"it is created, but its behavior properties read 0 (a Bullet does not "
+                          f"move); place one in a layout that never runs")
 
     # --- uniqueness, project files, addons ----------------------------------------------------
     def check_uniqueness(self) -> None:

@@ -4,12 +4,17 @@ Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md).
 
 - *Create object* picks only the new instance, plus the created children when
-  *Create hierarchy* is on; container siblings are created too. Whether the new
-  instance is also picked in its families is undocumented. To act on it through
-  the family, use *System: Pick last created* with the family in a sub-event;
-  the manual names that as the way to pick a created instance from its family.
-  [manual: system-reference/system-actions.md "Create object";
-  system-reference/system-conditions.md "Pick last created"]
+  *Create hierarchy* is on; container siblings are created too. Its families
+  are not picked: a family action after *Create object* in the same action
+  list acts on every other instance of the family and misses the new one. To
+  act on it through the family, use *System: Pick last created* with the
+  family in a sub-event; the manual names that as the way to pick a created
+  instance from its family. [manual: system-reference/system-actions.md
+  "Create object"; system-reference/system-conditions.md "Pick last created";
+  observed in a minimal project, r504 preview, 2026-10-02: `Create object
+  BladeEnemy` then `Enemies: Set X 777` moved the 19 instances already there
+  and not the new one; *Pick last created Enemies* in a sub-event picked the
+  new one alone]
 - A type that is both in the parent's container and among its children in the
   template's hierarchy is created once when the parent is created with
   *Create hierarchy* on: the container sibling and the hierarchy child are the
@@ -29,15 +34,22 @@ Sources and the rule for adding an entry are in the index,
   project, r503 preview, 2026-09-28: a custom action on 3 picked slots
   created 1 instance, 3 once the block held *For each*]
 - A runtime-created instance takes its properties from an existing instance or
-  the named template. Keep one template instance per runtime-created object in
-  a layout that never runs. [same; creation with zero instances anywhere is
-  unverified]
+  the named template. An object with no instance in any layout is still
+  created, with its image and size, but its behavior properties read 0: a
+  Bullet created that way has speed 0 and never moves, where the addon's
+  default is 400. Keep one template instance per runtime-created object in a
+  layout that never runs. [same; observed in a minimal project, r504
+  preview, 2026-10-02: the Laser of the official example families, its one
+  layout instance removed, was created 52×27 and visible with Bullet speed 0;
+  with the instance kept, speed 400]
 - A Particles object given a Sprite as its *Object* spawns real instances:
   *On created* fires for each, and they are not children of the emitter (the
   example parents them by hand). Per-particle state such as a colour frame
   comes from *On created* plus *Pick nearest* emitter, read from the emitter's
   instance variable. [example: child-particles; observed in a game
-  project, 2026-09-17, unverified at runtime]
+  project, 2026-09-17; observed in that example, r504 preview, 2026-10-02:
+  with its parenting event turned off, 49 of 50 particle sprites had no
+  parent]
 - A created instance is picked in its own event and that event's
   sub-events, and *Pick by unique ID* finds it anywhere; no other condition
   (*Pick all*, *Pick random*, *Compare instance variable*, overlap) finds it

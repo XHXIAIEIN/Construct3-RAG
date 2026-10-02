@@ -39,11 +39,16 @@ Sources and the rule for adding an entry are in the index,
   [examples: berry-harvester ProgressBar, jetpack FuelBar, flatland-golf
   PowerBarCover, test-your-might MightLevelBar (0.5, 1)]
 
-- Drawing Canvas *Fill polygon* draws nothing when two consecutive points of
-  the polygon coincide, a closing point that repeats the first one included;
-  the rest of the sheet runs on and no error is logged. Add a closing point
-  only when it is a point of its own, or count the points in a variable and
-  loop over that. [observed in a game project, r502 preview, 2026-09-24]
+- Drawing Canvas *Fill polygon* with *Convex* off draws nothing when two
+  consecutive points of the polygon coincide, a closing point that repeats
+  the first one included; the rest of the sheet runs on and no error is
+  logged. With *Convex* on the same points fill. Add a closing point only
+  when it is a point of its own, or count the points in a variable and loop
+  over that; a convex shape can also tick *Convex*. [observed in a game
+  project, r502 preview, 2026-09-24; observed in a minimal project, r504
+  preview, 2026-10-02: a square filled 5776 pixels, the same square with its
+  first point, a middle point or a closing point repeated filled 0, and all
+  three filled 5776 with *Convex* on]
 - A blend mode such as *Destination in* only touches the pixels under the
   object's own quad: a mask sprite the size of the shape it reveals leaves
   everything outside its bounding box untouched, and the layer needs *Force
@@ -94,7 +99,10 @@ Sources and the rule for adding an entry are in the index,
   it. Pick the children (*Pick children*) and move every part to the top,
   bottom part first, as the parts should stack. [manual:
   plugin-reference/common-features/common-actions.md "Move to top", "top of
-  its current layer"; observed in a game project, r503 preview, 2026-09-29]
+  its current layer"; observed in a game project, r503 preview, 2026-09-29;
+  observed in a minimal project, r504 preview, 2026-10-02, through the
+  scripting `moveToTop()`: the parent went from Z index 10 to the top, its
+  child stayed below an instance created after it]
 - *Set color* is a tint: each channel of the image is multiplied by the
   colour, white restoring the original. A part drawn in white takes the
   colour exactly and black outlines stay black, but white highlights are

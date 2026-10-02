@@ -67,7 +67,9 @@ Sources and the rule for adding an entry are in the index,
   a child, so a lifted parent can be drawn above everything while its parts
   stay under an outline. [releases: beta.json, "hierarchy information not
   duplicated properly if connections were setup between instances in
-  different layers"; observed in a game project, 2026-09-17, unverified at runtime]
+  different layers"; observed in a game project, 2026-09-17; observed in a
+  minimal project, r504 preview, 2026-10-02: a child on another layer than
+  its parent kept the parent and moved 40 px with it]
 - *ChildCount*, *Compare child count* and *Has children* count every attached
   child whatever its type. A second child type on the same parent shifts
   every count that meant one type. Get the

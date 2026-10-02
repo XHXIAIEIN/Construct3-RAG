@@ -44,7 +44,9 @@ custom ease are written in the project files is in
   copies of `SwordSlash` played on that instance. Keep no timeline name
   inside another's when both play on the same object. [runtime: exported
   c3runtime.js r504, `TimelineManager.GetTimelineOfTemplateForInstances`
-  tests `t.GetName().includes(e.GetName())`; not reproduced]
+  tests `t.GetName().includes(e.GetName())`; reported as
+  Scirra/Construct-bugs#9288, closed 2026-10-01 as fixed in the next beta
+  after r504]
 - *Stop* puts the playhead back to 0 and applies it in the same tick, so a
   relative timeline stopped midway takes its offsets back, also while it is
   paused, set by *Set time*, playing backwards or layered with another
@@ -61,7 +63,10 @@ custom ease are written in the project files is in
   in a minimal project, r495.2 and r504 preview, 2026-10-01: a relative X
   track at +121 px and an angle track at −57°, on a hierarchy child too,
   read 0 in the tick of *Stop* from each of those states, and a finished
-  one kept +484 px after *Stop* and read 0 after *Set time* 0]
+  one kept +484 px after *Stop* and read 0 after *Set time* 0. The finished
+  case was reported as Scirra/Construct-bugs#9287, closed 2026-09-30: the
+  next beta after r504 sets the time to 0 on *Stop* of a timeline that is
+  not playing; *Set time* 0 works in both]
 - *Set time* pauses a playing timeline where it puts it, and on one that
   was just played in the same action list it takes it off the schedule and
   applies the pose, which creates an instance's copy without playing it. It
@@ -93,9 +98,10 @@ custom ease are written in the project files is in
   `Interpolate`; observed in a game project, r504 preview, 2026-10-01: a
   sprite created at a sword's position in the trigger started 12 px off the
   pose drawn at the keyframe, and after *Wait 0* matched it within 1 px;
-  reported as Scirra/Construct-bugs#9291, open, 2026-10-01: in the trigger
-  `Time` reads the keyframe's time while a discrete track still holds the
-  value before the keyframe]
+  reported as Scirra/Construct-bugs#9291: in the trigger `Time` reads the
+  keyframe's time while a discrete track still holds the value before the
+  keyframe; closed 2026-10-01, to be fixed in the first beta after the next
+  stable release, where the *Wait 0* is no longer needed]
 - A negative playback rate plays a timeline back to 0, where it finishes:
   *Set playback rate* −3 on a windup cancelled midway takes the pose back
   smoothly, and a relative timeline ends with its offsets gone. Set a

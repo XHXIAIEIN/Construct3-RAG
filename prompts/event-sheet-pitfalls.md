@@ -168,7 +168,7 @@ Drawing Canvas polygons or blend modes.
 - *Set width* stretches a Sprite, repeats a Tiled Background and stretches a 9-patch's middle.
 - A Tiled Background's image scale is a percentage in events and a fraction in the layout file, and a growing Y offset moves the image down: multiply the fraction by 100, and scroll upward with a falling offset.
 - A bar grows from its origin: put the origin on the edge it grows from.
-- Drawing Canvas *Fill polygon* draws nothing when two consecutive points coincide.
+- Drawing Canvas *Fill polygon* with *Convex* off draws nothing when two consecutive points coincide: repeat no point.
 - A blend mode touches only the pixels under the object's own quad, and the layer needs *Force own texture*.
 - A Text object draws only the lines that fit its height: size the box for the longest text.
 - A single line taller than its Text box draws with the bottom of its glyphs cut off.
@@ -214,10 +214,10 @@ instance, or control a timeline by tags, keyframes or playback rate.
 Read [pitfalls/creating-objects.md](pitfalls/creating-objects.md) when the
 events create or spawn instances, or a Particles object spawns a Sprite.
 
-- *Create object* picks only the new instance; reach it through a family with *Pick last created*.
+- *Create object* picks the new instance in its type, not in its families: a family action after it moves every other instance; reach it through the family with *Pick last created*.
 - A part in both the parent's container and its template hierarchy is created once: put it in both to have it picked with the parent and follow it.
 - *Create object* runs once per event, however many instances are picked.
-- A runtime-created instance copies an existing instance or template: keep one per object in a layout that never runs.
+- A runtime-created instance copies an existing instance or template, and without one its behavior properties read 0: keep one per object in a layout that never runs.
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
 - A created instance is found outside its own event only by UID, until the top-level event ends.
 

@@ -26,7 +26,9 @@ Sources and the rule for adding an entry are in the index,
   8 Direction and Car have the same property. At speed 0 the angle of motion
   is 0 and cannot be set: set the speed first, then the angle. [manual:
   behavior-reference/bullet.md "Set angle", "Set angle of motion",
-  "AngleOfMotion"; behavior-reference/8-direction.md "Set angle"]
+  "AngleOfMotion"; behavior-reference/8-direction.md "Set angle"; Ashley in
+  Scirra/Construct-bugs#6105: by design, set the angle of motion again
+  after the speed]
 - The origin is image point 0 and the point X, Y and rotation refer to; the
   editor puts it at the centre (`originX`, `originY` 0.5 in the layout
   file), so a sprite at the layout's edge shows half. Position by an image
