@@ -79,6 +79,9 @@ Without it, runs drew plain shapes in roles of `PALETTE` and scored as well.
    skills share and the one with no counterpart here.
 6. **A critic subagent or a model-scored rubric.** It finds what no check
    does and cannot be scored; an eval may use one, the flow does not need it.
+7. **Copy an official example's art into the project.** The examples'
+   images carry no names that say what an asset is or what part it plays,
+   so an agent cannot choose one for a role.
 
 ## Decision
 
@@ -110,9 +113,8 @@ Option 3, with one bullet of option 2 in
   play: check the colours under the label's box, not the layer's.
 - The editor's preview is reachable from the session: try option 5,
   measured on the eval cases.
-- A route to real art is built (CC0 packs, a kit of the examples, an image
-  model): the icon checks, a box on the grid and 3:1 against the backdrop,
-  go with it.
+- A route to real art is built (CC0 packs or an image model): the icon
+  checks, a box on the grid and 3:1 against the backdrop, go with it.
 - A HUD sprite of one colour does not show on the layer behind it: check
   the UI layer's images in `no_overlap()`.
 - The example clone updates: rerun the look survey.

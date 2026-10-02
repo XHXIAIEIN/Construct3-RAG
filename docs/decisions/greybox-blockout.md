@@ -273,5 +273,5 @@ template value it names drift apart.
   differ by more than one unit.
 - A game needs more than three accents: the vocabulary is too small for it,
   or the game is past the blockout.
-- Real art arrives, from the user, a kit of the examples or an image model:
-  the blockout gives way, and its grids and pacing stay.
+- Real art arrives, from the user or an image model: the blockout gives
+  way, and its grids and pacing stay.
