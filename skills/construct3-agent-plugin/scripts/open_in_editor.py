@@ -35,6 +35,11 @@ preview needs the profile within about 190 characters; a deeper project, on a
 volume without 8.3 short names, is refused with how to pass --profile, a
 shorter folder for it.
 
+Every result, the error stacks and the state included, goes to
+.tmp/open-in-editor.json and a screenshot of the editor per project to
+.tmp/shots/; the last line names both. Read a cut-off result there instead of
+running the project again.
+
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
 above them: every project.c3proj and .c3p below it is opened, .tmp/ left out.
@@ -233,6 +238,15 @@ def scratch(folder: Path) -> Path:
     if not (path / ".gitignore").exists():
         (path / ".gitignore").write_text("*\n", encoding="utf-8")
     return path
+
+
+def kept(out: Path | None, shots: Path | None, first: Path) -> tuple[Path, Path]:
+    """Where the results and the screenshots go, .tmp/ of the first project unless named: a run
+    whose printed lines a pipe cut is read again from the file instead of run again."""
+    if out and shots:
+        return out, shots
+    tmp = scratch(first)
+    return out or tmp / "open-in-editor.json", shots or tmp / "shots"
 
 
 def write_c3p(project: Path) -> Path:
@@ -783,10 +797,20 @@ def report(result: dict) -> list[str]:
     lines += [f"  warning: {w}" for w in result.get("warnings", [])]
     if result["status"] == "timeout":
         lines.append(f"  editor: no answer in 45 seconds, the title is {result['title']!r}; "
-                     f"--shots DIR saves what the editor shows")
+                     f"its screenshot shows what the editor shows")
     if result["exception"]:
         lines.append(f"  exception: {result['exception'].splitlines()[0]}")
     return lines
+
+
+def failed(result: dict) -> bool:
+    return result["status"] != "opened" or bool(result.get("preview", {}).get("errors"))
+
+
+def summary(results: list[dict], previewed: bool, out: Path, shots: Path) -> str:
+    done = "opened and ran without errors" if previewed else "opened"
+    return (f"{sum(not failed(r) for r in results)} of {len(results)} {done}; full results in {out}, "
+            f"screenshots in {shots}")
 
 
 def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
@@ -799,7 +823,7 @@ def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
 
     def one(i: int, project: Path) -> None:
         nonlocal printed
-        shot = args.shots / f"{i:03d}-{project.name}.png" if args.shots else None
+        shot = args.shots / f"{i:03d}-{project.name}.png"
         try:
             then = (lambda b, t, p: preview(b, (t, p), args.preview, args.state)) if args.preview is not None else None
             result = open_one(browser, editor, project, browser.profile / f"project-{i}.c3p", shot,
@@ -853,8 +877,10 @@ def main() -> int:
     ap.add_argument("--profile", type=Path, metavar="FOLDER",
                     help="keep the browser profile in FOLDER/editor-<browser> instead of the project's .tmp/, for a "
                          "project too deep for the preview's IndexedDB, which it then names")
-    ap.add_argument("--out", type=Path, help="write every result, dialogs and exceptions included, as JSON")
-    ap.add_argument("--shots", type=Path, help="save a screenshot of the editor per project into this folder")
+    ap.add_argument("--out", type=Path, help="write every result, dialogs and exceptions included, as JSON "
+                                             "(default: .tmp/open-in-editor.json in the project)")
+    ap.add_argument("--shots", type=Path, help="save a screenshot of the editor per project into this folder "
+                                               "(default: .tmp/shots in the project)")
     ap.add_argument("--jobs", type=int, default=2, help="projects open at once (default 2)")
     ap.add_argument("--headed", action="store_true", help="show the browser window")
     ap.add_argument("--limit", type=int, default=c3.LIMIT, metavar="CHARS",
@@ -892,8 +918,8 @@ def main() -> int:
                       "references/reading-the-runtime.md says.")
         return 3
 
-    if args.shots:
-        args.shots.mkdir(parents=True, exist_ok=True)
+    args.out, args.shots = kept(args.out, args.shots, projects[0] if projects[0].is_dir() else projects[0].parent)
+    args.shots.mkdir(parents=True, exist_ok=True)
     try:
         results = run(projects, editor, exe, args)
     except EditorNotLoaded as e:
@@ -906,21 +932,18 @@ def main() -> int:
               f"project with a browser tool of this session.", file=sys.stderr)
         return 2
     unprinted = sum(1 for r in results if r.pop("unprinted", False))
-    if args.out:
-        args.out.write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")
-    failed = [r for r in results if r["status"] != "opened" or r.get("preview", {}).get("errors")]
+    args.out.write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")
     if all(r["status"] == "error" for r in results):
         print("the editor did not load for any project. Check the network connection and --release, and run "
               "again; without a connection, ask the user to open the project in Construct 3 and paste the text "
               "of the dialog it shows.", file=sys.stderr)
         return 2
     if unprinted:
-        print(f"{unprinted} results not printed in full: --out FILE keeps every one, --limit 0 prints them")
-    done = "opened" if args.preview is None else "opened and ran without errors"
-    print(f"{len(results) - len(failed)} of {len(results)} {done}" + (f"; full results in {args.out}" if args.out else ""))
-    if any(r["status"] != "opened" for r in failed):
+        print(f"{unprinted} results not printed in full: {args.out} keeps every one, --limit 0 prints them")
+    print(summary(results, args.preview is not None, args.out, args.shots))
+    if any(r["status"] != "opened" for r in results):
         print(NEXT)
-    if any(r.get("preview", {}).get("errors") for r in failed):
+    if any(r.get("preview", {}).get("errors") for r in results):
         print(NEXT_PREVIEW)
     return 1 if failed else 0
 

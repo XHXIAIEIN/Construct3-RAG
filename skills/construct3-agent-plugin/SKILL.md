@@ -208,11 +208,13 @@ not held to this. `--dry-run` does all of that and writes nothing.
    Warnings do not fail the run; a project an agent wrote should have none.
 4. Repeat until the last line starts with `ok:`.
 5. Open and preview it in the editor:
-   `python scripts/open_in_editor.py --preview --shots .tmp/shots`.
+   `python scripts/open_in_editor.py --preview`.
    The browser runs headless, so the user sees no window and may think
    the editor never opened: show them the saved screenshot,
    `.tmp/shots/000-<project>.png`, with the result, attached or read with
-   the image tool of this session, every time the script runs.
+   the image tool of this session, every time the script runs. Every
+   result is also kept in `.tmp/open-in-editor.json`: read a cut-off one
+   there instead of running the project again.
    `--headed` shows the window instead, when the user asks to watch.
    `opened` with
    `preview: ... no errors` is the hand-over. `failed` prints the editor's

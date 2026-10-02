@@ -69,6 +69,24 @@ def opener():
     return oe
 
 
+def test_open_in_editor_keeps_the_results_and_screenshots_in_the_project_by_default(tmp_path):
+    """A run piped through tail or head loses the lines it cut, and a run without --shots shows
+    nothing: sessions ran the same preview again only to see them (game projects' transcripts,
+    2026-09-27 to 10-02). Both are kept whatever the flags."""
+    oe = opener()
+    assert oe.kept(None, None, tmp_path) == (tmp_path / ".tmp" / "open-in-editor.json", tmp_path / ".tmp" / "shots")
+    assert (tmp_path / ".tmp" / ".gitignore").read_text(encoding="utf-8") == "*\n"
+    assert oe.kept(tmp_path / "a.json", tmp_path / "s", tmp_path) == (tmp_path / "a.json", tmp_path / "s")
+
+
+def test_open_in_editor_names_where_it_kept_them_in_its_last_line(tmp_path):
+    oe = opener()
+    opened = {"status": "opened", "preview": {"errors": []}}
+    line = oe.summary([opened, {"status": "failed"}], True, tmp_path / "r.json", tmp_path / "shots")
+    assert line == f"1 of 2 opened and ran without errors; full results in {tmp_path / 'r.json'}, " \
+                   f"screenshots in {tmp_path / 'shots'}", line
+
+
 def opened_with(preview: dict) -> list[str]:
     return opener().report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
                             "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [], "exception": "",
