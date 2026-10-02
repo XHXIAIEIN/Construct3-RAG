@@ -48,9 +48,9 @@ that changes which events are written goes to
   project, r504 preview, 2026-09-30: a *Pick parent* with *Own* that could
   not reach a grandparent passed the five-second preview and left a piece
   idle on its battle slot at the first drag by hand]
-- A headless preview ticks at the display's rate, as a visible one does, but
-  the window loads for part of the preview's seconds: `--preview 5` runs the
-  game about 4 seconds, and once ran it under one. The `preview:` line gives
+- A preview ticks at the display's rate, headless or headed, but the window
+  loads for part of the preview's seconds: `--preview 5` runs the game
+  about 4 seconds, and once, headed, ran it under one. The `preview:` line gives
   the runtime's own ticks and wall time; an event that waits for a time
   longer than that has not run. Pass more seconds for it. [observed in
   official examples and a game project, r504 preview in Edge and Chrome,
