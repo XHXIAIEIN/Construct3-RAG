@@ -51,6 +51,7 @@ opened once before it is handed over.
 | `scripts/export_project.py` | Export the project to Web (HTML5) in the editor into `--to`, `--bump` raising its version. The editor exports for a subscribed account, which the user logs in to: read [references/export-project.md](references/export-project.md) before the first export of a project, when the script stops, or before passing `--attach` |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
+| `assets/runtime-probe.js` | Evaluated in a running preview by a script of the agent's, reads the game's state: positions, variables, animations, behaviors. Read [references/reading-the-runtime.md](references/reading-the-runtime.md) before checking what an event did in the preview |
 
 Each prints its options and examples with `--help`. `--locale zh-CN` switches
 names and wording to Chinese; ids are the same in every locale. A harness cuts

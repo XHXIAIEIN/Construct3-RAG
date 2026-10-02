@@ -43,7 +43,8 @@ that changes which events are written goes to
   starts; it says nothing about an event that waits for a drop, a merge or
   a deployment. Such an event is verified by sending the input (the
   bullets above) and reading instance state every few frames until the
-  flow has run through, then it is handed over. [observed in a game
+  flow has run through ([reading-the-runtime.md](reading-the-runtime.md)),
+  then it is handed over. [observed in a game
   project, r504 preview, 2026-09-30: a *Pick parent* with *Own* that could
   not reach a grandparent passed the five-second preview and left a piece
   idle on its battle slot at the first drag by hand]
