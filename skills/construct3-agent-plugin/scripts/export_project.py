@@ -241,7 +241,7 @@ def wait_for_login(page) -> str:
 
 def click(page, x: float, y: float) -> None:
     page.call("Input.dispatchMouseEvent", type="mouseMoved", x=x, y=y)
-    time.sleep(0.3)
+    time.sleep(0.1)
     for kind in ("mousePressed", "mouseReleased"):
         page.call("Input.dispatchMouseEvent", type=kind, x=x, y=y, button="left", clickCount=1)
 
@@ -268,14 +268,14 @@ DISMISS_JS = r"""[...document.querySelectorAll('dialog[open]')].filter(d => d.id
   .forEach(d => d.querySelector('ui-close-button, .cancelButton, .okButton')?.click())"""
 
 
-def press(page, scope: str, text: str, settle: float = 1.0) -> None:
-    for _ in range(20):
+def press(page, scope: str, text: str, settle: float = 0.3) -> None:
+    for _ in range(50):
         at = page.evaluate(f"{FIND_JS}({json.dumps(scope)}, {json.dumps(text)})")
         if at:
             click(page, *at)
             time.sleep(settle)
             return
-        time.sleep(0.5)
+        time.sleep(0.2)
     raise Stop(f"no '{text}' in the editor; it shows {json.dumps(page.evaluate(DIALOG_JS))}")
 
 
@@ -283,7 +283,7 @@ def open_menu(page) -> None:
     at = page.evaluate("(() => { const r = document.getElementById('mainMenuButton').getBoundingClientRect(); "
                        "return [r.x + r.width / 2, r.y + r.height / 2]; })()")
     click(page, *at)
-    time.sleep(0.8)
+    time.sleep(0.3)
 
 
 def project_title(project: Path) -> str:
@@ -297,14 +297,14 @@ def close_project(page, project: Path) -> None:
         return
     page.evaluate(DISMISS_JS)
     open_menu(page)
-    press(page, "menu", "Project", 0.6)
-    press(page, "menu", "Close project", 1.5)
-    if page.evaluate(FIND_JS + "('dialog', \"Don't save\")"):
-        press(page, "dialog", "Don't save", 1.5)
-    for _ in range(20):
+    press(page, "menu", "Project", 0.2)
+    press(page, "menu", "Close project", 0.3)
+    for _ in range(50):     # the editor asks to save a project it holds as changed
         if not page.evaluate("document.title").startswith(project_title(project)):
             return
-        time.sleep(0.5)
+        if page.evaluate(FIND_JS + "('dialog', \"Don't save\")"):
+            press(page, "dialog", "Don't save", 0.3)
+        time.sleep(0.2)
     raise Stop(f"the project did not close; the editor shows {json.dumps(page.evaluate(DIALOG_JS))}")
 
 
@@ -346,20 +346,24 @@ ZIP_JS = r"""(async () => {
 def export(page) -> bytes:
     """Project > Export > Web (HTML5); the zip it makes."""
     open_menu(page)
-    press(page, "menu", "Project", 0.6)
-    press(page, "menu", "Export", 1.5)
-    press(page, "dialog", "Web (HTML5)", 0.5)
-    press(page, "dialog", "Next", 2)
-    dialog = page.evaluate(DIALOG_JS)
-    if not dialog or dialog["id"] != "exportStandardOptionsDialog":
+    press(page, "menu", "Project", 0.2)
+    press(page, "menu", "Export", 0.5)
+    press(page, "dialog", "Web (HTML5)", 0.2)
+    press(page, "dialog", "Next", 0.3)
+    for _ in range(50):     # until then the Next found is the one just pressed
+        dialog = page.evaluate(DIALOG_JS)
+        if dialog and dialog["id"] == "exportStandardOptionsDialog":
+            break
+        time.sleep(0.2)
+    else:
         raise Stop(f"the export options did not open; the editor shows {json.dumps(dialog)}")
     page.evaluate(OPTIONS_JS)
-    press(page, "dialog", "Next", 2)
-    for _ in range(EXPORT_WAIT):
+    press(page, "dialog", "Next", 0.3)
+    for _ in range(EXPORT_WAIT * 2):
         dialog = page.evaluate(DIALOG_JS)
         if dialog and dialog["id"] == "webExportReportDialog":
             break
-        time.sleep(1)
+        time.sleep(0.5)
     else:
         raise Stop(f"the export did not finish in {EXPORT_WAIT // 60} minutes; the editor shows {json.dumps(dialog)}")
     size = page.evaluate(ZIP_JS, wait=120)
