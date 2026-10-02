@@ -9,18 +9,24 @@ the input sent into it do, and
 `state` step does not print. Read this before writing the plan for a change
 the player triggers or sees: a drag, a merge, a jump, a hint, a sound.
 
-A lesson about planning such a check goes here, one bullet each with its
-source, in the section it belongs to; a fact about the editor or the preview
-goes to `editor-and-preview.md`.
+A lesson about planning such a check goes into the step or row it
+sharpens: rewrite that rule so it covers the lesson, and keep one source
+per step, the one that shows the rule most plainly. A lesson no step covers
+becomes a step with its source. The file is read for every kind of game, so
+a source from one game shows the rule and does not narrow it; a list of one
+game's cases under a step would be copied into games it does not fit. A fact
+about the editor or the preview goes to `editor-and-preview.md`.
 
 ## Steps
 
-1. **Name the cases before the plan.** Each change has a case it is
-   written for, a neighbouring case where it must not fire, the case the
-   game falls back to there, and a follow-through: the player does what the
-   game asked and the state that asked for it clears. Play every one; a
-   plan that plays only the first passes a condition that fires
-   everywhere. [observed in a game project, r504 preview, 2026-10-02: an
+1. **Name the cases before the plan.** A change that adds or moves a
+   condition has a case it is written for, a neighbouring case where it
+   must not fire, the case the game falls back to there, and a
+   follow-through: the player does what the game asked and the state that
+   asked for it clears. Play every one; a plan that plays only the first
+   passes a condition that fires everywhere. A change with no condition of
+   its own, a colour, a size, a duration, a volume, has one case: reach the
+   scene where it shows and read it as step 4 says. [observed in a game project, r504 preview, 2026-10-02: an
    idle hint to deploy a piece was played with the slot's column holding an
    enemy, without one, where it had to fall back to a merge hint, and
    followed through by dragging as the hand showed]
@@ -66,10 +72,15 @@ goes to `editor-and-preview.md`.
    logs no error and never reached the event says nothing; a run that logs
    an error after a direct write may say nothing about the events either.
    Report which cases were played, the result read in each, and any value
-   the plan forced. What is judged by eye, a motion's feel or timing, goes
-   to the user as the recording's review page, `NN-NAME.html`: they play it
-   frame by frame, select a part that looks wrong and copy it back as a
-   task. [design: docs/decisions/preview-player.md, the bullets on
+   the plan forced. Judge a motion's feel and timing from the recording
+   first: where it starts, overshoots and rests, and how long each part
+   takes, against the row for the same effect in
+   `Construct3-RAG/prompts/references/feel.md` where there is one. The
+   report says what the values show and which part looks off, or that the
+   values cannot settle it. The recording's review page, `NN-NAME.html`,
+   then goes to the user for what is left to the eye: they play it frame by
+   frame, select a part that looks wrong and copy it back as a task.
+   [design: docs/decisions/preview-player.md, the bullets on
    `record` and the review page]
 
 ## By kind of game
