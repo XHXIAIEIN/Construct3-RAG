@@ -2,33 +2,46 @@
 
 **English** | [中文](README_CN.md)
 
-Structured, bilingual reference data for [Construct 3](https://www.construct.net): plugins, behaviors, ACEs, effects, example projects, scripting interfaces, and the raw language packs. Everything under `data/` is committed JSON and `.d.ts` that a script or an LLM can read directly. An optional service adds keyword lookup on top.
+Construct3-RAG lets an AI agent make and change [Construct 3](https://www.construct.net) games: it looks up the exact conditions, actions and expressions, reads and edits event sheets, checks the project and opens it in the editor to confirm it loads. The tools come as the [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill, installed into the game project.
 
-## Set up from this link
+How to start:
 
-Run both commands as written, from any directory:
+- To set an agent up for a game project, follow [Set up](#set-up).
+- To answer a Construct 3 question from this clone, follow [Look something up](#look-something-up).
+- To change this repository, read [`AGENTS.md`](AGENTS.md).
+
+## Set up
+
+Git and Python 3.10 or later are needed. Run both commands as written, from any directory:
 
 ```bash
 git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct3-RAG
 python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-They put this clone, the repositories it reads and the `MyGame` project together in `$HOME/Construct3`, and install the `construct3-agent-plugin` skill in `MyGame` with its `AGENTS.md` and `CLAUDE.md`. Whatever is already there is left as it is, so the two are safe to run again; `--help` lists the flags. In `cmd.exe`, write `%USERPROFILE%` for `$HOME`. To keep everything somewhere else, write that folder into both commands in place of `$HOME/Construct3`.
+They put this repository, the three [related repositories](#related-repositories) and the `MyGame` project together in `$HOME/Construct3`, and install the skill in `MyGame`: the skill goes to `.agents/skills/`, a Construct 3 block into `AGENTS.md`, and the line `@AGENTS.md` into `CLAUDE.md`. In `cmd.exe`, write `%USERPROFILE%` for `$HOME`; to keep everything elsewhere, write that folder into both commands in place of `$HOME/Construct3`.
 
-`MyGame` starts as a copy of `data/c3-new-project`, the empty project the editor creates with **Project** > **New** and saves with **Save as** > **Save as project folder**. To start from an empty project saved on this machine instead, add `--template <that folder>` to the second command. For a game project that already exists, pass its folder to `--project`.
+For a game project that exists, give `--project` the path of its folder; a name alone creates a new project in `$HOME/Construct3`. A new project is a copy of `data/c3-new-project`, the empty project the editor creates with **Project** > **New** and saves with **Save as** > **Save as project folder**; `--template <folder>` copies an empty project of your own instead. When the agent reads skills from another folder, add `--into <folder>`, such as `--into .trae/skills` for TRAE. Run again, the script leaves the clones and instruction files that are there as they are and refreshes the skill from the clone; `--help` lists every flag.
 
-This works with any agent that reads `AGENTS.md`: the block written there names the skill's scripts and the clone that holds the schemas. The skill goes to `MyGame/.agents/skills/construct3-agent-plugin/`; for an agent that looks for skills in another folder, add `--into <that folder>` to the second command, such as `--into .trae/skills`. An agent that takes its project instructions from a file other than `AGENTS.md` needs a line in that file pointing to `AGENTS.md`, as `CLAUDE.md` does with `@AGENTS.md`.
+Then read `MyGame/AGENTS.md`; the script's last line names the first file to read. If the agent takes its project instructions from another file, such as `GEMINI.md`, first add a line to it that says to read `AGENTS.md`.
 
-Then read `MyGame/AGENTS.md`.
+### Claude Code plugin
 
-Claude Code users can install the skill as a plugin instead; the plugin is this whole repository, so the schemas come with it:
+Claude Code can install the plugin in place of the two commands. Use one or the other: both together leave two copies of the skill that update separately.
 
 ```bash
 claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
 ```
 
-This keeps a copy of the plugin, which `claude plugin update construct3@construct3-rag` brings up to the latest commit. With this repository already cloned, link the clone into Claude Code's skills folder instead, so that the plugin is read from the clone and a `git pull` reaches the next session: `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <the clone>` in PowerShell, `ln -s <the clone> ~/.claude/skills/construct3` elsewhere. Adding the clone as a marketplace copies all of it, ignored files included, into the plugin cache. Either way the game project needs no copy of the skill.
+The plugin is this whole repository, so the schemas come with it, and the skill's scripts run from the plugin's folder. Claude Code keeps a copy of the plugin, which `claude plugin update construct3@construct3-rag` brings up to the latest commit.
+
+With this repository already cloned, link the clone into Claude Code's skills folder instead of running these two commands. The plugin is then read from the clone, and a `git pull` reaches the next session:
+
+- PowerShell: `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <the clone>`
+- Elsewhere: `ln -s <the clone> ~/.claude/skills/construct3`
+
+Adding the clone as a marketplace copies all of it, ignored files included, into the plugin cache.
 
 ### What the skill's scripts run and reach
 
@@ -41,19 +54,17 @@ Everything is read from this repository's `data/` and from the game project; the
 - `preview_project.py`: opens the project the same way, previews it, and sends the taps, drags and key presses of a plan you or the agent wrote to that preview window, in the same browser. Screenshots and recordings go to `.tmp/preview/` of the game project; a recording is joined into a video by ffmpeg or Pillow where one is installed, with a page beside it to review it frame by frame and to copy a part of it as a task for an agent; `index.html` there lists every recording. Before each run it clears the saves the previews left in that browser profile.
 - `export_project.py`: drives the same editor in a headed browser to export the project to Web (HTML5), and unpacks the zip into the folder you name. The editor needs a subscription to export a large project; you log in yourself in that window and the script never sees or stores a credential. With `--attach` it connects to a browser of yours that has remote debugging turned on, and works only in a tab that has no project open.
 
-## Related repositories
+## Look something up
 
-Three more repositories, which `bootstrap.py` clones beside this one:
+Lookups run from the clone made in [Set up](#set-up), with Python 3.10 or later. For a condition, action or expression, run `lookup_ace.py` from the clone with the addon and a few words of the name. It prints each match with its parameters, its wording in the locale and the JSON to write:
 
-| Repository | What it holds | How it fits |
-|---|---|---|
-| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, Addon SDK guide, and Game Services docs as Markdown | `data/c3-schemas/` is the names and parameters; this is what they do. |
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as folder projects | `data/c3-examples/` is the metadata; this is the source. |
-| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects, and themes | `data/c3-ts-defs/sdk/` is the typed interface; this shows how to use it. |
+```bash
+python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale zh-CN
+```
 
-## Data files
+Use it for `System` and for the ACEs every world object shares in particular, the latter under any world object plugin, such as `Sprite overlap`: `plugins/system.json` and `plugins/_common.json` run to thousands of lines, more than most file tools read at once, and an ACE past the cut looks missing.
 
-No install needed. Pick a locale, `en-US` or `zh-CN`, and read. All paths are under `data/`.
+Everything else is read from the files. Paths are under `data/`; the locales are `en-US` and `zh-CN`.
 
 | Path | Content |
 |---|---|
@@ -69,13 +80,13 @@ No install needed. Pick a locale, `en-US` or `zh-CN`, and read. All paths are un
 | `c3-ts-defs/autocomplete-data.json` | Scripting class to methods and properties |
 | `c3-ts-defs/**/*.d.ts` | Full TypeScript interface signatures |
 
-Field names match the Construct CDN. Structural fields such as `id`, `scriptName`, `category`, and parameter types are identical in every locale, so an ACE found in one language can be read in the other. Field meanings, layout, and worked examples: [docs/guide/data-format.md](docs/guide/data-format.md).
+Field names match the Construct CDN. Structural fields such as `id`, `scriptName`, `category`, and parameter types are identical in every locale, so an ACE found in one language can be read in the other.
 
-## Reading the data
+To find an ACE in the files:
 
-1. Find the addon in `_index.json`. Its entry gives the `file` path and the ACE counts. If you only have a localized name, look it up in `{locale}/_index.json` first.
-2. Open `data/c3-schemas/{locale}/{file}` and locate the ACE by `id`, by `list-name` for conditions and actions, or by `translated-name` for expressions. `display-text` is the event sheet wording and `params` lists the parameters. If a world object's ACE is not in its file, it is in `plugins/_common.json`; the full list for a Sprite is its own file plus that one.
-3. For scripting, look the class up in `autocomplete-data.json`, then open the matching `.d.ts`.
+1. Find the addon in `c3-schemas/_index.json`; its entry gives the `file` path. With only a localized name, look the id up in `{locale}/_index.json` first.
+2. Open `c3-schemas/{locale}/{file}` and locate the ACE by `id`, by `list-name` for conditions and actions, or by `translated-name` for expressions. `display-text` is the event sheet wording and `params` lists the parameters. A world object's ACE that is not in its own file is in `plugins/_common.json`.
+3. For scripting, look the class up under `properties` in `autocomplete-data.json`, such as `ISpriteInstance`, then open its `.d.ts` in the plugin or behavior folder of the same name, such as `c3-ts-defs/plugins/general/sprite/c3runtime/ISpriteInstance.d.ts`.
 
 A condition from `en-US/plugins/sprite.json`:
 
@@ -90,13 +101,21 @@ A condition from `en-US/plugins/sprite.json`:
 }
 ```
 
-The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `display-text`, and parameter names.
+The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `display-text`, and parameter names. Field meanings and worked examples: [docs/guide/data-format.md](docs/guide/data-format.md). The full procedure for an agent, with deprecated ACEs and example projects, is section 2 of [`AGENTS.md`](AGENTS.md).
 
-## For AI agents and LLMs
+## Event sheet prompts
 
-Start with [`AGENTS.md`](AGENTS.md): the fact lookup procedure, the event sheet design procedure, and the rules for changing the code. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md), [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) and [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) together as the system prompt: structure in Construct terms (picking, families, containers, `Else`), output format and name verification, and the runtime facts that intuition gets wrong, one line each. The cases and sources behind those lines are in `prompts/pitfalls/`, one file per topic, read when the index says the events touch that topic. [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) is the authoring style of the official examples (groups and their variables, comments, names, UI text), for events written into a project. Each points to `prompts/references/` for material needed only sometimes, so that stays out of context until a task calls for it.
+To build an assistant that helps users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md), [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) and [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) together as the system prompt: structure in Construct terms (picking, families, containers, `Else`), output format and name verification, and the runtime facts that intuition gets wrong, one line each. The cases and sources behind those lines are in `prompts/pitfalls/`, one file per topic, read when the index says the events touch that topic. [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) is the authoring style of the official examples (groups and their variables, comments, names, UI text), for events written into a project. Each points to `prompts/references/` for material needed only sometimes, so that stays out of context until a task calls for it.
 
-An agent inside a game project reaches this repository through the [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the sheet editor, the checker, the editor opener, the preview player, the project packer and the generator template. The two commands at the top install it; `AGENTS.md` section 4 has the rule for a project that lacks it.
+## Related repositories
+
+Three more repositories, which `bootstrap.py` clones beside this one:
+
+| Repository | What it holds | How it fits |
+|---|---|---|
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, Addon SDK guide, and Game Services docs as Markdown | `data/c3-schemas/` is the names and parameters; this is what they do. |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as folder projects | `data/c3-examples/` is the metadata; this is the source. |
+| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects, and themes | `data/c3-ts-defs/sdk/` is the typed interface; this shows how to use it. |
 
 ## Lookup service (optional)
 
@@ -105,7 +124,7 @@ pip install -r src/requirements.txt
 python scripts/setup.py          # http://localhost:8765/playground
 ```
 
-This runs the deterministic offline lookup service over the committed data. It needs no database, no model and no network.
+This runs a deterministic, offline keyword lookup over the committed data, for a program that queries over HTTP. It runs locally on the files of the clone.
 
 Setup options, the `/search` and `/health` endpoints, and response shapes: [docs/guide/quick-start.md](docs/guide/quick-start.md) and [docs/guide/api-reference.md](docs/guide/api-reference.md).
 

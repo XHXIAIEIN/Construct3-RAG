@@ -13,9 +13,16 @@ follows a command block it is given.
 
 ## Decision
 
-- Both READMEs open with two commands: clone this repository into
-  `$HOME/Construct3`, then run
+- The first section of both READMEs, after three lines that route the
+  reader to setup, lookup or `AGENTS.md`, opens with two commands in one
+  block: clone this repository into `$HOME/Construct3`, then run
   `$HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame`.
+  The cases that change the command (an existing project as a path,
+  `--into`, `--template`) follow as one paragraph, and the last line says
+  to read the project's `AGENTS.md`, with the pointer from another
+  instruction file such as `GEMINI.md` in that same line: a small model
+  given the README alone skipped that pointer while it sat in a paragraph
+  among the options, and acts on the line that says what to read next.
 - The folder is written out because the working directory is what varies
   between sessions: a clone that lands somewhere new gets a second set of
   siblings, over a gigabyte, and neither side finds the other. Run again,

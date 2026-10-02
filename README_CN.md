@@ -2,82 +2,93 @@
 
 [English](README.md) | **中文**
 
-[Construct 3](https://www.construct.net) 的结构化双语参考数据：插件、行为、ACE、特效、示例项目、脚本接口和原始语言包。`data/` 下的内容都是已提交的 JSON 和 `.d.ts`，脚本或 LLM 可以直接读取。可选服务在数据之上提供关键词查找。
+帮 AI agent 做 [Construct 3](https://www.construct.net) 游戏：查到准确的条件、动作和表达式，读写事件表，检查项目，再放进编辑器里确认能打开。这些工具打包成 [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill，装进游戏项目里使用。
 
-## 从这个链接开始
+如何开始：
 
-两条命令照原样运行，在哪个目录都可以：
+- 要让 agent 接手一个游戏项目，看[安装](#安装)。
+- 要在本仓库里查 Construct 3 的资料，看[查找](#查找)。
+- 要修改本仓库，读 [`AGENTS.md`](AGENTS.md)。
+
+## 安装
+
+需要 Git 和 Python 3.10 以上。两条命令照原样运行，在哪个目录都可以：
 
 ```bash
 git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct3-RAG
 python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-它们把这个 clone、它要读的仓库和 `MyGame` 项目放在同一个 `$HOME/Construct3` 里，并把 `construct3-agent-plugin` skill 连同 `AGENTS.md` 和 `CLAUDE.md` 装进 `MyGame`。已经存在的都原样保留，所以这两条可以重复运行；`--help` 列出参数。`cmd.exe` 里把 `$HOME` 写成 `%USERPROFILE%`。想放在别处，就把两条命令里的 `$HOME/Construct3` 一起换成那个文件夹。
+它们把本仓库、三个[相关仓库](#相关仓库)和 `MyGame` 项目都放进 `$HOME/Construct3`，再把 skill 装进 `MyGame`：skill 复制到 `.agents/skills/`，`AGENTS.md` 里写一段 Construct 3 说明，`CLAUDE.md` 里加一行 `@AGENTS.md`。`cmd.exe` 里把 `$HOME` 写成 `%USERPROFILE%`；想放在别处，把两条命令里的 `$HOME/Construct3` 一起换掉。
 
-`MyGame` 从 `data/c3-new-project` 复制而来，即编辑器用 **项目** > **新建** 创建、再用 **另存为** > **保存为项目文件夹** 保存的空项目。想改用本机已保存的空项目，在第二条命令后加 `--template <那个文件夹>`。已有的游戏项目，把它的文件夹传给 `--project`。
+已有的游戏项目，`--project` 写项目文件夹的路径；只写名字会在 `$HOME/Construct3` 下新建项目。新项目复制自 `data/c3-new-project`，也就是编辑器 **项目** > **新建** 后 **另存为** > **保存为项目文件夹** 得到的空项目，加 `--template <文件夹>` 可以换成你自己保存的空项目。agent 从别的目录读 skill 时加 `--into <目录>`，比如 TRAE 写 `--into .trae/skills`。再次运行时，已有的 clone 和指令文件原样保留，skill 按 clone 更新；`--help` 列出全部参数。
 
-读 `AGENTS.md` 的 agent 都能这样用：写进去的那一块指明了 skill 的脚本和存放 schemas 的 clone。skill 装在 `MyGame/.agents/skills/construct3-agent-plugin/`；agent 从别的目录找 skill 时，在第二条命令后加 `--into <那个目录>`，例如 `--into .trae/skills`。agent 从 `AGENTS.md` 以外的文件读项目指令时，要在那个文件里加一行指向 `AGENTS.md`，就像 `CLAUDE.md` 里的 `@AGENTS.md`。
+之后读 `MyGame/AGENTS.md`，脚本最后一行会给出第一个要读的文件。agent 的项目指令文件是 `GEMINI.md` 这类时，先在里面加一行，让它去读 `AGENTS.md`。
 
-之后读 `MyGame/AGENTS.md`。
+### Claude Code plugin
 
-Claude Code 用户也可以把 skill 当插件装；插件就是整个仓库，schemas 随它一起到位：
+用 Claude Code 的话，也可以改装 plugin，代替上面两条命令。两种只选一种，同时装会有两份 skill 各自更新。
 
 ```bash
 claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
 ```
 
-这样装的插件是一份副本，`claude plugin update construct3@construct3-rag` 把它更新到最新提交。本机已经 clone 了这个仓库时，改为把 clone 链接进 Claude Code 的 skills 目录，插件就直接从 clone 读取，`git pull` 之后下一个会话就用上新版：PowerShell 里是 `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <clone 的路径>`，其他系统是 `ln -s <clone 的路径> ~/.claude/skills/construct3`。把 clone 添加为 marketplace 的话，整个 clone 连同被忽略的文件都会被复制进插件缓存。两种方式下游戏项目里都不需要 skill 副本。
+plugin 装的是整个仓库，schemas 一起带上，skill 的脚本直接在 plugin 的文件夹里运行。Claude Code 存的是一份副本，用 `claude plugin update construct3@construct3-rag` 更新到最新提交。
 
-### skill 的脚本运行什么、连到哪里
+如果本地已经 clone 了本仓库，可以不用上面两条命令，而是把 clone 链接到 Claude Code 的 skills 目录。这样 plugin 直接读 clone，`git pull` 之后，下一个会话就是新版：
 
-读的都是本仓库的 `data/` 和游戏项目；脚本不安装任何包，也不向我们的服务器发送任何东西。
+- PowerShell：`New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <clone 路径>`
+- 其他系统：`ln -s <clone 路径> ~/.claude/skills/construct3`
+
+把本地 clone 添加为 marketplace 的话，整个文件夹（包括被 git 忽略的文件）都会复制进 plugin 缓存。
+
+### skill 的脚本会做什么、访问哪里
+
+脚本只读本仓库的 `data/` 和游戏项目，不安装任何包，也不向我们的服务器发送任何数据。
 
 - `lookup_ace.py`、`print_sheet.py`、`check_project.py`、`check_look.py`：只读文件。
-- `edit_sheet.py`：在你指定的游戏项目里写事件表。
-- `install.py`：把 skill 复制进游戏项目，并在它的 `AGENTS.md` 和 `CLAUDE.md` 里加一段；`--dry-run` 先显示改动。
-- `open_in_editor.py`：启动本机的 Edge、Chrome 或 Chromium，无头运行，用游戏项目 `.tmp/` 里自己的 profile，在其中打开 Scirra 提供的编辑器 `https://editor.construct.net/`。项目是交给浏览器里的页面，不上传。它经 `127.0.0.1` 上的 DevTools 端口控制浏览器。
-- `preview_project.py`：用同样的方式打开项目并预览，再把你或 agent 写的计划里的点按、拖动和按键发给这个预览窗口，用的是同一个浏览器。截图和录屏存在游戏项目的 `.tmp/preview/`；本机装有 ffmpeg 或 Pillow 时，录屏的帧会合成视频，并配一个页面，用来逐帧复盘，也能选出一段复制成交给 agent 的任务；同一文件夹里的 `index.html` 列出所有录像。每次运行前，它会清掉这个浏览器 profile 里之前预览留下的存档。
-- `export_project.py`：在有界面的浏览器里驱动同一个编辑器，把项目导出为 Web (HTML5)，再把 zip 解到你指定的文件夹。超出限制的项目要订阅才能导出；登录由你在那个窗口里自己完成，脚本不读取也不保存任何凭据。`--attach` 连接你自己开了远程调试的浏览器，只在没有打开项目的标签页里工作。
+- `edit_sheet.py`：修改你指定的游戏项目里的事件表。
+- `install.py`：把 skill 复制到游戏项目，并在 `AGENTS.md` 和 `CLAUDE.md` 里加一段说明；加 `--dry-run` 可以先看会改什么。
+- `open_in_editor.py`：以无头模式启动本机的 Edge、Chrome 或 Chromium，使用游戏项目 `.tmp/` 下单独的配置目录，打开 Scirra 官方的编辑器 `https://editor.construct.net/`。项目是在浏览器里交给编辑器页面的，不会上传。脚本通过 `127.0.0.1` 上的 DevTools 端口控制浏览器。
+- `preview_project.py`：用同样的方式打开项目并预览，然后按你或 agent 写好的计划，在预览窗口里点击、拖动、按键。截图和录屏保存在游戏项目的 `.tmp/preview/`。本机装了 ffmpeg 或 Pillow 时，录屏会合成视频，并生成一个回看页面，可以逐帧查看，也可以截取一段作为任务交给 agent；同目录的 `index.html` 列出所有录像。每次运行前，它会清掉之前预览留在浏览器里的存档。
+- `export_project.py`：在有界面的浏览器里操作编辑器，把项目导出为 Web (HTML5)，再把 zip 解压到你指定的文件夹。项目较大时，编辑器需要订阅账号才能导出；登录由你自己在窗口里完成，脚本不会读取或保存任何账号信息。加 `--attach` 会连接你自己开启了远程调试的浏览器，并且只在没有打开项目的标签页里操作。
 
-## 相关仓库
+## 查找
 
-另外三个仓库，`bootstrap.py` 会把它们 clone 到本仓库旁边：
+在[安装](#安装)时 clone 下来的仓库里运行，需要 Python 3.10 以上。查条件、动作或表达式，用 `lookup_ace.py`，后面跟插件、行为或特效的名字，再加几个关键词。它会列出每个匹配项的参数、对应语言的显示文本，以及写进项目要用的 JSON：
 
-| 仓库 | 内容 | 与本仓库的关系 |
-|---|---|---|
-| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档的 Markdown 版 | `data/c3-schemas/` 是名称和参数，这里说明它们做什么。 |
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 示例浏览器中的全部示例，以文件夹项目形式保存 | `data/c3-examples/` 是元数据，这里是源文件。 |
-| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、特效和主题的模板与文档 | `data/c3-ts-defs/sdk/` 是类型接口，这里说明怎么用。 |
+```bash
+python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale zh-CN
+```
 
-## 数据文件
+查 `System` 的 ACE，或者所有世界对象共有的 ACE，一定要用这个脚本。查共有 ACE 时随便写一个世界对象就行，比如 `Sprite overlap`。原因是 `plugins/system.json` 和 `plugins/_common.json` 都有几千行，大多数读文件工具一次读不完，被截掉的 ACE 看起来就像不存在。
 
-无需安装。选择一个语言目录，`en-US` 或 `zh-CN`，直接读取。所有路径基于 `data/`。
+其他内容直接读文件。下表路径都在 `data/` 下，语言目录有 `en-US` 和 `zh-CN`。
 
 | 路径 | 内容 |
 |---|---|
-| `c3-schemas/_index.json` | 版本、语言列表，以及每个插件、行为、特效的文件路径和 ACE 数量。不含本地化名称 |
-| `c3-schemas/{locale}/_index.json` | 该语言下的插件、行为、特效名称，键与根索引相同 |
+| `c3-schemas/_index.json` | 版本号、语言列表，以及每个插件、行为、特效对应的文件和 ACE 数量。不含各语言的名称 |
+| `c3-schemas/{locale}/_index.json` | 插件、行为、特效在该语言下的名称，键和根索引一致 |
 | `c3-schemas/{locale}/plugins/{id}.json` | 条件、动作、表达式、属性 |
-| `c3-schemas/{locale}/plugins/_common.json` | 所有世界对象共有的 ACE：重叠、碰撞、实例变量、层级、UID、Z 序。只导出一次，不在各插件文件中重复；各插件文件在 `commonAces` 中列出自己拥有的那些 |
-| `c3-schemas/{locale}/behaviors/{id}.json` | 行为 ACE |
-| `c3-schemas/{locale}/effects/{id}.json` | 特效参数和分类 |
-| `c3-schemas/{locale}/_deprecated.json` | 编辑器已弃用的插件、行为、特效和 ACE，无论 schema 是否保留；有同名的现行 ACE 时一并给出 |
-| `c3-examples/{locale}/{id}.json` | 示例名称、描述、标签、使用的插件、打开链接 |
-| `c3-lang/{locale}.json` | CDN 原始语言包，每行一个字符串，用于对比版本和翻译 |
-| `c3-ts-defs/autocomplete-data.json` | 脚本类到方法和属性的映射 |
-| `c3-ts-defs/**/*.d.ts` | 完整 TypeScript 接口签名 |
+| `c3-schemas/{locale}/plugins/_common.json` | 所有世界对象共有的 ACE：重叠、碰撞、实例变量、层级、UID、Z 序。这些只存一份，不在每个插件文件里重复；插件文件用 `commonAces` 列出自己有哪些 |
+| `c3-schemas/{locale}/behaviors/{id}.json` | 行为的 ACE |
+| `c3-schemas/{locale}/effects/{id}.json` | 特效的参数和分类 |
+| `c3-schemas/{locale}/_deprecated.json` | 编辑器已弃用的插件、行为、特效和 ACE，不管 schema 里还有没有；有同名的新 ACE 时也会列出来 |
+| `c3-examples/{locale}/{id}.json` | 示例的名称、描述、标签、用到的插件、打开链接 |
+| `c3-lang/{locale}.json` | CDN 上的原始语言包，每行一条，用来对比版本和翻译 |
+| `c3-ts-defs/autocomplete-data.json` | 脚本里每个类有哪些方法和属性 |
+| `c3-ts-defs/**/*.d.ts` | 完整的 TypeScript 接口定义 |
 
-字段名与 Construct CDN 一致。`id`、`scriptName`、`category` 和参数类型等结构字段在所有语言中相同，在一种语言里找到的 ACE 可以直接在另一种语言里读取。字段含义、布局和完整示例见 [docs/guide/data-format.md](docs/guide/data-format.md)。
+字段名和 Construct CDN 保持一致。`id`、`scriptName`、`category`、参数类型这些结构字段在各语言里都一样，所以在一种语言里查到的 ACE，换到另一种语言也能直接对上。
 
-## 读取数据
+在文件里查 ACE 的步骤：
 
-1. 在 `_index.json` 中找到插件或行为，条目给出 `file` 路径和 ACE 数量。只知道中文名时，先在 `{locale}/_index.json` 中查到 id。
-2. 打开 `data/c3-schemas/{locale}/{file}`，用 `id` 定位 ACE；条件和动作也可以用 `list-name`，表达式用 `translated-name`。`display-text` 是事件表中的显示文本，`params` 列出参数。世界对象的 ACE 如果不在自己的文件里，就在 `plugins/_common.json`；Sprite 的完整 ACE 列表是自己的文件加上这一份。
-3. 脚本接口先在 `autocomplete-data.json` 中找到类名，再打开对应的 `.d.ts`。
+1. 在 `c3-schemas/_index.json` 里找到插件、行为或特效，条目里的 `file` 就是文件路径。只知道中文名时，先到 `{locale}/_index.json` 里查出 id。
+2. 打开 `c3-schemas/{locale}/{file}`，按 `id` 找 ACE；条件和动作也可以按 `list-name` 找，表达式按 `translated-name` 找。`display-text` 是事件表里显示的文字，`params` 是参数。世界对象的 ACE 在自己的文件里找不到时，去 `plugins/_common.json` 里找。
+3. 查脚本接口时，先在 `autocomplete-data.json` 的 `properties` 里找到类名，比如 `ISpriteInstance`，再到同名插件或行为的文件夹里打开对应的 `.d.ts`，比如 `c3-ts-defs/plugins/general/sprite/c3runtime/ISpriteInstance.d.ts`。
 
-`zh-CN/plugins/sprite.json` 中的一个条件：
+`zh-CN/plugins/sprite.json` 里的一个条件：
 
 ```json
 {
@@ -90,13 +101,21 @@ claude plugin install construct3@construct3-rag
 }
 ```
 
-`en-US/plugins/sprite.json` 中同一个 `id` 的条目携带英文的 `list-name`、`display-text` 和参数名。
+`en-US/plugins/sprite.json` 里同一个 `id` 的条目，`list-name`、`display-text` 和参数名都是英文。各字段的含义和完整示例见 [docs/guide/data-format.md](docs/guide/data-format.md)。agent 查资料的完整流程（包括弃用的 ACE 和示例项目）见 [`AGENTS.md`](AGENTS.md) 第 2 节。
 
-## AI 代理与 LLM
+## 事件表提示词
 
-先读 [`AGENTS.md`](AGENTS.md)，它给出事实查找流程、事件表设计流程和改代码的规则。要帮用户写事件表，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)、[`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 和 [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 一起作为 system prompt 加载：前者用 Construct 的方式决定结构（拾取、族、容器、`Else`），中间一份规定输出格式和名称核对，后者是凭直觉容易写错的运行时事实，每条一行。这些结论背后的例子和出处在 `prompts/pitfalls/`，每个主题一个文件，事件涉及入口列出的主题时再读。[`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) 是官方示例的书写风格（事件组及其变量、注释、命名、界面文案），用于把事件写进项目时。只在特定场景才需要的内容放在 `prompts/references/`，由这几份文件按需指引，平时不进上下文。
+如果要做一个帮用户写事件表的助手，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)、[`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 和 [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 一起作为 system prompt。第一份讲怎么用 Construct 的思路组织事件（选取、家族、关联、`Else`），第二份规定输出格式和名称核对，第三份列出凭直觉容易写错的运行时行为，一条一行。每条背后的案例和出处在 `prompts/pitfalls/` 里，按主题分文件，写到相关主题时再去读。[`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) 整理了官方示例的写法（事件组和组内变量、注释、命名、界面文字），把事件写进项目时参考。偶尔才用到的内容放在 `prompts/references/`，这几份文件会在需要时指过去，平时不占上下文。
 
-游戏项目里的 agent 通过 [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill 到达本仓库：一个 [Agent Skills](https://agentskills.io) 格式的文件夹，里面是 ACE 查询、事件表打印、事件表编辑、检查器、编辑器打开验证、预览试玩、项目打包和生成器模板。顶部的两条命令会安装它；项目里没有它时的规则见 `AGENTS.md` 第 4 节。
+## 相关仓库
+
+`bootstrap.py` 会把另外三个仓库 clone 到本仓库旁边：
+
+| 仓库 | 内容 | 和本仓库的关系 |
+|---|---|---|
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档，Markdown 格式 | `data/c3-schemas/` 给出名称和参数，手册说明它们的作用 |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 示例浏览器里的所有示例，以项目文件夹形式保存 | `data/c3-examples/` 是示例的元数据，这里是项目源文件 |
+| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、特效和主题的模板和文档 | `data/c3-ts-defs/sdk/` 是类型定义，这里讲怎么用 |
 
 ## 查找服务（可选）
 
@@ -105,34 +124,34 @@ pip install -r src/requirements.txt
 python scripts/setup.py          # http://localhost:8765/playground
 ```
 
-该命令基于已提交的数据启动确定性、离线的查找服务，不需要数据库、模型和网络。
+这会在本地启动一个关键词查找服务，数据来自仓库里的文件，结果固定、离线可用，适合需要通过 HTTP 查询的程序。
 
-安装选项、`/search` 与 `/health` 接口和返回结构见 [docs/guide/quick-start.md](docs/guide/quick-start.md) 和 [docs/guide/api-reference.md](docs/guide/api-reference.md)。
+安装选项、`/search` 和 `/health` 接口以及返回格式，见 [docs/guide/quick-start.md](docs/guide/quick-start.md) 和 [docs/guide/api-reference.md](docs/guide/api-reference.md)。
 
 ## 项目结构
 
 ```
-AGENTS.md               AI 代理入口
-data/                   已提交的参考数据，直接读取
-  c3-schemas/           ACE 定义、特效（en-US + zh-CN）
+AGENTS.md               AI agent 入口
+data/                   参考数据，直接读取
+  c3-schemas/           ACE 定义和特效（en-US + zh-CN）
   c3-examples/          示例项目元数据
   c3-lang/              CDN 语言包
   c3-ts-defs/           TypeScript 脚本接口
 prompts/                LLM system prompt
-  references/           按需加载
-skills/                 Agent Skills，安装到游戏项目里
-  construct3-agent-plugin/   ACE 查询、事件表打印、事件表编辑、检查器、编辑器打开验证、预览试玩、项目打包、生成器模板
-src/                    可选查找服务（见 src/AGENTS.md）
-scripts/                安装、数据刷新、版本检查
-tests/                  离线 pytest 套件
-docs/guide/             使用者文档
-docs/dev/               贡献者文档
+  references/           按需加载的参考
+skills/                 Agent Skills，装进游戏项目使用
+  construct3-agent-plugin/   ACE 查询、事件表打印和编辑、检查、编辑器打开验证、预览试玩、项目打包、生成器模板
+src/                    可选的查找服务（见 src/AGENTS.md）
+scripts/                安装、数据更新、版本检查
+tests/                  离线 pytest 测试
+docs/guide/             使用文档
+docs/dev/               开发文档
 docs/decisions/         决策记录
-.github/workflows/      数据更新自动化
+.github/workflows/      数据自动更新
 ```
 
 ## 致谢
 
-数据来自 [Scirra Ltd](https://www.scirra.com) 的 [Construct 3](https://www.construct.net)，取自[编辑器 CDN](https://editor.construct.net)。Construct 3 是 Scirra Ltd 的商标。
+数据来自 [Scirra Ltd](https://www.scirra.com) 的 [Construct 3](https://www.construct.net)，从[编辑器 CDN](https://editor.construct.net) 获取。Construct 3 是 Scirra Ltd 的商标。
 
 [MIT](LICENSE)
