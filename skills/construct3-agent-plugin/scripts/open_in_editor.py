@@ -536,6 +536,10 @@ class Browser:
         frames not at all, and an editor there could sit at "Opening (0%)" for longer
         than RESULT waits."""
         target = self.devtools.call("Target.createTarget", url=url, newWindow=True)["targetId"]
+        # The window the browser started with is no longer needed once another is open.
+        for t in self.devtools.call("Target.getTargets")["targetInfos"]:
+            if t["type"] == "page" and t["url"] == "about:blank" and t["targetId"] != target:
+                self.devtools.call("Target.closeTarget", targetId=t["targetId"])
         return target, DevTools(f"ws://127.0.0.1:{self.port}/devtools/page/{target}")
 
     def close(self) -> None:
