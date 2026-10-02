@@ -7,7 +7,8 @@ for, after sending input as [editor-and-preview.md](editor-and-preview.md)
 describes, instead of writing probe actions into the event sheet. For the
 state at the end of a preview without input,
 `scripts/open_in_editor.py --preview 10 --state Player Enemy` prints the same
-snapshot and needs no script.
+snapshot and needs no script, and `scripts/preview_project.py` plays a plan
+of taps, drags and keys with the same reads between the steps.
 
 ## Attach
 

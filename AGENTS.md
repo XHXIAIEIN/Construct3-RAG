@@ -5,8 +5,9 @@
 Bilingual Construct 3 reference data under `data/`, read directly, plus an
 optional lookup service in `src/`, and an agent skill in
 `skills/` that carries the project tools (ACE lookup, sheet printer, sheet
-editor, checker, editor opener, generator template) into a game project. Version and
-counts: `data/c3-schemas/_index.json`, never hardcoded.
+editor, checker, editor opener, preview player, generator template) into a
+game project. Version and counts: `data/c3-schemas/_index.json`, never
+hardcoded.
 
 Priorities, in order: exact addon, ACE and scripting lookup; citable
 English and Chinese data; example projects by topic; works from the
@@ -188,7 +189,7 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | Published-game visual language, motion statistics and the reproducible analyzer | `docs/decisions/published-game-visual-language.md`, `docs/dev/published-game-analysis.md`, `scripts/reference_games/` |
 | Slot case as a program, hand-editing project JSON, bars and life counters by the art they have, feel recipes, sounds and placeholder audio | `prompts/references/` |
 | A new project's sheets, layers, objects and look: colours by role, text, pixel art, and what other design skills do | `prompts/references/new-project.md`, `docs/decisions/game-look-from-design-skills.md` |
-| ACE lookup, sheet printer, sheet editor, checker, editor opener and generator template for a game project; changing and evaluating them | `skills/construct3-agent-plugin/SKILL.md`, `skills/AGENTS.md` |
+| ACE lookup, sheet printer, sheet editor, checker, editor opener, preview player and generator template for a game project; changing and evaluating them | `skills/construct3-agent-plugin/SKILL.md`, `skills/AGENTS.md` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |

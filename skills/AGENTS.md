@@ -7,8 +7,9 @@ source. A game project holds a copy of it, made and refreshed by the skill's
 `scripts/install.py`, and the copy reports when it differs from the source.
 
 `construct3-agent-plugin/` is the one skill here: the ACE lookup, sheet printer,
-sheet editor, checker, editor opener and generator template for a Construct
-3 folder project, and the block for the project's instruction file.
+sheet editor, checker, editor opener, preview player and generator template
+for a Construct 3 folder project, and the block for the project's instruction
+file.
 
 ## Rules
 

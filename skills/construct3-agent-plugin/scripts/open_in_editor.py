@@ -56,6 +56,7 @@ import time
 import urllib.parse
 import urllib.request
 import zipfile
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -520,15 +521,9 @@ def message_text(event: dict) -> str | None:
     return None
 
 
-def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float, state: list[str] | None = None) -> dict:
-    """Preview the layout the editor shows, F5 as the user would press it, let it run
-    for `seconds`, then read what the runtime reported, and with `state` what the
-    game holds.
-
-    Nothing listens while it runs: Runtime.enable hands over what a page or worker
-    logged before it, so the preview page and its workers, the runtime in one of
-    them, are attached once at the end."""
-    target, page = editor
+def start_preview(browser: Browser, target: str, page: DevTools) -> tuple[dict, DevTools] | list[str]:
+    """Press F5 in the editor, as the user would, and connect to the preview window
+    it opens; or the reasons it opened none."""
     for kind in ("rawKeyDown", "keyUp"):
         page.call("Input.dispatchKeyEvent", type=kind, key="F5", code="F5", windowsVirtualKeyCode=116)
     window = None
@@ -540,18 +535,60 @@ def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float, stat
             break
         time.sleep(0.25)
     if not window:
-        return {"started": False, "layout": None, "runtime": None,
-                "errors": dialogs or ["no preview window in 20 seconds"]}
-    time.sleep(seconds)
-    win = DevTools(f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}")
-    try:
-        win.call("Target.setAutoAttach", autoAttach=True, waitForDebuggerOnStart=False, flatten=True)
+        return dialogs or ["no preview window in 20 seconds"]
+    return window, DevTools(f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}")
+
+
+def attach(win: DevTools, patience: float = 0) -> tuple[list[str | None], list[str | None], bool]:
+    """Leave the probe where the game runs: the preview page, None, or one of its
+    workers, a session id. Returns every session, the one that runs the game (an
+    empty list when none does), and whether a runtime was found that did not tick.
+    A preview that is still loading answers nothing yet; it is asked again for
+    `patience` seconds."""
+    win.call("Target.setAutoAttach", autoAttach=True, waitForDebuggerOnStart=False, flatten=True)
+    end = time.monotonic() + patience
+    while True:
+        gone = {e["params"]["sessionId"] for e in win.events if e["method"] == "Target.detachedFromTarget"}
         sessions = [None] + [e["params"]["sessionId"] for e in win.events
                              if e["method"] == "Target.attachedToTarget"
-                             and e["params"]["targetInfo"]["type"] == "worker"]
-        win.events.clear()
-        answers = [(session, win.evaluate(PROBE_JS, wait=6, session=session)) for session in sessions]
-        live = [session for session, answer in answers if answer is True]
+                             and e["params"]["targetInfo"]["type"] == "worker" and e["params"]["sessionId"] not in gone]
+        answers = []
+        for session in sessions:
+            try:
+                answers.append(win.evaluate(PROBE_JS, wait=6, session=session))
+            except DevToolsError:
+                if not patience:
+                    raise
+                answers.append(None)    # the page replaced its context while loading
+        live = [s for s, answer in zip(sessions, answers) if answer is True]
+        if live or False in answers or time.monotonic() >= end:
+            return sessions, live, False in answers
+        time.sleep(0.25)
+
+
+def runtime_errors(win: DevTools) -> list[str]:
+    """The uncaught exceptions and console errors logged since the last call, once
+    Runtime.enable has been sent to the session they came from."""
+    errors = [text[:600] for text in map(message_text, win.events) if text]
+    win.events[:] = [e for e in win.events if e["method"].startswith("Target.")]
+    return errors
+
+
+def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float, state: list[str] | None = None) -> dict:
+    """Preview the layout the editor shows, let it run for `seconds`, then read what
+    the runtime reported, and with `state` what the game holds.
+
+    Nothing listens while it runs: Runtime.enable hands over what a page or worker
+    logged before it, so the preview page and its workers, the runtime in one of
+    them, are attached once at the end."""
+    target, page = editor
+    started = start_preview(browser, target, page)
+    if isinstance(started, list):
+        return {"started": False, "layout": None, "runtime": None, "errors": started}
+    window, win = started
+    time.sleep(seconds)
+    try:
+        sessions, live, stalled = attach(win)
         snap, read = None, None
         if live:
             snap = win.evaluate("c3probe.snapshot([], 0)", wait=6, session=live[0])
@@ -560,12 +597,12 @@ def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float, stat
         for session in sessions:
             win.call("Runtime.enable", session=session)
         win.evaluate("0")       # an answer after every replayed message
-        errors = [text[:600] for text in map(message_text, win.events) if text]
+        errors = runtime_errors(win)
     finally:
         win.ws.close()
         browser.devtools.call("Target.closeTarget", targetId=window["targetId"])
     if not live:
-        errors.insert(0, "the runtime loaded but did not tick for 3 seconds" if False in dict(answers).values()
+        errors.insert(0, "the runtime loaded but did not tick for 3 seconds" if stalled
                       else "the preview window opened but no runtime was found in it")
     return {"started": bool(snap), "layout": snap and snap["layout"],
             "runtime": ("worker" if live[0] else "page") if live else None,
@@ -662,10 +699,12 @@ def state_lines(read: dict) -> list[str]:
 
 
 def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: Path | None,
-             pinned: bool, seconds: float | None, state: list[str] | None = None) -> dict:
+             pinned: bool, then: Callable[[Browser, str, DevTools], dict] | None = None) -> dict:
     """In the editor at `editor`; unless the release is pinned, a project saved by a
     newer release than that editor's, which it refuses as saved in a newer version,
-    is opened in the latest beta instead."""
+    is opened in the latest beta instead. Once it opened, `then` previews it, given
+    the browser and the editor's target and page, and its answer is the result's
+    `preview`."""
     staged.write_bytes(pack(project))
     target, page = browser.page(editor)
     try:
@@ -690,15 +729,15 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
         if isinstance(result, str):
             result = {"opened": False, "title": "", "dialogs": [], "errors": [result]}
         ran = None
-        if result["opened"] and seconds is not None and too_deep(browser.data):
+        if result["opened"] and then and too_deep(browser.data):
             most = MAX_PATH - 1 - INDEXEDDB
             ran = {"started": False, "layout": None, "runtime": None, "errors": [
                 f"the browser profile {browser.data} is {len(browser.data)} characters long, and the preview's "
                 f"IndexedDB needs it at most {most}: copy the project to a shorter folder, or pass --profile "
                 f"<a folder of at most {most - len('/editor-chromium')} characters>"]}
-        elif result["opened"] and seconds is not None:
+        elif result["opened"] and then:
             try:
-                ran = preview(browser, (target, page), seconds, state)
+                ran = then(browser, target, page)
             except DevToolsError as e:
                 ran = {"started": False, "layout": None, "runtime": None, "errors": [f"the preview stopped answering: {e}"]}
     finally:
@@ -752,8 +791,9 @@ def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
         nonlocal printed
         shot = args.shots / f"{i:03d}-{project.name}.png" if args.shots else None
         try:
+            then = (lambda b, t, p: preview(b, (t, p), args.preview, args.state)) if args.preview is not None else None
             result = open_one(browser, editor, project, browser.profile / f"project-{i}.c3p", shot,
-                              bool(args.release), args.preview, args.state)
+                              bool(args.release), then)
         except (EditorNotLoaded, DevToolsError, OSError) as e:
             result = {"project": str(project), "status": "error", "title": "", "dialogs": [],
                       "exception": str(e), "editor": editor, "seconds": 0}

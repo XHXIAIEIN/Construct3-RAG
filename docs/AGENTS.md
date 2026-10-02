@@ -54,6 +54,7 @@ The project skill and the prompts:
 | `project-tools-skill.md` | Why the project tools ship as an Agent Skill, and what keeps small models on them |
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
+| `preview-player.md` | Why a preview is played from a JSON plan of steps, and what the steps cover |
 | `event-sheet-design-guidance.md` | The event sheet prompts, the style checks and the generator's placement helpers |
 | `pitfalls-index-and-topics.md` | Why the pitfalls are an index of one-line conclusions with a topic file per group, and which lessons belong in them |
 | `prompt-references-by-task.md` | Which parts of the design and style prompts moved to `prompts/references/`, and why Native first stays inline |

@@ -34,6 +34,7 @@ claude plugin install construct3@construct3-rag
 - `edit_sheet.py`：在你指定的游戏项目里写事件表。
 - `install.py`：把 skill 复制进游戏项目，并在它的 `AGENTS.md` 和 `CLAUDE.md` 里加一段；`--dry-run` 先显示改动。
 - `open_in_editor.py`：启动本机的 Edge、Chrome 或 Chromium，无头运行，用游戏项目 `.tmp/` 里自己的 profile，在其中打开 Scirra 提供的编辑器 `https://editor.construct.net/`。项目是交给浏览器里的页面，不上传。它经 `127.0.0.1` 上的 DevTools 端口控制浏览器。
+- `preview_project.py`：用同样的方式打开项目并预览，再把你或 agent 写的计划里的点按、拖动和按键发给这个预览窗口，用的是同一个浏览器。截图和录屏存在游戏项目的 `.tmp/preview/`；本机装有 ffmpeg 或 Pillow 时，录屏的帧会合成视频。
 - `export_project.py`：在有界面的浏览器里驱动同一个编辑器，把项目导出为 Web (HTML5)，再把 zip 解到你指定的文件夹。超出限制的项目要订阅才能导出；登录由你在那个窗口里自己完成，脚本不读取也不保存任何凭据。`--attach` 连接你自己开了远程调试的浏览器，只在没有打开项目的标签页里工作。
 
 ## 相关仓库
@@ -91,7 +92,7 @@ claude plugin install construct3@construct3-rag
 
 先读 [`AGENTS.md`](AGENTS.md)，它给出事实查找流程、事件表设计流程和改代码的规则。要帮用户写事件表，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)、[`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 和 [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 一起作为 system prompt 加载：前者用 Construct 的方式决定结构（拾取、族、容器、`Else`），中间一份规定输出格式和名称核对，后者是凭直觉容易写错的运行时事实，每条一行。这些结论背后的例子和出处在 `prompts/pitfalls/`，每个主题一个文件，事件涉及入口列出的主题时再读。[`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) 是官方示例的书写风格（事件组及其变量、注释、命名、界面文案），用于把事件写进项目时。只在特定场景才需要的内容放在 `prompts/references/`，由这几份文件按需指引，平时不进上下文。
 
-游戏项目里的 agent 通过 [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill 到达本仓库：一个 [Agent Skills](https://agentskills.io) 格式的文件夹，里面是 ACE 查询、事件表打印、事件表编辑、检查器、编辑器打开验证和生成器模板。顶部的两条命令会安装它；项目里没有它时的规则见 `AGENTS.md` 第 4 节。
+游戏项目里的 agent 通过 [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill 到达本仓库：一个 [Agent Skills](https://agentskills.io) 格式的文件夹，里面是 ACE 查询、事件表打印、事件表编辑、检查器、编辑器打开验证、预览试玩和生成器模板。顶部的两条命令会安装它；项目里没有它时的规则见 `AGENTS.md` 第 4 节。
 
 ## 查找服务（可选）
 
@@ -116,7 +117,7 @@ data/                   已提交的参考数据，直接读取
 prompts/                LLM system prompt
   references/           按需加载
 skills/                 Agent Skills，安装到游戏项目里
-  construct3-agent-plugin/   ACE 查询、事件表打印、事件表编辑、检查器、编辑器打开验证、生成器模板
+  construct3-agent-plugin/   ACE 查询、事件表打印、事件表编辑、检查器、编辑器打开验证、预览试玩、生成器模板
 src/                    可选查找服务（见 src/AGENTS.md）
 scripts/                安装、数据刷新、版本检查
 tests/                  离线 pytest 套件

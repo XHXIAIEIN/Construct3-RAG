@@ -2,7 +2,9 @@
 
 Read this before previewing a project that starts on a layout other than the
 one open in the editor, or before driving a preview with input from a script.
-A lesson from the editor, the preview or a script driving them goes here with
+`scripts/preview_project.py` sends taps, holds, drags and keys as the bullets
+below describe; a script of the agent's own needs them for what it does not
+cover, such as two fingers at once. A lesson from the editor, the preview or a script driving them goes here with
 its source, one bullet each: fact, consequence, source. A runtime behaviour
 that changes which events are written goes to
 `Construct3-RAG/prompts/event-sheet-pitfalls.md` instead.
@@ -41,10 +43,9 @@ that changes which events are written goes to
   piece]
 - A preview run for five seconds without input shows that the layout
   starts; it says nothing about an event that waits for a drop, a merge or
-  a deployment. Such an event is verified by sending the input (the
-  bullets above) and reading instance state every few frames until the
-  flow has run through ([reading-the-runtime.md](reading-the-runtime.md)),
-  then it is handed over. [observed in a game
+  a deployment. Such an event is verified by playing it, a plan of
+  `scripts/preview_project.py` that drags and then waits `until` the flow
+  has run through, before it is handed over. [observed in a game
   project, r504 preview, 2026-09-30: a *Pick parent* with *Own* that could
   not reach a grandparent passed the five-second preview and left a piece
   idle on its battle slot at the first drag by hand]

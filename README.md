@@ -34,6 +34,7 @@ Everything is read from this repository's `data/` and from the game project; the
 - `edit_sheet.py`: writes event sheets inside the game project you point it at.
 - `install.py`: copies the skill into the game project and adds a block to its `AGENTS.md` and `CLAUDE.md`; `--dry-run` shows the changes first.
 - `open_in_editor.py`: starts the Edge, Chrome or Chromium on the machine, headless, with its own profile in `.tmp/` of the game project, and opens `https://editor.construct.net/` in it, the editor Scirra serves. The project is handed to that page in the browser, not uploaded. It talks to the browser over a DevTools port on `127.0.0.1`.
+- `preview_project.py`: opens the project the same way, previews it, and sends the taps, drags and key presses of a plan you or the agent wrote to that preview window, in the same browser. Screenshots and recordings go to `.tmp/preview/` of the game project; a recording is joined into a video by ffmpeg or Pillow where one is installed.
 - `export_project.py`: drives the same editor in a headed browser to export the project to Web (HTML5), and unpacks the zip into the folder you name. The editor needs a subscription to export a large project; you log in yourself in that window and the script never sees or stores a credential. With `--attach` it connects to a browser of yours that has remote debugging turned on, and works only in a tab that has no project open.
 
 ## Related repositories
@@ -91,7 +92,7 @@ The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `d
 
 Start with [`AGENTS.md`](AGENTS.md): the fact lookup procedure, the event sheet design procedure, and the rules for changing the code. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md), [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) and [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) together as the system prompt: structure in Construct terms (picking, families, containers, `Else`), output format and name verification, and the runtime facts that intuition gets wrong, one line each. The cases and sources behind those lines are in `prompts/pitfalls/`, one file per topic, read when the index says the events touch that topic. [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) is the authoring style of the official examples (groups and their variables, comments, names, UI text), for events written into a project. Each points to `prompts/references/` for material needed only sometimes, so that stays out of context until a task calls for it.
 
-An agent inside a game project reaches this repository through the [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the sheet editor, the checker, the editor opener and the generator template. The two commands at the top install it; `AGENTS.md` section 4 has the rule for a project that lacks it.
+An agent inside a game project reaches this repository through the [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the sheet editor, the checker, the editor opener, the preview player and the generator template. The two commands at the top install it; `AGENTS.md` section 4 has the rule for a project that lacks it.
 
 ## Lookup service (optional)
 
@@ -116,7 +117,7 @@ data/                   Committed reference data, read directly
 prompts/                LLM system prompts
   references/           Loaded on demand
 skills/                 Agent Skills, installed into a game project
-  construct3-agent-plugin/   ACE lookup, sheet printer, sheet editor, checker, editor opener, generator template
+  construct3-agent-plugin/   ACE lookup, sheet printer, sheet editor, checker, editor opener, preview player, generator template
 src/                    Optional lookup service (see src/AGENTS.md)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite
