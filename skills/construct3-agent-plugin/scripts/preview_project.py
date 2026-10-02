@@ -332,6 +332,7 @@ class Recorder(threading.Thread):
     def __init__(self, url: str, folder: Path, viewport: list[int] | None, watch: dict[str, str]) -> None:
         super().__init__(daemon=True)
         self.folder, self.frames, self.steps, self.done = folder, [], [], threading.Event()
+        self.first = threading.Event()
         shutil.rmtree(folder, ignore_errors=True)
         folder.mkdir(parents=True)
         self.page = oe.DevTools(url)
@@ -347,6 +348,7 @@ class Recorder(threading.Thread):
                           " catch (e) { return `error: ${e.message}`; } };\n"
                           f"  return Object.fromEntries([{body}]); }})()")
         self.start()
+        self.first.wait(5)      # the next step starts after the state before it is on record
 
     def game_session(self) -> str | None:
         """The page or the worker where the probe was left: the same globals as the
@@ -375,6 +377,7 @@ class Recorder(threading.Thread):
                         frame["watch"] = {"error": str(e).splitlines()[0]}
                 (self.folder / frame["file"]).write_bytes(base64.b64decode(shot["data"]))
                 self.frames.append(frame)
+                self.first.set()
         except (oe.DevToolsError, OSError):     # the window closed
             return
 
