@@ -1,4 +1,4 @@
-"""The construct3-project skill, used the way an agent uses it: what its tests share.
+"""The construct3-agent-plugin skill, used the way an agent uses it: what its tests share.
 
 The skill is installed in a project folder by its own install.py and its
 scripts run as subprocesses from there. The stand-in game of
@@ -13,8 +13,8 @@ from pathlib import Path
 
 
 REPO = Path(__file__).resolve().parent.parent
-SKILL = REPO / "skills" / "construct3-project"
-INSTALLED = ".agents/skills/construct3-project"
+SKILL = REPO / "skills" / "construct3-agent-plugin"
+INSTALLED = ".agents/skills/construct3-agent-plugin"
 SHEET = "eventSheets/Game.json"
 
 

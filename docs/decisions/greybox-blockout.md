@@ -130,7 +130,7 @@ outline around them and understood by their hue.
 
 ## Decision
 
-Option 3, in `skills/construct3-project/assets/build_project.py`.
+Option 3, in `skills/construct3-agent-plugin/assets/build_project.py`.
 
 ### The vocabulary
 
@@ -240,7 +240,7 @@ average than the first. It prints the curve, one line a beat, above
 
 ### The manifest
 
-`skills/construct3-project/assets/look-manifest.json` lists every rule of
+`skills/construct3-agent-plugin/assets/look-manifest.json` lists every rule of
 this record with a status: `enforced` when a check stops the generator,
 `adopted` when the user decided it and the template holds it, `proposed`,
 `rejected`. Its `deliver` steps are what a model writing the generator is

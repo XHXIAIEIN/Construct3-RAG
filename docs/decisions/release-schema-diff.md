@@ -9,7 +9,7 @@ The update workflow refreshed `data/` for a new Construct release, opened a
 pull request whose body was the two release names, and merged it once checks
 passed. Nobody saw which addons and ACEs the release added, removed,
 deprecated or changed. The repository quotes ACE ids in many places outside
-`data/`: the prompts and pitfalls, the `construct3-project` skill's checker,
+`data/`: the prompts and pitfalls, the `construct3-agent-plugin` skill's checker,
 generator and references, the lookup's aliases, the docs. A release that
 removes or retypes one of them leaves those places wrong with no failing
 check, since only the tests are run and most of these files have none.

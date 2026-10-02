@@ -3,7 +3,7 @@
 Read this when writing or changing `eventSheets/*.json`, `layouts/*.json`,
 `objectTypes/**/*.json`, `families/*.json`, `project.c3proj` or clipboard
 payloads without the editor. Events go into a sheet through the
-`construct3-project` skill's `scripts/edit_sheet.py`, which takes them as a
+`construct3-agent-plugin` skill's `scripts/edit_sheet.py`, which takes them as a
 plan, gives them their sids and checks the result before it writes; what
 follows is how each entry of such a plan, or of a hand edit, is written.
 Clipboard payloads use the same condition and action entries; the envelope
@@ -160,7 +160,7 @@ sheet in document order, sub-events included; variables, comments and
 includes take no number and are filed under the next numbered event.
 Quote those numbers, never JSON line numbers, and read a screenshot or a
 pasted Find result back the same way. To find the JSON behind a number, run
-the `construct3-project` skill's `scripts/print_sheet.py --outline <sheet>`
+the `construct3-agent-plugin` skill's `scripts/print_sheet.py --outline <sheet>`
 in the project folder: each row prints with its number and its `sid`, which
 is the string to search the sheet file for. Without `--outline` it prints
 the same rows with their conditions and actions as the editor words them;
@@ -169,7 +169,7 @@ read the sheet that way before and after an edit.
 ## Checks before handing over
 
 Run the skill's `scripts/check_project.py` on the project folder, from the
-copy installed in the project, `.agents/skills/construct3-project/`, or in
+copy installed in the project, `.agents/skills/construct3-agent-plugin/`, or in
 place here with `--project <folder>`. It checks that the JSON parses; that
 every `objectClass`, instance variable and behavior name exists, families
 included; that `sid` and `uid` are unique; that every ACE `id` and parameter
@@ -177,7 +177,7 @@ key is in `data/c3-schemas/`; that every called function is defined with
 the right parameter count; that every object created at runtime has a
 template instance in some layout; and the rules the editor applies on
 opening, the table in
-`skills/construct3-project/references/checker-rules.md`.
+`skills/construct3-agent-plugin/references/checker-rules.md`.
 
 Once it passes, open and preview the project with the skill's
 `scripts/open_in_editor.py --preview`, which prints `opened`, or the

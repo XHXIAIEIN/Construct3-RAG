@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SKILL_SCRIPTS = ROOT / "skills" / "construct3-project" / "scripts"
+SKILL_SCRIPTS = ROOT / "skills" / "construct3-agent-plugin" / "scripts"
 sys.path.insert(0, str(SKILL_SCRIPTS))
 import c3project as c3  # noqa: E402
 
@@ -102,7 +102,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="Clone the repositories this one reads beside it, create a game project when the folder "
-                    "does not exist yet, and install the construct3-project skill in it. Safe to run again.",
+                    "does not exist yet, and install the construct3-agent-plugin skill in it. Safe to run again.",
         epilog="examples:\n"
                "  python scripts/bootstrap.py                          the siblings only\n"
                "  python scripts/bootstrap.py --project MyGame         siblings, then the skill in MyGame,\n"

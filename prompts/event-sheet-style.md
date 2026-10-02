@@ -133,6 +133,6 @@ reads as the text it shows. [manual: system-reference/system-expressions.md
 "StringSub"]
 
 To see the whole of it before writing, print an example: `python
-<Construct3-RAG>/skills/construct3-project/scripts/print_sheet.py --project
+<Construct3-RAG>/skills/construct3-agent-plugin/scripts/print_sheet.py --project
 <Construct-Example-Projects>/example-projects/samuroof Game`; labyrinth,
 eventide and digiautos show the same conventions.

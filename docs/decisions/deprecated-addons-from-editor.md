@@ -149,7 +149,7 @@ errors out of the report cut to `--limit`. With one warning per expression,
 and problems taking the room the warnings leave instead of a fixed two
 thirds, 2 are left out, the report being 180 characters over the limit. The
 old and new output of every script over the examples and the game projects
-is in `.local/docs/evidence/skill-evals/construct3-project/deprecated-list-2026-09-28/`.
+is in `.local/docs/evidence/skill-evals/construct3-agent-plugin/deprecated-list-2026-09-28/`.
 
 `POST /search` does not read the list; it answers from the schema as before.
 

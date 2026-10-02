@@ -34,7 +34,7 @@ project.
 | `prompts/references/` | Material needed only sometimes, each named by the task that needs it: a new project's sheets, layers, objects and look; feel; the slot case, native and as a program; hand-editing project JSON; bars and life counters |
 
 `AGENTS.md` section 3 is the SOP; the game project reaches it through the
-block of `skills/construct3-project/assets/game-project-block.md`.
+block of `skills/construct3-agent-plugin/assets/game-project-block.md`.
 
 How the prompts are kept:
 

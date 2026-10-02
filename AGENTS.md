@@ -42,7 +42,7 @@ it, still opens old projects that use it, and a new project should not.
 | Whether an addon or ACE is deprecated, and the current ACE of the same name | `data/c3-schemas/{locale}/_deprecated.json`; a deprecated ACE the schema kept also has `isDeprecated` |
 | JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the `.d.ts` under the plugin or behavior directory of the same name |
 | Types for an addon under development | editor `data/c3-ts-defs/sdk/`, runtime `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones |
-| Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python skills/construct3-project/scripts/print_sheet.py --project <example folder>` |
+| Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python skills/construct3-agent-plugin/scripts/print_sheet.py --project <example folder>` |
 | Translation of a string, editor text outside the schemas | `data/c3-lang/{locale}.json`, `text` |
 | What a field means before writing an event or a script | `data/AGENTS.md`; full reference `docs/guide/data-format.md` |
 
@@ -59,13 +59,13 @@ long. A reader that stops at 2000 lines shows part of them, and an ACE below
 the cut looks missing. Ask for the part instead:
 
 ```bash
-python skills/construct3-project/scripts/lookup_ace.py System wait
+python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait
 ```
 
 prints the matching conditions, actions and expressions of `System`, of a
 plugin or behavior by id or display name, or, run in a game project, of one
 of its objects with its behaviors, each with its parameters and the JSON to
-write (`skills/construct3-project/SKILL.md`, "Look an ACE up before writing
+write (`skills/construct3-agent-plugin/SKILL.md`, "Look an ACE up before writing
 it"). Given an effect's id or name, it prints the effect's parameters.
 
 ## 3. SOP: design event sheet logic
@@ -88,16 +88,16 @@ Interactions, data storage, timing, animation: read and follow
 ## 4. Use from another project
 
 A game project reaches this repository through two things it holds: the
-`construct3-project` skill, a copy of `skills/construct3-project/`, and the
+`construct3-agent-plugin` skill, a copy of `skills/construct3-agent-plugin/`, and the
 block of `prompts/game-project-AGENTS.md` in its instruction file, whose
 `Construct3-RAG:` line locates the schemas.
 
-- Working in a game project that has no `construct3-project` folder under
+- Working in a game project that has no `construct3-agent-plugin` folder under
   `.agents/skills/` or another client's skills folder: install it before
   the first project file is read or written, from the project folder:
 
   ```bash
-  python <this repository>/skills/construct3-project/scripts/install.py
+  python <this repository>/skills/construct3-agent-plugin/scripts/install.py
   ```
 
   It copies the skill, adds the block to the project's `AGENTS.md` when
@@ -112,11 +112,11 @@ block of `prompts/game-project-AGENTS.md` in its instruction file, whose
   what is missing beside this repository, creates the folder as an empty
   project when it does not exist, and runs `install.py` on it. The README's
   first section gives the two commands for a machine that has only the URL.
-- An installed copy says when it differs from `skills/construct3-project/`
+- An installed copy says when it differs from `skills/construct3-agent-plugin/`
   here and prints the command that refreshes it. Run it.
 - The user does not want it in the project: remove the copy, run the
   scripts from this repository in place,
-  `python <this repository>/skills/construct3-project/scripts/<script>.py
+  `python <this repository>/skills/construct3-agent-plugin/scripts/<script>.py
   --project <game folder>`, and do not install again in the session.
 
 ## 5. SOP: change code or data
@@ -188,7 +188,7 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | Published-game visual language, motion statistics and the reproducible analyzer | `docs/decisions/published-game-visual-language.md`, `docs/dev/published-game-analysis.md`, `scripts/reference_games/` |
 | Slot case as a program, hand-editing project JSON, bars and life counters by the art they have, feel recipes, sounds and placeholder audio | `prompts/references/` |
 | A new project's sheets, layers, objects and look: colours by role, text, pixel art, and what other design skills do | `prompts/references/new-project.md`, `docs/decisions/game-look-from-design-skills.md` |
-| ACE lookup, sheet printer, sheet editor, checker, editor opener and generator template for a game project; changing and evaluating them | `skills/construct3-project/SKILL.md`, `skills/AGENTS.md` |
+| ACE lookup, sheet printer, sheet editor, checker, editor opener and generator template for a game project; changing and evaluating them | `skills/construct3-agent-plugin/SKILL.md`, `skills/AGENTS.md` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |

@@ -1,5 +1,5 @@
 ---
-name: construct3-project
+name: construct3-agent-plugin
 description: Check, read, look up and generate the JSON of a Construct 3 folder project (project.c3proj, eventSheets, layouts, objectTypes, families) against the Construct3-RAG schemas and the rules the Construct 3 editor applies when it opens a project. Use this skill whenever you write or edit an event sheet or any other project file of a Construct 3 game, need the exact id, parameters and JSON of a condition, action or expression, want to read an event sheet or an official example as events instead of JSON, generate a whole project from a script, or the editor refuses to open or preview a project, even if the user only says "add a mechanic", "fix this event" or pastes an editor error.
 compatibility: Requires Python 3.10+ and a local clone of Construct3-RAG, whose data/c3-schemas the scripts read. Pillow is optional and only compares image sizes. Opening the project in the editor takes a network connection and Edge, Chrome or Chromium, or a browser tool of the agent.
 metadata:
@@ -21,7 +21,7 @@ opened once before it is handed over.
 
 - Commands here are written from this skill's folder. From the project root,
   put the folder this file is in before them, for example
-  `python .agents/skills/construct3-project/scripts/check_project.py`. The
+  `python .agents/skills/construct3-agent-plugin/scripts/check_project.py`. The
   scripts find the project from the current directory upward, so both work;
   `--project <folder>` names another one.
 - The scripts find the clone through `--rag`, the `CONSTRUCT3_RAG`
@@ -34,7 +34,7 @@ opened once before it is handed over.
   Construct 3 block to its `AGENTS.md` with the clone's path filled in
   (`--into .claude/skills` for Claude Code, `.trae/skills` for TRAE). Tell
   the user in one sentence what was installed.
-- A line `this copy of the construct3-project skill differs from the clone's`:
+- A line `this copy of the construct3-agent-plugin skill differs from the clone's`:
   run the command it prints, then repeat yours.
 - The project has no `.git`: `git init` in it before the first edit, so that
   every change can be seen and undone. Commit when the user asks.

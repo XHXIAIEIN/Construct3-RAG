@@ -1,6 +1,6 @@
 """Install this skill in a Construct 3 game project, or refresh a copy of it.
 
-    python <Construct3-RAG>/skills/construct3-project/scripts/install.py [--project FOLDER] [--into DIR]
+    python <Construct3-RAG>/skills/construct3-agent-plugin/scripts/install.py [--project FOLDER] [--into DIR]
 
 Copies the skill's folder from the Construct3-RAG clone into the project's
 skills directory, and adds the Construct 3 block to the project's AGENTS.md
@@ -141,7 +141,7 @@ def earlier_tools(project: Path, skill_path: str) -> list[str]:
 def main() -> int:
     ap = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="Install the construct3-project skill in a Construct 3 game project, or refresh the copies it "
+        description="Install the construct3-agent-plugin skill in a Construct 3 game project, or refresh the copies it "
                     "holds, from the Construct3-RAG clone this script sits in. Adds the Construct 3 block to the "
                     "project's AGENTS.md when no instruction file there names the clone yet, and the line @AGENTS.md "
                     "to CLAUDE.md. Safe to run again.",

@@ -243,10 +243,10 @@ agent writes: without the line, the agent would write them wrong. A lesson
 that does not change the events goes elsewhere:
 
 - How a project file is written: [references/hand-editing-project-files.md](references/hand-editing-project-files.md),
-  or a rule of the `construct3-project` skill's checker when a script can
+  or a rule of the `construct3-agent-plugin` skill's checker when a script can
   test it.
 - What the editor, the preview or a script driving them does: the
-  `construct3-project` skill's references, such as [editor-and-preview.md](../skills/construct3-project/references/editor-and-preview.md).
+  `construct3-agent-plugin` skill's references, such as [editor-and-preview.md](../skills/construct3-agent-plugin/references/editor-and-preview.md).
 - How the game looks, its art and its colours: [references/new-project.md](references/new-project.md),
   or the look documents listed in the root `AGENTS.md`.
 

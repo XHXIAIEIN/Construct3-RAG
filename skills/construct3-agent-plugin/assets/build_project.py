@@ -3,7 +3,7 @@ families, layouts, event sheets and the parts of project.c3proj that list them.
 
     python tools/build_project.py
 
-This file is the template of the construct3-project skill: copy it to tools/
+This file is the template of the construct3-agent-plugin skill: copy it to tools/
 in a project the editor created and saved as a folder, so that project.c3proj
 already has its uniqueId, icons and scripts, and rewrite it for the game. The
 generated files replace the previous ones; files the editor owns (uistate,
@@ -1574,11 +1574,11 @@ if __name__ == "__main__":
     # Generating without checking is how a project reaches the editor with a mistake
     # the checker names in one line; the two always run together. The skill is
     # installed in the project, or once for the user, under a client's skills folder.
-    checker = "skills/construct3-project/scripts/check_project.py"
+    checker = "skills/construct3-agent-plugin/scripts/check_project.py"
     found = sorted(ROOT.glob(f".*/{checker}")) or sorted(Path.home().glob(f".*/{checker}"))
     if not found:
-        sys.exit("generated, not checked: the construct3-project skill is not installed in this project; "
-                 "run python <Construct3-RAG>/skills/construct3-project/scripts/install.py here, then "
+        sys.exit("generated, not checked: the construct3-agent-plugin skill is not installed in this project; "
+                 "run python <Construct3-RAG>/skills/construct3-agent-plugin/scripts/install.py here, then "
                  "its scripts/check_project.py")
     print("generated; checking")
     sys.stdout.flush()

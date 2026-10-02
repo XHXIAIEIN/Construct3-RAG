@@ -14,7 +14,7 @@ Look ACEs up with the script, never by reading `plugins/system.json` or
 `plugins/_common.json`, which are longer than a reader shows:
 
 ```bash
-python skills/construct3-project/scripts/lookup_ace.py <object> [word ...]
+python skills/construct3-agent-plugin/scripts/lookup_ace.py <object> [word ...]
 ```
 
 `<object>` is `System`, a plugin or behavior id or display name, or an effect;

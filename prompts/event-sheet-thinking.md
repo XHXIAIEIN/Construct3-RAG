@@ -179,7 +179,7 @@ One hit means redesign, not patch.
    `behaviors` for a drag case) and, with `Construct-Example-Projects` cloned
    alongside, copy the event shape from `example-projects/{id}/eventSheets/`.
    Read a sheet as events, not as JSON: `python
-   <Construct3-RAG>/skills/construct3-project/scripts/print_sheet.py --project
+   <Construct3-RAG>/skills/construct3-agent-plugin/scripts/print_sheet.py --project
    <Construct-Example-Projects>/example-projects/{id}` prints it as the
    editor words it, at about a quarter of the length.
    The drop pattern in `family-tree` and `alchemist` is `On drop`, a sub-event

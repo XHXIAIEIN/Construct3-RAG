@@ -32,7 +32,7 @@ the checker, and `AGENTS.md` section 2 sends every agent to the ACE lookup.
 Option 3. TRAE reads `.trae/skills/` and `.agents/skills/`, Deep Code
 `.deepcode/skills/` and `.agents/skills/`, Claude Code `.claude/skills/`.
 
-- `skills/construct3-project/`: `SKILL.md`; `scripts/` with
+- `skills/construct3-agent-plugin/`: `SKILL.md`; `scripts/` with
   `check_project.py`, `print_sheet.py`, `lookup_ace.py`, `edit_sheet.py`,
   `open_in_editor.py` and `install.py` over `c3project.py`; `references/`;
   `assets/build_project.py`, the generator template, and
