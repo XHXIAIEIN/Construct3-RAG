@@ -91,7 +91,8 @@ kinds takes the rows of each.
   behavior-reference/physics.md "Set stepping mode"]
 - Random seed: an Advanced Random object with *Replace system random* and a
   fixed *Seed* makes `random()` and the randomness of behaviors repeat from
-  run to run; set it with *Update seed* in the plan or in a debug event.
+  run to run; *Update seed* changes it from an event, such as a debug
+  key or a function the plan calls.
   [manual: plugin-reference/advanced-random.md "Seed", "Replace system
   random", "Update seed"]
 - Sound: the preview runs muted, and a sound is checked by recording it in
