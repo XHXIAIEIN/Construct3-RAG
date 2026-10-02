@@ -26,6 +26,16 @@ claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
 ```
 
+### What the skill's scripts run and reach
+
+Everything is read from this repository's `data/` and from the game project; the scripts install no package and send nothing to a server of ours.
+
+- `lookup_ace.py`, `print_sheet.py`, `check_project.py`, `check_look.py`: read files only.
+- `edit_sheet.py`: writes event sheets inside the game project you point it at.
+- `install.py`: copies the skill into the game project and adds a block to its `AGENTS.md` and `CLAUDE.md`; `--dry-run` shows the changes first.
+- `open_in_editor.py`: starts the Edge, Chrome or Chromium on the machine, headless, with its own profile in `.tmp/` of the game project, and opens `https://editor.construct.net/` in it, the editor Scirra serves. The project is handed to that page in the browser, not uploaded. It talks to the browser over a DevTools port on `127.0.0.1`.
+- `export_project.py`: drives the same editor in a headed browser to export the project to Web (HTML5), and unpacks the zip into the folder you name. The editor needs a subscription to export a large project; you log in yourself in that window and the script never sees or stores a credential. With `--attach` it connects to a browser of yours that has remote debugging turned on, and works only in a tab that has no project open.
+
 ## Related repositories
 
 Three more repositories, which `bootstrap.py` clones beside this one:

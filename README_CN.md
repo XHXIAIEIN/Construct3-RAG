@@ -26,6 +26,16 @@ claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
 ```
 
+### skill 的脚本运行什么、连到哪里
+
+读的都是本仓库的 `data/` 和游戏项目；脚本不安装任何包，也不向我们的服务器发送任何东西。
+
+- `lookup_ace.py`、`print_sheet.py`、`check_project.py`、`check_look.py`：只读文件。
+- `edit_sheet.py`：在你指定的游戏项目里写事件表。
+- `install.py`：把 skill 复制进游戏项目，并在它的 `AGENTS.md` 和 `CLAUDE.md` 里加一段；`--dry-run` 先显示改动。
+- `open_in_editor.py`：启动本机的 Edge、Chrome 或 Chromium，无头运行，用游戏项目 `.tmp/` 里自己的 profile，在其中打开 Scirra 提供的编辑器 `https://editor.construct.net/`。项目是交给浏览器里的页面，不上传。它经 `127.0.0.1` 上的 DevTools 端口控制浏览器。
+- `export_project.py`：在有界面的浏览器里驱动同一个编辑器，把项目导出为 Web (HTML5)，再把 zip 解到你指定的文件夹。超出限制的项目要订阅才能导出；登录由你在那个窗口里自己完成，脚本不读取也不保存任何凭据。`--attach` 连接你自己开了远程调试的浏览器，只在没有打开项目的标签页里工作。
+
 ## 相关仓库
 
 另外三个仓库，`bootstrap.py` 会把它们 clone 到本仓库旁边：
