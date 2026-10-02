@@ -105,3 +105,15 @@ that changes which events are written goes to
   `--profile`. [observed in Edge, 2026-10-01: a profile of 189 characters
   plus the prefix previewed, one of 190 hung at `Target.setAutoAttach`; the
   same project at a short path ran]
+- A `.c3p` or a `.zip` opens only with `project.c3proj` at the root of the
+  archive; one that holds the project folder fails with "Check it is a
+  valid Construct 3 single-file (.c3p) project". `scripts/pack_project.py`
+  writes the root layout. [observed in r504, 2026-10-02: the same project
+  opened packed at the root and failed packed inside its folder]
+- A file put on a page's file input through the DevTools protocol from a
+  path past MAX_PATH reaches the page empty, with its name and no error: the
+  upload "succeeds" with 0 bytes. Hand the browser a copy under a short
+  folder and read `files[0].size` in the page before using it;
+  `pack_project.py` warns when it writes such a path. [observed in Chrome
+  154, 2026-10-02: a 73 KB zip at a 273-character path arrived as 0 bytes,
+  the same file under `%TEMP%` whole]

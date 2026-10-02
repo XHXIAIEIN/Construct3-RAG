@@ -946,7 +946,7 @@ def main() -> int:
         print(NEXT)
     if any(r.get("preview", {}).get("errors") for r in results):
         print(NEXT_PREVIEW)
-    return 1 if failed else 0
+    return 1 if any(failed(r) for r in results) else 0
 
 
 if __name__ == "__main__":
