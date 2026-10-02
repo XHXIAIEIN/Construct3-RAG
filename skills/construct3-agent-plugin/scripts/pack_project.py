@@ -17,10 +17,10 @@ the project one folder down comes out with project.c3proj at the root.
 
 What is written is what the editor saves: project.c3proj, llm-context.md, the
 root's *.uistate.json and the editor's folders (objectTypes, layouts,
-eventSheets, images, videos, 3dmodels, palettes, tilemapBrushes, ...).
-Anything else at the top, the agent's skill copy, AGENTS.md, a tools/
-generator, an export, is left out and named in the output; --keep NAME puts
-one back.
+eventSheets, images, videos, 3dmodels, palettes, tilemapBrushes, addons for
+bundled addons, ...). Anything else at the top, the agent's skill copy,
+AGENTS.md, a tools/ generator, an export, is left out and named in the
+output; --keep NAME puts one back.
 """
 from __future__ import annotations
 
@@ -38,10 +38,11 @@ SCRATCH = ".tmp"
 # Where a pack goes by default: the products of the skill's scripts, kept apart from the scratch of .tmp/.
 BUILD = ".build"
 # The top-level folders the editor saves a project in, as Scirra's guide "Construct's project format"
-# lists them, and the one file beside project.c3proj it writes into every project.
+# lists them, and the one file beside project.c3proj it writes into every project. addons/ is where a
+# project saved with Bundle addons keeps addons/<type>/<id>.c3addon (r504 save, 2026-10-03).
 EDITOR_FOLDERS = ("objectTypes", "families", "layouts", "eventSheets", "timelines", "flowcharts", "3dmodels",
                   "images", "icons", "files", "sounds", "music", "videos", "fonts", "scripts", "palettes",
-                  "tilemapBrushes")
+                  "tilemapBrushes", "addons")
 EDITOR_ROOT_FILES = ("project.c3proj", "llm-context.md")
 ARCHIVES = (".c3p", ".zip")
 # Windows reads no file past MAX_PATH unless asked to; a browser handed such a file over the

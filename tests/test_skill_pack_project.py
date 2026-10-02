@@ -82,3 +82,14 @@ def test_an_archive_with_the_folder_inside_is_repacked_and_unpacked(project, tmp
         z.writestr("readme.txt", "")
     code, out = tool(project, "pack_project", str(tmp_path / "empty.zip"))
     assert code == 2 and "holds no project.c3proj" in out and "Traceback" not in out, out
+
+
+def test_bundled_addons_are_packed(project, tmp_path):
+    """A project saved with Bundle addons keeps addons/<type>/<id>.c3addon, which the editor needs to
+    open it without the addon installed (r504 save, 2026-10-03)."""
+    addon = project / "addons" / "effect" / "Custom_Glow.c3addon"
+    addon.parent.mkdir(parents=True)
+    addon.write_bytes(b"PK\x05\x06" + bytes(18))
+    code, out = tool(project, "pack_project", "--out", str(tmp_path / "bundled.c3p"))
+    assert code == 0 and "addons/effect/Custom_Glow.c3addon" in names(tmp_path / "bundled.c3p"), out
+    assert "addons/" not in out.split("left out:")[-1], out

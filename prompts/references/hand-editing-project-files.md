@@ -186,6 +186,13 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   "Physics"` where only family `Parts` declares Physics. The member's layout
   instances hold the family behavior's properties block as if it were their
   own.
+- A project with Bundle addons set holds `"bundleAddons": true` in
+  `project.c3proj`, each bundled addon's `usedAddons` entry with
+  `"bundled": true` and its `"version"`, and the addon itself at
+  `addons/<type>/<id>.c3addon`, `addons/effect/Custom_ElectricBlob.c3addon`
+  for an effect. An effect's color parameter on a layout instance is four
+  numbers, `[1, 0.24, 0.27, 1]`. [observed in a project the editor r504
+  saved, 2026-10-03]
 - A Sprite Font has `"plugin-id": "Spritefont2"` and an `image` block in its
   object type file, as a Tiled Background has. Its picture is
   `images/<lowercase name>.png`, its `usedAddons` entry `{"type": "plugin",

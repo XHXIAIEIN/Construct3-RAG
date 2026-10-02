@@ -160,16 +160,28 @@ SETUP_JS = r"""async () => {
 # notice shown over the opened project: it is returned in warnings and closed, which
 # takes up to half a second, so that a preview or an export can go on. It is told by
 # its id, since the crash report, a refusal, also comes after the title has turned.
+# A project saved with Bundle addons asks, halfway through opening, to install each
+# bundled addon the profile lacks, and waits there: the addon is the project's own,
+# so it is installed as a user opening the project would, and named in warnings.
 RESULT_JS = r"""async () => {
   const w = t => new Promise(r => setTimeout(r, t)), start = () => window.__c3Title;
   const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog');
   const notice = d => d.id == 'deprecatedFeaturesDialog', text = d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500);
+  const installed = [];
   for (let n = 0; start() === undefined; n++) { if (n > 150) return 'no file on the input: put the .c3p on it'; await w(200); }
   if (start() === null) return 'the file on the input is empty: its path does not exist';
-  for (let n = 0; n < 180; n++, await w(250))
+  for (let n = 0; n < 180; n++, await w(250)) {
+    const ask = document.querySelector('#addonConfirmInstallDialog[open]');
+    if (ask) {
+      const m = text(ask).match(/Name (.+?) Version (\S+) Type (\S+)/);
+      installed.push('installed the bundled addon ' + (m ? `${m[1]} ${m[2]} (${m[3].toLowerCase()})` : text(ask).slice(-200)));
+      ask.querySelector('.okButton').click();
+      continue;
+    }
     if (!document.querySelector('#progressDialog[open]') && (open().some(d => !notice(d)) || document.title != start())) break;
+  }
   await w(1500);
-  const dialogs = open().filter(d => !notice(d)).map(text), warnings = open().filter(notice).map(text);
+  const dialogs = open().filter(d => !notice(d)).map(text), warnings = [...installed, ...open().filter(notice).map(text)];
   open().filter(notice).forEach(d => d.querySelector('ui-close-button, .okButton')?.click());
   for (let n = 0; n < 20 && open().some(notice); n++) await w(100);
   return {opened: !dialogs.length && document.title != start(), title: document.title, dialogs, warnings,

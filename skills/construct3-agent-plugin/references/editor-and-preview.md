@@ -130,3 +130,32 @@ which cases to play and how to reach and read them to
   `pack_project.py` warns when it writes such a path. [observed in Chrome
   154, 2026-10-02: a 73 KB zip at a 273-character path arrived as 0 bytes,
   the same file under `%TEMP%` whole]
+- A project saved with Bundle addons asks, while it opens, to install each
+  bundled addon the browser profile lacks, and waits at
+  `#addonConfirmInstallDialog` with the progress dialog still open.
+  `open_in_editor.py` clicks Install and names the addon in a `warning:`
+  line; the preview then runs with it. A project that uses a custom addon
+  without bundling it fails with "Missing addons" in any profile that has
+  not installed it, the headless one included: bundle the addon in an
+  example or a repro. [observed in r504, 2026-10-03: an effect addon
+  bundled in a demo installed from the dialog and previewed in a fresh
+  profile]
+- The editor refuses a `.c3addon` whose `addon.json` leaves `name`, `id`,
+  `version`, `author`, `website`, `documentation` or `description` empty,
+  with "Failed to install the addon" and the console line `invalid addon
+  json`. In an effect addon, `supported-renderers` names `webgl2` only
+  beside a WebGL 2 shader; the built-ins list `["webgl", "webgpu"]`, with
+  `effect.fx` and `effect.wgsl`. The lang file keys a parameter by its `id`
+  exactly, case included, else the Properties Bar shows `[???]`; the
+  built-ins write ids in kebab case. The editor's own effects, their
+  `addon.json`, GLSL and WGSL, are in `.cache/c3-cdn/<release>/effects_allEffects.json`
+  of the Construct3-RAG clone. [r504 `main.js`, the addon installer;
+  observed installing an effect addon, 2026-10-03]
+- An effect that counts its pixels by `pixelSize` changes with the editor's
+  zoom and the window size, since a texel of the drawn rect is a screen
+  pixel. Count them in the object's layout units instead, as the built-in
+  Randomize tiling does: the position in the object is
+  `(vTex - srcOriginStart) / (srcOriginEnd - srcOriginStart)`
+  (`c3_srcOriginToNorm` in WGSL), its size `abs(layoutEnd - layoutStart)`.
+  [r495.2 effect sources; observed in r504 previews at 640x400 and
+  1400x860, 2026-10-03: the same cells, scaled]
