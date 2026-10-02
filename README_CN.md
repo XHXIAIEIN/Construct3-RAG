@@ -15,7 +15,9 @@ python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 
 它们把这个 clone、它要读的仓库和 `MyGame` 项目放在同一个 `$HOME/Construct3` 里，并把 `construct3-agent-plugin` skill 连同 `AGENTS.md` 和 `CLAUDE.md` 装进 `MyGame`。已经存在的都原样保留，所以这两条可以重复运行；`--help` 列出参数。`cmd.exe` 里把 `$HOME` 写成 `%USERPROFILE%`。想放在别处，就把两条命令里的 `$HOME/Construct3` 一起换成那个文件夹。
 
-`MyGame` 从 `data/c3-new-project` 复制而来，即编辑器用 **项目** > **新建** 创建、再用 **另存为** > **保存为项目文件夹** 保存的空项目。想改用本机已保存的空项目，在第二条命令后加 `--template <那个文件夹>`。
+`MyGame` 从 `data/c3-new-project` 复制而来，即编辑器用 **项目** > **新建** 创建、再用 **另存为** > **保存为项目文件夹** 保存的空项目。想改用本机已保存的空项目，在第二条命令后加 `--template <那个文件夹>`。已有的游戏项目，把它的文件夹传给 `--project`。
+
+读 `AGENTS.md` 的 agent 都能这样用：写进去的那一块指明了 skill 的脚本和存放 schemas 的 clone。skill 装在 `MyGame/.agents/skills/construct3-agent-plugin/`；agent 从别的目录找 skill 时，在第二条命令后加 `--into <那个目录>`，例如 `--into .trae/skills`。agent 从 `AGENTS.md` 以外的文件读项目指令时，要在那个文件里加一行指向 `AGENTS.md`，就像 `CLAUDE.md` 里的 `@AGENTS.md`。
 
 之后读 `MyGame/AGENTS.md`。
 

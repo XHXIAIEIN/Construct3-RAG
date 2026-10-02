@@ -15,7 +15,9 @@ python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 
 They put this clone, the repositories it reads and the `MyGame` project together in `$HOME/Construct3`, and install the `construct3-agent-plugin` skill in `MyGame` with its `AGENTS.md` and `CLAUDE.md`. Whatever is already there is left as it is, so the two are safe to run again; `--help` lists the flags. In `cmd.exe`, write `%USERPROFILE%` for `$HOME`. To keep everything somewhere else, write that folder into both commands in place of `$HOME/Construct3`.
 
-`MyGame` starts as a copy of `data/c3-new-project`, the empty project the editor creates with **Project** > **New** and saves with **Save as** > **Save as project folder**. To start from an empty project saved on this machine instead, add `--template <that folder>` to the second command.
+`MyGame` starts as a copy of `data/c3-new-project`, the empty project the editor creates with **Project** > **New** and saves with **Save as** > **Save as project folder**. To start from an empty project saved on this machine instead, add `--template <that folder>` to the second command. For a game project that already exists, pass its folder to `--project`.
+
+This works with any agent that reads `AGENTS.md`: the block written there names the skill's scripts and the clone that holds the schemas. The skill goes to `MyGame/.agents/skills/construct3-agent-plugin/`; for an agent that looks for skills in another folder, add `--into <that folder>` to the second command, such as `--into .trae/skills`. An agent that takes its project instructions from a file other than `AGENTS.md` needs a line in that file pointing to `AGENTS.md`, as `CLAUDE.md` does with `@AGENTS.md`.
 
 Then read `MyGame/AGENTS.md`.
 
