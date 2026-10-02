@@ -23,7 +23,7 @@ Claude Code users can install the skill as a plugin instead; the plugin is this 
 
 ```bash
 claude plugin marketplace add XHXIAIEIN/Construct3-RAG
-claude plugin install construct3-project@construct3-rag
+claude plugin install construct3@construct3-rag
 ```
 
 ## Related repositories

@@ -4,7 +4,7 @@
   "metadata": { "description": "Construct 3 project tools and reference data." },
   "plugins": [
     {
-      "name": "construct3-project",
+      "name": "construct3",
       "source": "./",
       "description": "Look up, read, edit, check and generate Construct 3 folder projects against the bilingual Construct3-RAG schemas.",
       "category": "development"

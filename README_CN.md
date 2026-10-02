@@ -23,7 +23,7 @@ Claude Code 用户也可以把 skill 当插件装；插件就是整个仓库，s
 
 ```bash
 claude plugin marketplace add XHXIAIEIN/Construct3-RAG
-claude plugin install construct3-project@construct3-rag
+claude plugin install construct3@construct3-rag
 ```
 
 ## 相关仓库

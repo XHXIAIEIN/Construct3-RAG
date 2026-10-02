@@ -1,5 +1,5 @@
 {
-  "name": "construct3-project",
+  "name": "construct3",
   "version": "0.1.0",
   "description": "Look up, read, edit, check and generate Construct 3 folder projects against the bilingual Construct3-RAG schemas.",
   "author": { "name": "XHXIAIEIN" },
