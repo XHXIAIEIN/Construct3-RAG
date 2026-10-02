@@ -56,7 +56,7 @@ plugin 装的是整个仓库，schemas 一起带上，skill 的脚本直接在 p
 
 ## 查找
 
-在[安装](#安装)时 clone 下来的仓库里运行，需要 Python 3.10 以上。查条件、动作或表达式，用 `lookup_ace.py`，后面跟插件、行为或特效的名字，再加几个关键词。它会列出每个匹配项的参数、对应语言的显示文本，以及写进项目要用的 JSON：
+在[安装](#安装)时 clone 下来的仓库里运行，需要 Python 3.10 以上。查条件、动作或表达式，用 `lookup_ace.py`，后面跟插件、行为或滤镜的名字，再加几个关键词。它会列出每个匹配项的参数、对应语言的显示文本，以及写进项目要用的 JSON：
 
 ```bash
 python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale zh-CN
@@ -68,13 +68,13 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 
 | 路径 | 内容 |
 |---|---|
-| `c3-schemas/_index.json` | 版本号、语言列表，以及每个插件、行为、特效对应的文件和 ACE 数量。不含各语言的名称 |
-| `c3-schemas/{locale}/_index.json` | 插件、行为、特效在该语言下的名称，键和根索引一致 |
+| `c3-schemas/_index.json` | 版本号、语言列表，以及每个插件、行为、滤镜对应的文件和 ACE 数量。不含各语言的名称 |
+| `c3-schemas/{locale}/_index.json` | 插件、行为、滤镜在该语言下的名称，键和根索引一致 |
 | `c3-schemas/{locale}/plugins/{id}.json` | 条件、动作、表达式、属性 |
-| `c3-schemas/{locale}/plugins/_common.json` | 所有世界对象共有的 ACE：重叠、碰撞、实例变量、层级、UID、Z 序。这些只存一份，不在每个插件文件里重复；插件文件用 `commonAces` 列出自己有哪些 |
+| `c3-schemas/{locale}/plugins/_common.json` | 所有世界对象共有的 ACE：重叠、碰撞、实例变量、对象层级、UID、显示顺序。这些只存一份，不在每个插件文件里重复；插件文件用 `commonAces` 列出自己有哪些 |
 | `c3-schemas/{locale}/behaviors/{id}.json` | 行为的 ACE |
-| `c3-schemas/{locale}/effects/{id}.json` | 特效的参数和分类 |
-| `c3-schemas/{locale}/_deprecated.json` | 编辑器已弃用的插件、行为、特效和 ACE，不管 schema 里还有没有；有同名的新 ACE 时也会列出来 |
+| `c3-schemas/{locale}/effects/{id}.json` | 滤镜的参数和分类 |
+| `c3-schemas/{locale}/_deprecated.json` | 编辑器已弃用的插件、行为、滤镜和 ACE，不管 schema 里还有没有；有同名的新 ACE 时也会列出来 |
 | `c3-examples/{locale}/{id}.json` | 示例的名称、描述、标签、用到的插件、打开链接 |
 | `c3-lang/{locale}.json` | CDN 上的原始语言包，每行一条，用来对比版本和翻译 |
 | `c3-ts-defs/autocomplete-data.json` | 脚本里每个类有哪些方法和属性 |
@@ -84,7 +84,7 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 
 在文件里查 ACE 的步骤：
 
-1. 在 `c3-schemas/_index.json` 里找到插件、行为或特效，条目里的 `file` 就是文件路径。只知道中文名时，先到 `{locale}/_index.json` 里查出 id。
+1. 在 `c3-schemas/_index.json` 里找到插件、行为或滤镜，条目里的 `file` 就是文件路径。只知道中文名时，先到 `{locale}/_index.json` 里查出 id。
 2. 打开 `c3-schemas/{locale}/{file}`，按 `id` 找 ACE；条件和动作也可以按 `list-name` 找，表达式按 `translated-name` 找。`display-text` 是事件表里显示的文字，`params` 是参数。世界对象的 ACE 在自己的文件里找不到时，去 `plugins/_common.json` 里找。
 3. 查脚本接口时，先在 `autocomplete-data.json` 的 `properties` 里找到类名，比如 `ISpriteInstance`，再到同名插件或行为的文件夹里打开对应的 `.d.ts`，比如 `c3-ts-defs/plugins/general/sprite/c3runtime/ISpriteInstance.d.ts`。
 
@@ -105,7 +105,7 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 
 ## 事件表提示词
 
-如果要做一个帮用户写事件表的助手，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)、[`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 和 [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 一起作为 system prompt。第一份讲怎么用 Construct 的思路组织事件（选取、家族、关联、`Else`），第二份规定输出格式和名称核对，第三份列出凭直觉容易写错的运行时行为，一条一行。每条背后的案例和出处在 `prompts/pitfalls/` 里，按主题分文件，写到相关主题时再去读。[`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) 整理了官方示例的写法（事件组和组内变量、注释、命名、界面文字），把事件写进项目时参考。偶尔才用到的内容放在 `prompts/references/`，这几份文件会在需要时指过去，平时不占上下文。
+如果要做一个帮用户写事件表的助手，把 [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)、[`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) 和 [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) 一起作为 system prompt。第一份讲怎么用 Construct 的思路组织事件（选择、家族、关联、`Else`），第二份规定输出格式和名称核对，第三份列出凭直觉容易写错的运行时行为，一条一行。每条背后的案例和出处在 `prompts/pitfalls/` 里，按主题分文件，写到相关主题时再去读。[`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) 整理了官方示例的写法（事件组和组内变量、注释、命名、界面文字），把事件写进项目时参考。偶尔才用到的内容放在 `prompts/references/`，这几份文件会在需要时指过去，平时不占上下文。
 
 ## 相关仓库
 
@@ -115,7 +115,7 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 |---|---|---|
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档，Markdown 格式 | `data/c3-schemas/` 给出名称和参数，手册说明它们的作用 |
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 示例浏览器里的所有示例，以项目文件夹形式保存 | `data/c3-examples/` 是示例的元数据，这里是项目源文件 |
-| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、特效和主题的模板和文档 | `data/c3-ts-defs/sdk/` 是类型定义，这里讲怎么用 |
+| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、滤镜和主题的模板和文档 | `data/c3-ts-defs/sdk/` 是类型定义，这里讲怎么用 |
 
 ## 查找服务（可选）
 
@@ -133,7 +133,7 @@ python scripts/setup.py          # http://localhost:8765/playground
 ```
 AGENTS.md               AI agent 入口
 data/                   参考数据，直接读取
-  c3-schemas/           ACE 定义和特效（en-US + zh-CN）
+  c3-schemas/           ACE 定义和滤镜（en-US + zh-CN）
   c3-examples/          示例项目元数据
   c3-lang/              CDN 语言包
   c3-ts-defs/           TypeScript 脚本接口
