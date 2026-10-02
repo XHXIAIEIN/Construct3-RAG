@@ -26,6 +26,8 @@ claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
 ```
 
+这样装的插件是一份副本，`claude plugin update construct3@construct3-rag` 把它更新到最新提交。本机已经 clone 了这个仓库时，改为添加这个 clone：`claude plugin marketplace add <clone 的路径>`，插件就直接从 clone 读取，`git pull` 之后下一个会话就用上新版。两种方式下游戏项目里都不需要 skill 副本。
+
 ### skill 的脚本运行什么、连到哪里
 
 读的都是本仓库的 `data/` 和游戏项目；脚本不安装任何包，也不向我们的服务器发送任何东西。

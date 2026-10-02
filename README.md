@@ -26,6 +26,8 @@ claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
 ```
 
+This keeps a copy of the plugin, which `claude plugin update construct3@construct3-rag` brings up to the latest commit. With this repository already cloned, add the clone instead, `claude plugin marketplace add <the clone>`: the plugin is then read from the clone, and a `git pull` reaches the next session. Either way the game project needs no copy of the skill.
+
 ### What the skill's scripts run and reach
 
 Everything is read from this repository's `data/` and from the game project; the scripts install no package and send nothing to a server of ours.

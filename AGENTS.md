@@ -93,8 +93,12 @@ A game project reaches this repository through two things it holds: the
 block of `prompts/game-project-AGENTS.md` in its instruction file, whose
 `Construct3-RAG:` line locates the schemas.
 
+- Claude Code with the `construct3` plugin enabled (the skill is listed as
+  `construct3:construct3-agent-plugin`): the project needs no copy. Its
+  instruction file names the scripts in the plugin's folder, and nothing
+  is installed.
 - Working in a game project that has no `construct3-agent-plugin` folder under
-  `.agents/skills/` or another client's skills folder: install it before
+  `.agents/skills/` or another client's skills folder, and no plugin: install it before
   the first project file is read or written, from the project folder:
 
   ```bash

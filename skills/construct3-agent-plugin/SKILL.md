@@ -28,8 +28,12 @@ opened once before it is handed over.
   environment variable, or the `Construct3-RAG: <folder>` line in the
   project's `AGENTS.md` or `CLAUDE.md`. `Construct3-RAG not found`: fill that
   line in; ask the user for the folder instead of guessing it.
-- Reading this inside the clone while the work is in a game project: install
-  the skill there first, `python scripts/install.py --project <game folder>`.
+- Loaded as the Claude Code plugin (the skill is named
+  `construct3:construct3-agent-plugin`): the game project needs no copy; run
+  the scripts from this folder.
+- Otherwise, reading this inside the clone while the work is in a game
+  project: install the skill there first,
+  `python scripts/install.py --project <game folder>`.
   It copies this folder to the project's `.agents/skills/` and adds the
   Construct 3 block to its `AGENTS.md` with the clone's path filled in
   (`--into .claude/skills` for Claude Code, `.trae/skills` for TRAE). Tell
