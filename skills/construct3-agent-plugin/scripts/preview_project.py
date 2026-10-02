@@ -44,7 +44,8 @@ Steps, each an object with one of these keys, and "note" for a label:
                                 recording leaves NN-NAME.html to review it: the frames, the steps
                                 that ran and the watched values, frame by frame, and a part
                                 selected there copied as a task for an agent; and
-                                NN-NAME/timeline.json with the same
+                                NN-NAME/timeline.json with the same. index.html in --shots
+                                lists every recording there
 
 TARGET is where to press, the middle of an instance's bounding box:
   "Button"                      the first instance of an object type, as the project spells it
@@ -92,7 +93,11 @@ output:
       runtime: <an error the game logged during the step, with its event>
     3 state Piece: <as open_in_editor.py --state prints it>
     4 shot after-merge: .tmp/preview/04-after-merge.png
-    recorded merge: 95 frames in 3.4 s, .tmp/preview/02-merge.mp4; frames in .tmp/preview/02-merge
+    recorded merge: 95 frames in 3.4 s, .tmp/preview/02-merge.mp4
+      review .tmp/preview/02-merge.html: the user plays it there, selects the part that looks wrong and
+      copies it to you as a task; .tmp/preview/index.html lists every recording
+      frames and timeline.json in .tmp/preview/02-merge
+      watch coins: 40 at 0 ms, 30 at 900 ms
     ran: 4 of 4 steps in 9.6 s, 1 runtime error
 
 exit codes: 0 every step ran and the game logged no error; 1 a step failed, the game logged an error, or
@@ -405,11 +410,42 @@ class Recorder(threading.Thread):
                               for s in self.steps]}
         (self.folder / "timeline.json").write_text(json.dumps(timeline, ensure_ascii=False, indent=1), encoding="utf-8")
         page = video.with_suffix(".html")
-        data = json.dumps(timeline, ensure_ascii=False).replace("</", "<\\/")     # no </script> inside the script
-        page.write_text(REVIEW.replace("/*TIMELINE*/null", data), encoding="utf-8")
+        page.write_text(REVIEW.replace("/*TIMELINE*/null", script_json(timeline)), encoding="utf-8")
+        index = write_index(video.parent)
         lines = [f"{len(frames)} frames in {sum(seconds):.1f} s, {made or 'no ffmpeg or Pillow here to join them'}",
-                 f"review {page}; frames and timeline.json in {self.folder}"]
+                 f"review {page}: the user plays it there, selects the part that looks wrong and copies it to you "
+                 f"as a task; {index} lists every recording",
+                 f"frames and timeline.json in {self.folder}"]
         return "\n    ".join(lines + watch_lines(timeline["frames"]))
+
+
+def script_json(value) -> str:
+    """JSON to put in the page's script, with no </script> inside it."""
+    return json.dumps(value, ensure_ascii=False).replace("</", "<\\/")
+
+
+def write_index(shots: Path) -> Path:
+    """index.html in the shots folder: every recording there with its review page, the
+    newest first, so the user opens one from a page instead of a folder chooser."""
+    found = []
+    for timeline in shots.glob("*/timeline.json"):
+        page = timeline.parent.with_suffix(".html")
+        try:
+            data = json.loads(timeline.read_text(encoding="utf-8"))
+            frames, steps, when = data["frames"], data.get("steps", []), timeline.stat().st_mtime
+        except (OSError, ValueError, KeyError, TypeError):     # a folder that is not a recording
+            continue
+        if not page.exists():
+            continue
+        found.append((when, {"name": timeline.parent.name, "page": page.name, "project": data.get("project"),
+                             "when": time.strftime("%Y-%m-%d %H:%M", time.localtime(when)), "frames": len(frames),
+                             "seconds": frames[-1]["t"] if frames else 0, "steps": len(steps),
+                             "failed": sum(not s.get("ok", True) for s in steps),
+                             "errors": sum(len(s.get("errors", [])) for s in steps)}))
+    index = shots / "index.html"
+    recordings = [r for _, r in sorted(found, key=lambda pair: pair[0], reverse=True)]
+    index.write_text(REVIEW.replace("/*RECORDINGS*/null", script_json(recordings)), encoding="utf-8")
+    return index
 
 
 def watch_lines(frames: list[dict]) -> list[str]:
@@ -543,7 +579,7 @@ def do_step(game: Game, step: dict, n: int, shots: Path) -> tuple[str, dict | No
         said = game.stop_recording()
         if value:
             game.record(value, shots / f"{n:02d}-{value}", step.get("watch") or {})
-        return "; ".join(filter(None, [said, "recording" if value else ""])), None
+        return "; ".join(filter(None, ["recording" if value else "", said])), None
     return screenshot(game, shots / f"{n:02d}-{value}.png"), None
 
 

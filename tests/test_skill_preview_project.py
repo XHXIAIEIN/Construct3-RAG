@@ -1,5 +1,7 @@
 """preview_project.py: the plan, checked before the editor opens, and the report."""
 import json
+import os
+import re
 import sys
 
 import pytest
@@ -115,3 +117,27 @@ def test_preview_project_prints_how_the_watched_values_changed():
         "watch y: null at 0 ms, 662 at 500 ms, 600 at 1000 ms, 599 at 1100 ms, 598 at 1200 ms, 597 at 1300 ms, "
         "596 at 1400 ms, 595 at 1500 ms, and 3 more in timeline.json"]
     assert pp.watch_lines([{"t": 0.0}]) == []
+
+
+def test_preview_project_lists_every_recording_in_an_index_page(tmp_path):
+    """index.html beside the recordings lists each one that has its review page, the newest first."""
+    pp = module()
+    for name, when, steps in (("02-merge", 100, [{"ok": True, "errors": []}]),
+                              ("05-drop", 200, [{"ok": False, "errors": ["TypeError: x"]}])):
+        (tmp_path / name).mkdir()
+        timeline = tmp_path / name / "timeline.json"
+        timeline.write_text(json.dumps({"frames": [{"t": 0}, {"t": 1.5}], "steps": steps, "project": "D:/G"}),
+                            encoding="utf-8")
+        (tmp_path / f"{name}.html").write_text("", encoding="utf-8")
+        os.utime(timeline, (when, when))
+    (tmp_path / "07-left").mkdir()      # its review page was deleted
+    (tmp_path / "07-left" / "timeline.json").write_text('{"frames": []}', encoding="utf-8")
+    (tmp_path / "stray").mkdir()
+    (tmp_path / "stray" / "timeline.json").write_text("not json", encoding="utf-8")
+
+    page = pp.write_index(tmp_path).read_text(encoding="utf-8")
+    listed = json.loads(re.search(r"const recordings = (.*?);\s+//", page).group(1))
+    assert [r["name"] for r in listed] == ["05-drop", "02-merge"]
+    assert {k: listed[0][k] for k in ("page", "project", "frames", "seconds", "steps", "failed", "errors")} == {
+        "page": "05-drop.html", "project": "D:/G", "frames": 2, "seconds": 1.5, "steps": 1, "failed": 1, "errors": 1}
+    assert "let timeline = /*TIMELINE*/null" in page     # it opens as the list, not as one recording

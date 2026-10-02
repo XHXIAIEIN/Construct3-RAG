@@ -3,7 +3,8 @@
      ran and the values the record step watched. A part selected on the timeline is
      copied as a task for an agent: the frames' files, the steps and the watched values
      of that part. The script copies this page next to the recording's folder and puts
-     its timeline where TIMELINE is; without one, the page opens a recording's folder. -->
+     its timeline where TIMELINE is, and writes it as index.html with the recordings beside
+     it where RECORDINGS is; without either, the page opens a recording's folder. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -137,7 +138,8 @@
   .titleblock h1 { margin: 2px 0 0; font-size: 16px; font-weight: 600; word-break: break-word; }
   .titleblock b { display: block; margin-top: 2px; font-weight: 500; word-break: break-all; }
   .titleblock b.mono { font-size: 12px; }
-  #tb-project, #tb-folder { font-size: 11px; font-weight: 400; }
+  [title*="Click to copy"] { cursor: copy; }
+  .copied::after { content: " copied"; color: var(--blue); font: 11px var(--mono); }
 
   .opening .body p { margin: 0 0 14px; color: var(--muted); max-width: 640px; }
   .opening code { font-size: 12px; color: var(--ink); }
@@ -146,6 +148,13 @@
   .recordings { margin-top: 14px; border: 1px solid var(--hair); max-width: 640px; }
   .recordings:empty { display: none; }
   .recordings li .what { font-family: var(--mono); }
+  .recordings li.link { display: block; padding: 0; }
+  .recordings li.link a { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; padding: 7px 12px; color: inherit; text-decoration: none; }
+  .recordings li.link a:hover .what { text-decoration: underline; }
+  .opening.index .recordings { margin-top: 0; max-width: none; border: 0; }
+  .opening.index .body { padding: 0; }
+  .opening.index #pick-error { margin: 0; padding: 10px 12px; color: var(--muted); }
+  .titleblock a { color: var(--blue); }
 </style>
 </head>
 <body>
@@ -165,12 +174,13 @@
 </svg>
   <div class="board">
     <section class="panel opening" id="opening" hidden>
-      <header><h2>No recording on this page</h2><span class="meta">recording review</span></header>
+      <header><h2 id="opening-title">No recording on this page</h2><span class="meta" id="opening-meta">recording review</span></header>
       <div class="body">
-        <p>scripts/preview_project.py writes this page beside each recording with the recording in it, as
-          <code>NN-NAME.html</code> in <code>.tmp/preview/</code> of the game project: open that one. Or choose a
-          folder here: the game project, its <code>.tmp/preview/</code>, or the folder of one recording. Edge and
-          Chrome open the chooser in that folder the next time; the files stay in this browser.</p>
+        <p id="opening-help">scripts/preview_project.py writes this page beside each recording with the recording in
+          it, as <code>NN-NAME.html</code> in <code>.tmp/preview/</code> of the game project, and
+          <code>index.html</code> there lists them all: open one of those. Or choose a folder here: the game project,
+          its <code>.tmp/preview/</code>, or the folder of one recording. Edge and Chrome open the chooser in that
+          folder the next time; the files stay in this browser.</p>
         <button id="choose" class="ink"><svg class="i"><use href="#i-folder"/></svg>Choose a folder</button>
         <input type="file" id="pick" webkitdirectory hidden>
         <p id="pick-error" role="status"></p>
@@ -248,13 +258,15 @@
       <div><span class="label">Video</span><b class="mono" id="tb-video"></b></div>
       <div><span class="label">Steps</span><b class="mono" id="tb-steps"></b></div>
       <div><span class="label">Runtime errors</span><b class="mono" id="tb-errors"></b></div>
-      <div class="wide"><span class="label">Project</span><b class="mono" id="tb-project"></b></div>
-      <div class="wide"><span class="label">Recording folder</span><b class="mono" id="tb-folder"></b></div>
+      <div><span class="label">Project</span><b class="mono" id="tb-project"></b></div>
+      <div><span class="label">Recording folder</span><b class="mono" id="tb-folder"></b></div>
+      <div class="wide" id="tb-index"><span class="label">Every recording</span><b class="mono"><a href="index.html">index.html</a></b></div>
     </section>
     </div>
   </div>
 <script>
 let timeline = /*TIMELINE*/null;
+const recordings = /*RECORDINGS*/null;     // as index.html: the recordings beside it, the newest first
 const $ = id => document.getElementById(id);
 let frames = [], steps = [], end = 0.05;
 let picked = false;     // the recording came from a folder chosen on this page, not from the script
@@ -264,6 +276,30 @@ const at_ = t => `${100 * t / end}%`;
 const show = v => typeof v === "string" ? v : JSON.stringify(v);
 const clip = (text, n) => text.length <= n ? text : text.slice(0, n - 3) + "...";
 const plural = (n, word) => `${n} ${word}${n == 1 ? "" : "s"}`;
+const firstLine = text => text.split("\n")[0];     // what a record step said spells out the recording before it, over lines
+const baseName = path => path.replace(/[\\/]+$/, "").split(/[\\/]/).pop();
+
+// What a step said, its paths shortened to their last part for display: the folders of
+// this recording and of its project first, as they may hold spaces, then any drive path.
+function shortPaths(text) {
+  const folders = [timeline.path?.replace(/\/[^/]*$/, ""), timeline.project].filter(Boolean);
+  for (const dir of folders) for (const sep of ["/", "\\"]) text = text.split(dir.replaceAll("/", sep) + sep).join("");
+  return text.replace(/[A-Za-z]:[\\/][^\s;,]*[\\/]([^\s\\/;,]+)/g, "$1");
+}
+
+// A path shown by its last part; the whole path in its tooltip, copied by a click.
+function showPath(el, path) {
+  el.textContent = baseName(path) + (/[\\/]$/.test(path) ? "/" : "");
+  el.title = `${path}\nClick to copy the whole path`;
+  el.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(path);
+      el.classList.add("copied");
+      setTimeout(() => el.classList.remove("copied"), 1200);
+    } catch (e) {     // a browser that keeps the clipboard from a local file: the tooltip still shows it
+    }
+  };
+}
 const icon = name => `<svg class="i"><use href="#i-${name}"/></svg>`;
 let at = 0, playing = false, timer = null;
 let part = null;    // the selected part: the indexes of its first and last frame, {a, b}
@@ -309,8 +345,11 @@ function start(data, src) {
   $("tb-video").textContent = timeline.video ? timeline.video.split(/[\\/]/).pop() : "none";
   $("tb-steps").textContent = `${steps.length}` + (failed ? `, ${failed} failed` : "");
   $("tb-errors").textContent = `${errors}`;
-  $("tb-project").textContent = timeline.project || "not recorded";
-  $("tb-folder").textContent = framesFolder();
+  if (timeline.project) showPath($("tb-project"), timeline.project);
+  else $("tb-project").textContent = "not recorded";
+  if (/^([A-Za-z]:|\/)/.test(framesFolder())) showPath($("tb-folder"), framesFolder());
+  else $("tb-folder").textContent = framesFolder();
+  $("tb-index").hidden = picked;
   $("steps-meta").textContent = plural(steps.length, "step") + (failed ? ` · ${failed} failed` : "");
   drawRuler();
   for (const f of frames) {
@@ -330,7 +369,7 @@ function listStep(s) {
   li.className = s.ok ? "" : "bad";
   li.innerHTML = `${icon(s.ok ? "ok" : "bad")}<div><div class="what"></div><small></small></div>`;
   li.querySelector(".what").textContent = s.line + (s.ok ? "" : ": failed");
-  li.querySelector("small").textContent = span + (s.said ? ` · ${s.said}` : "");
+  li.querySelector("small").textContent = span + (s.said ? ` · ${clip(shortPaths(firstLine(s.said)), 140)}` : "");
   for (const e of s.errors) {
     const d = document.createElement("div");
     d.className = "error";
@@ -481,7 +520,7 @@ function brief() {
   lines.push("", ran.length ? "Steps of the plan that ran in it:" : "No step of the plan ran in it.");
   for (const s of ran) {
     lines.push(`  ${s.line}, ${ms(Math.max(0, s.start))} to ${ms(s.end)}` + (s.ok ? "" : ", FAILED")
-               + (s.said ? `: ${clip(s.said, 300)}` : ""));
+               + (s.said ? `: ${clip(firstLine(s.said), 300)}` : ""));
     lines.push(...s.errors.map(e => `    runtime: ${e.split("\n")[0]}`));
   }
   const names = Object.keys(first.watch || {});
@@ -685,7 +724,30 @@ async function openRecording(r) {
   start(data, file => urls.get(file) || "");
 }
 
+// The recordings index.html lists, each a link to its review page.
+function showIndex() {
+  $("opening").classList.add("index");
+  $("opening-title").textContent = document.title = "Recordings";
+  if (recordings[0]?.project) showPath($("opening-meta"), recordings[0].project);
+  else $("opening-meta").textContent = plural(recordings.length, "recording");
+  $("opening-help").hidden = $("choose").hidden = true;
+  if (!recordings.length) $("pick-error").textContent = "No recording here yet.";
+  for (const r of recordings) {
+    const li = document.createElement("li"), troubled = r.failed || r.errors;
+    li.className = "link" + (troubled ? " bad" : "");
+    li.innerHTML = `<a>${icon(troubled ? "bad" : "play")}<div><div class="what"></div><small></small></div></a>`;
+    li.firstChild.href = r.page;
+    li.querySelector(".what").textContent = r.name;
+    li.querySelector("small").textContent = `${r.when} · ${plural(r.frames, "frame")} in ${ms(r.seconds)}`
+      + ` · ${plural(r.steps, "step")}` + (r.failed ? `, ${r.failed} failed` : "")
+      + (r.errors ? ` · ${plural(r.errors, "runtime error")}` : "");
+    $("recordings").appendChild(li);
+  }
+  $("opening").hidden = false;
+}
+
 if (timeline) start(timeline, frameSrc);
+else if (recordings) showIndex();
 else $("opening").hidden = false;
 </script>
 </body>
