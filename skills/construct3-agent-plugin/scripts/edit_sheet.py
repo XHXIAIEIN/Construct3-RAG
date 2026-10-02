@@ -248,6 +248,17 @@ def place_of(events: list, node: dict) -> tuple[list, int] | None:
     return None
 
 
+def drop_empty_children(events: list, emptied: list) -> None:
+    """The editor saves an event without sub-events with no "children" key: take it off the event that held emptied."""
+    for ev in events:
+        children = ev.get("children")
+        if children is emptied:
+            del ev["children"]
+            return
+        if children:
+            drop_empty_children(children, emptied)
+
+
 def with_comments(siblings: list, i: int) -> int:
     """The index of the first of the comments directly above siblings[i]: they are about it."""
     while i and siblings[i - 1].get("eventType") == "comment":
@@ -320,6 +331,8 @@ class Plan:
         first = with_comments(siblings, i) if comments else i
         taken = siblings[first:i + 1]
         del siblings[first:i + 1]
+        if not siblings:
+            drop_empty_children(self.sheet["events"], siblings)
         return taken
 
     def new_events(self, op: dict, name: str) -> list[dict]:

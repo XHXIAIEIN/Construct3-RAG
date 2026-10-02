@@ -634,7 +634,8 @@ def call(name: str, *params: str) -> dict:
 
 def call_custom(obj: str, name: str, *params: str, family: str | None = None) -> dict:
     """Run a custom action on the picked instances of obj. family names the family
-    whose block it is when obj is a member type with an override of its own."""
+    whose block it is when obj is a member type that does not declare the block
+    itself: the editor saves such a call with customActionObjectClass."""
     a = {"customAction": name, "objectClass": obj, "sid": sid()}
     if family:
         a["customActionObjectClass"] = family

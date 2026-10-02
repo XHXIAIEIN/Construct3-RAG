@@ -52,9 +52,13 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
   `function*` keys as a function block; `functionCopyPicked` is *Copy all
   picked*. Call: `{"customAction": "name", "objectClass": "<row object>", "sid": N}`,
   with `"parameters": ["expr", ...]` exactly when the block declares
-  parameters. Add `"customActionObjectClass": "<family>"` when the row
-  object is a member type and the block belongs to the family; it is only
-  needed where the member overrides the block and calls the family's.
+  parameters. When the row object is a member type and the block is
+  declared on the family and not on the member, the editor saves the call
+  with `"customActionObjectClass": "<family>"`; a call that runs the
+  member's own block is saved without it. A call written without the key
+  still loads. [observed: Merge Game, r504, October 2026: 13 calls on
+  `base` and `body` gained it on save, the calls of `base`'s own `arm` and
+  `toTop` did not]
 - A `projectfile` parameter is the bare file name for a file at the root
   (`"file": "DefaultProfile.json"`) and `"file": {"path": "data/enemy.json"}`
   for a file in a subfolder; a bare name for a subfolder file loads and is
@@ -91,6 +95,31 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
   Sprite, Tiled Background, 9-patch and Sprite font instances, and
   `"y": 284.0` came back byte for byte as the editor had last saved it; a
   folder save made the same changes]
+- A Save of a folder project writes only the files of what was edited, and
+  a hand-written file keeps its form, keys the editor would rewrite
+  included, until something in it is edited in the editor. Save as project
+  folder and Download a copy write every file. [observed: Merge Game, r504,
+  October 2026: a Save after opening an unedited folder wrote no file; the
+  folder saves c30d3ce and 2063f77 rewrote only the edited layout and
+  `project.c3proj`]
+- The editor leaves empty lists out: an event without sub-events has no
+  `children`, a function or custom action call without arguments no
+  `parameters`, an animation frame without image points no `imagePoints`.
+  A `[]` loads and is dropped by the next save of its file.
+  `"sceneGraphData": null` does not mean no hierarchy: the save writes a
+  full `sceneGraphData` block for it, so leave the key out. A behavior
+  property an instance lacks is written with its default (`"rotation-type":
+  "2d"` for Rotate), and an instance's `instanceVariables` are written
+  family variables first, then the type's own, each in declaration order.
+  [observed: Merge Game, r504, October 2026: each of these written back by
+  hand into a saved project came back as described from Save as project
+  folder]
+- A layout instance's `world.originX` and `originY` are rewritten on save to
+  the origin of the first frame of its initial animation, so write the
+  frame's values: an instance written with `"originY": 1` over a frame whose
+  origin is 0.9929 is saved with 0.9929. [observed: Merge Game, r504,
+  October 2026, instances whose `initial-frame` is 0, and folder save
+  c30d3ce]
 - A family instance variable can be written through a member type:
   `"objectClass": "enemyBase"`, `"instance-variable": "hp"` with `hp`
   declared on family `EnemyGroup`.
@@ -168,6 +197,20 @@ r504 opened and previewed on 2026-09-30.
   and the name is inverted: `true` follows the system time scale, `false`
   ignores it, and a file without the key follows it. The export writes the
   key's value to the runtime's `useSystemTimescale`.
+- An instance track's `virtualPosition` is the editor's preview offset of
+  the instance while the playhead is dragged; the runtime does not read it.
+  The editor writes `"relativeFlags": 16383, "version": 1` after the offsets
+  whatever the file held, so a generator writes those. The 14 bits, low to
+  high, are z elevation, origin Y, origin X, opacity, angle, height, width,
+  Y, X, scale Y, scale X, depth, scale Z and 3D rotation; 2047 is the 2D
+  ones alone, as files from before the 3D offsets have it. A timeline file
+  also ends with `"nestedData": {}`, `"childrenNestedData": {}` and
+  `"transitionsData": []`. A save sometimes fills `transitionsData` with
+  copies of the custom eases the timeline uses; the editor reads them only
+  when the timeline is pasted, so `[]` is right in a file. [editor r504
+  `projectResources.js`; the exported `c3runtime.js` has no
+  `virtualPosition`; observed: Merge Game, r504, October 2026: 2047 written
+  with and without `version` came back 16383]
 
 ## Naming an event to the user
 

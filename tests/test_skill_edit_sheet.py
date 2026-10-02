@@ -265,3 +265,17 @@ def test_new_sid_left_in_a_plan_is_named(project):
                                        encoding="utf-8")
     code, out = tool(project, "edit_sheet", "Game", "plan.json")
     assert code == 1 and 'leave "sid" out' in out
+
+
+def test_plan_takes_the_children_key_off_an_event_it_empties(project):
+    """The editor saves an event without sub-events with no "children": a [] left behind
+    comes back changed in the diff of the sheet's next save."""
+    code, out = plan(project, {"after": 8, "events": [{"eventType": "group", "title": "Timer", "children": [
+        {"eventType": "comment", "text": "Show the clock."},
+        {"eventType": "block", "conditions": [], "actions": [{**SET_TIME, "parameters": {"text": '"Go"'}}]}]}]})
+    assert code == 0, out
+    n = int(re.search(r"^\s*(\d+) group Timer", printed(project), re.M).group(1))
+    code, out = plan(project, {"remove": n + 1})
+    assert code == 0, out
+    timer = next(ev for ev in all_events(project) if ev.get("title") == "Timer")
+    assert "children" not in timer
