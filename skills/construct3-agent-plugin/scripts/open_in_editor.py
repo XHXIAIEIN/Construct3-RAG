@@ -627,7 +627,8 @@ def report(result: dict) -> list[str]:
         ran = result.get("preview")
         if ran and ran["started"]:
             n = len(ran["errors"])
-            ticks = f"{ran['ticks']} ticks in {ran['wallTime']:.1f} s, " if ran.get("ticks") is not None else ""
+            ticks = (f"{ran['ticks']} ticks in {ran['wallTime']:.1f} s, "
+                     if ran.get("ticks") is not None and ran.get("wallTime") is not None else "")
             lines.append(f"  preview: layout {ran['layout']!r}, runtime in the {ran['runtime']}, {ticks}"
                          f"{n or 'no'} error{'' if n == 1 else 's'}")
             lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]

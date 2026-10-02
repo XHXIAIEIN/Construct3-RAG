@@ -83,3 +83,9 @@ def test_open_in_editor_reports_how_long_the_game_ran_in_the_preview():
 def test_open_in_editor_leaves_the_ticks_out_when_the_runtime_gave_none():
     lines = opened_with({"ticks": None, "wallTime": None})
     assert lines[1] == "  preview: layout 'Game', runtime in the worker, no errors", lines
+
+
+def test_open_in_editor_leaves_the_ticks_out_when_the_wall_time_is_missing():
+    """A release whose runtime gave no wall time must not end the run of every project."""
+    lines = opened_with({"ticks": 597, "wallTime": None})
+    assert lines[1] == "  preview: layout 'Game', runtime in the worker, no errors", lines
