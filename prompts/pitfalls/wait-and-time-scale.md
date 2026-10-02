@@ -87,6 +87,18 @@ Sources and the rule for adding an entry are in the index,
   0.08 s with one; a 0.08 s stop called 8 to 16 ms into a tick stayed at
   0.1 in 20 of 20 runs with the `wallclocktime` deadline and in 0 of 20
   with the count, which still lasted 0.08 s for the overlapping pair]
+- A hit stop slows every tween and every `dt` on game time, so a tween
+  started at an audio-clock deadline ends late by 0.9 of each stop that
+  falls inside it, and stops that overlap add up. Set the object's time
+  scale to 1 for that tween and restore it in *On finished*; a per-tick
+  blend that must keep real time divides `dt` by `timescale`. [manual:
+  system-reference/system-actions.md "Set object time scale", "Restore
+  object time scale"; system-reference/system-expressions.md "dt",
+  "timescale"; observed in a game project, r504 preview, 2026-10-02: an
+  elite dropped from 0.35 s before a beat to land on it landed 0.13 s late
+  when two kills fell inside the drop, and 1 ms early to 7 ms late with its
+  time scale at 1; a `1 - exp(-dt / 0.1)` blend on game time kept a
+  progress icon nodding at full depth through a 0.1 s kill stop]
 - Scroll To *Shake* replaces the shake that is running: magnitude, start
   and end are overwritten, so a 3 px tombstone shake 0.45 s after an 8 px
   kill shake ends the kill shake, and a 3 px splash shake in the same tick
