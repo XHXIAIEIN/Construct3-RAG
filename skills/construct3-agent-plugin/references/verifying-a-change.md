@@ -49,10 +49,14 @@ goes to `editor-and-preview.md`.
    came, until a tap on an empty spot came first]
 4. **Read the result where the player sees it.** A variable that says the
    flow ran is not the flow: read what is on screen, positions, opacity,
-   the layer shown, and for anything that moves, sample it over time. A
-   tween caught in one screenshot shows a point on its way; sampling every
-   50 ms for the length of the motion gives where it starts, where it
-   rests and where it ends. Wait with `until` on the result, not a fixed
+   the layer shown, and for anything that moves, read it over time. A
+   tween caught in one screenshot shows a point on its way. Put a `record`
+   step around the motion with the values to follow in `watch`: they are
+   read with every frame, the run prints their changes, and
+   `NN-NAME/timeline.json` puts frames, steps and values on one clock, so
+   where a motion starts, rests and ends is read from them. A `js` step
+   that samples one value in a loop does the same for a value read once.
+   Wait with `until` on the result, not a fixed
    `wait`, so a slow run does not fail and a fast one does not hide a
    second firing. [observed in a game project, r504 preview, 2026-10-02:
    a guide hand that fades in, presses and drags was read as "from bench
@@ -62,7 +66,11 @@ goes to `editor-and-preview.md`.
    logs no error and never reached the event says nothing; a run that logs
    an error after a direct write may say nothing about the events either.
    Report which cases were played, the result read in each, and any value
-   the plan forced.
+   the plan forced. What is judged by eye, a motion's feel or timing, goes
+   to the user as the recording's review page, `NN-NAME.html`: they play it
+   frame by frame, select a part that looks wrong and copy it back as a
+   task. [design: docs/decisions/preview-player.md, the bullets on
+   `record` and the review page]
 
 ## By kind of game
 
@@ -72,8 +80,8 @@ kinds takes the rows of each.
 
 | Kind | Drive | Read | Hold still |
 |------|-------|------|------------|
-| Board, merge, puzzle, cards: input on instances | `tap` and `drag` with an instance or `{js}` as the target | instance variables, which cell an instance sits in, counts | random placement: read where an instance landed instead of assuming it |
-| Platformer, top-down, action: input held over time | `key` with `seconds`, `hold` | positions and behavior state against a range, `until` a position is passed | the frame rate, which sets `dt` |
+| Board, merge, puzzle, cards: input on instances | `tap` and `drag` with an instance or `{js}` as the target | instance variables, which cell an instance sits in, counts; a recording for the motion of a drop or a merge | random placement: read where an instance landed instead of assuming it |
+| Platformer, top-down, action: input held over time | `key` with `seconds`, `hold` | positions and behavior state against a range, `until` a position is passed; a recording watching the position for a jump's arc | the frame rate, which sets `dt` |
 | Physics | as above | positions and velocities against a range | the Physics time step |
 | Rhythm, music, sound | input on the beat, timed from `Audio.CurrentTime` | the sound itself, recorded in the page | the audio clock's start |
 | Spawners, random levels, loot | play or `callFunction` | what spawned and where | the random seed |
