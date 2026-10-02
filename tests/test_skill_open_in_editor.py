@@ -30,6 +30,8 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
 
     code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps", "--preview")
     assert code == 3 and out.rstrip().endswith("read the console of the preview window it opens."), out
+    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps", "--state", "Player")
+    assert code == 3 and out.rstrip().endswith("as references/reading-the-runtime.md says."), out
 
     import io
     import zipfile
@@ -89,3 +91,40 @@ def test_open_in_editor_leaves_the_ticks_out_when_the_wall_time_is_missing():
     """A release whose runtime gave no wall time must not end the run of every project."""
     lines = opened_with({"ticks": 597, "wallTime": None})
     assert lines[1] == "  preview: layout 'Game', runtime in the worker, no errors", lines
+
+
+def test_open_in_editor_prints_the_state_the_game_left():
+    """--state: the globals, every type's count, then each named type's instances with
+    instance variables and the debugger's values under their last word; a miss names
+    the nearest type."""
+    platform = {"behaviors.platform.debugger.vector-x": 127.99999785, "behaviors.platform.properties.enabled.name": True,
+                "behaviors.platform.debugger.animation-mode": ["behaviors.platform.debugger.anim-moving"]}
+    sprite = {"title": "plugins.sprite.debugger.animation-properties.title",
+              "values": {"plugins.sprite.debugger.animation-properties.current-animation": "Run"}}
+    player = {"uid": 4, "x": 56.0, "y": 239.9375, "width": 8, "height": 12, "angle": 0, "layer": "World",
+              "zIndex": 1, "isVisible": False, "opacity": 1, "animationName": "Run", "animationFrame": 2,
+              "instVars": {"Health": 3}, "inspector": {"plugin": [sprite], "behaviors": {"Platform": platform}}}
+    state = {"globalVars": {"Score": 0, "Playable": True}, "counts": {"Player": 1, "Coin": 12},
+             "objects": {"Player": {"count": 1, "instances": [player]},
+                         "Coin": {"count": 12, "instances": [{"uid": 9, "x": 1, "y": 2, "width": 4, "height": 4,
+                                                              "layer": "World", "text": None}]},
+                         "Enemey": None},
+             "types": ["Player", "Coin", "Enemy"]}
+    lines = opened_with({"state": state})
+    assert lines[2:] == [
+        "  globals: Score 0, Playable true",
+        "  objects: Player 1, Coin 12",
+        "  Player: 1 instance",
+        "    uid 4, at (56, 239.94) 8x12, on World, hidden; Health 3",
+        '      sprite: current-animation "Run"',
+        "      Platform: vector-x 128, enabled true, animation-mode anim-moving",
+        "  Coin: 12 instances",
+        "    uid 9, at (1, 2) 4x4, on World",
+        "    and 11 more, not read",
+        "  Enemey: no object type of that name; closest: Enemy",
+    ], lines
+
+
+def test_open_in_editor_says_when_the_state_was_not_read():
+    lines = opened_with({"state": {"error": "TypeError: c3probe is undefined\n    at <anonymous>"}})
+    assert lines[2:] == ["  state: not read: TypeError: c3probe is undefined"], lines

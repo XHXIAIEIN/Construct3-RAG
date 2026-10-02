@@ -2,7 +2,8 @@
 editor's message when it does not.
 
     python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--release rNNN] [--browser EXE]
-                                     [--preview [SECONDS]] [--steps] [--shots DIR] [--out RESULTS.json]
+                                     [--preview [SECONDS]] [--state [TYPE ...]] [--steps] [--shots DIR]
+                                     [--out RESULTS.json]
                                      [--jobs 2] [--headed] [--profile FOLDER]
 
 Run it when check_project.py ends with ok:. The checker reads the files; the
@@ -26,7 +27,10 @@ JavaScript in it and puts a file on a file input.
 
 With --preview it then runs a preview, F5 in the editor, for some seconds and
 prints the layout it started on and what the runtime reported: uncaught
-exceptions and console errors, each with the event it came from. On Windows the
+exceptions and console errors, each with the event it came from. With --state it
+then prints what the game holds at the end: the global variables, how many
+instances each object type has, and every instance of the types named, its
+position, instance variables and behavior values. On Windows the
 preview needs the profile within about 190 characters; a deeper project, on a
 volume without 8.3 short names, is refused with how to pass --profile, a
 shorter folder for it.
@@ -41,6 +45,7 @@ import argparse
 import base64
 import io
 import json
+import math
 import os
 import shutil
 import socket
@@ -60,6 +65,7 @@ EPILOG = """examples:
   python scripts/open_in_editor.py
   python scripts/open_in_editor.py --project "D:/Games/Snake" --release r502
   python scripts/open_in_editor.py --preview
+  python scripts/open_in_editor.py --preview 10 --state Player Enemy
   python scripts/open_in_editor.py --steps
   python scripts/open_in_editor.py <eval iteration folder> --jobs 3 --out opened.json
 
@@ -67,6 +73,12 @@ output, one entry per project:
   opened   <project>  (<window title>, <the editor it opened in>)
     preview: layout '<name>', runtime in the worker, 600 ticks in 4.2 s, 1 error      with --preview
     runtime: <the first line of each error; --out keeps the stack>
+    globals: Score 0, Lives 3                                                         with --state
+    objects: Player 1, Enemy 6, Coin 12
+    Player: 1 instance                                                                with --state Player
+      uid 4, at (56, 239.94) 8x12, on World; Health 3
+        sprite: current-animation "Run", current-frame 2, is-playing true, speed 12, repeats 0
+        Platform: vector-x 128, vector-y 0, max-speed 128, ...
   failed   <project>
     editor: <the dialog's text, which names the sheet, event and parameter at fault>
     exception: <the first line of the exception the editor logged>
@@ -138,26 +150,14 @@ RESULT_JS = r"""async () => {
           errors: window.__c3Errors.filter(x => x.includes('Exception')).map(x => x.slice(0, 600))};
 }"""
 
-# The preview's runtime is private, but it runs C3.Runtime.prototype.Tick every
-# frame: wrapped once, the next tick hands over `this`, whose GetIRuntime() is the
-# scripting API, and the method is put back. Evaluated in the preview page and in
-# each of its workers; null where the runtime is not, which is most of them.
-# The ticks and the wall time are the runtime's own: the window loads for part of
-# the preview's seconds, so a 5-second preview runs the game about 4.
-# After skymen/c3cli (MIT), src/preview.ts.
-RUNTIME_JS = r"""(async () => {
-  if (typeof C3 === 'undefined' || !C3.Runtime || typeof C3.Runtime.prototype.Tick !== 'function') return null;
-  const proto = C3.Runtime.prototype, orig = proto.Tick;
-  return await new Promise(resolve => {
-    const timer = setTimeout(() => { proto.Tick = orig; resolve({layout: null, ticks: null, wallTime: null}); }, 3000);
-    proto.Tick = function (...args) {
-      proto.Tick = orig; clearTimeout(timer);
-      const rt = this.GetIRuntime();
-      resolve({layout: rt.layout.name, ticks: rt.tickCount, wallTime: rt.wallTime});
-      return orig.apply(this, args);
-    };
-  });
-})()"""
+# Evaluated in the preview page and in each of its workers, it leaves `c3probe` where
+# the game runs and answers true there, null elsewhere, false when the runtime did
+# not tick; references/reading-the-runtime.md declares what it reads. The ticks and
+# the wall time are the runtime's own: the window loads for part of the preview's
+# seconds, so a 5-second preview runs the game about 4.
+PROBE_JS = (c3.SKILL_DIR / "assets" / "runtime-probe.js").read_text(encoding="utf-8")
+# Instances printed per type named by --state; --out keeps as many.
+STATE_MAX = 20
 
 OPEN_DIALOGS_JS = r"""[...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog')
   .map(d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500))"""
@@ -520,9 +520,10 @@ def message_text(event: dict) -> str | None:
     return None
 
 
-def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float) -> dict:
+def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float, state: list[str] | None = None) -> dict:
     """Preview the layout the editor shows, F5 as the user would press it, let it run
-    for `seconds`, then read what the runtime reported.
+    for `seconds`, then read what the runtime reported, and with `state` what the
+    game holds.
 
     Nothing listens while it runs: Runtime.enable hands over what a page or worker
     logged before it, so the preview page and its workers, the runtime in one of
@@ -549,27 +550,119 @@ def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float) -> d
                              if e["method"] == "Target.attachedToTarget"
                              and e["params"]["targetInfo"]["type"] == "worker"]
         win.events.clear()
-        found, where = None, None
+        answers = [(session, win.evaluate(PROBE_JS, wait=6, session=session)) for session in sessions]
+        live = [session for session, answer in answers if answer is True]
+        snap, read = None, None
+        if live:
+            snap = win.evaluate("c3probe.snapshot([], 0)", wait=6, session=live[0])
+            if state is not None:
+                read = read_state(win, live[0], state)
         for session in sessions:
-            got = win.evaluate(RUNTIME_JS, wait=6, session=session)
-            if got and not found:
-                found, where = got, "worker" if session else "page"
             win.call("Runtime.enable", session=session)
         win.evaluate("0")       # an answer after every replayed message
         errors = [text[:600] for text in map(message_text, win.events) if text]
     finally:
         win.ws.close()
         browser.devtools.call("Target.closeTarget", targetId=window["targetId"])
-    if not found:
-        errors.insert(0, "the preview window opened but no runtime was found in it")
-    elif not found["layout"]:
-        errors.insert(0, "the runtime loaded but did not tick for 3 seconds")
-    return {"started": bool(found and found["layout"]), "layout": found and found["layout"], "runtime": where,
-            "ticks": found and found.get("ticks"), "wallTime": found and found.get("wallTime"), "errors": errors}
+    if not live:
+        errors.insert(0, "the runtime loaded but did not tick for 3 seconds" if False in dict(answers).values()
+                      else "the preview window opened but no runtime was found in it")
+    return {"started": bool(snap), "layout": snap and snap["layout"],
+            "runtime": ("worker" if live[0] else "page") if live else None,
+            "ticks": snap and snap.get("tickCount"), "wallTime": snap and snap.get("wallTime"), "errors": errors,
+            **({"state": read} if read else {})}
+
+
+def read_state(win: DevTools, session: str | None, names: list[str]) -> dict:
+    """For --state: the global variables, the count of every type that has instances,
+    and the instances of the types named, through the probe the preview holds."""
+    def call(js: str):
+        return win.evaluate(js, wait=6, session=session)
+    try:
+        snap = call("c3probe.snapshot(null, 0)")
+        read = {"globalVars": snap["globalVars"] or {},
+                "counts": {name: o["count"] for name, o in snap["objects"].items()}, "objects": {}}
+        if names:
+            read["objects"] = call(f"c3probe.snapshot({json.dumps(names)}, {STATE_MAX})")["objects"]
+            if None in read["objects"].values():
+                read["types"] = call("Object.keys(c3probe.runtime.objects)")
+        return read
+    except DevToolsError as e:
+        return {"error": str(e)}
+
+
+def key_name(key: str) -> str:
+    """The last word of a key of the editor's language files: max-speed for
+    behaviors.platform.properties.max-speed.name."""
+    words = key.split(".")
+    if len(words) > 2 and words[-1] in ("name", "title"):
+        words.pop()
+    return words[-1]
+
+
+def value_text(value) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, float) and math.isfinite(value):
+        value = round(value, 2)
+        return str(int(value)) if value == int(value) else str(value)
+    if isinstance(value, str):
+        return json.dumps(value[:80], ensure_ascii=False)
+    if isinstance(value, list):
+        return "/".join(key_name(v) if isinstance(v, str) else value_text(v) for v in value)
+    return "null" if value is None else str(value)
+
+
+def instance_lines(inst: dict) -> list[str]:
+    """One line for an instance, then one per plugin or behavior section of the
+    debugger's Inspect tab."""
+    words = [f"uid {inst['uid']}"]
+    if "x" in inst:
+        words.append(f"at ({value_text(inst['x'])}, {value_text(inst['y'])}) "
+                     f"{value_text(inst['width'])}x{value_text(inst['height'])}")
+        if inst.get("angle"):
+            words.append(f"angle {value_text(inst['angle'])}")
+        words.append(f"on {inst['layer']}")
+        if inst.get("isVisible") is False:
+            words.append("hidden")
+        if inst.get("opacity", 1) != 1:
+            words.append(f"opacity {value_text(inst['opacity'])}")
+    if inst.get("text") is not None:
+        words.append(f"text {value_text(inst['text'])}")
+    look = inst.get("inspector")
+    if not look and inst.get("animationName") is not None:
+        words.append(f"animation {inst['animationName']} frame {inst['animationFrame']}")
+    line = ", ".join(words)
+    if inst.get("instVars"):
+        line += "; " + ", ".join(f"{k} {value_text(v)}" for k, v in inst["instVars"].items())
+    lines = [f"    {line}"]
+    if look:
+        sections = [(s["title"].split(".")[1] if s["title"].startswith("plugins.") else key_name(s["title"]), s["values"])
+                    for s in look["plugin"]] + list(look["behaviors"].items())
+        lines += [f"      {label}: " + ", ".join(f"{key_name(k)} {value_text(v)}" for k, v in values.items())
+                  for label, values in sections if values]
+    return lines
+
+
+def state_lines(read: dict) -> list[str]:
+    if "error" in read:
+        return [f"  state: not read: {read['error'].splitlines()[0]}"]
+    lines = ["  globals: " + (", ".join(f"{k} {value_text(v)}" for k, v in read["globalVars"].items()) or "none"),
+             "  objects: " + (", ".join(f"{k} {n}" for k, n in read["counts"].items()) or "none")]
+    for name, o in read["objects"].items():
+        if o is None:
+            lines.append(f"  {name}: no object type of that name{c3.closest(name, read.get('types', []))}")
+            continue
+        lines.append(f"  {name}: {o['count']} instance{'' if o['count'] == 1 else 's'}")
+        for inst in o["instances"]:
+            lines += instance_lines(inst)
+        if o["count"] > len(o["instances"]):
+            lines.append(f"    and {o['count'] - len(o['instances'])} more, not read")
+    return lines
 
 
 def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: Path | None,
-             pinned: bool, seconds: float | None) -> dict:
+             pinned: bool, seconds: float | None, state: list[str] | None = None) -> dict:
     """In the editor at `editor`; unless the release is pinned, a project saved by a
     newer release than that editor's, which it refuses as saved in a newer version,
     is opened in the latest beta instead."""
@@ -605,7 +698,7 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
                 f"<a folder of at most {most - len('/editor-chromium')} characters>"]}
         elif result["opened"] and seconds is not None:
             try:
-                ran = preview(browser, (target, page), seconds)
+                ran = preview(browser, (target, page), seconds, state)
             except DevToolsError as e:
                 ran = {"started": False, "layout": None, "runtime": None, "errors": [f"the preview stopped answering: {e}"]}
     finally:
@@ -632,6 +725,8 @@ def report(result: dict) -> list[str]:
             lines.append(f"  preview: layout {ran['layout']!r}, runtime in the {ran['runtime']}, {ticks}"
                          f"{n or 'no'} error{'' if n == 1 else 's'}")
             lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
+            if ran.get("state"):
+                lines += state_lines(ran["state"])
         elif ran:
             lines += [f"  preview did not run: {e}" for e in ran["errors"]]
         return lines
@@ -658,17 +753,19 @@ def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
         shot = args.shots / f"{i:03d}-{project.name}.png" if args.shots else None
         try:
             result = open_one(browser, editor, project, browser.profile / f"project-{i}.c3p", shot,
-                              bool(args.release), args.preview)
+                              bool(args.release), args.preview, args.state)
         except (EditorNotLoaded, DevToolsError, OSError) as e:
             result = {"project": str(project), "status": "error", "title": "", "dialogs": [],
                       "exception": str(e), "editor": editor, "seconds": 0}
         with lock:
             results.append(result)
-            text = "\n".join(report(result))
-            if not args.limit or printed + len(text) <= args.limit:
+            lines = report(result)
+            shown = c3.fitting(lines, max(1, args.limit - printed) if args.limit else 0)
+            if shown:
+                text = "\n".join(lines[:shown])
                 print(text, flush=True)
                 printed += len(text) + 1
-            else:
+            if shown < len(lines):
                 result["unprinted"] = True
 
     try:
@@ -699,6 +796,10 @@ def main() -> int:
     ap.add_argument("--preview", type=float, nargs="?", const=5, metavar="SECONDS",
                     help="once it opened, preview the layout the editor shows for this long (default 5) and print "
                          "the layout, the uncaught exceptions and the console errors of the runtime")
+    ap.add_argument("--state", nargs="*", metavar="TYPE",
+                    help="at the end of the preview (5 seconds unless --preview says), print the global variables, "
+                         f"the instance count of every object type, and the first {STATE_MAX} instances of each TYPE "
+                         "named, as the project spells it; --out keeps them as JSON")
     ap.add_argument("--profile", type=Path, metavar="FOLDER",
                     help="keep the browser profile in FOLDER/editor-<browser> instead of the project's .tmp/, for a "
                          "project too deep for the preview's IndexedDB, which it then names")
@@ -710,6 +811,8 @@ def main() -> int:
                     help=f"stop printing results after about this many characters, since a harness cuts longer "
                          f"tool output; --out keeps them all, 0 prints everything (default: {c3.LIMIT})")
     args = ap.parse_args()
+    if args.state is not None and args.preview is None:
+        args.preview = 5
 
     if args.paths:
         projects = find_projects(args.paths)
@@ -734,6 +837,9 @@ def main() -> int:
         if args.preview is not None:
             print("\n--preview is not part of these steps: once it opened, press F5 in the editor page and read the "
                   "console of the preview window it opens.")
+            if args.state is not None:
+                print("To read the game's state there, evaluate assets/runtime-probe.js in the preview window, as "
+                      "references/reading-the-runtime.md says.")
         return 3
 
     if args.shots:
@@ -759,7 +865,7 @@ def main() -> int:
               "of the dialog it shows.", file=sys.stderr)
         return 2
     if unprinted:
-        print(f"{unprinted} results not printed: --out FILE keeps every one, --limit 0 prints them")
+        print(f"{unprinted} results not printed in full: --out FILE keeps every one, --limit 0 prints them")
     done = "opened" if args.preview is None else "opened and ran without errors"
     print(f"{len(results) - len(failed)} of {len(results)} {done}" + (f"; full results in {args.out}" if args.out else ""))
     if any(r["status"] != "opened" for r in failed):

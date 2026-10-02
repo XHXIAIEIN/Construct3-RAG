@@ -136,7 +136,9 @@ editor.construct.net as a `.c3p` and reads the answer: `opened`, or `failed`
 with the editor's dialogs and the exceptions it logged. `--preview` then
 presses F5, lets the layout run for 5 seconds and prints each uncaught
 exception and console error with its place, `Event sheet 1, event 3,
-action 1`, the numbering `print_sheet.py` uses.
+action 1`, the numbering `print_sheet.py` uses. `--state` adds what the
+game holds at the end, read through `assets/runtime-probe.js`: global
+variables, instance counts and the instances of the types named.
 
 - Agents come with different browser tools or none, and no Python package
   is on every machine. The script starts the machine's Edge, Chrome or

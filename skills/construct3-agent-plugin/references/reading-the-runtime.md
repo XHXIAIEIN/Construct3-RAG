@@ -4,7 +4,10 @@
 preview holds: positions, instance variables, global variables, animations
 and behavior state. Use it to check that an event did what it was written
 for, after sending input as [editor-and-preview.md](editor-and-preview.md)
-describes, instead of writing probe actions into the event sheet.
+describes, instead of writing probe actions into the event sheet. For the
+state at the end of a preview without input,
+`scripts/open_in_editor.py --preview 10 --state Player Enemy` prints the same
+snapshot and needs no script.
 
 ## Attach
 

@@ -7,6 +7,7 @@
 //
 // The runtime is not exposed, but it runs C3.Runtime.prototype.Tick every frame:
 // wrapped once, the next tick hands over `this`, and the method is put back.
+// After skymen/c3cli (MIT), src/preview.ts.
 (async () => {
   if (globalThis.c3probe) return true;
   if (typeof C3 === "undefined" || !C3.Runtime || typeof C3.Runtime.prototype.Tick !== "function") return null;
