@@ -1,9 +1,9 @@
 <!doctype html>
 <!-- A recording of scripts/preview_project.py, frame by frame beside the steps that
      ran and the values the record step watched. A part selected on the timeline is
-     copied as text for the agent: the frames' files, the steps and the watched values
+     copied as a task for an agent: the frames' files, the steps and the watched values
      of that part. The script copies this page next to the recording's folder and puts
-     its timeline where TIMELINE is. -->
+     its timeline where TIMELINE is; without one, the page opens a recording's folder. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -11,134 +11,251 @@
 <title>Recording review</title>
 <style>
   :root {
-    --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #e2e2dc; --tick: #c9c9c2;
-    --accent: #3b5bdb; --on-accent: #ffffff; --active: #e7ecff; --bad: #c92a2a; --bad-bg: #fff0f0; --changed: #fff4d6;
-    --part: rgba(59, 91, 219, 0.14);
+    --paper: #ffffff; --ink: #1b1b1b; --muted: #6b6b6b; --rule: #1b1b1b; --hair: #dadada; --zebra: #f5f5f5;
+    --blue: #1f5fbf; --blue-tint: #e7eff9; --blue-mid: #bcd0ee; --red: #c4302b; --red-tint: #fbeaea;
+    --frame: #000000;
+    --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #161615; --panel: #1f1f1d; --text: #ececea; --muted: #9a9a94; --line: #33332f; --tick: #4a4a45;
-      --accent: #8ea2ff; --on-accent: #161615; --active: #262c45; --bad: #ff8787; --bad-bg: #3a1f1f; --changed: #3b3420;
-      --part: rgba(142, 162, 255, 0.18);
+      --paper: #131313; --ink: #e4e4e4; --muted: #9a9a9a; --rule: #a8a8a8; --hair: #303030; --zebra: #1a1a1a;
+      --blue: #82a9ee; --blue-tint: #18243a; --blue-mid: #2c4670; --red: #ef7c74; --red-tint: #3a1d1c;
     }
   }
   * { box-sizing: border-box; scrollbar-width: none; }
   *::-webkit-scrollbar { display: none; }
   [hidden] { display: none !important; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, sans-serif; }
-  header { padding: 12px 16px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
-  header h1 { font-size: 16px; margin: 0; }
-  header span { color: var(--muted); }
-  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 380px); gap: 16px; padding: 16px; align-items: start; }
-  @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
-  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
-  .frame { display: flex; justify-content: center; background: #000; border-radius: 4px; }
-  .frame img { max-width: 100%; max-height: 68vh; display: block; }
-  .controls { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-  button, select, textarea { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
-  button, select { padding: 4px 10px; cursor: pointer; }
-  button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-  .clock { color: var(--muted); font-variant-numeric: tabular-nums; margin-left: auto; }
-  .timeline { position: relative; margin-top: 12px; padding-bottom: 18px; cursor: pointer; touch-action: none; user-select: none; outline: none; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 13px/1.45 var(--sans); }
+  .mono, code { font-family: var(--mono); }
+  svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; flex: none; }
+
+  /* The sheet: a frame with its zones numbered along the edges, as on a drawing. */
+  .sheet { margin: 16px; min-height: calc(100vh - 32px); display: grid; grid-template: 18px 1fr 18px / 18px minmax(0, 1fr) 18px; border: 1px solid var(--rule); }
+  .zones { display: flex; font: 10px/1 var(--mono); color: var(--muted); }
+  .zones span { flex: 1; display: flex; align-items: center; justify-content: center; }
+  .zones.top, .zones.bottom { grid-column: 2; }
+  .zones.top span + span, .zones.bottom span + span { border-left: 1px solid var(--rule); }
+  .zones.left, .zones.right { flex-direction: column; grid-row: 2; }
+  .zones.left span + span, .zones.right span + span { border-top: 1px solid var(--rule); }
+  .zones.top { grid-row: 1; } .zones.bottom { grid-row: 3; } .zones.left { grid-column: 1; } .zones.right { grid-column: 3; }
+  .board { grid-area: 2 / 2; border: 1px solid var(--rule); padding: 20px; display: grid; gap: 20px; align-items: start;
+           grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); grid-template-rows: auto 1fr auto;
+           grid-template-areas: "window steps" "window watch" "part title"; }
+  .board > .opening { grid-column: 1 / -1; }
+  @media (max-width: 900px) {
+    .board { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "window" "part" "steps" "watch" "title"; }
+  }
+  @media (max-width: 640px) {
+    .sheet { margin: 0; min-height: 0; border: 0; display: block; }
+    .zones { display: none; }
+    .board { border: 0; padding: 16px; }
+  }
+
+  /* A panel: a black tab with its letter, a title and a note in small type. */
+  .panel { border: 1px solid var(--rule); background: var(--paper); min-width: 0; }
+  .panel > header { display: flex; align-items: stretch; border-bottom: 1px solid var(--rule); min-height: 30px; }
+  .panel > header .tab { width: 30px; display: flex; align-items: center; justify-content: center; background: var(--ink); color: var(--paper); font-weight: 600; }
+  .panel > header h2 { margin: 0; padding: 0 10px; display: flex; align-items: center; font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .panel > header .meta { margin-left: auto; padding: 0 10px; align-self: center; min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 11px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .body { padding: 12px; }
+  .note { padding: 8px 12px; border-top: 1px solid var(--hair); font: 11px/1.5 var(--mono); color: var(--muted); }
+  .label { font: 11px/1.2 var(--mono); color: var(--muted); }
+
+  button, select, textarea { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--hair); border-radius: 0; }
+  button, select { height: 30px; cursor: pointer; }
+  button.icon { width: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+  button:hover, select:hover { border-color: var(--rule); }
+  button:focus-visible, select:focus-visible, textarea:focus-visible, .timeline:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+  button.ink { background: var(--ink); border-color: var(--ink); color: var(--paper); display: inline-flex; gap: 8px; align-items: center; padding: 0 12px; font-weight: 600; }
+  button[aria-pressed="true"] .i-play, button:not([aria-pressed="true"]) .i-pause { display: none; }
+  select { font: 12px var(--mono); padding: 0 4px; }
+
+  /* A: the window, its controls and the timeline. */
+  .frame { display: flex; justify-content: center; background: var(--frame); }
+  .frame img { max-width: 100%; max-height: 64vh; display: block; }
+  .controls { display: flex; gap: 6px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .controls .gap { width: 10px; }
+  .caption { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+  .timeline { position: relative; margin-top: 6px; padding-bottom: 16px; cursor: pointer; touch-action: none; user-select: none; outline: none; }
   .timeline.edge { cursor: ew-resize; }
-  .timeline:focus-visible { box-shadow: 0 0 0 2px var(--accent); border-radius: 4px; }
   .spans, .frames, .ruler { position: relative; }
-  .spans { height: 14px; }
-  .spans i { position: absolute; top: 0; height: 14px; min-width: 2px; background: var(--accent); opacity: 0.55; border-radius: 2px; box-shadow: inset -1px 0 0 var(--panel); }
-  .spans i.bad { background: var(--bad); opacity: 0.8; }
-  .spans i.active { opacity: 1; }
-  .frames { height: 8px; margin-top: 4px; }
-  .frames i { position: absolute; top: 0; width: 1px; height: 8px; background: var(--tick); }
-  .ruler { height: 10px; border-top: 1px solid var(--line); }
-  .ruler i { position: absolute; top: 0; width: 1px; height: 4px; background: var(--tick); }
-  .ruler i.major { height: 9px; background: var(--muted); }
-  .ruler b { position: absolute; top: 10px; transform: translateX(-50%); font: 11px/1 system-ui, sans-serif; font-weight: 400; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .playhead { position: absolute; top: -2px; bottom: 14px; width: 2px; margin-left: -1px; background: var(--text); pointer-events: none; }
-  .selection { position: absolute; top: -4px; bottom: 14px; min-width: 2px; margin-left: -1px; background: var(--part); border: 0 solid var(--accent); border-width: 0 2px; pointer-events: none; }
-  .part { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
-  .part p { margin: 0; color: var(--muted); }
-  .part-head, .part-send { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .part-head span { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: auto; }
-  .part textarea { width: 100%; padding: 6px 8px; resize: vertical; }
-  .part details summary { color: var(--muted); cursor: pointer; }
-  .part details textarea { margin-top: 6px; font: 12px/1.4 ui-monospace, Consolas, monospace; color: var(--muted); }
-  #copied { color: var(--muted); }
-  #copied.bad { color: var(--bad); }
-  aside { display: flex; flex-direction: column; gap: 16px; }
-  section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
-  section h2 { font-size: 13px; margin: 0; padding: 8px 12px; border-bottom: 1px solid var(--line); color: var(--muted); font-weight: 600; }
+  .spans { height: 14px; background: var(--zebra); }
+  .spans i { position: absolute; top: 0; height: 14px; min-width: 2px; background: var(--blue-tint); border: 1px solid var(--blue); }
+  .spans i.bad { background: var(--red-tint); border-color: var(--red); }
+  .spans i.active { background: var(--blue-mid); }
+  .spans i.bad.active { background: var(--red); opacity: 0.5; }
+  .frames { height: 7px; margin-top: 3px; }
+  .frames i { position: absolute; top: 0; width: 1px; height: 7px; background: var(--hair); }
+  .ruler { height: 8px; border-top: 1px solid var(--rule); }
+  .ruler i { position: absolute; top: 0; width: 1px; height: 3px; background: var(--muted); }
+  .ruler i.major { height: 6px; background: var(--rule); }
+  .ruler b { position: absolute; top: 8px; transform: translateX(-50%); font: 10px/1 var(--mono); font-weight: 400; color: var(--muted); white-space: nowrap; }
+  .playhead { position: absolute; top: -4px; bottom: 16px; width: 1.5px; margin-left: -0.75px; background: var(--ink); pointer-events: none; }
+  .playhead::before { content: ""; position: absolute; top: -1px; left: -3.25px; border: 4px solid transparent; border-top: 5px solid var(--ink); border-bottom: 0; }
+  .selection { position: absolute; top: -4px; bottom: 16px; min-width: 2px; margin-left: -1px; background: color-mix(in srgb, var(--blue) 14%, transparent); border: 0 solid var(--blue); border-width: 0 1.5px; pointer-events: none; }
+  .selection::before, .selection::after { content: ""; position: absolute; top: 0; width: 5px; height: 9px; background: var(--blue); }
+  .selection::before { left: -3.25px; } .selection::after { right: -3.25px; }
+
+  /* B: the steps, each with its outcome. */
   ol { list-style: none; margin: 0; padding: 0; }
-  ol li { padding: 6px 12px; border-bottom: 1px solid var(--line); cursor: pointer; }
+  ol li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; padding: 7px 12px; border-bottom: 1px solid var(--hair); cursor: pointer; }
+  ol li:nth-child(even) { background: var(--zebra); }
   ol li:last-child { border-bottom: 0; }
-  ol li.active { background: var(--active); }
-  ol li.bad { color: var(--bad); }
-  ol li small { display: block; color: var(--muted); word-break: break-word; font-variant-numeric: tabular-nums; }
-  ol li .error { color: var(--bad); background: var(--bad-bg); border-radius: 4px; padding: 2px 6px; margin-top: 4px; }
+  ol li.empty { display: block; cursor: default; }
+  ol li.active { background: var(--blue-tint); box-shadow: inset 2px 0 var(--blue); }
+  ol li .i { margin-top: 1px; color: var(--blue); }
+  ol li.bad .i, ol li.bad .what { color: var(--red); }
+  ol li .what { font-weight: 500; word-break: break-word; }
+  ol li small { display: block; font: 11px/1.45 var(--mono); color: var(--muted); word-break: break-word; font-variant-numeric: tabular-nums; }
+  ol li .error { font: 11px/1.45 var(--mono); color: var(--red); border-left: 2px solid var(--red); padding-left: 6px; margin-top: 4px; }
+
+  /* C: the watched values at the frame shown. */
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-  td { padding: 6px 12px; border-bottom: 1px solid var(--line); vertical-align: top; word-break: break-word; }
-  tr:last-child td { border-bottom: 0; }
-  td:first-child { color: var(--muted); width: 40%; }
-  tr.changed td { background: var(--changed); }
-  .empty { padding: 8px 12px; color: var(--muted); }
-  .opening { max-width: 560px; margin: 48px auto; padding: 0 16px; }
-  .opening h2 { font-size: 16px; margin: 0 0 8px; }
-  .opening p { margin: 0 0 16px; color: var(--muted); }
-  .opening code { font: 12px ui-monospace, Consolas, monospace; color: var(--text); }
-  .opening .bad { color: var(--bad); }
+  th { text-align: left; font: 11px var(--mono); color: var(--muted); font-weight: 400; padding: 6px 12px; border-bottom: 1px solid var(--hair); }
+  td { padding: 6px 12px; border-bottom: 1px solid var(--hair); vertical-align: top; word-break: break-word; }
+  tbody tr:nth-child(even) td { background: var(--zebra); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td:first-child { width: 40%; }
+  td:last-child { font-family: var(--mono); font-size: 12px; }
+  tr.changed td:last-child { color: var(--blue); }
+  tr.changed td:last-child::before { content: "\25CF\00A0"; font-size: 9px; vertical-align: 1px; }
+  .empty { padding: 10px 12px; color: var(--muted); }
+
+  /* D: the selected part, copied as a task for an agent. */
+  #part-empty { margin: 0; color: var(--muted); }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); border: 1px solid var(--hair); }
+  .facts div { padding: 6px 10px; border-right: 1px solid var(--hair); margin-right: -1px; }
+  .facts b { display: block; font: 13px var(--mono); font-weight: 500; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .facts .bad b { color: var(--red); }
+  .field { display: block; margin-top: 12px; }
+  .field textarea { display: block; width: 100%; margin-top: 4px; padding: 6px 8px; resize: vertical; }
+  .send { display: flex; gap: 6px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  #copied { font: 11px var(--mono); color: var(--blue); margin-left: 6px; }
+  #copied.bad { color: var(--red); }
+  details { margin-top: 12px; }
+  details summary { font: 11px var(--mono); color: var(--muted); cursor: pointer; }
+  details textarea { display: block; width: 100%; margin-top: 6px; padding: 8px; font: 11px/1.5 var(--mono); color: var(--muted); }
+
+  /* The title block: what this sheet is of. */
+  .titleblock { grid-area: title; border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr; }
+  .titleblock div { padding: 6px 10px; border-top: 1px solid var(--rule); min-width: 0; }
+  .titleblock div:first-child { border-top: 0; }
+  .titleblock .wide { grid-column: 1 / -1; }
+  .titleblock div:nth-child(odd):not(.wide) { border-left: 1px solid var(--rule); }
+  .titleblock h1 { margin: 2px 0 0; font-size: 16px; font-weight: 600; word-break: break-word; }
+  .titleblock b { display: block; margin-top: 2px; font-weight: 500; word-break: break-all; }
+  .titleblock b.mono { font-size: 12px; }
+  #tb-project, #tb-folder { font-size: 11px; font-weight: 400; }
+
+  .opening .body p { margin: 0 0 14px; color: var(--muted); max-width: 640px; }
+  .opening code { font-size: 12px; color: var(--ink); }
+  #pick-error { color: var(--red); font: 11px var(--mono); margin: 10px 0 0; }
 </style>
 </head>
 <body>
-<header><h1 id="name">Recording review</h1><span id="summary"></span></header>
-<div class="opening" id="opening" hidden>
-  <h2>No recording on this page</h2>
-  <p>scripts/preview_project.py writes this page beside each recording with the recording in it, as
-    <code>NN-NAME.html</code> in <code>.tmp/preview/</code> of the game project: open that one. Or choose the
-    folder of a recording here, the one that holds <code>timeline.json</code> and the frames; the files stay in
-    this browser.</p>
-  <button id="choose" class="primary">Choose a recording folder</button>
-  <input type="file" id="pick" webkitdirectory hidden>
-  <p class="bad" id="pick-error" role="status"></p>
-</div>
-<main id="main" hidden>
-  <div class="stage">
-    <div class="frame"><img id="frame" alt="the preview window at this moment"></div>
-    <div class="controls">
-      <button id="play" title="Space">Play</button>
-      <button id="prev" title="Left arrow: the frame before">&lsaquo;</button>
-      <button id="next" title="Right arrow: the frame after">&rsaquo;</button>
-      <select id="speed" aria-label="Speed"><option>0.25</option><option>0.5</option><option selected>1</option><option>2</option></select>
-      <button id="from" title="[ : the selected part starts at this frame">From here</button>
-      <button id="to" title="] : the selected part ends at this frame">To here</button>
-      <span class="clock" id="clock"></span>
-    </div>
-    <div class="timeline" id="timeline" role="slider" tabindex="0" aria-label="Time">
-      <div class="selection" id="selection" hidden></div>
-      <div class="spans" id="spans"></div>
-      <div class="frames" id="frames"></div>
-      <div class="ruler" id="ruler"></div>
-      <div class="playhead" id="playhead"></div>
-    </div>
-    <div class="part">
-      <p id="hint">Shift+drag on the timeline, or Shift+click a step, to select a part and copy it for the agent.</p>
-      <div class="part-head" id="part-head" hidden>
-        <b>Selected</b><span id="part-what"></span>
-        <button id="part-play">Play part</button>
-        <button id="part-clear" title="Esc">Clear</button>
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 16 16"><path d="M4.5 2.8 12.8 8l-8.3 5.2z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 16 16"><path d="M5.5 3v10M10.5 3v10"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 16 16"><path d="M3.5 3v10M12.5 3.2 5.8 8l6.7 4.8z"/></symbol>
+  <symbol id="i-next" viewBox="0 0 16 16"><path d="M12.5 3v10M3.5 3.2 10.2 8l-6.7 4.8z"/></symbol>
+  <symbol id="i-from" viewBox="0 0 16 16"><path d="M6.5 3H3.5v10h3M8 8h5.5M11 5.5 13.5 8 11 10.5"/></symbol>
+  <symbol id="i-to" viewBox="0 0 16 16"><path d="M9.5 3h3v10h-3M2.5 8H8M5.5 5.5 8 8l-2.5 2.5"/></symbol>
+  <symbol id="i-play-part" viewBox="0 0 16 16"><path d="M4 3H2v10h2M12 3h2v10h-2M6.3 5.2 10.5 8l-4.2 2.8z"/></symbol>
+  <symbol id="i-clear" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 16 16"><path d="M5.5 5.5h8v8h-8zM3 10.5h-.5v-8h8v.5"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 16 16"><path d="m2.8 8.4 3.4 3.4 7-7.2"/></symbol>
+  <symbol id="i-bad" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 16 16"><path d="M1.8 4h4.4l1.5 1.5h6.5v7.5H1.8z"/></symbol>
+</svg>
+<div class="sheet">
+  <div class="zones top"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="zones left"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+  <div class="zones right"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+  <div class="zones bottom"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="board">
+    <section class="panel opening" id="opening" hidden>
+      <header><b class="tab">A</b><h2>No recording on this page</h2><span class="meta">recording review</span></header>
+      <div class="body">
+        <p>scripts/preview_project.py writes this page beside each recording with the recording in it, as
+          <code>NN-NAME.html</code> in <code>.tmp/preview/</code> of the game project: open that one. Or choose the
+          folder of a recording here, the one that holds <code>timeline.json</code> and the frames; the files stay in
+          this browser.</p>
+        <button id="choose" class="ink"><svg class="i"><use href="#i-folder"/></svg>Choose a recording folder</button>
+        <input type="file" id="pick" webkitdirectory hidden>
+        <p id="pick-error" role="status"></p>
       </div>
-      <textarea id="note" rows="2" hidden aria-label="What to check"
-                placeholder="What to check here (optional), such as: the coin should land on the counter"></textarea>
-      <div class="part-send" id="part-send" hidden>
-        <button id="copy" class="primary">Copy for the agent</button>
-        <span id="copied" role="status"></span>
+    </section>
+
+    <section class="panel" style="grid-area: window" data-run hidden>
+      <header><b class="tab">A</b><h2>Preview window</h2><span class="meta" id="clock"></span></header>
+      <div class="body">
+        <div class="frame"><img id="frame" alt="the preview window at this moment"></div>
+        <div class="controls">
+          <button class="icon" id="play" aria-pressed="false" aria-label="Play" title="Play (Space)">
+            <svg class="i i-play"><use href="#i-play"/></svg><svg class="i i-pause"><use href="#i-pause"/></svg></button>
+          <button class="icon" id="prev" aria-label="Frame before" title="Frame before (Left arrow)"><svg class="i"><use href="#i-prev"/></svg></button>
+          <button class="icon" id="next" aria-label="Frame after" title="Frame after (Right arrow)"><svg class="i"><use href="#i-next"/></svg></button>
+          <select id="speed" aria-label="Speed" title="Speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select>
+          <span class="gap"></span>
+          <button class="icon" id="from" aria-label="Start the part here" title="Start the part here ( [ )"><svg class="i"><use href="#i-from"/></svg></button>
+          <button class="icon" id="to" aria-label="End the part here" title="End the part here ( ] )"><svg class="i"><use href="#i-to"/></svg></button>
+        </div>
+        <div class="caption"><span class="label">Steps above, frames below, time in ms</span><span class="label">Shift+drag selects a part</span></div>
+        <div class="timeline" id="timeline" role="slider" tabindex="0" aria-label="Time">
+          <div class="selection" id="selection" hidden></div>
+          <div class="spans" id="spans"></div>
+          <div class="frames" id="frames"></div>
+          <div class="ruler" id="ruler"></div>
+          <div class="playhead" id="playhead"></div>
+        </div>
       </div>
-      <details id="part-text" hidden><summary>What is copied</summary><textarea id="brief" rows="12" readonly></textarea></details>
-    </div>
+    </section>
+
+    <section class="panel" style="grid-area: steps" data-run hidden>
+      <header><b class="tab">B</b><h2>Steps</h2><span class="meta" id="steps-meta"></span></header>
+      <ol id="steps"></ol>
+      <div class="note">Click a step to go to it, Shift+click to select the part it ran.</div>
+    </section>
+
+    <section class="panel" style="grid-area: watch" data-run hidden>
+      <header><b class="tab">C</b><h2>Watched values</h2><span class="meta" id="watch-meta"></span></header>
+      <table><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody id="watch"></tbody></table>
+      <div class="note">&#9679; changed since the frame before.</div>
+    </section>
+
+    <section class="panel" style="grid-area: part" data-run hidden>
+      <header><b class="tab">D</b><h2>Selected part</h2><span class="meta" id="part-meta">a task for an agent</span></header>
+      <div class="body">
+        <p id="part-empty">No part selected. Shift+drag on the timeline, Shift+click a
+          step, or start and end one at the frame shown with [ and ].</p>
+        <div id="part-tools" hidden>
+          <div class="facts" id="facts"></div>
+          <label class="field"><span class="label">What to find out (optional)</span>
+            <textarea id="note" rows="2" placeholder="such as: the coin should land on the counter, here it stops in the air"></textarea></label>
+          <div class="send">
+            <button class="ink" id="copy"><svg class="i"><use href="#i-copy"/></svg>Copy for the agent</button>
+            <button class="icon" id="part-play" aria-pressed="false" aria-label="Play the part" title="Play the part">
+              <svg class="i i-play"><use href="#i-play-part"/></svg><svg class="i i-pause"><use href="#i-pause"/></svg></button>
+            <button class="icon" id="part-clear" aria-label="Clear the selection" title="Clear the selection (Esc)"><svg class="i"><use href="#i-clear"/></svg></button>
+            <span id="copied" role="status"></span>
+          </div>
+          <details id="part-text"><summary>Text for the agent</summary><textarea id="brief" rows="14" readonly></textarea></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="titleblock" data-run hidden>
+      <div class="wide"><span class="label">Title</span><h1 id="tb-title"></h1></div>
+      <div><span class="label">Frames</span><b class="mono" id="tb-frames"></b></div>
+      <div><span class="label">Video</span><b class="mono" id="tb-video"></b></div>
+      <div><span class="label">Steps</span><b class="mono" id="tb-steps"></b></div>
+      <div><span class="label">Runtime errors</span><b class="mono" id="tb-errors"></b></div>
+      <div class="wide"><span class="label">Project</span><b class="mono" id="tb-project"></b></div>
+      <div class="wide"><span class="label">Recording folder</span><b class="mono" id="tb-folder"></b></div>
+    </section>
   </div>
-  <aside>
-    <section><h2>Steps</h2><ol id="steps"></ol></section>
-    <section><h2>Watched values at this frame</h2><table id="watch"></table></section>
-  </aside>
-</main>
+</div>
 <script>
 let timeline = /*TIMELINE*/null;
 const $ = id => document.getElementById(id);
@@ -149,13 +266,15 @@ const ms = t => `${Math.round(t * 1000)} ms`;
 const at_ = t => `${100 * t / end}%`;
 const show = v => typeof v === "string" ? v : JSON.stringify(v);
 const clip = (text, n) => text.length <= n ? text : text.slice(0, n - 3) + "...";
+const plural = (n, word) => `${n} ${word}${n == 1 ? "" : "s"}`;
+const icon = name => `<svg class="i"><use href="#i-${name}"/></svg>`;
 let at = 0, playing = false, timer = null;
 let part = null;    // the selected part: the indexes of its first and last frame, {a, b}
 
 // The ruler: a labelled tick every major interval, small ones between, the interval
-// the shortest that leaves a label about 70 pixels at the ruler's width.
+// the shortest that leaves a label about 60 pixels at the ruler's width.
 function drawRuler() {
-  const fit = Math.max(2, Math.floor($("ruler").clientWidth / 70));
+  const fit = Math.max(2, Math.floor($("ruler").clientWidth / 60));
   const major = [10, 20, 50, 100, 200, 250, 500, 1000, 2000, 5000, 10000, 30000].find(m => end * 1000 / m <= fit)
     || 60000;
   const minor = {20: 5, 200: 50, 2000: 500}[major] || major / 5;
@@ -168,7 +287,7 @@ function drawRuler() {
     if (isMajor) {
       const label = document.createElement("b");
       label.style.left = at_(t / 1000);
-      label.textContent = `${Math.round(t)} ms`;
+      label.textContent = `${Math.round(t)}`;
       $("ruler").appendChild(label);
     }
   }
@@ -180,10 +299,17 @@ function start(data, src) {
   timeline = data, frames = data.frames, steps = data.steps || [], frameSrc = src;
   end = frames.length ? frames[frames.length - 1].t + 0.05 : 0.05;
   $("opening").hidden = true;
-  $("main").hidden = false;
-  $("name").textContent = timeline.name;
+  for (const el of document.querySelectorAll("[data-run]")) el.hidden = false;
   document.title = `${timeline.name}: recording review`;
-  $("summary").textContent = `${frames.length} frames in ${ms(end)}` + (timeline.video ? ` · ${timeline.video.split(/[\\/]/).pop()}` : "");
+  const failed = steps.filter(s => !s.ok).length, errors = steps.reduce((n, s) => n + s.errors.length, 0);
+  $("tb-title").textContent = `${timeline.name}: recording review`;
+  $("tb-frames").textContent = `${frames.length} in ${ms(end)}`;
+  $("tb-video").textContent = timeline.video ? timeline.video.split(/[\\/]/).pop() : "none";
+  $("tb-steps").textContent = `${steps.length}` + (failed ? `, ${failed} failed` : "");
+  $("tb-errors").textContent = `${errors}`;
+  $("tb-project").textContent = timeline.project || "not recorded";
+  $("tb-folder").textContent = framesFolder();
+  $("steps-meta").textContent = plural(steps.length, "step") + (failed ? ` · ${failed} failed` : "");
   drawRuler();
   for (const f of frames) {
     const tick = document.createElement("i");
@@ -195,20 +321,19 @@ function start(data, src) {
   go(0);
 }
 
-// A step in the list and as a span on the timeline.
+// A step in the list, with its outcome, and as a span on the timeline.
 function listStep(s) {
-  const begin = Math.max(0, s.start), span = `${ms(begin)} – ${ms(s.end)} (${ms(s.end - begin)})`;
+  const begin = Math.max(0, s.start), span = `${Math.round(begin * 1000)}–${ms(s.end)}`;
   const li = document.createElement("li");
   li.className = s.ok ? "" : "bad";
-  li.title = "Shift+click: select the part this step ran";
-  li.innerHTML = `<div></div><small></small>`;
-  li.firstChild.textContent = s.line + (s.ok ? "" : ": FAILED");
-  li.children[1].textContent = span + (s.said ? ` · ${s.said}` : "");
+  li.innerHTML = `${icon(s.ok ? "ok" : "bad")}<div><div class="what"></div><small></small></div>`;
+  li.querySelector(".what").textContent = s.line + (s.ok ? "" : ": failed");
+  li.querySelector("small").textContent = span + (s.said ? ` · ${s.said}` : "");
   for (const e of s.errors) {
     const d = document.createElement("div");
     d.className = "error";
     d.textContent = e.split("\n")[0];
-    li.appendChild(d);
+    li.lastChild.appendChild(d);
   }
   li.onmousedown = e => { if (e.shiftKey) e.preventDefault(); };     // no text selection
   li.onclick = e => {
@@ -239,6 +364,7 @@ function go(i) {
   const f = frames[at], before = frames[at - 1];
   $("frame").src = frameSrc(f.file);
   $("clock").textContent = `${ms(f.t)} / ${ms(end)} · frame ${at + 1}/${frames.length}`;
+  $("watch-meta").textContent = `at ${ms(f.t)}`;
   $("playhead").style.left = at_(f.t);
   $("timeline").setAttribute("aria-valuenow", Math.round(f.t * 1000));
   $("timeline").setAttribute("aria-valuetext", ms(f.t));
@@ -262,8 +388,12 @@ function go(i) {
 // Plays to the last frame, or through the selected part when one is given.
 function play(on, through) {
   playing = on;
-  $("play").textContent = on && !through ? "Pause" : "Play";
-  $("part-play").textContent = on && through ? "Pause" : "Play part";
+  const press = (id, down, label) => {
+    $(id).setAttribute("aria-pressed", down);
+    $(id).setAttribute("aria-label", label);
+  };
+  press("play", on && !through, on && !through ? "Pause" : "Play");
+  press("part-play", on && !!through, on && through ? "Pause" : "Play the part");
   clearTimeout(timer);
   if (!on) return;
   const first = through ? through.a : 0, last = through ? through.b : frames.length - 1;
@@ -280,18 +410,29 @@ function play(on, through) {
 // The selected part, from frame a to frame b, or none.
 function select(a, b) {
   part = a == null || !frames.length ? null : {a: Math.min(a, b), b: Math.max(a, b)};
-  for (const id of ["part-head", "note", "part-send", "part-text"]) $(id).hidden = !part;
-  $("hint").hidden = !!part;
+  $("part-tools").hidden = !part;
+  $("part-empty").hidden = !!part;
   $("selection").hidden = !part;
   $("copied").textContent = "";
+  $("part-meta").textContent = "a task for an agent";
   if (!part) return;
   const first = frames[part.a], last = frames[part.b], count = part.b - part.a + 1;
   $("selection").style.left = at_(first.t);
   $("selection").style.width = at_(last.t - first.t);
+  $("part-meta").textContent = `${Math.round(first.t * 1000)}–${ms(last.t)}`;
   const ran = stepsIn(first.t, last.t), errors = ran.reduce((n, s) => n + s.errors.length, 0);
-  $("part-what").textContent = `${ms(first.t)} – ${ms(last.t)} (${ms(last.t - first.t)}) · ${count} frame${count == 1 ? "" : "s"}`
-    + (ran.length ? ` · step${ran.length == 1 ? "" : "s"} ${[...new Set([ran[0].step, ran.at(-1).step])].join("–")}` : "")
-    + (errors ? ` · ${errors} error${errors == 1 ? "" : "s"}` : "");
+  const facts = [["From", ms(first.t)], ["To", ms(last.t)], ["Length", ms(last.t - first.t)], ["Frames", count],
+                 ["Steps", ran.length ? [...new Set([ran[0].step, ran.at(-1).step])].join("–") : "none"],
+                 ["Errors", errors, errors ? "bad" : ""]];
+  $("facts").innerHTML = "";
+  for (const [label, value, kind] of facts) {
+    const cell = document.createElement("div");
+    cell.className = kind || "";
+    cell.innerHTML = `<span class="label"></span><b></b>`;
+    cell.firstChild.textContent = label;
+    cell.lastChild.textContent = value;
+    $("facts").appendChild(cell);
+  }
   $("brief").value = brief();
 }
 
@@ -321,7 +462,7 @@ function brief() {
   const lines = [`Investigate ${ms(first.t)} to ${ms(last.t)} of the preview recording ${timeline.name}${project}.`, "",
     "What to find out: " + (note || "whether the game does here what the steps were meant to make it do, and if "
                                     + "not, what goes wrong and why."), "",
-    `The part is ${count} frame${count == 1 ? "" : "s"}. Time 0 is the recording's first frame; each frame's watched `
+    `The part is ${plural(count, "frame")}. Time 0 is the recording's first frame; each frame's watched `
     + "values were read just after it was taken."];
   lines.push("", (sample.length < count ? `${sample.length} of its frames, evenly spread,` : "Its frames,")
                  + ` in ${framesFolder()} (timeline.json there has all ${frames.length}, each with the watched values):`,
