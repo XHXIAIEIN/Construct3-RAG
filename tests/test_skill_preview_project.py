@@ -16,6 +16,16 @@ def module():
     return pp
 
 
+def test_preview_project_keeps_the_result_in_the_project_by_default(tmp_path):
+    """A plan whose printed lines a pipe cut is read again from the file, not played again."""
+    pp = module()
+    tmp = tmp_path / ".tmp"
+    assert pp.kept(None, None, tmp_path) == (tmp / "preview-project.json", tmp / "preview")
+    assert pp.kept(tmp_path / "r.json", tmp_path / "s", tmp_path) == (tmp_path / "r.json", tmp_path / "s")
+    assert pp.where(tmp / "preview-project.json", tmp / "preview") == \
+        f"full result in {tmp / 'preview-project.json'}, screenshots in {tmp / 'preview'}"
+
+
 def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
     """A plan is read whole first: every mistake is named with its step, and the
     browser is not started."""

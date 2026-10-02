@@ -240,13 +240,14 @@ def scratch(folder: Path) -> Path:
     return path
 
 
-def kept(out: Path | None, shots: Path | None, first: Path) -> tuple[Path, Path]:
+def kept(out: Path | None, shots: Path | None, first: Path,
+         result: str = "open-in-editor.json", folder: str = "shots") -> tuple[Path, Path]:
     """Where the results and the screenshots go, .tmp/ of the first project unless named: a run
     whose printed lines a pipe cut is read again from the file instead of run again."""
     if out and shots:
         return out, shots
     tmp = scratch(first)
-    return out or tmp / "open-in-editor.json", shots or tmp / "shots"
+    return out or tmp / result, shots or tmp / folder
 
 
 def write_c3p(project: Path) -> Path:

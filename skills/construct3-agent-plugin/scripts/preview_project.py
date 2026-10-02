@@ -60,7 +60,9 @@ is; longer code says `return`. A list of strings is joined into lines.
 The game starts on the layout the editor opens on, as with F5. The browser runs
 headless and silent; --headed shows it. A step that fails leaves a screenshot,
 NN-failed.png. Screenshots and recordings go to --shots, by default
-.tmp/preview/ in the project, which Git ignores.
+.tmp/preview/ in the project, and the whole result, every value and state, to
+--out, by default .tmp/preview-project.json; .tmp/ is ignored by Git. The last
+line names both: read a cut-off result there instead of playing the plan again.
 """
 from __future__ import annotations
 
@@ -644,6 +646,14 @@ def report(result: dict) -> list[str]:
     return lines
 
 
+def kept(out: Path | None, shots: Path | None, project: Path) -> tuple[Path, Path]:
+    return oe.kept(out, shots, project, "preview-project.json", "preview")
+
+
+def where(out: Path, shots: Path) -> str:
+    return f"full result in {out}, screenshots in {shots}"
+
+
 def main() -> int:
     c3.utf8_output()
     ap = argparse.ArgumentParser(description=__doc__, epilog=EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -654,7 +664,8 @@ def main() -> int:
     ap.add_argument("--browser", metavar="EXE",
                     help="the Chromium-based browser to start (default: Edge, Chrome or Chromium where installed)")
     ap.add_argument("--shots", type=Path, help="the folder for the screenshots (default: .tmp/preview in the project)")
-    ap.add_argument("--out", type=Path, help="write the result, every value and state included, as JSON")
+    ap.add_argument("--out", type=Path, help="write the result, every value and state included, as JSON "
+                                             "(default: .tmp/preview-project.json in the project)")
     ap.add_argument("--headed", action="store_true", help="show the browser window")
     ap.add_argument("--profile", type=Path, metavar="FOLDER",
                     help="keep the browser profile in FOLDER/editor-<browser> instead of the project's .tmp/")
@@ -682,7 +693,7 @@ def main() -> int:
               "drive the preview with a browser tool of this session as references/reading-the-runtime.md says.")
         return 3
     editor = f"{oe.EDITOR}{args.release.strip('/')}/" if args.release else oe.EDITOR
-    shots = args.shots or oe.scratch(project) / "preview"
+    out, shots = kept(args.out, args.shots, project)
     shots.mkdir(parents=True, exist_ok=True)
     try:
         browser = oe.Browser(exe, (args.profile or oe.scratch(project)) / f"editor-{Path(exe).stem.lower()}", args.headed)
@@ -701,13 +712,13 @@ def main() -> int:
         return 2
     finally:
         browser.close()
-    if args.out:
-        args.out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
+    out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
     lines = report(result)
     shown = c3.fitting(lines, args.limit)
     print("\n".join(lines[:shown]))
     if shown < len(lines):
-        print(f"{len(lines) - shown} lines not printed: --out FILE keeps everything, --limit 0 prints it")
+        print(f"{len(lines) - shown} lines not printed: {out} keeps everything, --limit 0 prints it")
+    print(where(out, shots))
     ran = result.get("preview") or {}
     failed = [d for d in ran.get("steps", []) if not d["ok"]]
     errors = ran.get("started") and (ran["errors"] or any(d["errors"] for d in ran["steps"]))
