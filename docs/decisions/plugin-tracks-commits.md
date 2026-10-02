@@ -21,11 +21,14 @@ install on its first copy however many commits followed
   and `claude plugin update construct3@construct3-rag` brings it to the
   latest one. `claude plugin validate` warns that no version is set; the
   warning is accepted.
-- On a machine with the clone, the marketplace is the clone itself
-  (`claude plugin marketplace add <the clone>`). Claude Code loads a
-  relative-path plugin of a local-directory marketplace in place, at every
-  session start, whatever its version, so a `git pull` reaches the next
-  session and there is no copy to fall behind.
+- On a machine with the clone, the clone is linked as
+  `~/.claude/skills/construct3` (a junction on Windows). Claude Code loads a
+  plugin directory under `~/.claude/skills/` in place as
+  `construct3@skills-dir`, so a `git pull` reaches the next session and
+  there is no copy to fall behind. The docs say a local-directory
+  marketplace loads in place too, but Claude Code 2.1.287 copied the whole
+  clone, 3.0 GB with the ignored `.cache/` and `.local/`, into
+  `~/.claude/plugins/cache/` when the clone was added as a marketplace.
 - A project used with the plugin holds no copy of the skill; its
   `AGENTS.md` names the scripts under the clone's
   `skills/construct3-agent-plugin/`. `SKILL.md` and `AGENTS.md` section 4
@@ -40,4 +43,5 @@ install on its first copy however many commits followed
 - `install.py` and the copy stay for other agents and for Claude Code
   without the plugin; nothing about them changed.
 - Plugin loading costs no network at session start: the plugin is read from
-  the cache or, in place, from the clone.
+  the cache or, through the link, from the clone. `claude plugin details
+  construct3@skills-dir` lists one skill and about 240 always-on tokens.

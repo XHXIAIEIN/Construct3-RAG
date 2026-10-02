@@ -26,7 +26,7 @@ claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
 ```
 
-这样装的插件是一份副本，`claude plugin update construct3@construct3-rag` 把它更新到最新提交。本机已经 clone 了这个仓库时，改为添加这个 clone：`claude plugin marketplace add <clone 的路径>`，插件就直接从 clone 读取，`git pull` 之后下一个会话就用上新版。两种方式下游戏项目里都不需要 skill 副本。
+这样装的插件是一份副本，`claude plugin update construct3@construct3-rag` 把它更新到最新提交。本机已经 clone 了这个仓库时，改为把 clone 链接进 Claude Code 的 skills 目录，插件就直接从 clone 读取，`git pull` 之后下一个会话就用上新版：PowerShell 里是 `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <clone 的路径>`，其他系统是 `ln -s <clone 的路径> ~/.claude/skills/construct3`。把 clone 添加为 marketplace 的话，整个 clone 连同被忽略的文件都会被复制进插件缓存。两种方式下游戏项目里都不需要 skill 副本。
 
 ### skill 的脚本运行什么、连到哪里
 

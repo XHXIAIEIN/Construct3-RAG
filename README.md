@@ -26,7 +26,7 @@ claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
 ```
 
-This keeps a copy of the plugin, which `claude plugin update construct3@construct3-rag` brings up to the latest commit. With this repository already cloned, add the clone instead, `claude plugin marketplace add <the clone>`: the plugin is then read from the clone, and a `git pull` reaches the next session. Either way the game project needs no copy of the skill.
+This keeps a copy of the plugin, which `claude plugin update construct3@construct3-rag` brings up to the latest commit. With this repository already cloned, link the clone into Claude Code's skills folder instead, so that the plugin is read from the clone and a `git pull` reaches the next session: `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <the clone>` in PowerShell, `ln -s <the clone> ~/.claude/skills/construct3` elsewhere. Adding the clone as a marketplace copies all of it, ignored files included, into the plugin cache. Either way the game project needs no copy of the skill.
 
 ### What the skill's scripts run and reach
 
