@@ -151,6 +151,17 @@ variables, instance counts and the instances of the types named.
   that no upload action fills.
 - The page is read, not the screen: the title, the dialogs, and what the
   editor logs. Start-up dialogs are closed by their buttons in any language.
+- A dialog over the opened project is a refusal unless its id marks a
+  notice. `#deprecatedFeaturesDialog` is one: it lists what the editor
+  updated or will drop, the legacy Flat export file structure or the
+  Normalized Z axis scale, over a project whose title has turned to its
+  name. Over the official examples (2026-10-02, stable r495-2) 56 of 524
+  were reported `failed` for that dialog alone; they are now `opened` with
+  the notice as a `warning:` line, and no other result changed. The notice
+  is closed so that `--preview` can go on. The title alone does not decide:
+  `#crashReportDialog`, "Oops! Something went wrong", also comes after the
+  title has turned. The runs are in
+  `.local/docs/evidence/skill-evals/construct3-agent-plugin/opened-2026-10-02/`.
 - A project saved by a newer release than the stable editor opens in
   `editor.construct.net/beta`; `--release` pins one.
 - The browser profile lives in `.tmp/editor-browser` of the project, with a

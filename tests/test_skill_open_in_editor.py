@@ -46,11 +46,7 @@ def test_open_in_editor_keeps_the_preview_indexeddb_inside_max_path(tmp_path):
     preview on a profile past 189 characters stopped answering (observed in Edge, 2026-10-01).
     A long profile goes by its 8.3 short name where the volume keeps one; one still too deep
     is refused before the preview."""
-    sys.path.insert(0, str(SKILL / "scripts"))
-    try:
-        import open_in_editor as oe
-    finally:
-        sys.path.pop(0)
+    oe = opener()
     assert not oe.too_deep("\\\\?\\" + "C:\\" + "x" * 186) and oe.too_deep("\\\\?\\" + "C:\\" + "x" * 187)
     assert oe.user_data_dir(tmp_path) == str(tmp_path.resolve())
     deep = tmp_path / ("y" * 100) / ("z" * 100) / ".tmp" / "editor-msedge"
@@ -64,15 +60,35 @@ def test_open_in_editor_keeps_the_preview_indexeddb_inside_max_path(tmp_path):
     assert code == 0 and "--profile FOLDER" in out, out
 
 
-def opened_with(preview: dict) -> list[str]:
+def opener():
     sys.path.insert(0, str(SKILL / "scripts"))
     try:
         import open_in_editor as oe
     finally:
         sys.path.pop(0)
-    return oe.report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
-                      "editor": "https://editor.construct.net/", "dialogs": [], "exception": "",
-                      "preview": {"started": True, "layout": "Game", "runtime": "worker", "errors": [], **preview}})
+    return oe
+
+
+def opened_with(preview: dict) -> list[str]:
+    return opener().report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
+                            "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [], "exception": "",
+                            "preview": {"started": True, "layout": "Game", "runtime": "worker", "errors": [],
+                                        **preview}})
+
+
+def test_open_in_editor_reports_a_notice_over_the_opened_project_as_a_warning():
+    """template-quiz opened, its title turned to the project's name, and the editor showed
+    #deprecatedFeaturesDialog over it (2026-10-02, r495-2 and r504): opened, with the notice
+    as a warning. The crash report also comes after the title has turned, so a dialog is a
+    notice by its id, not by the title."""
+    notice = ("Deprecated features This project uses some deprecated features. ... This project used the "
+              "legacy Flat export file structure mode. It has been updated to the modern Folders mode.")
+    lines = opener().report({"project": "Quiz", "status": "opened", "title": "Quiz template - Construct 3",
+                             "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [notice],
+                             "exception": ""})
+    assert lines == ["opened   Quiz  (Quiz template - Construct 3, https://editor.construct.net/)",
+                     f"  warning: {notice}"], lines
+    assert "d.id == 'deprecatedFeaturesDialog'" in opener().RESULT_JS
 
 
 def test_open_in_editor_reports_how_long_the_game_ran_in_the_preview():

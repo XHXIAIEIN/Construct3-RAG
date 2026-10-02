@@ -72,6 +72,7 @@ EPILOG = """examples:
 
 output, one entry per project:
   opened   <project>  (<window title>, <the editor it opened in>)
+    warning: <a notice the editor showed over the opened project, deprecated features: tell the user>
     preview: layout '<name>', runtime in the worker, 600 ticks in 4.2 s, 1 error      with --preview
     runtime: <the first line of each error; --out keeps the stack>
     globals: Score 0, Lives 3                                                         with --state
@@ -137,17 +138,23 @@ SETUP_JS = r"""async () => {
 
 # RESULT waits for the drop, then for the editor's answer: the title turns to the
 # project's name, or a dialog says why it did not open. A dialog can follow the
-# title by a moment, hence the last wait.
+# title by a moment, hence the last wait. The Deprecated features dialog is a
+# notice shown over the opened project: it is returned in warnings and closed, which
+# takes up to half a second, so that a preview or an export can go on. It is told by
+# its id, since the crash report, a refusal, also comes after the title has turned.
 RESULT_JS = r"""async () => {
   const w = t => new Promise(r => setTimeout(r, t)), start = () => window.__c3Title;
   const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog');
+  const notice = d => d.id == 'deprecatedFeaturesDialog', text = d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500);
   for (let n = 0; start() === undefined; n++) { if (n > 150) return 'no file on the input: put the .c3p on it'; await w(200); }
   if (start() === null) return 'the file on the input is empty: its path does not exist';
   for (let n = 0; n < 180; n++, await w(250))
-    if (!document.querySelector('#progressDialog[open]') && (open().length || document.title != start())) break;
+    if (!document.querySelector('#progressDialog[open]') && (open().some(d => !notice(d)) || document.title != start())) break;
   await w(1500);
-  const dialogs = open().map(d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500));
-  return {opened: !dialogs.length && document.title != start(), title: document.title, dialogs,
+  const dialogs = open().filter(d => !notice(d)).map(text), warnings = open().filter(notice).map(text);
+  open().filter(notice).forEach(d => d.querySelector('ui-close-button, .okButton')?.click());
+  for (let n = 0; n < 20 && open().some(notice); n++) await w(100);
+  return {opened: !dialogs.length && document.title != start(), title: document.title, dialogs, warnings,
           errors: window.__c3Errors.filter(x => x.includes('Exception')).map(x => x.slice(0, 600))};
 }"""
 
@@ -249,9 +256,10 @@ a file on a file input, in three rounds of calls; the page does the waiting, so 
 3. In one message: put this file on that input with the tool's upload action (a tool that waits
    for a file chooser gets one by clicking the input), then run RESULT:
    {c3p}
-   RESULT returns {{opened, title, dialogs, errors}} a few seconds after the upload. opened true
-   is the hand-over. Otherwise the dialog names the place and errors holds the exception the
-   editor logged. {NEXT.removeprefix("next: ")}
+   RESULT returns {{opened, title, dialogs, warnings, errors}} a few seconds after the upload.
+   opened true is the hand-over; warnings holds what the editor noted over the opened project,
+   deprecated features, to pass on to the user. Otherwise the dialog names the place and errors
+   holds the exception the editor logged. {NEXT.removeprefix("next: ")}
 Without such a tool, ask the user to open the project in Construct 3 and paste the text of the
 dialog it shows.{tail}
 
@@ -727,7 +735,7 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
         if shot:
             shot.write_bytes(base64.b64decode(page.call("Page.captureScreenshot")["data"]))
         if isinstance(result, str):
-            result = {"opened": False, "title": "", "dialogs": [], "errors": [result]}
+            result = {"opened": False, "title": "", "dialogs": [], "warnings": [], "errors": [result]}
         ran = None
         if result["opened"] and then and too_deep(browser.data):
             most = MAX_PATH - 1 - INDEXEDDB
@@ -747,7 +755,7 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
 
     status = "opened" if result["opened"] else "failed" if result["dialogs"] or result["errors"] else "timeout"
     return {"project": str(project), "status": status, "title": result["title"], "dialogs": result["dialogs"],
-            "exception": next(iter(result["errors"]), ""), "editor": editor,
+            "warnings": result["warnings"], "exception": next(iter(result["errors"]), ""), "editor": editor,
             "seconds": round(time.monotonic() - started, 1), **({"preview": ran} if ran else {})}
 
 
@@ -756,6 +764,7 @@ def report(result: dict) -> list[str]:
         return [f"error    {result['project']}: {result['exception']}"]
     if result["status"] == "opened":
         lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
+        lines += [f"  warning: {w}" for w in result.get("warnings", [])]
         ran = result.get("preview")
         if ran and ran["started"]:
             n = len(ran["errors"])
@@ -771,6 +780,7 @@ def report(result: dict) -> list[str]:
         return lines
     lines = [f"{result['status']:<8} {result['project']}"]
     lines += [f"  editor: {d}" for d in result["dialogs"]]
+    lines += [f"  warning: {w}" for w in result.get("warnings", [])]
     if result["status"] == "timeout":
         lines.append(f"  editor: no answer in 45 seconds, the title is {result['title']!r}; "
                      f"--shots DIR saves what the editor shows")
@@ -795,7 +805,7 @@ def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
             result = open_one(browser, editor, project, browser.profile / f"project-{i}.c3p", shot,
                               bool(args.release), then)
         except (EditorNotLoaded, DevToolsError, OSError) as e:
-            result = {"project": str(project), "status": "error", "title": "", "dialogs": [],
+            result = {"project": str(project), "status": "error", "title": "", "dialogs": [], "warnings": [],
                       "exception": str(e), "editor": editor, "seconds": 0}
         with lock:
             results.append(result)
