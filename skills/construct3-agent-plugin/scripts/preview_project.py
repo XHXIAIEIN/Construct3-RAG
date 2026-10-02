@@ -76,6 +76,7 @@ EPILOG = """examples:
 
 output:
   opened   <project>  (<window title>, <the editor it opened in>)
+    warning: <a notice the editor showed over the opened project, as open_in_editor.py prints it>
     preview: layout 'Game', runtime in the worker, viewport 430x932, touch
     1 until runtime.objects.Enemy.getAllInstances().length >= 3: true after 1.4 s
     2 drag Piece 0 to BattleSlot 1: (120, 712) to (215, 388) in 0.4 s
@@ -535,6 +536,7 @@ def report(result: dict) -> list[str]:
     if result["status"] != "opened":
         return oe.report(result)
     lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
+    lines += [f"  warning: {w}" for w in result.get("warnings", [])]
     ran = result.get("preview")
     if not ran or not ran["started"]:
         return lines + [f"  preview did not run: {e}" for e in (ran or {}).get("errors", ["no preview"])]
