@@ -6,7 +6,7 @@ one folder per skill, a `SKILL.md` with `name` and `description`, and
 source. A game project holds a copy of it, made and refreshed by the skill's
 `scripts/install.py`, and the copy reports when it differs from the source.
 
-`construct3-project/` is the one skill here: the ACE lookup, sheet printer,
+`construct3-agent-plugin/` is the one skill here: the ACE lookup, sheet printer,
 sheet editor, checker, editor opener and generator template for a Construct
 3 folder project, and the block for the project's instruction file.
 
@@ -66,7 +66,7 @@ sheet editor, checker, editor opener and generator template for a Construct
   that measurement, so a key missing from the generator fails here instead of
   in the editor.
 - A check becomes an error after the two steps in
-  `construct3-project/references/checker-rules.md`: the editor's message,
+  `construct3-agent-plugin/references/checker-rules.md`: the editor's message,
   then a run over the official examples that adds no finding. A style
   finding, one the editor accepts, is a warning behind `--style` and in what
   `edit_sheet.py` adds, never an error; its threshold comes from a
@@ -80,7 +80,7 @@ sheet editor, checker, editor opener and generator template for a Construct
   `docs/decisions/event-sheet-design-guidance.md`, "What small models read".
 - A change to a script is compared, old against new, over every official
   example and the game projects: exit code, stdout and stderr
-  (`construct3-project/evals/sweep_outputs.py`). A restructure shows no
+  (`construct3-agent-plugin/evals/sweep_outputs.py`). A restructure shows no
   difference; a change of output shows exactly the runs it was meant for.
 
 ## Checks
@@ -97,7 +97,7 @@ When the frontmatter of a `SKILL.md` changes, or the specification does, run
 the reference validator as well. It fetches code from GitHub and runs it:
 
 ```bash
-uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref" skills-ref validate skills/construct3-project
+uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref" skills-ref validate skills/construct3-agent-plugin
 ```
 
 If the session does not allow that, report it as not run; the tests pin the
@@ -111,7 +111,7 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 <https://agentskills.io/skill-creation/optimizing-descriptions>. A change to
 `SKILL.md`, to a reference or to what a script prints is a new iteration.
 
-| File in `construct3-project/evals/` | Holds |
+| File in `construct3-agent-plugin/evals/` | Holds |
 |-------------------------------------|-------|
 | `evals.json` | The test cases: prompt, expected output, assertions a script can check |
 | `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game or an official example, with this skill, the previous one or none |
@@ -124,18 +124,18 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 ```bash
 # before the change
 git worktree add --detach <folder outside the clone>/rag-old HEAD
-python skills/construct3-project/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-old.json --examples <example-projects> --projects <game folder> ...
+python skills/construct3-agent-plugin/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N/sweep-old.json --examples <example-projects> --projects <game folder> ...
 # after the change
-python skills/construct3-project/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-new.json --examples <example-projects> --projects <game folder> ...
-python skills/construct3-project/evals/sweep_outputs.py --compare .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-old.json .local/docs/evidence/skill-evals/construct3-project/iteration-N/sweep-new.json
-python skills/construct3-project/evals/make_fixtures.py <folder outside the clone>/iteration-N --arms with_skill old_skill --old-clone <folder outside the clone>/rag-old
+python skills/construct3-agent-plugin/evals/sweep_outputs.py .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N/sweep-new.json --examples <example-projects> --projects <game folder> ...
+python skills/construct3-agent-plugin/evals/sweep_outputs.py --compare .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N/sweep-old.json .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N/sweep-new.json
+python skills/construct3-agent-plugin/evals/make_fixtures.py <folder outside the clone>/iteration-N --arms with_skill old_skill --old-clone <folder outside the clone>/rag-old
 # after each run has reported
-python skills/construct3-project/evals/trace.py <transcript>.jsonl --out <run folder>
+python skills/construct3-agent-plugin/evals/trace.py <transcript>.jsonl --out <run folder>
 # after the last run of the iteration
-python skills/construct3-project/evals/grade.py .local/docs/evidence/skill-evals/construct3-project/iteration-N
-python skills/construct3-project/scripts/open_in_editor.py .local/docs/evidence/skill-evals/construct3-project/iteration-N --out .local/docs/evidence/skill-evals/construct3-project/iteration-N/opened.json
+python skills/construct3-agent-plugin/evals/grade.py .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N
+python skills/construct3-agent-plugin/scripts/open_in_editor.py .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N --out .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N/opened.json
 # after a change to the description
-python skills/construct3-project/evals/run_trigger_eval.py skills/construct3-project/evals/train_queries.json --project <game with .claude/skills>
+python skills/construct3-agent-plugin/evals/run_trigger_eval.py skills/construct3-agent-plugin/evals/train_queries.json --project <game with .claude/skills>
 ```
 
 - Each run starts clean, one agent per case and arm, and saves `answer.md`

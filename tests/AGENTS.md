@@ -5,7 +5,7 @@ The pytest suite is offline: it needs no service, no model and no network.
 ## Rules
 
 - Name unit-test files `test_<module_name>.py`; a script of the
-  `construct3-project` skill is tested in `test_skill_<script>.py`.
+  `construct3-agent-plugin` skill is tested in `test_skill_<script>.py`.
 - Assert public contracts, not private implementation fields.
 - `SearchStage` has exactly three stable values: `initialize`, `lookup`,
   `respond`. Request validation happens inside `initialize`; do not add a
@@ -26,7 +26,7 @@ an addon keeps it as `expected_entity`.
 
 A new keyword, alias or routing rule starts from a failing case here.
 
-The evals of the `construct3-project` skill are not here. They run agents,
+The evals of the `construct3-agent-plugin` skill are not here. They run agents,
 not the service, and live with the skill: `skills/AGENTS.md`, "Evals".
 The `test_skill_*.py` files cover the skill's scripts, and
 `test_skill_spec.py` the skill's format and, against a stand-in client, the

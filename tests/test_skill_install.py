@@ -55,7 +55,7 @@ def test_install_into_a_clients_own_skills_folder(tmp_path):
     root = new_project(tmp_path / "game")
     code, out = install(root, "--into", ".claude/skills")
     assert code == 0, out
-    assert "`.claude/skills/construct3-project/SKILL.md`" in (root / "AGENTS.md").read_text(encoding="utf-8")
+    assert "`.claude/skills/construct3-agent-plugin/SKILL.md`" in (root / "AGENTS.md").read_text(encoding="utf-8")
     (root / "tools").mkdir()
     shutil.copy(SKILL / "assets" / "build_project.py", root / "tools" / "build_project.py")
     code, out = run(root, "tools/build_project.py")     # the generator finds the checker there too
@@ -239,7 +239,7 @@ def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):
     script = project / INSTALLED / "scripts" / "print_sheet.py"
     script.write_text(script.read_text(encoding="utf-8") + "\n# edited\n", encoding="utf-8")
     code, out = check(project)
-    assert code == 0 and "warning: this copy of the construct3-project skill differs from the clone's" in out
+    assert code == 0 and "warning: this copy of the construct3-agent-plugin skill differs from the clone's" in out
     assert "scripts/print_sheet.py" in out and "install.py" in out
     # the other scripts say it first, on stdout with their result: a Doubao run in PowerShell
     # read it as an error record on every call of a stale copy
@@ -247,7 +247,7 @@ def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):
                        cwd=project, env=dict(os.environ, PYTHONIOENCODING="utf-8"), capture_output=True, text=True,
                        encoding="utf-8")
     assert p.returncode == 0 and p.stderr == ""
-    assert p.stdout.startswith("note: this copy of the construct3-project skill differs from the clone's")
+    assert p.stdout.startswith("note: this copy of the construct3-agent-plugin skill differs from the clone's")
     assert "condition wait " not in p.stdout.splitlines()[0] and "action wait " in p.stdout
     # the installed copy hands over to the clone's install.py, which restores the file
     code, out = run(project, f"{INSTALLED}/scripts/install.py")

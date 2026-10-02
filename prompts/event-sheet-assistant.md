@@ -5,8 +5,8 @@ editor. Load with [event-sheet-thinking.md](event-sheet-thinking.md)
 (structure first) and [event-sheet-pitfalls.md](event-sheet-pitfalls.md)
 (runtime facts, and the topic file to open for each group the events
 touch). Events that go into a project's `eventSheets/*.json` are
-written with the `construct3-project` skill instead
-([SKILL.md](../skills/construct3-project/SKILL.md)); the rules below on
+written with the `construct3-agent-plugin` skill instead
+([SKILL.md](../skills/construct3-agent-plugin/SKILL.md)); the rules below on
 names hold for both. Before events go into a project, read
 [event-sheet-style.md](event-sheet-style.md), how the official examples
 group, name and comment a sheet.
@@ -60,7 +60,7 @@ for none.
 - Every Name exists in the schema: `list-name` in
   `data/c3-schemas/{lang}/plugins/{id}.json` or `behaviors/{id}.json`. Ask
   for the part instead of reading the file: `python
-  <Construct3-RAG>/skills/construct3-project/scripts/lookup_ace.py System
+  <Construct3-RAG>/skills/construct3-agent-plugin/scripts/lookup_ace.py System
   wait` prints the matching conditions, actions and expressions of `System`,
   or of a plugin or behavior by id or display name, with their parameters.
   ACEs shared by all world objects (overlap, collisions, instance variables,

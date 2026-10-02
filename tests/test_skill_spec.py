@@ -1,4 +1,4 @@
-"""The construct3-project skill as the Agent Skills format defines it, and the trigger evaluation of its
+"""The construct3-agent-plugin skill as the Agent Skills format defines it, and the trigger evaluation of its
 description against a stand-in for the client."""
 import json
 import re
@@ -62,9 +62,9 @@ elif "silent" in query:
     print("not json")
 elif "event sheet" in query:
     tool("Glob", pattern="**/*.json")
-    tool("Skill", skill="construct3-project")
+    tool("Skill", skill="construct3-agent-plugin")
 elif "reads it" in query:
-    tool("Read", file_path="C:\\\\game\\\\.claude\\\\skills\\\\construct3-project\\\\SKILL.md")
+    tool("Read", file_path="C:\\\\game\\\\.claude\\\\skills\\\\construct3-agent-plugin\\\\SKILL.md")
 else:
     tool("Bash", command="ls")
     say({"type": "result", "is_error": False, "result": "done"})

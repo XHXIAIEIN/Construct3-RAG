@@ -7,14 +7,14 @@ comes back as UID links, `Pick all` and globals.
 
 Two things in the game project change that: a block in its `AGENTS.md` that
 routes each kind of work to the file that owns it, and a copy of the
-`construct3-project` skill with the tools. One command writes both, run in
+`construct3-agent-plugin` skill with the tools. One command writes both, run in
 the project folder:
 
 ```bash
-python <Construct3-RAG>/skills/construct3-project/scripts/install.py
+python <Construct3-RAG>/skills/construct3-agent-plugin/scripts/install.py
 ```
 
-It copies [`skills/construct3-project/`](../skills/construct3-project/SKILL.md)
+It copies [`skills/construct3-agent-plugin/`](../skills/construct3-agent-plugin/SKILL.md)
 to the project's `.agents/skills/` and, when no instruction file of the
 project names this repository yet, appends the block to `AGENTS.md` with the
 path of this clone on its `Construct3-RAG:` line. An instruction file that
@@ -27,7 +27,7 @@ reaches it too.
 ## The block
 
 The text is
-[`skills/construct3-project/assets/game-project-block.md`](../skills/construct3-project/assets/game-project-block.md).
+[`skills/construct3-agent-plugin/assets/game-project-block.md`](../skills/construct3-agent-plugin/assets/game-project-block.md).
 To place it by hand, copy it into the project's `AGENTS.md` and fill in the
 one path at the top, or a symlink inside the project that points here.
 Replace `<path-to>` in place, or keep it and add a line

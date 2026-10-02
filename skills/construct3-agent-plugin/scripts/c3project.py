@@ -15,7 +15,7 @@ import re
 import sys
 from pathlib import Path
 
-SKILL = "construct3-project"
+SKILL = "construct3-agent-plugin"
 SKILL_DIR = Path(__file__).resolve().parent.parent
 LOWER = str.lower  # expressions are case-insensitive: scrolly, SCROLLY and ScrollY are one name
 

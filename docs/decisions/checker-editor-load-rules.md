@@ -32,7 +32,7 @@ Option 2 as the default, and option 3 as the step after it.
 ### The checker
 
 - The rules, their messages and what each finding says are listed in
-  `skills/construct3-project/references/checker-rules.md`.
+  `skills/construct3-agent-plugin/references/checker-rules.md`.
 - A rule is read from the editor's project loader as a whole call chain,
   located by the message it throws, not from the one message a user pasted:
   the next assertion in the same function would cost another round trip.
@@ -168,7 +168,7 @@ action 1`, the numbering `print_sheet.py` uses.
   alone. Over the 84 eval projects with `--preview 5 --jobs 3`, tabs gave 6
   such errors, each on a hidden page; windows gave none in three runs, the
   same answer per project each time, in 5 minutes against 9. The results
-  are in `.local/docs/evidence/skill-evals/construct3-project/opened-2026-09-28/`.
+  are in `.local/docs/evidence/skill-evals/construct3-agent-plugin/opened-2026-09-28/`.
 - The preview wraps the runtime's tick once to reach it, as skymen/c3cli
   (MIT) does, and reads the preview page and its workers once at the end.
   It runs without input: it catches what breaks on start, not what a player

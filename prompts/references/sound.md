@@ -131,7 +131,7 @@ the reference M; the game set M at −30 LUFS.
   person listens to the WAVs for whether it sounds good.
 - Preview. The browser runs with `--mute-audio`; a sound is heard or
   measured by recording it inside the page, see
-  `Construct3-RAG/skills/construct3-project/references/editor-and-preview.md`.
+  `Construct3-RAG/skills/construct3-agent-plugin/references/editor-and-preview.md`.
   A debug global that logs the beat at each pass shows the grid holds: at
   pass n the beat read `32n − 1.67` within a frame over 62 s.
 - On the device: *Use worker* off for sample-accurate scheduling,

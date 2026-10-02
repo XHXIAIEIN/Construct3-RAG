@@ -6,7 +6,7 @@ Construct3-RAG is a versioned, bilingual Construct 3 reference dataset first.
 The HTTP service is an optional access layer over that data, and Direct Lookup
 is all it does: deterministic, offline, with no model and no database behind it.
 
-The `construct3-project` skill under `skills/` is outside this layout. Its
+The `construct3-agent-plugin` skill under `skills/` is outside this layout. Its
 scripts import the standard library and each other, read `data/c3-schemas/`
 directly, and run from a copy inside a game project with neither `src/` nor
 the service. Its rules are in `skills/AGENTS.md`.

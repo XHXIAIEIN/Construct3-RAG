@@ -13,7 +13,7 @@ git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct
 python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 ```
 
-They put this clone, the repositories it reads and the `MyGame` project together in `$HOME/Construct3`, and install the `construct3-project` skill in `MyGame` with its `AGENTS.md` and `CLAUDE.md`. Whatever is already there is left as it is, so the two are safe to run again; `--help` lists the flags. In `cmd.exe`, write `%USERPROFILE%` for `$HOME`. To keep everything somewhere else, write that folder into both commands in place of `$HOME/Construct3`.
+They put this clone, the repositories it reads and the `MyGame` project together in `$HOME/Construct3`, and install the `construct3-agent-plugin` skill in `MyGame` with its `AGENTS.md` and `CLAUDE.md`. Whatever is already there is left as it is, so the two are safe to run again; `--help` lists the flags. In `cmd.exe`, write `%USERPROFILE%` for `$HOME`. To keep everything somewhere else, write that folder into both commands in place of `$HOME/Construct3`.
 
 `MyGame` starts as a copy of `data/c3-new-project`, the empty project the editor creates with **Project** > **New** and saves with **Save as** > **Save as project folder**. To start from an empty project saved on this machine instead, add `--template <that folder>` to the second command.
 
@@ -91,7 +91,7 @@ The same `id` in `zh-CN/plugins/sprite.json` carries the Chinese `list-name`, `d
 
 Start with [`AGENTS.md`](AGENTS.md): the fact lookup procedure, the event sheet design procedure, and the rules for changing the code. To help users write event sheets, load [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md), [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md) and [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md) together as the system prompt: structure in Construct terms (picking, families, containers, `Else`), output format and name verification, and the runtime facts that intuition gets wrong, one line each. The cases and sources behind those lines are in `prompts/pitfalls/`, one file per topic, read when the index says the events touch that topic. [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) is the authoring style of the official examples (groups and their variables, comments, names, UI text), for events written into a project. Each points to `prompts/references/` for material needed only sometimes, so that stays out of context until a task calls for it.
 
-An agent inside a game project reaches this repository through the [`construct3-project`](skills/construct3-project/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the sheet editor, the checker, the editor opener and the generator template. The two commands at the top install it; `AGENTS.md` section 4 has the rule for a project that lacks it.
+An agent inside a game project reaches this repository through the [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill, a folder in the [Agent Skills](https://agentskills.io) format with the ACE lookup, the sheet printer, the sheet editor, the checker, the editor opener and the generator template. The two commands at the top install it; `AGENTS.md` section 4 has the rule for a project that lacks it.
 
 ## Lookup service (optional)
 
@@ -116,7 +116,7 @@ data/                   Committed reference data, read directly
 prompts/                LLM system prompts
   references/           Loaded on demand
 skills/                 Agent Skills, installed into a game project
-  construct3-project/   ACE lookup, sheet printer, sheet editor, checker, editor opener, generator template
+  construct3-agent-plugin/   ACE lookup, sheet printer, sheet editor, checker, editor opener, generator template
 src/                    Optional lookup service (see src/AGENTS.md)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite
