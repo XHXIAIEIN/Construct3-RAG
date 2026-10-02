@@ -1,0 +1,10 @@
+{
+  "name": "construct3-project",
+  "version": "0.1.0",
+  "description": "Look up, read, edit, check and generate Construct 3 folder projects against the bilingual Construct3-RAG schemas.",
+  "author": { "name": "XHXIAIEIN" },
+  "homepage": "https://github.com/XHXIAIEIN/Construct3-RAG",
+  "repository": "https://github.com/XHXIAIEIN/Construct3-RAG",
+  "license": "MIT",
+  "keywords": ["construct3", "game-dev", "event-sheet", "rag"]
+}

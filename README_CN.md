@@ -19,6 +19,13 @@ python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 
 之后读 `MyGame/AGENTS.md`。
 
+Claude Code 用户也可以把 skill 当插件装；插件就是整个仓库，schemas 随它一起到位：
+
+```bash
+claude plugin marketplace add XHXIAIEIN/Construct3-RAG
+claude plugin install construct3-project@construct3-rag
+```
+
 ## 相关仓库
 
 另外三个仓库，`bootstrap.py` 会把它们 clone 到本仓库旁边：

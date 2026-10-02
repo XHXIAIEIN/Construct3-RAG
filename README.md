@@ -19,6 +19,13 @@ They put this clone, the repositories it reads and the `MyGame` project together
 
 Then read `MyGame/AGENTS.md`.
 
+Claude Code users can install the skill as a plugin instead; the plugin is this whole repository, so the schemas come with it:
+
+```bash
+claude plugin marketplace add XHXIAIEIN/Construct3-RAG
+claude plugin install construct3-project@construct3-rag
+```
+
 ## Related repositories
 
 Three more repositories, which `bootstrap.py` clones beside this one:
