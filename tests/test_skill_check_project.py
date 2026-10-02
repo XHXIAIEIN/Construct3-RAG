@@ -634,6 +634,32 @@ def test_instance_variable_and_behavior_share_a_name(project):
         project, change, "objectTypes/Coin.json")
 
 
+def test_object_types_sharing_a_sid_stop_the_editor(project):
+    """The editor refuses two object classes with one sid: "object class sid already in use"."""
+    coin = json.loads((project / "objectTypes/Coin.json").read_text(encoding="utf-8"))
+    out = findings(project, lambda t: t.update(sid=coin["sid"]), "objectTypes/ScoreText.json")
+    line = next((x for x in out.splitlines() if "share the sid" in x), "")
+    assert "Coin" in line and "ScoreText" in line and "object class sid already in use" in line, out
+
+
+def test_another_repeated_sid_is_a_warning(project):
+    """The editor opens a project whose events, instances, layers or animations repeat a sid."""
+    def repeat(sheet):
+        rows = [ev for ev in sheet["events"] if "sid" in ev]
+        rows[1]["sid"] = rows[0]["sid"]
+    out = findings(project, repeat)
+    assert out.splitlines()[-1].startswith("ok:"), out
+    assert [w for w in warnings(out) if "duplicate sids" in w], out
+
+
+def test_instances_sharing_a_uid_are_named_with_what_the_editor_does(project):
+    def repeat(lay):
+        insts = [i for layer in lay["layers"] for i in layer["instances"]]
+        insts[1]["uid"] = insts[0]["uid"]
+    out = findings(project, repeat, "layouts/Game.json")
+    assert "duplicate uids" in out and "gives all but one of them another uid" in out, out
+
+
 def test_instance_without_uid_is_reported_not_raised(project):
     out = findings(project, lambda lay: lay["layers"][0]["instances"][0].pop("uid"), "layouts/Objects.json")
     assert "instance of Coin has no integer uid" in out

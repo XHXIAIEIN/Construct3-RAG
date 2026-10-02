@@ -43,6 +43,17 @@ Option 2 as the default, and option 3 as the step after it.
 - A rule becomes an error only after a run over the official examples adds
   no finding. *Trigger once* and *Every X seconds* in a triggered branch
   occur in official examples that open, so they are a warning.
+- Repeated ids were probed on 2026-10-03 in copies of one small project, each
+  repeating one kind. Two object types with one sid, and a family with an
+  object type's sid, stopped the editor with `object class sid already in
+  use`, so a sid two object classes share is an error. Two events, two
+  instances, an animation and an event, and a layer and its layout sharing a
+  sid opened and previewed, so any other repeated sid is a warning; official
+  examples that repeat such a sid open in the editor. Two instances with one
+  uid opened too, but the preview showed one of them under another uid: the
+  editor renumbers it, and a hierarchy link or a *Pick by UID* written for
+  one may reach the other, so a repeated uid is an error, as a name the
+  editor changes silently is.
 - The exporter writes `isTrigger` for every condition the editor treats as a
   trigger, `isFakeTrigger` and `isFastTrigger` included, and keeps
   `isLooping`, `isInvertible: false` and `isCompatibleWithTriggers: false`.

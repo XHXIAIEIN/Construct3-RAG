@@ -210,7 +210,8 @@ class Checker:
         self.world_types: set[str] = set()    # types with an instance on a layer: they have X, Width, Angle ...
         self.uids: list[int] = []
         self.sids: list[int] = []        # sids of events, variables, object types, instances, files
-        self.ace_sids: list[int] = []    # sids of condition and action entries; the editor tolerates repeats here
+        self.ace_sids: list[int] = []    # sids of condition and action entries
+        self.class_sids: dict[int, list[str]] = {}    # sid -> the object types and families that have it
         self.group_titles: set[str] = set()
         self.functions: dict[str, int] = {}                     # name -> parameter count
         self.custom_actions: dict[tuple[str, str], int] = {}    # (owner, name) -> parameter count
@@ -572,8 +573,10 @@ class Checker:
                                       plugin.get("properties") if plugin else None)
             self.check_effects(t.get("effectTypes", []))
             self.collect_sids(t)
-        for f in p.families.values():
+            self.class_sids.setdefault(t.get("sid"), []).append(name)
+        for fname, f in p.families.items():
             self.collect_sids(f)
+            self.class_sids.setdefault(f.get("sid"), []).append(f"family {fname}")
         self.collect_sids(p.data.get("rootFileFolders", {}))
 
     def check_namespace(self, obj: str) -> None:
@@ -1459,16 +1462,26 @@ class Checker:
     # --- uniqueness, project files, addons ----------------------------------------------------
     def check_uniqueness(self) -> None:
         sids, ace_sids, uids = self.sids, self.ace_sids, self.uids
-        dup_sids = sorted({s for s in sids if sids.count(s) > 1} | (set(sids) & set(ace_sids)))
+        # Only an object class sid stops the editor
+        shared = {s: names for s, names in self.class_sids.items() if len(names) > 1}
+        for s, names in sorted(shared.items()):
+            self.err(f"{' and '.join(names)} share the sid {s}; the editor stops with \"object class sid "
+                     f"already in use\": give all but one a new 15-digit sid no other entry of the project has")
+        dup_sids = sorted(({s for s in sids if sids.count(s) > 1} | (set(sids) & set(ace_sids))) - set(shared))
         if dup_sids:
-            self.err(f"duplicate sids: {dup_sids[:5]}{' ...' if len(dup_sids) > 5 else ''}")
+            self.warn(f"duplicate sids: {dup_sids[:5]}{' ...' if len(dup_sids) > 5 else ''}; the editor opens the "
+                      f"project; to make them unique, search the project's JSON for each sid and give all but one "
+                      f"entry a new 15-digit sid")
         dup_ace_sids = sorted({s for s in ace_sids if ace_sids.count(s) > 1})
         if dup_ace_sids:
             self.warn(f"conditions or actions sharing a sid (pasted in the editor?): "
                       f"{dup_ace_sids[:5]}{' ...' if len(dup_ace_sids) > 5 else ''}")
+        # The editor renumbers all but one of the instances that share a uid
         dup_uids = sorted({u for u in uids if uids.count(u) > 1})
         if dup_uids:
-            self.err(f"duplicate uids: {dup_uids[:5]}{' ...' if len(dup_uids) > 5 else ''}")
+            self.err(f"duplicate uids: {dup_uids[:5]}{' ...' if len(dup_uids) > 5 else ''}; the editor gives all "
+                     f"but one of them another uid, so a hierarchy link or a Pick by UID written for one may reach "
+                     f"the other: give the copies a uid no instance or single-global object type has")
 
     def check_files_and_addons(self) -> None:
         p = self.p

@@ -16,9 +16,12 @@ editor reads them. Layout instances must carry every instance variable and
 behavior block of their type and only properties the schema has. Layers,
 layouts, animations, groups, timelines, flowcharts, project files, images and
 called functions and custom actions must exist, with the right parameter
-count. Uids, and the sids of events, variables, object types and instances,
-must be unique; a condition or action that shares a sid is a warning, since
-the editor tolerates what its own paste leaves behind. A missing schema (a
+count. Two object types or families with one sid are an error: the editor
+stops with `object class sid already in use`. Any other repeated sid is a
+warning: a project whose events, instances, layers or animations repeat
+one opens and previews. Two instances with one uid are an error: the
+editor opens them but gives all but one another uid, so a hierarchy link
+or a *Pick by UID* written for one may reach the other. A missing schema (a
 third-party addon) is a warning, and its ACEs pass unchecked. So is what the
 editor has deprecated, from `Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`:
 an addon, and an ACE or expression, once each at its first use with the count
@@ -135,11 +138,10 @@ does not work with 'string' and 'number'`.
 
 ## How the rules were confirmed
 
-Run over the official example projects (saved r184 to r502) with the r495.2
-schemas on 2026-09-28, the checker passes 508 of 524. The rest fail on
-parameters that a later release changed, on layers and animations the
-examples name but no longer have, and on duplicate sids in r184 projects;
-each is a real finding, not a false one. None of them breaks an editor rule
+Run over the official example projects (saved r184 to r502), the checker
+fails a few, on parameters that a later release changed and on layers and
+animations the examples name but no longer have; each is a real finding,
+not a false one. None of them breaks an editor rule
 of the table above, which is how each rule was confirmed before it became an
 error. `Construct3-RAG/tests/test_skill_check_project.py` breaks the
 stand-in game one rule at a time and reads the finding.
