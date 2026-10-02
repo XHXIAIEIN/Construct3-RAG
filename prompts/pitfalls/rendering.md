@@ -48,7 +48,8 @@ Sources and the rule for adding an entry are in the index,
   project, r502 preview, 2026-09-24; observed in a minimal project, r504
   preview, 2026-10-02: a square filled 5776 pixels, the same square with its
   first point, a middle point or a closing point repeated filled 0, and all
-  three filled 5776 with *Convex* on]
+  three filled 5776 with *Convex* on; reported as Scirra/Construct-bugs#9292,
+  open]
 - A blend mode such as *Destination in* only touches the pixels under the
   object's own quad: a mask sprite the size of the shape it reveals leaves
   everything outside its bounding box untouched, and the layer needs *Force
