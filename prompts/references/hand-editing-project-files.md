@@ -218,12 +218,13 @@ r504 opened and previewed on 2026-09-30.
 ## Naming an event to the user
 
 The JSON has no event numbers; the editor does. Its margin and its Find
-results (`Event 15 action 2`) count blocks, groups and function blocks per
-sheet in document order, sub-events included; variables, comments and
-includes take no number and are filed under the next numbered event.
-Quote those numbers, never JSON line numbers, and read a screenshot or a
-pasted Find result back the same way. To find the JSON behind a number, run
-the `construct3-agent-plugin` skill's `scripts/print_sheet.py --outline <sheet>`
+results (`Event 15 action 2`) count blocks, groups, function blocks, custom
+action blocks and script blocks per sheet in document order, sub-events
+included; variables, comments and includes take no number and are filed
+under the next numbered event. Quote those numbers, never JSON line
+numbers, and read a screenshot or a pasted Find result back the same way.
+To find the JSON behind a number, run the `construct3-agent-plugin` skill's
+`scripts/print_sheet.py --outline <sheet>`
 in the project folder: each row prints with its number and its `sid`, which
 is the string to search the sheet file for. Without `--outline` it prints
 the same rows with their conditions and actions as the editor words them;

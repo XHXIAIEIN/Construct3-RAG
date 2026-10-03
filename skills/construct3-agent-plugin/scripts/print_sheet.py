@@ -15,9 +15,9 @@ with its parent) as a sub-event, which runs each time the event it sits in
 runs: once per call in a function, once per trigger under a trigger (the
 manual's project-primitives/events/sub-events).
 
-A row's number is the count of blocks, groups, function blocks and custom
-action blocks before it in the sheet, sub-events included, plus one: the
-number in the editor's margin and in its Find results. A variable, comment
+A row's number is the count of blocks, groups, function blocks, custom
+action blocks and script blocks before it in the sheet, sub-events included,
+plus one: the number in the editor's margin and in its Find results. A variable, comment
 or include takes no number of its own and belongs to the next one.
 --outline prints the numbering alone, with the sid of each event, which is
 the string to search the sheet's JSON for. --show N prints one event as

@@ -97,10 +97,11 @@ those and run again, or pass `--limit 0`.
 
 A finding in an event sheet is placed as `sheet Game event 15 action 2`. The
 event number is the editor's: the one in the margin of the event sheet and
-in the **Where** column of Find results. Blocks, groups and function blocks
-are counted per sheet in document order, sub-events included. A variable,
-comment or include has no number of its own: the margin leaves it blank and
-Find files it under the next numbered event, so the locals right above
+in the **Where** column of Find results. Blocks, groups, function blocks,
+custom action blocks and script blocks are counted per sheet in document
+order, sub-events included. A variable, comment or include has no number of
+its own: the margin leaves it blank and Find files it under the next
+numbered event, so the locals right above
 event 15 are `Event 15` too. Conditions and actions count
 from 1. `scripts/print_sheet.py --outline Game` prints the numbering of a
 sheet with each event's sid, which is what to search the JSON for,
