@@ -76,6 +76,7 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 - `check_look.py` 按 `assets/look-manifest.json` 里的硬性规则，检查生成的游戏的占位美术，比如网格、调色板和文字对比度。
 - `open_in_editor.py` 在 Construct 3 编辑器里打开项目，报告打开成功，或者给出编辑器的提示。加 `--preview` 时，它把游戏运行几秒，报告运行时错误和出错的事件。
 - `preview_project.py` 按一份点击、拖动、按键和等待的计划操作预览。它会截图，也会录下运行的片段。录像可以逐帧回看，其中一段可以作为任务交给 agent。
+- `review_look.py` 预览项目，逐个进入每个布局并截图。它报告运行时能看出的问题，比如文字被文本框截断、多个实例叠在同一位置。然后它给 agent 一组固定的问题，让它看着截图回答。
 - `export_project.py` 用你的订阅账号，让编辑器把项目导出为 Web (HTML5)。
 - `pack_project.py` 把项目保存成编辑器能打开的 `.c3p` 或 `.zip`。它也能把 `.c3p` 或 `.zip` 解成项目文件夹。
 - `install.py` 把 skill 装进游戏项目，或者按 clone 更新已有的副本。
@@ -91,7 +92,7 @@ skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。
   - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。加 `--dry-run` 可以先看会改什么。
   - `pack_project.py` 写入 `--out` 指定的压缩包或文件夹。默认写到项目 `.tmp/` 下的一个 `.c3p`。解包时，默认写到压缩包旁边的文件夹。
   - agent 把 `assets/build_project.py` 复制到项目的 `tools/`，按游戏改写。这份副本运行时，会重写它生成的项目文件，然后运行 `check_project.py`。
-- **打开编辑器**：`open_in_editor.py`、`preview_project.py` 和 `pack_project.py --open` 启动本机的 Edge、Chrome 或 Chromium。
+- **打开编辑器**：`open_in_editor.py`、`preview_project.py`、`review_look.py` 和 `pack_project.py --open` 启动本机的 Edge、Chrome 或 Chromium。
   - 浏览器默认无头运行，加 `--headed` 才显示窗口。它使用项目 `.tmp/` 下单独的配置目录，`--profile` 可以换到别的文件夹。
   - 浏览器打开 Scirra 提供的编辑器 `https://editor.construct.net/`，预览时还会打开 `https://preview.construct.net`。脚本在浏览器里把项目交给编辑器页面，所以项目文件留在你的电脑上。
   - 脚本通过 `127.0.0.1` 上的 DevTools 端口控制浏览器。计划里的 `js` 和 `until` 步骤会在预览里运行 JavaScript。`--install-addon` 会把 `.c3addon` 装进这个配置目录里的编辑器。

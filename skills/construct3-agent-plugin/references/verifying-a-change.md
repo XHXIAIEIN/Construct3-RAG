@@ -83,6 +83,36 @@ about the editor or the preview goes to `editor-and-preview.md`.
    [design: docs/decisions/preview-player.md, the bullets on
    `record` and the review page]
 
+## The look of each layout
+
+`scripts/review_look.py` checks what every layout shows, once the preview
+passes. It goes to each layout with the runtime's `goToLayout`, takes a
+screenshot into `.tmp/look/`, and reads the layout's instances from the
+runtime. Its finding lines are measured, each naming the layout, the object
+type and the UID: a text its box cuts (`text`), instances of one type on one
+box (`stacked`), overlaps on the HUD and texts over texts (`overlap`), a HUD
+instance the screen's edge cuts (`edge`), and a type whose kinds show one
+frame (`frame`). None of them fires on the official examples. Fix every one.
+
+What a measurement cannot judge, the script asks: one list of yes/no
+questions about visible facts: cut or overlapping text, objects that
+cover others, the edge of the screen, mixed drawing styles, a backdrop that
+outshines what the player acts on, kinds that look alike, and decoration
+repeated on every layout. Open each screenshot it
+names with the image tool, answer each question from the picture, and for
+each yes name the layout and the object type to change. A question answered
+from memory of the events, not from the picture, is not answered.
+
+A layout reached by `goToLayout` starts without what the game's flow sets up
+before it, and one whose start events leave at once is printed as left for
+the layout they went to. Play to such a scene with a plan of
+`scripts/preview_project.py` and a `shot` step, and answer the same
+questions about that screenshot. [observed in a generated card game, r495-2
+preview, 2026-10-04: the combat layout, reached directly, went to the ending
+at once; played to by a plan, the same checks over its instances found the
+names, descriptions and costs of five cards stacked on one card, in a
+screenshot the agent had reported as rendering normally]
+
 ## By kind of game
 
 What the plan drives, what it reads and what has to be held still differ
