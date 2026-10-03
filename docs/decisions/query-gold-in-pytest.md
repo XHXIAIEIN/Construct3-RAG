@@ -46,7 +46,7 @@ but the set kept its shape:
   `semantic-fallback-*` and `fallback-edge-*` cases are `declined-*` and
   `declined-edge-*`. The name reaches `debug.lookup.intent` only.
 - Effects: an effect name together with an effect word (`effect`, `shader`,
-  `特效`, `效果`, `着色器`) is the `effect_detail` intent, one match per
+  `特效`, `滤镜`, `效果`, `着色器`) is the `effect_detail` intent, one match per
   effect with its parameters in `params`. Without the word the query is
   declined and keeps the entity: Screen, Color and 亮度 are ordinary words
   too. The zh-CN pack names both Brightness and Lighten 亮度, so a name maps

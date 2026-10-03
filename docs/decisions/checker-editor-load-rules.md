@@ -43,6 +43,17 @@ Option 2 as the default, and option 3 as the step after it.
 - A rule becomes an error only after a run over the official examples adds
   no finding. *Trigger once* and *Every X seconds* in a triggered branch
   occur in official examples that open, so they are a warning.
+- A function's return type decides how it is reached, probed on 2026-10-03:
+  one returning a number called as an action stopped the editor with
+  `function 'Two' has wrong return type`, the same read in an expression
+  opened, and one returning none read in an expression stopped it with
+  `has a return type of 'None' so cannot be used as an expression`. The
+  sweep added no finding.
+- A script in a function that read a parameter by its bare name stopped a
+  preview on 2026-10-03 with `ReferenceError: string is not defined`, and
+  ran with `localVars.string`. It and a *Wait for signal* that nothing
+  raises are warnings: the editor opens both. No official example has
+  either.
 - Repeated ids were probed on 2026-10-03 in copies of one small project, each
   repeating one kind. Two object types with one sid, and a family with an
   object type's sid, stopped the editor with `object class sid already in

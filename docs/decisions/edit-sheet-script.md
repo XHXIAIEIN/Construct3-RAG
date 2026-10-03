@@ -59,11 +59,18 @@ Option 3, `scripts/edit_sheet.py SHEET PLAN.json`.
   `--force`.
 - The file is written whole through a temporary one, in the editor's layout.
   `--dry-run` writes nothing.
+- A plan's numbers come from a print. `print_sheet.py` keeps the hash of each
+  sheet it prints in the system's temporary folder, not in the project, and
+  a plan is refused when the sheet no longer matches it: a save in the
+  editor in between can move the events the numbers name. A written plan
+  keeps the new hash.
 - Output: what each operation did, the changed events as the editor words
   them under their new numbers, new warnings, and the checker's last line.
   A `note:` names each action the plan did not touch that still writes an
   older form of a text the plan writes elsewhere: runs changed the score
-  text in one place and left the other showing the old one.
+  text in one place and left the other showing the old one. After a write,
+  a `note:` says to reopen the project in an editor that has it open, whose
+  next save would write back the sheet it had loaded.
 
 ## Re-evaluate when
 

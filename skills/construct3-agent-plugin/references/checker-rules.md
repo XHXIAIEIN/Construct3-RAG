@@ -26,7 +26,11 @@ third-party addon) is a warning, and its ACEs pass unchecked. So is what the
 editor has deprecated, from `Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`:
 an addon, and an ACE or expression, once each at its first use with the count
 of the others, and the current ACE of the same name when there is one. The
-editor opens a project that uses them, and a new event should not.
+editor opens a project that uses them, and a new event should not. Two
+traps of the running game are warnings: a *Wait for signal* or *On signal*
+whose text tag no *Signal* action or `runtime.signal()` raises, which never
+ends or runs, and a script that reads an event's local or parameter by its
+bare name instead of `localVars.name`, a `ReferenceError` when it runs.
 
 ## The rules the editor applies on opening and before preview
 
@@ -43,6 +47,7 @@ How each was read from the editor and confirmed:
 | An object or family name is not `self`, `true`, `false`, `system` or a system expression (`Floor`, `Time`, `Random`, `Max`) | `name is reserved` |
 | A global or local variable or a function parameter is not named like a system expression (`mid`, `max`, `round`), compared without case: inside an expression the name reads as the system expression | `Invalid expressions ... parameter 0 does not take 'string'`, for a local `mid` passed to a function; `'round' does not accept 0 parameters`, for a parameter `round` |
 | A function without parameters is called without parentheses: `Functions.settling`, not `Functions.settling()` | `Syntax error: ')' can't go here` |
+| A function with a return type is read in an expression, never called as an action; one whose return type is `none` is called as an action, never read | `function 'X' has wrong return type`; `The function 'X' has a return type of 'None' so cannot be used as an expression` |
 | No two variables of one scope share a name, compared without case: the top-level variables of every sheet are one scope, the variables of one list of events another, a function's parameters another. A global declared at the top of two sheets is declared twice | the editor opens the file, and every use of the name reaches the first; its variable dialog refuses the second name with `The name X is already used in this scope` |
 | A local variable or function parameter is not named like a variable of another type already in scope, compared without case: the nearest scope wins, so a text `count` hides a number `COUNT` in its event and sub-events | `Type mismatch: - does not work with 'string' and 'number'`, for `COUNT - 1` below a text local `count` |
 | A shared ACE of `plugins/_common.json` is used only on a plugin whose `commonAces` lists it: Text has no `set-default-color`, its colour is `set-font-color` | `missing action id 'set-default-color'` |

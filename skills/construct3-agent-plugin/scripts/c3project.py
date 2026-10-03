@@ -9,10 +9,12 @@ from the folder they sit in.
 """
 import argparse
 import difflib
+import hashlib
 import json
 import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 SKILL = "construct3-agent-plugin"
@@ -207,6 +209,32 @@ def skill_files(skill_dir: Path) -> dict[str, Path]:
     files = {p.relative_to(skill_dir).as_posix(): p for p in sorted(skill_dir.rglob("*"))
              if p.is_file() and "__pycache__" not in p.parts}
     return {rel: p for rel, p in files.items() if not rel.startswith("evals/")}
+
+
+STAMPS = Path(tempfile.gettempdir()) / "construct3-sheet-stamps"
+
+
+def stamp_of(sheet: Path) -> Path:
+    return STAMPS / hashlib.sha1(str(sheet.resolve()).lower().encode()).hexdigest()[:20]
+
+
+def stamp(sheet: Path) -> None:
+    """Keep the hash of a sheet as print_sheet.py printed it or edit_sheet.py wrote it,
+    outside the project, so that edit_sheet.py notices a save in between."""
+    try:
+        STAMPS.mkdir(exist_ok=True)
+        draft = stamp_of(sheet).with_suffix(f".{os.getpid()}")
+        draft.write_text(hashlib.sha1(sheet.read_bytes()).hexdigest(), encoding="ascii")
+        os.replace(draft, stamp_of(sheet))
+    except OSError:
+        pass
+
+
+def changed_since_stamp(sheet: Path) -> bool:
+    try:
+        return stamp_of(sheet).read_text(encoding="ascii") != hashlib.sha1(sheet.read_bytes()).hexdigest()
+    except OSError:     # never printed: nothing to compare with
+        return False
 
 
 def same_text(a: Path, b: Path) -> bool:
