@@ -134,6 +134,7 @@ Read [pitfalls/audio.md](pitfalls/audio.md) when the events schedule
 sounds, change their rate, volume or effects, or keep music on a beat.
 
 - With *Use worker* on, scheduled sounds jitter by a message delay: set it to *No* for sample-accurate scheduling.
+- A sound not yet loaded plays late, and a Music file ignores its scheduled time: keep beat-locked files in Sounds, preloaded.
 - The audio clock stands still until the first release, click or key: start music when `CurrentTime` moves, not on a touch.
 - `PlaybackTime` of a scheduled sound runs ahead by its lead: build a beat grid from `CurrentTime` and integer steps.
 - *Set playback rate* retunes every instance with the tag: give each play a one-off tag.
