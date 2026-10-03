@@ -119,6 +119,10 @@ SQUASH = {
 COLLIDING = ("Platform", "EightDir", "Physics", "Car", "solid", "jumpthru")
 FONT = "Arial"                             # one font for every label
 TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
+# A Text's size is in points (manual: plugin-reference/text.md), drawn at 96 px per 72 pt, so
+# 1 em is size * PX_PER_PT px: measured at runtime, a Chinese character at size 18 is 24 px wide.
+PX_PER_PT = 4 / 3
+LINE_EMS = 1.2                             # one line is 1.05 to 1.17 em high in Arial, measured
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
 # as every official example at that size samples and 116 of 159 scale (build_project()).
 PIXEL_ART = UNIT == 8
@@ -1322,8 +1326,8 @@ def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, siz
 
 def text_ems(text: str) -> float:
     """The width of `text` in em: an East Asian wide or full-width character (Chinese,
-    Japanese, Korean, the full-width comma and colon) is about 1 em, any other about
-    0.6 em, so text_ems(s) * size is the width of s in px at that size."""
+    Japanese, Korean, the full-width comma and colon) is 1 em, any other at most about
+    0.6 em, so text_ems(s) * size * PX_PER_PT is the width of s in px at that size."""
     return round(sum(1.0 if unicodedata.east_asian_width(c) in ("W", "F") else 0.6 for c in text), 6)
 
 
@@ -1331,14 +1335,15 @@ def hud_text(otype: str, text: str, where: str, size: float | None = None, longe
              bold: bool = True, color: str = "ink", on: str = "canvas_alt", dx: float = 0, dy: float = 0,
              ivars=None, behaviors=None) -> dict:
     """A HUD label held against an edge or corner by anchor(). Its box is as wide as its
-    longest text (text_ems() at the size, rounded up to a unit) and the text is aligned to
+    longest text and as high as a line (text_ems() and LINE_EMS at the size in px, rounded
+    up to a unit), and the text is aligned to
     the side the box hangs on, so a right-hand label grows leftwards and two labels on one
     edge never meet. `longest` is the widest text the label shows at runtime, "Score: 999"
     for a label that starts as "Score: 0". The size is TEXT_SIZE["body"] unless a banner
     asks for TEXT_SIZE["title"]; color and on are roles of PALETTE, as for text_inst()."""
     size = size or TEXT_SIZE["body"]
-    w = math.ceil(text_ems(longest or text) * size / UNIT) * UNIT
-    h = math.ceil(size * 1.5 / UNIT) * UNIT
+    w = math.ceil(text_ems(longest or text) * size * PX_PER_PT / UNIT) * UNIT
+    h = math.ceil(size * PX_PER_PT * LINE_EMS / UNIT) * UNIT
     halign = {"left": "left", "middle": "center", "right": "right"}[sides(where)[1]]
     x, y = anchor(where, w, h, 0, 0, dx, dy)
     return text_inst(otype, text, x, y, w, h, size=size, halign=halign, bold=bold, color=color, on=on,

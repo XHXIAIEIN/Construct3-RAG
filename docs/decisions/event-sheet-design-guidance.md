@@ -133,7 +133,7 @@ on screen, where a chain splits it into quoted fragments between values.
 
 ## Style checks
 
-`check_project.py --style` reports seven kinds, each with the event and the
+`check_project.py --style` reports ten kinds, each with the event and the
 JSON to write. The thresholds come from the studio cohort, and each check
 was run over the official examples before it was kept.
 
@@ -146,12 +146,15 @@ was run over the official examples before it was kept.
 | `tree` | sub-events 3 levels deep whose leaves all call one function | a decision flattened into sub-events with one call at each leaf |
 | `ladder` | 5 or more sibling events of one shape, values aside | input ladders and else-if chains legitimately reach it, so it stays a warning |
 | `countdown` | *Every N seconds* taking N off a variable in the same event: *Subtract* N, *Add* -N or *Set* v to v - N | the variable counts seconds; no official example does it, the one that subtracts every N seconds counts coins |
+| `choice` | `chooseindex(c, a, b)` whose first argument is a comparison, a logical operator or a boolean variable | it returns `b` when `c` is true, the reverse of `c ? b : a`; no example calls `chooseindex` |
+| `dispatch` | 2 or more sibling events testing one text with `find(X, "<literal>")` | `find` matches any part and ignores case, so `"B"` runs for `"BU"`; no example dispatches so |
+| `table` | `mid("<letters>", ...find("<letters>", X)...)` | a cycle or a table written as letters; no example calls `find` with a literal first |
 
 A user's project is not held to the agent's style, so `--style` is off by
 default. `edit_sheet.py` refuses a plan whose new events raise `comment`,
 `run`, `cases` or `tick`, whose fix is one comment or one deleted condition.
-`tree`, `ladder` and `countdown` stay warnings: fixing them is a design
-change the plan's author must make. With the refusal stated in `SKILL.md` and its plan example
+`tree`, `ladder`, `countdown`, `choice`, `dispatch` and `table` stay
+warnings: fixing them is a design change the plan's author must make. With the refusal stated in `SKILL.md` and its plan example
 carrying a comment, runs wrote the comment from the first draft.
 
 For `comment`, the events directly in a group are top-level events, and
@@ -180,6 +183,19 @@ player, the blocks next to a breaking one. The other two follow it with a
 pick from a stored link, a UID in a function parameter or a variable, the
 only form rule 8 and the smell row of `event-sheet-thinking.md` call a
 rebuilt pick.
+
+`choice`, `dispatch` and `table` come from a generated card game that coded
+enemy moves (`"A6x2"`, `"BU"`, `"SHIFT"`) and card effects as strings,
+dispatched them with `find` in sibling events, chose between values with
+`chooseindex(condition, ...)` and cycled its five elements through two
+letter strings. Measured on 2026-10-04 over the 565 sheets of the 524
+examples: no `chooseindex` call, no sibling events testing one text with
+`find` (quest-flowcharts tests output names in one event or in separate
+functions), no `find` with a literal first; `?:` appears in 77 sheets and a
+cycle as `(n + 1) % N` in alien-battle and balloon-blower. The checker's
+output over the examples is unchanged by the three. On the card game they
+give 36, 3 and 3 warnings. The design rows are in the Native first and
+smell tables of `event-sheet-thinking.md`.
 
 Comments, variable comments and function descriptions end without a period,
 by the user's choice; a second sentence keeps the period between the two.

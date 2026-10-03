@@ -172,11 +172,11 @@ search the JSON for, unnumbered rows in parentheses.
 
 ## Style, with `--style`
 
-Seven warnings the editor never raises, for a project the agent wrote: the
+Ten warnings the editor never raises, for a project the agent wrote: the
 generator template passes `--style`. `edit_sheet.py` holds the events a plan
 creates to them, never the sheet's older events: the first four, whose fix
 is one comment or one deleted condition, refuse the plan like a problem; the
-other three, and any
+other six, and any
 finding on an event the plan moved or extended, are warnings under its
 output. Each names the event and says what to write.
 
@@ -189,11 +189,15 @@ output. Each names the event and says what to write.
 | sub-events N levels deep, every leaf calling one function | 3 levels, 3 or more leaves | 3, in shifting-dungeon, template-ladder-climbing, wall-walking |
 | with events ..., the same conditions and actions N times over (sibling events of one shape, their values ignored) | 5 or more | 47 in 31 projects; 32 in 20 studio games, input ladders, a key per action, and else-if chains among them |
 | counts seconds by hand (Every N seconds taking N off a variable in the same event: Subtract N, Add -N or Set v to v - N) | the amount equals the interval | none; the one example that subtracts every N seconds counts coins out. 73 of the 155 eval and small-model projects wrote it, every add-countdown run among them |
+| chooseindex(c, a, b) is a two-way choice on a condition (the first argument a comparison, `&`, `\|` or a boolean variable, two choices after it); the finding writes `c ? b : a` | any | none: no example calls chooseindex, and 77 sheets use `?:`. A generated card game got 36, and reversed the branches twice while fixing bugs |
+| with events ..., picks a branch by testing X for the codes ... with find (sibling events or Else branches whose conditions call `find(X, "<literal>")` or `findcase` on the same X); `find` matches any part and ignores case, so the finding names a code that matches another | 2 or more events | none; the one example that tests outputs with find, quest-flowcharts, does it inside one event or in separate functions. A generated card game dispatched its enemy moves and card effects this way, 3 times |
+| mid("<letters>", ...find("<letters>", X)..., ...) looks X up through the letters, a table written as text; the finding writes the cycle as `(X + 1) % N` | any | none: no example calls find with a literal first. A generated card game wrote its element cycle so, 3 times |
 
 Why these thresholds: `Construct3-RAG/docs/decisions/event-sheet-design-guidance.md`.
-A style warning is never an error: the editor accepts all seven, and an
+A style warning is never an error: the editor accepts all ten, and an
 official example may carry one. What the shape should be instead is
-`Construct3-RAG/prompts/event-sheet-style.md`.
+`Construct3-RAG/prompts/event-sheet-style.md`, and for the last three the
+Native first table of `Construct3-RAG/prompts/event-sheet-thinking.md`.
 
 ## What it does not see
 
