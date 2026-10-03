@@ -37,6 +37,7 @@ overwrites the files it produces.
    .trash/
    .tmp/
    __pycache__/
+   *.c3p
    ```
 
 ## Plan the state
@@ -123,8 +124,9 @@ above. Then:
    changes which events are written, `editor-and-preview.md` beside this
    file when it is about the editor or the preview, and the places its
    "Adding an entry" section names for a file format or the look.
-6. Commit the generator with the files it produced; the diff of the
-   generated JSON is the review of the change.
+6. Commit the generator with the files it produced, on the branch `agents`
+   (SKILL.md, "Before the first command"); the diff of the generated JSON is
+   the review of the change.
 
 The project's README explains the objects, the groups, the constants and how
 to regenerate. It is the second copy of the design, for the user, and it says

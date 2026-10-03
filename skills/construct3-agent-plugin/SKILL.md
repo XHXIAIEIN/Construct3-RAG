@@ -41,7 +41,12 @@ opened once before it is handed over.
 - A line `this copy of the construct3-agent-plugin skill differs from the clone's`:
   run the command it prints, then repeat yours.
 - The project has no `.git`: `git init` in it before the first edit, so that
-  every change can be seen and undone. Commit when the user asks.
+  every change can be seen and undone.
+- Commit on the branch `agents`, never on the user's own branch: `git switch
+  agents`, or `git switch -c agents` the first time. Commit after each
+  finished change, one commit per fix or review item, the message naming it;
+  the user reviews `agents` and merges it. Edit `tools/build_project.py` in
+  place: git keeps its history, so no scripts that patch it.
 
 ## Scripts
 
