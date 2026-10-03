@@ -876,6 +876,55 @@ def test_a_solid_changed_beside_custom_obstacles_is_not_named(project):
     assert not [w for w in warnings(out) if "changes a Solid" in w], out
 
 
+def function(name: str, sid: int, actions: list, children: list | None = None, params: list | None = None) -> dict:
+    return {"functionName": name, "functionDescription": "", "functionCategory": "", "functionReturnType": "none",
+            "functionCopyPicked": False, "functionIsAsync": False, "eventType": "function-block", "sid": sid,
+            "functionParameters": params or [], "conditions": [], "actions": actions,
+            **({"children": children} if children else {})}
+
+
+def call(name: str, sid: int, *params: str) -> dict:
+    return {"callFunction": name, "sid": sid, "parameters": list(params)}
+
+
+CREATE_COIN = {"id": "create-object", "objectClass": "System", "sid": 31, "parameters": {
+    "object-to-create": "Coin", "layer": '"Game"', "x": "0", "y": "0", "create-hierarchy": False,
+    "template-name": '""'}}
+COIN_X = {"id": "set-x", "objectClass": "Coin", "sid": 32, "parameters": {"x": "loopindex * 40"}}
+UID_PARAM = [{"name": "uid", "type": "number", "initialValue": "0", "comment": "", "sid": 33}]
+# DealCoins creates Coins through MakeCoin, in a loop, as a card game draws its hand.
+DEAL = [function("MakeCoin", 34, [CREATE_COIN]),
+        function("DealCoins", 35, [], [block([cond("repeat", params={"count": "3"})], [call("MakeCoin", 36)])])]
+LAY_OUT = function("LayOutCoins", 37, [], [block([cond("for-each", params={"object": "Coin"})], [COIN_X])])
+LAY_OUT_BY_UID = function("LayOutCoin", 38, [], [block([cond("pick-by-unique-id", "Coin", {"unique-id": "uid"}),
+                                                        cond("for-each", params={"object": "Coin"})], [COIN_X])],
+                          UID_PARAM)
+WAIT_0 = {"id": "wait", "objectClass": "System", "sid": 39, "parameters": {"seconds": "0", "use-timescale": True}}
+
+
+@pytest.mark.parametrize("rows, said", [
+    # a turn deals coins, then lays them out: the For each runs before the new coins join
+    ([*DEAL, LAY_OUT, function("NewTurn", 40, [call("DealCoins", 41), call("LayOutCoins", 42)])],
+     "NewTurn action 2: LayOutCoins picks Coin (System:for-each in sheet Game event"),
+    ([LAY_OUT, block([START], [CREATE_COIN, call("LayOutCoins", 42)])], "action 1 creates Coin earlier"),
+    # through the functions it calls, with a cycle among them
+    ([*DEAL, LAY_OUT, function("Turn", 43, [call("DealCoins", 41), call("Refresh", 44)]),
+      function("Refresh", 45, [call("LayOutCoins", 42), call("Refresh", 46)])],
+     "Refresh picks Coin through LayOutCoins"),
+    ([*DEAL, LAY_OUT_BY_UID, function("NewTurn", 40, [call("DealCoins", 41), call("LayOutCoin", 42, "0")])], None),
+    ([*DEAL, LAY_OUT, block([START], [call("DealCoins", 41)]), block([START], [call("LayOutCoins", 42)])], None),
+    ([*DEAL, LAY_OUT, block([START], [call("DealCoins", 41), WAIT_0, call("LayOutCoins", 42)])], None),
+    ([LAY_OUT, block([START], [call("LayOutCoins", 42), CREATE_COIN])], None),
+])
+def test_a_function_that_picks_what_an_earlier_call_created_is_named(project, rows, said):
+    """A created instance joins the others when the top-level event or trigger that created it ends; until then
+    only Pick by unique ID finds it outside its own event (prompts/pitfalls/creating-objects.md)."""
+    out = findings(project, lambda s: s["events"].extend(rows))
+    said_lines = [w for w in warnings(out) if "pitfalls/creating-objects.md" in w]
+    assert out.splitlines()[-1].startswith("ok:"), out
+    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+
+
 def sprite_font_label(project, text: str, bbcode: bool = True) -> None:
     """A Sprite Font Label on the Objects layout, drawing capitals, digits and the space."""
     (project / "objectTypes" / "Label.json").write_text(json.dumps({

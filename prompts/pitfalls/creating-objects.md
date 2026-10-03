@@ -58,7 +58,9 @@ Sources and the rule for adding an entry are in the index,
   the same event does not see the new instances. Create and initialise in one
   event, pass `UID` to functions, or pick from a later top-level event or
   trigger; *Wait 0* is not needed and runs a tick later (see [Wait and time
-  scale](wait-and-time-scale.md)). [Ashley in Scirra/Construct-bugs#3554 (2019) and #5178 (2021);
+  scale](wait-and-time-scale.md)). `check_project.py` warns when one list of
+  actions creates instances, directly or through a function, and then calls
+  a function that picks them by a condition. [Ashley in Scirra/Construct-bugs#3554 (2019) and #5178 (2021);
   runtime: exported c3runtime.js r503, `EventSheet.Run` calls
   `FlushPendingInstances()` after each top-level event, `_ExecuteTrigger`
   after the outermost trigger]

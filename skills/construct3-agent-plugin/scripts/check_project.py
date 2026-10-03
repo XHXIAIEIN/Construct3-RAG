@@ -110,6 +110,19 @@ C_OPERATORS = {"==": "=", "!=": "<>", "&&": "&", "||": "|", "**": "^"}
 C_OPERATOR = re.compile(r"==|!=|&&|\|\||\*\*|!")
 # What a local that would hide an outer variable of another type can be called instead.
 SHADOW_SUFFIX = {"string": "Text", "number": "Value", "boolean": "Flag"}
+# Instances created in a top-level event or trigger join the instance lists when it ends: until then only
+# Pick by unique ID finds them outside the creating event (prompts/pitfalls/creating-objects.md). The
+# actions that create an instance of a named type, with the parameter that names it; spawn-another-object
+# is on every world object. Create object by name is left out: its type is an expression.
+CREATING = {("System", "create-object"): "object-to-create", ("System", "recreate-initial-objects"): "object"}
+# System conditions that pick among the instances of the type in their object parameter.
+SYSTEM_PICKS = {"for-each", "for-each-ordered", "pick-nth-instance", "pick-random-instance", "pick-all",
+                "pick-by-comparison", "pick-by-evaluate", "pick-by-highest-lowest-value",
+                "pick-overlapping-point"}
+# Conditions on an object that find a created instance anyway, or pick another object than their own.
+NOT_PICKING = {"pick-by-unique-id", "pick-parent", "pick-children", "pick-nth-child", "on-created"}
+# After one of these the rest of the actions run later, once the instances have joined.
+WAITS = {"wait", "wait-for-signal", "wait-for-previous-actions"}
 
 
 def editor_name(name: str, is_object: bool) -> str:
@@ -339,6 +352,11 @@ class Checker:
         self.solid_obstacles = False      # a Pathfinding instance takes its obstacles from Solids
         self.solid_changes: list[str] = []    # where an action changes a Solid
         self.regenerated = False          # some action regenerates the obstacle map or a region of it
+        self.function_blocks: dict[str, dict] = {}                 # name -> function block
+        self.custom_blocks: dict[tuple[str, str], dict] = {}       # (owner, name) -> custom action block
+        self.event_where: dict[int, str] = {}       # id(event) -> where it is, for a finding about another event
+        self.action_lists: list[tuple[list, str]] = []     # (actions, where) of every block
+        self._summaries: dict[int, tuple | None] = {}
 
     def check(self) -> None:
         self.check_project_file()
@@ -1476,6 +1494,9 @@ class Checker:
                     paced: bool | None = False) -> None:
         """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
         or Trigger once, None in a function or custom action."""
+        self.event_where[id(ev)] = where
+        if isinstance(ev.get("actions"), list):
+            self.action_lists.append((ev["actions"], where))
         for i, c in enumerate(ev.get("conditions", []), 1):
             self.check_ace("conditions", c, scope, f"{where} condition {i}")
             self.note_signal(c, f"{where} condition {i}")
@@ -1776,8 +1797,10 @@ class Checker:
             if et == "function-block":
                 self.functions[ev["functionName"]] = len(ev["functionParameters"])
                 self.returns[LOWER(ev["functionName"])] = ev.get("functionReturnType")
+                self.function_blocks[ev["functionName"]] = ev
             elif et == "custom-ace-block":
                 self.custom_actions[(ev["objectClass"], ev["aceName"])] = len(ev["functionParameters"])
+                self.custom_blocks[(ev["objectClass"], ev["aceName"])] = ev
             self.declared_functions(ev.get("children") or [])
 
     def declared_groups(self, events: list) -> None:
@@ -1855,11 +1878,160 @@ class Checker:
                         "Regenerate region around object on the Solid, or for many changes Regenerate obstacle map; "
                         "it takes effect the next tick, so a Find path right after it waits first "
                         "(manual: behavior-reference/pathfinding.md)")
+        self.check_pending_instances()
         for t in self.created:
             if t in p.types and t not in self.templates:
                 self.warn(f"{t} is created at runtime but has no instance in any layout: "
                           f"it is created, but its behavior properties read 0 (a Bullet does not "
                           f"move); place one in a layout that never runs")
+
+    # --- created instances read by a later function in the same actions ------------------------
+    def is_object(self, name) -> bool:
+        return isinstance(name, str) and (name in self.p.types or name in self.p.families)
+
+    def related(self, a: str, b: str) -> bool:
+        return a == b or a in self.p.families_of(b) or b in self.p.families_of(a)
+
+    @staticmethod
+    def waits(a: dict) -> bool:
+        """Whether the actions after this one run later: a System wait, or a script that awaits."""
+        if a.get("type") == "script":
+            return "await" in script_text(a.get("script"))
+        return a.get("objectClass") == "System" and a.get("id") in WAITS
+
+    def made_by(self, a: dict) -> str | None:
+        """The object type or family an action creates instances of, when a literal parameter names it."""
+        obj, ace_id = a.get("objectClass"), a.get("id")
+        key = CREATING.get((obj, ace_id)) or ("object" if ace_id == "spawn-another-object" else None)
+        made = (a.get("parameters") or {}).get(key) if key else None
+        return made if self.is_object(made) else None
+
+    def picked_by(self, c: dict) -> str | None:
+        """The object type or family a condition picks among the instances that have joined."""
+        obj, cid = c.get("objectClass"), c.get("id")
+        if obj == "System":
+            made = (c.get("parameters") or {}).get("object") if cid in SYSTEM_PICKS else None
+            return made if self.is_object(made) else None
+        return obj if self.is_object(obj) and cid not in NOT_PICKING else None
+
+    @staticmethod
+    def picked_by_link(c: dict) -> str | None:
+        """The type a condition picks through a link to an instance rather than among the type's
+        instances: Pick by unique ID, Pick last created, or the child or parent of picked instances.
+        A condition on that type after it narrows what the link found."""
+        cid, params = c.get("id"), c.get("parameters") or {}
+        if cid == "pick-by-unique-id":
+            return c.get("objectClass")
+        if cid == "pick-last-created" and c.get("objectClass") == "System":
+            return params.get("object")
+        if cid in ("pick-children", "pick-nth-child"):
+            return params.get("child")
+        return params.get("parent") if cid == "pick-parent" else None
+
+    def called(self, a: dict) -> tuple[str, dict] | None:
+        """(the name to print, the block) of the function or custom action an action calls."""
+        if "callFunction" in a:
+            name = a["callFunction"]
+            return (name, self.function_blocks[name]) if name in self.function_blocks else None
+        if "customAction" in a:
+            owner = a.get("customActionObjectClass", a.get("objectClass"))
+            for o in [owner] + self.p.families_of(owner):
+                if (o, a["customAction"]) in self.custom_blocks:
+                    return f"{owner}.{a['customAction']}", self.custom_blocks[(o, a["customAction"])]
+        return None
+
+    def summary(self, block: dict) -> tuple[dict, dict] | None:
+        """What a function or custom action does when called, in its own events and the functions they
+        call: ({type it creates: [the functions it calls to create it]},
+        {type it picks: (where, condition, [the functions it calls to pick it])}).
+        None when it waits anywhere, since what follows a wait runs after the instances have joined. A
+        condition after a pick through a link on the same type (picked_by_link), or the picks of a custom
+        action or a function that copies the caller's picked instances, are not counted: those start from
+        instances the caller picked. A cycle of calls counts what is known when it closes."""
+        key = id(block)
+        if key in self._summaries:
+            return self._summaries[key]
+        self._summaries[key] = ({}, {})
+        made: dict[str, list[str]] = {}
+        picked: dict[str, tuple[str, str, list[str]]] = {}
+
+        def visit(ev: dict, uids: set[str]) -> bool:
+            if ev.get("eventType") == "script":
+                return "await" not in script_text(ev.get("script"))
+            uids = set(uids)
+            for c in ev.get("conditions") or []:
+                if not isinstance(c, dict):
+                    continue
+                linked = self.picked_by_link(c)
+                if linked:
+                    uids.add(linked)
+                    continue
+                t = self.picked_by(c)
+                if t and not any(self.related(t, u) for u in uids if isinstance(u, str)):
+                    picked.setdefault(t, (self.event_where.get(id(ev), "an event"), describe(c), []))
+            for a in ev.get("actions") or []:
+                if not isinstance(a, dict):
+                    continue
+                if self.waits(a):
+                    return False
+                t = self.made_by(a)
+                if t:
+                    made.setdefault(t, [])
+                hit = self.called(a)
+                sub = self.summary(hit[1]) if hit else None
+                if sub:
+                    for t, chain in sub[0].items():
+                        made.setdefault(t, [hit[0]] + chain)
+                    if hit[1].get("eventType") == "function-block" and not hit[1].get("functionCopyPicked"):
+                        for t, (w, c, path) in sub[1].items():
+                            picked.setdefault(t, (w, c, [hit[0]] + path))
+            return all(visit(child, uids) for child in ev.get("children") or [] if isinstance(child, dict))
+
+        self._summaries[key] = (made, picked) if visit(block, set()) else None
+        return self._summaries[key]
+
+    def check_pending_instances(self) -> None:
+        """In one list of actions, a function that creates instances and then a function that picks them
+        by a condition: the second runs before the instances join, and misses them."""
+        for actions, where in self.action_lists:
+            made: dict[str, tuple[int, list[str]]] = {}
+            warned: set[tuple[str, str]] = set()
+            for i, a in enumerate(actions, 1):
+                if not isinstance(a, dict):
+                    continue
+                if self.waits(a):
+                    break       # the rest runs later, where when the instances join is not read here
+                t = self.made_by(a)
+                if t:
+                    made.setdefault(t, (i, []))
+                    continue
+                hit = self.called(a)
+                sub = self.summary(hit[1]) if hit else None
+                if not sub:
+                    continue
+                name, block = hit
+                if block.get("eventType") == "function-block":
+                    for p, (pwhere, cond, path) in sub[1].items():
+                        for t, (j, chain) in made.items():
+                            # a function that copies picked instances gets the one the caller created
+                            if not self.related(p, t) or (not chain and block.get("functionCopyPicked")) \
+                                    or (name, t) in warned:
+                                continue
+                            warned.add((name, t))
+                            by = f"action {j} creates {t}" if not chain else \
+                                f"action {j} calls {chain[0]}, which creates {t}" \
+                                + (f" through {', '.join(chain[1:])}" if len(chain) > 1 else "")
+                            through = f" through {', '.join(path)}" if path else ""
+                            self.warn(f"{where} action {i}: {name} picks {p}{through} ({cond} in {pwhere}), but {by} "
+                                      f"earlier in the same actions, and that new {t} is not among the "
+                                      f"instances {name} picks from: until the top-level event or trigger that "
+                                      f"runs these actions ends, only Pick by unique ID finds it outside the "
+                                      f"event that created it. Set the new {t} up in the event that creates "
+                                      f"it, pass its UID to {name} and pick it there by unique ID, or call "
+                                      f"{name} from a later top-level event or trigger "
+                                      f"(Construct3-RAG/prompts/pitfalls/creating-objects.md)")
+                for t, chain in sub[0].items():
+                    made.setdefault(t, (i, [name] + chain))
 
     # --- uniqueness, project files, addons ----------------------------------------------------
     def check_uniqueness(self) -> None:

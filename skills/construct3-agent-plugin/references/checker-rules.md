@@ -71,7 +71,20 @@ Traps of the running game are warnings:
   top level of its expression: a character outside the Character set shows
   as an empty space; with *Enable BBCode* on, the tags are not counted;
 - an effect action naming, in a literal, an effect the object and its
-  families, the layer or every layout lack: it runs and changes nothing.
+  families, the layer or every layout lack: it runs and changes nothing;
+- in one list of actions, a *Create object*, *Spawn another object* or
+  *Recreate initial objects*, or a call to a function or custom action that
+  creates instances through its own events or the functions they call,
+  followed by a call to a function that picks that type, or a family of
+  it, by a condition anywhere in its events or the functions they call
+  (*For each*, *Pick all*, a comparison, an overlap): the new instances
+  join the others only when the top-level event or trigger ends, so the
+  second function misses them
+  [`Construct3-RAG/prompts/pitfalls/creating-objects.md`]. A pick that
+  starts from *Pick by unique ID*, *Pick last created* or a hierarchy link
+  passes, and so does a function that waits or copies the caller's picked
+  instances after a direct create; the actions after a wait are not
+  followed. Over the 524 official examples it adds no finding.
 
 A gesture action or a *Find path* in a function passes, since a trigger may
 call it.
