@@ -59,6 +59,10 @@ def test_preview_project_reads_a_step_of_code_and_a_key_as_the_page_needs_them()
     assert pp.code(["const p = runtime.objects.Player.getFirstInstance();", "return p.x;"]) == \
         "const p = runtime.objects.Player.getFirstInstance();\nreturn p.x;"
     assert pp.code("return 1") == "return 1"
+    some = "runtime.objects.Enemy.getAllInstances().some(e => { return e.hp < 5; })"
+    assert pp.code(some) == f"return ({some});"
+    assert pp.code("vars.n = 1; return vars.n") == "vars.n = 1; return vars.n"
+    assert pp.code("text === ';'") == "return (text === ';');"
     assert pp.key_event("ArrowRight") == {"key": "ArrowRight", "code": "ArrowRight", "windowsVirtualKeyCode": 39}
     assert pp.key_event("KeyZ") == pp.key_event("z") == pp.key_event("Z") == \
         {"key": "z", "code": "KeyZ", "windowsVirtualKeyCode": 90, "text": "z"}

@@ -16,6 +16,17 @@ Sources and the rule for adding an entry are in the index,
   `navigate` requests, `PostBroadcastMessage` delays 3000 ms,
   `GetCacheNameToUse` keeps the old cache while `clients.matchAll()` finds
   more than one; r503 export, 2026-09-28]
+- A project with the Browser object keeps the browser's install prompt for
+  itself: on every page load it calls `preventDefault()` on
+  `beforeinstallprompt` and holds the event for *Request install*. The
+  browser's own install banner never shows, and Chrome logs "Banner not
+  shown: beforeinstallpromptevent.preventDefault() called", which is not an
+  error. A game that offers installing shows its own button once *On
+  install available* fires, and calls *Request install* from it. [manual:
+  plugin-reference/browser.md "On install available", "Request install";
+  runtime: exported main.js r504, the Browser DOM handler's
+  `beforeinstallprompt` listener; observed on a game project's web export
+  in Chrome, 2026-10-02]
 - File System writes only through a picker tag, never a free path. The known
   folder tags (`<documents>`, `<desktop>`, `<saved-games>`, ...) exist only in
   the Windows WebView2, macOS WKWebView and Linux CEF exports; in preview and

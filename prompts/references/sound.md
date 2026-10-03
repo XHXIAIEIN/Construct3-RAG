@@ -7,7 +7,7 @@ music to a project, and when a user says the game is too loud, too busy, or
 that every sound is the same. The rules are what a game project with
 automatic combat, drag-and-drop merging and three music stems settled on
 and verified in an r504 preview and an offline mix, 2026-09-30 to
-2026-10-01; its numbers are starting points, not constants.
+2026-10-02; its numbers are starting points, not constants.
 
 ## Three roles
 
@@ -23,6 +23,12 @@ The role decides the rule:
   at most a beat, or dropped.
 - One strike per cell. A hit scheduled for a cell is dropped when a crit
   comes for it, and both are dropped while a kill holds the cell.
+- A sound the grid places that is not a strike (an enemy appearing, the
+  first landing of a stage) holds its cell too: hits, crits and auto-merges
+  skip it, or two files start on one sample and their peaks add. Claim the
+  cell when its moment is first known, as the stage is laid out, not in the
+  frame it plays: strikes are queued as soon as an attack is due, up to
+  0.18 s ahead of their cell in the game.
 - Beds give way to the first tier only, through a gain effect on the music
   tags, not *Set volume*, which the stems' fades already own. Overlapping
   ducks merge into one release (the deeper depth, the later release)
@@ -103,8 +109,10 @@ the reference M; the game set M at −30 LUFS.
   thud), sine bubbles that glide up a few semitones in 30 ms, triangle
   pads; no bell partials (2.76, 5.40 and 8.93 of the fundamental, the sound
   of metal: Fletcher and Rossing, *The Physics of Musical Instruments*), no
-  clicks above 1.5 kHz, attacks of at least 3 ms. A hard look inverts the
-  choices.
+  clicks above 1.5 kHz, attacks of at least 3 ms. A breath under a pure
+  tone is low-passed at 1.1 kHz or below: noise band-passed and swept up to
+  1.6 to 1.8 kHz under a G5 sine sounded like metal scraping. A hard look
+  inverts the choices.
 - Normalise each file to its tier's loudness, limit the peak to the
   ceiling, encode WebM Opus: 96 kbps stereo for effects and the stereo
   stem, 64 kbps mono for the rest. A file encoded to an exact length

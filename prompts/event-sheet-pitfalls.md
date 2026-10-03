@@ -122,10 +122,11 @@ when the events place, move or rotate objects or read the viewport.
 ### Input
 
 Read [pitfalls/input.md](pitfalls/input.md) when the events use Mouse and
-Touch together, or must tell a finger from a mouse.
+Touch together, must tell a finger from a mouse, or hide what can be pressed.
 
 - Mouse ignores fingers: tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too: detect the input method with it off.
+- Touch and Mouse press an object that is invisible or has collisions disabled: add *Is visible* to the event, or set its layer not interactive.
 
 ### Audio
 
@@ -133,6 +134,7 @@ Read [pitfalls/audio.md](pitfalls/audio.md) when the events schedule
 sounds, change their rate, volume or effects, or keep music on a beat.
 
 - With *Use worker* on, scheduled sounds jitter by a message delay: set it to *No* for sample-accurate scheduling.
+- A sound not yet loaded plays late, and a Music file ignores its scheduled time: keep beat-locked files in Sounds, preloaded.
 - The audio clock stands still until the first release, click or key: start music when `CurrentTime` moves, not on a touch.
 - `PlaybackTime` of a scheduled sound runs ahead by its lead: build a beat grid from `CurrentTime` and integer steps.
 - *Set playback rate* retunes every instance with the tag: give each play a one-off tag.
@@ -236,6 +238,7 @@ Read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md)
 when the project saves data, is exported for the web or uses File System.
 
 - A web export looks for an update only when the page loads.
+- The Browser object holds back the browser's install banner: offer installing with *Request install* after *On install available*.
 - File System writes only through a picker tag; the known folders exist only in desktop exports.
 - No tag names the Construct project folder; saves go to `<current-app-data>`.
 - In a browser File System needs desktop Chromium and a user input trigger, and a save picker erases the file.

@@ -44,3 +44,19 @@ Sources and the rule for adding an entry are in the index,
   input"; example: detecting-input-method, `Title events` event 3 and its
   comment, Touch object with *Use mouse input* off; runtime: exported
   c3runtime.js r503, `Plugins.Touch.Instance._OnPointerDown`]
+- Touch *On touched object*, *Is touching object*, *On tap object* and
+  Mouse *On object clicked*, *Is over object* find an instance by its shape
+  under the pointer and nothing else: an invisible instance, one with
+  collisions disabled and one on an invisible layer are all pressed. Only a
+  layer that is not interactive, or an instance outside the viewport, is
+  passed over. A button hidden to switch it off keeps working: add *Is
+  visible* to its event, or turn its layer off with *Set layer interactive*.
+  Collisions disabled fails overlap and collision tests, not these. [runtime:
+  exported c3runtime.js r504, those conditions call
+  `TestAndSelectCanvasPointOverlap`, which tests the layer's
+  `IsSelfAndParentsInteractive`, `IsInViewport2` and `ContainsPoint`;
+  manual: project-primitives/layers.md "Initially interactive"; observed in
+  a game project, r504 preview, 2026-10-03: a tap on a button ran its *On
+  touched object* event with the button invisible, with its collisions
+  disabled and with its layer invisible, and did not with the layer not
+  interactive]

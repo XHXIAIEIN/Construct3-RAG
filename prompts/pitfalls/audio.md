@@ -19,6 +19,21 @@ where Web Audio lives).
   a game project, r504 preview with `dom`, 2026-09-30: music passes queued
   1 s ahead on a 100 BPM grid logged at beat 32n − 1.65 for n = 1 to 3, one
   frame from the exact 32n − 1.67, no drift]
+- A scheduled play is exact only for a file in the Sounds folder that is
+  loaded when *Play* runs. *Play* waits for the file to download and decode,
+  then starts it at the scheduled time; a time already past plays at once,
+  from the start of the file. So with *Preload sounds* off the first play of
+  each sound lands late, and layers scheduled together start apart. A file
+  in the Music folder streams through an `<audio>` element, whose play takes
+  no start time and begins when the stream is ready. Keep beat-locked music
+  in Sounds with *Preload sounds* on, or *Preload* every scheduled file and
+  start the schedule in *On preloads complete*. [manual:
+  plugin-reference/audio.md "Categorise audio files correctly", "Preloading
+  sounds", "Schedule next play"; runtime: main.js `_Play` adds the offset to
+  the clock when the message arrives and awaits `_GetAudioInstance` before
+  the instance's `Play`, the buffer instance calls `start(when, offset)`,
+  the media instance's `Play` ignores its time argument; read from the
+  r504 runtime, not observed in play]
 - The audio clock does not run until the first `pointerup`, `touchend`,
   `click`, `keydown` or gamepad input: in *On any touch start* `CurrentTime`
   is still stopped, and sounds played before then queue and start together at
