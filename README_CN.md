@@ -79,6 +79,7 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 | `c3-lang/{locale}.json` | CDN 上的原始语言包，每行一条，用来对比版本和翻译 |
 | `c3-ts-defs/autocomplete-data.json` | 脚本里每个类有哪些方法和属性 |
 | `c3-ts-defs/**/*.d.ts` | 完整的 TypeScript 接口定义 |
+| `c3-guides/constructs-project-format.md` | Scirra 讲项目文件夹格式的指南，也就是每个项目里 `llm-context.md` 链接的那一篇，转成 Markdown（CC BY 4.0）：`project.c3proj` 列出什么、图像文件怎么命名、各类文件用什么格式 |
 
 字段名和 Construct CDN 保持一致。`id`、`scriptName`、`category`、参数类型这些结构字段在各语言里都一样，所以在一种语言里查到的 ACE，换到另一种语言也能直接对上。
 
@@ -137,6 +138,7 @@ data/                   参考数据，直接读取
   c3-examples/          示例项目元数据
   c3-lang/              CDN 语言包
   c3-ts-defs/           TypeScript 脚本接口
+  c3-guides/            Scirra 的项目格式指南
 prompts/                LLM system prompt
   references/           按需加载的参考
 skills/                 Agent Skills，装进游戏项目使用

@@ -101,7 +101,7 @@ Option 2 as the default, and option 3 as the step after it.
 - Scirra's guide
   [Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275),
   which the `llm-context.md` the editor writes into every project links,
-  states what the folder holds. Four of its statements were probed on
+  states what the folder holds. Its statements below were probed on
   2026-10-03 in the stable editor, each in a copy of an official example. A
   frame whose `width` and `height` differ from its image opened and
   previewed: the editor takes the size from the file, as the guide says, so
@@ -111,11 +111,11 @@ Option 2 as the default, and option 3 as the step after it.
   warns about one outside `scripts/`, where the editor keeps unlisted
   TypeScript files for an external editor. A listed video with no file
   stopped the editor with `missing file path 'videos\clip.webm'`, so `video`
-  joins the kinds whose files must be on disk. A sound listed as a WAV file
-  opened and previewed, so a sound or music file that is not WebM Opus,
+  is among the kinds whose files must be on disk. A sound listed as a WAV
+  file opened and previewed, so a sound or music file that is not WebM Opus,
   which the guide requires, is a warning. An image kept in a lossy format is
-  found through its `fileType`, as the guide describes; no official example
-  has one. A script listed as both `.ts` and `.js` is a warning, since
+  found through its `fileType`, as the guide describes; it was not probed.
+  A script listed as both `.ts` and `.js` is a warning, since
   Construct runs the `.js` (`typescript-construct.md`). None of these adds a
   finding over the official examples or the game folders.
 - The exporter writes `isTrigger` for every condition the editor treats as a

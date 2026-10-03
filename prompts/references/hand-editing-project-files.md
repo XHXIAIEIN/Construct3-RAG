@@ -13,7 +13,8 @@ is documented in `Construct3-Clipboard/docs/clipboard-format.md`.
 
 Scirra's guide [Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275),
 which the `llm-context.md` the editor writes into every project links,
-states what follows. The format has no published specification and changes
+states what follows; this repository keeps a copy in
+`data/c3-guides/constructs-project-format.md`. The format has no published specification and changes
 between releases, and an invalid edit can leave a project that does not
 open, which is why every hand edit ends with the checks at the end of this
 file.
@@ -33,11 +34,11 @@ file.
   `width` and `height` of its entry, so an image may be redrawn at another
   size outside the editor. One imported as JPEG or AVIF and not edited in
   the editor keeps that format, which its entry's `fileType` names.
-- Sound and music are WebM Opus, `.webm`. Fonts are best WOFF, the one
-  format every browser reads; the editor also takes TTF and OTF, as the
-  official examples show. Icons and the loading logo are PNG. Video is best
-  MP4 with H.264. A file in `files/` is of any kind; Construct does not use
-  it, the project's logic reads it, through AJAX for one.
+- Sound and music are WebM Opus, `.webm`. Fonts are WOFF, the only format
+  browsers support consistently; the editor also takes TTF and OTF, as the
+  official examples show. Icons and the loading logo are PNG. For video, MP4
+  with H.264 is a good default. A file in `files/` is of any kind; Construct
+  does not use it, the project's logic reads it, through AJAX for one.
 - TypeScript is the `.ts` files alone, which Construct compiles, or the
   `.js` files alone, compiled outside from `.ts` files the project does not
   list. With both of one script listed, Construct runs the `.js`

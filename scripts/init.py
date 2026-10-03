@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
-"""Refresh the committed Construct 3 data from the CDN.
+"""Refresh the committed Construct 3 data from the CDN, and Scirra's guides.
 
 Fetches the latest stable release (or --version), exports schemas,
 example metadata, language packs and TypeScript definitions into the cache,
-then replaces the matching directories under data/. The runtime reads data/,
-so the refresh shows in `git diff` before it is committed. The update
-workflow runs this same command.
+then replaces the matching directories under data/. It then fetches the
+guides of src/ingest/guides.py into data/c3-guides/, writing a guide only
+when its text changed; a guide that cannot be fetched keeps its committed
+copy. The runtime reads data/, so the refresh shows in `git diff` before it
+is committed. The update workflow runs this same command, and
+--guides-only every week.
 
 Usage:
     python scripts/init.py
     python scripts/init.py --version <release>
+    python scripts/init.py --guides-only
+    python scripts/init.py --guides-only --guide-html <page saved from a browser>
 """
 import argparse
 import sys
@@ -21,8 +26,16 @@ sys.path.insert(0, str(ROOT))
 from src.lookup.schema_layout import schema_counts
 
 
-def refresh(version: str | None = None) -> None:
-    """Fetch one release, the latest stable by default, and replace data/."""
+def refresh_guides(data_dir: Path, saved: list[Path]) -> None:
+    """Write each guide whose text changed; report what happened to each."""
+    from src.ingest.guides import GUIDES_DIR, refresh_guides as refresh
+
+    for name, outcome in refresh(data_dir, saved).items():
+        print(f"  {GUIDES_DIR}/{name}.md: {outcome}")
+
+
+def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
+    """Fetch one release, the latest stable by default, replace data/, then refresh the guides."""
     from src.settings import load_settings
     from src.ingest.c3_fetcher import C3Fetcher, latest_stable_version
 
@@ -39,7 +52,7 @@ def refresh(version: str | None = None) -> None:
     )
 
     # 1. Fetch core data
-    print("[1/5] Fetching ACE definitions...")
+    print("[1/6] Fetching ACE definitions...")
     aces = fetcher.fetch_all_aces()
     p_count = sum(
         len(cat.get("conditions", [])) + len(cat.get("actions", [])) + len(cat.get("expressions", []))
@@ -52,22 +65,22 @@ def refresh(version: str | None = None) -> None:
     print(f"  {len(aces['plugins'])} plugins ({p_count} ACEs)")
     print(f"  {len(aces['behaviors'])} behaviors ({b_count} ACEs)")
 
-    print("[2/5] Fetching language data...")
+    print("[2/6] Fetching language data...")
     en = fetcher.fetch_lang("en-US")
     zh = fetcher.fetch_lang("zh-CN")
     print(f"  en-US: {len(en.get('text', {}).get('plugins', {}))} plugins")
     print(f"  zh-CN: {len(zh.get('text', {}).get('plugins', {}))} plugins")
 
-    print("[3/5] Fetching effects...")
+    print("[3/6] Fetching effects...")
     effects = fetcher.fetch_effects()
     print(f"  {len(effects)} effects")
 
-    print("[4/5] Fetching example project data...")
+    print("[4/6] Fetching example project data...")
     examples = fetcher.fetch_examples()
     print(f"  {len(examples)} example projects")
 
     # 2. Export, then replace the committed copies
-    print("[5/5] Exporting schemas, language packs, and TypeScript definitions...")
+    print("[5/6] Exporting schemas, language packs, and TypeScript definitions...")
     targets = fetcher.export_to_data(settings.paths.data_dir)
     counts = schema_counts(targets["c3-schemas"])
     print(f"  {counts['plugins']} plugin schemas")
@@ -76,7 +89,11 @@ def refresh(version: str | None = None) -> None:
     print(f"  language packs: {', '.join(sorted(p.stem for p in targets['c3-lang'].glob('*.json')))}")
     print(f"  ts-defs: {len(list(targets['c3-ts-defs'].rglob('*.d.ts')))} files")
 
-    # 3. Summary
+    # 3. Scirra's guides: pages, not release data
+    print("[6/6] Fetching Scirra's guides...")
+    refresh_guides(settings.paths.data_dir, saved)
+
+    # 4. Summary
     print(f"\n{'='*50}")
     print(f"  Construct 3 {version} — data refreshed")
     print(f"  Cache: {fetcher.cache_dir}")
@@ -86,9 +103,20 @@ def refresh(version: str | None = None) -> None:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Refresh data/ from the Construct 3 CDN")
+    parser = argparse.ArgumentParser(description="Refresh data/ from the Construct 3 CDN, and Scirra's guides")
     parser.add_argument("--version", type=str, help="Release to fetch (default: latest stable on the CDN)")
-    refresh(parser.parse_args().version)
+    parser.add_argument("--guides-only", action="store_true",
+                        help="Refresh only data/c3-guides/, the guides of src/ingest/guides.py")
+    parser.add_argument("--guide-html", type=Path, action="append", default=[], metavar="FILE",
+                        help="A guide's page saved from a browser, read instead of fetching that guide, "
+                             "for when construct.net answers the script with a browser check")
+    args = parser.parse_args()
+    if args.guides_only:
+        from src.settings import load_settings
+        print("Fetching Scirra's guides...")
+        refresh_guides(load_settings().paths.data_dir, args.guide_html)
+    else:
+        refresh(args.version, args.guide_html)
 
 
 if __name__ == "__main__":

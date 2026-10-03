@@ -10,6 +10,7 @@
 | Example metadata | `editor.construct.net/{ver}/media/example-project-data.json` | JSON | Each C3 release |
 | Shared world-object ACEs | `editor.construct.net/{ver}/main.js` of the latest stable release, extracted by `scripts/extract_common_aces.py` into `src/ingest/common_aces.json` | JSON | When a release adds a shared ACE |
 | Deprecated plugins and behaviors | `editor.construct.net/{ver}/main.js`, `plugins/allEditorPlugins.js`, `behaviors/allEditorBehaviors.js`, read by `src/ingest/deprecated_addons.py` | JS | Each C3 release |
+| Scirra's guide "Construct's project format" | `www.construct.net/en/tutorials/constructs-project-format-3275`, read by `src/ingest/guides.py` | HTML page | When Scirra edits it; fetched every week |
 
 `{ver}` is the release's CDN directory: the release name, with the dot of a
 patch release written as a dash, `r495-2` for r495.2. `versions.json`, which
@@ -125,6 +126,38 @@ export clears its schema directory first, so what it leaves out does not
 survive from an earlier export of the same release. See
 `docs/decisions/deprecated-addons-from-editor.md`.
 
+## Scirra's Guides
+
+`src/ingest/guides.py` keeps a copy of each page it lists under
+`data/c3-guides/`, one Markdown file named after the page:
+`constructs-project-format.md` for the guide the editor's `llm-context.md`
+links. A guide is a page of construct.net, not a file of a release, so it
+lives beside the release data instead of in a directory the export replaces,
+and has no locale: the page is English only.
+
+`refresh_guides()` fetches the page, keeps the article and writes Markdown
+that opens with front matter: the source URL, the title, the contributors as
+the page lists them, the license (CC BY 4.0), and the published and
+last-updated dates. The comments, the side menu and the site navigation are
+left out. The file is written only when its text differs from the committed
+one, so a week with no edit commits nothing.
+
+A fetch that fails, or a page without the article, keeps the committed copy
+and logs a warning; the rest of the refresh goes on. When construct.net
+answers the script with a browser check (HTTP 403), the copy is refreshed by
+hand from the page saved in a browser:
+
+```bash
+python scripts/init.py --guides-only --guide-html <saved page>
+```
+
+`scripts/init.py` refreshes the guides after the release data;
+`--guides-only` refreshes them alone, which the update workflow runs every
+week before it checks for a release. A changed guide opens a pull request,
+which waits for a person: compare it with
+`docs/decisions/project-format-guide.md`. Nothing reads the network on import
+or on a query.
+
 ## Version Update
 
 `data/c3-schemas/_index.json` records the release `data/` holds.
@@ -160,5 +193,6 @@ file as LF, so a refresh changes only what the release changed
 both call it, so generated and committed layouts stay identical. The workflow
 opens a pull request with the result and the `schema_diff.py` report, against
 the data on `main`, as its body. It enables auto-merge only when the report
-watches no mentioned id; otherwise the pull request waits for a person. See
+watches no mentioned id and no guide changed; otherwise the pull request
+waits for a person. See
 `docs/decisions/release-schema-diff.md`.

@@ -48,6 +48,7 @@ src/
     c3_fetcher.py                CDN fetch, cache, schema/example/lang export
     common_aces.py               Shared world-object ACEs from common_aces.json
     deprecated_addons.py         What the editor has deprecated: addon flags, _deprecated.json
+    guides.py                    Scirra's guides as Markdown in data/c3-guides/
   locale/
     catalog.json                 Query vocabulary, grammar, and aliases per locale
     resources.py                 Catalog validation, merging, and format adapters
@@ -85,6 +86,7 @@ domain/* <-------------------------+
 Explicit maintenance path:
 
 scripts/init.py -----> ingest/c3_fetcher.py -----> data/
+                 \---> ingest/guides.py --------> data/c3-guides/
 ```
 
 Static boundary tests keep `application` and `lookup` from importing
@@ -166,9 +168,10 @@ reads the committed dataset, or the directory `C3_SCHEMA_DIR` names. A refresh
 replaces `data/` itself, so the cache is never read at query time.
 
 No ordinary import or query refreshes the CDN. `scripts/init.py` fetches,
-exports into the cache, and replaces the `data/` directories; the update
-workflow runs the same script, then `scripts/schema_diff.py` for the body of
-its pull request.
+exports into the cache, and replaces the `data/` directories, then writes
+each of Scirra's guides whose text changed; the update workflow runs the
+same script, `--guides-only` every week, then `scripts/schema_diff.py` for
+the body of its pull request.
 
 ## Known limits
 

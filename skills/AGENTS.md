@@ -67,14 +67,15 @@ project's instruction file.
   that measurement, so a key missing from the generator fails here instead of
   in the editor.
 - Scirra's guide
-  [Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275)
+  [Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275),
+  kept in `data/c3-guides/constructs-project-format.md`,
   states what the format keeps across releases: what `project.c3proj`
   indexes, image file names, the formats of sounds, fonts and icons, which
   files the editor ignores. Read it before a rule about the folder, a file
   name or a file format. The `llm-context.md` the editor writes into every
   project links it; the official examples were saved before the editor wrote
-  that file (r477), so a measurement over them shows neither it nor anything
-  the editor started writing since.
+  that file (r477, `Construct3-Manual/releases/beta.json`), so a measurement
+  over them shows neither it nor anything the editor started writing since.
 - A check becomes an error after the two steps in
   `construct3-agent-plugin/references/checker-rules.md`: the editor's message,
   then a run over the official examples that adds no finding. A style

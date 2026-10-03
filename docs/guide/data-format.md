@@ -26,6 +26,8 @@ data/
     behaviors/**/*.d.ts            behavior instance interfaces
     preview/**/*.d.ts              runtime base interfaces
     sdk/**/*.d.ts                  addon SDK interfaces
+  c3-guides/
+    constructs-project-format.md   Scirra's guide to the project folder
 ```
 
 `{locale}` is one of the directories listed in `_index.json` under
@@ -297,6 +299,17 @@ git diff <old-commit> -- data/c3-lang/zh-CN.json
 methods and properties. The matching `.d.ts` file under `c3-ts-defs/` holds
 full signatures and documentation comments. Look up the class first, then
 open the `.d.ts` file for the plugin or behavior directory with the same name.
+
+## Guides
+
+`c3-guides/constructs-project-format.md` is Scirra's guide
+[Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275),
+the page the `llm-context.md` of every saved project links. It says what
+`project.c3proj` lists, how image files are named, which formats sounds,
+fonts and icons take, and which files the editor ignores. The guide is
+licensed CC BY 4.0; the file's front matter gives the source, the authors,
+the license and the page's dates, and the article follows as Markdown,
+without the page's comments and navigation.
 
 ## Regeneration
 

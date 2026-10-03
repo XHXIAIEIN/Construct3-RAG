@@ -79,6 +79,7 @@ Everything else is read from the files. Paths are under `data/`; the locales are
 | `c3-lang/{locale}.json` | Raw CDN language pack, one string per line, for diffing releases and translations |
 | `c3-ts-defs/autocomplete-data.json` | Scripting class to methods and properties |
 | `c3-ts-defs/**/*.d.ts` | Full TypeScript interface signatures |
+| `c3-guides/constructs-project-format.md` | Scirra's guide to the project folder, the page the `llm-context.md` of every project links, as Markdown (CC BY 4.0): what `project.c3proj` lists, image file names, file formats |
 
 Field names match the Construct CDN. Structural fields such as `id`, `scriptName`, `category`, and parameter types are identical in every locale, so an ACE found in one language can be read in the other.
 
@@ -137,6 +138,7 @@ data/                   Committed reference data, read directly
   c3-examples/          Example project metadata
   c3-lang/              CDN language packs
   c3-ts-defs/           TypeScript scripting interfaces
+  c3-guides/            Scirra's guide to the project format
 prompts/                LLM system prompts
   references/           Loaded on demand
 skills/                 Agent Skills, installed into a game project

@@ -45,6 +45,7 @@ it, still opens old projects that use it, and a new project should not.
 | Types for an addon under development | editor `data/c3-ts-defs/sdk/`, runtime `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones |
 | Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python skills/construct3-agent-plugin/scripts/print_sheet.py --project <example folder>` |
 | Translation of a string, editor text outside the schemas | `data/c3-lang/{locale}.json`, `text` |
+| What a project folder holds: what `project.c3proj` lists, image file names, the formats of sounds, fonts and icons, which files the editor ignores | `data/c3-guides/constructs-project-format.md`, Scirra's guide that the `llm-context.md` of every project links; how this repository applies it: `prompts/references/hand-editing-project-files.md`, "The project folder" |
 | What a field means before writing an event or a script | `data/AGENTS.md`; full reference `docs/guide/data-format.md` |
 
 Structural fields (`id`, `scriptName`, `category`, `params.*.type`) are

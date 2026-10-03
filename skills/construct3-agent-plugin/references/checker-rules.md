@@ -32,7 +32,10 @@ an addon, and an ACE or expression, once each at its first use with the count
 of the others, and the current ACE of the same name when there is one. The
 editor opens a project that uses them, and a new event should not.
 
-Three findings about files are warnings, since the editor opens the project:
+What a project folder holds, the files `project.c3proj` lists, their names
+and formats, is stated in Scirra's guide to the project format, kept in
+`Construct3-RAG/data/c3-guides/constructs-project-format.md`. These findings
+about files are warnings, since the editor opens the project:
 
 - a file in a folder of the project that `project.c3proj` does not list,
   which the editor ignores; `scripts/` is not searched, since the editor

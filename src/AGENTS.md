@@ -110,6 +110,11 @@ it from the editor bundles on every export, the export leaves those addons
 out, and it writes `{locale}/_deprecated.json` with every deprecated addon
 and ACE for the skill's scripts to name.
 
+`guides.py` is not CDN data: it fetches Scirra's guides, the project format
+guide that the editor's `llm-context.md` links among them, and writes each
+as Markdown to `data/c3-guides/` when its text changed. A failed fetch keeps
+the committed copy and logs a warning; only `scripts/init.py` calls it.
+
 ### `settings/`
 
 `__init__.py` owns `load_settings()` and the immutable, grouped `AppSettings`
