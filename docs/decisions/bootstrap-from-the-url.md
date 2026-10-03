@@ -18,10 +18,10 @@ follows a command block it is given.
   block: clone this repository into `$HOME/Construct3`, then run
   `$HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame`.
   The cases that change the command (an existing project as a path,
-  `--into`, `--template`) follow as one paragraph, and the last line says
-  to read the project's `AGENTS.md`, with the pointer from another
-  instruction file such as `GEMINI.md` in that same line: a small model
-  given the README alone skipped that pointer while it sat in a paragraph
+  `--template`, `--into`, a rerun) follow as a list, and the paragraph
+  after it says to read the project's `AGENTS.md`, with the pointer from
+  another instruction file such as `GEMINI.md` in that same paragraph: a
+  small model given the README alone skipped that pointer while it sat
   among the options, and acts on the line that says what to read next.
 - The folder is written out because the working directory is what varies
   between sessions: a clone that lands somewhere new gets a second set of

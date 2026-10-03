@@ -153,7 +153,9 @@ Rules:
   reason in `docs/decisions/`.
 - Type hints, `pathlib.Path`, specific exceptions logged at the boundary.
 - Docs and tests change with the behavior. README: data first, service
-  second, English and Chinese identical. `docs/dev/architecture.md`
+  second. `README_CN.md` carries the content of `README.md`; `README.md`
+  names no Chinese text or locale besides its link to `README_CN.md`, and
+  the Chinese examples stay in `README_CN.md`. `docs/dev/architecture.md`
   describes only what runs. Test totals stay out of docs.
 - A commit message or PR text names an issue of another repository in
   words or as a URL in backticks, never as `owner/repo#N` or `#N`: GitHub
