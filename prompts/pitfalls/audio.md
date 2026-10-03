@@ -2,17 +2,18 @@
 
 Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md). The runtime sources
-below are the functions of an exported r503/r504 web build,
+below name functions of an exported r503/r504 web build, in
 `scripts/c3runtime.js` (the runtime) and `scripts/main.js` (the DOM side,
-where Web Audio lives).
+which runs Web Audio).
 
-- With *Use worker* on, `Audio.CurrentTime` is the worker's
-  `performance.now()`, and *Schedule next play* sends only an offset that the
-  DOM side adds to its own audio clock when the message arrives: every
-  scheduled sound carries the message delay as jitter, and layers scheduled
-  "together" can land a render block apart. Sample-accurate scheduling needs
-  the project property *Use worker* set to *No* (`"useWorker": "dom"`), where
-  `CurrentTime` is `audioContext.currentTime` and Play calls `start(when)`.
+- If *Use worker* is on, `Audio.CurrentTime` is the worker's
+  `performance.now()`. *Schedule next play* then sends only an offset, and
+  the DOM side adds it to its own audio clock when the message arrives. So
+  the message delay adds jitter to every scheduled sound, and layers
+  scheduled "together" can start a render block apart. For sample-accurate
+  scheduling, set the project property *Use worker* to *No*
+  (`"useWorker": "dom"`). Then `CurrentTime` is `audioContext.currentTime`,
+  and Play calls `start(when)`.
   [manual: plugin-reference/audio.md "Schedule next play", note on *Use
   worker*; runtime: c3runtime.js `ScheduleNextPlay`, main.js `_Play` adds
   `GetAudioCurrentTime()`; example: audio-scheduling uses `dom`; observed in
@@ -24,145 +25,148 @@ where Web Audio lives).
   `worker` gaps 15.8 to 36.3 ms, 3.7 ms mean and 11.5 ms worst off the grid]
 - A scheduled play is exact only for a file in the Sounds folder that is
   loaded when *Play* runs. *Play* waits for the file to download and decode,
-  then starts it at the scheduled time; a time already past plays at once,
-  from the start of the file. So with *Preload sounds* off the first play of
-  each sound lands late, and layers scheduled together start apart. A file
-  in the Music folder streams through an `<audio>` element, whose play takes
-  no start time and begins when the stream is ready. Keep beat-locked music
-  in Sounds with *Preload sounds* on, or *Preload* every scheduled file and
-  start the schedule in *On preloads complete*. [manual:
+  then starts it at the scheduled time. If that time is already past, the
+  file plays at once, from its start. So with *Preload sounds* off, the
+  first play of each sound starts late, and layers scheduled together start
+  apart. A file in the Music folder streams through an `<audio>` element.
+  Its play takes no start time and begins when the stream is ready. Keep
+  beat-locked music in Sounds with *Preload sounds* on. Or *Preload* every
+  scheduled file, and start the schedule in *On preloads complete*. [manual:
   plugin-reference/audio.md "Categorise audio files correctly", "Preloading
   sounds", "Schedule next play"; runtime: main.js `_Play` adds the offset to
   the clock when the message arrives and awaits `_GetAudioInstance` before
   the instance's `Play`, the buffer instance calls `start(when, offset)`,
   the media instance's `Play` ignores its time argument; read from the
   r504 runtime, not observed in play]
-- In a browser no sound is heard until the player first touches, clicks
-  or presses a key. The Audio object queues what *Play* asks for before
-  then and starts it at that input, so a sound played in *On start of
-  layout* needs no events of its own. A web game therefore opens on a "tap
-  anywhere to start" screen whose tap goes to the game: the game's music
-  and sounds then play from its first frame, and the same tap is where
-  *Request fullscreen* and the other requests the browser grants only after
-  input go ([input.md](input.md)). Music played on that screen itself
-  starts at the same tap, as the game begins, so a track meant for the
-  title screen needs one that waits for a second tap. A mobile app export
-  has no such limit, and an installed web app may not.
+- In a browser, no sound is heard until the player first touches, clicks
+  or presses a key. The Audio object queues the sounds played before then
+  and starts them at that input. So a sound played in *On start of layout*
+  needs no events of its own. Open a web game on a "tap anywhere to start"
+  screen whose tap goes to the game, so the game's music and sounds play
+  from its first frame. Put *Request fullscreen*, and the other requests
+  that the browser grants only after input, on the same tap
+  ([input.md](input.md)). Music played on that screen starts at the same
+  tap, as the game begins. So a track meant for the title screen needs a
+  screen that waits for a second tap. A mobile app export has no
+  such limit, and an installed web app may have none.
   [manual: plugin-reference/audio.md "Autoplay restrictions"; example:
   detecting-input-method, `Title events`: a flashing prompt, then one event
   per input method that sets a global and goes to the game]
 - The audio clock does not run until the first `pointerup`, `touchend`,
-  `click`, `keydown` or gamepad input: in *On any touch start* `CurrentTime`
-  is still stopped, and sounds played before then queue and start together at
-  the unblock. Start music by watching `CurrentTime` advance each tick, not
-  from a touch trigger, and cap what plays before it moves. [manual:
-  plugin-reference/audio.md "Autoplay restrictions"; runtime: main.js
-  `_AttachUnblockEvents`, `_UnblockAudioContext`]
-- `Audio.PlaybackTime(tag)` of a sound scheduled in the future counts from
-  the Play call, not from its start, so it runs ahead by the scheduling lead.
-  Compute a beat grid from `CurrentTime` minus a stored start time, and test
-  grid points by integer step numbers, never by `%` on float seconds.
-  [runtime: main.js `Play()` sets `_playStartTime` at the call; reported as
-  Scirra/Construct-bugs#9290, open]
+  `click`, `keydown` or gamepad input. So in *On any touch start*,
+  `CurrentTime` is still stopped. Sounds played before then queue and all
+  start together when the browser unblocks audio. Start music when
+  `CurrentTime` advances, not from a touch trigger, and limit what plays
+  before the clock moves. [manual: plugin-reference/audio.md "Autoplay
+  restrictions"; runtime: main.js `_AttachUnblockEvents`,
+  `_UnblockAudioContext`]
+- For a sound scheduled in the future, `Audio.PlaybackTime(tag)` counts
+  from the Play call, not from the sound's start, so it is ahead by the
+  scheduling lead. Compute a beat grid from `CurrentTime` minus a stored
+  start time. Test grid points by integer step numbers, never by `%` on
+  float seconds. [runtime: main.js `Play()` sets `_playStartTime` at the
+  call; reported as Scirra/Construct-bugs#9290, open]
 - *Set playback rate* changes every instance whose tags match, including
-  sounds still ringing from earlier plays: a pitch per play needs a one-off
-  tag per play (`"sfx p" & Serial`), and no rate action when the rate is 1.
-  `Audio.PlaybackRate(tag)` read in the tick of the Play reads 1: the state
-  updates on the DOM side's next report. [runtime: main.js
-  `_SetPlaybackRate` loops over all matching instances; c3runtime.js
-  `_MaybeMarkAsPlaying` inserts `"playbackRate": 1`, `_OnUpdateState`]
+  sounds still playing from earlier plays. So for a pitch per play, give
+  each play a one-off tag (`"sfx p" & Serial`), and skip the rate action
+  when the rate is 1. In the tick of the Play, `Audio.PlaybackRate(tag)`
+  returns 1, because the state updates on the DOM side's next report.
+  [runtime: main.js `_SetPlaybackRate` loops over all matching instances;
+  c3runtime.js `_MaybeMarkAsPlaying` inserts `"playbackRate": 1`,
+  `_OnUpdateState`]
 - A sound goes through the effect chain of its first tag only. An *Add ...
-  effect* or *Set effect parameter* whose tag is `"mus lead"` acts on each
-  tag in turn, so two chains built in the same order are changed by one
-  action. [manual: plugin-reference/audio.md "Tags"; runtime: main.js
+  effect* or *Set effect parameter* with the tag `"mus lead"` acts on each
+  tag in turn. So one action changes two chains built in the same order.
+  [manual: plugin-reference/audio.md "Tags"; runtime: main.js
   `GetDestinationForTag`, `_SetEffectParam` loops over the tags]
 - *Set effect parameter* first cancels every scheduled value of the
-  parameter and ramps from its current value: a second call cancels the rest
-  of the first ramp. Overlapping ducks must be merged into one release time,
-  not released with a *Wait* each. [runtime: main.js `SetAudioParam`,
+  parameter, then ramps from its current value. So a second call cancels
+  the rest of the first ramp. Merge overlapping ducks into one release
+  time instead of a *Wait* for each. [runtime: main.js `SetAudioParam`,
   `cancelScheduledValues(0)`]
 - The gain effect's parameter is in dB and ramps on the linear gain. The
-  compressor's parameters cannot change after it is added (`SetParam` is
-  empty). [runtime: main.js `C3AudioGainFX.SetParam` uses `DbToLinear`,
-  `C3AudioCompressorFX.SetParam`]
-- An exponential ramp to 0 throws, for every parameter of every effect: Web
-  Audio's `exponentialRampToValueAtTime` refuses a target of 0, and each
+  compressor's parameters cannot change after it is added, because its
+  `SetParam` is empty. [runtime: main.js `C3AudioGainFX.SetParam` uses
+  `DbToLinear`, `C3AudioCompressorFX.SetParam`]
+- An exponential ramp to 0 throws, for every parameter of every effect.
+  Web Audio's `exponentialRampToValueAtTime` refuses a target of 0, so each
   such *Set effect parameter* logs `RangeError ... should not be in the
-  range (-1.40130e-45, 1.40130e-45)` and leaves the parameter where it was.
-  Zero comes from more than an explicit 0: the dry path of a `mix` of 100
-  (its gain is `1 - mix`), and a value computed
-  from an expression that can reach 0, such as `from * (to / from) ^ p`
-  with a large negative `p`. Ramp such a parameter linearly, or keep the
-  value above 0 with `max(value, floor)`. [runtime: main.js
-  `SetAudioParam` case 2; the filter, delay, convolution, ring modulator
+  range (-1.40130e-45, 1.40130e-45)` and leaves the parameter unchanged.
+  The dry path of a `mix` of 100 also reaches 0, because its gain is
+  `1 - mix`. So does any expression that can reach 0, such as
+  `from * (to / from) ^ p` with a large negative `p`. Ramp such a parameter
+  linearly, or keep the value above 0 with `max(value, floor)`. [runtime:
+  main.js `SetAudioParam` case 2; the filter, delay, convolution, ring modulator
   and distortion effects' `SetParam` set the dry gain to `1 - t`; observed in a game project, r504 preview, 2026-10-02:
   a low-pass frequency computed as `from * (to / from) ^ stageP`, with
   `stageP` near -20000 after a test raised an enemy's hp above the
   stage's total, logged one RangeError per call]
-- The delay effect's `mix` is a percentage, 0 to 100, in *Add delay effect*
-  and in *Set effect parameter* alike; its wet path carries the dry signal,
-  so the dry level stays 1 and `mix` scales only the echoes: the first echo
-  is `mix × feedback`, the k-th `mix × feedback^k`. Feedback is
-  `filterdelaygain-gain`, in dB; the longest delay is the one it was created
-  with. [runtime: c3runtime.js `AddDelayEffect` divides by 100; main.js
-  `C3AudioDelayFX` node graph and `SetParam` cases 0, 4, 5]
-- *Fade volume* ramps the gain linearly from its current value and also
-  reaches instances scheduled but not started yet, so a layer faded in just
-  before its next scheduled pass starts that pass faded in, and a one-shot
-  scheduled ahead is cancelled by fading its one-off tag to -100 dB before
-  it starts. [runtime: main.js instance `FadeVolume`,
+- The delay effect's `mix` is a percentage, 0 to 100, in both *Add delay
+  effect* and *Set effect parameter*. Its wet path carries the dry signal,
+  so the dry level stays 1 and `mix` scales only the echoes. The first echo
+  is `mix × feedback`, and the k-th is `mix × feedback^k`. Feedback is
+  `filterdelaygain-gain`, in dB. The longest delay is the one the effect
+  was created with. [runtime: c3runtime.js `AddDelayEffect` divides by 100;
+  main.js `C3AudioDelayFX` node graph and `SetParam` cases 0, 4, 5]
+- *Fade volume* ramps the gain linearly from its current value. It also
+  reaches instances scheduled but not started yet. So if a layer
+  is faded in just before its next scheduled pass, that pass starts faded
+  in. To cancel a one-shot scheduled ahead, fade its one-off tag to -100 dB
+  before it starts. [runtime: main.js instance `FadeVolume`,
   `linearRampToValueAtTime`, and `FadeVolume` over
   `audioInstancesMatchingTags`; observed in a game project, r504 export in
   headless Edge 155, 2026-10-02: a play scheduled 0.5 s ahead and faded to
   -100 dB in the same tick, two frames later, or before its file had ever
   played, recorded at the noise floor, -130 dB against -29 dB unfaded, with
   the fade ending in stop or in keep playing; *Stop* cancelled it too]
-- Suspending (tab hidden, app backgrounded) stops each source and records its
-  position; resuming restarts all of them at once, scheduled sounds included,
-  and a scheduled one resumes ahead by its lead. A game that schedules on a
-  grid handles *On resumed* with *Stop all* and a fresh start of its
-  schedule; *Stop* in *On suspended* does not help. [runtime: main.js
-  `_SetSuspended` calls each instance's `SetSuspended`; `Stop()` leaves
-  `_resumeMe`; the *Stop* case reported as Scirra/Construct-bugs#9289, open]
-- *Stereo pan* goes through a `StereoPannerNode`, which on a stereo sound
-  folds one channel into the other: at ±20 the near channel gets the far one
-  at cos(0.4π) ≈ 0.31, so a file limited to −3 dBFS can peak near −1 dBFS,
-  and two loud sounds on the same grid point add over 0 dBFS. A transient
-  that is the same in both channels rises by 1 + sin(|pan| × 90°): 1.3 dB at
-  ±10, 2.3 dB at ±20, 3.2 dB at ±30. With no master limiter, keep loud
-  transients off each other's grid point (one replaces the other) rather than
-  trusting per-file ceilings, and narrow the pan of the loudest sounds: ±10
-  instead of ±20 gave a −3 dBFS kill the same headroom as a −4 dBFS file
-  ceiling, which would have cost it 0.5 dB of loudness. [runtime: main.js
+- On suspend (tab hidden, app backgrounded), Audio stops each source and
+  records its position. On resume it restarts all of them at once,
+  scheduled sounds included, and a scheduled sound resumes ahead by its
+  lead. If a game schedules on a grid, use *Stop all* in *On resumed* and
+  restart its schedule. *Stop* in *On suspended* does not help. [runtime:
+  main.js `_SetSuspended` calls each instance's `SetSuspended`; `Stop()`
+  leaves `_resumeMe`; the *Stop* case reported as
+  Scirra/Construct-bugs#9289, open]
+- *Stereo pan* goes through a `StereoPannerNode`. On a stereo sound it
+  mixes one channel into the other: at ±20 the near channel gets the far
+  one at cos(0.4π) ≈ 0.31. So a file limited to −3 dBFS can peak near
+  −1 dBFS, and two loud sounds on the same grid point sum above 0 dBFS. A
+  transient that is the same in both channels rises by
+  1 + sin(|pan| × 90°): 1.3 dB at ±10, 2.3 dB at ±20, 3.2 dB at ±30.
+  Without a master limiter, do not rely on per-file ceilings. Keep loud
+  transients off each other's grid point, so that one replaces the other,
+  and narrow the pan of the loudest sounds. A pan of ±10 instead of ±20
+  gave a −3 dBFS kill the same headroom as a −4 dBFS file ceiling, which
+  would have cost it 0.5 dB of loudness. [runtime: main.js
   `createStereoPanner` per instance; Web Audio spec, StereoPannerNode
   stereo-input algorithm; observed in an offline mix of a game project's
   rules, 2026-09-30]
-- Dictionary *Set key* only changes a key that exists and silently does
-  nothing otherwise; *Add key* creates or overwrites. Write gates and counters
-  with *Add key*. [runtime: c3runtime.js `SetKey(t,e){this._data.has(t)&&...}`,
-  `AddKey`]
-- The runtime keys a sound by its path below the Sounds or Music folder,
-  without the extension: a file in the folder `Board` is `Board/spawn`, and
-  *Play by name* with `"spawn"` finds nothing and plays nothing, with no
-  error. A game that builds sound names in expressions keeps those files at
-  the top of the folder, or puts the folder path in every name, matched in
-  case. Timelines are not keyed this way:
-  *Play by name* finds a timeline in a folder by its bare name. [runtime:
-  c3runtime.js `PlayByName` calls `GetProjectAudioFileUrl`, whose
-  `_audioFiles` map held `"Board/spawn"`, and `GetTimelineByName` reads
-  `_timelinesByName` by the lowercased bare name; observed in a game
-  project, r504 preview, 2026-10-02: after sounds moved into folders,
+- Dictionary *Set key* changes only an existing key and silently ignores
+  a missing one. *Add key* creates or overwrites, so write gates and
+  counters with *Add key*. [runtime: c3runtime.js
+  `SetKey(t,e){this._data.has(t)&&...}`, `AddKey`]
+- The runtime finds a sound by its path below the Sounds or Music folder,
+  without the extension. So a file in the folder `Board` is `Board/spawn`,
+  and *Play by name* with `"spawn"` finds and plays nothing, with no error.
+  If a game builds sound names in expressions, keep those files at the top
+  of the folder, or put the folder path in every name with matching case.
+  Timelines differ: *Play by name* finds a timeline in a folder by its
+  bare name. [runtime: c3runtime.js `PlayByName` calls
+  `GetProjectAudioFileUrl`, whose `_audioFiles` map held `"Board/spawn"`,
+  and `GetTimelineByName` reads `_timelinesByName` by the lowercased bare
+  name; observed in a game project, r504 preview, 2026-10-02: after sounds
+  moved into folders,
   `GetProjectAudioFileUrl("spawn")` returned null while
   `GetTimelineByName("SwordIdle")` found the timeline in its folder]
 - A sound is heard at its scheduled time plus `Audio.OutputLatency`, for
   immediate plays too. [runtime: c3runtime.js `OutputLatency`, main.js tick
   reports `outputLatency`; observed 0.04 s in a headless Chrome r504
   preview, 2026-09-30]
-- In Chrome 155, a WebM Opus file encoded to an exact length (ffmpeg
-  `libopus`, 96 kb/s) decodes with `decodeAudioData` to exactly the source's
-  sample count at 48 kHz, and one sample short at 44.1 kHz; the encoder's
-  pre-skip is removed. Loops re-scheduled on a grid do not depend on it. A
-  mono file decodes to one channel, so it takes half the decoded memory of
-  the same length in stereo, 192 KB a second at 48 kHz. [observed with a
+- In Chrome 155, `decodeAudioData` decodes a WebM Opus file encoded to an
+  exact length (ffmpeg `libopus`, 96 kb/s) to exactly the source's sample
+  count at 48 kHz. At 44.1 kHz it is one sample short. Decoding removes the
+  encoder's pre-skip. Loops re-scheduled on a grid do not depend on this
+  length. A mono file decodes to one channel, 192 KB a second at 48 kHz,
+  half the decoded memory of the same length in stereo. [observed with a
   test page, Chrome 155, 2026-09-30; mono: Edge 155, 2026-10-02, a 64 kb/s
   mono stem decoded to 1 channel of 998,400 samples]

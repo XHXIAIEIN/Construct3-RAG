@@ -1,32 +1,32 @@
 # A new project: sheets, layers, objects and look
 
-How the official examples lay out a project: its sheets and groups, then
-its viewport, colours, grid, HUD, folders, layers and objects. Read it when
-generating a project, or when adding a layout, layer, event sheet, group or
+This file shows how the official examples lay out a project: its sheets and
+groups, then its viewport, colours, grid, HUD, folders, layers and objects.
+Read it to generate a project or add a layout, layer, event sheet, group or
 object type to one. Design the events first with
 [event-sheet-thinking.md](../event-sheet-thinking.md).
 
 ## Sheets and groups
 
-The official examples split the same way every time (groups in 237 of 432,
-several sheets in 48, includes in 14). What goes inside a group, and how it
-is named and commented, is [event-sheet-style.md](../event-sheet-style.md),
-read before writing into a project.
+The official examples always split events the same way (groups in 237 of 432,
+several sheets in 48, includes in 14). Before writing into a project, read
+[event-sheet-style.md](../event-sheet-style.md) for what goes inside a group
+and how to name and comment it.
 
-- One layout: one sheet. Groups by subsystem, named as the examples name them:
-  *Setup* (`On start of layout`), *Player*, *Controls*, *Camera*, *Tutorial*,
-  *Game over*, *Restart* (the restart key and *Restart layout*).
-- A second layout: each screen gets its own sheet (*Menu*, *Game*,
+- One layout has one sheet, with groups by subsystem named as in the
+  examples: *Setup* (`On start of layout`), *Player*, *Controls*, *Camera*,
+  *Tutorial*, *Game over*, *Restart* (the restart key and *Restart layout*).
+- With a second layout, each screen gets its own sheet (*Menu*, *Game*,
   *Credits*); levels share one (samuroof: Level1 to Level5 use *Game*). A
   subsystem several screens need, or one that outgrows the sheet, moves to
-  its own sheet (*Player*, *Enemies*, *HUD*, *Camera*, *Effects*, *Sound*) and
-  the screen's sheet includes it (kiwi-story: eMain includes nine).
-- Globals are project-wide wherever they are declared. Declare them on one
-  sheet (*Globals*) so they can be found; kiwi-story, samuroof and
-  kitty-katcher do.
-- A group that starts inactive is for a phase that begins later: tutorial,
-  a boss enabled on entry, debug tools (19 examples). Deactivating a group
-  stops its events and nothing else, so it is not a pause.
+  its own sheet (*Player*, *Enemies*, *HUD*, *Camera*, *Effects*, *Sound*),
+  which the screen's sheet includes (kiwi-story: eMain includes nine).
+- Globals are project-wide wherever declared. Declare them on one sheet
+  (*Globals*) so they can be found, as kiwi-story, samuroof and kitty-katcher
+  do.
+- If a phase begins later, its group starts inactive: a tutorial, a boss
+  enabled on entry, debug tools (19 examples). Deactivating a group stops its
+  events and nothing else, so it is not a pause.
 
 [manual: project-primitives/events/groups.md, includes.md, event-sheets.md
 "share events between layouts", variables.md "Global variables"; examples:
@@ -35,84 +35,84 @@ Construct-Example-Projects, 2026-09-18]
 
 ## Project
 
-- Pixel art at a 320×180 viewport, *Nearest* sampling, *Letterbox integer
-  scale*; otherwise 1920×1080 and *Trilinear*. A one-screen game's layout
-  is the viewport's size.
-- Colours by role, and few of them. The median pixel-art project draws its
-  art in 35 colours, 9 of them covering 95% of its opaque pixels, with hard
-  edges; each colour is there for something: the player, what hurts, what is
-  collected, the panels, the text. Labels come in one to three colours,
-  white in two of three, and in two sizes, rarely more than four. Every
-  label reads 4.5:1 against what is behind it, 3:1 from the title size up
-  (WCAG 2.2, 1.4.3). All 159 studio projects at 360 px or less sample
-  *Nearest*, 116 of them at *Letterbox integer scale*. The generator
-  template holds these as `PALETTE` and `rgb()`, the colour check of
-  `write_png()`, `FONT` and `TEXT_SIZE`, the contrast check of `hud_text()`,
-  and `PIXEL_ART`.
-- Until the art arrives, a generated game is a blockout: value carries the
-  hierarchy, from a light checker backdrop through a solid grey to ink, and
-  two accents mark what is collected and what hurts, each shown by its ink
+- Pixel art uses a 320×180 viewport, *Nearest* sampling and *Letterbox
+  integer scale*; other art 1920×1080 and *Trilinear*. A one-screen game's
+  layout is the viewport's size.
+- Use few colours, each for a role: the player, what hurts, what is
+  collected, the panels, the text. The median pixel-art project draws its art
+  with hard edges in 35 colours, and 9 of them cover 95% of its opaque
+  pixels. Labels use one to three colours, white in two of three, and two
+  sizes, rarely more than four. Every label has 4.5:1 contrast with what is
+  behind it, 3:1 from the title size up (WCAG 2.2, 1.4.3). All 159 studio
+  projects at 360 px or less sample *Nearest*, and 116 of them use *Letterbox
+  integer scale*. The generator template holds these as `PALETTE` and
+  `rgb()`, the colour check of `write_png()`, `FONT` and `TEXT_SIZE`, the
+  contrast check of `hud_text()`, and `PIXEL_ART`.
+- Until the art arrives, a generated game is a blockout. Lightness shows the
+  hierarchy, from a light checker backdrop through a solid grey to ink. Two
+  accents mark what is collected and what hurts, each shown by its ink
   outline. A rectangle is the player or structure, a circle what is
-  collected, a triangle what hurts; an area or an edge is a striped Tiled
+  collected, a triangle what hurts. An area or an edge is a striped Tiled
   Background, and objects stay flat. A level is a run of beats, each asking
   one thing, with a rest after every hard one. The generator template holds
   these as `PALETTE`, `shape()`, `PATTERNS`, `area()`, `backdrop()` and
   `BEATS`; the record is `docs/decisions/greybox-blockout.md`.
-- Positions and sizes on a grid: 8 px at 320×180 (three quarters of the
-  examples' x and five sixths of their widths sit on it), 32 px at
-  1920×1080 (half of their x, three fifths of their widths). Whole numbers,
-  angle 0 unless the object is meant to lean. The HUD is on the parallax-0
-  layer, held against a corner or an edge, one unit inside it (the
-  examples' edge offsets are 0, one unit or two); the middle of the screen
-  is the game's. A game shown on a TV keeps graphics 5% inside every edge
-  (EBU R95). A tapped object is at least a finger wide: 48 dp (Android
-  accessibility help), 44 pt (Apple HIG, *Accessibility*, the iOS default
-  control size), 44 px (WCAG 2.5.5), which is 48 × the viewport's shorter
-  side / 360 in viewport pixels, a phone showing that side across about
-  360 dp: 24 px at 320×180, 160 px at 1920×1080, with 8 dp between two
-  targets. A label's box is as wide as its longest text and reads towards
-  the edge it hangs on; a row of hearts is spaced by a unit; nothing on the
-  HUD overlaps or leaves the viewport. The generator template holds these
-  as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`, `hud_text()`, `row()` and
-  `no_overlap()`.
-- One `ObjectRepository` layout, no event sheet, one instance of every type
-  the events create; nothing else there. No global objects.
-- One sheet, `MainCode`, until about sixty types. Beyond that `GameEvents`,
-  `MenuEvents`, `CreditsEvents` per screen; subsystems (`PlayerEvents`,
-  `EnemyEvents`, `SoundEvents`) included; `Globals` for shared variables.
-- Object folders from about forty types, every type inside one and the
-  root empty: `System` (managers, camera, fader, input), `Player`, `World`,
-  `UI`, `Interactable`, `Global`, and one per extra screen (`MainMenu`,
-  `Credits`). One level. Below forty the list stays flat.
-- Layers bottom to top: `Background`, `World`, `UI` or `HUD` at parallax 0,
-  `Fader`; `Tutorial` on a layer of its own. Two or three per layout.
-- Collision apart from graphics. `PlayerCollision` is an invisible
-  one-colour Sprite carrying Platform or 8 Direction; `PlayerGraphics`
-  holds the animations and no behavior. The two are a container, and
-  *PlayerCollision: On created* sets the graphics' position and *Add child*
-  (X, Y, destroy with parent). Enemies the same, `EnemyCollision` with
-  `EnemyAnimations`. Ground is a Tilemap with Solid (`GroundCollision`)
-  under the art (`Background`, a Tiled Background); a shadow is a child
-  Sprite (`PlayerShadow`). Hierarchy, not Pin.
-- Movement behaviors run with *Default controls* off; the input events
-  call *Simulate control*.
-- What has no picture is a 16×16 one-colour Sprite, invisible, stretched
-  over its area when it has one: `GameManager` holding the Timers and value
-  Tweens the sheet reads; `Camera` with Scroll To (or Scroll To on
-  `PlayerCollision`); `Trigger`, `TeleportTrigger`, `FinishLine`,
-  `SpawnPoint`, `InvisibleWall` with Solid, tested with *On collision* or
-  *Is overlapping* and told apart by an instance variable.
-- `Fader`: a one-colour Tiled Background the size of the viewport on the
-  top layer, Tween opacity; *On tweens finished*: *Go to layout* or
-  *Restart layout*.
+- Positions and sizes use a grid: 8 px at 320×180 (three quarters of the
+  examples' x and five sixths of their widths sit on it), 32 px at 1920×1080
+  (half of their x, three fifths of their widths). Use whole numbers, angle 0
+  unless the object should lean. The HUD is on the parallax-0 layer, against
+  a corner or an edge, one unit inside it (the examples' edge offsets are 0,
+  one unit or two). The screen's middle is for the game. On a TV, graphics
+  stay 5% inside every edge (EBU R95). A tapped object is at least a finger
+  wide: 48 dp (Android accessibility help), 44 pt (Apple HIG,
+  *Accessibility*, the iOS default control size), 44 px (WCAG 2.5.5). In
+  viewport pixels that is 48 × the viewport's shorter side / 360, since a
+  phone shows that side across about 360 dp. Rounded up to a whole grid
+  unit, it is 24 px at 320×180 and 160 px at
+  1920×1080, with 8 dp between two targets. A label's box is as wide as its
+  longest text and aligned to the edge it is anchored to. A row of hearts is
+  spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. The
+  generator template holds these as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`,
+  `hud_text()`, `row()` and `no_overlap()`.
+- One `ObjectRepository` layout, with no event sheet, holds one instance of
+  every type the events create, nothing else. No object is global.
+- `MainCode` is the only sheet up to about sixty types. Beyond that each
+  screen has a sheet (`GameEvents`, `MenuEvents`, `CreditsEvents`),
+  subsystems have included ones (`PlayerEvents`, `EnemyEvents`,
+  `SoundEvents`), and `Globals` holds shared variables.
+- From about forty types, every type is in an object folder, one level deep,
+  and the root is empty: `System` (managers, camera, fader, input), `Player`,
+  `World`, `UI`, `Interactable`, `Global`, and one per extra screen
+  (`MainMenu`, `Credits`). Below forty, the list stays flat.
+- Layers, bottom to top: `Background`, `World`, `UI` or `HUD` at parallax 0,
+  and `Fader`; `Tutorial` has its own layer. A layout has two or three.
+- Collision is apart from graphics. `PlayerCollision` is an invisible
+  one-colour Sprite with Platform or 8 Direction, and `PlayerGraphics` holds
+  the animations and no behavior. The two are a container; *PlayerCollision:
+  On created* sets the graphics' position and calls *Add child* (X, Y,
+  destroy with parent). Enemies too: `EnemyCollision` with `EnemyAnimations`.
+  Ground is a Tilemap with Solid (`GroundCollision`) under the art
+  (`Background`, a Tiled Background). A shadow is a child Sprite
+  (`PlayerShadow`). Use a hierarchy, not Pin.
+- Movement behaviors run with *Default controls* off; the input events call
+  *Simulate control*.
+- What has no picture is an invisible 16×16 one-colour Sprite, stretched over
+  its area if it has one. `GameManager` holds the Timers and value Tweens the
+  sheet reads. `Camera` has Scroll To (or Scroll To on `PlayerCollision`).
+  `Trigger`, `TeleportTrigger`, `FinishLine`, `SpawnPoint`, `InvisibleWall`
+  with Solid are tested with *On collision* or *Is overlapping* and told
+  apart by an instance variable.
+- `Fader` is a viewport-sized one-colour Tiled Background on the top layer,
+  with Tween on opacity. *On tweens finished* runs *Go to layout* or *Restart
+  layout*.
 - A light is a one-colour Sprite with *Additive* blend, soft-edged by a Glow
-  or Blur effect; darkness is a `Darkness` sprite or layer with
-  *Destination out* holes, on a layer with *Force own texture*.
-- Text is a SpriteFont in two games of three, the Text plugin in the third,
-  never both in one project.
-- Feel comes from behaviors: Tween on almost everything, a fade included
-  (Tween on Opacity), Timer, Sine, Flash, Rotate, Bullet, Particles; the
-  effects used are HSL adjust, Glow, Blur, Warp object.
-- Families for Z order (`ZOrderables`) and enemies; containers for the
-  collision and graphics pair and for an enemy with its parts. The player's
+  or Blur effect. Darkness is a `Darkness` sprite or layer with *Destination
+  out* holes, on a layer with *Force own texture*.
+- Two games of three use SpriteFont for text, the third the Text plugin. No
+  project uses both.
+- Behaviors make the feel: Tween on almost everything, a fade included (Tween
+  on Opacity), Timer, Sine, Flash, Rotate, Bullet, Particles. The effects
+  used are HSL adjust, Glow, Blur, Warp object.
+- Families serve Z order (`ZOrderables`) and enemies. Containers hold the
+  collision and graphics pair, and an enemy with its parts. The player's
   instance variables are `hp`, `maxHp`, `dead`.
