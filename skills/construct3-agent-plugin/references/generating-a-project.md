@@ -99,6 +99,14 @@ habits; they are what makes rerunning safe.
   block of the common behaviors (`SINE`, `BULLET`, `PLATFORM` ...) with the
   editor's keys; one it lacks is copied from an instance of an official
   example, under the behavior's name on that object (`"Sine"`, not `"Sin"`).
+- A table of records, cards, enemies, levels, is a project file, not events
+  that add keys: `dictionary_file("Cards", {"strike.cost": 1, ...})`, one
+  flat key `<id>.<field>` per value, or `array_file(name, table)`, where
+  `table[x][y]` is `At(x, y)`, both in `build_files()`; the object is a
+  `nonworld_type()` with a `nonworld_inst()` in the layout, and
+  `load_data_file("Cards", "Cards.json")` gives the three actions that
+  load it, first in that layout's *On start*, the AJAX object added with
+  them.
 - `random.seed(...)` before the first `sid()`: a rerun then produces the same
   ids and the diff shows only what changed.
 - One helper per ACE, named for what it does, its parameters in the
