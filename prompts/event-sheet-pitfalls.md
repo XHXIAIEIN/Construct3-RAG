@@ -126,7 +126,7 @@ Touch together, must tell a finger from a mouse, or hide what can be pressed.
 
 - Mouse ignores fingers: tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too: detect the input method with it off.
-- Touching or clicking an object presses it invisible or with collisions disabled: test *Is visible*, or set its layer not interactive.
+- Touch and Mouse press an object that is invisible or has collisions disabled: add *Is visible* to the event, or set its layer not interactive.
 
 ### Audio
 

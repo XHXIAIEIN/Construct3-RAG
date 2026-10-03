@@ -32,10 +32,8 @@ where Web Audio lives).
   sounds", "Schedule next play"; runtime: main.js `_Play` adds the offset to
   the clock when the message arrives and awaits `_GetAudioInstance` before
   the instance's `Play`, the buffer instance calls `start(when, offset)`,
-  the media instance's `Play` ignores its time argument; measured on a game
-  project's web export, Fast 4G and 4x CPU slowdown, 2026-10-03: with the
-  audio preload list emptied the game started at 4.49 s instead of 6.35 s;
-  the late start of layers is read from the runtime, not observed]
+  the media instance's `Play` ignores its time argument; read from the
+  r504 runtime, not observed in play]
 - The audio clock does not run until the first `pointerup`, `touchend`,
   `click`, `keydown` or gamepad input: in *On any touch start* `CurrentTime`
   is still stopped, and sounds played before then queue and start together at

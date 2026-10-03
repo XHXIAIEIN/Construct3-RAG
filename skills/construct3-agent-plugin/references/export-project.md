@@ -60,7 +60,7 @@ closes it after the export.
   attach to a browser.
 
 After an export by hand, set `project.c3proj` back to the exported version,
-or export again with the script (last bullet below).
+or export again with the script (the *Auto-increment version* bullet below).
 
 ## What the editor does
 

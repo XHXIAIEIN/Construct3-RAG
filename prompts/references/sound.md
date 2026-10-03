@@ -23,8 +23,8 @@ The role decides the rule:
   at most a beat, or dropped.
 - One strike per cell. A hit scheduled for a cell is dropped when a crit
   comes for it, and both are dropped while a kill holds the cell.
-- A sound the grid places that is not a strike, an enemy appearing or the
-  first landing of a stage, holds its cell too: hits, crits and auto-merges
+- A sound the grid places that is not a strike (an enemy appearing, the
+  first landing of a stage) holds its cell too: hits, crits and auto-merges
   skip it, or two files start on one sample and their peaks add. Claim the
   cell when its moment is first known, as the stage is laid out, not in the
   frame it plays: strikes are queued as soon as an attack is due, up to
