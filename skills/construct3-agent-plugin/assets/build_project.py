@@ -1579,7 +1579,7 @@ def build_all() -> None:
     sheet = build_event_sheet()
     squash_the_art(types, families)
     write_json(f"eventSheets/{sheet['name']}.json", sheet)
-    with c3proj.open(encoding="utf-8") as f:
+    with c3proj.open(encoding="utf-8-sig") as f:
         existing = json.load(f)
     write_json("project.c3proj", build_project(
         existing, types, families, containers, layouts, [sheet["name"]]))
