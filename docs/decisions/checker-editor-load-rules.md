@@ -43,6 +43,11 @@ Option 2 as the default, and option 3 as the step after it.
 - A rule becomes an error only after a run over the official examples adds
   no finding. *Trigger once* and *Every X seconds* in a triggered branch
   occur in official examples that open, so they are a warning.
+- Text literals were probed on 2026-10-03 in a text and a number parameter:
+  an empty parameter stopped the editor with `Empty expression`, an
+  unclosed literal with `String missing finishing "`, a backslash outside a
+  literal with `Unknown character`, and `"a\b"` opened. The sweep added no
+  finding.
 - A function's return type decides how it is reached, probed on 2026-10-03:
   one returning a number called as an action stopped the editor with
   `function 'Two' has wrong return type`, the same read in an expression

@@ -636,7 +636,18 @@ class Checker:
         p = self.p
         if not isinstance(expr, str):
             return
+        if not expr.strip():
+            self.err(f"{where}: the expression is empty; the editor stops with \"Empty expression: You must enter an "
+                     f"expression\". Empty text is the literal \"\" (\"\\\"\\\"\" in the JSON), a number 0")
+            return
+        if expr.count('"') % 2:     # a quote inside a literal is doubled, so an odd count leaves one open
+            self.err(f"{where}: a text literal is not closed; the editor stops with \"Syntax error: String missing "
+                     f"finishing \\\"\". A quote inside text is doubled: \"say \"\"hi\"\"\"")
+            return
         text = STRING_LITERAL.sub('""', expr)
+        if "\\" in text:
+            self.err(f"{where}: a backslash stands outside a text literal; the editor stops with \"Syntax error: "
+                     f"Unknown character\". Inside text it is a plain character: Construct has no escapes")
         scope_lower = {LOWER(k) for k in scope}
         found = [m.group(0) for m in C_OPERATOR.finditer(text)]
         if found:

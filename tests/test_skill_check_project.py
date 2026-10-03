@@ -690,6 +690,16 @@ def test_a_function_is_reached_as_its_return_type_says(project, returns, use, sa
     assert said in out, out
 
 
+@pytest.mark.parametrize("text, said", [
+    ("", "Empty expression"), ('"Score: ', "String missing finishing"), ("1 \\ 2", "Unknown character"),
+    ('"a\\b"', None),
+])
+def test_text_literals_as_the_editor_parses_them(project, text, said):
+    act = {"id": "set-text", "objectClass": "ScoreText", "sid": 4, "parameters": {"text": text}}
+    out = findings(project, lambda s: s["events"].append(block([cond("on-start-of-layout")], [act])))
+    assert (said in out) if said else out.splitlines()[-1].startswith("ok:"), out
+
+
 def test_instance_without_uid_is_reported_not_raised(project):
     out = findings(project, lambda lay: lay["layers"][0]["instances"][0].pop("uid"), "layouts/Objects.json")
     assert "instance of Coin has no integer uid" in out
