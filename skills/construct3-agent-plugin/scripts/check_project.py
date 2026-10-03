@@ -192,6 +192,15 @@ PACING = {("system", "every-x-seconds"), ("system", "trigger-once-while-true")}
 # empty space; with Enable BBCode on, the tags are markup, not characters, and \[ is a bracket.
 SPRITE_FONT_TEXT = ("set-text", "append-text", "typewriter-text")
 BBCODE_TAG = re.compile(r"(?<!\\)\[/?[a-z]+(?:=[^\]]*)?\]", re.I)
+# What the r495.2 editor reads for a Sprite Font instance that leaves these properties out, asked of the
+# editor on 2026-10-03. They fit the editor's own font image; the Character set maps its cells from the
+# top-left. Enable BBCode left out reads as off.
+SPRITE_FONT_DEFAULTS = {
+    "character-set": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,;:?!-_~#\"'&()[]|`\\/@"
+                     "°+=*$£€<>",
+    "character-width": 16,
+    "character-height": 16,
+}
 # Actions that name an effect by its name on the object, the layer or the layout. A name the target lacks
 # runs and changes nothing.
 EFFECT_ACTIONS = {"set-effect-parameter", "set-effect-enabled", "set-layer-effect-parameter", "set-layer-effect-enabled",
@@ -746,11 +755,19 @@ class Checker:
             self.err(f"{where}: {t} has no animation {initial!r} for initial-animation")
 
     def check_sprite_font_instance(self, where: str, t: str, props: dict) -> None:
-        """Records the characters this instance draws, for the type's Set text actions, and checks its own text."""
-        charset = props.get("character-set")
+        """Records the characters this instance draws, for the type's Set text actions, and checks its own text.
+        A property the instance leaves out is read as the editor fills it."""
+        missing = [k for k in SPRITE_FONT_DEFAULTS if k not in props]
+        if missing:
+            self.warn(f"{where}: {t} instance has no {', '.join(missing)}; the editor fills "
+                      + ", ".join(f"{k} {json.dumps(SPRITE_FONT_DEFAULTS[k], ensure_ascii=False)}" for k in missing)
+                      + ", which fit the font image the editor draws for a new Sprite Font. Write what this font "
+                        "image has: character-set, the characters in the order its cells draw them, left to right "
+                        "and top to bottom; character-width and character-height, one cell in pixels")
+        charset = props.get("character-set", SPRITE_FONT_DEFAULTS["character-set"])
         if not isinstance(charset, str):
             return
-        bbcode = props.get("enable-bbcode", True) is not False
+        bbcode = props.get("enable-bbcode", False) is not False
         chars, any_bbcode = self.font_sets.get(t, (set(), False))
         self.font_sets[t] = (chars | set(charset), any_bbcode or bbcode)
         text = props.get("text")

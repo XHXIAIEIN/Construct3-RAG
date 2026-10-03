@@ -70,7 +70,13 @@ Traps of the running game are warnings:
 - text a Sprite Font cannot draw, in a layout instance's text or in a
   literal that *Set text*, *Append text* or *Typewriter text* joins at the
   top level of its expression: a character outside the Character set shows
-  as an empty space; with *Enable BBCode* on, the tags are not counted;
+  as an empty space; with *Enable BBCode* on, the tags are not counted. An
+  instance without a Character set is read with the editor's default set,
+  and one without *Enable BBCode* with it off, as the editor reads them;
+- a Sprite Font instance without *Character set*, *Character width* or
+  *Character height*: the editor fills the values that fit its own font
+  image, so an image drawn in another order or cell size shows the wrong
+  characters;
 - `find` or `findcase` whose first argument is a one-character text literal
   and whose second is not a literal: `find(text, find)` searches the first,
   so `find("^", LASTPOP)` is -1 unless `LASTPOP` is `^` or empty. None of

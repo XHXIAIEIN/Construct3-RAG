@@ -952,8 +952,8 @@ def test_a_function_that_picks_what_an_earlier_call_created_is_named(project, ro
     assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
 
 
-def sprite_font_label(project, text: str, bbcode: bool = True) -> None:
-    """A Sprite Font Label on the Objects layout, drawing capitals, digits and the space."""
+def sprite_font_label(project, text: str, bbcode: bool = True, properties: dict | None = None) -> None:
+    """A Sprite Font Label on the Objects layout, drawing capitals, digits and the space, or with `properties`."""
     (project / "objectTypes" / "Label.json").write_text(json.dumps({
         "name": "Label", "plugin-id": "Spritefont2", "sid": 21, "instanceVariables": [], "behaviorTypes": [],
         "effectTypes": []}), encoding="utf-8")
@@ -962,8 +962,9 @@ def sprite_font_label(project, text: str, bbcode: bool = True) -> None:
 
     def place(d):
         inst = json.loads(json.dumps(d["layers"][0]["instances"][0]))
-        inst.update(type="Label", uid=22, sid=23, instanceVariables={}, behaviors={}, properties={
-            "text": text, "character-set": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ", "enable-bbcode": bbcode})
+        inst.update(type="Label", uid=22, sid=23, instanceVariables={}, behaviors={}, properties=properties or {
+            "text": text, "character-set": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ", "enable-bbcode": bbcode,
+            "character-width": 8, "character-height": 8})
         d["layers"][0]["instances"].append(inst)
     edit(project, "layouts/Objects.json", place)
 
@@ -989,6 +990,37 @@ def test_text_a_sprite_font_cannot_draw_is_named(project, layout_text, bbcode, a
     said_lines = [w for w in warnings(out) if "plugin-reference/sprite-font.md" in w]
     assert out.splitlines()[-1].startswith("ok:"), out
     assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+
+
+@pytest.mark.parametrize("properties, said", [
+    ({"text": "Score: 0"}, None),
+    ({"text": "Score ★ 0"}, "'★' is not in the Character set of the Sprite Font Label"),
+    ({"text": "Score {0}"}, "'{', '}' are not in the Character set"),
+])
+def test_a_sprite_font_without_its_character_set_reads_the_editors(project, properties, said):
+    """The r495.2 editor fills a left-out Character set, cell size and Enable BBCode with its defaults (asked of
+    the editor, 2026-10-03), so the text is checked against them and the missing properties are named."""
+    sprite_font_label(project, "", properties=properties)
+    out = findings(project, lambda s: None)
+    said_lines = [w for w in warnings(out) if "plugin-reference/sprite-font.md" in w]
+    assert out.splitlines()[-1].startswith("ok:"), out
+    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+    named = [w for w in warnings(out) if "Label instance has no character-set, character-width, character-height" in w]
+    assert len(named) == 1 and '"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' in named[0], out
+
+
+def test_a_sprite_font_with_its_character_set_is_not_named_for_it(project):
+    sprite_font_label(project, "SCORE 0")
+    assert not [w for w in warnings(findings(project, lambda s: None)) if "instance has no character-set" in w]
+
+
+def test_a_sprite_font_without_enable_bbcode_draws_the_tags(project):
+    """Enable BBCode left out reads as off in the r495.2 editor, so a tag is text the font draws."""
+    sprite_font_label(project, "", properties={
+        "text": "[b]SCORE[/b]", "character-set": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ",
+        "character-width": 8, "character-height": 8})
+    said = [w for w in warnings(findings(project, lambda s: None)) if "plugin-reference/sprite-font.md" in w]
+    assert len(said) == 1 and "'[', 'b', ']', '/' are not in" in said[0], said
 
 
 def set_effect(obj: str = "Coin", name: str = "AdjustHSL") -> dict:
