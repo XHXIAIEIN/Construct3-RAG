@@ -16,6 +16,12 @@ exports it to Web (HTML5) as a zip with Offline support, Deduplicate images
 and Optimize images on, and unpacks the zip into `--to`, replacing what was
 there.
 
+The copy handed to the editor sets *Use worker* to Auto, so the engine
+decides: a worker, unless the project has a script or an addon without worker
+support. `project.c3proj` keeps its own setting, so a project set to No for a
+test previews in the page and still exports with Auto. The last line says
+where the export's runtime starts, read from the main.js it holds.
+
 The version: `--bump` takes the export already in `--to` and adds one to its
 last number, or takes the project's Version when that is greater;
 `--version 1.2.0.0` names it; without either the export carries the
