@@ -371,6 +371,10 @@ def test_template_places_the_hud_on_the_grid(built):
     timer = t.hud_text("TimerText", "Time: 30", "top-right")
     assert (timer["world"]["x"], timer["world"]["y"], timer["world"]["width"], timer["world"]["height"]) == (528, 32, 160, 64)
     assert timer["properties"]["horizontal-alignment"] == "right"
+    # A wide character is about 1 em, so a Chinese label's box holds its characters at full size.
+    assert t.text_ems("Time: 30") == 4.8 and t.text_ems("结束回合，") == 5
+    banner = t.hud_text("MapTitle", "地图", "top", size=48, longest="选择前进之路")
+    assert banner["world"]["width"] >= len("选择前进之路") * 48
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
     score = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "ScoreText")["world"]
     assert (score["x"], score["y"], score["width"], score["height"]) == (32, 32, 192, 64)

@@ -32,6 +32,7 @@ import random
 import struct
 import subprocess
 import sys
+import unicodedata
 import zlib
 from pathlib import Path
 
@@ -1319,17 +1320,24 @@ def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, siz
                     world(x, y, w, h, 0, 0), ivars, behaviors)
 
 
+def text_ems(text: str) -> float:
+    """The width of `text` in em: an East Asian wide or full-width character (Chinese,
+    Japanese, Korean, the full-width comma and colon) is about 1 em, any other about
+    0.6 em, so text_ems(s) * size is the width of s in px at that size."""
+    return round(sum(1.0 if unicodedata.east_asian_width(c) in ("W", "F") else 0.6 for c in text), 6)
+
+
 def hud_text(otype: str, text: str, where: str, size: float | None = None, longest: str | None = None,
              bold: bool = True, color: str = "ink", on: str = "canvas_alt", dx: float = 0, dy: float = 0,
              ivars=None, behaviors=None) -> dict:
     """A HUD label held against an edge or corner by anchor(). Its box is as wide as its
-    longest text (about 0.6 em a character, rounded up to a unit) and the text is aligned to
+    longest text (text_ems() at the size, rounded up to a unit) and the text is aligned to
     the side the box hangs on, so a right-hand label grows leftwards and two labels on one
     edge never meet. `longest` is the widest text the label shows at runtime, "Score: 999"
     for a label that starts as "Score: 0". The size is TEXT_SIZE["body"] unless a banner
     asks for TEXT_SIZE["title"]; color and on are roles of PALETTE, as for text_inst()."""
     size = size or TEXT_SIZE["body"]
-    w = math.ceil(len(longest or text) * size * 0.6 / UNIT) * UNIT
+    w = math.ceil(text_ems(longest or text) * size / UNIT) * UNIT
     h = math.ceil(size * 1.5 / UNIT) * UNIT
     halign = {"left": "left", "middle": "center", "right": "right"}[sides(where)[1]]
     x, y = anchor(where, w, h, 0, 0, dx, dy)
