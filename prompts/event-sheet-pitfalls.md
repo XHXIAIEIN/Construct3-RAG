@@ -122,11 +122,14 @@ when the events place, move or rotate objects or read the viewport.
 ### Input
 
 Read [pitfalls/input.md](pitfalls/input.md) when the events use Mouse and
-Touch together, must tell a finger from a mouse, or hide what can be pressed.
+Touch together, must tell a finger from a mouse, hide what can be pressed,
+bind keys, or ask the browser for fullscreen, a permission or a picker.
 
 - Mouse ignores fingers: tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too: detect the input method with it off.
 - Touch and Mouse press an object that is invisible or has collisions disabled: add *Is visible* to the event, or set its layer not interactive.
+- W, A, S and D alone do not fit an AZERTY keyboard: give each direction its arrow key too.
+- The browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger until the player touches, clicks or presses a key: put them in an *On tap*, *On click* or *On key pressed* event.
 
 ### Audio
 
