@@ -90,8 +90,8 @@ def collect_tween(sheet: dict) -> dict:
 
 
 def warnings(out: str) -> list[str]:
-    """The checker's warning lines, less the notice that Pillow, which is optional, is missing."""
-    return [line for line in out.splitlines() if line.startswith("warning:") and "Pillow is not installed" not in line]
+    """The checker's warning lines."""
+    return [line for line in out.splitlines() if line.startswith("warning:")]
 
 
 def findings(root: Path, change, rel: str = SHEET) -> str:

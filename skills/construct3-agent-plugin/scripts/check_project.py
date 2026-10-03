@@ -31,11 +31,6 @@ from typing import NamedTuple
 import c3project as c3
 from c3project import LOWER, NUMBERED, closest, describe, folder_items, squash
 
-try:
-    from PIL import Image
-except ImportError:
-    Image = None
-
 # Names. The editor passes every name through a filter when it opens the
 # project and keeps the result, so a name the filter changes no longer matches
 # the events that use it; and it refuses a name that is reserved or already
@@ -48,9 +43,17 @@ EVENT_TEXT = (("comment", "text", "Cannot read properties of undefined (reading 
               ("group", "description", "expected string"),
               ("variable", "comment", "expected string"))
 FUNCTION_RETURN_TYPES = ("none", "number", "string", "any")
-# rootFileFolders kind -> the folder the editor saves its files in, as the official examples hold them.
+# rootFileFolders kind -> the folder the editor saves its files in, as Scirra's guide
+# "Construct's project format" lists them.
 ROOT_FILE_FOLDERS = {"general": "files", "icon": "icons", "sound": "sounds", "music": "music",
-                     "font": "fonts", "script": "scripts"}
+                     "video": "videos", "font": "fonts", "script": "scripts"}
+# The folders whose files project.c3proj lists by name, one JSON file each. The editor reads only
+# what the project lists and ignores any other file there; scripts/ is left out of that check,
+# since the editor keeps unlisted TypeScript copies and definitions in it for an external editor.
+RESOURCE_FOLDERS = ("objectTypes", "families", "layouts", "eventSheets", "timelines", "flowcharts")
+UNLISTED_ROOT_FILES = ("general", "icon", "sound", "music", "video", "font")
+# Sound and music are WebM Opus; the editor converts what it imports.
+AUDIO_TYPE = "audio/webm; codecs=opus"
 # how a layout instance writes the value of an instance variable of each type
 JSON_TYPES = {"number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
               "string": lambda v: isinstance(v, str), "boolean": lambda v: isinstance(v, bool)}
@@ -236,9 +239,10 @@ def effect_names(holder: dict) -> set[str]:
 
 
 def frames_of(folder, prefix=""):
+    """(file name without its extension, frame) for every frame of an animations folder."""
     for anim in folder.get("items", []):
         for i, fr in enumerate(anim["frames"]):
-            yield f"{prefix}{anim['name'].lower()}-{i:03d}.png", fr
+            yield f"{prefix}{anim['name'].lower()}-{i:03d}", fr
     for sub in folder.get("subfolders", []):
         yield from frames_of(sub, prefix)
 
@@ -506,12 +510,19 @@ class Checker:
                     self.err(f"container {c.get('members')}: member {m} is not an object type")
 
     # --- images: {type}-{animation}-{frame:03d}.png per frame, {type}.png for single-image plugins ---
-    def check_image(self, rel: str, width: int, height: int) -> None:
-        path = self.p.root / "images" / rel
-        if not path.exists():
-            self.err(f"missing image {rel}")
-        elif Image is not None and Image.open(path).size != (width, height):
-            self.err(f"{rel}: the object type says {width}x{height}, the file is {Image.open(path).size}")
+    def check_image(self, stem: str, entry: dict) -> None:
+        """The image file of a frame or a single-image type. Its size is not compared with the
+        entry's width and height: the editor takes the size from the file. An image imported in a
+        lossy format and not edited since keeps that format, which the entry's fileType names."""
+        folder = self.p.root / "images"
+        file_type = entry.get("fileType") or "image/png"
+        if (folder / f"{stem}.png").exists():
+            return
+        if file_type != "image/png" and folder.is_dir() and any(f.stem.lower() == stem for f in folder.iterdir()):
+            return
+        shown = f"images/{stem}.png" if file_type == "image/png" else f"images/{stem} as {file_type}"
+        self.err(f"missing image {shown}: the editor reads a frame from images/<object type>-<animation>-<frame "
+                 f"number, three digits>.png and a single image from images/<object type>.png, in lower case")
 
     def check_animations(self) -> None:
         for name, t in self.p.types.items():
@@ -521,13 +532,11 @@ class Checker:
                          f"\"Default\", \"frames\": [...], \"sid\": <n>}}], \"subfolders\": []}}")
 
     def check_images(self) -> None:
-        if Image is None:
-            self.warn("Pillow is not installed: image sizes are not compared with the frames")
         for name, t in self.p.types.items():
-            if "image" in t:
-                self.check_image(f"{name.lower()}.png", t["image"]["width"], t["image"]["height"])
-            for rel, fr in frames_of(t.get("animations", {}), f"{name.lower()}-"):
-                self.check_image(rel, fr["width"], fr["height"])
+            if isinstance(t.get("image"), dict):
+                self.check_image(name.lower(), t["image"])
+            for stem, fr in frames_of(t.get("animations", {}), f"{name.lower()}-"):
+                self.check_image(stem, fr)
 
     # --- layouts ----------------------------------------------------------------------------
     def collect_sids(self, obj, in_ace: bool = False) -> None:
@@ -1800,14 +1809,23 @@ class Checker:
 
     def check_files_and_addons(self) -> None:
         p = self.p
+        root_files = p.data.get("rootFileFolders", {})
         # The editor opens every listed file and stops with "missing file path 'icons\icon-16.png'".
         for kind, directory in ROOT_FILE_FOLDERS.items():
-            for name, folder in folder_items(p.data.get("rootFileFolders", {}).get(kind, {})):
+            for name, folder in folder_items(root_files.get(kind, {})):
                 fname = name["name"] if isinstance(name, dict) else name
                 if not (p.root / directory / folder / fname).exists():
                     shown = (Path(directory) / folder / fname).as_posix()
                     self.err(f"{kind} file {fname} is listed in project.c3proj but {shown} is missing; the editor "
                              f"stops with \"missing file path\". Add the file, or take it out of rootFileFolders")
+                if kind in ("sound", "music") and not LOWER(fname).endswith(".webm"):
+                    stem = Path(fname).stem
+                    self.warn(f"{kind} file {fname} is not WebM Opus (.webm), the format a project's sound and music "
+                              f"are in; the editor opens it, and whether it plays depends on the browser. Encode it, "
+                              f"ffmpeg -i {fname} -c:a libopus {stem}.webm, and list {stem}.webm with \"type\": "
+                              f"\"{AUDIO_TYPE}\", or import the file in the editor, which converts it")
+        self.check_scripts(root_files.get("script", {}))
+        self.check_unlisted(root_files)
 
         addon_ids = {a["id"] for a in p.data.get("usedAddons", [])}
 
@@ -1826,6 +1844,54 @@ class Checker:
                 need_addon(b["behaviorId"], f"family {name}")
             for e in f.get("effectTypes", []):
                 need_addon(e.get("effectId", e.get("id", "")), f"family {name}")
+
+    def check_scripts(self, scripts: dict) -> None:
+        """A script listed as both .ts and .js: Construct runs the .js and ignores the .ts."""
+        kinds: dict[str, set[str]] = {}
+        shown: dict[str, str] = {}
+        for name, folder in folder_items(scripts):
+            fname = name["name"] if isinstance(name, dict) else name
+            if not isinstance(fname, str):
+                continue
+            path = (folder / fname).with_suffix("").as_posix()
+            kinds.setdefault(LOWER(path), set()).add(LOWER(Path(fname).suffix))
+            shown.setdefault(LOWER(path), path)
+        for key, suffixes in sorted(kinds.items()):
+            if {".ts", ".js"} <= suffixes:
+                self.warn(f"scripts/{shown[key]}.ts and scripts/{shown[key]}.js are both listed; Construct runs the "
+                          f".js and ignores the .ts, so an edit to the .ts changes nothing. List the .ts alone when "
+                          f"Construct compiles the TypeScript, the .js alone when an external editor does")
+
+    def check_unlisted(self, root_files: dict) -> None:
+        """A file in a folder of the project that project.c3proj does not list: the editor
+        reads only what the project lists and ignores the rest."""
+        p = self.p
+        for kind in RESOURCE_FOLDERS:
+            folder = p.root / kind
+            if not folder.is_dir():
+                continue
+            listed = {LOWER(n) for n, _ in folder_items(p.data.get(kind) or {}) if isinstance(n, str)}
+            for f in sorted(folder.rglob("*.json")):
+                rel = f.relative_to(folder)
+                if f.name.endswith(".uistate.json") or "uistate" in rel.parts[:-1] or LOWER(f.stem) in listed:
+                    continue
+                self.warn(f"{kind}/{rel.as_posix()} is not listed in project.c3proj, so the editor ignores it: if "
+                          f"the project uses it, add \"{f.stem}\" to the \"{kind}\" items")
+        for kind in UNLISTED_ROOT_FILES:
+            directory = ROOT_FILE_FOLDERS[kind]
+            folder = p.root / directory
+            if not folder.is_dir():
+                continue
+            listed = {LOWER((sub / (n["name"] if isinstance(n, dict) else n)).as_posix())
+                      for n, sub in folder_items(root_files.get(kind) or {})
+                      if isinstance(n, str) or isinstance(n, dict) and isinstance(n.get("name"), str)}
+            for f in sorted(folder.rglob("*")):
+                rel = f.relative_to(folder)
+                if f.is_file() and not f.name.endswith(".uistate.json") and LOWER(rel.as_posix()) not in listed:
+                    self.warn(f"{directory}/{rel.as_posix()} is not listed in project.c3proj, so the editor ignores "
+                              f"it: if the project uses it, import it in the editor, or add an entry for "
+                              f"\"{f.name}\" to the rootFileFolders \"{kind}\" items, written like the entries the "
+                              f"editor saved there")
 
     def report(self) -> int:
         """Warnings, then problems, then the line that says how it went. A report

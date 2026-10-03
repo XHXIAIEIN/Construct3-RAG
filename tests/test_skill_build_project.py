@@ -15,7 +15,7 @@ def test_stand_in_project_passes_without_warnings(built):
     code, out = check(built)
     assert code == 0, out
     assert out.startswith("ok:") or "\nok:" in out
-    assert [line for line in out.splitlines() if line.startswith("warning:") and "Pillow" not in line] == []
+    assert warnings(out) == [], out
 
 
 def test_template_behavior_blocks_hold_the_schemas_keys():

@@ -13,7 +13,7 @@ def test_stand_in_project_passes_the_style_check(built):
     """The template is the shape the style asks for, so a generated project starts clean."""
     code, out = check(built, "--style")
     assert code == 0, out
-    assert [line for line in out.splitlines() if line.startswith("warning:") and "Pillow" not in line] == []
+    assert warnings(out) == [], out
 
 
 def test_style_findings_come_only_when_asked(project):

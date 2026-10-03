@@ -1,7 +1,7 @@
 ---
 name: construct3-agent-plugin
 description: Check, read, look up and generate the JSON of a Construct 3 folder project (project.c3proj, eventSheets, layouts, objectTypes, families) against the Construct3-RAG schemas and the rules the Construct 3 editor applies when it opens a project. Use this skill whenever you write or edit an event sheet or any other project file of a Construct 3 game, need the exact id, parameters and JSON of a condition, action or expression, want to read an event sheet or an official example as events instead of JSON, generate a whole project from a script, or the editor refuses to open or preview a project, even if the user only says "add a mechanic", "fix this event" or pastes an editor error.
-compatibility: Requires Python 3.10+ and a local clone of Construct3-RAG, whose data/c3-schemas the scripts read. Pillow is optional and only compares image sizes. Opening the project in the editor takes a network connection and Edge, Chrome or Chromium, or a browser tool of the agent.
+compatibility: Requires Python 3.10+ and a local clone of Construct3-RAG, whose data/c3-schemas the scripts read. Pillow is optional and only joins a preview recording into a GIF where ffmpeg is missing. Opening the project in the editor takes a network connection and Edge, Chrome or Chromium, or a browser tool of the agent.
 metadata:
   source: https://github.com/XHXIAIEIN/Construct3-RAG
 ---

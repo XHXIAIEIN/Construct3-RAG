@@ -355,13 +355,91 @@ def test_event_text_keys_return_type_and_ace_type_are_the_editors(project):
     assert "aceType 'condition' should be \"action\"" in out
 
 
-def test_a_listed_root_file_exists_in_its_folder(project):
-    """The editor opens every file rootFileFolders lists: "missing file path 'icons\\icon-16.png'"."""
+@pytest.mark.parametrize("kind, entry, said", [
+    ("icon", {"name": "icon-512.png", "type": "image/png", "sid": 7, "icon-info": {"purpose": "app-icon"}},
+     "icon file icon-512.png is listed in project.c3proj but icons/icon-512.png is missing"),
+    ("video", {"name": "clip.webm", "type": "video/webm", "sid": 7, "file-info": {"purpose": "none"}},
+     "video file clip.webm is listed in project.c3proj but videos/clip.webm is missing"),
+])
+def test_a_listed_root_file_exists_in_its_folder(project, kind, entry, said):
+    """The editor opens every file rootFileFolders lists: "missing file path 'icons\\icon-16.png'", and
+    "missing file path 'videos\\clip.webm'" in the stable editor, 2026-10-03."""
     def change(d):
-        d.setdefault("rootFileFolders", {}).setdefault("icon", {"items": [], "subfolders": []})["items"].append(
-            {"name": "icon-512.png", "type": "image/png", "sid": 7, "icon-info": {"purpose": "app-icon"}})
+        d.setdefault("rootFileFolders", {}).setdefault(kind, {"items": [], "subfolders": []})["items"].append(entry)
     out = findings(project, change, "project.c3proj")
-    assert "icon file icon-512.png is listed in project.c3proj but icons/icon-512.png is missing" in out, out
+    assert said in out, out
+
+
+def test_a_frame_whose_size_differs_from_its_image_passes(project):
+    """The editor takes an image's size from the file and ignores the width and height of its
+    entry (Scirra's guide "Construct's project format"); a copy of an example with a frame's
+    size changed opened and previewed in the stable editor, 2026-10-03."""
+    def change(t):
+        frame = t["animations"]["items"][0]["frames"][0]
+        frame["width"], frame["height"] = frame["width"] * 3 + 7, frame["height"] * 2 + 5
+    out = findings(project, change, "objectTypes/Coin.json")
+    assert warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
+
+
+@pytest.mark.parametrize("file_type, missing", [("image/jpeg", False), ("image/png", True)])
+def test_an_image_kept_in_a_lossy_format_is_found_by_its_file_type(project, file_type, missing):
+    """An image imported as JPEG, AVIF or WebP and not edited keeps its format, which the
+    entry's fileType names."""
+    (project / "images" / "coin-default-000.png").rename(project / "images" / "coin-default-000.jpg")
+    out = findings(project, lambda t: t["animations"]["items"][0]["frames"][0].update(fileType=file_type),
+                   "objectTypes/Coin.json")
+    assert ("missing image images/coin-default-000.png: the editor reads a frame from images/<object type>-"
+            in out) == missing, out
+
+
+def test_a_file_project_c3proj_does_not_list_is_named(project):
+    """The editor reads only what project.c3proj lists: a copy of an example with an unlisted event
+    sheet the editor would refuse opened and previewed in the stable editor, 2026-10-03. UI state
+    files and the scripts folder, where the editor keeps unlisted TypeScript files, are not named."""
+    (project / "eventSheets" / "Extra.json").write_text(json.dumps({"name": "Extra", "events": []}), encoding="utf-8")
+    (project / "eventSheets" / "Game.uistate.json").write_text("{}", encoding="utf-8")
+    (project / "layouts" / "uistate").mkdir(exist_ok=True)
+    (project / "layouts" / "uistate" / "Game.instancesBar.json").write_text("{}", encoding="utf-8")
+    (project / "files").mkdir(exist_ok=True)
+    (project / "files" / "levels.json").write_text("[]", encoding="utf-8")
+    (project / "scripts" / "ts-defs").mkdir(parents=True, exist_ok=True)
+    (project / "scripts" / "ts-defs" / "index.d.ts").write_text("", encoding="utf-8")
+    code, out = check(project)
+    assert code == 0 and warnings(out) == [
+        'warning: eventSheets/Extra.json is not listed in project.c3proj, so the editor ignores it: if the project '
+        'uses it, add "Extra" to the "eventSheets" items',
+        'warning: files/levels.json is not listed in project.c3proj, so the editor ignores it: if the project uses '
+        'it, import it in the editor, or add an entry for "levels.json" to the rootFileFolders "general" items, '
+        'written like the entries the editor saved there'], out
+
+
+def test_sound_or_music_that_is_not_webm_opus_is_named(project):
+    """Sound and music are WebM Opus (Scirra's guide "Construct's project format"); a copy of an
+    example with its sound listed as a WAV file opened and previewed, so it is a warning."""
+    (project / "sounds").mkdir(exist_ok=True)
+    (project / "sounds" / "pop.wav").write_bytes(b"")
+    out = findings(project, lambda d: d.setdefault("rootFileFolders", {}).update(sound={"items": [
+        {"name": "pop.wav", "type": "audio/wav", "sid": 5, "file-info": {"purpose": "none"}}], "subfolders": []}),
+        "project.c3proj")
+    assert [w for w in warnings(out) if "pop.wav" in w] == [
+        'warning: sound file pop.wav is not WebM Opus (.webm), the format a project\'s sound and music are in; the '
+        'editor opens it, and whether it plays depends on the browser. Encode it, ffmpeg -i pop.wav -c:a libopus '
+        'pop.webm, and list pop.webm with "type": "audio/webm; codecs=opus", or import the file in the editor, '
+        'which converts it'], out
+
+
+def test_a_script_listed_as_both_ts_and_js_is_named(project):
+    """Construct runs the .js and ignores the .ts of one script
+    [manual: scripting/using-scripting/typescript-construct.md]."""
+    (project / "scripts").mkdir(exist_ok=True)
+    for name in ("main.ts", "main.js"):
+        (project / "scripts" / name).write_text("", encoding="utf-8")
+    out = findings(project, lambda d: d.setdefault("rootFileFolders", {}).update(script={"items": [
+        {"name": "main.ts", "type": "application/typescript", "sid": 5, "script-info": {"purpose": "main"}},
+        {"name": "main.js", "type": "application/javascript", "sid": 6, "script-info": {"purpose": "none"}}],
+        "subfolders": []}), "project.c3proj")
+    assert "warning: scripts/main.ts and scripts/main.js are both listed; Construct runs the .js and ignores " \
+           "the .ts" in out, out
 
 
 def test_c_style_operators_are_refused_with_the_construct_ones(project):

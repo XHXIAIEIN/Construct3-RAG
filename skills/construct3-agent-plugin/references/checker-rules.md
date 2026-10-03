@@ -16,7 +16,11 @@ editor reads them. Layout instances must carry every instance variable and
 behavior block of their type and only properties the schema has. Layers,
 layouts, animations, groups, timelines, flowcharts, project files, images and
 called functions and custom actions must exist, with the right parameter
-count. Two object types or families with one sid are an error: the editor
+count. An image is `images/<object type>-<animation>-<frame, three
+digits>.png`, or `images/<object type>.png` for a single image, in lower
+case; one imported in a lossy format and not edited since keeps that format,
+which the entry's `fileType` names. Its size is not compared with the
+entry's `width` and `height`: the editor takes the size from the file. Two object types or families with one sid are an error: the editor
 stops with `object class sid already in use`. Any other repeated sid is a
 warning: a project whose events, instances, layers or animations repeat
 one opens and previews. Two instances with one uid are an error: the
@@ -26,8 +30,21 @@ third-party addon) is a warning, and its ACEs pass unchecked. So is what the
 editor has deprecated, from `Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`:
 an addon, and an ACE or expression, once each at its first use with the count
 of the others, and the current ACE of the same name when there is one. The
-editor opens a project that uses them, and a new event should not. Traps of the
-running game are warnings:
+editor opens a project that uses them, and a new event should not.
+
+Three findings about files are warnings, since the editor opens the project:
+
+- a file in a folder of the project that `project.c3proj` does not list,
+  which the editor ignores; `scripts/` is not searched, since the editor
+  keeps TypeScript copies and definitions there for an external editor
+  without listing them;
+- a sound or music file that is not WebM Opus (`.webm`), the format the
+  editor encodes imported audio to and Construct decodes itself on Safari
+  and iOS [manual: interface/dialogs/import-audio.md];
+- a script listed as both `.ts` and `.js`: Construct runs the `.js` and
+  ignores the `.ts` [manual: scripting/using-scripting/typescript-construct.md].
+
+Traps of the running game are warnings:
 
 - a *Wait for signal* or *On signal* whose text tag no *Signal* action or
   `runtime.signal()` raises, which never ends or runs;
@@ -84,7 +101,7 @@ How each was read from the editor and confirmed:
 | Every text literal is closed, a quote inside it doubled; a backslash stands only inside a literal, where it is a plain character | `Syntax error: String missing finishing "`, `Syntax error: Unknown character` |
 | A comment event carries `text`, a group `description`, an event variable `comment`, each as text, `""` when empty | `Cannot read properties of undefined (reading 'endsWith')`, `expected string` |
 | A function's `functionReturnType` is `none`, `number`, `string` or `any`; a custom action's `aceType` is `action` | `function has wrong return type`, `invalid ACE type` |
-| Every file `rootFileFolders` lists is on disk: `general` in `files/`, `icon` in `icons/`, `sound` in `sounds/`, `music` in `music/`, `font` in `fonts/`, `script` in `scripts/` | `missing file path 'icons\icon-16.png'` |
+| Every file `rootFileFolders` lists is on disk: `general` in `files/`, `icon` in `icons/`, `sound` in `sounds/`, `music` in `music/`, `video` in `videos/`, `font` in `fonts/`, `script` in `scripts/` | `missing file path 'icons\icon-16.png'`, `missing file path 'videos\clip.webm'` |
 | A sound parameter (*Play*, *Play at object*) names a sound or music file the project lists, without its extension, in any case: `SFX1` for `sfx1.webm` | `missing file '0'`, `missing file 'sfx1.webm'` |
 | A key is a key code, a JSON number | `expected finite number` |
 | An action does not write a constant. The editor finds a variable by its name without case, taking the nearest declaration and, within one list of events, the first: with a constant `PHASE` declared above a variable `phase`, *Add 1 to phase* writes `PHASE`, and the finding says to rename `phase` | `event variable phase is constant` |
@@ -170,7 +187,7 @@ does not work with 'string' and 'number'`.
 
 ## How the rules were confirmed
 
-Run over the official example projects (saved r184 to r502), the checker
+Run over the official example projects (saved r168 to r472), the checker
 fails a few, on parameters that a later release changed and on layers and
 animations the examples name but no longer have; each is a real finding,
 not a false one. None of them breaks an editor rule
