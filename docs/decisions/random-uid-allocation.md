@@ -13,6 +13,11 @@ hierarchy link or a *Pick by UID* written for one reaches another.
 
 ## Evidence
 
+- Scirra's guide
+  [Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275)
+  states that a uid may be any value as long as every instance has its own,
+  that large random numbers work better under source control, and that
+  Construct then uses six-digit random numbers.
 - Two instances sharing a uid opened in the editor on 2026-10-03, and the
   preview showed one of them under another uid
   (`checker-editor-load-rules.md`).

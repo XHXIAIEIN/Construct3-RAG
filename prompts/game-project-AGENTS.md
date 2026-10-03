@@ -7,7 +7,9 @@ what `project.c3proj` indexes, how image files are named, which formats the
 files take. Neither names an ACE, the rules the editor applies when it opens
 a project, or how events are designed, so an agent in the game folder answers
 those from memory: a drag-and-drop interaction comes back as UID links,
-`Pick all` and globals.
+`Pick all` and globals. What the guide states about the files is in
+[`prompts/references/hand-editing-project-files.md`](references/hand-editing-project-files.md),
+"The project folder", where the block sends a hand edit.
 
 Two things in the game project change that: a block in its `AGENTS.md` that
 routes each kind of work to the file that owns it, and a copy of the

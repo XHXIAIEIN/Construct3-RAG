@@ -9,6 +9,43 @@ follows is how each entry of such a plan, or of a hand edit, is written.
 Clipboard payloads use the same condition and action entries; the envelope
 is documented in `Construct3-Clipboard/docs/clipboard-format.md`.
 
+## The project folder
+
+Scirra's guide [Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275),
+which the `llm-context.md` the editor writes into every project links,
+states what follows. The format has no published specification and changes
+between releases, and an invalid edit can leave a project that does not
+open, which is why every hand edit ends with the checks at the end of this
+file.
+
+- `project.c3proj` lists every object type, family, layout, event sheet,
+  timeline, flowchart, 3D model, script, sound, music, video, font, icon and
+  file, in the folders of the Project Bar. The editor reads only what it
+  lists and ignores any other file, so a file written by hand is listed in
+  the same change. Each JSON resource is in its folder (`objectTypes/`,
+  `families/`, `layouts/`, `eventSheets/`, `timelines/`, `flowcharts/`,
+  `3dmodels/`), under the subfolders the listing names.
+- Images are in `images/`, without subfolders, named in lower case:
+  `<object type>-<animation>-<frame>.png`, the frame counted from 0 and
+  padded to three digits (`player-default-000.png`), and `<object
+  type>.png` for an object with a single image, a Tiled Background or a
+  9-patch. The editor takes an image's size from the file and ignores the
+  `width` and `height` of its entry, so an image may be redrawn at another
+  size outside the editor. One imported as JPEG or AVIF and not edited in
+  the editor keeps that format, which its entry's `fileType` names.
+- Sound and music are WebM Opus, `.webm`. Fonts are best WOFF, the one
+  format every browser reads; the editor also takes TTF and OTF, as the
+  official examples show. Icons and the loading logo are PNG. Video is best
+  MP4 with H.264. A file in `files/` is of any kind; Construct does not use
+  it, the project's logic reads it, through AJAX for one.
+- TypeScript is the `.ts` files alone, which Construct compiles, or the
+  `.js` files alone, compiled outside from `.ts` files the project does not
+  list. With both of one script listed, Construct runs the `.js`
+  [manual: scripting/using-scripting/typescript-construct.md].
+- `*.uistate.json` files and `uistate` folders hold the state of the
+  editor's interface; deleting them loses nothing else. Palettes and tilemap
+  brushes have folders of their own, `palettes/` and `tilemapBrushes/`.
+
 ## Encodings
 
 Each rule was read from the editor's loaders, from files it saved or from
@@ -126,11 +163,15 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
 - Parameters an ACE gained in a later release may be omitted; the editor
   fills defaults on load. `pick-nearestfurthest` loads with `which`, `x`,
   `y` alone, though the schema also lists `z` and `pick-all-tied`.
-- `sid`: 15-digit integer, unique across the whole project. `uid`: unique
-  across all layouts and the single-global object types, whose one
+- `sid`: 15-digit random integer, unique across the whole project, so
+  content merges without renumbering. `uid`: any value, unique across all
+  layouts and the single-global object types, whose one
   instance keeps its `uid` in `objectTypes/<Name>.json` (the Timeline
   controller among them): a new layout instance numbered from the highest
-  layout uid alone can collide with it. Files: UTF-8 with raw non-ASCII, tab indent, LF, no
+  layout uid alone can collide with it. With UID numbering set to Random
+  (`"uidAllocationMode": "random"`), Construct gives new instances
+  six-digit random uids, which keep two branches of a project under source
+  control apart (`docs/decisions/random-uid-allocation.md`). Files: UTF-8 with raw non-ASCII, tab indent, LF, no
   trailing newline, no byte order mark. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
   reproduces the editor's output byte for byte. A file that starts with a
   byte order mark still opens. [observed: the official examples carry none;
