@@ -400,6 +400,23 @@ class Checker:
         for a in p.data.get("usedAddons", []):
             if a.get("type") in ("plugin", "behavior"):
                 self.check_addon_id(a["type"] + "s", a["id"], "project.c3proj usedAddons")
+        # Object types, families and the Functions object share one namespace, without case.
+        def listed(folder) -> list[str]:
+            folder = folder if isinstance(folder, dict) else {}
+            return [n for n in folder.get("items", []) if isinstance(n, str)] + [
+                n for sub in folder.get("subfolders", []) for n in listed(sub)]
+        seen: dict[str, str] = {}
+        for name in listed(p.data.get("objectTypes")):
+            if LOWER(name) in seen:
+                self.err(f"project.c3proj lists object type {name} twice; the editor stops with \"object type "
+                         f"name '{name}' already used\": list it once")
+            seen[LOWER(name)] = f"object type {seen.get(LOWER(name), name)}"
+        seen.setdefault(LOWER(p.functions_object), f"the {p.functions_object} object")
+        for name in listed(p.data.get("families")):
+            if LOWER(name) in seen:
+                self.err(f"family {name} has the name of {seen[LOWER(name)]}, once case is ignored; the editor stops "
+                         f"with \"object class name '{name}' already used\": rename the family")
+            seen[LOWER(name)] = f"family {name}"
 
         for name, t in p.types.items():
             p.schema("plugins", t["plugin-id"])

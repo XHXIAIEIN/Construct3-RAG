@@ -43,6 +43,11 @@ Option 2 as the default, and option 3 as the step after it.
 - A rule becomes an error only after a run over the official examples adds
   no finding. *Trigger once* and *Every X seconds* in a triggered branch
   occur in official examples that open, so they are a warning.
+- Object class names were probed on 2026-10-03: a family named like an
+  object type, like it in another case, or like the Functions object
+  stopped the editor with `object class name 'X' already used`, and an
+  object type listed twice with `object type name 'X' already used`. The
+  sweep added no finding.
 - Text literals were probed on 2026-10-03 in a text and a number parameter:
   an empty parameter stopped the editor with `Empty expression`, an
   unclosed literal with `String missing finishing "`, a backslash outside a

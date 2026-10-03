@@ -700,6 +700,21 @@ def test_text_literals_as_the_editor_parses_them(project, text, said):
     assert (said in out) if said else out.splitlines()[-1].startswith("ok:"), out
 
 
+@pytest.mark.parametrize("family", ["coin", "Functions"])
+def test_a_family_named_like_another_object_class_is_refused(project, family):
+    (project / "families").mkdir(exist_ok=True)
+    (project / "families" / f"{family}.json").write_text(json.dumps(
+        {"name": family, "plugin-id": "Sprite", "sid": 5, "instanceVariables": [], "behaviorTypes": [],
+         "effectTypes": [], "members": ["Coin"]}), encoding="utf-8")
+    out = findings(project, lambda p: p.update(families={"items": [family], "subfolders": []}), "project.c3proj")
+    assert f"object class name '{family}' already used" in out, out
+
+
+def test_an_object_type_listed_twice_is_refused(project):
+    out = findings(project, lambda p: p["objectTypes"]["items"].append("Coin"), "project.c3proj")
+    assert "object type name 'Coin' already used" in out, out
+
+
 def test_instance_without_uid_is_reported_not_raised(project):
     out = findings(project, lambda lay: lay["layers"][0]["instances"][0].pop("uid"), "layouts/Objects.json")
     assert "instance of Coin has no integer uid" in out
