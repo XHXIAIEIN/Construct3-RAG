@@ -13,7 +13,7 @@ def test_ace_lookup_reaches_a_behavior_through_the_object(built):
     assert code == 0
     assert "action tween-two-properties - Tween (two properties) [behavior Tween, tween]  <isAsync>" in out
     assert '"objectClass": "Coin", "behaviorType": "Tween", "sid": <new sid>, "parameters": {"tags": "\\"\\"", "property": "position"' in out
-    assert "property               combo      position | size | scale" in out
+    assert "property               combo      The properties to tween.  (position | size | scale)" in out
 
 
 def test_ace_lookup_marks_shared_triggers_and_writes_expressions(built):
@@ -21,6 +21,24 @@ def test_ace_lookup_marks_shared_triggers_and_writes_expressions(built):
     assert "condition on-collision-with-another-object - On collision with another object [_common]  <isTrigger>" in out
     code, out = tool(built, "lookup_ace", "Coin", "progress")
     assert "write: Coin.Tween.Progress(tags)  -> number" in out
+
+
+def test_ace_lookup_says_what_each_parameter_is(built):
+    # find(text, find): the type says string twice, the schema's desc says which one is searched.
+    code, out = tool(built, "lookup_ace", "System", "find")
+    assert code == 0
+    lines = out.splitlines()
+    assert any(line.split()[:2] == ["text", "string"] and "Text to be searched." in line and "inner quotes" in line
+               for line in lines), out
+    assert any(line.split()[:2] == ["find", "string"] and "Text to search for." in line for line in lines), out
+    code, out = tool(built, "lookup_ace", "System", "find", "--locale", "zh-CN")
+    assert "原始字符串。" in out
+
+
+def test_ace_lookup_names_the_entries_in_full_that_do_not_fit(built):
+    code, out = tool(built, "lookup_ace", "System", "find", "--limit", "900")
+    assert code == 0 and len(out) <= 900
+    assert "expression find - find" in out and "1 more did not fit 900 characters (--limit): findcase" in out
 
 
 def test_ace_lookup_words_may_name_the_behavior_and_the_kind(built):

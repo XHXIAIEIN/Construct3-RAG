@@ -35,7 +35,7 @@ an id from an old project does not read as a typo.
 The schema files run to thousands of lines, more than most tools read at
 once, and an ACE below the cut looks as if it did not exist; this prints the
 part that was asked for. Six matches or fewer print in full, each parameter
-with the way it is written; more print one line each, and more than fit
+with what it is and the way it is written; more print one line each, and more than fit
 --limit print as counts per category. When no entry has every word, the
 entries that have some of them are listed.
 """
@@ -46,6 +46,7 @@ import c3project as c3
 from c3project import LOWER, closest, squash
 
 KINDS = ("conditions", "actions", "expressions")
+PARAM_LINE = 150    # a longer parameter line puts the way to write the value on a line of its own
 
 # How each parameter type is written in an event sheet file, and a value that loads.
 WRITING = {
@@ -182,8 +183,31 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, w
     for key, spec in params.items():
         how = " | ".join(spec["items"]) if spec.get("items") \
             else WRITING.get(spec["type"], ("", "expression string"))[1]
-        lines.append(f"    {key:<22} {spec['type']:<10} {how}")
+        # What the parameter is, from the schema: find(text, find) searches `text` for `find`,
+        # which the type alone does not say, and a model wrote it the other way round.
+        desc = " ".join(str(spec.get("desc") or "").split())
+        line = f"    {key:<22} {spec['type']:<10} "
+        if not desc:
+            lines.append(line + how)
+        elif len(line) + len(desc) + len(how) + 4 <= PARAM_LINE:
+            lines.append(f"{line}{desc}  ({how})")
+        else:
+            lines += [line + desc, " " * len(line) + f"({how})"]
     return lines
+
+
+def print_in_full(blocks: list[list[str]], ids: list[str], limit: int) -> None:
+    """Prints the entries in full while they fit --limit and names the rest: six entries
+    of Audio, each parameter described, run past 10 000 characters."""
+    # The note on the rest takes a few hundred characters of the limit.
+    room = c3.fitting([line for block in blocks for line in block], max(limit - 400, 1) if limit else 0)
+    for n, block in enumerate(blocks):
+        if len(block) > room and n:
+            print(f"{len(blocks) - n} more did not fit {limit} characters (--limit): {', '.join(ids[n:])}; "
+                  f"add a word to narrow them or raise --limit")
+            return
+        print("\n".join(block))
+        room -= len(block)
 
 
 def effects_of(p: c3.Project, target: str) -> list[str]:
@@ -345,16 +369,16 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
             if shared:
                 print(f"{target} has these, in plugins/_common.json rather than in its own plugin:" if plugins
                       else "every world object has these, in plugins/_common.json rather than in its own plugin:")
-                for kind, it in shared:
-                    # <Object>, not the <object> a parameter of that type is written with.
-                    print("\n".join(in_full("<Object>", None, "_common", kind, it)))
+                # <Object>, not the <object> a parameter of that type is written with.
+                print_in_full([in_full("<Object>", None, "_common", kind, it) for kind, it in shared],
+                              [it["id"] for _, it in shared], limit)
                 print(f"<Object> is {'a ' + target + ' object' if plugins else 'any object'} of the project; "
                       f"lookup_ace.py <Object> {query} writes its name in")
             if in_params:
                 print(f"no name under {target} has every word of {query!r}; a parameter of these takes it as a value:")
                 if len(in_params) <= 6:
-                    for e in in_params:
-                        print("\n".join(in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)))
+                    print_in_full([in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)
+                                   for e in in_params], [e[4]["id"] for e in in_params], limit)
                 else:
                     for e in in_params[:20]:
                         print("  " + brief(*e))
@@ -381,8 +405,8 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         return 1
 
     if len(found) <= 6:
-        for e in found:
-            print("\n".join(in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)))
+        print_in_full([in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)
+                       for e in found], [e[4]["id"] for e in found], limit)
         if by_category:
             print(f"by category, not by name: {', '.join(e[4]['id'] for e in by_category[:20])}"
                   + (" ..." if len(by_category) > 20 else ""))
