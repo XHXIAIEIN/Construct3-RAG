@@ -1556,9 +1556,6 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
         p["properties"]["fullscreenMode"] = "letterbox-integer-scale"
     p["firstLayout"] = "Game"
     p["properties"]["orientations"] = "portrait"
-    # An instance the editor adds gets a random uid, which a uid written by a script or by hand
-    # is unlikely to meet; two that meet are renumbered by the editor as it opens the project.
-    p["properties"]["uidAllocationMode"] = "random"
     return p
 
 
