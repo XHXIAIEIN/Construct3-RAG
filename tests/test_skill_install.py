@@ -96,6 +96,17 @@ def test_install_names_the_copies_a_project_got_by_hand(tmp_path):
 def test_install_outside_a_project_says_what_to_pass(tmp_path):
     code, out = install(tmp_path)
     assert code != 0 and "--project" in out and "Traceback" not in out
+    assert f"To start a new project, run python {(REPO / 'scripts' / 'bootstrap.py').as_posix()} --project <folder>" in out
+
+
+def test_install_into_a_folder_without_a_project_names_bootstrap(tmp_path):
+    """An agent asked for a new game makes the folder and runs install.py on it first;
+    install.py fills a project, and bootstrap.py is what creates one."""
+    game = tmp_path / "New Game"
+    game.mkdir()
+    code, out = install(tmp_path, "--project", str(game))
+    assert code == 1 and f"no project.c3proj in {game}" in out
+    assert f'run python {(REPO / "scripts" / "bootstrap.py").as_posix()} --project "{game}"' in out
 
 
 def test_install_asks_the_agent_to_remember_where_the_clone_is(tmp_path):
@@ -199,6 +210,17 @@ def test_bootstrap_leaves_a_folder_that_is_not_a_project(tmp_path):
                           "--project", str(tmp_path / "docs"))
     assert code == 1 and "is not empty and holds no project.c3proj" in out
     assert sorted(p.name for p in (tmp_path / "docs").iterdir()) == ["notes.txt"]
+
+
+def test_bootstrap_fills_a_folder_that_holds_only_a_git_repository(tmp_path):
+    """An agent often makes the folder and runs git init before it finds bootstrap.py."""
+    beside = siblings(tmp_path / "GitHub")
+    game = tmp_path / "MyGame"
+    (game / ".git").mkdir(parents=True)
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--template", str(template(tmp_path / "tmpl")),
+                          "--project", str(game))
+    assert code == 0, out
+    assert (game / "project.c3proj").is_file() and (game / INSTALLED / "SKILL.md").is_file()
 
 
 def test_bootstrap_dry_run_says_the_clones_it_would_make(tmp_path):

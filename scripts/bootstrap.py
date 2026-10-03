@@ -68,11 +68,12 @@ def unique_id() -> str:
 
 def new_project(template: Path, target: Path, dry_run: bool) -> str:
     """The empty project copied to target with its own name and uniqueId. A
-    folder that already holds files and is not a project is left alone."""
+    folder that already holds files and is not a project is left alone; a
+    folder that holds only a Git repository counts as empty."""
     if not (template / "project.c3proj").exists():
         return (f"{target.name}: not created; {template} holds no project.c3proj. Pass --template <folder> "
                 f"naming an empty project the editor saved, or save an empty project from the editor as {target}")
-    if target.exists() and any(target.iterdir()):
+    if target.exists() and any(p.name != ".git" for p in target.iterdir()):
         return f"{target.name}: {target} is not empty and holds no project.c3proj; pass an empty or new folder"
     if dry_run:
         return f"{target.name}: would copy {template} to {target}"

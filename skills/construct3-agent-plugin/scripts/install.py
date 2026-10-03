@@ -25,6 +25,14 @@ DEFAULT_INTO = ".agents/skills"
 RAG_KEY = re.compile(r"^[ \t>*-]*Construct3-RAG\s*[:=]", re.M)
 
 
+def new_project(folder: str) -> str:
+    """install.py fills a project; bootstrap.py in the clone creates one first."""
+    rag = c3.above(SKILL_DIR, "data/c3-schemas/_index.json")
+    script = (rag / "scripts" / "bootstrap.py").as_posix() if rag else "<Construct3-RAG>/scripts/bootstrap.py"
+    folder = f'"{folder}"' if " " in folder else folder
+    return f". To start a new project, run python {script} --project {folder}"
+
+
 def targets(project: Path | None, into: str | None) -> list[Path]:
     """Where the skill goes: --into, else every copy the project already holds, else the default."""
     if into:
@@ -37,7 +45,8 @@ def targets(project: Path | None, into: str | None) -> list[Path]:
         return [folder / SKILL]
     if project is None:
         sys.exit(f"no project.c3proj in {Path.cwd()} or above it; run this from the game project, pass "
-                 f"--project <folder>, or pass an absolute --into such as ~/.agents/skills")
+                 f"--project <folder>, or pass an absolute --into such as ~/.agents/skills"
+                 f"{new_project('<folder>')}")
     held = sorted(p.parent for p in project.glob(f".*/skills/{SKILL}/SKILL.md"))
     return held or [project / DEFAULT_INTO / SKILL]
 
@@ -165,7 +174,8 @@ def main() -> int:
 
     project = c3.find_project(args.project)
     if project and not (project / "project.c3proj").exists():
-        sys.exit(f"no project.c3proj in {project}: --project is the folder the editor saved the project into")
+        sys.exit(f"no project.c3proj in {project}: --project is the folder the editor saved the project into"
+                 f"{new_project(str(project))}")
 
     rag = c3.above(SKILL_DIR, "data/c3-schemas/_index.json")
     if rag is None or (rag / "skills" / SKILL).resolve() != SKILL_DIR:
