@@ -7,14 +7,15 @@ stops, or before passing it `--attach`. A lesson from an export goes under
 ## Run it
 
 ```bash
-python scripts/export_project.py --to export/web --bump
+python scripts/export_project.py --bump
 ```
 
 The script opens the project in the editor of the release that saved it,
 with only the files the editor reads, as `scripts/pack_project.py` packs them,
 exports it to Web (HTML5) as a zip with Offline support, Deduplicate images
 and Optimize images on, and unpacks the zip into `--to`, replacing what was
-there.
+there. Without `--to` the export goes to `.build/web`, where the products
+go and Git ignores them; the browser profile stays in `.tmp/`.
 
 The copy handed to the editor sets *Use worker* to Auto, so the engine
 decides: a worker, unless the project has a script or an addon without worker

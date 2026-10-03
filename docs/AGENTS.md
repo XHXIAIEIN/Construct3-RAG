@@ -66,6 +66,7 @@ The project skill and the prompts:
 | `skill-and-plugin-names.md` | The names of the skill and the Claude Code plugin |
 | `plugin-tracks-commits.md` | Why `plugin.json` has no version, and why a linked clone needs no copy in the project |
 | `directory-listing.md` | Why the plugin is in Claude's directory and also installs from this repository, and why a reviewer publishes each directory version |
+| `build-folder.md` | Why a game project's packed `.c3p` and export go in `.build/`, apart from the scratch of `.tmp/` |
 | `random-uid-allocation.md` | Why the projects this repository starts give new instances random uids |
 
 The lookup service:

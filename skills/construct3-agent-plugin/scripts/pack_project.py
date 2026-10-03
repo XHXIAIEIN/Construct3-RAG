@@ -35,6 +35,8 @@ from pathlib import Path, PurePosixPath
 import c3project as c3
 
 SCRATCH = ".tmp"
+# Where a pack goes by default: the products of the skill's scripts, kept apart from the scratch of .tmp/.
+BUILD = ".build"
 # The top-level folders the editor saves a project in, as Scirra's guide "Construct's project format"
 # lists them, and the one file beside project.c3proj it writes into every project.
 EDITOR_FOLDERS = ("objectTypes", "families", "layouts", "eventSheets", "timelines", "flowcharts", "3dmodels",
@@ -47,7 +49,7 @@ ARCHIVES = (".c3p", ".zip")
 MAX_PATH = 260
 
 EPILOG = """examples:
-  python scripts/pack_project.py                                 the project here as .tmp/<folder>.c3p
+  python scripts/pack_project.py                                 the project here as .build/<folder>.c3p
   python scripts/pack_project.py --out repro.zip --open          a bug report's attachment, opened once in the editor
   python scripts/pack_project.py downloaded.c3p --out game       a .c3p as a project folder
   python scripts/pack_project.py nested.zip --out fixed.zip      a zip with the folder inside, repacked at the root
@@ -67,9 +69,9 @@ class Refused(Exception):
 
 
 def from_folder(project: Path) -> dict[str, Path]:
-    """Every file of a folder project by its path in the archive, .git/ and .tmp/ aside."""
+    """Every file of a folder project by its path in the archive, .git/, .tmp/ and .build/ aside."""
     return {f.relative_to(project).as_posix(): f for f in sorted(project.rglob("*"))
-            if f.is_file() and f.relative_to(project).parts[0] not in (".git", SCRATCH)}
+            if f.is_file() and f.relative_to(project).parts[0] not in (".git", SCRATCH, BUILD)}
 
 
 def editor_files(files: dict, keep: tuple[str, ...]) -> tuple[dict, list[str]]:
@@ -132,11 +134,22 @@ def write_folder(out: Path, files: dict[str, bytes | Path]) -> None:
 def default_out(source: Path, is_archive: bool) -> Path:
     if is_archive:
         return source.with_suffix("")
-    scratch = source / SCRATCH
-    scratch.mkdir(exist_ok=True)
-    if not (scratch / ".gitignore").exists():
-        (scratch / ".gitignore").write_text("*\n", encoding="utf-8")
-    return scratch / f"{source.name}.c3p"
+    build = source / BUILD
+    build.mkdir(exist_ok=True)
+    if not (build / ".gitignore").exists():
+        (build / ".gitignore").write_text("*\n", encoding="utf-8")
+    return build / f"{source.name}.c3p"
+
+
+def committed_note(out: Path, project: Path) -> str | None:
+    """A note when --out lands in the project folder outside .build/ and .tmp/, where Git commits it."""
+    if not out.is_relative_to(project):
+        return None
+    top = out.relative_to(project).parts[:1]
+    if top and top[0] in (BUILD, SCRATCH, ".git"):
+        return None
+    return (f"note: {out} is inside the project, where Git commits it; "
+            f"a product goes in {project / BUILD}, which ignores its contents")
 
 
 def main() -> int:
@@ -148,7 +161,7 @@ def main() -> int:
                     help="the folder that holds project.c3proj (default: found from the current directory upward)")
     ap.add_argument("--out", metavar="FILE|FOLDER", type=Path,
                     help="a .c3p or .zip to write, or a new folder for a project folder (default: "
-                         ".tmp/<folder>.c3p of the project, or a folder beside the archive)")
+                         ".build/<folder>.c3p of the project, or a folder beside the archive)")
     ap.add_argument("--keep", metavar="NAME", action="append", default=[],
                     help="a top-level file or folder of the project to pack although the editor does not save it")
     ap.add_argument("--open", action="store_true",
@@ -178,6 +191,8 @@ def main() -> int:
     except Refused as e:
         print(e, file=sys.stderr)
         return 2
+    if not is_archive and (note := committed_note(out, source)):
+        print(note)
     if left:
         print(f"left out: {', '.join(left)} (--keep NAME packs one)")
     if os.name == "nt" and len(str(out)) >= MAX_PATH and out.suffix.lower() in ARCHIVES:

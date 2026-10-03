@@ -48,7 +48,7 @@ An addon the editor refuses stops the run with its message and exception.
 
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
-above them: every project.c3proj and .c3p below it is opened, .tmp/ left out.
+above them: every project.c3proj and .c3p below it is opened, .tmp/ and .build/ left out.
 """
 from __future__ import annotations
 
@@ -241,7 +241,7 @@ def find_projects(paths: list[Path]) -> list[Path]:
             found.append(path)
         elif path.is_dir():
             found += sorted(p.parent for p in path.rglob("project.c3proj") if ".git" not in p.parts)
-            found += sorted(p for p in path.rglob("*.c3p") if not {".git", SCRATCH} & set(p.parts))
+            found += sorted(p for p in path.rglob("*.c3p") if not {".git", SCRATCH, pp.BUILD} & set(p.parts))
     return list(dict.fromkeys(p.resolve() for p in found))
 
 

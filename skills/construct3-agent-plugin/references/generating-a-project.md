@@ -30,12 +30,16 @@ overwrites the files it produces.
 2. Copy `assets/build_project.py` to `tools/build_project.py` in the project.
    The generator belongs to the game and is committed with it; the checker
    stays in the skill.
-3. Ignore what the editor and the scripts leave behind:
+3. Ignore what the editor and the scripts leave behind: `.tmp/` holds
+   screenshots, recordings and browser profiles, `.build/` the products,
+   the packed `.c3p` and the export, so none is written to the project
+   root:
 
    ```gitignore
    *.uistate.json
    .trash/
    .tmp/
+   .build/
    __pycache__/
    ```
 

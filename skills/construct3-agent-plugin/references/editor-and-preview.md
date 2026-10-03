@@ -121,7 +121,7 @@ which cases to play and how to reach and read them to
 - A `.c3p` or a `.zip` opens only with `project.c3proj` at the root of the
   archive; one that holds the project folder fails with "Check it is a
   valid Construct 3 single-file (.c3p) project". `scripts/pack_project.py`
-  writes the root layout. [observed in r504, 2026-10-02: the same project
+  writes the root layout, by default to `.build/<folder>.c3p`. [observed in r504, 2026-10-02: the same project
   opened packed at the root and failed packed inside its folder]
 - A file put on a page's file input through the DevTools protocol from a
   path past MAX_PATH reaches the page empty, with its name and no error: the

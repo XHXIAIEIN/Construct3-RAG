@@ -21,7 +21,7 @@ project.c3proj, since an older one refuses it, with the files the editor reads, 
 pack_project.py packs them. The editor exports a zip with
 Offline support, Deduplicate images and Optimize images on and the other
 options as it remembers them; the zip replaces
-the contents of --to. The export carries the version given by --version or
+the contents of --to, by default .build/web of the project, a folder Git ignores. The export carries the version given by --version or
 --bump, else the project's, with Auto-increment version off in the copy handed to
 the editor, and that version is written into project.c3proj when it differs. The
 copy also sets Use worker to Auto, which lets the engine decide, whatever the
@@ -475,6 +475,15 @@ def exported_worker(folder: Path) -> bool | None:
     return found.group(2) == "true" if found else None
 
 
+def build(project: Path) -> Path:
+    """.build/ of the project, where the products go, with a .gitignore of * so that Git commits none."""
+    path = project / pp.BUILD
+    path.mkdir(exist_ok=True)
+    if not (path / ".gitignore").exists():
+        (path / ".gitignore").write_text("*\n", encoding="utf-8")
+    return path
+
+
 def pack(project: Path, version: str, skip: Path | None) -> bytes:
     """The files the editor reads as a .c3p carrying version, with Auto-increment version off so
     that the export carries it unchanged, and Use worker Auto. The rest stays
@@ -552,7 +561,7 @@ def main() -> int:
     ap.add_argument("--project", metavar="FOLDER",
                     help="the folder that holds project.c3proj (default: found from the current directory upward)")
     ap.add_argument("--to", metavar="FOLDER", type=Path,
-                    help="the folder the export replaces, relative to the project (default: .tmp/export-web)")
+                    help="the folder the export replaces, relative to the project (default: .build/web)")
     which = ap.add_mutually_exclusive_group()
     which.add_argument("--version", help="the version to export, 3 or 4 numbers of 0 to 99: 1.2.0.0")
     which.add_argument("--bump", action="store_true",
@@ -573,7 +582,7 @@ def main() -> int:
         print(f"no project.c3proj found from {args.project or Path.cwd()}; run this in the project folder or "
               f"pass --project <folder>", file=sys.stderr)
         return 2
-    folder = (project / (args.to or Path(oe.SCRATCH) / "export-web")).resolve()
+    folder = (project / (args.to or Path(pp.BUILD) / "web")).resolve()
     version = args.version or (bumped(project, folder) if args.bump else project_version(project))
     if not VERSION_FORMAT.fullmatch(version or ""):
         print(f"the version to export is '{version}', not 3 or 4 numbers of 0 to 99; pass --version 1.0.0.0 or "
@@ -583,6 +592,8 @@ def main() -> int:
         print(f"would export {version} in {editor_url(project)} into {folder}; project.c3proj version "
               f"{project_version(project)}{f' -> {version}' if version != project_version(project) else ''}")
         return 0
+    if not args.to:
+        build(project)
     if args.slow:
         global pace
         pace = SLOW

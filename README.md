@@ -91,7 +91,7 @@ The skill's scripts read this repository's `data/` and the projects and files th
 - **Writing files**:
   - `edit_sheet.py` writes the event sheets that you give it, and their hashes beside those of `print_sheet.py`.
   - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. `--dry-run` shows the changes first.
-  - `pack_project.py` writes the archive or folder that `--out` names. By default, it writes a `.c3p` in the project's `.tmp/`. When it unpacks, it writes a folder beside the archive by default.
+  - `pack_project.py` writes the archive or folder that `--out` names. By default, it writes a `.c3p` in the project's `.build/`, the folder for build products. When it unpacks, it writes a folder beside the archive by default.
   - The agent copies `assets/build_project.py` to the project's `tools/` and adapts it to the game. When it runs, the copy rewrites the project files that it generates, then runs `check_project.py`.
 - **Opening the editor**: `open_in_editor.py`, `preview_project.py`, `review_look.py` and `pack_project.py --open` start Edge, Chrome or Chromium on the machine.
   - The browser runs headless unless you add `--headed`. It uses a profile of its own in the project's `.tmp/`, unless `--profile` names another folder.
@@ -102,7 +102,7 @@ The skill's scripts read this repository's `data/` and the projects and files th
   - If the machine has none of these browsers, the scripts start nothing. They print the steps for a browser tool of the agent instead.
 - **Exporting**: `export_project.py` drives the same editor in a visible browser.
   - The browser profile is in `.tmp/` of the main clone of the Git repository that holds the project, which the script finds with `git`. If no Git repository holds the project, the profile is in the project's `.tmp/`.
-  - The script replaces the contents of the folder that `--to` names with the export. The default folder is the project's `.tmp/export-web`. If the exported version differs from the version in `project.c3proj`, the script writes the exported version into `project.c3proj`.
+  - The script replaces the contents of the folder that `--to` names with the export. The default folder is the project's `.build/web`. If the exported version differs from the version in `project.c3proj`, the script writes the exported version into `project.c3proj`.
   - The editor exports a large project only for an account with a subscription. You log in yourself in that window, and the browser keeps the session in that profile for the next export. The script does not read or store your credentials.
   - With `--attach`, the script uses a browser of yours that has remote debugging turned on, and connects to it over DevTools. If you give only a port, the script looks for the browser's `DevToolsActivePort` file that names that port. The script lists the browser's tabs and works only in a tab with no project open. If no such tab exists, it opens a window.
 

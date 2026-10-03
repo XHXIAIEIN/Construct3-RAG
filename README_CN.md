@@ -91,7 +91,7 @@ skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。
 - **写文件**：
   - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。
   - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。加 `--dry-run` 可以先看会改什么。
-  - `pack_project.py` 写入 `--out` 指定的压缩包或文件夹。默认写到项目 `.tmp/` 下的一个 `.c3p`。解包时，默认写到压缩包旁边的文件夹。
+  - `pack_project.py` 写入 `--out` 指定的压缩包或文件夹。默认写到项目 `.build/` 下的一个 `.c3p`，这个文件夹专放构建产物。解包时，默认写到压缩包旁边的文件夹。
   - agent 把 `assets/build_project.py` 复制到项目的 `tools/`，按游戏改写。这份副本运行时，会重写它生成的项目文件，然后运行 `check_project.py`。
 - **打开编辑器**：`open_in_editor.py`、`preview_project.py`、`review_look.py` 和 `pack_project.py --open` 启动本机的 Edge、Chrome 或 Chromium。
   - 浏览器默认无头运行，加 `--headed` 才显示窗口。它使用项目 `.tmp/` 下单独的配置目录，`--profile` 可以换到别的文件夹。
@@ -102,7 +102,7 @@ skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。
   - 如果本机没有这几种浏览器，脚本什么也不启动，而是打印步骤，交给 agent 自己的浏览器工具。
 - **导出**：`export_project.py` 在有界面的浏览器里操作同一个编辑器。
   - 浏览器的配置目录放在项目所在 Git 仓库的主 clone 的 `.tmp/` 下，脚本用 `git` 查出这个位置。如果项目不在 Git 仓库里，配置目录放在项目的 `.tmp/` 下。
-  - 脚本用导出结果替换 `--to` 指定文件夹里原有的内容。默认文件夹是项目的 `.tmp/export-web`。如果导出的版本号和 `project.c3proj` 里的不同，脚本会把导出的版本号写回 `project.c3proj`。
+  - 脚本用导出结果替换 `--to` 指定文件夹里原有的内容。默认文件夹是项目的 `.build/web`。如果导出的版本号和 `project.c3proj` 里的不同，脚本会把导出的版本号写回 `project.c3proj`。
   - 项目较大时，编辑器只给订阅账号导出。登录由你自己在那个窗口里完成，浏览器把登录状态保存在这个配置目录里，下次导出直接用。脚本不读取、也不保存你的账号凭据。
   - 加 `--attach` 时，脚本改用你自己开启了远程调试的浏览器，通过 DevTools 连接它。如果只给端口，脚本会找写有这个端口的浏览器 `DevToolsActivePort` 文件。脚本列出浏览器的标签页，只在没有打开项目的标签页里操作。如果没有这样的标签页，脚本会新开一个窗口。
 

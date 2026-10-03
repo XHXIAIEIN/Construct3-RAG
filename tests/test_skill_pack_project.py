@@ -13,16 +13,35 @@ def test_a_folder_project_is_packed_with_project_c3proj_at_the_root(project, tmp
     """The editor refuses a zip that holds the folder ("Check it is a valid Construct 3 single-file
     (.c3p) project", r504, 2026-10-02); what it does not save stays out and is named."""
     code, out = tool(project, "pack_project")
-    c3p = project / ".tmp" / f"{project.name}.c3p"
+    c3p = project / ".build" / f"{project.name}.c3p"
     assert code == 0 and f"into {c3p}, project.c3proj at the root" in out, out
     packed = names(c3p)
     assert "project.c3proj" in packed and SHEET in packed
-    assert not any(n.startswith((".agents/", ".tmp/", "tools/")) or n in ("AGENTS.md", "CLAUDE.md") for n in packed)
+    assert (project / ".build" / ".gitignore").read_text(encoding="utf-8") == "*\n"
+    assert not any(n.startswith((".agents/", ".tmp/", ".build/", "tools/")) or n in ("AGENTS.md", "CLAUDE.md") for n in packed)
     assert "left out: .agents/, AGENTS.md, CLAUDE.md, tools/ (--keep NAME packs one)" in out, out
     assert "next: python " in out and "open_in_editor.py" in out
 
     code, out = tool(project, "pack_project", "--out", str(tmp_path / "repro.zip"), "--keep", "tools")
     assert code == 0 and "tools/build_project.py" in names(tmp_path / "repro.zip"), out
+    assert "note:" not in out, out
+
+
+def test_build_and_tmp_stay_out_of_the_pack(project):
+    """A pack made before, an export and the scratch are neither packed nor named as left out, and
+    an --out in the project outside .build/ is written with a note that Git commits it."""
+    for rel in (".build/old.c3p", ".build/web/index.html", ".tmp/shots/a.png"):
+        (project / rel).parent.mkdir(parents=True, exist_ok=True)
+        (project / rel).write_text("x", encoding="utf-8")
+    code, out = tool(project, "pack_project")
+    packed = names(project / ".build" / f"{project.name}.c3p")
+    assert code == 0 and not any(n.startswith((".build/", ".tmp/")) for n in packed), packed
+    left = next(line for line in out.splitlines() if line.startswith("left out:"))
+    assert ".build" not in left and ".tmp" not in left, out
+
+    code, out = tool(project, "pack_project", "--out", str(project / "game.c3p"))
+    assert code == 0 and (project / "game.c3p").is_file(), out
+    assert "note:" in out and "Git commits it" in out and ".build" in out, out
 
 
 def test_every_folder_the_project_format_guide_names_is_packed(project):
@@ -35,7 +54,7 @@ def test_every_folder_the_project_format_guide_names_is_packed(project):
         (project / rel).parent.mkdir(parents=True, exist_ok=True)
         (project / rel).write_text("{}", encoding="utf-8")
     code, out = tool(project, "pack_project")
-    packed = names(project / ".tmp" / f"{project.name}.c3p")
+    packed = names(project / ".build" / f"{project.name}.c3p")
     assert code == 0 and all(rel in packed for rel in kept), out
 
 

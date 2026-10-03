@@ -34,6 +34,9 @@ def test_export_bumps_the_last_export_and_carries_a_hand_edit(project):
     assert code == 0 and "would export 1.0.1.0 " in out and "project.c3proj version 1.0.0.0 -> 1.0.1.0" in out, out
     code, out = run(project, f"{INSTALLED}/scripts/export_project.py", "--version", "1.2", "--dry-run")
     assert code == 2 and "not 3 or 4 numbers" in out, out
+    code, out = run(project, f"{INSTALLED}/scripts/export_project.py", "--dry-run")
+    assert code == 0 and f"into {project.resolve() / '.build' / 'web'}" in out, out    # the products' folder
+    assert not (project / ".build").exists()                                             # a dry run writes nothing
 
 
 def test_export_hands_the_editor_the_version_to_export(project):
