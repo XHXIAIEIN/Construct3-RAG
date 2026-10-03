@@ -92,10 +92,3 @@ or export again with the script (the *Auto-increment version* bullet below).
   2026-10-03: three runs stopped and the fourth exported once a second
   session had set both; then, with both set, a window under another one
   opened the export dialog and a minimized one did not]
-- The exported `index.html` holds one inline `<script>`, which only warns
-  when the page is opened from `file:`. A server whose Content Security
-  Policy allows no inline script blocks it and the console shows a red CSP
-  error on every load; the game runs as before, so the error needs no
-  `'unsafe-inline'`. To silence it, delete that block from `index.html`
-  after each export. [r504 web export, `index.html` line 29; served with
-  `default-src 'self' data: blob:`, 2026-10-02]
