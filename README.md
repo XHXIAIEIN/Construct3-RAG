@@ -2,49 +2,52 @@
 
 **English** | [中文](README_CN.md)
 
+Construct3-RAG lets an AI agent make and change [Construct 3](https://www.construct.net) games that are saved as project folders. It holds every condition, action, expression and effect as the editor defines them, in JSON files that the agent and the scripts read directly. The scripts come with the [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill. With them, the agent looks up the JSON to write and reads and edits event sheets. It also checks the project, and opens and plays it in the Construct 3 editor.
+
 > [!IMPORTANT]
-> **AI agents: answer this before you write any project file.** Have you cloned this repository onto the user's machine, and can you run `python <clone>/skills/construct3-agent-plugin/scripts/check_project.py --project <game folder>` there and read what it prints?
+> **AI agents: answer this question before you write a project file.** Is this repository cloned on the user's machine? Can you run `python <clone>/skills/construct3-agent-plugin/scripts/check_project.py --project <game folder>` there and read its output?
 >
-> - Yes: follow [Set up](#set-up), then the installed `SKILL.md`. Before you hand over a project, `check_project.py` reports no problems, and `pack_project.py` writes any `.c3p`.
-> - No, because you read this page from the web, or you have no shell or no Python: stop. Tell the user that you cannot build a Construct 3 project from this repository, and give them the two commands of [Set up](#set-up) to run, or an agent with a terminal.
+> - If yes, follow [Set up](#set-up), then the installed `SKILL.md`. Before you hand over a project, make sure that `check_project.py` reports no problems. Write every `.c3p` with `pack_project.py`.
+> - If no, stop. This is the case when you read this page from the web, or when you have no shell or no Python. Tell the user that you cannot build a Construct 3 project from this repository. Then give them the two commands of [Set up](#set-up) to run, or suggest an agent with a terminal.
 >
-> A project written from this page and general knowledge, without those scripts, gets values the editor rejects, and the editor refuses to open it.
-
-Construct3-RAG lets an AI agent make and change [Construct 3](https://www.construct.net) games saved as project folders. Every condition, action, expression and effect is here as the editor defines it. The scripts of the [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill let the agent look up the JSON of each one, read and edit event sheets, check the project, and open and play it in the Construct 3 editor.
-
-The data is committed here as JSON files, which the agent and the scripts read directly.
+> A project written from this page and general knowledge, without the scripts, gets values that the editor rejects. The editor then refuses to open it.
 
 - To set an agent up for a game, follow [Set up](#set-up).
-- To look a Construct 3 fact up in the data, see [Look something up](#look-something-up).
+- To look up a Construct 3 fact in the data, see [Look something up](#look-something-up).
 - To change this repository, read [`AGENTS.md`](AGENTS.md).
 
 ## Set up
 
-You need Git and Python 3.10 or later. Run both commands as written, from any folder:
+1. Install Git and Python 3.10 or later.
+2. Run these two commands as written, from any folder:
 
-```bash
-git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct3-RAG
-python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
-```
+   ```bash
+   git clone https://github.com/XHXIAIEIN/Construct3-RAG $HOME/Construct3/Construct3-RAG
+   python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
+   ```
 
-They put this repository, the three [related repositories](#related-repositories) and a new `MyGame` project with a Git repository of its own in `$HOME/Construct3`, then install the skill in `MyGame`: a copy in `.agents/skills/`, a Construct 3 block in `AGENTS.md` and the line `@AGENTS.md` in `CLAUDE.md`. In `cmd.exe`, write `%USERPROFILE%` for `$HOME`. To keep everything in another folder, write that folder in both commands in place of `$HOME/Construct3`.
+3. Read `MyGame/AGENTS.md`, then the installed `SKILL.md`. The last line of the second command gives the path of `SKILL.md`.
+
+The commands put this repository, the [related repositories](#related-repositories) and the `MyGame` project into `$HOME/Construct3`. `MyGame` gets a Git repository of its own. Then the second command installs the skill in `MyGame`. It copies the skill to `.agents/skills/` and adds a Construct 3 block to `AGENTS.md`. It also adds the line `@AGENTS.md` to `CLAUDE.md`.
+
+In `cmd.exe`, write `%USERPROFILE%` in place of `$HOME`. To keep everything in another folder, write that folder in both commands in place of `$HOME/Construct3`.
 
 To change what the second command does:
 
-- For a game you already have, give `--project` the path of its folder. A name alone creates a new project beside the clones, a copy of `data/c3-new-project`, the empty project the editor saves for **Project** > **New**.
+- If you have a game already, give `--project` the path of its folder. If you give a name alone, the command creates the project beside the clones. It copies `data/c3-new-project`, the empty project that the editor saves for **Project** > **New**.
 - To start from an empty project of your own, add `--template <folder>`.
 - If your agent reads skills from another folder, add `--into <folder>`, such as `--into .trae/skills` for TRAE.
-- Run it again at any time to refresh the skill from the clone. Clones and instruction files that exist stay as they are. `--help` lists every option.
+- Run the command again at any time to refresh the skill from the clone. It leaves the clones and instruction files that exist as they are. `--help` lists every option.
 
-Then read `MyGame/AGENTS.md`; the script's last line names the first file to read. If your agent takes its instructions from another file, such as `GEMINI.md`, first add a line there that says to read `AGENTS.md`.
+If your agent reads its instructions from another file, such as `GEMINI.md`, add a line there. The line tells the agent to read `AGENTS.md`.
 
 ### Claude Code
 
-In Claude Code, the `construct3` plugin takes the place of the two commands. Choose one or the other: with both, the game project holds a copy of the skill that updates apart from the plugin.
+In Claude Code, the `construct3` plugin replaces the two commands. Use one or the other, because with both, the game project holds a copy of the skill that updates separately from the plugin.
 
-The plugin is this whole repository, so the schemas come with it and the scripts run from the plugin's folder. Install it in one of three ways:
+The plugin is this whole repository, so the schemas come with it. The scripts run from the plugin's folder. Install the plugin in one of three ways:
 
-- From Claude's directory, the versions Anthropic has reviewed: on claude.ai, open **Customize** > **Plugins**, search for Construct3 and select **Add**. Claude Code signed in with the same account downloads it at its next start, as `construct3@synced`. Each version waits for a review, so this copy can be some commits behind the repository.
+- From Claude's directory, for the versions that Anthropic has reviewed. On claude.ai, open **Customize** > **Plugins**. Search for Construct3 and select **Add**. Claude Code downloads the plugin as `construct3@synced` at its next start, if it is signed in to the same account. Each version waits for a review, so this copy can be some commits behind the repository.
 - From this repository, to follow its latest commit:
 
   ```bash
@@ -52,68 +55,82 @@ The plugin is this whole repository, so the schemas come with it and the scripts
   claude plugin install construct3@construct3-rag
   ```
 
-  `claude plugin update construct3@construct3-rag` brings Claude Code's copy up to the latest commit.
-- From a clone you already have, so that a `git pull` reaches the next session: link the clone into Claude Code's skills folder.
+  To bring Claude Code's copy up to the latest commit, run `claude plugin update construct3@construct3-rag`.
+- From a clone that you have, so that the next session uses what `git pull` fetched: link the clone into Claude Code's skills folder.
   - PowerShell: `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <the clone>`
-  - Elsewhere: `ln -s <the clone> ~/.claude/skills/construct3`
+  - Other shells: `ln -s <the clone> ~/.claude/skills/construct3`
 
-  Link it rather than adding the clone as a marketplace, which copies all of it, ignored files included, into the plugin cache.
+  Use a link, not a marketplace that points at the clone. A marketplace copies the whole clone, with the files that Git ignores, into the plugin cache.
 
-If the directory's copy is added as well, Claude Code loads the one installed from this repository or linked from a clone, and leaves the directory's copy unloaded.
+If you also add the copy from Claude's directory, Claude Code loads the plugin from this repository or from the linked clone. It ignores the directory's copy.
 
 ## What the skill does
 
-[`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) tells the agent when to run which script. Each script in `scripts/` prints its options and examples with `--help`.
+[`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) tells the agent which script to run and when. Each script in `scripts/` prints its options and examples with `--help`.
 
-- `lookup_ace.py` looks up the conditions, actions and expressions of an object in the project, of `System`, or of a plugin or behavior, and prints each with its parameters, its event sheet wording and the JSON to write. Given an effect, it prints the effect's parameters.
-- `print_sheet.py` prints an event sheet as the editor words it, under the editor's event numbers. It reads the official examples the same way.
-- `edit_sheet.py` adds, moves, replaces or removes events from a JSON plan addressed by those numbers, and checks the result before it writes anything.
-- `check_project.py` checks every project file against the schemas and the rules the editor applies when it opens a project. Each finding names its place, and what to write where it can.
-- `check_look.py` checks the stand-in art of a generated game against the strict rules of `assets/look-manifest.json`, such as the grid, the palette and text contrast.
-- `open_in_editor.py` opens the project in the Construct 3 editor and reports that it opened, or the editor's message. With `--preview` it runs the game for a few seconds and reports the runtime errors with their events.
-- `preview_project.py` plays a preview from a plan of taps, drags, key presses and waits. It takes screenshots, and records parts you can review frame by frame and copy to the agent as a task.
-- `export_project.py` has the editor export the project to Web (HTML5), with your subscribed account.
-- `pack_project.py` saves the project as a `.c3p` or `.zip` the editor opens, or unpacks a `.c3p` or `.zip` into a project folder.
+- `lookup_ace.py` looks up the conditions, actions and expressions of an object in the project, of `System`, or of a plugin or behavior. It prints each one with its parameters, its event sheet wording and the JSON to write. For an effect, it prints the effect's parameters.
+- `print_sheet.py` prints an event sheet in the editor's words, with the editor's event numbers. It reads the official examples the same way.
+- `edit_sheet.py` adds, moves, replaces or removes events from a JSON plan that uses those numbers. It checks the result before it writes anything.
+- `check_project.py` checks every project file against the schemas and against the rules that the editor applies when it opens a project. Each finding names its place and, where it can, what to write.
+- `check_look.py` checks the placeholder art of a generated game against the strict rules in `assets/look-manifest.json`, such as the grid, the palette and the text contrast.
+- `open_in_editor.py` opens the project in the Construct 3 editor and reports that it opened, or gives the editor's message. With `--preview`, it runs the game for a few seconds and reports the runtime errors with their events.
+- `preview_project.py` plays a preview from a plan of taps, drags, key presses and waits. It takes screenshots and records parts of the run. You can review a recording frame by frame and give a part of it to the agent as a task.
+- `export_project.py` makes the editor export the project to Web (HTML5), with your subscribed account.
+- `pack_project.py` saves the project as a `.c3p` or `.zip` that the editor opens. It also unpacks a `.c3p` or `.zip` into a project folder.
 - `install.py` installs the skill in a game project, or refreshes a copy from the clone.
-- `assets/build_project.py` is a template for a script that generates a whole project from Python.
+- `assets/build_project.py` is a template for a Python script that generates a whole project.
 
 ### What the skill's scripts read, write and reach
 
-They read this repository's `data/` and the projects and files you point them at. They install no package and send nothing to a server of ours.
+The skill's scripts read this repository's `data/` and the projects and files that you give them. They run on the Python standard library. The only sites that they open are the Construct 3 editor and its preview, in a browser on your machine.
 
-- Read only: `lookup_ace.py`, `check_project.py`, `check_look.py`, and `print_sheet.py`, which keeps a hash of each sheet it prints in `construct3-sheet-stamps/` of the system's temporary folder, so that `edit_sheet.py` notices a save made in between.
-- Writing files: `edit_sheet.py` writes the event sheets you point it at, and their hashes beside those of `print_sheet.py`. `install.py` writes the skill's copy, deleting the files the skill no longer has, the block in `AGENTS.md` and the line in `CLAUDE.md`; an absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project, and `--dry-run` shows the changes first. `pack_project.py` writes the archive or folder named by `--out`, by default a `.c3p` in the project's `.tmp/`, or a folder beside the archive it unpacks. `assets/build_project.py`, once copied to the project's `tools/` and rewritten for the game, rewrites the project files it generates and runs `check_project.py`.
-- Opening the editor: `open_in_editor.py`, `preview_project.py` and `pack_project.py --open` start the Edge, Chrome or Chromium on the machine, headless unless `--headed`, with a profile of their own in the project's `.tmp/` unless `--profile` names another folder. They open `https://editor.construct.net/`, the editor Scirra serves, and a preview opens `https://preview.construct.net`. The project is handed to the editor page inside the browser, not uploaded. The scripts drive the browser over a DevTools port on `127.0.0.1`; a plan's `js` and `until` steps run JavaScript in the preview, and `--install-addon` installs a `.c3addon` in the editor of that profile. Results, screenshots and recordings go to the project's `.tmp/`; a recording is joined into a video with ffmpeg, or a GIF with Pillow, where one is installed. Before each run, `preview_project.py` clears the saves that earlier previews left in its profile, unless the plan sets `keep_saves`. Without a browser on the machine they start nothing and print the steps for a browser tool of the agent's.
-- Exporting: `export_project.py` drives the same editor in a visible browser, with a profile of its own in `.tmp/` of the main clone of the Git repository that holds the project, found with `git`, or of the project when none does. It replaces the contents of the folder given by `--to`, by default the project's `.tmp/export-web`, with the export, and writes the exported version into `project.c3proj` when it differs. The editor exports a large project only for an account with a subscription: you log in yourself in that window, the browser keeps the session in that profile for the next export, and the script never reads or stores a credential. `--attach` uses a browser of yours with remote debugging turned on instead: the script connects to it over DevTools, reads its port from the browser's `DevToolsActivePort` file when given only a port, lists its tabs, works only in a tab with no project open, and opens a window when no such tab exists.
+- **Read only**: `lookup_ace.py`, `check_project.py`, `check_look.py` and `print_sheet.py`. `print_sheet.py` keeps a hash of each sheet that it prints, in `construct3-sheet-stamps/` of the system's temporary folder. With this hash, `edit_sheet.py` notices a save made between the print and the edit.
+- **Writing files**:
+  - `edit_sheet.py` writes the event sheets that you give it, and their hashes beside those of `print_sheet.py`.
+  - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. `--dry-run` shows the changes first.
+  - `pack_project.py` writes the archive or folder that `--out` names. By default, it writes a `.c3p` in the project's `.tmp/`. When it unpacks, it writes a folder beside the archive by default.
+  - The agent copies `assets/build_project.py` to the project's `tools/` and adapts it to the game. When it runs, the copy rewrites the project files that it generates, then runs `check_project.py`.
+- **Opening the editor**: `open_in_editor.py`, `preview_project.py` and `pack_project.py --open` start Edge, Chrome or Chromium on the machine.
+  - The browser runs headless unless you add `--headed`. It uses a profile of its own in the project's `.tmp/`, unless `--profile` names another folder.
+  - The browser opens `https://editor.construct.net/`, the editor that Scirra serves. A preview opens `https://preview.construct.net`. The scripts pass the project to the editor page inside the browser, so the project files stay on your machine.
+  - The scripts drive the browser over a DevTools port on `127.0.0.1`. The `js` and `until` steps of a plan run JavaScript in the preview. `--install-addon` installs a `.c3addon` in the editor of that profile.
+  - Results, screenshots and recordings go to the project's `.tmp/`. If ffmpeg is installed, a recording becomes a video. Otherwise, if Pillow is installed, it becomes a GIF.
+  - Before each run, `preview_project.py` clears the saves that earlier previews left in its profile, unless the plan sets `keep_saves`.
+  - If the machine has none of these browsers, the scripts start nothing. They print the steps for a browser tool of the agent instead.
+- **Exporting**: `export_project.py` drives the same editor in a visible browser.
+  - The browser profile is in `.tmp/` of the main clone of the Git repository that holds the project, which the script finds with `git`. If no Git repository holds the project, the profile is in the project's `.tmp/`.
+  - The script replaces the contents of the folder that `--to` names with the export. The default folder is the project's `.tmp/export-web`. If the exported version differs from the version in `project.c3proj`, the script writes the exported version into `project.c3proj`.
+  - The editor exports a large project only for an account with a subscription. You log in yourself in that window, and the browser keeps the session in that profile for the next export. The script does not read or store your credentials.
+  - With `--attach`, the script uses a browser of yours that has remote debugging turned on, and connects to it over DevTools. If you give only a port, the script looks for the browser's `DevToolsActivePort` file that names that port. The script lists the browser's tabs and works only in a tab with no project open. If no such tab exists, it opens a window.
 
 ## Look something up
 
-Lookups run from the clone made in [Set up](#set-up). For a condition, action or expression, run `lookup_ace.py` with the object and a few words of the name:
+Run lookups from the clone that [Set up](#set-up) makes. For a condition, action or expression (an ACE), run `lookup_ace.py` with the object and a few words of the name:
 
 ```bash
 python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait
 ```
 
-It prints each match with its parameters, its wording and the JSON to write. Use it for `System`, and for the ACEs every world object shares, under any world object, such as `Sprite overlap`: `plugins/system.json` and `plugins/_common.json` run to thousands of lines, more than most file tools read at once, and an ACE past the cut looks missing.
+It prints each match with its parameters, its wording and the JSON to write. Use it for `System` and for the ACEs that every world object shares. Look a shared ACE up under any world object, such as `Sprite overlap`. The files of these ACEs, `plugins/system.json` and `plugins/_common.json`, are too long for most file tools to read at once. Such a tool shows only the first part of a file, so an ACE after that part looks missing.
 
-Everything else is read from the files under `data/`, where `{locale}` is one of the `languages` in `c3-schemas/_index.json`, such as `en-US`:
+Read everything else from the files under `data/`. In the paths below, `{locale}` is one of the `languages` in `c3-schemas/_index.json`, such as `en-US`:
 
 | Path | Content |
 |---|---|
 | `c3-schemas/_index.json` | Version, locales, and every plugin, behavior and effect with its file path and ACE counts. Language neutral |
 | `c3-schemas/{locale}/_index.json` | Addon names in that language, keyed by the same ids |
 | `c3-schemas/{locale}/plugins/{id}.json` | Conditions, actions, expressions, properties |
-| `c3-schemas/{locale}/plugins/_common.json` | ACEs every world object shares: overlap, collisions, instance variables, hierarchy, UID, Z order. Each plugin file lists the ones it gets under `commonAces` |
+| `c3-schemas/{locale}/plugins/_common.json` | ACEs that every world object shares: overlap, collisions, instance variables, hierarchy, UID, Z order. Each plugin file lists the ones that it gets under `commonAces` |
 | `c3-schemas/{locale}/behaviors/{id}.json` | Behavior ACEs |
 | `c3-schemas/{locale}/effects/{id}.json` | Effect parameters and categories |
-| `c3-schemas/{locale}/_deprecated.json` | Plugins, behaviors, effects and ACEs the editor has deprecated, with the current ACE of the same name where there is one |
+| `c3-schemas/{locale}/_deprecated.json` | Plugins, behaviors, effects and ACEs that the editor has deprecated, with the current ACE of the same name where one exists |
 | `c3-examples/{locale}/{id}.json` | Example name, description, tags, used addons, open URL |
 | `c3-lang/{locale}.json` | The editor's language pack from the CDN, one string per line |
-| `c3-ts-defs/autocomplete-data.json` | Scripting class to methods and properties |
+| `c3-ts-defs/autocomplete-data.json` | Scripting classes with their methods and properties |
 | `c3-ts-defs/**/*.d.ts` | Full TypeScript interface signatures |
-| `c3-guides/constructs-project-format.md` | Scirra's guide to the project folder, the one the `llm-context.md` of every project links, as Markdown (CC BY 4.0) |
+| `c3-guides/constructs-project-format.md` | Scirra's guide to the project folder, as Markdown (CC BY 4.0). The `llm-context.md` of every project links this guide |
 
-Field names match the Construct CDN. Structural fields such as `id`, `scriptName`, `category` and parameter types are the same in every locale. A condition from `en-US/plugins/sprite.json`:
+Field names match the Construct CDN. Structural fields such as `id`, `scriptName`, `category` and the parameter types are the same in every locale. So an ACE found in one locale has the same `id` in every other locale. Here is a condition from `en-US/plugins/sprite.json`:
 
 ```json
 {
@@ -126,38 +143,38 @@ Field names match the Construct CDN. Structural fields such as `id`, `scriptName
 }
 ```
 
-The same `id` in another locale carries that language's `list-name`, `display-text` and parameter names. [docs/guide/data-format.md](docs/guide/data-format.md) explains every field, with a worked example; section 2 of [`AGENTS.md`](AGENTS.md) is the procedure an agent follows, deprecated ACEs and example projects included.
+The same `id` in another locale has that language's `list-name`, `display-text` and parameter names. [docs/guide/data-format.md](docs/guide/data-format.md) explains every field, with a worked example. Section 2 of [`AGENTS.md`](AGENTS.md) is the procedure that an agent follows, including deprecated ACEs and example projects.
 
 ## Event sheet prompts
 
-To build an assistant that writes event sheets, load these three together as its system prompt:
+To build an assistant that writes event sheets, load these three files together as its system prompt:
 
-- [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md): events structured in Construct terms, such as picking, families, containers and `Else`.
-- [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md): the output format, and every name checked against the data.
-- [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md): runtime behavior that intuition gets wrong, one line each. The cases and sources behind the lines are in `prompts/pitfalls/`, one file per topic, read when the events touch that topic.
+- [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md): how to structure events in Construct terms, such as picking, families, containers and `Else`.
+- [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md): the output format, and a check of every name against the data.
+- [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md): runtime behavior that intuition gets wrong, one line each. `prompts/pitfalls/` holds the cases and sources behind the lines, one file per topic. Read the file of a topic when the events touch that topic.
 
-For events written into a project, [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) is how the official examples write a sheet: groups and their variables, comments, names, UI text. Material needed only sometimes is in `prompts/references/`; these files point to it when a task calls for it.
+For events written into a project, [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) describes how the official examples write a sheet: groups and their variables, comments, names and UI text. `prompts/references/` holds material that only some tasks need. The files above point to it when a task needs it.
 
 ## Related repositories
 
-`bootstrap.py` clones three more repositories beside this one:
+`bootstrap.py` clones these repositories beside this one:
 
-| Repository | What it holds | How it fits |
+| Repository | Content | How it fits |
 |---|---|---|
-| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, Addon SDK guide, and Game Services docs as Markdown | `data/c3-schemas/` is the names and parameters; this is what they do. |
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as folder projects | `data/c3-examples/` is the metadata; this is the source. |
-| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects, and themes | `data/c3-ts-defs/sdk/` is the typed interface; this shows how to use it. |
+| [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, the Addon SDK guide and the Game Services docs, as Markdown | `data/c3-schemas/` gives the names and parameters; the manual says what they do. |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as a folder project | `data/c3-examples/` holds the metadata; the projects are in that repository. |
+| [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects and themes | `data/c3-ts-defs/sdk/` holds the typed interface; the SDK shows how to use it. |
 
 ## Lookup service (optional)
 
-For a program that queries over HTTP, the clone can serve the same data as a deterministic keyword lookup, offline and on this machine. It needs Python 3.11 or later:
+A program that queries over HTTP can get the same data from a lookup service on your machine. The service is a deterministic keyword lookup that runs offline. It needs Python 3.11 or later:
 
 ```bash
 pip install -r src/requirements.txt
 python scripts/setup.py          # http://localhost:8765/playground
 ```
 
-Setup options, the `/search` and `/health` endpoints and their responses: [docs/guide/quick-start.md](docs/guide/quick-start.md) and [docs/guide/api-reference.md](docs/guide/api-reference.md).
+[docs/guide/quick-start.md](docs/guide/quick-start.md) gives the setup options. [docs/guide/api-reference.md](docs/guide/api-reference.md) gives the `/search` and `/health` endpoints and their responses.
 
 ## Project structure
 
@@ -165,7 +182,7 @@ Setup options, the `/search` and `/health` endpoints and their responses: [docs/
 AGENTS.md               AI agent entry point
 .claude-plugin/         Claude Code plugin and marketplace manifests
 data/                   Committed reference data, read directly
-  c3-schemas/           ACE definitions, effects, one folder per locale
+  c3-schemas/           ACE definitions and effects, one folder per locale
   c3-examples/          Example project metadata
   c3-lang/              CDN language packs
   c3-ts-defs/           TypeScript scripting interfaces
@@ -173,9 +190,9 @@ data/                   Committed reference data, read directly
   c3-new-project/       The editor's empty project, copied for a new game
 prompts/                LLM system prompts
   pitfalls/             Cases and sources behind the pitfalls, one file per topic
-  references/           Loaded on demand
+  references/           Material that some tasks load
 skills/                 Agent Skills, installed into a game project
-  construct3-agent-plugin/   The project tools listed in What the skill does
+  construct3-agent-plugin/   The project tools of "What the skill does"
 src/                    Optional lookup service (see src/AGENTS.md)
 scripts/                Setup, data refresh, version check
 tests/                  Offline pytest suite
