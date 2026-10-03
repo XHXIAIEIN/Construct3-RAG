@@ -50,6 +50,29 @@ def test_every_file_of_the_clone_the_skill_names_exists():
             assert (REPO / rel).is_file(), f"{doc.name} names Construct3-RAG/{rel}"
 
 
+OTHER_PROGRAMS = {"--mute-audio", "--user-data-dir"}     # the browser's, where the skill says how one is started
+
+
+def test_every_flag_the_skill_names_is_one_its_script_takes(tmp_path):
+    """A flag renamed in a script and left in SKILL.md or a reference ends the agent's run in a usage error.
+    A flag after a script's name on a line is that script's; one with no script before it, any script's."""
+    takes = {}
+    for script in sorted((SKILL / "scripts").glob("*.py")):
+        if script.stem != "c3project":
+            code, out = run(tmp_path, script, "--help")
+            assert code == 0, out
+            takes[script.name] = set(re.findall(r"^\s+(?:-\w(?: \S+)?, )?(--[a-z][\w-]*)", out, re.M))
+    any_script = set().union(*takes.values())
+    for doc in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
+        for line in doc.read_text(encoding="utf-8").splitlines():
+            script = None
+            for m in re.finditer(r"\b(\w+\.py)\b|(?<![\w-])(--[a-z][\w-]*)", line):
+                if m.group(1):
+                    script = m.group(1) if m.group(1) in takes else None
+                elif m.group(2) not in OTHER_PROGRAMS:
+                    assert m.group(2) in takes.get(script, any_script), f"{doc.name}: {script or 'no script'} takes no {m.group(2)}: {line.strip()}"
+
+
 # --- the trigger evaluation of the description, against a stand-in for the client -------------
 FAKE_CLIENT = '''
 import json, sys
