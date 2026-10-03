@@ -153,6 +153,67 @@
         "Every Text on the UI layer, the score included, reads at least 4.5:1 against every colour the background shows, or against the one-colour panel whose box holds it",
         "tools/build_project.py is the source: rerun in a copy, it writes the same layouts/Game.json"
       ]
+    },
+    {
+      "id": 10,
+      "name": "walk-with-wasd",
+      "fixture": "example:families",
+      "prompt": "this is the families example from construct, folder <project> . the player moves with the arrow keys right now. make it also walk with W A S D, the arrow keys have to keep working",
+      "expected_output": "Event sheet 1 gains events that hold W, A, S and D: Keyboard Key is down with each key's code, then Player 8Direction Simulate control up, left, down or right. 8 Direction keeps Default controls on, so the arrow keys still move the player. Under a press trigger such as On key pressed the control holds for one tick only. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning on an event the run added: the example's own warnings stay out",
+        "W, A, S and D each simulate their 8 Direction control on Player (up, left, down, right) under Keyboard Key is down or Key code is down with that key's code, with no trigger in the branch",
+        "The arrow keys still move the player: Player's 8 Direction keeps Default controls on, or each arrow key simulates its control under Key is down or Key code is down",
+        "Every event of the original sheet is still in it, by sid"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "countdown-between-rounds",
+      "fixture": "coins",
+      "prompt": "in my coins game, when the last coin of a round is collected i want a short countdown before the next round: the score text shows \"Next round in 3\", then 2, then 1, one second apart, and then the next round starts. the project folder is <project> , its all in eventSheets/Game.json",
+      "expected_output": "The event that ends a round, Coin.Count = 0 with Trigger once, starts the countdown once: a Timer started there, or Waits in that one block. ScoreText shows 3, 2 and 1 a second apart, and the layout restarts after the countdown, from On timer or after the last Wait. A Start timer in an event that runs every tick starts over each tick and never fires. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning",
+        "Every Start timer runs once per countdown: a trigger, Trigger once or Every X seconds is in its event or above it, or Is timer running is in its branch",
+        "ScoreText shows the countdown: a Set text saying Next round that reads a Timer expression or a variable, or Set texts of 3, 2 and 1",
+        "The layout restarts after the countdown: Restart layout under On timer, after Waits of 3 seconds or more in its block and the blocks above it, or under a test of the countdown reaching 0",
+        "Every event of the original sheet is still in it, by sid"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "fix-wasd-twitch",
+      "fixture": "families-key-pressed",
+      "prompt": "this is the families example from construct, folder <project> . i added W A S D so the player can walk, but it only twitches a tiny bit each time i press a key instead of walking while i hold it. please fix it, the arrow keys have to keep working",
+      "expected_output": "The events of W, A, S and D test Keyboard Key is down in place of On key pressed, so each control is simulated in every tick its key is held; 8 Direction keeps Default controls on for the arrow keys. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning on an event the run added or the seed wrote: the example's own warnings stay out",
+        "W, A, S and D each simulate their 8 Direction control on Player (up, left, down, right) under Keyboard Key is down or Key code is down with that key's code, with no trigger in the branch",
+        "The arrow keys still move the player: Player's 8 Direction keeps Default controls on, or each arrow key simulates its control under Key is down or Key code is down",
+        "Every event of the example is still in it, by sid"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "fix-next-round",
+      "fixture": "coins-timer-restart",
+      "prompt": "in my coins game the next round never starts. when i collect the last coin the text says Next round soon and then nothing happens. fix it please, the project folder is <project> , its all in eventSheets/Game.json",
+      "expected_output": "The event that tests Coin.Count = 0 has no trigger, so it starts the Timer again in every tick and On timer never fires. With Trigger once in that event, or the Timer started from a trigger, the timer runs out after 3 seconds and On timer deals the next round. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning",
+        "Every Start timer runs once per countdown: a trigger, Trigger once or Every X seconds is in its event or above it, or Is timer running is in its branch",
+        "Restart layout and Set beat run once per round: a trigger or Trigger once is in their event or above it",
+        "Every event of the game is still in it, by sid, the seeded round end aside"
+      ]
     }
   ]
 }

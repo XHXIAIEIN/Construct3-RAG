@@ -8,7 +8,8 @@ the clone reads its AGENTS.md, which routes to this skill, and a baseline
 that has the skill is not a baseline. A project is the stand-in game of
 assets/build_project.py, without tools/, so that the task is a hand edit of
 a project made in the editor; or, for a fixture `example:<id>`, a copy of
-that official example from --examples.
+that official example from --examples. A fixture of SEEDS is one of those with
+a mistake small models make written into it, for a case that asks to fix it.
 
 An arm named with_... holds the skill and the block as install.py leaves
 them, without_... holds neither, and old_... holds the previous version of
@@ -88,6 +89,64 @@ def seed_load_errors(root: Path) -> None:
     path.write_text(json.dumps(sheet, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
 
 
+def seed_key_pressed(root: Path) -> None:
+    """W, A, S and D under Keyboard On key pressed, each simulating its 8 Direction control on Player:
+    the player moves for the one tick of each press (docs/decisions/event-sheet-design-guidance.md)."""
+    path = root / "eventSheets" / "event sheet 1.json"
+    sheet = json.loads(path.read_text(encoding="utf-8"))
+    sid = iter(range(633333333333301, 633333333333399))
+    for key, control in ((87, "up"), (65, "left"), (83, "down"), (68, "right")):
+        sheet["events"] += [
+            {"eventType": "comment", "text": f"Walk {control} with {chr(key)}", "sid": next(sid)},
+            {"eventType": "block", "sid": next(sid),
+             "conditions": [{"id": "on-key-pressed", "objectClass": "Keyboard", "sid": next(sid), "parameters": {"key": key}}],
+             "actions": [{"id": "simulate-control", "objectClass": "Player", "sid": next(sid), "behaviorType": "8Direction",
+                          "parameters": {"control": control}}]}]
+    path.write_text(json.dumps(sheet, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+
+
+def seed_timer_restart(root: Path) -> None:
+    """The round ends on a Timer started with no trigger: Coin.Count = 0 -> ScoreText Start timer, which
+    starts the timer over each tick, so On timer never restarts the layout
+    (docs/decisions/event-sheet-design-guidance.md)."""
+    def edit(rel: str, change) -> None:
+        path = root / rel
+        data = json.loads(path.read_text(encoding="utf-8"))
+        change(data)
+        path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+
+    edit("objectTypes/ScoreText.json", lambda t: t["behaviorTypes"].append({"behaviorId": "Timer", "name": "Timer",
+                                                                            "sid": 644444444444401}))
+    edit("layouts/Game.json", lambda d: next(i for layer in d["layers"] for i in layer["instances"]
+                                             if i["type"] == "ScoreText").setdefault("behaviors", {}).update(
+        Timer={"properties": {}}))
+    edit("project.c3proj", lambda p: p["usedAddons"].append({"type": "behavior", "id": "Timer", "name": "Timer",
+                                                             "author": "Scirra", "bundled": False}))
+
+    def round_end(sheet: dict) -> None:
+        restart = next(e for e in sheet["events"] if e.get("eventType") == "group" and e.get("title") == "Restart")
+        old = next(e for e in restart["children"] if e["eventType"] == "block")
+        timer = {"objectClass": "ScoreText", "behaviorType": "Timer"}
+        restart["children"] = [
+            {"eventType": "comment", "text": "When the last coin is gone, count down to the next round", "sid": 644444444444402},
+            {"eventType": "block", "sid": 644444444444408, "conditions": [c for c in old["conditions"] if c["id"] != "trigger-once-while-true"],
+             "actions": [{"id": "set-text", "objectClass": "ScoreText", "sid": 644444444444403,
+                          "parameters": {"text": "\"Next round soon\""}},
+                         {"id": "start-timer", **timer, "sid": 644444444444404,
+                          "parameters": {"duration": "3", "type": "once", "tag": "\"next\""}}]},
+            {"eventType": "comment", "text": "Then deal the next round", "sid": 644444444444405},
+            {"eventType": "block", "sid": 644444444444406,
+             "conditions": [{"id": "on-timer", **timer, "sid": 644444444444407, "parameters": {"tag": "\"next\""}}],
+             "actions": [a for a in old["actions"] if a["id"] != "wait"]}]
+    edit("eventSheets/Game.json", round_end)
+
+
+# fixture -> (the fixture it starts from, the mistake written into it). The seeded entries' sids start
+# with 6333 or 6444, so a grader can tell the example's own events from them.
+SEEDS = {"families-key-pressed": ("example:families", seed_key_pressed),
+         "coins-timer-restart": ("coins", seed_timer_restart)}
+
+
 def digest(project: Path) -> dict:
     """The game's own files by hash, line endings aside, and the sids of the
     sheet's events; grade.py reads it to see what a run changed or lost."""
@@ -133,9 +192,12 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         game = stand_in(Path(tmp) / "coins")
         for case in (c for c in CASES if not args.cases or c["name"] in args.cases):
-            source = game
-            if case["fixture"].startswith("example:"):
-                source = Path(args.examples) / case["fixture"].split(":", 1)[1]
+            source, seed = game, None
+            fixture = case["fixture"]
+            if fixture in SEEDS:
+                fixture, seed = SEEDS[fixture]
+            if fixture.startswith("example:"):
+                source = Path(args.examples) / fixture.split(":", 1)[1]
                 if not (source / "project.c3proj").exists():
                     sys.exit(f"{source} is not a folder project; --examples is the example-projects folder of the "
                              f"Construct-Example-Projects clone")
@@ -147,6 +209,8 @@ def main() -> int:
                 (target.parent / "outputs").mkdir()
                 if case["fixture"] == "coins-load-errors":
                     seed_load_errors(target)
+                if seed:
+                    seed(target)
                 installer = next((script for prefix, script in installers.items() if arm.startswith(prefix)), None)
                 if installer:
                     run(str(installer), "--project", str(target), cwd=target)

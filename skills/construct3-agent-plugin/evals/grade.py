@@ -813,11 +813,185 @@ def grade_readable_on_a_dark_background(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
+def triggered(project: Path):
+    """A test of whether a condition is a trigger, from the clone's schemas."""
+    sys.path.insert(0, str(SKILL / "scripts"))
+    import c3project as c3
+    p = c3.Project(project, REPO, "en-US", c3.Findings())
+    return lambda c: bool((p.ace_entry("conditions", c) or {}).get("isTrigger"))
+
+
+def original_sids(run: Path, rows: list, sheet: str) -> tuple[bool, str]:
+    original = json.loads((run / "fixture.json").read_text(encoding="utf-8")).get(f"eventSheets/{sheet}.sids", [])
+    have = {ev.get("sid") for ev, _ in rows}
+    lost = [s for s in original if s not in have]
+    return bool(original) and not lost, f"{len(original) - len(lost)} of {len(original)} original event sids present"
+
+
+WASD = {87: "up", 65: "left", 83: "down", 68: "right"}
+ARROWS = {38: "up", 37: "left", 40: "down", 39: "right"}
+
+
+def grade_walk_with_wasd(run: Path) -> list[tuple[bool, str]]:
+    """Each letter holds its control: Simulate control under Key is down with no trigger in the branch,
+    since a simulated control holds for the tick it runs in."""
+    project = run / "project"
+    code, out = checker(project)
+    original = set(json.loads((run / "fixture.json").read_text(encoding="utf-8")).get("eventSheets/event sheet 1.json.sids", []))
+    # The example warns on a Spawn another object of its own; a warning on an event the run added names a new sid.
+    warnings = [line for line in out.splitlines() if line.startswith("warning:")
+                and not ((m := re.search(r"\(sid (\d+)\)", line)) and int(m.group(1)) in original)]
+    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
+               (not warnings, warnings[0] if warnings else "no warning line on an added event")]
+    try:
+        events = json.loads((project / "eventSheets" / "event sheet 1.json").read_text(encoding="utf-8"))["events"]
+    except (OSError, ValueError, KeyError):
+        return results + [(False, "eventSheets/event sheet 1.json is not readable JSON")] * 3
+    rows = list(walk(events))
+    is_trigger = triggered(project)
+    held: dict[int, set[str]] = {}      # key code -> the controls simulated while it is down
+    pressed = []
+    for ev, above in rows:
+        conds = conditions_over(ev, above)
+        moves = [a for a in ev.get("actions", []) if a.get("id") == "simulate-control" and a.get("objectClass") == "Player"]
+        if not moves:
+            continue
+        # Key is down takes the key as a code, Key code is down as an expression.
+        keys = [c.get("parameters", {}).get("key") for c in conds if c.get("id") == "key-is-down"] +             [int(k) for c in conds if c.get("id") == "key-code-is-down"
+             if (k := str(c.get("parameters", {}).get("keycode", "")).strip()).isdigit()]
+        triggers = [c for c in conds if is_trigger(c)]
+        for a in moves:
+            control = a.get("parameters", {}).get("control")
+            if triggers:
+                pressed.append(f"{control} under {triggers[0].get('id')}")
+                continue
+            for k in keys:
+                if isinstance(k, int):
+                    held.setdefault(k, set()).add(control)
+    missing = [f"{chr(k)} {d}" for k, d in WASD.items() if d not in held.get(k, set())]
+    results.append((not missing and not pressed, "held: " + ", ".join(f"{chr(k)} {d}" for k, d in WASD.items()
+                    if d in held.get(k, set())) + (f"; missing: {missing}" if missing else "")
+                    + (f"; under a trigger: {pressed}" if pressed else "")))
+    layout = json.loads((project / "layouts" / "layout 1.json").read_text(encoding="utf-8"))
+    on = [i.get("behaviors", {}).get("8Direction", {}).get("properties", {}).get("default-controls")
+          for layer in layout["layers"] for i in layer.get("instances", []) if i.get("type") == "Player"]
+    arrows = all(d in held.get(k, set()) for k, d in ARROWS.items())
+    results.append((bool(on) and all(on) or arrows, f"Default controls {on}, arrows held under Key is down: {arrows}"))
+    results.append(original_sids(run, rows, "event sheet 1.json"))
+    return results
+
+
+def seconds_of(a: dict) -> float:
+    try:
+        return float(str(a.get("parameters", {}).get("seconds", "")).strip())
+    except ValueError:
+        return 0.0
+
+
+def grade_countdown_between_rounds(run: Path) -> list[tuple[bool, str]]:
+    """The countdown starts once when the round ends, shows 3, 2 and 1, and the restart waits for it."""
+    project = run / "project"
+    code, out = checker(project)
+    warnings = [line for line in out.splitlines() if line.startswith("warning:")]
+    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
+               (not warnings, warnings[0] if warnings else "no warning line")]
+    events = sheet_of(project)
+    if events is None:
+        return results + [(False, "eventSheets/Game.json is not readable JSON")] * 4
+    rows = list(walk(events))
+    is_trigger = triggered(project)
+    paced = {"trigger-once-while-true", "every-x-seconds", "is-timer-running"}
+    starts = [(a, conditions_over(ev, above)) for ev, above in rows for a in ev.get("actions", []) if a.get("id") == "start-timer"]
+    every_tick = [a for a, conds in starts if not any(is_trigger(c) or c.get("id") in paced for c in conds)]
+    results.append((not every_tick, f"{len(starts)} Start timer, {len(every_tick)} in an event that runs every tick"
+                    + (": " + "; ".join(values([a]) for a in every_tick) if every_tick else "")))
+
+    texts = [a for ev, _ in rows for a in ev.get("actions", []) if a.get("id") == "set-text"
+             and a.get("objectClass") == "ScoreText" and re.search(r"next\s*round", values([a]), re.I)]
+    reads = [a for a in texts if re.search(r"&\s*[A-Za-z(]", values([a]))]
+    counted = {n for a in texts for n in re.findall(r"\b([123])\b", values([a]))}
+    results.append((bool(reads) or counted >= {"1", "2", "3"},
+                    f"{len(texts)} Set text with Next round; " + ("reads " + values(reads[:1]) if reads else f"literals {sorted(counted)}")))
+
+    after = []
+    for ev, above in rows:
+        actions = ev.get("actions", [])
+        for i, a in enumerate(actions):
+            if a.get("id") != "restart-layout":
+                continue
+            conds = conditions_over(ev, above)
+            waited = sum(seconds_of(w) for w in actions[:i] if w.get("id") == "wait") + \
+                sum(seconds_of(w) for e in above for w in e.get("actions", []) if w.get("id") == "wait")
+            on_timer = any(c.get("id") == "on-timer" for c in conds)
+            reaches_0 = any(re.search(r"(?:^|\|\s*)0(?:\.0)?\s*(?:\||$)", values([c])) for c in conds
+                            if c.get("id") in ("compare-eventvar", "compare-two-values", "compare-instance-variable")
+                            and ".count" not in values([c]).lower())
+            after.append((on_timer or waited >= 3 or reaches_0,
+                          f"Restart layout {'under On timer' if on_timer else f'after {waited:g} s of Wait'}"
+                          + (", under a test of 0" if reaches_0 else "")))
+    results.append((any(ok for ok, _ in after), "; ".join(said for _, said in after) or "no Restart layout"))
+    results.append(original_sids(run, rows, "Game.json"))
+    return results
+
+
+SEEDED = re.compile(r"^6(?:333|444)\d{11}$")     # the sids make_fixtures.py gives the entries it seeds
+
+
+def grade_fix_wasd_twitch(run: Path) -> list[tuple[bool, str]]:
+    """The seeded On key pressed events walk for one tick a press; the fix holds each key with Key is down.
+    The checks are walk-with-wasd's, with the seeded events counted as the run's own."""
+    results = grade_walk_with_wasd(run)
+    original = json.loads((run / "fixture.json").read_text(encoding="utf-8")).get("eventSheets/event sheet 1.json.sids", [])
+    example = {s for s in original if not SEEDED.match(str(s))}
+    code, out = checker(run / "project")
+    warnings = [line for line in out.splitlines() if line.startswith("warning:")
+                and not ((m := re.search(r"\(sid (\d+)\)", line)) and int(m.group(1)) in example)]
+    results[1] = (not warnings, warnings[0] if warnings else "no warning line on an added or seeded event")
+    events = json.loads((run / "project" / "eventSheets" / "event sheet 1.json").read_text(encoding="utf-8"))["events"]
+    have = {ev.get("sid") for ev, _ in walk(events)}
+    lost = [s for s in example if s not in have]
+    results[4] = (bool(example) and not lost, f"{len(example) - len(lost)} of {len(example)} example event sids present")
+    return results
+
+
+def grade_fix_next_round(run: Path) -> list[tuple[bool, str]]:
+    """The seeded round end starts its Timer in every tick; the fix starts it once, and Restart layout
+    and Set beat still run once per round."""
+    project = run / "project"
+    code, out = checker(project)
+    warnings = [line for line in out.splitlines() if line.startswith("warning:")]
+    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
+               (not warnings, warnings[0] if warnings else "no warning line")]
+    events = sheet_of(project)
+    if events is None:
+        return results + [(False, "eventSheets/Game.json is not readable JSON")] * 3
+    rows = list(walk(events))
+    is_trigger = triggered(project)
+    paced = {"trigger-once-while-true", "every-x-seconds", "is-timer-running"}
+    acts = [(a, conditions_over(ev, above)) for ev, above in rows for a in ev.get("actions", [])]
+    every_tick = [a for a, conds in acts if a.get("id") == "start-timer"
+                  and not any(is_trigger(c) or c.get("id") in paced for c in conds)]
+    results.append((not every_tick, f"{sum(a.get('id') == 'start-timer' for a, _ in acts)} Start timer, "
+                    f"{len(every_tick)} in an event that runs every tick"))
+    once = [(a, conds) for a, conds in acts if a.get("id") == "restart-layout"
+            or (a.get("id") == "set-eventvar-value" and a.get("parameters", {}).get("variable") == "beat")]
+    loose = [a["id"] for a, conds in once if not any(is_trigger(c) or c.get("id") == "trigger-once-while-true" for c in conds)]
+    results.append((bool(once) and not loose, f"{len(once)} Restart layout or Set beat, every tick: {loose or 'none'}"))
+    original = json.loads((run / "fixture.json").read_text(encoding="utf-8")).get("eventSheets/Game.json.sids", [])
+    game = [s for s in original if not SEEDED.match(str(s))]
+    have = {ev.get("sid") for ev, _ in rows}
+    lost = [s for s in game if s not in have]
+    results.append((bool(game) and not lost, f"{len(game) - len(lost)} of {len(game)} game event sids present"))
+    return results
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
            "reveal-the-gradient": grade_reveal_the_gradient, "lives-as-hearts": grade_lives_as_hearts,
-           "readable-on-a-dark-background": grade_readable_on_a_dark_background}
+           "readable-on-a-dark-background": grade_readable_on_a_dark_background,
+           "walk-with-wasd": grade_walk_with_wasd, "countdown-between-rounds": grade_countdown_between_rounds,
+           "fix-wasd-twitch": grade_fix_wasd_twitch, "fix-next-round": grade_fix_next_round}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")
