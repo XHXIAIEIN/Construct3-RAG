@@ -25,6 +25,20 @@ def test_a_folder_project_is_packed_with_project_c3proj_at_the_root(project, tmp
     assert code == 0 and "tools/build_project.py" in names(tmp_path / "repro.zip"), out
 
 
+def test_every_folder_the_project_format_guide_names_is_packed(project):
+    """Scirra's guide "Construct's project format" names videos, 3dmodels, palettes and
+    tilemapBrushes beside the folders the official examples hold, and the editor writes
+    llm-context.md into every project."""
+    kept = ["videos/clip.webm", "3dmodels/Model.json", "palettes/Palette 1.json", "tilemapBrushes/Brush.json",
+            "llm-context.md"]
+    for rel in kept:
+        (project / rel).parent.mkdir(parents=True, exist_ok=True)
+        (project / rel).write_text("{}", encoding="utf-8")
+    code, out = tool(project, "pack_project")
+    packed = names(project / ".tmp" / f"{project.name}.c3p")
+    assert code == 0 and all(rel in packed for rel in kept), out
+
+
 def test_an_archive_with_the_folder_inside_is_repacked_and_unpacked(project, tmp_path):
     nested = tmp_path / "nested.zip"
     with zipfile.ZipFile(nested, "w") as z:

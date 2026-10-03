@@ -15,11 +15,12 @@ The source is the folder project, or a .c3p or .zip; the output, chosen by
 in their name: a site that takes .zip uploads gets the .zip. A zip that holds
 the project one folder down comes out with project.c3proj at the root.
 
-What is written is what the editor saves: project.c3proj, the root's
-*.uistate.json and the editor's folders (objectTypes, layouts, eventSheets,
-images, ...). Anything else at the top, the agent's skill copy, AGENTS.md, a
-tools/ generator, an export, is left out and named in the output; --keep NAME
-puts one back.
+What is written is what the editor saves: project.c3proj, llm-context.md, the
+root's *.uistate.json and the editor's folders (objectTypes, layouts,
+eventSheets, images, videos, 3dmodels, palettes, tilemapBrushes, ...).
+Anything else at the top, the agent's skill copy, AGENTS.md, a tools/
+generator, an export, is left out and named in the output; --keep NAME puts
+one back.
 """
 from __future__ import annotations
 
@@ -34,9 +35,12 @@ from pathlib import Path, PurePosixPath
 import c3project as c3
 
 SCRATCH = ".tmp"
-# The top-level folders the editor saves a project in, as the official examples hold them.
-EDITOR_FOLDERS = ("objectTypes", "families", "layouts", "eventSheets", "timelines", "flowcharts", "images",
-                  "icons", "files", "sounds", "music", "fonts", "scripts")
+# The top-level folders the editor saves a project in, as Scirra's guide "Construct's project format"
+# lists them, and the one file beside project.c3proj it writes into every project.
+EDITOR_FOLDERS = ("objectTypes", "families", "layouts", "eventSheets", "timelines", "flowcharts", "3dmodels",
+                  "images", "icons", "files", "sounds", "music", "videos", "fonts", "scripts", "palettes",
+                  "tilemapBrushes")
+EDITOR_ROOT_FILES = ("project.c3proj", "llm-context.md")
 ARCHIVES = (".c3p", ".zip")
 # Windows reads no file past MAX_PATH unless asked to; a browser handed such a file over the
 # DevTools protocol gets it empty, with no error.
@@ -69,14 +73,14 @@ def from_folder(project: Path) -> dict[str, Path]:
 
 
 def editor_files(files: dict, keep: tuple[str, ...]) -> tuple[dict, list[str]]:
-    """The files the editor reads, and the top-level names left out: project.c3proj, the root's
-    *.uistate.json, the folders the editor saves, and what --keep names."""
+    """The files the editor reads, and the top-level names left out: project.c3proj, llm-context.md,
+    the root's *.uistate.json, the folders the editor saves, and what --keep names."""
     folders = set(EDITOR_FOLDERS) | set(keep)
     kept: dict = {}
     left: list[str] = []
     for name, data in files.items():
         top, _, rest = name.partition("/")
-        if (rest and top in folders) or (not rest and (top == "project.c3proj" or top.endswith(".uistate.json")
+        if (rest and top in folders) or (not rest and (top in EDITOR_ROOT_FILES or top.endswith(".uistate.json")
                                                        or top in keep)):
             kept[name] = data
         elif (shown := top + ("/" if rest else "")) not in left:
