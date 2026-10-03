@@ -108,8 +108,9 @@ def fitting(lines: list[str], limit: int) -> int:
 
 
 def load(path: Path):
+    """A JSON file; one that starts with a byte order mark reads too, as the editor opens it."""
     try:
-        with path.open(encoding="utf-8") as f:
+        with path.open(encoding="utf-8-sig") as f:
             return json.load(f)
     except json.JSONDecodeError as e:
         sys.exit(f"{path}: not valid JSON, line {e.lineno} column {e.colno}: {e.msg}")

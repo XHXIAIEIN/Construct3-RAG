@@ -131,8 +131,11 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
   instance keeps its `uid` in `objectTypes/<Name>.json` (the Timeline
   controller among them): a new layout instance numbered from the highest
   layout uid alone can collide with it. Files: UTF-8 with raw non-ASCII, tab indent, LF, no
-  trailing newline. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
-  reproduces the editor's output byte for byte.
+  trailing newline, no byte order mark. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
+  reproduces the editor's output byte for byte. A file that starts with a
+  byte order mark still opens. [observed: none of the 11 341 JSON files of
+  the official examples has one; an event sheet and a `project.c3proj`
+  with one opened in the stable editor, October 2026]
 - Local Storage is an IndexedDB database named `c3-localstorage-` plus the
   project's `uniqueId`, so it survives closing the preview and is separate
   per project. A tool that rewrites `project.c3proj` must keep `uniqueId`
@@ -215,12 +218,13 @@ r504 opened and previewed on 2026-09-30.
 ## Naming an event to the user
 
 The JSON has no event numbers; the editor does. Its margin and its Find
-results (`Event 15 action 2`) count blocks, groups and function blocks per
-sheet in document order, sub-events included; variables, comments and
-includes take no number and are filed under the next numbered event.
-Quote those numbers, never JSON line numbers, and read a screenshot or a
-pasted Find result back the same way. To find the JSON behind a number, run
-the `construct3-agent-plugin` skill's `scripts/print_sheet.py --outline <sheet>`
+results (`Event 15 action 2`) count blocks, groups, function blocks, custom
+action blocks and script blocks per sheet in document order, sub-events
+included; variables, comments and includes take no number and are filed
+under the next numbered event. Quote those numbers, never JSON line
+numbers, and read a screenshot or a pasted Find result back the same way.
+To find the JSON behind a number, run the `construct3-agent-plugin` skill's
+`scripts/print_sheet.py --outline <sheet>`
 in the project folder: each row prints with its number and its `sid`, which
 is the string to search the sheet file for. Without `--outline` it prints
 the same rows with their conditions and actions as the editor words them;

@@ -1,5 +1,7 @@
 """edit_sheet.py: changing a sheet from a plan."""
+import codecs
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -64,6 +66,28 @@ def test_plan_writes_what_the_editor_writes(project):
     assert list(condition) == ["id", "objectClass", "sid", "parameters"] and len(str(condition["sid"])) == 15
     raw = (project / SHEET).read_bytes()
     assert b"\r" not in raw and not raw.endswith(b"\n") and b'\n\t\t{\n\t\t\t"eventType"' in raw
+
+
+def test_files_with_a_byte_order_mark_are_read_and_a_sheet_is_written_without_it(project):
+    """The editor opens a file that starts with one and writes none."""
+    for name in ("project.c3proj", SHEET):
+        (project / name).write_bytes(codecs.BOM_UTF8 + (project / name).read_bytes())
+    assert check(project)[0] == 0
+    assert "   1 group Setup" in printed(project)
+    code, out = plan(project, {"before": 1, "events": [{"eventType": "variable", "name": "timeLeft"}]})
+    assert code == 0 and "Traceback" not in out, out
+    assert "started with a byte order mark" in out
+    assert not (project / SHEET).read_bytes().startswith(codecs.BOM_UTF8)
+
+
+def test_a_sheet_keeps_the_name_it_has_on_disk(project):
+    """project.c3proj lists Game; on a case-insensitive file system game.json is its file and stays game.json."""
+    (project / SHEET).rename(project / "eventSheets" / "game.json")
+    if not (project / SHEET).exists():
+        pytest.skip("this file system tells Game.json from game.json")
+    code, out = plan(project, {"before": 1, "events": [{"eventType": "variable", "name": "timeLeft"}]})
+    assert code == 0, out
+    assert "game.json" in os.listdir(project / "eventSheets")
 
 
 def test_plan_that_adds_a_problem_changes_nothing(project):

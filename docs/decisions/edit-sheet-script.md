@@ -58,7 +58,12 @@ Option 3, `scripts/edit_sheet.py SHEET PLAN.json`.
   stop a plan, so a broken event can be repaired through one. There is no
   `--force`.
 - The file is written whole through a temporary one, in the editor's layout.
-  `--dry-run` writes nothing.
+  `--dry-run` writes nothing. A sheet that starts with a byte order mark is
+  read, as the editor opens it, and written without one, as the editor
+  writes every file. The temporary file replaces the sheet under the name
+  the folder holds: on a case-insensitive file system `project.c3proj` may
+  list `Game` for `game.json`, and a rename onto `Game.json` respelled the
+  file.
 - A plan's numbers come from a print. `print_sheet.py` keeps the hash of each
   sheet it prints in the system's temporary folder, not in the project, and
   a plan is refused when the sheet no longer matches it: a save in the

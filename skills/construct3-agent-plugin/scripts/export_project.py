@@ -312,7 +312,7 @@ def open_menu(page) -> None:
 
 def project_title(project: Path) -> str:
     """The start of the window title while the project is open."""
-    return json.loads((project / "project.c3proj").read_text(encoding="utf-8"))["name"] + " - "
+    return json.loads((project / "project.c3proj").read_text(encoding="utf-8-sig"))["name"] + " - "
 
 
 def project_open(page) -> bool:

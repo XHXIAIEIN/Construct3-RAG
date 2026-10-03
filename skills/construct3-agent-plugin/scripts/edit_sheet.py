@@ -36,13 +36,14 @@ them, under their new numbers, and the checker's last line.
 
 print_sheet.py SHEET --show N prints event N as JSON, to change and put back
 with "replace". The file is written as the editor writes it: tabs, LF, no
-newline at the end.
+byte order mark, no newline at the end, under the name it has on disk.
 
 exit codes: 0 written, or a dry run that would be; 1 nothing written: the plan
 cannot be read, names an event the sheet does not have, or adds a problem, or
 the sheet changed on disk since print_sheet.py printed it; or the project or
 the clone was not found; 2 a project file lacks a key the editor always writes
 """
+import codecs
 import copy
 import json
 import os
@@ -534,6 +535,15 @@ def left_alone(original: list, events: list, span: dict) -> list[str]:
     return notes
 
 
+def as_on_disk(path: Path) -> Path:
+    """path with its file name spelled as the folder holds it. A case-insensitive file
+    system finds game.json as Game.json, and a rename onto Game.json would respell it."""
+    names = os.listdir(path.parent)
+    if path.name in names:
+        return path
+    return next((path.with_name(n) for n in names if n.lower() == path.name.lower()), path)
+
+
 def main() -> int:
     ap = c3.argument_parser(
         "Change an event sheet from a plan, a JSON file of operations addressed by the editor's event numbers: "
@@ -577,7 +587,7 @@ def main() -> int:
                  f"tool, so the plan's numbers may name other events; print it again, check the numbers and run "
                  f"the plan again\nnothing was written")
     raw = path.read_bytes()
-    on_disk = path.read_text(encoding="utf-8")
+    on_disk = raw.decode("utf-8-sig")
     sheet = json.loads(on_disk)
     try:
         text = Path(args.plan).read_text(encoding="utf-8-sig")
@@ -631,7 +641,7 @@ def main() -> int:
             sys.exit(f"{args.sheet} changed on disk while the plan was applied; run it again\nnothing was written")
         draft = path.with_name(path.name + ".tmp")
         draft.write_text(layout, encoding="utf-8", newline="\n")
-        os.replace(draft, path)
+        os.replace(draft, as_on_disk(path))
         c3.stamp(path)
 
     # What changed, as the editor words it, under the numbers the sheet has now.
@@ -661,6 +671,9 @@ def main() -> int:
         print(note)
     if on_disk.replace("\r\n", "\n") != json.dumps(sheet, indent="\t", ensure_ascii=False) and not args.dry_run:
         print(f"note: {path.name} was not laid out as the editor writes it (tabs, LF); it is now, so its diff is the whole file")
+    if raw.startswith(codecs.BOM_UTF8) and not args.dry_run:
+        print(f"note: {path.name} started with a byte order mark, which the editor does not write; it no longer does, "
+              f"so its first line shows in the diff")
     if not args.dry_run:
         print("note: if the project is open in the Construct 3 editor, close it there without saving and open it "
               "again; a save from the editor writes back the sheet it had loaded, over this change")
