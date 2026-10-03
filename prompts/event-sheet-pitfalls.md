@@ -122,10 +122,11 @@ when the events place, move or rotate objects or read the viewport.
 ### Input
 
 Read [pitfalls/input.md](pitfalls/input.md) when the events use Mouse and
-Touch together, or must tell a finger from a mouse.
+Touch together, must tell a finger from a mouse, or hide what can be pressed.
 
 - Mouse ignores fingers: tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too: detect the input method with it off.
+- Touching or clicking an object presses it invisible or with collisions disabled: test *Is visible*, or set its layer not interactive.
 
 ### Audio
 
