@@ -1,9 +1,13 @@
 # AGENTS.md for a Construct 3 project
 
 Nothing in a Construct project points here. The `llm-context.md` Construct
-writes into every project describes the folder layout, not this data, so an
-agent in the game folder answers from memory: a drag-and-drop interaction
-comes back as UID links, `Pick all` and globals.
+writes into every project outlines the folder layout and links Scirra's guide
+[Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275):
+what `project.c3proj` indexes, how image files are named, which formats the
+files take. Neither names an ACE, the rules the editor applies when it opens
+a project, or how events are designed, so an agent in the game folder answers
+those from memory: a drag-and-drop interaction comes back as UID links,
+`Pick all` and globals.
 
 Two things in the game project change that: a block in its `AGENTS.md` that
 routes each kind of work to the file that owns it, and a copy of the
