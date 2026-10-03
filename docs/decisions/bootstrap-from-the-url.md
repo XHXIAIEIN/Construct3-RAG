@@ -50,12 +50,20 @@ follows a command block it is given.
   it writes the block: a novice does not act on a note that the line is
   needed.
 
-Refreshing `data/c3-new-project/` by driving the editor was tried and
-dropped: the editor sometimes closed the New project dialog without making a
-project, and a run that reported success could save a file short. When a
-release changes what the editor writes, save a new empty project from the
-editor as a folder over it, leave out the `*.uistate.json`, and check that
-`savedWithRelease` moved.
+When a release changes what the editor writes, replace
+`data/c3-new-project/` with a new empty project: **Project** > **New** with
+the dialog's defaults, **UID numbering** set to Random in the project
+properties (the editor's default is Increment,
+`random-uid-allocation.md`), then **Save as** > **Save as project folder**.
+Leave out the `*.uistate.json` files and `layouts/uistate/`, and check that
+`savedWithRelease` moved. The r495.2 editor in its default dark theme gives
+Layer 0 a grey background (0.369); an earlier save had white.
+
+No script does this. The 2026-10-03 save drove a headless editor over
+DevTools, with `showDirectoryPicker` answered by a folder of the page's
+origin-private file system and the files read back from it. A page set up by
+`open_in_editor.py` closes every dialog it sees, the New project dialog
+included, until a project is dropped on it.
 
 ## Not verified
 

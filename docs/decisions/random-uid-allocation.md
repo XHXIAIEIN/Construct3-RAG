@@ -30,7 +30,8 @@ hierarchy link or a *Pick by UID* written for one reaches another.
 ## Decision
 
 Option 2. `data/c3-new-project/project.c3proj`, which `scripts/bootstrap.py`
-copies, has `uidAllocationMode: random`, and so does the generator
+copies, has `uidAllocationMode: random`, set as **UID numbering** in the
+editor's project properties before the project was saved; and so does the generator
 template's default for a project that lacks the key. A project made in the
 editor keeps its own setting.
 
