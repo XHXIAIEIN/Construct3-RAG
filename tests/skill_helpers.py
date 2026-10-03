@@ -20,9 +20,9 @@ SHEET = "eventSheets/Game.json"
 
 def run(root: Path, script: str | Path, *args: str) -> tuple[int, str]:
     """A script run from the project folder. No CONSTRUCT3_RAG and an empty home:
-    the clone and the skill are found through the project alone."""
+    the clone and the skill are found through the project alone, and the clone is not fetched."""
     env = {k: v for k, v in os.environ.items() if k != "CONSTRUCT3_RAG"}
-    env.update(PYTHONIOENCODING="utf-8", HOME=str(root / ".home"), USERPROFILE=str(root / ".home"))
+    env.update(PYTHONIOENCODING="utf-8", CONSTRUCT3_RAG_OFFLINE="1", HOME=str(root / ".home"), USERPROFILE=str(root / ".home"))
     p = subprocess.run([sys.executable, str(script), *args], cwd=root, env=env,
                        capture_output=True, text=True, encoding="utf-8")
     return p.returncode, p.stdout + p.stderr

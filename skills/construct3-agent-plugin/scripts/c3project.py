@@ -13,8 +13,11 @@ import hashlib
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 SKILL = "construct3-agent-plugin"
@@ -269,6 +272,50 @@ def skill_drift(rag: Path) -> str | None:
     return (f"this copy of the {SKILL} skill differs from the clone's ({', '.join(changed[:4])}"
             f"{' ...' if len(changed) > 4 else ''}); refresh it: "
             f"python \"{source / 'scripts' / 'install.py'}\" --into \"{SKILL_DIR.parent}\"")
+
+
+FETCH_STAMPS = Path(tempfile.gettempdir()) / "construct3-rag-fetch"
+FETCH_EVERY = 6 * 3600      # seconds between two fetches of one clone
+FETCH_WAIT = 8              # seconds a fetch may take before the check goes on without it
+
+
+def git_out(rag: Path, *args: str, wait: float = 5) -> str | None:
+    env = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+    env.setdefault("GIT_SSH_COMMAND", "ssh -o BatchMode=yes")
+    try:
+        p = subprocess.run(["git", "-C", str(rag), *args], capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", timeout=wait, env=env)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return p.stdout.strip() if p.returncode == 0 else None
+
+
+def clone_behind(rag: Path) -> str | None:
+    """A sentence when the clone's branch is behind its upstream. The clone is
+    fetched at most every FETCH_EVERY seconds; offline, or with no upstream, nothing is said."""
+    if os.environ.get("CONSTRUCT3_RAG_OFFLINE") or not (rag / ".git").exists() or not shutil.which("git"):
+        return None
+    upstream = git_out(rag, "rev-parse", "--abbrev-ref", "@{u}")
+    if not upstream:        # detached, or a branch that tracks nothing
+        return None
+    stamp_file = FETCH_STAMPS / hashlib.sha1(str(rag.resolve()).lower().encode()).hexdigest()[:20]
+    try:
+        due = time.time() - stamp_file.stat().st_mtime > FETCH_EVERY
+    except OSError:
+        due = True
+    if due:
+        # Stamped before the fetch, so that an offline machine waits once per period, not on every check
+        try:
+            FETCH_STAMPS.mkdir(exist_ok=True)
+            stamp_file.touch()
+        except OSError:
+            pass
+        git_out(rag, "fetch", "--quiet", upstream.split("/")[0], wait=FETCH_WAIT)
+    behind = git_out(rag, "rev-list", "--count", "HEAD..@{u}")
+    if not behind or behind == "0":
+        return None
+    return (f"Construct3-RAG at {rag} is {behind} commit{'s' if behind != '1' else ''} behind {upstream}; "
+            f"update it: git -C \"{rag}\" pull --ff-only, then run this check again")
 
 
 def argument_parser(description: str, epilog: str) -> argparse.ArgumentParser:

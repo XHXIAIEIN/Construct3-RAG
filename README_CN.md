@@ -38,7 +38,7 @@ Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construc
 - 想从自己的空项目开始，加 `--template <文件夹>`。
 - 如果 agent 从别的文件夹读 skill，加 `--into <文件夹>`，比如 TRAE 写 `--into .trae/skills`。
 
-随时可以再运行一次 `bootstrap.py`，按 clone 更新 skill。已有的 clone 和指令文件保持原样。加 `--help` 可以列出全部参数。
+要更新时，先在 clone 里运行 `git pull`，再运行一次 `bootstrap.py`，按 clone 更新项目里的 skill。已有的 clone 和指令文件保持原样。clone 落后于上游仓库时，`check_project.py` 会提示，并给出命令。给 `bootstrap.py` 加 `--help` 可以列出全部参数。
 
 如果 agent 的指令文件是 `GEMINI.md` 这样的其他文件，在那个文件里加一行。这一行让 agent 去读 `AGENTS.md`。
 
@@ -84,9 +84,9 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 
 ### skill 的脚本读写和访问的范围
 
-skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。它们只用 Python 标准库。它们打开的网站只有 Construct 3 编辑器和它的预览，都在你电脑上的浏览器里。
+skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。它们只用 Python 标准库。它们只在两处联网：`check_project.py` 从 clone 的上游仓库 fetch，打开编辑器的脚本在你电脑上的浏览器里打开 Construct 3 编辑器和它的预览。
 
-- **只读**：`lookup_ace.py`、`check_project.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。
+- **只读**：`lookup_ace.py`、`check_project.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每六小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。设置了 `CONSTRUCT3_RAG_OFFLINE` 时，它不 fetch。
 - **写文件**：
   - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。
   - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。加 `--dry-run` 可以先看会改什么。

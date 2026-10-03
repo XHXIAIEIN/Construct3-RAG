@@ -38,7 +38,7 @@ You can add these options to `bootstrap.py`:
 - To start from an empty project of your own, add `--template <folder>`.
 - If your agent reads skills from another folder, add `--into <folder>`, such as `--into .trae/skills` for TRAE.
 
-Run `bootstrap.py` again at any time to refresh the skill from the clone. It leaves the clones and instruction files that exist as they are. Add `--help` to see every option.
+To update, run `git pull` in the clone, then run `bootstrap.py` again to refresh the skill in the project. It leaves the clones and instruction files that exist as they are. When the clone is behind its upstream, `check_project.py` says so and gives the command. Add `--help` to `bootstrap.py` to see every option.
 
 If your agent reads its instructions from another file, such as `GEMINI.md`, add a line there. The line tells the agent to read `AGENTS.md`.
 
@@ -84,9 +84,9 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 
 ### What the skill's scripts read, write and reach
 
-The skill's scripts read this repository's `data/` and the projects and files that you give them. They run on the Python standard library. The only sites that they open are the Construct 3 editor and its preview, in a browser on your machine.
+The skill's scripts read this repository's `data/` and the projects and files that you give them. They run on the Python standard library. They reach the network in two ways: `check_project.py` fetches the clone's upstream, and the editor scripts open the Construct 3 editor and its preview in a browser on your machine.
 
-- **Read only**: `lookup_ace.py`, `check_project.py`, `check_look.py` and `print_sheet.py`. `print_sheet.py` keeps a hash of each sheet that it prints, in `construct3-sheet-stamps/` of the system's temporary folder. With this hash, `edit_sheet.py` notices a save made between the print and the edit.
+- **Read only**: `lookup_ace.py`, `check_project.py`, `check_look.py` and `print_sheet.py`. `print_sheet.py` keeps a hash of each sheet that it prints, in `construct3-sheet-stamps/` of the system's temporary folder. With this hash, `edit_sheet.py` notices a save made between the print and the edit. `check_project.py` runs `git fetch` in the clone at most every six hours, to say when the clone is behind its upstream. If `CONSTRUCT3_RAG_OFFLINE` is set, it skips the fetch.
 - **Writing files**:
   - `edit_sheet.py` writes the event sheets that you give it, and their hashes beside those of `print_sheet.py`.
   - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. `--dry-run` shows the changes first.

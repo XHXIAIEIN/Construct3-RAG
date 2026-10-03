@@ -2272,9 +2272,9 @@ def main() -> int:
     findings = c3.Findings()
     c3.stop_with_a_sentence("check_project.py", findings)
     project = c3.Project.open(args, findings)
-    drift = c3.skill_drift(project.rag)
-    if drift:
-        findings.warn(drift)
+    for note in (c3.clone_behind(project.rag), c3.skill_drift(project.rag)):
+        if note:
+            findings.warn(note)
     return Checker(project, args.limit, style=args.style).run()
 
 
