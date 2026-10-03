@@ -496,6 +496,7 @@
       "purpose": "Require an explicit effect word before an effect name becomes an effect lookup: names such as Screen, Color and 亮度 are ordinary words.",
       "source": [
         "gold:effect-detail-zh-01",
+        "gold:effect-detail-zh-05",
         "gold:effect-detail-en-02",
         "gold:effect-detail-negative-en-04",
         "schema:data/c3-schemas/{locale}/_index.json effects"
@@ -514,6 +515,7 @@
         ],
         "zh-CN": [
           "特效",
+          "滤镜",
           "效果",
           "着色器"
         ]
