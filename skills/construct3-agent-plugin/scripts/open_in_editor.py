@@ -72,6 +72,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import c3project as c3
+import pack_project as pp
 
 EPILOG = """examples:
   python scripts/open_in_editor.py
@@ -261,15 +262,16 @@ RELEASE_JS = r"""(performance.getEntriesByType('resource').map(e => e.name).join
 
 
 def pack(project: Path) -> bytes:
-    """A folder project as the .c3p the editor would save: the same files, zipped."""
+    """A folder project as the .c3p the editor would save: the files it reads, as pack_project.py
+    keeps them, zipped. The rest of the folder stays out, such as an export or the worktrees of
+    an agent under .claude, which made a game's .c3p 1.8 GB."""
     if project.is_file():
         return project.read_bytes()
+    files, _ = pp.editor_files(pp.from_folder(project), ())
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
-        for f in sorted(project.rglob("*")):
-            rel = f.relative_to(project)
-            if f.is_file() and rel.parts[0] not in (".git", SCRATCH):
-                z.write(f, rel.as_posix())
+        for name, f in files.items():
+            z.write(f, name)
     return buf.getvalue()
 
 

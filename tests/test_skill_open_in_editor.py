@@ -14,6 +14,8 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
     """Offline: finding the project, packing it, and the steps for an agent's own browser tool."""
     (project / ".git").mkdir()
     (project / ".git" / "HEAD").write_text("ref: refs/heads/main", encoding="utf-8")
+    (project / ".claude" / "worktrees" / "a").mkdir(parents=True)     # an agent's copies, 2.2 GB in a game
+    (project / ".claude" / "worktrees" / "a" / "project.c3proj").write_text("{}", encoding="utf-8")
     code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--help")
     assert code == 0 and "exit codes:" in out and "--steps" in out, out
     empty = tmp_path / "empty"
@@ -41,7 +43,8 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
     import zipfile
     names = zipfile.ZipFile(io.BytesIO(c3p.read_bytes())).namelist()
     assert "project.c3proj" in names and SHEET in names
-    assert not any(n.startswith((".git/", ".tmp/")) for n in names), names
+    # only the files the editor reads: the skill's copy and the worktrees under .claude stay out
+    assert not any(n.startswith((".git/", ".tmp/", ".claude/", ".agents/")) for n in names), names
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="MAX_PATH is Windows'")
