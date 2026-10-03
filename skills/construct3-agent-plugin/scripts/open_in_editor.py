@@ -498,7 +498,7 @@ class Browser:
     about 4 seconds against 20 to 40 from a cold profile, and a context of its
     own per page, which has no disk cache, is cold every time."""
 
-    def __init__(self, exe: str, profile: Path, headed: bool) -> None:
+    def __init__(self, exe: str, profile: Path, headed: bool, extra: tuple[str, ...] = ()) -> None:
         self.profile, self.proc = profile, None
         profile.mkdir(parents=True, exist_ok=True)
         self.data = user_data_dir(profile)
@@ -510,7 +510,7 @@ class Browser:
         url = self.devtools_url(port_file)
         if not url:
             port_file.unlink(missing_ok=True)
-            args = [exe, f"--user-data-dir={self.data}", "--remote-debugging-port=0", *QUIET,
+            args = [exe, f"--user-data-dir={self.data}", "--remote-debugging-port=0", *QUIET, *extra,
                     "--window-size=1400,900", "about:blank"]
             self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"],
                                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
