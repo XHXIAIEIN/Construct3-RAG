@@ -32,12 +32,13 @@ The commands put this repository, the [related repositories](#related-repositori
 
 In `cmd.exe`, write `%USERPROFILE%` in place of `$HOME`. To keep everything in another folder, write that folder in both commands in place of `$HOME/Construct3`.
 
-Other ways to run `bootstrap.py`:
+You can add these options to `bootstrap.py`:
 
 - For a game that you already have, pass the path of its folder to `--project`. If you give a name alone, the command creates an empty project of that name beside the clones.
 - To start from an empty project of your own, add `--template <folder>`.
 - If your agent reads skills from another folder, add `--into <folder>`, such as `--into .trae/skills` for TRAE.
-- Run the command again at any time to refresh the skill from the clone. It leaves the clones and instruction files that exist as they are. `--help` lists every option.
+
+Run `bootstrap.py` again at any time to refresh the skill from the clone. It leaves the clones and instruction files that exist as they are. Add `--help` to see every option.
 
 If your agent reads its instructions from another file, such as `GEMINI.md`, add a line there. The line tells the agent to read `AGENTS.md`.
 

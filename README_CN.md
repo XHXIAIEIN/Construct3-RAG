@@ -32,12 +32,13 @@ Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construc
 
 在 `cmd.exe` 里，把 `$HOME` 写成 `%USERPROFILE%`。想放在别的文件夹，就把两条命令里的 `$HOME/Construct3` 都换成那个文件夹。
 
-运行 `bootstrap.py` 时还可以这样用：
+运行 `bootstrap.py` 时可附加这些参数：
 
 - 要装进已有的游戏，`--project` 后面写游戏文件夹的路径。如果只写名字，命令会在 clone 旁边新建一个同名的空项目。
 - 想从自己的空项目开始，加 `--template <文件夹>`。
 - 如果 agent 从别的文件夹读 skill，加 `--into <文件夹>`，比如 TRAE 写 `--into .trae/skills`。
-- 随时可以再运行一次，按 clone 更新 skill。已有的 clone 和指令文件保持原样。`--help` 列出全部参数。
+
+随时可以再运行一次 `bootstrap.py`，按 clone 更新 skill。已有的 clone 和指令文件保持原样。加 `--help` 可以列出全部参数。
 
 如果 agent 的指令文件是 `GEMINI.md` 这样的其他文件，在那个文件里加一行。这一行让 agent 去读 `AGENTS.md`。
 
