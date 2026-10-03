@@ -276,7 +276,8 @@
       "category": "cursor",
       "translated-name": "X",
       "description": "Get the mouse cursor X co-ordinate in the layout.",
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "y",
@@ -284,7 +285,8 @@
       "category": "cursor",
       "translated-name": "Y",
       "description": "Get the mouse cursor Y co-ordinate in the layout.",
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "absolutex",

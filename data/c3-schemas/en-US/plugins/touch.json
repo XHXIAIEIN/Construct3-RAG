@@ -434,7 +434,8 @@
       "category": "touch",
       "translated-name": "X",
       "description": "Get the primary touch X co-ordinate in the layout.",
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "y",
@@ -442,7 +443,8 @@
       "category": "touch",
       "translated-name": "Y",
       "description": "Get the primary touch Y co-ordinate in the layout.",
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "absolutex",
@@ -481,7 +483,8 @@
           "desc": "Zero-based index of the touch to get."
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "yat",
@@ -496,7 +499,8 @@
           "desc": "Zero-based index of the touch to get."
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "absolutexat",
@@ -587,7 +591,8 @@
           "desc": "ID of the touch to get."
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "yforid",
@@ -602,7 +607,8 @@
           "desc": "ID of the touch to get."
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "absolutexforid",

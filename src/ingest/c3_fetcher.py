@@ -377,6 +377,11 @@ class C3Fetcher:
                                     entry["isDeprecated"] = True
                                 if ace.get("returnType"):
                                     entry["returnType"] = ace["returnType"]
+                                # A call may pass more arguments than params lists, and
+                                # fewer where params names an optional one: Mouse.X("HUD"),
+                                # Array.At(x, y), random(a, b), max(a, b, c).
+                                if ace.get("isVariadicParameters"):
+                                    entry["isVariadicParameters"] = True
 
                                 plugin_json[ace_type_plural].append(entry)
 

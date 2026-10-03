@@ -434,7 +434,8 @@
       "category": "touch",
       "translated-name": "X",
       "description": "获取触控点在图层的X坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "y",
@@ -442,7 +443,8 @@
       "category": "touch",
       "translated-name": "Y",
       "description": "获取触控点在图层的Y坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "absolutex",
@@ -481,7 +483,8 @@
           "desc": "触控点的索引，从 0 开始计数。"
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "yat",
@@ -496,7 +499,8 @@
           "desc": "触控点的索引，从 0 开始计数。"
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "absolutexat",
@@ -587,7 +591,8 @@
           "desc": "要获得的触点ID。"
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "yforid",
@@ -602,7 +607,8 @@
           "desc": "要获得的触摸ID。"
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "absolutexforid",

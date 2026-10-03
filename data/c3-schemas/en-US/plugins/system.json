@@ -3124,7 +3124,8 @@
           "desc": "The string associated with the function to call (case-insensitive)."
         }
       },
-      "returnType": "any"
+      "returnType": "any",
+      "isVariadicParameters": true
     },
     {
       "id": "scrollx",
@@ -3469,7 +3470,8 @@
           "desc": "Numbers to calculate maximum from."
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "min",
@@ -3489,7 +3491,8 @@
           "desc": "Numbers to calculate minimum from."
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "distance",
@@ -3912,7 +3915,8 @@
       "category": "system",
       "translated-name": "LoopIndex",
       "description": "Retrieve the index of a currently running loop.",
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "renderer",
@@ -4245,7 +4249,8 @@
           "desc": "Value to replace a placeholder with."
         }
       },
-      "returnType": "string"
+      "returnType": "string",
+      "isVariadicParameters": true
     },
     {
       "id": "trim",
@@ -4572,7 +4577,8 @@
           "desc": "Range of random numbers to generate, from 0 to one less than this value."
         }
       },
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "clamp",
@@ -4617,7 +4623,8 @@
           "desc": "Another random value to choose from."
         }
       },
-      "returnType": "any"
+      "returnType": "any",
+      "isVariadicParameters": true
     },
     {
       "id": "chooseindex",
@@ -4637,7 +4644,8 @@
           "desc": "A value to select by index."
         }
       },
-      "returnType": "any"
+      "returnType": "any",
+      "isVariadicParameters": true
     },
     {
       "id": "rgb",

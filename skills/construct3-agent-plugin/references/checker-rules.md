@@ -101,6 +101,7 @@ How each was read from the editor and confirmed:
 | A name has no spaces or punctuation; an instance variable name starts with a letter | the editor renames it silently, and the events that use it fail with `cannot find object` |
 | An instance variable, behavior or effect is not named like another one on the object or its families, nor like an expression of the object (`Angle`, `Width`, `Count`, `Text`) | `name already in object class namespace` |
 | An expression uses Construct's operators: `=` compares, `<>` is not equal, `&` is and, `\|` is or, `^` is power; `==`, `!=`, `&&`, `\|\|`, `**` and `!` stand only inside a text literal | `Syntax error: '=' can't go here`, `Syntax error: '*' can't go here`, `Syntax error: Unknown character` |
+| An expression call passes the parameters its schema lists, counted at the top level of the call: `LocalStorage.ItemValue` takes none, `clamp` three. An expression the schema marks `isVariadicParameters` takes more after them: `Mouse.X("HUD")`, `Array.At(x, y)`, `random(1, 5)`, `max(a, b, c)` | `Incorrect parameters: 'LocalStorage.ItemValue' does not accept 1 parameters` |
 | An expression parameter is never empty; empty text is the literal `""`, written `"\"\""` in the JSON | `Empty expression: You must enter an expression` |
 | Every text literal is closed, a quote inside it doubled; a backslash stands only inside a literal, where it is a plain character | `Syntax error: String missing finishing "`, `Syntax error: Unknown character` |
 | A comment event carries `text`, a group `description`, an event variable `comment`, each as text, `""` when empty | `Cannot read properties of undefined (reading 'endsWith')`, `expected string` |
@@ -184,7 +185,7 @@ triggers fire in, whether an expression means what the comment says. The
 editor and the preview judge those; the observations in
 `Construct3-RAG/prompts/event-sheet-pitfalls.md` and in
 `editor-and-preview.md` beside this file came from previewing, not from the
-checker. Expression syntax beyond those operators, argument counts and types, and
+checker. Expression syntax beyond those operators, argument types, and
 `function` and `template` parameters are not checked either.
 The editor checks the types in an expression as it opens the project, and
 `scripts/open_in_editor.py` prints its message, such as `Type mismatch: -

@@ -566,7 +566,8 @@
           "desc": "The X index (0-based) of the array value to get."
         }
       },
-      "returnType": "any"
+      "returnType": "any",
+      "isVariadicParameters": true
     },
     {
       "id": "width",

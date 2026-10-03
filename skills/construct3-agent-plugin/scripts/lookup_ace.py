@@ -159,7 +159,7 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, w
         lines.append(f"  deprecated: {c3.DEPRECATED}"
                      + (f"; the current {kind[:-1]} of the same name is {it['current']}" if it.get("current") else ""))
     if kind == "expressions":
-        call = f"({', '.join(params)})" if params else ""
+        call = f"({', '.join(params)}{', ...' if it.get('isVariadicParameters') else ''})" if params else ""
         path = f"{owner}.{behavior}." if behavior else ("" if owner == "System" else f"{owner}.")
         lines.append(f"  write: {path}{written or it['translated-name']}{call}  -> {it.get('returnType', 'any')}")
     else:

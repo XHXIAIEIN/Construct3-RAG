@@ -33,7 +33,9 @@ Fields that decide correctness:
   that cannot be inverted, `isCompatibleWithTriggers: false` one the editor
   keeps out of a triggered branch.
 - `isAsync` marks an awaitable action, `returnType` an expression's type;
-  `scriptName` is the JavaScript name.
+  `scriptName` is the JavaScript name. An expression call passes exactly
+  its `params`, or more when it has `isVariadicParameters`: `random(1, 5)`,
+  `Mouse.X("HUD")`.
 - `isDeprecated` marks an ACE the editor no longer offers and keeps only so
   that old projects open; a new event does not use it.
   `{locale}/_deprecated.json` lists it with the current ACE of the same name,

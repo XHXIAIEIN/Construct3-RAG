@@ -132,7 +132,8 @@
           "desc": "本地化对象的路径"
         }
       },
-      "returnType": "string"
+      "returnType": "string",
+      "isVariadicParameters": true
     },
     {
       "id": "look-up-plural",
@@ -152,7 +153,8 @@
           "desc": "用于获取复数形式的值。"
         }
       },
-      "returnType": "string"
+      "returnType": "string",
+      "isVariadicParameters": true
     },
     {
       "id": "current-context",

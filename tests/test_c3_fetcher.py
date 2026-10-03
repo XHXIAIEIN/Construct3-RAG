@@ -369,6 +369,22 @@ def test_export_marks_every_condition_the_editor_treats_as_a_trigger(fetcher):
     }
 
 
+def test_export_marks_an_expression_that_takes_more_arguments_than_it_lists(fetcher):
+    """Mouse.X takes an optional layer and max any number of values; the parameters
+    alone would make Mouse.X("HUD") read as a wrong call."""
+    aces = {"plugins": {"Mouse": {"cursor": {"conditions": [], "actions": [], "expressions": [
+        {"id": "x", "expressionName": "X", "returnType": "number", "isVariadicParameters": True},
+        {"id": "absolute-x", "expressionName": "AbsoluteX", "returnType": "number"},
+    ]}}}, "behaviors": {}}
+    text = {"text": {"plugins": {"mouse": {"name": "Mouse", "expressions": {
+        "x": {"translated-name": "X"}, "absolute-x": {"translated-name": "AbsoluteX"}}}}}}
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces),          patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)),          patch.object(fetcher, "fetch_lang", return_value=text),          patch.object(fetcher, "fetch_effects", return_value=[]),          patch.object(fetcher, "fetch_examples", return_value=[]):
+        schemas_dir = fetcher.export_schemas()
+    mouse = json.loads((schemas_dir / "en-US" / "plugins" / "mouse.json").read_text(encoding="utf-8"))
+    assert {e["id"]: e.get("isVariadicParameters") for e in mouse["expressions"]} == {
+        "x": True, "absolute-x": None}
+
+
 def test_export_leaves_out_what_the_editor_deprecates_though_translated(fetcher):
     """NW.js and the old Warp are still in both language packs; the editor's
     flags, not the packs, keep them out of every file and index."""

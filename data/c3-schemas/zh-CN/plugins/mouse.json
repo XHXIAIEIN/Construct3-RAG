@@ -276,7 +276,8 @@
       "category": "cursor",
       "translated-name": "X",
       "description": "获取鼠标在场景的X坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "y",
@@ -284,7 +285,8 @@
       "category": "cursor",
       "translated-name": "Y",
       "description": "获取鼠标在场景中的Y坐标。可选填入图层参数，获取在特定图层的位置，考虑滚动、旋转、缩放的结果。",
-      "returnType": "number"
+      "returnType": "number",
+      "isVariadicParameters": true
     },
     {
       "id": "absolutex",

@@ -143,6 +143,7 @@ Each file describes one addon. Field names match the official CDN.
 | `isAsync` | actions | `true` for actions that can be awaited. Absent otherwise. |
 | `isDeprecated` | all | `true` for an ACE the editor no longer offers and keeps only so that old projects open, such as System `rgb` and Pin `pin-to-object`. Absent otherwise. `{locale}/_deprecated.json` names the current ACE of the same name. |
 | `returnType` | expressions | `number`, `string`, or `any`. |
+| `isVariadicParameters` | expressions | `true` when a call may pass more arguments than `params` lists: `max` and `choose` any number, `random` a second, Array `At` a Y and a Z index, Mouse and Touch `X` and `Y` a layer. Absent means exactly the parameters `params` lists. |
 
 Structural fields are the same in every locale, so an ACE can be matched by
 `id` in one locale and read in another.

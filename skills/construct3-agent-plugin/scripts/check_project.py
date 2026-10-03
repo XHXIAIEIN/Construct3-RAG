@@ -185,6 +185,28 @@ EFFECT_ACTIONS = {"set-effect-parameter", "set-effect-enabled", "set-layer-effec
                   "set-layout-effect-parameter", "set-layout-effect-enabled"}
 
 
+def call_arguments(text: str, end: int) -> int:
+    """How many arguments the call that follows text[:end] passes, counting the commas
+    outside nested parentheses; 0 when no parenthesis follows. Text literals are
+    blanked to "" first, so a comma inside one is not counted."""
+    i = end
+    while i < len(text) and text[i].isspace():
+        i += 1
+    if i >= len(text) or text[i] != "(":
+        return 0
+    depth, count, start = 0, 1, i + 1
+    for j in range(i, len(text)):
+        if text[j] == "(":
+            depth += 1
+        elif text[j] == ")":
+            depth -= 1
+            if depth == 0:
+                return count if text[start:j].strip() else 0
+        elif text[j] == "," and depth == 1:
+            count += 1
+    return count     # not closed: the editor names that syntax error itself
+
+
 def script_text(script) -> str:
     return "\n".join(script) if isinstance(script, list) else script if isinstance(script, str) else ""
 
@@ -847,6 +869,8 @@ class Checker:
                 elif sub is None or LOWER(sub) not in p.expressions_of(bs):
                     self.err(f"{where}: {obj}.{member}.{sub or ''} is not an expression of behavior "
                              f"{behs[LOWER(member)]}")
+                else:
+                    self.check_arguments(where, f"{m.group(1)}.{member}.{sub}", [(bs, None)], sub, text, m.end(3))
                 continue
             plugin = p.schema("plugins", p.plugin_of[obj])
             if plugin is None:
@@ -866,6 +890,9 @@ class Checker:
                 hint = f"; it is an expression of a behavior: {obj}.{owner}.{member}" if owner \
                     else closest(member, known)
                 self.err(f"{where}: {obj}.{member} is neither an expression nor an instance variable of {obj}{hint}")
+            elif LOWER(member) not in ivars and sub is None:
+                self.check_arguments(where, f"{m.group(1)}.{member}", [(plugin, None), (p.common, p.common_of(plugin))],
+                                     member, text, m.end(2))
         for m in IDENT.finditer(text):
             name = m.group(0)
             if NUMBER.fullmatch(name):
@@ -879,6 +906,7 @@ class Checker:
                 self.deprecated_use(where, self.deprecated_expression(name, "System", retired))
                 continue
             if LOWER(name) in p.system_expressions:
+                self.check_arguments(where, name, [(p.system, None)], name, text, m.end())
                 continue
             if LOWER(name) in p.objects_lower and text[m.end():].lstrip().startswith("("):
                 continue
@@ -888,6 +916,31 @@ class Checker:
             elif text.strip() == name:
                 hint += f"; a text value carries inner quotes: \"\\\"{name}\\\"\""
             self.err(f"{where}: identifier {name!r} is not a variable, parameter or system expression{hint}")
+
+    def check_arguments(self, where: str, written: str, sources: list[tuple[dict, dict | None]], name: str,
+                        text: str, end: int) -> None:
+        """The arguments of an expression call against the parameters its schema lists.
+        sources: (schema, the part of it that applies) in order; the first that has an
+        expression of this name decides. The editor stops with "Incorrect parameters:
+        'LocalStorage.ItemValue' does not accept 1 parameters"; LocalStorage.ItemValue
+        reads the item the last Get item fetched and takes none."""
+        for schema, part in sources:
+            names = self.p.expression_names(schema)
+            entry = next((e for e in (part or schema or {}).get("expressions", [])
+                          if LOWER(names.get(e["id"], "")) == LOWER(name)), None)
+            if entry is None:
+                continue
+            params = list(entry.get("params") or {})
+            given = call_arguments(text, end)
+            # isVariadicParameters: more may follow the listed ones, Mouse.X("HUD"), Array.At(x, y), max(a, b, c)
+            more = entry.get("isVariadicParameters")
+            if given < len(params) or given > len(params) and not more:
+                usage = f"{written}({', '.join(params)}{', ...' if more else ''})" if params or more else written
+                # The message is the one r495.2 gave for one argument too many; too few was not probed.
+                self.err(f"{where}: {written} takes {'at least ' if more else ''}{len(params)} "
+                         f"parameter{'' if len(params) == 1 else 's'} and is given {given}; the editor stops with "
+                         f"\"Incorrect parameters: '{written}' does not accept {given} parameters\". Write {usage}")
+            return
 
     @staticmethod
     def deprecated_expression(written: str, owner: str, retired: tuple[str, dict]) -> str:

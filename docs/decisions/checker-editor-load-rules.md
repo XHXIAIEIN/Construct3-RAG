@@ -226,6 +226,18 @@ Option 2 as the default, and option 3 as the step after it.
   refuses a listed timeline or flowchart without its file. The generator
   template writes neither, so it keeps only the names that have a file.
   None of the 524 official examples has the finding.
+- A sheet of the same project wrote `LocalStorage.ItemValue("best")`; the
+  editor stopped with `Incorrect parameters: 'LocalStorage.ItemValue' does
+  not accept 1 parameters`. The checker now counts the top-level arguments
+  of every plugin, shared, behavior and System expression call and compares
+  them with the schema's `params`. Counted against `params` alone, the
+  official examples gave 840 findings, all on calls the editor accepts:
+  `loopindex("i")`, `Array.At(x, y)`, `Mouse.X("HUD")`, Touch `XAt(0,
+  "HUD")`. The editor marks these expressions `isVariadicParameters` in
+  `plugins/allAces.json`, 20 of them, `max`, `min`, `choose` and `random`
+  among them; the export now keeps the flag, and a call to one may pass
+  more than `params` lists. With the flag, the 524 examples give no
+  finding. The message for too few arguments was not probed.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from

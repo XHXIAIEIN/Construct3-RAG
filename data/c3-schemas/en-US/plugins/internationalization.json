@@ -132,7 +132,8 @@
           "desc": "Location within the internationalization object"
         }
       },
-      "returnType": "string"
+      "returnType": "string",
+      "isVariadicParameters": true
     },
     {
       "id": "look-up-plural",
@@ -152,7 +153,8 @@
           "desc": "The value used to get the plural form"
         }
       },
-      "returnType": "string"
+      "returnType": "string",
+      "isVariadicParameters": true
     },
     {
       "id": "current-context",

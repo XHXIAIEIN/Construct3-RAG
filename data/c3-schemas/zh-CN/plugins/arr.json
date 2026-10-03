@@ -566,7 +566,8 @@
           "desc": "要获取的值位于数组X轴的位置，从 0 开始计数。"
         }
       },
-      "returnType": "any"
+      "returnType": "any",
+      "isVariadicParameters": true
     },
     {
       "id": "width",

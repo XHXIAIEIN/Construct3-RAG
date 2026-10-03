@@ -620,6 +620,25 @@ def test_a_groups_local_is_not_seen_from_a_sibling_group(project):
     assert "identifier '拾取距离' is not a variable, parameter or system expression" in out
 
 
+@pytest.mark.parametrize("text, said", [
+    # r495.2: "Incorrect parameters: 'LocalStorage.ItemValue' does not accept 1 parameters"
+    ("Coin.X(1)", "Coin.X takes 0 parameters and is given 1; the editor stops with \"Incorrect parameters: "
+                  "'Coin.X' does not accept 1 parameters\". Write Coin.X"),
+    ("clamp(Coin.X, 0)", "clamp takes 3 parameters and is given 2"),
+    ("Coin.Tween.Progress", "Coin.Tween.Progress takes 1 parameter and is given 0; "),
+    ("random()", "random takes at least 1 parameter and is given 0"),
+    # Commas inside a literal or a nested call are not counted; a variadic expression takes more.
+    ('tokenat("a,b", clamp(max(1, 2, 3), 0, 9), ",") & choose(1, 2, 3) & random(1, 5)', None),
+    ("Coin.ImagePointX(0) + Coin.Tween.Progress(\"\") + loopindex", None),
+])
+def test_an_expression_is_given_the_arguments_its_schema_lists(project, text, said):
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text=text))
+    if said:
+        assert said in out
+    else:
+        assert out.rstrip().splitlines()[-1].startswith("ok:"), out
+
+
 def test_plugin_name_in_an_expression_names_the_object(project):
     out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="Sprite.Count"))
     assert "unknown object Sprite in expression; Sprite is the plugin, the object of it here is Coin" in out
