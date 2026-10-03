@@ -32,7 +32,7 @@ The commands put this repository, the [related repositories](#related-repositori
 
 In `cmd.exe`, write `%USERPROFILE%` in place of `$HOME`. To keep everything in another folder, write that folder in both commands in place of `$HOME/Construct3`.
 
-To change what the second command does:
+Other ways to run the second command:
 
 - For a game that you already have, pass the path of its folder to `--project`. If you give a name alone, the command creates an empty project of that name beside the clones.
 - To start from an empty project of your own, add `--template <folder>`.

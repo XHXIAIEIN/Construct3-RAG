@@ -32,7 +32,7 @@ Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construc
 
 在 `cmd.exe` 里，把 `$HOME` 写成 `%USERPROFILE%`。想放在别的文件夹，就把两条命令里的 `$HOME/Construct3` 都换成那个文件夹。
 
-第二条命令可以这样调整：
+第二条命令还有这些用法：
 
 - 要装进已有的游戏，`--project` 后面写游戏文件夹的路径。如果只写名字，命令会在 clone 旁边新建一个同名的空项目。
 - 想从自己的空项目开始，加 `--template <文件夹>`。
