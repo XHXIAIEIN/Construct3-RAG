@@ -350,6 +350,13 @@ def test_generator_without_the_skill_says_so(project):
     assert code != 0 and "generated, not checked" in out and "install.py" in out
 
 
+def test_template_run_where_it_sits_says_to_copy_it(project):
+    """Run from the skill's assets/, the template would look for project.c3proj in the skill."""
+    code, out = run(project, f"{INSTALLED}/assets/build_project.py")
+    assert code == 1 and "copy it to tools/build_project.py in the game project" in out
+    assert "create the project in the editor" not in out
+
+
 def test_template_places_the_hud_on_the_grid(built):
     """anchor() returns the origin point of a box held MARGIN inside the viewport edge, on the
     grid; the stand-in's HUD text and its tapped coin come from it, so a generated layout starts

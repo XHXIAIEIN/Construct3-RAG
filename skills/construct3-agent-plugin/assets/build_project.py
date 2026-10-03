@@ -1582,6 +1582,9 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
 def build_all() -> None:
     c3proj = ROOT / "project.c3proj"
     if not c3proj.exists():
+        if (ROOT / "SKILL.md").exists():
+            sys.exit(f"{Path(__file__).name} is the skill's template: copy it to tools/build_project.py in the "
+                     f"game project and run the copy there")
         sys.exit(
             f"{c3proj} not found: create the project in the editor and save it as a folder first")
     check_palette()
