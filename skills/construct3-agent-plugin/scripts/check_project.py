@@ -1632,11 +1632,16 @@ class Checker:
         if behavior == "pathfinding" and ace_id == "find-path":
             found[obj] = action["behaviorType"]
             if paced is False:
-                self.warn(f"{where}: Find path runs every tick, with no trigger, Every X seconds or Trigger once in "
-                          f"its event or above it; the manual warns that pathfinding every tick takes extremely "
-                          f"high CPU and delays every other object's path. Move the Find path into an event with a "
-                          f"trigger such as Mouse On click, or add System Every X seconds to its event "
-                          f"(manual: behavior-reference/pathfinding.md)")
+                # A kind of its own, so that edit_sheet.py refuses it in an event a plan creates.
+                every = json.dumps({"id": "every-x-seconds", "objectClass": "System",
+                                    "parameters": {"interval-seconds": "0.5"}})
+                self.p.findings.style_finding(
+                    "pathfinding", f"{where}: Find path runs every tick; move it into the trigger that sets the "
+                                   f"target, such as Touch On tap or Mouse On click, or add System Every 0.5 seconds "
+                                   f"to its event, {every}. With no trigger, Every X seconds or Trigger once in its "
+                                   f"event or above it, the manual warns that pathfinding every tick takes extremely "
+                                   f"high CPU and delays every other object's path "
+                                   f"(manual: behavior-reference/pathfinding.md)")
             return
         early = obj in found and (behavior == "pathfinding" and ace_id == "move-along-path"
                                   or behavior == "moveto" and ace_id == "move-along-pathfinding-path")

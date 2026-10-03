@@ -65,7 +65,8 @@ Traps of the running game are warnings:
   path* that started the path, with no *Wait for previous actions to
   complete* between them: the path is there only after *On path found*;
 - *Find path* in an event that runs every tick, with no trigger, *Every X
-  seconds* or *Trigger once* in it or above it;
+  seconds* or *Trigger once* in it or above it; `edit_sheet.py` refuses it
+  in an event a plan creates, as it refuses the style findings below;
 - text a Sprite Font cannot draw, in a layout instance's text or in a
   literal that *Set text*, *Append text* or *Typewriter text* joins at the
   top level of its expression: a character outside the Character set shows

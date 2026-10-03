@@ -4,6 +4,7 @@ import json
 import re
 
 from tests.skill_helpers import SHEET, check, edit, cond, block, events, warnings, plan
+from tests.test_skill_check_project import pathfinding_coin
 
 
 STYLE_ACTIONS = [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{i}"'}} for i in range(8)]
@@ -118,6 +119,41 @@ def test_plan_refuses_a_new_every_tick_beside_another_condition(project):
     ev["conditions"] = [test]
     code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, ev]})
     assert code == 0 and warnings(out) == [], out
+
+
+FIND_PATH = {"id": "find-path", "objectClass": "Coin", "behaviorType": "Pathfinding", "parameters": {"x": "100", "y": "100"}}
+EVERY_HALF_SECOND = {"id": "every-x-seconds", "objectClass": "System", "parameters": {"interval-seconds": "0.5"}}
+
+
+def test_plan_refuses_a_new_find_path_every_tick(project):
+    """Both arms of a Haiku run of 2026-10-03 chased with Every tick or NOT Is moving along path -> Find path,
+    and the run that saw the warning kept it: in an event the plan creates it is refused, the first line
+    naming the fix with the JSON of the condition; with Every 0.5 seconds it goes through."""
+    pathfinding_coin(project)
+    before = (project / SHEET).read_bytes()
+    moving = {"id": "is-moving-along-path", "objectClass": "Coin", "behaviorType": "Pathfinding", "isInverted": True}
+    for condition in ({"id": "every-tick", "objectClass": "System"}, moving):
+        ev = {"eventType": "block", "conditions": [condition], "actions": [FIND_PATH]}
+        code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Chase the player."}, ev]})
+        assert code == 1 and (project / SHEET).read_bytes() == before, out
+        assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) action 1: Find path runs every tick; move it "
+                        r"into the trigger that sets the target, such as Touch On tap", out), out
+        assert json.dumps(EVERY_HALF_SECOND) in out.splitlines()[0]
+        assert out.splitlines()[-1] == "the plan adds 1 problem(s) to the project; nothing was written"
+    ev = {"eventType": "block", "conditions": [moving, EVERY_HALF_SECOND], "actions": [FIND_PATH]}
+    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Chase the player."}, ev]})
+    assert code == 0 and warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
+
+
+def test_plan_warns_on_a_find_path_every_tick_in_an_event_it_did_not_create(project):
+    """A Find path the plan adds to the user's own event, which runs every tick, is a warning under
+    the output, as the comment findings are on such an event."""
+    pathfinding_coin(project)
+    edit(project, SHEET, lambda s: s["events"].append(with_own_sids(
+        block([cond("every-tick")], STYLE_ACTIONS[:1]), 940_000_000_000_000)))
+    code, out = plan(project, {"event": 10, "add-actions": [FIND_PATH]}, flags=("--dry-run",))
+    assert code == 0 and "Traceback" not in out, out
+    assert [w for w in warnings(out) if "Find path runs every tick" in w], out
 
 
 def test_style_names_a_countdown_kept_by_hand(project):

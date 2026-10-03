@@ -157,6 +157,17 @@ default. `edit_sheet.py` refuses a plan whose new events raise `comment`,
 warnings: fixing them is a design change the plan's author must make. With the refusal stated in `SKILL.md` and its plan example
 carrying a comment, runs wrote the comment from the first draft.
 
+A Pathfinding *Find path* in an event that runs every tick, with no trigger,
+*Every X seconds* or *Trigger once* in it or above it, is a warning of
+`check_project.py` from the manual (`behavior-reference/pathfinding.md`) and
+fires on none of the 524 examples. In the Haiku runs of `chase-around-walls`
+on 2026-10-03 both arms wrote *Every tick* or *NOT Is moving along path* ->
+*Find path*; the run that saw the warning four times kept it and called it
+intentional. `edit_sheet.py` refuses it in an event the plan creates, under
+the kind `pathfinding`, and its line names the fix first: the trigger that
+sets the target, or *Every 0.5 seconds* with the JSON of that condition. In
+the user's own events it stays a warning.
+
 For `comment`, the events directly in a group are top-level events, and
 small models do not read them so. In iteration 29 of `add-countdown`, two
 Haiku runs put a comment above a new group and not above the events in it;

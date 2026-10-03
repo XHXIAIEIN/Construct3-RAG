@@ -469,7 +469,9 @@ class Plan:
 
 
 # --- checking, writing, reporting -----------------------------------------------------------------
-REFUSED_STYLE = ("comment", "run", "cases", "tick")     # the style kinds of check_project.check_style a plan may not add
+# The style kinds of check_project.py a plan may not add: check_style's four whose fix is one comment or one
+# deleted condition, and a Find path that runs every tick, whose fix is one condition or one move.
+REFUSED_STYLE = ("comment", "run", "cases", "tick", "pathfinding")
 
 
 def findings_of(project: c3.Project, args, sheets: dict) -> tuple[check_project.Checker, c3.Findings]:
@@ -620,7 +622,8 @@ def main() -> int:
     # refused like a problem: the fix is one comment, and a
     # warning was not acted on in half the small-model runs of 2026-09-22
     # (event-sheet-design-guidance.md). An event the plan moved or extended is the user's;
-    # a finding on it prints as a warning below.
+    # a finding on it prints as a warning below. A Find path every tick is refused too: in the Haiku
+    # runs of 2026-10-03 both arms wrote one, and the run warned four times kept it as intentional.
     known_style = {unnumbered(m) for _, m in found_before.style}
     added += [m for kind, m in found_after.style if kind in REFUSED_STYLE and unnumbered(m) not in known_style
               and (sid := re.search(r"\(sid (\d+)\)", m)) and int(sid.group(1)) not in existing]

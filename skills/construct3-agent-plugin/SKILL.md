@@ -206,7 +206,8 @@ top-level event, function or custom action needs a one-sentence comment
 above it, `{"eventType": "comment", "text": "..."}` in the same `events`
 list, and a run of eight actions needs a comment action, `{"type":
 "comment", "text": "..."}`, among them: a plan that adds one without is
-refused like a problem, with the place and the JSON to write. A decision
+refused like a problem, with the place and the JSON to write, and so is a
+Pathfinding *Find path* in a new event that runs every tick. A decision
 written as sub-events three levels deep is a `warning:` under the output;
 write the cases as sibling sub-events instead. The user's older events are
 not held to this. `--dry-run` does all of that and writes nothing.
