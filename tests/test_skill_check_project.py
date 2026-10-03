@@ -660,6 +660,23 @@ def test_instances_sharing_a_uid_are_named_with_what_the_editor_does(project):
     assert "duplicate uids" in out and "gives all but one of them another uid" in out, out
 
 
+def test_a_wait_for_a_signal_nothing_raises_is_named(project):
+    wait = {"id": "wait-for-signal", "objectClass": "System", "sid": 1, "parameters": {"tag": '"go"'}}
+    out = findings(project, lambda s: s["events"].append(block([cond("on-start-of-layout")], [wait])))
+    assert [w for w in warnings(out) if 'raises "go", so this Wait for signal never ends' in w], out
+
+
+def test_a_script_that_reads_a_parameter_bare_is_named(project):
+    """A preview of such a script stopped with "ReferenceError: string is not defined" (2026-10-03)."""
+    func = {"functionName": "Hex", "functionDescription": "", "functionCategory": "", "functionReturnType": "none",
+            "functionCopyPicked": False, "functionIsAsync": False, "eventType": "function-block", "sid": 2,
+            "functionParameters": [{"name": "text", "type": "string", "initialValue": "", "comment": "", "sid": 3}],
+            "conditions": [], "actions": [{"type": "script", "language": "javascript",
+                                           "script": ["console.log(parseInt(text, 16), localVars.text);"]}]}
+    out = findings(project, lambda s: s["events"].append(func))
+    assert [w for w in warnings(out) if "reads text as a bare name" in w and "localVars.text" in w], out
+
+
 def test_instance_without_uid_is_reported_not_raised(project):
     out = findings(project, lambda lay: lay["layers"][0]["instances"][0].pop("uid"), "layouts/Objects.json")
     assert "instance of Coin has no integer uid" in out

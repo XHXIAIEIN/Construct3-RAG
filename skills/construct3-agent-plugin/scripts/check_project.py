@@ -138,6 +138,25 @@ def unquote(v: str) -> str:
     return v[1:-1].replace('""', '"')
 
 
+# JavaScript text with its strings and comments blanked, for names in the code itself
+JS_SKIPPED = re.compile(r"//[^\n]*|/\*.*?\*/|'(?:\\.|[^'\\\n])*'|\"(?:\\.|[^\"\\\n])*\"|`(?:\\.|[^`\\])*`", re.S)
+JS_SIGNAL = re.compile(r"runtime\s*\.\s*signal\s*\(\s*(?:(['\"])(.*?)\1\s*\))?")
+
+
+def script_text(script) -> str:
+    return "\n".join(script) if isinstance(script, list) else script if isinstance(script, str) else ""
+
+
+def bare_name_in(code: str, name: str) -> bool:
+    """name read as a variable of the script: not a member, a key or the script's own declaration."""
+    n = re.escape(name)
+    declared = (rf"\b(?:let|const|var|function|class)\s+{n}\b|(?<![\w$.]){n}\s*=>"
+                rf"|\((?:\s*[\w$]+\s*,)*\s*{n}\s*(?:,\s*[\w$]+\s*)*\)\s*=>")
+    if re.search(declared, code):
+        return False
+    return re.search(rf"(?<![\w$.]){re.escape(name)}(?![\w$])(?!\s*:(?!:))", code) is not None
+
+
 def bare(value, options) -> str:
     """A combo item, a layout, an object and a variable are written bare; only an
     expression carries quotes. Says so when stripping the quotes gives a match."""
@@ -222,6 +241,8 @@ class Checker:
         self.global_ids: set[int] = set()     # the top-level variables of every sheet
         self.variable_names: set[str] = set()     # every variable and parameter name, as written
         self.numbers_on_disk = True      # whether the sheet being walked is the file, whose numbers a plan can name
+        self.signalled: set[str] | None = set()     # literal tags a Signal raises; None once one is not literal
+        self.awaited: list[tuple[str, str, str]] = []     # (tag, ACE id, where) of each Wait for signal and On signal
 
     def check(self) -> None:
         self.check_project_file()
@@ -1109,11 +1130,38 @@ class Checker:
                  f"every use of either name as {other}, so {name} is never read or written{constant}. Rename it "
                  f"and its uses, for example {name}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
 
+    def note_signal(self, ace: dict, where: str) -> None:
+        if ace.get("objectClass") != "System" or ace.get("id") not in ("signal", "wait-for-signal", "on-signal"):
+            return
+        tag = (ace.get("parameters") or {}).get("tag")
+        if ace["id"] != "signal":
+            if is_literal(tag):
+                self.awaited.append((unquote(tag).lower(), ace["id"], where))
+        elif self.signalled is not None:
+            self.signalled = self.signalled | {unquote(tag).lower()} if is_literal(tag) else None
+
+    def check_script(self, script, scope: dict, where: str) -> None:
+        """A script reads an event's locals and parameters as localVars.name; a bare name
+        is a ReferenceError when the event runs. Signals it raises count as Signal actions."""
+        text = script_text(script)
+        for m in JS_SIGNAL.finditer(text):
+            if self.signalled is not None:
+                self.signalled = self.signalled | {m.group(2).lower()} if m.group(1) else None
+        code = JS_SKIPPED.sub('""', text)
+        for name, var in scope.items():
+            if id(var) not in self.global_ids and isinstance(name, str) and bare_name_in(code, name):
+                self.warn(f"{where}: the script reads {name} as a bare name, which it does not know; an event's "
+                          f"local or parameter is localVars.{name} in a script")
+
     def check_block(self, ev: dict, scope: dict, where: str) -> None:
         for i, c in enumerate(ev.get("conditions", []), 1):
             self.check_ace("conditions", c, scope, f"{where} condition {i}")
+            self.note_signal(c, f"{where} condition {i}")
         for i, a in enumerate(ev.get("actions", []), 1):
             w = f"{where} action {i}"
+            self.note_signal(a, w)
+            if a.get("type") == "script":
+                self.check_script(a.get("script"), scope, w)
             if a.get("type") in ("comment", "script"):
                 continue
             if "callFunction" in a:
@@ -1221,7 +1269,9 @@ class Checker:
                 self.check_block(ev, scope, w)
                 self.walk(ev.get("children", []), scope, where, counter, self.check_structure(ev, w, above, previous),
                           depth + 1)
-            elif et != "script":
+            elif et == "script":
+                self.check_script(ev.get("script"), scope, w)
+            else:
                 self.err(f"{w}: unknown eventType {et!r}; the editor knows block, group, variable, comment, include, "
                          f"function-block, custom-ace-block and script")
             if et != "comment":
@@ -1453,6 +1503,12 @@ class Checker:
                 elif self.custom_actions[hit] != nparams:
                     self.err(f"{where}: {owner}.{name} called with {nparams} parameters, "
                              f"defined with {self.custom_actions[hit]}")
+        # Signals are not kept: a Wait for signal or On signal that no Signal raises never ends or runs.
+        for tag, ace, where in self.awaited if self.signalled is not None else []:
+            if tag not in self.signalled:
+                self.warn(f"{where}: no Signal action or runtime.signal() raises \"{tag}\", so this "
+                          + ("Wait for signal never ends" if ace == "wait-for-signal" else "On signal never runs")
+                          + f"; add Signal \"{tag}\" where it should")
         for t in self.created:
             if t in p.types and t not in self.templates:
                 self.warn(f"{t} is created at runtime but has no instance in any layout: "

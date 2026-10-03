@@ -26,7 +26,11 @@ third-party addon) is a warning, and its ACEs pass unchecked. So is what the
 editor has deprecated, from `Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`:
 an addon, and an ACE or expression, once each at its first use with the count
 of the others, and the current ACE of the same name when there is one. The
-editor opens a project that uses them, and a new event should not.
+editor opens a project that uses them, and a new event should not. Two
+traps of the running game are warnings: a *Wait for signal* or *On signal*
+whose text tag no *Signal* action or `runtime.signal()` raises, which never
+ends or runs, and a script that reads an event's local or parameter by its
+bare name instead of `localVars.name`, a `ReferenceError` when it runs.
 
 ## The rules the editor applies on opening and before preview
 
