@@ -18,7 +18,10 @@ where Web Audio lives).
   `GetAudioCurrentTime()`; example: audio-scheduling uses `dom`; observed in
   a game project, r504 preview with `dom`, 2026-09-30: music passes queued
   1 s ahead on a 100 BPM grid logged at beat 32n − 1.65 for n = 1 to 3, one
-  frame from the exact 32n − 1.67, no drift]
+  frame from the exact 32n − 1.67, no drift; measured on the audio-scheduling
+  example, r504 preview, 195 sounds on a 25 ms grid, `when` read at the page's
+  `AudioBufferSourceNode.start`, 2026-10-03: `dom` 25.000 ms every gap,
+  `worker` gaps 15.8 to 36.3 ms, 3.7 ms mean and 11.5 ms worst off the grid]
 - A scheduled play is exact only for a file in the Sounds folder that is
   loaded when *Play* runs. *Play* waits for the file to download and decode,
   then starts it at the scheduled time; a time already past plays at once,
