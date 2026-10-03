@@ -276,6 +276,9 @@ def main() -> int:
     names = args.sheets or list(sheets)
     if (args.events or args.show is not None) and len(names) != 1:
         sys.exit(f"--events and --show read one sheet; name it: {', '.join(sheets)}")
+    files = project.listed_files("eventSheets")
+    for name in names:
+        c3.stamp(files[name])
     if args.show is not None:
         return show(sheets[names[0]], names[0], args.show, args.limit)
     first, last = events_range(args.events)

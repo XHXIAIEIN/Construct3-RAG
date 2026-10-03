@@ -39,9 +39,9 @@ with "replace". The file is written as the editor writes it: tabs, LF, no
 newline at the end.
 
 exit codes: 0 written, or a dry run that would be; 1 nothing written: the plan
-cannot be read, names an event the sheet does not have, or adds a problem; or
-the project or the clone was not found; 2 a project file lacks a key the
-editor always writes
+cannot be read, names an event the sheet does not have, or adds a problem, or
+the sheet changed on disk since print_sheet.py printed it; or the project or
+the clone was not found; 2 a project file lacks a key the editor always writes
 """
 import copy
 import json
@@ -572,6 +572,11 @@ def main() -> int:
     path = project.listed_files("eventSheets").get(args.sheet)
     if path is None:
         sys.exit(f"no event sheet named {args.sheet!r}; sheets: {', '.join(project.listed_files('eventSheets'))}")
+    if c3.changed_since_stamp(path):
+        sys.exit(f"{args.sheet} changed on disk after print_sheet.py printed it, saved in the editor or by another "
+                 f"tool, so the plan's numbers may name other events; print it again, check the numbers and run "
+                 f"the plan again\nnothing was written")
+    raw = path.read_bytes()
     on_disk = path.read_text(encoding="utf-8")
     sheet = json.loads(on_disk)
     try:
@@ -622,9 +627,12 @@ def main() -> int:
 
     layout = json.dumps(plan.sheet, indent="\t", ensure_ascii=False)
     if not args.dry_run:
+        if path.read_bytes() != raw:
+            sys.exit(f"{args.sheet} changed on disk while the plan was applied; run it again\nnothing was written")
         draft = path.with_name(path.name + ".tmp")
         draft.write_text(layout, encoding="utf-8", newline="\n")
         os.replace(draft, path)
+        c3.stamp(path)
 
     # What changed, as the editor words it, under the numbers the sheet has now.
     span = numbers(plan.sheet["events"], [0])
@@ -653,6 +661,9 @@ def main() -> int:
         print(note)
     if on_disk.replace("\r\n", "\n") != json.dumps(sheet, indent="\t", ensure_ascii=False) and not args.dry_run:
         print(f"note: {path.name} was not laid out as the editor writes it (tabs, LF); it is now, so its diff is the whole file")
+    if not args.dry_run:
+        print("note: if the project is open in the Construct 3 editor, close it there without saving and open it "
+              "again; a save from the editor writes back the sheet it had loaded, over this change")
     if found_after.errors:
         print(f"{len(found_after.errors)} problem(s) were in the project before this plan and still are: "
               f"check_project.py lists them")

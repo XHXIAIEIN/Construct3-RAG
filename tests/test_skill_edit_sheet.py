@@ -259,6 +259,18 @@ def test_a_plan_that_cannot_be_read_says_what_an_operation_is(project, operation
     assert (project / SHEET).read_bytes() == before
 
 
+def test_a_sheet_saved_after_it_was_printed_waits_for_a_new_print(project):
+    """A save in the editor between print_sheet.py and the plan can move the events the plan numbers."""
+    timer = {"before": 1, "events": [{"eventType": "variable", "name": "timeLeft"}]}
+    tool(project, "print_sheet", "Game")
+    edit(project, SHEET, lambda s: s["events"].insert(0, {"eventType": "comment", "text": "Saved in the editor."}))
+    code, out = plan(project, timer, flags=("--dry-run",))
+    assert code == 1 and "changed on disk after print_sheet.py printed it" in out, out
+    tool(project, "print_sheet", "Game")
+    code, out = plan(project, timer, flags=("--dry-run",))
+    assert code == 0, out
+
+
 def test_the_plan_skill_md_shows_is_one_the_script_takes(project):
     text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
     shown = text.split("## Change a sheet with a plan")[1].split("```json\n")[1].split("```")[0]
