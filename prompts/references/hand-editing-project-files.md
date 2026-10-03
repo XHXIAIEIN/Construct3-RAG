@@ -133,9 +133,9 @@ the official examples (`docs/decisions/checker-editor-load-rules.md`).
   layout uid alone can collide with it. Files: UTF-8 with raw non-ASCII, tab indent, LF, no
   trailing newline, no byte order mark. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
   reproduces the editor's output byte for byte. A file that starts with a
-  byte order mark still opens. [observed: none of the 11 341 JSON files of
-  the official examples has one; an event sheet and a `project.c3proj`
-  with one opened in the stable editor, October 2026]
+  byte order mark still opens. [observed: the official examples carry none;
+  an event sheet and a `project.c3proj` with one opened in the stable
+  editor, October 2026]
 - Local Storage is an IndexedDB database named `c3-localstorage-` plus the
   project's `uniqueId`, so it survives closing the preview and is separate
   per project. A tool that rewrites `project.c3proj` must keep `uniqueId`
