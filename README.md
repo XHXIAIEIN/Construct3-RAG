@@ -29,6 +29,10 @@ Then read `MyGame/AGENTS.md`; the script's last line names the first file to rea
 
 Claude Code can install the plugin in place of the two commands. Use one or the other: both together leave two copies of the skill that update separately.
 
+The plugin is listed in Claude's directory as Construct3. On claude.ai, open **Customize** > **Plugins**, search for Construct3 and select **Add**. Claude Code signed in with the same account downloads it at its next start, as `construct3@synced`. Anthropic reviews each version before the directory serves it, so the directory can be some commits behind this repository.
+
+To follow this repository's latest commit, install the plugin from it instead:
+
 ```bash
 claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
@@ -42,6 +46,8 @@ With this repository already cloned, link the clone into Claude Code's skills fo
 - Elsewhere: `ln -s <the clone> ~/.claude/skills/construct3`
 
 Adding the clone as a marketplace copies all of it, ignored files included, into the plugin cache.
+
+When the directory's copy is added as well, Claude Code loads the plugin installed from this repository or linked from the clone, and leaves the directory's copy unloaded.
 
 ### What the skill's scripts run and reach
 

@@ -29,6 +29,10 @@ python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
 
 用 Claude Code 的话，也可以改装 plugin，代替上面两条命令。两种只选一种，同时装会有两份 skill 各自更新。
 
+plugin 收录在 Claude 的目录里，名为 Construct3。在 claude.ai 打开 **Customize** > **Plugins**，搜索 Construct3，点 **Add**。用同一账号登录的 Claude Code 下次启动时会下载它，名为 `construct3@synced`。目录里的每个版本都要经过 Anthropic 审核才会提供，所以目录可能比本仓库落后几个提交。
+
+想跟上本仓库的最新提交，就改从本仓库安装：
+
 ```bash
 claude plugin marketplace add XHXIAIEIN/Construct3-RAG
 claude plugin install construct3@construct3-rag
@@ -42,6 +46,8 @@ plugin 装的是整个仓库，schemas 一起带上，skill 的脚本直接在 p
 - 其他系统：`ln -s <clone 路径> ~/.claude/skills/construct3`
 
 把本地 clone 添加为 marketplace 的话，整个文件夹（包括被 git 忽略的文件）都会复制进 plugin 缓存。
+
+如果同时也从目录添加了，Claude Code 加载从本仓库安装或从 clone 链接的那份，目录的那份不加载。
 
 ### skill 的脚本会做什么、访问哪里
 

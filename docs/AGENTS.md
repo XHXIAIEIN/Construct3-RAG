@@ -63,6 +63,9 @@ The project skill and the prompts:
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |
+| `skill-and-plugin-names.md` | The names of the skill and the Claude Code plugin |
+| `plugin-tracks-commits.md` | Why `plugin.json` has no version, and why a linked clone needs no copy in the project |
+| `directory-listing.md` | Why the plugin is in Claude's directory and also installs from this repository, and why a reviewer publishes each directory version |
 | `random-uid-allocation.md` | Why the projects this repository starts give new instances random uids |
 
 The lookup service:
