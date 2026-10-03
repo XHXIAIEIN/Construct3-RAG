@@ -407,6 +407,16 @@ class Checker:
                 if not isinstance(block.get(part), list):
                     self.err(f"project.c3proj {key}: {part} is {block.get(part)!r}; the editor walks both lists "
                              f"as it opens the project. Write \"{part}\": []")
+        # The editor opens every listed timeline and flowchart; a list copied from a new
+        # project without its folders stops it with "missing file path 'timelines\Timeline 1.json'".
+        for key in ("timelines", "flowcharts"):
+            if isinstance(data.get(key), dict):
+                for name, folder in folder_items(data[key]):
+                    if isinstance(name, str) and self.p.project_file(key, name, folder) is None:
+                        shown = Path(key) / folder / f"{name}.json"
+                        self.err(f"{key}: {name} is listed in project.c3proj but {shown.as_posix()} is missing; the "
+                                 f"editor stops with \"missing file path '{shown}'\". Take \"{name}\" out of the "
+                                 f"\"{key}\" items, or copy the file from the project the list came from")
         if not isinstance(data.get("containers"), list):
             self.err(f"project.c3proj: containers is {data.get('containers')!r}; the editor reads it as an array "
                      f"before it has read a file and stops with \"TypeError: expected array\". A project with no "

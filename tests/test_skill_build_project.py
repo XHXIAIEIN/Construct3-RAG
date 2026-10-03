@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from tests.skill_helpers import (
-    REPO, SKILL, INSTALLED, run, tool, check, warnings, findings, template_module, png_pixels,
+    REPO, SKILL, INSTALLED, run, tool, check, edit, warnings, findings, template_module, png_pixels,
 )
 
 
@@ -327,6 +327,21 @@ def test_generator_exits_with_the_checkers_findings(project):
     code, out = run(project, "tools/build_project.py")
     assert code == 1
     assert "generated; checking" in out and 'write it bare, "start"' in out
+
+
+def test_generator_keeps_only_the_timelines_and_flowcharts_that_have_a_file(project):
+    """A project.c3proj copied from the editor's new project lists Timeline 1 and Flowchart 1;
+    without their folders the editor stops with "missing file path 'timelines\\Timeline 1.json'"."""
+    edit(project, "project.c3proj", lambda p: p.update(
+        timelines={"items": ["Timeline 1", "Fade"], "subfolders": [{"items": [], "subfolders": []}]},
+        flowcharts={"items": ["Flowchart 1"], "subfolders": []}))
+    (project / "timelines").mkdir()
+    (project / "timelines" / "Fade.json").write_text("{}", encoding="utf-8")
+    code, out = check(project)
+    assert code == 1 and "flowcharts: Flowchart 1 is listed in project.c3proj but flowcharts/Flowchart 1.json "         "is missing" in out, out
+    run(project, "tools/build_project.py")
+    written = json.loads((project / "project.c3proj").read_text(encoding="utf-8"))
+    assert written["timelines"]["items"] == ["Fade"] and written["flowcharts"]["items"] == []
 
 
 def test_generator_without_the_skill_says_so(project):

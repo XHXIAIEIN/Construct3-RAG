@@ -1530,6 +1530,15 @@ PROPERTY_DEFAULTS = {"description": "", "version": "1.0.0.0", "autoIncrementVers
                      "scriptsType": "module"}
 
 
+def with_files(block: dict, kind: str) -> dict:
+    """A timelines or flowcharts list without the names that have no file. The editor's
+    new project lists Timeline 1 and Flowchart 1; a project.c3proj copied without their
+    folders stops the editor with "missing file path 'timelines\\Timeline 1.json'"."""
+    on_disk = {f.stem for f in (ROOT / kind).rglob("*.json")} if (ROOT / kind).is_dir() else set()
+    return {**block, "items": [n for n in block.get("items", []) if n in on_disk],
+            "subfolders": [with_files(sub, kind) for sub in block.get("subfolders", []) if isinstance(sub, dict)]}
+
+
 def build_project(existing: dict, types: dict, families: dict, containers: list, layouts: dict,
                   sheets: list) -> dict:
     """Only the keys this script owns change; uniqueId, icons, scripts and the
@@ -1547,6 +1556,9 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
     p["containers"] = list(containers)
     p["layouts"] = {"items": list(layouts), "subfolders": []}
     p["eventSheets"] = {"items": sheets, "subfolders": []}
+    for kind in ("timelines", "flowcharts"):     # this script writes neither; keep what has a file
+        if isinstance(p.get(kind), dict):
+            p[kind] = with_files(p[kind], kind)
     p["viewportWidth"] = VIEW_W
     p["viewportHeight"] = VIEW_H
     if PIXEL_ART:

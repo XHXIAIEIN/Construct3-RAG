@@ -105,6 +105,7 @@ How each was read from the editor and confirmed:
 | Every text literal is closed, a quote inside it doubled; a backslash stands only inside a literal, where it is a plain character | `Syntax error: String missing finishing "`, `Syntax error: Unknown character` |
 | A comment event carries `text`, a group `description`, an event variable `comment`, each as text, `""` when empty | `Cannot read properties of undefined (reading 'endsWith')`, `expected string` |
 | A function's `functionReturnType` is `none`, `number`, `string` or `any`; a custom action's `aceType` is `action` | `function has wrong return type`, `invalid ACE type` |
+| Every timeline and flowchart `project.c3proj` lists has its file, `timelines/<name>.json` and `flowcharts/<name>.json`: a list copied from a new project keeps `Timeline 1` and `Flowchart 1` | `missing file path 'timelines\Timeline 1.json'` |
 | Every file `rootFileFolders` lists is on disk: `general` in `files/`, `icon` in `icons/`, `sound` in `sounds/`, `music` in `music/`, `video` in `videos/`, `font` in `fonts/`, `script` in `scripts/` | `missing file path 'icons\icon-16.png'`, `missing file path 'videos\clip.webm'` |
 | A sound parameter (*Play*, *Play at object*) names a sound or music file the project lists, without its extension, in any case: `SFX1` for `sfx1.webm` | `missing file '0'`, `missing file 'sfx1.webm'` |
 | A key is a key code, a JSON number | `expected finite number` |

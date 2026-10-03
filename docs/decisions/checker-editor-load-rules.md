@@ -218,6 +218,14 @@ Option 2 as the default, and option 3 as the step after it.
   Scirra but the schema index lacks, since the index holds every addon by
   Scirra; an id by another author stays a warning. None of the 524 official
   examples has either finding.
+- The same project's `project.c3proj`, copied from the editor's new project,
+  listed `Timeline 1` and `Flowchart 1` without the `timelines/` and
+  `flowcharts/` folders; the editor stopped with `missing file path
+  'timelines\Timeline 1.json'`. The checker read the files of object
+  types, families, layouts and sheets but not of these two lists, and now
+  refuses a listed timeline or flowchart without its file. The generator
+  template writes neither, so it keeps only the names that have a file.
+  None of the 524 official examples has the finding.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from
