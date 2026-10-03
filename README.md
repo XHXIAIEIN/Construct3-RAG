@@ -34,7 +34,7 @@ In `cmd.exe`, write `%USERPROFILE%` in place of `$HOME`. To keep everything in a
 
 To change what the second command does:
 
-- If you have a game already, give `--project` the path of its folder. If you give a name alone, the command creates the project beside the clones. It copies `data/c3-new-project`, the empty project that the editor saves for **Project** > **New**.
+- If you have a game already, give `--project` the path of its folder. If you give a name alone, the command creates an empty project of that name beside the clones.
 - To start from an empty project of your own, add `--template <folder>`.
 - If your agent reads skills from another folder, add `--into <folder>`, such as `--into .trae/skills` for TRAE.
 - Run the command again at any time to refresh the skill from the clone. It leaves the clones and instruction files that exist as they are. `--help` lists every option.
