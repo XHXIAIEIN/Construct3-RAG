@@ -938,6 +938,13 @@ class Checker:
             hint = closest(name, list(scope) + list(p.plugin_of))
             if LOWER(name) in p.objects_lower:
                 hint = f"; {p.objects_lower[LOWER(name)]} is an object, write {p.objects_lower[LOWER(name)]}.<expression>"
+            elif LOWER(name) in ("true", "false"):
+                hint = ("; an expression has no true or false, a comparison gives 1 or 0. Test a boolean "
+                        "variable with System compare-boolean-eventvar, inverted for false, and set it with System "
+                        "set-boolean-eventvar; a boolean instance variable with is-boolean-instance-variable-set "
+                        "and set-boolean-instvar")
+            elif LOWER(name) in ("if", "then", "else"):
+                hint = "; an expression chooses with condition ? a : b"
             elif text.strip() == name:
                 hint += f"; a text value carries inner quotes: \"\\\"{name}\\\"\""
             self.err(f"{where}: identifier {name!r} is not a variable, parameter or system expression{hint}")

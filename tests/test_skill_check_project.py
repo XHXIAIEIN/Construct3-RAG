@@ -592,6 +592,18 @@ def test_bare_text_value_is_told_to_add_the_quotes(project):
     assert "identifier 'Hello' is not a variable" in out and 'a text value carries inner quotes: "\\"Hello\\""' in out
 
 
+def test_true_and_false_are_told_the_boolean_aces(project):
+    """An agent writes a boolean as it would in JavaScript; quoting it would make a text."""
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="false"))
+    assert "identifier 'false' is not a variable" in out and "an expression has no true or false" in out
+    assert "compare-boolean-eventvar" in out and "inner quotes" not in out
+
+
+def test_if_else_is_told_the_conditional_operator(project):
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="if 1 else 2"))
+    assert "identifier 'if' is not a variable" in out and "an expression chooses with condition ? a : b" in out
+
+
 def test_names_outside_ascii_are_checked_like_the_others(project):
     """The editor takes names in any script; an undeclared one stops it with "unknown
     expression" as it opens the project. A mixed name is one name, not its ASCII part."""
