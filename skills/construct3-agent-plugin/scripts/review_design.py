@@ -26,6 +26,8 @@ nothing, in the 524 official examples:
               Restart layout or Go to layout enters again
   expression  an expression 5 or more parentheses deep that writes a call of 30 or
               more characters twice
+  follow      a part made with an object (one container, or one action list) and set
+              from its position once, while another event moves the object alone
 
 What the examples also write, and a reader judges, becomes a question: an event
 with 4 to 11 conditions, sibling events of one trigger, sibling events that
@@ -127,7 +129,7 @@ CLASSES = {
     ("global", "scratch"): None, ("global", "sheet"): None, ("global", "function"): "owner",
     ("global", "group"): "owner", ("global", "handoff"): DROPPED,
     ("uid", "created"): None, ("uid", "kept"): "link",
-    ("data", ""): None, ("restart", ""): None, ("expression", ""): None,
+    ("data", ""): None, ("restart", ""): None, ("expression", ""): None, ("follow", ""): None,
 }
 
 
@@ -235,6 +237,7 @@ class Design:
     layouts: dict[str, dict] = field(default_factory=dict)
     types: dict[str, dict] = field(default_factory=dict)
     words: Callable[[str, dict], str] | None = None         # kind, ace -> the editor's wording
+    containers: list[dict] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.rows = {name: list(walk(name, sheet.get("events", []))) for name, sheet in self.sheets.items()}
@@ -259,7 +262,7 @@ class Design:
         def words(kind: str, ace: dict) -> str:
             return print_sheet.wording(p, kind, ace)
         return cls(sheets if sheets is not None else p.load_listed("eventSheets"), is_trigger, expressions,
-                   p.load_listed("layouts"), p.types, words)
+                   p.load_listed("layouts"), p.types, words, p.data.get("containers") or [])
 
     # --- shared reads ---------------------------------------------------------------------
     def blocks(self, sheet: str) -> list[Ev]:
@@ -758,8 +761,107 @@ def expression_rule(d: Design) -> list[dict]:
     return out
 
 
+# --- l: a part placed once beside an object that moves without it ----------------------
+MOVES = {"set-position", "set-x", "set-y", "move-forward", "move-at-angle", "set-position-to-another-object",
+         "set-position-3d"}
+TWEEN_MOVES = {"position", "offsetx", "offsety"}
+
+
+def moves(a: dict) -> bool:
+    if a.get("id") in MOVES and not a.get("behaviorType"):
+        return True
+    prop = str((a.get("parameters") or {}).get("property", "")).lower() if isinstance(a.get("parameters"), dict) else ""
+    return str(a.get("id", "")).startswith("tween-") and prop in TWEEN_MOVES
+
+
+def has_parent(d: Design) -> set[str]:
+    """Types a layout's hierarchy or an Add child action makes a child of something: their
+    position follows a parent, whichever one it is."""
+    type_of, parent_of = {}, {}
+    for lay in d.layouts.values():
+        for layer in lay.get("layers", []):
+            for inst in layer.get("instances", []):
+                graph = inst.get("sceneGraphData") or {}
+                type_of[inst.get("uid")] = inst.get("type")
+                for child in graph.get("children") or []:
+                    parent_of[child.get("uid")] = inst.get("uid")
+    children = {type_of.get(child) for child in parent_of}
+    for rows in d.rows.values():
+        for e in rows:
+            for a in e.actions:
+                if a.get("id") == "add-child":
+                    children.add((a.get("parameters") or {}).get("child"))
+    return children
+
+
+def together_made(d: Design) -> set[tuple[str, str]]:
+    """Pairs of types made as one thing: members of one container, or created in one action list.
+    A part spawned at an object and then left on its own, a bullet or a puff, is not one."""
+    out = set()
+    for c in d.containers:
+        members = [str(m) for m in c.get("members", [])]
+        out |= {(a, b) for a in members for b in members if a != b}
+    for rows in d.rows.values():
+        for e in rows:
+            made = [str((a.get("parameters") or {}).get("object-to-create", "")) for a in e.actions
+                    if a.get("id") == "create-object"]
+            out |= {(a, b) for a in made for b in made if a != b}
+    return out
+
+
+def every_tick(d: Design, e: Ev) -> bool:
+    """A row that runs on every tick: no trigger on it or above it, outside a function."""
+    return e.function is None and not any(d.trigger(r) for r in [e, *e.ancestors()])
+
+
+def follow_rule(d: Design) -> list[dict]:
+    """A part set to an object's position in one event, then the object moved by another
+    event that leaves the part behind: a label that stays where a card was drawn."""
+    placed: dict[tuple[str, str], list[Ev]] = {}
+    for rows in d.rows.values():
+        for e in rows:
+            for a in e.actions:
+                part = a.get("objectClass")
+                if not part or not moves(a) or a.get("behaviorType"):
+                    continue
+                text = " ".join(blank(v) for v in d.expressions("actions", a).values())
+                owners = {m.group(1) for m in re.finditer(r"(?<![\w.])(\w+)\s*\.\s*(?:x|y|imagepointx|imagepointy)\b",
+                                                          text, re.I)}
+                if a.get("id") == "set-position-to-another-object":
+                    owners.add(str((a.get("parameters") or {}).get("object", "")))
+                for owner in owners:
+                    if owner in d.types and owner != part:
+                        placed.setdefault((owner, part), []).append(e)
+    children, pinned = has_parent(d), {n for n, t in d.types.items()
+                                for b in t.get("behaviorTypes", []) if b.get("behaviorId") == "Pin"}
+    together = together_made(d)
+    left: dict[tuple[int, str], tuple[Ev, list[str], Ev]] = {}     # (row, owner) -> row, parts, placing row
+    for (owner, part), where in placed.items():
+        if (owner, part) not in together or part in children or part in pinned \
+                or any(every_tick(d, e) for e in where):
+            continue
+        for rows in d.rows.values():
+            for e in rows:
+                acts = [a for r in [e, *descendants(e)] for a in r.actions]
+                if not any(a.get("objectClass") == owner and moves(a) for a in e.actions):
+                    continue
+                if any(a.get("objectClass") == part for a in acts) or e in where:
+                    continue
+                left.setdefault((id(e), owner), (e, [], where[0]))[1].append(part)
+    out = []
+    for (_, owner), (e, parts, first) in left.items():
+        names = " and ".join(sorted(parts))
+        out.append(finding("follow", e, f"{e.place}: moves {owner} and leaves {names} where {first.place} set "
+                   f"{'them' if len(parts) > 1 else 'it'} from {owner}'s position; make {names} children of {owner}: "
+                   f"in a layout put {'their instances' if len(parts) > 1 else 'its instance'} under the {owner} "
+                   f"instance as a template hierarchy and create {owner} with create hierarchy on and that template, "
+                   f"or call {owner}: Add child where both are created; then delete the actions that set their "
+                   f"position", short=f"{owner} without {names}"))
+    return sorted(out, key=lambda f: (f["sheet"], f["event"]))
+
+
 RULES = (conditions_rule, guard_rule, idle_rule, pair_rule, trigger_rule, twice_rule, global_rule, uid_rule,
-         data_rule, restart_rule, expression_rule)
+         data_rule, restart_rule, expression_rule, follow_rule)
 
 
 def candidates(d: Design) -> list[dict]:

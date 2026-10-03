@@ -135,6 +135,7 @@ card game, a merge game and a tic-tac-toe sheet:
 | `data` | 20 or more actions of one kind with literal values: a project file | 0 | 1 | 0 | 0 |
 | `restart` | On start of layout setting instances after *Pick all*, on a layout that *Restart layout* or *Go to layout* enters again | 0 | 0 | 0 | 1 |
 | `expression` | 5 or more parentheses deep, with a call of 30 or more characters written twice: a function | 0 | 6 | 1 | 0 |
+| `follow` | a part in the object's container or created beside it, set from the object's position once, while another event moves the object alone: a hierarchy | 2 in 1 project | 3 | 0 | 0 |
 
 The five `guard` hits in the examples repeat 3 or 4 conditions, inverted
 *Is playing* or *Is touching* tests and a pick, across sibling events of one
@@ -142,6 +143,13 @@ group; a parent event would hold them once there too. The two `trigger`
 hits press Space in sibling events told apart by booleans, the shape of the
 tic-tac-toe sheet. The card game's `uid` hits were replaced by a container
 while it was measured.
+
+The `follow` rule was added later and measured the same way. Its two example hits
+are in ceiling-trap: the rail path is placed at the trap once and stays while the
+trap stomps down it, which is the design there. The card game's three hits move the
+cards in the hand layout, the aim and the play while their name, cost and text labels
+stay where the cards were drawn. Spawned parts that start at an object and then move
+on their own, such as projectiles, are not made with the object, and the rule leaves them.
 
 The questions name the events of what the examples write as well: 4 to 11
 conditions (231 events in 76 example projects, 71 in the merge game),

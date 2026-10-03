@@ -294,3 +294,36 @@ def test_review_refuses_a_sheet_it_does_not_have(tmp_path):
 def test_review_without_a_project(tmp_path):
     code, out = run(tmp_path, SCRIPT, "--rag", str(REPO))
     assert code == 1 and "no project.c3proj" in out, out
+
+
+# --- a label placed once beside a card that moves without it -----------------------------------
+def hand(root: Path, link: bool = False, container: bool = True) -> Path:
+    """A card drawn with its label set from its position, then laid out again by a function
+    that moves the card alone; `link` adds the label as the card's child where it is made."""
+    draw = [a("create-object", object_to_create="Card"),
+            a("set-position", "CardName", x="Card.X - 60", y="Card.Y - 74")]
+    draw[0]["parameters"] = {"object-to-create": "Card", "layer": '"Game"', "x": "640", "y": "600",
+                             "create-hierarchy": False, "template-name": '""'}
+    if link:
+        draw.append(a("add-child", "Card", child="CardName"))
+    events = [function("Draw", [ev([], draw)]),
+              function("Layout", [ev([c("for-each", object="Card")], [a("set-position", "Card", x="loopindex * 200",
+                                                                          y="600")])])]
+    root = write(root, {"Combat": events}, {"Card": ("Sprite", []), "CardName": ("Text", [])})
+    if container:
+        data = json.loads((root / "project.c3proj").read_text("utf-8"))
+        data["containers"] = [{"members": ["Card", "CardName"]}]
+        (root / "project.c3proj").write_text(json.dumps(data), "utf-8")
+    return root
+
+
+def test_a_container_label_left_behind_by_a_moved_card(tmp_path):
+    assert findings(hand(tmp_path), "follow") == [("follow", "", None, "Combat", 4)]
+
+
+def test_a_label_added_as_a_child_follows(tmp_path):
+    assert findings(hand(tmp_path, link=True), "follow") == []
+
+
+def test_a_part_only_spawned_at_an_object_is_its_own(tmp_path):
+    assert findings(hand(tmp_path, container=False), "follow") == []
