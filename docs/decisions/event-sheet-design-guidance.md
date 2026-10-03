@@ -173,7 +173,13 @@ Measured over the 524 examples and the 149 eval and small-model projects on
 among them, so it is not a finding; a variable named for a UID appears in 20
 examples; `Pick all` on the trigger's object inside a triggered branch
 appears in 6 examples and in no run, nor does *Pick by unique ID* on it. Those
-stay prose in the smell table until a run writes them.
+stay prose in the smell table until a run writes them. In four of the six
+examples, `Pick all` reaches the rest of the type and the events after it no
+longer read the trigger's instance: every ghost stopped when one touches the
+player, the blocks next to a breaking one. The other two follow it with a
+pick from a stored link, a UID in a function parameter or a variable, the
+only form rule 8 and the smell row of `event-sheet-thinking.md` call a
+rebuilt pick.
 
 Comments, variable comments and function descriptions end without a period,
 by the user's choice; a second sentence keeps the period between the two.

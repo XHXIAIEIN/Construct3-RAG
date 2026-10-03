@@ -75,8 +75,8 @@ it"). Given an effect's id or name, it prints the effect's parameters.
 Interactions, data storage, timing, animation: read and follow
 `prompts/event-sheet-thinking.md`, then verify names with section 2.
 
-- UID links between objects, `Pick all` to reset picking, or a timer,
-  tween or table rebuilt from variables: redesign.
+- UID links between objects, `Pick all` followed by a pick from a stored
+  link, or a timer, tween or table rebuilt from variables: redesign.
 - A runtime behaviour of events learned from a project, one that changes
   which events are written, goes into the topic file of its group under
   `prompts/pitfalls/`, with its source, and its conclusion goes into

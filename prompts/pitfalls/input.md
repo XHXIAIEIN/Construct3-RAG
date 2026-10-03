@@ -34,15 +34,19 @@ Sources and the rule for adding an entry are in the index,
   *On any touch start* then means a finger or a pen, and Mouse *On any
   click* or Keyboard *On any key pressed* means a desktop; each sets a
   global the controls are chosen from (see "Native first" in
-  [event-sheet-thinking.md](../event-sheet-thinking.md)). With it off a
+  [event-sheet-thinking.md](../event-sheet-thinking.md)).
+  detecting-input-method decides once, on its title screen. The same
+  triggers in a sheet that runs during play follow a change of device.
+  Gamepad *On any button pressed* adds a pad. With *Use mouse input* off a
   mouse fires no Touch trigger at all, so every button the mouse must press
   needs a Mouse event of its own; a project that clicks its Touch buttons
   with the mouse keeps it on and tells a finger drag from a mouse drag with
   the Mouse test above. The global follows the last input, and whether it
   has changed yet when a drag starts on the same press is the same
   undocumented order as above. [manual: plugin-reference/touch.md "Use mouse
-  input"; example: detecting-input-method, `Title events` event 3 and its
-  comment, Touch object with *Use mouse input* off; runtime: exported
+  input"; example: detecting-input-method, `Title events` events 2 and 3
+  and the comment of 3, Touch object with *Use mouse input* off; schema:
+  plugins/gamepad.json `on-any-button-pressed`, a trigger; runtime: exported
   c3runtime.js r503, `Plugins.Touch.Instance._OnPointerDown`]
 - Touch *On touched object*, *Is touching object*, *On tap object* and
   Mouse *On object clicked*, *Is over object* find an instance by its shape

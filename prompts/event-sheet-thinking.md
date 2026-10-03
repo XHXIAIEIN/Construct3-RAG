@@ -10,10 +10,10 @@ habits the checker warns on. Run every draft through the smell table below
 before showing it.
 
 A sheet that links objects through UID variables, resets picking with
-`Pick all`, copies picked results into variables and branches on the numbers,
-or rebuilds a timer, a tween or a lookup table out of variables and `Every
-tick` is a program transcribed into events. It works, and an experienced
-Construct user rejects it.
+`Pick all` and picks again from a stored link, copies picked results into
+variables and branches on the numbers, or rebuilds a timer, a tween or a
+lookup table out of variables and `Every tick` is a program transcribed into
+events. It works, and an experienced Construct user rejects it.
 
 ## The model
 
@@ -66,10 +66,15 @@ the clone.
    first and branching on the numbers is the wrong shape.
 7. **Derive appearance every tick.** One unconditioned event sets the default
    look; the next picks the exceptions and overrides. Nothing to reset.
-8. **UID, `Pick all` and globals come last.** Right for references that cross
-   events (an inventory array of UIDs, a persisted selection) and for
-   singletons. Inside one interaction they mean the trigger's pick was thrown
-   away and rebuilt by hand.
+8. **UID, `Pick all` and globals come last.** A UID or a global is right for
+   a reference that crosses events (an inventory array of UIDs, a persisted
+   selection) and for a singleton. `Pick all` is right for reaching the rest
+   of a type when the events after it no longer read the trigger's instance:
+   relic-hunter stops every ghost when one touches the player. When they read
+   both, as a merge compares two levels, the second is a family (rule 4).
+   Inside one interaction, `Pick all` followed by a pick from a stored link
+   (*Pick by unique ID*, or *Pick by comparison* on a variable holding a UID
+   or a slot number) means a pick was thrown away and rebuilt by hand.
 
 ## Native first
 
@@ -87,17 +92,17 @@ program transcribed into events even when no picking smell shows.
 | Continuous motion toward a target or along a heading | MoveTo, Bullet, Pathfinding, Platform, 8 Direction | `Set X`/`Set Y` from your own velocity variables |
 | Repeating or periodic movement, flashing, fading out | Sine, Flash, Rotate; a fade is a Tween on Opacity | Hand-written oscillation; the Fade behavior, superseded |
 | Level data, loot tables, stat curves, any lookup table | Array or Dictionary project file (Project Bar: *New - Array / Dictionary*), loaded at start with AJAX *Request project file* then *Load* from `AJAX.LastData`; nested or hand-written data through the JSON plugin | Per-level instance variables, `level1Hp`, chained conditions or nested ternaries that encode the table in expressions |
-| A list that changes at runtime: a deck and its discard pile, a queue, an inventory, a playlist | One Array per list, size 0 at start: *Push* or *Insert* to add, *Shuffle*, `Front`, `Back` or `At(i)` to read, then *Pop* or *Delete* to remove (they return nothing, so read first), *Contains value* or `IndexOf` to test membership, `Width` for the count (place-stickers, `InventoryArray`: *Shuffle*, `At(0)`, *Pop front*, *Is empty*; airborne-explorer, `ArrBGM`: *Push back* then *Shuffle*). Definitions with several fields, a card's cost, type and text, come from a project file as in the row above | A comma- or pipe-separated global read with `tokenat` and `tokencount`, an item removed by rebuilding the string in a `Repeat`, membership by `find("," & id & ",", …)`; a record packed into one separated string |
+| A list that changes at runtime: a deck and its discard pile, a queue, an inventory, a playlist | One Array per list, width 0 at start: *Push* to add, *Shuffle*, `Front`, `Back` or `At(i)` to read, then *Pop* or *Delete* to remove (they return nothing, so read first), *Contains value* to test membership, `Width` to count (place-stickers `InventoryArray`, airborne-explorer `ArrBGM`). Definitions with several fields come from a project file, row above | A separated string read with `tokenat` (smell table) |
 | Weighted random, seeded random, noise | Advanced Random: probability tables, `Weighted`, `Seed`, `Classic2d` | A cascade of `random()` comparisons with hand-tuned thresholds |
 | Data that survives a reload | Local Storage: *Set item*, *Get item*, *On item get* | Globals, which reset on reload; the Persist behavior, which keeps instances across layout changes, not across sessions |
 | Logic shared by several events | Functions with parameters and return values; a *custom action* on the object or family when it acts on picked instances | The same action block pasted into several events |
 | A slice of the sheet that only runs in one phase: tutorial, a boss's AI, debug tools | A Group, off at start when the phase is later, *Set group active* at the transition. Only events stop: behaviors, timers and tweens in it run on | A global mode variable that every event in the slice compares |
-| Which controls to offer: on-screen buttons for touch, keys and mouse on a desktop | Touch with *Use mouse input* off; *On any touch start* sets a global to touch, Mouse *On any click* or Keyboard *On any key pressed* to desktop, and the global shows the touch-controls layer and activates its group (detecting-input-method, decided once on a title screen; left active in play, the same triggers follow a change of device; Gamepad *On any button pressed* adds a pad). It picks a scheme, not a gesture: a drag that differs under a finger tests *Mouse button is down* per tick, which also works with *Use mouse input* on ([pitfalls: Input](pitfalls/input.md)) | Touch triggers with *Use mouse input* on, which fire for a click as well |
+| Which controls to offer: on-screen buttons for touch, keys and mouse on a desktop | Touch with *Use mouse input* off: *On any touch start* sets a global to touch, Mouse *On any click* or Keyboard *On any key pressed* to desktop, and the global shows the touch-controls layer and activates its group (detecting-input-method). A drag that differs under a finger tests *Mouse button is down* per tick instead ([pitfalls: Input](pitfalls/input.md)) | Touch triggers with *Use mouse input* on, which fire for a click as well |
 | Pause, slow motion, hit stop | *Set time scale* 0 (pause) or 0.1 (hit stop, slow motion); *Set object time scale* 1 on the UI that must keep moving; *Use time scale* off on the wait that ends it | A `paused` global checked in every event; behaviors disabled one by one |
 | One thing after another inside one interaction: knock back, then re-enable; fade out, then go to layout | *Wait* and *Wait for previous actions* in the same block; the picked instances are kept | A flag set now and a Timer or `On any finished` elsewhere to finish the sequence |
 | Reacting to a state any instance may reach, whoever started it | Timer *On timer*; Tween *On any finished* | A *Wait* that assumes one caller |
 | HUD and UI that stay on screen while the layout scrolls | A layer with parallax 0, 0; *Global* on that layer when every layout shows the same HUD | Every-tick *Set position* from `ViewportLeft`/`ViewportTop` |
-| A number shown as a bar, a gauge or a row of icons: health, fuel, progress, lives | One object, one property from one expression, `Set width to value / max × LENGTH` clamped, its origin on the edge it grows from, a frame behind it, Tween *Width* for a change; the art decides the object, Tiled Background for a colour or a painting to reveal, 9-patch for caps, one Tiled Background of `count × icon width` for hearts ([references/progress-bars.md](references/progress-bars.md)) | A Sprite scaled from its centre origin; a per-tick lerp of the width; one object type or one event per heart |
+| A number shown as a bar, a gauge or a row of icons: health, fuel, progress, lives | One object, `Set width to value / max × LENGTH` clamped, its origin on the edge it grows from, a frame behind it, Tween *Width* for a change; the art decides which object ([references/progress-bars.md](references/progress-bars.md)) | A Sprite scaled from its centre origin; a per-tick lerp of the width; one object type or one event per heart |
 | A panel, menu or popup opened and closed as a whole | Its own layer, *Initially visible* off: *Set layer visible*; to fade it, *Set layer opacity* from a *Tween (value)* on a manager object (airborne-explorer, `MenuUI` and `ShopUI`; eventide, `PauseUI`) | *Set visible* on each of its objects, in every event that opens or closes it |
 | A set of objects treated alike | Family; instance variables and behaviors declared on the family | Duplicate event blocks per object type |
 | Objects that belong together | Container (created, destroyed and picked together); hierarchy for parent-relative position | UID variables, or every-tick position copying |
@@ -160,7 +165,7 @@ One hit means redesign, not patch.
 | The draft has | Why it is wrong | Replace with |
 |---------------|-----------------|--------------|
 | Instance variables holding another object's UID | A relation stored as pointers | Container, hierarchy, family, or a spatial condition |
-| `Pick all` inside a trigger's sub-events | The trigger's pick discarded and rebuilt | Narrowing sub-events; a family for the second instance |
+| `Pick all` inside a trigger's sub-events, then a pick from a stored link | A pick discarded and rebuilt | Narrowing sub-events; a family for a second instance of the type |
 | Globals such as `DragUID`, `Selected` | The trigger's pick copied out | The picked instance; snapshot only what the engine cannot recover, such as a start position |
 | Local variables filled by one block, then an `Else` chain on them | A program transcribed into events | Trigger, narrowing sub-events, `Else` |
 | A boolean such as `occupied`, `busy` written from several events | State mirroring a condition | `Is overlapping another object`, `Is dragging`, `Is playing` |

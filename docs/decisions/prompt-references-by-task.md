@@ -43,7 +43,7 @@ spread of two runs. Runs and grading:
 
 ## Decision
 
-Option 2. thinking.md is 16 499 bytes, style.md 9 680.
+Option 2.
 
 | Moved | To | Read when |
 |-------|----|-----------|
@@ -54,6 +54,11 @@ Option 2. thinking.md is 16 499 bytes, style.md 9 680.
 The sections moved word for word. Each source keeps its heading with the
 read-when line, so step 3 of "Before proposing a structure" and the readers
 in the skill and the root `AGENTS.md` still find them.
+
+A Native first row names the built-in and what to write. A row whose
+examples need more than that links to the file that holds them
+(`prompts/references/progress-bars.md`, `prompts/pitfalls/input.md`), so
+the table grows by rows, not by the examples behind them.
 
 ## Re-evaluate when
 
