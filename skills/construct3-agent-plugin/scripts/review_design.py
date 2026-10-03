@@ -782,9 +782,11 @@ def review(d: Design) -> list[dict]:
 def questions(found: list[dict], shown: set[str]) -> list[str]:
     """The fixed questions, each naming the events of the sheets shown that it asks about,
     the ones with the most conditions or cases first."""
+    first = next((f for f in found if f["ask"] and f["event"] and f["sheet"] in shown), None)
+    example = f"{first['sheet']} --events {first['event']}" if first else "<sheet> --events <number>"
     lines = ["questions: answer each one yes or no, reading the events it names with print_sheet.py, for example "
-             "python scripts/print_sheet.py Weapons --events 107. For each yes, change the sheet as the question "
-             "says, with edit_sheet.py, and run this review again:"]
+             f"python scripts/print_sheet.py {example}. For each yes, change the sheet as the question says, with "
+             f"edit_sheet.py, and run this review again:"]
     for n, (ask, text) in enumerate(QUESTIONS.items(), 1):
         named = [f for f in found if f["ask"] == ask and f["sheet"] in shown]
         named.sort(key=lambda f: (-int((re.match(r"\d+", f["short"]) or [0])[0]), f["sheet"], f["event"] or 0))

@@ -128,6 +128,7 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 | `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game or an official example, with this skill, the previous one or none |
 | `trace.py` | What a run did, from its transcript: every tool call, the ones it lost, `trace.json` |
 | `grade.py` | `grading.json` per run with the evidence, `benchmark.json` per iteration: mean and deviation per case and arm (`<arm>_2` is a second run of `<arm>`), and the difference between arms |
+| `measure_design.py` | What each rule of `scripts/review_design.py` finds over the official examples and game projects, with looser variants, and every hit as JSON to read before a rule becomes a finding |
 | `sweep_outputs.py` | What the scripts print over every example and game project, a dry run of a small plan included, recorded and compared |
 | `train_queries.json`, `validation_queries.json` | Trigger queries, a fixed 60/40 split; near misses as the negatives |
 | `run_trigger_eval.py` | Trigger rates from `claude -p`, on Windows too |

@@ -2362,19 +2362,25 @@ class Checker:
                 f"{len(self.functions)} functions, {len(self.custom_actions)} custom actions")
         if not then_open:
             return line
-        return (f"{line}; next, open and preview it in the editor, which also reads the expressions and runs "
-                f"the events: {open_command(p.root)}")
+        return (f"{line}; next, review the design of the sheets and act on what it prints, "
+                f"{script_command(p.root, 'review_design.py')}, then open and preview it in the editor, which also "
+                f"reads the expressions and runs the events: {open_command(p.root)}")
+
+
+def script_command(root: Path, name: str, flags: str = "") -> str:
+    """A script of this folder run on root, as it runs from the current directory."""
+    def quoted(s: str) -> str:
+        return f'"{s}"' if " " in s else s
+    script = Path(__file__).resolve().parent / name
+    cwd = Path.cwd()
+    shown = script.relative_to(cwd).as_posix() if script.is_relative_to(cwd) else script.as_posix()
+    where = "" if c3.find_project(None) == root.resolve() else f" --project {quoted(root.resolve().as_posix())}"
+    return f"python {quoted(shown)}{where}{flags}"
 
 
 def open_command(root: Path) -> str:
     """open_in_editor.py --preview for root, as it runs from the current directory."""
-    def quoted(s: str) -> str:
-        return f'"{s}"' if " " in s else s
-    script = Path(__file__).resolve().parent / "open_in_editor.py"
-    cwd = Path.cwd()
-    shown = script.relative_to(cwd).as_posix() if script.is_relative_to(cwd) else script.as_posix()
-    where = "" if c3.find_project(None) == root.resolve() else f" --project {quoted(root.resolve().as_posix())}"
-    return f"python {quoted(shown)}{where} --preview"
+    return script_command(root, "open_in_editor.py", " --preview")
 
 
 def main() -> int:

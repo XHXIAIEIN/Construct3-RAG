@@ -113,6 +113,52 @@ at once; played to by a plan, the same checks over its instances found the
 names, descriptions and costs of five cards stacked on one card, in a
 screenshot the agent had reported as rendering normally]
 
+## The design of the sheets
+
+`scripts/review_design.py` reads the event sheets once `check_project.py`
+passes, before the editor opens them. It starts no browser. Each finding
+line names the event as `print_sheet.py` numbers it and says what to write
+instead; fix every one. A rule is a finding only where it finds next to
+nothing in the 524 official examples, every example hit read; what the
+examples also write becomes a question that names its events. Measured on
+2026-10-04 with `evals/measure_design.py`, over the examples, a generated
+card game, a merge game and a tic-tac-toe sheet:
+
+| Rule | Finding at | Examples | Card | Merge | Tic-tac-toe |
+|------|------------|----------|------|-------|-------------|
+| `conditions` | 12 or more conditions besides the trigger; the examples' most is 11 | 0 | 0 | 1 | 0 |
+| `guard` | the same 3 or more conditions of objects in 3 or more events of a sheet | 5 in 5 projects | 0 | 5 | 0 |
+| `trigger` | 2 or more sibling events with one trigger, told apart by globals | 2 in 2 projects | 0 | 0 | 1 |
+| `twice` | one action list writes a value into an Array cell indexed by an object's expressions and into that object's instance variable | 0 | 0 | 0 | 2 |
+| `global` | a scratch global (`TMP`, `TMPN2`); a layout's sheet declaring 10 or more globals only other sheets use | 0 | 6 | 0 | 0 |
+| `uid` | an instance variable set to the UID of an instance created in the same actions, then picked back by it: a container | 0 | 3 | 0 | 0 |
+| `data` | 20 or more actions of one kind with literal values: a project file | 0 | 1 | 0 | 0 |
+| `restart` | On start of layout setting instances after *Pick all*, on a layout that *Restart layout* or *Go to layout* enters again | 0 | 0 | 0 | 1 |
+| `expression` | 5 or more parentheses deep, with a call of 30 or more characters written twice: a function | 0 | 6 | 1 | 0 |
+
+The five `guard` hits in the examples repeat 3 or 4 conditions, inverted
+*Is playing* or *Is touching* tests and a pick, across sibling events of one
+group; a parent event would hold them once there too. The two `trigger`
+hits press Space in sibling events told apart by booleans, the shape of the
+tic-tac-toe sheet. The card game's `uid` hits were replaced by a container
+while it was measured.
+
+The questions name the events of what the examples write as well: 4 to 11
+conditions (231 events in 76 example projects, 71 in the merge game),
+sibling events of one trigger that test more than it (5 in 4), sibling
+events that differ only in their numbers and texts (53 in 27; the style
+ladder of `check_project.py --style` takes 5 or more), 3 or more inverted
+conditions (34 in 21), a global one function or one group reads and writes
+(262 in 92), and a UID kept in an instance variable (19 in 16). A question
+is answered from `print_sheet.py` for the events it names, never from
+memory of the plan. Two candidates were dropped: a global that several
+functions write and others read (20 in 6 examples, 15 in the merge game,
+all of them game state), and 10 or more globals on a layout's sheet (45
+examples; the examples keep shared globals on a sheet with no layout,
+samuroof `Globals`). An event of 6 or more conditions stays a question and
+is not a `--style` warning of `check_project.py`: 44 events in 24 example
+projects have one.
+
 ## By kind of game
 
 What the plan drives, what it reads and what has to be held still differ

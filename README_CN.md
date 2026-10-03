@@ -73,6 +73,7 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 - `print_sheet.py` 按编辑器的写法和事件编号打印事件表。官方示例也能这样读。
 - `edit_sheet.py` 按一份用这些编号写的 JSON 计划，添加、移动、替换或删除事件。写入之前，它先检查结果。
 - `check_project.py` 按 schemas 和编辑器打开项目时的规则，检查每个项目文件。每条问题都指出位置，能给出写法时也一并给出。
+- `review_design.py` 读取事件表，报告设计上难读或容易出错的地方，比如条件太多的事件、同一个事实存在两处、临时用的全局变量。每条问题都指出事件，并给出应该换成的写法。然后它给 agent 一组固定的问题，让它对照 `print_sheet.py` 的输出回答。
 - `check_look.py` 按 `assets/look-manifest.json` 里的硬性规则，检查生成的游戏的占位美术，比如网格、调色板和文字对比度。
 - `open_in_editor.py` 在 Construct 3 编辑器里打开项目，报告打开成功，或者给出编辑器的提示。加 `--preview` 时，它把游戏运行几秒，报告运行时错误和出错的事件。
 - `preview_project.py` 按一份点击、拖动、按键和等待的计划操作预览。它会截图，也会录下运行的片段。录像可以逐帧回看，其中一段可以作为任务交给 agent。
@@ -86,7 +87,7 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 
 skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。它们只用 Python 标准库。它们只在两处联网：`check_project.py` 从 clone 的上游仓库 fetch，打开编辑器的脚本在你电脑上的浏览器里打开 Construct 3 编辑器和它的预览。
 
-- **只读**：`lookup_ace.py`、`check_project.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每六小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。设置了 `CONSTRUCT3_RAG_OFFLINE` 时，它不 fetch。
+- **只读**：`lookup_ace.py`、`check_project.py`、`review_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每六小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。设置了 `CONSTRUCT3_RAG_OFFLINE` 时，它不 fetch。
 - **写文件**：
   - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。
   - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。加 `--dry-run` 可以先看会改什么。
