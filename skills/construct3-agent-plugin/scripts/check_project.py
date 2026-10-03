@@ -142,6 +142,22 @@ def unquote(v: str) -> str:
 JS_SKIPPED = re.compile(r"//[^\n]*|/\*.*?\*/|'(?:\\.|[^'\\\n])*'|\"(?:\\.|[^\"\\\n])*\"|`(?:\\.|[^`\\])*`", re.S)
 JS_SIGNAL = re.compile(r"runtime\s*\.\s*signal\s*\(\s*(?:(['\"])(.*?)\1\s*\))?")
 
+# Actions the browser refuses unless the player has just touched, clicked or pressed a key: the manual asks
+# for each in a user input trigger, on the plugin-reference page named here. Request MIDI access is not
+# among them: its page says some browsers allow it on startup, and the MIDI examples ask there first.
+GESTURE_ACTIONS = {
+    ("browser", "request-fullscreen"): "browser", ("browser", "request-install"): "browser",
+    ("touch", "request-permission"): "touch", ("platforminfo", "request-wake-lock"): "platform-info",
+    ("mouse", "request-pointer-lock"): "mouse", ("share", "share-text"): "share",
+    ("clipboard", "request-paste-text"): "clipboard", ("clipboard", "request-paste-binary"): "clipboard",
+    ("filechooser", "click"): "file-chooser", ("filesystem", "show-open-file-picker"): "filesystem",
+    ("filesystem", "show-save-file-picker"): "filesystem", ("filesystem", "show-folder-picker"): "filesystem",
+    ("bluetooth", "request-device"): "bluetooth", ("bbcmicrobit", "request-device"): "bbc-micro-bit",
+    ("gamerecorder", "start-screen-recording-2"): "video-recorder",
+    ("speechrecognition", "request-speech-recognition"): "speech-recognition", ("googleplay", "sign-in"): "google-play",
+}
+INPUT_PLUGINS = {"touch", "mouse", "keyboard", "button", "textbox", "list", "sliderbar", "htmlelement"}
+
 
 def script_text(script) -> str:
     return "\n".join(script) if isinstance(script, list) else script if isinstance(script, str) else ""
@@ -1186,13 +1202,27 @@ class Checker:
                 self.warn(f"{where}: the script reads {name} as a bare name, which it does not know; an event's "
                           f"local or parameter is localVars.{name} in a script")
 
-    def check_block(self, ev: dict, scope: dict, where: str) -> None:
+    def reads_input(self, ev: dict) -> bool:
+        return any(self.p.plugin_of.get(c.get("objectClass"), "").lower() in INPUT_PLUGINS
+                   for c in ev.get("conditions", []))
+
+    def check_gesture(self, action: dict, by_input: bool | None, where: str) -> None:
+        """by_input: whether the action's event or one above it tests touch, mouse, keyboard or a form
+        control; None in a function or custom action, which an input trigger may call."""
+        page = GESTURE_ACTIONS.get((self.p.plugin_of.get(action.get("objectClass"), "").lower(), action.get("id")))
+        if page and by_input is False:
+            self.warn(f"{where}: {describe(action)} runs with no touch, click or key in its event or above it, "
+                      f"and the browser refuses it there; move it into an event with a trigger such as Touch On "
+                      f"tap, Mouse On click or Keyboard On key pressed (manual: plugin-reference/{page}.md)")
+
+    def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False) -> None:
         for i, c in enumerate(ev.get("conditions", []), 1):
             self.check_ace("conditions", c, scope, f"{where} condition {i}")
             self.note_signal(c, f"{where} condition {i}")
         for i, a in enumerate(ev.get("actions", []), 1):
             w = f"{where} action {i}"
             self.note_signal(a, w)
+            self.check_gesture(a, by_input, w)
             if a.get("type") == "script":
                 self.check_script(a.get("script"), scope, w)
             if a.get("type") in ("comment", "script"):
@@ -1239,7 +1269,7 @@ class Checker:
                      f"the editor stops with \"invalid ACE type\"")
 
     def walk(self, events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None,
-             depth: int = 0, group: dict | None = None) -> None:
+             depth: int = 0, group: dict | None = None, by_input: bool | None = False) -> None:
         """A local declared in a list of sibling events is visible to every event of
         that list, whatever the order, and to their sub-events; not to the parent's
         own actions. So the list's variables enter the scope first, and a block is
@@ -1248,7 +1278,8 @@ class Checker:
         sheet's own top-level variables are there before its walk. counter holds the sheet's
         running event number, above what holds the trigger of this branch, depth
         how many sub-event levels down this list is (a group's children are 0),
-        group the group whose children the list is."""
+        group the group whose children the list is, by_input whether an event above
+        tests input (check_gesture)."""
         scope = dict(scope)
         bad = [ev for ev in events if not isinstance(ev, dict)]
         if bad:
@@ -1284,7 +1315,7 @@ class Checker:
                 elif et == "include" and where == f"sheet {ev['includeSheet']}":
                     self.err(f"{w}: a sheet cannot include itself")
             elif et == "group":
-                self.walk(ev.get("children") or [], scope, where, counter, above, group=ev)
+                self.walk(ev.get("children") or [], scope, where, counter, above, group=ev, by_input=by_input)
             elif et in ("function-block", "custom-ace-block"):
                 fscope = dict(scope)
                 outer = dict(fscope)
@@ -1295,13 +1326,14 @@ class Checker:
                 label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
                 if et == "custom-ace-block" and ev["objectClass"] not in self.p.plugin_of:
                     self.err(f"{w}: custom action {label} belongs to unknown object {ev['objectClass']}")
-                self.check_block(ev, fscope, f"{w} {label}")
+                self.check_block(ev, fscope, f"{w} {label}", None)
                 self.walk(ev.get("children", []), fscope, where, counter,
-                          self.check_structure(ev, f"{w} {label}", above, previous), depth + 1)
+                          self.check_structure(ev, f"{w} {label}", above, previous), depth + 1, by_input=None)
             elif et == "block":
-                self.check_block(ev, scope, w)
+                here = None if by_input is None else by_input or self.reads_input(ev)
+                self.check_block(ev, scope, w, here)
                 self.walk(ev.get("children", []), scope, where, counter, self.check_structure(ev, w, above, previous),
-                          depth + 1)
+                          depth + 1, by_input=here)
             elif et == "script":
                 self.check_script(ev.get("script"), scope, w)
             else:

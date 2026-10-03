@@ -26,11 +26,16 @@ third-party addon) is a warning, and its ACEs pass unchecked. So is what the
 editor has deprecated, from `Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`:
 an addon, and an ACE or expression, once each at its first use with the count
 of the others, and the current ACE of the same name when there is one. The
-editor opens a project that uses them, and a new event should not. Two
+editor opens a project that uses them, and a new event should not. Three
 traps of the running game are warnings: a *Wait for signal* or *On signal*
 whose text tag no *Signal* action or `runtime.signal()` raises, which never
-ends or runs, and a script that reads an event's local or parameter by its
-bare name instead of `localVars.name`, a `ReferenceError` when it runs.
+ends or runs; a script that reads an event's local or parameter by its
+bare name instead of `localVars.name`, a `ReferenceError` when it runs; and
+an action the manual allows only in a user input trigger, such as *Request
+fullscreen*, *Request permission* or *Request wake lock*, with no touch,
+mouse, keyboard or form control condition in its event or above it, which
+the browser refuses. One in a function passes, since an input trigger may
+call it.
 
 ## The rules the editor applies on opening and before preview
 
@@ -101,11 +106,10 @@ in the **Where** column of Find results. Blocks, groups, function blocks,
 custom action blocks and script blocks are counted per sheet in document
 order, sub-events included. A variable, comment or include has no number of
 its own: the margin leaves it blank and Find files it under the next
-numbered event, so the locals right above
-event 15 are `Event 15` too. Conditions and actions count
-from 1. `scripts/print_sheet.py --outline Game` prints the numbering of a
-sheet with each event's sid, which is what to search the JSON for,
-unnumbered rows in parentheses.
+numbered event, so the locals right above event 15 are `Event 15` too.
+Conditions and actions count from 1. `scripts/print_sheet.py --outline Game`
+prints the numbering of a sheet with each event's sid, which is what to
+search the JSON for, unnumbered rows in parentheses.
 
 ## Style, with `--style`
 

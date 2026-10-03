@@ -666,6 +666,33 @@ def test_a_wait_for_a_signal_nothing_raises_is_named(project):
     assert [w for w in warnings(out) if 'raises "go", so this Wait for signal never ends' in w], out
 
 
+FULLSCREEN = {"id": "request-fullscreen", "objectClass": "Browser", "sid": 5,
+              "parameters": {"mode": "stretch-letterbox-scale", "navigation-ui": "auto"}}
+TAPPED = cond("on-touched-object", "Touch", {"object": "Coin", "type": "start"})
+
+
+@pytest.mark.parametrize("event, warned", [
+    (block([cond("on-start-of-layout")], [FULLSCREEN]), True),
+    (block([TAPPED], [], [block([cond("every-tick")], [FULLSCREEN])]), False),
+    ({"functionName": "GoFullscreen", "functionDescription": "", "functionCategory": "", "functionReturnType": "none",
+      "functionCopyPicked": False, "functionIsAsync": False, "eventType": "function-block", "sid": 6,
+      "functionParameters": [], "conditions": [], "actions": [FULLSCREEN]}, False),
+])
+def test_an_action_the_browser_allows_only_after_input_is_named_outside_it(project, event, warned):
+    """The manual asks for Request fullscreen in a user input trigger; a function may be called from one."""
+    (project / "objectTypes" / "Browser.json").write_text(json.dumps({
+        "name": "Browser", "plugin-id": "Browser", "sid": 3,
+        "singleglobal-inst": {"type": "Browser", "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
+
+    def project_file(p):
+        p["objectTypes"]["items"].append("Browser")
+        p["usedAddons"].append({"type": "plugin", "id": "Browser", "name": "Browser", "author": "Scirra", "bundled": False})
+    edit(project, "project.c3proj", project_file)
+    out = findings(project, lambda s: s["events"].append(event))
+    said = [w for w in warnings(out) if "the browser refuses it there" in w and "plugin-reference/browser.md" in w]
+    assert bool(said) == warned and out.splitlines()[-1].startswith("ok:"), out
+
+
 def test_a_script_that_reads_a_parameter_bare_is_named(project):
     """A preview of such a script stopped with "ReferenceError: string is not defined" (2026-10-03)."""
     func = {"functionName": "Hex", "functionDescription": "", "functionCategory": "", "functionReturnType": "none",

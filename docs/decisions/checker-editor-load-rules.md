@@ -64,6 +64,15 @@ Option 2 as the default, and option 3 as the step after it.
   ran with `localVars.string`. It and a *Wait for signal* that nothing
   raises are warnings: the editor opens both. No official example has
   either.
+- An action the manual allows only in a user input trigger (*Request
+  fullscreen*, *Request install*, *Request permission*, *Request wake lock*,
+  a file picker, *Share* and the others its plugin pages name) is a warning
+  when no touch, mouse, keyboard or form control condition stands in its
+  event or above it, outside a function, which an input trigger may call.
+  The browser refuses it there, and the editor opens it. *Request MIDI
+  access* is left out: its page says some browsers allow it on startup, and
+  the MIDI examples ask there first. Over the official examples the
+  warning finds nothing else.
 - Repeated ids were probed on 2026-10-03 in copies of one small project, each
   repeating one kind. Two object types with one sid, and a family with an
   object type's sid, stopped the editor with `object class sid already in
