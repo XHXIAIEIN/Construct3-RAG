@@ -81,7 +81,16 @@ Option 2 as the default, and option 3 as the step after it.
   Solids regenerate, and the ones that find and move in one event wait
   between. A Sprite Font character outside its Character set
   (`plugin-reference/sprite-font.md`) is in a curly apostrophe of one
-  example's text and in a game's `###` placeholder. An effect action naming
+  example's text and in a game's `###` placeholder. A Sprite Font instance
+  that leaves out *Character set*, *Character width* and *Character height*
+  opens and previews; asked for the instance's values on 2026-10-03, the
+  r495.2 editor answered its default set (the letters, the digits and the
+  punctuation `SPRITE_FONT_DEFAULTS` in `check_project.py` holds), cells of
+  16 by 16 and *Enable BBCode* off. The checker reads the
+  text against those values and warns that the properties are missing,
+  since they fit the editor's own font image and a drawn one is mapped cell
+  by cell from them. Every Sprite Font instance in the official examples
+  writes all four. An effect action naming
   an effect its target lacks is in two examples. A preview of a copy with an
   object effect action and a layout effect action naming a missing effect
   raised no error and ran the action after them. A layer action and a
