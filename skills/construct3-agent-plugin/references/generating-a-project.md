@@ -39,13 +39,56 @@ overwrites the files it produces.
    __pycache__/
    ```
 
+## Plan the state
+
+The plan holds a state table before it holds any event: one row per piece
+of state the game keeps. Every later session follows the data model the
+plan fixes. A generated card game planned 40 globals, scratch `TMP` shared
+between functions, piles as comma-separated strings and each card as a
+17-field string, and every refactor after it fought that plan.
+
+| State | Owner | Lifetime | Written by | Read by | Stored in |
+|-------|-------|----------|------------|---------|-----------|
+| Player's block | Hero | one layout | Cards group | Enemy turn group | `Hero.block` |
+
+The owner is an object type, a group, a layout or the whole run. The
+lifetime is one event, one layout, the run or across sessions. Each row
+gets its storage from the rule for its owner and lifetime:
+
+- Lives one event: a local variable of that event; a function's result is
+  its return value.
+- Follows from other rows: an expression or a condition, not a row.
+- Belongs to one instance: its instance variable. A fighter's statuses are
+  on its object, reset when the layout creates it again.
+- Belongs to objects created together: a Container, `container([...])`.
+- One phase of play: a Group and *Set group active*, not a flag.
+- A list: an Array. Cards on screen are their instances, ordered by an
+  instance variable.
+- Static records: a project file of `dictionary_file()` or `array_file()`,
+  loaded with `load_data_file()`.
+- A kind or a move: a text field compared with `=`, each number in a field
+  of its own.
+- A cycle: a number and `%`.
+- Kept for the run and read by several layouts: a global, declared on the
+  *Globals* sheet. A list or records kept for the run: an Array or
+  Dictionary with *Global* on (airborne-explorer, `DictProfile`).
+- Across sessions: Local Storage.
+
+Check the table before writing events: no scratch global; no global that
+one group alone writes and reads; no field packed in a string with a
+separator or a suffix; no row stored in two places. The reasons are in
+`Construct3-RAG/prompts/event-sheet-thinking.md` ("Native first", "Smell
+table") and `Construct3-RAG/prompts/event-sheet-style.md` ("Six habits to
+avoid").
+
 ## Build, check, open
 
 Design first, as `Construct3-RAG/prompts/event-sheet-thinking.md` says:
 relations, an official example with the same behaviors, the Native first
-table, the Feel table of `Construct3-RAG/prompts/references/feel.md`, and the
+table, the Feel table of `Construct3-RAG/prompts/references/feel.md`, the
 sheets, groups and objects of
-`Construct3-RAG/prompts/references/new-project.md`. Then:
+`Construct3-RAG/prompts/references/new-project.md`, and the state table
+above. Then:
 
 1. Write the design into the generator: the constants at the top, the
    objects and their variables and behaviors, the layouts, then the event
@@ -99,6 +142,14 @@ habits; they are what makes rerunning safe.
   block of the common behaviors (`SINE`, `BULLET`, `PLATFORM` ...) with the
   editor's keys; one it lacks is copied from an instance of an official
   example, under the behavior's name on that object (`"Sine"`, not `"Sin"`).
+- A table of records, cards, enemies, levels, is a project file, not events
+  that add keys: `dictionary_file("Cards", {"strike.cost": 1, ...})`, one
+  flat key `<id>.<field>` per value, or `array_file(name, table)`, where
+  `table[x][y]` is `At(x, y)`, both in `build_files()`; the object is a
+  `nonworld_type()` with a `nonworld_inst()` in the layout, and
+  `load_data_file("Cards", "Cards.json")` gives the three actions that
+  load it, first in that layout's *On start*, the AJAX object added with
+  them.
 - `random.seed(...)` before the first `sid()`: a rerun then produces the same
   ids and the diff shows only what changed.
 - One helper per ACE, named for what it does, its parameters in the

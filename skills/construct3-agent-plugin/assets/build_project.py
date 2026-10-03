@@ -367,6 +367,65 @@ def shortest(obj):
     return obj
 
 
+# --- project files ----------------------------------------------------------------------
+# A table of records (cards, enemies, levels, loot) is data, not events: a Dictionary or Array
+# project file under files/, loaded once at start, as the official examples load theirs
+# (eventide's SkillsDescriptions.json, airborne-explorer's DefaultProfile.json). Written from
+# build_files(), listed in project.c3proj's rootFileFolders "general" by build_project().
+_general_files: list[dict] = []
+_ajax_used = False
+
+
+def general_file(name: str, text: str) -> str:
+    """Write files/<name> and list it as the editor lists a file imported into Files; returns the name,
+    what request_project_file() takes."""
+    path = ROOT / "files" / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="\n") as f:
+        f.write(text)
+    kind = "application/json" if name.endswith(".json") else "text/plain"
+    global _general_files
+    _general_files = [e for e in _general_files if e["name"] != name]
+    _general_files.append({"name": name, "type": kind, "sid": sid(), "file-info": {"purpose": "none"}})
+    return name
+
+
+def dictionary_file(name: str, data: dict) -> str:
+    """files/<name>.json as a Dictionary saves it, {"c2dictionary": true, "data": {...}}. Keys are
+    flat: a record's field is "<id>.<field>", {"strike.cost": 1, "strike.damage": 6}, read with
+    Cards.Get("strike.cost"). Values stay numbers or strings, so no int(tokenat(...)) decodes them.
+    Load it with load_data_file()."""
+    for key, value in data.items():
+        if not isinstance(key, str) or isinstance(value, bool) or not isinstance(value, (int, float, str)):
+            sys.exit(f"dictionary_file({name!r}): {key!r}: {value!r} is not a number or a string; a Dictionary "
+                     f"holds those only. Give each field its own key, \"{key}.<field>\"")
+    return general_file(f"{name}.json", json.dumps({"c2dictionary": True, "data": shortest(data)}, indent=4,
+                                                   ensure_ascii=False))
+
+
+def array_file(name: str, table: list) -> str:
+    """files/<name>.json as an Array saves it, {"c2array": true, "size": [w, h, 1], "data": ...}:
+    table[x][y] is Arr.At(x, y), one record per x and its fields along y, every column as long.
+    Numbers and strings only. Load it with load_data_file()."""
+    height = len(table[0]) if table else 0
+    for x, column in enumerate(table):
+        if len(column) != height:
+            sys.exit(f"array_file({name!r}): column {x} has {len(column)} cells, column 0 has {height}; pad it")
+        for y, value in enumerate(column):
+            if isinstance(value, bool) or not isinstance(value, (int, float, str)):
+                sys.exit(f"array_file({name!r}): at ({x}, {y}) {value!r} is not a number or a string")
+    return general_file(f"{name}.json", json.dumps(
+        {"c2array": True, "size": [len(table), height, 1], "data": [[[v] for v in column] for column in shortest(table)]},
+        indent=4, ensure_ascii=False))
+
+
+def build_files() -> None:
+    """The game's data files, before the object types: dictionary_file("Cards", {"strike.cost": 1, ...}),
+    with a nonworld_type("Cards", "Dictionary"), its nonworld_inst() in the layout that loads it,
+    and load_data_file("Cards", "Cards.json") first among the actions of that layout's On start.
+    The stand-in has none."""
+
+
 def q(s: str) -> str:
     """A string literal inside an expression parameter: q("tag") -> "\"tag\"". Quotes inside double up."""
     return '"' + s.replace('"', '""') + '"'
@@ -875,6 +934,25 @@ def wait_for_previous() -> dict:
     return act("wait-for-previous-actions", "System")
 
 
+def request_project_file(file: str, tag: str) -> dict:
+    """AJAX: Request a file of files/ by its bare name; adds the AJAX object to the project."""
+    global _ajax_used
+    _ajax_used = True
+    return act("request-project-file", "AJAX", {"tag": q(tag), "file": file})
+
+
+def load_json(obj: str, json_: str = "AJAX.LastData") -> dict:
+    """Dictionary or Array: Load from JSON, by default what the last AJAX request returned."""
+    return act("load", obj, {"json": json_})
+
+
+def load_data_file(obj: str, file: str) -> list:
+    """The three actions that load a project file of dictionary_file() or array_file() into obj:
+    request it, wait, load. The wait ends the tick: put them first in On start of layout, and the
+    actions that read obj after them in the same list; another event that tick sees obj empty."""
+    return [request_project_file(file, Path(file).stem), wait_for_previous(), load_json(obj)]
+
+
 def restart_layout() -> dict:
     return act("restart-layout", "System")
 
@@ -1245,6 +1323,13 @@ def instance(otype: str, properties: dict, world_: dict | None, ivars: dict | No
     return inst
 
 
+def nonworld_inst(otype: str, properties: dict | None = None) -> dict:
+    """An Array, Dictionary or JSON instance, in layout(..., nonworld=[...]): properties {} for a
+    Dictionary, {"width": 10, "height": 1, "depth": 1} for an Array."""
+    return {"type": otype, "properties": properties or {}, "uid": uid(), "sid": sid(), "tags": "",
+            "instanceVariables": {}}
+
+
 def sprite_inst(otype: str, x: float, y: float, w: float, h: float, anim: str = "Default", ivars=None,
                 behaviors=None, collisions: bool = True) -> dict:
     return instance(otype, {"initially-visible": True, "initial-animation": anim, "initial-frame": 0,
@@ -1498,7 +1583,7 @@ def build_layouts() -> dict[str, dict]:
 ADDON_NAMES = {"TiledBg": "Tiled Background", "NinePatch": "9-patch", "Spritefont2": "Sprite font", "EightDir": "8 Direction",
                "Sin": "Sine", "DragnDrop": "Drag & Drop", "ScrollTo": "Scroll To", "MoveTo": "Move To", "LOS": "Line of sight",
                "destroy": "Destroy outside layout", "bound": "Bound to layout", "solid": "Solid", "wrap": "Wrap",
-               "jumpthru": "Jump-thru", "AdvancedRandom": "Advanced Random", "LocalStorage": "Local Storage"}
+               "jumpthru": "Jump-thru", "Arr": "Array", "AdvancedRandom": "Advanced Random", "LocalStorage": "Local Storage"}
 
 
 def used_addons(types: dict, families: dict) -> list:
@@ -1572,6 +1657,14 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
     for kind in ("timelines", "flowcharts"):     # this script writes neither; keep what has a file
         if isinstance(p.get(kind), dict):
             p[kind] = with_files(p[kind], kind)
+    if _general_files:
+        # the files of build_files(), in place of a listed file of the same name; the others stay
+        folders = p["rootFileFolders"] = dict(p.get("rootFileFolders") or {})
+        for kind in ("script", "sound", "music", "video", "font", "icon", "general"):
+            folders.setdefault(kind, {"items": [], "subfolders": []})
+        ours = {e["name"] for e in _general_files}
+        general = folders["general"] = dict(folders["general"])
+        general["items"] = [e for e in general.get("items", []) if e.get("name") not in ours] + _general_files
     p["viewportWidth"] = VIEW_W
     p["viewportHeight"] = VIEW_H
     if PIXEL_ART:
@@ -1596,6 +1689,7 @@ def build_all() -> None:
     for line in pace(BEATS):
         print(line)
     build_images()
+    build_files()
     types, families, containers = build_object_types()
     for name, t in types.items():
         write_json(f"objectTypes/{name}.json", t)
@@ -1605,6 +1699,9 @@ def build_all() -> None:
     for name, lay in layouts.items():
         write_json(f"layouts/{name}.json", lay)
     sheet = build_event_sheet()
+    if _ajax_used and "AJAX" not in types:
+        types["AJAX"] = single_global_type("AJAX", "AJAX", {})
+        write_json("objectTypes/AJAX.json", types["AJAX"])
     squash_the_art(types, families)
     write_json(f"eventSheets/{sheet['name']}.json", sheet)
     with c3proj.open(encoding="utf-8-sig") as f:
