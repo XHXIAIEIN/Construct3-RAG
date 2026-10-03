@@ -220,6 +220,33 @@ def call_arguments(text: str, end: int) -> int:
     return count     # not closed: the editor names that syntax error itself
 
 
+# find(text, find) and findcase take the text to search first. A one-character literal there
+# with an expression after it is the other way round: find("^", LASTPOP) is -1 unless LASTPOP
+# is "^" or empty. None of the 23 find calls of the 524 official examples has a literal first.
+FIND_CALL = re.compile(r'(?<![\w.])(find|findcase)\s*\(\s*("(?:[^"]|"")*")\s*,', re.I)
+
+
+def argument_at(expr: str, i: int) -> str:
+    """The argument that starts at expr[i], up to the comma or parenthesis that ends it
+    outside text literals and nested calls."""
+    depth, j = 0, i
+    while j < len(expr):
+        c = expr[j]
+        if c == '"':
+            lit = STRING_LITERAL.match(expr, j)
+            j = lit.end() if lit else len(expr)
+            continue
+        if c == "(":
+            depth += 1
+        elif c in "),":
+            if depth == 0:
+                break
+            if c == ")":
+                depth -= 1
+        j += 1
+    return expr[i:j].strip()
+
+
 def script_text(script) -> str:
     return "\n".join(script) if isinstance(script, list) else script if isinstance(script, str) else ""
 
@@ -830,6 +857,7 @@ class Checker:
             self.err(f"{where}: a backslash stands outside a text literal; the editor stops with \"Syntax error: "
                      f"Unknown character\". Inside text it is a plain character: Construct has no escapes")
         scope_lower = {LOWER(k) for k in scope}
+        self.check_find(where, expr)
         found = [m.group(0) for m in C_OPERATOR.finditer(text)]
         if found:
             # Rewrite outside the string literals only: "a == b" as text is valid.
@@ -948,6 +976,21 @@ class Checker:
             elif text.strip() == name:
                 hint += f"; a text value carries inner quotes: \"\\\"{name}\\\"\""
             self.err(f"{where}: identifier {name!r} is not a variable, parameter or system expression{hint}")
+
+    def check_find(self, where: str, expr: str) -> None:
+        """find or findcase with a one-character literal first and an expression second:
+        a one-character text holds nothing longer, so the literal is the text searched for."""
+        literals = [m.span() for m in STRING_LITERAL.finditer(expr)]
+        for m in FIND_CALL.finditer(expr):
+            if any(a < m.start() < b for a, b in literals) or len(unquote(m.group(2))) != 1:
+                continue
+            second = argument_at(expr, m.end())
+            if not second or STRING_LITERAL.fullmatch(second):
+                continue
+            name, first = m.group(1), m.group(2)
+            self.warn(f"{where}: {name}({first}, {second}) searches the one-character text {first} for {second}, "
+                      f"so it is -1 unless {second} is {first} or empty; {name}(text, find) takes the text to search "
+                      f"first: write {name}({second}, {first})")
 
     def check_arguments(self, where: str, written: str, sources: list[tuple[dict, dict | None]], name: str,
                         text: str, end: int) -> None:

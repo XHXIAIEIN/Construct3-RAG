@@ -800,6 +800,21 @@ def test_instances_sharing_a_uid_are_named_with_what_the_editor_does(project):
     assert "duplicate uids" in out and "gives all but one of them another uid" in out, out
 
 
+@pytest.mark.parametrize("text, warned", [
+    ('find("^", str(Coin.X))', True),
+    ('findCase("""", str(Coin.X)) + 1', True),
+    ('find(str(Coin.X), "^")', False),
+    ('find("^", "a^")', False),
+    ('find("ab", str(Coin.X))', False),
+    ('"find(""^"", x)"', False),
+])
+def test_find_with_a_one_character_text_first_is_named(project, text, warned):
+    """find(text, find) searches its first argument: a one-character literal there is the needle."""
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text=text))
+    said = [w for w in warnings(out) if "searches the one-character text" in w and "takes the text to search first" in w]
+    assert bool(said) == warned, out
+
+
 def test_a_wait_for_a_signal_nothing_raises_is_named(project):
     wait = {"id": "wait-for-signal", "objectClass": "System", "sid": 1, "parameters": {"tag": '"go"'}}
     out = findings(project, lambda s: s["events"].append(block([cond("on-start-of-layout")], [wait])))

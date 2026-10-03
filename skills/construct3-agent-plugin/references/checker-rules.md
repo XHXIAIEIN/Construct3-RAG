@@ -70,6 +70,10 @@ Traps of the running game are warnings:
   literal that *Set text*, *Append text* or *Typewriter text* joins at the
   top level of its expression: a character outside the Character set shows
   as an empty space; with *Enable BBCode* on, the tags are not counted;
+- `find` or `findcase` whose first argument is a one-character text literal
+  and whose second is not a literal: `find(text, find)` searches the first,
+  so `find("^", LASTPOP)` is -1 unless `LASTPOP` is `^` or empty. None of
+  the 23 `find` calls in the official examples has a literal first;
 - an effect action naming, in a literal, an effect the object and its
   families, the layer or every layout lack: it runs and changes nothing;
 - in one list of actions, a *Create object*, *Spawn another object* or
