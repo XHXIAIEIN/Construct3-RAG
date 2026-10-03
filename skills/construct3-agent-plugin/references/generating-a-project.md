@@ -70,8 +70,8 @@ gets its storage from the rule for its owner and lifetime:
 - One phase of play: a Group and *Set group active*, not a flag.
 - A list: an Array. Cards on screen are their instances, ordered by an
   instance variable.
-- Static records: a project file of `dictionary_file()` or `array_file()`,
-  loaded with `load_data_file()`.
+- Static records: a project file of `record_table()`, loaded with
+  `load_data_file()` and copied into a Dictionary with `table_to_dictionary()`.
 - A kind or a move: a text field compared with `=`, each number in a field
   of its own.
 - A cycle: a number and `%`.
@@ -159,13 +159,16 @@ habits; they are what makes rerunning safe.
   editor's keys; one it lacks is copied from an instance of an official
   example, under the behavior's name on that object (`"Sine"`, not `"Sin"`).
 - A table of records, cards, enemies, levels, is a project file, not events
-  that add keys: `dictionary_file("Cards", {"strike.cost": 1, ...})`, one
-  flat key `<id>.<field>` per value, or `array_file(name, table)`, where
-  `table[x][y]` is `At(x, y)`, both in `build_files()`; the object is a
-  `nonworld_type()` with a `nonworld_inst()` in the layout, and
-  `load_data_file("Cards", "Cards.json")` gives the three actions that
-  load it, first in that layout's *On start*, the AJAX object added with
-  them.
+  that add keys: `record_table("CardTable", {"strike": {"cost": 1, ...}})`
+  in `build_files()` writes an Array with one record per row and one field
+  per column, ids in column 0 and field names in row 0, which the editor's
+  Array editor shows as a table. `load_data_file("CardTable",
+  "CardTable.json")` gives the three actions that load it, first in that
+  layout's *On start*, and `*table_to_dictionary("CardTable", "Cards")`
+  among that event's sub-events copies it into a Dictionary read as
+  `Cards.Get("strike.cost")`. Each object is a `nonworld_type()` with a
+  `nonworld_inst()` in the layout, the AJAX object added with them. A few
+  named values, such as settings, are a `dictionary_file()`.
 - `random.seed(...)` before the first `sid()`: a rerun then produces the same
   ids and the diff shows only what changed.
 - One helper per ACE, named for what it does, its parameters in the

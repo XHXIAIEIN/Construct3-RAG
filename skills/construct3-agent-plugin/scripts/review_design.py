@@ -653,11 +653,11 @@ def data_rule(d: Design) -> list[dict]:
             for (obj, ace_id), n in counts.items():
                 if n >= DATA_ACTIONS:
                     out.append(finding("data", e, f"{e.place}: {n} {obj} {ace_id} actions with literal values, a "
-                               f"table written as events; keep it in a project file ({obj} as a Dictionary or Array "
-                               f"file under Files) and load it at start with AJAX Request project file and {obj} "
-                               f"Load from AJAX.LastData. A generator writes the file with dictionary_file() or "
-                               f"array_file() and the loading events with load_data_file(), in "
-                               f"assets/build_project.py"))
+                               f"table written as events; keep it in a project file, an Array with one record per row "
+                               f"and one field per column under Files, load it at start with AJAX Request project "
+                               f"file and Load from AJAX.LastData, and copy it into {obj} with a For loop over its "
+                               f"rows and fields. A generator writes the file with record_table() and the events "
+                               f"with load_data_file() and table_to_dictionary(), in assets/build_project.py"))
     return out
 
 

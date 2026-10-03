@@ -645,47 +645,67 @@ def test_template_writes_instances_in_the_editors_key_order_and_number_form(tmp_
 def test_template_writes_a_data_file_lists_it_and_loads_it_at_start(project):
     """A table of records is a project file loaded at start, not hundreds of Add key actions: a
     generated card game put its cards into a Dictionary from events, each value a "|"-joined
-    string. The files are written in the formats eventide and airborne-explorer ship, listed as
-    the editor lists them, and loaded with the three actions eventide's On start runs."""
+    string, and then into 616 flat keys of a Dictionary file nobody could read as a table. The
+    records are an Array with a record per row, as grukkle-onslaught keeps its enemies, copied
+    into a Dictionary at start. The files are written in the formats eventide and
+    airborne-explorer ship, listed as the editor lists them, and loaded with the three actions
+    eventide's On start runs."""
     source = project / "tools" / "build_project.py"
     text = source.read_text(encoding="utf-8")
+    cards = '{"strike": {"name": "Strike", "cost": 1, "dmg": 6}, "guard": {"name": "Guard", "cost": 1, "block": 5}}'
     for old, new in (
             ('    The stand-in has none."""\n',
-             '    The stand-in has none."""\n    dictionary_file("Cards", {"strike.cost": 1, "strike.name": "Strike"})\n'
-             '    array_file("Waves", [[3, "Slime"], [5, "Bat"]])\n'),
+             f'    The stand-in has none."""\n    record_table("CardTable", {cards})\n'
+             '    dictionary_file("Settings", {"startGold": 60})\n'),
             ('        "Touch": single_global_type(',
-             '        "Cards": nonworld_type("Cards", "Dictionary"),\n        "Waves": nonworld_type("Waves", "Arr"),\n'
+             '        "CardTable": nonworld_type("CardTable", "Arr"),\n'
+             '        "Cards": nonworld_type("Cards", "Dictionary"),\n'
+             '        "Settings": nonworld_type("Settings", "Dictionary"),\n'
              '        "Touch": single_global_type('),
             ('    ], sheet="Game")',
-             '    ], sheet="Game", nonworld=[nonworld_inst("Cards"), nonworld_inst("Waves", {"width": 1, "height": 1, '
-             '"depth": 1})])'),
-            ('[on_start()], [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))]',
-             '[on_start()], steps(("Load the cards", load_data_file("Cards", "Cards.json")), '
-             '("Load the waves", load_data_file("Waves", "Waves.json")), '
-             '("Empty the score", [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))]))')):
+             '    ], sheet="Game", nonworld=[nonworld_inst("CardTable", {"width": 1, "height": 1, "depth": 1}), '
+             'nonworld_inst("Cards"), nonworld_inst("Settings")])'),
+            ('[on_start()], [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))], children=[',
+             '[on_start()], steps(("Load the cards", load_data_file("CardTable", "CardTable.json")), '
+             '("Load the settings", load_data_file("Settings", "Settings.json")), '
+             '("Empty the score", [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))])), children=['
+             '*table_to_dictionary("CardTable", "Cards"), ')):
         assert text.count(old) == 1, old
         text = text.replace(old, new)
     source.write_text(text, encoding="utf-8")
     code, out = run(project, "tools/build_project.py")
     assert code == 0 and warnings(out) == [], out
 
-    assert json.loads((project / "files" / "Cards.json").read_text(encoding="utf-8")) == {
-        "c2dictionary": True, "data": {"strike.cost": 1, "strike.name": "Strike"}}
-    assert json.loads((project / "files" / "Waves.json").read_text(encoding="utf-8")) == {
-        "c2array": True, "size": [2, 2, 1], "data": [[[3], ["Slime"]], [[5], ["Bat"]]]}
+    table = json.loads((project / "files" / "CardTable.json").read_text(encoding="utf-8"))
+    columns = [[cell[0] for cell in column] for column in table["data"]]
+    assert table["c2array"] and table["size"] == [5, 3, 1]
+    assert [list(row) for row in zip(*columns)] == [
+        ["id", "name", "cost", "dmg", "block"], ["strike", "Strike", 1, 6, 0], ["guard", "Guard", 1, 0, 5]]
+    assert json.loads((project / "files" / "Settings.json").read_text(encoding="utf-8")) == {
+        "c2dictionary": True, "data": {"startGold": 60}}
     proj = json.loads((project / "project.c3proj").read_text(encoding="utf-8"))
     listed = proj["rootFileFolders"]["general"]["items"]
     assert [(e["name"], e["type"], e["file-info"]) for e in listed] == [
-        ("Cards.json", "application/json", {"purpose": "none"}), ("Waves.json", "application/json", {"purpose": "none"})]
+        ("CardTable.json", "application/json", {"purpose": "none"}),
+        ("Settings.json", "application/json", {"purpose": "none"})]
     assert {"AJAX", "Arr", "Dictionary"} <= {a["id"] for a in proj["usedAddons"]} and "AJAX" in proj["objectTypes"]["items"]
 
-    sheet = (project / "eventSheets" / "Game.json").read_text(encoding="utf-8")
-    actions = [a for a in re.findall(r'"id": "([a-z-]+)",\s*"objectClass": "(\w+)"', sheet)
-               if a[0] in ("request-project-file", "wait-for-previous-actions", "load")]
-    assert actions == [("request-project-file", "AJAX"), ("wait-for-previous-actions", "System"), ("load", "Cards"),
-                       ("request-project-file", "AJAX"), ("wait-for-previous-actions", "System"), ("load", "Waves")]
-    assert '"tag": "\\"Cards\\"",' in sheet and '"file": "Cards.json"' in sheet and '"json": "AJAX.LastData"' in sheet
+    def every_action(events):
+        for e in events:
+            yield from e.get("actions", [])
+            yield from every_action(e.get("children", []))
+    sheet = json.loads((project / "eventSheets" / "Game.json").read_text(encoding="utf-8"))
+    loading = [a for a in every_action(sheet["events"])
+               if a.get("id") in ("request-project-file", "wait-for-previous-actions", "load", "add-key")]
+    assert [(a["id"], a["objectClass"]) for a in loading] == [
+        ("request-project-file", "AJAX"), ("wait-for-previous-actions", "System"), ("load", "CardTable"),
+        ("request-project-file", "AJAX"), ("wait-for-previous-actions", "System"), ("load", "Settings"),
+        ("add-key", "Cards")]
+    assert loading[0]["parameters"] == {"tag": '"CardTable"', "file": "CardTable.json"}
+    assert loading[-1]["parameters"] == {
+        "key": 'CardTable.At(0, loopindex("row")) & "." & CardTable.At(loopindex("field"), 0)',
+        "value": 'CardTable.At(loopindex("field"), loopindex("row"))'}
 
     t = template_module()
-    with pytest.raises(SystemExit, match=r"'strike': \{.*\} is not a number or a string.*\"strike.<field>\""):
+    with pytest.raises(SystemExit, match=r"'strike': \{.*\} is not a number or a string.*record_table"):
         t.dictionary_file("Cards", {"strike": {"cost": 1}})

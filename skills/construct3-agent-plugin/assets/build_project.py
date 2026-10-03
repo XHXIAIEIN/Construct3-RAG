@@ -398,22 +398,21 @@ def general_file(name: str, text: str) -> str:
 
 
 def dictionary_file(name: str, data: dict) -> str:
-    """files/<name>.json as a Dictionary saves it, {"c2dictionary": true, "data": {...}}. Keys are
-    flat: a record's field is "<id>.<field>", {"strike.cost": 1, "strike.damage": 6}, read with
-    Cards.Get("strike.cost"). Values stay numbers or strings, so no int(tokenat(...)) decodes them.
-    Load it with load_data_file()."""
+    """files/<name>.json as a Dictionary saves it, {"c2dictionary": true, "data": {...}}: a few named
+    values, such as settings, {"startGold": 60, "handSize": 5}. A table of records, cards or enemies,
+    is a record_table(). Values stay numbers or strings. Load it with load_data_file()."""
     for key, value in data.items():
         if not isinstance(key, str) or isinstance(value, bool) or not isinstance(value, (int, float, str)):
             sys.exit(f"dictionary_file({name!r}): {key!r}: {value!r} is not a number or a string; a Dictionary "
-                     f"holds those only. Give each field its own key, \"{key}.<field>\"")
+                     f"holds those only. A record with fields is a row of record_table()")
     return general_file(f"{name}.json", json.dumps({"c2dictionary": True, "data": shortest(data)}, indent=4,
                                                    ensure_ascii=False))
 
 
 def array_file(name: str, table: list) -> str:
     """files/<name>.json as an Array saves it, {"c2array": true, "size": [w, h, 1], "data": ...}:
-    table[x][y] is Arr.At(x, y), one record per x and its fields along y, every column as long.
-    Numbers and strings only. Load it with load_data_file()."""
+    table[x][y] is Arr.At(x, y), a list of columns, every column as long. Numbers and strings
+    only. Load it with load_data_file(). For records, record_table() lays the columns out."""
     height = len(table[0]) if table else 0
     for x, column in enumerate(table):
         if len(column) != height:
@@ -426,10 +425,41 @@ def array_file(name: str, table: list) -> str:
         indent=4, ensure_ascii=False))
 
 
+def record_table(name: str, records: dict, fields: list | None = None) -> str:
+    """files/<name>.json as an Array of records, the way the official examples keep one
+    (grukkle-onslaught Enemies.json, Towers.json): one record per row (Y), one field per column
+    (X), so the editor's Array editor shows the file as a table to read and change. Row 0 holds
+    "id" and the field names, column 0 the ids:
+        record_table("Cards", {"strike": {"name": "Strike", "cost": 1, "dmg": 6},
+                               "guard": {"name": "Guard", "cost": 1, "block": 5}})
+    A field a record lacks is 0, or "" when the field holds text elsewhere. Load it with
+    load_data_file() and turn it into a Dictionary with table_to_dictionary(), read as
+    Cards.Get("strike.dmg")."""
+    fields = fields or list(dict.fromkeys(f for r in records.values() for f in r))
+    texts = {f for r in records.values() for f, v in r.items() if isinstance(v, str)}
+    rows = [["id", *fields]] + [[rid, *(r.get(f, "" if f in texts else 0) for f in fields)]
+                                for rid, r in records.items()]
+    return array_file(name, [list(column) for column in zip(*rows)])
+
+
+def table_to_dictionary(table: str, dictionary: str) -> list:
+    """A sub-event, with its comment, that copies a record_table() Array into a Dictionary, one
+    key "<id>.<field>" per cell, numbers kept numbers. Put it among the sub-events of the On start
+    that ran load_data_file(table, ...), children=[*table_to_dictionary(...), ...]: the wait there
+    delays the sub-events too."""
+    cell = f'{table}.At(loopindex("field"), loopindex("row"))'
+    key = f'{table}.At(0, loopindex("row")) & "." & {table}.At(loopindex("field"), 0)'
+    return event(f"Copy each record of {table} into {dictionary}, one key per field",
+                 [for_loop("row", "1", f"{table}.Height - 1"), for_loop("field", "1", f"{table}.Width - 1")],
+                 [act("add-key", dictionary, {"key": key, "value": cell})])
+
+
 def build_files() -> None:
-    """The game's data files, before the object types: dictionary_file("Cards", {"strike.cost": 1, ...}),
-    with a nonworld_type("Cards", "Dictionary"), its nonworld_inst() in the layout that loads it,
-    and load_data_file("Cards", "Cards.json") first among the actions of that layout's On start.
+    """The game's data files, before the object types: record_table("CardTable", {"strike": {...}}),
+    with a nonworld_type("CardTable", "Arr") and a nonworld_type("Cards", "Dictionary"), their
+    nonworld_inst() in the layout that loads them, load_data_file("CardTable", "CardTable.json")
+    first among the actions of that layout's On start and *table_to_dictionary("CardTable", "Cards")
+    among its sub-events.
     The stand-in has none."""
 
 
