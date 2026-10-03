@@ -112,13 +112,22 @@ def test_open_in_editor_closes_the_start_up_window_once_when_projects_open_at_on
     profile.mkdir()
     (profile / "DevToolsActivePort").write_text("9222\n/devtools/browser/1", encoding="utf-8")
     monkeypatch.setattr(oe.Browser, "devtools_url", staticmethod(lambda port_file: "ws://127.0.0.1:9222/devtools/browser/1"))
-    monkeypatch.setattr(oe, "DevTools", lambda url, timeout=oe.CALL: browser if "/browser/" in url else object())
+    sent: list[str] = []
+
+    class Page:
+        def call(self, method: str, wait: float = oe.CALL, session: str | None = None, **params) -> dict:
+            sent.append(method)
+            return {}
+
+    monkeypatch.setattr(oe, "DevTools", lambda url, timeout=oe.CALL: browser if "/browser/" in url else Page())
 
     driven = oe.Browser("msedge.exe", profile, headed=False)
     with ThreadPoolExecutor(2) as pool:
         opened = list(pool.map(lambda _: driven.page(oe.EDITOR)[0], range(2)))
     assert browser.closed == ["start-up"], browser.closed
     assert sorted(browser.pages) == sorted(opened), browser.pages
+    # Each page is kept active, so a --headed window the user minimizes still opens the project
+    assert sorted(sent) == ["Emulation.setFocusEmulationEnabled"] * 2 + ["Page.setWebLifecycleState"] * 2, sent
 
 
 def test_open_in_editor_keeps_the_results_and_screenshots_in_the_project_by_default(tmp_path):

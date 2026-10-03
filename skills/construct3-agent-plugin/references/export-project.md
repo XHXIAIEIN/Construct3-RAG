@@ -11,6 +11,7 @@ python scripts/export_project.py --to export/web --bump
 ```
 
 The script opens the project in the editor of the release that saved it,
+with only the files the editor reads, as `scripts/pack_project.py` packs them,
 exports it to Web (HTML5) as a zip with Offline support, Deduplicate images
 and Optimize images on, and unpacks the zip into `--to`, replacing what was
 there.
@@ -25,9 +26,10 @@ editor and the folder, and opens nothing.
 A project over the Free edition's limits exports only from an account with a
 subscription. The script drives a window of its own, and when the editor
 shows Guest or Free edition it waits up to 5 minutes: tell the user to log
-in in that window. Afterwards the script closes the project and minimizes
-the window, and the next run goes on in it with the login. If the user
-closes the window, they log in again next time.
+in in that window. The script restores the window for the export, which
+then runs with other windows over it; afterwards it closes the project and
+minimizes the window, and the next run goes on in it with the login. If the
+user closes the window, they log in again next time.
 
 ## Use a browser the user has open
 
@@ -46,7 +48,8 @@ closes it after the export.
 
 - Exit 1, `not exported:` and the reason: the window or tab stays as it is.
   Do what it names (log in, allow the connection, close the dialog) and run
-  the same command again.
+  the same command again. The next run closes a project a stopped run left
+  open in the script's window, without saving it.
 - `trying again with longer pauses`: a menu item or dialog did not come
   within 30 seconds, as on a slow machine or network. The script closes
   what is open and runs the export once more with pauses three times as
@@ -76,3 +79,16 @@ or export again with the script (last bullet below).
   number after an export, so a project saved after a hand export is one
   ahead of its export. [one hand export, 0.1.0.4 exported and 0.1.0.5 saved,
   2026-10-01]
+- An editor window covered by other windows makes its page hidden
+  (`document.visibilityState` `hidden`), and `Page.bringToFront` does not
+  undo it. The editor then shows no menu item to click and stalls at
+  "Opening...", so a run stops with "no 'Project' in the editor" or a call
+  that gets no answer. `Emulation.setFocusEmulationEnabled` and
+  `Page.setWebLifecycleState` `active`, on a session held for the whole run,
+  keep the page visible, and the script sets both on the page it drives
+  before the first click. A minimized window needs restoring as well: with
+  both set it reports `visible`, but the click on Export opens no dialog and
+  a screenshot never comes. [r504 editor in Edge, exports of a game project,
+  2026-10-03: three runs stopped and the fourth exported once a second
+  session had set both; then, with both set, a window under another one
+  opened the export dialog and a minimized one did not]

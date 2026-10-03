@@ -67,6 +67,17 @@ which cases to play and how to reach and read them to
   (448, 304) lay outside the 430x932 the run had set, and the screenshots
   were still 430x932; without the override, the second connection's headed
   screenshot was 645x1398 at 150 %]
+- A `--headed` window behind other windows makes its page hidden, and a
+  hidden editor lays out no menu and can stall at "Opening...". Focus
+  emulation and the active lifecycle state keep a page visible for as long
+  as the connection that set them stays open: `open_in_editor.py` sets both
+  on the editor and the preview window it opens (`keep_active`), and a
+  script of the agent's own that drives a headed window does the same. A
+  minimized window then reports visible, but a click misses what the page
+  draws next and a screenshot never comes: leave a `--headed` window
+  restored while it runs. A headless window is never covered. [observed in
+  exports through `export_project.py`, r504 editor in Edge, 2026-10-03; see
+  [export-project.md](export-project.md), "What the editor does"]
 - A preview run for five seconds without input shows that the layout
   starts; it says nothing about an event that waits for a drop, a merge or
   a deployment. Such an event is verified by playing it, a plan of

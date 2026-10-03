@@ -634,7 +634,6 @@ def play(plan: dict, shots: Path, project: Path):
                 size = tuple(win.evaluate("[innerWidth, innerHeight]"))     # a headed window loses its frame's share
             if touch:
                 win.call("Emulation.setTouchEmulationEnabled", enabled=True, maxTouchPoints=5)
-            win.call("Emulation.setFocusEmulationEnabled", enabled=True)    # keys reach a page in the background
             sessions, live, stalled = oe.attach(win, patience=30)
             if not live:
                 return {"started": False, "layout": None, "runtime": None, "steps": [], "errors": [

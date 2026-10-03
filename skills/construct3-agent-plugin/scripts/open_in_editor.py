@@ -549,7 +549,9 @@ class Browser:
                 self.devtools.call("Target.closeTarget", targetId=t)
             except DevToolsError:   # a --headed window the user closed already
                 pass
-        return target, DevTools(f"ws://127.0.0.1:{self.port}/devtools/page/{target}")
+        page = DevTools(f"ws://127.0.0.1:{self.port}/devtools/page/{target}")
+        keep_active(page)
+        return target, page
 
     def close(self) -> None:
         try:
@@ -563,6 +565,19 @@ class Browser:
                 self.proc.kill()
         # A session file per run, never restored.
         shutil.rmtree(self.profile / "Default" / "Sessions", ignore_errors=True)
+
+
+def keep_active(page) -> None:
+    """Keep a page visible and focused while it is driven. A headed window covered by other
+    windows makes its page hidden: the editor then lays out no menu, and an opening project
+    stalls at its "Opening..." dialog until a call gives up. Bringing the page to the front does
+    not undo it. Focus emulation keeps the page visible, and keys reach it in the background;
+    the active lifecycle state thaws a page the browser froze. Both hold as long as the
+    connection or session that set them stays open. A minimized window then reports visible
+    but draws nothing: a click misses what the page shows after it, and a screenshot never
+    comes, so it is restored as well."""
+    page.call("Emulation.setFocusEmulationEnabled", enabled=True)
+    page.call("Page.setWebLifecycleState", state="active")
 
 
 def load(page: DevTools, editor: str) -> None:
@@ -614,7 +629,9 @@ def start_preview(browser: Browser, target: str, page: DevTools) -> tuple[dict, 
         time.sleep(0.25)
     if not window:
         return dialogs or ["no preview window in 20 seconds"]
-    return window, DevTools(f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}")
+    win = DevTools(f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}")
+    keep_active(win)
+    return window, win
 
 
 def attach(win: DevTools, patience: float = 0) -> tuple[list[str | None], list[str | None], bool]:

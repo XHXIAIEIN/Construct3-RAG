@@ -22,7 +22,8 @@ def test_export_bumps_the_last_export_and_carries_a_hand_edit(project):
 
 def test_export_hands_the_editor_the_version_to_export(project):
     """The .c3p the editor opens carries the version to export with Auto-increment version off, so
-    that the export carries it unchanged, and leaves out the export folder and .tmp."""
+    that the export carries it unchanged, and holds only the files the editor reads: no export
+    folder, .tmp or the worktrees under .claude (a game's .c3p was 1.8 GB, 2026-10-03)."""
     import importlib.util
     import io
     import zipfile
@@ -39,9 +40,12 @@ def test_export_hands_the_editor_the_version_to_export(project):
                                                              '"autoIncrementVersion": true'), encoding="utf-8")
     (project / "export" / "web").mkdir(parents=True)
     (project / "export" / "web" / "data.json").write_text("{}", encoding="utf-8")
+    (project / ".claude" / "worktrees" / "a").mkdir(parents=True)     # an agent's copies, 2.2 GB in a game
+    (project / ".claude" / "worktrees" / "a" / "project.c3proj").write_text("{}", encoding="utf-8")
     with zipfile.ZipFile(io.BytesIO(export.pack(project, "2.3.4.5", project / "export"))) as z:
         names = z.namelist()
         text = z.read("project.c3proj").decode("utf-8")
     assert '\t\t"version": "2.3.4.5",' in text and '"autoIncrementVersion": false' in text, text[:400]
-    assert not any(n.startswith(("export/", ".tmp/")) for n in names), names
+    assert not any(n.startswith(("export/", ".tmp/", ".claude/")) for n in names), names
+    assert any(n.startswith("layouts/") for n in names), names
     assert export.project_version(project) == "1.0.0.0"     # the project file itself is not touched

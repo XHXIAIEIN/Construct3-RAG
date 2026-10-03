@@ -9,12 +9,16 @@ gone when the browser closes or the page reloads. The script therefore drives a
 headed browser on a profile of its own, .tmp/export-<browser> of the main clone,
 and waits there for the user to log in when the editor shows Guest or Free edition;
 a GitHub or Google login stays in that profile, so logging in again is a click or
-two. After the export it closes the project and minimizes the window, which keeps
-the page and its login for the next run; when a run stops on an error the window is
-left as it is. --attach uses a browser of the user's own instead, already logged in.
+two. It restores the window and keeps the page active while it drives it, so the
+export runs with other windows over it. After the export it closes the project and
+minimizes the window, which keeps the page and its login for the next run; when a run
+stops on an error the window is left as it is, and the next run first closes a
+project left open in it. --attach uses a browser of the user's own instead, already
+logged in.
 
 The project goes to the editor of the release that saved it, savedWithRelease of
-project.c3proj, since an older one refuses it. The editor exports a zip with
+project.c3proj, since an older one refuses it, with the files the editor reads, as
+pack_project.py packs them. The editor exports a zip with
 Offline support, Deduplicate images and Optimize images on and the other
 options as it remembers them; the zip replaces
 the contents of --to. The export carries the version given by --version or
@@ -38,6 +42,7 @@ from pathlib import Path
 
 import c3project as c3
 import open_in_editor as oe
+import pack_project as pp
 
 EPILOG = """examples:
   python scripts/export_project.py --to export/web --bump
@@ -110,14 +115,17 @@ def own_page(b: oe.Browser, url: str) -> tuple[str, oe.DevTools]:
     The login lives in the page, so it is never reloaded."""
     for t in b.devtools.call("Target.getTargets")["targetInfos"]:
         if t["type"] == "page" and t["url"].startswith(url):
-            return t["targetId"], oe.DevTools(f"ws://127.0.0.1:{b.port}/devtools/page/{t['targetId']}")
+            page = oe.DevTools(f"ws://127.0.0.1:{b.port}/devtools/page/{t['targetId']}")
+            oe.keep_active(page)
+            return t["targetId"], page
     target, page = b.page(url)
     oe.load(page, url)
     return target, page
 
 
 def show_window(b: oe.Browser, target: str, state: str) -> None:
-    """normal or minimized. A minimized window is throttled, so it is restored before an export."""
+    """normal or minimized. A minimized window draws nothing, so clicks miss what the editor
+    shows next: it is restored before an export, and minimized after it, out of the way."""
     window = b.devtools.call("Browser.getWindowForTarget", targetId=target)["windowId"]
     b.devtools.call("Browser.setWindowBounds", windowId=window, bounds={"windowState": state})
 
@@ -196,12 +204,14 @@ def attached_page(devtools: oe.DevTools, project: Path) -> tuple[SessionPage, bo
         if t["type"] != "page" or not t["url"].startswith(oe.EDITOR) or not t["title"].startswith(START_TITLES):
             continue
         page = SessionPage(devtools, t["targetId"])
+        oe.keep_active(page)
         major, minor = (page.evaluate(oe.RELEASE_JS) + [0, 0])[:2]
         if major * 100 + minor >= saved:
             return page, False
         devtools.call("Target.detachFromTarget", sessionId=page.session)
     url = editor_url(project)
     page = SessionPage(devtools, devtools.call("Target.createTarget", url=url, newWindow=True)["targetId"])
+    oe.keep_active(page)
     oe.load(page, url)
     return page, True
 
@@ -303,9 +313,15 @@ def project_title(project: Path) -> str:
     return json.loads((project / "project.c3proj").read_text(encoding="utf-8"))["name"] + " - "
 
 
-def close_project(page, project: Path) -> None:
-    """Close the project in the editor without saving: it is the copy the script handed over."""
-    if not page.evaluate("document.title").startswith(project_title(project)):
+def project_open(page) -> bool:
+    return not page.evaluate("document.title").startswith(START_TITLES)
+
+
+def close_project(page) -> None:
+    """Close the project open in the editor without saving. The page is one the script drives, on
+    the start page when the run began, so the project is a copy the script handed over: this run's,
+    or one a run that stopped left open."""
+    if not project_open(page):
         return
     page.evaluate(DISMISS_JS)
     open_menu(page)
@@ -313,16 +329,22 @@ def close_project(page, project: Path) -> None:
     press(page, "menu", "Close project", 0.3)
     deadline = time.time() + UI_WAIT
     while time.time() < deadline:   # the editor asks to save a project it holds as changed
-        if not page.evaluate("document.title").startswith(project_title(project)):
+        if not project_open(page):
             return
         if page.evaluate(FIND_JS + "('dialog', \"Don't save\")"):
             press(page, "dialog", "Don't save", 0.3)
         time.sleep(0.2)
-    raise Stop(f"the project did not close; the editor shows {json.dumps(page.evaluate(DIALOG_JS))}")
+    raise Stop(f"the project did not close; the editor shows {json.dumps(page.evaluate(DIALOG_JS))}; close it "
+               f"in the editor window, Menu > Project > Close project, and run again")
 
 
 def open_project(page, project: Path, staged: Path) -> None:
-    close_project(page, project)        # left open by a run that stopped
+    # A project a run that stopped left opening: until it has opened, the title is the start page's
+    for _ in range(oe.RESULT_WAIT):
+        if not page.evaluate("!!document.querySelector('#progressDialog[open]')"):
+            break
+        time.sleep(1)
+    close_project(page)
     if page.evaluate(f"({oe.SETUP_JS})()", wait=oe.SETUP_WAIT) != "ready":
         raise Stop("the editor did not get ready to open a project; run again")
     field = page.evaluate("document.querySelector('input[aria-label=\"Project to open\"]')", by_value=False)
@@ -435,20 +457,20 @@ def with_version(text: str, version: str) -> str:
 
 
 def pack(project: Path, version: str, skip: Path | None) -> bytes:
-    """The project as a .c3p carrying version, with Auto-increment version off so that the export
-    carries it unchanged. skip, the export folder when it is inside the project, stays out."""
+    """The files the editor reads as a .c3p carrying version, with Auto-increment version off so
+    that the export carries it unchanged. The rest stays out: an earlier export, the worktrees of
+    an agent under .claude, which made a game's .c3p 1.8 GB; and skip, the export folder."""
+    files, _ = pp.editor_files(pp.from_folder(project), ())
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
-        for f in sorted(project.rglob("*")):
-            rel = f.relative_to(project)
-            if not f.is_file() or rel.parts[0] in (".git", oe.SCRATCH) or (skip and f.is_relative_to(skip)):
+        for name, f in files.items():
+            if skip and f.is_relative_to(skip):
                 continue
-            if rel.as_posix() == "project.c3proj":
+            if name == "project.c3proj":
                 text = with_version(f.read_text(encoding="utf-8"), version)
-                z.writestr("project.c3proj", text.replace('"autoIncrementVersion": true',
-                                                          '"autoIncrementVersion": false'))
+                z.writestr(name, text.replace('"autoIncrementVersion": true', '"autoIncrementVersion": false'))
             else:
-                z.write(f, rel.as_posix())
+                z.write(f, name)
     return buf.getvalue()
 
 
@@ -484,7 +506,7 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
     # Close the project, so that this editor and one the user has open elsewhere do not both
     # change it. The script's own window is minimized and keeps its login for the next run; in the
     # user's browser a tab the script opened is closed and the user's own is left on the start page
-    close_project(page, project)
+    close_project(page)
     if not spec:
         show_window(b, target, "minimized")
     elif opened:
