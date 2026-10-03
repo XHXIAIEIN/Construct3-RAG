@@ -16,13 +16,11 @@ exports it to Web (HTML5) as a zip with Offline support, Deduplicate images
 and Optimize images on, and unpacks the zip into `--to`, replacing what was
 there.
 
-The copy handed to the editor sets *Use worker* to Yes, so the exported game
-runs its runtime off the main thread; `project.c3proj` keeps its own setting
-for preview. Auto runs in the page as soon as the project has a script, and No
-is what sample-accurate audio scheduling needs. The last line says where the
-export's runtime starts, read from the main.js it holds. `--keep-worker`
-exports with the project's setting: for a game whose scripts use the DOM, or
-whose scheduled sounds must land on the beat.
+The copy handed to the editor sets *Use worker* to Auto, so the engine
+decides: a worker, unless the project has a script or an addon without worker
+support. `project.c3proj` keeps its own setting, so a project set to No for a
+test previews in the page and still exports with Auto. The last line says
+where the export's runtime starts, read from the main.js it holds.
 
 The version: `--bump` takes the export already in `--to` and adds one to its
 last number, or takes the project's Version when that is greater;
