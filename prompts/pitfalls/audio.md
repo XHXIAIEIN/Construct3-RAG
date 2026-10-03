@@ -36,15 +36,18 @@ where Web Audio lives).
   r504 runtime, not observed in play]
 - In a browser no sound is heard until the player first touches, clicks
   or presses a key. The Audio object queues what *Play* asks for before
-  then and starts it at that input, so a title track played in *On start
-  of layout* needs no events of its own. If that first input also changes
-  the layout or stops the music, the track may never be heard: give the
-  first screen a "tap anywhere to start" that leaves the music playing, and
-  move on at a later tap. The same tap is where *Request fullscreen* and the
-  other requests the browser grants only after input go
-  ([input.md](input.md)). A mobile app export has no such limit, and an
-  installed web app may not. [manual: plugin-reference/audio.md "Autoplay
-  restrictions"]
+  then and starts it at that input, so a sound played in *On start of
+  layout* needs no events of its own. A web game therefore opens on a "tap
+  anywhere to start" screen whose tap goes to the game: the game's music
+  and sounds then play from its first frame, and the same tap is where
+  *Request fullscreen* and the other requests the browser grants only after
+  input go ([input.md](input.md)). Music played on that screen itself
+  starts at the same tap, as the game begins, so a track meant for the
+  title screen needs one that waits for a second tap. A mobile app export
+  has no such limit, and an installed web app may not.
+  [manual: plugin-reference/audio.md "Autoplay restrictions"; example:
+  detecting-input-method, `Title events`: a flashing prompt, then one event
+  per input method that sets a global and goes to the game]
 - The audio clock does not run until the first `pointerup`, `touchend`,
   `click`, `keydown` or gamepad input: in *On any touch start* `CurrentTime`
   is still stopped, and sounds played before then queue and start together at

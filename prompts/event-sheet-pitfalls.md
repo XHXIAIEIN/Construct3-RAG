@@ -139,7 +139,7 @@ effects, or keep music on a beat.
 
 - With *Use worker* on, scheduled sounds jitter by a message delay: set it to *No* for sample-accurate scheduling.
 - A sound not yet loaded plays late, and a Music file ignores its scheduled time: keep beat-locked files in Sounds, preloaded.
-- In a browser nothing is heard before the first touch, click or key, and sounds wait for it: a first tap that changes layout or stops the music loses the title track, so open on a "tap anywhere to start" screen, which also carries *Request fullscreen*.
+- In a browser nothing is heard before the first touch, click or key: open on a "tap anywhere to start" screen that goes to the game, and put *Request fullscreen* on that tap; music on that screen itself starts only at the tap.
 - The audio clock stands still until the first release, click or key: start music when `CurrentTime` moves, not on a touch.
 - `PlaybackTime` of a scheduled sound runs ahead by its lead: build a beat grid from `CurrentTime` and integer steps.
 - *Set playback rate* retunes every instance with the tag: give each play a one-off tag.
