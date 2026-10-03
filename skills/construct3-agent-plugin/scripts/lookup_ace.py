@@ -237,6 +237,39 @@ def retired_note(p: c3.Project, sources: list[tuple[str, str | None, dict]], wor
             "old projects open", *hits[:6]] + ([f"  ... and {len(hits) - 6} more"] if len(hits) > 6 else [])
 
 
+def addon_word_lines(p: c3.Project, sources: list[tuple[str, str | None, dict]], target: str,
+                     words: list[str]) -> list[str]:
+    """A word that names a behavior or plugin `target` does not have: `System timer` looks for
+    the Timer behavior under System, which has none of its ACEs. The way to them, for the
+    first line of a miss, which is all a small model reads of it."""
+    have = {squash(s.get("id", "")) for _, _, s in sources}
+    lines = []
+    for word in words:
+        for kind in ("behaviors", "plugins"):
+            addon = p.addon_names(kind).get(squash(word))
+            if not addon or squash(addon) in have or addon == "_common":
+                continue
+            name = (p.schema(kind, addon) or {}).get("name", addon)
+            arg = f'"{name}"' if " " in name else name
+            rest = " ".join(w for w in words if w is not word)
+            if kind == "behaviors":
+                owners = [o for o in p.plugin_of if squash(addon) in map(squash, p.behaviors_of(o).values())]
+                if owners:
+                    lines.append(f"{name} is a behavior, not part of {target}; {', '.join(owners[:4])} "
+                                 f"{'has' if len(owners) == 1 else 'have'} it: lookup_ace.py {owners[0]} {' '.join(words)}")
+                else:
+                    lines.append(f"{name} is a behavior, not part of {target}, and no object of the project has it: "
+                                 f"lookup_ace.py {arg} {rest}".rstrip() + f" lists its ACEs; add it to the "
+                                 f"behaviorTypes of the object that uses them first")
+            else:
+                owners = [o for o, plugin in p.plugin_of.items() if squash(plugin) == squash(addon)]
+                lines.append(f"{name} is a plugin, not part of {target}: lookup_ace.py "
+                             f"{owners[0] if owners else arg} {rest}".rstrip()
+                             + (f", a {name} object of the project" if owners and owners[0] != name else ""))
+            break
+    return list(dict.fromkeys(lines))
+
+
 def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
     sources = sources_of(p, target)
     entries = []        # (its names, its names and category, owner, behavior, addon, kind, entry)
@@ -280,6 +313,8 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
 
     if not found:
         query = " ".join(words)
+        for line in addon_word_lines(p, sources, target, words):
+            print(line)
         # A deprecated id of an old project would otherwise read as a typo.
         for line in retired_lines:
             print(line)
