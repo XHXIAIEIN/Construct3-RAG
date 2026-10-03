@@ -244,14 +244,15 @@ def addon_word_lines(p: c3.Project, sources: list[tuple[str, str | None, dict]],
     first line of a miss, which is all a small model reads of it."""
     have = {squash(s.get("id", "")) for _, _, s in sources}
     lines = []
-    for word in words:
+    # A quoted argument holds several: `System "start timer"`.
+    for word in dict.fromkeys(w for arg in words for w in [arg, *arg.split()]):
         for kind in ("behaviors", "plugins"):
             addon = p.addon_names(kind).get(squash(word))
             if not addon or squash(addon) in have or addon == "_common":
                 continue
             name = (p.schema(kind, addon) or {}).get("name", addon)
             arg = f'"{name}"' if " " in name else name
-            rest = " ".join(w for w in words if w is not word)
+            rest = " ".join(w for w in " ".join(words).split() if squash(w) != squash(word))
             if kind == "behaviors":
                 owners = [o for o in p.plugin_of if squash(addon) in map(squash, p.behaviors_of(o).values())]
                 if owners:
