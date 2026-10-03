@@ -26,13 +26,13 @@ Construct3-RAG lets an AI agent make and change [Construct 3](https://www.constr
    python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
    ```
 
-3. Read `MyGame/AGENTS.md`, then the installed `SKILL.md`. The last line of the second command gives the path of `SKILL.md`.
+3. Read `MyGame/AGENTS.md`, then the installed `SKILL.md`. The last line that `bootstrap.py` prints gives the path of `SKILL.md`.
 
-The commands put this repository, the [related repositories](#related-repositories) and the `MyGame` project into `$HOME/Construct3`. `MyGame` gets a Git repository of its own. Then the second command installs the skill in `MyGame`. It copies the skill to `.agents/skills/` and adds a Construct 3 block to `AGENTS.md`. It also adds the line `@AGENTS.md` to `CLAUDE.md`.
+The commands put this repository, the [related repositories](#related-repositories) and the `MyGame` project into `$HOME/Construct3`. `MyGame` gets a Git repository of its own. Then `bootstrap.py` installs the skill in `MyGame`. It copies the skill to `.agents/skills/` and adds a Construct 3 block to `AGENTS.md`. It also adds the line `@AGENTS.md` to `CLAUDE.md`.
 
 In `cmd.exe`, write `%USERPROFILE%` in place of `$HOME`. To keep everything in another folder, write that folder in both commands in place of `$HOME/Construct3`.
 
-Other ways to run the second command:
+Other ways to run `bootstrap.py`:
 
 - For a game that you already have, pass the path of its folder to `--project`. If you give a name alone, the command creates an empty project of that name beside the clones.
 - To start from an empty project of your own, add `--template <folder>`.

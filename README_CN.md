@@ -26,13 +26,13 @@ Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construc
    python $HOME/Construct3/Construct3-RAG/scripts/bootstrap.py --project MyGame
    ```
 
-3. 读 `MyGame/AGENTS.md`，再读装好的 `SKILL.md`。第二条命令输出的最后一行给出 `SKILL.md` 的路径。
+3. 读 `MyGame/AGENTS.md`，再读装好的 `SKILL.md`。`bootstrap.py` 输出的最后一行给出 `SKILL.md` 的路径。
 
-这两条命令把本仓库、[相关仓库](#相关仓库)和 `MyGame` 项目都放进 `$HOME/Construct3`。`MyGame` 自带一个 Git 仓库。然后第二条命令把 skill 装进 `MyGame`。它把 skill 复制到 `.agents/skills/`，在 `AGENTS.md` 里加一段 Construct 3 说明。它还在 `CLAUDE.md` 里加一行 `@AGENTS.md`。
+这两条命令把本仓库、[相关仓库](#相关仓库)和 `MyGame` 项目都放进 `$HOME/Construct3`。`MyGame` 自带一个 Git 仓库。然后 `bootstrap.py` 把 skill 装进 `MyGame`。它把 skill 复制到 `.agents/skills/`，在 `AGENTS.md` 里加一段 Construct 3 说明。它还在 `CLAUDE.md` 里加一行 `@AGENTS.md`。
 
 在 `cmd.exe` 里，把 `$HOME` 写成 `%USERPROFILE%`。想放在别的文件夹，就把两条命令里的 `$HOME/Construct3` 都换成那个文件夹。
 
-第二条命令还有这些用法：
+`bootstrap.py` 还有这些用法：
 
 - 要装进已有的游戏，`--project` 后面写游戏文件夹的路径。如果只写名字，命令会在 clone 旁边新建一个同名的空项目。
 - 想从自己的空项目开始，加 `--template <文件夹>`。
