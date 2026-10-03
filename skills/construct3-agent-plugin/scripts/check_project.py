@@ -82,6 +82,11 @@ PROJECT_ALSO = {"sampling": ("linear", "point")}    # older ids the editor maps 
 # there. The 2930 Sprite and 785 Shape3D types of the official examples all have
 # one, and no other plugin there does.
 ANIMATED_PLUGINS = ("Sprite", "Shape3D")
+# Plugins whose object type carries one image instead: without the "image" block the
+# editor stops the same way. The 872 TiledBg, 392 Spritefont2, 223 Particles, 153
+# Tilemap and 106 NinePatch types of the official examples all have one, and no
+# other plugin there does.
+IMAGE_PLUGINS = ("TiledBg", "Spritefont2", "Particles", "Tilemap", "NinePatch")
 # A layer's blend mode, read as it opens: the editor's own map, "xor" is not in it.
 BLEND_MODES = ("normal", "additive", "copy", "destination-over", "source-in", "destination-in",
                "source-out", "destination-out", "source-atop", "destination-atop", "lighten",
@@ -668,6 +673,13 @@ class Checker:
                 self.err(f"object type {name}: a {t['plugin-id']} carries an animations folder and the editor "
                          f"reads it as it opens the type. Write \"animations\": {{\"items\": [{{\"name\": "
                          f"\"Default\", \"frames\": [...], \"sid\": <n>}}], \"subfolders\": []}}")
+            if t.get("plugin-id") in IMAGE_PLUGINS and not isinstance(t.get("image"), dict):
+                instead = " in place of its animations" if "animations" in t else ""
+                self.err(f"object type {name}: a {t['plugin-id']} carries one image and the editor reads it as it "
+                         f"opens the type. Write{instead} \"image\": {{\"width\": <w>, \"height\": <h>, "
+                         f"\"originX\": 0.5, \"originY\": 0.5, \"originalSource\": \"\", \"exportFormat\": "
+                         f"\"lossless\", \"exportQuality\": 0.8, \"imageSpriteId\": <n>, \"useCollisionPoly\": "
+                         f"true}}, the size of images/{name.lower()}.png")
 
     def check_images(self) -> None:
         for name, t in self.p.types.items():
@@ -741,6 +753,14 @@ class Checker:
         plugin = p.schema("plugins", p.plugin_of[t])
         self.check_properties(f"{where}: {t}", inst.get("properties", {}), plugin.get("properties") if plugin else None)
         for b, block in inst.get("behaviors", {}).items():
+            if b in behs and not (isinstance(block, dict) and isinstance(block.get("properties"), dict)):
+                bs = p.schema("behaviors", behs[b])
+                ids = list((bs or {}).get("properties") or {})
+                values = ", ".join(f'"{k}": true' if k == "enabled" else f'"{k}": ...' for k in ids)
+                self.err(f"{where}: {t} instance behavior {b} is {json.dumps(block)}, with no \"properties\" "
+                         f"block; the editor reads it as it opens the layout. Write \"{b}\": {{\"properties\": "
+                         f"{{{values}}}}}")
+                continue
             if b in behs:
                 bs = p.schema("behaviors", behs[b])
                 self.check_properties(f"{where}: {t}.{b}", block.get("properties", {}),

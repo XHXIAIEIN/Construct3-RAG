@@ -247,6 +247,24 @@ Option 2 as the default, and option 3 as the step after it.
   among them; the export now keeps the flag, and a call to one may pass
   more than `params` lists. With the flag, the 524 examples give no
   finding. The message for too few arguments was not probed.
+- Two keys a Haiku eval left out on 2026-10-03, in projects the checker
+  passed, stopped the editor; a copy with the key added opened and
+  previewed. A Sprite Font type with no `image`, and one written with
+  `animations` in its place, stopped it with `TypeError: expected object`;
+  the copy holds the block the spritefont-formatting example saves, and its
+  PNG named after the type in lower case. The 872 TiledBg, 392 Spritefont2,
+  223 Particles, 153 Tilemap and 106 NinePatch types of the official
+  examples all carry `image` and no other plugin there does, so the rule
+  covers those five, as the animations rule covers Sprite and Shape3D. An
+  instance whose `behaviors` block held `"Tween": {}` stopped it with
+  `TypeError: Cannot convert undefined or null to object`; all 17191
+  behavior blocks of the examples' instances are `{"properties": {...}}`.
+  An instance without an `effects` block for its type's effect opened, so
+  that is not asked for. Both are errors that name the type or instance and
+  the block to write, as the animations rule is, rather than the exit-code-2
+  stop for a key the editor always writes: that stop is the checker's own
+  read failing, and it hides every other finding. The sweep added no
+  finding on the examples or the game folders.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from

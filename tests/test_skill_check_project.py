@@ -117,6 +117,28 @@ def test_a_sprite_without_its_animations_folder_is_named(project):
     assert "object type Coin: a Sprite carries an animations folder" in out
 
 
+@pytest.mark.parametrize("change, said", [
+    (lambda t: t.pop("image"), 'Write "image": {"width": <w>'),
+    (lambda t: t.update(animations=t.pop("image")), 'Write in place of its animations "image"'),
+])
+def test_a_single_image_type_without_its_image_is_named(project, change, said):
+    """A Tiled Background, Sprite Font, Particles, Tilemap or 9-patch type without
+    "image" stops the open with "TypeError: expected object"."""
+    out = findings(project, change, "objectTypes/Backdrop.json")
+    assert "object type Backdrop: a TiledBg carries one image" in out and said in out
+    assert "the size of images/backdrop.png" in out
+
+
+@pytest.mark.parametrize("block", [{}, {"enabled": True}])
+def test_an_instance_behavior_without_properties_is_named(project, block):
+    """`"Tween": {}` on an instance stops the open with "Cannot convert undefined or
+    null to object"; every one of the examples' behavior blocks holds "properties"."""
+    out = findings(project, lambda d: d["layers"][0]["instances"][0]["behaviors"].update(Tween=block),
+                   "layouts/Objects.json")
+    assert f'Coin instance behavior Tween is {json.dumps(block)}, with no "properties" block' in out
+    assert 'Write "Tween": {"properties": {"enabled": true}}' in out
+
+
 # --- triggers ------------------------------------------------------------------------------
 def test_two_triggers_in_one_event(project):
     out = findings(project, lambda s: events(s)["input"]["conditions"].append(cond("on-start-of-layout")))
@@ -953,10 +975,13 @@ def test_a_function_that_picks_what_an_earlier_call_created_is_named(project, ro
 
 
 def sprite_font_label(project, text: str, bbcode: bool = True, properties: dict | None = None) -> None:
-    """A Sprite Font Label on the Objects layout, drawing capitals, digits and the space, or with `properties`."""
+    """A Sprite Font Label on the Objects layout, drawing capitals, digits and the space, or with `properties`;
+    its image is the backdrop's."""
+    backdrop = json.loads((project / "objectTypes" / "Backdrop.json").read_text(encoding="utf-8"))
+    (project / "images" / "label.png").write_bytes((project / "images" / "backdrop.png").read_bytes())
     (project / "objectTypes" / "Label.json").write_text(json.dumps({
         "name": "Label", "plugin-id": "Spritefont2", "sid": 21, "instanceVariables": [], "behaviorTypes": [],
-        "effectTypes": []}), encoding="utf-8")
+        "effectTypes": [], "image": {**backdrop["image"], "imageSpriteId": 25}}), encoding="utf-8")
     edit(project, "project.c3proj", lambda p: p["objectTypes"]["items"].append("Label"))
     add_addon(project, "plugin", "Spritefont2", "Sprite font")
 
