@@ -93,6 +93,9 @@ program transcribed into events even when no picking smell shows.
 | Repeating or periodic movement, flashing, fading out | Sine, Flash, Rotate; a fade is a Tween on Opacity | Hand-written oscillation; the Fade behavior, superseded |
 | Level data, loot tables, stat curves, any lookup table | Array or Dictionary project file (Project Bar: *New - Array / Dictionary*), loaded at start with AJAX *Request project file* then *Load* from `AJAX.LastData`; nested or hand-written data through the JSON plugin | Per-level instance variables, `level1Hp`, chained conditions or nested ternaries that encode the table in expressions |
 | A list that changes at runtime: a deck and its discard pile, a queue, an inventory, a playlist | One Array per list, width 0 at start: *Push* to add, *Shuffle*, `Front`, `Back` or `At(i)` to read, then *Pop* or *Delete* to remove (they return nothing, so read first), *Contains value* to test membership, `Width` to count (place-stickers `InventoryArray`, airborne-explorer `ArrBGM`). Definitions with several fields come from a project file, row above | A separated string read with `tokenat` (smell table) |
+| What a move, an effect or an attack does: its kind and its numbers | One field per fact, a `kind` text and `amount` and `times` numbers, as instance variables or fields of a project file (row above); the branch is an exact comparison, `kind = "block"`, one sibling event or `Else` per kind (alien-battle: under the boss's *On Timer*, `AnimationState = 0`, `= 1`, `= 2`, one attack each) | A code such as `"A6x2"` parsed with `mid`, `tokenat` or `right` and dispatched with `find` (smell table) |
+| A value that depends on a condition | `condition ? ifTrue : ifFalse` (airborne-explorer `endlessMode ? ENDLESS_TIME_LIMIT : ...`, balloon-blower `currAudioSource > 0 ? ... : ...`); `chooseindex(i, a, b, c)` to pick by a number, `choose` at random | `chooseindex(condition, ifFalse, ifTrue)`, the branches in reverse reading order |
+| A cycle of states, elements or turns; whether a set holds an item | The state as a number 0 to N - 1: the next is `(n + 1) % N`, the one after `(n + 2) % N` (alien-battle `(AnimationState + 1) % 3`, balloon-blower `(currAudioSource + 1) % UserMedia.AudioSourceCount`), its name from an Array at that index. Membership: Dictionary *Has key* (airborne-explorer `DictCombo: Has key "Boss"`), Array *Contains value* | Letters looked up through two strings, `mid("FEMAW", find("WFAEM", e), 1)`; `find("," & RELICS & ",", ",rel5,") >= 0` |
 | Weighted random, seeded random, noise | Advanced Random: probability tables, `Weighted`, `Seed`, `Classic2d` | A cascade of `random()` comparisons with hand-tuned thresholds |
 | Data that survives a reload | Local Storage: *Set item*, *Get item*, *On item get* | Globals, which reset on reload; the Persist behavior, which keeps instances across layout changes, not across sessions |
 | Logic shared by several events | Functions with parameters and return values; a *custom action* on the object or family when it acts on picked instances | The same action block pasted into several events |
@@ -108,10 +111,12 @@ program transcribed into events even when no picking smell shows.
 | Objects that belong together | Container (created, destroyed and picked together); hierarchy for parent-relative position | UID variables, or every-tick position copying |
 
 [manual: behavior-reference/timer.md, behavior-reference/tween.md,
-system-reference/system-expressions.md "lerp", "dt",
+system-reference/system-expressions.md "lerp", "dt", "find", "choose",
+"chooseindex", project-primitives/events/expressions.md "Operators" (`%`,
+`?:`), plugin-reference/dictionary.md "Has key",
 behavior-reference/move.md, behavior-reference/bullet.md,
 plugin-reference/array.md "Load", "Manipulating arrays", "Push", "Pop",
-"Shuffle", plugin-reference/ajax.md "Request project
+"Shuffle", "Contains value", plugin-reference/ajax.md "Request project
 file", plugin-reference/json.md, plugin-reference/advanced-random.md
 "Probability tables", plugin-reference/local-storage.md,
 project-primitives/events/functions.md,
@@ -175,6 +180,7 @@ One hit means redesign, not patch.
 | `Every tick` stepping a progress variable by `dt` and feeding it to `lerp` between fixed ends | A tween written by hand, with its own "finished" bookkeeping. `lerp` toward a moving target, or from a value the engine owns, is not this | Tween behavior, *On any finished* |
 | Per-level numbers in variable names, expression constants or a ladder of `Compare` blocks | A lookup table transcribed into events | Array or Dictionary project file, loaded once; Advanced Random for weights |
 | A separated string used as a list or a record: `tokenat`/`tokencount` to read, a `Repeat` that rebuilds it to remove one item, `find` to test membership | An array transcribed into string handling, a loop per removal (a generated card game kept its draw pile, discard pile, hand and exhaust pile this way, and each card as 17 `\|`-separated fields) | Array: *Push*, *Pop*, *Delete*, *Shuffle*, *Contains value*; records in a JSON or Array project file |
+| Behaviour coded in strings: sibling events testing `find(code, "B")`, `find(code, "BU")`, numbers cut out with `mid`, `tokenat`, `right` | A mini-language parsed by hand. `find` matches any part of the text and ignores case, so the branch of `"B"` runs for `"BU"` and `"s"` for `"SHIFT"` (a generated card game coded its enemy moves and card effects this way) | One field per fact, compared with `=` (Native first, "What a move, an effect or an attack does") |
 | A global `state` or `paused` compared at the top of many events | A phase switch or a pause written as a flag | A Group and *Set group active*; *Set time scale* for pause; a layout of its own for another screen |
 | A boolean set by one event and a Timer or `Every tick` elsewhere waiting to finish what that event started | A sequence split across events | *Wait* or *Wait for previous actions* in the block that started it |
 

@@ -247,6 +247,50 @@ def argument_at(expr: str, i: int) -> str:
     return expr[i:j].strip()
 
 
+def arguments_from(expr: str, i: int) -> list[str]:
+    """Every argument of the call whose opening parenthesis ends just before expr[i]."""
+    args = []
+    while True:
+        arg = argument_at(expr, i)
+        args.append(arg)
+        j = expr.index(arg, i) + len(arg) if arg else i
+        while j < len(expr) and expr[j] not in ",)":
+            j += 1
+        if j >= len(expr) or expr[j] == ")":
+            return args
+        i = j + 1
+
+
+def outside_literals(expr: str, matches) -> list:
+    """The regex matches that do not start inside a text literal of expr."""
+    literals = [m.span() for m in STRING_LITERAL.finditer(expr)]
+    return [m for m in matches if not any(a < m.start() < b for a, b in literals)]
+
+
+def top_level_operator(expr: str) -> bool:
+    """Whether expr has a comparison or a logical operator outside literals and parentheses,
+    after its outer parentheses are taken off: a value that is true or false."""
+    text = STRING_LITERAL.sub('""', expr).strip()
+    while text.startswith("(") and text.endswith(")") and argument_at(text, 1) == text[1:-1].strip():
+        text = text[1:-1].strip()
+    depth = 0
+    for c in text:
+        depth += (c == "(") - (c == ")")
+        if depth == 0 and c in "=<>&|":
+            return True
+    return False
+
+
+# Three habits of a generated card game, none in the 565 event sheets of the 524 official
+# examples (event-sheet-design-guidance.md, 2026-10-04): chooseindex(condition, a, b) as an
+# if-else, which the examples write condition ? b : a; sibling events dispatching on
+# find(<same text>, "<code>"); and a value looked up through two text literals,
+# mid("FEMAW", find("WFAEM", X), 1), where the examples step a number with %.
+CHOOSEINDEX_CALL = re.compile(r'(?<![\w.])chooseindex\s*\(', re.I)
+FIND_LITERAL_SECOND = re.compile(r'(?<![\w.])(find|findcase)\s*\(', re.I)
+MID_OF_LITERAL = re.compile(r'(?<![\w.])mid\s*\(\s*("(?:[^"]|"")*")\s*,', re.I)
+
+
 def script_text(script) -> str:
     return "\n".join(script) if isinstance(script, list) else script if isinstance(script, str) else ""
 
@@ -348,7 +392,7 @@ class Checker:
         self.p = p
         self.limit = limit
         self.unsaved = sheets or {}     # edit_sheet.py checks a sheet before it writes it
-        self.style = style              # the three readability warnings of check_style, off unless asked
+        self.style = style              # the warnings of check_style, off unless asked
         self.err, self.warn = p.err, p.warn
         self.layouts: dict[str, dict] = {}
         self.sheets: dict[str, dict] = {}
@@ -858,7 +902,10 @@ class Checker:
                      f"Unknown character\". Inside text it is a plain character: Construct has no escapes")
         scope_lower = {LOWER(k) for k in scope}
         self.check_find(where, expr)
-        found = [m.group(0) for m in C_OPERATOR.finditer(text)]
+        if self.style:
+            self.check_chooseindex(where, expr, scope)
+            self.check_letter_table(where, expr)
+        found =[m.group(0) for m in C_OPERATOR.finditer(text)]
         if found:
             # Rewrite outside the string literals only: "a == b" as text is valid.
             parts, last = [], 0
@@ -991,6 +1038,68 @@ class Checker:
             self.warn(f"{where}: {name}({first}, {second}) searches the one-character text {first} for {second}, "
                       f"so it is -1 unless {second} is {first} or empty; {name}(text, find) takes the text to search "
                       f"first: write {name}({second}, {first})")
+
+    def is_boolean(self, expr: str, scope: dict) -> bool:
+        """A comparison or logical expression, or a boolean variable: local, global or instance."""
+        if top_level_operator(expr):
+            return True
+        m = re.fullmatch(r"\s*(?:(\w+)\s*\.\s*)?(\w+)\s*", expr)
+        if not m:
+            return False
+        if m.group(1) is None:
+            return (self.variable_named(m.group(2), scope) or {}).get("type") == "boolean"
+        types = {LOWER(k): v for k, v in self.p.ivar_types_of(m.group(1)).items()}
+        return types.get(LOWER(m.group(2))) == "boolean"
+
+    def check_chooseindex(self, where: str, expr: str, scope: dict) -> None:
+        """chooseindex(condition, a, b) as an if-else: it returns b when the condition is
+        true, the reverse of the order it is read in. The examples write condition ? b : a."""
+        for m in outside_literals(expr, CHOOSEINDEX_CALL.finditer(expr)):
+            args = arguments_from(expr, m.end())
+            if len(args) != 3 or not self.is_boolean(args[0], scope):
+                continue
+            test, if_false, if_true = args
+            self.p.findings.style_finding(
+                "choice", f"{where}: chooseindex({test}, {if_false}, {if_true}) is a two-way choice on a condition, "
+                          f"which returns its last value when the condition is true; Construct's conditional "
+                          f"operator reads in that order: write {test} ? {if_true} : {if_false}")
+
+    def check_letter_table(self, where: str, expr: str) -> None:
+        """mid("<letters>", find("<letters>", X) ..., 1): a value mapped through two text
+        literals, a table or a cycle of letters."""
+        for m in outside_literals(expr, MID_OF_LITERAL.finditer(expr)):
+            position = argument_at(expr, m.end())
+            for f in outside_literals(position, FIND_CALL.finditer(position)):
+                looked_up = argument_at(position, f.end())
+                letters = unquote(f.group(2))
+                self.p.findings.style_finding(
+                    "table", f"{where}: mid({m.group(1)}, {position}, ...) looks {looked_up} up through the letters "
+                             f"{f.group(2)}, a table written as text; keep {looked_up} as a number 0 to "
+                             f"{len(letters) - 1}: the next one in a cycle is ({looked_up} + 1) % {len(letters)}, "
+                             f"as alien-battle steps (AnimationState + 1) % 3, and a value that maps to another "
+                             f"is a Dictionary key or an Array index loaded from a project file")
+                break
+
+    def check_find_dispatch(self, tests: dict[str, list[tuple[int, str, str]]]) -> None:
+        """Sibling events that test one text with find for different codes: a mini-language
+        dispatched by substring. find matches any part of the text and ignores case, so the
+        branch of "B" fires for "BU" too."""
+        for subject, hits in tests.items():
+            events = sorted({(n, w) for n, w, _ in hits})
+            if len(events) < 2:
+                continue
+            codes = sorted({lit for _, _, lit in hits}, key=lambda s: (len(s), s))
+            plain = [unquote(c).lower() for c in codes]
+            overlap = next(((a, b) for i, a in enumerate(plain) for b in plain[i + 1:] if a and a in b), None)
+            because = (f"\"{overlap[0]}\" also matches \"{overlap[1]}\", so a wrong branch runs" if overlap else
+                       "a code that contains another runs that one's branch too")
+            others = ", ".join(str(n) for n, _ in events[1:])
+            self.p.findings.style_finding(
+                "dispatch", f"{events[0][1]}: with events {others}, picks a branch by testing {subject} for the codes "
+                            f"{', '.join(codes)} with find, which matches any part of the text and ignores case: "
+                            f"{because}. Keep each fact in a field of its own, a text field such as kind compared "
+                            f"with = (an instance variable, or a field of a JSON or Array project file) and numbers "
+                            f"such as amount and times in number fields")
 
     def check_arguments(self, where: str, written: str, sources: list[tuple[dict, dict | None]], name: str,
                         text: str, end: int) -> None:
@@ -1627,6 +1736,7 @@ class Checker:
                            "declared above it in the same list of events")
         ladders = self.ladders(events) if self.style else {}
         numbered: dict[int, list[tuple[int, str]]] = {}
+        find_tests: dict[str, list[tuple[int, str, str]]] = {}
         previous = None
         for i, ev in enumerate(events):
             et = ev.get("eventType")
@@ -1636,6 +1746,9 @@ class Checker:
             self.check_event_lists(ev, et, w)
             if self.style and et in ("block", "function-block", "custom-ace-block"):
                 self.check_style(ev, w, events, i, depth, group, counter[0])
+            if self.style and et == "block":
+                for subject, code in self.find_tests(ev):
+                    find_tests.setdefault(subject, []).append((counter[0], w, code))
             if id(ev) in ladders:
                 rungs = numbered.setdefault(ladders[id(ev)][0], [])
                 rungs.append((counter[0], w))
@@ -1679,6 +1792,24 @@ class Checker:
                          f"function-block, custom-ace-block and script")
             if et != "comment":
                 previous = ev
+        self.check_find_dispatch(find_tests)
+
+    @staticmethod
+    def find_tests(ev: dict) -> list[tuple[str, str]]:
+        """(text searched, code) for each find or findcase in the event's conditions whose
+        second argument is a text literal: find(TMP, "BU")."""
+        tests = []
+        for c in ev.get("conditions", []):
+            params = c.get("parameters")
+            for value in (params.values() if isinstance(params, dict) else []):
+                if not isinstance(value, str):
+                    continue
+                for m in outside_literals(value, FIND_LITERAL_SECOND.finditer(value)):
+                    args = arguments_from(value, m.end())
+                    if len(args) == 2 and STRING_LITERAL.fullmatch(args[1]) and \
+                            not STRING_LITERAL.fullmatch(args[0]):
+                        tests.append((re.sub(r"\s+", "", args[0]), args[1]))
+        return tests
 
     # --- style, with --style ------------------------------------------------------------
     def check_style(self, ev: dict, where: str, siblings: list, i: int, depth: int, group: dict | None,
@@ -2264,9 +2395,10 @@ def main() -> int:
                          f"Every tick beside another condition, "
                          f"sub-events {STYLE_TREE} levels deep whose leaves all call one function, "
                          f"{STYLE_LADDER} or more sibling events of the same conditions and actions with other "
-                         "values, and Every N seconds taking N off a variable, a countdown the Timer "
-                         "behavior keeps. For a project the agent wrote; edit_sheet.py refuses a plan whose new "
-                         "events raise the first four and warns on the other three")
+                         "values, Every N seconds taking N off a variable, a countdown the Timer "
+                         "behavior keeps, chooseindex on a condition, sibling events dispatching on find of one "
+                         "text, and mid through two text literals. For a project the agent wrote; edit_sheet.py "
+                         "refuses a plan whose new events raise the first four and warns on the other six")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()

@@ -209,3 +209,42 @@ def test_style_names_the_operation_that_comments_an_event_in_a_group(project):
     code, out = plan(project, op)
     assert code == 0 and warnings(out) == [], out
     assert "no comment above it" not in check(project, "--style")[1]
+
+
+def test_style_names_chooseindex_on_a_condition(project):
+    """chooseindex(condition, a, b) returns b when the condition is true; ?: reads in that order.
+    A number first is an index among the choices, and three or more choices are a pick."""
+    def text(value):
+        edit(project, SHEET, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text=value))
+        return [w for w in warnings(check(project, "--style")[1]) if "two-way choice on a condition" in w]
+    found = text('chooseindex(score > 1, "few", "many")')
+    assert len(found) == 1 and found[0].endswith('write score > 1 ? "many" : "few"'), found
+    assert text('chooseindex(score, "few", "many")') == []
+    assert text('chooseindex(score > 1, "few", "many", "all")') == []
+
+
+def test_style_names_a_table_written_as_letters(project):
+    """mid through two text literals maps a value by its place in a string; a cycle is a number with %."""
+    def text(value):
+        edit(project, SHEET, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text=value))
+        return [w for w in warnings(check(project, "--style")[1]) if "a table written as text" in w]
+    found = text('mid("BCA", find("ABC", ScoreText.Text), 1)')
+    assert len(found) == 1 and "keep ScoreText.Text as a number 0 to 2" in found[0] and \
+        "(ScoreText.Text + 1) % 3" in found[0], found
+    assert text('mid(ScoreText.Text, find(ScoreText.Text, "A"), 1)') == []
+    assert text('"mid(""BCA"", find(""ABC"", x), 1)"') == []
+
+
+def test_style_names_sibling_events_dispatching_on_find(project):
+    """Sibling events testing one text with find for different codes: "B" also matches "BU"."""
+    def finds(*codes):
+        return [with_own_sids(block([cond("compare-two-values", params={
+            "first-value": f'find(ScoreText.Text, "{code}")', "comparison": 5, "second-value": "0"})],
+            STYLE_ACTIONS[:1]), 940_000_000_000_000 + 10 * i) for i, code in enumerate(codes)]
+    edit(project, SHEET, lambda s: events(s)["input"].update(children=finds("B", "BU")))
+    found = [w for w in warnings(check(project, "--style")[1]) if "picks a branch by testing" in w]
+    assert len(found) == 1 and re.search(r"event 6 \(sid \d+\): with events 7, picks a branch by testing "
+                                         r"ScoreText\.Text for the codes \"B\", \"BU\"", found[0]), found
+    assert '"b" also matches "bu"' in found[0] and "compared with =" in found[0], found
+    edit(project, SHEET, lambda s: events(s)["input"].update(children=finds("B")))
+    assert "picks a branch by testing" not in check(project, "--style")[1]
