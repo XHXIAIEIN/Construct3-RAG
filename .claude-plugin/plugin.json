@@ -1,6 +1,6 @@
 {
   "name": "construct3",
-  "description": "Look up, read, edit, check and generate Construct 3 folder projects against the bilingual Construct3-RAG schemas.",
+  "description": "Make Construct 3 games: look up conditions, actions and expressions, read and write event sheets, and check that the project opens in the editor.",
   "author": { "name": "XHXIAIEIN" },
   "homepage": "https://github.com/XHXIAIEIN/Construct3-RAG",
   "repository": "https://github.com/XHXIAIEIN/Construct3-RAG",

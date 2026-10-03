@@ -6,7 +6,7 @@
     {
       "name": "construct3",
       "source": "./",
-      "description": "Look up, read, edit, check and generate Construct 3 folder projects against the bilingual Construct3-RAG schemas.",
+      "description": "Make Construct 3 games: look up conditions, actions and expressions, read and write event sheets, and check that the project opens in the editor.",
       "category": "development"
     }
   ]
