@@ -273,6 +273,11 @@ def addon_word_lines(p: c3.Project, sources: list[tuple[str, str | None, dict]],
 
 def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
     sources = sources_of(p, target)
+    if LOWER(target) == LOWER(p.functions_object):
+        # A model that has not met it writes an object type and a usedAddons entry, and the editor
+        # reports a missing legacy addon.
+        print(f"note: {p.functions_object} is built in: project.c3proj names it in \"functionsName\", with no "
+              f"object type file and no usedAddons entry")
     entries = []        # (its names, its names and category, owner, behavior, addon, kind, entry)
     param_text = []     # parameter names and combo values, in step with entries
     written = {}        # (behavior, addon, expression id) -> the name it is written under

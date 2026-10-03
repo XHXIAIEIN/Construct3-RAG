@@ -473,6 +473,14 @@ class Checker:
         for a in p.data.get("usedAddons", []):
             if a.get("type") in ("plugin", "behavior"):
                 self.check_addon_id(a["type"] + "s", a["id"], "project.c3proj usedAddons")
+                p.schema(a["type"] + "s", a["id"])     # an id by Scirra that no addon has is reported here
+        for name in p.types:
+            if LOWER(name) == LOWER(p.functions_object):
+                self.err(f"object type {name} has the name of the built-in {p.functions_object} object, which "
+                         f"project.c3proj names in \"functionsName\", compared without case. Functions are "
+                         f"built in: delete "
+                         f"objectTypes/{name}.json, its name in the objectTypes items and its usedAddons entry; "
+                         f"an action of a function writes \"objectClass\": \"{p.functions_object}\"")
         # Object types, families and the Functions object share one namespace, without case.
         def listed(folder) -> list[str]:
             folder = folder if isinstance(folder, dict) else {}

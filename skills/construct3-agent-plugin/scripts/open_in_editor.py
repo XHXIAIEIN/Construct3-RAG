@@ -216,8 +216,10 @@ OPEN_DIALOGS_JS = r"""[...document.querySelectorAll('dialog[open]')].filter(d =>
 
 NEXT = ("next: a message that names a place, `Game, event 12, condition 1`, is event 12 of sheet Game as "
         "scripts/print_sheet.py numbers it: fix it, run scripts/check_project.py, then this script again, and "
-        "when the checker had passed it, tell the user the message, since the checker lacks that rule. Missing "
-        "addons are installed in the editor, not written into the files: tell the user which.")
+        "when the checker had passed it, tell the user the message, since the checker lacks that rule. A missing "
+        "addon by Scirra is an id the project invented: remove it from the files (Functions are built in and "
+        "need no object type or usedAddons entry). A missing addon by another author is installed in the "
+        "editor, not written into the files: tell the user which.")
 NEXT_PREVIEW = ("next: a runtime error names its place, `Event sheet 1, event 3, action 1` for a script in an event, "
                 "numbered as scripts/print_sheet.py numbers it: fix it and run this again with --preview. The preview "
                 "starts on the layout the editor shows after opening, as F5 does: firstLayout, or the one the editor "

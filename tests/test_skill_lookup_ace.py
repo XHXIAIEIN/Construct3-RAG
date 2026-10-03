@@ -35,6 +35,13 @@ def test_ace_lookup_lists_briefly_when_many_match(built):
     assert code == 0 and "add a word to narrow them" in out and "write:" not in out
 
 
+def test_ace_lookup_says_functions_is_built_in(built):
+    code, out = tool(built, "lookup_ace", "Functions", "set", "return")
+    assert code == 0
+    assert out.splitlines()[0] == ('note: Functions is built in: project.c3proj names it in "functionsName", '
+                                   'with no object type file and no usedAddons entry'), out
+
+
 def test_ace_lookup_needs_no_project_and_takes_a_display_name(tmp_path):
     shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
     code, out = tool(tmp_path, "lookup_ace", "8 Direction", "max", "speed")

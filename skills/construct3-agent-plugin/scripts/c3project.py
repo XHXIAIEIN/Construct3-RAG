@@ -36,6 +36,18 @@ NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
 # (SetIsDeprecated, isDeprecated, is-deprecated).
 DEPRECATED = "Construct 3 no longer offers it and keeps it only so that old projects open"
 
+# The ACEs of the built-in Functions object. The System schema holds them, and a
+# project writes them under the name project.c3proj gives in functionsName: the
+# official examples write "objectClass": "Functions" for all 216 Set return value
+# and all 17 function map actions, never "System".
+FUNCTIONS_ACES = {"set-function-return-value"}
+FUNCTIONS_CATEGORY = "function-maps"
+
+
+def is_functions_ace(it: dict) -> bool:
+    """Whether a System schema entry belongs to the built-in Functions object."""
+    return it.get("id") in FUNCTIONS_ACES or it.get("category") == FUNCTIONS_CATEGORY
+
 
 class Findings:
     """Errors fail the run; warnings are printed and do not. Each is kept once.
@@ -391,6 +403,14 @@ class Project:
                               f"{DEPRECATED}; {unchecked} not checked")
                 elif hint:
                     self.err(f"{kind[:-1]} id {addon_id!r} does not exist: the editor's id is {hint!r}")
+                elif kind != "effects" and self.used_addons.get(addon_id, {}).get("author") == "Scirra":
+                    # Every addon by Scirra is in the schema index, so one that is not there was made up.
+                    # The editor reports it as a missing legacy (SDK v1) addon and does not open the project.
+                    self.err(f"{kind[:-1]} id {addon_id!r} is invented: usedAddons lists it by Scirra, and no "
+                             f"addon by Scirra has that id, so the editor stops with \"Missing addons\". Remove "
+                             f"its usedAddons entry and the object type or behavior that uses it. Functions need "
+                             f"no object type and no usedAddons entry: project.c3proj names the built-in object "
+                             f"in \"functionsName\": \"{self.functions_object}\"")
                 else:
                     self.warn(f"no schema for {kind[:-1]} {addon_id}: its ACEs and properties are not checked")
         return self._schema_cache[key]

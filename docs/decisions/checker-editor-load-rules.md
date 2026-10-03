@@ -206,6 +206,18 @@ Option 2 as the default, and option 3 as the step after it.
   can't go here`. None of the 1028 function parameters of the official
   examples is named like a system expression and none of their sheets
   writes the empty pair; the sweep changed no output.
+- A generated project held `objectTypes/Functions.json` with the plugin id
+  `Functions` and a `usedAddons` entry of that id by Scirra. The checker
+  warned that the plugin had no schema and passed; the r495.2 editor
+  stopped with `Missing addons ... Plugin Functions (Functions) by Scirra
+  (legacy SDK v1)`. Functions are built in: `project.c3proj` names the
+  object in `functionsName`, and the official examples write
+  `"objectClass": "Functions"` with no object type or `usedAddons` entry
+  for it. The checker now refuses an object type named like
+  `functionsName`, and a plugin or behavior id that `usedAddons` lists by
+  Scirra but the schema index lacks, since the index holds every addon by
+  Scirra; an id by another author stays a warning. None of the 524 official
+  examples has either finding.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from

@@ -644,6 +644,28 @@ def test_third_party_addon_stays_a_warning(project):
     assert out.rstrip().splitlines()[-1].startswith("ok:"), out     # its ACEs pass unchecked
 
 
+def test_an_invented_functions_object_type_is_refused(project):
+    """A model wrote objectTypes/Functions.json with an addon by Scirra of that id; the editor
+    reported "Missing addons ... Plugin Functions (Functions) by Scirra (legacy SDK v1)"."""
+    edit(project, "project.c3proj", lambda p: p["usedAddons"].append(
+        {"type": "plugin", "id": "Functions", "name": "Functions", "author": "Scirra", "bundled": False}))
+    (project / "objectTypes" / "Functions.json").write_text(json.dumps(
+        {"name": "Functions", "plugin-id": "Functions", "sid": 7, "isGlobal": True}), encoding="utf-8")
+    edit(project, "project.c3proj", lambda p: p["objectTypes"]["items"].append("Functions"))
+    code, out = check(project)
+    assert code == 1, out
+    assert "object type Functions has the name of the built-in Functions object" in out
+    assert "plugin id 'Functions' is invented" in out and '"functionsName": "Functions"' in out
+    assert "warning: no schema for plugin Functions" not in out
+
+
+def test_an_invented_scirra_behavior_in_used_addons_is_refused(project):
+    edit(project, "project.c3proj", lambda p: p["usedAddons"].append(
+        {"type": "behavior", "id": "Gravity", "name": "Gravity", "author": "Scirra", "bundled": False}))
+    code, out = check(project)
+    assert code == 1 and "behavior id 'Gravity' is invented" in out, out
+
+
 def test_a_deprecated_addon_is_named_so(project):
     """NW.js has no schema, like a third-party addon, but the editor still opens a project with it."""
     edit(project, "project.c3proj", lambda p: p["usedAddons"].append(
