@@ -178,11 +178,34 @@ def key_event(name: str) -> dict | None:
     return None
 
 
+def statements(line: str) -> bool:
+    """Whether a line holds a `;` outside brackets and strings, so more than one statement."""
+    depth, quote, escaped = 0, "", False
+    for ch in line:
+        if quote:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == quote:
+                quote = ""
+        elif ch in "'\"`":
+            quote = ch
+        elif ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth -= 1
+        elif ch == ";" and depth == 0:
+            return True
+    return False
+
+
 def code(text: str | list[str]) -> str:
     """The body of an async function: a single expression is returned as it is."""
     body = "\n".join(text) if isinstance(text, list) else text
     one = body.strip().rstrip(";")
-    if "\n" not in one and ";" not in one and not one.startswith(("return ", "return;", "const ", "let ", "if ")):
+    if "\n" not in one and not statements(one) and \
+            not one.startswith(("return ", "return;", "const ", "let ", "var ", "if ", "for ", "while ", "throw ")):
         return f"return ({one});"
     return body
 
