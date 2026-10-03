@@ -1,6 +1,6 @@
 # The Game's Look: What Design Skills Do, and What the Generator Takes
 
-Date: 2026-09-26
+Date: 2026-10-04
 Schema: Construct 3 r495.2
 
 ## Problem
@@ -62,6 +62,21 @@ clean heart to an octagon between runs of one prompt; the user judged the
 icons too crude for a default, and a default is what a small model repeats.
 Without it, runs drew plain shapes in roles of `PALETTE` and scored as well.
 
+### A generated card game
+
+A small model built a card game from this skill, with the generator's look
+values, and previewed four scenes with screenshots. The screenshots showed
+labels cut by boxes too narrow for them, the names and descriptions of five
+cards stacked on one card while the others showed none, a subtitle drawn over
+the title, a name over the enemy it names, the hero inside the hand, every map
+node with the same icon, one decoration repeated on every layout, and four
+drawing styles at once. The model reported the menu as rendering normally.
+Most of these are measurable from the runtime: run over the same project,
+the instance checks below found the cut labels, the stacked card texts, a
+price over a card's name and a wrapped score line; the rest showed only in
+the picture. Run over the official examples, the same checks found nothing
+once their exceptions were in place.
+
 ## Options
 
 1. **Install a third-party design skill beside this one.** The web skills
@@ -76,7 +91,8 @@ Without it, runs drew plain shapes in roles of `PALETTE` and scored as well.
    sampling.** A sampling warning would fire on small projects that are not
    pixel art.
 5. **A render-and-look loop** over the running game: the mechanism most
-   skills share and the one with no counterpart here.
+   skills share. The preview player made it reachable: the runtime gives
+   every instance's box, layer, text size and frame.
 6. **A critic subagent or a model-scored rubric.** It finds what no check
    does and cannot be scored; an eval may use one, the flow does not need it.
 7. **Copy an official example's art into the project.** The examples'
@@ -105,14 +121,46 @@ Option 3, with one bullet of option 2 in
   *Letterbox integer scale*.
 - `layer()` fills an opaque layer from a role, `canvas` unless named.
 
+Option 5, as a mechanical report and a fixed checklist, after the editor's
+preview became reachable: `scripts/review_look.py` previews the project,
+visits every layout through the runtime, takes a screenshot of each and
+prints
+
+- one line per measured fault, naming the layout, the object type, the UID
+  and what to change: a text its box cuts, instances of one type on one box,
+  overlaps on the HUD and texts over texts, a HUD instance the screen's edge
+  cuts, kinds of a Sprite type shown with one frame. Each rule fired on an
+  official example until an exception covered it, and the exception is in
+  the rule: a text and its shadow, an overlay over half the screen, an
+  instance waiting wholly off screen, art running off the edge of a world
+  layer, hidden state such as a mine's, a kind told apart by its label.
+- a fixed list of yes/no questions about visible facts that the agent
+  answers from each screenshot with its own image tool, each yes naming the
+  object to change: cut or overlapping text, objects that cover others,
+  the edge of the screen, mixed drawing styles, a backdrop that outshines
+  what the player acts on, kinds that look alike, decoration repeated on
+  every layout.
+
+The script judges no taste and calls no model; the default path stays
+offline apart from the editor, as the opener is. Option 6 stays out of the
+flow: a critic or a scored rubric is a second model to run and calibrate,
+while a small model reading tool output answers concrete questions.
+
 ## Re-evaluate when
 
 - A run passes `painted=True` for flat art: the way out is used as a way
   round; the message must say when it applies, or the flag goes.
 - A label passes the contrast check and a user still cannot read it over
   play: check the colours under the label's box, not the layer's.
-- The editor's preview is reachable from the session: try option 5,
+- A finding line fires on an official example or a user's game where the
+  picture shows nothing wrong: narrow the rule, or drop it.
+- An agent answers the questions "no" over a screenshot that shows the
+  fault: the question is not concrete enough for it, or option 6 is due,
   measured on the eval cases.
+- A fault the picture shows recurs across generated games and the runtime
+  can measure it: it becomes a finding line.
+- Most faults sit in scenes `goToLayout` cannot reach: let the script play a
+  plan to a scene before it reviews it.
 - A route to real art is built (CC0 packs or an image model): the icon
   checks, a box on the grid and 3:1 against the backdrop, go with it.
 - A HUD sprite of one colour does not show on the layer behind it: check

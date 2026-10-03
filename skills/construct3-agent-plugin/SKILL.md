@@ -53,6 +53,7 @@ opened once before it is handed over.
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds seven warnings from the official examples' style, for a project the agent wrote |
 | `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then previews it for 5 seconds, of which the game runs about 4, and prints the ticks the runtime ran and its errors, each with its event; `--state [TYPE ...]` adds what the game holds at the end: global variables, instance counts, and the instances of the types named. `--install-addon FILE.c3addon` first installs a custom addon the project uses, or prints the editor's refusal. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
 | `scripts/preview_project.py PLAN.json` | Preview the project and play it from a plan: tap, hold and drag the game's instances by name, press keys, wait `until` an expression holds, run JavaScript against the runtime, read the state, take screenshots and record the window between steps, a recording with a page to review it frame by frame beside the steps and the values it watched; one line per step with the runtime errors it caused. Each run starts from a first launch, with no save. `--help` describes the plan |
+| `scripts/review_look.py` | Preview the project, visit every layout and print a screenshot of each, the faults the runtime shows on it, and fixed yes/no questions to answer from the screenshots |
 | `scripts/export_project.py` | Export the project to Web (HTML5) in the editor into `--to`, `--bump` raising its version. The editor exports for a subscribed account, which the user logs in to: read [references/export-project.md](references/export-project.md) before the first export of a project, when the script stops, or before passing `--attach` |
 | `scripts/pack_project.py` | Save the project as a .c3p or .zip, or a .c3p or .zip as a project folder, with project.c3proj at the root of the archive as the editor needs it and only the files the editor saves; what it leaves out it names. Any project handed over as a file, a bug report's attachment among them, is packed with it, `--open` opens the result once in the editor |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
@@ -222,7 +223,7 @@ not held to this. `--dry-run` does all of that and writes nothing.
    there instead of running the project again.
    `--headed` shows the window instead, when the user asks to watch.
    `opened` with
-   `preview: ... no errors` is the hand-over. `failed` prints the editor's
+   `preview: ... no errors` passes, and step 6 follows. `failed` prints the editor's
    dialog, which names the place as `Game, event 12, condition 1`, event 12
    of sheet Game as `print_sheet.py` numbers it; a `runtime:` line names it
    as `Event sheet 1, event 3, action 1`. Fix either as a finding and go
@@ -241,6 +242,12 @@ not held to this. `--dry-run` does all of that and writes nothing.
    driving the preview with input from a script.
    Exit code 3: the machine has no browser the script can drive; follow the
    steps it printed instead.
+6. Once the preview passes, run `python scripts/review_look.py` and do what
+   it prints: fix every finding line, open each screenshot it names with the
+   image tool of this session and answer its questions, then fix each yes
+   and run it again; a run with no finding and every answer no is the
+   hand-over. A scene the game reaches only in play is read the same way
+   from a `shot` of a plan.
 
 `ok:` is about the files, not the game. The checker cannot run the events:
 which instances a condition picks, what order triggers fire in and what a
