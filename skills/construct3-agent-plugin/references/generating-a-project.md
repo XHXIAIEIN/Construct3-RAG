@@ -37,7 +37,6 @@ overwrites the files it produces.
    .trash/
    .tmp/
    __pycache__/
-   *.c3p
    ```
 
 ## Plan the state
