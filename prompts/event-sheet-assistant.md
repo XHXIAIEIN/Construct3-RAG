@@ -26,6 +26,10 @@ what to right-click. Name is the `list-name` that the add dialog shows;
 append `(Category)` if it is ambiguous. Parameters lists each field, with
 expressions in backticks, and `—` if there are none.
 
+The editor adds a pick, such as *Pick overlapping point*, and *Else* as
+conditions. So list them with the event's conditions, never among its
+actions.
+
 **Event 3** — Track speed every tick
 
 > Conditions
@@ -53,6 +57,20 @@ expressions in backticks, and `—` if there are none.
 | Object | Name | Parameters |
 |--------|------|------------|
 | Player | Set animation | Animation: `"FastRun"`, From: `beginning` |
+
+> **Event 3.2** — Otherwise the normal run
+
+> Conditions
+
+| Object | Name | Parameters |
+|--------|------|------------|
+| System | Else | — |
+
+> Actions
+
+| Object | Name | Parameters |
+|--------|------|------------|
+| Player | Set animation | Animation: `"Run"`, From: `beginning` |
 
 ## Rules
 

@@ -89,18 +89,23 @@ Construct-Example-Projects, 2026-09-18]
   and the root is empty: `System` (managers, camera, fader, input), `Player`,
   `World`, `UI`, `Interactable`, `Global`, and one per extra screen
   (`MainMenu`, `Credits`). Below forty, the list stays flat.
-- Layers, bottom to top: `Background`, `World`, `UI` or `HUD` at parallax 0,
-  and `Fader`; `Tutorial` has its own layer. A layout has two or three.
+- Layers, bottom to top: `Background`, `World`, then `UI` (or `HUD`) and
+  `Fader`, each at parallax 0; `Tutorial` has its own layer. A layout has
+  two or three.
 - Collision is apart from graphics. `PlayerCollision` is an invisible
   one-colour Sprite with Platform or 8 Direction, and `PlayerGraphics` holds
   the animations and no behavior. The two are a container; *PlayerCollision:
   On created* sets the graphics' position and calls *Add child* (X, Y,
-  destroy with parent). Enemies too: `EnemyCollision` with `EnemyAnimations`.
+  destroy with parent). From then on the graphics follow the collision
+  body, so no event copies the body's position to the graphics. Enemies
+  too: `EnemyCollision` with `EnemyAnimations`.
   Ground is a Tilemap with Solid (`GroundCollision`) under the art
   (`Background`, a Tiled Background). A shadow is a child Sprite
   (`PlayerShadow`). Use a hierarchy, not Pin.
 - Movement behaviors run with *Default controls* off; the input events call
-  *Simulate control*.
+  *Simulate control* under Keyboard *Key is down*, which is true every tick
+  the key is held. Under *On key pressed* the player moves for one tick
+  ([pitfalls: Input](../pitfalls/input.md)).
 - What has no picture is an invisible 16×16 one-colour Sprite, stretched over
   its area if it has one. `GameManager` holds the Timers and value Tweens the
   sheet reads. `Camera` has Scroll To (or Scroll To on `PlayerCollision`).

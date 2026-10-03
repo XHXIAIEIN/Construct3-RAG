@@ -23,6 +23,7 @@ children, overlap and collision tests, or sub-events that rely on the
 parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 
 - An instance with collisions disabled fails every overlap and collision test, both ways. Use this for a dragged or tweening instance, not an `isMoving` flag.
+- A Solid blocks while its behavior is enabled, so a door that only plays an open animation keeps blocking. Disable its Solid with *Set enabled*, or destroy it.
 - The slot a dragged or tweening instance will land on reads empty until it lands. An event that fills empty slots on its own waits for it.
 - A type and its family are picked separately, so narrowing `Piece` never narrows `Pieces`. Refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
@@ -33,6 +34,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 - Sub-events run after the parent's actions, so their conditions see what those actions changed.
 - A hierarchy child can be on another layer than its parent and stay its child. So a lifted parent can be drawn above everything while its parts stay under an outline.
 - `ChildCount`, *Compare child count* and *Has children* count children of every type. Count one type with *Pick children* plus `PickedCount`.
+- A destroyed instance still counts in `Count` until the top-level event ends. Test "none left" in a top-level event of its own.
 - A destroyed child still counts as a child until the top-level event ends. Count from a later top-level event or with *Pick children* plus `PickedCount`.
 - Turret *Add object to target* takes the whole type or family, whatever the event picked. To target only some instances, leave it out and run *Acquire target* on one picked instance.
 
@@ -123,12 +125,14 @@ If the events place, move or rotate objects or read the viewport, read
 ### Input
 
 If the events use Mouse and Touch together, tell a finger from a mouse,
-hide what can be pressed, bind keys, or ask the browser for fullscreen, a
-permission or a picker, read [pitfalls/input.md](pitfalls/input.md).
+hide what can be pressed, bind keys, steer a movement behavior, or ask the
+browser for fullscreen, a permission or a picker, read
+[pitfalls/input.md](pitfalls/input.md).
 
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too. Detect the input method with it off.
 - Touch and Mouse press an object that is invisible or has collisions disabled. Add *Is visible* to the event or set its layer not interactive.
+- *Simulate control* acts only in the tick it runs. Put it in an event whose condition stays true while the control is held: *Key is down*, not *On key pressed*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
 

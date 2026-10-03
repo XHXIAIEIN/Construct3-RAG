@@ -48,11 +48,14 @@ without `.md`, after
    condition can answer the question.
 2. **Read the state that the engine already keeps.** Position, overlap,
    dragging, tween progress, animation name and frame, parent and child all
-   have conditions and expressions. A boolean that copies one of them
-   (`occupied`, `isDragging`) stops matching the engine as soon as
-   instances move, and every event that must update it can forget to. Store
-   only what nothing can answer (level, score, where a drag started), on the
-   instance it describes. If family events read it, declare it on the
+   have conditions and expressions. So does the number of instances:
+   `Brick.Count`, or `PickedCount` after a pick. A destroyed instance still
+   counts until the top-level event ends
+   ([pitfalls: Picking](pitfalls/picking.md)). A variable that copies one of
+   these (`occupied`, `isDragging`, `bricksLeft`) stops matching the engine
+   as soon as instances move or are destroyed. Every event that must update
+   it can forget to. Store only what nothing can answer (level, score,
+   where a drag started), on the instance it describes. If family events read it, declare it on the
    family.
 
    A decision that plays out as an animation is such a value. While the
@@ -71,12 +74,17 @@ without `.md`, after
    `Set collisions disabled` at `On drag start`, and enable them again when
    the instance settles (Tween `On any finished`). Every overlap test then
    ignores it: its old slot tests as empty, and a drop back on that slot
-   takes the empty-slot branch.
+   takes the empty-slot branch. In the same way, a Solid that should stop
+   blocking, such as a door that opens, gets Solid *Set enabled* off. Its
+   animation alone leaves it blocking.
 6. **Shape an interaction as a trigger, narrowing sub-events and Else.**
    Each branch reads as a sentence: on drop; over a slot; slot holds a
    piece; same level: merge. Else: swap. Else: move in. Else: go back.
    Collecting values into variables first and branching on the numbers is
-   the wrong shape.
+   the wrong shape. A branch holds one trigger, and a function counts as
+   one. So the *On finished* of a tween that a function starts is a
+   top-level event of its own
+   ([pitfalls: Triggers and Else](pitfalls/triggers-and-else.md)).
 7. **Derive appearance every tick.** One event without conditions sets the
    default look. The next picks the exceptions and overrides it, so nothing
    needs a reset.
@@ -105,8 +113,9 @@ is a program transcribed into events, even without a picking smell.
 | Smooth follow of a target that keeps moving: camera, cursor, aim angle | `lerp(a, b, 1 - f^dt)` (`anglelerp` for angles) in `Every tick`; it reads the target again each tick and never finishes | A Tween restarted every tick; `lerp(a, b, 0.1)` with a constant factor, which is framerate-dependent |
 | A value derived from another live value: colour from health, zoom from speed, a slider position | `lerp(lo, hi, t)` with `t` from `unlerp`, a ratio, `Tween.Value(tag)` or a timeline; no duration of its own | A variable holding the mapped value, updated from several events |
 | Continuous motion toward a target or along a heading | MoveTo, Bullet, Pathfinding, Platform, 8 Direction | `Set X`/`Set Y` from your own velocity variables |
+| A part that moves with a body: the graphics on a collision box, a shadow, a held item | Hierarchy: *Add child* once, when the body is created; the child then follows it | An every-tick *Set position* to the body's X and Y |
 | Repeating or periodic movement, flashing, fading out | Sine, Flash, Rotate; a fade is a Tween on Opacity | Hand-written oscillation; the Fade behavior, superseded |
-| Level data, loot tables, stat curves, any lookup table | Array or Dictionary project file (Project Bar: *New - Array / Dictionary*), loaded at start with AJAX *Request project file* then *Load* from `AJAX.LastData`; nested or hand-written data through the JSON plugin | Per-level instance variables, `level1Hp`, chained conditions or nested ternaries that encode the table in expressions |
+| Level data, loot tables, stat curves, any lookup table | Array or Dictionary project file (Project Bar: *New - Array / Dictionary*), loaded in *On start of layout*: AJAX *Request project file*, *Wait for previous actions*, then *Load* from `AJAX.LastData`, all in that one block, because a *Wait* delays only its own block (cell-linking loads its level this way). An AJAX *On completed* is a trigger and cannot sit under *On start of layout*. Nested or hand-written data through the JSON plugin | Per-level instance variables, `level1Hp`, chained conditions or nested ternaries that encode the table in expressions |
 | A list that changes at runtime: a deck and its discard pile, a queue, an inventory, a playlist | One Array per list, width 0 at start: *Push* to add, *Shuffle*, `Front`, `Back` or `At(i)` to read, then *Pop* or *Delete* to remove (they return nothing, so read first), *Contains value* to test membership, `Width` to count (place-stickers `InventoryArray`, airborne-explorer `ArrBGM`). Load definitions with several fields from a project file (row above) | A separated string read with `tokenat` (smell table) |
 | What a move, an effect or an attack does: its kind and its numbers | One field per fact, a `kind` text and `amount` and `times` numbers, as instance variables or fields of a project file (row above); the branch is an exact comparison, `kind = "block"`, one sibling event or `Else` per kind (alien-battle: under the boss's *On Timer*, `AnimationState = 0`, `= 1`, `= 2`, one attack each) | A code such as `"A6x2"` parsed with `mid`, `tokenat` or `right` and dispatched with `find` (smell table) |
 | A value that depends on a condition | `condition ? ifTrue : ifFalse` (airborne-explorer `endlessMode ? ENDLESS_TIME_LIMIT : ...`, balloon-blower `currAudioSource > 0 ? ... : ...`); `chooseindex(i, a, b, c)` to pick by a number, `choose` at random | `chooseindex(condition, ifFalse, ifTrue)`, the branches in reverse reading order |
@@ -190,6 +199,7 @@ If a draft matches one row, redesign it instead of patching it.
 | Globals such as `DragUID`, `Selected` | The trigger's pick copied into globals | The picked instance; store only what the engine cannot recover, such as a start position |
 | Local variables filled by one block, then an `Else` chain on them | A program transcribed into events | Trigger, narrowing sub-events, `Else` |
 | A boolean such as `occupied`, `busy` written from several events | State that copies a condition | `Is overlapping another object`, `Is dragging`, `Is playing` |
+| A variable that counts instances: raised on create, lowered on destroy, or set from `PickedCount` every tick | A copy of the engine's count | `Brick.Count`, or a pick and `PickedCount`, read where the decision is made. A destroyed instance is released at the end of the top-level event, so test "none left" in a top-level event of its own ([pitfalls: Picking](pitfalls/picking.md)) |
 | Custom actions named `attach`, `detach`, `sync` that write two variables | Two copies of one fact | One source, usually the engine's |
 | `Pick by unique ID` for the object the trigger already picked | Re-picking what is picked | Delete the condition |
 | `For each` before actions that already run per picked instance | A redundant loop | Delete it, unless a function call or a pick by one instance's position follows (see [pitfalls: Triggers and Else](pitfalls/triggers-and-else.md)) |

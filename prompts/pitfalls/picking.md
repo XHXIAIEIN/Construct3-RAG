@@ -9,6 +9,13 @@ Sources and the rule for adding an entry are in the index,
   [manual: plugin-reference/sprite.md "Set collisions enabled";
   scripting/scripting-reference/object-interfaces/iworldinstance.md
   `isCollisionEnabled`]
+- A Solid blocks while its behavior is enabled, through the collision
+  polygon of its current frame. So a door that only plays an open
+  animation keeps blocking wherever its frames' polygons reach. When the
+  door opens, disable its Solid with *Set enabled*, or destroy it. [manual:
+  behavior-reference/solid.md "Is enabled", "Set enabled";
+  behavior-reference/platform.md, the collision polygon changing as an
+  animation plays]
 - While a dragged or tweening instance has collisions disabled, the slot
   where it will land reads empty until it lands, the slot it is flying back
   to included. The
@@ -80,6 +87,14 @@ Sources and the rule for adding an entry are in the index,
   children. [manual: plugin-reference/common-features/common-expressions.md
   "ChildCount", common-conditions.md "Compare child count"; observed in a
   game project, 2026-09-17]
+- *Destroy* releases the instance only at the end of the top-level event,
+  and until then `Count` still includes it. So the event that destroys the
+  last brick still reads `Brick.Count` as 1. Test "none left" in a
+  top-level event of its own. [manual: system-reference/system-actions.md
+  "Unload images" note "destroying objects does not really release them
+  until the end of the next top-level event"; runtime: exported
+  c3runtime.js r504, `Count` is `GetInstanceCount()` plus the instances
+  pending creation, and `DestroyInstance` defers the removal]
 - *Destroy* does not detach a child from its parent. The runtime releases the
   instance only at the end of the top-level event. Until then *Compare child
   count*, *Has children*, `ChildCount` and *Pick children* still see it. So

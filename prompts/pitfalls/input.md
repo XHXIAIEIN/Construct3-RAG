@@ -63,6 +63,12 @@ Sources and the rule for adding an entry are in the index,
   a button ran its *On touched object* event with the button invisible, with
   its collisions disabled and with its layer invisible, and did not with the
   layer not interactive]
+- *Simulate control* acts in the tick it runs, as if the control were held
+  for that tick. So put it in an event whose condition stays true while the
+  control is held, such as Keyboard *Key is down*. In an *On key pressed*
+  event the player moves for one tick and stops. [manual:
+  behavior-reference.md "Custom controls", the tip that the input events
+  must be continually true]
 - A game that moves with W, A, S and D alone is hard to control on an AZERTY
   keyboard. There those letters sit elsewhere and ZQSD takes their place.
   Give every direction its arrow key too, in an OR block with the letter or
