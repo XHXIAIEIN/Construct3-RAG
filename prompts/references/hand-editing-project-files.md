@@ -186,8 +186,8 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   "Physics"` where only family `Parts` declares Physics. The member's layout
   instances hold the family behavior's properties block as if it were their
   own.
-- A project with Bundle addons set holds `"bundleAddons": true` in
-  `project.c3proj`, each bundled addon's `usedAddons` entry with
+- A project with Bundle addons set, the test project of an addon under
+  development, holds `"bundleAddons": true` in `project.c3proj`, each bundled addon's `usedAddons` entry with
   `"bundled": true` and its `"version"`, and the addon itself at
   `addons/<type>/<id>.c3addon`, `addons/effect/<id>.c3addon` for an
   effect. An effect's color parameter on a layout instance is four

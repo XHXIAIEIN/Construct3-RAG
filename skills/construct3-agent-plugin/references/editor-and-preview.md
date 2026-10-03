@@ -130,16 +130,18 @@ which cases to play and how to reach and read them to
   `pack_project.py` warns when it writes such a path. [observed in Chrome
   154, 2026-10-02: a 73 KB zip at a 273-character path arrived as 0 bytes,
   the same file under `%TEMP%` whole]
-- A project saved with Bundle addons asks, while it opens, to install each
-  bundled addon the browser profile lacks, and waits at
+- Bundle addons is a project setting for developing an addon: the test
+  project carries the addon, so a fresh browser profile opens it and
+  previews the addon's latest build. A game project leaves it off, as the
+  generator template does. A project saved with it asks, while it opens, to
+  install each bundled addon the profile lacks, and waits at
   `#addonConfirmInstallDialog` with the progress dialog still open.
   `open_in_editor.py` clicks Install and names the addon in a `warning:`
   line; the preview then runs with it. A project that uses a custom addon
   without bundling it fails with "Missing addons" in any profile that has
-  not installed it, the headless one included: bundle the addon in an
-  example or a repro. [observed in r504, 2026-10-03: an effect addon
-  bundled in a demo installed from the dialog and previewed in a fresh
-  profile]
+  not installed it, the headless one included. [observed in r504,
+  2026-10-03: an effect addon bundled in its test project installed from
+  the dialog and previewed in a fresh profile]
 - The editor refuses a `.c3addon` whose `addon.json` leaves `name`, `id`,
   `version`, `author`, `website`, `documentation` or `description` empty,
   with "Failed to install the addon" and the console line `invalid addon
