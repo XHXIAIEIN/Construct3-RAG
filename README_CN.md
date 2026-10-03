@@ -2,7 +2,7 @@
 
 [English](README.md) | **中文**
 
-Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construct 3](https://www.construct.net) 游戏。它按编辑器的定义收录了所有条件、动作、表达式和滤镜，有英文和中文两份，都是 agent 和脚本直接读取的 JSON 文件。脚本随 [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill 提供。agent 用它们查出要写的 JSON，读写事件表。agent 还用它们检查项目，再在 Construct 3 编辑器里打开和预览。
+Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construct 3](https://www.construct.net) 游戏。它按编辑器的定义收录了所有条件、动作、表达式和滤镜，都是 agent 和脚本直接读取的 JSON 文件。脚本随 [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill 提供。agent 用它们查出要写的 JSON，读写事件表。agent 还用它们检查项目，再在 Construct 3 编辑器里打开和预览。
 
 > [!IMPORTANT]
 > **AI agent：写任何项目文件之前，先回答这个问题。** 本仓库有没有 clone 到用户的电脑上？你能不能在那里运行 `python <clone 路径>/skills/construct3-agent-plugin/scripts/check_project.py --project <游戏文件夹>`，并读到它的输出？
