@@ -374,21 +374,22 @@ def test_template_places_the_hud_on_the_grid(built):
     assert t.anchor("top-left", 96, 96, 0.5, 0.5, dx=3) == (32 + 96 + 48, 32 + 48)
     # A row of three fingers' width, one unit apart, centred on the top edge: 352 px wide from x 184.
     assert t.row("top", 3, 96, 96) == [(232, 80), (360, 80), (488, 80)]
-    # A label's box fits its longest text (8 x 32 x 0.6 = 154 -> 160) and reads towards the side it hangs on.
+    # A Text's size is in points, 4/3 px each, so a label's box fits its longest text
+    # (8 x 0.6 em x 32 x 4/3 = 205 -> 224) and reads towards the side it hangs on.
     timer = t.hud_text("TimerText", "Time: 30", "top-right")
-    assert (timer["world"]["x"], timer["world"]["y"], timer["world"]["width"], timer["world"]["height"]) == (528, 32, 160, 64)
+    assert (timer["world"]["x"], timer["world"]["y"], timer["world"]["width"], timer["world"]["height"]) == (464, 32, 224, 64)
     assert timer["properties"]["horizontal-alignment"] == "right"
     # A wide character is about 1 em, so a Chinese label's box holds its characters at full size.
     assert t.text_ems("Time: 30") == 4.8 and t.text_ems("结束回合，") == 5
     banner = t.hud_text("MapTitle", "地图", "top", size=48, longest="选择前进之路")
-    assert banner["world"]["width"] >= len("选择前进之路") * 48
+    assert banner["world"]["width"] >= len("选择前进之路") * 48 * 4 / 3
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
     score = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "ScoreText")["world"]
-    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 32, 192, 64)
+    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 32, 256, 64)
     for k in ("x", "y", "width", "height"):
         assert score[k] % t.UNIT == 0, k
     # Two HUD boxes that meet, or one past the viewport, stop the generator and name them.
-    with pytest.raises(SystemExit, match=r"ScoreText \(32,32\)-\(224,96\) overlaps TimerText .* Move TimerText down 3 units: dy=3"):
+    with pytest.raises(SystemExit, match=r"ScoreText \(32,32\)-\(288,96\) overlaps TimerText .* Move TimerText down 3 units: dy=3"):
         t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"),
                       t.hud_text("TimerText", "Time: 30", "top-left")])
     # The dy the guard names puts the second label's top one unit under the first.

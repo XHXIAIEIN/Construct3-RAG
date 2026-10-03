@@ -128,7 +128,9 @@ habits; they are what makes rerunning safe.
   passed so the point returned is the one the file stores. A HUD label is
   `hud_text(type, text, where, longest=...)`: its box fits its longest text,
   0.6 em a Latin character and 1 em a Chinese, Japanese, Korean or
-  full-width one (`text_ems()`), and reads towards the side it hangs on. Repeated items, hearts or stars,
+  full-width one (`text_ems()`), where 1 em is the size times `PX_PER_PT`
+  (4/3) in px because a Text's size is in points, and it reads towards the
+  side it hangs on. Repeated items, hearts or stars,
   are `row(where, n, w, h)`, spaced so they never touch. A second row on
   the same edge is `dy` in units on the same call, `dy=3` under a 2-unit
   label. The UI layer's instances go through `no_overlap()`, which stops
