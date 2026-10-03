@@ -87,6 +87,7 @@ program transcribed into events even when no picking smell shows.
 | Continuous motion toward a target or along a heading | MoveTo, Bullet, Pathfinding, Platform, 8 Direction | `Set X`/`Set Y` from your own velocity variables |
 | Repeating or periodic movement, flashing, fading out | Sine, Flash, Rotate; a fade is a Tween on Opacity | Hand-written oscillation; the Fade behavior, superseded |
 | Level data, loot tables, stat curves, any lookup table | Array or Dictionary project file (Project Bar: *New - Array / Dictionary*), loaded at start with AJAX *Request project file* then *Load* from `AJAX.LastData`; nested or hand-written data through the JSON plugin | Per-level instance variables, `level1Hp`, chained conditions or nested ternaries that encode the table in expressions |
+| A list that changes at runtime: a deck and its discard pile, a queue, an inventory, a playlist | One Array per list, size 0 at start: *Push* or *Insert* to add, *Shuffle*, `Front`, `Back` or `At(i)` to read, then *Pop* or *Delete* to remove (they return nothing, so read first), *Contains value* or `IndexOf` to test membership, `Width` for the count (place-stickers, `InventoryArray`: *Shuffle*, `At(0)`, *Pop front*, *Is empty*; airborne-explorer, `ArrBGM`: *Push back* then *Shuffle*). Definitions with several fields, a card's cost, type and text, come from a project file as in the row above | A comma- or pipe-separated global read with `tokenat` and `tokencount`, an item removed by rebuilding the string in a `Repeat`, membership by `find("," & id & ",", …)`; a record packed into one separated string |
 | Weighted random, seeded random, noise | Advanced Random: probability tables, `Weighted`, `Seed`, `Classic2d` | A cascade of `random()` comparisons with hand-tuned thresholds |
 | Data that survives a reload | Local Storage: *Set item*, *Get item*, *On item get* | Globals, which reset on reload; the Persist behavior, which keeps instances across layout changes, not across sessions |
 | Logic shared by several events | Functions with parameters and return values; a *custom action* on the object or family when it acts on picked instances | The same action block pasted into several events |
@@ -104,7 +105,8 @@ program transcribed into events even when no picking smell shows.
 [manual: behavior-reference/timer.md, behavior-reference/tween.md,
 system-reference/system-expressions.md "lerp", "dt",
 behavior-reference/move.md, behavior-reference/bullet.md,
-plugin-reference/array.md "Load", plugin-reference/ajax.md "Request project
+plugin-reference/array.md "Load", "Manipulating arrays", "Push", "Pop",
+"Shuffle", plugin-reference/ajax.md "Request project
 file", plugin-reference/json.md, plugin-reference/advanced-random.md
 "Probability tables", plugin-reference/local-storage.md,
 project-primitives/events/functions.md,
@@ -167,6 +169,7 @@ One hit means redesign, not patch.
 | `For each` before actions that already run per picked instance | A redundant loop | Delete it, unless a function call or a pick by one instance's position follows (see [pitfalls: Triggers and Else](pitfalls/triggers-and-else.md)) |
 | `Every tick` stepping a progress variable by `dt` and feeding it to `lerp` between fixed ends | A tween written by hand, with its own "finished" bookkeeping. `lerp` toward a moving target, or from a value the engine owns, is not this | Tween behavior, *On any finished* |
 | Per-level numbers in variable names, expression constants or a ladder of `Compare` blocks | A lookup table transcribed into events | Array or Dictionary project file, loaded once; Advanced Random for weights |
+| A separated string used as a list or a record: `tokenat`/`tokencount` to read, a `Repeat` that rebuilds it to remove one item, `find` to test membership | An array transcribed into string handling, a loop per removal (a generated card game kept its draw pile, discard pile, hand and exhaust pile this way, and each card as 17 `\|`-separated fields) | Array: *Push*, *Pop*, *Delete*, *Shuffle*, *Contains value*; records in a JSON or Array project file |
 | A global `state` or `paused` compared at the top of many events | A phase switch or a pause written as a flag | A Group and *Set group active*; *Set time scale* for pause; a layout of its own for another screen |
 | A boolean set by one event and a Timer or `Every tick` elsewhere waiting to finish what that event started | A sequence split across events | *Wait* or *Wait for previous actions* in the block that started it |
 
