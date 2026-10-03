@@ -25,19 +25,19 @@ which runs Web Audio).
   `worker` gaps 15.8 to 36.3 ms, 3.7 ms mean and 11.5 ms worst off the grid]
 - A scheduled play is exact only for a file in the Sounds folder that is
   loaded when *Play* runs. *Play* waits for the file to download and decode,
-  then starts it at the scheduled time. If that time is already past, the
-  file plays at once, from its start. So with *Preload sounds* off, the
-  first play of each sound starts late, and layers scheduled together start
-  apart. A file in the Music folder streams through an `<audio>` element.
-  Its play takes no start time and begins when the stream is ready. Keep
-  beat-locked music in Sounds with *Preload sounds* on. Or *Preload* every
-  scheduled file, and start the schedule in *On preloads complete*. [manual:
+  then starts it at the scheduled time. If that time is already past, the file
+  plays at once, from its start. So with *Preload sounds* off, the first play
+  of each sound starts late, and layers scheduled together start apart. A file
+  in the Music folder streams through an `<audio>` element. The element's play
+  takes no start time and begins when the stream is ready. Keep beat-locked
+  music in Sounds with *Preload sounds* on. Or *Preload* every scheduled file,
+  and start the schedule in *On preloads complete*. [manual:
   plugin-reference/audio.md "Categorise audio files correctly", "Preloading
   sounds", "Schedule next play"; runtime: main.js `_Play` adds the offset to
-  the clock when the message arrives and awaits `_GetAudioInstance` before
-  the instance's `Play`, the buffer instance calls `start(when, offset)`,
-  the media instance's `Play` ignores its time argument; read from the
-  r504 runtime, not observed in play]
+  the clock when the message arrives and awaits `_GetAudioInstance` before the
+  instance's `Play`, the buffer instance calls `start(when, offset)`, the
+  media instance's `Play` ignores its time argument; read from the r504
+  runtime, not observed in play]
 - In a browser, no sound is heard until the player first touches, clicks
   or presses a key. The Audio object queues the sounds played before then
   and starts them at that input. So a sound played in *On start of layout*
@@ -55,9 +55,9 @@ which runs Web Audio).
 - The audio clock does not run until the first `pointerup`, `touchend`,
   `click`, `keydown` or gamepad input. So in *On any touch start*,
   `CurrentTime` is still stopped. Sounds played before then queue and all
-  start together when the browser unblocks audio. Start music when
-  `CurrentTime` advances, not from a touch trigger, and limit what plays
-  before the clock moves. [manual: plugin-reference/audio.md "Autoplay
+  start together when the browser unblocks audio. Start music when an event
+  that runs every tick sees `CurrentTime` advance, not from a touch trigger,
+  and limit what plays before the clock moves. [manual: plugin-reference/audio.md "Autoplay
   restrictions"; runtime: main.js `_AttachUnblockEvents`,
   `_UnblockAudioContext`]
 - For a sound scheduled in the future, `Audio.PlaybackTime(tag)` counts
@@ -88,19 +88,20 @@ which runs Web Audio).
   compressor's parameters cannot change after it is added, because its
   `SetParam` is empty. [runtime: main.js `C3AudioGainFX.SetParam` uses
   `DbToLinear`, `C3AudioCompressorFX.SetParam`]
-- An exponential ramp to 0 throws, for every parameter of every effect.
-  Web Audio's `exponentialRampToValueAtTime` refuses a target of 0, so each
-  such *Set effect parameter* logs `RangeError ... should not be in the
-  range (-1.40130e-45, 1.40130e-45)` and leaves the parameter unchanged.
-  The dry path of a `mix` of 100 also reaches 0, because its gain is
-  `1 - mix`. So does any expression that can reach 0, such as
-  `from * (to / from) ^ p` with a large negative `p`. Ramp such a parameter
-  linearly, or keep the value above 0 with `max(value, floor)`. [runtime:
-  main.js `SetAudioParam` case 2; the filter, delay, convolution, ring modulator
-  and distortion effects' `SetParam` set the dry gain to `1 - t`; observed in a game project, r504 preview, 2026-10-02:
-  a low-pass frequency computed as `from * (to / from) ^ stageP`, with
-  `stageP` near -20000 after a test raised an enemy's hp above the
-  stage's total, logged one RangeError per call]
+- An exponential ramp to 0 throws, for every parameter of every effect. Web
+  Audio's `exponentialRampToValueAtTime` refuses a target of 0, so each such
+  *Set effect parameter* logs `RangeError ... should not be in the range
+  (-1.40130e-45, 1.40130e-45)` and leaves the parameter unchanged. A target of
+  0 comes from more than an explicit 0. The dry path of a `mix` of 100 reaches
+  0, because its gain is `1 - mix`. An expression that can reach 0 does too,
+  such as `from * (to / from) ^ p` with a large negative `p`. Ramp such a
+  parameter linearly, or keep the value above 0 with `max(value, floor)`.
+  [runtime: main.js `SetAudioParam` case 2; the filter, delay, convolution,
+  ring modulator and distortion effects' `SetParam` set the dry gain to `1 -
+  t`; observed in a game project, r504 preview, 2026-10-02: a low-pass
+  frequency computed as `from * (to / from) ^ stageP`, with `stageP` near
+  -20000 after a test raised an enemy's hp above the stage's total, logged one
+  RangeError per call]
 - The delay effect's `mix` is a percentage, 0 to 100, in both *Add delay
   effect* and *Set effect parameter*. Its wet path carries the dry signal,
   so the dry level stays 1 and `mix` scales only the echoes. The first echo
@@ -127,20 +128,19 @@ which runs Web Audio).
   main.js `_SetSuspended` calls each instance's `SetSuspended`; `Stop()`
   leaves `_resumeMe`; the *Stop* case reported as
   Scirra/Construct-bugs#9289, open]
-- *Stereo pan* goes through a `StereoPannerNode`. On a stereo sound it
-  mixes one channel into the other: at ±20 the near channel gets the far
-  one at cos(0.4π) ≈ 0.31. So a file limited to −3 dBFS can peak near
-  −1 dBFS, and two loud sounds on the same grid point sum above 0 dBFS. A
-  transient that is the same in both channels rises by
-  1 + sin(|pan| × 90°): 1.3 dB at ±10, 2.3 dB at ±20, 3.2 dB at ±30.
-  Without a master limiter, do not rely on per-file ceilings. Keep loud
-  transients off each other's grid point, so that one replaces the other,
-  and narrow the pan of the loudest sounds. A pan of ±10 instead of ±20
-  gave a −3 dBFS kill the same headroom as a −4 dBFS file ceiling, which
-  would have cost it 0.5 dB of loudness. [runtime: main.js
-  `createStereoPanner` per instance; Web Audio spec, StereoPannerNode
-  stereo-input algorithm; observed in an offline mix of a game project's
-  rules, 2026-09-30]
+- *Stereo pan* goes through a `StereoPannerNode`. On a stereo sound it mixes
+  one channel into the other: at ±20 the near channel gets the far one at
+  cos(0.4π) ≈ 0.31. So a file limited to −3 dBFS can peak near −1 dBFS, and
+  two loud sounds on the same grid point sum above 0 dBFS. A transient that is
+  the same in both channels rises by 1 + sin(|pan| × 90°): 1.3 dB at ±10, 2.3
+  dB at ±20, 3.2 dB at ±30. Without a master limiter, do not rely on per-file
+  ceilings. Keep loud transients off each other's grid point: if two would
+  share one, let one replace the other. Narrow the pan of the loudest sounds.
+  A pan of ±10 instead of ±20 gave a −3 dBFS kill the same headroom as a −4
+  dBFS file ceiling. That ceiling would have cost the kill 0.5 dB of loudness.
+  [runtime: main.js `createStereoPanner` per instance; Web Audio spec,
+  StereoPannerNode stereo-input algorithm; observed in an offline mix of a
+  game project's rules, 2026-09-30]
 - Dictionary *Set key* changes only an existing key and silently ignores
   a missing one. *Add key* creates or overwrites, so write gates and
   counters with *Add key*. [runtime: c3runtime.js
@@ -166,7 +166,7 @@ which runs Web Audio).
   exact length (ffmpeg `libopus`, 96 kb/s) to exactly the source's sample
   count at 48 kHz. At 44.1 kHz it is one sample short. Decoding removes the
   encoder's pre-skip. Loops re-scheduled on a grid do not depend on this
-  length. A mono file decodes to one channel, 192 KB a second at 48 kHz,
-  half the decoded memory of the same length in stereo. [observed with a
-  test page, Chrome 155, 2026-09-30; mono: Edge 155, 2026-10-02, a 64 kb/s
-  mono stem decoded to 1 channel of 998,400 samples]
+  length. A mono file decodes to one channel, so it takes half the decoded
+  memory of the same length in stereo: 192 KB a second at 48 kHz. [observed
+  with a test page, Chrome 155, 2026-09-30; mono: Edge 155, 2026-10-02, a 64
+  kb/s mono stem decoded to 1 channel of 998,400 samples]

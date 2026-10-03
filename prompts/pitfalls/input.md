@@ -3,22 +3,22 @@
 Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md).
 
-- The Mouse object reacts only to a pointer whose type is mouse. *Mouse
-  button is down*, *On any click*, *On button released*, a single *On click*
-  and `Mouse.X`, `Mouse.Y` ignore a finger and a pen. *On movement* is the
-  exception and fires for touch too. Touch with *Use mouse input* on fires
-  for the mouse and the finger alike and has no expression for the pointer
-  type. Drag & Drop takes a left click and a finger without the Touch object.
-  Some drags must behave differently under a finger, such as a piece lifted
-  higher so the finger does not hide it. For these, test `Mouse: Mouse button
-  is down (left)`: true while a mouse drags, false while a finger does. Test
-  it in an event that runs every tick under Drag & Drop *Is dragging*, not
-  under *On drag start*. That trigger runs from the same pointer-down
-  dispatch as the Mouse object's own handler, and the two run in the order
-  they subscribed in, which nothing documents. This test decides per drag, so
-  a touchscreen laptop gets each drag right. The input-method triggers of the
-  next entry choose a control scheme instead. [runtime: exported c3runtime.js
-  r503, `Plugins.Mouse.Instance` `_OnPointerDown`, `_OnPointerMove` and
+- The Mouse object reacts only to a pointer whose type is mouse. *Mouse button
+  is down*, *On any click*, *On button released*, a single *On click* and
+  `Mouse.X`, `Mouse.Y` ignore a finger and a pen. *On movement* is the
+  exception and fires for touch too. Touch with *Use mouse input* on fires for
+  the mouse and the finger alike and has no expression for the pointer type.
+  Drag & Drop takes a left click and a finger without the Touch object. So if
+  a drag behaves differently under a finger, such as a piece lifted higher so
+  the finger does not hide it, test `Mouse: Mouse button is down (left)`: true
+  while a mouse drags, false while a finger does. Test it in an event that
+  runs every tick under Drag & Drop *Is dragging*, not under *On drag start*.
+  That trigger runs from the same pointer-down dispatch as the Mouse object's
+  own handler, and the two run in the order they subscribed in, which nothing
+  documents. This test decides per drag, so a touchscreen laptop gets each
+  drag right. The input-method triggers of the next entry choose a control
+  scheme instead. [runtime: exported c3runtime.js r503,
+  `Plugins.Mouse.Instance` `_OnPointerDown`, `_OnPointerMove` and
   `_OnPointerUp` each test `"mouse"===e["pointerType"]` before touching the
   position or the button map, and the movement trigger in `_OnPointerMove`
   runs before that test, while a double click comes from the browser's
@@ -51,18 +51,18 @@ Sources and the rule for adding an entry are in the index,
 - Touch *On touched object*, *Is touching object*, *On tap object* and Mouse
   *On object clicked*, *Is over object* find an instance only by its shape
   under the pointer. So the player can press an invisible instance, one with
-  collisions disabled and one on an invisible layer. They skip only an
-  instance outside the viewport or on a layer that is not interactive. A
-  button hidden to switch it off still works. Add *Is visible* to its event,
-  or turn its layer off with *Set layer interactive*. Disabled collisions
-  fail overlap and collision tests, not these. [runtime: exported
-  c3runtime.js r504, those conditions call `TestAndSelectCanvasPointOverlap`,
-  which tests the layer's `IsSelfAndParentsInteractive`, `IsInViewport2` and
+  collisions disabled and one on an invisible layer. These conditions skip
+  only an instance outside the viewport or on a layer that is not interactive.
+  A button hidden to switch it off still works. Add *Is visible* to its event,
+  or turn its layer off with *Set layer interactive*. Disabled collisions fail
+  overlap and collision tests, not these. [runtime: exported c3runtime.js
+  r504, those conditions call `TestAndSelectCanvasPointOverlap`, which tests
+  the layer's `IsSelfAndParentsInteractive`, `IsInViewport2` and
   `ContainsPoint`; manual: project-primitives/layers.md "Initially
-  interactive"; observed in a game project, r504 preview, 2026-10-03: a tap
-  on a button ran its *On touched object* event with the button invisible,
-  with its collisions disabled and with its layer invisible, and did not with
-  the layer not interactive]
+  interactive"; observed in a game project, r504 preview, 2026-10-03: a tap on
+  a button ran its *On touched object* event with the button invisible, with
+  its collisions disabled and with its layer invisible, and did not with the
+  layer not interactive]
 - A game that moves with W, A, S and D alone is hard to control on an AZERTY
   keyboard. There those letters sit elsewhere and ZQSD takes their place.
   Give every direction its arrow key too, in an OR block with the letter or
@@ -75,22 +75,23 @@ Sources and the rule for adding an entry are in the index,
   controls"; example: detecting-input-method, `Game events` 5 to 8: each
   direction an OR block of its arrow key and its letter, simulating 8
   Direction]
-- *Request fullscreen*, *Request install*, *Request permission* (Touch),
-  *Request wake lock*, *Request pointer lock*, *Share*, the clipboard's paste
-  requests, the File chooser's *Click*, the File System pickers, a Bluetooth
-  device request, screen recording, speech recognition and Google Play *Sign
-  in* ask the browser for something it grants only just after the player
-  touches, clicks or presses a key. In *On start of layout* or on a timer the
-  browser refuses *Request fullscreen*, and *On fullscreen error* fires. Put
-  each in an event with an *On tap*, *On click*, *On key pressed* or form
-  control trigger, such as a fullscreen button, or in a function such an
-  event calls. The `construct3-agent-plugin` skill's `check_project.py` warns
-  if one has no touch, mouse, keyboard or form control condition in its event
-  or above it. *Request MIDI access* is the exception. Some browsers allow it
-  on startup, so the MIDI examples ask there and offer a button for a second
-  try. [manual: plugin-reference/browser.md "Request fullscreen", "On
-  fullscreen error", "Request install"; touch.md "Request permission";
-  platform-info.md "Request wake lock"; mouse.md "Request pointer lock";
-  share.md; clipboard.md; file-chooser.md "Click"; filesystem.md;
-  bluetooth.md; bbc-micro-bit.md; video-recorder.md; speech-recognition.md;
-  google-play.md "Sign in"; midi.md; example: midi-input, event 2]
+- These actions ask the browser for something it grants only just after the
+  player touches, clicks or presses a key: *Request fullscreen*, *Request
+  install*, *Request permission* (Touch), *Request wake lock*, *Request
+  pointer lock*, *Share*, the clipboard's paste requests, the File chooser's
+  *Click*, the File System pickers, a Bluetooth device request, screen
+  recording, speech recognition and Google Play *Sign in*. In *On start of
+  layout* or on a timer the browser refuses *Request fullscreen*, and *On
+  fullscreen error* fires. Put each in an event with an *On tap*, *On click*,
+  *On key pressed* or form control trigger, such as a fullscreen button, or in
+  a function such an event calls. The `construct3-agent-plugin` skill's
+  `check_project.py` warns if one has no touch, mouse, keyboard or form
+  control condition in its event or above it. *Request MIDI access* is the
+  exception. Some browsers allow it on startup, so the MIDI examples ask there
+  and offer a button for a second try. [manual: plugin-reference/browser.md
+  "Request fullscreen", "On fullscreen error", "Request install"; touch.md
+  "Request permission"; platform-info.md "Request wake lock"; mouse.md
+  "Request pointer lock"; share.md; clipboard.md; file-chooser.md "Click";
+  filesystem.md; bluetooth.md; bbc-micro-bit.md; video-recorder.md;
+  speech-recognition.md; google-play.md "Sign in"; midi.md; example:
+  midi-input, event 2]

@@ -35,9 +35,10 @@ Sources and the rule for adding an entry are in the index,
   down while the offset grew]
 - A bar grows from its origin. Every filling bar in the examples has its
   origin on the edge it grows from, (0, 0) or (0, 0.5). A cover that hides
-  from the right has it at (1, 0.5). With a 0.5 origin, a bar grows both ways
-  from the middle. [examples: berry-harvester ProgressBar, jetpack FuelBar,
-  flatland-golf PowerBarCover, test-your-might MightLevelBar (0.5, 1)]
+  from the right has its origin at (1, 0.5). With a 0.5 origin, a bar grows
+  both ways from the middle. [examples: berry-harvester ProgressBar, jetpack
+  FuelBar, flatland-golf PowerBarCover, test-your-might MightLevelBar (0.5,
+  1)]
 
 - Drawing Canvas *Fill polygon* with *Convex* off draws nothing if two
   consecutive points of the polygon coincide, including a closing point that
@@ -108,20 +109,20 @@ Sources and the rule for adding an entry are in the index,
   plugin-reference/common-features/common-actions.md "Set color"; observed in
   a game project, r503 preview, 2026-09-29]
 - A Text object draws its text into a texture of its own. A change of text or
-  font size redraws and re-uploads that texture on the next frame. So a
-  *Set font size* every tick during a pop tween redraws the text and uploads a
+  font size redraws and re-uploads that texture on the next frame. So a *Set
+  font size* every tick during a pop tween redraws the text and uploads a
   texture every frame, at the device's full resolution. In a merge game, each
   damage number that popped this way was redrawn every frame: 175 texture
-  uploads a second at 144 Hz, most of the Text cost of the whole game.
-  *Set text* to the string already shown costs nothing, because the runtime
+  uploads a second at 144 Hz, most of the Text cost of the whole game. *Set
+  text* to the string already shown costs nothing, because the runtime
   compares and returns. Animate a number by moving its finished texture
   (position, angle, opacity). Or draw it with a Sprite Font and tween its
-  *Scale*, which redraws nothing. After that change, the same game redrew no
-  damage number and no countdown. *Set resolution mode* to *Fixed* only stops
-  redraws caused by the display scale, not by the font size. [manual:
-  plugin-reference/text.md "Set resolution mode"; observed in a game project,
-  r504 export, runtime `_SetText` source and a counter on `_OnBeforeRender`,
-  2026-09-30]
+  *Scale*, which redraws nothing. After the switch to a Sprite Font with a
+  *Scale* tween, the same game redrew no damage number and no countdown. *Set
+  resolution mode* to *Fixed* only stops redraws caused by the display scale,
+  not by the font size. [manual: plugin-reference/text.md "Set resolution
+  mode"; observed in a game project, r504 export, runtime `_SetText` source
+  and a counter on `_OnBeforeRender`, 2026-09-30]
 
 - A Sprite Font draws each character as its whole cell of the image, then
   moves on by the character's width from *Spacing data*. So a glyph is drawn

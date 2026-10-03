@@ -110,18 +110,19 @@ files store a timeline and a custom ease, see
   −3, was back at 0 and finished 0.08 s later]
 - A timeline that played forward to its end and stopped there cannot be
   *Resume*d backwards. While it is not playing, the runtime counts it as
-  playing forward at any playback rate. A forward timeline at its total time
-  cannot resume. To take back a pose held at the end, *Set time* to
-  `TotalTime(tag) - 0.001` first, then set a negative rate and *Resume*. This
-  1 ms moves a relative track by what its last segment covers in that time:
-  nothing under an ease that flattens at the end. If it is still playing, set
-  the negative rate and *Resume* directly. [runtime: exported c3runtime.js
-  r504, `TimelineState.IsForwardPlayBack` returns
-  `!IsPlaying() || playbackRate > 0`, `_CanResume` returns false when forward
-  and `GetTime() >= GetTotalTime()`; observed in a game project, r504 preview,
-  2026-09-30: a sword pose held at the end of its 0.36 s stayed put while
-  events set rate −2 and *Resume*d it, and after *Set time* 0.359 the same
-  actions took it back to 0 in 0.18 s]
+  playing forward at any playback rate. So a timeline stopped at its total
+  time is at the end of a forward pass, and it cannot resume. To take back a
+  pose held at the end, *Set time* to `TotalTime(tag) - 0.001` first, then set
+  a negative rate and *Resume*. This 1 ms moves a relative track by what its
+  last segment covers in that time: nothing under an ease that flattens at the
+  end. If the timeline is still playing, set the negative rate and *Resume*
+  directly. [runtime: exported c3runtime.js r504,
+  `TimelineState.IsForwardPlayBack` returns `!IsPlaying() || playbackRate >
+  0`, `_CanResume` returns false when forward and `GetTime() >=
+  GetTotalTime()`; observed in a game project, r504 preview, 2026-09-30: a
+  sword pose held at the end of its 0.36 s stayed put while events set rate −2
+  and *Resume*d it, and after *Set time* 0.359 the same actions took it back
+  to 0 in 0.18 s]
 - A copy that *Resume* or *Play* starts is playing at once, but its playhead
   reads 0 until the timeline ticks it. So an event later in the same tick, or
   an action resumed after a *Wait*, sees `Time` 0 with *Is playing* true. To

@@ -18,9 +18,10 @@ Sources and the rule for adding an entry are in the index,
   system-reference/system-conditions.md "Is between angles"]
 - A sprite is drawn facing right at angle 0. So art painted pointing up
   appears turned a quarter clockwise when *Set angle towards position* runs.
-  Paint it facing right, or add the same 90 in every *Set angle*. Do not
-  correct it per event. [consequence of the same convention; Rotate's speed
-  is positive clockwise: manual behavior-reference/rotate.md "Speed"]
+  Paint it facing right, or add the same 90 in every *Set angle*. Do not add a
+  different correction in each event. [consequence of the same convention;
+  Rotate's speed is positive clockwise: manual behavior-reference/rotate.md
+  "Speed"]
 - A Bullet's angle of motion and the object's angle are two values. They
   change together only while the behavior's *Set angle* property is on, and 8
   Direction and Car have the same property. At speed 0 the angle of motion is

@@ -17,11 +17,11 @@ Sources and the rule for adding an entry are in the index,
   new one alone]
 - A type can be both in the parent's container and among its children in the
   template's hierarchy. Then creating the parent with *Create hierarchy* on
-  creates it once: the container sibling and the hierarchy child are the same
-  new instance. Put a part in both to have it picked with the parent and
-  moved with it. [observed in a game project, r504 preview, 2026-09-30: a
-  `Card` template with four parts in its container and its hierarchy, created
-  six times, left six instances of each part]
+  creates one instance of that type: the container sibling and the hierarchy
+  child are the same new instance. Put a part in both to have it picked with
+  the parent and moved with it. [observed in a game project, r504 preview,
+  2026-09-30: a `Card` template with four parts in its container and its
+  hierarchy, created six times, left six instances of each part]
 - *Create object* is a System action, so it runs once per event, however many
   instances are picked. `Slot.X` in its parameters reads the first picked
   one. A custom action runs once with all the caller's picks, so `Slot: Spawn

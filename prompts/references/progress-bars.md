@@ -1,9 +1,9 @@
 # Bars, gauges and life counters
 
-This page covers how the official examples show a number as a bar, a
-gauge or a row of icons, and the object the art calls for. Design first
-with [event-sheet-thinking.md](../event-sheet-thinking.md); this page
-expands its row "a number shown as a bar".
+This page covers how the official examples show a number as a bar, a gauge or
+a row of icons, and the object the art calls for. Design first with
+[event-sheet-thinking.md](../event-sheet-thinking.md); this page expands that
+file's row "a number shown as a bar".
 
 ## One property from one expression
 
@@ -16,19 +16,19 @@ Wherever the value changes, one action sets one property of one object:
 - template-monk-fight `cHPBar: Set width to clamp((cHPBar.maxWidth / Character.hpMax) * Character.hp, 0, cHPBar.maxWidth)`
 
 `LENGTH` is a global constant (`POWERBARLENGTH = 68`, `FuelBarScaledWidth =
-64`) or the frame's width. The expression clamps, so a value past its
-maximum never grows the bar past the frame. The bar's origin sits on the
-edge it grows from: (0, 0) or (0, 0.5) on every filling bar in the
-examples, (1, 0.5) on a cover that hides from the right (flatland-golf
-`PowerBarCover`), (0.5, 1) on a meter that rises (test-your-might
-`MightLevelBar`). At origin 0.5 the bar grows both ways from the middle.
+64`) or the frame's width. The expression clamps, so a value past its maximum
+never grows the bar past the frame. The bar's origin sits on the edge it grows
+from. Every filling bar in the examples has (0, 0) or (0, 0.5). A cover that
+hides from the right has (1, 0.5) (flatland-golf `PowerBarCover`), and a meter
+that rises has (0.5, 1) (test-your-might `MightLevelBar`). At origin 0.5 the
+bar grows both ways from the middle.
 
-To slide a change, Tween the same property: car-selection-screen
-`StatusBar: Tween "ChangeWidth" property Width to (14 * Units) + 4 in 0.25
-seconds (easeinoutsine)`, bamboo-strike `TimerBar`, dig-the-way `EnergyBar`.
-A damage ghost is a second, wider bar behind the first that is set later:
+To slide a change, Tween the same property: car-selection-screen `StatusBar:
+Tween "ChangeWidth" property Width to (14 * Units) + 4 in 0.25 seconds
+(easeinoutsine)`, bamboo-strike `TimerBar`, dig-the-way `EnergyBar`. A damage
+ghost is a second, wider bar behind the first that is set later:
 template-monk-fight `cUnderHPBar` and `eUnderHPBar`, shown for a second by a
-Timer. Use these, not a per-tick lerp of the width.
+Timer. Use a Tween or a ghost bar, not a per-tick lerp of the width.
 
 ## The object the art calls for
 

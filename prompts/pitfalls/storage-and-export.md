@@ -3,18 +3,18 @@
 Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md).
 
-- A web export looks for an update only when the page loads. On each
-  navigation its service worker fetches `offline.json` and downloads a newer
-  version in the background. It posts *On update found* and *On update
-  ready* about 3 seconds later. So a tab left open never sees a deploy.
-  *Reload*, like the player's own refresh, switches to the new files only
-  while no other tab of the game is open. In *On update ready*, ask the
-  player to reload. To test it, deploy the new version, then load the old
-  version once. [manual: plugin-reference/browser.md "On update ready",
-  "Reload"; runtime: exported sw.js, `UpdateCheck` runs from the `fetch`
-  handler for `navigate` requests, `PostBroadcastMessage` delays 3000 ms,
-  `GetCacheNameToUse` keeps the old cache while `clients.matchAll()` finds
-  more than one; r503 export, 2026-09-28]
+- A web export looks for an update only when the page loads, so a tab left
+  open never sees a deploy. On each navigation its service worker fetches
+  `offline.json` and downloads a newer version in the background. It posts *On
+  update found* and *On update ready* about 3 seconds later. *Reload*, like
+  the player's own refresh, switches to the new files only while no other tab
+  of the game is open. In *On update ready*, ask the player to reload. To test
+  it, deploy the new version, then load the old version once. [manual:
+  plugin-reference/browser.md "On update ready", "Reload"; runtime: exported
+  sw.js, `UpdateCheck` runs from the `fetch` handler for `navigate` requests,
+  `PostBroadcastMessage` delays 3000 ms, `GetCacheNameToUse` keeps the old
+  cache while `clients.matchAll()` finds more than one; r503 export,
+  2026-09-28]
 - In a project with the Browser object, the browser's own install banner
   never shows. On every page load the Browser object calls
   `preventDefault()` on `beforeinstallprompt` and holds the event for
@@ -45,13 +45,13 @@ Sources and the rule for adding an entry are in the index,
   Sandbox"]
 - In a browser the plugin needs desktop Chromium, not Firefox or Safari. A
   picker opens only in a user input trigger, and a second write to a file
-  opened earlier prompts for permission. A save picker erases the chosen
-  file, so write with folder path "" and do not read it. *Start in* sets
-  only the folder the dialog opens at. The browser remembers the picker tag
-  across sessions, so with *Has picker tag* true at start, a *Save* button
-  can rewrite the same file without a dialog. [manual:
-  plugin-reference/filesystem.md "Browser permissions model", "Show save
-  file picker"; example: file-system-text-editor]
+  opened earlier prompts for permission. A save picker erases the chosen file,
+  so write with folder path "" and do not read it. *Start in* sets only the
+  folder the dialog opens at. The picker tag persists across sessions, so with
+  *Has picker tag* true at start, a *Save* button can rewrite the same file
+  without a dialog. [manual: plugin-reference/filesystem.md "Browser
+  permissions model", "Show save file picker"; example:
+  file-system-text-editor]
 - Android and iOS (Cordova) exports are not in the plugin's support list,
   and the WKWebView extension covers macOS only. So treat File System as
   unavailable there. Save with Local Storage, and hand a file to the user
