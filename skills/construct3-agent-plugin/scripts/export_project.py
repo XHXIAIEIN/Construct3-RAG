@@ -1,7 +1,7 @@
 """Export a folder project to Web (HTML5) in the Construct 3 editor and unpack it into a folder.
 
     python scripts/export_project.py [--to FOLDER] [--version X | --bump] [--attach PORT|URL|FILE]
-                                     [--slow] [--project FOLDER] [--dry-run]
+                                     [--keep-worker] [--slow] [--project FOLDER] [--dry-run]
 
 The Free edition does not export a project over its limits, so the editor needs an
 account with a subscription. The editor keeps its login in the open page only: it is
@@ -23,7 +23,9 @@ Offline support, Deduplicate images and Optimize images on and the other
 options as it remembers them; the zip replaces
 the contents of --to. The export carries the version given by --version or
 --bump, else the project's, with Auto-increment version off in the copy handed to
-the editor, and that version is written into project.c3proj when it differs.
+the editor, and that version is written into project.c3proj when it differs. The
+copy also sets Use worker to Yes, so the exported game runs off the main thread
+whatever the project sets for preview; --keep-worker exports with the project's own.
 """
 from __future__ import annotations
 
@@ -62,7 +64,7 @@ one it opens a tab and closes it after the export.
 
 output:
   logged in as <name>, exporting <version>
-  exported <version> into <folder>; project.c3proj version <version>
+  exported <version> into <folder>, runtime in the worker|page; project.c3proj version <version>
 
 exit codes: 0 exported; 1 the export did not finish: no subscription within 5 minutes,
 the project did not open, or a dialog stopped it; the window is left open, and a run
@@ -456,10 +458,33 @@ def with_version(text: str, version: str) -> str:
     return VERSION_RE.sub(lambda m: m.group(1) + version + m.group(3), text)
 
 
-def pack(project: Path, version: str, skip: Path | None) -> bytes:
+# Use worker in project.c3proj: auto, worker (Yes) or dom (No). Auto runs in the page as soon as
+# the project has any script, so a game with a script exports in the page unless it says worker.
+WORKER_RE = re.compile(r'("useWorker": ")([a-z]+)(")')
+
+
+def project_worker(project: Path) -> str:
+    found = WORKER_RE.search((project / "project.c3proj").read_text(encoding="utf-8"))
+    return found.group(2) if found else "auto"
+
+
+# start-export.js at the end of scripts/main.js: const e=true;...RuntimeInterface({useWorker:e,...
+EXPORTED_WORKER_RE = re.compile(r'const (\w+)=(true|false);window\["c3_runtimeInterface"\]=new '
+                                r'self\.RuntimeInterface\(\{useWorker:\1[,}]')
+
+
+def exported_worker(folder: Path) -> bool | None:
+    """Whether the export in folder starts its runtime in a worker; None when main.js does not say."""
+    main = folder / "scripts" / "main.js"
+    found = EXPORTED_WORKER_RE.search(main.read_text(encoding="utf-8")) if main.is_file() else None
+    return found.group(2) == "true" if found else None
+
+
+def pack(project: Path, version: str, skip: Path | None, worker: bool = True) -> bytes:
     """The files the editor reads as a .c3p carrying version, with Auto-increment version off so
-    that the export carries it unchanged. The rest stays out: an earlier export, the worktrees of
-    an agent under .claude, which made a game's .c3p 1.8 GB; and skip, the export folder."""
+    that the export carries it unchanged, and Use worker Yes unless worker is False. The rest stays
+    out: an earlier export, the worktrees of an agent under .claude, which made a game's .c3p 1.8 GB;
+    and skip, the export folder."""
     files, _ = pp.editor_files(pp.from_folder(project), ())
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
@@ -468,7 +493,10 @@ def pack(project: Path, version: str, skip: Path | None) -> bytes:
                 continue
             if name == "project.c3proj":
                 text = with_version(f.read_text(encoding="utf-8"), version)
-                z.writestr(name, text.replace('"autoIncrementVersion": true', '"autoIncrementVersion": false'))
+                text = text.replace('"autoIncrementVersion": true', '"autoIncrementVersion": false')
+                if worker:
+                    text = WORKER_RE.sub(r"\g<1>worker\g<3>", text)
+                z.writestr(name, text)
             else:
                 z.write(f, name)
     return buf.getvalue()
@@ -483,9 +511,10 @@ def unpack(data: bytes, folder: Path) -> None:
 
 
 # --- the run --------------------------------------------------------------------------
-def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | None) -> None:
+def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | None, worker: bool) -> bool | None:
+    """Exports; whether the export runs in a worker, as its main.js says."""
     staged = scratch(project) / "export-project.c3p"
-    staged.write_bytes(pack(project, version, folder if folder.is_relative_to(project) else None))
+    staged.write_bytes(pack(project, version, folder if folder.is_relative_to(project) else None, worker))
     if spec:
         devtools = attach(spec)
         page, opened = attached_page(devtools, project)
@@ -520,6 +549,7 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
     text = path.read_text(encoding="utf-8")
     if project_version(project) != version:
         path.write_bytes(with_version(text, version).encode("utf-8"))
+    return exported_worker(folder)
 
 
 def main() -> int:
@@ -537,6 +567,8 @@ def main() -> int:
     ap.add_argument("--attach", metavar="PORT|URL|FILE",
                     help="export in a Chrome or Edge the user has open and is logged in to, not in a window "
                          "of the script's own (see below)")
+    ap.add_argument("--keep-worker", action="store_true",
+                    help="export with Use worker as the project sets it, not Yes")
     ap.add_argument("--slow", action="store_true",
                     help=f"pauses {SLOW} times longer between clicks from the start, for a slow machine or "
                          f"network; without it a step the editor missed is tried once more this way")
@@ -555,10 +587,17 @@ def main() -> int:
         print(f"the version to export is '{version}', not 3 or 4 numbers of 0 to 99; pass --version 1.0.0.0 or "
               f"set Version in the project properties", file=sys.stderr)
         return 2
+    worker = project_worker(project) if args.keep_worker else "worker"
     if args.dry_run:
-        print(f"would export {version} in {editor_url(project)} into {folder}; project.c3proj version "
-              f"{project_version(project)}{f' -> {version}' if version != project_version(project) else ''}")
+        print(f"would export {version} in {editor_url(project)} into {folder}, Use worker "
+              f"{ {'worker': 'Yes', 'dom': 'No'}.get(worker, 'Auto') }; "
+              f"project.c3proj version {project_version(project)}"
+              f"{f' -> {version}' if version != project_version(project) else ''}")
         return 0
+    if not args.keep_worker and project_worker(project) == "dom":
+        print("the project sets Use worker to No, which preview keeps; the export runs in a worker, where "
+              "scheduled sounds carry the message delay and scripts have no DOM; --keep-worker exports in "
+              "the page", flush=True)
     if args.slow:
         global pace
         pace = SLOW
@@ -568,7 +607,7 @@ def main() -> int:
               file=sys.stderr)
         return 3
     try:
-        run(project, folder, version, args.attach, exe)
+        in_worker = run(project, folder, version, args.attach, exe, not args.keep_worker)
     except ValueError as e:
         print(e, file=sys.stderr)
         return 2
@@ -578,7 +617,11 @@ def main() -> int:
     except (Stop, oe.DevToolsError) as e:
         print(f"not exported: {e}")
         return 1
-    print(f"exported {version} into {folder}; project.c3proj version {version}")
+    where = {True: "the worker", False: "the page", None: "a place scripts/main.js does not name"}[in_worker]
+    print(f"exported {version} into {folder}, runtime in {where}; project.c3proj version {version}")
+    if in_worker is False and not args.keep_worker:
+        print("the editor exported in the page although Use worker was Yes: an addon without worker support or "
+              "an import map keeps it there")
     return 0
 
 
