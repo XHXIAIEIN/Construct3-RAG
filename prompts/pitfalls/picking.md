@@ -95,6 +95,15 @@ Sources and the rule for adding an entry are in the index,
   until the end of the next top-level event"; runtime: exported
   c3runtime.js r504, `Count` is `GetInstanceCount()` plus the instances
   pending creation, and `DestroyInstance` defers the removal]
+- A condition that picks no instance of a type stops its event, and System
+  *Pick all* is false when the type has no instance. So `PickedCount = 0`
+  never holds below a pick of that type. Under *Pick all Key*, a sub-event
+  that tests `Key.PickedCount = 0` never runs, not even when the last key
+  is gone. Test "none left" with `Key.Count = 0` in *Compare two values*,
+  in an event that does not pick Key. [manual:
+  project-primitives/events/how-events-work.md, the actions "do not run at
+  all" when no instance meets the conditions; runtime: exported
+  c3runtime.js r504, `PickAll` returns false when `GetInstanceCount()` is 0]
 - *Destroy* does not detach a child from its parent. The runtime releases the
   instance only at the end of the top-level event. Until then *Compare child
   count*, *Has children*, `ChildCount` and *Pick children* still see it. So

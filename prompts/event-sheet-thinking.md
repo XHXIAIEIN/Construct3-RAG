@@ -49,8 +49,8 @@ without `.md`, after
 2. **Read the state that the engine already keeps.** Position, overlap,
    dragging, tween progress, animation name and frame, parent and child all
    have conditions and expressions. So does the number of instances:
-   `Brick.Count`, or `PickedCount` after a pick. A destroyed instance still
-   counts until the top-level event ends
+   `Brick.Count`, and `PickedCount` for the instances a pick kept. A
+   destroyed instance still counts until the top-level event ends
    ([pitfalls: Picking](pitfalls/picking.md)). A variable that copies one of
    these (`occupied`, `isDragging`, `bricksLeft`) stops matching the engine
    as soon as instances move or are destroyed. Every event that must update
@@ -199,7 +199,7 @@ If a draft matches one row, redesign it instead of patching it.
 | Globals such as `DragUID`, `Selected` | The trigger's pick copied into globals | The picked instance; store only what the engine cannot recover, such as a start position |
 | Local variables filled by one block, then an `Else` chain on them | A program transcribed into events | Trigger, narrowing sub-events, `Else` |
 | A boolean such as `occupied`, `busy` written from several events | State that copies a condition | `Is overlapping another object`, `Is dragging`, `Is playing` |
-| A variable that counts instances: raised on create, lowered on destroy, or set from `PickedCount` every tick | A copy of the engine's count | `Brick.Count`, or a pick and `PickedCount`, read where the decision is made. A destroyed instance is released at the end of the top-level event, so test "none left" in a top-level event of its own ([pitfalls: Picking](pitfalls/picking.md)) |
+| A variable that counts instances: raised on create, lowered on destroy, or set from `PickedCount` every tick | A copy of the engine's count | `Brick.Count`, read where the decision is made. A destroyed instance is released at the end of the top-level event, and a pick of no instance stops its event. So test "none left" with `Brick.Count = 0` in a top-level event of its own ([pitfalls: Picking](pitfalls/picking.md)) |
 | Custom actions named `attach`, `detach`, `sync` that write two variables | Two copies of one fact | One source, usually the engine's |
 | `Pick by unique ID` for the object the trigger already picked | Re-picking what is picked | Delete the condition |
 | `For each` before actions that already run per picked instance | A redundant loop | Delete it, unless a function call or a pick by one instance's position follows (see [pitfalls: Triggers and Else](pitfalls/triggers-and-else.md)) |

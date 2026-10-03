@@ -35,6 +35,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 - A hierarchy child can be on another layer than its parent and stay its child. So a lifted parent can be drawn above everything while its parts stay under an outline.
 - `ChildCount`, *Compare child count* and *Has children* count children of every type. Count one type with *Pick children* plus `PickedCount`.
 - A destroyed instance still counts in `Count` until the top-level event ends. Test "none left" in a top-level event of its own.
+- A pick of no instance stops its event, *Pick all* included, so `PickedCount = 0` never holds below a pick of that type. Test "none left" with `Count = 0` in an event that does not pick the type.
 - A destroyed child still counts as a child until the top-level event ends. Count from a later top-level event or with *Pick children* plus `PickedCount`.
 - Turret *Add object to target* takes the whole type or family, whatever the event picked. To target only some instances, leave it out and run *Acquire target* on one picked instance.
 

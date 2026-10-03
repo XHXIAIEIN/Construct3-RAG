@@ -118,6 +118,16 @@ over with the layout, and all nine runs set the global back under *On
 start of layout*, as the case asks. So the countdown stays a warning: a
 refusal would hold up a form that works, for no gain in speed.
 
+An edit to `event-sheet-thinking.md` moves Haiku's structure on tasks the
+edit does not mention. After rules on counts, doors and project files went
+in, Haiku put a tween's *On finished* inside the function that starts the
+tween, and no single one of those rules carried the effect. So rule 6 says
+that a function counts as the trigger of its branch, and an edit to that
+file is run beside the file before it on a task that asks for one function
+to tween an instance and act when the tween ends. The task, its rubric and
+the runs are in `.local/docs/evidence/pitfalls-fix-lines-2026-09-30/` and
+`prompt-verify-2026-10-04/`.
+
 ## The authoring style
 
 The style file describes one cohort of the official examples: the demo
