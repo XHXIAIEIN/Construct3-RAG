@@ -145,6 +145,8 @@ write the built-in that already keeps it:
 
 - A delay, a countdown, a cooldown: the Timer behavior, *Start timer* and
   *On timer*; the time left is `Duration(tag) - CurrentTime(tag)`.
+- How many of a type are left: `Coin.Count`, not a variable counted up and
+  down beside it.
 - A move, scale, fade or colour change over a known time: the Tween behavior
   and *On any finished*.
 - One step after another inside one interaction: *Wait* in the same block.
@@ -209,8 +211,9 @@ top-level event, function or custom action needs a one-sentence comment
 above it, `{"eventType": "comment", "text": "..."}` in the same `events`
 list, and a run of eight actions needs a comment action, `{"type":
 "comment", "text": "..."}`, among them: a plan that adds one without is
-refused like a problem, with the place and the JSON to write, and so is a
-Pathfinding *Find path* in a new event that runs every tick. A decision
+refused like a problem, with the place and the JSON to write, and so are
+the traps of the running game that `references/checker-rules.md` marks as
+refused, such as a *Find path* that runs every tick. A decision
 written as sub-events three levels deep is a `warning:` under the output;
 write the cases as sibling sub-events instead. The user's older events are
 not held to this. `--dry-run` does all of that and writes nothing.
@@ -317,6 +320,9 @@ user's to decide.
 - One trigger per event and per branch of sub-events. A function or a custom
   action counts as one and holds none: react to *On tween finished* in a
   top-level event of its own that calls the next function.
+- A Solid blocks while its behavior is enabled, whatever its animation or
+  visibility. A door that opens gets Solid *Set enabled* to disabled, or is
+  destroyed.
 - A name is chosen once: every event that uses it changes with it. Names are
   plain words without spaces or punctuation, an instance variable starts
   with a letter, an object is not named like a system expression (`Floor`,

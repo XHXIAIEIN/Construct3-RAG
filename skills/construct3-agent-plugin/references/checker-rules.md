@@ -65,8 +65,29 @@ Traps of the running game are warnings:
   path* that started the path, with no *Wait for previous actions to
   complete* between them: the path is there only after *On path found*;
 - *Find path* in an event that runs every tick, with no trigger, *Every X
-  seconds* or *Trigger once* in it or above it; `edit_sheet.py` refuses it
-  in an event a plan creates, as it refuses the style findings below;
+  seconds* or *Trigger once* in it or above it;
+- Timer *Start timer* in an event that runs every tick, when every condition
+  of its branch tests a variable or `Count`. The timer then starts over each
+  tick, and *On timer* never fires. It passes when an action of the branch
+  sets that variable, creates or destroys that type, calls a function or
+  leaves the group or layout, and when the branch tests *Is timer running*
+  or what changes as the game plays: an overlap, a key, a position, a
+  function;
+- *Simulate control* of a Platform's left or right, or of any 8 Direction or
+  Car control, in a branch with a trigger: the control holds for the tick
+  it runs in, so the object moves one tick and stops [manual:
+  behavior-reference.md "Custom controls"]. A Platform jump and Tile
+  movement, which take one tick as a whole move, pass;
+- `X.Count = 0`, `≤ 0` or `< 1` in a condition that runs after a *Destroy*
+  of X in the same top-level event: the destroyed instance counts until
+  that event ends, so the test fails for the last one
+  [`Construct3-RAG/prompts/pitfalls/picking.md`]. The official examples
+  compare with 1 there, which passes, as does a test after a *Wait*;
+- `X.PickedCount = 0`, `≤ 0` or `< 1` below a condition of its branch that
+  picks X, such as *Pick all*, *For each* or a condition on X: a condition
+  that picks no X stops its event, and *Pick all* is false when no X
+  exists, so the test never holds [manual:
+  project-primitives/events/how-events-work.md];
 - text a Sprite Font cannot draw, in a layout instance's text or in a
   literal that *Set text*, *Append text* or *Typewriter text* joins at the
   top level of its expression: a character outside the Character set shows
@@ -97,8 +118,12 @@ Traps of the running game are warnings:
   instances after a direct create; the actions after a wait are not
   followed. Over the 524 official examples it adds no finding.
 
-A gesture action or a *Find path* in a function passes, since a trigger may
-call it.
+`edit_sheet.py` refuses the findings on *Find path*, *Start timer*,
+*Simulate control*, `Count` and `PickedCount` in an event a plan creates, as
+it refuses the style findings below; in the user's own events they stay
+warnings. A gesture action, a *Find path*, a *Start timer* or a *Simulate
+control* in a function passes, since a trigger or an event that runs every
+tick may call it.
 
 ## The rules the editor applies on opening and before preview
 

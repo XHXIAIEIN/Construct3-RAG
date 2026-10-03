@@ -151,6 +151,12 @@ def editor_name(name: str, is_object: bool) -> str:
     return "".join(chars)
 
 
+def params_of(ace: dict) -> dict:
+    """An ACE's parameters by id; a function call keeps its arguments in a list, which names none."""
+    params = ace.get("parameters")
+    return params if isinstance(params, dict) else {}
+
+
 def is_literal(v) -> bool:
     return isinstance(v, str) and re.fullmatch(r'"(?:[^"]|"")*"', v) is not None
 
@@ -193,6 +199,41 @@ REGENERATE = {"regenerate-obstacle-map", "regenerate-region", "regenerate-region
 PATH_NODES = re.compile(r"(\w+)\s*\.\s*(\w+)\s*\.\s*(?:nodecount|nodexat|nodeyat)\b", re.I)
 # Conditions that keep an event from running every tick, beside the triggers.
 PACING = {("system", "every-x-seconds"), ("system", "trigger-once-while-true")}
+# Simulate control holds a control for the tick it runs in (manual: behavior-reference.md "Custom controls", the
+# input events must be continually true), so under a trigger the object moves one tick and stops. Behavior id ->
+# the controls held, None for all. A Platform jump starts on one tick, and Tile movement takes one tick as a move
+# to the next tile: the official examples simulate both under On key pressed.
+HELD_CONTROLS = {"platform": {"left", "right"}, "eightdir": None, "car": None}
+# The trigger a held control was put under -> the condition that holds while the input is held, and the
+# trigger's parameters it keeps.
+HOLDING = {("keyboard", "on-key-pressed"): ("key-is-down", ("key",)),
+           ("keyboard", "on-key-code-pressed"): ("key-code-is-down", ("keycode",)),
+           ("gamepad", "on-button-pressed"): ("is-button-down", ("gamepad", "button")),
+           ("touch", "on-touched-object"): ("is-touching-object", ("object",))}
+# Conditions that test values, which hold until an event changes them; an overlap, a key held or a running timer
+# change as the game plays. A Start timer under these alone, in an event that runs every tick, starts over each tick.
+# Else is left out: it holds while the event before it fails, which may test anything.
+VALUE_TESTS = {("System", "compare-two-values"), ("System", "compare-eventvar"), ("System", "compare-boolean-eventvar"),
+               ("System", "evaluate-expression"), ("System", "is-between-values"), ("System", "every-tick"),
+               ("System", "for-each"), ("System", "for-each-ordered"), ("System", "pick-by-evaluate"),
+               ("System", "pick-by-comparison"), ("System", "pick-all")}
+INSTANCE_VALUE_TESTS = {"compare-instance-variable", "is-boolean-instance-variable-set"}
+# An object's expression in a value test, Player.X or Functions.canMove, reads what changes as the game plays;
+# only Count and the variables wait for an event to change them.
+OBJECT_EXPRESSION = re.compile(r"(?<![\w.])([A-Za-z_]\w*)\s*\.\s*([A-Za-z_]\w*)")
+# Actions that change what a value test reads: a variable set or toggled, keyed by the parameter that names it.
+# Add and Subtract are left out: a count stepped each tick still starts the timer over on every tick until its
+# test fails.
+SETS = {"set-eventvar-value": "variable", "set-boolean-eventvar": "variable", "toggle-boolean-eventvar": "variable",
+        "set-instvar-value": "instance-variable", "set-boolean-instvar": "instance-variable",
+        "toggle-boolean-instvar": "instance-variable"}
+# System actions after which the event does not run again in the next tick.
+LEAVES = {"set-group-active", "go-to-layout", "go-to-layout-by-name", "restart-layout", "go-to-nextprevious-layout"}
+# The comparison ids of Compare two values: 0 =, 1 ≠, 2 <, 3 ≤, 4 >, 5 ≥.
+COMPARISONS = {0: "=", 1: "<>", 2: "<", 3: "<=", 4: ">", 5: ">="}
+# How a condition tests that none of a type is left: X.Count or X.PickedCount = 0, ≤ 0 or < 1, with the operands
+# in either order.
+NONE_LEFT = re.compile(r"(\w+)\.(count|pickedcount)(?:=0|<=0|<1)|(?:0=|0>=|1>)(\w+)\.(count|pickedcount)", re.I)
 # Sprite Font (manual: plugin-reference/sprite-font.md) draws a character outside its Character set as an
 # empty space; with Enable BBCode on, the tags are markup, not characters, and \[ is a bracket.
 SPRITE_FONT_TEXT = ("set-text", "append-text", "typewriter-text")
@@ -1691,22 +1732,158 @@ class Checker:
                       f"one. Put System Wait for previous actions to complete between them, or move this into "
                       f"an On path found event (manual: behavior-reference/pathfinding.md)")
 
+    def behavior_of(self, ace: dict) -> str:
+        """The behavior id an ACE belongs to, lower case, or "" for the object's own."""
+        obj = ace.get("objectClass")
+        return self.p.behaviors_of(obj).get(ace.get("behaviorType", ""), "").lower() if obj in self.p.plugin_of else ""
+
+    def check_held_control(self, action: dict, where: str, held: tuple, paced: bool | None) -> None:
+        """Simulate control of a movement held down, under a trigger: the control holds for the one tick the
+        trigger fires. held: the conditions of the event and of those above it."""
+        controls = HELD_CONTROLS.get(self.behavior_of(action), ())
+        control = params_of(action).get("control")
+        if action.get("id") != "simulate-control" or paced is None or (controls is not None and control not in controls):
+            return
+        trigger = next((c for c in held if (self.p.ace_entry("conditions", c) or {}).get("isTrigger")), None)
+        if trigger is None:
+            return
+        plugin = self.p.plugin_of.get(trigger.get("objectClass"), "").lower()
+        hold = HOLDING.get((plugin, trigger.get("id")))
+        if hold:
+            kept = {k: v for k, v in params_of(trigger).items() if k in hold[1]}
+            instead = {"id": hold[0], "objectClass": trigger["objectClass"], **({"parameters": kept} if kept else {})}
+            fix = f"Put this action in an event whose condition is {trigger['objectClass']} {hold[0]} in place of the " \
+                  f"trigger, {json.dumps(instead, ensure_ascii=False)}"
+        else:
+            example = json.dumps({"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}})
+            fix = f"Put this action in an event whose condition holds while the input is held, such as {example} " \
+                  f"with the key's code"
+        self.p.findings.style_finding(
+            "control", f"{where}: Simulate control {control} runs only in the tick that {describe(trigger)} fires, "
+                       f"so {action.get('objectClass')} moves for one tick and stops. {fix} "
+                       f"(manual: behavior-reference.md \"Custom controls\")")
+
+    @staticmethod
+    def words_of(aces: list) -> set[str]:
+        """Every word in the parameters of these conditions or actions, lower case: the variables, objects and
+        expressions they read."""
+        words = set()
+        for ace in aces:
+            for value in params_of(ace).values():
+                if isinstance(value, str):
+                    words |= {w.lower() for w in IDENT.findall(value)}
+        return words
+
+    def check_timer_restart(self, action: dict, where: str, line: tuple, held: tuple, paced: bool | None) -> None:
+        """Start timer in an event that runs every tick, whose conditions test values that the actions of its
+        branch leave alone: each tick starts the timer over, and On timer never fires. A cooldown tests Is timer
+        running, and an overlap, a key held or a position changes as the game plays, so those are left alone.
+        line: the event and those above it, held: their conditions."""
+        if paced is not False or action.get("id") != "start-timer" or self.behavior_of(action) != "timer":
+            return
+        for c in held:
+            value_test = (c.get("objectClass"), c.get("id")) in VALUE_TESTS or c.get("id") in INSTANCE_VALUE_TESTS
+            moving = any(m.group(2).lower() != "count" for value in params_of(c).values() if isinstance(value, str)
+                         for m in OBJECT_EXPRESSION.finditer(value))
+            if c.get("id") == "is-timer-running" or not value_test or moving:
+                return
+        actions = [a for ev in line for a in ev.get("actions", []) if isinstance(a, dict)]
+        changed = {str(params_of(a).get(SETS[a["id"]], "")).lower() for a in actions if a.get("id") in SETS}
+        changed |= {str(a.get("objectClass")).lower() for a in actions if a.get("id") == "destroy"}
+        changed |= {str(self.made_by(a)).lower() for a in actions if self.made_by(a)}
+        if changed & self.words_of(list(held)) or any("callFunction" in a or "customAction" in a for a in actions) \
+                or any(a.get("objectClass") == "System" and a.get("id") in LEAVES for a in actions):
+            return
+        tag = params_of(action).get("tag", '""')
+        once = json.dumps({"id": "trigger-once-while-true", "objectClass": "System"})
+        self.p.findings.style_finding(
+            "timer", f"{where}: Start timer {tag} runs every tick. No trigger, Every X seconds or Trigger once is in "
+                     f"its event or above it, and its actions leave its conditions true. So the timer starts over each "
+                     f"tick, and On timer {tag} never fires. Add System Trigger once as the last condition of its "
+                     f"event, {once}, or start the timer in the event that begins the countdown")
+
+    def none_left(self, c: dict) -> tuple[str, str] | None:
+        """Return (the object type, "count" or "pickedcount") when a condition tests that none of the type is
+        left, X.Count = 0 or X.PickedCount = 0, in Compare two values with the operands in either order or in
+        Evaluate expression; None otherwise."""
+        params = params_of(c)
+        if c.get("objectClass") != "System" or c.get("isInverted"):
+            return None
+        if c.get("id") == "compare-two-values" and params.get("comparison") in COMPARISONS:
+            text = f"{params.get('first-value')}{COMPARISONS[params['comparison']]}{params.get('second-value')}"
+        elif c.get("id") == "evaluate-expression":
+            text = str(params.get("value"))
+        else:
+            return None
+        m = NONE_LEFT.fullmatch(re.sub(r"\s+", "", text))
+        return None if m is None else (m.group(1), m.group(2).lower()) if m.group(1) else (m.group(3), m.group(4).lower())
+
+    @staticmethod
+    def picks(c: dict) -> set[str]:
+        """The object types and families a condition narrows, lower case: its own, unless it is System's, and
+        the one its object parameter names (Pick all, For each, On touched object, Is overlapping)."""
+        own = c.get("objectClass") if c.get("objectClass") != "System" else None
+        return {n.lower() for n in (own, params_of(c).get("object")) if isinstance(n, str)}
+
+    def check_none_left(self, c: dict, where: str, gone: dict[str, str] | None, earlier: list[dict]) -> None:
+        """X.Count = 0 after a Destroy of X earlier in the same top-level event: the destroyed instance counts
+        until the top-level event ends (prompts/pitfalls/picking.md), so the test fails for the last one.
+        X.PickedCount = 0 below a condition that picks X: a pick of no X stops the event, Pick all included.
+        gone: object type -> where an action destroyed it before this condition runs; earlier: the conditions
+        that run before this one in its branch, those of OR blocks left out."""
+        tested = self.none_left(c)
+        if tested is None:
+            return
+        name, expression = tested
+        if expression == "pickedcount":
+            pick = next((e for e in earlier if name.lower() in self.picks(e)), None)
+            if pick:
+                count = json.dumps({"id": "compare-two-values", "objectClass": "System",
+                                    "parameters": {"first-value": f"{name}.Count", "comparison": 0, "second-value": "0"}})
+                self.p.findings.style_finding(
+                    "picked", f"{where}: {name}.PickedCount = 0 never holds here. {describe(pick)} above it picks "
+                              f"{name}, and a condition that picks no {name} stops its event, as System Pick all does "
+                              f"when no {name} exists. Test none left in an event that does not pick {name}, {count}")
+            return
+        obj = next((o for o in gone or {} if o.lower() == name.lower()), None)
+        if obj is None:
+            return
+        test = json.dumps([{"id": "compare-two-values", "objectClass": "System",
+                            "parameters": {"first-value": f"{obj}.Count", "comparison": 0, "second-value": "0"}},
+                           {"id": "trigger-once-while-true", "objectClass": "System"}])
+        self.p.findings.style_finding(
+            "count", f"{where}: {obj}.Count = 0 is false here even when the last {obj} is gone. {gone[obj]} destroys "
+                     f"it earlier in this top-level event, and a destroyed instance counts in Count until that event "
+                     f"ends. Test it in a top-level event of its own, with the conditions {test}")
+
     def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False,
-                    paced: bool | None = False) -> None:
+                    paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
         """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
-        or Trigger once, None in a function or custom action."""
+        or Trigger once, None in a function or custom action; line: the event and those above it; gone: as
+        check_none_left's, filled by the event's Destroy actions, None for the sub-events of an event whose
+        actions wait."""
+        held = tuple(c for e in line for c in e.get("conditions", []) if isinstance(c, dict))
+        earlier = [c for e in line[:-1] if not e.get("isOrBlock") for c in e.get("conditions", []) if isinstance(c, dict)]
         self.event_where[id(ev)] = where
         if isinstance(ev.get("actions"), list):
             self.action_lists.append((ev["actions"], where))
         for i, c in enumerate(ev.get("conditions", []), 1):
             self.check_ace("conditions", c, scope, f"{where} condition {i}")
             self.note_signal(c, f"{where} condition {i}")
+            if isinstance(c, dict):
+                self.check_none_left(c, f"{where} condition {i}", gone, earlier)
+                if not ev.get("isOrBlock"):
+                    earlier.append(c)
         found: dict[str, str] = {}
         for i, a in enumerate(ev.get("actions", []), 1):
             w = f"{where} action {i}"
             self.note_signal(a, w)
             self.check_gesture(a, by_input, w)
             self.check_pathfinding(a, w, found, paced)
+            self.check_held_control(a, w, held, paced)
+            self.check_timer_restart(a, w, line, held, paced)
+            if gone is not None and a.get("id") == "destroy" and a.get("objectClass") in self.p.plugin_of:
+                gone.setdefault(a["objectClass"], w)
             if a.get("type") == "script":
                 self.check_script(a.get("script"), scope, w)
             if a.get("type") in ("comment", "script"):
@@ -1754,7 +1931,7 @@ class Checker:
 
     def walk(self, events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None,
              depth: int = 0, group: dict | None = None, by_input: bool | None = False,
-             paced: bool | None = False) -> None:
+             paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
         """A local declared in a list of sibling events is visible to every event of
         that list, whatever the order, and to their sub-events; not to the parent's
         own actions. So the list's variables enter the scope first, and a block is
@@ -1765,7 +1942,9 @@ class Checker:
         how many sub-event levels down this list is (a group's children are 0),
         group the group whose children the list is, by_input whether an event above
         tests input (check_gesture), paced whether one above is triggered or on a
-        timer (check_pathfinding)."""
+        timer (check_pathfinding), line the events above in this branch, gone
+        what the top-level event destroyed before the list runs (check_none_left),
+        shared by the list's events in the order they run."""
         scope = dict(scope)
         bad = [ev for ev in events if not isinstance(ev, dict)]
         if bad:
@@ -1817,16 +1996,20 @@ class Checker:
                 label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
                 if et == "custom-ace-block" and ev["objectClass"] not in self.p.plugin_of:
                     self.err(f"{w}: custom action {label} belongs to unknown object {ev['objectClass']}")
-                self.check_block(ev, fscope, f"{w} {label}", None, None)
+                body: dict[str, str] = {}
+                self.check_block(ev, fscope, f"{w} {label}", None, None, gone=body)
                 self.walk(ev.get("children", []), fscope, where, counter,
                           self.check_structure(ev, f"{w} {label}", above, previous), depth + 1, by_input=None,
-                          paced=None)
+                          paced=None, gone=None if any(self.waits(a) for a in ev.get("actions", [])) else body)
             elif et == "block":
                 here = None if by_input is None else by_input or self.reads_input(ev)
                 timed = None if paced is None else paced or self.paces(ev)
-                self.check_block(ev, scope, w, here, timed)
+                # A top-level event starts with nothing destroyed; after a Wait its sub-events run later.
+                mine = {} if depth == 0 else gone
+                self.check_block(ev, scope, w, here, timed, line + (ev,), mine)
                 self.walk(ev.get("children", []), scope, where, counter, self.check_structure(ev, w, above, previous),
-                          depth + 1, by_input=here, paced=timed)
+                          depth + 1, by_input=here, paced=timed, line=line + (ev,),
+                          gone=None if any(self.waits(a) for a in ev.get("actions", [])) else mine)
             elif et == "script":
                 self.check_script(ev.get("script"), scope, w)
             else:

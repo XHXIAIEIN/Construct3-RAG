@@ -90,7 +90,8 @@ down is left to `event-sheet-thinking.md` and the pitfalls.
 Update 2026-10-01. Iteration 30 confirmed it: no run opened
 `event-sheet-thinking.md`, 0 of 6 used a Timer. The route to the Timer is
 now in what the runs read. `SKILL.md` has a section, "Built-ins before
-variables", of five lines from the Native first table, and
+variables", drawn from the Native first table and rule 2 of the thinking
+guide, and
 `check_project.py --style` has a `countdown` kind, below. Over the 60
 archived `add-countdown` runs of iterations 21 to 30 it fires on every one,
 and on no official example or game project; nothing else the checker prints
@@ -167,6 +168,31 @@ intentional. `edit_sheet.py` refuses it in an event the plan creates, under
 the kind `pathfinding`, and its line names the fix first: the trigger that
 sets the target, or *Every 0.5 seconds* with the JSON of that condition. In
 the user's own events it stays a warning.
+
+The traps of the running game in the table below take the same path as
+*Find path*. Small models write them in plans whatever the guides say, so
+the rule goes into the line a script prints, with the fix as JSON:
+
+| Kind | Finding | Passes |
+|------|---------|--------|
+| `timer` | Timer *Start timer* in an event that runs every tick, every condition of its branch a test of a variable or `Count`; the timer starts over each tick, so *On timer* never fires | a branch that tests *Is timer running* or what changes as the game plays (an overlap, a key, a position, a function), and one whose actions set the variable it tests, create or destroy the type it counts, call a function or leave the group or layout |
+| `control` | *Simulate control* of a Platform's left or right, or of any 8 Direction or Car control, under a trigger: the control holds for the one tick the trigger fires (manual: `behavior-reference.md` "Custom controls") | a Platform jump and a Tile movement step, each a whole move in one tick |
+| `count` | `X.Count = 0`, `≤ 0` or `< 1` in a condition that runs after a *Destroy* of X in the same top-level event: the destroyed instance counts until that event ends | a comparison with 1, as the official examples write it, and a test after a *Wait* |
+| `picked` | `X.PickedCount = 0`, `≤ 0` or `< 1` below a condition of its branch that picks X: a pick of no X stops its event, and *Pick all* is false when no X exists | a test of `X.Count` in an event that does not pick X |
+
+Each fires on none of the official examples. `edit_sheet.py` refuses each
+in an event a plan creates, and its line names the fix: *Trigger once*, the
+condition that holds while the input is held (*Key is down* with the
+trigger's key), or the `Count` test in an event of its own. In the user's
+own events they stay warnings. A counter kept beside an instance count, and
+a door left Solid, have no form a check can tell from sound code:
+`SKILL.md` names `Count` among the built-ins and the Solid among the
+gotchas.
+
+In skill runs the refusals rarely fire: given a project, Haiku tests a key
+the way the project's own events do. A warning that names the fix gets a
+seeded trap fixed at once. Evidence:
+`.local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-39/`.
 
 For `comment`, the events directly in a group are top-level events, and
 small models do not read them so. In iteration 29 of `add-countdown`, two

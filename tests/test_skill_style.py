@@ -1,10 +1,11 @@
 """Style, with --style: the habits of small models as warnings from check_project.py, and the
 same findings refusing what a plan of edit_sheet.py adds."""
+import copy
 import json
 import re
 
-from tests.skill_helpers import SHEET, check, edit, cond, block, events, warnings, plan
-from tests.test_skill_check_project import pathfinding_coin
+from tests.skill_helpers import SHEET, check, edit, cond, block, events, findings, warnings, plan
+from tests.test_skill_check_project import add_addon, add_keyboard, pathfinding_coin
 
 
 STYLE_ACTIONS = [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{i}"'}} for i in range(8)]
@@ -154,6 +155,142 @@ def test_plan_warns_on_a_find_path_every_tick_in_an_event_it_did_not_create(proj
     code, out = plan(project, {"event": 10, "add-actions": [FIND_PATH]}, flags=("--dry-run",))
     assert code == 0 and "Traceback" not in out, out
     assert [w for w in warnings(out) if "Find path runs every tick" in w], out
+
+
+def give_behavior(project, obj: str, behavior_id: str, name: str) -> None:
+    """obj gets the behavior, on its type and on its instance: Coin's template in Objects, ScoreText's in Game."""
+    edit(project, f"objectTypes/{obj}.json", lambda t: t.setdefault("behaviorTypes", []).append(
+        {"behaviorId": behavior_id, "name": name, "sid": 950_000_000_000_000 + len(name)}))
+    layout = "layouts/Objects.json" if obj == "Coin" else "layouts/Game.json"
+    edit(project, layout, lambda d: next(i for layer in d["layers"] for i in layer["instances"] if i["type"] == obj)
+         .setdefault("behaviors", {}).update({name: {"properties": {}}}))
+    add_addon(project, "behavior", behavior_id, name)
+
+
+def comment(text: str) -> dict:
+    return {"eventType": "comment", "text": text}
+
+
+NONE_LEFT = {"id": "compare-two-values", "objectClass": "System",
+             "parameters": {"first-value": "Coin.Count", "comparison": 0, "second-value": "0"}}
+ONCE = {"id": "trigger-once-while-true", "objectClass": "System"}
+START_WAVE = {"id": "start-timer", "objectClass": "ScoreText", "behaviorType": "Timer",
+              "parameters": {"duration": "3", "type": "once", "tag": '"wave"'}}
+
+
+def test_plan_refuses_a_new_timer_started_every_tick(project):
+    """The wave-system runs of the prompt evals of 2026-10-04 started the countdown between waves with no
+    trigger, Enemy.Count = 0 -> Start timer, which starts it over each tick, so On timer never fires: refused
+    in an event the plan creates, the first line naming Trigger once with its JSON. Trigger once, a cooldown's
+    NOT Is timer running, or a Set of the variable the event tests goes through."""
+    give_behavior(project, "ScoreText", "Timer", "Timer")
+    before = (project / SHEET).read_bytes()
+    ev = {"eventType": "block", "conditions": [NONE_LEFT], "actions": [START_WAVE]}
+    code, out = plan(project, {"into": 0, "events": [comment("Count down to the next round."), ev]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r'operation 1: sheet Game event \d+ \(sid \d+\) action 1: Start timer "wave" runs every tick\. '
+                    r'No trigger', out), out
+    assert "On timer \"wave\" never fires" in out and json.dumps(ONCE) in out.splitlines()[0], out
+    running = {"id": "is-timer-running", "objectClass": "ScoreText", "behaviorType": "Timer",
+               "parameters": {"tag": '"wave"'}, "isInverted": True}
+    beat_is_0 = {"id": "compare-eventvar", "objectClass": "System",
+                 "parameters": {"variable": "beat", "comparison": 0, "value": "0"}}
+    set_beat = {"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "beat", "value": "1"}}
+    for conditions, actions in (([NONE_LEFT, ONCE], [START_WAVE]), ([NONE_LEFT, running], [START_WAVE]),
+                                ([beat_is_0], [START_WAVE, set_beat])):
+        ev = {"eventType": "block", "conditions": conditions, "actions": actions}
+        code, out = plan(project, {"into": 0, "events": [comment("Count down to the next round."), ev]},
+                         flags=("--dry-run",))
+        assert code == 0 and warnings(out) == [], (conditions, out)
+
+
+def test_timer_started_under_a_trigger_or_by_an_overlap_is_left_alone(project):
+    """A Start timer below a trigger runs once; one under a test of what moves, a position here, is the
+    official examples' timer that fires once the test stops holding."""
+    give_behavior(project, "ScoreText", "Timer", "Timer")
+    moved = {"id": "compare-two-values", "objectClass": "System",
+             "parameters": {"first-value": "ScoreText.X", "comparison": 4, "second-value": "100"}}
+    for top in (block([cond("on-start-of-layout")], [], [block([NONE_LEFT], [START_WAVE])]),
+                block([moved], [START_WAVE])):
+        out = findings(project, lambda s: s["events"].append(with_own_sids(copy.deepcopy(top), 960_000_000_000_000)))
+        assert "runs every tick" not in out and out.splitlines()[-1].startswith("ok:"), out
+
+
+def test_simulate_control_under_a_trigger(project):
+    """Every new-game plan of the prompt evals walked under On key pressed: Simulate control holds the
+    control for that tick alone. Refused in a new event with the condition that holds, its key kept;
+    under Key is down, and a Platform jump under On key pressed, go through."""
+    give_behavior(project, "Coin", "EightDir", "8Direction")
+    give_behavior(project, "Coin", "Platform", "Platform")
+    add_keyboard(project, 87)
+    before = (project / SHEET).read_bytes()
+    up = {"id": "simulate-control", "objectClass": "Coin", "behaviorType": "8Direction", "parameters": {"control": "up"}}
+    pressed = {"id": "on-key-pressed", "objectClass": "Keyboard", "parameters": {"key": 87}}
+    ev = {"eventType": "block", "conditions": [pressed], "actions": [up]}
+    code, out = plan(project, {"into": 0, "events": [comment("W walks up."), ev]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) action 1: Simulate control up runs only in the "
+                    r"tick that Keyboard:on-key-pressed fires, so Coin moves for one tick and stops", out), out
+    assert '{"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}}' in out.splitlines()[0], out
+    touched = {"id": "on-touched-object", "objectClass": "Touch", "parameters": {"object": "Coin", "type": "start"}}
+    ev["conditions"] = [touched]
+    code, out = plan(project, {"into": 0, "events": [comment("A touch walks up."), ev]})
+    assert code == 1 and '{"id": "is-touching-object", "objectClass": "Touch", "parameters": {"object": "Coin"}}' in out
+    ev["conditions"] = [{"id": "on-key-code-pressed", "objectClass": "Keyboard", "parameters": {"keycode": "87"}}]
+    code, out = plan(project, {"into": 0, "events": [comment("W walks up."), ev]})
+    assert code == 1 and '{"id": "key-code-is-down", "objectClass": "Keyboard", "parameters": {"keycode": "87"}}' in out
+    jump = {"id": "simulate-control", "objectClass": "Coin", "behaviorType": "Platform", "parameters": {"control": "jump"}}
+    for conditions, action in (([{**pressed, "id": "key-is-down"}], up), ([pressed], jump)):
+        ev = {"eventType": "block", "conditions": conditions, "actions": [action]}
+        code, out = plan(project, {"into": 0, "events": [comment("W moves."), ev]}, flags=("--dry-run",))
+        assert code == 0 and warnings(out) == [], (conditions, out)
+
+
+def test_none_left_in_the_event_that_destroys_the_last(project):
+    """The key-and-door runs tested Key.Count = 0 in a sub-event of the trigger that destroys the key,
+    which the destroyed key still fails: refused, naming the top-level event to write. Its own top-level
+    event, a comparison with 1 as the official examples write it, or a Wait before the sub-events goes through."""
+    before = (project / SHEET).read_bytes()
+    touched = {"id": "on-touched-object", "objectClass": "Touch", "parameters": {"object": "Coin", "type": "start"}}
+    destroy = {"id": "destroy", "objectClass": "Coin"}
+    done = {"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Done"'}}
+    last = {"eventType": "block", "conditions": [NONE_LEFT], "actions": [done]}
+    ev = {"eventType": "block", "conditions": [touched], "actions": [destroy], "children": [last]}
+    code, out = plan(project, {"into": 0, "events": [comment("A touched coin goes."), ev]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r"operation 1: sheet Game event (\d+) \(sid \d+\) condition 1: Coin.Count = 0 is false here even "
+                    r"when the last Coin is gone\. sheet Game event \d+ \(sid \d+\) action 1 destroys it", out), out
+    assert json.dumps([NONE_LEFT, ONCE]) in out.splitlines()[0], out
+    one_left = {**NONE_LEFT, "parameters": {**NONE_LEFT["parameters"], "second-value": "1"}}
+    wait = {"id": "wait", "objectClass": "System", "parameters": {"seconds": "0", "use-timescale": False}}
+    for events_ in ([{**ev, "children": [{**last, "conditions": [one_left]}]}],
+                    [{**ev, "actions": [destroy, wait]}],
+                    [{**ev, "children": []}, comment("Then none is left."),
+                     {"eventType": "block", "conditions": [NONE_LEFT, ONCE], "actions": [done]}]):
+        code, out = plan(project, {"into": 0, "events": [comment("A touched coin goes."), *events_]},
+                         flags=("--dry-run",))
+        assert code == 0 and warnings(out) == [], (events_, out)
+
+
+def test_picked_count_of_none_below_a_pick(project):
+    """Three key-and-door runs wrote Pick all Key, then Key.PickedCount = 0: a pick of no instance stops its
+    event, Pick all included, so the test never holds. Refused, naming Count in an event without the pick;
+    Coin.Count = 0 with Trigger once goes through."""
+    before = (project / SHEET).read_bytes()
+    pick_all = {"id": "pick-all", "objectClass": "System", "parameters": {"object": "Coin"}}
+    none_picked = {"id": "compare-two-values", "objectClass": "System",
+                   "parameters": {"first-value": "Coin.PickedCount", "comparison": 0, "second-value": "0"}}
+    done = {"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Done"'}}
+    ev = {"eventType": "block", "conditions": [pick_all], "actions": [],
+          "children": [{"eventType": "block", "conditions": [none_picked], "actions": [done]}]}
+    code, out = plan(project, {"into": 0, "events": [comment("Say when no coin is left."), ev]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) condition 1: Coin.PickedCount = 0 never holds here\. "
+                    r"System:pick-all above it picks Coin", out), out
+    assert json.dumps(NONE_LEFT) in out.splitlines()[0], out
+    ev = {"eventType": "block", "conditions": [NONE_LEFT, ONCE], "actions": [done]}
+    code, out = plan(project, {"into": 0, "events": [comment("Say when no coin is left."), ev]}, flags=("--dry-run",))
+    assert code == 0 and warnings(out) == [], out
 
 
 def test_style_names_a_countdown_kept_by_hand(project):
