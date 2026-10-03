@@ -544,6 +544,39 @@ def test_template_keeps_alpha_pure_and_shapes_on_the_grid(tmp_path):
     assert t.grid_random(0, 624) == "32 * floor(random(0, 20))"
 
 
+def test_template_art_shows_the_stand_in_until_its_picture_is_there(tmp_path):
+    """art() draws the stand-in shape until art/<file> holds the fitted picture, then copies it in
+    with the stand-in's box, origin and polygon, so the layouts and events stay as they are."""
+    t = template_module()
+    t.ROOT = tmp_path
+    f = t.art("gem-default-000.png", "circle", 64, 64, "reward", "a red gem")
+    assert t.DRAWN_AS["gem-default-000.png"][0] == "circle" and t.ART["gem-default-000.png"]["subject"] == "a red gem"
+    stand_in = (tmp_path / "images" / "gem-default-000.png").read_bytes()
+    assert f["width"] > 64                                          # the shadow widens the stand-in
+    t.art("sky-default-000.png", "scene", 128, 64, "canvas", "a night sky")
+    assert t.drawn("sky-default-000.png")["width"] == 128           # a flat rectangle, no shadow
+    with pytest.raises(SystemExit, match=r"art\('x.png'\): 'star' is no kind; art\(\) takes rect, circle, triangle or scene"):
+        t.art("x.png", "star", 64, 64, "reward", "a star")
+    with pytest.raises(SystemExit, match=r"art\('x.png'\): say what the picture shows"):
+        t.art("x.png", "rect", 64, 64, "reward", " ")
+
+    t.write_png("../art/gem-default-000.png", 64, 64, lambda x, y: (200, 30, 30, 255 if x > 8 else 90), painted=True)
+    t.write_png("../art/gem-default-000.hit.png", 64, 64, lambda x, y: (255, 255, 255, 255 if x > 8 else 90),
+                painted=True)
+    f = t.art("gem-default-000.png", "circle", 64, 64, "reward", "a red gem", oy=1)
+    assert (tmp_path / "images" / "gem-default-000.png").read_bytes() != stand_in
+    assert (f["width"], f["height"], f["originY"], t.PADS["gem-default-000.png"]) == (64, 64, 1, (0, 0))
+    assert len(f["collisionPoly"]["points"]) == 32
+    hit = t.hit_frame("gem-default-000.png")
+    assert hit["tag"] == "hit" and hit["imageSpriteId"] != f["imageSpriteId"] and f["tag"] == ""
+    assert png_pixels(tmp_path / "images" / "gem-default-001.png")[0][20] == (255, 255, 255, 255)
+    inst = t.shape_inst("Gem", "gem-default-000.png", 2, 3)
+    assert (inst["world"]["x"], inst["world"]["y"]) == (96, 160)
+    with pytest.raises(SystemExit, match=r"art/gem-default-000.png is 64x64, and art\(\) asks 96x96: put the picture "
+                                         r"in art/raw/ and run the skill's scripts/prepare_art.py.* or delete"):
+        t.art("gem-default-000.png", "circle", 96, 96, "reward", "a red gem")
+
+
 def test_template_squashes_the_art_on_a_hit_a_landing_and_a_jump():
     """A squash stops the one the object is in, sets a share of the image's size, holds it for a
     jump, and tweens back under "squash"; one acting on an object that collides stops the run."""

@@ -33,13 +33,15 @@ overwrites the files it produces.
 3. Ignore what the editor and the scripts leave behind: `.tmp/` holds
    screenshots, recordings and browser profiles, `.build/` the products,
    the packed `.c3p` and the export, so none is written to the project
-   root:
+   root. `art/raw/` holds the large pictures of an image tool; their
+   fitted copies in `art/` are committed:
 
    ```gitignore
    *.uistate.json
    .trash/
    .tmp/
    .build/
+   art/raw/
    __pycache__/
    ```
 
@@ -84,6 +86,15 @@ separator or a suffix; no row stored in two places. The reasons are in
 `Construct3-RAG/prompts/event-sheet-thinking.md` ("Native first", "Smell
 table") and `Construct3-RAG/prompts/event-sheet-style.md` ("Six habits to
 avoid").
+
+## Plan the art
+
+The plan names the art direction in one sentence, `ART_STYLE`, and each
+sprite with what its picture shows and its box in units. Every sprite is an
+`art()`, which shows its stand-in until its picture is in `art/`. The
+session that has an image tool makes the pictures; the plan does not draw
+them in code. Art drawn in code looks worse than the stand-ins and mixes
+drawing styles on one screen (`Construct3-RAG/docs/decisions/art-from-the-image-tool.md`).
 
 ## Build, check, open
 
@@ -208,9 +219,14 @@ habits; they are what makes rerunning safe.
   them by role through `rgb()`, and a pixel of any other colour stops the
   run with the nearest role: a new object reuses the game's colours or adds
   one under the role it plays. A painting, a gradient or a photograph,
-  passes `painted=True`. The template draws stand-ins, one colour or a plain
-  shape each, and leaves the art to the user or to real assets. A stand-in
-  is `shape(file, kind, w, h, role)` in `build_images()`: a rectangle,
+  passes `painted=True`. A sprite is `art(file, kind, w, h, role, subject)`
+  in `build_images()`. It takes the picture `art/<file>` when it is there,
+  which `scripts/prepare_art.py` fits to the box; until then it draws the
+  stand-in. Both have the same box, origin and collision polygon, so the
+  layouts and events do not change when the art arrives. `subject` says
+  in words what the picture shows, for its prompt. Kind `"scene"` is an
+  opaque backdrop that fills its box. A stand-in is
+  `shape(file, kind, w, h, role)`: a rectangle,
   circle or triangle with the outline and cast shadow of `SHAPE_STYLE`
   drawn into the image, since Construct's effects have neither. The type
   takes `drawn(file)` as its frame and an instance is that frame's size,

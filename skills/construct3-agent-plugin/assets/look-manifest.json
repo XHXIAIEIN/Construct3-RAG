@@ -1,7 +1,7 @@
 {
   "name": "greybox-blockout",
   "version": 1,
-  "about": "The stand-in look of a generated game: what the generator template holds, what stops its run, what the user has decided and what is still open. An agent hands the model the deliver steps and runs the confirm steps on what comes back.",
+  "about": "The stand-in look of a generated game and the route its art takes: what the generator template holds, what stops its run, what the user has decided and what is still open. An agent hands the model the deliver steps and runs the confirm steps on what comes back.",
   "template": "assets/build_project.py",
   "decisions": [
     "Construct3-RAG/docs/decisions/greybox-blockout.md",
@@ -173,6 +173,14 @@
       "confirm": "check_look.py: motion.hit"
     },
     {
+      "id": "art.image-tool",
+      "status": "adopted",
+      "says": "A sprite is art(): its picture when it is in art/, else its stand-in, in the same box of whole units with the same origin and collision polygon. When the session has an image tool, the pictures come from it, prompted by prepare_art.py --list from ART_STYLE and each subject, then cut out and fitted by prepare_art.py. Art is not drawn in code.",
+      "template": "ART_STYLE, art()",
+      "helpers": "art(), hit_frame(), write_wanted()",
+      "confirm": "prepare_art.py: ok"
+    },
+    {
       "id": "juice.functions",
       "status": "proposed",
       "says": "Screen shake, size impact, slow motion at time scale 0.1 to 0.2, zoom impact; shake magnitudes in tiers of the viewport's shorter side."
@@ -221,8 +229,9 @@
     }
   ],
   "deliver": [
-    "Copy assets/build_project.py to the project's tools/ and rewrite only the game: PALETTE's values by role, BEATS, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
-    "Keep SHAPE_STYLE and the helpers. Draw every stand-in with shape() in whole units and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
+    "Copy assets/build_project.py to the project's tools/ and rewrite only the game: PALETTE's values by role, ART_STYLE, BEATS, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
+    "Keep SHAPE_STYLE and the helpers. Give every sprite an art() in whole units, which draws its stand-in until its picture arrives, and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
+    "With an image tool in the session: run prepare_art.py --list, make each picture with the prompt it prints, run prepare_art.py, then the generator. Never draw the art in code: it looks worse than the stand-ins and mixes styles.",
     "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area or an edge is area() of a pattern(), the backdrop the checker's backdrop().",
     "Write BEATS for the game's zones or rounds, and read the curve the generator prints; measure every gap of a platformer level with jump().",
     "Give every object that can be hit a hit_frame() after its shape and the Tween behavior, and show a hit with hit(obj), last in its block; never the Flash behavior.",
@@ -233,6 +242,7 @@
   "confirm": [
     "python tools/build_project.py: the last line starts with ok:",
     "python <skill>/scripts/check_look.py --project <folder>: the last line starts with ok:",
+    "python <skill>/scripts/prepare_art.py --list --project <folder>, where the art is meant to come from an image tool: no picture left to make",
     "python <skill>/scripts/open_in_editor.py --project <folder>: opened",
     "The look itself is the user's call on a screenshot; no script scores it."
   ]

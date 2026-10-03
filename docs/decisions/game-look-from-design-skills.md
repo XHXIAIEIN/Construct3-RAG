@@ -112,8 +112,9 @@ Option 3, with one bullet of option 2 in
   naming the nearest role and the two ways out: that role, or the colour
   added under the role it plays. `painted=True` lets a painting, a gradient
   or a photograph through.
-- No helper draws art. The template draws stand-ins with `shape()` and
-  leaves art to the user or to real assets.
+- No helper draws art. The template draws stand-ins with `shape()`, and
+  `art()` puts the art of the image tool or the user in their boxes
+  (`art-from-the-image-tool.md`).
 - `FONT` and `TEXT_SIZE`: `body` one unit, `title` two. `text_inst()` and
   `hud_text()` take their size from it and stop below 4.5:1, or 3:1 from the
   title size up (WCAG 2.2, 1.4.3), naming the roles that would read.
@@ -161,8 +162,9 @@ while a small model reading tool output answers concrete questions.
   can measure it: it becomes a finding line.
 - Most faults sit in scenes `goToLayout` cannot reach: let the script play a
   plan to a scene before it reviews it.
-- A route to real art is built (CC0 packs or an image model): the icon
-  checks, a box on the grid and 3:1 against the backdrop, go with it.
+- The art of the image tool reads poorly against the backdrop on the
+  user's screenshots: a 3:1 check of a picture against the backdrop goes
+  into `prepare_art.py`.
 - A HUD sprite of one colour does not show on the layer behind it: check
   the UI layer's images in `no_overlap()`.
 - The example clone updates: rerun the look survey.

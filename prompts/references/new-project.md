@@ -57,6 +57,11 @@ Construct-Example-Projects, 2026-09-18]
   one thing, with a rest after every hard one. The generator template holds
   these as `PALETTE`, `shape()`, `PATTERNS`, `area()`, `backdrop()` and
   `BEATS`; the record is `docs/decisions/greybox-blockout.md`.
+- The art arrives through the template's `art()`, in the boxes of the
+  stand-ins: from the session's image tool by way of the skill's
+  `prepare_art.py`, or from the user. It is not drawn in code, which looks
+  worse than the stand-ins and mixes styles
+  (`docs/decisions/art-from-the-image-tool.md`).
 - Positions and sizes use a grid: 8 px at 320×180 (three quarters of the
   examples' x and five sixths of their widths sit on it), 32 px at 1920×1080
   (half of their x, three fifths of their widths). Use whole numbers, angle 0

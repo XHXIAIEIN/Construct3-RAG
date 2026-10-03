@@ -1,7 +1,7 @@
 ---
 name: construct3-agent-plugin
 description: Check, read, look up and generate the JSON of a Construct 3 folder project (project.c3proj, eventSheets, layouts, objectTypes, families) against the Construct3-RAG schemas and the rules the Construct 3 editor applies when it opens a project. Use this skill whenever you write or edit an event sheet or any other project file of a Construct 3 game, need the exact id, parameters and JSON of a condition, action or expression, want to read an event sheet or an official example as events instead of JSON, generate a whole project from a script, or the editor refuses to open or preview a project, even if the user only says "add a mechanic", "fix this event" or pastes an editor error.
-compatibility: Requires Python 3.10+ and a local clone of Construct3-RAG, whose data/c3-schemas the scripts read. Pillow is optional and only joins a preview recording into a GIF where ffmpeg is missing. Opening the project in the editor takes a network connection and Edge, Chrome or Chromium, or a browser tool of the agent.
+compatibility: Requires Python 3.10+ and a local clone of Construct3-RAG, whose data/c3-schemas the scripts read. prepare_art.py needs Pillow to cut out the pictures of an image tool; elsewhere Pillow is optional and only joins a preview recording into a GIF where ffmpeg is missing. Opening the project in the editor takes a network connection and Edge, Chrome or Chromium, or a browser tool of the agent.
 metadata:
   source: https://github.com/XHXIAIEIN/Construct3-RAG
 ---
@@ -62,6 +62,7 @@ opened once before it is handed over.
 | `scripts/review_look.py` | Preview the project, visit every layout and print a screenshot of each, the faults the runtime shows on it, and fixed yes/no questions to answer from the screenshots |
 | `scripts/export_project.py` | Export the project to Web (HTML5) in the editor into `--to`, `--bump` raising its version. The editor exports for a subscribed account, which the user logs in to: read [references/export-project.md](references/export-project.md) before the first export of a project, when the script stops, or before passing `--attach` |
 | `scripts/pack_project.py` | Save the project as a .c3p or .zip, or a .c3p or .zip as a project folder, with project.c3proj at the root of the archive as the editor needs it and only the files the editor saves; what it leaves out it names. Any project handed over as a file, a bug report's attachment among them, is packed with it, `--open` opens the result once in the editor |
+| `scripts/prepare_art.py` | The art from the image tool of this session: `--list` prints a prompt for every picture the generator's `art()` asks for; without it, each picture saved in `art/raw/` is cut out of its background and fitted to its box, for the generator to take in place of the stand-in. Needs Pillow |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
 | `assets/runtime-probe.js` | Evaluated in a running preview by a script of the agent's, reads the game's state: positions, variables, animations, behaviors. Read [references/reading-the-runtime.md](references/reading-the-runtime.md) before checking what an event did in the preview |
@@ -284,6 +285,13 @@ before writing it: set-up in the editor, the build and check loop, one
 function per group of the sheet, the habits that keep a rerun safe. The
 generator checks what it wrote with `--style`, so every event is held to the
 style of the official examples.
+
+Every sprite of the game is an `art()` in the generator: it shows a stand-in
+shape until its picture is in `art/`. When this session has an image
+generation tool, the art comes from that tool, not from code: run
+`python scripts/prepare_art.py --list` and follow its output. Without an
+image tool, keep the stand-ins: art drawn in code with Pillow looks worse
+than they do and mixes styles.
 
 When another model writes the generator, give it the `deliver` steps of
 `assets/look-manifest.json`, then run its `confirm` steps on the result,

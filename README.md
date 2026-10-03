@@ -75,6 +75,7 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 - `check_project.py` checks every project file against the schemas and against the rules that the editor applies when it opens a project. Each finding names its place and, where it can, what to write.
 - `review_design.py` reads the event sheets and reports where their design is hard to read or fragile, such as an event with too many conditions, one fact kept in two places or a scratch global. Each finding names the event and the form to write instead. Then it asks the agent fixed questions to answer from `print_sheet.py`.
 - `check_look.py` checks the placeholder art of a generated game against the strict rules in `assets/look-manifest.json`, such as the grid, the palette and the text contrast.
+- `prepare_art.py` brings in art from the agent's image tool. It prints a prompt for each picture that the generator asks for. Then it cuts each picture that the tool made out of its background and fits it to the box of its placeholder. It needs Pillow.
 - `open_in_editor.py` opens the project in the Construct 3 editor and reports that it opened, or gives the editor's message. With `--preview`, it runs the game for a few seconds and reports the runtime errors with their events.
 - `preview_project.py` plays a preview from a plan of taps, drags, key presses and waits. It takes screenshots and records parts of the run. You can review a recording frame by frame and give a part of it to the agent as a task.
 - `review_look.py` previews the project, visits every layout and takes a screenshot of each. It reports what the runtime shows wrong there, such as a text that its box cuts or instances stacked on one spot. Then it asks the agent fixed questions to answer from the screenshots.
@@ -85,12 +86,13 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 
 ### What the skill's scripts read, write and reach
 
-The skill's scripts read this repository's `data/` and the projects and files that you give them. They run on the Python standard library. They reach the network in two ways: `check_project.py` fetches the clone's upstream, and the editor scripts open the Construct 3 editor and its preview in a browser on your machine.
+The skill's scripts read this repository's `data/` and the projects and files that you give them. They run on the Python standard library, except `prepare_art.py`, which needs Pillow. They reach the network in two ways: `check_project.py` fetches the clone's upstream, and the editor scripts open the Construct 3 editor and its preview in a browser on your machine.
 
 - **Read only**: `lookup_ace.py`, `check_project.py`, `review_design.py`, `check_look.py` and `print_sheet.py`. `print_sheet.py` keeps a hash of each sheet that it prints, in `construct3-sheet-stamps/` of the system's temporary folder. With this hash, `edit_sheet.py` notices a save made between the print and the edit. `check_project.py` runs `git fetch` in the clone at most every six hours, to say when the clone is behind its upstream. If `CONSTRUCT3_RAG_OFFLINE` is set, it skips the fetch.
 - **Writing files**:
   - `edit_sheet.py` writes the event sheets that you give it, and their hashes beside those of `print_sheet.py`.
   - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. `--dry-run` shows the changes first.
+  - `prepare_art.py` writes the fitted pictures into the project's `art/`. It reads the pictures in `art/raw/` and changes none of them.
   - `pack_project.py` writes the archive or folder that `--out` names. By default, it writes a `.c3p` in the project's `.build/`, the folder for build products. When it unpacks, it writes a folder beside the archive by default.
   - The agent copies `assets/build_project.py` to the project's `tools/` and adapts it to the game. When it runs, the copy rewrites the project files that it generates, then runs `check_project.py`.
 - **Opening the editor**: `open_in_editor.py`, `preview_project.py`, `review_look.py` and `pack_project.py --open` start Edge, Chrome or Chromium on the machine.

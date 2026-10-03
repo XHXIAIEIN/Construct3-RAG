@@ -9,7 +9,8 @@ layouts and event sheets the editor would load and checks:
   alpha.pure            a clear pixel holds no colour, and the project's images
                         hold one alpha value between clear and opaque, the
                         shadow's; a painting meant to keep soft edges is
-                        named with --painted
+                        named with --painted, and the art prepare_art.py
+                        wrote is known by the mark it leaves in the file
   grid.world-placement  an instance of a world layer starts on the grid: its
                         box's left or right edge and top or bottom edge are
                         whole UNITs, the other side being the shadow's
@@ -38,6 +39,20 @@ import zlib
 from pathlib import Path
 
 import c3project as c3
+
+
+def painted_mark(path: Path) -> bool:
+    """Whether the PNG carries the text chunk scripts/prepare_art.py writes into a painting."""
+    data = path.read_bytes()
+    pos = 8
+    while pos + 8 <= len(data):
+        n, tag = struct.unpack(">I", data[pos:pos + 4])[0], data[pos + 4:pos + 8]
+        if tag == b"tEXt" and data[pos + 8:pos + 8 + n].startswith(b"c3-art\0"):
+            return True
+        if tag == b"IDAT":
+            return False
+        pos += 12 + n
+    return False
 
 
 def png_rgba(path: Path) -> tuple[int, int, list[tuple]] | None:
@@ -117,6 +132,8 @@ def check_alpha(root: Path, painted: list[str], out: list[str]) -> int:
         if hidden:
             out.append(f"alpha.pure: {rel} has {len(hidden)} clear pixels that hold a colour, the first at "
                        f"({hidden[0] % w},{hidden[0] // w}); write a clear pixel as (0, 0, 0, 0)")
+        if painted_mark(png):       # art from prepare_art.py keeps the soft edges of its picture
+            continue
         for i, p in enumerate(pixels):
             if 0 < p[3] < 255:
                 partial.setdefault(rel, {}).setdefault(p[3], (i % w, i // w))

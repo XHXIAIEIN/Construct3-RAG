@@ -14,7 +14,8 @@ project is ready for the editor when the last line starts with `ok:`.
 The game below is a stand-in: coins appear, a tap collects one, the score
 counts up, and when the last coin is gone the next round starts, one round a
 beat of BEATS. Replace PALETTE with the game's colours by role, SHAPE_STYLE
-with its outline and shadow, BEATS with its pacing, build_images(),
+with its outline and shadow, ART_STYLE with its art direction, BEATS with its
+pacing, build_images() with an art() for every sprite,
 build_object_types(), build_layouts(), the module_*() functions of the
 event sheet and the name and orientation in build_project(); keep the
 helpers, or grow them from the skill's `scripts/lookup_ace.py <object>
@@ -126,6 +127,12 @@ LINE_EMS = 1.2                             # one line is 1.05 to 1.17 em high in
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
 # as every official example at that size samples and 116 of 159 scale (build_project()).
 PIXEL_ART = UNIT == 8
+# The art direction in one sentence, the look the user agreed. It fixes the technique, the
+# outline, the colours and the shading, never a subject: "flat vector, thick dark outlines, warm
+# colours, soft cel shading", or "ink wash on rice paper, dry brush edges, muted greens, no
+# outlines". Every prompt the skill's scripts/prepare_art.py prints for the image tool starts
+# with it, so the pictures art() asks for share one style.
+ART_STYLE = ""
 
 # --- pacing ---------------------------------------------------------------------------
 # The order in which the game asks things of the player, one beat at a time: a camera zone of a
@@ -436,8 +443,11 @@ EQ, NE, LT, LE, GT, GE = 0, 1, 2, 3, 4, 5
 
 
 # --- images ----------------------------------------------------------------------
-# Stand-in art without Pillow: a PNG from an RGBA function. Real projects draw with
-# Pillow or ship files; the file names below are the ones the editor expects.
+# The stand-ins are drawn without Pillow, a PNG from an RGBA function. The art comes from the
+# image tool of the session through art() and the skill's scripts/prepare_art.py, or from the
+# user; art drawn here in code does not replace the stand-ins, it looks worse than they do and
+# mixes styles (Construct3-RAG/docs/decisions/art-from-the-image-tool.md). The file names below
+# are the ones the editor expects.
 def rgb(role: str) -> tuple[int, int, int]:
     """The colour of a role of PALETTE: rgb("danger")."""
     if role not in PALETTE:
@@ -559,6 +569,13 @@ def inside(kind: str, w: float, h: float, x: float, y: float, inset: float = 0) 
     return True
 
 
+def corners(kind: str) -> list[tuple[float, float]]:
+    """The collision polygon of a kind of SHAPES across its box, from 0 to 1."""
+    return {"rect": [(0, 0), (1, 0), (1, 1), (0, 1)], "triangle": [(0.5, 0), (1, 1), (0, 1)],
+            "circle": [(0.5 + math.cos(a) / 2, 0.5 + math.sin(a) / 2)
+                       for a in (i * math.pi / 8 for i in range(16))]}[kind]
+
+
 def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: float = 0.5,
           outline: bool | None = None, shadow: bool | None = None) -> dict:
     """images/<rel>: a flat `kind` of SHAPES, w x h px in whole units, in the colour of `role`, with the outline
@@ -595,10 +612,7 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
         return (0, 0, 0, 0)
 
     write_png(rel, iw, ih, pixel)
-    corners = {"rect": [(0, 0), (1, 0), (1, 1), (0, 1)], "triangle": [(0.5, 0), (1, 1), (0, 1)],
-               "circle": [(0.5 + math.cos(a) / 2, 0.5 + math.sin(a) / 2)
-                          for a in (i * math.pi / 8 for i in range(16))]}[kind]
-    poly = [round(v, 4) for cx, cy in corners for v in ((left + cx * w) / iw, (top + cy * h) / ih)]
+    poly = [round(v, 4) for cx, cy in corners(kind) for v in ((left + cx * w) / iw, (top + cy * h) / ih)]
     FRAMES[rel] = frame(iw, ih, (left + ox * w) / iw, (top + oy * h) / ih, poly)
     PADS[rel] = (left, top)
     DRAWN_AS[rel] = (kind, w, h, ox, oy, outline, shadow)
@@ -606,25 +620,100 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
 
 
 def hit_frame(rel: str) -> dict:
-    """The hit frame of the shape drawn as images/<rel>, "coin-default-000.png": the same shape,
-    outline and shadow, filled in HIT_FLASH's role, drawn as the next frame's file and tagged
-    "hit". Put it after the shape's frame in the animation; hit_flash() shows it."""
+    """The hit frame of the image shape() or art() drew as images/<rel>, "coin-default-000.png":
+    the same shape, outline and shadow filled in HIT_FLASH's role, or the picture's silhouette in
+    that colour, written as the next frame's file and tagged "hit". Put it after the first frame
+    in the animation; hit_flash() shows it."""
     if rel not in DRAWN_AS or not rel.endswith("-000.png"):
-        sys.exit(f"hit_frame({rel!r}): draw the frame first with shape({rel!r}, ...), named <type>-<animation>-000.png")
-    kind, w, h, ox, oy, outline, shadow = DRAWN_AS[rel]
+        sys.exit(f"hit_frame({rel!r}): draw the frame first with shape({rel!r}, ...) or art({rel!r}, ...), named "
+                 f"<type>-<animation>-000.png")
     hit = rel[:-len("000.png")] + "001.png"
+    if DRAWN_AS[rel][0] == "art":
+        # the picture's silhouette in the flash colour, which prepare_art.py writes beside it
+        source = ROOT / "art" / (rel[:-len(".png")] + ".hit.png")
+        if not source.exists():
+            sys.exit(f"art/{source.name} is missing: run the skill's scripts/prepare_art.py, which writes each "
+                     f"picture's hit frame beside it")
+        (ROOT / "images" / hit).write_bytes(source.read_bytes())
+        FRAMES[hit] = {**FRAMES[rel], "imageSpriteId": image_id(), "tag": "hit"}
+        return FRAMES[hit]
+    kind, w, h, ox, oy, outline, shadow = DRAWN_AS[rel]
     f = shape(hit, kind, w, h, HIT_FLASH["role"], ox, oy, outline, shadow)
     f["tag"] = "hit"
     return f
 
 
 def drawn(rel: str) -> dict:
-    """The frame shape() drew as images/<rel>: sprite_type() takes it, and an instance of it is
-    drawn(rel)["width"] x drawn(rel)["height"]."""
+    """The frame shape() or art() drew as images/<rel>: sprite_type() takes it, and an instance
+    of it is drawn(rel)["width"] x drawn(rel)["height"]."""
     if rel not in FRAMES:
-        sys.exit(f"images/{rel} was not drawn: draw it with shape({rel!r}, ...) in build_images(), "
-                 f"which runs before build_object_types()")
+        sys.exit(f"images/{rel} was not drawn: draw it with art({rel!r}, ...) or shape({rel!r}, ...) in "
+                 f"build_images(), which runs before build_object_types()")
     return FRAMES[rel]
+
+
+# --- art -------------------------------------------------------------------------------
+# A sprite whose art the game will have is art(): it asks for a picture of `subject` in a box of
+# whole units and shows the stand-in shape() until the picture is in art/. The skill's
+# scripts/prepare_art.py --list prints a prompt per picture for the session's image tool; the run
+# without --list cuts each picture out and fits it to its box as art/<file>. The box, the
+# origin and the collision polygon are the stand-in's, so the layouts and the events stay as
+# they are when the art arrives.
+ART: dict[str, dict] = {}                  # what art() asked for, by file name: art/wanted.json
+
+
+def art(rel: str, kind: str, w: int, h: int, role: str, subject: str, ox: float = 0.5, oy: float = 0.5,
+        outline: bool | None = None, shadow: bool | None = None) -> dict:
+    """images/<rel>: the picture art/<rel> when it is there, else the stand-in
+    shape(rel, kind, w, h, role, ...). `subject` says what the picture shows, in words for its
+    prompt: "a gold coin seen from the front". Kind "scene" is an opaque picture that fills its
+    box, a backdrop, with a flat rectangle of `role` as its stand-in. Returns the frame, as
+    shape() does; hit_frame() works on both."""
+    scene = kind == "scene"
+    if kind not in SHAPES and not scene:
+        sys.exit(f"art({rel!r}): {kind!r} is no kind; art() takes {', '.join(SHAPES)} or scene")
+    if not subject.strip():
+        sys.exit(f"art({rel!r}): say what the picture shows, the words its prompt is made of: art({rel!r}, "
+                 f"{kind!r}, {w}, {h}, {role!r}, \"a gold coin seen from the front\")")
+    ART[rel] = {"file": rel, "kind": kind, "width": w, "height": h, "origin": [ox, oy], "subject": subject}
+    picture = ROOT / "art" / rel
+    if not picture.exists():
+        if scene:
+            return shape(rel, "rect", w, h, role, ox, oy, outline=False, shadow=False)
+        return shape(rel, kind, w, h, role, ox, oy, outline, shadow)
+    if w % UNIT or h % UNIT:
+        sys.exit(f"art({rel!r}): {w}x{h} is not whole units of {UNIT} px; give it units(n) or TOUCH, "
+                 f"{math.ceil(w / UNIT) * UNIT}x{math.ceil(h / UNIT) * UNIT} here, then run prepare_art.py again")
+    data = picture.read_bytes()
+    size = struct.unpack(">II", data[16:24]) if data[:8] == b"\x89PNG\r\n\x1a\n" else None
+    if size != (w, h):
+        sys.exit(f"art/{rel} is {'not a PNG' if size is None else '%dx%d' % size}, and art() asks {w}x{h}: put the "
+                 f"picture in art/raw/ and run the skill's scripts/prepare_art.py, which fits it to its box, or "
+                 f"delete art/{rel} to show the stand-in")
+    target = ROOT / "images" / rel
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(data)
+    poly = [round(v, 4) for point in corners("rect" if scene else kind) for v in point]
+    FRAMES[rel] = frame(w, h, ox, oy, poly)
+    PADS[rel] = (0, 0)
+    DRAWN_AS[rel] = ("art",)
+    return FRAMES[rel]
+
+
+def write_wanted() -> None:
+    """art/wanted.json, what art() asked for, which the skill's scripts/prepare_art.py reads;
+    prints how many sprites still show their stand-in."""
+    if not ART:
+        return
+    write_json("art/wanted.json", {"style": ART_STYLE, "flash": list(rgb(HIT_FLASH["role"])),
+                                   "pixel_art": PIXEL_ART, "images": list(ART.values())})
+    waiting = [rel for rel in ART if not (ROOT / "art" / rel).exists()]
+    if waiting:
+        print(f"art: {len(waiting)} of {len(ART)} images show their stand-in ({', '.join(waiting[:3])}"
+              f"{' ...' if len(waiting) > 3 else ''}); with an image tool in this session, run the skill's "
+              f"scripts/prepare_art.py --list for their prompts")
+    else:
+        print(f"art: all {len(ART)} images from art/")
 
 
 # Objects are flat; an area or an edge carries a pattern, a Tiled Background, which repeats its
@@ -662,7 +751,7 @@ def pattern(name: str, kind: str) -> None:
 
 def build_images() -> None:
     pattern("Backdrop", "checker")
-    shape("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward")
+    art("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward", "a gold coin seen from the front")
     hit_frame("coin-default-000.png")
 
 
@@ -1689,6 +1778,7 @@ def build_all() -> None:
     for line in pace(BEATS):
         print(line)
     build_images()
+    write_wanted()
     build_files()
     types, families, containers = build_object_types()
     for name, t in types.items():

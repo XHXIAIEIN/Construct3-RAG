@@ -17,8 +17,9 @@ def built(tmp_path_factory) -> Path:
     code, out = run(root, "tools/build_project.py")
     assert code == 0, out
     lines = out.splitlines()
-    # the pacing curve of BEATS, one line a beat, then the check
-    assert lines[0].startswith("beat 1 intro") and lines[6] == "generated; checking" and lines[-1].startswith("ok:")
+    # the pacing curve of BEATS, one line a beat, the art still to come, then the check
+    assert lines[0].startswith("beat 1 intro") and lines[6].startswith("art: 1 of 1 images show their stand-in")
+    assert lines[7] == "generated; checking" and lines[-1].startswith("ok:")
     return root
 
 

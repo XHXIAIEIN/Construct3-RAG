@@ -18,8 +18,9 @@ def test_a_folder_project_is_packed_with_project_c3proj_at_the_root(project, tmp
     packed = names(c3p)
     assert "project.c3proj" in packed and SHEET in packed
     assert (project / ".build" / ".gitignore").read_text(encoding="utf-8") == "*\n"
-    assert not any(n.startswith((".agents/", ".tmp/", ".build/", "tools/")) or n in ("AGENTS.md", "CLAUDE.md") for n in packed)
-    assert "left out: .agents/, AGENTS.md, CLAUDE.md, tools/ (--keep NAME packs one)" in out, out
+    assert not any(n.startswith((".agents/", ".tmp/", ".build/", "tools/", "art/")) or n in ("AGENTS.md", "CLAUDE.md")
+                   for n in packed)
+    assert "left out: .agents/, AGENTS.md, art/, CLAUDE.md, tools/ (--keep NAME packs one)" in out, out
     assert "next: python " in out and "open_in_editor.py" in out
 
     code, out = tool(project, "pack_project", "--out", str(tmp_path / "repro.zip"), "--keep", "tools")
