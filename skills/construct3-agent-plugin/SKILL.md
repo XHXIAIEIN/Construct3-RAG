@@ -68,8 +68,11 @@ opened once before it is handed over.
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
 | `assets/runtime-probe.js` | Evaluated in a running preview by a script of the agent's, reads the game's state: positions, variables, animations, behaviors. Read [references/reading-the-runtime.md](references/reading-the-runtime.md) before checking what an event did in the preview |
 
-Each prints its options and examples with `--help`. `--locale zh-CN` switches
-names and wording to Chinese; ids are the same in every locale. A harness cuts
+Each prints its options and examples with `--help`. The scripts that read the
+schemas (`lookup_ace.py`, `print_sheet.py`, `check_project.py`, `edit_sheet.py`,
+`review_design.py`, `check_look.py`, `prepare_art.py`) take `--locale zh-CN`
+for the editor's Chinese names and wording; ids are the same in every locale.
+The others print no schema wording and take no `--locale`. A harness cuts
 long tool output without saying where, so each script stops at about 10 000
 characters and its last line says how to get the rest; `--limit 0` prints
 everything, for a file or a pipe.
