@@ -677,6 +677,19 @@ def test_a_script_that_reads_a_parameter_bare_is_named(project):
     assert [w for w in warnings(out) if "reads text as a bare name" in w and "localVars.text" in w], out
 
 
+@pytest.mark.parametrize("returns, use, said", [
+    ("number", {"callFunction": "Two", "sid": 4, "parameters": []}, "function 'Two' has wrong return type"),
+    ("none", {"id": "set-text", "objectClass": "ScoreText", "sid": 4, "parameters": {"text": "Functions.Two"}},
+     "has a return type of 'None' so cannot be used as an expression"),
+])
+def test_a_function_is_reached_as_its_return_type_says(project, returns, use, said):
+    func = {"functionName": "Two", "functionDescription": "", "functionCategory": "", "functionReturnType": returns,
+            "functionCopyPicked": False, "functionIsAsync": False, "functionParameters": [],
+            "eventType": "function-block", "conditions": [], "actions": [], "sid": 2}
+    out = findings(project, lambda s: s["events"].extend([func, block([cond("on-start-of-layout")], [use])]))
+    assert said in out, out
+
+
 def test_instance_without_uid_is_reported_not_raised(project):
     out = findings(project, lambda lay: lay["layers"][0]["instances"][0].pop("uid"), "layouts/Objects.json")
     assert "instance of Coin has no integer uid" in out

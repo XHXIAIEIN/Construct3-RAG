@@ -233,6 +233,7 @@ class Checker:
         self.class_sids: dict[int, list[str]] = {}    # sid -> the object types and families that have it
         self.group_titles: set[str] = set()
         self.functions: dict[str, int] = {}                     # name -> parameter count
+        self.returns: dict[str, str] = {}                       # lowercase name -> functionReturnType
         self.custom_actions: dict[tuple[str, str], int] = {}    # (owner, name) -> parameter count
         self.pending_calls: list[tuple] = []
         self.created: set[str] = set()
@@ -665,6 +666,10 @@ class Checker:
             if LOWER(obj) == LOWER(p.functions_object):
                 if LOWER(member) not in {LOWER(f) for f in self.functions}:
                     self.err(f"{where}: {obj}.{member} is not a defined function")
+                elif self.returns.get(LOWER(member)) == "none":
+                    self.err(f"{where}: {obj}.{member} has no return type, and the editor stops with \"The function "
+                             f"'{member}' has a return type of 'None' so cannot be used as an expression\": give it a "
+                             f"return type and a Set return value, or call it as an action")
                 elif EMPTY_CALL.match(text, m.end(2)):
                     # No official example writes an empty pair; the editor stops at it (r504, 2026-10-02).
                     self.err(f"{where}: {obj}.{member}() has an empty pair of parentheses; the editor stops with "
@@ -1443,6 +1448,7 @@ class Checker:
             et = ev.get("eventType")
             if et == "function-block":
                 self.functions[ev["functionName"]] = len(ev["functionParameters"])
+                self.returns[LOWER(ev["functionName"])] = ev.get("functionReturnType")
             elif et == "custom-ace-block":
                 self.custom_actions[(ev["objectClass"], ev["aceName"])] = len(ev["functionParameters"])
             self.declared_functions(ev.get("children") or [])
@@ -1494,6 +1500,10 @@ class Checker:
                     self.err(f"{where}: call to undefined function {name}{closest(name, self.functions)}")
                 elif self.functions[name] != nparams:
                     self.err(f"{where}: {name} called with {nparams} parameters, defined with {self.functions[name]}")
+                elif self.returns.get(LOWER(name), "none") != "none":
+                    self.err(f"{where}: {name} returns a {self.returns[LOWER(name)]} and is called as an action; the "
+                             f"editor stops with \"function '{name}' has wrong return type\". Read it in an expression, "
+                             f"{p.functions_object}.{name}{'(...)' if nparams else ''}, or set its return type to none")
             else:
                 owners = [owner] + p.families_of(owner)
                 hit = next(((o, name) for o in owners if (o, name) in self.custom_actions), None)
