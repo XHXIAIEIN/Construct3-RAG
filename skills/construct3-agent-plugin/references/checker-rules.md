@@ -26,15 +26,34 @@ third-party addon) is a warning, and its ACEs pass unchecked. So is what the
 editor has deprecated, from `Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`:
 an addon, and an ACE or expression, once each at its first use with the count
 of the others, and the current ACE of the same name when there is one. The
-editor opens a project that uses them, and a new event should not. Three
-traps of the running game are warnings: a *Wait for signal* or *On signal*
-whose text tag no *Signal* action or `runtime.signal()` raises, which never
-ends or runs; a script that reads an event's local or parameter by its
-bare name instead of `localVars.name`, a `ReferenceError` when it runs; and
-an action the manual allows only in a user input trigger, such as *Request
-fullscreen*, *Request permission* or *Request wake lock*, with no touch,
-mouse, keyboard or form control condition in its event or above it, which
-the browser refuses. One in a function passes, since an input trigger may
+editor opens a project that uses them, and a new event should not. Traps of the
+running game are warnings:
+
+- a *Wait for signal* or *On signal* whose text tag no *Signal* action or
+  `runtime.signal()` raises, which never ends or runs;
+- a script that reads an event's local or parameter by its bare name
+  instead of `localVars.name`, a `ReferenceError` when it runs;
+- an action the manual allows only in a user input trigger, such as
+  *Request fullscreen*, *Request permission* or *Request wake lock*, with no
+  touch, mouse, keyboard or form control condition in its event or above
+  it, which the browser refuses;
+- with a Pathfinding behavior taking its obstacles from Solids, an action
+  that creates, destroys, moves or resizes a Solid, switches one off or
+  changes a Solid tilemap's tiles, when no *Regenerate* action is anywhere:
+  the obstacle map is built once at startup;
+- *Move along path* or a node expression in the same actions as the *Find
+  path* that started the path, with no *Wait for previous actions to
+  complete* between them: the path is there only after *On path found*;
+- *Find path* in an event that runs every tick, with no trigger, *Every X
+  seconds* or *Trigger once* in it or above it;
+- text a Sprite Font cannot draw, in a layout instance's text or in a
+  literal that *Set text*, *Append text* or *Typewriter text* joins at the
+  top level of its expression: a character outside the Character set shows
+  as an empty space; with *Enable BBCode* on, the tags are not counted;
+- an effect action naming, in a literal, an effect the object and its
+  families, the layer or every layout lack: it runs and changes nothing.
+
+A gesture action or a *Find path* in a function passes, since a trigger may
 call it.
 
 ## The rules the editor applies on opening and before preview

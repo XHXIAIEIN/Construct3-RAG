@@ -158,6 +158,29 @@ GESTURE_ACTIONS = {
 }
 INPUT_PLUGINS = {"touch", "mouse", "keyboard", "button", "textbox", "list", "sliderbar", "htmlelement"}
 
+# Pathfinding (manual: behavior-reference/pathfinding.md). With Obstacles set to Solids the obstacle map is
+# built once at startup, so creating, destroying, moving or resizing a Solid, switching its Solid off or
+# changing a Solid tilemap's tiles leaves paths routed round the old map until a Regenerate action runs.
+SOLID_CHANGES = {"destroy", "set-x", "set-y", "set-position", "set-position-to-another-object", "move-forward",
+                 "move-at-angle", "set-width", "set-height", "set-size", "erase-tile", "set-tile", "erase-tile-range",
+                 "set-tile-range", "set-tile-with-brush", "erase-tile-with-brush", "set-tile-with-brush-by-name",
+                 "erase-tile-with-brush-by-name", "set-tile-with-patch-brush", "erase-tile-with-patch-brush",
+                 "set-tile-with-patch-brush-by-name", "erase-tile-with-patch-brush-by-name"}
+REGENERATE = {"regenerate-obstacle-map", "regenerate-region", "regenerate-region-around-object"}
+# A found path is there only after On path found: Move along path, and the node expressions, in the same
+# actions as Find path read the previous path, unless Wait for previous actions to complete stands between.
+PATH_NODES = re.compile(r"(\w+)\s*\.\s*(\w+)\s*\.\s*(?:nodecount|nodexat|nodeyat)\b", re.I)
+# Conditions that keep an event from running every tick, beside the triggers.
+PACING = {("system", "every-x-seconds"), ("system", "trigger-once-while-true")}
+# Sprite Font (manual: plugin-reference/sprite-font.md) draws a character outside its Character set as an
+# empty space; with Enable BBCode on, the tags are markup, not characters, and \[ is a bracket.
+SPRITE_FONT_TEXT = ("set-text", "append-text", "typewriter-text")
+BBCODE_TAG = re.compile(r"(?<!\\)\[/?[a-z]+(?:=[^\]]*)?\]", re.I)
+# Actions that name an effect by its name on the object, the layer or the layout. A name the target lacks
+# runs and changes nothing.
+EFFECT_ACTIONS = {"set-effect-parameter", "set-effect-enabled", "set-layer-effect-parameter", "set-layer-effect-enabled",
+                  "set-layout-effect-parameter", "set-layout-effect-enabled"}
+
 
 def script_text(script) -> str:
     return "\n".join(script) if isinstance(script, list) else script if isinstance(script, str) else ""
@@ -171,6 +194,24 @@ def bare_name_in(code: str, name: str) -> bool:
     if re.search(declared, code):
         return False
     return re.search(rf"(?<![\w$.]){re.escape(name)}(?![\w$])(?!\s*:(?!:))", code) is not None
+
+
+def joined_literals(expr: str) -> list[str]:
+    """The text literals an expression joins with & at its top level, unquoted: "Score: " & Score gives
+    ["Score: "]; a literal that is an argument or a branch of a condition is left out."""
+    parts, depth, start, quoted = [], 0, 0, False
+    for i, ch in enumerate(expr):
+        if ch == '"':
+            quoted = not quoted     # a doubled quote inside a literal toggles twice
+        elif not quoted and ch == "(":
+            depth += 1
+        elif not quoted and ch == ")":
+            depth -= 1
+        elif not quoted and depth == 0 and ch == "&":
+            parts.append(expr[start:i])
+            start = i + 1
+    parts.append(expr[start:])
+    return [unquote(p.strip()) for p in parts if is_literal(p.strip())]
 
 
 def bare(value, options) -> str:
@@ -187,6 +228,11 @@ def number_of(value) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def effect_names(holder: dict) -> set[str]:
+    """The names of the effects an object type, family, layer or layout carries."""
+    return {e["name"] for e in holder.get("effectTypes", []) if isinstance(e.get("name"), str)}
 
 
 def frames_of(folder, prefix=""):
@@ -260,6 +306,13 @@ class Checker:
         self.numbers_on_disk = True      # whether the sheet being walked is the file, whose numbers a plan can name
         self.signalled: set[str] | None = set()     # literal tags a Signal raises; None once one is not literal
         self.awaited: list[tuple[str, str, str]] = []     # (tag, ACE id, where) of each Wait for signal and On signal
+        self.layer_effects: dict[str, set[str]] = {}     # layer name -> its effects' names, in any layout
+        self.layout_effects: set[str] = set()             # the effects of every layout
+        # Sprite Font type -> the characters its instances draw, whether any has BBCode on
+        self.font_sets: dict[str, tuple[set[str], bool]] = {}
+        self.solid_obstacles = False      # a Pathfinding instance takes its obstacles from Solids
+        self.solid_changes: list[str] = []    # where an action changes a Solid
+        self.regenerated = False          # some action regenerates the obstacle map or a region of it
 
     def check(self) -> None:
         self.check_project_file()
@@ -545,10 +598,36 @@ class Checker:
                 bs = p.schema("behaviors", behs[b])
                 self.check_properties(f"{where}: {t}.{b}", block.get("properties", {}),
                                       bs.get("properties") if bs else None)
+                if behs[b].lower() == "pathfinding" and block.get("properties", {}).get("obstacles", "solids") == "solids":
+                    self.solid_obstacles = True
+        if p.plugin_of[t].lower() == "spritefont2":
+            self.check_sprite_font_instance(where, t, inst.get("properties", {}))
         anims = p.animations_of(t)
         initial = inst.get("properties", {}).get("initial-animation")
         if anims is not None and initial is not None and LOWER(initial) not in anims:
             self.err(f"{where}: {t} has no animation {initial!r} for initial-animation")
+
+    def check_sprite_font_instance(self, where: str, t: str, props: dict) -> None:
+        """Records the characters this instance draws, for the type's Set text actions, and checks its own text."""
+        charset = props.get("character-set")
+        if not isinstance(charset, str):
+            return
+        bbcode = props.get("enable-bbcode", True) is not False
+        chars, any_bbcode = self.font_sets.get(t, (set(), False))
+        self.font_sets[t] = (chars | set(charset), any_bbcode or bbcode)
+        text = props.get("text")
+        if isinstance(text, str):
+            self.check_sprite_font_text(f"{where}: {t} text", t, text, set(charset), bbcode)
+
+    def check_sprite_font_text(self, where: str, t: str, text: str, charset: set[str], bbcode: bool) -> None:
+        shown = BBCODE_TAG.sub("", text).replace("\\[", "[") if bbcode else text
+        missing = list(dict.fromkeys(c for c in shown if not c.isspace() and c not in charset))
+        if missing:
+            self.warn(f"{where}: {', '.join(map(repr, missing))} {'is' if len(missing) == 1 else 'are'} not in "
+                      f"the Character set of "
+                      f"the Sprite Font {t}, which draws {'it' if len(missing) == 1 else 'each'} as an empty space "
+                      f"(manual: plugin-reference/sprite-font.md); add {'it' if len(missing) == 1 else 'them'} to "
+                      f"the Character set and the font image, or show the text with a Text object")
 
     def check_number(self, where: str, what: str, value, least: float | None = None) -> bool:
         """A value the editor reads through its finite-number assertion. Text in
@@ -571,6 +650,7 @@ class Checker:
                          f'stops with "TypeError: expected string"')
             else:
                 self.layers.add(name)
+                self.layer_effects.setdefault(name, set()).update(effect_names(layer))
             for what in LAYER_NUMBERS:
                 self.check_number(here, what, layer.get(what))
             if layer.get("blendMode") not in BLEND_MODES:
@@ -617,6 +697,7 @@ class Checker:
             for inst in lay.get("nonworld-instances", []):
                 self.check_instance(f"layout {lname}", inst)
             self.check_effects(lay.get("effectTypes", []))
+            self.layout_effects |= effect_names(lay)
             if lay.get("eventSheet") and lay["eventSheet"] not in self.sheets:
                 self.err(f"layout {lname}: event sheet {lay['eventSheet']} does not exist")
 
@@ -987,11 +1068,49 @@ class Checker:
                 continue
             self.check_param(where, k, v, schema_params[k]["type"], schema_params[k].get("items"), obj, scope,
                              writes=kind == "actions", stand_in=stand_in)
+        if kind == "actions" and ace_id in EFFECT_ACTIONS:
+            self.check_effect_name(where, obj, ace_id, params)
+        if kind == "actions" and ace_id in SPRITE_FONT_TEXT and isinstance(params.get("text"), str) \
+                and p.plugin_of[obj].lower() == "spritefont2":
+            members = p.families[obj].get("members", []) if obj in p.families else [obj]
+            sets = [self.font_sets[m] for m in members if m in self.font_sets]
+            if sets:
+                charset, bbcode = set().union(*(s for s, _ in sets)), any(b for _, b in sets)
+                for literal in joined_literals(params["text"]):
+                    self.check_sprite_font_text(f"{where} text", obj, literal, charset, bbcode)
         if ace_id == "create-object" and obj == "System":
             self.created.add(params.get("object-to-create"))
         if ace_id == "set-eventvar-value" and \
                 (self.variable_named(params.get("variable"), scope) or {}).get("type") == "boolean":
             self.err(f"{where}: Set value on boolean {params['variable']}; use Set boolean")
+
+    def check_effect_name(self, where: str, obj: str, ace_id: str, params: dict) -> None:
+        """An effect named in a literal that the object, the layer or the layouts do not carry: the action runs
+        and changes nothing. An object reaches its families' effects. A family's action accepts its members'
+        effects, and a layer's the effects of that layer in any layout: whether the runtime resolves those
+        was not probed."""
+        p = self.p
+        name = params.get("effect")
+        if not is_literal(name):
+            return
+        name = unquote(name)
+        if ace_id.startswith("set-layer-"):
+            layer = params.get("layer")
+            if not is_literal(layer) or unquote(layer) not in self.layer_effects:
+                return      # a layer by number or expression, or one check_param already says is missing
+            names, add = self.layer_effects[unquote(layer)], "the layer's Effects"
+            missing, held = f"the layer {unquote(layer)} has no effect named {name!r}", "it has"
+        elif ace_id.startswith("set-layout-"):
+            names, add = self.layout_effects, "the layout's Effects"
+            missing, held = f"no layout has an effect named {name!r}", "the layouts have"
+        else:
+            holders = [obj] + p.families_of(obj) + (p.families[obj].get("members", []) if obj in p.families else [])
+            names = set().union(*(effect_names(p.types.get(h) or p.families.get(h) or {}) for h in holders))
+            missing, held, add = f"{obj} has no effect named {name!r}", "it has", f"{obj}'s Effects"
+        if LOWER(name) not in {LOWER(n) for n in names}:
+            has = f"{held} {', '.join(sorted(names))}" if names else f"{held} none"
+            self.warn(f"{where}: {missing} ({has}), so the action runs and changes nothing; add the effect in "
+                      f"{add}, or name one it has")
 
     def check_structure(self, ev: dict, where: str, above: Holder | None, previous: dict | None) -> Holder | None:
         """Where a condition may stand. These are the editor's own rules, the first
@@ -1215,14 +1334,70 @@ class Checker:
                       f"and the browser refuses it there; move it into an event with a trigger such as Touch On "
                       f"tap, Mouse On click or Keyboard On key pressed (manual: plugin-reference/{page}.md)")
 
-    def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False) -> None:
+    def paces(self, ev: dict) -> bool:
+        """Whether a condition of the event keeps it from running every tick: a trigger, Every X seconds,
+        Trigger once."""
+        return any((self.p.ace_entry("conditions", c) or {}).get("isTrigger")
+                   or (self.p.plugin_of.get(c.get("objectClass"), "").lower(), c.get("id")) in PACING
+                   for c in ev.get("conditions", []))
+
+    def is_solid(self, obj) -> bool:
+        """A type with the Solid behavior, or a family that is one or has one among its members."""
+        p = self.p
+        names = [obj] + (p.families[obj].get("members", []) if obj in p.families else [])
+        return any(b.lower() == "solid" for n in names if n in p.plugin_of for b in p.behaviors_of(n).values())
+
+    def check_pathfinding(self, action: dict, where: str, found: dict[str, str], paced: bool | None) -> None:
+        """found: object -> the name of the Pathfinding behavior a Find path earlier in the same actions
+        started on it, cleared by Wait for previous actions to complete. paced: as check_block's."""
+        p = self.p
+        obj, ace_id, params = action.get("objectClass"), action.get("id"), action.get("parameters", {})
+        if obj not in p.plugin_of or not isinstance(params, dict):
+            return      # a comment, a script, a function call or a custom action
+        behavior = p.behaviors_of(obj).get(action.get("behaviorType", ""), "").lower()
+        if obj == "System" and ace_id == "wait-for-previous-actions":
+            found.clear()
+        made = params.get("object-to-create") if (obj, ace_id) == ("System", "create-object") \
+            else params.get("object") if ace_id == "spawn-another-object" else None
+        if (isinstance(made, str) and self.is_solid(made)) \
+                or (ace_id in SOLID_CHANGES and not behavior and self.is_solid(obj)) \
+                or (behavior == "solid" and ace_id == "set-enabled"):
+            self.solid_changes.append(where)
+        if behavior == "pathfinding" and ace_id in REGENERATE:
+            self.regenerated = True
+        if behavior == "pathfinding" and ace_id == "find-path":
+            found[obj] = action["behaviorType"]
+            if paced is False:
+                self.warn(f"{where}: Find path runs every tick, with no trigger, Every X seconds or Trigger once in "
+                          f"its event or above it; the manual warns that pathfinding every tick takes extremely "
+                          f"high CPU and delays every other object's path. Move the Find path into an event with a "
+                          f"trigger such as Mouse On click, or add System Every X seconds to its event "
+                          f"(manual: behavior-reference/pathfinding.md)")
+            return
+        early = obj in found and (behavior == "pathfinding" and ace_id == "move-along-path"
+                                  or behavior == "moveto" and ace_id == "move-along-pathfinding-path")
+        for m in PATH_NODES.finditer(" ".join(v for v in params.values() if isinstance(v, str))):
+            owner = obj if LOWER(m.group(1)) == "self" else p.objects_lower.get(LOWER(m.group(1)))
+            early |= owner in found and LOWER(m.group(2)) == LOWER(found[owner])
+        if early:
+            self.warn(f"{where}: {describe(action)} reads the path a Find path above it in the same actions has only "
+                      f"started: the path is there after On path found, and until then this reads the previous "
+                      f"one. Put System Wait for previous actions to complete between them, or move this into "
+                      f"an On path found event (manual: behavior-reference/pathfinding.md)")
+
+    def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False,
+                    paced: bool | None = False) -> None:
+        """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
+        or Trigger once, None in a function or custom action."""
         for i, c in enumerate(ev.get("conditions", []), 1):
             self.check_ace("conditions", c, scope, f"{where} condition {i}")
             self.note_signal(c, f"{where} condition {i}")
+        found: dict[str, str] = {}
         for i, a in enumerate(ev.get("actions", []), 1):
             w = f"{where} action {i}"
             self.note_signal(a, w)
             self.check_gesture(a, by_input, w)
+            self.check_pathfinding(a, w, found, paced)
             if a.get("type") == "script":
                 self.check_script(a.get("script"), scope, w)
             if a.get("type") in ("comment", "script"):
@@ -1269,7 +1444,8 @@ class Checker:
                      f"the editor stops with \"invalid ACE type\"")
 
     def walk(self, events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None,
-             depth: int = 0, group: dict | None = None, by_input: bool | None = False) -> None:
+             depth: int = 0, group: dict | None = None, by_input: bool | None = False,
+             paced: bool | None = False) -> None:
         """A local declared in a list of sibling events is visible to every event of
         that list, whatever the order, and to their sub-events; not to the parent's
         own actions. So the list's variables enter the scope first, and a block is
@@ -1279,7 +1455,8 @@ class Checker:
         running event number, above what holds the trigger of this branch, depth
         how many sub-event levels down this list is (a group's children are 0),
         group the group whose children the list is, by_input whether an event above
-        tests input (check_gesture)."""
+        tests input (check_gesture), paced whether one above is triggered or on a
+        timer (check_pathfinding)."""
         scope = dict(scope)
         bad = [ev for ev in events if not isinstance(ev, dict)]
         if bad:
@@ -1315,7 +1492,8 @@ class Checker:
                 elif et == "include" and where == f"sheet {ev['includeSheet']}":
                     self.err(f"{w}: a sheet cannot include itself")
             elif et == "group":
-                self.walk(ev.get("children") or [], scope, where, counter, above, group=ev, by_input=by_input)
+                self.walk(ev.get("children") or [], scope, where, counter, above, group=ev, by_input=by_input,
+                          paced=paced)
             elif et in ("function-block", "custom-ace-block"):
                 fscope = dict(scope)
                 outer = dict(fscope)
@@ -1326,14 +1504,16 @@ class Checker:
                 label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
                 if et == "custom-ace-block" and ev["objectClass"] not in self.p.plugin_of:
                     self.err(f"{w}: custom action {label} belongs to unknown object {ev['objectClass']}")
-                self.check_block(ev, fscope, f"{w} {label}", None)
+                self.check_block(ev, fscope, f"{w} {label}", None, None)
                 self.walk(ev.get("children", []), fscope, where, counter,
-                          self.check_structure(ev, f"{w} {label}", above, previous), depth + 1, by_input=None)
+                          self.check_structure(ev, f"{w} {label}", above, previous), depth + 1, by_input=None,
+                          paced=None)
             elif et == "block":
                 here = None if by_input is None else by_input or self.reads_input(ev)
-                self.check_block(ev, scope, w, here)
+                timed = None if paced is None else paced or self.paces(ev)
+                self.check_block(ev, scope, w, here, timed)
                 self.walk(ev.get("children", []), scope, where, counter, self.check_structure(ev, w, above, previous),
-                          depth + 1, by_input=here)
+                          depth + 1, by_input=here, paced=timed)
             elif et == "script":
                 self.check_script(ev.get("script"), scope, w)
             else:
@@ -1579,6 +1759,15 @@ class Checker:
                 self.warn(f"{where}: no Signal action or runtime.signal() raises \"{tag}\", so this "
                           + ("Wait for signal never ends" if ace == "wait-for-signal" else "On signal never runs")
                           + f"; add Signal \"{tag}\" where it should")
+        if self.solid_obstacles and self.solid_changes and not self.regenerated:
+            places, more = self.solid_changes[:3], len(self.solid_changes) - 3
+            self.warn("; ".join(places) + (f" and {more} more" if more > 0 else "")
+                      + f": {'this changes' if len(places) == 1 else 'these change'} a Solid while Pathfinding "
+                        "takes its obstacles from Solids, and nothing regenerates the obstacle map, which is built "
+                        "once at startup: paths keep going round the old obstacles. After a change add Pathfinding "
+                        "Regenerate region around object on the Solid, or for many changes Regenerate obstacle map; "
+                        "it takes effect the next tick, so a Find path right after it waits first "
+                        "(manual: behavior-reference/pathfinding.md)")
         for t in self.created:
             if t in p.types and t not in self.templates:
                 self.warn(f"{t} is created at runtime but has no instance in any layout: "

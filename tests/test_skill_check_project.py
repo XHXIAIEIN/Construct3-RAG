@@ -693,6 +693,130 @@ def test_an_action_the_browser_allows_only_after_input_is_named_outside_it(proje
     assert bool(said) == warned and out.splitlines()[-1].startswith("ok:"), out
 
 
+def add_addon(project, kind: str, addon_id: str, name: str) -> None:
+    edit(project, "project.c3proj", lambda p: p["usedAddons"].append(
+        {"type": kind, "id": addon_id, "name": name, "author": "Scirra", "bundled": False}))
+
+
+def pathfinding_coin(project, obstacles: str = "solids") -> None:
+    """Coin gets Pathfinding, taking its obstacles from Solids, and the Backdrop, which no event changes, Solid."""
+    edit(project, "objectTypes/Coin.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "Pathfinding", "name": "Pathfinding", "sid": 11}))
+    edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["behaviors"].update(
+        Pathfinding={"properties": {"obstacles": obstacles}}))
+    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "solid", "name": "Solid", "sid": 12}))
+    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"][0].setdefault("behaviors", {}).update(
+        Solid={"properties": {}}))
+    add_addon(project, "behavior", "Pathfinding", "Pathfinding")
+    add_addon(project, "behavior", "solid", "Solid")
+
+
+FIND_PATH = {"id": "find-path", "objectClass": "Coin", "sid": 13, "behaviorType": "Pathfinding",
+             "parameters": {"x": "100", "y": "100"}}
+MOVE_ALONG = {"id": "move-along-path", "objectClass": "Coin", "sid": 14, "behaviorType": "Pathfinding"}
+WAIT_FOR_PREVIOUS = {"id": "wait-for-previous-actions", "objectClass": "System", "sid": 15}
+DESTROY_WALL = {"id": "destroy", "objectClass": "Backdrop", "sid": 16}
+REGENERATE_MAP = {"id": "regenerate-obstacle-map", "objectClass": "Coin", "sid": 17, "behaviorType": "Pathfinding"}
+NODE_X = {"id": "set-x", "objectClass": "Coin", "sid": 18, "parameters": {"x": "Coin.Pathfinding.NodeXAt(0)"}}
+START = cond("on-start-of-layout")
+
+
+@pytest.mark.parametrize("event, said", [
+    (block([START], [FIND_PATH, MOVE_ALONG]), "reads the path a Find path above it in the same actions has only started"),
+    (block([START], [FIND_PATH, NODE_X]), "reads the path a Find path above it in the same actions has only started"),
+    (block([START], [FIND_PATH, WAIT_FOR_PREVIOUS, MOVE_ALONG]), None),
+    (block([cond("every-tick")], [FIND_PATH]), "Find path runs every tick"),
+    (block([cond("every-x-seconds", params={"interval-seconds": "1"})], [FIND_PATH]), None),
+    (block([START], [], [block([cond("every-tick")], [FIND_PATH])]), None),
+    (block([START], [DESTROY_WALL]), "this changes a Solid while Pathfinding takes its obstacles from Solids"),
+    (block([START], [DESTROY_WALL, REGENERATE_MAP]), None),
+])
+def test_pathfinding_on_a_map_or_a_path_that_is_not_there_yet_is_named(project, event, said):
+    """The manual: the obstacle map is built once at startup, a path is there only after On path found,
+    and pathfinding every tick takes extremely high CPU (behavior-reference/pathfinding.md)."""
+    pathfinding_coin(project)
+    out = findings(project, lambda s: s["events"].append(event))
+    said_lines = [w for w in warnings(out) if "behavior-reference/pathfinding.md" in w]
+    assert out.splitlines()[-1].startswith("ok:"), out
+    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+
+
+def test_a_solid_changed_beside_custom_obstacles_is_not_named(project):
+    pathfinding_coin(project, obstacles="custom")
+    out = findings(project, lambda s: s["events"].append(block([START], [DESTROY_WALL])))
+    assert not [w for w in warnings(out) if "changes a Solid" in w], out
+
+
+def sprite_font_label(project, text: str, bbcode: bool = True) -> None:
+    """A Sprite Font Label on the Objects layout, drawing capitals, digits and the space."""
+    (project / "objectTypes" / "Label.json").write_text(json.dumps({
+        "name": "Label", "plugin-id": "Spritefont2", "sid": 21, "instanceVariables": [], "behaviorTypes": [],
+        "effectTypes": []}), encoding="utf-8")
+    edit(project, "project.c3proj", lambda p: p["objectTypes"]["items"].append("Label"))
+    add_addon(project, "plugin", "Spritefont2", "Sprite font")
+
+    def place(d):
+        inst = json.loads(json.dumps(d["layers"][0]["instances"][0]))
+        inst.update(type="Label", uid=22, sid=23, instanceVariables={}, behaviors={}, properties={
+            "text": text, "character-set": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ", "enable-bbcode": bbcode})
+        d["layers"][0]["instances"].append(inst)
+    edit(project, "layouts/Objects.json", place)
+
+
+def set_label(text: str) -> dict:
+    return {"id": "set-text", "objectClass": "Label", "sid": 24, "parameters": {"text": text}}
+
+
+@pytest.mark.parametrize("layout_text, bbcode, action, said", [
+    ("SCORE 0", True, None, None),
+    ("SCORE #0", True, None, "'#' is not in the Character set of the Sprite Font Label"),
+    ("[color=#ff0000]SCORE[/color] 0", True, None, None),
+    ("[color=#ff0000]SCORE[/color] 0", False, None, "'[', 'c', 'o', 'l', 'r', '=', '#', 'f', ']', '/' are not in"),
+    ("SCORE", True, set_label('"BEST: " & Score'), "':' is not in the Character set"),
+    ("SCORE", True, set_label('"BEST " & Score & int("1.5")'), None),
+    ("SCORE", True, set_label('Score = 0 ? "NONE" : "SOME"'), None),
+])
+def test_text_a_sprite_font_cannot_draw_is_named(project, layout_text, bbcode, action, said):
+    """The manual: a character outside the Character set is drawn as an empty space
+    (plugin-reference/sprite-font.md). Only literals joined at the top level are text that shows."""
+    sprite_font_label(project, layout_text, bbcode)
+    out = findings(project, lambda s: action and s["events"].append(block([START], [action])))
+    said_lines = [w for w in warnings(out) if "plugin-reference/sprite-font.md" in w]
+    assert out.splitlines()[-1].startswith("ok:"), out
+    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+
+
+def set_effect(obj: str = "Coin", name: str = "AdjustHSL") -> dict:
+    return {"id": "set-effect-parameter", "objectClass": obj, "sid": 31,
+            "parameters": {"effect": f'"{name}"', "parameter-index": "2", "value": "100"}}
+
+
+@pytest.mark.parametrize("coin_effects, action, said", [
+    ([], set_effect(), "Coin has no effect named 'AdjustHSL' (it has none)"),
+    (["AdjustHSL"], set_effect(), None),
+    (["AdjustHSL"], set_effect(name="adjusthsl"), None),
+    (["AdjustHSL"], set_effect(name="Tint"), "(it has AdjustHSL)"),
+    ([], {"id": "set-layout-effect-parameter", "objectClass": "System", "sid": 32,
+          "parameters": {"effect": '"AdjustHSL"', "parameter-index": "2", "value": "100"}},
+     "no layout has an effect named 'AdjustHSL'"),
+    ([], {"id": "set-layer-effect-enabled", "objectClass": "System", "sid": 33,
+          "parameters": {"layer": '"Objects"', "mode": "enable", "effect": '"AdjustHSL"'}},
+     "the layer Objects has no effect named 'AdjustHSL'"),
+])
+def test_an_effect_action_naming_an_effect_its_target_lacks_is_named(project, coin_effects, action, said):
+    """A Set effect parameter naming an effect that is not there raises no error in a preview, and the
+    next action runs (docs/decisions/checker-editor-load-rules.md)."""
+    if coin_effects:
+        edit(project, "objectTypes/Coin.json", lambda t: t["effectTypes"].extend(
+            {"effectId": "hsladjust", "name": n} for n in coin_effects))
+        add_addon(project, "effect", "hsladjust", "Adjust HSL")
+    out = findings(project, lambda s: s["events"].append(block([START], [action])))
+    said_lines = [w for w in warnings(out) if "so the action runs and changes nothing" in w]
+    assert out.splitlines()[-1].startswith("ok:"), out
+    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+
+
 def test_a_script_that_reads_a_parameter_bare_is_named(project):
     """A preview of such a script stopped with "ReferenceError: string is not defined" (2026-10-03)."""
     func = {"functionName": "Hex", "functionDescription": "", "functionCategory": "", "functionReturnType": "none",

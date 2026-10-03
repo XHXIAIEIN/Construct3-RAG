@@ -73,6 +73,20 @@ Option 2 as the default, and option 3 as the step after it.
   access* is left out: its page says some browsers allow it on startup, and
   the MIDI examples ask there first. Over the official examples the
   warning finds nothing else.
+- Traps of the running game that the manual states are warnings too.
+  Pathfinding (`behavior-reference/pathfinding.md`): a Solid changed while
+  the obstacle map comes from Solids and nothing regenerates it, a path read
+  in the same actions as the *Find path* that started it, and *Find path*
+  every tick. No official example has any of them: the ones that change
+  Solids regenerate, and the ones that find and move in one event wait
+  between. A Sprite Font character outside its Character set
+  (`plugin-reference/sprite-font.md`) is in a curly apostrophe of one
+  example's text and in a game's `###` placeholder. An effect action naming
+  an effect its target lacks is in two examples. A preview of a copy with an
+  object effect action and a layout effect action naming a missing effect
+  raised no error and ran the action after them. A layer action and a
+  family's action accept the effects of the layer in any layout and of the
+  family's members; neither was probed.
 - Repeated ids were probed on 2026-10-03 in copies of one small project, each
   repeating one kind. Two object types with one sid, and a family with an
   object type's sid, stopped the editor with `object class sid already in
