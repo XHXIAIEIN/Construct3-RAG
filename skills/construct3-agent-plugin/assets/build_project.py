@@ -1525,7 +1525,7 @@ PROPERTY_DEFAULTS = {"description": "", "version": "1.0.0.0", "autoIncrementVers
                      "downscaling": "medium", "renderingMode": "auto",
                      "anisotropicFiltering": "auto", "zNear": 10, "zFar": 100000,
                      "maxSpriteSheetSize": 2048, "loaderStyle": "splash", "preloadSounds": True,
-                     "uidAllocationMode": "increment", "cordovaiOSScheme": "app",
+                     "uidAllocationMode": "random", "cordovaiOSScheme": "app",
                      "cordovaAndroidScheme": "https", "exportFileStructure": "folders",
                      "scriptsType": "module"}
 
@@ -1556,6 +1556,9 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
         p["properties"]["fullscreenMode"] = "letterbox-integer-scale"
     p["firstLayout"] = "Game"
     p["properties"]["orientations"] = "portrait"
+    # An instance the editor adds gets a random uid, which a uid written by a script or by hand
+    # is unlikely to meet; two that meet are renumbered by the editor as it opens the project.
+    p["properties"]["uidAllocationMode"] = "random"
     return p
 
 

@@ -67,8 +67,9 @@ def unique_id() -> str:
 
 
 def new_project(template: Path, target: Path, dry_run: bool) -> str:
-    """The empty project copied to target with its own name and uniqueId. A
-    folder that already holds files and is not a project is left alone."""
+    """The empty project copied to target with its own name and uniqueId, and
+    random uids (docs/decisions/random-uid-allocation.md). A folder that already
+    holds files and is not a project is left alone."""
     if not (template / "project.c3proj").exists():
         return (f"{target.name}: not created; {template} holds no project.c3proj. Pass --template <folder> "
                 f"naming an empty project the editor saved, or save an empty project from the editor as {target}")
@@ -80,6 +81,7 @@ def new_project(template: Path, target: Path, dry_run: bool) -> str:
     proj = target / "project.c3proj"
     data = json.loads(proj.read_text(encoding="utf-8"))
     data["name"], data["uniqueId"] = target.name, unique_id()
+    data.setdefault("properties", {})["uidAllocationMode"] = "random"
     proj.write_text(json.dumps(data, indent="\t", ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     line = f"{target.name}: created from {template.name} at {target}"
     if git():

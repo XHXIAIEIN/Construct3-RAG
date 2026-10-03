@@ -252,6 +252,7 @@ def test_stand_in_project_opens_in_the_editor(built):
     assert props["fullscreenMode"] == "letterbox-scale" and props["fullscreenQuality"] == "high"
     assert props["orientations"] == "portrait" and props["sampling"] == "trilinear"
     assert props["downscaling"] == "medium" and props["loaderStyle"] == "splash"
+    assert props["uidAllocationMode"] == "random"     # docs/decisions/random-uid-allocation.md
 
 
 EXAMPLES = REPO.parent / "Construct-Example-Projects" / "example-projects"

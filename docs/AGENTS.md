@@ -62,6 +62,7 @@ The project skill and the prompts:
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |
+| `random-uid-allocation.md` | Why the projects this repository creates and generates give new instances random uids |
 
 The lookup service:
 

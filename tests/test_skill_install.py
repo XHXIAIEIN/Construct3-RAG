@@ -220,8 +220,10 @@ def test_bootstrap_copies_the_committed_empty_project(tmp_path):
     proj = json.loads((game / "project.c3proj").read_text(encoding="utf-8"))
     kept = json.loads((REPO / "data" / "c3-new-project" / "project.c3proj").read_text(encoding="utf-8"))
     assert proj["name"] == "MyGame" and proj["uniqueId"] != kept["uniqueId"]
-    same = lambda d: {k: v for k, v in d.items() if k not in ("name", "uniqueId")}  # noqa: E731
+    assert proj["properties"]["uidAllocationMode"] == "random"
+    same = lambda d: {k: v for k, v in d.items() if k not in ("name", "uniqueId", "properties")}  # noqa: E731
     assert same(proj) == same(kept)
+    assert {**proj["properties"], "uidAllocationMode": None} == {**kept["properties"], "uidAllocationMode": None}
     code, out = check(game)
     assert code == 0 and out.rstrip().splitlines()[-1].startswith("ok:"), out
 
