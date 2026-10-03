@@ -639,6 +639,15 @@ def test_an_expression_is_given_the_arguments_its_schema_lists(project, text, sa
         assert out.rstrip().splitlines()[-1].startswith("ok:"), out
 
 
+def test_functions_call_mapped_is_an_expression_not_a_function(project):
+    ok = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(
+        text='Functions.CallMapped("map", "key")'))
+    assert ok.rstrip().splitlines()[-1].startswith("ok:"), ok
+    out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(
+        text='Functions.CallMapped("map")'))
+    assert "Functions.CallMapped takes at least 2 parameters and is given 1" in out
+
+
 def test_plugin_name_in_an_expression_names_the_object(project):
     out = findings(project, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text="Sprite.Count"))
     assert "unknown object Sprite in expression; Sprite is the plugin, the object of it here is Coin" in out

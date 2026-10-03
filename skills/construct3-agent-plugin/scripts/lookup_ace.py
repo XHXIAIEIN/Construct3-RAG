@@ -92,6 +92,10 @@ def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]
     obj = p.objects_lower.get(LOWER(target))
     if obj == "System" or LOWER(target) == "system":
         return [("System", None, p.system)]
+    if obj and LOWER(obj) == LOWER(p.functions_object):
+        # The built-in Functions object has the System schema's Set return value and function maps, nothing else.
+        own = {**p.system, **{kind: [it for it in p.system.get(kind, []) if c3.is_functions_ace(it)] for kind in KINDS}}
+        return [(p.functions_object, None, own)]
     if obj:
         own = p.schema("plugins", p.plugin_of[obj]) or {}
         sources = [(obj, None, own)]
@@ -291,7 +295,10 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
                 # A word may also name where the ACE lives: the behavior, the addon, "condition".
                 names = squash(" ".join([*(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")),
                                          behavior or "", s.get("id", ""), s.get("name", ""), kind]))
-                entries.append((names, names + " " + squash(it.get("category", "")), owner, behavior, s.get("id", ""), kind, it))
+                # Set return value and the function maps are in the System schema, and a
+                # project writes them under the Functions object's name.
+                writer = p.functions_object if s.get("id") == "system" and c3.is_functions_ace(it) else owner
+                entries.append((names, names + " " + squash(it.get("category", "")), writer, behavior, s.get("id", ""), kind, it))
                 params = it.get("params") or {}
                 # Tween Color is Tween (one property) with the property offsetColor: the word is a
                 # combo value, and a search of the names alone answers that Tween has no color.

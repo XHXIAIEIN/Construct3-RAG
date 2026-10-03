@@ -42,6 +42,19 @@ def test_ace_lookup_says_functions_is_built_in(built):
                                    'with no object type file and no usedAddons entry'), out
 
 
+def test_a_functions_ace_found_under_system_is_written_on_the_functions_object(built):
+    """Set return value and the function maps are in the System schema; the official examples
+    write all of them with "objectClass": "Functions", none with "System"."""
+    for target in ("System", "Functions"):
+        code, out = tool(built, "lookup_ace", target, "set", "return")
+        assert code == 0 and '"id": "set-function-return-value", "objectClass": "Functions"' in out, out
+    code, out = tool(built, "lookup_ace", "System", "function", "map")
+    assert '"id": "map-function", "objectClass": "Functions"' in out
+    assert "write: Functions.CallMapped(name, string, ...)" in out
+    code, out = tool(built, "lookup_ace", "Functions", "wait")
+    assert '"objectClass": "Functions"' not in out     # Wait is System's, not the Functions object's
+
+
 def test_ace_lookup_needs_no_project_and_takes_a_display_name(tmp_path):
     shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
     code, out = tool(tmp_path, "lookup_ace", "8 Direction", "max", "speed")

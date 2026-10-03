@@ -838,7 +838,14 @@ class Checker:
             if LOWER(obj) == "self" or NUMBER.fullmatch(obj):   # a decimal such as 0.5 is not a member access
                 continue
             if LOWER(obj) == LOWER(p.functions_object):
-                if LOWER(member) not in {LOWER(f) for f in self.functions}:
+                names = p.expression_names(p.system)
+                mapped = [e for e in p.system.get("expressions", [])
+                          if c3.is_functions_ace(e) and LOWER(names.get(e["id"], "")) == LOWER(member)]
+                if mapped and LOWER(member) not in {LOWER(f) for f in self.functions}:
+                    # Functions.CallMapped is an expression of the Functions object, not a function of the project
+                    self.check_arguments(where, f"{obj}.{member}", [(p.system, {"expressions": mapped})], member,
+                                         text, m.end(2))
+                elif LOWER(member) not in {LOWER(f) for f in self.functions}:
                     self.err(f"{where}: {obj}.{member} is not a defined function")
                 elif self.returns.get(LOWER(member)) == "none":
                     self.err(f"{where}: {obj}.{member} has no return type, and the editor stops with \"The function "
