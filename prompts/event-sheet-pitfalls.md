@@ -238,6 +238,7 @@ Read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md)
 when the project saves data, is exported for the web or uses File System.
 
 - A web export looks for an update only when the page loads.
+- The Browser object holds back the browser's install banner: offer installing with *Request install* after *On install available*.
 - File System writes only through a picker tag; the known folders exist only in desktop exports.
 - No tag names the Construct project folder; saves go to `<current-app-data>`.
 - In a browser File System needs desktop Chromium and a user input trigger, and a save picker erases the file.
