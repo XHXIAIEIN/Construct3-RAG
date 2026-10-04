@@ -125,6 +125,14 @@ If the events place, move or rotate objects or read the viewport, read
 - *Scale outer* keeps a parallax-0 HUD centred on the design area. Pin a screen-edge HUD with Anchor and stretch a backdrop to the screen with Anchor's left and right edges.
 - Drag & Drop moves the instance only on pointer moves. Put a trailing or lifted look on a child.
 
+### Moving toward a target
+
+If an object chases, follows or walks to another object, read
+[pitfalls/movement.md](pitfalls/movement.md).
+
+- 8 Direction has no move-toward action and does not avoid walls. Chase with Move To (*Move to object* repeated, since it takes the target's position once) on open ground, Pathfinding (*Find path* every second or so, *Move along path* in *On path found*) around walls.
+- Follow replays the target's path after a delay. Use it for a trailing companion, not a chasing enemy.
+
 ### Input
 
 If the events use Mouse and Touch together, tell a finger from a mouse,
