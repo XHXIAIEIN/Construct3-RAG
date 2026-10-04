@@ -1,15 +1,18 @@
 """Tests for the FastAPI lookup service (no external services needed)."""
 import dataclasses
-import sys
 import subprocess
+import sys
+from collections.abc import Iterator
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from fastapi.testclient import TestClient
+
+import src.api
+from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
+
+ROOT = Path(__file__).resolve().parent.parent
 
 
 def test_service_import_loads_no_model_or_vector_package():
@@ -22,7 +25,7 @@ def test_service_import_loads_no_model_or_vector_package():
     )
     result = subprocess.run(
         [sys.executable, "-c", code],
-        cwd=Path(__file__).parent.parent,
+        cwd=ROOT,
         capture_output=True,
         text=True,
         check=False,
@@ -31,7 +34,7 @@ def test_service_import_loads_no_model_or_vector_package():
 
 
 def test_playground_uses_current_nested_search_contract():
-    html = (Path(__file__).parent.parent / "src" / "interfaces" / "http" / "playground.html").read_text(encoding="utf-8")
+    html = (ROOT / "src" / "interfaces" / "http" / "playground.html").read_text(encoding="utf-8")
 
     assert "data.lookup?.hit" not in html
     assert "data.latency_ms" not in html
@@ -45,20 +48,14 @@ def test_playground_uses_current_nested_search_contract():
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
-def client():
+def client(monkeypatch: pytest.MonkeyPatch) -> Iterator[tuple[TestClient, MagicMock]]:
     """Create a test client with a mocked lookup engine."""
     mock_lookup = MagicMock()
     mock_lookup.try_lookup.return_value = None  # default: no match
+    monkeypatch.setattr(src.api, "_lookup_engine", mock_lookup)
 
-    import src.api
-    original_lookup_engine = src.api._lookup_engine
-    src.api._lookup_engine = mock_lookup
-
-    try:
-        with TestClient(src.api.app) as c:
-            yield c, mock_lookup
-    finally:
-        src.api._lookup_engine = original_lookup_engine
+    with TestClient(src.api.app) as c:
+        yield c, mock_lookup
 
 
 # ---------------------------------------------------------------------------
@@ -72,18 +69,16 @@ def test_health_reports_the_committed_schema_as_ready(client):
     assert resp.json() == {"status": "ok", "schema_ready": True, "message": "Lookup ready"}
 
 
-def test_health_says_how_to_get_missing_schema_data(client, tmp_path):
+def test_health_says_how_to_get_missing_schema_data(client, tmp_path, monkeypatch):
     c, _ = client
-    import src.api
-    original_settings = src.api.SETTINGS
-    src.api.SETTINGS = dataclasses.replace(
-        src.api.SETTINGS,
-        schema=dataclasses.replace(src.api.SETTINGS.schema, directory=tmp_path),
+    settings = src.api.SETTINGS
+    monkeypatch.setattr(
+        src.api,
+        "SETTINGS",
+        dataclasses.replace(settings, schema=dataclasses.replace(settings.schema, directory=tmp_path)),
     )
-    try:
-        data = c.get("/health").json()
-    finally:
-        src.api.SETTINGS = original_settings
+
+    data = c.get("/health").json()
 
     assert data["status"] == "unavailable"
     assert data["schema_ready"] is False
@@ -96,12 +91,11 @@ def test_health_says_how_to_get_missing_schema_data(client, tmp_path):
 
 def test_search_routes_to_lookup(client):
     c, lookup = client
-    from src.domain.lookup import LookupResponse as LR, LookupIntent, LookupMatch, ACELocale
     intent = LookupIntent(
         intent_type="ace_list", plugin_id="sprite", ace_type="actions", tier=1,
         confidence=0.85,
     )
-    lookup.try_lookup.return_value = LR(
+    lookup.try_lookup.return_value = LookupResponse(
         context="| 名称 | 描述 |\n|---|---|\n| Set animation | ... |",
         query_type="lookup_ace_list",
         intent=intent,
@@ -130,7 +124,6 @@ def test_search_routes_to_lookup(client):
 def test_list_mode_answers_an_effect_with_its_matches(client):
     """List mode names ACEs; an effect has none, and a hit must not come back as an empty section."""
     c, lookup = client
-    from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
 
     lookup.try_lookup.return_value = LookupResponse(
         intent=LookupIntent(intent_type="effect_detail", plugin_id="bulge", entity_kind="effect", tier=1),
@@ -155,7 +148,6 @@ def test_list_mode_answers_an_effect_with_its_matches(client):
 
 def test_properties_are_grouped_under_properties(client):
     c, lookup = client
-    from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
 
     lookup.try_lookup.return_value = LookupResponse(
         intent=LookupIntent(intent_type="prop_list", plugin_id="sprite", ace_type="properties", tier=1),
@@ -189,7 +181,6 @@ def test_search_lookup_miss_returns_no_lookup_section(client):
 @pytest.mark.parametrize("context", ["legacy context without matches", ""])
 def test_context_only_lookup_is_not_a_lookup_section(client, context):
     c, lookup = client
-    from src.domain.lookup import LookupIntent, LookupResponse
 
     lookup.try_lookup.return_value = LookupResponse(
         intent=LookupIntent(intent_type="term_translate", term="Destroy", tier=1),
@@ -206,7 +197,6 @@ def test_context_only_lookup_is_not_a_lookup_section(client, context):
 
 def test_debug_reports_the_lookup_intent_and_timing(client):
     c, lookup = client
-    from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
 
     lookup.try_lookup.return_value = LookupResponse(
         intent=LookupIntent(
@@ -253,8 +243,6 @@ def test_search_response_structure(client):
 
 
 def test_openapi_describes_typed_lookup_items_only():
-    import src.api
-
     schemas = src.api.app.openapi()["components"]["schemas"]
 
     assert "LookupItemResult" in schemas

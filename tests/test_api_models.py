@@ -6,7 +6,6 @@ from src.application.models import SearchCommand, SearchOutcome
 from src.domain.lookup import ACELocale, LookupIntent, LookupMatch, LookupResponse
 from src.interfaces.http.models import (
     ACELocaleResult,
-    LookupDebug,
     LookupItemResult,
     LookupMatchResult,
     LookupSection,
@@ -20,14 +19,10 @@ def test_search_request_mode_default():
     assert req.mode == "auto"
 
 
-def test_search_request_mode_lookup():
-    req = SearchRequest(query="test", mode="lookup")
-    assert req.mode == "lookup"
-
-
-def test_search_request_mode_list():
-    req = SearchRequest(query="test", mode="list")
-    assert req.mode == "list"
+@pytest.mark.parametrize("mode", ["lookup", "list"])
+def test_search_request_mode_valid(mode):
+    req = SearchRequest(query="test", mode=mode)
+    assert req.mode == mode
 
 
 @pytest.mark.parametrize("mode", ["invalid", "semantic"])
