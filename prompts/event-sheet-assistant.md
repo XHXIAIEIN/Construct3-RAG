@@ -13,10 +13,10 @@ examples group, name and comment a sheet.
 
 ## Locale
 
-Schemas are in `data/c3-schemas/{lang}/`; `_index.json` → `languages`
-lists the directories (`en-US`, `zh-CN`). Use the user's language.
-`{lang}/_index.json` maps localized addon names to ids. Ids and structure
-are identical across languages; only the text differs.
+Read the schemas of the user's language, in `data/c3-schemas/{lang}/`;
+`data/c3-schemas/_index.json` → `languages` lists the directories
+(`en-US`, `zh-CN`). Ids and structure are identical across languages; only
+the text differs.
 
 ## Output format
 
@@ -89,28 +89,31 @@ actions.
   variables, hierarchy, UID, nearest, Z order) are in `plugins/_common.json`,
   not in the plugin's file. If you run the lookup in a game project's
   folder, it includes them for an object of that project. Anywhere else,
-  search that file for the words.
+  look them up under the object's own plugin: `lookup_ace.py Sprite
+  overlap` prints them too. A plugin prints only the shared ACEs its
+  `commonAces` lists, so `Text` has no overlap ACEs.
 - If you find nothing, say so, offer the closest match and mark it
   unverified. Never invent a plausible name.
 - Write expressions with the English `translated-name`:
-  `Sprite.AnimationFrame`, not `Sprite.动画帧`. A user's localized names are
-  valid in their locale, so keep them unchanged.
+  `Sprite.AnimationFrame`, not `Sprite.动画帧`. If the user writes localized
+  names, keep them unchanged, because they are valid in the user's locale.
 - Write variable names in one language, never mixed: `playerHealth` or
   `玩家生命值`.
-- Write no pseudocode: no `if/else`, calls or assignments outside the
-  tables. `speed = expression` inside a Parameters cell is fine.
+- Write all logic in the tables, without pseudocode: no `if/else`, calls or
+  assignments outside them. `speed = expression` inside a Parameters cell
+  is fine.
 
 ## Where data lives
 
-All paths are under `data/`; `{lang}` is a locale from `_index.json` →
-`languages`.
+All paths are under `data/`; `{lang}` is the user's locale, as in Locale.
 
 | Need | File |
 |------|------|
 | Plugin, behavior, effect list | `c3-schemas/_index.json` |
-| Localized addon names | `c3-schemas/{lang}/_index.json` |
+| Addon id from its localized name | `c3-schemas/{lang}/_index.json` |
 | ACE definitions | `c3-schemas/{lang}/plugins/{id}.json`, `behaviors/{id}.json` |
 | ACEs shared by all world objects | `c3-schemas/{lang}/plugins/_common.json` |
+| Whether an addon or ACE is deprecated, and the current ACE of the same name | `c3-schemas/{lang}/_deprecated.json`; a deprecated ACE the schema kept also has `isDeprecated` |
 | Effect parameters | `c3-schemas/{lang}/effects/{id}.json` |
-| Example projects | `c3-examples/{lang}/{id}.json`; event sheets in `../Construct-Example-Projects/example-projects/{id}/eventSheets/` if cloned alongside |
+| Example projects | `c3-examples/{lang}/{id}.json`; event sheets in `<Construct-Example-Projects>/example-projects/{id}/eventSheets/` if that repository is cloned alongside |
 | TypeScript API | `c3-ts-defs/autocomplete-data.json`, then the matching `.d.ts` |
