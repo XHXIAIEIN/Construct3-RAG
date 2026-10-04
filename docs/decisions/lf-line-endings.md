@@ -4,12 +4,12 @@ Date: 2026-10-02
 
 ## Problem
 
-Several agents work on this repository at once, each in its own worktree,
-some through the Windows git, some through a git inside a sandbox or WSL,
-and the update workflow runs on Linux. The repository had no
-`.gitattributes`, so each git decided line endings from its own
-`core.autocrlf`, and edits that changed no content showed up as whole-file
-changes that then conflicted with other branches.
+Several agents work on this repository at once, each in its own worktree:
+some through the Windows git, some through a git inside a sandbox or WSL.
+The update workflow runs on Linux. The repository had no `.gitattributes`,
+so each git decided line endings from its own `core.autocrlf`. Edits that
+changed no content then showed up as whole-file changes, which conflicted
+with other branches.
 
 ## Evidence
 
@@ -28,10 +28,12 @@ changes that then conflicted with other branches.
 
 `.gitattributes` holds `* text=auto eol=lf`, and the 150 CRLF files were
 renormalized to LF in the same commit. The attribute takes precedence over
-`core.autocrlf`, so every checkout has LF whatever the machine's settings,
-and a file written with CRLF, by an editor, a Python script on Windows or
-the CDN, is stored as LF without a diff. `text=auto` leaves files git
-detects as binary, the PNG icons, untouched.
+`core.autocrlf`, so every checkout has LF whatever the machine's settings.
+A file written with CRLF, by an editor, a Python script on Windows or the
+CDN, is stored as LF without a diff. `text=auto` leaves files git detects
+as binary, the PNG icons, untouched. A file that needs CRLF, a `.bat` for
+example, gets its own `eol=crlf` line in `.gitattributes`; no file in the
+repository needs one.
 
 With the attribute in place, the same checkout read with
 `core.autocrlf=false` reports no change, and the LF rewrite of
@@ -43,6 +45,5 @@ the whole-file diffs.
 
 ## Consequence
 
-A checkout made before this change keeps its CRLF files until git rewrites
-them; `git status` stays clean meanwhile. No file in the repository needs
-CRLF; one that does, a `.bat` for example, gets its own `eol=crlf` line.
+A checkout made before `.gitattributes` existed keeps its CRLF files until
+git rewrites them; `git status` stays clean meanwhile.
