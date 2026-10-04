@@ -1,8 +1,13 @@
 """check_look.py: the look's rules, read off the images, layouts and sheets of a project."""
-import json
 import re
+import struct
+import zlib
 
 from tests.skill_helpers import tool, edit, template_module
+
+
+def png_chunk(tag: bytes, data: bytes) -> bytes:
+    return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
 
 
 def test_check_look_passes_the_stand_in_and_names_each_fault(project):
@@ -13,29 +18,20 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     t.ROOT = project
     t.write_png("smudge.png", 2, 1, lambda x, y: [(9, 9, 9, 0), (*t.PALETTE["danger"], 128)][x])
     t.write_png("glow.png", 1, 1, lambda x, y: (*t.PALETTE["danger"], 37), painted=True)
-    import struct
-    import zlib
-
-    def chunk(tag, data):
-        return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
     (project / "images" / "dirty.png").write_bytes(      # a clear pixel with a colour under it
-        bytes([0x89]) + b"PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0))
-        + chunk(b"IDAT", zlib.compress(bytes([0, 9, 9, 9, 0]))) + chunk(b"IEND", b""))
+        b"\x89PNG\r\n\x1a\n" + png_chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0))
+        + png_chunk(b"IDAT", zlib.compress(bytes([0, 9, 9, 9, 0]))) + png_chunk(b"IEND", b""))
     edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x=50))
-
-    def raw_random(sheet):
-        text = json.dumps(sheet).replace("32 * floor(random(0, 20)) + 48", "random(96, 624)")
-        sheet.clear()
-        sheet.update(json.loads(text))
-    edit(project, "eventSheets/Game.json", raw_random)
+    sheet = project / "eventSheets" / "Game.json"
+    sheet.write_text(sheet.read_text(encoding="utf-8").replace("32 * floor(random(0, 20)) + 48", "random(96, 624)"),
+                     encoding="utf-8")
     code, out = tool(project, "check_look")
-    lines = out.splitlines()
     assert code == 1, out
     assert "alpha.pure: images/dirty.png has 1 clear pixels that hold a colour, the first at (0,0)" in out
     assert re.search(r"alpha.pure: images/glow.png has alpha 37 at \(0,0\); the project's shadow is 128.*--painted glow.png", out)
     assert re.search(r"grid.world-placement: layout Objects layer Objects: Coin at \(\d+,\d+\) \d+x\d+ is off the 32 px grid", out)
     assert "grid.runtime-spawn: sheet Game: create Coin at x = random(96, 624), a raw random()" in out
-    assert lines[-1].startswith("4 findings:")
+    assert out.splitlines()[-1].startswith("4 findings:")
     code, out = tool(project, "check_look", "--painted", "glow.png")
     assert "glow.png" not in out and out.splitlines()[-1].startswith("3 findings:")
     edit(project, "objectTypes/Coin.json", lambda d: d["behaviorTypes"].append(
