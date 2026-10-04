@@ -759,7 +759,7 @@ class Checker:
                 said = ("must have at least three points in a collision poly" if pairs
                         else "must have an even number of elements in collision poly points array")
                 self.err(f"object type {name} animation {anim.get('name')} frame {i}: collisionPoly holds {held}; "
-                         f"the editor opens the project, then stops the preview and the export with \"assertion "
+                         f"the editor opens the project, then stops the preview with \"assertion "
                          f"failure: {said}\". Write three or more x, y pairs from 0 to 1 across the image, or leave "
                          f"collisionPoly out for the whole image")
         for sub in folder.get("subfolders", []):

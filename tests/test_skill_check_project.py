@@ -133,17 +133,16 @@ def test_a_single_image_type_without_its_image_is_named(project, change, said):
 
 @pytest.mark.parametrize("points, said", [
     ([0, 0, 1, 1], 'frame 0: collisionPoly holds 2 points, [0, 0, 1, 1]; the editor opens the project, then stops '
-                   'the preview and the export with "assertion failure: must have at least three points in a '
-                   'collision poly"'),
+                   'the preview with "assertion failure: must have at least three points in a collision poly"'),
     ([], "frame 0: collisionPoly holds 0 points, []"),
     ([0, 0, 1, 0, 1], 'frame 0: collisionPoly holds 5 numbers, [0, 0, 1, 0, 1], which are not x, y pairs; '
-                      'the editor opens the project, then stops the preview and the export with "assertion '
-                      'failure: must have an even number of elements in collision poly points array"'),
+                      'the editor opens the project, then stops the preview with "assertion failure: must have '
+                      'an even number of elements in collision poly points array"'),
     ([0, 0, 1, 0, 0.5, 1], None),
     (None, None),       # no collisionPoly: the whole image
 ])
 def test_a_frame_collision_polygon_holds_three_points(project, points, said):
-    """A shorter polygon opens; the preview and the export stop on the editor's crash report."""
+    """A shorter polygon opens; the preview stops on the editor's crash report."""
     def change(t):
         fr = t["animations"]["items"][0]["frames"][0]
         if points is None:

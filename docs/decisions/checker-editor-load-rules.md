@@ -274,7 +274,9 @@ Option 2 as the default, and option 3 as the step after it.
   collision poly` or `must have an even number of elements in collision
   poly points array`. An export through `export_project.py`, in an r495.2
   editor logged in to an account with a subscription, stopped on the same
-  report, and the copy with a whole polygon exported. A frame without
+  report before it reached the Export menu, and the copy with a whole
+  polygon exported; in the headless editor as a guest the same project
+  exported, so the report does not always stop an export. A frame without
   `collisionPoly` previewed with the whole image as its polygon. Two points
   on a Tiled Background's `image` opened and previewed, so the rule covers
   animation frames.
