@@ -33,7 +33,8 @@ from c3project import LOWER, NUMBERED, closest, describe, folder_items, squash
 
 # Names. The editor passes every name through a filter when it opens the
 # project and keeps the result, so a name the filter changes no longer matches
-# the events that use it; and it refuses a name that is reserved or already
+# the events that use it. After the open it also renames an object type or
+# family whose name is reserved, Floor to Floor2. It refuses a name already
 # taken in the object's namespace, where instance variables, behaviors, effects
 # and the plugin's expressions live side by side, compared without case.
 NAME_DROPS = set(".。,，\"“”(（)）?？:：\\/;*|'-`!¬£$%^&+=<>{}[]@#~­​")
@@ -59,8 +60,11 @@ JSON_TYPES = {"number": lambda v: isinstance(v, (int, float)) and not isinstance
               "string": lambda v: isinstance(v, str), "boolean": lambda v: isinstance(v, bool)}
 JSON_EXAMPLES = {"number": "a number such as 1", "string": "text such as \"a\"", "boolean": "true or false"}
 FULL_TURN = 2 * math.pi + 1e-6      # the largest world angle the official examples hold is 2π
-RESERVED_NAMES = {"self", "true", "false", "system", "con", "prn", "aux", "nul",
-                  *(f"com{i}" for i in range(1, 10)), *(f"lpt{i}" for i in range(1, 10))}
+# Names the editor reserves for an object besides the system expressions, compared without case.
+# "system" is not among them: it is the System object's own name, and an object of that name
+# stops the open.
+RESERVED_WORDS = {"self", "true", "false"}
+DEVICE_NAMES = {"con", "prn", "aux", "nul", *(f"com{i}" for i in range(1, 10)), *(f"lpt{i}" for i in range(1, 10))}
 
 # project.c3proj. Opening a project reads the whole properties block before it
 # reads a single file of the project, and each of these is asserted as it is
@@ -149,6 +153,14 @@ def editor_name(name: str, is_object: bool) -> str:
         while chars and (chars[0].isdigit() or chars[0] == "_"):
             chars.pop(0)
     return "".join(chars)
+
+
+def next_name(name: str) -> str:
+    """The name the editor gives an object whose name it cannot keep: the number at its end plus
+    one, or a 2 added when it has none."""
+    stem = name.rstrip("0123456789")
+    number = name[len(stem):]
+    return stem + (str(int(number) + 1) if number else "2")
 
 
 def params_of(ace: dict) -> dict:
@@ -645,17 +657,56 @@ class Checker:
         if exact and exact != addon_id:
             self.err(f"{where}: {kind[:-1]} id {addon_id!r} must be written {exact!r}; addon ids are case-sensitive")
 
+    def reserved(self, name: str) -> str:
+        """Why the editor reserves an object type's or family's name, or "" when it does not."""
+        low = LOWER(name)
+        if low in RESERVED_WORDS:
+            return f"{low} is a reserved word"
+        if low in DEVICE_NAMES:
+            return f"{low} is a device name that Windows reserves"
+        if low in self.p.system_expression_names:
+            return f"{low} is a system expression"
+        return ""
+
+    def check_reserved(self, kind: str, name: str, used: set[str]) -> None:
+        """A reserved name: the editor opens the project and renames the object, and an expression
+        that names it by the old name fails."""
+        if LOWER(name) == "system":
+            what = "object type" if kind == "object type" else "object class"
+            self.err(f"{kind} {name} has the name of the System object, compared without case; the editor stops "
+                     f"with \"{what} name '{name}' already used\". Rename it, for example {name}Object")
+            return
+        why = self.reserved(name)
+        if not why:
+            return
+        new = next_name(name)
+        while LOWER(new) in used and not self.reserved(new):
+            new = next_name(new)
+        if self.reserved(new):
+            self.err(f"{kind} {name}: {why}. The editor renames it to {new} when it opens the project, and {new} "
+                     f"is reserved too, so the open stops with \"name is reserved\". Rename it, for example "
+                     f"{name}Object")
+            return
+        if LOWER(name) == "self":   # in an expression the word is Self, whatever object has the name
+            lost = (f"{name}.X in an expression reads as Self, and in a System action the editor stops with "
+                    f"\"Invalid use of 'self'\"")
+        else:
+            lost = (f"an expression that names {name}, such as {name}.X, stops the open with \"Not an object: "
+                    f"'{name}' is not an object name\"")
+        self.err(f"{kind} {name}: {why}, so the editor renames it to {new} when it opens the project. Its "
+                 f"conditions and actions follow the new name, but {lost}. A script finds no "
+                 f"runtime.objects.{name}. Rename it, for example {name}Object")
+
     def check_names(self) -> None:
         p = self.p
+        used = {LOWER(n) for n in (*p.types, *p.families, p.functions_object, "system")}
         for kind, listed in (("object type", p.types), ("family", p.families)):
             for name, t in listed.items():
                 if t.get("name") != name:
                     self.err(f"{kind} {name}: the file says \"name\": {t.get('name')!r}; "
                              f"it must be the name listed in project.c3proj")
                 self.check_name(f"{kind} {name}", kind, name, True)
-                if LOWER(name) in RESERVED_NAMES or LOWER(name) in p.system_expression_names:
-                    self.err(f"{kind} {name}: the name is reserved ({LOWER(name)} is a keyword or a system "
-                             f"expression); rename it, for example {name}Object")
+                self.check_reserved(kind, name, used)
                 self.check_addon_id("plugins", t["plugin-id"], f"{kind} {name}")
                 for b in t.get("behaviorTypes", []):
                     self.check_addon_id("behaviors", b["behaviorId"], f"{kind} {name} behavior {b['name']}")
@@ -1071,8 +1122,12 @@ class Checker:
             self.err(f"{where}: {', '.join(ops)} {'is not an operator' if len(ops) == 1 else 'are not operators'} "
                      f"of Construct expressions; the editor stops with "
                      f"\"Syntax error\"{hint}")
-        if owner == "System" and any(LOWER(m.group(0)) == "self" for m in IDENT.finditer(text)):
-            fixed = re.sub(r"\bself\b", stand_in, expr, flags=re.I) if stand_in else None
+        # With a variable or parameter named self in scope, a bare self reads as it; self. is still Self.
+        variable_self = "self" in scope_lower
+        if owner == "System" and any(LOWER(m.group(0)) == "self" and not (
+                variable_self and not text[m.end():].lstrip().startswith(".")) for m in IDENT.finditer(text)):
+            pattern = r"\bself\b(?=\s*\.)" if variable_self else r"\bself\b"
+            fixed = re.sub(pattern, stand_in, expr, flags=re.I) if stand_in else None
             hint = f"; write {fixed!r}" if fixed else "; name the object instead"
             self.err(f"{where}: Self names the object of the condition or action, and here that is System; "
                      f"the editor stops with \"Invalid use of 'self'\"{hint}")

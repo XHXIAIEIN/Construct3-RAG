@@ -438,6 +438,23 @@ def test_self_in_a_system_parameter_names_the_object_to_write(project):
     assert "name the object instead" in out
 
 
+def test_a_variable_named_self_is_read_bare(project):
+    """The editor reads a bare self as a variable of that name in scope, and self.X still as Self."""
+    def change(s):
+        s["events"].insert(0, {"eventType": "variable", "name": "self", "type": "number", "initialValue": "5",
+                               "comment": "", "isStatic": False, "isConstant": False, "sid": 9})
+        events(s)["restart"]["children"].append(block([cond("on-start-of-layout")], [
+            {"id": "set-eventvar-value", "objectClass": "System", "sid": 5,
+             "parameters": {"variable": "score", "value": "self + 1"}}]))
+    out = findings(project, change)
+    assert "Self names the object" not in out and out.splitlines()[-1].startswith("ok:"), out
+
+    def read_member(s):
+        events(s)["restart"]["children"][-1]["actions"][0]["parameters"]["value"] = "self + self.X"
+    out = findings(project, read_member)
+    assert "value: Self names the object of the condition or action" in out, out
+
+
 def test_self_in_an_objects_own_parameter_passes(project):
     out = findings(project, lambda s: collect_tween(s)["parameters"].update(**{"end-x": "Self.X"}))
     assert "Self" not in out, out
@@ -864,21 +881,39 @@ def test_a_deprecated_ace_or_expression_warns_once_at_its_first_use(project):
     assert "System: set-minimum-framerate (minimum-fps: 30) [deprecated]" in tool(project, "print_sheet", "Game")[1]
 
 
-def rename_type(root: Path, old: str, new: str) -> None:
+def rename_type(root: Path, old: str, new: str, sid: int = 7) -> None:
     data = json.loads((root / "objectTypes" / f"{old}.json").read_text(encoding="utf-8"))
-    data.update(name=new, sid=7)
+    data.update(name=new, sid=sid)
     (root / "objectTypes" / f"{new}.json").write_text(json.dumps(data), encoding="utf-8")
     edit(root, "project.c3proj", lambda p: p["objectTypes"]["items"].append(new))
 
 
 @pytest.mark.parametrize("name, message", [
-    ("Floor", "object type Floor: the name is reserved (floor is a keyword or a system expression)"),
+    ("Floor", "object type Floor: floor is a system expression, so the editor renames it to Floor2 when it opens "
+              "the project. Its conditions and actions follow the new name, but an expression that names Floor, "
+              "such as Floor.X, stops the open with \"Not an object: 'Floor' is not an object name\""),
+    ("self", "self.X in an expression reads as Self, and in a System action the editor stops with "
+             "\"Invalid use of 'self'\""),
+    ("Con", "object type Con: con is a device name that Windows reserves, so the editor renames it to Con2"),
+    ("Com1", "The editor renames it to Com2 when it opens the project, and Com2 is reserved too, so the open stops "
+             "with \"name is reserved\""),
+    ("system", "object type system has the name of the System object, compared without case; the editor stops with "
+               "\"object type name 'system' already used\""),
     ("Score-Text", "the editor does not keep the object type name 'Score-Text' as written, it becomes 'ScoreText'"),
     ("Hi Score", "it becomes 'HiScore'"),
 ])
 def test_object_names_the_editor_changes_or_refuses(project, name, message):
     rename_type(project, "ScoreText", name)
     assert message in check(project)[1]
+
+
+def test_a_reserved_name_is_renamed_past_the_names_in_use(project):
+    """The editor counts up from the name until one is free: Floor beside Floor2 becomes Floor3."""
+    rename_type(project, "ScoreText", "Floor2")
+    rename_type(project, "ScoreText", "Floor", sid=8)
+    out = check(project)[1]
+    assert "the editor renames it to Floor3 when it opens the project" in out, out
+    assert "object type Floor2" not in out, out
 
 
 def test_file_name_and_inner_name_must_agree(project):
@@ -1334,7 +1369,7 @@ def test_text_literals_as_the_editor_parses_them(project, text, said):
     assert (said in out) if said else out.splitlines()[-1].startswith("ok:"), out
 
 
-@pytest.mark.parametrize("family", ["coin", "Functions"])
+@pytest.mark.parametrize("family", ["coin", "Functions", "System"])
 def test_a_family_named_like_another_object_class_is_refused(project, family):
     (project / "families").mkdir(exist_ok=True)
     (project / "families" / f"{family}.json").write_text(json.dumps(

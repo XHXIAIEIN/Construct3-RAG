@@ -48,6 +48,43 @@ Option 2 as the default, and option 3 as the step after it.
   stopped the editor with `object class name 'X' already used`, and an
   object type listed twice with `object type name 'X' already used`. The
   sweep added no finding.
+- Reserved object names were probed on 2026-10-04 in copies of
+  `data/c3-new-project`, each with one Text object type, in the stable
+  r495.2 editor and in r504, with the same result in both. The editor
+  opens such a project and then renames each object type or family whose
+  name is reserved, as it numbers a new object whose name is taken.
+  `Floor`, `floor`, `Random`, `Time`, `self`, `true`, `False` and `Con`
+  each took the number 2, `Floor` beside a `Floor2` became `Floor3`, and
+  a family `Random` became `Random2`. The conditions, actions and object
+  parameters on the object followed the rename. The system expressions
+  kept their meaning: beside the renamed `Floor2` at x 123, a preview
+  read `floor(1.5)` as 1 and `Floor2.X + floor(2.7)` as 125. An
+  expression that named the old name, `Floor.X`, stopped the open with
+  `Invalid expressions ... Not an object: 'Floor' is not an object name`,
+  in a dialog whose one button closes the project. `self.X` read as the
+  Self keyword, and in a System action it stopped the open with `Invalid
+  use of 'self'`. A script found no `runtime.objects.self`. An object
+  type named `system` stopped the open with `object type name 'system'
+  already used`, and a family `System` with `object class name 'System'
+  already used`. `Com1` was renamed to `Com2`, which is reserved too, and
+  the open stopped with `name is reserved`. A project whose events never
+  name such an object opens without a dialog, with the object renamed.
+  The name stays an error, because the files then hold a name that the
+  editor does not, and the first expression or script that names the
+  object fails. A user cannot give the name back either. Driven over
+  DevTools in both releases, the editor's own rename in the Project Bar
+  refused `Com1`, `Floor`, `self`, `Random`, `true` and `system` with
+  `The name Floor is reserved and cannot be used as a name`. Its Create
+  new object type dialog refused each with `This name is already taken`.
+  Both took `Ground2`. The finding gives the new name and the message. A variable is not an object: globals named `self` and `Com1`
+  opened and previewed in both releases. `Set Com1 to self` read the
+  variable `self`, and in an object's own action `self + Self.Width`
+  read the variable and then the object. The checker had refused the bare
+  `self` there as `Invalid use of 'self'`; it now reads a bare `self` as
+  a variable of that name in scope. No official example or game folder
+  names an object this way, and the sweep changed no output. The probes
+  and what the editor printed are in
+  `.local/docs/evidence/skill-evals/construct3-agent-plugin/reserved-names-2026-10-04/`.
 - Text literals were probed on 2026-10-03 in a text and a number parameter:
   an empty parameter stopped the editor with `Empty expression`, an
   unclosed literal with `String missing finishing "`, a backslash outside a
