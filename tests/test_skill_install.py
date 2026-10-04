@@ -3,6 +3,7 @@ clone through the project alone."""
 import json
 import os
 import re
+import runpy
 import shutil
 import subprocess
 import sys
@@ -10,7 +11,10 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, INSTALLED, run, check, install, new_project
+from tests.skill_helpers import REPO, SKILL, INSTALLED, run, check, install, new_project, warnings
+
+sys.path.insert(0, str(SKILL / "scripts"))
+import c3project as c3  # noqa: E402
 
 
 # --- installing the skill in a game project ---------------------------------------------------
@@ -294,6 +298,152 @@ def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):
     assert code == 0 and "wrote scripts/print_sheet.py" in out, out
     code, out = check(project)
     assert "differs from the clone's" not in out
+
+
+# --- refreshing the helpers of a game's generator ----------------------------------------------
+TEMPLATE = (SKILL / "assets" / "build_project.py").read_text(encoding="utf-8").split("\n")
+VERSION = c3.helpers_in(TEMPLATE).version
+
+
+def at(lines: list[str], prefix: str) -> int:
+    return next(i for i, line in enumerate(lines) if line.startswith(prefix))
+
+
+def as_the_game_has_it(lines: list[str]) -> list[str]:
+    """The template's lines with a game's own changes outside the markers: its name, and a
+    helper of its own below the end marker."""
+    lines = list(lines)
+    lines[at(lines, "PROJECT_NAME = ")] = 'PROJECT_NAME = "Gems"'
+    main = at(lines, 'if __name__ == "__main__":')
+    lines[main:main] = ["def gem_value() -> int:", '    """What a gem is worth."""', "    return 5", "", ""]
+    return lines
+
+
+def older_generator(root: Path, version: str = "2026-09-01", edited: bool = False, newline: str = "\n") -> bytes:
+    """tools/build_project.py as a game holds it after a copy of an older template: tween_width() not
+    written yet, units() without its docstring, the end marker stamped for that part and dated
+    earlier. edited changes a line between the markers afterwards, as an agent's edit there does."""
+    lines = list(TEMPLATE)
+    del lines[at(lines, "def tween_width("):at(lines, "def tween_value(")]
+    del lines[at(lines, '    """n grid units in pixels')]
+    helpers = c3.helpers_in(lines)
+    lines[helpers.end] = c3.helpers_end_line(version, helpers.actual)
+    if edited:
+        lines[at(lines, '    """v moved to the nearest grid line')] = '    """v moved to the grid line under it."""'
+    data = newline.join(as_the_game_has_it(lines)).encode("utf-8")
+    (root / "tools").mkdir(exist_ok=True)
+    (root / "tools" / "build_project.py").write_bytes(data)
+    return data
+
+
+def test_install_refreshes_an_older_generators_helpers_and_keeps_the_game(project):
+    """A game's generator keeps the helpers of the day it was copied. When the skill is refreshed,
+    its part between the markers becomes the skill's, since nothing there was edited, and every
+    line outside them stays as the game had it, line ends included."""
+    older_generator(project, newline="\r\n")
+    code, out = check(project)
+    assert code == 0 and (f"warning: tools/build_project.py: its helpers, between the markers, are the skill's of "
+                          f"2026-09-01, and the skill's are now of {VERSION}") in out, out
+    assert "scripts/install.py --helpers-only, then run python tools/build_project.py" in out
+    code, out = install(project)
+    assert code == 0 and (f"tools/build_project.py: replaced its helpers of 2026-09-01 with the skill's of "
+                          f"{VERSION}; the lines outside the markers are as they were") in out, out
+    data = (project / "tools" / "build_project.py").read_bytes()
+    assert data == "\r\n".join(as_the_game_has_it(TEMPLATE)).encode("utf-8")
+    code, out = run(project, "tools/build_project.py")
+    assert code == 0 and warnings(out) == [], out
+    assert json.loads((project / "project.c3proj").read_text(encoding="utf-8"))["name"] == "Gems"
+    code, out = install(project)
+    assert code == 0 and f"tools/build_project.py: its helpers are the skill's of {VERSION}, already current" in out
+
+
+def test_install_keeps_helpers_edited_in_the_game_and_says_how_to_take_the_new_ones(project):
+    """An edit between the markers is the game's: the refresh leaves the part as it is and says to
+    move the edit below the end marker, where a def replaces the skill's, before it replaces the part."""
+    before = older_generator(project, edited=True)
+    code, out = check(project)
+    assert code == 0 and "are the skill's of 2026-09-01 with edits made there" in out and \
+        "install.py --helpers-only --replace-edited-helpers" in out, out
+    code, out = install(project)
+    assert code == 0 and "tools/build_project.py: its helpers, between the markers, were edited there, so they " \
+                         "were left as they are. Copy each helper changed there below the end marker" in out, out
+    assert "--replace-edited-helpers" in out
+    generator = project / "tools" / "build_project.py"
+    assert generator.read_bytes() == before
+    # the agent moves its snap() below the end marker, then takes the skill's helpers
+    text = generator.read_text(encoding="utf-8").replace(
+        'if __name__ == "__main__":', 'def snap(v: float) -> int:\n    """v moved to the grid line under it."""\n'
+        '    return int(v // UNIT) * UNIT\n\n\nif __name__ == "__main__":')
+    generator.write_text(text, encoding="utf-8", newline="\n")
+    code, out = install(project, "--helpers-only", "--replace-edited-helpers")
+    assert code == 0 and "replaced its helpers of 2026-09-01" in out, out
+    lines = generator.read_text(encoding="utf-8").split("\n")
+    helpers = c3.helpers_in(lines)
+    assert lines[helpers.begin:helpers.end + 1] == TEMPLATE[c3.helpers_in(TEMPLATE).begin:c3.helpers_in(TEMPLATE).end + 1]
+    game = runpy.run_path(str(generator), run_name="generator")
+    assert game["snap"].__doc__ == "v moved to the grid line under it." and game["snap"](40) == 32
+
+
+def test_install_helpers_only_refreshes_the_generator_alone(tmp_path):
+    """A project used through the Claude Code plugin holds no copy of the skill: --helpers-only
+    refreshes the generator's helpers and writes nothing else."""
+    root = new_project(tmp_path / "game")
+    older_generator(root)
+    code, out = install(root, "--helpers-only", "--dry-run")
+    assert code == 0 and "would replace its helpers of 2026-09-01" in out and "dry run: nothing was written" in out
+    assert c3.helpers_in((root / "tools" / "build_project.py").read_text(encoding="utf-8").split("\n")).version \
+        == "2026-09-01"
+    code, out = install(root, "--helpers-only")
+    assert code == 0 and "replaced its helpers of 2026-09-01" in out, out
+    assert sorted(p.name for p in root.iterdir()) == ["project.c3proj", "tools"]
+    code, out = install(root, "--helpers-only")
+    assert code == 0 and "already current" in out
+    (root / "tools" / "build_project.py").unlink()
+    code, out = install(root, "--helpers-only")
+    assert code == 1 and "tools/build_project.py: not in" in out
+
+
+def unmarked(root: Path) -> None:
+    """A generator copied before the template marked its helpers."""
+    older_generator(root)
+    path = root / "tools" / "build_project.py"
+    path.write_text("\n".join(line for line in path.read_text(encoding="utf-8").split("\n")
+                              if "construct3-agent-plugin helpers:" not in line), encoding="utf-8")
+
+
+def without_end_marker(root: Path) -> None:
+    older_generator(root)
+    path = root / "tools" / "build_project.py"
+    path.write_text("\n".join(line for line in path.read_text(encoding="utf-8").split("\n")
+                              if "helpers: end" not in line), encoding="utf-8")
+
+
+def not_compiling(root: Path) -> None:
+    older_generator(root)
+    path = root / "tools" / "build_project.py"
+    path.write_text(path.read_text(encoding="utf-8").replace("def gem_value() -> int:", "def gem_value( -> int:"),
+                    encoding="utf-8")
+
+
+@pytest.mark.parametrize("make, said, checked", [
+    (unmarked, "tools/build_project.py: written before the template marked its helpers, so nothing refreshes them; "
+               "left as it is", None),
+    (lambda root: older_generator(root, version="2099-01-01"), "its helpers are of 2099-01-01, newer than this "
+                                                              "skill's", None),
+    (without_end_marker, "tools/build_project.py: it has 1 begin and 0 end markers of the helpers, not one of each; "
+                         "copy the marker lines", "until then the skill cannot refresh its helpers"),
+    (not_compiling, "with the skill's helpers it would not compile, line", "are the skill's of 2026-09-01, and"),
+])
+def test_install_leaves_a_generator_it_cannot_refresh(project, make, said, checked):
+    make(project)
+    before = (project / "tools" / "build_project.py").read_bytes()
+    code, out = install(project, "--helpers-only")
+    assert code == 1 and said in out, out
+    assert (project / "tools" / "build_project.py").read_bytes() == before
+    code, out = install(project)
+    assert code == 0 and said in out
+    code, out = check(project)
+    assert (checked in out) if checked else "tools/build_project.py" not in out, out
 
 
 # --- finding the schemas ---------------------------------------------------------------

@@ -9,6 +9,11 @@ filled in, and the line `@AGENTS.md` to CLAUDE.md. Run again, it refreshes
 every copy the project holds and leaves the instruction files alone. The
 clone is the source: run from an installed copy, it hands over to the clone's
 own install.py.
+
+The project's generator, tools/build_project.py, keeps the template's helpers
+between two markers. When they are an older version and unedited there, they
+are replaced with the skill's; the lines outside the markers stay as they are.
+--helpers-only does that alone, for a project that has no copy of the skill.
 """
 import argparse
 import re
@@ -135,6 +140,45 @@ def unnamed_clone(project: Path, rag: Path) -> list[str]:
             f"notes between sessions"]
 
 
+def again(flag: str) -> str:
+    """This run's command with one more flag."""
+    def quoted(s: str) -> str:
+        return f'"{s}"' if " " in s else s
+    return " ".join(["python", quoted(Path(__file__).resolve().as_posix()), *map(quoted, sys.argv[1:]), flag])
+
+
+def generator(project: Path, rag: Path, replace_edited: bool, dry_run: bool) -> tuple[bool, list[str]]:
+    """The helpers of the project's tools/build_project.py replaced with the skill's when they
+    are an older version left unedited there; whether they are the skill's afterwards, and what
+    to print. Edits between the markers are the game's, so they are kept unless the run asks."""
+    h = c3.generator_helpers(project)
+    name = c3.GENERATOR
+    if h.state == "missing":
+        return False, []
+    if h.state == "unmarked":
+        return False, [f"{name}: written before the template marked its helpers, so nothing refreshes them; "
+                       f"left as it is"]
+    if h.state == "broken":
+        return False, [f"{name}: {h.detail}; its helpers were left as they are"]
+    if h.state == "current":
+        return True, [f"{name}: its helpers are the skill's of {h.want.version}, already current"]
+    have, want = c3.versions(h.have, h.want)
+    if h.state == "newer":
+        return False, [f"{name}: its helpers are of {have}, newer than this skill's of {want}, "
+                       f"and were left as they are; update the clone, git -C \"{rag}\" pull --ff-only, and run this "
+                       f"again"]
+    if h.state == "edited" and not replace_edited:
+        return False, [f"{name}: its helpers, between the markers, were edited there, so they were left as they "
+                       f"are. Copy each helper changed there below the end marker, where a def of the same name "
+                       f"replaces the one between the markers, then run {again('--replace-edited-helpers')}"]
+    problem = c3.replace_helpers(project, dry_run=dry_run)
+    if problem:
+        return False, [f"{name}: {problem}; nothing was written"]
+    return True, [f"{name}: {'would replace' if dry_run else 'replaced'} its helpers of {have} with the "
+                  f"skill's of {want}; the lines outside the markers are as they were. Run python "
+                  f"{name}, which regenerates the project with them"]
+
+
 def earlier_tools(project: Path, skill_path: str) -> list[str]:
     """The two files a project got by hand before the skill, and a copy of the skill under its
     former name. Nothing refreshes them. The generator of the two files ends by running the
@@ -164,14 +208,19 @@ def main() -> int:
         description="Install the construct3-agent-plugin skill in a Construct 3 game project, or refresh the copies it "
                     "holds, from the Construct3-RAG clone this script sits in. Adds the Construct 3 block to the "
                     "project's AGENTS.md when no instruction file there names the clone yet, and the line @AGENTS.md "
-                    "to CLAUDE.md. Safe to run again.",
+                    "to CLAUDE.md. Replaces the helpers of the project's tools/build_project.py, between its "
+                    "markers, with the skill's when they are an older version left unedited there. Safe to run "
+                    "again.",
         epilog="examples:\n"
                "  python install.py                          into the project found from the current directory\n"
                "  python install.py --project ../MyGame --into .claude/skills\n"
-               "  python install.py --into ~/.agents/skills  one copy for every project of this user\n\n"
+               "  python install.py --into ~/.agents/skills  one copy for every project of this user\n"
+               "  python install.py --helpers-only           the generator's helpers alone, as with the plugin\n\n"
                "skills directories: .agents/skills is read by most agents; Claude Code reads .claude/skills,\n"
                "TRAE .trae/skills (.agents/skills once enabled in its settings), Deep Code .deepcode/skills.\n\n"
-               "exit codes: 0 installed or already current, 1 no project or no clone found")
+               "exit codes: 0 installed or already current, 1 no project or no clone found; with --helpers-only,\n"
+               "0 when the generator's helpers are the skill's and 1 when they are not: no generator, no\n"
+               "markers, edited there or newer")
     ap.add_argument("--project", metavar="FOLDER",
                     help="the folder that holds project.c3proj (default: found from the current directory upward)")
     ap.add_argument("--into", metavar="DIR",
@@ -179,6 +228,13 @@ def main() -> int:
                          f"copy the project already holds, else {DEFAULT_INTO})")
     ap.add_argument("--rag", metavar="FOLDER", help="the Construct3-RAG clone, when run from an installed copy")
     ap.add_argument("--no-block", action="store_true", help="do not touch the project's AGENTS.md")
+    ap.add_argument("--helpers-only", action="store_true",
+                    help=f"refresh only the helpers of the project's {c3.GENERATOR}, between its markers; no copy "
+                         f"of the skill and no instruction file is written. For a project that uses the skill "
+                         f"without a copy, as the Claude Code plugin does")
+    ap.add_argument("--replace-edited-helpers", action="store_true",
+                    help=f"replace the helpers of {c3.GENERATOR} even when they were edited there; copy each "
+                         f"edited helper below the end marker first, where it replaces the skill's")
     ap.add_argument("--dry-run", action="store_true", help="say what would be written, write nothing")
     args = ap.parse_args()
     c3.utf8_output()
@@ -200,13 +256,24 @@ def main() -> int:
             passed += ["--into", str(SKILL_DIR.parent)]
         return subprocess.run([sys.executable, str(theirs), *passed]).returncode
 
+    if args.helpers_only:
+        if project is None:
+            sys.exit(f"no project.c3proj in {Path.cwd()} or above it; run this from the game project, or pass "
+                     f"--project <folder>")
+        current, lines = generator(project, rag, args.replace_edited_helpers, args.dry_run)
+        print("\n".join(lines or [f"{c3.GENERATOR}: not in {project}, so there are no helpers to refresh"]))
+        if args.dry_run:
+            print("dry run: nothing was written")
+        return 0 if current else 1
+
     places = targets(project, args.into)
     for target in places:
         print(f"{shown(target, project)}: {mirror(SKILL_DIR, target, args.dry_run)}")
     if project:
         notes = unnamed_clone(project, rag) if args.no_block else \
             add_block(project, rag, shown(places[0], project), args.dry_run)
-        for note in notes + earlier_tools(project, shown(places[0], project)):
+        refreshed = generator(project, rag, args.replace_edited_helpers, args.dry_run)[1]
+        for note in refreshed + notes + earlier_tools(project, shown(places[0], project)):
             print(note)
     if args.dry_run:
         print("dry run: nothing was written")

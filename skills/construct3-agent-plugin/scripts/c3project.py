@@ -1,8 +1,8 @@
 """What the scripts of this skill share: finding the project and the
 Construct3-RAG clone, reading the files project.c3proj lists, the schemas,
 the object model (types, families, behaviors, instance variables), the
-schema entry behind a condition or an action, and what the editor has
-deprecated.
+schema entry behind a condition or an action, what the editor has
+deprecated, and the helpers of a game's generator against the template's.
 
 Not a command. check_project.py, print_sheet.py and lookup_ace.py import it
 from the folder they sit in.
@@ -19,6 +19,7 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+from typing import NamedTuple
 
 SKILL = "construct3-agent-plugin"
 SKILL_DIR = Path(__file__).resolve().parent.parent
@@ -337,6 +338,134 @@ def clone_behind(rag: Path) -> tuple[str, bool] | None:
     refresh = refresh_command(rag)
     return (f"{lag}, so the scripts lack the fixes and checks of those commits. Run git -C \"{rag}\" pull --ff-only, "
             f"{f'then {refresh}, ' if refresh else ''}then run this check again"), True
+
+
+# --- the generator's helpers ----------------------------------------------------------
+# assets/build_project.py keeps its helpers between a begin and an end marker, and the end
+# marker carries their version and the stamp of the lines between. A game's copy,
+# tools/build_project.py, takes the template's part in place of its own when the skill is
+# refreshed, as long as its lines still match the stamp on its end marker: then nothing in
+# the part was edited there, and the replacement loses nothing of the game's.
+GENERATOR = "tools/build_project.py"
+TEMPLATE = SKILL_DIR / "assets" / "build_project.py"
+HELPERS_BEGIN = re.compile(r"# =+ construct3-agent-plugin helpers: begin\b")
+HELPERS_END = re.compile(r"# =+ construct3-agent-plugin helpers: end\b")
+HELPERS_VERSION = re.compile(r"; version (\d{4}-\d{2}-\d{2}), stamp ([0-9a-f]{12})\b")
+MARKER_WIDTH = 100
+
+
+class Helpers(NamedTuple):
+    """The marked part of a generator: its markers' line indexes, the version and stamp its
+    end marker carries, and the stamp of the lines between them as they are now."""
+    begin: int
+    end: int
+    version: str
+    stamp: str
+    actual: str
+
+
+class HelperState(NamedTuple):
+    """How a game's generator stands against the template: missing, unmarked, broken (detail
+    says what is wrong), current, older, newer, or edited (its lines match neither stamp)."""
+    state: str
+    detail: str = ""
+    have: Helpers | None = None
+    want: Helpers | None = None
+
+
+def versions(have: Helpers, want: Helpers) -> tuple[str, str]:
+    """The two versions in words, "2026-09-01" and "2026-10-04", with their stamps when the
+    dates are the same."""
+    if have.version != want.version:
+        return have.version, want.version
+    return f"{have.version}, stamp {have.stamp}", f"{want.version}, stamp {want.stamp}"
+
+
+def helpers_stamp(lines: list[str]) -> str:
+    """The stamp of the lines between the markers: the first 12 hex digits of their SHA-256."""
+    return hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest()[:12]
+
+
+def helpers_end_line(version: str, stamp: str) -> str:
+    """The end marker as the template writes it."""
+    line = f"# ==== construct3-agent-plugin helpers: end; version {version}, stamp {stamp} "
+    return line + "=" * max(4, MARKER_WIDTH - len(line))
+
+
+def text_lines(path: Path) -> tuple[list[str], str, bool]:
+    """A UTF-8 file's lines without their ends, the line end it uses, and whether it starts
+    with a byte order mark, so that it can be written back the way it was."""
+    data = path.read_bytes()
+    bom = data.startswith(b"\xef\xbb\xbf")
+    text = data[3 if bom else 0:].decode("utf-8")
+    return text.replace("\r\n", "\n").split("\n"), "\r\n" if "\r\n" in text else "\n", bom
+
+
+def helpers_in(lines: list[str]) -> Helpers | str | None:
+    """The marked part of a generator's lines; None when it has neither marker, and a sentence
+    saying what is wrong and what to write when its markers are broken."""
+    begins = [i for i, line in enumerate(lines) if HELPERS_BEGIN.match(line)]
+    ends = [i for i, line in enumerate(lines) if HELPERS_END.match(line)]
+    if not begins and not ends:
+        return None
+    copy = "copy the marker lines of the skill's assets/build_project.py around its helpers"
+    if len(begins) != 1 or len(ends) != 1:
+        return f"it has {len(begins)} begin and {len(ends)} end markers of the helpers, not one of each; {copy}"
+    if ends[0] < begins[0]:
+        return f"the end marker of its helpers stands above the begin marker; {copy}"
+    found = HELPERS_VERSION.search(lines[ends[0]])
+    if not found:
+        return f"the end marker of its helpers has lost its version and stamp; {copy}"
+    return Helpers(begins[0], ends[0], found[1], found[2], helpers_stamp(lines[begins[0] + 1:ends[0]]))
+
+
+def generator_helpers(root: Path, template: Path = TEMPLATE) -> HelperState:
+    """How the helpers of root's tools/build_project.py stand against the template's. Older and
+    newer go by the version on the end markers; edited is a part whose lines match neither the
+    stamp on its own end marker nor the template's lines."""
+    path = root / GENERATOR
+    if not path.is_file():
+        return HelperState("missing")
+    template_lines = text_lines(template)[0]
+    want = helpers_in(template_lines)
+    if not isinstance(want, Helpers):
+        return HelperState("broken", f"the skill's own assets/build_project.py: {want or 'no markers'}")
+    try:
+        lines = text_lines(path)[0]
+    except UnicodeDecodeError:
+        return HelperState("broken", "it is not UTF-8 text, which Python reads a source file as; save it as UTF-8")
+    have = helpers_in(lines)
+    if have is None:
+        return HelperState("unmarked")
+    if isinstance(have, str):
+        return HelperState("broken", have)
+    if lines[have.begin:have.end + 1] == template_lines[want.begin:want.end + 1]:
+        return HelperState("current", have=have, want=want)
+    if have.actual not in (have.stamp, want.stamp):
+        return HelperState("edited", have=have, want=want)
+    return HelperState("newer" if have.version > want.version else "older", have=have, want=want)
+
+
+def replace_helpers(root: Path, template: Path = TEMPLATE, dry_run: bool = False) -> str | None:
+    """Put the template's marked part, both markers included, in place of the one in root's
+    tools/build_project.py; every line outside the markers, the line ends and a byte order mark
+    stay as they were. None when done, or a sentence when the result would not compile, and
+    then nothing is written."""
+    path = root / GENERATOR
+    lines, newline, bom = text_lines(path)
+    template_lines = text_lines(template)[0]
+    have, want = helpers_in(lines), helpers_in(template_lines)
+    text = newline.join(lines[:have.begin] + template_lines[want.begin:want.end + 1] + lines[have.end + 1:])
+    try:
+        compile(text, str(path), "exec")
+    except SyntaxError as e:
+        return f"with the skill's helpers it would not compile, line {e.lineno}: {e.msg}"
+    if not dry_run:
+        draft = path.with_name(f".{path.name}.{os.getpid()}")
+        draft.write_bytes((b"\xef\xbb\xbf" if bom else b"") + text.encode("utf-8"))
+        shutil.copymode(path, draft)
+        os.replace(draft, path)
+    return None
 
 
 def argument_parser(description: str, epilog: str) -> argparse.ArgumentParser:

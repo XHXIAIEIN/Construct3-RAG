@@ -11,30 +11,33 @@ icons, scripts) are left alone. It ends by running the skill's
 check_project.py on what it wrote and exits with the checker's code: the
 project is ready for the editor when the last line starts with `ok:`.
 
+The file has three parts. The game's settings come first: its name, the
+viewport, the grid, the look. The helpers follow, between a begin and an end
+marker: one per ACE, the images, the layouts and the checks that stop a run.
+They are the skill's, the same in every game, and the skill's install.py
+replaces them with its current ones when the skill is refreshed. The game
+comes last: BEATS, build_files(), build_images(), build_object_types(),
+build_layouts() and the module_*() functions of the event sheet.
+
 The game below is a stand-in: coins appear, a tap collects one, the score
 counts up, and when the last coin is gone the next round starts, one round a
-beat of BEATS. Replace PALETTE with the game's colours by role, SHAPE_STYLE
-with its outline and shadow, ART_STYLE with its art direction, BEATS with its
-pacing, build_images() with an art() for every sprite,
-build_object_types(), build_layouts(), the module_*() functions of the
-event sheet and the name and orientation in build_project(); keep the
-helpers, or grow them from the skill's `scripts/lookup_ace.py <object>
-<words>`, which prints an ACE with the JSON to write, when the game needs one
-they do not cover. The encodings are the ones the editor writes; see
+beat of BEATS. Replace PROJECT_NAME, FIRST_LAYOUT and ORIENTATION, PALETTE
+with the game's colours by role, SHAPE_STYLE with its outline and shadow,
+ART_STYLE with its art direction, BEATS with its pacing, build_images() with
+an art() for every sprite, build_object_types(), build_layouts() and the
+module_*() functions of the event sheet. Keep the helpers. A helper the game
+needs and they lack goes below the end marker, grown from the skill's
+`scripts/lookup_ace.py <object> <words>`, which prints an ACE with the JSON to
+write. The encodings are the ones the editor writes; see
 Construct3-RAG/prompts/references/hand-editing-project-files.md.
 
 The sheet is written a group at a time: one module_*() per group, laid out as
 the official examples lay a group out (module, event, procedure, steps, cases
-below). Write one, run this file, read the sheet it printed, then the next.
+among the helpers). Write one, run this file, read the sheet it printed, then
+the next.
 """
-import json
 import math
 import random
-import struct
-import subprocess
-import sys
-import unicodedata
-import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -42,6 +45,9 @@ ROOT = Path(__file__).resolve().parent.parent
 random.seed(20170328)
 
 VIEW_W, VIEW_H = 720, 1280
+PROJECT_NAME = "Coins"                     # the project's name in the editor
+FIRST_LAYOUT = "Game"                      # the layout the game starts on
+ORIENTATION = "portrait"                   # "portrait", "landscape" or "any"
 
 # --- placement grid -------------------------------------------------------------------
 # Every position and size is a whole number of UNITs, so that a layout reads as cells, not as
@@ -116,14 +122,8 @@ SQUASH = {
     "land": {"width": 1.2, "height": 0.8, "hold": 0, "seconds": 0.5, "ease": "easeoutelastic"},
     "jump": {"width": 0.7, "height": 1.3, "hold": 0.2, "seconds": 0.75, "ease": "easeoutelastic"},
 }
-# the behaviors whose object collides, by behaviorId; squash() stops the run on one of them
-COLLIDING = ("Platform", "EightDir", "Physics", "Car", "solid", "jumpthru")
 FONT = "Arial"                             # one font for every label
 TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
-# A Text's size is in points (manual: plugin-reference/text.md), drawn at 96 px per 72 pt, so
-# 1 em is size * PX_PER_PT px: measured at runtime, a Chinese character at size 18 is 24 px wide.
-PX_PER_PT = 4 / 3
-LINE_EMS = 1.2                             # one line is 1.05 to 1.17 em high in Arial, measured
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
 # as every official example at that size samples and 116 of 159 scale (build_project()).
 PIXEL_ART = UNIT == 8
@@ -134,29 +134,32 @@ PIXEL_ART = UNIT == 8
 # with it, so the pictures art() asks for share one style.
 ART_STYLE = ""
 
-# --- pacing ---------------------------------------------------------------------------
-# The order in which the game asks things of the player, one beat at a time: a camera zone of a
-# level, or in a one-screen game like this one a round, a wave or a window of time. A beat has a
-# type, an intensity from 0 to 3, the mechanics it asks for alone or together, and for a rest
-# what it holds; anything else in it is the game's own, here the coins a round deals. pace()
-# stops the run on a curve that breaks the rules of Construct3-RAG/docs/decisions/
-# greybox-blockout.md, *Pacing*, and prints the curve, one line a beat.
+
+# ==== construct3-agent-plugin helpers: begin ======================================================
+# The skill's helpers, the same in every game; they read the settings above when they are called.
+# The skill's install.py replaces everything from here to the end marker with its current helpers
+# when the skill is refreshed, and leaves the part as it is once it is edited here. To change a
+# helper for this game, define it again below the end marker: a def or a constant there replaces
+# the one of the same name here, and a refresh keeps it.
+import json
+import math
+import random
+import struct
+import subprocess
+import sys
+import unicodedata
+import zlib
+from pathlib import Path
+
+
+# --- grid and pacing --------------------------------------------------------------------
+# The types of beat BEATS is made of; beat() writes one, and pace() checks the curve they make.
 BEAT_TYPES = ("intro", "teach", "practice", "twist", "rest", "climax", "exit")
 
 
 def beat(kind: str, intensity: int, mechanics: tuple = (), holds: str = "", **game) -> dict:
     """One beat of BEATS: beat("rest", 0, holds="pickup", coins=2)."""
     return {"type": kind, "intensity": intensity, "mechanics": list(mechanics), "holds": holds, **game}
-
-
-BEATS = [
-    beat("intro", 0, ["tap"], coins=1),
-    beat("teach", 1, ["tap"], coins=3),
-    beat("practice", 2, ["tap"], coins=6),
-    beat("rest", 0, ["tap"], holds="pickup", coins=2),
-    beat("climax", 3, ["tap"], coins=10),
-    beat("exit", 0, ["tap"], coins=1),
-]
 
 
 def units(n: float) -> int:
@@ -454,17 +457,9 @@ def table_to_dictionary(table: str, dictionary: str) -> list:
                  [act("add-key", dictionary, {"key": key, "value": cell})])
 
 
-def build_files() -> None:
-    """The game's data files, before the object types: record_table("CardTable", {"strike": {...}}),
-    with a nonworld_type("CardTable", "Arr") and a nonworld_type("Cards", "Dictionary"), their
-    nonworld_inst() in the layout that loads them, load_data_file("CardTable", "CardTable.json")
-    first among the actions of that layout's On start and *table_to_dictionary("CardTable", "Cards")
-    among its sub-events.
-    The stand-in has none."""
-
-
 def q(s: str) -> str:
-    """A string literal inside an expression parameter: q("tag") -> "\"tag\"". Quotes inside double up."""
+    """q("tag") gives the string literal "tag", quotes included, for an expression parameter. A quote inside
+    the text is doubled."""
     return '"' + s.replace('"', '""') + '"'
 
 
@@ -779,12 +774,6 @@ def pattern(name: str, kind: str) -> None:
     PATTERN_OF[name], TILES[name] = kind, UNIT
 
 
-def build_images() -> None:
-    pattern("Backdrop", "checker")
-    art("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward", "a gold coin seen from the front")
-    hit_frame("coin-default-000.png")
-
-
 # --- event sheet: conditions, actions, blocks ------------------------------------------
 # Ids and parameter keys come from data/c3-schemas/{locale}/plugins/{id}.json and
 # behaviors/{id}.json; ACEs shared by every world object are in plugins/_common.json.
@@ -985,7 +974,8 @@ def set_bool_var(name: str, value: bool) -> dict:
 
 
 def create(obj: str, layer: str, x: str, y: str) -> dict:
-    """Picks only the new instance. Give every runtime-created type a template instance in a layout that never runs."""
+    """Picks only the new instance. Give every runtime-created type a template instance in a layout
+    that never runs, because without one its behavior properties read 0."""
     return act("create-object", "System", {"object-to-create": obj, "layer": q(layer), "x": x, "y": y,
                                            "create-hierarchy": False, "template-name": q("")})
 
@@ -1000,6 +990,8 @@ def hit_flash(obj: str) -> list:
 
 
 SQUASHED: set[str] = set()                 # the objects squash() acts on, checked in build_all()
+# the behaviors whose object collides, by behaviorId; squash() stops the run on one of them
+COLLIDING = ("Platform", "EightDir", "Physics", "Car", "solid", "jumpthru")
 
 
 def squash(obj: str, kind: str, tween: str = "Tween") -> list:
@@ -1218,77 +1210,6 @@ def on_touched(obj: str) -> dict:
     return cond("on-touched-object", "Touch", {"object": obj, "type": "start"})
 
 
-# --- the event sheet -------------------------------------------------------------------
-# One function per group, in play order. A game grows a group at a time: write a
-# module, run the generator, read the sheet it printed, then write the next.
-def module_setup() -> dict:
-    return module("Setup", events=[
-        # Restart layout keeps every global variable: a value the round starts from is set here,
-        # before any text shows it.
-        event("Empty the score and deal this round's coins",
-              [on_start()], [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))], children=[
-                  block([for_loop("i", "0", f"int(tokenat(ROUND_COINS, beat, {q(',')})) - 1")], [
-                      create("Coin", "Game", f"{grid_random(0, VIEW_W - COIN_SIZE)} + {COIN_SIZE // 2}",
-                             f"{grid_random(snap(1.5 * COIN_SIZE), VIEW_H - COIN_SIZE)} + {COIN_SIZE // 2}"),
-                      set_ivar("Coin", "value", "choose(1, 5)"),
-                  ]),
-              ]),
-    ])
-
-
-def module_input() -> dict:
-    return module("Input", events=[
-        event("A touched coin collects itself, once", [on_touched("Coin"), cond("is-any-playing", "Coin", beh="Tween",
-                                                                           inverted=True)],
-              [call_custom("Coin", "Collect")]),
-    ])
-
-
-def scoring() -> list:
-    """What the groups call: a custom action for what acts on the caller's picked
-    instances, a function for a value or for logic that picks its own."""
-    return [
-        *procedure("Score the coin, show the hit, then shrink it away", custom_action("Coin", "Collect", steps(
-            ("Score it, then show the hit", [call("AddScore", "Coin.value"), *hit("Coin")]),
-            ("Shrink it away once the punch is over", [
-                wait(f"{SQUASH['hit']['seconds'] - HIT_FLASH['seconds']:g}", use_timescale=False),
-                tween2("Coin", "collect", "size", "0", "0", "0.25", "easeinback", destroy=True)]),
-        ))),
-        *procedure("Add points and show the score", func("AddScore", [
-            add_var("score", "points"),
-            set_text("ScoreText", q("Score: ") + " & score"),
-        ], params=[param("points", "number", 0)])),
-    ]
-
-
-def module_restart() -> dict:
-    return module("Restart", events=[
-        event("Start the next round when the last coin is gone",
-              [cmp2("Coin.Count", EQ, "0"), trigger_once()],
-              [set_var("beat", f"(beat + 1) % tokencount(ROUND_COINS, {q(',')})"), wait("1"), restart_layout()]),
-    ])
-
-
-def build_event_sheet() -> dict:
-    """What the sheet covers, the constants under Settings, the state the groups share,
-    then the groups; a variable one group owns is declared in that module instead."""
-    events = [
-        comment("Coins. Tap a coin to collect it; when the last one is gone the next round starts.\n"
-                "The touched coin is the trigger's pick: Collect runs on it and nothing else"),
-        comment("Settings"),
-        var("ROUND_COINS", "string", ",".join(str(b["coins"]) for b in BEATS),
-            "Coins dealt in each round, one round a beat of the generator's BEATS", const=True),
-        comment("Gameplay variables"),
-        var("score", "number", 0, "Points collected this round"),
-        var("beat", "number", 0, "The round being played, from 0; a global keeps it across the restart"),
-        module_setup(),
-        module_input(),
-        *scoring(),
-        module_restart(),
-    ]
-    return {"name": "Game", "events": events, "sid": sid()}
-
-
 # --- object types --------------------------------------------------------------------
 def frame(w: int, h: int, ox: float = 0.5, oy: float = 0.5, poly: list | None = None) -> dict:
     """poly: the collision polygon as x, y pairs from 0 to 1 across the image; the whole image
@@ -1342,9 +1263,9 @@ def image_type(name: str, plugin_id: str, w: int, h: int, ox: float = 0.5, oy: f
 
 
 def bar_types(frame_name: str, fill_name: str, caps: bool = False, tween: bool = True) -> dict:
-    """The two object types of a bar for hud_bar(): Tiled Backgrounds of a 16x16 image each,
-    which Set width repeats and never stretches, so a painted fill is revealed; 9-patches when
-    `caps`, whose corners keep their size at any length. The fill carries Tween for
+    """The two object types of a bar for hud_bar(), Tiled Backgrounds whose Set width reveals a
+    painted fill and never stretches it. Each has a 16x16 image, which Set width repeats; they are
+    9-patches when `caps`, whose corners keep their size at any length. The fill carries Tween for
     tween_width(). Images: bar_images() in build_images()."""
     plugin = "NinePatch" if caps else "TiledBg"
     return {frame_name: image_type(frame_name, plugin, 16, 16),
@@ -1386,21 +1307,6 @@ def container(members: list) -> dict:
     return {"members": sorted(members, key=str.lower)}
 
 
-def build_object_types() -> tuple[dict, dict, list]:
-    types = {
-        "Coin": sprite_type("Coin", [animation("Default", [drawn("coin-default-000.png"), drawn("coin-default-001.png")])],
-                            ivars=[ivar_def("value", "number", "Points it is worth."),
-                                   ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
-                            behaviors=[beh_def("Tween")]),
-        "Backdrop": pattern_type("Backdrop"),
-        "ScoreText": text_type("ScoreText"),
-        "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True}),
-    }
-    families = {}
-    containers = []
-    return types, families, containers
-
-
 # --- layouts -------------------------------------------------------------------------------
 def layer(name: str, bg: str | None = None, transparent: bool = True, parallax: float = 1) -> dict:
     """parallax 0 for a HUD layer that stays put while the layout scrolls. bg is the role of
@@ -1415,9 +1321,12 @@ def layer(name: str, bg: str | None = None, transparent: bool = True, parallax: 
             "zElevation": 0, "global": False}
 
 
-def layout(name: str, layers: list, sheet: str | None, nonworld: list = (), width: int = VIEW_W, height: int = VIEW_H) -> dict:
+def layout(name: str, layers: list, sheet: str | None, nonworld: list = (), width: int | None = None,
+           height: int | None = None) -> dict:
+    """A layout of the viewport's size unless width and height say otherwise."""
     return {"name": name, "layers": layers, "sid": sid(), "nonworld-instances": list(nonworld), "effectTypes": [],
-            "width": width, "height": height, "unboundedScrolling": False, "sampling": "auto", "ambientLight": 0.03,
+            "width": VIEW_W if width is None else width, "height": VIEW_H if height is None else height,
+            "unboundedScrolling": False, "sampling": "auto", "ambientLight": 0.03,
             "vpX": 0.5, "vpY": 0.5, "projection": "perspective", "eventSheet": sheet}
 
 
@@ -1528,6 +1437,12 @@ def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, siz
                     world(x, y, w, h, 0, 0), ivars, behaviors)
 
 
+# A Text's size is in points (manual: plugin-reference/text.md), drawn at 96 px per 72 pt, so
+# 1 em is size * PX_PER_PT px: measured at runtime, a Chinese character at size 18 is 24 px wide.
+PX_PER_PT = 4 / 3
+LINE_EMS = 1.2                             # one line is 1.05 to 1.17 em high in Arial, measured
+
+
 def text_ems(text: str) -> float:
     """The width of `text` in em: an East Asian wide or full-width character (Chinese,
     Japanese, Korean, the full-width comma and colon) is 1 em, any other at most about
@@ -1594,13 +1509,14 @@ def area(otype: str, col: int, row: int, cols: int, rows: int, ivars=None, behav
     return tiledbg_inst(otype, units(col), units(row), units(cols), units(rows), 0, 0, ivars, behaviors)
 
 
-def backdrop(otype: str, width: int = VIEW_W, height: int = VIEW_H) -> dict:
+def backdrop(otype: str, width: int | None = None, height: int | None = None) -> dict:
     """The checker of pattern `otype` behind everything: one Tiled Background from the layout's
-    origin over `width` x `height`, the layout's size, on a layer at parallax 1, so its cells are
-    the ruler that sizes and distances are counted in. It replaces a grid: never both."""
+    origin over `width` x `height`, the layout's size, the viewport's unless given, on a layer at
+    parallax 1, so its cells are the ruler that sizes and distances are counted in. It replaces a
+    grid: never both."""
     if PATTERN_OF.get(otype) != "checker":
         sys.exit(f"backdrop({otype!r}): the backdrop is the checker; draw it with pattern({otype!r}, \"checker\")")
-    return tiledbg_inst(otype, 0, 0, width, height, 0, 0)
+    return tiledbg_inst(otype, 0, 0, VIEW_W if width is None else width, VIEW_H if height is None else height, 0, 0)
 
 
 def ninepatch_inst(otype: str, x: float, y: float, w: float, h: float, ox: float = 0, oy: float = 0.5, margin: int = 2,
@@ -1666,38 +1582,6 @@ LINE_OF_SIGHT = {"LineOfSight": {"properties": {"obstacles": "solids", "range": 
                                                 "use-collision-cells": True}}}
 
 
-def build_layouts() -> dict[str, dict]:
-    game = layout("Game", [
-        layer("Background", transparent=False),
-        layer("Game"),
-        layer("UI", parallax=0),
-    ], sheet="Game")
-    # The checker behind everything is the ruler: two cells a unit. An area or an edge in a
-    # pattern is area(type, col, row, cols, rows) on the Game layer.
-    game["layers"][0]["instances"].append(backdrop("Backdrop"))
-    # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
-    # row(), anything else by anchor(); the middle of the screen is the game's. no_overlap()
-    # stops the run when two HUD boxes meet or one leaves the viewport. A label is
-    # TEXT_SIZE["body"] in rgb("ink"), a banner TEXT_SIZE["title"], and hud_text() stops the
-    # run on a colour that does not read on what is behind it.
-    ui = game["layers"][2]["instances"]
-    ui.append(hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"))
-    # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
-    # types from bar_types() and images from bar_images(), and the sheet sets the fill with
-    # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
-    no_overlap(ui)
-    # Everything outside the HUD starts on the grid: a shape by shape_inst() on a cell, one
-    # created at runtime at grid_random(); on_grid() stops the run on an instance that does not.
-    on_grid(game["layers"][1]["instances"], "layer Game")
-    # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
-    objects = layout("Objects", [layer("Objects")], sheet=None)
-    objects["layers"][0]["instances"].append(
-        shape_inst("Coin", "coin-default-000.png", MARGIN // UNIT, MARGIN // UNIT,
-                   ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN)))
-    on_grid(objects["layers"][0]["instances"], "layout Objects")
-    return {"Game": game, "Objects": objects}
-
-
 # --- project.c3proj -------------------------------------------------------------------------
 ADDON_NAMES = {"TiledBg": "Tiled Background", "NinePatch": "9-patch", "Spritefont2": "Sprite font", "EightDir": "8 Direction",
                "Sin": "Sine", "DragnDrop": "Drag & Drop", "ScrollTo": "Scroll To", "MoveTo": "Move To", "LOS": "Line of sight",
@@ -1759,14 +1643,15 @@ def with_files(block: dict, kind: str) -> dict:
 def build_project(existing: dict, types: dict, families: dict, containers: list, layouts: dict,
                   sheets: list) -> dict:
     """Only the keys this script owns change; uniqueId, icons, scripts and the
-    properties the project already has stay."""
+    properties the project already has stay. The name, the first layout and the
+    orientation are PROJECT_NAME, FIRST_LAYOUT and ORIENTATION."""
     p = dict(existing)
     for key, value in PROJECT_DEFAULTS.items():
         p.setdefault(key, value)
     p["properties"] = dict(p.get("properties") or {})
     for key, value in PROPERTY_DEFAULTS.items():
         p["properties"].setdefault(key, value)
-    p["name"] = "Coins"
+    p["name"] = PROJECT_NAME
     p["usedAddons"] = used_addons(types, families)
     p["objectTypes"] = {"items": list(types), "subfolders": []}
     p["families"] = {"items": list(families), "subfolders": []}
@@ -1791,8 +1676,8 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
         # whole numbers every pixel stays square.
         p["properties"]["sampling"] = "nearest"
         p["properties"]["fullscreenMode"] = "letterbox-integer-scale"
-    p["firstLayout"] = "Game"
-    p["properties"]["orientations"] = "portrait"
+    p["firstLayout"] = FIRST_LAYOUT
+    p["properties"]["orientations"] = ORIENTATION
     return p
 
 
@@ -1830,7 +1715,9 @@ def build_all() -> None:
         existing, types, families, containers, layouts, [sheet["name"]]))
 
 
-if __name__ == "__main__":
+def build_and_check() -> None:
+    """build_all(), then the skill's check_project.py with --style on what it wrote; exits with the
+    checker's code."""
     build_all()
     # Generating without checking is how a project reaches the editor with a mistake
     # the checker names in one line; the two always run together. The skill is
@@ -1846,3 +1733,165 @@ if __name__ == "__main__":
     # --style: the agent wrote every event, so the readability warnings of the official
     # examples' style apply to all of them.
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
+
+
+# ==== construct3-agent-plugin helpers: end; version 2026-10-04, stamp 8f0574c52f69 ================
+
+
+# --- the game ---------------------------------------------------------------------------
+# What this game is, built in this order by build_all() above: its pacing, data files, images,
+# object types, layouts and event sheet. The helpers it calls are between the markers above.
+
+
+# --- pacing ---------------------------------------------------------------------------
+# The order in which the game asks things of the player, one beat at a time: a camera zone of a
+# level, or in a one-screen game like this one a round, a wave or a window of time. A beat has a
+# type, an intensity from 0 to 3, the mechanics it asks for alone or together, and for a rest
+# what it holds; anything else in it is the game's own, here the coins a round deals. pace()
+# stops the run on a curve that breaks the rules of Construct3-RAG/docs/decisions/
+# greybox-blockout.md, *Pacing*, and prints the curve, one line a beat.
+BEATS = [
+    beat("intro", 0, ["tap"], coins=1),
+    beat("teach", 1, ["tap"], coins=3),
+    beat("practice", 2, ["tap"], coins=6),
+    beat("rest", 0, ["tap"], holds="pickup", coins=2),
+    beat("climax", 3, ["tap"], coins=10),
+    beat("exit", 0, ["tap"], coins=1),
+]
+
+
+def build_files() -> None:
+    """The game's data files, before the object types: record_table("CardTable", {"strike": {...}}),
+    with a nonworld_type("CardTable", "Arr") and a nonworld_type("Cards", "Dictionary"), their
+    nonworld_inst() in the layout that loads them, load_data_file("CardTable", "CardTable.json")
+    first among the actions of that layout's On start and *table_to_dictionary("CardTable", "Cards")
+    among its sub-events.
+    The stand-in has none."""
+
+
+def build_images() -> None:
+    pattern("Backdrop", "checker")
+    art("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward", "a gold coin seen from the front")
+    hit_frame("coin-default-000.png")
+
+
+def build_object_types() -> tuple[dict, dict, list]:
+    types = {
+        "Coin": sprite_type("Coin", [animation("Default", [drawn("coin-default-000.png"), drawn("coin-default-001.png")])],
+                            ivars=[ivar_def("value", "number", "Points it is worth."),
+                                   ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
+                            behaviors=[beh_def("Tween")]),
+        "Backdrop": pattern_type("Backdrop"),
+        "ScoreText": text_type("ScoreText"),
+        "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True}),
+    }
+    families = {}
+    containers = []
+    return types, families, containers
+
+
+def build_layouts() -> dict[str, dict]:
+    game = layout("Game", [
+        layer("Background", transparent=False),
+        layer("Game"),
+        layer("UI", parallax=0),
+    ], sheet="Game")
+    # The checker behind everything is the ruler: two cells a unit. An area or an edge in a
+    # pattern is area(type, col, row, cols, rows) on the Game layer.
+    game["layers"][0]["instances"].append(backdrop("Backdrop"))
+    # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
+    # row(), anything else by anchor(); the middle of the screen is the game's. no_overlap()
+    # stops the run when two HUD boxes meet or one leaves the viewport. A label is
+    # TEXT_SIZE["body"] in rgb("ink"), a banner TEXT_SIZE["title"], and hud_text() stops the
+    # run on a colour that does not read on what is behind it.
+    ui = game["layers"][2]["instances"]
+    ui.append(hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"))
+    # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
+    # types from bar_types() and images from bar_images(), and the sheet sets the fill with
+    # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
+    no_overlap(ui)
+    # Everything outside the HUD starts on the grid: a shape by shape_inst() on a cell, one
+    # created at runtime at grid_random(); on_grid() stops the run on an instance that does not.
+    on_grid(game["layers"][1]["instances"], "layer Game")
+    # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
+    objects = layout("Objects", [layer("Objects")], sheet=None)
+    objects["layers"][0]["instances"].append(
+        shape_inst("Coin", "coin-default-000.png", MARGIN // UNIT, MARGIN // UNIT,
+                   ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN)))
+    on_grid(objects["layers"][0]["instances"], "layout Objects")
+    return {"Game": game, "Objects": objects}
+
+
+# --- the event sheet -------------------------------------------------------------------
+# One function per group, in play order. A game grows a group at a time: write a
+# module, run the generator, read the sheet it printed, then write the next.
+def module_setup() -> dict:
+    return module("Setup", events=[
+        # Restart layout keeps every global variable: a value the round starts from is set here,
+        # before any text shows it.
+        event("Empty the score and deal this round's coins",
+              [on_start()], [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))], children=[
+                  block([for_loop("i", "0", f"int(tokenat(ROUND_COINS, beat, {q(',')})) - 1")], [
+                      create("Coin", "Game", f"{grid_random(0, VIEW_W - COIN_SIZE)} + {COIN_SIZE // 2}",
+                             f"{grid_random(snap(1.5 * COIN_SIZE), VIEW_H - COIN_SIZE)} + {COIN_SIZE // 2}"),
+                      set_ivar("Coin", "value", "choose(1, 5)"),
+                  ]),
+              ]),
+    ])
+
+
+def module_input() -> dict:
+    return module("Input", events=[
+        event("A touched coin collects itself, once", [on_touched("Coin"), cond("is-any-playing", "Coin", beh="Tween",
+                                                                           inverted=True)],
+              [call_custom("Coin", "Collect")]),
+    ])
+
+
+def scoring() -> list:
+    """What the groups call: a custom action for what acts on the caller's picked
+    instances, a function for a value or for logic that picks its own."""
+    return [
+        *procedure("Score the coin, show the hit, then shrink it away", custom_action("Coin", "Collect", steps(
+            ("Score it, then show the hit", [call("AddScore", "Coin.value"), *hit("Coin")]),
+            ("Shrink it away once the punch is over", [
+                wait(f"{SQUASH['hit']['seconds'] - HIT_FLASH['seconds']:g}", use_timescale=False),
+                tween2("Coin", "collect", "size", "0", "0", "0.25", "easeinback", destroy=True)]),
+        ))),
+        *procedure("Add points and show the score", func("AddScore", [
+            add_var("score", "points"),
+            set_text("ScoreText", q("Score: ") + " & score"),
+        ], params=[param("points", "number", 0)])),
+    ]
+
+
+def module_restart() -> dict:
+    return module("Restart", events=[
+        event("Start the next round when the last coin is gone",
+              [cmp2("Coin.Count", EQ, "0"), trigger_once()],
+              [set_var("beat", f"(beat + 1) % tokencount(ROUND_COINS, {q(',')})"), wait("1"), restart_layout()]),
+    ])
+
+
+def build_event_sheet() -> dict:
+    """What the sheet covers, the constants under Settings, the state the groups share,
+    then the groups; a variable one group owns is declared in that module instead."""
+    events = [
+        comment("Coins. Tap a coin to collect it; when the last one is gone the next round starts.\n"
+                "The touched coin is the trigger's pick: Collect runs on it and nothing else"),
+        comment("Settings"),
+        var("ROUND_COINS", "string", ",".join(str(b["coins"]) for b in BEATS),
+            "Coins dealt in each round, one round a beat of the generator's BEATS", const=True),
+        comment("Gameplay variables"),
+        var("score", "number", 0, "Points collected this round"),
+        var("beat", "number", 0, "The round being played, from 0; a global keeps it across the restart"),
+        module_setup(),
+        module_input(),
+        *scoring(),
+        module_restart(),
+    ]
+    return {"name": "Game", "events": events, "sid": sid()}
+
+
+if __name__ == "__main__":
+    build_and_check()

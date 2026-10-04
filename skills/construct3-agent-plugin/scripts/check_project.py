@@ -2819,6 +2819,29 @@ def open_command(root: Path) -> str:
     return script_command(root, "open_in_editor.py", " --preview")
 
 
+def helpers_behind(root: Path) -> str | None:
+    """A sentence when the helpers of the project's generator are an older version than the
+    skill's, with the command that refreshes them; a generator whose markers are broken is
+    named too, since nothing can refresh it. Edits there, with nothing newer to take, and a
+    generator from before the markers say nothing."""
+    h = c3.generator_helpers(root)
+    command = script_command(root, "install.py", " --helpers-only")
+    if h.state == "broken":
+        return f"{c3.GENERATOR}: {h.detail}; until then the skill cannot refresh its helpers"
+    if h.state == "older":
+        have, want = c3.versions(h.have, h.want)
+        return (f"{c3.GENERATOR}: its helpers, between the markers, are the skill's of {have}, and the skill's are "
+                f"now of {want}; refresh them, which leaves the lines outside the markers as they are: {command}, "
+                f"then run python {c3.GENERATOR}")
+    if h.state == "edited" and h.have.stamp != h.want.stamp and h.have.version <= h.want.version:
+        have, want = c3.versions(h.have, h.want)
+        return (f"{c3.GENERATOR}: its helpers, between the markers, are the skill's of {have} with edits made "
+                f"there, and the skill's are now of {want}. Copy each helper changed there below "
+                f"the end marker, where a def of the same name replaces the one between the markers, then run "
+                f"{command} --replace-edited-helpers and python {c3.GENERATOR}")
+    return None
+
+
 def main() -> int:
     ap = c3.argument_parser(
         "Check a Construct 3 folder project against the Construct3-RAG schemas and the rules the editor applies "
@@ -2854,6 +2877,9 @@ def main() -> int:
     drift = None if behind and behind[1] else c3.skill_drift(project.rag)     # the update above refreshes the copy too
     if drift:
         findings.err(drift)
+    helpers = helpers_behind(project.root)
+    if helpers:
+        findings.warn(helpers)
     return Checker(project, args.limit, style=args.style).run()
 
 

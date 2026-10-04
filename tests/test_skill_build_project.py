@@ -1,7 +1,11 @@
 """assets/build_project.py, the generator template, and the stand-in game it generates."""
+import builtins
+import datetime
 import json
 import re
 import shutil
+import symtable
+import sys
 from pathlib import Path
 
 import pytest
@@ -9,6 +13,51 @@ import pytest
 from tests.skill_helpers import (
     REPO, SKILL, INSTALLED, run, tool, check, edit, warnings, findings, template_module, png_pixels,
 )
+
+sys.path.insert(0, str(SKILL / "scripts"))
+import c3project as c3  # noqa: E402
+
+# What a game's generator holds outside the markers and the helpers read: the settings above
+# them, and below them BEATS and the functions build_all() calls.
+EVERY_GAME = {"ROOT", "VIEW_W", "VIEW_H", "PROJECT_NAME", "FIRST_LAYOUT", "ORIENTATION", "UNIT", "MARGIN", "TOUCH",
+              "PALETTE", "SHAPE_STYLE", "HIT_FLASH", "SQUASH", "FONT", "TEXT_SIZE", "PIXEL_ART", "ART_STYLE",
+              "BEATS", "build_files", "build_images", "build_object_types", "build_layouts", "build_event_sheet"}
+
+
+def test_template_stamps_its_helpers():
+    """The end marker carries the version and the stamp of the helpers between the markers, so that
+    a game's copy tells an older version of them, which install.py replaces, from one edited there,
+    which it keeps. Changed helpers fail here until the end marker carries their stamp."""
+    lines = (SKILL / "assets" / "build_project.py").read_text(encoding="utf-8").split("\n")
+    helpers = c3.helpers_in(lines)
+    assert isinstance(helpers, c3.Helpers), helpers
+    today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+    assert helpers.stamp == helpers.actual, (
+        f"the helpers of assets/build_project.py changed, so their version and stamp did: replace line "
+        f"{helpers.end + 1}, the end marker, with\n{c3.helpers_end_line(today, helpers.actual)}")
+    assert lines[helpers.end] == c3.helpers_end_line(helpers.version, helpers.stamp)
+
+
+def test_template_helpers_read_only_what_every_game_has():
+    """A refresh replaces the helpers and keeps the rest of a game's generator, so the helpers import
+    the modules they use and read nothing from outside the markers but what every generator has:
+    a helper that reads a new setting stops a game refreshed onto it with a NameError."""
+    lines = (SKILL / "assets" / "build_project.py").read_text(encoding="utf-8").split("\n")
+    helpers = c3.helpers_in(lines)
+    table = symtable.symtable("\n".join(lines[helpers.begin + 1:helpers.end]), "helpers", "exec")
+    defined = {s.get_name() for s in table.get_symbols() if s.is_assigned() or s.is_imported()}
+    read: set[str] = set()
+
+    def walk(scope) -> None:
+        read.update(s.get_name() for s in scope.get_symbols()
+                    if s.is_referenced() and (scope.get_type() == "module" or s.is_global()))
+        for child in scope.get_children():
+            walk(child)
+    walk(table)
+    outside = {name for name in read - defined - set(dir(builtins)) if not name.startswith("__")}
+    assert outside <= EVERY_GAME, (
+        f"the helpers read {sorted(outside - EVERY_GAME)}, which a game copied before them does not have: import "
+        f"a module between the markers, and give a new setting a default there, NAME = globals().get(\"NAME\", ...)")
 
 
 def test_stand_in_project_passes_without_warnings(built):
