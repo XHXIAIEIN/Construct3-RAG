@@ -144,10 +144,11 @@ def write_project(root, globals_, types, placed, viewport=(720, 1280)):
 def whack_project(root):
     write_project(root, {"score": ("number", "0"), "escapes": ("number", "0"), "over": ("number", "0")},
                   {"Mole": ("Sprite", ["hole"]), "Hole": ("Sprite", ["index"]), "Message": ("Text", []),
-                   "Touch": ("Touch", [])},
+                   "ScoreText": ("Text", []), "Touch": ("Touch", [])},
                   [{"type": "Mole", "world": {"x": 100, "y": 100}, "instanceVariables": {"hole": 4}},
                    {"type": "Hole", "world": {"x": 100, "y": 100}, "instanceVariables": {"index": 0}},
-                   {"type": "Message", "layer": "UI", "world": {"x": 0, "y": 0}, "properties": {"text": ""}}])
+                   {"type": "Message", "layer": "UI", "world": {"x": 0, "y": 0}, "properties": {"text": ""}},
+                   {"type": "ScoreText", "layer": "UI", "world": {"x": 0, "y": 0}, "properties": {"text": "Score: 0"}}])
 
 
 def test_play_design_writes_one_plan_per_test_and_taps_by_instance_variables(tmp_path):
@@ -190,15 +191,15 @@ def test_play_design_refuses_a_name_the_project_lacks(tmp_path):
 def test_play_design_takes_the_project_start_only_when_the_prototype_still_passes(tmp_path):
     """Where the layout's grid placed an instance is the project's to say; the design adopts it, played again."""
     data = example()
-    data["state"][3]["start"] = 7
+    data["state"][4]["start"] = 7
     _, (code, out) = play(tmp_path, data)
     assert code == 1
-    assert ("state[3]: hole starts as 4 in the project (Mole.hole) and 7 in the design; write 4 as its start in the "
+    assert ("state[4]: hole starts as 4 in the project (Mole.hole) and 7 in the design; write 4 as its start in the "
             "design and change nothing in the project") in out
     design, (code, out) = play(tmp_path, data, "--adopt-starts")
     assert code == 0, out
     assert "adopted the project's start values into" in out and "hole = 4; the prototype still passes" in out
-    assert json.loads(design.read_text(encoding="utf-8"))["state"][3]["start"] == 4
+    assert json.loads(design.read_text(encoding="utf-8"))["state"][4]["start"] == 4
     data = example()
     data["rules"][0]["do"].remove("score = 0")      # nothing sets the score back: the first launch's value counts
     (tmp_path / "game" / "eventSheets" / "Game.json").write_text(json.dumps({"name": "Game", "events": [
@@ -224,12 +225,14 @@ def test_play_design_finds_a_play_area_off_the_middle():
 EXPRESSIONS = ["1 + 2 * 3", "\"a\" & 1 & \"b\"", "1 & 0", "2 | 0", "score = 3 ? \"yes\" : \"no\"", "-score + 10 % 4",
                "max(1, score, 2) - min(4, 5)", "clamp(score * 3, 0, 5)", "floor(7 / 2) + ceil(0.2) + round(2.5)",
                "find(label, \"OVER\")", "len(label) + abs(-2)", "label = \"Game over\"", "score <> 3",
-               "G.At(1, 2) + G.At(9, 9) + G.Width", "InARow(G, 3, 1)", "count(G, 1)", "2 ^ 3 >= 8", "str(score) & \"!\""]
+               "G.At(1, 2) + G.At(9, 9) + G.Width", "InARow(G, 3, 1)", "count(G, 1)", "2 ^ 3 >= 8", "str(score) & \"!\"",
+               "stones * 10 + blacks"]
 
 
 def test_the_generated_javascript_evaluates_as_the_prototype(tmp_path):
     """Each expression compiled for the runtime gives what the prototype gives, run under Node on a stand-in
-    runtime that holds the same values."""
+    runtime that holds the same values: a count of instances shown leaves out the hidden, the transparent and
+    those on a hidden layer."""
     node = shutil.which("node")
     if not node:
         pytest.skip("no Node here")
@@ -238,11 +241,13 @@ def test_the_generated_javascript_evaluates_as_the_prototype(tmp_path):
                         "screen": {"a": "b"}, "state": [
                             {"name": "score", "start": 3, "stored_in": "global"},
                             {"name": "label", "start": "Game over", "stored_in": "Label.text"},
-                            {"name": "G", "size": [3, 3], "stored_in": "Array"}],
+                            {"name": "G", "size": [3, 3], "stored_in": "Array"},
+                            {"name": "stones", "start": 0, "stored_in": "Stone.shown"},
+                            {"name": "blacks", "start": 0, "stored_in": "Stone.shown(frame=1)"}],
                         "inputs": [], "rules": [], "win": "score = 3", "lose": "none", "tests": []})
     sim = gm.Sim.__new__(gm.Sim)
     sim.d, sim.rng = design, None
-    sim.values = {"score": 3.0, "label": "Game over"}
+    sim.values = {"score": 3.0, "label": "Game over", "stones": 2.0, "blacks": 1.0}
     sim.arrays = {"G": [[1.0, 0.0, 0.0], [0.0, 1.0, 5.0], [0.0, 0.0, 1.0]]}
     want = [sim.ev(gm.parse(e), {}) for e in EXPRESSIONS]
     body = ",\n".join(pd.compile_expr(gm.parse(e), design) for e in EXPRESSIONS)
@@ -250,7 +255,13 @@ def test_the_generated_javascript_evaluates_as_the_prototype(tmp_path):
 const grid = {json.dumps(sim.arrays["G"])};
 const runtime = {{globalVars: {{score: 3}}, objects: {{
   Label: {{getFirstInstance: () => ({{text: "Game over", instVars: {{}}}})}},
-  G: {{getFirstInstance: () => ({{width: 3, height: 3, getAt: (x, y) => grid[x][y]}})}}}}}};
+  G: {{getFirstInstance: () => ({{width: 3, height: 3, getAt: (x, y) => grid[x][y]}})}},
+  Stone: {{getAllInstances: () => [
+    {{isVisible: true, opacity: 1, layer: {{isVisible: true}}, animationFrame: 1}},
+    {{isVisible: true, opacity: 1, layer: {{isVisible: true}}, animationFrame: 2}},
+    {{isVisible: false, opacity: 1, layer: {{isVisible: true}}, animationFrame: 1}},
+    {{isVisible: true, opacity: 0, layer: {{isVisible: true}}, animationFrame: 1}},
+    {{isVisible: true, opacity: 1, layer: {{isVisible: false}}, animationFrame: 1}}]}}}}}};
 {pd.HELPERS}
 console.log(JSON.stringify([{body}]));
 """
@@ -275,7 +286,7 @@ def test_check_design_keeps_a_design_small(tmp_path):
     design["state"] += [{"name": f"extra{i}", "start": 0, "stored_in": "global", "const": True} for i in range(8)]
     code, out = check(tmp_path, design)
     assert code == 1
-    assert "state: 13 rows; at most 10" in out
+    assert "state: 14 rows; at most 10" in out
 
 
 def test_a_design_reads_its_state_not_the_game_and_taps_the_screen_where_an_argument_says(tmp_path):
@@ -304,3 +315,136 @@ def test_a_sub_rule_with_no_condition_beside_cases_is_refused(tmp_path):
     design["rules"][2]["children"].append({"id": "fine", "if": ["escapes < 3"], "do": ["message = \"\""]})
     code, out = check(tmp_path, design)
     assert "rules[2].children[0].if: empty, so this sub-rule runs every time beside siblings that test a case" in out
+
+
+def board_game(stones: bool = True) -> dict:
+    """Two players place pieces on a 9 x 9 board; five in a row wins. With stones, a row counts the pieces shown."""
+    state = [{"name": "turn", "start": 1, "stored_in": "global"}, {"name": "over", "start": 0, "stored_in": "global"},
+             {"name": "status", "start": "Black to move", "stored_in": "Status.text"},
+             {"name": "Board", "size": [9, 9], "stored_in": "Array"}]
+    place = ["Board.At(c, r) = turn"]
+    if stones:
+        state.append({"name": "stones", "start": 0, "stored_in": "Stone.shown"})
+        place.append("stones += 1")
+    five = [{"do": "place", "c": x, "r": r} for x in range(5) for r in (0, 1)][:9]
+    return {
+        "game": "Five", "core_loop": "Two players place stones in turn; five in a row wins",
+        "reference": {"example": sorted(p.stem for p in (REPO / "data" / "c3-examples" / "en-US").glob("*.json"))[0],
+                      "takes": "a board of cells tapped by their col and row"},
+        "screen": {"board": "centre", "status": "below the board"},
+        "state": state,
+        "inputs": [{"name": "place", "player": "tap an empty crossing", "args": ["c", "r"],
+                    "game": {"tap": "Cell", "args": {"c": "col", "r": "row"}}},
+                   {"name": "again", "player": "tap below the board", "game": {"tap": [0.5, 0.95]}}],
+        "rules": [{"id": "new-game", "on": "start", "do": ["turn = 1", "over = 0"]},
+                  {"id": "place", "on": "place", "if": ["over = 0", "Board.At(c, r) = 0"], "do": place,
+                   "feedback": "a stone of the side to move appears on the crossing", "children": [
+                       {"id": "win", "if": ["InARow(Board, 5, turn)"], "do": ["over = 1", "status = \"Five! Tap\""]},
+                       {"id": "next", "else": True, "do": ["turn = 3 - turn",
+                                                           "status = turn = 1 ? \"Black to move\" : \"White to move\""]}]},
+                  {"id": "restart", "on": "again", "if": ["over = 1"], "do": ["restart"], "feedback": "an empty board"}],
+        "win": "over = 1", "lose": "none",
+        "tests": [{"name": "a stone shows and the turn passes", "steps": [
+                      {"do": "place", "c": 4, "r": 4}, {"expect": "turn = 2"}, {"expect": "status = \"White to move\""}]
+                   + ([{"expect": "stones = 1"}] if stones else [])},
+                  {"name": "five across win, a tap restarts", "steps": five + [
+                      {"expect": "over = 1"}, {"expect": "find(status, \"Five\") >= 0"}, {"do": "again"}, {"wait": 0.2},
+                      {"expect": "over = 0"}]}]}
+
+
+def test_an_array_cell_an_input_writes_needs_a_count_of_the_instances_shown(tmp_path):
+    """The status line changing says nothing of the stone: a rule that writes a board cell changes a count of the
+    pieces shown, and a test expects it after the tap."""
+    code, out = check(tmp_path, board_game(stones=False))
+    assert code == 1
+    assert ("rules[1] 'place': rule place writes a cell of Board, and an Array is not on screen: the player sees the "
+            "cell as an instance. Add a row that counts the instances shown") in out
+    design = board_game()
+    code, out = check(tmp_path, design)
+    assert code == 0, out
+    design["tests"][0]["steps"].pop()
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert ("inputs[0]: no test expects what the player sees after place: stones. After a step {\"do\": \"place\", "
+            "\"c\": ..., \"r\": ...}, add {\"expect\": \"stones = ...\"}") in out
+    design = board_game()
+    design["tests"][0]["steps"].insert(0, {"set": "stones = 3"})
+    code, out = check(tmp_path, design)
+    assert "tests[0].steps[0].set: stones counts the Stone instances the player sees, and a fixture cannot" in out
+
+
+def test_an_input_that_changes_nothing_the_player_sees_is_refused(tmp_path):
+    design = example()
+    design["rules"][1]["do"].remove("scoreLine = \"Score: \" & score")
+    design["rules"][2]["children"][0]["do"][1] = "message = \"Over\""
+    design["tests"][0]["steps"].pop()
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert ("inputs[0]: the input hit changes only score, hole, which the player does not see (a global, an Array, an "
+            "instance variable)") in out
+
+
+def test_a_game_over_at_launch_is_refused_though_a_fixture_steps_past_it(tmp_path):
+    design = example()
+    design["lose"] = "lives <= 0"
+    design["state"].append({"name": "lives", "start": 0, "stored_in": "global"})
+    design["rules"][2]["do"].append("lives -= 1")
+    for t in design["tests"]:
+        t["steps"].insert(0, {"set": "lives = 3"})
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert ("lose: lives <= 0 holds on the first screen, before the player does anything (lives = 0 after the start "
+            "rules): the game is over at launch") in out
+
+
+def stone_project(root, placed):
+    write_project(root, {"turn": ("number", "1"), "over": ("number", "0")},
+                  {"Stone": ("Sprite", []), "Cell": ("Sprite", ["col", "row"]), "Status": ("Text", []),
+                   "Board": ("Arr", []), "Touch": ("Touch", [])},
+                  [{"type": "Cell", "world": {"x": 0, "y": 0}, "instanceVariables": {"col": 0, "row": 0}},
+                   {"type": "Status", "layer": "UI", "world": {"x": 0, "y": 0}, "properties": {"text": "Black to move"}},
+                   {"type": "Board", "world": {"x": 0, "y": 0}}] + placed)
+
+
+def test_play_design_counts_the_instances_shown_from_the_layout_and_in_the_runtime(tmp_path):
+    design = board_game()
+    design["state"].append({"name": "blacks", "start": 0, "stored_in": "Stone.shown(frame=1)"})
+    design["rules"][1]["do"].append("blacks += turn = 1 ? 1 : 0")
+    design["tests"][0]["steps"].append({"expect": "blacks = 1"})
+    assert check(tmp_path, design)[0] == 0
+    path = tmp_path / "design.json"
+    path.write_text(json.dumps(design), encoding="utf-8")
+    hidden = [{"type": "Stone", "world": {"x": 0, "y": 0}, "properties": {"initially-visible": False}}] * 3
+    shown = [{"type": "Stone", "world": {"x": 0, "y": 0}, "properties": {"initial-frame": 1}}]
+    stone_project(tmp_path / "game", hidden + shown)
+    code, out = run(tmp_path, SKILL / "scripts" / "play_design.py", str(path), "--project", str(tmp_path / "game"),
+                    "--plan-only", str(tmp_path / "plans.json"))
+    assert code == 1
+    assert "stones starts as 1 in the project (Stone.shown) and 0 in the design" in out
+    assert "blacks starts as 1 in the project (Stone.shown(frame=1)) and 0 in the design" in out
+    shutil.rmtree(tmp_path / "game")
+    stone_project(tmp_path / "game", hidden)
+    code, out = run(tmp_path, SKILL / "scripts" / "play_design.py", str(path), "--project", str(tmp_path / "game"),
+                    "--plan-only", str(tmp_path / "plans.json"))
+    assert code == 0, out
+    plans = json.loads((tmp_path / "plans.json").read_text(encoding="utf-8"))
+    assert any('H.shown("Stone", null)' in s.get("js", "") for s in plans[1]["steps"])
+    assert any('H.shown("Stone", 1)' in s.get("js", "") for s in plans[1]["steps"])
+    start = plans[0]["steps"][2]
+    assert start["note"] == "start" and '"stones": ' in start["js"] and '"status": ' in start["js"]
+
+
+def test_the_first_screen_is_held_to_the_prototype():
+    """A value the first screen shows, and a win or lose there, read in the game against the prototype."""
+    gm, pd = module("game_model"), module("play_design")
+    design = gm.Design(example())
+    still = pd.launch_values(design)
+    assert still["ends"] == {"win": False, "lose": False}
+    assert set(still["rows"]) == {"scoreLine", "message"}
+    found = pd.launch_findings(design, {"rows": {"scoreLine": "Score: 0", "message": ""}, "ends": {"win": 0, "lose": 1}})
+    assert len(found) == 1 and found[0].startswith(
+        "lose: over = 1 is true on the first screen of the game and false in the prototype: the game is over at launch")
+    found = pd.launch_findings(design, {"rows": {"scoreLine": "Score: 3", "message": ""}, "ends": {"win": 0, "lose": 0}})
+    assert found == ["state[1]: scoreLine is \"Score: 3\" on the first screen of the game (ScoreText.text) and "
+                     "\"Score: 0\" in the prototype. Compare the start rules' events and where the project starts it "
+                     "with the design"]

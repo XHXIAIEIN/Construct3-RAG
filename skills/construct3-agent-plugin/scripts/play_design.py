@@ -7,7 +7,7 @@ built from it, and check the look of its first screen.
 Run it after check_design.py passes on the design and the game is built from
 it, check_project.py passing. It reads where the design says each piece of
 state is kept ("stored_in": a global, an Array, an object's variable, text or
-position) and how each input is done in the game ("game": tap an object by
+position, or a count of the instances shown) and how each input is done in the game ("game": tap an object by
 its instance variables, tap a point of the screen, press a key), and refuses
 a name the project does not have. Then it writes one preview_project.py plan
 per test, from a first launch each, with the JavaScript generated from the
@@ -21,11 +21,13 @@ design's expressions by this script, and plays them in one editor session:
 
 Before it opens the editor it reads the project's files: every piece of state
 starts as the design says (a global's initial value, an instance's place,
-text or variable in the layout the game starts on). Before the tests it
-previews the game once without input and checks the first screen for the
-faults review_look.py finds (a text cut by its box, two labels over each other, a
-HUD instance cut by the screen's edge, instances stacked on one box), and a
-play area off the screen's middle.
+text or variable in the layout the game starts on, a count of shown instances).
+Before the tests it previews the game once without input and checks the first
+screen: what it shows (texts, frames, counts of instances) and whether the
+win or the lose holds there, against the prototype, and the faults
+review_look.py finds (a text cut by its box, two labels over each other, a HUD
+instance cut by the screen's edge, instances stacked on one box), and a play
+area off the screen's middle.
 
 --plan-only writes the plans to OUT.json and plays nothing.
 """
@@ -94,6 +96,9 @@ HELPERS = r"""const H = {
     return 0; },
   count: (t, val) => { const a = H.arr(t); let c = 0;
     for (let x = 0; x < a.width; x++) for (let y = 0; y < a.height; y++) c += H.eq(H.v(a.getAt(x, y)), val); return c; },
+  shown: (t, frame) => { const o = runtime.objects[t]; if (!o) throw new Error(`no object ${t} in the project`);
+    return o.getAllInstances().filter(i => i.isVisible && i.opacity > 0 && (!i.layer || i.layer.isVisible)
+      && (frame === null || i.animationFrame === frame)).length; },
 };"""
 
 
@@ -176,6 +181,9 @@ def read(name: str, design: gm.Design) -> str:
     st = design.state[name]
     if st.stored_in == "global":
         return f"H.v(runtime.globalVars[{json.dumps(name)}])"
+    if st.shown:
+        obj, frame = st.shown
+        return f"H.shown({json.dumps(obj)}, {'null' if frame is None else int(frame)})"
     obj, prop = split(st.stored_in)
     return f"H.get({json.dumps(obj)}, {json.dumps(prop)})"
 
@@ -183,6 +191,8 @@ def read(name: str, design: gm.Design) -> str:
 def write(eff: tuple, design: gm.Design) -> str:
     (name, index), op, value = eff[1], eff[2], eff[3]
     st = design.state[name]
+    if st.shown:
+        raise Binding(f"{name} counts instances; a fixture cannot write it")
     v = compile_expr(value, design)
     if index is not None:
         x, y = (compile_expr(a, design) for a in (index + [gm.Node("num", 0.0)])[:2])
@@ -217,6 +227,7 @@ class Model:
                         self.globals[ev["name"]] = ev
         self.hud: str | None = None
         self.placed: dict[str, list[dict]] = {}     # the instances of the layout the game starts on, by type
+        self.seen: dict[str, list[dict]] = {}       # those of them the first screen shows, on a shown layer
         first = self.c3proj.get("firstLayout") or next((n for n, _ in c3.folder_items(self.c3proj.get("layouts", {}))), None)
         for name, sub in c3.folder_items(self.c3proj.get("layouts", {})):
             if name == first and (project / "layouts" / sub / f"{name}.json").exists():
@@ -225,6 +236,8 @@ class Model:
                         self.hud = layer["name"]
                     for inst in layer.get("instances", []):
                         self.placed.setdefault(inst.get("type"), []).append(inst)
+                        if layer.get("isInitiallyVisible", True) is not False and                                 (inst.get("properties") or {}).get("initially-visible", True) is not False and                                 ((inst.get("world") or {}).get("color") or [1, 1, 1, 1])[3] > 0:
+                            self.seen.setdefault(inst.get("type"), []).append(inst)
         self.size = (int(self.c3proj.get("viewportWidth", 854)), int(self.c3proj.get("viewportHeight", 480)))
 
     def plugin(self, name: str) -> str:
@@ -243,6 +256,9 @@ def bindings(design: gm.Design, model: Model) -> list[str]:
             if n not in model.globals:
                 problems.append(f"{st.path}: {n} is stored in a global variable {n}, and no event sheet declares one; "
                                 f"add {{\"eventType\": \"variable\", \"name\": \"{n}\", ...}} at the top of the sheet")
+        elif st.shown:
+            if st.shown[0] not in model.types:
+                problems.append(f"{st.path}.stored_in: no object {st.shown[0]}; the objects are {names}")
         elif st.stored_in == "Array":
             if model.plugin(n) != "Arr":
                 problems.append(f"{st.path}: {n} is stored in an Array {n}, and the project has no Array of that name; "
@@ -278,6 +294,10 @@ def first_value(st: gm.State, model: Model):
             return float(value)
         except ValueError:
             return value
+    if st.shown:
+        obj, frame = st.shown
+        return float(sum(1 for i in model.seen.get(obj, [])
+                         if frame is None or int((i.get("properties") or {}).get("initial-frame", 0)) == frame))
     obj, prop = split(st.stored_in)
     inst = model.placed[obj][0]
     if prop in ("x", "y"):
@@ -298,7 +318,7 @@ def starts(design: gm.Design, model: Model) -> tuple[list[str], dict[str, object
     for n, st in design.state.items():
         if st.kind == "array":
             continue
-        if st.stored_in != "global" and not model.placed.get(split(st.stored_in)[0]):
+        if st.stored_in != "global" and not st.shown and not model.placed.get(split(st.stored_in)[0]):
             out.append(f"{st.path}: {n} is kept in {st.stored_in}, and the layout the game starts on has no "
                        f"{split(st.stored_in)[0]} instance; place one there")
             continue
@@ -336,11 +356,63 @@ def find_js(obj: str, where: dict[str, str], args: dict) -> str:
 
 
 # --- the plans ------------------------------------------------------------------------------
+STILL = (0.2, 2.0)      # seconds after the launch between which a value the first screen shows holds still
+
+
+def launch_values(design: gm.Design) -> dict:
+    """What the prototype shows on the first screen and holds still through STILL: the seen rows other than a
+    place or a size, which the layout grid decides, and whether the win and the lose hold."""
+    sim = gm.Sim(design)
+    sim.advance(STILL[0])
+    early = dict(sim.values)
+    won, lost = sim.won, sim.lost
+    sim.advance(STILL[1] - STILL[0])
+    rows = {n: v for n, v in early.items() if design.state[n].seen and same(sim.values[n], v)
+            and design.state[n].stored_in.rsplit(".", 1)[-1] not in ("x", "y", "angle", "width", "height")}
+    ends = {k: hit for k, node, hit, now in (("win", design.win, won, sim.won), ("lose", design.lose, lost, sim.lost))
+            if node is not None and hit == now}
+    return {"rows": rows, "ends": ends}
+
+
+def launch_js(design: gm.Design, still: dict) -> str:
+    """JavaScript that reads those rows and the win and the lose in the running game."""
+    rows = ", ".join(f"{json.dumps(n)}: (() => {{ try {{ return {read(n, design)}; }} catch (e) {{ return e.message; }} }})()"
+                     for n in still["rows"])
+    ends = ", ".join(f"{k}: (() => {{ try {{ return H.t({compile_expr(design.win if k == 'win' else design.lose, design)})"
+                     f" ? 1 : 0; }} catch (e) {{ return e.message; }} }})()" for k in still["ends"])
+    return f"{HELPERS}\nreturn {{rows: {{{rows}}}, ends: {{{ends}}}}};"
+
+
 def first_screen_plan(design: gm.Design, model: Model) -> dict:
     return {"viewport": list(model.size), "touch": True, "steps": [
         {"wait": 0.6},
         {"js": f"return await {look.LOOK_JS};", "note": "look"},
+        {"js": launch_js(design, launch_values(design)), "note": "start"},
     ]}
+
+
+def launch_findings(design: gm.Design, got: dict) -> list[str]:
+    """Each value the first screen shows in the game and not in the prototype, and a win or lose at launch."""
+    want = launch_values(design)
+    out = []
+    for k, hit in want["ends"].items():
+        now = (got.get("ends") or {}).get(k)
+        if isinstance(now, str):
+            out.append(f"{k}: reading it on the first screen failed: {now}")
+        elif now is not None and bool(now) != hit:
+            names = sorted(n for n in gm.names_in(design.win if k == "win" else design.lose) if n in design.state)
+            out.append(f"{k}: {design.data.get(k)} is {'true' if now else 'false'} on the first screen of the game and "
+                       f"{'true' if hit else 'false'} in the prototype" + (": the game is over at launch" if now else "")
+                       + f". Compare the start of {', '.join(names)} in the project and the events of the start rules "
+                       f"{', '.join(r.id for r in design.rules if r.on == 'start') or '(none)'} with the design")
+    for n, v in want["rows"].items():
+        now = (got.get("rows") or {}).get(n)
+        if now is None or not same(now, v):
+            st = design.state[n]
+            out.append(f"{st.path}: {n} is {gm.show(now) if not isinstance(now, (dict, list)) else now} on the first "
+                       f"screen of the game ({st.stored_in}) and {gm.show(v)} in the prototype. Compare the start "
+                       f"rules' events and where the project starts it with the design")
+    return out
 
 
 def test_plan(test: dict, design: gm.Design, model: Model) -> tuple[dict, list[dict]]:
@@ -459,6 +531,9 @@ def report(design: gm.Design, plans_meta: list, result: dict) -> tuple[list[str]
     if isinstance(snap, dict) and "instances" in snap:
         for f in look.findings(snap) + centre_findings(snap):
             screen.append(f"    look: {f['line']}")
+    start = by_note.get(3, {}).get("value")
+    if isinstance(start, dict):
+        screen += [f"    start: {line}" for line in launch_findings(design, start)]
     for d in first.get("steps", []):
         errors += d.get("errors", [])
     lines.append(f"  first screen: {len(screen) or 'no'} finding{'s' if len(screen) != 1 else ''}")

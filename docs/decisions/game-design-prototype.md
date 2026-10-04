@@ -24,9 +24,11 @@ and the built game is held to the same tests.
   change ("rule win would change it and did not run: over = 0 is false
   (over = 1)"). A refusal that names only the fault, where the fix needs an
   idea the model lacks, is resent unchanged until its steps run out.
-- Tests read state, not what each instance shows. A pick that changes every
-  instance of a type, or a start value a fixture steps past, passes tests
-  that read only the globals and the Arrays.
+- Tests that read only globals and Arrays pass a game whose state is right
+  and whose screen is wrong: a pick that changes every instance of a type,
+  a placing rule that writes the board and shows no piece, a game over at
+  launch that a fixture steps past. The player sees instances: their text,
+  place, frame, visibility, and how many of them there are.
 - A value read in the running game has moved on by the time it is read; a
   start value read from the project files has not. Where an instance lands
   is the layout grid's to say, not the design's.
@@ -67,22 +69,35 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
   expected, and a restart must leave the state of a new game. A failed
   expect names the values, the rules that ran and changed them, and the
   rules that would have, with the condition that held each back.
+- The input -> rule -> feedback table is held to what the player sees. A
+  state row may count the instances of a type the player sees, of any frame
+  or of one; the rules change it as a number, a test cannot set it, and the
+  editor counts the visible instances. Each input changes a row the player
+  sees, directly or through the rules that read what it changes, and some
+  test expects one such row after it. A rule fired by an input that writes
+  an Array cell changes a count in its own chain, since the cell is not on
+  screen. Neither the win nor the lose may hold before the first input.
 - The expressions are parsed into trees and evaluated by the script; the
   editor's tests are JavaScript generated from the same trees, with names
   checked against the state and values encoded by the script, so nothing a
   design holds runs as code. A test under Node holds the generated
   JavaScript to the prototype's values.
-- `play_design.py` reads start values from the project files.
-  `--adopt-starts` writes the project's start values into the design and
-  goes on only if the prototype still passes.
+- `play_design.py` reads start values from the project files, a count as
+  the visible instances of the first layout. `--adopt-starts` writes the
+  project's start values into the design and goes on only if the prototype
+  still passes. Before the tests it reads the first screen in the editor
+  without input: each shown text, frame or count that holds still in the
+  prototype through the first two seconds, and the win and the lose, must
+  match the prototype.
 
 ## Re-evaluate when
 
 - Most runs still deliver nothing: the steps a run may take, a stronger
   model for the design, or a refusal that names the fix where it now names
   only the fault.
-- A delivered game breaks in a way its tests did not read, such as every
-  instance changed by one pick: a state the tests can read for it.
+- A delivered game breaks in a way its tests did not read, such as a piece
+  shown in the wrong place or with the wrong frame while the count is right:
+  a count over a region or a variable, not only over a frame.
 - The prototype and the editor disagree on a construct: the simulator
   follows the runtime there, or the construct is refused.
 - A genre needs what the expression language cannot state, such as physics

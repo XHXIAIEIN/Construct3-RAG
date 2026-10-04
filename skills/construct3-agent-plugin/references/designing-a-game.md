@@ -35,6 +35,7 @@ shows before the build and a bug in the events after it.
  "screen": {"score": "top-left", "holes": "a 3 x 3 grid in the middle", "message": "below the holes"},
  "state": [
   {"name": "score", "start": 0, "stored_in": "global"},
+  {"name": "scoreLine", "start": "Score: 0", "stored_in": "ScoreText.text"},
   {"name": "escapes", "start": 0, "stored_in": "global"},
   {"name": "over", "start": 0, "stored_in": "global", "means": "0 playing, 1 over"},
   {"name": "hole", "start": 4, "stored_in": "Mole.hole", "means": "the hole the mole is in, 0 to 8"},
@@ -44,7 +45,7 @@ shows before the build and a bug in the events after it.
   {"name": "again", "player": "tap anywhere once it is over", "game": {"tap": [0.5, 0.9]}}],
  "rules": [
   {"id": "new-game", "on": "start", "do": ["score = 0", "escapes = 0", "over = 0"]},
-  {"id": "hit", "on": "hit", "if": ["over = 0", "h = hole"], "do": ["score += 1", "hole = floor(random(9))"],
+  {"id": "hit", "on": "hit", "if": ["over = 0", "h = hole"], "do": ["score += 1", "scoreLine = \"Score: \" & score", "hole = floor(random(9))"],
    "feedback": "the mole jumps to another hole and the score goes up"},
   {"id": "escape", "on": "every 1", "if": ["over = 0"], "do": ["escapes += 1", "hole = floor(random(9))"],
    "children": [{"id": "lose", "if": ["escapes >= 3"], "do": ["over = 1", "message = \"Over: \" & score & \" points. Tap\""]}]},
@@ -52,7 +53,7 @@ shows before the build and a bug in the events after it.
  "win": "score >= 20",
  "lose": "over = 1",
  "tests": [
-  {"name": "a hit scores", "steps": [{"set": "hole = 4"}, {"do": "hit", "h": 4}, {"expect": "score = 1"}]},
+  {"name": "a hit scores", "steps": [{"set": "hole = 4"}, {"do": "hit", "h": 4}, {"expect": "score = 1"}, {"expect": "scoreLine = \"Score: 1\""}]},
   {"name": "a miss does not", "steps": [{"set": "hole = 4"}, {"do": "hit", "h": 2}, {"expect": "score = 0"}]},
   {"name": "twenty hits win", "steps": [{"set": "score = 19"}, {"set": "hole = 1"}, {"do": "hit", "h": 1}, {"expect": "score >= 20"}]},
   {"name": "three escapes lose, a tap restarts", "steps": [{"wait": 3.2}, {"expect": "over = 1"},
@@ -64,10 +65,15 @@ shows before the build and a bug in the events after it.
   name), `"Array"` (an Array object of the same name, with `"size": [w, h]`
   in place of `start`), or `"Object.variable"`, `"Object.text"`,
   `"Object.x"`, `"Object.y"`, `"Object.frame"` of an object with one
-  instance. `"keep": true` for a value meant to outlast a restart (a best
-  score), `"const": true` for a tuning value no rule changes. The check
-  prints who writes and who reads each row and refuses a row nothing writes
-  or nothing reads, and one place that stores two rows.
+  instance, or `"Object.shown"`, how many instances of the object the
+  player sees (visible, not transparent, on a shown layer), and
+  `"Object.shown(frame=1)"`, how many of them show frame 1. A rule changes a
+  count as a number, `stones += 1`; the game changes it by creating,
+  destroying, showing or hiding instances. `"keep": true` for a value meant
+  to outlast a restart (a best score), `"const": true` for a tuning value no
+  rule changes. The check prints who writes and who reads each row and
+  refuses a row nothing writes or nothing reads, and one place that stores
+  two rows.
 - `inputs`: what the player does, with the arguments the rules read. `game`
   says how it is done in the game: `{"tap": "Hole", "args": {"h": "index"}}`
   taps the Hole whose instance variable `index` holds `h`;
@@ -82,14 +88,22 @@ shows before the build and a bug in the events after it.
   actions in order, `children` its sub-events, and `"else": true` makes a
   child the Else of the child before it. A rule fired by an input names its
   `feedback`, what the player sees: the input -> rule -> feedback table.
+  The table is held to rows the player sees: each input changes, through
+  its rules or rules that read what they change, a row stored in a text, a
+  position, a frame, a visibility or a count of instances shown. A rule
+  fired by an input that writes a cell of an Array changes a count in the
+  same rule or its sub-rules, since a cell is not on screen and a status
+  line says nothing of the piece.
 - `win` and `lose`: expressions over the state, or `"lose": "none"` for a
-  game without losing. Some test must reach each.
+  game without losing. Some test must reach each, and neither may hold on
+  the first screen, before the player does anything.
 - `tests`: from a first launch each. `{"do": "hit", "h": 4}` does an input,
   then lets the game run 0.15 s; `{"wait": 1}` lets it run;
   `{"expect": "score = 1"}` must hold; `{"set": "hole = 4"}` is a fixture
-  that puts the game in a state, for what is random or slow. Every rule must
-  run in some test, every input be done, and some test restart after the
-  win or the lose.
+  that puts the game in a state, for what is random or slow; it cannot set a
+  count of instances. Every rule must run in some test, every input be
+  done and be followed by an expect on a row the player sees, the count
+  where it writes a cell, and some test restart after the win or the lose.
 
 ## Rules as data
 
@@ -115,7 +129,8 @@ restart that leaves one as it was.
 ## Shapes that recur
 
 - A line on a board (gomoku, tic-tac-toe, connect four): the placing rule
-  writes the cell, `Board.At(c, r) = turn`; its first child is
+  writes the cell, `Board.At(c, r) = turn`, and counts the piece,
+  `stones += 1` on a row stored in `Stone.shown`; its first child is
   `{"id": "win", "if": ["InARow(Board, 5, turn)"], "do": [...]}` and its next
   child, `"else": true`, passes the turn, `turn = 3 - turn`. InARow tests
   every line of the board; neighbours counted by hand miss most of them.
@@ -145,6 +160,7 @@ restart that leaves one as it was.
 | an input `{"key": ...}` | Keyboard *On key pressed* |
 | a condition | *Compare variable*, *Compare two values* or the instance's own condition |
 | `name = expr` | *Set value*, *Set text*, *Set instance variable*, *Set X* by where `name` is stored |
+| `stones += 1` on `Stone.shown` | System *Create object* Stone, or *Set visible* on the Stone the event picked, such as the one on the tapped Cell; never an action on every Stone |
 | `Grid.At(x, y) = v` | Array *Set value at (x, y)* |
 | `InARow(Grid, n, v)` | two *For* loops over the Array and one *Compare two values* that tests the four directions |
 | `wait N` | System *Wait N seconds* |
@@ -153,6 +169,9 @@ restart that leaves one as it was.
 
 A state the design keeps in a global is declared with the start value as its
 initial value; one kept in an object starts there in the layout, a text with
-its `start` as the text. `play_design.py` reads each one in the project's
-files before it opens the editor and refuses a start that differs from the
-design's.
+its `start` as the text, a count as that many visible instances on the first
+layout. `play_design.py` reads each one in the project's files before it
+opens the editor and refuses a start that differs from the design's. In the
+editor it then reads the first screen without input: a text, a frame or a
+count that differs from the prototype's, or a win or a lose that holds
+there, is a finding.

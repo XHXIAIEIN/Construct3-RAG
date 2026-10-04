@@ -9,13 +9,17 @@ regions, the state table, the inputs, the rules as data (trigger, conditions,
 effects, sub-rules), win and lose, and the acceptance tests. The script reads
 it and refuses a gap by its path: a missing table, a name nothing defines,
 a state no rule writes or nothing reads, a fact kept in two places, an input
-without feedback, no rule that restarts.
+without feedback, no rule that restarts, an input that changes nothing the
+player sees, and a cell of an Array an input writes with no count of the
+instances that show it.
 
 Then it runs the rules as a prototype: each test from a first launch, 60
 ticks a second, an input followed by 0.15 s of play, as the editor runs the
 events. It refuses a failed expect with the values the state held, a rule
-no test reaches, a win or a lose no test reaches, a restart that leaves a
-value other than a new game's, and rules that fire each other without end.
+no test reaches, a win or a lose no test reaches or that holds at launch, an
+input after which no test expects what the player sees, a restart that
+leaves a value other than a new game's, and rules that fire each other
+without end.
 A design that passes holds a game whose rules close the loop; build it, one
 rule per event, then play the same tests in the editor with play_design.py.
 """
@@ -79,22 +83,157 @@ def where_read(design: gm.Design) -> tuple[dict[str, list[str]], dict[str, list[
     return written, read
 
 
-SHOWN = (".text", ".x", ".y", ".frame", ".visible", ".angle", ".width", ".height", ".opacity")
-
-
 def coverage(design: gm.Design) -> None:
-    """Static gaps of the tables: state nobody writes or reads, no restart."""
+    """Static gaps of the tables: state nobody writes or reads, no restart, an input the player does not see."""
     written, read = where_read(design)
     for n, s in design.state.items():
         if not written[n] and not s.const:
             design.bad(f"{s.path}", f"no rule changes {n}: write the rule that does, or mark the row \"const\": true "
                                     f"when it is a tuning value the game never changes")
-        if not read[n] and not s.stored_in.endswith(SHOWN) and not s.keep:
+        if not read[n] and not s.seen and not s.keep:
             design.bad(f"{s.path}", f"nothing reads {n}: no condition, effect, win or lose uses it and the player "
                                     f"does not see it; drop the row, or use it where the game decides something")
     if not any(e[0] == "restart" for r in design.all_rules() for e in r.do):
         design.bad("rules", "no rule restarts the game: add one, fired by the input that starts a new game, whose "
                             "effects end with \"restart\"")
+    seen_after(design)
+
+
+def chain(rule: gm.Rule) -> list[gm.Rule]:
+    """The rule and its sub-rules, all levels down."""
+    out = [rule]
+    for c in rule.children:
+        out += chain(c)
+    return out
+
+
+def changes(rules: list[gm.Rule]) -> list[str]:
+    """The state rows the effects of these rules set, in order."""
+    out: list[str] = []
+    for r in rules:
+        for e in r.do:
+            if e[0] == "set" and e[1][0] not in out:
+                out.append(e[1][0])
+    return out
+
+
+def reads(design: gm.Design) -> dict[str, set[str]]:
+    """Each rule's id and the rows it reads, its parents' conditions and effects counted: a sub-rule runs
+    only after its parent read them."""
+    out: dict[str, set[str]] = {}
+
+    def walk(r: gm.Rule, above: set[str]) -> None:
+        mine = set(above)
+        for c in r.when:
+            mine |= gm.names_in(c)
+        for e in r.do:
+            if e[0] == "set":
+                for node in [e[3], *(e[1][1] or [])]:
+                    mine |= gm.names_in(node)
+            elif e[0] == "wait":
+                mine |= gm.names_in(e[1])
+        out[r.id] = mine
+        for c in r.children:
+            walk(c, mine)
+    for r in design.rules:
+        walk(r, set())
+    return out
+
+
+def playing(design: gm.Design, name: str) -> list[gm.Rule]:
+    """The rules the input fires that do not restart: a restart shows the player a new game."""
+    return [r for r in design.rules if r.on == name and not any(e[0] == "restart" for x in chain(r) for e in x.do)]
+
+
+def shows(design: gm.Design, name: str) -> dict[str, list[str]]:
+    """What the player sees after the input: the rows its rules change, or that change through rules reading
+    them, each seen row with the names that lead to it."""
+    fired = playing(design, name)
+    changed = changes([x for r in fired for x in chain(r)])
+    path = {n: [n] for n in changed}
+    read_by = reads(design)
+    grew = True
+    while grew:
+        grew = False
+        for r in design.all_rules():
+            source = next((n for n in path if n in read_by[r.id]), None)
+            if source is None:
+                continue
+            for n in changes([r]):
+                if n not in path:
+                    path[n] = path[source] + [n]
+                    grew = True
+    return {n: p for n, p in path.items() if design.state[n].seen}
+
+
+def seen_after(design: gm.Design) -> None:
+    """Refuse an input whose rules change only what the player does not see, and a cell of an Array written by an
+    input with no instance shown for it."""
+    for name, i in design.inputs.items():
+        fired = playing(design, name)
+        if not fired:
+            continue
+        for r in fired:
+            for x in chain(r):
+                arrays = [e[1][0] for e in x.do if e[0] == "set" and e[1][1] is not None]
+                if arrays and not any(design.state[n].shown for n in changes(chain(x))):
+                    design.bad(x.path, f"rule {x.id} writes a cell of {arrays[0]}, and an Array is not on screen: "
+                               f"the player sees the cell as an instance. Add a row that counts the instances shown, "
+                               f"such as {{\"name\": \"pieces\", \"start\": 0, \"stored_in\": \"Piece.shown\"}} (or "
+                               f"\"Piece.shown(frame=1)\" for the pieces of frame 1), and change it in this rule beside "
+                               f"the cell: \"pieces += 1\", or \"pieces = count({arrays[0]}, 1)\"")
+        if not shows(design, name):
+            rows = changes([x for r in fired for x in chain(r)])
+            design.bad(i["path"], f"the input {name} changes only {', '.join(rows) or 'nothing'}, which the player "
+                       f"does not see (a global, an Array, an instance variable). Store what shows it where the "
+                       f"player sees it, an object's text, x, y, frame or visible, or a count of instances, "
+                       f"\"stored_in\": \"Piece.shown\", and change it in the rule {fired[0].id}")
+
+
+def wanted(design: gm.Design, name: str) -> list[str]:
+    """The seen rows a test expects after the input: the counts of instances where its rules write an Array cell,
+    since the status line changing says nothing of the piece, else every seen row it changes."""
+    rules = [x for r in playing(design, name) for x in chain(r)]
+    counts = [n for x in rules if any(e[0] == "set" and e[1][1] is not None for e in x.do)
+              for n in changes(chain(x)) if design.state[n].shown]
+    return list(dict.fromkeys(counts)) or list(shows(design, name))
+
+
+def expected_after(design: gm.Design) -> None:
+    """Refuse an input after which no test expects what the player sees."""
+    for name, i in design.inputs.items():
+        rows = wanted(design, name)
+        if not rows or not any(st["kind"] == "do" and st["input"] == name for t in design.tests for st in t["steps"]):
+            continue        # no test does it: play() says so
+        hit = False
+        for t in design.tests:
+            done = False
+            for st in t["steps"]:
+                done = done or st["kind"] == "do" and st["input"] == name
+                if done and st["kind"] == "expect" and gm.names_in(st["node"]) & set(rows):
+                    hit = True
+        if not hit:
+            row = design.state[rows[0]]
+            design.bad(i["path"], f"no test expects what the player sees after {name}: {', '.join(rows)}. After a "
+                       f"step {{\"do\": \"{name}\"" + "".join(f', "{a}": ...' for a in i["args"]) + f"}}, add "
+                       f"{{\"expect\": \"{rows[0]} = ...\"}}, the value the game shows then; the editor reads it "
+                       f"from {row.stored_in}")
+
+
+def launch(design: gm.Design) -> None:
+    """Refuse a win or a lose that holds on the first screen, before the player does anything."""
+    try:
+        sim = gm.Sim(design)
+        sim.advance(0.5)
+    except gm.ModelError:
+        return      # play() names it with the test
+    for key, node, hit in (("win", design.win, sim.won), ("lose", design.lose, sim.lost)):
+        if node is not None and hit:
+            seen = ", ".join(f"{n} = {gm.show(sim.values[n])}" for n in sorted(gm.names_in(node)) if n in sim.values)
+            design.bad(key, f"{design.data.get(key)} holds on the first screen, before the player does anything"
+                            + (f" ({seen} after the start rules)" if seen else "") + ": the game is over at launch. "
+                            f"Give the rows it reads the start of a new game, in the state's start and in a \"start\" "
+                            f"rule, and play the tests from there rather than from a fixture")
 
 
 def play(design: gm.Design) -> list[str]:
@@ -103,6 +242,7 @@ def play(design: gm.Design) -> list[str]:
     ran: dict[str, int] = {}
     done_inputs: set[str] = set()
     won = lost = restarted = False
+    launch(design)
     for t in design.tests:
         try:
             sim = gm.Sim(design)
@@ -162,6 +302,7 @@ def play(design: gm.Design) -> list[str]:
         if name not in done_inputs:
             design.bad(i["path"], f"no test does {name}: add a step {{\"do\": \"{name}\"" +
                                   "".join(f', "{a}": ...' for a in i["args"]) + "}")
+    expected_after(design)
     if design.win and not won:
         design.bad("win", "no test reaches the win: add a test that plays to it and expects it")
     if design.lose and not lost:

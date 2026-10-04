@@ -40,6 +40,9 @@ WAIT_MAX = 20.0             # seconds one test may wait in all
 NAME = re.compile(r"[A-Za-z][A-Za-z0-9_]{0,31}$")
 KEY = re.compile(r"(Arrow(Left|Right|Up|Down)|Space|Enter|Escape|Key[A-Z]|Digit[0-9]|[a-z0-9])$")
 PROPS = ("x", "y", "text", "frame", "visible", "angle", "width", "height", "opacity")
+SEEN = ("text", "x", "y", "frame", "visible", "angle", "width", "height", "opacity", "shown")   # props the player sees
+# "Stone.shown" counts the Stone instances the player sees; "Stone.shown(frame=1)" those showing frame 1
+SHOWN = re.compile(r"([A-Za-z][A-Za-z0-9_]*)\.shown(?:\(frame\s*=\s*(\d+)\))?")
 
 DESIGN_KEYS = {"game", "core_loop", "reference", "screen", "state", "inputs", "rules", "win", "lose", "tests"}
 STATE_KEYS = {"name", "start", "size", "stored_in", "means", "keep", "const"}
@@ -299,6 +302,12 @@ class State:
     keep: bool
     const: bool
     path: str
+    shown: tuple[str, int | None] | None = None   # (object, frame or None) for a count of instances seen
+
+    @property
+    def seen(self) -> bool:
+        """Whether the player sees this row: a property of an instance on screen, or a count of instances."""
+        return bool(self.shown) or "." in self.stored_in and self.stored_in.rsplit(".", 1)[1] in SEEN
 
 
 class Design:
@@ -419,16 +428,23 @@ class Design:
             where = row.get("stored_in")
             if not isinstance(where, str) or not where.strip():
                 self.bad(f"{path}.stored_in", 'where the game keeps it: "global" (a global variable of this name), '
-                                              '"Array" (an Array object of this name), or "Object.variable", "Object.text", '
-                                              '"Object.x", "Object.y", "Object.frame" of an object with one instance')
+                                              '"Array" (an Array object of this name), "Object.variable", "Object.text", '
+                                              '"Object.x", "Object.y", "Object.frame" of an object with one instance, '
+                                              'or "Object.shown", how many instances of Object the player sees')
                 continue
             where = where.strip()
             kind = "array" if where == "Array" else "value"
+            shown = None
             if where not in ("global", "Array"):
                 m = re.fullmatch(r"([A-Za-z][A-Za-z0-9_]*)\.([A-Za-z][A-Za-z0-9_]*)", where)
-                if not m:
-                    self.bad(f"{path}.stored_in", f"{where!r}: \"global\", \"Array\", or \"Object.variable\" such as "
-                                                  f"\"Player.lives\" or \"Status.text\"")
+                s = SHOWN.fullmatch(where)
+                if s:
+                    shown = (s.group(1), int(s.group(2)) if s.group(2) else None)
+                elif not m:
+                    self.bad(f"{path}.stored_in", f"{where!r}: \"global\", \"Array\", \"Object.variable\" such as "
+                                                  f"\"Player.lives\" or \"Status.text\", or \"Object.shown\" or "
+                                                  f"\"Object.shown(frame=1)\", how many Object instances the player "
+                                                  f"sees, of any frame or of that frame")
                     continue
             if where in stores and where not in ("global", "Array"):
                 self.bad(f"{path}.stored_in", f"{where!r} also stores {stores[where]}: one fact is kept in one place")
@@ -449,7 +465,12 @@ class Design:
                     continue
                 if isinstance(start, (int, float)):
                     start = float(start)
-            self.state[name] = State(name, start, kind, size, where, bool(row.get("keep")), bool(row.get("const")), path)
+                if shown and not (isinstance(start, float) and start >= 0 and start == int(start)):
+                    self.bad(f"{path}.start", f"{where} is a count of instances: a whole number from 0, the instances "
+                                              f"the first screen shows")
+                    continue
+            self.state[name] = State(name, start, kind, size, where, bool(row.get("keep")), bool(row.get("const")), path,
+                                     shown)
 
     def read_inputs(self) -> None:
         rows = self.data.get("inputs")
@@ -728,6 +749,11 @@ class Design:
                     target = s["effect"][1]
                     if target[0] not in self.state:
                         self.bad(f"{s['path']}.set", f"{target[0]!r} is no state")
+                    elif self.state[target[0]].shown:
+                        self.bad(f"{s['path']}.set", f"{target[0]} counts the {self.state[target[0]].shown[0]} instances "
+                                                     f"the player sees, and a fixture cannot make or show instances. "
+                                                     f"Reach it with the inputs, \"do\" steps, and set only what the "
+                                                     f"rules read")
                     scope_ok(s["effect"][3], values, f"{s['path']}.set")
 
     def all_rules(self) -> list[Rule]:
