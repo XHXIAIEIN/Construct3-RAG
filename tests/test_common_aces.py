@@ -20,12 +20,16 @@ from src.ingest.common_aces import (
 )
 
 ROOT = Path(__file__).resolve().parent.parent
+SCHEMAS = ROOT / "data" / "c3-schemas"
 LOCALES = ("en-US", "zh-CN")
 
 
-def _lang_common(locale: str) -> dict:
-    pack = json.loads((ROOT / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))
-    return pack["text"]["plugins"]["_common"]
+def _lang_pack(locale: str) -> dict:
+    return json.loads((ROOT / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))
+
+
+def _exported_common(locale: str) -> dict:
+    return json.loads((SCHEMAS / locale / "plugins" / "_common.json").read_text(encoding="utf-8"))
 
 
 def _structural_index(categories: dict) -> dict[tuple[str, str], dict]:
@@ -43,7 +47,7 @@ def _structural_index(categories: dict) -> dict[tuple[str, str], dict]:
 @pytest.mark.parametrize("locale", LOCALES)
 def test_committed_extract_covers_the_language_pack(locale):
     categories = load_common_aces()
-    lang = _lang_common(locale)
+    lang = _lang_pack(locale)["text"]["plugins"]["_common"]
     check_common_coverage(categories, lang)
 
     structural = _structural_index(categories)
@@ -264,12 +268,7 @@ def test_committed_extract_requirements_cover_every_shared_ace():
 
 
 def test_exported_common_schema_is_typed_and_structurally_identical_across_locales():
-    files = {
-        locale: json.loads(
-            (ROOT / "data" / "c3-schemas" / locale / "plugins" / "_common.json").read_text(encoding="utf-8")
-        )
-        for locale in LOCALES
-    }
+    files = {locale: _exported_common(locale) for locale in LOCALES}
     en = files["en-US"]
     structural = _structural_index(load_common_aces())
     for ace_type in ACE_TYPES:
@@ -300,7 +299,7 @@ def test_shared_properties_are_named_in_every_locale(locale):
     """Their text is under ui.bars.properties.instance; the plugins._common
     entry of the language pack has ACE text only, which is why the export
     left the properties empty."""
-    pack = json.loads((ROOT / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))
+    pack = _lang_pack(locale)
     assert "properties" not in pack["text"]["plugins"]["_common"]
     built = build_common_properties(pack["text"])
     assert [p for p, _, _ in COMMON_PROPERTIES] == list(built)
@@ -318,12 +317,7 @@ def test_exported_common_schema_carries_the_instance_properties():
     properties, and `written` says where, the properties bar and the file
     disagreeing on the angle and the opacity
     (docs/decisions/common-instance-properties.md)."""
-    files = {
-        locale: json.loads(
-            (ROOT / "data" / "c3-schemas" / locale / "plugins" / "_common.json").read_text(encoding="utf-8")
-        )["properties"]
-        for locale in LOCALES
-    }
+    files = {locale: _exported_common(locale)["properties"] for locale in LOCALES}
     for locale, props in files.items():
         assert list(props) == [p for p, _, _ in COMMON_PROPERTIES], locale
         assert props["color"]["written"].startswith("world.color, [r, g, b, a]")
@@ -334,18 +328,18 @@ def test_exported_common_schema_carries_the_instance_properties():
            {k: v["written"] for k, v in files["zh-CN"].items()}
     assert files["en-US"]["color"]["desc"] != files["zh-CN"]["color"]["desc"]
 
+
 def test_exported_plugins_list_the_shared_aces_they_get():
     """commonAces is structural: the same in every locale, what the committed
     extract gives the plugin, and every id in it is one of plugins/_common.json."""
     available = load_common_availability()
-    schemas = ROOT / "data" / "c3-schemas"
-    common = json.loads((schemas / "en-US" / "plugins" / "_common.json").read_text(encoding="utf-8"))
+    common = _exported_common("en-US")
     ids = {t: {a["id"] for a in common[t]} for t in ACE_TYPES}
-    index = json.loads((schemas / "_index.json").read_text(encoding="utf-8"))["plugins"]
+    index = json.loads((SCHEMAS / "_index.json").read_text(encoding="utf-8"))["plugins"]
     for plugin_id, entry in index.items():
         if plugin_id == "_common":
             continue
-        en, zh = (json.loads((schemas / locale / entry["file"]).read_text(encoding="utf-8")) for locale in LOCALES)
+        en, zh = (json.loads((SCHEMAS / locale / entry["file"]).read_text(encoding="utf-8")) for locale in LOCALES)
         assert en["commonAces"] == zh["commonAces"], plugin_id
         assert en["commonAces"] == available[entry["originalId"]], plugin_id
         for t in ACE_TYPES:

@@ -3,12 +3,17 @@ import json
 import os
 import time
 import urllib.error
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from src.ingest.c3_fetcher import C3Fetcher, _cache_expired, latest_stable_version
 from src.ingest.common_aces import COMMON_PROPERTIES
+from src.lookup import SchemaIndex
+from src.lookup.schema_layout import schema_is_complete
+
+LOCALES = ("en-US", "zh-CN")
 
 
 @pytest.fixture
@@ -179,11 +184,55 @@ def test_export_lang_writes_readable_json_per_locale(fetcher):
     assert zh_text.count("\n") > 3
 
 
+def _read_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _editor_flags(aces: dict, deprecated: tuple[str, ...] = ()) -> dict:
+    """What the editor bundles say of these addons: only ``deprecated`` are."""
+    return {kind: {addon: addon in deprecated for addon in aces.get(kind, {})}
+            for kind in ("plugins", "behaviors")}
+
+
+def _export_with(fetcher: C3Fetcher, texts: dict[str, dict], aces: dict | None = None,
+                 effects: list[dict] | None = None, flags: dict | None = None) -> Path:
+    """Run export_schemas on these CDN files: ``texts`` holds the language pack
+    of each locale, and ``flags`` default to the editor deprecating no addon."""
+    if aces is None:
+        aces = {"plugins": {}, "behaviors": {}}
+    if flags is None:
+        flags = _editor_flags(aces)
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
+         patch.object(fetcher, "fetch_addon_deprecation", return_value=flags), \
+         patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]), \
+         patch.object(fetcher, "fetch_effects", return_value=effects or []), \
+         patch.object(fetcher, "fetch_examples", return_value=[]):
+        return fetcher.export_schemas()
+
+
+def _instance_properties() -> dict:
+    """What a pack holds for the shared world-instance properties. A real one
+    has it under ui.bars.properties.instance, not in its _common entry, which
+    is why the export reads both; a pack missing a path stops the export
+    (tests/test_common_aces.py)."""
+    instance: dict = {}
+    for prop_id, path, _ in COMMON_PROPERTIES:
+        node = instance
+        for part in path[:-1]:
+            node = node.setdefault(part, {})
+        node[path[-1]] = {"name": prop_id.title(), "desc": f"The {prop_id} of this instance."}
+    return {"ui": {"bars": {"properties": {"instance": instance}}}}
+
+
+def _common_texts(en_actions: dict, zh_actions: dict) -> dict:
+    return {
+        "en-US": {"text": {"plugins": {"_common": {"actions": en_actions}}, **_instance_properties()}},
+        "zh-CN": {"text": {"plugins": {"_common": {"actions": zh_actions}}, **_instance_properties()}},
+    }
+
+
 def test_export_schemas_keeps_root_index_language_neutral(fetcher):
     """Localized names go to {locale}/_index.json; the root index stays structural."""
-    from src.lookup import SchemaIndex
-    from src.lookup.schema_layout import schema_is_complete
-
     aces = {
         "plugins": {"Sprite": {"general": {
             "conditions": [{"id": "is-visible", "scriptName": "isVisible"}],
@@ -226,12 +275,7 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
         }},
     }
     effects = [{"id": "blur", "category": "blur", "parameters": []}]
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
-         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)), \
-         patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]), \
-         patch.object(fetcher, "fetch_effects", return_value=effects), \
-         patch.object(fetcher, "fetch_examples", return_value=[]):
-        schemas_dir = fetcher.export_schemas()
+    schemas_dir = _export_with(fetcher, texts, aces=aces, effects=effects)
 
     root_text = (schemas_dir / "_index.json").read_text(encoding="utf-8")
     root = json.loads(root_text)
@@ -248,8 +292,8 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
         "file": "plugins/_common.json", "conditions": 0, "actions": 2, "expressions": 0,
     }
 
-    en = json.loads((schemas_dir / "en-US" / "_index.json").read_text(encoding="utf-8"))
-    zh = json.loads((schemas_dir / "zh-CN" / "_index.json").read_text(encoding="utf-8"))
+    en = _read_json(schemas_dir / "en-US" / "_index.json")
+    zh = _read_json(schemas_dir / "zh-CN" / "_index.json")
     assert (en["version"], en["language"]) == (fetcher.version, "en-US")
     assert en["plugins"]["sprite"] == {"name": "Sprite", "file": "plugins/sprite.json"}
     assert zh["plugins"]["sprite"] == {"name": "精灵", "file": "plugins/sprite.json"}
@@ -259,39 +303,6 @@ def test_export_schemas_keeps_root_index_language_neutral(fetcher):
 
     assert schema_is_complete(schemas_dir)
     assert SchemaIndex(schemas_dir).find_effect_in_query("模糊") == (("blur",), 0, 2)
-
-
-def _editor_flags(aces: dict, deprecated: tuple[str, ...] = ()) -> dict:
-    """What the editor bundles say of these addons: only ``deprecated`` are."""
-    return {kind: {addon: addon in deprecated for addon in aces.get(kind, {})}
-            for kind in ("plugins", "behaviors")}
-
-
-def _export_with(fetcher, texts):
-    aces = {"plugins": {}, "behaviors": {}}
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces),          patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)),          patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]),          patch.object(fetcher, "fetch_effects", return_value=[]),          patch.object(fetcher, "fetch_examples", return_value=[]):
-        return fetcher.export_schemas()
-
-
-def _instance_properties() -> dict:
-    """What a pack holds for the shared world-instance properties. A real one
-    has it under ui.bars.properties.instance, not in its _common entry, which
-    is why the export reads both; a pack missing a path stops the export
-    (tests/test_common_aces.py)."""
-    instance: dict = {}
-    for prop_id, path, _ in COMMON_PROPERTIES:
-        node = instance
-        for part in path[:-1]:
-            node = node.setdefault(part, {})
-        node[path[-1]] = {"name": prop_id.title(), "desc": f"The {prop_id} of this instance."}
-    return {"ui": {"bars": {"properties": {"instance": instance}}}}
-
-
-def _common_texts(en_actions, zh_actions):
-    return {
-        "en-US": {"text": {"plugins": {"_common": {"actions": en_actions}}, **_instance_properties()}},
-        "zh-CN": {"text": {"plugins": {"_common": {"actions": zh_actions}}, **_instance_properties()}},
-    }
 
 
 def test_export_common_merges_bundle_structure_with_language_text(fetcher):
@@ -307,8 +318,8 @@ def test_export_common_merges_bundle_structure_with_language_text(fetcher):
     )
     schemas_dir = _export_with(fetcher, texts)
 
-    en = json.loads((schemas_dir / "en-US" / "plugins" / "_common.json").read_text(encoding="utf-8"))
-    zh = json.loads((schemas_dir / "zh-CN" / "plugins" / "_common.json").read_text(encoding="utf-8"))
+    en = _read_json(schemas_dir / "en-US" / "plugins" / "_common.json")
+    zh = _read_json(schemas_dir / "zh-CN" / "plugins" / "_common.json")
     assert (en["name"], zh["name"]) == ("Common", "Common")  # neither pack names it here
     assert en["actions"] == [{
         "id": "set-visible", "scriptName": "SetVisible", "category": "appearance",
@@ -321,7 +332,7 @@ def test_export_common_merges_bundle_structure_with_language_text(fetcher):
     }]
     assert zh["actions"][0]["params"]["visibility"]["items"] == {"invisible": "不可见", "visible": "可见", "toggle": "切换"}
     assert zh["actions"][0]["params"]["visibility"]["type"] == "combo"
-    zh_index = json.loads((schemas_dir / "zh-CN" / "_index.json").read_text(encoding="utf-8"))
+    zh_index = _read_json(schemas_dir / "zh-CN" / "_index.json")
     assert zh_index["plugins"]["_common"] == {"name": "Common", "file": "plugins/_common.json"}
 
 
@@ -349,16 +360,11 @@ def test_export_marks_every_condition_the_editor_treats_as_a_trigger(fetcher):
         "plugins": {"system": {"name": "System", "conditions": {i: {"list-name": i} for i in ids}}},
         "behaviors": {"timer": {"name": "Timer", "conditions": {"on-timer": {"list-name": "On timer"}}}},
     }}
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
-         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)), \
-         patch.object(fetcher, "fetch_lang", return_value=text), \
-         patch.object(fetcher, "fetch_effects", return_value=[]), \
-         patch.object(fetcher, "fetch_examples", return_value=[]):
-        schemas_dir = fetcher.export_schemas()
+    schemas_dir = _export_with(fetcher, dict.fromkeys(LOCALES, text), aces=aces)
 
     flags = ("isTrigger", "isFakeTrigger", "isLooping", "isInvertible", "isCompatibleWithTriggers")
-    system = json.loads((schemas_dir / "en-US" / "plugins" / "system.json").read_text(encoding="utf-8"))
-    timer = json.loads((schemas_dir / "en-US" / "behaviors" / "timer.json").read_text(encoding="utf-8"))
+    system = _read_json(schemas_dir / "en-US" / "plugins" / "system.json")
+    timer = _read_json(schemas_dir / "en-US" / "behaviors" / "timer.json")
     by_id = {c["id"]: {k: c[k] for k in flags if k in c} for c in system["conditions"] + timer["conditions"]}
     assert by_id == {
         "on-start-of-layout": {"isTrigger": True},
@@ -380,13 +386,12 @@ def test_export_keeps_the_default_the_editor_fills_in(fetcher):
         ]},
     ]}}}, "behaviors": {}}
     text = {"text": {"plugins": {"system": {"name": "System", "actions": {"wait": {"list-name": "Wait"}}}}}}
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces),          patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)),          patch.object(fetcher, "fetch_lang", return_value=text),          patch.object(fetcher, "fetch_effects", return_value=[]),          patch.object(fetcher, "fetch_examples", return_value=[]):
-        schemas_dir = fetcher.export_schemas()
+    schemas_dir = _export_with(fetcher, dict.fromkeys(LOCALES, text), aces=aces)
 
-    for locale in ("en-US", "zh-CN"):
-        system = json.loads((schemas_dir / locale / "plugins" / "system.json").read_text(encoding="utf-8"))
-        params = system["actions"][0]["params"]
-        assert {k: v.get("initialValue") for k, v in params.items()} ==             {"seconds": "1.0", "use-timescale": "true", "note": None}
+    for locale in LOCALES:
+        params = _read_json(schemas_dir / locale / "plugins" / "system.json")["actions"][0]["params"]
+        assert {k: v.get("initialValue") for k, v in params.items()} == \
+            {"seconds": "1.0", "use-timescale": "true", "note": None}
 
 
 def test_export_marks_an_expression_that_takes_more_arguments_than_it_lists(fetcher):
@@ -398,9 +403,8 @@ def test_export_marks_an_expression_that_takes_more_arguments_than_it_lists(fetc
     ]}}}, "behaviors": {}}
     text = {"text": {"plugins": {"mouse": {"name": "Mouse", "expressions": {
         "x": {"translated-name": "X"}, "absolute-x": {"translated-name": "AbsoluteX"}}}}}}
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces),          patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)),          patch.object(fetcher, "fetch_lang", return_value=text),          patch.object(fetcher, "fetch_effects", return_value=[]),          patch.object(fetcher, "fetch_examples", return_value=[]):
-        schemas_dir = fetcher.export_schemas()
-    mouse = json.loads((schemas_dir / "en-US" / "plugins" / "mouse.json").read_text(encoding="utf-8"))
+    schemas_dir = _export_with(fetcher, dict.fromkeys(LOCALES, text), aces=aces)
+    mouse = _read_json(schemas_dir / "en-US" / "plugins" / "mouse.json")
     assert {e["id"]: e.get("isVariadicParameters") for e in mouse["expressions"]} == {
         "x": True, "absolute-x": None}
 
@@ -408,8 +412,6 @@ def test_export_marks_an_expression_that_takes_more_arguments_than_it_lists(fetc
 def test_export_leaves_out_what_the_editor_deprecates_though_translated(fetcher):
     """NW.js and the old Warp are still in both language packs; the editor's
     flags, not the packs, keep them out of every file and index."""
-    from src.lookup.schema_layout import schema_is_complete
-
     aces = {
         "plugins": {pid: {"general": {"conditions": [], "actions": [{"id": "act", "scriptName": "Act"}],
                                       "expressions": []}}
@@ -431,19 +433,15 @@ def test_export_leaves_out_what_the_editor_deprecates_though_translated(fetcher)
         }}
 
     texts = {"en-US": pack(""), "zh-CN": pack(" 中")}
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
-         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces, ("NodeWebkit",))), \
-         patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]), \
-         patch.object(fetcher, "fetch_effects", return_value=effects), \
-         patch.object(fetcher, "fetch_examples", return_value=[]):
-        schemas_dir = fetcher.export_schemas()
+    schemas_dir = _export_with(fetcher, texts, aces=aces, effects=effects,
+                               flags=_editor_flags(aces, ("NodeWebkit",)))
 
-    root = json.loads((schemas_dir / "_index.json").read_text(encoding="utf-8"))
+    root = _read_json(schemas_dir / "_index.json")
     assert set(root["plugins"]) == {"sprite"}
     assert set(root["behaviors"]) == {"platform"}
     assert set(root["effects"]) == {"blur"}
-    for locale in ("en-US", "zh-CN"):
-        index = json.loads((schemas_dir / locale / "_index.json").read_text(encoding="utf-8"))
+    for locale in LOCALES:
+        index = _read_json(schemas_dir / locale / "_index.json")
         assert (set(index["plugins"]), set(index["effects"])) == ({"sprite"}, {"blur"})
         assert not (schemas_dir / locale / "plugins" / "nodewebkit.json").exists()
         assert not (schemas_dir / locale / "effects" / "warp.json").exists()
@@ -478,15 +476,11 @@ def test_export_lists_what_the_editor_deprecates_per_locale(fetcher):
         }}
 
     texts = {"en-US": pack(False), "zh-CN": pack(True)}
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
-         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces, ("NodeWebkit",))), \
-         patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]), \
-         patch.object(fetcher, "fetch_effects", return_value=effects), \
-         patch.object(fetcher, "fetch_examples", return_value=[]):
-        schemas_dir = fetcher.export_schemas()
+    schemas_dir = _export_with(fetcher, texts, aces=aces, effects=effects,
+                               flags=_editor_flags(aces, ("NodeWebkit",)))
 
-    en = json.loads((schemas_dir / "en-US" / "_deprecated.json").read_text(encoding="utf-8"))
-    zh = json.loads((schemas_dir / "zh-CN" / "_deprecated.json").read_text(encoding="utf-8"))
+    en = _read_json(schemas_dir / "en-US" / "_deprecated.json")
+    zh = _read_json(schemas_dir / "zh-CN" / "_deprecated.json")
     assert (en["version"], en["language"], zh["language"]) == (fetcher.version, "en-US", "zh-CN")
     assert en["addons"] == {
         "plugins": {"nodewebkit": {"originalId": "NodeWebkit", "name": "NW.js", "description": "Desktop"}},
@@ -502,7 +496,7 @@ def test_export_lists_what_the_editor_deprecates_per_locale(fetcher):
     assert zh["aces"]["plugins"]["mouse"]["actions"]["set-cursor-style"]["list-name"] == "Set cursor style"
     assert zh["aces"]["plugins"]["mouse"]["actions"]["old-hint"]["list-name"] == "中 Old hint"
 
-    mouse = json.loads((schemas_dir / "en-US" / "plugins" / "mouse.json").read_text(encoding="utf-8"))
+    mouse = _read_json(schemas_dir / "en-US" / "plugins" / "mouse.json")
     assert {a["id"]: a.get("isDeprecated", False) for a in mouse["actions"]} == {
         "set-cursor-style2": False, "old-hint": True,
     }
@@ -512,13 +506,8 @@ def test_export_stops_when_the_editor_bundle_does_not_construct_an_addon(fetcher
     """An addon of allAces.json the bundle does not build may be deprecated
     or not; the export stops instead of guessing."""
     aces = {"plugins": {"Sprite": {}}, "behaviors": {}}
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
-         patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags({})), \
-         patch.object(fetcher, "fetch_lang", return_value={"text": {}}), \
-         patch.object(fetcher, "fetch_effects", return_value=[]), \
-         patch.object(fetcher, "fetch_examples", return_value=[]):
-        with pytest.raises(ValueError, match="constructs no plugin Sprite"):
-            fetcher.export_schemas()
+    with pytest.raises(ValueError, match="constructs no plugin Sprite"):
+        _export_with(fetcher, dict.fromkeys(LOCALES, {"text": {}}), aces=aces, flags=_editor_flags({}))
     assert not (fetcher.cache_dir / "schemas" / ".exported").exists()
 
 
