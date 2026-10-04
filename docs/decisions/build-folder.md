@@ -33,6 +33,10 @@ outside `.build/` and `.tmp/` is written, with a note on stdout that Git
 commits it. Screenshots, recordings, browser profiles and the copy
 `open_in_editor.py` hands the editor stay in `.tmp/`.
 
+`screenshot_sheet.py` writes its pictures of event sheets to
+`.build/sheets/` by default, with the same `.gitignore`, because they are
+made to be handed to people (`sheet-screenshot.md`).
+
 ## Re-evaluate when
 
 A product is still committed from a project root, or a client or engine

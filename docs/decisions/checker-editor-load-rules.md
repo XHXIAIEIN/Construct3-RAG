@@ -36,8 +36,9 @@ Option 2 as the default, and option 3 as the step after it.
 - A rule is read from the editor's project loader as a whole call chain,
   located by the message it throws, not from the one message a user pasted:
   the next assertion in the same function would cost another round trip.
-  The manual states some of them (`how-events-work.md` "Triggers",
-  `sub-events.md`, `conditions.md` "Inverting conditions"), and the Addon SDK
+  The manual states some of them (`how-events-work.md`
+  "Events run top to bottom", `sub-events.md`,
+  `conditions.md` "Inverting conditions"), and the Addon SDK
   guide defines the flags they read (`isFakeTrigger`, `isLooping`,
   `isInvertible`, `isCompatibleWithTriggers`).
 - A rule becomes an error only after a run over the official examples adds
@@ -167,8 +168,8 @@ Option 2 as the default, and option 3 as the step after it.
 - The exporter writes `isTrigger` for every condition the editor treats as a
   trigger, `isFakeTrigger` and `isFastTrigger` included, and keeps
   `isLooping`, `isInvertible: false` and `isCompatibleWithTriggers: false`.
-  *On collision*, *On timer* and the Gamepad button conditions were missing
-  the flag before.
+  *On collision*, *On timer* and the Gamepad button conditions, which the
+  CDN marks `isFakeTrigger` alone, get `isTrigger` this way.
 - `tests/test_skill_check_project.py` breaks the stand-in project one rule at
   a time and reads the finding; `tests/test_skill_build_project.py` compares
   the generated project with the keys every official example carries at each
@@ -389,7 +390,8 @@ variables, instance counts and the instances of the types named.
 - The preview wraps the runtime's tick once to reach it, as skymen/c3cli
   (MIT) does, and reads the preview page and its workers once at the end.
   It runs without input: it catches what breaks on start, not what a player
-  does later.
+  does later, which `preview_project.py` plays from a plan
+  (`preview-player.md`).
 - The editor asserts on some data only as it builds a preview, a collision
   polygon of fewer than three points among them. It shows its crash report
   over the editor, and the preview window can open and run behind it, so

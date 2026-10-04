@@ -95,7 +95,7 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   `references/reading-the-runtime.md`.
 - `open_in_editor.py` keeps opening the project, `--preview` and `--state`,
   and the browser and editor functions both scripts share; the preview
-  player imports them, as the exporter does.
+  player imports them, as `export_project.py` does.
 
 Not covered: two fingers at once, a gamepad, and what a sound sounds like.
 `references/editor-and-preview.md` says how a script of one's own does the
