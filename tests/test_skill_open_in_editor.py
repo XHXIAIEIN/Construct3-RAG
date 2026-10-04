@@ -38,6 +38,8 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
     assert code == 3 and out.rstrip().endswith("read the console of the preview window it opens."), out
     code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps", "--state", "Player")
     assert code == 3 and out.rstrip().endswith("as references/reading-the-runtime.md says."), out
+    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps", "--typescript")
+    assert code == 2 and "TypeScript > Update TypeScript definitions" in out, out
 
     import io
     import zipfile
@@ -171,6 +173,37 @@ def test_open_in_editor_reports_a_notice_over_the_opened_project_as_a_warning():
     assert lines == ["opened   Quiz  (Quiz template - Construct 3, https://editor.construct.net/)",
                      f"  warning: {notice}"], lines
     assert "d.id == 'deprecatedFeaturesDialog'" in opener().RESULT_JS
+
+
+def test_open_in_editor_writes_the_typescript_definitions_the_editor_wrote(tmp_path):
+    """Save as project folder, then Set up TypeScript for external editor, wrote 57 files under
+    scripts/ts-defs of a game project, a class per object type among them (2026-10-04, r495-2). They go over
+    the ones there; a tsconfig.json the project has is the user's and stays."""
+    oe = opener()
+
+    class Page:
+        def evaluate(self, expression, wait=None):
+            assert "Set up TypeScript for external editor" in expression
+            return {"files": {"ts-defs/instanceTypes.d.ts": "declare namespace InstanceType {\n\tclass Coin {}\n}",
+                              "ts-defs/runtime/IRuntime.d.ts": "new", "tsconfig.json": "editor's"}}
+
+    scripts = tmp_path / "scripts"
+    (scripts / "ts-defs" / "runtime").mkdir(parents=True)
+    (scripts / "ts-defs" / "runtime" / "IRuntime.d.ts").write_text("old", encoding="utf-8")
+    (scripts / "tsconfig.json").write_text("user's", encoding="utf-8")
+    wrote = oe.typescript(Page(), tmp_path)
+    assert wrote == {"written": ["ts-defs/instanceTypes.d.ts", "ts-defs/runtime/IRuntime.d.ts"]}, wrote
+    assert (scripts / "ts-defs" / "runtime" / "IRuntime.d.ts").read_text(encoding="utf-8") == "new"
+    assert (scripts / "tsconfig.json").read_text(encoding="utf-8") == "user's"
+    lines = opener().report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
+                             "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [],
+                             "exception": "", "typescript": wrote})
+    assert lines[1] == "  typescript: wrote 2 files into scripts/ts-defs", lines
+    assert oe.typescript(Page(), tmp_path / "game.c3p") == {
+        "error": "a .c3p has no scripts folder to write into: pass the folder project"}
+    failed = {"status": "opened", "typescript": {"error": 'the editor\'s menu has no "TypeScript"'}}
+    assert oe.failed(failed) and oe.report({**failed, "project": "Game", "title": "", "editor": "", "warnings": []})[1] \
+        == '  typescript: not written, the editor\'s menu has no "TypeScript"'
 
 
 def test_open_in_editor_reports_how_long_the_game_ran_in_the_preview():

@@ -2495,6 +2495,7 @@ class Checker:
                               f"ffmpeg -i {fname} -c:a libopus {stem}.webm, and list {stem}.webm with \"type\": "
                               f"\"{AUDIO_TYPE}\", or import the file in the editor, which converts it")
         self.check_scripts(root_files.get("script", {}))
+        self.check_ts_defs()
         self.check_unlisted(root_files)
 
         addon_ids = {a["id"] for a in p.data.get("usedAddons", [])}
@@ -2531,6 +2532,22 @@ class Checker:
                 self.warn(f"scripts/{shown[key]}.ts and scripts/{shown[key]}.js are both listed; Construct runs the "
                           f".js and ignores the .ts, so an edit to the .ts changes nothing. List the .ts alone when "
                           f"Construct compiles the TypeScript, the .js alone when an external editor does")
+
+    def check_ts_defs(self) -> None:
+        """scripts/ts-defs/instanceTypes.d.ts, which the editor writes when the user sets up or
+        updates TypeScript definitions, without an object type or family the project has now:
+        TypeScript checked against it does not know InstanceType.<name>."""
+        p = self.p
+        defs = p.root / "scripts" / "ts-defs" / "instanceTypes.d.ts"
+        if not defs.is_file():
+            return
+        declared = set(re.findall(r"\w+", defs.read_text(encoding="utf-8", errors="replace")))
+        missing = sorted(n for n in (*p.types, *p.families) if n not in declared)
+        if missing:
+            shown = ", ".join(missing[:5]) + (f" and {len(missing) - 5} more" if len(missing) > 5 else "")
+            self.warn(f"scripts/ts-defs/instanceTypes.d.ts does not declare {shown}, so TypeScript checked against "
+                      f"it does not know InstanceType.{missing[0]}. Have the editor write them again: "
+                      f"{script_command(p.root, 'open_in_editor.py', ' --typescript')}")
 
     def check_unlisted(self, root_files: dict) -> None:
         """A file in a folder of the project that project.c3proj does not list: the editor

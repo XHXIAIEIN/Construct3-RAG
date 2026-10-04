@@ -2,7 +2,8 @@
 editor's message when it does not.
 
     python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--release rNNN] [--browser EXE]
-                                     [--preview [SECONDS]] [--state [TYPE ...]] [--steps] [--shots DIR]
+                                     [--preview [SECONDS]] [--state [TYPE ...]] [--typescript] [--steps]
+                                     [--shots DIR]
                                      [--out RESULTS.json]
                                      [--jobs 2] [--headed] [--profile FOLDER]
 
@@ -39,6 +40,15 @@ Every result, the error stacks and the state included, goes to
 .tmp/open-in-editor.json and a screenshot of the editor per project to
 .tmp/shots/; the last line names both. Read a cut-off result there instead of
 running the project again.
+
+With --typescript it has the editor write the project's TypeScript
+definitions, as Set up TypeScript for external editor does on the Scripts
+folder: the runtime API and the project's own types, InstanceType.<object>
+with its behaviors and instance variables among them, go into
+scripts/ts-defs/, over the files there, and scripts/tsconfig.json is written
+when the project has none. The editor writes them only for what the project
+holds when it runs, so run it again after adding an object, a behavior or a
+variable. It takes about 10 seconds more.
 
 With --install-addon FILE.c3addon it first installs the addon into the editor of
 the browser profile, as a user drops it on the editor and clicks Install, or
@@ -222,6 +232,64 @@ INSTALL_JS = r"""async () => {
 PROBE_JS = (c3.SKILL_DIR / "assets" / "runtime-probe.js").read_text(encoding="utf-8")
 # Instances printed per type named by --state; --out keeps as many.
 STATE_MAX = 20
+
+# TYPESCRIPT does in the opened project what the user does to set up TypeScript for an
+# external editor: Menu > Project > Save as > Save as project folder, with the folder picker
+# answered by a folder of the page's origin-private file system, then Set up TypeScript for
+# external editor from the context menu of the Scripts folder in the Project Bar. The editor
+# writes the definitions only into a folder project, from its own model of the project, so
+# they are the ones the user would get. It returns the files it wrote under scripts/, by
+# path, and removes the folder. The menus are found by their English labels, the editor's
+# language in a profile of this script; a dialog it shows on the way, such as the offer to
+# set up backups, is closed.
+TYPESCRIPT_JS = r"""async () => {
+  const w = t => new Promise(r => setTimeout(r, t));
+  const fire = (el, types) => { const r = el.getBoundingClientRect();
+    for (const type of types) el.dispatchEvent(new (type.startsWith('pointer') ? PointerEvent : MouseEvent)(type,
+      {bubbles: true, clientX: r.x + 5, clientY: r.y + 5, button: type == 'contextmenu' ? 2 : 0})); };
+  const click = el => fire(el, ['pointerover', 'mouseover', 'pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click']);
+  const item = t => [...document.querySelectorAll('ui-menuitem')].find(e => e.offsetParent !== null
+    && e.querySelector('.menu-item-text')?.textContent.trim() == t);
+  const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog');
+  const calm = async () => { for (let n = 0; n < 50; n++, await w(200)) {
+    if (document.querySelector('#progressDialog[open]')) { n = 0; continue; }
+    const d = open()[0];
+    if (!d) return;
+    (d.querySelector('.cancelButton') || d.querySelector('ui-close-button, .okButton'))?.click(); } };
+  const pick = async (...labels) => { for (const t of labels) {
+    const e = item(t);
+    if (!e) return `the editor's menu has no "${t}"`;
+    click(e); await w(500); } };
+  const root = await navigator.storage.getDirectory(), name = 'typescript-' + Date.now();
+  const dir = await root.getDirectoryHandle(name, {create: true});
+  window.showDirectoryPicker = async () => dir;
+  try {
+    click(document.getElementById('mainMenuButton')); await w(500);
+    let no = await pick('Project', 'Save as', 'Save as project folder...');
+    if (no) return no;
+    await w(1000); await calm();
+    const scripts = [...document.querySelectorAll('ui-treeitem.fileGroup > .tree-item-wrap > .tree-item-name')]
+      .find(e => e.textContent.trim() == 'Scripts' && e.offsetParent !== null);
+    if (!scripts) return 'the Project Bar shows no Scripts folder';
+    fire(scripts, ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'contextmenu']); await w(500);
+    no = await pick('TypeScript', 'Set up TypeScript for external editor');
+    if (no) return no;
+    await w(1000); await calm();
+    const files = {};
+    const read = async (folder, path) => { for await (const [n, h] of folder.entries()) {
+      if (h.kind == 'directory') await read(h, path + n + '/');
+      else files[path + n] = await (await h.getFile()).text(); } };
+    const s = await dir.getDirectoryHandle('scripts');
+    await read(await s.getDirectoryHandle('ts-defs'), 'ts-defs/');
+    try { files['tsconfig.json'] = await (await (await s.getFileHandle('tsconfig.json')).getFile()).text(); } catch (e) {}
+    return {files};
+  } catch (e) {
+    return 'the editor wrote no TypeScript definitions: ' + e;
+  } finally {
+    await root.removeEntry(name, {recursive: true}).catch(() => {});
+  }
+}"""
+TYPESCRIPT_WAIT = 60
 
 OPEN_DIALOGS_JS = r"""[...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog')
   .map(d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500))"""
@@ -862,6 +930,29 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
             "seconds": round(time.monotonic() - started, 1), **({"preview": ran} if ran else {})}
 
 
+def typescript(page: DevTools, project: Path) -> dict:
+    """Have the editor write the project's TypeScript definitions, and put them into
+    scripts/ts-defs/ over what is there, with scripts/tsconfig.json when the project has
+    none: what Set up TypeScript for external editor writes, less the .ts copies of .js files."""
+    if not project.is_dir():
+        return {"error": "a .c3p has no scripts folder to write into: pass the folder project"}
+    try:
+        got = page.evaluate(f"({TYPESCRIPT_JS})()", wait=TYPESCRIPT_WAIT)
+    except DevToolsError as e:
+        got = f"the editor stopped answering: {e}"
+    if isinstance(got, str):
+        return {"error": got}
+    scripts, written = project / "scripts", []
+    for name, text in sorted(got["files"].items()):
+        target = scripts / name
+        if name == "tsconfig.json" and target.exists():
+            continue
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(text.encode("utf-8"))
+        written.append(name)
+    return {"written": written}
+
+
 def addon_json(addon: Path) -> dict | str:
     """The addon.json of a .c3addon, or what is wrong with it, before the editor reads it."""
     try:
@@ -919,6 +1010,13 @@ def report(result: dict) -> list[str]:
     if result["status"] == "opened":
         lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
         lines += [f"  warning: {w}" for w in result.get("warnings", [])]
+        ts = result.get("typescript")
+        if ts and "error" in ts:
+            lines.append(f"  typescript: not written, {ts['error']}")
+        elif ts:
+            defs = sum(n.startswith("ts-defs/") for n in ts["written"])
+            config = ", and scripts/tsconfig.json" if "tsconfig.json" in ts["written"] else ""
+            lines.append(f"  typescript: wrote {defs} files into scripts/ts-defs{config}")
         ran = result.get("preview")
         if ran and ran["started"]:
             n = len(ran["errors"])
@@ -944,7 +1042,8 @@ def report(result: dict) -> list[str]:
 
 
 def failed(result: dict) -> bool:
-    return result["status"] != "opened" or bool(result.get("preview", {}).get("errors"))
+    return (result["status"] != "opened" or bool(result.get("preview", {}).get("errors"))
+            or "error" in result.get("typescript", {}))
 
 
 def summary(results: list[dict], previewed: bool, out: Path, shots: Path) -> str:
@@ -975,10 +1074,18 @@ def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
     def one(i: int, project: Path) -> None:
         nonlocal printed
         shot = args.shots / f"{i:03d}-{project.name}.png"
+        wrote: dict = {}
+
+        def then(b: Browser, t: str, p: DevTools) -> dict | None:
+            if args.typescript:
+                wrote.update(typescript(p, project))
+            return preview(b, (t, p), args.preview, args.state) if args.preview is not None else None
+
         try:
-            then = (lambda b, t, p: preview(b, (t, p), args.preview, args.state)) if args.preview is not None else None
             result = open_one(browser, editor, project, browser.profile / f"project-{i}.c3p", shot,
-                              bool(args.release), then)
+                              bool(args.release), then if args.typescript or args.preview is not None else None)
+            if wrote:
+                result["typescript"] = wrote
         except (EditorNotLoaded, DevToolsError, OSError) as e:
             result = {"project": str(project), "status": "error", "title": "", "dialogs": [], "warnings": [],
                       "exception": str(e), "editor": editor, "seconds": 0}
@@ -1025,6 +1132,11 @@ def main() -> int:
                     help="at the end of the preview (5 seconds unless --preview says), print the global variables, "
                          f"the instance count of every object type, and the first {STATE_MAX} instances of each TYPE "
                          "named, as the project spells it; --out keeps them as JSON")
+    ap.add_argument("--typescript", action="store_true",
+                    help="once it opened, have the editor write the project's TypeScript definitions into "
+                         "scripts/ts-defs, over the ones there, and scripts/tsconfig.json when there is none, as "
+                         "Set up TypeScript for external editor does; run it again after adding an object, a "
+                         "behavior or a variable")
     ap.add_argument("--install-addon", type=Path, nargs="+", default=[], metavar="FILE",
                     help="install these .c3addon files into the editor of the browser profile before opening the "
                          "project, which keeps them for later runs; an addon the editor refuses stops the run")
@@ -1061,6 +1173,10 @@ def main() -> int:
     why = "not opened here (--steps)" if args.steps else None if exe else "no Edge, Chrome or Chromium found here"
     if why and len(projects) > 1:
         print(f"{why}, and {len(projects)} projects were found; name one with --project", file=sys.stderr)
+        return 2
+    if why and args.typescript:
+        print(f"{why}: --typescript needs it. Ask the user to right-click the Scripts folder in the editor's "
+              f"Project Bar and choose TypeScript > Update TypeScript definitions.", file=sys.stderr)
         return 2
     if why and args.install_addon:
         print(f"{why}: drop {', '.join(map(str, args.install_addon))} on the editor in the browser tool's page and "

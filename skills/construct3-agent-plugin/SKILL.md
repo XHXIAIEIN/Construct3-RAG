@@ -57,7 +57,7 @@ opened once before it is handed over.
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed; checked before anything is written |
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds ten warnings from the official examples' style, for a project the agent wrote |
 | `scripts/review_design.py` | Read the sheets and print where their design is hard to read or fragile: an event with too many conditions, a guard repeated, one trigger split by globals, one fact kept twice, scratch globals, a UID link, a table written as actions, an expression that repeats itself. Each finding names the event and the form to write instead; then fixed yes/no questions name the events to read with `print_sheet.py`. Reads the files only |
-| `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then previews it for 5 seconds, of which the game runs about 4, and prints the ticks the runtime ran and its errors, each with its event; `--state [TYPE ...]` adds what the game holds at the end: global variables, instance counts, and the instances of the types named. `--install-addon FILE.c3addon` first installs a custom addon the project uses, or prints the editor's refusal. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
+| `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then previews it for 5 seconds, of which the game runs about 4, and prints the ticks the runtime ran and its errors, each with its event; `--state [TYPE ...]` adds what the game holds at the end: global variables, instance counts, and the instances of the types named. `--typescript` has the editor write the project's TypeScript definitions into `scripts/ts-defs/`. `--install-addon FILE.c3addon` first installs a custom addon the project uses, or prints the editor's refusal. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
 | `scripts/preview_project.py PLAN.json` | Preview the project and play it from a plan: tap, hold and drag the game's instances by name, press keys, wait `until` an expression holds, run JavaScript against the runtime, read the state, take screenshots and record the window between steps, a recording with a page to review it frame by frame beside the steps and the values it watched; one line per step with the runtime errors it caused. Each run starts from a first launch, with no save. `--help` describes the plan |
 | `scripts/review_look.py` | Preview the project, visit every layout and print a screenshot of each, the faults the runtime shows on it, and fixed yes/no questions to answer from the screenshots |
 | `scripts/screenshot_sheet.py [SHEET] [--group TITLE]` | A picture of an event sheet or one group of it as the editor shows it, in English, cropped to the sheet with each column as wide as its longest line, for a forum post, a bug report or a doc; into `.build/sheets/` |
@@ -156,6 +156,16 @@ write the built-in that already keeps it:
 
 The rest, with what each replaces, is the Native first table of
 `Construct3-RAG/prompts/event-sheet-thinking.md`.
+
+## Write TypeScript
+
+Before writing a script, read the `.d.ts` of each API it calls under
+`Construct3-RAG/data/c3-ts-defs/`, and an official example on the same
+topic whose folder ends in `-ts`. The project's own types, such as
+`InstanceType.Coin` with its behaviors and instance variables, are in
+`scripts/ts-defs/`, which the editor writes:
+`python scripts/open_in_editor.py --typescript`, again after adding an
+object, a behavior or a variable. `check_project.py` says when one is missing.
 
 ## Change a sheet with a plan
 

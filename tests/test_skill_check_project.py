@@ -466,6 +466,26 @@ def test_a_script_listed_as_both_ts_and_js_is_named(project):
            "the .ts" in out, out
 
 
+def test_typescript_definitions_without_an_object_type_are_named(project):
+    """The editor writes scripts/ts-defs/instanceTypes.d.ts when the user sets up or updates
+    TypeScript definitions, and not again by itself [manual: scripting/guides/using-external-editor.md];
+    game projects on disk held one written before their objects were added."""
+    names = sorted(json.loads(f.read_text(encoding="utf-8"))["name"] for f in (project / "objectTypes").glob("*.json"))
+    defs = project / "scripts" / "ts-defs" / "instanceTypes.d.ts"
+    defs.parent.mkdir(parents=True, exist_ok=True)
+    body = "".join(f"\tclass {n} extends IWorldInstance {{}}\n" for n in names[1:])
+    defs.write_text(f"declare namespace InstanceType {{\n{body}}}", encoding="utf-8")
+    code, out = check(project)
+    found = [w for w in warnings(out) if "ts-defs" in w]
+    assert code == 0 and len(found) == 1 and found[0].startswith(
+        f"warning: scripts/ts-defs/instanceTypes.d.ts does not declare {names[0]}, so TypeScript checked against it "
+        f"does not know InstanceType.{names[0]}. Have the editor write them again: python ") \
+        and found[0].endswith("open_in_editor.py --typescript"), out
+    defs.write_text(f"declare namespace InstanceType {{\n\tclass {names[0]} extends IWorldInstance {{}}\n{body}}}",
+                    encoding="utf-8")
+    assert not [w for w in warnings(check(project)[1]) if "ts-defs" in w]
+
+
 def test_c_style_operators_are_refused_with_the_construct_ones(project):
     """The editor's parser refuses ==, !=, &&, ||, ** and ! ("Syntax error"); inside a text literal they are
     text. ^ is Construct's power: 2 ^ 3 ran as 8 in a preview."""
