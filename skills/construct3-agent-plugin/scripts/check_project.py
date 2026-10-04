@@ -405,6 +405,14 @@ def effect_names(holder: dict) -> set[str]:
     return {e["name"] for e in holder.get("effectTypes", []) if isinstance(e.get("name"), str)}
 
 
+def layer_instances(layers: list):
+    """Every instance on these layers and their sublayers, in the order the file lists them."""
+    for layer in layers if isinstance(layers, list) else []:
+        if isinstance(layer, dict):
+            yield from (i for i in layer.get("instances") or [] if isinstance(i, dict))
+            yield from layer_instances(layer.get("subLayers"))
+
+
 def frames_of(folder, prefix=""):
     """(file name without its extension, frame) for every frame of an animations folder."""
     for anim in folder.get("items", []):
@@ -921,6 +929,7 @@ class Checker:
                          f"opens the layout, before it reads anything on it")
                 continue
             self.walk_layers(f"layout {lname}", lay["layers"])
+            self.check_default_controls(lname, lay["layers"])
             for inst in lay.get("nonworld-instances", []):
                 self.check_instance(f"layout {lname}", inst)
             self.check_effects(lay.get("effectTypes", []))
@@ -941,6 +950,35 @@ class Checker:
             self.collect_sids(f)
             self.class_sids.setdefault(f.get("sid"), []).append(f"family {fname}")
         self.collect_sids(p.data.get("rootFileFolders", {}))
+
+    def check_default_controls(self, lname: str, layers: list) -> None:
+        """Default controls is a property of each instance of a movement behavior, and every instance with it
+        on moves with the arrow keys. An instance without the property reads as on, as the editor fills it.
+        Instances of two or more object types with it on in one layout walk together: a crate given Platform
+        to be pushed walks with the player. One type steered on purpose, two knights that move as one, passes."""
+        steered: dict[str, tuple[int, list[str]]] = {}     # type -> (instances, behavior names)
+        for inst in layer_instances(layers):
+            t = inst.get("type")
+            behs = self.p.behaviors_of(t) if t in self.p.types else {}
+            names = []
+            for b, block in (inst.get("behaviors") or {}).items():
+                schema = self.p.schema("behaviors", behs[b]) if b in behs else None
+                props = block.get("properties") if isinstance(block, dict) else None
+                if (schema and "default-controls" in (schema.get("properties") or {}) and isinstance(props, dict)
+                        and props.get("default-controls", True) is not False):
+                    names.append(b)
+            if names:
+                n, known = steered.get(t, (0, []))
+                steered[t] = (n + 1, known + [b for b in names if b not in known])
+        if len(steered) < 2:
+            return
+        listed = "; ".join(f"{t} ({n} instance{'s' if n > 1 else ''}, {', '.join(bs)})"
+                           for t, (n, bs) in steered.items())
+        self.warn(f"layout {lname}: {listed} have Default controls on, so all of them move with the arrow keys "
+                  f"together. Keep it on for the object the player steers. In every layout, give each instance "
+                  f"of the others \"default-controls\": false in its behavior's properties, and move it with "
+                  f"Simulate control or the behavior's actions (manual: behavior-reference/platform.md "
+                  f"\"Default controls\")")
 
     def check_namespace(self, obj: str) -> None:
         """`Enemy.Angle` has to mean one thing, so the editor refuses an instance

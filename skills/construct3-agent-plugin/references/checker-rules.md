@@ -91,6 +91,13 @@ Traps of the running game are warnings:
   it runs in, so the object moves one tick and stops [manual:
   behavior-reference.md "Custom controls"]. A Platform jump and Tile
   movement, which take one tick as a whole move, pass;
+- in one layout, instances of two or more object types with a movement
+  behavior whose *Default controls* is on, or absent from the instance's
+  properties, which the editor reads as on: each moves with the arrow
+  keys, so a crate given Platform to be
+  pushed walks with the player [manual: behavior-reference/platform.md
+  "Default controls"]. Instances of one type steered together, two knights
+  that move as one, pass. Over the official examples it adds no finding;
 - `X.Count = 0`, `≤ 0` or `< 1` in a condition that runs after a *Destroy*
   of X in the same top-level event: the destroyed instance counts until
   that event ends, so the test fails for the last one

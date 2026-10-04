@@ -964,6 +964,48 @@ def test_a_solid_changed_beside_custom_obstacles_is_not_named(project):
     assert not [w for w in warnings(out) if "changes a Solid" in w], out
 
 
+def platform_instances(project, *placed: tuple[str, dict]) -> None:
+    """Coin and Backdrop get Platform. The Objects layout holds one instance per (type, Platform properties)
+    instead of the Coin it had. The Game layout's Backdrop, the model for a Backdrop there, has Default
+    controls off."""
+    for t, behavior_sid in (("Coin", 11), ("Backdrop", 12)):
+        edit(project, f"objectTypes/{t}.json", lambda o, s=behavior_sid: o["behaviorTypes"].append(
+            {"behaviorId": "Platform", "name": "Platform", "sid": s}))
+    add_addon(project, "behavior", "Platform", "Platform")
+    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"][0].setdefault("behaviors", {}).update(
+        Platform={"properties": {"default-controls": False}}))
+    game = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
+
+    def place(d):
+        made = {"Coin": d["layers"][0]["instances"][0], "Backdrop": game["layers"][0]["instances"][0]}
+        d["layers"][0]["instances"] = []
+        for i, (t, properties) in enumerate(placed):
+            inst = json.loads(json.dumps(made[t]))
+            inst.update(uid=500 + i, sid=600 + i)
+            inst.setdefault("behaviors", {})["Platform"] = {"properties": properties}
+            d["layers"][0]["instances"].append(inst)
+    edit(project, "layouts/Objects.json", place)
+
+
+ON, OFF = {"default-controls": True}, {"default-controls": False}
+
+
+@pytest.mark.parametrize("placed, said", [
+    ((("Coin", ON), ("Backdrop", ON)), "Coin (1 instance, Platform); Backdrop (1 instance, Platform) have Default"),
+    ((("Coin", ON), ("Coin", ON), ("Backdrop", {})), "Coin (2 instances, Platform); Backdrop (1 instance, Platform)"),
+    ((("Coin", ON), ("Backdrop", OFF)), None),
+    ((("Coin", ON), ("Coin", ON)), None),
+])
+def test_two_types_steered_by_the_arrow_keys_are_named(project, placed, said):
+    """Every instance with Default controls on, or without the property, moves with the arrow keys. One type
+    steered on purpose, two knights that move as one, passes."""
+    platform_instances(project, *placed)
+    out = findings(project, lambda s: None)
+    said_lines = [w for w in warnings(out) if "move with the arrow keys together" in w]
+    assert out.splitlines()[-1].startswith("ok:"), out
+    assert (said in said_lines[0] and '"default-controls": false' in said_lines[0] if said else not said_lines), out
+
+
 def function(name: str, sid: int, actions: list, children: list | None = None, params: list | None = None) -> dict:
     return {"functionName": name, "functionDescription": "", "functionCategory": "", "functionReturnType": "none",
             "functionCopyPicked": False, "functionIsAsync": False, "eventType": "function-block", "sid": sid,
