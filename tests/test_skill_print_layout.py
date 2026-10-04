@@ -1,10 +1,11 @@
 """print_layout.py: layers, instances and what a text lies on."""
 import json
+from pathlib import Path
 
 from tests.skill_helpers import tool
 
 
-def layout_file(project):
+def layout_file(project: Path) -> Path:
     return next(p for p in (project / "layouts").rglob("*.json") if not p.name.endswith(".uistate.json"))
 
 
