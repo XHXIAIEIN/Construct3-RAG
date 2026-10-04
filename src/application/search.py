@@ -2,7 +2,9 @@
 
 The canonical SOP is explicit and request-local:
 
-``initialize -> validate -> lookup -> respond``
+``initialize -> lookup -> respond``
+
+Validation runs inside ``initialize``; it is not a stage of its own.
 
 HTTP conversion is delegated to :mod:`src.interfaces.http.presenters`. The
 legacy :meth:`SearchWorkflow.run` method remains as a thin compatibility wrapper;
@@ -13,8 +15,7 @@ from __future__ import annotations
 
 import logging
 import time
-from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, get_args
 
 from src.application.models import (
     LanguageCode,
@@ -30,7 +31,11 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-_LANGUAGES = frozenset({"en", "zh", "ja", "ko"})
+_LANGUAGES = frozenset(get_args(LanguageCode))
+
+
+def _elapsed_ms(started_at: float) -> float:
+    return round((time.perf_counter() - started_at) * 1000, 1)
 
 
 class InvalidSearchRequestError(ValueError):
@@ -75,29 +80,19 @@ class SearchWorkflow:
         )
 
         self._validate(execution)
-        self._measure(execution, SearchStage.LOOKUP, self._run_lookup)
+
+        execution.stage = SearchStage.LOOKUP
+        lookup_started_at = time.perf_counter()
+        self._run_lookup(execution)
+        execution.timing_ms[SearchStage.LOOKUP.value] = _elapsed_ms(lookup_started_at)
 
         execution.stage = SearchStage.RESPOND
         return SearchOutcome(
             command=command,
             lang=execution.lang,
-            elapsed_ms=round((time.perf_counter() - started_at) * 1000, 1),
+            elapsed_ms=_elapsed_ms(started_at),
             lookup_result=execution.lookup_result,
             timing_ms=dict(execution.timing_ms),
-        )
-
-    def _measure(
-        self,
-        execution: SearchExecution,
-        stage: SearchStage,
-        operation: Callable[[SearchExecution], None],
-    ) -> None:
-        execution.stage = stage
-        started_at = time.perf_counter()
-        operation(execution)
-        execution.timing_ms[stage.value] = round(
-            (time.perf_counter() - started_at) * 1000,
-            1,
         )
 
     @staticmethod
@@ -114,16 +109,12 @@ class SearchWorkflow:
         except Exception as exc:
             logger.warning("Lookup failed: %s", exc)
             return
-        if result is None or not result.matches:
-            return
-        execution.lookup_result = result
+        if result is not None and result.matches:
+            execution.lookup_result = result
 
 
 __all__ = [
     "InvalidSearchRequestError",
-    "SearchCommand",
-    "SearchOutcome",
-    "SearchStage",
     "SearchWorkflow",
     "detect_language",
 ]

@@ -1,7 +1,7 @@
-"""FastAPI composition root for the optional Construct 3 search service.
+"""FastAPI composition root for the optional Construct 3 lookup service.
 
 The HTTP layer owns routing and dependency construction only.  Request/response
-contracts live in :mod:`src.interfaces.http.models`; the searchable SOP lives in
+contracts live in :mod:`src.interfaces.http.models`; the search SOP lives in
 :mod:`src.application.search`.
 """
 

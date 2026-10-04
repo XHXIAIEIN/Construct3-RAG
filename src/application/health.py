@@ -1,4 +1,4 @@
-"""Transport-independent health use case for the optional search service."""
+"""Transport-independent health use case for the optional lookup service."""
 
 from __future__ import annotations
 

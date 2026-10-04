@@ -1,4 +1,5 @@
 """Structural ports implemented by the lookup runtime adapter."""
+
 from __future__ import annotations
 
 from collections.abc import Callable

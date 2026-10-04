@@ -42,21 +42,6 @@ class AppSettings:
     runtime: RuntimeSettings
 
 
-def _string(source: Mapping[str, str], key: str, default: str) -> str:
-    value = source.get(key)
-    return default if value is None else value
-
-
-def _integer(source: Mapping[str, str], key: str, default: int) -> int:
-    value = source.get(key)
-    return default if value is None else int(value)
-
-
-def _path(source: Mapping[str, str], key: str, default: Path) -> Path:
-    value = source.get(key)
-    return default if value is None else Path(value)
-
-
 def load_settings(
     environ: Mapping[str, str] | None = None,
     base_dir: Path | None = None,
@@ -77,13 +62,13 @@ def load_settings(
     directory = Path(explicit_schema) if explicit_schema else data_dir / "c3-schemas"
     schema = SchemaSettings(
         version=schema_version(directory),
-        cdn_base=_string(source, "C3_CDN_BASE", "https://editor.construct.net"),
-        cache_dir=_path(source, "C3_CACHE_DIR", root / ".cache" / "c3-cdn"),
+        cdn_base=source.get("C3_CDN_BASE", "https://editor.construct.net"),
+        cache_dir=Path(source.get("C3_CACHE_DIR", root / ".cache" / "c3-cdn")),
         directory=directory,
     )
 
     runtime = RuntimeSettings(
-        server_port=_integer(source, "RAG_SERVER_PORT", 8765),
+        server_port=int(source.get("RAG_SERVER_PORT", 8765)),
     )
     return AppSettings(paths=paths, schema=schema, runtime=runtime)
 

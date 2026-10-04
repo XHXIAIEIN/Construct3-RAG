@@ -48,6 +48,7 @@ class SearchOutcome:
     lookup_result: LookupResponse | None
     timing_ms: dict[str, float]
 
+
 __all__ = [
     "LanguageCode",
     "SearchCommand",
