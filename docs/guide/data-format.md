@@ -336,4 +336,5 @@ without the page's comments and navigation.
 Before changing a file under `data/`, read `data/AGENTS.md`: it says which
 directories `scripts/init.py` and the update workflow
 (`.github/workflows/update.yml`) regenerate and which are replaced by hand.
-The refresh and the review of its result are in `docs/dev/data-pipeline.md`.
+To refresh the data and review the result, follow "Version Update" in
+`docs/dev/data-pipeline.md`.

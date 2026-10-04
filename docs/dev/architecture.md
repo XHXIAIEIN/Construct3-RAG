@@ -42,8 +42,8 @@ src/
   requirements.txt     The service's dependencies; reading data/ needs none
 ```
 
-`src/AGENTS.md` describes the files of each package and the rules for
-changing them.
+Before adding, moving or changing a file in a package, read that package's
+section of `src/AGENTS.md`.
 
 The import paths are `src.interfaces.http.models` for the HTTP contracts,
 `src.domain.lookup` for the lookup records and `src.lookup` for the lookup.

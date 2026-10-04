@@ -39,10 +39,7 @@ The runs are kept on the evaluation machine under
 Direct Lookup itself widened a topic word through undirected synonym groups
 and added whole ACE categories to a hit. The groups chained into each other:
 保存 grew to about 220 words, so `Array 保存` was answered with `Load`. With
-both expansions turned off, the lookup declined that query. The audit is in
-`docs/decisions/query-understanding-stage-zero-audit.md` and
-`query-understanding-refactor-requirements.md` of commit
-`8c71768425fcf32c77009a295d328f83e1510757`, the last that holds them.
+both expansions turned off, the lookup declined that query.
 
 ## Options
 

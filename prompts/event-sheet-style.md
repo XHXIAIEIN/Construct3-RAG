@@ -4,8 +4,8 @@ Read this after the design, before events go into a project or a
 generator. It shows how the official examples
 (`Construct-Example-Projects`, the games by Viridino and Forsteri Studios)
 organise, name and comment a sheet. If the user's sheet has conventions of
-its own, follow those. The evidence behind the style checks, and the reason
-for each rule that departs from the examples, is in
+its own, follow those. If a rule here differs from what an example does, or
+a style check's threshold is in question, read
 `docs/decisions/event-sheet-design-guidance.md`.
 
 ## Six habits to avoid
