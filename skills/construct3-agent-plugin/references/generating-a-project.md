@@ -59,7 +59,9 @@ overwrites the files it produces.
 ## Plan the state
 
 The plan holds a state table before it holds any event: one row per piece
-of state the game keeps. Every later session follows the data model the
+of state the game keeps. For a new game the table is the `state` of its
+design, which `scripts/check_design.py` checks with the rules and tests
+around it (`designing-a-game.md` beside this file). Every later session follows the data model the
 plan fixes. A generated card game planned 40 globals, scratch `TMP` shared
 between functions, piles as comma-separated strings and each card as a
 17-field string, and every refactor after it fought that plan.
@@ -109,7 +111,8 @@ drawing styles on one screen (`Construct3-RAG/docs/decisions/art-from-the-image-
 
 ## Build, check, open
 
-Design first, as `Construct3-RAG/prompts/event-sheet-thinking.md` says:
+Design first, as `designing-a-game.md` beside this file and
+`Construct3-RAG/prompts/event-sheet-thinking.md` say:
 relations, an official example with the same behaviors, the Native first
 table, the Feel table of `Construct3-RAG/prompts/references/feel.md`, the
 sheets, groups and objects of
@@ -136,7 +139,9 @@ above. Then:
 3. Open and preview it, `python scripts/open_in_editor.py --preview`, until
    it prints `opened` and `preview: ... no errors`. A `failed` or a
    `runtime:` line names the sheet and event at fault: fix the generator,
-   not the JSON, and run both again.
+   not the JSON, and run both again. A game with a design then plays its
+   tests, `python scripts/play_design.py tools/design.json`, until every
+   test passes in the editor as it passed in the prototype.
 4. Hand over: ask the user to open the folder (**Menu** > **Project** >
    **Open**, the local project folder option) and to preview, and say what
    to look at. When no tool of the session could open it, ask for the text

@@ -74,6 +74,8 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 - `edit_sheet.py` 按一份用这些编号写的 JSON 计划，添加、移动、替换或删除事件。写入之前，它先检查结果。
 - `check_project.py` 按 schemas 和编辑器打开项目时的规则，检查每个项目文件。每条问题都指出位置，能给出写法时也一并给出。
 - `review_design.py` 读取事件表，报告设计上难读或容易出错的地方，比如条件太多的事件、同一个事实存在两处、临时用的全局变量。每条问题都指出事件，并给出应该换成的写法。然后它给 agent 一组固定的问题，让它对照 `print_sheet.py` 的输出回答。
+- `check_design.py` 在写任何项目文件之前检查新游戏的设计：核心循环、状态表、输入、规则、胜负和验收测试。然后它直接在规则上跑这些测试，相当于一个不用编辑器的原型。每条问题都指出它在设计里的位置，没通过的测试会指出是哪一步，以及当时各个状态的值。
+- `play_design.py` 在 Construct 3 编辑器里，对照设计做出来的游戏再跑一遍同样的测试。它先对照项目文件，检查设计里的名字和初始值。每个失败都指出测试、步骤，以及要对照的规则对应的事件。
 - `check_look.py` 按 `assets/look-manifest.json` 里的硬性规则，检查生成的游戏的占位美术，比如网格、调色板和文字对比度。
 - `prepare_art.py` 把 agent 的生图工具画的图接进游戏。它为生成器要的每张图打印一条提示词。然后它把生图工具画好的每张图从背景里抠出来，缩放进对应占位图形的框里。它需要 Pillow。
 - `open_in_editor.py` 在 Construct 3 编辑器里打开项目，报告打开成功，或者给出编辑器的提示。加 `--preview` 时，它把游戏运行几秒，报告运行时错误和出错的事件。加 `--typescript` 时，编辑器把项目的 TypeScript 类型定义写进 `scripts/ts-defs/`。
@@ -89,15 +91,16 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 
 skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。除了需要 Pillow 的 `prepare_art.py`，它们只用 Python 标准库。它们只在两处联网：`check_project.py` 从 clone 的上游仓库 fetch，打开编辑器的脚本在你电脑上的浏览器里打开 Construct 3 编辑器和它的预览。
 
-- **只读**：`lookup_ace.py`、`check_project.py`、`review_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。设置了 `CONSTRUCT3_RAG_OFFLINE` 时，它不 fetch。
+- **只读**：`lookup_ace.py`、`check_project.py`、`review_design.py`、`check_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。设置了 `CONSTRUCT3_RAG_OFFLINE` 时，它不 fetch。
 - **写文件**：
   - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。
   - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。项目的 `tools/build_project.py` 里两行标记之间的辅助函数如果是旧版本、又没人改过，它会换成 skill 当前的版本，文件其余部分不动。加 `--dry-run` 可以先看会改什么。
+  - `play_design.py --adopt-starts` 在原型用项目的初始值仍然通过时，把这些初始值写回设计文件。
   - `prepare_art.py` 把处理好的图写进项目的 `art/`。它读取 `art/raw/` 里的原图，不改动它们。
   - `screenshot_sheet.py` 把截图写到项目的 `.build/sheets/`，或 `--out` 指定的文件夹。
   - `pack_project.py` 写入 `--out` 指定的压缩包或文件夹。默认写到项目 `.build/` 下的一个 `.c3p`，这个文件夹专放构建产物。解包时，默认写到压缩包旁边的文件夹。
   - agent 把 `assets/build_project.py` 复制到项目的 `tools/`，按游戏改写。这份副本运行时，会重写它生成的项目文件，然后运行 `check_project.py`。
-- **打开编辑器**：`open_in_editor.py`、`preview_project.py`、`review_look.py`、`screenshot_sheet.py` 和 `pack_project.py --open` 启动本机的 Edge、Chrome 或 Chromium。
+- **打开编辑器**：`open_in_editor.py`、`preview_project.py`、`play_design.py`、`review_look.py`、`screenshot_sheet.py` 和 `pack_project.py --open` 启动本机的 Edge、Chrome 或 Chromium。
   - 浏览器默认无头运行，加 `--headed` 才显示窗口。它使用项目 `.tmp/` 下单独的配置目录，`--profile` 可以换到别的文件夹。
   - 浏览器打开 Scirra 提供的编辑器 `https://editor.construct.net/`，预览时还会打开 `https://preview.construct.net`。脚本在浏览器里把项目交给编辑器页面，所以项目文件留在你的电脑上。
   - 脚本通过 `127.0.0.1` 上的 DevTools 端口控制浏览器。计划里的 `js` 和 `until` 步骤会在预览里运行 JavaScript。`--install-addon` 会把 `.c3addon` 装进这个配置目录里的编辑器。
