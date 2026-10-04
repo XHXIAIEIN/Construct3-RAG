@@ -29,6 +29,15 @@ and the built game is held to the same tests.
   a placing rule that writes the board and shows no piece, a game over at
   launch that a fixture steps past. The player sees instances: their text,
   place, frame, visibility, and how many of them there are.
+- One tap is several triggers in a fixed order, not the sheet's: Touch *On
+  any touch start*, then *On touched object*, then *On tap* at the release.
+  A prototype that runs only the input a test names misses a tap that runs
+  the rules of two inputs, and one that follows the sheet's order runs the
+  two in the wrong order.
+- A test that ends right after the step that starts a delayed effect, such
+  as a restart after a Wait, passes although the player later sees the
+  effect. A phase that a Wait sets after the end is a shape the guide
+  recommends, so only a restart after the last step is a fault by itself.
 - A value read in the running game has moved on by the time it is read; a
   start value read from the project files has not. Where an instance lands
   is the layout grid's to say, not the design's.
@@ -77,6 +86,19 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
   test expects one such row after it. A rule fired by an input that writes
   an Array cell changes a count in its own chain, since the cell is not on
   screen. Neither the win nor the lose may hold before the first input.
+- Every tap is a tap on the screen: it runs the rules of every screen input
+  whose region holds it, in the design's order, before the rules of the
+  object it taps. An input on a point may name its region; a tap on an
+  object or at an argument's position counts as outside every region. A
+  rule that reads the position of a tap the prototype does not know stops
+  the test, with the condition to add. A failed expect after a tap names
+  the rule the tap ran as a tap on the screen.
+- A test runs 1 s more after its last step, and the expects at its end are
+  read again. In the prototype a restart in that second that breaks one is
+  refused, with the step that started it; a change by anything else is the
+  game running on. The expects that still hold are read again after the
+  same second in the editor, where a trigger that fires later than the
+  design's shows.
 - The expressions are parsed into trees and evaluated by the script; the
   editor's tests are JavaScript generated from the same trees, with names
   checked against the state and values encoded by the script, so nothing a
@@ -100,6 +122,9 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
   a count over a region or a variable, not only over a frame.
 - The prototype and the editor disagree on a construct: the simulator
   follows the runtime there, or the construct is refused.
+- A tapped object lies inside a screen input's region, which only the
+  editor run shows: the binding of a tap on an object would carry where the
+  object lies.
 - A genre needs what the expression language cannot state, such as physics
   or a behavior's motion: the design abstracts it, and a test that depends
   on it is left to the editor run.

@@ -274,6 +274,7 @@ console.log(JSON.stringify([{body}]));
 
 def test_a_failed_expect_names_the_rule_that_would_change_it_and_the_condition_that_holds_it_back(tmp_path):
     design = example()
+    design["inputs"][1]["game"]["region"] = [0, 0.8, 1, 1]      # a tap on a hole is outside it: not a tap on again
     design["tests"][0]["steps"] = [{"set": "hole = 4"}, {"set": "over = 1"}, {"do": "hit", "h": 4}, {"expect": "score = 1"}]
     code, out = check(tmp_path, design)
     assert code == 1
@@ -448,3 +449,105 @@ def test_the_first_screen_is_held_to_the_prototype():
     assert found == ["state[1]: scoreLine is \"Score: 3\" on the first screen of the game (ScoreText.text) and "
                      "\"Score: 0\" in the prototype. Compare the start rules' events and where the project starts it "
                      "with the design"]
+
+
+def tapping(restart_if, win_do, tests=None) -> dict:
+    """A board game in small: three taps on a cell win, a tap on the screen starts a new game."""
+    return {"game": "Three", "core_loop": "tap cells until three are placed", "reference": example()["reference"],
+            "screen": {"board": "centre"},
+            "state": [{"name": "n", "start": 0, "stored_in": "global"}, {"name": "over", "start": 0, "stored_in": "global"},
+                      {"name": "pieces", "start": 0, "stored_in": "Piece.shown"}],
+            "inputs": [{"name": "place", "player": "tap a cell", "args": ["c"], "game": {"tap": "Cell", "args": {"c": "col"}}},
+                       {"name": "again", "player": "tap once it is over", "game": {"tap": [0.5, 0.9]}}],
+            "rules": [{"id": "new-game", "on": "start", "do": ["n = 0", "over = 0"]},
+                      {"id": "place", "on": "place", "if": ["over = 0"], "do": ["n += 1", "pieces += 1"], "feedback": "a piece shows",
+                       "children": [{"id": "win", "if": ["n >= 3"], "do": win_do}]},
+                      {"id": "restart", "on": "again", "if": restart_if, "do": ["wait 0.3", "restart"],
+                       "feedback": "a new game"}],
+            "win": "over = 1", "lose": "none",
+            "tests": tests or [
+                {"name": "three win", "steps": [{"do": "place", "c": 0}, {"do": "place", "c": 1}, {"do": "place", "c": 2},
+                                                {"expect": "over = 1"}, {"expect": "pieces = 3"}]},
+                {"name": "a tap restarts", "steps": [{"set": "n = 3"}, {"set": "over = 1"}, {"do": "again"}, {"wait": 0.5},
+                                                     {"expect": "over = 0"}, {"expect": "n = 0"}]}]}
+
+
+def test_a_tap_on_an_object_fires_the_taps_on_the_screen_first_as_the_runtime_does(tmp_path):
+    """Touch On any touch start fires for every tap and before On touched object, whatever the sheet's order:
+    a restart that tests the state the winning tap sets does not fire on that tap."""
+    code, out = check(tmp_path, tapping(["over = 1"], ["over = 1"]))
+    assert code == 0, out
+    code, out = check(tmp_path, tapping([], ["over = 1"]))      # a restart on every tap
+    assert code == 1
+    assert ("tests[0].steps[2] does place, a tap on Cell. Every tap is also a tap on the screen, so Touch On any "
+            "touch start fires again for it, before On touched object, and rule restart ran.") in out
+    design = tapping([], ["over = 1"])
+    design["inputs"][1]["game"]["region"] = [0, 0.8, 1, 1]
+    code, out = check(tmp_path, design)
+    assert code == 0, out
+
+
+def test_a_test_ends_with_a_settle_that_shows_what_a_wait_held_back(tmp_path):
+    code, out = check(tmp_path, tapping(["over = 1"], ["over = 1", "wait 0.3", "restart"]))
+    assert code == 1
+    assert ("tests[0].steps[3]: expect over = 1 held at its step and is false 1 s after the test's last step; over = 0. "
+            "over was changed by the restart of rule win, started by tests[0].steps[2] (place)") in out
+    assert "give rule win a condition that is false then" in out
+
+
+def test_a_tap_whose_position_the_prototype_does_not_know_is_refused_where_a_rule_reads_it(tmp_path):
+    design = tapping(["over = 1"], ["over = 1"])
+    design["state"].append({"name": "px", "start": 0, "stored_in": "Paddle.x"})
+    design["inputs"].append({"name": "steer", "player": "tap where the paddle goes", "args": ["x"],
+                             "game": {"tap": "screen", "args": {"x": "x"}}})
+    design["rules"].append({"id": "follow", "on": "steer", "do": ["px = x"], "feedback": "the paddle moves"})
+    design["tests"].append({"name": "steer", "steps": [{"do": "steer", "x": 100}, {"expect": "px = 100"}]})
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert ("tests[0].steps[0]: the prototype stopped here: place is a tap on Cell, and every tap is also a tap on the "
+            "screen: Touch On any touch start fires steer for it, before On touched object. Rule follow then reads x, "
+            "the position of that tap, which the prototype does not know: in the game it is where the Cell lies.") in out
+    design["rules"][-1]["if"] = ["over = 0"]      # the tap that starts a new game does not steer; a cell's tap does
+    code, out = check(tmp_path, design)
+    assert "tests[0].steps[0]: the prototype stopped here" in out and "tests[1].steps[2]" not in out, out
+
+
+def test_a_region_belongs_to_a_tap_on_a_point_and_holds_it(tmp_path):
+    design = example()
+    design["inputs"][1]["game"]["region"] = [0, 0, 1, 0.5]
+    design["inputs"][0]["game"]["region"] = [0, 0, 1, 1]
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert "inputs[1].game.tap: [0.5, 0.9] lies outside its own region [0, 0, 1, 0.5]" in out
+    assert "inputs[0].game.region: only a tap on a point has a region" in out
+
+
+def test_play_design_reads_the_last_expects_again_after_the_settle(tmp_path):
+    """The plan ends with the settle and the expects the prototype still held then; a timer's change is left out.
+    A settled expect that fails in the game is named as a change after the last step."""
+    design = tmp_path / "design.json"
+    design.write_text(json.dumps(example()), encoding="utf-8")
+    whack_project(tmp_path / "game")
+    plans = tmp_path / "plans.json"
+    code, out = run(tmp_path, SKILL / "scripts" / "play_design.py", str(design), "--project", str(tmp_path / "game"),
+                    "--plan-only", str(plans))
+    assert code == 0, out
+    written = json.loads(plans.read_text(encoding="utf-8"))
+    hit = written[1]["steps"]
+    at = hit.index({"wait": 1.0, "note": "settle"})
+    again = hit[at + 1:]
+    assert len(again) == 2 and all(s["note"] == "settled" for s in again)
+    assert [s["js"] for s in again] == [s["js"] for s in hit[at - 2:at]]
+    settled = [s["js"] for s in written[4]["steps"] if s.get("note") == "settled"]
+    assert len(settled) == 1 and "over" in settled[0]      # escapes goes on with the timer: not read again
+    pd, gm, cd = module("play_design"), module("game_model"), module("check_design")
+    data = gm.Design(example())
+    _, origin = pd.test_plan(data.tests[0], data, pd.Model(tmp_path / "game"), cd.run_test(data, data.tests[0])["stable"])
+    steps = [{"ok": True, "value": {"ok": not (o and o["kind"] == "settled" and o["text"] == "score = 1"),
+                                    "seen": {"score": 0}}} for o in origin]
+    runs = [{"started": True, "steps": [{"ok": True}, {"ok": True, "value": {}}]}, {"started": True, "steps": steps}]
+    lines, code = pd.report(data, [origin], {"status": "opened", "project": "p", "title": "t", "editor": "e",
+                                             "preview": {"plans": runs}})
+    assert code == 1
+    assert ("FAIL  a hit scores: tests[0].steps[2] expect score = 1: held at its step and is false 1 s after the "
+            "test's last step in the game") in "\n".join(lines)

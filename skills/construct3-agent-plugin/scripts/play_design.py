@@ -18,6 +18,10 @@ design's expressions by this script, and plays them in one editor session:
     the prototype; a failure names the test, the step, the values the game
     held, and the rules whose events to compare with the design
   - a set is the test's fixture, written into the runtime
+  - after the last step the game runs 1 s more. The test's last expects that
+    still hold in the prototype after that second are read again, so an
+    effect that a Wait or a later trigger delays shows (Touch On tap fires
+    at the release)
 
 Before it opens the editor it reads the project's files: every piece of state
 starts as the design says (a global's initial value, an instance's place,
@@ -39,6 +43,7 @@ import time
 from pathlib import Path
 
 import c3project as c3
+import check_design as cd
 import game_model as gm
 import open_in_editor as oe
 import preview_project as play
@@ -333,15 +338,14 @@ def starts(design: gm.Design, model: Model) -> tuple[list[str], dict[str, object
 
 def adopt(data: dict, differ: dict[str, object]) -> tuple[dict, list[str]]:
     """The design with the project's start values, and what the prototype then refuses."""
-    check = __import__("check_design")
     data = json.loads(json.dumps(data))
     for row in data["state"]:
         if row.get("name") in differ:
             row["start"] = differ[row["name"]]
     design = gm.Design(data)
-    check.coverage(design)
+    cd.coverage(design)
     if not design.problems:
-        check.play(design)
+        cd.play(design)
     return data, [f"{path}: {what}" for path, what in design.problems]
 
 
@@ -415,8 +419,17 @@ def launch_findings(design: gm.Design, got: dict) -> list[str]:
     return out
 
 
-def test_plan(test: dict, design: gm.Design, model: Model) -> tuple[dict, list[dict]]:
-    """The plan of one test, and for each plan step the test step it plays (None for a pause)."""
+def expect_js(node: gm.Node, design: gm.Design) -> str:
+    names = sorted(n for n in gm.names_in(node) if n in design.state and design.state[n].kind != "array")
+    seen = ", ".join(f"{json.dumps(n)}: (() => {{ try {{ return {read(n, design)}; }} catch (e) {{ return e.message; }} }})()"
+                     for n in names)
+    return (f"{HELPERS}\nlet ok;\ntry {{ ok = H.t({compile_expr(node, design)}); }} "
+            f"catch (e) {{ ok = e.message; }}\nreturn {{ok, seen: {{{seen}}}}};")
+
+
+def test_plan(test: dict, design: gm.Design, model: Model, stable: list[dict] = ()) -> tuple[dict, list[dict]]:
+    """The plan of one test, and for each plan step the test step it plays (None for a pause). stable holds the
+    last expects that held after the settle in the prototype: the plan reads them again after the same settle."""
     steps, origin = [{"wait": 0.4}], [None]
     for s in test["steps"]:
         if s["kind"] == "do":
@@ -445,12 +458,14 @@ def test_plan(test: dict, design: gm.Design, model: Model) -> tuple[dict, list[d
             steps.append({"js": f"{HELPERS}\n{write(s['effect'], design)}\nreturn true;"})
             origin.append(s)
         else:
-            names = sorted(n for n in gm.names_in(s["node"]) if n in design.state and design.state[n].kind != "array")
-            seen = ", ".join(f"{json.dumps(n)}: (() => {{ try {{ return {read(n, design)}; }} catch (e) {{ return e.message; }} }})()"
-                             for n in names)
-            steps.append({"js": f"{HELPERS}\nlet ok;\ntry {{ ok = H.t({compile_expr(s['node'], design)}); }} "
-                                f"catch (e) {{ ok = e.message; }}\nreturn {{ok, seen: {{{seen}}}}};"})
+            steps.append({"js": expect_js(s["node"], design)})
             origin.append(s)
+    if stable:
+        steps.append({"wait": gm.SETTLE, "note": "settle"})
+        origin.append(None)
+        for s in stable:
+            steps.append({"js": expect_js(s["node"], design), "note": "settled"})
+            origin.append({**s, "kind": "settled"})
     return {"viewport": list(model.size), "touch": True, "steps": steps}, origin
 
 
@@ -556,13 +571,21 @@ def report(design: gm.Design, plans_meta: list, result: dict) -> tuple[list[str]
                 where = s["path"] if s else test["path"]
                 failed = f"{where}: {d['said'].split('; the window then')[0]}"
                 continue
-            if s and s["kind"] == "expect":
+            if s and s["kind"] in ("expect", "settled"):
                 got = d.get("value") or {}
                 if got.get("ok") is not True:
                     seen = ", ".join(f"{n} = {gm.show(v) if not isinstance(v, (dict, list)) else v}"
                                      for n, v in (got.get("seen") or {}).items())
                     why = f"{got['ok']}" if isinstance(got.get("ok"), str) else "false in the game, true in the prototype"
+                    if s["kind"] == "settled" and not isinstance(got.get("ok"), str):
+                        why = (f"held at its step and is false {gm.SETTLE:g} s after the test's last step in the game, "
+                               f"and still holds then in the prototype. An event changed it later than the design does: "
+                               f"after a Wait, or on a trigger that fires later (Touch On tap fires at the release, "
+                               f"after On touched object)")
                     rules = writers(design, gm.names_in(s["node"]))
+                    if s["kind"] == "settled":
+                        rules += [r.id for r in design.all_rules()
+                                  if r.id not in rules and any(e[0] == "restart" for e in r.do)]
                     failed = (f"{s['path']} expect {s['text']}: {why}" + (f"; {seen}" if seen else "") +
                               (f". Compare the events of rule{'s' if len(rules) > 1 else ''} {', '.join(rules)} with "
                                f"the design: print_sheet.py prints them" if rules else ""))
@@ -632,7 +655,7 @@ def main() -> int:
     plans = [first_screen_plan(design, model)]
     meta = []
     for t in design.tests:
-        plan, origin = test_plan(t, design, model)
+        plan, origin = test_plan(t, design, model, cd.run_test(design, t)["stable"])
         plans.append(plan)
         meta.append(origin)
     for plan in plans:

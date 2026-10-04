@@ -15,11 +15,14 @@ instances that show it.
 
 Then it runs the rules as a prototype: each test from a first launch, 60
 ticks a second, an input followed by 0.15 s of play, as the editor runs the
-events. It refuses a failed expect with the values the state held, a rule
-no test reaches, a win or a lose no test reaches or that holds at launch, an
-input after which no test expects what the player sees, a restart that
-leaves a value other than a new game's, and rules that fire each other
-without end.
+events. A tap is also a tap on the screen: it fires the screen inputs whose
+region holds it, before the tapped object's rules, as the runtime does. After
+the last step the game runs 1 s more and the test's last expects are read
+again, so a restart that a Wait holds back shows. It refuses a failed expect
+with the values the state held, a rule no test reaches, a win or a lose no
+test reaches or that holds at launch, an input after which no test expects
+what the player sees, a restart that leaves a value other than a new game's,
+and rules that fire each other without end.
 A design that passes holds a game whose rules close the loop; build it, one
 rule per event, then play the same tests in the editor with play_design.py.
 """
@@ -236,6 +239,87 @@ def launch(design: gm.Design) -> None:
                             f"rule, and play the tests from there rather than from a fixture")
 
 
+def run_test(design: gm.Design, t: dict) -> dict:
+    """Play one test from a first launch, then the settle. Returns a dict: "sim" (the Sim at the end), "failed"
+    ((path, what) or None), "cover" (what the steps reached before the settle: ran, won, lost, restarts,
+    after_restart), "stable" (the last expects that still hold after the settle; the editor reads them again after
+    the same settle). Raises ModelError when the start rules fail."""
+    sim = gm.Sim(design)
+    failed = None
+    last_do = None
+    for step in t["steps"]:
+        try:
+            if step["kind"] == "do":
+                sim.fire(step["input"], step["args"], step["path"])
+                last_do = step
+            elif step["kind"] == "wait":
+                sim.advance(step["seconds"])
+            elif step["kind"] == "set":
+                sim.set(step["effect"])
+            elif not gm.truth(sim.ev(step["node"], {})):
+                seen = ", ".join(f"{n} = {state_text(sim, n)}" for n in sorted(gm.names_in(step["node"])))
+                rules = ", ".join(f"{rid} x{c}" for rid, c in sim.ran.items()) or "none"
+                failed = (step["path"], f"expect {step['text']}: false in the prototype; {seen}. Rules that "
+                                        f"ran in this test so far: {rules}." + echo_note(design, sim, last_do, step["node"])
+                                        + why_not(design, sim, step["node"])
+                                        + " Change the rules, or the test when it expects the wrong thing")
+                break
+        except gm.ModelError as e:
+            failed = (step["path"], f"the prototype stopped here: {e}")
+            break
+    tail = []
+    for step in reversed(t["steps"]):
+        if step["kind"] != "expect":
+            break
+        tail.insert(0, step)
+    stable: list[dict] = []
+    seen_by_steps = {"ran": dict(sim.ran), "won": sim.won, "lost": sim.lost, "restarts": sim.restarts,
+                     "after_restart": list(sim.after_restart)}       # coverage counts the steps, not the settle
+    if failed or not tail:
+        return {"sim": sim, "cover": seen_by_steps, "failed": failed, "stable": stable}
+    try:
+        sim.settle()
+    except gm.ModelError as e:
+        return {"sim": sim, "cover": seen_by_steps, "failed": (t["path"], f"in the {gm.SETTLE:g} s after the last "
+                                                                          f"step the prototype stopped: {e}"),
+                "stable": stable}
+    for step in tail:
+        if gm.truth(sim.ev(step["node"], {})):
+            stable.append(step)
+            continue
+        late = [(n, *sim.late[n]) for n in sorted(gm.names_in(step["node"])) if n in sim.late]
+        if late and not failed:
+            n, rid, said = late[0]
+            seen = ", ".join(f"{m} = {state_text(sim, m)}" for m in sorted(gm.names_in(step["node"])))
+            failed = (step["path"], f"expect {step['text']} held at its step and is false {gm.SETTLE:g} s after the "
+                                    f"test's last step; {seen}. {n} was changed by {said}: the player sees that, and a "
+                                    f"test that ends sooner does not. If the step should not start that restart, give "
+                                    f"rule {rid} a condition that is false then, such as a state that the end sets after "
+                                    f"a wait, or a \"region\" for a tap on the screen that the other tap lies outside. "
+                                    f"If the change is meant, end the test after it with a wait, then expects of the "
+                                    f"state it leaves")
+    return {"sim": sim, "cover": seen_by_steps, "failed": failed, "stable": stable}
+
+
+def echo_note(design: gm.Design, sim: gm.Sim, step: dict | None, node: gm.Node) -> str:
+    """For a failed expect after a tap: the rules the tap ran as a tap on the screen that changed what it reads."""
+    if not step:
+        return ""
+    names = gm.names_in(node)
+    hit = [(screen, rid) for screen, rid in sim.echoed
+           if any(e[0] == "set" and e[1][0] in names for e in design.by_id[rid].do)
+           or any(e[0] == "restart" for e in design.by_id[rid].do)]
+    if not hit:
+        return ""
+    screen, rid = hit[0]
+    tap = step["input"]
+    return (f" {step['path']} does {tap}, {gm.how_tapped(design.inputs[tap])}. Every tap is also a tap on the "
+            f"screen, so Touch On any touch start fires {screen} for it, before On touched object, and rule {rid} ran. "
+            f"If {rid} should not run on that tap, give it a condition that is false then: a state that the rule "
+            f"that ends the game sets after a wait, or a \"region\" [x0, y0, x1, y1] for {screen} that the tapped "
+            f"object lies outside.")
+
+
 def play(design: gm.Design) -> list[str]:
     """Run every test; return its result lines and add a problem for each failure."""
     lines = []
@@ -244,38 +328,19 @@ def play(design: gm.Design) -> list[str]:
     won = lost = restarted = False
     launch(design)
     for t in design.tests:
+        done_inputs |= {s["input"] for s in t["steps"] if s["kind"] == "do"}
         try:
-            sim = gm.Sim(design)
+            result = run_test(design, t)
         except gm.ModelError as e:
             design.bad("rules", f"the start rules fail: {e}")
             return lines
-        failed = None
-        for k, step in enumerate(t["steps"]):
-            try:
-                if step["kind"] == "do":
-                    done_inputs.add(step["input"])
-                    sim.fire(step["input"], step["args"])
-                elif step["kind"] == "wait":
-                    sim.advance(step["seconds"])
-                elif step["kind"] == "set":
-                    sim.set(step["effect"])
-                else:
-                    if not gm.truth(sim.ev(step["node"], {})):
-                        seen = ", ".join(f"{n} = {state_text(sim, n)}" for n in sorted(gm.names_in(step["node"])))
-                        rules = ", ".join(f"{rid} x{c}" for rid, c in sim.ran.items()) or "none"
-                        failed = (step["path"], f"expect {step['text']}: false in the prototype; {seen}. Rules that "
-                                                f"ran in this test so far: {rules}." + why_not(design, sim, step["node"])
-                                                + " Change the rules, or the test when it expects the wrong thing")
-                        break
-            except gm.ModelError as e:
-                failed = (step["path"], f"the prototype stopped here: {e}")
-                break
-        for rid, c in sim.ran.items():
+        cover, failed = result["cover"], result["failed"]
+        for rid, c in cover["ran"].items():
             ran[rid] = ran.get(rid, 0) + c
-        won |= sim.won
-        lost |= sim.lost
-        restarted |= sim.restarts > 0
-        for name, now, first in sim.after_restart[:3]:
+        won |= cover["won"]
+        lost |= cover["lost"]
+        restarted |= cover["restarts"] > 0
+        for name, now, first in cover["after_restart"][:3]:
             design.bad(t["path"], f"after the restart {name} is {gm.show(now)}, and a new game starts with "
                                   f"{gm.show(first)}: a restart keeps global variables, so set {name} in a "
                                   f"\"start\" rule, or mark the row \"keep\": true when it is meant to last (a best score)")
@@ -283,8 +348,8 @@ def play(design: gm.Design) -> list[str]:
             design.bad(*failed)
             lines.append(f"  FAIL  {t['name']}: {failed[0]}")
         else:
-            said = [w for w, hit in (("win reached", sim.won), ("lose reached", sim.lost),
-                                     ("restarted", sim.restarts)) if hit]
+            said = [w for w, hit in (("win reached", cover["won"]), ("lose reached", cover["lost"]),
+                                     ("restarted", cover["restarts"])) if hit]
             lines.append(f"  ok    {t['name']}: {len(t['steps'])} steps" + (f", {', '.join(said)}" if said else ""))
     if any(p[0].startswith("tests") for p in design.problems):
         return lines        # coverage counts only once the tests run

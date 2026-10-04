@@ -56,6 +56,7 @@ variable that flips, read
 - Else is decided per block, not per instance. Branch per instance with a second event and the inverted condition, or override a default.
 - Else does not narrow. It cannot directly follow a trigger block, only a normal sub-event inside one.
 - Touch *On tap* skips a tap within 666 ms and 25 px of the one before it, which fires *On double-tap*. A button that counts every press uses *On touched object* (start).
+- One tap fires *On any touch start*, then *On touched object*, then *On tap* at the release, whatever the sheet's order. A restart on *On tap*, or on *On touched object* in a later event, fires on the tap that ends the game, so make it test a value that the end sets after a *Wait*.
 
 ### Functions
 

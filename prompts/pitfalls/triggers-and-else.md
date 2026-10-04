@@ -69,3 +69,14 @@ Sources and the rule for adding an entry are in the index,
   preview, 2026-09-28: 7 mouse clicks 0.3 s apart on the button made 4
   pieces, 8 clicks 0.7 s apart made 8; on *On touched object* (start), 7
   clicks 0.3 s apart made 7]
+- One tap on an object fires Touch *On any touch start* first, then *On
+  touched object* (start), then, at the release, *On tap*, whatever the
+  order of their events in the sheet. So a restart on *On any touch start*
+  runs before an *On touched object* event ends the game, and does not fire
+  on that tap. A restart on *On tap*, or on *On touched object* in a later
+  event, runs after it and fires. Make that restart test a value that the
+  end sets after a *Wait*. [observed in a game project,
+  editor preview, 2026-10-04: events that each appended a letter to a
+  global gave "SO" for one tap on a cell, *On any touch start* and *On
+  touched object* in either order, by touch and by mouse, and "SOT" with an
+  *On tap* event added first in the sheet]

@@ -20,6 +20,14 @@ resets what the layout holds (Arrays placed on it, instance variables, a
 text's text, positions) and keeps the globals, then runs the start rules
 again. Comparisons give 1 or 0, `&` joins text when either side is text and
 is a logical and otherwise, and At() outside an Array gives 0.
+
+Every tap is a tap on the screen. Touch *On any touch start* fires for every
+tap, a tap on an object included. It fires before *On touched object*,
+whatever the order of the two events in the sheet. So a tap fires the rules
+of every screen input whose region holds it, then the rules of the object it
+taps. The prototype knows where a point tap lands. A tap on an object or at
+an argument's position counts as outside every region, and a rule that reads
+a position the prototype does not know stops the test.
 """
 from __future__ import annotations
 
@@ -31,6 +39,7 @@ from dataclasses import dataclass, field
 
 TICK = 1 / 60
 AFTER_INPUT = 0.15          # seconds the game runs after each input, in the prototype and in the editor
+SETTLE = 1.0                # seconds a test runs after its last step before its last expects are read again
 OPS_MAX = 50_000            # actions one test may run before it counts as a loop
 TESTS_MAX = 6
 STATE_MAX = 10              # a small game: what a small model can keep consistent, and the prototype explain
@@ -53,6 +62,16 @@ TEST_KEYS = {"name", "steps"}
 
 class ModelError(Exception):
     """An expression or an effect that cannot be read or run; the message says what to write."""
+
+
+class Unplaced:
+    """The position of a tap the prototype does not know: on an object, or at a point given in shares."""
+
+    def __repr__(self) -> str:
+        return "unplaced"
+
+
+UNPLACED = Unplaced()
 
 
 # --- expressions ------------------------------------------------------------------------
@@ -501,18 +520,19 @@ class Design:
             game = row.get("game")
             self.read_binding(game, args, f"{path}.game")
             self.inputs[name] = {"args": args, "game": game if isinstance(game, dict) else {}, "path": path,
-                                 "player": str(row.get("player") or "")}
+                                 "player": str(row.get("player") or ""), "kind": input_kind(game)}
 
     def read_binding(self, game, args: list[str], path: str) -> None:
         """How the player does it in the game: tap an object, tap a point of the screen, or press a key."""
         what = ('how the player does it in the game: {"tap": "Cell", "args": {"c": "col", "r": "row"}} taps the Cell '
                 'whose instance variables col and row hold the arguments; {"tap": [0.5, 0.5]} taps that point of the '
-                'screen, as shares of its width and height; {"tap": "screen", "args": {"x": "x"}} taps the screen '
+                'screen, as shares of its width and height, and fires on every tap unless "region": [x0, y0, x1, y1] '
+                'names the part of the screen it fires in; {"tap": "screen", "args": {"x": "x"}} taps the screen '
                 'where the argument x says, in px of the layout; {"key": "ArrowLeft"} presses a key')
         if not isinstance(game, dict) or len({"tap", "key"} & set(game)) != 1:
             self.bad(path, what)
             return
-        extra = set(game) - {"tap", "key", "args", "seconds"}
+        extra = set(game) - {"tap", "key", "args", "seconds", "region"}
         if extra:
             self.bad(path, f"unknown key(s) {', '.join(sorted(extra))}; " + what)
         if "key" in game:
@@ -520,6 +540,8 @@ class Design:
                 self.bad(f"{path}.key", "a key: ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Space, Enter, Escape, KeyA, Digit1")
             if args:
                 self.bad(path, "a key carries no arguments; make one input per key")
+            if "region" in game:
+                self.bad(f"{path}.region", "a key has no region; leave it out")
             seconds = game.get("seconds", 0.1)
             if isinstance(seconds, bool) or not isinstance(seconds, (int, float)) or not 0.05 <= seconds <= 3:
                 self.bad(f"{path}.seconds", "how long the key is held, 0.05 to 3 seconds")
@@ -530,7 +552,20 @@ class Design:
                 self.bad(f"{path}.tap", "a point as shares of the screen, [0.5, 0.5] for its middle")
             if args:
                 self.bad(path, "a tap on a point carries no arguments; tap an object for them")
+            region = game.get("region")
+            if region is not None:
+                if not (isinstance(region, list) and len(region) == 4 and all(
+                        isinstance(v, (int, float)) and not isinstance(v, bool) and 0 <= v <= 1 for v in region)
+                        and region[0] < region[2] and region[1] < region[3]):
+                    self.bad(f"{path}.region", "the part of the screen the tap fires in, [x0, y0, x1, y1] as shares "
+                                               "of its width and height: [0, 0.8, 1, 1] for the bottom fifth")
+                elif len(tap) == 2 and not in_region(tap, region):
+                    self.bad(f"{path}.tap", f"{tap} lies outside its own region {region}; tap a point inside it")
             return
+        if "region" in game:
+            self.bad(f"{path}.region", "only a tap on a point has a region: a tap on an object fires where the object "
+                                       "is, and the rule of a tap at an argument's position tests the argument, "
+                                       "\"x < 360\"")
         if tap == "screen":
             bound = game.get("args") or {}
             if not isinstance(bound, dict) or set(bound) != set(args) or not set(bound.values()) <= {"x", "y"}:
@@ -800,6 +835,31 @@ def effect(text) -> tuple:
     return ("set", (name, index), op, value)
 
 
+def input_kind(game) -> str:
+    """key, object (Touch On touched object), point or screen (both Touch On any touch start)."""
+    if not isinstance(game, dict):
+        return ""
+    if "key" in game:
+        return "key"
+    tap = game.get("tap")
+    if isinstance(tap, list):
+        return "point"
+    return "screen" if tap == "screen" else "object"
+
+
+def in_region(point, region) -> bool:
+    return region[0] <= point[0] <= region[2] and region[1] <= point[1] <= region[3]
+
+
+def how_tapped(inp: dict) -> str:
+    tap = inp["game"].get("tap")
+    if inp["kind"] == "object":
+        return f"a tap on {tap}"
+    if inp["kind"] == "point":
+        return f"a tap at {tap} of the screen"
+    return "a tap on the screen"
+
+
 # --- the simulator -----------------------------------------------------------------------
 class Sim:
     """The design's state machine at 60 ticks a second."""
@@ -811,8 +871,14 @@ class Sim:
         self.ops = 0
         self.values: dict[str, object] = {}
         self.arrays: dict[str, list[list[float]]] = {}
-        self.pending: list[tuple[float, int, Rule, int, dict]] = []
-        self.restart_due = False
+        self.pending: list[tuple[float, int, Rule, int, dict, str]] = []
+        self.restart_due: tuple[str, str] | None = None     # the rule that asked for it, and what started that rule
+        self.rule = ""                  # the rule running now
+        self.cause = ""                 # the step that started it, "" for a timer
+        self.tap: tuple[str, str] | None = None     # while a screen input runs for another tap: (that tap, this input)
+        self.echoed: list[tuple[str, str]] = []     # the last input's rules run for it as a tap on the screen
+        self.settling = False
+        self.late: dict[str, tuple[str, str]] = {}  # in the settle: what a restart changed, by state name
         self.restarts = 0
         self.ran: dict[str, int] = {}
         self.won = self.lost = False
@@ -843,6 +909,8 @@ class Sim:
             return node.value
         if k == "name":
             if node.value in scope:
+                if scope[node.value] is UNPLACED:
+                    raise ModelError(self.unplaced(node.value))
                 return scope[node.value]
             if node.value == "dt":
                 return TICK
@@ -917,8 +985,22 @@ class Sim:
             return self.rng.choice(a)
         raise ModelError(f"no function {f}")
 
+    def unplaced(self, name: str) -> str:
+        rule = self.rule
+        if not self.tap:
+            return f"rule {rule} reads {name}, the position of a tap the prototype does not know"
+        tap, screen = self.tap
+        where = (f": in the game it is where the {self.d.inputs[tap]['game']['tap']} lies"
+                 if self.d.inputs[tap]["kind"] == "object" else "")
+        return (f"{tap} is {how_tapped(self.d.inputs[tap])}, and every tap is also a tap on the screen: Touch On any "
+                f"touch start fires {screen} for it, before On touched object. Rule {rule} then reads {name}, the "
+                f"position of that tap, which the prototype does not know{where}. Give {rule} a condition, placed "
+                f"before the one that reads {name}, that is false on that tap, such as a state of the game's "
+                f"phase")
+
     # rules
     def run(self, r: Rule, scope: dict, from_effect: int = 0) -> bool:
+        self.rule = r.id
         if from_effect == 0:
             if not all(truth(self.ev(c, scope)) for c in r.when):
                 return False
@@ -930,10 +1012,11 @@ class Sim:
                 raise ModelError(f"more than {OPS_MAX} effects ran in one test: rules fire each other without end")
             if e[0] == "wait":
                 self.order += 1
-                self.pending.append((self.t + max(0.0, num(self.ev(e[1], scope))), self.order, r, k + 1, dict(scope)))
+                self.pending.append((self.t + max(0.0, num(self.ev(e[1], scope))), self.order, r, k + 1, dict(scope),
+                                     self.cause))
                 return True
             if e[0] == "restart":
-                self.restart_due = True
+                self.restart_due = (r.id, self.cause)
                 continue
             (name, index), op, value = e[1], e[2], e[3]
             v = self.ev(value, scope)
@@ -958,11 +1041,55 @@ class Sim:
                 continue
             done = self.run(c, scope) or (c.otherwise and done)
 
-    def fire(self, name: str, args: dict) -> None:
+    def screen_inputs(self, name: str, args: dict) -> dict[str, dict]:
+        """The screen inputs a tap fires, each with its arguments: itself when it is one, and every other whose
+        region holds the tap. A coordinate the tap does not give is UNPLACED."""
+        inp = self.d.inputs[name]
+        kind = inp["kind"]
+        if kind == "key":
+            return {}
+        given = {coord: args[arg] for arg, coord in (inp["game"].get("args") or {}).items()} if kind == "screen" else {}
+        out = {}
+        for other, o in self.d.inputs.items():
+            if o["kind"] not in ("point", "screen"):
+                continue
+            region = o["game"].get("region")
+            if other != name and region and not (kind == "point" and in_region(inp["game"]["tap"], region)):
+                continue
+            out[other] = dict(args) if other == name else {
+                arg: given.get(coord, UNPLACED) for arg, coord in (o["game"].get("args") or {}).items()}
+        return out
+
+    def fire(self, name: str, args: dict, step: str = "") -> None:
+        """Play one input as the runtime gets it. First run the rules of every screen input the tap fires, in
+        the sheet's order (Touch On any touch start). Then run the input's own rules (On touched object, On key
+        pressed)."""
+        screen = self.screen_inputs(name, args)
+        self.echoed = []
         for r in self.d.rules:
-            if r.on == name:
+            if r.on in screen:
+                self.tap = (name, r.on) if r.on != name else None
+                self.cause = step + (f" ({name}, whose tap also fired {r.on})" if r.on != name else f" ({name})")
+                before = dict(self.ran)
+                self.run(r, dict(screen[r.on]))
+                if r.on != name:
+                    self.echoed += [(r.on, rid) for rid, c in self.ran.items() if c != before.get(rid, 0)]
+        self.tap = None
+        for r in self.d.rules:
+            if r.on == name and name not in screen:
+                self.cause = f"{step} ({name})"
                 self.run(r, dict(args))
+        self.cause = ""
         self.advance(AFTER_INPUT)
+
+    def settle(self, seconds: float = SETTLE) -> None:
+        """Let the game run after a test's last step, noting what a restart changes meanwhile. A change by
+        anything else, such as a timer or a Wait, is the game running on and is not noted."""
+        self.settling, self.late = True, {}
+        try:
+            self.advance(seconds)
+        finally:
+            self.settling = False
 
     def tick(self) -> None:
         before = self.t
@@ -972,16 +1099,29 @@ class Sim:
                 self.run(r, {})
             elif r.every and math.floor(self.t / r.every + 1e-9) > math.floor(before / r.every + 1e-9):
                 self.run(r, {})
-        due = sorted(p for p in self.pending if p[0] <= self.t + 1e-9)
+        due = sorted((p for p in self.pending if p[0] <= self.t + 1e-9), key=lambda p: (p[0], p[1]))
         self.pending = [p for p in self.pending if p[0] > self.t + 1e-9]
-        for _, _, r, k, scope in due:
-            self.run(r, scope, from_effect=k)
+        for _, _, r, k, scope, cause in due:
+            self.cause = cause          # a restart after a Wait names the step that started its rule
+            try:
+                self.run(r, scope, from_effect=k)
+            finally:
+                self.cause = ""
         if self.restart_due:
-            self.restart_due = False
+            rid, cause = self.restart_due
+            self.restart_due = None
             self.restarts += 1
             self.pending = []
+            before = (dict(self.values), json.dumps(self.arrays))
             self.reset(first=False)
             self.run_start()
+            if self.settling:
+                said = f"the restart of rule {rid}" + (f", started by {cause.strip()}" if cause.strip() else "")
+                old_arrays = json.loads(before[1])
+                for n in self.d.state:
+                    old = old_arrays.get(n) if n in self.arrays else before[0].get(n)
+                    if old != (self.arrays.get(n) if n in self.arrays else self.values.get(n)):
+                        self.late.setdefault(n, (rid, said))
             for n, s in self.d.state.items():
                 if s.kind != "array" and not s.keep and self.values[n] != self.baseline[n]:
                     self.after_restart.append((n, self.values[n], self.baseline[n]))

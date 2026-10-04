@@ -83,6 +83,14 @@ shows before the build and a bug in the events after it.
   `{"key": "ArrowLeft"}` presses a key. A design reads only its own state and
   the arguments: a basket's position is a state row stored in `Basket.x`, not
   `Basket.X` in a rule.
+- Every tap is also a tap on the screen: a screen input fires on every tap,
+  a tap on an object included, before the object's rules. So a tap on a
+  Hole also runs the rules of `again`, first. To limit a tap on a point to a
+  part of the screen, give it `"region": [x0, y0, x1, y1]`, as shares. The
+  prototype counts a tap on an object as outside every region. When a rule
+  of `{"tap": "screen", ...}` runs on a tap on an object and reads its
+  argument, the prototype does not know that position, and the check stops
+  there. Give that rule a condition that is false on that tap.
 - `rules`: each one event. `on` is its trigger: `start`, `tick`, `every N`
   (seconds) or an input's name. `if` holds its other conditions, `do` its
   actions in order, `children` its sub-events, and `"else": true` makes a
@@ -104,6 +112,10 @@ shows before the build and a bug in the events after it.
   count of instances. Every rule must run in some test, every input be
   done and be followed by an expect on a row the player sees, the count
   where it writes a cell, and some test restart after the win or the lose.
+  After the last step the game runs 1 s more, and the expects at the end
+  of the test are read again in the prototype; the editor reads again
+  those that still hold. So a restart that a `wait` holds back fails the
+  test that ends before the restart.
 
 ## Rules as data
 
@@ -144,8 +156,13 @@ restart that leaves one as it was.
   Array, an `every 0.2` rule that moves, and inputs that only change the
   direction.
 - The end and the restart: the rule that ends sets the state, then
-  `wait 0.5`, then a second value the restart rule tests, so the tap that
-  ended the game does not also restart it.
+  `wait 0.5`, then a second value the restart rule tests, so a tap made
+  while the end shows does not restart at once. A restart on a tap on the
+  screen runs before the tap on an object that ends the game, so it sees
+  the game still on and does not fire on that tap. A restart on the same
+  input as the end, or on Touch *On tap*, which fires at the release, runs
+  after the end. Without the second value it restarts on the tap that
+  ended the game.
 
 ## From the design to the events
 
@@ -155,7 +172,8 @@ restart that leaves one as it was.
 | `"on": "tick"` | no trigger: the block runs every tick |
 | `"on": "every 1"` | System *Every 1 seconds* |
 | an input `{"tap": "Hole", ...}` | Touch *On touched Hole*; an argument is the tapped instance's variable, `Hole.index` |
-| an input `{"tap": [x, y]}` | Touch *On any touch start*, with *Compare two values* on `Touch.X` or `Touch.Y` when two inputs split the screen |
+| an input `{"tap": [x, y]}` | Touch *On any touch start*, never *On tap*; it fires before every *On touched object* of the same tap, whatever the order of the events |
+| `"region": [x0, y0, x1, y1]` | after *On any touch start*, *Compare two values* on `Touch.X` and `Touch.Y` against the region's edges: `OriginalViewportWidth * x0`, `OriginalViewportHeight * y0` and so on |
 | an input `{"tap": "screen", "args": {"x": "x"}}` | Touch *On any touch start*; the argument is `Touch.X` |
 | an input `{"key": ...}` | Keyboard *On key pressed* |
 | a condition | *Compare variable*, *Compare two values* or the instance's own condition |
