@@ -398,6 +398,21 @@ class Project:
         """The file of every item project.c3proj lists under kind; None for one that has no file."""
         return {name: self.project_file(kind, name, folder) for name, folder in folder_items(self.data.get(kind, {}))}
 
+    def script_files(self) -> list[Path]:
+        """The JavaScript and TypeScript files project.c3proj lists, relative to the project folder."""
+        out = []
+        for item, folder in folder_items(self.data.get("rootFileFolders", {}).get("script", {})):
+            path = Path("scripts") / folder / str(item.get("name", "") if isinstance(item, dict) else item)
+            if (self.root / path).is_file():
+                out.append(path)
+        return out
+
+    def scripts_summary(self) -> str:
+        """'scripts/main.js (110 lines)', each listed script with its length."""
+        def lines(path: Path) -> int:
+            return len((self.root / path).read_text(encoding="utf-8", errors="replace").splitlines())
+        return ", ".join(f"{path.as_posix()} ({lines(path)} lines)" for path in self.script_files())
+
     def load_listed(self, kind: str) -> dict[str, dict]:
         out = {}
         for name, path in self.listed_files(kind).items():

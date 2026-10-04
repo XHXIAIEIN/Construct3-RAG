@@ -2585,6 +2585,9 @@ class Checker:
         line = (f"ok: {len(p.types)} object types, {len(p.families)} families, {len(self.layouts)} layouts, "
                 f"{len(self.sheets)} sheets, {len(self.sids) + len(self.ace_sids)} sids, {len(self.uids)} uids, "
                 f"{len(self.functions)} functions, {len(self.custom_actions)} custom actions")
+        scripts = p.scripts_summary()
+        if scripts:
+            line += f"; scripts, which this check does not read: {scripts}"
         if not then_open:
             return line
         return (f"{line}; next, review the design of the sheets and act on what it prints, "

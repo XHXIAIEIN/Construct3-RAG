@@ -1206,3 +1206,10 @@ def test_committed_schemas_mark_what_the_editor_treats_as_a_trigger(rel, ace_id)
         data = json.loads((REPO / "data" / "c3-schemas" / locale / rel).read_text(encoding="utf-8"))
         entry = next(c for c in data["conditions"] if c["id"] == ace_id)
         assert entry.get("isTrigger") is True, (locale, rel, ace_id)
+
+
+def test_ok_line_names_the_scripts_the_check_does_not_read(project):
+    from tests.test_skill_print_sheet import add_script
+    add_script(project, 4)
+    code, out = tool(project, "check_project")
+    assert code == 0 and "; scripts, which this check does not read: scripts/main.js (4 lines);" in out, out

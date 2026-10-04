@@ -117,6 +117,26 @@ def test_print_counts_the_lines_of_a_script_stored_either_way(project):
     assert "script, 67 lines" not in out and "script, 1 lines" not in out, out
 
 
+def add_script(project, lines: int = 2) -> None:
+    (project / "scripts").mkdir(exist_ok=True)
+    (project / "scripts" / "main.js").write_text("\n".join(["// game"] * lines), encoding="utf-8")
+    def listed(data):
+        folder = data.setdefault("rootFileFolders", {}).setdefault("script", {"items": [], "subfolders": []})
+        folder["items"].append({"name": "main.js", "type": "application/javascript", "sid": 1, "script-info": {"purpose": "main"}})
+    edit(project, "project.c3proj", listed)
+
+
+def test_print_of_a_project_without_sheets_points_to_its_scripts(project):
+    """A project written in JavaScript has no sheet; an empty print read as a project with no logic."""
+    add_script(project, 3)
+    edit(project, "project.c3proj", lambda data: data["eventSheets"].update(items=[], subfolders=[]))
+    code, out = tool(project, "print_sheet")
+    assert code == 0 and out.strip().endswith("logic is in its scripts, read them as code: scripts/main.js (3 lines)"), out
+    (project / "scripts" / "main.js").unlink()
+    code, out = tool(project, "print_sheet")
+    assert code == 0 and "no event sheets and no scripts" in out, out
+
+
 def test_print_marks_what_the_editor_has_disabled(project):
     """The editor skips a disabled condition or action and runs the event without it. Printed like the others,
     a disabled NOT condition was read as a check the event still makes. The event's own marker ends the line

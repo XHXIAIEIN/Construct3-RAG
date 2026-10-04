@@ -270,6 +270,11 @@ def main() -> int:
         print(f"note: {drift}")
 
     sheets = project.load_listed("eventSheets")
+    if not sheets:
+        scripts = project.scripts_summary()
+        print(f"no event sheets: the project's logic is in its scripts, read them as code: {scripts}" if scripts
+              else "no event sheets and no scripts: the project holds no logic yet")
+        return 0
     for name in args.sheets:
         if name not in sheets:
             sys.exit(f"no event sheet named {name!r}; sheets: {', '.join(sheets)}")
