@@ -31,7 +31,8 @@ which runs Web Audio).
   in the Music folder streams through an `<audio>` element. The element's play
   takes no start time and begins when the stream is ready. Keep beat-locked
   music in Sounds with *Preload sounds* on. Or *Preload* every scheduled file,
-  and start the schedule in *On preloads complete*. [manual:
+  and start the schedule once, in an event that tests *Preloads complete*
+  (a condition, not a trigger) with *Trigger once*. [manual:
   plugin-reference/audio.md "Categorise audio files correctly", "Preloading
   sounds", "Schedule next play"; runtime: main.js `_Play` adds the offset to
   the clock when the message arrives and awaits `_GetAudioInstance` before the
@@ -68,7 +69,7 @@ which runs Web Audio).
   call; reported as Scirra/Construct-bugs#9290, open]
 - *Set playback rate* changes every instance whose tags match, including
   sounds still playing from earlier plays. So for a pitch per play, give
-  each play a one-off tag (`"sfx p" & Serial`), and skip the rate action
+  each play a one-off tag (`"sfx p" & playCount`), and skip the rate action
   when the rate is 1. In the tick of the Play, `Audio.PlaybackRate(tag)`
   returns 1, because the state updates on the DOM side's next report.
   [runtime: main.js `_SetPlaybackRate` loops over all matching instances;
@@ -124,7 +125,8 @@ which runs Web Audio).
   records its position. On resume it restarts all of them at once,
   scheduled sounds included, and a scheduled sound resumes ahead by its
   lead. If a game schedules on a grid, use *Stop all* in *On resumed* and
-  restart its schedule. *Stop* in *On suspended* does not help. [runtime:
+  restart its schedule. *Stop* in *On suspended* does not keep a sound from
+  restarting, because the sound stays marked to resume. [runtime:
   main.js `_SetSuspended` calls each instance's `SetSuspended`; `Stop()`
   leaves `_resumeMe`; the *Stop* case reported as
   Scirra/Construct-bugs#9289, open]
@@ -132,7 +134,7 @@ which runs Web Audio).
   one channel into the other: at ±20 the near channel gets the far one at
   cos(0.4π) ≈ 0.31. So a file limited to −3 dBFS can peak near −1 dBFS, and
   two loud sounds on the same grid point sum above 0 dBFS. A transient that is
-  the same in both channels rises by 1 + sin(|pan| × 90°): 1.3 dB at ±10, 2.3
+  the same in both channels rises by 1 + sin(|pan| / 100 × 90°): 1.3 dB at ±10, 2.3
   dB at ±20, 3.2 dB at ±30. Without a master limiter, do not rely on per-file
   ceilings. Keep loud transients off each other's grid point: if two would
   share one, let one replace the other. Narrow the pan of the loudest sounds.
@@ -147,11 +149,11 @@ which runs Web Audio).
   `SetKey(t,e){this._data.has(t)&&...}`, `AddKey`]
 - The runtime finds a sound by its path below the Sounds or Music folder,
   without the extension. So a file in the folder `Board` is `Board/spawn`,
-  and *Play by name* with `"spawn"` finds and plays nothing, with no error.
-  If a game builds sound names in expressions, keep those files at the top
-  of the folder, or put the folder path in every name with matching case.
-  Timelines differ: *Play by name* finds a timeline in a folder by its
-  bare name. [runtime: c3runtime.js `PlayByName` calls
+  and *Play (by name)* with `"spawn"` finds and plays nothing, with no
+  error. If a game builds sound names in expressions, keep those files at
+  the top of the folder, or put the folder path in every name with
+  matching case. Timeline *Play (by name)* differs: it finds a timeline in
+  a folder by its bare name. [runtime: c3runtime.js `PlayByName` calls
   `GetProjectAudioFileUrl`, whose `_audioFiles` map held `"Board/spawn"`,
   and `GetTimelineByName` reads `_timelinesByName` by the lowercased bare
   name; observed in a game project, r504 preview, 2026-10-02: after sounds

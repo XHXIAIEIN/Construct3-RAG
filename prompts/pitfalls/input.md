@@ -34,7 +34,7 @@ Sources and the rule for adding an entry are in the index,
   *On any touch start* means a finger or a pen, and Mouse *On any click* or
   Keyboard *On any key pressed* means a desktop. Each sets a global variable
   that decides the controls (see "Native first" in
-  [event-sheet-thinking.md](../event-sheet-thinking.md)).
+  [event-sheet-thinking.md](../event-sheet-thinking.md)). The example
   detecting-input-method decides once, on its title screen. The same triggers
   in a sheet that runs during play follow a change of device. Gamepad *On any
   button pressed* adds a gamepad. With *Use mouse input* off, a mouse fires
@@ -49,7 +49,7 @@ Sources and the rule for adding an entry are in the index,
   `on-any-button-pressed`, a trigger; runtime: exported c3runtime.js r503,
   `Plugins.Touch.Instance._OnPointerDown`]
 - Touch *On touched object*, *Is touching object*, *On tap object* and Mouse
-  *On object clicked*, *Is over object* find an instance only by its shape
+  *On object clicked*, *Cursor is over object* find an instance only by its shape
   under the pointer. So the player can press an invisible instance, one with
   collisions disabled and one on an invisible layer. These conditions skip
   only an instance outside the viewport or on a layer that is not interactive.

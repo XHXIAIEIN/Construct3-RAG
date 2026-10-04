@@ -17,7 +17,8 @@ Sources and the rule for adding an entry are in the index,
   system-reference/system-expressions.md "Math";
   system-reference/system-conditions.md "Is between angles"]
 - A sprite is drawn facing right at angle 0. So art painted pointing up
-  appears turned a quarter clockwise when *Set angle towards position* runs.
+  points a quarter turn counter-clockwise of its target after *Set angle
+  toward position*.
   Paint it facing right, or add the same 90 in every *Set angle*. Do not add a
   different correction in each event. [consequence of the same convention;
   Rotate's speed is positive clockwise: manual behavior-reference/rotate.md

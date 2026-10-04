@@ -4,12 +4,13 @@ Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md).
 
 - A Text object has no *Set color*. `plugins/_common.json` lists
-  `set-default-color`, and `lookup_ace.py Text color` prints it. But the
-  editor refuses it on a Text with `missing action id 'set-default-color'`,
-  and the project does not open. A Text's colour is its font colour:
-  *Set font color* (`set-font-color`). A plugin file lists the shared ACEs it
-  gets under `commonAces`, and `lookup_ace.py` and `check_project.py` follow
-  it. [plugins/text.json `set-font-color`; observed in a game project, r495.2
+  `set-default-color`, but the editor refuses it on a Text with
+  `missing action id 'set-default-color'`, and the project does not open. A
+  Text's colour is its font colour: *Set font color* (`set-font-color`). A
+  plugin file lists the shared ACEs it gets under `commonAces`, and
+  `lookup_ace.py` and `check_project.py` follow it, so
+  `lookup_ace.py Text color` prints only *Set font color*.
+  [plugins/text.json `set-font-color`; observed in a game project, r495.2
   editor, 2026-09-23]
 - *Set width* stretches a Sprite's whole image, repeats a Tiled Background's,
   and on a 9-patch stretches or tiles the middle while the corners keep their
@@ -117,10 +118,10 @@ Sources and the rule for adding an entry are in the index,
   text* to the string already shown costs nothing, because the runtime
   compares and returns. Animate a number by moving its finished texture
   (position, angle, opacity). Or draw it with a Sprite Font and tween its
-  *Scale*, which redraws nothing. After the switch to a Sprite Font with a
-  *Scale* tween, the same game redrew no damage number and no countdown. *Set
-  resolution mode* to *Fixed* only stops redraws caused by the display scale,
-  not by the font size. [manual: plugin-reference/text.md "Set resolution
+  *Scale*, which redraws nothing: with that tween, the same game redrew no
+  damage number and no countdown. *Set resolution mode* to *Fixed* only
+  stops redraws caused by the display scale, not by the font size.
+  [manual: plugin-reference/text.md "Set resolution
   mode"; observed in a game project, r504 export, runtime `_SetText` source
   and a counter on `_OnBeforeRender`, 2026-09-30]
 
