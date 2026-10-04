@@ -540,8 +540,12 @@ class Checker:
                          f"Write \"{key}\": \"{options[0]}\", or "
                          f"{rest if len(options) == 2 else 'one of ' + rest}")
             elif value not in options and value not in PROJECT_ALSO.get(key, ()):
-                self.err(f"project.c3proj properties: {key} {value!r} is not one of "
-                         f"{', '.join(options)}; the editor stops with \"invalid {key}\"")
+                name, labels = self.project_property_wording(key)
+                listed = ", ".join(f"{o} ({labels[o]})" if o in labels else o for o in options)
+                self.err(f"project.c3proj properties: {key}{f' ({name})' if name else ''} {value!r} is not one of "
+                         f"{listed}; the editor stops with \"invalid {key}\" before the project opens, so it "
+                         f"cannot be changed there. Write \"{key}\": \"{options[0]}\" in project.c3proj, or "
+                         f"another of these")
         for key in ("viewportWidth", "viewportHeight"):
             value = data.get(key)
             if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(value) or value < 2:
@@ -1210,6 +1214,16 @@ class Checker:
         _, entry = retired
         return (f"{written} is a deprecated expression of {owner}: {c3.DEPRECATED}"
                 + (f"; the current expression of the same name is {entry['current']}" if entry.get("current") else ""))
+
+    def project_property_wording(self, key: str) -> tuple[str, dict[str, str]]:
+        """The Properties bar's name of a project property and of its options in the locale,
+        so a finding names them as the user's editor shows them: fullscreenMode is 缩放模式 in zh-CN."""
+        pack = self.p.rag / "data" / "c3-lang" / f"{self.p.locale}.json"
+        if not pack.exists():
+            return "", {}
+        bar = c3.load(pack)["text"]["ui"]["bars"]["properties"]["project"]
+        entry = bar.get(re.sub(r"(?<!^)(?=[A-Z])", "-", key).lower(), {})
+        return entry.get("name", ""), entry.get("options", {})
 
     def builtin_eases(self) -> set[str]:
         """Ids of the built-in eases, the keys the editor's language pack labels."""

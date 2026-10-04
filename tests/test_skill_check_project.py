@@ -46,7 +46,9 @@ def test_checker_prints_the_findings_that_fit_and_counts_the_rest(project):
      'author, appId are missing or not text'),
     (lambda p: p["properties"].pop("loaderStyle"), 'no "loaderStyle"'),
     (lambda p: p["properties"].update(orientations="vertical"),
-     "orientations 'vertical' is not one of any, portrait, landscape"),
+     "orientations (Orientations) 'vertical' is not one of any (Any), portrait (Portrait), landscape (Landscape); "
+     "the editor stops with \"invalid orientations\" before the project opens, so it cannot be changed there. "
+     "Write \"orientations\": \"any\" in project.c3proj"),
     (lambda p: p["properties"].update(sampling="linear"), None),       # the editor maps the older id
     (lambda p: p.update(viewportWidth="720"), "viewportWidth is '720'"),
     (lambda p: p.update(projectFormatVersion=2), "projectFormatVersion is 2"),
@@ -1213,3 +1215,9 @@ def test_ok_line_names_the_scripts_the_check_does_not_read(project):
     add_script(project, 4)
     code, out = tool(project, "check_project")
     assert code == 0 and "; scripts, which this check does not read: scripts/main.js (4 lines);" in out, out
+
+
+def test_an_invalid_project_property_is_named_in_the_editor_language(project):
+    edit(project, "project.c3proj", lambda p: p["properties"].update(fullscreenMode="scale"))
+    code, out = check(project, "--locale", "zh-CN")
+    assert code == 1 and "fullscreenMode (缩放模式) 'scale' is not one of letterbox-scale (比例缩放)" in out, out
