@@ -92,7 +92,7 @@ def wording(p: c3.Project, kind: str, ace: dict) -> str:
     obj = ace.get("objectClass", "?")
     args_ = ace.get("parameters", [])
     if "callFunction" in ace:
-        return f"Functions: Call {ace['callFunction']}({', '.join(map(str, args_))})"
+        return f"{p.functions_object}: Call {ace['callFunction']}({', '.join(map(str, args_))})"
     if "customAction" in ace:
         return f"{obj}: {ace['customAction']}({', '.join(map(str, args_))})"
     if ace.get("type") == "comment":
@@ -314,6 +314,11 @@ def main() -> int:
     if args.show is not None:
         return show(sheets[names[0]], names[0], args.show, args.limit)
     first, last = events_range(args.events)
+    if project.functions_object != "Functions":
+        # A model read 活着.Potion as a function named 活着 that returned its own name.
+        f = project.functions_object
+        print(f"note: {f} is this project's name for the built-in Functions object (functionsName in "
+              f"project.c3proj), not a function: {f}.Name(...) calls the function Name")
 
     rows, totals = {}, {}
     for name in names:

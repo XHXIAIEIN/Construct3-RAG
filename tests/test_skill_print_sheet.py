@@ -1,4 +1,5 @@
 """print_sheet.py: the event sheet in the words of the editor."""
+import json
 import os
 import re
 import shutil
@@ -184,3 +185,15 @@ def test_scripts_write_utf8_and_survive_a_code_page_that_cannot(built):
                            cwd=built, env=env, capture_output=True)
         assert p.returncode == 0, p.stdout + p.stderr
         assert want in p.stdout.decode(codec or "utf-8")
+
+
+def test_print_names_a_renamed_functions_object(project):
+    """A model read Renamed.Potion as a function named after the Functions object."""
+    proj = project / "project.c3proj"
+    data = json.loads(proj.read_text(encoding="utf-8"))
+    data["functionsName"] = "Calls"
+    proj.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8")
+    code, out = tool(project, "print_sheet", "Game")
+    assert code == 0, out
+    assert out.startswith("note: Calls is this project's name for the built-in Functions object"), out
+    assert "Calls: Call AddScore(" in out and "Functions: Call" not in out, out
