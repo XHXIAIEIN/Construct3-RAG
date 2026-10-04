@@ -55,68 +55,39 @@ output; prose reaches the model that already knows it needs it.
 
 So a habit with a mechanical form becomes a checker finding or a generator
 helper that makes the good shape the default. A habit with no mechanical
-form that passes the official examples stays prose. A pile of state globals,
-the first habit the user named, is one: no heuristic tells it from a
-legitimate global.
+form that passes the official examples stays prose. A pile of state globals
+is one: no heuristic tells it from a legitimate global.
 
-A global that a round starts from is the case in point. *Restart layout*
-keeps global variables, so a countdown that restarts the layout at 0 is 0
-on the next run unless something sets it back. In iterations 21 to 27 of
-`add-countdown`, on the stand-in before it had rounds, 1 of 48 runs set it
-back. In iteration 29, on the stand-in with rounds, 3 of 4 did with the
-previous template and 4 of 4 with the stand-in that sets `score` back under
-*On start of layout*; that difference is within chance, and the skill
-changed between the iterations as well, so what moved the rate is not
-isolated. The reset comes before the text that shows the score: one run
-rewrote that text to read `score` and `timeLeft` above the resets, which
+A global that a round starts from shows the same. *Restart layout* keeps
+global variables, so a countdown that restarts the layout at 0 stays 0 on
+the next run unless an event sets it back. The runs set their countdown
+back the way the stand-in game sets `score` back, under *On start of
+layout*. The reset goes before the text that shows the value, or the text
 shows the last round's values at the start of the next.
 
-Update 2026-09-28. A preview of an iteration-27 run with the countdown cut to
-3 seconds: the first start reads 3, every later one 0, and the layout
-restarted 144 times in 10 seconds. None of the 56 archived runs used a
-Timer, although `prompts/event-sheet-thinking.md` names the Timer behavior
-for a countdown, and the case graded only the variable: a Timer run would
-have failed three assertions. The case now accepts a Timer started for 30
-seconds under *On start of layout* with *On timer* restarting the layout; a
-reference solution scores 8 of 8 and, cut to 3 seconds, counts 3, 2, 1, 0
-and 3 again in preview. The verdicts of the 56 archived runs are unchanged.
-The plan example in `SKILL.md` and in `edit_sheet.py --help` was this
-countdown, a global under *Every 1 seconds* without a reset, the form every
-run wrote: the case measured the copy of the example more than the skill's
-guidance. The example is now a best score, a global kept across restarts
-on purpose, raised to `max(best, score)` when a round ends, so how to count
-down is left to `event-sheet-thinking.md` and the pitfalls.
+The countdown itself shows the limit of a guide. `event-sheet-thinking.md`
+names the Timer behavior for a countdown, and the runs do not open it: they
+count a global down under *Every 1 seconds*. So the route to the Timer is
+in what they read. `SKILL.md` has a section, "Built-ins before variables",
+drawn from the Native first table and rule 2 of the thinking guide, and
+`check_project.py --style` has a `countdown` kind, below. Runs still count
+by hand: the warning shows under the plan, and they go on to
+`check_project.py` without `--style`, which ends in `ok:`. The
+`add-countdown` case grades either form, a Timer started for 30 seconds
+under *On start of layout* with *On timer* restarting the layout, or a
+variable set back on start. The plan example in `SKILL.md` and in
+`edit_sheet.py --help` is a best score, a global kept across restarts on
+purpose, because runs copy an example's form: while the example was a
+countdown under *Every 1 seconds*, every run wrote that countdown.
 
-Update 2026-10-01. Iteration 30 confirmed it: no run opened
-`event-sheet-thinking.md`, 0 of 6 used a Timer. The route to the Timer is
-now in what the runs read. `SKILL.md` has a section, "Built-ins before
-variables", drawn from the Native first table and rule 2 of the thinking
-guide, and
-`check_project.py --style` has a `countdown` kind, below. Over the 60
-archived `add-countdown` runs of iterations 21 to 30 it fires on every one,
-and on no official example or game project; nothing else the checker prints
-changed.
-
-Update 2026-10-02. Iterations 33 and 34 of `add-countdown`, Haiku, three
-runs an arm. In iteration 33, the change against the commit before it,
-every run with the change read the new section, all six runs scored 8 of 8
-and none used a Timer. The runs with the change wrote *Add* -1 and *Set*
-v to v - 1, which the warning did not read yet, so it fired on none of
-them; it reads the three spellings since. In iteration 34 the warning
-showed under the plan of each run, one to three times, and no run acted on
-it: each went on to `check_project.py` without `--style`, which ends in
-`ok:`. No run of the nine since the change used a Timer.
-
-A Timer would not be faster. Timed per runtime tick in the preview
-(`.local/docs/evidence/timer-vs-dt-2026-10-01/`): one countdown costs the
-same either way, within the 0.1 ms the worker's clock resolves. With 10 000
-instances each counting its own period, a Timer per instance costs 1.7 ms a
-tick against 0.7 ms for subtracting `dt` in events, about half of it the
-behavior's own tick and half *On timer*, which is tested every tick for
-every instance. What the Timer gives one countdown is a value that starts
-over with the layout, and all nine runs set the global back under *On
-start of layout*, as the case asks. So the countdown stays a warning: a
-refusal would hold up a form that works, for no gain in speed.
+A Timer is not faster. Timed per runtime tick in the preview, one countdown
+costs the same either way. With ten thousand instances, a Timer each costs
+more than subtracting `dt` in events, because *On timer* is tested every
+tick for every instance (`.local/docs/evidence/timer-vs-dt-2026-10-01/`).
+What the Timer gives one countdown is a value that starts over with the
+layout, and a variable set back under *On start of layout* gives that too.
+So the countdown stays a warning: a refusal would hold up a form that works,
+for no gain in speed.
 
 An edit to `event-sheet-thinking.md` moves Haiku's structure on tasks the
 edit does not mention. After rules on counts, doors and project files went
@@ -138,9 +109,9 @@ no style to learn. The survey scripts are kept under
 
 One rule departs from the examples: a text built from two or more values
 is a `StringSub` template. No example calls `StringSub`; they chain `&`.
-The user chose the template on 2026-09-30, reviewing the readouts of small
-bug-report projects: `StringSub("X = {0}    Y = {1}", ...)` reads as the line
-on screen, where a chain splits it into quoted fragments between values.
+`StringSub("X = {0}    Y = {1}", ...)` reads as the line on screen, where a
+chain splits it into quoted fragments between values, which matters most in
+the readouts of a small bug-report project.
 
 ## Style checks
 
@@ -165,16 +136,17 @@ A user's project is not held to the agent's style, so `--style` is off by
 default. `edit_sheet.py` refuses a plan whose new events raise `comment`,
 `run`, `cases` or `tick`, whose fix is one comment or one deleted condition.
 `tree`, `ladder`, `countdown`, `choice`, `dispatch` and `table` stay
-warnings: fixing them is a design change the plan's author must make. With the refusal stated in `SKILL.md` and its plan example
-carrying a comment, runs wrote the comment from the first draft.
+warnings: fixing them is a design change the plan's author must make. With
+the refusal stated in `SKILL.md` and its plan example carrying a comment,
+runs write the comment from the first draft.
 
 A Pathfinding *Find path* in an event that runs every tick, with no trigger,
 *Every X seconds* or *Trigger once* in it or above it, is a warning of
 `check_project.py` from the manual (`behavior-reference/pathfinding.md`) and
-fires on none of the 524 examples. In the Haiku runs of `chase-around-walls`
-on 2026-10-03 both arms wrote *Every tick* or *NOT Is moving along path* ->
-*Find path*; the run that saw the warning four times kept it and called it
-intentional. `edit_sheet.py` refuses it in an event the plan creates, under
+fires on none of the official examples. Small models write it as *Every
+tick* or *NOT Is moving along path* -> *Find path*, and keep it through the
+warning, calling it intentional. So `edit_sheet.py` refuses it in an event
+the plan creates, under
 the kind `pathfinding`, and its line names the fix first: the trigger that
 sets the target, or *Every 0.5 seconds* with the JSON of that condition. In
 the user's own events it stays a warning.
@@ -205,29 +177,23 @@ seeded trap fixed at once. Evidence:
 `.local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-39/`.
 
 For `comment`, the events directly in a group are top-level events, and
-small models do not read them so. In iteration 29 of `add-countdown`, two
-Haiku runs put a comment above a new group and not above the events in it;
-`edit_sheet.py` refused 10 and 8 of their plans, and every retry left an
-event of the group without its comment. The finding called those events
-top-level and named them by numbers the file did not have yet. For an event
-directly in a group it now names the group and the event's entry in its
-`children`, the list the comment goes into, and under
-`check_project.py --style` the `edit_sheet.py` operation that puts it there.
-A refused plan gets no operation: its numbers are the ones the sheet would
-have.
+small models do not read them so: refused, they put the comment above the
+group, and the retry still leaves an event of the group without its
+comment. So for an event directly in a group the finding names the group
+and the event's entry in its `children`, the list the comment goes into,
+and under `check_project.py --style` the `edit_sheet.py` operation that puts
+it there. A refused plan gets no operation: its numbers are the ones the
+sheet would have.
 
 `countdown` is the one smell of `event-sheet-thinking.md` that small models
-were seen writing and that has a mechanical form the official examples pass.
-Measured over the 524 examples and the 149 eval and small-model projects on
-2026-10-01: subtracting `dt` from a variable appears in 33 examples, cooldowns
-among them, so it is not a finding; a variable named for a UID appears in 20
-examples; `Pick all` on the trigger's object inside a triggered branch
-appears in 6 examples and in no run, nor does *Pick by unique ID* on it. Those
-stay prose in the smell table until a run writes them. In four of the six
-examples, `Pick all` reaches the rest of the type and the events after it no
-longer read the trigger's instance: every ghost stopped when one touches the
-player, the blocks next to a breaking one. The other two follow it with a
-pick from a stored link, a UID in a function parameter or a variable, the
+write and that has a mechanical form the official examples pass.
+Subtracting `dt` from a variable is how the examples count cooldowns, so it
+is not a finding. A variable named for a UID, and `Pick all` on the
+trigger's object inside a triggered branch, appear in sound example code
+and in no run; they stay prose in the smell table until a run writes them.
+Where an example writes that `Pick all`, it reaches the rest of the type,
+as when every ghost stops once one touches the player, or it is followed by
+a pick from a stored link, a UID in a function parameter or a variable, the
 only form rule 8 and the smell row of `event-sheet-thinking.md` call a
 rebuilt pick.
 
@@ -235,18 +201,14 @@ rebuilt pick.
 enemy moves (`"A6x2"`, `"BU"`, `"SHIFT"`) and card effects as strings,
 dispatched them with `find` in sibling events, chose between values with
 `chooseindex(condition, ...)` and cycled its five elements through two
-letter strings. Measured on 2026-10-04 over the 565 sheets of the 524
-examples: no `chooseindex` call, no sibling events testing one text with
-`find` (quest-flowcharts tests output names in one event or in separate
-functions), no `find` with a literal first; `?:` appears in 77 sheets and a
-cycle as `(n + 1) % N` in alien-battle and balloon-blower. The checker's
-output over the examples is unchanged by the three. On the card game they
-give 36, 3 and 3 warnings. The design rows are in the Native first and
-smell tables of `event-sheet-thinking.md`.
+letter strings. The official examples do none of the three: they choose
+with `c ? a : b` and cycle with `(n + 1) % N`, so the three fire on no
+example. The design rows are in the Native first and smell tables of
+`event-sheet-thinking.md`.
 
 Comments, variable comments and function descriptions end without a period,
-by the user's choice; a second sentence keeps the period between the two.
-The checker does not look at punctuation.
+the style this repository writes; a second sentence keeps the period
+between the two. The checker does not look at punctuation.
 
 ## Placement and HUD helpers
 
