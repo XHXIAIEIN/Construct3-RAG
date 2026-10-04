@@ -7,6 +7,7 @@ import runpy
 import shutil
 import subprocess
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -194,10 +195,10 @@ def test_bootstrap_creates_the_project_from_the_template_and_installs_the_skill(
     assert proj["name"] == "MyGame" and re.fullmatch(r"[a-z0-9]{11}", proj["uniqueId"]) and proj["uniqueId"] != "he3qe448adg"
     assert (game / INSTALLED / "SKILL.md").is_file()
     assert (game / ".git").is_dir() and "git initialised" in out
-    assert f"- Construct3-RAG: {REPO.as_posix()}" in (game / "AGENTS.md").read_text(encoding="utf-8")
+    block = (game / "AGENTS.md").read_text(encoding="utf-8")
+    assert f"- Construct3-RAG: {REPO.as_posix()}" in block
     assert (game / "CLAUDE.md").read_text(encoding="utf-8") == "@AGENTS.md\n"
     # the clones are not beside the Construct3-RAG clone here, so the block gets a line for each
-    block = (game / "AGENTS.md").read_text(encoding="utf-8")
     assert f"- Construct3-Manual: {(beside / 'Construct3-Manual').as_posix()}" in block
     assert block.index("- Construct3-RAG:") < block.index("- Construct3-Manual:") < block.index("Anything that changes")
     # a second run finds everything in place
@@ -302,7 +303,8 @@ def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):
 
 # --- refreshing the helpers of a game's generator ----------------------------------------------
 TEMPLATE = (SKILL / "assets" / "build_project.py").read_text(encoding="utf-8").split("\n")
-VERSION = c3.helpers_in(TEMPLATE).version
+TEMPLATE_HELPERS = c3.helpers_in(TEMPLATE)
+VERSION = TEMPLATE_HELPERS.version
 
 
 def at(lines: list[str], prefix: str) -> int:
@@ -379,7 +381,7 @@ def test_install_keeps_helpers_edited_in_the_game_and_says_how_to_take_the_new_o
     assert code == 0 and "replaced its helpers of 2026-09-01" in out, out
     lines = generator.read_text(encoding="utf-8").split("\n")
     helpers = c3.helpers_in(lines)
-    assert lines[helpers.begin:helpers.end + 1] == TEMPLATE[c3.helpers_in(TEMPLATE).begin:c3.helpers_in(TEMPLATE).end + 1]
+    assert lines[helpers.begin:helpers.end + 1] == TEMPLATE[TEMPLATE_HELPERS.begin:TEMPLATE_HELPERS.end + 1]
     game = runpy.run_path(str(generator), run_name="generator")
     assert game["snap"].__doc__ == "v moved to the grid line under it." and game["snap"](40) == 32
 
@@ -403,26 +405,26 @@ def test_install_helpers_only_refreshes_the_generator_alone(tmp_path):
     assert code == 1 and "tools/build_project.py: not in" in out
 
 
-def unmarked(root: Path) -> None:
-    """A generator copied before the template marked its helpers."""
+def older_generator_changed(root: Path, change: Callable[[str], str]) -> None:
+    """older_generator(), then its text changed by change."""
     older_generator(root)
     path = root / "tools" / "build_project.py"
-    path.write_text("\n".join(line for line in path.read_text(encoding="utf-8").split("\n")
-                              if "construct3-agent-plugin helpers:" not in line), encoding="utf-8")
+    path.write_text(change(path.read_text(encoding="utf-8")), encoding="utf-8")
+
+
+def unmarked(root: Path) -> None:
+    """A generator copied before the template marked its helpers."""
+    older_generator_changed(root, lambda text: "\n".join(line for line in text.split("\n")
+                                                         if "construct3-agent-plugin helpers:" not in line))
 
 
 def without_end_marker(root: Path) -> None:
-    older_generator(root)
-    path = root / "tools" / "build_project.py"
-    path.write_text("\n".join(line for line in path.read_text(encoding="utf-8").split("\n")
-                              if "helpers: end" not in line), encoding="utf-8")
+    older_generator_changed(root, lambda text: "\n".join(line for line in text.split("\n")
+                                                         if "helpers: end" not in line))
 
 
 def not_compiling(root: Path) -> None:
-    older_generator(root)
-    path = root / "tools" / "build_project.py"
-    path.write_text(path.read_text(encoding="utf-8").replace("def gem_value() -> int:", "def gem_value( -> int:"),
-                    encoding="utf-8")
+    older_generator_changed(root, lambda text: text.replace("def gem_value() -> int:", "def gem_value( -> int:"))
 
 
 @pytest.mark.parametrize("make, said, checked", [
@@ -436,10 +438,11 @@ def not_compiling(root: Path) -> None:
 ])
 def test_install_leaves_a_generator_it_cannot_refresh(project, make, said, checked):
     make(project)
-    before = (project / "tools" / "build_project.py").read_bytes()
+    generator = project / "tools" / "build_project.py"
+    before = generator.read_bytes()
     code, out = install(project, "--helpers-only")
     assert code == 1 and said in out, out
-    assert (project / "tools" / "build_project.py").read_bytes() == before
+    assert generator.read_bytes() == before
     code, out = install(project)
     assert code == 0 and said in out
     code, out = check(project)
