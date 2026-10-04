@@ -75,7 +75,9 @@ import subprocess
 import sys
 import threading
 import time
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import c3project as c3
 import open_in_editor as oe
@@ -216,7 +218,7 @@ def scope(text: str | list[str]) -> str:
             f"{code(text)}\n}})")
 
 
-def check_plan(plan) -> tuple[dict, list[str]]:
+def check_plan(plan: object) -> tuple[dict, list[str]]:
     """The plan as {viewport, touch, steps}, and what is wrong with it."""
     problems: list[str] = []
     if isinstance(plan, list):
@@ -272,7 +274,7 @@ def check_plan(plan) -> tuple[dict, list[str]]:
     return plan, problems
 
 
-def target_ok(value) -> bool:
+def target_ok(value: object) -> bool:
     if isinstance(value, str):
         return bool(value.strip())
     if isinstance(value, dict):
@@ -281,7 +283,7 @@ def target_ok(value) -> bool:
     return False
 
 
-def target_text(value) -> str:
+def target_text(value: str | dict) -> str:
     if isinstance(value, str):
         return value
     if "js" in value:
@@ -297,28 +299,28 @@ class Game:
                  viewport: list[int] | None, project: Path) -> None:
         self.win, self.live, self.touch, self.size, self.url, self.viewport = win, live, touch, size, url, viewport
         self.project = project
-        self.recording: tuple[str, Recorder, Path] | None = None
+        self.recording: Recorder | None = None
         self.recorded: list[Recorder] = []      # finished, their connections closed after the window (Recorder)
 
     def record(self, name: str, video: Path, watch: dict[str, str]) -> None:
-        self.recording = (name, Recorder(self.url, video.with_suffix(""), self.viewport, watch, self.project), video)
+        self.recording = Recorder(self.url, name, video, self.viewport, watch, self.project)
 
     def stop_recording(self) -> str:
         """What the recording that ran made, or "" when none ran."""
         if not self.recording:
             return ""
-        (name, recorder, video), self.recording = self.recording, None
+        recorder, self.recording = self.recording, None
         self.recorded.append(recorder)
-        return f"recorded {name}: {recorder.finish(name, video)}"
+        return f"recorded {recorder.name}: {recorder.finish()}"
 
     def close(self) -> None:
         for recorder in self.recorded:
             recorder.page.ws.close()
 
-    def run(self, js: str, wait: float = 60):
+    def run(self, js: str, wait: float = 60) -> Any:
         return self.win.evaluate(js, wait=wait, session=self.live)
 
-    def aim(self, target) -> tuple[float, float]:
+    def aim(self, target: str | dict) -> tuple[float, float]:
         if isinstance(target, dict) and "js" in target:
             got = self.run(f"(async () => c3play.aim(await {scope(target['js'])}()))()")
         else:
@@ -371,21 +373,21 @@ class Recorder(threading.Thread):
     scale; and it stays open until the window closes, since closing a connection
     that emulated a size clears the size for the page, the steps' connection included."""
 
-    def __init__(self, url: str, folder: Path, viewport: list[int] | None, watch: dict[str, str],
+    def __init__(self, url: str, name: str, video: Path, viewport: list[int] | None, watch: dict[str, str],
                  project: Path) -> None:
-        super().__init__(daemon=True)
-        self.folder, self.project, self.frames, self.steps, self.done = folder, project, [], [], threading.Event()
-        self.first = threading.Event()
-        shutil.rmtree(folder, ignore_errors=True)
-        folder.mkdir(parents=True)
+        super().__init__(name=name, daemon=True)
+        self.video, self.folder, self.project = video, video.with_suffix(""), project
+        self.frames, self.steps, self.done, self.first = [], [], threading.Event(), threading.Event()
+        shutil.rmtree(self.folder, ignore_errors=True)
+        self.folder.mkdir(parents=True)
         self.page = oe.DevTools(url)
         if viewport:
             emulate(self.page, viewport)
         self.session, self.watch = None, None
         if watch:
             self.session = self.game_session()
-            body = ", ".join(f"[{json.dumps(name)}, await read(async () => ({expression}))]"
-                             for name, expression in watch.items())
+            body = ", ".join(f"[{json.dumps(label)}, await read(async () => ({expression}))]"
+                             for label, expression in watch.items())
             self.watch = ("(async () => { const runtime = c3probe.runtime, vars = c3play.vars;\n"
                           "  const read = async f => { try { return c3play.plain(await f()); }"
                           " catch (e) { return `error: ${e.message}`; } };\n"
@@ -424,7 +426,7 @@ class Recorder(threading.Thread):
         except (oe.DevToolsError, OSError):     # the window closed
             return
 
-    def finish(self, name: str, video: Path) -> str:
+    def finish(self) -> str:
         """Stop, and leave the frames, the timeline, a video and the review page: what
         to print about them."""
         self.done.set()
@@ -434,16 +436,16 @@ class Recorder(threading.Thread):
             return f"no frames: the window answered no screenshot; {self.folder} is empty"
         start = frames[0]["t"]
         seconds = [max(b["t"] - a["t"], 0.001) for a, b in zip(frames, frames[1:])] + [0.05]
-        made = make_video([self.folder / f["file"] for f in frames], seconds, video)
-        timeline = {"name": name, "folder": self.folder.name, "path": self.folder.resolve().as_posix(),
+        made = make_video([self.folder / f["file"] for f in frames], seconds, self.video)
+        timeline = {"name": self.name, "folder": self.folder.name, "path": self.folder.resolve().as_posix(),
                     "project": self.project.resolve().as_posix(), "video": made,
                     "frames": [{**f, "t": round(f["t"] - start, 3)} for f in frames],
                     "steps": [{**s, "start": round(s["start"] - start, 3), "end": round(s["end"] - start, 3)}
                               for s in self.steps]}
         (self.folder / "timeline.json").write_text(json.dumps(timeline, ensure_ascii=False, indent=1), encoding="utf-8")
-        page = video.with_suffix(".html")
+        page = self.video.with_suffix(".html")
         page.write_text(REVIEW.replace("/*TIMELINE*/null", script_json(timeline)), encoding="utf-8")
-        index = write_index(video.parent)
+        index = write_index(self.video.parent)
         lines = [f"{len(frames)} frames in {sum(seconds):.1f} s, {made or 'no ffmpeg or Pillow here to join them'}",
                  f"review {page}: the user plays it there, selects the part that looks wrong and copies it to you "
                  f"as a task; {index} lists every recording",
@@ -451,7 +453,7 @@ class Recorder(threading.Thread):
         return "\n    ".join(lines + watch_lines(timeline["frames"]))
 
 
-def script_json(value) -> str:
+def script_json(value: object) -> str:
     """JSON to put in the page's script, with no </script> inside it."""
     return json.dumps(value, ensure_ascii=False).replace("</", "<\\/")
 
@@ -634,7 +636,7 @@ def screenshot(game: Game, path: Path) -> str:
     return str(path)
 
 
-def play(plan: dict, shots: Path, project: Path):
+def play(plan: dict, shots: Path, project: Path) -> Callable[[oe.Browser, str, oe.DevTools], dict]:
     """The `then` of open_in_editor.open_one: preview the project and run the plan."""
     def run(browser: oe.Browser, target: str, page: oe.DevTools) -> dict:
         if not plan.get("keep_saves"):     # a game reads its save on start, so the profile's would carry over
@@ -690,8 +692,8 @@ def play(plan: dict, shots: Path, project: Path):
                 done["errors"] = oe.runtime_errors(win)
                 steps.append(done)
                 if game.recording:      # its timeline places the step
-                    game.recording[1].steps.append({k: done[k] for k in ("step", "line", "ok", "said", "errors")}
-                                                   | {"start": started_at, "end": time.monotonic()})
+                    game.recording.steps.append({k: done[k] for k in ("step", "line", "ok", "said", "errors")}
+                                                | {"start": started_at, "end": time.monotonic()})
                 if not done["ok"]:
                     break
             seconds = time.monotonic() - began
