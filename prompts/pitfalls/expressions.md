@@ -4,20 +4,21 @@ Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md).
 
 - `Self` is the object of the condition or action that holds the expression.
-  A System condition or action, *For each ordered* included, has no such
+  A System condition or action, *For Each (ordered)* included, has no such
   object, so the editor refuses to open the project with `Invalid use of
   'self'`. Write the object: order *For each Segment* by `Segment.IID`, not
   `Self.IID`. [editor message `Invalid use of 'self'`; observed in a game
   project, 2026-09-22]
-- A local or global variable named like a system expression is read as the
-  expression. A local number `mid` passed as `Functions.Measure(mid)` is read
-  as the text function `mid()`, so the editor refuses the whole project with
-  `Invalid expressions ... parameter 0 does not take 'string'`. Give each
-  variable a name that no system expression has (`probe`, not `mid`; not
-  `left`, `right`, `len`, `find`, `max`, `min`, `abs`, `round`). A function
-  parameter is read the same way: a parameter `round` used as `"第 " & round &
-  " 轮"` stops the editor with `'round' does not accept 0 parameters`, and
-  `roundNo` opens. `check_project.py` refuses both kinds of name.
+- A local or global variable or a function parameter named like a system
+  expression is read as the expression. A local number `mid` passed as
+  `Functions.Measure(mid)` is read as the text function `mid()`, so the
+  editor refuses the whole project with
+  `Invalid expressions ... parameter 0 does not take 'string'`. A parameter
+  `round` used as `"Round " & round` stops the editor with
+  `'round' does not accept 0 parameters`, and `roundNo` opens. Give each
+  variable and parameter a name that no system expression has (`probe`, not
+  `mid`; not `left`, `right`, `len`, `find`, `max`, `min`, `abs`, `round`).
+  `check_project.py` refuses both kinds of name.
   [plugins/system.json, expression `mid`; observed in a game project, r495.2
   editor, 2026-09-23; the parameter case observed in a game project, r504
   editor, 2026-09-30; both in minimal projects, r504 editor, 2026-10-02]
@@ -66,7 +67,7 @@ Sources and the rule for adding an entry are in the index,
 - JSON `Type(path)` reads `"undefined"` for a path that is not there, and
   `"array"`, `"object"`, `"number"`, `"string"`, `"boolean"` or `"null"`
   otherwise. So an expression can test presence, while *Has key* works only
-  as a condition: `"layers." & name & (RunData.Type("layers." & name &
+  as a condition: `"layers." & name & (JSON.Type("layers." & name &
   ".alt") = "array" ? ".alt" : ".main")`. [runtime: exported c3runtime.js
   r504, JSON `_GetTypeOf` returns `_JSONTypeOf` of the value, `typeof` for
   anything but null and arrays]
@@ -77,7 +78,6 @@ Sources and the rule for adding an entry are in the index,
   the same event's conditions before the loop. [runtime: exported
   c3runtime.js r504, `_For` takes the `--e` branch when the end is below the
   start]
-
 - A local variable placed as a sub-event or in a group is visible to every
   event at its level, before or after it, and to their sub-events, but not to
   the parent's own actions. Set it in a sibling block with no conditions,

@@ -5,8 +5,8 @@ Sources and the rule for adding an entry are in the index,
 
 - A function's locals, declared as children of its block, are in scope for
   its sub-events but not for the block's own top-level actions. If such an
-  action sets a local with `Set value`, the editor rejects the whole project
-  at load with "cannot find event variable". So compute them in a child
+  action sets a local with *Set value*, the editor refuses to open the
+  project with "cannot find event variable". So compute them in a child
   block after the declarations. [observed in a game project, r502 editor,
   2026-09-17]
 - A function with a return type is an expression of the Functions object,
@@ -20,14 +20,14 @@ Sources and the rule for adding an entry are in the index,
   picked, so "modify this sprite" modifies every instance. [manual:
   interface/dialogs/function.md "Copy picked"]
 - With *Copy picked*, type and family picks are copied separately. So a
-  function that writes `Bases.*` acts on whatever `Bases` holds, even if the
-  caller narrowed `base`. If shared logic acts only on the caller's picked
+  function that writes `Pieces.*` acts on whatever `Pieces` holds, even if the
+  caller narrowed `Piece`. If shared logic acts only on the caller's picked
   instances of one object and returns nothing, make it a *custom action* on
   that object or family, not a function. A custom action runs on exactly the
   instances of its object that the caller picked. A family custom action
   called through a member type runs the family block on that member's picked
-  instances. Inside a family block, write the family name (`Bases.X`),
-  because the block does not get the member type: `base.X` reads the first
+  instances. Inside a family block, write the family name (`Pieces.X`),
+  because the block does not get the member type: `Piece.X` reads the first
   of all instances. [manual: project-primitives/events/functions.md
   "functions with no return type are essentially custom actions";
   project-primitives/events/custom-actions.md "Picking", "Family custom

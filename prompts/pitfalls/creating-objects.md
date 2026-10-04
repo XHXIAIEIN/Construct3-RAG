@@ -4,12 +4,13 @@ Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md).
 
 - *Create object* picks only the new instance, plus the created children if
-  *Create hierarchy* is on. Container siblings are created too. Its families
-  are not picked, so a family action after *Create object* in the same action
-  list acts on every other instance of the family and misses the new one. To
-  act on it through the family, use *System: Pick last created* with the
-  family in a sub-event. The manual names this as the way to pick a created
-  instance from its family. [manual: system-reference/system-actions.md
+  *Create hierarchy* is on. Container siblings are created too. The new
+  instance's families are not picked, so a family action after *Create
+  object* in the same action list acts on every other instance of the
+  family and misses the new one. To act on it through the family, use
+  *System: Pick last created* with the family in a sub-event. The manual
+  names this as the way to pick a created instance from its family.
+  [manual: system-reference/system-actions.md
   "Create object"; system-reference/system-conditions.md "Pick last created";
   observed in a minimal project, r504 preview, 2026-10-02: `Create object
   BladeEnemy` then `Enemies: Set X 777` moved the 19 instances already there
@@ -52,8 +53,8 @@ Sources and the rule for adding an entry are in the index,
   parent]
 - A created instance is picked in its own event and that event's sub-events,
   and *Pick by unique ID* finds it anywhere. No other condition (*Pick all*,
-  *Pick random*, *Compare instance variable*, overlap) finds it among all
-  instances until the top-level event that created it has ended, or the
+  *Pick random instance*, *Compare instance variable*, overlap) finds it among
+  all instances until the top-level event that created it has ended, or the
   outermost trigger. So a function called after the creating function in the
   same event does not see the new instances. Create and initialise in one
   event, pass `UID` to functions, or pick from a later top-level event or

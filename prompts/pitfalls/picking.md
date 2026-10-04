@@ -67,11 +67,12 @@ Sources and the rule for adding an entry are in the index,
   container; observed in a game project, r503 preview, 2026-09-28: the merge
   target's body was not picked until the pick went through a one-member
   family]
-- *Pick parent* with *Which* set to *Own* looks only one level up. With `base
-  → view → body`, `Bodies: Pick parent base (own)` picks nothing, because
-  `body`'s own parent is `view`. Then the event's actions never run, and no
-  error shows. If the parent you name is not the direct one, set *Which* to
-  *All*. *Pick children* with *All* works the same way down the hierarchy.
+- *Pick parent* with *Which* set to *Own* looks only one level up. With
+  `Robot → Arm → Hand`, `Hands: Pick parent Robot (own)` picks nothing,
+  because `Hand`'s own parent is `Arm`. Then the event's actions never run,
+  and no error shows. If the parent you name is not the direct one, set
+  *Which* to *All*. *Pick children* with *All* works the same way down the
+  hierarchy.
   [manual: plugin-reference/common-features/common-conditions.md "Pick
   parent"; observed in a game project, r504 preview, 2026-09-30: a deploy
   flag cleared from `On Tween "hop" finished` through `Pick parent base
@@ -95,8 +96,9 @@ Sources and the rule for adding an entry are in the index,
 - *ChildCount*, *Compare child count* and *Has children* count every attached
   child of any type. So a second child type on the same parent changes every
   count that meant one type. Get the top index from *Pick children* plus
-  *Pick highest* on that type, or count in a *For each* over the picked
-  children. [manual: plugin-reference/common-features/common-expressions.md
+  *Pick highest/lowest* (highest) on that type, or count in a *For each*
+  over the picked children.
+  [manual: plugin-reference/common-features/common-expressions.md
   "ChildCount", common-conditions.md "Compare child count"; observed in a
   game project, 2026-09-17]
 - *Destroy* releases the instance only at the end of the top-level event,
