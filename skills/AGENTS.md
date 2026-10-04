@@ -54,6 +54,14 @@ project, and the block for the project's instruction file.
   stderr in an error record, and a harness that shows stdout alone shows
   nothing. Only what stops the run before it answers, an unusable flag, a
   project or clone that was not found, goes to stderr with the exit code.
+- The generator template keeps its helpers between two marker lines, and
+  the end line carries their version and the stamp of the lines between:
+  `install.py` replaces that part of a game's `tools/build_project.py` when
+  it is older and unedited, and keeps every other line. A change between the
+  markers fails `tests/test_skill_build_project.py` until the end line it
+  prints is pasted. A helper reads nothing outside the markers but what
+  every game's generator has, so a setting a new helper needs gets its
+  default between the markers.
 - A script that changes a project file checks the result before it writes
   it, writes the whole file or nothing, in the editor's layout (tabs, LF, no
   newline at the end, the editor's keys in the editor's order), and has

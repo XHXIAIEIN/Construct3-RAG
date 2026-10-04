@@ -82,8 +82,8 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 - `screenshot_sheet.py` 按编辑器里的样子，给事件表或其中一个组截图，用于论坛回帖、bug 报告或文档。截图是英文界面，只裁事件表本身，每一列的宽度正好放下它最长的一行。
 - `export_project.py` 用你的订阅账号，让编辑器把项目导出为 Web (HTML5)。
 - `pack_project.py` 把项目保存成编辑器能打开的 `.c3p` 或 `.zip`。它也能把 `.c3p` 或 `.zip` 解成项目文件夹。
-- `install.py` 把 skill 装进游戏项目，或者按 clone 更新已有的副本。
-- `assets/build_project.py` 是一个模板，用来写生成整个项目的 Python 脚本。
+- `install.py` 把 skill 装进游戏项目，或者按 clone 更新已有的副本。它也会把游戏 `tools/build_project.py` 里的辅助函数更新到当前版本，加 `--helpers-only` 时只做这一件事。
+- `assets/build_project.py` 是一个模板，用来写生成整个项目的 Python 脚本。它的辅助函数放在两行标记之间，游戏的设置在标记上方，游戏本身在标记下方。
 
 ### skill 的脚本读写和访问的范围
 
@@ -92,7 +92,7 @@ skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。
 - **只读**：`lookup_ace.py`、`check_project.py`、`review_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。设置了 `CONSTRUCT3_RAG_OFFLINE` 时，它不 fetch。
 - **写文件**：
   - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。
-  - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。加 `--dry-run` 可以先看会改什么。
+  - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。项目的 `tools/build_project.py` 里两行标记之间的辅助函数如果是旧版本、又没人改过，它会换成 skill 当前的版本，文件其余部分不动。加 `--dry-run` 可以先看会改什么。
   - `prepare_art.py` 把处理好的图写进项目的 `art/`。它读取 `art/raw/` 里的原图，不改动它们。
   - `screenshot_sheet.py` 把截图写到项目的 `.build/sheets/`，或 `--out` 指定的文件夹。
   - `pack_project.py` 写入 `--out` 指定的压缩包或文件夹。默认写到项目 `.build/` 下的一个 `.c3p`，这个文件夹专放构建产物。解包时，默认写到压缩包旁边的文件夹。

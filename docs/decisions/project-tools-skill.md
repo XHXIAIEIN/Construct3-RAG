@@ -47,7 +47,9 @@ Option 3. TRAE reads `.trae/skills/` and `.agents/skills/`, Deep Code
 - A copy compares its files with the clone's on every run. While it differs,
   the first line of every script's output is the command that refreshes it.
 - The generator moves into the game as `tools/build_project.py` and finds
-  the checker in the project's skills folders.
+  the checker in the project's skills folders. `install.py` replaces its
+  helpers, between two markers, with the skill's current ones
+  (`generator-helpers-inline.md`).
 
 ## What holds the design in place
 

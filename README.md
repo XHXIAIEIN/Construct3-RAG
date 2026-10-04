@@ -82,8 +82,8 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 - `screenshot_sheet.py` takes a picture of an event sheet, or of one group in it, as the editor shows it, for a forum post, a bug report or a document. The picture is in English and cropped to the sheet, and each column is as wide as its longest line.
 - `export_project.py` makes the editor export the project to Web (HTML5), with your subscribed account.
 - `pack_project.py` saves the project as a `.c3p` or `.zip` that the editor opens. It also unpacks a `.c3p` or `.zip` into a project folder.
-- `install.py` installs the skill in a game project, or refreshes a copy from the clone.
-- `assets/build_project.py` is a template for a Python script that generates a whole project.
+- `install.py` installs the skill in a game project, or refreshes a copy from the clone. It also brings the helpers in a game's `tools/build_project.py` up to date, and `--helpers-only` does only that.
+- `assets/build_project.py` is a template for a Python script that generates a whole project. Its helpers sit between two markers, apart from the game's settings above them and the game below them.
 
 ### What the skill's scripts read, write and reach
 
@@ -92,7 +92,7 @@ The skill's scripts read this repository's `data/` and the projects and files th
 - **Read only**: `lookup_ace.py`, `check_project.py`, `review_design.py`, `check_look.py` and `print_sheet.py`. `print_sheet.py` keeps a hash of each sheet that it prints, in `construct3-sheet-stamps/` of the system's temporary folder. With this hash, `edit_sheet.py` notices a save made between the print and the edit. `check_project.py` runs `git fetch` in the clone at most once an hour, to say when the clone is behind its upstream. If `CONSTRUCT3_RAG_OFFLINE` is set, it skips the fetch.
 - **Writing files**:
   - `edit_sheet.py` writes the event sheets that you give it, and their hashes beside those of `print_sheet.py`.
-  - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. `--dry-run` shows the changes first.
+  - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. In the project's `tools/build_project.py`, it replaces the helpers between the two markers with the skill's when they are an older version that nobody edited there, and keeps the rest of the file. `--dry-run` shows the changes first.
   - `prepare_art.py` writes the fitted pictures into the project's `art/`. It reads the pictures in `art/raw/` and changes none of them.
   - `screenshot_sheet.py` writes its pictures in the project's `.build/sheets/`, or in the folder that `--out` names.
   - `pack_project.py` writes the archive or folder that `--out` names. By default, it writes a `.c3p` in the project's `.build/`, the folder for build products. When it unpacks, it writes a folder beside the archive by default.

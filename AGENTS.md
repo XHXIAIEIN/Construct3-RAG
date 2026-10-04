@@ -108,8 +108,11 @@ block of `prompts/game-project-AGENTS.md` in its instruction file, whose
 
   It copies the skill, adds the block to the project's `AGENTS.md` when
   no instruction file there names this repository, with the path filled in,
-  and the line `@AGENTS.md` to `CLAUDE.md`. It changes no other file. Say
-  in one sentence what it wrote, then read the installed `SKILL.md`.
+  and the line `@AGENTS.md` to `CLAUDE.md`. In a game generated from the
+  template it also replaces the helpers between the markers of
+  `tools/build_project.py` when they are an older version left unedited.
+  It changes no other file. Say in one sentence what it wrote, then read
+  the installed `SKILL.md`.
   `--into .claude/skills` for Claude Code, `--into .trae/skills` for TRAE;
   `--no-block` when the user keeps the instruction files to themselves;
   `--dry-run` to see first.

@@ -65,8 +65,8 @@ opened once before it is handed over.
 | `scripts/export_project.py` | Export the project to Web (HTML5) in the editor into `--to`, `--bump` raising its version. The editor exports for a subscribed account, which the user logs in to: read [references/export-project.md](references/export-project.md) before the first export of a project, when the script stops, or before passing `--attach` |
 | `scripts/pack_project.py` | Save the project as a .c3p or .zip, or a .c3p or .zip as a project folder, with project.c3proj at the root of the archive as the editor needs it and only the files the editor saves; what it leaves out it names. Any project handed over as a file, a bug report's attachment among them, is packed with it, `--open` opens the result once in the editor |
 | `scripts/prepare_art.py` | The art from the image tool of this session: `--list` prints a prompt for every picture the generator's `art()` asks for; without it, each picture saved in `art/raw/` is cut out of its background and fitted to its box, for the generator to take in place of the stand-in. Needs Pillow |
-| `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone |
-| `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game |
+| `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone and with it the helpers of the project's `tools/build_project.py`; `--helpers-only` refreshes those alone, for a project that holds no copy |
+| `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game above and below its helpers, which stay the skill's between two markers |
 | `assets/runtime-probe.js` | Evaluated in a running preview by a script of the agent's, reads the game's state: positions, variables, animations, behaviors. Read [references/reading-the-runtime.md](references/reading-the-runtime.md) before checking what an event did in the preview |
 
 Each prints its options and examples with `--help`. The scripts that read the
@@ -309,7 +309,10 @@ it as one Python generator instead of JSON by hand. Read
 before writing it: set-up in the editor, the build and check loop, one
 function per group of the sheet, the habits that keep a rerun safe. The
 generator checks what it wrote with `--style`, so every event is held to the
-style of the official examples.
+style of the official examples. Its helpers lie between two markers, and
+`scripts/install.py` brings them up to date: write the game's settings above
+them and the game below them, and a helper the game changes again below the
+end marker, where it replaces the skill's.
 
 Every sprite of the game is an `art()` in the generator: it shows a stand-in
 shape until its picture is in `art/`. When this session has an image

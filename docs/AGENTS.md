@@ -52,7 +52,7 @@ The project skill and the prompts:
 | Record | What it settles |
 |--------|-----------------|
 | `project-tools-skill.md` | Why the project tools ship as an Agent Skill, and what keeps small models on them |
-| `generator-helpers-inline.md` | Why the generator template keeps its helpers in the file the agent edits, and what was measured when they moved out |
+| `generator-helpers-inline.md` | Why the generator template keeps its helpers in the file the agent edits, between markers that let a game's copy take the skill's current ones, and what was measured |
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON, and how a plan names a variable or a comment |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
 | `clone-update-check.md` | Why the checker fetches the clone and fails when it is behind its upstream, and how plugin users get updates |

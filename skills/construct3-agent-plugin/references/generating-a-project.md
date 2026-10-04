@@ -2,11 +2,18 @@
 
 `assets/build_project.py` is a generator for a project an agent writes end to
 end: object types, families, layouts, event sheets, images and the index in
-`project.c3proj`, produced from one Python file. It came out of the Water
-Sort project (r502, September 2026), where the event sheet grew past what
-hand-editing JSON can keep consistent: every rerun produces the whole
-project, and `scripts/check_project.py` catches the mistakes the editor would
-otherwise report one at a time.
+`project.c3proj`, produced from one Python file. It came out of a puzzle game
+an agent wrote end to end (r502, September 2026), where the event sheet grew
+past what hand-editing JSON can keep consistent: every rerun produces the
+whole project, and `scripts/check_project.py` catches the mistakes the editor
+would otherwise report one at a time.
+
+The file has three parts. The game's settings come first: `PROJECT_NAME`,
+`VIEW_W` and `VIEW_H`, the grid, `PALETTE` and the rest of the look. The
+helpers follow between a begin and an end marker, the same in every game.
+The game comes last: `BEATS`, `build_files()`, `build_images()`,
+`build_object_types()`, `build_layouts()` and the `module_*()` functions of
+the sheet.
 
 Generate when the agent owns the project and the user reviews it in the
 editor: a prototype, a game built from a design conversation, a rewrite. Edit
@@ -29,7 +36,11 @@ overwrites the files it produces.
    those names.
 2. Copy `assets/build_project.py` to `tools/build_project.py` in the project.
    The generator belongs to the game and is committed with it; the checker
-   stays in the skill.
+   stays in the skill. The helpers between its markers stay the skill's:
+   `scripts/install.py` replaces them with the current ones when the skill
+   is refreshed, unless they were edited there, and keeps every line above
+   and below them. `check_project.py` says when they are older than the
+   skill's and how to refresh them.
 3. Ignore what the editor and the scripts leave behind: `.tmp/` holds
    screenshots, recordings and browser profiles, `.build/` the products,
    the packed `.c3p` and the export, so none is written to the project
@@ -151,12 +162,19 @@ that running the generator discards edits made in the editor.
 The stand-in game in `assets/build_project.py` shows the shape. Keep these
 habits; they are what makes rerunning safe.
 
+- Write the game above the begin marker and below the end marker. A helper
+  the game changes is defined again below the end marker, where a def or a
+  constant replaces the one of the same name between the markers and a
+  refresh keeps it; so is a helper the game adds. An edit between the
+  markers holds every helper at its version: `install.py` leaves the part as
+  it is and says how to move the edit below.
 - Constants once, at the top, and a global constant in the sheet for every
   number an event reads; a tunable value has one place to change. What a
   behavior owns (a Sine period, a particle rate) is an instance property set
-  in `build_layouts()`, not an event. The template holds the properties
+  in `build_layouts()`, not an event. The helpers hold the properties
   block of the common behaviors (`SINE`, `BULLET`, `PLATFORM` ...) with the
-  editor's keys; one it lacks is copied from an instance of an official
+  editor's keys; a game that tunes one assigns it again below the end
+  marker, and one they lack is copied from an instance of an official
   example, under the behavior's name on that object (`"Sine"`, not `"Sin"`).
 - A table of records, cards, enemies, levels, is a project file, not events
   that add keys: `record_table("CardTable", {"strike": {"cost": 1, ...}})`
@@ -174,7 +192,7 @@ habits; they are what makes rerunning safe.
 - One helper per ACE, named for what it does, its parameters in the
   schema's order, with a docstring only where the schema does not say enough
   (which pick it leaves, what a tick later looks like). A helper is added
-  when the design needs the ACE; print its entry with
+  below the end marker when the design needs the ACE; print its entry with
   `scripts/lookup_ace.py` first and copy the `write:` line.
 - Behaviors are referred to by the name given on the object, not the
   behavior id: `beh_def("Sin", "Shake")` and `beh_def("Sin", "Rock")` are
