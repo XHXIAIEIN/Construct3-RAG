@@ -50,7 +50,7 @@ PARAM_LINE = 150    # a longer parameter line puts the way to write the value on
 
 # How each parameter type is written in an event sheet file, and a value that loads.
 WRITING = {
-    "number": ('"0"', "expression string: \"100\", \"Self.X + 50\""),
+    "number": ('"0"', "expression string, in the unit its description names: \"100\""),
     "string": ('"\\"\\""', "expression string, text in inner quotes: \"\\\"hello\\\"\""),
     "any": ('"0"', "expression string, a number or a text in inner quotes"),
     "boolean": ("false", "JSON true or false"),

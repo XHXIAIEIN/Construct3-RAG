@@ -46,6 +46,14 @@ def test_ace_lookup_says_what_each_parameter_is(built):
     assert "原始字符串。" in out
 
 
+def test_a_number_is_written_in_the_unit_its_description_names(built):
+    """A grid column took a pixel position when the hint for every number showed one."""
+    code, out = tool(built, "lookup_ace", "TileMovement", "grid", "position")
+    line = next(line for line in out.splitlines() if line.split()[:2] == ["x", "number"])
+    assert code == 0 and "The column to move the object to." in line and "in the unit its description names" in line
+    assert "Self.X" not in line, line
+
+
 def test_ace_lookup_names_the_entries_in_full_that_do_not_fit(built):
     code, out = tool(built, "lookup_ace", "System", "find", "--limit", "900")
     assert code == 0 and len(out) <= 900
