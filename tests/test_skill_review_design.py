@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 
-from tests.skill_helpers import REPO, SKILL, run
+from tests.skill_helpers import REPO, SKILL, edit, run
 
 SCRIPT = SKILL / "scripts" / "review_design.py"
 SID = iter(range(100_000_000_000_001, 100_000_000_099_999))
@@ -50,6 +50,11 @@ def function(name, children, params=()):
 
 def setv(name, value):
     return a("set-eventvar-value", variable=name, value=value)
+
+
+def create(obj, x, y):
+    return a("create-object", **{"object-to-create": obj, "layer": '"Game"', "x": x, "y": y,
+                                 "create-hierarchy": False, "template-name": '""'})
 
 
 def write(root: Path, sheets: dict, types: dict, layouts: dict | None = None) -> Path:
@@ -134,12 +139,11 @@ def test_tictactoe_one_fact_in_the_array_and_the_cell(tmp_path):
 
 
 def test_the_array_alone_is_not_twice(tmp_path):
-    root = tmp_path / "game"
-    tictactoe(root)
-    sheet = json.loads((root / "eventSheets" / "Game.json").read_text("utf-8"))
-    for e in sheet["events"][-2:]:
-        e["actions"] = [x for x in e["actions"] if x["id"] != "set-instvar-value"]
-    (root / "eventSheets" / "Game.json").write_text(json.dumps(sheet), "utf-8")
+    def drop_cell_writes(sheet):
+        for e in sheet["events"][-2:]:
+            e["actions"] = [x for x in e["actions"] if x["id"] != "set-instvar-value"]
+    root = tictactoe(tmp_path)
+    edit(root, "eventSheets/Game.json", drop_cell_writes)
     assert findings(root, "twice") == []
 
 
@@ -148,11 +152,9 @@ def test_tictactoe_resets_what_the_restart_restores(tmp_path):
 
 
 def test_resets_on_a_layout_never_entered_again(tmp_path):
-    root = tmp_path / "game"
-    tictactoe(root)
-    sheet = json.loads((root / "eventSheets" / "Game.json").read_text("utf-8"))
-    sheet["events"][3]["actions"] = [a("go-to-layout", layout="Menu")]
-    (root / "eventSheets" / "Game.json").write_text(json.dumps(sheet), "utf-8")
+    root = tictactoe(tmp_path)
+    edit(root, "eventSheets/Game.json",
+         lambda sheet: sheet["events"][3].update(actions=[a("go-to-layout", layout="Menu")]))
     assert findings(root, "restart") == []
 
 
@@ -165,17 +167,17 @@ def test_tictactoe_pair_is_a_question(tmp_path):
 def card_game(root: Path, scratch="TMP", table=25) -> Path:
     shared = [var(f"G{n}") for n in range(12)]
     menu = [*shared, var(scratch), ev([c("on-start-of-layout")],
-                                      [a("add-key", "Defs", key=f'"c{n}"', value=f'"card {n}|{n}"') for n in range(table)])]
+                                      [a("add-key", "CardTable", key=f'"c{n}"', value=f'"card {n}|{n}"')
+                                       for n in range(table)])]
     reads = [setv(f"G{n}", f"G{n} + 1") for n in range(12)]
-    deal = [a("create-object", **{"object-to-create": "CardName", "layer": '"Game"', "x": "0", "y": "0",
-                                  "create-hierarchy": False, "template-name": '""'}),
-            a("set-instvar-value", "Card", **{"instance-variable": "TAGNAME", "value": "CardName.UID"})]
-    combat = [function("Draw", [ev([], [setv(scratch, "Defs.Get(\"c1\")"), *deal])]),
+    deal = [create("CardLabel", "0", "0"),
+            a("set-instvar-value", "Card", **{"instance-variable": "labelUid", "value": "CardLabel.UID"})]
+    combat = [function("Draw", [ev([], [setv(scratch, "CardTable.Get(\"c1\")"), *deal])]),
               function("Show", [ev([c("compare-eventvar", variable=scratch, comparison=0, value='""')], reads)]),
-              ev([c("pick-by-unique-id", "CardName", **{"unique-id": "Card.TAGNAME"})],
-                 [a("set-text", "CardName", text='"x"')])]
+              ev([c("pick-by-unique-id", "CardLabel", **{"unique-id": "Card.labelUid"})],
+                 [a("set-text", "CardLabel", text='"x"')])]
     return write(root, {"Menu": menu, "Combat": combat},
-                 {"Card": ("Sprite", ["TAGNAME"]), "CardName": ("Text", []), "Defs": ("Dictionary", [])})
+                 {"Card": ("Sprite", ["labelUid"]), "CardLabel": ("Text", []), "CardTable": ("Dictionary", [])})
 
 
 def test_card_game_scratch_global_and_globals_on_the_menu_sheet(tmp_path):
@@ -186,10 +188,8 @@ def test_card_game_scratch_global_and_globals_on_the_menu_sheet(tmp_path):
 def test_named_globals_on_a_globals_sheet_pass(tmp_path):
     """The examples' form: a sheet with the shared globals and no layout, a name for each value."""
     root = card_game(tmp_path, scratch="drawnKey")
-    project = json.loads((root / "project.c3proj").read_text("utf-8"))
-    project["layouts"]["items"] = ["Combat"]
+    edit(root, "project.c3proj", lambda project: project["layouts"].update(items=["Combat"]))
     (root / "layouts" / "Menu.json").unlink()
-    (root / "project.c3proj").write_text(json.dumps(project), "utf-8")
     assert findings(root, "global") == []
 
 
@@ -198,11 +198,11 @@ def test_card_game_uid_of_an_instance_created_with_it(tmp_path):
 
 
 def test_a_uid_kept_without_the_create_is_a_question(tmp_path):
+    def drop_create(sheet):
+        actions = sheet["events"][0]["children"][0]["actions"]
+        actions[:] = [x for x in actions if x["id"] != "create-object"]
     root = card_game(tmp_path)
-    sheet = json.loads((root / "eventSheets" / "Combat.json").read_text("utf-8"))
-    actions = sheet["events"][0]["children"][0]["actions"]
-    actions[:] = [x for x in actions if x["id"] != "create-object"]
-    (root / "eventSheets" / "Combat.json").write_text(json.dumps(sheet), "utf-8")
+    edit(root, "eventSheets/Combat.json", drop_create)
     assert [f for f in found(root) if f[0] == "uid"] == [("uid", "kept", "link", "Combat", 2)]
 
 
@@ -213,7 +213,7 @@ def test_card_game_table_written_as_actions(tmp_path):
 
 # --- a merge game: many conditions, a guard repeated, a repeated deep call ---------------------
 def guard():
-    return [c("is-enabled", "Piece", inverted=False), c("is-dragging", "Piece", inverted=True),
+    return [c("is-enabled", "Piece"), c("is-dragging", "Piece", inverted=True),
             c("is-any-playing", "Piece", inverted=True)]
 
 
@@ -251,7 +251,7 @@ def test_merge_game_expression_that_repeats_a_long_call(tmp_path):
 def test_expression_shape_keeps_texts_apart():
     """Get("a") and Get("b") are two calls; a parenthesis inside a text is not counted."""
     _, rd = module()
-    assert rd.expression_shape('Defs.Get("rewardC") & Defs.Get("rewardU")') == (1, "")
+    assert rd.expression_shape('CardTable.Get("a") & CardTable.Get("b")') == (1, "")
     assert rd.expression_shape('f(g("((("), g("((("))')[0] == 2
 
 
@@ -300,20 +300,15 @@ def test_review_without_a_project(tmp_path):
 def hand(root: Path, link: bool = False, container: bool = True) -> Path:
     """A card drawn with its label set from its position, then laid out again by a function
     that moves the card alone; `link` adds the label as the card's child where it is made."""
-    draw = [a("create-object", object_to_create="Card"),
-            a("set-position", "CardName", x="Card.X - 60", y="Card.Y - 74")]
-    draw[0]["parameters"] = {"object-to-create": "Card", "layer": '"Game"', "x": "640", "y": "600",
-                             "create-hierarchy": False, "template-name": '""'}
+    draw = [create("Card", "640", "600"), a("set-position", "CardLabel", x="Card.X - 60", y="Card.Y - 74")]
     if link:
-        draw.append(a("add-child", "Card", child="CardName"))
+        draw.append(a("add-child", "Card", child="CardLabel"))
     events = [function("Draw", [ev([], draw)]),
               function("Layout", [ev([c("for-each", object="Card")], [a("set-position", "Card", x="loopindex * 200",
                                                                           y="600")])])]
-    root = write(root, {"Combat": events}, {"Card": ("Sprite", []), "CardName": ("Text", [])})
+    root = write(root, {"Combat": events}, {"Card": ("Sprite", []), "CardLabel": ("Text", [])})
     if container:
-        data = json.loads((root / "project.c3proj").read_text("utf-8"))
-        data["containers"] = [{"members": ["Card", "CardName"]}]
-        (root / "project.c3proj").write_text(json.dumps(data), "utf-8")
+        edit(root, "project.c3proj", lambda project: project.update(containers=[{"members": ["Card", "CardLabel"]}]))
     return root
 
 
