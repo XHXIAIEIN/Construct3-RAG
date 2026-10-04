@@ -52,9 +52,10 @@ one.
   without errors, and `tsc --noEmit` with the written `tsconfig.json`
   accepted the project's scripts and a behavior property of an object type,
   and refused an object type and a behavior the project does not have.
-- The menu labels are matched in English, the language of the profile the
-  script starts. A profile set to another language gets the message that
-  names the missing label.
+- Menu items carry no id, only a label and a tooltip in the editor's
+  language. The script reads each label by its key from the language file
+  the editor loaded for the page's language, the keys `data/c3-lang` holds.
+  An editor set to Chinese wrote the same 57 files as one in English.
 
 ## Not verified
 

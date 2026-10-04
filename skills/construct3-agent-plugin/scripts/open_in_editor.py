@@ -239,11 +239,19 @@ STATE_MAX = 20
 # external editor from the context menu of the Scripts folder in the Project Bar. The editor
 # writes the definitions only into a folder project, from its own model of the project, so
 # they are the ones the user would get. It returns the files it wrote under scripts/, by
-# path, and removes the folder. The menus are found by their English labels, the editor's
-# language in a profile of this script; a dialog it shows on the way, such as the offer to
-# set up backups, is closed.
+# path, and removes the folder. Menu items carry no id, only their label and tooltip, so
+# each is found by its label in the language the editor shows: the text of its key in the
+# language file the editor loaded for the language of the page, loader/lang/
+# precompiled-<language>.json, whose keys data/c3-lang shares; an editor in another language
+# loads the English one as well. A dialog it shows on the way, such as the offer to set up backups,
+# is closed.
 TYPESCRIPT_JS = r"""async () => {
   const w = t => new Promise(r => setTimeout(r, t));
+  const files = performance.getEntriesByType('resource').map(e => e.name).filter(u => /\/lang\/precompiled-[^/]+\.json$/.test(u));
+  const file = files.find(u => u.endsWith(`/precompiled-${document.documentElement.lang}.json`)) || files[0];
+  if (!file) return "the editor loaded no language file";
+  const lang = (await (await fetch(file)).json()).text;
+  const label = key => key.split('.').reduce((o, k) => o?.[k], lang);
   const fire = (el, types) => { const r = el.getBoundingClientRect();
     for (const type of types) el.dispatchEvent(new (type.startsWith('pointer') ? PointerEvent : MouseEvent)(type,
       {bubbles: true, clientX: r.x + 5, clientY: r.y + 5, button: type == 'contextmenu' ? 2 : 0})); };
@@ -256,23 +264,25 @@ TYPESCRIPT_JS = r"""async () => {
     const d = open()[0];
     if (!d) return;
     (d.querySelector('.cancelButton') || d.querySelector('ui-close-button, .okButton'))?.click(); } };
-  const pick = async (...labels) => { for (const t of labels) {
-    const e = item(t);
-    if (!e) return `the editor's menu has no "${t}"`;
+  const pick = async (...keys) => { for (const k of keys) {
+    const e = item(label(k));
+    if (!e) return `the editor's menu has no item ${k}, "${label(k)}"`;
     click(e); await w(500); } };
   const root = await navigator.storage.getDirectory(), name = 'typescript-' + Date.now();
   const dir = await root.getDirectoryHandle(name, {create: true});
   window.showDirectoryPicker = async () => dir;
   try {
     click(document.getElementById('mainMenuButton')); await w(500);
-    let no = await pick('Project', 'Save as', 'Save as project folder...');
+    let no = await pick('main-menu.project-menu.menu-name', 'main-menu.project-menu.save-as',
+                        'main-menu.project-menu.save-as-folder');
     if (no) return no;
     await w(1000); await calm();
     const scripts = [...document.querySelectorAll('ui-treeitem.fileGroup > .tree-item-wrap > .tree-item-name')]
-      .find(e => e.textContent.trim() == 'Scripts' && e.offsetParent !== null);
+      .find(e => e.textContent.trim() == label('ui.bars.project.items.script-files') && e.offsetParent !== null);
     if (!scripts) return 'the Project Bar shows no Scripts folder';
     fire(scripts, ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'contextmenu']); await w(500);
-    no = await pick('TypeScript', 'Set up TypeScript for external editor');
+    no = await pick('ui.bars.project.menu.fileFolderItem.typescript',
+                    'ui.bars.project.menu.fileFolderItem.set-up-external-typescript');
     if (no) return no;
     await w(1000); await calm();
     const files = {};

@@ -1,5 +1,7 @@
 """open_in_editor.py: handing the project to the editor."""
 import itertools
+import json
+import re
 import sys
 import threading
 import time
@@ -183,7 +185,7 @@ def test_open_in_editor_writes_the_typescript_definitions_the_editor_wrote(tmp_p
 
     class Page:
         def evaluate(self, expression, wait=None):
-            assert "Set up TypeScript for external editor" in expression
+            assert "'ui.bars.project.menu.fileFolderItem.set-up-external-typescript'" in expression
             return {"files": {"ts-defs/instanceTypes.d.ts": "declare namespace InstanceType {\n\tclass Coin {}\n}",
                               "ts-defs/runtime/IRuntime.d.ts": "new", "tsconfig.json": "editor's"}}
 
@@ -201,9 +203,24 @@ def test_open_in_editor_writes_the_typescript_definitions_the_editor_wrote(tmp_p
     assert lines[1] == "  typescript: wrote 2 files into scripts/ts-defs", lines
     assert oe.typescript(Page(), tmp_path / "game.c3p") == {
         "error": "a .c3p has no scripts folder to write into: pass the folder project"}
-    failed = {"status": "opened", "typescript": {"error": 'the editor\'s menu has no "TypeScript"'}}
+    failed = {"status": "opened", "typescript": {"error": "the Project Bar shows no Scripts folder"}}
     assert oe.failed(failed) and oe.report({**failed, "project": "Game", "title": "", "editor": "", "warnings": []})[1] \
-        == '  typescript: not written, the editor\'s menu has no "TypeScript"'
+        == "  typescript: not written, the Project Bar shows no Scripts folder"
+
+
+def test_open_in_editor_finds_the_typescript_menus_by_the_keys_of_their_labels():
+    """Menu items carry no id, so their labels are read from the editor's language file by key:
+    an editor in Chinese wrote the same 57 files (2026-10-04, r495-2). Each key names the label
+    the steps click, in the language files this repository keeps."""
+    keys = re.findall(r"'((?:main-menu|ui\.bars)\.[\w.-]+)'", opener().TYPESCRIPT_JS)
+    assert len(keys) == 6, keys
+    for locale in ("en-US", "zh-CN"):
+        text = json.loads((SKILL.parents[1] / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))["text"]
+        for key in keys:
+            node = text
+            for part in key.split("."):
+                node = node[part]
+            assert isinstance(node, str) and node, (locale, key)
 
 
 def test_open_in_editor_reports_how_long_the_game_ran_in_the_preview():
