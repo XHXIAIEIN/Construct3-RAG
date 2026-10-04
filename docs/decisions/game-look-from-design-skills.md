@@ -167,4 +167,5 @@ while a small model reading tool output answers concrete questions.
   into `prepare_art.py`.
 - A HUD sprite of one colour does not show on the layer behind it: check
   the UI layer's images in `no_overlap()`.
-- The example clone updates: rerun the look survey.
+- The example clone updates: rerun the survey under "What the official
+  examples do".

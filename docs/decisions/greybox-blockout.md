@@ -5,12 +5,12 @@ Schema: Construct 3 r495.2
 
 ## Problem
 
-A generated game has no art until the user brings some, and until then it
-has to look like what it is: a blockout that can be played, read and judged,
-and still looks like a designed thing rather than a debug screen. The
-template does not draw art (`game-look-from-design-skills.md`); what it drew
-instead, "a stand-in of one colour or a plain shape", each run filled in its
-own way.
+A generated game has no art until the user or the agent's image tool
+supplies it, and until then it has to look like what it is: a blockout that
+can be played, read and judged, and still looks like a designed thing rather
+than a debug screen. The template does not draw art
+(`game-look-from-design-skills.md`). In place of art it drew "a stand-in of
+one colour or a plain shape", and each run filled that in its own way.
 
 A level had the same gap. The grid, `anchor()` and `no_overlap()` place a
 HUD; nothing placed a level's content, so a model laid platforms, hazards
@@ -50,8 +50,8 @@ The outline, shadow, hit and squash values come from the evidence in
 
 ### Contrast of the values
 
-Relative luminance and contrast ratio as WCAG 2.2 defines them, the formula
-of `contrast()` in the template; lightness as CIE L*.
+The ratios are WCAG 2.2 contrast ratios of relative luminance, the formula
+of `contrast()` in the template; L* is CIE lightness.
 
 | Role | Colour | L* |
 |------|--------|---:|

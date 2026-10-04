@@ -6,15 +6,15 @@ releases
 
 ## Problem
 
-The greybox template needs visual hierarchy, motion and level pacing that a
-small model can reproduce with plain shapes. "Polished" or "juicy" does not
+The generator template needs visual hierarchy, motion and level pacing that
+a small model can reproduce with plain shapes. "Polished" or "juicy" does not
 say which objects get outlines, how long a squash lasts, or when a level
 releases tension.
 
 Several authors publish small Construct games whose web exports carry those
 choices as object data, event-sheet constants and effect parameters. The
-question: which choices repeat across the authors, which belong to one, and
-which can become theme-neutral defaults without copying characters or
+question is which choices repeat across the authors, which belong to one,
+and which can become theme-neutral defaults without copying characters or
 finished art.
 
 ## Evidence

@@ -8,8 +8,8 @@ Schema: Construct 3 r495.2
 The generator template draws stand-ins, and the skill said nothing about
 where the art comes from beyond "the user or real assets". The template's
 own comment said that real projects draw with Pillow. So an agent asked for
-a game that looks finished draws the art itself, in code, even when its
-client has an image model it could call.
+a game that looks finished drew the art itself, in code, even when its
+client had an image model it could call.
 
 Task: an agent with an image generation tool makes the game's art with it,
 and the art drops into the generated project without changing a layout or
@@ -78,7 +78,7 @@ Option 3.
 
 ## Open
 
-- No run of a small model with an image tool has used the route yet; the
+- No run of a small model with an image tool has used the route; the
   pictures it was tested on are synthetic, made to fail the way model
   output does (a near-flat key, JPEG noise, a ground shadow, a subject
   over the edge).
