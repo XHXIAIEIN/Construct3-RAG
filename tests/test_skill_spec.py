@@ -17,6 +17,12 @@ def frontmatter() -> dict[str, str]:
     return dict(re.findall(r"^([a-z-]+): (.+)$", text.split("---\n")[1], re.M))
 
 
+def skill_docs() -> list[tuple[str, str]]:
+    """SKILL.md and the references, each file name with its text."""
+    return [(doc.name, doc.read_text(encoding="utf-8"))
+            for doc in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]]
+
+
 def test_skill_name_and_description_meet_the_specification():
     fields = frontmatter()
     assert fields["name"] == SKILL.name
@@ -37,17 +43,17 @@ def test_skill_md_reads_under_any_locale_codec():
 
 
 def test_every_file_the_skill_names_is_in_it():
-    for doc in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
+    for name, text in skill_docs():
         # a path of the clone, Construct3-RAG/prompts/references/..., is not one of the skill's own
-        for rel in set(re.findall(r"(?<![\w/])((?:scripts|references|assets)/[\w.-]+\.\w+)", doc.read_text(encoding="utf-8"))):
-            assert (SKILL / rel).is_file(), f"{doc.name} names {rel}"
+        for rel in set(re.findall(r"(?<![\w/])((?:scripts|references|assets)/[\w.-]+\.\w+)", text)):
+            assert (SKILL / rel).is_file(), f"{name} names {rel}"
 
 
 def test_every_file_of_the_clone_the_skill_names_exists():
     """A copy of the skill reaches these through the project's Construct3-RAG line; a rename here breaks them in silence."""
-    for doc in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
-        for rel in set(re.findall(r"Construct3-RAG/([\w./-]+\.\w+)", doc.read_text(encoding="utf-8"))):
-            assert (REPO / rel).is_file(), f"{doc.name} names Construct3-RAG/{rel}"
+    for name, text in skill_docs():
+        for rel in set(re.findall(r"Construct3-RAG/([\w./-]+\.\w+)", text)):
+            assert (REPO / rel).is_file(), f"{name} names Construct3-RAG/{rel}"
 
 
 OTHER_PROGRAMS = {"--mute-audio", "--user-data-dir"}     # the browser's, where the skill says how one is started
@@ -56,21 +62,21 @@ OTHER_PROGRAMS = {"--mute-audio", "--user-data-dir"}     # the browser's, where 
 def test_every_flag_the_skill_names_is_one_its_script_takes(tmp_path):
     """A flag renamed in a script and left in SKILL.md or a reference ends the agent's run in a usage error.
     A flag after a script's name on a line is that script's; one with no script before it, any script's."""
-    takes = {}
+    takes: dict[str, set[str]] = {}
     for script in sorted((SKILL / "scripts").glob("*.py")):
         if script.stem != "c3project":
             code, out = run(tmp_path, script, "--help")
             assert code == 0, out
             takes[script.name] = set(re.findall(r"^\s+(?:-\w(?: \S+)?, )?(--[a-z][\w-]*)", out, re.M))
     any_script = set().union(*takes.values())
-    for doc in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
-        for line in doc.read_text(encoding="utf-8").splitlines():
+    for name, text in skill_docs():
+        for line in text.splitlines():
             script = None
             for m in re.finditer(r"\b(\w+\.py)\b|(?<![\w-])(--[a-z][\w-]*)", line):
                 if m.group(1):
                     script = m.group(1) if m.group(1) in takes else None
                 elif m.group(2) not in OTHER_PROGRAMS:
-                    assert m.group(2) in takes.get(script, any_script), f"{doc.name}: {script or 'no script'} takes no {m.group(2)}: {line.strip()}"
+                    assert m.group(2) in takes.get(script, any_script), f"{name}: {script or 'no script'} takes no {m.group(2)}: {line.strip()}"
 
 
 # --- the trigger evaluation of the description, against a stand-in for the client -------------
