@@ -82,6 +82,7 @@ group turned off to pause, read
 [pitfalls/wait-and-time-scale.md](pitfalls/wait-and-time-scale.md).
 
 - *Wait* does not stop a loop, so the remaining iterations run in the same tick.
+- A *Wait* keeps the instances its event picked: *Wait 2 seconds* then *Destroy* destroys the instance that started it, with no UID stored.
 - *Wait for previous actions* waits only for asynchronous actions.
 - Of two overlapping *Wait* hit stops, the shorter ends both. Count the stops under way, and restore the time scale when the count is back to 0. A `wallclocktime` deadline runs on another clock than the *Wait* and leaves the game slowed.
 - A hit stop slows tweens and `dt` too. If a tween must end on an audio beat, set its object's time scale to 1 and restore it in *On finished*. If a blend must keep real time, use `dt / timescale`.

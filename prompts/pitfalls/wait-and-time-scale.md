@@ -9,6 +9,16 @@ Sources and the rule for adding an entry are in the index,
   If a loop must pause between iterations, use a Timer or a function called
   from *On timer*. [manual: system-reference/system-actions.md "Wait";
   examples: arcade-shooter, layout-transition]
+- A *Wait* keeps the instances its event picked. The actions after it act on
+  those instances, even if other events pick or create instances in the
+  meantime, and an instance destroyed during the wait drops out. So
+  *Wait 2 seconds* then *Destroy* in one action list destroys the instance
+  that started the wait, with no UID to store and no *Pick by UID*. If the
+  event picked several instances, the actions after the wait run on all of
+  them. [runtime: exported c3runtime.js r503, `ScheduledWait._Init` saves the
+  SOL of every object type and the wait restores it when it resumes; read
+  from source, not observed; construct.net tutorial system-wait-action-63,
+  "Wait remembers picked objects"]
 - *Wait for previous actions* (the manual's "Wait for previous actions to
   complete") waits only for asynchronous actions, marked with an icon in the
   editor: Tween actions, AJAX requests, Local Storage, *Snapshot canvas*.
