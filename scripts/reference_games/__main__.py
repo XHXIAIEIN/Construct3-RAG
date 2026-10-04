@@ -6,13 +6,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .catalog import REPO, WORKSPACE, load_catalog
+from .catalog import DOWNLOADS, REPO, STATS, load_catalog
 
 
 def downloaded(names: list[str] | None = None) -> list[Path]:
-    root = WORKSPACE / "downloads"
     wanted = names or [entry["folder"] for entry in load_catalog()]
-    return [root / name for name in wanted if (root / name / "manifest.json").exists()]
+    return [DOWNLOADS / name for name in wanted if (DOWNLOADS / name / "manifest.json").exists()]
 
 
 def run_module(name: str, args: list[str], output: Path | None = None) -> None:
@@ -49,7 +48,7 @@ def main() -> None:
 
     if args.stage in ("report", "all"):
         run_module("stats", [])
-        run_module("compare", [], WORKSPACE / "stats" / "compare_authors.txt")
+        run_module("compare", [], STATS / "compare_authors.txt")
 
 
 if __name__ == "__main__":

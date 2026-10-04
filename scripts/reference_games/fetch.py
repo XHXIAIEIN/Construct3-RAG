@@ -19,9 +19,8 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[2]
-WORKSPACE = REPO / ".local" / "docs" / "evidence" / "c3-reference-games"
-DOWNLOADS = WORKSPACE / "downloads"
+from .catalog import DOWNLOADS, WORKSPACE
+
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"
 SKIP_EXT = {".webm", ".ogg", ".m4a", ".mp3", ".wav", ".mp4", ".opus", ".aac"}
 OPTIONAL_SCRIPTS = {

@@ -16,11 +16,11 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import Any
 
-REPO = Path(__file__).resolve().parents[2]
-ROOT = REPO / ".local" / "docs" / "evidence" / "c3-reference-games"
+from .catalog import DECODED, REPO
+
 SCHEMAS = REPO / "data" / "c3-schemas" / "en-US"
-OUT = ROOT / "decoded"
 
 
 # ---------------------------------------------------------------- runtime tables
@@ -132,8 +132,8 @@ COMMON = schema_for("_common", "plugins")
 # index into the editor's ACE definition, so the order comes from the cached allAces.json.
 ALL_ACES: dict[tuple[str, str, str], list[dict]] = {}
 _cache = sorted((REPO / ".cache" / "c3-cdn").glob("r*/plugins_allAces.json"))
-for kind_file in (_cache[-1:] if _cache else []):
-    for folder, fname in (("plugins", "plugins_allAces.json"), ("behaviors", "behaviors_allAces.json")):
+for kind_file in _cache[-1:]:
+    for fname in ("plugins_allAces.json", "behaviors_allAces.json"):
         data = json.loads((kind_file.parent / fname).read_text(encoding="utf-8"))
         for addon, cats in data.items():
             for cat in cats.values():
@@ -153,7 +153,7 @@ def ace_schema(ref: str) -> tuple[str, list[tuple[str, dict]]]:
     parts = ref.split(".")
     if len(parts) < 4:
         return ref, []
-    kind, addon, group, fn = parts[0], parts[1], parts[2], parts[3]
+    kind, addon, group, fn = parts[:4]
     table = {"Cnds": "conditions", "Acts": "actions", "Exps": "expressions"}.get(group, "")
     folder = "plugins" if kind == "Plugins" else "behaviors"
     labels: dict = {}
@@ -239,12 +239,12 @@ class Game:
         self.aces: list[dict] = []
 
     # names
-    def ref(self, i) -> str:
+    def ref(self, i: Any) -> str:
         if self.refs and isinstance(i, int) and 0 <= i < len(self.refs):
             return self.refs[i]
         return f"ace#{i}"
 
-    def _collect_vars(self, node) -> None:
+    def _collect_vars(self, node: Any) -> None:
         """Global, local and function-parameter variables: [1, name, type, initial, ..., sid, ...]."""
         if not isinstance(node, list):
             return
@@ -258,7 +258,7 @@ class Game:
                 self._collect_vars(sub)
 
     # expressions
-    def node_desc(self, node) -> str:
+    def node_desc(self, node: Any) -> str:
         if not isinstance(node, list) or not node:
             return str(node)
         t = node[0]
@@ -283,7 +283,7 @@ class Game:
             pass
         return f"node{node}"
 
-    def expr(self, data) -> str:
+    def expr(self, data: Any) -> str:
         if not isinstance(data, list) or not data:
             return json.dumps(data)
         num, nodes = data[0], data[1:]
@@ -312,7 +312,7 @@ class Game:
             body = re.sub(r"\b" + re.escape(v) + r"\b", d, body)
         return body.strip()
 
-    def param(self, prm, spec: tuple[str, dict] | None, obj: int | None = None) -> str:
+    def param(self, prm: Any, spec: tuple[str, dict] | None, obj: int | None = None) -> str:
         name = spec[0] if spec else None
         info = spec[1] if spec else {}
         if not isinstance(prm, list) or not prm:
@@ -323,7 +323,7 @@ class Game:
             if t == 10 and isinstance(v, int) and obj is not None:
                 names = self.ivars.get(obj, [])
                 val = names[v] if v < len(names) else f"ivar#{v}"
-            elif isinstance(v, list) and v and isinstance(v[0], int) and t not in (13,):
+            elif isinstance(v, list) and v and isinstance(v[0], int) and t != 13:
                 val = self.expr(v)
             elif info.get("type") == "ease" and isinstance(v, int):
                 val = self.eases[v] if 0 <= v < len(self.eases) else f"custom-ease#{v}"
@@ -340,7 +340,7 @@ class Game:
                 val = json.dumps(v, ensure_ascii=False)
         return f"{name}={val}" if name else val
 
-    def ace(self, entry, kind: str, sheet: str, group: str | None) -> str:
+    def ace(self, entry: list, kind: str, sheet: str, group: str | None) -> str:
         o, r = entry[0], entry[1]
         params = next((x for x in reversed(entry) if isinstance(x, list) and (not x or isinstance(x[0], list))), [])
         ref = self.ref(r)
@@ -355,7 +355,6 @@ class Game:
             specs = fixed
         rendered = [self.param(prm, specs[i] if i < len(specs) else None, o if isinstance(o, int) and o >= 0 else None)
                     for i, prm in enumerate(params)]
-        beh = entry[2] if len(entry) > 2 and isinstance(entry[2], int) else None
         if o == -1:
             who = "System"
         elif o == -2:
@@ -368,7 +367,7 @@ class Game:
                           "params": rendered})
         return f"{head}({', '.join(rendered)})"
 
-    def walk(self, items, depth: int, sheet: str, group: str | None, out: list[str]) -> None:
+    def walk(self, items: list, depth: int, sheet: str, group: str | None, out: list[str]) -> None:
         ind = "  " * depth
         for it in items:
             if not isinstance(it, list) or not it:
@@ -407,7 +406,8 @@ class Game:
                 continue
             out.append(f"{ind}? {json.dumps(it)[:160]}")
 
-    def _event_body(self, conds, acts, depth, sheet, group, out, show_always=True) -> None:
+    def _event_body(self, conds: list, acts: list, depth: int, sheet: str, group: str | None, out: list[str],
+                    show_always: bool = True) -> None:
         ind = "  " * depth
         heads = [self.ace(c, "cond", sheet, group) for c in conds if isinstance(c, list) and len(c) > 1]
         if heads or show_always:
@@ -486,7 +486,7 @@ class Game:
 
 def decode(folder: Path) -> str:
     g = Game(folder)
-    out = OUT / folder.name
+    out = DECODED / folder.name
     sheets = out / "sheets"
     sheets.mkdir(parents=True, exist_ok=True)
     total = 0

@@ -11,6 +11,10 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 WORKSPACE = REPO / ".local" / "docs" / "evidence" / "c3-reference-games"
 CATALOG = WORKSPACE / "catalog.json"
+# fetch writes DOWNLOADS/<game>/, decode and atlas write DECODED/<game>/, and the report writes STATS.
+DOWNLOADS = WORKSPACE / "downloads"
+DECODED = WORKSPACE / "decoded"
+STATS = WORKSPACE / "stats"
 
 
 def load_catalog(path: Path = CATALOG) -> list[dict[str, str]]:

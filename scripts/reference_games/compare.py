@@ -10,7 +10,7 @@ import json
 import statistics
 from collections import Counter, defaultdict
 
-from .catalog import WORKSPACE as ROOT, load_catalog
+from .catalog import STATS, load_catalog
 
 
 def share(counter: Counter, n: int = 6) -> str:
@@ -19,7 +19,7 @@ def share(counter: Counter, n: int = 6) -> str:
 
 
 def main() -> None:
-    games = json.loads((ROOT / "stats" / "stats.json").read_text(encoding="utf-8"))
+    games = json.loads((STATS / "stats.json").read_text(encoding="utf-8"))
     entries = load_catalog()
     authors = {entry["folder"]: entry["author"] for entry in entries}
     groups: dict[str, list[str]] = defaultdict(list)

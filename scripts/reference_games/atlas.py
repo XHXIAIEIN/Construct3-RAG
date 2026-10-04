@@ -15,9 +15,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-REPO = Path(__file__).resolve().parents[2]
-ROOT = REPO / ".local" / "docs" / "evidence" / "c3-reference-games"
-OUT = ROOT / "decoded"
+from .catalog import DECODED
+
 CELL = 512
 
 
@@ -61,7 +60,7 @@ def main() -> None:
         for i, t in enumerate(thumbs):
             x, y = i % cols * CELL, i // cols * CELL
             sheet.paste(t, (x + (CELL - t.width) // 2, y + (CELL - t.height) // 2), t)
-        dest = OUT / game.name
+        dest = DECODED / game.name
         dest.mkdir(parents=True, exist_ok=True)
         sheet.save(dest / "images.png")
         total = sum(colours.values()) or 1

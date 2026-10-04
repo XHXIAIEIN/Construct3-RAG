@@ -13,10 +13,7 @@ import re
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from .catalog import WORKSPACE as ROOT, load_catalog
-
-DECODED = ROOT / "decoded"
-OUT = ROOT / "stats"
+from .catalog import DECODED, STATS, load_catalog
 
 MOTION = {
     "tween": re.compile(r"Tween\.(Tween\w+)$"),
@@ -68,12 +65,10 @@ def game_stats(folder: Path) -> dict:
     waits = [num(param(m["params"], "seconds") or "") for m in motion["wait"]]
     anims = [a for o in s["objects"] for a in o["animations"] if a["frames"] > 1]
     effects = Counter(e.split(":")[0] for o in s["objects"] for e in o["effects"])
-    for L in s["layouts"]:
-        for ly in L["layers"]:
-            effects.update(str(e) for e in ly["effects"])
     bgs = Counter()
     for L in s["layouts"]:
         for ly in L["layers"]:
+            effects.update(str(e) for e in ly["effects"])
             if ly["bg"] and not ly["transparent"]:
                 bgs["#" + "".join(f"{int(c):02x}" for c in ly["bg"][:3])] += 1
     behaviors = Counter(b["type"] if isinstance(b["type"], str) else b["name"] for o in s["objects"] for b in o["behaviors"])
@@ -109,8 +104,8 @@ def main() -> None:
     for folder in sorted(DECODED.iterdir()):
         if (folder / "summary.json").exists():
             games[folder.name] = game_stats(folder)
-    OUT.mkdir(exist_ok=True)
-    (OUT / "stats.json").write_text(json.dumps(games, indent=1, ensure_ascii=False), encoding="utf-8")
+    STATS.mkdir(exist_ok=True)
+    (STATS / "stats.json").write_text(json.dumps(games, indent=1, ensure_ascii=False), encoding="utf-8")
     md = ["# Motion and look across the reference games", "",
           "Durations in seconds from the decoded event sheets. Eases by the runtime's own index table.", ""]
     by_author: dict[str, list[str]] = defaultdict(list)
@@ -163,8 +158,8 @@ def main() -> None:
         if st["anims"]:
             md.append("- Animations >1 frame: " + "; ".join(f"{a['name']} {a['frames']}f {a['speed']}fps" for a in st["anims"][:14]))
         md.append("")
-    (OUT / "stats.md").write_text("\n".join(md), encoding="utf-8")
-    print(f"{len(games)} games -> {OUT / 'stats.md'}")
+    (STATS / "stats.md").write_text("\n".join(md), encoding="utf-8")
+    print(f"{len(games)} games -> {STATS / 'stats.md'}")
 
 
 if __name__ == "__main__":
