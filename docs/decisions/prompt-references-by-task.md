@@ -66,5 +66,6 @@ the table grows by rows, not by the examples behind them.
   it without opening `new-project.md`: reword the read-when line, then bring
   the part it missed back inline.
 - A task names one of the effects and the run skips `feel.md`: the same.
-- thinking.md grows back to about 20 KB, or style.md to 15 KB: look for the
-  next section whose reader is a visible kind of task.
+- `event-sheet-thinking.md` grows back to about 20 KB, or
+  `event-sheet-style.md` to 15 KB: look for the next section whose reader is
+  a visible kind of task.

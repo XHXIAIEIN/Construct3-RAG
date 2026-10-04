@@ -31,7 +31,7 @@ project.
 | `prompts/pitfalls/` | One file per topic of the index, each pitfall with its cases and its source |
 | `prompts/event-sheet-assistant.md` | Output format and name verification |
 | `prompts/event-sheet-style.md` | How the official examples organise, name and comment a sheet |
-| `prompts/references/` | Material needed only sometimes, each named by the task that needs it: a new project's sheets, layers, objects and look; feel; the slot case, native and as a program; hand-editing project JSON; bars and life counters |
+| `prompts/references/` | Material needed only sometimes, each named by the task that needs it: a new project's sheets, layers, objects and look; feel; the slot case, native and as a program; hand-editing project JSON; bars and life counters; sounds and placeholder audio |
 
 `AGENTS.md` section 3 is the SOP; the game project reaches it through the
 block of `skills/construct3-agent-plugin/assets/game-project-block.md`.
@@ -302,7 +302,7 @@ is two lines of the style prompt).
   such as the side that starts the next round. Narrow it to an *Else* with
   *Trigger once*, the form the seeded case produces.
 - The official examples change: rerun the survey scripts; the thresholds
-  are constants at the top of `check_project.py`.
+  are the `STYLE_` constants of `check_project.py`.
 - A game needs real art at generation time: design a generator that writes
   frames from a CC0 archive into `images/`, with the tile size as the unit.
 - Construct changes the picking model, `Else`, or family picking: re-read

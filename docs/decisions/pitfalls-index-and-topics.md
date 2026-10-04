@@ -110,5 +110,5 @@ differ in number, or when an entry has no source.
 - An eval shows an agent writing a pitfall's topic without opening its file:
   reword that group's when-to-read line first.
 - An agent repeats a mistake that a moved lesson describes, because it did
-  not read the lesson's new home: bring the lesson back, or point to it from
+  not read the lesson's home: bring the lesson back, or point to it from
   where that agent does read.
