@@ -43,8 +43,8 @@ install on its first copy however many commits followed
 - A marketplace install lags main until someone raises the version, and
   the repository has no release process that would raise it. The linked
   clone does not depend on the version and follows every `git pull`.
-- `install.py` and the copy stay for other agents and for Claude Code
-  without the plugin; nothing about them changed.
+- `install.py` and the copy serve other agents and Claude Code without the
+  plugin.
 - Plugin loading costs no network at session start: the plugin is read from
   the cache or, through the link, from the clone. `claude plugin details
   construct3@skills-dir` lists one skill and about 240 always-on tokens.

@@ -30,14 +30,16 @@ the checker, and `AGENTS.md` section 2 sends every agent to the ACE lookup.
 ## Decision
 
 Option 3. TRAE reads `.trae/skills/` and `.agents/skills/`, Deep Code
-`.deepcode/skills/` and `.agents/skills/`, Claude Code `.claude/skills/`.
+`.deepcode/skills/` and `.agents/skills/`, Claude Code `.claude/skills/`. A
+project used with the Claude Code plugin holds no copy
+(`plugin-tracks-commits.md`).
 
-- `skills/construct3-agent-plugin/`: `SKILL.md`; `scripts/` with
-  `check_project.py`, `print_sheet.py`, `lookup_ace.py`, `edit_sheet.py`,
-  `open_in_editor.py` and `install.py` over `c3project.py`; `references/`;
-  `assets/build_project.py`, the generator template, and
-  `assets/game-project-block.md`, the block for the project's instruction
-  file; `evals/`, which stays in this repository.
+- `skills/construct3-agent-plugin/`: `SKILL.md`; `scripts/`, one script per
+  intent, each named in `SKILL.md`, over the shared `c3project.py`, and
+  `check_design.py` and `play_design.py` also over `game_model.py`;
+  `references/`; `assets/`, among them `build_project.py`, the generator
+  template, and `game-project-block.md`, the block for the project's
+  instruction file; `evals/`, which stays in this repository.
 - `install.py` copies the folder into `.agents/skills/`, or the folder
   `--into` names, refreshes every copy the project holds when run again, and
   appends the block to `AGENTS.md` with the clone's path filled in when no
@@ -46,10 +48,10 @@ Option 3. TRAE reads `.trae/skills/` and `.agents/skills/`, Deep Code
   otherwise.
 - A copy compares its files with the clone's on every run. While it differs,
   the first line of every script's output is the command that refreshes it.
-- The generator moves into the game as `tools/build_project.py` and finds
-  the checker in the project's skills folders. `install.py` replaces its
-  helpers, between two markers, with the skill's current ones
-  (`generator-helpers-inline.md`).
+- The generator is copied into the game as `tools/build_project.py` and
+  finds the checker in a skills folder of the project or of the user's home
+  folder. `install.py` replaces its helpers, between two markers, with the
+  skill's current ones (`generator-helpers-inline.md`).
 
 ## What holds the design in place
 
@@ -95,9 +97,10 @@ Each of these was a failure seen in an eval run or a game project.
   query files are ready. Change `description` only from its train failures.
 - No one has reviewed the eval answers by hand; the assertions are at
   ceiling, so that review is the next signal.
-- Paging, JSON output, separate exit codes for findings and not-found, and a
-  generator guard against overwriting files the editor changed: nothing seen
-  yet needs them.
+- Paging beyond the `--events` range that `print_sheet.py` gives, JSON
+  output, separate exit codes for findings and not-found, and a generator
+  guard against overwriting files the editor changed: no eval run or game
+  project has needed them.
 
 ## Re-evaluate when
 
