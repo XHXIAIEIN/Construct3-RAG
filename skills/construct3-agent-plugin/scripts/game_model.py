@@ -585,7 +585,12 @@ class Design:
         if not isinstance(kids, list):
             self.bad(f"{path}.children", "a list of sub-rules")
             kids = []
+        cases = [c for c in kids if isinstance(c, dict) and (c.get("if") or c.get("else") is True)]
         for k, c in enumerate(kids):
+            if isinstance(c, dict) and not c.get("if") and c.get("else") is not True and cases:
+                self.bad(f"{node}.children[{k}].if", "empty, so this sub-rule runs every time beside siblings that test "
+                         "a case; write the condition of its case, such as \"InARow(Board, 5, turn)\", or make it the "
+                         "other case with \"else\": true after the sibling it excludes")
             if k == 0 and isinstance(c, dict) and c.get("else") is True:
                 self.bad(f"{path}.children[0].else", "an else follows a sibling sub-rule; there is none before it")
             child = self.read_rule(c, f"{node}.children[{k}]", top=False)

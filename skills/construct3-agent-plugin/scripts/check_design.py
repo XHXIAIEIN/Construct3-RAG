@@ -182,6 +182,11 @@ def why_not(design: gm.Design, sim: gm.Sim, node: gm.Node) -> str:
             parents[c.id] = r
     said = []
     for r in design.all_rules():
+        if sim.ran.get(r.id) and any(e[0] == "set" and e[1][0] in names for e in r.do):
+            said.append(f"{r.id} ran {sim.ran[r.id]} time(s) and changed it, "
+                        + (f"its conditions {', '.join(r.when_text)}" if r.when_text else
+                           "with no condition of its own, so it runs every time its trigger or parent does"))
+    for r in design.all_rules():
         if sim.ran.get(r.id) or not any(e[0] == "set" and e[1][0] in names for e in r.do):
             continue
         chain, up = [], r
@@ -203,7 +208,7 @@ def why_not(design: gm.Design, sim: gm.Sim, node: gm.Node) -> str:
             parts.append("it is an Else, so it runs only when the rule before it did not")
         said.append(f"{r.id} would change it, fired by {trigger}, and did not run: "
                     + ("; ".join(parts) if parts else "no condition holds it back, so its trigger never fired"))
-    return (" " + ". ".join(said[:3]) + ".") if said else ""
+    return (" " + ". ".join(said[:4]) + ".") if said else ""
 
 
 def state_text(sim: gm.Sim, name: str) -> str:

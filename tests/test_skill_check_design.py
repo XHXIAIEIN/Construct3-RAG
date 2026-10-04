@@ -107,7 +107,7 @@ def test_the_prototype_runs_events_as_the_runtime_does():
         "rules": [{"id": "go", "on": "go", "do": ["a = 1"], "feedback": "it goes", "children": [
             {"id": "first", "if": ["a = 1"], "do": ["b = 1"]},
             {"id": "other", "else": True, "do": ["b = 2"]},
-            {"id": "later", "do": ["wait 0.5", "t = \"n\" & a & (2 > 1)"], "children": [
+            {"id": "later", "if": ["b > 0"], "do": ["wait 0.5", "t = \"n\" & a & (2 > 1)"], "children": [
                 {"id": "deep", "do": ["G.At(5, 5) = 9", "a = G.At(5, 5) + (1 & 0) + (1 & 1)"]}]}]}],
         "win": "a = 1", "lose": "none",
         "tests": [{"name": "t", "steps": [{"do": "go"}]}]})
@@ -296,3 +296,11 @@ def test_a_design_reads_its_state_not_the_game_and_taps_the_screen_where_an_argu
                     str(tmp_path / "game"), "--plan-only", str(tmp_path / "plans.json"))
     assert code == 0, out
     assert {"tap": {"x": 100.0, "y": 1024.0}} in json.loads((tmp_path / "plans.json").read_text(encoding="utf-8"))[4]["steps"]
+
+
+def test_a_sub_rule_with_no_condition_beside_cases_is_refused(tmp_path):
+    design = example()
+    design["rules"][2]["children"][0]["if"] = []
+    design["rules"][2]["children"].append({"id": "fine", "if": ["escapes < 3"], "do": ["message = \"\""]})
+    code, out = check(tmp_path, design)
+    assert "rules[2].children[0].if: empty, so this sub-rule runs every time beside siblings that test a case" in out
