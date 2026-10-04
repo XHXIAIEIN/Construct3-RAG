@@ -16,12 +16,13 @@ Wherever the value changes, one action sets one property of one object:
 - template-monk-fight `cHPBar: Set width to clamp((cHPBar.maxWidth / Character.hpMax) * Character.hp, 0, cHPBar.maxWidth)`
 
 `LENGTH` is a global constant (`POWERBARLENGTH = 68`, `FuelBarScaledWidth =
-64`) or the frame's width. The expression clamps, so a value past its maximum
-never grows the bar past the frame. The bar's origin sits on the edge it grows
-from. Every filling bar in the examples has (0, 0) or (0, 0.5). A cover that
-hides from the right has (1, 0.5) (flatland-golf `PowerBarCover`), and a meter
-that rises has (0.5, 1) (test-your-might `MightLevelBar`). At origin 0.5 the
-bar grows both ways from the middle.
+64`) or the frame's width. Clamp the expression, as berry-harvester and
+template-monk-fight do, so a value past its maximum never grows the bar past
+the frame. The bar's origin sits on the edge it grows from. Every filling bar
+in the examples has (0, 0) or (0, 0.5). A cover that hides from the right has
+(1, 0.5) (flatland-golf `PowerBarCover`), and a meter that rises has (0.5, 1)
+(test-your-might `MightLevelBar`). At origin 0.5 the bar grows both ways from
+the middle.
 
 To slide a change, Tween the same property: car-selection-screen `StatusBar:
 Tween "ChangeWidth" property Width to (14 * Units) + 4 in 0.25 seconds
@@ -40,9 +41,9 @@ Timer. Use a Tween or a ghost bar, not a per-tick lerp of the width.
 | A fill that should show only where the container's art already is | A plain Tiled Background fill with blend mode *Source atop*, drawn after the container, on a layer with *Force own texture* | The fill is drawn only on pixels the layer already has | artillery-war `PowerMeter`, origin (0, 0.5), `Set width to 1 + 3 * Arrow.CannonPower`, layer `Interface` with *Force own texture* |
 | A bar with caps, borders or rounded ends that must survive any length | 9-patch for the fill and for the frame, *Set size* or Tween *Width* | The corners keep their size, and the middle stretches or tiles. The manual calls it "useful for representing things like progress bars with special artwork at the end of the bar". The width must not go negative | car-selection-screen `StatusBar` in `StatusBarBackground`, both 9-patch, Tween *Width* 0.25 s |
 | A count of icons: hearts, stars, bullets | One Tiled Background of the full icon at `count × icon width`, over one Tiled Background of the empty icon at `max × icon width` | Two objects show any count, and one constant changes the maximum | tower-defense-game `Hearts` and `HeartsBackground`, 8×8 tiles, `Set width to 8 * PlayerBase.HeathPoints` |
-| The same, when each icon animates on its own | Instances of one Sprite with an index variable, picked by `Pick by evaluating Life.lifeID > lives` and destroyed or tweened away. Or one Sprite whose animation frame is the count | Each icon can fall, flash or fade. A frame strip needs one image per count | family-tree `Life` (Tween Y then destroy) with `LifeSpot` under it, tile-matcher `Life` |
+| The same, when each icon animates on its own | Instances of one Sprite with an index variable, picked by `Pick Life by evaluating Life.lifeID > lives` and destroyed or tweened away. Or one Sprite whose animation frame is the count | Each icon can fall, flash or fade. A frame strip needs one image per count | family-tree `Life` (Tween Y then destroy) with `LifeSpot` under it, tile-matcher `Life` |
 | A gauge with a needle | A needle Sprite, *Set angle* from the value | One object, one angle | rally-drifting `SpeedometerPointer` |
-| A ring or arc that fills | No example drives one. The cheapest is a frame strip, one frame per step, the animation frame set from the value. For any fraction, use a mesh on a ring texture: *Set mesh size*, then *Set mesh point* for the outer and inner points along the arc (`plugins/_common.json`). Or rotate two half-ring Sprites behind a cover. The examples use blend-mode masks (*Destination out* holes) for light and darkness, not for bars | | |
+| A ring or arc that fills | A frame strip, one frame per step, its animation frame set from the value. For any fraction, a mesh on a ring texture: *Set mesh size*, then *Set mesh point* for the outer and inner points along the arc (`plugins/_common.json`). Or two half-ring Sprites rotated behind a cover | The frame strip is the cheapest; the mesh shows any fraction | None drives one. The examples use blend-mode masks (*Destination out* holes) for light and darkness, not for bars |
 
 The `progressbar` plugin is a form control, a DOM element over the canvas.
 The examples use it for a file transfer, not in a game HUD.

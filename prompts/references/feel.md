@@ -1,16 +1,12 @@
 # Feel
 
-Screen shake, hit stop, squash, hit flash, a choreographed sequence, a
-following camera, a fade between layouts, a keyframed motion of one part,
-effects layered on one body, a dragged thing that lags: each recipe follows
-the official examples or what a game project settled in a preview. The
-table applies the Native first table of
+The table below applies the Native first table of
 [event-sheet-thinking.md](../event-sheet-thinking.md) to the effects the
-player notices first. What plays with them, when and how loud, is in
-[sound.md](sound.md).
-
-Each row names its source: an official example, or `observed` for a game
-project's r504 preview, 2026-09-30 to 2026-10-01.
+player notices first. Each row names its source in the Example column: an
+official example, or `observed` for what a game project settled in its r504
+preview, 2026-09-30 to 2026-10-01. Before adding the sounds that go with
+these effects, read [sound.md](sound.md), which says which sounds play,
+when and how loud.
 
 | Need | Use | Example |
 |------|-----|---------|

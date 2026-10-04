@@ -65,7 +65,7 @@ Custom actions detach / attach keep occupant and slot in step
 |------------------------|-------|--------------------------------------|
 | `Slot.occupant`, `Piece.slot` | A relation stored as pointers, twice | `Slot: Is overlapping Pieces` asks the engine each time |
 | `DragUID`, `DragFrom` | The trigger's pick copied into globals | `Piece` inside `On drop` is the dropped piece; it stores only `startX`/`startY`, because the start position is the one thing the engine cannot recover |
-| `Pick all Piece` then `Pick by comparison` / `Pick by UID` | The pick discarded and rebuilt | Family `Pieces` as the second, independent pick of the same type |
+| `Pick all Piece` then `Pick by comparison` / `Pick by unique ID` | The pick discarded and rebuilt | Family `Pieces` as the second, independent pick of the same type |
 | `Pick nearest Slot` after `Is overlapping Slot` | Picks the dragged piece's own slot if the piece overlaps that slot and the target, so the swap branch needs a guard | `Pick Slot overlapping point (Piece.X, Piece.Y)` plus collisions disabled during the drag |
 | `toSlot` local, then an `Else` chain on numbers | A program transcribed into events | Trigger, narrowing sub-events, `Else` |
 | `detach` / `attach` custom actions | Two copies of one fact kept equal | Slot frames derived every tick from the overlap, with no stored occupancy |

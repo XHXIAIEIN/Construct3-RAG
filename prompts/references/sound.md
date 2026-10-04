@@ -4,7 +4,7 @@ This file says which sounds play, when, how loud, and how to make and
 check placeholder files. Read it before adding sounds or music, and when a
 user says their game is too loud, too busy, or that every sound is the
 same. It adds to the Audio plugin's runtime facts in
-[pitfalls/audio.md](../pitfalls/audio.md). The rules come from a game
+[pitfalls: Audio](../pitfalls/audio.md). The rules come from a game
 project with automatic combat, drag-and-drop merging and three music
 stems. It verified them in an r504 preview and an offline mix, 2026-09-30
 to 2026-10-02. Its numbers are starting points, not constants.
@@ -28,7 +28,7 @@ music. The role decides the rule:
   that cell, or two files start on one sample and their peaks add. Claim
   the cell when its time is first known, as the stage is laid out, not in
   the frame it plays: impacts are queued for their cell before then.
-- Music stems duck only for the first tier, through a gain effect on the
+- Music stems duck only for the Key tier, through a gain effect on the
   music tags, not *Set volume*, which the stems' fades use. Merge
   overlapping ducks into one release (the deeper depth, the later
   release), because *Set effect parameter* cancels the ramp still running.
