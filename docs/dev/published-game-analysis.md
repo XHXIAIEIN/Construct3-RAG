@@ -1,5 +1,10 @@
 # Analyze Published Construct Games
 
+Contents: [Run the study](#run-the-study), [Read the output](#read-the-output),
+[Maintain the decoder](#maintain-the-decoder),
+[Update the catalog](#update-the-catalog),
+[Interpret the evidence](#interpret-the-evidence).
+
 The reference-game analyzer turns public Construct web exports into local,
 searchable evidence about project structure, event sheets, palettes and motion.
 It writes all downloaded and generated material under the ignored
@@ -34,8 +39,8 @@ python -m scripts.reference_games atlas
 python -m scripts.reference_games report
 ```
 
-Restrict download, decode or atlas generation by passing sources or folder
-names:
+To restrict a stage, pass sources to `fetch` and downloaded folder names to
+`decode` or `atlas`:
 
 ```bash
 python -m scripts.reference_games fetch <kind>:<id> <kind>:<id>
@@ -81,7 +86,9 @@ but prints numbered ACEs and expressions.
 
 Resolve parameter labels from `data/c3-schemas/en-US`, then resolve ordered
 combo values from the cached editor `allAces.json`. The schema’s `items` map is
-localized data; its map order is not the serialized combo index contract.
+localized data in the language pack’s order. An export stores a combo as an
+index into the order of the editor’s ACE definition, so the schema’s order
+cannot decode it.
 
 Read Tween’s one-property list from the sampled game’s runtime. Its order
 changed across Construct releases. Applying the current editor order to an old

@@ -1,13 +1,19 @@
 # Data Pipeline
 
+Contents: [Data Sources](#data-sources),
+[CDN Fetching](#cdn-fetching-c3fetcher) (release directory, cache, export,
+deprecation filter), [Scirra's Guides](#scirras-guides),
+[Version Update](#version-update).
+
 ## Data Sources
 
 | Source | Origin | Format | Updates |
 |--------|--------|--------|---------|
-| ACE definitions | `editor.construct.net/{ver}/plugins/allAces.json` | JSON | Each C3 release |
+| ACE definitions | `editor.construct.net/{ver}/plugins/allAces.json`, `behaviors/allAces.json` | JSON | Each C3 release |
 | Language (en/zh) | `editor.construct.net/{ver}/loader/lang/precompiled-{lang}.json` | JSON | Each C3 release |
 | Effects | `editor.construct.net/{ver}/effects/allEffects.json` | JSON | Each C3 release |
 | Example metadata | `editor.construct.net/{ver}/media/example-project-data.json` | JSON | Each C3 release |
+| TypeScript definitions | the `.d.ts` files that `editor.construct.net/{ver}/offline.json` lists, and `media/autocomplete-data.json` | TypeScript, JSON | Each C3 release |
 | Shared world-object ACEs | `editor.construct.net/{ver}/main.js` of the latest stable release, extracted by `scripts/extract_common_aces.py` into `src/ingest/common_aces.json` | JSON | When a release adds a shared ACE |
 | Deprecated plugins and behaviors | `editor.construct.net/{ver}/main.js`, `plugins/allEditorPlugins.js`, `behaviors/allEditorBehaviors.js`, read by `src/ingest/deprecated_addons.py` | JS | Each C3 release |
 | Scirra's guide "Construct's project format" | `www.construct.net/en/tutorials/constructs-project-format-3275`, read by `src/ingest/guides.py` | HTML page | When Scirra edits it; fetched every week |
@@ -43,10 +49,14 @@ refuses the directory spelling. See
 
 ### Schema Export
 
-`C3Fetcher.export_schemas()` merges CDN structural data (`allAces.json`, `allEffects.json`, `example-project-data.json`) with per-locale text (`precompiled-{locale}.json`) into **per-language** schema files using CDN-native field names:
+`C3Fetcher.export_schemas()` merges CDN structural data (`allAces.json`,
+`allEffects.json`, `example-project-data.json`) with per-locale text
+(`precompiled-{locale}.json`) into **per-language** schema files using
+CDN-native field names. It writes `schemas/` and `examples/` in the cache,
+`export_lang()` writes `lang/`, and `export_ts_defs()` writes `ts-defs/`:
 
 ```
-.cache/c3-cdn/{version}/schemas/
+.cache/c3-cdn/{release}/schemas/
   _index.json                  — language-neutral index (plugin/behavior/effect counts, originalId)
   en-US/_index.json            — English names + file paths, same ids as the root index
   zh-CN/_index.json            — Chinese equivalent
@@ -57,25 +67,34 @@ refuses the directory spelling. See
   en-US/effects/alphaclamp.json   — English effect definitions
   zh-CN/...                     — Chinese equivalents (same structure)
 
-.cache/c3-cdn/{version}/examples/
+.cache/c3-cdn/{release}/examples/
   en-US/{id}.json               — English example project metadata
   zh-CN/{id}.json               — Chinese equivalent
 
-.cache/c3-cdn/{version}/lang/
+.cache/c3-cdn/{release}/lang/
   en-US.json                    — raw precompiled language pack, re-indented
   zh-CN.json                    — Chinese equivalent
+
+.cache/c3-cdn/{release}/ts-defs/
+  **/*.d.ts                     — the TypeScript definitions offline.json lists
+  autocomplete-data.json        — scripting classes with their members
 ```
 
-`C3Fetcher.export_lang()` writes the `lang/` files. They are the CDN text
-unchanged apart from indentation, so a release-to-release diff of
-`data/c3-lang/` shows exactly which strings Scirra added, removed, or
-retranslated.
+The `lang/` files are the CDN text unchanged apart from indentation, so a
+release-to-release diff of `data/c3-lang/` shows exactly which strings
+Scirra added, removed, or retranslated.
 
 Each plugin/behavior file uses CDN field names:
 - Conditions/actions: `list-name`, `display-text`, `description`
 - Expressions: `translated-name`, `description`
-- Params: `{param_id: {type, name, desc}}` (object keyed by param id)
-- Structural fields from allAces: `scriptName`, `isTrigger`, `isFakeTrigger`, `isLooping`, `isInvertible`, `isCompatibleWithTriggers`, `isAsync`, `isDeprecated`, `returnType`, `category`. `isTrigger` is also written for a CDN `isFakeTrigger` or `isFastTrigger`, since the editor holds all three to the same rules
+- Params: `{param_id: {type, name, desc, items, initialValue}}` (an object
+  keyed by param id; `items` for a combo, `initialValue` where the CDN
+  records one)
+- Structural fields from allAces: `scriptName`, `isTrigger`, `isFakeTrigger`,
+  `isLooping`, `isInvertible`, `isCompatibleWithTriggers`, `isAsync`,
+  `isDeprecated`, `returnType`, `isVariadicParameters`, `category`.
+  `isTrigger` is also written for a CDN `isFakeTrigger` or `isFastTrigger`,
+  since the editor holds all three to the same rules
 
 `plugins/_common.json` goes through the same merge. Its structural side is
 not on any CDN endpoint: the editor registers the shared ACEs in `main.js`,
@@ -85,21 +104,21 @@ taken from. The same script records which plugin gets which shared ACE: the
 guards of that block (`AddCommonAppearanceACEs`, `SetSupportsColor` ...) as
 `requires`, and the flags each built-in plugin's constructor sets in
 `plugins/allEditorPlugins.js` as `plugins`. The export writes the result into
-each plugin file as `commonAces`. The export stops when the language pack names a shared ACE or
-parameter the file does not define; rerun the script, review the diff and
-commit it with the data. See `docs/decisions/common-aces-from-editor-bundle.md`.
+each plugin file as `commonAces`. The export stops when the language pack
+names a shared ACE or parameter the file does not define; rerun the script,
+review the diff and commit it with the data. See
+`docs/decisions/common-aces-from-editor-bundle.md`.
 
 The ACE counts in `_index.json` are those of the written files, after the
 deprecation filter below.
 
 Consumers that need both languages use `_merge_bilingual()` in
-`src/lookup/schema_index.py` to load `en-US` + `zh-CN` and produce a unified
-in-memory format. `src/lookup/schema_layout.py` owns the typed `SchemaManifest`,
-canonical locale names, manifest loading, completeness checks, counts, and
-runtime path selection. A schema snapshot is complete only when `_index.json`
-is valid, its plugin/behavior/effect sections are non-empty, every manifest
-file exists as valid JSON under both `en-US` and `zh-CN`, and each locale's
-`_index.json` names exactly the manifest's addons.
+`src/lookup/schema_index.py`, which merges the `en-US` and `zh-CN` files
+into one in-memory format. `src/lookup/schema_layout.py` owns the typed
+`SchemaManifest`, the canonical locale names, manifest loading, the
+completeness check and counts. Before changing what the export writes into
+`_index.json` or a locale directory, read "Schema snapshot contract" in
+`docs/dev/architecture.md`.
 
 ### Deprecation Filter
 
