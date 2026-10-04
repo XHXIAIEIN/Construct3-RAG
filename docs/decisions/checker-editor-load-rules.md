@@ -350,6 +350,12 @@ variables, instance counts and the instances of the types named.
   (MIT) does, and reads the preview page and its workers once at the end.
   It runs without input: it catches what breaks on start, not what a player
   does later.
+- The editor page is read too once the preview has run. The editor asserts
+  on some data only as it builds a preview, a collision polygon of fewer
+  than three points among them, and shows its crash report over the editor
+  while the preview window can open and run behind it; a run that read only
+  the preview window called such a project clean. A crash report there now
+  fails the project. The official examples tried printed as before.
 
 A passing check ends its `ok:` line with the opener's command. Agents given
 the step only in `SKILL.md` often stopped at `ok:` and called the project

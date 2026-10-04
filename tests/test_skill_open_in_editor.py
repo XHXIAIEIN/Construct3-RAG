@@ -241,6 +241,42 @@ def test_open_in_editor_leaves_the_ticks_out_when_the_wall_time_is_missing():
     assert lines[1] == "  preview: layout 'Game', runtime in the worker, no errors", lines
 
 
+def test_open_in_editor_reports_the_crash_report_the_preview_left_in_the_editor(monkeypatch):
+    """A frame whose collision polygon held two points opened; F5 then showed the editor's crash
+    report, "assertion failure: must have at least three points in a collision poly", while the
+    preview window opened and ran behind it, and the run said "no errors" (2026-10-04, r495-2).
+    The editor's page is read once the preview has run, and its crash report fails the project."""
+    oe = opener()
+    crash = ("Construct Oops! Something went wrong. ... Type: assertion failure Message: must have at least "
+             "three points in a collision poly")
+
+    class Win:
+        events: list = []
+        ws = type("Socket", (), {"close": staticmethod(lambda: None)})
+
+        def call(self, method, wait=None, session=None, **params):
+            return {}
+
+        def evaluate(self, expression, wait=None, session=None):
+            return {"layout": "Game", "tickCount": 389, "wallTime": 2.7} if "snapshot" in expression else 0
+
+    class Page:
+        def evaluate(self, expression, wait=None):
+            assert expression == oe.CRASH_JS
+            return crash
+
+    browser = type("Browser", (), {"devtools": Win()})()
+    monkeypatch.setattr(oe, "start_preview", lambda b, target, page: ({"targetId": "preview"}, Win()))
+    monkeypatch.setattr(oe, "attach", lambda win, patience=0: ([None], [None], False))
+    monkeypatch.setattr(oe.time, "sleep", lambda seconds: None)
+    ran = oe.preview(browser, ("editor", Page()), 4)
+    assert ran["started"] and ran["editor"] == crash and ran["errors"] == [], ran
+    lines = opened_with({"ticks": 389, "wallTime": 2.7, "editor": crash})
+    assert lines[1:] == ["  preview: layout 'Game', runtime in the worker, 389 ticks in 2.7 s, 1 error",
+                         f"  editor: {crash}"], lines
+    assert oe.failed({"status": "opened", "preview": {"errors": [], "editor": crash}})
+
+
 def test_open_in_editor_prints_the_state_the_game_left():
     """--state: the globals, every type's count, then each named type's instances with
     instance variables and the debugger's values under their last word; a miss names

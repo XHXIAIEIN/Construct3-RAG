@@ -101,6 +101,7 @@ output, one entry per addon with --install-addon, then one per project:
   opened   <project>  (<window title>, <the editor it opened in>)
     warning: <a notice the editor showed over the opened project, deprecated features: tell the user>
     preview: layout '<name>', runtime in the worker, 600 ticks in 4.2 s, 1 error      with --preview
+    editor: <the crash report the editor showed while it built the preview>
     runtime: <the first line of each error; --out keeps the stack>
     globals: Score 0, Lives 3                                                         with --state
     objects: Player 1, Enemy 6, Coin 12
@@ -303,6 +304,12 @@ TYPESCRIPT_WAIT = 60
 
 OPEN_DIALOGS_JS = r"""[...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog')
   .map(d => d.innerText.trim().replace(/\s+/g, ' ').slice(0, 1500))"""
+
+# The crash report the editor shows when it asserts as it builds the preview, as it does for a
+# frame whose collision polygon has fewer than three points. The preview window may still open
+# and run behind it, so the editor's page is read once the preview has run.
+CRASH_JS = r"""document.querySelector('#crashReportDialog[open]')?.innerText.trim().replace(/\s+/g, ' ')
+  .slice(0, 1500) || ''"""
 
 NEXT = ("next: a message that names a place, `Game, event 12, condition 1`, is event 12 of sheet Game as "
         "scripts/print_sheet.py numbers it: fix it, run scripts/check_project.py, then this script again, and "
@@ -793,10 +800,11 @@ def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float, stat
     if not live:
         errors.insert(0, "the runtime loaded but did not tick for 3 seconds" if stalled
                       else "the preview window opened but no runtime was found in it")
+    crash = page.evaluate(CRASH_JS)
     return {"started": bool(snap), "layout": snap and snap["layout"],
             "runtime": ("worker" if live[0] else "page") if live else None,
             "ticks": snap and snap.get("tickCount"), "wallTime": snap and snap.get("wallTime"), "errors": errors,
-            **({"state": read} if read else {})}
+            **({"editor": crash} if crash else {}), **({"state": read} if read else {})}
 
 
 def read_state(win: DevTools, session: str | None, names: list[str]) -> dict:
@@ -1029,11 +1037,13 @@ def report(result: dict) -> list[str]:
             lines.append(f"  typescript: wrote {defs} files into scripts/ts-defs{config}")
         ran = result.get("preview")
         if ran and ran["started"]:
-            n = len(ran["errors"])
+            n = len(ran["errors"]) + bool(ran.get("editor"))
             ticks = (f"{ran['ticks']} ticks in {ran['wallTime']:.1f} s, "
                      if ran.get("ticks") is not None and ran.get("wallTime") is not None else "")
             lines.append(f"  preview: layout {ran['layout']!r}, runtime in the {ran['runtime']}, {ticks}"
                          f"{n or 'no'} error{'' if n == 1 else 's'}")
+            if ran.get("editor"):
+                lines.append(f"  editor: {ran['editor']}")
             lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
             if ran.get("state"):
                 lines += state_lines(ran["state"])
@@ -1052,7 +1062,8 @@ def report(result: dict) -> list[str]:
 
 
 def failed(result: dict) -> bool:
-    return (result["status"] != "opened" or bool(result.get("preview", {}).get("errors"))
+    ran = result.get("preview", {})
+    return (result["status"] != "opened" or bool(ran.get("errors")) or bool(ran.get("editor"))
             or "error" in result.get("typescript", {}))
 
 
