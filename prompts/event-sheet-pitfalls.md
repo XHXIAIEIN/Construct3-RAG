@@ -143,7 +143,7 @@ browser for fullscreen, a permission or a picker, read
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too. Detect the input method with it off.
 - Touch and Mouse press an object that is invisible or has collisions disabled. Add *Is visible* to the event or set its layer not interactive.
-- Touch and Mouse pick every overlapping instance under the pointer. Add *Pick top/bottom* (top) under the trigger so only the front button reacts; a family for buttons of several types.
+- Touch and Mouse pick every overlapping instance under the pointer. Add the button's *Pick top/bottom* (top) as a second condition of the trigger's event so only the front button reacts; a family for buttons of several types.
 - *Simulate control* acts only in the tick it runs. Put it in an event whose condition stays true while the control is held: *Key is down*, not *On key pressed*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.

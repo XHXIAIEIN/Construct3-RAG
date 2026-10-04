@@ -66,8 +66,9 @@ Sources and the rule for adding an entry are in the index,
 - Touch *On touched object*, *On tap object* and Mouse *On object clicked*
   pick every instance under the pointer, not the one in front. So when
   popups, menus or buttons overlap, a click or tap on the front one also
-  runs the event for each instance behind it: the press goes through. Add *Pick top/bottom* (top)
-  under the trigger: it keeps the front instance, counting layers first and
+  runs the event for each instance behind it: the press goes through. Add
+  the button's own *Pick top/bottom* (top) as a second condition of the
+  trigger's event: it keeps the front instance, counting layers first and
   then Z order, so it works across popup layers too. It compares instances of
   one object type, so buttons made of several types go into a family and the
   event uses the family. [manual: plugin-reference/common-features/common-conditions.md
