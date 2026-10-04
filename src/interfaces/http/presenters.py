@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import jieba
 
 from src.application.health import HealthOutcome
-from src.application.models import SearchCommand, SearchOutcome
-from src.domain.lookup import LookupResponse
+from src.application.models import SearchCommand, SearchOutcome, SearchStage
+from src.domain.lookup import ACELocale, LookupResponse
 
 from .models import (
     ACELocaleResult,
@@ -47,7 +49,7 @@ def present_health_outcome(outcome: HealthOutcome) -> HealthResponse:
 _GROUP_KEYS = {"property": "properties"}
 
 
-def _convert_params(raw_params: list[dict]) -> list[ACEParam]:
+def _convert_params(raw_params: list[dict[str, Any]]) -> list[ACEParam]:
     return [
         ACEParam(
             name=param.get("name_en") or param.get("name_zh", param.get("id", "")),
@@ -56,6 +58,14 @@ def _convert_params(raw_params: list[dict]) -> list[ACEParam]:
         )
         for param in raw_params
     ]
+
+
+def _present_locale(locale: ACELocale, include_display: bool) -> ACELocaleResult:
+    return ACELocaleResult(
+        name=locale.name,
+        desc=locale.desc or None,
+        display=(locale.display or None) if include_display else None,
+    )
 
 
 def _present_lookup(
@@ -72,22 +82,21 @@ def _present_lookup(
     include_localized = lang == "zh"
     include_scripts = command.scope in {"scripts", "js", "ts", "all"}
     include_display = command.scope in {"eventsheet", "all"}
-    is_list = command.mode == "list"
 
-    if is_list:
+    if command.mode == "list":
         grouped_names: dict[str, list[str]] = {}
         for match in result.matches:
             name = match.script_name if include_scripts else match.en.name
             grouped_names.setdefault(match.ace_type, []).append(name)
-    # Properties, effects, terms and examples have no ACE names to list; they
-    # are answered with the full matches rather than an empty section.
-    if is_list and any(grouped_names.get(kind) for kind in ("condition", "action", "expression")):
-        return LookupSection(
-            conditions=grouped_names.get("condition") or None,
-            actions=grouped_names.get("action") or None,
-            expressions=grouped_names.get("expression") or None,
-            context=_lookup_context(result, command, include_localized),
-        )
+        # Properties, effects, terms and examples have no ACE names to list;
+        # they are answered with the full matches rather than an empty section.
+        if any(grouped_names.get(kind) for kind in ("condition", "action", "expression")):
+            return LookupSection(
+                conditions=grouped_names.get("condition") or None,
+                actions=grouped_names.get("action") or None,
+                expressions=grouped_names.get("expression") or None,
+                context=_lookup_context(result, command, include_localized),
+            )
 
     grouped_matches: dict[str, dict[str, list[LookupItemResult]]] = {}
     for match in result.matches:
@@ -95,19 +104,9 @@ def _present_lookup(
             ace_id=match.ace_id,
             ace_type=match.ace_type,
             plugin_id=match.plugin_id,
-            en=ACELocaleResult(
-                name=match.en.name,
-                desc=match.en.desc or None,
-                display=(match.en.display or None) if include_display else None,
-            ),
+            en=_present_locale(match.en, include_display),
             localized=(
-                ACELocaleResult(
-                    name=match.zh.name,
-                    desc=match.zh.desc or None,
-                    display=(match.zh.display or None) if include_display else None,
-                )
-                if include_localized
-                else None
+                _present_locale(match.zh, include_display) if include_localized else None
             ),
             script_name=match.script_name if include_scripts else None,
             category=match.category or None,
@@ -118,8 +117,8 @@ def _present_lookup(
             return_type=match.return_type or None,
         )
         payload = response_match.to_dict(lang if include_localized else "")
-        plugin_id = payload.pop("plugin_id", match.plugin_id)
-        ace_type = payload.pop("ace_type", "other")
+        plugin_id = payload.pop("plugin_id")
+        ace_type = payload.pop("ace_type")
         group_key = _GROUP_KEYS.get(ace_type, f"{ace_type}s")
         grouped_matches.setdefault(plugin_id, {}).setdefault(group_key, []).append(
             LookupItemResult.model_validate(payload)
@@ -167,15 +166,9 @@ def _present_debug(outcome: SearchOutcome) -> DebugInfo:
         )
 
     return DebugInfo(
-        lookup_ms=outcome.timing_ms.get(SearchStageName.LOOKUP),
+        lookup_ms=outcome.timing_ms.get(SearchStage.LOOKUP.value),
         lookup=lookup_debug,
     )
-
-
-class SearchStageName:
-    """Avoid importing the workflow enum into the HTTP presentation layer."""
-
-    LOOKUP = "lookup"
 
 
 def present_search_outcome(outcome: SearchOutcome) -> SearchResponse:
