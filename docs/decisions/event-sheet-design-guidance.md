@@ -188,7 +188,10 @@ true, which in the seeded game is once a round. So the checker names that form
 too, as the kind `flip-once`, and the `flip` line says that *Trigger once*
 is not the fix. `flip-once` is a warning that `edit_sheet.py` does not
 refuse, since a flip once a round, such as the side that starts the next
-round, is sound. Evidence:
+round, is sound. In a second batch, with that line, all three runs moved
+the flip under a trigger, two of them after reading the warning; two of
+three runs of the previous skill did so, and the third kept a flip under
+*Trigger once*, which the checker names. Evidence:
 `.local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-43/`.
 
 In skill runs the refusals rarely fire: given a project, Haiku tests a key

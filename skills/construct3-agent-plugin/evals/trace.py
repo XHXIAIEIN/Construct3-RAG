@@ -55,15 +55,19 @@ def calls_of(path: Path) -> list[dict]:
     return calls
 
 
+# The tools a run starts a script with: Bash, or PowerShell on Windows.
+SHELLS = ("Bash", "PowerShell")
+
+
 def summary(calls: list[dict]) -> dict:
     scripts = [{"script": m.group(1), "args": m.group(2).strip(), "failed": c["failed"], "chars": c["chars"]}
-               for c in calls if c["tool"] == "Bash" for m in SCRIPT.finditer(c["what"])]
+               for c in calls if c["tool"] in SHELLS for m in SCRIPT.finditer(c["what"])]
     by_tool: dict[str, dict[str, int]] = {}
     for c in calls:
         counts = by_tool.setdefault(c["tool"], {"calls": 0, "failed": 0})
         counts["calls"] += 1
         counts["failed"] += c["failed"]
-    lost = [c for c in calls if c["failed"] and not (c["tool"] == "Bash" and "check_project.py" in c["what"])]
+    lost = [c for c in calls if c["failed"] and not (c["tool"] in SHELLS and "check_project.py" in c["what"])]
     return {"tool_calls": len(calls), "lost_calls": len(lost), "by_tool": by_tool, "scripts": scripts,
             "read_skill_md": any(c["tool"] in ("Read", "Skill") and "SKILL.md" in c["what"] for c in calls)}
 
