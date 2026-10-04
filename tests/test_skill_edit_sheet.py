@@ -322,3 +322,99 @@ def test_plan_takes_the_children_key_off_an_event_it_empties(project):
     assert code == 0, out
     timer = next(ev for ev in all_events(project) if ev.get("title") == "Timer")
     assert "children" not in timer
+
+
+def local_n_in_two_groups(project: Path) -> None:
+    """A local n in group Setup and another in group Restart: one name, two variables."""
+    def change(sheet):
+        groups = {ev.get("title"): ev for ev in sheet["events"]}
+        for group, sid in ((groups["Setup"], 811111111111111), (groups["Restart"], 822222222222222)):
+            group["children"].insert(0, {"eventType": "variable", "name": "n", "type": "number", "initialValue": "0",
+                                         "comment": "", "isStatic": False, "isConstant": False, "sid": sid})
+    edit(project, SHEET, change)
+    assert "   1 group Setup\n       local number n = 0" in printed(project)
+
+
+def test_plan_sets_a_variable_by_its_name(project):
+    """A variable has no number: the plan names it, and a value kept in a constant changes there."""
+    code, out = plan(project, {"variable": "ROUND_COINS", "set": {"initialValue": "2,4"}},
+                     {"variable": "score", "set": {"initialValue": 5, "comment": "Points this round"}})
+    assert code == 0, out
+    assert "-- variable ROUND_COINS changed: global constant string ROUND_COINS = 2,4" in out
+    score = next(ev for ev in all_events(project) if ev.get("name") == "score")
+    assert (score["initialValue"], score["comment"]) == ("5", "Points this round")
+    assert list(score) == ["eventType", "name", "type", "initialValue", "comment", "isStatic", "isConstant", "sid"]
+    assert check(project)[0] == 0
+
+
+@pytest.mark.parametrize("values, said", [
+    ({"isConstant": True}, "score is a constant and an action cannot change it"),
+    ({"initialValue": "fast"}, "initialValue 'fast' is not a number"),
+    ({"type": "boolean"}, "should be \"true\" or \"false\""),
+    ({"name": "points"}, "the plan removes or renames score, and the events above still use it"),
+])
+def test_a_variable_set_keeps_the_checkers_guarantees(project, values, said):
+    before = (project / SHEET).read_bytes()
+    code, out = plan(project, {"variable": "score", "set": values})
+    assert code == 1 and said in out and out.splitlines()[-1].endswith("nothing was written"), out
+    assert (project / SHEET).read_bytes() == before
+
+
+def test_plan_removes_a_variable_and_a_comment(project):
+    code, out = plan(project, {"before": 1, "events": [{"eventType": "variable", "name": "unused"}]},
+                     {"variable": "unused", "remove": True}, {"comment": "Settings", "remove": True})
+    assert code == 0, out
+    assert "-- variable unused removed" in out and "-- comment // Settings removed" in out
+    sheet = printed(project)
+    assert "unused" not in sheet and "// Settings" not in sheet and "global constant string ROUND_COINS" in sheet
+    code, out = plan(project, {"variable": "beat", "remove": True})
+    assert code == 1 and "variable 'beat' is not in scope" in out and "the events above still use it" in out
+
+
+def test_plan_changes_a_comment_by_words_of_its_text(project):
+    code, out = plan(project, {"comment": "Start the next round", "set": {"text": "Next round once the coins are gone"}})
+    assert code == 0, out
+    assert "  8 group Restart\n       // Next round once the coins are gone\n   9" in printed(project)
+    code, out = plan(project, {"comment": "coin", "set": {"text": "x"}})
+    assert code == 1 and "comments hold 'coin'" in out and '"in": 1' in out
+
+
+def test_an_unknown_variable_is_refused_with_the_variables_of_the_sheet(project):
+    code, out = plan(project, {"variable": "Score", "set": {"initialValue": "1"}})
+    assert code == 1 and "the sheet has no variable named 'Score'; closest: score" in out, out
+    assert "Its variables: global constant string ROUND_COINS = 1,3,6,2,10,1, global number score = 0" in out
+    code, out = plan(project, {"event": 2, "set": {"initialValue": "1"}})
+    assert code == 1 and '{"variable": "NAME", "set": {"initialValue": "0.5"}}' in out, out
+    code, out = plan(project, {"variable": 3, "set": {"initialValue": "1"}})
+    assert code == 1 and "not a number" in out
+
+
+def test_a_local_name_in_two_events_is_named_with_in(project):
+    local_n_in_two_groups(project)
+    code, out = plan(project, {"variable": "n", "set": {"initialValue": "3"}})
+    assert code == 1, out
+    assert ("2 variables are named 'n': in event 1 (group Setup); in event 8 (group Restart). "
+            'Name the event that holds the one to change with "in"') in out
+    assert '{"variable": "n", "in": 1, "set": {"initialValue": "3"}}' in out
+    code, out = plan(project, {"variable": "n", "in": 8, "set": {"initialValue": "3"}})
+    assert code == 0 and "local number n = 3 in event 8 (group Restart)" in out, out
+    assert "local number n = 0" in printed(project)
+    code, out = plan(project, {"variable": "n", "in": 0, "remove": True})
+    assert code == 1 and "no variable named 'n' at the top level" in out and "local number n = 0 in event 1" in out
+
+
+def test_a_variable_change_in_a_dry_run_writes_nothing(project):
+    before = (project / SHEET).read_bytes()
+    code, out = plan(project, {"variable": "ROUND_COINS", "set": {"initialValue": "2,4"}}, flags=("--dry-run",))
+    assert code == 0 and "global constant string ROUND_COINS = 2,4" in out
+    assert out.splitlines()[-1] == "dry run: nothing was written" and (project / SHEET).read_bytes() == before
+
+
+def test_print_says_how_a_plan_names_a_variable(project):
+    lines = printed(project).splitlines()
+    assert lines[-1].startswith('-- a variable or comment has no number, so a plan of edit_sheet.py names it. '
+                                'A variable: {"variable": "ROUND_COINS", "set": {"initialValue": "1,3,6,2,10,1"}}; '
+                                'a value a constant holds is changed there')
+    (project / "plan.json").write_text(json.dumps([json.loads(re.search(r"(\{\"variable\".*?\}\})", lines[-1]).group(1))]))
+    assert tool(project, "edit_sheet", "Game", "plan.json", "--dry-run")[0] == 0
+    assert "has no number" not in tool(project, "print_sheet", "Game", "--events", "4-5")[1]

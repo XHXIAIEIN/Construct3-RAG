@@ -16,6 +16,12 @@ read off the printed sheet, and they land in the file as the editor would
 have written them, or not at all. `SKILL.md` makes this the way to change a
 sheet.
 
+A variable or a comment has no number in the editor, so a plan needs
+another way to name it. Without one, an agent that slows a timed animation
+whose duration a constant holds multiplies the formulas that read the
+constant, and may change an action that read a different one. The checker
+cannot tell this from an intended change.
+
 ## Options
 
 1. A sentence in `SKILL.md` on how to edit. Tried; no effect.
@@ -29,9 +35,19 @@ sheet.
 5. Leave it to the generator. The sheets agents edit by hand are the ones
    made in the editor.
 
+For a variable or a comment, which the editor does not number:
+
+6. By sid. `print_sheet.py` prints a sid only with `--outline`, a second
+   print to read before the plan.
+7. A number of their own. It would differ from the editor's margin and from
+   what the checker's findings say.
+8. By the name or the text the print already shows, with `"in"` for a name
+   that more than one event holds.
+
 ## Decision
 
-Option 3, `scripts/edit_sheet.py SHEET PLAN.json`.
+Option 3, `scripts/edit_sheet.py SHEET PLAN.json`, and option 8 for
+variables and comments.
 
 - Operations on events: `after`, `before`, `into` (0 is the sheet) and
   `replace` with `"events"`, `remove`, `move`. On what an event holds:
@@ -41,6 +57,25 @@ Option 3, `scripts/edit_sheet.py SHEET PLAN.json`.
   values. `set` takes a parameter at a time, `null` takes a key out, and a
   key the editor does not write for that kind of entry is refused with the
   nearest one: an accepted stray key stayed in the sheet and meant nothing.
+- A plan names a variable by its name, `{"variable": "NAME", "set": {...}}`
+  or `"remove": true`, and a comment by words of its text,
+  `{"comment": "...", ...}`. `"in": N` names the event that holds a local,
+  and 0 the top level.
+- A name or text that more than one row matches is refused with the places
+  and the operation written with `"in"`. An unknown name is refused with the
+  sheet's variables and the nearest one, because that list is what steers a
+  small model back.
+- `set` on a variable takes its own values, rename included. The checker
+  then refuses a constant that an action writes, an initial value that does
+  not fit the type, and a removed or renamed name still in use.
+- A rename leaves the uses to the plan. The editor's rename changes them
+  too, but its scope rules decide which use reads which variable, and a
+  plan that writes the uses shows each one.
+- `set` of `initialValue` on a numbered event is refused with the variable
+  form. A print that shows a variable, except `--outline`, ends with one
+  line that gives the form for its first variable and says that a value a
+  constant holds is changed there.
+- An include has no name a plan can use, so a plan does not address it.
 - Targets are found before the first operation and followed through the
   ones after it. An event replaced by one event keeps its number for the
   operations below it; replaced by several, or removed, it is gone, and a
@@ -86,5 +121,7 @@ Option 3, `scripts/edit_sheet.py SHEET PLAN.json`.
   examples that adds no finding.
 - Runs that read the note still leave the second place: print the whole
   sheet after a plan, not only what changed.
-- An agent needs to address a variable, a comment or an include, which have
-  no number: a place by sid.
+- Runs still tune a value in its formulas when a constant holds it, after
+  the print's line: a checker warning for a plan that multiplies every read
+  of a constant by the same factor.
+- An agent needs to change or remove an include.

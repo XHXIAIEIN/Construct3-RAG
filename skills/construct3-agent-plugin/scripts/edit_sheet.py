@@ -20,6 +20,14 @@ whatever the operations before it do:
     {"event": 2, "condition": 1, "set": {"isInverted": null}}  null takes a key out; parameters are set one by one
     {"event": 4, "set": {"title": "Input", "disabled": true}}  the event's own values
     {"event": 6, "action": 3, "remove": true}
+    {"variable": "score", "set": {"initialValue": "10"}}   a variable by its name; also "type", "isConstant",
+                                           "isStatic", "comment" and "name", which leaves its uses to change
+    {"variable": "n", "in": 4, "remove": true}             "in": the event that holds a local, 0 the top level
+    {"comment": "Start the next", "set": {"text": "..."}}  a comment by its text or a part of it; or "remove": true
+
+A variable, comment or include has no number of its own, so a plan names a
+variable by its name and a comment by its text. A name that more than one
+local holds is refused with the events that hold them, to name with "in".
 
 An event is written as the sheet's JSON holds it, and may leave out what the
 editor always writes the same way: {"eventType": "variable", "name": "lives"}
@@ -39,12 +47,14 @@ with "replace". The file is written as the editor writes it: tabs, LF, no
 byte order mark, no newline at the end, under the name it has on disk.
 
 exit codes: 0 written, or a dry run that would be; 1 nothing written: the plan
-cannot be read, names an event the sheet does not have, or adds a problem, or
-the sheet changed on disk since print_sheet.py printed it; or the project or
-the clone was not found; 2 a project file lacks a key the editor always writes
+cannot be read, names an event, variable or comment the sheet does not have,
+or a name more than one variable has, or adds a problem, or the sheet changed
+on disk since print_sheet.py printed it; or the project or the clone was not
+found; 2 a project file lacks a key the editor always writes
 """
 import codecs
 import copy
+import difflib
 import json
 import os
 import random
@@ -88,6 +98,9 @@ RARE_KEYS = {"block": ("bookmark",), "function-block": ("bookmark",), "comment":
 # The keys of a comment row and a script among the actions.
 ROWS = {"comment": ("type", "text", "background-color", "text-color"), "script": ("type", "script", "language")}
 HOLDS_EVENTS = ("block", "group", "function-block", "custom-ace-block")
+# Values only a variable has: "set" on a numbered event with one of them meant a variable.
+VARIABLE_KEYS = ("initialValue", "isConstant", "isStatic")
+UNNUMBERED = {"variable": "name", "comment": "text"}      # rows a plan names, and the key that names them
 PLACES = ("after", "before", "into")
 
 
@@ -129,7 +142,8 @@ def assign(entry: dict, values: dict, name: str, fixed: tuple[str, ...]) -> None
     keys the editor writes for this kind of entry, or that it already has: a
     key of the plan's own making would stay in the file and mean nothing."""
     template = EVENTS.get(entry.get("eventType")) or next((keys for kind, keys in ACES.items() if kind in entry), [])
-    known = [key for key in dict.fromkeys([*(key for key, _ in template), *entry]) if key not in fixed]
+    rare = RARE_KEYS.get(entry.get("eventType"), ())
+    known = [key for key in dict.fromkeys([*(key for key, _ in template), *entry, *rare]) if key not in fixed]
     what = f"a {entry['eventType']}" if "eventType" in entry else "a condition or action"
     for key, value in values.items():
         if key in fixed:
@@ -138,7 +152,10 @@ def assign(entry: dict, values: dict, name: str, fixed: tuple[str, ...]) -> None
         if key not in known:
             raise PlanError(f"{name}: {key!r} is not a value of {what}, which has: {', '.join(known)}"
                             + c3.closest(key, known, n=1)
-                            + ("; a condition or an action of the event is changed by its number, "
+                            + ("; a variable has no number and is named instead, "
+                               '{"variable": "NAME", "set": {"initialValue": "0.5"}}'
+                               if key in VARIABLE_KEYS and entry.get("eventType") != "variable" else
+                               "; a condition or an action of the event is changed by its number, "
                                '{"event": N, "condition": 1, "set": {"isInverted": null}}' if "conditions" in entry else ""))
         if key == "parameters" and isinstance(value, dict) and isinstance(entry.get("parameters"), dict):
             entry["parameters"].update(value)
@@ -292,6 +309,7 @@ class Plan:
         self.operation_of: dict[int, int] = {}            # sid of a new entry, or of the event it went into -> operation
         self.sids_given = 0
         self.gone: dict[int, str] = {}                    # id of an event taken out -> which operation did it, and how
+        self.unnamed: dict[str, str] = {}                 # a variable's name a plan removed or renamed -> which operation
 
     def index(self, events: list, counter: list[int]) -> None:
         for ev in events:
@@ -389,6 +407,132 @@ class Plan:
         self.done.append((said, [target]))
         self.own_row.add(id(target))
 
+    def rows_of(self, kind: str) -> list[tuple[list, int, list[dict]]]:
+        """Every variable or comment of the sheet as it is now: the list that holds it,
+        where, and the events it sits in, outermost first."""
+        found = []
+
+        def walk(events: list, above: list[dict]) -> None:
+            for i, ev in enumerate(events):
+                if ev.get("eventType") == kind:
+                    found.append((events, i, above))
+                walk(ev.get("children", []), [*above, ev])
+        walk(self.sheet["events"], [])
+        return found
+
+    def scope_of(self, above: list[dict]) -> str:
+        """Where a variable or comment is, in the words of a plan's "in"."""
+        if not above:
+            return "at the top level"
+        holder = above[-1]
+        n = next((n for n, ev in self.by_number.items() if ev is holder), None)
+        et = holder.get("eventType")
+        what = {"group": f"group {holder.get('title')}", "function-block": f"function {holder.get('functionName')}",
+                "custom-ace-block": f"custom action {holder.get('objectClass')}.{holder.get('aceName')}"}.get(et, et)
+        return f"in event {n} ({what})" if n else f"in a {what} this plan added"
+
+    @staticmethod
+    def variable_line(var: dict, above: list[dict]) -> str:
+        """A variable as print_sheet.py prints it."""
+        kind = ("local" if above else "global") + (" constant" if var.get("isConstant") else "") \
+            + (" static" if var.get("isStatic") else "")
+        return f"{kind} {var.get('type')} {var.get('name')} = {var.get('initialValue', '')}"
+
+    def named(self, op: dict, kind: str, name: str) -> tuple[list, int, list[dict]]:
+        """The variable an operation names, or the comment whose text holds its words,
+        within event "in" when it gives one."""
+        key = op[kind]
+        if not isinstance(key, str) or not key.strip():
+            example = ('{"variable": "score", "set": {"initialValue": "0"}}' if kind == "variable"
+                       else '{"comment": "Score the coin", "set": {"text": "..."}}')
+            raise PlanError(f"{name}: \"{kind}\" is the {'name' if kind == 'variable' else 'text'} print_sheet.py "
+                            f"prints for it, not a number: {example}")
+        everywhere = self.rows_of(kind)
+        rows, within = everywhere, op.get("in")
+        if within is not None:
+            holder = self.event(within, name, zero=True)
+            if holder is not None:
+                self.place(holder, within, name)
+            rows = [r for r in rows if (any(ev is holder for ev in r[2]) if holder is not None else not r[2])]
+        if kind == "variable":
+            hits = [r for r in rows if r[0][r[1]].get("name") == key]
+        else:
+            hits = [r for r in rows if key in str(r[0][r[1]].get("text", ""))]
+            whole = [r for r in hits if str(r[0][r[1]].get("text", "")).strip() == key.strip()]
+            hits = whole if len(whole) == 1 else hits
+        if len(hits) == 1:
+            return hits[0]
+        inside = "" if within is None else " at the top level" if within == 0 else f" in event {within}"
+        if hits:
+            places = [self.scope_of(above) + ("" if kind == "variable" else " " + json.dumps(
+                str(v[i].get("text", "")).split("\n")[0][:60], ensure_ascii=False)) for v, i, above in hits]
+            first = next((int(m.group(1)) for m in (re.match(r"in event (\d+)", p) for p in places) if m), 0)
+            example = {kind: key, "in": first, **{k: op[k] for k in ("set", "remove") if k in op}}
+            raise PlanError(f"{name}: {len(hits)} {kind}s{inside} {'are named' if kind == 'variable' else 'hold'} "
+                            f"{key!r}: {'; '.join(places)}. Name the event that holds the one to change with "
+                            f"\"in\", 0 for the top level: {json.dumps(example, ensure_ascii=False)}"
+                            + ("" if kind == "variable" else "; or quote more of its text"))
+        if kind == "variable":
+            said = self.unnamed.get(key)
+            listed = [self.variable_line(v[i], above) + (f" {self.scope_of(above)}" if above else "")
+                      for v, i, above in everywhere]
+            near = c3.closest(key, [v[i].get("name", "") for v, i, _ in everywhere])
+            raise PlanError(f"{name}: the sheet has no variable named {key!r}{inside}" + (f", {said}" if said else "")
+                            + (f"{near}. Its variables: " + ", ".join(listed[:40])
+                               + (f" and {len(listed) - 40} more" if len(listed) > 40 else "")
+                               if listed else ". It has none; a new one goes in with "
+                               '{"before": 1, "events": [{"eventType": "variable", "name": "...", "initialValue": "0"}]}'))
+        texts = [str(v[i].get("text", "")).split("\n")[0] for v, i, _ in everywhere]
+        near = difflib.get_close_matches(key, texts, n=5, cutoff=0.4) or texts[:10]
+        raise PlanError(f"{name}: no comment of the sheet holds {key!r}{inside}"
+                        + (". Write words of one as print_sheet.py prints it after //, such as "
+                           + "; ".join(json.dumps(t, ensure_ascii=False) for t in near) if near else ". It has none"))
+
+    def unnumbered(self, op: dict, kind: str, name: str, i: int) -> None:
+        """A variable or comment changed or taken out, named by its name or text."""
+        if ("set" in op) == ("remove" in op):
+            raise PlanError(f'{name} is {{"{kind}": ..., "set": {{...}}}} or {{"{kind}": ..., "remove": true}}, '
+                            f'with "in": N when more than one has it')
+        siblings, at, above = self.named(op, kind, name)
+        row, key = siblings[at], op[kind]
+        if isinstance(row.get("sid"), int):
+            self.operation_of.setdefault(row["sid"], i)
+        if "remove" in op:
+            if op["remove"] is not True:
+                raise PlanError(f"{name}: \"remove\" is true")
+            del siblings[at]
+            if not siblings:
+                drop_empty_children(self.sheet["events"], siblings)
+            self.used -= set(sids_of(row))
+            if kind == "variable":
+                self.unnamed[key] = f"operation {i} removed it"
+                self.done.append((f"variable {key} removed", []))
+            else:
+                self.done.append((f"comment // {str(row.get('text', '')).split(chr(10))[0]} removed", []))
+            return
+        values = op["set"]
+        if not isinstance(values, dict):
+            raise PlanError(f"{name}: \"set\" is an object of the values to change, "
+                            f"{{\"{'initialValue' if kind == 'variable' else 'text'}\": ...}}")
+        if kind == "variable":
+            empty = [k for k, v in values.items() if v is None]
+            if empty:
+                raise PlanError(f"{name}: a variable keeps each of its keys; give {empty[0]!r} a value, "
+                                f"\"\" for no comment")
+            if "type" in values and values["type"] not in INITIAL:
+                raise PlanError(f"{name}: type is 'number', 'string' or 'boolean', not {values['type']!r}")
+        assign(row, values, name, ("sid", "eventType"))
+        if kind == "variable":
+            value = row.get("initialValue")
+            if isinstance(value, (bool, int, float)):       # the editor keeps a string
+                row["initialValue"] = str(value).lower() if isinstance(value, bool) else str(value)
+            if row.get("name") != key:
+                self.unnamed[key] = f"operation {i} renamed it {row.get('name')}"
+            self.done.append((f"variable {key} changed: {self.variable_line(row, above)}"
+                              + (f" {self.scope_of(above)}" if above else ""), []))
+        else:
+            self.done.append((f"comment changed: // {str(row.get('text', '')).split(chr(10))[0]}", []))
+
     def apply(self, op, i: int) -> None:
         self.change(op, i)
         for sid in sids_of(self.done[-1][1]):
@@ -398,6 +542,14 @@ class Plan:
         name = f"operation {i}"
         if not isinstance(op, dict):
             raise PlanError(f"{name} is {json.dumps(op)[:60]}, not an object such as {{\"after\": 8, \"events\": [...]}}")
+        named = [k for k in UNNUMBERED if k in op]
+        if len(named) == 1 and not {"move", "event", *PLACES, "replace"} & set(op):
+            if set(op) - {named[0], "in", "set", "remove"}:
+                raise PlanError(f"{name} has the keys {', '.join(op)}; a {named[0]} is changed with "
+                                f'{{"{named[0]}": ..., "set": {{...}}}} or taken out with {{"{named[0]}": ..., '
+                                f'"remove": true}}, and "in": N names the event that holds it')
+            self.unnumbered(op, named[0], f"{name} ({named[0]} {json.dumps(op[named[0]], ensure_ascii=False)})", i)
+            return
         places = [k for k in ("replace", "remove", *PLACES) if k in op]
         verb = "move" if "move" in op else "event" if "event" in op else places[0] if len(places) == 1 else None
         allowed = {"move": {"move", *PLACES}, "remove": {"remove"},
@@ -410,7 +562,8 @@ class Plan:
                             '{"after"|"before"|"into"|"replace": N, "events": [...]}, {"remove": N}, '
                             '{"move": N, "after"|"before"|"into": M}, {"event": N, "add-actions"|"add-conditions": [...]}, '
                             '{"event": N, "condition"|"action": J, "set": {...}}, {"event": N, "set": {...}}, '
-                            '{"event": N, "condition"|"action": J, "remove": true}')
+                            '{"event": N, "condition"|"action": J, "remove": true}, '
+                            '{"variable": "name", "set": {...}}, {"comment": "its text", "remove": true}')
         n = op[verb]
         name = f"{name} ({verb} {json.dumps(n)})"
         if verb in PLACES:
@@ -551,7 +704,8 @@ def as_on_disk(path: Path) -> Path:
 def main() -> int:
     ap = c3.argument_parser(
         "Change an event sheet from a plan, a JSON file of operations addressed by the editor's event numbers: "
-        "events put in, moved, replaced or removed, conditions and actions added, changed or removed. New entries "
+        "events put in, moved, replaced or removed, conditions and actions added, changed or removed, and "
+        "variables and comments, named, changed or removed. New entries "
         "get their sids and the keys the editor always writes. The result is checked before it is written; a plan "
         "that adds a problem changes nothing.",
         "a plan:\n"
@@ -561,16 +715,20 @@ def main() -> int:
         '   {"event": 5, "condition": 1, "set": {"isInverted": null}}, {"event": 6, "action": 3, "remove": true},\n'
         '   {"into": 3, "events": [{"eventType": "block", "conditions": [...], "actions": [...]}]},\n'
         '   {"after": 8, "events": [{"eventType": "group", "title": "HUD", "children": [...]}]},\n'
-        '   {"move": 7, "after": 6}, {"replace": 5, "events": [...]}, {"remove": 4}]\n'
+        '   {"move": 7, "after": 6}, {"replace": 5, "events": [...]}, {"remove": 4},\n'
+        '   {"variable": "SPEED", "set": {"initialValue": "0.5"}}, {"variable": "n", "in": 4, "remove": true},\n'
+        '   {"comment": "Start the next round", "set": {"text": "Start the next round after a second"}}]\n'
         "Every number is one of the sheet as print_sheet.py prints it now, and as a finding of check_project.py\n"
-        "names it: event 5 condition 1. \"into\": 0 is the end of the sheet.\n\n"
+        "names it: event 5 condition 1. \"into\": 0 is the end of the sheet. A variable or comment has no number:\n"
+        "a plan names a variable by its name and a comment by words of its text, and \"in\": N by the event that\n"
+        "holds it when more than one matches.\n\n"
         "examples:\n"
         "  python scripts/edit_sheet.py Game plan.json\n"
         "  python scripts/edit_sheet.py Game plan.json --dry-run   check the plan and show the result, write nothing\n"
         "  python scripts/print_sheet.py Game --show 5             event 5 as JSON, to change and put back with replace\n\n"
         "exit codes: 0 written, or a dry run that would be; 1 nothing written: the plan cannot be read, names an\n"
-        "event the sheet does not have or adds a problem, or project/clone not found; 2 a project file lacks a key\n"
-        "the editor always writes")
+        "event, variable or comment the sheet does not have, or adds a problem, or project/clone not found; 2 a\n"
+        "project file lacks a key the editor always writes")
     ap.add_argument("sheet", metavar="SHEET", help="the event sheet's name")
     ap.add_argument("plan", metavar="PLAN.json", help="the operations, a JSON list")
     ap.add_argument("--dry-run", action="store_true", help="check the plan and print the result, write nothing")
@@ -637,6 +795,11 @@ def main() -> int:
                  for e, m in zip(added, sid_in)]
         fit = max(c3.fitting(added, args.limit and max(args.limit - 300, 3)), 1)
         print("\n".join(added[:fit]))
+        # A rename or a removal leaves the uses of the old name, which the editor would rename with it.
+        unnamed = [n for n in plan.unnamed if any(re.search(rf"\b{re.escape(n)}\b", e) for e in added)]
+        if unnamed:
+            print(f"the plan removes or renames {', '.join(unnamed)}, and the events above still use "
+                  f"{'it' if len(unnamed) == 1 else 'them'}: change each use in the same plan, or keep the name")
         print((f"... and {len(added) - fit} more\n" if fit < len(added) else "")
               + f"the plan adds {len(added)} problem(s) to the project; nothing was written")
         return 1

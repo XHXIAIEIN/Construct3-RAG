@@ -18,7 +18,10 @@ manual's project-primitives/events/sub-events).
 A row's number is the count of blocks, groups, function blocks, custom
 action blocks and script blocks before it in the sheet, sub-events included,
 plus one: the number in the editor's margin and in its Find results. A variable, comment
-or include takes no number of its own and belongs to the next one.
+or include takes no number of its own and belongs to the next one, so a
+plan of edit_sheet.py names a variable by its name and a comment by words of
+its text. A print that shows a variable, except --outline, ends with the
+line that says how.
 --outline prints the numbering alone, with the sid of each event, which is
 the string to search the sheet's JSON for. --show N prints one event as
 JSON, for a plan of edit_sheet.py that puts it back changed.
@@ -38,6 +41,7 @@ import c3project as c3
 from c3project import NUMBERED, describe
 
 COMPARISONS = ("=", "≠", "<", "≤", ">", "≥")
+VARIABLE_ROW = re.compile(r"\s*(?:global|local)(?: constant)?(?: static)? (?:number|string|boolean) (\S+) = (.*)")
 
 
 class Row(NamedTuple):
@@ -196,6 +200,19 @@ def part(rows: list[Row], first: int, last: int | None, room: int | None) -> tup
     return lines, None
 
 
+def naming_note(lines: list[str]) -> str | None:
+    """How a plan names the first variable the lines show: a variable has no number to address."""
+    found = [m for m in map(VARIABLE_ROW.fullmatch, (line[5:] for line in lines)) if m]
+    if not found:
+        return None
+    m = next((m for m in found if len(m.group(2)) <= 30), found[0])     # a short value keeps the line short
+    value = m.group(2) if len(m.group(2)) <= 30 else "..."
+    plan = json.dumps({"variable": m.group(1)[:40], "set": {"initialValue": value}}, ensure_ascii=False)
+    return (f"-- a variable or comment has no number, so a plan of edit_sheet.py names it. A variable: {plan}; "
+            f"a value a constant holds is changed there, not in the formulas that read it. A comment, by words "
+            f'of its text: {{"comment": "...", "set": {{"text": "..."}}}}')
+
+
 def events_range(spec: str | None) -> tuple[int, int | None]:
     if spec is None:
         return 1, None
@@ -298,7 +315,10 @@ def main() -> int:
         sys.exit(f"sheet {names[0]} has {totals[names[0]]} events; --events {args.events} starts past its end")
 
     size = {name: sum(len(line) + 1 for line in [f"== {name}", *part(rows[name], first, last, None)[0]]) for name in names}
-    fits = not args.limit or sum(size.values()) <= args.limit
+    # The line on naming a variable, with room for a longer name or value than this one's in a part.
+    note = None if args.outline else naming_note([line for name in names for line in part(rows[name], first, last, None)[0]])
+    reserved = len(note) + 70 if note else 0
+    fits = not args.limit or sum(size.values()) + reserved <= args.limit
     if not fits and not args.sheets and len(names) > 1:
         print(f"{len(names)} event sheets, {sum(size.values())} characters as events, over the limit of "
               f"{args.limit} (--limit). Name the ones to read:")
@@ -310,7 +330,8 @@ def main() -> int:
               f"A sheet over the limit prints in parts; the last line of a part names the next.")
         return 0
 
-    room = None if fits else args.limit - 600   # the title, and a whole command to close
+    room = None if fits else args.limit - 600 - reserved   # the title, the note and a whole command to close
+    shown: list[str] = []
     for i, name in enumerate(names):
         lines, stopped = part(rows[name], first, last, room)
         whole = stopped is None and not args.events
@@ -322,6 +343,10 @@ def main() -> int:
         if room is not None:
             room -= sum(len(line) + 1 for line in lines)
         rest = names[i + 1:]
+        shown += lines
+        said = note and (not rest or stopped is not None or (room is not None and room <= 0)) and naming_note(shown)
+        if said:
+            print(said)
         if stopped is not None or (rest and room is not None and room <= 0):
             more = [again(args, [name], f"{stopped}-{last or ''}")] if stopped else []
             more += [again(args, rest, None)] if rest else []

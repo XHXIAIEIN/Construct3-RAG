@@ -52,7 +52,7 @@ The project skill and the prompts:
 | Record | What it settles |
 |--------|-----------------|
 | `project-tools-skill.md` | Why the project tools ship as an Agent Skill, and what keeps small models on them |
-| `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON |
+| `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON, and how a plan names a variable or a comment |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
 | `project-format-guide.md` | Where each statement of Scirra's project format guide, the one `llm-context.md` links, is written and what checks it, and how its copy in `data/c3-guides/` is kept |
 | `preview-player.md` | Why a preview is played from a JSON plan of steps, and what the steps cover |
