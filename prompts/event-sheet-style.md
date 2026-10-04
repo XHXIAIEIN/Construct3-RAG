@@ -2,11 +2,11 @@
 
 Read this after the design, before events go into a project or a
 generator. It shows how the official examples
-(`Construct-Example-Projects`, the 221 games by Viridino and Forsteri
-Studios) organise, name and comment a sheet.
-`docs/decisions/event-sheet-design-guidance.md` gives the counts behind
-every rule. If the user's sheet has conventions of its own, follow
-those.
+(`Construct-Example-Projects`, the games by Viridino and Forsteri Studios)
+organise, name and comment a sheet. If the user's sheet has conventions of
+its own, follow those. The evidence behind the style checks, and the reason
+for each rule that departs from the examples, is in
+`docs/decisions/event-sheet-design-guidance.md`.
 
 ## Six habits to avoid
 
@@ -29,11 +29,7 @@ just enough to silence it.
 
 ## The shape
 
-Here is a sheet as `print_sheet.py` prints it. Constants go under
-`Settings`, shared state under `Gameplay variables`, then one group per
-subsystem in play order (`Setup`, `Tutorial`, `Player`, `Enemies`,
-`Camera`, `HUD`, `Game Over`, `Restart`). Every event is in a group, with a
-comment above it.
+Here is a sheet as `print_sheet.py` prints it.
 
 ```
      // Coins. Tap a coin to collect it; when the last one is gone the layout restarts.
@@ -63,18 +59,23 @@ comment above it.
    7   Coin: Collect()             (custom action, description "Shrink the coin away and score it")
 ```
 
-A group holds its variables, then its functions and custom actions, then
-its events. A trigger has its filter conditions in the same block and its
-branches in sub-events, one comment each. Two levels of sub-events cover
-almost every event in the examples.
+Constants go under `Settings`, shared state under `Gameplay variables`,
+then one group per subsystem in play order (`Setup`, `Tutorial`, `Player`,
+`Enemies`, `Camera`, `HUD`, `Game Over`, `Restart`). Every event is in a
+group, with a comment above it. A group holds its variables, then its
+functions and custom actions, then its events. A trigger has its filter
+conditions in the same block and its branches in sub-events, one comment
+each. Two levels of sub-events cover almost every event in the examples.
 
 ## Comments
 
-The examples' 10,500 comments are one sentence of eight words at the
-median and eighteen at the ninetieth percentile. One in forty has a second
-sentence. A comment names the things of the game (the player, the wall,
-the trail), never the ACE: `Turn the player left`, not
-`Set angle to Self.Angle - 90`. Write comments in the user's language. End
+The examples' comments are one sentence of eight words at the median and
+eighteen at the ninetieth percentile. One in forty has a second sentence.
+A comment names the things of the game (the player, the wall, the trail),
+never the ACE: `Turn the player left`, not `Set angle to Self.Angle - 90`
+or `Set score to 0`. It never holds a `TODO`, a change history, how the
+author got there, `#`, colours or BBCode. Write comments in the user's
+language. End
 every comment and description without a period, even where the examples
 put one. Keep the period between two sentences.
 
@@ -91,9 +92,6 @@ put one. Keep the period between two sentences.
 | The sheet | One line on what it covers | `This is the main gameplay event sheet. Each game component has a dedicated event sheet` |
 
 A function or custom action takes the same sentence as its description.
-The examples' comments never restate the ACE (`Set score to 0`) or hold
-a `TODO`, a change history, how the author got there, `#`, colours or
-BBCode.
 
 ## Names
 
