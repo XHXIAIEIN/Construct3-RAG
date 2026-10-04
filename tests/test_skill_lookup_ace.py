@@ -6,8 +6,18 @@ import shutil
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+import pytest
 
 from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, tool, check, edit
+
+
+@pytest.fixture
+def skill_only(tmp_path) -> Path:
+    """A folder that holds the skill and no project: an addon is looked up by its own name."""
+    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
+    return tmp_path
 
 
 def test_ace_lookup_reaches_a_behavior_through_the_object(built):
@@ -92,9 +102,8 @@ def test_a_functions_ace_found_under_system_is_written_on_the_functions_object(b
     assert '"objectClass": "Functions"' not in out     # Wait is System's, not the Functions object's
 
 
-def test_ace_lookup_needs_no_project_and_takes_a_display_name(tmp_path):
-    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
-    code, out = tool(tmp_path, "lookup_ace", "8 Direction", "max", "speed")
+def test_ace_lookup_needs_no_project_and_takes_a_display_name(skill_only):
+    code, out = tool(skill_only, "lookup_ace", "8 Direction", "max", "speed")
     assert code == 0, out
     assert "action set-max-speed" in out and "[behavior <behavior name on the object>, eightdir]" in out
 
@@ -104,12 +113,11 @@ def test_ace_lookup_offers_the_nearest_id(built):
     assert code != 0 and "closest: wait" in out
 
 
-def test_ace_lookup_does_not_take_a_near_name_for_the_addon(tmp_path):
-    """`Platform` is the behavior; a near match used to read it as the plugin Platform Info."""
-    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
-    code, out = tool(tmp_path, "lookup_ace", "Platform", "jump", "strength")
+def test_ace_lookup_does_not_take_a_near_name_for_the_addon(skill_only):
+    """`Platform` is the behavior; a near match must not read it as the plugin Platform Info."""
+    code, out = tool(skill_only, "lookup_ace", "Platform", "jump", "strength")
     assert code == 0 and "action set-jump-strength" in out and "platforminfo" not in out
-    code, out = tool(tmp_path, "lookup_ace", "Platfrom")
+    code, out = tool(skill_only, "lookup_ace", "Platfrom")
     assert code == 1 and "closest: platform" in out
 
 
@@ -123,9 +131,8 @@ def test_ace_lookup_takes_a_category_for_a_word(built):
     assert code == 1 and "categories, each a word too:" in out and " time," in out
 
 
-def test_ace_lookup_by_name_is_not_widened_by_a_category(tmp_path):
-    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
-    code, out = tool(tmp_path, "lookup_ace", "Physics", "force")
+def test_ace_lookup_by_name_is_not_widened_by_a_category(skill_only):
+    code, out = tool(skill_only, "lookup_ace", "Physics", "force")
     assert code == 0 and out.count("  write: ") == 3
     assert "by category, not by name: apply-impulse" in out
 
@@ -144,7 +151,7 @@ def test_ace_lookup_counts_per_category_what_does_not_fit(built):
     assert code == 0 and "expression dt " in out
 
 
-def test_ace_lookup_points_a_shared_ace_to_an_object(built, tmp_path):
+def test_ace_lookup_points_a_shared_ace_to_an_object(built, skill_only):
     """Pick nearest/furthest is every world object's, not System's, and so is Set color. The
     shared entry is the answer and comes first: printed after a line saying nothing was found,
     one Doubao run picked by lowest distance instead, another took a Sprite to have no color
@@ -153,8 +160,7 @@ def test_ace_lookup_points_a_shared_ace_to_an_object(built, tmp_path):
     assert code == 0 and out.startswith("every world object has these, in plugins/_common.json")
     assert "write: {\"id\": \"pick-nearestfurthest\", \"objectClass\": \"<Object>\"" in out
     assert "lookup_ace.py <Object> nearest writes its name in" in out
-    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
-    code, out = tool(tmp_path, "lookup_ace", "Sprite", "color")
+    code, out = tool(skill_only, "lookup_ace", "Sprite", "color")
     assert code == 0 and out.startswith("Sprite has these, in plugins/_common.json") and "set-default-color" in out
     assert "nothing under" not in out
     code, out = tool(built, "lookup_ace", "Coin", "nearest")
@@ -163,15 +169,14 @@ def test_ace_lookup_points_a_shared_ace_to_an_object(built, tmp_path):
     assert code == 1 and "every world object has these" not in out
 
 
-def test_ace_lookup_leaves_out_the_shared_aces_the_plugin_does_not_get(built, tmp_path):
+def test_ace_lookup_leaves_out_the_shared_aces_the_plugin_does_not_get(built, skill_only):
     """lookup_ace.py Text color printed Set color, which the editor refuses on a Text: of
     plugins/_common.json a plugin gets what its schema lists under commonAces."""
     code, out = tool(built, "lookup_ace", "ScoreText", "color")
     assert code == 0 and "set-font-color" in out and "set-default-color" not in out
     code, out = tool(built, "lookup_ace", "ScoreText", "opacity")
     assert code == 0 and "set-opacity" in out
-    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
-    code, out = tool(tmp_path, "lookup_ace", "Text", "default", "color")
+    code, out = tool(skill_only, "lookup_ace", "Text", "default", "color")
     assert code == 1 and "set-default-color" not in out
 
 
@@ -198,19 +203,18 @@ def test_ace_lookup_prints_an_effect_with_its_parameters(built):
     assert code == 0 and "effect brightness" in out and "effect lighten" in out and "no parameters" in out
 
 
-def test_ace_lookup_names_what_the_editor_has_deprecated(tmp_path):
+def test_ace_lookup_names_what_the_editor_has_deprecated(skill_only):
     """A deprecated addon is said to be one, not listed as unknown; a deprecated ACE the
     schema kept comes after the current ones; one it left out is named, so that an id
     from an old project does not read as a typo."""
-    shutil.copytree(SKILL, tmp_path / INSTALLED, ignore=shutil.ignore_patterns("__pycache__"))
-    code, out = tool(tmp_path, "lookup_ace", "NW.js")
+    code, out = tool(skill_only, "lookup_ace", "NW.js")
     assert code == 1 and out.startswith("NodeWebkit (NW.js) is a deprecated plugin: Construct 3 no longer offers it")
-    code, out = tool(tmp_path, "lookup_ace", "Warp")
+    code, out = tool(skill_only, "lookup_ace", "Warp")
     assert code == 1 and out.startswith("warp (Warp) is a deprecated effect")
-    code, out = tool(tmp_path, "lookup_ace", "Pin", "pin", "to", "object")
+    code, out = tool(skill_only, "lookup_ace", "Pin", "pin", "to", "object")
     assert code == 0 and out.index("action pin-to-object-properties") < out.index("action pin-to-object - ")
     assert "<deprecated>" in out and "the current action of the same name is pin-to-object-properties" in out
-    code, out = tool(tmp_path, "lookup_ace", "Mouse", "set-cursor-style")
+    code, out = tool(skill_only, "lookup_ace", "Mouse", "set-cursor-style")
     assert code == 0 and out.startswith("action set-cursor-style2 - Set cursor style")
     assert re.search(r"action +set-cursor-style +Set cursor style \[mouse\]  current of the same name: "
                      r"set-cursor-style2", out), out
@@ -221,13 +225,15 @@ def test_ace_lookup_prints_a_miss_on_stdout(built):
     alone printed nothing, and PowerShell wrapped each line in a NativeCommandError record,
     which is how two Doubao runs read it."""
     env = dict(os.environ, PYTHONIOENCODING="utf-8")
-    p = subprocess.run([sys.executable, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), "Sprite", "aniamtion"],
-                       cwd=built, env=env, capture_output=True, text=True, encoding="utf-8")
+
+    def lookup(*words: str) -> subprocess.CompletedProcess:     # tool() joins stdout and stderr
+        return subprocess.run([sys.executable, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), *words],
+                              cwd=built, env=env, capture_output=True, text=True, encoding="utf-8")
+    p = lookup("Sprite", "aniamtion")
     assert p.returncode == 1
     assert p.stdout.startswith("nothing under Sprite has every word of 'aniamtion'\n") and "set-animation" in p.stdout
     assert p.stderr == ""
-    p = subprocess.run([sys.executable, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), "Sprte"],
-                       cwd=built, env=env, capture_output=True, text=True, encoding="utf-8")
+    p = lookup("Sprte")
     assert p.returncode == 1 and p.stdout == "" and "is not an object of this project" in p.stderr
 
 
