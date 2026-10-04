@@ -6,10 +6,11 @@ Date: 2026-10-03
 
 With `uidAllocationMode: increment`, the editor's default, a new instance
 takes the next number, and so does an instance an agent or a script adds,
-counted from what it read. The two meet: a single-global object keeps its
-uid in `objectTypes/`, which a count over the layouts misses. The editor
-opens two instances with one uid and gives all but one another uid, so a
-hierarchy link or a *Pick by UID* written for one reaches another.
+counted from what it read. The two can give out the same uid: a
+single-global object keeps its uid in `objectTypes/`, which a count over the
+layouts misses. The editor opens two instances with one uid and gives all but one
+another uid, so a hierarchy link or a *Pick by unique ID* written for one
+reaches another.
 
 ## Evidence
 
@@ -17,7 +18,7 @@ hierarchy link or a *Pick by UID* written for one reaches another.
   [Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275)
   states that a uid may be any value as long as every instance has its own,
   that large random numbers work better under source control, and that
-  Construct then uses six-digit random numbers.
+  Construct then usually uses six-digit random numbers.
 - Two instances sharing a uid opened in the editor on 2026-10-03, and the
   preview showed one of them under another uid
   (`checker-editor-load-rules.md`).

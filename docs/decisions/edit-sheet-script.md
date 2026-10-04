@@ -79,8 +79,8 @@ variables and comments.
   plan that writes the uses shows each one.
 - `set` of `initialValue` on a numbered event is refused with the variable
   form. A print that shows a variable, except `--outline`, ends with one
-  line that gives the form for its first variable and says that a value a
-  constant holds is changed there.
+  line that gives the form for one of the variables it shows and says that
+  a value a constant holds is changed there.
 - An include has no name a plan can use, so a plan does not address it.
 - Targets are found before the first operation and followed through the
   ones after it. An event replaced by one event keeps its number for the

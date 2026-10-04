@@ -84,7 +84,7 @@ Option 4.
   new helper needs gets its default between the markers.
   `tests/test_skill_build_project.py` pins this and the stamp.
 
-## Constraints
+## Trade-offs
 
 - In one marked block, the helpers sit apart from the game's functions that
   call them, which cost the reveal-the-gradient case above.
