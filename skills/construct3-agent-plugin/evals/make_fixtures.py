@@ -141,10 +141,43 @@ def seed_timer_restart(root: Path) -> None:
     edit("eventSheets/Game.json", round_end)
 
 
+def seed_turn_flip(root: Path) -> None:
+    """Two players take turns, and the turn passes in a top-level Else after a test of the round's end:
+    Coin.Count = 0 / Else -> Set turn to 3 - turn runs in every tick while coins are left, so the turn
+    flips every tick (docs/decisions/event-sheet-design-guidance.md)."""
+    path = root / "eventSheets" / "Game.json"
+    sheet = json.loads(path.read_text(encoding="utf-8"))
+    rows = sheet["events"]
+    at = next(i for i, e in enumerate(rows) if e.get("eventType") == "variable" and e.get("name") == "beat") + 1
+    rows.insert(at, {"eventType": "variable", "name": "turn", "type": "number", "initialValue": "1",
+                     "comment": "Whose turn it is, 1 or 2", "isStatic": False, "isConstant": False,
+                     "sid": 655555555555501})
+    text = {"id": "set-text", "objectClass": "ScoreText"}
+    rows.append({"eventType": "group", "disabled": False, "title": "Turns", "description": "",
+                 "isActiveOnStart": True, "sid": 655555555555502, "children": [
+                     {"eventType": "comment", "text": "When the round is over, nobody taps", "sid": 655555555555503},
+                     {"eventType": "block", "sid": 655555555555504,
+                      "conditions": [{"id": "compare-two-values", "objectClass": "System", "sid": 655555555555505,
+                                      "parameters": {"first-value": "Coin.Count", "comparison": 0,
+                                                     "second-value": "0"}}],
+                      "actions": [{**text, "sid": 655555555555506,
+                                   "parameters": {"text": "\"Round over. Score: \" & score"}}]},
+                     {"eventType": "comment", "text": "Otherwise the turn passes to the other player",
+                      "sid": 655555555555507},
+                     {"eventType": "block", "sid": 655555555555508,
+                      "conditions": [{"id": "else", "objectClass": "System", "sid": 655555555555509}],
+                      "actions": [{"id": "set-eventvar-value", "objectClass": "System", "sid": 655555555555510,
+                                   "parameters": {"variable": "turn", "value": "3 - turn"}},
+                                  {**text, "sid": 655555555555511,
+                                   "parameters": {"text": "\"Player \" & turn & \" to tap. Score: \" & score"}}]}]})
+    path.write_text(json.dumps(sheet, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+
+
 # fixture -> (the fixture it starts from, the mistake written into it). The seeded entries' sids start
-# with 6333 or 6444, so a grader can tell the example's own events from them.
+# with 6333, 6444 or 6555, so a grader can tell the example's own events from them.
 SEEDS = {"families-key-pressed": ("example:families", seed_key_pressed),
-         "coins-timer-restart": ("coins", seed_timer_restart)}
+         "coins-timer-restart": ("coins", seed_timer_restart),
+         "coins-turn-flip": ("coins", seed_turn_flip)}
 
 
 def digest(project: Path) -> dict:

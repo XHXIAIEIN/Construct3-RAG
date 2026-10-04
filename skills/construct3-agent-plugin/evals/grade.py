@@ -935,7 +935,7 @@ def grade_countdown_between_rounds(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
-SEEDED = re.compile(r"^6(?:333|444)\d{11}$")     # the sids make_fixtures.py gives the entries it seeds
+SEEDED = re.compile(r"^6(?:333|444|555)\d{11}$")     # the sids make_fixtures.py gives the entries it seeds
 
 
 def grade_fix_wasd_twitch(run: Path) -> list[tuple[bool, str]]:
@@ -986,13 +986,54 @@ def grade_fix_next_round(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
+TURN_CHANGES = {"set-eventvar-value", "toggle-boolean-eventvar", "add-to-eventvar", "subtract-from-eventvar"}
+
+
+def grade_fix_turn_flip(run: Path) -> list[tuple[bool, str]]:
+    """The seeded Else passes the turn in every tick; the fix passes it once per tapped coin: in the tap's
+    branch or another trigger's, in the custom action or function the tap calls, or in an event that resets
+    a variable it tests."""
+    project = run / "project"
+    code, out = checker(project)
+    warnings = [line for line in out.splitlines() if line.startswith("warning:")]
+    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
+               (not warnings, warnings[0] if warnings else "no warning line")]
+    events = sheet_of(project)
+    if events is None:
+        return results + [(False, "eventSheets/Game.json is not readable JSON")] * 2
+    rows = list(walk(events))
+    is_trigger = triggered(project)
+    once, every_tick = [], []
+    for ev, above in rows:
+        for a in ev.get("actions", []):
+            params = a.get("parameters") if isinstance(a.get("parameters"), dict) else {}
+            if params.get("variable") != "turn" or a.get("id") not in TURN_CHANGES \
+                    or (a.get("id") == "set-eventvar-value" and str(params.get("value")).strip() == "1"):
+                continue
+            conds = conditions_over(ev, above)
+            in_block = any(e.get("eventType") in ("function-block", "custom-ace-block") for e in (*above, ev))
+            tested = {c.get("parameters", {}).get("variable") for c in conds if c.get("id") == "compare-eventvar"}
+            reset = {b.get("parameters", {}).get("variable") for e in (*above, ev) for b in e.get("actions", [])
+                     if b.get("id") == "set-eventvar-value"} - {"turn"}
+            (once if in_block or any(is_trigger(c) for c in conds) or tested & reset else every_tick).append(values([a]))
+    results.append((bool(once) and not every_tick, f"turn changes once per tap: {once or 'nowhere'}"
+                    + (f"; in every tick: {every_tick}" if every_tick else "")))
+    original = json.loads((run / "fixture.json").read_text(encoding="utf-8")).get("eventSheets/Game.json.sids", [])
+    game = [s for s in original if not SEEDED.match(str(s))]
+    have = {ev.get("sid") for ev, _ in rows}
+    lost = [s for s in game if s not in have]
+    results.append((bool(game) and not lost, f"{len(game) - len(lost)} of {len(game)} game event sids present"))
+    return results
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
            "reveal-the-gradient": grade_reveal_the_gradient, "lives-as-hearts": grade_lives_as_hearts,
            "readable-on-a-dark-background": grade_readable_on_a_dark_background,
            "walk-with-wasd": grade_walk_with_wasd, "countdown-between-rounds": grade_countdown_between_rounds,
-           "fix-wasd-twitch": grade_fix_wasd_twitch, "fix-next-round": grade_fix_next_round}
+           "fix-wasd-twitch": grade_fix_wasd_twitch, "fix-next-round": grade_fix_next_round,
+           "fix-turn-flip": grade_fix_turn_flip}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")

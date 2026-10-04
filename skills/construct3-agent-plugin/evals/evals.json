@@ -214,6 +214,20 @@
         "Restart layout and Set beat run once per round: a trigger or Trigger once is in their event or above it",
         "Every event of the game is still in it, by sid, the seeded round end aside"
       ]
+    },
+    {
+      "id": 14,
+      "name": "fix-turn-flip",
+      "fixture": "coins-turn-flip",
+      "prompt": "my coins game is for two players now: they take turns, one coin each, and the text says whose turn it is. but the text flickers like crazy between player 1 and player 2 and the turn never passes properly when someone taps. fix it so the turn goes to the other player once after each coin. the project folder is <project> , its all in eventSheets/Game.json",
+      "expected_output": "The Else that passes the turn follows a test of Coin.Count, not a trigger, so it runs in every tick while coins are left and flips the turn every tick. The turn passes once per coin in the tap's event, or in the Collect custom action or the function it calls, and the text that says whose turn it is follows it. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning",
+        "The turn changes once per tapped coin: every change of turn sits under a trigger, in a function or custom action, or in an event that resets a variable it tests, and one exists",
+        "Every event of the game is still in it, by sid, the seeded turns aside"
+      ]
     }
   ]
 }
