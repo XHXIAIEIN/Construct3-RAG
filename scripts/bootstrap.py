@@ -136,7 +136,7 @@ def main() -> int:
         failed |= "not cloned" in line or "failed" in line
         print(line)
 
-    if not project:
+    if project is None:
         print("dry run: nothing was done" if args.dry_run else
               f"ok: next, python {Path(__file__).as_posix()} --project <game folder>")
         return 1 if failed else 0

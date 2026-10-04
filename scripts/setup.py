@@ -10,6 +10,7 @@ import argparse
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
@@ -21,12 +22,12 @@ from scripts.init import refresh
 SETTINGS = load_settings()
 
 
-def run(cmd: list[str], check: bool = True, **kw) -> subprocess.CompletedProcess:
+def run(cmd: list[str], check: bool = True, **kw: Any) -> subprocess.CompletedProcess:
     print(f"  $ {' '.join(cmd)}")
     return subprocess.run(cmd, check=check, **kw)
 
 
-def check_python():
+def check_python() -> None:
     v = sys.version_info
     print(f"[check] Python {v.major}.{v.minor}.{v.micro}")
     if v < (3, 11):
@@ -35,14 +36,14 @@ def check_python():
     print("  OK")
 
 
-def install_deps():
+def install_deps() -> None:
     req_file = ROOT / "src" / "requirements.txt"
     print(f"[deps] Installing from {req_file.name}...")
     run([sys.executable, "-m", "pip", "install", "-r", str(req_file), "-q"])
     print("  OK")
 
 
-def report_local_schema():
+def report_local_schema() -> None:
     """Report the already available deterministic lookup dataset."""
     schema_dir = SETTINGS.schema.directory
     counts = schema_counts(schema_dir)
@@ -56,7 +57,7 @@ def report_local_schema():
     print("  Use --refresh-data to refresh it explicitly.")
 
 
-def start_server(port: int = 8765):
+def start_server(port: int) -> None:
     print(f"[server] Starting API server on port {port}...")
     print(f"  Playground: http://localhost:{port}/playground")
     print(f"  Health:     http://localhost:{port}/health")
@@ -66,14 +67,14 @@ def start_server(port: int = 8765):
         cwd=str(ROOT))
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Construct3-RAG setup")
     parser.add_argument(
         "--refresh-data",
         action="store_true",
         help="Explicitly refresh the versioned Construct CDN dataset",
     )
-    parser.add_argument("--version", type=str, help="Refresh data/ from this release")
+    parser.add_argument("--version", help="Refresh data/ from this release")
     parser.add_argument("--skip-deps", action="store_true", help="Skip pip install")
     parser.add_argument("--port", type=int, default=SETTINGS.runtime.server_port, help="Server port")
     args = parser.parse_args()
