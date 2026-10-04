@@ -11,6 +11,8 @@ import pytest
 
 from tests.skill_helpers import INSTALLED, SKILL, run
 
+SCRIPT = f"{INSTALLED}/scripts/export_project.py"
+
 
 def load(scripts: Path):
     """export_project as a module, with the scripts beside it importable."""
@@ -30,14 +32,14 @@ def test_export_bumps_the_last_export_and_carries_a_hand_edit(project):
     web = project / "export" / "web"
     web.mkdir(parents=True)
     (web / "data.json").write_text(json.dumps({"project": ["Coins", None, "0.1.0.99", 1]}), encoding="utf-8")
-    code, out = run(project, f"{INSTALLED}/scripts/export_project.py", "--to", "export/web", "--bump", "--dry-run")
+    code, out = run(project, SCRIPT, "--to", "export/web", "--bump", "--dry-run")
     assert code == 0 and "would export 1.0.0.0 " in out, out     # the project's 1.0.0.0 is greater than 0.1.1.0
     (web / "data.json").write_text(json.dumps({"project": ["Coins", "1.0.0.99"]}), encoding="utf-8")
-    code, out = run(project, f"{INSTALLED}/scripts/export_project.py", "--to", "export/web", "--bump", "--dry-run")
+    code, out = run(project, SCRIPT, "--to", "export/web", "--bump", "--dry-run")
     assert code == 0 and "would export 1.0.1.0 " in out and "project.c3proj version 1.0.0.0 -> 1.0.1.0" in out, out
-    code, out = run(project, f"{INSTALLED}/scripts/export_project.py", "--version", "1.2", "--dry-run")
+    code, out = run(project, SCRIPT, "--version", "1.2", "--dry-run")
     assert code == 2 and "not 3 or 4 numbers" in out, out
-    code, out = run(project, f"{INSTALLED}/scripts/export_project.py", "--dry-run")
+    code, out = run(project, SCRIPT, "--dry-run")
     assert code == 0 and f"into {project.resolve() / '.build' / 'web'}" in out, out    # the products' folder
     assert not (project / ".build").exists()                                             # a dry run writes nothing
 
@@ -52,10 +54,11 @@ def test_export_hands_the_editor_the_version_to_export(project):
     path.write_text(path.read_text(encoding="utf-8").replace('"autoIncrementVersion": false',
                                                              '"autoIncrementVersion": true')
                     .replace('"useWorker": "auto"', '"useWorker": "dom"'), encoding="utf-8")
-    (project / "export" / "web").mkdir(parents=True)
-    (project / "export" / "web" / "data.json").write_text("{}", encoding="utf-8")
-    (project / ".claude" / "worktrees" / "a").mkdir(parents=True)     # an agent's copies, 2.2 GB in a game
-    (project / ".claude" / "worktrees" / "a" / "project.c3proj").write_text("{}", encoding="utf-8")
+    web, worktree = project / "export" / "web", project / ".claude" / "worktrees" / "a"
+    web.mkdir(parents=True)
+    (web / "data.json").write_text("{}", encoding="utf-8")
+    worktree.mkdir(parents=True)     # an agent's copies, 2.2 GB in a game
+    (worktree / "project.c3proj").write_text("{}", encoding="utf-8")
     with zipfile.ZipFile(io.BytesIO(export.pack(project, "2.3.4.5", project / "export"))) as z:
         names = z.namelist()
         text = z.read("project.c3proj").decode("utf-8")
@@ -82,9 +85,9 @@ class Tab:
         return None
 
 
-def stopped_run(monkeypatch, tmp_path, opened: bool, stop_in: str):
+def stopped_run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, opened: bool, stop_in: str) -> tuple:
     """export_project.run over --attach, stopped in open_project or in export; the module, the
-    browser connection and the tab, once run has raised."""
+    browser connection, the tab and the pages close_project was given, once run has raised."""
     export = load(SKILL / "scripts")
     browser, tab, closed = Tab("browser"), Tab(), []
 
