@@ -95,7 +95,7 @@ const FIXED_PASSAGES = [
   { path: 'AGENTS.md', what: 'the section numbers, section 2\'s route to lookup_ace.py, and section 4\'s install commands', rule: 'the game-project block and decision records cite them' },
   { path: 'README.md', what: 'the agent notice at the top, and the Set up section, which stays the first section', rule: 'docs/decisions/bootstrap-from-the-url.md' },
   { path: 'README_CN.md', what: 'the agent notice at the top, and the Set up section, which stays the first section', rule: 'docs/decisions/bootstrap-from-the-url.md' },
-  { path: 'CLAUDE.md', what: 'the single line @AGENTS.md', rule: 'install.py writes the same line into game projects, and tests/test_skill_install.py pins it' },
+  { path: '.claude/CLAUDE.md', what: 'the single line @AGENTS.md', rule: 'Claude Code loads it as the project instructions of this repository, and install.py writes the same line into game projects' },
 ]
 
 const never = p => NEVER.find(([r]) => r.test(p))
