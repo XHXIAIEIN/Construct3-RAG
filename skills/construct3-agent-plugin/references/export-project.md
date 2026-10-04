@@ -87,9 +87,10 @@ or export again with the script (the *Auto-increment version* bullet below).
   answers with `Page.handleJavaScriptDialog`; a mouse click on Restart waits
   on that question. So the script presses Restart from the page and answers
   the question. [observed in r495.2, 2026-10-04: an export of a project whose
-  collision polygon had two points left the user's tab on the report; in a
-  headless editor, Restart pressed this way reloaded it to the start page in
-  about 3 seconds]
+  collision polygon had two points crashed as its Export dialog opened, in
+  the user's Chrome over `--attach`; the run pressed Restart, and the tab came
+  back to the start page with the account and its subscription still shown.
+  In a headless editor, Restart pressed this way reloaded in about 3 seconds]
 
 - The login lives in the open page only, in no cookie or storage; a reload
   or browser restart shows Guest. So the script never reloads the page and
