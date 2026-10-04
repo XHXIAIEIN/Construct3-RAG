@@ -1,13 +1,15 @@
 # `src/` Directory
 
-Runtime source for the HTTP service, offline Direct Lookup, and the CDN
-ingestion that writes `data/`.
+Runtime source for the lookup service, the offline Direct Lookup behind it,
+and the CDN ingestion that writes `data/`.
 
 ## Dependency Direction
 
-Transport code maps HTTP data into application commands. Application workflows
-depend on domain data and injected ports. Lookup and ingestion are
-implementation packages behind those boundaries.
+`api.py`, the thin FastAPI composition root, and `interfaces/http/` are the
+transport code: they map HTTP data into application commands. Application
+workflows depend on domain data and injected ports, which `lookup/`
+implements. Ingestion is a maintenance path apart from the service:
+`scripts/init.py` runs it to write `data/`.
 
 Keep Direct Lookup independent of ingestion and of `settings/`: callers inject
 the schema directory. Each type has one import path; there are no re-export
@@ -30,14 +32,9 @@ modules.
 - Public API change: `interfaces/http/models.py`, docs and compatibility
   tests in one change. Internal structures promise no compatibility.
 - Schema layout (`en-US`, `zh-CN`): `lookup/schema_layout.py` owns it.
-- Checks: `/health` reports schema readiness; a change to `/search` is run
-  against the live service, not only the test client.
-
-## Top-level Modules
-
-| File | Purpose |
-|------|---------|
-| `api.py` | Thin FastAPI composition root |
+- Checks: after a change to `/search`, run it against the live service,
+  started as in Entry Points, not only against the test client. `/health`
+  reports schema readiness.
 
 ## Packages
 
@@ -86,7 +83,7 @@ Canonical offline Direct Lookup implementation:
 | `formatting.py` | Pure result formatting helpers |
 | `intent.py` | Deterministic query classification |
 | `schema_index.py` | Plugin, behavior, ACE, and schema metadata index |
-| `schema_layout.py` | Schema locale/layout validation and path selection, shared with `settings/` and `ingest/` |
+| `schema_layout.py` | Schema locale/layout validation and path selection, shared with `application/`, `ingest/`, `settings/` and `scripts/` |
 | `scripting_index.py` | Scripting API index |
 | `term_index.py` | Curated terminology index built through public schema contracts |
 | `examples_index.py` | Example lookup and public fallback-tag queries |
@@ -147,5 +144,5 @@ sources must state the specific authority or rationale.
 
 ## Entry Points
 
-- Lookup/search API: `python -m uvicorn src.api:app --port 8765`
-- Data initialization: `python scripts/init.py`
+- Lookup service: `python -m uvicorn src.api:app --port 8765`
+- Data refresh: `python scripts/init.py`

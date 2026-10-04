@@ -36,13 +36,21 @@ The consumers of this data are LLM agents, which are such readers.
 The runs are kept on the evaluation machine under
 `.local/docs/evidence/query-quality/`.
 
+Direct Lookup itself widened a topic word through undirected synonym groups
+and added whole ACE categories to a hit. The groups chained into each other:
+保存 grew to about 220 words, so `Array 保存` was answered with `Load`. With
+both expansions turned off, the lookup declined that query. The audit is in
+`docs/decisions/query-understanding-stage-zero-audit.md` and
+`query-understanding-refactor-requirements.md` of commit
+`8c71768425fcf32c77009a295d328f83e1510757`, the last that holds them.
+
 ## Options
 
 1. Keep the full mode: a GPU tier no default path calls, and the weakest of
    the measured rankings at naming the ACE.
 2. Shrink it to typed retrieval over the `ace` collection: still Docker, a
    model and an index build per release, to hand an agent ten candidates.
-3. Replace vectors with a local model read as a classifier: a 15 GiB model
+3. Replace vectors with a local model used as a classifier: a 15 GiB model
    in a project that promises to work from its committed files.
 4. Remove it. Retrieval by vectors or by a model is a consumer of `data/` and
    lives in its own repository.
@@ -57,6 +65,11 @@ Option 4.
   `src/requirements-full.txt`, the semantic evaluator and its gold set.
   The last commit that holds them is
   `5f39cf72ca064949ea4dca29827a833605c16364`.
+- Direct Lookup has no synonym groups and no category expansion. A word
+  reaches another only through a directed alias under
+  `expansion.directed_aliases` in `src/locale/catalog.json`: keyed by its
+  rule ID, scoped, and one hop, which `src/locale/resources.py` enforces.
+  `Array 保存` is declined (`tests/test_lookup.py`).
 - `POST /search`: `mode` is `auto`, `lookup` or `list`, and `auto` equals
   `lookup`. The request model forbids unknown fields, so a caller that sends
   a removed filter gets 422 with the field's name. There is no `semantic`
@@ -72,11 +85,12 @@ filters.
 
 ## Re-evaluate when
 
-- A consumer that is not an LLM agent needs free-text "which ACE": build it
-  in a separate repository, from typed retrieval over ACEs and a closed-list
-  choice, not from mixed ranking.
-- Agents pick the wrong addon with the offline tools: build a lexical
-  proposer in the core tier and measure it on ACE-labelled queries.
+- A consumer that is not an LLM agent needs the ACE for a free-text
+  question: build it in a separate repository, from typed retrieval over ACEs
+  and a choice from a closed list, not from mixed ranking.
+- Agents pick the wrong addon with the offline tools: build a lexical search
+  that proposes candidate addons in the core tier, and measure it on queries
+  with an ACE-level label.
 - A caller needs a declined query told apart from an empty lookup: add a
   typed reason to the response, with `docs/guide/api-reference.md` and its
   tests.

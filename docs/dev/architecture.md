@@ -1,16 +1,24 @@
 # Architecture
 
+Contents: [Product boundary](#product-boundary), [Source layout](#source-layout),
+[Dependency direction](#dependency-direction), [Search SOP](#search-sop),
+[Direct Lookup SOP](#direct-lookup-sop),
+[Schema snapshot contract](#schema-snapshot-contract),
+[Known limits](#known-limits).
+
 ## Product boundary
 
 Construct3-RAG is a versioned, bilingual Construct 3 reference dataset first.
-The HTTP service is an optional access layer over that data, and Direct Lookup
+The lookup service is an optional access layer over that data, and Direct Lookup
 is all it does: deterministic, offline, with no model and no database behind it.
 
-The `construct3-agent-plugin` skill under `skills/` is outside this layout. Its
-scripts import the standard library and each other, `prepare_art.py` Pillow
-as well, read `data/c3-schemas/`
-directly, and run from a copy inside a game project with neither `src/` nor
-the service. Its rules are in `skills/AGENTS.md`.
+The `construct3-agent-plugin` skill under `skills/` is outside this layout.
+Its scripts import the standard library and each other. `prepare_art.py` also
+imports Pillow, and `preview_project.py` imports it when it is installed, to
+save a recording as a GIF where ffmpeg is missing. The scripts read
+`data/c3-schemas/` directly and run from a copy inside a game project with
+neither `src/` nor the service. Before changing the skill, read
+`skills/AGENTS.md`.
 
 The project follows four dependency rules:
 
@@ -23,47 +31,28 @@ The project follows four dependency rules:
 
 ```text
 src/
-  api.py                         FastAPI composition root
-  interfaces/http/
-    models.py                    Pydantic request/response contracts
-    presenters.py                Search/health outcome -> HTTP DTO mapping
-    playground.html              Debug UI served at /playground
-  application/
-    models.py                    SearchCommand, execution state, outcome, stages
-    ports.py                     Lookup Protocol
-    search.py                    Search SOP orchestration
-    health.py                    Typed health aggregation
-  domain/
-    lookup.py                    Lookup intent/match/result records
-  lookup/
-    service.py                   Canonical deterministic LookupEngine
-    intent.py                    Conservative query classification
-    handlers.py                  Intent -> typed match execution
-    formatting.py                Compatibility context rendering
-    schema_index.py              Bilingual Schema repository
-    schema_layout.py             Typed Schema manifest and snapshot validation
-    term_index.py                Translation-term index
-    examples_index.py            Example metadata index
-    scripting_index.py           Script API index
-  ingest/
-    c3_fetcher.py                CDN fetch, cache, schema/example/lang export
-    common_aces.py               Shared world-object ACEs from common_aces.json
-    deprecated_addons.py         What the editor has deprecated: addon flags, _deprecated.json
-    guides.py                    Scirra's guides as Markdown in data/c3-guides/
-  locale/
-    catalog.json                 Query vocabulary, grammar, and aliases per locale
-    resources.py                 Catalog validation, merging, and format adapters
-  settings/__init__.py           Immutable, grouped settings loader
+  api.py               FastAPI composition root
+  interfaces/http/     Request and response contracts, presenters, the /playground debug UI
+  application/         Search workflow, its stages and its lookup port
+  domain/              Lookup intent, match and result records
+  lookup/              Direct Lookup: the engine, query classification and four indexes
+  ingest/              CDN fetch and export, deprecation flags, Scirra's guides
+  locale/              Query vocabulary, grammar and aliases per locale
+  settings/            Immutable, grouped settings loader
+  requirements.txt     The service's dependencies; reading data/ needs none
 ```
 
-HTTP contracts are imported from `src.interfaces.http`, the lookup from
-`src.lookup`.
+`src/AGENTS.md` describes the files of each package and the rules for
+changing them.
+
+The import paths are `src.interfaces.http.models` for the HTTP contracts,
+`src.domain.lookup` for the lookup records and `src.lookup` for the lookup.
 
 `src.settings.load_settings()` accepts an explicit environment mapping and
 repository root, returning a frozen tree of path, Schema, and runtime groups.
 Every field has a runtime reader. It reads no `.env` file and probes no
-external service; the schema version is the one `data/c3-schemas/_index.json`
-records.
+external service; the schema version is the one the schema directory's
+`_index.json` records.
 
 ## Dependency direction
 
@@ -126,6 +115,8 @@ dictionaries.
 query
   -> IntentClassifier
   -> named handler (ACE list/detail/search, properties, effect, term, example)
+     or, when the classifier declines or the handler finds nothing,
+     ScriptingIndex (an exact script API class or member)
   -> LookupMatch records
   -> optional compatibility context renderer
   -> LookupResponse
@@ -154,8 +145,9 @@ Direct Lookup is deliberately conservative:
   "platforms"), tagged Feature example or Barebones template, fewest addons in
   use; never by file name.
 
-The four repositories expose public loading/iteration/search methods. Callers
-do not inspect another repository's private dictionaries.
+The lookup has four indexes: schema, term, example and script API. Before
+code outside an index reads its data, read the `lookup/` section of
+`src/AGENTS.md`.
 
 ## Schema snapshot contract
 
