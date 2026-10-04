@@ -1,18 +1,20 @@
 """prepare_art.py: the image tool's pictures cut out, fitted to the boxes art() asks for, and taken
 by the generator in place of the stand-ins."""
 import json
+from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import run, tool
+from tests.skill_helpers import edit, run, tool
 
-PIL = pytest.importorskip("PIL")
+pytest.importorskip("PIL")
 from PIL import Image, ImageDraw, ImageFilter  # noqa: E402
 
 MAGENTA = (255, 0, 255)
 
 
-def picture(path, bg=MAGENTA, r=200, shadow=True, stripes=False):
+def picture(path: Path, bg: tuple[int, int, int] = MAGENTA, r: int = 200, shadow: bool = True,
+            stripes: bool = False) -> None:
     """A picture as an image model makes one: a gold coin with soft edges on a key colour that
     is not quite flat, a darker patch of that colour under it, saved as a JPEG."""
     img = Image.new("RGB", (512, 512), bg)
@@ -46,13 +48,12 @@ def test_prepare_art_lists_a_prompt_for_each_picture_to_make(project):
                          ".agents/skills/construct3-agent-plugin/scripts/prepare_art.py")
     assert (project / "art" / "raw").is_dir()
 
-    wanted = json.loads((project / "art" / "wanted.json").read_text(encoding="utf-8"))
-    wanted["style"] = "Bright flat vector, thick dark outlines."
-    wanted["images"] += [{"file": "rose-default-000.png", "kind": "circle", "width": 64, "height": 64,
-                          "origin": [0.5, 0.5], "subject": "a pink rose"},
-                         {"file": "sky-default-000.png", "kind": "scene", "width": 720, "height": 1280,
-                          "origin": [0, 0], "subject": "a night sky over hills"}]
-    (project / "art" / "wanted.json").write_text(json.dumps(wanted), encoding="utf-8")
+    edit(project, "art/wanted.json", lambda wanted: wanted.update(
+        style="Bright flat vector, thick dark outlines.",
+        images=wanted["images"] + [{"file": "rose-default-000.png", "kind": "circle", "width": 64, "height": 64,
+                                    "origin": [0.5, 0.5], "subject": "a pink rose"},
+                                   {"file": "sky-default-000.png", "kind": "scene", "width": 720, "height": 1280,
+                                    "origin": [0, 0], "subject": "a night sky over hills"}]))
     code, out = tool(project, "prepare_art", "--list")
     assert "style: Bright flat vector, thick dark outlines." in out
     assert 'key picture: make it first, "Bright flat vector, thick dark outlines; a line-up of' in out
@@ -113,10 +114,9 @@ def test_prepare_art_refuses_a_picture_it_cannot_cut_out(project):
 
 
 def test_prepare_art_fits_a_scene_and_keeps_a_picture_with_transparency(project):
-    wanted = json.loads((project / "art" / "wanted.json").read_text(encoding="utf-8"))
-    wanted["images"].append({"file": "sky-default-000.png", "kind": "scene", "width": 720, "height": 1280,
-                             "origin": [0, 0], "subject": "a night sky"})
-    (project / "art" / "wanted.json").write_text(json.dumps(wanted), encoding="utf-8")
+    edit(project, "art/wanted.json", lambda wanted: wanted["images"].append(
+        {"file": "sky-default-000.png", "kind": "scene", "width": 720, "height": 1280, "origin": [0, 0],
+         "subject": "a night sky"}))
     (project / "art" / "raw").mkdir(parents=True)
     Image.new("RGB", (1365, 768), (20, 30, 80)).save(project / "art" / "raw" / "sky-default-000.jpg")
     cut = Image.new("RGBA", (300, 600), (0, 0, 0, 0))
