@@ -70,9 +70,11 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 [`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) 告诉 agent 什么时候运行哪个脚本。`scripts/` 里的每个脚本加 `--help` 会列出参数和示例。
 
 - `lookup_ace.py` 查项目里某个对象、`System`、某个插件或行为的条件、动作和表达式。每条都带参数、中文或英文的显示文本，以及要写的 JSON。给它一个滤镜，它会列出滤镜的参数。
+- `lookup_script_api.py` 查脚本 API。给它一个接口、插件或行为，它列出成员；给它一个成员，它打印声明、声明它的接口以及所在的文件和行号，继承来的成员也查得到。
+- `search_guides.py` 按关键词搜索事件表的坑点和官方示例。它完整打印匹配的坑点条目；对每个匹配的示例，给出打印其事件的命令。
 - `print_sheet.py` 按编辑器的写法和事件编号打印事件表。官方示例也能这样读。
 - `edit_sheet.py` 按一份用这些编号写的 JSON 计划，添加、移动、替换或删除事件。写入之前，它先检查结果。
-- `check_project.py` 按 schemas 和编辑器打开项目时的规则，检查每个项目文件。每条问题都指出位置，能给出写法时也一并给出。
+- `check_project.py` 按 schemas 和编辑器打开项目时的规则，检查每个项目文件。每条问题都指出位置，能给出写法时也一并给出。审查别人问到的项目时加 `--review`，它和 `print_sheet.py` 的输出最后会写明审查该报告什么：先说项目做了什么，只报会让某个功能失效的问题。
 - `review_design.py` 读取事件表，报告设计上难读或容易出错的地方，比如条件太多的事件、同一个事实存在两处、临时用的全局变量。每条问题都指出事件，并给出应该换成的写法。然后它给 agent 一组固定的问题，让它对照 `print_sheet.py` 的输出回答。
 - `check_design.py` 在写任何项目文件之前检查新游戏的设计：核心循环、状态表、输入、规则、胜负和验收测试。然后它直接在规则上跑这些测试，相当于一个不用编辑器的原型。每条问题都指出它在设计里的位置，没通过的测试会指出是哪一步，以及当时各个状态的值。
 - `play_design.py` 在 Construct 3 编辑器里，对照设计做出来的游戏再跑一遍同样的测试。它先对照项目文件，检查设计里的名字和初始值。每个失败都指出测试、步骤，以及要对照的规则对应的事件。
@@ -91,7 +93,7 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 
 skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。除了需要 Pillow 的 `prepare_art.py`，它们只用 Python 标准库。它们只在两处联网：`check_project.py` 从 clone 的上游仓库 fetch，打开编辑器的脚本在你电脑上的浏览器里打开 Construct 3 编辑器和它的预览。
 
-- **只读**：`lookup_ace.py`、`check_project.py`、`review_design.py`、`check_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。设置了 `CONSTRUCT3_RAG_OFFLINE` 时，它不 fetch。
+- **只读**：`lookup_ace.py`、`lookup_script_api.py`、`search_guides.py`、`check_project.py`、`review_design.py`、`check_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。设置了 `CONSTRUCT3_RAG_OFFLINE` 时，它不 fetch。
 - **写文件**：
   - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。
   - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。项目的 `tools/build_project.py` 里两行标记之间的辅助函数如果是旧版本、又没人改过，它会换成 skill 当前的版本，文件其余部分不动。加 `--dry-run` 可以先看会改什么。

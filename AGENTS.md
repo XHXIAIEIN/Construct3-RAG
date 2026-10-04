@@ -4,9 +4,10 @@
 
 Bilingual Construct 3 reference data under `data/`, read directly, plus an
 optional lookup service in `src/`, and an agent skill in
-`skills/` that carries the project tools (ACE lookup, sheet printer, layout
-printer, sheet editor, checker, design checker and prototype, editor opener,
-preview player, project packer, generator template) into a game project.
+`skills/` that carries the project tools (ACE and scripting API lookup,
+pitfall and example search, sheet printer, layout printer, sheet editor,
+checker, design checker and prototype, editor opener, preview player,
+project packer, generator template) into a game project.
 Version and counts: `data/c3-schemas/_index.json`, never hardcoded.
 
 Priorities, in order: exact addon, ACE and scripting lookup; citable
@@ -41,9 +42,9 @@ it, still opens old projects that use it, and a new project should not.
 | ACEs shared by every world object: overlap, collisions, instance variables, hierarchy, UID, Z order | `data/c3-schemas/{locale}/plugins/_common.json`, in addition to the plugin file, whose `commonAces` lists the ones that plugin gets |
 | Effect parameters | `data/c3-schemas/{locale}/effects/{id}.json` |
 | Whether an addon or ACE is deprecated, and the current ACE of the same name | `data/c3-schemas/{locale}/_deprecated.json`; a deprecated ACE the schema kept also has `isDeprecated` |
-| JavaScript or TypeScript API | `data/c3-ts-defs/autocomplete-data.json`, then the `.d.ts` under the plugin or behavior directory of the same name |
+| JavaScript or TypeScript API | `python skills/construct3-agent-plugin/scripts/lookup_script_api.py NAME`: an interface, a plugin or behavior, or a member, from the `.d.ts` files of `data/c3-ts-defs/`; global names in `data/c3-ts-defs/autocomplete-data.json` |
 | Types for an addon under development | editor `data/c3-ts-defs/sdk/`, runtime `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones |
-| Example projects for a topic | `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python skills/construct3-agent-plugin/scripts/print_sheet.py --project <example folder>` |
+| Example projects for a topic | `python skills/construct3-agent-plugin/scripts/search_guides.py WORD ...`, which also prints the pitfall entries that hold the words, or `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python skills/construct3-agent-plugin/scripts/print_sheet.py --project <example folder>` |
 | Translation of a string, editor text outside the schemas | `data/c3-lang/{locale}.json`, `text` |
 | What a project folder holds: what `project.c3proj` lists, image file names, the formats of sounds, fonts and icons, which files the editor ignores | `data/c3-guides/constructs-project-format.md`, Scirra's guide that the `llm-context.md` of every project links; how this repository applies it: `prompts/references/hand-editing-project-files.md`, "The project folder" |
 | What a field means before writing an event or a script | `data/AGENTS.md`; full reference `docs/guide/data-format.md` |
@@ -201,7 +202,7 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | Published-game visual language, motion statistics and the reproducible analyzer | `docs/decisions/published-game-visual-language.md`, `docs/dev/published-game-analysis.md`, `scripts/reference_games/` |
 | Slot case as a program, hand-editing project JSON, bars and life counters by the art they have, feel recipes, sounds and placeholder audio | `prompts/references/` |
 | A new project's sheets, layers, objects and look: colours by role, text, pixel art, what other design skills do, and where its art comes from | `prompts/references/new-project.md`, `docs/decisions/game-look-from-design-skills.md`, `docs/decisions/art-from-the-image-tool.md` |
-| ACE lookup, sheet printer, layout printer, sheet editor, checker, design checker and prototype, editor opener, preview player, project packer and generator template for a game project; changing and evaluating them | `skills/construct3-agent-plugin/SKILL.md`, `skills/AGENTS.md` |
+| ACE and scripting API lookup, pitfall and example search, sheet printer, layout printer, sheet editor, checker, design checker and prototype, editor opener, preview player, project packer and generator template for a game project; changing and evaluating them | `skills/construct3-agent-plugin/SKILL.md`, `skills/AGENTS.md` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |

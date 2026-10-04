@@ -30,6 +30,14 @@ LOWER = str.lower  # expressions are case-insensitive: scrolly, SCROLLY and Scro
 # below that by themselves and say how to ask for the rest.
 LIMIT = 10_000
 
+# --review: the line print_sheet.py and check_project.py end with when the project is someone else's to
+# review. Asked in the system prompt alone, a model listed design choices as "not wrong", a warning on an
+# omitted parameter and a reset that another event already did; at the end of the tool output it did not.
+REVIEW = ("review: say first what the project does. Name a problem only when the events, read together, stop "
+          "something from working; before calling a step missing, look for another event that does it. Give a "
+          "fix as the final steps to take, stated as what to do. Leave out what works, design choices, what is not wrong, what the "
+          "person might check, and warnings that do not stop the project opening or running.")
+
 # The editor numbers these in document order, sub-events included, one
 # sequence per sheet. A variable, comment or include takes no number of its
 # own: the margin leaves it blank and Find files it under the next numbered

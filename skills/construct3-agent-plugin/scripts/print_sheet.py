@@ -277,7 +277,8 @@ def main() -> int:
         "  python scripts/print_sheet.py --outline Game        numbers and sids, to find the JSON behind a number\n"
         "  python scripts/print_sheet.py Game --show 5         event 5 as JSON\n"
         "  python scripts/print_sheet.py --project <Construct-Example-Projects>/example-projects/template-snake\n"
-        "  python scripts/print_sheet.py Game --locale zh-CN   the editor's Chinese wording\n\n"
+        "  python scripts/print_sheet.py Game --locale zh-CN   the editor's Chinese wording\n"
+        "  python scripts/print_sheet.py --review              a project someone asked about\n\n"
         "exit codes: 0 printed, whole or the part that fits; 1 no such sheet, a range past the sheet's end, or\n"
         "project/clone not found; 2 a sheet lacks a key the editor writes")
     ap.add_argument("sheets", nargs="*", metavar="SHEET", help="event sheet names (default: every sheet)")
@@ -287,6 +288,8 @@ def main() -> int:
                     help="print the event numbering with each event's sid, without conditions and actions")
     ap.add_argument("--show", type=int, metavar="N",
                     help="print event N of one sheet as JSON, to change and put back with edit_sheet.py's replace")
+    ap.add_argument("--review", action="store_true",
+                    help="for a project someone else wrote and asked about: end with what a review reports")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()
@@ -332,7 +335,7 @@ def main() -> int:
     size = {name: sum(len(line) + 1 for line in [f"== {name}", *part(rows[name], first, last, None)[0]]) for name in names}
     # The line on naming a variable, with room for a longer name or value than this one's in a part.
     note = None if args.outline else naming_note([line for name in names for line in part(rows[name], first, last, None)[0]])
-    reserved = len(note) + 70 if note else 0
+    reserved = (len(note) + 70 if note else 0) + (len(c3.REVIEW) + 1 if args.review else 0)
     fits = not args.limit or sum(size.values()) + reserved <= args.limit
     if not fits and not args.sheets and len(names) > 1:
         print(f"{len(names)} event sheets, {sum(size.values())} characters as events, over the limit of "
@@ -363,12 +366,17 @@ def main() -> int:
         if said:
             print(said)
         if stopped is not None or (rest and room is not None and room <= 0):
+            if args.review:
+                print(c3.REVIEW)        # above the line that names the rest, which stays the last
             more = [again(args, [name], f"{stopped}-{last or ''}")] if stopped else []
             more += [again(args, rest, None)] if rest else []
             print(f"-- stopped at the limit of {args.limit} characters (--limit)"
                   + (f", before event {stopped} of {totals[name]}" if stopped else "")
                   + f". The rest: {'  then  '.join(more)}")
             break
+    else:
+        if args.review:
+            print(c3.REVIEW)
     return 0
 
 

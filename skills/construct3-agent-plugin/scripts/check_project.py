@@ -457,8 +457,9 @@ class Checker:
     the functions and groups of every sheet."""
 
     def __init__(self, p: c3.Project, limit: int = 0, sheets: dict[str, dict] | None = None,
-                 style: bool = False) -> None:
+                 style: bool = False, review: bool = False) -> None:
         self.p = p
+        self.review = review            # someone else's project: no omitted parameters, no next steps
         self.limit = limit
         self.unsaved = sheets or {}     # edit_sheet.py checks a sheet before it writes it
         self.style = style              # the warnings of check_style, off unless asked
@@ -1493,7 +1494,8 @@ class Checker:
                 self.err(f"{where}: unknown parameter {k}; the parameters are: {', '.join(schema_params) or 'none'}")
         for k in schema_params:
             if k not in params:
-                self.warn(f"{where}: parameter {k} is omitted; the editor fills its default")
+                if not self.review:     # the editor saves an ACE so and fills it on open
+                    self.warn(f"{where}: parameter {k} is omitted; the editor fills its default")
         named = [v for k, v in params.items() if schema_params.get(k, {}).get("type") == "object"]
         stand_in = named[0] if len(named) == 1 and named[0] in p.plugin_of else None
         for k, v in params.items():
@@ -2792,7 +2794,7 @@ class Checker:
         many it left out."""
         p = self.p
         warnings, errors = [f"warning: {w}" for w in p.findings.warnings], p.findings.errors
-        closing = 300 + (0 if errors else len(self.ok_line()))                  # the cut notes and the last line
+        closing = 300 + (0 if errors else len(self.ok_line())) + (len(c3.REVIEW) if self.review else 0)                  # the cut notes and the last line
         room = max(self.limit - closing, 3)
         cut = self.limit and c3.fitting(warnings + errors, room) < len(warnings + errors)
         shares = (0, 0)                                                         # 0 is no limit
@@ -2807,10 +2809,12 @@ class Checker:
                 print("\n".join(lines[:fit]))
             if fit < len(lines):
                 print(f"... and {len(lines) - fit} more {rest} (--limit 0 prints all)")
+        if self.review:
+            print(c3.REVIEW)
         if errors:
             print(f"{len(errors)} problem(s)")
             return 1
-        print(self.ok_line())
+        print(self.ok_line(then_open=not self.review))
         return 0
 
     def ok_line(self, then_open: bool = True) -> str:
@@ -2878,7 +2882,8 @@ def main() -> int:
         "examples:\n"
         "  python scripts/check_project.py\n"
         "  python scripts/check_project.py --project ../OtherGame\n\n"
-        "  python scripts/check_project.py --style        # a project the agent wrote\n\n"
+        "  python scripts/check_project.py --style        # a project the agent wrote\n"
+        "  python scripts/check_project.py --review       # a project someone asked about\n\n"
         "exit codes: 0 no errors (warnings do not fail the run), 1 findings or project/clone not found,\n"
         "2 a project file lacks a key the editor always writes and the run stopped there")
     ap.add_argument("--style", action="store_true",
@@ -2892,6 +2897,10 @@ def main() -> int:
                          "behavior keeps, chooseindex on a condition, sibling events dispatching on find of one "
                          "text, and mid through two text literals. For a project the agent wrote; edit_sheet.py "
                          "refuses a plan whose new events raise the first four and warns on the other six")
+    ap.add_argument("--review", action="store_true",
+                    help="for a project someone else wrote and asked about: leave out the parameters the editor "
+                         "fills, end without the next steps of writing a project, and say above the last line "
+                         "what a review reports")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()
@@ -2908,7 +2917,7 @@ def main() -> int:
     helpers = helpers_behind(project.root)
     if helpers:
         findings.warn(helpers)
-    return Checker(project, args.limit, style=args.style).run()
+    return Checker(project, args.limit, style=args.style, review=args.review).run()
 
 
 if __name__ == "__main__":

@@ -53,10 +53,12 @@ opened once before it is handed over.
 | Script | Use |
 |--------|-----|
 | `scripts/lookup_ace.py OBJECT [WORD ...]` | Conditions, actions and expressions of an object of the project, of `System`, or of a plugin or behavior, each with its parameters and the JSON to write; or an effect by id or name, with its parameters |
+| `scripts/lookup_script_api.py NAME ...` | The scripting API: an interface with its members (`IRuntime`, `Sprite`, `Timer`), or a member with its declaration, its interface and its file and line (`callFunction`, `ISpriteInstance.x`, inherited members included) |
+| `scripts/search_guides.py WORD ...` | The pitfall entries that hold the words, in full, and the official examples that do, with the command that prints their events; for an interaction, a timing, a pick or a movement before writing its events, and for events that do not behave as expected |
 | `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--outline` for numbers and sids only, `--show N` for one event as JSON |
 | `scripts/print_layout.py [LAYOUT ...] [--layer NAME]` | Layers bottom to top and each instance in Z order with its box, size, opacity and text, and the object a text lies on; read it to say where things are, and after generating a layout, where `on no object` marks a label off its button |
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed, variables and comments by name; checked before anything is written |
-| `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds ten warnings from the official examples' style, for a project the agent wrote |
+| `scripts/check_project.py` | Every project file against the schemas and the editor's load rules; exit 0 when the last line starts with `ok:`. `--style` adds ten warnings from the official examples' style, for a project the agent wrote. For a project someone asks about, pass `--review` to this and to `print_sheet.py`: they then end with what a review reports |
 | `scripts/review_design.py` | Read the sheets and print where their design is hard to read or fragile: an event with too many conditions, a guard repeated, one trigger split by globals, one fact kept twice, scratch globals, a UID link, a table written as actions, an expression that repeats itself. Each finding names the event and the form to write instead; then fixed yes/no questions name the events to read with `print_sheet.py`. Reads the files only |
 | `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then previews it for 5 seconds, of which the game runs about 4, and prints the ticks the runtime ran and its errors, each with its event; `--state [TYPE ...]` adds what the game holds at the end: global variables, instance counts, and the instances of the types named. `--typescript` has the editor write the project's TypeScript definitions into `scripts/ts-defs/`. `--install-addon FILE.c3addon` first installs a custom addon the project uses, or prints the editor's refusal. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
 | `scripts/preview_project.py PLAN.json` | Preview the project and play it from a plan: tap, hold and drag the game's instances by name, press keys, wait `until` an expression holds, run JavaScript against the runtime, read the state, take screenshots and record the window between steps, a recording with a page to review it frame by frame beside the steps and the values it watched; one line per step with the runtime errors it caused. Each run starts from a first launch, with no save. `--help` describes the plan |
@@ -75,6 +77,7 @@ Each prints its options and examples with `--help`. The scripts that read the
 schemas (`lookup_ace.py`, `print_sheet.py`, `check_project.py`, `edit_sheet.py`,
 `review_design.py`, `check_look.py`, `prepare_art.py`) take `--locale zh-CN`
 for the editor's Chinese names and wording; ids are the same in every locale.
+`search_guides.py` takes it for the examples' names; its pitfalls are English.
 The others print no schema wording and take no `--locale`. A harness cuts
 long tool output without saying where, so each script stops at about 10 000
 characters and its last line says how to get the rest; `--limit 0` prints
@@ -164,11 +167,13 @@ The rest, with what each replaces, is the Native first table of
 
 ## Write TypeScript
 
-Before writing a script, read the `.d.ts` of each API it calls under
-`Construct3-RAG/data/c3-ts-defs/`, and an official example on the same
-topic whose folder ends in `-ts`. The project's own types, such as
-`InstanceType.Coin` with its behaviors and instance variables, are in
-`scripts/ts-defs/`, which the editor writes:
+Before writing a script, look up each API it calls,
+`python scripts/lookup_script_api.py IRuntime.callFunction`, and read an
+official example on the same topic whose folder ends in `-ts`. Look a call
+up before saying that one in the user's script does not exist. The
+project's own types, such as `InstanceType.Coin` with its behaviors and
+instance variables, are in `scripts/ts-defs/`, which the editor writes and
+the lookup reads:
 `python scripts/open_in_editor.py --typescript`, again after adding an
 object, a behavior or a variable. `check_project.py` says when one is missing.
 
@@ -288,10 +293,11 @@ not held to this. `--dry-run` does all of that and writes nothing.
 `ok:` is about the files, not the game. The checker cannot run the events:
 which instances a condition picks, what order triggers fire in and what a
 tick later looks like are the preview's to judge. Design with
-`Construct3-RAG/prompts/event-sheet-thinking.md` first, which also says what
-a new project takes instead of a superseded feature (a Tween on Opacity for
-Fade, a hierarchy for Pin, instance tags for the Solid behavior's own), and
-before events go
+`Construct3-RAG/prompts/event-sheet-thinking.md` and the pitfalls
+`scripts/search_guides.py` prints for the interaction's words first. The
+thinking guide also says what a new project takes instead of a superseded
+feature (a Tween on Opacity for Fade, a hierarchy for Pin, instance tags for
+the Solid behavior's own), and before events go
 into a sheet read `Construct3-RAG/prompts/event-sheet-style.md`, the shape
 the official examples give a sheet, which the style warnings enforce only in
 part. What the preview teaches goes, with its source, where "Adding an
