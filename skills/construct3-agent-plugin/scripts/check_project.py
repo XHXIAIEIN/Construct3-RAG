@@ -1268,8 +1268,11 @@ class Checker:
                 self.err(f"{where}: {key}={value!r} is not a sound or music file of the project; the editor stops "
                          f"with \"missing file {name!r}\". Write the file's name without its extension"
                          + (near or listed))
-        elif ptype in ("tilemapbrush", "function", "model3d", "template", "objecteffect"):
+        elif ptype in ("tilemapbrush", "function", "model3d", "objecteffect"):
             return
+        elif ptype == "template":
+            # a name in an expression, "\"\"" for none; written "" the editor does not open the project
+            self.check_expr(f"{where} {key}", value, scope, obj, stand_in)
         elif ptype == "object":
             if value not in p.plugin_of or value == "System":
                 self.err(f"{where}: {key}={value!r} is not an object type or family"
@@ -1353,8 +1356,14 @@ class Checker:
             return "; it belongs to the object itself: remove \"behaviorType\""
         sources = p.ace_sources(ace)
         other = "actions" if kind == "conditions" else "conditions"
-        if any(it["id"] == ace_id for s in sources for it in s.get(other, [])):
-            return f"; {ace_id} is one of its {other}, not its {kind}"
+        found = next((it for s in sources for it in s.get(other, []) if it["id"] == ace_id), None)
+        if found:
+            # where to move it: told only "not its actions", a small model rewrote the loop away (2026-10-04)
+            where = (f": move it into the \"conditions\" of this event" + (
+                     ", or of a sub-event whose actions are the ones to repeat; a loop is a condition, and the actions "
+                     "of its event run once per pass" if found.get("isLooping") else "")
+                     if kind == "actions" else ": move it into the \"actions\" of this event")
+            return f"; {ace_id} is one of its {other}, not its {kind}{where}"
         spellings = {}
         for s in sources:
             for it in s.get(kind, []):

@@ -90,6 +90,15 @@ def test_a_sheet_keeps_the_name_it_has_on_disk(project):
     assert "game.json" in os.listdir(project / "eventSheets")
 
 
+def test_a_loop_written_as_an_action_says_where_it_goes(project):
+    """Told only that For is a condition, a small model rewrote its loops away instead of moving them (2026-10-04)."""
+    code, out = plan(project, {"event": 2, "add-actions": [{"id": "for", "objectClass": "System", "parameters": {
+        "name": '"i"', "start-index": "0", "end-index": "3"}}]})
+    assert code == 1
+    assert 'for is one of its conditions, not its actions: move it into the "conditions" of this event' in out
+    assert "a loop is a condition, and the actions of its event run once per pass" in out
+
+
 def test_plan_that_adds_a_problem_changes_nothing(project):
     before = (project / SHEET).read_bytes()
     code, out = plan(project, {"after": 8, "events": [TIMER]},

@@ -232,6 +232,23 @@ def add_keyboard(root: Path, key) -> None:
     edit(root, SHEET, lambda s: s["events"].append(block([cond("on-key-pressed", "Keyboard", {"key": key})])))
 
 
+def create_coin(template: str) -> dict:
+    return block([cond("on-start-of-layout")], [{"id": "create-object", "objectClass": "System", "sid": 7, "parameters": {
+        "object-to-create": "Coin", "layer": '"Game"', "x": "0", "y": "0", "create-hierarchy": False,
+        "template-name": template}}])
+
+
+@pytest.mark.parametrize("template, refused", [('""', False), ("", True), (" ", True)])
+def test_an_empty_template_name_is_refused(project, template, refused):
+    """The editor refused a generated project whose Create object had its template name written "" in the file:
+    "Invalid expressions ... Game, event 2, action 1: Empty expression: You must enter an expression"."""
+    edit(project, SHEET, lambda s: s["events"].append(create_coin(template)))
+    code, out = check(project)
+    assert (code == 1 and "template-name: the expression is empty" in out and "Empty expression" in out) == refused, out
+    if not refused:
+        assert code == 0, out
+
+
 def test_key_is_a_key_code(project):
     add_keyboard(project, 32)
     assert check(project)[0] == 0
