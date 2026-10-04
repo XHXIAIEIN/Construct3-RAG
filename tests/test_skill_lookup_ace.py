@@ -1,11 +1,13 @@
 """lookup_ace.py: the conditions, actions and expressions to write, with their parameters."""
+import json
 import os
 import re
 import shutil
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
-from tests.skill_helpers import REPO, SKILL, INSTALLED, tool
+from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, tool, check, edit
 
 
 def test_ace_lookup_reaches_a_behavior_through_the_object(built):
@@ -222,6 +224,42 @@ def test_lookup_writes_the_value_the_editor_fills_in(built):
     code, out = tool(built, "lookup_ace", "System", "wait")
     assert code == 0 and '"parameters": {"seconds": "1.0", "use-timescale": true}' in out, out
     assert "the editor ticks it by default" in out, out
+
+
+def test_lookup_writes_a_numeric_default_as_expression_text(built):
+    """Set opacity's 100 and Add to's 1 are JSON numbers in the schema. A project file writes
+    every expression as text, "opacity": "100" in the official examples, and the checker
+    refuses "opacity": 100."""
+    code, out = tool(built, "lookup_ace", "Coin", "set-opacity")
+    assert code == 0 and '"parameters": {"opacity": "100"}' in out, out
+    code, out = tool(built, "lookup_ace", "Coin", "add-to-instvar")
+    assert code == 0 and '"parameters": {"instance-variable": "<variable>", "value": "1"}' in out, out
+
+
+def test_every_shared_template_writes_its_expressions_as_text(project):
+    """Each condition and action a Sprite gets from plugins/_common.json, copied from its
+    write: line into a sheet: the checker finds no parameter that should be an expression
+    string. The placeholders, <variable> and the like, are findings of their own."""
+    schema = REPO / "data" / "c3-schemas" / "en-US" / "plugins" / "sprite.json"
+    wanted = [(kind, ace) for kind in ("conditions", "actions")
+              for ace in json.loads(schema.read_text(encoding="utf-8"))["commonAces"][kind]]
+    with ThreadPoolExecutor(8) as pool:
+        outs = list(pool.map(lambda w: tool(project, "lookup_ace", "Coin", w[1], w[0][:-1])[1], wanted))
+    written = {"conditions": [], "actions": []}
+    for n, ((kind, ace), out) in enumerate(zip(wanted, outs)):
+        line = next((line for line in out.splitlines() if line.startswith(f'  write: {{"id": "{ace}"')), None)
+        assert line, out
+        written[kind].append(json.loads(line.removeprefix("  write: ").replace("<new sid>", str(900000 + n))))
+    sid = iter(range(950000, 960000))
+
+    def add(sheet):
+        sheet["events"] += [{"eventType": "block", "conditions": [c], "actions": [], "sid": next(sid)}
+                            for c in written["conditions"]]
+        sheet["events"].append({"eventType": "block", "conditions": [], "actions": written["actions"], "sid": next(sid)})
+    edit(project, SHEET, add)
+    code, out = check(project, "--limit", "0")
+    assert code == 1 and "<variable>" in out, out
+    assert "should be an expression string" not in out, out
 
 
 def test_a_behavior_looked_up_under_system_names_where_it_is(built):
