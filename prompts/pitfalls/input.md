@@ -80,6 +80,16 @@ Sources and the rule for adding an entry are in the index,
   event the player moves for one tick and stops. [manual:
   behavior-reference.md "Custom controls", the tip that the input events
   must be continually true]
+- *Default controls* is a property of each instance, and every instance
+  with it on moves with the arrow keys. A crate given Platform to be pushed,
+  or an enemy given 8 Direction, has it on by default and walks with the
+  player. Turn it off on every instance the player does not steer, in each
+  layout: `"default-controls": false` in the instance's behavior
+  properties. Move those objects with *Simulate control*. The
+  `construct3-agent-plugin` skill's `check_project.py` warns when instances
+  of two object types in one layout have it on. [manual:
+  behavior-reference/platform.md, 8-direction.md, car.md and
+  tile-movement.md "Default controls"]
 - A game that moves with W, A, S and D alone is hard to control on an AZERTY
   keyboard. There those letters sit elsewhere and ZQSD takes their place.
   Give every direction its arrow key too, in an OR block with the letter or

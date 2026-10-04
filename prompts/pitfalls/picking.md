@@ -16,6 +16,18 @@ Sources and the rule for adding an entry are in the index,
   behavior-reference/solid.md "Is enabled", "Set enabled";
   behavior-reference/platform.md, the collision polygon changing as an
   animation plays]
+- A Solid stops a Platform object at its edge, so the two touch and do not
+  overlap. *Is overlapping* stays false while the player stands on a Solid
+  floor or walks into a Solid wall. So an event that pushes a crate the
+  player is against never runs. Test touching with *Is overlapping at
+  offset*, 1 pixel towards the Solid. That is (1, 0) for a wall on the
+  right and (0, 1) for the floor. The offset moves the object the condition
+  belongs to, so a test from the crate's side takes the opposite sign.
+  [manual: plugin-reference/common-features/common-conditions.md "Is
+  overlapping at offset"; observed in a copy of the official example
+  follow-rewind-time, stable r495.2 preview, 2026-10-04: a Platform player
+  held against a Solid wall on a Solid floor, *Is overlapping* false, at
+  offset (1, 0) and (0, 1) true]
 - While a dragged or tweening instance has collisions disabled, the slot
   where it will land reads empty until it lands, the slot it is flying back
   to included. The

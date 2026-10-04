@@ -24,6 +24,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 
 - An instance with collisions disabled fails every overlap and collision test, both ways. Use this for a dragged or tweening instance, not an `isMoving` flag.
 - A Solid blocks while its behavior is enabled, so a door that only plays an open animation keeps blocking. Disable its Solid with *Set enabled*, or destroy it.
+- A Solid stops a Platform object at its edge, so *Is overlapping* stays false against a wall or on the floor. Test touching with *Is overlapping at offset*, 1 pixel towards the Solid.
 - The slot a dragged or tweening instance will land on reads empty until it lands. An event that fills empty slots on its own waits for it.
 - A type and its family are picked separately, so narrowing `Piece` never narrows `Pieces`. Refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
@@ -123,6 +124,7 @@ If the events place, move or rotate objects or read the viewport, read
 - A sprite is drawn facing right at angle 0. Paint art facing right.
 - A Bullet's angle of motion and the object's angle are two values. At speed 0 the first cannot be set.
 - The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
+- Tile movement's *Set grid position* takes a column and a row, not pixels. Convert a position with `round((X - offset X) / grid width)`.
 - `ViewportLeft` and the rest take a layer. `LayoutWidth` and `ViewportWidth(layer)` differ.
 - *Scale outer* keeps a parallax-0 HUD centred on the design area. Pin a screen-edge HUD with Anchor and stretch a backdrop to the screen with Anchor's left and right edges.
 - Drag & Drop moves the instance only on pointer moves. Put a trailing or lifted look on a child.
@@ -147,6 +149,7 @@ browser for fullscreen, a permission or a picker, read
 - Touch and Mouse press an object that is invisible or has collisions disabled. Add *Is visible* to the event or set its layer not interactive.
 - Touch and Mouse pick every overlapping instance under the pointer. Add the button's *Pick top/bottom* (top) as a second condition of the trigger's event so only the front button reacts; a family for buttons of several types.
 - *Simulate control* acts only in the tick it runs. Put it in an event whose condition stays true while the control is held: *Key is down*, not *On key pressed*.
+- Every instance with *Default controls* on moves with the arrow keys. Turn it off on each instance the player does not steer, such as a pushed crate, and move it with *Simulate control*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
 
