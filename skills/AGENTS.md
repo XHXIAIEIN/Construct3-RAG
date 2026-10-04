@@ -6,11 +6,9 @@ one folder per skill, a `SKILL.md` with `name` and `description`, and
 source. A game project holds a copy of it, made and refreshed by the skill's
 `scripts/install.py`, and the copy reports when it differs from the source.
 
-`construct3-agent-plugin/` is the one skill here: the ACE and scripting
-API lookup, pitfall and example search, sheet printer, layout printer,
-sheet editor, checker, design checker and prototype, editor opener, preview
-player, project packer and generator template for a Construct 3 folder
-project, and the block for the project's instruction file.
+`construct3-agent-plugin/` is the one skill here: the project tools for a
+Construct 3 folder project, listed under "Scripts" in its `SKILL.md`, and
+the block for the project's instruction file.
 
 ## Rules
 
@@ -68,7 +66,8 @@ project, and the block for the project's instruction file.
   newline at the end, the editor's keys in the editor's order), and has
   `--dry-run`. `edit_sheet.py` is the one that does; the keys the editor
   writes per kind of event, in order, are its templates.
-- English only; `--locale` switches the schema wording, not the tool's.
+- The skill's text and its scripts' own wording are English; `--locale`
+  switches the schema wording a script prints, not the script's own.
 - A rule about what a project file must hold is read from the editor's loader
   as a whole call chain, not from the one message a user pasted: the next
   assertion in the same function costs another round trip through them. What
@@ -115,16 +114,16 @@ The tests install the skill in a temporary project and run the copy, and
 they pin the format's constraints offline.
 
 When the frontmatter of a `SKILL.md` changes, or the specification does, run
-the reference validator as well. It fetches code from GitHub and runs it:
+the reference validator as well. It checks the frontmatter only: the fields,
+the name against the folder, the lengths; whether the skill helps is what
+the evals measure. It fetches code from GitHub and runs it:
 
 ```bash
 uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref" skills-ref validate skills/construct3-agent-plugin
 ```
 
-If the session does not allow that, report it as not run; the tests pin the
-same constraints. It checks the frontmatter only: the fields, the name
-against the folder, the lengths. Whether the skill helps is what the evals
-measure.
+If the session does not allow that, report the validator as not run; the
+tests pin the same constraints.
 
 ## Evals
 
@@ -160,27 +159,29 @@ python skills/construct3-agent-plugin/scripts/open_in_editor.py .local/docs/evid
 python skills/construct3-agent-plugin/evals/run_trigger_eval.py skills/construct3-agent-plugin/evals/train_queries.json --project <game with .claude/skills>
 ```
 
-- Each run starts clean, one agent per case and arm, and saves `answer.md`
-  with the commands it ran. A baseline started below the clone reads its
-  `AGENTS.md` and reaches for the checker: tell it to use nothing outside
-  the project folder, read its commands, and give a run that broke its arm
-  a `void.txt` with the reason. `grade.py` does not score it.
+- Each run starts clean, one agent per case and arm, and saves
+  `outputs/answer.md` with the commands it ran. A baseline started below the
+  clone reads its `AGENTS.md` and reaches for the checker, so tell it to use
+  nothing outside the project folder. Then read the commands its answer
+  lists. If a run broke its arm, put the reason in its
+  `void.txt`; `grade.py` does not score that run.
 - The previous version of the skill is the baseline of a change to it. Its
-  arm names a checkout of the previous commit as its clone: pointed at this
-  one, the old copy reports that it differs and the agent refreshes it.
+  arm, `old_skill`, names a checkout of the previous commit as its clone
+  (`--old-clone`), because an old copy pointed at this clone reports that it
+  differs and the agent refreshes it.
 - Make fixtures from a worktree branch that tracks nothing, or from a clone
   level with its upstream. A fixture names the clone that
   `make_fixtures.py` ran from, and if that clone's branch trails its
   upstream, the checker gives the runs a pull of it in the middle of the
   iteration.
-- Read the transcript of every run, not only its answer. Claude Code keeps
-  it as `~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl`;
-  the answer lists the commands a run remembers. When every assertion
-  passes, the lost calls are what is left to improve: a lookup that found
-  nothing, an edit that did not match.
-- `timing.json` holds the tokens and the duration of the run's completion
-  notice, written when it arrives. A run without one has none; nothing is
-  estimated.
+- Read the transcript of every run, not only its answer, because the answer
+  lists only the commands a run remembers. Claude Code keeps the transcript
+  as `~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl`.
+  When every assertion passes, the lost calls are what is left to improve:
+  a lookup that found nothing, an edit that did not match.
+- When a run's completion notice arrives, write the tokens and the duration
+  it gives into the run's `timing.json`. A run without one has no time or
+  tokens in the benchmark; nothing is estimated.
 - One run per case and arm gives counts, not a spread. Lay a cell out more
   than once, `--arms with_skill with_skill_2`, before quoting a deviation;
   lost calls vary from 1 to 6 between two runs of the same cell.
