@@ -587,7 +587,15 @@ class Plan:
             taken = self.take(n, name, comments=True)
             self.forget(taken, f"operation {i} removed")
             self.used -= set(sids_of(taken))
-            self.done.append((f"event {n} removed" + (f", with {count(taken[1:], 'comment')} above it" if taken[1:] else ""), []))
+            below = print_sheet.numbered_below(taken[0].get("children", []))
+            gone = (f" with its sub-event{'s' if below > 1 else ''} {n + 1}" + (f"-{n + below}" if below > 1 else "")
+                    + f", {count(list(actions_in([taken[0]])), 'action')} in all") if below else ""
+            self.done.append((f"event {n} removed{gone}"
+                              + (f", with {count(taken[1:], 'comment')} above it" if taken[1:] else ""), []))
+            gone = f" and its sub-event{'s' if below > 1 else ''} {n + 1}" + (f"-{n + below}" if below > 1 else "") \
+                + f", {count(list(actions_in([taken[0]])), 'action')} in all" if below else ""
+            self.done.append((f"event {n}{gone} removed"
+                              + (f", with {count(taken[1:], 'comment')} above it" if taken[1:] else ""), []))
         elif verb == "move":
             where = [k for k in PLACES if k in op]
             if len(where) != 1:

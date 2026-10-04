@@ -119,6 +119,11 @@ def wording(p: c3.Project, kind: str, ace: dict) -> str:
     return f"{obj}: {'NOT ' if ace.get('isInverted') else ''}{text}"
 
 
+def numbered_below(events: list) -> int:
+    """How many numbered events these are, with everything below them."""
+    return sum((ev.get("eventType") in NUMBERED) + numbered_below(ev.get("children", [])) for ev in events)
+
+
 def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (),
                top: bool = True) -> Iterator[Row]:
     """The sheet as the editor shows it, with the editor's event numbers. top: every
@@ -157,8 +162,13 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
             lines += [wording(p, "conditions", c) + (" [condition disabled]" if c.get("disabled") else "")
                       for c in ev.get("conditions", [])]
             joiner = "OR " if ev.get("isOrBlock") else ""
+            # Indenting alone did not tell a model that the event below belonged to this one:
+            # it removed a trigger with no actions as empty, and its sub-events went with it.
+            below = numbered_below(ev.get("children", [])) if et not in ("function-block", "custom-ace-block") else 0
+            nested = f"  [sub-event{'s' if below > 1 else ''} {counter[0] + 1}"                      + (f"-{counter[0] + below}]" if below > 1 else "]") if below else ""
             head = [f"{number if i == 0 else '     '}{pad}{joiner if i else ''}{line}"
                     + (" [event disabled]" if ev.get("disabled") and i == 0 else "")
+                    + (nested if i == len(lines or [unconditional]) - 1 else "")
                     for i, line in enumerate(lines or [unconditional])]
             body = [f"     {pad}    -> {wording(p, 'actions', a)}" + (" [action disabled]" if a.get("disabled") else "")
                     for a in ev.get("actions", [])]

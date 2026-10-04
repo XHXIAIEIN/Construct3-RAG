@@ -51,6 +51,17 @@ def test_print_says_every_tick_only_where_an_event_without_conditions_runs_every
     assert out.count("(every tick)") == 2 and out.count("(runs with its parent)") == 2, out
 
 
+def test_print_names_the_sub_events_of_an_event(project):
+    """A trigger with no actions of its own looked empty to a model, which removed it and the
+    sub-events that did the work."""
+    code, out = tool(project, "print_sheet", "Game")
+    assert code == 0, out
+    parent = next(line for line in out.splitlines() if "[sub-event" in line)
+    number = int(parent.split()[0])
+    assert parent.endswith(f"[sub-event {number + 1}]") or f"[sub-events {number + 1}-" in parent, out
+    assert not any("function" in line and "[sub-event" in line for line in out.splitlines()), out
+
+
 def test_print_follows_the_locale(built):
     code, out = tool(built, "print_sheet", "Game", "--locale", "zh-CN")
     assert code == 0 and "System: 场景开始" in out

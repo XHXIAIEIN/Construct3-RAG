@@ -200,6 +200,13 @@ def test_plan_moves_replaces_and_removes(project):
     assert sids <= {c.get("sid") for ev in all_events(project) for c in ev.get("conditions", [])}, "a replaced event keeps the sids it is given"
 
 
+def test_removing_an_event_names_the_sub_events_that_go_with_it(project):
+    # A model removed a trigger with no actions as empty; the summary's event count alone did not stop it.
+    code, out = plan(project, {"remove": 4})
+    assert code == 0, out
+    assert re.search(r"-- event 4 removed with its sub-events? 5(-\d+)?, \d+ actions? in all", out), out
+
+
 def test_an_event_replaced_by_one_without_a_sid_keeps_its_own(project):
     was = events(json.loads((project / SHEET).read_text(encoding="utf-8")))["restart_block"]["sid"]
     code, out = plan(project, {"replace": 9, "events": [{"eventType": "block", "conditions": [], "actions": [
