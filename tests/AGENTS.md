@@ -26,12 +26,14 @@ an addon keeps it as `expected_entity`.
 
 A new keyword, alias or routing rule starts from a failing case here.
 
+## Skill tests
+
 The evals of the `construct3-agent-plugin` skill are not here. They run agents,
 not the service, and live with the skill: `skills/AGENTS.md`, "Evals".
-The `test_skill_*.py` files cover the skill's scripts, and
-`test_skill_spec.py` the skill's format and, against a stand-in client, the
-trigger runner. They share `skill_helpers.py` and, in `conftest.py`, the
-stand-in game, generated once a run.
+`test_skill_spec.py` tests the skill's format and, against a stand-in client,
+the trigger runner `run_trigger_eval.py`. The skill's tests share
+`skill_helpers.py` and, in `conftest.py`, the stand-in game, generated once a
+run.
 
 ## Commands
 
