@@ -3,12 +3,36 @@ same findings refusing what a plan of edit_sheet.py adds."""
 import copy
 import json
 import re
+from pathlib import Path
 
 from tests.skill_helpers import SHEET, check, edit, cond, block, events, findings, warnings, plan
 from tests.test_skill_check_project import add_addon, add_keyboard, pathfinding_coin
 
 
 STYLE_ACTIONS = [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{i}"'}} for i in range(8)]
+
+
+def comment(text: str) -> dict:
+    return {"eventType": "comment", "text": text}
+
+
+def equals_one(n: int) -> dict:
+    """System: Compare two values n = 1."""
+    return cond("compare-two-values", params={"first-value": str(n), "comparison": 0, "second-value": "1"})
+
+
+def with_own_sids(ev: dict, start: int) -> dict:
+    """The test helpers give every row sid 1 or 2; the checker wants them distinct."""
+    fresh = iter(range(start, start + 500))
+
+    def give(e):
+        e["sid"] = next(fresh)
+        for c in e.get("conditions", []):
+            c["sid"] = next(fresh)
+        for k in e.get("children", []):
+            give(k)
+        return e
+    return give(ev)
 
 
 def test_stand_in_project_passes_the_style_check(built):
@@ -38,43 +62,18 @@ def test_style_names_a_long_run_of_actions(project):
 
 
 def test_style_names_a_tree_of_one_call(project):
-    def test(n):
-        return cond("compare-two-values", params={"first-value": str(n), "comparison": 0, "second-value": "1"})
-
     def leaf(n):
-        return block([test(n)], [{"callFunction": "AddScore", "parameters": [str(n)]}])
-    tree = block([test(1)], [], [block([test(2)], [], [leaf(1), leaf(2)]), block([cond("else")], [], [leaf(3), leaf(4)])])
-    fresh = iter(range(900_000_000_000_001, 900_000_000_000_099))
-
-    def own_sids(ev):      # the test helpers give every row sid 1 or 2; the checker wants them distinct
-        ev["sid"] = next(fresh)
-        for c in ev["conditions"]:
-            c["sid"] = next(fresh)
-        for k in ev.get("children", []):
-            own_sids(k)
-    own_sids(tree)
+        return block([equals_one(n)], [{"callFunction": "AddScore", "parameters": [str(n)]}])
+    tree = block([equals_one(1)], [], [block([equals_one(2)], [], [leaf(1), leaf(2)]),
+                                       block([cond("else")], [], [leaf(3), leaf(4)])])
+    with_own_sids(tree, 900_000_000_000_001)
     edit(project, SHEET, lambda s: events(s)["input"].update(children=[tree]))
     code, out = check(project, "--style")
     assert code == 0 and "event 5 (sid" in out and "sub-events 3 levels deep, every leaf calling AddScore" in out, out
 
 
-def with_own_sids(ev: dict, start: int) -> dict:
-    """The test helpers give every row sid 1 or 2; the checker wants them distinct."""
-    fresh = iter(range(start, start + 500))
-
-    def give(e):
-        e["sid"] = next(fresh)
-        for c in e.get("conditions", []):
-            c["sid"] = next(fresh)
-        for k in e.get("children", []):
-            give(k)
-        return e
-    return give(ev)
-
-
 def case(n: int) -> dict:
-    return block([cond("compare-two-values", params={"first-value": str(n), "comparison": 0, "second-value": "1"})],
-                 [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{n}"'}}])
+    return block([equals_one(n)], [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{n}"'}}])
 
 
 def test_style_names_cases_with_no_comment_above_any(project):
@@ -82,7 +81,7 @@ def test_style_names_cases_with_no_comment_above_any(project):
         children=[with_own_sids(case(n), 910_000_000_000_000 + 10 * n) for n in (1, 2)]))
     code, out = check(project, "--style")
     assert code == 0 and re.search(r"event 5 \(sid \d+\): none of its 2 case sub-events has a comment above it", out), out
-    edit(project, SHEET, lambda s: events(s)["input"]["children"].insert(0, {"eventType": "comment", "text": "First."}))
+    edit(project, SHEET, lambda s: events(s)["input"]["children"].insert(0, comment("First.")))
     assert "case sub-events" not in check(project, "--style")[1]
 
 
@@ -99,7 +98,7 @@ def test_style_names_a_ladder_of_one_shape(project):
 
 def test_style_names_every_tick_beside_another_condition(project):
     tick = cond("every-tick")
-    test = cond("compare-two-values", params={"first-value": "1", "comparison": 0, "second-value": "1"})
+    test = equals_one(1)
     edit(project, SHEET, lambda s: events(s)["input"].update(children=[with_own_sids(
         block([tick, test], STYLE_ACTIONS[:1]), 930_000_000_000_000)]))
     code, out = check(project, "--style")
@@ -115,10 +114,10 @@ def test_plan_refuses_a_new_every_tick_beside_another_condition(project):
             "parameters": {"first-value": "1", "comparison": 0, "second-value": "1"}}
     ev = {"eventType": "block", "conditions": [{"id": "every-tick", "objectClass": "System"}, test],
           "actions": STYLE_ACTIONS[:1]}
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, ev]})
+    code, out = plan(project, {"into": 0, "events": [comment("Show the score."), ev]})
     assert code == 1 and (project / SHEET).read_bytes() == before and "Every tick beside 1 other" in out, out
     ev["conditions"] = [test]
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, ev]})
+    code, out = plan(project, {"into": 0, "events": [comment("Show the score."), ev]})
     assert code == 0 and warnings(out) == [], out
 
 
@@ -135,14 +134,14 @@ def test_plan_refuses_a_new_find_path_every_tick(project):
     moving = {"id": "is-moving-along-path", "objectClass": "Coin", "behaviorType": "Pathfinding", "isInverted": True}
     for condition in ({"id": "every-tick", "objectClass": "System"}, moving):
         ev = {"eventType": "block", "conditions": [condition], "actions": [FIND_PATH]}
-        code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Chase the player."}, ev]})
+        code, out = plan(project, {"into": 0, "events": [comment("Chase the player."), ev]})
         assert code == 1 and (project / SHEET).read_bytes() == before, out
         assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) action 1: Find path runs every tick; move it "
                         r"into the trigger that sets the target, such as Touch On tap", out), out
         assert json.dumps(EVERY_HALF_SECOND) in out.splitlines()[0]
         assert out.splitlines()[-1] == "the plan adds 1 problem(s) to the project; nothing was written"
     ev = {"eventType": "block", "conditions": [moving, EVERY_HALF_SECOND], "actions": [FIND_PATH]}
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Chase the player."}, ev]})
+    code, out = plan(project, {"into": 0, "events": [comment("Chase the player."), ev]})
     assert code == 0 and warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
 
 
@@ -157,7 +156,7 @@ def test_plan_warns_on_a_find_path_every_tick_in_an_event_it_did_not_create(proj
     assert [w for w in warnings(out) if "Find path runs every tick" in w], out
 
 
-def give_behavior(project, obj: str, behavior_id: str, name: str) -> None:
+def give_behavior(project: Path, obj: str, behavior_id: str, name: str) -> None:
     """obj gets the behavior, on its type and on its instance: Coin's template in Objects, ScoreText's in Game."""
     edit(project, f"objectTypes/{obj}.json", lambda t: t.setdefault("behaviorTypes", []).append(
         {"behaviorId": behavior_id, "name": name, "sid": 950_000_000_000_000 + len(name)}))
@@ -167,15 +166,13 @@ def give_behavior(project, obj: str, behavior_id: str, name: str) -> None:
     add_addon(project, "behavior", behavior_id, name)
 
 
-def comment(text: str) -> dict:
-    return {"eventType": "comment", "text": text}
-
-
 NONE_LEFT = {"id": "compare-two-values", "objectClass": "System",
              "parameters": {"first-value": "Coin.Count", "comparison": 0, "second-value": "0"}}
 ONCE = {"id": "trigger-once-while-true", "objectClass": "System"}
 START_WAVE = {"id": "start-timer", "objectClass": "ScoreText", "behaviorType": "Timer",
               "parameters": {"duration": "3", "type": "once", "tag": '"wave"'}}
+TOUCH_COIN = {"id": "on-touched-object", "objectClass": "Touch", "parameters": {"object": "Coin", "type": "start"}}
+SAY_DONE = {"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Done"'}}
 
 
 def test_plan_refuses_a_new_timer_started_every_tick(project):
@@ -232,8 +229,7 @@ def test_simulate_control_under_a_trigger(project):
     assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) action 1: Simulate control up runs only in the "
                     r"tick that Keyboard:on-key-pressed fires, so Coin moves for one tick and stops", out), out
     assert '{"id": "key-is-down", "objectClass": "Keyboard", "parameters": {"key": 87}}' in out.splitlines()[0], out
-    touched = {"id": "on-touched-object", "objectClass": "Touch", "parameters": {"object": "Coin", "type": "start"}}
-    ev["conditions"] = [touched]
+    ev["conditions"] = [TOUCH_COIN]
     code, out = plan(project, {"into": 0, "events": [comment("A touch walks up."), ev]})
     assert code == 1 and '{"id": "is-touching-object", "objectClass": "Touch", "parameters": {"object": "Coin"}}' in out
     ev["conditions"] = [{"id": "on-key-code-pressed", "objectClass": "Keyboard", "parameters": {"keycode": "87"}}]
@@ -251,11 +247,9 @@ def test_none_left_in_the_event_that_destroys_the_last(project):
     which the destroyed key still fails: refused, naming the top-level event to write. Its own top-level
     event, a comparison with 1 as the official examples write it, or a Wait before the sub-events goes through."""
     before = (project / SHEET).read_bytes()
-    touched = {"id": "on-touched-object", "objectClass": "Touch", "parameters": {"object": "Coin", "type": "start"}}
     destroy = {"id": "destroy", "objectClass": "Coin"}
-    done = {"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Done"'}}
-    last = {"eventType": "block", "conditions": [NONE_LEFT], "actions": [done]}
-    ev = {"eventType": "block", "conditions": [touched], "actions": [destroy], "children": [last]}
+    last = {"eventType": "block", "conditions": [NONE_LEFT], "actions": [SAY_DONE]}
+    ev = {"eventType": "block", "conditions": [TOUCH_COIN], "actions": [destroy], "children": [last]}
     code, out = plan(project, {"into": 0, "events": [comment("A touched coin goes."), ev]})
     assert code == 1 and (project / SHEET).read_bytes() == before, out
     assert re.match(r"operation 1: sheet Game event (\d+) \(sid \d+\) condition 1: Coin.Count = 0 is false here even "
@@ -266,7 +260,7 @@ def test_none_left_in_the_event_that_destroys_the_last(project):
     for events_ in ([{**ev, "children": [{**last, "conditions": [one_left]}]}],
                     [{**ev, "actions": [destroy, wait]}],
                     [{**ev, "children": []}, comment("Then none is left."),
-                     {"eventType": "block", "conditions": [NONE_LEFT, ONCE], "actions": [done]}]):
+                     {"eventType": "block", "conditions": [NONE_LEFT, ONCE], "actions": [SAY_DONE]}]):
         code, out = plan(project, {"into": 0, "events": [comment("A touched coin goes."), *events_]},
                          flags=("--dry-run",))
         assert code == 0 and warnings(out) == [], (events_, out)
@@ -280,15 +274,14 @@ def test_picked_count_of_none_below_a_pick(project):
     pick_all = {"id": "pick-all", "objectClass": "System", "parameters": {"object": "Coin"}}
     none_picked = {"id": "compare-two-values", "objectClass": "System",
                    "parameters": {"first-value": "Coin.PickedCount", "comparison": 0, "second-value": "0"}}
-    done = {"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Done"'}}
     ev = {"eventType": "block", "conditions": [pick_all], "actions": [],
-          "children": [{"eventType": "block", "conditions": [none_picked], "actions": [done]}]}
+          "children": [{"eventType": "block", "conditions": [none_picked], "actions": [SAY_DONE]}]}
     code, out = plan(project, {"into": 0, "events": [comment("Say when no coin is left."), ev]})
     assert code == 1 and (project / SHEET).read_bytes() == before, out
     assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) condition 1: Coin.PickedCount = 0 never holds here\. "
                     r"System:pick-all above it picks Coin", out), out
     assert json.dumps(NONE_LEFT) in out.splitlines()[0], out
-    ev = {"eventType": "block", "conditions": [NONE_LEFT, ONCE], "actions": [done]}
+    ev = {"eventType": "block", "conditions": [NONE_LEFT, ONCE], "actions": [SAY_DONE]}
     code, out = plan(project, {"into": 0, "events": [comment("Say when no coin is left."), ev]}, flags=("--dry-run",))
     assert code == 0 and warnings(out) == [], out
 
@@ -301,18 +294,17 @@ def test_style_names_a_countdown_kept_by_hand(project):
     every = {"id": "every-x-seconds", "objectClass": "System", "parameters": {"interval-seconds": "1"}}
     tick = {"id": "subtract-from-eventvar", "objectClass": "System", "parameters": {"variable": "score", "value": "1"}}
     ev = {"eventType": "block", "conditions": [every], "actions": [tick]}
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Count down."}, ev]}, flags=("--dry-run",))
+    code, out = plan(project, {"into": 0, "events": [comment("Count down."), ev]}, flags=("--dry-run",))
     assert code == 0 and "score counts seconds by hand, 1 off every 1 seconds; a global keeps its value across " \
                          "Restart layout" in out, out
     assert '"id": "start-timer"' in out and 'ceil(<Object>.Timer.Duration("countdown")' in out
     for spelled in ({"id": "add-to-eventvar", "value": "-1"}, {"id": "set-eventvar-value", "value": "score - 1"}):
         ev["actions"] = [{**tick, "id": spelled["id"], "parameters": {"variable": "score", "value": spelled["value"]}}]
-        code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Count down."}, ev]},
-                         flags=("--dry-run",))
+        code, out = plan(project, {"into": 0, "events": [comment("Count down."), ev]}, flags=("--dry-run",))
         assert code == 0 and "score counts seconds by hand, 1 off every 1 seconds" in out, (spelled, out)
     ev["actions"] = [tick]
     tick["parameters"]["value"] = "2"
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Count down."}, ev]}, flags=("--dry-run",))
+    code, out = plan(project, {"into": 0, "events": [comment("Count down."), ev]}, flags=("--dry-run",))
     assert code == 0 and "counts seconds by hand" not in out, out
 
 
@@ -322,12 +314,12 @@ def test_plan_refuses_new_cases_without_a_comment(project):
     before = (project / SHEET).read_bytes()
     cases = [{"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS[:1]} for _ in range(2)]
     parent = {"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS[:1], "children": cases}
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, parent]})
+    code, out = plan(project, {"into": 0, "events": [comment("Show the score."), parent]})
     assert code == 1 and (project / SHEET).read_bytes() == before, out
     assert "none of its 2 case sub-events has a comment above it" in out
     assert out.splitlines()[-1] == "the plan adds 1 problem(s) to the project; nothing was written"
-    parent["children"] = [{"eventType": "comment", "text": "First."}, *cases]
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the score."}, parent]})
+    parent["children"] = [comment("First."), *cases]
+    code, out = plan(project, {"into": 0, "events": [comment("Show the score."), parent]})
     assert code == 0 and warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
 
 
@@ -342,7 +334,7 @@ def test_plan_refuses_new_events_without_their_comments(project):
     assert "8 actions in a row without a comment action" in out and "no comment above it" in out
     assert "event 5 (sid" not in out and out.splitlines()[-1] == "the plan adds 2 problem(s) to the project; nothing was written"
     stepped = STYLE_ACTIONS[:4] + [{"type": "comment", "text": "Then the rest."}] + STYLE_ACTIONS[4:]
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Show the time."},
+    code, out = plan(project, {"into": 0, "events": [comment("Show the time."),
                                                     {"eventType": "block", "conditions": [], "actions": stepped}]})
     assert code == 0 and warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
 
@@ -353,15 +345,14 @@ def test_plan_names_the_group_its_uncommented_events_are_in(project):
     before = (project / SHEET).read_bytes()
     rows = [{"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS[:1]} for _ in range(2)]
     timer = {"eventType": "group", "title": "Timer", "children": rows}
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Count the time down."}, timer]})
+    code, out = plan(project, {"into": 0, "events": [comment("Count the time down."), timer]})
     assert code == 1 and (project / SHEET).read_bytes() == before, out
     refused = [line for line in out.splitlines() if "no comment above it" in line]
     assert [re.search(r'entry \d in the "children" of group "Timer"', line)[0] for line in refused] == \
         ['entry 1 in the "children" of group "Timer"', 'entry 2 in the "children" of group "Timer"'], out
     assert all(line.startswith("operation 1: ") for line in refused) and '"before"' not in out, out
-    timer["children"] = [{"eventType": "comment", "text": "Take a second off."}, rows[0],
-                         {"eventType": "comment", "text": "Show what is left."}, rows[1]]
-    code, out = plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Count the time down."}, timer]})
+    timer["children"] = [comment("Take a second off."), rows[0], comment("Show what is left."), rows[1]]
+    code, out = plan(project, {"into": 0, "events": [comment("Count the time down."), timer]})
     assert code == 0 and warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
 
 
@@ -369,7 +360,7 @@ def test_style_names_the_operation_that_comments_an_event_in_a_group(project):
     """On disk the finding carries the operation that puts the comment in the group's children.
     A plan that inserts above the user's uncommented event moves its entry and prints no warning."""
     edit(project, SHEET, lambda s: events(s)["input_group"]["children"].pop(0))
-    code, out = plan(project, {"before": 5, "events": [{"eventType": "comment", "text": "Show the time."},
+    code, out = plan(project, {"before": 5, "events": [comment("Show the time."),
                                                       {"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS[:1]}]})
     assert code == 0 and warnings(out) == [], out
     code, out = check(project, "--style")
@@ -384,12 +375,17 @@ def test_style_names_the_operation_that_comments_an_event_in_a_group(project):
     assert "no comment above it" not in check(project, "--style")[1]
 
 
+def style_warnings_on_text(project: Path, value: str, about: str) -> list[str]:
+    """The --style warnings that contain `about`, once the second action of setup sets the text to `value`."""
+    edit(project, SHEET, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text=value))
+    return [w for w in warnings(check(project, "--style")[1]) if about in w]
+
+
 def test_style_names_chooseindex_on_a_condition(project):
     """chooseindex(condition, a, b) returns b when the condition is true; ?: reads in that order.
     A number first is an index among the choices, and three or more choices are a pick."""
     def text(value):
-        edit(project, SHEET, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text=value))
-        return [w for w in warnings(check(project, "--style")[1]) if "two-way choice on a condition" in w]
+        return style_warnings_on_text(project, value, "two-way choice on a condition")
     found = text('chooseindex(score > 1, "few", "many")')
     assert len(found) == 1 and found[0].endswith('write score > 1 ? "many" : "few"'), found
     assert text('chooseindex(score, "few", "many")') == []
@@ -399,8 +395,7 @@ def test_style_names_chooseindex_on_a_condition(project):
 def test_style_names_a_table_written_as_letters(project):
     """mid through two text literals maps a value by its place in a string; a cycle is a number with %."""
     def text(value):
-        edit(project, SHEET, lambda s: events(s)["setup"]["actions"][1]["parameters"].update(text=value))
-        return [w for w in warnings(check(project, "--style")[1]) if "a table written as text" in w]
+        return style_warnings_on_text(project, value, "a table written as text")
     found = text('mid("BCA", find("ABC", ScoreText.Text), 1)')
     assert len(found) == 1 and "keep ScoreText.Text as a number 0 to 2" in found[0] and \
         "(ScoreText.Text + 1) % 3" in found[0], found
