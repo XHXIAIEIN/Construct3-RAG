@@ -117,36 +117,42 @@ def test_a_problem_that_was_there_does_not_stop_a_plan(project):
     assert "global number timeLeft = 0" in printed(project)
 
 
-TURN_AND_STATE = {"before": 1, "events": [{"eventType": "variable", "name": "turn", "initialValue": "1"},
-                                          {"eventType": "variable", "name": "state", "initialValue": "0"}]}
-FLIP_TURN = {"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "turn", "value": "3 - turn"}}
-STATE_IS_1 = {"id": "compare-eventvar", "objectClass": "System", "parameters": {"variable": "state", "comparison": 0,
+SIDE_AND_PHASE = {"before": 1, "events": [{"eventType": "variable", "name": "side", "initialValue": "1"},
+                                          {"eventType": "variable", "name": "phase", "initialValue": "0"}]}
+FLIP_SIDE = {"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "side", "value": "3 - side"}}
+PHASE_IS_1 = {"id": "compare-eventvar", "objectClass": "System", "parameters": {"variable": "phase", "comparison": 0,
                                                                                "value": "1"}}
 TOUCHED_COIN = {"id": "on-touched-object", "objectClass": "Touch", "parameters": {"object": "Coin", "type": "start"}}
 
 
 def test_plan_refuses_a_new_event_that_flips_a_variable_on_every_tick(project):
-    """A generated board game changed the turn in a top-level Else after a test of the state, so the turn flipped
-    on every tick and a tap landed on whichever turn that tick held. Refused in an event the plan creates, the
-    first line naming the trigger to put it under; the same change under the tap goes through."""
+    """A new event that flips a variable on every tick is refused, and the first line says where the flip goes.
+    The same flip under a tap goes through; under Trigger once and tests of values it is a warning."""
     before = (project / SHEET).read_bytes()
-    wait = {"eventType": "block", "conditions": [STATE_IS_1],
-            "actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Moving"'}}]}
-    swap = {"eventType": "block", "conditions": [{"id": "else", "objectClass": "System"}], "actions": [FLIP_TURN]}
-    code, out = plan(project, TURN_AND_STATE, {"into": 0, "events": [
-        {"eventType": "comment", "text": "A move is playing."}, wait,
+    shown = {"eventType": "block", "conditions": [PHASE_IS_1],
+             "actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Moving"'}}]}
+    swap = {"eventType": "block", "conditions": [{"id": "else", "objectClass": "System"}], "actions": [FLIP_SIDE]}
+    code, out = plan(project, SIDE_AND_PHASE, {"into": 0, "events": [
+        {"eventType": "comment", "text": "A move is playing."}, shown,
         {"eventType": "comment", "text": "Otherwise the other side plays."}, swap]})
     assert code == 1 and (project / SHEET).read_bytes() == before, out
-    assert re.match(r"operation 2: sheet Game event \d+ \(sid \d+\) action 1: Set turn to 3 - turn flips turn on "
-                    r"every tick\. No trigger", out), out
-    assert ('Make this event a sub-event of the event whose trigger it follows, such as the tap that makes the move, '
-            'or start its conditions with that trigger, such as {"id": "on-touched-object", "objectClass": "Touch", '
-            '"parameters": {"object": "<Object>", "type": "start"}}') in out.splitlines()[0], out
+    assert re.match(r"operation 2: sheet Game event \d+ \(sid \d+\) action 1: Set side to 3 - side flips side on "
+                    r"every tick, so an input can read either value", out), out
+    assert ('Move the flip into the event whose trigger causes the change, or into a sub-event of it. Trigger once '
+            'does not fix it') in out.splitlines()[0], out
+    tap = '{"id": "on-touched-object", "objectClass": "Touch", "parameters": {"object": "<Object>", "type": "start"}}'
+    assert tap in out.splitlines()[0], out
     assert out.splitlines()[-1] == "the plan adds 1 problem(s) to the project; nothing was written"
-    tapped = {"eventType": "block", "conditions": [TOUCHED_COIN], "actions": [FLIP_TURN]}
-    code, out = plan(project, TURN_AND_STATE, {"into": 0, "events": [
-        {"eventType": "comment", "text": "A tapped coin ends the turn."}, tapped]}, flags=("--dry-run",))
+    tapped = {"eventType": "block", "conditions": [TOUCHED_COIN], "actions": [FLIP_SIDE]}
+    code, out = plan(project, SIDE_AND_PHASE, {"into": 0, "events": [
+        {"eventType": "comment", "text": "A tapped coin passes the play to the other side."}, tapped]},
+        flags=("--dry-run",))
     assert code == 0 and "warning:" not in out, out
+    swap["conditions"].append({"id": "trigger-once-while-true", "objectClass": "System"})
+    code, out = plan(project, SIDE_AND_PHASE, {"into": 0, "events": [
+        {"eventType": "comment", "text": "A move is playing."}, shown,
+        {"eventType": "comment", "text": "Otherwise the other side plays."}, swap]}, flags=("--dry-run",))
+    assert code == 0 and [w for w in out.splitlines() if w.startswith("warning:") and "under Trigger once flips" in w], out
 
 
 def test_a_finding_names_the_place_a_plan_changes(project):

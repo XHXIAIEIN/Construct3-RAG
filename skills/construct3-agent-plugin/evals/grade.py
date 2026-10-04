@@ -1007,16 +1007,16 @@ def grade_fix_turn_flip(run: Path) -> list[tuple[bool, str]]:
     for ev, above in rows:
         for a in ev.get("actions", []):
             params = a.get("parameters") if isinstance(a.get("parameters"), dict) else {}
-            if params.get("variable") != "turn" or a.get("id") not in TURN_CHANGES \
+            if params.get("variable") != "side" or a.get("id") not in TURN_CHANGES \
                     or (a.get("id") == "set-eventvar-value" and str(params.get("value")).strip() == "1"):
                 continue
             conds = conditions_over(ev, above)
             in_block = any(e.get("eventType") in ("function-block", "custom-ace-block") for e in (*above, ev))
             tested = {c.get("parameters", {}).get("variable") for c in conds if c.get("id") == "compare-eventvar"}
             reset = {b.get("parameters", {}).get("variable") for e in (*above, ev) for b in e.get("actions", [])
-                     if b.get("id") == "set-eventvar-value"} - {"turn"}
+                     if b.get("id") == "set-eventvar-value"} - {"side"}
             (once if in_block or any(is_trigger(c) for c in conds) or tested & reset else every_tick).append(values([a]))
-    results.append((bool(once) and not every_tick, f"turn changes once per tap: {once or 'nowhere'}"
+    results.append((bool(once) and not every_tick, f"side changes once per tap: {once or 'nowhere'}"
                     + (f"; in every tick: {every_tick}" if every_tick else "")))
     original = json.loads((run / "fixture.json").read_text(encoding="utf-8")).get("eventSheets/Game.json.sids", [])
     game = [s for s in original if not SEEDED.match(str(s))]

@@ -229,9 +229,9 @@ SETS = {"set-eventvar-value": "variable", "set-boolean-eventvar": "variable", "t
         "toggle-boolean-instvar": "instance-variable"}
 # System actions after which the event does not run again in the next tick.
 LEAVES = {"set-group-active", "go-to-layout", "go-to-layout-by-name", "restart-layout", "go-to-nextprevious-layout"}
-# Actions that flip a variable between two values: Toggle, and a Set to N - x, -x, x * -1, x = a ? b : a or
-# x <> a ? a : b of the same variable, with literal values, or to not(x) or !x, which the editor refuses as
-# expressions. An event that runs every tick flips the variable back on the next tick.
+# Actions that flip a variable between two values: Toggle, and a Set of the variable to N - x, -x, x * -1,
+# x = a ? b : a or x <> a ? a : b, with literal values. An event that runs every tick flips it back on the
+# next tick.
 TOGGLES = {"toggle-boolean-eventvar": "variable", "toggle-boolean-instvar": "instance-variable"}
 FLIPS = {"set-eventvar-value": "variable", "set-instvar-value": "instance-variable"}
 LITERAL = r'-?\d+(?:\.\d+)?|"(?:[^"]|"")*"'
@@ -1706,16 +1706,21 @@ class Checker:
                       f"and the browser refuses it there; move it into an event with a trigger such as Touch On "
                       f"tap, Mouse On click or Keyboard On key pressed (manual: plugin-reference/{page}.md)")
 
-    def paces(self, ev: dict) -> bool:
-        """Whether a condition of the event keeps it from running every tick: a trigger, Every X seconds,
-        Trigger once. A condition of an addon without a schema is taken for a trigger when its id starts
-        with on-."""
+    def pacing(self, ev: dict) -> set[str]:
+        """What keeps the event from running every tick: "trigger", "every" for Every X seconds, "once" for
+        Trigger once. A condition of an addon without a schema is a trigger when its id starts with on-."""
+        kinds = set()
         for c in ev.get("conditions", []):
             entry = self.p.ace_entry("conditions", c)
-            if (entry.get("isTrigger") if entry else str(c.get("id", "")).startswith("on-")) \
-                    or (self.p.plugin_of.get(c.get("objectClass"), "").lower(), c.get("id")) in PACING:
-                return True
-        return False
+            if entry.get("isTrigger") if entry else str(c.get("id", "")).startswith("on-"):
+                kinds.add("trigger")
+            elif (self.p.plugin_of.get(c.get("objectClass"), "").lower(), c.get("id")) in PACING:
+                kinds.add("once" if c.get("id") == "trigger-once-while-true" else "every")
+        return kinds
+
+    def paces(self, ev: dict) -> bool:
+        """Whether a condition of the event keeps it from running every tick."""
+        return bool(self.pacing(ev))
 
     def is_solid(self, obj) -> bool:
         """A type with the Solid behavior, or a family that is one or has one among its members."""
@@ -1850,8 +1855,7 @@ class Checker:
         x = re.escape(name) if a["id"] == "set-eventvar-value" else \
             rf"(?:self|{re.escape(str(a.get('objectClass')))})\.{re.escape(name)}"
         v = re.sub(r"\s+", "", value)
-        forms = (rf"\(?-?\d+(?:\.\d+)?-{x}\)?", rf"-\(?{x}\)?", rf"\(?{x}\)?\*\(?-1\)?", rf"\(?-1\)?\*\(?{x}\)?",
-                 rf"not\({x}\)", rf"!\(?{x}\)?")
+        forms = (rf"\(?-?\d+(?:\.\d+)?-{x}\)?", rf"-\(?{x}\)?", rf"\(?{x}\)?\*\(?-1\)?", rf"\(?-1\)?\*\(?{x}\)?")
         if any(re.fullmatch(f, v, re.I) for f in forms):
             return name
         m = re.fullmatch(rf"\(?{x}(=|<>)({LITERAL})\)?\?({LITERAL}):({LITERAL})", v, re.I)
@@ -1867,9 +1871,9 @@ class Checker:
             [a for k in ev.get("children") or [] if isinstance(k, dict) for a in Checker.actions_below(k)]
 
     def writes(self, actions: list, seen: set[int]) -> set[str] | None:
-        """What these actions change that a condition may test, lower case: the variables they set or toggle
-        and the types they create or destroy, those of the functions and custom actions they call included,
-        through their events. None when one leaves the group or the layout. seen: the blocks already read."""
+        """What these actions change that a condition may test, lower case: the variables they set or toggle,
+        and the types they create or destroy. The functions and custom actions they call count with their
+        events. None when one leaves the group or the layout. seen: the blocks already read."""
         out: set[str] = set()
         for a in actions:
             if a.get("objectClass") == "System" and a.get("id") in LEAVES:
@@ -1887,20 +1891,38 @@ class Checker:
                 out |= below
         return out
 
+    @staticmethod
+    def tests_a_value(c: dict) -> bool:
+        """Whether a condition tests a value that holds until an event changes it, a variable or Count, or is
+        Else or Trigger once; an input, an overlap, a position or a function changes as the game plays."""
+        if c.get("objectClass") == "System" and c.get("id") in ("else", "trigger-once-while-true"):
+            return True
+        moving = any(m.group(2).lower() != "count" for value in params_of(c).values() if isinstance(value, str)
+                     for m in OBJECT_EXPRESSION.finditer(value))
+        return ((c.get("objectClass"), c.get("id")) in VALUE_TESTS or c.get("id") in INSTANCE_VALUE_TESTS) \
+            and not moving
+
     def check_flip(self, action: dict, where: str, line: tuple, paced: bool | None) -> None:
-        """A variable flipped in an event that runs every tick, whose actions do not change what its conditions
-        test: the event runs again on the next tick and flips it back. A branch passes when its actions set a
-        variable its conditions read, create or destroy a type they read, act on an object a condition is on
-        or reads (Player.X, Grid.At) or leave the group or layout, since each may stop it running again. An
-        event that starts with Else also tests the event it answers. line: the event and those above it."""
-        name = self.flipped(action) if paced is False else None
+        """A variable flipped in an event that runs every tick: the event runs again on the next tick and flips
+        it back. Under Trigger once alone, with conditions that test values, the flip happens once each time
+        they turn true, not once per input. That is a warning edit_sheet.py does not refuse, since a flip once a
+        round is sound. A branch passes when its actions change what its conditions test: they set a variable,
+        create or destroy a type, or act on an object a condition is on or reads (Player.X, Grid.At). It also
+        passes when they leave the group or layout. An event that starts with Else also tests the event it
+        answers. line: the event and those above it."""
+        name = self.flipped(action) if paced is not None else None
         if name is None:
+            return
+        kinds = set().union(*(self.pacing(ev) for ev in line))
+        if kinds - {"once"}:
             return
         tested = []
         for ev in line:
             while ev is not None:
                 tested += [c for c in ev.get("conditions", []) if isinstance(c, dict)]
                 ev = self.answered.get(id(ev))
+        if kinds and not all(self.tests_a_value(c) for c in tested):
+            return
         read = self.words_of(tested) | {str(c.get("objectClass")).lower() for c in tested
                                         if c.get("objectClass") != "System"}
         actions = [a for ev in line for a in ev.get("actions", []) if isinstance(a, dict)]
@@ -1913,12 +1935,20 @@ class Checker:
         touch = next((n for n, plugin in self.p.plugin_of.items() if plugin.lower() == "touch"), "Touch")
         trigger = json.dumps({"id": "on-touched-object", "objectClass": touch,
                               "parameters": {"object": "<Object>", "type": "start"}})
+        if kinds:
+            self.p.findings.style_finding(
+                "flip-once", f"{where}: {what} under Trigger once flips {name} once each time the conditions of "
+                             f"its event turn true. They test values, not an input, so {name} changes when those "
+                             f"values do, not once per tap or move. If it should follow each tap or move, move the "
+                             f"flip into the event whose trigger causes the change, or into a sub-event of it, such "
+                             f"as {trigger} with the tapped object for <Object>")
+            return
         self.p.findings.style_finding(
-            "toggle", f"{where}: {what} flips {name} on every tick. No trigger, Every X seconds or Trigger once is "
-                      f"in its event or above it, and its actions do not change what its conditions test, so the "
-                      f"event runs again on the next tick and flips {name} back; an input reads whichever value that "
-                      f"tick left. Make this event a sub-event of the event whose trigger it follows, such as the "
-                      f"tap that makes the move, or start its conditions with that trigger, such as {trigger}")
+            "flip", f"{where}: {what} flips {name} on every tick, so an input can read either value: no trigger is "
+                    f"in its event or above it. Move the flip into the event whose trigger causes the change, or "
+                    f"into a sub-event of it. Trigger once does not fix it: it flips {name} once when the "
+                    f"conditions turn true, not once per change. An event of its own for the flip starts with "
+                    f"that trigger, such as {trigger}, with the tapped object for <Object>")
 
     def none_left(self, c: dict) -> tuple[str, str] | None:
         """Return (the object type, "count" or "pickedcount") when a condition tests that none of the type is

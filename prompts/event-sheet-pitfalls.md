@@ -42,15 +42,15 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 ### Triggers and Else
 
 If the events use a trigger, a function or custom action, *Else*, an
-inverted condition, *Trigger once*, *Every X seconds* or Touch taps, or
-flip a variable such as the turn, read
+inverted condition, *Trigger once*, *Every X seconds*, Touch taps or a
+variable that flips, read
 [pitfalls/triggers-and-else.md](pitfalls/triggers-and-else.md).
 
 - An event or a branch of sub-events holds one trigger, and a function or custom action is the trigger of its branch. So a tween's *On finished* is a top-level event of its own that calls the next function. Only an OR block lists several triggers.
 - The editor treats *On collision with another object*, Timer *On timer* and the Gamepad button conditions as triggers, with every rule above, but the runtime tests them in sheet order.
 - A trigger, a loop, *Else*, *Trigger once* and the conditions that only pick cannot be inverted. For "not on collision", invert *Is overlapping*.
 - *Trigger once* and *Every X seconds* do nothing useful under a trigger, and the editor does not offer them there.
-- An event with no trigger runs every tick, so a variable it flips, *Toggle* or `3 - turn`, flips back on the next tick and a tap reads whichever value that tick left. Flip a turn in the trigger that makes the move, or in a sub-event of it.
+- An event runs every tick unless a trigger, *Every X seconds* or *Trigger once* is in it or above it, so a variable it flips with *Toggle* or `3 - x` changes on every tick. Flip it in the event whose trigger causes the change, or in a sub-event of it, such as a pause flag in *On key pressed*; *Trigger once* flips it once when the conditions turn true, not once per input.
 - A trigger can fire with several instances picked, Timer *On timer* included. If a *Pick nearest* or a function call is written for one, add *For each* after the trigger.
 - Else is decided per block, not per instance. Branch per instance with a second event and the inverted condition, or override a default.
 - Else does not narrow. It cannot directly follow a trigger block, only a normal sub-event inside one.

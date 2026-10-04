@@ -143,13 +143,13 @@ def seed_timer_restart(root: Path) -> None:
 
 def seed_turn_flip(root: Path) -> None:
     """Two players take turns, and the turn passes in a top-level Else after a test of the round's end:
-    Coin.Count = 0 / Else -> Set turn to 3 - turn runs in every tick while coins are left, so the turn
+    Coin.Count = 0 / Else -> Set side to 3 - side runs in every tick while coins are left, so the turn
     flips every tick (docs/decisions/event-sheet-design-guidance.md)."""
     path = root / "eventSheets" / "Game.json"
     sheet = json.loads(path.read_text(encoding="utf-8"))
     rows = sheet["events"]
     at = next(i for i, e in enumerate(rows) if e.get("eventType") == "variable" and e.get("name") == "beat") + 1
-    rows.insert(at, {"eventType": "variable", "name": "turn", "type": "number", "initialValue": "1",
+    rows.insert(at, {"eventType": "variable", "name": "side", "type": "number", "initialValue": "1",
                      "comment": "Whose turn it is, 1 or 2", "isStatic": False, "isConstant": False,
                      "sid": 655555555555501})
     text = {"id": "set-text", "objectClass": "ScoreText"}
@@ -167,9 +167,9 @@ def seed_turn_flip(root: Path) -> None:
                      {"eventType": "block", "sid": 655555555555508,
                       "conditions": [{"id": "else", "objectClass": "System", "sid": 655555555555509}],
                       "actions": [{"id": "set-eventvar-value", "objectClass": "System", "sid": 655555555555510,
-                                   "parameters": {"variable": "turn", "value": "3 - turn"}},
+                                   "parameters": {"variable": "side", "value": "3 - side"}},
                                   {**text, "sid": 655555555555511,
-                                   "parameters": {"text": "\"Player \" & turn & \" to tap. Score: \" & score"}}]}]})
+                                   "parameters": {"text": "\"Player \" & side & \" to tap. Score: \" & score"}}]}]})
     path.write_text(json.dumps(sheet, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
 
 

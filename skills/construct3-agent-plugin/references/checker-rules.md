@@ -75,13 +75,17 @@ Traps of the running game are warnings:
   function;
 - a variable flipped in an event that runs every tick: *Toggle*, or *Set*
   to `N - x`, `-x`, `x * -1` or `x = a ? b : a` of the same variable. The
-  event runs again on the next tick and flips it back, so an input reads
-  whichever value that tick left [manual:
-  project-primitives/events/how-events-work.md]. It passes when an action
-  of the branch, or of a function it calls, sets a variable its conditions
-  test, creates or destroys a type they test, acts on an object they are
-  on or read, or leaves the group or layout. An event that starts with
-  *Else* also tests the event it answers;
+  event runs again on the next tick and flips it back, so the value an
+  input reads depends on the tick it arrives in [manual:
+  project-primitives/events/how-events-work.md "Events run top to
+  bottom"]. It passes when an action of the branch, or of a function it
+  calls, changes what a condition tests: it sets a variable, creates or
+  destroys a type, or acts on an object that the condition names or reads.
+  It also passes when an action leaves the group or layout. An event that
+  starts with *Else* also tests the event it answers. Under *Trigger once*
+  alone, with conditions that test values, the flip happens once each time
+  they turn true, not once per input: a warning that `edit_sheet.py` does
+  not refuse, since a flip once a round is sound;
 - *Simulate control* of a Platform's left or right, or of any 8 Direction or
   Car control, in a branch with a trigger: the control holds for the tick
   it runs in, so the object moves one tick and stops [manual:
@@ -127,13 +131,16 @@ Traps of the running game are warnings:
   instances after a direct create; the actions after a wait are not
   followed. Over the 524 official examples it adds no finding.
 
+*Find path*, *Start timer* and a flipped variable ask whether an event runs
+every tick. For them, a condition of an addon without a schema counts as a
+trigger when its id starts with `on-`.
+
 `edit_sheet.py` refuses the findings on *Find path*, *Start timer*,
-*Simulate control*, `Count`, `PickedCount` and a flipped variable in an
-event a plan creates, as it refuses the style findings below; in the user's
-own events they stay warnings. A gesture action, a *Find path*, a *Start
-timer*, a *Simulate control* or a flip in a function passes, since a
-trigger or an event that runs every tick may call it. A condition of an
-addon without a schema counts as a trigger when its id starts with `on-`.
+*Simulate control*, `Count`, `PickedCount` and a variable flipped every
+tick in an event a plan creates, as it refuses the style findings below; in
+the user's own events they stay warnings. A gesture action, a *Find path*,
+a *Start timer*, a *Simulate control* or a flip in a function passes, since
+a trigger or an event that runs every tick may call it.
 
 ## The rules the editor applies on opening and before preview
 

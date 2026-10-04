@@ -1013,11 +1013,11 @@ def test_a_function_that_picks_what_an_earlier_call_created_is_named(project, ro
     assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
 
 
-def turn_and_state(rows: list):
-    """The sheet with the globals turn and state, numbers, and paused, a boolean, then rows at its end."""
+def side_and_phase(rows: list):
+    """The sheet with the globals side and phase, numbers, and paused, a boolean, then rows at its end."""
     def change(sheet):
-        sheet["events"][0:0] = [number_variable("turn", False, 900000000000020),
-                                number_variable("state", False, 900000000000021),
+        sheet["events"][0:0] = [number_variable("side", False, 900000000000020),
+                                number_variable("phase", False, 900000000000021),
                                 {**number_variable("paused", False, 900000000000022), "type": "boolean",
                                  "initialValue": "false"}]
         sheet["events"].extend(rows)
@@ -1029,56 +1029,64 @@ def set_var(name: str, value: str, sid: int = 51) -> dict:
             "parameters": {"variable": name, "value": value}}
 
 
-FLIP_TURN = set_var("turn", "3 - turn")
-STATE_IS = cond("compare-eventvar", params={"variable": "state", "comparison": 0, "value": "1"})
+FLIP_SIDE = set_var("side", "3 - side")
+PHASE_IS = cond("compare-eventvar", params={"variable": "phase", "comparison": 0, "value": "1"})
+ONCE = cond("trigger-once-while-true")
+EVERY_TICK = "Set side to 3 - side flips side on every tick"
+ONCE_A_ROUND = "Set side to 3 - side under Trigger once flips side once each time the conditions of its event turn true"
 
 
 @pytest.mark.parametrize("rows, said", [
-    # a generated board game changed the turn in a top-level Else after a test of the state
-    ([block([STATE_IS]), block([cond("else")], [FLIP_TURN])], "action 1: Set turn to 3 - turn flips turn on every tick"),
+    # flips in an event that runs every tick
+    ([block([PHASE_IS]), block([cond("else")], [FLIP_SIDE])], EVERY_TICK),
     ([block([cond("every-tick")], [{"id": "toggle-boolean-eventvar", "objectClass": "System", "sid": 52,
                                     "parameters": {"variable": "paused"}}])], "Toggle paused flips paused on every tick"),
-    ([block([], [set_var("turn", "turn = 1 ? 2 : 1")])], "Set turn to turn = 1 ? 2 : 1 flips turn"),
+    ([block([], [set_var("side", "side = 1 ? 2 : 1")])], "Set side to side = 1 ? 2 : 1 flips side on every tick"),
     ([block([cond("compare-instance-variable", "Coin", {"instance-variable": "value", "comparison": 4, "value": "0"})],
             [{"id": "set-instvar-value", "objectClass": "Coin", "sid": 53,
               "parameters": {"instance-variable": "kind", "value": "1 - Self.kind"}}])],
-     "Coin Set kind to 1 - Self.kind flips kind"),
-    # under the trigger that makes the move, or kept from running every tick
-    ([block([TAPPED], [FLIP_TURN])], None),
-    ([block([TAPPED], [], [block([], [FLIP_TURN])])], None),
-    ([block([STATE_IS, cond("trigger-once-while-true")], [FLIP_TURN])], None),
-    ([function("SwitchTurn", 55, [FLIP_TURN])], None),
-    # the branch changes what it tests: a flag a tap raised, the turn of the side that moves, what the Else
-    # answers, the object a test reads, through a function it calls; a call that leaves it alone does not
-    ([block([STATE_IS], [set_var("state", "0", 54), FLIP_TURN])], None),
-    ([block([cond("compare-eventvar", params={"variable": "turn", "comparison": 0, "value": "2"})], [FLIP_TURN])], None),
-    ([block([STATE_IS]), block([cond("else")], [FLIP_TURN, set_var("state", "1", 54)])], None),
+     "Coin Set kind to 1 - Self.kind flips kind on every tick"),
+    # under Trigger once alone and tests of values, once each time they turn true
+    ([block([PHASE_IS]), block([cond("else"), ONCE], [FLIP_SIDE])], ONCE_A_ROUND),
+    ([block([PHASE_IS, ONCE], [FLIP_SIDE])], ONCE_A_ROUND),
+    # under a trigger, Every X seconds, Trigger once with a test of what moves, or in a function
+    ([block([TAPPED], [FLIP_SIDE])], None),
+    ([block([TAPPED], [], [block([], [FLIP_SIDE])])], None),
+    ([block([cond("every-x-seconds", params={"interval-seconds": "0.5"})], [FLIP_SIDE])], None),
+    ([block([cond("is-overlapping-another-object", "Coin", {"object": "Backdrop"}), ONCE], [FLIP_SIDE])], None),
+    ([function("SwitchSide", 55, [FLIP_SIDE])], None),
+    # the branch changes what it tests: a flag an input raised, the variable it flips, what the Else answers,
+    # the object a test reads, through a function it calls; a call that changes nothing it tests does not
+    ([block([PHASE_IS], [set_var("phase", "0", 54), FLIP_SIDE])], None),
+    ([block([cond("compare-eventvar", params={"variable": "side", "comparison": 0, "value": "2"})], [FLIP_SIDE])], None),
+    ([block([PHASE_IS]), block([cond("else")], [FLIP_SIDE, set_var("phase", "1", 54)])], None),
     ([block([cond("compare-two-values", params={"first-value": "Coin.X", "comparison": 4, "second-value": "100"})],
-            [{"id": "set-x", "objectClass": "Coin", "sid": 56, "parameters": {"x": "0"}}, FLIP_TURN])], None),
-    ([function("EndMove", 57, [set_var("state", "0", 58)]), block([STATE_IS], [call("EndMove", 59), FLIP_TURN])], None),
-    ([function("ShowTurn", 57, [{"id": "set-text", "objectClass": "ScoreText", "sid": 58,
-                                 "parameters": {"text": '"Turn " & turn'}}]),
-      block([STATE_IS], [call("ShowTurn", 59), FLIP_TURN])], "Set turn to 3 - turn flips turn on every tick"),
+            [{"id": "set-x", "objectClass": "Coin", "sid": 56, "parameters": {"x": "0"}}, FLIP_SIDE])], None),
+    ([function("EndMove", 57, [set_var("phase", "0", 58)]), block([PHASE_IS], [call("EndMove", 59), FLIP_SIDE])], None),
+    ([function("ShowSide", 57, [{"id": "set-text", "objectClass": "ScoreText", "sid": 58,
+                                 "parameters": {"text": '"Side " & side'}}]),
+      block([PHASE_IS], [call("ShowSide", 59), FLIP_SIDE])], EVERY_TICK),
     # a step and a value that settles are not flips
-    ([block([], [set_var("turn", "turn + 1"), set_var("state", "state = 1 ? 2 : 3", 54)])], None),
+    ([block([], [set_var("side", "side + 1"), set_var("phase", "phase = 1 ? 2 : 3", 54)])], None),
 ])
 def test_a_variable_flipped_on_every_tick_is_named(project, rows, said):
     """An event without a trigger is tested every tick (manual: project-primitives/events/how-events-work.md),
     so one that flips a variable flips it back on the next tick, unless its actions change what it tests."""
-    out = findings(project, turn_and_state(rows))
-    said_lines = [w for w in warnings(out) if "on every tick" in w]
+    out = findings(project, side_and_phase(rows))
+    said_lines = [w for w in warnings(out) if " flips " in w]
     assert out.splitlines()[-1].startswith("ok:"), out
     assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
 
 
 @pytest.mark.parametrize("ace_id, flipped", [("on-animation-finished", False), ("is-animation-playing", True)])
 def test_a_condition_without_a_schema_is_a_trigger_when_its_id_starts_with_on(project, ace_id, flipped):
-    """A third-party addon has no schema to mark its triggers; they are named as Scirra's are."""
+    """A condition of an addon without a schema counts as a trigger when its id starts with on-, as Scirra's
+    triggers are named."""
     edit(project, "project.c3proj", lambda p: p["usedAddons"].append(
         {"type": "plugin", "id": "Spriter", "name": "Spriter", "author": "BrashMonkey", "bundled": True}))
     edit(project, "objectTypes/ScoreText.json", lambda t: t.update({"plugin-id": "Spriter"}))
-    out = findings(project, turn_and_state([block([cond(ace_id, "ScoreText")], [FLIP_TURN])]))
-    assert bool([w for w in warnings(out) if "flips turn on every tick" in w]) == flipped, out
+    out = findings(project, side_and_phase([block([cond(ace_id, "ScoreText")], [FLIP_SIDE])]))
+    assert bool([w for w in warnings(out) if EVERY_TICK in w]) == flipped, out
 
 
 def sprite_font_label(project, text: str, bbcode: bool = True, properties: dict | None = None) -> None:

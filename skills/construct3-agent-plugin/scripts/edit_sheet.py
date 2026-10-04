@@ -634,7 +634,7 @@ class Plan:
 # deleted condition, and the traps of the running game whose fix is one condition or one move: a Find path or a
 # Start timer that runs every tick, Simulate control under a trigger, X.Count = 0 after X's Destroy,
 # X.PickedCount = 0 after a pick of X, and a variable flipped every tick.
-REFUSED_STYLE = ("comment", "run", "cases", "tick", "pathfinding", "timer", "control", "count", "picked", "toggle")
+REFUSED_STYLE = ("comment", "run", "cases", "tick", "pathfinding", "timer", "control", "count", "picked", "flip")
 
 
 def findings_of(project: c3.Project, args, sheets: dict) -> tuple[check_project.Checker, c3.Findings]:
