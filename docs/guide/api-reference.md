@@ -1,6 +1,7 @@
 # API Reference
 
-Default: `http://localhost:8765`
+The service answers at `http://localhost:8765` unless it was started on
+another port (`docs/guide/quick-start.md`).
 
 ## Endpoints
 

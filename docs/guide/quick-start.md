@@ -10,7 +10,7 @@ pip install -r src/requirements.txt
 python scripts/setup.py
 ```
 
-Provides keyword lookup for ACE definitions. It runs offline and loads no
+The service looks up ACE definitions by keyword. It runs offline and loads no
 model; there is no database to start.
 
 Open `http://localhost:8765/playground` to test.
@@ -27,7 +27,7 @@ python scripts/setup.py --port 9000     # custom port
 
 ## Configuration
 
-Environment variables, defined in `src/settings/`:
+`src/settings/` reads these environment variables:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
