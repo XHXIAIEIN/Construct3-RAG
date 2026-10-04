@@ -18,6 +18,15 @@ def test_ace_lookup_reaches_a_behavior_through_the_object(built):
     assert "property               combo      The properties to tween.  (position | size | scale)" in out
 
 
+def test_ace_lookup_names_combo_items_in_the_locale(built):
+    """A combo item is written by its id and shown by its name. With the id alone a model named
+    Pick top/bottom's top "上方" in a Chinese answer, where the editor shows "顶部"."""
+    code, out = tool(built, "lookup_ace", "Coin", "pick-topbottom", "--locale", "zh-CN")
+    assert code == 0 and "(top: 顶部 | bottom: 底部)" in out
+    code, out = tool(built, "lookup_ace", "Coin", "pick-topbottom")
+    assert code == 0 and "(top | bottom)" in out
+
+
 def test_ace_lookup_marks_shared_triggers_and_writes_expressions(built):
     code, out = tool(built, "lookup_ace", "Coin", "collision", "another")
     assert "condition on-collision-with-another-object - On collision with another object [_common]  <isTrigger>" in out

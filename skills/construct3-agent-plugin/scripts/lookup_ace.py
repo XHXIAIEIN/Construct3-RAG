@@ -195,8 +195,10 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, w
         body = ", ".join(f'"{k}": {v}' for k, v in values.items())
         lines.append("  write: " + head + (f', "parameters": {{{body}}}}}' if params else "}"))
     for key, spec in params.items():
-        how = " | ".join(spec["items"]) if spec.get("items") \
-            else WRITING.get(spec["type"], ("", "expression string"))[1]
+        # A combo item is written by its id and shown in the editor by its name, which a model named
+        # from the id when only the id was printed ("上方" for top, whose zh-CN name is "顶部").
+        how = " | ".join(k if squash(k) == squash(v) else f"{k}: {v}" for k, v in spec["items"].items()) \
+            if spec.get("items") else WRITING.get(spec["type"], ("", "expression string"))[1]
         if spec.get("type") == "boolean" and spec.get("initialValue") is not None:
             how += "; the editor ticks it by default" if EDITOR_DEFAULT["boolean"](spec["initialValue"]) == "true" \
                 else "; the editor leaves it unticked by default"

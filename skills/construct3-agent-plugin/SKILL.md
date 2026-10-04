@@ -105,7 +105,9 @@ project, `Coin nearest`, which prints them with the object's name written in.
 
 Copy the `write:` line and replace the values. Leave `"sid": <new sid>` out
 of a plan for `edit_sheet.py`, which gives every new entry one; in a hand
-edit it is a 15-digit number the project does not use yet. An expression
+edit it is a 15-digit number the project does not use yet. A combo item
+whose editor name differs from its id prints both, `top: 顶部` under
+`--locale zh-CN`: write the id, and give the user the name. An expression
 prints the way it is reached, `Coin.Tween.Progress(tags)`. What
 the line does not show is in
 `Construct3-RAG/prompts/references/hand-editing-project-files.md`: read it
