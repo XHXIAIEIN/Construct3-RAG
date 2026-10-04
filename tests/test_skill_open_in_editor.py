@@ -5,20 +5,37 @@ import re
 import sys
 import threading
 import time
+import zipfile
 from concurrent.futures import ThreadPoolExecutor
+from types import SimpleNamespace
 
 import pytest
 
-from tests.skill_helpers import SKILL, INSTALLED, SHEET, run
+from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, run
+
+# The result of a project the editor opened, before a preview or the TypeScript definitions.
+OPENED = {"project": "Game", "status": "opened", "title": "Game - Construct 3",
+          "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [], "exception": ""}
+
+
+def opener():
+    sys.path.insert(0, str(SKILL / "scripts"))
+    try:
+        import open_in_editor as oe
+    finally:
+        sys.path.pop(0)
+    return oe
 
 
 def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in(project, tmp_path):
     """Offline: finding the project, packing it, and the steps for an agent's own browser tool."""
+    script = f"{INSTALLED}/scripts/open_in_editor.py"
     (project / ".git").mkdir()
     (project / ".git" / "HEAD").write_text("ref: refs/heads/main", encoding="utf-8")
-    (project / ".claude" / "worktrees" / "a").mkdir(parents=True)     # an agent's copies, 2.2 GB in a game
-    (project / ".claude" / "worktrees" / "a" / "project.c3proj").write_text("{}", encoding="utf-8")
-    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--help")
+    worktree = project / ".claude" / "worktrees" / "a"     # an agent's copies, 2.2 GB in a game
+    worktree.mkdir(parents=True)
+    (worktree / "project.c3proj").write_text("{}", encoding="utf-8")
+    code, out = run(project, script, "--help")
     assert code == 0 and "exit codes:" in out and "--steps" in out, out
     empty = tmp_path / "empty"
     empty.mkdir()
@@ -26,26 +43,25 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
     code, out = run(empty, SKILL / "scripts" / "open_in_editor.py")
     assert code == 2 and "no project.c3proj or .c3p found" in out and "--project" in out, out
 
-    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--browser", str(tmp_path / "no-browser.exe"))
+    code, out = run(project, script, "--browser", str(tmp_path / "no-browser.exe"))
     assert code == 2 and "could not be driven" in out and "--steps" in out, out
 
-    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps")
+    code, out = run(project, script, "--steps")
     c3p = project / ".tmp" / "open-in-editor.c3p"
     assert code == 3 and str(c3p) in out and 'the input "Project to open"' in out, out
     assert (project / ".tmp" / ".gitignore").read_text(encoding="utf-8") == "*\n"
     assert "\nSETUP:\nasync () => {\n" in out and "\nRESULT:\nasync () => {\n" in out
     assert "https://editor.construct.net/" in out
 
-    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps", "--preview")
+    code, out = run(project, script, "--steps", "--preview")
     assert code == 3 and out.rstrip().endswith("read the console of the preview window it opens."), out
-    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps", "--state", "Player")
+    code, out = run(project, script, "--steps", "--state", "Player")
     assert code == 3 and out.rstrip().endswith("as references/reading-the-runtime.md says."), out
-    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--steps", "--typescript")
+    code, out = run(project, script, "--steps", "--typescript")
     assert code == 2 and "TypeScript > Update TypeScript definitions" in out, out
 
-    import io
-    import zipfile
-    names = zipfile.ZipFile(io.BytesIO(c3p.read_bytes())).namelist()
+    with zipfile.ZipFile(c3p) as packed:
+        names = packed.namelist()
     assert "project.c3proj" in names and SHEET in names
     # only the files the editor reads: the skill's copy and the worktrees under .claude stay out
     assert not any(n.startswith((".git/", ".tmp/", ".claude/", ".agents/")) for n in names), names
@@ -69,15 +85,6 @@ def test_open_in_editor_keeps_the_preview_indexeddb_inside_max_path(tmp_path):
     project.mkdir()
     code, out = run(project, SKILL / "scripts" / "open_in_editor.py", "--help")
     assert code == 0 and "--profile FOLDER" in out, out
-
-
-def opener():
-    sys.path.insert(0, str(SKILL / "scripts"))
-    try:
-        import open_in_editor as oe
-    finally:
-        sys.path.pop(0)
-    return oe
 
 
 def test_open_in_editor_closes_the_start_up_window_once_when_projects_open_at_once(tmp_path, monkeypatch):
@@ -156,10 +163,8 @@ def test_open_in_editor_names_where_it_kept_them_in_its_last_line(tmp_path):
 
 
 def opened_with(preview: dict) -> list[str]:
-    return opener().report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
-                            "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [], "exception": "",
-                            "preview": {"started": True, "layout": "Game", "runtime": "worker", "errors": [],
-                                        **preview}})
+    return opener().report({**OPENED, "preview": {"started": True, "layout": "Game", "runtime": "worker",
+                                                  "errors": [], **preview}})
 
 
 def test_open_in_editor_reports_a_notice_over_the_opened_project_as_a_warning():
@@ -169,12 +174,11 @@ def test_open_in_editor_reports_a_notice_over_the_opened_project_as_a_warning():
     notice by its id, not by the title."""
     notice = ("Deprecated features This project uses some deprecated features. ... This project used the "
               "legacy Flat export file structure mode. It has been updated to the modern Folders mode.")
-    lines = opener().report({"project": "Quiz", "status": "opened", "title": "Quiz template - Construct 3",
-                             "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [notice],
-                             "exception": ""})
+    oe = opener()
+    lines = oe.report({**OPENED, "project": "Quiz", "title": "Quiz template - Construct 3", "warnings": [notice]})
     assert lines == ["opened   Quiz  (Quiz template - Construct 3, https://editor.construct.net/)",
                      f"  warning: {notice}"], lines
-    assert "d.id == 'deprecatedFeaturesDialog'" in opener().RESULT_JS
+    assert "d.id == 'deprecatedFeaturesDialog'" in oe.RESULT_JS
 
 
 def test_open_in_editor_writes_the_typescript_definitions_the_editor_wrote(tmp_path):
@@ -197,9 +201,7 @@ def test_open_in_editor_writes_the_typescript_definitions_the_editor_wrote(tmp_p
     assert wrote == {"written": ["ts-defs/instanceTypes.d.ts", "ts-defs/runtime/IRuntime.d.ts"]}, wrote
     assert (scripts / "ts-defs" / "runtime" / "IRuntime.d.ts").read_text(encoding="utf-8") == "new"
     assert (scripts / "tsconfig.json").read_text(encoding="utf-8") == "user's"
-    lines = opener().report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
-                             "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [],
-                             "exception": "", "typescript": wrote})
+    lines = oe.report({**OPENED, "typescript": wrote})
     assert lines[1] == "  typescript: wrote 2 files into scripts/ts-defs", lines
     assert oe.typescript(Page(), tmp_path / "game.c3p") == {
         "error": "a .c3p has no scripts folder to write into: pass the folder project"}
@@ -215,7 +217,7 @@ def test_open_in_editor_finds_the_typescript_menus_by_the_keys_of_their_labels()
     keys = re.findall(r"'((?:main-menu|ui\.bars)\.[\w.-]+)'", opener().TYPESCRIPT_JS)
     assert len(keys) == 6, keys
     for locale in ("en-US", "zh-CN"):
-        text = json.loads((SKILL.parents[1] / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))["text"]
+        text = json.loads((REPO / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))["text"]
         for key in keys:
             node = text
             for part in key.split("."):
@@ -252,7 +254,7 @@ def test_open_in_editor_reports_the_crash_report_the_preview_left_in_the_editor(
 
     class Win:
         events: list = []
-        ws = type("Socket", (), {"close": staticmethod(lambda: None)})
+        ws = SimpleNamespace(close=lambda: None)
 
         def call(self, method, wait=None, session=None, **params):
             return {}
@@ -265,7 +267,7 @@ def test_open_in_editor_reports_the_crash_report_the_preview_left_in_the_editor(
             assert expression == oe.CRASH_JS
             return crash
 
-    browser = type("Browser", (), {"devtools": Win()})()
+    browser = SimpleNamespace(devtools=Win())
     monkeypatch.setattr(oe, "start_preview", lambda b, target, page: ({"targetId": "preview"}, Win()))
     monkeypatch.setattr(oe, "attach", lambda win, patience=0: ([None], [None], False))
     monkeypatch.setattr(oe.time, "sleep", lambda seconds: None)
@@ -316,7 +318,6 @@ def test_open_in_editor_says_when_the_state_was_not_read():
 
 def test_install_addon_reads_addon_json_before_the_editor(tmp_path):
     """A .c3addon whose addon.json the editor could not read is refused here, with what to fix."""
-    import zipfile
     oe = opener()
     good, folder, broken = tmp_path / "good.c3addon", tmp_path / "folder.c3addon", tmp_path / "broken.c3addon"
     with zipfile.ZipFile(good, "w") as z:
