@@ -8,19 +8,15 @@ import pytest
 
 from tests.skill_helpers import SKILL, INSTALLED, run
 
-
-def module():
-    sys.path.insert(0, str(SKILL / "scripts"))
-    try:
-        import preview_project as pp
-    finally:
-        sys.path.pop(0)
-    return pp
+sys.path.insert(0, str(SKILL / "scripts"))
+try:
+    import preview_project as pp  # noqa: E402
+finally:
+    sys.path.pop(0)
 
 
 def test_preview_project_keeps_the_result_in_the_project_by_default(tmp_path):
     """A plan whose printed lines a pipe cut is read again from the file, not played again."""
-    pp = module()
     tmp = tmp_path / ".tmp"
     assert pp.kept(None, None, tmp_path) == (tmp / "preview-project.json", tmp / "preview")
     assert pp.kept(tmp_path / "r.json", tmp_path / "s", tmp_path) == (tmp_path / "r.json", tmp_path / "s")
@@ -54,7 +50,6 @@ def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
 
 
 def test_preview_project_reads_a_step_of_code_and_a_key_as_the_page_needs_them():
-    pp = module()
     assert pp.code("runtime.globalVars.Score") == "return (runtime.globalVars.Score);"
     assert pp.code(["const p = runtime.objects.Player.getFirstInstance();", "return p.x;"]) == \
         "const p = runtime.objects.Player.getFirstInstance();\nreturn p.x;"
@@ -73,7 +68,6 @@ def test_preview_project_reads_a_step_of_code_and_a_key_as_the_page_needs_them()
 def test_preview_project_waits_until_the_window_has_taken_the_viewport(monkeypatch):
     """The browser answers the emulation before the page resizes: a size read at once
     was the window's own, 778x511, while the runtime aimed in 430x932."""
-    pp = module()
 
     class Page:
         def __init__(self, sizes):
@@ -101,7 +95,6 @@ def test_preview_project_waits_until_the_window_has_taken_the_viewport(monkeypat
 def test_preview_project_reports_each_step_with_the_errors_it_caused():
     """One line per step; a runtime error under the step it followed; a failed step
     ends the list and says why."""
-    pp = module()
     steps = [{"step": 1, "line": "1 tap Button (buy)", "ok": True, "said": "at (352, 882)",
               "errors": ["Event sheet 1, event 3, action 1: TypeError\n    at stack"]},
              {"step": 2, "line": "2 state Piece", "ok": True, "said": "", "errors": [],
@@ -126,11 +119,9 @@ def test_preview_project_reports_each_step_with_the_errors_it_caused():
 def test_preview_project_joins_a_recording_into_a_gif_without_ffmpeg(tmp_path, monkeypatch):
     """Each frame stays up for as long as the window showed it."""
     image = pytest.importorskip("PIL.Image")
-    pp = module()
-    frames = []
-    for i, colour in enumerate(("red", "blue")):
-        frames.append(tmp_path / f"{i + 1:04d}.jpg")
-        image.new("RGB", (8, 8), colour).save(frames[-1])
+    frames = [tmp_path / "0001.jpg", tmp_path / "0002.jpg"]
+    for frame, colour in zip(frames, ("red", "blue")):
+        image.new("RGB", (8, 8), colour).save(frame)
     monkeypatch.setattr(pp.shutil, "which", lambda name: None)
     made = pp.make_video(frames, [0.25, 0.05], tmp_path / "02-merge")
     assert made == str(tmp_path / "02-merge.gif")
@@ -140,7 +131,6 @@ def test_preview_project_joins_a_recording_into_a_gif_without_ffmpeg(tmp_path, m
 
 def test_preview_project_prints_how_the_watched_values_changed():
     """The agent reviews a recording from these lines: each change once, with its time."""
-    pp = module()
     frames = [{"t": 0.0, "watch": {"coins": 40, "y": None}}, {"t": 0.5, "watch": {"coins": 40, "y": 662}},
               {"t": 0.9, "watch": {"coins": 30, "y": 662}}]
     frames += [{"t": 1 + i / 10, "watch": {"coins": 30, "y": 600 - i}} for i in range(9)]
@@ -153,7 +143,6 @@ def test_preview_project_prints_how_the_watched_values_changed():
 
 def test_preview_project_lists_every_recording_in_an_index_page(tmp_path):
     """index.html beside the recordings lists each one that has its review page, the newest first."""
-    pp = module()
     for name, when, steps in (("02-merge", 100, [{"ok": True, "errors": []}]),
                               ("05-drop", 200, [{"ok": False, "errors": ["TypeError: x"]}])):
         (tmp_path / name).mkdir()
