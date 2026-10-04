@@ -49,14 +49,14 @@ Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construc
 plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin 的文件夹里运行。plugin 有三种装法：
 
 - 从 Claude 目录安装，得到 Anthropic 审核过的版本。在 claude.ai 打开 **Customize** > **Plugins**。搜索 Construct3，点 **Add**。如果 Claude Code 用同一账号登录，它下次启动时会下载这个 plugin，名为 `construct3@synced`。每个版本都要等审核，所以这份可能比本仓库落后几个提交。
-- 从本仓库安装，跟上最新提交：
+- 从本仓库安装，跟上发布的版本：
 
   ```bash
   claude plugin marketplace add XHXIAIEIN/Construct3-RAG
   claude plugin install construct3@construct3-rag
   ```
 
-  要把 Claude Code 存的副本更新到最新提交，运行 `claude plugin update construct3@construct3-rag`。只有 marketplace 打开了自动更新，Claude Code 才会自己更新它，而不是 Anthropic 运营的 marketplace 默认不开。要打开它，在会话里运行 `/plugin`，打开 **Marketplaces** 标签，选 `construct3-rag`，再选 **Enable auto-update**。更新从下一个会话起生效。
+  要把 Claude Code 存的副本更新到本仓库 `plugin.json` 里的版本，运行 `claude plugin update construct3@construct3-rag`；没有提升这个版本的提交不会进入副本。只有 marketplace 打开了自动更新，Claude Code 才会自己更新它；不由 Anthropic 运营的 marketplace 默认不开自动更新。要打开它，在会话里运行 `/plugin`，打开 **Marketplaces** 标签，选 `construct3-rag`，再选 **Enable auto-update**。更新从下一个会话起生效。
 - 从已有的 clone 安装，让下一个会话用上 `git pull` 拉下来的文件：把 clone 链接到 Claude Code 的 skills 文件夹。
   - PowerShell：`New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <clone 路径>`
   - 其他 shell：`ln -s <clone 路径> ~/.claude/skills/construct3`

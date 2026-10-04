@@ -49,14 +49,14 @@ In Claude Code, the `construct3` plugin replaces the two commands. Use one or th
 The plugin is this whole repository, so the schemas come with it. The scripts run from the plugin's folder. Install the plugin in one of three ways:
 
 - From Claude's directory, for the versions that Anthropic has reviewed. On claude.ai, open **Customize** > **Plugins**. Search for Construct3 and select **Add**. Claude Code downloads the plugin as `construct3@synced` at its next start, if it is signed in to the same account. Each version waits for a review, so this copy can be some commits behind the repository.
-- From this repository, to follow its latest commit:
+- From this repository, to follow its released versions:
 
   ```bash
   claude plugin marketplace add XHXIAIEIN/Construct3-RAG
   claude plugin install construct3@construct3-rag
   ```
 
-  To bring Claude Code's copy up to the latest commit, run `claude plugin update construct3@construct3-rag`. Claude Code updates it on its own only when auto-update is on for the marketplace, and auto-update is off by default for a marketplace that Anthropic does not run. To turn it on, run `/plugin` in a session, open the **Marketplaces** tab, select `construct3-rag`, then select **Enable auto-update**. An update applies from the next session.
+  To bring Claude Code's copy up to the version in the repository's `plugin.json`, run `claude plugin update construct3@construct3-rag`; a commit that does not raise that version does not reach the copy. Claude Code updates it on its own only when auto-update is on for the marketplace, and auto-update is off by default for a marketplace that Anthropic does not run. To turn it on, run `/plugin` in a session, open the **Marketplaces** tab, select `construct3-rag`, then select **Enable auto-update**. An update applies from the next session.
 - From a clone that you have, so that the next session uses what `git pull` fetched: link the clone into Claude Code's skills folder.
   - PowerShell: `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <the clone>`
   - Other shells: `ln -s <the clone> ~/.claude/skills/construct3`
