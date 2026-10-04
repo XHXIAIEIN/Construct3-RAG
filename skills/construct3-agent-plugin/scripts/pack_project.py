@@ -34,6 +34,7 @@ from pathlib import Path, PurePosixPath
 
 import c3project as c3
 
+# Scratch inside the project, where check_project.py does not look and the editor does not write.
 SCRATCH = ".tmp"
 # Where a pack goes by default: the products of the skill's scripts, kept apart from the scratch of .tmp/.
 BUILD = ".build"
@@ -111,7 +112,8 @@ def from_archive(archive: Path) -> dict[str, bytes]:
     return entries
 
 
-def write_archive(out: Path, files: dict[str, bytes | Path]) -> None:
+def zipped(files: dict[str, bytes | Path]) -> bytes:
+    """The files, by their path in the archive, as the bytes of a .c3p; a Path is read from disk."""
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
         for name, data in files.items():
@@ -119,8 +121,13 @@ def write_archive(out: Path, files: dict[str, bytes | Path]) -> None:
                 z.write(data, name)
             else:
                 z.writestr(name, data)
+    return buf.getvalue()
+
+
+def write_archive(out: Path, files: dict[str, bytes | Path]) -> None:
+    data = zipped(files)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_bytes(buf.getvalue())
+    out.write_bytes(data)
 
 
 def write_folder(out: Path, files: dict[str, bytes | Path]) -> None:
@@ -132,14 +139,19 @@ def write_folder(out: Path, files: dict[str, bytes | Path]) -> None:
         target.write_bytes(data.read_bytes() if isinstance(data, Path) else data)
 
 
+def ignored_folder(path: Path) -> Path:
+    """path, a folder of the project, made when missing and given a .gitignore of * so that Git
+    commits nothing in it."""
+    path.mkdir(exist_ok=True)
+    if not (path / ".gitignore").exists():
+        (path / ".gitignore").write_text("*\n", encoding="utf-8")
+    return path
+
+
 def default_out(source: Path, is_archive: bool) -> Path:
     if is_archive:
         return source.with_suffix("")
-    build = source / BUILD
-    build.mkdir(exist_ok=True)
-    if not (build / ".gitignore").exists():
-        (build / ".gitignore").write_text("*\n", encoding="utf-8")
-    return build / f"{source.name}.c3p"
+    return ignored_folder(source / BUILD) / f"{source.name}.c3p"
 
 
 def committed_note(out: Path, project: Path) -> str | None:

@@ -64,7 +64,6 @@ from __future__ import annotations
 
 import argparse
 import base64
-import io
 import json
 import math
 import os
@@ -120,9 +119,7 @@ for a browser tool were printed instead, the project is not opened yet
 """
 
 EDITOR = "https://editor.construct.net/"
-BETA = EDITOR + "beta"      # redirects to the latest beta release, /r503/ as of 2026-09-24
-# Inside the project, where check_project.py does not look and the editor does not write.
-SCRATCH = ".tmp"
+BETA = EDITOR + "beta"      # redirects to the latest beta release
 # Seconds a DevTools call may take. SETUP waits in the page up to 45 for the editor,
 # RESULT up to 30 for the drop and 45 for the answer; every other call answers at once.
 CALL, SETUP_WAIT, RESULT_WAIT = 10, 55, 85
@@ -340,7 +337,7 @@ def find_projects(paths: list[Path]) -> list[Path]:
             found.append(path)
         elif path.is_dir():
             found += sorted(p.parent for p in path.rglob("project.c3proj") if ".git" not in p.parts)
-            found += sorted(p for p in path.rglob("*.c3p") if not {".git", SCRATCH, pp.BUILD} & set(p.parts))
+            found += sorted(p for p in path.rglob("*.c3p") if not {".git", pp.SCRATCH, pp.BUILD} & set(p.parts))
     return list(dict.fromkeys(p.resolve() for p in found))
 
 
@@ -368,21 +365,12 @@ def pack(project: Path) -> bytes:
     an agent under .claude, which made a game's .c3p 1.8 GB."""
     if project.is_file():
         return project.read_bytes()
-    files, _ = pp.editor_files(pp.from_folder(project), ())
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
-        for name, f in files.items():
-            z.write(f, name)
-    return buf.getvalue()
+    return pp.zipped(pp.editor_files(pp.from_folder(project), ())[0])
 
 
 def scratch(folder: Path) -> Path:
     """.tmp/ of a project folder, with a .gitignore of * so that nothing in it is committed."""
-    path = folder / SCRATCH
-    path.mkdir(exist_ok=True)
-    if not (path / ".gitignore").exists():
-        (path / ".gitignore").write_text("*\n", encoding="utf-8")
-    return path
+    return pp.ignored_folder(folder / pp.SCRATCH)
 
 
 def kept(out: Path | None, shots: Path | None, first: Path,

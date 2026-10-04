@@ -29,7 +29,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 import c3project as c3
-from c3project import LOWER, NUMBERED, closest, describe, folder_items, squash
+from c3project import LOWER, NUMBERED, STRING_LITERAL, closest, describe, folder_items, squash
 
 # Names. The editor passes every name through a filter when it opens the
 # project and keeps the result, so a name the filter changes no longer matches
@@ -111,7 +111,6 @@ IDENT = re.compile(r"\w+")
 NUMBER = re.compile(r"\d+(\.\d+)?(e[+-]?\d+)?", re.I)
 EMPTY_CALL = re.compile(r"\s*\(\s*\)")
 MEMBER = re.compile(r"(\w+)(?:\([^()]*\))?\s*\.\s*(\w+)(?:\s*\.\s*(\w+))?")
-STRING_LITERAL = re.compile(r'"(?:[^"]|"")*"')
 # C-style operators the expression parser refuses, with the Construct operator for each; the power
 # of JavaScript's ** is ^, which in C would be exclusive or. A lone ! has none: the editor calls it
 # an unknown character, and the test is written as a comparison.
@@ -170,7 +169,7 @@ def params_of(ace: dict) -> dict:
 
 
 def is_literal(v) -> bool:
-    return isinstance(v, str) and re.fullmatch(r'"(?:[^"]|"")*"', v) is not None
+    return isinstance(v, str) and STRING_LITERAL.fullmatch(v) is not None
 
 
 def unquote(v: str) -> str:
@@ -1107,7 +1106,7 @@ class Checker:
         if self.style:
             self.check_chooseindex(where, expr, scope)
             self.check_letter_table(where, expr)
-        found =[m.group(0) for m in C_OPERATOR.finditer(text)]
+        found = [m.group(0) for m in C_OPERATOR.finditer(text)]
         if found:
             # Rewrite outside the string literals only: "a == b" as text is valid.
             parts, last = [], 0
@@ -1532,7 +1531,8 @@ class Checker:
                 return
         if entry is None:
             owner = p.behaviors_of(obj)[ace["behaviorType"]] if "behaviorType" in ace else p.plugin_of[obj]
-            shared = "behaviorType" not in ace and obj != "System" and                 any(it["id"] == ace_id for it in (p.common or {}).get(kind, []))
+            shared = "behaviorType" not in ace and obj != "System" and \
+                any(it["id"] == ace_id for it in (p.common or {}).get(kind, []))
             self.err(f"{where}: {owner} has no {kind[:-1]} {ace_id}"
                      + (f": it is in plugins/_common.json, but the editor gives it only to plugins that ask for "
                         f"it, not to {owner}, and does not open the project" if shared
@@ -1685,7 +1685,7 @@ class Checker:
         name, vtype, value = var.get("name"), var.get("type"), var.get("initialValue")
         w = f"{where}: {what} {name}"
         if isinstance(name, str) and LOWER(name) in self.p.system_expression_names:
-            # A local mid passed as Functions.areaBelow(mid) is read as the text function mid(), and
+            # A local mid passed as Functions.measure(mid) is read as the text function mid(), and
             # a parameter round in "第 " & round & " 轮" as round() with no argument; the editor
             # refuses the project either way (r504, 2026-10-02). None of the 2697 variables and
             # 1028 function parameters of the official examples shares a system expression's name.
@@ -2856,10 +2856,11 @@ class Checker:
         many it left out."""
         p = self.p
         warnings, errors = [f"warning: {w}" for w in p.findings.warnings], p.findings.errors
-        closing = 300 + (0 if errors else len(self.ok_line())) + (len(c3.REVIEW) if self.review else 0)                  # the cut notes and the last line
+        # The room kept for the cut notes and the last line.
+        closing = 300 + (0 if errors else len(self.ok_line())) + (len(c3.REVIEW) if self.review else 0)
         room = max(self.limit - closing, 3)
         cut = self.limit and c3.fitting(warnings + errors, room) < len(warnings + errors)
-        shares = (0, 0)                                                         # 0 is no limit
+        shares = (0, 0)     # 0 is no limit
         if cut:
             of_warnings = room // 3 if errors else room
             used = sum(len(w) + 1 for w in warnings[:max(c3.fitting(warnings, of_warnings), 1)])

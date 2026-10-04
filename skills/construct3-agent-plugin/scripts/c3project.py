@@ -18,6 +18,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from collections.abc import Iterator
 from pathlib import Path
 from typing import NamedTuple
 
@@ -43,6 +44,9 @@ REVIEW = ("review: say first what the project does. Name a problem only when the
 # own: the margin leaves it blank and Find files it under the next numbered
 # event, so every row's number is the count of numbered rows before it plus one.
 NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
+
+# A text literal of an expression: a quote inside it is written twice, "say ""hi""".
+STRING_LITERAL = re.compile(r'"(?:[^"]|"")*"')
 
 # What a deprecated addon or ACE is, in the words of the Addon SDK reference
 # (SetIsDeprecated, isDeprecated, is-deprecated).
@@ -170,6 +174,31 @@ def folder_entries(folder: dict) -> list[dict]:
         i for sub in folder.get("subfolders", []) if isinstance(sub, dict) for i in folder_entries(sub)]
 
 
+def numbered_events(events: list) -> Iterator[dict]:
+    """Every numbered event in document order, sub-events included: the n-th is event n of the
+    sheet, so print_sheet.py and edit_sheet.py name the same event by the same number."""
+    for ev in events:
+        if ev.get("eventType") in NUMBERED:
+            yield ev
+        yield from numbered_events(ev.get("children", []))
+
+
+def layers_of(layers: list, depth: int = 0) -> Iterator[tuple[dict, int]]:
+    """(layer, depth) of a layout's layers bottom to top, a sublayer above the layer that holds it."""
+    for layer in layers:
+        yield layer, depth
+        yield from layers_of(layer.get("subLayers", []), depth + 1)
+
+
+def box(world: dict) -> tuple[float, float, float, float]:
+    """left, top, right, bottom of an unrotated instance, from its origin. The editor writes
+    originX and originY on every instance; one without them is read as centred."""
+    w, h = world.get("width", 0), world.get("height", 0)
+    left = world.get("x", 0) - w * world.get("originX", 0.5)
+    top = world.get("y", 0) - h * world.get("originY", 0.5)
+    return left, top, left + w, top + h
+
+
 # --- locate the project and the clone ---------------------------------------------
 def above(start: Path, marker: str) -> Path | None:
     """The nearest folder at or above start that holds marker."""
@@ -295,6 +324,13 @@ def skill_drift(rag: Path) -> str | None:
         return None
     return (f"this copy of the {SKILL} skill differs from the clone's ({', '.join(changed[:4])}"
             f"{' ...' if len(changed) > 4 else ''}); refresh it: {refresh}")
+
+
+def note_drift(rag: Path) -> None:
+    """Print skill_drift's sentence as a note, when there is one."""
+    drift = skill_drift(rag)
+    if drift:
+        print(f"note: {drift}")
 
 
 FETCH_STAMPS = Path(tempfile.gettempdir()) / "construct3-rag-fetch"

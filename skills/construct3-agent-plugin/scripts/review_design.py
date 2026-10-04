@@ -48,7 +48,7 @@ from typing import Callable, Iterator
 
 import c3project as c3
 import print_sheet
-from c3project import NUMBERED
+from c3project import NUMBERED, STRING_LITERAL
 
 EPILOG = """examples:
   python scripts/review_design.py
@@ -87,7 +87,6 @@ SHOWN = 8                   # events a question names before "and N more"
 EXPRESSION_TYPES = {"any", "number", "string", "layer", "animation", "animationframe", "groupname", "objecteffect",
                     "layereffect", "layouteffect"}
 NAME_KEYS = {"variable", "instance-variable", "object", "layout", "comparison", "key"}
-STRING_LITERAL = re.compile(r'"(?:[^"]|"")*"')
 NUMBER_LITERAL = re.compile(r"(?<![\w.])\d+(?:\.\d+)?(?:e[+-]?\d+)?(?![\w.])", re.I)
 IDENT = re.compile(r"(?<![\w.])([A-Za-z_]\w*)(?!\s*\()")
 CALL = re.compile(r"(?<![\w.])([A-Za-z_][\w.]*)\s*\(")
@@ -924,9 +923,7 @@ def main() -> int:
     findings = c3.Findings()
     c3.stop_with_a_sentence("review_design.py", findings)
     project = c3.Project.open(args, findings)
-    drift = c3.skill_drift(project.rag)
-    if drift:
-        print(f"note: {drift}")
+    c3.note_drift(project.rag)
     d = Design.of(project)
     for name in args.sheets or []:
         if name not in d.sheets:

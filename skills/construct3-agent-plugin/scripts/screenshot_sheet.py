@@ -292,10 +292,10 @@ def main() -> int:
         print("no Edge, Chrome or Chromium found here, so no picture; pass one with --browser, or open the sheet "
               "in the editor and take the screenshot there", file=sys.stderr)
         return 3
+    if not args.out:
+        pp.ignored_folder(project / pp.BUILD)
     out = (args.out or (project / pp.BUILD / "sheets")).resolve()
     out.mkdir(parents=True, exist_ok=True)
-    if not args.out and not (project / pp.BUILD / ".gitignore").exists():
-        (project / pp.BUILD / ".gitignore").write_text("*\n", encoding="utf-8")
     editor = f"{oe.EDITOR}{args.release.strip('/')}/" if args.release else oe.EDITOR
     profile = (args.profile.resolve() if args.profile else oe.scratch(project)) / f"editor-{Path(exe).stem.lower()}"
     try:

@@ -115,7 +115,7 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
                        f"{item['height']} box -> art/raw/{stem}.png")
             out.append(f"  \"{prompt(item, style)}\"")
         else:
-            out.append(f"{s} {stem}: {raw_of(root, rel).name if raw_of(root, rel) else 'art/' + rel}")
+            out.append(f"{s} {stem}: {raw.name if (raw := raw_of(root, rel)) else 'art/' + rel}")
     counts = {k: list(states.values()).count(k) for k in ("make", "prepare", "done")}
     if counts["make"]:
         out.append(f"to make: {counts['make']}, to prepare: {counts['prepare']}, done: {counts['done']}; next: make "

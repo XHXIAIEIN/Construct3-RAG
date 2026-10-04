@@ -151,12 +151,6 @@ def check_alpha(root: Path, painted: list[str], out: list[str]) -> int:
     return read
 
 
-def layers_of(layers: list):
-    for layer in layers:
-        yield layer
-        yield from layers_of(layer.get("subLayers", []))
-
-
 def on_grid(v: float, unit: int) -> bool:
     return abs(v / unit - round(v / unit)) < 1e-6
 
@@ -168,7 +162,7 @@ def check_grid(root: Path, unit: int, out: list[str]) -> int:
         if path.name.endswith(".uistate.json"):
             continue
         layout = c3.load(path)
-        for layer in layers_of(layout.get("layers", [])):
+        for layer, _ in c3.layers_of(layout.get("layers", [])):
             if layer.get("parallaxX", 1) == 0 and layer.get("parallaxY", 1) == 0:
                 continue
             for inst in layer.get("instances", []):

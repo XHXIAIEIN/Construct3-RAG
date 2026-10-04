@@ -165,7 +165,8 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
             # Indenting alone did not tell a model that the event below belonged to this one:
             # it removed a trigger with no actions as empty, and its sub-events went with it.
             below = numbered_below(ev.get("children", [])) if et not in ("function-block", "custom-ace-block") else 0
-            nested = f"  [sub-event{'s' if below > 1 else ''} {counter[0] + 1}"                      + (f"-{counter[0] + below}]" if below > 1 else "]") if below else ""
+            nested = f"  [sub-event{'s' if below > 1 else ''} {counter[0] + 1}" \
+                + (f"-{counter[0] + below}]" if below > 1 else "]") if below else ""
             head = [f"{number if i == 0 else '     '}{pad}{joiner if i else ''}{line}"
                     + (" [event disabled]" if ev.get("disabled") and i == 0 else "")
                     + (nested if i == len(lines or [unconditional]) - 1 else "")
@@ -238,12 +239,7 @@ def events_range(spec: str | None) -> tuple[int, int | None]:
 
 def show(sheet: dict, name: str, n: int, limit: int) -> int:
     """Event n as JSON, two spaces deep: what edit_sheet.py takes back under "replace"."""
-    def numbered(events: list) -> Iterator[dict]:
-        for ev in events:
-            if ev.get("eventType") in NUMBERED:
-                yield ev
-            yield from numbered(ev.get("children", []))
-    events = list(numbered(sheet["events"]))
+    events = list(c3.numbered_events(sheet["events"]))
     if not 1 <= n <= len(events):
         sys.exit(f"sheet {name} has {len(events)} events; --show {n} is not one of them")
     text = json.dumps(events[n - 1], indent=2, ensure_ascii=False)
@@ -295,9 +291,7 @@ def main() -> int:
     findings = c3.Findings()
     c3.stop_with_a_sentence("print_sheet.py", findings)
     project = c3.Project.open(args, findings)
-    drift = c3.skill_drift(project.rag)
-    if drift:
-        print(f"note: {drift}")
+    c3.note_drift(project.rag)
 
     sheets = project.load_listed("eventSheets")
     if not sheets:
@@ -332,9 +326,10 @@ def main() -> int:
     if args.events and first > totals[names[0]]:
         sys.exit(f"sheet {names[0]} has {totals[names[0]]} events; --events {args.events} starts past its end")
 
-    size = {name: sum(len(line) + 1 for line in [f"== {name}", *part(rows[name], first, last, None)[0]]) for name in names}
+    whole = {name: part(rows[name], first, last, None)[0] for name in names}
+    size = {name: sum(len(line) + 1 for line in [f"== {name}", *whole[name]]) for name in names}
     # The line on naming a variable, with room for a longer name or value than this one's in a part.
-    note = None if args.outline else naming_note([line for name in names for line in part(rows[name], first, last, None)[0]])
+    note = None if args.outline else naming_note([line for name in names for line in whole[name]])
     reserved = (len(note) + 70 if note else 0) + (len(c3.REVIEW) + 1 if args.review else 0)
     fits = not args.limit or sum(size.values()) + reserved <= args.limit
     if not fits and not args.sheets and len(names) > 1:

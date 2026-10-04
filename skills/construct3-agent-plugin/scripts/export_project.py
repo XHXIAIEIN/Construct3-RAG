@@ -539,34 +539,23 @@ def exported_worker(folder: Path) -> bool | None:
     return found.group(2) == "true" if found else None
 
 
-def build(project: Path) -> Path:
-    """.build/ of the project, where the products go, with a .gitignore of * so that Git commits none."""
-    path = project / pp.BUILD
-    path.mkdir(exist_ok=True)
-    if not (path / ".gitignore").exists():
-        (path / ".gitignore").write_text("*\n", encoding="utf-8")
-    return path
-
-
 def pack(project: Path, version: str, skip: Path | None) -> bytes:
     """The files the editor reads as a .c3p carrying version, with Auto-increment version off so
     that the export carries it unchanged, and Use worker Auto. The rest stays
     out: an earlier export, the worktrees of an agent under .claude, which made a game's .c3p 1.8 GB;
     and skip, the export folder."""
     files, _ = pp.editor_files(pp.from_folder(project), ())
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
-        for name, f in files.items():
-            if skip and f.is_relative_to(skip):
-                continue
-            if name == "project.c3proj":
-                text = with_version(f.read_text(encoding="utf-8"), version)
-                text = text.replace('"autoIncrementVersion": true', '"autoIncrementVersion": false')
-                text = WORKER_RE.sub(r"\g<1>auto\g<3>", text)
-                z.writestr(name, text)
-            else:
-                z.write(f, name)
-    return buf.getvalue()
+    staged: dict[str, bytes | Path] = {}
+    for name, f in files.items():
+        if skip and f.is_relative_to(skip):
+            continue
+        if name == "project.c3proj":
+            text = with_version(f.read_text(encoding="utf-8"), version)
+            text = text.replace('"autoIncrementVersion": true', '"autoIncrementVersion": false')
+            staged[name] = WORKER_RE.sub(r"\g<1>auto\g<3>", text).encode("utf-8")
+        else:
+            staged[name] = f
+    return pp.zipped(staged)
 
 
 def unpack(data: bytes, folder: Path) -> None:
@@ -664,7 +653,7 @@ def main() -> int:
               f"{project_version(project)}{f' -> {version}' if version != project_version(project) else ''}")
         return 0
     if not args.to:
-        build(project)
+        pp.ignored_folder(project / pp.BUILD)       # where the products go, which Git ignores
     if args.slow:
         global pace
         pace = SLOW

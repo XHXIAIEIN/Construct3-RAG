@@ -482,9 +482,7 @@ def main() -> int:
     findings = c3.Findings()
     c3.stop_with_a_sentence("lookup_ace.py", findings)
     project = c3.Project.open(args, findings, needs_project=False)
-    drift = c3.skill_drift(project.rag)
-    if drift:
-        print(f"note: {drift}")
+    c3.note_drift(project.rag)
     effects = effects_of(project, args.object)
     if effects:
         return max(effect_lookup(project, effect, args.words) for effect in effects)

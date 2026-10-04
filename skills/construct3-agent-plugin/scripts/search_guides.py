@@ -94,9 +94,7 @@ def main() -> int:
     c3.utf8_output()
     root = c3.find_project(args.project)
     rag = c3.find_rag(root if root and (root / "project.c3proj").exists() else None, args.rag)
-    drift = c3.skill_drift(rag)
-    if drift:
-        print(f"note: {drift}")
+    c3.note_drift(rag)
 
     lines: list[str] = []
     found_pitfalls = ranked(pitfalls(rag), lambda p: p[2], args.words)[: args.pitfalls]

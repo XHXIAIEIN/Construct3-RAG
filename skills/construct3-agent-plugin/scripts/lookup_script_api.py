@@ -232,9 +232,7 @@ def main() -> int:
     if root and not (root / "project.c3proj").exists():
         root = None
     rag = c3.find_rag(root, args.rag)
-    drift = c3.skill_drift(rag)
-    if drift:
-        print(f"note: {drift}")
+    c3.note_drift(rag)
     decls = load_api(rag, root)
     lines, missing = [], 0
     for name in args.names:

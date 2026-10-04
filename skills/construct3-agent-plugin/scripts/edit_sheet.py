@@ -301,8 +301,7 @@ class Plan:
     def __init__(self, sheet: dict, used: set[int]) -> None:
         self.sheet = copy.deepcopy(sheet)
         self.used = set(used)
-        self.by_number = {}
-        self.index(self.sheet["events"], [0])
+        self.by_number = dict(enumerate(c3.numbered_events(self.sheet["events"]), 1))
         self.total = len(self.by_number)
         self.done: list[tuple[str, list[dict]]] = []      # what each operation says it did, and the events to show
         self.own_row: set[int] = set()                    # events shown without their sub-events: only their actions changed
@@ -310,13 +309,6 @@ class Plan:
         self.sids_given = 0
         self.gone: dict[int, str] = {}                    # id of an event taken out -> which operation did it, and how
         self.unnamed: dict[str, str] = {}                 # a variable's name a plan removed or renamed -> which operation
-
-    def index(self, events: list, counter: list[int]) -> None:
-        for ev in events:
-            if ev.get("eventType") in NUMBERED:
-                counter[0] += 1
-                self.by_number[counter[0]] = ev
-            self.index(ev.get("children", []), counter)
 
     def event(self, n, op: str, zero: bool = False) -> dict | None:
         if isinstance(n, bool) or not isinstance(n, int) or not (0 if zero else 1) <= n <= self.total:
@@ -745,9 +737,7 @@ def main() -> int:
     findings = c3.Findings()
     c3.stop_with_a_sentence("edit_sheet.py", findings)
     project = c3.Project.open(args, findings)
-    drift = c3.skill_drift(project.rag)
-    if drift:
-        print(f"note: {drift}")
+    c3.note_drift(project.rag)
 
     path = project.listed_files("eventSheets").get(args.sheet)
     if path is None:

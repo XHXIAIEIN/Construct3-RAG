@@ -21,14 +21,6 @@ def number(v: float) -> str:
     return str(r) if abs(v - r) < EDGE else f"{v:.1f}"
 
 
-def box(world: dict) -> tuple[float, float, float, float]:
-    """left, top, right, bottom of an unrotated instance, from its origin."""
-    w, h = world.get("width", 0), world.get("height", 0)
-    left = world.get("x", 0) - w * world.get("originX", 0.5)
-    top = world.get("y", 0) - h * world.get("originY", 0.5)
-    return left, top, left + w, top + h
-
-
 def text_of(instance: dict) -> str | None:
     props = instance.get("properties") or {}
     for key in TEXT_PROPERTIES:
@@ -47,7 +39,8 @@ def rows_lines(rows: list[tuple[str, str, tuple, str]], pad: str) -> list[str]:
     out, i = [], 0
     while i < len(rows):
         j = i
-        while j + 1 < len(rows) and rows[j + 1][0] == rows[i][0] and rows[j + 1][3] == rows[i][3]                 and 'text "' not in rows[i][3]:
+        while j + 1 < len(rows) and rows[j + 1][0] == rows[i][0] and rows[j + 1][3] == rows[i][3] \
+                and 'text "' not in rows[i][3]:
             j += 1
         obj, plugin, b, rest = rows[i]
         if j - i + 1 >= RUN:
@@ -63,13 +56,6 @@ def rows_lines(rows: list[tuple[str, str, tuple, str]], pad: str) -> list[str]:
     return out
 
 
-def layers_of(layers: list, depth: int = 0):
-    """(layer, depth) bottom to top, a sublayer above the layer that holds it."""
-    for layer in layers:
-        yield layer, depth
-        yield from layers_of(layer.get("subLayers", []), depth + 1)
-
-
 def layout_lines(p: c3.Project, name: str, layout: dict, only_layer: str | None) -> list[str]:
     props = p.data.get("properties", {})
     vw, vh = props.get("viewportWidth"), props.get("viewportHeight")
@@ -78,7 +64,7 @@ def layout_lines(p: c3.Project, name: str, layout: dict, only_layer: str | None)
              + (f", viewport {vw} x {vh}" if vw and vh else "")
              + (f", event sheet {layout['eventSheet']}" if layout.get("eventSheet") else "")]
     below: list[tuple[str, tuple, bool]] = []  # (object, box, shown) of every instance drawn so far, texts aside
-    for layer, depth in layers_of(layout.get("layers", [])):
+    for layer, depth in c3.layers_of(layout.get("layers", [])):
         pad = "  " * depth
         hud = layer.get("parallaxX", 1) == 0 and layer.get("parallaxY", 1) == 0
         shown_layer = layer.get("isInitiallyVisible", True)
@@ -95,7 +81,7 @@ def layout_lines(p: c3.Project, name: str, layout: dict, only_layer: str | None)
         for inst in instances:
             world = inst.get("world") or {}
             obj = inst.get("type", "?")
-            b = box(world)
+            b = c3.box(world)
             shown = shown_layer and (inst.get("properties") or {}).get("initially-visible", True) is not False
             if listed:
                 plugin = p.plugin_of.get(obj, "?")
@@ -123,7 +109,7 @@ def layout_lines(p: c3.Project, name: str, layout: dict, only_layer: str | None)
         if listed:
             lines += rows_lines(rows, pad)
     if only_layer and len(lines) == 1:
-        names = [layer.get("name") for layer, _ in layers_of(layout.get("layers", []))]
+        names = [layer.get("name") for layer, _ in c3.layers_of(layout.get("layers", []))]
         lines.append(f"no layer named {only_layer!r}; layers: {', '.join(names)}")
     return lines
 
