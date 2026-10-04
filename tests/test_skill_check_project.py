@@ -7,8 +7,8 @@ from pathlib import Path
 import pytest
 
 from tests.skill_helpers import (
-    REPO, SKILL, INSTALLED, SHEET, run, tool, check, edit, cond, block, events, collect_tween, warnings, findings,
-    plan,
+    REPO, SKILL, INSTALLED, SHEET, run, tool, check, edit, cond, block, events, every_event, collect_tween, warnings,
+    findings, plan,
 )
 
 
@@ -23,13 +23,10 @@ def test_a_passing_check_ends_with_the_command_that_opens_the_project(built):
 
 def test_checker_prints_the_findings_that_fit_and_counts_the_rest(project):
     def misspell_every_action(sheet):
-        def walk(rows):
-            for ev in rows:
-                for action in ev.get("actions", []):
-                    if "id" in action:
-                        action["id"] += "-x"
-                walk(ev.get("children", []))
-        walk(sheet["events"])
+        for ev in every_event(sheet["events"]):
+            for action in ev.get("actions", []):
+                if "id" in action:
+                    action["id"] += "-x"
     edit(project, SHEET, misspell_every_action)
     code, out = check(project, "--limit", "600")
     lines = out.splitlines()
@@ -351,11 +348,14 @@ def test_a_sound_is_named_as_a_sound_or_music_file(project, value, refused):
                                                                     else "closest: pop") in out, out
 
 
+def set_var(name: str, value: str, sid: int = 51) -> dict:
+    return {"id": "set-eventvar-value", "objectClass": "System", "sid": sid,
+            "parameters": {"variable": name, "value": value}}
+
+
 def test_action_cannot_write_a_constant(project):
     def change(s):
-        events(s)["add_score"]["actions"].append(
-            {"id": "set-eventvar-value", "objectClass": "System", "sid": 5,
-             "parameters": {"variable": "ROUND_COINS", "value": '"3"'}})
+        events(s)["add_score"]["actions"].append(set_var("ROUND_COINS", '"3"', 5))
     assert "ROUND_COINS is a constant and an action cannot change it" in findings(project, change)
 
 
@@ -429,10 +429,10 @@ def test_self_in_a_system_parameter_names_the_object_to_write(project):
     def change(s):
         events(s)["restart"]["children"].append(
             block([cond("for-each-ordered", "System", {"object": "Coin", "expression": "Self.value", "order": "ascending"})],
-                  [{"id": "set-eventvar-value", "objectClass": "System", "sid": 5,
-                    "parameters": {"variable": "score", "value": "score + Self.value"}}]))
+                  [set_var("score", "score + Self.value", 5)]))
     out = findings(project, change)
-    assert "condition 1 System:for-each-ordered expression: Self names the object of the condition or action, "            "and here that is System; the editor stops with \"Invalid use of 'self'\"; write 'Coin.value'" in out
+    assert ("condition 1 System:for-each-ordered expression: Self names the object of the condition or action, "
+            "and here that is System; the editor stops with \"Invalid use of 'self'\"; write 'Coin.value'") in out
     assert "action 1 System:set-eventvar-value value: Self names the object" in out
     assert "name the object instead" in out
 
@@ -440,11 +440,8 @@ def test_self_in_a_system_parameter_names_the_object_to_write(project):
 def test_a_variable_named_self_is_read_bare(project):
     """The editor reads a bare self as a variable of that name in scope, and self.X still as Self."""
     def change(s):
-        s["events"].insert(0, {"eventType": "variable", "name": "self", "type": "number", "initialValue": "5",
-                               "comment": "", "isStatic": False, "isConstant": False, "sid": 9})
-        events(s)["restart"]["children"].append(block([cond("on-start-of-layout")], [
-            {"id": "set-eventvar-value", "objectClass": "System", "sid": 5,
-             "parameters": {"variable": "score", "value": "self + 1"}}]))
+        s["events"].insert(0, {**number_variable("self", False, 9), "initialValue": "5"})
+        events(s)["restart"]["children"].append(block([cond("on-start-of-layout")], [set_var("score", "self + 1", 5)]))
     out = findings(project, change)
     assert "Self names the object" not in out and out.splitlines()[-1].startswith("ok:"), out
 
@@ -567,7 +564,7 @@ def test_a_script_listed_as_both_ts_and_js_is_named(project):
 def test_typescript_definitions_without_an_object_type_are_named(project):
     """The editor writes scripts/ts-defs/instanceTypes.d.ts when the user sets up or updates
     TypeScript definitions, and not again by itself [manual: scripting/guides/using-external-editor.md];
-    game projects on disk held one written before their objects were added."""
+    so a project can hold one written before its objects were added."""
     names = sorted(json.loads(f.read_text(encoding="utf-8"))["name"] for f in (project / "objectTypes").glob("*.json"))
     defs = project / "scripts" / "ts-defs" / "instanceTypes.d.ts"
     defs.parent.mkdir(parents=True, exist_ok=True)
@@ -589,8 +586,7 @@ def test_c_style_operators_are_refused_with_the_construct_ones(project):
     text. ^ is Construct's power: 2 ^ 3 ran as 8 in a preview."""
     def change(s):
         events(s)["add_score"]["actions"] += [
-            {"id": "set-eventvar-value", "objectClass": "System", "sid": 5 + i,
-             "parameters": {"variable": "score", "value": value}}
+            set_var("score", value, 5 + i)
             for i, value in enumerate(['points == 5 ? 5 : 1', 'points != 5 & score || 1',
                                        '!points', 'points = 5 ? 1 : 0', 'len("a == b") <> 0 | 1',
                                        'points ** 2', 'points ^ 2 + len("2 ** 3")'])]
@@ -628,7 +624,7 @@ def test_misspelt_id_lists_the_nearest(project):
 
 def test_a_shared_ace_the_plugin_does_not_get_is_refused(project):
     """Set color is in plugins/_common.json, but the editor gives it only to a plugin that
-    supports colour, and Text does not: it refused the LiquidVolume project with "missing
+    supports colour, and Text does not: it refused a game project with "missing
     action id 'set-default-color'". Text's colour is Set font color."""
     def change(sheet):
         setup = events(sheet)["setup"]
@@ -636,7 +632,8 @@ def test_a_shared_ace_the_plugin_does_not_get_is_refused(project):
         setup["actions"].append({"id": "set-opacity", "objectClass": "ScoreText", "sid": 900000000000003,
                                  "parameters": {"opacity": "50"}})
     out = findings(project, change)
-    assert "Text has no action set-default-color: it is in plugins/_common.json, but the editor gives it only "            "to plugins that ask for it, not to Text" in out
+    assert ("Text has no action set-default-color: it is in plugins/_common.json, but the editor gives it only "
+            "to plugins that ask for it, not to Text") in out
     assert "closest: set-font-color" in out
     assert "set-opacity" not in out
 
@@ -650,14 +647,11 @@ def test_a_shared_expression_the_plugin_does_not_get_is_named(project):
 
 @pytest.mark.parametrize("name", ["mid", "Max"])
 def test_a_variable_named_like_a_system_expression_is_refused(project, name):
-    """A local mid passed as Functions.areaBelow(mid) is read as the text function mid(), and the
-    editor refused the LiquidVolume project with "Invalid expressions ... parameter 0 does not
+    """A local mid passed as Functions.measure(mid) is read as the text function mid(), and the
+    editor refused a game project with "Invalid expressions ... parameter 0 does not
     take 'string'". The comparison ignores case, as the editor's reading of names does."""
     def change(sheet):
-        setup = events(sheet)["setup"]
-        setup.setdefault("children", []).insert(0, {
-            "eventType": "variable", "name": name, "type": "number", "initialValue": "0", "comment": "",
-            "isStatic": False, "isConstant": False, "sid": 900000000000004})
+        events(sheet)["setup"].setdefault("children", []).insert(0, number_variable(name, False, 900000000000004))
     out = findings(project, change)
     assert f"variable {name}: the name is that of the system expression {name.lower()}" in out
     assert f"rename it, for example {name}Value" in out
@@ -765,9 +759,7 @@ def test_a_groups_local_is_not_seen_from_a_sibling_group(project):
     project with "unknown expression" on every use there."""
     def change(sheet):
         ev = events(sheet)
-        ev["input_group"]["children"].insert(0, {"eventType": "variable", "name": "拾取距离", "type": "number",
-                                                 "initialValue": "40", "comment": "", "isStatic": False,
-                                                 "isConstant": False, "sid": 4})
+        ev["input_group"]["children"].insert(0, {**number_variable("拾取距离", False, 4), "initialValue": "40"})
         ev["restart_block"]["actions"].append({"id": "set-text", "objectClass": "ScoreText", "sid": 5,
                                                "parameters": {"text": "拾取距离 + 1"}})
     out = findings(project, change)
@@ -865,10 +857,8 @@ def test_a_deprecated_ace_or_expression_warns_once_at_its_first_use(project):
         events(s)["add_score"]["actions"] += [
             {"id": "set-minimum-framerate", "objectClass": "System", "sid": 910000000001,
              "parameters": {"minimum-fps": "30"}},
-            {"id": "set-eventvar-value", "objectClass": "System", "sid": 910000000002,
-             "parameters": {"variable": "score", "value": "rgb(1, 2, 3)"}},
-            {"id": "set-eventvar-value", "objectClass": "System", "sid": 910000000003,
-             "parameters": {"variable": "score", "value": "rgb(4, 5, 6) + unixtime"}}]
+            set_var("score", "rgb(1, 2, 3)", 910000000002),
+            set_var("score", "rgb(4, 5, 6) + unixtime", 910000000003)]
     out = findings(project, change)
     assert out.rstrip().splitlines()[-1].startswith("ok:"), out
     said = warnings(out)
@@ -1008,6 +998,13 @@ def test_an_action_the_browser_allows_only_after_input_is_named_outside_it(proje
     assert bool(said) == warned and out.splitlines()[-1].startswith("ok:"), out
 
 
+def assert_one_warning(out: str, marker: str, said: str | None) -> None:
+    """The check passes, and its warnings that hold `marker` are one that holds `said`, or none when `said` is None."""
+    said_lines = [w for w in warnings(out) if marker in w]
+    assert out.splitlines()[-1].startswith("ok:"), out
+    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+
+
 def add_addon(project, kind: str, addon_id: str, name: str) -> None:
     edit(project, "project.c3proj", lambda p: p["usedAddons"].append(
         {"type": kind, "id": addon_id, "name": name, "author": "Scirra", "bundled": False}))
@@ -1052,9 +1049,7 @@ def test_pathfinding_on_a_map_or_a_path_that_is_not_there_yet_is_named(project, 
     and pathfinding every tick takes extremely high CPU (behavior-reference/pathfinding.md)."""
     pathfinding_coin(project)
     out = findings(project, lambda s: s["events"].append(event))
-    said_lines = [w for w in warnings(out) if "behavior-reference/pathfinding.md" in w]
-    assert out.splitlines()[-1].startswith("ok:"), out
-    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+    assert_one_warning(out, "behavior-reference/pathfinding.md", said)
 
 
 def test_a_solid_changed_beside_custom_obstacles_is_not_named(project):
@@ -1149,9 +1144,7 @@ def test_a_function_that_picks_what_an_earlier_call_created_is_named(project, ro
     """A created instance joins the others when the top-level event or trigger that created it ends; until then
     only Pick by unique ID finds it outside its own event (prompts/pitfalls/creating-objects.md)."""
     out = findings(project, lambda s: s["events"].extend(rows))
-    said_lines = [w for w in warnings(out) if "pitfalls/creating-objects.md" in w]
-    assert out.splitlines()[-1].startswith("ok:"), out
-    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+    assert_one_warning(out, "pitfalls/creating-objects.md", said)
 
 
 def side_and_phase(rows: list):
@@ -1163,11 +1156,6 @@ def side_and_phase(rows: list):
                                  "initialValue": "false"}]
         sheet["events"].extend(rows)
     return change
-
-
-def set_var(name: str, value: str, sid: int = 51) -> dict:
-    return {"id": "set-eventvar-value", "objectClass": "System", "sid": sid,
-            "parameters": {"variable": name, "value": value}}
 
 
 FLIP_SIDE = set_var("side", "3 - side")
@@ -1214,9 +1202,7 @@ def test_a_variable_flipped_on_every_tick_is_named(project, rows, said):
     """An event without a trigger is tested every tick (manual: project-primitives/events/how-events-work.md),
     so one that flips a variable flips it back on the next tick, unless its actions change what it tests."""
     out = findings(project, side_and_phase(rows))
-    said_lines = [w for w in warnings(out) if " flips " in w]
-    assert out.splitlines()[-1].startswith("ok:"), out
-    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+    assert_one_warning(out, " flips ", said)
 
 
 RUN_OUT = cond("compare-eventvar", params={"variable": "phase", "comparison": 3, "value": "0"})
@@ -1282,9 +1268,7 @@ def test_text_a_sprite_font_cannot_draw_is_named(project, layout_text, bbcode, a
     (plugin-reference/sprite-font.md). Only literals joined at the top level are text that shows."""
     sprite_font_label(project, layout_text, bbcode)
     out = findings(project, lambda s: action and s["events"].append(block([START], [action])))
-    said_lines = [w for w in warnings(out) if "plugin-reference/sprite-font.md" in w]
-    assert out.splitlines()[-1].startswith("ok:"), out
-    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+    assert_one_warning(out, "plugin-reference/sprite-font.md", said)
 
 
 @pytest.mark.parametrize("properties, said", [
@@ -1297,9 +1281,7 @@ def test_a_sprite_font_without_its_character_set_reads_the_editors(project, prop
     the editor, 2026-10-03), so the text is checked against them and the missing properties are named."""
     sprite_font_label(project, "", properties=properties)
     out = findings(project, lambda s: None)
-    said_lines = [w for w in warnings(out) if "plugin-reference/sprite-font.md" in w]
-    assert out.splitlines()[-1].startswith("ok:"), out
-    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+    assert_one_warning(out, "plugin-reference/sprite-font.md", said)
     named = [w for w in warnings(out) if "Label instance has no character-set, character-width, character-height" in w]
     assert len(named) == 1 and '"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' in named[0], out
 
@@ -1343,18 +1325,14 @@ def test_an_effect_action_naming_an_effect_its_target_lacks_is_named(project, co
             {"effectId": "hsladjust", "name": n} for n in coin_effects))
         add_addon(project, "effect", "hsladjust", "Adjust HSL")
     out = findings(project, lambda s: s["events"].append(block([START], [action])))
-    said_lines = [w for w in warnings(out) if "so the action runs and changes nothing" in w]
-    assert out.splitlines()[-1].startswith("ok:"), out
-    assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
+    assert_one_warning(out, "so the action runs and changes nothing", said)
 
 
 def test_a_script_that_reads_a_parameter_bare_is_named(project):
     """A preview of such a script stopped with "ReferenceError: string is not defined" (2026-10-03)."""
-    func = {"functionName": "Hex", "functionDescription": "", "functionCategory": "", "functionReturnType": "none",
-            "functionCopyPicked": False, "functionIsAsync": False, "eventType": "function-block", "sid": 2,
-            "functionParameters": [{"name": "text", "type": "string", "initialValue": "", "comment": "", "sid": 3}],
-            "conditions": [], "actions": [{"type": "script", "language": "javascript",
-                                           "script": ["console.log(parseInt(text, 16), localVars.text);"]}]}
+    func = function("Hex", 2, [{"type": "script", "language": "javascript",
+                                "script": ["console.log(parseInt(text, 16), localVars.text);"]}],
+                    params=[{"name": "text", "type": "string", "initialValue": "", "comment": "", "sid": 3}])
     out = findings(project, lambda s: s["events"].append(func))
     assert [w for w in warnings(out) if "reads text as a bare name" in w and "localVars.text" in w], out
 
@@ -1446,8 +1424,8 @@ def test_a_world_angle_beyond_a_full_turn_is_named_as_degrees(project):
 
 
 def test_an_instance_variable_type_outside_the_three_is_named(project):
-    """The editor's Text type is written "string". A type "text" used to stop the checker
-    with `missing key 'text'`, a sentence about the wrong thing."""
+    """The editor's Text type is written "string". A type "text" is named as outside the three,
+    not reported as `missing key 'text'`."""
     def change(t):
         t["instanceVariables"][1]["type"] = "text"
     out = findings(project, change, "objectTypes/Coin.json")

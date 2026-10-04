@@ -8,19 +8,19 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import SKILL, SHEET, tool, check, edit, events, collect_tween, plan
+from tests.skill_helpers import SKILL, SHEET, tool, check, edit, events, every_event, collect_tween, plan
 
 
 def printed(root: Path) -> str:
     return tool(root, "print_sheet", "Game")[1]
 
 
+def sheet_on_disk(root: Path) -> dict:
+    return json.loads((root / SHEET).read_text(encoding="utf-8"))
+
+
 def all_events(root: Path) -> list[dict]:
-    def walk(rows):
-        for ev in rows:
-            yield ev
-            yield from walk(ev.get("children", []))
-    return list(walk(json.loads((root / SHEET).read_text(encoding="utf-8"))["events"]))
+    return list(every_event(sheet_on_disk(root)["events"]))
 
 
 SET_TIME = {"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Time: " & timeLeft'}}
@@ -56,11 +56,11 @@ def test_plan_writes_what_the_editor_writes(project):
     assert plan(project, {"into": 0, "events": [{"eventType": "variable", "name": "lives"}, TIMER]})[0] != 0   # timeLeft is not declared
     code, out = plan(project, {"into": 0, "events": [{"eventType": "variable", "name": "timeLeft", "type": "number"}, TIMER]})
     assert code == 0, out
-    events = all_events(project)
-    variable = next(ev for ev in events if ev.get("name") == "timeLeft")
+    rows = all_events(project)
+    variable = next(ev for ev in rows if ev.get("name") == "timeLeft")
     assert list(variable) == ["eventType", "name", "type", "initialValue", "comment", "isStatic", "isConstant", "sid"]
     assert (variable["initialValue"], variable["isConstant"]) == ("0", False)
-    group = next(ev for ev in events if ev.get("title") == "Timer")
+    group = next(ev for ev in rows if ev.get("title") == "Timer")
     assert list(group) == ["eventType", "disabled", "title", "description", "isActiveOnStart", "children", "sid"]
     condition = next(e for e in group["children"] if e["eventType"] == "block")["conditions"][0]
     assert list(condition) == ["id", "objectClass", "sid", "parameters"] and len(str(condition["sid"])) == 15
@@ -173,7 +173,7 @@ def test_a_finding_names_the_place_a_plan_changes(project):
                      {"event": 8, "action": 2, "set": {"id": "set-text"}},
                      {"move": 7, "after": 6})
     assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
-    raw = json.loads((project / SHEET).read_text(encoding="utf-8"))
+    raw = sheet_on_disk(project)
     sheet = events(raw)
     assert "isInverted" not in sheet["setup"]["conditions"][0], "the editor writes isInverted only when it is true"
     assert list(collect_tween(raw))[:4] == ["id", "objectClass", "sid", "behaviorType"]
@@ -196,7 +196,7 @@ def test_plan_shows_a_condition_or_action_it_disables_as_disabled(project):
     assert code == 0, out
     assert "       Coin: NOT Is any Tween playing [condition disabled]\n" in out
     assert "         -> System: Add points to score [action disabled]\n" in out
-    assert events(json.loads((project / SHEET).read_text(encoding="utf-8")))["input"]["conditions"][1]["disabled"] is True
+    assert events(sheet_on_disk(project))["input"]["conditions"][1]["disabled"] is True
 
 
 def test_plan_names_an_older_form_of_a_text_it_left_alone(project):
@@ -255,11 +255,11 @@ def test_removing_an_event_names_the_sub_events_that_go_with_it(project):
 
 
 def test_an_event_replaced_by_one_without_a_sid_keeps_its_own(project):
-    was = events(json.loads((project / SHEET).read_text(encoding="utf-8")))["restart_block"]["sid"]
+    was = events(sheet_on_disk(project))["restart_block"]["sid"]
     code, out = plan(project, {"replace": 9, "events": [{"eventType": "block", "conditions": [], "actions": [
         {"id": "restart-layout", "objectClass": "System"}]}]})
     assert code == 0, out
-    assert events(json.loads((project / SHEET).read_text(encoding="utf-8")))["restart_block"]["sid"] == was
+    assert events(sheet_on_disk(project))["restart_block"]["sid"] == was
 
 
 def test_an_event_replaced_by_one_keeps_its_number_for_the_operations_below(project):
@@ -293,7 +293,7 @@ def test_before_an_event_is_above_the_comments_about_it(project):
 
 
 def test_a_sid_the_project_uses_is_replaced(project):
-    taken = events(json.loads((project / SHEET).read_text(encoding="utf-8")))["restart"]["sid"]
+    taken = events(sheet_on_disk(project))["restart"]["sid"]
     code, out = plan(project, {"into": 0, "events": [{"eventType": "block", "conditions": [], "actions": [], "sid": taken}]})
     assert code == 0 and "1 new sids" in out.splitlines()[0]
     sids = [ev["sid"] for ev in all_events(project) if "sid" in ev]

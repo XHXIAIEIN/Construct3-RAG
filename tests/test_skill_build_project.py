@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 from tests.skill_helpers import (
-    REPO, SKILL, INSTALLED, run, tool, check, edit, warnings, findings, template_module, png_pixels,
+    REPO, SKILL, INSTALLED, run, tool, check, edit, every_event, warnings, findings, template_module, png_pixels,
 )
 
 sys.path.insert(0, str(SKILL / "scripts"))
@@ -71,10 +71,7 @@ def test_template_behavior_blocks_hold_the_schemas_keys():
     """A behavior the template has no block for is guessed from the schema, whose
     properties carry no values, or copied from an example: the blocks here are the
     editor's key sets, checked against the schemas, with a combo value from its items."""
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
-    template = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(template)
+    template = template_module()
     blocks = {"TWEEN": "tween", "TIMER": "timer", "SOLID": "solid", "SINE": "sin", "FLASH": "flash",
               "BULLET": "bullet", "EIGHT_DIR": "eightdir", "PLATFORM": "platform", "MOVE_TO": "moveto",
               "ROTATE": "rotate", "DRAG_DROP": "dragndrop", "SCROLL_TO": "scrollto",
@@ -94,38 +91,19 @@ def test_template_behavior_blocks_hold_the_schemas_keys():
         assert " " not in name and name[0].isalnum(), name
 
 
-def read_png(path: Path) -> tuple[int, int, list]:
-    """Width, height and rows of RGBA tuples of a PNG that write_png() made: 8-bit RGBA, filter 0."""
-    import struct
-    import zlib
-    data = path.read_bytes()
-    w, h = struct.unpack(">II", data[16:24])
-    idat, pos = b"", 8
-    while pos < len(data):
-        n, = struct.unpack(">I", data[pos:pos + 4])
-        if data[pos + 4:pos + 8] == b"IDAT":
-            idat += data[pos + 8:pos + 8 + n]
-        pos += 12 + n
-    raw = zlib.decompress(idat)
-    rows = [raw[y * (4 * w + 1) + 1:(y + 1) * (4 * w + 1)] for y in range(h)]
-    return w, h, [[tuple(r[4 * x:4 * x + 4]) for x in range(w)] for r in rows]
-
-
 def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
     """Construct's effects have no outline or drop shadow, so shape() draws them into the image
     from SHAPE_STYLE: the outline inside the shape, which keeps its size, the shadow outside it,
     which widens the image on its side and stays out of the collision polygon and the origin."""
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
-    template = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(template)
+    template = template_module()
     template.ROOT = tmp_path
     style = template.SHAPE_STYLE
     style.update(outline_width=4, shadow_distance=10, shadow_angle=90, shadow_opacity=0.5)
     ink, fill = template.rgb(style["outline_role"]), template.rgb("reward")
 
     f = template.shape("on.png", "rect", 64, 32, "reward")
-    w, h, px = read_png(tmp_path / "images" / "on.png")
+    px = png_pixels(tmp_path / "images" / "on.png")
+    w, h = len(px[0]), len(px)
     assert (w, h) == (f["width"], f["height"]) == (64, 42)
     assert px[0][0] == (*ink, 255) and px[3][3] == (*ink, 255) and px[4][4] == (*fill, 255)
     assert px[40][32] == (*template.rgb(style["shadow_role"]), 128)
@@ -139,10 +117,11 @@ def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
 
     style.update(outline=False, shadow=False)
     f = template.shape("off.png", "triangle", 32, 32, "solid")
-    w, h, px = read_png(tmp_path / "images" / "off.png")
+    px = png_pixels(tmp_path / "images" / "off.png")
+    w, h = len(px[0]), len(px)
     assert (w, h) == (32, 32) and {p[:3] for row in px for p in row if p[3]} == {template.rgb("solid")}
     f = template.shape("one.png", "rect", 32, 32, "reward", outline=True)
-    assert read_png(tmp_path / "images" / "one.png")[2][0][0] == (*ink, 255)
+    assert png_pixels(tmp_path / "images" / "one.png")[0][0] == (*ink, 255)
 
 
 def test_template_draws_an_accent_with_its_outline_and_a_fill_the_outline_shows_on(tmp_path):
@@ -273,10 +252,7 @@ def test_stand_in_project_writes_containers_where_the_editor_reads_them(project)
     """A container is a row of project.c3proj, not a file: a Doubao run searched objectTypes/
     and the example folders for its format and gave up. The helper writes what saves from
     r342 on hold, members alone, and the checker reads the row."""
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
-    template = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(template)
+    template = template_module()
     assert template.container(["Coin", "ScoreText"]) == {"members": ["Coin", "ScoreText"]}
     proj = json.loads((project / "project.c3proj").read_text(encoding="utf-8"))
     assert proj["containers"] == [] and list(proj).index("containers") < list(proj).index("layouts")
@@ -387,7 +363,8 @@ def test_generator_keeps_only_the_timelines_and_flowcharts_that_have_a_file(proj
     (project / "timelines").mkdir()
     (project / "timelines" / "Fade.json").write_text("{}", encoding="utf-8")
     code, out = check(project)
-    assert code == 1 and "flowcharts: Flowchart 1 is listed in project.c3proj but flowcharts/Flowchart 1.json "         "is missing" in out, out
+    assert code == 1 and ("flowcharts: Flowchart 1 is listed in project.c3proj but flowcharts/Flowchart 1.json "
+                          "is missing") in out, out
     run(project, "tools/build_project.py")
     written = json.loads((project / "project.c3proj").read_text(encoding="utf-8"))
     assert written["timelines"]["items"] == ["Fade"] and written["flowcharts"]["items"] == []
@@ -410,10 +387,7 @@ def test_template_places_the_hud_on_the_grid(built):
     """anchor() returns the origin point of a box held MARGIN inside the viewport edge, on the
     grid; the stand-in's HUD text and its tapped coin come from it, so a generated layout starts
     aligned and a small model fills cells instead of choosing coordinates."""
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
-    t = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(t)
+    t = template_module()
     assert (t.VIEW_W, t.VIEW_H, t.UNIT, t.MARGIN, t.TOUCH) == (720, 1280, 32, 32, 96)
     assert t.units(13) == 416 and t.snap(100) == 96 and t.snap(112) == 128
     assert t.anchor("top-left", 416, 64) == (32, 32)
@@ -459,10 +433,7 @@ def test_template_bar_grows_from_its_left_edge_inside_its_frame():
     """hud_bar() is the reference's bar as one call: a Tiled Background fill, origin on the left,
     inset in a frame held by anchor(); its width comes from bar_width(), clamped to the frame;
     the instance properties are the editor's, every key in the plugin's schema."""
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("build_project", SKILL / "assets" / "build_project.py")
-    t = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(t)
+    t = template_module()
     frame, fill = t.hud_bar("HpFrame", "HpFill", "top-left", 384, dy=3)
     assert (frame["world"]["x"], frame["world"]["y"], frame["world"]["width"], frame["world"]["height"]) == (224, 144, 384, 32)
     assert (fill["world"]["x"], fill["world"]["y"], fill["world"]["width"], fill["world"]["height"]) == (34, 144, 380, 28)
@@ -739,12 +710,8 @@ def test_template_writes_a_data_file_lists_it_and_loads_it_at_start(project):
         ("Settings.json", "application/json", {"purpose": "none"})]
     assert {"AJAX", "Arr", "Dictionary"} <= {a["id"] for a in proj["usedAddons"]} and "AJAX" in proj["objectTypes"]["items"]
 
-    def every_action(events):
-        for e in events:
-            yield from e.get("actions", [])
-            yield from every_action(e.get("children", []))
     sheet = json.loads((project / "eventSheets" / "Game.json").read_text(encoding="utf-8"))
-    loading = [a for a in every_action(sheet["events"])
+    loading = [a for e in every_event(sheet["events"]) for a in e.get("actions", [])
                if a.get("id") in ("request-project-file", "wait-for-previous-actions", "load", "add-key")]
     assert [(a["id"], a["objectClass"]) for a in loading] == [
         ("request-project-file", "AJAX"), ("wait-for-previous-actions", "System"), ("load", "CardTable"),

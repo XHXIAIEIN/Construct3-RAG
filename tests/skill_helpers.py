@@ -9,6 +9,7 @@ import json
 import os
 import subprocess
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 
@@ -62,6 +63,13 @@ def cond(ace_id: str, obj: str = "System", params: dict | None = None, **extra) 
 def block(conditions: list, actions: list | None = None, children: list | None = None) -> dict:
     return {"eventType": "block", "conditions": conditions, "actions": actions or [], "sid": 2,
             **({"children": children} if children else {})}
+
+
+def every_event(rows: list) -> Iterator[dict]:
+    """Every event of `rows` and of their sub-events, each before its sub-events, as the sheet reads."""
+    for ev in rows:
+        yield ev
+        yield from every_event(ev.get("children", []))
 
 
 def events(sheet: dict) -> dict:
