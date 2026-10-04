@@ -52,6 +52,38 @@ end of this file.
 Each rule was read from the editor's loaders, from files it saved or from the
 official examples (`docs/decisions/checker-editor-load-rules.md`).
 
+### Every file
+
+- A `sid` is a 15-digit random integer unique across the whole project, so
+  content merges without renumbering. A `uid` is any value unique across all
+  layouts and the single-global object types. A single-global type like the
+  Timeline controller keeps the `uid` of its one instance in
+  `objectTypes/<Name>.json`, so a layout instance numbered from the highest
+  layout uid alone can collide with it. With UID numbering set to Random
+  (`"uidAllocationMode": "random"`), Construct gives new instances six-digit
+  random uids, which keep two branches of a project under source control apart
+  (`docs/decisions/random-uid-allocation.md`).
+- Files are UTF-8 with raw non-ASCII, tab indent, LF, no trailing newline and
+  no byte order mark. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
+  reproduces the editor's output byte for byte. A file that starts with a byte
+  order mark still opens. [observed: the official examples carry none; an event
+  sheet and a `project.c3proj` with one opened in the stable editor, October
+  2026]
+- A Save of a folder project writes only the files of what was edited. So a
+  hand-written file keeps its form, including keys the editor would rewrite,
+  until something in it is edited in the editor. Save as project folder and
+  Download a copy write every file. [observed in a game project, r504, October
+  2026: a Save after opening an unedited folder wrote no file; two folder
+  saves rewrote only the edited layout and `project.c3proj`]
+- The editor leaves empty lists out: an event without sub-events has no
+  `children`, a function or custom action call without arguments no
+  `parameters`, an animation frame without image points no `imagePoints`. A
+  `[]` loads, and the next save of its file drops it. [observed in a game
+  project, r504, October 2026: each of these written back by hand into a
+  saved project came back as described from Save as project folder]
+
+### Event sheets
+
 - Comparison parameters are integers: 0 `=`, 1 `≠`, 2 `<`, 3 `≤`, 4 `>`, 5 `≥`.
 - String parameters keep their quotes: `"tag": "\"attack\""`. `layer` is an
   index string `"2"` or a quoted name `"\"Graphics\""`. `create-hierarchy` is a
@@ -63,12 +95,6 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   editor: it silently keeps the default. A key is its key code as a JSON number
   (`"key": 32`); a string stops the load with `expected finite number`. A JSON
   string `"false"` in a boolean parameter reads as true.
-- `plugin-id`, `behaviorId` and the `id` of a `usedAddons` entry use the
-  editor's exact spelling, `originalId` in `data/c3-schemas/_index.json`. `Arr`
-  is Array, `Json` JSON, `TiledBg` Tiled Background, `EightDir` 8 Direction and
-  `Sin` Sine. `solid`, `scrollto`, `jumpthru`, `bound`, `wrap`, `destroy` and
-  `gamepad` are lowercase. Any other spelling stops the load with
-  `missing plugin id`.
 - An event variable's `initialValue` is text whatever its `type`: `"0"`,
   `"hello"` without inner quotes, and for a boolean `"true"` or `"false"`,
   lowercase. The editor reads a boolean by comparing the text to `"true"`, so a
@@ -76,10 +102,6 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   text that does not parse reads as 0. A function parameter's `initialValue`
   may also be a JSON number; anything else stops the load with
   `invalid type of initialValue`.
-- A layout instance's `instanceVariables` map holds JSON values by type, with
-  no quotes on a number or a boolean: `{"hp": 3, "dead": false, "label": "a"}`.
-- An instance's `world.angle` is in radians: 270 degrees is `4.7124`. A
-  generator uses `math.radians`; `Angle` in events stays in degrees.
 - A function call is
   `{"callFunction": "name", "sid": N, "parameters": ["expr", ...]}`. A
   function block has `functionCopyPicked` (boolean) and `functionParameters`
@@ -100,21 +122,29 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   (`"file": "DefaultProfile.json"`) and `"file": {"path": "data/enemy.json"}`
   for a file in a subfolder. A bare name for a subfolder file loads and is
   rewritten to the object form on save.
-- A family is `families/<Name>.json` (`name`, `plugin-id`, `sid`,
-  `instanceVariables`, `behaviorTypes`, `effectTypes`, `members`), listed under
-  `families` in `project.c3proj` like an object type. A container has no file:
-  `project.c3proj` holds `"containers": [{"members": ["TankBase",
-  "TankTurret"]}]`, with object type names as members and no `selectMode`.
-  Nothing under `objectTypes/` names a container.
-- The editor sorts some lists of `project.c3proj` on save, so an entry appended
-  at the end moves in the diff of the next save. `usedAddons` holds plugins,
-  then behaviors, then effects, each sorted by `id` in code point order,
-  uppercase before lowercase: `AJAX` before `AdvancedRandom`, `Touch` before
-  `gamepad`. A container's `members` are sorted without regard to case:
-  `enemyHpText` before `EnemyStats`. Insert an entry where the sort puts it.
-  [observed: Merge Game, r504, October 2026: a save moved `Timeline`,
-  `Spritefont2` and `Anchor` from the end of `usedAddons` into place and
-  `CardFace` ahead of `CardShadow`]
+- You can omit parameters an ACE gained in a later release; the editor fills
+  their defaults on load. `pick-nearestfurthest` loads with `which`, `x`, `y`
+  alone, though the schema also lists `z` and `pick-all-tied`.
+- A family instance variable can be written through a member type:
+  `"objectClass": "Bat"`, `"instance-variable": "hp"` with `hp` declared on
+  family `EnemyGroup`.
+- A behavior declared on a family is used through a member type with the
+  family's behavior name: `"objectClass": "DragonHead", "behaviorType":
+  "Physics"` where only family `Parts` declares Physics. The member's layout
+  instances hold the family behavior's properties block as if it were their
+  own.
+
+### Layouts
+
+- A layout instance's `instanceVariables` map holds JSON values by type, with
+  no quotes on a number or a boolean: `{"hp": 3, "dead": false, "label": "a"}`.
+- An instance's `world.angle` is in radians: 270 degrees is `4.7124`. A
+  generator uses `math.radians`; `Angle` in events stays in degrees.
+- Instance `world` entries write Z elevation as `"z"` with a `"depth"` key;
+  layers use `zElevation`.
+- An effect's color parameter on a layout instance is four numbers,
+  `[1, 0.24, 0.27, 1]`. [observed in a project the editor r504 saved,
+  2026-10-03]
 - The editor saves every layout instance in one key order and number form, so a
   hand edit in another form comes back changed in the diff of the next save. An
   instance's key order is `type`, `properties`, `uid`, `sid`, `tags`,
@@ -126,28 +156,47 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   whether or not it has effects, and a nonworld instance gets none. Numbers are
   saved in their shortest form: `284.0` becomes `284`, `215.250` becomes
   `215.25`, `-0.0` becomes `0`. So a generator writes a whole float as an int.
-  [observed: Merge Game, r504, October 2026: Download a copy of a layout with
-  `effects` and `sceneGraphData` after `world`, `materialSurfaceType` removed
-  from Sprite, Tiled Background, 9-patch and Sprite font instances, and
-  `"y": 284.0` came back byte for byte as the editor had last saved it; a
+  [observed in a game project, r504, October 2026: Download a copy of a layout
+  with `effects` and `sceneGraphData` after `world`, `materialSurfaceType`
+  removed from Sprite, Tiled Background, 9-patch and Sprite Font instances,
+  and `"y": 284.0` came back byte for byte as the editor had last saved it; a
   folder save made the same changes]
-- A Save of a folder project writes only the files of what was edited. So a
-  hand-written file keeps its form, including keys the editor would rewrite,
-  until something in it is edited in the editor. Save as project folder and
-  Download a copy write every file. [observed: Merge Game, r504, October 2026:
-  a Save after opening an unedited folder wrote no file; the folder saves
-  c30d3ce and 2063f77 rewrote only the edited layout and `project.c3proj`]
-- The editor leaves empty lists out: an event without sub-events has no
-  `children`, a function or custom action call without arguments no
-  `parameters`, an animation frame without image points no `imagePoints`. A
-  `[]` loads, and the next save of its file drops it. For no hierarchy, leave
-  `sceneGraphData` out, because the save writes a full `sceneGraphData` block
-  for `"sceneGraphData": null`. A behavior property an instance lacks is saved
-  with its default (`"rotation-type": "2d"` for Rotate). An instance's
-  `instanceVariables` are saved family variables first, then the type's own,
-  each in declaration order. [observed: Merge Game, r504, October 2026: each of
-  these written back by hand into a saved project came back as described from
-  Save as project folder]
+- For no hierarchy, leave `sceneGraphData` out, because the save writes a full
+  `sceneGraphData` block for `"sceneGraphData": null`. A behavior property an
+  instance lacks is saved with its default (`"rotation-type": "2d"` for
+  Rotate). An instance's `instanceVariables` are saved family variables first,
+  then the type's own, each in declaration order. [observed in a game
+  project, r504, October 2026: each of these written back by hand into a
+  saved project came back as described from Save as project folder]
+- The save rewrites a layout instance's `world.originX` and `originY` to the
+  origin of the first frame of its initial animation, so write the frame's
+  values. An instance written with `"originY": 1` over a frame whose origin is
+  0.9929 is saved with 0.9929. [observed in a game project, r504, October
+  2026: instances whose `initial-frame` is 0, and a folder save]
+
+### Object types, families and `project.c3proj`
+
+- `plugin-id`, `behaviorId` and the `id` of a `usedAddons` entry use the
+  editor's exact spelling, `originalId` in `data/c3-schemas/_index.json`. `Arr`
+  is Array, `Json` JSON, `TiledBg` Tiled Background, `EightDir` 8 Direction and
+  `Sin` Sine. `solid`, `scrollto`, `jumpthru`, `bound`, `wrap`, `destroy` and
+  `gamepad` are lowercase. Any other spelling stops the load with
+  `missing plugin id`.
+- A family is `families/<Name>.json` (`name`, `plugin-id`, `sid`,
+  `instanceVariables`, `behaviorTypes`, `effectTypes`, `members`), listed under
+  `families` in `project.c3proj` like an object type. A container has no file:
+  `project.c3proj` holds `"containers": [{"members": ["TankBase",
+  "TankTurret"]}]`, with object type names as members and no `selectMode`.
+  Nothing under `objectTypes/` names a container.
+- The editor sorts some lists of `project.c3proj` on save, so an entry appended
+  at the end moves in the diff of the next save. `usedAddons` holds plugins,
+  then behaviors, then effects, each sorted by `id` in code point order,
+  uppercase before lowercase: `AJAX` before `AdvancedRandom`, `Touch` before
+  `gamepad`. A container's `members` are sorted without regard to case:
+  `heroLabel` before `HeroStats`. Insert an entry where the sort puts it.
+  [observed in a game project, r504, October 2026: a save moved `Timeline`,
+  `Spritefont2` and `Anchor` from the end of `usedAddons` into place and
+  reordered a container's members]
 - The save leaves out a frame's `collisionPoly` when it is the whole image in
   the editor's vertex order, `[0, 0, 1, 0, 1, 1, 0, 1]`. It keeps
   `useCollisionPoly`, `true` or `false`. A frame without `collisionPoly`
@@ -159,51 +208,6 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   false; both frames in the editor's order came back without
   `collisionPoly` and with their `useCollisionPoly`, the other two as
   written]
-- The save rewrites a layout instance's `world.originX` and `originY` to the
-  origin of the first frame of its initial animation, so write the frame's
-  values. An instance written with `"originY": 1` over a frame whose origin is
-  0.9929 is saved with 0.9929. [observed: Merge Game, r504, October 2026,
-  instances whose `initial-frame` is 0, and folder save c30d3ce]
-- A family instance variable can be written through a member type:
-  `"objectClass": "enemyBase"`, `"instance-variable": "hp"` with `hp` declared
-  on family `EnemyGroup`.
-- You can omit parameters an ACE gained in a later release; the editor fills
-  their defaults on load. `pick-nearestfurthest` loads with `which`, `x`, `y`
-  alone, though the schema also lists `z` and `pick-all-tied`.
-- A `sid` is a 15-digit random integer unique across the whole project, so
-  content merges without renumbering. A `uid` is any value unique across all
-  layouts and the single-global object types. A single-global type like the
-  Timeline controller keeps the `uid` of its one instance in
-  `objectTypes/<Name>.json`, so a layout instance numbered from the highest
-  layout uid alone can collide with it. With UID numbering set to Random
-  (`"uidAllocationMode": "random"`), Construct gives new instances six-digit
-  random uids, which keep two branches of a project under source control apart
-  (`docs/decisions/random-uid-allocation.md`).
-- Files are UTF-8 with raw non-ASCII, tab indent, LF, no trailing newline and
-  no byte order mark. Python `json.dumps(obj, indent="\t", ensure_ascii=False)`
-  reproduces the editor's output byte for byte. A file that starts with a byte
-  order mark still opens. [observed: the official examples carry none; an event
-  sheet and a `project.c3proj` with one opened in the stable editor, October
-  2026]
-- Local Storage is an IndexedDB database named `c3-localstorage-` plus the
-  project's `uniqueId`, so it survives closing the preview and is separate per
-  project. A tool that rewrites `project.c3proj` must keep `uniqueId`, or the
-  project loses its saved data. [runtime: exported c3runtime.js
-  `_GetProjectStorage`; manual:
-  scripting/scripting-reference/interfaces/istorage.md "unique to the specific
-  project"]
-- A behavior declared on a family is used through a member type with the
-  family's behavior name: `"objectClass": "DragonHead", "behaviorType":
-  "Physics"` where only family `Parts` declares Physics. The member's layout
-  instances hold the family behavior's properties block as if it were their
-  own.
-- A project with Bundle addons set, the test project of an addon under
-  development, holds `"bundleAddons": true` in `project.c3proj`, each bundled addon's `usedAddons` entry with
-  `"bundled": true` and its `"version"`, and the addon itself at
-  `addons/<type>/<id>.c3addon`, `addons/effect/<id>.c3addon` for an
-  effect. An effect's color parameter on a layout instance is four
-  numbers, `[1, 0.24, 0.27, 1]`. [observed in a project the editor r504
-  saved, 2026-10-03]
 - A Sprite Font has `"plugin-id": "Spritefont2"` and an `image` block in its
   object type file, as a Tiled Background has. Its picture is
   `images/<lowercase name>.png`, its `usedAddons` entry `{"type": "plugin",
@@ -216,8 +220,19 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   `"[[25,\".\"],[53,\"0123456789\"]]"`, or `""` for none. [examples:
   animated-spritefont-effects, 3d-castle-maze `TextFont`; a game project the
   editor r504 opened and previewed, 2026-09-30]
-- Instance `world` entries write Z elevation as `"z"` with a `"depth"` key;
-  layers use `zElevation`.
+- A project with Bundle addons set, the test project of an addon under
+  development, holds `"bundleAddons": true` in `project.c3proj`, each bundled
+  addon's `usedAddons` entry with `"bundled": true` and its `"version"`, and
+  the addon itself at `addons/<type>/<id>.c3addon`,
+  `addons/effect/<id>.c3addon` for an effect. [observed in a project the
+  editor r504 saved, 2026-10-03]
+- Local Storage is an IndexedDB database named `c3-localstorage-` plus the
+  project's `uniqueId`, so it survives closing the preview and is separate per
+  project. A tool that rewrites `project.c3proj` must keep `uniqueId`, or the
+  project loses its saved data. [runtime: exported c3runtime.js
+  `_GetProjectStorage`; manual:
+  scripting/scripting-reference/interfaces/istorage.md "unique to the specific
+  project"]
 
 ## Timelines and custom eases
 

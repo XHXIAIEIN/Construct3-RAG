@@ -1,9 +1,9 @@
 # A new project: sheets, layers, objects and look
 
-This file shows how the official examples lay out a project: its sheets and
-groups, then its viewport, colours, grid, HUD, folders, layers and objects.
-Read it to generate a project or add a layout, layer, event sheet, group or
-object type to one. Design the events first with
+Read this to generate a project or add a layout, layer, event sheet, group or
+object type to one. It shows how the official examples lay out a project: its
+sheets and groups, then its viewport, colours, grid, HUD, folders, layers and
+objects. Design the events first with
 [event-sheet-thinking.md](../event-sheet-thinking.md).
 
 ## Sheets and groups
@@ -33,7 +33,7 @@ and how to name and comment it.
 kiwi-story, samuroof, airborne-explorer, family-tree, labyrinth; survey of
 Construct-Example-Projects, 2026-09-18]
 
-## Project
+## Viewport, look and HUD
 
 - Pixel art uses a 320×180 viewport, *Nearest* sampling and *Letterbox
   integer scale*; other art 1920×1080 and *Trilinear*. A one-screen game's
@@ -79,6 +79,9 @@ Construct-Example-Projects, 2026-09-18]
   spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. The
   generator template holds these as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`,
   `hud_text()`, `row()` and `no_overlap()`.
+
+## Layouts, sheets, folders and layers
+
 - One `ObjectRepository` layout, with no event sheet, holds one instance of
   every type the events create, nothing else. No object is global.
 - `MainCode` is the only sheet up to about sixty types. Beyond that each
@@ -92,6 +95,9 @@ Construct-Example-Projects, 2026-09-18]
 - Layers, bottom to top: `Background`, `World`, then `UI` (or `HUD`) and
   `Fader`, each at parallax 0; `Tutorial` has its own layer. A layout has
   two or three.
+
+## Objects
+
 - Collision is apart from graphics. `PlayerCollision` is an invisible
   one-colour Sprite with Platform or 8 Direction, and `PlayerGraphics` holds
   the animations and no behavior. The two are a container; *PlayerCollision:
@@ -113,12 +119,12 @@ Construct-Example-Projects, 2026-09-18]
   with Solid are tested with *On collision* or *Is overlapping* and told
   apart by an instance variable.
 - `Fader` is a viewport-sized one-colour Tiled Background on the top layer,
-  with Tween on opacity. *On tweens finished* runs *Go to layout* or *Restart
+  with Tween on opacity. *On finished* runs *Go to layout* or *Restart
   layout*.
 - A light is a one-colour Sprite with *Additive* blend, soft-edged by a Glow
   or Blur effect. Darkness is a `Darkness` sprite or layer with *Destination
   out* holes, on a layer with *Force own texture*.
-- Two games of three use SpriteFont for text, the third the Text plugin. No
+- Two games of three use Sprite Font for text, the third the Text plugin. No
   project uses both.
 - Behaviors make the feel: Tween on almost everything, a fade included (Tween
   on Opacity), Timer, Sine, Flash, Rotate, Bullet, Particles. The effects
