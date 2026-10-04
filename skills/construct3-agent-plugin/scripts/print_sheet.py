@@ -6,8 +6,8 @@
 Conditions and actions are worded from the schema's display-text, in the
 locale of --locale, at about a quarter of the JSON's length; one the editor
 has deprecated ends in [deprecated], and the schema may not word it. One the
-editor has disabled ends in [disabled]: the event runs as if it were not
-there. A disabled event or group ends its first line in [event disabled],
+editor has disabled ends in [condition disabled] or [action disabled]: the
+event runs as if that line were not there, and its other lines run. A disabled event or group ends its first line in [event disabled],
 so that it does not read as a disabled first condition. It reads any
 folder project, an official example included. An event without conditions
 reads (every tick) at the top of the sheet, in a group or not, and (runs
@@ -150,13 +150,13 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
                 lines.append(f"{'function' if et == 'function-block' else 'custom action'} {name}({params})"
                              + (f" -> {returns}" if returns != "none" else "")
                              + (" [copy picked]" if ev.get("functionCopyPicked") else ""))
-            lines += [wording(p, "conditions", c) + (" [disabled]" if c.get("disabled") else "")
+            lines += [wording(p, "conditions", c) + (" [condition disabled]" if c.get("disabled") else "")
                       for c in ev.get("conditions", [])]
             joiner = "OR " if ev.get("isOrBlock") else ""
             head = [f"{number if i == 0 else '     '}{pad}{joiner if i else ''}{line}"
                     + (" [event disabled]" if ev.get("disabled") and i == 0 else "")
                     for i, line in enumerate(lines or [unconditional])]
-            body = [f"     {pad}    -> {wording(p, 'actions', a)}" + (" [disabled]" if a.get("disabled") else "")
+            body = [f"     {pad}    -> {wording(p, 'actions', a)}" + (" [action disabled]" if a.get("disabled") else "")
                     for a in ev.get("actions", [])]
         row = Row(counter[0] if et in NUMBERED else counter[0] + 1, head, body, above)
         yield row

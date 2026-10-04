@@ -147,8 +147,8 @@ def test_plan_shows_a_condition_or_action_it_disables_as_disabled(project):
     code, out = plan(project, {"event": 5, "condition": 2, "set": {"disabled": True}},
                      {"event": 7, "action": 1, "set": {"disabled": True}})
     assert code == 0, out
-    assert "       Coin: NOT Is any Tween playing [disabled]\n" in out
-    assert "         -> System: Add points to score [disabled]\n" in out
+    assert "       Coin: NOT Is any Tween playing [condition disabled]\n" in out
+    assert "         -> System: Add points to score [action disabled]\n" in out
     assert events(json.loads((project / SHEET).read_text(encoding="utf-8")))["input"]["conditions"][1]["disabled"] is True
 
 

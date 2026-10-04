@@ -153,13 +153,14 @@ def test_print_marks_what_the_editor_has_disabled(project):
     for locale in ("en-US", "zh-CN"):
         code, out = tool(project, "print_sheet", "Game", "--locale", locale)
         assert code == 0, out
-        assert out.count(" [disabled]") == 4 and out.count(" [event disabled]") == 2, out
+        assert out.count(" [condition disabled]") == 2 and out.count(" [action disabled]") == 2, out
+        assert out.count(" [event disabled]") == 2, out
     code, out = tool(project, "print_sheet", "Game")
-    assert "   5   Touch: On touched Coin (start)\n       Coin: NOT Is any Tween playing [disabled]\n" \
-           "           -> Coin: Collect() [disabled]" in out
-    assert "   7 function AddScore(points: number)\n         -> System: Add points to score [disabled]" in out
+    assert "   5   Touch: On touched Coin (start)\n       Coin: NOT Is any Tween playing [condition disabled]\n" \
+           "           -> Coin: Collect() [action disabled]" in out
+    assert "   7 function AddScore(points: number)\n         -> System: Add points to score [action disabled]" in out
     assert "   8 group Restart [event disabled]\n" in out
-    assert "   9   System: Coin.Count = 0 [disabled] [event disabled]\n       System: Trigger once\n" in out
+    assert "   9   System: Coin.Count = 0 [condition disabled] [event disabled]\n       System: Trigger once\n" in out
 
 
 def test_scripts_write_utf8_and_survive_a_code_page_that_cannot(built):
