@@ -1129,6 +1129,11 @@ def deltas(by_case: dict[str, dict[str, dict]]) -> dict:
     return out
 
 
+def optional_json(path: Path) -> dict:
+    """A file a run has only once it has reported (timing.json) or been traced (trace.json); {} without it."""
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
 def main() -> int:
     if len(sys.argv) != 2 or sys.argv[1] in ("-h", "--help"):
         print(__doc__)
@@ -1147,18 +1152,19 @@ def main() -> int:
             graded = [{"text": text, "passed": ok, "evidence": evidence}
                       for text, (ok, evidence) in zip(case["assertions"], GRADERS[name](run), strict=True)]
             passed = sum(g["passed"] for g in graded)
+            score = f"{passed}/{len(graded)}"
             summary = {"passed": passed, "failed": len(graded) - passed, "total": len(graded),
                        "pass_rate": round(passed / len(graded), 3)}
             (run / "grading.json").write_text(json.dumps({"assertion_results": graded, "summary": summary},
                                                          indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-            timing = json.loads((run / "timing.json").read_text(encoding="utf-8")) if (run / "timing.json").exists() else {}
-            trace = json.loads((run / "trace.json").read_text(encoding="utf-8")) if (run / "trace.json").exists() else {}
+            timing = optional_json(run / "timing.json")
+            trace = optional_json(run / "trace.json")
             arm = re.sub(r"_\d+$", "", run.name)           # with_skill_2 is a second run of with_skill
             cells.setdefault(name, {}).setdefault(arm, []).append({
-                "run": run.name, "passed": f"{passed}/{len(graded)}", "pass_rate": summary["pass_rate"],
+                "run": run.name, "passed": score, "pass_rate": summary["pass_rate"],
                 "tokens": timing.get("total_tokens"), "seconds": round(timing["duration_ms"] / 1000, 1) if timing else None,
                 **{k: trace[k] for k in ("tool_calls", "lost_calls") if k in trace}})
-            print(f"{name}/{run.name}: {passed}/{len(graded)}" + ("" if timing else "  (no timing.json)"))
+            print(f"{name}/{run.name}: {score}" + ("" if timing else "  (no timing.json)"))
             for g in graded:
                 if not g["passed"]:
                     print(f"    FAIL {g['text']}\n         {g['evidence']}")
@@ -1169,12 +1175,12 @@ def main() -> int:
                       for arm, runs in arms.items()} for name, arms in cells.items()}
     # Per arm, the mean of its cases' means: a deviation across different cases would measure the cases.
     arms = sorted({arm for case in by_case.values() for arm in case})
-    summary = {arm: {key: round(statistics.mean(means), 3) for key in METRICS
-                     if (means := [case[arm][key]["mean"] for case in by_case.values() if arm in case and case[arm].get(key)])}
-               for arm in arms}
-    summary["delta"] = deltas(by_case)
+    run_summary = {arm: {key: round(statistics.mean(means), 3) for key in METRICS
+                         if (means := [case[arm][key]["mean"] for case in by_case.values() if arm in case and case[arm].get(key)])}
+                   for arm in arms}
+    run_summary["delta"] = deltas(by_case)
     (iteration / "benchmark.json").write_text(json.dumps(
-        {"run_summary": summary, "by_case": by_case, "void_runs": void}, indent=2) + "\n", encoding="utf-8")
+        {"run_summary": run_summary, "by_case": by_case, "void_runs": void}, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {iteration / 'benchmark.json'}")
     return 0
 
