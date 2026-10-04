@@ -82,13 +82,15 @@ WRITING = {
     "objectname": ('"\\"\\""', "expression string, the object type's name as text: \"\\\"Enemy\\\"\""),
     "model3d-animation-string": ('"\\"\\""', "expression string, the animation name in inner quotes"),
 }
-# A parameter's initialValue in the schema is the editor's default as expression text,
-# "true" or "false" for a boolean. These types write it; a layer's default "" names no layer.
+# A parameter's initialValue in the schema is the editor's default: expression text, or a
+# JSON number for a few such as Set opacity's 100, and "true" or "false" for a boolean. A
+# project file writes every expression as text, "opacity": "100", and the checker refuses a
+# number there. These types write it; a layer's default "" names no layer.
 EDITOR_DEFAULT = {
     "boolean": lambda v: "true" if str(v).lower() == "true" else "false",
-    "number": json.dumps,
-    "string": json.dumps,
-    "any": json.dumps,
+    "number": lambda v: json.dumps(str(v)),
+    "string": lambda v: json.dumps(str(v)),
+    "any": lambda v: json.dumps(str(v)),
 }
 
 
