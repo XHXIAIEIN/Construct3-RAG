@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import inspect
+import json
 from dataclasses import FrozenInstanceError
 from pathlib import Path
 
 import pytest
 
+import src.settings as settings_module
 from src.settings import AppSettings, load_settings
 
 
@@ -54,8 +56,6 @@ def test_explicit_schema_override_always_wins(tmp_path):
 
 
 def test_version_is_the_one_the_committed_data_records():
-    import json
-
     manifest = json.loads(
         (Path(__file__).parent.parent / "data" / "c3-schemas" / "_index.json").read_text(encoding="utf-8")
     )
@@ -68,8 +68,6 @@ def test_invalid_integer_setting_fails(tmp_path):
 
 
 def test_typed_settings_module_has_no_dotenv_or_external_runtime_probe():
-    import src.settings as settings_module
-
     source = inspect.getsource(settings_module)
 
     assert "dotenv" not in source

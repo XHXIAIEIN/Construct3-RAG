@@ -2,7 +2,9 @@
 
 import json
 import re
+from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 
 from src.locale.resources import (
     ACE_DIRECTED_ALIASES,
@@ -29,7 +31,7 @@ def test_catalog_stores_localized_values_side_by_side():
         assert set(resource["intent_keywords"]) == locale_keys
 
 
-def _catalog_resources():
+def _catalog_resources() -> Iterator[dict[str, Any]]:
     query = CATALOG["query"]
     yield from query["ace_types"].values()
     for rules in query["grammar"].values():
