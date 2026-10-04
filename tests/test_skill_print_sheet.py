@@ -1,10 +1,10 @@
 """print_sheet.py: the event sheet in the words of the editor."""
-import json
 import os
 import re
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -78,14 +78,14 @@ def test_expression_names_are_english_in_every_locale(built):
 
 def test_print_stops_at_the_limit_and_names_the_part_that_continues(built):
     """A harness cuts long output without saying where; the script stops at an event and says how to go on."""
-    code, whole = tool(built, "print_sheet", "Game")
-    parts, events = [], "1-"
-    while events:
-        code, out = tool(built, "print_sheet", "Game", "--events", events, "--limit", "900")
+    _, whole = tool(built, "print_sheet", "Game")
+    parts, span = [], "1-"
+    while span:
+        code, out = tool(built, "print_sheet", "Game", "--events", span, "--limit", "900")
         assert code == 0 and len(out) < 1500, out
         parts.append(out)
         last = out.splitlines()[-1]
-        events = re.search(r"--events (\d+-)", last).group(1) if last.startswith("-- stopped at the limit") else None
+        span = re.search(r"--events (\d+-)", last).group(1) if last.startswith("-- stopped at the limit") else None
     assert len(parts) > 1 and parts[0].startswith("== Game: events 1-")
     printed = {line for part in parts for line in part.splitlines() if "[context]" not in line}
     assert [line for line in whole.splitlines()[1:] if line not in printed] == []
@@ -100,9 +100,9 @@ def test_print_of_a_part_starts_with_the_events_it_sits_in(built):
     assert "Touch: On touched" not in out
 
 
-@pytest.mark.parametrize("events, said", [("40-", "has 9 events"), ("x", "40-80, 40- or 40"), ("5-2", "ends before it starts")])
-def test_print_refuses_a_range_it_cannot_read(built, events, said):
-    code, out = tool(built, "print_sheet", "Game", "--events", events)
+@pytest.mark.parametrize("span, said", [("40-", "has 9 events"), ("x", "40-80, 40- or 40"), ("5-2", "ends before it starts")])
+def test_print_refuses_a_range_it_cannot_read(built, span, said):
+    code, out = tool(built, "print_sheet", "Game", "--events", span)
     assert code == 1 and said in out
 
 
@@ -129,7 +129,7 @@ def test_print_counts_the_lines_of_a_script_stored_either_way(project):
     assert "script, 67 lines" not in out and "script, 1 lines" not in out, out
 
 
-def add_script(project, lines: int = 2) -> None:
+def add_script(project: Path, lines: int = 2) -> None:
     (project / "scripts").mkdir(exist_ok=True)
     (project / "scripts" / "main.js").write_text("\n".join(["// game"] * lines), encoding="utf-8")
     def listed(data):
@@ -180,7 +180,8 @@ def test_scripts_write_utf8_and_survive_a_code_page_that_cannot(built):
     script = built / INSTALLED / "scripts" / "print_sheet.py"
     for codec, want in ((None, "场景开始"), ("cp1252", "System: ")):
         env = {k: v for k, v in os.environ.items() if k not in ("PYTHONIOENCODING", "PYTHONUTF8")}
-        env.update({"PYTHONIOENCODING": codec} if codec else {})
+        if codec:
+            env["PYTHONIOENCODING"] = codec
         p = subprocess.run([sys.executable, str(script), "Game", "--locale", "zh-CN", "--rag", str(REPO)],
                            cwd=built, env=env, capture_output=True)
         assert p.returncode == 0, p.stdout + p.stderr
@@ -189,10 +190,7 @@ def test_scripts_write_utf8_and_survive_a_code_page_that_cannot(built):
 
 def test_print_names_a_renamed_functions_object(project):
     """A model read Renamed.Potion as a function named after the Functions object."""
-    proj = project / "project.c3proj"
-    data = json.loads(proj.read_text(encoding="utf-8"))
-    data["functionsName"] = "Calls"
-    proj.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8")
+    edit(project, "project.c3proj", lambda data: data.update(functionsName="Calls"))
     code, out = tool(project, "print_sheet", "Game")
     assert code == 0, out
     assert out.startswith("note: Calls is this project's name for the built-in Functions object"), out
