@@ -86,7 +86,8 @@
         "offset": {
           "type": "number",
           "name": "起始值",
-          "desc": "序列表中的首位最小值。"
+          "desc": "序列表中的首位最小值。",
+          "initialValue": "0"
         }
       }
     },
@@ -144,12 +145,14 @@
         "value": {
           "type": "any",
           "name": "数值",
-          "desc": "元素的值"
+          "desc": "元素的值",
+          "initialValue": "\"\""
         },
         "weight": {
           "type": "number",
           "name": "元素权重",
-          "desc": "此在列表中出现的概率权重"
+          "desc": "此在列表中出现的概率权重",
+          "initialValue": "1"
         }
       }
     },
@@ -164,12 +167,14 @@
         "value": {
           "type": "any",
           "name": "数值",
-          "desc": "元素的数值"
+          "desc": "元素的数值",
+          "initialValue": "\"\""
         },
         "weight": {
           "type": "number",
           "name": "元素权重",
-          "desc": "此元素的权重，只有权重相同的才会被删除。填写 0 则匹配第 1 项。"
+          "desc": "此元素的权重，只有权重相同的才会被删除。填写 0 则匹配第 1 项。",
+          "initialValue": "0"
         }
       }
     },
@@ -214,7 +219,8 @@
         "count": {
           "type": "number",
           "name": "数量",
-          "desc": "要使用的分型倍数，从1至16。"
+          "desc": "要使用的分型倍数，从1至16。",
+          "initialValue": "1"
         }
       }
     }

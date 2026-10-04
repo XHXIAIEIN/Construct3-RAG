@@ -117,7 +117,8 @@
         "tag": {
           "type": "animationframe",
           "name": "标签",
-          "desc": "用于比较的动画帧标签。"
+          "desc": "用于比较的动画帧标签。",
+          "initialValue": "\"\""
         }
       }
     },
@@ -311,7 +312,8 @@
         "where": {
           "type": "animationframe",
           "name": "位置",
-          "desc": "要插入或删除动画帧的编号或标签。使用 -1 指定最后一帧。"
+          "desc": "要插入或删除动画帧的编号或标签。使用 -1 指定最后一帧。",
+          "initialValue": "-1"
         }
       }
     },
@@ -411,7 +413,8 @@
         "create-hierarchy": {
           "type": "boolean",
           "name": "创建子对象",
-          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
+          "initialValue": "false"
         },
         "template-name": {
           "type": "template",
@@ -474,7 +477,8 @@
         "scale": {
           "type": "number",
           "name": "大小",
-          "desc": "设置对象整体尺寸的倍数，1：原始尺寸，2：扩大两倍，0.5：缩小一半"
+          "desc": "设置对象整体尺寸的倍数，1：原始尺寸，2：扩大两倍，0.5：缩小一半",
+          "initialValue": "1"
         }
       }
     },
@@ -489,7 +493,8 @@
         "uri": {
           "type": "string",
           "name": "URI",
-          "desc": "要导入的远程图像地址或通过表达式返回的数据地址。"
+          "desc": "要导入的远程图像地址或通过表达式返回的数据地址。",
+          "initialValue": "\"https://\""
         },
         "size": {
           "type": "combo",

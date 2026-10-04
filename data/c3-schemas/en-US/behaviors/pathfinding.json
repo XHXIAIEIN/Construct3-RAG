@@ -194,7 +194,8 @@
         "move-cost": {
           "type": "number",
           "name": "Move cost",
-          "desc": "The basic cost to move to an adjacent cell while calculating a path."
+          "desc": "The basic cost to move to an adjacent cell while calculating a path.",
+          "initialValue": "10"
         }
       }
     },
@@ -214,7 +215,8 @@
         "cost": {
           "type": "number",
           "name": "Cost",
-          "desc": "The additional cost to travel over this object. Note normal costs are 10 and 14 for horizontal/diagonal movement respectively."
+          "desc": "The additional cost to travel over this object. Note normal costs are 10 and 14 for horizontal/diagonal movement respectively.",
+          "initialValue": "50"
         }
       }
     },
@@ -284,17 +286,20 @@
         "base-cost": {
           "type": "number",
           "name": "Base cost",
-          "desc": "The extra cost to add around found paths, which is multiplied depending on the number of workers used."
+          "desc": "The extra cost to add around found paths, which is multiplied depending on the number of workers used.",
+          "initialValue": "1"
         },
         "cell-spread": {
           "type": "number",
           "name": "Cell spread",
-          "desc": "The number of cells around the found path to increase cost for. Prefer to use an odd number."
+          "desc": "The number of cells around the found path to increase cost for. Prefer to use an odd number.",
+          "initialValue": "1"
         },
         "max-workers": {
           "type": "number",
           "name": "Max workers",
-          "desc": "The maximum number of worker threads to distribute paths across for this group. Each worker tracks costs separately."
+          "desc": "The maximum number of worker threads to distribute paths across for this group. Each worker tracks costs separately.",
+          "initialValue": "1"
         }
       }
     },

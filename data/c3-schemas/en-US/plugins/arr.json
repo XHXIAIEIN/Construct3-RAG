@@ -222,17 +222,20 @@
         "width": {
           "type": "number",
           "name": "Width",
-          "desc": "The new number of elements on the X axis."
+          "desc": "The new number of elements on the X axis.",
+          "initialValue": "1"
         },
         "height": {
           "type": "number",
           "name": "Height",
-          "desc": "The new number of elements on the Y axis."
+          "desc": "The new number of elements on the Y axis.",
+          "initialValue": "1"
         },
         "depth": {
           "type": "number",
           "name": "Depth",
-          "desc": "The new number of elements on the Z axis."
+          "desc": "The new number of elements on the Z axis.",
+          "initialValue": "1"
         }
       }
     },
@@ -337,7 +340,8 @@
         "filename": {
           "type": "string",
           "name": "Filename",
-          "desc": "The name of the file to download."
+          "desc": "The name of the file to download.",
+          "initialValue": "\"data.json\""
         }
       }
     },
@@ -537,7 +541,8 @@
         "separator": {
           "type": "string",
           "name": "Separator",
-          "desc": "The character to use to split the string."
+          "desc": "The character to use to split the string.",
+          "initialValue": "\",\""
         },
         "type": {
           "type": "combo",
@@ -689,7 +694,8 @@
         "separator": {
           "type": "string",
           "name": "Separator",
-          "desc": "The character to use to join the string."
+          "desc": "The character to use to join the string.",
+          "initialValue": "\",\""
         }
       },
       "returnType": "string"

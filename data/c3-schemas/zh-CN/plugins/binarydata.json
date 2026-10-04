@@ -211,12 +211,14 @@
         "offset": {
           "type": "number",
           "name": "偏移",
-          "desc": "起始位的偏移量，以字节为单位。"
+          "desc": "起始位的偏移量，以字节为单位。",
+          "initialValue": "0"
         },
         "length": {
           "type": "number",
           "name": "长度",
-          "desc": "要填充的区域长度，以字节为单位。使用 -1 表示尾部。"
+          "desc": "要填充的区域长度，以字节为单位。使用 -1 表示尾部。",
+          "initialValue": "-1"
         }
       }
     },
@@ -236,17 +238,20 @@
         "start": {
           "type": "number",
           "name": "起始位置",
-          "desc": "范围的起始值(包含)，以字节为单位。"
+          "desc": "范围的起始值(包含)，以字节为单位。",
+          "initialValue": "0"
         },
         "length": {
           "type": "number",
           "name": "长度",
-          "desc": "字节范围长度。使用 -1 表示尾部。"
+          "desc": "字节范围长度。使用 -1 表示尾部。",
+          "initialValue": "-1"
         },
         "target": {
           "type": "number",
           "name": "目标",
-          "desc": "插入范围的位置，以字节为单位。"
+          "desc": "插入范围的位置，以字节为单位。",
+          "initialValue": "0"
         }
       }
     },

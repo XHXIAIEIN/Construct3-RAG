@@ -369,12 +369,14 @@
         "min-size": {
           "type": "number",
           "name": "Min size",
-          "desc": "The minimum number of participants that a suggested context should ideally have. Use -1 to specify no limit."
+          "desc": "The minimum number of participants that a suggested context should ideally have. Use -1 to specify no limit.",
+          "initialValue": "-1"
         },
         "max-size": {
           "type": "number",
           "name": "Max size",
-          "desc": "The maximum number of participants that a suggested context should ideally have. Use -1 to specify no limit."
+          "desc": "The maximum number of participants that a suggested context should ideally have. Use -1 to specify no limit.",
+          "initialValue": "-1"
         }
       },
       "isAsync": true
@@ -390,7 +392,8 @@
         "data": {
           "type": "any",
           "name": "Data",
-          "desc": "A string of data to save for the player. Consider using a JSON string, e.g. from the Dictionary plugin."
+          "desc": "A string of data to save for the player. Consider using a JSON string, e.g. from the Dictionary plugin.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -521,7 +524,8 @@
         "count": {
           "type": "number",
           "name": "Count",
-          "desc": "The number of leaderboard scores to request."
+          "desc": "The number of leaderboard scores to request.",
+          "initialValue": "10"
         }
       },
       "isAsync": true

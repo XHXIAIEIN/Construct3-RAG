@@ -169,7 +169,8 @@
         "filename": {
           "type": "string",
           "name": "文件名",
-          "desc": "要下载的文件的名称。"
+          "desc": "要下载的文件的名称。",
+          "initialValue": "\"tilemap.json\""
         }
       }
     },
@@ -254,12 +255,14 @@
         "width": {
           "type": "number",
           "name": "宽度",
-          "desc": "要擦除的横向图块数量。"
+          "desc": "要擦除的横向图块数量。",
+          "initialValue": "1"
         },
         "height": {
           "type": "number",
           "name": "高度",
-          "desc": "要擦除的纵向图块数量。"
+          "desc": "要擦除的纵向图块数量。",
+          "initialValue": "1"
         }
       }
     },
@@ -284,12 +287,14 @@
         "width": {
           "type": "number",
           "name": "宽度",
-          "desc": "要设置的横向图块数量。"
+          "desc": "要设置的横向图块数量。",
+          "initialValue": "1"
         },
         "height": {
           "type": "number",
           "name": "高度",
-          "desc": "要擦除的纵向图块数量。"
+          "desc": "要擦除的纵向图块数量。",
+          "initialValue": "1"
         },
         "tile": {
           "type": "number",
@@ -369,12 +374,14 @@
         "width": {
           "type": "number",
           "name": "宽度",
-          "desc": "要设置的图块在水平方向的数量。"
+          "desc": "要设置的图块在水平方向的数量。",
+          "initialValue": "1"
         },
         "height": {
           "type": "number",
           "name": "高度",
-          "desc": "要设置的图块在垂直方向的数量。"
+          "desc": "要设置的图块在垂直方向的数量。",
+          "initialValue": "1"
         },
         "state": {
           "type": "combo",
@@ -519,12 +526,14 @@
         "mirror": {
           "type": "boolean",
           "name": "左右翻转",
-          "desc": "笔刷是否左右翻转。"
+          "desc": "笔刷是否左右翻转。",
+          "initialValue": "false"
         },
         "flip": {
           "type": "boolean",
           "name": "上下翻转",
-          "desc": "笔刷是否上下翻转。"
+          "desc": "笔刷是否上下翻转。",
+          "initialValue": "false"
         },
         "rotation": {
           "type": "combo",
@@ -574,12 +583,14 @@
         "mirror": {
           "type": "boolean",
           "name": "左右翻转",
-          "desc": "笔刷是否左右翻转。"
+          "desc": "笔刷是否左右翻转。",
+          "initialValue": "false"
         },
         "flip": {
           "type": "boolean",
           "name": "上下翻转",
-          "desc": "笔刷是否上下翻转。"
+          "desc": "笔刷是否上下翻转。",
+          "initialValue": "false"
         },
         "rotation": {
           "type": "combo",
@@ -620,12 +631,14 @@
         "mirror": {
           "type": "boolean",
           "name": "左右翻转",
-          "desc": "笔刷是否左右翻转。"
+          "desc": "笔刷是否左右翻转。",
+          "initialValue": "false"
         },
         "flip": {
           "type": "boolean",
           "name": "上下翻转",
-          "desc": "笔刷是否上下翻转。"
+          "desc": "笔刷是否上下翻转。",
+          "initialValue": "false"
         },
         "rotation": {
           "type": "combo",
@@ -675,12 +688,14 @@
         "mirror": {
           "type": "boolean",
           "name": "左右翻转",
-          "desc": "笔刷是否左右翻转。"
+          "desc": "笔刷是否左右翻转。",
+          "initialValue": "false"
         },
         "flip": {
           "type": "boolean",
           "name": "上下翻转",
-          "desc": "笔刷是否上下翻转。"
+          "desc": "笔刷是否上下翻转。",
+          "initialValue": "false"
         },
         "rotation": {
           "type": "combo",
@@ -706,7 +721,8 @@
         "uri": {
           "type": "string",
           "name": "URI",
-          "desc": "要下载图像或数据的远程服务器地址。"
+          "desc": "要下载图像或数据的远程服务器地址。",
+          "initialValue": "\"https://\""
         },
         "cross-origin": {
           "type": "combo",

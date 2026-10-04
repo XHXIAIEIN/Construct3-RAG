@@ -140,7 +140,8 @@
         "scale-x": {
           "type": "number",
           "name": "X scale",
-          "desc": "The X scale of the image within the object, as a percentage."
+          "desc": "The X scale of the image within the object, as a percentage.",
+          "initialValue": "100"
         }
       }
     },
@@ -155,7 +156,8 @@
         "scale-y": {
           "type": "number",
           "name": "Y scale",
-          "desc": "The Y scale of the image within the object, as a percentage."
+          "desc": "The Y scale of the image within the object, as a percentage.",
+          "initialValue": "100"
         }
       }
     },
@@ -189,7 +191,8 @@
         "uri": {
           "type": "string",
           "name": "URI",
-          "desc": "Enter the URL on the web, or data URI, of an image to load."
+          "desc": "Enter the URL on the web, or data URI, of an image to load.",
+          "initialValue": "\"https://\""
         }
       },
       "isAsync": true

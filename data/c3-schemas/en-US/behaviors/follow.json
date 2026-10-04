@@ -222,7 +222,8 @@
         "history-rate": {
           "type": "number",
           "name": "History rate",
-          "desc": "The rate in entries per second at which to remember changes in the followed object."
+          "desc": "The rate in entries per second at which to remember changes in the followed object.",
+          "initialValue": "30"
         }
       }
     },

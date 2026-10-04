@@ -264,17 +264,20 @@
         "playing": {
           "type": "boolean",
           "name": "初始播放",
-          "desc": "场景开始时，是否立即播放所选动画。"
+          "desc": "场景开始时，是否立即播放所选动画。",
+          "initialValue": "false"
         },
         "looping": {
           "type": "boolean",
           "name": "循环播放",
-          "desc": "所选动画是否循环播放。"
+          "desc": "所选动画是否循环播放。",
+          "initialValue": "false"
         },
         "progress": {
           "type": "number",
           "name": "动画进度",
-          "desc": "开始播放动画时，从指定进度开始。范围在 [0-1]"
+          "desc": "开始播放动画时，从指定进度开始。范围在 [0-1]",
+          "initialValue": "0"
         }
       },
       "isAsync": true
@@ -305,17 +308,20 @@
         "playing": {
           "type": "boolean",
           "name": "初始播放",
-          "desc": "场景开始时，是否立即播放所选动画。"
+          "desc": "场景开始时，是否立即播放所选动画。",
+          "initialValue": "false"
         },
         "looping": {
           "type": "boolean",
           "name": "循环播放",
-          "desc": "所选动画是否循环播放。"
+          "desc": "所选动画是否循环播放。",
+          "initialValue": "false"
         },
         "progress": {
           "type": "number",
           "name": "动画进度",
-          "desc": "开始播放动画时，从指定进度开始。范围在 [0-1]"
+          "desc": "开始播放动画时，从指定进度开始。范围在 [0-1]",
+          "initialValue": "0"
         }
       },
       "isAsync": true
@@ -371,17 +377,20 @@
         "playing": {
           "type": "boolean",
           "name": "初始播放",
-          "desc": "场景开始时，是否立即播放所选动画。"
+          "desc": "场景开始时，是否立即播放所选动画。",
+          "initialValue": "false"
         },
         "looping": {
           "type": "boolean",
           "name": "循环播放",
-          "desc": "所选动画是否循环播放。"
+          "desc": "所选动画是否循环播放。",
+          "initialValue": "false"
         },
         "progress": {
           "type": "number",
           "name": "进度",
-          "desc": "所选动画从哪里开始播放，取值区间在 [0-1] 范围。"
+          "desc": "所选动画从哪里开始播放，取值区间在 [0-1] 范围。",
+          "initialValue": "0"
         }
       }
     },
@@ -396,7 +405,8 @@
         "progress": {
           "type": "number",
           "name": "进度",
-          "desc": "设置动画的进度，取值在 [0-1] 范围内。"
+          "desc": "设置动画的进度，取值在 [0-1] 范围内。",
+          "initialValue": "0"
         }
       }
     },
@@ -411,17 +421,20 @@
         "x-transform": {
           "type": "number",
           "name": "X",
-          "desc": "要应用在 X 轴的变换值。"
+          "desc": "要应用在 X 轴的变换值。",
+          "initialValue": "0"
         },
         "y-transform": {
           "type": "number",
           "name": "Y",
-          "desc": "要应用在 Y 轴的变换值。"
+          "desc": "要应用在 Y 轴的变换值。",
+          "initialValue": "0"
         },
         "z-transform": {
           "type": "number",
           "name": "Z",
-          "desc": "要应用在 Z 轴的变换值。"
+          "desc": "要应用在 Z 轴的变换值。",
+          "initialValue": "0"
         },
         "operation": {
           "type": "combo",
@@ -594,12 +607,14 @@
         "looping": {
           "type": "boolean",
           "name": "循环播放",
-          "desc": "设置动画是否进入循环播放。"
+          "desc": "设置动画是否进入循环播放。",
+          "initialValue": "false"
         },
         "progress": {
           "type": "number",
           "name": "进度",
-          "desc": "所选动画应从哪里开始播放，使用区间 [0-1] 的值。"
+          "desc": "所选动画应从哪里开始播放，使用区间 [0-1] 的值。",
+          "initialValue": "0"
         }
       }
     },
@@ -657,7 +672,8 @@
         "uri": {
           "type": "string",
           "name": "URL",
-          "desc": "要加载的远程图像地址，或通过表达式返回的数据地址。"
+          "desc": "要加载的远程图像地址，或通过表达式返回的数据地址。",
+          "initialValue": "\"https://\""
         },
         "mesh": {
           "type": "model3d-mesh-string",

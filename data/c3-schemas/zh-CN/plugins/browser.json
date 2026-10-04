@@ -288,7 +288,8 @@
         "message": {
           "type": "any",
           "name": "信息",
-          "desc": "输入要在控制台中输出的信息"
+          "desc": "输入要在控制台中输出的信息",
+          "initialValue": "\"\""
         }
       }
     },
@@ -326,7 +327,8 @@
         "pattern": {
           "type": "string",
           "name": "模式",
-          "desc": "一组由逗号分割的字符串，表示在振动和停顿周期交替的持续时间，以毫秒为单位。其中 0 表示立即取消振动。"
+          "desc": "一组由逗号分割的字符串，表示在振动和停顿周期交替的持续时间，以毫秒为单位。其中 0 表示立即取消振动。",
+          "initialValue": "\"200,100,200\""
         }
       }
     },
@@ -356,17 +358,20 @@
         "property-name": {
           "type": "string",
           "name": "属性名称",
-          "desc": "要修改的 CSS 样式属性名称。"
+          "desc": "要修改的 CSS 样式属性名称。",
+          "initialValue": "\"border\""
         },
         "value": {
           "type": "string",
           "name": "值",
-          "desc": "要修改的 CSS 样式属性值的字符串。"
+          "desc": "要修改的 CSS 样式属性值的字符串。",
+          "initialValue": "\"1px solid red\""
         },
         "selector": {
           "type": "string",
           "name": "选择器",
-          "desc": "用于匹配元素的 CSS 选择器。"
+          "desc": "用于匹配元素的 CSS 选择器。",
+          "initialValue": "\"html\""
         },
         "type": {
           "type": "combo",
@@ -396,7 +401,8 @@
         "selector": {
           "type": "string",
           "name": "选择器",
-          "desc": "用于匹配元素的 CSS 选择器。"
+          "desc": "用于匹配元素的 CSS 选择器。",
+          "initialValue": "\"html\""
         },
         "tag": {
           "type": "string",
@@ -433,7 +439,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "输入要跳转的完整URL"
+          "desc": "输入要跳转的完整URL",
+          "initialValue": "\"https://\""
         },
         "target": {
           "type": "combo",
@@ -458,12 +465,14 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "输入要跳转的完整URL。"
+          "desc": "输入要跳转的完整URL。",
+          "initialValue": "\"https://\""
         },
         "tag": {
           "type": "string",
           "name": "标签",
-          "desc": "用于识别此窗口的标签。用于后续通过此标签来重现这个窗口。"
+          "desc": "用于识别此窗口的标签。用于后续通过此标签来重现这个窗口。",
+          "initialValue": "\"NewWindow\""
         }
       }
     },
@@ -511,12 +520,14 @@
         "mime-type": {
           "type": "string",
           "name": "MIME类型",
-          "desc": "给定数据的MIME类型。"
+          "desc": "给定数据的MIME类型。",
+          "initialValue": "\"application/json\""
         },
         "filename": {
           "type": "string",
           "name": "文件名",
-          "desc": "下载文件的文件名"
+          "desc": "下载文件的文件名",
+          "initialValue": "\"mydata.json\""
         }
       }
     },
@@ -561,7 +572,8 @@
         "message": {
           "type": "any",
           "name": "信息",
-          "desc": "输入要在对话框中显示的消息"
+          "desc": "输入要在对话框中显示的消息",
+          "initialValue": "\"\""
         }
       }
     },

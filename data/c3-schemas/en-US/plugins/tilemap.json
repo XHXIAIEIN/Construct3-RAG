@@ -169,7 +169,8 @@
         "filename": {
           "type": "string",
           "name": "Filename",
-          "desc": "The name of the file to download."
+          "desc": "The name of the file to download.",
+          "initialValue": "\"tilemap.json\""
         }
       }
     },
@@ -254,12 +255,14 @@
         "width": {
           "type": "number",
           "name": "Width",
-          "desc": "Number of tiles across to erase."
+          "desc": "Number of tiles across to erase.",
+          "initialValue": "1"
         },
         "height": {
           "type": "number",
           "name": "Height",
-          "desc": "Number of tiles down to erase."
+          "desc": "Number of tiles down to erase.",
+          "initialValue": "1"
         }
       }
     },
@@ -284,12 +287,14 @@
         "width": {
           "type": "number",
           "name": "Width",
-          "desc": "Number of tiles across to set."
+          "desc": "Number of tiles across to set.",
+          "initialValue": "1"
         },
         "height": {
           "type": "number",
           "name": "Height",
-          "desc": "Number of tiles down to set."
+          "desc": "Number of tiles down to set.",
+          "initialValue": "1"
         },
         "tile": {
           "type": "number",
@@ -369,12 +374,14 @@
         "width": {
           "type": "number",
           "name": "Width",
-          "desc": "Number of tiles across to set."
+          "desc": "Number of tiles across to set.",
+          "initialValue": "1"
         },
         "height": {
           "type": "number",
           "name": "Height",
-          "desc": "Number of tiles down to set."
+          "desc": "Number of tiles down to set.",
+          "initialValue": "1"
         },
         "state": {
           "type": "combo",
@@ -519,12 +526,14 @@
         "mirror": {
           "type": "boolean",
           "name": "Mirror",
-          "desc": "Whether to mirror the brush."
+          "desc": "Whether to mirror the brush.",
+          "initialValue": "false"
         },
         "flip": {
           "type": "boolean",
           "name": "Flip",
-          "desc": "Whether to flip the brush."
+          "desc": "Whether to flip the brush.",
+          "initialValue": "false"
         },
         "rotation": {
           "type": "combo",
@@ -574,12 +583,14 @@
         "mirror": {
           "type": "boolean",
           "name": "Mirror",
-          "desc": "Whether to mirror the brush."
+          "desc": "Whether to mirror the brush.",
+          "initialValue": "false"
         },
         "flip": {
           "type": "boolean",
           "name": "Flip",
-          "desc": "Whether to flip the brush."
+          "desc": "Whether to flip the brush.",
+          "initialValue": "false"
         },
         "rotation": {
           "type": "combo",
@@ -620,12 +631,14 @@
         "mirror": {
           "type": "boolean",
           "name": "Mirror",
-          "desc": "Whether to mirror the brush."
+          "desc": "Whether to mirror the brush.",
+          "initialValue": "false"
         },
         "flip": {
           "type": "boolean",
           "name": "Flip",
-          "desc": "Whether to flip the brush."
+          "desc": "Whether to flip the brush.",
+          "initialValue": "false"
         },
         "rotation": {
           "type": "combo",
@@ -675,12 +688,14 @@
         "mirror": {
           "type": "boolean",
           "name": "Mirror",
-          "desc": "Whether to mirror the brush."
+          "desc": "Whether to mirror the brush.",
+          "initialValue": "false"
         },
         "flip": {
           "type": "boolean",
           "name": "Flip",
-          "desc": "Whether to flip the brush."
+          "desc": "Whether to flip the brush.",
+          "initialValue": "false"
         },
         "rotation": {
           "type": "combo",
@@ -706,7 +721,8 @@
         "uri": {
           "type": "string",
           "name": "URI",
-          "desc": "Enter the URL on the web, or data URI, of an image to load."
+          "desc": "Enter the URL on the web, or data URI, of an image to load.",
+          "initialValue": "\"https://\""
         },
         "cross-origin": {
           "type": "combo",

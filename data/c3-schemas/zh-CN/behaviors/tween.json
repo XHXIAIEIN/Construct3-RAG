@@ -23,7 +23,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         }
       },
       "isTrigger": true
@@ -48,7 +49,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要检查的补间动画的标签。"
+          "desc": "要检查的补间动画的标签。",
+          "initialValue": "\"\""
         }
       },
       "isTrigger": true
@@ -73,7 +75,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         }
       }
     },
@@ -96,7 +99,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         }
       }
     },
@@ -119,7 +123,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "state": {
           "type": "combo",
@@ -171,7 +176,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         }
       },
       "isTrigger": true
@@ -208,7 +214,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要检查的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "state": {
           "type": "combo",
@@ -236,7 +243,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要暂停播放的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要暂停播放的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         }
       }
     },
@@ -259,7 +267,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要恢复播放的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要恢复播放的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         }
       }
     },
@@ -282,7 +291,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要停止播放的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要停止播放的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         }
       }
     },
@@ -324,7 +334,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "ease": {
           "type": "ease",
@@ -359,7 +370,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "time": {
           "type": "number",
@@ -394,7 +406,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "destroy-on-complete": {
           "type": "combo",
@@ -439,12 +452,14 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "rate": {
           "type": "number",
           "name": "倍数",
-          "desc": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。"
+          "desc": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
+          "initialValue": "1"
         }
       }
     },
@@ -459,7 +474,8 @@
         "rate": {
           "type": "number",
           "name": "倍速",
-          "desc": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。"
+          "desc": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
+          "initialValue": "1"
         }
       }
     },
@@ -474,7 +490,8 @@
         "tags": {
           "type": "string",
           "name": "标签(可选)",
-          "desc": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。"
+          "desc": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -500,12 +517,14 @@
         "end-value": {
           "type": "number",
           "name": "目标值",
-          "desc": "补间动画的目标值。若设置颜色，请使用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 等。"
+          "desc": "补间动画的目标值。若设置颜色，请使用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 等。",
+          "initialValue": "0"
         },
         "time": {
           "type": "number",
           "name": "持续时间",
-          "desc": "补间动画的持续时间，以秒为单位。"
+          "desc": "补间动画的持续时间，以秒为单位。",
+          "initialValue": "5"
         },
         "ease": {
           "type": "ease",
@@ -545,7 +564,8 @@
         "repeat-count": {
           "type": "number",
           "name": "重复次数",
-          "desc": "动画重复播放的次数。"
+          "desc": "动画重复播放的次数。",
+          "initialValue": "1"
         }
       },
       "isAsync": true
@@ -561,7 +581,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -586,7 +607,8 @@
         "end-value": {
           "type": "number",
           "name": "目标值",
-          "desc": "要设置的结束值。若目标为颜色，需使用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 或 HexColor(\"#FF0\") 等。"
+          "desc": "要设置的结束值。若目标为颜色，需使用颜色表达式，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 或 HexColor(\"#FF0\") 等。",
+          "initialValue": "0"
         }
       }
     },
@@ -601,7 +623,8 @@
         "tags": {
           "type": "string",
           "name": "标签(可选)",
-          "desc": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。"
+          "desc": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -617,17 +640,20 @@
         "end-x": {
           "type": "number",
           "name": "结束 X",
-          "desc": "第一个属性的结束值。"
+          "desc": "第一个属性的结束值。",
+          "initialValue": "0"
         },
         "end-y": {
           "type": "number",
           "name": "结束 Y",
-          "desc": "第二个属性的结束值。"
+          "desc": "第二个属性的结束值。",
+          "initialValue": "0"
         },
         "time": {
           "type": "number",
           "name": "持续时间",
-          "desc": "补间动画的持续时间，以秒为单位。"
+          "desc": "补间动画的持续时间，以秒为单位。",
+          "initialValue": "5"
         },
         "ease": {
           "type": "ease",
@@ -667,7 +693,8 @@
         "repeat-count": {
           "type": "number",
           "name": "重复次数",
-          "desc": "动画重复播放的次数。"
+          "desc": "动画重复播放的次数。",
+          "initialValue": "1"
         }
       },
       "isAsync": true
@@ -683,7 +710,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -699,12 +727,14 @@
         "end-x": {
           "type": "number",
           "name": "结束 X",
-          "desc": "第一个属性的结束值。"
+          "desc": "第一个属性的结束值。",
+          "initialValue": "0"
         },
         "end-y": {
           "type": "number",
           "name": "结束 Y",
-          "desc": "第二个属性的结束值。"
+          "desc": "第二个属性的结束值。",
+          "initialValue": "0"
         }
       }
     },
@@ -719,7 +749,8 @@
         "tags": {
           "type": "string",
           "name": "标签(可选)",
-          "desc": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。"
+          "desc": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -735,22 +766,26 @@
         "end-x": {
           "type": "number",
           "name": "结束 X",
-          "desc": "第一个属性的结束值。"
+          "desc": "第一个属性的结束值。",
+          "initialValue": "0"
         },
         "end-y": {
           "type": "number",
           "name": "结束 Y",
-          "desc": "第二个属性的结束值。"
+          "desc": "第二个属性的结束值。",
+          "initialValue": "0"
         },
         "end-z": {
           "type": "number",
           "name": "结束 Z",
-          "desc": "第三个属性的结束值。"
+          "desc": "第三个属性的结束值。",
+          "initialValue": "0"
         },
         "time": {
           "type": "number",
           "name": "时间",
-          "desc": "补间动画的持续时间，以秒为单位。"
+          "desc": "补间动画的持续时间，以秒为单位。",
+          "initialValue": "5"
         },
         "ease": {
           "type": "ease",
@@ -790,7 +825,8 @@
         "repeat-count": {
           "type": "number",
           "name": "重复次数",
-          "desc": "动画重复播放的次数。"
+          "desc": "动画重复播放的次数。",
+          "initialValue": "1"
         }
       },
       "isAsync": true
@@ -806,7 +842,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要设置的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要设置的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -822,17 +859,20 @@
         "end-x": {
           "type": "number",
           "name": "结束 X",
-          "desc": "设置第一个属性的结束值。"
+          "desc": "设置第一个属性的结束值。",
+          "initialValue": "0"
         },
         "end-y": {
           "type": "number",
           "name": "结束 Y",
-          "desc": "设置第二个属性的结束值。"
+          "desc": "设置第二个属性的结束值。",
+          "initialValue": "0"
         },
         "end-z": {
           "type": "number",
           "name": "结束 Z",
-          "desc": "设置第三个属性的结束值。"
+          "desc": "设置第三个属性的结束值。",
+          "initialValue": "0"
         }
       }
     },
@@ -847,22 +887,26 @@
         "tags": {
           "type": "string",
           "name": "标签(可选)",
-          "desc": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。"
+          "desc": "填写一个字符串，可以是任意内容，用于区分不同的补间动画。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "start-value": {
           "type": "number",
           "name": "起始值",
-          "desc": "补间的起始值。"
+          "desc": "补间的起始值。",
+          "initialValue": "0"
         },
         "end-value": {
           "type": "number",
           "name": "目标值",
-          "desc": "补间的结束值。"
+          "desc": "补间的结束值。",
+          "initialValue": "0"
         },
         "time": {
           "type": "number",
           "name": "持续时间",
-          "desc": "补间动画的持续时间，以秒为单位。"
+          "desc": "补间动画的持续时间，以秒为单位。",
+          "initialValue": "5"
         },
         "ease": {
           "type": "ease",
@@ -902,7 +946,8 @@
         "repeat-count": {
           "type": "number",
           "name": "重复次数",
-          "desc": "动画重复播放的次数。"
+          "desc": "动画重复播放的次数。",
+          "initialValue": "1"
         }
       },
       "isAsync": true
@@ -918,12 +963,14 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "start-value": {
           "type": "number",
           "name": "起始值",
-          "desc": "设置起始值"
+          "desc": "设置起始值",
+          "initialValue": "0"
         }
       }
     },
@@ -938,12 +985,14 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。"
+          "desc": "要操作的补间动画的标签。使用空格分隔多个标签。",
+          "initialValue": "\"\""
         },
         "end-value": {
           "type": "number",
           "name": "目标值",
-          "desc": "设置目标值"
+          "desc": "设置目标值",
+          "initialValue": "0"
         }
       }
     }
@@ -959,7 +1008,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。"
+          "desc": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"
@@ -974,7 +1024,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。"
+          "desc": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"
@@ -989,7 +1040,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。"
+          "desc": "补间动画的标签。多个标签用空格分隔，留空则指定第一个播放的动画。",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"
@@ -1004,7 +1056,8 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要获取的补间动画的标签。留空则指定第一个播放的动画。"
+          "desc": "要获取的补间动画的标签。留空则指定第一个播放的动画。",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"

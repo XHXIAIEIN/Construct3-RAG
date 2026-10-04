@@ -204,7 +204,8 @@
         "show-accept-all": {
           "type": "boolean",
           "name": "接受所有文件类型",
-          "desc": "是否显示所有文件类型"
+          "desc": "是否显示所有文件类型",
+          "initialValue": "true"
         },
         "suggested-name": {
           "type": "string",
@@ -249,7 +250,8 @@
         "show-accept-all": {
           "type": "boolean",
           "name": "接受所有文件类型",
-          "desc": "是否显示所有文件类型"
+          "desc": "是否显示所有文件类型",
+          "initialValue": "true"
         },
         "multiple": {
           "type": "boolean",

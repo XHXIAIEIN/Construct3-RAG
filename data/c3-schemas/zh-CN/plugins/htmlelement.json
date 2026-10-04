@@ -255,7 +255,8 @@
         "value": {
           "type": "any",
           "name": "值",
-          "desc": "设置新属性的值（如果是删除属性则忽略）"
+          "desc": "设置新属性的值（如果是删除属性则忽略）",
+          "initialValue": "\"\""
         },
         "selector": {
           "type": "string",
@@ -285,12 +286,14 @@
         "property-name": {
           "type": "string",
           "name": "属性名称",
-          "desc": "填写CSS样式属性名称。"
+          "desc": "填写CSS样式属性名称。",
+          "initialValue": "\"border\""
         },
         "value": {
           "type": "string",
           "name": "值",
-          "desc": "要指定为此CSS属性的值的字符串。"
+          "desc": "要指定为此CSS属性的值的字符串。",
+          "initialValue": "\"1px solid red\""
         },
         "selector": {
           "type": "string",

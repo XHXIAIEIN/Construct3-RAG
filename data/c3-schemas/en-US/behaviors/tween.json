@@ -23,7 +23,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the finished tweens."
+          "desc": "The tag or tags of the finished tweens.",
+          "initialValue": "\"\""
         }
       },
       "isTrigger": true
@@ -48,7 +49,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the released tweens."
+          "desc": "The tag or tags of the released tweens.",
+          "initialValue": "\"\""
         }
       },
       "isTrigger": true
@@ -73,7 +75,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to check."
+          "desc": "The tag or tags of the tweens to check.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -96,7 +99,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to check."
+          "desc": "The tag or tags of the tweens to check.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -119,7 +123,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the ping-ponged tweens."
+          "desc": "The tag or tags of the ping-ponged tweens.",
+          "initialValue": "\"\""
         },
         "state": {
           "type": "combo",
@@ -171,7 +176,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the looped tweens."
+          "desc": "The tag or tags of the looped tweens.",
+          "initialValue": "\"\""
         }
       },
       "isTrigger": true
@@ -208,7 +214,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the ping-ponged tweens."
+          "desc": "The tag or tags of the ping-ponged tweens.",
+          "initialValue": "\"\""
         },
         "state": {
           "type": "combo",
@@ -236,7 +243,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to pause."
+          "desc": "The tag or tags of the tweens to pause.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -259,7 +267,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the paused tweens to resume."
+          "desc": "The tag or tags of the paused tweens to resume.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -282,7 +291,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to stop."
+          "desc": "The tag or tags of the tweens to stop.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -324,7 +334,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to set the easing function for."
+          "desc": "The tag or tags of the tweens to set the easing function for.",
+          "initialValue": "\"\""
         },
         "ease": {
           "type": "ease",
@@ -359,7 +370,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to set the time of."
+          "desc": "The tag or tags of the tweens to set the time of.",
+          "initialValue": "\"\""
         },
         "time": {
           "type": "number",
@@ -394,7 +406,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to set the property of."
+          "desc": "The tag or tags of the tweens to set the property of.",
+          "initialValue": "\"\""
         },
         "destroy-on-complete": {
           "type": "combo",
@@ -439,12 +452,14 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to set the playback rate of."
+          "desc": "The tag or tags of the tweens to set the playback rate of.",
+          "initialValue": "\"\""
         },
         "rate": {
           "type": "number",
           "name": "Rate",
-          "desc": "The playback rate to set."
+          "desc": "The playback rate to set.",
+          "initialValue": "1"
         }
       }
     },
@@ -459,7 +474,8 @@
         "rate": {
           "type": "number",
           "name": "Rate",
-          "desc": "The playback rate to set."
+          "desc": "The playback rate to set.",
+          "initialValue": "1"
         }
       }
     },
@@ -474,7 +490,8 @@
         "tags": {
           "type": "string",
           "name": "Tags",
-          "desc": "A space-separated list of tags to identify a tween (optional)."
+          "desc": "A space-separated list of tags to identify a tween (optional).",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -500,12 +517,14 @@
         "end-value": {
           "type": "number",
           "name": "End value",
-          "desc": "The end value of the tween. Specify colors with the rgbEx() expression."
+          "desc": "The end value of the tween. Specify colors with the rgbEx() expression.",
+          "initialValue": "0"
         },
         "time": {
           "type": "number",
           "name": "Time",
-          "desc": "The duration of the tween, in seconds."
+          "desc": "The duration of the tween, in seconds.",
+          "initialValue": "5"
         },
         "ease": {
           "type": "ease",
@@ -545,7 +564,8 @@
         "repeat-count": {
           "type": "number",
           "name": "Repeat count",
-          "desc": "The amount of times to repeat the animation"
+          "desc": "The amount of times to repeat the animation",
+          "initialValue": "1"
         }
       },
       "isAsync": true
@@ -561,7 +581,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to set the end value for."
+          "desc": "The tag or tags of the tweens to set the end value for.",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -586,7 +607,8 @@
         "end-value": {
           "type": "number",
           "name": "End value",
-          "desc": "The end value to set. Specify colors with the rgbEx() expression."
+          "desc": "The end value to set. Specify colors with the rgbEx() expression.",
+          "initialValue": "0"
         }
       }
     },
@@ -601,7 +623,8 @@
         "tags": {
           "type": "string",
           "name": "Tags",
-          "desc": "Optional space-separated list of many tags to identify a tween."
+          "desc": "Optional space-separated list of many tags to identify a tween.",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -617,17 +640,20 @@
         "end-x": {
           "type": "number",
           "name": "End X",
-          "desc": "The end value of the first property."
+          "desc": "The end value of the first property.",
+          "initialValue": "0"
         },
         "end-y": {
           "type": "number",
           "name": "End Y",
-          "desc": "The end value of the second property."
+          "desc": "The end value of the second property.",
+          "initialValue": "0"
         },
         "time": {
           "type": "number",
           "name": "Time",
-          "desc": "The duration of the tween, in seconds."
+          "desc": "The duration of the tween, in seconds.",
+          "initialValue": "5"
         },
         "ease": {
           "type": "ease",
@@ -667,7 +693,8 @@
         "repeat-count": {
           "type": "number",
           "name": "Repeat count",
-          "desc": "The amount of times to repeat the animation"
+          "desc": "The amount of times to repeat the animation",
+          "initialValue": "1"
         }
       },
       "isAsync": true
@@ -683,7 +710,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to set the end value of."
+          "desc": "The tag or tags of the tweens to set the end value of.",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -699,12 +727,14 @@
         "end-x": {
           "type": "number",
           "name": "End X",
-          "desc": "The end value to set in the first property."
+          "desc": "The end value to set in the first property.",
+          "initialValue": "0"
         },
         "end-y": {
           "type": "number",
           "name": "End Y",
-          "desc": "The end value to set in the second property."
+          "desc": "The end value to set in the second property.",
+          "initialValue": "0"
         }
       }
     },
@@ -719,7 +749,8 @@
         "tags": {
           "type": "string",
           "name": "Tags",
-          "desc": "Optional space-separated list of many tags to identify a tween."
+          "desc": "Optional space-separated list of many tags to identify a tween.",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -735,22 +766,26 @@
         "end-x": {
           "type": "number",
           "name": "End X",
-          "desc": "The end value of the first property."
+          "desc": "The end value of the first property.",
+          "initialValue": "0"
         },
         "end-y": {
           "type": "number",
           "name": "End Y",
-          "desc": "The end value of the second property."
+          "desc": "The end value of the second property.",
+          "initialValue": "0"
         },
         "end-z": {
           "type": "number",
           "name": "End Z",
-          "desc": "The end value of the third property."
+          "desc": "The end value of the third property.",
+          "initialValue": "0"
         },
         "time": {
           "type": "number",
           "name": "Time",
-          "desc": "The duration of the tween, in seconds."
+          "desc": "The duration of the tween, in seconds.",
+          "initialValue": "5"
         },
         "ease": {
           "type": "ease",
@@ -790,7 +825,8 @@
         "repeat-count": {
           "type": "number",
           "name": "Repeat count",
-          "desc": "The amount of times to repeat the animation"
+          "desc": "The amount of times to repeat the animation",
+          "initialValue": "1"
         }
       },
       "isAsync": true
@@ -806,7 +842,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to set the end value of."
+          "desc": "The tag or tags of the tweens to set the end value of.",
+          "initialValue": "\"\""
         },
         "property": {
           "type": "combo",
@@ -822,17 +859,20 @@
         "end-x": {
           "type": "number",
           "name": "End X",
-          "desc": "The end value to set in the first property."
+          "desc": "The end value to set in the first property.",
+          "initialValue": "0"
         },
         "end-y": {
           "type": "number",
           "name": "End Y",
-          "desc": "The end value to set in the second property."
+          "desc": "The end value to set in the second property.",
+          "initialValue": "0"
         },
         "end-z": {
           "type": "number",
           "name": "End Z",
-          "desc": "The end value to set in the third property."
+          "desc": "The end value to set in the third property.",
+          "initialValue": "0"
         }
       }
     },
@@ -847,22 +887,26 @@
         "tags": {
           "type": "string",
           "name": "Tags",
-          "desc": "A space-separated list of tags to identify a tween (optional)."
+          "desc": "A space-separated list of tags to identify a tween (optional).",
+          "initialValue": "\"\""
         },
         "start-value": {
           "type": "number",
           "name": "Start value",
-          "desc": "The start value of the tween."
+          "desc": "The start value of the tween.",
+          "initialValue": "0"
         },
         "end-value": {
           "type": "number",
           "name": "End value",
-          "desc": "The end value of the tween."
+          "desc": "The end value of the tween.",
+          "initialValue": "0"
         },
         "time": {
           "type": "number",
           "name": "Time",
-          "desc": "The duration of the tween, in seconds."
+          "desc": "The duration of the tween, in seconds.",
+          "initialValue": "5"
         },
         "ease": {
           "type": "ease",
@@ -902,7 +946,8 @@
         "repeat-count": {
           "type": "number",
           "name": "Repeat count",
-          "desc": "The amount of times to repeat the animation"
+          "desc": "The amount of times to repeat the animation",
+          "initialValue": "1"
         }
       },
       "isAsync": true
@@ -918,12 +963,14 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to set the start value for."
+          "desc": "The tag or tags of the tweens to set the start value for.",
+          "initialValue": "\"\""
         },
         "start-value": {
           "type": "number",
           "name": "Start value",
-          "desc": "The start value to set."
+          "desc": "The start value to set.",
+          "initialValue": "0"
         }
       }
     },
@@ -938,12 +985,14 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag or tags of the tweens to set the end value for."
+          "desc": "The tag or tags of the tweens to set the end value for.",
+          "initialValue": "\"\""
         },
         "end-value": {
           "type": "number",
           "name": "End value",
-          "desc": "The end value to set."
+          "desc": "The end value to set.",
+          "initialValue": "0"
         }
       }
     }
@@ -959,7 +1008,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag of the tween to get the time from. Leave empty for the first tween."
+          "desc": "The tag of the tween to get the time from. Leave empty for the first tween.",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"
@@ -974,7 +1024,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag of the tween to get the value from. Leave empty for the first 'Value' tween."
+          "desc": "The tag of the tween to get the value from. Leave empty for the first 'Value' tween.",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"
@@ -989,7 +1040,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag of the tween to get the progress from. Leave empty for the first tween."
+          "desc": "The tag of the tween to get the progress from. Leave empty for the first tween.",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"
@@ -1004,7 +1056,8 @@
         "tags": {
           "type": "string",
           "name": "Tag",
-          "desc": "The tag of the tween to get the playback rate from. Leave empty for the first tween."
+          "desc": "The tag of the tween to get the playback rate from. Leave empty for the first tween.",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"

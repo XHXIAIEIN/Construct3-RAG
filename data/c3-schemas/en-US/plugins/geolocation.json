@@ -63,7 +63,8 @@
         "timeout": {
           "type": "number",
           "name": "Timeout",
-          "desc": "The maximum length of time in seconds that the device can take to return a position."
+          "desc": "The maximum length of time in seconds that the device can take to return a position.",
+          "initialValue": "60"
         },
         "maximum-age": {
           "type": "number",
@@ -92,7 +93,8 @@
         "timeout": {
           "type": "number",
           "name": "Timeout",
-          "desc": "The maximum length of time in seconds that the device can take to return a position."
+          "desc": "The maximum length of time in seconds that the device can take to return a position.",
+          "initialValue": "60"
         },
         "maximum-age": {
           "type": "number",

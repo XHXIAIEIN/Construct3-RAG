@@ -82,6 +82,14 @@ WRITING = {
     "objectname": ('"\\"\\""', "expression string, the object type's name as text: \"\\\"Enemy\\\"\""),
     "model3d-animation-string": ('"\\"\\""', "expression string, the animation name in inner quotes"),
 }
+# A parameter's initialValue in the schema is the editor's default as expression text,
+# "true" or "false" for a boolean. These types write it; a layer's default "" names no layer.
+EDITOR_DEFAULT = {
+    "boolean": lambda v: "true" if str(v).lower() == "true" else "false",
+    "number": json.dumps,
+    "string": json.dumps,
+    "any": json.dumps,
+}
 
 
 def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]:
@@ -174,6 +182,10 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, w
             if items:
                 first = spec.get("initialValue") if spec.get("initialValue") in items else next(iter(items))
                 values[key] = json.dumps(first)
+            elif spec.get("initialValue") is not None and spec["type"] in EDITOR_DEFAULT:
+                # What the editor fills in, so a copied template behaves like an ACE added
+                # there: Wait follows the time scale, "use-timescale": true.
+                values[key] = EDITOR_DEFAULT[spec["type"]](spec["initialValue"])
             else:
                 values[key] = WRITING.get(spec["type"], ('"0"', ""))[0]
         head = f'{{"id": "{it["id"]}", "objectClass": "{owner}"' \
@@ -183,6 +195,9 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, w
     for key, spec in params.items():
         how = " | ".join(spec["items"]) if spec.get("items") \
             else WRITING.get(spec["type"], ("", "expression string"))[1]
+        if spec.get("type") == "boolean" and spec.get("initialValue") is not None:
+            how += "; the editor ticks it by default" if EDITOR_DEFAULT["boolean"](spec["initialValue"]) == "true" \
+                else "; the editor leaves it unticked by default"
         # What the parameter is, from the schema: find(text, find) searches `text` for `find`,
         # which the type alone does not say, and a model wrote it the other way round.
         desc = " ".join(str(spec.get("desc") or "").split())

@@ -155,7 +155,7 @@ Structural fields are the same in every locale, so an ACE can be matched by
 | `type` | Editor parameter type such as `number`, `string`, `object`, `combo`, `animation`, `instancevar`, `cmp`. Identical across locales. |
 | `name`, `desc` | Localized label and help text. |
 | `items` | `combo` only: map of stable item id to localized label, for example `{"current-frame": "current frame", "beginning": "beginning"}`. |
-| `initialValue` | `combo` only, when the CDN records a default: the item id selected by default. |
+| `initialValue` | When the CDN records a default: the value the editor fills in when the ACE is added. For a `combo` the item id selected, for a `boolean` `"true"` or `"false"`, otherwise expression text such as `"1.0"` or `"\"mysave\""`. |
 
 ### Properties
 

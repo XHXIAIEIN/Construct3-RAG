@@ -91,7 +91,8 @@
         "jpeg-quality": {
           "type": "number",
           "name": "JPEG品质",
-          "desc": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。"
+          "desc": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。",
+          "initialValue": "75"
         },
         "x": {
           "type": "number",
@@ -154,7 +155,8 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "要设置的像素颜色。"
+          "desc": "要设置的像素颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         }
       }
     },
@@ -206,7 +208,8 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "用于填充的颜色。"
+          "desc": "用于填充的颜色。",
+          "initialValue": "rgba(0, 0, 0, 0)"
         }
       }
     },
@@ -241,7 +244,8 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "用于填充的颜色。"
+          "desc": "用于填充的颜色。",
+          "initialValue": "rgba(0, 0, 0, 0)"
         }
       }
     },
@@ -276,7 +280,8 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "用于填充的颜色。"
+          "desc": "用于填充的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         }
       }
     },
@@ -311,12 +316,14 @@
         "color1": {
           "type": "number",
           "name": "开始颜色",
-          "desc": "渐变开始的颜色。"
+          "desc": "渐变开始的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "color2": {
           "type": "number",
           "name": "结束颜色",
-          "desc": "渐变结束的颜色。"
+          "desc": "渐变结束的颜色。",
+          "initialValue": "rgba(100, 100, 100, 100)"
         },
         "direction": {
           "type": "combo",
@@ -360,7 +367,8 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "用于填充的颜色。"
+          "desc": "用于填充的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "edge": {
           "type": "combo",
@@ -405,12 +413,14 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "边框的颜色。"
+          "desc": "边框的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "粗细",
-          "desc": "线条的粗细。"
+          "desc": "线条的粗细。",
+          "initialValue": "1"
         },
         "edge": {
           "type": "combo",
@@ -455,12 +465,14 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "用于填充的颜色。"
+          "desc": "用于填充的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "粗细",
-          "desc": "线条的粗细。"
+          "desc": "线条的粗细。",
+          "initialValue": "1"
         }
       }
     },
@@ -495,12 +507,14 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "线条的颜色。"
+          "desc": "线条的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "粗细",
-          "desc": "线条的粗细。"
+          "desc": "线条的粗细。",
+          "initialValue": "1"
         },
         "line-cap": {
           "type": "combo",
@@ -544,17 +558,20 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "线条的颜色。"
+          "desc": "线条的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "粗细",
-          "desc": "线条的粗细。"
+          "desc": "线条的粗细。",
+          "initialValue": "1"
         },
         "dash-length": {
           "type": "number",
           "name": "虚线长度",
-          "desc": "线条上每个线段的长度。"
+          "desc": "线条上每个线段的长度。",
+          "initialValue": "5"
         },
         "line-cap": {
           "type": "combo",
@@ -663,12 +680,14 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "线条的颜色。"
+          "desc": "线条的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "粗细",
-          "desc": "线条的粗细。"
+          "desc": "线条的粗细。",
+          "initialValue": "1"
         },
         "line-cap": {
           "type": "combo",
@@ -692,17 +711,20 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "线条的颜色。"
+          "desc": "线条的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "粗细",
-          "desc": "线条的粗细。"
+          "desc": "线条的粗细。",
+          "initialValue": "1"
         },
         "dash-length": {
           "type": "number",
           "name": "虚线长度",
-          "desc": "线条上每个线段的长度。"
+          "desc": "线条上每个线段的长度。",
+          "initialValue": "5"
         },
         "line-cap": {
           "type": "combo",
@@ -726,7 +748,8 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "用于填充的颜色。"
+          "desc": "用于填充的颜色。",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "convex": {
           "type": "boolean",

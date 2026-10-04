@@ -318,7 +318,8 @@
         "gravity": {
           "type": "number",
           "name": "Gravity",
-          "desc": "The new force of gravity to set."
+          "desc": "The new force of gravity to set.",
+          "initialValue": "10"
         }
       }
     },
@@ -352,12 +353,14 @@
         "velocity-iterations": {
           "type": "number",
           "name": "Velocity iterations",
-          "desc": "Iterations for the velocity constraint solver.  Lower is fast and inaccurate, higher is slow and accurate."
+          "desc": "Iterations for the velocity constraint solver.  Lower is fast and inaccurate, higher is slow and accurate.",
+          "initialValue": "8"
         },
         "position-iterations": {
           "type": "number",
           "name": "Position iterations",
-          "desc": "Iterations for the position constraint solver.  Lower is fast and inaccurate, higher is slow and accurate."
+          "desc": "Iterations for the position constraint solver.  Lower is fast and inaccurate, higher is slow and accurate.",
+          "initialValue": "3"
         }
       }
     },
@@ -506,12 +509,14 @@
         "lower-translation": {
           "type": "number",
           "name": "Lower translation",
-          "desc": "The lower translation allowed relative to the starting position, in pixels."
+          "desc": "The lower translation allowed relative to the starting position, in pixels.",
+          "initialValue": "-20"
         },
         "upper-translation": {
           "type": "number",
           "name": "Upper translation",
-          "desc": "The upper translation allowed relative to the starting position, in pixels."
+          "desc": "The upper translation allowed relative to the starting position, in pixels.",
+          "initialValue": "20"
         },
         "enable-motor": {
           "type": "combo",
@@ -553,7 +558,8 @@
         "density": {
           "type": "number",
           "name": "Density",
-          "desc": "The new object density.  Only has effect when 'Immovable' is 'No'."
+          "desc": "The new object density.  Only has effect when 'Immovable' is 'No'.",
+          "initialValue": "1.0"
         }
       }
     },
@@ -568,7 +574,8 @@
         "friction": {
           "type": "number",
           "name": "Friction",
-          "desc": "The new object friction coefficient, between 0 and 1."
+          "desc": "The new object friction coefficient, between 0 and 1.",
+          "initialValue": "0.5"
         }
       }
     },
@@ -583,7 +590,8 @@
         "elasticity": {
           "type": "number",
           "name": "Elasticity",
-          "desc": "The new object elasticity (restitution or 'bounciness') coefficient, between 0 and 1."
+          "desc": "The new object elasticity (restitution or 'bounciness') coefficient, between 0 and 1.",
+          "initialValue": "0.2"
         }
       }
     },
@@ -613,7 +621,8 @@
         "angular-damping": {
           "type": "number",
           "name": "Angular damping",
-          "desc": "The new object angular damping, between 0 and 1."
+          "desc": "The new object angular damping, between 0 and 1.",
+          "initialValue": "0.01"
         }
       }
     },

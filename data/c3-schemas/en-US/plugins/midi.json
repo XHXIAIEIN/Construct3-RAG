@@ -414,12 +414,14 @@
         "note": {
           "type": "any",
           "name": "Note",
-          "desc": "The MIDI note number, or string of the note name e.g. \"C4\"."
+          "desc": "The MIDI note number, or string of the note name e.g. \"C4\".",
+          "initialValue": "60"
         },
         "velocity": {
           "type": "number",
           "name": "Velocity",
-          "desc": "The velocity, or pressure for aftertouch messages, from 0-127."
+          "desc": "The velocity, or pressure for aftertouch messages, from 0-127.",
+          "initialValue": "64"
         }
       }
     },
@@ -439,12 +441,14 @@
         "controller-number": {
           "type": "number",
           "name": "Controller number",
-          "desc": "The MIDI controller number, e.g. 1 for modulation wheel (coarse)."
+          "desc": "The MIDI controller number, e.g. 1 for modulation wheel (coarse).",
+          "initialValue": "1"
         },
         "controller-value": {
           "type": "number",
           "name": "Controller value",
-          "desc": "The controller value to set, from 0-127."
+          "desc": "The controller value to set, from 0-127.",
+          "initialValue": "64"
         }
       }
     },
@@ -474,7 +478,8 @@
         "value": {
           "type": "number",
           "name": "Value",
-          "desc": "The value to send, from 0-127 for program change or channel pressure messages, or 0-16383 for pitch wheel messages."
+          "desc": "The value to send, from 0-127 for program change or channel pressure messages, or 0-16383 for pitch wheel messages.",
+          "initialValue": "0"
         }
       }
     },

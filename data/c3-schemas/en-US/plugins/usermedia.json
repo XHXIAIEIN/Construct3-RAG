@@ -124,7 +124,8 @@
         "jpeg-quality": {
           "type": "number",
           "name": "JPEG quality",
-          "desc": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best).  Ignored for PNG."
+          "desc": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best).  Ignored for PNG.",
+          "initialValue": "75"
         }
       },
       "isAsync": true
@@ -140,7 +141,8 @@
         "tag": {
           "type": "string",
           "name": "Tag",
-          "desc": "A tag in the Audio object to route the microphone input to."
+          "desc": "A tag in the Audio object to route the microphone input to.",
+          "initialValue": "\"mic\""
         },
         "source": {
           "type": "number",

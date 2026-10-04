@@ -108,7 +108,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "The URL to request.  Note: most browsers prevent cross-domain requests."
+          "desc": "The URL to request.  Note: most browsers prevent cross-domain requests.",
+          "initialValue": "\"https://\""
         }
       },
       "isAsync": true
@@ -150,7 +151,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "The URL to post to.  Note: most browsers prevent cross-domain posts."
+          "desc": "The URL to post to.  Note: most browsers prevent cross-domain posts.",
+          "initialValue": "\"https://\""
         },
         "data": {
           "type": "string",
@@ -160,7 +162,8 @@
         "method": {
           "type": "string",
           "name": "Method",
-          "desc": "The HTTP method to use, typically \"POST\"."
+          "desc": "The HTTP method to use, typically \"POST\".",
+          "initialValue": "\"POST\""
         }
       },
       "isAsync": true
@@ -261,7 +264,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "The URL to post to. Note: most browsers prevent cross-domain posts."
+          "desc": "The URL to post to. Note: most browsers prevent cross-domain posts.",
+          "initialValue": "\"https://\""
         },
         "data": {
           "type": "object",
@@ -271,7 +275,8 @@
         "method": {
           "type": "string",
           "name": "Method",
-          "desc": "The HTTP method to use, typically \"POST\"."
+          "desc": "The HTTP method to use, typically \"POST\".",
+          "initialValue": "\"POST\""
         }
       },
       "isAsync": true

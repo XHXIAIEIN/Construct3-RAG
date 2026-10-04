@@ -234,7 +234,8 @@
         "reload": {
           "type": "boolean",
           "name": "Force reload",
-          "desc": "Ensure that the results are up to date, and not from the cache."
+          "desc": "Ensure that the results are up to date, and not from the cache.",
+          "initialValue": "false"
         }
       },
       "isAsync": true
@@ -250,7 +251,8 @@
         "reload": {
           "type": "boolean",
           "name": "Force reload",
-          "desc": "Ensure that the results are up to date, and not from the cache."
+          "desc": "Ensure that the results are up to date, and not from the cache.",
+          "initialValue": "false"
         }
       },
       "isAsync": true
@@ -424,7 +426,8 @@
         "results": {
           "type": "number",
           "name": "Results",
-          "desc": "The number of score results to return, from 1 to 25."
+          "desc": "The number of score results to return, from 1 to 25.",
+          "initialValue": "25"
         },
         "type": {
           "type": "combo",
@@ -438,7 +441,8 @@
         "reload": {
           "type": "boolean",
           "name": "Force reload",
-          "desc": "Ensure that the results are up to date, and not from the cache."
+          "desc": "Ensure that the results are up to date, and not from the cache.",
+          "initialValue": "false"
         }
       },
       "isAsync": true

@@ -35,17 +35,20 @@
         "on-time": {
           "type": "number",
           "name": "'On' time",
-          "desc": "Duration in seconds the object is visible."
+          "desc": "Duration in seconds the object is visible.",
+          "initialValue": "0.1"
         },
         "off-time": {
           "type": "number",
           "name": "'Off' time",
-          "desc": "Duration in seconds the object is invisible."
+          "desc": "Duration in seconds the object is invisible.",
+          "initialValue": "0.1"
         },
         "duration": {
           "type": "number",
           "name": "Duration",
-          "desc": "Duration in seconds the object flashes for."
+          "desc": "Duration in seconds the object flashes for.",
+          "initialValue": "1.0"
         }
       }
     },

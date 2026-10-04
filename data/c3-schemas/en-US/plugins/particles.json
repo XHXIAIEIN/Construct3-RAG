@@ -86,7 +86,8 @@
         "time": {
           "type": "number",
           "name": "Time",
-          "desc": "The amount of time in seconds to advance the particle effect by."
+          "desc": "The amount of time in seconds to advance the particle effect by.",
+          "initialValue": "1"
         }
       }
     },

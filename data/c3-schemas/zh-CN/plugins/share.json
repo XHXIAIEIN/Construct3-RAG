@@ -79,12 +79,14 @@
         "filename": {
           "type": "string",
           "name": "文件名",
-          "desc": "要添加的文件的名称。"
+          "desc": "要添加的文件的名称。",
+          "initialValue": "\"image.png\""
         },
         "type": {
           "type": "string",
           "name": "文件类型",
-          "desc": "要添加的文件的内容类型，也称为MIME类型。"
+          "desc": "要添加的文件的内容类型，也称为MIME类型。",
+          "initialValue": "\"image/png\""
         },
         "data": {
           "type": "object",
@@ -104,22 +106,26 @@
         "dialogText": {
           "type": "string",
           "name": "正文内容",
-          "desc": "请求评价对话框的正文。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+          "desc": "请求评价对话框的正文。仅适用于没有安装 Google Play 应用商店的安卓设备。",
+          "initialValue": "\"If you enjoy using MY_APP_NAME, please take a moment to rate it. Thanks for your support!\""
         },
         "confirmButtonText": {
           "type": "string",
           "name": "确认按钮",
-          "desc": "确认按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+          "desc": "确认按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。",
+          "initialValue": "\"Rate MY_APP_NAME\""
         },
         "cancelButtonText": {
           "type": "string",
           "name": "取消按钮",
-          "desc": "取消按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+          "desc": "取消按钮的文字。仅适用于没有安装 Google Play 应用商店的安卓设备。",
+          "initialValue": "\"No, thanks\""
         },
         "appIdentifier": {
           "type": "string",
           "name": "App ID",
-          "desc": "请求评分的应用程序ID。留空则使用在项目属性中填写的应用程序ID。仅适用于没有安装 Google Play 应用商店的安卓设备。"
+          "desc": "请求评分的应用程序ID。留空则使用在项目属性中填写的应用程序ID。仅适用于没有安装 Google Play 应用商店的安卓设备。",
+          "initialValue": "\"\""
         }
       }
     },

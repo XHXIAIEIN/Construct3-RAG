@@ -330,17 +330,20 @@
         "duration": {
           "type": "number",
           "name": "Duration",
-          "desc": "Time in milliseconds to vibrate for."
+          "desc": "Time in milliseconds to vibrate for.",
+          "initialValue": "500"
         },
         "weak-magnitude": {
           "type": "number",
           "name": "Weak magnitude",
-          "desc": "The magnitude of the weak rumble motor from 0-100."
+          "desc": "The magnitude of the weak rumble motor from 0-100.",
+          "initialValue": "100"
         },
         "strong-magnitude": {
           "type": "number",
           "name": "Strong magnitude",
-          "desc": "The magnitude of the strong rumble motor from 0-100."
+          "desc": "The magnitude of the strong rumble motor from 0-100.",
+          "initialValue": "100"
         }
       }
     },
@@ -360,27 +363,32 @@
         "duration": {
           "type": "number",
           "name": "Duration",
-          "desc": "Time in milliseconds to vibrate for."
+          "desc": "Time in milliseconds to vibrate for.",
+          "initialValue": "500"
         },
         "weak-magnitude": {
           "type": "number",
           "name": "Weak magnitude",
-          "desc": "The magnitude of the weak rumble motor from 0-100."
+          "desc": "The magnitude of the weak rumble motor from 0-100.",
+          "initialValue": "100"
         },
         "strong-magnitude": {
           "type": "number",
           "name": "Strong magnitude",
-          "desc": "The magnitude of the strong rumble motor from 0-100."
+          "desc": "The magnitude of the strong rumble motor from 0-100.",
+          "initialValue": "100"
         },
         "left-trigger": {
           "type": "number",
           "name": "Left trigger",
-          "desc": "The magnitude of the rumble for the left trigger from 0-100."
+          "desc": "The magnitude of the rumble for the left trigger from 0-100.",
+          "initialValue": "100"
         },
         "right-trigger": {
           "type": "number",
           "name": "Right trigger",
-          "desc": "The magnitude of the rumble for the right trigger from 0-100."
+          "desc": "The magnitude of the rumble for the right trigger from 0-100.",
+          "initialValue": "100"
         }
       }
     },

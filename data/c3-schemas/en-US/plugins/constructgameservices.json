@@ -589,12 +589,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "Results per page",
-          "desc": "The number of results to retrieve, from 1 to 50."
+          "desc": "The number of results to retrieve, from 1 to 50.",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "Page",
-          "desc": "The zero-based index of the page number to retrieve."
+          "desc": "The zero-based index of the page number to retrieve.",
+          "initialValue": "0"
         }
       },
       "isAsync": true
@@ -645,12 +647,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "Results per page",
-          "desc": "The number of results to retrieve, from 1 to 50."
+          "desc": "The number of results to retrieve, from 1 to 50.",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "Page",
-          "desc": "The zero-based index of the page number to retrieve."
+          "desc": "The zero-based index of the page number to retrieve.",
+          "initialValue": "0"
         }
       },
       "isAsync": true
@@ -760,12 +764,14 @@
         "allowPersisting": {
           "type": "boolean",
           "name": "Allow persisting",
-          "desc": "Allow re-using this sign in session later on."
+          "desc": "Allow re-using this sign in session later on.",
+          "initialValue": "true"
         },
         "expiry": {
           "type": "number",
           "name": "Expiry",
-          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes)."
+          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes).",
+          "initialValue": "1440"
         }
       },
       "isAsync": true
@@ -791,12 +797,14 @@
         "allowPersisting": {
           "type": "boolean",
           "name": "Allow persisting",
-          "desc": "Allow re-using this sign in session later on."
+          "desc": "Allow re-using this sign in session later on.",
+          "initialValue": "true"
         },
         "expiry": {
           "type": "number",
           "name": "Expiry",
-          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes)."
+          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes).",
+          "initialValue": "1440"
         }
       },
       "isAsync": true
@@ -832,22 +840,26 @@
         "allow-persisting": {
           "type": "boolean",
           "name": "Allow persisting",
-          "desc": "Allow re-using this sign in session later on."
+          "desc": "Allow re-using this sign in session later on.",
+          "initialValue": "true"
         },
         "expiry": {
           "type": "number",
           "name": "Expiry",
-          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes)."
+          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes).",
+          "initialValue": "1440"
         },
         "popup-window-width": {
           "type": "number",
           "name": "Popup window width",
-          "desc": "The width of the authentication popup window."
+          "desc": "The width of the authentication popup window.",
+          "initialValue": "800"
         },
         "popup-window-height": {
           "type": "number",
           "name": "Popup window height",
-          "desc": "The height of the authentication popup window."
+          "desc": "The height of the authentication popup window.",
+          "initialValue": "800"
         }
       },
       "isAsync": true
@@ -892,12 +904,14 @@
         "popup-window-width": {
           "type": "number",
           "name": "Popup window width",
-          "desc": "The width of the authentication popup window."
+          "desc": "The width of the authentication popup window.",
+          "initialValue": "800"
         },
         "popup-window-height": {
           "type": "number",
           "name": "Popup window height",
-          "desc": "The height of the authentication popup window."
+          "desc": "The height of the authentication popup window.",
+          "initialValue": "800"
         }
       },
       "isAsync": true
@@ -1164,12 +1178,14 @@
         "allow-persisting": {
           "type": "boolean",
           "name": "Allow persisting",
-          "desc": "Allow re-using this sign in session later on."
+          "desc": "Allow re-using this sign in session later on.",
+          "initialValue": "true"
         },
         "expiry": {
           "type": "number",
           "name": "Expiry",
-          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes)."
+          "desc": "The time in minutes for sessions to remain valid. The default is 24 hours (1440 minutes).",
+          "initialValue": "1440"
         }
       },
       "isAsync": true
@@ -1195,12 +1211,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "Results per page",
-          "desc": "The number of results to retrieve, from 1 to 100."
+          "desc": "The number of results to retrieve, from 1 to 100.",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "Page",
-          "desc": "The zero-based index of the page number to retrieve."
+          "desc": "The zero-based index of the page number to retrieve.",
+          "initialValue": 0
         }
       },
       "isAsync": true
@@ -1226,12 +1244,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "Results per page",
-          "desc": "The number of results to retrieve, from 1 to 100."
+          "desc": "The number of results to retrieve, from 1 to 100.",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "Page",
-          "desc": "The zero-based index of the page number to retrieve."
+          "desc": "The zero-based index of the page number to retrieve.",
+          "initialValue": 0
         }
       },
       "isAsync": true
@@ -1262,7 +1282,8 @@
         "range": {
           "type": "number",
           "name": "Range",
-          "desc": "How many scores to return on either side of the queried score."
+          "desc": "How many scores to return on either side of the queried score.",
+          "initialValue": "5"
         }
       },
       "isAsync": true
@@ -1386,7 +1407,8 @@
         "results-per-page": {
           "type": "number",
           "name": "Results per page",
-          "desc": "The number of results to retrieve, from 1 to 500."
+          "desc": "The number of results to retrieve, from 1 to 500.",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
@@ -1454,12 +1476,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "Results per page",
-          "desc": "The number of results to retrieve, from 1 to 100."
+          "desc": "The number of results to retrieve, from 1 to 100.",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "Page",
-          "desc": "The zero-based index of the page number to retrieve."
+          "desc": "The zero-based index of the page number to retrieve.",
+          "initialValue": "0"
         }
       }
     },
@@ -1600,12 +1624,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "Results per page",
-          "desc": "The number of results to retrieve, from 1 to 100."
+          "desc": "The number of results to retrieve, from 1 to 100.",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "Page",
-          "desc": "The zero-based index of the page number to retrieve."
+          "desc": "The zero-based index of the page number to retrieve.",
+          "initialValue": "0"
         }
       },
       "isAsync": true

@@ -79,12 +79,14 @@
         "filename": {
           "type": "string",
           "name": "Filename",
-          "desc": "Name of the file to add."
+          "desc": "Name of the file to add.",
+          "initialValue": "\"image.png\""
         },
         "type": {
           "type": "string",
           "name": "Type",
-          "desc": "Content type (also known as MIME type) of the file to add."
+          "desc": "Content type (also known as MIME type) of the file to add.",
+          "initialValue": "\"image/png\""
         },
         "data": {
           "type": "object",
@@ -104,22 +106,26 @@
         "dialogText": {
           "type": "string",
           "name": "Dialog Text",
-          "desc": "The body text of the request review dialog (Android with no Google Play Store App only)."
+          "desc": "The body text of the request review dialog (Android with no Google Play Store App only).",
+          "initialValue": "\"If you enjoy using MY_APP_NAME, please take a moment to rate it. Thanks for your support!\""
         },
         "confirmButtonText": {
           "type": "string",
           "name": "Confirm Button Text",
-          "desc": "The text of the \"confirm\" button on the request review dialog (Android with no Google Play Store App only)."
+          "desc": "The text of the \"confirm\" button on the request review dialog (Android with no Google Play Store App only).",
+          "initialValue": "\"Rate MY_APP_NAME\""
         },
         "cancelButtonText": {
           "type": "string",
           "name": "Cancel Button Text",
-          "desc": "The text of the \"cancel\" button on the request review dialog (Android with no Google Play Store App only)."
+          "desc": "The text of the \"cancel\" button on the request review dialog (Android with no Google Play Store App only).",
+          "initialValue": "\"No, thanks\""
         },
         "appIdentifier": {
           "type": "string",
           "name": "App ID",
-          "desc": "The app ID to request a rating for (Android with no Google Play Store App only). Leave empty to use the project's app ID."
+          "desc": "The app ID to request a rating for (Android with no Google Play Store App only). Leave empty to use the project's app ID.",
+          "initialValue": "\"\""
         }
       }
     },

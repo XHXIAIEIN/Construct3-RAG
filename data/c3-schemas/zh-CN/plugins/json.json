@@ -441,7 +441,8 @@
         "size": {
           "type": "number",
           "name": "大小",
-          "desc": "数组中元素的数量。"
+          "desc": "数组中元素的数量。",
+          "initialValue": "0"
         }
       }
     }

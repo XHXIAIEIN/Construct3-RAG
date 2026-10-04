@@ -323,7 +323,8 @@
         "offset": {
           "type": "number",
           "name": "Offset",
-          "desc": "Offset the banner by the specified amount. Ignored when 'Overlap' is 'false'"
+          "desc": "Offset the banner by the specified amount. Ignored when 'Overlap' is 'false'",
+          "initialValue": "0"
         },
         "overlap": {
           "type": "combo",
@@ -501,7 +502,8 @@
         "option": {
           "type": "boolean",
           "name": "Use child directed content",
-          "desc": "Specifies if the Admob SDK should return child directed content"
+          "desc": "Specifies if the Admob SDK should return child directed content",
+          "initialValue": "true"
         }
       },
       "isAsync": true
@@ -517,7 +519,8 @@
         "option": {
           "type": "boolean",
           "name": "User under age of consent",
-          "desc": "Specifies if the user is under the age of consent"
+          "desc": "Specifies if the user is under the age of consent",
+          "initialValue": "true"
         }
       },
       "isAsync": true

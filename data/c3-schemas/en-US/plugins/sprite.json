@@ -117,7 +117,8 @@
         "tag": {
           "type": "animationframe",
           "name": "tag",
-          "desc": "The animation frame tag to compare against."
+          "desc": "The animation frame tag to compare against.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -311,7 +312,8 @@
         "where": {
           "type": "animationframe",
           "name": "Where",
-          "desc": "The index or tag at which to insert or delete an animation frame. Use -1 for last frame."
+          "desc": "The index or tag at which to insert or delete an animation frame. Use -1 for last frame.",
+          "initialValue": "-1"
         }
       }
     },
@@ -411,7 +413,8 @@
         "create-hierarchy": {
           "type": "boolean",
           "name": "Create hierarchy",
-          "desc": "Whether to also create all child instances according to the hierarchy in the Layout View."
+          "desc": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
         },
         "template-name": {
           "type": "template",
@@ -474,7 +477,8 @@
         "scale": {
           "type": "number",
           "name": "Scale",
-          "desc": "The object width and height to set, based on a multiple of its original dimensions, e.g. 1 = original size, 2 = double size, 0.5 = half size etc."
+          "desc": "The object width and height to set, based on a multiple of its original dimensions, e.g. 1 = original size, 2 = double size, 0.5 = half size etc.",
+          "initialValue": "1"
         }
       }
     },
@@ -489,7 +493,8 @@
         "uri": {
           "type": "string",
           "name": "URI",
-          "desc": "Enter the URL on the web, or data URI, of an image to load."
+          "desc": "Enter the URL on the web, or data URI, of an image to load.",
+          "initialValue": "\"https://\""
         },
         "size": {
           "type": "combo",

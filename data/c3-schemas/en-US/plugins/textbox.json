@@ -71,7 +71,8 @@
         "text": {
           "type": "any",
           "name": "Text",
-          "desc": "The text to set in the text input."
+          "desc": "The text to set in the text input.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -86,7 +87,8 @@
         "text": {
           "type": "any",
           "name": "Text",
-          "desc": "Enter the text to append to the object's content."
+          "desc": "Enter the text to append to the object's content.",
+          "initialValue": "\"\""
         }
       }
     },

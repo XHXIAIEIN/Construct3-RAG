@@ -403,17 +403,20 @@
         "latency": {
           "type": "number",
           "name": "延迟",
-          "desc": "要模拟的网络延迟，以秒为单位。这将导致发送和接收的消息都被人为进行延迟。"
+          "desc": "要模拟的网络延迟，以秒为单位。这将导致发送和接收的消息都被人为进行延迟。",
+          "initialValue": "0.1"
         },
         "pdv": {
           "type": "number",
           "name": "延迟波动",
-          "desc": "在标准网络延迟的基础上，增加一个从 0 到目标值之间的随机秒数 (PDV)，用于模拟真实环境中，玩家与本机发送或接受消息时的延迟。"
+          "desc": "在标准网络延迟的基础上，增加一个从 0 到目标值之间的随机秒数 (PDV)，用于模拟真实环境中，玩家与本机发送或接受消息时的延迟。",
+          "initialValue": "0.03"
         },
         "packet-loss": {
           "type": "number",
           "name": "丢包概率",
-          "desc": "模拟数据包丢失的百分比概率，数值范围从 0 到 1，如 0.05 表示有 5％ 的几率丢失数据。用于模拟在发送和接收的消息可能被人为的忽略或进一步延迟。"
+          "desc": "模拟数据包丢失的百分比概率，数值范围从 0 到 1，如 0.05 表示有 5％ 的几率丢失数据。用于模拟在发送和接收的消息可能被人为的忽略或进一步延迟。",
+          "initialValue": "0.05"
         }
       }
     },
@@ -702,7 +705,8 @@
         "server": {
           "type": "string",
           "name": "服务器",
-          "desc": "要连接的信令服务器URL。"
+          "desc": "要连接的信令服务器URL。",
+          "initialValue": "\"wss://multiplayer.construct.net\""
         }
       },
       "isAsync": true
@@ -726,7 +730,8 @@
         "ice-server": {
           "type": "string",
           "name": "ICE 服务器",
-          "desc": "自定义ICE服务器，例如 STUN或TURN，帮助建立连接。"
+          "desc": "自定义ICE服务器，例如 STUN或TURN，帮助建立连接。",
+          "initialValue": "\"stun:\""
         },
         "username-optional": {
           "type": "string",
@@ -767,12 +772,14 @@
         "game": {
           "type": "string",
           "name": "游戏",
-          "desc": "用于服务器识别此游戏的字符串。为了确保它是唯一的，建议使用更详细的字符串描述，例如包含您或您公司的名称，例如使用 'MyStudio-Game' 而不仅是 'Game'。"
+          "desc": "用于服务器识别此游戏的字符串。为了确保它是唯一的，建议使用更详细的字符串描述，例如包含您或您公司的名称，例如使用 'MyStudio-Game' 而不仅是 'Game'。",
+          "initialValue": "\"MyCompany-MyGame\""
         },
         "instance": {
           "type": "string",
           "name": "大厅",
-          "desc": "用于识别游戏大厅的字符串，允许运行不同的游戏房间。方便区分游戏版本，服务地区，玩法模式等。"
+          "desc": "用于识别游戏大厅的字符串，允许运行不同的游戏房间。方便区分游戏版本，服务地区，玩法模式等。",
+          "initialValue": "\"default\""
         },
         "room": {
           "type": "string",
@@ -823,12 +830,14 @@
         "game": {
           "type": "string",
           "name": "游戏",
-          "desc": "用于服务器识别此游戏的字符串。为了确保它是唯一的，建议使用更详细的字符串描述，例如包含您或您团队的名称，例如使用 'MyStudio-Game' 而不仅是 'Game'。"
+          "desc": "用于服务器识别此游戏的字符串。为了确保它是唯一的，建议使用更详细的字符串描述，例如包含您或您团队的名称，例如使用 'MyStudio-Game' 而不仅是 'Game'。",
+          "initialValue": "\"MyCompany-MyGame\""
         },
         "instance": {
           "type": "string",
           "name": "大厅",
-          "desc": "用于识别游戏大厅的字符串，允许运行不同的游戏房间。方便区分游戏版本，服务地区，玩法模式等。"
+          "desc": "用于识别游戏大厅的字符串，允许运行不同的游戏房间。方便区分游戏版本，服务地区，玩法模式等。",
+          "initialValue": "\"default\""
         },
         "first-room": {
           "type": "string",
@@ -838,7 +847,8 @@
         "max-peers": {
           "type": "number",
           "name": "房间人数",
-          "desc": "房间最大可容纳的用户数量。 若房间满员，后面的用户将被送到下一个房间。"
+          "desc": "房间最大可容纳的用户数量。 若房间满员，后面的用户将被送到下一个房间。",
+          "initialValue": "2"
         },
         "locking": {
           "type": "combo",

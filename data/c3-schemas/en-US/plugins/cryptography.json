@@ -196,7 +196,8 @@
         "iterations": {
           "type": "number",
           "name": "Iterations",
-          "desc": "Number of times to repeat hash function when generating key. Higher values are slower but more secure."
+          "desc": "Number of times to repeat hash function when generating key. Higher values are slower but more secure.",
+          "initialValue": "100000"
         },
         "tag": {
           "type": "string",

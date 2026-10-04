@@ -141,7 +141,8 @@
         "rate": {
           "type": "number",
           "name": "Rate",
-          "desc": "The playback rate to set. 1 is original speed, 2 is double speed, etc."
+          "desc": "The playback rate to set. 1 is original speed, 2 is double speed, etc.",
+          "initialValue": "1"
         }
       }
     },
@@ -194,7 +195,8 @@
         "volume": {
           "type": "number",
           "name": "Volume",
-          "desc": "The volume of the audio to set, in dB attenuation."
+          "desc": "The volume of the audio to set, in dB attenuation.",
+          "initialValue": "-6"
         }
       }
     },

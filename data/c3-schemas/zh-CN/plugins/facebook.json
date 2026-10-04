@@ -106,7 +106,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "分享的链接。"
+          "desc": "分享的链接。",
+          "initialValue": "\"https://\""
         }
       }
     },
@@ -141,7 +142,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "分享的链接。"
+          "desc": "分享的链接。",
+          "initialValue": "\"https://\""
         },
         "name": {
           "type": "string",

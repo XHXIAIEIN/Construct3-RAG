@@ -132,7 +132,8 @@
         "frequency": {
           "type": "number",
           "name": "Frequency",
-          "desc": "The frequency parameter for the chosen filter, in Hertz."
+          "desc": "The frequency parameter for the chosen filter, in Hertz.",
+          "initialValue": "350"
         },
         "detune": {
           "type": "number",
@@ -142,7 +143,8 @@
         "q": {
           "type": "number",
           "name": "Q",
-          "desc": "The filter Q factor."
+          "desc": "The filter Q factor.",
+          "initialValue": "1"
         },
         "gain": {
           "type": "number",
@@ -152,7 +154,8 @@
         "mix": {
           "type": "number",
           "name": "Mix",
-          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
+          "initialValue": "100"
         }
       }
     },
@@ -187,17 +190,20 @@
         "delay": {
           "type": "number",
           "name": "Delay",
-          "desc": "The delay time in seconds."
+          "desc": "The delay time in seconds.",
+          "initialValue": "0.4"
         },
         "gain": {
           "type": "number",
           "name": "Gain",
-          "desc": "The gain of the delayed audio in decibels."
+          "desc": "The gain of the delayed audio in decibels.",
+          "initialValue": "-5"
         },
         "mix": {
           "type": "number",
           "name": "Mix",
-          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
+          "initialValue": "100"
         }
       }
     },
@@ -231,7 +237,8 @@
         "mix": {
           "type": "number",
           "name": "Mix",
-          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
+          "initialValue": "100"
         }
       }
     },
@@ -308,27 +315,32 @@
         "delay": {
           "type": "number",
           "name": "Delay",
-          "desc": "The delay time, in milliseconds."
+          "desc": "The delay time, in milliseconds.",
+          "initialValue": "5"
         },
         "modulation": {
           "type": "number",
           "name": "Modulation",
-          "desc": "The magnitude by which to alter the delay time, in milliseconds. Set to 0 for a chorus style effect."
+          "desc": "The magnitude by which to alter the delay time, in milliseconds. Set to 0 for a chorus style effect.",
+          "initialValue": "3"
         },
         "frequency": {
           "type": "number",
           "name": "Frequency",
-          "desc": "The frequency over which to cycle the delay time, in hertz."
+          "desc": "The frequency over which to cycle the delay time, in hertz.",
+          "initialValue": "0.25"
         },
         "feedback": {
           "type": "number",
           "name": "Feedback",
-          "desc": "The feedback amount, from 0 (none) to 100 (all)."
+          "desc": "The feedback amount, from 0 (none) to 100 (all).",
+          "initialValue": "50"
         },
         "mix": {
           "type": "number",
           "name": "Mix",
-          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
+          "initialValue": "100"
         }
       }
     },
@@ -348,7 +360,8 @@
         "frequency": {
           "type": "number",
           "name": "Frequency",
-          "desc": "The frequency in Hertz where the center of the phase transition occurs."
+          "desc": "The frequency in Hertz where the center of the phase transition occurs.",
+          "initialValue": "4000"
         },
         "detune": {
           "type": "number",
@@ -358,22 +371,26 @@
         "q": {
           "type": "number",
           "name": "Q",
-          "desc": "The filter Q factor."
+          "desc": "The filter Q factor.",
+          "initialValue": "0.5"
         },
         "modulation": {
           "type": "number",
           "name": "Modulation",
-          "desc": "The magnitude by which to alter the frequency, in Hertz."
+          "desc": "The magnitude by which to alter the frequency, in Hertz.",
+          "initialValue": "3900"
         },
         "modulation-frequency": {
           "type": "number",
           "name": "Modulation frequency",
-          "desc": "The frequency over which to cycle the modulation, in hertz."
+          "desc": "The frequency over which to cycle the modulation, in hertz.",
+          "initialValue": "1"
         },
         "mix": {
           "type": "number",
           "name": "Mix",
-          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
+          "initialValue": "100"
         }
       }
     },
@@ -393,7 +410,8 @@
         "gain": {
           "type": "number",
           "name": "Gain",
-          "desc": "The volume adjustment, in decibels."
+          "desc": "The volume adjustment, in decibels.",
+          "initialValue": "-10"
         }
       }
     },
@@ -413,7 +431,8 @@
         "stereo-pan": {
           "type": "number",
           "name": "Stereo pan",
-          "desc": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
+          "desc": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle.",
+          "initialValue": "0"
         }
       }
     },
@@ -433,27 +452,32 @@
         "threshold": {
           "type": "number",
           "name": "Threshold",
-          "desc": "The threshold above which compression occurs, in dB."
+          "desc": "The threshold above which compression occurs, in dB.",
+          "initialValue": "-24"
         },
         "knee": {
           "type": "number",
           "name": "Knee",
-          "desc": "The range above the threshold where the curve smoothly transitions to the 'ratio' portion, in dB."
+          "desc": "The range above the threshold where the curve smoothly transitions to the 'ratio' portion, in dB.",
+          "initialValue": "30"
         },
         "ratio": {
           "type": "number",
           "name": "Ratio",
-          "desc": "The amount of dB change in input for a 1dB change in output."
+          "desc": "The amount of dB change in input for a 1dB change in output.",
+          "initialValue": "12"
         },
         "attack": {
           "type": "number",
           "name": "Attack",
-          "desc": "The time in which to reduce gain by 10dB, in milliseconds."
+          "desc": "The time in which to reduce gain by 10dB, in milliseconds.",
+          "initialValue": "3"
         },
         "release": {
           "type": "number",
           "name": "Release",
-          "desc": "The time in which to increase gain by 10dB, in milliseconds."
+          "desc": "The time in which to increase gain by 10dB, in milliseconds.",
+          "initialValue": "250"
         }
       }
     },
@@ -473,12 +497,14 @@
         "frequency": {
           "type": "number",
           "name": "Frequency",
-          "desc": "The frequency of amplitude modulation, in Hertz."
+          "desc": "The frequency of amplitude modulation, in Hertz.",
+          "initialValue": "10"
         },
         "mix": {
           "type": "number",
           "name": "Mix",
-          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
+          "initialValue": "100"
         }
       }
     },
@@ -498,7 +524,8 @@
         "fft-size": {
           "type": "number",
           "name": "FFT size",
-          "desc": "The size of the FFT used for frequency-domain analysis. Must be a power of two."
+          "desc": "The size of the FFT used for frequency-domain analysis. Must be a power of two.",
+          "initialValue": "512"
         },
         "smoothing": {
           "type": "number",
@@ -523,12 +550,14 @@
         "frequency": {
           "type": "number",
           "name": "Frequency",
-          "desc": "The frequency of the ring modulator, in Hertz."
+          "desc": "The frequency of the ring modulator, in Hertz.",
+          "initialValue": "600"
         },
         "mix": {
           "type": "number",
           "name": "Mix",
-          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
+          "initialValue": "100"
         }
       }
     },
@@ -548,27 +577,32 @@
         "threshold": {
           "type": "number",
           "name": "Threshold",
-          "desc": "The distortion threshold, in dB."
+          "desc": "The distortion threshold, in dB.",
+          "initialValue": "-27"
         },
         "headroom": {
           "type": "number",
           "name": "Headroom",
-          "desc": "The distortion headroom, in dB."
+          "desc": "The distortion headroom, in dB.",
+          "initialValue": "21"
         },
         "drive": {
           "type": "number",
           "name": "Drive",
-          "desc": "The distortion drive."
+          "desc": "The distortion drive.",
+          "initialValue": "5"
         },
         "make-up-gain": {
           "type": "number",
           "name": "Make-up gain",
-          "desc": "The additional volume increase after the effect, in dB."
+          "desc": "The additional volume increase after the effect, in dB.",
+          "initialValue": "3"
         },
         "mix": {
           "type": "number",
           "name": "Mix",
-          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect)."
+          "desc": "The wet/dry mix, from 0 (no effect) to 100 (full effect).",
+          "initialValue": "100"
         }
       }
     },
@@ -637,12 +671,14 @@
         "inner-angle": {
           "type": "number",
           "name": "Inner angle",
-          "desc": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
+          "desc": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound.",
+          "initialValue": "360"
         },
         "outer-angle": {
           "type": "number",
           "name": "Outer angle",
-          "desc": "The cone outer angle (where volume is reduced for directional sources) in degrees."
+          "desc": "The cone outer angle (where volume is reduced for directional sources) in degrees.",
+          "initialValue": "360"
         },
         "outer-gain": {
           "type": "number",
@@ -691,12 +727,14 @@
         "inner-angle": {
           "type": "number",
           "name": "Inner angle",
-          "desc": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
+          "desc": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound.",
+          "initialValue": "360"
         },
         "outer-angle": {
           "type": "number",
           "name": "Outer angle",
-          "desc": "The cone outer angle (where volume is reduced for directional sources) in degrees."
+          "desc": "The cone outer angle (where volume is reduced for directional sources) in degrees.",
+          "initialValue": "360"
         },
         "outer-gain": {
           "type": "number",
@@ -751,32 +789,38 @@
         "forwardX": {
           "type": "number",
           "name": "Forward X",
-          "desc": "The X component of the forward vector."
+          "desc": "The X component of the forward vector.",
+          "initialValue": "0"
         },
         "forwardY": {
           "type": "number",
           "name": "Forward Y",
-          "desc": "The Y component of the forward vector."
+          "desc": "The Y component of the forward vector.",
+          "initialValue": "0"
         },
         "forwardZ": {
           "type": "number",
           "name": "Forward Z",
-          "desc": "The Z component of the forward vector."
+          "desc": "The Z component of the forward vector.",
+          "initialValue": "-1"
         },
         "upX": {
           "type": "number",
           "name": "Up X",
-          "desc": "The X component of the up vector."
+          "desc": "The X component of the up vector.",
+          "initialValue": "0"
         },
         "upY": {
           "type": "number",
           "name": "Up Y",
-          "desc": "The Y component of the up vector."
+          "desc": "The Y component of the up vector.",
+          "initialValue": "1"
         },
         "upZ": {
           "type": "number",
           "name": "Up Z",
-          "desc": "The Z component of the up vector."
+          "desc": "The Z component of the up vector.",
+          "initialValue": "0"
         }
       }
     },
@@ -824,12 +868,14 @@
         "inner-angle": {
           "type": "number",
           "name": "Inner angle",
-          "desc": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
+          "desc": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound.",
+          "initialValue": "360"
         },
         "outer-angle": {
           "type": "number",
           "name": "Outer angle",
-          "desc": "The cone outer angle (where volume is reduced for directional sources) in degrees."
+          "desc": "The cone outer angle (where volume is reduced for directional sources) in degrees.",
+          "initialValue": "360"
         },
         "outer-gain": {
           "type": "number",
@@ -902,12 +948,14 @@
         "inner-angle": {
           "type": "number",
           "name": "Inner angle",
-          "desc": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound."
+          "desc": "The cone inner angle (for full volume sound for directional sources) in degrees. 360 means a non-directional sound.",
+          "initialValue": "360"
         },
         "outer-angle": {
           "type": "number",
           "name": "Outer angle",
-          "desc": "The cone outer angle (where volume is reduced for directional sources) in degrees."
+          "desc": "The cone outer angle (where volume is reduced for directional sources) in degrees.",
+          "initialValue": "360"
         },
         "outer-gain": {
           "type": "number",
@@ -937,7 +985,8 @@
         "stereo-pan": {
           "type": "number",
           "name": "Stereo pan",
-          "desc": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
+          "desc": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle.",
+          "initialValue": "0"
         }
       }
     },
@@ -971,7 +1020,8 @@
         "stereo-pan": {
           "type": "number",
           "name": "Stereo pan",
-          "desc": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
+          "desc": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle.",
+          "initialValue": "0"
         },
         "tag-optional": {
           "type": "string",
@@ -1044,7 +1094,8 @@
         "db": {
           "type": "number",
           "name": "dB",
-          "desc": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+          "desc": "The attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc.",
+          "initialValue": "-10"
         }
       }
     },
@@ -1064,12 +1115,14 @@
         "db": {
           "type": "number",
           "name": "dB",
-          "desc": "The attenuation in decibels (dB) to fade to."
+          "desc": "The attenuation in decibels (dB) to fade to.",
+          "initialValue": "-100"
         },
         "duration": {
           "type": "number",
           "name": "Duration",
-          "desc": "The time in seconds to fade over."
+          "desc": "The time in seconds to fade over.",
+          "initialValue": "3"
         },
         "ending": {
           "type": "combo",
@@ -1114,7 +1167,8 @@
         "playback-rate": {
           "type": "number",
           "name": "Playback rate",
-          "desc": "The rate of playback.  1.0 is normal speed, 0.5 half speed, 2.0 double speed, etc."
+          "desc": "The rate of playback.  1.0 is normal speed, 0.5 half speed, 2.0 double speed, etc.",
+          "initialValue": "1.0"
         }
       }
     },
@@ -1172,7 +1226,8 @@
         "stereo-pan": {
           "type": "number",
           "name": "Stereo pan",
-          "desc": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle."
+          "desc": "The stereo pan, from -100 (left) to 100 (right), with 0 being middle.",
+          "initialValue": "0"
         },
         "tag-optional": {
           "type": "string",
@@ -1237,7 +1292,8 @@
         "db": {
           "type": "number",
           "name": "dB",
-          "desc": "The master attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc."
+          "desc": "The master attenuation in decibels (dB).  0 is original volume, -10 dB is about half as loud, etc.",
+          "initialValue": "-10"
         }
       }
     },
@@ -1351,12 +1407,14 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "URL to load the audio from. Note cross-domain requests require CORS."
+          "desc": "URL to load the audio from. Note cross-domain requests require CORS.",
+          "initialValue": "\"https://\""
         },
         "type": {
           "type": "string",
           "name": "Type",
-          "desc": "The content type (aka MIME type) of the audio loaded at the given URL. Note WebM Opus is the only format guaranteed to play on all platforms."
+          "desc": "The content type (aka MIME type) of the audio loaded at the given URL. Note WebM Opus is the only format guaranteed to play on all platforms.",
+          "initialValue": "\"audio/webm; codecs=opus\""
         },
         "name": {
           "type": "string",

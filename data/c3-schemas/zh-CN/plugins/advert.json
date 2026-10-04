@@ -323,7 +323,8 @@
         "offset": {
           "type": "number",
           "name": "偏移位置",
-          "desc": "横幅的偏移位置，以像素为单位。需要 '覆盖显示' 选项为 '覆盖' 时有效。"
+          "desc": "横幅的偏移位置，以像素为单位。需要 '覆盖显示' 选项为 '覆盖' 时有效。",
+          "initialValue": "0"
         },
         "overlap": {
           "type": "combo",
@@ -501,7 +502,8 @@
         "option": {
           "type": "boolean",
           "name": "标记此用户为儿童",
-          "desc": "告知 Admob SDK 此用户为儿童，应返回适用于儿童的广告内容。"
+          "desc": "告知 Admob SDK 此用户为儿童，应返回适用于儿童的广告内容。",
+          "initialValue": "true"
         }
       },
       "isAsync": true
@@ -517,7 +519,8 @@
         "option": {
           "type": "boolean",
           "name": "标记此用户为未成年人",
-          "desc": "告知 Admob SDK 此用户未达到法定年龄。"
+          "desc": "告知 Admob SDK 此用户未达到法定年龄。",
+          "initialValue": "true"
         }
       },
       "isAsync": true

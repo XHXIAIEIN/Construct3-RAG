@@ -30,7 +30,8 @@
         "within": {
           "type": "number",
           "name": "Within",
-          "desc": "Number of degrees that object must be within."
+          "desc": "Number of degrees that object must be within.",
+          "initialValue": 0.5
         },
         "angle": {
           "type": "number",
@@ -70,7 +71,8 @@
         "second-angle": {
           "type": "number",
           "name": "Second angle",
-          "desc": "Second angle, in degrees.  Specify in clockwise order."
+          "desc": "Second angle, in degrees.  Specify in clockwise order.",
+          "initialValue": 45
         }
       }
     },
@@ -817,7 +819,8 @@
         "w-component": {
           "type": "number",
           "name": "Quaternion W",
-          "desc": "W component of quaternion."
+          "desc": "W component of quaternion.",
+          "initialValue": "1"
         }
       }
     },
@@ -878,7 +881,8 @@
         "opacity": {
           "type": "number",
           "name": "Opacity",
-          "desc": "Choose the object opacity, from 0 (transparent) to 100 (opaque)."
+          "desc": "Choose the object opacity, from 0 (transparent) to 100 (opaque).",
+          "initialValue": 100
         }
       }
     },
@@ -893,7 +897,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "Choose the color to apply using an expression like rgbEx(100, 0, 0) for red."
+          "desc": "Choose the color to apply using an expression like rgbEx(100, 0, 0) for red.",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
       }
     },
@@ -1003,7 +1008,8 @@
         "value": {
           "type": "any",
           "name": "Value",
-          "desc": "Value to add to this instance variable."
+          "desc": "Value to add to this instance variable.",
+          "initialValue": 1
         }
       }
     },
@@ -1023,7 +1029,8 @@
         "value": {
           "type": "any",
           "name": "Value",
-          "desc": "Value to subtract from this instance variable."
+          "desc": "Value to subtract from this instance variable.",
+          "initialValue": 1
         }
       }
     },
@@ -1226,7 +1233,8 @@
         "distance": {
           "type": "number",
           "name": "Distance",
-          "desc": "Distance, in pixels, to move the object forwards at its current angle."
+          "desc": "Distance, in pixels, to move the object forwards at its current angle.",
+          "initialValue": 1
         }
       }
     },
@@ -1246,7 +1254,8 @@
         "distance": {
           "type": "number",
           "name": "Distance",
-          "desc": "Distance, in pixels, to move the object at the given angle."
+          "desc": "Distance, in pixels, to move the object at the given angle.",
+          "initialValue": 1
         }
       }
     },
@@ -1451,47 +1460,56 @@
         "transform-x": {
           "type": "boolean",
           "name": "X",
-          "desc": "Transform with the parent's X position."
+          "desc": "Transform with the parent's X position.",
+          "initialValue": "true"
         },
         "transform-y": {
           "type": "boolean",
           "name": "Y",
-          "desc": "Transform with the parent's Y position."
+          "desc": "Transform with the parent's Y position.",
+          "initialValue": "true"
         },
         "transform-z-elevation": {
           "type": "boolean",
           "name": "Z",
-          "desc": "Transform with the parent's Z position."
+          "desc": "Transform with the parent's Z position.",
+          "initialValue": "true"
         },
         "transform-w": {
           "type": "boolean",
           "name": "Width",
-          "desc": "Transform with the parent's width."
+          "desc": "Transform with the parent's width.",
+          "initialValue": "true"
         },
         "transform-h": {
           "type": "boolean",
           "name": "Height",
-          "desc": "Transform with the parent's height."
+          "desc": "Transform with the parent's height.",
+          "initialValue": "true"
         },
         "transform-d": {
           "type": "boolean",
           "name": "Depth",
-          "desc": "Transform with the parent's depth."
+          "desc": "Transform with the parent's depth.",
+          "initialValue": "true"
         },
         "transform-a": {
           "type": "boolean",
           "name": "Angle",
-          "desc": "Transform with the parent's angle."
+          "desc": "Transform with the parent's angle.",
+          "initialValue": "true"
         },
         "transform-o": {
           "type": "boolean",
           "name": "Opacity",
-          "desc": "Transform with the parent's opacity."
+          "desc": "Transform with the parent's opacity.",
+          "initialValue": "false"
         },
         "transform-visibility": {
           "type": "boolean",
           "name": "Visibility",
-          "desc": "Transform with the parent's visibility."
+          "desc": "Transform with the parent's visibility.",
+          "initialValue": "false"
         },
         "destroy-with-parent": {
           "type": "boolean",
@@ -1593,12 +1611,14 @@
         "texx": {
           "type": "number",
           "name": "Texture X",
-          "desc": "X co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
+          "desc": "X co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged.",
+          "initialValue": "-1"
         },
         "texy": {
           "type": "number",
           "name": "Texture Y",
-          "desc": "Y co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged."
+          "desc": "Y co-ordinate of the object image at the mesh point, from 0-1 within the object's box. Use -1 in absolute mode, or 0 in relative mode, to leave unchanged.",
+          "initialValue": "-1"
         }
       }
     },
@@ -1613,12 +1633,14 @@
         "property-name": {
           "type": "string",
           "name": "Property name",
-          "desc": "A CSS property name to set on the HTML element."
+          "desc": "A CSS property name to set on the HTML element.",
+          "initialValue": "\"border\""
         },
         "value": {
           "type": "string",
           "name": "Value",
-          "desc": "A string to assign as the value for this CSS property."
+          "desc": "A string to assign as the value for this CSS property.",
+          "initialValue": "\"1px solid red\""
         }
       }
     },
@@ -1638,7 +1660,8 @@
         "attribute-value": {
           "type": "any",
           "name": "Value",
-          "desc": "The value to set the attribute to."
+          "desc": "The value to set the attribute to.",
+          "initialValue": "\"\""
         }
       }
     },

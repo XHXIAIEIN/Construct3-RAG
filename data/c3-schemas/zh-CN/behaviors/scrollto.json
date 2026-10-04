@@ -26,12 +26,14 @@
         "magnitude": {
           "type": "number",
           "name": "振动强度",
-          "desc": "振动强度，即允许滚动随机偏移的最大像素。"
+          "desc": "振动强度，即允许滚动随机偏移的最大像素。",
+          "initialValue": "20"
         },
         "duration": {
           "type": "number",
           "name": "持续时间",
-          "desc": "振动的持续时间，以秒为单位。"
+          "desc": "振动的持续时间，以秒为单位。",
+          "initialValue": "0.4"
         },
         "mode": {
           "type": "combo",

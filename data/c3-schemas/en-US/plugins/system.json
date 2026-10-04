@@ -42,7 +42,8 @@
         "within": {
           "type": "number",
           "name": "Within",
-          "desc": "Number of degrees that angle 1 must be within angle 2."
+          "desc": "Number of degrees that angle 1 must be within angle 2.",
+          "initialValue": "0.5"
         },
         "angle-2": {
           "type": "number",
@@ -92,7 +93,8 @@
         "second-angle": {
           "type": "number",
           "name": "Second angle",
-          "desc": "Second angle in degrees. Specify in clockwise order."
+          "desc": "Second angle in degrees. Specify in clockwise order.",
+          "initialValue": "45"
         }
       }
     },
@@ -165,7 +167,8 @@
         "upper-bound": {
           "type": "number",
           "name": "Upper bound",
-          "desc": "The upper value to compare to."
+          "desc": "The upper value to compare to.",
+          "initialValue": "10"
         }
       }
     },
@@ -205,7 +208,8 @@
         "flags": {
           "type": "string",
           "name": "Flags",
-          "desc": "Regular expression flags. i = ignore case, g = global match, m = multiline."
+          "desc": "Regular expression flags. i = ignore case, g = global match, m = multiline.",
+          "initialValue": "\"gi\""
         }
       }
     },
@@ -437,12 +441,14 @@
         "start-index": {
           "type": "number",
           "name": "Start index",
-          "desc": "Start index of the loop range (inclusive)."
+          "desc": "Start index of the loop range (inclusive).",
+          "initialValue": "1"
         },
         "end-index": {
           "type": "number",
           "name": "End index",
-          "desc": "End index of the loop range (inclusive)."
+          "desc": "End index of the loop range (inclusive).",
+          "initialValue": "10"
         }
       },
       "isLooping": true
@@ -474,7 +480,8 @@
         "count": {
           "type": "number",
           "name": "Count",
-          "desc": "Number of times to repeat the actions."
+          "desc": "Number of times to repeat the actions.",
+          "initialValue": "10"
         }
       },
       "isLooping": true
@@ -885,7 +892,8 @@
         "interval-seconds": {
           "type": "number",
           "name": "Interval (seconds)",
-          "desc": "Specify time, in seconds, between running the actions.  Interval is limited by the framerate (actions will not run more than once per tick)."
+          "desc": "Specify time, in seconds, between running the actions.  Interval is limited by the framerate (actions will not run more than once per tick).",
+          "initialValue": "1.0"
         }
       },
       "isCompatibleWithTriggers": false
@@ -906,7 +914,8 @@
         "time-seconds": {
           "type": "number",
           "name": "Time (seconds)",
-          "desc": "The time (seconds since starting) to compare to."
+          "desc": "The time (seconds since starting) to compare to.",
+          "initialValue": "1.0"
         }
       }
     },
@@ -968,7 +977,8 @@
         "jpeg-quality": {
           "type": "number",
           "name": "JPEG quality",
-          "desc": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG."
+          "desc": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG.",
+          "initialValue": "75"
         },
         "x": {
           "type": "number",
@@ -1126,7 +1136,8 @@
         "create-hierarchy": {
           "type": "boolean",
           "name": "Create hierarchy",
-          "desc": "Whether to also create all child instances according to the hierarchy in the Layout View."
+          "desc": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
         },
         "template-name": {
           "type": "template",
@@ -1166,7 +1177,8 @@
         "create-hierarchy": {
           "type": "boolean",
           "name": "Create hierarchy",
-          "desc": "Whether to also create all child instances according to the hierarchy in the Layout View."
+          "desc": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
         },
         "template-name": {
           "type": "template",
@@ -1293,7 +1305,8 @@
         "value": {
           "type": "any",
           "name": "Value",
-          "desc": "Value to add to this variable."
+          "desc": "Value to add to this variable.",
+          "initialValue": "1"
         }
       }
     },
@@ -1313,7 +1326,8 @@
         "value": {
           "type": "any",
           "name": "Value",
-          "desc": "Value to subtract from this variable."
+          "desc": "Value to subtract from this variable.",
+          "initialValue": "1"
         }
       }
     },
@@ -1483,7 +1497,8 @@
         "scale": {
           "type": "number",
           "name": "Scale",
-          "desc": "The layer scale (or 'zoom').  1.0 for original size, 2.0 for double size, etc."
+          "desc": "The layer scale (or 'zoom').  1.0 for original size, 2.0 for double size, etc.",
+          "initialValue": "1.0"
         }
       }
     },
@@ -1523,7 +1538,8 @@
         "scale-rate": {
           "type": "number",
           "name": "Scale rate",
-          "desc": "The scale rate to set.  1.0 for ordinary zoom, 2.0 for twice as much zoom, 0 for no zoom etc."
+          "desc": "The scale rate to set.  1.0 for ordinary zoom, 2.0 for twice as much zoom, 0 for no zoom etc.",
+          "initialValue": "1.0"
         }
       }
     },
@@ -1662,12 +1678,14 @@
         "parallax-x": {
           "type": "number",
           "name": "Parallax X",
-          "desc": "The horizontal scroll rate as a percentage (e.g. 50 for half speed)."
+          "desc": "The horizontal scroll rate as a percentage (e.g. 50 for half speed).",
+          "initialValue": "100"
         },
         "parallax-y": {
           "type": "number",
           "name": "Parallax Y",
-          "desc": "The vertical scroll rate as a percentage (e.g. 50 for half speed)."
+          "desc": "The vertical scroll rate as a percentage (e.g. 50 for half speed).",
+          "initialValue": "100"
         }
       }
     },
@@ -1687,7 +1705,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color to set the layer background to."
+          "desc": "The color to set the layer background to.",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
       }
     },
@@ -1862,7 +1881,8 @@
         "insert-by": {
           "type": "layer",
           "name": "Insert by",
-          "desc": "The name or index of an existing layer indicating where to add the new layer."
+          "desc": "The name or index of an existing layer indicating where to add the new layer.",
+          "initialValue": "\"\""
         },
         "where": {
           "type": "combo",
@@ -1888,12 +1908,14 @@
         "layer": {
           "type": "layer",
           "name": "Layer",
-          "desc": "The name or index of an existing layer to move."
+          "desc": "The name or index of an existing layer to move.",
+          "initialValue": "\"\""
         },
         "insert-by": {
           "type": "layer",
           "name": "Insert by",
-          "desc": "The name or index of another layer indicating where to move the layer to."
+          "desc": "The name or index of another layer indicating where to move the layer to.",
+          "initialValue": "\"\""
         },
         "where": {
           "type": "combo",
@@ -1919,7 +1941,8 @@
         "layer": {
           "type": "layer",
           "name": "Layer",
-          "desc": "The name to or index of an existing layer to remove."
+          "desc": "The name to or index of an existing layer to remove.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -2069,7 +2092,8 @@
         "scale": {
           "type": "number",
           "name": "Scale",
-          "desc": "The overall scale of the layout.  1.0 for original size, 2.0 for double size, etc."
+          "desc": "The overall scale of the layout.  1.0 for original size, 2.0 for double size, etc.",
+          "initialValue": "1.0"
         }
       }
     },
@@ -2148,12 +2172,14 @@
         "vanishing-point-x": {
           "type": "number",
           "name": "Vanishing point X",
-          "desc": "The vanishing point X in the viewport, from 0-100, with 50 being the middle."
+          "desc": "The vanishing point X in the viewport, from 0-100, with 50 being the middle.",
+          "initialValue": "50"
         },
         "vanishing-point-y": {
           "type": "number",
           "name": "Vanishing point Y",
-          "desc": "The vanishing point Y in the viewport, from 0-100, with 50 being the middle."
+          "desc": "The vanishing point Y in the viewport, from 0-100, with 50 being the middle.",
+          "initialValue": "50"
         }
       }
     },
@@ -2238,12 +2264,14 @@
         "source-layer": {
           "type": "any",
           "name": "Source layer",
-          "desc": "Name or zero-based index of layer on source layout to take objects from. Use -1 to recreate objects from all layers."
+          "desc": "Name or zero-based index of layer on source layout to take objects from. Use -1 to recreate objects from all layers.",
+          "initialValue": "-1"
         },
         "dest-layer": {
           "type": "any",
           "name": "Destination layer",
-          "desc": "Name or zero-based index of layer on current layout to create objects on. Use -1 to match the original layers."
+          "desc": "Name or zero-based index of layer on current layout to create objects on. Use -1 to match the original layers.",
+          "initialValue": "-1"
         },
         "offset-x": {
           "type": "number",
@@ -2258,7 +2286,8 @@
         "create-hierarchy": {
           "type": "boolean",
           "name": "Create hierarchy",
-          "desc": "Whether to also create all child instances according to the hierarchy in the Layout View."
+          "desc": "Whether to also create all child instances according to the hierarchy in the Layout View.",
+          "initialValue": "false"
         }
       }
     },
@@ -2375,7 +2404,8 @@
         "slot": {
           "type": "string",
           "name": "Slot",
-          "desc": "A string identifying this save game state."
+          "desc": "A string identifying this save game state.",
+          "initialValue": "\"mysave\""
         }
       },
       "isAsync": true
@@ -2391,7 +2421,8 @@
         "slot": {
           "type": "string",
           "name": "Slot",
-          "desc": "The slot that was previously saved to, from which to load from."
+          "desc": "The slot that was previously saved to, from which to load from.",
+          "initialValue": "\"mysave\""
         }
       },
       "isAsync": true
@@ -2497,7 +2528,8 @@
         "time-scale": {
           "type": "number",
           "name": "Time scale",
-          "desc": "The new time scale: 1.0 = normal speed, 0.5 = half speed, 2.0 = double speed, 0 = pause, etc."
+          "desc": "The new time scale: 1.0 = normal speed, 0.5 = half speed, 2.0 = double speed, 0 = pause, etc.",
+          "initialValue": "1.0"
         }
       }
     },
@@ -2517,7 +2549,8 @@
         "time-scale": {
           "type": "number",
           "name": "Time scale",
-          "desc": "The new time scale for the object (1.0 = normal speed, 0.5 = half speed, etc)."
+          "desc": "The new time scale for the object (1.0 = normal speed, 0.5 = half speed, etc).",
+          "initialValue": "1.0"
         }
       }
     },
@@ -2547,12 +2580,14 @@
         "seconds": {
           "type": "number",
           "name": "Seconds",
-          "desc": "The number of seconds to wait before running the next action."
+          "desc": "The number of seconds to wait before running the next action.",
+          "initialValue": "1.0"
         },
         "use-timescale": {
           "type": "boolean",
           "name": "Use time scale",
-          "desc": "Uncheck to ignore the current time scale and wait in wall-clock time."
+          "desc": "Uncheck to ignore the current time scale and wait in wall-clock time.",
+          "initialValue": "true"
         }
       }
     },
@@ -2605,12 +2640,14 @@
         "minimum-dt": {
           "type": "number",
           "name": "Min delta-time",
-          "desc": "The minimum delta-time, causing the project to go in to fast forward as the framerate increases."
+          "desc": "The minimum delta-time, causing the project to go in to fast forward as the framerate increases.",
+          "initialValue": "0"
         },
         "maximum-dt": {
           "type": "number",
           "name": "Max delta-time",
-          "desc": "The maximum delta-time, causing the project to go in to slow motion as the framerate decreases."
+          "desc": "The maximum delta-time, causing the project to go in to slow motion as the framerate decreases.",
+          "initialValue": "1 / 30"
         }
       }
     },
@@ -3086,7 +3123,8 @@
         "layer": {
           "type": "layer",
           "name": "layer",
-          "desc": "Layer name to get index for."
+          "desc": "Layer name to get index for.",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"
@@ -3217,7 +3255,8 @@
         "number": {
           "type": "number",
           "name": "Number",
-          "desc": "Number to take square root of"
+          "desc": "Number to take square root of",
+          "initialValue": 1
         }
       },
       "returnType": "number"
@@ -4337,7 +4376,8 @@
         "flags": {
           "type": "string",
           "name": "Flags",
-          "desc": "Regular expression flags"
+          "desc": "Regular expression flags",
+          "initialValue": "\"gi\""
         }
       },
       "returnType": "number"
@@ -4362,7 +4402,8 @@
         "flags": {
           "type": "string",
           "name": "Flags",
-          "desc": "Regular expression flags"
+          "desc": "Regular expression flags",
+          "initialValue": "\"gi\""
         },
         "replace": {
           "type": "string",
@@ -4392,7 +4433,8 @@
         "flags": {
           "type": "string",
           "name": "Flags",
-          "desc": "Regular expression flags"
+          "desc": "Regular expression flags",
+          "initialValue": "\"gi\""
         }
       },
       "returnType": "number"
@@ -4417,7 +4459,8 @@
         "flags": {
           "type": "string",
           "name": "Flags",
-          "desc": "Regular expression flags"
+          "desc": "Regular expression flags",
+          "initialValue": "\"gi\""
         },
         "index": {
           "type": "number",
@@ -4574,7 +4617,8 @@
         "range": {
           "type": "number",
           "name": "Range",
-          "desc": "Range of random numbers to generate, from 0 to one less than this value."
+          "desc": "Range of random numbers to generate, from 0 to one less than this value.",
+          "initialValue": 10
         }
       },
       "returnType": "number",

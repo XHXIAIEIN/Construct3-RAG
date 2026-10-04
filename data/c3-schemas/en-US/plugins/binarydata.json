@@ -211,12 +211,14 @@
         "offset": {
           "type": "number",
           "name": "Offset",
-          "desc": "Offset of start in bytes."
+          "desc": "Offset of start in bytes.",
+          "initialValue": "0"
         },
         "length": {
           "type": "number",
           "name": "Length",
-          "desc": "Length of area to fill in bytes. Use -1 for end."
+          "desc": "Length of area to fill in bytes. Use -1 for end.",
+          "initialValue": "-1"
         }
       }
     },
@@ -236,17 +238,20 @@
         "start": {
           "type": "number",
           "name": "Start",
-          "desc": "Start of range in bytes (inclusive)."
+          "desc": "Start of range in bytes (inclusive).",
+          "initialValue": "0"
         },
         "length": {
           "type": "number",
           "name": "Length",
-          "desc": "Length of range in bytes. Use -1 for end."
+          "desc": "Length of range in bytes. Use -1 for end.",
+          "initialValue": "-1"
         },
         "target": {
           "type": "number",
           "name": "Target",
-          "desc": "Location to insert range in bytes."
+          "desc": "Location to insert range in bytes.",
+          "initialValue": "0"
         }
       }
     },

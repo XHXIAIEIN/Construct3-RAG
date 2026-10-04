@@ -288,7 +288,8 @@
         "message": {
           "type": "any",
           "name": "Message",
-          "desc": "Enter the message text to log to the browser console."
+          "desc": "Enter the message text to log to the browser console.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -326,7 +327,8 @@
         "pattern": {
           "type": "string",
           "name": "Pattern",
-          "desc": "A comma-separated string with a list of times in milliseconds, describing a pattern of vibrations and pauses."
+          "desc": "A comma-separated string with a list of times in milliseconds, describing a pattern of vibrations and pauses.",
+          "initialValue": "\"200,100,200\""
         }
       }
     },
@@ -356,17 +358,20 @@
         "property-name": {
           "type": "string",
           "name": "Property name",
-          "desc": "A CSS property name to set on the HTML element."
+          "desc": "A CSS property name to set on the HTML element.",
+          "initialValue": "\"border\""
         },
         "value": {
           "type": "string",
           "name": "Value",
-          "desc": "A string to assign as the value for this CSS property."
+          "desc": "A string to assign as the value for this CSS property.",
+          "initialValue": "\"1px solid red\""
         },
         "selector": {
           "type": "string",
           "name": "Selector",
-          "desc": "A CSS selector which will be used to match elements."
+          "desc": "A CSS selector which will be used to match elements.",
+          "initialValue": "\"html\""
         },
         "type": {
           "type": "combo",
@@ -396,7 +401,8 @@
         "selector": {
           "type": "string",
           "name": "Selector",
-          "desc": "A CSS selector which will be used to match the element."
+          "desc": "A CSS selector which will be used to match the element.",
+          "initialValue": "\"html\""
         },
         "tag": {
           "type": "string",
@@ -433,7 +439,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "Enter the full URL to navigate to."
+          "desc": "Enter the full URL to navigate to.",
+          "initialValue": "\"https://\""
         },
         "target": {
           "type": "combo",
@@ -458,12 +465,14 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "Enter the full URL to navigate to."
+          "desc": "Enter the full URL to navigate to.",
+          "initialValue": "\"https://\""
         },
         "tag": {
           "type": "string",
           "name": "Tag",
-          "desc": "A string to identify this window.  You can reuse an existing window by reusing its tag."
+          "desc": "A string to identify this window.  You can reuse an existing window by reusing its tag.",
+          "initialValue": "\"NewWindow\""
         }
       }
     },
@@ -511,12 +520,14 @@
         "mime-type": {
           "type": "string",
           "name": "MIME type",
-          "desc": "The MIME type of the given data."
+          "desc": "The MIME type of the given data.",
+          "initialValue": "\"application/json\""
         },
         "filename": {
           "type": "string",
           "name": "Filename",
-          "desc": "The filename to give the downloaded file."
+          "desc": "The filename to give the downloaded file.",
+          "initialValue": "\"mydata.json\""
         }
       }
     },
@@ -561,7 +572,8 @@
         "message": {
           "type": "any",
           "name": "Message",
-          "desc": "Enter the message to display in the alert."
+          "desc": "Enter the message to display in the alert.",
+          "initialValue": "\"\""
         }
       }
     },

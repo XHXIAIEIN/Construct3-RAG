@@ -255,7 +255,8 @@
         "value": {
           "type": "any",
           "name": "Value",
-          "desc": "The value to set for the attribute (ignored if removing attribute)."
+          "desc": "The value to set for the attribute (ignored if removing attribute).",
+          "initialValue": "\"\""
         },
         "selector": {
           "type": "string",
@@ -285,12 +286,14 @@
         "property-name": {
           "type": "string",
           "name": "Property name",
-          "desc": "A CSS property name to set on the HTML element."
+          "desc": "A CSS property name to set on the HTML element.",
+          "initialValue": "\"border\""
         },
         "value": {
           "type": "string",
           "name": "Value",
-          "desc": "A string to assign as the value for this CSS property."
+          "desc": "A string to assign as the value for this CSS property.",
+          "initialValue": "\"1px solid red\""
         },
         "selector": {
           "type": "string",

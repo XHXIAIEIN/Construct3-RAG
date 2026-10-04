@@ -101,7 +101,8 @@
         "range": {
           "type": "number",
           "name": "Range",
-          "desc": "The new maximum distance in pixels that line-of-sight can cover."
+          "desc": "The new maximum distance in pixels that line-of-sight can cover.",
+          "initialValue": "10000"
         }
       }
     },
@@ -116,7 +117,8 @@
         "cone-of-view": {
           "type": "number",
           "name": "Cone of view",
-          "desc": "The new angle range in degrees relative to the object angle that line-of-sight can cover."
+          "desc": "The new angle range in degrees relative to the object angle that line-of-sight can cover.",
+          "initialValue": "360"
         }
       }
     },
@@ -154,12 +156,14 @@
         "from-x": {
           "type": "number",
           "name": "From X",
-          "desc": "The ray origin X co-ordinate."
+          "desc": "The ray origin X co-ordinate.",
+          "initialValue": "Self.X"
         },
         "from-y": {
           "type": "number",
           "name": "From Y",
-          "desc": "The ray origin Y co-ordinate."
+          "desc": "The ray origin Y co-ordinate.",
+          "initialValue": "Self.Y"
         },
         "to-x": {
           "type": "number",
@@ -174,7 +178,8 @@
         "use-collision-cells": {
           "type": "boolean",
           "name": "Use collision cells",
-          "desc": "Enabling usually improves performance, but can be slower over very long distances."
+          "desc": "Enabling usually improves performance, but can be slower over very long distances.",
+          "initialValue": "true"
         }
       }
     }

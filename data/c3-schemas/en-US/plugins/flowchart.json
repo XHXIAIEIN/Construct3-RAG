@@ -305,7 +305,8 @@
         "flags": {
           "type": "string",
           "name": "Flags",
-          "desc": "Regular expression flags"
+          "desc": "Regular expression flags",
+          "initialValue": "\"gi\""
         }
       }
     },
@@ -330,7 +331,8 @@
         "flags": {
           "type": "string",
           "name": "Flags",
-          "desc": "Regular expression flags"
+          "desc": "Regular expression flags",
+          "initialValue": "\"gi\""
         }
       }
     },
@@ -579,7 +581,8 @@
         "set-as-current": {
           "type": "boolean",
           "name": "Set as current",
-          "desc": "Make this flowchart the current one on creation."
+          "desc": "Make this flowchart the current one on creation.",
+          "initialValue": "true"
         }
       }
     },
@@ -609,7 +612,8 @@
         "set-as-current": {
           "type": "boolean",
           "name": "Set as current",
-          "desc": "Make this flowchart the current one on creation."
+          "desc": "Make this flowchart the current one on creation.",
+          "initialValue": "true"
         }
       }
     },

@@ -222,7 +222,8 @@
         "history-rate": {
           "type": "number",
           "name": "频率",
-          "desc": "每秒记录跟随对象属性的次数。"
+          "desc": "每秒记录跟随对象属性的次数。",
+          "initialValue": "30"
         }
       }
     },

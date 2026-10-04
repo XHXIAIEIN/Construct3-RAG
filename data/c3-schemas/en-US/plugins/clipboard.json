@@ -50,7 +50,8 @@
         "type": {
           "type": "string",
           "name": "Type",
-          "desc": "The content type (aka MIME type) of the pasted data."
+          "desc": "The content type (aka MIME type) of the pasted data.",
+          "initialValue": "\"image/png\""
         }
       },
       "isTrigger": true
@@ -98,7 +99,8 @@
         "type": {
           "type": "string",
           "name": "Type",
-          "desc": "The content type (aka MIME type) of the data being copied."
+          "desc": "The content type (aka MIME type) of the data being copied.",
+          "initialValue": "\"image/png\""
         }
       },
       "isAsync": true

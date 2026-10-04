@@ -34,7 +34,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color of the shadows cast by this object."
+          "desc": "The color of the shadows cast by this object.",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
       }
     },

@@ -101,7 +101,8 @@
         "range": {
           "type": "number",
           "name": "范围",
-          "desc": "视线能覆盖的最远距离，以像素为单位。"
+          "desc": "视线能覆盖的最远距离，以像素为单位。",
+          "initialValue": "10000"
         }
       }
     },
@@ -116,7 +117,8 @@
         "cone-of-view": {
           "type": "number",
           "name": "角度",
-          "desc": "视线在朝向能够覆盖的角度范围，以角度为单位。"
+          "desc": "视线在朝向能够覆盖的角度范围，以角度为单位。",
+          "initialValue": "360"
         }
       }
     },
@@ -154,12 +156,14 @@
         "from-x": {
           "type": "number",
           "name": "起始 X",
-          "desc": "用于检测视线的第1个X坐标。"
+          "desc": "用于检测视线的第1个X坐标。",
+          "initialValue": "Self.X"
         },
         "from-y": {
           "type": "number",
           "name": "起始 Y",
-          "desc": "用于检测视线的第1个Y坐标。"
+          "desc": "用于检测视线的第1个Y坐标。",
+          "initialValue": "Self.Y"
         },
         "to-x": {
           "type": "number",
@@ -174,7 +178,8 @@
         "use-collision-cells": {
           "type": "boolean",
           "name": "使用碰撞单元",
-          "desc": "启用此选项通常可以提升性能，但在检查较远的距离时，反而导致性能变慢。"
+          "desc": "启用此选项通常可以提升性能，但在检查较远的距离时，反而导致性能变慢。",
+          "initialValue": "true"
         }
       }
     }

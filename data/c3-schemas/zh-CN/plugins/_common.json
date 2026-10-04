@@ -30,7 +30,8 @@
         "within": {
           "type": "number",
           "name": "相差",
-          "desc": "对象的角度必须在目标角度的相差范围内。"
+          "desc": "对象的角度必须在目标角度的相差范围内。",
+          "initialValue": 0.5
         },
         "angle": {
           "type": "number",
@@ -70,7 +71,8 @@
         "second-angle": {
           "type": "number",
           "name": "角度2",
-          "desc": "第二个角度。(顺时针方向)"
+          "desc": "第二个角度。(顺时针方向)",
+          "initialValue": 45
         }
       }
     },
@@ -817,7 +819,8 @@
         "w-component": {
           "type": "number",
           "name": "分量W",
-          "desc": "四元数的 W 分量。"
+          "desc": "四元数的 W 分量。",
+          "initialValue": "1"
         }
       }
     },
@@ -878,7 +881,8 @@
         "opacity": {
           "type": "number",
           "name": "不透明度",
-          "desc": "选择对象不透明度，从0（透明）到100（不透明）"
+          "desc": "选择对象不透明度，从0（透明）到100（不透明）",
+          "initialValue": 100
         }
       }
     },
@@ -893,7 +897,8 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "使用颜色表达式应用颜色，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 等。"
+          "desc": "使用颜色表达式应用颜色，例如 rgbEx255(255, 0, 0) 或 rgbEx(100, 0, 0) 等。",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
       }
     },
@@ -1003,7 +1008,8 @@
         "value": {
           "type": "any",
           "name": "值",
-          "desc": "要增加到实例变量中的值"
+          "desc": "要增加到实例变量中的值",
+          "initialValue": 1
         }
       }
     },
@@ -1023,7 +1029,8 @@
         "value": {
           "type": "any",
           "name": "值",
-          "desc": "要从实例变量中减去的值"
+          "desc": "要从实例变量中减去的值",
+          "initialValue": 1
         }
       }
     },
@@ -1226,7 +1233,8 @@
         "distance": {
           "type": "number",
           "name": "距离",
-          "desc": "将对象朝当前角度向前移动的距离，以像素为单位。"
+          "desc": "将对象朝当前角度向前移动的距离，以像素为单位。",
+          "initialValue": 1
         }
       }
     },
@@ -1246,7 +1254,8 @@
         "distance": {
           "type": "number",
           "name": "距离",
-          "desc": "朝指定角度移动时的距离，以像素为单位。"
+          "desc": "朝指定角度移动时的距离，以像素为单位。",
+          "initialValue": 1
         }
       }
     },
@@ -1451,47 +1460,56 @@
         "transform-x": {
           "type": "boolean",
           "name": "X",
-          "desc": "父对象的X轴位置变化时，自身也跟随变化。"
+          "desc": "父对象的X轴位置变化时，自身也跟随变化。",
+          "initialValue": "true"
         },
         "transform-y": {
           "type": "boolean",
           "name": "Y",
-          "desc": "父对象的Y轴位置变化时，自身也跟随变化。"
+          "desc": "父对象的Y轴位置变化时，自身也跟随变化。",
+          "initialValue": "true"
         },
         "transform-z-elevation": {
           "type": "boolean",
           "name": "Z",
-          "desc": "父对象的Z轴变化时，自身也跟随变化。"
+          "desc": "父对象的Z轴变化时，自身也跟随变化。",
+          "initialValue": "true"
         },
         "transform-w": {
           "type": "boolean",
           "name": "宽度",
-          "desc": "父对象的宽度变化时，自身也跟随变化。"
+          "desc": "父对象的宽度变化时，自身也跟随变化。",
+          "initialValue": "true"
         },
         "transform-h": {
           "type": "boolean",
           "name": "高度",
-          "desc": "父对象的高度变化时，自身也跟随变化。"
+          "desc": "父对象的高度变化时，自身也跟随变化。",
+          "initialValue": "true"
         },
         "transform-d": {
           "type": "boolean",
           "name": "深度",
-          "desc": "父对象的深度变化时，自身也跟随变化。"
+          "desc": "父对象的深度变化时，自身也跟随变化。",
+          "initialValue": "true"
         },
         "transform-a": {
           "type": "boolean",
           "name": "角度",
-          "desc": "父对象的角度变化时，自身也跟随变化。"
+          "desc": "父对象的角度变化时，自身也跟随变化。",
+          "initialValue": "true"
         },
         "transform-o": {
           "type": "boolean",
           "name": "不透明度",
-          "desc": "父对象的不透明度变化时，自身也跟随变化。"
+          "desc": "父对象的不透明度变化时，自身也跟随变化。",
+          "initialValue": "false"
         },
         "transform-visibility": {
           "type": "boolean",
           "name": "可见性",
-          "desc": "父对象的可见性变化时，自身也跟随变化。"
+          "desc": "父对象的可见性变化时，自身也跟随变化。",
+          "initialValue": "false"
         },
         "destroy-with-parent": {
           "type": "boolean",
@@ -1593,12 +1611,14 @@
         "texx": {
           "type": "number",
           "name": "纹理X",
-          "desc": "网格点对应对象图像的 X 坐标，在对象框内按 0 到 1 取值。若要保持不变，绝对模式下使用 -1， 相对模式下使用 0。"
+          "desc": "网格点对应对象图像的 X 坐标，在对象框内按 0 到 1 取值。若要保持不变，绝对模式下使用 -1， 相对模式下使用 0。",
+          "initialValue": "-1"
         },
         "texy": {
           "type": "number",
           "name": "纹理Y",
-          "desc": "网格点对应对象图像的 Y 坐标，在对象框内按 0 到 1 取值。若要保持不变，绝对模式下使用 -1， 相对模式下使用 0。"
+          "desc": "网格点对应对象图像的 Y 坐标，在对象框内按 0 到 1 取值。若要保持不变，绝对模式下使用 -1， 相对模式下使用 0。",
+          "initialValue": "-1"
         }
       }
     },
@@ -1613,12 +1633,14 @@
         "property-name": {
           "type": "string",
           "name": "属性名",
-          "desc": "填写CSS样式属性名称。"
+          "desc": "填写CSS样式属性名称。",
+          "initialValue": "\"border\""
         },
         "value": {
           "type": "string",
           "name": "值",
-          "desc": "要指定为此CSS属性的值的字符串。"
+          "desc": "要指定为此CSS属性的值的字符串。",
+          "initialValue": "\"1px solid red\""
         }
       }
     },
@@ -1638,7 +1660,8 @@
         "attribute-value": {
           "type": "any",
           "name": "值",
-          "desc": "赋予属性的数值"
+          "desc": "赋予属性的数值",
+          "initialValue": "\"\""
         }
       }
     },

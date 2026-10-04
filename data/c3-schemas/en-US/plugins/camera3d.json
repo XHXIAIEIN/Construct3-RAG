@@ -31,7 +31,8 @@
         "cam-z": {
           "type": "number",
           "name": "Camera Z",
-          "desc": "The Z co-ordinate of the camera position."
+          "desc": "The Z co-ordinate of the camera position.",
+          "initialValue": "100"
         },
         "look-x": {
           "type": "number",
@@ -56,7 +57,8 @@
         "up-y": {
           "type": "number",
           "name": "Up vector Y",
-          "desc": "The Y component of a 3D vector indicating which way is up."
+          "desc": "The Y component of a 3D vector indicating which way is up.",
+          "initialValue": "1"
         },
         "up-z": {
           "type": "number",
@@ -86,7 +88,8 @@
         "cam-z": {
           "type": "number",
           "name": "Camera Z",
-          "desc": "The Z co-ordinate of the camera position."
+          "desc": "The Z co-ordinate of the camera position.",
+          "initialValue": "10"
         },
         "look-angle": {
           "type": "number",
@@ -228,12 +231,14 @@
         "min-polar-angle": {
           "type": "number",
           "name": "Min polar angle",
-          "desc": "The minimum angle for Y rotation, limiting how far the camera can look upwards."
+          "desc": "The minimum angle for Y rotation, limiting how far the camera can look upwards.",
+          "initialValue": "0.1"
         },
         "max-polar-angle": {
           "type": "number",
           "name": "Max polar angle",
-          "desc": "The maximum angle for Y rotation, limiting how far the camera can look downwards."
+          "desc": "The maximum angle for Y rotation, limiting how far the camera can look downwards.",
+          "initialValue": "179.9"
         }
       }
     },

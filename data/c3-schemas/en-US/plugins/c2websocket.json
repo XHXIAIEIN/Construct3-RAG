@@ -97,7 +97,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "Enter the WebSocket server to connect to."
+          "desc": "Enter the WebSocket server to connect to.",
+          "initialValue": "\"ws://\""
         },
         "protocol-optional": {
           "type": "string",

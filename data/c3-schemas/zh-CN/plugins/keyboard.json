@@ -238,7 +238,8 @@
         "keys": {
           "type": "string",
           "name": "按键",
-          "desc": "要锁定的按键名，以逗号区分多个按键名。留空默认所有按键。注：按键名使用 keyCode 标准。"
+          "desc": "要锁定的按键名，以逗号区分多个按键名。留空默认所有按键。注：按键名使用 keyCode 标准。",
+          "initialValue": "\"KeyW,KeyA,KeyS,KeyD\""
         }
       },
       "isAsync": true

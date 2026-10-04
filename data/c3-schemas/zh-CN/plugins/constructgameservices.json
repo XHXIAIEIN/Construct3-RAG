@@ -589,12 +589,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "每页结果",
-          "desc": "要检索的结果数量，范围为 1 到 50。"
+          "desc": "要检索的结果数量，范围为 1 到 50。",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "分页",
-          "desc": "要获取的分页，从 0 开始计数。"
+          "desc": "要获取的分页，从 0 开始计数。",
+          "initialValue": "0"
         }
       },
       "isAsync": true
@@ -645,12 +647,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "每页结果",
-          "desc": "要检索的结果数量，范围为 1 到 50。"
+          "desc": "要检索的结果数量，范围为 1 到 50。",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "页数",
-          "desc": "要获取的分页，从 0 开始计数。"
+          "desc": "要获取的分页，从 0 开始计数。",
+          "initialValue": "0"
         }
       },
       "isAsync": true
@@ -760,12 +764,14 @@
         "allowPersisting": {
           "type": "boolean",
           "name": "保持登录",
-          "desc": "保持当前登录状态，允许下次直接登录。"
+          "desc": "保持当前登录状态，允许下次直接登录。",
+          "initialValue": "true"
         },
         "expiry": {
           "type": "number",
           "name": "保持时长",
-          "desc": "登录状态保持有效的时间，以分钟为单位。默认 24 小时 (1440 分钟)。"
+          "desc": "登录状态保持有效的时间，以分钟为单位。默认 24 小时 (1440 分钟)。",
+          "initialValue": "1440"
         }
       },
       "isAsync": true
@@ -791,12 +797,14 @@
         "allowPersisting": {
           "type": "boolean",
           "name": "保持登录",
-          "desc": "保持当前登录状态，允许下次直接登录。"
+          "desc": "保持当前登录状态，允许下次直接登录。",
+          "initialValue": "true"
         },
         "expiry": {
           "type": "number",
           "name": "保持时长",
-          "desc": "登录状态保持有效的分钟数。默认为 24 小时 (1440 分钟)。"
+          "desc": "登录状态保持有效的分钟数。默认为 24 小时 (1440 分钟)。",
+          "initialValue": "1440"
         }
       },
       "isAsync": true
@@ -832,22 +840,26 @@
         "allow-persisting": {
           "type": "boolean",
           "name": "保持登录",
-          "desc": "保持当前登录状态，允许下次直接登录。"
+          "desc": "保持当前登录状态，允许下次直接登录。",
+          "initialValue": "true"
         },
         "expiry": {
           "type": "number",
           "name": "保持时长",
-          "desc": "登录状态保持有效的分钟数。默认为 24 小时 (1440 分钟)。"
+          "desc": "登录状态保持有效的分钟数。默认为 24 小时 (1440 分钟)。",
+          "initialValue": "1440"
         },
         "popup-window-width": {
           "type": "number",
           "name": "弹窗宽度",
-          "desc": "登录弹窗的宽度，以像素为单位。"
+          "desc": "登录弹窗的宽度，以像素为单位。",
+          "initialValue": "800"
         },
         "popup-window-height": {
           "type": "number",
           "name": "弹窗高度",
-          "desc": "登录弹窗的高度，以像素为单位。"
+          "desc": "登录弹窗的高度，以像素为单位。",
+          "initialValue": "800"
         }
       },
       "isAsync": true
@@ -892,12 +904,14 @@
         "popup-window-width": {
           "type": "number",
           "name": "弹窗宽度",
-          "desc": "登录弹窗的宽度，以像素为单位。"
+          "desc": "登录弹窗的宽度，以像素为单位。",
+          "initialValue": "800"
         },
         "popup-window-height": {
           "type": "number",
           "name": "弹窗高度",
-          "desc": "登录弹窗的高度，以像素为单位。"
+          "desc": "登录弹窗的高度，以像素为单位。",
+          "initialValue": "800"
         }
       },
       "isAsync": true
@@ -1164,12 +1178,14 @@
         "allow-persisting": {
           "type": "boolean",
           "name": "保持登录",
-          "desc": "保持当前登录状态，允许下次直接登录。"
+          "desc": "保持当前登录状态，允许下次直接登录。",
+          "initialValue": "true"
         },
         "expiry": {
           "type": "number",
           "name": "保持时长",
-          "desc": "登录状态保持有效的时间，以分钟为单位。默认 24 小时 (1440 分钟)。"
+          "desc": "登录状态保持有效的时间，以分钟为单位。默认 24 小时 (1440 分钟)。",
+          "initialValue": "1440"
         }
       },
       "isAsync": true
@@ -1195,12 +1211,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "每页结果",
-          "desc": "要检索的结果数量，范围从 1 到 100。"
+          "desc": "要检索的结果数量，范围从 1 到 100。",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "页数",
-          "desc": "要获取的分页，从 0 开始计数。"
+          "desc": "要获取的分页，从 0 开始计数。",
+          "initialValue": 0
         }
       },
       "isAsync": true
@@ -1226,12 +1244,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "每页结果",
-          "desc": "要检索的结果数量，范围从 1 到 100。"
+          "desc": "要检索的结果数量，范围从 1 到 100。",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "页数",
-          "desc": "要获取的分页，从 0 开始计数。"
+          "desc": "要获取的分页，从 0 开始计数。",
+          "initialValue": 0
         }
       },
       "isAsync": true
@@ -1262,7 +1282,8 @@
         "range": {
           "type": "number",
           "name": "范围",
-          "desc": "要查询相邻高低分数的范围。"
+          "desc": "要查询相邻高低分数的范围。",
+          "initialValue": "5"
         }
       },
       "isAsync": true
@@ -1386,7 +1407,8 @@
         "results-per-page": {
           "type": "number",
           "name": "每页结果",
-          "desc": "每次检索结果的数量，从 1 到 500。"
+          "desc": "每次检索结果的数量，从 1 到 500。",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
@@ -1454,12 +1476,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "每页结果",
-          "desc": "要检索的结果数量，范围从 1 到 100。"
+          "desc": "要检索的结果数量，范围从 1 到 100。",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "页数",
-          "desc": "要获取的分页，从 0 开始计数。"
+          "desc": "要获取的分页，从 0 开始计数。",
+          "initialValue": "0"
         }
       }
     },
@@ -1600,12 +1624,14 @@
         "resultsPerPage": {
           "type": "number",
           "name": "每页结果",
-          "desc": "要检索的结果数量，范围从 1 到 100。"
+          "desc": "要检索的结果数量，范围从 1 到 100。",
+          "initialValue": "20"
         },
         "page": {
           "type": "number",
           "name": "页数",
-          "desc": "要获取的分页，从 0 开始计数。"
+          "desc": "要获取的分页，从 0 开始计数。",
+          "initialValue": "0"
         }
       },
       "isAsync": true

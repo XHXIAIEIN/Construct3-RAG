@@ -284,7 +284,8 @@
         "time": {
           "type": "any",
           "name": "时间",
-          "desc": "要设置的时间（秒）或带有tag的字符串，来将所有时间轴同步"
+          "desc": "要设置的时间（秒）或带有tag的字符串，来将所有时间轴同步",
+          "initialValue": "0"
         }
       }
     },
@@ -304,7 +305,8 @@
         "rate": {
           "type": "number",
           "name": "倍速",
-          "desc": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。负值则反向回放。"
+          "desc": "要设置的播放速度。1.0是正常速度，0.5半速，2.0倍速等。负值则反向回放。",
+          "initialValue": "1"
         }
       }
     },
@@ -490,12 +492,14 @@
         "timeline": {
           "type": "string",
           "name": "时间轴名称或标签",
-          "desc": "时间轴的名称或者标签。"
+          "desc": "时间轴的名称或者标签。",
+          "initialValue": ""
         },
         "track": {
           "type": "string",
           "name": "属性轨道名称或ID",
-          "desc": "时间轴的名称或者标签。"
+          "desc": "时间轴的名称或者标签。",
+          "initialValue": ""
         }
       },
       "returnType": "number"

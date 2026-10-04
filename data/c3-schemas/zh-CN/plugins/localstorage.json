@@ -181,7 +181,8 @@
         "value": {
           "type": "any",
           "name": "值",
-          "desc": "用来和当前值进行比较的数字或字符串。"
+          "desc": "用来和当前值进行比较的数字或字符串。",
+          "initialValue": "\"\""
         }
       }
     },
@@ -245,7 +246,8 @@
         "value": {
           "type": "any",
           "name": "值",
-          "desc": "要存储的数据。"
+          "desc": "要存储的数据。",
+          "initialValue": "\"\""
         }
       },
       "isAsync": true

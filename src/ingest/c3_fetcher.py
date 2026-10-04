@@ -333,8 +333,10 @@ class C3Fetcher:
                                             param_entry["items"] = l_items
                                         else:
                                             param_entry["items"] = {k: k for k in p["items"]}
-                                        if p.get("initialValue"):
-                                            param_entry["initialValue"] = p["initialValue"]
+                                    # The value the editor fills in when the ACE is added:
+                                    # Wait's "use time scale" is ticked, "true".
+                                    if p.get("initialValue") is not None:
+                                        param_entry["initialValue"] = p["initialValue"]
                                     params[pid_param] = param_entry
 
                                 entry: dict = {

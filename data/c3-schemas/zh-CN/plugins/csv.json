@@ -43,7 +43,8 @@
         "delimiter": {
           "type": "string",
           "name": "分隔符",
-          "desc": "填入 CSV 的分隔符，可能是逗号、空格、或制表符。制表符可通过表达式引用。"
+          "desc": "填入 CSV 的分隔符，可能是逗号、空格、或制表符。制表符可通过表达式引用。",
+          "initialValue": "\",\""
         },
         "array": {
           "type": "object",
@@ -78,7 +79,8 @@
         "delimiter": {
           "type": "string",
           "name": "分隔符",
-          "desc": "填入 CSV 的分隔符，可能是逗号、空格、或制表符。制表符可通过表达式引用。"
+          "desc": "填入 CSV 的分隔符，可能是逗号、空格、或制表符。制表符可通过表达式引用。",
+          "initialValue": "\",\""
         }
       }
     }

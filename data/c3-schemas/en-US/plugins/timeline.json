@@ -284,7 +284,8 @@
         "time": {
           "type": "any",
           "name": "Time",
-          "desc": "The time to set in seconds, or a string with a keyframe's tags, to set the time to the first keyframe that matches all the tags."
+          "desc": "The time to set in seconds, or a string with a keyframe's tags, to set the time to the first keyframe that matches all the tags.",
+          "initialValue": "0"
         }
       }
     },
@@ -304,7 +305,8 @@
         "rate": {
           "type": "number",
           "name": "Rate",
-          "desc": "The rate to set, 1 being normal speed, 0.5 half speed, etc. Negative values produce backwards playback."
+          "desc": "The rate to set, 1 being normal speed, 0.5 half speed, etc. Negative values produce backwards playback.",
+          "initialValue": "1"
         }
       }
     },
@@ -490,12 +492,14 @@
         "timeline": {
           "type": "string",
           "name": "TimelineNameOrTags",
-          "desc": "Name or tags of the timeline that has the value track."
+          "desc": "Name or tags of the timeline that has the value track.",
+          "initialValue": ""
         },
         "track": {
           "type": "string",
           "name": "ValueTrackNameOrId",
-          "desc": "Name or id of the track to get the value for."
+          "desc": "Name or id of the track to get the value for.",
+          "initialValue": ""
         }
       },
       "returnType": "number"

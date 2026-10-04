@@ -108,7 +108,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "要请求的远程服务器地址，或本地项目文件路径。注意，大多数浏览器会阻止跨域请求，请确保服务器有正确设置 CORS 权限。或本地测试环境是否启用HTTPS"
+          "desc": "要请求的远程服务器地址，或本地项目文件路径。注意，大多数浏览器会阻止跨域请求，请确保服务器有正确设置 CORS 权限。或本地测试环境是否启用HTTPS",
+          "initialValue": "\"https://\""
         }
       },
       "isAsync": true
@@ -150,7 +151,8 @@
         "url": {
           "type": "string",
           "name": "地址",
-          "desc": "目标服务器的地址。注意，由于安全限制，浏览器通常会拦截跨域请求，请查询目标服务器 CORS 相关配置。"
+          "desc": "目标服务器的地址。注意，由于安全限制，浏览器通常会拦截跨域请求，请查询目标服务器 CORS 相关配置。",
+          "initialValue": "\"https://\""
         },
         "data": {
           "type": "string",
@@ -160,7 +162,8 @@
         "method": {
           "type": "string",
           "name": "请求方法",
-          "desc": "要使用的HTTP请求方法。通常是 \"Get\" 或 \"POST\"。"
+          "desc": "要使用的HTTP请求方法。通常是 \"Get\" 或 \"POST\"。",
+          "initialValue": "\"POST\""
         }
       },
       "isAsync": true
@@ -261,7 +264,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "要接受数据的远程服务器地址。提示：多数浏览器不允许跨域提交数据。"
+          "desc": "要接受数据的远程服务器地址。提示：多数浏览器不允许跨域提交数据。",
+          "initialValue": "\"https://\""
         },
         "data": {
           "type": "object",
@@ -271,7 +275,8 @@
         "method": {
           "type": "string",
           "name": "方法",
-          "desc": "要使用的HTTP请求方法，通常是 \"Get\" 或 \"POST\"。"
+          "desc": "要使用的HTTP请求方法，通常是 \"Get\" 或 \"POST\"。",
+          "initialValue": "\"POST\""
         }
       },
       "isAsync": true

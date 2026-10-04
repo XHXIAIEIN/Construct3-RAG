@@ -87,7 +87,8 @@
         "font-face": {
           "type": "string",
           "name": "Font face",
-          "desc": "The new font face name to set."
+          "desc": "The new font face name to set.",
+          "initialValue": "\"Arial\""
         },
         "style": {
           "type": "combo",
@@ -113,7 +114,8 @@
         "size-pt": {
           "type": "number",
           "name": "Size (pt)",
-          "desc": "The new font size."
+          "desc": "The new font size.",
+          "initialValue": "12"
         }
       }
     },
@@ -128,7 +130,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The new font color, in the form rgbEx(r, g, b)."
+          "desc": "The new font color, in the form rgbEx(r, g, b).",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
       }
     },
@@ -278,7 +281,8 @@
         "fixed-scale": {
           "type": "number",
           "name": "Fixed scale",
-          "desc": "When using fixed resolution, the scale factor to use."
+          "desc": "When using fixed resolution, the scale factor to use.",
+          "initialValue": "1"
         }
       }
     },
@@ -293,7 +297,8 @@
         "text": {
           "type": "any",
           "name": "Text",
-          "desc": "Enter the text to set the object's content to."
+          "desc": "Enter the text to set the object's content to.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -308,7 +313,8 @@
         "text": {
           "type": "any",
           "name": "Text",
-          "desc": "Enter the text to append to the object's content."
+          "desc": "Enter the text to append to the object's content.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -323,7 +329,8 @@
         "text": {
           "type": "any",
           "name": "Text",
-          "desc": "Enter the text to set the object's content to over time."
+          "desc": "Enter the text to set the object's content to over time.",
+          "initialValue": "\"\""
         },
         "duration": {
           "type": "number",

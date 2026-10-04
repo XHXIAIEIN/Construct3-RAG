@@ -264,17 +264,20 @@
         "playing": {
           "type": "boolean",
           "name": "Playing",
-          "desc": "Choose if the selected animation should start playing immediately."
+          "desc": "Choose if the selected animation should start playing immediately.",
+          "initialValue": "false"
         },
         "looping": {
           "type": "boolean",
           "name": "Loop",
-          "desc": "Choose if the selected animation should loop."
+          "desc": "Choose if the selected animation should loop.",
+          "initialValue": "false"
         },
         "progress": {
           "type": "number",
           "name": "Progress",
-          "desc": "Value in the [0-1] range to chosse where the selected animation should start playing from."
+          "desc": "Value in the [0-1] range to chosse where the selected animation should start playing from.",
+          "initialValue": "0"
         }
       },
       "isAsync": true
@@ -305,17 +308,20 @@
         "playing": {
           "type": "boolean",
           "name": "Playing",
-          "desc": "Choose if the selected animation should start playing immediately."
+          "desc": "Choose if the selected animation should start playing immediately.",
+          "initialValue": "false"
         },
         "looping": {
           "type": "boolean",
           "name": "Loop",
-          "desc": "Choose if the selected animation should loop."
+          "desc": "Choose if the selected animation should loop.",
+          "initialValue": "false"
         },
         "progress": {
           "type": "number",
           "name": "Progress",
-          "desc": "Value in the [0-1] range to chosse where the selected animation should start playing from."
+          "desc": "Value in the [0-1] range to chosse where the selected animation should start playing from.",
+          "initialValue": "0"
         }
       },
       "isAsync": true
@@ -371,17 +377,20 @@
         "playing": {
           "type": "boolean",
           "name": "Playing",
-          "desc": "Choose if the selected animation should start playing immediately."
+          "desc": "Choose if the selected animation should start playing immediately.",
+          "initialValue": "false"
         },
         "looping": {
           "type": "boolean",
           "name": "Loop",
-          "desc": "Choose if the selected animation should loop."
+          "desc": "Choose if the selected animation should loop.",
+          "initialValue": "false"
         },
         "progress": {
           "type": "number",
           "name": "Progress",
-          "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1]."
+          "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1].",
+          "initialValue": "0"
         }
       }
     },
@@ -396,7 +405,8 @@
         "progress": {
           "type": "number",
           "name": "Progress",
-          "desc": "Choose the progress of the current animation with a value in the range [0-1]."
+          "desc": "Choose the progress of the current animation with a value in the range [0-1].",
+          "initialValue": "0"
         }
       }
     },
@@ -411,17 +421,20 @@
         "x-transform": {
           "type": "number",
           "name": "Transform X",
-          "desc": "The transformation value to apply in the X axis."
+          "desc": "The transformation value to apply in the X axis.",
+          "initialValue": "0"
         },
         "y-transform": {
           "type": "number",
           "name": "Transform Y",
-          "desc": "The transformation value to apply in the Y axis."
+          "desc": "The transformation value to apply in the Y axis.",
+          "initialValue": "0"
         },
         "z-transform": {
           "type": "number",
           "name": "Transform Z",
-          "desc": "The transformation value to apply in the Z axis."
+          "desc": "The transformation value to apply in the Z axis.",
+          "initialValue": "0"
         },
         "operation": {
           "type": "combo",
@@ -594,12 +607,14 @@
         "looping": {
           "type": "boolean",
           "name": "Loop",
-          "desc": "Choose if the animation should loop."
+          "desc": "Choose if the animation should loop.",
+          "initialValue": "false"
         },
         "progress": {
           "type": "number",
           "name": "Progress",
-          "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1]."
+          "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1].",
+          "initialValue": "0"
         }
       }
     },
@@ -657,7 +672,8 @@
         "uri": {
           "type": "string",
           "name": "URI",
-          "desc": "Enter the URL on the web, or data URI, of an image to load."
+          "desc": "Enter the URL on the web, or data URI, of an image to load.",
+          "initialValue": "\"https://\""
         },
         "mesh": {
           "type": "model3d-mesh-string",

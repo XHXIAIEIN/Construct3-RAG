@@ -234,7 +234,8 @@
         "reload": {
           "type": "boolean",
           "name": "强制重新加载",
-          "desc": "确保数据是最新的，而不是来自本地缓存的数据。"
+          "desc": "确保数据是最新的，而不是来自本地缓存的数据。",
+          "initialValue": "false"
         }
       },
       "isAsync": true
@@ -250,7 +251,8 @@
         "reload": {
           "type": "boolean",
           "name": "强制重新加载",
-          "desc": "确保数据是最新的，而不是之前来自本地缓存的数据。"
+          "desc": "确保数据是最新的，而不是之前来自本地缓存的数据。",
+          "initialValue": "false"
         }
       },
       "isAsync": true
@@ -424,7 +426,8 @@
         "results": {
           "type": "number",
           "name": "数量",
-          "desc": "要返回的分数数量，从 1 到 25"
+          "desc": "要返回的分数数量，从 1 到 25",
+          "initialValue": "25"
         },
         "type": {
           "type": "combo",
@@ -438,7 +441,8 @@
         "reload": {
           "type": "boolean",
           "name": "强制重新加载",
-          "desc": "确保数据是最新的，而不是之前来自本地缓存的数据。"
+          "desc": "确保数据是最新的，而不是之前来自本地缓存的数据。",
+          "initialValue": "false"
         }
       },
       "isAsync": true

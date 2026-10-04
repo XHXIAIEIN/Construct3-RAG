@@ -42,7 +42,8 @@
         "within": {
           "type": "number",
           "name": "相差",
-          "desc": "检查角度1是否位于角度2的相差范围内。"
+          "desc": "检查角度1是否位于角度2的相差范围内。",
+          "initialValue": "0.5"
         },
         "angle-2": {
           "type": "number",
@@ -92,7 +93,8 @@
         "second-angle": {
           "type": "number",
           "name": "角度2",
-          "desc": "第二个角度，按顺时针方向顺序。"
+          "desc": "第二个角度，按顺时针方向顺序。",
+          "initialValue": "45"
         }
       }
     },
@@ -165,7 +167,8 @@
         "upper-bound": {
           "type": "number",
           "name": "上限",
-          "desc": "要比较的上限值。"
+          "desc": "要比较的上限值。",
+          "initialValue": "10"
         }
       }
     },
@@ -205,7 +208,8 @@
         "flags": {
           "type": "string",
           "name": "标志",
-          "desc": "正则表达式标志。i - 忽略大小写，g - 全局匹配，m - 多行"
+          "desc": "正则表达式标志。i - 忽略大小写，g - 全局匹配，m - 多行",
+          "initialValue": "\"gi\""
         }
       }
     },
@@ -437,12 +441,14 @@
         "start-index": {
           "type": "number",
           "name": "初始值",
-          "desc": "循环起始值的索引（包括）。使用 loopindex 表达式获取索引。"
+          "desc": "循环起始值的索引（包括）。使用 loopindex 表达式获取索引。",
+          "initialValue": "1"
         },
         "end-index": {
           "type": "number",
           "name": "目标值",
-          "desc": "循环范围结束的索引（包括）。使用 loopindex 表达式获取索引。"
+          "desc": "循环范围结束的索引（包括）。使用 loopindex 表达式获取索引。",
+          "initialValue": "10"
         }
       },
       "isLooping": true
@@ -474,7 +480,8 @@
         "count": {
           "type": "number",
           "name": "次数",
-          "desc": "要重复执行的次数。"
+          "desc": "要重复执行的次数。",
+          "initialValue": "10"
         }
       },
       "isLooping": true
@@ -885,7 +892,8 @@
         "interval-seconds": {
           "type": "number",
           "name": "间隔（秒）",
-          "desc": "每隔一段时间依次执行每个动作。此时间间隔会受到帧速率的影响，每个动作在每帧不会执行超过一次。"
+          "desc": "每隔一段时间依次执行每个动作。此时间间隔会受到帧速率的影响，每个动作在每帧不会执行超过一次。",
+          "initialValue": "1.0"
         }
       },
       "isCompatibleWithTriggers": false
@@ -906,7 +914,8 @@
         "time-seconds": {
           "type": "number",
           "name": "秒",
-          "desc": "比较自游戏运行以来累计的秒数。"
+          "desc": "比较自游戏运行以来累计的秒数。",
+          "initialValue": "1.0"
         }
       }
     },
@@ -968,7 +977,8 @@
         "jpeg-quality": {
           "type": "number",
           "name": "JPEG品质",
-          "desc": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。"
+          "desc": "仅适用于 'JPEG' 图像格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。",
+          "initialValue": "75"
         },
         "x": {
           "type": "number",
@@ -1126,7 +1136,8 @@
         "create-hierarchy": {
           "type": "boolean",
           "name": "创建子对象",
-          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
+          "initialValue": "false"
         },
         "template-name": {
           "type": "template",
@@ -1166,7 +1177,8 @@
         "create-hierarchy": {
           "type": "boolean",
           "name": "创建子对象",
-          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
+          "initialValue": "false"
         },
         "template-name": {
           "type": "template",
@@ -1293,7 +1305,8 @@
         "value": {
           "type": "any",
           "name": "值",
-          "desc": "要增加到此变量的值。"
+          "desc": "要增加到此变量的值。",
+          "initialValue": "1"
         }
       }
     },
@@ -1313,7 +1326,8 @@
         "value": {
           "type": "any",
           "name": "值",
-          "desc": "要从此变量中减去的值。"
+          "desc": "要从此变量中减去的值。",
+          "initialValue": "1"
         }
       }
     },
@@ -1483,7 +1497,8 @@
         "scale": {
           "type": "number",
           "name": "大小",
-          "desc": "图层的缩放倍数。1.0 为原始尺寸，2.0为双倍尺寸。"
+          "desc": "图层的缩放倍数。1.0 为原始尺寸，2.0为双倍尺寸。",
+          "initialValue": "1.0"
         }
       }
     },
@@ -1523,7 +1538,8 @@
         "scale-rate": {
           "type": "number",
           "name": "同步比例",
-          "desc": "跟随场景缩放的同步比例。1.0 为正常缩放。2.0为双倍缩放，0为不缩放。"
+          "desc": "跟随场景缩放的同步比例。1.0 为正常缩放。2.0为双倍缩放，0为不缩放。",
+          "initialValue": "1.0"
         }
       }
     },
@@ -1662,12 +1678,14 @@
         "parallax-x": {
           "type": "number",
           "name": "滚动视差X",
-          "desc": "图层在水平方向跟随镜头移动的滚动速率百分比（例如，半速为50）。"
+          "desc": "图层在水平方向跟随镜头移动的滚动速率百分比（例如，半速为50）。",
+          "initialValue": "100"
         },
         "parallax-y": {
           "type": "number",
           "name": "滚动视差Y",
-          "desc": "图层在垂直方向跟随镜头移动的滚动速率百分比（例如，半速为50）。"
+          "desc": "图层在垂直方向跟随镜头移动的滚动速率百分比（例如，半速为50）。",
+          "initialValue": "100"
         }
       }
     },
@@ -1687,7 +1705,8 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "用于设置图层背景的颜色。"
+          "desc": "用于设置图层背景的颜色。",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
       }
     },
@@ -1862,7 +1881,8 @@
         "insert-by": {
           "type": "layer",
           "name": "插入到",
-          "desc": "添加新图层的相对位置，指定另一个图层的名称或编号。"
+          "desc": "添加新图层的相对位置，指定另一个图层的名称或编号。",
+          "initialValue": "\"\""
         },
         "where": {
           "type": "combo",
@@ -1888,12 +1908,14 @@
         "layer": {
           "type": "layer",
           "name": "图层",
-          "desc": "要移动的图层的名称或编号。"
+          "desc": "要移动的图层的名称或编号。",
+          "initialValue": "\"\""
         },
         "insert-by": {
           "type": "layer",
           "name": "插入到",
-          "desc": "要将图层移动到的相对位置，指定另一图层的名称或编号。"
+          "desc": "要将图层移动到的相对位置，指定另一图层的名称或编号。",
+          "initialValue": "\"\""
         },
         "where": {
           "type": "combo",
@@ -1919,7 +1941,8 @@
         "layer": {
           "type": "layer",
           "name": "图层",
-          "desc": "要删除的图层名称或编号。"
+          "desc": "要删除的图层名称或编号。",
+          "initialValue": "\"\""
         }
       }
     },
@@ -2069,7 +2092,8 @@
         "scale": {
           "type": "number",
           "name": "大小",
-          "desc": "场景的缩放比例。1.0 为原始尺寸。2.0为双倍尺寸。"
+          "desc": "场景的缩放比例。1.0 为原始尺寸。2.0为双倍尺寸。",
+          "initialValue": "1.0"
         }
       }
     },
@@ -2148,12 +2172,14 @@
         "vanishing-point-x": {
           "type": "number",
           "name": "透视点X",
-          "desc": "透视点的X坐标，数值从 0-100，中间位置是50。"
+          "desc": "透视点的X坐标，数值从 0-100，中间位置是50。",
+          "initialValue": "50"
         },
         "vanishing-point-y": {
           "type": "number",
           "name": "透视点Y",
-          "desc": "透视点的Y坐标，数值从 0-100，中间位置是50。"
+          "desc": "透视点的Y坐标，数值从 0-100，中间位置是50。",
+          "initialValue": "50"
         }
       }
     },
@@ -2238,12 +2264,14 @@
         "source-layer": {
           "type": "any",
           "name": "源图层",
-          "desc": "目标物体的所在图层名或零基编号 留空来选择当前层"
+          "desc": "目标物体的所在图层名或零基编号 留空来选择当前层",
+          "initialValue": "-1"
         },
         "dest-layer": {
           "type": "any",
           "name": "目标图层",
-          "desc": "对象创建的图层，填写当前场景的图层名称或从 0 开始的索引。使用 -1 匹配原始图层。"
+          "desc": "对象创建的图层，填写当前场景的图层名称或从 0 开始的索引。使用 -1 匹配原始图层。",
+          "initialValue": "-1"
         },
         "offset-x": {
           "type": "number",
@@ -2258,7 +2286,8 @@
         "create-hierarchy": {
           "type": "boolean",
           "name": "创建子对象",
-          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。"
+          "desc": "根据在场景中设置的对象层级关系，创建此对象所有的子对象。在当前事件范围，被创建的子对象也会一起被选择。",
+          "initialValue": "false"
         }
       }
     },
@@ -2375,7 +2404,8 @@
         "slot": {
           "type": "string",
           "name": "插槽",
-          "desc": "用于识别这份快照数据的字符串。填写相同名称将覆盖旧档。"
+          "desc": "用于识别这份快照数据的字符串。填写相同名称将覆盖旧档。",
+          "initialValue": "\"mysave\""
         }
       },
       "isAsync": true
@@ -2391,7 +2421,8 @@
         "slot": {
           "type": "string",
           "name": "插槽",
-          "desc": "填写先前在 '保存游戏快照' 时填写的插槽字符串。"
+          "desc": "填写先前在 '保存游戏快照' 时填写的插槽字符串。",
+          "initialValue": "\"mysave\""
         }
       },
       "isAsync": true
@@ -2497,7 +2528,8 @@
         "time-scale": {
           "type": "number",
           "name": "时间速率",
-          "desc": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度"
+          "desc": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度",
+          "initialValue": "1.0"
         }
       }
     },
@@ -2517,7 +2549,8 @@
         "time-scale": {
           "type": "number",
           "name": "时间速率",
-          "desc": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度"
+          "desc": "时间速率。 1.0：正常速度，0：暂停, 0.5：半速，2.0：双倍速度",
+          "initialValue": "1.0"
         }
       }
     },
@@ -2547,12 +2580,14 @@
         "seconds": {
           "type": "number",
           "name": "秒",
-          "desc": "要等待的时间，以秒为单位。如需在循环遍历中等待，请填写 loopindex * 等待秒数"
+          "desc": "要等待的时间，以秒为单位。如需在循环遍历中等待，请填写 loopindex * 等待秒数",
+          "initialValue": "1.0"
         },
         "use-timescale": {
           "type": "boolean",
           "name": "使用时间倍数",
-          "desc": "是否使用当前的时间倍数。取消则使用真实时间速度。"
+          "desc": "是否使用当前的时间倍数。取消则使用真实时间速度。",
+          "initialValue": "true"
         }
       }
     },
@@ -2605,12 +2640,14 @@
         "minimum-dt": {
           "type": "number",
           "name": "最小增量时间",
-          "desc": "若游戏帧率低于最小值，增量时间dt值不会增加，而是进入慢动作状态。"
+          "desc": "若游戏帧率低于最小值，增量时间dt值不会增加，而是进入慢动作状态。",
+          "initialValue": "0"
         },
         "maximum-dt": {
           "type": "number",
           "name": "最大增量时间",
-          "desc": "若游戏帧率高于最大值，增量时间dt值不会减低，而是进入加速状态。"
+          "desc": "若游戏帧率高于最大值，增量时间dt值不会减低，而是进入加速状态。",
+          "initialValue": "1 / 30"
         }
       }
     },
@@ -3086,7 +3123,8 @@
         "layer": {
           "type": "layer",
           "name": "图层",
-          "desc": "要获取的图层。可以是编号或者名字。"
+          "desc": "要获取的图层。可以是编号或者名字。",
+          "initialValue": "\"\""
         }
       },
       "returnType": "number"
@@ -3217,7 +3255,8 @@
         "number": {
           "type": "number",
           "name": "数字",
-          "desc": "取平方根的数"
+          "desc": "取平方根的数",
+          "initialValue": 1
         }
       },
       "returnType": "number"
@@ -4337,7 +4376,8 @@
         "flags": {
           "type": "string",
           "name": "修饰符",
-          "desc": "正则表达式的修饰符。如 \"g\" 表示全局匹配，查找所有匹配项。留空则在匹配到第一个后停止。"
+          "desc": "正则表达式的修饰符。如 \"g\" 表示全局匹配，查找所有匹配项。留空则在匹配到第一个后停止。",
+          "initialValue": "\"gi\""
         }
       },
       "returnType": "number"
@@ -4362,7 +4402,8 @@
         "flags": {
           "type": "string",
           "name": "修饰符",
-          "desc": "正则表达式的修饰符"
+          "desc": "正则表达式的修饰符",
+          "initialValue": "\"gi\""
         },
         "replace": {
           "type": "string",
@@ -4392,7 +4433,8 @@
         "flags": {
           "type": "string",
           "name": "修饰符",
-          "desc": "用于指定额外匹配策略的标记符。"
+          "desc": "用于指定额外匹配策略的标记符。",
+          "initialValue": "\"gi\""
         }
       },
       "returnType": "number"
@@ -4417,7 +4459,8 @@
         "flags": {
           "type": "string",
           "name": "修饰符",
-          "desc": "正则表达式的修饰符"
+          "desc": "正则表达式的修饰符",
+          "initialValue": "\"gi\""
         },
         "index": {
           "type": "number",
@@ -4574,7 +4617,8 @@
         "range": {
           "type": "number",
           "name": "范围",
-          "desc": "要生成的随机浮点数范围，从 0 到小于此值。"
+          "desc": "要生成的随机浮点数范围，从 0 到小于此值。",
+          "initialValue": 10
         }
       },
       "returnType": "number",

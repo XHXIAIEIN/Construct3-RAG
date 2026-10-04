@@ -65,7 +65,8 @@
         "duration": {
           "type": "number",
           "name": "Duration",
-          "desc": "Enter the time in seconds after which to trigger 'On timer'."
+          "desc": "Enter the time in seconds after which to trigger 'On timer'.",
+          "initialValue": "1.0"
         },
         "type": {
           "type": "combo",

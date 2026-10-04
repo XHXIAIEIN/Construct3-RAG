@@ -181,7 +181,8 @@
         "value": {
           "type": "any",
           "name": "Value",
-          "desc": "String or number to compare the current value to."
+          "desc": "String or number to compare the current value to.",
+          "initialValue": "\"\""
         }
       }
     },
@@ -245,7 +246,8 @@
         "value": {
           "type": "any",
           "name": "Value",
-          "desc": "Enter the value to store."
+          "desc": "Enter the value to store.",
+          "initialValue": "\"\""
         }
       },
       "isAsync": true

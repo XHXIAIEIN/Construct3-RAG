@@ -91,7 +91,8 @@
         "jpeg-quality": {
           "type": "number",
           "name": "JPEG quality",
-          "desc": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG."
+          "desc": "If 'Format' is 'JPEG', the JPEG quality from 0 (worst) to 100 (best). Ignored for PNG.",
+          "initialValue": "75"
         },
         "x": {
           "type": "number",
@@ -154,7 +155,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color of the pixel to set."
+          "desc": "The color of the pixel to set.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         }
       }
     },
@@ -206,7 +208,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color to clear to."
+          "desc": "The color to clear to.",
+          "initialValue": "rgba(0, 0, 0, 0)"
         }
       }
     },
@@ -241,7 +244,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color to clear to."
+          "desc": "The color to clear to.",
+          "initialValue": "rgba(0, 0, 0, 0)"
         }
       }
     },
@@ -276,7 +280,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color to fill."
+          "desc": "The color to fill.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         }
       }
     },
@@ -311,12 +316,14 @@
         "color1": {
           "type": "number",
           "name": "Color 1",
-          "desc": "The start color of the gradient."
+          "desc": "The start color of the gradient.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "color2": {
           "type": "number",
           "name": "Color 2",
-          "desc": "The end color of the gradient."
+          "desc": "The end color of the gradient.",
+          "initialValue": "rgba(100, 100, 100, 100)"
         },
         "direction": {
           "type": "combo",
@@ -360,7 +367,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color to fill."
+          "desc": "The color to fill.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "edge": {
           "type": "combo",
@@ -405,12 +413,14 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color of the outline."
+          "desc": "The color of the outline.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "Thickness",
-          "desc": "The line thickness of the outline."
+          "desc": "The line thickness of the outline.",
+          "initialValue": "1"
         },
         "edge": {
           "type": "combo",
@@ -455,12 +465,14 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color to fill."
+          "desc": "The color to fill.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "Thickness",
-          "desc": "The line thickness of the outline."
+          "desc": "The line thickness of the outline.",
+          "initialValue": "1"
         }
       }
     },
@@ -495,12 +507,14 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color of the line."
+          "desc": "The color of the line.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "Thickness",
-          "desc": "The line thickness of line."
+          "desc": "The line thickness of line.",
+          "initialValue": "1"
         },
         "line-cap": {
           "type": "combo",
@@ -544,17 +558,20 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color of the line."
+          "desc": "The color of the line.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "Thickness",
-          "desc": "The line thickness of line."
+          "desc": "The line thickness of line.",
+          "initialValue": "1"
         },
         "dash-length": {
           "type": "number",
           "name": "Dash length",
-          "desc": "The length of each dash on the line."
+          "desc": "The length of each dash on the line.",
+          "initialValue": "5"
         },
         "line-cap": {
           "type": "combo",
@@ -663,12 +680,14 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color of the line."
+          "desc": "The color of the line.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "Thickness",
-          "desc": "The line thickness of line."
+          "desc": "The line thickness of line.",
+          "initialValue": "1"
         },
         "line-cap": {
           "type": "combo",
@@ -692,17 +711,20 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color of the line."
+          "desc": "The color of the line.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "line-thickness": {
           "type": "number",
           "name": "Thickness",
-          "desc": "The line thickness of line."
+          "desc": "The line thickness of line.",
+          "initialValue": "1"
         },
         "dash-length": {
           "type": "number",
           "name": "Dash length",
-          "desc": "The length of each dash on the line."
+          "desc": "The length of each dash on the line.",
+          "initialValue": "5"
         },
         "line-cap": {
           "type": "combo",
@@ -726,7 +748,8 @@
         "color": {
           "type": "number",
           "name": "Color",
-          "desc": "The color to fill."
+          "desc": "The color to fill.",
+          "initialValue": "rgba(0, 0, 0, 100)"
         },
         "convex": {
           "type": "boolean",

@@ -238,7 +238,8 @@
         "keys": {
           "type": "string",
           "name": "Keys",
-          "desc": "A comma-separated array of keys to lock. Leave empty to request to lock all keys."
+          "desc": "A comma-separated array of keys to lock. Leave empty to request to lock all keys.",
+          "initialValue": "\"KeyW,KeyA,KeyS,KeyD\""
         }
       },
       "isAsync": true

@@ -74,12 +74,14 @@
         "rate": {
           "type": "number",
           "name": "速率",
-          "desc": "说话的相对速度，例如 1为正常，0.5为一半快。"
+          "desc": "说话的相对速度，例如 1为正常，0.5为一半快。",
+          "initialValue": "1"
         },
         "pitch": {
           "type": "number",
           "name": "音高",
-          "desc": "说话的相对音高，介于0和2之间。"
+          "desc": "说话的相对音高，介于0和2之间。",
+          "initialValue": "1"
         }
       }
     },

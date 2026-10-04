@@ -132,7 +132,8 @@
         "frequency": {
           "type": "number",
           "name": "频率",
-          "desc": "滤波器的频率，以赫兹为单位。"
+          "desc": "滤波器的频率，以赫兹为单位。",
+          "initialValue": "350"
         },
         "detune": {
           "type": "number",
@@ -142,7 +143,8 @@
         "q": {
           "type": "number",
           "name": "Q",
-          "desc": "滤波器的品质因子, 默认为 1，范围从 0.0001 到 1000。Q值越高，损耗越大，用于模拟随振荡衰减的频率。"
+          "desc": "滤波器的品质因子, 默认为 1，范围从 0.0001 到 1000。Q值越高，损耗越大，用于模拟随振荡衰减的频率。",
+          "initialValue": "1"
         },
         "gain": {
           "type": "number",
@@ -152,7 +154,8 @@
         "mix": {
           "type": "number",
           "name": "混合",
-          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "initialValue": "100"
         }
       }
     },
@@ -187,17 +190,20 @@
         "delay": {
           "type": "number",
           "name": "延迟",
-          "desc": "延迟时间，以秒为单位。"
+          "desc": "延迟时间，以秒为单位。",
+          "initialValue": "0.4"
         },
         "gain": {
           "type": "number",
           "name": "增益",
-          "desc": "延迟音频的增益，以分贝为单位。"
+          "desc": "延迟音频的增益，以分贝为单位。",
+          "initialValue": "-5"
         },
         "mix": {
           "type": "number",
           "name": "混合",
-          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "initialValue": "100"
         }
       }
     },
@@ -231,7 +237,8 @@
         "mix": {
           "type": "number",
           "name": "混合",
-          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "initialValue": "100"
         }
       }
     },
@@ -308,27 +315,32 @@
         "delay": {
           "type": "number",
           "name": "延迟",
-          "desc": "延迟时间，以毫秒为单位。"
+          "desc": "延迟时间，以毫秒为单位。",
+          "initialValue": "5"
         },
         "modulation": {
           "type": "number",
           "name": "调制",
-          "desc": "改变延迟时间的幅度，以毫秒为单位。 设置为0表示合唱风格效果。"
+          "desc": "改变延迟时间的幅度，以毫秒为单位。 设置为0表示合唱风格效果。",
+          "initialValue": "3"
         },
         "frequency": {
           "type": "number",
           "name": "频率",
-          "desc": "设置时间延迟的频率，以赫兹为单位。"
+          "desc": "设置时间延迟的频率，以赫兹为单位。",
+          "initialValue": "0.25"
         },
         "feedback": {
           "type": "number",
           "name": "反馈",
-          "desc": "反馈量，从0（无）到100（全部）。"
+          "desc": "反馈量，从0（无）到100（全部）。",
+          "initialValue": "50"
         },
         "mix": {
           "type": "number",
           "name": "混合",
-          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "initialValue": "100"
         }
       }
     },
@@ -348,7 +360,8 @@
         "frequency": {
           "type": "number",
           "name": "频率",
-          "desc": "相位转换的中心位置所对应的频率，以赫兹为单位。"
+          "desc": "相位转换的中心位置所对应的频率，以赫兹为单位。",
+          "initialValue": "4000"
         },
         "detune": {
           "type": "number",
@@ -358,22 +371,26 @@
         "q": {
           "type": "number",
           "name": "Q",
-          "desc": "过滤器Q因子。"
+          "desc": "过滤器Q因子。",
+          "initialValue": "0.5"
         },
         "modulation": {
           "type": "number",
           "name": "调频",
-          "desc": "改变频率的强度，以赫兹为单位。"
+          "desc": "改变频率的强度，以赫兹为单位。",
+          "initialValue": "3900"
         },
         "modulation-frequency": {
           "type": "number",
           "name": "调制频率",
-          "desc": "设置调制器周期的频率，以赫兹为单位。"
+          "desc": "设置调制器周期的频率，以赫兹为单位。",
+          "initialValue": "1"
         },
         "mix": {
           "type": "number",
           "name": "混合",
-          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "initialValue": "100"
         }
       }
     },
@@ -393,7 +410,8 @@
         "gain": {
           "type": "number",
           "name": "增益",
-          "desc": "音量调整，以分贝为单位。"
+          "desc": "音量调整，以分贝为单位。",
+          "initialValue": "-10"
         }
       }
     },
@@ -413,7 +431,8 @@
         "stereo-pan": {
           "type": "number",
           "name": "声道",
-          "desc": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。"
+          "desc": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。",
+          "initialValue": "0"
         }
       }
     },
@@ -433,27 +452,32 @@
         "threshold": {
           "type": "number",
           "name": "阈值",
-          "desc": "高于此阈值的阈值，以dB为单位。"
+          "desc": "高于此阈值的阈值，以dB为单位。",
+          "initialValue": "-24"
         },
         "knee": {
           "type": "number",
           "name": "转折点",
-          "desc": "高于阈值的范围，以dB为单位。此范围内的曲线会平滑地过渡到 '比率' 部分。"
+          "desc": "高于阈值的范围，以dB为单位。此范围内的曲线会平滑地过渡到 '比率' 部分。",
+          "initialValue": "30"
         },
         "ratio": {
           "type": "number",
           "name": "比率",
-          "desc": "控制输入与输出的压缩比。例如比率为 4 时，输入每增加 4 dB，输出就会影响 1 dB 。"
+          "desc": "控制输入与输出的压缩比。例如比率为 4 时，输入每增加 4 dB，输出就会影响 1 dB 。",
+          "initialValue": "12"
         },
         "attack": {
           "type": "number",
           "name": "起音",
-          "desc": "将增益降低 10 分贝所需的时间，以毫秒为单位。"
+          "desc": "将增益降低 10 分贝所需的时间，以毫秒为单位。",
+          "initialValue": "3"
         },
         "release": {
           "type": "number",
           "name": "释放",
-          "desc": "增益增加到 10dB 所需的时间，以毫秒为单位。"
+          "desc": "增益增加到 10dB 所需的时间，以毫秒为单位。",
+          "initialValue": "250"
         }
       }
     },
@@ -473,12 +497,14 @@
         "frequency": {
           "type": "number",
           "name": "频率",
-          "desc": "幅度调制的频率，以赫兹为单位。"
+          "desc": "幅度调制的频率，以赫兹为单位。",
+          "initialValue": "10"
         },
         "mix": {
           "type": "number",
           "name": "混合",
-          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "initialValue": "100"
         }
       }
     },
@@ -498,7 +524,8 @@
         "fft-size": {
           "type": "number",
           "name": "FFT 大小",
-          "desc": "用于频域分析的 FFT 大小。必须是 2 的幂次方。"
+          "desc": "用于频域分析的 FFT 大小。必须是 2 的幂次方。",
+          "initialValue": "512"
         },
         "smoothing": {
           "type": "number",
@@ -523,12 +550,14 @@
         "frequency": {
           "type": "number",
           "name": "频率",
-          "desc": "环形调制器的频率，以赫兹为单位。"
+          "desc": "环形调制器的频率，以赫兹为单位。",
+          "initialValue": "600"
         },
         "mix": {
           "type": "number",
           "name": "混合",
-          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "initialValue": "100"
         }
       }
     },
@@ -548,27 +577,32 @@
         "threshold": {
           "type": "number",
           "name": "阈值",
-          "desc": "失真阈值，以dB为单位。"
+          "desc": "失真阈值，以dB为单位。",
+          "initialValue": "-27"
         },
         "headroom": {
           "type": "number",
           "name": "动态余量",
-          "desc": "信号在临近失真范围的余量，以 dB 为单位。"
+          "desc": "信号在临近失真范围的余量，以 dB 为单位。",
+          "initialValue": "21"
         },
         "drive": {
           "type": "number",
           "name": "驱动",
-          "desc": "失真效果的驱动程度，影响信号的饱和度。"
+          "desc": "失真效果的驱动程度，影响信号的饱和度。",
+          "initialValue": "5"
         },
         "make-up-gain": {
           "type": "number",
           "name": "增益补偿",
-          "desc": "效果后的额外音量增加，以dB为单位。"
+          "desc": "效果后的额外音量增加，以dB为单位。",
+          "initialValue": "3"
         },
         "mix": {
           "type": "number",
           "name": "混合",
-          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。"
+          "desc": "调节湿/干的混合程度，范围从 0 (无效果) 到 100 (完全效果)。",
+          "initialValue": "100"
         }
       }
     },
@@ -637,12 +671,14 @@
         "inner-angle": {
           "type": "number",
           "name": "内角",
-          "desc": "锥型内角的角度，位于声源的内角范围内，可听到完整的声音。360°的内角即表示全方向的声音。"
+          "desc": "锥型内角的角度，位于声源的内角范围内，可听到完整的声音。360°的内角即表示全方向的声音。",
+          "initialValue": "360"
         },
         "outer-angle": {
           "type": "number",
           "name": "外角",
-          "desc": "锥型外角的角度，位于声源的外角之外，听到的声音会逐渐缩减。"
+          "desc": "锥型外角的角度，位于声源的外角之外，听到的声音会逐渐缩减。",
+          "initialValue": "360"
         },
         "outer-gain": {
           "type": "number",
@@ -691,12 +727,14 @@
         "inner-angle": {
           "type": "number",
           "name": "内角",
-          "desc": "定向音频源发声的内角范围，以度为单位。在范围内的音量为最大值。360 表示非定向声音。"
+          "desc": "定向音频源发声的内角范围，以度为单位。在范围内的音量为最大值。360 表示非定向声音。",
+          "initialValue": "360"
         },
         "outer-angle": {
           "type": "number",
           "name": "外角",
-          "desc": "定向音频源发声的外角范围，以度为单位。从内角到外角的范围，音量逐渐减弱，超出范围外则几乎听不到。"
+          "desc": "定向音频源发声的外角范围，以度为单位。从内角到外角的范围，音量逐渐减弱，超出范围外则几乎听不到。",
+          "initialValue": "360"
         },
         "outer-gain": {
           "type": "number",
@@ -751,32 +789,38 @@
         "forwardX": {
           "type": "number",
           "name": "前推X",
-          "desc": "前推向量的X分量。"
+          "desc": "前推向量的X分量。",
+          "initialValue": "0"
         },
         "forwardY": {
           "type": "number",
           "name": "前推Y",
-          "desc": "前推向量的Y分量。"
+          "desc": "前推向量的Y分量。",
+          "initialValue": "0"
         },
         "forwardZ": {
           "type": "number",
           "name": "前推Z",
-          "desc": "前推向量的Z分量。"
+          "desc": "前推向量的Z分量。",
+          "initialValue": "-1"
         },
         "upX": {
           "type": "number",
           "name": "升降X",
-          "desc": "升降向量的X分量。"
+          "desc": "升降向量的X分量。",
+          "initialValue": "0"
         },
         "upY": {
           "type": "number",
           "name": "升降Y",
-          "desc": "升降向量的Y分量。"
+          "desc": "升降向量的Y分量。",
+          "initialValue": "1"
         },
         "upZ": {
           "type": "number",
           "name": "升降Z",
-          "desc": "升降向量的Z分量。"
+          "desc": "升降向量的Z分量。",
+          "initialValue": "0"
         }
       }
     },
@@ -824,12 +868,14 @@
         "inner-angle": {
           "type": "number",
           "name": "内角",
-          "desc": "定向音频源发声的内角范围，以度为单位。在范围内的音量为最大值。360 表示非定向声音。"
+          "desc": "定向音频源发声的内角范围，以度为单位。在范围内的音量为最大值。360 表示非定向声音。",
+          "initialValue": "360"
         },
         "outer-angle": {
           "type": "number",
           "name": "外角",
-          "desc": "定向音频源发声的外角范围，以度为单位。从内角到外角的范围，音量逐渐减弱，超出范围外则几乎听不到。"
+          "desc": "定向音频源发声的外角范围，以度为单位。从内角到外角的范围，音量逐渐减弱，超出范围外则几乎听不到。",
+          "initialValue": "360"
         },
         "outer-gain": {
           "type": "number",
@@ -902,12 +948,14 @@
         "inner-angle": {
           "type": "number",
           "name": "内角",
-          "desc": "锥型内角的角度，位于声源的内角范围内，可听到完整的声音。360°的内角即表示全方向的声音。"
+          "desc": "锥型内角的角度，位于声源的内角范围内，可听到完整的声音。360°的内角即表示全方向的声音。",
+          "initialValue": "360"
         },
         "outer-angle": {
           "type": "number",
           "name": "外角",
-          "desc": "锥型外角的角度，位于声源的外角之外，听到的声音会逐渐缩减。"
+          "desc": "锥型外角的角度，位于声源的外角之外，听到的声音会逐渐缩减。",
+          "initialValue": "360"
         },
         "outer-gain": {
           "type": "number",
@@ -937,7 +985,8 @@
         "stereo-pan": {
           "type": "number",
           "name": "声道",
-          "desc": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。"
+          "desc": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。",
+          "initialValue": "0"
         }
       }
     },
@@ -971,7 +1020,8 @@
         "stereo-pan": {
           "type": "number",
           "name": "声道",
-          "desc": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。"
+          "desc": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。",
+          "initialValue": "0"
         },
         "tag-optional": {
           "type": "string",
@@ -1044,7 +1094,8 @@
         "db": {
           "type": "number",
           "name": "dB",
-          "desc": "基于原始音量的增益与衰减，单位为分贝 (dB)。 0 是原始音量，-10 dB大约是声音的一半。"
+          "desc": "基于原始音量的增益与衰减，单位为分贝 (dB)。 0 是原始音量，-10 dB大约是声音的一半。",
+          "initialValue": "-10"
         }
       }
     },
@@ -1064,12 +1115,14 @@
         "db": {
           "type": "number",
           "name": "dB",
-          "desc": "以分贝(dB)进行衰减淡出。"
+          "desc": "以分贝(dB)进行衰减淡出。",
+          "initialValue": "-100"
         },
         "duration": {
           "type": "number",
           "name": "持续时间",
-          "desc": "在几秒内完全淡出完成。"
+          "desc": "在几秒内完全淡出完成。",
+          "initialValue": "3"
         },
         "ending": {
           "type": "combo",
@@ -1114,7 +1167,8 @@
         "playback-rate": {
           "type": "number",
           "name": "播放速度",
-          "desc": "声音的播放速度。1.0是正常速度，0.5半速，2.0倍速等。"
+          "desc": "声音的播放速度。1.0是正常速度，0.5半速，2.0倍速等。",
+          "initialValue": "1.0"
         }
       }
     },
@@ -1172,7 +1226,8 @@
         "stereo-pan": {
           "type": "number",
           "name": "声道",
-          "desc": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。"
+          "desc": "平衡双声道的音量，默认为 0，范围从-100（左声道）到100（右声道）。",
+          "initialValue": "0"
         },
         "tag-optional": {
           "type": "string",
@@ -1237,7 +1292,8 @@
         "db": {
           "type": "number",
           "name": "dB",
-          "desc": "主衰减以分贝（dB）表示。 0是原始音量，-10 dB大约是声音的一半，等等。"
+          "desc": "主衰减以分贝（dB）表示。 0是原始音量，-10 dB大约是声音的一半，等等。",
+          "initialValue": "-10"
         }
       }
     },
@@ -1351,12 +1407,14 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "加载音频的远程链接。注意，跨域的请求需要使用CORS。"
+          "desc": "加载音频的远程链接。注意，跨域的请求需要使用CORS。",
+          "initialValue": "\"https://\""
         },
         "type": {
           "type": "string",
           "name": "类型",
-          "desc": "在指定链接中加载的音频的格式类型( 也叫MIME类型)。注：WebM Opus 是唯一能保证在所有平台上播放的格式。"
+          "desc": "在指定链接中加载的音频的格式类型( 也叫MIME类型)。注：WebM Opus 是唯一能保证在所有平台上播放的格式。",
+          "initialValue": "\"audio/webm; codecs=opus\""
         },
         "name": {
           "type": "string",

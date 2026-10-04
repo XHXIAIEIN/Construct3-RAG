@@ -35,17 +35,20 @@
         "on-time": {
           "type": "number",
           "name": "可见时间",
-          "desc": "在持续时间内使对象可见"
+          "desc": "在持续时间内使对象可见",
+          "initialValue": "0.1"
         },
         "off-time": {
           "type": "number",
           "name": "隐去时间",
-          "desc": "在持续时间内使对象不可见"
+          "desc": "在持续时间内使对象不可见",
+          "initialValue": "0.1"
         },
         "duration": {
           "type": "number",
           "name": "持续时间",
-          "desc": "在持续时间内使对象闪烁"
+          "desc": "在持续时间内使对象闪烁",
+          "initialValue": "1.0"
         }
       }
     },

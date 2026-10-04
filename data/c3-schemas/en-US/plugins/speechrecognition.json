@@ -125,7 +125,8 @@
         "language": {
           "type": "string",
           "name": "Language",
-          "desc": "The BCP 47 language tag to recognize, or empty for the browser's current language."
+          "desc": "The BCP 47 language tag to recognize, or empty for the browser's current language.",
+          "initialValue": "\"en\""
         },
         "process-locally": {
           "type": "boolean",
@@ -171,7 +172,8 @@
         "language": {
           "type": "string",
           "name": "Language",
-          "desc": "The BCP 47 language tag to check."
+          "desc": "The BCP 47 language tag to check.",
+          "initialValue": "\"en\""
         },
         "process-locally": {
           "type": "boolean",
@@ -192,7 +194,8 @@
         "language": {
           "type": "string",
           "name": "Language",
-          "desc": "The BCP 47 language tag to install on-device recognition for."
+          "desc": "The BCP 47 language tag to install on-device recognition for.",
+          "initialValue": "\"en\""
         }
       },
       "isAsync": true

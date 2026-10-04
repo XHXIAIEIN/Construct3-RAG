@@ -222,17 +222,20 @@
         "width": {
           "type": "number",
           "name": "X",
-          "desc": "数组在X轴的元素数量。"
+          "desc": "数组在X轴的元素数量。",
+          "initialValue": "1"
         },
         "height": {
           "type": "number",
           "name": "Y",
-          "desc": "数组在Y轴的元素数量。"
+          "desc": "数组在Y轴的元素数量。",
+          "initialValue": "1"
         },
         "depth": {
           "type": "number",
           "name": "Z",
-          "desc": "数组在Z轴的元素数量。"
+          "desc": "数组在Z轴的元素数量。",
+          "initialValue": "1"
         }
       }
     },
@@ -337,7 +340,8 @@
         "filename": {
           "type": "string",
           "name": "文件名",
-          "desc": "要下载的文件的名称。"
+          "desc": "要下载的文件的名称。",
+          "initialValue": "\"data.json\""
         }
       }
     },
@@ -537,7 +541,8 @@
         "separator": {
           "type": "string",
           "name": "分隔符",
-          "desc": "用于拆分的字符。"
+          "desc": "用于拆分的字符。",
+          "initialValue": "\",\""
         },
         "type": {
           "type": "combo",
@@ -689,7 +694,8 @@
         "separator": {
           "type": "string",
           "name": "分隔符",
-          "desc": "用于拼接字符串的字符。"
+          "desc": "用于拼接字符串的字符。",
+          "initialValue": "\",\""
         }
       },
       "returnType": "string"

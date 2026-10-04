@@ -91,17 +91,20 @@
         "x": {
           "type": "boolean",
           "name": "X",
-          "desc": "固定对象的X坐标。"
+          "desc": "固定对象的X坐标。",
+          "initialValue": "true"
         },
         "y": {
           "type": "boolean",
           "name": "Y",
-          "desc": "固定对象的Y坐标。"
+          "desc": "固定对象的Y坐标。",
+          "initialValue": "true"
         },
         "angle": {
           "type": "boolean",
           "name": "角度",
-          "desc": "固定对象的角度。"
+          "desc": "固定对象的角度。",
+          "initialValue": "true"
         },
         "width-type": {
           "type": "combo",
@@ -151,7 +154,8 @@
         "angle": {
           "type": "boolean",
           "name": "角度",
-          "desc": "固定对象的角度。"
+          "desc": "固定对象的角度。",
+          "initialValue": "true"
         },
         "width-type": {
           "type": "combo",

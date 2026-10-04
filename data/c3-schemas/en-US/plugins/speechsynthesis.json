@@ -74,12 +74,14 @@
         "rate": {
           "type": "number",
           "name": "Rate",
-          "desc": "The relative speed at which to speak, e.g. 1 for normal, 0.5 for half as fast."
+          "desc": "The relative speed at which to speak, e.g. 1 for normal, 0.5 for half as fast.",
+          "initialValue": "1"
         },
         "pitch": {
           "type": "number",
           "name": "Pitch",
-          "desc": "The relative pitch at which to speak, between 0 and 2."
+          "desc": "The relative pitch at which to speak, between 0 and 2.",
+          "initialValue": "1"
         }
       }
     },

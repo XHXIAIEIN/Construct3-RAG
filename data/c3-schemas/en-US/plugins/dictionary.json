@@ -177,7 +177,8 @@
         "filename": {
           "type": "string",
           "name": "Filename",
-          "desc": "The name of the file to download."
+          "desc": "The name of the file to download.",
+          "initialValue": "\"data.json\""
         }
       }
     }

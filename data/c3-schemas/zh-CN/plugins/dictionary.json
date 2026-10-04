@@ -177,7 +177,8 @@
         "filename": {
           "type": "string",
           "name": "文件名",
-          "desc": "要下载的文件的名称。"
+          "desc": "要下载的文件的名称。",
+          "initialValue": "\"data.json\""
         }
       }
     }

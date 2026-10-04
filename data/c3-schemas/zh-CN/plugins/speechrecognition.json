@@ -125,7 +125,8 @@
         "language": {
           "type": "string",
           "name": "语言",
-          "desc": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。"
+          "desc": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。",
+          "initialValue": "\"en\""
         },
         "process-locally": {
           "type": "boolean",
@@ -171,7 +172,8 @@
         "language": {
           "type": "string",
           "name": "语言环境",
-          "desc": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。"
+          "desc": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。",
+          "initialValue": "\"en\""
         },
         "process-locally": {
           "type": "boolean",
@@ -192,7 +194,8 @@
         "language": {
           "type": "string",
           "name": "语言环境",
-          "desc": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。"
+          "desc": "填写 BCP 47 标准的语言标签。如中文表示 zh、英文表示 en。",
+          "initialValue": "\"en\""
         }
       },
       "isAsync": true

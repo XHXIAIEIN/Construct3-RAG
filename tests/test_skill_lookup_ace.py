@@ -217,6 +217,13 @@ def test_lookup_writes_a_sound_bare(built):
     assert code == 0 and '"audio-file": "<sound>"' in out and "without its extension" in out, out
 
 
+def test_lookup_writes_the_value_the_editor_fills_in(built):
+    # A Wait written with "use-timescale": false ignores the time scale, unlike one added in the editor.
+    code, out = tool(built, "lookup_ace", "System", "wait")
+    assert code == 0 and '"parameters": {"seconds": "1.0", "use-timescale": true}' in out, out
+    assert "the editor ticks it by default" in out, out
+
+
 def test_a_behavior_looked_up_under_system_names_where_it_is(built):
     """`System timer` found nothing under System, and runs went on guessing words under it."""
     code, out = tool(built, "lookup_ace", "System", "timer")

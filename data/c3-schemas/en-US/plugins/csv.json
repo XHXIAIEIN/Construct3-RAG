@@ -43,7 +43,8 @@
         "delimiter": {
           "type": "string",
           "name": "Delimiter",
-          "desc": "The character that separates values."
+          "desc": "The character that separates values.",
+          "initialValue": "\",\""
         },
         "array": {
           "type": "object",
@@ -78,7 +79,8 @@
         "delimiter": {
           "type": "string",
           "name": "Delimiter",
-          "desc": "The character that separates values."
+          "desc": "The character that separates values.",
+          "initialValue": "\",\""
         }
       }
     }

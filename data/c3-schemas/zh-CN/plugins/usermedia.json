@@ -124,7 +124,8 @@
         "jpeg-quality": {
           "type": "number",
           "name": "JPEG品质",
-          "desc": "仅适用于 'JPEG' 格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。"
+          "desc": "仅适用于 'JPEG' 格式，控制输出品质从 0 (最差) 到 100 (最好)，但品质越小图像则越模糊，设为 100 则无损输出。",
+          "initialValue": "75"
         }
       },
       "isAsync": true
@@ -140,7 +141,8 @@
         "tag": {
           "type": "string",
           "name": "标签",
-          "desc": "用于在音频对象中，关联麦克风输入的标签。"
+          "desc": "用于在音频对象中，关联麦克风输入的标签。",
+          "initialValue": "\"mic\""
         },
         "source": {
           "type": "number",

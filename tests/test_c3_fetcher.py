@@ -369,6 +369,26 @@ def test_export_marks_every_condition_the_editor_treats_as_a_trigger(fetcher):
     }
 
 
+def test_export_keeps_the_default_the_editor_fills_in(fetcher):
+    """Wait's "use time scale" is ticked when the action is added; a template that
+    wrote false made every Wait ignore the time scale."""
+    aces = {"plugins": {"system": {"time": {"conditions": [], "expressions": [], "actions": [
+        {"id": "wait", "scriptName": "Wait", "params": [
+            {"id": "seconds", "type": "number", "initialValue": "1.0"},
+            {"id": "use-timescale", "type": "boolean", "initialValue": "true"},
+            {"id": "note", "type": "string"},
+        ]},
+    ]}}}, "behaviors": {}}
+    text = {"text": {"plugins": {"system": {"name": "System", "actions": {"wait": {"list-name": "Wait"}}}}}}
+    with patch.object(fetcher, "fetch_all_aces", return_value=aces),          patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(aces)),          patch.object(fetcher, "fetch_lang", return_value=text),          patch.object(fetcher, "fetch_effects", return_value=[]),          patch.object(fetcher, "fetch_examples", return_value=[]):
+        schemas_dir = fetcher.export_schemas()
+
+    for locale in ("en-US", "zh-CN"):
+        system = json.loads((schemas_dir / locale / "plugins" / "system.json").read_text(encoding="utf-8"))
+        params = system["actions"][0]["params"]
+        assert {k: v.get("initialValue") for k, v in params.items()} ==             {"seconds": "1.0", "use-timescale": "true", "note": None}
+
+
 def test_export_marks_an_expression_that_takes_more_arguments_than_it_lists(fetcher):
     """Mouse.X takes an optional layer and max any number of values; the parameters
     alone would make Mouse.X("HUD") read as a wrong call."""

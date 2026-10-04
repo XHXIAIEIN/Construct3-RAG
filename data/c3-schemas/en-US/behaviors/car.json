@@ -181,7 +181,8 @@
         "steer-speed": {
           "type": "number",
           "name": "Steer speed",
-          "desc": "The turn speed, in degrees per second."
+          "desc": "The turn speed, in degrees per second.",
+          "initialValue": "225"
         }
       }
     },
@@ -196,7 +197,8 @@
         "drift-recover": {
           "type": "number",
           "name": "Drift recover",
-          "desc": "The rate the angle of motion catches up with the object angle.  Lower values cause drifting, higher values cause tighter turns."
+          "desc": "The rate the angle of motion catches up with the object angle.  Lower values cause drifting, higher values cause tighter turns.",
+          "initialValue": "185"
         }
       }
     },
@@ -211,7 +213,8 @@
         "friction": {
           "type": "number",
           "name": "Friction",
-          "desc": "The amount of slowdown when hitting solids, between 0 and 1."
+          "desc": "The amount of slowdown when hitting solids, between 0 and 1.",
+          "initialValue": "0.4"
         }
       }
     },

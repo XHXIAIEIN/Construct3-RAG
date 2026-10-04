@@ -106,7 +106,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "The link to share."
+          "desc": "The link to share.",
+          "initialValue": "\"https://\""
         }
       }
     },
@@ -141,7 +142,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "The link to share."
+          "desc": "The link to share.",
+          "initialValue": "\"https://\""
         },
         "name": {
           "type": "string",

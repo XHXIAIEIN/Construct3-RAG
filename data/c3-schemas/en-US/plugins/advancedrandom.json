@@ -86,7 +86,8 @@
         "offset": {
           "type": "number",
           "name": "Offset",
-          "desc": "The lowest value in the table."
+          "desc": "The lowest value in the table.",
+          "initialValue": "0"
         }
       }
     },
@@ -144,12 +145,14 @@
         "value": {
           "type": "any",
           "name": "Value",
-          "desc": "The value of the entry"
+          "desc": "The value of the entry",
+          "initialValue": "\"\""
         },
         "weight": {
           "type": "number",
           "name": "Entry weight",
-          "desc": "The weight for the probability of the value"
+          "desc": "The weight for the probability of the value",
+          "initialValue": "1"
         }
       }
     },
@@ -164,12 +167,14 @@
         "value": {
           "type": "any",
           "name": "Value",
-          "desc": "The value of the entry"
+          "desc": "The value of the entry",
+          "initialValue": "\"\""
         },
         "weight": {
           "type": "number",
           "name": "Entry weight",
-          "desc": "The weight for the probability of the value, specifying 0 matches any weight"
+          "desc": "The weight for the probability of the value, specifying 0 matches any weight",
+          "initialValue": "0"
         }
       }
     },
@@ -214,7 +219,8 @@
         "count": {
           "type": "number",
           "name": "Count",
-          "desc": "The number of octaves to use, from 1-16."
+          "desc": "The number of octaves to use, from 1-16.",
+          "initialValue": "1"
         }
       }
     }

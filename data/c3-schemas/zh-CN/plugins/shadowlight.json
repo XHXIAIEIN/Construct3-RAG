@@ -34,7 +34,8 @@
         "color": {
           "type": "number",
           "name": "颜色",
-          "desc": "此对象投射的阴影的颜色。"
+          "desc": "此对象投射的阴影的颜色。",
+          "initialValue": "rgbEx(0, 0, 0)"
         }
       }
     },

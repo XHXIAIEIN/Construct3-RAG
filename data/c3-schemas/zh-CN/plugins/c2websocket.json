@@ -97,7 +97,8 @@
         "url": {
           "type": "string",
           "name": "URL",
-          "desc": "输入要连接的WebSocket服务器。"
+          "desc": "输入要连接的WebSocket服务器。",
+          "initialValue": "\"ws://\""
         },
         "protocol-optional": {
           "type": "string",

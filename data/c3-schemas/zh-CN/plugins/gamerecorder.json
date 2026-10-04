@@ -162,7 +162,8 @@
         "quality-kbps": {
           "type": "number",
           "name": "质量(kbps)",
-          "desc": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。"
+          "desc": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。",
+          "initialValue": "2500"
         }
       }
     },
@@ -219,7 +220,8 @@
         "quality-kbps": {
           "type": "number",
           "name": "质量(kbps)",
-          "desc": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。"
+          "desc": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。",
+          "initialValue": "2500"
         }
       }
     },
@@ -271,7 +273,8 @@
         "quality-kbps": {
           "type": "number",
           "name": "质量(kbps)",
-          "desc": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。"
+          "desc": "音频录制的编码速率，以千比特每秒 (kbps) 为单位。",
+          "initialValue": "2500"
         }
       }
     },

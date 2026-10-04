@@ -204,7 +204,8 @@
         "show-accept-all": {
           "type": "boolean",
           "name": "Show accept all",
-          "desc": "Whether to show an accept type that shows all files."
+          "desc": "Whether to show an accept type that shows all files.",
+          "initialValue": "true"
         },
         "suggested-name": {
           "type": "string",
@@ -249,7 +250,8 @@
         "show-accept-all": {
           "type": "boolean",
           "name": "Show accept all",
-          "desc": "Whether to show an accept type that shows all files."
+          "desc": "Whether to show an accept type that shows all files.",
+          "initialValue": "true"
         },
         "multiple": {
           "type": "boolean",

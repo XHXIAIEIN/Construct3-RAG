@@ -26,12 +26,14 @@
         "magnitude": {
           "type": "number",
           "name": "Magnitude",
-          "desc": "The strength of the shake, in maximum pixels to scroll away."
+          "desc": "The strength of the shake, in maximum pixels to scroll away.",
+          "initialValue": "20"
         },
         "duration": {
           "type": "number",
           "name": "Duration",
-          "desc": "The time the shake should last, in seconds."
+          "desc": "The time the shake should last, in seconds.",
+          "initialValue": "0.4"
         },
         "mode": {
           "type": "combo",

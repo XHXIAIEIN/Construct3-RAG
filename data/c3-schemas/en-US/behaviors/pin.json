@@ -91,17 +91,20 @@
         "x": {
           "type": "boolean",
           "name": "X",
-          "desc": "Pin the object's X co-ordinate."
+          "desc": "Pin the object's X co-ordinate.",
+          "initialValue": "true"
         },
         "y": {
           "type": "boolean",
           "name": "Y",
-          "desc": "Pin the object's Y co-ordinate."
+          "desc": "Pin the object's Y co-ordinate.",
+          "initialValue": "true"
         },
         "angle": {
           "type": "boolean",
           "name": "Angle",
-          "desc": "Pin the object's angle."
+          "desc": "Pin the object's angle.",
+          "initialValue": "true"
         },
         "width-type": {
           "type": "combo",
@@ -151,7 +154,8 @@
         "angle": {
           "type": "boolean",
           "name": "Angle",
-          "desc": "Pin the object's angle."
+          "desc": "Pin the object's angle.",
+          "initialValue": "true"
         },
         "width-type": {
           "type": "combo",

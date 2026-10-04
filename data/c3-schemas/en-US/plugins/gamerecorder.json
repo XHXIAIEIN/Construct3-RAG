@@ -162,7 +162,8 @@
         "quality-kbps": {
           "type": "number",
           "name": "Quality (kbps)",
-          "desc": "The data rate to encode in kilobits per second (kbps)."
+          "desc": "The data rate to encode in kilobits per second (kbps).",
+          "initialValue": "2500"
         }
       }
     },
@@ -219,7 +220,8 @@
         "quality-kbps": {
           "type": "number",
           "name": "Quality (kbps)",
-          "desc": "The data rate to encode in kilobits per second (kbps)."
+          "desc": "The data rate to encode in kilobits per second (kbps).",
+          "initialValue": "2500"
         }
       }
     },
@@ -271,7 +273,8 @@
         "quality-kbps": {
           "type": "number",
           "name": "Quality (kbps)",
-          "desc": "The data rate to encode in kilobits per second (kbps)."
+          "desc": "The data rate to encode in kilobits per second (kbps).",
+          "initialValue": "2500"
         }
       }
     },

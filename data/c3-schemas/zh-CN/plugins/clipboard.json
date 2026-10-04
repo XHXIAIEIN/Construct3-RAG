@@ -50,7 +50,8 @@
         "type": {
           "type": "string",
           "name": "类型",
-          "desc": "粘贴数据的类型（又称 MIME 类型）。"
+          "desc": "粘贴数据的类型（又称 MIME 类型）。",
+          "initialValue": "\"image/png\""
         }
       },
       "isTrigger": true
@@ -98,7 +99,8 @@
         "type": {
           "type": "string",
           "name": "类型",
-          "desc": "被复制的数据类型（又称 MIME 类型）。"
+          "desc": "被复制的数据类型（又称 MIME 类型）。",
+          "initialValue": "\"image/png\""
         }
       },
       "isAsync": true

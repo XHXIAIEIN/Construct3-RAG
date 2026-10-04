@@ -111,7 +111,8 @@
         "scale-x": {
           "type": "number",
           "name": "X轴比例",
-          "desc": "图像在 X 轴的缩放比例，以百分比表示。"
+          "desc": "图像在 X 轴的缩放比例，以百分比表示。",
+          "initialValue": "100"
         }
       }
     },
@@ -126,7 +127,8 @@
         "scale-y": {
           "type": "number",
           "name": "Y轴比例",
-          "desc": "图像在 Y 轴的缩放比例，以百分比表示。"
+          "desc": "图像在 Y 轴的缩放比例，以百分比表示。",
+          "initialValue": "100"
         }
       }
     },
@@ -226,7 +228,8 @@
         "uri": {
           "type": "string",
           "name": "URI",
-          "desc": "要下载数据的远程服务器地址。"
+          "desc": "要下载数据的远程服务器地址。",
+          "initialValue": "\"https://\""
         },
         "cross-origin": {
           "type": "combo",

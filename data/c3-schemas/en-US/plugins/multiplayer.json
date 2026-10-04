@@ -403,17 +403,20 @@
         "latency": {
           "type": "number",
           "name": "Latency",
-          "desc": "Enter a latency in seconds to simulate. Sent and received messages will be artificially delayed."
+          "desc": "Enter a latency in seconds to simulate. Sent and received messages will be artificially delayed.",
+          "initialValue": "0.1"
         },
         "pdv": {
           "type": "number",
           "name": "PDV",
-          "desc": "Enter a packet delay variance in seconds to simulate. Sent and received messages will be artificially delayed."
+          "desc": "Enter a packet delay variance in seconds to simulate. Sent and received messages will be artificially delayed.",
+          "initialValue": "0.03"
         },
         "packet-loss": {
           "type": "number",
           "name": "Packet loss",
-          "desc": "Enter a packet loss percentage to simulate, from 0 to 1 (e.g. 0.05 for 5%). Sent and received messages will be artificially ignored or further delayed."
+          "desc": "Enter a packet loss percentage to simulate, from 0 to 1 (e.g. 0.05 for 5%). Sent and received messages will be artificially ignored or further delayed.",
+          "initialValue": "0.05"
         }
       }
     },
@@ -702,7 +705,8 @@
         "server": {
           "type": "string",
           "name": "Server",
-          "desc": "The signalling server URL to connect to."
+          "desc": "The signalling server URL to connect to.",
+          "initialValue": "\"wss://multiplayer.construct.net\""
         }
       },
       "isAsync": true
@@ -726,7 +730,8 @@
         "ice-server": {
           "type": "string",
           "name": "ICE server",
-          "desc": "A custom ICE server, e.g. STUN or TURN, to help establish connectivity."
+          "desc": "A custom ICE server, e.g. STUN or TURN, to help establish connectivity.",
+          "initialValue": "\"stun:\""
         },
         "username-optional": {
           "type": "string",
@@ -767,12 +772,14 @@
         "game": {
           "type": "string",
           "name": "Game",
-          "desc": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\"."
+          "desc": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\".",
+          "initialValue": "\"MyCompany-MyGame\""
         },
         "instance": {
           "type": "string",
           "name": "Instance",
-          "desc": "A string identifying an instance of the game, in case you wish to run separate instances."
+          "desc": "A string identifying an instance of the game, in case you wish to run separate instances.",
+          "initialValue": "\"default\""
         },
         "room": {
           "type": "string",
@@ -823,12 +830,14 @@
         "game": {
           "type": "string",
           "name": "Game",
-          "desc": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\"."
+          "desc": "A string uniquely identifying this game on the server. To help ensure uniqueness, include you or your company's name, e.g. \"MyStudio-Asteroids\" instead of just \"Asteroids\".",
+          "initialValue": "\"MyCompany-MyGame\""
         },
         "instance": {
           "type": "string",
           "name": "Instance",
-          "desc": "A string identifying an instance of the game, in case you wish to run separate instances."
+          "desc": "A string identifying an instance of the game, in case you wish to run separate instances.",
+          "initialValue": "\"default\""
         },
         "first-room": {
           "type": "string",
@@ -838,7 +847,8 @@
         "max-peers": {
           "type": "number",
           "name": "Max peers",
-          "desc": "The number of peers per room. Once full, later peers will be sent to the next room."
+          "desc": "The number of peers per room. Once full, later peers will be sent to the next room.",
+          "initialValue": "2"
         },
         "locking": {
           "type": "combo",

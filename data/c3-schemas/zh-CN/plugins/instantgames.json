@@ -369,12 +369,14 @@
         "min-size": {
           "type": "number",
           "name": "最小尺寸",
-          "desc": "建议的上下文理想情况下应该具有的最小参与者数量。使用-1指定无限制。"
+          "desc": "建议的上下文理想情况下应该具有的最小参与者数量。使用-1指定无限制。",
+          "initialValue": "-1"
         },
         "max-size": {
           "type": "number",
           "name": "最大大小",
-          "desc": "建议的上下文理想情况下应该具有的最大参与者数量。使用-1指定无限制。"
+          "desc": "建议的上下文理想情况下应该具有的最大参与者数量。使用-1指定无限制。",
+          "initialValue": "-1"
         }
       },
       "isAsync": true
@@ -390,7 +392,8 @@
         "data": {
           "type": "any",
           "name": "数据",
-          "desc": "要为玩家保存的数据，建议使用 JSON 或字典对象储存。"
+          "desc": "要为玩家保存的数据，建议使用 JSON 或字典对象储存。",
+          "initialValue": "\"\""
         }
       }
     },
@@ -521,7 +524,8 @@
         "count": {
           "type": "number",
           "name": "计数",
-          "desc": "要请求多少条分数"
+          "desc": "要请求多少条分数",
+          "initialValue": "10"
         }
       },
       "isAsync": true
