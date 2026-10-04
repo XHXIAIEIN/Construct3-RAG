@@ -156,6 +156,12 @@ def folder_items(folder: dict, prefix: Path = Path()) -> list[tuple[str, Path]]:
     return out
 
 
+def folder_entries(folder: dict) -> list[dict]:
+    """The entries of a folder tree whose items are objects, subfolders included."""
+    return [i for i in folder.get("items", []) if isinstance(i, dict)] + [
+        i for sub in folder.get("subfolders", []) if isinstance(sub, dict) for i in folder_entries(sub)]
+
+
 # --- locate the project and the clone ---------------------------------------------
 def above(start: Path, marker: str) -> Path | None:
     """The nearest folder at or above start that holds marker."""
@@ -570,7 +576,27 @@ class Project:
                 self.err(f"{kind}: {name} is listed in project.c3proj but has no file")
                 continue
             out[name] = load(path)
+            if kind in ("objectTypes", "families") and isinstance(out[name], dict):
+                self.read_lists(kind, name, out[name])
         return out
+
+    def read_lists(self, kind: str, name: str, data: dict) -> None:
+        """An object type's or family's instance variables, behaviors and effects are each a
+        list. The editor loops over each one as it opens the file, and one written as a folder,
+        {"items": [], "subfolders": []}, stops it with "TypeError: ... is not iterable". The
+        finding names the key; the folder's items stand in for the list, so that the later
+        checks and the other scripts read the file instead of stopping on it."""
+        what = "object type" if kind == "objectTypes" else "family"
+        for key in ("instanceVariables", "behaviorTypes", "effectTypes"):
+            value = data.get(key, [])
+            if isinstance(value, list):
+                continue
+            data[key] = found = folder_entries(value) if isinstance(value, dict) else []
+            shape = "a folder" if isinstance(value, dict) and ("items" in value or "subfolders" in value) \
+                else json.dumps(value, ensure_ascii=False)[:60]
+            self.err(f"{what} {name}: \"{key}\" is {shape}, and the editor reads it as a list, stopping with "
+                     f"\"TypeError: ... is not iterable\" before the project opens. Write \"{key}\": "
+                     + ("[...], the folder's items in a list" if found else "[]"))
 
     # --- schemas ----------------------------------------------------------------------
     def addon_names(self, kind: str) -> dict[str, str]:

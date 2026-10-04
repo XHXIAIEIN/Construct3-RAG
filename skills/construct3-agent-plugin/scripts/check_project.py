@@ -740,6 +740,30 @@ class Checker:
                          f"\"originX\": 0.5, \"originY\": 0.5, \"originalSource\": \"\", \"exportFormat\": "
                          f"\"lossless\", \"exportQuality\": 0.8, \"imageSpriteId\": <n>, \"useCollisionPoly\": "
                          f"true}}, the size of images/{name.lower()}.png")
+            if isinstance(t.get("animations"), dict):
+                self.check_collision_polys(name, t["animations"])
+
+    def check_collision_polys(self, name: str, folder: dict) -> None:
+        """A frame's collision polygon is x, y pairs, three or more. The editor opens a frame with
+        fewer, then asserts as the preview or the export reads it, and shows its crash report. A
+        frame without collisionPoly takes the whole image."""
+        for anim in folder.get("items", []):
+            for i, fr in enumerate(anim.get("frames", [])):
+                poly = fr.get("collisionPoly") if isinstance(fr, dict) else None
+                points = poly.get("points") if isinstance(poly, dict) else None
+                if not isinstance(points, list) or (len(points) >= 6 and len(points) % 2 == 0):
+                    continue
+                pairs = len(points) % 2 == 0
+                held = (f"{len(points) // 2} point{'' if len(points) == 2 else 's'}, {json.dumps(points)}" if pairs
+                        else f"{len(points)} numbers, {json.dumps(points)}, which are not x, y pairs")
+                said = ("must have at least three points in a collision poly" if pairs
+                        else "must have an even number of elements in collision poly points array")
+                self.err(f"object type {name} animation {anim.get('name')} frame {i}: collisionPoly holds {held}; "
+                         f"the editor opens the project, then stops the preview and the export with \"assertion "
+                         f"failure: {said}\". Write three or more x, y pairs from 0 to 1 across the image, or leave "
+                         f"collisionPoly out for the whole image")
+        for sub in folder.get("subfolders", []):
+            self.check_collision_polys(name, sub)
 
     def check_images(self) -> None:
         for name, t in self.p.types.items():
@@ -2075,15 +2099,20 @@ class Checker:
                 self.check_script(a.get("script"), scope, w)
             if a.get("type") in ("comment", "script"):
                 continue
-            if "callFunction" in a:
-                self.pending_calls.append(("function", a["callFunction"], None, len(a.get("parameters", [])), w))
-                for param in a.get("parameters", []):
-                    self.check_expr(w, param, scope)
-                continue
-            if "customAction" in a:
-                owner = a.get("customActionObjectClass", a["objectClass"])
-                self.pending_calls.append(("custom", a["customAction"], owner, len(a.get("parameters", [])), w))
-                for param in a.get("parameters", []):
+            if "callFunction" in a or "customAction" in a:
+                params = a.get("parameters", [])
+                if not isinstance(params, list):
+                    self.err(f"{w}: the call writes \"parameters\": {json.dumps(params, ensure_ascii=False)}; a call "
+                             f"to a function or a custom action lists its arguments in order, \"parameters\": "
+                             f"[\"1\"], and leaves the key out when it passes none. The editor stops with "
+                             f"\"TypeError: expected array\" before the project opens")
+                    params = []
+                if "callFunction" in a:
+                    self.pending_calls.append(("function", a["callFunction"], None, len(params), w))
+                else:
+                    owner = a.get("customActionObjectClass", a["objectClass"])
+                    self.pending_calls.append(("custom", a["customAction"], owner, len(params), w))
+                for param in params:
                     self.check_expr(w, param, scope)
                 continue
             self.check_ace("actions", a, scope, w)

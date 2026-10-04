@@ -131,6 +131,71 @@ def test_a_single_image_type_without_its_image_is_named(project, change, said):
     assert "the size of images/backdrop.png" in out
 
 
+@pytest.mark.parametrize("points, said", [
+    ([0, 0, 1, 1], 'frame 0: collisionPoly holds 2 points, [0, 0, 1, 1]; the editor opens the project, then stops '
+                   'the preview and the export with "assertion failure: must have at least three points in a '
+                   'collision poly"'),
+    ([], "frame 0: collisionPoly holds 0 points, []"),
+    ([0, 0, 1, 0, 1], 'frame 0: collisionPoly holds 5 numbers, [0, 0, 1, 0, 1], which are not x, y pairs; '
+                      'the editor opens the project, then stops the preview and the export with "assertion '
+                      'failure: must have an even number of elements in collision poly points array"'),
+    ([0, 0, 1, 0, 0.5, 1], None),
+    (None, None),       # no collisionPoly: the whole image
+])
+def test_a_frame_collision_polygon_holds_three_points(project, points, said):
+    """A shorter polygon opens; the preview and the export stop on the editor's crash report."""
+    def change(t):
+        fr = t["animations"]["items"][0]["frames"][0]
+        if points is None:
+            fr.pop("collisionPoly")
+        else:
+            fr["collisionPoly"] = {"points": points}
+    out = findings(project, change, "objectTypes/Coin.json")
+    if said is None:
+        assert warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
+    else:
+        assert "object type Coin animation " in out and said in out
+        assert "Write three or more x, y pairs from 0 to 1 across the image, or leave collisionPoly out" in out
+
+
+@pytest.mark.parametrize("rel, key, write", [
+    ("objectTypes/Coin.json", "instanceVariables", '"instanceVariables": [...], the folder\'s items in a list'),
+    ("objectTypes/Coin.json", "behaviorTypes", '"behaviorTypes": [...], the folder\'s items in a list'),
+    ("objectTypes/Coin.json", "effectTypes", '"effectTypes": []'),
+    ("objectTypes/Backdrop.json", "instanceVariables", '"instanceVariables": []'),
+])
+def test_an_object_type_list_written_as_a_folder_is_named(project, rel, key, write):
+    """The editor loops over each list as it opens the file, and a folder stops it with "TypeError:
+    ... is not iterable". The folder's items stand in for the list, so the instances that carry
+    them raise nothing more, and the checker goes on instead of stopping."""
+    out = findings(project, lambda t: t.update({key: {"items": t.get(key, []), "subfolders": []}}), rel)
+    name = rel.split("/")[1][:-5]
+    assert (f'object type {name}: "{key}" is a folder, and the editor reads it as a list, stopping with '
+            f'"TypeError: ... is not iterable" before the project opens. Write {write}') in out
+    assert out.splitlines()[-1] == "1 problem(s)", out
+
+
+@pytest.mark.parametrize("role, params, said", [
+    ("function", {}, True),
+    ("custom action", {}, True),
+    ("custom action", [], False),       # an empty list loads; the editor leaves the key out on save
+])
+def test_a_call_lists_its_arguments(project, role, params, said):
+    """A call's "parameters" is read as a list: an object stops the open with "expected array"."""
+    def change(s):
+        ev = events(s)
+        holder = ev["collect"] if role == "function" else ev["input"]
+        next(a for a in holder["actions"] if ("callFunction" if role == "function" else "customAction") in a)[
+            "parameters"] = params
+    out = findings(project, change)
+    if said:
+        assert ('the call writes "parameters": {}; a call to a function or a custom action lists its arguments '
+                'in order, "parameters": ["1"], and leaves the key out when it passes none. The editor stops with '
+                '"TypeError: expected array"') in out
+    else:
+        assert warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
+
+
 @pytest.mark.parametrize("block", [{}, {"enabled": True}])
 def test_an_instance_behavior_without_properties_is_named(project, block):
     """`"Tween": {}` on an instance stops the open with "Cannot convert undefined or
