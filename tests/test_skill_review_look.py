@@ -31,8 +31,12 @@ def snap(*instances, size=(1280, 720)):
             "instances": list(instances)}
 
 
+def pairs(found):
+    return [(f["rule"], f["uids"]) for f in found]
+
+
 def rules(rl, *instances, **kw):
-    return [(f["rule"], f["uids"]) for f in rl.findings(snap(*instances, **kw))]
+    return pairs(rl.findings(snap(*instances, **kw)))
 
 
 def test_review_look_finds_a_text_its_box_cuts_or_wraps():
@@ -45,7 +49,7 @@ def test_review_look_finds_a_text_its_box_cuts_or_wraps():
         text(3, "CardName", [580, 240, 700, 260], "金刃风暴", [85, 25]),
         text(4, "Hidden", [0, 0, 10, 10], "too long for its box", [200, 20], shown=False),
         text(5, "Turned", [0, 0, 10, 10], "too long for its box", [200, 20], angle=0.5)))
-    assert [(f["rule"], f["uids"]) for f in found] == [("text", [1]), ("text", [2])], found
+    assert pairs(found) == [("text", [1]), ("text", [2])], found
     assert 'HelpText uid 1 "选择前进之路": the text needs 144x28 px and its box is 96x32' in found[0]["line"]
     assert "make the box at least 144x32 or the font smaller" in found[0]["line"]
 
@@ -57,7 +61,7 @@ def test_review_look_finds_instances_created_and_never_moved_apart():
     found = rl.findings(snap(*[text(10 + n, "CardName", [300, 420, 420, 450], w, [80, 24], layer="Game")
                                for n, w in enumerate(names)],
                              inst(20, "Card", [100, 400, 220, 560], layer="Game")))
-    assert [(f["rule"], f["uids"]) for f in found] == [("stacked", [10, 11, 12, 13, 14])], found
+    assert pairs(found) == [("stacked", [10, 11, 12, 13, 14])], found
     assert found[0]["line"].startswith("CardName: 5 instances on one box at (300, 420) 120x30, uids 10, 11")
     assert "set each one's position from the instance it belongs to" in found[0]["line"]
     assert rules(rl, inst(1, "Tiles", [0, 0, 1216, 256], layer="Game"), inst(2, "Tiles", [0, 0, 1216, 256]),
@@ -102,7 +106,7 @@ def test_review_look_finds_a_hud_instance_the_screen_edge_cuts():
     art on a world layer that runs off the edge."""
     rl = module()
     found = rl.findings(snap(inst(1, "Hint", [1200, 300, 1400, 340])))
-    assert [(f["rule"], f["uids"]) for f in found] == [("edge", [1])], found
+    assert pairs(found) == [("edge", [1])], found
     assert "the right edge of the screen cuts it" in found[0]["line"]
     assert rules(rl, text(5, "Counter", [1200, 0, 1300, 32], "x00", [51, 21], align=("left", "center"))) == []
     assert rules(rl, inst(2, "Popup", [400, -300, 880, -20]),
@@ -115,20 +119,21 @@ def test_review_look_finds_kinds_drawn_with_one_frame():
     the animation has one frame, or when a text on each tells them apart."""
     rl = module()
 
-    def node(uid, kind, playing=False):    # COL differs too, and is no kind
+    def node(uid, kind):    # COL differs too, and is no kind
         return inst(uid, "Node", [100 * uid, 300, 100 * uid + 48, 348], layer="Game", animation="Default", frame=0,
-                    frames=4, playing=playing, instVars={"NTYPE": kind, "COL": uid})
+                    frames=4, playing=False, instVars={"NTYPE": kind, "COL": uid})
     kinds = ["C", "E", "C", "R", "C"]
-    found = rl.findings(snap(*[node(n + 1, k) for n, k in enumerate(kinds)]))
-    assert [(f["rule"], f["uids"]) for f in found] == [("frame", [1, 2, 3, 4, 5])], found
+    nodes = [node(uid, k) for uid, k in enumerate(kinds, 1)]
+    found = rl.findings(snap(*nodes))
+    assert pairs(found) == [("frame", [1, 2, 3, 4, 5])], found
     assert "show animation 'Default' frame 0 of 4, though their NTYPE differs" in found[0]["line"]
-    assert rules(rl, *[node(n + 1, k, playing=n == 0) for n, k in enumerate(kinds)]) == []
-    assert rules(rl, *[dict(node(n + 1, k), frames=1) for n, k in enumerate(kinds)]) == []
-    hidden = [dict(node(n + 1, k), instVars={"IsMine": k == "C"}) for n, k in enumerate(kinds)]
+    assert rules(rl, dict(nodes[0], playing=True), *nodes[1:]) == []
+    assert rules(rl, *[dict(one, frames=1) for one in nodes]) == []
+    hidden = [dict(one, instVars={"IsMine": k == "C"}) for one, k in zip(nodes, kinds)]
     assert rules(rl, *hidden) == []         # hidden state, drawn the same on purpose
-    labels = [text(10 + n, "NodeLabel", [100 * (n + 1) + 4, 310, 100 * (n + 1) + 44, 330], k, [20, 20], layer="Game")
-              for n, k in enumerate(kinds)]
-    assert rules(rl, *[node(n + 1, k) for n, k in enumerate(kinds)], *labels) == []
+    labels = [text(10 + uid, "NodeLabel", [100 * uid + 4, 310, 100 * uid + 44, 330], k, [20, 20], layer="Game")
+              for uid, k in enumerate(kinds, 1)]
+    assert rules(rl, *nodes, *labels) == []
 
 
 def test_review_look_names_screenshots_by_layout_and_asks_the_questions_once():
