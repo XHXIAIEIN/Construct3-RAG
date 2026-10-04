@@ -45,7 +45,7 @@ the ACE counts, effect `category`, and `examples`. `supported_languages` is
 removed. Each locale directory gets `_index.json` with `version`,
 `language`, and `{name, file}` per addon, keyed by the same ids as the root.
 
-`schema_layout.schema_is_complete` now also requires every locale index to
+`schema_layout.schema_is_complete` also requires every locale index to
 exist and to list exactly the manifest's ids with non-empty names, so a
 snapshot missing one side fails selection instead of loading half named.
 `schema_index.py` builds its effect name map from the locale indexes.

@@ -36,8 +36,8 @@ clone, and what each gives:
 | Source | Gives |
 |--------|-------|
 | `ui.bars.properties.instance` of both language packs | `name` and `desc` per locale, the properties bar's own wording |
-| `Construct3-Manual/project-primitives/objects/instances.md` | the semantics: a colour is normalized per channel and multiplied, an angle is shown in degrees |
-| `data/c3-ts-defs/.../IWorldInstance.d.ts` | the scripting names and types: `x y z width height depth originX originY angle angleDegrees opacity colorRgb blendMode`, and `BlendModeParameter` as a string union |
+| `Construct3-Manual/Construct3-Manual/project-primitives/objects/instances.md` | the semantics: a colour is normalized per channel and multiplied, an angle is shown in degrees |
+| `data/c3-ts-defs/preview/interfaces/objects/IWorldInstance.d.ts` | the scripting names and types: `x y z width height depth originX originY angle angleDegrees opacity colorRgb blendMode`, and `BlendModeParameter`, the string union `IRuntime.d.ts` declares |
 
 None of the three describes a project file. Measured over the 33 225 world
 instances of the 524 official examples:
@@ -73,12 +73,12 @@ instances of the 524 official examples:
 3. **A separate file for the file format.** A second place to look up one
    instance, and nothing points at it from the schema.
 
+## Decision
+
 Taken: 2. The failure this came from was a lookup whose answer was two lines
 below a denial, read by a model that stopped at the first line; text that
 contradicts the file, with the correction in a guide, is the same failure
 one step later.
-
-## Result
 
 `COMMON_PROPERTIES` in `src/ingest/common_aces.py` maps each property to its
 path in the language pack and to where it is written; the export stops when
@@ -92,6 +92,7 @@ have blocks of their own; the origin is in the file but has no bar row and
 so no localized text, and is documented in `docs/guide/data-format.md`
 instead of being given an invented name.
 
-Not done: `check_project.py` does not yet read these. A check becomes an
-error only after the two steps in `references/checker-rules.md`, and a colour
-or blend mode written wrong has no editor message recorded yet.
+`check_project.py` does not read these properties, because a check becomes an
+error only after the two steps in
+`skills/construct3-agent-plugin/references/checker-rules.md`, and no editor
+message is recorded for an instance's colour or blend mode written wrong.

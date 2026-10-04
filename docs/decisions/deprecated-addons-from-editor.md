@@ -54,8 +54,8 @@ reads all of them there, so the flags and the ACEs come from the same build.
 
 What depends on the three ids. The gold set, the tests, the prompts and the
 skill do not name them. None of the 524 official examples uses NW.js or
-`warpmask`; two use `warp`, and the checker now warns once that it has no
-schema for that effect.
+`warpmask`; two use `warp`, and the checker warns once that it has no schema
+for that effect.
 
 ## Options
 
@@ -82,10 +82,10 @@ effect with `is-deprecated`. An addon of `allAces.json` the bundle does not
 construct stops the export, so a bundle of another shape fails the update
 instead of letting a deprecated addon through.
 
-The zh-CN rule stays for addons, after the flag: every locale file takes its
-ACE list from the zh-CN pack, so an addon the pack lacks would be written with
-no ACEs. At r495.2 every addon it lacks is also flagged, so it removes nothing
-on its own.
+The zh-CN rule also applies to addons, after the flag: every locale file
+takes its ACE list from the zh-CN pack, so an addon the pack lacks would be
+written with no ACEs. At r495.2 every addon the pack lacks is also flagged,
+so the rule removes nothing on its own.
 
 `common-aces-from-editor-bundle.md` rejected parsing `main.js` on every
 export for the shared ACE block. This read is one method name per SDK class
@@ -93,9 +93,10 @@ and one call per constructor, not 136 literals with their guards, and it has
 to follow every release, not only the ones that add a shared ACE. It costs
 about 1.7 MB more per weekly export, cached like the rest.
 
-The export now clears its schema directory before writing.
+The export clears its schema directory before writing.
 `export_to_data()` copies that directory whole, and a re-export of the same
-release would otherwise keep the files of an addon it now leaves out.
+release would otherwise keep the files an earlier export wrote for an addon
+it leaves out.
 
 Removed from `data/c3-schemas/`: `plugins/nodewebkit.json`,
 `effects/warp.json` and `effects/warpmask.json` in both locales, and their
@@ -151,7 +152,7 @@ thirds, 2 are left out, the report being 180 characters over the limit. The
 old and new output of every script over the examples and the game projects
 is in `.local/docs/evidence/skill-evals/construct3-agent-plugin/deprecated-list-2026-09-28/`.
 
-`POST /search` does not read the list; it answers from the schema as before.
+`POST /search` does not read the list; it answers from the schema.
 
 ## Re-evaluate when
 
