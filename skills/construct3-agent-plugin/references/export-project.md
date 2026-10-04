@@ -90,7 +90,10 @@ or export again with the script (the *Auto-increment version* bullet below).
   collision polygon had two points crashed as its Export dialog opened, in
   the user's Chrome over `--attach`; the run pressed Restart, and the tab came
   back to the start page with the account and its subscription still shown.
-  In a headless editor, Restart pressed this way reloaded in about 3 seconds]
+  In a tab the run opened, an r504 export of it finished and the report came
+  as the copy closed; the run restarted that tab and closed it. A run that
+  stopped in `open_project` closed the tab it had opened. In a headless
+  editor, Restart pressed this way reloaded in about 3 seconds]
 
 - The login lives in the open page only, in no cookie or storage; a reload
   or browser restart shows Guest. So the script never reloads the page and
