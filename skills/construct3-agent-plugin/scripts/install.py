@@ -22,6 +22,7 @@ from c3project import SKILL, SKILL_DIR
 
 BLOCK = SKILL_DIR / "assets" / "game-project-block.md"
 DEFAULT_INTO = ".agents/skills"
+FORMER_NAMES = ("construct3-project",)     # the skill's folder before it was renamed
 RAG_KEY = re.compile(r"^[ \t>*-]*Construct3-RAG\s*[:=]", re.M)
 
 
@@ -135,8 +136,9 @@ def unnamed_clone(project: Path, rag: Path) -> list[str]:
 
 
 def earlier_tools(project: Path, skill_path: str) -> list[str]:
-    """The two files a project got by hand before the skill. Nothing refreshes
-    them, and the generator among them ends by running the checker beside it."""
+    """The two files a project got by hand before the skill, and a copy of the skill under its
+    former name. Nothing refreshes them. The generator of the two files ends by running the
+    checker beside it. A client lists the former copy as a second skill."""
     notes = []
     if (project / "tools" / "check-project.py").exists():
         notes.append(f"tools/check-project.py: an earlier copy of the checker that nothing refreshes; run "
@@ -144,6 +146,15 @@ def earlier_tools(project: Path, skill_path: str) -> list[str]:
     if (project / "tools" / "build-project.py").exists():
         notes.append("tools/build-project.py: it ends by running the checker beside it; replace its last lines "
                      "with those of assets/build_project.py, which run the skill's checker")
+    for former in FORMER_NAMES:
+        for copy in sorted(p.parent for p in project.glob(f".*/skills/{former}/SKILL.md")):
+            notes.append(f"{shown(copy, project)}: a copy of this skill under its former name, which nothing "
+                         f"refreshes and a client lists beside {SKILL}; remove the folder when the user agrees")
+        for name in ("AGENTS.md", "CLAUDE.md"):
+            path = project / name
+            if path.exists() and f"/{former}/" in path.read_text(encoding="utf-8"):
+                notes.append(f"{name}: names the skill's former folder {former}; write {skill_path} in place of "
+                             f"each path to it")
     return notes
 
 

@@ -93,6 +93,22 @@ def test_install_names_the_copies_a_project_got_by_hand(tmp_path):
     assert (root / "tools" / "check-project.py").exists()       # said, not removed: the file is the user's
 
 
+def test_install_names_a_copy_under_the_skills_former_name(tmp_path):
+    """A project installed before the rename keeps the old folder and the instruction lines that run it."""
+    root = new_project(tmp_path / "game")
+    old = root / ".agents" / "skills" / "construct3-project"
+    old.mkdir(parents=True)
+    (old / "SKILL.md").write_text("---\nname: construct3-project\n---\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text(f"- Construct3-RAG: {REPO.as_posix()}\n\n"
+                                    "Run .agents/skills/construct3-project/scripts/check_project.py\n", encoding="utf-8")
+    code, out = install(root)
+    assert code == 0, out
+    assert (".agents/skills/construct3-project: a copy of this skill under its former name, which nothing refreshes "
+            "and a client lists beside construct3-agent-plugin") in out
+    assert f"AGENTS.md: names the skill's former folder construct3-project; write {INSTALLED} in place of" in out
+    assert (old / "SKILL.md").exists() and (root / INSTALLED / "SKILL.md").exists()
+
+
 def test_install_outside_a_project_says_what_to_pass(tmp_path):
     code, out = install(tmp_path)
     assert code != 0 and "--project" in out and "Traceback" not in out
