@@ -117,6 +117,38 @@ def test_a_problem_that_was_there_does_not_stop_a_plan(project):
     assert "global number timeLeft = 0" in printed(project)
 
 
+TURN_AND_STATE = {"before": 1, "events": [{"eventType": "variable", "name": "turn", "initialValue": "1"},
+                                          {"eventType": "variable", "name": "state", "initialValue": "0"}]}
+FLIP_TURN = {"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "turn", "value": "3 - turn"}}
+STATE_IS_1 = {"id": "compare-eventvar", "objectClass": "System", "parameters": {"variable": "state", "comparison": 0,
+                                                                               "value": "1"}}
+TOUCHED_COIN = {"id": "on-touched-object", "objectClass": "Touch", "parameters": {"object": "Coin", "type": "start"}}
+
+
+def test_plan_refuses_a_new_event_that_flips_a_variable_on_every_tick(project):
+    """A generated board game changed the turn in a top-level Else after a test of the state, so the turn flipped
+    on every tick and a tap landed on whichever turn that tick held. Refused in an event the plan creates, the
+    first line naming the trigger to put it under; the same change under the tap goes through."""
+    before = (project / SHEET).read_bytes()
+    wait = {"eventType": "block", "conditions": [STATE_IS_1],
+            "actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Moving"'}}]}
+    swap = {"eventType": "block", "conditions": [{"id": "else", "objectClass": "System"}], "actions": [FLIP_TURN]}
+    code, out = plan(project, TURN_AND_STATE, {"into": 0, "events": [
+        {"eventType": "comment", "text": "A move is playing."}, wait,
+        {"eventType": "comment", "text": "Otherwise the other side plays."}, swap]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r"operation 2: sheet Game event \d+ \(sid \d+\) action 1: Set turn to 3 - turn flips turn on "
+                    r"every tick\. No trigger", out), out
+    assert ('Make this event a sub-event of the event whose trigger it follows, such as the tap that makes the move, '
+            'or start its conditions with that trigger, such as {"id": "on-touched-object", "objectClass": "Touch", '
+            '"parameters": {"object": "<Object>", "type": "start"}}') in out.splitlines()[0], out
+    assert out.splitlines()[-1] == "the plan adds 1 problem(s) to the project; nothing was written"
+    tapped = {"eventType": "block", "conditions": [TOUCHED_COIN], "actions": [FLIP_TURN]}
+    code, out = plan(project, TURN_AND_STATE, {"into": 0, "events": [
+        {"eventType": "comment", "text": "A tapped coin ends the turn."}, tapped]}, flags=("--dry-run",))
+    assert code == 0 and "warning:" not in out, out
+
+
 def test_a_finding_names_the_place_a_plan_changes(project):
     """The five mistakes of the eval's broken sheet, repaired by the places the checker gives for them."""
     sys.path.insert(0, str(SKILL / "evals"))

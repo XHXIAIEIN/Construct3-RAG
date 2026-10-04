@@ -229,6 +229,12 @@ SETS = {"set-eventvar-value": "variable", "set-boolean-eventvar": "variable", "t
         "toggle-boolean-instvar": "instance-variable"}
 # System actions after which the event does not run again in the next tick.
 LEAVES = {"set-group-active", "go-to-layout", "go-to-layout-by-name", "restart-layout", "go-to-nextprevious-layout"}
+# Actions that flip a variable between two values: Toggle, and a Set to N - x, -x, x * -1, x = a ? b : a or
+# x <> a ? a : b of the same variable, with literal values, or to not(x) or !x, which the editor refuses as
+# expressions. An event that runs every tick flips the variable back on the next tick.
+TOGGLES = {"toggle-boolean-eventvar": "variable", "toggle-boolean-instvar": "instance-variable"}
+FLIPS = {"set-eventvar-value": "variable", "set-instvar-value": "instance-variable"}
+LITERAL = r'-?\d+(?:\.\d+)?|"(?:[^"]|"")*"'
 # The comparison ids of Compare two values: 0 =, 1 ≠, 2 <, 3 ≤, 4 >, 5 ≥.
 COMPARISONS = {0: "=", 1: "<>", 2: "<", 3: "<=", 4: ">", 5: ">="}
 # How a condition tests that none of a type is left: X.Count or X.PickedCount = 0, ≤ 0 or < 1, with the operands
@@ -481,6 +487,7 @@ class Checker:
         self.function_blocks: dict[str, dict] = {}                 # name -> function block
         self.custom_blocks: dict[tuple[str, str], dict] = {}       # (owner, name) -> custom action block
         self.event_where: dict[int, str] = {}       # id(event) -> where it is, for a finding about another event
+        self.answered: dict[int, dict] = {}         # id(event that starts with Else) -> the event before it
         self.action_lists: list[tuple[list, str]] = []     # (actions, where) of every block
         self._summaries: dict[int, tuple | None] = {}
 
@@ -1701,10 +1708,14 @@ class Checker:
 
     def paces(self, ev: dict) -> bool:
         """Whether a condition of the event keeps it from running every tick: a trigger, Every X seconds,
-        Trigger once."""
-        return any((self.p.ace_entry("conditions", c) or {}).get("isTrigger")
-                   or (self.p.plugin_of.get(c.get("objectClass"), "").lower(), c.get("id")) in PACING
-                   for c in ev.get("conditions", []))
+        Trigger once. A condition of an addon without a schema is taken for a trigger when its id starts
+        with on-."""
+        for c in ev.get("conditions", []):
+            entry = self.p.ace_entry("conditions", c)
+            if (entry.get("isTrigger") if entry else str(c.get("id", "")).startswith("on-")) \
+                    or (self.p.plugin_of.get(c.get("objectClass"), "").lower(), c.get("id")) in PACING:
+                return True
+        return False
 
     def is_solid(self, obj) -> bool:
         """A type with the Solid behavior, or a family that is one or has one among its members."""
@@ -1825,6 +1836,90 @@ class Checker:
                      f"tick, and On timer {tag} never fires. Add System Trigger once as the last condition of its "
                      f"event, {once}, or start the timer in the event that begins the countdown")
 
+    @staticmethod
+    def flipped(a: dict) -> str | None:
+        """The variable an action flips between two values, as TOGGLES and FLIPS name them; None for any other
+        action. An instance variable is read as Self.x or through its object's name, an event variable bare."""
+        params = params_of(a)
+        if a.get("id") in TOGGLES:
+            name = params.get(TOGGLES[a["id"]])
+            return name if isinstance(name, str) else None
+        name, value = params.get(FLIPS.get(a.get("id"), "")), params.get("value")
+        if not isinstance(name, str) or not isinstance(value, str):
+            return None
+        x = re.escape(name) if a["id"] == "set-eventvar-value" else \
+            rf"(?:self|{re.escape(str(a.get('objectClass')))})\.{re.escape(name)}"
+        v = re.sub(r"\s+", "", value)
+        forms = (rf"\(?-?\d+(?:\.\d+)?-{x}\)?", rf"-\(?{x}\)?", rf"\(?{x}\)?\*\(?-1\)?", rf"\(?-1\)?\*\(?{x}\)?",
+                 rf"not\({x}\)", rf"!\(?{x}\)?")
+        if any(re.fullmatch(f, v, re.I) for f in forms):
+            return name
+        m = re.fullmatch(rf"\(?{x}(=|<>)({LITERAL})\)?\?({LITERAL}):({LITERAL})", v, re.I)
+        # x = a ? b : a and x <> a ? a : b go back to a on the next run
+        if m and m.group(3) != m.group(4) and m.group(2) == (m.group(4) if m.group(1) == "=" else m.group(3)):
+            return name
+        return None
+
+    @staticmethod
+    def actions_below(ev: dict) -> list[dict]:
+        """The actions of an event and of all its sub-events."""
+        return [a for a in ev.get("actions") or [] if isinstance(a, dict)] + \
+            [a for k in ev.get("children") or [] if isinstance(k, dict) for a in Checker.actions_below(k)]
+
+    def writes(self, actions: list, seen: set[int]) -> set[str] | None:
+        """What these actions change that a condition may test, lower case: the variables they set or toggle
+        and the types they create or destroy, those of the functions and custom actions they call included,
+        through their events. None when one leaves the group or the layout. seen: the blocks already read."""
+        out: set[str] = set()
+        for a in actions:
+            if a.get("objectClass") == "System" and a.get("id") in LEAVES:
+                return None
+            if a.get("id") in SETS:
+                out.add(str(params_of(a).get(SETS[a["id"]], "")).lower())
+            if a.get("id") == "destroy" or self.made_by(a):
+                out.add(str(self.made_by(a) or a.get("objectClass")).lower())
+            hit = self.called(a)
+            if hit and id(hit[1]) not in seen:
+                seen.add(id(hit[1]))
+                below = self.writes(self.actions_below(hit[1]), seen)
+                if below is None:
+                    return None
+                out |= below
+        return out
+
+    def check_flip(self, action: dict, where: str, line: tuple, paced: bool | None) -> None:
+        """A variable flipped in an event that runs every tick, whose actions do not change what its conditions
+        test: the event runs again on the next tick and flips it back. A branch passes when its actions set a
+        variable its conditions read, create or destroy a type they read, act on an object a condition is on
+        or reads (Player.X, Grid.At) or leave the group or layout, since each may stop it running again. An
+        event that starts with Else also tests the event it answers. line: the event and those above it."""
+        name = self.flipped(action) if paced is False else None
+        if name is None:
+            return
+        tested = []
+        for ev in line:
+            while ev is not None:
+                tested += [c for c in ev.get("conditions", []) if isinstance(c, dict)]
+                ev = self.answered.get(id(ev))
+        read = self.words_of(tested) | {str(c.get("objectClass")).lower() for c in tested
+                                        if c.get("objectClass") != "System"}
+        actions = [a for ev in line for a in ev.get("actions", []) if isinstance(a, dict)]
+        changed = self.writes(actions, set())
+        if changed is None or changed & read \
+                or any(a is not action and str(a.get("objectClass")).lower() in read for a in actions):
+            return
+        owner = "" if action.get("objectClass") == "System" else f"{action.get('objectClass')} "
+        what = f"{owner}Toggle {name}" if action["id"] in TOGGLES else f"{owner}Set {name} to {params_of(action)['value']}"
+        touch = next((n for n, plugin in self.p.plugin_of.items() if plugin.lower() == "touch"), "Touch")
+        trigger = json.dumps({"id": "on-touched-object", "objectClass": touch,
+                              "parameters": {"object": "<Object>", "type": "start"}})
+        self.p.findings.style_finding(
+            "toggle", f"{where}: {what} flips {name} on every tick. No trigger, Every X seconds or Trigger once is "
+                      f"in its event or above it, and its actions do not change what its conditions test, so the "
+                      f"event runs again on the next tick and flips {name} back; an input reads whichever value that "
+                      f"tick left. Make this event a sub-event of the event whose trigger it follows, such as the "
+                      f"tap that makes the move, or start its conditions with that trigger, such as {trigger}")
+
     def none_left(self, c: dict) -> tuple[str, str] | None:
         """Return (the object type, "count" or "pickedcount") when a condition tests that none of the type is
         left, X.Count = 0 or X.PickedCount = 0, in Compare two values with the operands in either order or in
@@ -1905,6 +2000,7 @@ class Checker:
             self.check_pathfinding(a, w, found, paced)
             self.check_held_control(a, w, held, paced)
             self.check_timer_restart(a, w, line, held, paced)
+            self.check_flip(a, w, line, paced)
             if gone is not None and a.get("id") == "destroy" and a.get("objectClass") in self.p.plugin_of:
                 gone.setdefault(a["objectClass"], w)
             if a.get("type") == "script":
@@ -2027,6 +2123,10 @@ class Checker:
             elif et == "block":
                 here = None if by_input is None else by_input or self.reads_input(ev)
                 timed = None if paced is None else paced or self.paces(ev)
+                first = next(iter(ev.get("conditions") or []), None)
+                if isinstance(first, dict) and (first.get("objectClass"), first.get("id")) == ("System", "else") \
+                        and previous is not None and previous.get("eventType") == "block":
+                    self.answered[id(ev)] = previous
                 # A top-level event starts with nothing destroyed; after a Wait its sub-events run later.
                 mine = {} if depth == 0 else gone
                 self.check_block(ev, scope, w, here, timed, line + (ev,), mine)

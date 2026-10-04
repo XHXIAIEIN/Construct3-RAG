@@ -30,6 +30,18 @@ Sources and the rule for adding an entry are in the index,
   because they are tested only in the trigger's tick. The editor does not
   offer them there. [Addon SDK guide defining-aces.md
   "isCompatibleWithTriggers"; schema: `isCompatibleWithTriggers: false`]
+- An event with no trigger, *Every X seconds* or *Trigger once* in it or
+  above it is tested every tick. If it flips a variable, with *Toggle* or
+  *Set* to `3 - turn`, `1 - x`, `-x` or `x = 1 ? 2 : 1`, the next tick
+  flips it back. The value then changes every tick, and a tap reads
+  whichever value that tick left. Flip a turn in the trigger that makes the
+  move, or in a sub-event of it. An event whose actions change what it
+  tests runs once, such as one that resets the flag a tap raised.
+  `check_project.py` names the flip, and `edit_sheet.py` refuses it in a
+  new event. [manual: project-primitives/events/how-events-work.md, events
+  are checked once per tick and triggers are the exception; observed in a
+  generated board game, 2026-10-04: the turn change in a top-level *Else*
+  after a test of the game state flipped the turn every tick]
 - A trigger can fire with several instances picked. Timer *On timer* does
   this when timers elapse in the same tick. A *Pick nearest* or a function
   call written for one instance then runs once. Add *For each* after such

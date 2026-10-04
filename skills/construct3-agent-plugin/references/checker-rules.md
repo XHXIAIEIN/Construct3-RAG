@@ -73,6 +73,15 @@ Traps of the running game are warnings:
   leaves the group or layout, and when the branch tests *Is timer running*
   or what changes as the game plays: an overlap, a key, a position, a
   function;
+- a variable flipped in an event that runs every tick: *Toggle*, or *Set*
+  to `N - x`, `-x`, `x * -1` or `x = a ? b : a` of the same variable. The
+  event runs again on the next tick and flips it back, so an input reads
+  whichever value that tick left [manual:
+  project-primitives/events/how-events-work.md]. It passes when an action
+  of the branch, or of a function it calls, sets a variable its conditions
+  test, creates or destroys a type they test, acts on an object they are
+  on or read, or leaves the group or layout. An event that starts with
+  *Else* also tests the event it answers;
 - *Simulate control* of a Platform's left or right, or of any 8 Direction or
   Car control, in a branch with a trigger: the control holds for the tick
   it runs in, so the object moves one tick and stops [manual:
@@ -119,11 +128,12 @@ Traps of the running game are warnings:
   followed. Over the 524 official examples it adds no finding.
 
 `edit_sheet.py` refuses the findings on *Find path*, *Start timer*,
-*Simulate control*, `Count` and `PickedCount` in an event a plan creates, as
-it refuses the style findings below; in the user's own events they stay
-warnings. A gesture action, a *Find path*, a *Start timer* or a *Simulate
-control* in a function passes, since a trigger or an event that runs every
-tick may call it.
+*Simulate control*, `Count`, `PickedCount` and a flipped variable in an
+event a plan creates, as it refuses the style findings below; in the user's
+own events they stay warnings. A gesture action, a *Find path*, a *Start
+timer*, a *Simulate control* or a flip in a function passes, since a
+trigger or an event that runs every tick may call it. A condition of an
+addon without a schema counts as a trigger when its id starts with `on-`.
 
 ## The rules the editor applies on opening and before preview
 

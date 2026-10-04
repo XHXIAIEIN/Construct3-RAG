@@ -161,12 +161,24 @@ the rule goes into the line a script prints, with the fix as JSON:
 | `control` | *Simulate control* of a Platform's left or right, or of any 8 Direction or Car control, under a trigger: the control holds for the one tick the trigger fires (manual: `behavior-reference.md` "Custom controls") | a Platform jump and a Tile movement step, each a whole move in one tick |
 | `count` | `X.Count = 0`, `≤ 0` or `< 1` in a condition that runs after a *Destroy* of X in the same top-level event: the destroyed instance counts until that event ends | a comparison with 1, as the official examples write it, and a test after a *Wait* |
 | `picked` | `X.PickedCount = 0`, `≤ 0` or `< 1` below a condition of its branch that picks X: a pick of no X stops its event, and *Pick all* is false when no X exists | a test of `X.Count` in an event that does not pick X |
+| `toggle` | a variable flipped in an event that runs every tick, by *Toggle* or a *Set* to `N - x`, `-x`, `x * -1` or `x = a ? b : a` of the same variable: the event runs again on the next tick and flips it back | a branch whose actions, or the functions they call, set a variable its conditions test (an *Else* also tests the event it answers), create or destroy a type they test, act on an object they are on or read, or leave the group or layout |
 
 Each fires on none of the official examples. `edit_sheet.py` refuses each
 in an event a plan creates, and its line names the fix: *Trigger once*, the
 condition that holds while the input is held (*Key is down* with the
-trigger's key), or the `Count` test in an event of its own. In the user's
-own events they stay warnings. A counter kept beside an instance count, and
+trigger's key), the `Count` test in an event of its own, or the trigger
+the flip follows, such as the tap that makes the move. In the user's own
+events they stay warnings.
+
+`toggle` comes from a generated board game that changed the turn in a
+top-level *Else* after a test of the game state. The turn flipped on every
+tick, and a tap landed on whichever turn that tick held, while
+`check_project.py --style`, `review_design.py` and `edit_sheet.py` let the
+event through. A branch that resets a flag its tap raised, or that tests
+the turn it flips, as the computer's move does under `turn = 2`, runs once,
+so the rule leaves it alone. A fixed step without `dt`, *Add* 1 each tick,
+is not a flip: the official examples sum input axes and count ticks that
+way. A counter kept beside an instance count, and
 a door left Solid, have no form a check can tell from sound code:
 `SKILL.md` names `Count` among the built-ins and the Solid among the
 gotchas.
