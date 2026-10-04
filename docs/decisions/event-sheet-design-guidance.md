@@ -194,10 +194,30 @@ three runs of the previous skill did so, and the third kept a flip under
 *Trigger once*, which the checker names. Evidence:
 `.local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-43/`.
 
+A scan with `check_project.py` of the projects that small models wrote, in
+eval runs and through a spec builder, finds no `flip`. It finds
+`flip-once` only in runs of the seeded case that added *Trigger once* to
+the flipping *Else*. There the turn passed once a round instead of once a
+tap. Every hit is a fault, so `flip-once` stays as it is.
+
 In skill runs the refusals rarely fire: given a project, Haiku tests a key
 the way the project's own events do. A warning that names the fix gets a
 seeded trap fixed at once. Evidence:
 `.local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-39/`.
+
+Asked to make the stand-in game two-player, Haiku passed the turn in the
+function the tap calls, with the rule and without it. Given a time limit
+too, it passed the turn on a timeout in an event that also sets the time
+back. That event runs once per timeout, so the refusal had nothing to
+refuse.
+
+The board game that `flip` comes from was built by a spec builder, which
+writes a model's events through `edit_sheet.py`. Later plans of that
+builder again changed the turn in a top-level event after the tests of a
+win. `edit_sheet.py` refuses such a plan with the `flip` line. The
+builder's own check refuses the same events first. The model then moves the
+flip under the tap, the fix that the `flip` line names. Evidence:
+`.local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-45/`.
 
 For `comment`, the events directly in a group are top-level events, and
 small models do not read them so: refused, they put the comment above the
@@ -276,6 +296,13 @@ is two lines of the style prompt).
 - A run that counts seconds by hand also leaves the global where the last
   round ended, the warning under its plan: the warning is not enough for
   the case where it matters; make `edit_sheet.py` refuse that pair.
+- `flip-once` names a sheet that flips a value once a round on purpose,
+  such as the side that starts the next round. Narrow it to an *Else* with
+  *Trigger once*, the form the seeded case produces.
+- A model that the `flip` line refuses for a timeout flip moves the flip
+  under the tap, and no timeout passes the turn. The line gives only a
+  touch trigger as its example, so add the second fix to it: set the time
+  back in the same event.
 - The official examples change: rerun the survey scripts; the thresholds
   are constants at the top of `check_project.py`.
 - A game needs real art at generation time: design a generator that writes
