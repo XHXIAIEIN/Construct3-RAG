@@ -143,12 +143,14 @@ CALL, SETUP_WAIT, RESULT_WAIT = 10, 55, 85
 # the editor handles a synthetic drop like a file dragged from the desktop.
 # __c3Title keeps the title at the drop, null for a file with no bytes: the upload
 # action of a tool accepts a path that does not exist and hands the page nothing.
+# __c3Keep is the interval that closes the dialogs, for a script that stops before the
+# drop to clear in a page that stays open, as an export does in the user's own tab.
 SETUP_JS = r"""async () => {
   const w = t => new Promise(r => setTimeout(r, t)), e = window.__c3Errors = [], log = console.error.bind(console);
   const open = () => [...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog');
   const ok = () => document.getElementById('mainMenuButton') && !open().length;
   console.error = (...a) => { e.push(a.map(String).join(' ')); log(...a); };
-  const keep = setInterval(() => { document.querySelector('a.noThanksLink')?.click();
+  const keep = window.__c3Keep = setInterval(() => { document.querySelector('a.noThanksLink')?.click();
     open().forEach(d => d.querySelector('ui-close-button, .okButton')?.click()); }, 200);
   const i = document.createElement('input');
   i.type = 'file'; i.ariaLabel = 'Project to open'; document.body.prepend(i);

@@ -11,10 +11,11 @@ and waits there for the user to log in when the editor shows Guest or Free editi
 a GitHub or Google login stays in that profile, so logging in again is a click or
 two. It restores the window and keeps the page active while it drives it, so the
 export runs with other windows over it. After the export it closes the project and
-minimizes the window, which keeps the page and its login for the next run; when a run
-stops on an error the window is left as it is, and the next run first closes a
-project left open in it. --attach uses a browser of the user's own instead, already
-logged in.
+minimizes the window, which keeps the page and its login for the next run. A run that
+stops on an error closes the copy it handed to the editor, without saving, and the
+dialogs over it; an editor that crashed shows a report whose one way out is Restart,
+which the script presses, and the reloaded editor may ask for the login again.
+--attach uses a browser of the user's own instead, already logged in.
 
 The project goes to the editor of the release that saved it, savedWithRelease of
 project.c3proj, since an older one refuses it, with the files the editor reads, as
@@ -60,16 +61,17 @@ file of the browser's user data folder. Given a port that does not answer
 the DevToolsActivePort with that port in the user data folders of Chrome, Chromium
 and Edge. It works in an editor tab that shows the start page and is new enough,
 never in one with a project open, which may hold the user's unsaved work; without
-one it opens a tab and closes it after the export.
+one it opens a tab and closes it after the export, or when the run stops. A tab of the
+user's is left on the start page either way.
 
 output:
   logged in as <name>, exporting <version>
   exported <version> into <folder>, runtime in the worker|page; project.c3proj version <version>
 
 exit codes: 0 exported; 1 the export did not finish: no subscription within 5 minutes,
-the project did not open, or a dialog stopped it; the window is left open, and a run
-again goes on in it; 2 no project, a flag that cannot be used, or the editor did not
-load; 3 no Edge, Chrome or Chromium here
+the project did not open, or a dialog stopped it; the copy is closed, the window is left
+open, and a run again goes on in it; 2 no project, a flag that cannot be used, or the
+editor did not load; 3 no Edge, Chrome or Chromium here
 """
 
 LOGIN_WAIT = 300        # seconds the user has to log in
@@ -319,25 +321,87 @@ def project_open(page) -> bool:
     return not page.evaluate("document.title").startswith(START_TITLES)
 
 
+CRASH_JS = "!!document.querySelector('#crashReportDialog[open]')"
+RESTART_WAIT = 60       # seconds the editor has to load again after Restart
+
+
+def restart(page) -> None:
+    """Press Restart on the editor's crash report, the report's one way out: a crashed editor shows
+    it again as soon as the menu opens. The editor reloads after the page's own question about
+    leaving, which is answered Leave, since the project is the script's copy."""
+    print("the editor showed its crash report over the copy; pressing its Restart, which reloads the "
+          "editor: log in there again if it asks", flush=True)
+    page.call("Page.enable")        # without it the question is not seen
+    page.evaluate(DISMISS_JS)       # a dialog over the report, such as a preview that failed
+    before = page.evaluate("performance.timeOrigin")
+    page.evaluate("setTimeout(() => document.querySelector('#crashReportDialog .reloadButton').click(), 0), 1")
+    deadline = time.time() + RESTART_WAIT
+    while time.time() < deadline:
+        try:
+            page.call("Page.handleJavaScriptDialog", wait=2, accept=True)
+        except oe.DevToolsError:    # not asked yet, or answered
+            pass
+        try:
+            origin, ready = page.evaluate("[performance.timeOrigin, document.readyState == 'complete' && "
+                                          "!!document.getElementById('mainMenuButton')]", wait=2)
+            if origin != before and ready:
+                return
+        except oe.DevToolsError:    # the page is unloading
+            pass
+        time.sleep(0.3)
+    raise Stop(f"the editor did not load again in {RESTART_WAIT} seconds after Restart; reload its tab by hand")
+
+
 def close_project(page) -> None:
     """Close the project open in the editor without saving. The page is one the script drives, on
     the start page when the run began, so the project is a copy the script handed over: this run's,
-    or one a run that stopped left open."""
+    or one a run that stopped left open. A crashed editor is restarted instead."""
     if not project_open(page):
         return
-    page.evaluate(DISMISS_JS)
-    open_menu(page)
-    press(page, "menu", "Project", 0.2)
-    press(page, "menu", "Close project", 0.3)
+    if not page.evaluate(CRASH_JS):
+        page.evaluate(DISMISS_JS)
+        try:
+            open_menu(page)
+            press(page, "menu", "Project", 0.2)
+            press(page, "menu", "Close project", 0.3)
+        except Missed:
+            if not page.evaluate(CRASH_JS):
+                raise
     deadline = time.time() + UI_WAIT
     while time.time() < deadline:   # the editor asks to save a project it holds as changed
         if not project_open(page):
+            return
+        if page.evaluate(CRASH_JS):
+            restart(page)
             return
         if page.evaluate(FIND_JS + "('dialog', \"Don't save\")"):
             press(page, "dialog", "Don't save", 0.3)
         time.sleep(0.2)
     raise Stop(f"the project did not close; the editor shows {json.dumps(page.evaluate(DIALOG_JS))}; close it "
                f"in the editor window, Menu > Project > Close project, and run again")
+
+
+# What open_in_editor's SETUP leaves in a page until a file is dropped: the file input and the
+# interval that closes the editor's dialogs
+UNSET_JS = r"""(() => { clearInterval(window.__c3Keep);
+  document.querySelectorAll('input[aria-label="Project to open"]').forEach(i => i.remove()); })()"""
+
+
+def discard(page, devtools: oe.DevTools | None, opened: bool) -> None:
+    """Undo what a run that stopped did in the editor, so that it leaves no copy open: a tab the
+    script opened in the user's browser is closed; in the user's own tab or the script's window,
+    the copy is closed without saving and the dialogs and the file input are taken away. The page
+    keeps its login, unless the editor had crashed and had to restart."""
+    try:
+        if opened:
+            devtools.call("Target.closeTarget", targetId=page.target)
+            return
+        close_project(page)
+        page.evaluate(DISMISS_JS)
+        page.evaluate(UNSET_JS)
+    except (Stop, oe.DevToolsError) as e:
+        print(f"the copy may still be open in the editor ({e}); close it there without saving: Menu > "
+              f"Project > Close project, Don't save", flush=True)
 
 
 def open_project(page, project: Path, staged: Path) -> None:
@@ -518,6 +582,7 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
     """Exports; whether the export runs in a worker, as its main.js says."""
     staged = scratch(project) / "export-project.c3p"
     staged.write_bytes(pack(project, version, folder if folder.is_relative_to(project) else None))
+    devtools, opened = None, False
     if spec:
         devtools = attach(spec)
         page, opened = attached_page(devtools, project)
@@ -525,16 +590,22 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
         b = own_browser(project, exe)
         target, page = own_page(b, editor_url(project))
         show_window(b, target, "normal")
+        close_project(page)     # one a run that was killed left, before the login is read: a restart loses it
     print(f"logged in as {wait_for_login(page)}, exporting {version}", flush=True)
-    open_project(page, project, staged)
     try:
-        data = export(page)
-    except Missed as e:
-        if pace >= SLOW:
-            raise
-        print(f"{e}; trying again with longer pauses", flush=True)
-        slow_down(page)
-        data = export(page)
+        open_project(page, project, staged)
+        try:
+            data = export(page)
+        except Missed as e:
+            if pace >= SLOW:
+                raise
+            print(f"{e}; trying again with longer pauses", flush=True)
+            slow_down(page)
+            data = export(page)
+    except (Stop, oe.DevToolsError):
+        discard(page, devtools, opened)
+        staged.unlink(missing_ok=True)
+        raise
     # Close the project, so that this editor and one the user has open elsewhere do not both
     # change it. The script's own window is minimized and keeps its login for the next run; in the
     # user's browser a tab the script opened is closed and the user's own is left on the start page

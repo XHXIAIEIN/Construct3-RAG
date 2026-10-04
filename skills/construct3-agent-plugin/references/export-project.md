@@ -49,14 +49,22 @@ address, and allows the connection when the browser asks; the script waits
 
 The script never touches a tab with a project open, since it may hold
 unsaved work. It uses an editor tab on the start page, or opens one and
-closes it after the export.
+closes it after the export or when the run stops.
 
 ## When it stops
 
-- Exit 1, `not exported:` and the reason: the window or tab stays as it is.
-  Do what it names (log in, allow the connection, close the dialog) and run
-  the same command again. The next run closes a project a stopped run left
-  open in the script's window, without saving it.
+- Exit 1, `not exported:` and the reason. The run closes the copy it
+  handed to the editor, without saving, and the dialogs over it: a tab it
+  opened is closed, and the user's own tab or the script's window is left
+  on the start page. Do what the reason names (log in, allow the
+  connection) and run the same command again.
+- `the editor showed its crash report over the copy; pressing its
+  Restart`: the editor crashed on the project, and Restart is the report's
+  one way out. The reloaded editor may ask for the login again. Run
+  `scripts/check_project.py` before exporting again: a collision polygon
+  of fewer than three points crashed an export this way.
+- A run that was killed leaves its copy open in the script's window, and
+  the next run closes it before it reads the login.
 - `trying again with longer pauses`: a menu item or dialog did not come
   within 30 seconds, as on a slow machine or network. The script closes
   what is open and runs the export once more with pauses three times as
@@ -70,6 +78,18 @@ After an export by hand, set `project.c3proj` back to the exported version,
 or export again with the script (the *Auto-increment version* bullet below).
 
 ## What the editor does
+
+- An editor that crashed shows its crash report, "Oops! Something went
+  wrong", with Save open projects, Copy information and Restart and no way
+  to close it, and shows it again as soon as the menu opens, so its project
+  cannot be closed. Restart reloads the page after the page's question about
+  leaving, which the DevTools protocol sees only after `Page.enable` and
+  answers with `Page.handleJavaScriptDialog`; a mouse click on Restart waits
+  on that question. So the script presses Restart from the page and answers
+  the question. [observed in r495.2, 2026-10-04: an export of a project whose
+  collision polygon had two points left the user's tab on the report; in a
+  headless editor, Restart pressed this way reloaded it to the start page in
+  about 3 seconds]
 
 - The login lives in the open page only, in no cookie or storage; a reload
   or browser restart shows Guest. So the script never reloads the page and

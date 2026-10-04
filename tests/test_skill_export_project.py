@@ -1,10 +1,13 @@
-"""export_project.py: the version an export carries and where its runtime starts."""
+"""export_project.py: the version an export carries, where its runtime starts, and what a run
+that stops leaves in the editor."""
 import importlib.util
 import io
 import json
 import sys
 import zipfile
 from pathlib import Path
+
+import pytest
 
 from tests.skill_helpers import INSTALLED, SKILL, run
 
@@ -62,6 +65,99 @@ def test_export_hands_the_editor_the_version_to_export(project):
     assert any(n.startswith("layouts/") for n in names), names
     assert export.project_version(project) == "1.0.0.0"     # the project file itself is not touched
     assert '"useWorker": "dom"' in path.read_text(encoding="utf-8")
+
+
+class Tab:
+    """A tab of the user's browser as export_project drives it: what it was asked, in order."""
+
+    def __init__(self, target: str = "tab-1") -> None:
+        self.target, self.asked = target, []
+
+    def call(self, method: str, wait: float = 10, **params) -> dict:
+        self.asked.append(method)
+        return {}
+
+    def evaluate(self, expression: str, by_value: bool = True, wait: float = 10):
+        self.asked.append(expression)
+        return None
+
+
+def stopped_run(monkeypatch, tmp_path, opened: bool, stop_in: str):
+    """export_project.run over --attach, stopped in open_project or in export; the module, the
+    browser connection and the tab, once run has raised."""
+    export = load(SKILL / "scripts")
+    browser, tab, closed = Tab("browser"), Tab(), []
+
+    def stop(*args):
+        raise export.Stop(f"stopped in {stop_in}")
+    monkeypatch.setattr(export, "scratch", lambda project: tmp_path)
+    monkeypatch.setattr(export, "pack", lambda project, version, skip: b"zip")
+    monkeypatch.setattr(export, "attach", lambda spec: browser)
+    monkeypatch.setattr(export, "attached_page", lambda devtools, project: (tab, opened))
+    monkeypatch.setattr(export, "wait_for_login", lambda page: "Someone")
+    monkeypatch.setattr(export, "open_project", stop if stop_in == "open_project" else lambda *a: None)
+    monkeypatch.setattr(export, "export", stop if stop_in == "export" else lambda page: b"")
+    monkeypatch.setattr(export, "close_project", lambda page: closed.append(page))
+    with pytest.raises(export.Stop):
+        export.run(tmp_path, tmp_path / "web", "1.0.0.0", "9222", None)
+    assert not (tmp_path / "export-project.c3p").exists()
+    return export, browser, tab, closed
+
+
+def test_a_stopped_export_closes_the_tab_it_opened(monkeypatch, tmp_path):
+    """A run that stopped left its copy open in the user's browser, and the next run, which takes
+    only a tab on the start page, opened another (2026-10-04, r495-2). A tab the run opened is
+    closed when it stops, as after an export."""
+    export, browser, tab, closed = stopped_run(monkeypatch, tmp_path, opened=True, stop_in="export")
+    assert browser.asked == ["Target.closeTarget"] and closed == [], (browser.asked, closed)
+
+
+@pytest.mark.parametrize("stop_in", ["open_project", "export"])
+def test_a_stopped_export_leaves_the_users_own_tab_on_the_start_page(monkeypatch, tmp_path, stop_in):
+    """In a tab of the user's the copy is closed without saving, and the dialogs, the file input
+    and the interval open_in_editor's SETUP put there are taken away; the tab and its login stay."""
+    export, browser, tab, closed = stopped_run(monkeypatch, tmp_path, opened=False, stop_in=stop_in)
+    assert closed == [tab] and browser.asked == [], (closed, browser.asked)
+    assert tab.asked[-2:] == [export.DISMISS_JS, export.UNSET_JS], tab.asked
+    assert "window.__c3Keep = setInterval" in export.oe.SETUP_JS
+
+
+def test_a_crashed_editor_is_restarted_to_close_the_copy(capsys):
+    """An export left the user's tab on the editor's crash report, which has no close button and
+    came back each time the menu opened, so the copy could not be closed (2026-10-04, r495-2).
+    Restart reloads the editor once the page's question about leaving is answered, which the
+    DevTools protocol sees only after Page.enable; the editor was back on its start page in 3 s."""
+    export = load(SKILL / "scripts")
+
+    class Crashed(Tab):
+        reloaded = pressed = False
+
+        def call(self, method: str, wait: float = 10, **params) -> dict:
+            super().call(method)
+            if method == "Page.handleJavaScriptDialog":
+                if not self.pressed:
+                    raise export.oe.DevToolsError("Page.handleJavaScriptDialog: No dialog is showing")
+                self.reloaded = True
+            return {}
+
+        def evaluate(self, expression: str, by_value: bool = True, wait: float = 10):
+            super().evaluate(expression)
+            if expression == "document.title":
+                return "Game Making Software - Construct 3" if self.reloaded else "Coins - Construct 3"
+            if expression == export.CRASH_JS:
+                return not self.reloaded
+            if "reloadButton" in expression:
+                self.pressed = True
+                return 1
+            if expression.startswith("[performance.timeOrigin"):
+                return [2 if self.reloaded else 1, self.reloaded]
+            return 1 if expression == "performance.timeOrigin" else None
+
+    tab = Crashed()
+    export.close_project(tab)
+    assert tab.reloaded and tab.asked.index("Page.enable") < tab.asked.index("Page.handleJavaScriptDialog")
+    assert not any("mainMenuButton').getBoundingClientRect" in a for a in tab.asked), tab.asked   # no menu
+    assert "pressing its Restart, which reloads the editor: log in there again if it asks" in capsys.readouterr().out
 
 
 def test_export_reads_where_the_runtime_starts(tmp_path):
