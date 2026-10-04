@@ -207,3 +207,4 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |
 | Delegating an ACE lookup or check to a Claude Code sub-agent | `.claude/agents/ace-lookup.md` |
+| Polishing instruction files, docs, records, prompts and code in one verified run; start it when no other session edits the repository | `.claude/workflows/polish.js` |
