@@ -6,6 +6,20 @@ locales, and per-addon ACE counts. Treat it as the source of truth. It is
 language neutral; each locale directory has its own `_index.json` with the
 display names in that language.
 
+## Contents
+
+- [Layout](#layout)
+- [Index entries](#index-entries)
+- [Deprecated addons and ACEs](#deprecated-addons-and-aces)
+- [Plugin and behavior files](#plugin-and-behavior-files): ACE entries,
+  parameters, properties, shared ACEs and properties, a worked example
+- [Effect files](#effect-files)
+- [Example projects](#example-projects)
+- [Language packs](#language-packs)
+- [Scripting interfaces](#scripting-interfaces)
+- [Guides](#guides)
+- [Regeneration](#regeneration)
+
 ## Layout
 
 ```
@@ -24,14 +38,15 @@ data/
     autocomplete-data.json         scripting class to member listings
     plugins/**/*.d.ts              plugin instance interfaces
     behaviors/**/*.d.ts            behavior instance interfaces
-    preview/**/*.d.ts              runtime base interfaces
-    sdk/**/*.d.ts                  addon SDK interfaces
+    preview/**/*.d.ts              runtime base interfaces; interfaces/sdk/ for addons
+    sdk/**/*.d.ts                  addon SDK interfaces of the editor
+  c3-new-project/                  the editor's empty project, copied by scripts/bootstrap.py
   c3-guides/
     constructs-project-format.md   Scirra's guide to the project folder
 ```
 
-`{locale}` is one of the directories listed in `_index.json` under
-`languages`, currently `en-US` and `zh-CN`. Every locale is a complete copy
+`{locale}` is one of the directories that `_index.json` lists under
+`languages`: `en-US` and `zh-CN`. Every locale is a complete copy
 with the same files and structure. Only text values differ.
 
 ## Index entries
@@ -122,6 +137,7 @@ Each file describes one addon. Field names match the official CDN.
 | `aceCategories` | Map of category id to localized label, for example `collisions: Collisions`. |
 | `conditions`, `actions`, `expressions` | ACE lists, described below. |
 | `properties` | Editor properties, described below. |
+| `commonAces` | Every plugin file but `_common.json`: the ids of the `_common.json` ACEs the plugin gets, by type, described below. |
 
 ### ACE entries
 
@@ -141,7 +157,7 @@ Each file describes one addon. Field names match the official CDN.
 | `isInvertible` | conditions | `false` where the editor does not allow invert: `Else`, `Trigger once` and the conditions that only pick, such as `Pick all`, `Pick by comparison`, `Pick nearest/furthest` and `Pick children`. Absent means invertible, unless the condition is a trigger or a loop. |
 | `isCompatibleWithTriggers` | conditions | `false` for `Else`, `Trigger once` and `Every X seconds`, which the editor keeps out of a triggered branch. Absent means compatible. |
 | `isAsync` | actions | `true` for actions that can be awaited. Absent otherwise. |
-| `isDeprecated` | all | `true` for an ACE the editor no longer offers and keeps only so that old projects open, such as System `rgb` and Pin `pin-to-object`. Absent otherwise. `{locale}/_deprecated.json` names the current ACE of the same name. |
+| `isDeprecated` | all | `true` for an ACE the editor no longer offers and keeps only so that old projects open, such as System `rgb` and Pin `pin-to-object`. Absent otherwise. `{locale}/_deprecated.json` names the current ACE of the same name, where there is exactly one. |
 | `returnType` | expressions | `number`, `string`, or `any`. |
 | `isVariadicParameters` | expressions | `true` when a call may pass more arguments than `params` lists: `max` and `choose` any number, `random` a second, Array `At` a Y and a Z index, Mouse and Touch `X` and `Y` a layer. Absent means exactly the parameters `params` lists. |
 
@@ -172,6 +188,8 @@ Structural fields are the same in every locale, so an ACE can be matched by
 
 Property types are not exported. The language pack is the only CDN source
 for properties, and it carries text only.
+
+### Shared ACEs and properties
 
 Conditions, actions, and expressions that every world object has, such as
 `Is overlapping another object`, `Pick by unique ID`, `Set value`,
@@ -271,9 +289,10 @@ Each file in `c3-examples/{locale}/` describes one official example:
 
 | Field | Meaning |
 |-------|---------|
+| `id` | Example id: the file's name. The `Construct-Example-Projects` clone holds the example under `example-projects/` in a folder of the same name, or in `<id>-js`, `<id>-ts` or both, one per scripting language; a few examples have no folder there |
 | `name`, `description` | Localized title and summary |
 | `tags` | Topic tags for filtering |
-| `used-addons` | Plugin and behavior ids the example uses |
+| `used-addons` | The addons the example uses, under `plugins`, `behaviors` and `effects`: a plugin or behavior by its CDN id, the index's `originalId`, an effect by its index key |
 | `open` | URL that opens the example in the Construct editor |
 
 To find examples for a plugin, filter on `used-addons`. To find examples for
@@ -314,7 +333,7 @@ without the page's comments and navigation.
 
 ## Regeneration
 
-Files here are produced by the exporter in `src/ingest/` and refreshed by
-`scripts/init.py` or the update workflow in `.github/workflows/update.yml`.
-Do not edit generated files by hand. Fix the exporter and regenerate, then
-check `_index.json` counts. Details are in `docs/dev/data-pipeline.md`.
+Before changing a file under `data/`, read `data/AGENTS.md`: it says which
+directories `scripts/init.py` and the update workflow
+(`.github/workflows/update.yml`) regenerate and which are replaced by hand.
+The refresh and the review of its result are in `docs/dev/data-pipeline.md`.
