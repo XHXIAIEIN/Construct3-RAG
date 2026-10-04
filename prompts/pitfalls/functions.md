@@ -9,6 +9,13 @@ Sources and the rule for adding an entry are in the index,
   at load with "cannot find event variable". So compute them in a child
   block after the declarations. [observed in a game project, r502 editor,
   2026-09-17]
+- A function with a return type is an expression of the Functions object,
+  under whatever name the project gave that object. Without parameters it is
+  written `Functions.MyFunction`, with no parentheses; parameters go in
+  parentheses, `Functions.MyFunction(1, 2)`. So `Functions.MyFunction`
+  without `()` already calls it and returns the value. [manual:
+  project-primitives/events/functions.md, "It can then be called using it as
+  an expression"]
 - Without *Copy picked*, a function resets every object to all its instances
   picked, so "modify this sprite" modifies every instance. [manual:
   interface/dialogs/function.md "Copy picked"]

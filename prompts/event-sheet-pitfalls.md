@@ -59,6 +59,7 @@ inverted condition, *Trigger once*, *Every X seconds* or Touch taps, read
 If the events define or call a function or a custom action, read
 [pitfalls/functions.md](pitfalls/functions.md).
 
+- A function with a return type is the expression `Functions.MyFunction`; parentheses only carry parameters.
 - Function locals are out of scope for the function block's own top-level actions.
 - Without *Copy picked* a function runs with every object reset to all picked.
 - With *Copy picked*, type and family picks are copied separately. Logic on the caller's picks is a custom action.
