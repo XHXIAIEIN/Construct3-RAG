@@ -95,10 +95,11 @@ Sources and the rule for adding an entry are in the index,
   `wallclocktime` deadline and in 0 of 20 with the count, which still lasted
   0.08 s for the overlapping pair]
 - A hit stop slows every tween and every `dt` on game time. So a tween
-  started at an audio-clock deadline ends late by 0.9 of each stop inside
-  it, and overlapping stops add their delays. Set the object's time scale to
-  1 for that tween, and restore it in *On finished*. If a per-tick blend
-  must keep real time, divide `dt` by `timescale`. [manual:
+  started on the audio clock to end on a beat ends late by 0.9 of the length
+  of each stop inside it, and overlapping stops add their delays. Set its
+  object's time scale to 1 for that tween, and restore it with *Restore
+  object time scale* in *On finished*. If a per-tick blend must keep real
+  time, divide `dt` by `timescale`. [manual:
   system-reference/system-actions.md "Set object time scale", "Restore
   object time scale"; system-reference/system-expressions.md "dt",
   "timescale"; observed in a game project, r504 preview, 2026-10-02: an

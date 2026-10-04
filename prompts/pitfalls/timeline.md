@@ -1,8 +1,9 @@
 # Event Sheet Pitfalls: Timeline
 
 Sources and the rule for adding an entry are in the index,
-[event-sheet-pitfalls.md](../event-sheet-pitfalls.md). For how the project
-files store a timeline and a custom ease, see
+[event-sheet-pitfalls.md](../event-sheet-pitfalls.md). If you read or write
+a timeline or a custom ease in the project files, read "Timelines and custom
+eases" in
 [references/hand-editing-project-files.md](../references/hand-editing-project-files.md).
 
 - A numeric property track in *Relative* mode changes its property by the step
@@ -39,9 +40,9 @@ files store a timeline and a custom ease, see
   `GetTimelinesByName` before `GetTimelinesByTags`; observed in a game
   project, r504 preview, 2026-09-30: three swords, one copy of each of two
   timelines per sword, each reached by its own tag]
-- The runtime finds an instance's copy as one whose name (`SwordSlash:3`)
-  contains the timeline's name. So a timeline named `Slash` also matches the
-  copies of `SwordSlash` played on that instance. If two timelines play on the
+- The runtime finds an instance's copy as one whose name (`HeroAttack:3`)
+  contains the timeline's name. So a timeline named `Attack` also matches the
+  copies of `HeroAttack` played on that instance. If two timelines play on the
   same object, neither name may contain the other. [runtime: exported
   c3runtime.js r504, `TimelineManager.GetTimelineOfTemplateForInstances` tests
   `t.GetName().includes(e.GetName())`; reported as Scirra/Construct-bugs#9288,
@@ -67,9 +68,10 @@ files store a timeline and a custom ease, see
   a timeline that is not playing; *Set time* 0 works in both]
 - *Set time* pauses a playing timeline at the time it sets. After a *Play* in
   the same action list, it takes the timeline off the schedule and applies the
-  pose. This creates an instance's copy without playing it. It triggers
-  *On time set*, never *On keyframe reached*. So moving the playhead across a
-  tagged keyframe with *Set time* does not run its events. [runtime: exported
+  pose. *Play* then *Set time* thus creates an instance's copy without
+  playing it. *Set time* triggers *On time set*, never *On keyframe
+  reached*. So moving the playhead across a tagged keyframe with *Set time*
+  does not run its events. [runtime: exported
   c3runtime.js r504, `TimelineState.SetTime` stops a playing timeline and
   deschedules a scheduled one, then interpolates with the ticking flag off;
   `TrackState.MaybeTriggerKeyframeReachedConditions` returns when not ticking;
@@ -153,8 +155,8 @@ files store a timeline and a custom ease, see
   A cheer rewound at −4 re-ran its `catch` and `jump` events, and a rewound
   raise re-fired its spark burst. The keyframe trigger cannot read the
   playback rate. So if an event must run only on the forward pass, make it
-  test a flag (`cheerBack`) that the rewinding event sets and the forward
-  *Resume* clears. [runtime: exported c3runtime.js r504,
+  test a flag (`rewinding`): the event that starts the rewind sets it, and
+  the forward *Resume* clears it. [runtime: exported c3runtime.js r504,
   `TrackState.MaybeTriggerKeyframeReachedConditions` has an `else` branch for
   `!IsForwardPlayBack()` that calls `OnKeyframeReached` for the keyframe at or
   above the new time; observed in a game project, r504 preview, 2026-10-02]
