@@ -67,19 +67,20 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 
 ## What the skill does
 
-[`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) tells the agent which script to run and when. Each script in `scripts/` prints its options and examples with `--help`.
+[`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) tells the agent which script to run and when. Every script below except the `assets/build_project.py` template prints its options and examples with `--help`.
 
 - `lookup_ace.py` looks up the conditions, actions and expressions of an object in the project, of `System`, or of a plugin or behavior. It prints each one with its parameters, its event sheet wording and the JSON to write. For an effect, it prints the effect's parameters.
 - `lookup_script_api.py` looks up the scripting API. Given an interface, a plugin or a behavior, it prints the members. Given a member, it prints the declaration, the interface that declares it and the file and line, inherited members included.
 - `search_guides.py` searches the event sheet pitfalls and the official examples by words. It prints the matching pitfall entries in full, and for each matching example the command that prints its events.
 - `print_sheet.py` prints an event sheet in the editor's words, with the editor's event numbers. It reads the official examples the same way.
 - `edit_sheet.py` adds, moves, replaces or removes events from a JSON plan that uses those numbers. It checks the result before it writes anything.
+- `print_layout.py` prints the layers of each layout from bottom to top, and the instances on each layer in Z order. Each instance comes with its box, size, opacity and text. A text also names the object that it lies on, so the output shows a label that misses its button.
 - `check_project.py` checks every project file against the schemas and against the rules that the editor applies when it opens a project. Each finding names its place and, where it can, what to write. With `--review`, for a project that someone asks about, it and `print_sheet.py` end with what a review reports: what the project does first, and only the problems that stop something from working.
 - `review_design.py` reads the event sheets and reports where their design is hard to read or fragile, such as an event with too many conditions, one fact kept in two places or a scratch global. Each finding names the event and the form to write instead. Then it asks the agent fixed questions to answer from `print_sheet.py`.
 - `check_design.py` checks the design of a new game before any project file is written: the core loop, the state table, the inputs, the rules, win and lose, and acceptance tests. Then it plays the tests on the rules themselves, as a prototype that runs without the editor. Each finding names its place in the design, and a failed test names the step and the values that the state held.
 - `play_design.py` plays the same tests in the Construct 3 editor on the game built from the design. First it checks the names and start values of the design against the project files. Each failure names the test, the step and the rules whose events to compare.
-- `check_look.py` checks the placeholder art of a generated game against the strict rules in `assets/look-manifest.json`, such as the grid, the palette and the text contrast.
-- `prepare_art.py` brings in art from the agent's image tool. It prints a prompt for each picture that the generator asks for. Then it cuts each picture that the tool made out of its background and fits it to the box of its placeholder. It needs Pillow.
+- `check_look.py` checks the files of a generated game against the strict rules in `assets/look-manifest.json`, such as a clean alpha channel, instances on the grid and a hit shown as a colour.
+- `prepare_art.py` brings in art from the agent's image tool. It prints a prompt for each picture that the generator asks for. Then it cuts each picture that the tool made out of its background and fits it to the box of its stand-in shape. It needs Pillow.
 - `open_in_editor.py` opens the project in the Construct 3 editor and reports that it opened, or gives the editor's message. With `--preview`, it runs the game for a few seconds and reports the runtime errors with their events. With `--typescript`, the editor writes the project's TypeScript definitions into `scripts/ts-defs/`.
 - `preview_project.py` plays a preview from a plan of taps, drags, key presses and waits. It takes screenshots and records parts of the run. You can review a recording frame by frame and give a part of it to the agent as a task.
 - `review_look.py` previews the project, visits every layout and takes a screenshot of each. It reports what the runtime shows wrong there, such as a text that its box cuts or instances stacked on one spot. Then it asks the agent fixed questions to answer from the screenshots.
@@ -163,7 +164,7 @@ To build an assistant that writes event sheets, load these three files together 
 
 - [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md): how to structure events in Construct terms, such as picking, families, containers and `Else`.
 - [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md): the output format, and a check of every name against the data.
-- [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md): runtime behavior that intuition gets wrong, one line each. `prompts/pitfalls/` holds the cases and sources behind the lines, one file per topic. Read the file of a topic when the events touch that topic.
+- [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md): runtime behavior that intuition gets wrong, one line each. `prompts/pitfalls/` holds the cases and sources behind the lines, one file per topic. When the events touch a topic, read the file of that topic.
 
 For events written into a project, [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) describes how the official examples write a sheet: groups and their variables, comments, names and UI text. `prompts/references/` holds material that only some tasks need. The files above point to it when a task needs it.
 
@@ -193,6 +194,7 @@ python scripts/setup.py          # http://localhost:8765/playground
 ```
 AGENTS.md               AI agent entry point
 .claude-plugin/         Claude Code plugin and marketplace manifests
+.claude/                Claude Code ACE lookup sub-agent and polish workflow
 data/                   Committed reference data, read directly
   c3-schemas/           ACE definitions and effects, one folder per locale
   c3-examples/          Example project metadata
@@ -206,7 +208,7 @@ prompts/                LLM system prompts
 skills/                 Agent Skills, installed into a game project
   construct3-agent-plugin/   The project tools of "What the skill does"
 src/                    Optional lookup service (see src/AGENTS.md)
-scripts/                Setup, data refresh, version check
+scripts/                Bootstrap, lookup service setup, data refresh, version check, schema diff, published-game analyzer
 tests/                  Offline pytest suite
 docs/guide/             User docs
 docs/dev/               Contributor docs

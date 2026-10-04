@@ -67,23 +67,24 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 
 ## skill 能做什么
 
-[`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) 告诉 agent 什么时候运行哪个脚本。`scripts/` 里的每个脚本加 `--help` 会列出参数和示例。
+[`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) 告诉 agent 什么时候运行哪个脚本。下面的脚本除了 `assets/build_project.py` 模板，加 `--help` 都会列出参数和示例。
 
 - `lookup_ace.py` 查项目里某个对象、`System`、某个插件或行为的条件、动作和表达式。每条都带参数、中文或英文的显示文本，以及要写的 JSON。给它一个滤镜，它会列出滤镜的参数。
 - `lookup_script_api.py` 查脚本 API。给它一个接口、插件或行为，它列出成员；给它一个成员，它打印声明、声明它的接口以及所在的文件和行号，继承来的成员也查得到。
 - `search_guides.py` 按关键词搜索事件表的坑点和官方示例。它完整打印匹配的坑点条目；对每个匹配的示例，给出打印其事件的命令。
 - `print_sheet.py` 按编辑器的写法和事件编号打印事件表。官方示例也能这样读。
 - `edit_sheet.py` 按一份用这些编号写的 JSON 计划，添加、移动、替换或删除事件。写入之前，它先检查结果。
+- `print_layout.py` 从下到上打印每个场景的图层，以及每个图层上按显示顺序排列的实例。每个实例都带所占的矩形、大小、不透明度和文本。文本还会注明它压在哪个对象上，所以输出能显示哪个标签没落在按钮上。
 - `check_project.py` 按 schemas 和编辑器打开项目时的规则，检查每个项目文件。每条问题都指出位置，能给出写法时也一并给出。审查别人问到的项目时加 `--review`，它和 `print_sheet.py` 的输出最后会写明审查该报告什么：先说项目做了什么，只报会让某个功能失效的问题。
 - `review_design.py` 读取事件表，报告设计上难读或容易出错的地方，比如条件太多的事件、同一个事实存在两处、临时用的全局变量。每条问题都指出事件，并给出应该换成的写法。然后它给 agent 一组固定的问题，让它对照 `print_sheet.py` 的输出回答。
 - `check_design.py` 在写任何项目文件之前检查新游戏的设计：核心循环、状态表、输入、规则、胜负和验收测试。然后它直接在规则上跑这些测试，相当于一个不用编辑器的原型。每条问题都指出它在设计里的位置，没通过的测试会指出是哪一步，以及当时各个状态的值。
 - `play_design.py` 在 Construct 3 编辑器里，对照设计做出来的游戏再跑一遍同样的测试。它先对照项目文件，检查设计里的名字和初始值。每个失败都指出测试、步骤，以及要对照的规则对应的事件。
-- `check_look.py` 按 `assets/look-manifest.json` 里的硬性规则，检查生成的游戏的占位美术，比如网格、调色板和文字对比度。
+- `check_look.py` 按 `assets/look-manifest.json` 里的硬性规则，检查生成的游戏的项目文件，比如干净的透明通道、实例对齐网格、受击用颜色表示。
 - `prepare_art.py` 把 agent 的生图工具画的图接进游戏。它为生成器要的每张图打印一条提示词。然后它把生图工具画好的每张图从背景里抠出来，缩放进对应占位图形的框里。它需要 Pillow。
 - `open_in_editor.py` 在 Construct 3 编辑器里打开项目，报告打开成功，或者给出编辑器的提示。加 `--preview` 时，它把游戏运行几秒，报告运行时错误和出错的事件。加 `--typescript` 时，编辑器把项目的 TypeScript 类型定义写进 `scripts/ts-defs/`。
 - `preview_project.py` 按一份点击、拖动、按键和等待的计划操作预览。它会截图，也会录下运行的片段。录像可以逐帧回看，其中一段可以作为任务交给 agent。
-- `review_look.py` 预览项目，逐个进入每个布局并截图。它报告运行时能看出的问题，比如文字被文本框截断、多个实例叠在同一位置。然后它给 agent 一组固定的问题，让它看着截图回答。
-- `screenshot_sheet.py` 按编辑器里的样子，给事件表或其中一个组截图，用于论坛回帖、bug 报告或文档。截图是英文界面，只裁事件表本身，每一列的宽度正好放下它最长的一行。
+- `review_look.py` 预览项目，逐个进入每个场景并截图。它报告运行时能看出的问题，比如文字被文本框截断、多个实例叠在同一位置。然后它给 agent 一组固定的问题，让它看着截图回答。
+- `screenshot_sheet.py` 按编辑器里的样子，给事件表或其中一个事件组截图，用于论坛回帖、bug 报告或文档。截图是英文界面，只裁事件表本身，每一列的宽度正好放下它最长的一行。
 - `export_project.py` 用你的订阅账号，让编辑器把项目导出为 Web (HTML5)。
 - `pack_project.py` 把项目保存成编辑器能打开的 `.c3p` 或 `.zip`。它也能把 `.c3p` 或 `.zip` 解成项目文件夹。
 - `install.py` 把 skill 装进游戏项目，或者按 clone 更新已有的副本。它也会把游戏 `tools/build_project.py` 里的辅助函数更新到当前版本，加 `--helpers-only` 时只做这一件事。
@@ -125,7 +126,7 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 
 它列出每个匹配项的参数、显示文本，以及要写的 JSON。查 `System` 和所有世界对象共有的 ACE 时，用这个脚本。查共有 ACE 时随便写一个世界对象就行，比如 `Sprite overlap`。这些 ACE 所在的 `plugins/system.json` 和 `plugins/_common.json` 太长，大多数读文件工具一次读不完。这类工具只显示文件的前一部分，所以后面的 ACE 看起来就像不存在。
 
-其他内容直接读 `data/` 下的文件。下表路径里的 `{locale}` 是 `en-US` 或 `zh-CN`：
+其他内容直接读 `data/` 下的文件。下表路径里的 `{locale}` 是 `c3-schemas/_index.json` 的 `languages` 里的一种语言，比如 `zh-CN`：
 
 | 路径 | 内容 |
 |---|---|
@@ -174,7 +175,7 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 | 仓库 | 内容 | 和本仓库的关系 |
 |---|---|---|
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档，Markdown 格式 | `data/c3-schemas/` 给出名称和参数，手册说明它们的作用 |
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 示例浏览器里的所有示例，以项目文件夹形式保存 | `data/c3-examples/` 是示例的元数据，项目本身在那个仓库里 |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 案例库里的所有示例，以项目文件夹形式保存 | `data/c3-examples/` 是示例的元数据，项目本身在那个仓库里 |
 | [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、滤镜和主题的模板和文档 | `data/c3-ts-defs/sdk/` 是类型定义，SDK 讲怎么用 |
 
 ## 查找服务（可选）
@@ -193,6 +194,7 @@ python scripts/setup.py          # http://localhost:8765/playground
 ```
 AGENTS.md               AI agent 入口
 .claude-plugin/         Claude Code plugin 和 marketplace 的清单
+.claude/                Claude Code 的 ACE 查找子 agent 和 polish 工作流
 data/                   提交在仓库里的参考数据，直接读取
   c3-schemas/           ACE 定义和滤镜，每种语言一个文件夹
   c3-examples/          示例项目元数据
@@ -201,12 +203,12 @@ data/                   提交在仓库里的参考数据，直接读取
   c3-guides/            Scirra 的项目格式指南
   c3-new-project/       编辑器的空项目，新建游戏时复制
 prompts/                LLM system prompt
-  pitfalls/             易错点背后的案例和出处，按主题分文件
+  pitfalls/             坑点背后的案例和出处，按主题分文件
   references/           部分任务才加载的材料
 skills/                 Agent Skills，装进游戏项目使用
   construct3-agent-plugin/   项目工具，见“skill 能做什么”
 src/                    可选的查找服务（见 src/AGENTS.md）
-scripts/                安装、数据更新、版本检查
+scripts/                安装、查找服务启动、数据更新、版本检查、schema 对比、已发布游戏分析
 tests/                  离线 pytest 测试
 docs/guide/             使用文档
 docs/dev/               开发文档
