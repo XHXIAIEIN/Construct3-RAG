@@ -106,7 +106,7 @@ const uniq = xs => [...new Set(xs)]
 // ---------------------------------------------------------------- shared text
 
 const UNIT_RULES = `A unit is a set of files that must stay consistent with each other and that one agent can read in full: up to about 1500 lines of text, or one large code file, or a few small ones. Every polishable file belongs to exactly one unit. Unit ids are short and kebab-case. Areas and kinds:
-- instructions (text): the root AGENTS.md with CLAUDE.md; every other AGENTS.md on its own.
+- instructions (text): the root AGENTS.md with .claude/CLAUDE.md; every other AGENTS.md on its own.
 - readme (text): README.md with README_CN.md, because README_CN.md carries the content of README.md.
 - docs (text): docs/guide/; docs/dev/.
 - records (text): docs/decisions/, in batches of up to six records that share a group of the table in docs/AGENTS.md.

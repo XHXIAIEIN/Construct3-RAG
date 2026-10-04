@@ -1,4 +1,4 @@
-# The Plugin Tracks Commits and Needs No Copy in the Project
+# The Plugin's Version and Why a Project Needs No Copy
 
 Date: 2026-10-02
 
@@ -17,10 +17,13 @@ install on its first copy however many commits followed
 
 ## Decision
 
-- `plugin.json` has no `version`. A GitHub install is versioned by commit,
-  and `claude plugin update construct3@construct3-rag` brings it to the
-  latest one. `claude plugin validate` warns that no version is set; the
-  warning is accepted.
+- `plugin.json` carries a `version`, `1.0.0` since 2026-10-05. Until then
+  it had none, so that a GitHub install was versioned by commit and
+  `claude plugin update construct3@construct3-rag` reached every commit.
+  Claude's directory warns about a plugin without a version
+  (`directory-listing.md`), so the field came back. A change that a
+  marketplace install should receive raises the version; without that,
+  `claude plugin update` keeps the install where it is.
 - On a machine with the clone, the clone is linked as
   `~/.claude/skills/construct3` (a junction on Windows). Claude Code loads a
   plugin directory under `~/.claude/skills/` in place as
@@ -37,9 +40,9 @@ install on its first copy however many commits followed
 
 ## Trade-offs
 
-- Without a pinned version, a GitHub install has no release boundary: an
-  update takes whatever main holds. The repository has no release process
-  for the plugin that a version number would mark.
+- A marketplace install lags main until someone raises the version, and
+  the repository has no release process that would raise it. The linked
+  clone does not depend on the version and follows every `git pull`.
 - `install.py` and the copy stay for other agents and for Claude Code
   without the plugin; nothing about them changed.
 - Plugin loading costs no network at session start: the plugin is read from

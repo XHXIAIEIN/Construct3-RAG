@@ -27,11 +27,14 @@ Held for a reviewer:
   `check_project.py`, its tests and `checker-rules.md` read. A Construct
   project is made of such files.
 
-Warnings:
+Warnings, both cleared on 2026-10-05:
 
-- No `version` in `plugin.json` (`plugin-tracks-commits.md`).
-- `CLAUDE.md` at the root is not loaded by the plugin. It is the entry
-  point for agents working in this repository, not context for the plugin.
+- No `version` in `plugin.json`. It now has one
+  (`plugin-tracks-commits.md`).
+- A `CLAUDE.md` at the root, which a plugin does not load. The file is the
+  entry point for agents working in this repository, so it moved to
+  `.claude/CLAUDE.md`, which Claude Code loads as project instructions
+  from the same place, and imports `../AGENTS.md`.
 
 The portal therefore reports that auto-publish does not apply.
 
