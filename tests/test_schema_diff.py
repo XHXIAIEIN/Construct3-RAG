@@ -20,19 +20,17 @@ def write_snapshot(
     """A minimal data/c3-schemas: root index, primary-locale files, _deprecated.json."""
     locale = root / "en-US"
     index: dict = {"version": version, "languages": ["en-US"], "plugins": {}, "behaviors": {}, "effects": {}}
+
+    def write_addon(kind: str, addon_id: str, data: dict) -> None:
+        rel = f"{kind}/{addon_id}.json"
+        index[kind][addon_id] = {"file": rel}
+        (locale / kind).mkdir(parents=True, exist_ok=True)
+        (locale / rel).write_text(json.dumps({"id": addon_id, **data}), encoding="utf-8")
+
     for plugin_id, data in plugins.items():
-        rel = f"plugins/{plugin_id}.json"
-        index["plugins"][plugin_id] = {"file": rel}
-        (locale / "plugins").mkdir(parents=True, exist_ok=True)
-        (locale / rel).write_text(json.dumps({"id": plugin_id, **data}), encoding="utf-8")
+        write_addon("plugins", plugin_id, data)
     for effect_id, parameters in (effects or {}).items():
-        rel = f"effects/{effect_id}.json"
-        index["effects"][effect_id] = {"file": rel}
-        (locale / "effects").mkdir(parents=True, exist_ok=True)
-        (locale / rel).write_text(
-            json.dumps({"id": effect_id, "name": effect_id.title(), "parameters": parameters}),
-            encoding="utf-8",
-        )
+        write_addon("effects", effect_id, {"name": effect_id.title(), "parameters": parameters})
     (root / "_index.json").write_text(json.dumps(index), encoding="utf-8")
     if deprecated is not None:
         (locale / "_deprecated.json").write_text(json.dumps(deprecated), encoding="utf-8")
@@ -43,10 +41,14 @@ def action(ace_id: str, name: str, **fields) -> dict:
     return {"id": ace_id, "list-name": name, "display-text": name, **fields}
 
 
-def diff(tmp_path: Path, base: dict, target: dict) -> list[schema_diff.Change]:
+def snapshots(tmp_path: Path, base: dict, target: dict) -> tuple[schema_diff.Snapshot, schema_diff.Snapshot]:
     old = schema_diff.load_snapshot(schema_diff.FolderSource(write_snapshot(tmp_path / "old", "r1", **base)))
     new = schema_diff.load_snapshot(schema_diff.FolderSource(write_snapshot(tmp_path / "new", "r2", **target)))
-    return schema_diff.diff_snapshots(old, new)
+    return old, new
+
+
+def diff(tmp_path: Path, base: dict, target: dict) -> list[schema_diff.Change]:
+    return schema_diff.diff_snapshots(*snapshots(tmp_path, base, target))
 
 
 def by_ace(changes: list[schema_diff.Change]) -> dict[tuple[str, str], schema_diff.Change]:
@@ -161,8 +163,7 @@ def test_mentions_are_quoted_ids_of_watched_changes_only(tmp_path):
 def test_markdown_puts_mentions_first_and_respects_the_limit(tmp_path):
     base = {"plugins": {"sprite": {"name": "Sprite", "actions": [action(f"a{i}", f"A{i}") for i in range(200)]}}}
     target = {"plugins": {"sprite": {"name": "Sprite", "actions": []}}}
-    old = schema_diff.load_snapshot(schema_diff.FolderSource(write_snapshot(tmp_path / "old", "r1", **base)))
-    new = schema_diff.load_snapshot(schema_diff.FolderSource(write_snapshot(tmp_path / "new", "r2", **target)))
+    old, new = snapshots(tmp_path, base, target)
     changes = schema_diff.diff_snapshots(old, new)
     text = schema_diff.render_markdown(old, new, changes, {"a1": ["prompts/x.md:3"]}, limit=0)
     assert text.startswith("## Construct 3 r1 → r2\n\n200 removed.\n")
