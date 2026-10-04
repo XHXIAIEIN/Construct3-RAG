@@ -228,6 +228,36 @@
         "The turn passes once per tapped coin: every change of side sits under a trigger, in a function or custom action, or in an event that resets a variable it tests, and one exists",
         "Every event of the game is still in it, by sid, the seeded turns aside"
       ]
+    },
+    {
+      "id": 15,
+      "name": "two-player-turns",
+      "fixture": "coins",
+      "prompt": "make my coins game two-player: player 1 and player 2 take turns, one coin each. the score text should also say whose turn it is, like \"Score: 3  Player 2's turn\". the project folder is <project> , its all in eventSheets/Game.json",
+      "expected_output": "A variable holds whose turn it is. It passes to the other player once per collected coin, in the tap's event or in the Collect custom action or the AddScore function it calls. A flip in an event with no trigger in it or above it runs on every tick. A flip is Toggle, or Set to 3 - turn. ScoreText says whose turn it is, and the checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning",
+        "Each change of the turn variable runs once: under a trigger, in a function or custom action, or in an event that resets a variable it tests. A set to a fixed value runs under a trigger, Trigger once or Every X seconds. One flip sits under the tap or in a function or custom action",
+        "ScoreText says whose turn it is: a Set text of ScoreText reads the turn variable or names a player",
+        "Every event of the original sheet is still in it, by sid"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "two-player-turn-limit",
+      "fixture": "coins",
+      "prompt": "make my coins game two-player: player 1 and player 2 take turns, one coin each, and a turn lasts at most 5 seconds: if the player doesnt tap a coin in time, the turn goes to the other player. the score text should say whose turn it is and the seconds left, like \"Score: 3  Player 2: 4s\". the project folder is <project> , its all in eventSheets/Game.json",
+      "expected_output": "A variable holds whose turn it is. It passes to the other player once per collected coin, in the tap's event, the Collect custom action or the AddScore function. It passes once more when the time of the turn runs out. That change sits under a Timer's On timer, or in an event that tests the time left and sets it back. A flip in an event with no trigger that leaves the time at 0 runs on every tick. ScoreText shows the turn and the seconds left, and the checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning",
+        "Each change of the turn variable runs once: under a trigger, in a function or custom action, or in an event that resets a variable it tests. A set to a fixed value runs under a trigger, Trigger once or Every X seconds. One flip sits under the tap or in a function or custom action",
+        "ScoreText says whose turn it is: a Set text of ScoreText reads the turn variable or names a player",
+        "Every event of the original sheet is still in it, by sid"
+      ]
     }
   ]
 }

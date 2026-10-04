@@ -1026,6 +1026,73 @@ def grade_fix_turn_flip(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
+TURN_NAME = re.compile(r"turn|player|side|current|whose|active", re.I)
+# A time or a score is not the turn, though its name may say player or current: turnTimeLeft, player1Score.
+NOT_TURN = re.compile(r"time|timer|sec|clock|left|limit|count|remain|score|point", re.I)
+
+
+def grade_two_player_turns(run: Path) -> list[tuple[bool, str]]:
+    """The turn variable is the run's own: its name says whose turn it is, or ScoreText's text reads it, and it
+    is not named for a time or a score. Each change of it runs once: under a trigger, in a function or custom
+    action, or in an event that resets a variable it tests, a function the event calls included. A flip reads
+    the variable (3 - turn, Toggle) or runs under a condition that tests it; a set to a fixed value is a reset,
+    which also runs once under Trigger once or Every X seconds. One flip sits under the tap or in a function or
+    custom action. A change under On start of layout is not read."""
+    project = run / "project"
+    code, out = checker(project)
+    warnings = [line for line in out.splitlines() if line.startswith("warning:")]
+    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
+               (not warnings, warnings[0] if warnings else "no warning line")]
+    events = sheet_of(project)
+    if events is None:
+        return results + [(False, "eventSheets/Game.json is not readable JSON")] * 3
+    rows = list(walk(events))
+    texts = [a for ev, _ in rows for a in ev.get("actions", [])
+             if a.get("objectClass") == "ScoreText" and a.get("id") == "set-text"]
+
+    def reads(name: str, text: str) -> bool:
+        return bool(re.search(rf"(?<![\w.]){re.escape(name)}(?!\w)", text, re.I))
+
+    new = {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable"} - ORIGINAL_GLOBALS
+    turns = {n for n in new if (TURN_NAME.search(n) or reads(n, values(texts))) and not NOT_TURN.search(n)}
+    sets_in = {ev.get("functionName"): {a.get("parameters", {}).get("variable") for e, _ in walk([ev])
+                                        for a in e.get("actions", []) if a.get("id") == "set-eventvar-value"}
+               for ev, _ in rows if ev.get("eventType") == "function-block"}
+    is_trigger = triggered(project)
+    once, every_tick, on_tap = [], [], []
+    for ev, above in rows:
+        conds = conditions_over(ev, above)
+        if any(c.get("id") == "on-start-of-layout" for c in conds):
+            continue
+        for a in ev.get("actions", []):
+            params = a.get("parameters") if isinstance(a.get("parameters"), dict) else {}
+            name = params.get("variable")
+            if name not in turns or a.get("id") not in TURN_CHANGES:
+                continue
+            in_block = any(e.get("eventType") in ("function-block", "custom-ace-block") for e in (*above, ev))
+            # the variables its conditions test, and those its branch or the functions it calls set
+            tested = {c.get("parameters", {}).get("variable") for c in conds if c.get("id") == "compare-eventvar"}
+            tested |= {w for c in conds if c.get("id") in ("compare-two-values", "evaluate-expression")
+                       for w in re.findall(r"[A-Za-z_]\w*", values([c]))}
+            branch = [b for e in (*above, ev) for b in e.get("actions", [])]
+            reset = {b.get("parameters", {}).get("variable") for b in branch if b.get("id") == "set-eventvar-value"}
+            reset = (reset | {v for b in branch for v in sets_in.get(b.get("callFunction"), ())}) - {name}
+            flip = a.get("id") != "set-eventvar-value" or reads(name, str(params.get("value", ""))) or name in tested
+            # Trigger once runs a reset once, but a flip once a round
+            paced = any(is_trigger(c) for c in conds) or (not flip and any(
+                c.get("id") in ("trigger-once-while-true", "every-x-seconds") for c in conds))
+            (once if in_block or paced or tested & reset else every_tick).append(f"{name}: {values([a])}")
+            if flip and (in_block or any(is_trigger(c) and c.get("objectClass") in ("Touch", "Mouse") for c in conds)):
+                on_tap.append(f"{name}: {values([a])}")
+    results.append((bool(on_tap) and not every_tick, f"turn variables {sorted(turns) or 'none'}; changed once: "
+                    f"{once or 'nowhere'}; on a tap: {on_tap or 'nowhere'}"
+                    + (f"; in every tick: {every_tick}" if every_tick else "")))
+    said = [values([a]) for a in texts if any(reads(n, values([a])) for n in turns) or re.search(r"player", values([a]), re.I)]
+    results.append((bool(said), f"ScoreText texts that say whose turn: {said or 'none'}"))
+    results.append(original_sids(run, rows, "Game.json"))
+    return results
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
@@ -1033,7 +1100,8 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "readable-on-a-dark-background": grade_readable_on_a_dark_background,
            "walk-with-wasd": grade_walk_with_wasd, "countdown-between-rounds": grade_countdown_between_rounds,
            "fix-wasd-twitch": grade_fix_wasd_twitch, "fix-next-round": grade_fix_next_round,
-           "fix-turn-flip": grade_fix_turn_flip}
+           "fix-turn-flip": grade_fix_turn_flip, "two-player-turns": grade_two_player_turns,
+           "two-player-turn-limit": grade_two_player_turns}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")
