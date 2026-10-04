@@ -261,7 +261,9 @@ def test_a_copy_that_differs_from_the_clone_says_how_to_refresh_it(project):
     script = project / INSTALLED / "scripts" / "print_sheet.py"
     script.write_text(script.read_text(encoding="utf-8") + "\n# edited\n", encoding="utf-8")
     code, out = check(project)
-    assert code == 0 and "warning: this copy of the construct3-agent-plugin skill differs from the clone's" in out
+    # a problem: a warning above the passing check's last line goes unread
+    assert code == 1 and "warning: this copy" not in out
+    assert "this copy of the construct3-agent-plugin skill differs from the clone's" in out
     assert "scripts/print_sheet.py" in out and "install.py" in out
     # the other scripts say it first, on stdout with their result: a Doubao run in PowerShell
     # read it as an error record on every call of a stale copy

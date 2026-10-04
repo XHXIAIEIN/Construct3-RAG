@@ -159,6 +159,11 @@ python skills/construct3-agent-plugin/evals/run_trigger_eval.py skills/construct
 - The previous version of the skill is the baseline of a change to it. Its
   arm names a checkout of the previous commit as its clone: pointed at this
   one, the old copy reports that it differs and the agent refreshes it.
+- Make fixtures from a worktree branch that tracks nothing, or from a clone
+  level with its upstream. A fixture names the clone that
+  `make_fixtures.py` ran from, and if that clone's branch trails its
+  upstream, the checker gives the runs a pull of it in the middle of the
+  iteration.
 - Read the transcript of every run, not only its answer. Claude Code keeps
   it as `~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl`;
   the answer lists the commands a run remembers. When every assertion

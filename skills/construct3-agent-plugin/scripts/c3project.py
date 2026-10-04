@@ -258,24 +258,32 @@ def same_text(a: Path, b: Path) -> bool:
     return a.read_bytes().replace(b"\r\n", b"\n") == b.read_bytes().replace(b"\r\n", b"\n")
 
 
-def skill_drift(rag: Path) -> str | None:
-    """A sentence when this copy of the skill, installed in a game project, is
-    not what the clone holds. The clone is the source; install.py refreshes the copy."""
+def refresh_command(rag: Path) -> str | None:
+    """The command that makes this copy of the skill the clone's again; None when
+    the scripts run from the clone itself."""
     source = rag / "skills" / SKILL
     if not (source / "SKILL.md").exists() or source.resolve() == SKILL_DIR:
         return None
-    wanted, have = skill_files(source), skill_files(SKILL_DIR)
+    return f"python \"{source / 'scripts' / 'install.py'}\" --into \"{SKILL_DIR.parent}\""
+
+
+def skill_drift(rag: Path) -> str | None:
+    """A sentence when this copy of the skill, installed in a game project, is
+    not what the clone holds. The clone is the source; install.py refreshes the copy."""
+    refresh = refresh_command(rag)
+    if not refresh:
+        return None
+    wanted, have = skill_files(rag / "skills" / SKILL), skill_files(SKILL_DIR)
     changed = [rel for rel, path in wanted.items() if rel not in have or not same_text(path, have[rel])]
     changed += [rel for rel in have if rel not in wanted]
     if not changed:
         return None
     return (f"this copy of the {SKILL} skill differs from the clone's ({', '.join(changed[:4])}"
-            f"{' ...' if len(changed) > 4 else ''}); refresh it: "
-            f"python \"{source / 'scripts' / 'install.py'}\" --into \"{SKILL_DIR.parent}\"")
+            f"{' ...' if len(changed) > 4 else ''}); refresh it: {refresh}")
 
 
 FETCH_STAMPS = Path(tempfile.gettempdir()) / "construct3-rag-fetch"
-FETCH_EVERY = 6 * 3600      # seconds between two fetches of one clone
+FETCH_EVERY = 3600          # seconds between two fetches of one clone
 FETCH_WAIT = 8              # seconds a fetch may take before the check goes on without it
 
 
@@ -290,9 +298,12 @@ def git_out(rag: Path, *args: str, wait: float = 5) -> str | None:
     return p.stdout.strip() if p.returncode == 0 else None
 
 
-def clone_behind(rag: Path) -> str | None:
-    """A sentence when the clone's branch is behind its upstream. The clone is
-    fetched at most every FETCH_EVERY seconds; offline, or with no upstream, nothing is said."""
+def clone_behind(rag: Path) -> tuple[str, bool] | None:
+    """A sentence when the clone's branch is behind its upstream, and whether the
+    agent updates it. A clone with no commits or changes of its own fast-forwards:
+    the sentence gives the pull and, for a copy of the skill, its refresh. A clone
+    that holds the user's work is the user's to update. The clone is fetched at most
+    every FETCH_EVERY seconds; offline, or with no upstream, nothing is said."""
     if os.environ.get("CONSTRUCT3_RAG_OFFLINE") or not (rag / ".git").exists() or not shutil.which("git"):
         return None
     upstream = git_out(rag, "rev-parse", "--abbrev-ref", "@{u}")
@@ -311,11 +322,21 @@ def clone_behind(rag: Path) -> str | None:
         except OSError:
             pass
         git_out(rag, "fetch", "--quiet", upstream.split("/")[0], wait=FETCH_WAIT)
-    behind = git_out(rag, "rev-list", "--count", "HEAD..@{u}")
-    if not behind or behind == "0":
+    try:
+        ahead, behind = (int(n) for n in git_out(rag, "rev-list", "--left-right", "--count", "HEAD...@{u}").split())
+    except (AttributeError, ValueError):
         return None
-    return (f"Construct3-RAG at {rag} is {behind} commit{'s' if behind != '1' else ''} behind {upstream}; "
-            f"update it: git -C \"{rag}\" pull --ff-only, then run this check again")
+    if not behind:
+        return None
+    lag = f"Construct3-RAG at {rag} is {behind} commit{'s' if behind != 1 else ''} behind {upstream}"
+    own = [f"{ahead} commit{'s' if ahead != 1 else ''}"] if ahead else []
+    if git_out(rag, "status", "--porcelain", "--untracked-files=no"):
+        own.append("uncommitted changes")
+    if own:
+        return f"{lag}, and it holds {' and '.join(own)} of its own; tell the user, who decides how to update it", False
+    refresh = refresh_command(rag)
+    return (f"{lag}, so the scripts lack the fixes and checks of those commits. Run git -C \"{rag}\" pull --ff-only, "
+            f"{f'then {refresh}, ' if refresh else ''}then run this check again"), True
 
 
 def argument_parser(description: str, epilog: str) -> argparse.ArgumentParser:

@@ -2678,9 +2678,14 @@ def main() -> int:
     findings = c3.Findings()
     c3.stop_with_a_sentence("check_project.py", findings)
     project = c3.Project.open(args, findings)
-    for note in (c3.clone_behind(project.rag), c3.skill_drift(project.rag)):
-        if note:
-            findings.warn(note)
+    # Stale tools are a problem to fix first: a warning above a passing check's last line goes unread
+    behind = c3.clone_behind(project.rag)
+    if behind:
+        line, agent_updates = behind
+        (findings.err if agent_updates else findings.warn)(line)
+    drift = None if behind and behind[1] else c3.skill_drift(project.rag)     # the update above refreshes the copy too
+    if drift:
+        findings.err(drift)
     return Checker(project, args.limit, style=args.style).run()
 
 
