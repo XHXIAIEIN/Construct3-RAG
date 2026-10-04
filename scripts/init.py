@@ -23,7 +23,17 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from src.lookup.schema_layout import schema_counts
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES, SCHEMA_LOCALES, schema_counts
+
+
+def _ace_count(addons: dict) -> int:
+    """The ACEs of an allAces.json section, every category of every addon."""
+    return sum(
+        len(category.get(ace_type, []))
+        for categories in addons.values()
+        for category in categories.values()
+        for ace_type in SCHEMA_ACE_TYPES
+    )
 
 
 def refresh_guides(data_dir: Path, saved: list[Path]) -> None:
@@ -54,22 +64,14 @@ def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
     # 1. Fetch core data
     print("[1/6] Fetching ACE definitions...")
     aces = fetcher.fetch_all_aces()
-    p_count = sum(
-        len(cat.get("conditions", [])) + len(cat.get("actions", [])) + len(cat.get("expressions", []))
-        for cats in aces["plugins"].values() for cat in cats.values()
-    )
-    b_count = sum(
-        len(cat.get("conditions", [])) + len(cat.get("actions", [])) + len(cat.get("expressions", []))
-        for cats in aces["behaviors"].values() for cat in cats.values()
-    )
+    p_count, b_count = _ace_count(aces["plugins"]), _ace_count(aces["behaviors"])
     print(f"  {len(aces['plugins'])} plugins ({p_count} ACEs)")
     print(f"  {len(aces['behaviors'])} behaviors ({b_count} ACEs)")
 
     print("[2/6] Fetching language data...")
-    en = fetcher.fetch_lang("en-US")
-    zh = fetcher.fetch_lang("zh-CN")
-    print(f"  en-US: {len(en.get('text', {}).get('plugins', {}))} plugins")
-    print(f"  zh-CN: {len(zh.get('text', {}).get('plugins', {}))} plugins")
+    packs = {locale: fetcher.fetch_lang(locale) for locale in SCHEMA_LOCALES}
+    for locale, pack in packs.items():
+        print(f"  {locale}: {len(pack.get('text', {}).get('plugins', {}))} plugins")
 
     print("[3/6] Fetching effects...")
     effects = fetcher.fetch_effects()

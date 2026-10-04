@@ -11,6 +11,8 @@ from typing import Any, Mapping
 SCHEMA_LOCALES: tuple[str, ...] = ("en-US", "zh-CN")
 PRIMARY_SCHEMA_LOCALE = "en-US"
 SCHEMA_ADDON_TYPES: tuple[str, ...] = ("plugins", "behaviors", "effects")
+# The ACE lists of a plugin or behavior file, in the order the file writes them.
+SCHEMA_ACE_TYPES: tuple[str, ...] = ("conditions", "actions", "expressions")
 SCHEMA_INDEX_FILE = "_index.json"
 
 
@@ -216,7 +218,3 @@ def schema_counts(root: Path, locale: str = PRIMARY_SCHEMA_LOCALE) -> dict[str, 
         addon_type: len(list((Path(root) / locale / addon_type).glob("*.json")))
         for addon_type in SCHEMA_ADDON_TYPES
     }
-
-    if schema_is_complete(generated) and schema_version(generated) == expected_version:
-        return generated
-    return bundled

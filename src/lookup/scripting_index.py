@@ -38,9 +38,6 @@ class ScriptingIndex:
         self._data = data.get("properties", {})
         logger.info("[ScriptingIndex] Loaded %d classes", len(self._data))
 
-    # Compatibility for callers that used the historical private loader.
-    _load = ensure_loaded
-
     def search(self, query: str, max_results: int = 20) -> list[dict]:
         """Search exact TypeScript identifiers only.
 

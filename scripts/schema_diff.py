@@ -31,11 +31,14 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from src.lookup.schema_layout import PRIMARY_SCHEMA_LOCALE, SCHEMA_INDEX_FILE
+from src.lookup.schema_layout import (
+    PRIMARY_SCHEMA_LOCALE,
+    SCHEMA_ACE_TYPES,
+    SCHEMA_ADDON_TYPES,
+    SCHEMA_INDEX_FILE,
+)
 
 SCHEMAS = "data/c3-schemas"
-ACE_KINDS = ("conditions", "actions", "expressions")
-ADDON_KINDS = ("plugins", "behaviors", "effects")
 # Fields whose change alters how an event using the ACE is written or behaves.
 ACE_FLAGS = (
     "scriptName",
@@ -153,7 +156,7 @@ def load_snapshot(source: Source) -> Snapshot:
     if not isinstance(index, dict):
         raise SnapshotError(f"{source.label}: no {SCHEMA_INDEX_FILE}")
     files: list[tuple[str, str, str]] = []
-    for kind in ADDON_KINDS:
+    for kind in SCHEMA_ADDON_TYPES:
         for addon_id, entry in (index.get(kind) or {}).items():
             files.append((kind, addon_id, entry["file"]))
     files.append(("plugins", "_common", "plugins/_common.json"))
@@ -170,7 +173,7 @@ def load_snapshot(source: Source) -> Snapshot:
         if kind == "effects":
             addon.params = {p["id"]: p for p in data.get("parameters") or []}
         else:
-            for ace_kind in ACE_KINDS:
+            for ace_kind in SCHEMA_ACE_TYPES:
                 for ace in data.get(ace_kind) or []:
                     addon.aces[(ace_kind, ace["id"])] = ace
         addons[(kind, addon_id)] = addon

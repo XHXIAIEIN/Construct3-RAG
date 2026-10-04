@@ -5,6 +5,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES
+
 if TYPE_CHECKING:
     from src.lookup.schema_index import SchemaIndex
 
@@ -53,7 +55,7 @@ class TermIndex:
                     )
                     added += 1
 
-            for ace_type in ("conditions", "actions", "expressions"):
+            for ace_type in SCHEMA_ACE_TYPES:
                 for item in schema.get(ace_type, []):
                     en = item.get("name_en", "")
                     zh = item.get("name_zh", "")

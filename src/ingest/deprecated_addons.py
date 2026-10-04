@@ -23,7 +23,8 @@ from __future__ import annotations
 
 import re
 
-from src.ingest.common_aces import ACE_TYPES, _group_end, _js_value, _top_level
+from src.ingest.common_aces import _group_end, _js_value, _top_level
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 
 ADDON_KINDS = ("plugins", "behaviors")
 
@@ -156,7 +157,7 @@ def deprecated_list(
             if addon_id in retired.get(kind, ()):
                 continue
             pid = addon_id.lower()
-            for ace_type in ACE_TYPES:
+            for ace_type in SCHEMA_ACE_TYPES:
                 name_key = "translated-name" if ace_type == "expressions" else "list-name"
                 items = [a for c in categories.values() for a in c.get(ace_type, [])]
                 en_aces = en.get(kind, {}).get(pid, {}).get(ace_type, {})

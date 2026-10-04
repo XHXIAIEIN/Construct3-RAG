@@ -12,6 +12,8 @@ Endpoints:
     media/example-project-data.json      — example project metadata
     plugins/pluginList.json      — plugin ID → path mapping
     behaviors/behaviorList.json  — behavior ID → path mapping
+    offline.json                 — the release's file list, read for its .d.ts paths
+    media/autocomplete-data.json — scripting class to member listing
     versions.json                — the current Beta, Stable and LTS releases
     main.js, plugins/allEditorPlugins.js, behaviors/allEditorBehaviors.js
                                  — editor bundles, read for SetIsDeprecated
@@ -33,6 +35,7 @@ import json
 import logging
 import re
 import shutil
+import time
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone, timedelta
@@ -47,6 +50,7 @@ from src.ingest.common_aces import (
     load_common_availability,
 )
 from src.ingest.deprecated_addons import ADDON_KINDS, deprecated_ids, deprecated_list, extract_deprecation
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES, SCHEMA_LOCALES
 
 
 logger = logging.getLogger(__name__)
@@ -143,15 +147,8 @@ class C3Fetcher:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     def _http_get(self, url: str) -> bytes:
-        """Fetch URL with browser User-Agent (CDN returns 403 without it)."""
-        req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            return resp.read()
-
-    @staticmethod
-    def _strip_bom(raw: bytes) -> bytes:
-        """Remove UTF-8 BOM if present."""
-        return raw[3:] if raw[:3] == b"\xef\xbb\xbf" else raw
+        """The one HTTP call of a fetcher, kept as a method so a test can stub it."""
+        return _http_get(url)
 
     def url(self, path: str) -> str:
         """The CDN URL of ``path`` in this release's directory."""
@@ -179,14 +176,7 @@ class C3Fetcher:
             path: Relative path under the release directory (e.g. "plugins/allAces.json")
             force: Skip cache and always fetch from CDN
         """
-        cache_path = self.cache_dir / path.replace("/", "_")
-        if not force and cache_path.exists() and not _cache_expired(cache_path):
-            raw = cache_path.read_bytes()
-        else:
-            raw = self._download(path)
-            cache_path.parent.mkdir(parents=True, exist_ok=True)
-            cache_path.write_bytes(raw)
-        return json.loads(self._strip_bom(raw))
+        return json.loads(_strip_bom(self.fetch_raw(path, force)))
 
     # ── Schema export (per-language, CDN-native field names) ─────────────
 
@@ -197,11 +187,11 @@ class C3Fetcher:
         per-language files that preserve CDN field names:
           - conditions/actions: list-name, display-text, description
           - expressions: translated-name, description
-          - params: name, desc, items (object keyed by param id)
+          - params: name, desc, items, initialValue (object keyed by param id)
 
         Structure fields from allAces (scriptName, isTrigger, isFakeTrigger,
         isLooping, isInvertible, isCompatibleWithTriggers, isAsync, isDeprecated,
-        returnType, params[].type) are merged in.
+        returnType, isVariadicParameters, params[].type) are merged in.
 
         Directory layout:
             schemas/en-US/plugins/sprite.json
@@ -224,10 +214,7 @@ class C3Fetcher:
             shutil.rmtree(schemas_dir)
 
         aces_data = self.fetch_all_aces()
-        lang_texts = {
-            "en-US": self.fetch_lang("en-US").get("text", {}),
-            "zh-CN": self.fetch_lang("zh-CN").get("text", {}),
-        }
+        lang_texts = {locale: self.fetch_lang(locale).get("text", {}) for locale in SCHEMA_LOCALES}
 
         # An addon the editor marks deprecated is hidden from its Add object
         # and Add behavior dialogs; it is left out here whether or not the
@@ -306,7 +293,7 @@ class C3Fetcher:
                         plugin_json["commonAces"] = common_of[plugin_id]
 
                     for category, ace_types in categories.items():
-                        for ace_type_plural in ("conditions", "actions", "expressions"):
+                        for ace_type_plural in SCHEMA_ACE_TYPES:
                             for ace in ace_types.get(ace_type_plural, []):
                                 ace_id = ace.get("id", "")
 
@@ -408,7 +395,6 @@ class C3Fetcher:
                 # Index entry (language-neutral). Counts are those of the
                 # written file, not of allAces: deprecated ACEs were skipped
                 # above, identically for every locale.
-                section = "plugins" if plugin_type == "plugin" else "behaviors"
                 index_entry: dict = {
                     "file": f"{addon_type}/{pid_lower}.json",
                     "conditions": len(plugin_json["conditions"]),
@@ -418,7 +404,7 @@ class C3Fetcher:
                 if plugin_id != COMMON_ADDON_ID:
                     # The CDN spelling of the id; _common has none.
                     index_entry = {"originalId": plugin_id, **index_entry}
-                index_data[section][pid_lower] = index_entry
+                index_data[addon_type][pid_lower] = index_entry
 
         # ── Effects ───────────────────────────────────────────────────────
         # allEffects.json flags the effects the Add effect dialog hides.
@@ -607,8 +593,6 @@ class C3Fetcher:
 
         Returns the ts-defs output directory path.
         """
-        import time
-
         ts_dir = self.cache_dir / "ts-defs"
         marker = ts_dir / ".exported"
         if marker.exists() and not _cache_expired(marker):
@@ -626,10 +610,7 @@ class C3Fetcher:
                 continue  # already cached
             out_path.parent.mkdir(parents=True, exist_ok=True)
             try:
-                raw = self.fetch_raw(dts_path)
-                # Strip BOM
-                raw = self._strip_bom(raw)
-                out_path.write_bytes(raw)
+                out_path.write_bytes(_strip_bom(self.fetch_raw(dts_path)))
                 fetched += 1
                 # Throttle: 100ms between requests to be respectful
                 if fetched % 10 == 0:
@@ -718,7 +699,7 @@ class C3Fetcher:
         """Fetch precompiled language file (en-US or zh-CN)."""
         return self.fetch(ENDPOINTS["lang"].format(locale=locale))
 
-    def export_lang(self, locales: tuple[str, ...] = ("en-US", "zh-CN")) -> Path:
+    def export_lang(self, locales: tuple[str, ...] = SCHEMA_LOCALES) -> Path:
         """Save the raw precompiled language packs as readable JSON.
 
         The CDN serves them minified on one line. Re-serialising with

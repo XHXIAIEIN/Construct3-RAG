@@ -19,7 +19,21 @@ from src.lookup.formatting import (
     match_from_item,
 )
 from src.lookup.schema_index import SchemaIndex
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 from src.lookup.term_index import TermIndex
+
+
+# The ace_type of a match, per ACE list of a schema file.
+_SINGULAR = {
+    "conditions": "condition",
+    "actions": "action",
+    "expressions": "expression",
+}
+
+
+def _ace_types_of(intent: LookupIntent) -> list[str]:
+    """The ACE lists an intent names, from its comma-separated ``ace_type``."""
+    return [value.strip() for value in intent.ace_type.split(",") if value.strip()]
 
 
 class LookupHandlers:
@@ -52,6 +66,15 @@ class LookupHandlers:
         prefix = "behavior" if intent.is_behavior else "plugin"
         return f"{prefix}-{canonical_id}"
 
+    def _example_line(self, schema: dict, intent: LookupIntent) -> str:
+        """The "Related examples" line of an addon, empty when none uses it."""
+        example_records = self.examples_index.search(
+            [self._get_example_tag(schema, intent)],
+            max_results=3,
+            names=[schema.get("name_en", "")],
+        )
+        return ExamplesIndex.format_for_ace(example_records)
+
     def _format_ace_list(
         self,
         intent: LookupIntent,
@@ -63,11 +86,7 @@ class LookupHandlers:
         if not schema:
             return "", []
 
-        ace_types = [
-            value.strip()
-            for value in intent.ace_type.split(",")
-            if value.strip()
-        ]
+        ace_types = _ace_types_of(intent)
         if len(ace_types) > 1:
             contexts = []
             all_matches = []
@@ -104,11 +123,6 @@ class LookupHandlers:
         if not any(items for _, _, items in sources):
             return "", []
 
-        singular = {
-            "conditions": "condition",
-            "actions": "action",
-            "expressions": "expression",
-        }
         prefix = ACE_PREFIX.get(ace_type, "?")
         plugin_en = schema.get(
             "name_en",
@@ -137,7 +151,7 @@ class LookupHandlers:
                 matches.append(
                     match_from_item(
                         item,
-                        singular.get(ace_type, ace_type),
+                        _SINGULAR.get(ace_type, ace_type),
                         source_id,
                         source_zh,
                         name_en,
@@ -150,13 +164,7 @@ class LookupHandlers:
                 )
 
         lines.append(build_zh_line(plugin_en, plugin_zh, zh_pairs))
-        example_tag = self._get_example_tag(schema, intent)
-        example_records = self.examples_index.search(
-            [example_tag],
-            max_results=3,
-            names=[schema.get("name_en", "")],
-        )
-        example_line = ExamplesIndex.format_for_ace(example_records)
+        example_line = self._example_line(schema, intent)
         if example_line:
             lines.extend(("", example_line))
         return "\n".join(line for line in lines if line), matches
@@ -193,11 +201,6 @@ class LookupHandlers:
         if not found_item:
             return "", []
 
-        singular = {
-            "conditions": "condition",
-            "actions": "action",
-            "expressions": "expression",
-        }
         plugin_en = schema.get("name_en", intent.plugin_id)
         plugin_zh = schema.get("name_zh", "")
         name_en = found_item.get("name_en", "")
@@ -228,19 +231,13 @@ class LookupHandlers:
             else []
         )
         lines.append(build_zh_line(plugin_en, plugin_zh, zh_pairs))
-        example_tag = self._get_example_tag(schema, intent)
-        example_records = self.examples_index.search(
-            [example_tag],
-            max_results=3,
-            names=[schema.get("name_en", "")],
-        )
-        example_line = ExamplesIndex.format_for_ace(example_records)
+        example_line = self._example_line(schema, intent)
         if example_line:
             lines.extend(("", example_line))
 
         match = match_from_item(
             found_item,
-            singular.get(found_type, found_type),
+            _SINGULAR.get(found_type, found_type),
             intent.plugin_id,
             plugin_zh,
             name_en,
@@ -273,7 +270,7 @@ class LookupHandlers:
         plugin_common = {
             key: value
             for key, value in common_schema.items()
-            if key not in ("conditions", "actions", "expressions")
+            if key not in SCHEMA_ACE_TYPES
         }
         for ace_type, ace_ids in schema.get("commonAces", {}).items():
             listed = set(ace_ids)
@@ -336,11 +333,7 @@ class LookupHandlers:
                 )
 
         ace_types = sorted(
-            [
-                value.strip()
-                for value in intent.ace_type.split(",")
-                if value.strip()
-            ],
+            _ace_types_of(intent),
             key=lambda value: ACE_SORT_ORDER.get(value, 99),
         )
         if not ace_types:
@@ -434,11 +427,6 @@ class LookupHandlers:
         lines: list[str] = []
         zh_pairs: list[tuple[str, str]] = []
         matches: list[LookupMatch] = []
-        singular = {
-            "conditions": "condition",
-            "actions": "action",
-            "expressions": "expression",
-        }
         for (
             _,
             match_count,
@@ -476,7 +464,7 @@ class LookupHandlers:
 
             match = match_from_item(
                 item,
-                singular.get(ace_type, ace_type),
+                _SINGULAR.get(ace_type, ace_type),
                 source_id,
                 current_schema.get("name_zh", ""),
                 name_en,

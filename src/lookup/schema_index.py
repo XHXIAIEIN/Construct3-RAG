@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Any
 
 from src.lookup.schema_layout import (
+    SCHEMA_ACE_TYPES,
+    SCHEMA_INDEX_FILE,
     SCHEMA_LOCALES,
     SchemaManifestError,
     load_locale_index,
@@ -20,6 +22,13 @@ logger = logging.getLogger(__name__)
 
 def _is_ascii_identifier_char(char: str) -> bool:
     return char == "_" or "0" <= char <= "9" or "a" <= char.lower() <= "z"
+
+
+def _is_whole_word(text: str, start: int, end: int) -> bool:
+    """Whether ``text[start:end]`` has no identifier character on either side."""
+    return (start == 0 or not _is_ascii_identifier_char(text[start - 1])) and (
+        end == len(text) or not _is_ascii_identifier_char(text[end])
+    )
 
 
 def _merge_bilingual(en: dict, zh: dict) -> dict:
@@ -36,7 +45,7 @@ def _merge_bilingual(en: dict, zh: dict) -> dict:
         "commonAces": en.get("commonAces", {}),
     }
 
-    for ace_type in ("conditions", "actions", "expressions"):
+    for ace_type in SCHEMA_ACE_TYPES:
         zh_map = {
             item.get("id", ""): item for item in zh.get(ace_type, [])
         }
@@ -170,7 +179,7 @@ class SchemaIndex:
         self._loaded = True
 
         index_data: dict = {}
-        index_path = self._schema_dir / "_index.json"
+        index_path = self._schema_dir / SCHEMA_INDEX_FILE
         if index_path.exists():
             try:
                 index_data = json.loads(index_path.read_text(encoding="utf-8"))
@@ -259,9 +268,6 @@ class SchemaIndex:
         if effect_id not in ids:
             ids.append(effect_id)
 
-    # Compatibility for callers that used the historical private loader.
-    _load = ensure_loaded
-
     def _register_names(
         self,
         data: dict,
@@ -306,17 +312,9 @@ class SchemaIndex:
             start = query_lower.find(registered)
             while start >= 0:
                 end = start + len(registered)
-                if registered.isascii():
-                    left_ok = start == 0 or not _is_ascii_identifier_char(
-                        query_lower[start - 1]
-                    )
-                    right_ok = (
-                        end == len(query_lower)
-                        or not _is_ascii_identifier_char(query_lower[end])
-                    )
-                    if not (left_ok and right_ok):
-                        start = query_lower.find(registered, start + 1)
-                        continue
+                if registered.isascii() and not _is_whole_word(query_lower, start, end):
+                    start = query_lower.find(registered, start + 1)
+                    continue
                 candidates.append(
                     (len(registered), -start, end, plugin_id, is_behavior)
                 )
@@ -338,16 +336,8 @@ class SchemaIndex:
             if start < 0:
                 continue
             end = start + len(registered)
-            if registered.isascii():
-                left_ok = start == 0 or not _is_ascii_identifier_char(
-                    query_lower[start - 1]
-                )
-                right_ok = (
-                    end == len(query_lower)
-                    or not _is_ascii_identifier_char(query_lower[end])
-                )
-                if not (left_ok and right_ok):
-                    continue
+            if registered.isascii() and not _is_whole_word(query_lower, start, end):
+                continue
             candidates.append((len(registered), -start, end, tuple(effect_ids)))
         if not candidates:
             return None

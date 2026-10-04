@@ -29,6 +29,7 @@ from src.locale.resources import (
     TRANSLATE_QUERY_PATTERNS,
 )
 from src.lookup.schema_index import SchemaIndex
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +96,6 @@ class IntentClassifier:
         if intent:
             logger.info(f"[Lookup] example_find hit: tags={intent.matched_tags}")
             return intent
-
 
         # Keyword inference (plugin + topic → ace_search)
         intent = self._keyword_infer(query)
@@ -169,7 +169,7 @@ class IntentClassifier:
         q_lower = query.lower()
         if not any(kw in q_lower for kw in EXAMPLE_QUERY_KEYWORDS_ZH_EN):
             return None
-        matched_tags: List[str] = []
+        matched_tags: list[str] = []
         entity = self.schema.find_name_in_query(query)
         if entity:
             plugin_id, is_behavior, _, _ = entity
@@ -251,22 +251,18 @@ class IntentClassifier:
             flags=re.IGNORECASE,
         )
 
-        # Tokenize topic — split on particles, then on CJK/ASCII boundaries.
-        tokens = re.split(QUERY_PARTICLE_SPLIT_PATTERN_ZH, remainder)
-        split = []
-        for t in tokens:
-            t = t.strip()
-            if t:
-                # Split on CJK ↔ ASCII boundary: "Sprite字体" → ["Sprite", "字体"]
-                split.extend(
-                    part for part in re.split(CJK_ASCII_BOUNDARY_PATTERN, t)
-                    if part
-                )
-        tokens = split
+        # Tokenize topic — split on particles, then on the CJK ↔ ASCII
+        # boundary: "Sprite字体" → ["Sprite", "字体"].
+        remaining_tokens = [
+            part
+            for token in re.split(QUERY_PARTICLE_SPLIT_PATTERN_ZH, remainder)
+            if token.strip()
+            for part in re.split(CJK_ASCII_BOUNDARY_PATTERN, token.strip())
+            if part
+        ]
 
         # Ambiguity check: if plugin name is a common English word and
         # remaining tokens are all generic, skip lookup (e.g. "custom action")
-        remaining_tokens = [t for t in tokens if t]
         if plugin_id in AMBIGUOUS_PLUGIN_IDS_EN:
             remaining_lower = {t.lower() for t in remaining_tokens}
             if remaining_lower and remaining_lower <= GENERIC_QUERY_WORDS_EN:
@@ -274,14 +270,11 @@ class IntentClassifier:
 
         # 3. Count meaningful tokens to detect complex multi-concept queries.
         #    Skip words and single-char noise are filtered out.
-        def _is_useful(tok: str) -> bool:
-            if tok.lower() in _HOWTO_NOISE_LOWER:
-                return False
-            if len(tok) <= 1:
-                return False
-            return True
-
-        useful_tokens = [t for t in remaining_tokens if _is_useful(t)]
+        useful_tokens = [
+            t
+            for t in remaining_tokens
+            if t.lower() not in _HOWTO_NOISE_LOWER and len(t) > 1
+        ]
         if len(useful_tokens) > 3:
             return None  # complex multi-concept query: decline
 
@@ -291,7 +284,7 @@ class IntentClassifier:
             return LookupIntent(
                 intent_type="ace_list",
                 plugin_id=plugin_id,
-                ace_type="conditions,actions,expressions",
+                ace_type=",".join(SCHEMA_ACE_TYPES),
                 is_behavior=is_behavior,
                 tier=1,
                 confidence=0.90,
@@ -319,11 +312,11 @@ class IntentClassifier:
         # 6. Infer ACE types from topic tokens (narrow search if possible)
         ace_types = _infer_ace_types(topic_tokens)
         if not ace_types:
-            ace_types = ["conditions", "actions", "expressions"]
+            ace_types = list(SCHEMA_ACE_TYPES)
 
         # Confidence: base 0.70 + bonus for specific ACE types and useful tokens
         conf = 0.70
-        if len(ace_types) < 3:
+        if len(ace_types) < len(SCHEMA_ACE_TYPES):
             conf += 0.10  # narrowed ACE types = higher confidence
         if useful_tokens:
             conf += 0.05  # explicit filter keywords present

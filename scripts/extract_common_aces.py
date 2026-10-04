@@ -30,9 +30,8 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
 from src.settings import load_settings
-from src.ingest.c3_fetcher import C3Fetcher, latest_stable_version
+from src.ingest.c3_fetcher import ENDPOINTS, C3Fetcher, latest_stable_version
 from src.ingest.common_aces import (
-    ACE_TYPES,
     COMMON_ACES_PATH,
     COMMON_ADDON_ID,
     check_common_coverage,
@@ -40,6 +39,7 @@ from src.ingest.common_aces import (
     extract_common_requirements,
     extract_plugin_flags,
 )
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 
 
 def main() -> None:
@@ -66,23 +66,23 @@ def main() -> None:
         main_js = args.main_js.read_text(encoding="utf-8", errors="replace")
         source_version = args.release or "local file " + args.main_js.name
     else:
-        main_js = fetcher.fetch_raw("main.js").decode("utf-8", errors="replace")
+        main_js = fetcher.fetch_raw(ENDPOINTS["main_js"]).decode("utf-8", errors="replace")
         source_version = latest
     if args.plugins_js:
         plugins_js = args.plugins_js.read_text(encoding="utf-8", errors="replace")
     else:
-        plugins_js = fetcher.fetch_raw("plugins/allEditorPlugins.js").decode("utf-8", errors="replace")
+        plugins_js = fetcher.fetch_raw(ENDPOINTS["plugin_js"]).decode("utf-8", errors="replace")
 
     categories = extract_common_aces(main_js, lang_common)
     check_common_coverage(categories, lang_common)
     requires = extract_common_requirements(main_js, lang_common)
     plugins = extract_plugin_flags(main_js, plugins_js, lang_common)
 
-    counts = {t: sum(len(c.get(t, [])) for c in categories.values()) for t in ACE_TYPES}
+    counts = {t: sum(len(c.get(t, [])) for c in categories.values()) for t in SCHEMA_ACE_TYPES}
     payload = {
         "_source": {
             "file": "main.js",
-            "url": fetcher.url("main.js"),
+            "url": fetcher.url(ENDPOINTS["main_js"]),
             "block": "the function that registers plugins._common in the editor bundle",
             "plugins": "plugins/allEditorPlugins.js, the constructor of each built-in plugin",
             "release": source_version,

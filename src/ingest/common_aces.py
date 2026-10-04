@@ -22,6 +22,8 @@ import json
 import re
 from pathlib import Path
 
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES as ACE_TYPES
+
 COMMON_ADDON_ID = "_common"
 # Display name when a language pack has none (en-US says "(unused)", zh-CN nothing).
 COMMON_ADDON_NAME = "Common"
@@ -31,8 +33,6 @@ COMMON_ACES_PATH = Path(__file__).with_name("common_aces.json")
 # this string. It is the language-pack path of the block, so it is expected
 # to outlive the minified method names around it.
 BUNDLE_ANCHOR = '"plugins._common"'
-
-ACE_TYPES = ("conditions", "actions", "expressions")
 
 
 def load_common_aces(path: Path = COMMON_ACES_PATH) -> dict[str, dict[str, list[dict]]]:
@@ -85,8 +85,9 @@ def check_common_coverage(categories: dict[str, dict[str, list[dict]]], lang_com
 
 # The properties every world instance has. Their text is in the language
 # pack, but under ``ui.bars.properties.instance``: the ``plugins._common``
-# entry a plugin's properties would come from carries ACE text only, so the
-# export used to leave ``_common`` with an empty properties dict.
+# entry a plugin's properties would come from carries ACE text only, so an
+# export that read the properties there would leave ``_common`` with an empty
+# properties dict.
 #
 # ``lang`` is the path to the text, ``written`` the key of the instance in a
 # project file and the unit when the properties bar shows another one. Where
@@ -247,6 +248,19 @@ def _function_body(source: str, anchor_pos: int) -> tuple[int, str]:
     return body_start, _literal_at(source, body_start)
 
 
+def _bundle_anchor(main_js: str) -> int:
+    """The offset of the one ``BUNDLE_ANCHOR`` in ``main.js``."""
+    anchors = [m.start() for m in re.finditer(re.escape(BUNDLE_ANCHOR), main_js)]
+    if len(anchors) != 1:
+        raise ValueError(f"expected one {BUNDLE_ANCHOR} anchor in main.js, found {len(anchors)}")
+    return anchors[0]
+
+
+def _lang_ids(lang_common: dict) -> dict[str, set[str]]:
+    """The shared ACE ids one language pack lists, by ACE type."""
+    return {ace_type: set(lang_common.get(ace_type, {})) for ace_type in ACE_TYPES}
+
+
 def extract_common_aces(main_js: str, lang_common: dict) -> dict[str, dict[str, list[dict]]]:
     """Parse the shared-ACE block of the editor bundle.
 
@@ -259,15 +273,10 @@ def extract_common_aces(main_js: str, lang_common: dict) -> dict[str, dict[str, 
     object, definition wins and the duplicate must agree on parameter ids and
     types.
     """
-    anchors = [m.start() for m in re.finditer(re.escape(BUNDLE_ANCHOR), main_js)]
-    if len(anchors) != 1:
-        raise ValueError(f"expected one {BUNDLE_ANCHOR} anchor in main.js, found {len(anchors)}")
-    body_offset, body = _function_body(main_js, anchors[0])
+    _, body = _function_body(main_js, _bundle_anchor(main_js))
 
     categories = set(lang_common.get("aceCategories", {}))
-    lang_ids = {
-        ace_type: set(lang_common.get(ace_type, {})) for ace_type in ACE_TYPES
-    }
+    lang_ids = _lang_ids(lang_common)
 
     # The receiver that registers ACEs also sets the category, e.g. t.$("angle").
     first = re.search(r'([\w$]+)\.[\w$]+\(\{id:"', body)
@@ -457,15 +466,12 @@ def _sdk_names(main_js: str) -> dict[str, str]:
 def _common_guards(main_js: str, lang_common: dict) -> tuple[list[tuple[int, str, dict]], list[tuple[int, int, str, str]]]:
     """The registrations of the _common block and its guards, each guard as
     ``(start, end, requirement, field of the info class)``."""
-    anchors = [m.start() for m in re.finditer(re.escape(BUNDLE_ANCHOR), main_js)]
-    if len(anchors) != 1:
-        raise ValueError(f"expected one {BUNDLE_ANCHOR} anchor in main.js, found {len(anchors)}")
-    params = re.match(r"function\(([\w$]+),([\w$]+)\)", main_js[main_js.rfind("function(", 0, anchors[0]):])
+    anchor = _bundle_anchor(main_js)
+    params = re.match(r"function\(([\w$]+),([\w$]+)\)", main_js[main_js.rfind("function(", 0, anchor):])
     if params is None:
         raise ValueError("the _common block does not take (registrar, plugin info)")
-    _, body = _function_body(main_js, anchors[0])
-    lang_ids = {ace_type: set(lang_common.get(ace_type, {})) for ace_type in ACE_TYPES}
-    registrations = list(_registrations(body, lang_ids))
+    _, body = _function_body(main_js, anchor)
+    registrations = list(_registrations(body, _lang_ids(lang_common)))
 
     setters, getters, _ = _info_class(main_js)
     sdk = _sdk_names(main_js)

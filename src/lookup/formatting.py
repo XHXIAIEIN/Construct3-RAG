@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from src.domain.lookup import ACELocale, LookupMatch
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 
 
 ACE_PREFIX: dict[str, str] = {
@@ -10,10 +11,9 @@ ACE_PREFIX: dict[str, str] = {
     "actions": "A",
     "expressions": "E",
 }
+# Results list conditions, then actions, then expressions, as a schema file does.
 ACE_SORT_ORDER: dict[str, int] = {
-    "conditions": 0,
-    "actions": 1,
-    "expressions": 2,
+    ace_type: order for order, ace_type in enumerate(SCHEMA_ACE_TYPES)
 }
 TERM_TRANSLATE_HEADER = '**"{term}"** translation results ({count} items):\n'
 TERM_TABLE_HEADER = "| # | Chinese | English | Key |"
@@ -22,36 +22,32 @@ TERM_TABLE_SEPARATOR = "|---|---------|---------|-----|"
 _GENERIC_PARAM_TYPES = frozenset({"cmp"})
 
 
-def format_params(params: list[dict]) -> str:
-    """Build a compact multi-parameter action/expression signature."""
-    semantic = [
+def _semantic_params(params: list[dict]) -> list[dict]:
+    """The parameters that say what the ACE does, without comparison operands."""
+    return [
         param
         for param in params
         if param.get("type", "") not in _GENERIC_PARAM_TYPES
     ]
-    if len(semantic) <= 1:
-        return ""
+
+
+def _joined_names(params: list[dict]) -> str:
     return ",".join(
         param.get("name_en", "").strip()
-        for param in semantic
+        for param in params
         if param.get("name_en", "").strip()
     )
+
+
+def format_params(params: list[dict]) -> str:
+    """Build a compact multi-parameter action/expression signature."""
+    semantic = _semantic_params(params)
+    return _joined_names(semantic) if len(semantic) > 1 else ""
 
 
 def format_condition_sig(name_en: str, params: list[dict]) -> str:
     """Build a condition signature, omitting generic comparison operands."""
-    semantic = [
-        param
-        for param in params
-        if param.get("type", "") not in _GENERIC_PARAM_TYPES
-    ]
-    if not semantic:
-        return name_en
-    param_text = ",".join(
-        param.get("name_en", "").strip()
-        for param in semantic
-        if param.get("name_en", "").strip()
-    )
+    param_text = _joined_names(_semantic_params(params))
     return f"{name_en}({param_text})" if param_text else name_en
 
 
@@ -108,10 +104,3 @@ def match_from_item(
         is_async=item.get("isAsync", False),
         return_type=item.get("returnType", ""),
     )
-
-
-# Historical private helper aliases used by a few local callers.
-_format_params = format_params
-_format_condition_sig = format_condition_sig
-_build_zh_line = build_zh_line
-_match_from_item = match_from_item
