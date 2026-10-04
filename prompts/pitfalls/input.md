@@ -63,6 +63,15 @@ Sources and the rule for adding an entry are in the index,
   a button ran its *On touched object* event with the button invisible, with
   its collisions disabled and with its layer invisible, and did not with the
   layer not interactive]
+- The same conditions pick every instance under the pointer, not the one in
+  front. So when popups or buttons overlap, a press on the front one also
+  runs the event for each instance behind it. Add *Pick top/bottom* (top)
+  under the trigger: it keeps the front instance, counting layers first and
+  then Z order, so it works across popup layers too. It compares instances of
+  one object type, so buttons made of several types go into a family and the
+  event uses the family. [manual: plugin-reference/common-features/common-conditions.md
+  "Pick top/bottom"; runtime: the `TestAndSelectCanvasPointOverlap` of the
+  entry above selects each instance that contains the point]
 - *Simulate control* acts in the tick it runs, as if the control were held
   for that tick. So put it in an event whose condition stays true while the
   control is held, such as Keyboard *Key is down*. In an *On key pressed*
