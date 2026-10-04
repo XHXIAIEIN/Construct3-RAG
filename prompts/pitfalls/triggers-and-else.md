@@ -40,7 +40,9 @@ Sources and the rule for adding an entry are in the index,
   move. *Trigger once* does not fix it: under conditions that test values,
   the flip happens once each time they turn true, not once per tap. An
   event whose actions change what it tests runs once, such as one that
-  resets the flag a tap raised. `check_project.py` warns about the flip,
+  resets the flag a tap raised. A turn that also passes when its time runs
+  out keeps that flip in the event that tests the time left, which sets
+  the time back in the same actions. `check_project.py` warns about the flip,
   and `edit_sheet.py` refuses it in an event a plan creates. [manual:
   project-primitives/events/how-events-work.md "Events run top to bottom";
   observed in a generated board game, 2026-10-04: the turn change in a

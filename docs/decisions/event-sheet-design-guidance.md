@@ -168,7 +168,9 @@ in an event a plan creates, and its line names the fix: *Trigger once*, the
 condition that holds while the input is held (*Key is down* with the
 trigger's key), or the `Count` test in an event of its own. For `flip` it
 names the event whose trigger causes the change, such as *On touched
-object* for a tap. In the user's own events they stay warnings. A counter
+object* for a tap. A flip that a value running out causes, such as the
+time left of a turn, has no trigger to move into, so the line also names
+the action that sets that value back in the same event. In the user's own events they stay warnings. A counter
 kept beside an instance count, and a door left Solid, have no form a check
 can tell from sound code: `SKILL.md` names `Count` among the built-ins and
 the Solid among the gotchas.
@@ -299,10 +301,6 @@ is two lines of the style prompt).
 - `flip-once` names a sheet that flips a value once a round on purpose,
   such as the side that starts the next round. Narrow it to an *Else* with
   *Trigger once*, the form the seeded case produces.
-- A model that the `flip` line refuses for a timeout flip moves the flip
-  under the tap, and no timeout passes the turn. The line gives only a
-  touch trigger as its example, so add the second fix to it: set the time
-  back in the same event.
 - The official examples change: rerun the survey scripts; the thresholds
   are constants at the top of `check_project.py`.
 - A game needs real art at generation time: design a generator that writes

@@ -1219,6 +1219,20 @@ def test_a_variable_flipped_on_every_tick_is_named(project, rows, said):
     assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
 
 
+RUN_OUT = cond("compare-eventvar", params={"variable": "phase", "comparison": 3, "value": "0"})
+
+
+@pytest.mark.parametrize("actions, told", [([FLIP_SIDE], True), ([FLIP_SIDE, set_var("phase", "5", 54)], False)])
+def test_a_flip_on_a_timeout_is_told_to_set_the_time_back(project, actions, told):
+    """A turn that passes when its time runs out has no trigger to move into: the line names the variable its
+    event tests, to set back in the same actions, and with that action the event passes."""
+    out = findings(project, side_and_phase([block([RUN_OUT], actions)]))
+    said = [w for w in warnings(out) if " flips " in w]
+    reset = ('keep the flip here and set that value back in the same actions, {"id": "set-eventvar-value", '
+             '"objectClass": "System", "parameters": {"variable": "phase", "value": "<its start value>"}}')
+    assert (len(said) == 1 and reset in said[0]) if told else not said, out
+
+
 @pytest.mark.parametrize("ace_id, flipped", [("on-animation-finished", False), ("is-animation-playing", True)])
 def test_a_condition_without_a_schema_is_a_trigger_when_its_id_starts_with_on(project, ace_id, flipped):
     """A condition of an addon without a schema counts as a trigger when its id starts with on-, as Scirra's

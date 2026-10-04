@@ -51,7 +51,7 @@ variable that flips, read
 - The editor treats *On collision with another object*, Timer *On timer* and the Gamepad button conditions as triggers, with every rule above, but the runtime tests them in sheet order.
 - A trigger, a loop, *Else*, *Trigger once* and the conditions that only pick cannot be inverted. For "not on collision", invert *Is overlapping*.
 - *Trigger once* and *Every X seconds* do nothing useful under a trigger, and the editor does not offer them there.
-- An event runs every tick unless a trigger, *Every X seconds* or *Trigger once* is in it or above it, so a variable it flips with *Toggle* or `3 - x` changes on every tick. Flip it in the event whose trigger causes the change, or in a sub-event of it, such as a pause flag in *On key pressed*; *Trigger once* flips it once when the conditions turn true, not once per input.
+- An event runs every tick unless a trigger, *Every X seconds* or *Trigger once* is in it or above it, so a variable it flips with *Toggle* or `3 - x` changes on every tick. Flip it in the event whose trigger causes the change, or in a sub-event of it, such as a pause flag in *On key pressed*; a timeout flips it in the event that tests the time left and sets the time back there; *Trigger once* flips it once when the conditions turn true, not once per input.
 - A trigger can fire with several instances picked, Timer *On timer* included. If a *Pick nearest* or a function call is written for one, add *For each* after the trigger.
 - Else is decided per block, not per instance. Branch per instance with a second event and the inverted condition, or override a default.
 - Else does not narrow. It cannot directly follow a trigger block, only a normal sub-event inside one.

@@ -2061,12 +2061,19 @@ class Checker:
                              f"flip into the event whose trigger causes the change, or into a sub-event of it, such "
                              f"as {trigger} with the tapped object for <Object>")
             return
+        # A timeout has no trigger: the event that tests the time left resets it, and so runs once.
+        timer = next((params_of(c).get("variable") for c in tested if c.get("id") == "compare-eventvar"
+                      and params_of(c).get("variable") != name), None)
+        reset = json.dumps({"id": "set-eventvar-value", "objectClass": "System",
+                            "parameters": {"variable": timer or "<the time left>", "value": "<its start value>"}})
         self.p.findings.style_finding(
             "flip", f"{where}: {what} flips {name} on every tick, so an input can read either value: no trigger is "
                     f"in its event or above it. Move the flip into the event whose trigger causes the change, or "
                     f"into a sub-event of it. Trigger once does not fix it: it flips {name} once when the "
                     f"conditions turn true, not once per change. An event of its own for the flip starts with "
-                    f"that trigger, such as {trigger}, with the tapped object for <Object>")
+                    f"that trigger, such as {trigger}, with the tapped object for <Object>. If a value that runs "
+                    f"out causes the change, such as the time left of a turn, keep the flip here and set that value "
+                    f"back in the same actions, {reset}: the event then runs once each time it runs out")
 
     def none_left(self, c: dict) -> tuple[str, str] | None:
         """Return (the object type, "count" or "pickedcount") when a condition tests that none of the type is

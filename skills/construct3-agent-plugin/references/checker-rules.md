@@ -82,7 +82,10 @@ Traps of the running game are warnings:
   calls, changes what a condition tests: it sets a variable, creates or
   destroys a type, or acts on an object that the condition names or reads.
   It also passes when an action leaves the group or layout. An event that
-  starts with *Else* also tests the event it answers. Under *Trigger once*
+  starts with *Else* also tests the event it answers. The finding names
+  the triggering event to move the flip into, and, for a value that runs
+  out such as the time left of a turn, the *Set* that puts it back in the
+  same actions. Under *Trigger once*
   alone, with conditions that test values, the flip happens once each time
   they turn true, not once per input: a warning that `edit_sheet.py` does
   not refuse, since a flip once a round is sound;
