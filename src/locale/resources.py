@@ -15,8 +15,7 @@ from typing import Any
 
 
 CATALOG_PATH = Path(__file__).with_name("catalog.json")
-with CATALOG_PATH.open("r", encoding="utf-8") as _handle:
-    CATALOG: dict[str, Any] = json.load(_handle)
+CATALOG: dict[str, Any] = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
 
 if CATALOG.get("schema_version") != 1:
     raise ValueError("unsupported locale catalog schema_version")
@@ -64,8 +63,12 @@ def _validate_metadata(resource: dict[str, Any], path: str) -> None:
         raise ValueError(f"{path}.source has unknown prefixes: {sorted(unknown_prefixes)}")
 
 
-def _merged_localized_list(value: Any, path: str) -> tuple[Any, ...]:
-    localized = _localized(value, path)
+def _query_list(*keys: str) -> tuple[Any, ...]:
+    """Return the localized lists at ``query.<keys>``, joined in query locale order."""
+    value: Any = _QUERY
+    for key in keys:
+        value = value[key]
+    localized = _localized(value, ".".join(("query", *keys)))
     return tuple(item for locale in QUERY_LOCALE_ORDER for item in localized[locale])
 
 
@@ -110,21 +113,14 @@ for _rule_id, _rule in _DIRECTED_ALIAS_DATA.items():
 
 
 ACE_INTENT_KEYWORDS: dict[str, frozenset[str]] = {
-    ace_type: frozenset(
-        _merged_localized_list(
-            resource["intent_keywords"],
-            f"query.ace_types.{ace_type}.intent_keywords",
-        )
-    )
-    for ace_type, resource in _ACE_TYPES.items()
+    ace_type: frozenset(_query_list("ace_types", ace_type, "intent_keywords"))
+    for ace_type in _ACE_TYPES
 }
 
 ACE_TYPE_ALIASES: dict[str, str] = {
     alias.casefold(): ace_type
-    for ace_type, resource in _ACE_TYPES.items()
-    for alias in _merged_localized_list(
-        resource["aliases"], f"query.ace_types.{ace_type}.aliases"
-    )
+    for ace_type in _ACE_TYPES
+    for alias in _query_list("ace_types", ace_type, "aliases")
 }
 
 _ACE_TYPE_PATTERN = "|".join(
@@ -134,13 +130,12 @@ _ACE_TYPE_PATTERN = "|".join(
 
 
 def _grammar_patterns(intent: str) -> tuple[str, ...]:
-    patterns: list[str] = []
-    for locale in QUERY_LOCALE_ORDER:
-        for rule in _QUERY["grammar"][intent].values():
-            template = rule["patterns"][locale]
-            if template:
-                patterns.append(template.format(ace_type=_ACE_TYPE_PATTERN))
-    return tuple(patterns)
+    return tuple(
+        rule["patterns"][locale].format(ace_type=_ACE_TYPE_PATTERN)
+        for locale in QUERY_LOCALE_ORDER
+        for rule in _QUERY["grammar"][intent].values()
+        if rule["patterns"][locale]
+    )
 
 
 LIST_QUERY_PATTERNS = _grammar_patterns("list")
@@ -148,39 +143,22 @@ DETAIL_QUERY_PATTERNS = _grammar_patterns("detail")
 TRANSLATE_QUERY_PATTERNS = _grammar_patterns("translate")
 
 HOWTO_HARD_SKIP_ZH: frozenset[str] = frozenset(
-    _merged_localized_list(
-        _QUERY["howto"]["hard_skip"]["values"], "query.howto.hard_skip.values"
-    )
+    _query_list("howto", "hard_skip", "values")
 )
 HOWTO_SOFT_SKIP_ZH: frozenset[str] = frozenset(
-    _merged_localized_list(
-        _QUERY["howto"]["soft_skip"]["values"], "query.howto.soft_skip.values"
-    )
+    _query_list("howto", "soft_skip", "values")
 )
 DECLINE_MARKERS_EN: tuple[str, ...] = tuple(
-    marker.casefold()
-    for marker in _merged_localized_list(
-        _QUERY["howto"]["decline_markers"]["values"],
-        "query.howto.decline_markers.values",
-    )
+    marker.casefold() for marker in _query_list("howto", "decline_markers", "values")
 )
 EXAMPLE_QUERY_KEYWORDS_ZH_EN: tuple[str, ...] = tuple(
-    keyword.casefold()
-    for keyword in _merged_localized_list(
-        _QUERY["example_keywords"]["values"], "query.example_keywords.values"
-    )
+    keyword.casefold() for keyword in _query_list("example_keywords", "values")
 )
 EFFECT_QUERY_KEYWORDS_ZH_EN: tuple[str, ...] = tuple(
-    keyword.casefold()
-    for keyword in _merged_localized_list(
-        _QUERY["effect_keywords"]["values"], "query.effect_keywords.values"
-    )
+    keyword.casefold() for keyword in _query_list("effect_keywords", "values")
 )
 
-_PARTICLE_PATTERNS = _merged_localized_list(
-    _QUERY["tokenization"]["particle_split_patterns"]["values"],
-    "query.tokenization.particle_split_patterns.values",
-)
+_PARTICLE_PATTERNS = _query_list("tokenization", "particle_split_patterns", "values")
 QUERY_PARTICLE_SPLIT_PATTERN_ZH = (
     "(?:" + "|".join(f"(?:{pattern})" for pattern in _PARTICLE_PATTERNS) + ")"
     if _PARTICLE_PATTERNS
@@ -191,22 +169,14 @@ CJK_ASCII_BOUNDARY_PATTERN = (
     r"(?<=[A-Za-z0-9])(?=[\u4e00-\u9fff])"
 )
 
-_ROLE_WORDS = _localized(
-    _QUERY["tokenization"]["entity_role_words"]["values"],
-    "query.tokenization.entity_role_words.values",
-)
-_ASCII_ROLE_WORDS = tuple(word for word in _ROLE_WORDS["en-US"] if word.isascii())
-_NON_ASCII_ROLE_WORDS = tuple(
+_ROLE_WORDS = _query_list("tokenization", "entity_role_words", "values")
+_ASCII_ROLE_WORDS = tuple(
     word
-    for locale in QUERY_LOCALE_ORDER
-    for word in _ROLE_WORDS[locale]
-    if not word.isascii()
+    for word in _QUERY["tokenization"]["entity_role_words"]["values"]["en-US"]
+    if word.isascii()
 )
-_ROLE_ALTERNATION = "|".join(
-    re.escape(word)
-    for locale in QUERY_LOCALE_ORDER
-    for word in _ROLE_WORDS[locale]
-)
+_NON_ASCII_ROLE_WORDS = tuple(word for word in _ROLE_WORDS if not word.isascii())
+_ROLE_ALTERNATION = "|".join(map(re.escape, _ROLE_WORDS))
 ENTITY_ROLE_SUFFIX_PATTERN_ZH_EN = rf"(?:\s*(?:{_ROLE_ALTERNATION}))\s*$"
 ENTITY_ROLE_TOKEN_PATTERN_ZH_EN = "|".join(filter(None, (
     rf"\b(?:{'|'.join(map(re.escape, _ASCII_ROLE_WORDS))})\b" if _ASCII_ROLE_WORDS else "",
@@ -214,25 +184,14 @@ ENTITY_ROLE_TOKEN_PATTERN_ZH_EN = "|".join(filter(None, (
 )))
 
 AMBIGUOUS_PLUGIN_IDS_EN: frozenset[str] = frozenset(
-    value.casefold()
-    for value in _merged_localized_list(
-        _QUERY["ambiguity"]["plugin_ids"]["values"],
-        "query.ambiguity.plugin_ids.values",
-    )
+    value.casefold() for value in _query_list("ambiguity", "plugin_ids", "values")
 )
 GENERIC_QUERY_WORDS_EN: frozenset[str] = frozenset(
     value.casefold()
-    for value in _merged_localized_list(
-        _QUERY["ambiguity"]["generic_query_words"]["values"],
-        "query.ambiguity.generic_query_words.values",
-    )
+    for value in _query_list("ambiguity", "generic_query_words", "values")
 )
 AMBIGUOUS_BARE_TOPICS_ZH_EN: frozenset[str] = frozenset(
-    value.casefold()
-    for value in _merged_localized_list(
-        _QUERY["ambiguity"]["bare_topics"]["values"],
-        "query.ambiguity.bare_topics.values",
-    )
+    value.casefold() for value in _query_list("ambiguity", "bare_topics", "values")
 )
 
 
