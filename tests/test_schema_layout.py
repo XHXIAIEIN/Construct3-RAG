@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from src.lookup import SchemaIndex
 from src.lookup.schema_layout import (
     SchemaManifest,
     load_locale_index,
@@ -120,9 +121,7 @@ def test_load_locale_index_returns_localized_names(tmp_path):
 
 
 def test_effect_names_resolve_from_locale_indexes(tmp_path):
-    """The root index no longer carries names, so lookup must read the locale ones."""
-    from src.lookup import SchemaIndex
-
+    """The root index carries no names, so lookup reads the locale ones."""
     index = SchemaIndex(_make_schema(tmp_path / "schemas"))
 
     assert index.find_effect_in_query("加一个模糊特效") == (("blur",), 3, 5)
@@ -146,8 +145,6 @@ def test_schema_counts_uses_canonical_locale_names(tmp_path):
 
 def test_bundled_schema_is_self_contained_and_loadable():
     """A clean checkout must not need the developer cache for Direct Lookup."""
-    from src.lookup import SchemaIndex
-
     bundled = Path(__file__).parents[1] / "data" / "c3-schemas"
     assert schema_is_complete(bundled)
 

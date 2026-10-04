@@ -2,22 +2,20 @@
 Tests for the query router and direct lookup service.
 Uses the resolved committed/cache schema dataset but no external services.
 """
-import sys
-from pathlib import Path
+import json
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+import pytest
 
 from src.domain.lookup import LookupIntent
 from src.lookup import (
     SchemaIndex, TermIndex, IntentClassifier, LookupEngine, ExamplesIndex,
 )
+from src.settings import load_settings
 
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
-
-from src.settings import load_settings
 
 SCHEMA_DIR = load_settings().schema.directory
 
@@ -31,7 +29,9 @@ def make_classifier() -> IntentClassifier:
     return IntentClassifier(schema_index=make_schema_index())
 
 
-def make_engine() -> LookupEngine:
+@pytest.fixture(scope="module")
+def engine() -> LookupEngine:
+    """The engine the tests share; a test that changes it builds its own."""
     return LookupEngine(schema_dir=SCHEMA_DIR)
 
 
@@ -238,8 +238,7 @@ class TestIntentClassifier:
 class TestLookupEngineDetail:
     """Tests for structured ace_detail lookup responses."""
 
-    def test_ace_detail_returns_structured_match(self):
-        engine = make_engine()
+    def test_ace_detail_returns_structured_match(self, engine):
         resp = engine.try_lookup("Sprite 的 Set animation 怎么用")
         assert resp is not None
         assert resp.query_type == "lookup_ace_detail"
@@ -248,9 +247,8 @@ class TestLookupEngineDetail:
         ]
         assert "animation" in resp.context.lower()
 
-    def test_ace_detail_nonexistent_ace_falls_through(self):
+    def test_ace_detail_nonexistent_ace_falls_through(self, engine):
         """Query with valid plugin but non-matching ACE name returns None."""
-        engine = make_engine()
         resp = engine.try_lookup("Sprite 的 NonexistentAce12345 怎么用")
         assert resp is None
 
@@ -262,8 +260,7 @@ class TestLookupEngineDetail:
 class TestLookupEngine:
     """End-to-end tests: query to structured lookup response."""
 
-    def test_ace_list_returns_compact_format(self):
-        engine = make_engine()
+    def test_ace_list_returns_compact_format(self, engine):
         resp = engine.try_lookup("Sprite 有哪些 action")
         assert resp is not None
         assert resp.query_type == "lookup_ace_list"
@@ -275,8 +272,7 @@ class TestLookupEngine:
         # The shared actions Sprite's commonAces lists are part of its list.
         assert ("plugins", "_common", "action", "destroy") in result_keys(resp)
 
-    def test_prop_list(self):
-        engine = make_engine()
+    def test_prop_list(self, engine):
         resp = engine.try_lookup("Sprite 有哪些 属性")
         assert resp is not None
         assert resp.query_type == "lookup_prop_list"
@@ -284,9 +280,8 @@ class TestLookupEngine:
             "plugins", "sprite", "property", "edit-animations"
         )
 
-    def test_prop_list_platform_canshu(self):
+    def test_prop_list_platform_canshu(self, engine):
         """'Platform 行为有哪些主要参数' returns properties with jump/speed info."""
-        engine = make_engine()
         resp = engine.try_lookup("Platform 行为有哪些主要参数")
         assert resp is not None
         assert resp.query_type == "lookup_prop_list"
@@ -294,9 +289,8 @@ class TestLookupEngine:
         assert "跳跃" in resp.context
         assert "速度" in resp.context
 
-    def test_term_translate_returns_real_structured_terms(self):
+    def test_term_translate_returns_real_structured_terms(self, engine):
         """A translation hit must expose stable term identities, not context alone."""
-        engine = make_engine()
         resp = engine.try_lookup("翻译 Destroy")
         assert resp is not None
         assert resp.query_type == "lookup_term_translate"
@@ -306,34 +300,28 @@ class TestLookupEngine:
         assert resp.matches[0].en.name == "Destroy"
         assert resp.matches[0].zh.name == "销毁对象"
 
-    def test_chinese_tutorial_is_not_translation(self):
-        engine = make_engine()
+    def test_chinese_tutorial_is_not_translation(self, engine):
         assert engine.try_lookup("中文教程怎么做") is None
 
-    def test_unknown_translation_term_falls_through(self):
-        engine = make_engine()
+    def test_unknown_translation_term_falls_through(self, engine):
         assert engine.try_lookup("翻译 DefinitelyNotATerm999") is None
 
-    def test_solution_question_is_declined(self):
-        engine = make_engine()
+    def test_solution_question_is_declined(self, engine):
         resp = engine.try_lookup("如何实现存档系统？")
         assert resp is None
 
-    def test_behavior_lookup(self):
-        engine = make_engine()
+    def test_behavior_lookup(self, engine):
         resp = engine.try_lookup("Bullet 有哪些 action")
         assert resp is not None
         assert resp.intent.is_behavior is True
         assert "A:" in resp.context
 
-    def test_unknown_name_containing_sprite_does_not_resolve(self):
+    def test_unknown_name_containing_sprite_does_not_resolve(self, engine):
         """ASCII entity matching requires identifier boundaries."""
-        engine = make_engine()
         resp = engine.try_lookup("QuantumSprite 有哪些 actions")
         assert resp is None
 
-    def test_elapsed_ms(self):
-        engine = make_engine()
+    def test_elapsed_ms(self, engine):
         resp = engine.try_lookup("Sprite 有哪些 action")
         assert resp is not None
         assert resp.elapsed_ms >= 0
@@ -346,9 +334,8 @@ class TestLookupEngine:
 class TestKeywordInfer:
     """Test narrow entity-plus-topic lookup without broad category expansion."""
 
-    def test_sprite_collision(self):
+    def test_sprite_collision(self, engine):
         """A collision topic returns the shared condition and Sprite's own action."""
-        engine = make_engine()
         resp = engine.try_lookup("Sprite 碰撞")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
@@ -359,17 +346,15 @@ class TestKeywordInfer:
         )
         assert ("plugins", "sprite", "action", "set-collisions-enabled") in keys
 
-    def test_common_aces_follow_the_plugin_list(self):
+    def test_common_aces_follow_the_plugin_list(self, engine):
         """Shared ACEs come from the plugin's commonAces, not from being a world object."""
-        engine = make_engine()
         assert engine.try_lookup("文本碰撞") is None
         resp = engine.try_lookup("Array UID")
         assert resp is not None
         assert ("plugins", "_common", "condition", "pick-by-unique-id") in result_keys(resp)
 
-    def test_array_sort(self):
+    def test_array_sort(self, engine):
         """Array sorting resolves to the Sort action."""
-        engine = make_engine()
         resp = engine.try_lookup("Array 排序")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
@@ -377,9 +362,8 @@ class TestKeywordInfer:
             "plugins", "arr", "action", "sort2"
         )
 
-    def test_sprite_animation(self):
+    def test_sprite_animation(self, engine):
         """Playing an animation is Set animation, then Start; Stop is the opposite."""
-        engine = make_engine()
         resp = engine.try_lookup("Sprite 播放 动画")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
@@ -389,17 +373,15 @@ class TestKeywordInfer:
             ("plugins", "sprite", "action", "set-animation"),
             ("plugins", "sprite", "action", "start-animation"),
         ]
-        stop = make_engine().try_lookup("Sprite 停止播放")
+        stop = engine.try_lookup("Sprite 停止播放")
         assert result_keys(stop)[0] == ("plugins", "sprite", "action", "stop-animation")
 
-    def test_concept_question_is_declined(self):
+    def test_concept_question_is_declined(self, engine):
         """'Sprite 是什么' asks for a definition, not an ACE."""
-        engine = make_engine()
         assert engine.try_lookup("Sprite 是什么") is None
 
-    def test_array_find_returns_contains_and_indexof(self):
+    def test_array_find_returns_contains_and_indexof(self, engine):
         """Finding a value in an Array answers with Contains value and IndexOf."""
-        engine = make_engine()
         resp = engine.try_lookup("怎么在数组中查找特定数字")
         assert resp is not None
         assert resp.intent.plugin_id == "arr"
@@ -407,14 +389,12 @@ class TestKeywordInfer:
         assert ("plugins", "arr", "condition", "contains-value") in keys[:3]
         assert ("plugins", "arr", "expression", "indexof") in keys[:3]
 
-    def test_array_save_is_declined(self):
+    def test_array_save_is_declined(self, engine):
         """Save on an Array is Download, AsJSON or Set at X; one word cannot pick, and never Load."""
-        engine = make_engine()
         assert engine.try_lookup("Array 保存") is None
 
-    def test_collision_howto_answers_like_the_topic(self):
+    def test_collision_howto_answers_like_the_topic(self, engine):
         """'怎么检测' is phrasing: detecting a collision is the shared collision condition."""
-        engine = make_engine()
         resp = engine.try_lookup("怎么检测Sprite碰撞")
         assert resp is not None
         assert resp.intent.ace_type == "conditions"
@@ -422,36 +402,32 @@ class TestKeywordInfer:
             "plugins", "_common", "condition", "on-collision-with-another-object"
         )
 
-    def test_compact_mixed_plugin_topic_hits_lookup(self):
+    def test_compact_mixed_plugin_topic_hits_lookup(self, engine):
         """CJK can delimit an ASCII plugin without accepting identifier substrings."""
-        engine = make_engine()
         resp = engine.try_lookup("Sprite碰撞")
         assert resp is not None
         assert (
             "plugins", "_common", "condition", "on-collision-with-another-object"
         ) in result_keys(resp)[:3]
 
-    def test_sprite_display_uses_directed_common_alias(self):
+    def test_sprite_display_uses_directed_common_alias(self, engine):
         """The scoped one-hop 显示→可见 rule returns only shared set-visible."""
-        engine = make_engine()
         resp = engine.try_lookup("精灵显示")
         assert resp is not None
         assert result_keys(resp)[0] == (
             "plugins", "_common", "action", "set-visible"
         )
 
-    def test_display_alias_does_not_expand_a_more_specific_text_topic(self):
+    def test_display_alias_does_not_expand_a_more_specific_text_topic(self, engine):
         """A bare-display alias cannot add visibility noise to a text request."""
-        engine = make_engine()
         resp = engine.try_lookup("Text 显示中文文本")
         assert resp is not None
         keys = result_keys(resp)
         assert ("plugins", "text", "action", "set-text") in keys[:5]
         assert ("plugins", "_common", "action", "set-visible") not in keys
 
-    def test_sprite_move_answers_with_position_actions(self):
+    def test_sprite_move_answers_with_position_actions(self, engine):
         """A bare move is a change of position; the Z-order actions named 移动到… are not it."""
-        engine = make_engine()
         z_order = {"move-to-top", "move-to-bottom", "move-to-layer", "move-to-object"}
         for query in ("精灵移动", "怎么让精灵移动", "Sprite move"):
             resp = engine.try_lookup(query)
@@ -461,15 +437,14 @@ class TestKeywordInfer:
             assert ("plugins", "_common", "action", "move-at-angle") in keys[:3], query
             assert not z_order & {key[3] for key in keys}, query
 
-    def test_sprite_move_to_layer_keeps_the_z_order_action(self):
+    def test_sprite_move_to_layer_keeps_the_z_order_action(self, engine):
         """Naming the layer is no longer a bare move: the rule does not fire."""
-        resp = make_engine().try_lookup("Sprite 移动到其他图层")
+        resp = engine.try_lookup("Sprite 移动到其他图层")
         assert resp is not None
         assert ("plugins", "_common", "action", "move-to-layer") in result_keys(resp)[:3]
 
-    def test_array_store_answers_with_write_actions(self):
+    def test_array_store_answers_with_write_actions(self, engine):
         """Storing data in an Array is writing values, whichever question word asks it."""
-        engine = make_engine()
         for query in ("怎样用数组存储数据", "怎么用数组存储数据", "如何用数组存储数据"):
             resp = engine.try_lookup(query)
             assert resp is not None, query
@@ -478,28 +453,24 @@ class TestKeywordInfer:
             assert ("plugins", "arr", "action", "push") in keys[:5], query
             assert ("plugins", "arr", "expression", "asjson") not in keys, query
 
-    def test_game_howto_is_declined(self):
+    def test_game_howto_is_declined(self, engine):
         """'怎么做一个平台跳跃游戏？' asks for a whole game, not an ACE."""
-        engine = make_engine()
         assert engine.try_lookup("怎么做一个平台跳跃游戏？") is None
 
-    def test_implement_question_is_declined(self):
+    def test_implement_question_is_declined(self, engine):
         """'如何实现存档系统？' asks for a solution; 系统 is not the System plugin here."""
-        engine = make_engine()
         assert engine.try_lookup("如何实现存档系统？") is None
 
-    def test_behavior_topic(self):
+    def test_behavior_topic(self, engine):
         """'Platform 跳跃' → ace_search on platform behavior."""
-        engine = make_engine()
         resp = engine.try_lookup("Platform 跳跃")
         assert resp is not None
         assert resp.query_type == "lookup_ace_search"
         assert resp.intent.is_behavior is True
         assert "跳跃" in resp.context
 
-    def test_no_plugin_no_trigger(self):
+    def test_no_plugin_no_trigger(self, engine):
         """Query with ACE keyword but no plugin → should not trigger."""
-        engine = make_engine()
         resp = engine.try_lookup("碰撞检测")
         assert resp is None  # no addon names the object
 
@@ -567,9 +538,8 @@ class TestExamplesIndex:
         assert "cave-bridge" in result
         assert "adventure" in result.lower()
 
-    def test_example_find_returns_structured_matches(self):
+    def test_example_find_returns_structured_matches(self, engine):
         """Example lookup must expose metadata slugs as stable result IDs."""
-        engine = make_engine()
         resp = engine.try_lookup("Show me a FileSystem example project")
         assert resp is not None
         assert resp.query_type == "lookup_example_find"
@@ -585,14 +555,13 @@ class TestExamplesIndex:
 class TestACEExampleAttach:
     def test_ace_list_appends_examples(self, tmp_path):
         """ACE list result should include related examples from a supplied index."""
-        import json
         index_file = tmp_path / "examples_index.json"
         index_file.write_text(json.dumps({
             "behavior-Tween": [
                 {"title": "Tween Demo", "slug": "tween-demo", "genres": ["animation"], "behaviors": ["Tween"]},
             ]
         }), encoding="utf-8")
-        engine = make_engine()
+        engine = LookupEngine(schema_dir=SCHEMA_DIR)
         engine.examples_index = ExamplesIndex(index_path=index_file)
         intent = LookupIntent(
             intent_type="ace_list",
@@ -606,7 +575,6 @@ class TestACEExampleAttach:
         assert "Related examples" in result
 
     def test_examples_index_builds_from_exported_metadata(self, tmp_path):
-        import json
         examples_dir = tmp_path / "en-US"
         examples_dir.mkdir()
         (examples_dir / "demo.json").write_text(json.dumps({
@@ -631,8 +599,7 @@ class TestACEExampleAttach:
 # ---------------------------------------------------------------------------
 
 class TestScriptingLookup:
-    def test_qualified_class_member_is_top_result(self):
-        engine = make_engine()
+    def test_qualified_class_member_is_top_result(self, engine):
         resp = engine.try_lookup("IRuntime.callFunction")
         assert resp is not None
         assert resp.query_type == "lookup_script_api"
@@ -646,8 +613,7 @@ class TestScriptingLookup:
 # ---------------------------------------------------------------------------
 
 class TestLookupResponseStructure:
-    def test_ace_search_returns_matches(self):
-        engine = make_engine()
+    def test_ace_search_returns_matches(self, engine):
         resp = engine.try_lookup("Sprite 动画")
         assert resp is not None
         assert len(resp.matches) > 0
@@ -656,29 +622,25 @@ class TestLookupResponseStructure:
         assert match.en.name
         assert match.plugin_id
 
-    def test_ace_search_has_context(self):
-        engine = make_engine()
+    def test_ace_search_has_context(self, engine):
         resp = engine.try_lookup("Sprite 动画")
         assert resp.context
         assert isinstance(resp.context, str)
 
-    def test_ace_list_returns_matches(self):
-        engine = make_engine()
+    def test_ace_list_returns_matches(self, engine):
         resp = engine.try_lookup("Sprite 有哪些 action")
         assert resp is not None
         assert len(resp.matches) > 0
         assert all(m.ace_type == "action" for m in resp.matches)
 
-    def test_prop_list_returns_matches(self):
-        engine = make_engine()
+    def test_prop_list_returns_matches(self, engine):
         resp = engine.try_lookup("Platform 行为有哪些主要参数")
         assert resp is not None
         assert len(resp.matches) > 0
         assert all(m.collection == "behaviors" for m in resp.matches)
         assert all(m.ace_type == "property" for m in resp.matches)
 
-    def test_context_is_string(self):
-        engine = make_engine()
+    def test_context_is_string(self, engine):
         resp = engine.try_lookup("Sprite 有哪些 action")
         assert isinstance(resp.context, str)
         assert len(resp.context) > 0
@@ -689,8 +651,8 @@ class TestLookupResponseStructure:
 # ---------------------------------------------------------------------------
 
 class TestEffectLookup:
-    def test_effect_answers_with_its_parameters_in_both_languages(self):
-        resp = make_engine().try_lookup("膨胀特效有哪些参数")
+    def test_effect_answers_with_its_parameters_in_both_languages(self, engine):
+        resp = engine.try_lookup("膨胀特效有哪些参数")
         assert resp is not None
         assert resp.query_type == "lookup_effect_detail"
         [match] = resp.matches
@@ -701,19 +663,18 @@ class TestEffectLookup:
             ("scale", "percent", "强度"),
         ]
 
-    def test_a_name_two_effects_share_returns_both(self):
-        resp = make_engine().try_lookup("亮度效果的参数")
+    def test_a_name_two_effects_share_returns_both(self, engine):
+        resp = engine.try_lookup("亮度效果的参数")
         assert resp is not None
         assert [m.ace_id for m in resp.matches] == ["brightness", "lighten"]
 
-    def test_an_effect_without_parameters_says_so(self):
-        resp = make_engine().try_lookup("Lighten effect")
+    def test_an_effect_without_parameters_says_so(self, engine):
+        resp = engine.try_lookup("Lighten effect")
         assert resp is not None
         assert resp.matches[0].params == []
         assert "no parameters" in resp.context
 
-    def test_an_effect_name_without_an_effect_word_is_declined(self):
-        engine = make_engine()
+    def test_an_effect_name_without_an_effect_word_is_declined(self, engine):
         assert engine.try_lookup("screen width") is None
         intent = engine.classifier.classify("screen width")
         assert (intent.intent_type, intent.entity_kind) == ("declined", "effect")
