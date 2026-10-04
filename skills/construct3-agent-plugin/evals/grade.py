@@ -261,7 +261,8 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
     try:
         layout = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        return results + [(False, "layouts/Game.json is not readable JSON")] * 6
+        return results + [(False, "layouts/Game.json is not readable JSON")] * (
+            len(CASES["lay-out-the-hud"]["assertions"]) - len(results))
     hud = [inst for layer in layout.get("layers", []) if layer.get("name", "").lower() in HUD_LAYERS
            for inst in layer.get("instances", []) if "world" in inst]
     added = [i for i in hud if i["type"] != "ScoreText"]
