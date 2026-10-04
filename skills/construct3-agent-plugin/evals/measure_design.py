@@ -34,8 +34,9 @@ def variants(d: rd.Design) -> dict:
         for e in d.blocks(sheet):
             if e.ev.get("isOrBlock"):
                 continue
-            spread[len(d.filters(e))] += 1
-            inverted = [c for c in d.filters(e) if c.get("isInverted") and c.get("objectClass") != "System"]
+            filters = d.filters(e)
+            spread[len(filters)] += 1
+            inverted = [c for c in filters if c.get("isInverted") and c.get("objectClass") != "System"]
             out["inverted_3_any_object"] += len(inverted) >= 3
         for e in d.rows[sheet]:
             for a in e.actions:
@@ -54,10 +55,9 @@ def variants(d: rd.Design) -> dict:
     uses = rd.global_uses(d)
     globals_ = d.globals()
     out["globals"] = len(globals_)
-    off: Counter = Counter(globals_[g][0] for g, us in uses.items() if us and globals_[g][0] not in {u.e.sheet for u in us})
-    out["sheets_declaring_10_globals_used_elsewhere"] = sum(1 for n in off.values() if n >= 10)
-    out["globals_declared_off_their_sheets"] = sum(
-        1 for g, us in uses.items() if us and globals_[g][0] not in {u.e.sheet for u in us})
+    off = [globals_[g][0] for g, us in uses.items() if us and globals_[g][0] not in {u.e.sheet for u in us}]
+    out["sheets_declaring_10_globals_used_elsewhere"] = sum(1 for n in Counter(off).values() if n >= 10)
+    out["globals_declared_off_their_sheets"] = len(off)
     return {"variants": dict(out), "conditions": dict(spread)}
 
 
@@ -97,7 +97,7 @@ def main() -> int:
                 projects_hit.setdefault(tag, set()).add(root.name)
                 hits.append({"project": root.name, "kept": kept, **f})
             var.update(extra["variants"])
-            spread.update({int(k): v for k, v in extra["conditions"].items()})
+            spread.update(extra["conditions"])
         total = sum(spread.values())
         at_least = {n: sum(v for k, v in spread.items() if k >= n) for n in (4, 5, 6, 8)}
         result[label] = {"projects": len(roots), "failed": failed, "rules": dict(rules),

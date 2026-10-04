@@ -225,10 +225,8 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         game = stand_in(Path(tmp) / "coins")
         for case in (c for c in CASES if not args.cases or c["name"] in args.cases):
-            source, seed = game, None
-            fixture = case["fixture"]
-            if fixture in SEEDS:
-                fixture, seed = SEEDS[fixture]
+            fixture, seed = SEEDS.get(case["fixture"], (case["fixture"], None))
+            source = game
             if fixture.startswith("example:"):
                 source = Path(args.examples) / fixture.split(":", 1)[1]
                 if not (source / "project.c3proj").exists():

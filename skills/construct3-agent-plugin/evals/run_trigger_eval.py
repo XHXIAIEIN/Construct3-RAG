@@ -61,7 +61,7 @@ def run_once(client: str, query: str, project: Path, model: str | None, max_tool
         raise ClientError(f"{client} could not be started: {e}") from e
     timer = threading.Timer(timeout, proc.kill)
     timer.start()
-    tools = known = 0
+    tools, known = 0, False
     try:
         for line in proc.stdout:
             try:
@@ -69,13 +69,12 @@ def run_once(client: str, query: str, project: Path, model: str | None, max_tool
             except ValueError:
                 continue
             if event.get("type") == "result":
-                known += 1
                 if event.get("is_error"):
                     raise ClientError(str(event.get("result", "the client reported an error")))
                 return False
             if event.get("type") != "assistant":
                 continue
-            known += 1
+            known = True
             for part in event.get("message", {}).get("content", []):
                 if part.get("type") != "tool_use":
                     continue
@@ -120,11 +119,11 @@ def main() -> int:
     def rate(item: dict) -> dict:
         hits = sum(run_once(args.client, item["query"], project, args.model, args.max_tools, args.timeout)
                    for _ in range(args.runs))
-        triggered = hits / args.runs >= args.threshold
-        print(f"  {hits}/{args.runs} {'ok  ' if triggered == item['should_trigger'] else 'FAIL'} "
+        passed = (hits / args.runs >= args.threshold) == item["should_trigger"]
+        print(f"  {hits}/{args.runs} {'ok  ' if passed else 'FAIL'} "
               f"{'should' if item['should_trigger'] else 'should not'}: {item['query'][:80]}", file=sys.stderr)
         return {**item, "triggers": hits, "runs": args.runs, "trigger_rate": round(hits / args.runs, 3),
-                "pass": triggered == item["should_trigger"]}
+                "pass": passed}
 
     try:
         run_once(args.client, queries[0]["query"], project, args.model, 1, args.timeout)    # fail before sixty runs do

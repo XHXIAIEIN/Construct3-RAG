@@ -27,7 +27,7 @@ from pathlib import Path
 SCRIPT = re.compile(r"scripts[/\\](\w+)\.py\"?((?:\s+(?!\d*[<>])(?:\"[^\"]*\"|[^\s|;&<>]+))*)")     # 2>&1 is not an argument
 
 
-def short(value, n: int) -> str:
+def short(value: object, n: int) -> str:
     text = str(value).replace("\n", " \\n ")
     return text if len(text) <= n else f"{text[:n]} ...[{len(text)} chars]"
 
@@ -50,8 +50,8 @@ def calls_of(path: Path) -> list[dict]:
                 body = part.get("content")
                 if isinstance(body, list):
                     body = " ".join(b.get("text", "") for b in body if isinstance(b, dict))
-                by_id[part["tool_use_id"]].update(chars=len(str(body or "")), failed=bool(part.get("is_error")),
-                                                  result=str(body or ""))
+                text = str(body or "")
+                by_id[part["tool_use_id"]].update(chars=len(text), failed=bool(part.get("is_error")), result=text)
     return calls
 
 
