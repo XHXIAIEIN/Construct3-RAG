@@ -265,26 +265,26 @@ Option 2 as the default, and option 3 as the step after it.
   stop for a key the editor always writes: that stop is the checker's own
   read failing, and it hides every other finding. The sweep added no
   finding on the examples or the game folders.
-- Three more rules were probed on 2026-10-04 in scratch projects, each
-  beside a copy that opened, in the stable r495.2 editor and in r504. A
-  Sprite frame whose `collisionPoly` held two points, none, or an odd count
-  of numbers opened, and the preview stopped on the editor's crash report,
-  `assertion failure: must have at least three points in a collision poly`
-  or `must have an even number of elements in collision poly points array`.
-  An export of the same project through `export_project.py`, in an r495.2
+- The next three rules were probed on 2026-10-04 in scratch projects, each
+  beside a copy that opened, in the stable r495.2 editor and in r504. No
+  official example writes any of them.
+- A Sprite frame whose `collisionPoly` held two points, an empty list or an
+  odd count of numbers opened. The preview then stopped on the editor's
+  crash report, `assertion failure: must have at least three points in a
+  collision poly` or `must have an even number of elements in collision
+  poly points array`. An export through `export_project.py`, in an r495.2
   editor logged in to an account with a subscription, stopped on the same
-  crash report, and the copy with a whole polygon exported. A frame without
+  report, and the copy with a whole polygon exported. A frame without
   `collisionPoly` previewed with the whole image as its polygon. Two points
   on a Tiled Background's `image` opened and previewed, so the rule covers
-  animation frames. An object type or a family whose `instanceVariables`,
-  `behaviorTypes` or `effectTypes` was a folder, `{"items": [],
-  "subfolders": []}`, stopped the open with `TypeError: ... is not
-  iterable`. The checker had stopped on such a file with its exit-code-2
-  sentence; it now names the key and reads the folder's items as the list,
-  so that its other findings still print. A call to a function or a custom
-  action written with `"parameters": {}` stopped the open with `TypeError:
-  expected array`, and `[]` opened. No official example writes any of the
-  three, and the sweep changed no output.
+  animation frames.
+- An object type or a family whose `instanceVariables`, `behaviorTypes` or
+  `effectTypes` was a folder, `{"items": [], "subfolders": []}`, stopped
+  the open with `TypeError: ... is not iterable`. The checker names the key
+  and reads the folder's items as the list, so that its other findings
+  still print; the exit-code-2 stop would hide them.
+- A call to a function or a custom action written with `"parameters": {}`
+  stopped the open with `TypeError: expected array`, and `[]` opened.
 
 The file encodings in `prompts/references/hand-editing-project-files.md`
 were read the same way: from the loaders, from files the editor saved, from
@@ -350,12 +350,12 @@ variables, instance counts and the instances of the types named.
   (MIT) does, and reads the preview page and its workers once at the end.
   It runs without input: it catches what breaks on start, not what a player
   does later.
-- The editor page is read too once the preview has run. The editor asserts
-  on some data only as it builds a preview, a collision polygon of fewer
-  than three points among them, and shows its crash report over the editor
-  while the preview window can open and run behind it; a run that read only
-  the preview window called such a project clean. A crash report there now
-  fails the project. The official examples tried printed as before.
+- The editor asserts on some data only as it builds a preview, a collision
+  polygon of fewer than three points among them. It shows its crash report
+  over the editor, and the preview window can open and run behind it, so
+  the preview window alone does not show the report. The editor's page is
+  read once the preview has run, and a crash report there fails the
+  project.
 
 A passing check ends its `ok:` line with the opener's command. Agents given
 the step only in `SKILL.md` often stopped at `ok:` and called the project

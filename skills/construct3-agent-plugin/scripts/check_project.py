@@ -744,9 +744,8 @@ class Checker:
                 self.check_collision_polys(name, t["animations"])
 
     def check_collision_polys(self, name: str, folder: dict) -> None:
-        """A frame's collision polygon is x, y pairs, three or more. The editor opens a frame with
-        fewer, then asserts as the preview or the export reads it, and shows its crash report. A
-        frame without collisionPoly takes the whole image."""
+        """A frame's collision polygon is three or more x, y pairs; a frame without collisionPoly
+        takes the whole image."""
         for anim in folder.get("items", []):
             for i, fr in enumerate(anim.get("frames", [])):
                 poly = fr.get("collisionPoly") if isinstance(fr, dict) else None
@@ -2102,10 +2101,10 @@ class Checker:
             if "callFunction" in a or "customAction" in a:
                 params = a.get("parameters", [])
                 if not isinstance(params, list):
-                    self.err(f"{w}: the call writes \"parameters\": {json.dumps(params, ensure_ascii=False)}; a call "
-                             f"to a function or a custom action lists its arguments in order, \"parameters\": "
-                             f"[\"1\"], and leaves the key out when it passes none. The editor stops with "
-                             f"\"TypeError: expected array\" before the project opens")
+                    self.err(f"{w}: the call writes \"parameters\": {json.dumps(params, ensure_ascii=False)}, and the "
+                             f"editor stops with \"TypeError: expected array\" before the project opens. Write the "
+                             f"arguments as a list in order, \"parameters\": [\"1\"], or leave the key out when the "
+                             f"call passes none")
                     params = []
                 if "callFunction" in a:
                     self.pending_calls.append(("function", a["callFunction"], None, len(params), w))

@@ -165,9 +165,9 @@ def test_a_frame_collision_polygon_holds_three_points(project, points, said):
     ("objectTypes/Backdrop.json", "instanceVariables", '"instanceVariables": []'),
 ])
 def test_an_object_type_list_written_as_a_folder_is_named(project, rel, key, write):
-    """The editor loops over each list as it opens the file, and a folder stops it with "TypeError:
-    ... is not iterable". The folder's items stand in for the list, so the instances that carry
-    them raise nothing more, and the checker goes on instead of stopping."""
+    """A folder in place of a list stops the editor with "TypeError: ... is not iterable". The
+    finding names the key, and the folder's items are read as the list, so the instances that
+    carry them pass and the checker prints its other findings."""
     out = findings(project, lambda t: t.update({key: {"items": t.get(key, []), "subfolders": []}}), rel)
     name = rel.split("/")[1][:-5]
     assert (f'object type {name}: "{key}" is a folder, and the editor reads it as a list, stopping with '
@@ -189,9 +189,9 @@ def test_a_call_lists_its_arguments(project, role, params, said):
             "parameters"] = params
     out = findings(project, change)
     if said:
-        assert ('the call writes "parameters": {}; a call to a function or a custom action lists its arguments '
-                'in order, "parameters": ["1"], and leaves the key out when it passes none. The editor stops with '
-                '"TypeError: expected array"') in out
+        assert ('the call writes "parameters": {}, and the editor stops with "TypeError: expected array" before '
+                'the project opens. Write the arguments as a list in order, "parameters": ["1"], or leave the key '
+                'out when the call passes none') in out
     else:
         assert warnings(out) == [] and out.splitlines()[-1].startswith("ok:"), out
 

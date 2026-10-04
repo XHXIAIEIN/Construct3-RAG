@@ -86,11 +86,10 @@ which cases to play and how to reach and read them to
   project, r504 preview, 2026-09-30: a *Pick parent* with *Own* that could
   not reach a grandparent passed the five-second preview and left a piece
   idle on its battle slot at the first drag by hand]
-- The editor checks some project data only as it builds a preview: a Sprite
-  frame whose collision polygon has fewer than three points opens, and at
-  F5 the editor shows its crash report, "Oops! Something went wrong", while
-  the preview window may still open and run behind it. A check of the
-  preview window alone reads such a run as clean, so
+- The editor checks some project data only as it builds a preview. A
+  Sprite frame whose collision polygon has fewer than three points opens,
+  and at F5 the editor shows its crash report, "Oops! Something went
+  wrong". The preview window can still open and run behind it, so
   `open_in_editor.py --preview` reads the editor's page after the run and
   prints the report as an `editor:` line. [observed in a scratch project,
   r495.2 and r504 previews in Edge, 2026-10-04]

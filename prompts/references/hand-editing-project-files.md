@@ -148,6 +148,17 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   each in declaration order. [observed: Merge Game, r504, October 2026: each of
   these written back by hand into a saved project came back as described from
   Save as project folder]
+- The save leaves out a frame's `collisionPoly` when it is the whole image in
+  the editor's vertex order, `[0, 0, 1, 0, 1, 1, 0, 1]`. It keeps
+  `useCollisionPoly`, `true` or `false`. A frame without `collisionPoly`
+  takes the whole image, so both ways of writing it save the same. The whole
+  image in another vertex order, such as `[1, 0, 1, 1, 0, 1, 0, 0]`, is kept
+  as written. [observed in a scratch project, r495.2 and r504, 2026-10-04:
+  Save as project folder of a Sprite whose frames held the whole image in
+  both orders, a triangle, and the whole image with `useCollisionPoly`
+  false; both frames in the editor's order came back without
+  `collisionPoly` and with their `useCollisionPoly`, the other two as
+  written]
 - The save rewrites a layout instance's `world.originX` and `originY` to the
   origin of the first frame of its initial animation, so write the frame's
   values. An instance written with `"originY": 1` over a frame whose origin is

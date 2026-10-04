@@ -582,10 +582,9 @@ class Project:
 
     def read_lists(self, kind: str, name: str, data: dict) -> None:
         """An object type's or family's instance variables, behaviors and effects are each a
-        list. The editor loops over each one as it opens the file, and one written as a folder,
-        {"items": [], "subfolders": []}, stops it with "TypeError: ... is not iterable". The
-        finding names the key; the folder's items stand in for the list, so that the later
-        checks and the other scripts read the file instead of stopping on it."""
+        list, and the editor stops on a folder there, {"items": [], "subfolders": []}, with
+        "TypeError: ... is not iterable". The finding names the key, and the folder's items are
+        read as the list, so that the later checks and the other scripts can read the file."""
         what = "object type" if kind == "objectTypes" else "family"
         for key in ("instanceVariables", "behaviorTypes", "effectTypes"):
             value = data.get(key, [])
