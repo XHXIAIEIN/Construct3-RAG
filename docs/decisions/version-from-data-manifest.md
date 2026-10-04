@@ -23,14 +23,14 @@ nothing read, and `C3_VERSION` was the reason the dotenv loading remained.
   reads: `data/c3-schemas`, or `C3_SCHEMA_DIR`.
 - A refresh (`scripts/init.py`, `scripts/setup.py --refresh-data`) fetches
   the latest stable release from `versions.json`; `--version` names another.
-  It replaces `data/` as before, so the service never reads the cache.
+  It replaces `data/`, so the service never reads the cache.
 - `scripts/extract_common_aces.py` fetches the language pack of the latest
   stable release, the release its `main.js` comes from.
 - `scripts/check_c3_version.py` compares `_index.json` with the CDN and
   prints the refresh command; `--update`, which wrote `C3_VERSION` into
   `src/.env`, is gone.
-- The workflow reads the current release from the data and no longer edits
-  source.
+- The workflow reads the current release from the data and edits no source
+  file.
 
 Removed with it: `C3_VERSION`, `select_schema_dir()` and the
 `bundled_dir`/`generated_dir` settings, `src/.env.example`, every
@@ -39,5 +39,5 @@ Removed with it: `C3_VERSION`, `select_schema_dir()` and the
 
 ## Trade-off
 
-A refresh without `--version` now needs `versions.json` to answer. It needed
+A refresh without `--version` needs `versions.json` to answer, and it needs
 the network for everything else it fetches anyway.

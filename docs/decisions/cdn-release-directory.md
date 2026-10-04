@@ -40,16 +40,17 @@ Probed with GET; HEAD returns 405 on some paths.
 
 ## Options
 
-1. Keep the root fallback. Correct only while the requested release is the
-   current stable one.
-2. Request the dash directory and keep the root fallback, with a warning.
-   No endpoint needs it, and a warning in a weekly job's log still leaves
-   another release in `data/` under the requested name.
-3. Request the dash directory and stop on a 404.
-4. Take the directory from the `launchURL` of `versions.json`. It lists only
-   the current Beta, Stable and LTS releases, and the Stable one's
-   `launchURL` is the root, so it names neither an older release nor the
-   stable release's own directory.
+1. Keep the root fallback. It is correct only while the requested release is
+   the current stable one.
+2. Request the release's own directory, the dot written as a dash, and keep
+   the root fallback with a warning. No endpoint needs the fallback, and a
+   warning in a weekly job's log still leaves another release in `data/`
+   under the requested name.
+3. Request the release's own directory and stop on a 404.
+4. Take the directory from the `launchURL` of `versions.json`.
+   `versions.json` lists only the current Beta, Stable and LTS releases, and
+   the Stable one's `launchURL` is the root, so it names neither an older
+   release nor the stable release's own directory.
 
 ## Decision
 
@@ -61,7 +62,7 @@ release. `export_ts_defs()` logs a `.d.ts` that fails and goes on, as it did
 for any error; every other fetch stops the refresh. `versions.json` stays at
 the root, read by `latest_stable_version()`.
 
-The release name still labels everything: the `version` of `_index.json`,
+The release name labels everything else: the `version` of `_index.json`,
 the cache directory `.cache/c3-cdn/r495.2/` and the refresh pull request.
 `C3Fetcher` refuses a name outside the `r503` and `r495.2` forms. `r495-2`,
 the directory's spelling, would fetch the right files and label them with a
@@ -69,7 +70,7 @@ release `versions.json` never names.
 
 `scripts/extract_common_aces.py` reads `main.js` and
 `plugins/allEditorPlugins.js` from the latest stable release's directory and
-records that URL in the `_source` of `common_aces.json`.
+records the URL of `main.js` in the `_source` of `common_aces.json`.
 
 ## Re-evaluate when
 
@@ -78,6 +79,7 @@ records that URL in the `_source` of `common_aces.json`.
   that release's `launchURL` or the editor's script URLs and change
   `release_directory()`.
 - `versions.json` names a release outside the `r503` and `r495.2` forms:
-  extend the pattern and the directory mapping together.
+  extend the name pattern `C3Fetcher` checks and `release_directory()`
+  together.
 - The CDN publishes a list of release directories: read it instead of
   deriving the name.

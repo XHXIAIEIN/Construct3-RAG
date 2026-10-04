@@ -19,7 +19,7 @@ check, since only the tests are run and most of these files have none.
 Comparing the r476.2 export kept in the CDN cache with the committed r495.2
 data finds removed ACEs (the 3D model's rotation expressions), addons and
 ACEs the editor deprecated in between, and parameters retyped. Several of
-the watched ids are quoted in the skill's scripts and in the prompts. The two
+these ids are quoted in the skill's scripts and in the prompts. The two
 exports differ in exporter version as well, so the count of changes there
 overstates what one release does; the kinds of change are what matter.
 
@@ -27,12 +27,13 @@ overstates what one release does; the kinds of change are what matter.
 
 - **Body only, merge as before.** Every release gets a readable report, but
   a breaking one still lands unattended.
-- **Hold every release for review.** Safe, and a release that only adds ACEs,
-  most of them, waits on a person for nothing.
+- **Hold every release for review.** Safe, but a release that only adds
+  ACEs, as most releases do, waits for a person although nothing the
+  repository quotes can break.
 - **Hold only when a quoted id is affected.** The report lists every quoted
   or backticked mention of an id the release removed, deprecated, or changed
-  in a way an event written for the old one can trip on; auto-merge is
-  enabled only when there is none.
+  in a way that can break an event written for the old ACE; auto-merge is
+  enabled only when the report lists no mention.
 
 ## Decision
 
