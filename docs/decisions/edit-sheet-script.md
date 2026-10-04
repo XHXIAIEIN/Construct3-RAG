@@ -22,6 +22,12 @@ whose duration a constant holds multiplies the formulas that read the
 constant, and may change an action that read a different one. The checker
 cannot tell this from an intended change.
 
+Evidence: small-model runs asked to slow such an animation, with the plan as
+the only way to change the sheet. With the variable form, three of three
+changed the constant with their first plan. Without it, one of three wrote
+the new durations into the actions, and two wrote the sheet outside the
+plan.
+
 ## Options
 
 1. A sentence in `SKILL.md` on how to edit. Tried; no effect.
