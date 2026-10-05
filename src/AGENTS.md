@@ -26,9 +26,10 @@ modules.
   they chained words together, so `Array 保存` returned *Load*. What remains are
   directed, scoped, single-hop aliases, each with a rule ID.
 - Bad result: check data quality, field weights, routing and product scope
-  before adding keywords, prompts or a model layer. A new keyword, alias or
-  rule starts from a failing case in `tests/fixtures/query_gold.jsonl`;
-  `tests/test_query_gold.py` runs the set.
+  before adding keywords, prompts or a model layer. Before adding a keyword,
+  alias or routing rule, write its failing case in
+  `tests/fixtures/query_gold.jsonl` as `tests/AGENTS.md`, "Gold set",
+  describes.
 - Public API change: `interfaces/http/models.py`, docs and compatibility
   tests in one change. Internal structures promise no compatibility.
 - Schema layout (`en-US`, `zh-CN`): `lookup/schema_layout.py` owns it.
