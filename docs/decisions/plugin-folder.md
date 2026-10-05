@@ -163,8 +163,9 @@ overwrites it and the test fails until then.
 - In the plugin, the TypeScript definitions and the examples are read
   through their scripts only. The clone keeps them as files.
 - The checker's clone-behind check (`clone-update-check.md`) looks for
-  `.git` in the folder that holds `data/`. Run from `<clone>/plugin`, it
-  looks one folder up.
+  `.git` in the folder that holds `data/`. `search_guides.py` looks for
+  the example projects beside that folder. Run from `<clone>/plugin`, both
+  start at the clone, one folder up, which `c3project.clone_root` returns.
 - The icons are bundled images that `new_project.py` copies, which the
   checklist holds for a reviewer when a script refers to them. The script
   copies the empty project as a folder and names no image file.

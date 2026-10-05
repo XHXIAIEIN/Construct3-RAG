@@ -252,6 +252,13 @@ def is_clone(folder: Path) -> bool:
     return (folder / "data" / "c3-schemas" / "_index.json").exists()
 
 
+def clone_root(rag: Path) -> Path:
+    """The clone that holds rag: its parent when rag is the plugin/ folder of a clone, else rag itself.
+    A clone's plugin/ folder, linked into ~/.claude/skills/ as the Claude Code plugin, is where the scripts
+    find data/. The sibling clones lie beside the clone, not beside plugin/."""
+    return rag.parent if rag.name == "plugin" and is_clone(rag.parent) else rag
+
+
 def locate_rag(root: Path | None, override: str | None) -> tuple[Path | None, list[str]]:
     """The clone or None, and the places tried before it; for a script that runs without a clone."""
     tried = []
@@ -376,8 +383,7 @@ def clone_behind(rag: Path) -> tuple[str, bool] | None:
     the sentence gives the pull and, for a copy of the skill, its refresh. A clone
     that holds the user's work is the user's to update. The clone is fetched at most
     every FETCH_EVERY seconds; offline, or with no upstream, nothing is said."""
-    if rag.name == "plugin" and not (rag / ".git").exists() and (rag.parent / ".git").exists():
-        rag = rag.parent    # the plugin folder of a clone, linked as the Claude Code plugin
+    rag = clone_root(rag)
     if os.environ.get("CONSTRUCT3_RAG_OFFLINE") or not (rag / ".git").exists() or not shutil.which("git"):
         return None
     upstream = git_out(rag, "rev-parse", "--abbrev-ref", "@{u}")
