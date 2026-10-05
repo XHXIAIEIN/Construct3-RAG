@@ -576,7 +576,7 @@ class Checker:
         props = data.get("properties")
         if not isinstance(props, dict):
             self.err("project.c3proj: no \"properties\" block; copy the one from a project the editor saved, "
-                     "or from Construct3-RAG/data/c3-new-project/project.c3proj")
+                     f"or from {(self.p.rag / 'data' / 'c3-new-project' / 'project.c3proj').as_posix()}")
             props = {}
         missing = [k for k in PROJECT_TEXT if not isinstance(props.get(k), str)]
         if missing:
@@ -2844,7 +2844,7 @@ class Checker:
                                       f"event that created it. Set the new {t} up in the event that creates "
                                       f"it, pass its UID to {name} and pick it there by unique ID, or call "
                                       f"{name} from a later top-level event or trigger "
-                                      f"(Construct3-RAG/prompts/pitfalls/creating-objects.md)")
+                                      f"({(self.p.rag / 'prompts' / 'pitfalls' / 'creating-objects.md').as_posix()})")
                 for t, chain in sub[0].items():
                     made.setdefault(t, (i, [name] + chain))
 

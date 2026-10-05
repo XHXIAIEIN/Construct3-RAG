@@ -32,7 +32,7 @@ of taps, drags and keys with the same reads between the steps.
 ```ts
 declare const c3probe: {
   /** The scripting API, the `runtime` of a project's scripts:
-   *  Construct3-RAG/data/c3-ts-defs/preview/interfaces/IRuntime.d.ts */
+   *  python scripts/lookup_script_api.py IRuntime */
   runtime: IRuntime;
   /** `names`: object types as the project spells them; every type with
    *  instances when left out. At most `max` instances per type (default 20). */
@@ -76,21 +76,21 @@ game has many instances.
 `c3probe.runtime` is the same object a project's script gets, so any
 expression of the scripting API works:
 
-| To read | Write | Declared in `Construct3-RAG/data/c3-ts-defs/` |
-|---------|-------|-------------------------------------------|
-| A global variable | `runtime.globalVars.Score` | `preview/interfaces/IRuntime.d.ts` |
-| The instances of a type | `runtime.objects.Enemy.getAllInstances()` | `preview/interfaces/objects/IObjectClass.d.ts` |
-| An instance by UID | `runtime.getInstanceByUid(12)` | `preview/interfaces/IRuntime.d.ts` |
-| Position, size, layer | `inst.x`, `inst.width`, `inst.layer.name` | `preview/interfaces/objects/IWorldInstance.d.ts` |
+| To read | Write | `scripts/lookup_script_api.py` prints it for |
+|---------|-------|----------------------------------------------|
+| A global variable | `runtime.globalVars.Score` | `IRuntime.globalVars` |
+| The instances of a type | `runtime.objects.Enemy.getAllInstances()` | `IObjectClass.getAllInstances` |
+| An instance by UID | `runtime.getInstanceByUid(12)` | `IRuntime.getInstanceByUid` |
+| Position, size, layer | `inst.x`, `inst.width`, `inst.layer.name` | `IWorldInstance` |
 | An instance variable | `inst.instVars.health` | none: generated for each project; the manual's IInstance page |
-| A behavior's state | `inst.behaviors.Platform.isOnFloor` | `behaviors/movements/platform/c3runtime/IPlatformBehaviorInstance.d.ts` |
-| A Sprite's animation | `inst.animationName`, `inst.animationFrame` | `plugins/general/sprite/c3runtime/ISpriteInstance.d.ts` |
-| Time | `runtime.tickCount`, `runtime.gameTime` | `preview/interfaces/IRuntime.d.ts` |
+| A behavior's state | `inst.behaviors.Platform.isOnFloor` | `IPlatformBehaviorInstance.isOnFloor` |
+| A Sprite's animation | `inst.animationName`, `inst.animationFrame` | `ISpriteInstance` |
+| Time | `runtime.tickCount`, `runtime.gameTime` | `IRuntime.gameTime` |
 
 `inst.behaviors` is keyed by the behavior's name on the object, which the
 project may have changed from the default. The interface of another plugin
-or behavior is found by its name in `data/c3-ts-defs/autocomplete-data.json`,
-then in the `.d.ts` under the directory of the same name.
+or behavior is printed for its name: `python scripts/lookup_script_api.py
+Platform`.
 
 To wait for an event, evaluate the same read every few hundred milliseconds
 until it changes, with a limit on the wait; the preview keeps running

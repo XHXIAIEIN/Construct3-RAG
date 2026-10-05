@@ -47,7 +47,7 @@ def pitfalls(rag: Path) -> list[tuple[str, int, str]]:
         for i, start in enumerate(starts):
             end = starts[i + 1] if i + 1 < len(starts) else len(text)
             block = re.split(r"\n(?!  )", text[start:end].rstrip())[0]     # the bullet ends at an unindented line
-            out.append((f"Construct3-RAG/prompts/pitfalls/{path.name}", text.count("\n", 0, start) + 1,
+            out.append((path.as_posix(), text.count("\n", 0, start) + 1,
                         without_source(" ".join(block[2:].split()))))
     return out
 
@@ -111,8 +111,7 @@ def main() -> int:
             lines.append(f"{e['id']}: {e.get('name', '')}. {e.get('description', '')}")
             # an example written in both languages is two folders, <id>-js and <id>-ts
             folders = [clone / f"{e['id']}{end}" for end in ("", "-js", "-ts") if (clone / f"{e['id']}{end}").is_dir()]
-            lines += [f"  python scripts/print_sheet.py --project \"{f}\"" for f in folders] or [
-                f"  {e.get('open', '')} (the Construct-Example-Projects clone beside Construct3-RAG has its files)"]
+            lines += [f"  python scripts/print_sheet.py --project \"{f}\"" for f in folders] or [f"  {e.get('open', '')}"]
     if not lines:
         print(f"nothing holds {' or '.join(args.words)}; try fewer words, another English word for the same "
               f"thing, or the name of the condition or behavior (`overlapping`, `tween`, `wait`)")

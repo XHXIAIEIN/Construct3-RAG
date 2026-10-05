@@ -108,7 +108,7 @@ def build(out: Path) -> None:
     for locale in ("en-US", "zh-CN"):
         write(out / "data" / "c3-lang" / f"{locale}.json", lang_subset(locale))
     copy(SOURCES / "plugin.json", out / ".claude-plugin" / "plugin.json")
-    # The listing icon, which plugin.json names in "icon": every file but the manifest goes at the root
+    # The listing icon, which plugin.json names in "icon"; .claude-plugin/ holds the manifest only
     copy(SOURCES / "icon.png", out / "icon.png")
     copy(SOURCES / "README.md", out / "README.md")
     copy(ROOT / "LICENSE", out / "LICENSE")

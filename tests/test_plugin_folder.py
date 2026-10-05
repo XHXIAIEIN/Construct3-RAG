@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 from scripts import build_plugin
 from tests.skill_helpers import REPO, SKILL
@@ -37,22 +38,15 @@ def test_the_build_writes_text_files_with_lf_and_an_image_byte_for_byte(tmp_path
     assert (out / "icon.png").read_bytes() == icon
 
 
-def bundled(rel: str) -> bool:
-    """A file the plugin keeps in a bundle beside its folder."""
-    for bundle in PLUGIN.glob("data/**/*.bundle-*.json"):
-        folder = bundle.relative_to(PLUGIN).as_posix().rsplit(".bundle-", 1)[0]
-        if rel.startswith(folder + "/") and rel[len(folder) + 1:] in json.loads(bundle.read_text(encoding="utf-8")):
-            return True
-    return False
-
-
 def test_every_data_and_prompt_file_the_skill_names_is_in_the_plugin():
+    """SKILL.md tells a plugin user that such a path lies under the plugin's folder, so it names a file
+    there, not one that only a bundle holds."""
     texts = [SKILL / "SKILL.md", *sorted((SKILL / "references").glob("*.md")), SKILL / "assets" / "game-project-block.md"]
     missing, names = set(), 0
     for path in texts:
         for rel in NAMED.findall(path.read_text(encoding="utf-8")):
             names += 1
-            if not ((PLUGIN / rel).exists() or bundled(rel)):
+            if not (PLUGIN / rel).exists():
                 missing.add(f"{path.name}: {rel}")
     assert names > 10 and not missing, sorted(missing)
 
@@ -73,14 +67,23 @@ def test_the_listing_icon_is_a_file_of_the_plugin():
     assert path.is_relative_to(PLUGIN.resolve()) and ".claude-plugin" not in path.relative_to(PLUGIN.resolve()).parts
 
 
-def test_scripts_in_the_plugin_read_the_bundled_data(tmp_path):
+def test_scripts_in_the_plugin_read_the_bundled_data_and_print_what_opens(tmp_path):
+    """A plugin user has no clone and often no Construct3-RAG line: a printed path opens as it is, and a
+    declaration that only a bundle holds names the command that prints it."""
     scripts = PLUGIN / "skills" / "construct3-agent-plugin" / "scripts"
     # No CONSTRUCT3_RAG: the scripts find the plugin folder above them, as an installed plugin does
     env = {k: v for k, v in os.environ.items() if k != "CONSTRUCT3_RAG"}
     env.update(PYTHONIOENCODING="utf-8", CONSTRUCT3_RAG_OFFLINE="1")
-    for args, expected in ((["lookup_script_api.py", "IRuntime.callFunction"],
-                            "Construct3-RAG/data/c3-ts-defs/preview/interfaces/IRuntime.d.ts:"),
-                           (["search_guides.py", "platformer"], "3d-platformer")):
-        p = subprocess.run([sys.executable, str(scripts / args[0]), *args[1:]], cwd=tmp_path, env=env,
+
+    def run(script: str, *args: str) -> str:
+        p = subprocess.run([sys.executable, str(scripts / script), *args], cwd=tmp_path, env=env,
                            capture_output=True, text=True, encoding="utf-8", timeout=60)
-        assert p.returncode == 0 and expected in p.stdout, p.stdout + p.stderr
+        assert p.returncode == 0, p.stdout + p.stderr
+        return p.stdout
+
+    out = run("lookup_script_api.py", "IRuntime.callFunction")
+    assert out.startswith("IRuntime.callFunction   lookup_script_api.py IRuntime.callFunction\n"), out
+    out = run("search_guides.py", "wait", "platformer")
+    pitfalls = re.findall(r"^(.+\.md):\d+$", out, re.M)
+    assert pitfalls and all(Path(p).is_file() for p in pitfalls), out
+    assert "3d-platformer" in out and "Construct-Example-Projects" not in out

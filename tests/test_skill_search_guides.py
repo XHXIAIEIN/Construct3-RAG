@@ -1,5 +1,5 @@
 """search_guides.py: the pitfall entries and official examples that hold the words."""
-from tests.skill_helpers import tool
+from tests.skill_helpers import REPO, tool
 
 
 def test_the_entry_with_most_of_the_words_comes_first_in_full(built):
@@ -8,7 +8,7 @@ def test_the_entry_with_most_of_the_words_comes_first_in_full(built):
     code, out = tool(built, "search_guides", "click", "button", "behind", "--examples", "0")
     assert code == 0
     lines = out.splitlines()
-    assert lines[0] == "pitfalls:" and lines[1].startswith("Construct3-RAG/prompts/pitfalls/input.md:")
+    assert lines[0] == "pitfalls:" and lines[1].startswith(f"{REPO.as_posix()}/prompts/pitfalls/input.md:")
     assert "*Pick top/bottom* (top)" in lines[2]
     assert "[manual:" not in out
 

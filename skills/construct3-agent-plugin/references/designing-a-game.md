@@ -11,9 +11,10 @@ shows before the build and a bug in the events after it.
 
 ## Steps
 
-1. Find the closest official example by its tags and addons in
-   `Construct3-RAG/data/c3-examples/<locale>/*.json`, and read its events:
-   `python scripts/print_sheet.py --project <Construct-Example-Projects>/example-projects/<id>`.
+1. Find the closest official example by its tags and addons,
+   `python scripts/search_guides.py WORD ... --pitfalls 0`, and read its
+   events with the `print_sheet.py` command it prints when the example
+   projects are on the machine.
    Take how it is built (which object holds what, which trigger does what),
    not its events: the design names it under `reference`.
 2. Write the design, below, to `tools/design.json` in the project.

@@ -13,7 +13,9 @@ The declarations are the `.d.ts` files of
 `Construct3-RAG/data/c3-ts-defs/`, without the addon SDK, and those under the
 project's `scripts/ts-defs/` when the editor has written them
 (`open_in_editor.py --typescript`): there `InstanceType.Coin` lists the
-behaviors and instance variables of the project's own objects.
+behaviors and instance variables of the project's own objects. The Claude
+Code plugin keeps these `.d.ts` files in bundles, so there a declaration
+shows the command that prints it instead of a file and line.
 
 A grep for a name also hits the parameters and event maps that mention it.
 This prints the declaration, the interface it belongs to, and its file and
@@ -111,22 +113,29 @@ def load_api(rag: Path, project: Path | None) -> list[Declaration]:
     """The declarations of the clone's API, then those of the project. The editor copies the whole API into
     scripts/ts-defs/ beside the project's own files, so a project file with the name of one of the clone's is
     skipped."""
-    files = {f"Construct3-RAG/data/c3-ts-defs/{k}": text
-             for k, text in c3.data_texts(rag, "data/c3-ts-defs", "*.d.ts").items() if "sdk" not in k.split("/")}
-    names = {k.rpartition("/")[2] for k in files}
+    defs = rag / "data" / "c3-ts-defs"
+    api = {k: text for k, text in c3.data_texts(rag, "data/c3-ts-defs", "*.d.ts").items() if "sdk" not in k.split("/")}
+    # A file the plugin keeps only in a bundle has no path to open; where() shows the command instead
+    files = [((defs / k).as_posix() if (defs / k).is_file() else "", text) for k, text in api.items()]
+    names = {k.rpartition("/")[2] for k in api}
     own = project / "scripts" / "ts-defs" if project else None
     if own and own.is_dir():
         for path in sorted(own.rglob("*.d.ts")):
             if path.name not in names and "sdk" not in path.relative_to(own).parts:
-                files[f"scripts/ts-defs/{path.relative_to(own).as_posix()}"] = path.read_text(encoding="utf-8", errors="replace")
+                files.append((f"scripts/ts-defs/{path.relative_to(own).as_posix()}",
+                              path.read_text(encoding="utf-8", errors="replace")))
     out = []
-    for shown, text in files.items():
+    for shown, text in files:
         out += parse(text, shown)
     return out
 
 
-def where(d: Declaration, line: int) -> str:
-    return f"{d.file}:{line}"
+def where(d: Declaration, m: Member | None = None) -> str:
+    """The file and line of a declaration or of one of its members, or the command that prints it when the
+    declaration has no file to open."""
+    if not d.file:
+        return f"lookup_script_api.py {d.name}{f'.{m.name}' if m else ''}"
+    return f"{d.file}:{m.line if m else d.line}"
 
 
 def addon_keys(name: str) -> set[str]:
@@ -155,7 +164,7 @@ def ancestors(api: dict[str, list[Declaration]], name: str) -> list[Declaration]
 
 
 def print_declaration(d: Declaration) -> list[str]:
-    lines = [f"{d.kind} {d.name}   {where(d, d.line)}", f"  {d.header}"]
+    lines = [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}"]
     lines += [f"  {m.text}" for m in d.members]
     if d.extends:
         lines.append(f"  -- members of {', '.join(d.extends)} are {d.name}'s too: "
@@ -166,7 +175,7 @@ def print_declaration(d: Declaration) -> list[str]:
 def print_members(hits: list[tuple[Declaration, Member]]) -> list[str]:
     lines = []
     for d, m in hits:
-        lines.append(f"{d.name}.{m.name}   {where(d, m.line)}")
+        lines.append(f"{d.name}.{m.name}   {where(d, m)}")
         lines.append(f"  {m.text}")
         if m.doc and len(hits) <= FULL:
             lines.append(f"  /** {m.doc} */")
@@ -198,7 +207,7 @@ def lookup(decls: list[Declaration], query: str) -> tuple[list[str], bool]:
     named += [d for d in decls if d.kind not in ("class", "interface", "namespace") and squash(d.name) == key]
     for d in named:
         lines += print_declaration(d) if d.kind in ("class", "interface", "namespace") else \
-            [f"{d.kind} {d.name}   {where(d, d.line)}", f"  {d.header}"]
+            [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}"]
     exact = [(d, m) for d in decls for m in d.members if m.name.lower() == query.lower()]
     if exact:
         lines += print_members(exact)
@@ -207,7 +216,7 @@ def lookup(decls: list[Declaration], query: str) -> tuple[list[str], bool]:
     near = [(d, m) for d in decls for m in d.members if key and key in squash(m.name)]
     if near:
         return ([f"no member is named {query!r}; members whose name holds it:"]
-                + [f"{d.name}.{m.name}   {where(d, m.line)}" for d, m in near]), True
+                + [f"{d.name}.{m.name}   {where(d, m)}" for d, m in near]), True
     names = {d.name for d in decls} | {m.name for d in decls for m in d.members}
     return [f"the scripting API declares no {query!r}{closest(query, names)}"], False
 

@@ -30,7 +30,9 @@ opened once before it is handed over.
   line in; ask the user for the folder instead of guessing it.
 - Loaded as the Claude Code plugin (the skill is named
   `construct3:construct3-agent-plugin`): the game project needs no copy; run
-  the scripts from this folder.
+  the scripts from this folder. In the files of this skill, `Construct3-RAG/`
+  before `data/` or `prompts/` stands for `${CLAUDE_PLUGIN_ROOT}/`. Other
+  `Construct3-RAG/` paths, such as `docs/`, are not in the plugin; skip them.
 - Otherwise, reading this inside the clone while the work is in a game
   project: install the skill there first,
   `python scripts/install.py --project <game folder>`.

@@ -37,6 +37,12 @@ the block for the project's instruction file.
 - Paths inside the skill are relative to its folder. A file of this
   repository is written `Construct3-RAG/<path>`, as the block in the game
   project writes it; a relative link out of the folder breaks in a copy.
+  The plugin bullet of `SKILL.md` says where such a path lies in the plugin,
+  so the skill's text names no file that the plugin holds only in a bundle.
+  A script prints a file of this repository by its absolute path. It prints
+  a TypeScript declaration that the plugin holds only in a bundle as the
+  `lookup_script_api.py` command that prints it
+  (`docs/decisions/plugin-folder.md`).
 - Scripts use the standard library, except `prepare_art.py`, which needs
   Pillow to read, cut out and resample pictures (`open_in_editor.py`
   drives the machine's Edge or Chrome over the DevTools protocol, and prints

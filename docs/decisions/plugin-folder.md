@@ -95,30 +95,51 @@ The build:
   wherever they are missing.
 - Writes `.claude-plugin/plugin.json`, `README.md` and the icon from their
   sources in `scripts/plugin/`, and the repository's `LICENSE`. The icon
-  goes at the plugin root, where the plugin reference puts every file but
-  the manifest, and `plugin.json` names it in `icon`, the field that
-  Claude's directory reads for the listing and Claude Code ignores. No text
-  of the plugin writes the icon's path in backticks or a code block, which
-  the checklist holds for a reviewer. The README describes the plugin route
-  only, and states what the plugin runs and what reaches the network: the
-  checker's fetch of a clone, and the browser that the scripts open on the
-  Construct editor and its preview. The checklist's "Prepare for the
-  security scan" asks the README to describe everything the plugin runs,
-  sends or fetches. This repository's README names `plugin/` as the plugin
-  folder.
+  goes at the plugin root, because the plugin manifest reference ("Manifest
+  file") keeps only `plugin.json` in `.claude-plugin/`. `plugin.json` names
+  it in `icon`, which Claude's directory reads for the listing and Claude
+  Code ignores. No text of the plugin writes the icon's path in backticks
+  or a code block, which the checklist holds for a reviewer. The README
+  describes the plugin route only, and states what the plugin runs and what
+  reaches the network: the checker's fetch of a clone, and the browser that
+  the scripts open on the Construct editor and its preview. The checklist's
+  "Prepare for the security scan" asks the README to describe everything
+  the plugin runs, sends or fetches. This repository's README names
+  `plugin/` as the plugin folder.
 
 Copied text files are written with LF line endings, as Git stores them, so
 a checkout with CRLF files (`lf-line-endings.md`) builds the same folder as
 any other.
 
+The skill names a file of this repository as `Construct3-RAG/<path>`. A
+game project resolves it through its `Construct3-RAG:` line, which a plugin
+user's project often lacks. So the plugin bullet of `SKILL.md` says that
+`Construct3-RAG/` before `data/` or `prompts/` stands for
+`${CLAUDE_PLUGIN_ROOT}/`, and the skill's text names no file that the
+plugin holds only in a bundle. Claude Code replaces that variable with the
+plugin's folder in the Markdown body of a skill when it loads the skill
+(Claude Code docs, "Plugin manifest reference", "Environment variables").
+It does not replace the variable in a reference that the agent reads with
+a file tool, and a Bash command does not get it. So only `SKILL.md` can
+carry the variable. Its one sentence also covers the paths of the
+references, which a build that wrote the variable into `SKILL.md` would not
+reach, so the build copies `SKILL.md` unchanged.
+
+The scripts print a file of this repository by its absolute path. A
+TypeScript declaration that the plugin holds only in a bundle is printed as
+the `lookup_script_api.py` command that prints it.
+
 The result stays under 512 files. A test builds the folder into a temporary
 directory and fails when the result differs from `plugin/`, has more than
 512 files, holds a binary file other than a PNG or a file over 256 KiB other
-than an image, names in `icon` a file it does not hold, or lacks a file
-under `data/` or `prompts/` that `SKILL.md`, `references/` or the
-game-project block names as `Construct3-RAG/<path>`.
-`init.py` builds the folder again after each data refresh, so the update
-workflow's pull request carries the build with the data.
+than an image, names in `icon` a file it does not hold, or lacks a file or
+folder under `data/` or `prompts/` that `SKILL.md`, `references/` or the
+game-project block names as `Construct3-RAG/<path>`. Another runs the
+plugin's scripts with no clone, and fails when a pitfall path that
+`search_guides.py` prints does not open, or when `lookup_script_api.py`
+prints a file path instead of a command. `init.py` builds the folder again
+after each data refresh, so the update workflow's pull request carries the
+build with the data.
 
 `skills/construct3-agent-plugin/` and `data/` stay the source. Edit them,
 then run the build; never edit `plugin/` by hand, because the next build
