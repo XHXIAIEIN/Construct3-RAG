@@ -5,11 +5,14 @@
 
 RUNS_DIR must lie outside the Construct3-RAG clone: an agent started below
 the clone reads its AGENTS.md, which routes to this skill, and a baseline
-that has the skill is not a baseline. A project is the stand-in game of
-assets/build_project.py, without tools/, so that the task is a hand edit of
-a project made in the editor; or, for a fixture `example:<id>`, a copy of
-that official example from --examples. A fixture of SEEDS is one of those with
-a mistake small models make written into it, for a case that asks to fix it.
+that has the skill is not a baseline. A project is one of three kinds. The
+default is the stand-in game of assets/build_project.py, without tools/, so
+that the task is a hand edit of a project made in the editor. A fixture
+`example:<id>` is a copy of that official example from --examples. A fixture
+`empty` is the project that new_project.py creates, for a case that designs a
+game before any file exists. A fixture of SEEDS is a stand-in game or an
+example with a mistake small models make written into it, for a case that
+asks to fix it.
 
 An arm named with_... holds the skill and the block as install.py leaves
 them, without_... holds neither, and old_... holds the previous version of
@@ -190,7 +193,8 @@ def digest(project: Path) -> dict:
 
     out: dict = {p.relative_to(project).as_posix(): hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
                  for p in sorted(project.rglob("*"))
-                 if p.is_file() and p.name != "AGENTS.md" and not {".agents", "__pycache__", "tools"} & set(p.parts)}
+                 if p.is_file() and p.name != "AGENTS.md"
+                 and not {".agents", "__pycache__", "tools", ".git", ".tmp"} & set(p.parts)}
     for path in sorted((project / "eventSheets").rglob("*.json")):
         if not path.name.endswith(".uistate.json"):
             sheet = json.loads(path.read_text(encoding="utf-8"))
@@ -230,7 +234,11 @@ def main() -> int:
         for case in (c for c in CASES if not args.cases or c["name"] in args.cases):
             fixture, seed = SEEDS.get(case["fixture"], (case["fixture"], None))
             source = game
-            if fixture.startswith("example:"):
+            if fixture == "empty":
+                source = Path(tmp) / "empty"
+                if not source.exists():
+                    run(str(SKILL / "scripts" / "new_project.py"), str(source), cwd=Path(tmp))
+            elif fixture.startswith("example:"):
                 source = Path(args.examples) / fixture.split(":", 1)[1]
                 if not (source / "project.c3proj").exists():
                     sys.exit(f"{source} is not a folder project; --examples is the example-projects folder of the "

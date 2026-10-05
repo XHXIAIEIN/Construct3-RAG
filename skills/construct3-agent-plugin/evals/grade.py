@@ -1193,6 +1193,27 @@ def grade_platform_state_in_chinese(run: Path) -> list[tuple[bool, str]]:
             unchanged(run)]
 
 
+def grade_design_a_catch_game(run: Path) -> list[tuple[bool, str]]:
+    project = run / "project"
+    design = project / "tools" / "design.json"
+    if design.exists():
+        p = subprocess.run([sys.executable, str(SKILL / "scripts" / "check_design.py"), str(design), "--project",
+                            str(project), "--rag", str(REPO), "--limit", "0"],
+                           capture_output=True, text=True, encoding="utf-8", env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+        lines = (p.stdout + p.stderr).strip().splitlines()
+        checked = (p.returncode == 0, f"exit {p.returncode}: {lines[-1] if lines else 'no output'}")
+        try:
+            example = (json.loads(design.read_text(encoding="utf-8")).get("reference") or {}).get("example")
+        except (ValueError, AttributeError):
+            example = None
+    else:
+        checked, example = (False, "no tools/design.json"), None
+    ids = {path.stem for path in (REPO / "data" / "c3-examples" / "en-US").glob("*.json")}
+    return [checked,
+            (isinstance(example, str) and example in ids, f"reference.example: {example!r}"),
+            unchanged(run, ("tools/",))]
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
@@ -1203,7 +1224,8 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "fix-turn-flip": grade_fix_turn_flip, "two-player-turns": grade_two_player_turns,
            "two-player-turn-limit": grade_two_player_turns, "find-a-drag-example": grade_find_a_drag_example,
            "script-shift-and-edges": grade_script_shift_and_edges,
-           "platform-state-in-chinese": grade_platform_state_in_chinese}
+           "platform-state-in-chinese": grade_platform_state_in_chinese,
+           "design-a-catch-game": grade_design_a_catch_game}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")
