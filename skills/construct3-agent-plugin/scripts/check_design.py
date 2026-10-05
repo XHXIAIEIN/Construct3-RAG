@@ -9,7 +9,7 @@ regions, the state table, the inputs, the rules as data (trigger, conditions,
 effects, sub-rules), win and lose, and the acceptance tests. The script reads
 it and refuses a gap by its path: a missing table, a name nothing defines,
 a state no rule writes or nothing reads, a fact kept in two places, an input
-without feedback, no rule that restarts, an input that changes nothing the
+without feedback, no rule that restarts a game that ends, an input that changes nothing the
 player sees, and a cell of an Array an input writes with no count of the
 instances that show it.
 
@@ -96,9 +96,10 @@ def coverage(design: gm.Design) -> None:
         if not read[n] and not s.seen and not s.keep:
             design.bad(f"{s.path}", f"nothing reads {n}: no condition, effect, win or lose uses it and the player "
                                     f"does not see it; drop the row, or use it where the game decides something")
-    if not any(e[0] == "restart" for r in design.all_rules() for e in r.do):
+    if design.ends and not any(e[0] == "restart" for r in design.all_rules() for e in r.do):
         design.bad("rules", "no rule restarts the game: add one, fired by the input that starts a new game, whose "
-                            "effects end with \"restart\"")
+                            "effects end with \"restart\". A demo of one mechanic that is never won or lost writes "
+                            "\"win\": \"none\" and \"lose\": \"none\" instead, and needs no restart")
     seen_after(design)
 
 
@@ -236,7 +237,8 @@ def launch(design: gm.Design) -> None:
             design.bad(key, f"{design.data.get(key)} holds on the first screen, before the player does anything"
                             + (f" ({seen} after the start rules)" if seen else "") + ": the game is over at launch. "
                             f"Give the rows it reads the start of a new game, in the state's start and in a \"start\" "
-                            f"rule, and play the tests from there rather than from a fixture")
+                            f"rule, and play the tests from there rather than from a fixture. If the game is never "
+                            f"{'won' if key == 'win' else 'lost'}, as a demo of one mechanic, write \"{key}\": \"none\"")
 
 
 def run_test(design: gm.Design, t: dict) -> dict:
@@ -372,7 +374,7 @@ def play(design: gm.Design) -> list[str]:
         design.bad("win", "no test reaches the win: add a test that plays to it and expects it")
     if design.lose and not lost:
         design.bad("lose", "no test reaches the lose: add a test that plays to it and expects it")
-    if not restarted and not any(p[0] == "rules" for p in design.problems):
+    if design.ends and not restarted and not any(p[0] == "rules" for p in design.problems):
         design.bad("tests", "no test restarts the game: after the win or lose, do the input that starts a new game, "
                             "wait, and expect the state of a new game")
     return lines
@@ -482,8 +484,10 @@ def main() -> int:
     if n:
         out.append(f"design: {n} finding{'s' if n != 1 else ''}; fix each at its path and run this again")
     else:
-        out.append(f"ok: design complete; {len(design.tests)} tests pass in the prototype, win"
-                   + (" and lose" if design.lose else "") + " reached, restart checked. Next, build the game, one "
+        ends = " and ".join(k for k, node in (("win", design.win), ("lose", design.lose)) if node is not None)
+        out.append(f"ok: design complete; {len(design.tests)} tests pass in the prototype, "
+                   + (f"{ends} reached, restart checked" if ends else "no win or lose: a demo that never ends")
+                   + ". Next, build the game, one "
                    "event per rule with the rule's id in the comment above it, then play the same tests in the "
                    "editor: python scripts/play_design.py " + str(args.design))
     shown = c3.fitting(out, args.limit)

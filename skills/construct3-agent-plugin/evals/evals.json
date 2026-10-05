@@ -45,7 +45,7 @@
       "expected_output": "Event 9, the number in the editor's margin: Coin.Count = 0 with Trigger once, then a 1 second wait and Restart layout. The project is left unchanged.",
       "files": [],
       "assertions": [
-        "The answer gives 9 as the event that restarts the layout, and another number only for the group it sits in",
+        "The answer gives 9 first, as the event that restarts the layout, and 8 only as the group it sits in",
         "The answer states both conditions, Coin.Count = 0 and Trigger once, and the 1 second wait",
         "No project file differs from the fixture"
       ]
@@ -300,6 +300,19 @@
         "The answer gives 330, 650 and 1500",
         "The answer names the three values as the zh-CN editor does: 最大移动速度, 跳跃高度, 重力",
         "No project file differs from the fixture, the .tmp folder of the preview aside"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "design-a-catch-game",
+      "fixture": "empty",
+      "prompt": "i want to make a small game in my new project at <project> : a basket at the bottom follows the mouse and catches falling apples, every apple caught is a point, a missed apple costs one of three lives, and at zero lives the game is over. dont build it yet. design it first the way the skill says, check the design, then stop and tell me which official construct example you based it on and why",
+      "expected_output": "search_guides.py with the game's words and --pitfalls 0 prints the closest official examples, each with the print_sheet.py command that prints its events. The run reads the events of one of them, as step 1 of references/designing-a-game.md says. tools/design.json names that example under reference.example and passes check_design.py. No other project file changes.",
+      "files": [],
+      "assertions": [
+        "tools/design.json exists and the clone's check_design.py passes it",
+        "The design's reference.example is the id of an official example",
+        "No project file but tools/ differs from the fixture"
       ]
     }
   ]

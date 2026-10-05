@@ -215,20 +215,32 @@ def grade_fix_load_errors(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
+def system_text(locale: str, kind: str, ace: str) -> str:
+    """The display text of a System condition or action in one locale, without its markup."""
+    aces = json.loads((REPO / "data" / "c3-schemas" / locale / "plugins" / "system.json").read_text(encoding="utf-8"))[kind]
+    return re.sub(r"\[/?[bi]\]", "", next(a["display-text"] for a in aces if a["id"] == ace))
+
+
+# A run that answers in Chinese uses the zh-CN editor's wording: "事件 9", "仅触发一次", "等待 1 秒".
+ZH_TRIGGER_ONCE = system_text("zh-CN", "conditions", "trigger-once-while-true")
+ZH_SECONDS = system_text("zh-CN", "actions", "wait").split("{0}")[1].split()[0]
+EVENT_NUMBER = re.compile(r"(?:\bevent(?:\s+number)?|事件(?:编号)?)[\s:：*#`]*(\d+)", re.I)
+
+
 def grade_name_the_restart_event(run: Path) -> list[tuple[bool, str]]:
-    path = run / "outputs" / "answer.md"
-    text = path.read_text(encoding="utf-8") if path.exists() else ""
-    answer = re.split(r"^#+\s*commands?\s+run", text, flags=re.I | re.M)[0]
-    given = re.compile(r"\bevent(?:\s+number)?[\s:*#`]*(\d+)", re.I)
-    numbers = sorted(set(map(int, given.findall(answer))))
-    # 9 restarts; 8 is the group it sits in, and an answer may say so on a line that calls it the group.
-    beside = sorted({int(n) for line in answer.splitlines() if not re.search(r"\bgroup\b", line, re.I)
-                     for n in given.findall(line)} - {9})
-    results = [(9 in numbers and not beside, f"event numbers the answer gives: {numbers or 'none'}"
-                + (f"; as the event, not as its group: {beside}" if beside else ""))]
+    answer = answer_of(run)
+    numbers = [int(n) for n in EVENT_NUMBER.findall(answer)]
+    # 9 restarts and 8 is the group it sits in. The first number is the answer; a later one may name another
+    # event as context ("Setup (event 2) runs again"), and 8 may stand on a line that calls it the group.
+    as_event = {int(n) for line in answer.splitlines() if not re.search(r"\bgroup\b|组", line, re.I)
+                for n in EVENT_NUMBER.findall(line)}
+    results = [(numbers[:1] == [9] and 8 not in as_event, f"event numbers the answer gives, in order: {numbers or 'none'}"
+                + ("; 8 as the event, not as its group" if 8 in as_event else ""))]
+    # "仅" is "only"; answers drop it.
+    trigger_once = rf"trigger\s+once|{re.escape(ZH_TRIGGER_ONCE).replace('仅', '仅?')}"
     parts = {"Coin.Count = 0": re.search(r"coin\.count`?\s*=+\s*`?0", answer, re.I),
-             "Trigger once": re.search(r"trigger\s+once", answer, re.I),
-             "1 second wait": re.search(r"\b(1|one)[\s-]*(s\b|sec)", answer, re.I)}
+             "Trigger once": re.search(trigger_once, answer, re.I),
+             "1 second wait": re.search(rf"\b(1|one)[\s-]*(s\b|sec)|(1|一)\s*{ZH_SECONDS}", answer, re.I)}
     results.append((all(parts.values()), "stated: " + ", ".join(k for k, v in parts.items() if v)
                     + ("; missing: " + ", ".join(k for k, v in parts.items() if not v) if not all(parts.values()) else "")))
     results.append(unchanged(run))
@@ -1208,6 +1220,27 @@ def grade_platform_state_in_chinese(run: Path) -> list[tuple[bool, str]]:
             unchanged(run)]
 
 
+def grade_design_a_catch_game(run: Path) -> list[tuple[bool, str]]:
+    project = run / "project"
+    design = project / "tools" / "design.json"
+    if design.exists():
+        p = subprocess.run([sys.executable, str(SKILL / "scripts" / "check_design.py"), str(design), "--project",
+                            str(project), "--rag", str(REPO), "--limit", "0"],
+                           capture_output=True, text=True, encoding="utf-8", env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+        lines = (p.stdout + p.stderr).strip().splitlines()
+        checked = (p.returncode == 0, f"exit {p.returncode}: {lines[-1] if lines else 'no output'}")
+        try:
+            example = (json.loads(design.read_text(encoding="utf-8")).get("reference") or {}).get("example")
+        except (ValueError, AttributeError):
+            example = None
+    else:
+        checked, example = (False, "no tools/design.json"), None
+    ids = {path.stem for path in (REPO / "data" / "c3-examples" / "en-US").glob("*.json")}
+    return [checked,
+            (isinstance(example, str) and example in ids, f"reference.example: {example!r}"),
+            unchanged(run, ("tools/",))]
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
@@ -1218,7 +1251,8 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "fix-turn-flip": grade_fix_turn_flip, "two-player-turns": grade_two_player_turns,
            "two-player-turn-limit": grade_two_player_turns, "find-a-drag-example": grade_find_a_drag_example,
            "script-shift-and-edges": grade_script_shift_and_edges,
-           "platform-state-in-chinese": grade_platform_state_in_chinese}
+           "platform-state-in-chinese": grade_platform_state_in_chinese,
+           "design-a-catch-game": grade_design_a_catch_game}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")

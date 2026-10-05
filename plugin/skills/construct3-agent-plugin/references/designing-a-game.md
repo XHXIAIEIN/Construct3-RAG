@@ -103,9 +103,11 @@ shows before the build and a bug in the events after it.
   fired by an input that writes a cell of an Array changes a count in the
   same rule or its sub-rules, since a cell is not on screen and a status
   line says nothing of the piece.
-- `win` and `lose`: expressions over the state, or `"lose": "none"` for a
-  game without losing. Some test must reach each, and neither may hold on
-  the first screen, before the player does anything.
+- `win` and `lose`: expressions over the state, or `"none"` for a game
+  never won or never lost. Some test must reach each, and neither may hold
+  on the first screen, before the player does anything. A demo of one
+  mechanic (a toggle, a countdown, a drag that snaps) writes `"none"` for
+  both: it never ends, so it needs no restart rule and no test restarts it.
 - `tests`: from a first launch each. `{"do": "hit", "h": 4}` does an input,
   then lets the game run 0.15 s; `{"wait": 1}` lets it run;
   `{"expect": "score = 1"}` must hold; `{"set": "hole = 4"}` is a fixture

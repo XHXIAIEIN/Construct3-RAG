@@ -68,6 +68,7 @@ The project skill and the prompts:
 | `published-game-visual-language.md` | Which visual, motion, camera and pacing rules repeated across published Construct games, and which of them the template took |
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
+| `layout-by-name.md` | Why a generated screen is laid out by names, a button with its label, named bands and a main object sized to the stage, with the positions computed and checked as numbers |
 | `art-from-the-image-tool.md` | Why a generated game's art comes from the agent's image tool through `art()` and `prepare_art.py`, and is not drawn in code |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |
 | `skill-and-plugin-names.md` | The names of the skill and the Claude Code plugin |

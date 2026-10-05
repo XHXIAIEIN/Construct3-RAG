@@ -147,7 +147,7 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 | File in `construct3-agent-plugin/evals/` | Holds |
 |-------------------------------------|-------|
 | `evals.json` | The test cases: prompt, expected output, assertions a script can check |
-| `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game or an official example, with this skill, the previous one or none |
+| `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game, an official example or the empty project of `new_project.py`, with this skill, the previous one or none |
 | `trace.py` | What a run did, from its transcript: every tool call, the ones it lost, `trace.json` |
 | `grade.py` | `grading.json` per run with the evidence, `benchmark.json` per iteration: mean and deviation per case and arm (`<arm>_2` is a second run of `<arm>`), and the difference between arms |
 | `measure_design.py` | What each rule of `scripts/review_design.py` finds over the official examples and game projects, with looser variants, and every hit as JSON to read before a rule becomes a finding |

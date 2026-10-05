@@ -116,8 +116,8 @@ Option 3, with one bullet of option 2 in
   `art()` puts the art of the image tool or the user in their boxes
   (`art-from-the-image-tool.md`).
 - `FONT` and `TEXT_SIZE`: `body` one unit, `title` two. `text_inst()` and
-  `hud_text()` take their size from it and stop below 4.5:1, or 3:1 from the
-  title size up (WCAG 2.2, 1.4.3), naming the roles that would read.
+  `hud_text()` take their size from it and stop below 4.5:1, or 3:1 from 18 pt
+  up (`text_contrast()`; WCAG 2.2, 1.4.3), naming the roles that would read.
 - `PIXEL_ART` (a viewport 360 px high or less): *Nearest* sampling at
   *Letterbox integer scale*.
 - `layer()` fills an opaque layer from a role, `canvas` unless named.

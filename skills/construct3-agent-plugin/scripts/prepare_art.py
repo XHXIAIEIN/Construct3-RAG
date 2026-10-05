@@ -1,18 +1,31 @@
 """Turn the pictures of the session's image tool into a generated game's art.
 
-    python scripts/prepare_art.py --list     the prompt for each picture still to make
+    python scripts/prepare_art.py --list     the next step: the prompts of the pictures to make
     python scripts/prepare_art.py            cut out and fit every picture in art/raw/
 
 The generator's art() asks for each sprite by what it shows, in a box of whole
 units, and writes the list to art/wanted.json; until its picture is there, the
-sprite shows its stand-in shape. --list prints a prompt per picture, starting
-with ART_STYLE so that the pictures share one style. Make each with the image
-tool and save it as art/raw/<name>.png, .jpg or .webp, where <name> is the
-image's file name without .png. Without --list, each picture there is:
+sprite shows its stand-in shape. --list prints one step at a time. While
+ART_STYLE is empty, it asks for ART_STYLE. While more than one sprite is to
+make, it asks for the key picture, a line-up of the game's subjects that sets
+the style. Then it prints a prompt per picture, which starts with ART_STYLE so
+that the pictures share one style. Make each picture with the image tool and
+save it as art/raw/<name>.png, .jpg or .webp, where <name> is the image's file
+name without .png. Save the key picture as art/raw/_key.png: each sprite's
+prompt then gives it as the reference image.
 
-  cut out    a picture with transparency keeps it; any other was asked for on
-             a flat key colour, removed where it touches the edge and wherever
-             it is that colour exactly, with the edge blended
+--list also warns of subjects that will come out wrong. A subject must not
+name a background, a shadow, text, or a drawing style that ART_STYLE does not
+name. Several subjects that differ only in colour or element words come out
+as one figure in several colours. Without --list, each picture there is:
+
+  cut out    a picture with transparency keeps it. Any other picture was
+             asked for on a flat magenta or green, the key. The key is
+             removed where it touches the edge and where it shows through a
+             gap, and taken out of the colour of the edge pixels it blends
+             with. A picture on another background, or one whose edge still
+             leans to the key after the cut, is refused with what to make
+             instead
   fitted     trimmed to the subject and fitted into its box, centred, standing
              on the box's bottom when the origin is at the feet; a scene
              covers its box and is cropped
@@ -26,11 +39,17 @@ Needs Pillow (pip install pillow).
 The last line starts with ok: once every picture art() asks for is in art/;
 before that it counts what is left and names the next step.
 
-Exit 0: no picture was refused. Exit 1: a picture could not be used; its line
-says what to make instead. Exit 2: no art/wanted.json, or no Pillow.
+A refused picture is recorded in art/refused.json, and --list gives its
+prompt again with what to make instead. After three refusals a picture keeps
+its stand-in, and both runs count it and move on.
+
+Exit 0: no picture waits to be made again. Exit 1: a picture could not be
+used; its line says why. Exit 2: no art/wanted.json, or no Pillow.
 """
+import hashlib
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -40,21 +59,66 @@ RAW_TYPES = (".png", ".jpg", ".jpeg", ".webp")
 KEYS = {"magenta": (255, 0, 255), "green": (0, 255, 0)}
 # a subject in these colours is asked for on green, so the key does not eat it
 NEAR_MAGENTA = ("pink", "magenta", "purple", "violet", "fuchsia", "lilac", "lavender", "rose", "粉", "紫", "品红")
+# Words in a subject that the prompt or ART_STYLE already decides, in English and Chinese. A word
+# after "no", "without", "无" or "不含" is not counted: "无文字" asks for what the prompt asks for.
+# docs/decisions/art-from-the-image-tool.md records what they were measured on.
+NAMES = {
+    "background": ("background", "backdrop", "scenery", "背景"),
+    "shadow": ("shadow", "阴影", "影子", "投影"),
+    "text": ("text", "lettering", "letter", "caption", "writing", "word", "文字", "字样", "文本", "字母"),
+}
+STYLE_WORDS = ("pixel", "8-bit", "16-bit", "vector", "cartoon", "anime", "manga", "chibi", "realistic", "watercolo",
+               "oil paint", "painterly", "sketch", "line art", "cel-shad", "cel shad", "low poly", "low-poly", "3d",
+               "outline", "像素", "矢量", "扁平", "卡通", "动漫", "二次元", "写实", "水彩", "油画", "素描", "手绘",
+               "线稿", "描边", "赛璐璐", "低多边形", "厚涂", "风格")
+NEGATION = re.compile(r"(?:\b(?:no|not|without|free of)\b(?:\W+\w+){0,2}\W*|无|不含|没有|不带|不要|去掉)$")
+# Colour and element words: subjects the same without them come out as one figure in several colours.
+COLOUR_WORDS = ("red", "green", "blue", "yellow", "orange", "purple", "pink", "violet", "white", "black", "grey",
+                "gray", "brown", "golden", "gold", "silver", "cyan", "teal", "crimson", "scarlet", "azure", "navy",
+                "magenta", "dark", "light", "pale", "fire", "water", "ice", "earth", "wood", "metal", "poison",
+                "lightning", "thunder", "wind", "鎏金", "红", "绿", "蓝", "黄", "橙", "紫", "粉", "白", "黑", "灰",
+                "褐", "棕", "金", "银", "青", "赤", "翠", "湛", "碧", "色", "暗", "深", "浅", "亮", "木", "水", "火",
+                "土", "冰", "雷", "毒")
+VARIANTS = 3                               # subjects that differ only in colour or element words: a warning
 RATIOS = ((1, 1), (4, 3), (3, 4), (3, 2), (2, 3), (16, 9), (9, 16), (2, 1), (1, 2))
-# distances in RGB from the background colour: background wherever it is this near, background
-# where it touches the edge and is this near, and the width of the blend on the subject's edge
-EXACT, NEAR, BLEND = 30, 60, 150
+# RGB distances from the background colour, the key as the model painted it. NEAR: background
+# that joins the edge. POCKET: a gap in the subject, anywhere, when it also lies within KEYLINE of
+# the key made darker or lighter. docs/decisions/art-from-the-image-tool.md has the measurements.
+NEAR, POCKET, KEYLINE = 60, 70, 60
+# The edge is REACH px deep, or a pixel per REACH_PER px of the picture's long side when that is
+# more, because a real picture's blend widens with its size. An edge pixel is unmixed when it
+# leans to the key MARGIN more than the subject behind it, or lies within LINE of the line between
+# the background and that subject. The subject's colour is carried along a strand that has no
+# inside for up to SWEEPS px.
+REACH, REACH_PER, MARGIN, LINE, SWEEPS = 3, 240, 16, 30, 16
+# Key light inside the subject: a pixel that leans SPILL more to the key than the 5x5 around it.
+SPILL = 60
+# A cut whose edge pixels lean to the key in more than this share, and more than FRINGE_MIN of
+# them, is refused.
+FRINGE, FRINGE_MIN = 0.005, 8
+LINEUP = 4                                 # subjects in the key picture
 WORK = 4                                   # a picture is cut out at up to this many times its box
+REFUSED = "art/refused.json"               # the pictures this script refused, which --list reads
+TRIES = 3                                  # refusals before a picture keeps its stand-in
 MARK = "c3-art"                            # the PNG text key check_look.py reads as a painting
 
 
 class Unusable(Exception):
-    """A picture the run cannot use; the message says what to make instead."""
+    """A picture the run cannot use. `problem` says what is wrong with it, and `again` what to
+    make instead. `tell` is the sentence the picture's next prompt adds for the image tool, and
+    `key` the key colour that prompt asks for when it changes. A file Pillow cannot read has no
+    `again`, because it is saved again, not made again."""
+
+    def __init__(self, problem: str, again: str = "", tell: str = "", key: str | None = None):
+        super().__init__(f"{problem}; {again}" if again else problem)
+        self.again, self.tell, self.key = again, tell, key
 
 
 def key_for(item: dict, style: str) -> tuple[str, tuple]:
+    """The key colour a sprite is asked for on: the one its last refusal named, else green for a
+    subject in pink or purple, else magenta."""
     words = f"{item['subject']} {style}".lower()
-    name = "green" if any(w in words for w in NEAR_MAGENTA) else "magenta"
+    name = item.get("key") or ("green" if any(w in words for w in NEAR_MAGENTA) else "magenta")
     return name, KEYS[name]
 
 
@@ -67,13 +131,23 @@ def ratio(w: int, h: int) -> str:
     return f"{a}:{b}"
 
 
-def prompt(item: dict, style: str) -> str:
-    lead = f"{style.rstrip('. ')}; " if style.strip() else ""
+def lead(style: str) -> str:
+    """ART_STYLE as the start of a prompt."""
+    return f"{style.strip().rstrip('。. ')}; " if style.strip() else ""
+
+
+def prompt(item: dict, style: str, reference: bool = False) -> str:
+    """The prompt of one picture. With `reference`, a sprite's prompt says what the key picture
+    is for. With item["tell"], it says what the picture last refused got wrong."""
+    subject = item["subject"].strip().rstrip("。. ")
     if item["kind"] == "scene":
-        return f"{lead}{item['subject']}. A full-frame background scene, no characters in front, no text."
+        return f"{lead(style)}{subject}. A full-frame background scene, no characters in front, no text."
     name, key = key_for(item, style)
-    return (f"{lead}{item['subject']}. One subject, whole and centred with room around it, on a flat {name} "
-            f"{hex_of(key)} background: no scenery, no shadow on the ground, no text.")
+    again = f" {item['tell']}" if item.get("tell") else ""
+    copy = (" The reference image sets the style and the palette; it is not a picture to copy, so draw only this "
+            "subject.") if reference else ""
+    return (f"{lead(style)}{subject}. One subject, whole and centred with room around it, on a flat {name} "
+            f"{hex_of(key)} background: no scenery, no shadow on the ground, no text.{again}{copy}")
 
 
 def raw_of(root: Path, rel: str) -> Path | None:
@@ -83,53 +157,177 @@ def raw_of(root: Path, rel: str) -> Path | None:
     return max(found, key=lambda p: p.stat().st_mtime) if found else None
 
 
-def state(root: Path, item: dict) -> str:
-    """make: no picture yet; prepare: a picture newer than its fitted art; done."""
+def fingerprint(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+
+
+def refusals(root: Path, wanted: dict) -> dict:
+    """art/refused.json, by file name: the pictures refused, by fingerprint, and the `tell` and
+    `key` of the last refusal. A record whose subject differs from the one art() asks for is
+    ignored."""
+    try:
+        data = json.loads((root / REFUSED).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    subjects = {item["file"]: item["subject"] for item in wanted["images"]}
+    return {rel: r for rel, r in data.items() if isinstance(r, dict) and subjects.get(rel) == r.get("subject")}
+
+
+def with_refusal(item: dict, refused: dict) -> dict:
+    """The item with the `tell` and `key` of its last refusal, which its next prompt carries."""
+    r = refused.get(item["file"])
+    return {**item, **{k: r[k] for k in ("tell", "key") if r.get(k)}} if r else item
+
+
+def state(root: Path, item: dict, refused: dict) -> str:
+    """make: no picture yet; again: its pictures were refused, fewer than TRIES; stand-in: TRIES
+    were; prepare: a picture newer than its fitted art and not refused; done."""
     raw, out = raw_of(root, item["file"]), root / "art" / item["file"]
-    if raw is None:
-        return "done" if out.exists() else "make"
-    return "done" if out.exists() and out.stat().st_mtime >= raw.stat().st_mtime else "prepare"
+    if out.exists() and (raw is None or out.stat().st_mtime >= raw.stat().st_mtime):
+        return "done"
+    r = refused.get(item["file"])
+    if raw is not None and (r is None or fingerprint(raw) not in r["pictures"]):
+        return "prepare"
+    if r is None:
+        return "make"
+    return "stand-in" if len(r["pictures"]) >= TRIES else "again"
+
+
+def lineup(sprites: list[dict]) -> list[dict]:
+    """The sprites of the key picture, LINEUP of them: the first of each object before a second of
+    one, so that it shows the kinds of things the game holds rather than the frames of one."""
+    seen, first, more = set(), [], []
+    for item in sprites:
+        obj = item["file"].split("-")[0]
+        (more if obj in seen else first).append(item)
+        seen.add(obj)
+    return (first + more)[:LINEUP]
+
+
+def named(subject: str, words, whole: bool = True) -> list[str]:
+    """The words of `words` that `subject` names, as it writes them, not counting one after a
+    negation. An English word matches whole, or with `whole` false as the start of a word:
+    "outline" in "outlined"."""
+    low = subject.lower()
+    found = []
+    for w in words:
+        pattern = re.escape(w) if not w.isascii() else rf"\b{re.escape(w)}" + (r"s?\b" if whole else "")
+        found += [m.group() for m in re.finditer(pattern + ("" if whole else r"\w*"), low)
+                  if not NEGATION.search(low[:m.start()])][:1]
+    return found
+
+
+def warnings(items: list[dict], style: str) -> list[str]:
+    """One warning for each thing a subject says that its prompt or ART_STYLE already decides, and
+    one for the groups of subjects that differ only in colour or element words."""
+    def listed(found: list[str]) -> str:
+        return ", ".join(found[:5]) + (f" and {len(found) - 5} more" if len(found) > 5 else "")
+
+    def stem(item: dict) -> str:
+        return item["file"][:-len(".png")]
+
+    sprites = [item for item in items if item["kind"] != "scene"]
+    out = []
+    for what, among, why in (
+            ("a background", sprites, "A sprite is made on the key colour alone and cut out, so take the background "
+                                      "out of the subject, or make the picture a scene"),
+            ("a shadow", sprites, "The cut removes a shadow together with the background, so take it out of the "
+                                  "subject"),
+            ("text", items, "The image tool misspells words, so take them out of the subject and write them with a "
+                            "Text object")):
+        if found := [stem(item) for item in among if named(item["subject"], NAMES[what.split()[-1]])]:
+            out.append(f"warning: {listed(found)}: the subject names {what}. {why}")
+    styles = {}
+    for item in items:
+        for w in STYLE_WORDS:
+            if w not in style.lower() and (written := named(item["subject"], [w], whole=False)):
+                styles.setdefault(written[0], []).append(stem(item))
+    for word, found in styles.items():
+        out.append(f"warning: {listed(found)}: the subject names the drawing style \"{word}\", and ART_STYLE does "
+                   f"not. Pictures in two styles do not match, so add the style to ART_STYLE or take it out of the "
+                   f"subject")
+    groups = {}
+    for item in items:
+        bare = item["subject"].lower()
+        for w in sorted(COLOUR_WORDS, key=len, reverse=True):
+            bare = re.sub(rf"\b{w}\b" if w.isascii() else w, "", bare)
+        bare = re.sub(r"\b(?:a|an|the)\b|[\W_]+", "", bare)
+        groups.setdefault((item["kind"], item["width"], item["height"], bare), []).append(stem(item))
+    if same := [listed(found) for found in groups.values() if len(found) >= VARIANTS]:
+        out.append(f"warning: {'; '.join(same)}: the subjects differ only in colour or element words, so each group "
+                   f"comes out as one figure in several colours. If they are different things, say in each subject "
+                   f"what else sets it apart: its shape, its size, what it holds")
+    return out
 
 
 def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
+    """The next step only: ART_STYLE while it is empty, then the key picture while it is missing,
+    then a prompt per picture."""
     style, items = wanted.get("style", ""), wanted["images"]
-    states = {item["file"]: state(root, item) for item in items}
-    out = [f"style: {style}" if style.strip() else
-           "style: none. Write ART_STYLE in tools/build_project.py first, one sentence of art direction the user "
-           "agreed, so that every picture shares it. Then run the generator"]
-    to_make = [item for item in items if states[item["file"]] == "make"]
-    sprites = [item for item in to_make if item["kind"] != "scene"]
+    refused = refusals(root, wanted)
+    states = {item["file"]: state(root, item, refused) for item in items}
+    counts = {k: list(states.values()).count(k) for k in ("make", "again", "prepare", "done", "stand-in")}
+    to_make = counts["make"] + counts["again"]
+    count = f"to make: {to_make}, to prepare: {counts['prepare']}, done: {counts['done']}" + \
+        (f", stand-ins: {counts['stand-in']}" if counts["stand-in"] else "")
+    making = [item for item in items if states[item["file"]] in ("make", "again")]
+    sprites = [item for item in making if item["kind"] != "scene"]
+    if to_make and not style.strip():
+        return ["style: none. Write ART_STYLE in tools/build_project.py, one sentence of art direction the user "
+                "agreed, so that every picture shares it", *warnings(making, style),
+                f"{count}; next: write ART_STYLE, run python tools/build_project.py, then python {skill}/scripts/"
+                f"prepare_art.py --list again"]
+    out = ([f"style: {style}"] if style.strip() else []) + warnings(making, style)
     if len(sprites) > 1 and raw_of(root, "_key.png") is None:
-        lineup = "; ".join(item["subject"] for item in sprites[:4])
-        name, key = key_for(sprites[0], style)
-        lead = f"{style.rstrip('. ')}; " if style.strip() else ""
-        out.append(f"key picture: make it first, \"{lead}a line-up of {lineup}, side by side on a flat {name} "
-                   f"{hex_of(key)} background, no text\". If the user is in the session, show it and keep the one "
-                   f"they choose. Save it as art/raw/_key.png. Give it as the reference image of every picture "
-                   f"below, where the image tool takes one")
+        shown = lineup(sprites)
+        subjects = "; ".join(item["subject"].rstrip("。. ") for item in shown)
+        name, key = key_for({"subject": subjects}, style)
+        return out + [f"key picture: \"{lead(style)}a line-up of {subjects}, side by side on a flat {name} "
+                      f"{hex_of(key)} background, no text\". If the user is in the session, show it and keep the "
+                      f"one they choose. Save it as art/raw/_key.png",
+                      f"{count}; next: make the key picture, then python {skill}/scripts/prepare_art.py --list for "
+                      f"the prompts of the others"]
+    key_picture = raw_of(root, "_key.png")
     for item in items:
         rel, s = item["file"], states[item["file"]]
         stem = rel[:-len(".png")]
-        if s == "make":
-            out.append(f"make {stem}: ratio {ratio(item['width'], item['height'])}, for a {item['width']}x"
-                       f"{item['height']} box -> art/raw/{stem}.png")
-            out.append(f"  \"{prompt(item, style)}\"")
+        if s in ("make", "again"):
+            reference = key_picture is not None and item["kind"] != "scene"
+            tried = (f" again (refusal {len(refused[rel]['pictures'])} of {TRIES}; after {TRIES} it keeps its "
+                     f"stand-in)") if s == "again" else ""
+            out.append(f"make {stem}{tried}: ratio {ratio(item['width'], item['height'])}, for a {item['width']}x"
+                       f"{item['height']} box" + (f", art/raw/{key_picture.name} as the reference image" if reference
+                                                  else "") + f" -> art/raw/{stem}.png")
+            out.append(f"  \"{prompt(with_refusal(item, refused), style, reference)}\"")
+        elif s == "stand-in":
+            out.append(f"stand-in {stem}: refused {TRIES} times, so it keeps its stand-in. "
+                       f"To try again, change its subject in art(), which starts the count again")
         else:
             out.append(f"{s} {stem}: {raw.name if (raw := raw_of(root, rel)) else 'art/' + rel}")
-    counts = {k: list(states.values()).count(k) for k in ("make", "prepare", "done")}
-    if counts["make"]:
-        out.append(f"to make: {counts['make']}, to prepare: {counts['prepare']}, done: {counts['done']}; next: make "
-                   f"each with the image tool, then python {skill}/scripts/prepare_art.py")
+    if to_make:
+        out.append(f"{count}; next: make each with the image tool, then python {skill}/scripts/prepare_art.py")
     elif counts["prepare"]:
-        out.append(f"to prepare: {counts['prepare']}, done: {counts['done']}; next: python "
-                   f"{skill}/scripts/prepare_art.py")
+        out.append(f"{count}; next: python {skill}/scripts/prepare_art.py")
+    elif counts["stand-in"]:
+        out.append(f"{count}; next: python tools/build_project.py")
     else:
         out.append(f"ok: all {counts['done']} pictures done; next: python tools/build_project.py")
     return out
 
 
+def leaning_to(key: tuple):
+    """A function that gives how far a colour leans to the key: the lowest keyed channel less the
+    highest other one, about 255 on the key and 0 or less away from it. The lean is linear in a
+    blend with the key. Red under magenta and gold under green lean no more than grey."""
+    on = [k for k in range(3) if key[k]]
+    off = [k for k in range(3) if not key[k]]
+    return lambda c: min(c[k] for k in on) - max(c[k] for k in off)
+
+
 def cut_out(img, key: tuple) -> tuple[object, str]:
-    """The picture as RGBA with its background clear, and how the background was found."""
+    """The picture as RGBA with its background clear, and a line that gives the background's
+    colour and counts the pixels cleared in gaps and recoloured. Raises Unusable when the picture
+    cannot be cut cleanly."""
     from PIL import Image, ImageFilter
     rgba = img.convert("RGBA")
     w, h = rgba.size
@@ -141,69 +339,218 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     colours = [tuple(data[4 * i:4 * i + 3]) for i in edge]
     bg = tuple(sorted(c[k] for c in colours)[len(colours) // 2] for k in range(3))
     near = sum(sum((a - b) ** 2 for a, b in zip(c, bg)) < NEAR ** 2 for c in colours) / len(colours)
+    name = next(n for n, c in KEYS.items() if c == key)
     if near < 0.5:
-        name = next(n for n, c in KEYS.items() if c == key)
-        raise Unusable(f"its edge is not one flat colour, {near:.0%} of it near {hex_of(bg)}; make it again on a "
-                       f"flat {name} {hex_of(key)} background, or with a transparent one")
+        raise Unusable(f"its edge is not one flat colour, {near:.0%} of it near {hex_of(bg)}",
+                       f"make it again on a flat {name} {hex_of(key)} background, or with a transparent one",
+                       f"Nothing but flat {name} {hex_of(key)} around the subject, out to every edge, or a "
+                       f"transparent background.")
+    # the background is the key asked for, or the other one, as a model paints it: the keyed
+    # channels lit, the others dark, as in (216, 46, 147) or (8, 162, 24)
+    painted = [n for n, k in KEYS.items()
+               if min(c for c, on in zip(bg, k) if on) >= 96
+               and max(c for c, on in zip(bg, k) if not on) <= 0.35 * min(c for c, on in zip(bg, k) if on)]
+    if not painted:
+        raise Unusable(f"its background is {hex_of(bg)}, neither magenta nor green, and a cut on it would also "
+                       f"remove the subject's parts in that colour",
+                       f"make it again on a flat {name} {hex_of(key)} background, or with a transparent one",
+                       f"Nothing but flat {name} {hex_of(key)} around the subject, out to every edge, or a "
+                       f"transparent background.")
+    name = painted[0]
+    key = KEYS[name]
     if near < 0.9:
-        raise Unusable(f"the subject runs off the picture over {1 - near:.0%} of its edge, so it is cut off; make "
-                       f"it again whole and centred, with room around it")
+        raise Unusable(f"the subject runs off the picture over {1 - near:.0%} of its edge, so it is cut off",
+                       "make it again whole and centred, with room around it",
+                       "Show all of the subject, smaller, with room on every side.")
     n = w * h
     br, bgr, bb = bg
-    dist2 = [(data[4 * i] - br) ** 2 + (data[4 * i + 1] - bgr) ** 2 + (data[4 * i + 2] - bb) ** 2 for i in range(n)]
-    # A shadow on the key colour, which models draw though the prompt says not to, is that colour
-    # darker, and goes with the background. A grey background cannot tell it from a grey subject.
-    saturated = max(bg) - min(bg) > 128
-    norm = br * br + bgr * bgr + bb * bb or 1
+    rgb = [data[4 * i:4 * i + 3] for i in range(n)]
+    dist2 = [(r - br) ** 2 + (g - bgr) ** 2 + (b - bb) ** 2 for r, g, b in rgb]
+    lean = leaning_to(key)
+    ex = [lean(c) for c in rgb]
+    e_bg = lean(bg)
+    norm = br * br + bgr * bgr + bb * bb
+
+    def shade(c) -> tuple[float, float]:       # how far a colour is from the key darker or lighter, and how much
+        s = (c[0] * br + c[1] * bgr + c[2] * bb) / norm
+        return math.sqrt((c[0] - s * br) ** 2 + (c[1] - s * bgr) ** 2 + (c[2] - s * bb) ** 2), s
 
     def background(j: int) -> bool:
+        """Near the key, or a shadow on it, which models draw though the prompt says not to: the key
+        darker."""
         if dist2[j] < NEAR ** 2:
             return True
-        if not saturated:
-            return False
-        r, g, b = data[4 * j], data[4 * j + 1], data[4 * j + 2]
-        k = (r * br + g * bgr + b * bb) / norm
-        return 0.25 <= k <= 1.05 and (r - k * br) ** 2 + (g - k * bgr) ** 2 + (b - k * bb) ** 2 < 40 ** 2
+        off, s = shade(rgb[j])
+        return 0.25 <= s <= 1.05 and off < 40
+
+    def gap(j: int) -> bool:
+        """The key seen through a gap in the subject, in shade: kept apart from a subject colour near
+        the key, such as a hot pink under magenta, by its distance and its line."""
+        return dist2[j] < POCKET ** 2 and ex[j] > e_bg / 2 and shade(rgb[j])[0] < KEYLINE
 
     clear = bytearray(n)
+    shadow = bytearray(n)                      # cleared as the key darker, not as the key
     stack = [i for i in edge if background(i)]
     for i in stack:
         clear[i] = 1
+        shadow[i] = dist2[i] >= NEAR ** 2
     while stack:
         i = stack.pop()
         x = i % w
         for j in (i - w, i + w, i - 1 if x else -1, i + 1 if x < w - 1 else -1):
             if 0 <= j < n and not clear[j] and background(j):
                 clear[j] = 1
+                shadow[j] = dist2[j] >= NEAR ** 2
                 stack.append(j)
+    gaps = 0
     for i in range(n):
-        if dist2[i] < EXACT ** 2:
+        if not clear[i] and gap(i):
             clear[i] = 1
+            gaps += 1
+
+    def mask(on):
+        return Image.frombytes("L", (w, h), bytes(255 if v else 0 for v in on))
+
+    # a dark outline's blended edge reads as a shadow too: beside the subject, it is unmixed below
+    beside = mask(not c for c in clear).filter(ImageFilter.MaxFilter(3)).tobytes()
+    for i in range(n):
+        if shadow[i] and beside[i] and not gap(i):
+            clear[i] = 0
+    # the edge: pixels up to `reach` in from the background, ring by ring
+    reach = max(REACH, round(max(w, h) / REACH_PER))
+    depth = bytearray(n)
+    grown = mask(clear)
+    rings = [[]]
+    for d in range(1, reach + 1):
+        grown = grown.filter(ImageFilter.MaxFilter(3))
+        ring = [i for i, g in enumerate(grown.tobytes()) if g and not clear[i] and not depth[i]]
+        for i in ring:
+            depth[i] = d
+        rings.append(ring)
+
+    def around(i: int) -> list[int]:
+        x, y = i % w, i // w
+        return [yy * w + xx for yy in range(max(0, y - 1), min(h, y + 2)) for xx in range(max(0, x - 1), min(w, x + 2))
+                if yy * w + xx != i]
+
+    def mean(cs) -> tuple:
+        return tuple(sum(c[k] for c in cs) / len(cs) for k in range(3))
+
+    # behind each edge pixel: the background, carried in from the clear pixels beside it, and the
+    # subject, carried out from its inside and then along the edge into strands with no inside
+    back = {}
+    for d in range(1, reach + 1):
+        for i in rings[d]:
+            src = [rgb[j] for j in around(i) if clear[j]] if d == 1 else \
+                  [back[j] for j in around(i) if depth[j] == d - 1 and j in back]
+            if src:
+                back[i] = mean(src)
+    inner = {}
+    for d in range(reach, 0, -1):
+        for i in rings[d]:
+            src = [rgb[j] for j in around(i) if not clear[j] and not depth[j]] + \
+                  [inner[j] for j in around(i) if depth[j] == d + 1 and j in inner]
+            if src:
+                inner[i] = mean(src)
+    loose = [i for i in back if i not in inner]
+    for _ in range(SWEEPS):
+        reached = {i: mean(src) for i in loose if (src := [inner[j] for j in around(i) if j in inner])}
+        if not reached:
+            break
+        inner.update(reached)
+        loose = [i for i in loose if i not in reached]
+
+    def on_line(o, b, s) -> float | None:      # o as a blend of b and s: how much of s, or None
+        v = [s[k] - b[k] for k in range(3)]
+        t = sum((o[k] - b[k]) * v[k] for k in range(3)) / max(1, sum(x * x for x in v))
+        return t if sum((o[k] - b[k] - t * v[k]) ** 2 for k in range(3)) < LINE ** 2 else None
+
     out = bytearray(data)
-    beside = Image.frombytes("L", (w, h), bytes(255 if c else 0 for c in clear)).filter(ImageFilter.MaxFilter(3))
-    beside = beside.tobytes()                  # a pixel next to the background, or in it
     for i in range(n):
         if clear[i]:
             out[4 * i:4 * i + 4] = b"\0\0\0\0"
-            continue
-        if not beside[i]:
-            continue
-        x, y = i % w, i // w
-        near_clear = [j for j in (yy * w + xx for yy in range(max(0, y - 1), min(h, y + 2))
-                                  for xx in range(max(0, x - 1), min(w, x + 2))) if clear[j]]
-        if not near_clear:
-            continue
-        # an edge pixel: take the background beside it back out of its colour
-        local = [sum(data[4 * j + k] for j in near_clear) / len(near_clear) for k in range(3)]
-        d = math.sqrt(sum((data[4 * i + k] - local[k]) ** 2 for k in range(3)))
-        a = min(1.0, max(0.0, (d - EXACT) / (BLEND - EXACT)))
+    # Each edge pixel is a blend o = a*s + (1-a)*b of the subject s and the background b. Its lean
+    # to the key is linear in the blend, so a = (lean(b) - lean(o)) / (lean(b) - lean(s)), whatever
+    # the subject's colour: red under magenta and gold under green stay opaque. Then the subject's
+    # colour is (o - (1-a)*b) / a.
+    for i, b in back.items():
+        o = rgb[i]
+        s = inner.get(i)
+        e_s = lean(s) if s else min([0] + [ex[j] for j in around(i) if not clear[j]])
+        if ex[i] <= max(e_s, 0) + MARGIN:
+            t = on_line(o, b, s) if s and ex[i] > e_s + MARGIN else None
+            if t is None or t >= 0.97:
+                continue
+        e_b = lean(b)
+        a = min(1.0, max(0.0, (e_b - ex[i]) / max(64, e_b - e_s)))
         if a < 0.1:
             out[4 * i:4 * i + 4] = b"\0\0\0\0"
         elif a < 1:
-            for k in range(3):
-                out[4 * i + k] = min(255, max(0, round((data[4 * i + k] - (1 - a) * local[k]) / a)))
-            out[4 * i + 3] = round(255 * a)
-    return Image.frombytes("RGBA", (w, h), bytes(out)), f"background {hex_of(bg)}"
+            out[4 * i:4 * i + 4] = bytes(min(255, max(0, round((o[k] - (1 - a) * b[k]) / a))) for k in range(3)) + \
+                bytes((round(255 * a),))
+    # key light caught inside the subject: a pixel between the colour around it and the key gets
+    # that colour back, alpha kept
+    spill = 0
+    around5 = rgba.convert("RGB").filter(ImageFilter.MedianFilter(5)).tobytes()
+    for i in range(n):
+        if clear[i] or depth[i]:
+            continue
+        m = around5[3 * i:3 * i + 3]
+        if ex[i] - lean(m) <= SPILL:
+            continue
+        t = on_line(rgb[i], m, bg)
+        if t is None or not 0.1 <= t <= 0.9:
+            continue
+        out[4 * i:4 * i + 3] = bytes(min(255, max(0, round((rgb[i][k] - t * bg[k]) / (1 - t)))) for k in range(3))
+        spill += 1
+    cut = Image.frombytes("RGBA", (w, h), bytes(out))
+    left, band = fringe(cut, key)
+    if left > max(FRINGE_MIN, FRINGE * band):
+        other = next(k for k in KEYS if k != name)
+        raise Unusable(f"after the cut, {left} of the {band} pixels along the subject's edge lean to {name}: a "
+                       f"fringe the cut left, or a subject too near the key",
+                       f"make it again on a flat {other} {hex_of(KEYS[other])} background, or with a transparent one",
+                       f"Keep {name} out of the subject and its edge, or make the background transparent.", other)
+    return cut, f"background {hex_of(bg)}, {gaps} px cleared in gaps, {spill} px of key light recoloured"
+
+
+def fringe(img, key: tuple) -> tuple[int, int]:
+    """Two counts: the shown pixels within 3 px of a clear one that lean to the key by more than
+    40, and all shown pixels there."""
+    from PIL import Image, ImageFilter
+    data = img.tobytes()
+    alpha = data[3::4]
+    near = Image.frombytes("L", img.size, bytes(255 if a == 0 else 0 for a in alpha)).filter(ImageFilter.MaxFilter(7))
+    lean = leaning_to(key)
+    left = band = 0
+    for i, z in enumerate(near.tobytes()):
+        if z and alpha[i] >= 32:
+            band += 1
+            left += lean(data[4 * i:4 * i + 3]) > 40
+    return left, band
+
+
+def resample(img, size: tuple[int, int], how: int):
+    """An RGBA picture scaled with its alpha and its colour apart. Alpha, and the colour weighted
+    by alpha, are scaled in floats through `how`, HAMMING or BOX, then divided. These filters have
+    no negative lobe, so each pixel's colour is a mix of the colours under it. LANCZOS has one: on
+    an edge, its lobes and the division by a low alpha give a light rim and a key tint."""
+    from array import array
+    from PIL import Image
+    data = img.tobytes()
+    alpha = data[3::4]
+
+    def scaled(layer) -> array:
+        return array("f", layer.resize(size, how).tobytes())
+
+    cover = scaled(img.getchannel("A").convert("F"))
+    mix = [scaled(Image.frombytes("F", img.size, array("f", (c * a for c, a in zip(data[k::4], alpha))).tobytes()))
+           for k in range(3)]
+    out = bytearray(4 * size[0] * size[1])
+    for i, a in enumerate(cover):
+        if a >= 0.5:
+            out[4 * i:4 * i + 4] = bytes(min(255, max(0, round(m[i] / a))) for m in mix) + bytes((min(255, round(a)),))
+    return Image.frombytes("RGBA", size, bytes(out))
 
 
 def clean(img):
@@ -246,13 +593,15 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
         save(big.crop((left, top, left + w, top + h)).convert("RGBA"), root / "art" / rel)
         return [f"{stem}: {raw.name} {rw}x{rh} -> art/{rel} {w}x{h}, cropped to cover it"]
     s = min(1.0, min(WORK * max(w, h), 1024) / max(rw, rh))
-    work = img if s == 1 else img.resize((max(1, round(rw * s)), max(1, round(rh * s))), Image.LANCZOS)
+    work = img if s == 1 else resample(img.convert("RGBA"), (max(1, round(rw * s)), max(1, round(rh * s))),
+                                       Image.HAMMING)
     cut, how = cut_out(work, key_for(item, wanted.get("style", ""))[1])
     alpha = cut.getchannel("A")
     solid = alpha.point(lambda a: 255 if a >= 128 else 0).getbbox()
     if solid is None:
-        raise Unusable(f"nothing is left of the subject once the background is removed ({how}); make the subject "
-                       f"in colours far from the background")
+        raise Unusable(f"nothing is left of the subject once the background is removed ({how})",
+                       "make the subject in colours far from the background",
+                       f"Draw the subject in colours far from {key_for(item, wanted.get('style', ''))[0]}.")
     if solid[0] == 0 or solid[1] == 0 or solid[2] == cut.width or solid[3] == cut.height:
         notes.append(f"  note: the subject touches the picture's edge and may be cut off; make it whole, with room "
                      f"around it")
@@ -260,7 +609,7 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
     subject = cut.crop(box)
     f = min(w / subject.width, h / subject.height)
     sw, sh = max(1, round(subject.width * f)), max(1, round(subject.height * f))
-    subject = subject.resize((sw, sh), Image.BOX if pixel_art else Image.LANCZOS)
+    subject = resample(subject, (sw, sh), Image.BOX if pixel_art else Image.HAMMING)
     if pixel_art:      # Nearest sampling shows a soft edge as a fringe: an edge is in or out
         subject.putalpha(subject.getchannel("A").point(lambda a: 255 if a >= 128 else 0))
     canvas = Image.new("RGBA", (w, h), (0, 0, 0, 0))
@@ -284,10 +633,12 @@ def main() -> int:
     ap = c3.argument_parser(__doc__.split("\n\n")[0], "examples:\n"
                             "  python scripts/prepare_art.py --list\n"
                             "  python scripts/prepare_art.py --project D:/games/Coins\n\n"
-                            "exit codes: 0 when no picture was refused, the last line starting with ok: once all are "
-                            "in art/; 1 when a picture could not be used; 2 when art/wanted.json or Pillow is missing")
+                            "exit codes: 0 when no picture waits to be made again, the last line starting with ok: "
+                            "once all are in art/; 1 when a picture could not be used; 2 when art/wanted.json or "
+                            "Pillow is missing")
     ap.add_argument("--list", action="store_true",
-                    help="print the prompt of every picture still to make, and what is ready")
+                    help="print the next step: ART_STYLE, the key picture, or the prompt of every picture still to "
+                         "make, and what is ready")
     args = ap.parse_args()
     root = c3.find_project(args.project)
     wanted_path = (root or Path.cwd()) / "art" / "wanted.json"
@@ -311,25 +662,54 @@ def main() -> int:
         except ImportError:
             print("prepare_art.py needs Pillow to read and resize the pictures: pip install pillow", file=sys.stderr)
             return 2
-        out, waiting, done = [], 0, 0
+        refused = refusals(root, wanted)
+        out, waiting, done, kept = [], 0, 0, 0
         for item in wanted["images"]:
-            if raw_of(root, item["file"]) is None:
-                if (root / "art" / item["file"]).exists():
+            rel = item["file"]
+            stem, raw = rel[:-len(".png")], raw_of(root, rel)
+            if state(root, item, refused) == "stand-in":
+                kept += 1
+                out.append(f"{stem}: refused {TRIES} times, so it keeps its stand-in. "
+                           f"To try again, change its subject in art(), which starts the count again")
+                continue
+            if raw is None:
+                if (root / "art" / rel).exists():
                     done += 1           # put in art/ as it is, by the user
                 else:
                     waiting += 1
                 continue
             try:
-                out += prepare(root, item, wanted)
+                out += prepare(root, with_refusal(item, refused), wanted)
                 done += 1
+                refused.pop(rel, None)
             except Unusable as e:
+                line = f"{stem}: {raw.name}: {e}"
+                if e.again:
+                    r = refused.setdefault(rel, {"subject": item["subject"], "pictures": []})
+                    if (seen := fingerprint(raw)) not in r["pictures"]:
+                        r["pictures"].append(seen)
+                    r["tell"] = e.tell
+                    if e.key:
+                        r["key"] = e.key
+                    if len(r["pictures"]) >= TRIES:
+                        kept += 1
+                        out.append(f"{line}. Refused {TRIES} times, so it keeps its stand-in. "
+                                   f"To try again, change its subject in art(), which starts the count again")
+                        continue
+                    line += f" (refusal {len(r['pictures'])} of {TRIES}; after {TRIES} it keeps its stand-in)"
                 failed += 1
-                out.append(f"{item['file'][:-len('.png')]}: {raw_of(root, item['file']).name}: {e}")
-        counts = f"prepared: {done}, could not use: {failed}, still to make: {waiting}"
+                out.append(line)
+        if refused or (root / REFUSED).exists():
+            (root / REFUSED).write_text(json.dumps(refused, indent=1, ensure_ascii=False), encoding="utf-8")
+        counts = f"prepared: {done}, could not use: {failed}, still to make: {waiting}" + \
+            (f", kept as stand-ins: {kept}" if kept else "")
         if failed:
-            out.append(f"{counts}; next: make the pictures above again as their lines say, then run this again")
+            out.append(f"{counts}; next: python {skill.as_posix()}/scripts/prepare_art.py --list for the prompts of "
+                       f"the pictures above, make them again, then python {skill.as_posix()}/scripts/prepare_art.py")
         elif waiting:
             out.append(f"{counts}; next: python {skill.as_posix()}/scripts/prepare_art.py --list for their prompts")
+        elif kept:
+            out.append(f"{counts}; next: python tools/build_project.py")
         else:
             out.append(f"ok: {done} pictures in art/; next: python tools/build_project.py")
     shown = c3.fitting(out, args.limit)

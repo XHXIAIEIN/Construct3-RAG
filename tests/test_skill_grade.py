@@ -1,29 +1,57 @@
-"""evals/grade.py over a run it has not seen: a design an agent wrote, graded the way an iteration is."""
+"""evals/grade.py on runs of its cases: what grading.json says about each.
+
+The answers in fixtures/restart_event_answers/ are runs' answer.md files of the name-the-restart-event case,
+with their run folder replaced by <run>. The project of each of those runs is empty and so is its fixture.json,
+so the third assertion passes throughout. An add-countdown run is the stand-in game with the events it wrote.
+"""
 import json
 import shutil
-import subprocess
-import sys
 from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import SKILL, SHEET
+from tests.skill_helpers import SKILL, SHEET, run
+
+ANSWERS = Path(__file__).parent / "fixtures" / "restart_event_answers"
+CHINESE_ALL_THREE = "**事件 9**（Restart 组）：Coin.Count = 0，仅触发一次。触发后等待 1 秒，再重载场景。\n"
 
 
-def graded(tmp_path: Path, project: Path, case: str) -> dict[str, dict]:
-    """grading.json of one run of case, the project as it is, by the text of each assertion."""
-    run = tmp_path / "iteration" / case / "with_skill"
-    shutil.copytree(project, run / "project")
-    (run / "fixture.json").write_text("{}", encoding="utf-8")
-    p = subprocess.run([sys.executable, str(SKILL / "evals" / "grade.py"), str(tmp_path / "iteration")],
-                       capture_output=True, text=True, encoding="utf-8", timeout=120)
-    assert p.returncode == 0, p.stdout + p.stderr
-    results = json.loads((run / "grading.json").read_text(encoding="utf-8"))["assertion_results"]
-    return {r["text"].split(":")[0]: r for r in results}
+def grade(tmp_path: Path, answer: str) -> list[bool]:
+    case = tmp_path / "it" / "name-the-restart-event" / "with_skill"
+    (case / "project").mkdir(parents=True)
+    (case / "outputs").mkdir()
+    (case / "fixture.json").write_text("{}", encoding="utf-8")
+    (case / "outputs" / "answer.md").write_text(answer, encoding="utf-8")
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
+    assert code == 0, out
+    graded = json.loads((case / "grading.json").read_text(encoding="utf-8"))["assertion_results"]
+    return [g["passed"] for g in graded]
 
 
-@pytest.mark.parametrize("kind, counts", [("regular", True), ("once", False)])
-def test_a_countdown_on_a_one_second_timer_loses_one_per_second(tmp_path, project, kind, counts):
+@pytest.mark.parametrize(("name", "passed"), [
+    ("english_all_three.md", [True, True, True]),
+    # "Setup (event 2) runs again" names another event after the answer, 9
+    ("english_names_setup_as_context.md", [True, True, True]),
+    # "事件 8" is the Restart group's row; "仅触发一次" and "等待 1 秒" are the zh-CN wording
+    ("chinese_gives_the_group_number.md", [False, True, True]),
+    ("english_without_the_wait.md", [True, False, True]),
+])
+def test_restart_event_answers(tmp_path: Path, name: str, passed: list[bool]) -> None:
+    assert grade(tmp_path, (ANSWERS / name).read_text(encoding="utf-8")) == passed
+
+
+def test_chinese_answer_with_all_three(tmp_path: Path) -> None:
+    assert grade(tmp_path, CHINESE_ALL_THREE) == [True, True, True]
+
+
+def test_group_number_first_fails(tmp_path: Path) -> None:
+    assert grade(tmp_path, "Event 8 restarts it: Coin.Count = 0, Trigger once, then a 1 second wait. "
+                           "Event 9 is inside it.\n")[0] is False
+
+
+@pytest.mark.parametrize(("kind", "counts"), [("regular", True), ("once", False)])
+def test_a_countdown_on_a_one_second_timer_loses_one_per_second(tmp_path: Path, project: Path, kind: str,
+                                                                counts: bool) -> None:
     """The add-countdown run of 2026-10-06 (with_q35_lean_2) started ScoreText's Timer "tick" for 1 second, Regular,
     under On start of layout, and took 1 from Countdown under On timer "tick". A Once timer fires a single time."""
     path = project / SHEET
@@ -39,7 +67,13 @@ def test_a_countdown_on_a_one_second_timer_loses_one_per_second(tmp_path, projec
         "actions": [{"id": "set-eventvar-value", "objectClass": "System", "sid": 104,
                      "parameters": {"variable": "Countdown", "value": "Countdown - 1"}}]})
     path.write_text(json.dumps(sheet, indent="\t"), encoding="utf-8")
+    case = tmp_path / "it" / "add-countdown" / "with_skill"
+    shutil.copytree(project, case / "project")
+    (case / "fixture.json").write_text("{}", encoding="utf-8")
 
-    result = graded(tmp_path, project, "add-countdown")["The countdown loses one per second"]
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
+    assert code == 0, out
+    graded = json.loads((case / "grading.json").read_text(encoding="utf-8"))["assertion_results"]
+    result = next(g for g in graded if g["text"].startswith("The countdown loses one per second"))
     assert result["passed"] is counts, result
     assert 'on-timer("tick") -> set-eventvar-value(Countdown | Countdown - 1)' in result["evidence"]
