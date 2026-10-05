@@ -1160,6 +1160,7 @@ def grade_script_shift_and_edges(run: Path) -> list[tuple[bool, str]]:
     path = run / "project" / "scripts" / "main.ts"
     code = path.read_text(encoding="utf-8") if path.exists() else ""
     code = re.sub(r"/\*.*?\*/|//[^\n]*", "", code, flags=re.S)      # a comment can name what the code does not do
+    code = re.sub(r"getLayout\([^)]*\)", "layout", code)            # a layout got by name is read as runtime.layout
     keys = [k or n for k, n in re.findall(r"isKeyDown\(\s*(?:[\"'`](\w+)[\"'`]|(\d+))\s*\)", code)]
     arrows = {"ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"} - set(keys)
     shift = [k for k in keys if k.lower().startswith("shift") or k == "16"]

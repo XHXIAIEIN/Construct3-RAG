@@ -35,6 +35,18 @@ MEMBER = re.compile(r"^\s*(?:(?:readonly|static|get|set|async|abstract)\s+)*([\w
 # the suffixes an addon's interface carries after its name: Timer is ITimerBehaviorInstance
 SUFFIXES = ("behaviorinstance", "instance", "behaviortype", "objecttype", "behaviors", "behavior", "plugin", "")
 FULL = 6    # this many member hits or fewer print with their doc comment
+# What a size member measures, where its name does not say. From the manual's scripting reference: iruntime,
+# plugin-interfaces/sprite and plugin-interfaces/tiled-background. Printed under the member.
+VIEWPORT = ("the project's viewport size from Project Properties, not the layout's size, which is "
+            "runtime.layout.width and runtime.layout.height")
+IN_LAYOUT = "not the instance's size in the layout, which is the instance's width and height"
+SIZE_NOTES = {
+    **{("IRuntime", name): VIEWPORT for name in ("viewportWidth", "viewportHeight", "getViewportSize")},
+    **{("ISpriteInstance", name): f"the size in pixels of the current animation frame's source image, {IN_LAYOUT}"
+       for name in ("imageWidth", "imageHeight", "getImageSize")},
+    **{("ITiledBackgroundInstance", name): f"the size in pixels of the image without the tiling, {IN_LAYOUT}"
+       for name in ("imageWidth", "imageHeight", "getImageSize")},
+}
 
 
 @dataclass
@@ -165,7 +177,12 @@ def ancestors(api: dict[str, list[Declaration]], name: str) -> list[Declaration]
 
 def print_declaration(d: Declaration) -> list[str]:
     lines = [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}"]
-    lines += [f"  {m.text}" for m in d.members]
+    sizes = [SIZE_NOTES.get((d.name, m.name)) for m in d.members]
+    for i, m in enumerate(d.members):
+        lines.append(f"  {m.text}")
+        # members side by side that measure the same size share one line, under the last of them
+        if sizes[i] and (i + 1 == len(sizes) or sizes[i + 1] != sizes[i]):
+            lines.append(f"  -- {sizes[i]}")
     if d.extends:
         lines.append(f"  -- members of {', '.join(d.extends)} are {d.name}'s too: "
                      f"lookup_script_api.py {d.extends[0]}, or {d.name}.NAME for one of them")
@@ -177,6 +194,8 @@ def print_members(hits: list[tuple[Declaration, Member]]) -> list[str]:
     for d, m in hits:
         lines.append(f"{d.name}.{m.name}   {where(d, m)}")
         lines.append(f"  {m.text}")
+        if (d.name, m.name) in SIZE_NOTES:
+            lines.append(f"  -- {SIZE_NOTES[d.name, m.name]}")
         if m.doc and len(hits) <= FULL:
             lines.append(f"  /** {m.doc} */")
     return lines

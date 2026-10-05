@@ -92,9 +92,16 @@ Each of these was a failure seen in an eval run or a game project.
   `runtime.layout.height` and the width and height of the instance. The line
   also says that a copied number is wrong once the layout or an instance is
   resized. The runs that printed the layout with the line read the sizes at
-  run time in their first edit. A run that never prints the layout can still
-  pick another size, such as the viewport's. The runs behind these two
-  entries are in `.local/docs/evidence/skill-evals/`.
+  run time in their first edit.
+- A run that never printed the layout looked the sizes up in the API. It
+  took the viewport's size as the layout's size and the image's size as
+  the instance's size. So `lookup_script_api.py` prints a line under the
+  viewport size members of `IRuntime` and the image size members of the
+  sprite and tiled background instances. The line says what the members
+  measure, as the manual describes them, and names the members that give
+  the layout's and the instance's size. The one run that met these lines
+  read the right sizes; the other runs met none. The runs behind these
+  three entries are in `.local/docs/evidence/skill-evals/`.
 - `SKILL.md` holds what every activation needs and no tool says at the
   moment it matters. What a script prints when it is needed, or what one
   kind of task needs, is a line that says when to read a reference. Taken
