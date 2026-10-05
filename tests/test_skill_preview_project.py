@@ -31,8 +31,10 @@ def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
     plan.write_text(json.dumps({"speed": 2, "steps": [
         {"tapp": "Button"}, {"drag": "Piece 0"}, {"key": "F13"}, {"wait": -1}, {"shot": "a b"},
         {"tap": "Button", "seconds": 1}, {"until": "true", "timout": 3}, {"record": "a b"}, {"record": False},
-        {"record": "r", "watch": {"coins": 3}}, {"record": False, "watch": {"coins": "1"}}], "keep_saves": True}),
-        encoding="utf-8")
+        {"record": "r", "watch": {"coins": 3}}, {"record": False, "watch": {"coins": "1"}},
+        {"drag": "Ball", "to": "Ball", "through": "Goal", "rest": -1},
+        {"drag": "Ball", "to": "Ball", "through": [{"x": 1, "y": 2}], "rest": 0}],
+        "keep_saves": True, "pixel_ratio": 0}), encoding="utf-8")
     code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "plan.json")
     assert code == 2, out
     for expected in ("the plan has 'speed'", "step 1 has none of", "closest: tap", 'step 2 (drag) needs "to"',
@@ -40,9 +42,12 @@ def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
                      "step 6 (tap) has 'seconds'", "step 7 (until) has 'timout'; closest: timeout",
                      "step 8 (record) takes a file name of letters, digits, - and _, or false to stop",
                      'step 10 (record): watch is {"label": "EXPRESSION", ...}',
-                     'step 11 (record): watch is {"label": "EXPRESSION", ...} on a step that starts'):
+                     'step 11 (record): watch is {"label": "EXPRESSION", ...} on a step that starts',
+                     "step 12 (drag): through is a list of targets", "step 12 (drag): rest is a number of seconds",
+                     "pixel_ratio is device pixels per CSS pixel"):
         assert expected in out, (expected, out)
-    assert "step 9" not in out and "has 'keep_saves'" not in out, out     # false stops a recording
+    assert "step 9" not in out and "step 13" not in out, out     # false stops a recording
+    assert "has 'keep_saves'" not in out and "has 'pixel_ratio'" not in out, out
     assert not (project / ".tmp" / "preview").exists()
 
     code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "--help")
@@ -83,13 +88,40 @@ def test_preview_project_waits_until_the_window_has_taken_the_viewport(monkeypat
             return got
 
     monkeypatch.setattr(pp.time, "sleep", lambda s: None)
-    page = Page([pp.oe.DevToolsError("Cannot find context"), [778, 511], [778, 511], [430, 932]])
+    page = Page([pp.oe.DevToolsError("Cannot find context"), [778, 511, 1], [778, 511, 1], [430, 932, 1]])
     assert pp.emulate(page, [430, 932]) == (430, 932)
     assert page.calls == [("Emulation.setDeviceMetricsOverride",
                            {"width": 430, "height": 932, "deviceScaleFactor": 1, "mobile": False})]
+    page = Page([[430, 932, 1], [430, 932, 2]])     # a pixel ratio alone keeps the window's size
+    assert pp.emulate(page, None, 2) == (430, 932) and not page.sizes[1:]
+    assert page.calls[0][1] == {"width": 0, "height": 0, "deviceScaleFactor": 2, "mobile": False}
     monkeypatch.setattr(pp, "RESIZE", 0.05)
-    assert pp.emulate(Page([[778, 511]]), [430, 932]) == (778, 511)
+    assert pp.emulate(Page([[778, 511, 1]]), [430, 932]) == (778, 511)
     assert pp.emulate(Page([pp.oe.DevToolsError("Cannot find context")]), [430, 932]) is None
+
+
+def test_preview_project_drags_through_its_waypoints_and_can_release_moving(monkeypatch, tmp_path):
+    """A path back to where the drag started, every target aimed before the press; each
+    leg's time by its length; with rest 0 the release follows the last move at once."""
+    moves = pp.path([(0, 0), (90, 0), (0, 0)], 0.48)
+    assert len(moves) == 16 and moves[7][1:] == (90, 0) and moves[-1][1:] == (0, 0)
+    assert sum(m[0] for m in moves) == pytest.approx(0.48)
+    assert pp.path([(0, 0), (30, 40)], 0.4) == [(0.4 / 13, 30 * k / 13, 40 * k / 13) for k in range(1, 14)]
+    legs = pp.path([(0, 0), (300, 0), (300, 100)], 0.8)
+    assert sum(m[0] for m in legs if m[2] == 0) == pytest.approx(0.6)
+
+    game = pp.Game(None, None, True, (430, 932), "", None, tmp_path)
+    places = {"Ball": (100, 500), "Goal": (300, 200)}
+    sent, slept = [], []
+    monkeypatch.setattr(game, "aim", lambda t: places[t] if isinstance(t, str) else (t["x"], t["y"]))
+    monkeypatch.setattr(game, "finger", lambda kind, x=0, y=0: sent.append((kind, round(x), round(y))))
+    monkeypatch.setattr(pp.time, "sleep", slept.append)
+    step = {"drag": "Ball", "through": ["Goal", {"x": 100, "y": 200}], "to": "Ball", "seconds": 0.9, "rest": 0}
+    said, _ = pp.do_step(game, step, 1, tmp_path)
+    assert said == "(100, 500) through (300, 200) through (100, 200) to (100, 500) in 0.9 s, released moving"
+    assert pp.step_line(1, step) == "1 drag Ball through Goal through (100, 200) on the first layer to Ball"
+    assert sent[0] == ("touchStart", 100, 500) and sent[-2] == ("touchMove", 100, 500) and sent[-1][0] == "touchEnd"
+    assert ("touchMove", 300, 200) in sent and ("touchMove", 100, 200) in sent and slept[-1] == 0
 
 
 def test_preview_project_reports_each_step_with_the_errors_it_caused():

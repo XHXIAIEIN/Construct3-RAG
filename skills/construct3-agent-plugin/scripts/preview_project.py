@@ -15,6 +15,8 @@ plan is JSON, the steps run in order, and a step that fails stops the run:
      {"js": "runtime.callFunction('finishTutorial')"},
      {"tap": "StartButton"},
      {"drag": "Piece 0", "to": "BattleSlot 1", "seconds": 0.4},
+     {"drag": "Ball", "through": [{"x": 300, "y": 200}], "to": "Ball", "seconds": 0.8},
+     {"drag": "Card", "to": {"x": 215, "y": 100}, "seconds": 0.15, "rest": 0},
      {"hold": {"x": 40, "y": 600, "layer": "UI"}, "seconds": 1},
      {"key": "ArrowRight", "seconds": 0.5},
      {"wait": 1.5, "note": "the merge animation"},
@@ -26,11 +28,20 @@ viewport  CSS pixels of the preview window, [width, height]; a phone's, 430 x 93
 touch     taps, holds and drags as touches instead of the mouse (default: false)
 keep_saves  start from what earlier runs saved, Local Storage and IndexedDB, instead of
           from a first launch (default: false); the browser profile keeps them
+pixel_ratio  device pixels per CSS pixel: the game draws, and screenshots and recordings
+          come out, at that scale, 2 or 3 for a phone (default: 1)
 
 Steps, each an object with one of these keys, and "note" for a label:
   tap TARGET                    press and release
   hold TARGET, seconds          press, wait, release (default 0.5 s)
-  drag TARGET, to TARGET, seconds   press, move in steps, release (default 0.4 s)
+  drag TARGET, to TARGET, seconds, through, rest
+                                press, move in steps, release (default 0.4 s). through is a list
+                                of TARGETs the pointer passes on the way, the time shared by
+                                distance; every target is aimed before the press, so "to" can be
+                                where the drag started. rest is the seconds the pointer stays
+                                still on "to" before the release (default 0.05). For a flick,
+                                give 0: the release follows the last move, since Touch reads a
+                                speed of 0 from a pointer that has been still about 50 ms
   key NAME, seconds             press a key: ArrowLeft, Space, Enter, Escape, KeyA or a, Digit1 or 1
                                 (default 0.1 s)
   wait SECONDS                  let the game run
@@ -70,12 +81,23 @@ leaves a screenshot, NN-failed.png. Screenshots and recordings go to --shots, by
 .tmp/preview/ in the project, and the whole result, every value and state, to
 --out, by default .tmp/preview-project.json; .tmp/ is ignored by Git. The last
 line names both: read a cut-off result there instead of playing the plan again.
+
+The result holds what the editor did, as open_in_editor.py writes it, and the
+run under "preview"; the steps are in preview.steps, one object per step that ran:
+  {"project", "status": "opened", "title", "editor", "warnings", ...,
+   "preview": {"started": true, "layout" at the end, "runtime", "viewport",
+     "pixel_ratio", "touch", "seconds", "planned" steps, "errors" before the first step,
+     "recorded",
+     "steps": [{"step": 1, "line", "ok", "said", "errors" the step caused,
+                "value" of a js step, "state" of a state step,
+                "reloaded": [seconds the game took to start again] after the page reloaded}]}}
 """
 from __future__ import annotations
 
 import argparse
 import base64
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -114,7 +136,7 @@ the project did not open; 2 the plan, the project, the editor or --locale could 
 """
 
 STEPS = ("tap", "hold", "drag", "key", "wait", "until", "js", "state", "shot", "record")
-FIELDS = {"tap": set(), "hold": {"seconds"}, "drag": {"to", "seconds"}, "key": {"seconds"}, "wait": set(),
+FIELDS = {"tap": set(), "hold": {"seconds"}, "drag": {"to", "seconds", "through", "rest"}, "key": {"seconds"}, "wait": set(),
           "until": {"timeout"}, "js": {"timeout"}, "state": set(), "shot": set(), "record": {"watch"}}
 PRESS = {"hold": 0.5, "drag": 0.4, "key": 0.1}
 # Seconds the preview window gets to take the plan's viewport.
@@ -237,12 +259,15 @@ def check_plan(plan: object) -> tuple[dict, list[str]]:
         plan = {"steps": plan}
     if not isinstance(plan, dict) or not isinstance(plan.get("steps"), list) or not plan["steps"]:
         return {}, ['the plan is {"steps": [...]} or a list of steps, with at least one step']
-    for extra in set(plan) - {"steps", "viewport", "touch", "keep_saves"}:
-        problems.append(f"the plan has {extra!r}; it takes steps, viewport, touch and keep_saves")
+    for extra in set(plan) - {"steps", "viewport", "touch", "keep_saves", "pixel_ratio"}:
+        problems.append(f"the plan has {extra!r}; it takes steps, viewport, touch, keep_saves and pixel_ratio")
     view = plan.get("viewport")
     if view is not None and not (isinstance(view, list) and len(view) == 2 and all(isinstance(n, int) and n > 0
                                                                                    for n in view)):
         problems.append("viewport is [width, height] in CSS pixels, such as [430, 932]")
+    ratio = plan.get("pixel_ratio", 1)
+    if not (isinstance(ratio, (int, float)) and not isinstance(ratio, bool) and 0 < ratio <= 4):
+        problems.append("pixel_ratio is device pixels per CSS pixel, a number up to 4, such as 2")
     for n, step in enumerate(plan["steps"], 1):
         kinds = [k for k in STEPS if isinstance(step, dict) and k in step]
         if len(kinds) != 1:
@@ -259,6 +284,9 @@ def check_plan(plan: object) -> tuple[dict, list[str]]:
                             f"{{\"x\": .., \"y\": .., \"layer\": ..}} or {{\"js\": ..}}")
         if kind == "drag" and not target_ok(step.get("to")):
             problems.append(f"step {n} (drag) needs \"to\", a target like the one it drags")
+        if kind == "drag" and "through" in step and not (isinstance(step["through"], list) and step["through"]
+                                                         and all(map(target_ok, step["through"]))):
+            problems.append(f"step {n} (drag): through is a list of targets like the one it drags")
         if kind == "key" and (not isinstance(value, str) or not key_event(value)):
             problems.append(f"step {n} (key): {value!r} is no key this script presses; use a letter (a or KeyA), "
                             f"a digit (1 or Digit1) or one of {', '.join(NAMED_KEYS)}")
@@ -280,7 +308,7 @@ def check_plan(plan: object) -> tuple[dict, list[str]]:
                 isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in watch.items())):
             problems.append(f"step {n} (record): watch is {{\"label\": \"EXPRESSION\", ...}} on a step that starts "
                             f"a recording")
-        for field in ("seconds", "timeout"):
+        for field in ("seconds", "timeout", "rest"):
             if field in step and not (isinstance(step[field], (int, float)) and step[field] >= 0):
                 problems.append(f"step {n} ({kind}): {field} is a number of seconds")
     return plan, problems
@@ -308,14 +336,14 @@ class Game:
     that runs the game for code."""
 
     def __init__(self, win: oe.DevTools, live: str | None, touch: bool, size: tuple[int, int], url: str,
-                 viewport: list[int] | None, project: Path) -> None:
+                 viewport: list[int] | None, project: Path, ratio: float = 1) -> None:
         self.win, self.live, self.touch, self.size, self.url, self.viewport = win, live, touch, size, url, viewport
-        self.project = project
+        self.project, self.ratio = project, ratio
         self.recording: Recorder | None = None
         self.recorded: list[Recorder] = []      # finished, their connections closed after the window (Recorder)
 
     def record(self, name: str, video: Path, watch: dict[str, str]) -> None:
-        self.recording = Recorder(self.url, name, video, self.viewport, watch, self.project)
+        self.recording = Recorder(self.url, name, video, self.viewport, watch, self.project, self.ratio)
 
     def stop_recording(self) -> str:
         """What the recording that ran made, or "" when none ran."""
@@ -409,15 +437,15 @@ class Recorder(threading.Thread):
     that emulated a size clears the size for the page, the steps' connection included."""
 
     def __init__(self, url: str, name: str, video: Path, viewport: list[int] | None, watch: dict[str, str],
-                 project: Path) -> None:
+                 project: Path, ratio: float = 1) -> None:
         super().__init__(name=name, daemon=True)
         self.video, self.folder, self.project = video, video.with_suffix(""), project
         self.frames, self.steps, self.done, self.first = [], [], threading.Event(), threading.Event()
         shutil.rmtree(self.folder, ignore_errors=True)
         self.folder.mkdir(parents=True)
         self.page = oe.DevTools(url)
-        if viewport:
-            emulate(self.page, viewport)
+        if viewport or ratio != 1:
+            emulate(self.page, viewport, ratio)
         self.session, self.watch = None, None
         if watch:
             self.session = self.game_session()
@@ -561,23 +589,39 @@ def make_video(frames: list[Path], seconds: list[float], video: Path) -> str | N
     return str(gif)
 
 
-def emulate(page: oe.DevTools, viewport: list[int]) -> tuple[int, int] | None:
-    """Give the window the plan's viewport, and the size the page then reports, None
-    when it answered nothing. The browser answers before the page has resized, by as
-    much as 0.4 s: a size read at once can be the window's own while the runtime
-    already places its layers in the viewport."""
-    page.call("Emulation.setDeviceMetricsOverride", width=viewport[0], height=viewport[1], deviceScaleFactor=1,
+def emulate(page: oe.DevTools, viewport: list[int] | None, ratio: float = 1) -> tuple[int, int] | None:
+    """Give the window the plan's viewport and pixel ratio, and the size the page then
+    reports, None when it answered nothing; without a viewport the window keeps its
+    own size. The browser answers before the page has resized, by as much as 0.4 s:
+    a size read at once can be the window's own while the runtime already places its
+    layers in the viewport."""
+    width, height = viewport or (0, 0)     # 0 keeps the window's own
+    page.call("Emulation.setDeviceMetricsOverride", width=width, height=height, deviceScaleFactor=ratio,
               mobile=False)
-    size, end = None, time.monotonic() + RESIZE
+    size, scale, end = None, None, time.monotonic() + RESIZE
     while time.monotonic() < end:
         try:
-            size = tuple(page.evaluate("[innerWidth, innerHeight]"))
+            got = page.evaluate("[innerWidth, innerHeight, devicePixelRatio]")
+            size, scale = tuple(got[:2]), got[2]
         except oe.DevToolsError:    # the preview page replaced its document while loading
             pass
-        if size == tuple(viewport):
+        if scale == ratio and (not viewport or size == tuple(viewport)):
             break
         time.sleep(0.05)
     return size
+
+
+def path(points: list[tuple[float, float]], seconds: float) -> list[tuple[float, float, float]]:
+    """The moves of a drag through `points`, each (seconds before it, x, y): every
+    0.03 s and at least 8 a leg, each leg given time in proportion to its length."""
+    legs = list(zip(points, points[1:]))
+    lengths = [math.dist(a, b) for a, b in legs]
+    moves = []
+    for ((x1, y1), (x2, y2)), length in zip(legs, lengths):
+        share = seconds * (length / sum(lengths) if sum(lengths) else 1 / len(legs))
+        count = max(8, round(share / 0.03))
+        moves += [(share / count, x1 + (x2 - x1) * k / count, y1 + (y2 - y1) * k / count) for k in range(1, count + 1)]
+    return moves
 
 
 class StepFailed(Exception):
@@ -588,7 +632,8 @@ def step_line(n: int, step: dict) -> str:
     kind = next(k for k in STEPS if k in step)
     value = step[kind]
     what = {"tap": lambda: target_text(value), "hold": lambda: target_text(value),
-            "drag": lambda: f"{target_text(value)} to {target_text(step['to'])}", "key": lambda: value,
+            "drag": lambda: " through ".join(map(target_text, [value, *step.get("through", [])]))
+            + f" to {target_text(step['to'])}", "key": lambda: value,
             "wait": lambda: f"{value:g} s", "until": lambda: one_line(value), "js": lambda: one_line(value),
             "state": lambda: " ".join([value] if isinstance(value, str) else value) or "counts",
             "shot": lambda: value, "record": lambda: value or "stop"}[kind]()
@@ -622,16 +667,17 @@ def do_step(game: Game, step: dict, n: int, shots: Path) -> tuple[str, dict | No
         game.release(x, y)
         return f"at ({x:.0f}, {y:.0f}) for {seconds:g} s", None
     if kind == "drag":
-        (x1, y1), (x2, y2) = game.aim(value), game.aim(step["to"])
-        seconds = step.get("seconds", PRESS["drag"])
-        moves = max(8, round(seconds / 0.03))
-        game.press(x1, y1)
-        for k in range(1, moves + 1):
-            time.sleep(seconds / moves)
-            game.move(x1 + (x2 - x1) * k / moves, y1 + (y2 - y1) * k / moves)
-        time.sleep(0.05)
-        game.release(x2, y2)
-        return f"({x1:.0f}, {y1:.0f}) to ({x2:.0f}, {y2:.0f}) in {seconds:g} s", None
+        points = [game.aim(t) for t in [value, *step.get("through", []), step["to"]]]
+        seconds, rest = step.get("seconds", PRESS["drag"]), step.get("rest", 0.05)
+        game.press(*points[0])
+        for delay, x, y in path(points, seconds):
+            time.sleep(delay)
+            game.move(x, y)
+        time.sleep(rest)
+        game.release(*points[-1])
+        where = " through ".join(f"({x:.0f}, {y:.0f})" for x, y in points[:-1])
+        moving = ", released moving" if rest == 0 else ""
+        return f"{where} to ({points[-1][0]:.0f}, {points[-1][1]:.0f}) in {seconds:g} s{moving}", None
     if kind == "key":
         event, seconds = key_event(value), step.get("seconds", PRESS["key"])
         down = "keyDown" if "text" in event else "rawKeyDown"
@@ -680,16 +726,16 @@ def play(plan: dict, shots: Path, project: Path) -> Callable[[oe.Browser, str, o
         if isinstance(started, list):
             return {"started": False, "layout": None, "runtime": None, "errors": started, "steps": []}
         window, win = started
-        touch, view = bool(plan.get("touch")), plan.get("viewport")
+        touch, view, ratio = bool(plan.get("touch")), plan.get("viewport"), plan.get("pixel_ratio", 1)
         game = None
         try:
-            if view:
-                size = emulate(win, view)
-                if size != tuple(view):
+            if view or ratio != 1:
+                size = emulate(win, view, ratio)
+                if view and size != tuple(view):
                     return {"started": False, "layout": None, "runtime": None, "steps": [], "errors": [
                         f"the preview window did not take the viewport {view[0]}x{view[1]} in {RESIZE} seconds; "
                         f"it reports {'nothing' if size is None else f'{size[0]}x{size[1]}'}"]}
-            else:
+            if not view:
                 size = tuple(win.evaluate("[innerWidth, innerHeight]"))     # a headed window loses its frame's share
             if touch:
                 win.call("Emulation.setTouchEmulationEnabled", enabled=True, maxTouchPoints=5)
@@ -703,7 +749,7 @@ def play(plan: dict, shots: Path, project: Path) -> Callable[[oe.Browser, str, o
             win.evaluate("0")
             before = oe.runtime_errors(win)
             game = Game(win, live[0], touch, size, f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}",
-                        view, project)
+                        view, project, ratio)
             began = time.monotonic()
             steps = play_steps(game, plan["steps"], shots)
             seconds = time.monotonic() - began
@@ -718,7 +764,7 @@ def play(plan: dict, shots: Path, project: Path) -> Callable[[oe.Browser, str, o
             if game:
                 game.close()
         return {"started": True, "layout": layout, "runtime": "worker" if game.live else "page",
-                "seconds": round(seconds, 1), "viewport": list(size), "touch": touch,
+                "seconds": round(seconds, 1), "viewport": list(size), "pixel_ratio": ratio, "touch": touch,
                 "errors": before, "steps": steps, "planned": len(plan["steps"]), "recorded": recorded}
     return run
 
@@ -798,8 +844,9 @@ def report(result: dict, label: Callable[[str], str] = oe.key_name) -> list[str]
     if not ran or not ran["started"]:
         return lines + [f"  preview did not run: {e}" for e in (ran or {}).get("errors", ["no preview"])]
     touch = ", touch" if ran["touch"] else ""
+    ratio = f" at pixel ratio {ran['pixel_ratio']:g}" if ran.get("pixel_ratio", 1) != 1 else ""
     lines.append(f"  preview: layout {ran['layout']!r} at the end, runtime in the {ran['runtime']}, "
-                 f"viewport {ran['viewport'][0]}x{ran['viewport'][1]}{touch}")
+                 f"viewport {ran['viewport'][0]}x{ran['viewport'][1]}{ratio}{touch}")
     lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
     for done in ran["steps"]:
         said = f": {done['said']}" if done["said"] else ""
