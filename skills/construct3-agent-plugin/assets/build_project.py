@@ -1625,7 +1625,7 @@ def text_on(on: str, size: float | None = None) -> str:
 
 def button_size(text: str, size: float | None = None) -> tuple[int, int]:
     """The (w, h) in px of a button whose label is `text`, its longest text if the events change
-    it: the label with a unit of air on either side and half a unit above and below, and never
+    it: the label with a unit of padding on either side and half a unit above and below, and never
     less than TOUCH either way, so a finger hits it. Draw the button at it:
     shape(rel, "rect", *button_size("Restart"), "solid")."""
     w, h = label_box(text, size)
@@ -1669,7 +1669,7 @@ def labelled_bar(label: str, text: str, frame_name: str, fill_name: str, where: 
                  height: float = 0, inset: float = 2, caps: bool = False, dx: float = 0, dy: float = 0,
                  color: str = "ink", on: str = "canvas_alt") -> tuple[dict, dict, dict]:
     """A bar with its name in front of it, held to an edge or corner by anchor() as one box: the
-    label `text` in the Text type `label`, a unit of air, then hud_bar()'s frame `length` px long
+    label `text` in the Text type `label`, a unit of space, then hud_bar()'s frame `length` px long
     and its fill, so the name never lands on the bar. Returns (label, frame, fill); the sheet sets
     the fill as for hud_bar()."""
     height = height or units(1)
@@ -1684,11 +1684,13 @@ SCREENS = ("stage",)
 
 
 def bands(screen: str = "stage", title: bool = True) -> dict[str, tuple[int, int, int, int]]:
-    """The named bands of a screen, each (x, y, w, h) in px, MARGIN inside the viewport and their
-    tops on the grid: "title" at the top, a line of TEXT_SIZE["title"] for the game's name;
-    "status" under it, a body line for what the player watches, the score or the time; "hint" at
-    the bottom, a body line for what to do; "stage" between them, a unit from each, where the game
-    is. A screen with no title, title=False, starts with the status band and gives the stage the room."""
+    """The named bands of a screen, each (x, y, w, h) in px, MARGIN inside the viewport, their
+    tops on the grid:
+        title   at the top, a line of TEXT_SIZE["title"] for the game's name
+        status  under it, a body line for what the player watches, the score or the time
+        stage   a unit under the status, where the game is
+        hint    at the bottom, a unit under the stage, a body line for what to do
+    A screen with no title, title=False, starts with the status band, and the stage takes the room."""
     if screen not in SCREENS:
         sys.exit(f"bands({screen!r}): the screens are {', '.join(SCREENS)}")
     width = VIEW_W - 2 * MARGIN
@@ -1705,10 +1707,10 @@ def band_text(otype: str, text: str, band: str, align: str = "center", longest: 
               screen: str = "stage", title: bool = True, color: str = "ink", on: str = "canvas_alt", ivars=None,
               behaviors=None) -> dict:
     """A label in the band `band` of bands(), at its `align` side, as wide as `longest` (or
-    `text`) and a line high, as hud_text() sizes it. "title", and "stage", where the label is the
-    stage's middle line, take TEXT_SIZE["title"], or the body size when the text is wider than
-    the band at it; "status" and "hint" take the body size. A text the band cannot hold stops the
-    run with the characters that fit."""
+    `text`) and a line high, as hud_text() sizes it. The "title" and "stage" bands take
+    TEXT_SIZE["title"], or the body size when the text is wider than the band at that size. In the
+    "stage" band the label is centred vertically. The "status" and "hint" bands take the body
+    size. A text the band cannot hold stops the run with the characters that fit."""
     box = bands(screen, title).get(band)
     if box is None:
         sys.exit(f"band_text({otype!r}): {band!r} is no band; the bands are {', '.join(bands(screen, title))}")
@@ -1730,9 +1732,9 @@ def band_text(otype: str, text: str, band: str, align: str = "center", longest: 
 
 
 def fit(w: float, h: float, screen: str = "stage", share: float = STAGE_SHARE, title: bool = True) -> tuple[int, int]:
-    """The largest size in whole units with the proportions w:h that covers at most `share` of
-    the stage of bands() across and down: the stage's main object, fit(1, 1) for a square, is as
-    large as the screen allows. Returns (cols, rows)."""
+    """The largest size in whole units with the proportions w:h that covers `share` of the stage
+    of bands() across or down, whichever limit it reaches first. The stage's main object takes
+    this size, fit(1, 1) for a square. Returns (cols, rows)."""
     _, _, sw, sh = bands(screen, title)["stage"]
     k = min(share * sw / UNIT / w, share * sh / UNIT / h)
     return max(1, int(w * k)), max(1, int(h * k))
@@ -1931,7 +1933,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-05, stamp a3151168df3f ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-05, stamp 1aab510f86cb ================
 
 
 # --- the game ---------------------------------------------------------------------------

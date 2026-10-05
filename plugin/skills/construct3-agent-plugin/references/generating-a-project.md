@@ -227,28 +227,29 @@ habits; they are what makes rerunning safe.
   are `row(where, n, w, h)`, spaced so they never touch. A second row on
   the same edge is `dy` in units on the same call, `dy=3` under a 2-unit
   label. The UI layer's instances go through `no_overlap()`, which stops
-  the run naming every two boxes that meet, with the `dy` that clears them,
-  and every one past the viewport. A value shown as a bar, health, fuel, progress, a
-  row of hearts, is `hud_bar(frame, fill, where, length)`: a frame and,
+  the run naming every pair of boxes that meet, with the `dy` that clears
+  them, and every box past the viewport. A value shown as a bar, health,
+  fuel, progress, a row of hearts, is
+  `hud_bar(frame, fill, where, length)`: a frame and,
   inside it, a fill whose origin is its left edge, both Tiled Backgrounds
   from `bar_types()` and `bar_images()` (9-patches with `caps=True`); the
   sheet sets the fill in the one place the value changes,
   `set_width(fill, bar_width(value, maximum, LENGTH))`, or slides it with
   `tween_width()`. A bar with its name in front of it is
-  `labelled_bar(label, text, frame, fill, where, length)`. A button is
-  `button(type, file, label, text, col, row)`, its shape drawn at
-  `button_size(text)`: the label is centred on the shape in the colour that
-  reads best on its fill (`text_on()`), at the title size on a button that
-  holds it (`label_size()`), and is the shape's child in the layout's
-  hierarchy (`link()`), so the events that hide, move or destroy the button
-  take the label along. A one-screen layout can be named bands: `bands()`
-  gives the boxes of the title, the status line, the stage and the hint,
-  `band_text(type, text, band, align)` puts a label in one, `fit(w, h)`
+  `labelled_bar(label, text, frame, fill, where, length)`.
+- A button is `button(type, file, label, text, col, row)`, its shape drawn
+  at `button_size(text)`. The label is centred on the shape, in the colour
+  `text_on()` picks for its fill, at the size `label_size()` gives. It is
+  the shape's child in the layout's hierarchy (`link()`), so the events that
+  hide, move or destroy the button take the label along.
+- A one-screen layout can be named bands. `bands()` gives the boxes of the
+  title, the status line, the stage and the hint.
+  `band_text(type, text, band, align)` puts a label in one. `fit(w, h)`
   sizes the stage's main object to `STAGE_SHARE` of the stage with its
-  proportions, and `stage_cell(cols, rows)` centres it there. `UNIT`
-  follows the viewport (8 px for pixel art, 32 px otherwise) and `TOUCH`
-  is the smallest object
-  a finger taps at that viewport; a tapped sprite is at least `TOUCH` wide.
+  proportions, and `stage_cell(cols, rows)` centres it there.
+- `UNIT` follows the viewport (8 px for pixel art, 32 px otherwise), and
+  `TOUCH` is the smallest object a finger taps at that viewport; a tapped
+  sprite is at least `TOUCH` wide.
   The middle of the screen is the game's; the HUD lives on the edges. The
   counts behind the grid are in
   `Construct3-RAG/prompts/references/new-project.md`.
