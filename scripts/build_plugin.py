@@ -13,10 +13,21 @@ skills/construct3-agent-plugin/scripts/c3project.py reads with data_texts;
 the language packs keep the parts check_project.py reads. Why:
 docs/decisions/plugin-folder.md.
 
+The build also sets the version in .claude-plugin/plugin.json. The published
+plugin is the one at the commit that HEAD shares with origin/main, or at HEAD
+without that ref. During a merge, it is the one at the commit that the merge
+commit will share with origin/main. If the built files other than plugin.json
+equal the published ones, the build keeps the published version; otherwise it
+writes the published version with its patch raised by one. The version in
+scripts/plugin/plugin.json is the floor, raised by hand for a minor or major
+release. The build reads Git locally and never fetches. Why:
+docs/decisions/plugin-tracks-commits.md.
+
 exit codes: 0 built or equal, 1 plugin/ differs or breaks a limit
 """
 import argparse
 import filecmp
+import hashlib
 import json
 import shutil
 import subprocess
@@ -28,6 +39,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "plugin"
 SOURCES = ROOT / "scripts" / "plugin"          # the manifest, README and icon of the plugin
 SKILL = "skills/construct3-agent-plugin"
+MANIFEST = ".claude-plugin/plugin.json"
 
 # Copied to the same path inside the plugin
 COPIED = (SKILL, "data/c3-schemas", "data/c3-guides", "data/c3-new-project", "prompts",
@@ -107,6 +119,63 @@ def build(out: Path) -> None:
     shutil.copyfile(ROOT / "LICENSE", out / "LICENSE")
 
 
+def blob_id(data: bytes) -> str:
+    """The id Git gives a file holding data."""
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+def git(*args: str) -> str | None:
+    """What git prints, or None when it fails."""
+    p = subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True, text=True, encoding="utf-8")
+    return p.stdout if p.returncode == 0 else None
+
+
+def published() -> tuple[str | None, dict[str, str]]:
+    """The version and the blob ids, by path, of the plugin at the commit that HEAD shares with
+    origin/main. Without origin/main or a merge base, as in a shallow CI checkout, the commit is HEAD."""
+    # During a merge, the commit the merge commit will share: git takes the merge base of the first
+    # commit and a merge of the others
+    merging = ["MERGE_HEAD"] if git("rev-parse", "-q", "--verify", "MERGE_HEAD") else []
+    base = (git("merge-base", "origin/main", "HEAD", *merging) or "HEAD").strip()
+    version = None
+    for path in (f"plugin/{MANIFEST}", MANIFEST):      # the second path: the manifest in commits that predate plugin/
+        text = git("show", f"{base}:{path}")
+        if text and (version := json.loads(text).get("version")):
+            break
+    blobs = {}
+    for entry in (git("ls-tree", "-r", "-z", f"{base}:plugin") or "").split("\0"):
+        if entry:
+            meta, path = entry.split("\t", 1)
+            kind, blob = meta.split()[1:]
+            if kind == "blob" and path != MANIFEST:
+                blobs[path] = blob
+    return version, blobs
+
+
+def release_version(published_version: str | None, published_blobs: dict[str, str],
+                    fresh_blobs: dict[str, str], floor: str) -> str:
+    """The version of a build. It is the published version while the build's files equal the published
+    files, and that version with its patch raised by one once they differ. It is never below the floor."""
+    def numbers(version: str) -> tuple[int, ...]:
+        return tuple(int(n) for n in version.split("."))
+
+    if published_version is None:
+        return floor
+    version = numbers(published_version)
+    if fresh_blobs != published_blobs:
+        version = (*version[:-1], version[-1] + 1)
+    return ".".join(map(str, max(version, numbers(floor))))
+
+
+def set_version(out: Path) -> str:
+    """Write the release version into the manifest of the plugin built in out, and return it."""
+    manifest = json.loads((out / MANIFEST).read_text(encoding="utf-8"))
+    fresh = {rel: blob_id(p.read_bytes()) for rel, p in files(out).items() if rel != MANIFEST}
+    manifest["version"] = release_version(*published(), fresh, manifest["version"])
+    write(out / MANIFEST, json.dumps(manifest, ensure_ascii=False, indent="\t") + "\n")
+    return manifest["version"]
+
+
 def files(folder: Path) -> dict[str, Path]:
     """The files of a plugin folder, without the bytecode Python writes beside a script it ran."""
     return {p.relative_to(folder).as_posix(): p for p in sorted(folder.rglob("*"))
@@ -145,10 +214,16 @@ def rebuild() -> list[str]:
     with tempfile.TemporaryDirectory() as tmp:
         fresh = Path(tmp) / "plugin"
         build(fresh)
+        set_version(fresh)
         if OUT.exists():
             shutil.rmtree(OUT)
         shutil.copytree(fresh, OUT)
     return limits(OUT)
+
+
+def version_in(folder: Path) -> str | None:
+    manifest = folder / MANIFEST
+    return json.loads(manifest.read_text(encoding="utf-8")).get("version") if manifest.is_file() else None
 
 
 def check() -> list[str]:
@@ -156,7 +231,11 @@ def check() -> list[str]:
     with tempfile.TemporaryDirectory() as tmp:
         fresh = Path(tmp) / "plugin"
         build(fresh)
-        return limits(fresh) + differences(fresh, OUT)
+        version = set_version(fresh)
+        problems = limits(fresh) + differences(fresh, OUT)
+    if version_in(OUT) != version:
+        problems.append(f"version: {version_in(OUT)} in plugin/, {version} in a fresh build")
+    return problems
 
 
 def main() -> int:
@@ -171,7 +250,8 @@ def main() -> int:
     if args.check:
         print(f"plugin/: {'differs or breaks a limit; run python scripts/build_plugin.py' if problems else 'equal to a fresh build'}")
     else:
-        print(f"plugin/: built, {len(files(OUT))} files{'; breaks the limits above' if problems else ''}")
+        print(f"plugin/: built, version {version_in(OUT)}, {len(files(OUT))} files"
+              f"{'; breaks the limits above' if problems else ''}")
     return 1 if problems else 0
 
 
