@@ -66,7 +66,7 @@ LOOKUPS = {
                    ["Audio", "play"], ["Physics", "force"], ["NoSuchAddon"], ["Mouse", "set-cursor-style"],
                    ["Glow"], ["System", "wait", "--locale", "zh-CN"]],
     "lookup_script_api": [["IRuntime"], ["Timer"], ["callFunction"], ["ISpriteInstance.x"],
-                          ["setAnimation", "startTimer"], ["NoSuchName"]],
+                          ["setAnimation", "startTimer"], ["getImageSize"], ["NoSuchName"]],
     "search_guides": [["chase", "enemy"], ["platform", "jump"], ["tween"], ["save", "load"], ["nosuchword"]],
 }
 # A plan every project takes: a comment, a variable and an event that uses it, at the end of its first sheet.

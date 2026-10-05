@@ -27,6 +27,18 @@ def test_a_member_of_an_interface_is_found_where_it_is_inherited_from(built):
     assert "ISpriteInstance and the interfaces it extends declare no 'speed'" in out
 
 
+def test_a_size_member_says_what_it_measures(built):
+    # The viewport's size is not the layout's, and a sprite's image size is not the instance's
+    code, out = tool(built, "lookup_script_api", "runtime.viewportWidth", "ISpriteInstance.imageWidth")
+    assert code == 0
+    assert "  readonly viewportWidth: number;\n  -- the project's viewport size" in out, out
+    assert "runtime.layout.width" in out and "not the instance's size in the layout" in out, out
+    code, out = tool(built, "lookup_script_api", "IRuntime")
+    lines = out.splitlines()
+    notes = [i for i, line in enumerate(lines) if line.startswith("  -- the project's viewport size")]
+    assert len(notes) == 1 and lines[notes[0] - 1] == "  getViewportSize(): Vec2Arr;", out
+
+
 def test_a_name_the_api_does_not_declare_prints_the_near_ones(built):
     code, out = tool(built, "lookup_script_api", "callFuncton")
     assert code == 1 and out.startswith("the scripting API declares no 'callFuncton'; closest: callFunction")
