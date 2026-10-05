@@ -201,6 +201,43 @@ def test_prepare_art_lists_the_next_step_only(project):
     assert code == 2 and "no art/wanted.json" in out and "give every sprite an art()" in out
 
 
+def test_prepare_art_warns_of_subjects_that_come_out_wrong(project):
+    """A subject that names what its prompt or ART_STYLE decides, and subjects that differ only in
+    colour words, are warned about; the prompts are printed all the same. A word after a negation
+    asks for what the prompt asks for."""
+    items = [sprite("knight-default-000.png", "a knight casting a long shadow, pixel art"),
+             sprite("sign-default-000.png", "a sign with the word EXIT"),
+             sprite("tree-default-000.png", "a tree on a hill background"),
+             sprite("crate-default-000.png", "a wooden crate with a stone texture, no shadow, without any text"),
+             sprite("card-default-000.png", "卡牌背面：暗色底、鎏金纹章，无文字，暗金描边"),
+             {"file": "sky-default-000.png", "kind": "scene", "width": 720, "height": 1280, "subject": "a night sky"}]
+    items += [sprite(f"slime-default-00{i}.png", f"a {colour} slime") for i, colour in enumerate(("red", "blue", "green"))]
+    items += [sprite(f"wolf-default-00{i}.png", f"{e}属性狼妖的圆形徽章肖像：{c}狼头")
+              for i, (e, c) in enumerate((("木", "青绿色"), ("火", "赤红"), ("水", "蓝色")))]
+    items += [sprite(f"gem-default-00{i}.png", f"a red {thing}") for i, thing in enumerate(("gem", "heart", "star"))]
+    assert prepare_art.warnings(items, "Dark gilded flat shapes, 暗金描边.") == [
+        "warning: tree-default-000: the subject names a background, a sprite is made on the key colour alone and cut "
+        "out; take it out, or make the picture a scene",
+        "warning: knight-default-000: the subject names a shadow, the cut-out takes a shadow on the key away with the "
+        "background; take it out",
+        "warning: sign-default-000: the subject names text, which the image tool misspells; take it out and write the "
+        "words with a Text object",
+        "warning: knight-default-000: the subject names a drawing style, pixel, that ART_STYLE does not; pictures in "
+        "two styles do not match, so say it in ART_STYLE or take it out",
+        "warning: slime-default-000, slime-default-001, slime-default-002; wolf-default-000, wolf-default-001, "
+        "wolf-default-002: the subjects differ only in colour words, so each group comes out as one figure in several "
+        "colours. If they are different things, say in each subject what else sets it apart: its shape, its size, "
+        "what it holds"]
+
+    edit(project, "art/wanted.json", lambda wanted: wanted.update(style="Dark gilded flat shapes, 暗金描边.", images=items))
+    (project / "art" / "raw").mkdir(parents=True)
+    Image.new("RGB", (64, 32), (255, 0, 255)).save(project / "art" / "raw" / "_key.png")
+    code, out = tool(project, "prepare_art", "--list", "--limit", "0")
+    lines = out.splitlines()
+    assert code == 0 and lines[1].startswith("warning: tree-default-000") and lines[5].startswith("warning: slime"), out
+    assert "make knight-default-000: ratio 1:1, for a 64x64 box, art/raw/_key.png as the reference image -> "            "art/raw/knight-default-000.png" in lines
+
+
 def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
     picture(project / "art" / "raw" / "coin-default-000.jpg")
     code, out = tool(project, "prepare_art")

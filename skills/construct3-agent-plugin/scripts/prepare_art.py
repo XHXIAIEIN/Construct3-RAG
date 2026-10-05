@@ -12,7 +12,10 @@ then a prompt per picture, starting with ART_STYLE so that the pictures share
 one style. Make each with the image tool and save it as art/raw/<name>.png,
 .jpg or .webp, where <name> is the image's file name without .png, and the key
 picture as art/raw/_key.png: each sprite's prompt then gives it as the
-reference image. Without --list, each picture there is:
+reference image. --list also warns of subjects that will come out wrong: one
+that names a background, a shadow, text, or a drawing style that ART_STYLE
+does not, and several that differ only in colour words. Without --list, each
+picture there is:
 
   cut out    a picture with transparency keeps it. Any other picture was
              asked for on a flat magenta or green, the key. The key is
@@ -44,6 +47,7 @@ used; its line says why. Exit 2: no art/wanted.json, or no Pillow.
 import hashlib
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -53,6 +57,27 @@ RAW_TYPES = (".png", ".jpg", ".jpeg", ".webp")
 KEYS = {"magenta": (255, 0, 255), "green": (0, 255, 0)}
 # a subject in these colours is asked for on green, so the key does not eat it
 NEAR_MAGENTA = ("pink", "magenta", "purple", "violet", "fuchsia", "lilac", "lavender", "rose", "粉", "紫", "品红")
+# Words in a subject that the prompt or ART_STYLE already decides, in English and Chinese. A word
+# after "no", "without", "无" or "不含" is not counted: "无文字" asks for what the prompt asks for.
+# docs/decisions/art-from-the-image-tool.md has the subjects they were measured on.
+NAMES = {
+    "background": ("background", "backdrop", "scenery", "背景"),
+    "shadow": ("shadow", "阴影", "影子", "投影"),
+    "text": ("text", "lettering", "letter", "caption", "writing", "word", "文字", "字样", "文本", "字母"),
+}
+STYLE_WORDS = ("pixel", "8-bit", "16-bit", "vector", "cartoon", "anime", "manga", "chibi", "realistic", "watercolo",
+               "oil paint", "painterly", "sketch", "line art", "cel-shad", "cel shad", "low poly", "low-poly", "3d",
+               "outline", "像素", "矢量", "扁平", "卡通", "动漫", "二次元", "写实", "水彩", "油画", "素描", "手绘",
+               "线稿", "描边", "赛璐璐", "低多边形", "厚涂", "风格")
+NEGATION = re.compile(r"(?:\b(?:no|not|without|free of)\b(?:\W+\w+){0,2}\W*|无|不含|没有|不带|不要|去掉)$")
+# Colours, shades and elements: subjects the same without them come out as one figure in several colours.
+COLOUR_WORDS = ("red", "green", "blue", "yellow", "orange", "purple", "pink", "violet", "white", "black", "grey",
+                "gray", "brown", "golden", "gold", "silver", "cyan", "teal", "crimson", "scarlet", "azure", "navy",
+                "magenta", "dark", "light", "pale", "fire", "water", "ice", "earth", "wood", "metal", "poison",
+                "lightning", "thunder", "wind", "鎏金", "红", "绿", "蓝", "黄", "橙", "紫", "粉", "白", "黑", "灰",
+                "褐", "棕", "金", "银", "青", "赤", "翠", "湛", "碧", "色", "暗", "深", "浅", "亮", "木", "水", "火",
+                "土", "冰", "雷", "毒")
+VARIANTS = 3                               # subjects that differ only in colour words before a warning
 RATIOS = ((1, 1), (4, 3), (3, 4), (3, 2), (2, 3), (16, 9), (9, 16), (2, 1), (1, 2))
 # RGB distances from the background colour, the key as the model painted it. NEAR: background
 # that joins the edge. POCKET: a gap in the subject, anywhere, when it also lies within KEYLINE of
@@ -176,6 +201,58 @@ def lineup(sprites: list[dict]) -> list[dict]:
     return (first + more)[:LINEUP]
 
 
+def named(subject: str, words, whole: bool = True) -> list[str]:
+    """The words of `words` that `subject` names, not counting one after a negation. An English
+    word matches whole, or with `whole` false as the start of a word: "outline" in "outlined"."""
+    low = subject.lower()
+    found = []
+    for w in words:
+        pattern = re.escape(w) if not w.isascii() else rf"\b{re.escape(w)}" + (r"s?\b" if whole else "")
+        if any(not NEGATION.search(low[:m.start()]) for m in re.finditer(pattern, low)):
+            found.append(w)
+    return found
+
+
+def warnings(items: list[dict], style: str) -> list[str]:
+    """A warning per thing that the subjects of the pictures to make say and their prompts or
+    ART_STYLE already decide, and per group of subjects that differ only in colour words."""
+    def listed(found: list[str]) -> str:
+        return ", ".join(found[:5]) + (f" and {len(found) - 5} more" if len(found) > 5 else "")
+
+    def stem(item: dict) -> str:
+        return item["file"][:-len(".png")]
+
+    sprites = [item for item in items if item["kind"] != "scene"]
+    out = []
+    for what, among, why in (
+            ("background", sprites, "a sprite is made on the key colour alone and cut out; take it out, or make the "
+                                    "picture a scene"),
+            ("shadow", sprites, "the cut-out takes a shadow on the key away with the background; take it out"),
+            ("text", items, "which the image tool misspells; take it out and write the words with a Text object")):
+        if found := [stem(item) for item in among if named(item["subject"], NAMES[what])]:
+            out.append(f"warning: {listed(found)}: the subject names {'' if what == 'text' else 'a '}{what}, {why}")
+    styles = {}
+    for item in items:
+        for word in named(item["subject"], STYLE_WORDS, whole=False):
+            if word not in style.lower():
+                styles.setdefault(word, []).append(stem(item))
+    for word, found in styles.items():
+        out.append(f"warning: {listed(found)}: the subject names a drawing style, {word}, that ART_STYLE does not; "
+                   f"pictures in two styles do not match, so say it in ART_STYLE or take it out")
+    groups = {}
+    for item in items:
+        bare = item["subject"].lower()
+        for w in sorted(COLOUR_WORDS, key=len, reverse=True):
+            bare = re.sub(rf"\b{w}\b" if w.isascii() else w, "", bare)
+        bare = re.sub(r"\b(?:a|an|the)\b|[\W_]+", "", bare)
+        groups.setdefault((item["kind"], item["width"], item["height"], bare), []).append(stem(item))
+    if same := [listed(found) for found in groups.values() if len(found) >= VARIANTS]:
+        out.append(f"warning: {'; '.join(same)}: the subjects differ only in colour words, so each group comes out as "
+                   f"one figure in several colours. If they are different things, say in each subject what else sets "
+                   f"it apart: its shape, its size, what it holds")
+    return out
+
+
 def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
     """The next step only: ART_STYLE while it is empty, then the key picture while it is missing,
     then a prompt per picture."""
@@ -185,12 +262,13 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
     counts = {k: list(states.values()).count(k) for k in ("make", "again", "prepare", "done", "stand-in")}
     to_make = counts["make"] + counts["again"]
     count = f"to make: {to_make}, to prepare: {counts['prepare']}, done: {counts['done']}" +         (f", stand-ins: {counts['stand-in']}" if counts["stand-in"] else "")
-    sprites = [item for item in items if states[item["file"]] in ("make", "again") and item["kind"] != "scene"]
+    making = [item for item in items if states[item["file"]] in ("make", "again")]
+    sprites = [item for item in making if item["kind"] != "scene"]
     if to_make and not style.strip():
         return ["style: none. Write ART_STYLE in tools/build_project.py, one sentence of art direction the user "
-                "agreed, so that every picture shares it",
+                "agreed, so that every picture shares it", *warnings(making, style),
                 f"{count}; next: write ART_STYLE, run python tools/build_project.py, then this again"]
-    out = [f"style: {style}"] if style.strip() else []
+    out = ([f"style: {style}"] if style.strip() else []) + warnings(making, style)
     if len(sprites) > 1 and raw_of(root, "_key.png") is None:
         shown = lineup(sprites)
         subjects = "; ".join(item["subject"].rstrip("。. ") for item in shown)
