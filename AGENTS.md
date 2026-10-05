@@ -157,6 +157,10 @@ Rules:
   configuration, dependencies, tests and docs in the same change, with the
   reason in `docs/decisions/`.
 - Type hints, `pathlib.Path`, specific exceptions logged at the boundary.
+- `plugin/` is built from `skills/construct3-agent-plugin/`, `data/` and
+  `prompts/` by `python scripts/build_plugin.py`, and committed with them.
+  Edit the source, then build; an edit inside `plugin/` is lost at the next
+  build, and `tests/test_plugin_folder.py` fails until the build is run.
 - Docs and tests change with the behavior. README: data first, service
   second. `README_CN.md` carries the content of `README.md`; `README.md`
   names no Chinese text or locale besides its link to `README_CN.md`, and

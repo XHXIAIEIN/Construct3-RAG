@@ -17,8 +17,11 @@ Its scripts import the standard library and each other. `prepare_art.py` also
 imports Pillow, and `preview_project.py` imports it when it is installed, to
 save a recording as a GIF where ffmpeg is missing. The scripts read
 `data/c3-schemas/` directly and run from a copy inside a game project with
-neither `src/` nor the service. Before changing the skill, read
-`skills/AGENTS.md`.
+neither `src/` nor the service. `scripts/build_plugin.py` copies the skill
+and the data it reads into `plugin/`, the Claude Code plugin, where the
+TypeScript definitions and the examples are bundles that
+`c3project.data_texts` reads (`docs/decisions/plugin-folder.md`). Before
+changing the skill, read `skills/AGENTS.md`.
 
 The project follows four dependency rules:
 

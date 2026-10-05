@@ -46,7 +46,7 @@ Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construc
 
 在 Claude Code 里，`construct3` plugin 可以代替上面两条命令。两种只选一种，因为同时用的话，游戏项目里那份 skill 会和 plugin 各自更新。
 
-plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin 的文件夹里运行。plugin 有三种装法：
+plugin 是 [`plugin/`](plugin/README.md) 文件夹，由 `scripts/build_plugin.py` 从 skill 和它读取的数据构建，所以 schemas 一起带上。脚本直接在 plugin 的文件夹里运行。plugin 有三种装法：
 
 - 从 Claude 目录安装，得到 Anthropic 审核过的版本。在 claude.ai 打开 **Customize** > **Plugins**。搜索 Construct3，点 **Add**。如果 Claude Code 用同一账号登录，它下次启动时会下载这个 plugin，名为 `construct3@synced`。每个版本都要等审核，所以这份可能比本仓库落后几个提交。
 - 从本仓库安装，跟上发布的版本：
@@ -58,10 +58,10 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 
   要把 Claude Code 存的副本更新到本仓库 `plugin.json` 里的版本，运行 `claude plugin update construct3@construct3-rag`；没有提升这个版本的提交不会进入副本。只有 marketplace 打开了自动更新，Claude Code 才会自己更新它；不由 Anthropic 运营的 marketplace 默认不开自动更新。要打开它，在会话里运行 `/plugin`，打开 **Marketplaces** 标签，选 `construct3-rag`，再选 **Enable auto-update**。更新从下一个会话起生效。
 - 从已有的 clone 安装，让下一个会话用上 `git pull` 拉下来的文件：把 clone 链接到 Claude Code 的 skills 文件夹。
-  - PowerShell：`New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <clone 路径>`
-  - 其他 shell：`ln -s <clone 路径> ~/.claude/skills/construct3`
+  - PowerShell：`New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <clone 路径>/plugin`
+  - 其他 shell：`ln -s <clone 路径>/plugin ~/.claude/skills/construct3`
 
-  要用链接，不要添加指向 clone 的 marketplace。marketplace 会把整个 clone（包括被 Git 忽略的文件）复制进 plugin 缓存。
+  要用链接，不要添加指向 clone 的 marketplace。marketplace 装的是一份副本，`git pull` 不会改变它。
 
 如果同时也添加了 Claude 目录里的那份，Claude Code 加载从本仓库安装或从 clone 链接的那份。Claude 目录里的那份会被忽略。
 
@@ -87,6 +87,7 @@ plugin 就是整个仓库，所以 schemas 一起带上。脚本直接在 plugin
 - `screenshot_sheet.py` 按编辑器里的样子，给事件表或其中一个事件组截图，用于论坛回帖、bug 报告或文档。截图是英文界面，只裁事件表本身，每一列的宽度正好放下它最长的一行。
 - `export_project.py` 用你的订阅账号，让编辑器把项目导出为 Web (HTML5)。
 - `pack_project.py` 把项目保存成编辑器能打开的 `.c3p` 或 `.zip`。它也能把 `.c3p` 或 `.zip` 解成项目文件夹。
+- `new_project.py` 在空文件夹里新建游戏项目，内容来自编辑器 **项目** > **新建** 保存的空项目。
 - `install.py` 把 skill 装进游戏项目，或者按 clone 更新已有的副本。它也会把游戏 `tools/build_project.py` 里的辅助函数更新到当前版本，加 `--helpers-only` 时只做这一件事。
 - `assets/build_project.py` 是一个模板，用来写生成整个项目的 Python 脚本。它的辅助函数放在两行标记之间，游戏的设置在标记上方，游戏本身在标记下方。
 
@@ -193,7 +194,8 @@ python scripts/setup.py          # http://localhost:8765/playground
 
 ```
 AGENTS.md               AI agent 入口
-.claude-plugin/         Claude Code plugin 和 marketplace 的清单
+.claude-plugin/         Claude Code marketplace 的清单
+plugin/                 Claude Code plugin，由 scripts/build_plugin.py 构建
 .claude/                Claude Code 的 ACE 查找子 agent 和 polish 工作流
 data/                   提交在仓库里的参考数据，直接读取
   c3-schemas/           ACE 定义和滤镜，每种语言一个文件夹
@@ -208,7 +210,7 @@ prompts/                LLM system prompt
 skills/                 Agent Skills，装进游戏项目使用
   construct3-agent-plugin/   项目工具，见“skill 能做什么”
 src/                    可选的查找服务（见 src/AGENTS.md）
-scripts/                安装、查找服务启动、数据更新、版本检查、schema 对比、已发布游戏分析
+scripts/                安装、plugin 构建、查找服务启动、数据更新、版本检查、schema 对比、已发布游戏分析
 tests/                  离线 pytest 测试
 docs/guide/             使用文档
 docs/dev/               开发文档

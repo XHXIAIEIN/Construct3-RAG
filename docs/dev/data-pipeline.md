@@ -184,11 +184,12 @@ or on a query.
 the CDN's `versions.json`. When Construct 3 releases a new version:
 
 ```bash
-# Fetch the latest stable release (or --version <release>), replace data/
+# Fetch the latest stable release (or --version <release>), replace data/,
+# then build plugin/ again from it
 python scripts/init.py
 
 # What the release changed against the committed data, and which tracked
-# files quote an id it broke; review them, then commit data/
+# files quote an id it broke; review them, then commit data/ and plugin/
 python scripts/schema_diff.py
 ```
 

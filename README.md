@@ -46,7 +46,7 @@ If your agent reads its instructions from another file, such as `GEMINI.md`, add
 
 In Claude Code, the `construct3` plugin replaces the two commands. Use one or the other, because with both, the game project holds a copy of the skill that updates separately from the plugin.
 
-The plugin is this whole repository, so the schemas come with it. The scripts run from the plugin's folder. Install the plugin in one of three ways:
+The plugin is the [`plugin/`](plugin/README.md) folder, which `scripts/build_plugin.py` builds from the skill and the data it reads, so the schemas come with it. The scripts run from the plugin's folder. Install the plugin in one of three ways:
 
 - From Claude's directory, for the versions that Anthropic has reviewed. On claude.ai, open **Customize** > **Plugins**. Search for Construct3 and select **Add**. Claude Code downloads the plugin as `construct3@synced` at its next start, if it is signed in to the same account. Each version waits for a review, so this copy can be some commits behind the repository.
 - From this repository, to follow its released versions:
@@ -58,10 +58,10 @@ The plugin is this whole repository, so the schemas come with it. The scripts ru
 
   To bring Claude Code's copy up to the version in the repository's `plugin.json`, run `claude plugin update construct3@construct3-rag`; a commit that does not raise that version does not reach the copy. Claude Code updates it on its own only when auto-update is on for the marketplace, and auto-update is off by default for a marketplace that Anthropic does not run. To turn it on, run `/plugin` in a session, open the **Marketplaces** tab, select `construct3-rag`, then select **Enable auto-update**. An update applies from the next session.
 - From a clone that you have, so that the next session uses what `git pull` fetched: link the clone into Claude Code's skills folder.
-  - PowerShell: `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <the clone>`
-  - Other shells: `ln -s <the clone> ~/.claude/skills/construct3`
+  - PowerShell: `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <the clone>/plugin`
+  - Other shells: `ln -s <the clone>/plugin ~/.claude/skills/construct3`
 
-  Use a link, not a marketplace that points at the clone. A marketplace copies the whole clone, with the files that Git ignores, into the plugin cache.
+  Use a link, not a marketplace that points at the clone. A marketplace installs a copy, which a `git pull` does not change.
 
 If you also add the copy from Claude's directory, Claude Code loads the plugin from this repository or from the linked clone. It ignores the directory's copy.
 
@@ -87,6 +87,7 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 - `screenshot_sheet.py` takes a picture of an event sheet, or of one group in it, as the editor shows it, for a forum post, a bug report or a document. The picture is in English and cropped to the sheet, and each column is as wide as its longest line.
 - `export_project.py` makes the editor export the project to Web (HTML5), with your subscribed account.
 - `pack_project.py` saves the project as a `.c3p` or `.zip` that the editor opens. It also unpacks a `.c3p` or `.zip` into a project folder.
+- `new_project.py` starts a game project in an empty folder from the empty project that the editor saves for **Project** > **New**.
 - `install.py` installs the skill in a game project, or refreshes a copy from the clone. It also brings the helpers in a game's `tools/build_project.py` up to date, and `--helpers-only` does only that.
 - `assets/build_project.py` is a template for a Python script that generates a whole project. Its helpers sit between two markers, apart from the game's settings above them and the game below them.
 
@@ -193,7 +194,8 @@ python scripts/setup.py          # http://localhost:8765/playground
 
 ```
 AGENTS.md               AI agent entry point
-.claude-plugin/         Claude Code plugin and marketplace manifests
+.claude-plugin/         Claude Code marketplace manifest
+plugin/                 The Claude Code plugin, built by scripts/build_plugin.py
 .claude/                Claude Code ACE lookup sub-agent and polish workflow
 data/                   Committed reference data, read directly
   c3-schemas/           ACE definitions and effects, one folder per locale
@@ -208,7 +210,7 @@ prompts/                LLM system prompts
 skills/                 Agent Skills, installed into a game project
   construct3-agent-plugin/   The project tools of "What the skill does"
 src/                    Optional lookup service (see src/AGENTS.md)
-scripts/                Bootstrap, lookup service setup, data refresh, version check, schema diff, published-game analyzer
+scripts/                Bootstrap, plugin build, lookup service setup, data refresh, version check, schema diff, published-game analyzer
 tests/                  Offline pytest suite
 docs/guide/             User docs
 docs/dev/               Contributor docs
