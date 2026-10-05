@@ -208,6 +208,30 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     return Image.frombytes("RGBA", (w, h), bytes(out)), f"background {hex_of(bg)}"
 
 
+def resample(img, size: tuple[int, int], how: int):
+    """An RGBA picture scaled with its coverage and its colour apart. LANCZOS rings: its negative
+    lobes and the division by a low alpha at the edge give colours no source pixel had, a light
+    rim and a key tint. Here alpha and the colour weighted by alpha go through a filter with no
+    negative lobe, HAMMING or BOX, in floats, so each pixel's colour is a mix of the colours under
+    it."""
+    from array import array
+    from PIL import Image
+    data = img.tobytes()
+    alpha = data[3::4]
+
+    def scaled(layer) -> array:
+        return array("f", layer.resize(size, how).tobytes())
+
+    cover = scaled(img.getchannel("A").convert("F"))
+    mix = [scaled(Image.frombytes("F", img.size, array("f", (c * a for c, a in zip(data[k::4], alpha))).tobytes()))
+           for k in range(3)]
+    out = bytearray(4 * size[0] * size[1])
+    for i, a in enumerate(cover):
+        if a >= 0.5:
+            out[4 * i:4 * i + 4] = bytes(min(255, max(0, round(m[i] / a))) for m in mix) + bytes((min(255, round(a)),))
+    return Image.frombytes("RGBA", size, bytes(out))
+
+
 def clean(img):
     """A clear pixel written as (0, 0, 0, 0): a colour under alpha 0 bleeds into the edge when the
     image is scaled with linear sampling."""
@@ -248,7 +272,8 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
         save(big.crop((left, top, left + w, top + h)).convert("RGBA"), root / "art" / rel)
         return [f"{stem}: {raw.name} {rw}x{rh} -> art/{rel} {w}x{h}, cropped to cover it"]
     s = min(1.0, min(WORK * max(w, h), 1024) / max(rw, rh))
-    work = img if s == 1 else img.resize((max(1, round(rw * s)), max(1, round(rh * s))), Image.LANCZOS)
+    work = img if s == 1 else resample(img.convert("RGBA"), (max(1, round(rw * s)), max(1, round(rh * s))),
+                                       Image.HAMMING)
     cut, how = cut_out(work, key_for(item, wanted.get("style", ""))[1])
     alpha = cut.getchannel("A")
     solid = alpha.point(lambda a: 255 if a >= 128 else 0).getbbox()
@@ -262,7 +287,7 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
     subject = cut.crop(box)
     f = min(w / subject.width, h / subject.height)
     sw, sh = max(1, round(subject.width * f)), max(1, round(subject.height * f))
-    subject = subject.resize((sw, sh), Image.BOX if pixel_art else Image.LANCZOS)
+    subject = resample(subject, (sw, sh), Image.BOX if pixel_art else Image.HAMMING)
     if pixel_art:      # Nearest sampling shows a soft edge as a fringe: an edge is in or out
         subject.putalpha(subject.getchannel("A").point(lambda a: 255 if a >= 128 else 0))
     canvas = Image.new("RGBA", (w, h), (0, 0, 0, 0))

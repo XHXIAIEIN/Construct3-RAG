@@ -1,16 +1,28 @@
 """prepare_art.py: the image tool's pictures cut out, fitted to the boxes art() asks for, and taken
 by the generator in place of the stand-ins."""
 import json
+import math
+import sys
 from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import edit, run, tool
+from tests.skill_helpers import SKILL, edit, run, tool
 
 pytest.importorskip("PIL")
 from PIL import Image, ImageDraw, ImageFilter  # noqa: E402
 
+sys.path.insert(0, str(SKILL / "scripts"))
+import prepare_art  # noqa: E402
+
 MAGENTA = (255, 0, 255)
+SS = 4                                          # the figure is drawn at this many times its size
+OUTLINE, SKIN, SHIRT, WHITE = (28, 18, 16), (238, 206, 178), (245, 245, 240), (252, 252, 252)
+RED, GREEN_HAIR, GOLD, HOT_PINK = (200, 40, 30), (90, 190, 60), (230, 180, 40), (249, 40, 142)
+PAINTED = {"magenta": (250, 4, 240), "green": (6, 246, 10)}      # the key as a model paints it
+POCKET = {"magenta": (215, 40, 200), "green": (40, 200, 35)}     # the key seen through a gap, about 60 off
+RING = (20, 128, 32, 140)                                         # the gap, in pixels
+SPILL = [(70, 60), (90, 56), (26, 124)]                          # 2x2 spots of key light in the hair
 
 
 def picture(path: Path, bg: tuple[int, int, int] = MAGENTA, r: int = 200, shadow: bool = True,
@@ -34,6 +46,76 @@ def picture(path: Path, bg: tuple[int, int, int] = MAGENTA, r: int = 200, shadow
     d.ellipse([256 - r + 24, 236 - r + 24, 256 + r - 24, 236 + r - 24], fill=(240, 190, 40))
     path.parent.mkdir(parents=True, exist_ok=True)
     img.filter(ImageFilter.SMOOTH).save(path, quality=85)
+
+
+def figure(key: str, spill: bool = True) -> tuple:
+    """A figure whose matte is known, (truth, picture): drawn at SS times its size and box-reduced,
+    so its edge has every alpha, then laid over the key as a model paints it. A face with white
+    eye highlights over a white shirt, a hair cap with strands 0.5 to 2 px wide, a ring of hair
+    with the key showing through it, a hot-pink heart under magenta or a gold coin under green,
+    and spots where the key's light falls on the hair."""
+    w, h = 160, 200
+    hair = GREEN_HAIR if key == "magenta" else RED
+    big = Image.new("RGBA", (w * SS, h * SS), (0, 0, 0, 0))
+    d = ImageDraw.Draw(big)
+
+    def at(*v):
+        return [round(x * SS) for x in v]
+
+    d.ellipse(at(33.8, 73.8, 126.2, 166.2), fill=OUTLINE)
+    d.pieslice(at(36, 76, 124, 164), 180, 360, fill=SKIN)
+    d.pieslice(at(36, 76, 124, 164), 0, 180, fill=SHIRT)
+    for x in (60, 88):
+        d.ellipse(at(x, 92, x + 12, 104), fill=OUTLINE)
+        d.ellipse(at(x + 3, 94, x + 7, 98), fill=WHITE)
+    if key == "magenta":
+        d.polygon([tuple(at(68, 132)), tuple(at(92, 132)), tuple(at(80, 148))], fill=HOT_PINK)
+        d.ellipse(at(67, 125, 81, 139), fill=HOT_PINK)
+        d.ellipse(at(79, 125, 93, 139), fill=HOT_PINK)
+    else:
+        d.ellipse(at(118, 140, 146, 168), fill=GOLD)
+    d.chord(at(46, 44, 114, 112), 180, 360, fill=hair)
+    for deg, thick, length in ((-160, 0.5, 22), (-135, 0.7, 24), (-110, 1.0, 22), (-70, 1.4, 20), (-45, 0.8, 22),
+                               (-20, 2.0, 20)):
+        c, s = math.cos(math.radians(deg)), math.sin(math.radians(deg))
+        x0, y0 = 80 + 32 * c, 78 + 32 * s
+        d.line(at(x0, y0, x0 + length * c, y0 + length * s), fill=hair, width=max(1, round(thick * SS)))
+    d.ellipse(at(12, 120, 40, 148), fill=hair)
+    d.ellipse(at(*RING), fill=(0, 0, 0, 0))
+    d.rectangle(at(38, 131, 42, 137), fill=hair)
+    truth = big.resize((w, h), Image.BOX)
+    back = Image.new("RGB", (w, h), PAINTED[key])
+    ImageDraw.Draw(back).ellipse([RING[0] - 1, RING[1] - 1, RING[2] + 1, RING[3] + 1], fill=POCKET[key])
+    fg, bg = truth.tobytes(), back.tobytes()
+    out = bytearray(w * h * 3)
+    for i in range(w * h):
+        a = fg[4 * i + 3] / 255
+        for c in range(3):
+            out[3 * i + c] = round(a * fg[4 * i + c] + (1 - a) * bg[3 * i + c])
+    pic = Image.frombytes("RGB", (w, h), bytes(out))
+    if spill:
+        px, tr = pic.load(), truth.load()
+        for x, y in ((sx + dx, sy + dy) for sx, sy in SPILL for dx in (0, 1) for dy in (0, 1)):
+            px[x, y] = tuple(round(0.6 * a + 0.4 * b) for a, b in zip(tr[x, y][:3], PAINTED[key]))
+    return truth, pic
+
+
+def new_colours(src, out) -> list:
+    """The pixels of `out`, a scaled `src`, shown (alpha >= 38) in a colour more than one level
+    outside the range of the shown source pixels under them."""
+    sp, op = src.load(), out.load()
+    fx, fy = src.width / out.width, src.height / out.height
+    bad = []
+    for v in range(out.height):
+        for u in range(out.width):
+            if op[u, v][3] < 38:
+                continue
+            xs = range(max(0, math.floor((u - 0.5) * fx)), min(src.width, math.ceil((u + 1.5) * fx)))
+            ys = range(max(0, math.floor((v - 0.5) * fy)), min(src.height, math.ceil((v + 1.5) * fy)))
+            seen = [sp[x, y] for y in ys for x in xs if sp[x, y][3]]
+            if any(not min(p[k] for p in seen) - 1 <= op[u, v][k] <= max(p[k] for p in seen) + 1 for k in range(3)):
+                bad.append((u, v))
+    return bad
 
 
 def test_prepare_art_lists_a_prompt_for_each_picture_to_make(project):
@@ -98,6 +180,16 @@ def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
     assert len(frames[0]["collisionPoly"]["points"]) == 32          # the stand-in's circle
     code, out = tool(project, "check_look")
     assert code == 0 and out.splitlines()[-1].startswith("ok: 3 images"), out
+
+
+def test_prepare_art_scales_a_picture_without_new_colours():
+    """LANCZOS gives a light rim and a key tint no source pixel had (618 pixels at half size)."""
+    truth = figure("magenta", spill=False)[0]
+    for scale in (0.2, 0.35, 0.5, 0.75):
+        size = (round(truth.width * scale), round(truth.height * scale))
+        assert len(new_colours(truth, truth.resize(size, Image.LANCZOS))) > 100
+        assert new_colours(truth, prepare_art.resample(truth, size, Image.HAMMING)) == [], scale
+        assert new_colours(truth, prepare_art.resample(truth, size, Image.BOX)) == [], scale
 
 
 def test_prepare_art_refuses_a_picture_it_cannot_cut_out(project):
