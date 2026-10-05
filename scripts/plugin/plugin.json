@@ -6,5 +6,6 @@
 	"homepage": "https://github.com/XHXIAIEIN/Construct3-RAG",
 	"repository": "https://github.com/XHXIAIEIN/Construct3-RAG",
 	"license": "MIT",
+	"icon": "./icon.png",
 	"keywords": ["construct3", "construct-3", "gamedev", "game-development", "make-games", "web-games", "html5-games", "low-code", "no-code", "event-sheets", "javascript", "typescript", "2d-games", "3d-games", "project-validation"]
 }

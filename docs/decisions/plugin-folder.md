@@ -94,13 +94,18 @@ The build:
   reviewer. A plugin user works without the siblings, as the skill does
   wherever they are missing.
 - Writes `.claude-plugin/plugin.json`, `README.md` and the icon from their
-  sources in `scripts/plugin/`, and the repository's `LICENSE`. The README
-  describes the plugin route only, and states what the plugin runs and what
-  reaches the network: the checker's fetch of a clone, and the browser that
-  the scripts open on the Construct editor and its preview. The checklist's
-  "Prepare for the security scan" asks the README to describe everything the
-  plugin runs, sends or fetches. This repository's README names `plugin/` as
-  the plugin folder.
+  sources in `scripts/plugin/`, and the repository's `LICENSE`. The icon
+  goes at the plugin root, where the plugin reference puts every file but
+  the manifest, and `plugin.json` names it in `icon`, the field that
+  Claude's directory reads for the listing and Claude Code ignores. No text
+  of the plugin writes the icon's path in backticks or a code block, which
+  the checklist holds for a reviewer. The README describes the plugin route
+  only, and states what the plugin runs and what reaches the network: the
+  checker's fetch of a clone, and the browser that the scripts open on the
+  Construct editor and its preview. The checklist's "Prepare for the
+  security scan" asks the README to describe everything the plugin runs,
+  sends or fetches. This repository's README names `plugin/` as the plugin
+  folder.
 
 Copied text files are written with LF line endings, as Git stores them, so
 a checkout with CRLF files (`lf-line-endings.md`) builds the same folder as
@@ -109,8 +114,9 @@ any other.
 The result stays under 512 files. A test builds the folder into a temporary
 directory and fails when the result differs from `plugin/`, has more than
 512 files, holds a binary file other than a PNG or a file over 256 KiB other
-than an image, or lacks a file under `data/` or `prompts/` that `SKILL.md`,
-`references/` or the game-project block names as `Construct3-RAG/<path>`.
+than an image, names in `icon` a file it does not hold, or lacks a file
+under `data/` or `prompts/` that `SKILL.md`, `references/` or the
+game-project block names as `Construct3-RAG/<path>`.
 `init.py` builds the folder again after each data refresh, so the update
 workflow's pull request carries the build with the data.
 

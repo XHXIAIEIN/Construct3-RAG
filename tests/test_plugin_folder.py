@@ -34,7 +34,7 @@ def test_the_build_writes_text_files_with_lf_and_an_image_byte_for_byte(tmp_path
     build_plugin.build(out)
     assert (out / ".claude-plugin" / "plugin.json").read_bytes() == b'{\n\t"name": "construct3"\n}\n'
     assert (out / "README.md").read_bytes() == b"# Construct 3\n\nA line.\n"
-    assert (out / ".claude-plugin" / "icon.png").read_bytes() == icon
+    assert (out / "icon.png").read_bytes() == icon
 
 
 def bundled(rel: str) -> bool:
@@ -62,6 +62,15 @@ def test_the_marketplace_installs_the_plugin_folder():
     assert [p["source"] for p in market["plugins"]] == ["./plugin"]
     assert not (REPO / ".claude-plugin" / "plugin.json").exists()
     assert json.loads((PLUGIN / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))["name"] == "construct3"
+
+
+def test_the_listing_icon_is_a_file_of_the_plugin():
+    """The directory reads the listing icon from plugin.json's "icon", a path inside the plugin, outside
+    .claude-plugin/ (Claude Code docs, "Plugin manifest reference", "Directory listing fields")."""
+    icon = json.loads((PLUGIN / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))["icon"]
+    path = (PLUGIN / icon).resolve()
+    assert icon.startswith("./") and path.is_file(), icon
+    assert path.is_relative_to(PLUGIN.resolve()) and ".claude-plugin" not in path.relative_to(PLUGIN.resolve()).parts
 
 
 def test_scripts_in_the_plugin_read_the_bundled_data(tmp_path):
