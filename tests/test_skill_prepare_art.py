@@ -283,3 +283,14 @@ def test_prepare_art_clears_gaps_and_key_light_and_keeps_colours_near_the_key():
         heart = HOT_PINK if key == "magenta" else GREEN_HEART
         inside = [(x, y) for x in range(66, 94) for y in range(124, 149) if truth.getpixel((x, y)) == (*heart, 255)]
         assert inside and all(cut.getpixel(p) == (*heart, 255) for p in inside), key
+
+
+def test_prepare_art_refuses_a_cut_that_leaves_the_key_on_the_edge():
+    truth, pic = figure("magenta", hair=HOT_PINK)
+    with pytest.raises(prepare_art.Unusable, match=r"pixels along the subject's edge lean to magenta: a fringe "
+                                                   r"the cut left, or a subject too near the key; make it again on "
+                                                   r"a flat green #00FF00 background"):
+        prepare_art.cut_out(pic, KEYS["magenta"])
+    truth, pic = figure("green", hair=HOT_PINK)          # made again as the line says
+    cut, how = prepare_art.cut_out(pic, KEYS["magenta"])
+    assert how.startswith("background #06F60A") and leaning(cut, KEYS["green"])[0] == 0

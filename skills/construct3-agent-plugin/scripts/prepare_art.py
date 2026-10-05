@@ -55,6 +55,9 @@ NEAR, POCKET, KEYLINE = 60, 70, 60
 REACH, REACH_PER, MARGIN, LINE, SWEEPS = 3, 240, 16, 30, 16
 # Key light inside the subject: a pixel leaning SPILL more to the key than the 5x5 around it.
 SPILL = 60
+# A cut that leaves more pixels leaning to the key than this share of its edge, and than
+# FRINGE_MIN, is refused.
+FRINGE, FRINGE_MIN = 0.005, 8
 WORK = 4                                   # a picture is cut out at up to this many times its box
 MARK = "c3-art"                            # the PNG text key check_look.py reads as a painting
 
@@ -165,11 +168,17 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     if near < 0.5:
         raise Unusable(f"its edge is not one flat colour, {near:.0%} of it near {hex_of(bg)}; make it again on a "
                        f"flat {name} {hex_of(key)} background, or with a transparent one")
-    lit = min(c for c, k in zip(bg, key) if k)
-    if lit < 96 or max(c for c, k in zip(bg, key) if not k) > 0.35 * lit:
+    # the background is the key asked for, or the other one, as a model paints it: the keyed
+    # channels lit, the others dark, as in (216, 46, 147) or (8, 162, 24)
+    painted = [n for n, k in KEYS.items()
+               if min(c for c, on in zip(bg, k) if on) >= 96
+               and max(c for c, on in zip(bg, k) if not on) <= 0.35 * min(c for c, on in zip(bg, k) if on)]
+    if not painted:
         raise Unusable(f"its background is {hex_of(bg)}, not the {name} it was asked on, and a cut on that colour "
                        f"takes the subject's own parts in it; make it again on a flat {name} {hex_of(key)} "
                        f"background, or with a transparent one")
+    name = painted[0]
+    key = KEYS[name]
     if near < 0.9:
         raise Unusable(f"the subject runs off the picture over {1 - near:.0%} of its edge, so it is cut off; make "
                        f"it again whole and centred, with room around it")
@@ -315,7 +324,29 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
         out[4 * i:4 * i + 3] = bytes(min(255, max(0, round((rgb[i][k] - t * bg[k]) / (1 - t)))) for k in range(3))
         spill += 1
     cut = Image.frombytes("RGBA", (w, h), bytes(out))
+    left, band = fringe(cut, key)
+    if left > max(FRINGE_MIN, FRINGE * band):
+        other = next(k for k in KEYS if k != name)
+        raise Unusable(f"after the cut, {left} of the {band} pixels along the subject's edge lean to {name}: a "
+                       f"fringe the cut left, or a subject too near the key; make it again on a flat {other} "
+                       f"{hex_of(KEYS[other])} background, or with a transparent one")
     return cut, f"background {hex_of(bg)}, {gaps} px of it in gaps, {spill} px of its light recoloured"
+
+
+def fringe(img, key: tuple) -> tuple[int, int]:
+    """The shown pixels within 3 px of a clear one that lean clearly to the key, and all shown
+    pixels there."""
+    from PIL import Image, ImageFilter
+    data = img.tobytes()
+    alpha = data[3::4]
+    near = Image.frombytes("L", img.size, bytes(255 if a == 0 else 0 for a in alpha)).filter(ImageFilter.MaxFilter(7))
+    hue = leaning_to(key)
+    left = band = 0
+    for i, z in enumerate(near.tobytes()):
+        if z and alpha[i] >= 32:
+            band += 1
+            left += hue(data[4 * i:4 * i + 3]) > 40
+    return left, band
 
 
 def resample(img, size: tuple[int, int], how: int):
