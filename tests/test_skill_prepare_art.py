@@ -143,27 +143,48 @@ def matte(truth, cut) -> tuple[float, int]:
     return err, sum(a[3] >= 128 and b[3] >= 32 and max(abs(a[k] - b[k]) for k in range(3)) > 40 for a, b in px)
 
 
-def test_prepare_art_lists_a_prompt_for_each_picture_to_make(project):
+def sprite(file: str, subject: str, w: int = 64, h: int = 64) -> dict:
+    return {"file": file, "kind": "circle", "width": w, "height": h, "origin": [0.5, 0.5], "subject": subject}
+
+
+def test_prepare_art_lists_the_next_step_only(project):
+    """No ART_STYLE: that step alone. Then the key picture alone, while more than one sprite is to
+    make. Then a prompt per picture."""
     code, out = tool(project, "prepare_art", "--list")
-    lines = out.splitlines()
     assert code == 0, out
-    assert lines[0].startswith("style: none. Write ART_STYLE in tools/build_project.py first")
-    assert "make coin-default-000: ratio 1:1, for a 96x96 box -> art/raw/coin-default-000.png" in lines
-    assert ('  "a gold coin seen from the front. One subject, whole and centred with room around it, on a flat '
-            'magenta #FF00FF background: no scenery, no shadow on the ground, no text."') in lines
-    assert lines[-1] == ("to make: 1, to prepare: 0, done: 0; next: make each with the image tool, then python "
-                         ".agents/skills/construct3-agent-plugin/scripts/prepare_art.py")
+    assert out.splitlines() == [
+        "style: none. Write ART_STYLE in tools/build_project.py, one sentence of art direction the user agreed, so "
+        "that every picture shares it",
+        "to make: 1, to prepare: 0, done: 0; next: write ART_STYLE, run python tools/build_project.py, then this "
+        "again"]
     assert (project / "art" / "raw").is_dir()
 
-    edit(project, "art/wanted.json", lambda wanted: wanted.update(
-        style="Bright flat vector, thick dark outlines.",
-        images=wanted["images"] + [{"file": "rose-default-000.png", "kind": "circle", "width": 64, "height": 64,
-                                    "origin": [0.5, 0.5], "subject": "a pink rose"},
-                                   {"file": "sky-default-000.png", "kind": "scene", "width": 720, "height": 1280,
-                                    "origin": [0, 0], "subject": "a night sky over hills"}]))
+    edit(project, "art/wanted.json", lambda wanted: wanted.update(style="Bright flat vector, thick dark outlines."))
     code, out = tool(project, "prepare_art", "--list")
-    assert "style: Bright flat vector, thick dark outlines." in out
-    assert 'key picture: make it first, "Bright flat vector, thick dark outlines; a line-up of' in out
+    lines = out.splitlines()
+    assert lines[0] == "style: Bright flat vector, thick dark outlines."
+    assert "make coin-default-000: ratio 1:1, for a 96x96 box -> art/raw/coin-default-000.png" in lines
+    assert ('  "Bright flat vector, thick dark outlines; a gold coin seen from the front. One subject, whole and '
+            'centred with room around it, on a flat magenta #FF00FF background: no scenery, no shadow on the '
+            'ground, no text."') in lines
+    assert lines[-1] == ("to make: 1, to prepare: 0, done: 0; next: make each with the image tool, then python "
+                         ".agents/skills/construct3-agent-plugin/scripts/prepare_art.py")
+
+    edit(project, "art/wanted.json", lambda wanted: wanted["images"].extend(
+        [sprite("coin-default-001.png", "a silver coin"), sprite("rose-default-000.png", "a pink rose"),
+         {"file": "sky-default-000.png", "kind": "scene", "width": 720, "height": 1280, "origin": [0, 0],
+          "subject": "a night sky over hills"}]))
+    code, out = tool(project, "prepare_art", "--list")
+    assert out.splitlines() == [
+        "style: Bright flat vector, thick dark outlines.",
+        'key picture: "Bright flat vector, thick dark outlines; a line-up of a gold coin seen from the front; a pink '
+        'rose; a silver coin, side by side on a flat green #00FF00 background, no text". If the user is in the '
+        'session, show it and keep the one they choose. Save it as art/raw/_key.png',
+        "to make: 4, to prepare: 0, done: 0; next: make the key picture, the style every other picture follows, "
+        "then run this again for their prompts"], out
+
+    Image.new("RGB", (64, 32), (0, 255, 0)).save(project / "art" / "raw" / "_key.png")
+    code, out = tool(project, "prepare_art", "--list")
     assert "a pink rose. One subject, whole and centred with room around it, on a flat green #00FF00" in out
     assert "make sky-default-000: ratio 9:16, for a 720x1280 box" in out
     assert "a night sky over hills. A full-frame background scene, no characters in front, no text." in out

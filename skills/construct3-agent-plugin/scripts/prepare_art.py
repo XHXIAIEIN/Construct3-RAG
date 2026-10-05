@@ -1,14 +1,17 @@
 """Turn the pictures of the session's image tool into a generated game's art.
 
-    python scripts/prepare_art.py --list     the prompt for each picture still to make
+    python scripts/prepare_art.py --list     the next step: the prompts of the pictures to make
     python scripts/prepare_art.py            cut out and fit every picture in art/raw/
 
 The generator's art() asks for each sprite by what it shows, in a box of whole
 units, and writes the list to art/wanted.json; until its picture is there, the
-sprite shows its stand-in shape. --list prints a prompt per picture, starting
-with ART_STYLE so that the pictures share one style. Make each with the image
-tool and save it as art/raw/<name>.png, .jpg or .webp, where <name> is the
-image's file name without .png. Without --list, each picture there is:
+sprite shows its stand-in shape. --list prints one step at a time: while
+ART_STYLE is empty, that it is to be written; with more than one sprite to
+make, the key picture, a line-up of the game's subjects that sets the style;
+then a prompt per picture, starting with ART_STYLE so that the pictures share
+one style. Make each with the image tool and save it as art/raw/<name>.png,
+.jpg or .webp, where <name> is the image's file name without .png, and the key
+picture as art/raw/_key.png. Without --list, each picture there is:
 
   cut out    a picture with transparency keeps it. Any other picture was
              asked for on a flat magenta or green, the key. The key is
@@ -60,6 +63,7 @@ SPILL = 60
 # A cut whose edge pixels lean to the key in more than this share, and more than FRINGE_MIN of
 # them, is refused.
 FRINGE, FRINGE_MIN = 0.005, 8
+LINEUP = 4                                 # subjects in the key picture: more in one picture repeat or merge
 WORK = 4                                   # a picture is cut out at up to this many times its box
 MARK = "c3-art"                            # the PNG text key check_look.py reads as a painting
 
@@ -83,12 +87,17 @@ def ratio(w: int, h: int) -> str:
     return f"{a}:{b}"
 
 
+def lead(style: str) -> str:
+    """ART_STYLE as the start of a prompt."""
+    return f"{style.strip().rstrip('。. ')}; " if style.strip() else ""
+
+
 def prompt(item: dict, style: str) -> str:
-    lead = f"{style.rstrip('. ')}; " if style.strip() else ""
+    subject = item["subject"].strip().rstrip("。. ")
     if item["kind"] == "scene":
-        return f"{lead}{item['subject']}. A full-frame background scene, no characters in front, no text."
+        return f"{lead(style)}{subject}. A full-frame background scene, no characters in front, no text."
     name, key = key_for(item, style)
-    return (f"{lead}{item['subject']}. One subject, whole and centred with room around it, on a flat {name} "
+    return (f"{lead(style)}{subject}. One subject, whole and centred with room around it, on a flat {name} "
             f"{hex_of(key)} background: no scenery, no shadow on the ground, no text.")
 
 
@@ -107,22 +116,39 @@ def state(root: Path, item: dict) -> str:
     return "done" if out.exists() and out.stat().st_mtime >= raw.stat().st_mtime else "prepare"
 
 
+def lineup(sprites: list[dict]) -> list[dict]:
+    """The sprites of the key picture, LINEUP of them: the first of each object before a second of
+    one, so that it shows the kinds of things the game holds rather than the frames of one."""
+    seen, first, more = set(), [], []
+    for item in sprites:
+        obj = item["file"].split("-")[0]
+        (more if obj in seen else first).append(item)
+        seen.add(obj)
+    return (first + more)[:LINEUP]
+
+
 def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
+    """The next step only: ART_STYLE while it is empty, then the key picture while it is missing,
+    then a prompt per picture."""
     style, items = wanted.get("style", ""), wanted["images"]
     states = {item["file"]: state(root, item) for item in items}
-    out = [f"style: {style}" if style.strip() else
-           "style: none. Write ART_STYLE in tools/build_project.py first, one sentence of art direction the user "
-           "agreed, so that every picture shares it. Then run the generator"]
-    to_make = [item for item in items if states[item["file"]] == "make"]
-    sprites = [item for item in to_make if item["kind"] != "scene"]
+    counts = {k: list(states.values()).count(k) for k in ("make", "prepare", "done")}
+    count = f"to make: {counts['make']}, to prepare: {counts['prepare']}, done: {counts['done']}"
+    sprites = [item for item in items if states[item["file"]] == "make" and item["kind"] != "scene"]
+    if counts["make"] and not style.strip():
+        return ["style: none. Write ART_STYLE in tools/build_project.py, one sentence of art direction the user "
+                "agreed, so that every picture shares it",
+                f"{count}; next: write ART_STYLE, run python tools/build_project.py, then this again"]
+    out = [f"style: {style}"] if style.strip() else []
     if len(sprites) > 1 and raw_of(root, "_key.png") is None:
-        lineup = "; ".join(item["subject"] for item in sprites[:4])
-        name, key = key_for(sprites[0], style)
-        lead = f"{style.rstrip('. ')}; " if style.strip() else ""
-        out.append(f"key picture: make it first, \"{lead}a line-up of {lineup}, side by side on a flat {name} "
-                   f"{hex_of(key)} background, no text\". If the user is in the session, show it and keep the one "
-                   f"they choose. Save it as art/raw/_key.png. Give it as the reference image of every picture "
-                   f"below, where the image tool takes one")
+        shown = lineup(sprites)
+        subjects = "; ".join(item["subject"].rstrip("。. ") for item in shown)
+        name, key = key_for({"subject": subjects}, style)
+        return out + [f"key picture: \"{lead(style)}a line-up of {subjects}, side by side on a flat {name} "
+                      f"{hex_of(key)} background, no text\". If the user is in the session, show it and keep the "
+                      f"one they choose. Save it as art/raw/_key.png",
+                      f"{count}; next: make the key picture, the style every other picture follows, then run this "
+                      f"again for their prompts"]
     for item in items:
         rel, s = item["file"], states[item["file"]]
         stem = rel[:-len(".png")]
@@ -132,10 +158,8 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
             out.append(f"  \"{prompt(item, style)}\"")
         else:
             out.append(f"{s} {stem}: {raw.name if (raw := raw_of(root, rel)) else 'art/' + rel}")
-    counts = {k: list(states.values()).count(k) for k in ("make", "prepare", "done")}
     if counts["make"]:
-        out.append(f"to make: {counts['make']}, to prepare: {counts['prepare']}, done: {counts['done']}; next: make "
-                   f"each with the image tool, then python {skill}/scripts/prepare_art.py")
+        out.append(f"{count}; next: make each with the image tool, then python {skill}/scripts/prepare_art.py")
     elif counts["prepare"]:
         out.append(f"to prepare: {counts['prepare']}, done: {counts['done']}; next: python "
                    f"{skill}/scripts/prepare_art.py")
