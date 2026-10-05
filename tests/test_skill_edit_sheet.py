@@ -57,7 +57,8 @@ def test_plan_puts_events_in_by_the_numbers_the_sheet_has_now(project):
     assert out.splitlines()[0] == "Game: 4 operations, 9 events before and 12 now, 8 new sids"
     assert out.splitlines()[-1].startswith("ok:") and "open_in_editor" not in out     # the closing check names it
     sheet = printed(project)
-    assert "     global number beat = 0\n     global number timeLeft = 30\n   1 group Setup" in sheet
+    assert ("     global number beat = 0\n         // The round being played, from 0; a global keeps it across the "
+            "restart\n     global number timeLeft = 30\n   1 group Setup") in sheet
     assert '-> ScoreText: Set text to "Score: 0"\n           -> ScoreText: Set text to "Time: " & timeLeft' in sheet
     assert "   4       (runs with its parent)\n               -> Coin: Set scale to 1.5" in sheet
     assert "     // Countdown.\n  11 group Timer\n       // Count down.\n  12   System: Every 1 seconds" in sheet

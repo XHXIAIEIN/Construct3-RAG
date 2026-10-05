@@ -29,6 +29,19 @@ def test_print_words_the_sheet_as_the_editor_does(built):
     assert "   9   System: Coin.Count = 0\n       System: Trigger once" in out
 
 
+def test_print_shows_a_group_description_and_a_variable_comment(project):
+    """Each under its row, in the column of the actions, where no comment event of the sheet prints."""
+    def describe(sheet):
+        top = sheet["events"]
+        next(ev for ev in top if ev.get("eventType") == "group")["description"] = "Round set-up\nand the first coins"
+        next(ev for ev in top if ev.get("name") == "ROUND_COINS")["comment"] = "Coins per round"
+    edit(project, SHEET, describe)
+    code, out = tool(project, "print_sheet", "Game")
+    assert code == 0, out
+    assert "   1 group Setup\n         // Round set-up\n         // and the first coins\n" in out
+    assert "     global constant string ROUND_COINS = 1,3,6,2,10,1\n         // Coins per round\n" in out
+
+
 def test_print_says_every_tick_only_where_an_event_without_conditions_runs_every_tick(project):
     """At the top of the sheet or in a group there, an event without conditions runs every tick. As a
     sub-event it runs when the event it sits in runs, once a touch under a trigger, once a call in a

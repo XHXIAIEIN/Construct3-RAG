@@ -21,7 +21,11 @@ plus one: the number in the editor's margin and in its Find results. A variable,
 or include takes no number of its own and belongs to the next one, so a
 plan of edit_sheet.py names a variable by its name and a comment by words of
 its text. A print that shows a variable, except --outline, ends with the
-line that says how.
+line that says how. A group's description and a variable's comment print
+as // lines under it, in the column of the actions, not of the comments: a
+plan changes them with "set" on the group's number or the variable's name,
+{"event": 4, "set": {"description": "..."}} or
+{"variable": "score", "set": {"comment": "..."}}.
 --outline prints the numbering alone, with the sid of each event, which is
 the string to search the sheet's JSON for. --show N prints one event as
 JSON, for a plan of edit_sheet.py that puts it back changed.
@@ -124,6 +128,12 @@ def numbered_below(events: list) -> int:
     return sum((ev.get("eventType") in NUMBERED) + numbered_below(ev.get("children", [])) for ev in events)
 
 
+def remarks(text: object, pad: str) -> list[str]:
+    """A group's description or a variable's comment, as // lines under it in the column of the actions: a
+    comment event sits in the column of the events."""
+    return [f"     {pad}    // {line}" for line in text.split("\n")] if isinstance(text, str) and text.strip() else []
+
+
 def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (),
                top: bool = True) -> Iterator[Row]:
     """The sheet as the editor shows it, with the editor's event numbers. top: every
@@ -140,6 +150,7 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
             kind = ("local" if above else "global") + (" constant" if ev.get("isConstant") else "") \
                    + (" static" if ev.get("isStatic") else "")
             head = [f"{number}{pad}{kind} {ev['type']} {ev['name']} = {ev.get('initialValue', '')}"]
+            body = remarks(ev.get("comment"), pad)
         elif et == "comment":
             head = [f"{number}{pad}// {line}" for line in ev.get("text", "").split("\n")]
         elif et == "include":
@@ -150,6 +161,7 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
             head = [f"{number}{pad}group {ev.get('title', '')}"
                     + ("" if ev.get("isActiveOnStart", True) else " (inactive on start)")
                     + (" [event disabled]" if ev.get("disabled") else "")]
+            body = remarks(ev.get("description"), pad)
         else:
             lines = []
             if et in ("function-block", "custom-ace-block"):
