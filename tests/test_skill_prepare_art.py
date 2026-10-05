@@ -183,11 +183,18 @@ def test_prepare_art_lists_the_next_step_only(project):
         "to make: 4, to prepare: 0, done: 0; next: make the key picture, the style every other picture follows, "
         "then run this again for their prompts"], out
 
+    # the key picture is the style reference of every sprite, not of a scene
     Image.new("RGB", (64, 32), (0, 255, 0)).save(project / "art" / "raw" / "_key.png")
     code, out = tool(project, "prepare_art", "--list")
-    assert "a pink rose. One subject, whole and centred with room around it, on a flat green #00FF00" in out
-    assert "make sky-default-000: ratio 9:16, for a 720x1280 box" in out
-    assert "a night sky over hills. A full-frame background scene, no characters in front, no text." in out
+    lines = out.splitlines()
+    assert ("make rose-default-000: ratio 1:1, for a 64x64 box, art/raw/_key.png as the reference image -> "
+            "art/raw/rose-default-000.png") in lines
+    assert ('  "Bright flat vector, thick dark outlines; a pink rose. One subject, whole and centred with room around '
+            'it, on a flat green #00FF00 background: no scenery, no shadow on the ground, no text. The reference '
+            'image sets the style and the palette; it is not a picture to copy, so draw only this subject."') in lines
+    assert "make sky-default-000: ratio 9:16, for a 720x1280 box -> art/raw/sky-default-000.png" in lines
+    assert ('  "Bright flat vector, thick dark outlines; a night sky over hills. A full-frame background scene, no '
+            'characters in front, no text."') in lines
 
     (project / "art" / "wanted.json").unlink()
     code, out = tool(project, "prepare_art")

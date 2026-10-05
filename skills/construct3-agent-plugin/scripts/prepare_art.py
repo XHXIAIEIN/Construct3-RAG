@@ -11,7 +11,8 @@ make, the key picture, a line-up of the game's subjects that sets the style;
 then a prompt per picture, starting with ART_STYLE so that the pictures share
 one style. Make each with the image tool and save it as art/raw/<name>.png,
 .jpg or .webp, where <name> is the image's file name without .png, and the key
-picture as art/raw/_key.png. Without --list, each picture there is:
+picture as art/raw/_key.png: each sprite's prompt then gives it as the
+reference image. Without --list, each picture there is:
 
   cut out    a picture with transparency keeps it. Any other picture was
              asked for on a flat magenta or green, the key. The key is
@@ -92,13 +93,17 @@ def lead(style: str) -> str:
     return f"{style.strip().rstrip('。. ')}; " if style.strip() else ""
 
 
-def prompt(item: dict, style: str) -> str:
+def prompt(item: dict, style: str, reference: bool = False) -> str:
+    """The prompt of one picture; with `reference`, a sprite's says what the key picture given
+    beside it is for."""
     subject = item["subject"].strip().rstrip("。. ")
     if item["kind"] == "scene":
         return f"{lead(style)}{subject}. A full-frame background scene, no characters in front, no text."
     name, key = key_for(item, style)
+    copy = (" The reference image sets the style and the palette; it is not a picture to copy, so draw only this "
+            "subject.") if reference else ""
     return (f"{lead(style)}{subject}. One subject, whole and centred with room around it, on a flat {name} "
-            f"{hex_of(key)} background: no scenery, no shadow on the ground, no text.")
+            f"{hex_of(key)} background: no scenery, no shadow on the ground, no text.{copy}")
 
 
 def raw_of(root: Path, rel: str) -> Path | None:
@@ -149,13 +154,16 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
                       f"one they choose. Save it as art/raw/_key.png",
                       f"{count}; next: make the key picture, the style every other picture follows, then run this "
                       f"again for their prompts"]
+    key_picture = raw_of(root, "_key.png")
     for item in items:
         rel, s = item["file"], states[item["file"]]
         stem = rel[:-len(".png")]
         if s == "make":
+            reference = key_picture is not None and item["kind"] != "scene"
             out.append(f"make {stem}: ratio {ratio(item['width'], item['height'])}, for a {item['width']}x"
-                       f"{item['height']} box -> art/raw/{stem}.png")
-            out.append(f"  \"{prompt(item, style)}\"")
+                       f"{item['height']} box" + (f", art/raw/{key_picture.name} as the reference image" if reference
+                                                  else "") + f" -> art/raw/{stem}.png")
+            out.append(f"  \"{prompt(item, style, reference)}\"")
         else:
             out.append(f"{s} {stem}: {raw.name if (raw := raw_of(root, rel)) else 'art/' + rel}")
     if counts["make"]:
