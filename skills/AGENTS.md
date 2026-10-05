@@ -5,6 +5,9 @@ one folder per skill, a `SKILL.md` with `name` and `description`, and
 `scripts/`, `references/` and `assets/` beside it. The folder here is the
 source. A game project holds a copy of it, made and refreshed by the skill's
 `scripts/install.py`, and the copy reports when it differs from the source.
+`plugin/`, the Claude Code plugin, holds another copy, which
+`scripts/build_plugin.py` writes and `tests/test_plugin_folder.py` keeps
+equal to this folder.
 
 `construct3-agent-plugin/` is the one skill here: the project tools for a
 Construct 3 folder project, listed under "Scripts" in its `SKILL.md`, and

@@ -1,0 +1,241 @@
+{
+  "id": "shadowlight",
+  "name": "Shadow light",
+  "description": "Cast shadows from objects with the Shadow Caster behavior.",
+  "type": "plugin",
+  "aceCategories": {
+    "light": "Light"
+  },
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-light-height",
+      "scriptName": "SetLightHeight",
+      "category": "light",
+      "list-name": "Set light height",
+      "display-text": "Set light height to [i]{0}[/i]",
+      "description": "Set the height of the light.",
+      "params": {
+        "height": {
+          "type": "number",
+          "name": "Height",
+          "desc": "The height of the light to set, in pixels."
+        }
+      }
+    },
+    {
+      "id": "set-shadow-color",
+      "scriptName": "SetLightColor",
+      "category": "light",
+      "list-name": "Set shadow color",
+      "display-text": "Set shadow color to [i]{0}[/i]",
+      "description": "Set the color of shadows cast by the light.",
+      "params": {
+        "color": {
+          "type": "number",
+          "name": "Color",
+          "desc": "The color of the shadows cast by this object.",
+          "initialValue": "rgbEx(0, 0, 0)"
+        }
+      }
+    },
+    {
+      "id": "set-tag",
+      "scriptName": "SetTag",
+      "category": "light",
+      "list-name": "Set tag",
+      "display-text": "Set shadow tag to [i]{0}[/i]",
+      "description": "Set the tag for the light.",
+      "params": {
+        "tag": {
+          "type": "string",
+          "name": "Tag",
+          "desc": "The new tag to set for the light."
+        }
+      }
+    },
+    {
+      "id": "set-cast-from",
+      "scriptName": "SetCastFrom",
+      "category": "light",
+      "list-name": "Set cast from",
+      "display-text": "Set cast from [b]{0}[/b]",
+      "description": "Set which objects to cast shadows from depending on their tags.",
+      "params": {
+        "cast-from": {
+          "type": "combo",
+          "name": "Cast from",
+          "desc": "Decide which objects to cast shadows from depending on their tags.",
+          "items": {
+            "all": "All",
+            "same-tag": "Same tag",
+            "different-tag": "Different tag"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-light-position",
+      "scriptName": "SetLightPosition",
+      "category": "light",
+      "list-name": "Set light position",
+      "display-text": "Set light position to ([i]{0}[/i], [i]{1}[/i])",
+      "description": "Set the position from which shadows are cast from.",
+      "params": {
+        "x": {
+          "type": "number",
+          "name": "Light X",
+          "desc": "The X co-ordinate of the light."
+        },
+        "y": {
+          "type": "number",
+          "name": "Light Y",
+          "desc": "The Y co-ordinate of the light."
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "lightx",
+      "scriptName": "LightX",
+      "category": "light",
+      "translated-name": "LightX",
+      "description": "The X position of the light source.",
+      "returnType": "number"
+    },
+    {
+      "id": "lighty",
+      "scriptName": "LightY",
+      "category": "light",
+      "translated-name": "LightY",
+      "description": "The Y position of the light source.",
+      "returnType": "number"
+    },
+    {
+      "id": "tag",
+      "scriptName": "Tag",
+      "category": "light",
+      "translated-name": "Tag",
+      "description": "The tag of the light.",
+      "returnType": "string"
+    }
+  ],
+  "properties": {
+    "light-height": {
+      "name": "Light height",
+      "desc": "Initial height of the light, in pixels."
+    },
+    "light-radius": {
+      "name": "Light radius",
+      "desc": "Cast soft shadow edges with a radius. Must use height of 0."
+    },
+    "shadow-color": {
+      "name": "Shadow color",
+      "desc": "Color of the shadows the light casts."
+    },
+    "cast-from": {
+      "name": "Cast from",
+      "desc": "Decide which objects to cast shadows from depending on their tags.",
+      "items": {
+        "all": "All",
+        "same-tag": "Same tag",
+        "different-tag": "Different tag"
+      }
+    },
+    "tag": {
+      "name": "Tag",
+      "desc": "A tag to identify which objects to cast a shadow from."
+    },
+    "live-preview": {
+      "name": "Preview",
+      "desc": "Tick to run a live preview in the editor."
+    }
+  },
+  "commonAces": {
+    "conditions": [
+      "is-visible",
+      "compare-opacity",
+      "is-effect-enabled",
+      "compare-instance-variable",
+      "is-boolean-instance-variable-set",
+      "pick-highestlowest",
+      "pick-by-unique-id",
+      "has-tags",
+      "on-created",
+      "on-destroyed",
+      "on-instance-signal",
+      "compare-x",
+      "compare-y",
+      "is-on-screen",
+      "is-outside-layout",
+      "pick-nearestfurthest",
+      "compare-z-elevation",
+      "is-on-layer",
+      "pick-topbottom",
+      "on-hierarchy-ready",
+      "has-parent",
+      "has-children",
+      "pick-parent",
+      "pick-children",
+      "pick-nth-child",
+      "compare-child-count"
+    ],
+    "actions": [
+      "set-visible",
+      "set-opacity",
+      "set-effect-enabled",
+      "set-effect-parameter",
+      "set-instvar-value",
+      "add-to-instvar",
+      "subtract-from-instvar",
+      "set-boolean-instvar",
+      "toggle-boolean-instvar",
+      "destroy",
+      "change-tags",
+      "set-from-json",
+      "instance-signal",
+      "instance-wait-for-signal",
+      "set-x",
+      "set-y",
+      "set-position",
+      "set-position-to-another-object",
+      "move-at-angle",
+      "set-position-3d",
+      "set-z-elevation",
+      "move-to-top",
+      "move-to-bottom",
+      "move-to-layer",
+      "move-to-object",
+      "add-child",
+      "remove-child",
+      "remove-from-parent"
+    ],
+    "expressions": [
+      "opacity",
+      "count",
+      "pickedcount",
+      "uid",
+      "iid",
+      "asjson",
+      "objecttypename",
+      "get-tags",
+      "get-tags-count",
+      "get-tag-at",
+      "x",
+      "y",
+      "dt",
+      "z",
+      "total-z",
+      "z-elevation",
+      "total-z-elevation",
+      "layernumber",
+      "layername",
+      "zindex",
+      "parent-uid",
+      "child-count",
+      "all-child-count",
+      "template-name"
+    ]
+  }
+}

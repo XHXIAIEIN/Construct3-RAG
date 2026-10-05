@@ -7,8 +7,8 @@ then replaces the matching directories under data/. It then fetches the
 guides of src/ingest/guides.py into data/c3-guides/, writing a guide only
 when its text changed; a guide that cannot be fetched keeps its committed
 copy. The runtime reads data/, so the refresh shows in `git diff` before it
-is committed. The update workflow runs this same command, and
---guides-only every week.
+is committed. Last, it builds plugin/ again from the refreshed data. The
+update workflow runs this same command, and --guides-only every week.
 
 Usage:
     python scripts/init.py
@@ -119,6 +119,11 @@ def main():
         refresh_guides(load_settings().paths.data_dir, args.guide_html)
     else:
         refresh(args.version, args.guide_html)
+    # plugin/ carries a copy of the data, so it follows every refresh (docs/decisions/plugin-folder.md)
+    import build_plugin
+    for line in build_plugin.rebuild():
+        print(f"  plugin/: {line}")
+    print("  plugin/: built")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,892 @@
+{
+  "version": "r495.2",
+  "language": "en-US",
+  "addons": {
+    "plugins": {
+      "function": {
+        "originalId": "Function",
+        "name": "Function",
+        "description": "Run other events in an action, like functions in programming languages."
+      },
+      "gamecenter": {
+        "originalId": "gamecenter",
+        "name": "Game Center",
+        "description": "Access Game Center on iOS with Cordova."
+      },
+      "nodewebkit": {
+        "originalId": "NodeWebkit",
+        "name": "NW.js",
+        "description": "Access features only available when exported with NW.js, like accessing files on disk."
+      },
+      "pubcenter": {
+        "originalId": "pubcenter",
+        "name": "pubCenter",
+        "description": "Show an ad from Microsoft pubCenter in a Windows Store app."
+      },
+      "scirraarcadev4": {
+        "originalId": "ScirraArcadeV4",
+        "name": "Scirra Arcade",
+        "description": "Submit hi-scores on the Scirra Arcade."
+      },
+      "twitter": {
+        "originalId": "Twitter",
+        "name": "Twitter",
+        "description": "Create a 'Follow' or 'Tweet' button."
+      },
+      "win8": {
+        "originalId": "win8",
+        "name": "Windows Store",
+        "description": "Access features specific to Windows Store apps (Windows 8+)."
+      },
+      "xboxlive": {
+        "originalId": "XboxLive",
+        "name": "Xbox Live",
+        "description": "Access Xbox Live services for Windows 10 and Xbox."
+      }
+    },
+    "behaviors": {},
+    "effects": {
+      "warp": {
+        "name": "Warp",
+        "description": "An animated wave distortion."
+      },
+      "warpmask": {
+        "name": "Warp mask",
+        "description": "An animated wave distortion of the background."
+      }
+    }
+  },
+  "aces": {
+    "plugins": {
+      "_common": {
+        "expressions": {
+          "z-elevation": {
+            "translated-name": "ZElevation",
+            "description": "Get the Z position relative to its layer."
+          },
+          "total-z-elevation": {
+            "translated-name": "TotalZElevation",
+            "description": "Get the total Z position taking in to account the layer Z elevation."
+          }
+        }
+      },
+      "advert": {
+        "conditions": {
+          "on-video-ready": {
+            "list-name": "On video ready",
+            "description": "Triggers when rewarded video advert is ready to display"
+          },
+          "on-video-failed-to-load": {
+            "list-name": "On video failed to load",
+            "description": "Triggers when rewarded video advert fails to load"
+          },
+          "on-video-complete": {
+            "list-name": "On video complete",
+            "description": "Triggers when a rewarded video has completed"
+          },
+          "on-video-cancelled": {
+            "list-name": "On video cancelled",
+            "description": "Triggers when a rewarded video is cancelled"
+          },
+          "is-showing-video": {
+            "list-name": "Is showing video",
+            "description": "returns true if a video advert is currently being displayed"
+          },
+          "is-loaded-video": {
+            "list-name": "Is video loaded",
+            "description": "returns true if a video advert is loaded"
+          },
+          "on-user-personalization-updated": {
+            "list-name": "On user personalization updated",
+            "description": "Triggers when the user advert personalization value has been updated"
+          }
+        },
+        "actions": {
+          "create-video": {
+            "list-name": "Create rewarded video advert",
+            "description": "Create a rewarded video advert with the given identifier"
+          },
+          "show-video": {
+            "list-name": "Show video advert",
+            "description": "Shows an already loaded rewarded video advert"
+          },
+          "set-public-key": {
+            "list-name": "Configure",
+            "description": "Configure Mobile Advert by setting various properties such as the app and publisher IDs."
+          },
+          "set-user-personalisation": {
+            "list-name": "Set user personalisation",
+            "description": "Change the user personalisation value. If your using the default user consent screen you do not need to set this"
+          }
+        }
+      },
+      "arr": {
+        "actions": {
+          "sort": {
+            "list-name": "Sort",
+            "description": "Sort the elements on an axis.",
+            "current": "sort2"
+          }
+        }
+      },
+      "audio": {
+        "conditions": {
+          "advanced-audio-supported": {
+            "list-name": "Advanced audio supported",
+            "description": "True if advanced audio features are supported (Web Audio API)."
+          }
+        }
+      },
+      "binarydata": {
+        "actions": {
+          "set-from-base64": {
+            "list-name": "Set from base64",
+            "description": "Set buffer from base64 string."
+          },
+          "set-from-text": {
+            "list-name": "Set from text",
+            "description": "Set buffer from string (encodes to UTF-8)."
+          }
+        }
+      },
+      "browser": {
+        "conditions": {
+          "is-charging": {
+            "list-name": "Is charging",
+            "description": "False if device is battery-powered and is not plugged in, otherwise true."
+          },
+          "java-supported": {
+            "list-name": "Java supported",
+            "description": "Browser supports java."
+          },
+          "is-metered": {
+            "list-name": "Is metered",
+            "description": "True if the connection is metered (e.g. pay-per-use).  False if not or if unknown."
+          },
+          "on-menu-button": {
+            "list-name": "On menu button",
+            "description": "Triggers when device 'Menu' button is pressed.  Note not all devices have a 'Menu' button."
+          },
+          "on-search-button": {
+            "list-name": "On search button",
+            "description": "Triggers when device 'Search' button is pressed.  Note not all devices have a 'Search' button."
+          },
+          "is-downloading-update": {
+            "list-name": "Is downloading update",
+            "description": "True when the browser is running from the offline cache, but downloading an update in the background."
+          },
+          "on-update-ready": {
+            "list-name": "On update ready",
+            "description": "Triggered when an update has finished downloading.  You may want to prompt the user to reload the page.",
+            "current": "on-update-ready-sw"
+          },
+          "page-is-visible": {
+            "list-name": "Page is visible",
+            "description": "True if the page is currently visible to the user (e.g. in active tab or mobile app is in foreground)."
+          },
+          "on-resumed": {
+            "list-name": "On resumed",
+            "description": "Triggers when resuming (switched back to tab, restored window, mobile app returns to foreground, etc.)"
+          },
+          "on-suspended": {
+            "list-name": "On suspended",
+            "description": "Triggers when suspending (switched tab, minimized window, mobile app goes in to background, etc.)"
+          },
+          "supports-requesting-fullscreen": {
+            "list-name": "Supports requesting fullscreen",
+            "description": "Check if the current browser/platform supports the 'Request fullscreen' action."
+          }
+        },
+        "actions": {
+          "execute-javascript": {
+            "list-name": "Execute Javascript",
+            "description": "Execute a string of javascript in the browser. Use with care!"
+          },
+          "go-home": {
+            "list-name": "Go home",
+            "description": "Go to the browser homepage."
+          }
+        },
+        "expressions": {
+          "batterylevel": {
+            "translated-name": "BatteryLevel",
+            "description": "Get battery charge level from 0 to 1, or 1 if unknown."
+          },
+          "batterytimeleft": {
+            "translated-name": "BatteryTimeLeft",
+            "description": "Get the time left in seconds before battery is fully discharged, if not charging."
+          },
+          "name": {
+            "translated-name": "Name",
+            "description": "Get the browser application name."
+          },
+          "version": {
+            "translated-name": "Version",
+            "description": "Get the browser application version."
+          },
+          "product": {
+            "translated-name": "Product",
+            "description": "Get the browser product name (e.g. Gecko)."
+          },
+          "vendor": {
+            "translated-name": "Vendor",
+            "description": "Get the browser vendor."
+          },
+          "execjs": {
+            "translated-name": "ExecJS",
+            "description": "Execute a string of javascript code and return a string or number. Wherever possible, prefer to use Construct's scripting feature or the Javascript SDK instead."
+          },
+          "bandwidth": {
+            "translated-name": "Bandwidth",
+            "description": "Estimated connection bandwidth in megabits/s if known (infinity if unknown)."
+          },
+          "connectiontype": {
+            "translated-name": "ConnectionType",
+            "description": "Type of connection in use if known e.g. \"wifi\" or \"cellular\"."
+          },
+          "screenwidth": {
+            "translated-name": "ScreenWidth",
+            "description": "Get the width of the user's entire screen in pixels."
+          },
+          "screenheight": {
+            "translated-name": "ScreenHeight",
+            "description": "Get the height of the user's entire screen in pixels."
+          },
+          "devicepixelratio": {
+            "translated-name": "DevicePixelRatio",
+            "description": "The display pixels per CSS pixel."
+          },
+          "windowinnerwidth": {
+            "translated-name": "WindowInnerWidth",
+            "description": "Get the width of the window client area in pixels."
+          },
+          "windowinnerheight": {
+            "translated-name": "WindowInnerHeight",
+            "description": "Get the height of the window client area in pixels."
+          },
+          "windowouterwidth": {
+            "translated-name": "WindowOuterWidth",
+            "description": "Get the width of the window outer area in pixels."
+          },
+          "windowouterheight": {
+            "translated-name": "WindowOuterHeight",
+            "description": "Get the height of the window outer area in pixels."
+          }
+        }
+      },
+      "constructgameservices": {
+        "actions": {
+          "set-player-id": {
+            "list-name": "Set player ID",
+            "description": "Set the player identifier for leaderboard scores."
+          }
+        }
+      },
+      "cordovaiap": {
+        "actions": {
+          "set-public-key": {
+            "list-name": "Set public key",
+            "description": "Set the public key for your application"
+          }
+        },
+        "expressions": {
+          "transaction": {
+            "translated-name": "Transaction",
+            "description": "In a trigger, the transaction information as a JSON string."
+          }
+        }
+      },
+      "facebook": {
+        "conditions": {
+          "on-ready": {
+            "list-name": "On ready",
+            "description": "Triggered when the Facebook API has loaded and is ready to be used."
+          },
+          "on-user-top-score-available": {
+            "list-name": "On user top score available",
+            "description": "Triggered after the 'request user top score' action."
+          },
+          "on-hi-score": {
+            "list-name": "On hi-score",
+            "description": "Triggered for each top score after the 'request hi-score board' action."
+          },
+          "on-score-submitted": {
+            "list-name": "On score submitted",
+            "description": "Triggered when the 'publish score' action completes."
+          }
+        },
+        "actions": {
+          "log-in-deprecated": {
+            "list-name": "Log in",
+            "description": "Log the user in to the application so their details can be accessed.",
+            "current": "log-in"
+          },
+          "publish-score": {
+            "list-name": "Publish score",
+            "description": "Publish a score for this user."
+          },
+          "request-user-top-score": {
+            "list-name": "Request user top score",
+            "description": "Request the user's top score, triggering 'on user top score available' when received."
+          },
+          "request-hi-score-board": {
+            "list-name": "Request hi-score board",
+            "description": "Request the app's hi-score board, triggering 'on hi-score' for each hi-score received."
+          }
+        },
+        "expressions": {
+          "userid": {
+            "translated-name": "UserID",
+            "description": "Get the user's ID, which is different even for users with the same name."
+          },
+          "score": {
+            "translated-name": "Score",
+            "description": "Get the score, when in a 'on user top score' or 'on hi-score' event."
+          },
+          "hiscorename": {
+            "translated-name": "HiScoreName",
+            "description": "Get the name of the user with hi-score, when in an 'on hi-score' event."
+          },
+          "hiscorerank": {
+            "translated-name": "HiScoreRank",
+            "description": "Get the rank of the hi-score, when in an 'on hi-score' event."
+          },
+          "hiscoreuserid": {
+            "translated-name": "HiScoreUserID",
+            "description": "Get the user ID of the user with hi-score, when in an 'on hi-score' event."
+          },
+          "hiscoreuseridstr": {
+            "translated-name": "HiScoreUserIDStr",
+            "description": "Get the user ID string of the user with hi-score, when in an 'on hi-score' event."
+          }
+        }
+      },
+      "gamepad": {
+        "conditions": {
+          "gamepads-are-supported": {
+            "list-name": "Gamepads are supported",
+            "description": "True if the current platform or browser supports gamepad input."
+          }
+        },
+        "expressions": {
+          "gamepadaxes": {
+            "translated-name": "GamepadAxes",
+            "description": "(DEBUG) String listing all axis data"
+          },
+          "gamepadbuttons": {
+            "translated-name": "GamepadButtons",
+            "description": "(DEBUG) String listing all button data"
+          },
+          "lastbutton": {
+            "translated-name": "LastButton",
+            "description": "Return index of last gamepad button pressed or released."
+          }
+        }
+      },
+      "gamerecorder": {
+        "conditions": {
+          "is-video-format-supported": {
+            "list-name": "Is video format supported",
+            "description": "Check if a particular video format is supported for recording.",
+            "current": "is-video-format-supported-2"
+          },
+          "is-audio-format-supported": {
+            "list-name": "Is audio format supported",
+            "description": "Check if a particular audio format is supported for recording.",
+            "current": "is-audio-format-supported-2"
+          }
+        },
+        "actions": {
+          "start-recording": {
+            "list-name": "Start recording",
+            "description": "Record a real-time video of the project.",
+            "current": "start-recording-2"
+          },
+          "start-screen-recording": {
+            "list-name": "Start screen recording",
+            "description": "Record a real-time video of the user's screen.",
+            "current": "start-screen-recording-2"
+          },
+          "start-user-media-recording": {
+            "list-name": "Start User Media recording",
+            "description": "Record the audio or video from an active User Media object.",
+            "current": "start-user-media-recording-2"
+          }
+        }
+      },
+      "googleplay": {
+        "conditions": {
+          "on-loaded": {
+            "list-name": "On loaded",
+            "description": "Triggered when game services have loaded and are ready to use."
+          }
+        }
+      },
+      "instantgames": {
+        "actions": {
+          "share-leaderboard-update": {
+            "list-name": "Share leaderboard update",
+            "description": "Post a leaderboard update in to a message thread."
+          }
+        },
+        "expressions": {
+          "context-type": {
+            "translated-name": "ContextType",
+            "description": "The type of the current game context, e.g. \"THREAD\" or \"SOLO\"."
+          },
+          "connected-player-name-at": {
+            "translated-name": "ConnectedPlayerNameAt",
+            "description": "The player name of a connected player at an index."
+          },
+          "connected-player-photo-url-at": {
+            "translated-name": "ConnectedPlayerPhotoURLAt",
+            "description": "The photo URL of a connected player at an index."
+          },
+          "leaderboard-player-name-at": {
+            "translated-name": "LeaderboardPlayerNameAt",
+            "description": "The player name for a result at an index on a leaderboard."
+          },
+          "leaderboard-player-photo-at": {
+            "translated-name": "LeaderboardPlayerPhotoURLAt",
+            "description": "The player picture URL for a result at an index on a leaderboard."
+          },
+          "leaderboard-rank-at": {
+            "translated-name": "LeaderboardRankAt",
+            "description": "The rank of a result at an index on a leaderboard."
+          }
+        }
+      },
+      "model3d": {
+        "actions": {
+          "set-mesh": {
+            "list-name": "Set mesh",
+            "description": "Change the displayed mesh."
+          },
+          "set-meshes": {
+            "list-name": "Set meshes",
+            "description": "Change the displayed meshes."
+          }
+        },
+        "expressions": {
+          "mesh": {
+            "translated-name": "Mesh",
+            "description": "The current mesh. If more than one mesh is being drawn, the expression returns an empty string."
+          }
+        }
+      },
+      "mouse": {
+        "actions": {
+          "set-cursor-style": {
+            "list-name": "Set cursor style",
+            "description": "Change the style of the mouse cursor.",
+            "current": "set-cursor-style2"
+          }
+        }
+      },
+      "multiplayer": {
+        "conditions": {
+          "on-server-list-received": {
+            "list-name": "On server list received",
+            "description": "Triggered after 'Request server list' successfully completes."
+          },
+          "supports-multiplayer": {
+            "list-name": "Supports multiplayer",
+            "description": "True if the current browser supports multiplayer games."
+          }
+        },
+        "actions": {
+          "sync-object": {
+            "list-name": "Sync object",
+            "description": "Automatically synchronise an object type over the network.",
+            "current": "sync-object-2"
+          },
+          "request-server-list": {
+            "list-name": "Request server list",
+            "description": "Request a list of signalling servers that can be joined."
+          }
+        },
+        "expressions": {
+          "serverlistcount": {
+            "translated-name": "ServerListCount",
+            "description": "The number of servers in a received server list."
+          },
+          "serverlisturlat": {
+            "translated-name": "ServerListURLAt",
+            "description": "The URL of the Nth received signalling server."
+          },
+          "serverlistnameat": {
+            "translated-name": "ServerListNameAt",
+            "description": "The name of the Nth received signalling server."
+          },
+          "serverlistoperatorat": {
+            "translated-name": "ServerListOperatorAt",
+            "description": "The operator of the Nth received signalling server."
+          },
+          "serverlistwebsiteat": {
+            "translated-name": "ServerListWebsiteAt",
+            "description": "The operator's website for the Nth received signalling server."
+          }
+        }
+      },
+      "platforminfo": {
+        "conditions": {
+          "is-nwjs-export": {
+            "list-name": "Is NW.js export",
+            "description": "True when running after an NW.js export."
+          },
+          "is-windows-uwp-export": {
+            "list-name": "Is Windows UWP export",
+            "description": "True when running after a Windows UWP export (Microsoft Store/Xbox One)."
+          }
+        }
+      },
+      "shape3d": {
+        "conditions": {
+          "compare-z-height": {
+            "list-name": "Compare Z height",
+            "description": "Compare the current Z height of the shape."
+          }
+        },
+        "actions": {
+          "set-z-height": {
+            "list-name": "Set Z height",
+            "description": "Set the current Z height of the shape."
+          }
+        },
+        "expressions": {
+          "z-height": {
+            "translated-name": "ZHeight",
+            "description": "The current Z height of the shape."
+          }
+        }
+      },
+      "system": {
+        "conditions": {
+          "effects-are-supported": {
+            "list-name": "Effects are supported",
+            "description": "True if shader effects are supported and can be displayed in the game."
+          },
+          "is-on-mobile-device": {
+            "list-name": "Is on mobile device",
+            "description": "True if being viewed on a mobile device.  This is an estimate and may not be perfectly accurate."
+          },
+          "is-on-platform": {
+            "list-name": "Is on platform",
+            "description": "Check if currently running on a specific platform, e.g. Android."
+          }
+        },
+        "actions": {
+          "set-half-framerate-mode": {
+            "list-name": "Set half framerate mode",
+            "description": "Enable or disable half-framerate mode (e.g. 30 FPS on 60 Hz display)."
+          },
+          "set-minimum-framerate": {
+            "list-name": "Set min/max framerate",
+            "description": "Set the framerate minimum (below which goes in to slow-motion) and maximum (above which goes in to fast-forward)."
+          }
+        },
+        "expressions": {
+          "windowwidth": {
+            "translated-name": "WindowWidth",
+            "description": "Width of the window area used to display the game."
+          },
+          "windowheight": {
+            "translated-name": "WindowHeight",
+            "description": "Height of the window area used to display the game."
+          },
+          "originalwindowwidth": {
+            "translated-name": "OriginalWindowWidth",
+            "description": "The 'Window width' project property value."
+          },
+          "originalwindowheight": {
+            "translated-name": "OriginalWindowHeight",
+            "description": "The 'Window height' project property value."
+          },
+          "renderer": {
+            "translated-name": "Renderer",
+            "description": "Get a string describing the renderer (returns \"canvas2d\" or \"webgl\")."
+          },
+          "rendererdetail": {
+            "translated-name": "RendererDetail",
+            "description": "Get a string describing the rendering hardware, if available."
+          },
+          "unixtime": {
+            "translated-name": "unixtime",
+            "description": "The UNIX time in milliseconds since Jan 1, 1970."
+          },
+          "rgb": {
+            "translated-name": "rgb",
+            "description": "Generate an RGB value (number representing a color)."
+          }
+        }
+      },
+      "text": {
+        "actions": {
+          "set-web-font": {
+            "list-name": "Set web font",
+            "description": "Set the font face from an online web font."
+          }
+        }
+      },
+      "timeline": {
+        "conditions": {
+          "on-timeline-started": {
+            "list-name": "On started",
+            "description": "Triggered when a timeline starts.",
+            "current": "on-timeline-started-by-tags"
+          },
+          "on-timeline-started-by-name": {
+            "list-name": "On started (by name)",
+            "description": "Triggered when a timeline starts, using a string of the timeline name."
+          },
+          "on-timeline-finished": {
+            "list-name": "On finished",
+            "description": "Triggered when a timeline finishes.",
+            "current": "on-timeline-finished-by-tags"
+          },
+          "on-timeline-finished-by-name": {
+            "list-name": "On finished (by name)",
+            "description": "Triggered when a timeline finishes, using a string of the timeline name."
+          },
+          "is-playing": {
+            "list-name": "Is playing",
+            "description": "Test if a timeline is currently playing.",
+            "current": "is-playing-by-tags"
+          },
+          "is-playing-by-name": {
+            "list-name": "Is playing (by name)",
+            "description": "Test if a timeline is currently playing, using a string of the timeline name."
+          },
+          "on-time-set": {
+            "list-name": "On time set",
+            "description": "Test if the time of a timeline, has been manually set.",
+            "current": "on-time-set-by-tags"
+          },
+          "on-time-set-by-name": {
+            "list-name": "On time set (by name)",
+            "description": "Test if the time of a timeline, has been manually set."
+          }
+        },
+        "actions": {
+          "pause-timeline": {
+            "list-name": "Pause",
+            "description": "Pause a timeline.",
+            "current": "pause-timeline-by-tags"
+          },
+          "resume-timeline": {
+            "list-name": "Resume",
+            "description": "Resume a timeline.",
+            "current": "resume-timeline-by-tags"
+          },
+          "stop-timeline": {
+            "list-name": "Stop",
+            "description": "Stop a timeline.",
+            "current": "stop-timeline-by-tags"
+          },
+          "set-timeline-time": {
+            "list-name": "Set time",
+            "description": "Set the time of a timeline.",
+            "current": "set-timeline-time-by-tags"
+          },
+          "set-timeline-playback-rate": {
+            "list-name": "Set playback rate",
+            "description": "Set the playback rate of a timeline.",
+            "current": "set-timeline-playback-rate-by-tags"
+          },
+          "pause-timeline-by-name": {
+            "list-name": "Pause (by name)",
+            "description": "Pause a timeline, using a string to select it."
+          },
+          "resume-timeline-by-name": {
+            "list-name": "Resume (by name)",
+            "description": "Resume a timeline, using a string to select it."
+          },
+          "stop-timeline-by-name": {
+            "list-name": "Stop (by name)",
+            "description": "Stop a timeline using a string to select it."
+          },
+          "set-timeline-time-by-name": {
+            "list-name": "Set time (by name)",
+            "description": "Set the time of a timeline, using a string to select it."
+          },
+          "set-timeline-playback-rate-by-name": {
+            "list-name": "Set playback rate (by name)",
+            "description": "Set the playback rate of a timeline, using a string to select it."
+          }
+        }
+      },
+      "touch": {
+        "conditions": {
+          "device-orientation-supported": {
+            "list-name": "Device orientation supported",
+            "description": "True if the device supports orientation detection."
+          },
+          "device-motion-supported": {
+            "list-name": "Device motion supported",
+            "description": "True if the device supports motion detection."
+          }
+        }
+      },
+      "usermedia": {
+        "conditions": {
+          "on-reading-update": {
+            "list-name": "On reading update",
+            "description": "Triggered when the device ambient light sensor (if present) reading changes."
+          },
+          "on-canvas-recording-ready": {
+            "list-name": "On canvas recording ready",
+            "description": "Triggered after 'Stop recording canvas' when the recording is available in the CanvasRecordingURL expression."
+          },
+          "is-canvas-recording-supported": {
+            "list-name": "Is canvas recording supported",
+            "description": "True if the current browser supports recording the canvas."
+          },
+          "is-recording-format-supported": {
+            "list-name": "Is recording format supported",
+            "description": "Check if a particular video format is supported for canvas recording."
+          },
+          "supports-speech-recognition": {
+            "list-name": "Supports speech recognition",
+            "description": "True if the current browser supports speech recognition."
+          },
+          "on-start": {
+            "list-name": "On start",
+            "description": "Triggered when speech recognition begins."
+          },
+          "on-end": {
+            "list-name": "On end",
+            "description": "Triggered when speech recognition ends."
+          },
+          "on-error": {
+            "list-name": "On error",
+            "description": "Triggered if there is an error starting speech recognition, e.g. permission denied."
+          },
+          "on-result": {
+            "list-name": "On result",
+            "description": "Triggered during speech recognition as results are detected."
+          },
+          "is-recognising-speech": {
+            "list-name": "Is recognising speech",
+            "description": "True if speech recognition is currently active."
+          },
+          "supports-speech-synthesis": {
+            "list-name": "Supports speech synthesis",
+            "description": "True if the current browser supports speech synthesis."
+          },
+          "is-speaking": {
+            "list-name": "Is speaking",
+            "description": "True if currently speaking some text."
+          },
+          "supports-user-media": {
+            "list-name": "Supports user media",
+            "description": "True if the current browser supports accessing user media."
+          }
+        },
+        "actions": {
+          "start-recording-canvas": {
+            "list-name": "Start recording canvas",
+            "description": "Record a real-time video of the canvas."
+          },
+          "stop-recording-canvas": {
+            "list-name": "Stop recording canvas",
+            "description": "Finish recording a canvas video. Triggers 'On canvas recording ready' when available."
+          },
+          "request-speech-recognition": {
+            "list-name": "Request speech recognition",
+            "description": "Prompt the user for speech recognition input from a microphone, if one is present."
+          },
+          "stop-speech-recognition": {
+            "list-name": "Stop speech recognition",
+            "description": "Stop any active speech recognition input."
+          },
+          "speak-text": {
+            "list-name": "Speak text",
+            "description": "Read out some text with speech synthesis."
+          },
+          "stop-speaking": {
+            "list-name": "Stop speaking",
+            "description": "Cancel any active speech synthesis."
+          },
+          "pause-speaking": {
+            "list-name": "Pause speaking",
+            "description": "Pause any active speech synthesis."
+          },
+          "resume-speaking": {
+            "list-name": "Resume speaking",
+            "description": "Resume a previously paused speech synthesis."
+          }
+        },
+        "expressions": {
+          "ambientlux": {
+            "translated-name": "AmbientLux",
+            "description": "Return the device ambient light reading, if available, in lux."
+          },
+          "canvasrecordingurl": {
+            "translated-name": "CanvasRecordingURL",
+            "description": "Return a URL of the canvas recording that can be downloaded with the Browser object."
+          },
+          "finaltranscript": {
+            "translated-name": "FinalTranscript",
+            "description": "Return the final recognised speech."
+          },
+          "interimtranscript": {
+            "translated-name": "InterimTranscript",
+            "description": "Return the interim recognised speech, which can change."
+          },
+          "speecherror": {
+            "translated-name": "SpeechError",
+            "description": "Return a string describing the type of error in 'On error'."
+          },
+          "voicecount": {
+            "translated-name": "VoiceCount",
+            "description": "Return the number of available voices."
+          },
+          "voicenameat": {
+            "translated-name": "VoiceNameAt",
+            "description": "Return the name of a voice at an index."
+          },
+          "voicelangat": {
+            "translated-name": "VoiceLangAt",
+            "description": "Return the language of a voice at an index."
+          },
+          "voiceuriat": {
+            "translated-name": "VoiceURIAt",
+            "description": "Return the URI of a voice at an index."
+          }
+        }
+      },
+      "video": {
+        "actions": {
+          "set-source": {
+            "list-name": "Set source",
+            "description": "Switch to a different video. This does not automatically start playing it.",
+            "current": "set-source-2"
+          }
+        }
+      }
+    },
+    "behaviors": {
+      "pathfinding": {
+        "expressions": {
+          "rabbitx": {
+            "translated-name": "RabbitX",
+            "description": "The current rabbit X."
+          },
+          "rabbity": {
+            "translated-name": "RabbitY",
+            "description": "The current rabbit Y."
+          }
+        }
+      },
+      "pin": {
+        "actions": {
+          "pin-to-object": {
+            "list-name": "Pin to object",
+            "description": "Pin the object to another object.",
+            "current": "pin-to-object-properties"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "crosshatch",
+  "name": "Crosshatch",
+  "description": "Show a crosshatch with the density corresponding to the image.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "spacing",
+      "type": "percent",
+      "name": "Spacing",
+      "desc": "Spacing between crosshatch lines."
+    },
+    {
+      "id": "line-width",
+      "type": "percent",
+      "name": "Line width",
+      "desc": "Width of the crosshatch lines."
+    }
+  ]
+}

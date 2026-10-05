@@ -1,0 +1,10 @@
+{
+  "id": "sketch",
+  "name": "Sketch",
+  "description": "Create a hand-drawn sketch style appearance.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

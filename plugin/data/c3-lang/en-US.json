@@ -1,0 +1,340 @@
+{
+	"text": {
+		"ui": {
+			"bars": {
+				"properties": {
+					"project": {
+						"about": {
+							"desc": "Information about this project.",
+							"name": "About"
+						},
+						"advanced": {
+							"desc": "Settings intended for advanced users. It is recommended to leave these on defaults.",
+							"name": "Advanced"
+						},
+						"anisotropic-filtering": {
+							"desc": "The degree of anisotropy to use, mainly affecting rendering of surfaces at oblique viewing angles, such as in 3D shape objects.",
+							"name": "Anisotropic filtering",
+							"options": {
+								"16x": "16x",
+								"2x": "2x",
+								"3x": "3x",
+								"4x": "4x",
+								"8x": "8x",
+								"auto": "Auto",
+								"off": "Off"
+							}
+						},
+						"aspect-ratio": {
+							"desc": "The aspect ratio of the viewport.",
+							"name": "Aspect ratio"
+						},
+						"author": {
+							"desc": "The name or organisation of the project author.",
+							"name": "Author"
+						},
+						"auto-increment-version": {
+							"desc": "Check to automatically increment the fourth number of the version field after every export.",
+							"name": "Auto-increment version"
+						},
+						"background-color": {
+							"desc": "The background color, which appears around or at the edges of the viewport.",
+							"name": "Background color"
+						},
+						"bundle-addons": {
+							"desc": "Save installed addons with this project so it can be opened anywhere.",
+							"name": "Bundle addons"
+						},
+						"colors": {
+							"desc": "Choose colors used by the project.",
+							"name": "Colors"
+						},
+						"compatibility-settings": {
+							"desc": "Settings that exist mainly for backwards compatibility reasons. Usually these settings should not be changed.",
+							"name": "Compatibility settings"
+						},
+						"description": {
+							"desc": "A sentence or two describing the project.",
+							"name": "Description"
+						},
+						"display": {
+							"desc": "Settings affecting how the project is rendered at runtime.",
+							"name": "Display"
+						},
+						"downscaling-quality": {
+							"desc": "Trade-off between display quality and memory use when drawing downscaled objects.",
+							"name": "Downscaling quality",
+							"options": {
+								"high": "High (not recommended)",
+								"low": "Low",
+								"medium": "Medium"
+							}
+						},
+						"editor": {
+							"desc": "Settings affecting the editing and preview of the project.",
+							"name": "Editor"
+						},
+						"email": {
+							"desc": "A contact email address, such as the author or support email.",
+							"name": "Email",
+							"placeholder": "author@example.com"
+						},
+						"enable-multitexturing": {
+							"desc": "Enables multitextured rendering when using WebGPU renderer. This trades off texture-swap performance for fill-rate performance.",
+							"name": "Enable multitexturing",
+							"options": {
+								"auto": "Auto"
+							}
+						},
+						"enable-webgpu": {
+							"desc": "Use the WebGPU renderer if supported, which usually improves performance. Falls back to WebGL if not supported.",
+							"name": "Enable WebGPU",
+							"options": {
+								"auto": "Auto"
+							}
+						},
+						"far-distance": {
+							"desc": "The distance of the far plane from the camera, affecting the limits of 2D scaling and 3D rendering.",
+							"name": "Far distance"
+						},
+						"first-layout": {
+							"default": "(default)",
+							"desc": "The layout that will initially load when the project is run.",
+							"name": "First layout"
+						},
+						"fixed-framerate": {
+							"desc": "The frames per second rate to target (subject to performance and timer precision limitations).",
+							"name": "Fixed framerate"
+						},
+						"fov": {
+							"desc": "The angle of the visible area in front of the camera (only available when using regular Z axis scale). Note this changes the default camera Z.",
+							"name": "Field of view"
+						},
+						"framerate-mode": {
+							"desc": "How to schedule frames. Typically v-synced gives the best results.",
+							"name": "Framerate mode",
+							"options": {
+								"fixed": "Fixed",
+								"unlimited-frame": "Unlimited (full frames)",
+								"unlimited-tick": "Unlimited (ticks only)",
+								"vsync": "V-synced"
+							}
+						},
+						"fullscreen-mode": {
+							"desc": "How to resize the view to fill the available area.",
+							"name": "Fullscreen mode",
+							"options": {
+								"integer-scale-inner": "Integer scale inner",
+								"integer-scale-outer": "Integer scale outer",
+								"letterbox-integer-scale": "Letterbox integer scale",
+								"letterbox-scale": "Letterbox scale",
+								"off": "Off",
+								"scale-inner": "Scale inner",
+								"scale-outer": "Scale outer"
+							}
+						},
+						"fullscreen-quality": {
+							"desc": "Whether to scale to fullscreen before (high quality) or after (low quality) rendering.",
+							"name": "Fullscreen quality",
+							"options": {
+								"high": "High",
+								"low": "Low"
+							}
+						},
+						"gpu-preference": {
+							"desc": "On devices with multiple GPUs, the type of GPU to prefer (where supported).",
+							"name": "GPU preference",
+							"options": {
+								"default": "Default",
+								"high-performance": "High performance",
+								"low-power": "Low power"
+							}
+						},
+						"help-link": {
+							"desc": "Open the manual to learn more about project properties.",
+							"link-text": "Help",
+							"name": "More information"
+						},
+						"id": {
+							"desc": "An identifier for this project in reverse domain format.",
+							"name": "ID",
+							"placeholder": "com.company.appname"
+						},
+						"loader-style": {
+							"desc": "What to show when loading, or loading the loader layout.",
+							"name": "Loader style",
+							"options": {
+								"none": "Nothing (not recommended)",
+								"percent": "Percentage text",
+								"progress": "Progress bar only",
+								"progress-logo": "Progress bar & logo",
+								"splash": "Construct splash"
+							}
+						},
+						"max-spritesheet-size": {
+							"desc": "The maximum spritesheet size to use. Smaller sizes save memory but larger sizes can improve performance.",
+							"disabled": "Disabled (not recommended)",
+							"name": "Max spritesheet size"
+						},
+						"name": {
+							"desc": "The project name.",
+							"name": "Name"
+						},
+						"near-distance": {
+							"desc": "The distance of the near plane from the camera, affecting the limits of 2D scaling and 3D rendering.",
+							"name": "Near distance"
+						},
+						"orientations": {
+							"desc": "Where supported, the device orientations to allow.",
+							"name": "Orientations",
+							"options": {
+								"any": "Any",
+								"landscape": "Landscape",
+								"portrait": "Portrait"
+							}
+						},
+						"pause-on-unfocus": {
+							"desc": "During preview only, pause the game when the browser loses focus.",
+							"name": "Pause on unfocus"
+						},
+						"pixel-rounding": {
+							"desc": "Round the position all objects are drawn at to an integer.",
+							"name": "Pixel rounding"
+						},
+						"preload-sounds": {
+							"desc": "Download and decode all sounds (but not music) while loading.",
+							"name": "Preload sounds"
+						},
+						"preview-effects": {
+							"desc": "Preview blend modes and effects in the editor.",
+							"name": "Preview effects"
+						},
+						"rendering-mode": {
+							"desc": "Whether to render this project in 2D mode, 3D mode, or automatically decide.",
+							"name": "Rendering mode",
+							"options": {
+								"auto": "Auto"
+							}
+						},
+						"splash-color": {
+							"desc": "The background color of the splash screen, which appears when run as a web app.",
+							"name": "Splash color"
+						},
+						"startup": {
+							"desc": "Settings affecting how the project loads and starts.",
+							"name": "Startup"
+						},
+						"theme-color": {
+							"desc": "On some platforms the theme color replaces the default UI color.",
+							"name": "Theme color"
+						},
+						"uid-numbering": {
+							"desc": "The numbering scheme to use for assigning a UID to new objects.",
+							"name": "UID numbering",
+							"options": {
+								"increment": "Increment",
+								"random": "Random"
+							}
+						},
+						"use-loader-layout": {
+							"desc": "Display the first layout while the rest of the project is still loading.",
+							"name": "Use loader layout"
+						},
+						"use-theme-color": {
+							"desc": "Whether to enable the theme color, which replaces the default UI color on some platforms.",
+							"name": "Use theme color"
+						},
+						"use-worker": {
+							"desc": "Host the runtime in a Web Worker, off the main thread.",
+							"name": "Use worker",
+							"options": {
+								"auto": "Auto"
+							}
+						},
+						"version": {
+							"desc": "Up to four numbers to identify the version of the project.",
+							"name": "Version"
+						},
+						"viewport-fit": {
+							"desc": "How to handle non-rectangular displays like on the iPhone X.",
+							"name": "Viewport fit",
+							"options": {
+								"auto": "Auto",
+								"cover": "Cover"
+							}
+						},
+						"viewport-size": {
+							"desc": "The size of the viewport area in pixels.",
+							"height": {
+								"desc": "The height of the viewport area in pixels.",
+								"name": "Height"
+							},
+							"name": "Viewport size",
+							"separator": " x ",
+							"width": {
+								"desc": "The width of the viewport area in pixels.",
+								"name": "Width"
+							}
+						},
+						"website": {
+							"desc": "The website associated with this project.",
+							"name": "Website",
+							"placeholder": "https://www.example.com"
+						},
+						"z-axis-scale": {
+							"convert": {
+								"confirmation-message": "Converting the project to Z axis scale 'Regular' will affect the Z co-ordinate and depth of all 3D content in all layouts and layers in the project. This cannot be undone. Note this does not affect your event sheets or code which may still need to be manually updated. Do you want to continue?",
+								"desc": "Click to convert the project to Z axis scale 'Regular'.",
+								"link": "Convert to 'Regular'",
+								"name": "Convert Z axis scale"
+							},
+							"desc": "The scale of units to use on the Z axis for 3D features. 'Regular' uses same units as X/Y axes. 'Normalized' works 0-100 and is deprecated - use 'Regular' mode instead.",
+							"name": "Z axis scale",
+							"normalized-confirmation": "Z axis scale 'Normalized' is deprecated. In future this mode will be removed in favor of 'Regular' mode. Are you sure you want to change the Z axis scale to 'Normalized'?",
+							"options": {
+								"normalized": "Normalized",
+								"regular": "Regular"
+							}
+						}
+					}
+				},
+				"timeline": {
+					"eases": {
+						"default": "Default",
+						"easeinback": "In Back",
+						"easeinbounce": "In Bounce",
+						"easeincirc": "In Circular",
+						"easeincubic": "In Cubic",
+						"easeinelastic": "In Elastic",
+						"easeinexpo": "In Exponential",
+						"easeinoutback": "In Out Back",
+						"easeinoutbounce": "In Out Bounce",
+						"easeinoutcirc": "In Out Circular",
+						"easeinoutcubic": "In Out Cubic",
+						"easeinoutelastic": "In Out Elastic",
+						"easeinoutexpo": "In Out Exponential",
+						"easeinoutquad": "In Out Quadratic",
+						"easeinoutquart": "In Out Quartic",
+						"easeinoutquint": "In Out Quintic",
+						"easeinoutsine": "In Out Sinusoidal",
+						"easeinquad": "In Quadratic",
+						"easeinquart": "In Quartic",
+						"easeinquint": "In Quintic",
+						"easeinsine": "In Sinusoidal",
+						"easeoutback": "Out Back",
+						"easeoutbounce": "Out Bounce",
+						"easeoutcirc": "Out Circular",
+						"easeoutcubic": "Out Cubic",
+						"easeoutelastic": "Out Elastic",
+						"easeoutexpo": "Out Exponential",
+						"easeoutquad": "Out Quadratic",
+						"easeoutquart": "Out Quartic",
+						"easeoutquint": "Out Quintic",
+						"easeoutsine": "Out Sinusoidal",
+						"noease": "Linear"
+					}
+				}
+			}
+		}
+	}
+}

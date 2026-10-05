@@ -117,17 +117,17 @@ def test_install_names_a_copy_under_the_skills_former_name(tmp_path):
 def test_install_outside_a_project_says_what_to_pass(tmp_path):
     code, out = install(tmp_path)
     assert code != 0 and "--project" in out and "Traceback" not in out
-    assert f"To start a new project, run python {(REPO / 'scripts' / 'bootstrap.py').as_posix()} --project <folder>" in out
+    assert f"To start a new project, run python {(SKILL / 'scripts' / 'new_project.py').as_posix()} <folder>" in out
 
 
-def test_install_into_a_folder_without_a_project_names_bootstrap(tmp_path):
+def test_install_into_a_folder_without_a_project_names_new_project(tmp_path):
     """An agent asked for a new game makes the folder and runs install.py on it first;
-    install.py fills a project, and bootstrap.py is what creates one."""
+    install.py fills a project, and new_project.py is what creates one."""
     game = tmp_path / "New Game"
     game.mkdir()
     code, out = install(tmp_path, "--project", str(game))
     assert code == 1 and f"no project.c3proj in {game}" in out
-    assert f'run python {(REPO / "scripts" / "bootstrap.py").as_posix()} --project "{game}"' in out
+    assert f'run python {(SKILL / "scripts" / "new_project.py").as_posix()} "{game}"' in out
 
 
 def test_install_asks_the_agent_to_remember_where_the_clone_is(tmp_path):
@@ -274,7 +274,7 @@ def test_bootstrap_names_the_way_round_a_template_that_is_not_a_project(tmp_path
     (tmp_path / "empty").mkdir()
     code, out = bootstrap(tmp_path, "--beside", str(beside), "--template", str(tmp_path / "empty"),
                           "--project", str(tmp_path / "MyGame"))
-    assert code == 1 and "MyGame: not created" in out and "--template <folder>" in out
+    assert code == 1 and "MyGame: not created" in out and "Project > New" in out
     assert not (tmp_path / "MyGame").exists()
 
 

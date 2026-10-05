@@ -1,0 +1,17 @@
+{
+  "id": "scanlines",
+  "name": "Scan lines",
+  "description": "Slightly darken alternate rows.",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "line-height",
+      "type": "float",
+      "name": "Line height",
+      "desc": "Height of each scan line, in pixels."
+    }
+  ]
+}

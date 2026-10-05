@@ -1,0 +1,223 @@
+{
+  "id": "svgpicture",
+  "name": "SVG Picture",
+  "description": "Display an SVG file imported to the project.",
+  "type": "plugin",
+  "aceCategories": {
+    "appearance": "Appearance",
+    "svg": "SVG"
+  },
+  "conditions": [],
+  "actions": [
+    {
+      "id": "set-blend-mode",
+      "scriptName": "SetEffect",
+      "category": "appearance",
+      "list-name": "Set blend mode",
+      "display-text": "Set blend mode to [i]{0}[/i]",
+      "description": "Set the background blend mode for this object.",
+      "params": {
+        "blend-mode": {
+          "type": "combo",
+          "name": "Blend mode",
+          "desc": "Choose the new blend mode for this object.",
+          "items": {
+            "normal": "Normal",
+            "additive": "Additive",
+            "xor": "XOR",
+            "copy": "Copy",
+            "destination-over": "Destination over",
+            "source-in": "Source in",
+            "destination-in": "Destination in",
+            "source-out": "Source out",
+            "destination-out": "Destination out",
+            "source-atop": "Source atop",
+            "destination-atop": "Destination atop",
+            "lighten": "Lighten",
+            "darken": "Darken",
+            "multiply": "Multiply",
+            "screen": "Screen"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-image",
+      "scriptName": "SetImage",
+      "category": "svg",
+      "list-name": "Set image",
+      "display-text": "Set image to [i]{0}[/i]",
+      "description": "Set the SVG image to be displayed from a project file.",
+      "params": {
+        "file": {
+          "type": "projectfile",
+          "name": "File",
+          "desc": "A project file to load an SVG image from."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "set-image-by-name",
+      "scriptName": "SetImageByName",
+      "category": "svg",
+      "list-name": "Set image (by name)",
+      "display-text": "Set image to [i]{0}[/i]",
+      "description": "Set the SVG image to be displayed from a string of a project file.",
+      "params": {
+        "file": {
+          "type": "string",
+          "name": "File",
+          "desc": "A string of the name of a project file to load an SVG image from."
+        }
+      },
+      "isAsync": true
+    }
+  ],
+  "expressions": [],
+  "properties": {
+    "svg-file": {
+      "name": "SVG file",
+      "desc": "Pick an SVG file imported to the project to display."
+    },
+    "view-image": {
+      "name": "Image",
+      "desc": "Click to view the object's image file.",
+      "link-text": "View"
+    },
+    "initially-visible": {
+      "name": "Initially visible",
+      "desc": "Choose whether the object is visible when the layout starts."
+    },
+    "origin": {
+      "name": "Origin",
+      "desc": "Choose the location of the origin in the object.",
+      "items": {
+        "top-left": "Top-left",
+        "top": "Top",
+        "top-right": "Top-right",
+        "left": "Left",
+        "center": "Center",
+        "right": "Right",
+        "bottom-left": "Bottom-left",
+        "bottom": "Bottom",
+        "bottom-right": "Bottom-right"
+      }
+    }
+  },
+  "commonAces": {
+    "conditions": [
+      "is-within-angle",
+      "is-clockwise-from",
+      "is-between-angles",
+      "is-visible",
+      "compare-opacity",
+      "is-effect-enabled",
+      "compare-instance-variable",
+      "is-boolean-instance-variable-set",
+      "pick-highestlowest",
+      "pick-by-unique-id",
+      "has-tags",
+      "on-created",
+      "on-destroyed",
+      "on-instance-signal",
+      "compare-x",
+      "compare-y",
+      "is-on-screen",
+      "is-outside-layout",
+      "pick-nearestfurthest",
+      "compare-z-elevation",
+      "compare-width",
+      "compare-height",
+      "is-on-layer",
+      "pick-topbottom",
+      "on-hierarchy-ready",
+      "has-parent",
+      "has-children",
+      "pick-parent",
+      "pick-children",
+      "pick-nth-child",
+      "compare-child-count"
+    ],
+    "actions": [
+      "set-angle",
+      "rotate-clockwise",
+      "rotate-counter-clockwise",
+      "rotate-toward-angle",
+      "rotate-toward-position",
+      "set-angle-toward-position",
+      "set-visible",
+      "set-opacity",
+      "set-default-color",
+      "set-effect-enabled",
+      "set-effect-parameter",
+      "set-instvar-value",
+      "add-to-instvar",
+      "subtract-from-instvar",
+      "set-boolean-instvar",
+      "toggle-boolean-instvar",
+      "destroy",
+      "change-tags",
+      "set-from-json",
+      "instance-signal",
+      "instance-wait-for-signal",
+      "set-x",
+      "set-y",
+      "set-position",
+      "set-position-to-another-object",
+      "move-forward",
+      "move-at-angle",
+      "set-position-3d",
+      "set-z-elevation",
+      "set-width",
+      "set-height",
+      "set-size",
+      "move-to-top",
+      "move-to-bottom",
+      "move-to-layer",
+      "move-to-object",
+      "add-child",
+      "remove-child",
+      "remove-from-parent"
+    ],
+    "expressions": [
+      "angle",
+      "color-value",
+      "opacity",
+      "count",
+      "pickedcount",
+      "uid",
+      "iid",
+      "asjson",
+      "objecttypename",
+      "get-tags",
+      "get-tags-count",
+      "get-tag-at",
+      "x",
+      "y",
+      "dt",
+      "z",
+      "total-z",
+      "z-elevation",
+      "total-z-elevation",
+      "width",
+      "height",
+      "bboxleft",
+      "bboxtop",
+      "bboxback",
+      "bboxright",
+      "bboxbottom",
+      "bboxfront",
+      "bboxmidx",
+      "bboxmidy",
+      "bboxmidz",
+      "layernumber",
+      "layername",
+      "zindex",
+      "parent-uid",
+      "child-count",
+      "all-child-count",
+      "template-name"
+    ]
+  }
+}

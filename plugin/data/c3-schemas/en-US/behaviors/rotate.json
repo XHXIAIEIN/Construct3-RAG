@@ -1,0 +1,135 @@
+{
+  "id": "rotate",
+  "name": "Rotate",
+  "description": "Make an object spin.",
+  "type": "behavior",
+  "aceCategories": {},
+  "conditions": [
+    {
+      "id": "is-enabled",
+      "scriptName": "IsEnabled",
+      "category": "",
+      "list-name": "Is enabled",
+      "display-text": "{my} is enabled",
+      "description": "Test if the behavior is enabled."
+    }
+  ],
+  "actions": [
+    {
+      "id": "set-speed",
+      "scriptName": "SetSpeed",
+      "category": "",
+      "list-name": "Set speed",
+      "display-text": "Set {my} speed to {0} degrees per second",
+      "description": "Set the rate the object spins at.",
+      "params": {
+        "speed": {
+          "type": "number",
+          "name": "Speed",
+          "desc": "The new rotation speed, in degrees per second."
+        }
+      }
+    },
+    {
+      "id": "set-acceleration",
+      "scriptName": "SetAcceleration",
+      "category": "",
+      "list-name": "Set acceleration",
+      "display-text": "Set {my} acceleration to {0} degrees per second per second",
+      "description": "Set the rate the object's spinning changes.",
+      "params": {
+        "acceleration": {
+          "type": "number",
+          "name": "Acceleration",
+          "desc": "The new rotation acceleration, in degrees per second per second."
+        }
+      }
+    },
+    {
+      "id": "set-rotation-type",
+      "scriptName": "SetRotationType",
+      "category": "",
+      "list-name": "Set rotation type",
+      "display-text": "Set rotation type [i]{0}[/i]",
+      "description": "Set whether to rotate in 2D or in 3D on an axis.",
+      "params": {
+        "rotation-type": {
+          "type": "combo",
+          "name": "Rotation type",
+          "desc": "The rotation type to set.",
+          "items": {
+            "2d": "2D",
+            "rotation-x": "Rotation X",
+            "rotation-y": "Rotation Y",
+            "rotation-z": "Rotation Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-enabled",
+      "scriptName": "SetEnabled",
+      "category": "",
+      "list-name": "Set enabled",
+      "display-text": "Set {my} [b]{0}[/b]",
+      "description": "Set whether this behavior is enabled.",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "State",
+          "desc": "Set whether to enable or disable the behavior.",
+          "items": {
+            "disabled": "Disabled",
+            "enabled": "Enabled"
+          }
+        }
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "id": "speed",
+      "scriptName": "Speed",
+      "category": "",
+      "translated-name": "Speed",
+      "description": "The current rotation speed in degrees per second.",
+      "returnType": "number"
+    },
+    {
+      "id": "acceleration",
+      "scriptName": "Acceleration",
+      "category": "",
+      "translated-name": "Acceleration",
+      "description": "The current rotation acceleration in degrees per second per second.",
+      "returnType": "number"
+    }
+  ],
+  "properties": {
+    "speed": {
+      "name": "Speed",
+      "desc": "The rotation speed, in degrees per second.  Positive is clockwise and negative is anticlockwise."
+    },
+    "acceleration": {
+      "name": "Acceleration",
+      "desc": "Rotation acceleration in degrees per second per second (negative slows down)."
+    },
+    "rotation-type": {
+      "name": "Rotation type",
+      "desc": "Rotate either in 2D or in 3D on an axis.",
+      "items": {
+        "2d": "2D",
+        "rotation-x": "Rotation X",
+        "rotation-y": "Rotation Y",
+        "rotation-z": "Rotation Z"
+      }
+    },
+    "enabled": {
+      "name": "Enabled",
+      "desc": "Whether the behavior is initially enabled or disabled."
+    },
+    "live-preview": {
+      "name": "Preview",
+      "desc": "Tick to run a live preview in the editor."
+    }
+  }
+}

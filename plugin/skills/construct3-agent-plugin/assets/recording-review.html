@@ -1,0 +1,753 @@
+<!doctype html>
+<!-- A recording of scripts/preview_project.py, frame by frame beside the steps that
+     ran and the values the record step watched. A part selected on the timeline is
+     copied as a task for an agent: the frames' files, the steps and the watched values
+     of that part. The script copies this page next to the recording's folder and puts
+     its timeline where TIMELINE is, and writes it as index.html with the recordings beside
+     it where RECORDINGS is; without either, the page opens a recording's folder. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recording review</title>
+<style>
+  :root {
+    --paper: #ffffff; --ink: #1b1b1b; --muted: #6b6b6b; --rule: #1b1b1b; --hair: #dadada; --zebra: #f5f5f5;
+    --blue: #1f5fbf; --blue-tint: #e7eff9; --blue-mid: #bcd0ee; --red: #c4302b; --red-tint: #fbeaea;
+    --frame: #000000;
+    --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #131313; --ink: #e4e4e4; --muted: #9a9a9a; --rule: #a8a8a8; --hair: #303030; --zebra: #1a1a1a;
+      --blue: #82a9ee; --blue-tint: #18243a; --blue-mid: #2c4670; --red: #ef7c74; --red-tint: #3a1d1c;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 13px/1.45 var(--sans); }
+  .mono, code { font-family: var(--mono); }
+  svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; flex: none; }
+
+  .board { padding: 10px; display: grid; gap: 8px; align-items: start; grid-template-columns: minmax(0, 1fr) minmax(260px, 320px); }
+  .board > .opening { grid-column: 1 / -1; }
+  .col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  @media (max-width: 900px) { .board { grid-template-columns: minmax(0, 1fr); } }
+
+  /* A panel: a title and a note in small type, ruled off from what it holds. */
+  .panel { border: 1px solid var(--rule); background: var(--paper); min-width: 0; }
+  .panel > header { display: flex; align-items: stretch; border-bottom: 1px solid var(--rule); min-height: 28px; }
+  .panel > header h2 { margin: 0; padding: 0 8px; display: flex; align-items: center; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .panel > header .meta { margin-left: auto; padding: 0 10px; align-self: center; min-width: 0; overflow: hidden; text-overflow: ellipsis; font: 11px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .body { padding: 8px; }
+  .label { font: 11px/1.2 var(--mono); color: var(--muted); }
+
+  button, select, textarea { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--hair); border-radius: 0; }
+  button, select { height: 30px; cursor: pointer; }
+  button.icon { width: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+  button:hover, select:hover { border-color: var(--rule); }
+  button:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+  button.ink { background: var(--ink); border-color: var(--ink); color: var(--paper); display: inline-flex; gap: 8px; align-items: center; padding: 0 12px; font-weight: 600; }
+  button[aria-pressed="true"] .i-play, button:not([aria-pressed="true"]) .i-pause { display: none; }
+  select { font: 12px var(--mono); padding: 0 4px; }
+
+  /* A: the window, its controls and the timeline. */
+  .frame { display: flex; justify-content: center; background: var(--frame); }
+  .frame img { max-width: 100%; max-height: 64vh; display: block; }
+  .controls { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+  /* From the top: the marks above the playhead, the selected part's dimension line, the
+     steps, the frames and the ruler. */
+  .timeline { position: relative; margin-top: 6px; padding: 48px 0 16px; cursor: pointer; touch-action: none; user-select: none; }
+  .timeline.edge { cursor: ew-resize; }
+  .spans, .frames, .ruler { position: relative; }
+  .spans { height: 14px; background: var(--zebra); }
+  .spans i { position: absolute; top: 0; height: 14px; min-width: 2px; background: var(--blue-tint); border: 1px solid var(--blue); }
+  .spans i.bad { background: var(--red-tint); border-color: var(--red); }
+  .spans i.active { background: var(--blue-mid); }
+  .spans i.bad.active { background: var(--red); opacity: 0.5; }
+  .frames { height: 7px; margin-top: 3px; }
+  .frames i { position: absolute; top: 0; width: 1px; height: 7px; background: var(--hair); }
+  .ruler { height: 8px; border-top: 1px solid var(--rule); }
+  .ruler i { position: absolute; top: 0; width: 1px; height: 3px; background: var(--muted); }
+  .ruler i.major { height: 6px; background: var(--rule); }
+  .ruler b { position: absolute; top: 8px; transform: translateX(-50%); font: 10px/1 var(--mono); font-weight: 400; color: var(--muted); white-space: nowrap; }
+  .playhead { position: absolute; top: 24px; bottom: 16px; width: 1.5px; margin-left: -0.75px; background: var(--ink); pointer-events: none; }
+  .playhead::before { content: ""; position: absolute; top: -1px; left: -3.25px; border: 4px solid transparent; border-top: 5px solid var(--ink); border-bottom: 0; }
+  .marks { position: absolute; top: 0; display: flex; cursor: default; }
+  .marks button { width: 26px; height: 22px; }
+  .marks button + button { border-left: 0; }
+  .timeline.playing .marks { visibility: hidden; }
+  /* The selected part, dimensioned as on a drawing: a line between its two edges with
+     its length on it, the edges drawn down through the lanes, the rest washed out. */
+  .shade { position: absolute; top: 48px; height: 24px; background: color-mix(in srgb, var(--paper) 62%, transparent); pointer-events: none; }
+  .selection { position: absolute; top: 28px; bottom: 16px; min-width: 1px; border: 0 solid var(--blue); border-width: 0 1px; pointer-events: none; }
+  .selection::before { content: ""; position: absolute; top: 7px; left: 0; right: 0; height: 1px; background: var(--blue); }
+  .selection span { position: absolute; z-index: 1; top: 0; left: 50%; transform: translateX(-50%); padding: 0 5px; background: var(--paper); font: 10px/14px var(--mono); color: var(--blue); white-space: nowrap; }
+  .selection span.right { left: 100%; transform: none; }
+  .selection span.left { left: auto; right: 100%; transform: none; }
+
+  /* B: the steps, each with its outcome. */
+  ol { list-style: none; margin: 0; padding: 0; }
+  ol li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; padding: 5px 8px; border-bottom: 1px solid var(--hair); cursor: pointer; }
+  ol li:nth-child(even) { background: var(--zebra); }
+  ol li:last-child { border-bottom: 0; }
+  ol li.empty { display: block; cursor: default; }
+  ol li.active { background: var(--blue-tint); box-shadow: inset 2px 0 var(--blue); }
+  ol li .i { margin-top: 1px; color: var(--blue); }
+  ol li.bad .i, ol li.bad .what { color: var(--red); }
+  ol li .what { font-weight: 500; word-break: break-word; }
+  ol li small { display: block; font: 11px/1.45 var(--mono); color: var(--muted); word-break: break-word; font-variant-numeric: tabular-nums; }
+  ol li .error { font: 11px/1.45 var(--mono); color: var(--red); border-left: 2px solid var(--red); padding-left: 6px; margin-top: 4px; }
+
+  /* C: the watched values at the frame shown. */
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th { text-align: left; font: 11px var(--mono); color: var(--muted); font-weight: 400; padding: 4px 8px; border-bottom: 1px solid var(--hair); }
+  td { padding: 4px 8px; border-bottom: 1px solid var(--hair); vertical-align: top; word-break: break-word; }
+  tbody tr:nth-child(even) td { background: var(--zebra); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td:first-child { width: 40%; }
+  td:last-child { font-family: var(--mono); font-size: 12px; }
+  tr.changed td:last-child { color: var(--blue); }
+  tr.changed td:last-child::before { content: "\25CF\00A0"; font-size: 9px; vertical-align: 1px; }
+  .empty { padding: 10px 12px; color: var(--muted); }
+
+  /* D: the selected part, copied as a task for an agent. */
+  #part-empty { margin: 0; color: var(--muted); }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .facts b { display: block; font: 13px var(--mono); font-weight: 500; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .facts .bad b { color: var(--red); }
+  .field { display: block; margin-top: 8px; }
+  .field textarea { display: block; width: 100%; margin-top: 4px; padding: 6px 8px; resize: vertical; }
+  .send { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+  #copied { font: 11px var(--mono); color: var(--blue); margin-left: 6px; }
+  #copied.bad { color: var(--red); }
+  details { margin-top: 8px; }
+  details summary { font: 11px var(--mono); color: var(--muted); cursor: pointer; }
+  details textarea { display: block; width: 100%; margin-top: 6px; padding: 8px; font: 11px/1.5 var(--mono); color: var(--muted); }
+
+  .recording-info { margin: 0; border: 1px solid var(--rule); }
+  .recording-info > summary { padding: 6px 8px; color: var(--ink); font: 12px var(--sans); overflow-wrap: anywhere; }
+  .titleblock { display: grid; grid-template-columns: 1fr 1fr; }
+  .titleblock div { padding: 5px 8px; border-top: 1px solid var(--hair); min-width: 0; }
+  .titleblock .wide { grid-column: 1 / -1; }
+  .titleblock b { display: block; margin-top: 2px; font-weight: 500; overflow-wrap: anywhere; }
+  .titleblock b.mono { font-size: 11px; }
+  #steps { max-height: 38vh; overflow-y: auto; }
+  .watch-table { max-height: 30vh; overflow-y: auto; }
+  .watch-table thead { position: sticky; top: 0; background: var(--paper); }
+  @media (max-width: 600px) {
+    .board { padding: 6px; gap: 6px; }
+    .panel > header { flex-wrap: wrap; }
+    .panel > header .meta { font-size: 10px; padding: 4px 8px; }
+    .frame img { max-height: 52vh; }
+  }
+  [title*="Click to copy"] { cursor: copy; }
+  .copied::after { content: " copied"; color: var(--blue); font: 11px var(--mono); }
+
+  .opening .body p { margin: 0 0 14px; color: var(--muted); max-width: 640px; }
+  .opening code { font-size: 12px; color: var(--ink); }
+  #pick-error { color: var(--red); font: 11px var(--mono); margin: 10px 0 0; }
+  #pick-error:empty { display: none; }
+  .recordings { margin-top: 14px; border: 1px solid var(--hair); max-width: 640px; }
+  .recordings:empty { display: none; }
+  .recordings li .what { font-family: var(--mono); }
+  .recordings li.link { display: block; padding: 0; }
+  .recordings li.link a { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; padding: 5px 8px; color: inherit; text-decoration: none; }
+  .recordings li.link a:hover .what { text-decoration: underline; }
+  .opening.index .recordings { margin-top: 0; max-width: none; border: 0; }
+  .opening.index .body { padding: 0; }
+  .opening.index #pick-error { margin: 0; padding: 10px 12px; color: var(--muted); }
+  .titleblock a { color: var(--blue); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 16 16"><path d="M4.5 2.8 12.8 8l-8.3 5.2z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 16 16"><path d="M5.5 3v10M10.5 3v10"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 16 16"><path d="M3.5 3v10M12.5 3.2 5.8 8l6.7 4.8z"/></symbol>
+  <symbol id="i-next" viewBox="0 0 16 16"><path d="M12.5 3v10M3.5 3.2 10.2 8l-6.7 4.8z"/></symbol>
+  <symbol id="i-from" viewBox="0 0 16 16"><path d="M6.5 3H3.5v10h3M8 8h5.5M11 5.5 13.5 8 11 10.5"/></symbol>
+  <symbol id="i-to" viewBox="0 0 16 16"><path d="M9.5 3h3v10h-3M2.5 8H8M5.5 5.5 8 8l-2.5 2.5"/></symbol>
+  <symbol id="i-play-part" viewBox="0 0 16 16"><path d="M4 3H2v10h2M12 3h2v10h-2M6.3 5.2 10.5 8l-4.2 2.8z"/></symbol>
+  <symbol id="i-clear" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 16 16"><path d="M5.5 5.5h8v8h-8zM3 10.5h-.5v-8h8v.5"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 16 16"><path d="m2.8 8.4 3.4 3.4 7-7.2"/></symbol>
+  <symbol id="i-bad" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 16 16"><path d="M1.8 4h4.4l1.5 1.5h6.5v7.5H1.8z"/></symbol>
+</svg>
+  <div class="board">
+    <section class="panel opening" id="opening" hidden>
+      <header><h2 id="opening-title">Open recording</h2><span class="meta" id="opening-meta">recording review</span></header>
+      <div class="body">
+        <p id="opening-help">Open a game project or recording folder.</p>
+        <button id="choose" class="ink"><svg class="i"><use href="#i-folder"/></svg>Choose a folder</button>
+        <input type="file" id="pick" webkitdirectory hidden>
+        <p id="pick-error" role="status"></p>
+        <ol class="recordings" id="recordings"></ol>
+      </div>
+    </section>
+
+    <div class="col" data-run hidden>
+    <section class="panel">
+      <header><h2>Preview</h2><span class="meta" id="clock"></span></header>
+      <div class="body">
+        <div class="frame"><img id="frame" alt="the preview window at this moment"></div>
+        <div class="controls">
+          <button class="icon" id="play" aria-pressed="false" aria-label="Play" title="Play (Space)">
+            <svg class="i i-play"><use href="#i-play"/></svg><svg class="i i-pause"><use href="#i-pause"/></svg></button>
+          <button class="icon" id="prev" aria-label="Frame before" title="Frame before (Left arrow)"><svg class="i"><use href="#i-prev"/></svg></button>
+          <button class="icon" id="next" aria-label="Frame after" title="Frame after (Right arrow)"><svg class="i"><use href="#i-next"/></svg></button>
+          <select id="speed" aria-label="Speed" title="Speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select>
+        </div>
+        <div class="timeline" id="timeline" aria-label="Timeline" title="Time in ms · Shift+drag to select · [ / ] to set start / end">
+          <div class="spans" id="spans"></div>
+          <div class="frames" id="frames"></div>
+          <div class="ruler" id="ruler"></div>
+          <div class="shade" id="shade-before" hidden></div>
+          <div class="shade" id="shade-after" hidden></div>
+          <div class="selection" id="selection" hidden><span id="selection-length"></span></div>
+          <div class="playhead" id="playhead"></div>
+          <div class="marks" id="marks">
+            <button class="icon" id="from" aria-label="Start the part here" title="Start the part here ( [ )"><svg class="i"><use href="#i-from"/></svg></button>
+            <button class="icon" id="to" aria-label="End the part here" title="End the part here ( ] )"><svg class="i"><use href="#i-to"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <header><h2>Selected part</h2></header>
+      <div class="body">
+        <p id="part-empty">Shift+drag the timeline to select.</p>
+        <div id="part-tools" hidden>
+          <div class="facts" id="facts"></div>
+          <label class="field"><span class="label">Question (optional)</span>
+            <textarea id="note" rows="1" placeholder="What should happen here?"></textarea></label>
+          <div class="send">
+            <button class="icon ink" id="copy" aria-label="Copy task for agent" title="Copy task for agent"><svg class="i"><use href="#i-copy"/></svg></button>
+            <button class="icon" id="part-play" aria-pressed="false" aria-label="Play the part" title="Play the part">
+              <svg class="i i-play"><use href="#i-play-part"/></svg><svg class="i i-pause"><use href="#i-pause"/></svg></button>
+            <button class="icon" id="part-clear" aria-label="Clear the selection" title="Clear the selection (Esc)"><svg class="i"><use href="#i-clear"/></svg></button>
+            <span id="copied" role="status"></span>
+          </div>
+          <details id="part-text"><summary>Text for the agent</summary><textarea id="brief" rows="14" readonly></textarea></details>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <div class="col" data-run hidden>
+    <section class="panel">
+      <header><h2>Steps</h2><span class="meta" id="steps-meta"></span></header>
+      <ol id="steps" title="Click to jump · Shift+click to select"></ol>
+    </section>
+
+    <section class="panel">
+      <header><h2>Watched values</h2><span class="meta" id="watch-meta"></span></header>
+      <div class="watch-table"><table><thead><tr><th>Name</th><th title="● changed since the previous frame">Value</th></tr></thead><tbody id="watch"></tbody></table></div>
+    </section>
+
+    <details class="recording-info">
+      <summary id="tb-title">Recording details</summary>
+      <div class="titleblock">
+      <div><span class="label">Frames</span><b class="mono" id="tb-frames"></b></div>
+      <div><span class="label">Video</span><b class="mono" id="tb-video"></b></div>
+      <div><span class="label">Steps</span><b class="mono" id="tb-steps"></b></div>
+      <div><span class="label">Runtime errors</span><b class="mono" id="tb-errors"></b></div>
+      <div><span class="label">Project</span><b class="mono" id="tb-project"></b></div>
+      <div><span class="label">Recording folder</span><b class="mono" id="tb-folder"></b></div>
+      <div class="wide" id="tb-index"><span class="label">Every recording</span><b class="mono"><a href="index.html">index.html</a></b></div>
+      </div>
+    </details>
+    </div>
+  </div>
+<script>
+let timeline = /*TIMELINE*/null;
+const recordings = /*RECORDINGS*/null;     // as index.html: the recordings beside it, the newest first
+const $ = id => document.getElementById(id);
+let frames = [], steps = [], end = 0.05;
+let picked = false;     // the recording came from a folder chosen on this page, not from the script
+let frameSrc = file => `${timeline.folder}/${file}`;
+const ms = t => `${Math.round(t * 1000)} ms`;
+const at_ = t => `${100 * t / end}%`;
+const show = v => typeof v === "string" ? v : JSON.stringify(v);
+const clip = (text, n) => text.length <= n ? text : text.slice(0, n - 3) + "...";
+const plural = (n, word) => `${n} ${word}${n == 1 ? "" : "s"}`;
+const firstLine = text => text.split("\n")[0];     // what a record step said spells out the recording before it, over lines
+const baseName = path => path.replace(/[\\/]+$/, "").split(/[\\/]/).pop();
+
+// What a step said, its paths shortened to their last part for display: the folders of
+// this recording and of its project first, as they may hold spaces, then any drive path.
+function shortPaths(text) {
+  const folders = [timeline.path?.replace(/\/[^/]*$/, ""), timeline.project].filter(Boolean);
+  for (const dir of folders) for (const sep of ["/", "\\"]) text = text.split(dir.replaceAll("/", sep) + sep).join("");
+  return text.replace(/[A-Za-z]:[\\/][^\s;,]*[\\/]([^\s\\/;,]+)/g, "$1");
+}
+
+// A path shown by its last part; the whole path in its tooltip, copied by a click.
+function showPath(el, path) {
+  el.textContent = baseName(path) + (/[\\/]$/.test(path) ? "/" : "");
+  el.title = `${path}\nClick to copy the whole path`;
+  el.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(path);
+      el.classList.add("copied");
+      setTimeout(() => el.classList.remove("copied"), 1200);
+    } catch (e) {     // a browser that keeps the clipboard from a local file: the tooltip still shows it
+    }
+  };
+}
+const icon = name => `<svg class="i"><use href="#i-${name}"/></svg>`;
+let at = 0, playing = false, timer = null;
+let part = null;    // the selected part: the indexes of its first and last frame, {a, b}
+
+// The ruler: a labelled tick every major interval, small ones between, the interval
+// the shortest that leaves a label about 60 pixels at the ruler's width.
+function drawRuler() {
+  const fit = Math.max(2, Math.floor($("ruler").clientWidth / 60));
+  const major = [10, 20, 50, 100, 200, 250, 500, 1000, 2000, 5000, 10000, 30000].find(m => end * 1000 / m <= fit)
+    || 60000;
+  const minor = {20: 5, 200: 50, 2000: 500}[major] || major / 5;
+  $("ruler").innerHTML = "";
+  for (let t = 0; t <= end * 1000 + 0.5; t += minor) {
+    const tick = document.createElement("i"), isMajor = Math.abs(t / major - Math.round(t / major)) < 1e-6;
+    tick.style.left = at_(t / 1000);
+    tick.className = isMajor ? "major" : "";
+    $("ruler").appendChild(tick);
+    if (isMajor) {
+      const label = document.createElement("b");
+      label.style.left = at_(t / 1000);
+      label.textContent = `${Math.round(t)}`;
+      $("ruler").appendChild(label);
+    }
+  }
+}
+addEventListener("resize", () => {
+  drawRuler();
+  if (!frames.length) return;
+  go(at);
+  if (part) select(part.a, part.b);
+});
+
+// Shows a recording: its timeline, and where each frame's file is.
+function start(data, src) {
+  timeline = data, frames = data.frames, steps = data.steps || [], frameSrc = src;
+  end = frames.length ? frames[frames.length - 1].t + 0.05 : 0.05;
+  $("opening").hidden = true;
+  for (const el of document.querySelectorAll("[data-run]")) el.hidden = false;
+  document.title = `${timeline.name}: recording review`;
+  const failed = steps.filter(s => !s.ok).length, errors = steps.reduce((n, s) => n + s.errors.length, 0);
+  $("tb-title").textContent = `${timeline.name} · Details`;
+  $("tb-frames").textContent = `${frames.length} in ${ms(end)}`;
+  $("tb-video").textContent = timeline.video ? timeline.video.split(/[\\/]/).pop() : "none";
+  $("tb-steps").textContent = `${steps.length}` + (failed ? `, ${failed} failed` : "");
+  $("tb-errors").textContent = `${errors}`;
+  if (timeline.project) showPath($("tb-project"), timeline.project);
+  else $("tb-project").textContent = "not recorded";
+  if (/^([A-Za-z]:|\/)/.test(framesFolder())) showPath($("tb-folder"), framesFolder());
+  else $("tb-folder").textContent = framesFolder();
+  $("tb-index").hidden = picked;
+  $("steps-meta").textContent = plural(steps.length, "step") + (failed ? ` · ${failed} failed` : "");
+  drawRuler();
+  for (const f of frames) {
+    const tick = document.createElement("i");
+    tick.style.left = at_(f.t);
+    $("frames").appendChild(tick);
+  }
+  steps.forEach(listStep);
+  if (!steps.length) $("steps").innerHTML = `<li class="empty">No step ran while recording.</li>`;
+  go(0);
+}
+
+// A step in the list, with its outcome, and as a span on the timeline.
+function listStep(s) {
+  const begin = Math.max(0, s.start), span = `${Math.round(begin * 1000)}–${ms(s.end)}`;
+  const li = document.createElement("li");
+  li.className = s.ok ? "" : "bad";
+  li.innerHTML = `${icon(s.ok ? "ok" : "bad")}<div><div class="what"></div><small></small></div>`;
+  li.querySelector(".what").textContent = s.line + (s.ok ? "" : ": failed");
+  li.querySelector("small").textContent = span + (s.said ? ` · ${clip(shortPaths(firstLine(s.said)), 140)}` : "");
+  for (const e of s.errors) {
+    const d = document.createElement("div");
+    d.className = "error";
+    d.textContent = e.split("\n")[0];
+    li.lastChild.appendChild(d);
+  }
+  li.onmousedown = e => { if (e.shiftKey) e.preventDefault(); };     // no text selection
+  li.onclick = e => {
+    play(false);
+    if (e.shiftKey) select(frameAt(begin), frameAt(s.end));
+    go(frameAt(begin));
+  };
+  s.li = li;
+  $("steps").appendChild(li);
+  const bar = document.createElement("i");
+  bar.className = s.ok && !s.errors.length ? "" : "bad";
+  bar.style.left = at_(begin);
+  bar.style.width = at_(s.end - begin);
+  bar.title = `${s.line}\n${span}`;
+  s.bar = bar;
+  $("spans").appendChild(bar);
+}
+
+function frameAt(t) {
+  let i = 0;
+  while (i + 1 < frames.length && frames[i + 1].t <= t) i++;
+  return i;
+}
+
+function go(i) {
+  if (!frames.length) return;
+  at = Math.min(Math.max(0, i), frames.length - 1);
+  const f = frames[at], before = frames[at - 1];
+  $("frame").src = frameSrc(f.file);
+  $("clock").textContent = `${ms(f.t)} / ${ms(end)} · frame ${at + 1}/${frames.length}`;
+  $("watch-meta").textContent = `at ${ms(f.t)}`;
+  $("playhead").style.left = at_(f.t);
+  // The marks sit centred over the playhead, kept inside the timeline at its two ends.
+  const wide = $("timeline").clientWidth, marks = $("marks").offsetWidth;
+  $("marks").style.left = `${Math.min(Math.max(0, wide * f.t / end - marks / 2), wide - marks)}px`;
+  const current = steps.filter(s => s.start <= f.t).pop();     // the step this frame belongs to
+  for (const s of steps) {
+    s.li.classList.toggle("active", s === current);
+    s.bar.classList.toggle("active", s === current);
+  }
+  const names = Object.keys(f.watch || {});
+  $("watch").innerHTML = names.length ? "" : `<tr><td class="empty" colspan="2">The record step watched nothing.</td></tr>`;
+  for (const name of names) {
+    const tr = document.createElement("tr");
+    tr.className = before && show(before.watch?.[name]) !== show(f.watch[name]) ? "changed" : "";
+    if (tr.className) tr.title = "Changed since the previous frame";
+    tr.innerHTML = "<td></td><td></td>";
+    tr.children[0].textContent = name;
+    tr.children[1].textContent = show(f.watch[name]);
+    $("watch").appendChild(tr);
+  }
+}
+
+// Plays to the last frame, or through the selected part when one is given.
+function play(on, through) {
+  playing = on;
+  const press = (id, down, label) => {
+    $(id).setAttribute("aria-pressed", down);
+    $(id).setAttribute("aria-label", label);
+  };
+  press("play", on && !through, on && !through ? "Pause" : "Play");
+  press("part-play", on && !!through, on && through ? "Pause" : "Play the part");
+  $("timeline").classList.toggle("playing", on);
+  clearTimeout(timer);
+  if (!on) return;
+  const first = through ? through.a : 0, last = through ? through.b : frames.length - 1;
+  if (at < first || at >= last) go(first);
+  const tick = () => {
+    if (!playing) return;
+    if (at >= last) return play(false);
+    const wait = (frames[at + 1].t - frames[at].t) * 1000 / Number($("speed").value);
+    timer = setTimeout(() => { go(at + 1); tick(); }, wait);
+  };
+  tick();
+}
+
+// The selected part, from frame a to frame b, or none.
+function select(a, b) {
+  part = a == null || !frames.length ? null : {a: Math.min(a, b), b: Math.max(a, b)};
+  $("part-tools").hidden = !part;
+  $("part-empty").hidden = !!part;
+  for (const id of ["selection", "shade-before", "shade-after"]) $(id).hidden = !part;
+  $("copied").textContent = "";
+  if (!part) return;
+  const first = frames[part.a], last = frames[part.b], count = part.b - part.a + 1;
+  $("selection").style.left = at_(first.t);
+  $("selection").style.width = at_(last.t - first.t);
+  $("shade-before").style.cssText = `left: 0; width: ${at_(first.t)}`;
+  $("shade-after").style.cssText = `left: ${at_(last.t)}; right: 0`;
+  // The length sits on the dimension line, or beside it where the part is too narrow to hold it.
+  const length = $("selection-length"), wide = $("timeline").clientWidth;
+  length.textContent = ms(last.t - first.t);
+  length.className = "";
+  if (length.offsetWidth + 12 > $("selection").offsetWidth)
+    length.className = $("selection").offsetLeft + $("selection").offsetWidth + length.offsetWidth < wide ? "right" : "left";
+  const ran = stepsIn(first.t, last.t), errors = ran.reduce((n, s) => n + s.errors.length, 0);
+  const facts = [["From", ms(first.t)], ["To", ms(last.t)], ["Length", ms(last.t - first.t)], ["Frames", count],
+                 ["Steps", ran.length ? [...new Set([ran[0].step, ran.at(-1).step])].join("–") : "none"],
+                 ["Errors", errors, errors ? "bad" : ""]];
+  $("facts").innerHTML = "";
+  for (const [label, value, kind] of facts) {
+    const cell = document.createElement("div");
+    cell.className = kind || "";
+    cell.innerHTML = `<span class="label"></span><b></b>`;
+    cell.firstChild.textContent = label;
+    cell.lastChild.textContent = value;
+    $("facts").appendChild(cell);
+  }
+  $("brief").value = brief();
+}
+
+const stepsIn = (from, to) => steps.filter(s => s.start <= to && s.end >= from);
+
+// Where the frames are on this machine, for the agent to open them: the folder beside a
+// page opened from the disk, which holds wherever the recording was moved; else where
+// the script wrote them.
+function framesFolder() {
+  if (location.protocol === "file:" && !picked) {
+    const page = decodeURIComponent(location.pathname).replace(/^\/([A-Za-z]:)/, "$1");
+    return (location.host ? `//${location.host}` : "") + page.replace(/[^/]*$/, "") + `${timeline.folder}/`;
+  }
+  return timeline.path ? `${timeline.path}/` : `${timeline.folder}/, the folder of the recording`;
+}
+
+// The selected part as a task for an agent that starts cold: what to find out, in which
+// project, the evidence (the frames to look at, the steps that ran, how the watched
+// values changed, each change with the frame that shows it), how to go about it and
+// what to report.
+function brief() {
+  const first = frames[part.a], last = frames[part.b], count = part.b - part.a + 1, shown = Math.min(count, 12);
+  const sample = [...new Set(Array.from({length: shown}, (_, k) =>
+    part.a + Math.round(k * (count - 1) / Math.max(shown - 1, 1))))];
+  const project = timeline.project ? ` of the Construct 3 project in ${timeline.project}` : "";
+  const note = $("note").value.trim();
+  const lines = [`Investigate ${ms(first.t)} to ${ms(last.t)} of the preview recording ${timeline.name}${project}.`, "",
+    "What to find out: " + (note || "whether the game does here what the steps were meant to make it do, and if "
+                                    + "not, what goes wrong and why."), "",
+    `The part is ${plural(count, "frame")}. Time 0 is the recording's first frame; each frame's watched `
+    + "values were read just after it was taken."];
+  lines.push("", (sample.length < count ? `${sample.length} of its frames, evenly spread,` : "Its frames,")
+                 + ` in ${framesFolder()} (timeline.json there has all ${frames.length}, each with the watched values):`,
+             "  " + sample.map(i => `${frames[i].file} ${ms(frames[i].t)}`).join(", "));
+  const ran = stepsIn(first.t, last.t);
+  lines.push("", ran.length ? "Steps of the plan that ran in it:" : "No step of the plan ran in it.");
+  for (const s of ran) {
+    lines.push(`  ${s.line}, ${ms(Math.max(0, s.start))} to ${ms(s.end)}` + (s.ok ? "" : ", FAILED")
+               + (s.said ? `: ${clip(firstLine(s.said), 300)}` : ""));
+    lines.push(...s.errors.map(e => `    runtime: ${e.split("\n")[0]}`));
+  }
+  const names = Object.keys(first.watch || {});
+  if (names.length) lines.push("", "Watched values in it:");
+  for (const name of names) {
+    const changes = [];
+    let value;
+    for (let i = part.a; i <= part.b; i++) {
+      const v = clip(JSON.stringify(frames[i].watch?.[name] ?? null), 80);
+      if (v !== value) changes.push(`${v} at ${ms(frames[i].t)}` + (i > part.a ? ` (${frames[i].file})` : ""));
+      value = v;
+    }
+    lines.push(`  ${name}: ` + (changes.length == 1 ? `${changes[0]}, unchanged`
+      : changes.length <= 8 ? changes.join(", ")
+      : `${changes.slice(0, 7).join(", ")}, ${changes.length - 8} more in timeline.json, ${changes.at(-1)}`));
+  }
+  lines.push("", "How:",
+    "1. Look at the frames in order, the listed ones first, and note what the window shows at each moment that matters.",
+    "2. Line them up with the steps and the watched values: find the first moment the game departs from what was "
+    + "meant, by its time and frame.",
+    "3. Find the events that cause it in the project's event sheets, with the construct3-agent-plugin skill "
+    + "(print_sheet.py prints a sheet as events). Where the frames and values cannot settle it, record the part again "
+    + "with preview_project.py, watching the expressions that would.",
+    "", "Report what happens and at which frame, the cause by sheet and event number, and the fix you propose; say "
+    + "which of it you saw and which you infer. Change no file before the user agrees to the fix.");
+  return lines.join("\n");
+}
+
+$("copy").onclick = async () => {
+  const text = brief();
+  $("brief").value = text;
+  try {
+    await navigator.clipboard.writeText(text);
+    $("copied").className = "";
+    $("copied").textContent = "Copied";
+  } catch (e) {     // a browser that keeps the clipboard from a local file
+    $("part-text").open = true;
+    $("brief").select();
+    $("copied").className = "bad";
+    $("copied").textContent = "The browser did not allow copying: the text is selected below, press Ctrl+C.";
+  }
+};
+$("note").addEventListener("input", () => { $("brief").value = brief(); $("copied").textContent = ""; });
+$("part-play").onclick = () => playing ? play(false) : play(true, part);
+$("part-clear").onclick = () => select(null);
+// The marks over the playhead are pressed, not the timeline under them, and take no focus from a click.
+$("marks").addEventListener("pointerdown", e => e.stopPropagation());
+$("marks").addEventListener("mousedown", e => e.preventDefault());
+// A start after the part's end runs it to the last frame, an end before its start from the first.
+$("from").onclick = () => { play(false); select(at, part && part.b >= at ? part.b : frames.length - 1); };
+$("to").onclick = () => { play(false); select(part && part.a <= at ? part.a : 0, at); };
+
+// On the timeline, pressing or dragging shows the frame at that moment. With Shift
+// it selects the part dragged over, or from the frame shown to the one clicked; an
+// edge of the selected part drags that edge.
+const box = () => $("timeline").getBoundingClientRect();
+const frameAtX = x => frameAt(end * Math.min(Math.max(0, (x - box().left) / box().width), 1));
+const edgeAt = x => part && ["a", "b"].find(k => Math.abs(x - box().left - box().width * frames[part[k]].t / end) <= 6);
+let drag = null;
+// The keys work on the whole page, so the timeline takes no focus, and a button clicked
+// before it gives its focus up, so that Shift draws no focus ring.
+$("timeline").addEventListener("pointerdown", e => {
+  play(false);
+  document.activeElement?.blur();
+  $("timeline").setPointerCapture(e.pointerId);
+  const edge = edgeAt(e.clientX);
+  drag = edge ? {edge} : e.shiftKey ? {from: at, x: e.clientX, anchor: frameAtX(e.clientX)} : {};
+  dragTo(e);
+});
+$("timeline").addEventListener("pointermove", e => {
+  if (!drag) return $("timeline").classList.toggle("edge", !!edgeAt(e.clientX));
+  if (e.buttons) dragTo(e);
+});
+const dragTo = e => {
+  const i = frameAtX(e.clientX);
+  go(i);
+  if (drag.edge) {
+    const other = part[drag.edge === "a" ? "b" : "a"];
+    select(i, other);
+    if (i !== other) drag.edge = i < other ? "a" : "b";
+  } else if (drag.anchor != null && (drag.moved ||= Math.abs(e.clientX - drag.x) > 3)) {
+    select(drag.anchor, i);
+  }
+};
+const endDrag = () => {
+  if (drag && drag.anchor != null && !drag.moved) select(drag.from, at);   // Shift+click
+  drag = null;
+};
+$("timeline").addEventListener("pointerup", endDrag);
+$("timeline").addEventListener("pointercancel", endDrag);
+
+$("play").onclick = () => play(!playing);
+$("prev").onclick = () => { play(false); go(at - 1); };
+$("next").onclick = () => { play(false); go(at + 1); };
+document.addEventListener("keydown", e => {
+  if (!frames.length || ["SELECT", "TEXTAREA", "INPUT"].includes(e.target.tagName)) return;
+  if (e.key === " ") { e.preventDefault(); play(!playing); }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); play(false); go(at - 1); }
+  else if (e.key === "ArrowRight") { e.preventDefault(); play(false); go(at + 1); }
+  else if (e.key === "Home") { play(false); go(0); }
+  else if (e.key === "End") { play(false); go(frames.length - 1); }
+  else if (e.code === "BracketLeft") $("from").click();
+  else if (e.code === "BracketRight") $("to").click();
+  else if (e.key === "Escape" && part) select(null);
+});
+
+// Without a recording in it, the page opens one from a folder the user chooses: the game
+// project, its .tmp/preview, or one recording's folder, which holds timeline.json and the
+// frames. A folder with several recordings lists them. Edge and Chrome remember the folder
+// under the picker's id and start there the next time; the files stay in the browser.
+$("choose").onclick = async () => {
+  $("pick-error").textContent = "";
+  if (!window.showDirectoryPicker) return $("pick").click();
+  let folder;
+  try {
+    folder = await showDirectoryPicker({id: "c3-recordings", mode: "read"});
+  } catch (e) {     // the chooser was closed
+    return;
+  }
+  offer(await recordingsIn(folder));
+};
+
+// A recording is {name, timeline: File, files(): Map of file name to File}.
+async function recordingsIn(folder) {
+  const one = async dir => {
+    try {
+      const timeline = await (await dir.getFileHandle("timeline.json")).getFile();
+      return {name: dir.name, timeline, files: async () => {
+        const files = new Map();
+        for await (const [name, handle] of dir.entries()) if (handle.kind === "file") files.set(name, await handle.getFile());
+        return files;
+      }};
+    } catch (e) {     // no timeline.json in it
+      return null;
+    }
+  };
+  const under = async dir => {
+    const found = [];
+    for await (const handle of dir.values()) if (handle.kind === "directory") found.push(await one(handle));
+    return found.filter(Boolean);
+  };
+  const here = await one(folder);
+  if (here) return [here];
+  const found = await under(folder);
+  if (found.length) return found;
+  try {
+    return await under(await (await folder.getDirectoryHandle(".tmp")).getDirectoryHandle("preview"));
+  } catch (e) {     // not a game project with recordings
+    return [];
+  }
+}
+
+$("pick").onchange = () => {
+  const folders = new Map();
+  for (const f of $("pick").files) {
+    const dir = f.webkitRelativePath.replace(/[^/]*$/, "");
+    if (!folders.has(dir)) folders.set(dir, new Map());
+    folders.get(dir).set(f.name, f);
+  }
+  $("pick").value = "";
+  offer([...folders].filter(([, files]) => files.has("timeline.json"))
+    .map(([dir, files]) => ({name: dir.split("/").at(-2), timeline: files.get("timeline.json"), files: async () => files})));
+};
+
+// Opens the one recording found, or lists them to choose from.
+async function offer(found) {
+  $("recordings").innerHTML = "";
+  if (!found.length) {
+    $("pick-error").textContent = "No recording there: choose the game project, its .tmp/preview, or one recording's "
+      + "folder, the one that holds timeline.json.";
+    return;
+  }
+  if (found.length == 1) return openRecording(found[0]);
+  found.sort((a, b) => a.name.localeCompare(b.name));
+  for (const r of found) {
+    const li = document.createElement("li");
+    li.innerHTML = `${icon("play")}<div><div class="what"></div><small></small></div>`;
+    li.querySelector(".what").textContent = r.name;
+    li.onclick = () => openRecording(r);
+    $("recordings").appendChild(li);
+    r.timeline.text().then(text => {
+      const data = JSON.parse(text), n = data.frames.length, failed = data.steps.filter(s => !s.ok).length;
+      li.querySelector("small").textContent = `${plural(n, "frame")} in ${ms(n ? data.frames[n - 1].t : 0)}`
+        + ` · ${plural(data.steps.length, "step")}` + (failed ? `, ${failed} failed` : "");
+    }).catch(() => { li.querySelector("small").textContent = "timeline.json does not read as a recording"; });
+  }
+}
+
+async function openRecording(r) {
+  let data;
+  try {
+    data = JSON.parse(await r.timeline.text());
+    if (!Array.isArray(data.frames)) throw new Error("no frames");
+  } catch (e) {
+    $("pick-error").textContent = `${r.name}/timeline.json is not a recording of preview_project.py: ${e.message}.`;
+    return;
+  }
+  const urls = new Map();
+  for (const [name, file] of await r.files()) urls.set(name, URL.createObjectURL(file));
+  picked = true;
+  start(data, file => urls.get(file) || "");
+}
+
+// The recordings index.html lists, each a link to its review page.
+function showIndex() {
+  $("opening").classList.add("index");
+  $("opening-title").textContent = document.title = "Recordings";
+  if (recordings[0]?.project) showPath($("opening-meta"), recordings[0].project);
+  else $("opening-meta").textContent = plural(recordings.length, "recording");
+  $("opening-help").hidden = $("choose").hidden = true;
+  if (!recordings.length) $("pick-error").textContent = "No recording here yet.";
+  for (const r of recordings) {
+    const li = document.createElement("li"), troubled = r.failed || r.errors;
+    li.className = "link" + (troubled ? " bad" : "");
+    li.innerHTML = `<a>${icon(troubled ? "bad" : "play")}<div><div class="what"></div><small></small></div></a>`;
+    li.firstChild.href = r.page;
+    li.querySelector(".what").textContent = r.name;
+    li.querySelector("small").textContent = `${r.when} · ${plural(r.frames, "frame")} in ${ms(r.seconds)}`
+      + ` · ${plural(r.steps, "step")}` + (r.failed ? `, ${r.failed} failed` : "")
+      + (r.errors ? ` · ${plural(r.errors, "runtime error")}` : "");
+    $("recordings").appendChild(li);
+  }
+  $("opening").hidden = false;
+}
+
+if (timeline) start(timeline, frameSrc);
+else if (recordings) showIndex();
+else $("opening").hidden = false;
+</script>
+</body>
+</html>

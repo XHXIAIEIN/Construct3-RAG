@@ -12,10 +12,7 @@ Safe to run again: a clone already present is left as it is, and install.py
 refreshes rather than overwrites.
 """
 import argparse
-import json
-import random
 import shutil
-import string
 import subprocess
 import sys
 from pathlib import Path
@@ -24,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILL_SCRIPTS = ROOT / "skills" / "construct3-agent-plugin" / "scripts"
 sys.path.insert(0, str(SKILL_SCRIPTS))
 import c3project as c3  # noqa: E402
+from new_project import new_project  # noqa: E402
 
 INSTALL = SKILL_SCRIPTS / "install.py"
 
@@ -59,34 +57,6 @@ def clone(name: str, url: str, shallow: bool, folder: Path, dry_run: bool) -> st
     if p.returncode != 0:
         return f"{name}: git clone failed; run by hand: {' '.join(cmd)}\n{p.stderr.strip()}"
     return f"{name}: cloned to {target}"
-
-
-def unique_id() -> str:
-    """The shape the editor writes: eleven lowercase letters and digits."""
-    return "".join(random.choices(string.ascii_lowercase + string.digits, k=11))
-
-
-def new_project(template: Path, target: Path, dry_run: bool) -> str:
-    """The empty project copied to target with its own name and uniqueId. A
-    folder that already holds files and is not a project is left alone; a
-    folder that holds only a Git repository counts as empty."""
-    if not (template / "project.c3proj").exists():
-        return (f"{target.name}: not created; {template} holds no project.c3proj. Pass --template <folder> "
-                f"naming an empty project the editor saved, or save an empty project from the editor as {target}")
-    if target.exists() and any(p.name != ".git" for p in target.iterdir()):
-        return f"{target.name}: {target} is not empty and holds no project.c3proj; pass an empty or new folder"
-    if dry_run:
-        return f"{target.name}: would copy {template} to {target}"
-    shutil.copytree(template, target, ignore=shutil.ignore_patterns(".git"), dirs_exist_ok=True)
-    proj = target / "project.c3proj"
-    data = json.loads(proj.read_text(encoding="utf-8"))
-    data["name"], data["uniqueId"] = target.name, unique_id()
-    proj.write_text(json.dumps(data, indent="\t", ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
-    line = f"{target.name}: created from {template.name} at {target}"
-    if git():
-        subprocess.run(["git", "init", "-q"], cwd=target, check=False)
-        line += ", git initialised"
-    return line
 
 
 def game_folder(given: str, folder: Path) -> Path:

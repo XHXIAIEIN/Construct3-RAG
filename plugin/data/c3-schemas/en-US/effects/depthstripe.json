@@ -1,0 +1,47 @@
+{
+  "id": "depthstripe",
+  "name": "Depth stripe",
+  "description": "Add stripes of color receding in to the distance.",
+  "category": "3d",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "color1",
+      "type": "color",
+      "name": "Color 1",
+      "desc": "Color of the first stripe."
+    },
+    {
+      "id": "opacity1",
+      "type": "percent",
+      "name": "Opacity 1",
+      "desc": "Opacity of the first stripe."
+    },
+    {
+      "id": "color2",
+      "type": "color",
+      "name": "Color 2",
+      "desc": "Color of the second (alternate) stripe."
+    },
+    {
+      "id": "opacity2",
+      "type": "percent",
+      "name": "Opacity 2",
+      "desc": "Opacity of the second (alternate) stripe."
+    },
+    {
+      "id": "stripe-depth",
+      "type": "float",
+      "name": "Stripe depth",
+      "desc": "How wide the stripes are in terms of depth."
+    },
+    {
+      "id": "offset",
+      "type": "float",
+      "name": "Offset",
+      "desc": "A depth offset to apply to the stripe pattern."
+    }
+  ]
+}

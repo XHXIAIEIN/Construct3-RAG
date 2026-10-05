@@ -1,0 +1,10 @@
+{
+  "id": "divide",
+  "name": "Divide",
+  "description": "For each color channel, divide the back pixel by the front pixel for a lightening blend.",
+  "category": "blend",
+  "blends-background": true,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": []
+}

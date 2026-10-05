@@ -1,0 +1,23 @@
+{
+  "id": "highlightshadow",
+  "name": "高光阴影",
+  "description": "调整图像的高光和阴影。",
+  "category": "color",
+  "blends-background": false,
+  "cross-sampling": false,
+  "animated": false,
+  "parameters": [
+    {
+      "id": "shadow-factor",
+      "type": "percent",
+      "name": "阴影系数",
+      "desc": "调整阴影的数量。数值在 0 - 100 范围。"
+    },
+    {
+      "id": "highlight-factor",
+      "type": "percent",
+      "name": "高光系数",
+      "desc": "调整高光的数量。数值在 0 - 100 范围。"
+    }
+  ]
+}

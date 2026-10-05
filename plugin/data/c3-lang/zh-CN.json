@@ -1,0 +1,339 @@
+{
+	"text": {
+		"ui": {
+			"bars": {
+				"properties": {
+					"project": {
+						"about": {
+							"desc": "项目信息",
+							"name": "关于"
+						},
+						"advanced": {
+							"desc": "适用于高级用户的设置。 建议将这些保留为默认值",
+							"name": "高级选项"
+						},
+						"anisotropic-filtering": {
+							"desc": "图像使用的各向异性的过滤模式，主要影响3D相机从侧面观察物体表面的精细程度，也影响部分调整为极端长宽比的2D对象渲染质量。建议保持为自动。",
+							"name": "各向异性",
+							"options": {
+								"16x": "16x",
+								"2x": "2x",
+								"3x": "3x",
+								"4x": "4x",
+								"8x": "8x",
+								"auto": "自动",
+								"off": "关闭"
+							}
+						},
+						"aspect-ratio": {
+							"desc": "可视区域的宽高比",
+							"name": "宽高比例"
+						},
+						"author": {
+							"desc": "此项目的开发者或团队的名称",
+							"name": "作者"
+						},
+						"auto-increment-version": {
+							"desc": "每次导出项目后，自动增加版本号的第四个数字。",
+							"name": "版本号自动递增"
+						},
+						"background-color": {
+							"desc": "在视窗外显示的背景颜色",
+							"name": "背景颜色"
+						},
+						"bundle-addons": {
+							"desc": "将此项目使用的第三方插件附加到项目文件中，以便可以在任何地方打开它。",
+							"name": "附加插件到项目"
+						},
+						"colors": {
+							"desc": "选择项目使用的颜色",
+							"name": "颜色"
+						},
+						"compatibility-settings": {
+							"desc": "用于导出项目的向后兼容设置。通常不应更改这些设置。",
+							"name": "兼容性设置"
+						},
+						"description": {
+							"desc": "必填项。用一两句话描述你的项目。用于介绍游戏的类型、玩法以及特色等。",
+							"name": "简介"
+						},
+						"display": {
+							"desc": "影响项目在运行时呈现方式的设置。",
+							"name": "显示"
+						},
+						"downscaling-quality": {
+							"desc": "渲染小于原始尺寸的图像时，权衡缩放质量和性能内存的策略。仅建议在观察到小图像边缘出现伪影或锯齿时选择高质量模式。",
+							"name": "缩放质量",
+							"options": {
+								"high": "质量 (不推荐)",
+								"low": "性能",
+								"medium": "均衡"
+							}
+						},
+						"editor": {
+							"desc": "影响项目编辑和预览的设置",
+							"name": "编辑器"
+						},
+						"email": {
+							"desc": "用于联系的邮箱地址，如开发者或商务合作的邮箱。",
+							"name": "邮箱",
+							"placeholder": "author@example.com"
+						},
+						"enable-multitexturing": {
+							"desc": "使用 WebGPU 渲染器时启用多重纹理渲染，可以减少纹理切换，提升渲染效率和整体视觉质量。但会增加填充率的性能开销，在移动设备会导致性能下降。",
+							"name": "启用多重纹理",
+							"options": {
+								"auto": "自动"
+							}
+						},
+						"enable-webgpu": {
+							"desc": "使用实验性的WebGPU渲染器，这通常会提高性能。若设备不支持，则自动退回到WebGL。",
+							"name": "启用 WebGPU",
+							"options": {
+								"auto": "自动"
+							}
+						},
+						"far-distance": {
+							"desc": "远平面与相机的距离，影响 2D 缩放和 3D 渲染的极限。",
+							"name": "最远距离"
+						},
+						"first-layout": {
+							"default": "(默认)",
+							"desc": "项目运行时最初加载的场景",
+							"name": "初始场景"
+						},
+						"fixed-framerate": {
+							"desc": "目标帧率。实际帧率受硬件性能限制影响。",
+							"name": "固定帧率"
+						},
+						"fov": {
+							"desc": "改变相机前方聚焦的可见区域角度，仅在Z轴刻度为 '常规' 模式下生效。注意，这也将会改变相机默认Z轴刻度。",
+							"name": "相机FOV"
+						},
+						"framerate-mode": {
+							"desc": "调整游戏帧速调度方式，通常垂直同步效果最好，可以保持与显示器刷新率同步。无上限用于特殊使用场景，将尽可能在屏幕刷新前更快的渲染。",
+							"name": "帧率模式",
+							"options": {
+								"fixed": "固定",
+								"unlimited-frame": "无上限",
+								"unlimited-tick": "无上限(仅每帧)",
+								"vsync": "垂直同步"
+							}
+						},
+						"fullscreen-mode": {
+							"desc": "根据设备的纵横比和分辨率，使用不同的缩放模式调整视区大小或填充可视空间。",
+							"name": "缩放模式",
+							"options": {
+								"integer-scale-inner": "内部整倍缩放",
+								"integer-scale-outer": "外部整倍缩放",
+								"letterbox-integer-scale": "整数缩放",
+								"letterbox-scale": "比例缩放",
+								"off": "关闭",
+								"scale-inner": "内部缩放",
+								"scale-outer": "外部放大"
+							}
+						},
+						"fullscreen-quality": {
+							"desc": "高质量在高分辨率游戏可以获得更好的视觉表现，低像素适用于临近采样的像素风格游戏。",
+							"name": "全屏质量",
+							"options": {
+								"high": "高质量",
+								"low": "低像素"
+							}
+						},
+						"gpu-preference": {
+							"desc": "在具有多个GPU的设备上，首选GPU类型。",
+							"name": "GPU首选",
+							"options": {
+								"default": "默认",
+								"high-performance": "高性能",
+								"low-power": "集成图形"
+							}
+						},
+						"help-link": {
+							"desc": "打开帮助手册了解有关项目属性的更多信息。",
+							"link-text": "帮助",
+							"name": "更多信息"
+						},
+						"id": {
+							"desc": "必填项。用于应用平台识别此项目的唯一标志符，以反向域名的格式填写。如 com.myname.myproject",
+							"name": "应用ID",
+							"placeholder": "com.company.appname"
+						},
+						"loader-style": {
+							"desc": "在加载过程中，以哪种加载内容方式展示。",
+							"name": "加载页样式",
+							"options": {
+								"none": "空白 (不推荐)",
+								"percent": "进度百分比文本",
+								"progress": "进度条",
+								"progress-logo": "进度条 & LOGO",
+								"splash": "Construct 启动页"
+							}
+						},
+						"max-spritesheet-size": {
+							"desc": "项目导出时，将所有图像资源合并为图集。使用较小尺寸的图集可以节省运行内存占用，但会降低性能。较大的图集可以提升性能，但需要更多运行内存。",
+							"disabled": "禁用 (不推荐)",
+							"name": "图集尺寸"
+						},
+						"name": {
+							"desc": "项目名称",
+							"name": "名称"
+						},
+						"near-distance": {
+							"desc": "近平面与相机的距离，影响 2D 缩放和 3D 渲染的极限。",
+							"name": "最近距离"
+						},
+						"orientations": {
+							"desc": "若设备支持，允许设备以竖屏或横屏进行。",
+							"name": "锁定方向",
+							"options": {
+								"any": "任意",
+								"landscape": "横屏",
+								"portrait": "竖屏"
+							}
+						},
+						"pause-on-unfocus": {
+							"desc": "当游戏窗口失去焦点时暂停游戏 ，仅在预览模式有效。",
+							"name": "窗口后台暂停"
+						},
+						"pixel-rounding": {
+							"desc": "将所有对象的坐标位置总是四舍五入为整数。",
+							"name": "像素对齐"
+						},
+						"preload-sounds": {
+							"desc": "在项目启动前，下载并解码所有声音文件（不包含音乐），确保首次播放声音时不会延迟。禁用可以提升启动速度和内存占用，但播放前要按需加载并管理内存卸载。注意，音乐文件不会预加载，它将在运行时流式传输。",
+							"name": "预载音效"
+						},
+						"preview-effects": {
+							"desc": "在编辑器中预览混合模式和滤镜。",
+							"name": "预览滤镜效果"
+						},
+						"rendering-mode": {
+							"desc": "是否以 2D 模式、3D 模式或自动决定渲染此项目。",
+							"name": "渲染模式",
+							"options": {
+								"auto": "自动"
+							}
+						},
+						"splash-color": {
+							"desc": "启动屏幕的背景颜色，导出应用程序启动时显示。",
+							"name": "加载页颜色"
+						},
+						"startup": {
+							"desc": "影响项目加载和启动方式的设置。",
+							"name": "启动页"
+						},
+						"theme-color": {
+							"desc": "主题颜色允许在部分平台运行时，替换平台默认的UI颜色。",
+							"name": "主题色"
+						},
+						"uid-numbering": {
+							"desc": "为新对象分配UID编号时使用的方案。",
+							"name": "UID分配",
+							"options": {
+								"increment": "顺序",
+								"random": "随机"
+							}
+						},
+						"use-loader-layout": {
+							"desc": "在项目其他内容仍在加载时，显示初始场景作为加载场景。",
+							"name": "自定义加载场景"
+						},
+						"use-theme-color": {
+							"desc": "启用主题颜色功能，允许在部分平台运行时，替换平台默认的UI颜色。",
+							"name": "使用主题色"
+						},
+						"use-worker": {
+							"desc": "将游戏环境托管在 Web Worker 中运行，独立于浏览器主线程。这样可以有效提升游戏效率。",
+							"name": "启用 Worker",
+							"options": {
+								"auto": "自动"
+							}
+						},
+						"version": {
+							"desc": "项目的版本号，通常由四组数字组成，例如1.0.0.0。每组数字在 0-99 范围。",
+							"name": "版本"
+						},
+						"viewport-fit": {
+							"desc": "处理非矩形的屏幕设备，如刘海屏、异型屏等。选择自动，将在安全区域显示。",
+							"name": "适应屏幕",
+							"options": {
+								"auto": "自动",
+								"cover": "覆盖"
+							}
+						},
+						"viewport-size": {
+							"desc": "可视区域大小，即玩家实际看到场景区域的范围。",
+							"height": {
+								"desc": "可视区域的高度，以像素为单位。",
+								"name": "高度"
+							},
+							"name": "可视区域",
+							"separator": " x ",
+							"width": {
+								"desc": "可视区域的宽度，以像素为单位。",
+								"name": "宽度"
+							}
+						},
+						"website": {
+							"desc": "与该项目相关的网站。",
+							"name": "主页"
+						},
+						"z-axis-scale": {
+							"convert": {
+								"confirmation-message": "将项目转换为 Z 轴比例 '标准' 模式将影响项目中所有布局和图层内所有 3D 内容的 Z 坐标和深度。此操作无法撤销。请注意，这不会自动更新您的事件表或代码，相关内容可能仍需手动更新。您要继续吗？",
+								"desc": "将项目转换为 '标准' Z 轴比例。",
+								"link": "转换为 '标准'",
+								"name": "转换 Z 轴比例"
+							},
+							"desc": "用于 3D 功能在 Z 轴使用的单位尺度。'归一化' 选项使用与 X/Y 轴相同的单位。'标准' 选项使用 0–100 的范围，但已被弃用—— 请改用 '标准' 模式。",
+							"name": "Z轴刻度",
+							"normalized-confirmation": "Z 轴刻度的 '归一化' 模式现已标记为弃用。未来将移除此模式，取而代之的是 \"标准\" 模式。您想要提前更改为 \"标准\" 模式吗？",
+							"options": {
+								"normalized": "归一化",
+								"regular": "标准"
+							}
+						}
+					}
+				},
+				"timeline": {
+					"eases": {
+						"default": "默认",
+						"easeinback": "In Back",
+						"easeinbounce": "In Bounce",
+						"easeincirc": "In Circular",
+						"easeincubic": "In Cubic",
+						"easeinelastic": "In Elastic",
+						"easeinexpo": "In Exponential",
+						"easeinoutback": "In Out Back",
+						"easeinoutbounce": "In Out Bounce",
+						"easeinoutcirc": "In Out Circular",
+						"easeinoutcubic": "In Out Cubic",
+						"easeinoutelastic": "In Out Elastic",
+						"easeinoutexpo": "In Out Exponential",
+						"easeinoutquad": "In Out Quadratic",
+						"easeinoutquart": "In Out Quartic",
+						"easeinoutquint": "In Out Quintic",
+						"easeinoutsine": "In Out Sinusoidal",
+						"easeinquad": "In Quadratic",
+						"easeinquart": "In Quartic",
+						"easeinquint": "In Quintic",
+						"easeinsine": "In Sinusoidal",
+						"easeoutback": "Out Back",
+						"easeoutbounce": "Out Bounce",
+						"easeoutcirc": "Out Circular",
+						"easeoutcubic": "Out Cubic",
+						"easeoutelastic": "Out Elastic",
+						"easeoutexpo": "Out Exponential",
+						"easeoutquad": "Out Quadratic",
+						"easeoutquart": "Out Quartic",
+						"easeoutquint": "Out Quintic",
+						"easeoutsine": "Out Sinusoidal",
+						"noease": "Linear"
+					}
+				}
+			}
+		}
+	}
+}
