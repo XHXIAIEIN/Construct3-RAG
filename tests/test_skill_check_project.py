@@ -373,9 +373,9 @@ def number_variable(name: str, constant: bool, sid: int) -> dict:
 ])
 def test_an_action_writes_the_variable_the_editor_finds_without_case(project, globals_, local, written, refused):
     """A constant PHASE declared above a variable phase made Add 1 to phase stop the editor with
-    "event variable phase is constant": it finds a name without case, the nearest declaration
-    first and, among the variables of one list of events, the first. Each case was opened in
-    the editor (r495.2, 2026-10-02); the ones without this finding opened."""
+    "event variable phase is constant": it finds a name without case, of two globals the first
+    and in a local's scope the local. Each case was opened in the editor (r495.2, 2026-10-02);
+    the ones without this finding opened."""
     def change(sheet):
         sheet["events"][0:0] = [number_variable(n, n == "PHASE", 900000000000010 + i) for i, n in enumerate(globals_)]
         block = events(sheet)["setup"]
@@ -398,16 +398,20 @@ def test_an_action_writes_the_variable_the_editor_finds_without_case(project, gl
     ("globals", ["PHASE", "phase"], "sheet Game variable phase: phase has the name of PHASE, declared at the top "
                                     "level of sheet Game, once case is ignored"),
     ("locals", ["step", "STEP"], "variable STEP: STEP has the name of step, declared above it in the same list "
-                                 "of events, once case is ignored; the editor finds every use of either name as "
-                                 "step, so STEP is never read or written. Rename it and its uses, for example "
-                                 "STEPValue"),
-    ("parameters", ["amount", "Amount"], "parameter Amount: Amount has the name of amount, an earlier parameter "
-                                         "of the same function, once case is ignored"),
+                                 "of events, once case is ignored. The editor renames STEP to STEP2 when it opens "
+                                 "the project. Every use of either name refers to step, so STEP is never read or "
+                                 "written. Rename it and its uses, for example STEPValue"),
+    ("parameters", ["amount", "Amount"], "parameter amount: amount has the name of Amount, a later parameter of "
+                                         "the same function, once case is ignored. The editor renames amount to "
+                                         "amount2 when it opens the project. Every use of the name refers to "
+                                         "Amount"),
 ])
 def test_two_variables_of_one_scope_with_one_name_are_refused(project, where, names, expected):
-    """The editor's dialogs refuse a second variable named like one of its scope, case aside; a file
-    that has two opens, and every use of the name reaches the first (opened in r495.2, 2026-10-02).
-    A small model declared its globals at the top of both of its sheets."""
+    """The editor's dialogs refuse a second variable named like one of its scope, compared without
+    case. A file that has two opens: two globals keep their names, and every use refers to the
+    first; of two locals of one list the editor renames the second, and of a function's parameters
+    every one but the last (r495.2 and r504, 2026-10-05). A small model declared its globals at the
+    top of both of its sheets."""
     def change(sheet):
         if where == "parameters":
             events(sheet)["add_score"]["functionParameters"] += [
@@ -422,6 +426,89 @@ def test_two_variables_of_one_scope_with_one_name_are_refused(project, where, na
     out = findings(project, change)
     assert expected in out, out
     assert out.count("never read or written") == 1, out
+
+
+def number_param(name: str, sid: int) -> dict:
+    return {"name": name, "type": "number", "initialValue": "0", "comment": "", "sid": sid}
+
+
+def function_block(name: str, params: list, actions: list, sid: int) -> dict:
+    return {"functionName": name, "functionDescription": "", "functionCategory": "", "functionReturnType": "none",
+            "functionCopyPicked": False, "functionIsAsync": False, "functionParameters": params,
+            "eventType": "function-block", "conditions": [], "actions": actions, "sid": sid}
+
+
+def launch() -> dict:
+    """A function whose parameter speed its action reads."""
+    return function_block("Launch", [number_param("speed", 900000000000041)],
+                          [set_var("score", "score + speed", 900000000000042)], 900000000000043)
+
+
+@pytest.mark.parametrize("case, expected", [
+    ("parameter after its group's constant",
+     "parameter speed: speed has the name of the constant SPEED of group Restart once case is ignored, and SPEED "
+     "is in scope where speed is declared, before it. The editor renames speed to speed2 when it opens the "
+     "project. Every use of speed then refers to SPEED, and the value a call passes for it is lost. Rename speed "
+     "and its uses, for example speedValue"),
+    ("group's constant after the function",
+     "variable SPEED: SPEED has the name of the parameter speed of function Launch once case is ignored, which is "
+     "declared before it, inside the scope of SPEED. The editor renames SPEED to SPEED2 when it opens the project. "
+     "In function Launch, SPEED then refers to speed, and elsewhere an expression that names SPEED stops the open "
+     "with \"Unknown expression 'SPEED': This is not a system expression or variable name in this scope\". Rename "
+     "SPEED and its uses"),
+    ("local of a function after its parameter",
+     "variable Points: Points has the name of the parameter points of function AddScore once case is ignored, and "
+     "points is in scope where Points is declared, before it. The editor renames Points to Points2 when it opens "
+     "the project. Every use of Points then refers to points. Rename Points and its uses, for example "
+     "PointsValue"),
+    ("local of a sub-event after its group's static variable",
+     "variable Level: Level has the name of the static variable level of group Setup once case is ignored, and "
+     "level is in scope where Level is declared, before it. The editor renames Level to Level2 when it opens the "
+     "project"),
+])
+def test_a_variable_inside_the_scope_of_another_of_its_name_is_refused(project, case, expected):
+    """Of two locals or parameters whose names match without case, one inside the scope of the
+    other, the editor renames the one that comes later in the sheet, and both names refer to the
+    other. A parameter after its group's constant of that name read the constant for every use; a
+    constant after the function was renamed instead, and a use of it outside the function stopped
+    the open (r495.2 and r504, 2026-10-05)."""
+    def change(sheet):
+        restart = events(sheet)["restart"]["children"]
+        if case == "parameter after its group's constant":
+            restart[0:0] = [number_variable("SPEED", True, 900000000000040)]
+            restart.append(launch())
+        elif case == "group's constant after the function":
+            restart += [launch(), number_variable("SPEED", True, 900000000000040)]
+        elif case == "local of a function after its parameter":
+            events(sheet)["add_score"]["children"] = [
+                number_variable("Points", False, 900000000000044),
+                block([], [set_var("score", "score + Points", 900000000000045)])]
+        else:
+            setup = next(e for e in sheet["events"] if e.get("title") == "Setup")
+            setup["children"].insert(0, {**number_variable("level", False, 900000000000046), "isStatic": True})
+            events(sheet)["setup"]["children"].insert(0, number_variable("Level", False, 900000000000047))
+    out = findings(project, change)
+    assert expected in out, out
+    assert out.count("when it opens the project") == 1, out
+
+
+def test_two_functions_whose_names_differ_by_case_are_refused(project):
+    """Of two functions beep and Beep the editor renamed the second to Beep2, and a call by either
+    name ran beep; two custom actions of one object went the same way (r495.2 and r504,
+    2026-10-05)."""
+    def change(sheet):
+        sheet["events"] += [
+            function_block("addScore", [number_param("points", 900000000000050)], [], 900000000000051),
+            {"aceType": "action", "aceName": "collect", "objectClass": "Coin", "functionDescription": "",
+             "functionCategory": "", "functionReturnType": "none", "functionCopyPicked": True,
+             "functionIsAsync": False, "functionParameters": [], "eventType": "custom-ace-block",
+             "conditions": [], "actions": [], "sid": 900000000000052}]
+    out = findings(project, change)
+    assert "function addScore has the name of the function AddScore at sheet Game event 7" in out, out
+    assert ("once case is ignored. The editor renames it to addScore2 when it opens the project, and a call to "
+            "addScore runs AddScore, so this function never runs") in out, out
+    assert "custom action Coin.collect has the name of the custom action Coin.Collect at sheet Game event 6" in out
+    assert "The editor renames it to collect2 when it opens the project" in out, out
 
 
 def test_self_in_a_system_parameter_names_the_object_to_write(project):
@@ -686,10 +773,11 @@ def test_a_call_with_an_empty_pair_of_parentheses_is_refused(project):
     assert "empty pair" not in out
 
 
-def test_a_local_that_hides_a_variable_of_another_type_by_case_is_refused(project):
+def test_a_local_that_hides_a_global_by_case_is_named(project):
     """A local string count hid the global constant COUNT, and COUNT - 1 below it stopped the editor
-    with "Type mismatch: - does not work with 'string' and 'number'". A same-typed local, or one
-    whose name differs by more than case, is accepted."""
+    with "Type mismatch: - does not work with 'string' and 'number'". A local or parameter of the
+    same type hides the global too, and the project opens, so the global's spelling reads it
+    there: a warning. One whose name differs by more than case passes."""
     def change(sheet):
         children = events(sheet)["setup"].setdefault("children", [])
         children.insert(0, {"eventType": "variable", "name": "SCORE", "type": "string", "initialValue": "",
@@ -701,7 +789,11 @@ def test_a_local_that_hides_a_variable_of_another_type_by_case_is_refused(projec
     out = findings(project, change)
     assert "variable SCORE: string SCORE has the name of the number variable score once case is ignored" in out
     assert "rename it, for example SCOREText" in out
-    assert "parameter Score" not in out
+    line = next(x for x in out.splitlines() if "parameter Score:" in x)
+    assert line.startswith("warning: ") and line.endswith(
+        "parameter Score: Score has the name of the global score once case is ignored, and hides it in function "
+        "AddScore. There, an expression or action that names score refers to Score, which the editor accepts. If "
+        "they are two values, rename Score and its uses, for example ScoreValue"), out
     assert "scoreText" not in out
 
 
@@ -922,6 +1014,16 @@ def test_instance_variable_and_behavior_share_a_name(project):
         t["instanceVariables"].append({"name": "tween", "type": "number", "desc": "", "show": True, "sid": 6})
     assert "Coin: behavior Tween has the same name as instance variable tween" in findings(
         project, change, "objectTypes/Coin.json")
+
+
+def test_two_instance_variables_whose_names_differ_by_case_are_refused(project):
+    """hp and HP on one object stopped the r495.2 and r504 editors (2026-10-05)."""
+    def change(t):
+        t["instanceVariables"] += [{"name": "hp", "type": "number", "desc": "", "show": True, "sid": 6},
+                                   {"name": "HP", "type": "number", "desc": "", "show": True, "sid": 7}]
+    assert ("Coin: instance variable HP has the same name as instance variable hp once case is ignored; the editor "
+            "stops with \"name 'HP' already in object class 'Coin' namespace\" before the project opens. Rename HP, "
+            "for example HPValue") in findings(project, change, "objectTypes/Coin.json")
 
 
 def test_object_types_sharing_a_sid_stop_the_editor(project):

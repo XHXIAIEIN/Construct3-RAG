@@ -116,7 +116,7 @@ MEMBER = re.compile(r"(\w+)(?:\([^()]*\))?\s*\.\s*(\w+)(?:\s*\.\s*(\w+))?")
 # an unknown character, and the test is written as a comparison.
 C_OPERATORS = {"==": "=", "!=": "<>", "&&": "&", "||": "|", "**": "^"}
 C_OPERATOR = re.compile(r"==|!=|&&|\|\||\*\*|!")
-# What a local that would hide an outer variable of another type can be called instead.
+# What a variable or parameter named like another one, compared without case, can be called instead.
 SHADOW_SUFFIX = {"string": "Text", "number": "Value", "boolean": "Flag"}
 # Instances created in a top-level event or trigger join the instance lists when it ends: until then only
 # Pick by unique ID finds them outside the creating event (prompts/pitfalls/creating-objects.md). The
@@ -160,6 +160,28 @@ def next_name(name: str) -> str:
     stem = name.rstrip("0123456789")
     number = name[len(stem):]
     return stem + (str(int(number) + 1) if number else "2")
+
+
+def free_name(name: str, taken) -> str:
+    """The name the editor gives a variable, parameter or function it renames: next_name,
+    repeated until no name taken matches it without case (Amount3 when amount2 is taken)."""
+    low = {LOWER(t) for t in taken if isinstance(t, str)}
+    new = next_name(name)
+    while LOWER(new) in low:
+        new = next_name(new)
+    return new
+
+
+def variable_kind(var: dict) -> str:
+    """What a finding calls a declaration; a function parameter carries no eventType."""
+    if "eventType" not in var:
+        return "parameter"
+    return "constant" if var.get("isConstant") else "static variable" if var.get("isStatic") else "variable"
+
+
+def case_aside(name: str, other: str) -> str:
+    """' once case is ignored' when the two names differ, else ''."""
+    return "" if name == other else " once case is ignored"
 
 
 def params_of(ace: dict) -> dict:
@@ -494,6 +516,10 @@ class Checker:
         self.deprecated_uses: dict[str, list[str]] = {}      # warning -> where each use is
         self.global_ids: set[int] = set()     # the top-level variables of every sheet
         self.variable_names: set[str] = set()     # every variable and parameter name, as written
+        self.load_order: dict[int, int] = {}     # id of a local or parameter -> its place in the sheets' order
+        self.declared: dict[int, tuple[str, str, str]] = {}     # id -> (where, what a finding calls it, its scope)
+        self.renamed: set[int] = set()     # ids of the locals and parameters the editor renames
+        self.callables: dict[tuple[str, str], tuple[str, str]] = {}  # (owner or "", lower name) -> (name, where)
         self.numbers_on_disk = True      # whether the sheet being walked is the file, whose numbers a plan can name
         self.signalled: set[str] | None = set()     # literal tags a Signal raises; None once one is not literal
         self.awaited: list[tuple[str, str, str]] = []     # (tag, ACE id, where) of each Wait for signal and On signal
@@ -1057,25 +1083,32 @@ class Checker:
     def check_namespace(self, obj: str) -> None:
         """`Enemy.Angle` has to mean one thing, so the editor refuses an instance
         variable, behavior or effect named like another one on the object or its
-        families, or like an expression of the plugin. Names compare without case."""
+        families, or like an expression of the plugin. Names compare without case:
+        instance variables hp and HP of Thing stopped the r495.2 and r504 editors with
+        "name 'HP' already in object class 'Thing' namespace", and a family's hp beside
+        a member's HP with the family named."""
         p = self.p
-        declared: dict[str, str] = {}
+        declared: dict[str, tuple[str, str]] = {}     # lower name -> (label, name)
         for owner in [obj] + p.families_of(obj):
             d = p.types.get(owner) or p.families.get(owner) or {}
-            entries = ([("instance variable", v["name"]) for v in d.get("instanceVariables", [])]
-                       + [("behavior", b["name"]) for b in d.get("behaviorTypes", [])]
-                       + [("effect", e["name"]) for e in d.get("effectTypes", []) if "name" in e])
-            for what, name in entries:
+            entries = ([("instance variable", v["name"], v.get("type")) for v in d.get("instanceVariables", [])]
+                       + [("behavior", b["name"], None) for b in d.get("behaviorTypes", [])]
+                       + [("effect", e["name"], None) for e in d.get("effectTypes", []) if "name" in e])
+            for what, name, vtype in entries:
                 label = f"{what} {name}" + (f" of family {owner}" if owner != obj else "")
                 if LOWER(name) in declared:
-                    self.err(f"{obj}: {label} has the same name as {declared[LOWER(name)]}")
-                declared[LOWER(name)] = label
+                    other, first = declared[LOWER(name)]
+                    rename = f", for example {name}{SHADOW_SUFFIX.get(vtype, 'Value')}" if vtype else ""
+                    self.err(f"{obj}: {label} has the same name as {other}{case_aside(name, first)}; the editor "
+                             f"stops with \"name '{name}' already in object class '{owner}' namespace\" before the "
+                             f"project opens. Rename {name}{rename}")
+                declared[LOWER(name)] = (label, name)
         plugin = p.schema("plugins", p.plugin_of[obj])
         expressions = p.expressions_of(plugin)
         members = p.families[obj].get("members", []) if obj in p.families else [obj]
         if any(m in self.world_types for m in members):
             expressions |= p.common_expressions_of(plugin)
-        for key, label in declared.items():
+        for key, (label, _) in declared.items():
             if key in expressions and " of family " not in label:
                 self.err(f"{obj}: {label} collides with the expression {obj}.{key}; rename it")
 
@@ -1420,11 +1453,10 @@ class Checker:
             elif writes and var.get("isConstant") and var["name"] != value and value in self.variable_names:
                 kind = "global" if id(var) in self.global_ids else "local"
                 self.err(f"{where}: {value} is read as the {kind} constant {var['name']}: the editor finds a "
-                         f"variable by its name without case, taking the nearest declaration and, within one list "
-                         f"of events, the first, so the action writes {var['name']} and the editor stops with "
-                         f"'event variable {value} is constant'. Rename the variable {value}, here and wherever "
-                         f"it is declared and used, so that it differs from {var['name']} by more than case, "
-                         f"for example {value}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
+                         f"variable by its name without case, so the action writes {var['name']} and the editor "
+                         f"stops with 'event variable {value} is constant'. Rename the variable {value}, here and "
+                         f"wherever it is declared and used, so that it differs from {var['name']} by more than "
+                         f"case, for example {value}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
             elif writes and var.get("isConstant"):
                 self.err(f"{where}: {value} is a constant and an action cannot change it; "
                          f"the editor stops with 'event variable {value} is constant'")
@@ -1718,75 +1750,148 @@ class Checker:
             if not finite:
                 self.err(f"{w}: initialValue {value!r} is not a number; the editor reads it as 0")
 
-    def check_shadow(self, var: dict, scope: dict, where: str) -> None:
-        """Names match without case and the nearest scope wins, so a local string count
-        hides a global number COUNT in its event and sub-events: COUNT - 1 there is read
-        on the text and the editor refuses the project with "Type mismatch: - does not
-        work with 'string' and 'number'". A same-typed local only hides the outer value,
-        which the editor accepts. None of the 565 sheets of the official examples
-        declares a local named like a variable already in scope."""
-        name = var.get("name")
-        if not isinstance(name, str):
-            return
-        outer = self.variable_named(name, scope)
-        if outer is None or outer is var or id(var) in self.global_ids or outer.get("type") == var.get("type"):
-            return
-        self.err(f"{where}: {var.get('type')} {name} has the name of the {outer.get('type')} variable {outer['name']} "
-                 f"once case is ignored, and it hides it here and in the sub-events; an expression that means "
-                 f"{outer['name']} reads {name}, and the editor refuses the project with \"Type mismatch\" "
-                 f"(\"- does not work with 'string' and 'number'\" for a text local beside a number); rename it, "
-                 f"for example {name}{SHADOW_SUFFIX.get(var.get('type'), 'Local')}")
+    def check_shadow(self, var: dict, other: dict, where: str, visible: str) -> None:
+        """A local or parameter named like a global, compared without case. The editor keeps
+        both names, and in the local's scope the global's name refers to the local. A text
+        count beside a number COUNT makes COUNT - 1 there "Type mismatch: - does not work with
+        'string' and 'number'", which stops the open. With a local of the same type under
+        another case the project opens, and the global's spelling there reads the local. No
+        official example declares a local named like a variable in scope. visible: where the
+        local is visible."""
+        name, outer = var["name"], other["name"]
+        if other.get("type") != var.get("type"):
+            self.err(f"{where}: {var.get('type')} {name} has the name of the {other.get('type')} variable {outer} "
+                     f"once case is ignored, and it hides it here and in the sub-events; an expression that means "
+                     f"{outer} reads {name}, and the editor refuses the project with \"Type mismatch\" "
+                     f"(\"- does not work with 'string' and 'number'\" for a text local beside a number); rename it, "
+                     f"for example {name}{SHADOW_SUFFIX.get(var.get('type'), 'Local')}")
+        elif name != outer:
+            self.warn(f"{where}: {name} has the name of the global {outer} once case is ignored, and hides it in "
+                      f"{visible}. There, an expression or action that names {outer} refers to {name}, which the "
+                      f"editor accepts. If they are two values, rename {name} and its uses, for example "
+                      f"{name}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
 
     @staticmethod
     def variable_named(name, scope: dict) -> dict | None:
-        """The variable the editor binds a name to, compared without case. declare
-        keeps the scope in the editor's order of search."""
+        """The variable a name refers to in scope, compared without case; enter keeps the
+        scope as the editor binds the names."""
         if not isinstance(name, str):
             return None
         return next((v for k, v in scope.items() if LOWER(k) == LOWER(name)), None)
 
-    @staticmethod
-    def declare(scope: dict, var: dict, outer: dict) -> dict | None:
-        """Bring a variable into scope as the editor searches it: the event's own function
-        parameters, then the variables of each enclosing list from the nearest out, then
-        the top-level variables of every sheet, each list in its order, and the first name
-        that matches without case wins. So a variable drops the outer ones of its name, and
-        a later one of its own list that matches it is never found: that earlier one is
-        returned. outer: the scope as it was before this list."""
+    def enter(self, scope: dict, var: dict, outer: dict, where: str, holder: str) -> None:
+        """Bring a local or a function parameter into scope as the editor binds its name, and
+        check the name against the variables in scope, compared without case. holder: the
+        event that holds its list, "group Movement", "event 5" or "function launch"; outer:
+        the scope as it was before this list.
+
+        A local beside a global keeps its name and hides the global in its scope. As it opens
+        the project, the editor renames a local or parameter whose name matches another of its
+        list or of a scope that holds it: the one that comes later in the sheet gets a number
+        (speed to speed2), and both names then refer to the other one wherever it is in scope.
+        Probed in the r495.2 and r504 editors (docs/decisions/checker-editor-load-rules.md)."""
         name = var.get("name")
         if not isinstance(name, str):
-            return None
-        for k in [k for k in scope if LOWER(k) == LOWER(name) and outer.get(k) is scope[k]]:
+            return
+        visible = holder if variable_kind(var) == "parameter" or holder.startswith("group ") \
+            else f"the sub-events of {holder}"
+        self.declared[id(var)] = (where, f"the {variable_kind(var)} {name} of {holder}", visible)
+        same = next((v for k, v in scope.items() if LOWER(k) == LOWER(name) and outer.get(k) is not v), None)
+        if same is not None:
+            self.renamed.add(id(var))
+            self.check_declared_once(var, same, where, "declared above it in the same list of events",
+                                     free_name(name, scope))
+            return
+        other = self.variable_named(name, outer)
+        if other is not None and id(other) not in self.renamed and id(other) not in self.global_ids \
+                and self.load_order.get(id(var), 0) > self.load_order.get(id(other), 0):
+            self.renamed.add(id(var))
+            self.check_renamed(var, other, where, free_name(name, scope))
+            return
+        for k in [k for k in scope if scope[k] is other]:
             del scope[k]
-        earlier = Checker.variable_named(name, scope)
-        if earlier is None:
-            scope[name] = var
-        return earlier
-
-    def enter(self, scope: dict, var: dict, outer: dict, where: str, first: str) -> None:
-        """Declare a local or a function parameter and check its name against its own
-        list and, when the list has no other of that name, against the outer scope."""
-        earlier = self.declare(scope, var, outer)
-        if earlier is None:
-            self.check_shadow(var, outer, where)
+        scope[name] = var
+        if other is None or id(other) in self.renamed:
+            return
+        if id(other) in self.global_ids:
+            self.check_shadow(var, other, where, visible)
         else:
-            self.check_declared_once(var, earlier, where, first)
+            self.renamed.add(id(other))
+            self.check_outer_renamed(other, var, free_name(other["name"], scope))
 
-    def check_declared_once(self, var: dict, earlier: dict, where: str, first: str) -> None:
-        """The editor's own dialogs never let two variables of one scope share a name
-        without case. A file that has them opens, and every use of either name reaches
-        the first one. first: where that one is, as a phrase."""
+    def check_renamed(self, var: dict, other: dict, where: str, new: str) -> None:
+        """A local or parameter declared after a local or parameter of its name whose scope
+        holds it: the editor renames it, and its uses refer to the other one."""
+        name, desc = var["name"], self.declared[id(other)][1]
+        kept = other["name"] if other["name"] != name else f"that {variable_kind(other)}"
+        lost = ", and the value a call passes for it is lost" if variable_kind(var) == "parameter" else ""
+        self.err(f"{where}: {name} has the name of {desc}{case_aside(name, other['name'])}, and {kept} is in "
+                 f"scope where {name} is declared, before it. The editor renames {name} to {new} when it opens "
+                 f"the project. Every use of {name} then refers to {kept}{lost}. Rename {name} and its uses, for "
+                 f"example {name}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
+
+    def check_outer_renamed(self, var: dict, inner: dict, new: str) -> None:
+        """An outer local declared after an inner local or parameter of its name: the editor
+        renames the outer one, so its name refers to the inner one inside the inner one's
+        scope and to nothing elsewhere."""
+        where = self.declared[id(var)][0]
+        name = var["name"]
+        _, desc, visible = self.declared[id(inner)]
+        kept = inner["name"] if inner["name"] != name else f"that {variable_kind(inner)}"
+        self.err(f"{where}: {name} has the name of {desc}{case_aside(name, inner['name'])}, which is declared "
+                 f"before it, inside the scope of {name}. The editor renames {name} to {new} when it opens the "
+                 f"project. In {visible}, {name} then refers to {kept}, and elsewhere an expression that names "
+                 f"{name} stops the open with \"Unknown expression '{name}': This is not a system expression or "
+                 f"variable name in this scope\". Rename {name} and its uses, for example "
+                 f"{name}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
+
+    def check_declared_once(self, var: dict, earlier: dict, where: str, first: str, new: str = "") -> None:
+        """Two variables of one list whose names match without case, which the editor's own
+        dialogs never allow. A file that has them opens, and every use of either name refers
+        to the first. The editor renames the second local as it opens the project, to new:
+        STEP to STEP2. A second global keeps its name, and only a script reads it. first:
+        where the first one is, as a phrase."""
         name, other = var["name"], earlier["name"]
         if other == name:
-            self.err(f"{where}: {name} is declared again; the first {name} is {first}, and the editor finds "
-                     f"every use of the name as that one, so this declaration is never read or written. Delete it"
+            renames = f" The editor renames this one to {new} when it opens the project." if new else ""
+            self.err(f"{where}: {name} is declared again; the first {name} is {first}.{renames} Every use of the "
+                     f"name refers to the first, so this declaration is never read or written. Delete it"
                      + ("; a global is visible from every sheet" if id(var) in self.global_ids else ""))
             return
+        renames = f" The editor renames {name} to {new} when it opens the project." if new else ""
         constant = (f"; an action that writes {name} stops the editor with \"event variable {name} is constant\""
                     if earlier.get("isConstant") else "")
-        self.err(f"{where}: {name} has the name of {other}, {first}, once case is ignored; the editor finds "
-                 f"every use of either name as {other}, so {name} is never read or written{constant}. Rename it "
-                 f"and its uses, for example {name}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
+        self.err(f"{where}: {name} has the name of {other}, {first}, once case is ignored.{renames} Every use of "
+                 f"either name refers to {other}, so {name} is never read or written{constant}. Rename it and its "
+                 f"uses, for example {name}{SHADOW_SUFFIX.get(var.get('type'), 'Value')}")
+
+    def check_parameter_renamed(self, param: dict, last: dict, where: str, new: str) -> None:
+        """Two parameters of one function whose names match without case. The editor renames
+        every one but the last as it opens the project, amount to amount2 and Amount to
+        Amount3 before a third AMOUNT, and every use of the name refers to the last."""
+        name, kept = param["name"], last["name"]
+        said = (f"{name} is declared again by a later parameter of the same function" if name == kept else
+                f"{name} has the name of {kept}, a later parameter of the same function, once case is ignored")
+        self.err(f"{where}: {said}. The editor renames {name} to {new} when it opens the project. Every use of "
+                 f"the name refers to {'the later one' if name == kept else kept}, so {name} is never read or "
+                 f"written, and the value a call passes for it is lost. Rename it and its uses, for example "
+                 f"{name}{SHADOW_SUFFIX.get(param.get('type'), 'Value')}")
+
+    def check_callable_name(self, ev: dict, kind: str, name: str, where: str) -> None:
+        """Functions share one namespace, and the custom actions of an object another, compared
+        without case. As it opens the project, the editor renames the one that comes later, a
+        number added (Beep to Beep2), and a call by either name runs the first."""
+        owner = "" if kind == "function" else str(ev.get("objectClass"))
+        key = (owner, LOWER(name))
+        first = self.callables.setdefault(key, (name, where))
+        if first[0] == name:
+            return
+        of = f"{owner}." if owner else ""
+        new = free_name(name, [n for (o, _), (n, _) in self.callables.items() if o == owner])
+        self.err(f"{where}: {kind} {of}{name} has the name of the {kind} {of}{first[0]} at {first[1]} once case is "
+                 f"ignored. The editor renames it to {new} when it opens the project, and a call to {name} runs "
+                 f"{first[0]}, so this {kind} never runs. Rename it and its calls so that the two names differ by "
+                 f"more than case")
 
     def note_signal(self, ace: dict, where: str) -> None:
         if ace.get("objectClass") != "System" or ace.get("id") not in ("signal", "wait-for-signal", "on-signal"):
@@ -2210,12 +2315,13 @@ class Checker:
 
     def walk(self, events: list, scope: dict, where: str, counter: list[int], above: Holder | None = None,
              depth: int = 0, group: dict | None = None, by_input: bool | None = False,
-             paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
+             paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None,
+             holder: str = "") -> None:
         """A local declared in a list of sibling events is visible to every event of
         that list, whatever the order, and to their sub-events; not to the parent's
         own actions. So the list's variables enter the scope first, and a block is
         checked before its children are walked. scope maps a name to the variable
-        event or function parameter that declares it, in the order declare keeps; a
+        event or function parameter that declares it, in the order enter keeps; a
         sheet's own top-level variables are there before its walk. counter holds the sheet's
         running event number, above what holds the trigger of this branch, depth
         how many sub-event levels down this list is (a group's children are 0),
@@ -2223,7 +2329,8 @@ class Checker:
         tests input (check_gesture), paced whether one above is triggered or on a
         timer (check_pathfinding), line the events above in this branch, gone
         what the top-level event destroyed before the list runs (check_none_left),
-        shared by the list's events in the order they run."""
+        shared by the list's events in the order they run, holder the event that
+        holds the list, "group Movement", "event 5" or "function launch"."""
         scope = dict(scope)
         bad = [ev for ev in events if not isinstance(ev, dict)]
         if bad:
@@ -2232,8 +2339,7 @@ class Checker:
         outer = dict(scope)
         for ev in events:
             if ev.get("eventType") == "variable" and id(ev) not in self.global_ids:
-                self.enter(scope, ev, outer, f"{where} variable {ev['name']}",
-                           "declared above it in the same list of events")
+                self.enter(scope, ev, outer, f"{where} variable {ev['name']}", holder)
         ladders = self.ladders(events) if self.style else {}
         numbered: dict[int, list[tuple[int, str]]] = {}
         find_tests: dict[str, list[tuple[int, str, str]]] = {}
@@ -2264,22 +2370,36 @@ class Checker:
                     self.err(f"{w}: a sheet cannot include itself")
             elif et == "group":
                 self.walk(ev.get("children") or [], scope, where, counter, above, group=ev, by_input=by_input,
-                          paced=paced)
+                          paced=paced, holder=f"group {ev.get('title')}")
             elif et in ("function-block", "custom-ace-block"):
+                kind = "function" if et == "function-block" else "custom action"
+                name = ev.get("functionName") if et == "function-block" else ev.get("aceName")
+                label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
+                if isinstance(name, str):
+                    self.check_callable_name(ev, kind, name, w)
                 fscope = dict(scope)
                 outer = dict(fscope)
-                for param in ev["functionParameters"]:
-                    self.enter(fscope, param, outer, f"{w} parameter {param['name']}",
-                               "an earlier parameter of the same function")
+                params = ev["functionParameters"]
+                # Of the parameters whose names match without case, the editor keeps the last.
+                last = {LOWER(p["name"]): p for p in params if isinstance(p.get("name"), str)}
+                taken = set(fscope) | {p.get("name") for p in params}
+                for param in params:
+                    kept = last[LOWER(param["name"])] if isinstance(param.get("name"), str) else param
+                    if kept is param:
+                        self.enter(fscope, param, outer, f"{w} parameter {param['name']}", f"{kind} {label}")
+                    else:
+                        new = free_name(param["name"], taken)
+                        taken.add(new)
+                        self.check_parameter_renamed(param, kept, f"{w} parameter {param['name']}", new)
                     self.check_variable(param, w, "parameter")
-                label = ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}"
                 if et == "custom-ace-block" and ev["objectClass"] not in self.p.plugin_of:
                     self.err(f"{w}: custom action {label} belongs to unknown object {ev['objectClass']}")
                 body: dict[str, str] = {}
                 self.check_block(ev, fscope, f"{w} {label}", None, None, gone=body)
                 self.walk(ev.get("children", []), fscope, where, counter,
                           self.check_structure(ev, f"{w} {label}", above, previous), depth + 1, by_input=None,
-                          paced=None, gone=None if any(self.waits(a) for a in ev.get("actions", [])) else body)
+                          paced=None, gone=None if any(self.waits(a) for a in ev.get("actions", [])) else body,
+                          holder=f"{kind} {label}")
             elif et == "block":
                 here = None if by_input is None else by_input or self.reads_input(ev)
                 timed = None if paced is None else paced or self.paces(ev)
@@ -2292,7 +2412,8 @@ class Checker:
                 self.check_block(ev, scope, w, here, timed, line + (ev,), mine)
                 self.walk(ev.get("children", []), scope, where, counter, self.check_structure(ev, w, above, previous),
                           depth + 1, by_input=here, paced=timed, line=line + (ev,),
-                          gone=None if any(self.waits(a) for a in ev.get("actions", [])) else mine)
+                          gone=None if any(self.waits(a) for a in ev.get("actions", [])) else mine,
+                          holder=f"event {counter[0]}")
             elif et == "script":
                 self.check_script(ev.get("script"), scope, w)
             else:
@@ -2521,10 +2642,15 @@ class Checker:
         sheet_of = {id(ev): sname for sname, ev in tops}
         globals_: dict = {}
         for sname, ev in tops:
-            earlier = self.declare(globals_, ev, {})
+            earlier = self.variable_named(ev.get("name"), globals_)
             if earlier is not None:
                 self.check_declared_once(ev, earlier, f"sheet {sname} variable {ev['name']}",
                                          f"declared at the top level of sheet {sheet_of[id(earlier)]}")
+            elif isinstance(ev.get("name"), str):
+                globals_[ev["name"]] = ev
+        # The order the editor reads variables and parameters in: sheet by sheet, each event before its sub-events.
+        self.load_order = {id(v): i for i, v in enumerate(
+            v for s in self.sheets.values() for v in declarations(s["events"]))}
         self.variable_names = {v.get("name") for s in self.sheets.values() for v in declarations(s["events"])}
         for sname, sheet in self.sheets.items():
             # A plan's sheet has numbers the file does not have yet: no operation can address them.

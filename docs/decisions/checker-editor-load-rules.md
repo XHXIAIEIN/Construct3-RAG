@@ -209,40 +209,66 @@ Option 2 as the default, and option 3 as the step after it.
   `functionCategory` may be left out. Every official example writes all
   five; the sweep changed no finding.
 - The one type mismatch among the 91 came from a local text variable named
-  like a number variable in scope, under another case: names match without
-  case and the nearest scope wins, so the number's expression read the
-  text. The checker now refuses a local or function parameter named like a
-  variable of another type in scope. None of the 565 sheets of the official
-  examples declares one, and the sweep changed no finding. A same-typed
-  local only hides the outer value, which the editor accepts. Type
-  inference for the rest of an expression was not built: it needs a real
-  expression parser, operator rules probed in the editor one by one and
-  no new finding over the examples, to catch what the editor opener already
-  reports; it is worth building when an open fails on a mismatch the
-  shadowing rule does not explain.
+  like a number global, under another case: names match without case and,
+  in the local's scope, the nearest wins, so the global's expression read
+  the text. The checker refuses a local or function parameter named like a
+  global of another type. No official example declares one, and the sweep
+  changed no finding. Type inference for the
+  rest of an expression was not built: it needs a real expression parser,
+  operator rules probed in the editor one by one and no new finding over
+  the examples, to catch what the editor opener already reports; it is
+  worth building when an open fails on a mismatch the shadowing rule does
+  not explain.
 - A generated benchmark project declared a global constant `PHASE` above a
   global variable `phase` and wrote *Add 1 to phase*; the checker passed it
   and the editor refused it with `event variable phase is constant`. The
-  loader binds a variable parameter through the same search an expression
-  uses: the event's own function parameters, then the parameters and
-  variables of each enclosing event from the nearest out, then the top-level
-  variables of every sheet, each list in its order, and the first name that
-  matches without case wins; the loader does not refuse two names that
-  differ only in case. Five probes opened as that order predicts: the
-  constant first refused, the variable first opened whichever case the
-  action wrote, a local constant refused over a global variable and a local
-  variable opened over a global constant. The checker now resolves a
-  variable parameter in that order, so it also passes the two probes that
-  opened, which it had refused. The official examples and the game folders
-  print as before.
-- Two variables of one scope whose names match without case are an error at
-  the second declaration, although the editor opens such a file: every use
-  of the name reaches the first, so the second is never read or written,
-  and the editor's variable dialog refuses the name (`The name X is already
-  used in this scope`). A global and a local pair, each declared twice in
-  one list, opened in the editor. No official example declares one; the
-  sweep added eight findings, all in one small model's project, which
-  declares its globals at the top of both of its sheets.
+  loader binds a variable parameter to the variable an expression of that
+  name reads: of two globals the first, and in a local's scope the local
+  before a global. Five probes opened as that predicts: the constant first
+  refused, the variable first opened whichever case the action wrote, a
+  local constant refused over a global variable and a local variable opened
+  over a global constant. The checker resolves a variable parameter the same
+  way, so it passes the two probes that opened. The official examples and
+  the game folders print as before.
+- Names that differ only in case were probed on 2026-10-05, after a game
+  project's sheet read a group's constant where a function meant its
+  parameter of that name. Each copy of `data/c3-new-project` held one pair,
+  opened and previewed in the stable r495.2 editor and in r504, with the
+  same result in both. No rename raised a dialog, and the preview read each
+  renamed variable under its new name in `localVars`; a call to `Beep2`
+  ran the renamed function. "Later" is the order of the sheets: sheet by
+  sheet, each event before its sub-events, a function's parameters at the
+  function. Identical names went the same way. A global named like an
+  object type, and sibling groups with a static variable of one name, kept
+  both.
+
+| Two names that match without case | As the editor opens the project |
+|-----------------------------------|---------------------------------|
+| Two globals, of one sheet or two | it keeps both; every event refers to the first, and a script reads each by its own name |
+| A global and a local or parameter | it keeps both, and in the local's scope the local wins |
+| Two locals of one list | it renames the second, `STEP2`; every use refers to the first |
+| Two parameters of one function | it renames every one but the last: of `amount`, `Amount` and `AMOUNT` the first two become `amount2` and `Amount3`, because the number counts past a name taken in another case; every use refers to the last |
+| A local or parameter, and one of a scope that holds it | it renames the one that comes later in the sheet; both names refer to the other one where it is in scope |
+| Two functions, or two custom actions of one object | it renames the second, `Beep2`; a call by either name runs the first |
+| Two instance variables of one object, or a family's beside a member's | it stops with `name 'HP' already in object class 'Thing' namespace`, naming the family when the second name is the family's |
+
+- In the scope case, a parameter after its group's constant read the
+  constant for every use, and the value a call passed was lost. With the
+  function first, the editor renamed the constant instead, and a use of it
+  elsewhere in the group stopped the open with `Unknown expression 'SPEED':
+  This is not a system expression or variable name in this scope`.
+- So two names that match without case are an error at the one the editor
+  renames, and, of two globals, at the one the events never refer to: the file
+  then names a variable that the editor calls something else, or never
+  finds, and the events refer to the other one. The finding gives the new
+  name and the variable that every use then refers to. The editor's own
+  variable dialog refuses two names of one scope (`The name X is already
+  used in this scope`). A local or parameter of a global's own type, under
+  another case, is a warning: both keep their names, the project opens, and
+  only a use of the global's spelling inside the local's scope reads the
+  wrong one. No official example declares any of these, and the sweep
+  changed no finding. The probes and what the editor printed are in
+  `.local/docs/evidence/skill-evals/construct3-agent-plugin/case-insensitive-names-2026-10-05/`.
 - Two expression rules were added after a game project met them and minimal
   projects reproduced them in the r504 editor on 2026-10-02, each beside a
   corrected copy that opened. A function parameter named like a system
