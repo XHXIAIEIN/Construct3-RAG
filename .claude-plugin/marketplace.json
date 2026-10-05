@@ -7,7 +7,7 @@
       "name": "construct3",
       "source": "./",
       "description": "Make Construct 3 games: look up conditions, actions and expressions, read and write event sheets, and check that the project opens in the editor.",
-      "category": "development"
+      "category": "game-development"
     }
   ]
 }
