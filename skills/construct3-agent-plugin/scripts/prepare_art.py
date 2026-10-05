@@ -10,9 +10,13 @@ with ART_STYLE so that the pictures share one style. Make each with the image
 tool and save it as art/raw/<name>.png, .jpg or .webp, where <name> is the
 image's file name without .png. Without --list, each picture there is:
 
-  cut out    a picture with transparency keeps it; any other was asked for on
-             a flat key colour, removed where it touches the edge and wherever
-             it is that colour exactly, with the edge blended
+  cut out    a picture with transparency keeps it. Any other picture was
+             asked for on a flat magenta or green, the key. The key is
+             removed where it touches the edge and where it shows through a
+             gap, and taken out of the colour of the edge pixels it blends
+             with. A picture on another background, or one whose edge still
+             leans to the key after the cut, is refused with what to make
+             instead
   fitted     trimmed to the subject and fitted into its box, centred, standing
              on the box's bottom when the origin is at the feet; a scene
              covers its box and is cropped
@@ -41,22 +45,20 @@ KEYS = {"magenta": (255, 0, 255), "green": (0, 255, 0)}
 # a subject in these colours is asked for on green, so the key does not eat it
 NEAR_MAGENTA = ("pink", "magenta", "purple", "violet", "fuchsia", "lilac", "lavender", "rose", "粉", "紫", "品红")
 RATIOS = ((1, 1), (4, 3), (3, 4), (3, 2), (2, 3), (16, 9), (9, 16), (2, 1), (1, 2))
-# Distances in RGB from the background colour, the key as the model painted it: background where
-# it joins the edge and is within NEAR; a gap in the subject, anywhere, within POCKET when it is
-# also within KEYLINE of the key in shade. On real pictures 70 clears the shaded gaps between
-# strands, 66 to 70 away; 50 left them, and 90 cut into the subject and into the edge of a green
-# heart under green, 92 away.
+# RGB distances from the background colour, the key as the model painted it. NEAR: background
+# that joins the edge. POCKET: a gap in the subject, anywhere, when it also lies within KEYLINE of
+# the key made darker or lighter. docs/decisions/art-from-the-image-tool.md has the measurements.
 NEAR, POCKET, KEYLINE = 60, 70, 60
-# The subject's edge: pixels up to a pixel per REACH_PER of the picture's long side in from the
-# background, and at least REACH, are unmixed from it when they lean to the key MARGIN more than
-# the subject behind them, or lie within LINE of the line between the two. A real picture's blend
-# widens with its size: 3 cleared it at 718 px, 4 at 1005 px, 5 at 1436 px. SWEEPS carries the
-# subject's colour along a strand that has no inside.
+# The edge is REACH px deep, or a pixel per REACH_PER px of the picture's long side when that is
+# more, because a real picture's blend widens with its size. An edge pixel is unmixed when it
+# leans to the key MARGIN more than the subject behind it, or lies within LINE of the line between
+# the background and that subject. The subject's colour is carried along a strand that has no
+# inside for up to SWEEPS px.
 REACH, REACH_PER, MARGIN, LINE, SWEEPS = 3, 240, 16, 30, 16
-# Key light inside the subject: a pixel leaning SPILL more to the key than the 5x5 around it.
+# Key light inside the subject: a pixel that leans SPILL more to the key than the 5x5 around it.
 SPILL = 60
-# A cut that leaves more pixels leaning to the key than this share of its edge, and than
-# FRINGE_MIN, is refused.
+# A cut whose edge pixels lean to the key in more than this share, and more than FRINGE_MIN of
+# them, is refused.
 FRINGE, FRINGE_MIN = 0.005, 8
 WORK = 4                                   # a picture is cut out at up to this many times its box
 MARK = "c3-art"                            # the PNG text key check_look.py reads as a painting
@@ -143,16 +145,18 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
 
 
 def leaning_to(key: tuple):
-    """How far a colour leans to the key: about 255 on the key, 0 or less on a colour away from
-    it. It is linear in a blend with the key, and red under magenta or gold under green lean to it
-    no more than grey does."""
+    """A function that gives how far a colour leans to the key: the lowest keyed channel less the
+    highest other one, about 255 on the key and 0 or less away from it. The lean is linear in a
+    blend with the key. Red under magenta and gold under green lean no more than grey."""
     on = [k for k in range(3) if key[k]]
     off = [k for k in range(3) if not key[k]]
     return lambda c: min(c[k] for k in on) - max(c[k] for k in off)
 
 
 def cut_out(img, key: tuple) -> tuple[object, str]:
-    """The picture as RGBA with its background clear, and how the background was found."""
+    """The picture as RGBA with its background clear, and a line that gives the background's
+    colour and counts the pixels cleared in gaps and recoloured. Raises Unusable when the picture
+    cannot be cut cleanly."""
     from PIL import Image, ImageFilter
     rgba = img.convert("RGBA")
     w, h = rgba.size
@@ -174,8 +178,8 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
                if min(c for c, on in zip(bg, k) if on) >= 96
                and max(c for c, on in zip(bg, k) if not on) <= 0.35 * min(c for c, on in zip(bg, k) if on)]
     if not painted:
-        raise Unusable(f"its background is {hex_of(bg)}, not the {name} it was asked on, and a cut on that colour "
-                       f"takes the subject's own parts in it; make it again on a flat {name} {hex_of(key)} "
+        raise Unusable(f"its background is {hex_of(bg)}, neither magenta nor green, and a cut on it would also "
+                       f"remove the subject's parts in that colour; make it again on a flat {name} {hex_of(key)} "
                        f"background, or with a transparent one")
     name = painted[0]
     key = KEYS[name]
@@ -186,9 +190,9 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     br, bgr, bb = bg
     rgb = [data[4 * i:4 * i + 3] for i in range(n)]
     dist2 = [(r - br) ** 2 + (g - bgr) ** 2 + (b - bb) ** 2 for r, g, b in rgb]
-    hue = leaning_to(key)
-    ex = [hue(c) for c in rgb]
-    e_bg = hue(bg)
+    lean = leaning_to(key)
+    ex = [lean(c) for c in rgb]
+    e_bg = lean(bg)
     norm = br * br + bgr * bgr + bb * bb
 
     def shade(c) -> tuple[float, float]:       # how far a colour is from the key darker or lighter, and how much
@@ -290,18 +294,18 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
         if clear[i]:
             out[4 * i:4 * i + 4] = b"\0\0\0\0"
     # Each edge pixel is a blend o = a*s + (1-a)*b of the subject s and the background b. Its lean
-    # to the key is linear in the blend, so a = (hue(b) - hue(o)) / (hue(b) - hue(s)), whatever
-    # the subject's colour: red under magenta and gold under green stay opaque. Then o less the
-    # background is the subject's colour.
+    # to the key is linear in the blend, so a = (lean(b) - lean(o)) / (lean(b) - lean(s)), whatever
+    # the subject's colour: red under magenta and gold under green stay opaque. Then the subject's
+    # colour is (o - (1-a)*b) / a.
     for i, b in back.items():
         o = rgb[i]
         s = inner.get(i)
-        e_s = hue(s) if s else min([0] + [ex[j] for j in around(i) if not clear[j]])
+        e_s = lean(s) if s else min([0] + [ex[j] for j in around(i) if not clear[j]])
         if ex[i] <= max(e_s, 0) + MARGIN:
             t = on_line(o, b, s) if s and ex[i] > e_s + MARGIN else None
             if t is None or t >= 0.97:
                 continue
-        e_b = hue(b)
+        e_b = lean(b)
         a = min(1.0, max(0.0, (e_b - ex[i]) / max(64, e_b - e_s)))
         if a < 0.1:
             out[4 * i:4 * i + 4] = b"\0\0\0\0"
@@ -316,7 +320,7 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
         if clear[i] or depth[i]:
             continue
         m = around5[3 * i:3 * i + 3]
-        if ex[i] - hue(m) <= SPILL:
+        if ex[i] - lean(m) <= SPILL:
             continue
         t = on_line(rgb[i], m, bg)
         if t is None or not 0.1 <= t <= 0.9:
@@ -330,31 +334,30 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
         raise Unusable(f"after the cut, {left} of the {band} pixels along the subject's edge lean to {name}: a "
                        f"fringe the cut left, or a subject too near the key; make it again on a flat {other} "
                        f"{hex_of(KEYS[other])} background, or with a transparent one")
-    return cut, f"background {hex_of(bg)}, {gaps} px of it in gaps, {spill} px of its light recoloured"
+    return cut, f"background {hex_of(bg)}, {gaps} px cleared in gaps, {spill} px of key light recoloured"
 
 
 def fringe(img, key: tuple) -> tuple[int, int]:
-    """The shown pixels within 3 px of a clear one that lean clearly to the key, and all shown
-    pixels there."""
+    """Two counts: the shown pixels within 3 px of a clear one that lean to the key by more than
+    40, and all shown pixels there."""
     from PIL import Image, ImageFilter
     data = img.tobytes()
     alpha = data[3::4]
     near = Image.frombytes("L", img.size, bytes(255 if a == 0 else 0 for a in alpha)).filter(ImageFilter.MaxFilter(7))
-    hue = leaning_to(key)
+    lean = leaning_to(key)
     left = band = 0
     for i, z in enumerate(near.tobytes()):
         if z and alpha[i] >= 32:
             band += 1
-            left += hue(data[4 * i:4 * i + 3]) > 40
+            left += lean(data[4 * i:4 * i + 3]) > 40
     return left, band
 
 
 def resample(img, size: tuple[int, int], how: int):
-    """An RGBA picture scaled with its coverage and its colour apart. LANCZOS rings: its negative
-    lobes and the division by a low alpha at the edge give colours no source pixel had, a light
-    rim and a key tint. Here alpha and the colour weighted by alpha go through a filter with no
-    negative lobe, HAMMING or BOX, in floats, so each pixel's colour is a mix of the colours under
-    it."""
+    """An RGBA picture scaled with its alpha and its colour apart. Alpha, and the colour weighted
+    by alpha, are scaled in floats through `how`, HAMMING or BOX, then divided. These filters have
+    no negative lobe, so each pixel's colour is a mix of the colours under it. LANCZOS has one: on
+    an edge, its lobes and the division by a low alpha give a light rim and a key tint."""
     from array import array
     from PIL import Image
     data = img.tobytes()

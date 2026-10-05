@@ -208,7 +208,7 @@ def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
 
 
 def test_prepare_art_scales_a_picture_without_new_colours():
-    """LANCZOS gives a light rim and a key tint no source pixel had (618 pixels at half size)."""
+    """LANCZOS gives a light rim and a key tint that no source pixel had."""
     truth = figure("magenta", spill=False)[0]
     for scale in (0.2, 0.35, 0.5, 0.75):
         size = (round(truth.width * scale), round(truth.height * scale))
@@ -232,7 +232,7 @@ def test_prepare_art_refuses_a_picture_it_cannot_cut_out(project):
     picture(project / "art" / "raw" / "coin-default-000.jpg", bg=(250, 250, 250))
     code, out = tool(project, "prepare_art")
     assert code == 1, out
-    assert "its background is #F" in out and "not the magenta it was asked on" in out, out
+    assert "its background is #F" in out and "neither magenta nor green" in out, out
     assert "make it again on a flat magenta #FF00FF background, or with a transparent one" in out
 
 
@@ -255,10 +255,9 @@ def test_prepare_art_fits_a_scene_and_keeps_a_picture_with_transparency(project)
 
 
 def test_prepare_art_unmixes_the_edge_by_how_much_key_it_holds():
-    """Each edge pixel is a blend of the subject and the key; its alpha is the share of the subject.
-    The ramp on the distance from the key it replaced kept half-key pixels opaque: on this figure
-    1.7 and 1.9 levels of mean alpha error, 113 and 122 pixels off colour, 35 and 8 leaning to
-    the key."""
+    """Each edge pixel is a blend of the subject and the key, and its alpha is the share of the
+    subject. A half blend of the key with a colour far from it comes out half clear, not opaque
+    and tinted."""
     for key in KEYS:
         truth, pic = figure(key, spill=False, gap=False)
         cut, how = prepare_art.cut_out(pic, KEYS[key])
@@ -274,7 +273,7 @@ def test_prepare_art_clears_gaps_and_key_light_and_keeps_colours_near_the_key():
     for key in KEYS:
         truth, pic = figure(key)
         cut, how = prepare_art.cut_out(pic, KEYS[key])
-        assert "102 px of it in gaps, 12 px of its light recoloured" in how, how
+        assert "102 px cleared in gaps, 12 px of key light recoloured" in how, how
         hole = [(x, y) for x in range(RING[0] + 1, RING[2] - 1) for y in range(RING[1] + 1, RING[3] - 1)
                 if truth.getpixel((x, y))[3] == 0]
         assert hole and all(cut.getpixel(p)[3] == 0 for p in hole), key

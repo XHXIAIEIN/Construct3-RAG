@@ -10,9 +10,13 @@ with ART_STYLE so that the pictures share one style. Make each with the image
 tool and save it as art/raw/<name>.png, .jpg or .webp, where <name> is the
 image's file name without .png. Without --list, each picture there is:
 
-  cut out    a picture with transparency keeps it; any other was asked for on
-             a flat key colour, removed where it touches the edge and wherever
-             it is that colour exactly, with the edge blended
+  cut out    a picture with transparency keeps it. Any other picture was
+             asked for on a flat magenta or green, the key. The key is
+             removed where it touches the edge and where it shows through a
+             gap, and taken out of the colour of the edge pixels it blends
+             with. A picture on another background, or one whose edge still
+             leans to the key after the cut, is refused with what to make
+             instead
   fitted     trimmed to the subject and fitted into its box, centred, standing
              on the box's bottom when the origin is at the feet; a scene
              covers its box and is cropped
@@ -41,9 +45,21 @@ KEYS = {"magenta": (255, 0, 255), "green": (0, 255, 0)}
 # a subject in these colours is asked for on green, so the key does not eat it
 NEAR_MAGENTA = ("pink", "magenta", "purple", "violet", "fuchsia", "lilac", "lavender", "rose", "粉", "紫", "品红")
 RATIOS = ((1, 1), (4, 3), (3, 4), (3, 2), (2, 3), (16, 9), (9, 16), (2, 1), (1, 2))
-# distances in RGB from the background colour: background wherever it is this near, background
-# where it touches the edge and is this near, and the width of the blend on the subject's edge
-EXACT, NEAR, BLEND = 30, 60, 150
+# RGB distances from the background colour, the key as the model painted it. NEAR: background
+# that joins the edge. POCKET: a gap in the subject, anywhere, when it also lies within KEYLINE of
+# the key made darker or lighter. docs/decisions/art-from-the-image-tool.md has the measurements.
+NEAR, POCKET, KEYLINE = 60, 70, 60
+# The edge is REACH px deep, or a pixel per REACH_PER px of the picture's long side when that is
+# more, because a real picture's blend widens with its size. An edge pixel is unmixed when it
+# leans to the key MARGIN more than the subject behind it, or lies within LINE of the line between
+# the background and that subject. The subject's colour is carried along a strand that has no
+# inside for up to SWEEPS px.
+REACH, REACH_PER, MARGIN, LINE, SWEEPS = 3, 240, 16, 30, 16
+# Key light inside the subject: a pixel that leans SPILL more to the key than the 5x5 around it.
+SPILL = 60
+# A cut whose edge pixels lean to the key in more than this share, and more than FRINGE_MIN of
+# them, is refused.
+FRINGE, FRINGE_MIN = 0.005, 8
 WORK = 4                                   # a picture is cut out at up to this many times its box
 MARK = "c3-art"                            # the PNG text key check_look.py reads as a painting
 
@@ -128,8 +144,19 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
     return out
 
 
+def leaning_to(key: tuple):
+    """A function that gives how far a colour leans to the key: the lowest keyed channel less the
+    highest other one, about 255 on the key and 0 or less away from it. The lean is linear in a
+    blend with the key. Red under magenta and gold under green lean no more than grey."""
+    on = [k for k in range(3) if key[k]]
+    off = [k for k in range(3) if not key[k]]
+    return lambda c: min(c[k] for k in on) - max(c[k] for k in off)
+
+
 def cut_out(img, key: tuple) -> tuple[object, str]:
-    """The picture as RGBA with its background clear, and how the background was found."""
+    """The picture as RGBA with its background clear, and a line that gives the background's
+    colour and counts the pixels cleared in gaps and recoloured. Raises Unusable when the picture
+    cannot be cut cleanly."""
     from PIL import Image, ImageFilter
     rgba = img.convert("RGBA")
     w, h = rgba.size
@@ -141,69 +168,212 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     colours = [tuple(data[4 * i:4 * i + 3]) for i in edge]
     bg = tuple(sorted(c[k] for c in colours)[len(colours) // 2] for k in range(3))
     near = sum(sum((a - b) ** 2 for a, b in zip(c, bg)) < NEAR ** 2 for c in colours) / len(colours)
+    name = next(n for n, c in KEYS.items() if c == key)
     if near < 0.5:
-        name = next(n for n, c in KEYS.items() if c == key)
         raise Unusable(f"its edge is not one flat colour, {near:.0%} of it near {hex_of(bg)}; make it again on a "
                        f"flat {name} {hex_of(key)} background, or with a transparent one")
+    # the background is the key asked for, or the other one, as a model paints it: the keyed
+    # channels lit, the others dark, as in (216, 46, 147) or (8, 162, 24)
+    painted = [n for n, k in KEYS.items()
+               if min(c for c, on in zip(bg, k) if on) >= 96
+               and max(c for c, on in zip(bg, k) if not on) <= 0.35 * min(c for c, on in zip(bg, k) if on)]
+    if not painted:
+        raise Unusable(f"its background is {hex_of(bg)}, neither magenta nor green, and a cut on it would also "
+                       f"remove the subject's parts in that colour; make it again on a flat {name} {hex_of(key)} "
+                       f"background, or with a transparent one")
+    name = painted[0]
+    key = KEYS[name]
     if near < 0.9:
         raise Unusable(f"the subject runs off the picture over {1 - near:.0%} of its edge, so it is cut off; make "
                        f"it again whole and centred, with room around it")
     n = w * h
     br, bgr, bb = bg
-    dist2 = [(data[4 * i] - br) ** 2 + (data[4 * i + 1] - bgr) ** 2 + (data[4 * i + 2] - bb) ** 2 for i in range(n)]
-    # A shadow on the key colour, which models draw though the prompt says not to, is that colour
-    # darker, and goes with the background. A grey background cannot tell it from a grey subject.
-    saturated = max(bg) - min(bg) > 128
-    norm = br * br + bgr * bgr + bb * bb or 1
+    rgb = [data[4 * i:4 * i + 3] for i in range(n)]
+    dist2 = [(r - br) ** 2 + (g - bgr) ** 2 + (b - bb) ** 2 for r, g, b in rgb]
+    lean = leaning_to(key)
+    ex = [lean(c) for c in rgb]
+    e_bg = lean(bg)
+    norm = br * br + bgr * bgr + bb * bb
+
+    def shade(c) -> tuple[float, float]:       # how far a colour is from the key darker or lighter, and how much
+        s = (c[0] * br + c[1] * bgr + c[2] * bb) / norm
+        return math.sqrt((c[0] - s * br) ** 2 + (c[1] - s * bgr) ** 2 + (c[2] - s * bb) ** 2), s
 
     def background(j: int) -> bool:
+        """Near the key, or a shadow on it, which models draw though the prompt says not to: the key
+        darker."""
         if dist2[j] < NEAR ** 2:
             return True
-        if not saturated:
-            return False
-        r, g, b = data[4 * j], data[4 * j + 1], data[4 * j + 2]
-        k = (r * br + g * bgr + b * bb) / norm
-        return 0.25 <= k <= 1.05 and (r - k * br) ** 2 + (g - k * bgr) ** 2 + (b - k * bb) ** 2 < 40 ** 2
+        off, s = shade(rgb[j])
+        return 0.25 <= s <= 1.05 and off < 40
+
+    def gap(j: int) -> bool:
+        """The key seen through a gap in the subject, in shade: kept apart from a subject colour near
+        the key, such as a hot pink under magenta, by its distance and its line."""
+        return dist2[j] < POCKET ** 2 and ex[j] > e_bg / 2 and shade(rgb[j])[0] < KEYLINE
 
     clear = bytearray(n)
+    shadow = bytearray(n)                      # cleared as the key darker, not as the key
     stack = [i for i in edge if background(i)]
     for i in stack:
         clear[i] = 1
+        shadow[i] = dist2[i] >= NEAR ** 2
     while stack:
         i = stack.pop()
         x = i % w
         for j in (i - w, i + w, i - 1 if x else -1, i + 1 if x < w - 1 else -1):
             if 0 <= j < n and not clear[j] and background(j):
                 clear[j] = 1
+                shadow[j] = dist2[j] >= NEAR ** 2
                 stack.append(j)
+    gaps = 0
     for i in range(n):
-        if dist2[i] < EXACT ** 2:
+        if not clear[i] and gap(i):
             clear[i] = 1
+            gaps += 1
+
+    def mask(on):
+        return Image.frombytes("L", (w, h), bytes(255 if v else 0 for v in on))
+
+    # a dark outline's blended edge reads as a shadow too: beside the subject, it is unmixed below
+    beside = mask(not c for c in clear).filter(ImageFilter.MaxFilter(3)).tobytes()
+    for i in range(n):
+        if shadow[i] and beside[i] and not gap(i):
+            clear[i] = 0
+    # the edge: pixels up to `reach` in from the background, ring by ring
+    reach = max(REACH, round(max(w, h) / REACH_PER))
+    depth = bytearray(n)
+    grown = mask(clear)
+    rings = [[]]
+    for d in range(1, reach + 1):
+        grown = grown.filter(ImageFilter.MaxFilter(3))
+        ring = [i for i, g in enumerate(grown.tobytes()) if g and not clear[i] and not depth[i]]
+        for i in ring:
+            depth[i] = d
+        rings.append(ring)
+
+    def around(i: int) -> list[int]:
+        x, y = i % w, i // w
+        return [yy * w + xx for yy in range(max(0, y - 1), min(h, y + 2)) for xx in range(max(0, x - 1), min(w, x + 2))
+                if yy * w + xx != i]
+
+    def mean(cs) -> tuple:
+        return tuple(sum(c[k] for c in cs) / len(cs) for k in range(3))
+
+    # behind each edge pixel: the background, carried in from the clear pixels beside it, and the
+    # subject, carried out from its inside and then along the edge into strands with no inside
+    back = {}
+    for d in range(1, reach + 1):
+        for i in rings[d]:
+            src = [rgb[j] for j in around(i) if clear[j]] if d == 1 else \
+                  [back[j] for j in around(i) if depth[j] == d - 1 and j in back]
+            if src:
+                back[i] = mean(src)
+    inner = {}
+    for d in range(reach, 0, -1):
+        for i in rings[d]:
+            src = [rgb[j] for j in around(i) if not clear[j] and not depth[j]] + \
+                  [inner[j] for j in around(i) if depth[j] == d + 1 and j in inner]
+            if src:
+                inner[i] = mean(src)
+    loose = [i for i in back if i not in inner]
+    for _ in range(SWEEPS):
+        reached = {i: mean(src) for i in loose if (src := [inner[j] for j in around(i) if j in inner])}
+        if not reached:
+            break
+        inner.update(reached)
+        loose = [i for i in loose if i not in reached]
+
+    def on_line(o, b, s) -> float | None:      # o as a blend of b and s: how much of s, or None
+        v = [s[k] - b[k] for k in range(3)]
+        t = sum((o[k] - b[k]) * v[k] for k in range(3)) / max(1, sum(x * x for x in v))
+        return t if sum((o[k] - b[k] - t * v[k]) ** 2 for k in range(3)) < LINE ** 2 else None
+
     out = bytearray(data)
-    beside = Image.frombytes("L", (w, h), bytes(255 if c else 0 for c in clear)).filter(ImageFilter.MaxFilter(3))
-    beside = beside.tobytes()                  # a pixel next to the background, or in it
     for i in range(n):
         if clear[i]:
             out[4 * i:4 * i + 4] = b"\0\0\0\0"
-            continue
-        if not beside[i]:
-            continue
-        x, y = i % w, i // w
-        near_clear = [j for j in (yy * w + xx for yy in range(max(0, y - 1), min(h, y + 2))
-                                  for xx in range(max(0, x - 1), min(w, x + 2))) if clear[j]]
-        if not near_clear:
-            continue
-        # an edge pixel: take the background beside it back out of its colour
-        local = [sum(data[4 * j + k] for j in near_clear) / len(near_clear) for k in range(3)]
-        d = math.sqrt(sum((data[4 * i + k] - local[k]) ** 2 for k in range(3)))
-        a = min(1.0, max(0.0, (d - EXACT) / (BLEND - EXACT)))
+    # Each edge pixel is a blend o = a*s + (1-a)*b of the subject s and the background b. Its lean
+    # to the key is linear in the blend, so a = (lean(b) - lean(o)) / (lean(b) - lean(s)), whatever
+    # the subject's colour: red under magenta and gold under green stay opaque. Then the subject's
+    # colour is (o - (1-a)*b) / a.
+    for i, b in back.items():
+        o = rgb[i]
+        s = inner.get(i)
+        e_s = lean(s) if s else min([0] + [ex[j] for j in around(i) if not clear[j]])
+        if ex[i] <= max(e_s, 0) + MARGIN:
+            t = on_line(o, b, s) if s and ex[i] > e_s + MARGIN else None
+            if t is None or t >= 0.97:
+                continue
+        e_b = lean(b)
+        a = min(1.0, max(0.0, (e_b - ex[i]) / max(64, e_b - e_s)))
         if a < 0.1:
             out[4 * i:4 * i + 4] = b"\0\0\0\0"
         elif a < 1:
-            for k in range(3):
-                out[4 * i + k] = min(255, max(0, round((data[4 * i + k] - (1 - a) * local[k]) / a)))
-            out[4 * i + 3] = round(255 * a)
-    return Image.frombytes("RGBA", (w, h), bytes(out)), f"background {hex_of(bg)}"
+            out[4 * i:4 * i + 4] = bytes(min(255, max(0, round((o[k] - (1 - a) * b[k]) / a))) for k in range(3)) + \
+                bytes((round(255 * a),))
+    # key light caught inside the subject: a pixel between the colour around it and the key gets
+    # that colour back, alpha kept
+    spill = 0
+    around5 = rgba.convert("RGB").filter(ImageFilter.MedianFilter(5)).tobytes()
+    for i in range(n):
+        if clear[i] or depth[i]:
+            continue
+        m = around5[3 * i:3 * i + 3]
+        if ex[i] - lean(m) <= SPILL:
+            continue
+        t = on_line(rgb[i], m, bg)
+        if t is None or not 0.1 <= t <= 0.9:
+            continue
+        out[4 * i:4 * i + 3] = bytes(min(255, max(0, round((rgb[i][k] - t * bg[k]) / (1 - t)))) for k in range(3))
+        spill += 1
+    cut = Image.frombytes("RGBA", (w, h), bytes(out))
+    left, band = fringe(cut, key)
+    if left > max(FRINGE_MIN, FRINGE * band):
+        other = next(k for k in KEYS if k != name)
+        raise Unusable(f"after the cut, {left} of the {band} pixels along the subject's edge lean to {name}: a "
+                       f"fringe the cut left, or a subject too near the key; make it again on a flat {other} "
+                       f"{hex_of(KEYS[other])} background, or with a transparent one")
+    return cut, f"background {hex_of(bg)}, {gaps} px cleared in gaps, {spill} px of key light recoloured"
+
+
+def fringe(img, key: tuple) -> tuple[int, int]:
+    """Two counts: the shown pixels within 3 px of a clear one that lean to the key by more than
+    40, and all shown pixels there."""
+    from PIL import Image, ImageFilter
+    data = img.tobytes()
+    alpha = data[3::4]
+    near = Image.frombytes("L", img.size, bytes(255 if a == 0 else 0 for a in alpha)).filter(ImageFilter.MaxFilter(7))
+    lean = leaning_to(key)
+    left = band = 0
+    for i, z in enumerate(near.tobytes()):
+        if z and alpha[i] >= 32:
+            band += 1
+            left += lean(data[4 * i:4 * i + 3]) > 40
+    return left, band
+
+
+def resample(img, size: tuple[int, int], how: int):
+    """An RGBA picture scaled with its alpha and its colour apart. Alpha, and the colour weighted
+    by alpha, are scaled in floats through `how`, HAMMING or BOX, then divided. These filters have
+    no negative lobe, so each pixel's colour is a mix of the colours under it. LANCZOS has one: on
+    an edge, its lobes and the division by a low alpha give a light rim and a key tint."""
+    from array import array
+    from PIL import Image
+    data = img.tobytes()
+    alpha = data[3::4]
+
+    def scaled(layer) -> array:
+        return array("f", layer.resize(size, how).tobytes())
+
+    cover = scaled(img.getchannel("A").convert("F"))
+    mix = [scaled(Image.frombytes("F", img.size, array("f", (c * a for c, a in zip(data[k::4], alpha))).tobytes()))
+           for k in range(3)]
+    out = bytearray(4 * size[0] * size[1])
+    for i, a in enumerate(cover):
+        if a >= 0.5:
+            out[4 * i:4 * i + 4] = bytes(min(255, max(0, round(m[i] / a))) for m in mix) + bytes((min(255, round(a)),))
+    return Image.frombytes("RGBA", size, bytes(out))
 
 
 def clean(img):
@@ -246,7 +416,8 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
         save(big.crop((left, top, left + w, top + h)).convert("RGBA"), root / "art" / rel)
         return [f"{stem}: {raw.name} {rw}x{rh} -> art/{rel} {w}x{h}, cropped to cover it"]
     s = min(1.0, min(WORK * max(w, h), 1024) / max(rw, rh))
-    work = img if s == 1 else img.resize((max(1, round(rw * s)), max(1, round(rh * s))), Image.LANCZOS)
+    work = img if s == 1 else resample(img.convert("RGBA"), (max(1, round(rw * s)), max(1, round(rh * s))),
+                                       Image.HAMMING)
     cut, how = cut_out(work, key_for(item, wanted.get("style", ""))[1])
     alpha = cut.getchannel("A")
     solid = alpha.point(lambda a: 255 if a >= 128 else 0).getbbox()
@@ -260,7 +431,7 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
     subject = cut.crop(box)
     f = min(w / subject.width, h / subject.height)
     sw, sh = max(1, round(subject.width * f)), max(1, round(subject.height * f))
-    subject = subject.resize((sw, sh), Image.BOX if pixel_art else Image.LANCZOS)
+    subject = resample(subject, (sw, sh), Image.BOX if pixel_art else Image.HAMMING)
     if pixel_art:      # Nearest sampling shows a soft edge as a fringe: an edge is in or out
         subject.putalpha(subject.getchannel("A").point(lambda a: 255 if a >= 128 else 0))
     canvas = Image.new("RGBA", (w, h), (0, 0, 0, 0))
