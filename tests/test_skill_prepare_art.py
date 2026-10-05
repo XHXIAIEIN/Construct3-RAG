@@ -16,13 +16,15 @@ sys.path.insert(0, str(SKILL / "scripts"))
 import prepare_art  # noqa: E402
 
 MAGENTA = (255, 0, 255)
+KEYS = prepare_art.KEYS
 SS = 4                                          # the figure is drawn at this many times its size
 OUTLINE, SKIN, SHIRT, WHITE = (28, 18, 16), (238, 206, 178), (245, 245, 240), (252, 252, 252)
 RED, GREEN_HAIR, GOLD, HOT_PINK = (200, 40, 30), (90, 190, 60), (230, 180, 40), (249, 40, 142)
+GREEN_HEART = (17, 207, 99)                                       # 92 from the key, as on a real picture
 PAINTED = {"magenta": (250, 4, 240), "green": (6, 246, 10)}      # the key as a model paints it
 POCKET = {"magenta": (215, 40, 200), "green": (40, 200, 35)}     # the key seen through a gap, about 60 off
 RING = (20, 128, 32, 140)                                         # the gap, in pixels
-SPILL = [(70, 60), (90, 56), (26, 124)]                          # 2x2 spots of key light in the hair
+SPILL = [(70, 60), (90, 56), (80, 66)]                          # 2x2 spots of key light in the hair
 
 
 def picture(path: Path, bg: tuple[int, int, int] = MAGENTA, r: int = 200, shadow: bool = True,
@@ -48,14 +50,15 @@ def picture(path: Path, bg: tuple[int, int, int] = MAGENTA, r: int = 200, shadow
     img.filter(ImageFilter.SMOOTH).save(path, quality=85)
 
 
-def figure(key: str, spill: bool = True) -> tuple:
+def figure(key: str, spill: bool = True, hair: tuple | None = None, gap: bool = True) -> tuple:
     """A figure whose matte is known, (truth, picture): drawn at SS times its size and box-reduced,
     so its edge has every alpha, then laid over the key as a model paints it. A face with white
     eye highlights over a white shirt, a hair cap with strands 0.5 to 2 px wide, a ring of hair
-    with the key showing through it, a hot-pink heart under magenta or a gold coin under green,
-    and spots where the key's light falls on the hair."""
+    with the key showing through it, a heart in a colour near the key (hot pink under magenta,
+    green under green), a red ball under magenta or a gold ball under green, and spots where the
+    key's light falls on the hair. Without `gap`, the key shows through the ring unshaded."""
     w, h = 160, 200
-    hair = GREEN_HAIR if key == "magenta" else RED
+    hair = hair or (GREEN_HAIR if key == "magenta" else RED)
     big = Image.new("RGBA", (w * SS, h * SS), (0, 0, 0, 0))
     d = ImageDraw.Draw(big)
 
@@ -68,12 +71,11 @@ def figure(key: str, spill: bool = True) -> tuple:
     for x in (60, 88):
         d.ellipse(at(x, 92, x + 12, 104), fill=OUTLINE)
         d.ellipse(at(x + 3, 94, x + 7, 98), fill=WHITE)
-    if key == "magenta":
-        d.polygon([tuple(at(68, 132)), tuple(at(92, 132)), tuple(at(80, 148))], fill=HOT_PINK)
-        d.ellipse(at(67, 125, 81, 139), fill=HOT_PINK)
-        d.ellipse(at(79, 125, 93, 139), fill=HOT_PINK)
-    else:
-        d.ellipse(at(118, 140, 146, 168), fill=GOLD)
+    heart = HOT_PINK if key == "magenta" else GREEN_HEART
+    d.polygon([tuple(at(68, 132)), tuple(at(92, 132)), tuple(at(80, 148))], fill=heart)
+    d.ellipse(at(67, 125, 81, 139), fill=heart)
+    d.ellipse(at(79, 125, 93, 139), fill=heart)
+    d.ellipse(at(118, 140, 146, 168), fill=RED if key == "magenta" else GOLD)
     d.chord(at(46, 44, 114, 112), 180, 360, fill=hair)
     for deg, thick, length in ((-160, 0.5, 22), (-135, 0.7, 24), (-110, 1.0, 22), (-70, 1.4, 20), (-45, 0.8, 22),
                                (-20, 2.0, 20)):
@@ -85,7 +87,8 @@ def figure(key: str, spill: bool = True) -> tuple:
     d.rectangle(at(38, 131, 42, 137), fill=hair)
     truth = big.resize((w, h), Image.BOX)
     back = Image.new("RGB", (w, h), PAINTED[key])
-    ImageDraw.Draw(back).ellipse([RING[0] - 1, RING[1] - 1, RING[2] + 1, RING[3] + 1], fill=POCKET[key])
+    if gap:
+        ImageDraw.Draw(back).ellipse([RING[0] - 1, RING[1] - 1, RING[2] + 1, RING[3] + 1], fill=POCKET[key])
     fg, bg = truth.tobytes(), back.tobytes()
     out = bytearray(w * h * 3)
     for i in range(w * h):
@@ -116,6 +119,27 @@ def new_colours(src, out) -> list:
             if any(not min(p[k] for p in seen) - 1 <= op[u, v][k] <= max(p[k] for p in seen) + 1 for k in range(3)):
                 bad.append((u, v))
     return bad
+
+
+def leaning(img, key: tuple) -> tuple[int, int]:
+    """The shown pixels within 3 px of a clear one that lean to the key by more than 40, and all
+    shown pixels there."""
+    px = img.load()
+    near = Image.frombytes("L", img.size, bytes(255 if a == 0 else 0 for a in img.getchannel("A").tobytes()))
+    near = near.filter(ImageFilter.MaxFilter(7)).load()
+    on = [k for k in range(3) if key[k]]
+    off = [k for k in range(3) if not key[k]]
+    shown = [px[x, y] for y in range(img.height) for x in range(img.width) if near[x, y] and px[x, y][3] >= 32]
+    return sum(min(p[k] for k in on) - max(p[k] for k in off) > 40 for p in shown), len(shown)
+
+
+def matte(truth, cut) -> tuple[float, int]:
+    """The mean alpha error in levels, and the pixels at least half covered in the truth that are
+    shown in a colour more than 40 off it."""
+    t, c = truth.load(), cut.load()
+    px = [(t[x, y], c[x, y]) for y in range(truth.height) for x in range(truth.width)]
+    err = sum(abs(a[3] - b[3]) for a, b in px) / len(px)
+    return err, sum(a[3] >= 128 and b[3] >= 32 and max(abs(a[k] - b[k]) for k in range(3)) > 40 for a, b in px)
 
 
 def test_prepare_art_lists_a_prompt_for_each_picture_to_make(project):
@@ -227,3 +251,19 @@ def test_prepare_art_fits_a_scene_and_keeps_a_picture_with_transparency(project)
     assert "note: the subject, 24x96, fills 25% of its 96x96 box; give art() a box of the subject's shape" in out, out
     sky = Image.open(project / "art" / "sky-default-000.png")
     assert sky.size == (720, 1280) and sky.getpixel((0, 0))[3] == 255
+
+
+def test_prepare_art_unmixes_the_edge_by_how_much_key_it_holds():
+    """Each edge pixel is a blend of the subject and the key; its alpha is the share of the subject.
+    The ramp on the distance from the key it replaced kept half-key pixels opaque: on this figure
+    1.7 and 1.9 levels of mean alpha error, 113 and 122 pixels off colour, 35 and 8 leaning to
+    the key."""
+    for key in KEYS:
+        truth, pic = figure(key, spill=False, gap=False)
+        cut, how = prepare_art.cut_out(pic, KEYS[key])
+        err, off = matte(truth, cut)
+        assert err < 1 and off <= 10, (key, err, off)
+        assert leaning(cut, KEYS[key])[0] == 0, key
+        # red under magenta and gold under green lean part way to the key, and stay opaque
+        ball = [(x, y) for x in range(120, 145) for y in range(142, 167) if truth.getpixel((x, y))[3] == 255]
+        assert ball and all(cut.getpixel(p)[3] == 255 for p in ball), key
