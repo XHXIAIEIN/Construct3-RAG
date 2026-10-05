@@ -34,9 +34,14 @@ Needs Pillow (pip install pillow).
 The last line starts with ok: once every picture art() asks for is in art/;
 before that it counts what is left and names the next step.
 
-Exit 0: no picture was refused. Exit 1: a picture could not be used; its line
-says what to make instead. Exit 2: no art/wanted.json, or no Pillow.
+A refused picture is recorded in art/refused.json, and --list gives its
+prompt again with what to make instead. After three refusals a picture keeps
+its stand-in, and both runs count it and move on.
+
+Exit 0: no picture waits to be made again. Exit 1: a picture could not be
+used; its line says why. Exit 2: no art/wanted.json, or no Pillow.
 """
+import hashlib
 import json
 import math
 import sys
@@ -66,16 +71,27 @@ SPILL = 60
 FRINGE, FRINGE_MIN = 0.005, 8
 LINEUP = 4                                 # subjects in the key picture: more in one picture repeat or merge
 WORK = 4                                   # a picture is cut out at up to this many times its box
+REFUSED = "art/refused.json"               # the pictures this script refused, which --list reads
+TRIES = 3                                  # refusals before a picture keeps its stand-in
 MARK = "c3-art"                            # the PNG text key check_look.py reads as a painting
 
 
 class Unusable(Exception):
-    """A picture the run cannot use; the message says what to make instead."""
+    """A picture the run cannot use: what is wrong with it, then `again`, what to make instead,
+    which --list adds to the picture's next prompt, and `key`, the key colour that prompt asks
+    for when it changes. A file Pillow cannot read has no `again`: it is saved again, not made
+    again."""
+
+    def __init__(self, problem: str, again: str = "", key: str | None = None):
+        super().__init__(f"{problem}; {again}" if again else problem)
+        self.again, self.key = again, key
 
 
 def key_for(item: dict, style: str) -> tuple[str, tuple]:
+    """The key colour a sprite is asked for on: the one its last refusal named, else green for a
+    subject in pink or purple, else magenta."""
     words = f"{item['subject']} {style}".lower()
-    name = "green" if any(w in words for w in NEAR_MAGENTA) else "magenta"
+    name = item.get("key") or ("green" if any(w in words for w in NEAR_MAGENTA) else "magenta")
     return name, KEYS[name]
 
 
@@ -94,16 +110,17 @@ def lead(style: str) -> str:
 
 
 def prompt(item: dict, style: str, reference: bool = False) -> str:
-    """The prompt of one picture; with `reference`, a sprite's says what the key picture given
-    beside it is for."""
+    """The prompt of one picture. A sprite's says what the key picture beside it is for, with
+    `reference`, and what to make instead of the picture last refused, with item["again"]."""
     subject = item["subject"].strip().rstrip("。. ")
     if item["kind"] == "scene":
         return f"{lead(style)}{subject}. A full-frame background scene, no characters in front, no text."
     name, key = key_for(item, style)
+    again = f" {item['again'][0].upper()}{item['again'][1:]}." if item.get("again") else ""
     copy = (" The reference image sets the style and the palette; it is not a picture to copy, so draw only this "
             "subject.") if reference else ""
     return (f"{lead(style)}{subject}. One subject, whole and centred with room around it, on a flat {name} "
-            f"{hex_of(key)} background: no scenery, no shadow on the ground, no text.{copy}")
+            f"{hex_of(key)} background: no scenery, no shadow on the ground, no text.{again}{copy}")
 
 
 def raw_of(root: Path, rel: str) -> Path | None:
@@ -113,12 +130,39 @@ def raw_of(root: Path, rel: str) -> Path | None:
     return max(found, key=lambda p: p.stat().st_mtime) if found else None
 
 
-def state(root: Path, item: dict) -> str:
-    """make: no picture yet; prepare: a picture newer than its fitted art; done."""
+def fingerprint(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+
+
+def refusals(root: Path, wanted: dict) -> dict:
+    """art/refused.json, by file name: the pictures refused, by fingerprint, and the `again` and
+    `key` of the last refusal. A record whose subject art() no longer asks for counts no more."""
+    try:
+        data = json.loads((root / REFUSED).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    subjects = {item["file"]: item["subject"] for item in wanted["images"]}
+    return {rel: r for rel, r in data.items() if isinstance(r, dict) and subjects.get(rel) == r.get("subject")}
+
+
+def with_refusal(item: dict, refused: dict) -> dict:
+    """The item with the `again` and `key` of its last refusal, which its next prompt carries."""
+    r = refused.get(item["file"])
+    return {**item, **{k: r[k] for k in ("again", "key") if r.get(k)}} if r else item
+
+
+def state(root: Path, item: dict, refused: dict) -> str:
+    """make: no picture yet; again: its pictures were refused, fewer than TRIES; stand-in: TRIES
+    were; prepare: a picture newer than its fitted art and not refused; done."""
     raw, out = raw_of(root, item["file"]), root / "art" / item["file"]
-    if raw is None:
-        return "done" if out.exists() else "make"
-    return "done" if out.exists() and out.stat().st_mtime >= raw.stat().st_mtime else "prepare"
+    if out.exists() and (raw is None or out.stat().st_mtime >= raw.stat().st_mtime):
+        return "done"
+    r = refused.get(item["file"])
+    if raw is not None and (r is None or fingerprint(raw) not in r["pictures"]):
+        return "prepare"
+    if r is None:
+        return "make"
+    return "stand-in" if len(r["pictures"]) >= TRIES else "again"
 
 
 def lineup(sprites: list[dict]) -> list[dict]:
@@ -136,11 +180,13 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
     """The next step only: ART_STYLE while it is empty, then the key picture while it is missing,
     then a prompt per picture."""
     style, items = wanted.get("style", ""), wanted["images"]
-    states = {item["file"]: state(root, item) for item in items}
-    counts = {k: list(states.values()).count(k) for k in ("make", "prepare", "done")}
-    count = f"to make: {counts['make']}, to prepare: {counts['prepare']}, done: {counts['done']}"
-    sprites = [item for item in items if states[item["file"]] == "make" and item["kind"] != "scene"]
-    if counts["make"] and not style.strip():
+    refused = refusals(root, wanted)
+    states = {item["file"]: state(root, item, refused) for item in items}
+    counts = {k: list(states.values()).count(k) for k in ("make", "again", "prepare", "done", "stand-in")}
+    to_make = counts["make"] + counts["again"]
+    count = f"to make: {to_make}, to prepare: {counts['prepare']}, done: {counts['done']}" +         (f", stand-ins: {counts['stand-in']}" if counts["stand-in"] else "")
+    sprites = [item for item in items if states[item["file"]] in ("make", "again") and item["kind"] != "scene"]
+    if to_make and not style.strip():
         return ["style: none. Write ART_STYLE in tools/build_project.py, one sentence of art direction the user "
                 "agreed, so that every picture shares it",
                 f"{count}; next: write ART_STYLE, run python tools/build_project.py, then this again"]
@@ -158,19 +204,24 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
     for item in items:
         rel, s = item["file"], states[item["file"]]
         stem = rel[:-len(".png")]
-        if s == "make":
+        if s in ("make", "again"):
             reference = key_picture is not None and item["kind"] != "scene"
-            out.append(f"make {stem}: ratio {ratio(item['width'], item['height'])}, for a {item['width']}x"
+            tried = f" again, refused {len(refused[rel]['pictures'])} of {TRIES} times" if s == "again" else ""
+            out.append(f"make {stem}{tried}: ratio {ratio(item['width'], item['height'])}, for a {item['width']}x"
                        f"{item['height']} box" + (f", art/raw/{key_picture.name} as the reference image" if reference
                                                   else "") + f" -> art/raw/{stem}.png")
-            out.append(f"  \"{prompt(item, style, reference)}\"")
+            out.append(f"  \"{prompt(with_refusal(item, refused), style, reference)}\"")
+        elif s == "stand-in":
+            out.append(f"stand-in {stem}: refused {TRIES} times, it keeps its stand-in; to try again, change its "
+                       f"subject in art()")
         else:
             out.append(f"{s} {stem}: {raw.name if (raw := raw_of(root, rel)) else 'art/' + rel}")
-    if counts["make"]:
+    if to_make:
         out.append(f"{count}; next: make each with the image tool, then python {skill}/scripts/prepare_art.py")
     elif counts["prepare"]:
-        out.append(f"to prepare: {counts['prepare']}, done: {counts['done']}; next: python "
-                   f"{skill}/scripts/prepare_art.py")
+        out.append(f"{count}; next: python {skill}/scripts/prepare_art.py")
+    elif counts["stand-in"]:
+        out.append(f"{count}; next: python tools/build_project.py")
     else:
         out.append(f"ok: all {counts['done']} pictures done; next: python tools/build_project.py")
     return out
@@ -202,8 +253,8 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     near = sum(sum((a - b) ** 2 for a, b in zip(c, bg)) < NEAR ** 2 for c in colours) / len(colours)
     name = next(n for n, c in KEYS.items() if c == key)
     if near < 0.5:
-        raise Unusable(f"its edge is not one flat colour, {near:.0%} of it near {hex_of(bg)}; make it again on a "
-                       f"flat {name} {hex_of(key)} background, or with a transparent one")
+        raise Unusable(f"its edge is not one flat colour, {near:.0%} of it near {hex_of(bg)}",
+                       f"make it again on a flat {name} {hex_of(key)} background, or with a transparent one")
     # the background is the key asked for, or the other one, as a model paints it: the keyed
     # channels lit, the others dark, as in (216, 46, 147) or (8, 162, 24)
     painted = [n for n, k in KEYS.items()
@@ -211,13 +262,13 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
                and max(c for c, on in zip(bg, k) if not on) <= 0.35 * min(c for c, on in zip(bg, k) if on)]
     if not painted:
         raise Unusable(f"its background is {hex_of(bg)}, neither magenta nor green, and a cut on it would also "
-                       f"remove the subject's parts in that colour; make it again on a flat {name} {hex_of(key)} "
-                       f"background, or with a transparent one")
+                       f"remove the subject's parts in that colour",
+                       f"make it again on a flat {name} {hex_of(key)} background, or with a transparent one")
     name = painted[0]
     key = KEYS[name]
     if near < 0.9:
-        raise Unusable(f"the subject runs off the picture over {1 - near:.0%} of its edge, so it is cut off; make "
-                       f"it again whole and centred, with room around it")
+        raise Unusable(f"the subject runs off the picture over {1 - near:.0%} of its edge, so it is cut off",
+                       "make it again whole and centred, with room around it")
     n = w * h
     br, bgr, bb = bg
     rgb = [data[4 * i:4 * i + 3] for i in range(n)]
@@ -364,8 +415,9 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     if left > max(FRINGE_MIN, FRINGE * band):
         other = next(k for k in KEYS if k != name)
         raise Unusable(f"after the cut, {left} of the {band} pixels along the subject's edge lean to {name}: a "
-                       f"fringe the cut left, or a subject too near the key; make it again on a flat {other} "
-                       f"{hex_of(KEYS[other])} background, or with a transparent one")
+                       f"fringe the cut left, or a subject too near the key",
+                       f"make it again on a flat {other} {hex_of(KEYS[other])} background, or with a transparent one",
+                       other)
     return cut, f"background {hex_of(bg)}, {gaps} px cleared in gaps, {spill} px of key light recoloured"
 
 
@@ -454,8 +506,8 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
     alpha = cut.getchannel("A")
     solid = alpha.point(lambda a: 255 if a >= 128 else 0).getbbox()
     if solid is None:
-        raise Unusable(f"nothing is left of the subject once the background is removed ({how}); make the subject "
-                       f"in colours far from the background")
+        raise Unusable(f"nothing is left of the subject once the background is removed ({how})",
+                       "make the subject in colours far from the background")
     if solid[0] == 0 or solid[1] == 0 or solid[2] == cut.width or solid[3] == cut.height:
         notes.append(f"  note: the subject touches the picture's edge and may be cut off; make it whole, with room "
                      f"around it")
@@ -487,10 +539,12 @@ def main() -> int:
     ap = c3.argument_parser(__doc__.split("\n\n")[0], "examples:\n"
                             "  python scripts/prepare_art.py --list\n"
                             "  python scripts/prepare_art.py --project D:/games/Coins\n\n"
-                            "exit codes: 0 when no picture was refused, the last line starting with ok: once all are "
-                            "in art/; 1 when a picture could not be used; 2 when art/wanted.json or Pillow is missing")
+                            "exit codes: 0 when no picture waits to be made again, the last line starting with ok: once "
+                            "all are in art/; 1 when a picture could not be used; 2 when art/wanted.json or Pillow is "
+                            "missing")
     ap.add_argument("--list", action="store_true",
-                    help="print the prompt of every picture still to make, and what is ready")
+                    help="print the next step: ART_STYLE, the key picture, or the prompt of every picture still to "
+                         "make, and what is ready")
     args = ap.parse_args()
     root = c3.find_project(args.project)
     wanted_path = (root or Path.cwd()) / "art" / "wanted.json"
@@ -514,25 +568,53 @@ def main() -> int:
         except ImportError:
             print("prepare_art.py needs Pillow to read and resize the pictures: pip install pillow", file=sys.stderr)
             return 2
-        out, waiting, done = [], 0, 0
+        refused = refusals(root, wanted)
+        out, waiting, done, kept = [], 0, 0, 0
         for item in wanted["images"]:
-            if raw_of(root, item["file"]) is None:
-                if (root / "art" / item["file"]).exists():
+            rel = item["file"]
+            stem, raw = rel[:-len(".png")], raw_of(root, rel)
+            if state(root, item, refused) == "stand-in":
+                kept += 1
+                out.append(f"{stem}: refused {TRIES} times, it keeps its stand-in; to try again, change its subject "
+                           f"in art()")
+                continue
+            if raw is None:
+                if (root / "art" / rel).exists():
                     done += 1           # put in art/ as it is, by the user
                 else:
                     waiting += 1
                 continue
             try:
-                out += prepare(root, item, wanted)
+                out += prepare(root, with_refusal(item, refused), wanted)
                 done += 1
+                refused.pop(rel, None)
             except Unusable as e:
+                line = f"{stem}: {raw.name}: {e}"
+                if e.again:
+                    r = refused.setdefault(rel, {"subject": item["subject"], "pictures": []})
+                    if (seen := fingerprint(raw)) not in r["pictures"]:
+                        r["pictures"].append(seen)
+                    r["again"] = e.again
+                    if e.key:
+                        r["key"] = e.key
+                    if len(r["pictures"]) >= TRIES:
+                        kept += 1
+                        out.append(f"{line}. Refused {TRIES} times, it keeps its stand-in; to try again, change its "
+                                   f"subject in art()")
+                        continue
+                    line += f" (refused {len(r['pictures'])} of {TRIES} times)"
                 failed += 1
-                out.append(f"{item['file'][:-len('.png')]}: {raw_of(root, item['file']).name}: {e}")
-        counts = f"prepared: {done}, could not use: {failed}, still to make: {waiting}"
+                out.append(line)
+        if refused or (root / REFUSED).exists():
+            (root / REFUSED).write_text(json.dumps(refused, indent=1, ensure_ascii=False), encoding="utf-8")
+        counts = f"prepared: {done}, could not use: {failed}, still to make: {waiting}" +             (f", kept as stand-ins: {kept}" if kept else "")
         if failed:
-            out.append(f"{counts}; next: make the pictures above again as their lines say, then run this again")
+            out.append(f"{counts}; next: make the pictures above again with the prompts python {skill.as_posix()}"
+                       f"/scripts/prepare_art.py --list prints, then run this again")
         elif waiting:
             out.append(f"{counts}; next: python {skill.as_posix()}/scripts/prepare_art.py --list for their prompts")
+        elif kept:
+            out.append(f"{counts}; next: python tools/build_project.py")
         else:
             out.append(f"ok: {done} pictures in art/; next: python tools/build_project.py")
     shown = c3.fitting(out, args.limit)

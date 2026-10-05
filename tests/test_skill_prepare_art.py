@@ -246,22 +246,52 @@ def test_prepare_art_scales_a_picture_without_new_colours():
 
 
 def test_prepare_art_refuses_a_picture_it_cannot_cut_out(project):
-    picture(project / "art" / "raw" / "coin-default-000.jpg", stripes=True)
-    code, out = tool(project, "prepare_art")
-    assert code == 1, out
-    assert "coin-default-000: coin-default-000.jpg: its edge is not one flat colour" in out
-    assert "make it again on a flat magenta #FF00FF background, or with a transparent one" in out
+    """A refusal is counted once per picture, carried into the picture's next prompt, and after the
+    third the picture keeps its stand-in."""
+    edit(project, "art/wanted.json", lambda wanted: wanted.update(style="Bright flat vector."))
+    raw = project / "art" / "raw" / "coin-default-000.jpg"
+    picture(raw, stripes=True)
+    for _ in range(2):                                   # the same picture again counts once
+        code, out = tool(project, "prepare_art")
+        assert code == 1, out
+        assert ("coin-default-000: coin-default-000.jpg: its edge is not one flat colour" in out
+                and "; make it again on a flat magenta #FF00FF background, or with a transparent one (refused 1 of 3 "
+                    "times)" in out), out
     assert out.splitlines()[-1] == ("prepared: 0, could not use: 1, still to make: 0; next: make the pictures above "
-                                    "again as their lines say, then run this again")
-    picture(project / "art" / "raw" / "coin-default-000.jpg", r=270, shadow=False)
+                                    "again with the prompts python .agents/skills/construct3-agent-plugin/scripts/"
+                                    "prepare_art.py --list prints, then run this again")
+    code, out = tool(project, "prepare_art", "--list")
+    lines = out.splitlines()
+    assert "make coin-default-000 again, refused 1 of 3 times: ratio 1:1, for a 96x96 box -> "            "art/raw/coin-default-000.png" in lines, out
+    assert ('  "Bright flat vector; a gold coin seen from the front. One subject, whole and centred with room around '
+            'it, on a flat magenta #FF00FF background: no scenery, no shadow on the ground, no text. Make it again on a '
+            'flat magenta #FF00FF background, or with a transparent one."') in lines
+    assert lines[-1].startswith("to make: 1, to prepare: 0, done: 0; next: make each with the image tool")
+
+    picture(raw, r=270, shadow=False)
     code, out = tool(project, "prepare_art")
-    assert code == 1 and "the subject runs off the picture over" in out and "make it again whole" in out, out
+    assert code == 1 and "the subject runs off the picture over" in out, out
+    assert "make it again whole and centred, with room around it (refused 2 of 3 times)" in out
     # on white, a cut would take the subject's whites with it
-    picture(project / "art" / "raw" / "coin-default-000.jpg", bg=(250, 250, 250))
+    picture(raw, bg=(250, 250, 250))
     code, out = tool(project, "prepare_art")
-    assert code == 1, out
+    assert code == 0, out
     assert "its background is #F" in out and "neither magenta nor green" in out, out
-    assert "make it again on a flat magenta #FF00FF background, or with a transparent one" in out
+    assert ("make it again on a flat magenta #FF00FF background, or with a transparent one. Refused 3 times, it keeps "
+            "its stand-in; to try again, change its subject in art()") in out
+    assert out.splitlines()[-1] == ("prepared: 0, could not use: 0, still to make: 0, kept as stand-ins: 1; next: "
+                                    "python tools/build_project.py")
+    code, out = tool(project, "prepare_art", "--list")
+    assert out.splitlines()[-2:] == [
+        "stand-in coin-default-000: refused 3 times, it keeps its stand-in; to try again, change its subject in art()",
+        "to make: 0, to prepare: 0, done: 0, stand-ins: 1; next: python tools/build_project.py"], out
+    code, out = run(project, "tools/build_project.py")
+    assert code == 0 and "1 of 1 images show their stand-in" in out, out
+
+    # a new subject is a new request: its count starts again
+    edit(project, "art/wanted.json", lambda wanted: wanted["images"][0].update(subject="a gold coin, flat"))
+    code, out = tool(project, "prepare_art", "--list")
+    assert "prepare coin-default-000: coin-default-000.jpg" in out.splitlines(), out
 
 
 def test_prepare_art_fits_a_scene_and_keeps_a_picture_with_transparency(project):
@@ -317,8 +347,11 @@ def test_prepare_art_refuses_a_cut_that_leaves_the_key_on_the_edge():
     truth, pic = figure("magenta", hair=HOT_PINK)
     with pytest.raises(prepare_art.Unusable, match=r"pixels along the subject's edge lean to magenta: a fringe "
                                                    r"the cut left, or a subject too near the key; make it again on "
-                                                   r"a flat green #00FF00 background"):
+                                                   r"a flat green #00FF00 background") as refused:
         prepare_art.cut_out(pic, KEYS["magenta"])
+    item = {"file": "x.png", "kind": "circle", "subject": "a knight in red"}
+    record = {"x.png": {"pictures": ["0"], "again": refused.value.again, "key": refused.value.key}}
+    assert "on a flat green #00FF00 background" in prepare_art.prompt(prepare_art.with_refusal(item, record), "")
     truth, pic = figure("green", hair=HOT_PINK)          # made again as the line says
     cut, how = prepare_art.cut_out(pic, KEYS["magenta"])
     assert how.startswith("background #06F60A") and leaning(cut, KEYS["green"])[0] == 0
