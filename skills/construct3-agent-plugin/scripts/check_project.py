@@ -277,6 +277,9 @@ NONE_LEFT = re.compile(r"(\w+)\.(count|pickedcount)(?:=0|<=0|<1)|(?:0=|0>=|1>)(\
 # empty space; with Enable BBCode on, the tags are markup, not characters, and \[ is a bracket.
 SPRITE_FONT_TEXT = ("set-text", "append-text", "typewriter-text")
 BBCODE_TAG = re.compile(r"(?<!\\)\[/?[a-z]+(?:=[^\]]*)?\]", re.I)
+# Set text to replace(Self.Text, "###", ProjectVersion): the object's own text is a template, and "###" is
+# replaced before the font draws it.
+OWN_TEXT_REPLACED = re.compile(r'replace\s*\(\s*(\w+)\s*\.\s*text\s*,\s*("(?:[^"]|"")*")', re.I)
 # What the r495.2 editor reads for a Sprite Font instance that leaves these properties out, asked of the
 # editor on 2026-10-03. They fit the editor's own font image; the Character set maps its cells from the
 # top-left. Enable BBCode left out reads as off.
@@ -397,6 +400,34 @@ def bare_name_in(code: str, name: str) -> bool:
     if re.search(declared, code):
         return False
     return re.search(rf"(?<![\w$.]){re.escape(name)}(?![\w$])(?!\s*:(?!:))", code) is not None
+
+
+def replaced_in_own_text(sheets: dict, families: dict) -> dict[str, set[str]]:
+    """Object type -> the parts of its own text that a Set text replaces, "###" for
+    replace(Self.Text, "###", ProjectVersion): a layout text that holds them is a template the events fill in.
+    An action of a family replaces them in each member."""
+    found: dict[str, set[str]] = {}
+
+    def walk(events: list) -> None:
+        for ev in events:
+            if not isinstance(ev, dict):
+                continue
+            for a in ev.get("actions") or []:
+                obj = a.get("objectClass") if isinstance(a, dict) and a.get("id") == "set-text" else None
+                text = (a.get("parameters") or {}).get("text") if obj else None
+                if not isinstance(obj, str) or not isinstance(text, str):
+                    continue
+                for m in OWN_TEXT_REPLACED.finditer(text):
+                    if m.group(1).lower() in ("self", obj.lower()):
+                        for t in families[obj].get("members", []) if obj in families else [obj]:
+                            found.setdefault(t, set()).add(unquote(m.group(2)))
+            if isinstance(ev.get("children"), list):
+                walk(ev["children"])
+
+    for sheet in sheets.values():
+        if isinstance(sheet.get("events"), list):
+            walk(sheet["events"])
+    return found
 
 
 def joined_literals(expr: str) -> list[str]:
@@ -527,6 +558,7 @@ class Checker:
         self.layout_effects: set[str] = set()             # the effects of every layout
         # Sprite Font type -> the characters its instances draw, whether any has BBCode on
         self.font_sets: dict[str, tuple[set[str], bool]] = {}
+        self.font_templates: dict[str, set[str]] = {}     # type -> the parts of its text a Set text replaces
         self.solid_obstacles = False      # a Pathfinding instance takes its obstacles from Solids
         self.solid_changes: list[str] = []    # where an action changes a Solid
         self.regenerated = False          # some action regenerates the obstacle map or a region of it
@@ -935,8 +967,8 @@ class Checker:
             self.err(f"{where}: {t} has no animation {initial!r} for initial-animation")
 
     def check_sprite_font_instance(self, where: str, t: str, props: dict) -> None:
-        """Records the characters this instance draws, for the type's Set text actions, and checks its own text.
-        A property the instance leaves out is read as the editor fills it."""
+        """Records the characters this instance draws, for the type's Set text actions, and checks its own text
+        without the parts a Set text replaces. A property the instance leaves out is read as the editor fills it."""
         missing = [k for k in SPRITE_FONT_DEFAULTS if k not in props]
         if missing:
             self.warn(f"{where}: {t} instance has no {', '.join(missing)}; the editor fills "
@@ -952,6 +984,8 @@ class Checker:
         self.font_sets[t] = (chars | set(charset), any_bbcode or bbcode)
         text = props.get("text")
         if isinstance(text, str):
+            for part in self.font_templates.get(t, ()):
+                text = text.replace(part, "")
             self.check_sprite_font_text(f"{where}: {t} text", t, text, set(charset), bbcode)
 
     def check_sprite_font_text(self, where: str, t: str, text: str, charset: set[str], bbcode: bool) -> None:
@@ -1017,6 +1051,7 @@ class Checker:
         p = self.p
         self.layouts = p.load_listed("layouts")
         self.sheets = {**p.load_listed("eventSheets"), **self.unsaved}
+        self.font_templates = replaced_in_own_text(self.sheets, p.families)
         for lname, lay in self.layouts.items():
             self.collect_sids(lay)
             if not (isinstance(lay.get("name"), str) and lay["name"]):

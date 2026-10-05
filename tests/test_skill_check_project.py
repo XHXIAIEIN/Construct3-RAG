@@ -1364,10 +1364,15 @@ def set_label(text: str) -> dict:
     ("SCORE", True, set_label('"BEST: " & Score'), "':' is not in the Character set"),
     ("SCORE", True, set_label('"BEST " & Score & int("1.5")'), None),
     ("SCORE", True, set_label('Score = 0 ? "NONE" : "SOME"'), None),
+    ("V###", True, set_label('replace(Self.Text, "###", ProjectVersion)'), None),
+    ("v###", True, set_label('replace(Label.Text, "###", ProjectVersion)'), "'v' is not in the Character set"),
+    ("V###", True, set_label('Self.Text & "1"'), "'#' is not in the Character set"),
 ])
 def test_text_a_sprite_font_cannot_draw_is_named(project, layout_text, bbcode, action, said):
     """The manual: a character outside the Character set is drawn as an empty space
-    (plugin-reference/sprite-font.md). Only literals joined at the top level are text that shows."""
+    (plugin-reference/sprite-font.md). Only literals joined at the top level are text that shows. A layout
+    text is a template where a Set text replaces part of it, as in replace(Self.Text, "###", ProjectVersion):
+    that part is never drawn, and the rest still is."""
     sprite_font_label(project, layout_text, bbcode)
     out = findings(project, lambda s: action and s["events"].append(block([START], [action])))
     assert_one_warning(out, "plugin-reference/sprite-font.md", said)

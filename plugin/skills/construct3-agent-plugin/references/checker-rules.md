@@ -114,9 +114,12 @@ Traps of the running game are warnings:
 - text a Sprite Font cannot draw, in a layout instance's text or in a
   literal that *Set text*, *Append text* or *Typewriter text* joins at the
   top level of its expression: a character outside the Character set shows
-  as an empty space; with *Enable BBCode* on, the tags are not counted. An
-  instance without a Character set is read with the editor's default set,
-  and one without *Enable BBCode* with it off, as the editor reads them;
+  as an empty space; with *Enable BBCode* on, the tags are not counted. A
+  layout text whose part a *Set text* replaces in the object's own text,
+  `###` for `replace(Self.Text, "###", ProjectVersion)`, is checked without
+  that part. An instance without a Character set is read with the editor's
+  default set, and one without *Enable BBCode* with it off, as the editor
+  reads them;
 - a Sprite Font instance without *Character set*, *Character width* or
   *Character height*: the editor fills the values that fit its own font
   image, so an image drawn in another order or cell size shows the wrong
