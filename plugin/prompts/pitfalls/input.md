@@ -74,6 +74,35 @@ Sources and the rule for adding an entry are in the index,
   event uses the family. [manual: plugin-reference/common-features/common-conditions.md
   "Pick top/bottom"; runtime: the `TestAndSelectCanvasPointOverlap` of the
   entry above selects each instance that contains the point]
+- Drag & Drop starts one drag per press, on the front instance under the
+  pointer: the one on the highest layer, then the one highest in Z order on
+  that layer. It considers only instances whose behavior is enabled and
+  whose layer is interactive, of every object type that has the behavior. It
+  ignores visibility, of the instance and of its layer. A popup without Drag & Drop takes no part, so the pieces under it
+  can still be dragged, and a hidden piece or a piece on a hidden layer is
+  dragged too. To stop drags while a popup shows, turn the pieces' layer off
+  with *Set layer interactive*, or the behavior with *Set enabled*. [runtime:
+  exported c3runtime.js r504, `Behaviors.DragnDrop` `_OnInputDown` skips an
+  instance whose behavior is disabled or whose layer fails
+  `IsSelfAndParentsInteractive`, then keeps the instance with the highest
+  layer index, then the highest Z index; observed in a minimal project, r504
+  preview, 2026-10-05: of two overlapping instances on two layers, the upper
+  layer's dragged, also with that layer hidden and with that instance
+  hidden, and the lower one dragged once the upper layer was not interactive;
+  of two on one layer, the higher in Z dragged]
+- A touch's speed, from `Touch.SpeedAt`, `Touch.SpeedForID` or *Compare
+  touch speed*, is the distance between the last two pointer moves divided by
+  the time between them. Once the finger has been still for about 50 ms, the
+  speed reads 0. The release adds no move. So in *On any touch end* the speed
+  is that of the last move if the finger lifts while it moves, and 0 if it
+  stopped first: a flick test there passes only for a release made in
+  motion. [runtime: exported c3runtime.js r504, `Plugins.Touch.TouchInfo`
+  `GetSpeed`; `Plugins.Touch.Instance` `_OnTick2` sets a touch's last time
+  to the present once it has not moved for 50 ms, which makes the speed 0,
+  and `_OnPointerUp` records no position; observed in a minimal project, r504
+  preview, 2026-10-05: pointer events dispatched in the page, ten moves
+  16 ms apart, read 1829 px/s in *On any touch end* with the release 16 or
+  36 ms after the last move, and 0 with the release 56 ms or more after it]
 - *Simulate control* acts in the tick it runs, as if the control were held
   for that tick. So put it in an event whose condition stays true while the
   control is held, such as Keyboard *Key is down*. In an *On key pressed*

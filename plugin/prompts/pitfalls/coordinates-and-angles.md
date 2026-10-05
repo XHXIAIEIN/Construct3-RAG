@@ -25,12 +25,20 @@ Sources and the rule for adding an entry are in the index,
   "Speed"]
 - A Bullet's angle of motion and the object's angle are two values. They
   change together only while the behavior's *Set angle* property is on, and 8
-  Direction and Car have the same property. At speed 0 the angle of motion is
-  0 and cannot be set, so set the speed first, then the angle. [manual:
+  Direction and Car have the same property. The Bullet moves by a velocity
+  vector. *Set angle of motion* turns that vector and keeps its length, so at
+  speed 0 it does nothing. *Set speed* from 0 then starts a vector at angle 0,
+  so the object moves right. A projectile created at speed 0 and given *Set
+  angle of motion*, then *Set speed*, flies right whatever its angle. Set the
+  speed first, then the angle of motion. [manual:
   behavior-reference/bullet.md "Set angle", "Set angle of motion",
   "AngleOfMotion"; behavior-reference/8-direction.md "Set angle"; Ashley in
   Scirra/Construct-bugs#6105: by design, set the angle of motion again after
-  the speed]
+  the speed; runtime: exported c3runtime.js r504, Bullet `_SetAngleOfMotion`
+  multiplies the new direction by the vector's length, and `_SetSpeed` sets
+  dx to the speed and dy to 0 when the length is 0; observed in a game
+  project, r504 preview, 2026-10-05: in recorded frames every projectile flew
+  right, and with the two actions swapped each flew along its angle]
 - A sprite's origin is image point 0, the point X, Y and rotation refer to.
   The editor puts it at the centre (`originX`, `originY` 0.5 in the layout
   file), so a sprite at the layout's edge shows half. For a muzzle or a

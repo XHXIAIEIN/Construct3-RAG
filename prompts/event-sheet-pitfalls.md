@@ -125,7 +125,7 @@ If the events place, move or rotate objects or read the viewport, read
 - The origin (0, 0) is the top-left of the layout and Y grows downwards.
 - Angles are clockwise degrees from 0 facing right. Compare them with `anglediff`, never `<`.
 - A sprite is drawn facing right at angle 0. Paint art facing right.
-- A Bullet's angle of motion and the object's angle are two values. At speed 0 the first cannot be set.
+- A Bullet's angle of motion and the object's angle are two values. At speed 0 *Set angle of motion* does nothing, and *Set speed* from 0 moves right. Set the speed first, then the angle of motion.
 - The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
 - Tile movement's *Set grid position* takes a column and a row, not pixels. Convert a position with `round((X - offset X) / grid width)`.
 - `ViewportLeft` and the rest take a layer. `LayoutWidth` and `ViewportWidth(layer)` differ.
@@ -143,14 +143,16 @@ If an object chases, follows or walks to another object, read
 ### Input
 
 If the events use Mouse and Touch together, tell a finger from a mouse,
-hide what can be pressed, bind keys, steer a movement behavior, or ask the
-browser for fullscreen, a permission or a picker, read
-[pitfalls/input.md](pitfalls/input.md).
+hide what can be pressed or dragged, read a touch's speed, bind keys, steer
+a movement behavior, or ask the browser for fullscreen, a permission or a
+picker, read [pitfalls/input.md](pitfalls/input.md).
 
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too. Detect the input method with it off.
 - Touch and Mouse press an object that is invisible or has collisions disabled. Add *Is visible* to the event or set its layer not interactive.
 - Touch and Mouse pick every overlapping instance under the pointer. Add the button's *Pick top/bottom* (top) as a second condition of the trigger's event so only the front button reacts; a family for buttons of several types.
+- Drag & Drop drags the front instance under the pointer, by layer and then Z, visible or not. Stop drags under a popup with *Set layer interactive* on the pieces' layer or *Set enabled* on the behavior.
+- Touch speed reads 0 once the finger has been still for about 50 ms, and the release adds no move. So a flick tested in *On any touch end* passes only for a release made in motion.
 - *Simulate control* acts only in the tick it runs. Put it in an event whose condition stays true while the control is held: *Key is down*, not *On key pressed*.
 - Every instance with *Default controls* on moves with the arrow keys. Turn it off on each instance the player does not steer, such as a pushed crate, and move it with *Simulate control*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
@@ -159,11 +161,13 @@ browser for fullscreen, a permission or a picker, read
 ### Audio
 
 If the events play music from the first screen, schedule sounds, change
-their rate, volume or effects, or keep music on a beat, read
+their rate, volume or effects, keep music on a beat, or preload and unload
+files, read
 [pitfalls/audio.md](pitfalls/audio.md).
 
 - With *Use worker* on, scheduled sounds jitter by a message delay. For sample-accurate scheduling, set it to *No*.
 - A sound not yet loaded plays late, and a Music file ignores its scheduled time. Keep beat-locked files in Sounds, preloaded.
+- *Preload sounds* skips the Music folder. *Unload audio* stops every instance still playing the file, so unload a fading track in *On fade ended*.
 - In a browser nothing is heard before the first touch, click or key. Open on a "tap anywhere to start" screen that goes to the game and put *Request fullscreen* on that tap. Music on that screen itself starts only at the tap.
 - The audio clock does not run until the first release, click or key. Start music when `CurrentTime` moves, not on a touch.
 - `PlaybackTime` of a scheduled sound runs ahead by its lead. Build a beat grid from `CurrentTime` and integer steps.
@@ -193,13 +197,14 @@ If the events use image points, animations or frames, read
 
 ### Rendering
 
-If the events colour or size Text, scale or scroll a Tiled Background's
-image, or draw bars, Drawing Canvas polygons or blend modes, read
+If the events colour, size or space Text or a Sprite Font, scale or scroll
+the image of a Tiled Background or a 9-patch, or draw bars, Drawing Canvas
+polygons or blend modes, read
 [pitfalls/rendering.md](pitfalls/rendering.md).
 
 - A Text object has no *Set color*. Colour it with *Set font color*, or the project does not open.
 - *Set width* stretches a Sprite, repeats a Tiled Background and stretches a 9-patch's middle.
-- A Tiled Background's image scale is a percentage in events and a fraction in the layout file, so multiply the fraction by 100. A growing Y offset moves the image down, so scroll upward with a falling offset.
+- A Tiled Background's or 9-patch's image scale is a percentage in events and a fraction in the layout file, so multiply the fraction by 100. A growing Y offset moves the image down, so scroll upward with a falling offset. A 9-patch pops as one piece only if its image scale changes with its size.
 - A bar grows from its origin. Put the origin on the edge it grows from.
 - Drawing Canvas *Fill polygon* with *Convex* off draws nothing when two consecutive points coincide. Repeat no point.
 - A blend mode changes only the pixels under the object's own quad, and the layer needs *Force own texture*.
@@ -209,6 +214,7 @@ image, or draw bars, Drawing Canvas polygons or blend modes, read
 - *Set color* multiplies. Draw a tinted part white and keep highlights on an untinted child.
 - Changing a Text's font size redraws and re-uploads its texture. Animate position, angle or opacity, or use a Sprite Font and tween its scale.
 - A Sprite Font draws whole cells and tints its outline with its colour. Draw glyphs left in the cell, one image per colour, in a box sized for the largest scale.
+- A Sprite Font's *Character spacing* is in layout pixels, not scaled by *Scale*, and only between characters. `TextWidth` includes it. Keep it 0 and put a space character where a gap is wanted.
 
 ### Tween
 

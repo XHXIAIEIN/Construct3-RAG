@@ -39,6 +39,20 @@ which runs Web Audio).
   instance's `Play`, the buffer instance calls `start(when, offset)`, the
   media instance's `Play` ignores its time argument; read from the r504
   runtime, not observed in play]
+- The project property *Preload sounds* loads the files of the Sounds folder
+  only, never those of the Music folder. *Unload audio* and *Unload audio
+  (by name)* release a file's data and stop every instance still playing
+  it. So a track unloaded while *Fade volume*
+  takes it down is cut in the middle of the fade. Unload a track in *On fade
+  ended* for its tag, or after its fade has had its full time. [manual:
+  plugin-reference/audio.md "Preloading sounds", "Audio memory actions";
+  runtime: c3runtime.js `GetAudioToPreload` skips a file with `isMusic`;
+  main.js `_Unload` calls the buffer's `Release`, which calls
+  `ReleaseInstancesForBuffer`, and each instance's `Release` calls `Stop`;
+  observed in a minimal project, r504 preview, 2026-10-05: a looping sound's
+  instance left the page's list of instances at *Unload audio (by name)*.
+  The cut fade was found by an offline mirror of a game project's music
+  events, not heard in a browser]
 - In a browser, no sound is heard until the player first touches, clicks
   or presses a key. The Audio object queues the sounds played before then
   and starts them at that input. So a sound played in *On start of layout*
