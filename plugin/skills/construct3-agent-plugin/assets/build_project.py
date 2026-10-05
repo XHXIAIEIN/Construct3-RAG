@@ -219,8 +219,8 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
     wholly inside another is a layer on purpose, a bar's fill in its frame or an icon on its
     panel, and passes, unless the outer one is a label, which anything on top of it hides.
     Called on the UI layer in build_layouts(); a layer whose art is meant to stack is not
-    passed."""
-    boxes = []
+    passed. Every box in the way is named in one message, one line each."""
+    boxes, said = [], []
     for inst in instances:
         w = inst.get("world")
         if w:
@@ -229,8 +229,8 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
             boxes.append((inst["type"], left, top, left + w["width"], top + w["height"], "text" in inst.get("properties", {})))
     for kind, l, t, r, b, _ in boxes:
         if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H:
-            sys.exit(f"{where}: {kind} ({l:g},{t:g})-({r:g},{b:g}) reaches past the {VIEW_W}x{VIEW_H} viewport; "
-                     f"place it with anchor() or row(), which keep it MARGIN inside the edge")
+            said.append(f"{where}: {kind} ({l:g},{t:g})-({r:g},{b:g}) reaches past the {VIEW_W}x{VIEW_H} viewport; "
+                        f"place it with anchor() or row(), which keep it MARGIN inside the edge")
 
     def layered(inner: tuple, outer: tuple) -> bool:
         """inner wholly inside outer, and outer not a label: a label under another label is hidden."""
@@ -243,11 +243,13 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
                 continue
             if min(a[3], b[3]) - max(a[1], b[1]) > 0 and min(a[4], b[4]) - max(a[2], b[2]) > 0:
                 dy = math.ceil((a[4] + UNIT - b[2]) / UNIT)
-                sys.exit(f"{where}: {a[0]} ({a[1]:g},{a[2]:g})-({a[3]:g},{a[4]:g}) overlaps {b[0]} "
-                         f"({b[1]:g},{b[2]:g})-({b[3]:g},{b[4]:g}). Move {b[0]} down {dy} units: dy={dy} on its "
-                         f"anchor(), row() or hud_text() call, on top of any dy it has, puts its top one unit under "
-                         f"{a[0]}. Or size a label to its text with hud_text(), space repeated items with row(), "
-                         f"or hold one of them to another edge.")
+                said.append(f"{where}: {a[0]} ({a[1]:g},{a[2]:g})-({a[3]:g},{a[4]:g}) overlaps {b[0]} "
+                            f"({b[1]:g},{b[2]:g})-({b[3]:g},{b[4]:g}). Move {b[0]} down {dy} units: dy={dy} on its "
+                            f"anchor(), row() or hud_text() call, on top of any dy it has, puts its top one unit under "
+                            f"{a[0]}. Or size a label to its text with hud_text(), space repeated items with row(), "
+                            f"or hold one of them to another edge.")
+    if said:
+        sys.exit("\n".join(said))
 
 
 def pace(beats: list) -> list[str]:
@@ -570,6 +572,7 @@ SHAPES = ("rect", "circle", "triangle")
 FRAMES: dict[str, dict] = {}               # the frame of each image shape() drew, by file name
 PADS: dict[str, tuple[int, int]] = {}      # where the shape starts inside that image, past its shadow
 DRAWN_AS: dict[str, tuple] = {}            # the arguments each image was drawn with, for hit_frame()
+FILLS: dict[str, str] = {}                 # the role of PALETTE each image is filled with, which a label on it reads on
 
 
 def shadow_offset() -> tuple[int, int]:
@@ -641,6 +644,7 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
     FRAMES[rel] = frame(iw, ih, (left + ox * w) / iw, (top + oy * h) / ih, poly)
     PADS[rel] = (left, top)
     DRAWN_AS[rel] = (kind, w, h, ox, oy, outline, shadow)
+    FILLS[rel] = role
     return FRAMES[rel]
 
 
@@ -721,7 +725,8 @@ def art(rel: str, kind: str, w: int, h: int, role: str, subject: str, ox: float 
     poly = [round(v, 4) for point in corners("rect" if scene else kind) for v in point]
     FRAMES[rel] = frame(w, h, ox, oy, poly)
     PADS[rel] = (0, 0)
-    DRAWN_AS[rel] = ("art",)
+    DRAWN_AS[rel] = ("art", w, h)
+    FILLS[rel] = role
     return FRAMES[rel]
 
 
@@ -1410,10 +1415,17 @@ def contrast(a: tuple, b: tuple) -> float:
     return (hi + 0.05) / (lo + 0.05)
 
 
+def text_contrast(size: float) -> float:
+    """The contrast a text of `size` points needs against what is behind it: 4.5:1, and 3:1 for
+    large-scale text, 18 pt and up (WCAG 2.2, 1.4.3). A label here is bold, but the 14 pt bold of
+    WCAG's definition is left aside, so a regular label of the same size reads as well."""
+    return 3 if size >= 18 else 4.5
+
+
 def readable(otype: str, color: str, on: str, size: float) -> None:
-    """Stops the run when a label in `color` does not read on `on`, both roles of PALETTE: text
-    needs 4.5:1 against what is behind it, 3:1 from TEXT_SIZE["title"] up (WCAG 2.2, 1.4.3)."""
-    need = 3 if size >= TEXT_SIZE["title"] else 4.5
+    """Stops the run when a label in `color` does not read on `on`, both roles of PALETTE, by the
+    contrast text_contrast() asks for its size."""
+    need = text_contrast(size)
     ratio = contrast(rgb(color), rgb(on))
     if ratio < need:
         fits = [role for role in PALETTE if role != on and contrast(PALETTE[role], PALETTE[on]) >= need]
@@ -1461,12 +1473,19 @@ def hud_text(otype: str, text: str, where: str, size: float | None = None, longe
     for a label that starts as "Score: 0". The size is TEXT_SIZE["body"] unless a banner
     asks for TEXT_SIZE["title"]; color and on are roles of PALETTE, as for text_inst()."""
     size = size or TEXT_SIZE["body"]
-    w = math.ceil(text_ems(longest or text) * size * PX_PER_PT / UNIT) * UNIT
-    h = math.ceil(size * PX_PER_PT * LINE_EMS / UNIT) * UNIT
+    w, h = label_box(longest or text, size)
     halign = {"left": "left", "middle": "center", "right": "right"}[sides(where)[1]]
     x, y = anchor(where, w, h, 0, 0, dx, dy)
     return text_inst(otype, text, x, y, w, h, size=size, halign=halign, bold=bold, color=color, on=on,
                      ivars=ivars, behaviors=behaviors)
+
+
+def label_box(text: str, size: float | None = None) -> tuple[int, int]:
+    """The (w, h) in px of a one-line label of `text` at `size`, TEXT_SIZE["body"] unless given:
+    its width by text_ems(), its height a line, each rounded up to a whole unit."""
+    size = size or TEXT_SIZE["body"]
+    return (math.ceil(text_ems(text) * size * PX_PER_PT / UNIT) * UNIT,
+            math.ceil(size * PX_PER_PT * LINE_EMS / UNIT) * UNIT)
 
 
 def origin_name(ox: float, oy: float) -> str:
@@ -1541,11 +1560,188 @@ def hud_bar(frame_name: str, fill_name: str, where: str, length: float, height: 
     shows the empty icon. Returns (frame instance, fill instance)."""
     height = height or units(1)
     cx, cy = anchor(where, length, height, 0.5, 0.5, dx, dy)
+    return bar_at(frame_name, fill_name, cx, cy, length, height, inset, caps)
+
+
+def bar_at(frame_name: str, fill_name: str, cx: float, cy: float, length: float, height: float, inset: float = 2,
+           caps: bool = False) -> tuple[dict, dict]:
+    """hud_bar()'s frame and fill, the frame's centre at (cx, cy)."""
     make = ninepatch_inst if caps else tiledbg_inst
     frame_inst = make(frame_name, cx, cy, length, height, 0.5, 0.5)
     fill_inst = make(fill_name, cx - length / 2 + inset, cy, length - 2 * inset, height - 2 * inset, 0, 0.5,
                      behaviors=dict(TWEEN))
     return frame_inst, fill_inst
+
+
+# --- components and screens ---------------------------------------------------------------
+# A part made of two objects is made by one call, so the two never come apart: a button is a
+# shape with its label centred on the same box, a bar has its name in front of it. The label is
+# the shape's child in the layout's hierarchy (link()), so the events move, hide or destroy the
+# button and the label goes with it. A screen is named bands (bands()): the title at the top, the
+# status under it, the hint at the bottom and the stage between them, where the game is; a label
+# goes into a band by name (band_text()), and fit() sizes the stage's main object to the stage.
+# Construct3-RAG/docs/decisions/layout-by-name.md.
+SCENE_FLAGS = {"x": True, "y": True, "z": False, "w": False, "h": False, "a": False, "o": True, "v": True, "d": True,
+               "sm": "normal"}
+STAGE_SHARE = 0.6                          # the share of the stage, across or down, its main object covers
+
+
+def link(parent: dict, *children: dict) -> None:
+    """Makes `children` follow the layout instance `parent` in the layout's hierarchy, written as
+    the editor writes it: their position, opacity and visibility follow the parent's, and they are
+    destroyed with it, so "Set invisible" on a button hides its label too. Each child starts
+    visible when the parent does. Put a child on the parent's layer, after it."""
+    preview = {"transformX": 0, "transformY": 0, "transformZElevation": 0, "transformW": 0, "transformH": 0,
+               "transformA": 0, "transformSX": 0, "transformSY": 0, "transformO": 0, "previewSceneGraph": False}
+    own = {"x": True, "y": True, "z": True, "w": True, "h": True, "a": True, "o": False, "v": False, "d": True,
+           "sm": "normal"}
+
+    def put(inst: dict, graph: dict) -> None:
+        items = [(k, v) for k, v in inst.items() if k != "sceneGraphData"]
+        inst.clear()
+        for k, v in items:
+            if k == "showing":
+                inst["sceneGraphData"] = graph
+            inst[k] = v
+
+    graph = parent.get("sceneGraphData") or {"parent-uid": None, "uid": parent["uid"], "children": [],
+                                              "flags": dict(own), "preview": dict(preview)}
+    for child in children:
+        graph["children"].append({"uid": child["uid"], "flags": dict(SCENE_FLAGS)})
+        put(child, {"parent-uid": parent["uid"], "uid": child["uid"], "flags": dict(SCENE_FLAGS),
+                    "preview": dict(preview)})
+        child["properties"]["initially-visible"] = parent["properties"].get("initially-visible", True)
+    put(parent, graph)
+
+
+def text_on(on: str, size: float | None = None) -> str:
+    """The role of PALETTE a label reads best in on the role `on`: "ink" or "flash", the dark or
+    the white one, whichever stands out more, or another role when neither reads (readable())."""
+    best = max((r for r in ("ink", "flash") if r in PALETTE and r != on), key=lambda r: contrast(PALETTE[r], rgb(on)))
+    if contrast(PALETTE[best], rgb(on)) >= text_contrast(size or TEXT_SIZE["body"]):
+        return best
+    return max((r for r in PALETTE if r != on), key=lambda r: contrast(PALETTE[r], PALETTE[on]))
+
+
+def button_size(text: str, size: float | None = None) -> tuple[int, int]:
+    """The (w, h) in px of a button whose label is `text`, its longest text if the events change
+    it: the label with a unit of air on either side and half a unit above and below, and never
+    less than TOUCH either way, so a finger hits it. Draw the button at it:
+    shape(rel, "rect", *button_size("Restart"), "solid")."""
+    w, h = label_box(text, size)
+    return max(TOUCH, w + 2 * UNIT), max(TOUCH, h + UNIT)
+
+
+def label_size(text: str, w: float, h: float) -> float:
+    """The size of a label of `text` on a box of w x h px: TEXT_SIZE["title"] when the box holds
+    it as button_size() asks, else TEXT_SIZE["body"], so a large button gets a large label."""
+    tw, th = button_size(text, TEXT_SIZE["title"])
+    return TEXT_SIZE["title"] if tw <= w and th <= h else TEXT_SIZE["body"]
+
+
+def button(otype: str, rel: str, label: str, text: str, col: int, row: int, size: float | None = None,
+           longest: str | None = None, color: str | None = None, ivars=None, behaviors=None, label_ivars=None,
+           label_behaviors=None) -> tuple[dict, dict]:
+    """A button: the shape of images/<rel> on cell (col, row), as shape_inst() places it, and the
+    Text type `label` showing `text` centred on the same box, in a role that reads on the shape's
+    fill (text_on()) unless `color` names one, linked to the shape as its child (link()), at
+    `size` or the size label_size() gives the shape. `longest` is the widest text the label shows.
+    A shape smaller than button_size() of that text stops the run with the size to draw. Returns
+    (shape, label); put both on one layer, in that order, so the label draws on top."""
+    if rel not in DRAWN_AS:
+        sys.exit(f"button({otype!r}): draw images/{rel} first, shape({rel!r}, \"rect\", *button_size({text!r}), "
+                 f"role), in build_images()")
+    w, h = DRAWN_AS[rel][1:3]
+    size = size or label_size(longest or text, w, h)
+    need = button_size(longest or text, size)
+    if w < need[0] or h < need[1]:
+        sys.exit(f"button({otype!r}): the label {longest or text!r} needs a shape of {need[0]}x{need[1]} px and "
+                 f"images/{rel} is {w}x{h}; draw it at button_size({longest or text!r}), or shorten the text")
+    shape_ = shape_inst(otype, rel, col, row, ivars=ivars, behaviors=behaviors)
+    on = FILLS.get(rel, "canvas_alt")
+    text_ = text_inst(label, text, units(col), units(row), w, h, size, "center", bold=True,
+                      color=color or text_on(on, size), on=on, ivars=label_ivars, behaviors=label_behaviors)
+    link(shape_, text_)
+    return shape_, text_
+
+
+def labelled_bar(label: str, text: str, frame_name: str, fill_name: str, where: str, length: float,
+                 height: float = 0, inset: float = 2, caps: bool = False, dx: float = 0, dy: float = 0,
+                 color: str = "ink", on: str = "canvas_alt") -> tuple[dict, dict, dict]:
+    """A bar with its name in front of it, held to an edge or corner by anchor() as one box: the
+    label `text` in the Text type `label`, a unit of air, then hud_bar()'s frame `length` px long
+    and its fill, so the name never lands on the bar. Returns (label, frame, fill); the sheet sets
+    the fill as for hud_bar()."""
+    height = height or units(1)
+    lw, lh = label_box(text)
+    box_h = max(lh, height)
+    x, y = anchor(where, lw + UNIT + length, box_h, 0, 0, dx, dy)
+    name = text_inst(label, text, x, y, lw, box_h, halign="left", bold=True, color=color, on=on)
+    return (name, *bar_at(frame_name, fill_name, x + lw + UNIT + length / 2, y + box_h / 2, length, height, inset, caps))
+
+
+SCREENS = ("stage",)
+
+
+def bands(screen: str = "stage", title: bool = True) -> dict[str, tuple[int, int, int, int]]:
+    """The named bands of a screen, each (x, y, w, h) in px, MARGIN inside the viewport and their
+    tops on the grid: "title" at the top, a line of TEXT_SIZE["title"] for the game's name;
+    "status" under it, a body line for what the player watches, the score or the time; "hint" at
+    the bottom, a body line for what to do; "stage" between them, a unit from each, where the game
+    is. A screen with no title, title=False, starts with the status band and gives the stage the room."""
+    if screen not in SCREENS:
+        sys.exit(f"bands({screen!r}): the screens are {', '.join(SCREENS)}")
+    width = VIEW_W - 2 * MARGIN
+    title_h = label_box("", TEXT_SIZE["title"])[1] if title else 0
+    line_h = label_box("", TEXT_SIZE["body"])[1]
+    status_y = MARGIN + title_h
+    stage_y = status_y + line_h + UNIT
+    hint_y = (VIEW_H - MARGIN - line_h) // UNIT * UNIT
+    return {"title": (MARGIN, MARGIN, width, title_h), "status": (MARGIN, status_y, width, line_h),
+            "stage": (MARGIN, stage_y, width, hint_y - UNIT - stage_y), "hint": (MARGIN, hint_y, width, line_h)}
+
+
+def band_text(otype: str, text: str, band: str, align: str = "center", longest: str | None = None,
+              screen: str = "stage", title: bool = True, color: str = "ink", on: str = "canvas_alt", ivars=None,
+              behaviors=None) -> dict:
+    """A label in the band `band` of bands(), at its `align` side, as wide as `longest` (or
+    `text`) and a line high, as hud_text() sizes it. "title", and "stage", where the label is the
+    stage's middle line, take TEXT_SIZE["title"], or the body size when the text is wider than
+    the band at it; "status" and "hint" take the body size. A text the band cannot hold stops the
+    run with the characters that fit."""
+    box = bands(screen, title).get(band)
+    if box is None:
+        sys.exit(f"band_text({otype!r}): {band!r} is no band; the bands are {', '.join(bands(screen, title))}")
+    if align not in ("left", "center", "right"):
+        sys.exit(f"band_text({otype!r}): align {align!r}; left, center or right")
+    x0, y0, bw, bh = box
+    size = TEXT_SIZE["title"] if band in ("title", "stage") else TEXT_SIZE["body"]
+    if label_box(longest or text, size)[0] > bw:
+        size = TEXT_SIZE["body"]
+    w, h = label_box(longest or text, size)
+    if w > bw:
+        chars = int(bw / (size * PX_PER_PT))
+        sys.exit(f"band_text({otype!r}): {longest or text!r} is {w} px wide and the {band} band {bw}; it holds about "
+                 f"{chars} Chinese characters or {int(chars / 0.6)} letters, so shorten it")
+    x = {"left": x0, "center": x0 + (bw - w) // 2, "right": x0 + bw - w}[align]
+    y = y0 + (bh - h) // 2 if band == "stage" else y0
+    return text_inst(otype, text, x, y, w, h, size, align, bold=True, color=color, on=on, ivars=ivars,
+                     behaviors=behaviors)
+
+
+def fit(w: float, h: float, screen: str = "stage", share: float = STAGE_SHARE, title: bool = True) -> tuple[int, int]:
+    """The largest size in whole units with the proportions w:h that covers at most `share` of
+    the stage of bands() across and down: the stage's main object, fit(1, 1) for a square, is as
+    large as the screen allows. Returns (cols, rows)."""
+    _, _, sw, sh = bands(screen, title)["stage"]
+    k = min(share * sw / UNIT / w, share * sh / UNIT / h)
+    return max(1, int(w * k)), max(1, int(h * k))
+
+
+def stage_cell(cols: int, rows: int, screen: str = "stage", title: bool = True) -> tuple[int, int]:
+    """The cell (col, row) that centres a box of cols x rows units in the stage of bands()."""
+    x, y, w, h = bands(screen, title)["stage"]
+    return (x + (w - cols * UNIT) // 2) // UNIT, (y + (h - rows * UNIT) // 2) // UNIT
 
 
 # The properties block a layout instance writes for a behavior, keyed by the name
@@ -1735,7 +1931,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-04, stamp 8f0574c52f69 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-05, stamp a3151168df3f ================
 
 
 # --- the game ---------------------------------------------------------------------------

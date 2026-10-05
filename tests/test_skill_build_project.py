@@ -427,6 +427,73 @@ def test_template_places_the_hud_on_the_grid(built):
     fill = t.sprite_inst("HpFill", 32 + 96, 128 + 16, 192, 32)
     t.no_overlap([frame, fill])
     t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"), timer])
+    # Every box in the way is named at once, one line each, so one run shows all there is to move.
+    with pytest.raises(SystemExit) as stop:
+        t.no_overlap([t.sprite_inst("Coin", 32, 32, 96, 96), t.hud_text("ScoreText", "Score: 0", "top-left"),
+                      t.hud_text("TimerText", "Time: 30", "top-left")])
+    said = str(stop.value).splitlines()
+    assert len(said) == 4 and "reaches past" in said[0] and all("overlaps" in line for line in said[1:])
+
+
+def test_template_button_is_a_shape_and_its_label_that_never_come_apart(tmp_path):
+    """button() puts a label on its shape as one part: the shape at least button_size() of its
+    text, the label centred on the same box in a colour that reads on the fill, and linked as the
+    shape's child in the layout's hierarchy, as the editor writes it, so the events that hide or
+    move the button take the label along."""
+    t = template_module()
+    t.ROOT = tmp_path
+    assert t.button_size("继续") == (160, 96)                 # 3 units of text and one on each side; TOUCH high
+    assert t.button_size("A") == (t.TOUCH, t.TOUCH)        # never smaller than a finger
+    t.shape("resume-default-000.png", "rect", *t.button_size("继续"), "solid")
+    shape, label = t.button("Resume", "resume-default-000.png", "ResumeLabel", "继续", 3, 10)
+    assert (label["world"]["x"], label["world"]["y"], label["world"]["width"], label["world"]["height"]) == \
+        (96, 320, 160, 96)
+    assert label["properties"]["horizontal-alignment"] == "center" and label["properties"]["size"] == t.TEXT_SIZE["body"]
+    assert t.contrast(tuple(round(c * 255) for c in label["properties"]["color"][:3]), t.PALETTE["solid"]) >= 3
+    assert shape["sceneGraphData"]["parent-uid"] is None
+    assert shape["sceneGraphData"]["children"] == [{"uid": label["uid"], "flags": t.SCENE_FLAGS}]
+    assert label["sceneGraphData"]["parent-uid"] == shape["uid"] and label["sceneGraphData"]["flags"]["v"] is True
+    assert list(label)[list(label).index("sceneGraphData") + 1] == "showing"
+    t.no_overlap([shape, label])                            # a label inside its shape is a layer on purpose
+    # A large button gets the large label; a shape too small for its text names the size to draw.
+    t.shape("big-default-000.png", "rect", 384, 192, "solid")
+    assert t.button("Big", "big-default-000.png", "BigLabel", "继续", 0, 0)[1]["properties"]["size"] == t.TEXT_SIZE["title"]
+    t.shape("small-default-000.png", "rect", 96, 96, "solid")
+    with pytest.raises(SystemExit, match=r"needs a shape of 256x96 px and images/small-default-000.png is 96x96; "
+                                         r"draw it at button_size\('重新开始'\)"):
+        t.button("Small", "small-default-000.png", "SmallLabel", "继续", 0, 0, longest="重新开始")
+    # A hidden button starts with its label hidden.
+    hidden = t.sprite_inst("Panel", 0, 0, 96, 96)
+    hidden["properties"]["initially-visible"] = False
+    child = t.text_inst("PanelText", "", 0, 0, 96, 96)
+    t.link(hidden, child)
+    assert child["properties"]["initially-visible"] is False
+
+
+def test_template_screen_is_named_bands_and_the_stage_sizes_its_main_object():
+    """bands() names the parts of a screen, so a label goes into a band by name and the builder
+    computes every position; fit() sizes the stage's main object to a share of the stage, and
+    labelled_bar() keeps a bar's name in front of it."""
+    t = template_module()
+    assert t.bands() == {"title": (32, 32, 656, 128), "status": (32, 160, 656, 64), "stage": (32, 256, 656, 896),
+                         "hint": (32, 1184, 656, 64)}
+    assert t.bands(title=False)["status"] == (32, 32, 656, 64) and t.bands(title=False)["stage"] == (32, 128, 656, 1024)
+    assert t.fit(1, 1) == (12, 12) and t.fit(5, 3) == (12, 7)        # 60% of the stage across, proportions kept
+    assert t.stage_cell(12, 12) == (5, 16)
+    score = t.band_text("Score", "Score: 0", "status", "left", longest="Score: 999")
+    timer = t.band_text("Timer", "Time: 30", "status", "right")
+    assert (score["world"]["x"], score["world"]["y"]) == (32, 160) and timer["world"]["x"] + timer["world"]["width"] == 688
+    t.no_overlap([score, timer])
+    title = t.band_text("Title", "开关按钮", "title")
+    assert title["properties"]["size"] == t.TEXT_SIZE["title"] and title["world"]["y"] == 32
+    assert t.band_text("Title", "一个很长很长很长的标题", "title")["properties"]["size"] == t.TEXT_SIZE["body"]
+    with pytest.raises(SystemExit, match=r"the hint band 656; it holds about 15 Chinese characters"):
+        t.band_text("Hint", "点" * 20, "hint")
+    with pytest.raises(SystemExit, match=r"'side' is no band; the bands are title, status, stage, hint"):
+        t.band_text("Hint", "x", "side")
+    name, frame, fill = t.labelled_bar("HpName", "HP", "HpFrame", "HpFill", "top-left", 192)
+    assert name["world"]["x"] == 32 and frame["world"]["x"] - 96 == name["world"]["x"] + name["world"]["width"] + 32
+    t.no_overlap([name, frame, fill])
 
 
 def test_template_bar_grows_from_its_left_edge_inside_its_frame():
@@ -484,19 +551,24 @@ def test_template_draws_only_the_colours_of_its_palette(built, tmp_path):
 
 def test_template_labels_read_on_what_is_behind_them():
     """A label is FONT at a size of TEXT_SIZE in a role of PALETTE, and one that reads below
-    4.5:1 on its backdrop, 3:1 from the title size up (WCAG 2.2, 1.4.3), stops the run with the
-    roles that would read there."""
+    4.5:1 on its backdrop, 3:1 from 18 pt up, large-scale text (WCAG 2.2, 1.4.3), stops the run
+    with the roles that would read there."""
     t = template_module()
     assert round(t.contrast((255, 255, 255), (0, 0, 0)), 2) == 21 and t.contrast((30, 34, 48), (30, 34, 48)) == 1
     score = t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999")
     assert (score["properties"]["font"], score["properties"]["size"], score["properties"]["color"]) == \
         ("Arial", 32, t.rgba(t.PALETTE["ink"]))
-    t.hud_text("TimerText", "Time: 30", "top-right", color="dim")          # 5.4:1 on the backdrop's darker cell
-    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.5:1 there
+    assert (t.text_contrast(8), t.text_contrast(17), t.text_contrast(18), t.text_contrast(32)) == (4.5, 4.5, 3, 3)
+    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.5:1 on the backdrop's darker cell
+    t.hud_text("TimerText", "Time: 30", "top-right", color="dim")          # 32 pt is large-scale: 3:1 is enough
     with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(228, 228, 228\) reads 3\.5:1; "
-                                         r"text of size 32 needs 4\.5:1\. Roles that read on canvas_alt: ink;"):
+                                         r"text of size 12 needs 4\.5:1\. Roles that read on canvas_alt: ink;"):
+        t.hud_text("TimerText", "Time: 30", "top-right", size=12, color="dim")
+    t.PALETTE["dim"] = (150, 150, 150)                                   # 2.3:1
+    with pytest.raises(SystemExit, match=r"text of size 32 needs 3:1"):
         t.hud_text("TimerText", "Time: 30", "top-right", color="dim")
-    banner = t.hud_text("WinText", "YOU WIN", "center", size=t.TEXT_SIZE["title"], color="dim")   # 3:1 is enough for a title
+    t.PALETTE["dim"] = (120, 120, 120)
+    banner = t.hud_text("WinText", "YOU WIN", "center", size=t.TEXT_SIZE["title"], color="dim")
     assert banner["properties"]["size"] == 64 and banner["properties"]["color"][:3] == [120 / 255] * 3
     with pytest.raises(SystemExit, match=r"LivesText: flash \(255, 255, 255\) on reward \(245, 197, 24\) reads 1\.\d:1; "
                                          r".* Roles that read on reward: ink;"):

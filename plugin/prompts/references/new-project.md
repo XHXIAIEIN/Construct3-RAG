@@ -43,7 +43,7 @@ Construct-Example-Projects, 2026-09-18]
   with hard edges in 35 colours, and 9 of them cover 95% of its opaque
   pixels. Labels use one to three colours, white in two of three, and two
   sizes, rarely more than four. Every label has 4.5:1 contrast with what is
-  behind it, 3:1 from the title size up (WCAG 2.2, 1.4.3). All 159 studio
+  behind it, 3:1 from 18 pt up, large-scale text (WCAG 2.2, 1.4.3). All 159 studio
   projects at 360 px or less sample *Nearest*, and 116 of them use *Letterbox
   integer scale*. The generator template holds these as `PALETTE` and
   `rgb()`, the colour check of `write_png()`, `FONT` and `TEXT_SIZE`, the
@@ -76,9 +76,15 @@ Construct-Example-Projects, 2026-09-18]
   unit, it is 24 px at 320×180 and 160 px at
   1920×1080, with 8 dp between two targets. A label's box is as wide as its
   longest text and aligned to the edge it is anchored to. A row of hearts is
-  spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. The
-  generator template holds these as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`,
-  `hud_text()`, `row()` and `no_overlap()`.
+  spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. A
+  button's text is its label, centred on it, and the two move and hide
+  together; a bar's name stands in front of the bar. A one-screen layout is
+  bands: the title, the status line, the stage in the middle and the hint at
+  the bottom, with the stage's main object at a large share of the stage.
+  The generator template holds these as `UNIT`, `MARGIN`, `TOUCH`,
+  `anchor()`, `hud_text()`, `row()`, `no_overlap()`, `button()`,
+  `labelled_bar()`, `bands()`, `band_text()` and `fit()`; the record is
+  `docs/decisions/layout-by-name.md`.
 
 ## Layouts, sheets, folders and layers
 

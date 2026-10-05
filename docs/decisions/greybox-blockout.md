@@ -164,7 +164,8 @@ pass, when:
   `canvas_alt` (`check_palette()`);
 - an accent, a role that is a hue rather than a grey, is drawn without its
   outline, or an outlined fill falls under 3:1 against `ink` (`shape()`);
-- a label reads under 4.5:1, a title under 3:1 (`hud_text()`).
+- a label reads under 4.5:1, or under 3:1 from 18 pt up, large-scale text
+  (`text_contrast()`, through `hud_text()` and every label).
 
 ### Backdrop and patterns
 
