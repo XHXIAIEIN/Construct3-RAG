@@ -28,9 +28,9 @@ export const meta = {
 //   max_moves: 6                at most this many moves between files per run.
 //   merge: false                leave the branch for a person to merge.
 //   refresh_standards: true     re-read the official guidance although the last read is under 30 days old.
-//   examples: '<folder>'        the official examples for sweep_outputs.py; default the example-projects folder
-//                                of the Construct-Example-Projects clone beside this one.
-//   projects: ['<folder>']      game projects for sweep_outputs.py besides the examples.
+//   examples: '<folder>'        the official examples for scripts/output_diff.py; default the example-projects
+//                                folder of the Construct-Example-Projects clone beside this one.
+//   projects: ['<folder>']      game projects for sweep_outputs.py, which compares them besides the examples.
 //   forbidden: ['<name>']       names that must not appear in tracked files. Pass them from your notes, or keep
 //                                them one per line in .local/polish/forbidden.txt; never write them here, because this
 //                                file is tracked in a public repository.
@@ -51,7 +51,7 @@ export const meta = {
 //   A person updates it from the report's guidance differences.
 // - Text units edit one worktree in parallel; code units run one at a time, because their tests import each
 //   other's modules. Code goes through the simplify skill and is reviewed with the code-review skill;
-//   behavior stays identical, which the tests and sweep_outputs.py check.
+//   behavior stays identical, which the tests and scripts/output_diff.py check.
 // - The gates of checks, review and commits are computed here, not left to an agent: a dead reviewer or a
 //   failed check keeps the branch out of main. The merge agent can only add a stop.
 
@@ -345,7 +345,7 @@ const PREFLIGHT = {
     units: { type: 'array', items: UNIT },
     excluded: { type: 'array', items: { type: 'object', properties: { paths: STR, reason: STR }, required: ['paths', 'reason'] } },
     failing_before: { ...STRS, description: 'pytest node ids that fail in the worktree before any change' },
-    examples: { ...STR, description: 'the examples folder for sweep_outputs.py, empty when missing' },
+    examples: { ...STR, description: 'the examples folder for output_diff.py, empty when missing' },
     standing_proposals: { ...RELS, description: 'guarded files whose content is unchanged since proposals.json recorded proposals for them' },
     standards_due: { type: 'boolean' },
     forbidden_files: { ...STRS, description: 'files that list names that must not appear in tracked files' },
@@ -779,9 +779,12 @@ const revertPrompt = (pre, unit, created) => `Restore files of the polish worktr
 
 const checkPrompt = (pre, units, kept, followUps, moveCommits) => {
   const keepFiles = uniq(kept.flatMap(r => [...editable(r.unit), ...(r.polished.created || [])]))
-  const sweepTail = pre.examples ? ` --examples "${pre.examples}"` : ''
-  const projectsTail = PROJECTS.length ? ` --projects ${PROJECTS.map(p => `"${p}"`).join(' ')}` : ''
-  const sweepNote = !pre.examples && !PROJECTS.length ? ' There is no examples folder and no game project: say in notes that the output sweep did not run.' : !PROJECTS.length ? ' No game project was given: say in notes that the output sweep covered the official examples only.' : ''
+  const examplesTail = pre.examples ? ` --examples "${pre.examples}"` : ''
+  const projectsTail = PROJECTS.map(p => `"${p}"`).join(' ')
+  const sweepNote = !pre.examples ? ' There is no examples folder: output_diff.py exits 2, so say in notes that the output comparison did not run.' : ''
+  const projectsStep = PROJECTS.length
+    ? ` Then the game projects, which output_diff.py does not run: \`git -C "${pre.main}" worktree add --detach "${pre.report_dir}/old" ${pre.head}\`, then \`cd "${pre.report_dir}/old" && python skills/construct3-agent-plugin/evals/sweep_outputs.py "${pre.report_dir}/sweep-old.json" --scripts "${pre.report_dir}/old/skills/construct3-agent-plugin/scripts" --projects ${projectsTail}\`, then the same command for the new side with --scripts "${pre.worktree}/skills/construct3-agent-plugin/scripts" and "${pre.report_dir}/sweep-new.json", then \`--compare\` of the two (allow 10 minutes each), and afterwards \`git -C "${pre.main}" worktree remove --force "${pre.report_dir}/old"\`.`
+    : pre.examples ? ' No game project was given: say in notes that the comparison covered the official examples, the lookups and the generators only.' : ''
   return `You check the polished worktree before anything is committed: restore what was not kept, apply follow-ups, run the checks, and undo what breaks them. The next agent commits what you leave.
 
 ${env(pre)}
@@ -790,7 +793,7 @@ Commit nothing; only \`git revert\` of a move commit, in step 4, is allowed.
 1. Restore. \`git -C "${pre.worktree}" status --porcelain\`. Every changed tracked file outside the keep list below goes back with \`git -C "${pre.worktree}" checkout HEAD -- <file>\`, and every untracked file outside it is deleted (ignored files such as __pycache__ stay).
 2. Follow-ups that kept units asked for in other files (listed below). Apply each that is right and touches no file in ${JSON.stringify(lockedFiles(units))}, leaving these passages byte-identical: ${JSON.stringify(passages(units).filter(g => followUps.some(f => f.path === g.path)))}. Skip the others with the reason. Report the files each applied follow-up changed under follow_ups_applied, with the unit that asked for it.
 3. Checks: \`cd "${pre.worktree}" && python -m pytest -q -p no:cacheprovider -rf\` (allow 10 minutes), \`cd "${pre.worktree}" && python -m compileall -q src scripts tests skills\`, \`git -C "${pre.worktree}" diff --check ${pre.head}\`, and the checks of the AGENTS.md of each touched directory. Tests in ${JSON.stringify(pre.failing_before)} failed before the run: list them in notes, they are no failure. The run's changes, the committed moves included, are what \`git -C "${pre.worktree}" diff --name-only ${pre.head}\` lists:
-   - If it lists a file under skills/<skill>/scripts/: record the old and new output and compare. \`git -C "${pre.main}" worktree add --detach "${pre.report_dir}/old" ${pre.head}\`, then \`cd "${pre.report_dir}/old" && python skills/construct3-agent-plugin/evals/sweep_outputs.py "${pre.report_dir}/sweep-old.json" --scripts "${pre.report_dir}/old/skills/construct3-agent-plugin/scripts"${sweepTail}${projectsTail}\`, then the same command for the new side with --scripts "${pre.worktree}/skills/construct3-agent-plugin/scripts" and "${pre.report_dir}/sweep-new.json", then \`--compare\` of the two (allow 10 minutes each).${sweepNote} For a changed script that sweep_outputs.py does not run, compare its --help output on both sides. Any difference fails the unit or move whose change printed it. Afterwards \`git -C "${pre.main}" worktree remove --force "${pre.report_dir}/old"\`.
+   - If it lists a file under skills/<skill>/scripts/ or skills/<skill>/assets/: compare the output of ${pre.head} with the worktree's. \`cd "${pre.worktree}" && python scripts/output_diff.py ${pre.head}${examplesTail} --show 100 > "${pre.report_dir}/output-diff.txt" 2>&1\` (allow 10 minutes) runs the skill's tools over the official examples, a fixed list of lookups, new_project.py and the generator template on both sides; exit 1 and its list name the cases that differ.${sweepNote}${projectsStep} For a changed script that neither runs, compare its --help output on both sides. Any difference fails the unit or move whose change printed it.
    - If it lists a file under src/: run the service the way src/AGENTS.md asks. Find a free port with \`python -c "import socket;s=socket.socket();s.bind(('127.0.0.1',0));print(s.getsockname()[1])"\`, start \`cd "${pre.worktree}" && python -m uvicorn src.api:app --port <port>\` in the background with its output in "${pre.report_dir}/service.log", note its PID, wait until the log says it is running, GET /health, POST /search with one query of tests/fixtures/query_gold.jsonl and check the answer against that case, then stop only that PID (\`taskkill //PID <pid> //T //F\`).
 4. On a failure, find what caused it and undo that, then run the checks again, until no failure is left beyond failing_before. A failure in a unit's files: restore that unit's files and delete the files it created. A failure in a follow-up: restore its files. A failure in a move commit of ${JSON.stringify(moveCommits.map(m => m.sha))}: first restore the kept units' files that the move touched and list them under reverted, then \`git -C "${pre.worktree}" revert --no-edit <sha>\` and list the sha under reverted_moves; if the revert conflicts, run \`git -C "${pre.worktree}" revert --abort\` and return ok=false. List every restored file under reverted with the reason.
 5. Report head, \`git -C "${pre.worktree}" rev-parse HEAD\`.
