@@ -121,6 +121,17 @@ Each of these was a failure seen in an eval run or a game project.
   query files are ready. Change `description` only from its train failures.
 - No one has reviewed the eval answers by hand; the assertions are at
   ceiling, so that review is the next signal.
+- A run that opens `layouts/*.json` or `objectTypes/*.json` for a size
+  copies the numbers it finds into a script. It never sees the line that
+  ends the `print_layout.py` print and names the run-time properties. A
+  paragraph in `SKILL.md` that says to read sizes at run time does not stop
+  this: in the eval case `script-shift-and-edges` with Haiku, as many runs
+  copied a size with the paragraph as without it. `SKILL.md` does not carry
+  the paragraph, because every activation reads that file.
+  `check_project.py` could read each script for a number that equals the
+  layout's width or height. The ok line names the scripts the check does not
+  read, and that is where it would print the finding. The runs are in
+  `.local/docs/evidence/skill-evals/`.
 - Paging beyond the `--events` range that `print_sheet.py` gives, JSON
   output, separate exit codes for findings and not-found, and a generator
   guard against overwriting files the editor changed: no eval run or game
