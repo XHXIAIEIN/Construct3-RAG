@@ -22,15 +22,22 @@ Sources and the rule for adding an entry are in the index,
   [plugins/system.json, expression `mid`; observed in a game project, r495.2
   editor, 2026-09-23; the parameter case observed in a game project, r504
   editor, 2026-09-30; both in minimal projects, r504 editor, 2026-10-02]
-- The editor matches variable names without regard to case and uses the
-  nearest scope's variable. A local string `count` declared in an event hides
-  the global constant `COUNT` in that event and its sub-events. So `COUNT -
-  1` there uses the string, and the editor refuses the whole project with
-  `Type mismatch: - does not work with 'string' and 'number'`, naming the
-  sub-event. `check_project.py` refuses a local or parameter named like a
-  variable of another type in scope. Give a local a name that differs from
-  every variable in scope by more than its case (`countText` beside `COUNT`).
-  [observed in a game project, r502 editor, 2026-09-24]
+- The editor matches variable names without regard to case. A local named
+  like a global hides the global in the local's scope. A local string
+  `count` declared in an event hides the global constant `COUNT` in that
+  event's sub-events. So `COUNT - 1` there uses the string, and the editor
+  refuses the whole project with `Type mismatch: - does not work with
+  'string' and 'number'`, naming the sub-event. Two locals such as `step`
+  and `STEP`, one in the other's list or in a list below it, do not both
+  keep their names. As the editor opens the project, it renames the one
+  that comes later in the sheet, `STEP` to `STEP2`. Every use of either
+  name then refers to `step`. Two globals both keep their names, and every
+  event refers to the one declared first. Give each variable a name that
+  differs from every variable in its scope by more than its case
+  (`countText` beside `COUNT`). `check_project.py` refuses each of these,
+  and warns about a local of the global's own type, which hides the global
+  too. [observed in a game project, r502 editor, 2026-09-24; the renaming in
+  minimal projects, r495.2 and r504 editors, 2026-10-05]
 - `lerp(Self.X, Target.X, 0.1)` moves a different fraction per second at
   different framerates, and it ignores the time scale. If the third argument
   is a constant and the first is last tick's result, write `lerp(a, b, 1 -

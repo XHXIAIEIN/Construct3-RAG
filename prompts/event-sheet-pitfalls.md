@@ -69,6 +69,8 @@ If the events define or call a function or a custom action, read
 - With *Copy picked*, type and family picks are copied separately. Logic on the caller's picks is a custom action.
 - A custom action runs once with all the caller's picks, and a System condition in it reads the first. If it decides per instance, put *For each* first.
 - Parameters are bare identifiers in expressions: `OffsetX`, not `Functions.OffsetX`.
+- If a parameter and a variable of its function's group have names that differ only in case, the editor renames the one that comes later in the sheet. A parameter after the variable is renamed, so the function reads the variable. Name them apart by more than case (`launchSpeed` beside `SPEED`).
+- If two functions, or two custom actions of one object, have names that differ only in case, the editor renames the second, and every call runs the first. Name them apart by more than case.
 - A function without parameters is called without parentheses: `Functions.name`, not `Functions.name()`.
 
 ### Timer
@@ -104,7 +106,7 @@ If you write expressions or name and place variables, read
 
 - `Self` has no object in a System condition or action, and the editor refuses the project.
 - A variable or function parameter named like a system expression (`mid`, `left`, `max`, `round`) is read as the expression.
-- Variable names ignore case and the nearest scope applies, so a local `count` hides a global `COUNT`.
+- Variable names ignore case. A local hides a global of the same name inside its scope. If two locals share a name and one is in the other's scope, the editor renames the later one (`STEP2`), and every use refers to the other one. Give each variable a name that differs from the others in its scope by more than case.
 - `lerp(a, b, 0.1)` each tick depends on the framerate. Write `lerp(a, b, 1 - f^dt)`.
 - If the factor comes from the engine, such as a tween's value, `lerp` needs no time of its own.
 - `lerp` and `unlerp` do not clamp.

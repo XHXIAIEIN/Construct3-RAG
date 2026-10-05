@@ -47,6 +47,30 @@ Sources and the rule for adding an entry are in the index,
 - Parameters are bare identifiers in expressions: `Self.X + OffsetX`, not
   `Functions.OffsetX` or `Self.OffsetX`. [example: 3d-castle-maze, function
   OffsetHand]
+- A parameter and a variable of the function's group, or of a group around
+  it, whose names match once case is ignored, do not both keep their names.
+  As the editor opens the project, it renames the one that comes later in
+  the sheet. A parameter `speed` after the group's constant `SPEED` becomes
+  `speed2`. Every `speed` in the function then refers to `SPEED`, and the
+  value a call passes is lost. If the function comes first, the editor
+  renames the group's variable instead. An expression elsewhere in the group
+  that names it then stops the open with `Unknown expression`. Of a
+  function's parameters whose names match, the editor renames every one but
+  the last, and every use refers to the last. A global of a parameter's name
+  keeps its name and is hidden inside the function. Give each parameter a
+  name that differs from the variables around it by more than case
+  (`launchSpeed` beside `SPEED`). `check_project.py` refuses each of these,
+  and warns about a global of the parameter's own type. [observed in a game
+  project, r504 editor, 2026-10-05: two parameters named like variables of
+  their group, once case is ignored, read the group's values; minimal
+  projects, r495.2 and r504 editors, 2026-10-05]
+- Two functions, or two custom actions of one object, whose names match once
+  case is ignored, do not both keep their names. As the editor opens the
+  project, it renames the second, `Beep` to `Beep2`. A call by either name
+  then runs the first, so the second never runs. Give each function and
+  custom action a name that differs from the others by more than case.
+  `check_project.py` refuses both. [minimal projects, r495.2 and r504
+  editors, 2026-10-05]
 - If a function has no parameters, call it in an expression without
   parentheses: `Functions.settling`, not `Functions.settling()`. With the
   empty pair, the editor refuses the whole project with `Syntax error: ')'
