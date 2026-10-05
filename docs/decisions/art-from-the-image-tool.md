@@ -67,6 +67,22 @@ left key on the edge that 4 and 5 px cleared.
 On white, a cut also erases the subject's whites. LANCZOS makes pixels in
 colours the source never had: a light rim and a key tint.
 
+What `--list` warns of was measured on the subjects of a card game that a
+small model generated with `art()`, all in Chinese. Many end in "无文字" (no
+text), which the prompt asks for too, so a word after a negation does not
+count. Most name the outline that `ART_STYLE` names, so a style word that
+`ART_STYLE` also names does not count. Three groups of enemies and the
+buttons are one subject in several colours or elements. Text similarity of
+the subjects does not find these groups: two different creatures scored
+0.87, one creature in two elements 0.94. The same subject without its
+colour and element words does. Printed all at once, that game's prompts
+passed the output limit, and its key picture showed four cards that
+differ only in colour.
+
+A published sprite tool that draws several poses in one picture reports
+four a picture as stable, and repeated or dropped subjects at nine and
+twelve.
+
 ## Options
 
 1. **A line in `SKILL.md`: use the image tool.** The model went back to
@@ -93,14 +109,28 @@ Option 3.
   sprites still show their stand-in, with the command that prints their
   prompts.
 - `ART_STYLE`, one sentence of art direction, leads every prompt, so the
-  pictures share one style. With more than one sprite to make,
-  `prepare_art.py --list` first asks for a key picture, a line-up of the
-  subjects, shown to the user when they are there to choose one; it is the
-  reference image of every later picture where the tool takes one.
-- `scripts/prepare_art.py --list` prints a prompt per picture still to
-  make, the aspect ratio to ask for, and where to save it, `art/raw/`. A
-  sprite is asked for on a flat key colour, magenta, or green for a subject
-  in pink or purple, with no ground shadow and no text.
+  pictures share one style.
+- `scripts/prepare_art.py --list` prints the next step only, so that no
+  picture is made before what it depends on. While `ART_STYLE` is empty, it
+  asks for that. With more than one sprite to make and no
+  `art/raw/_key.png`, it asks for the key picture: a line-up of four
+  subjects, the first of each object before a second of one, shown to the
+  user when they are there to choose one. Then it prints a prompt per
+  picture still to make, the aspect ratio to ask for, and where to save it,
+  `art/raw/`. A sprite is asked for on a flat key colour, magenta, or green
+  for a subject in pink or purple, with no ground shadow and no text. Its
+  prompt gives the key picture as the reference image, which sets the
+  style and the palette and is not a picture to copy. A scene's prompt
+  does not, because the key picture's background is the key colour.
+- `--list` warns of three kinds of subject and prints the prompts all the
+  same:
+  - a sprite's subject that names a background or a shadow;
+  - a subject that names text, or a drawing style that `ART_STYLE` does
+    not;
+  - three or more subjects of one kind and box that are the same without
+    their colour, shade and element words.
+
+  A word after "no", "without", "无" or "不含" does not count.
 - `scripts/prepare_art.py` keeps a picture's own transparency. Otherwise it
   refuses a picture whose edge is not one flat colour, is neither key, or
   is crossed by the subject, saying what to make instead. It removes the
@@ -120,6 +150,13 @@ Option 3.
   0, and writes the hit frame, the silhouette in the flash colour. It
   marks each file so that `check_look.py` lets its soft edges through.
   Its line counts the gap pixels and the recoloured ones.
+- A refused picture is recorded in `art/refused.json` by a fingerprint of
+  its bytes, so that a second run on it does not count it again. `--list`
+  gives its prompt again with a sentence for the image tool on what the
+  refused picture got wrong, and with the other key when the edge leaned
+  to the first. After three
+  refusals a picture keeps its stand-in, and both runs say so, count it
+  and go on. A new subject in `art()` starts the count again.
 - Without an image tool, the stand-ins stay. `SKILL.md`, the reference on
   generating a project and the look manifest say that art is not drawn in
   code.
@@ -142,6 +179,14 @@ Option 3.
   images; `art()` covers sprites and backdrops.
 - Contrast of the art against the backdrop is the user's call on a
   screenshot, as `review_look.py` asks it; no check measures it.
+- Whether a client's image tool takes a reference image, and whether it
+  carries one picture into the next, is not known. The English warning
+  words were tried on subjects written for the tests, not on a model's
+  run. The cap of three refusals and the four subjects of the key picture
+  are choices; neither was measured on an image tool here.
+- The buttons of the card game are one thing in several colours, as
+  meant, and get the colour warning; it says that it applies to different
+  things.
 
 ## Re-evaluate when
 
@@ -158,3 +203,9 @@ Option 3.
   colour drops out of the prompt.
 - The pictures of one game drift apart in style despite the key picture:
   generate several subjects on one picture and cut them apart.
+- A warning fires on a subject that comes out right, or a subject comes
+  out wrong without one: change the word lists in `prepare_art.py`, and
+  add the subject to the ones above.
+- A picture keeps its stand-in after three refusals that a fourth picture
+  would have fixed, or the image tool itself refuses a prompt: the cap or
+  the refusal's sentence needs that run's evidence.

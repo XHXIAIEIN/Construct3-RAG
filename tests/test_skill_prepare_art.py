@@ -155,8 +155,8 @@ def test_prepare_art_lists_the_next_step_only(project):
     assert out.splitlines() == [
         "style: none. Write ART_STYLE in tools/build_project.py, one sentence of art direction the user agreed, so "
         "that every picture shares it",
-        "to make: 1, to prepare: 0, done: 0; next: write ART_STYLE, run python tools/build_project.py, then this "
-        "again"]
+        "to make: 1, to prepare: 0, done: 0; next: write ART_STYLE, run python tools/build_project.py, then python "
+        ".agents/skills/construct3-agent-plugin/scripts/prepare_art.py --list again"]
     assert (project / "art" / "raw").is_dir()
 
     edit(project, "art/wanted.json", lambda wanted: wanted.update(style="Bright flat vector, thick dark outlines."))
@@ -180,8 +180,8 @@ def test_prepare_art_lists_the_next_step_only(project):
         'key picture: "Bright flat vector, thick dark outlines; a line-up of a gold coin seen from the front; a pink '
         'rose; a silver coin, side by side on a flat green #00FF00 background, no text". If the user is in the '
         'session, show it and keep the one they choose. Save it as art/raw/_key.png',
-        "to make: 4, to prepare: 0, done: 0; next: make the key picture, the style every other picture follows, "
-        "then run this again for their prompts"], out
+        "to make: 4, to prepare: 0, done: 0; next: make the key picture, then python "
+        ".agents/skills/construct3-agent-plugin/scripts/prepare_art.py --list for the prompts of the others"], out
 
     # the key picture is the style reference of every sprite, not of a scene
     Image.new("RGB", (64, 32), (0, 255, 0)).save(project / "art" / "raw" / "_key.png")
@@ -203,39 +203,44 @@ def test_prepare_art_lists_the_next_step_only(project):
 
 def test_prepare_art_warns_of_subjects_that_come_out_wrong(project):
     """A subject that names what its prompt or ART_STYLE decides, and subjects that differ only in
-    colour words, are warned about; the prompts are printed all the same. A word after a negation
-    asks for what the prompt asks for."""
-    items = [sprite("knight-default-000.png", "a knight casting a long shadow, pixel art"),
+    colour or element words, are warned about; the prompts are printed all the same. A word after
+    a negation asks for what the prompt asks for."""
+    items = [sprite("knight-default-000.png", "a knight casting a long shadow, pixel art, watercolour"),
              sprite("sign-default-000.png", "a sign with the word EXIT"),
              sprite("tree-default-000.png", "a tree on a hill background"),
              sprite("crate-default-000.png", "a wooden crate with a stone texture, no shadow, without any text"),
              sprite("card-default-000.png", "卡牌背面：暗色底、鎏金纹章，无文字，暗金描边"),
              {"file": "sky-default-000.png", "kind": "scene", "width": 720, "height": 1280, "subject": "a night sky"}]
-    items += [sprite(f"slime-default-00{i}.png", f"a {colour} slime") for i, colour in enumerate(("red", "blue", "green"))]
+    items += [sprite(f"slime-default-00{i}.png", f"a {colour} slime")
+              for i, colour in enumerate(("red", "blue", "green"))]
     items += [sprite(f"wolf-default-00{i}.png", f"{e}属性狼妖的圆形徽章肖像：{c}狼头")
               for i, (e, c) in enumerate((("木", "青绿色"), ("火", "赤红"), ("水", "蓝色")))]
     items += [sprite(f"gem-default-00{i}.png", f"a red {thing}") for i, thing in enumerate(("gem", "heart", "star"))]
     assert prepare_art.warnings(items, "Dark gilded flat shapes, 暗金描边.") == [
-        "warning: tree-default-000: the subject names a background, a sprite is made on the key colour alone and cut "
-        "out; take it out, or make the picture a scene",
-        "warning: knight-default-000: the subject names a shadow, the cut-out takes a shadow on the key away with the "
-        "background; take it out",
-        "warning: sign-default-000: the subject names text, which the image tool misspells; take it out and write the "
-        "words with a Text object",
-        "warning: knight-default-000: the subject names a drawing style, pixel, that ART_STYLE does not; pictures in "
-        "two styles do not match, so say it in ART_STYLE or take it out",
+        "warning: tree-default-000: the subject names a background. A sprite is made on the key colour alone and cut "
+        "out, so take the background out of the subject, or make the picture a scene",
+        "warning: knight-default-000: the subject names a shadow. The cut removes a shadow together with the "
+        "background, so take it out of the subject",
+        "warning: sign-default-000: the subject names text. The image tool misspells words, so take them out of the "
+        "subject and write them with a Text object",
+        "warning: knight-default-000: the subject names the drawing style \"pixel\", and ART_STYLE does not. Pictures "
+        "in two styles do not match, so add the style to ART_STYLE or take it out of the subject",
+        "warning: knight-default-000: the subject names the drawing style \"watercolour\", and ART_STYLE does not. "
+        "Pictures in two styles do not match, so add the style to ART_STYLE or take it out of the subject",
         "warning: slime-default-000, slime-default-001, slime-default-002; wolf-default-000, wolf-default-001, "
-        "wolf-default-002: the subjects differ only in colour words, so each group comes out as one figure in several "
-        "colours. If they are different things, say in each subject what else sets it apart: its shape, its size, "
-        "what it holds"]
+        "wolf-default-002: the subjects differ only in colour or element words, so each group comes out as one "
+        "figure in several colours. If they are different things, say in each subject what else sets it apart: its "
+        "shape, its size, what it holds"]
 
-    edit(project, "art/wanted.json", lambda wanted: wanted.update(style="Dark gilded flat shapes, 暗金描边.", images=items))
+    edit(project, "art/wanted.json", lambda wanted: wanted.update(style="Dark gilded flat shapes, 暗金描边.",
+                                                                  images=items))
     (project / "art" / "raw").mkdir(parents=True)
     Image.new("RGB", (64, 32), (255, 0, 255)).save(project / "art" / "raw" / "_key.png")
     code, out = tool(project, "prepare_art", "--list", "--limit", "0")
     lines = out.splitlines()
-    assert code == 0 and lines[1].startswith("warning: tree-default-000") and lines[5].startswith("warning: slime"), out
-    assert "make knight-default-000: ratio 1:1, for a 64x64 box, art/raw/_key.png as the reference image -> "            "art/raw/knight-default-000.png" in lines
+    assert code == 0 and lines[1].startswith("warning: tree-default-000") and lines[6].startswith("warning: slime"), out
+    assert ("make knight-default-000: ratio 1:1, for a 64x64 box, art/raw/_key.png as the reference image -> "
+            "art/raw/knight-default-000.png") in lines
 
 
 def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
@@ -292,35 +297,37 @@ def test_prepare_art_refuses_a_picture_it_cannot_cut_out(project):
         code, out = tool(project, "prepare_art")
         assert code == 1, out
         assert ("coin-default-000: coin-default-000.jpg: its edge is not one flat colour" in out
-                and "; make it again on a flat magenta #FF00FF background, or with a transparent one (refused 1 of 3 "
-                    "times)" in out), out
-    assert out.splitlines()[-1] == ("prepared: 0, could not use: 1, still to make: 0; next: make the pictures above "
-                                    "again with the prompts python .agents/skills/construct3-agent-plugin/scripts/"
-                                    "prepare_art.py --list prints, then run this again")
+                and "; make it again on a flat magenta #FF00FF background, or with a transparent one (refusal 1 of 3; "
+                    "after 3 it keeps its stand-in)" in out), out
+    script = ".agents/skills/construct3-agent-plugin/scripts/prepare_art.py"
+    assert out.splitlines()[-1] == (f"prepared: 0, could not use: 1, still to make: 0; next: python {script} --list "
+                                    f"for the prompts of the pictures above, make them again, then python {script}")
     code, out = tool(project, "prepare_art", "--list")
     lines = out.splitlines()
-    assert "make coin-default-000 again, refused 1 of 3 times: ratio 1:1, for a 96x96 box -> "            "art/raw/coin-default-000.png" in lines, out
+    assert ("make coin-default-000 again (refusal 1 of 3; after 3 it keeps its stand-in): ratio 1:1, for a 96x96 box "
+            "-> art/raw/coin-default-000.png") in lines, out
     assert ('  "Bright flat vector; a gold coin seen from the front. One subject, whole and centred with room around '
-            'it, on a flat magenta #FF00FF background: no scenery, no shadow on the ground, no text. Make it again on a '
-            'flat magenta #FF00FF background, or with a transparent one."') in lines
+            'it, on a flat magenta #FF00FF background: no scenery, no shadow on the ground, no text. Nothing but flat '
+            'magenta #FF00FF around the subject, out to every edge, or a transparent background."') in lines
     assert lines[-1].startswith("to make: 1, to prepare: 0, done: 0; next: make each with the image tool")
 
     picture(raw, r=270, shadow=False)
     code, out = tool(project, "prepare_art")
     assert code == 1 and "the subject runs off the picture over" in out, out
-    assert "make it again whole and centred, with room around it (refused 2 of 3 times)" in out
+    assert "make it again whole and centred, with room around it (refusal 2 of 3;" in out
     # on white, a cut would take the subject's whites with it
     picture(raw, bg=(250, 250, 250))
     code, out = tool(project, "prepare_art")
     assert code == 0, out
     assert "its background is #F" in out and "neither magenta nor green" in out, out
-    assert ("make it again on a flat magenta #FF00FF background, or with a transparent one. Refused 3 times, it keeps "
-            "its stand-in; to try again, change its subject in art()") in out
+    keep = "To try again, change its subject in art(), which starts the count again"
+    assert ("make it again on a flat magenta #FF00FF background, or with a transparent one. Refused 3 times, so it "
+            f"keeps its stand-in. {keep}") in out
     assert out.splitlines()[-1] == ("prepared: 0, could not use: 0, still to make: 0, kept as stand-ins: 1; next: "
                                     "python tools/build_project.py")
     code, out = tool(project, "prepare_art", "--list")
     assert out.splitlines()[-2:] == [
-        "stand-in coin-default-000: refused 3 times, it keeps its stand-in; to try again, change its subject in art()",
+        f"stand-in coin-default-000: refused 3 times, so it keeps its stand-in. {keep}",
         "to make: 0, to prepare: 0, done: 0, stand-ins: 1; next: python tools/build_project.py"], out
     code, out = run(project, "tools/build_project.py")
     assert code == 0 and "1 of 1 images show their stand-in" in out, out
@@ -387,8 +394,9 @@ def test_prepare_art_refuses_a_cut_that_leaves_the_key_on_the_edge():
                                                    r"a flat green #00FF00 background") as refused:
         prepare_art.cut_out(pic, KEYS["magenta"])
     item = {"file": "x.png", "kind": "circle", "subject": "a knight in red"}
-    record = {"x.png": {"pictures": ["0"], "again": refused.value.again, "key": refused.value.key}}
-    assert "on a flat green #00FF00 background" in prepare_art.prompt(prepare_art.with_refusal(item, record), "")
+    record = {"x.png": {"pictures": ["0"], "tell": refused.value.tell, "key": refused.value.key}}
+    text = prepare_art.prompt(prepare_art.with_refusal(item, record), "")
+    assert "on a flat green #00FF00 background" in text and "Keep magenta out of the subject and its edge" in text
     truth, pic = figure("green", hair=HOT_PINK)          # made again as the line says
     cut, how = prepare_art.cut_out(pic, KEYS["magenta"])
     assert how.startswith("background #06F60A") and leaning(cut, KEYS["green"])[0] == 0
