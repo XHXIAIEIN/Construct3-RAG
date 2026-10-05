@@ -11,6 +11,18 @@ import pytest
 
 from tests.skill_helpers import REPO, SKILL, SHEET, run, tool, check, edit, events, every_event, collect_tween, plan
 
+sys.path.insert(0, str(SKILL / "scripts"))
+from c3project import NUMBERED, siblings_folder  # noqa: E402
+
+EXAMPLES = siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"
+# What a copy of an example leaves out: the scripts read no image, sound or font.
+MEDIA = ("*.png", "*.jpg", "*.webp", "*.webm", "*.ogg", "*.m4a", "*.mp3", "*.wav", "*.woff", "*.woff2", "*.ttf")
+
+
+def source_tool(root: Path, name: str, *args: str) -> tuple[int, str]:
+    """A script of the skill's source run on a project without the skill installed, such as a copy of an example."""
+    return run(root, SKILL / "scripts" / f"{name}.py", "--rag", str(REPO), *args)
+
 
 def printed(root: Path) -> str:
     return tool(root, "print_sheet", "Game")[1]
@@ -225,7 +237,7 @@ def test_set_takes_no_key_of_the_plans_own_making(project):
     """Two eval runs wrote {"event": 2, "set": {"inverted": false}}: the key stayed in the sheet and changed nothing."""
     before = (project / SHEET).read_bytes()
     code, out = plan(project, {"event": 2, "set": {"inverted": False}})
-    assert code == 1 and "'inverted' is not a value of a block, which has: disabled, isOrBlock" in out
+    assert code == 1 and "'inverted' is not a value of a block, which has: bookmark, disabled, isOrBlock" in out
     assert '{"event": N, "condition": 1, "set": {"isInverted": null}}' in out
     code, out = plan(project, {"event": 2, "condition": 1, "set": {"inverted": False}})
     assert code == 1 and "is not a value of a condition or action" in out and "closest: isInverted" in out
@@ -246,9 +258,6 @@ def test_plan_moves_replaces_and_removes(project):
     assert sheet.index("function AddScore") < sheet.index("custom action Coin.Collect") and "group Input" not in sheet
     assert '% tokencount(ROUND_COINS, ",")\n           -> System: Restart layout' in sheet
     assert sids <= {c.get("sid") for ev in all_events(project) for c in ev.get("conditions", [])}, "a replaced event keeps the sids it is given"
-
-
-NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
 
 
 def put_back(root: Path, sheet: str, path: Path, n: int, script=tool) -> tuple[bytes, str]:
@@ -274,32 +283,14 @@ def test_an_event_put_back_as_print_sheet_shows_it_leaves_the_sheet_byte_for_byt
             assert out.splitlines()[0].endswith(", 0 new sids"), out
 
 
-
-sys.path.insert(0, str(SKILL / "scripts"))
-import c3project as c3  # noqa: E402
-
-EXAMPLES = c3.siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"
-
-
-def source_tool(root: Path, name: str, *args: str) -> tuple[int, str]:
-    """A script of the skill's source run on a project without the skill installed, such as a copy of an example."""
-    return run(root, SKILL / "scripts" / f"{name}.py", "--rag", str(REPO), *args)
-
-
-MEDIA = ("*.png", "*.jpg", "*.webp", "*.webm", "*.ogg", "*.m4a", "*.mp3", "*.wav", "*.woff", "*.woff2", "*.ttf")
-
-
-CHANGES = pytest.mark.xfail(strict=True, reason="edit_sheet.py writes the event it is given in the template's keys and order, and gives a repeated sid a new one")
-
-
 # One event of an official example for each way a round trip changed a sheet, found by
 # evals/sweep_round_trip.py, which puts back every event of every example.
 @pytest.mark.skipif(not EXAMPLES.is_dir(), reason="the Construct-Example-Projects clone is not beside this one")
 @pytest.mark.parametrize("example, file, n", [
-    pytest.param("date-time", "event sheet 1.json", 3, id="a function saved before functionCopyPicked", marks=CHANGES),
-    pytest.param("high-tech-vision", "Events.json", 45, id="functionCopyPicked after functionName", marks=CHANGES),
-    pytest.param("eventide", "EventsEnemy.json", 40, id="a bookmark, which the editor writes first", marks=CHANGES),
-    pytest.param("pair-of-knights", "Events.json", 38, id="a sid twice in one event", marks=CHANGES),
+    pytest.param("date-time", "event sheet 1.json", 3, id="a function saved before functionCopyPicked"),
+    pytest.param("high-tech-vision", "Events.json", 45, id="functionCopyPicked after functionName"),
+    pytest.param("eventide", "EventsEnemy.json", 40, id="a bookmark, which the editor writes first"),
+    pytest.param("pair-of-knights", "Events.json", 38, id="a sid twice in one event"),
 ])
 def test_an_event_of_an_official_example_put_back_leaves_its_sheet_byte_for_byte(tmp_path, example, file, n):
     root = tmp_path / example

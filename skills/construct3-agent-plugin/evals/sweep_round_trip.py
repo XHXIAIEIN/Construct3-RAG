@@ -8,7 +8,7 @@ way edit_sheet.py applies it, and the sheet edit_sheet.py would write is
 compared with the file. The invariant is that they are byte for byte the
 same: a plan that puts an event back unchanged changes nothing. The sweep
 calls the two scripts' functions in this process, without the checker, so
-that the 17 000 events of the examples take seconds, not the hours that two
+that the examples' thousands of events take a minute, not the hours that two
 script runs per event take.
 
 --cli runs the two scripts as an agent does, on the first event of every
@@ -18,8 +18,8 @@ ends is compared after its line ends are turned into LF, as the repository
 of the examples stores it.
 
 tests/test_skill_edit_sheet.py runs the same invariant through the scripts on
-every event of the stand-in game and on a few events of the examples, one for
-each defect this sweep found.
+every event of the stand-in game and on one event of the examples for each
+kind of change this sweep has found.
 
 exit codes: 0 no event changes its sheet; 1 some do, listed; 2 no example
 projects found

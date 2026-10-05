@@ -43,7 +43,8 @@ before does not stop it. It ends with the changed events as the editor words
 them, under their new numbers, and the checker's last line.
 
 print_sheet.py SHEET --show N prints event N as JSON, to change and put back
-with "replace". The file is written as the editor writes it: tabs, LF, no
+with "replace". Its entries keep their keys, in their order, and their sids,
+so an event put back unchanged leaves the file byte for byte as it was. The file is written as the editor writes it: tabs, LF, no
 byte order mark, no newline at the end, under the name it has on disk.
 
 exit codes: 0 written, or a dry run that would be; 1 nothing written: the plan
@@ -53,6 +54,7 @@ on disk since print_sheet.py printed it; or the project or the clone was not
 found; 2 a project file lacks a key the editor always writes
 """
 import codecs
+import collections
 import copy
 import difflib
 import json
@@ -71,13 +73,14 @@ NEEDED, SID, IF_GIVEN = "needed", "sid", "if given"
 INITIAL = {"number": "0", "string": "", "boolean": "false"}
 FUNCTION = [("functionDescription", ""), ("functionCategory", ""), ("functionReturnType", "none"),
             ("functionCopyPicked", False), ("functionIsAsync", False), ("functionParameters", list),
-            ("eventType", NEEDED), ("conditions", list), ("actions", list), ("sid", SID), ("children", IF_GIVEN)]
+            ("bookmark", IF_GIVEN), ("eventType", NEEDED), ("conditions", list), ("actions", list), ("sid", SID),
+            ("children", IF_GIVEN)]
 # The keys the editor writes for each kind of event, in its order, with the
 # value it writes when nothing else is said: read from the 46 000 events of the
 # official examples, saved by 126 releases.
 EVENTS = {
-    "block": [("eventType", NEEDED), ("conditions", list), ("actions", list), ("sid", SID), ("disabled", IF_GIVEN),
-              ("children", IF_GIVEN), ("isOrBlock", IF_GIVEN)],
+    "block": [("bookmark", IF_GIVEN), ("eventType", NEEDED), ("conditions", list), ("actions", list), ("sid", SID),
+              ("disabled", IF_GIVEN), ("children", IF_GIVEN), ("isOrBlock", IF_GIVEN)],
     "group": [("eventType", NEEDED), ("disabled", False), ("title", NEEDED), ("description", ""),
               ("isActiveOnStart", True), ("children", list), ("sid", SID)],
     "variable": [("eventType", NEEDED), ("name", NEEDED), ("type", "number"), ("initialValue", None), ("comment", ""),
@@ -93,8 +96,8 @@ ACES = {"id": [("id", NEEDED), ("objectClass", NEEDED), ("sid", SID), ("behavior
         "callFunction": [("callFunction", NEEDED), ("sid", SID), ("parameters", IF_GIVEN), ("disabled", IF_GIVEN)],
         "customAction": [("customAction", NEEDED), ("objectClass", NEEDED), ("customActionObjectClass", IF_GIVEN),
                          ("sid", SID), ("disabled", IF_GIVEN), ("parameters", IF_GIVEN)]}
-# Keys the examples write on a few events only: a bookmark, a comment's colours.
-RARE_KEYS = {"block": ("bookmark",), "function-block": ("bookmark",), "comment": ("background-color", "text-color")}
+# Keys the examples write on a few comments only: their colours.
+RARE_KEYS = {"comment": ("background-color", "text-color")}
 # The keys of a comment row and a script among the actions.
 ROWS = {"comment": ("type", "text", "background-color", "text-color"), "script": ("type", "script", "language")}
 HOLDS_EVENTS = ("block", "group", "function-block", "custom-ace-block")
@@ -109,24 +112,36 @@ class PlanError(Exception):
 
 
 # --- what the plan holds, written the way the editor writes it ----------------------------------
-def filled(given: dict, keys: list, where: str) -> dict:
-    """given with the editor's keys in the editor's order, then whatever else it holds."""
+def filled(given: dict, keys: list, where: str, own: dict | None = None) -> dict:
+    """given with the editor's keys in the editor's order, then whatever else it holds. An entry
+    whose sid is one of own, the entries of the event a replace puts it in place of, is that entry
+    put back: it keeps the keys and the order a release of the editor saved it with, so that an
+    event put back unchanged leaves the file as it was."""
+    old = (own or {}).get(given.get("sid"))
+    if old is not None and any(old.get(key) != given.get(key) for key in ("eventType", "id", "callFunction", "customAction")):
+        old = None      # another kind of entry under its sid: filled in as a new one
     out = {}
     for key, default in keys:
         if key in given:
             out[key] = given[key]
         elif default == NEEDED:
             raise PlanError(f"{where} needs {key!r}")
+        elif old is not None and key not in old:
+            continue
         elif default == SID:
             out[key] = None
         elif default != IF_GIVEN:
             out[key] = default() if callable(default) else default
-    if "initialValue" in out:
+    if "initialValue" in out and "type" in out:
         if out["type"] not in INITIAL:
             raise PlanError(f"{where}: type is 'number', 'string' or 'boolean', not {out['type']!r}")
         value = given.get("initialValue", INITIAL[out["type"]])
         out["initialValue"] = str(value).lower() if isinstance(value, bool) else str(value)   # the editor keeps a string
-    return {**out, **{k: v for k, v in given.items() if k not in out}}
+    out = {**out, **{k: v for k, v in given.items() if k not in out}}
+    if old is None:
+        return out
+    order = list(old)
+    return {k: out[k] for k in sorted(out, key=lambda k: order.index(k) if k in old else len(order))}
 
 
 def in_order(entry: dict) -> None:
@@ -176,7 +191,7 @@ def known_keys(given: dict, known: list, where: str, what: str) -> None:
                             + c3.closest(key, known, n=1) + "; the editor would drop it with its value")
 
 
-def new_ace(ace, where: str) -> dict:
+def new_ace(ace, where: str, own: dict | None = None) -> dict:
     if not isinstance(ace, dict):
         raise PlanError(f"{where} is {json.dumps(ace)[:60]}, not an object")
     if ace.get("type") in ROWS:
@@ -189,10 +204,10 @@ def new_ace(ace, where: str) -> dict:
                         f'{{"callFunction": "name", "parameters": ["expression", ...]}}')
     known_keys(ace, [key for key, _ in ACES[kind]], where,
                {"id": "a condition or action", "callFunction": "a function call", "customAction": "a custom action"}[kind])
-    return filled(ace, ACES[kind], where)
+    return filled(ace, ACES[kind], where, own)
 
 
-def new_event(ev, where: str) -> dict:
+def new_event(ev, where: str, own: dict | None = None) -> dict:
     if not isinstance(ev, dict):
         raise PlanError(f"{where} is {json.dumps(ev)[:60]}, not an object")
     kind = ev.get("eventType")
@@ -201,7 +216,7 @@ def new_event(ev, where: str) -> dict:
     if kind not in EVENTS:
         raise PlanError(f"{where}: eventType is {kind!r}; it is one of {', '.join(EVENTS)}. An event with conditions "
                         f"and actions is a 'block'")
-    out = filled(ev, EVENTS[kind], f"{where}, a {kind}")
+    out = filled(ev, EVENTS[kind], f"{where}, a {kind}", own)
     known = [key for key, _ in EVENTS[kind]] + list(RARE_KEYS.get(kind, ()))
     for key in ev:
         if key not in known:        # the editor drops a key it does not know, and what it held with it
@@ -210,12 +225,13 @@ def new_event(ev, where: str) -> dict:
                             + ("; its sub-events are its 'children'" if "children" in known else ""))
     for key in ("conditions", "actions"):
         if key in out:
-            out[key] = [new_ace(a, f"{where} {key[:-1]} {i}") for i, a in enumerate(as_list(out[key], f"{where} {key}"), 1)]
+            out[key] = [new_ace(a, f"{where} {key[:-1]} {i}", own)
+                        for i, a in enumerate(as_list(out[key], f"{where} {key}"), 1)]
     if "functionParameters" in out:
-        out["functionParameters"] = [filled(fp, PARAMETER, f"{where} parameter {i}") for i, fp in
+        out["functionParameters"] = [filled(fp, PARAMETER, f"{where} parameter {i}", own) for i, fp in
                                      enumerate(as_list(out["functionParameters"], f"{where} functionParameters"), 1)]
     if "children" in out:
-        out["children"] = [new_event(c, f"{where} sub-event {i}") for i, c in
+        out["children"] = [new_event(c, f"{where} sub-event {i}", own) for i, c in
                            enumerate(as_list(out["children"], f"{where} children"), 1)]
     return out
 
@@ -233,25 +249,44 @@ def count(things: list, word: str) -> str:
     return f"{len(things)} {word}{'' if len(things) == 1 else 's'}"
 
 
+def entries_by_sid(obj, out: dict | None = None) -> dict[int, dict]:
+    """Every event, condition, action and function parameter in obj that has a sid, by its sid."""
+    out = {} if out is None else out
+    if isinstance(obj, dict):
+        if isinstance(obj.get("sid"), int):
+            out.setdefault(obj["sid"], obj)
+        for v in obj.values():
+            entries_by_sid(v, out)
+    elif isinstance(obj, list):
+        for v in obj:
+            entries_by_sid(v, out)
+    return out
+
+
 def sids_of(obj) -> list[int]:
     if isinstance(obj, dict):
         return [v for k, v in obj.items() if k == "sid" and isinstance(v, int)] + [s for v in obj.values() for s in sids_of(v)]
     return [s for v in obj for s in sids_of(v)] if isinstance(obj, list) else []
 
 
-def give_sids(obj, used: set[int]) -> int:
-    """A sid for every new entry that has none the project is free of; returns how many were given."""
+def give_sids(obj, used: set[int], again: collections.Counter | None = None) -> int:
+    """A sid for every new entry that has none the project is free of; returns how many were given.
+    again: how many times each sid may stand in obj, for an event put back in its own place,
+    which holds a sid more than once when the editor saved it so."""
     given = 0
     if isinstance(obj, dict):
         if "sid" in obj:
             sid = obj["sid"]
-            if not isinstance(sid, int) or isinstance(sid, bool) or sid <= 0 or sid in used:
+            valid = isinstance(sid, int) and not isinstance(sid, bool) and sid > 0
+            if valid and again and again[sid] > 0:
+                again[sid] -= 1
+            elif not valid or sid in used:
                 while (sid := random.randrange(10 ** 14, 10 ** 15)) in used:
                     pass
                 obj["sid"], given = sid, 1
             used.add(sid)
-        return given + sum(give_sids(v, used) for k, v in obj.items() if k != "sid")
-    return sum(give_sids(v, used) for v in obj) if isinstance(obj, list) else 0
+        return given + sum(give_sids(v, used, again) for k, v in obj.items() if k != "sid")
+    return sum(give_sids(v, used, again) for v in obj) if isinstance(obj, list) else 0
 
 
 # --- the sheet as a tree the editor's numbers point into ------------------------------------------
@@ -359,10 +394,10 @@ class Plan:
             drop_empty_children(self.sheet["events"], siblings)
         return taken
 
-    def new_events(self, op: dict, name: str) -> list[dict]:
+    def new_events(self, op: dict, name: str, own: dict | None = None) -> list[dict]:
         if not op.get("events"):
             raise PlanError(f"{name} needs \"events\": [...], the events to put there")
-        events = [new_event(ev, f"{name} event {i}") for i, ev in enumerate(as_list(op["events"], f"{name} events"), 1)]
+        events = [new_event(ev, f"{name} event {i}", own) for i, ev in enumerate(as_list(op["events"], f"{name} events"), 1)]
         return events
 
     def amend(self, op: dict, n, name: str) -> None:
@@ -564,16 +599,19 @@ class Plan:
             self.sids_given += give_sids(events, self.used)
             self.done.append((f"{count(events, 'event')} {verb} event {n}" if n else f"{count(events, 'event')} at the end", events))
         elif verb == "replace":
-            events = self.new_events(op, name)
+            # What it replaces may come back, as print_sheet.py --show printed it, partly or whole.
+            replaced = self.by_number.get(n) if isinstance(n, int) and not isinstance(n, bool) else None
+            events = self.new_events(op, name, entries_by_sid(replaced))
             siblings, at = self.place(self.event(n, name), n, name)
-            self.used -= set(sids_of(siblings[at]))
+            again = collections.Counter(sids_of(siblings[at]))
+            self.used -= set(again)
             if len(events) == 1 and events[0].get("sid", 0) is None:       # the same event with other contents
                 events[0]["sid"] = siblings[at].get("sid")
             self.forget([siblings[at]], f"operation {i} replaced")
             if len(events) == 1 and events[0].get("eventType") in NUMBERED:
                 self.by_number[n] = events[0]                              # the number stays with what stands there now
             siblings[at:at + 1] = events
-            self.sids_given += give_sids(events, self.used)
+            self.sids_given += give_sids(events, self.used, again)
             self.done.append((f"event {n} replaced by {count(events, 'event')}", events))
         elif verb == "remove":
             taken = self.take(n, name, comments=True)
