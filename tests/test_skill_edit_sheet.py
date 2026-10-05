@@ -3,12 +3,13 @@ import codecs
 import json
 import os
 import re
+import shutil
 import sys
 from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import SKILL, SHEET, tool, check, edit, events, every_event, collect_tween, plan
+from tests.skill_helpers import REPO, SKILL, SHEET, run, tool, check, edit, events, every_event, collect_tween, plan
 
 
 def printed(root: Path) -> str:
@@ -250,12 +251,12 @@ def test_plan_moves_replaces_and_removes(project):
 NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
 
 
-def put_back(root: Path, sheet: str, path: Path, n: int) -> tuple[bytes, str]:
+def put_back(root: Path, sheet: str, path: Path, n: int, script=tool) -> tuple[bytes, str]:
     """Event n of a sheet printed with --show and replaced by what was printed: the file after, and what the plan said."""
-    code, shown = tool(root, "print_sheet", sheet, "--show", str(n), "--limit", "0")
+    code, shown = script(root, "print_sheet", sheet, "--show", str(n), "--limit", "0")
     assert code == 0, shown
     (root / "plan.json").write_text(json.dumps([{"replace": n, "events": [json.loads(shown)]}]), encoding="utf-8")
-    code, out = tool(root, "edit_sheet", sheet, "plan.json")
+    code, out = script(root, "edit_sheet", sheet, "plan.json")
     assert code == 0, out
     return path.read_bytes(), out
 
@@ -271,6 +272,43 @@ def test_an_event_put_back_as_print_sheet_shows_it_leaves_the_sheet_byte_for_byt
             after, out = put_back(project, sheet["name"], path, n)
             assert after == before, f"{sheet['name']} event {n}: {out}"
             assert out.splitlines()[0].endswith(", 0 new sids"), out
+
+
+
+sys.path.insert(0, str(SKILL / "scripts"))
+import c3project as c3  # noqa: E402
+
+EXAMPLES = c3.siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"
+
+
+def source_tool(root: Path, name: str, *args: str) -> tuple[int, str]:
+    """A script of the skill's source run on a project without the skill installed, such as a copy of an example."""
+    return run(root, SKILL / "scripts" / f"{name}.py", "--rag", str(REPO), *args)
+
+
+MEDIA = ("*.png", "*.jpg", "*.webp", "*.webm", "*.ogg", "*.m4a", "*.mp3", "*.wav", "*.woff", "*.woff2", "*.ttf")
+
+
+CHANGES = pytest.mark.xfail(strict=True, reason="edit_sheet.py writes the event it is given in the template's keys and order, and gives a repeated sid a new one")
+
+
+# One event of an official example for each way a round trip changed a sheet, found by
+# evals/sweep_round_trip.py, which puts back every event of every example.
+@pytest.mark.skipif(not EXAMPLES.is_dir(), reason="the Construct-Example-Projects clone is not beside this one")
+@pytest.mark.parametrize("example, file, n", [
+    pytest.param("date-time", "event sheet 1.json", 3, id="a function saved before functionCopyPicked", marks=CHANGES),
+    pytest.param("high-tech-vision", "Events.json", 45, id="functionCopyPicked after functionName", marks=CHANGES),
+    pytest.param("eventide", "EventsEnemy.json", 40, id="a bookmark, which the editor writes first", marks=CHANGES),
+    pytest.param("pair-of-knights", "Events.json", 38, id="a sid twice in one event", marks=CHANGES),
+])
+def test_an_event_of_an_official_example_put_back_leaves_its_sheet_byte_for_byte(tmp_path, example, file, n):
+    root = tmp_path / example
+    shutil.copytree(EXAMPLES / example, root, ignore=shutil.ignore_patterns(*MEDIA))
+    path = root / "eventSheets" / file
+    before = path.read_bytes().replace(b"\r\n", b"\n")      # LF as the examples' repository stores it
+    path.write_bytes(before)
+    after, out = put_back(root, json.loads(before)["name"], path, n, script=source_tool)
+    assert after == before, out
 
 
 def test_removing_an_event_names_the_sub_events_that_go_with_it(project):
