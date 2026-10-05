@@ -161,6 +161,13 @@ Rules:
   `prompts/` by `python scripts/build_plugin.py`, and committed with them.
   Edit the source, then build; an edit inside `plugin/` is lost at the next
   build, and `tests/test_plugin_folder.py` fails until the build is run.
+  The build sets the plugin's version and raises its patch itself. Raise
+  `version` in `scripts/plugin/plugin.json` only for a minor or major
+  release (`docs/decisions/plugin-tracks-commits.md`). If a merge leaves
+  conflicts in `plugin/`, resolve the sources, run the build, stage
+  `plugin/`, then commit the merge. During a merge the build compares with
+  the commit the merge will share with `origin/main`, so one run writes the
+  right version.
 - Docs and tests change with the behavior. README: data first, service
   second. `README_CN.md` carries the content of `README.md`; `README.md`
   names no Chinese text or locale besides its link to `README_CN.md`, and

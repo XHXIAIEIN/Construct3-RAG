@@ -56,7 +56,7 @@ The plugin is the [`plugin/`](plugin/README.md) folder, which `scripts/build_plu
   claude plugin install construct3@construct3-rag
   ```
 
-  To bring Claude Code's copy up to the version in the repository's `plugin.json`, run `claude plugin update construct3@construct3-rag`; a commit that does not raise that version does not reach the copy. Claude Code updates it on its own only when auto-update is on for the marketplace, and auto-update is off by default for a marketplace that Anthropic does not run. To turn it on, run `/plugin` in a session, open the **Marketplaces** tab, select `construct3-rag`, then select **Enable auto-update**. An update applies from the next session.
+  To bring Claude Code's copy up to the version in the repository's `plugin.json`, run `claude plugin update construct3@construct3-rag`. A change to the plugin's skill, data or prompts raises that version. Claude Code updates it on its own only when auto-update is on for the marketplace, and auto-update is off by default for a marketplace that Anthropic does not run. To turn it on, run `/plugin` in a session, open the **Marketplaces** tab, select `construct3-rag`, then select **Enable auto-update**. An update applies from the next session.
 - From a clone that you have, so that the next session uses what `git pull` fetched: link the clone into Claude Code's skills folder.
   - PowerShell: `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <the clone>/plugin`
   - Other shells: `ln -s <the clone>/plugin ~/.claude/skills/construct3`
