@@ -98,13 +98,16 @@ between evaluations.
 
 ## Inspector values
 
-`inspector` holds the values the engine gives the debugger, under the keys
-of the editor's language files: `behaviors.platform.debugger.vector-x` is
-"Vector X" in `Construct3-RAG/data/c3-lang/en-US.json`, under `text`, then
-`behaviors`, `platform`, `debugger`, and `zh-CN.json` has the Chinese. A
-value can be a list of such keys, as the Platform behavior's animation
-mode is. These come from the engine's internals, not the scripting API,
+`inspector` holds the inspector values, the values the engine gives the
+debugger's Inspect tab, under the keys of the editor's language files:
+`behaviors.platform.debugger.vector-x` is "Vector X" in
+`Construct3-RAG/data/c3-lang/en-US.json`, under `text`, then `behaviors`,
+`platform`, `debugger`, and `zh-CN.json` has the Chinese. A value can be a
+list of such keys, as the Platform behavior's animation mode is. The
+inspector values come from the engine's internals, not the scripting API,
 so a release may change them, and `inspector` is then left out while the
 rest of the snapshot stays. Prefer the scripting API for a value it has;
 read `inspector` for one it lacks, or to see everything an object holds
-without knowing its interface.
+without knowing its interface. `open_in_editor.py --state` and a `state`
+step of `preview_project.py` print each inspector value under its text
+from the language pack, in the language of `--locale`.

@@ -2,7 +2,8 @@
 editor's message when it does not.
 
     python scripts/open_in_editor.py [PATH ...] [--project FOLDER] [--release rNNN] [--browser EXE]
-                                     [--preview [SECONDS]] [--state [TYPE ...]] [--typescript] [--steps]
+                                     [--preview [SECONDS]] [--state [TYPE ...]] [--locale en-US]
+                                     [--typescript] [--steps]
                                      [--shots DIR]
                                      [--out RESULTS.json]
                                      [--jobs 2] [--headed] [--profile FOLDER]
@@ -31,10 +32,11 @@ prints the layout it started on and what the runtime reported: uncaught
 exceptions and console errors, each with the event it came from. With --state it
 then prints what the game holds at the end: the global variables, how many
 instances each object type has, and every instance of the types named, its
-position, instance variables and behavior values. On Windows the
-preview needs the profile within about 190 characters; a deeper project, on a
-volume without 8.3 short names, is refused with how to pass --profile, a
-shorter folder for it.
+position, instance variables and inspector values, the values of the
+debugger's Inspect tab, each under the name the editor gives it in --locale.
+On Windows the preview needs the profile within about 190 characters; a
+deeper project, on a volume without 8.3 short names, is refused with how to
+pass --profile, a shorter folder for it.
 
 Every result, the error stacks and the state included, goes to
 .tmp/open-in-editor.json and a screenshot of the editor per project to
@@ -88,6 +90,7 @@ EPILOG = """examples:
   python scripts/open_in_editor.py --project "D:/Games/Snake" --release r502
   python scripts/open_in_editor.py --preview
   python scripts/open_in_editor.py --preview 10 --state Player Enemy
+  python scripts/open_in_editor.py --state Player --locale zh-CN
   python scripts/open_in_editor.py --steps
   python scripts/open_in_editor.py --install-addon MyEffect.c3addon --preview
   python scripts/open_in_editor.py <eval iteration folder> --jobs 3 --out opened.json
@@ -106,15 +109,15 @@ output, one entry per addon with --install-addon, then one per project:
     objects: Player 1, Enemy 6, Coin 12
     Player: 1 instance                                                                with --state Player
       uid 4, at (56, 239.94) 8x12, on World; Health 3
-        sprite: current-animation "Run", current-frame 2, is-playing true, speed 12, repeats 0
-        Platform: vector-x 128, vector-y 0, max-speed 128, ...
+        Sprite animation: Current animation "Run", Current frame 2, Is playing true, Speed 12, Repeats 0
+        Platform: Vector X 128, Vector Y 0, Max speed 128, ...
   failed   <project>
     editor: <the dialog's text, which names the sheet, event and parameter at fault>
     exception: <the first line of the exception the editor logged>
 
 exit codes: 0 every project opened, and with --preview ran without errors; 1 at least one did not, or an
 --install-addon was refused; 2 no project
-found, or the editor did not load; 3 no browser here, or --steps: the steps
+found, the editor did not load, or --locale has no language pack; 3 no browser here, or --steps: the steps
 for a browser tool were printed instead, the project is not opened yet
 """
 
@@ -824,7 +827,29 @@ def key_name(key: str) -> str:
     return words[-1]
 
 
-def value_text(value) -> str:
+def labeler(project: Path | None, locale: str) -> Callable[[str], str]:
+    """The name the editor gives a key of its language files in `locale`: Vector X, or 向量 X in zh-CN,
+    for behaviors.platform.debugger.vector-x. A key the language pack lacks, such as a third-party addon's,
+    keeps its last word. So does every key when no clone is found. A locale the clone has no language pack
+    for raises ValueError."""
+    rag, _ = c3.locate_rag(project, None)
+    if not rag:
+        return key_name
+    packs = rag / "data" / "c3-lang"
+    if not (packs / f"{locale}.json").is_file():
+        raise ValueError(f"no language pack for --locale {locale}; the clone has: "
+                         f"{', '.join(sorted(p.stem for p in packs.glob('*.json')))}")
+    text = c3.load(packs / f"{locale}.json")["text"]
+
+    def label(key: str) -> str:
+        node = text
+        for part in key.split("."):
+            node = node.get(part) if isinstance(node, dict) else None
+        return node if isinstance(node, str) and node else key_name(key)
+    return label
+
+
+def value_text(value, label: Callable[[str], str] = key_name) -> str:
     if isinstance(value, bool):
         return "true" if value else "false"
     if isinstance(value, float) and math.isfinite(value):
@@ -832,14 +857,15 @@ def value_text(value) -> str:
         return str(int(value)) if value == int(value) else str(value)
     if isinstance(value, str):
         return json.dumps(value[:80], ensure_ascii=False)
-    if isinstance(value, list):
-        return "/".join(key_name(v) if isinstance(v, str) else value_text(v) for v in value)
+    if isinstance(value, list):     # keys, such as the Platform behavior's animation mode
+        return "/".join(label(v) if isinstance(v, str) else value_text(v, label) for v in value)
     return "null" if value is None else str(value)
 
 
-def instance_lines(inst: dict) -> list[str]:
+def instance_lines(inst: dict, label: Callable[[str], str] = key_name) -> list[str]:
     """One line for an instance, then one per plugin or behavior section of the
-    debugger's Inspect tab."""
+    debugger's Inspect tab, its title and values named by `label`. A behavior's
+    section keeps the behavior's name on the object."""
     words = [f"uid {inst['uid']}"]
     if "x" in inst:
         words.append(f"at ({value_text(inst['x'])}, {value_text(inst['y'])}) "
@@ -861,14 +887,13 @@ def instance_lines(inst: dict) -> list[str]:
         line += "; " + ", ".join(f"{k} {value_text(v)}" for k, v in inst["instVars"].items())
     lines = [f"    {line}"]
     if look:
-        sections = [(s["title"].split(".")[1] if s["title"].startswith("plugins.") else key_name(s["title"]), s["values"])
-                    for s in look["plugin"]] + list(look["behaviors"].items())
-        lines += [f"      {label}: " + ", ".join(f"{key_name(k)} {value_text(v)}" for k, v in values.items())
-                  for label, values in sections if values]
+        sections = [(label(s["title"]), s["values"]) for s in look["plugin"]] + list(look["behaviors"].items())
+        lines += [f"      {title}: " + ", ".join(f"{label(k)} {value_text(v, label)}" for k, v in values.items())
+                  for title, values in sections if values]
     return lines
 
 
-def state_lines(read: dict) -> list[str]:
+def state_lines(read: dict, label: Callable[[str], str] = key_name) -> list[str]:
     if "error" in read:
         return [f"  state: not read: {read['error'].splitlines()[0]}"]
     lines = ["  globals: " + (", ".join(f"{k} {value_text(v)}" for k, v in read["globalVars"].items()) or "none"),
@@ -879,7 +904,7 @@ def state_lines(read: dict) -> list[str]:
             continue
         lines.append(f"  {name}: {o['count']} instance{'' if o['count'] == 1 else 's'}")
         for inst in o["instances"]:
-            lines += instance_lines(inst)
+            lines += instance_lines(inst, label)
         if o["count"] > len(o["instances"]):
             lines.append(f"    and {o['count'] - len(o['instances'])} more, not read")
     return lines
@@ -1012,7 +1037,7 @@ def addon_report(result: dict) -> list[str]:
     return lines
 
 
-def report(result: dict) -> list[str]:
+def report(result: dict, label: Callable[[str], str] = key_name) -> list[str]:
     if result["status"] == "error":
         return [f"error    {result['project']}: {result['exception']}"]
     if result["status"] == "opened":
@@ -1036,7 +1061,7 @@ def report(result: dict) -> list[str]:
                 lines.append(f"  editor: {ran['editor']}")
             lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
             if ran.get("state"):
-                lines += state_lines(ran["state"])
+                lines += state_lines(ran["state"], label)
         elif ran:
             lines += [f"  preview did not run: {e}" for e in ran["errors"]]
         return lines
@@ -1063,7 +1088,7 @@ def summary(results: list[dict], previewed: bool, out: Path, shots: Path) -> str
             f"screenshots in {shots}")
 
 
-def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
+def run(projects: list[Path], editor: str, exe: str, args, label: Callable[[str], str] = key_name) -> list[dict]:
     first = projects[0] if projects[0].is_dir() else projects[0].parent
     # One profile per browser: Chrome does not load a profile Edge has written.
     browser = Browser(exe, (args.profile or scratch(first)) / f"editor-{Path(exe).stem.lower()}", args.headed)
@@ -1102,7 +1127,7 @@ def run(projects: list[Path], editor: str, exe: str, args) -> list[dict]:
                       "exception": str(e), "editor": editor, "seconds": 0}
         with lock:
             results.append(result)
-            lines = report(result)
+            lines = report(result, label)
             shown = c3.fitting(lines, max(1, args.limit - printed) if args.limit else 0)
             if shown:
                 text = "\n".join(lines[:shown])
@@ -1142,7 +1167,10 @@ def main() -> int:
     ap.add_argument("--state", nargs="*", metavar="TYPE",
                     help="at the end of the preview (5 seconds unless --preview says), print the global variables, "
                          f"the instance count of every object type, and the first {STATE_MAX} instances of each TYPE "
-                         "named, as the project spells it; --out keeps them as JSON")
+                         "named, as the project spells it, with their inspector values; --out keeps them as JSON")
+    ap.add_argument("--locale", default="en-US",
+                    help="the language pack in data/c3-lang of Construct3-RAG or the plugin that names the inspector "
+                         "values; a key the pack lacks keeps its last word (default: en-US)")
     ap.add_argument("--typescript", action="store_true",
                     help="once it opened, have the editor write the project's TypeScript definitions into "
                          "scripts/ts-defs, over the ones there, and scripts/tsconfig.json when there is none, as "
@@ -1202,7 +1230,13 @@ def main() -> int:
                       "references/reading-the-runtime.md says.")
         return 3
 
-    args.out, args.shots = kept(args.out, args.shots, projects[0] if projects[0].is_dir() else projects[0].parent)
+    first = projects[0] if projects[0].is_dir() else projects[0].parent
+    try:
+        label = labeler(first, args.locale) if args.state is not None else key_name
+    except ValueError as e:
+        print(e, file=sys.stderr)
+        return 2
+    args.out, args.shots = kept(args.out, args.shots, first)
     args.shots.mkdir(parents=True, exist_ok=True)
     missing = [a for a in args.install_addon if not a.is_file()]
     if missing:
@@ -1212,7 +1246,7 @@ def main() -> int:
     args.install_addon = [a.resolve() for a in args.install_addon]
     args.profile = args.profile and args.profile.resolve()
     try:
-        results = run(projects, editor, exe, args)
+        results = run(projects, editor, exe, args, label)
     except AddonRefused:
         return 1
     except EditorNotLoaded as e:

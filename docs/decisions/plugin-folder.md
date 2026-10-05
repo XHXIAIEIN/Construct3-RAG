@@ -41,7 +41,7 @@ paths in its scripts, `SKILL.md`, `references/` and the game-project block:
 | `data/c3-schemas/` | every script, and agents directly | its files, a few hundred |
 | `data/c3-ts-defs/` except `sdk/` | `lookup_script_api.py`, which skips `sdk/` | one bundle |
 | `data/c3-examples/` | `search_guides.py`, `check_design.py` | two bundles per locale, from about a thousand small files |
-| `data/c3-lang/` | `check_project.py`, two subtrees of about 10 KiB; agents, the texts of the plugins and behaviors that label a preview's inspector values (`reading-the-runtime.md`) | the two subtrees and those texts, about 100 KiB per locale |
+| `data/c3-lang/` | `check_project.py`, two subtrees of about 10 KiB; `open_in_editor.py`, `preview_project.py` and agents, the texts of the plugins and behaviors that label a preview's inspector values (`reading-the-runtime.md`) | the two subtrees and those texts, about 100 KiB per locale |
 | `data/c3-guides/`, `prompts/` | agents, from `SKILL.md` and the block | their files |
 | `skills/construct3-agent-plugin/` except `evals/` | | its files |
 
@@ -86,9 +86,10 @@ The build:
   `check_project.py` reads. It also keeps the `name`, `properties` and
   `debugger` texts of every plugin and behavior, at the same JSON paths.
   The keys of a preview's inspector values are paths into those texts,
-  such as `behaviors.platform.debugger.vector-x`, and the skill's
-  `reading-the-runtime.md` sends an agent to the language pack for the
-  label.
+  such as `behaviors.platform.debugger.vector-x`. `open_in_editor.py
+  --state` and a `state` step of `preview_project.py` print each value
+  under its text, and `reading-the-runtime.md` sends an agent that reads
+  `inspector` itself to the language pack for the label.
 - Copies `data/c3-new-project/`, Construct's icons included. A new project
   is made by `new_project.py` of the skill, which copies the empty project
   and gives it its own name and `uniqueId`. The clone and the plugin start a

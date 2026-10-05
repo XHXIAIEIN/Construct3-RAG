@@ -4,6 +4,7 @@ scripts against the runtime, and read the state, take screenshots and record bet
 
     python scripts/preview_project.py PLAN.json [--project FOLDER] [--release rNNN] [--browser EXE]
                                       [--shots DIR] [--out RESULT.json] [--headed] [--profile FOLDER]
+                                      [--locale en-US]
 
 Use it to check what a player does: a merge, a drop, a jump, a purchase. The
 plan is JSON, the steps run in order, and a step that fails stops the run:
@@ -35,7 +36,8 @@ Steps, each an object with one of these keys, and "note" for a label:
   wait SECONDS                  let the game run
   until EXPRESSION, timeout     wait until the JavaScript expression is true (default 10 s)
   js CODE                       run JavaScript against the runtime and print what it returns
-  state [TYPE ...]              the globals, every type's count, the named types' instances
+  state [TYPE ...]              the globals, every type's count, the named types' instances with
+                                their inspector values, named in --locale
   shot NAME                     a screenshot, NN-NAME.png in --shots
   record NAME, watch            record the window from here to the next record step or the end
                                 of the plan, as NN-NAME.mp4 with ffmpeg, NN-NAME.gif with Pillow,
@@ -103,7 +105,7 @@ output:
     ran: 4 of 4 steps in 9.6 s, 1 runtime error
 
 exit codes: 0 every step ran and the game logged no error; 1 a step failed, the game logged an error, or
-the project did not open; 2 the plan, the project or the editor could not be used; 3 no browser here
+the project did not open; 2 the plan, the project, the editor or --locale could not be used; 3 no browser here
 """
 
 STEPS = ("tap", "hold", "drag", "key", "wait", "until", "js", "state", "shot", "record")
@@ -710,9 +712,9 @@ def play(plan: dict, shots: Path, project: Path) -> Callable[[oe.Browser, str, o
     return run
 
 
-def report(result: dict) -> list[str]:
+def report(result: dict, label: Callable[[str], str] = oe.key_name) -> list[str]:
     if result["status"] != "opened":
-        return oe.report(result)
+        return oe.report(result, label)
     lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
     lines += [f"  warning: {w}" for w in result.get("warnings", [])]
     ran = result.get("preview")
@@ -726,7 +728,7 @@ def report(result: dict) -> list[str]:
         said = f": {done['said']}" if done["said"] else ""
         lines.append(f"  {done['line']}{said}" if done["ok"] else f"  {done['line']}: FAILED, {done['said']}")
         if "state" in done:
-            lines += ["  " + line for line in oe.state_lines(done["state"])]
+            lines += ["  " + line for line in oe.state_lines(done["state"], label)]
         lines += [f"    runtime: {e.splitlines()[0]}" for e in done["errors"]]
     if ran.get("recorded"):
         lines.append(f"  {ran['recorded']}")
@@ -760,6 +762,9 @@ def main() -> int:
     ap.add_argument("--headed", action="store_true", help="show the browser window")
     ap.add_argument("--profile", type=Path, metavar="FOLDER",
                     help="keep the browser profile in FOLDER/editor-<browser> instead of the project's .tmp/")
+    ap.add_argument("--locale", default="en-US",
+                    help="the language pack in data/c3-lang of Construct3-RAG or the plugin that names the inspector "
+                         "values; a key the pack lacks keeps its last word (default: en-US)")
     ap.add_argument("--limit", type=int, default=c3.LIMIT, metavar="CHARS",
                     help=f"stop printing after about this many characters; --out keeps everything, 0 prints "
                          f"everything (default: {c3.LIMIT})")
@@ -777,6 +782,11 @@ def main() -> int:
     if not project:
         print(f"no project.c3proj found from {args.project or Path.cwd()} upward; run this in the project folder or "
               f"pass --project <folder>", file=sys.stderr)
+        return 2
+    try:
+        label = oe.labeler(project, args.locale)
+    except ValueError as e:
+        print(e, file=sys.stderr)
         return 2
     exe = args.browser or oe.browser_path()
     if not exe:
@@ -804,7 +814,7 @@ def main() -> int:
     finally:
         browser.close()
     out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
-    lines = report(result)
+    lines = report(result, label)
     shown = c3.fitting(lines, args.limit)
     print("\n".join(lines[:shown]))
     if shown < len(lines):

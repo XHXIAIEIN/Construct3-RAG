@@ -162,9 +162,11 @@ def test_open_in_editor_names_where_it_kept_them_in_its_last_line(tmp_path):
                    f"screenshots in {tmp_path / 'shots'}", line
 
 
-def opened_with(preview: dict) -> list[str]:
-    return opener().report({**OPENED, "preview": {"started": True, "layout": "Game", "runtime": "worker",
-                                                  "errors": [], **preview}})
+def opened_with(preview: dict, locale: str | None = None) -> list[str]:
+    oe = opener()
+    return oe.report({**OPENED, "preview": {"started": True, "layout": "Game", "runtime": "worker",
+                                            "errors": [], **preview}},
+                     oe.labeler(None, locale) if locale else oe.key_name)
 
 
 def test_open_in_editor_reports_a_notice_over_the_opened_project_as_a_warning():
@@ -279,36 +281,64 @@ def test_open_in_editor_reports_the_crash_report_the_preview_left_in_the_editor(
     assert oe.failed({"status": "opened", "preview": {"errors": [], "editor": crash}})
 
 
+# A player read by --state: a Sprite with the Platform behavior, as the probe returns it
+PLATFORM = {"behaviors.platform.debugger.vector-x": 127.99999785, "behaviors.platform.properties.enabled.name": True,
+            "behaviors.platform.debugger.animation-mode": ["behaviors.platform.debugger.anim-moving"]}
+SPRITE = {"title": "plugins.sprite.debugger.animation-properties.title",
+          "values": {"plugins.sprite.debugger.animation-properties.current-animation": "Run"}}
+PLAYER = {"uid": 4, "x": 56.0, "y": 239.9375, "width": 8, "height": 12, "angle": 0, "layer": "World",
+          "zIndex": 1, "isVisible": False, "opacity": 1, "animationName": "Run", "animationFrame": 2,
+          "instVars": {"Health": 3}, "inspector": {"plugin": [SPRITE], "behaviors": {"Platform": PLATFORM}}}
+
+
 def test_open_in_editor_prints_the_state_the_game_left():
-    """--state: the globals, every type's count, then each named type's instances with
-    instance variables and the debugger's values under their last word; a miss names
-    the nearest type."""
-    platform = {"behaviors.platform.debugger.vector-x": 127.99999785, "behaviors.platform.properties.enabled.name": True,
-                "behaviors.platform.debugger.animation-mode": ["behaviors.platform.debugger.anim-moving"]}
-    sprite = {"title": "plugins.sprite.debugger.animation-properties.title",
-              "values": {"plugins.sprite.debugger.animation-properties.current-animation": "Run"}}
-    player = {"uid": 4, "x": 56.0, "y": 239.9375, "width": 8, "height": 12, "angle": 0, "layer": "World",
-              "zIndex": 1, "isVisible": False, "opacity": 1, "animationName": "Run", "animationFrame": 2,
-              "instVars": {"Health": 3}, "inspector": {"plugin": [sprite], "behaviors": {"Platform": platform}}}
+    """--state prints the globals and every type's count. Then each named type's instances
+    show their instance variables and the inspector values under the names the editor gives
+    them. A behavior's section keeps the behavior's name on the object, and a miss names the
+    nearest type."""
     state = {"globalVars": {"Score": 0, "Playable": True}, "counts": {"Player": 1, "Coin": 12},
-             "objects": {"Player": {"count": 1, "instances": [player]},
+             "objects": {"Player": {"count": 1, "instances": [PLAYER]},
                          "Coin": {"count": 12, "instances": [{"uid": 9, "x": 1, "y": 2, "width": 4, "height": 4,
                                                               "layer": "World", "text": None}]},
                          "Enemey": None},
              "types": ["Player", "Coin", "Enemy"]}
-    lines = opened_with({"state": state})
+    lines = opened_with({"state": state}, "en-US")
     assert lines[2:] == [
         "  globals: Score 0, Playable true",
         "  objects: Player 1, Coin 12",
         "  Player: 1 instance",
         "    uid 4, at (56, 239.94) 8x12, on World, hidden; Health 3",
-        '      sprite: current-animation "Run"',
-        "      Platform: vector-x 128, enabled true, animation-mode anim-moving",
+        '      Sprite animation: Current animation "Run"',
+        "      Platform: Vector X 128, Enabled true, Animation mode Moving",
         "  Coin: 12 instances",
         "    uid 9, at (1, 2) 4x4, on World",
         "    and 11 more, not read",
         "  Enemey: no object type of that name; closest: Enemy",
     ], lines
+
+
+def test_open_in_editor_names_the_debuggers_values_in_the_locale_and_keeps_a_key_the_pack_lacks():
+    """--locale zh-CN gives the editor's Chinese names. A key the language pack lacks, such as
+    a third-party addon's, keeps its last word."""
+    zh = json.loads((REPO / "data" / "c3-lang" / "zh-CN.json").read_text(encoding="utf-8"))["text"]
+    platform = zh["behaviors"]["platform"]
+    state = {"globalVars": {}, "counts": {"Player": 1}, "objects": {"Player": {"count": 1, "instances": [PLAYER]}}}
+    lines = opened_with({"state": state}, "zh-CN")
+    assert lines[6:8] == [
+        f'      {zh["plugins"]["sprite"]["debugger"]["animation-properties"]["title"]}: '
+        f'{zh["plugins"]["sprite"]["debugger"]["animation-properties"]["current-animation"]} "Run"',
+        f'      Platform: {platform["debugger"]["vector-x"]} 128, {platform["properties"]["enabled"]["name"]} true, '
+        f'{platform["debugger"]["animation-mode"]} {platform["debugger"]["anim-moving"]}',
+    ], lines
+    label = opener().labeler(None, "en-US")
+    assert label("plugins.myaddon.debugger.charge") == "charge"
+    assert label("plugins.myaddon.properties.power.name") == "power"
+
+
+def test_open_in_editor_refuses_a_locale_the_clone_has_no_language_pack_for(project, tmp_path):
+    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--state", "Player", "--locale", "xx-XX",
+                    "--browser", str(tmp_path / "no-browser.exe"))
+    assert code == 2 and "no language pack for --locale xx-XX; the clone has: en-US, zh-CN" in out, out
 
 
 def test_open_in_editor_says_when_the_state_was_not_read():

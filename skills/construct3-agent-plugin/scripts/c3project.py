@@ -252,7 +252,8 @@ def is_clone(folder: Path) -> bool:
     return (folder / "data" / "c3-schemas" / "_index.json").exists()
 
 
-def find_rag(root: Path | None, override: str | None) -> Path:
+def locate_rag(root: Path | None, override: str | None) -> tuple[Path | None, list[str]]:
+    """The clone or None, and the places tried before it; for a script that runs without a clone."""
     tried = []
     candidates = [("--rag", override), ("CONSTRUCT3_RAG", os.environ.get("CONSTRUCT3_RAG"))]
     # The project being read, then the one this copy of the skill is installed in:
@@ -267,12 +268,16 @@ def find_rag(root: Path | None, override: str | None) -> Path:
         if not c:
             continue
         if is_clone(Path(c)):
-            return Path(c)
+            return Path(c), tried
         tried.append(f"{source}: {c}")
     # Run in place, from <Construct3-RAG>/skills/, the clone is the script's own.
-    own = above(SKILL_DIR, "data/c3-schemas/_index.json")
-    if own:
-        return own
+    return above(SKILL_DIR, "data/c3-schemas/_index.json"), tried
+
+
+def find_rag(root: Path | None, override: str | None) -> Path:
+    rag, tried = locate_rag(root, override)
+    if rag:
+        return rag
     sys.exit("Construct3-RAG not found. Pass --rag <folder>, set CONSTRUCT3_RAG, or write the line "
              "'- Construct3-RAG: <folder>' in the project's AGENTS.md or CLAUDE.md; the folder is the "
              "one that holds data/c3-schemas/_index.json."

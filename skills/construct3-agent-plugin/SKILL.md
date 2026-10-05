@@ -81,10 +81,11 @@ schemas (`lookup_ace.py`, `print_sheet.py`, `check_project.py`, `edit_sheet.py`,
 `review_design.py`, `check_look.py`, `prepare_art.py`) take `--locale zh-CN`
 for the editor's Chinese names and wording; ids are the same in every locale.
 `search_guides.py` takes it for the examples' names; its pitfalls are English.
-The others print no schema wording and take no `--locale`. A harness cuts
-long tool output without saying where, so each script stops at about 10 000
-characters and its last line says how to get the rest; `--limit 0` prints
-everything, for a file or a pipe.
+`open_in_editor.py` and `preview_project.py` take it for the names of the
+inspector values they print. The others print no schema wording and take no
+`--locale`. A harness cuts long tool output without saying where, so each
+script stops at about 10 000 characters and its last line says how to get the
+rest; `--limit 0` prints everything, for a file or a pipe.
 
 ## Look an ACE up before writing it
 
