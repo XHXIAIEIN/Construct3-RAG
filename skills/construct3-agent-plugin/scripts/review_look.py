@@ -13,8 +13,10 @@ the object type, the instance's UID and what to change:
 
   text      a visible Text whose text needs more room than its box: it is cut
             or wraps beyond the box
-  stacked   two or more visible instances of one object type on the same box:
-            instances created at runtime and never moved apart
+  stacked   two or more visible instances of one object type on the same box,
+            showing the same frame: instances created at runtime and never
+            moved apart. Instances that show different frames or animations
+            there, a fill under its rim, are layered on purpose and left out
   overlap   two visible instances on a layer of parallax 0 (the HUD), or two
             texts on any layer, one covering half of the other. A Text counts
             by the part its text covers. Left out: an instance inside a larger
@@ -212,12 +214,15 @@ def text_findings(instances: list[dict]) -> list[dict]:
 
 
 def stacked_findings(instances: list[dict]) -> list[dict]:
+    """Instances of one type on one box that show the same frame: two that show different
+    frames or animations, a fill under its rim, are layered on purpose."""
     groups: dict[tuple, list[dict]] = {}
     for i in instances:
         if sized(i):
-            groups.setdefault((i["type"], i["layer"], *(round(v) for v in i["box"])), []).append(i)
+            box = tuple(round(v) for v in i["box"])
+            groups.setdefault((i["type"], i["layer"], box, i.get("animation"), i.get("frame")), []).append(i)
     found = []
-    for (kind, _, left, top, right, bottom), same in groups.items():
+    for (kind, _, (left, top, right, bottom), *_), same in groups.items():
         if len(same) < 2:
             continue
         uids = [i["uid"] for i in same]

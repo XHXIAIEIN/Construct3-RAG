@@ -68,6 +68,19 @@ def test_review_look_finds_instances_created_and_never_moved_apart():
                  inst(3, "Drop", [60, 180, 61, 182], layer="Game"), inst(4, "Drop", [60, 180, 61, 182], layer="Game")) == []
 
 
+def test_review_look_leaves_out_one_box_that_shows_different_frames():
+    """A slot's fill frame under its rim frame, one type on one box, is drawn so on purpose;
+    two of the same frame there were never moved apart."""
+    rl = module()
+    slot = [100, 400, 172, 472]
+
+    def frame(uid, animation, n):
+        return inst(uid, "Slot", slot, layer="Game", animation=animation, frame=n, frames=2, playing=False)
+    assert rules(rl, frame(1, "Default", 0), frame(2, "Default", 1)) == []
+    assert rules(rl, frame(1, "Fill", 0), frame(2, "Rim", 0)) == []
+    assert rules(rl, frame(1, "Default", 0), frame(2, "Default", 1), frame(3, "Default", 1)) == [("stacked", [2, 3])]
+
+
 def test_review_look_finds_overlaps_on_the_hud_but_not_a_label_on_its_button():
     rl = module()
     assert rules(rl,
