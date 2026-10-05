@@ -3019,6 +3019,9 @@ class Checker:
             line += f"; scripts, which this check does not read: {scripts}"
         if not then_open:
             return line
+        if scripts:
+            line += (f"; when you write or change a script, look up each API it calls: "
+                     f"{script_command(p.root, 'lookup_script_api.py')} NAME")
         return (f"{line}; next, review the design of the sheets and act on what it prints, "
                 f"{script_command(p.root, 'review_design.py')}, then open and preview it in the editor, which also "
                 f"reads the expressions and runs the events: {open_command(p.root)}")

@@ -1563,6 +1563,11 @@ def test_ok_line_names_the_scripts_the_check_does_not_read(project):
     add_script(project, 4)
     code, out = tool(project, "check_project")
     assert code == 0 and "; scripts, which this check does not read: scripts/main.js (4 lines);" in out, out
+    assert re.search(r"; when you write or change a script, look up each API it calls: "
+                     r"python \S*lookup_script_api\.py NAME; next,", out), out
+    # A review reads the project and changes no script
+    code, out = tool(project, "check_project", "--review")
+    assert code == 0 and "scripts/main.js (4 lines)" in out and "lookup_script_api" not in out, out
 
 
 def test_an_invalid_project_property_is_named_in_the_editor_language(project):

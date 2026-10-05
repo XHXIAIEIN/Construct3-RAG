@@ -78,6 +78,20 @@ Each of these was a failure seen in an eval run or a game project.
   version has no such ACE" when the ACE was every world object's.
 - An object name is an exact id or display name, or the run stops with the
   nearest ones: a near match once read `Platform` as Platform Info.
+- Runs skip the API lookup that `SKILL.md` asks for before a script is
+  written: one of six Haiku runs made it (iteration 47,
+  `script-shift-and-edges`). So for a project with scripts, the passing
+  check ends by saying to look up each API that a written or changed script
+  calls, with the `lookup_script_api.py` command; the lines of
+  `edit_sheet.py` and `--review` leave it out, since they change no script.
+  Iteration 48 ran the case three times with the line and three times
+  without. One run with the line ran the check after its edit, read the
+  line, looked up the four APIs it had called and opened two declarations
+  at the printed paths. Another read the line before its edit and still
+  took the sizes from the layout file, not from `runtime.layout`. Both arms
+  passed 11 of 12 assertions, so the line rests on the one run that read
+  the declarations. It adds 239 to 265 characters to such a check, most of
+  them the path.
 - `SKILL.md` holds what every activation needs and no tool says at the
   moment it matters. What a script prints when it is needed, or what one
   kind of task needs, is a line that says when to read a reference. Taken
