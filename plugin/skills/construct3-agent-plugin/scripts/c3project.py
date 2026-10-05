@@ -50,6 +50,12 @@ NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
 # A text literal of an expression: a quote inside it is written twice, "say ""hi""".
 STRING_LITERAL = re.compile(r'"(?:[^"]|"")*"')
 
+# A comment or a string in a JavaScript or TypeScript file.
+# The leftmost match wins, so // inside a string is not a comment.
+SCRIPT_TEXT = re.compile(r"//[^\n]*|/\*.*?\*/|\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`", re.S)
+# A number written as a literal, not the digits of a name, a hex number or an exponent.
+SCRIPT_NUMBER = re.compile(r"(?<![\w.$])(?:\d+(?:\.\d+)?|\.\d+)(?![\w.])")
+
 # What a deprecated addon or ACE is, in the words of the Addon SDK reference
 # (SetIsDeprecated, isDeprecated, is-deprecated).
 DEPRECATED = "Construct 3 no longer offers it and keeps it only so that old projects open"
@@ -658,6 +664,15 @@ class Project:
         def lines(path: Path) -> int:
             return len((self.root / path).read_text(encoding="utf-8", errors="replace").splitlines())
         return ", ".join(f"{path.as_posix()} ({lines(path)} lines)" for path in self.script_files())
+
+    def script_numbers(self, path: Path) -> dict[float, int]:
+        """How often each number is written as a literal in the code of a script; comments and
+        strings do not count."""
+        code = SCRIPT_TEXT.sub(" ", (self.root / path).read_text(encoding="utf-8", errors="replace"))
+        counts: dict[float, int] = {}
+        for m in SCRIPT_NUMBER.finditer(code):
+            counts[float(m.group(0))] = counts.get(float(m.group(0)), 0) + 1
+        return counts
 
     def load_listed(self, kind: str) -> dict[str, dict]:
         out = {}

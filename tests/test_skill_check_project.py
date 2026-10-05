@@ -1563,16 +1563,57 @@ def test_committed_schemas_mark_what_the_editor_treats_as_a_trigger(rel, ace_id)
         assert entry.get("isTrigger") is True, (locale, rel, ace_id)
 
 
-def test_ok_line_names_the_scripts_the_check_does_not_read(project):
+def test_ok_line_names_the_scripts_the_check_does_not_run(project):
     from tests.test_skill_print_sheet import add_script
     add_script(project, 4)
     code, out = tool(project, "check_project")
-    assert code == 0 and "; scripts, which this check does not read: scripts/main.js (4 lines);" in out, out
+    assert code == 0 and "; scripts, which this check does not run or type-check: scripts/main.js (4 lines);" in out, out
     assert re.search(r"; when you write or change a script, look up each API it calls: "
                      r"python \S*lookup_script_api\.py NAME; next,", out), out
     # A review reads the project and changes no script
     code, out = tool(project, "check_project", "--review")
     assert code == 0 and "scripts/main.js (4 lines)" in out and "lookup_script_api" not in out, out
+
+
+def test_ok_line_names_a_layout_size_written_into_a_script(project):
+    """A script that writes the sizes of a layout as numbers gets a clause with what to read at run
+    time. Sizes in a comment or a string do not count, and an instance's size is named only beside
+    its layout's."""
+    from tests.test_skill_print_sheet import add_script
+    add_script(project)
+    edit(project, "layouts/Game.json", lambda layout: layout.update(width=1280, height=1024))
+    layout = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
+    # The smallest instance that is not square, so that it is not a background as big as a layout
+    inst = min((i for layer in layout["layers"] for i in layer["instances"]
+                if i.get("world", {}).get("width") not in (None, i["world"].get("height"))),
+               key=lambda i: i["world"]["width"] * i["world"]["height"])
+    w, h = inst["world"]["width"], inst["world"]["height"]
+
+    def ok_line(script: str, *args: str) -> str:
+        (project / "scripts" / "main.js").write_text(script, encoding="utf-8")
+        code, out = check(project, *args)
+        assert code == 0, out
+        return out.splitlines()[-1]
+
+    # Sizes in a comment or a string do not count
+    assert "as numbers" not in ok_line('// the layout is 1280 x 1024\nconst label = "1024";\nconst w = 1280;')
+    line = ok_line("const w = 1280, h = 1024;")
+    assert ("; scripts/main.js writes these sizes as numbers: layout 'Game' (width 1280, height 1024). Replace them "
+            "with runtime.layout.width and runtime.layout.height. A number copied from the layout is wrong when the "
+            "layout is resized; when you write or change a script") in line, line
+    # An instance's size is named beside its layout's
+    line = ok_line(f"const w = 1280, h = 1024, pw = {w}, ph = {h};")
+    assert (f"layout 'Game' (width 1280, height 1024), {inst['type']} in it (width {w:.10g}, height {h:.10g}). "
+            f"Replace the layout's numbers with runtime.layout.width and runtime.layout.height, and each object's "
+            f"numbers with the width and height of its instance. A number copied from the layout is wrong when the "
+            f"layout or an instance is resized;") in line, line
+    assert "as numbers" not in ok_line(f"const pw = {w}, ph = {h};")
+    # A review changes no script
+    assert "as numbers" not in ok_line("const w = 1280, h = 1024;", "--review")
+    # A square layout needs its side written twice
+    edit(project, "layouts/Game.json", lambda layout: layout.update(width=800, height=800))
+    assert "as numbers" not in ok_line("clamp(y, 200, 800);")
+    assert "layout 'Game' (width 800, height 800)" in ok_line("const w = 800, h = 800;")
 
 
 def test_an_invalid_project_property_is_named_in_the_editor_language(project):

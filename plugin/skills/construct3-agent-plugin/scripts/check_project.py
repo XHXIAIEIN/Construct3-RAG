@@ -3051,15 +3051,59 @@ class Checker:
                 f"{len(self.functions)} functions, {len(self.custom_actions)} custom actions")
         scripts = p.scripts_summary()
         if scripts:
-            line += f"; scripts, which this check does not read: {scripts}"
+            line += f"; scripts, which this check does not run or type-check: {scripts}"
         if not then_open:
             return line
         if scripts:
+            line += "".join(f"; {clause}" for clause in copied_sizes(p, self.layouts))
             line += (f"; when you write or change a script, look up each API it calls: "
                      f"{script_command(p.root, 'lookup_script_api.py')} NAME")
         return (f"{line}; next, review the design of the sheets and act on what it prints, "
                 f"{script_command(p.root, 'review_design.py')}, then open and preview it in the editor, which also "
                 f"reads the expressions and runs the events: {open_command(p.root)}")
+
+
+def copied_sizes(p: c3.Project, layouts: dict[str, dict]) -> list[str]:
+    """A clause for each script whose code writes both the width and the height of a layout as
+    numbers, for the first such layout: the numbers, and what to read at run time in their place.
+    A size copied into a script is wrong when the layout is resized. An instance's size is named
+    only beside its layout's, because scripts also write such numbers as offsets and counts.
+    Evidence: docs/decisions/project-tools-skill.md."""
+    def size(holder: dict) -> tuple[float, float] | None:
+        w, h = holder.get("width"), holder.get("height")
+        return (float(w), float(h)) if JSON_TYPES["number"](w) and JSON_TYPES["number"](h) and w > 0 and h > 0 \
+            else None
+
+    def written(numbers: dict[float, int], wh: tuple[float, float]) -> bool:
+        # A square is written when its side appears twice
+        return numbers.get(wh[0], 0) >= 2 if wh[0] == wh[1] else wh[0] in numbers and wh[1] in numbers
+
+    def shown(wh: tuple[float, float]) -> str:
+        return f"width {wh[0]:.10g}, height {wh[1]:.10g}"
+
+    out = []
+    for path in p.script_files():
+        numbers = p.script_numbers(path)
+        for name, layout in layouts.items():
+            wh = size(layout) if isinstance(layout, dict) else None
+            if not wh or not written(numbers, wh):
+                continue
+            objects: dict[str, tuple[float, float]] = {}
+            for layer, _ in c3.layers_of(layout.get("layers", [])):
+                for inst in layer.get("instances", []):
+                    of = size(inst.get("world") or {}) if isinstance(inst, dict) else None
+                    if of and written(numbers, of):
+                        objects.setdefault(str(inst.get("type")), of)
+            named = list(objects.items())[:3]
+            held = f"{path.as_posix()} writes these sizes as numbers: layout {name!r} ({shown(wh)})"
+            held += "".join(f", {obj} in it ({shown(of)})" for obj, of in named)
+            read = ("Replace the layout's numbers with runtime.layout.width and runtime.layout.height, and each "
+                    "object's numbers with the width and height of its instance") if named \
+                else "Replace them with runtime.layout.width and runtime.layout.height"
+            out.append(f"{held}. {read}. A number copied from the layout is wrong when the layout"
+                       f"{' or an instance' if named else ''} is resized")
+            break
+    return out
 
 
 def script_command(root: Path, name: str, flags: str = "") -> str:

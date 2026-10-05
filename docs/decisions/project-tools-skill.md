@@ -102,6 +102,45 @@ Each of these was a failure seen in an eval run or a game project.
   the layout's and the instance's size. The one run that met these lines
   read the right sizes; the other runs met none. The runs behind these
   three entries are in `.local/docs/evidence/skill-evals/`.
+- A run that reads a size from `layouts/*.json` or `objectTypes/*.json`
+  copies the numbers into a script and meets none of the lines above. A
+  paragraph in `SKILL.md` that says to read sizes at run time does not stop
+  it: in the eval case `script-shift-and-edges` with Haiku, 2 of 4 runs
+  copied a size with the paragraph and 2 of 4 without it. `SKILL.md` does
+  not carry the paragraph, because every activation reads that file. So the
+  ok line of a passing check carries a size clause. The check reads the code
+  of each script, but not its comments or strings. The clause names a
+  script that writes the width and the height of a layout as numbers, the
+  layout, the numbers, and the run-time properties that replace them. It
+  also names up to three objects that have an instance in that layout whose
+  width and height the script writes, with the instance's width and height
+  to read instead.
+- The size clause was measured over the 174 scripts of the 119 official
+  examples that have scripts. No script writes both sizes of a layout. One
+  script writes the side of a square layout once, so a square counts only
+  when its side is written twice. 14 scripts write both sizes of an
+  instance, mostly as small counts and offsets. 14 write one size of a
+  layout: 6 as an angle or a colour offset that equals it, 8 as a position
+  or a length. So the clause names neither alone: a script that copies one
+  side only is not named, and an instance is named only beside its layout.
+  In the 14 scripts of the game projects, the clause names none. Of the 32
+  final scripts of the `script-shift-and-edges` runs of iterations 47 to 51,
+  it names 10, and each of the 10 copies the layout's size.
+- The size clause is part of the ok line. The editor accepts the script,
+  and a style finding is a warning behind `--style`, which runs do not
+  pass, so a finding would reach no run. Like the note on looking up APIs,
+  the clause is left out of the lines of `edit_sheet.py` and `--review`,
+  which change no script. The ok line says that the check does not run or
+  type-check the scripts, because the check reads their code for numbers.
+- Runs act on the size clause. In iteration 52 of `script-shift-and-edges`
+  with Haiku, 3 of 12 runs with the clause copied the layout's size in
+  their first edit. All 3 met the clause when they ran the check. 2 of
+  them then replaced the numbers with `runtime.layout.width`,
+  `runtime.layout.height` and the instance's size. The third ended its work
+  at the ok line, and it had not opened `SKILL.md`. Of 8 runs without the
+  clause, 3 copied the size and kept it. So 1 of 12 final scripts with the
+  clause hold the layout's size, against 3 of 8 without it. The runs behind
+  these four entries are in `.local/docs/evidence/skill-evals/`.
 - `SKILL.md` holds what every activation needs and no tool says at the
   moment it matters. What a script prints when it is needed, or what one
   kind of task needs, is a line that says when to read a reference. Taken
@@ -121,17 +160,14 @@ Each of these was a failure seen in an eval run or a game project.
   query files are ready. Change `description` only from its train failures.
 - No one has reviewed the eval answers by hand; the assertions are at
   ceiling, so that review is the next signal.
-- A run that opens `layouts/*.json` or `objectTypes/*.json` for a size
-  copies the numbers it finds into a script. It never sees the line that
-  ends the `print_layout.py` print and names the run-time properties. A
-  paragraph in `SKILL.md` that says to read sizes at run time does not stop
-  this: in the eval case `script-shift-and-edges` with Haiku, as many runs
-  copied a size with the paragraph as without it. `SKILL.md` does not carry
-  the paragraph, because every activation reads that file.
-  `check_project.py` could read each script for a number that equals the
-  layout's width or height. The ok line names the scripts the check does not
-  read, and that is where it would print the finding. The runs are in
-  `.local/docs/evidence/skill-evals/`.
+- A script can hold the viewport's size from `project.c3proj` in place of
+  the layout's. In iteration 52, 2 of 12 runs with the size clause wrote
+  640 and 480, the viewport's size, beside the sprite's 91 and 103. The
+  clause did not name them, because it looks for a layout's size. No
+  official example's script writes both viewport numbers, so a clause for
+  them would name no example. 2 more of the 12 runs wrote
+  `runtime.layoutWidth`, which the API does not declare, and did not run
+  the lookup that the ok line names.
 - Paging beyond the `--events` range that `print_sheet.py` gives, JSON
   output, separate exit codes for findings and not-found, and a generator
   guard against overwriting files the editor changed: no eval run or game
