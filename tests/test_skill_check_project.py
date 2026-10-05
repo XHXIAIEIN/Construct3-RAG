@@ -1034,6 +1034,21 @@ def test_object_types_sharing_a_sid_stop_the_editor(project):
     assert "Coin" in line and "ScoreText" in line and "object class sid already in use" in line, out
 
 
+def test_images_sharing_an_image_sprite_id_stop_the_editor(project):
+    """Two images or frames with one imageSpriteId stop the r504 editor with "id already in use".
+    A project that gives one of them the id in the finding opens."""
+    coin = json.loads((project / "objectTypes/Coin.json").read_text(encoding="utf-8"))
+    frame_id = coin["animations"]["items"][0]["frames"][0]["imageSpriteId"]
+    out = findings(project, lambda t: t["image"].update(imageSpriteId=frame_id), "objectTypes/Backdrop.json")
+    line = next((x for x in out.splitlines() if "imageSpriteId" in x), "")
+    assert ("the frame images/coin-default-000.png of Coin (objectTypes/Coin.json) and the image of Backdrop "
+            f"(objectTypes/Backdrop.json) share the imageSpriteId {frame_id}, and the editor stops with \"id "
+            "already in use\"") in line, out
+    offered = int(line.rsplit(" ", 1)[-1])
+    out = findings(project, lambda t: t["image"].update(imageSpriteId=offered), "objectTypes/Backdrop.json")
+    assert "imageSpriteId" not in out and out.splitlines()[-1].startswith("ok:"), out
+
+
 def test_another_repeated_sid_is_a_warning(project):
     """The editor opens a project whose events, instances, layers or animations repeat a sid."""
     def repeat(sheet):

@@ -145,6 +145,15 @@ Option 2 as the default, and option 3 as the step after it.
   editor renumbers it, and a hierarchy link or a *Pick by UID* written for
   one may reach the other, so a repeated uid is an error, as a name the
   editor changes silently is.
+- A repeated `imageSpriteId` stops the r504 editor with `id already in
+  use`. The loader keeps one set of these ids for the whole project, and
+  every image and every animation frame adds its own to it. Three pairs
+  stopped the editor when they shared an id: a Sprite Font object type
+  copied from another one's JSON in a game project, a Tiled Background
+  image and a Sprite frame, and two frames of one animation. Each opened
+  once one of the pair took the id the checker offers. No official example
+  repeats one, so the checker reports a repeated id as an error that names
+  both object type files.
 - Scirra's guide
   [Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275),
   which the `llm-context.md` the editor writes into every project links,
