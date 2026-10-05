@@ -264,7 +264,10 @@ game project the editor r504 opened and previewed on 2026-09-30.
 - A property keyframe holds `value` and `rValue`, read in relative mode, and
   `aValue`, read in absolute mode. Angles are in radians. An `angle` addon
   gives the direction of the segment that starts at that keyframe, `closest`,
-  `clockwise` or `anti-clockwise`, and extra `revolutions`. Its `ease` is a
+  `clockwise` or `anti-clockwise`, and extra `revolutions`. The runtime turns
+  that way even when it is the long way round, so write the direction of the
+  change to the next keyframe, or `closest`
+  ([pitfalls/timeline.md](../pitfalls/timeline.md)). A keyframe's `ease` is a
   built-in ease id or a custom ease's name.
 - The editor saves *Use system timescale* as `ignoreSystemTimescale`, and the
   name is inverted: `true` follows the system time scale, `false` ignores it,
