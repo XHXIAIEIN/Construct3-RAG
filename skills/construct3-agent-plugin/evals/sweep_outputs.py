@@ -3,13 +3,13 @@
     python evals/sweep_outputs.py OUT.json --examples FOLDER [--projects FOLDER ...] [--limit 0] [--scripts DIR]
     python evals/sweep_outputs.py --compare OLD.json NEW.json
 
-The first form runs check_project.py with and without --style,
-print_sheet.py, print_sheet.py --outline and a dry run of edit_sheet.py
-with a small plan on every folder
-project under --examples (the example-projects folder of the
-Construct-Example-Projects clone) and on each --projects folder, and a fixed
-list of lookups, and writes exit code, a hash of stdout and of stderr and
-their length per run. Nothing is written to a project. Record the old side
+The first form runs these scripts on every folder project under --examples
+(the example-projects folder of the Construct-Example-Projects clone) and on
+each --projects folder: check_project.py with and without --style,
+print_sheet.py with and without --outline, print_layout.py, and a dry run of
+edit_sheet.py with a small plan. It also runs a fixed list of lookups. It
+writes the exit code, a hash of stdout and of stderr, and their length per
+run. Nothing is written to a project. Record the old side
 before a change and the new side after it; --limit 0 lifts the scripts'
 output limit, so that what they print in full can be compared with a version
 that had none. For an old side that was not recorded, --scripts names the
@@ -38,7 +38,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 COMMANDS = {"check": ["check_project.py"], "style": ["check_project.py", "--style"], "print": ["print_sheet.py"],
-            "outline": ["print_sheet.py", "--outline"]}
+            "outline": ["print_sheet.py", "--outline"], "layout": ["print_layout.py"]}
 # A plan every project takes: a comment, a variable and an event that uses it, at the end of its first sheet.
 PLAN = [{"into": 0, "events": [
     {"eventType": "comment", "text": "sweep"}, {"eventType": "variable", "name": "SweepProbe"},

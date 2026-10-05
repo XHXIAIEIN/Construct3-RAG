@@ -4,6 +4,10 @@ instances in Z order with their object, box, size and text, and the object a tex
 Read a layout this way to answer where something is, how big it is or what covers what,
 and after generating one, to see that a label lies on its button and a backdrop covers
 the screen. Whether the look works is still the user's call on a screenshot.
+
+For a project with scripts, the output ends with a line that names the runtime
+properties a script reads these sizes from. A number copied from the output is
+wrong when the layout or an instance is resized.
 """
 import math
 import re
@@ -14,6 +18,10 @@ import c3project as c3
 TEXT_PROPERTIES = ("text",)  # Text, SpriteFont, TextInput, Button, HTML elements
 EDGE = 0.05  # a value closer than this to a whole pixel prints as that pixel
 RUN = 4  # this many instances in a row of one object and size print as one line
+# the last line of the print of a project with scripts
+SCRIPT_SIZES = ("in a script, read these sizes at run time: runtime.layout.width, runtime.layout.height, "
+                "and the instance's width and height. A number copied from this output is wrong when the layout "
+                "or an instance is resized")
 
 
 def number(v: float) -> str:
@@ -145,6 +153,8 @@ def main() -> int:
              for line in layout_lines(project, name, layouts[name], args.layer)]
     fit = c3.fitting(lines, max(args.limit - 300, 1) if args.limit else 0)
     print("\n".join(lines[:fit]))
+    if project.scripts_summary():
+        print(SCRIPT_SIZES)
     if fit < len(lines):
         print(f"-- {len(lines) - fit} more lines past --limit {args.limit}; name one layout, add --layer, "
               f"or raise --limit")

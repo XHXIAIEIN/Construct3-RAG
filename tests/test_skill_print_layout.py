@@ -38,6 +38,17 @@ def test_a_label_off_its_button_says_so(project):
     assert f'[text "On it"; on {sprite["type"]}]' in out, out
 
 
+def test_the_print_of_a_project_with_scripts_ends_with_the_runtime_sizes(project):
+    # A size copied from this print into a script is wrong when the layout is resized
+    from tests.test_skill_print_sheet import add_script
+    code, out = tool(project, "print_layout")
+    assert code == 0 and "runtime.layout" not in out, out
+    add_script(project)
+    code, out = tool(project, "print_layout")
+    last = out.splitlines()[-1]
+    assert code == 0 and "runtime.layout.width" in last and "runtime.layout.height" in last, out
+
+
 def test_a_layout_not_there_names_the_layouts(built):
     code, out = tool(built, "print_layout", "Nowhere")
     assert code == 1 and "no layout named 'Nowhere'; layouts: " in out, out
