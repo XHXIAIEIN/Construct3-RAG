@@ -56,7 +56,7 @@ plugin 是 [`plugin/`](plugin/README.md) 文件夹，由 `scripts/build_plugin.p
   claude plugin install construct3@construct3-rag
   ```
 
-  要把 Claude Code 存的副本更新到本仓库 `plugin.json` 里的版本，运行 `claude plugin update construct3@construct3-rag`；没有提升这个版本的提交不会进入副本。只有 marketplace 打开了自动更新，Claude Code 才会自己更新它；不由 Anthropic 运营的 marketplace 默认不开自动更新。要打开它，在会话里运行 `/plugin`，打开 **Marketplaces** 标签，选 `construct3-rag`，再选 **Enable auto-update**。更新从下一个会话起生效。
+  要把 Claude Code 存的副本更新到本仓库 `plugin.json` 里的版本，运行 `claude plugin update construct3@construct3-rag`。plugin 的 skill、数据或 prompts 有改动，这个版本就会提高。只有 marketplace 打开了自动更新，Claude Code 才会自己更新它；不由 Anthropic 运营的 marketplace 默认不开自动更新。要打开它，在会话里运行 `/plugin`，打开 **Marketplaces** 标签，选 `construct3-rag`，再选 **Enable auto-update**。更新从下一个会话起生效。
 - 从已有的 clone 安装，让下一个会话用上 `git pull` 拉下来的文件：把 clone 链接到 Claude Code 的 skills 文件夹。
   - PowerShell：`New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <clone 路径>/plugin`
   - 其他 shell：`ln -s <clone 路径>/plugin ~/.claude/skills/construct3`

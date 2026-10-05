@@ -93,7 +93,8 @@ The build:
   cache, and a script that downloads and runs code holds a version for a
   reviewer. A plugin user works without the siblings, as the skill does
   wherever they are missing.
-- Writes `.claude-plugin/plugin.json`, `README.md` and the icon from their
+- Writes `.claude-plugin/plugin.json`, with the version set as
+  `plugin-tracks-commits.md` describes, `README.md` and the icon from their
   sources in `scripts/plugin/`, and the repository's `LICENSE`. The icon
   goes at the plugin root, because the plugin manifest reference ("Manifest
   file") keeps only `plugin.json` in `.claude-plugin/`. `plugin.json` names

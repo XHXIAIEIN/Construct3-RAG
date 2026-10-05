@@ -71,7 +71,7 @@ The project skill and the prompts:
 | `art-from-the-image-tool.md` | Why a generated game's art comes from the agent's image tool through `art()` and `prepare_art.py`, and is not drawn in code |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |
 | `skill-and-plugin-names.md` | The names of the skill and the Claude Code plugin |
-| `plugin-tracks-commits.md` | How `plugin.json`'s version reaches an install, and why a linked clone needs no copy in the project |
+| `plugin-tracks-commits.md` | How the build sets `plugin.json`'s version so that a change to `plugin/` reaches an install, and why a linked clone needs no copy in the project |
 | `directory-listing.md` | Why the plugin is in Claude's directory and also installs from this repository, and why a reviewer publishes each directory version |
 | `plugin-folder.md` | Why the plugin is the built folder `plugin/`, what it carries from the repository, and the test that keeps it equal to its sources |
 | `build-folder.md` | Why a game project's packed `.c3p`, export and sheet pictures go in `.build/`, apart from the scratch of `.tmp/` |

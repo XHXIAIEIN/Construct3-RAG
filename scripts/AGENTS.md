@@ -5,7 +5,7 @@
 | Script | Purpose | Usage |
 |--------|---------|-------|
 | `bootstrap.py` | Clone the sibling repositories that are missing, create the game project from the empty project when its folder does not exist, and install the skill in it; the second command of the README's Set up section | `python scripts/bootstrap.py --project <folder>` |
-| `build_plugin.py` | Build `plugin/`, the Claude Code plugin, from the skill, the data it reads and the prompts, under the limits of Claude's plugin directory; `--check` compares `plugin/` with a fresh build (`docs/decisions/plugin-folder.md`) | `python scripts/build_plugin.py` |
+| `build_plugin.py` | Build `plugin/`, the Claude Code plugin, from the skill, the data it reads and the prompts, under the limits of Claude's plugin directory. The plugin's version is the published version, raised by one patch when the files differ from the published plugin. `--check` compares `plugin/` with a fresh build (`docs/decisions/plugin-folder.md`, `docs/decisions/plugin-tracks-commits.md`) | `python scripts/build_plugin.py` |
 | `setup.py` | Install the dependencies and start the lookup server; `--refresh-data` refreshes `data/` from the CDN first | `python scripts/setup.py` |
 | `init.py` | Fetch CDN data, export it into the cache, and replace `data/c3-schemas`, `c3-examples`, `c3-lang`, `c3-ts-defs`; then write each of Scirra's guides in `data/c3-guides/` whose text changed, and build `plugin/` again | `python scripts/init.py`; `--guides-only` for the guides alone, `--guide-html <page>` for a page saved from a browser |
 | `check_c3_version.py` | Compare the release `data/` holds with the latest stable release on the CDN | `python scripts/check_c3_version.py` |
