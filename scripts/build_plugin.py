@@ -69,6 +69,14 @@ def write(path: Path, text: str) -> None:
     path.write_bytes(text.encode("utf-8"))
 
 
+def copy(src: Path, dst: Path) -> None:
+    """src at dst: an image byte for byte, any other file with LF line endings, as Git stores it.
+    A checkout made before .gitattributes holds CRLF files; LF keeps its build equal to plugin/."""
+    data = src.read_bytes()
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_bytes(data if src.name.endswith(IMAGES) else data.replace(b"\r\n", b"\n"))
+
+
 def bundles(folder: str, pattern: str) -> list[tuple[str, str]]:
     """The bundles of a folder, <folder>.bundle-<n>.json, each under BUNDLE_SIZE."""
     files = {}
@@ -105,18 +113,16 @@ def lang_subset(locale: str) -> str:
 def build(out: Path) -> None:
     for part in COPIED:
         for rel in tracked(part):
-            (out / rel).parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(ROOT / rel, out / rel)
+            copy(ROOT / rel, out / rel)
     for folder, pattern in BUNDLED:
         for rel, text in bundles(folder, pattern):
             write(out / rel, text)
     for locale in ("en-US", "zh-CN"):
         write(out / "data" / "c3-lang" / f"{locale}.json", lang_subset(locale))
-    (out / ".claude-plugin").mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(SOURCES / "plugin.json", out / ".claude-plugin" / "plugin.json")
-    shutil.copyfile(SOURCES / "icon.png", out / ".claude-plugin" / "icon.png")
-    shutil.copyfile(SOURCES / "README.md", out / "README.md")
-    shutil.copyfile(ROOT / "LICENSE", out / "LICENSE")
+    copy(SOURCES / "plugin.json", out / ".claude-plugin" / "plugin.json")
+    copy(SOURCES / "icon.png", out / ".claude-plugin" / "icon.png")
+    copy(SOURCES / "README.md", out / "README.md")
+    copy(ROOT / "LICENSE", out / "LICENSE")
 
 
 def blob_id(data: bytes) -> str:

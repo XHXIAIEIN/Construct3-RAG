@@ -103,6 +103,10 @@ The build:
   plugin runs, sends or fetches. This repository's README names `plugin/` as
   the plugin folder.
 
+Copied text files are written with LF line endings, as Git stores them, so
+a checkout with CRLF files (`lf-line-endings.md`) builds the same folder as
+any other.
+
 The result stays under 512 files. A test builds the folder into a temporary
 directory and fails when the result differs from `plugin/`, has more than
 512 files, holds a binary file other than a PNG or a file over 256 KiB other
