@@ -4,7 +4,7 @@ The table below applies the Native first table of
 [event-sheet-thinking.md](../event-sheet-thinking.md) to the effects the
 player notices first. Each row names its source in the Example column: an
 official example, or `observed` for what a game project settled in its r504
-preview, 2026-09-30 to 2026-10-01. Before adding the sounds that go with
+preview, 2026-09-30 to 2026-10-05. Before adding the sounds that go with
 these effects, read [sound.md](sound.md), which says which sounds play,
 when and how loud.
 
@@ -21,6 +21,7 @@ when and how loud.
 | A dragged thing that lags and overshoots like a spring | An invisible base takes Drag & Drop, the drop test and the snap. The visible parts, hierarchy children of a follower, follow it on a damped spring stepped every tick and lean by how far they lag. Step the spring implicitly (acceleration from the lag, then divide the velocity by `1 + damping·dt + stiffness·dt²`), or the lag differs between 30 and 144 fps. Moving the base itself breaks the drag: Drag & Drop writes its position only while the pointer moves | observed |
 | A choreographed sequence over several objects: opening, level clear, a bridge rebuilding | Timeline *Play*, *Set instance* for runtime-created objects. Branches that must start together go in sibling sub-events, since a *Wait* delays the sub-events after it | cave-bridge, 17 examples; observed |
 | Camera that follows, clamped to a zone | Scroll To on the target if plain following is enough. For bounds and smoothing, System *Scroll to position* with `lerp(scrollx, clamp(target, zone edges), …)` every tick | dynamic-camera-system |
+| A chapter or stage title card | The order: dim, banner, a title that drops and lands, a shake with a burst on the landing, a hold, then everything leaves together. One tuned set: dim the play area to 55 % opacity in 0.2 s, and open a banner from the centre, its width tweened from 0 in 0.25 s with `easeoutquart`. 0.15 s after the card's first line appears, the title drops from 2.8 times its rest scale to 1 in 0.22 s with `easeinquad` and fades in as it falls. On landing it squashes to 0.88 and springs back with `easeoutback` over 0.35 s. The screen shakes 6 px for 0.35 s, and stars burst from the title. 1.8 s after the card opened, title, banner and dim rise and fade in 0.35 s with `easeinquad`, and the next stage enters as they leave. Each phase of the title's scale is a *Tween (value)* channel, multiplied every tick ([pitfalls: Tween](../pitfalls/tween.md)) | observed |
 | Fade between layouts | A *Fader* sprite on the parallax-0 layer, Tween opacity, *Wait for previous actions*, *Go to layout* | avalanche, airborne-explorer |
 
 [manual: behavior-reference/scroll-to.md "Shake",

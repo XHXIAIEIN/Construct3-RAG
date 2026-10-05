@@ -127,6 +127,34 @@ with every stem on, set at −30 LUFS in the game.
 - The generator writes the pitched layers of each file (frequency, start,
   time to −12 dB) to a JSON next to the WAVs, for the offline check.
 
+## Memory for several songs
+
+A file in the Sounds folder is held decoded once it loads, as 32-bit
+samples at the audio context's rate. A second takes the rate × 4 bytes × the
+channels: 192 KB in mono at 48 kHz, the rate of the Edge preview measured.
+An 18 s mono stem takes about 3.5 MB, so several songs of several stems
+each, all preloaded, take tens of MB. A file in the Music
+folder streams instead, but it cannot be scheduled on the grid
+([pitfalls: Audio](../pitfalls/audio.md)). To hold only the effects and
+the songs in use:
+
+1. Turn the project property *Preload sounds* off.
+2. *Preload* the effects and the stems of the current song at the start.
+3. Start the music in an event that tests *Preloads complete*, as the
+   scheduled-play entry of the Audio pitfalls describes.
+4. *Preload* the next song a stage or more before it plays, so its decode
+   is done when it starts.
+5. *Unload audio* the old song only in *On fade ended* of its last fade,
+   because an unload stops every instance still playing the file.
+
+A preview can list what is decoded at a moment; see "Reading one value" in
+`Construct3-RAG/skills/construct3-agent-plugin/references/reading-the-runtime.md`.
+[manual: plugin-reference/audio.md "Preloading sounds", "Categorise audio
+files correctly"; Web Audio spec, AudioBuffer: 32-bit linear PCM;
+pitfalls/audio.md, the decoding entry and the unload entry; observed in a minimal project, r504
+preview in Edge, 2026-10-05: a mono file of the Sounds folder decoded to one
+channel at 48 kHz]
+
 ## Checking
 
 - Offline mix. It proves the rules were followed; a person judges the
