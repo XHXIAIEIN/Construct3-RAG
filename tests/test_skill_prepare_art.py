@@ -111,6 +111,12 @@ def test_prepare_art_refuses_a_picture_it_cannot_cut_out(project):
     picture(project / "art" / "raw" / "coin-default-000.jpg", r=270, shadow=False)
     code, out = tool(project, "prepare_art")
     assert code == 1 and "the subject runs off the picture over" in out and "make it again whole" in out, out
+    # on white, a cut would take the subject's whites with it
+    picture(project / "art" / "raw" / "coin-default-000.jpg", bg=(250, 250, 250))
+    code, out = tool(project, "prepare_art")
+    assert code == 1, out
+    assert "its background is #F" in out and "not the magenta it was asked on" in out, out
+    assert "make it again on a flat magenta #FF00FF background, or with a transparent one" in out
 
 
 def test_prepare_art_fits_a_scene_and_keeps_a_picture_with_transparency(project):

@@ -141,10 +141,15 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     colours = [tuple(data[4 * i:4 * i + 3]) for i in edge]
     bg = tuple(sorted(c[k] for c in colours)[len(colours) // 2] for k in range(3))
     near = sum(sum((a - b) ** 2 for a, b in zip(c, bg)) < NEAR ** 2 for c in colours) / len(colours)
+    name = next(n for n, c in KEYS.items() if c == key)
     if near < 0.5:
-        name = next(n for n, c in KEYS.items() if c == key)
         raise Unusable(f"its edge is not one flat colour, {near:.0%} of it near {hex_of(bg)}; make it again on a "
                        f"flat {name} {hex_of(key)} background, or with a transparent one")
+    lit = min(c for c, k in zip(bg, key) if k)
+    if lit < 96 or max(c for c, k in zip(bg, key) if not k) > 0.35 * lit:
+        raise Unusable(f"its background is {hex_of(bg)}, not the {name} it was asked on, and a cut on that colour "
+                       f"takes the subject's own parts in it; make it again on a flat {name} {hex_of(key)} "
+                       f"background, or with a transparent one")
     if near < 0.9:
         raise Unusable(f"the subject runs off the picture over {1 - near:.0%} of its edge, so it is cut off; make "
                        f"it again whole and centred, with room around it")
@@ -152,15 +157,12 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     br, bgr, bb = bg
     dist2 = [(data[4 * i] - br) ** 2 + (data[4 * i + 1] - bgr) ** 2 + (data[4 * i + 2] - bb) ** 2 for i in range(n)]
     # A shadow on the key colour, which models draw though the prompt says not to, is that colour
-    # darker, and goes with the background. A grey background cannot tell it from a grey subject.
-    saturated = max(bg) - min(bg) > 128
-    norm = br * br + bgr * bgr + bb * bb or 1
+    # darker, and goes with the background.
+    norm = br * br + bgr * bgr + bb * bb
 
     def background(j: int) -> bool:
         if dist2[j] < NEAR ** 2:
             return True
-        if not saturated:
-            return False
         r, g, b = data[4 * j], data[4 * j + 1], data[4 * j + 2]
         k = (r * br + g * bgr + b * bb) / norm
         return 0.25 <= k <= 1.05 and (r - k * br) ** 2 + (g - k * bgr) ** 2 + (b - k * bb) ** 2 < 40 ** 2
