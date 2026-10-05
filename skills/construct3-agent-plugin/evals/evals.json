@@ -11,7 +11,7 @@
       "assertions": [
         "check_project.py of the clone exits 0 on the edited project",
         "check_project.py prints no warning",
-        "The countdown loses one per second: a Timer started for 30 seconds, or a variable subtracted under Every X seconds with 1, or by dt every tick",
+        "The countdown loses one per second: a Timer started for 30 seconds, or a variable subtracted under Every X seconds with 1, decreased by 1 under On timer of a Timer started for 1 second, Regular, or by dt every tick",
         "An event restarts the layout under a condition that reads the countdown: the variable, the Timer's expressions, or On timer with the countdown's tag",
         "Every action that sets ScoreText's text after the start writes both the score and the time",
         "An action on Coin makes the coins of value 5 larger: a size or scale action that reads value",

@@ -93,15 +93,30 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
     names = re.compile("|".join([*map(re.escape, timers), r"\b(?:Duration|CurrentTime|TotalTime|NormalizedProgress)\s*\("])
                        if timers or started else r"$^", re.I)
 
+    # A Timer started for 1 second, Regular, fires On timer once a second: the variable it takes 1 from counts down.
+    ticks = {str(a["parameters"].get("tag", "")) for a, _ in acts if a.get("id") == "start-timer"
+             and str(a.get("parameters", {}).get("duration", "")).strip() in {"1", "1.0"}
+             and str(a["parameters"].get("type", "")).lower() == "regular"}
+
+    def by_one(a: dict) -> bool:
+        p = a.get("parameters", {})
+        value = str(p.get("value", "")).strip()
+        return (a.get("id") == "subtract-from-eventvar" and value in ("1", "1.0")
+                or a.get("id") == "add-to-eventvar" and value in ("-1", "-1.0")
+                or a.get("id") == "set-eventvar-value"
+                and re.fullmatch(rf"{re.escape(str(p.get('variable', '')))}\s*-\s*1(?:\.0)?", value) is not None)
+
     ticking = [(ev, above, a) for ev, above in rows for a in ev.get("actions", [])
                if a.get("id") in ("subtract-from-eventvar", "add-to-eventvar", "set-eventvar-value") and names.search(values([a]))]
     per_second, seen = False, "no action writes a countdown variable"
     for ev, above, a in ticking:
         conds = conditions_over(ev, above)
         every = [c for c in conds if c.get("id") == "every-x-seconds"]
+        on_tick = any(c.get("id") == "on-timer" and str(c.get("parameters", {}).get("tag", "")) in ticks for c in conds)
         worded = "; ".join(c.get("id", "?") + "(" + values([c]) + ")" for c in conds) or "no condition"
         seen = f"{worded} -> {a['id']}({values([a])})"
-        if any(values([c]).strip() in ("1", "1.0") for c in every) or re.search(r"\bdt\b", values([a]), re.I):
+        if (any(values([c]).strip() in ("1", "1.0") for c in every) or re.search(r"\bdt\b", values([a]), re.I)
+                or on_tick and by_one(a)):
             per_second = True
             break
     if not per_second and started:
