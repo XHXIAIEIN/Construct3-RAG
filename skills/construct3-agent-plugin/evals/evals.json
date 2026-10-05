@@ -258,6 +258,49 @@
         "ScoreText says whose turn it is: a Set text of ScoreText reads the turn variable or names a player",
         "Every event of the original sheet is still in it, by sid"
       ]
+    },
+    {
+      "id": 17,
+      "name": "find-a-drag-example",
+      "fixture": "coins",
+      "prompt": "i want drag and drop in my coins game: you drag a coin onto a bank box at the bottom of the screen to bank it. before i build anything: which official construct example does drag and drop onto a target like that, and how do its events handle the drop? give me the example's name and the numbers of the events that handle the drop, as the editor shows them in the margin. also tell me what traps to watch out for with drag and drop in construct. dont change my project yet, the folder is <project>",
+      "expected_output": "search_guides.py with the words of the task prints the official examples that use Drag & Drop, each with the print_sheet.py command that prints its events. It also prints the pitfall entries about dragging, each under the path of its file. The answer names one of those examples and the event number of its Drag & Drop On drop, as print_sheet.py numbers it (alchemist 8, chess-checkmate 9). It names traps from the pitfall entries. The project is left unchanged.",
+      "files": [],
+      "assertions": [
+        "The answer names an official example that uses the Drag & Drop behavior",
+        "The answer gives an event number at which a named example's sheet holds a Drag & Drop On drop, as print_sheet.py numbers it",
+        "The answer names a trap of a pitfall entry about dragging: the instance moves only when the pointer moves, a slot reads empty while the dragged instance has collisions disabled, the Mouse object ignores a finger, or Pick children in On drop finds nothing when the child type is in the parent's container",
+        "No project file differs from the fixture"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "script-shift-and-edges",
+      "fixture": "example:simple-keyboard-movement-ts",
+      "prompt": "this is the simple keyboard movement example from construct, the typescript one, folder <project> . two changes in scripts/main.ts: holding shift makes the player move twice as fast, and the player cant leave the layout any more, it stops at the edges so the whole sprite stays inside. keep it all in typescript, no event sheets",
+      "expected_output": "scripts/main.ts is edited. The arrow keys still move the player, and a Shift key tested with isKeyDown doubles the speed. The position is clamped between the player's half size and the layout's size less that half, read from runtime.layout and the instance. lookup_script_api.py prints each API with the file and line of its declaration. No other file changes, but for the TypeScript definitions that open_in_editor.py --typescript writes.",
+      "files": [],
+      "assertions": [
+        "main.ts still moves the player with the four arrow keys through isKeyDown",
+        "main.ts tests a Shift key with isKeyDown and doubles the speed",
+        "main.ts reads the layout's width and height and the player's size or bounding box",
+        "No project file differs from the fixture, but for scripts/main.ts and the scripts/ts-defs/ and scripts/tsconfig.json that open_in_editor.py --typescript writes"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "platform-state-in-chinese",
+      "fixture": "example:template-platformer",
+      "prompt": "这是 Construct 官方的平台跳跃模板，项目文件夹 <project> 。帮我在预览里跑一下看看：开局几秒以后，玩家是已经站在地面上了，还是还在往下掉？这时候玩家的平台行为里，最大速度、跳跃的力度和重力分别是多少？我要的是游戏运行时的值，不是项目文件里写的。名称按中文版编辑器的调试器里显示的写给我。项目先别改。",
+      "expected_output": "open_in_editor.py --preview --state Player --locale zh-CN prints the Platform behavior's inspector values under the zh-CN editor's names. The player is on the floor: 向量 Y is 0 and the player is at y 768. 最大移动速度 is 330, 跳跃高度 is 650 and 重力 is 1500. The answer gives them under those names. The project is left unchanged but for the .tmp folder the preview writes.",
+      "files": [],
+      "assertions": [
+        "The run previewed the project and read Player's state: .tmp/open-in-editor.json holds the Platform values of Player",
+        "The answer says that the player stands on the floor",
+        "The answer gives 330, 650 and 1500",
+        "The answer names the three values as the zh-CN editor does: 最大移动速度, 跳跃高度, 重力",
+        "No project file differs from the fixture, the .tmp folder of the preview aside"
+      ]
     }
   ]
 }

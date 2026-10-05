@@ -220,23 +220,36 @@ def grade_name_the_restart_event(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
-def unchanged(run: Path) -> tuple[bool, str]:
+def unchanged(run: Path, allowed: tuple[str, ...] = ()) -> tuple[bool, str]:
+    """Whether no project file differs from the fixture, with the list of those that do. A path that starts
+    with one of `allowed` is skipped, and so are .tmp, where the skill's scripts write their results, and .git,
+    which SKILL.md tells a run to create."""
     want = {k: v for k, v in json.loads((run / "fixture.json").read_text(encoding="utf-8")).items() if not k.endswith(".sids")}
     project = run / "project"
     have = {p.relative_to(project).as_posix(): hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
             for p in sorted(project.rglob("*"))
-            if p.is_file() and p.name != "AGENTS.md" and not {".agents", "__pycache__"} & set(p.parts)}
-    changed = sorted(k for k in set(want) | set(have) if want.get(k) != have.get(k))
+            if p.is_file() and p.name != "AGENTS.md" and not {".agents", "__pycache__", ".tmp", ".git"} & set(p.parts)}
+    changed = sorted(k for k in set(want) | set(have) if want.get(k) != have.get(k) and not k.startswith(allowed))
     return not changed, f"files that differ from the fixture: {changed or 'none'}"
 
 
-def grade_find_in_a_long_sheet(run: Path) -> list[tuple[bool, str]]:
+def answer_of(run: Path) -> str:
+    """The run's answer, without the list of commands it ran."""
     path = run / "outputs" / "answer.md"
     text = path.read_text(encoding="utf-8") if path.exists() else ""
-    answer = re.split(r"^#+\s*commands?\s+run", text, flags=re.I | re.M)[0]
-    # Every number that follows the word: "event 103", "events 104 and 105", "Events 103-105".
-    numbers = sorted({int(n) for span in re.findall(r"\bevents?\b[^.\n]{0,40}", answer, re.I)
-                      for n in re.findall(r"(?<![\w.])\d{1,3}(?![\w.]|\s*(?:seconds?|s\b|px|%))", span)})
+    return re.split(r"^#+\s*commands?\s+run", text, flags=re.I | re.M)[0]
+
+
+def event_numbers(answer: str) -> list[int]:
+    """Every number that follows "event" or "events" in the answer: "event 103", "events 104 and 105",
+    "Events 103-105"."""
+    return sorted({int(n) for span in re.findall(r"\bevents?\b[^.\n]{0,40}", answer, re.I)
+                   for n in re.findall(r"(?<![\w.])\d{1,3}(?![\w.]|\s*(?:seconds?|s\b|px|%))", span)})
+
+
+def grade_find_in_a_long_sheet(run: Path) -> list[tuple[bool, str]]:
+    answer = answer_of(run)
+    numbers = event_numbers(answer)
     said = f"event numbers the answer gives: {numbers or 'none'}"
     return [(103 in numbers and bool(re.search(r"finish\s*line", answer, re.I)), said),
             (108 in numbers and "showgameover" in answer.lower() and bool(re.search(r"restart", answer, re.I)), said),
@@ -1093,6 +1106,92 @@ def grade_two_player_turns(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
+def drag_examples() -> dict[str, str]:
+    """The official examples that use the Drag & Drop behavior, id to name."""
+    out = {}
+    for path in sorted((REPO / "data" / "c3-examples" / "en-US").glob("*.json")):
+        e = json.loads(path.read_text(encoding="utf-8"))
+        if "DragnDrop" in e.get("used-addons", {}).get("behaviors", []):
+            out[e["id"]] = e.get("name", "")
+    return out
+
+
+def drop_events(example: str) -> set[int]:
+    """The event numbers at which an example's sheets hold On drop, as print_sheet.py numbers them, over its
+    folders: <id>, or <id>-js and <id>-ts."""
+    sys.path.insert(0, str(SKILL / "scripts"))
+    import c3project as c3
+    folder = c3.siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"
+    numbers = set()
+    for end in ("", "-js", "-ts"):
+        if (folder / f"{example}{end}" / "project.c3proj").is_file():
+            out = subprocess.run([sys.executable, str(SKILL / "scripts" / "print_sheet.py"), "--project",
+                                  str(folder / f"{example}{end}"), "--rag", str(REPO), "--limit", "0"],
+                                 capture_output=True, text=True, encoding="utf-8",
+                                 env=dict(os.environ, PYTHONIOENCODING="utf-8")).stdout
+            numbers |= {int(n) for n in re.findall(r"^\s*(\d+)\s+.*\bOn \w+ drop\b", out, re.M)}
+    return numbers
+
+
+# The words an answer uses for each trap in the pitfall entries on dragging
+DRAG_TRAPS = {"moves only when the pointer moves": r"only\s+(?:when|while|if)\s+the\s+(?:pointer|mouse|finger|cursor)\s+"
+              r"(?:moves|is\s+moving)|set\s+position\b.{0,80}\boverwrit",
+              "a slot reads empty": r"collisions?\s+(?:are\s+|is\s+)?(?:disabled|off)|reads?\s+(?:as\s+)?empty|lands?\s+on\s+top",
+              "the Mouse object ignores a finger": r"\bmouse\b.{0,80}\b(?:ignores?|only)\b.{0,40}\b(?:finger|touch|pen)",
+              "Pick children in On drop": r"pick\s+children"}
+
+
+def grade_find_a_drag_example(run: Path) -> list[tuple[bool, str]]:
+    answer = answer_of(run)
+    named = {i: n for i, n in drag_examples().items()
+             if re.search(rf"(?<![\w-]){re.escape(i)}(?![\w-])", answer, re.I) or (n and re.search(re.escape(n), answer, re.I))}
+    numbers = event_numbers(answer)
+    drops = {i: sorted(drop_events(i)) for i in named}
+    hit = {i: sorted(set(d) & set(numbers)) for i, d in drops.items() if set(d) & set(numbers)}
+    traps = [k for k, pattern in DRAG_TRAPS.items() if re.search(pattern, answer, re.I | re.S)]
+    return [(bool(named), f"Drag & Drop examples the answer names: {sorted(named) or 'none'}"),
+            (bool(hit), f"event numbers the answer gives: {numbers or 'none'}; On drop in the named examples: "
+                        f"{drops or 'none'}"),
+            (bool(traps), f"traps named: {traps or 'none'}"),
+            unchanged(run)]
+
+
+def grade_script_shift_and_edges(run: Path) -> list[tuple[bool, str]]:
+    path = run / "project" / "scripts" / "main.ts"
+    code = path.read_text(encoding="utf-8") if path.exists() else ""
+    code = re.sub(r"/\*.*?\*/|//[^\n]*", "", code, flags=re.S)      # a comment can name what the code does not do
+    keys = [k or n for k, n in re.findall(r"isKeyDown\(\s*(?:[\"'`](\w+)[\"'`]|(\d+))\s*\)", code)]
+    arrows = {"ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"} - set(keys)
+    shift = [k for k in keys if k.lower().startswith("shift") or k == "16"]
+    double = re.search(r"\*\s*2(?![\d.])|(?<![\w.])2\s*\*|\?\s*2(?![\d.])|=\s*2\s*;|\b400\b", code)
+    layout = [w for w in ("width", "height") if re.search(rf"layout\.{w}\b", code)]
+    own = re.search(r"(?<!layout)\.(?:width|height)\b|getBoundingBox", code)
+    return [(bool(code) and not arrows, f"arrow keys tested: {sorted(set(keys) & {'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'})}"
+                                        + (f"; missing: {sorted(arrows)}" if arrows else "")),
+            (bool(shift and double), f"Shift keys tested: {shift or 'none'}; doubled: {double.group(0) if double else 'no'}"),
+            (len(layout) == 2 and bool(own), f"layout sides read: {layout or 'none'}; the player's size: "
+                                             f"{own.group(0) if own else 'not read'}"),
+            # open_in_editor.py --typescript writes scripts/ts-defs/ and scripts/tsconfig.json
+            unchanged(run, ("scripts/main.ts", "scripts/ts-defs/", "scripts/tsconfig.json"))]
+
+
+def grade_platform_state_in_chinese(run: Path) -> list[tuple[bool, str]]:
+    project = run / "project"
+    read = [p.relative_to(project).as_posix() for p in sorted((project / ".tmp").rglob("*.json"))
+            if "behaviors.platform.properties.max-speed" in p.read_text(encoding="utf-8", errors="replace")]
+    answer = answer_of(run)
+    floor = re.search(r"地面上|站在地|落地|着地|落在地|on\s+the\s+(?:floor|ground)", answer, re.I)
+    numbers = [n for n in ("330", "650", "1500") if re.search(rf"(?<!\d){n}(?!\d)", answer)]
+    texts = json.loads((REPO / "data" / "c3-lang" / "zh-CN.json").read_text(encoding="utf-8"))["text"]
+    names = [texts["behaviors"]["platform"]["properties"][k]["name"] for k in ("max-speed", "jump-strength", "gravity")]
+    return [(bool(read), f"state files that hold Platform's values: {read or 'none'}"),
+            (bool(floor), f"on the floor: {floor.group(0) if floor else 'not said'}"),
+            (len(numbers) == 3, f"values given: {numbers}"),
+            (all(n in answer for n in names), "names given: " + ", ".join(n for n in names if n in answer)
+             + ("; missing: " + ", ".join(n for n in names if n not in answer) if not all(n in answer for n in names) else "")),
+            unchanged(run)]
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
@@ -1101,7 +1200,9 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "walk-with-wasd": grade_walk_with_wasd, "countdown-between-rounds": grade_countdown_between_rounds,
            "fix-wasd-twitch": grade_fix_wasd_twitch, "fix-next-round": grade_fix_next_round,
            "fix-turn-flip": grade_fix_turn_flip, "two-player-turns": grade_two_player_turns,
-           "two-player-turn-limit": grade_two_player_turns}
+           "two-player-turn-limit": grade_two_player_turns, "find-a-drag-example": grade_find_a_drag_example,
+           "script-shift-and-edges": grade_script_shift_and_edges,
+           "platform-state-in-chinese": grade_platform_state_in_chinese}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")

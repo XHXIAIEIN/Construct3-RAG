@@ -32,6 +32,8 @@ from pathlib import Path
 
 SKILL = Path(__file__).resolve().parent.parent
 REPO = SKILL.parent.parent
+sys.path.insert(0, str(SKILL / "scripts"))
+import c3project as c3              # noqa: E402
 CASES = json.loads((Path(__file__).parent / "evals.json").read_text(encoding="utf-8"))["evals"]
 
 
@@ -204,8 +206,9 @@ def main() -> int:
     ap.add_argument("--cases", nargs="+", metavar="NAME", help="test cases by name (default: all of evals.json)")
     ap.add_argument("--old-clone", metavar="FOLDER", help="a checkout of the clone before the change, for old_... arms")
     ap.add_argument("--examples", metavar="FOLDER",
-                    default=str(REPO.parent / "Construct-Example-Projects" / "example-projects"),
-                    help="the example-projects folder of the Construct-Example-Projects clone (default: beside this clone)")
+                    default=str(c3.siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"),
+                    help="the example-projects folder of the Construct-Example-Projects clone (default: beside this "
+                         "clone, or beside its main working tree from a worktree)")
     args = ap.parse_args()
 
     out = Path(args.runs_dir).resolve()
