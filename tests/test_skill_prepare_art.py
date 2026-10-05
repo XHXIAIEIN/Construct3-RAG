@@ -2,6 +2,7 @@
 by the generator in place of the stand-ins."""
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -294,3 +295,21 @@ def test_prepare_art_refuses_a_cut_that_leaves_the_key_on_the_edge():
     truth, pic = figure("green", hair=HOT_PINK)          # made again as the line says
     cut, how = prepare_art.cut_out(pic, KEYS["magenta"])
     assert how.startswith("background #06F60A") and leaning(cut, KEYS["green"])[0] == 0
+
+
+REAL = os.environ.get("CONSTRUCT3_RAG_ART_PICTURES", "")
+
+
+@pytest.mark.skipif(not REAL, reason="CONSTRUCT3_RAG_ART_PICTURES names no folder of real image-model pictures")
+def test_prepare_art_cuts_real_pictures():
+    """Real pictures, kept out of the repository: one subject each on a flat magenta or green, as
+    an image model made them. Each is cut without a refusal, and at most 1 in 1000 of its edge
+    pixels leans to the key."""
+    pictures = [p for p in sorted(Path(REAL).iterdir()) if p.suffix.lower() in prepare_art.RAW_TYPES]
+    assert pictures, f"no .png, .jpg or .webp in {REAL}"
+    for path in pictures:
+        img = Image.open(path).convert("RGB")
+        key = KEYS["magenta" if img.getpixel((0, 0))[0] > 128 else "green"]
+        cut, how = prepare_art.cut_out(img, key)
+        left, band = leaning(cut, key)
+        assert left <= band / 1000, (path.name, left, band)
