@@ -247,6 +247,32 @@ def test_plan_moves_replaces_and_removes(project):
     assert sids <= {c.get("sid") for ev in all_events(project) for c in ev.get("conditions", [])}, "a replaced event keeps the sids it is given"
 
 
+NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
+
+
+def put_back(root: Path, sheet: str, path: Path, n: int) -> tuple[bytes, str]:
+    """Event n of a sheet printed with --show and replaced by what was printed: the file after, and what the plan said."""
+    code, shown = tool(root, "print_sheet", sheet, "--show", str(n), "--limit", "0")
+    assert code == 0, shown
+    (root / "plan.json").write_text(json.dumps([{"replace": n, "events": [json.loads(shown)]}]), encoding="utf-8")
+    code, out = tool(root, "edit_sheet", sheet, "plan.json")
+    assert code == 0, out
+    return path.read_bytes(), out
+
+
+def test_an_event_put_back_as_print_sheet_shows_it_leaves_the_sheet_byte_for_byte(project):
+    """--show N, then a plan that replaces N with what it printed, changes nothing: for every event, sub-events too."""
+    for path in sorted((project / "eventSheets").glob("*.json")):
+        before = path.read_bytes()
+        sheet = json.loads(before)
+        count = sum(ev["eventType"] in NUMBERED for ev in every_event(sheet["events"]))
+        assert count > 1
+        for n in range(1, count + 1):
+            after, out = put_back(project, sheet["name"], path, n)
+            assert after == before, f"{sheet['name']} event {n}: {out}"
+            assert out.splitlines()[0].endswith(", 0 new sids"), out
+
+
 def test_removing_an_event_names_the_sub_events_that_go_with_it(project):
     # A model removed a trigger with no actions as empty; the summary's event count alone did not stop it.
     code, out = plan(project, {"remove": 4})
