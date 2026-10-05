@@ -60,9 +60,13 @@ CODE and EXPRESSION see `runtime`, the scripting API (IRuntime), `vars`, an obje
 kept from step to step, and `wait(seconds)`. A single expression is returned as it
 is; longer code says `return`. A list of strings is joined into lines.
 
-The game starts on the layout the editor opens on, as with F5. The browser runs
-headless and silent; --headed shows it. A step that fails leaves a screenshot,
-NN-failed.png. Screenshots and recordings go to --shots, by default
+The game starts on the layout the editor opens on, as with F5. A game that
+reloads its page, with Browser Reload, starts again in the new page, and the plan
+goes on there: the step's line says that the page reloaded. A step the reload
+broke off runs again, except a js step whose code had started, which fails.
+
+The browser runs headless and silent; --headed shows it. A step that fails
+leaves a screenshot, NN-failed.png. Screenshots and recordings go to --shots, by default
 .tmp/preview/ in the project, and the whole result, every value and state, to
 --out, by default .tmp/preview-project.json; .tmp/ is ignored by Git. The last
 line names both: read a cut-off result there instead of playing the plan again.
@@ -72,6 +76,7 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -114,6 +119,8 @@ FIELDS = {"tap": set(), "hold": {"seconds"}, "drag": {"to", "seconds"}, "key": {
 PRESS = {"hold": 0.5, "drag": 0.4, "key": 0.1}
 # Seconds the preview window gets to take the plan's viewport.
 RESIZE = 5
+# Seconds a page the game reloaded gets to run its runtime again.
+RELOAD = 30
 # Where the editor serves a preview, and where a game's saves live.
 PREVIEW = "https://preview.construct.net"
 # The page that reviews a recording, its timeline put where it says TIMELINE.
@@ -164,6 +171,9 @@ PLAY_JS = r"""(() => {
   };
   return true;
 })()"""
+
+# A js step that failed so: its code never started, the page having reloaded before it.
+NOT_STARTED = re.compile(r"ReferenceError: c3(probe|play) is not defined")
 
 # The key, its code and the Windows key code a keyboard event carries.
 NAMED_KEYS = {"ArrowLeft": 37, "ArrowUp": 38, "ArrowRight": 39, "ArrowDown": 40, "Space": 32, "Enter": 13,
@@ -321,6 +331,29 @@ class Game:
 
     def run(self, js: str, wait: float = 60) -> Any:
         return self.win.evaluate(js, wait=wait, session=self.live)
+
+    def reloaded(self) -> float | None:
+        """None while the page the probe was left in still runs. After the game
+        reloaded its page (Browser *Reload*), the probe and c3play are left again in
+        the new page once its runtime ticks, and the seconds that took are returned.
+        Raises StepFailed when no runtime ticks in the new page.
+        The answer is also what the errors a step caused arrive before."""
+        try:
+            if self.run("typeof c3play === 'object'", wait=5):
+                return None
+        except oe.DevToolsError:    # the page's context or the worker went with the reload
+            pass
+        began = time.monotonic()
+        sessions, live, stalled = oe.attach(self.win, patience=RELOAD)
+        if not live:
+            raise StepFailed("the page reloaded, and " + ("its runtime did not tick for 3 seconds" if stalled else
+                                                          f"no runtime ran in it in {RELOAD} seconds"))
+        self.live = live[0]
+        self.win.evaluate(PLAY_JS, session=self.live)
+        enable(self.win, sessions)
+        if self.recording and self.recording.watch:
+            self.recording.session = self.recording.game_session()
+        return time.monotonic() - began
 
     def aim(self, target: str | dict) -> tuple[float, float]:
         if isinstance(target, dict) and "js" in target:
@@ -648,7 +681,6 @@ def play(plan: dict, shots: Path, project: Path) -> Callable[[oe.Browser, str, o
             return {"started": False, "layout": None, "runtime": None, "errors": started, "steps": []}
         window, win = started
         touch, view = bool(plan.get("touch")), plan.get("viewport")
-        steps: list[dict] = []
         game = None
         try:
             if view:
@@ -666,50 +698,95 @@ def play(plan: dict, shots: Path, project: Path) -> Callable[[oe.Browser, str, o
                 return {"started": False, "layout": None, "runtime": None, "steps": [], "errors": [
                     "the runtime loaded but did not tick for 3 seconds" if stalled
                     else "the preview window opened but no runtime was found in it in 30 seconds"]}
-            session = live[0]
-            win.evaluate(PLAY_JS, session=session)
-            for s in sessions:
-                try:
-                    win.call("Runtime.enable", session=s)
-                except oe.DevToolsError:    # a worker that ended since
-                    pass
+            win.evaluate(PLAY_JS, session=live[0])
+            enable(win, sessions)
             win.evaluate("0")
             before = oe.runtime_errors(win)
-            game = Game(win, session, touch, size, f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}",
+            game = Game(win, live[0], touch, size, f"ws://127.0.0.1:{browser.port}/devtools/page/{window['targetId']}",
                         view, project)
             began = time.monotonic()
-            for n, step in enumerate(plan["steps"], 1):
-                done = {"step": n, "line": step_line(n, step), "ok": True}
-                started_at = time.monotonic()
-                try:
-                    done["said"], extra = do_step(game, step, n, shots)
-                    done.update(extra or {})
-                except (StepFailed, oe.DevToolsError) as e:     # the code threw, or the page stopped answering
-                    done.update(ok=False, said=str(e).splitlines()[0])
-                    try:
-                        done["said"] += f"; the window then: {screenshot(game, shots / f'{n:02d}-failed.png')}"
-                    except oe.DevToolsError:
-                        pass
-                win.evaluate("0", session=session)      # the errors the step caused have arrived
-                done["errors"] = oe.runtime_errors(win)
-                steps.append(done)
-                if game.recording:      # its timeline places the step
-                    game.recording.steps.append({k: done[k] for k in ("step", "line", "ok", "said", "errors")}
-                                                | {"start": started_at, "end": time.monotonic()})
-                if not done["ok"]:
-                    break
+            steps = play_steps(game, plan["steps"], shots)
             seconds = time.monotonic() - began
             recorded = game.stop_recording()
-            snap = win.evaluate("c3probe.snapshot([], 0)", wait=6, session=session)
+            try:
+                layout = win.evaluate("c3probe.snapshot([], 0)", wait=6, session=game.live)["layout"]
+            except oe.DevToolsError:    # the last step left the page reloading
+                layout = None
         finally:
             win.ws.close()
             browser.devtools.call("Target.closeTarget", targetId=window["targetId"])
             if game:
                 game.close()
-        return {"started": True, "layout": snap["layout"], "runtime": "worker" if session else "page",
+        return {"started": True, "layout": layout, "runtime": "worker" if game.live else "page",
                 "seconds": round(seconds, 1), "viewport": list(size), "touch": touch,
                 "errors": before, "steps": steps, "planned": len(plan["steps"]), "recorded": recorded}
     return run
+
+
+def enable(win: oe.DevTools, sessions: list[str | None]) -> None:
+    """Have the page and each worker hand over the errors they log."""
+    for s in sessions:
+        try:
+            win.call("Runtime.enable", session=s)
+        except oe.DevToolsError:    # a worker that ended since
+            pass
+
+
+def play_steps(game: Game, steps: list[dict], shots: Path) -> list[dict]:
+    """Run the steps in order until one fails: what each said, read and caused.
+
+    A game that reloads its page loses the probe with it. After each step the
+    probe is looked for, and left again in the new page; the step's `reloaded`
+    lists the seconds the game took to start again. A step the reload broke
+    off runs again in the new page, except a js step whose code had started:
+    it may have done part of its work, so it fails."""
+    played: list[dict] = []
+    for n, step in enumerate(steps, 1):
+        started_at = time.monotonic()
+        ok, said, extra = attempt(game, step, n, shots)
+        reloads: list[float] = []
+        try:
+            back = game.reloaded()
+            if back is not None:
+                reloads.append(back)
+                if ok:
+                    said += f"; then the page reloaded, and the game started again {back:.1f} s later"
+                elif "js" not in step or NOT_STARTED.search(said):
+                    ok, said, extra = attempt(game, step, n, shots)
+                    said = f"the page reloaded during the step, so it ran again {back:.1f} s later: {said}"
+                    back = game.reloaded()
+                    if back is not None:
+                        reloads.append(back)
+                        said += f"; then the page reloaded again, and the game started {back:.1f} s later"
+                else:
+                    said += "; the page reloaded while the code ran, so the step did not run again"
+        except StepFailed as e:     # the reloaded page ran no game
+            ok, said = False, f"{said}; {e}"
+        done = {"step": n, "line": step_line(n, step), "ok": ok, "said": said, **extra}
+        if reloads:
+            done["reloaded"] = [round(s, 1) for s in reloads]
+        if not ok:
+            try:
+                done["said"] += f"; the window then: {screenshot(game, shots / f'{n:02d}-failed.png')}"
+            except oe.DevToolsError:
+                pass
+        done["errors"] = oe.runtime_errors(game.win)    # they arrived before reloaded() was answered
+        played.append(done)
+        if game.recording:      # its timeline places the step
+            game.recording.steps.append({k: done[k] for k in ("step", "line", "ok", "said", "errors")}
+                                        | {"start": started_at, "end": time.monotonic()})
+        if not ok:
+            break
+    return played
+
+
+def attempt(game: Game, step: dict, n: int, shots: Path) -> tuple[bool, str, dict]:
+    """Run one step: whether it ran, what to print after its line, and what it read."""
+    try:
+        said, extra = do_step(game, step, n, shots)
+        return True, said, extra or {}
+    except (StepFailed, oe.DevToolsError) as e:     # the code threw, or the page stopped answering
+        return False, str(e).splitlines()[0], {}
 
 
 def report(result: dict, label: Callable[[str], str] = oe.key_name) -> list[str]:

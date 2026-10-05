@@ -116,6 +116,94 @@ def test_preview_project_reports_each_step_with_the_errors_it_caused():
     ], lines
 
 
+class ReloadingGame:
+    """A game whose page reloads: each step's outcomes in turn, and what reloaded() answers after each try."""
+
+    def __init__(self, outcomes, reloads):
+        self.outcomes, self.reloads, self.win, self.recording, self.tries = outcomes, reloads, None, None, []
+
+    def reloaded(self):
+        back = self.reloads.pop(0)
+        if isinstance(back, Exception):
+            raise back
+        return back
+
+
+def play_reloading(monkeypatch, tmp_path, steps, outcomes, reloads):
+    game = ReloadingGame(outcomes, reloads)
+
+    def do_step(game, step, n, shots):
+        game.tries.append(n)
+        got = game.outcomes.pop(0)
+        if isinstance(got, Exception):
+            raise got
+        return got, None
+
+    monkeypatch.setattr(pp, "do_step", do_step)
+    monkeypatch.setattr(pp.oe, "runtime_errors", lambda win: [])
+    monkeypatch.setattr(pp, "screenshot", lambda game, path: str(path.name))
+    return game, pp.play_steps(game, steps, tmp_path)
+
+
+def test_preview_project_goes_on_after_the_game_reloads_its_page(monkeypatch, tmp_path):
+    """A tap on a button that reloads the page: the probe is left again, the step after
+    it that found no probe runs again in the new page, and every step's result is kept."""
+    steps = [{"tap": "ResetButton"}, {"until": "runtime.globalVars.Level === 1"}, {"tap": "StartButton"}]
+    game, played = play_reloading(monkeypatch, tmp_path, steps,
+                                  ["at (40, 600)", pp.oe.DevToolsError("ReferenceError: c3play is not defined"),
+                                   "true after 0.2 s", "at (215, 466)"],
+                                  [1.24, 0.81, None, None])
+    assert game.tries == [1, 2, 2, 3]
+    assert [(d["ok"], d["said"], d.get("reloaded")) for d in played] == [
+        (True, "at (40, 600); then the page reloaded, and the game started again 1.2 s later", [1.2]),
+        (True, "the page reloaded during the step, so it ran again 0.8 s later: true after 0.2 s", [0.8]),
+        (True, "at (215, 466)", None)]
+
+
+def test_preview_project_leaves_the_probe_again_in_the_reloaded_page(monkeypatch, tmp_path):
+    """The worker that ran the game went with the page; the new one gets the probe and c3play."""
+
+    class Window:
+        def __init__(self):
+            self.calls = []
+
+        def evaluate(self, js, wait=None, session=None):
+            if js == "typeof c3play === 'object'":
+                raise pp.oe.DevToolsError("Runtime.evaluate: Session with given id not found.")
+            self.calls.append(("evaluate", js[:12], session))
+
+        def call(self, method, session=None, **params):
+            self.calls.append((method, session))
+
+    win = Window()
+    game = pp.Game(win, "worker-1", False, (430, 932), "", None, tmp_path)
+    monkeypatch.setattr(pp.oe, "attach", lambda win, patience: ([None, "worker-2"], ["worker-2"], False))
+    assert game.reloaded() >= 0 and game.live == "worker-2"
+    assert win.calls == [("evaluate", pp.PLAY_JS[:12], "worker-2"), ("Runtime.enable", None),
+                         ("Runtime.enable", "worker-2")]
+    monkeypatch.setattr(pp.oe, "attach", lambda win, patience: ([None], [], False))
+    with pytest.raises(pp.StepFailed, match="the page reloaded, and no runtime ran in it in 30 seconds"):
+        game.reloaded()
+
+
+def test_preview_project_stops_with_the_steps_kept_when_a_reload_breaks_off_a_js_step(monkeypatch, tmp_path):
+    """Code that had started may have done part of its work, so it does not run twice; a
+    page that runs no game after the reload stops the plan, naming the reload."""
+    steps = [{"wait": 1}, {"js": "runtime.callFunction('wipe')"}, {"wait": 1}]
+    game, played = play_reloading(monkeypatch, tmp_path, steps,
+                                  ["ok", pp.oe.DevToolsError("Execution context was destroyed.")], [None, 0.5])
+    assert game.tries == [1, 2] and [d["ok"] for d in played] == [True, False]
+    assert played[1]["said"] == ("Execution context was destroyed.; the page reloaded while the code ran, so the step "
+                                 "did not run again; the window then: 02-failed.png")
+
+    steps = [{"tap": "ResetButton"}, {"wait": 1}]
+    _, played = play_reloading(monkeypatch, tmp_path, steps, ["at (40, 600)"],
+                               [pp.StepFailed("the page reloaded, and no runtime ran in it in 30 seconds")])
+    assert [(d["ok"], d["said"]) for d in played] == [
+        (False, "at (40, 600); the page reloaded, and no runtime ran in it in 30 seconds; the window then: "
+                "01-failed.png")]
+
+
 def test_preview_project_joins_a_recording_into_a_gif_without_ffmpeg(tmp_path, monkeypatch):
     """Each frame stays up for as long as the window showed it."""
     image = pytest.importorskip("PIL.Image")
