@@ -10,7 +10,9 @@ whatever the operations before it do:
     {"before": 3, "events": [...]}         above event 3 and the comments directly above it
     {"into": 3, "events": [...]}           as the last sub-events of event 3; 0 is the sheet itself
     {"replace": 5, "events": [...]}        in the place of event 5 and its sub-events; one event keeps its sid
-                                           and the number 5 for the operations below
+                                           and the number 5 for the operations below. The comments directly
+                                           above stay: change one with {"comment": ..., "set": ...} below,
+                                           since a comment in "events" is a second one
     {"remove": 5}                          event 5, its sub-events and the comments directly above it
     {"move": 7, "after": 6}                or "before" or "into"; the comments directly above go with it
     {"event": 2, "add-actions": [...]}     after its last action; "position": 1 makes the first new one the first
