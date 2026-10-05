@@ -827,14 +827,16 @@ def key_name(key: str) -> str:
     return words[-1]
 
 
-def labeler(project: Path | None, locale: str) -> Callable[[str], str]:
-    """The name the editor gives a key of its language files in `locale`: Vector X, or 向量 X in zh-CN,
-    for behaviors.platform.debugger.vector-x. A key the language pack lacks, such as a third-party addon's,
-    keeps its last word. So does every key when no clone is found. A locale the clone has no language pack
-    for raises ValueError."""
+def labeler(project: Path | None, locale: str) -> tuple[Callable[[str], str], str | None]:
+    """The function that names a key of the editor's language files in `locale`, and the note to print, or
+    None. It names behaviors.platform.debugger.vector-x Vector X, or 向量 X in zh-CN. A key the language
+    pack lacks, such as a third-party addon's, keeps its last word. Without a clone, every key keeps its last
+    word, and the note says so. A locale the clone has no language pack for raises ValueError."""
     rag, _ = c3.locate_rag(project, None)
     if not rag:
-        return key_name
+        return key_name, (f"note: Construct3-RAG not found, so each inspector value shows the last word of its key, "
+                          f"not its name in --locale {locale}. Set CONSTRUCT3_RAG to the clone's folder, or write "
+                          f"the line '- Construct3-RAG: <folder>' in the project's AGENTS.md, then run again.")
     packs = rag / "data" / "c3-lang"
     if not (packs / f"{locale}.json").is_file():
         raise ValueError(f"no language pack for --locale {locale}; the clone has: "
@@ -846,7 +848,7 @@ def labeler(project: Path | None, locale: str) -> Callable[[str], str]:
         for part in key.split("."):
             node = node.get(part) if isinstance(node, dict) else None
         return node if isinstance(node, str) and node else key_name(key)
-    return label
+    return label, None
 
 
 def value_text(value, label: Callable[[str], str] = key_name) -> str:
@@ -1232,10 +1234,12 @@ def main() -> int:
 
     first = projects[0] if projects[0].is_dir() else projects[0].parent
     try:
-        label = labeler(first, args.locale) if args.state is not None else key_name
+        label, note = labeler(first, args.locale) if args.state is not None else (key_name, None)
     except ValueError as e:
         print(e, file=sys.stderr)
         return 2
+    if note:
+        print(note)
     args.out, args.shots = kept(args.out, args.shots, first)
     args.shots.mkdir(parents=True, exist_ok=True)
     missing = [a for a in args.install_addon if not a.is_file()]

@@ -166,7 +166,7 @@ def opened_with(preview: dict, locale: str | None = None) -> list[str]:
     oe = opener()
     return oe.report({**OPENED, "preview": {"started": True, "layout": "Game", "runtime": "worker",
                                             "errors": [], **preview}},
-                     oe.labeler(None, locale) if locale else oe.key_name)
+                     oe.labeler(None, locale)[0] if locale else oe.key_name)
 
 
 def test_open_in_editor_reports_a_notice_over_the_opened_project_as_a_warning():
@@ -330,8 +330,8 @@ def test_open_in_editor_names_the_debuggers_values_in_the_locale_and_keeps_a_key
         f'      Platform: {platform["debugger"]["vector-x"]} 128, {platform["properties"]["enabled"]["name"]} true, '
         f'{platform["debugger"]["animation-mode"]} {platform["debugger"]["anim-moving"]}',
     ], lines
-    label = opener().labeler(None, "en-US")
-    assert label("plugins.myaddon.debugger.charge") == "charge"
+    label, note = opener().labeler(None, "en-US")
+    assert note is None and label("plugins.myaddon.debugger.charge") == "charge"
     assert label("plugins.myaddon.properties.power.name") == "power"
 
 
@@ -339,6 +339,29 @@ def test_open_in_editor_refuses_a_locale_the_clone_has_no_language_pack_for(proj
     code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--state", "Player", "--locale", "xx-XX",
                     "--browser", str(tmp_path / "no-browser.exe"))
     assert code == 2 and "no language pack for --locale xx-XX; the clone has: en-US, zh-CN" in out, out
+
+
+def test_state_says_in_one_line_when_no_clone_names_the_inspector_values(project, tmp_path):
+    """Without a clone, --state and a plan with a state step print the note first. --preview and a plan
+    without a state step print none, because they show no inspector values."""
+    agents = project / "AGENTS.md"
+    agents.write_text("".join(line for line in agents.read_text(encoding="utf-8").splitlines(keepends=True)
+                              if "Construct3-RAG:" not in line), encoding="utf-8")
+    browser = str(tmp_path / "no-browser.exe")
+    note = ("note: Construct3-RAG not found, so each inspector value shows the last word of its key, not its name "
+            "in --locale zh-CN. Set CONSTRUCT3_RAG to the clone's folder, or write the line "
+            "'- Construct3-RAG: <folder>' in the project's AGENTS.md, then run again.")
+    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--state", "Player", "--locale", "zh-CN",
+                    "--browser", browser)
+    assert code == 2 and out.splitlines()[0] == note and "could not be driven" in out, out
+    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--preview", "--browser", browser)
+    assert code == 2 and "note:" not in out, out
+    plan = tmp_path / "plan.json"
+    for steps, noted in (([{"wait": 1}, {"state": ["Player"]}], True), ([{"wait": 1}], False)):
+        plan.write_text(json.dumps({"steps": steps}), encoding="utf-8")
+        code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", str(plan), "--locale", "zh-CN",
+                        "--browser", browser)
+        assert code == 2 and (out.splitlines()[0] == note) == noted and "could not be driven" in out, out
 
 
 def test_open_in_editor_says_when_the_state_was_not_read():

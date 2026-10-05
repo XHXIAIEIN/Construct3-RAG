@@ -783,11 +783,15 @@ def main() -> int:
         print(f"no project.c3proj found from {args.project or Path.cwd()} upward; run this in the project folder or "
               f"pass --project <folder>", file=sys.stderr)
         return 2
-    try:
-        label = oe.labeler(project, args.locale)
-    except ValueError as e:
-        print(e, file=sys.stderr)
-        return 2
+    label, note = oe.key_name, None
+    if any("state" in step for step in plan["steps"]):     # the only step that prints inspector values
+        try:
+            label, note = oe.labeler(project, args.locale)
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            return 2
+    if note:
+        print(note)
     exe = args.browser or oe.browser_path()
     if not exe:
         print("no Edge, Chrome or Chromium found here, and a plan needs one this script can drive: install one, or "
