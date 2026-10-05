@@ -259,6 +259,22 @@ def clone_root(rag: Path) -> Path:
     return rag.parent if rag.name == "plugin" and is_clone(rag.parent) else rag
 
 
+def siblings_folder(rag: Path) -> Path:
+    """The folder that holds the sibling clones, Construct-Example-Projects among them: the parent of the clone
+    that holds rag. A git worktree lies inside the clone it belongs to, so for a worktree it is the parent of
+    the main working tree. The worktree's .git file points to its git folder. The commondir file in that folder
+    points to the main .git folder, whose parent is the main working tree."""
+    clone = clone_root(rag)
+    try:
+        link = (clone / ".git").read_text(encoding="utf-8") if (clone / ".git").is_file() else ""
+        gitdir = clone / link.partition("gitdir:")[2].strip()    # absolute, or relative to the worktree
+        common = gitdir / "commondir"
+        main = (gitdir / common.read_text(encoding="utf-8").strip()).resolve() if link and common.is_file() else None
+    except OSError:
+        main = None
+    return main.parent.parent if main and main.name == ".git" else clone.parent
+
+
 def locate_rag(root: Path | None, override: str | None) -> tuple[Path | None, list[str]]:
     """The clone or None, and the places tried before it; for a script that runs without a clone."""
     tried = []

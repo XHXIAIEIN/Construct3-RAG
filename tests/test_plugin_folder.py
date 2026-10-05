@@ -3,6 +3,7 @@ every data and prompt file the skill's text sends an agent to (docs/decisions/pl
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -86,8 +87,12 @@ def test_the_listing_icon_is_a_file_of_the_plugin():
 
 def test_scripts_in_the_plugin_read_the_bundled_data_and_print_what_opens(tmp_path):
     """A plugin user has no clone and often no Construct3-RAG line: a printed path opens as it is, and a
-    declaration that only a bundle holds names the command that prints it."""
-    scripts = PLUGIN / "skills" / "construct3-agent-plugin" / "scripts"
+    declaration that only a bundle holds names the command that prints it. An example is its editor URL
+    alone, since no example projects lie beside the plugin."""
+    # A copy outside the repository, as Claude Code installs the plugin: no clone holds it or lies beside it
+    plugin = tmp_path / "construct3"
+    shutil.copytree(PLUGIN, plugin, ignore=shutil.ignore_patterns("__pycache__"))
+    scripts = plugin / "skills" / "construct3-agent-plugin" / "scripts"
     # No CONSTRUCT3_RAG: the scripts find the plugin folder above them, as an installed plugin does
     env = {k: v for k, v in os.environ.items() if k != "CONSTRUCT3_RAG"}
     env.update(PYTHONIOENCODING="utf-8", CONSTRUCT3_RAG_OFFLINE="1")
@@ -102,5 +107,5 @@ def test_scripts_in_the_plugin_read_the_bundled_data_and_print_what_opens(tmp_pa
     assert out.startswith("IRuntime.callFunction   lookup_script_api.py IRuntime.callFunction\n"), out
     out = run("search_guides.py", "wait", "platformer")
     pitfalls = re.findall(r"^(.+\.md):\d+$", out, re.M)
-    assert pitfalls and all(Path(p).is_file() for p in pitfalls), out
-    assert "3d-platformer" in out and "Construct-Example-Projects" not in out
+    assert pitfalls and all(Path(p).is_file() and Path(p).is_relative_to(plugin) for p in pitfalls), out
+    assert "\n  https://editor.construct.net/#open=3d-platformer\n" in out and "beside Construct3-RAG" not in out, out

@@ -105,7 +105,7 @@ def main() -> int:
             lines += [f"{file}:{line}", f"  {text}", ""]
     found_examples = ranked(examples(rag, args.locale), example_text, args.words)[: args.examples]
     if found_examples:
-        clone = c3.clone_root(rag).parent / "Construct-Example-Projects" / "example-projects"
+        clone = c3.siblings_folder(rag) / "Construct-Example-Projects" / "example-projects"
         lines.append("examples:")
         for e in found_examples:
             lines.append(f"{e['id']}: {e.get('name', '')}. {e.get('description', '')}")
