@@ -96,6 +96,28 @@ To wait for an event, evaluate the same read every few hundred milliseconds
 until it changes, with a limit on the wait; the preview keeps running
 between evaluations.
 
+`runtime.globalVars` holds the global variables only. A local variable of an
+event sheet, static or not, is not on it, and a read of its name returns
+`undefined` with no error. Read a local through a function of the sheet that
+returns it, `runtime.callFunction("getLevel")`, or copy it to a global in an
+event for the test. [observed in a minimal project, r504 preview,
+2026-10-05: a static local counted every tick, `runtime.globalVars` had no
+key for it or for a plain local, and a global set from it each tick read
+the count]
+
+To see which audio files a preview holds decoded while debugging, read the
+Audio object's state on the page: each entry of
+`self.C3Audio_DOMInterface._audioBuffers` has `GetOriginalUrl()`, and its
+`_audioBuffer` the `length`, `numberOfChannels` and `sampleRate` of the
+decoded data. Evaluate this in the page session, not in a worker session,
+because Web Audio runs on the page. These are internals of the runtime, not
+the scripting API, so a release can change them. Use them to debug, not in
+a project's scripts.
+[r504 main.js, the Audio DOM handler sets `self["C3Audio_DOMInterface"]`;
+observed in a minimal project, r504 preview, 2026-10-05: a preloaded mono
+file listed with 1 channel at 48 kHz, and the list emptied at *Unload audio
+(by name)*]
+
 ## Inspector values
 
 `inspector` holds the inspector values, the values the engine gives the
