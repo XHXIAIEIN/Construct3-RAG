@@ -13,19 +13,11 @@ reviewed.
 ## Evidence
 
 The directory's submission portal validates and scans each commit it picks
-up, and its report on this repository lists two findings that hold a
-version for a reviewer and two warnings. The limits behind them are in
-Claude's "Plugin pre-submission checklist".
-
-Held for a reviewer:
-
-- More than 512 files in the plugin folder, and files over 256 KiB. The
-  plugin folder is the repository root, so `data/` counts, and the schemas
-  are what the plugin is for.
-- Files that name images of a game project: the icons of
-  `data/c3-new-project/project.c3proj`, and the image paths that
-  `check_project.py`, its tests and `checker-rules.md` read. A Construct
-  project is made of such files.
+up. Its holds for a reviewer come from the checklist's limits on the
+plugin folder, the file count, the file size and bundled images, in
+Claude's "Plugin pre-submission checklist"; `plugin/` is built to them
+(`plugin-folder.md`). Its report on the repository root also gave two
+warnings.
 
 Warnings, both cleared on 2026-10-05:
 
@@ -36,7 +28,8 @@ Warnings, both cleared on 2026-10-05:
   `.claude/CLAUDE.md`, which Claude Code loads as project instructions
   from the same place, and imports `../AGENTS.md`.
 
-The portal therefore reports that auto-publish does not apply.
+The portal reports that auto-publish does not apply to a version held for
+a reviewer; whether it applies to `plugin/` waits for its re-validation.
 
 ## Options
 
@@ -47,7 +40,7 @@ The portal therefore reports that auto-publish does not apply.
 
 ## Decision
 
-Both. The repository root is submitted as Construct3 and listed on
+Both. The plugin folder `plugin/` is submitted as Construct3 and listed on
 claude.ai, in Cowork and in Claude Code. The directory receives each commit
 on the default branch through the GitHub push webhook, and a reviewer
 publishes each version.
@@ -67,9 +60,4 @@ publishes each version.
 ## Re-evaluate when
 
 - The portal offers auto-publish for this plugin.
-- The plugin folder falls under the file-count and file-size limits, for
-  example as a subfolder that carries only the skill and the data it reads.
-  The skill's scripts find `data/` in the folder above them that holds
-  `data/c3-schemas/_index.json`, so that is a change to the scripts too.
-  The image-path finding stays as long as the checker reads a project's
-  images.
+- Re-validation of `plugin/` still reports a hold (`plugin-folder.md`).

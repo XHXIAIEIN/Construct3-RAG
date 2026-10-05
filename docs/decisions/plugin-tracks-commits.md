@@ -24,16 +24,17 @@ install on its first copy however many commits followed
   (`directory-listing.md`), so the field came back. A change that a
   marketplace install should receive raises the version; without that,
   `claude plugin update` keeps the install where it is.
-- On a machine with the clone, the clone is linked as
-  `~/.claude/skills/construct3` (a junction on Windows). Claude Code loads a
-  plugin directory under `~/.claude/skills/` in place as
-  `construct3@skills-dir`, so a `git pull` reaches the next session and
-  there is no copy to fall behind. The docs say a local-directory
-  marketplace loads in place too, but Claude Code 2.1.287 copied the whole
-  clone, 3.0 GB with the ignored `.cache/` and `.local/`, into
-  `~/.claude/plugins/cache/` when the clone was added as a marketplace.
+- On a machine with the clone, the clone's plugin folder, `<clone>/plugin`
+  (`plugin-folder.md`), is linked as `~/.claude/skills/construct3` (a
+  junction on Windows). Claude Code loads a plugin directory under
+  `~/.claude/skills/` in place as `construct3@skills-dir`, so a `git pull`
+  reaches the next session and there is no copy to fall behind. The docs
+  say a local-directory marketplace loads in place too, but Claude Code
+  2.1.287 copied the whole clone, 3.0 GB with the ignored `.cache/` and
+  `.local/`, into `~/.claude/plugins/cache/` when the clone was added as a
+  marketplace whose plugin source was the repository root.
 - A project used with the plugin holds no copy of the skill; its
-  `AGENTS.md` names the scripts under the clone's
+  `AGENTS.md` names the scripts under the plugin's
   `skills/construct3-agent-plugin/`. `SKILL.md` and `AGENTS.md` section 4
   tell an agent that sees the skill as `construct3:construct3-agent-plugin`
   not to install one.

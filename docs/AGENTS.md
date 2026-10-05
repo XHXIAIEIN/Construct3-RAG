@@ -73,6 +73,7 @@ The project skill and the prompts:
 | `skill-and-plugin-names.md` | The names of the skill and the Claude Code plugin |
 | `plugin-tracks-commits.md` | How `plugin.json`'s version reaches an install, and why a linked clone needs no copy in the project |
 | `directory-listing.md` | Why the plugin is in Claude's directory and also installs from this repository, and why a reviewer publishes each directory version |
+| `plugin-folder.md` | Why the plugin is the built folder `plugin/`, what it carries from the repository, and the test that keeps it equal to its sources |
 | `build-folder.md` | Why a game project's packed `.c3p`, export and sheet pictures go in `.build/`, apart from the scratch of `.tmp/` |
 | `random-uid-allocation.md` | Why the projects this repository starts give new instances random uids |
 
