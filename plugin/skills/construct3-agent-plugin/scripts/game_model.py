@@ -351,6 +351,12 @@ class Design:
         if (path, what) not in self.problems:
             self.problems.append((path, what))
 
+    @property
+    def ends(self) -> bool:
+        """Whether the game is won or lost. With "win": "none" and "lose": "none" it never ends, as a demo of
+        one mechanic, and has no new game to restart into."""
+        return self.win is not None or self.lose is not None
+
     def text(self, key: str, what: str) -> str:
         v = self.data.get(key)
         if not isinstance(v, str) or len(v.strip()) < 3:
@@ -404,9 +410,11 @@ class Design:
                              f"rules says what the player sees. Add \"feedback\": \"<what the player sees when it works>\" "
                              f"to this rule, e.g. \"a stone appears on the crossing\"")
         win = d.get("win")
-        self.win = self.expr(win, "win") if win is not None else None
         if win is None:
-            self.bad("win", 'missing; the expression over the state that is true once the game is won: "over = 1"')
+            self.bad("win", 'missing; the expression over the state that is true once the game is won: "over = 1", '
+                            'or "none" when nothing is won (a demo of one mechanic, a toy, a game that is only lost)')
+        elif win != "none":
+            self.win = self.expr(win, "win")
         lose = d.get("lose")
         if lose is None:
             self.bad("lose", 'missing; the expression that is true once the game is lost, or "none" when the game '

@@ -83,6 +83,36 @@ def test_check_design_refuses_a_rule_no_test_reaches_and_a_missing_feedback(tmp_
     assert "rules[1] 'hit'.feedback: missing: the input hit fires this rule" in out
 
 
+def toggle(win: str = "none") -> dict:
+    """A demo of one mechanic: a tap switches a label between On and Off, and nothing ends it."""
+    design = example()
+    design.update({
+        "game": "toggle", "core_loop": "tap to switch", "screen": {"all": "screen"},
+        "state": [{"name": "on", "start": 0, "stored_in": "global"},
+                  {"name": "label", "start": "Off", "stored_in": "Label.text"}],
+        "inputs": [{"name": "flip", "player": "tap", "game": {"tap": [0.5, 0.5]}}],
+        "rules": [{"id": "flip", "on": "flip", "feedback": "the label switches", "children": [
+            {"id": "turn-on", "if": ["on = 0"], "do": ["on = 1", "label = \"On\""]},
+            {"id": "turn-off", "else": True, "do": ["on = 0", "label = \"Off\""]}]}],
+        "win": win, "lose": "none",
+        "tests": [{"name": "two taps", "steps": [{"do": "flip"}, {"expect": "label = \"On\""},
+                                                 {"do": "flip"}, {"expect": "label = \"Off\""}]}]})
+    return design
+
+
+def test_a_demo_that_is_never_won_or_lost_needs_no_restart(tmp_path):
+    code, out = check(tmp_path, toggle())
+    assert code == 0, out
+    assert out.splitlines()[-1].startswith("ok: design complete; 1 tests pass in the prototype, no win or lose")
+
+
+def test_a_game_that_ends_still_needs_a_restart_and_a_win_at_launch_names_none(tmp_path):
+    code, out = check(tmp_path, toggle(win="label = \"Off\""))
+    assert code == 1
+    assert "no rule restarts the game" in out and "\"win\": \"none\"" in out
+    assert "win: label = \"Off\" holds on the first screen" in out
+
+
 def test_check_design_reads_the_sheet_syntax_and_says_what_to_write(tmp_path):
     design = example()
     design["rules"][1]["if"][1] = "h == hole"
