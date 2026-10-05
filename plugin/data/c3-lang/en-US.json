@@ -1,5 +1,3191 @@
 {
 	"text": {
+		"behaviors": {
+			"anchor": {
+				"name": "Anchor",
+				"properties": {
+					"bottom-edge": {
+						"desc": "Anchor the object's bottom edge.",
+						"items": {
+							"none": "None",
+							"window-bottom": "Viewport bottom"
+						},
+						"name": "Bottom edge"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"left-edge": {
+						"desc": "Anchor the object's left edge to a viewport edge.",
+						"items": {
+							"none": "None",
+							"window-left": "Viewport left",
+							"window-right": "Viewport right"
+						},
+						"name": "Left edge"
+					},
+					"right-edge": {
+						"desc": "Anchor the object's right edge.",
+						"items": {
+							"none": "None",
+							"window-right": "Viewport right"
+						},
+						"name": "Right edge"
+					},
+					"top-edge": {
+						"desc": "Anchor the object's top edge to a viewport edge.",
+						"items": {
+							"none": "None",
+							"window-bottom": "Viewport bottom",
+							"window-top": "Viewport top"
+						},
+						"name": "Top edge"
+					}
+				}
+			},
+			"billboard": {
+				"name": "Billboard",
+				"properties": {
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"offset-x": {
+						"desc": "Additional rotation on the X axis to apply.",
+						"name": "Offset X"
+					},
+					"offset-y": {
+						"desc": "Additional rotation on the Y axis to apply.",
+						"name": "Offset Y"
+					},
+					"offset-z": {
+						"desc": "Additional rotation on the Z axis to apply.",
+						"name": "Offset Z"
+					}
+				}
+			},
+			"bound": {
+				"name": "Bound to",
+				"properties": {
+					"bound-by": {
+						"desc": "Choose whether to stop the object at its origin or at its edge.",
+						"items": {
+							"edge": "Edge",
+							"origin": "Origin"
+						},
+						"name": "Bound by"
+					},
+					"region": {
+						"desc": "Choose the region to bound the object inside.",
+						"items": {
+							"layout": "Layout",
+							"viewport": "Viewport"
+						},
+						"name": "Region"
+					}
+				}
+			},
+			"bullet": {
+				"debugger": {
+					"angle-of-motion": "Angle of motion",
+					"distance-travelled": "Distance travelled",
+					"gravity-vector-x": "Gravity vector X",
+					"gravity-vector-y": "Gravity vector Y",
+					"gravity-vector-z": "Gravity vector Z",
+					"vector-x": "Vector X",
+					"vector-y": "Vector Y",
+					"vector-z": "Vector Z"
+				},
+				"name": "Bullet",
+				"properties": {
+					"acceleration": {
+						"desc": "The rate of acceleration, in pixels per second per second.  Negative values decelerate.",
+						"name": "Acceleration"
+					},
+					"bounce-off-solids": {
+						"desc": "Make the object bounce off solid objects when it collides with them.",
+						"name": "Bounce off solids"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"gravity": {
+						"desc": "Gravity on the bullet, in pixels per second per second.",
+						"name": "Gravity"
+					},
+					"set-angle": {
+						"desc": "Automatically set the object's angle to the angle of motion.",
+						"name": "Set angle"
+					},
+					"speed": {
+						"desc": "The speed the object travels at, in pixels per second.",
+						"name": "Speed"
+					},
+					"step": {
+						"desc": "Move in small steps triggering 'On step', for making additional collision tests.",
+						"name": "Step"
+					}
+				}
+			},
+			"car": {
+				"debugger": {
+					"angle-of-motion": "Angle of motion",
+					"speed": "Speed",
+					"vector-x": "Vector X",
+					"vector-y": "Vector Y"
+				},
+				"name": "Car",
+				"properties": {
+					"acceleration": {
+						"desc": "The rate of acceleration, in pixels per second per second.",
+						"name": "Acceleration"
+					},
+					"deceleration": {
+						"desc": "The rate of deceleration, in pixels per second per second.",
+						"name": "Deceleration"
+					},
+					"default-controls": {
+						"desc": "If enabled, arrow keys control movement.  Otherwise, use the 'simulate control' action.",
+						"name": "Default controls"
+					},
+					"drift-recover": {
+						"desc": "The rate the angle of motion catches up with the object angle.  Lower values cause drifting, higher values cause tighter turns.",
+						"name": "Drift recover"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"friction": {
+						"desc": "The amount of slowdown when hitting solids, between 0 and 1.",
+						"name": "Friction"
+					},
+					"max-speed": {
+						"desc": "The maximum speed, in pixels per second, the object can travel at.",
+						"name": "Max speed"
+					},
+					"set-angle": {
+						"desc": "Set the object's angle while moving.",
+						"name": "Set angle"
+					},
+					"steer-speed": {
+						"desc": "The turn speed, in degrees per second.",
+						"name": "Steer speed"
+					},
+					"turn-while-stopped": {
+						"desc": "Whether to allow turning while stopped, or only allow turning while moving.",
+						"name": "Turn while stopped"
+					}
+				}
+			},
+			"custom": {
+				"debugger": {
+					"vector-x": "Vector X",
+					"vector-y": "Vector Y"
+				},
+				"name": "Custom",
+				"properties": {
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"pixels-per-step": {
+						"desc": "When stepping enabled, the number of pixels to move each step.",
+						"name": "Pixels per step"
+					},
+					"stepping-mode": {
+						"desc": "Move in increments while firing the step triggers.",
+						"items": {
+							"horizontal-then-vertical": "Horizontal then vertical",
+							"linear": "Linear",
+							"none": "None",
+							"vertical-then-horizontal": "Vertical then horizontal"
+						},
+						"name": "Stepping mode"
+					}
+				}
+			},
+			"destroy": {
+				"name": "Destroy outside",
+				"properties": {
+					"region": {
+						"desc": "Choose the region to destroy the object outside.",
+						"items": {
+							"layout": "Layout",
+							"viewport": "Viewport"
+						},
+						"name": "Region"
+					}
+				}
+			},
+			"dragndrop": {
+				"debugger": {
+					"is-dragging": "Is dragging"
+				},
+				"name": "Drag & Drop",
+				"properties": {
+					"axes": {
+						"desc": "Which ways the object can be dragged.",
+						"items": {
+							"both": "Both",
+							"horizontal-only": "Horizontal only",
+							"vertical-only": "Vertical only"
+						},
+						"name": "Axes"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					}
+				}
+			},
+			"eightdir": {
+				"debugger": {
+					"angle-of-motion": "Angle of motion",
+					"speed": "Speed",
+					"vector-x": "Vector X",
+					"vector-y": "Vector Y"
+				},
+				"name": "8 Direction",
+				"properties": {
+					"acceleration": {
+						"desc": "The rate of acceleration, in pixels per second per second.",
+						"name": "Acceleration"
+					},
+					"allow-sliding": {
+						"desc": "If enabled, moving along sloped obstacles allows sliding along them rather than stopping.",
+						"name": "Allow sliding"
+					},
+					"deceleration": {
+						"desc": "The rate of deceleration, in pixels per second per second.",
+						"name": "Deceleration"
+					},
+					"default-controls": {
+						"desc": "If enabled, arrow keys control movement.  Otherwise, use the 'simulate control' action.",
+						"name": "Default controls"
+					},
+					"directions": {
+						"desc": "The number of directions of movement available.",
+						"items": {
+							"dir-4": "4 directions",
+							"dir-8": "8 directions",
+							"left-right": "Left & right",
+							"up-down": "Up & down"
+						},
+						"name": "Directions"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"max-speed": {
+						"desc": "The maximum speed, in pixels per second, the object can travel at.",
+						"name": "Max speed"
+					},
+					"set-angle": {
+						"desc": "How to set the object's angle while moving.",
+						"items": {
+							"interval-45": "45° intervals",
+							"interval-90": "90° intervals",
+							"no": "No",
+							"smooth": "Smooth"
+						},
+						"name": "Set angle"
+					}
+				}
+			},
+			"fade": {
+				"debugger": {
+					"done": "Done",
+					"fade-in": "Fade in",
+					"fade-out": "Fade out",
+					"stage": "Stage",
+					"wait": "Wait"
+				},
+				"name": "Fade",
+				"properties": {
+					"destroy": {
+						"desc": "Automatically destroy the object after it has faded out.",
+						"name": "Destroy"
+					},
+					"enabled": {
+						"desc": "Whether the fade starts running immediately, or on the 'Start' action.",
+						"name": "Enabled"
+					},
+					"fade-in-time": {
+						"desc": "Duration in seconds of fade-in, or zero to skip.",
+						"name": "Fade in time"
+					},
+					"fade-out-time": {
+						"desc": "Duration in seconds of fade-out, or zero to skip.",
+						"name": "Fade out time"
+					},
+					"live-preview": {
+						"desc": "Tick to run a live preview in the editor.",
+						"name": "Preview"
+					},
+					"wait-time": {
+						"desc": "Duration in seconds of time to wait between fade-in and fade-out, or zero to skip.",
+						"name": "Wait time"
+					}
+				}
+			},
+			"flash": {
+				"debugger": {
+					"is-flashing": "Is flashing",
+					"off-time": "'Off' time",
+					"on-time": "'On' time",
+					"time-left": "Time left"
+				},
+				"name": "Flash"
+			},
+			"follow": {
+				"debugger": {
+					"history-entry-count": "History entry count",
+					"paused": "Paused"
+				},
+				"name": "Follow",
+				"properties": {
+					"delay": {
+						"desc": "The time in seconds, or distance in pixels, to follow (depending on the mode).",
+						"name": "Delay"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"follow-angle": {
+						"desc": "Whether to follow the object angle.",
+						"name": "Follow angle"
+					},
+					"follow-destroyed": {
+						"desc": "Whether to destroy the object at the point the followed object is destroyed.",
+						"name": "Follow destroyed"
+					},
+					"follow-height": {
+						"desc": "Whether to follow the object height.",
+						"name": "Follow height"
+					},
+					"follow-opacity": {
+						"desc": "Whether to follow the object opacity.",
+						"name": "Follow opacity"
+					},
+					"follow-visibility": {
+						"desc": "Whether to follow the object visibility.",
+						"name": "Follow visibility"
+					},
+					"follow-width": {
+						"desc": "Whether to follow the object width.",
+						"name": "Follow width"
+					},
+					"follow-x": {
+						"desc": "Whether to follow the object X position.",
+						"name": "Follow X"
+					},
+					"follow-y": {
+						"desc": "Whether to follow the object Y position.",
+						"name": "Follow Y"
+					},
+					"follow-z-elevation": {
+						"desc": "Whether to follow the object Z position.",
+						"name": "Follow Z"
+					},
+					"history-rate": {
+						"desc": "The rate in entries per second at which to remember changes in the followed object.",
+						"name": "History rate"
+					},
+					"max-delay": {
+						"desc": "The maximum time/distance data to remember.",
+						"name": "Max delay"
+					},
+					"mode": {
+						"desc": "Whether to follow by time or distance from the followed object.",
+						"items": {
+							"distance": "Distance",
+							"time": "Time"
+						},
+						"name": "Mode"
+					}
+				}
+			},
+			"jumpthru": {
+				"name": "Jump-thru",
+				"properties": {
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					}
+				}
+			},
+			"los": {
+				"name": "Line of sight",
+				"properties": {
+					"cone-of-view": {
+						"desc": "The angle range in degrees relative to the object angle that line-of-sight can cover.",
+						"name": "Cone of view"
+					},
+					"obstacles": {
+						"desc": "Choose whether solids obstruct LOS or if to use custom objects added by events.",
+						"items": {
+							"custom": "Custom",
+							"solids": "Solids"
+						},
+						"name": "Obstacles"
+					},
+					"range": {
+						"desc": "The maximum distance in pixels that line-of-sight can cover.",
+						"name": "Range"
+					},
+					"use-collision-cells": {
+						"desc": "Enabling usually improves performance, but can be slower over very long distances.",
+						"name": "Use collision cells"
+					}
+				}
+			},
+			"moveto": {
+				"debugger": {
+					"angle-of-motion": "Angle of motion",
+					"speed": "Speed",
+					"target-x": "Target X",
+					"target-y": "Target Y",
+					"waypoint-count": "Waypoint count"
+				},
+				"name": "Move To",
+				"properties": {
+					"acceleration": {
+						"desc": "The rate of acceleration, in pixels per second per second. Use 0 for instant acceleration.",
+						"name": "Acceleration"
+					},
+					"deceleration": {
+						"desc": "The rate of deceleration, in pixels per second per second. Use 0 for instant deceleration.",
+						"name": "Deceleration"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"max-speed": {
+						"desc": "The maximum speed, in pixels per second, the object can travel at.",
+						"name": "Max speed"
+					},
+					"rotate-speed": {
+						"desc": "When turning, the maximum turn speed in degrees per second. Use 0 to disable turning.",
+						"name": "Rotate speed"
+					},
+					"set-angle": {
+						"desc": "Automatically set the object's angle to the angle of motion.",
+						"name": "Set angle"
+					},
+					"stop-on-solids": {
+						"desc": "Automatically stop movement if hitting a solid object.",
+						"name": "Stop on solids"
+					}
+				}
+			},
+			"nosave": {
+				"name": "No save",
+				"properties": {}
+			},
+			"orbit": {
+				"debugger": {
+					"rotation": "Rotation",
+					"total-absolute-rotation": "Total absolute rotation",
+					"total-rotation": "Total rotation"
+				},
+				"name": "Orbit",
+				"properties": {
+					"acceleration": {
+						"desc": "Rotation acceleration in degrees per second per second (negative slows down).",
+						"name": "Acceleration"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"live-preview": {
+						"desc": "Tick to run a live preview in the editor.",
+						"name": "Preview"
+					},
+					"match-rotation": {
+						"desc": "Whether the instance should also rotate, so that it faces the direction of travel.",
+						"name": "Match rotation"
+					},
+					"offset-angle": {
+						"desc": "Rotation of the primary axis in degrees.",
+						"name": "Offset angle"
+					},
+					"primary-axis": {
+						"desc": "The radius of the orbit along its primary axis.",
+						"name": "Primary radius"
+					},
+					"secondary-axis": {
+						"desc": "The radius of the orbit along its secondary axis (for a circle use the same as the primary axis).",
+						"name": "Secondary radius"
+					},
+					"speed": {
+						"desc": "The rotation speed, in degrees per second. Positive is clockwise and negative is anticlockwise.",
+						"name": "Speed"
+					}
+				}
+			},
+			"pathfinding": {
+				"debugger": {
+					"angle-of-motion": "Angle of motion",
+					"has-path": "Has path",
+					"is-calculating-path": "Is calculating path",
+					"is-moving": "Is moving",
+					"speed": "Speed"
+				},
+				"name": "Pathfinding",
+				"properties": {
+					"acceleration": {
+						"desc": "For movement, the acceleration in pixels per second per second.",
+						"name": "Acceleration"
+					},
+					"cell-border": {
+						"desc": "Additional size to detect obstacles. Prevents paths very close to obstacles.",
+						"name": "Cell border"
+					},
+					"cell-size": {
+						"desc": "The size of cells for pathfinding. Smaller sizes will use more CPU.",
+						"name": "Cell size"
+					},
+					"deceleration": {
+						"desc": "For movement, the deceleration in pixels per second per second.",
+						"name": "Deceleration"
+					},
+					"diagonals": {
+						"desc": "Whether paths are allowed to use diagonal directions.",
+						"name": "Diagonals"
+					},
+					"direct-movement": {
+						"desc": "Where to allow moving directly towards a node when the surrounding area is clear.",
+						"items": {
+							"anywhere-along-path": "Anywhere along path",
+							"none": "None",
+							"to-destination": "To destination"
+						},
+						"name": "Direct movement"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"max-speed": {
+						"desc": "For movement, the maximum speed in pixels per second.",
+						"name": "Max speed"
+					},
+					"obstacles": {
+						"desc": "Use either solids or custom objects as obstacles.",
+						"items": {
+							"custom": "Custom",
+							"solids": "Solids"
+						},
+						"name": "Obstacles"
+					},
+					"rotate-object": {
+						"desc": "For movement, whether to change the object's angle.",
+						"name": "Rotate object"
+					},
+					"rotate-speed": {
+						"desc": "For movement, the maximum turn speed in degrees per second.",
+						"name": "Rotate speed"
+					}
+				}
+			},
+			"persist": {
+				"name": "Persist",
+				"properties": {}
+			},
+			"physics": {
+				"debugger": {
+					"angular-velocity": "Angular velocity",
+					"collision-filter-inclusive": "Collision filter inclusive",
+					"is-sleeping": "Is sleeping",
+					"mass": "Mass",
+					"velocity-x": "Velocity X",
+					"velocity-y": "Velocity Y"
+				},
+				"name": "Physics",
+				"properties": {
+					"angular-damping": {
+						"desc": "Coefficient to slow down rotations over time, between 0 and 1.",
+						"name": "Angular damping"
+					},
+					"bullet": {
+						"desc": "Enable enhanced collision detection for fast moving objects.",
+						"name": "Bullet"
+					},
+					"collision-filter-mode": {
+						"desc": "How to apply the collision filter tags to instance tags.",
+						"items": {
+							"exclusive": "Exclusive",
+							"inclusive": "Inclusive"
+						},
+						"name": "Collision filter mode"
+					},
+					"collision-filter-tags": {
+						"desc": "A list of space separated tags to filter collisions with.",
+						"name": "Collision filter tags"
+					},
+					"collision-mask": {
+						"desc": "How the object collides in the physics simulation.",
+						"items": {
+							"bounding-box": "Bounding box",
+							"circle": "Circle",
+							"use-collision-polygon": "Use collision polygon"
+						},
+						"name": "Collision mask"
+					},
+					"density": {
+						"desc": "The object density, from which its mass is calculated.",
+						"name": "Density"
+					},
+					"elasticity": {
+						"desc": "The object elasticity (restitution or 'bounciness') coefficient, between 0 and 1.",
+						"name": "Elasticity"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"friction": {
+						"desc": "The object friction coefficient, between 0 and 1.",
+						"name": "Friction"
+					},
+					"immovable": {
+						"desc": "Enable to make object have infinite mass.  Ideal for scenery.",
+						"name": "Immovable"
+					},
+					"linear-damping": {
+						"desc": "Coefficient to slow down motion over time, between 0 and 1.",
+						"name": "Linear damping"
+					},
+					"prevent-rotation": {
+						"desc": "Prevent the object rotating when hit.",
+						"name": "Prevent rotation"
+					}
+				}
+			},
+			"pin": {
+				"debugger": {
+					"is-pinned": "Is pinned",
+					"pinned-uid": "Pinned UID"
+				},
+				"name": "Pin",
+				"properties": {
+					"destroy": {
+						"desc": "If the object pinned to is destroyed, also destroy this object.",
+						"name": "Destroy with pinned object"
+					}
+				}
+			},
+			"platform": {
+				"debugger": {
+					"anim-falling": "Falling",
+					"anim-jumping": "Jumping",
+					"anim-moving": "Moving",
+					"anim-stopped": "Stopped",
+					"animation-mode": "Animation mode",
+					"gravity-angle": "Gravity angle",
+					"vector-x": "Vector X",
+					"vector-y": "Vector Y"
+				},
+				"name": "Platform",
+				"properties": {
+					"acceleration": {
+						"desc": "The rate of acceleration, in pixels per second per second.",
+						"name": "Acceleration"
+					},
+					"deceleration": {
+						"desc": "The rate of deceleration, in pixels per second per second.",
+						"name": "Deceleration"
+					},
+					"default-controls": {
+						"desc": "If enabled, arrow keys control movement.  Otherwise, use the 'simulate control' action.",
+						"name": "Default controls"
+					},
+					"double-jump": {
+						"desc": "Allow a single extra jump while in mid-air before landing.",
+						"name": "Double-jump"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"gravity": {
+						"desc": "Acceleration from gravity, in pixels per second per second.",
+						"name": "Gravity"
+					},
+					"jump-strength": {
+						"desc": "Speed at which jumps start, in pixels per second.",
+						"name": "Jump strength"
+					},
+					"jump-sustain": {
+						"desc": "Time in milliseconds to allow jump to sustain for, reaching higher if holding longer.",
+						"name": "Jump sustain"
+					},
+					"max-fall-speed": {
+						"desc": "Maximum speed object can reach in freefall, in pixels per second.",
+						"name": "Max fall speed"
+					},
+					"max-speed": {
+						"desc": "The maximum speed, in pixels per second, the object can travel at.",
+						"name": "Max speed"
+					}
+				}
+			},
+			"rotate": {
+				"name": "Rotate",
+				"properties": {
+					"acceleration": {
+						"desc": "Rotation acceleration in degrees per second per second (negative slows down).",
+						"name": "Acceleration"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"live-preview": {
+						"desc": "Tick to run a live preview in the editor.",
+						"name": "Preview"
+					},
+					"rotation-type": {
+						"desc": "Rotate either in 2D or in 3D on an axis.",
+						"items": {
+							"2d": "2D",
+							"rotation-x": "Rotation X",
+							"rotation-y": "Rotation Y",
+							"rotation-z": "Rotation Z"
+						},
+						"name": "Rotation type"
+					},
+					"speed": {
+						"desc": "The rotation speed, in degrees per second.  Positive is clockwise and negative is anticlockwise.",
+						"name": "Speed"
+					}
+				}
+			},
+			"scrollto": {
+				"name": "Scroll To",
+				"properties": {
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					}
+				}
+			},
+			"shadowcaster": {
+				"name": "Shadow caster",
+				"properties": {
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"height": {
+						"desc": "The height of the object in pixels, determining the length shadow it casts.",
+						"name": "Height"
+					},
+					"tag": {
+						"desc": "A tag to identify which lights to cast a shadow from.",
+						"name": "Tag"
+					}
+				}
+			},
+			"sin": {
+				"debugger": {
+					"value": "Value"
+				},
+				"name": "Sine",
+				"properties": {
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"live-preview": {
+						"desc": "Tick to run a live preview in the editor.",
+						"name": "Preview"
+					},
+					"magnitude": {
+						"desc": "The maximum change in pixels, degrees, percent etc.",
+						"name": "Magnitude"
+					},
+					"magnitude-random": {
+						"desc": "Add a random number to the magnitude, up to this value.",
+						"name": "Magnitude random"
+					},
+					"movement": {
+						"desc": "Select what property of the object to modify.",
+						"items": {
+							"angle": "Angle",
+							"forwards-backwards": "Forwards/backwards",
+							"height": "Height",
+							"horizontal": "Horizontal",
+							"opacity": "Opacity",
+							"size": "Size",
+							"value-only": "Value only",
+							"vertical": "Vertical",
+							"width": "Width",
+							"z-elevation": "Z elevation"
+						},
+						"name": "Movement"
+					},
+					"period": {
+						"desc": "The time in seconds for a complete cycle.",
+						"name": "Period"
+					},
+					"period-offset": {
+						"desc": "The initial time in seconds through the cycle.",
+						"name": "Period offset"
+					},
+					"period-offset-random": {
+						"desc": "Add a random number of seconds to the initial time, up to this value.",
+						"name": "Period offset random"
+					},
+					"period-random": {
+						"desc": "Add a random number of seconds to the period, up to this value.",
+						"name": "Period random"
+					},
+					"wave": {
+						"desc": "Select the kind of wave function used to calculate the movement.",
+						"items": {
+							"reverse-sawtooth": "Reverse sawtooth",
+							"sawtooth": "Sawtooth",
+							"sine": "Sine",
+							"square": "Square",
+							"triangle": "Triangle"
+						},
+						"name": "Wave"
+					}
+				}
+			},
+			"solid": {
+				"name": "Solid",
+				"properties": {
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"tags": {
+						"desc": "A space-separated list of tags to use for collision filtering with this solid.",
+						"name": "Tags"
+					},
+					"use-instance-tags": {
+						"desc": "Use the instance tags rather than separate solid behavior tags for collision filtering.",
+						"name": "Use instance tags"
+					}
+				}
+			},
+			"tilemovement": {
+				"debugger": {
+					"grid-target-x": "Grid target X",
+					"grid-target-y": "Grid target Y",
+					"grid-x": "Grid X",
+					"grid-y": "Grid Y",
+					"target-x": "Target X",
+					"target-y": "Target Y"
+				},
+				"name": "Tile movement",
+				"properties": {
+					"default-controls": {
+						"desc": "Whether the default controls will be bound to the behaviour.",
+						"name": "Default controls"
+					},
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"grid-height": {
+						"desc": "The height of the movement grid.",
+						"name": "Grid height"
+					},
+					"grid-offset-x": {
+						"desc": "The offset of the movement grid on the X axis.",
+						"name": "Grid offset X"
+					},
+					"grid-offset-y": {
+						"desc": "The offset of the movement grid on the Y axis.",
+						"name": "Grid offset Y"
+					},
+					"grid-width": {
+						"desc": "The width of the movement grid.",
+						"name": "Grid width"
+					},
+					"isometric": {
+						"desc": "Whether the behaviour uses an isometric or cartesian grid.",
+						"name": "Isometric"
+					},
+					"speed-x": {
+						"desc": "The speed of movement in the X axis, in pixels per second.",
+						"name": "Speed X"
+					},
+					"speed-y": {
+						"desc": "The speed of movement in the Y axis, in pixels per second.",
+						"name": "Speed Y"
+					}
+				}
+			},
+			"timer": {
+				"debugger": {
+					"timers": "Timers"
+				},
+				"name": "Timer",
+				"properties": {}
+			},
+			"turret": {
+				"debugger": {
+					"has-target": "Has target",
+					"target-uid": "Target UID"
+				},
+				"name": "Turret",
+				"properties": {
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled or disabled.",
+						"name": "Enabled"
+					},
+					"predictive-aim": {
+						"desc": "Aim to where targets are going, rather than where they are.",
+						"name": "Predictive aim"
+					},
+					"projectile-speed": {
+						"desc": "The projectile speed for predictive aim to work, in pixels per second.",
+						"name": "Projectile speed"
+					},
+					"range": {
+						"desc": "The range in pixels the turret can detect targets.",
+						"name": "Range"
+					},
+					"rate-of-fire": {
+						"desc": "The time to shoot in seconds.",
+						"name": "Rate of fire"
+					},
+					"rotate": {
+						"desc": "Automatically rotate towards targets.",
+						"name": "Rotate"
+					},
+					"rotate-speed": {
+						"desc": "Rotation speed in degrees per second, if 'Rotate' enabled.",
+						"name": "Rotate-speed"
+					},
+					"target-mode": {
+						"desc": "How to deal with multiple targets.",
+						"items": {
+							"first-in-range": "First in range",
+							"nearest": "Nearest"
+						},
+						"name": "Target mode"
+					},
+					"use-collision-cells": {
+						"desc": "Usually improves performance, but can be slower with very long ranges.",
+						"name": "Use collision cells"
+					}
+				}
+			},
+			"tween": {
+				"name": "Tween",
+				"properties": {
+					"enabled": {
+						"desc": "Whether the behavior is initially enabled.",
+						"name": "Enabled"
+					}
+				}
+			},
+			"wrap": {
+				"name": "Wrap",
+				"properties": {
+					"wrap-to": {
+						"desc": "Whether to wrap to layout bounds or viewport bounds.",
+						"items": {
+							"layout": "Layout",
+							"viewport": "Viewport"
+						},
+						"name": "Wrap to"
+					}
+				}
+			}
+		},
+		"plugins": {
+			"_common": {
+				"name": "(unused)"
+			},
+			"advancedrandom": {
+				"debugger": {
+					"current-gradient": "Current gradient",
+					"current-probability-table": "Current probability table",
+					"gradients": "Advanced Random: Gradients",
+					"noise-lacunarity": "Noise lacunarity",
+					"noise-octaves": "Noise octaves",
+					"noise-persistence": "Noise persistence",
+					"permutation-table": "Permutation table",
+					"probability-tables": "Advanced Random: Probability Tables",
+					"replace-system": "Replaces system random",
+					"seed": "PRNG seed",
+					"title": "Advanced Random"
+				},
+				"name": "Advanced Random",
+				"properties": {
+					"seed": {
+						"desc": "The seed used by the random number generator.",
+						"name": "Seed"
+					},
+					"seeded-random": {
+						"desc": "Replace the system random with this plugin's seeded PRNG.",
+						"name": "Replace system random"
+					}
+				}
+			},
+			"advert": {
+				"name": "Mobile advert",
+				"properties": {
+					"application-id": {
+						"desc": "The application ID given to you by AdMob for the Android version of your app",
+						"name": "Android Application ID"
+					},
+					"debug-location": {
+						"desc": "Spoof a location for the user consent dialog - do not use in release",
+						"items": {
+							"disabled": "Disabled",
+							"eea": "Inside the EU",
+							"outside-eea": "Outside the EU"
+						},
+						"name": "Spoof location (debug)"
+					},
+					"ios-application-id": {
+						"desc": "The applcation ID given to you by AdMob for the iOS version of your app",
+						"name": "iOS Application ID"
+					},
+					"mobile-export": {
+						"desc": "Properties that only apply to mobile exports.",
+						"name": "Mobile export"
+					},
+					"privacy-policy": {
+						"desc": "A link to your application's privacy policy.",
+						"name": "Privacy policy URL"
+					},
+					"publisher-id": {
+						"desc": "The unique identifier for your AdMob account",
+						"name": "Publisher ID"
+					},
+					"show-ad-free-option": {
+						"desc": "On the user consent screen show the \"Purchase ad free\" option",
+						"name": "Show AD free option"
+					},
+					"show-consent": {
+						"desc": "Choose users from which locations should see the consent dialog.",
+						"items": {
+							"eu": "EU and Unknown",
+							"everywhere": "Everywhere",
+							"nowhere": "Nowhere"
+						},
+						"name": "Locations to show user consent dialog"
+					},
+					"show-on-start-up": {
+						"desc": "Wether to show the consent form on start up or not",
+						"name": "Show on start up"
+					},
+					"test-mode": {
+						"desc": "Only display testing ads",
+						"name": "Test mode"
+					},
+					"web-export": {
+						"desc": "Properties that only apply to web exports.",
+						"name": "Web export"
+					}
+				}
+			},
+			"ajax": {
+				"debugger": {
+					"last-data": "Last data",
+					"last-status-code": "Last status code",
+					"title": "AJAX"
+				},
+				"name": "AJAX"
+			},
+			"arr": {
+				"debugger": {
+					"array-data": {
+						"title": "Data"
+					},
+					"array-properties": {
+						"title": "Array"
+					}
+				},
+				"name": "Array",
+				"properties": {
+					"depth": {
+						"desc": "Initial number of elements on the Z axis. Note 0 will make the array empty.",
+						"name": "Depth"
+					},
+					"elements": {
+						"desc": "Initial number of elements in the array. If 0 the array is empty and will be unable to store any data.",
+						"name": "Elements"
+					},
+					"height": {
+						"desc": "Initial number of elements on the Y axis. Note 0 will make the array empty.",
+						"name": "Height"
+					},
+					"width": {
+						"desc": "Initial number of elements on the X axis.",
+						"name": "Width"
+					}
+				}
+			},
+			"audio": {
+				"debugger": {
+					"currently-playing": "Currently playing",
+					"currently-playing-count": "Count",
+					"tag-effects": "Tag effects"
+				},
+				"name": "Audio",
+				"properties": {
+					"distance-model": {
+						"desc": "The formula to determine volume reduction over distance.",
+						"items": {
+							"exponential": "Exponential",
+							"inverse": "Inverse",
+							"linear": "Linear"
+						},
+						"name": "Distance model"
+					},
+					"enable-multiple-tags": {
+						"desc": "Check to enable using multiple tags by separating them with spaces.",
+						"name": "Enable multiple tags"
+					},
+					"latency-hint": {
+						"desc": "Provide a hint to the audio engine about the preferred latency vs. power usage tradeoff.",
+						"items": {
+							"balanced": "Balanced",
+							"interactive": "Interactive",
+							"playback": "Playback"
+						},
+						"name": "Latency hint"
+					},
+					"listener-z-height": {
+						"desc": "The height of the listener above the layout, in pixels.",
+						"name": "Listener Z height"
+					},
+					"maximum-distance": {
+						"desc": "The distance, in pixels, after which volume is not reduced any further.",
+						"name": "Maximum distance"
+					},
+					"panning-model": {
+						"desc": "The panning model used to process positioned audio.",
+						"items": {
+							"equal-power": "Equal power",
+							"hrtf": "HRTF"
+						},
+						"name": "Panning model"
+					},
+					"play-in-background": {
+						"desc": "Keep playing audio even when the tab or app goes in to the background.",
+						"name": "Play in background"
+					},
+					"positioned-audio": {
+						"desc": "Properties affecting the playback of positioned sounds.",
+						"name": "Positioned audio"
+					},
+					"reference-distance": {
+						"desc": "A reference distance for reducing volume as sources move further away, in pixels.",
+						"name": "Reference distance"
+					},
+					"roll-off-factor": {
+						"desc": "How quickly the volume is reduced as sources move away.",
+						"name": "Roll-off factor"
+					},
+					"save-load": {
+						"desc": "What playback state to save when using the savegame system.",
+						"items": {
+							"all": "All",
+							"music-only": "Music only",
+							"none": "None",
+							"sounds-only": "Sounds only"
+						},
+						"name": "Save/load"
+					},
+					"timescale-audio": {
+						"desc": "Choose whether the audio playback rate changes with the time scale.",
+						"items": {
+							"off": "Off",
+							"sounds-and-music": "On (sounds and music)",
+							"sounds-only": "On (sounds only)"
+						},
+						"name": "Timescale audio"
+					}
+				}
+			},
+			"bbcmicrobit": {
+				"name": "BBC micro:bit",
+				"properties": {
+					"enable-accelerometer": {
+						"desc": "Whether to enable accelerometer readings.",
+						"name": "Enable accelerometer"
+					},
+					"enable-buttons": {
+						"desc": "Whether to enable button input readings.",
+						"name": "Enable buttons"
+					},
+					"enable-led-display": {
+						"desc": "Whether to enable updating the LED display.",
+						"name": "Enable LED display"
+					},
+					"enable-magnetometer": {
+						"desc": "Whether to enable magnetometer for bearing readings.",
+						"name": "Enable magnetometer"
+					},
+					"enable-temperature": {
+						"desc": "Whether to enable temperature readings.",
+						"name": "Enable temperature"
+					}
+				}
+			},
+			"binarydata": {
+				"debugger": {
+					"title": "Binary Data"
+				},
+				"name": "Binary Data",
+				"properties": {
+					"endian": {
+						"desc": "The endian used for reading and writing values.",
+						"items": {
+							"big": "Big",
+							"little": "Little"
+						},
+						"name": "Endian"
+					}
+				}
+			},
+			"bluetooth": {
+				"name": "Bluetooth"
+			},
+			"browser": {
+				"debugger": {
+					"is-fullscreen": "Is fullscreen",
+					"is-online": "Is online",
+					"user-agent": "User agent"
+				},
+				"name": "Browser"
+			},
+			"button": {
+				"name": "Button",
+				"properties": {
+					"auto-font-size": {
+						"desc": "Automatically set the font size depending on the layer scale.",
+						"name": "Auto font size"
+					},
+					"checked": {
+						"desc": "For checkboxes, the initial check state.",
+						"name": "Checked"
+					},
+					"class": {
+						"desc": "An optional class for the element allowing it to be styled with CSS.",
+						"name": "Class"
+					},
+					"enabled": {
+						"desc": "Whether the button is enabled or disabled on startup.",
+						"name": "Enabled"
+					},
+					"id": {
+						"desc": "An optional ID for the element allowing it to be styled with CSS.",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "Choose if the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"text": {
+						"desc": "The initial text for the button.",
+						"name": "Text"
+					},
+					"tooltip": {
+						"desc": "Display this text when hovering the mouse over the control.",
+						"name": "Tooltip"
+					},
+					"type": {
+						"desc": "The kind of button to use.",
+						"items": {
+							"button": "Button",
+							"checkbox": "Checkbox"
+						},
+						"name": "Type"
+					}
+				}
+			},
+			"c2websocket": {
+				"debugger": {
+					"is-open": "Is open",
+					"last-error": "Last error",
+					"last-message": "Last message",
+					"server-url": "Server URL"
+				},
+				"name": "WebSocket"
+			},
+			"camera3d": {
+				"debugger": {
+					"camera": {
+						"camera-x": "Camera X",
+						"camera-y": "Camera Y",
+						"camera-z": "Camera Z",
+						"look-x": "Look X",
+						"look-y": "Look Y",
+						"look-z": "Look Z",
+						"title": "Camera",
+						"x-rotation": "X rotation",
+						"y-rotation": "Y rotation"
+					},
+					"vectors": {
+						"forward-x": "Forward X",
+						"forward-y": "Forward Y",
+						"forward-z": "Forward Z",
+						"right-x": "Right X",
+						"right-y": "Right Y",
+						"right-z": "Right Z",
+						"title": "Vectors",
+						"up-x": "Up X",
+						"up-y": "Up Y",
+						"up-z": "Up Z"
+					},
+					"z-axis": {
+						"title": "Z axis"
+					}
+				},
+				"name": "3D camera",
+				"properties": {
+					"default-camera-z": {
+						"desc": "The camera Z position where a 2D view will display at 100% scale.",
+						"name": "Default camera Z"
+					},
+					"z-scale": {
+						"desc": "The scale factor for number of pixels per unit on the Z axis.",
+						"name": "Z scale"
+					}
+				}
+			},
+			"clipboard": {
+				"name": "Clipboard",
+				"properties": {}
+			},
+			"constructgameservices": {
+				"name": "Construct Game Services",
+				"properties": {
+					"game-id": {
+						"desc": "The initial game ID to set.",
+						"name": "Game ID"
+					},
+					"simulate-popup-blocked": {
+						"desc": "For testing purposes, act as if the first attempt to open a sign in popup window is blocked.",
+						"name": "Simulate popup blocked"
+					},
+					"target-language": {
+						"desc": "The langauge to return all translatable content in.",
+						"items": {
+							"": "Original",
+							"AR": "Arabic",
+							"BG": "Bulgarian",
+							"CS": "Czech",
+							"DA": "Danish",
+							"DE": "German",
+							"EL": "Greek",
+							"EN-GB": "English (British)",
+							"EN-US": "English (American)",
+							"ES": "Spanish",
+							"ES-419": "Spanish (Latin American)",
+							"ET": "Estonian",
+							"FI": "Finnish",
+							"FR": "French",
+							"HE": "Hebrew",
+							"HU": "Hungarian",
+							"ID": "Indonesian",
+							"IT": "Italian",
+							"JA": "Japanese",
+							"KO": "Korean",
+							"LT": "Lithuanian",
+							"LV": "Latvian",
+							"NB": "Norwegian Bokmål",
+							"NL": "Dutch",
+							"PL": "Polish",
+							"PT-BR": "Portuguese (Brazilian)",
+							"PT-PT": "Portuguese",
+							"RO": "Romanian",
+							"RU": "Russian",
+							"SK": "Slovak",
+							"SL": "Slovenian",
+							"SV": "Swedish",
+							"TH": "Thai",
+							"TR": "Turkish",
+							"UK": "Ukrainian",
+							"VI": "Vietnamese",
+							"ZH-HANS": "Chinese (simplified)",
+							"ZH-HANT": "Chinese (traditional)"
+						},
+						"name": "Target Language"
+					}
+				}
+			},
+			"cordovaiap": {
+				"name": "Mobile IAP",
+				"properties": {
+					"validator-url": {
+						"desc": "Optional URL of receipt validation service to verify purchases with.",
+						"name": "Validator URL"
+					}
+				}
+			},
+			"cryptography": {
+				"debugger": {},
+				"name": "Cryptography",
+				"properties": {}
+			},
+			"csv": {
+				"name": "CSV",
+				"properties": {}
+			},
+			"date": {
+				"name": "Date"
+			},
+			"dictionary": {
+				"debugger": {
+					"key-count": "Key count"
+				},
+				"name": "Dictionary",
+				"properties": {}
+			},
+			"drawingcanvas": {
+				"name": "Drawing canvas",
+				"properties": {
+					"antialiasing": {
+						"desc": "Enable antialiasing for better quality drawing. Requires WebGL 2+. If enabled, objects using background blending effects cannot be pasted.",
+						"items": {
+							"2x-msaa": "2x MSAA",
+							"4x-msaa": "4x MSAA",
+							"8x-msaa": "8x MSAA",
+							"off": "Off"
+						},
+						"name": "Antialiasing"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"origin": {
+						"desc": "Choose the location of the origin in the object.",
+						"items": {
+							"bottom": "Bottom",
+							"bottom-left": "Bottom-left",
+							"bottom-right": "Bottom-right",
+							"center": "Center",
+							"left": "Left",
+							"right": "Right",
+							"top": "Top",
+							"top-left": "Top-left",
+							"top-right": "Top-right"
+						},
+						"name": "Origin"
+					},
+					"resolution-mode": {
+						"desc": "Whether to automatically match the canvas resolution to the project, or always use a fixed resolution.",
+						"items": {
+							"auto": "Automatic",
+							"fixed": "Fixed"
+						},
+						"name": "Resolution mode"
+					}
+				}
+			},
+			"facebook": {
+				"name": "Facebook",
+				"properties": {
+					"app-id": {
+						"desc": "The App ID Facebook gives you after creating an app.",
+						"name": "App ID"
+					},
+					"app-secret": {
+						"desc": "The App Secret Facebook gives you after creating an app. Only necessary for submitting scores!",
+						"name": "App secret"
+					}
+				}
+			},
+			"filechooser": {
+				"name": "File chooser",
+				"properties": {
+					"accept": {
+						"desc": "File type filter, e.g. .png or image/*",
+						"name": "Accept"
+					},
+					"class": {
+						"desc": "An optional class for the element allowing it to be styled with CSS.",
+						"name": "Class"
+					},
+					"id": {
+						"desc": "An optional ID for the element allowing it to be styled with CSS.",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "Choose if the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"select": {
+						"desc": "Whether to allow single or multiple file selection.",
+						"items": {
+							"multiple": "Multiple",
+							"single": "Single"
+						},
+						"name": "Select"
+					}
+				}
+			},
+			"filesystem": {
+				"name": "File system",
+				"properties": {}
+			},
+			"flowchart": {
+				"name": "Flowchart controller"
+			},
+			"function": {
+				"name": "Function"
+			},
+			"gamecenter": {
+				"name": "Game Center",
+				"properties": {}
+			},
+			"gamepad": {
+				"debugger": {
+					"last-button": "Last button"
+				},
+				"name": "Gamepad",
+				"properties": {
+					"analog-deadzone": {
+						"desc": "Analog stick values (0-100) below this range are returned as zero to smooth the input.",
+						"name": "Analog deadzone"
+					}
+				}
+			},
+			"gamerecorder": {
+				"debugger": {
+					"is-recording": "Is recording",
+					"supported-audio-formats": "Supported audio formats",
+					"supported-video-formats": "Supported video formats"
+				},
+				"name": "Video recorder"
+			},
+			"geolocation": {
+				"name": "Geolocation"
+			},
+			"googleplay": {
+				"name": "Google Play",
+				"properties": {
+					"application-id": {
+						"desc": "The application ID from Google Play Developer Console. Required for Web.",
+						"name": "Application ID (web)"
+					},
+					"client-id": {
+						"desc": "The client ID from Google Play Developer Console.",
+						"name": "Client ID"
+					},
+					"game-id": {
+						"desc": "The application ID from Game services in the Google Play Console. Required for Android.",
+						"name": "Application ID (android)"
+					}
+				}
+			},
+			"htmlelement": {
+				"name": "HTML Element",
+				"properties": {
+					"allow-context-menu": {
+						"desc": "Whether to allow showing the browser default context menu for this element.",
+						"name": "Allow context menu"
+					},
+					"allow-text-selection": {
+						"desc": "Whether to allow the user to select text inside this element.",
+						"name": "Allow text selection"
+					},
+					"auto-font-size": {
+						"desc": "Automatically set the font size depending on the layer scale.",
+						"name": "Auto font size"
+					},
+					"class": {
+						"desc": "An optional class for the element allowing it to be styled with CSS.",
+						"name": "Class"
+					},
+					"content": {
+						"desc": "The initial content of the element.",
+						"name": "Content"
+					},
+					"content-type": {
+						"desc": "How to interpret the content string.",
+						"items": {
+							"bbcode": "BBCode",
+							"html": "HTML",
+							"plain-text": "Plain text"
+						},
+						"name": "Content type"
+					},
+					"default-background-color": {
+						"desc": "The initial CSS background-color style to set.",
+						"name": "Default background color"
+					},
+					"default-color": {
+						"desc": "The initial CSS color style to set.",
+						"name": "Default color"
+					},
+					"id": {
+						"desc": "An optional ID for the element allowing it to be styled with CSS.",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "Choose if the element is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"origin": {
+						"desc": "Choose the location of the origin in the object.",
+						"items": {
+							"bottom": "Bottom",
+							"bottom-left": "Bottom-left",
+							"bottom-right": "Bottom-right",
+							"center": "Center",
+							"left": "Left",
+							"right": "Right",
+							"top": "Top",
+							"top-left": "Top-left",
+							"top-right": "Top-right"
+						},
+						"name": "Origin"
+					},
+					"set-background-color": {
+						"desc": "Whether to set the CSS background-color style for the element.",
+						"name": "Set background color"
+					},
+					"set-color": {
+						"desc": "Whether to set the CSS color style for the element.",
+						"name": "Set color"
+					},
+					"stop-input-events": {
+						"desc": "Whether to stop input events on the element reaching the rest of the project.",
+						"items": {
+							"child-elements": "Child elements only",
+							"entire-element": "Entire element",
+							"no": "No"
+						},
+						"name": "Stop input events"
+					},
+					"style-attribute": {
+						"desc": "Additional initial content of the style attribute for this element.",
+						"name": "Style attribute"
+					},
+					"styling": {
+						"desc": "Properties affecting the element style.",
+						"name": "Styling"
+					},
+					"tag": {
+						"desc": "The tag name of the HTML element.",
+						"name": "Tag"
+					}
+				}
+			},
+			"iframe": {
+				"name": "iframe",
+				"properties": {
+					"allow": {
+						"desc": "An optional feature policy string for the 'allow' attribute, specifying what the displayed page is allowed to do.",
+						"name": "Allow"
+					},
+					"enable-sandbox": {
+						"desc": "Enable the 'sandbox' attribute for enhanced security when displaying the page.",
+						"name": "Enable sandbox"
+					},
+					"html": {
+						"desc": "A string of HTML to load in to the iframe. Only used if the URL is empty.",
+						"name": "HTML content"
+					},
+					"id": {
+						"desc": "An optional ID for the control allowing it to be styled with CSS from the page HTML.",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "Choose if the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"permissions": {
+						"desc": "Settings controlling the permissions of the displayed page.",
+						"name": "Permissions"
+					},
+					"sandbox": {
+						"desc": "The 'sandbox' attribute string with the list of sandboxing exceptions.",
+						"name": "Sandbox"
+					},
+					"url": {
+						"desc": "The URL to load in the iframe.",
+						"name": "URL"
+					}
+				}
+			},
+			"instantgames": {
+				"name": "Instant Games",
+				"properties": {
+					"navigation-menu": {
+						"desc": "The platform navigation menu version the game should use.",
+						"items": {
+							"bar": "Bar",
+							"floating": "Floating"
+						},
+						"name": "Navigation menu"
+					}
+				}
+			},
+			"internationalization": {
+				"name": "Internationalization",
+				"properties": {}
+			},
+			"json": {
+				"debugger": {
+					"data": "Instance data",
+					"path": "Current path",
+					"title": "JSON"
+				},
+				"name": "JSON",
+				"properties": {}
+			},
+			"keyboard": {
+				"debugger": {
+					"last-key-code": "Last key code",
+					"last-key-string": "Last key string",
+					"last-typed-key": "Last typed key"
+				},
+				"name": "Keyboard"
+			},
+			"list": {
+				"debugger": {
+					"item-count": "Item count",
+					"selected-index": "Selected index"
+				},
+				"name": "List",
+				"properties": {
+					"auto-font-size": {
+						"desc": "Automatically set the font size depending on the layer scale.",
+						"name": "Auto font size"
+					},
+					"class": {
+						"desc": "An optional class for the element allowing it to be styled with CSS.",
+						"name": "Class"
+					},
+					"enabled": {
+						"desc": "Whether the list is enabled or disabled on startup.",
+						"name": "Enabled"
+					},
+					"id": {
+						"desc": "An optional ID for the element allowing it to be styled with CSS.",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "Choose if the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"items": {
+						"desc": "The initial list of items, separated by lines.",
+						"name": "Items"
+					},
+					"multi-select": {
+						"desc": "For list boxes, whether to allow multiple selections.",
+						"name": "Multi-select"
+					},
+					"tooltip": {
+						"desc": "Display this text when hovering the mouse over the control.",
+						"name": "Tooltip"
+					},
+					"type": {
+						"desc": "The kind of control to use.",
+						"items": {
+							"dropdown-list": "Dropdown list",
+							"list-box": "List box"
+						},
+						"name": "Type"
+					}
+				}
+			},
+			"localstorage": {
+				"name": "Local storage",
+				"properties": {
+					"in-memory-only": {
+						"desc": "Enable to only store data in memory for the current pageload only.",
+						"name": "In-memory only"
+					}
+				}
+			},
+			"midi": {
+				"name": "MIDI"
+			},
+			"model3d": {
+				"debugger": {
+					"fit": "Fit",
+					"hierarchy": "Model hierarchy",
+					"isolate": "Isolated",
+					"legacy": "Legacy",
+					"looping": "Looping",
+					"origin-x-left": "Left",
+					"origin-x-middle": "Middle",
+					"origin-x-right": "Right",
+					"origin-y-bottom": "Bottom",
+					"origin-y-middle": "Middle",
+					"origin-y-top": "Top",
+					"origin-z-back": "Back",
+					"origin-z-front": "Front",
+					"origin-z-middle": "Middle",
+					"playback-controls": "Controls",
+					"playing": "Playing",
+					"progress": "Progress",
+					"stretch": "Stretch"
+				},
+				"name": "3D model",
+				"properties": {
+					"3d-model-object": {
+						"desc": "Pick a 3D model from the project.",
+						"name": "3D model"
+					},
+					"animation": {
+						"desc": "Pick one of the available animations.",
+						"name": "Animation"
+					},
+					"animation-properties": {
+						"desc": "Settings specific to 3D model animations.",
+						"name": "3D model animation properties"
+					},
+					"axis-scale-mode": {
+						"desc": "How the model transforms along with the instance. \"Fit\" mode preserves the model's proportions. \"Stretch\" mode scales each axis to fit in the instance bounds. \"Legacy\" mode exists for backwards compatibility, the other modes are prefered.",
+						"items": {
+							"fit": "Fit",
+							"legacy": "Legacy",
+							"stretch": "Stretch"
+						},
+						"name": "Transform mode"
+					},
+					"back-face-culling": {
+						"desc": "Check to ignore drawing polygon faces which are not visible.",
+						"name": "Back face culling"
+					},
+					"bounding-box": {
+						"desc": "Show the bounding box of the current mesh in the editor.",
+						"name": "Show bounding box"
+					},
+					"bounding-box-color": {
+						"desc": "The color of the bouding box in the editor.",
+						"name": "Bounding box color"
+					},
+					"editor-properties": {
+						"desc": "Settings which only affect how 3D model instances are used in the editor.",
+						"name": "3D model editor properties"
+					},
+					"enable-collisions": {
+						"desc": "Whether the object will register collision events or not.",
+						"name": "Enable collisions"
+					},
+					"initial-animation-progress": {
+						"desc": "The progress the current animation should start playing from.",
+						"name": "Initial animation progress"
+					},
+					"initially-playing": {
+						"desc": "Choose if the model should start playing the current animation immediately.",
+						"name": "Initially playing"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"live-preview": {
+						"desc": "Tick to run a live preview in the editor.",
+						"name": "Preview"
+					},
+					"loop": {
+						"desc": "Check so they animation loops.",
+						"name": "Loop"
+					},
+					"mesh-render-mode": {
+						"desc": "How to draw individual meshes: either following the hierarchy in the model file or in isolation.",
+						"items": {
+							"hierarchy": "Model hierarchy",
+							"isolate": "Isolate"
+						},
+						"name": "Render mode"
+					},
+					"meshes": {
+						"desc": "Pick any of the available meshes to draw.",
+						"name": "Meshes"
+					},
+					"origin": {
+						"desc": "The origin of the model.",
+						"name": "Model origin",
+						"separator": ", "
+					},
+					"position": {
+						"desc": "The offset of the model.",
+						"name": "Model offset",
+						"separator": ", "
+					},
+					"scale": {
+						"desc": "The scale of the model.",
+						"name": "Model scale",
+						"separator": ", "
+					},
+					"x-origin": {
+						"desc": "Origin on the X axis",
+						"items": {
+							"left": "Left",
+							"middle": "Middle",
+							"right": "Right"
+						},
+						"name": "X Origin"
+					},
+					"x-position": {
+						"desc": "Offset on the X axis.",
+						"name": "X offset"
+					},
+					"x-scale": {
+						"desc": "Scale on the X axis.",
+						"name": "X Scale"
+					},
+					"y-origin": {
+						"desc": "Origin on the Y axis",
+						"items": {
+							"bottom": "Bottom",
+							"middle": "Middle",
+							"top": "Top"
+						},
+						"name": "Y Origin"
+					},
+					"y-position": {
+						"desc": "Offset on the Y axis.",
+						"name": "Y offset"
+					},
+					"y-scale": {
+						"desc": "Scale on the Y axis.",
+						"name": "Y Scale"
+					},
+					"z-origin": {
+						"desc": "Origin on the Z axis",
+						"items": {
+							"back": "Back",
+							"front": "Front",
+							"middle": "Middle"
+						},
+						"name": "Z Origin"
+					},
+					"z-position": {
+						"desc": "Offset on the Z axis.",
+						"name": "Z offset"
+					},
+					"z-scale": {
+						"desc": "Scale on the Z axis.",
+						"name": "Z Scale"
+					}
+				}
+			},
+			"mouse": {
+				"debugger": {
+					"absolute-position": "Absolute position",
+					"button-4": "Button 4",
+					"button-5": "Button 5",
+					"left-button": "Left button",
+					"middle-button": "Middle button",
+					"position-on-each-layer": "Position on each layer",
+					"right-button": "Right button"
+				},
+				"name": "Mouse"
+			},
+			"multiplayer": {
+				"debugger": {
+					"multiplayer": {
+						"game": "Game",
+						"host-alias": "Host alias",
+						"host-id": "Host ID",
+						"instance": "Instance",
+						"my-alias": "My alias",
+						"my-id": "My ID",
+						"room": "Room",
+						"title": "Multiplayer"
+					},
+					"peers": {
+						"title": "Peers"
+					},
+					"signalling": {
+						"motd": "MOTD",
+						"name": "Name",
+						"operator": "Operator",
+						"title": "Signalling",
+						"url": "URL",
+						"version": "Version"
+					},
+					"statistics": {
+						"inbound-bandwidth": "Inbound bandwidth",
+						"inbound-compression": "Inbound compression",
+						"inbound-count": "Inbound count",
+						"inbound-decompressed-bandwidth": "Inbound decompressed bandwidth",
+						"outbound-bandwidth": "Outbound bandwidth",
+						"outbound-compression": "Outbound compression",
+						"outbound-count": "Outbound count",
+						"outbound-decompressed-bandwidth": "Outbound decompressed bandwidth",
+						"title": "Statistics"
+					}
+				},
+				"name": "Multiplayer"
+			},
+			"ninepatch": {
+				"name": "9-patch",
+				"properties": {
+					"bottom-margin": {
+						"desc": "Bottom border margin on the image in pixels.",
+						"name": "Bottom margin"
+					},
+					"edges": {
+						"desc": "Choose whether to tile or stretch the edges.",
+						"items": {
+							"stretch": "Stretch",
+							"tile": "Tile"
+						},
+						"name": "Edges"
+					},
+					"edit-image": {
+						"desc": "Click to edit the object's image.",
+						"link-text": "Edit",
+						"name": "Image"
+					},
+					"fill": {
+						"desc": "Choose how to display the inside of the box.",
+						"items": {
+							"stretch": "Stretch",
+							"tile": "Tile",
+							"transparent": "Transparent"
+						},
+						"name": "Fill"
+					},
+					"image-scale-x": {
+						"desc": "The X scale of the image within the object.",
+						"name": "Image scale X"
+					},
+					"image-scale-y": {
+						"desc": "The Y scale of the image within the object.",
+						"name": "Image scale Y"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"left-margin": {
+						"desc": "Left border margin on the image in pixels.",
+						"name": "Left margin"
+					},
+					"origin": {
+						"desc": "Choose the location of the origin in the object.",
+						"items": {
+							"bottom": "Bottom",
+							"bottom-left": "Bottom-left",
+							"bottom-right": "Bottom-right",
+							"center": "Center",
+							"left": "Left",
+							"right": "Right",
+							"top": "Top",
+							"top-left": "Top-left",
+							"top-right": "Top-right"
+						},
+						"name": "Origin"
+					},
+					"right-margin": {
+						"desc": "Right border margin on the image in pixels.",
+						"name": "Right margin"
+					},
+					"seams": {
+						"desc": "Overlap seams or meet exact. 'Overlap' is seamless unless opacity used.",
+						"items": {
+							"exact": "Exact",
+							"overlap": "Overlap"
+						},
+						"name": "Seams"
+					},
+					"top-margin": {
+						"desc": "Top border margin on the image in pixels.",
+						"name": "Top margin"
+					}
+				}
+			},
+			"nodewebkit": {
+				"debugger": {
+					"app-folder": "App folder",
+					"project-files-folder": "Project files folder",
+					"user-folder": "User folder"
+				},
+				"name": "NW.js"
+			},
+			"particles": {
+				"debugger": {
+					"is-spraying": "Is spraying",
+					"particle-count": "Particle count"
+				},
+				"name": "Particles",
+				"properties": {
+					"acceleration": {
+						"desc": "Acceleration of each particle, in pixels per second per second.",
+						"name": "Acceleration"
+					},
+					"angle-randomiser": {
+						"desc": "A random angle deflection to apply over time.",
+						"name": "Angle randomiser"
+					},
+					"destroy-mode": {
+						"desc": "Choose when each individual particle is destroyed.",
+						"items": {
+							"fade-to-invisible": "Fade to invisible",
+							"particle-stopped": "Particle stopped",
+							"timeout-expired": "Timeout expired"
+						},
+						"name": "Destroy mode"
+					},
+					"edit-image": {
+						"desc": "Click to edit the particle image.",
+						"link-text": "Edit",
+						"name": "Image"
+					},
+					"gravity": {
+						"desc": "Force of gravity, in pixels per second per second.",
+						"name": "Gravity"
+					},
+					"grow-rate": {
+						"desc": "Rate the size changes over time, in pixels per second.",
+						"name": "Grow rate"
+					},
+					"grow-rate-randomiser": {
+						"desc": "Random addition to particle grow rate on creation.",
+						"name": "Grow rate randomiser"
+					},
+					"initial-particle-properties": {
+						"desc": "Properties affecting the creation of each particle.",
+						"name": "Initial particle properties"
+					},
+					"initial-speed-randomiser": {
+						"desc": "Random addition to particle speed on creation.",
+						"name": "Speed randomiser"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"life-speed-randomiser": {
+						"desc": "A random speed adjustment to apply over time.",
+						"name": "Speed randomiser"
+					},
+					"live-preview": {
+						"desc": "Tick to run a live preview in the editor.",
+						"name": "Preview"
+					},
+					"object": {
+						"desc": "Optionally choose an object to spawn as particles instead of drawing the particle image.",
+						"name": "Object"
+					},
+					"opacity": {
+						"desc": "Initial opacity of each particle, from 0 (transparent) to 100 (opaque).",
+						"name": "Opacity"
+					},
+					"opacity-randomiser": {
+						"desc": "A random opacity adjustment to apply over time.",
+						"name": "Opacity randomiser"
+					},
+					"particle-lifetime-properties": {
+						"desc": "Properties affecting the behavior of each particle.",
+						"name": "Particle lifetime properties"
+					},
+					"rate": {
+						"desc": "Number of particles to create per second, or total for one-shot.",
+						"name": "Rate"
+					},
+					"size": {
+						"desc": "Initial size of each particle, in pixels.",
+						"name": "Size"
+					},
+					"size-randomiser": {
+						"desc": "Random addition to particle size on creation.",
+						"name": "Size randomiser"
+					},
+					"speed": {
+						"desc": "Initial particle speed, in pixels per second.",
+						"name": "Speed"
+					},
+					"spray-cone": {
+						"desc": "Number of degrees through which particles are created.",
+						"name": "Spray cone"
+					},
+					"timeout": {
+						"desc": "Time in seconds for timeout or fade to invisible (depending on destroy mode).",
+						"name": "Timeout"
+					},
+					"type": {
+						"desc": "Either a spray or a one-shot blast of particles.",
+						"items": {
+							"continuous-spray": "Continuous spray",
+							"one-shot": "One-shot"
+						},
+						"name": "Type"
+					},
+					"x-randomiser": {
+						"desc": "Random X co-ordinate offset on creation.",
+						"name": "X randomiser"
+					},
+					"y-randomiser": {
+						"desc": "Random Y co-ordinate offset on creation.",
+						"name": "Y randomiser"
+					}
+				}
+			},
+			"platforminfo": {
+				"name": "Platform info"
+			},
+			"progressbar": {
+				"name": "Progress bar",
+				"properties": {
+					"class": {
+						"desc": "An optional class for the element allowing it to be styled with CSS.",
+						"name": "Class"
+					},
+					"id": {
+						"desc": "An optional ID for the element allowing it to be styled with CSS.",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "Choose if the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"maximum": {
+						"desc": "The maximum value of the progress bar. Set to 0 for an indeterminate progress bar.",
+						"name": "Maximum"
+					},
+					"tooltip": {
+						"desc": "Display this text when hovering the mouse over the control.",
+						"name": "Tooltip"
+					},
+					"value": {
+						"desc": "Initial value of the progress bar.",
+						"name": "Value"
+					}
+				}
+			},
+			"pubcenter": {
+				"name": "pubCenter",
+				"properties": {
+					"ad-unit-id": {
+						"desc": "Ad unit ID from Microsoft PubCenter.",
+						"name": "Ad unit ID"
+					},
+					"application-id": {
+						"desc": "Application ID from Microsoft PubCenter.",
+						"name": "Application ID"
+					}
+				}
+			},
+			"qrcode": {
+				"name": "QR code",
+				"properties": {
+					"correction-level": {
+						"desc": "The error correction level. Higher levels include more error correction data for reliability.",
+						"items": {
+							"h": "High (30%)",
+							"l": "Low (7%)",
+							"m": "Medium (15%)",
+							"q": "Quartile (25%)"
+						},
+						"name": "Correction level"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"text": {
+						"desc": "Text content of the QR code.",
+						"name": "Text"
+					}
+				}
+			},
+			"scirraarcadev4": {
+				"name": "Scirra Arcade",
+				"properties": {}
+			},
+			"shadowlight": {
+				"name": "Shadow light",
+				"properties": {
+					"cast-from": {
+						"desc": "Decide which objects to cast shadows from depending on their tags.",
+						"items": {
+							"all": "All",
+							"different-tag": "Different tag",
+							"same-tag": "Same tag"
+						},
+						"name": "Cast from"
+					},
+					"light-height": {
+						"desc": "Initial height of the light, in pixels.",
+						"name": "Light height"
+					},
+					"light-radius": {
+						"desc": "Cast soft shadow edges with a radius. Must use height of 0.",
+						"name": "Light radius"
+					},
+					"live-preview": {
+						"desc": "Tick to run a live preview in the editor.",
+						"name": "Preview"
+					},
+					"shadow-color": {
+						"desc": "Color of the shadows the light casts.",
+						"name": "Shadow color"
+					},
+					"tag": {
+						"desc": "A tag to identify which objects to cast a shadow from.",
+						"name": "Tag"
+					}
+				}
+			},
+			"shape3d": {
+				"debugger": {},
+				"name": "3D shape",
+				"properties": {
+					"back-face-culling": {
+						"desc": "Automatically hides faces that are pointing away from the camera.",
+						"name": "Back face culling"
+					},
+					"edit-images": {
+						"desc": "Click to edit the images used for each face of the shape.",
+						"link-text": "Edit",
+						"name": "Images"
+					},
+					"face-back": {
+						"desc": "Choose whether the back face is visible.",
+						"name": "Back face"
+					},
+					"face-bottom": {
+						"desc": "Choose whether the bottom face is visible.",
+						"name": "Bottom face"
+					},
+					"face-front": {
+						"desc": "Choose whether the front face is visible.",
+						"name": "Front face"
+					},
+					"face-left": {
+						"desc": "Choose whether the left face is visible.",
+						"name": "Left face"
+					},
+					"face-right": {
+						"desc": "Choose whether the right face is visible.",
+						"name": "Right face"
+					},
+					"face-top": {
+						"desc": "Choose whether the top face is visible.",
+						"name": "Top face"
+					},
+					"face-visibility": {
+						"desc": "Choose which faces of the shape are visible.",
+						"name": "Face visibility"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"object-back": {
+						"desc": "Optionally choose an object to use as the image for the back face. An instance of the object must be in the same layout.",
+						"name": "Back face object"
+					},
+					"object-bottom": {
+						"desc": "Optionally choose an object to use as the image for the bottom face. An instance of the object must be in the same layout.",
+						"name": "Bottom face object"
+					},
+					"object-front": {
+						"desc": "Optionally choose an object to use as the image for the front face. An instance of the object must be in the same layout.",
+						"name": "Front face object"
+					},
+					"object-left": {
+						"desc": "Optionally choose an object to use as the image for the left face. An instance of the object must be in the same layout.",
+						"name": "Left face object"
+					},
+					"object-right": {
+						"desc": "Optionally choose an object to use as the image for the right face. An instance of the object must be in the same layout.",
+						"name": "Right face object"
+					},
+					"object-top": {
+						"desc": "Optionally choose an object to use as the image for the top face. An instance of the object must be in the same layout.",
+						"name": "Top face object"
+					},
+					"shape": {
+						"desc": "The 3D shape primitive to use. Note not all shapes use all six faces.",
+						"items": {
+							"box": "Box",
+							"corner": "Corner (out)",
+							"corner-in": "Corner (in)",
+							"prism": "Prism",
+							"pyramid": "Pyramid",
+							"wedge": "Wedge"
+						},
+						"name": "Shape"
+					},
+					"use-object-image-for-faces": {
+						"desc": "Optionally choose another object to use as the image for each face of the shape. An instance of the object must be in the same layout.",
+						"name": "Use object image for faces"
+					},
+					"z-origin": {
+						"desc": "Where the object origin is on the Z axis.",
+						"items": {
+							"back": "Back",
+							"front": "Front",
+							"middle": "Middle"
+						},
+						"name": "Z origin"
+					},
+					"z-tiling-factor": {
+						"desc": "When using Tiled Backgrounds or 9-Patches for faces, a scale factor to apply for image repetition on the Z axis.",
+						"name": "Z tiling factor"
+					}
+				}
+			},
+			"share": {
+				"name": "Share",
+				"properties": {}
+			},
+			"sliderbar": {
+				"name": "Slider bar",
+				"properties": {
+					"class": {
+						"desc": "An optional class for the element allowing it to be styled with CSS.",
+						"name": "Class"
+					},
+					"enabled": {
+						"desc": "Whether the slider is enabled or disabled on startup.",
+						"name": "Enabled"
+					},
+					"id": {
+						"desc": "An optional ID for the element allowing it to be styled with CSS.",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "Choose if the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"maximum": {
+						"desc": "The maximum value of the slider bar.",
+						"name": "Maximum"
+					},
+					"minimum": {
+						"desc": "The minimum value of the slider bar.",
+						"name": "Minimum"
+					},
+					"step": {
+						"desc": "The step value, giving the increments along the slider.",
+						"name": "Step"
+					},
+					"tooltip": {
+						"desc": "Display this text when hovering the mouse over the control.",
+						"name": "Tooltip"
+					},
+					"value": {
+						"desc": "Initial value of the slider bar.",
+						"name": "Value"
+					}
+				}
+			},
+			"speechrecognition": {
+				"debugger": {
+					"final-transcript": "Final transcript",
+					"interim-transcript": "Interim transcript",
+					"is-recognising-speech": "Is recognizing speech",
+					"last-error": "Last error"
+				},
+				"name": "Speech recognition"
+			},
+			"speechsynthesis": {
+				"debugger": {
+					"voices": "Voices"
+				},
+				"name": "Speech synthesis"
+			},
+			"sprite": {
+				"debugger": {
+					"animation-properties": {
+						"current-animation": "Current animation",
+						"current-frame": "Current frame",
+						"is-playing": "Is playing",
+						"repeats": "Repeats",
+						"speed": "Speed",
+						"title": "Sprite animation"
+					}
+				},
+				"name": "Sprite",
+				"properties": {
+					"edit-animations": {
+						"desc": "Click to edit the object's animations.",
+						"link-text": "Edit",
+						"name": "Animations"
+					},
+					"enable-collisions": {
+						"desc": "Whether the object will register collision events or not.",
+						"name": "Enable collisions"
+					},
+					"initial-animation": {
+						"desc": "The initial animation showing.",
+						"name": "Initial animation"
+					},
+					"initial-frame": {
+						"desc": "The initial animation frame showing.",
+						"name": "Initial frame"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"live-preview": {
+						"desc": "Tick to run a live preview in the editor.",
+						"name": "Preview"
+					},
+					"make-original-size": {
+						"desc": "Click to set the object to the same size as its image.",
+						"link-text": "Make 1:1",
+						"name": "Size"
+					}
+				}
+			},
+			"spritefont2": {
+				"debugger": {
+					"text-height": "Text height",
+					"text-width": "Text width"
+				},
+				"name": "Sprite font",
+				"properties": {
+					"accessibility": {
+						"desc": "Settings for accessibility features.",
+						"name": "Accessibility"
+					},
+					"character-height": {
+						"desc": "Height of each cell in the image.",
+						"name": "Character height"
+					},
+					"character-set": {
+						"desc": "List of characters in the spritefont image, starting in the top-left.",
+						"name": "Character set"
+					},
+					"character-spacing": {
+						"desc": "Extra pixel width to add between displayed characters.",
+						"name": "Character spacing"
+					},
+					"character-width": {
+						"desc": "Width of each cell in the image.",
+						"name": "Character width"
+					},
+					"edit-image": {
+						"desc": "Click to edit the object's spritefont.",
+						"link-text": "Edit",
+						"name": "Sprite font"
+					},
+					"enable-bbcode": {
+						"desc": "Allow use of BBCode tags in the text, e.g. [scale=2]big text[/scale].",
+						"name": "Enable BBCode"
+					},
+					"horizontal-alignment": {
+						"desc": "Horizontal alignment of the text inside its bounding box.",
+						"items": {
+							"center": "Center",
+							"left": "Left",
+							"right": "Right"
+						},
+						"name": "Horizontal alignment"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"line-height": {
+						"desc": "Offset to the default line height, in pixels. 0 is default line height.",
+						"name": "Line height"
+					},
+					"origin": {
+						"desc": "Choose the location of the origin in the object.",
+						"items": {
+							"bottom": "Bottom",
+							"bottom-left": "Bottom-left",
+							"bottom-right": "Bottom-right",
+							"center": "Center",
+							"left": "Left",
+							"right": "Right",
+							"top": "Top",
+							"top-left": "Top-left",
+							"top-right": "Top-right"
+						},
+						"name": "Origin"
+					},
+					"read-aloud": {
+						"desc": "Check for text to be read aloud when it appears or changes while using a screen reader.",
+						"name": "Read aloud"
+					},
+					"scale": {
+						"desc": "Amount to scale the drawn text by.",
+						"name": "Scale"
+					},
+					"spacing-data": {
+						"desc": "Data describing individual character widths in JSON format.",
+						"name": "Spacing data"
+					},
+					"text": {
+						"desc": "The initial text to display.",
+						"initial-value": "Text",
+						"name": "Text"
+					},
+					"vertical-alignment": {
+						"desc": "Vertical alignment of the text inside its bounding box.",
+						"items": {
+							"bottom": "Bottom",
+							"center": "Center",
+							"top": "Top"
+						},
+						"name": "Vertical alignment"
+					},
+					"wrapping": {
+						"desc": "Wrap text by space-separated words or by character.",
+						"items": {
+							"character": "Character",
+							"cjk": "CJK",
+							"word": "Word"
+						},
+						"name": "Wrapping"
+					}
+				}
+			},
+			"svgpicture": {
+				"name": "SVG Picture",
+				"properties": {
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"origin": {
+						"desc": "Choose the location of the origin in the object.",
+						"items": {
+							"bottom": "Bottom",
+							"bottom-left": "Bottom-left",
+							"bottom-right": "Bottom-right",
+							"center": "Center",
+							"left": "Left",
+							"right": "Right",
+							"top": "Top",
+							"top-left": "Top-left",
+							"top-right": "Top-right"
+						},
+						"name": "Origin"
+					},
+					"svg-file": {
+						"desc": "Pick an SVG file imported to the project to display.",
+						"name": "SVG file"
+					},
+					"view-image": {
+						"desc": "Click to view the object's image file.",
+						"link-text": "View",
+						"name": "Image"
+					}
+				}
+			},
+			"system": {
+				"name": "System"
+			},
+			"text": {
+				"debugger": {
+					"text-height": "Text height",
+					"text-width": "Text width"
+				},
+				"name": "Text",
+				"properties": {
+					"accessibility": {
+						"desc": "Settings for accessibility features.",
+						"name": "Accessibility"
+					},
+					"bold": {
+						"desc": "Display the font in a bold weight.",
+						"name": "Bold"
+					},
+					"color": {
+						"desc": "The color of the text to display.",
+						"name": "Color"
+					},
+					"enable-bbcode": {
+						"desc": "Allow use of BBCode tags in the text, e.g. [b]bold text[/b].",
+						"name": "Enable BBCode"
+					},
+					"font": {
+						"desc": "The name of the font to display the text with.",
+						"name": "Font"
+					},
+					"horizontal-alignment": {
+						"desc": "Horizontal alignment of the text inside its bounding box.",
+						"items": {
+							"center": "Center",
+							"left": "Left",
+							"right": "Right"
+						},
+						"name": "Horizontal alignment"
+					},
+					"icon-set": {
+						"desc": "When BBcode is enabled, a Sprite object with an icon per animation frame to use for icon tags.",
+						"name": "Icon set"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"italic": {
+						"desc": "Display the font in a slanted italic style.",
+						"name": "Italic"
+					},
+					"line-height": {
+						"desc": "Offset to the default line height, in pixels. 0 is default line height.",
+						"name": "Line height"
+					},
+					"origin": {
+						"desc": "Choose the location of the origin in the object.",
+						"items": {
+							"bottom": "Bottom",
+							"bottom-left": "Bottom-left",
+							"bottom-right": "Bottom-right",
+							"center": "Center",
+							"left": "Left",
+							"right": "Right",
+							"top": "Top",
+							"top-left": "Top-left",
+							"top-right": "Top-right"
+						},
+						"name": "Origin"
+					},
+					"read-aloud": {
+						"desc": "Check for text to be read aloud when it appears or changes while using a screen reader.",
+						"name": "Read aloud"
+					},
+					"size": {
+						"desc": "The size of the text to display, in points (pt).",
+						"name": "Size"
+					},
+					"text": {
+						"desc": "The initial text to display.",
+						"initial-value": "Text",
+						"name": "Text"
+					},
+					"text-direction": {
+						"desc": "The direction of the text flow.",
+						"items": {
+							"auto": "Auto",
+							"ltr": "Left-to-right",
+							"rtl": "Right-to-left"
+						},
+						"name": "Text direction"
+					},
+					"vertical-alignment": {
+						"desc": "Vertical alignment of the text inside its bounding box.",
+						"items": {
+							"bottom": "Bottom",
+							"center": "Center",
+							"top": "Top"
+						},
+						"name": "Vertical alignment"
+					},
+					"wrapping": {
+						"desc": "Wrap text by space-separated words or by character.",
+						"items": {
+							"character": "Character",
+							"cjk": "CJK",
+							"word": "Word"
+						},
+						"name": "Wrapping"
+					}
+				}
+			},
+			"textbox": {
+				"name": "Text input",
+				"properties": {
+					"auto-font-size": {
+						"desc": "Automatically set the font size depending on the layer scale.",
+						"name": "Auto font size"
+					},
+					"class": {
+						"desc": "An optional class for the element allowing it to be styled with CSS.",
+						"name": "Class"
+					},
+					"enabled": {
+						"desc": "Whether the control is enabled or disabled on startup.",
+						"name": "Enabled"
+					},
+					"id": {
+						"desc": "An optional ID for the element allowing it to be styled with CSS.",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "Choose if the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"placeholder": {
+						"desc": "A tip to display when the text input is empty.",
+						"name": "Placeholder"
+					},
+					"read-only": {
+						"desc": "Whether the text input is read-only on startup.",
+						"name": "Read-only"
+					},
+					"spell-check": {
+						"desc": "Allow the browser to spell-check the text input, if supported.",
+						"name": "Spell check"
+					},
+					"text": {
+						"desc": "The initial text for the text input.",
+						"name": "Text"
+					},
+					"tooltip": {
+						"desc": "Display this text when hovering the mouse over the control.",
+						"name": "Tooltip"
+					},
+					"type": {
+						"desc": "The kind of text entered in to the text input, which also affects on-screen keyboards on touch devices.",
+						"items": {
+							"email": "Email",
+							"number": "Number",
+							"password": "Password",
+							"search": "Search",
+							"telephone-number": "Telephone number",
+							"text": "Text",
+							"textarea": "Textarea",
+							"url": "URL"
+						},
+						"name": "Type"
+					}
+				}
+			},
+			"tiledbg": {
+				"name": "Tiled Background",
+				"properties": {
+					"angle-random": {
+						"desc": "Amount of rotation randomization.",
+						"name": "Angle random"
+					},
+					"blend-margin-x": {
+						"desc": "Percentage of tile width that fades to adjacent tile.",
+						"name": "Blend margin X"
+					},
+					"blend-margin-y": {
+						"desc": "Percentage of tile height that fades to adjacent tile.",
+						"name": "Blend margin Y"
+					},
+					"edit-image": {
+						"desc": "Click to edit the object's image.",
+						"link-text": "Edit",
+						"name": "Image"
+					},
+					"enable-tile-randomization": {
+						"desc": "Whether to enable random offsets and orientation for tiles to break up repetitive patterns.",
+						"name": "Enable tile randomization"
+					},
+					"image-angle": {
+						"desc": "The angle of the image within the object, in degrees.",
+						"name": "Image angle"
+					},
+					"image-offset-x": {
+						"desc": "The X offset of the image within the object, in pixels.",
+						"name": "Image offset X"
+					},
+					"image-offset-y": {
+						"desc": "The Y offset of the image within the object, in pixels.",
+						"name": "Image offset Y"
+					},
+					"image-scale-x": {
+						"desc": "The X scale of the image within the object.",
+						"name": "Image scale X"
+					},
+					"image-scale-y": {
+						"desc": "The Y scale of the image within the object.",
+						"name": "Image scale Y"
+					},
+					"image-transform": {
+						"desc": "Adjust how the tiled image is displayed within the object.",
+						"name": "Image transform"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"origin": {
+						"desc": "Choose the location of the origin in the object.",
+						"items": {
+							"bottom": "Bottom",
+							"bottom-left": "Bottom-left",
+							"bottom-right": "Bottom-right",
+							"center": "Center",
+							"left": "Left",
+							"right": "Right",
+							"top": "Top",
+							"top-left": "Top-left",
+							"top-right": "Top-right"
+						},
+						"name": "Origin"
+					},
+					"tile-randomization": {
+						"desc": "Break up repetitive patterns by applying a random offset and orientation for each tile and blending the edges.",
+						"name": "Tile randomization"
+					},
+					"wrap-horizontal": {
+						"desc": "How the image wraps horizontally. Note: this applies to all instances of this object type.",
+						"items": {
+							"clamp-to-edge": "Clamp to edge",
+							"mirror-repeat": "Mirrored repeat",
+							"repeat": "Repeat"
+						},
+						"name": "Wrap horizontal"
+					},
+					"wrap-vertical": {
+						"desc": "How the image wraps vertically. Note: this applies to all instances of this object type.",
+						"items": {
+							"clamp-to-edge": "Clamp to edge",
+							"mirror-repeat": "Mirrored repeat",
+							"repeat": "Repeat"
+						},
+						"name": "Wrap vertical"
+					},
+					"x-random": {
+						"desc": "Amount of horizontal shift randomization.",
+						"name": "X random"
+					},
+					"y-random": {
+						"desc": "Amount of vertical shift randomization.",
+						"name": "Y random"
+					}
+				}
+			},
+			"tilemap": {
+				"name": "Tilemap",
+				"properties": {
+					"drawing-mode": {
+						"desc": "Order in which tiles are drawn",
+						"items": {
+							"bottom-to-left": "Bottom to left",
+							"bottom-to-right": "Bottom to right",
+							"top-to-left": "Top to left",
+							"top-to-right": "Top to right"
+						},
+						"name": "Drawing mode"
+					},
+					"edit-image": {
+						"desc": "Click to edit the tilemap image.",
+						"link-text": "Edit",
+						"name": "Image"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"seamless-mode": {
+						"desc": "Use a slower but seamless rendering method.",
+						"name": "Seamless mode"
+					},
+					"tile-height": {
+						"desc": "Height of each tile, in pixels.",
+						"name": "Tile height"
+					},
+					"tile-width": {
+						"desc": "Width of each tile, in pixels.",
+						"name": "Tile width"
+					},
+					"tile-x-drawing-offset": {
+						"desc": "Horizontal offset applied to each tile when it is drawn",
+						"name": "Tile X drawing offset"
+					},
+					"tile-x-offset": {
+						"desc": "X offset in image of first tile.",
+						"name": "Tile X offset"
+					},
+					"tile-x-spacing": {
+						"desc": "Horizontal gap in pixels between each tile.",
+						"name": "Tile X spacing"
+					},
+					"tile-y-drawing-offset": {
+						"desc": "Vertical offset applied to each tile when it is drawn",
+						"name": "Tile Y drawing offset"
+					},
+					"tile-y-offset": {
+						"desc": "Y offset in image of first tile.",
+						"name": "Tile Y offset"
+					},
+					"tile-y-spacing": {
+						"desc": "Vertical gap in pixels between each tile.",
+						"name": "Tile Y spacing"
+					}
+				}
+			},
+			"timeline": {
+				"name": "Timeline controller"
+			},
+			"touch": {
+				"debugger": {
+					"touches": "Touches"
+				},
+				"name": "Touch",
+				"properties": {
+					"use-mouse-input": {
+						"desc": "Use mouse clicks as single-touch input (useful for testing).",
+						"name": "Use mouse input"
+					}
+				}
+			},
+			"twitter": {
+				"name": "Twitter",
+				"properties": {
+					"count": {
+						"desc": "Whether to show a count for the share or follow buttons.",
+						"items": {
+							"horizontal": "Horizontal",
+							"none": "None",
+							"vertical": "Vertical"
+						},
+						"name": "Count"
+					},
+					"hashtags": {
+						"desc": "Comma-separated extra hashtags to append without #, e.g. construct3,html5",
+						"name": "Hashtags"
+					},
+					"initially-visible": {
+						"desc": "Choose if the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"language": {
+						"desc": "An ISO 639-1 language code to use for the button.",
+						"initial-value": "en",
+						"name": "Language"
+					},
+					"share": {
+						"desc": "The screen name, URL or hashtag to be used with the button (without the @ or #).",
+						"name": "Share"
+					},
+					"size": {
+						"desc": "Whether to use medium or large style.",
+						"items": {
+							"large": "Large",
+							"medium": "Medium"
+						},
+						"name": "Size"
+					},
+					"text": {
+						"desc": "The text to use in the tweet, if applicable to the button type.",
+						"initial-value": "My tweet text",
+						"name": "Text"
+					},
+					"type": {
+						"desc": "The kind of button to create.",
+						"items": {
+							"follow": "Follow",
+							"hashtag": "Hashtag",
+							"mention": "Mention",
+							"share": "Share"
+						},
+						"name": "Type"
+					},
+					"via": {
+						"desc": "A screen name to report the tweet as 'via', if applicable (without @).",
+						"name": "Via"
+					}
+				}
+			},
+			"usermedia": {
+				"name": "User Media",
+				"properties": {}
+			},
+			"video": {
+				"name": "Video",
+				"properties": {
+					"autoplay": {
+						"desc": "Whether to do nothing, start downloading, or start playing upon creation (if supported).",
+						"items": {
+							"no": "No",
+							"preload": "Preload",
+							"yes": "Yes"
+						},
+						"name": "Autoplay"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"play-in-background": {
+						"desc": "Keep playing video even when the tab or app goes in to the background.",
+						"name": "Play in background"
+					},
+					"primary-format": {
+						"desc": "The container format and video codec of the primary source.",
+						"items": {
+							"mp4-av1": "MP4 AV1",
+							"mp4-h264": "MP4 H.264",
+							"mp4-h265": "MP4 H.265",
+							"webm-av1": "WebM AV1",
+							"webm-vp8": "WebM VP8",
+							"webm-vp9": "WebM VP9"
+						},
+						"name": "Primary format"
+					},
+					"primary-source": {
+						"desc": "File name of primary video source to use if supported.",
+						"name": "Primary source"
+					},
+					"secondary-format": {
+						"desc": "The container format and video codec of the secondary source.",
+						"items": {
+							"mp4-av1": "MP4 AV1",
+							"mp4-h264": "MP4 H.264",
+							"mp4-h265": "MP4 H.265",
+							"webm-av1": "WebM AV1",
+							"webm-vp8": "WebM VP8",
+							"webm-vp9": "WebM VP9"
+						},
+						"name": "Secondary format"
+					},
+					"secondary-source": {
+						"desc": "File name of secondary video source to use if the primary format is not supported.",
+						"name": "Secondary source"
+					}
+				}
+			},
+			"win8": {
+				"name": "Windows Store",
+				"properties": {
+					"about-setting": {
+						"desc": "Show an 'About' option in the Settings charm, which opens about.html.",
+						"name": "'About' setting"
+					},
+					"privacy-setting": {
+						"desc": "Show a 'Privacy' option in the Settings charm, which opens privacy.html.",
+						"name": "'Privacy' setting"
+					},
+					"support-setting": {
+						"desc": "Show a 'Support' option in the Settings charm, which opens support.html.",
+						"name": "'Support' setting"
+					},
+					"test-mode": {
+						"desc": "Enable to test purchases. Be sure to disable when publishing.",
+						"name": "Test mode"
+					}
+				}
+			},
+			"xboxlive": {
+				"name": "Xbox Live",
+				"properties": {
+					"scid": {
+						"desc": "The Service Configuration ID (SCID) for this Xbox Live product.",
+						"name": "SCID"
+					},
+					"title-id": {
+						"desc": "The title ID (in decimal) that identifies this Xbox Live product.",
+						"name": "Title ID"
+					},
+					"xbox-live-creators-title": {
+						"desc": "Enable for titles in the Xbox Live Creators Program. Disable for other titles (e.g. ID@Xbox).",
+						"name": "Xbox Live Creators Title"
+					}
+				}
+			},
+			"xml": {
+				"name": "XML",
+				"properties": {}
+			}
+		},
 		"ui": {
 			"bars": {
 				"properties": {

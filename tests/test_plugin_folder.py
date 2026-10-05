@@ -51,6 +51,23 @@ def test_every_data_and_prompt_file_the_skill_names_is_in_the_plugin():
     assert names > 10 and not missing, sorted(missing)
 
 
+def test_the_language_packs_keep_what_check_project_and_a_preview_inspector_read():
+    """check_project.py reads two subtrees of each language pack. The keys of a preview's inspector values
+    are paths into the name, properties and debugger texts of a plugin or behavior, such as
+    behaviors.platform.debugger.vector-x (references/reading-the-runtime.md, "Inspector values")."""
+    for locale in ("en-US", "zh-CN"):
+        full = json.loads((REPO / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8-sig"))["text"]
+        kept = json.loads((PLUGIN / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))["text"]
+        assert kept["ui"]["bars"]["properties"]["project"] == full["ui"]["bars"]["properties"]["project"]
+        assert kept["ui"]["bars"]["timeline"]["eases"] == full["ui"]["bars"]["timeline"]["eases"]
+        for kind in ("plugins", "behaviors"):
+            for addon, texts in full[kind].items():
+                for part in ("name", "properties", "debugger"):
+                    if part in texts:
+                        assert kept[kind][addon][part] == texts[part], f"{locale}: text.{kind}.{addon}.{part}"
+        assert kept["behaviors"]["platform"]["debugger"]["vector-x"]
+
+
 def test_the_marketplace_installs_the_plugin_folder():
     market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
     assert [p["source"] for p in market["plugins"]] == ["./plugin"]

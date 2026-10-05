@@ -1,5 +1,3053 @@
 {
 	"text": {
+		"behaviors": {
+			"anchor": {
+				"name": "锚点",
+				"properties": {
+					"bottom-edge": {
+						"desc": "锚定对象的底边。",
+						"items": {
+							"none": "无",
+							"window-bottom": "视图下边缘"
+						},
+						"name": "下边缘"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"left-edge": {
+						"desc": "将对象的左边缘固定到视区边缘。",
+						"items": {
+							"none": "无",
+							"window-left": "视区左边缘",
+							"window-right": "视区右边缘"
+						},
+						"name": "左边缘"
+					},
+					"right-edge": {
+						"desc": "锚定对象的右边缘。",
+						"items": {
+							"none": "无",
+							"window-right": "视图右边缘"
+						},
+						"name": "右边缘"
+					},
+					"top-edge": {
+						"desc": "将对象的上边缘锚定到视区边缘。",
+						"items": {
+							"none": "无",
+							"window-bottom": "视区下边缘",
+							"window-top": "视区上边缘"
+						},
+						"name": "上边缘"
+					}
+				}
+			},
+			"billboard": {
+				"name": "展示板",
+				"properties": {
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"offset-x": {
+						"desc": "沿X轴进行额外的旋转。",
+						"name": "偏移X"
+					},
+					"offset-y": {
+						"desc": "沿Y轴进行额外的旋转。",
+						"name": "偏移Y"
+					},
+					"offset-z": {
+						"desc": "沿Z轴进行额外的旋转。",
+						"name": "偏移Z"
+					}
+				}
+			},
+			"bound": {
+				"name": "边界约束",
+				"properties": {
+					"bound-by": {
+						"desc": "是在对象的原点，还是图像边缘进行约束。",
+						"items": {
+							"edge": "图像边缘",
+							"origin": "图像原点"
+						},
+						"name": "边界"
+					},
+					"region": {
+						"desc": "选择要检测的区域。",
+						"items": {
+							"layout": "场景",
+							"viewport": "视区"
+						},
+						"name": "范围"
+					}
+				}
+			},
+			"bullet": {
+				"debugger": {
+					"angle-of-motion": "移动角度",
+					"distance-travelled": "移动距离",
+					"gravity-vector-x": "重力向量X",
+					"gravity-vector-y": "重力向量Y",
+					"gravity-vector-z": "重力向量Z",
+					"vector-x": "向量 X",
+					"vector-y": "向量 Y",
+					"vector-z": "向量Z"
+				},
+				"name": "子弹",
+				"properties": {
+					"acceleration": {
+						"desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。负值则减速。",
+						"name": "加速度"
+					},
+					"bounce-off-solids": {
+						"desc": "子弹对象碰撞到具有 '实体' 行为的对象时，使子弹反弹。",
+						"name": "撞击实体时反弹"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"gravity": {
+						"desc": "设置子弹的重力，以像素/秒为单位",
+						"name": "重力"
+					},
+					"set-angle": {
+						"desc": "启用后，将精灵图像的角度设置为运动角度。",
+						"name": "改变图像角度"
+					},
+					"speed": {
+						"desc": "对象移动的速度，以像素/秒为单位。",
+						"name": "速度"
+					},
+					"step": {
+						"desc": "以更小的增量移动对象，避免因高速移动穿过实体对象。每次向前移动都将触发 '步进' 条件，以进行更高精度的碰撞测试。",
+						"name": "步进模式"
+					}
+				}
+			},
+			"car": {
+				"debugger": {
+					"angle-of-motion": "运动的角度",
+					"speed": "速度",
+					"vector-x": "向量 X",
+					"vector-y": "向量 Y"
+				},
+				"name": "车辆",
+				"properties": {
+					"acceleration": {
+						"desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+						"name": "加速度"
+					},
+					"deceleration": {
+						"desc": "减速度，以像素/秒为单位。",
+						"name": "减速度"
+					},
+					"default-controls": {
+						"desc": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来操控。",
+						"name": "默认的控制方式"
+					},
+					"drift-recover": {
+						"desc": "运动角度追上物体角度的速率。较低的值会导致漂移，较高的值则会造成急转弯。",
+						"name": "漂移修正"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"friction": {
+						"desc": "撞击实体对象时的减速度，介于0到1之间。",
+						"name": "摩擦力"
+					},
+					"max-speed": {
+						"desc": "对象移动的最高速度，以像素/秒为单位。",
+						"name": "最大移动速度"
+					},
+					"set-angle": {
+						"desc": "移动时更改对象角度",
+						"name": "设置角度"
+					},
+					"steer-speed": {
+						"desc": "转向速度，以度数/秒为单位。",
+						"name": "转向速度"
+					},
+					"turn-while-stopped": {
+						"desc": "在静止时禁止旋转，或允许原地旋转。",
+						"name": "静止时旋转"
+					}
+				}
+			},
+			"custom": {
+				"debugger": {
+					"vector-x": "向量 X",
+					"vector-y": "向量 Y"
+				},
+				"name": "自定义移动",
+				"properties": {
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"pixels-per-step": {
+						"desc": "启用步进时，每一步移动的像素数量。",
+						"name": "像素/步进"
+					},
+					"stepping-mode": {
+						"desc": "触发 '步进' 条件后，以增量移动。",
+						"items": {
+							"horizontal-then-vertical": "水平方向优先",
+							"linear": "线性",
+							"none": "无",
+							"vertical-then-horizontal": "垂直方向优先"
+						},
+						"name": "步进模式"
+					}
+				}
+			},
+			"destroy": {
+				"name": "出界销毁",
+				"properties": {
+					"region": {
+						"desc": "选择要检测的区域。对象超出此范围将被销毁。",
+						"items": {
+							"layout": "场景",
+							"viewport": "视区"
+						},
+						"name": "范围"
+					}
+				}
+			},
+			"dragndrop": {
+				"debugger": {
+					"is-dragging": "正在拖动"
+				},
+				"name": "拖放",
+				"properties": {
+					"axes": {
+						"desc": "选择可拖动的方向，例如仅允许水平或垂直方向拖动对象。",
+						"items": {
+							"both": "无限制",
+							"horizontal-only": "仅水平方向",
+							"vertical-only": "仅垂直方向"
+						},
+						"name": "拖动方向"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					}
+				}
+			},
+			"eightdir": {
+				"debugger": {
+					"angle-of-motion": "移动角度",
+					"speed": "速度",
+					"vector-x": "向量 X",
+					"vector-y": "向量 Y"
+				},
+				"name": "八方向",
+				"properties": {
+					"acceleration": {
+						"desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+						"name": "加速度"
+					},
+					"allow-sliding": {
+						"desc": "启用后，沿着倾斜的障碍移动时，会朝倾斜方向继续滑行而不是停下。",
+						"name": "沿边缘滑行"
+					},
+					"deceleration": {
+						"desc": "从正常移动至完全停止的减速度，以像素/秒为单位。",
+						"name": "减速度"
+					},
+					"default-controls": {
+						"desc": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来移动。",
+						"name": "使用默认控制方式"
+					},
+					"directions": {
+						"desc": "对象朝多个方向移动的方式。",
+						"items": {
+							"dir-4": "四方向",
+							"dir-8": "八方向",
+							"left-right": "左右移动",
+							"up-down": "上下移动"
+						},
+						"name": "运动方向"
+					},
+					"enabled": {
+						"desc": "对象创建时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"max-speed": {
+						"desc": "最大移动速度，以像素/秒为单位。",
+						"name": "最大速度"
+					},
+					"set-angle": {
+						"desc": "启用后，将精灵图像的角度设置为移动角度。",
+						"items": {
+							"interval-45": "45° 间隔",
+							"interval-90": "90° 间隔",
+							"no": "关闭",
+							"smooth": "360° 间隔"
+						},
+						"name": "更改图像角度"
+					}
+				}
+			},
+			"fade": {
+				"debugger": {
+					"done": "完成",
+					"fade-in": "淡入",
+					"fade-out": "淡出",
+					"stage": "阶段",
+					"wait": "等待"
+				},
+				"name": "淡入淡出",
+				"properties": {
+					"destroy": {
+						"desc": "在淡出结束后，自动销毁对象。",
+						"name": "淡出完成后销毁"
+					},
+					"enabled": {
+						"desc": "对象创建时立即执行淡入淡出。禁用时，需使用 '开始播放' 动作运行。",
+						"name": "启用"
+					},
+					"fade-in-time": {
+						"desc": "淡入的持续时间，以秒为单位。如果为 0，则跳过淡入。",
+						"name": "淡入时间"
+					},
+					"fade-out-time": {
+						"desc": "逐渐淡出直到不可见的状态。如果为 0，则跳过淡出。",
+						"name": "淡出时间"
+					},
+					"live-preview": {
+						"desc": "在编辑器中进行实时预览。",
+						"name": "预览"
+					},
+					"wait-time": {
+						"desc": "淡入结束后，等待淡出开始的阶段。如果为 0，则跳过等待。",
+						"name": "等待时间"
+					}
+				}
+			},
+			"flash": {
+				"debugger": {
+					"is-flashing": "处于闪烁中",
+					"off-time": "关闭时间",
+					"on-time": "启动时间",
+					"time-left": "剩余时间"
+				},
+				"name": "闪烁"
+			},
+			"follow": {
+				"debugger": {
+					"history-entry-count": "历史记忆步数",
+					"paused": "暂停"
+				},
+				"name": "轨迹跟随",
+				"properties": {
+					"delay": {
+						"desc": "推迟开始跟随的时机，取决于跟随模式，延迟时间(秒)，距离(像素)。",
+						"name": "延迟"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"follow-angle": {
+						"desc": "是否需要跟随对象的角度。",
+						"name": "跟随角度"
+					},
+					"follow-destroyed": {
+						"desc": "跟随的对象被销毁时，是否同时销毁这个实例。",
+						"name": "跟随销毁"
+					},
+					"follow-height": {
+						"desc": "是否需要跟随对象的高度。",
+						"name": "跟随高度"
+					},
+					"follow-opacity": {
+						"desc": "是否需要跟随对象的不透明度。",
+						"name": "跟随不透明度"
+					},
+					"follow-visibility": {
+						"desc": "是否需要跟随对象的可见性。",
+						"name": "跟随可见性"
+					},
+					"follow-width": {
+						"desc": "是否需要跟随对象的宽度。",
+						"name": "跟随宽度"
+					},
+					"follow-x": {
+						"desc": "是否需要跟随对象的X坐标",
+						"name": "跟随X坐标"
+					},
+					"follow-y": {
+						"desc": "是否需要跟随对象的Y坐标",
+						"name": "跟随Y坐标"
+					},
+					"follow-z-elevation": {
+						"desc": "是否需要跟随对象的Z坐标。",
+						"name": "跟随Z坐标"
+					},
+					"history-rate": {
+						"desc": "每秒记录跟随对象属性的次数。",
+						"name": "同步频率"
+					},
+					"max-delay": {
+						"desc": "最多可记忆的模仿数据的最长时间或距离。",
+						"name": "最大同步时长"
+					},
+					"mode": {
+						"desc": "设置按时间或距离进行跟踪。",
+						"items": {
+							"distance": "距离",
+							"time": "时间"
+						},
+						"name": "模式"
+					}
+				}
+			},
+			"jumpthru": {
+				"name": "跳跃穿透",
+				"properties": {
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					}
+				}
+			},
+			"los": {
+				"name": "视线",
+				"properties": {
+					"cone-of-view": {
+						"desc": "视线在朝向能覆盖的角度范围，以角度为单位。",
+						"name": "角度"
+					},
+					"obstacles": {
+						"desc": "选择哪些对象可以被视线对象识别为遮挡物，阻挡视线。选择 '自定义' 将由事件添加。",
+						"items": {
+							"custom": "自定义",
+							"solids": "实体"
+						},
+						"name": "遮挡物"
+					},
+					"range": {
+						"desc": "视线能覆盖的最远距离，以像素为单位。",
+						"name": "范围"
+					},
+					"use-collision-cells": {
+						"desc": "启用此选项通常可以提升性能，若目标在距离很远的地方，性能反而会变慢。",
+						"name": "使用碰撞单元"
+					}
+				}
+			},
+			"moveto": {
+				"debugger": {
+					"angle-of-motion": "运动角度",
+					"speed": "速度",
+					"target-x": "目标 X",
+					"target-y": "目标 Y",
+					"waypoint-count": "路径数"
+				},
+				"name": "移动到",
+				"properties": {
+					"acceleration": {
+						"desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。使用 0 表示瞬间加速。",
+						"name": "加速度"
+					},
+					"deceleration": {
+						"desc": "从正常移动至完全停止的减速度，以像素/秒为单位。使用 0 表示瞬间减速。",
+						"name": "减速度"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"max-speed": {
+						"desc": "设置最大移动速度，以像素/秒为单位。",
+						"name": "最大移动速度"
+					},
+					"rotate-speed": {
+						"desc": "转弯时，每秒最大的转向速度，以度数/秒为单位，使用 0 则禁用转向。",
+						"name": "转向速度"
+					},
+					"set-angle": {
+						"desc": "自动设置物体的角度到运动的角度。",
+						"name": "设置角度"
+					},
+					"stop-on-solids": {
+						"desc": "碰撞到实体对象时停止移动。",
+						"name": "碰撞实体时停下"
+					}
+				}
+			},
+			"nosave": {
+				"name": "不存档"
+			},
+			"orbit": {
+				"debugger": {
+					"rotation": "旋转角度",
+					"total-absolute-rotation": "总绝对旋转角度",
+					"total-rotation": "总旋转角度"
+				},
+				"name": "环绕",
+				"properties": {
+					"acceleration": {
+						"desc": "每秒提升旋转的加速度，负值则减慢。",
+						"name": "加速度"
+					},
+					"enabled": {
+						"desc": "进入场景时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"live-preview": {
+						"desc": "在编辑器中进行实时预览。",
+						"name": "预览"
+					},
+					"match-rotation": {
+						"desc": "对象的角度是否跟随轨道的角度而旋转。",
+						"name": "旋转对齐"
+					},
+					"offset-angle": {
+						"desc": "主轴的旋转角度。对于圆形轨道，则改变初始角度。",
+						"name": "偏移角度"
+					},
+					"primary-axis": {
+						"desc": "圆心点与轨道的距离。对于圆形轨道，主半径为圆形的半径。对于椭圆轨道，则为偏移角度的轨道半径。",
+						"name": "主半径"
+					},
+					"secondary-axis": {
+						"desc": "圆心点与轨道的垂直距离。对于圆形轨道，请确保与主半径是相同值。对于椭圆轨道，则为垂直于偏移角度的半径。",
+						"name": "次半径"
+					},
+					"speed": {
+						"desc": "环绕的速度。正数为顺时针方向运动，负数则为逆时针运动。",
+						"name": "速度"
+					}
+				}
+			},
+			"pathfinding": {
+				"debugger": {
+					"angle-of-motion": "移动角度",
+					"has-path": "检测到路径",
+					"is-calculating-path": "正在计算路径",
+					"is-moving": "正在移动",
+					"speed": "速度"
+				},
+				"name": "寻路",
+				"properties": {
+					"acceleration": {
+						"desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+						"name": "加速度"
+					},
+					"cell-border": {
+						"desc": "用于侦测障碍物的额外尺寸，以防止行进路线过于贴近障碍物",
+						"name": "单元格边界"
+					},
+					"cell-size": {
+						"desc": "路线使用的单元格大小。单元格越小寻路越精细，CPU负载也更大。",
+						"name": "单元格大小"
+					},
+					"deceleration": {
+						"desc": "从正常移动至完全停止的减速度，以像素/秒为单位。",
+						"name": "减速度"
+					},
+					"diagonals": {
+						"desc": "是否允许路径往对角线进行斜向移动。",
+						"name": "斜向移动"
+					},
+					"direct-movement": {
+						"desc": "当周围没有障碍物时，允许直接向下一个节点移动。",
+						"items": {
+							"anywhere-along-path": "沿路径任意点",
+							"none": "禁用",
+							"to-destination": "前往目的地"
+						},
+						"name": "直接移动"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"max-speed": {
+						"desc": "移动时可达到的最大移动速度，以像素/秒为单位。",
+						"name": "最大移动速度"
+					},
+					"obstacles": {
+						"desc": "指定实体对象或自定义对象作为障碍物。",
+						"items": {
+							"custom": "自定义",
+							"solids": "实体"
+						},
+						"name": "障碍物"
+					},
+					"rotate-object": {
+						"desc": "移动中是否改变对象的角度",
+						"name": "旋转对象"
+					},
+					"rotate-speed": {
+						"desc": "移动时的转向速度,以度/秒为单位。",
+						"name": "转向速度"
+					}
+				}
+			},
+			"persist": {
+				"name": "持久化"
+			},
+			"physics": {
+				"debugger": {
+					"angular-velocity": "角速度",
+					"collision-filter-inclusive": "包含的碰撞过滤标签",
+					"is-sleeping": "正在休眠",
+					"mass": "质量",
+					"velocity-x": "向量 X",
+					"velocity-y": "向量 Y"
+				},
+				"name": "物理",
+				"properties": {
+					"angular-damping": {
+						"desc": "对象旋转时，随时间逐渐减速的系数，介于0到1之间。",
+						"name": "角度阻尼"
+					},
+					"bullet": {
+						"desc": "针对高速移动的对象，使用增强的碰撞检测算法，防止对象穿透。注意，这会影响性能，除非需要超高速移动的物理对象，否则不建议启用它。",
+						"name": "子弹模式"
+					},
+					"collision-filter-mode": {
+						"desc": "使用什么方式来过滤物理碰撞标签。",
+						"items": {
+							"exclusive": "排除",
+							"inclusive": "包含"
+						},
+						"name": "过滤模式"
+					},
+					"collision-filter-tags": {
+						"desc": "过滤其他指定碰撞标签的物理对象的碰撞，用空格分隔多个标签。",
+						"name": "碰撞标签"
+					},
+					"collision-mask": {
+						"desc": "处理此对象物理碰撞的方式。",
+						"items": {
+							"bounding-box": "矩形",
+							"circle": "圆形",
+							"use-collision-polygon": "碰撞框"
+						},
+						"name": "碰撞边界"
+					},
+					"density": {
+						"desc": "物理对象的密度，用于计算物体的质量。注意，精确的密度值并不重要，仅用于作不同物体相对密度的比较。",
+						"name": "密度"
+					},
+					"elasticity": {
+						"desc": "弹力，影响物体撞击其他物体时反弹的高度。范围值 0-1。",
+						"name": "弹性系数"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"friction": {
+						"desc": "摩擦力，影响物体接触其他物体时相互运动的阻力，范围值 0-1。",
+						"name": "摩擦系数"
+					},
+					"immovable": {
+						"desc": "开启后，此物体将拥有无限的质量，不再受到物体密度的影响，不会发生移动，适用于场景对象，例如坚固的墙体。",
+						"name": "不可移动"
+					},
+					"linear-damping": {
+						"desc": "物体运动时，随时间逐渐减速的系数，介于0到1之间。",
+						"name": "线性阻尼"
+					},
+					"prevent-rotation": {
+						"desc": "锁定对象的角度，受到物理撞击时不会导致它旋转。",
+						"name": "不可旋转"
+					}
+				}
+			},
+			"pin": {
+				"debugger": {
+					"is-pinned": "被固定",
+					"pinned-uid": "被固定的对象UID"
+				},
+				"name": "固定",
+				"properties": {
+					"destroy": {
+						"desc": "如果被固定的对象被销毁时，该对象也将被销毁。",
+						"name": "与被固定的对象一起被销毁"
+					}
+				}
+			},
+			"platform": {
+				"debugger": {
+					"anim-falling": "正在下落",
+					"anim-jumping": "正在跳跃",
+					"anim-moving": "正在移动",
+					"anim-stopped": "静止",
+					"animation-mode": "动画模式",
+					"gravity-angle": "重力角度",
+					"vector-x": "向量 X",
+					"vector-y": "向量 Y"
+				},
+				"name": "平台",
+				"properties": {
+					"acceleration": {
+						"desc": "从静止状态到正常移动速度的加速度，以像素/秒为单位。",
+						"name": "加速度"
+					},
+					"deceleration": {
+						"desc": "从正常移动至完全停止的减速度，以像素/秒为单位。",
+						"name": "减速度"
+					},
+					"default-controls": {
+						"desc": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制' 来移动。",
+						"name": "默认的控制方式"
+					},
+					"double-jump": {
+						"desc": "在落地前，允许在空中进行一次额外的跳跃。",
+						"name": "二段跳"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"gravity": {
+						"desc": "重力加速度，以像素/秒为单位。",
+						"name": "重力"
+					},
+					"jump-strength": {
+						"desc": "跳跃的初始速度，以像素每秒为单位。",
+						"name": "跳跃高度"
+					},
+					"jump-sustain": {
+						"desc": "在跳跃状态，根据长按跳跃键的时长，让角色在空中可以保持更长的时间，以毫秒为单位。",
+						"name": "跳跃保持"
+					},
+					"max-fall-speed": {
+						"desc": "下落时的最大速度，以像素/秒为单位。",
+						"name": "最大下落速度"
+					},
+					"max-speed": {
+						"desc": "角色在移动时的最大速度，以像素/秒为单位。",
+						"name": "最大移动速度"
+					}
+				}
+			},
+			"rotate": {
+				"name": "旋转",
+				"properties": {
+					"acceleration": {
+						"desc": "每秒旋转的加速度，以角度/秒为单位。负数则减速。",
+						"name": "加速度"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"live-preview": {
+						"desc": "在编辑器中进行实时预览。",
+						"name": "预览"
+					},
+					"rotation-type": {
+						"desc": "选择绕轴进行2D或3D旋转方式。",
+						"items": {
+							"2d": "2D",
+							"rotation-x": "旋转X",
+							"rotation-y": "旋转Y",
+							"rotation-z": "旋转Z"
+						},
+						"name": "旋转类型"
+					},
+					"speed": {
+						"desc": "转速，以度/秒为单位。 正向为顺时针，负向为逆时针",
+						"name": "速度"
+					}
+				}
+			},
+			"scrollto": {
+				"name": "镜头跟随",
+				"properties": {
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					}
+				}
+			},
+			"shadowcaster": {
+				"name": "投影对象",
+				"properties": {
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"height": {
+						"desc": "对象的高度，用于确定阴影投射的长度，以像素为单位。",
+						"name": "投影高度"
+					},
+					"tag": {
+						"desc": "填写一个字符串，可以是任意内容，用于区分不同的投影光源。",
+						"name": "投影标签"
+					}
+				}
+			},
+			"sin": {
+				"debugger": {
+					"value": "值"
+				},
+				"name": "正弦运动",
+				"properties": {
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"live-preview": {
+						"desc": "在编辑器中进行实时预览。",
+						"name": "预览"
+					},
+					"magnitude": {
+						"desc": "运动的幅度。振幅越大，影响运动的变化越明显。",
+						"name": "振幅"
+					},
+					"magnitude-random": {
+						"desc": "在振幅增加一个随机数，微调运动的幅度。适合用在多个对象正弦运动的情景，有助于改善视觉效果。",
+						"name": "振幅扰动"
+					},
+					"movement": {
+						"desc": "选择要修改的对象属性",
+						"items": {
+							"angle": "角度",
+							"forwards-backwards": "前后",
+							"height": "高度",
+							"horizontal": "左右",
+							"opacity": "不透明度",
+							"size": "大小",
+							"value-only": "数值",
+							"vertical": "上下",
+							"width": "宽度",
+							"z-elevation": "视距高度"
+						},
+						"name": "运动"
+					},
+					"period": {
+						"desc": "完整播放一次周期运动的时间，以秒为单位。",
+						"name": "周期"
+					},
+					"period-offset": {
+						"desc": "调整周期开始的时间，从第几秒开始播放。可以用来微调首次播放的位置。",
+						"name": "相位偏移"
+					},
+					"period-offset-random": {
+						"desc": "在起始相位的时间增加一个随机秒数，推迟播放时间。适合用在多个对象正弦运动的情景，有助于改善视觉效果。",
+						"name": "相位扰动"
+					},
+					"period-random": {
+						"desc": "在周期时间增加一个随机秒数，延长持续时间。适合用在多个对象正弦运动的情景，有助于改善视觉效果。",
+						"name": "周期扰动"
+					},
+					"wave": {
+						"desc": "选择用于计算运动的波形函数类型。",
+						"items": {
+							"reverse-sawtooth": "反锯齿",
+							"sawtooth": "锯齿",
+							"sine": "正弦",
+							"square": "方波",
+							"triangle": "三角"
+						},
+						"name": "波型"
+					}
+				}
+			},
+			"solid": {
+				"name": "实体",
+				"properties": {
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"tags": {
+						"desc": "用于区分不同实体的字符串，使用空格分隔多个标签。",
+						"name": "标签"
+					},
+					"use-instance-tags": {
+						"desc": "处理碰撞过滤时，使用实例标签而不是实体行为的标签。",
+						"name": "使用实例标签"
+					}
+				}
+			},
+			"tilemovement": {
+				"debugger": {
+					"grid-target-x": "网格目标 X",
+					"grid-target-y": "网格目标 Y",
+					"grid-x": "网格 X",
+					"grid-y": "网格 Y",
+					"target-x": "目标 X",
+					"target-y": "目标 Y"
+				},
+				"name": "网格移动",
+				"properties": {
+					"default-controls": {
+						"desc": "启用后，默认允许使用方向键控制移动。否则，只能通过 '模拟控制 '来操控。",
+						"name": "默认的控制方式"
+					},
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"grid-height": {
+						"desc": "移动网格的高度。",
+						"name": "网格高度"
+					},
+					"grid-offset-x": {
+						"desc": "在X轴网格移动的偏移量。",
+						"name": "网格偏移 X"
+					},
+					"grid-offset-y": {
+						"desc": "在Y轴网格移动的偏移量。",
+						"name": "网格偏移 Y"
+					},
+					"grid-width": {
+						"desc": "移动网格的宽度。",
+						"name": "网格宽度"
+					},
+					"isometric": {
+						"desc": "使用等距网格或是笛卡尔网格。",
+						"name": "等距移动"
+					},
+					"speed-x": {
+						"desc": "在X轴的移动速度，以像素/秒为单位。",
+						"name": "移动速度 X"
+					},
+					"speed-y": {
+						"desc": "在Y轴的移动速度，以像素/秒为单位。",
+						"name": "移动速度 Y"
+					}
+				}
+			},
+			"timer": {
+				"debugger": {
+					"timers": "计时器"
+				},
+				"name": "计时器"
+			},
+			"turret": {
+				"debugger": {
+					"has-target": "检测到目标",
+					"target-uid": "目标UID"
+				},
+				"name": "炮台",
+				"properties": {
+					"enabled": {
+						"desc": "游戏初始化时，是否默认启用该行为。",
+						"name": "启用"
+					},
+					"predictive-aim": {
+						"desc": "瞄准目标即将前进的位置，而不是目标当前位置。",
+						"name": "预判走位"
+					},
+					"projectile-speed": {
+						"desc": "预测目标的射弹速度，以像素/每秒为单位。",
+						"name": "预判速度"
+					},
+					"range": {
+						"desc": "炮台可以探测目标的范围，以像素为单位。",
+						"name": "射程范围"
+					},
+					"rate-of-fire": {
+						"desc": "每次射击的时间间隔。",
+						"name": "发射频率"
+					},
+					"rotate": {
+						"desc": "自动转向瞄准目标",
+						"name": "转向目标"
+					},
+					"rotate-speed": {
+						"desc": "在开启转向时，以度数/秒的速度转向瞄准目标。",
+						"name": "转向速度"
+					},
+					"target-mode": {
+						"desc": "如何处理多个目标",
+						"items": {
+							"first-in-range": "第一个",
+							"nearest": "最近的"
+						},
+						"name": "目标模式"
+					},
+					"use-collision-cells": {
+						"desc": "寻找范围内目标时，开启这项功能通常可以提高性能。若目标超出范围外的极远距离下反而会变慢。",
+						"name": "使用碰撞单元"
+					}
+				}
+			},
+			"tween": {
+				"name": "补间动画",
+				"properties": {
+					"enabled": {
+						"desc": "设置该行为在初始化时是否启用。",
+						"name": "启用"
+					}
+				}
+			},
+			"wrap": {
+				"name": "边界穿梭",
+				"properties": {
+					"wrap-to": {
+						"desc": "让对象在场景边界或视窗边界穿梭",
+						"items": {
+							"layout": "场景",
+							"viewport": "视窗"
+						},
+						"name": "边界范围"
+					}
+				}
+			}
+		},
+		"plugins": {
+			"advancedrandom": {
+				"debugger": {
+					"current-gradient": "当前渐变",
+					"current-probability-table": "当前概率表",
+					"gradients": "高级随机：渐变",
+					"noise-lacunarity": "噪声迭代",
+					"noise-octaves": "噪声分形",
+					"noise-persistence": "噪声持续",
+					"permutation-table": "序列表",
+					"probability-tables": "高级随机：概率表",
+					"replace-system": "替换系统内置随机",
+					"seed": "PRNG 随机种子",
+					"title": "高级随机"
+				},
+				"name": "高级随机",
+				"properties": {
+					"seed": {
+						"desc": "随机数生成器所使用的随机种子。",
+						"name": "随机数种子"
+					},
+					"seeded-random": {
+						"desc": "使用此插件生成的PRNG随机种子，替换系统内置的随机数。",
+						"name": "替换系统内置的随机数"
+					}
+				}
+			},
+			"advert": {
+				"name": "激励广告",
+				"properties": {
+					"application-id": {
+						"desc": "填写 AdMob 向你提供的 Android 版本的应用ID",
+						"name": "安卓应用ID"
+					},
+					"debug-location": {
+						"desc": "用于测试环境。伪造设备位置，以便测试不同场景的用户同意对话框。仅导出移动端有效。【注意，请不要在正式发布时使用】",
+						"items": {
+							"disabled": "禁用",
+							"eea": "位于欧盟",
+							"outside-eea": "非欧盟地区"
+						},
+						"name": "模拟定位(调试)"
+					},
+					"ios-application-id": {
+						"desc": "广告AdMob需要的iOS应用ID",
+						"name": "iOS应用ID"
+					},
+					"mobile-export": {
+						"desc": "仅适用于移动端的属性。",
+						"name": "移动端"
+					},
+					"privacy-policy": {
+						"desc": "前往你APP的隐私协议的地址",
+						"name": "隐私协议地址"
+					},
+					"publisher-id": {
+						"desc": "您AdMob广告服务的账号ID",
+						"name": "发布商 ID"
+					},
+					"show-ad-free-option": {
+						"desc": "在用户授权弹窗上显示 '购买无广告' 选项",
+						"name": "显示无广告选项"
+					},
+					"show-consent": {
+						"desc": "选择应该在哪些位置看到同意对话框的用户。",
+						"items": {
+							"eu": "欧盟和未知",
+							"everywhere": "任何地方",
+							"nowhere": "不在任何地方"
+						},
+						"name": "显示用户同意对话框的位置"
+					},
+					"show-on-start-up": {
+						"desc": "在应用启动时，展示广告授权的提示。",
+						"name": "启动时显示"
+					},
+					"test-mode": {
+						"desc": "只显示测试广告",
+						"name": "测试模式"
+					},
+					"web-export": {
+						"desc": "仅适用于网页端的属性。",
+						"name": "网页端"
+					}
+				}
+			},
+			"ajax": {
+				"debugger": {
+					"last-data": "最后取得的数据",
+					"last-status-code": "状态码",
+					"title": "AJAX"
+				},
+				"name": "AJAX"
+			},
+			"arr": {
+				"debugger": {
+					"array-data": {
+						"title": "数据"
+					},
+					"array-properties": {
+						"title": "数组"
+					}
+				},
+				"name": "数组",
+				"properties": {
+					"depth": {
+						"desc": "数组在 Z 轴的初始元素数量，大小为 0 会使数组为空。",
+						"name": "深度"
+					},
+					"elements": {
+						"desc": "数组中的初始元素数量。如果数量为0，表示数组为空，无法储存数据。",
+						"name": "元素"
+					},
+					"height": {
+						"desc": "数组在 Y 轴的初始元素数量，大小为 0 会使数组为空。",
+						"name": "高度"
+					},
+					"width": {
+						"desc": "数组在 X 轴的初始元素数量，大小为 0 会使数组为空。",
+						"name": "宽度"
+					}
+				}
+			},
+			"audio": {
+				"debugger": {
+					"currently-playing": "当前播放",
+					"currently-playing-count": "总数",
+					"tag-effects": "效果标签"
+				},
+				"name": "音频",
+				"properties": {
+					"distance-model": {
+						"desc": "用于处理音频对象相对听众的距离公式。根据距离的变化影响音量的大小。",
+						"items": {
+							"exponential": "指数",
+							"inverse": "反向",
+							"linear": "线性"
+						},
+						"name": "距离模型"
+					},
+					"enable-multiple-tags": {
+						"desc": "允许使用多标签管理声音播放，用空格分隔。",
+						"name": "启用多标签"
+					},
+					"latency-hint": {
+						"desc": "针对音频延迟与电池功耗之间的调整。对于实时交互的音频，推荐低延迟模式。对于背景音乐，推荐节能模式。",
+						"items": {
+							"balanced": "标准",
+							"interactive": "交互式(低延迟, 高功耗)",
+							"playback": "流媒体 (低功耗, 高延迟)"
+						},
+						"name": "延迟模式"
+					},
+					"listener-z-height": {
+						"desc": "监听器在场景的高度，以像素为单位。用于影响空间定位的相对音量变化。高度越小，靠近声源时有更明显的变化。高度增加，即使远离声源变化也不明显。",
+						"name": "音频空间高度"
+					},
+					"maximum-distance": {
+						"desc": "以像素为单位的距离，之后不再减小音量。",
+						"name": "最大距离"
+					},
+					"panning-model": {
+						"desc": "用于处理音频在空间定位的平移模型。",
+						"items": {
+							"equal-power": "Equal power",
+							"hrtf": "HRTF"
+						},
+						"name": "声像模型"
+					},
+					"play-in-background": {
+						"desc": "游戏窗口最小化或切换到后台时，是否继续播放音频。",
+						"name": "后台继续播放"
+					},
+					"positioned-audio": {
+						"desc": "影响声音在空间定位的属性。",
+						"name": "空间音频"
+					},
+					"reference-distance": {
+						"desc": "用于减少音量的参考距离，因为光源移动得更远，以像素为单位。",
+						"name": "相对距离"
+					},
+					"roll-off-factor": {
+						"desc": "随着声源移动时，音量减弱的速度变化有多快。",
+						"name": "衰减效率"
+					},
+					"save-load": {
+						"desc": "使用内置的存档系统时，是否要保存声音的播放状态。",
+						"items": {
+							"all": "所有",
+							"music-only": "仅音乐",
+							"none": "不保存",
+							"sounds-only": "仅声音"
+						},
+						"name": "保存音频状态"
+					},
+					"timescale-audio": {
+						"desc": "调整游戏内的时间速率时，声音播放的速率是否也跟着变化。",
+						"items": {
+							"off": "关",
+							"sounds-and-music": "声音和音乐",
+							"sounds-only": "仅声音"
+						},
+						"name": "同步时间速率"
+					}
+				}
+			},
+			"bbcmicrobit": {
+				"name": "BBC micro:bit",
+				"properties": {
+					"enable-accelerometer": {
+						"desc": "是否启用加速度计模块。",
+						"name": "启用加速度计"
+					},
+					"enable-buttons": {
+						"desc": "是否启用按钮输入模块。",
+						"name": "启用按钮"
+					},
+					"enable-led-display": {
+						"desc": "是否启用LED显示屏模块。",
+						"name": "启用 LED 显示屏"
+					},
+					"enable-magnetometer": {
+						"desc": "是否启用磁力计模块。",
+						"name": "启用磁力计"
+					},
+					"enable-temperature": {
+						"desc": "是否启用温度计模块。",
+						"name": "启用温度计"
+					}
+				}
+			},
+			"binarydata": {
+				"debugger": {
+					"title": "二进制数据"
+				},
+				"name": "二进制",
+				"properties": {
+					"endian": {
+						"desc": "读写数据时，字节使用的单元顺序。(也被称为 Endian)",
+						"items": {
+							"big": "Big",
+							"little": "Little"
+						},
+						"name": "字节顺序"
+					}
+				}
+			},
+			"bluetooth": {
+				"name": "蓝牙"
+			},
+			"browser": {
+				"debugger": {
+					"is-fullscreen": "已全屏",
+					"is-online": "已在线",
+					"user-agent": "用户代理"
+				},
+				"name": "浏览器"
+			},
+			"button": {
+				"name": "按钮",
+				"properties": {
+					"auto-font-size": {
+						"desc": "根据图层比例自动设置字体大小。",
+						"name": "自动字体大小"
+					},
+					"checked": {
+						"desc": "对于复选框，初始检查状态。",
+						"name": "已勾选"
+					},
+					"class": {
+						"desc": "可选的元素Class，允许通过CSS设置样式。",
+						"name": "Class"
+					},
+					"enabled": {
+						"desc": "在初始状态下，默认启用还是禁用按钮。",
+						"name": "启用"
+					},
+					"id": {
+						"desc": "可选的元素ID，允许通过CSS设置样式。",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "选择场景开始时对象是否可见。",
+						"name": "初始可见"
+					},
+					"text": {
+						"desc": "按钮的初始文本。",
+						"name": "文本"
+					},
+					"tooltip": {
+						"desc": "将鼠标悬停在控件上时显示此文本。",
+						"name": "提示"
+					},
+					"type": {
+						"desc": "要使用的按钮类型。",
+						"items": {
+							"button": "按钮",
+							"checkbox": "复选框"
+						},
+						"name": "类型"
+					}
+				}
+			},
+			"c2websocket": {
+				"debugger": {
+					"is-open": "已开启",
+					"last-error": "最后一次返回的错误",
+					"last-message": "最后一条消息",
+					"server-url": "服务器URL"
+				},
+				"name": "WebSocket"
+			},
+			"camera3d": {
+				"debugger": {
+					"camera": {
+						"camera-x": "相机X",
+						"camera-y": "相机Y",
+						"camera-z": "相机Z",
+						"look-x": "注视X",
+						"look-y": "注视Y",
+						"look-z": "注视Z",
+						"title": "摄像机",
+						"x-rotation": "X 旋转",
+						"y-rotation": "Y旋转"
+					},
+					"vectors": {
+						"forward-x": "前推X",
+						"forward-y": "前推Y",
+						"forward-z": "前推Z",
+						"right-x": "平移X",
+						"right-y": "平移Y",
+						"right-z": "平移Z",
+						"title": "向量",
+						"up-x": "抬头X",
+						"up-y": "抬头Y",
+						"up-z": "抬头Z"
+					},
+					"z-axis": {
+						"title": "Z轴"
+					}
+				},
+				"name": "3D相机",
+				"properties": {
+					"default-camera-z": {
+						"desc": "2D视图中，相机在100%缩放比中的相机位置。",
+						"name": "默认相机 Z"
+					},
+					"z-scale": {
+						"desc": "影响在Z轴方向中，每个像素的缩放比例。",
+						"name": "Z轴刻度"
+					}
+				}
+			},
+			"clipboard": {
+				"name": "剪贴板"
+			},
+			"constructgameservices": {
+				"name": "游戏服务",
+				"properties": {
+					"game-id": {
+						"desc": "要设置的初始游戏 ID。",
+						"name": "游戏ID"
+					},
+					"simulate-popup-blocked": {
+						"desc": "作为测试功能，模拟首次尝试打开登录弹窗被阻止的情况。",
+						"name": "模拟弹出窗口被阻止"
+					},
+					"target-language": {
+						"desc": "将所有内容翻译为目标语言。",
+						"items": {
+							"": "原始",
+							"AR": "阿拉伯语",
+							"BG": "保加利亚语",
+							"CS": "捷克语",
+							"DA": "丹麦语",
+							"DE": "德语",
+							"EL": "希腊语",
+							"EN-GB": "英语(英式)",
+							"EN-US": "英语(美式)",
+							"ES": "西班牙语",
+							"ES-419": "西班牙语（拉丁美洲）",
+							"ET": "爱沙尼亚语",
+							"FI": "芬兰语",
+							"FR": "法语",
+							"HE": "希伯来语",
+							"HU": "匈牙利语",
+							"ID": "印度尼西亚语",
+							"IT": "意大利语",
+							"JA": "日语",
+							"KO": "韩语",
+							"LT": "立陶宛语",
+							"LV": "拉脱维亚语",
+							"NB": "挪威语",
+							"NL": "荷兰语",
+							"PL": "波兰语",
+							"PT-BR": "葡萄牙语（巴西）",
+							"PT-PT": "葡萄牙语",
+							"RO": "罗马尼亚语",
+							"RU": "俄语",
+							"SK": "斯洛伐克语",
+							"SL": "斯洛文尼亚语",
+							"SV": "瑞典语",
+							"TH": "泰语",
+							"TR": "土耳其语",
+							"UK": "乌克兰语",
+							"VI": "越南语",
+							"ZH-HANS": "简体中文",
+							"ZH-HANT": "繁體中文"
+						},
+						"name": "目标语言"
+					}
+				}
+			},
+			"cordovaiap": {
+				"name": "应用内购",
+				"properties": {
+					"validator-url": {
+						"desc": "订单验证的服务器地址，用于验证是否完成购买。",
+						"name": "验证服务器地址(可选)"
+					}
+				}
+			},
+			"cryptography": {
+				"name": "密码学"
+			},
+			"csv": {
+				"name": "CSV"
+			},
+			"date": {
+				"name": "日期"
+			},
+			"dictionary": {
+				"debugger": {
+					"key-count": "字段数量"
+				},
+				"name": "字典"
+			},
+			"drawingcanvas": {
+				"name": "画布",
+				"properties": {
+					"antialiasing": {
+						"desc": "启用抗锯齿可以获得更高质量的画面。需要设备支持WebGL 2 +。启用后，则无法被粘贴使用了背景混合效果的对象。",
+						"items": {
+							"2x-msaa": "2x MSAA",
+							"4x-msaa": "4x MSAA",
+							"8x-msaa": "8x MSAA",
+							"off": "关闭"
+						},
+						"name": "抗锯齿"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"origin": {
+						"desc": "选择图像原点的位置。",
+						"items": {
+							"bottom": "底部",
+							"bottom-left": "左下",
+							"bottom-right": "右下",
+							"center": "中心",
+							"left": "左",
+							"right": "右",
+							"top": "顶部",
+							"top-left": "左上",
+							"top-right": "右上"
+						},
+						"name": "图像原点"
+					},
+					"resolution-mode": {
+						"desc": "画布的自动匹配成项目的分辨率，还是始终使用固定的分辨率。",
+						"items": {
+							"auto": "自动",
+							"fixed": "固定"
+						},
+						"name": "缩放模式"
+					}
+				}
+			},
+			"facebook": {
+				"name": "Facebook",
+				"properties": {
+					"app-id": {
+						"desc": "Facebook创建应用程序后为您提供App ID。",
+						"name": "App ID"
+					},
+					"app-secret": {
+						"desc": "App Secret在创建应用程序后Facebook为您提供。 仅必要提交分数！",
+						"name": "App secret"
+					}
+				}
+			},
+			"filechooser": {
+				"name": "文件选择",
+				"properties": {
+					"accept": {
+						"desc": "文件类型过滤器，例如 .png 或 image/*",
+						"name": "同意"
+					},
+					"class": {
+						"desc": "可选项，添加 Class 元素来设置样式。",
+						"name": "Class"
+					},
+					"id": {
+						"desc": "控件的可选ID，允许使用页面HTML中的CSS设置样式。",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"select": {
+						"desc": "是否允许单个或多个文件选择。",
+						"items": {
+							"multiple": "多人",
+							"single": "单个"
+						},
+						"name": "选择"
+					}
+				}
+			},
+			"filesystem": {
+				"name": "文件系统"
+			},
+			"flowchart": {
+				"name": "流程图"
+			},
+			"gamepad": {
+				"debugger": {
+					"last-button": "最后按下的按钮"
+				},
+				"name": "手柄",
+				"properties": {
+					"analog-deadzone": {
+						"desc": "如果虚拟摇杆的方向值(0-100)低于此范围则作为0返回，以进行平滑输入。",
+						"name": "模拟死区"
+					}
+				}
+			},
+			"gamerecorder": {
+				"debugger": {
+					"is-recording": "正在录制",
+					"supported-audio-formats": "支持的音频格式",
+					"supported-video-formats": "支持的视频格式"
+				},
+				"name": "屏幕录制"
+			},
+			"geolocation": {
+				"name": "地理位置"
+			},
+			"googleplay": {
+				"name": "Google Play",
+				"properties": {
+					"application-id": {
+						"desc": "谷歌Play Store开发者控制台中的AppID（仅Web游戏需要）",
+						"name": "网页应用ID"
+					},
+					"client-id": {
+						"desc": "在 Google Play 开发者控制台中的客户端ID。",
+						"name": "客户端 ID"
+					},
+					"game-id": {
+						"desc": "谷歌Google Play控制台 游戏服务中的应用ID。安卓设备需要填写",
+						"name": "安卓应用ID"
+					}
+				}
+			},
+			"htmlelement": {
+				"name": "HTML",
+				"properties": {
+					"allow-context-menu": {
+						"desc": "是否允许在此元素显示浏览器默认的上下文菜单。",
+						"name": "允许右键菜单"
+					},
+					"allow-text-selection": {
+						"desc": "允许用户选择此元素的文本。",
+						"name": "允许选中文字"
+					},
+					"auto-font-size": {
+						"desc": "根据图层比例自动设置字体大小。",
+						"name": "自动缩放字体"
+					},
+					"class": {
+						"desc": "可选项，添加 Class 元素来设置样式。",
+						"name": "Class"
+					},
+					"content": {
+						"desc": "此HTML元素的初始内容。",
+						"name": "内容"
+					},
+					"content-type": {
+						"desc": "使用哪种方式解析内容。",
+						"items": {
+							"bbcode": "富文本",
+							"html": "HTML",
+							"plain-text": "纯文本"
+						},
+						"name": "内容类型"
+					},
+					"default-background-color": {
+						"desc": "初始的 background-color 样式。",
+						"name": "默认背景颜色"
+					},
+					"default-color": {
+						"desc": "初始的 color 样式。",
+						"name": "默认颜色"
+					},
+					"id": {
+						"desc": "可选项，添加 ID 元素来设置样式。",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "选择在场景开始时元素默认可见。",
+						"name": "初始可见"
+					},
+					"origin": {
+						"desc": "选择对象的原点位置。",
+						"items": {
+							"bottom": "底部",
+							"bottom-left": "左下",
+							"bottom-right": "右下",
+							"center": "中心",
+							"left": "左",
+							"right": "右",
+							"top": "顶部",
+							"top-left": "左上",
+							"top-right": "右上"
+						},
+						"name": "原点"
+					},
+					"set-background-color": {
+						"desc": "设置元素 background-color 样式",
+						"name": "设置背景颜色"
+					},
+					"set-color": {
+						"desc": "设置元素 color 样式",
+						"name": "设置颜色"
+					},
+					"stop-input-events": {
+						"desc": "停止该元素上的输入事件，避免影响到项目的其他部分。",
+						"items": {
+							"child-elements": "仅子级元素",
+							"entire-element": "整个元素",
+							"no": "关闭"
+						},
+						"name": "阻止输入事件"
+					},
+					"style-attribute": {
+						"desc": "在此元素附加初始的属性。",
+						"name": "属性"
+					},
+					"styling": {
+						"desc": "影响此元素的样式属性。",
+						"name": "基本样式"
+					},
+					"tag": {
+						"desc": "此HTML元素的标签名称。",
+						"name": "标签"
+					}
+				}
+			},
+			"iframe": {
+				"name": "内嵌网页",
+				"properties": {
+					"allow": {
+						"desc": "可选的特性策略字符串，用于允许指定的显示页面执行某些操作。如：全屏播放视频。",
+						"name": "特性"
+					},
+					"enable-sandbox": {
+						"desc": "在显示页面时启用 '沙盒' 属性以增强安全性。",
+						"name": "沙盒模式"
+					},
+					"html": {
+						"desc": "要加载到内嵌网页的HTML内容，仅在 'URL' 属性为空时有效。",
+						"name": "HTML 内容"
+					},
+					"id": {
+						"desc": "可选的元素ID，允许使用 CSS 定位此元素，更改外观样式。",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"permissions": {
+						"desc": "控制显示页权限的设置。",
+						"name": "权限"
+					},
+					"sandbox": {
+						"desc": "在 '沙盒' 模式下，对显示页面启用的额外限制条件字符串。",
+						"name": "沙盒特性"
+					},
+					"url": {
+						"desc": "要加载到内嵌网页中的链接",
+						"name": "URL"
+					}
+				}
+			},
+			"instantgames": {
+				"name": "Instant Games",
+				"properties": {
+					"navigation-menu": {
+						"desc": "游戏应该使用的子菜单版本",
+						"items": {
+							"bar": "菜单条",
+							"floating": "漂浮菜单"
+						},
+						"name": "上下文目录"
+					}
+				}
+			},
+			"internationalization": {
+				"name": "本地化"
+			},
+			"json": {
+				"debugger": {
+					"data": "实例数据",
+					"path": "当前节点",
+					"title": "JSON"
+				},
+				"name": "JSON"
+			},
+			"keyboard": {
+				"debugger": {
+					"last-key-code": "最后按下的按键码",
+					"last-key-string": "最后按下的按键字符串",
+					"last-typed-key": "最后按下的按键名"
+				},
+				"name": "键盘"
+			},
+			"list": {
+				"debugger": {
+					"item-count": "列表数量",
+					"selected-index": "选中项目的索引值"
+				},
+				"name": "列表",
+				"properties": {
+					"auto-font-size": {
+						"desc": "根据图层比例自动设置字体大小。",
+						"name": "自动字体大小"
+					},
+					"class": {
+						"desc": "可选项，添加 Class 元素来设置样式。",
+						"name": "Class"
+					},
+					"enabled": {
+						"desc": "是否在启动时启用或禁用列表。",
+						"name": "启用"
+					},
+					"id": {
+						"desc": "控件的可选ID，允许使用页面HTML中的CSS设置样式。",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "选择在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"items": {
+						"desc": "列表初始存在的选项，用换行分隔。",
+						"name": "列表项"
+					},
+					"multi-select": {
+						"desc": "对于列表框，是否允许多个选择。",
+						"name": "多选"
+					},
+					"tooltip": {
+						"desc": "将鼠标悬停在控件上时显示此文本。",
+						"name": "提示"
+					},
+					"type": {
+						"desc": "要使用哪种控件。",
+						"items": {
+							"dropdown-list": "下拉列表",
+							"list-box": "列表框"
+						},
+						"name": "类型"
+					}
+				}
+			},
+			"localstorage": {
+				"name": "本地存储",
+				"properties": {
+					"in-memory-only": {
+						"desc": "启用后，数据仅储在当前页面加载的内存中，页面关闭后被清除。可以通过 '临时内存数据' 表达式手动储存到本地，并通过 '加载临时内存数据' 来还原。",
+						"name": "仅储存在内存"
+					}
+				}
+			},
+			"midi": {
+				"name": "MIDI"
+			},
+			"model3d": {
+				"debugger": {
+					"fit": "等比适配",
+					"hierarchy": "层级",
+					"isolate": "隔离",
+					"legacy": "兼容旧版",
+					"looping": "循环播放",
+					"origin-x-left": "左面",
+					"origin-x-middle": "中心",
+					"origin-x-right": "右面",
+					"origin-y-bottom": "底部",
+					"origin-y-middle": "中间",
+					"origin-y-top": "顶部",
+					"origin-z-back": "背面",
+					"origin-z-front": "顶面",
+					"origin-z-middle": "中间",
+					"playback-controls": "控制",
+					"playing": "正在播放",
+					"progress": "进度",
+					"stretch": "拉伸填满"
+				},
+				"name": "3D模型",
+				"properties": {
+					"3d-model-object": {
+						"desc": "从项目中选择一个3D模型。",
+						"name": "3D模型"
+					},
+					"animation": {
+						"desc": "选择一个可用的动画。",
+						"name": "动画"
+					},
+					"animation-properties": {
+						"desc": "3D模型动画专用设置。",
+						"name": "3D模型动画属性"
+					},
+					"axis-scale-mode": {
+						"desc": "模型如何随实例变化。'等比适配' 模式将保持模型比例。'拉伸填满' 模式将缩放每个轴以适应实例的边界框。'兼容旧版'模式仅为向后兼容而存在，建议使用其他模式。",
+						"items": {
+							"fit": "等比适配",
+							"legacy": "兼容旧版",
+							"stretch": "拉伸填满"
+						},
+						"name": "变换模式"
+					},
+					"back-face-culling": {
+						"desc": "启用后，绘制时将忽略不可见的多边形面。",
+						"name": "背面剔除"
+					},
+					"bounding-box": {
+						"desc": "在编辑器中显示当前网格的边界框。",
+						"name": "显示边界框"
+					},
+					"bounding-box-color": {
+						"desc": "在编辑器中显示的边界框颜色。",
+						"name": "边界框颜色"
+					},
+					"editor-properties": {
+						"desc": "这些设置只影响编辑器中 3D 模型实例的使用方式。",
+						"name": "编辑器属性"
+					},
+					"enable-collisions": {
+						"desc": "对象是否注册碰撞事件。注意，在真正触发碰撞事件前，禁用此选项不会提升性能。",
+						"name": "启用碰撞"
+					},
+					"initial-animation-progress": {
+						"desc": "在场景开始时，动画的播放进度。",
+						"name": "初始动画进度"
+					},
+					"initially-playing": {
+						"desc": "在场景开始时，是否立即播放当前动画。",
+						"name": "初始播放动画"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"live-preview": {
+						"desc": "在编辑器中进行实时预览。",
+						"name": "预览"
+					},
+					"loop": {
+						"desc": "检查动画是否循环播放。",
+						"name": "循环播放"
+					},
+					"mesh-render-mode": {
+						"desc": "选择绘制单个网格的渲染模式，是按层级绘制，或组件隔离。",
+						"items": {
+							"hierarchy": "层级",
+							"isolate": "隔离"
+						},
+						"name": "渲染模式"
+					},
+					"meshes": {
+						"desc": "选择任意可用的网格进行绘制。",
+						"name": "网格"
+					},
+					"origin": {
+						"desc": "模型的位置原点。",
+						"name": "模型原点",
+						"separator": ", "
+					},
+					"position": {
+						"desc": "模型的偏移量。",
+						"name": "模型偏移",
+						"separator": ", "
+					},
+					"scale": {
+						"desc": "模型的缩放比例。",
+						"name": "模型缩放",
+						"separator": ", "
+					},
+					"x-origin": {
+						"desc": "在 X 轴上的原点。",
+						"items": {
+							"left": "左",
+							"middle": "中心",
+							"right": "右"
+						},
+						"name": "原点X"
+					},
+					"x-position": {
+						"desc": "显示到 X 轴的偏移值。",
+						"name": "X 偏移"
+					},
+					"x-scale": {
+						"desc": "在X轴的缩放倍数。",
+						"name": "X 缩放"
+					},
+					"y-origin": {
+						"desc": "在 Y 轴上的原点。",
+						"items": {
+							"bottom": "下",
+							"middle": "中心",
+							"top": "上"
+						},
+						"name": "原点Y"
+					},
+					"y-position": {
+						"desc": "显示到 Y 轴的偏移值。",
+						"name": "Y 偏移"
+					},
+					"y-scale": {
+						"desc": "在Y轴的缩放倍数。",
+						"name": "Y 缩放"
+					},
+					"z-origin": {
+						"desc": "在 Z 轴上的原点。",
+						"items": {
+							"back": "底部",
+							"front": "顶部",
+							"middle": "中心"
+						},
+						"name": "Z轴原点"
+					},
+					"z-position": {
+						"desc": "显示到 Z 轴的偏移值。",
+						"name": "Z 偏移"
+					},
+					"z-scale": {
+						"desc": "在Z轴的缩放倍数。",
+						"name": "Z 缩放"
+					}
+				}
+			},
+			"mouse": {
+				"debugger": {
+					"absolute-position": "绝对位置",
+					"button-4": "鼠标键4",
+					"button-5": "鼠标键5",
+					"left-button": "左键",
+					"middle-button": "中键",
+					"position-on-each-layer": "在每个图层的位置",
+					"right-button": "右键"
+				},
+				"name": "鼠标"
+			},
+			"multiplayer": {
+				"debugger": {
+					"multiplayer": {
+						"game": "游戏",
+						"host-alias": "主机昵称",
+						"host-id": "主机ID",
+						"instance": "大厅",
+						"my-alias": "个人昵称",
+						"my-id": "个人ID",
+						"room": "房间",
+						"title": "多人联机"
+					},
+					"peers": {
+						"title": "玩家"
+					},
+					"signalling": {
+						"motd": "MOTD",
+						"name": "名称",
+						"operator": "运营商",
+						"title": "信令",
+						"url": "URL",
+						"version": "版本"
+					},
+					"statistics": {
+						"inbound-bandwidth": "入站带宽",
+						"inbound-compression": "入站压缩",
+						"inbound-count": "入站数量",
+						"inbound-decompressed-bandwidth": "入站解包带宽",
+						"outbound-bandwidth": "出站带宽",
+						"outbound-compression": "出站压缩",
+						"outbound-count": "出站数量",
+						"outbound-decompressed-bandwidth": "出站解包带宽",
+						"title": "统计"
+					}
+				},
+				"name": "多人联机"
+			},
+			"ninepatch": {
+				"name": "九宫图",
+				"properties": {
+					"bottom-margin": {
+						"desc": "图像下边框保留的边距，以像素为单位。",
+						"name": "下边距"
+					},
+					"edges": {
+						"desc": "选择是否平铺或拉伸边缘。",
+						"items": {
+							"stretch": "拉伸",
+							"tile": "平铺"
+						},
+						"name": "边缘"
+					},
+					"edit-image": {
+						"desc": "单击以编辑对象的图像。",
+						"link-text": "编辑",
+						"name": "图像"
+					},
+					"fill": {
+						"desc": "选择组合框的显示方式。",
+						"items": {
+							"stretch": "拉伸",
+							"tile": "平铺",
+							"transparent": "透明"
+						},
+						"name": "填充"
+					},
+					"image-scale-x": {
+						"desc": "图像在X轴的缩放比例。",
+						"name": "图像比例X"
+					},
+					"image-scale-y": {
+						"desc": "图像在Y轴的缩放比例。",
+						"name": "图像比例Y"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"left-margin": {
+						"desc": "图像左边框保留的边距，以像素为单位。",
+						"name": "左边距"
+					},
+					"origin": {
+						"desc": "选择图像原点的位置。",
+						"items": {
+							"bottom": "底部",
+							"bottom-left": "左下",
+							"bottom-right": "右下",
+							"center": "中心",
+							"left": "左",
+							"right": "右",
+							"top": "顶部",
+							"top-left": "左上",
+							"top-right": "右上"
+						},
+						"name": "图像原点"
+					},
+					"right-margin": {
+						"desc": "图像右边框保留的边距，以像素为单位。",
+						"name": "右边距"
+					},
+					"seams": {
+						"desc": "实现无缝衔接的渲染方式，对于具有半透明的图形，建议使用 '精准匹配' 设置。",
+						"items": {
+							"exact": "精确",
+							"overlap": "覆盖"
+						},
+						"name": "边缘衔接"
+					},
+					"top-margin": {
+						"desc": "图像上边框保留的边距，以像素为单位。",
+						"name": "上边距"
+					}
+				}
+			},
+			"nodewebkit": {
+				"debugger": {
+					"app-folder": "应用程序文件夹",
+					"project-files-folder": "项目文件的文件夹",
+					"user-folder": "用户文件夹"
+				},
+				"name": "NW.js"
+			},
+			"particles": {
+				"debugger": {
+					"is-spraying": "正在喷射",
+					"particle-count": "粒子数量"
+				},
+				"name": "粒子",
+				"properties": {
+					"acceleration": {
+						"desc": "每个粒子的加速度，以每秒像素/秒为单位。",
+						"name": "加速度"
+					},
+					"angle-randomiser": {
+						"desc": "调整随机偏移角度，以度数/秒为单位。",
+						"name": "角度分散值"
+					},
+					"destroy-mode": {
+						"desc": "选择何时销毁每个粒子。",
+						"items": {
+							"fade-to-invisible": "逐渐淡出",
+							"particle-stopped": "停止播放",
+							"timeout-expired": "超时后销毁"
+						},
+						"name": "销毁时机"
+					},
+					"edit-image": {
+						"desc": "点击编辑粒子图像",
+						"link-text": "编辑",
+						"name": "图像"
+					},
+					"gravity": {
+						"desc": "重力，以每秒像素/秒为单位。",
+						"name": "重力"
+					},
+					"grow-rate": {
+						"desc": "粒子大小会随时间而增长，若增长率为负值，则逐渐变小。",
+						"name": "增长率"
+					},
+					"grow-rate-randomiser": {
+						"desc": "粒子初始增长率的随机偏移值。",
+						"name": "增长率分散值"
+					},
+					"initial-particle-properties": {
+						"desc": "影响每个粒子创建的属性。",
+						"name": "初始属性"
+					},
+					"initial-speed-randomiser": {
+						"desc": "粒子初始速度的随机偏移值。",
+						"name": "速度分散值"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"life-speed-randomiser": {
+						"desc": "调整随机偏移速度，以像素/秒为单位。",
+						"name": "速度分散值"
+					},
+					"live-preview": {
+						"desc": "在编辑器中进行实时预览。",
+						"name": "预览"
+					},
+					"object": {
+						"desc": "可选择指定一个对象作为粒子图像，而不是绘制粒子本身的图像。",
+						"name": "对象"
+					},
+					"opacity": {
+						"desc": "粒子的初始不透明度。",
+						"name": "不透明度"
+					},
+					"opacity-randomiser": {
+						"desc": "调整随机偏移不透明度。",
+						"name": "不透明度分散值"
+					},
+					"particle-lifetime-properties": {
+						"desc": "影响每个粒子行为的属性。",
+						"name": "生命周期"
+					},
+					"rate": {
+						"desc": "每秒创建的粒子数，或一次性的总粒子数。",
+						"name": "速率"
+					},
+					"size": {
+						"desc": "粒子的初始大小。",
+						"name": "大小"
+					},
+					"size-randomiser": {
+						"desc": "粒子初始大小的随机偏移值。",
+						"name": "大小分散值"
+					},
+					"speed": {
+						"desc": "粒子的初始喷射速度。",
+						"name": "速度"
+					},
+					"spray-cone": {
+						"desc": "粒子创建时的发射角度范围。",
+						"name": "范围"
+					},
+					"timeout": {
+						"desc": "粒子超时或淡出至不可见的时间，以秒为单位。这取决于超时销毁属性。",
+						"name": "持续时间"
+					},
+					"type": {
+						"desc": "无论是喷雾还是一次喷射的颗粒。",
+						"items": {
+							"continuous-spray": "持续发射",
+							"one-shot": "仅一次"
+						},
+						"name": "类型"
+					},
+					"x-randomiser": {
+						"desc": "粒子在X轴的初始位置随机值。",
+						"name": "X轴分散值"
+					},
+					"y-randomiser": {
+						"desc": "粒子在Y轴的初始位置随机值。",
+						"name": "Y轴分散值"
+					}
+				}
+			},
+			"platforminfo": {
+				"name": "设备信息"
+			},
+			"progressbar": {
+				"name": "进度条",
+				"properties": {
+					"class": {
+						"desc": "可选的元素Class，允许通过CSS设置样式。",
+						"name": "Class"
+					},
+					"id": {
+						"desc": "可选的元素ID，允许通过CSS设置样式。",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "选择在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"maximum": {
+						"desc": "进度条的最大值。 对于不确定的进度条，设置为0。",
+						"name": "最大值"
+					},
+					"tooltip": {
+						"desc": "将鼠标悬停在控件上时显示此文本。",
+						"name": "提示"
+					},
+					"value": {
+						"desc": "进度条的初始值。",
+						"name": "值"
+					}
+				}
+			},
+			"qrcode": {
+				"name": "二维码",
+				"properties": {
+					"correction-level": {
+						"desc": "容错率越高，二维码生成的码点越密度，可在遮挡越多的情况下被扫描出来。",
+						"items": {
+							"h": "30%",
+							"l": "7%",
+							"m": "15%",
+							"q": "25%"
+						},
+						"name": "容错率"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"text": {
+						"desc": "二维码的文本内容。",
+						"name": "文本"
+					}
+				}
+			},
+			"shadowlight": {
+				"name": "投影光",
+				"properties": {
+					"cast-from": {
+						"desc": "根据投影对象的投影标签，决定哪些对象能被投射。",
+						"items": {
+							"all": "所有标签",
+							"different-tag": "不同标签",
+							"same-tag": "相同标签"
+						},
+						"name": "投射目标"
+					},
+					"light-height": {
+						"desc": "光源的初始高度，以像素为单位。",
+						"name": "光源高度"
+					},
+					"light-radius": {
+						"desc": "投射具有柔软边缘的阴影光，仅在光源高度为 0 时有效，",
+						"name": "光源半径"
+					},
+					"live-preview": {
+						"desc": "在编辑器中进行实时预览。",
+						"name": "预览"
+					},
+					"shadow-color": {
+						"desc": "光源投射的阴影颜色。",
+						"name": "光源颜色"
+					},
+					"tag": {
+						"desc": "用于识别 '投影对象' 的阴影标签。",
+						"name": "投影标签"
+					}
+				}
+			},
+			"shape3d": {
+				"name": "3D形状",
+				"properties": {
+					"back-face-culling": {
+						"desc": "自动隐藏背对相机的朝面。",
+						"name": "背面剔除"
+					},
+					"edit-images": {
+						"desc": "编辑此形状每个朝面的图像。",
+						"link-text": "编辑",
+						"name": "图像"
+					},
+					"face-back": {
+						"desc": "选择背面是否可见。",
+						"name": "背面"
+					},
+					"face-bottom": {
+						"desc": "选择底面是否可见。",
+						"name": "底面"
+					},
+					"face-front": {
+						"desc": "选择顶面是否可见。",
+						"name": "顶面"
+					},
+					"face-left": {
+						"desc": "选择左面是否可见。",
+						"name": "左面"
+					},
+					"face-right": {
+						"desc": "选择右面是否可见。",
+						"name": "右面"
+					},
+					"face-top": {
+						"desc": "选择顶面是否可见。",
+						"name": "顶面"
+					},
+					"face-visibility": {
+						"desc": "选择形状的哪些面是可见的。",
+						"name": "朝面可见"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"object-back": {
+						"desc": "可选。选择一个对象作为背面的图像。注意，此对象的实例必须放在相同场景中。",
+						"name": "背面对象"
+					},
+					"object-bottom": {
+						"desc": "可选。选择一个对象作为底部的图像。注意，此对象的实例必须放在相同场景中。",
+						"name": "底部对象"
+					},
+					"object-front": {
+						"desc": "可选。选择一个对象作为顶面的图像。注意，此对象的实例必须放在相同场景中。",
+						"name": "顶面对象"
+					},
+					"object-left": {
+						"desc": "可选。选择一个对象作为左面的图像。注意，此对象的实例必须放在相同场景中。",
+						"name": "左面对象"
+					},
+					"object-right": {
+						"desc": "可选。选择一个对象作为右面的图像。注意，此对象的实例必须放在相同场景中。",
+						"name": "右面对象"
+					},
+					"object-top": {
+						"desc": "可选。选择一个对象作为顶部的图像。注意，此对象的实例必须放在相同场景中。",
+						"name": "顶部对象"
+					},
+					"shape": {
+						"desc": "要使用的 3D 基本形状。请注意，并非所有形状都使用所有六个面。",
+						"items": {
+							"box": "方盒",
+							"corner": "尖角(外)",
+							"corner-in": "尖角(内)",
+							"prism": "棱柱",
+							"pyramid": "金字塔",
+							"wedge": "斜坡"
+						},
+						"name": "形状"
+					},
+					"use-object-image-for-faces": {
+						"desc": "可选。允许选择一个对象作为每个朝面的图像。注意，此对象的实例必须放置在相同的场景中。",
+						"name": "朝面对象"
+					},
+					"z-origin": {
+						"desc": "物体位于 Z 轴上的位置。",
+						"items": {
+							"back": "背面",
+							"front": "顶面",
+							"middle": "中间"
+						},
+						"name": "Z轴原点"
+					},
+					"z-tiling-factor": {
+						"desc": "使用平铺图或九宫图类型的作为朝向图像时，应用到Z轴上的纹理平铺系数。数值越大，图像重复越密集。",
+						"name": "平铺系数"
+					}
+				}
+			},
+			"share": {
+				"name": "分享"
+			},
+			"sliderbar": {
+				"name": "滑动条",
+				"properties": {
+					"class": {
+						"desc": "可选项，添加 Class 元素来设置样式。",
+						"name": "Class"
+					},
+					"enabled": {
+						"desc": "是否在启动时启用或禁用滑块。",
+						"name": "启用"
+					},
+					"id": {
+						"desc": "控件的可选ID，允许使用页面HTML中的CSS设置样式。",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "选择在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"maximum": {
+						"desc": "滑块的最大值。",
+						"name": "最大值"
+					},
+					"minimum": {
+						"desc": "滑块的最小值。",
+						"name": "最小值"
+					},
+					"step": {
+						"desc": "步长值，滑块每次拖动的增量。",
+						"name": "步长"
+					},
+					"tooltip": {
+						"desc": "将鼠标悬停在控件上时显示此文本。",
+						"name": "提示"
+					},
+					"value": {
+						"desc": "滑块的初始值。",
+						"name": "值"
+					}
+				}
+			},
+			"speechrecognition": {
+				"debugger": {
+					"final-transcript": "最终记录",
+					"interim-transcript": "临时结果",
+					"is-recognising-speech": "正在识别语音",
+					"last-error": "最后一次返回的错误"
+				},
+				"name": "语音识别"
+			},
+			"speechsynthesis": {
+				"debugger": {
+					"voices": "声音"
+				},
+				"name": "语音合成"
+			},
+			"sprite": {
+				"debugger": {
+					"animation-properties": {
+						"current-animation": "当前动画",
+						"current-frame": "当前帧",
+						"is-playing": "正在播放",
+						"repeats": "重复",
+						"speed": "速度",
+						"title": "精灵动画"
+					}
+				},
+				"name": "精灵",
+				"properties": {
+					"edit-animations": {
+						"desc": "单击以编辑对象的动画。",
+						"link-text": "编辑",
+						"name": "动画"
+					},
+					"enable-collisions": {
+						"desc": "对象是否注册碰撞事件。注意，在真正触发碰撞事件前，禁用此选项不会提升性能。",
+						"name": "允许碰撞"
+					},
+					"initial-animation": {
+						"desc": "初始显示的动画。",
+						"name": "初始动画"
+					},
+					"initial-frame": {
+						"desc": "初始显示的动画帧。",
+						"name": "初始帧数"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"live-preview": {
+						"desc": "在编辑器中进行实时预览。",
+						"name": "预览"
+					},
+					"make-original-size": {
+						"desc": "单击以将对象设置为与其图像相同的大小。",
+						"link-text": "恢复尺寸",
+						"name": "图像尺寸"
+					}
+				}
+			},
+			"spritefont2": {
+				"debugger": {
+					"text-height": "文本高度",
+					"text-width": "文本宽度"
+				},
+				"name": "位图字体",
+				"properties": {
+					"accessibility": {
+						"desc": "辅助功能的设置。",
+						"name": "辅助功能"
+					},
+					"character-height": {
+						"desc": "图像中每个单元格的高度。",
+						"name": "字符高度"
+					},
+					"character-set": {
+						"desc": "图像每个位置对应的字符，从左上角开始。",
+						"name": "字符集"
+					},
+					"character-spacing": {
+						"desc": "在字符之间添加的额外像素宽度。",
+						"name": "字符间距"
+					},
+					"character-width": {
+						"desc": "图像中每个单元格的宽度。",
+						"name": "字符宽度"
+					},
+					"edit-image": {
+						"desc": "单击以编辑对象的位图字体。",
+						"link-text": "编辑",
+						"name": "位图字体"
+					},
+					"enable-bbcode": {
+						"desc": "在文本中使用 BBCode 标签，例如[scale=2]更大的文字[/scale]。",
+						"name": "启用富文本"
+					},
+					"horizontal-alignment": {
+						"desc": "文本在边框内的水平对齐方式。",
+						"items": {
+							"center": "居中",
+							"left": "左对齐",
+							"right": "右对齐"
+						},
+						"name": "水平对齐"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"line-height": {
+						"desc": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。",
+						"name": "行距"
+					},
+					"origin": {
+						"desc": "选择图像原点的位置。",
+						"items": {
+							"bottom": "底部",
+							"bottom-left": "左下",
+							"bottom-right": "右下",
+							"center": "中心",
+							"left": "左",
+							"right": "右",
+							"top": "顶部",
+							"top-left": "左上",
+							"top-right": "右上"
+						},
+						"name": "图像原点"
+					},
+					"read-aloud": {
+						"desc": "使用屏幕阅读器时，当文本首次出现或内容发生变化时，允许设备的辅助功能朗读这段文本。",
+						"name": "朗读内容"
+					},
+					"scale": {
+						"desc": "绘制文字时，对其进行缩放。",
+						"name": "缩放比例"
+					},
+					"spacing-data": {
+						"desc": "用于微调单个字符宽度，这是一组JSON数据。",
+						"name": "间距数据"
+					},
+					"text": {
+						"desc": "要显示的初始文本。",
+						"initial-value": "文本",
+						"name": "文本"
+					},
+					"vertical-alignment": {
+						"desc": "文本在边框内的垂直对齐方式。",
+						"items": {
+							"bottom": "底部",
+							"center": "居中",
+							"top": "顶部"
+						},
+						"name": "垂直对齐"
+					},
+					"wrapping": {
+						"desc": "当内容超出对象宽度时，自动换行的截断规则。以空格分隔的单词，或按字符截断。选择亚洲语言时，会尽可能避免标点符号换行。",
+						"items": {
+							"character": "字符",
+							"cjk": "亚洲语言",
+							"word": "词组"
+						},
+						"name": "自动换行"
+					}
+				}
+			},
+			"svgpicture": {
+				"name": "矢量图",
+				"properties": {
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"origin": {
+						"desc": "选择图像原点的位置。",
+						"items": {
+							"bottom": "底部",
+							"bottom-left": "左下",
+							"bottom-right": "右下",
+							"center": "中心",
+							"left": "左",
+							"right": "右",
+							"top": "顶部",
+							"top-left": "左上",
+							"top-right": "右上"
+						},
+						"name": "图像原点"
+					},
+					"svg-file": {
+						"desc": "选择要显示的SVG文件。",
+						"name": "SVG文件"
+					},
+					"view-image": {
+						"desc": "单击查看对象的图像文件。",
+						"link-text": "查看",
+						"name": "图像"
+					}
+				}
+			},
+			"system": {
+				"name": "系统"
+			},
+			"text": {
+				"debugger": {
+					"text-height": "文本高度",
+					"text-width": "文本宽度"
+				},
+				"name": "文本",
+				"properties": {
+					"accessibility": {
+						"desc": "辅助功能的设置。",
+						"name": "辅助功能"
+					},
+					"bold": {
+						"desc": "以粗体显示字体。",
+						"name": "粗体"
+					},
+					"color": {
+						"desc": "要显示的文本的颜色。",
+						"name": "颜色"
+					},
+					"enable-bbcode": {
+						"desc": "在文本中使用 BBCode 标签，例如 [b]加粗文本[/b]、[color=#FF0000]红色文字[/color]。",
+						"name": "启用富文本"
+					},
+					"font": {
+						"desc": "用于显示文本的字体类型。若要导入自定义字体，可在项目栏 '字体' 文件夹中导入。",
+						"name": "字型"
+					},
+					"horizontal-alignment": {
+						"desc": "文本在其边界框内的水平对齐方式。",
+						"items": {
+							"center": "居中",
+							"left": "左",
+							"right": "右"
+						},
+						"name": "水平对齐"
+					},
+					"icon-set": {
+						"desc": "启用富文本功能时，允许使用 [icon=tag] 标签图标集的精灵对象中带有动画帧标签的图像，显示为文本中的图标。",
+						"name": "图标集"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"italic": {
+						"desc": "以倾斜斜体样式显示字体。",
+						"name": "斜体"
+					},
+					"line-height": {
+						"desc": "基于默认行高的额外间距偏移量，以像素为单位。 默认行间距是0。",
+						"name": "行距"
+					},
+					"origin": {
+						"desc": "选择图像原点的位置。",
+						"items": {
+							"bottom": "底部",
+							"bottom-left": "左下",
+							"bottom-right": "右下",
+							"center": "中心",
+							"left": "左",
+							"right": "右",
+							"top": "顶部",
+							"top-left": "左上",
+							"top-right": "右上"
+						},
+						"name": "图像原点"
+					},
+					"read-aloud": {
+						"desc": "使用屏幕阅读器时，当文本首次出现或内容发生变化时，允许设备的辅助功能朗读这段文本。",
+						"name": "朗读内容"
+					},
+					"size": {
+						"desc": "要显示的文本大小，以磅为单位（pt）。",
+						"name": "大小"
+					},
+					"text": {
+						"desc": "要显示的初始文本。",
+						"initial-value": "Text",
+						"name": "文本"
+					},
+					"text-direction": {
+						"desc": "文本书写的方向。",
+						"items": {
+							"auto": "自动",
+							"ltr": "从左向右",
+							"rtl": "从右向左"
+						},
+						"name": "文本方向"
+					},
+					"vertical-alignment": {
+						"desc": "文本在其边界框内的垂直对齐方式。",
+						"items": {
+							"bottom": "底部",
+							"center": "居中",
+							"top": "顶部"
+						},
+						"name": "垂直对齐"
+					},
+					"wrapping": {
+						"desc": "当内容超出对象宽度时，自动换行的截断规则。以空格分隔的单词，或按字符截断。选择亚洲语言时，会尽可能避免标点符号换行。",
+						"items": {
+							"character": "字符",
+							"cjk": "亚洲语言",
+							"word": "词组"
+						},
+						"name": "自动换行"
+					}
+				}
+			},
+			"textbox": {
+				"name": "输入框",
+				"properties": {
+					"auto-font-size": {
+						"desc": "根据图层比例自动设置字体大小。",
+						"name": "自动字体大小"
+					},
+					"class": {
+						"desc": "可选项，添加 Class 元素来设置样式。",
+						"name": "Class"
+					},
+					"enabled": {
+						"desc": "场景启动时，启用还是禁用控件。",
+						"name": "启用"
+					},
+					"id": {
+						"desc": "控件的可选ID，允许使用页面HTML中的CSS设置样式。",
+						"name": "ID"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"placeholder": {
+						"desc": "文本输入为空时显示的提示。",
+						"name": "占位符"
+					},
+					"read-only": {
+						"desc": "场景启动时，是否为只读模式。不允许用户对值修改。",
+						"name": "只读"
+					},
+					"spell-check": {
+						"desc": "如果支持，允许浏览器拼写检查文本输入。",
+						"name": "拼写检查"
+					},
+					"text": {
+						"desc": "文本输入的初始文本。",
+						"name": "文本"
+					},
+					"tooltip": {
+						"desc": "将鼠标悬停在控件上时显示此文本。",
+						"name": "提示"
+					},
+					"type": {
+						"desc": "输入框接收值的类型，如单行、多行文本，仅数字、密码、邮箱等，这也会影响触控设备上的屏幕键盘布局。",
+						"items": {
+							"email": "邮箱",
+							"number": "数字",
+							"password": "密码",
+							"search": "搜索",
+							"telephone-number": "电话号码",
+							"text": "文本",
+							"textarea": "多行文本",
+							"url": "URL"
+						},
+						"name": "类型"
+					}
+				}
+			},
+			"tiledbg": {
+				"name": "平铺图",
+				"properties": {
+					"angle-random": {
+						"desc": "随机旋转的角度。",
+						"name": "扰动角度"
+					},
+					"blend-margin-x": {
+						"desc": "淡入到相邻图块的宽度百分比。",
+						"name": "边界混合X"
+					},
+					"blend-margin-y": {
+						"desc": "淡入到相邻图块的高度百分比。",
+						"name": "边界混合Y"
+					},
+					"edit-image": {
+						"desc": "单击以编辑对象的图像。",
+						"link-text": "编辑",
+						"name": "图像"
+					},
+					"enable-tile-randomization": {
+						"desc": "启用图块随机偏移混合，以减少图案在视觉上的重复。",
+						"name": "启用边界混合"
+					},
+					"image-angle": {
+						"desc": "图像在内部的倾斜角度，以度数为单位。",
+						"name": "图像角度"
+					},
+					"image-offset-x": {
+						"desc": "图像在X轴的偏移滚动",
+						"name": "图像偏移X"
+					},
+					"image-offset-y": {
+						"desc": "图像在Y轴的偏移滚动",
+						"name": "图像偏移Y"
+					},
+					"image-scale-x": {
+						"desc": "图像在X轴的缩放",
+						"name": "图像缩放X"
+					},
+					"image-scale-y": {
+						"desc": "图像在Y轴的缩放",
+						"name": "图像缩放Y"
+					},
+					"image-transform": {
+						"desc": "调整图片显示的模式",
+						"name": "图像变换"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"origin": {
+						"desc": "选择图像原点的位置。",
+						"items": {
+							"bottom": "底部",
+							"bottom-left": "左下",
+							"bottom-right": "右下",
+							"center": "中心",
+							"left": "左",
+							"right": "右",
+							"top": "顶部",
+							"top-left": "左上",
+							"top-right": "右上"
+						},
+						"name": "图像原点"
+					},
+					"tile-randomization": {
+						"desc": "使用随机偏移量和角度旋转对重复图块边界的纹理进行混合。",
+						"name": "纹理混合"
+					},
+					"wrap-horizontal": {
+						"desc": "图像在水平环绕的显示方式。注意，此操作会同步到此对象的所有实例。",
+						"items": {
+							"clamp-to-edge": "约束到边缘",
+							"mirror-repeat": "镜像重复",
+							"repeat": "重复"
+						},
+						"name": "横向平铺"
+					},
+					"wrap-vertical": {
+						"desc": "图像在垂直环绕的显示方式。注意，此操作会同步到此对象的所有实例。",
+						"items": {
+							"clamp-to-edge": "约束到边缘",
+							"mirror-repeat": "镜像重复",
+							"repeat": "重复"
+						},
+						"name": "垂直平铺"
+					},
+					"x-random": {
+						"desc": "在水平方向的随机平移量。",
+						"name": "扰动X"
+					},
+					"y-random": {
+						"desc": "在垂直方向的随机平移量。",
+						"name": "扰动Y"
+					}
+				}
+			},
+			"tilemap": {
+				"name": "瓦片图",
+				"properties": {
+					"drawing-mode": {
+						"desc": "图块绘制的顺序",
+						"items": {
+							"bottom-to-left": "底部到左",
+							"bottom-to-right": "底部到右",
+							"top-to-left": "顶部到左",
+							"top-to-right": "顶部到右"
+						},
+						"name": "绘图模式"
+					},
+					"edit-image": {
+						"desc": "单击以编辑瓦片图像资源。",
+						"link-text": "编辑",
+						"name": "图像"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"seamless-mode": {
+						"desc": "使用一种性能较慢但无缝衔接的渲染方式。",
+						"name": "无缝模式"
+					},
+					"tile-height": {
+						"desc": "每个图块的高度，以像素为单位。",
+						"name": "图块高度"
+					},
+					"tile-width": {
+						"desc": "每个图块的宽度，以像素为单位。",
+						"name": "图块宽度"
+					},
+					"tile-x-drawing-offset": {
+						"desc": "绘制时应用在每个图块的水平偏移",
+						"name": "图块偏移X"
+					},
+					"tile-x-offset": {
+						"desc": "第一个图块在图像中的X偏移值。",
+						"name": "图块偏移X"
+					},
+					"tile-x-spacing": {
+						"desc": "每个图块之间的水平间隙。",
+						"name": "图块间距X"
+					},
+					"tile-y-drawing-offset": {
+						"desc": "绘制时应用于每个图块的垂直偏移",
+						"name": "图块偏移Y"
+					},
+					"tile-y-offset": {
+						"desc": "第一个图块在图像中的Y偏移值。",
+						"name": "图块偏移Y"
+					},
+					"tile-y-spacing": {
+						"desc": "每个图块之间的垂直间隙。",
+						"name": "图块间距Y"
+					}
+				}
+			},
+			"timeline": {
+				"name": "时间轴"
+			},
+			"touch": {
+				"debugger": {
+					"touches": "触摸"
+				},
+				"name": "触控",
+				"properties": {
+					"use-mouse-input": {
+						"desc": "允许使用鼠标单击模拟单点触控，这对测试很有用。",
+						"name": "允许鼠标输入"
+					}
+				}
+			},
+			"usermedia": {
+				"name": "用户媒体"
+			},
+			"video": {
+				"name": "视频",
+				"properties": {
+					"autoplay": {
+						"desc": "场景开始时，自动开始播放视频（如果支持）。",
+						"items": {
+							"no": "否",
+							"preload": "预加载",
+							"yes": "是"
+						},
+						"name": "自动播放"
+					},
+					"initially-visible": {
+						"desc": "在场景开始时，对象是否可见。",
+						"name": "初始可见"
+					},
+					"play-in-background": {
+						"desc": "即使标签或应用程序进入后台，也可以继续播放视频。",
+						"name": "后台继续播放"
+					},
+					"primary-format": {
+						"desc": "首选的视频格式和视频编码器。若设备不支持播放此格式，将使用备选格式。",
+						"items": {
+							"mp4-av1": "MP4 AV1",
+							"mp4-h264": "MP4 H.264",
+							"mp4-h265": "MP4 H.265",
+							"webm-av1": "WebM AV1",
+							"webm-vp8": "WebM VP8",
+							"webm-vp9": "WebM VP9"
+						},
+						"name": "首选格式"
+					},
+					"primary-source": {
+						"desc": "要播放的视频文件名，包含后缀名，如 video.mp4。若放在文件夹内，需补全文件夹路径，如 Folder/video.mp4",
+						"name": "首选播放源"
+					},
+					"secondary-format": {
+						"desc": "备选的视频格式和编解码器，在首选视频格式无法播放的情况使用。",
+						"items": {
+							"mp4-av1": "MP4 AV1",
+							"mp4-h264": "MP4 H.264",
+							"mp4-h265": "MP4 H.265",
+							"webm-av1": "WebM AV1",
+							"webm-vp8": "WebM VP8",
+							"webm-vp9": "WebM VP9"
+						},
+						"name": "备选格式"
+					},
+					"secondary-source": {
+						"desc": "若首选视频格式设备无法播放，则使用备选视频源。",
+						"name": "备选播放源"
+					}
+				}
+			},
+			"xml": {
+				"name": "XML"
+			}
+		},
 		"ui": {
 			"bars": {
 				"properties": {

@@ -10,7 +10,9 @@ other than an image under 256 KiB. The skill, the schemas, the guides, the
 prompts and the empty project are copied to the same paths. The TypeScript
 definitions and the examples are written as bundles, which
 skills/construct3-agent-plugin/scripts/c3project.py reads with data_texts;
-the language packs keep the parts check_project.py reads. Why:
+the language packs keep the parts check_project.py reads. They also keep
+the name, properties and debugger texts of every plugin and behavior,
+because the keys of a preview's inspector values point into them. Why:
 docs/decisions/plugin-folder.md.
 
 The build also sets the version in .claude-plugin/plugin.json. The published
@@ -49,6 +51,9 @@ LEFT_OUT = (f"{SKILL}/evals/",)
 BUNDLED = (("data/c3-ts-defs", "*.d.ts"), ("data/c3-examples/en-US", "*.json"), ("data/c3-examples/zh-CN", "*.json"))
 # The language pack keys check_project.py reads
 LANG_KEYS = (("text", "ui", "bars", "properties", "project"), ("text", "ui", "bars", "timeline", "eases"))
+# The texts kept for every plugin and behavior, at text.<kind>.<id>.<part>
+# A preview's inspector keys point into them (references/reading-the-runtime.md, "Inspector values")
+ADDON_TEXTS = ("name", "properties", "debugger")
 
 MAX_FILES = 512
 MAX_SIZE = 256 * 1024
@@ -107,6 +112,11 @@ def lang_subset(locale: str) -> str:
         for k in keys[:-1]:
             src, dst = src[k], dst.setdefault(k, {})
         dst[keys[-1]] = src[keys[-1]]
+    for kind in ("plugins", "behaviors"):
+        for addon, texts in pack["text"][kind].items():
+            kept = {part: texts[part] for part in ADDON_TEXTS if isinstance(texts, dict) and part in texts}
+            if kept:
+                out["text"].setdefault(kind, {})[addon] = kept
     return json.dumps(out, ensure_ascii=False, indent="\t", sort_keys=True) + "\n"
 
 
