@@ -236,6 +236,7 @@ several timelines on one instance, or control a timeline by tags,
 keyframes or playback rate, read [pitfalls/timeline.md](pitfalls/timeline.md).
 
 - A relative track adds each tick's step from 0, so keyframe values are offsets from the pose at play start. Moves that start and end at 0 layer and repeat with no offset left.
+- An angle keyframe turns the way its direction says, the long way round if that disagrees with the values. Set it to the sign of the change to the next keyframe.
 - *Set instance* covers the next *Play* only, and one *Play* starts a copy per picked instance with the same tags. Set one instance at a time and tag each copy with its UID.
 - A copy is found by the timeline's name inside the copy's name, so keep no timeline name inside another's.
 - *Stop* rewinds to 0 and takes a relative track's offsets back, and *Pause* holds. A finished timeline ignores both *Stop* and *Resume* and keeps its offsets. *Set time* 0 before replaying or putting the instance back.

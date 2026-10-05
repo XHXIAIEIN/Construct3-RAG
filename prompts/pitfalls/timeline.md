@@ -24,6 +24,17 @@ eases" in
   of a child; observed in a game project, r504 preview, 2026-09-30: a sword
   parented to a body placed by events every tick kept its slash pose, and an
   idle sway and a slash timeline on the same sword added up]
+- An angle keyframe's direction, `clockwise` or `anti-clockwise`, holds for
+  the segment that starts at that keyframe, whatever its two values are. If it
+  disagrees with the shorter way to the next value, the instance turns the
+  long way round: from 0 to +90° *Anti-clockwise* turns −270°. *Closest* takes
+  the shorter way, and *Revolutions* adds full turns. So a generator sets each
+  keyframe's direction to the sign of the change to the next keyframe:
+  positive is clockwise. [runtime: exported c3runtime.js r504, the angle
+  adapter's `Interpolate` switches on `GetDirection()` to `C3.angleLerp`,
+  `C3.angleLerpClockwise` or `C3.angleLerpAntiClockwise`; observed in a game
+  project, r504 preview, October 2026: a bow keyframe from 300° to 390° set
+  *Anti-clockwise* spun the bow 270° backwards]
 - *Set instance* applies to the next *Play* only. With several instances
   picked, one *Play* starts a copy of the timeline for each, all with the same
   tags. So every copy answers the same *Set time* or *Stop*. Set one instance
