@@ -42,14 +42,19 @@ KEYS = {"magenta": (255, 0, 255), "green": (0, 255, 0)}
 NEAR_MAGENTA = ("pink", "magenta", "purple", "violet", "fuchsia", "lilac", "lavender", "rose", "粉", "紫", "品红")
 RATIOS = ((1, 1), (4, 3), (3, 4), (3, 2), (2, 3), (16, 9), (9, 16), (2, 1), (1, 2))
 # Distances in RGB from the background colour, the key as the model painted it: background where
-# it joins the edge and is within NEAR, and anywhere within EXACT.
-NEAR, EXACT = 60, 30
+# it joins the edge and is within NEAR; a gap in the subject, anywhere, within POCKET when it is
+# also within KEYLINE of the key in shade. On real pictures 70 clears the shaded gaps between
+# strands, 66 to 70 away; 50 left them, and 90 cut into the subject and into the edge of a green
+# heart under green, 92 away.
+NEAR, POCKET, KEYLINE = 60, 70, 60
 # The subject's edge: pixels up to a pixel per REACH_PER of the picture's long side in from the
 # background, and at least REACH, are unmixed from it when they lean to the key MARGIN more than
 # the subject behind them, or lie within LINE of the line between the two. A real picture's blend
 # widens with its size: 3 cleared it at 718 px, 4 at 1005 px, 5 at 1436 px. SWEEPS carries the
 # subject's colour along a strand that has no inside.
 REACH, REACH_PER, MARGIN, LINE, SWEEPS = 3, 240, 16, 30, 16
+# Key light inside the subject: a pixel leaning SPILL more to the key than the 5x5 around it.
+SPILL = 60
 WORK = 4                                   # a picture is cut out at up to this many times its box
 MARK = "c3-art"                            # the PNG text key check_look.py reads as a painting
 
@@ -174,6 +179,7 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     dist2 = [(r - br) ** 2 + (g - bgr) ** 2 + (b - bb) ** 2 for r, g, b in rgb]
     hue = leaning_to(key)
     ex = [hue(c) for c in rgb]
+    e_bg = hue(bg)
     norm = br * br + bgr * bgr + bb * bb
 
     def shade(c) -> tuple[float, float]:       # how far a colour is from the key darker or lighter, and how much
@@ -187,6 +193,11 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
             return True
         off, s = shade(rgb[j])
         return 0.25 <= s <= 1.05 and off < 40
+
+    def gap(j: int) -> bool:
+        """The key seen through a gap in the subject, in shade: kept apart from a subject colour near
+        the key, such as a hot pink under magenta, by its distance and its line."""
+        return dist2[j] < POCKET ** 2 and ex[j] > e_bg / 2 and shade(rgb[j])[0] < KEYLINE
 
     clear = bytearray(n)
     shadow = bytearray(n)                      # cleared as the key darker, not as the key
@@ -202,9 +213,11 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
                 clear[j] = 1
                 shadow[j] = dist2[j] >= NEAR ** 2
                 stack.append(j)
+    gaps = 0
     for i in range(n):
-        if dist2[i] < EXACT ** 2:
+        if not clear[i] and gap(i):
             clear[i] = 1
+            gaps += 1
 
     def mask(on):
         return Image.frombytes("L", (w, h), bytes(255 if v else 0 for v in on))
@@ -212,7 +225,7 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     # a dark outline's blended edge reads as a shadow too: beside the subject, it is unmixed below
     beside = mask(not c for c in clear).filter(ImageFilter.MaxFilter(3)).tobytes()
     for i in range(n):
-        if shadow[i] and beside[i]:
+        if shadow[i] and beside[i] and not gap(i):
             clear[i] = 0
     # the edge: pixels up to `reach` in from the background, ring by ring
     reach = max(REACH, round(max(w, h) / REACH_PER))
@@ -286,7 +299,23 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
         elif a < 1:
             out[4 * i:4 * i + 4] = bytes(min(255, max(0, round((o[k] - (1 - a) * b[k]) / a))) for k in range(3)) + \
                 bytes((round(255 * a),))
-    return Image.frombytes("RGBA", (w, h), bytes(out)), f"background {hex_of(bg)}"
+    # key light caught inside the subject: a pixel between the colour around it and the key gets
+    # that colour back, alpha kept
+    spill = 0
+    around5 = rgba.convert("RGB").filter(ImageFilter.MedianFilter(5)).tobytes()
+    for i in range(n):
+        if clear[i] or depth[i]:
+            continue
+        m = around5[3 * i:3 * i + 3]
+        if ex[i] - hue(m) <= SPILL:
+            continue
+        t = on_line(rgb[i], m, bg)
+        if t is None or not 0.1 <= t <= 0.9:
+            continue
+        out[4 * i:4 * i + 3] = bytes(min(255, max(0, round((rgb[i][k] - t * bg[k]) / (1 - t)))) for k in range(3))
+        spill += 1
+    cut = Image.frombytes("RGBA", (w, h), bytes(out))
+    return cut, f"background {hex_of(bg)}, {gaps} px of it in gaps, {spill} px of its light recoloured"
 
 
 def resample(img, size: tuple[int, int], how: int):

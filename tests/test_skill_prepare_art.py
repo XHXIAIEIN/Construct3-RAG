@@ -267,3 +267,19 @@ def test_prepare_art_unmixes_the_edge_by_how_much_key_it_holds():
         # red under magenta and gold under green lean part way to the key, and stay opaque
         ball = [(x, y) for x in range(120, 145) for y in range(142, 167) if truth.getpixel((x, y))[3] == 255]
         assert ball and all(cut.getpixel(p)[3] == 255 for p in ball), key
+
+
+def test_prepare_art_clears_gaps_and_key_light_and_keeps_colours_near_the_key():
+    for key in KEYS:
+        truth, pic = figure(key)
+        cut, how = prepare_art.cut_out(pic, KEYS[key])
+        assert "102 px of it in gaps, 12 px of its light recoloured" in how, how
+        hole = [(x, y) for x in range(RING[0] + 1, RING[2] - 1) for y in range(RING[1] + 1, RING[3] - 1)
+                if truth.getpixel((x, y))[3] == 0]
+        assert hole and all(cut.getpixel(p)[3] == 0 for p in hole), key
+        for x, y in ((sx + dx, sy + dy) for sx, sy in SPILL for dx in (0, 1) for dy in (0, 1)):
+            assert max(abs(a - b) for a, b in zip(cut.getpixel((x, y)), truth.getpixel((x, y)))) <= 24, (key, x, y)
+        # a hot-pink heart under magenta, 94 from the key, and a green one under green: untouched
+        heart = HOT_PINK if key == "magenta" else GREEN_HEART
+        inside = [(x, y) for x in range(66, 94) for y in range(124, 149) if truth.getpixel((x, y)) == (*heart, 255)]
+        assert inside and all(cut.getpixel(p) == (*heart, 255) for p in inside), key
