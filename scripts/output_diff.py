@@ -3,8 +3,10 @@
     python scripts/output_diff.py [REF] [--only KIND ...] [--limit N] [--examples FOLDER] [--show N] [--verbose]
 
 REF (default origin/main) is checked out with `git worktree add --detach` into
-a folder of the system temp folder, which is removed afterwards. The same cases
-then run with REF's skill scripts and with the working tree's:
+a folder of the system temp folder, which is removed afterwards. A worktree,
+not an export, so that REF's scripts find the example clone beside the main
+working tree as the working tree's do. The same cases then run with REF's
+skill scripts and with the working tree's:
 
   print_sheet    print_sheet.py on every sheet of every official example
   print_layout   print_layout.py on every layout of every official example

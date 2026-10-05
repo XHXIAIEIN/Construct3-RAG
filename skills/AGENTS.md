@@ -111,6 +111,10 @@ the block for the project's instruction file.
   example and the game projects: exit code, stdout and stderr
   (`construct3-agent-plugin/evals/sweep_outputs.py`). A restructure shows no
   difference; a change of output shows exactly the runs it was meant for.
+  `scripts/output_diff.py [REF]` makes the comparison against a git ref in
+  one command and prints the first differing line of each case; it covers
+  the official examples, `new_project.py` and the generator template, and
+  `sweep_outputs.py` also takes the game projects.
 
 ## Checks
 
