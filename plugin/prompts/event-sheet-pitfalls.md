@@ -82,7 +82,7 @@ If the events use the Timer behavior, read [pitfalls/timer.md](pitfalls/timer.md
 - *Start timer* on an existing tag restarts it. After *Stop* or a *Once* timer's end its expressions return 0.
 - A timer is state you start and stop, so list every transition before choosing it.
 - A timer and a tween scheduled to end together end a tick apart.
-- A Timer cannot hold one timed buff per stacked shield: no expression names the tag that fired, and a re-cast restarts the tag. Keep the shields in an Array in the type's container, picked by UID from a family event: expiry `time + duration` in row 0, amount in row 1, sorted by column; spend from column 0, and one timer armed for column 0 expires it.
+- One instance cannot time stacked buffs of one kind with Timer tags: no expression names the tag that fired, and a re-cast restarts the tag. Make each shield or buff an instance with its own Timer and amount, a child of its holder; spend them with *Pick children* and *For each (ordered)* by the time left.
 
 ### Wait and time scale
 
@@ -264,6 +264,7 @@ Sprite, read [pitfalls/creating-objects.md](pitfalls/creating-objects.md).
 - A runtime-created instance copies an existing instance or template, and without one its behavior properties read 0. Keep one per object in a layout that never runs.
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
 - A created instance is found outside its own event only by UID, until the top-level event ends.
+- The instances of a new hierarchy run *On created* in no fixed order. Initialise the hierarchy in *On hierarchy ready* of its root, which fires once all of them have.
 
 ### Restarting a layout
 
