@@ -751,6 +751,25 @@ def write_editor_json(path: Path, data: dict) -> None:
     os.replace(draft, path)
 
 
+def put_back(sheet: Path, before: dict[Path, bytes]) -> list[str]:
+    """Removes a new sheet and its draft and writes the files of before back as they were; the ones that
+    could not be."""
+    left = []
+    for p in (sheet, sheet.with_name(sheet.name + ".tmp")):
+        try:
+            if p.is_file():         # a folder there is not one this run wrote
+                p.unlink()
+        except OSError:
+            left.append(str(p))
+    for p, raw in before.items():
+        try:
+            if p.read_bytes() != raw:
+                p.write_bytes(raw)
+        except OSError:
+            left.append(str(p))
+    return left
+
+
 def main() -> int:
     ap = c3.argument_parser(
         "Change an event sheet from a plan, a JSON file of operations addressed by the editor's event numbers: "
@@ -881,19 +900,30 @@ def main() -> int:
     if not args.dry_run:
         if (path.exists() if new else path.read_bytes() != raw):
             sys.exit(f"{args.sheet} changed on disk while the plan was applied; run it again\nnothing was written")
-        path.parent.mkdir(exist_ok=True)
-        draft = path.with_name(path.name + ".tmp")
-        draft.write_text(layout, encoding="utf-8", newline="\n")
-        os.replace(draft, path if new else as_on_disk(path))
+        # A new sheet writes three kinds of file; one that fails puts back those written before it, so that the
+        # project is as it was and the same plan runs again.
+        before = {p: p.read_bytes() for p in (project.root / "project.c3proj", *runs_on.values())} if new else {}
+        try:
+            path.parent.mkdir(exist_ok=True)
+            draft = path.with_name(path.name + ".tmp")
+            draft.write_text(layout, encoding="utf-8", newline="\n")
+            os.replace(draft, path if new else as_on_disk(path))
+            if new:
+                listed = project.data.setdefault("eventSheets", {"items": [], "subfolders": []})
+                listed.setdefault("items", []).append(args.sheet)
+                write_editor_json(project.root / "project.c3proj", project.data)
+                for p in runs_on.values():
+                    data = json.loads(p.read_text(encoding="utf-8-sig"))
+                    data["eventSheet"] = args.sheet
+                    write_editor_json(p, data)
+        except OSError as e:
+            if not new:
+                raise
+            left = put_back(path, before)
+            sys.exit(f"{args.sheet}: a file could not be written: {e}\n"
+                     + (f"these could not be put back as they were: {', '.join(left)}; restore them from Git"
+                        if left else "the files written before it are put back: nothing was written"))
         c3.stamp(path)
-        if new:
-            listed = project.data.setdefault("eventSheets", {"items": [], "subfolders": []})
-            listed.setdefault("items", []).append(args.sheet)
-            write_editor_json(project.root / "project.c3proj", project.data)
-            for p in runs_on.values():
-                data = json.loads(p.read_text(encoding="utf-8-sig"))
-                data["eventSheet"] = args.sheet
-                write_editor_json(p, data)
     if new:
         print(f"{args.sheet}: a new event sheet in eventSheets/, listed in project.c3proj, "
               + (f"run by layout {', '.join(runs_on)}" if runs_on else

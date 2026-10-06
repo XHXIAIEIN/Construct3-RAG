@@ -552,6 +552,28 @@ def test_new_makes_the_sheet_a_project_without_one_runs(project):
     assert "System: On start of layout" in printed(project) and check(project)[0] == 0
 
 
+@pytest.mark.parametrize("blocked", ["eventSheets/Game.json.tmp", "project.c3proj.tmp", "layout"])
+def test_new_puts_back_what_it_wrote_when_a_later_file_fails(project, blocked):
+    """--new writes the sheet, project.c3proj and the layouts that run it; a write that fails, here on a folder
+    where its draft goes, leaves every file as it was, and the same plan runs once the way is clear (the audit
+    of 2026-10-07 left a sheet that project.c3proj did not list, which the plan then refused)."""
+    layouts = list((project / "layouts").glob("*.json"))
+    (project / SHEET).unlink()
+    edit(project, "project.c3proj", lambda p: p["eventSheets"].update(items=[]))
+    for path in layouts:
+        edit(project, path.relative_to(project).as_posix(), lambda lay: lay.update(eventSheet=None))
+    files = {p: p.read_bytes() for p in (project / "project.c3proj", *layouts)}
+    folder = project / (f"layouts/{layouts[-1].name}.tmp" if blocked == "layout" else blocked)
+    folder.mkdir()
+    start = {"into": 0, "events": [{"eventType": "comment", "text": "Score from zero."}]}
+    code, out = plan(project, start, flags=("--new",))
+    assert code == 1 and "could not be written" in out and "nothing was written" in out, out
+    assert all(p.read_bytes() == raw for p, raw in files.items()) and not (project / SHEET).exists()
+    folder.rmdir()
+    code, out = plan(project, start, flags=("--new",))
+    assert code == 0 and (project / SHEET).is_file(), out
+
+
 def test_a_new_sheet_beside_others_says_no_layout_runs_it(project):
     layouts = {p: p.read_bytes() for p in (project / "layouts").glob("*.json")}
     (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "variable", "name": "menuShown"}]}]),
