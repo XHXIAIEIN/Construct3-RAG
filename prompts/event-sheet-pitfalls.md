@@ -81,6 +81,7 @@ If the events use the Timer behavior, read [pitfalls/timer.md](pitfalls/timer.md
 - *Start timer* on an existing tag restarts it. After *Stop* or a *Once* timer's end its expressions return 0.
 - A timer is state you start and stop, so list every transition before choosing it.
 - A timer and a tween scheduled to end together end a tick apart.
+- A Timer cannot hold one timed buff per stacked shield: no expression names the tag that fired, and a re-cast restarts the tag. Keep the shields in an Array in the type's container, picked by UID from a family event: expiry `time + duration` in row 0, amount in row 1, sorted by column; spend from column 0, and one timer armed for column 0 expires it.
 
 ### Wait and time scale
 
