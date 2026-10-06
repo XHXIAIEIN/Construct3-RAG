@@ -81,26 +81,48 @@ def test_every_flag_the_skill_names_is_one_its_script_takes(tmp_path):
 
 # --- the trigger evaluation of the description, against a stand-in for the client -------------
 FAKE_CLIENT = '''
-import json, sys
+import json, pathlib, sys, time
 query = sys.argv[sys.argv.index("-p") + 1]
 def say(event): print(json.dumps(event), flush=True)
-def tool(name, **given): say({"type": "assistant", "message": {"content": [{"type": "tool_use", "name": name, "input": given}]}})
+def tool(name, id="t", **given):
+    say({"type": "assistant", "message": {"content": [{"type": "tool_use", "id": id, "name": name, "input": given}]}})
+def result(id, error=False):
+    say({"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": id, "is_error": error,
+                                                  "content": "File does not exist." if error else "loaded"}]}})
+pathlib.Path("written-by-a-run.txt").write_text(query)     # what a run writes stays in its own copy
 if "signed out" in query:
     say({"type": "result", "is_error": True, "result": "Failed to authenticate: OAuth session expired"})
 elif "silent" in query:
     print("not json")
 elif "event sheet" in query:
-    tool("Glob", pattern="**/*.json")
-    tool("Skill", skill="construct3-agent-plugin")
+    tool("Glob", id="g", pattern="**/*.json")
+    tool("Skill", id="s", skill="construct3:construct3-agent-plugin")
+    result("s")
 elif "reads it" in query:
-    tool("Read", file_path="C:\\\\game\\\\.claude\\\\skills\\\\construct3-agent-plugin\\\\SKILL.md")
+    tool("Read", id="r", file_path="C:\\\\game\\\\.claude\\\\skills\\\\construct3-agent-plugin\\\\SKILL.md")
+    result("r")
+elif "missing" in query:
+    tool("Read", id="r", file_path="C:/game/.claude/skills/construct3-agent-plugin/SKILL.md")
+    result("r", error=True)
+elif "another skill" in query:
+    tool("Read", id="r", file_path="C:/game/.claude/skills/my-construct3-agent-plugin/SKILL.md")
+    result("r")
+    say({"type": "result", "is_error": False, "result": "done"})
+elif "slow" in query:
+    tool("Bash", command="ls")
+    sys.stderr.write("still thinking")
+    sys.stderr.flush()
+    time.sleep(30)
+elif "stops" in query:
+    tool("Bash", command="ls")
+    sys.stderr.write("crashed")
 else:
     tool("Bash", command="ls")
     say({"type": "result", "is_error": False, "result": "done"})
 '''
 
 
-def trigger_eval(tmp_path: Path, queries: list[dict]) -> tuple[int, str, Path]:
+def trigger_eval(tmp_path: Path, queries: list[dict], *extra: str) -> tuple[int, str, Path]:
     root = new_project(tmp_path / "game")
     code, out = install(root, "--into", ".claude/skills", "--no-block")
     assert code == 0, out
@@ -109,7 +131,8 @@ def trigger_eval(tmp_path: Path, queries: list[dict]) -> tuple[int, str, Path]:
     report = tmp_path / "report.json"
     code, out = run(tmp_path, SKILL / "evals" / "run_trigger_eval.py", "queries.json", "--project", str(root),
                     "--client", f"{Path(sys.executable).as_posix()} {(tmp_path / 'client.py').as_posix()}",
-                    "--runs", "2", "--output", str(report))
+                    "--runs", "2", "--output", str(report), *extra)
+    assert not (root / "written-by-a-run.txt").exists(), "a run wrote into the project the others read"
     return code, out, report
 
 
@@ -118,11 +141,28 @@ def test_trigger_eval_counts_a_skill_call_and_a_read_of_skill_md(tmp_path):
         {"query": "fix my event sheet", "should_trigger": True},
         {"query": "the agent reads it", "should_trigger": True},
         {"query": "zip the folder", "should_trigger": False},
-        {"query": "zip the folder, which should have triggered", "should_trigger": True}])
+        {"query": "zip the folder, which should have triggered", "should_trigger": True},
+        {"query": "read another skill", "should_trigger": False}])
     assert code == 1, out
     results = json.loads(report.read_text(encoding="utf-8"))
-    assert [r["trigger_rate"] for r in results["results"]] == [1.0, 1.0, 0.0, 0.0]
-    assert [r["pass"] for r in results["results"]] == [True, True, True, False] and results["passed"] == 3
+    assert [r["trigger_rate"] for r in results["results"]] == [1.0, 1.0, 0.0, 0.0, 0.0]
+    assert [r["pass"] for r in results["results"]] == [True, True, True, False, True] and results["passed"] == 4
+
+
+def test_trigger_eval_leaves_a_run_without_an_answer_out_of_the_rate(tmp_path):
+    """A read of SKILL.md that failed, a run stopped by --timeout after it spoke, and a client that stopped
+    without a result have neither triggered nor declined (the audit of 2026-10-07 counted the first as
+    triggered and the second as not): they are counted apart, with the client's stderr, and a query
+    with no other run does not pass."""
+    code, out, report = trigger_eval(tmp_path, [
+        {"query": "the file is missing", "should_trigger": True},
+        {"query": "a slow one", "should_trigger": False},
+        {"query": "the client stops", "should_trigger": False}], "--timeout", "3")
+    assert code == 1, out
+    results = json.loads(report.read_text(encoding="utf-8"))["results"]
+    assert [r["ends"] for r in results] == [{"load failed": 2}, {"timed out": 2}, {"client stopped": 2}]
+    assert [(r["answered"], r["trigger_rate"], r["pass"]) for r in results] == [(0, None, False)] * 3
+    assert results[1]["stderr"] == ["still thinking"] * 2 and results[2]["stderr"] == ["crashed"] * 2
 
 
 @pytest.mark.parametrize("query, said", [("signed out", "Failed to authenticate"), ("silent", "no assistant or result event")])
