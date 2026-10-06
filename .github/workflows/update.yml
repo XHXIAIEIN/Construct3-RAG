@@ -74,10 +74,37 @@ jobs:
         id: diff
         run: python scripts/schema_diff.py --base HEAD --output "$RUNNER_TEMP/schema-diff.md" --github-output
 
+      # A pull request opened with GITHUB_TOKEN starts no other workflow, so
+      # the checks of AGENTS.md run here. A failure still opens the pull
+      # request, says so in its body, and keeps it from auto-merge.
+      - name: Run the repository's checks
+        if: steps.check.outputs.changed == 'true' || steps.guides.outputs.changed == 'true'
+        id: checks
+        continue-on-error: true
+        run: |
+          pip install pytest httpx
+          set -o pipefail
+          {
+            python -m pytest -q
+            python -m compileall -q src scripts tests skills
+            python scripts/build_plugin.py --check
+          } 2>&1 | tee "$RUNNER_TEMP/checks.log"
+
+      - name: Report failed checks
+        if: steps.checks.outcome == 'failure'
+        run: |
+          {
+            echo "The checks failed in the update job, so this pull request waits for a person:"
+            echo
+            echo '```'
+            tail -n 60 "$RUNNER_TEMP/checks.log"
+            echo '```'
+          } > "$RUNNER_TEMP/checks.md"
+
       - name: Compose the pull request body
         if: steps.check.outputs.changed == 'true' || steps.guides.outputs.changed == 'true'
         run: |
-          for part in schema-diff.md guides.md; do
+          for part in checks.md schema-diff.md guides.md; do
             if [ -f "$RUNNER_TEMP/$part" ]; then cat "$RUNNER_TEMP/$part"; echo; fi
           done > "$RUNNER_TEMP/pr-body.md"
 
@@ -94,26 +121,39 @@ jobs:
           delete-branch: true
 
       # A release that touches what the repository quotes waits for a person,
-      # and so does a changed guide.
+      # and so does a changed guide or a failed check. Other checks on the pull
+      # request, if any, must all pass: a failure, a cancel, or one still
+      # pending after 10 minutes stops the merge.
       - name: Enable auto-merge for PR
-        if: steps.pr.outputs.pull-request-number != '' && steps.diff.outputs.needs_review != 'true' && steps.guides.outputs.changed != 'true'
+        if: steps.pr.outputs.pull-request-number != '' && steps.checks.outcome == 'success' && steps.diff.outputs.needs_review != 'true' && steps.guides.outputs.changed != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
         run: |
-          # Wait for status checks to complete (max 10 minutes)
-          for i in {1..60}; do
-            STATUS=$(gh pr checks $PR_NUMBER --json state --jq '.[0].state // "pending"' 2>/dev/null || echo "pending")
-            if [ "$STATUS" = "PASS" ]; then
-              echo "✓ All checks passed"
-              break
-            elif [ "$STATUS" = "FAIL" ]; then
-              echo "✗ Checks failed, skipping auto-merge"
+          for i in $(seq 1 60); do
+            # gh exits non-zero while a check is pending, and when there is none
+            OUT=$(gh pr checks "$PR_NUMBER" --json name,bucket 2>&1) || true
+            if ! echo "$OUT" | jq -e 'type == "array"' > /dev/null 2>&1; then
+              case "$OUT" in
+                *"no checks reported"*) OUT='[]' ;;
+                *) echo "Could not read the checks: $OUT"; exit 1 ;;
+              esac
+            fi
+            FAILED=$(echo "$OUT" | jq -r '[.[] | select(.bucket == "fail" or .bucket == "cancel") | .name] | join(", ")')
+            PENDING=$(echo "$OUT" | jq '[.[] | select(.bucket == "pending")] | length')
+            if [ -n "$FAILED" ]; then
+              echo "Checks failed: $FAILED; not merging"
               exit 1
             fi
-            echo "Waiting for checks... ($i/60)"
+            if [ "$PENDING" = "0" ]; then
+              echo "Checks on the pull request: $(echo "$OUT" | jq length), none failed or pending"
+              break
+            fi
+            if [ "$i" = "60" ]; then
+              echo "$PENDING checks still pending after 10 minutes; not merging"
+              exit 1
+            fi
+            echo "Waiting for $PENDING checks... ($i/60)"
             sleep 10
           done
-
-          # Merge PR with squash strategy
-          gh pr merge $PR_NUMBER --auto --squash || echo "Could not enable auto-merge (may already be merged)"
+          gh pr merge "$PR_NUMBER" --auto --squash

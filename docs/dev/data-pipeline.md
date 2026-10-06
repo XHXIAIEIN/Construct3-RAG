@@ -211,8 +211,12 @@ as the CDN ships them, some with CRLF; `.gitattributes` stores every text
 file as LF, so a refresh changes only what the release changed
 (`docs/decisions/lf-line-endings.md`). `scripts/init.py` and the update workflow
 both call it, so generated and committed layouts stay identical. The workflow
-opens a pull request with the result and the `schema_diff.py` report, against
-the data on `main`, as its body. It enables auto-merge only when the report
-watches no mentioned id and no guide changed; otherwise the pull request
-waits for a person. See
+runs the checks of `AGENTS.md` (pytest, compileall, `build_plugin.py --check`)
+in its own job, because a pull request opened with `GITHUB_TOKEN` starts no
+other workflow. It then opens a pull request with the result and the
+`schema_diff.py` report, against the data on `main`, as its body. It enables
+auto-merge only when its checks passed, the report watches no mentioned id
+and no guide changed, and every other check on the pull request passed within
+10 minutes; otherwise the pull request waits for a person, with the end of the
+check log in its body when the checks failed. See
 `docs/decisions/release-schema-diff.md`.
