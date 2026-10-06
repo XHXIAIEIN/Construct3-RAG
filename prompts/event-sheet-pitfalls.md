@@ -74,6 +74,7 @@ If the events define or call a function or a custom action, read
 - If a parameter and a variable of its function's group have names that differ only in case, the editor renames the one that comes later in the sheet. A parameter after the variable is renamed, so the function reads the variable. Name them apart by more than case (`launchSpeed` beside `SPEED`).
 - If two functions, or two custom actions of one object, have names that differ only in case, the editor renames the second, and every call runs the first. Name them apart by more than case.
 - A function without parameters is called without parentheses: `Functions.name`, not `Functions.name()`.
+- The deprecated Function plugin's call by a string is a function map in built-in functions: *Map function to string*, then *Call mapped function* with the string, or `Functions.CallMapped` for a value.
 
 ### Timer
 

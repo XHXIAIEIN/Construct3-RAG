@@ -77,3 +77,20 @@ Sources and the rule for adding an entry are in the index,
   can't go here` and names each condition with the pair. `check_project.py`
   refuses it. [observed in a game project, r504 editor, 2026-10-01; in a
   minimal project, r504 editor, 2026-10-02]
+- The deprecated Function plugin calls a function by a string: *Call
+  function* takes the name as an expression, and the function reads its
+  parameters as `Function.Param(n)`. The built-in functions have named,
+  typed parameters, a return value read as the expression
+  `Functions.Name(...)`, and a call by a string through a function map:
+  *Map function to string* once per name, then *Call mapped function* with
+  the string, which forwards the calling function's parameters from an
+  index, and `Functions.CallMapped(map, string, ...)` for a value. *Map
+  default function* catches a string that no entry holds. A migration gives
+  each function its parameters and maps each name that the project calls
+  from data or from a variable; the editor's *Replace with built-in
+  function* on an *On function* block does the first part where it can.
+  [data/c3-schemas/en-US/_deprecated.json, plugin `function`; manual:
+  tips-and-guides/deprecated-features.md "Functions",
+  project-primitives/events/functions.md "Function maps"; example:
+  function-maps, events 7 to 10; observation in a studied project,
+  2026-10-06: every cue of a data file called by name through the plugin]
