@@ -162,6 +162,7 @@ picker, read [pitfalls/input.md](pitfalls/input.md).
 - Every instance with *Default controls* on moves with the arrow keys. Turn it off on each instance the player does not steer, such as a pushed crate, and move it with *Simulate control*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
+- Keyboard and Gamepad are separate conditions. Write both into one input object with a value per control and its last-tick copy, and read a press as `confirm > lastConfirm`.
 
 ### Audio
 
