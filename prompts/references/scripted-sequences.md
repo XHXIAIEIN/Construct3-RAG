@@ -15,24 +15,23 @@ named in each section and from a studied project read on 2026-10-06, marked
 A sequence is a project file with one row per cue: the delay since the cue
 before it, the cue's name, then its parameters. Write the delay as seconds
 since the previous row, so a row can be moved or inserted without
-renumbering the rest.
+renumbering the rest. The block shows the row form only.
 
 ```
-0,BoxResize,132,250,507,390
-0.3,SpawnWall,bottom,15,180
-0,SpawnWall,top,15,0
-1.5,Gravity,down
-3,Gravity,up
+0,ShowBanner,title
+0.5,SpawnWave,left,3
+0,SpawnWave,right,3
+2,PlayLine,intro_2
 ```
 
 - **Load once.** When the sequence starts: AJAX *Request project file*,
   *Wait for previous actions*, then CSV *Parse CSV* from `AJAX.LastData` into
   an Array, in that one block ([event-sheet-thinking.md](../event-sheet-thinking.md),
-  "Level data, loot tables"). The Array then holds one row per cue, and
-  `Array.At(0, row)` is the delay, the row on the Y axis. A row that only names a label, such as
-  `:loop`, goes into a Dictionary as its row index when the file loads, so a
-  jump finds it without a search. [manual: plugin-reference/csv.md "Parse
-  CSV"; studied]
+  "Level data, loot tables"). The Array then holds one row per cue on its Y
+  axis, and `Array.At(0, row)` is the delay. A row that only names a label
+  goes into a Dictionary as its row index when the file loads, so a jump
+  finds it without a search. [manual: plugin-reference/csv.md "Parse CSV";
+  studied]
 - **Step with an accumulated clock.** One number `clock` gains `dt` each
   tick while the sequence runs. A *While* with the conditions `running`,
   `row < Array.Height` and `clock ≥ float(Array.At(0, row))` drains every
@@ -50,29 +49,31 @@ renumbering the rest.
   is an event that no tool checks. Write a pattern that needs a loop or a
   random choice as a function with parameters, and call it from one row with
   its numbers. The file then holds only what a designer changes: when, which
-  cue, with which numbers. [studied: a file of fifteen opcodes with `$`
-  variables, read by seventy events]
+  cue, with which numbers. [studied]
 - **Music in step.** If the attack pattern must stay on the music through a
   pause, one clock leads. Each tick, if `abs(Audio.PlaybackTime(tag) -
-  clock)` passes a frame, *Seek to* the clock. The sequence's pause then holds the
-  music's place too. [studied; the audio clock's own rules are in
+  clock)` passes a frame, *Seek to* the clock. The sequence's pause then
+  holds the music's place too. [studied; the audio clock's own rules are in
   [pitfalls: Audio](../pitfalls/audio.md)]
 
 ## Dispatching a cue by its name
 
 The cue's name is a string from the file, and a function map calls a
-function by a string. At the start, *Map function to string* once per cue
-name, and *Map default function* to a function that reports an unknown cue
-with its row. Then the step calls *Call mapped function* with the row's
-name. The parameters go through an intermediate function: call
-`Cue(name, a, b, c, d)` with the row's fields as typed parameters, and
-inside it *Call mapped function* forwards the parameters from index 1, so
-each cue function declares only the parameters it uses, in the order the
-file gives them. `Functions.CallMapped(map, name, ...)` returns a value
-when the cue is a query. A project with cue names in the hundreds can
-dispatch from a script block instead, with `runtime.callFunction(name,
-...params)`. The deprecated Function plugin's *Call function* by name is
-the same shape, and a migration replaces it with a map ([pitfalls:
+function by a string.
+
+1. At the start, *Map function to string* once per cue name, and *Map
+   default function* to a function that reports an unknown cue with its row.
+2. The step calls an intermediate function, `Cue(name, a, b, c, d)`, with
+   the row's fields as typed parameters.
+3. Inside it, *Call mapped function* with `name` forwards the parameters
+   from index 1. Each cue function then declares only the parameters it
+   uses, in the order the file gives them.
+
+`Functions.CallMapped(map, name, ...)` returns a value when the cue is a
+query. A project with cue names in the hundreds can dispatch from a script
+block instead, with `runtime.callFunction(name, ...params)`. The deprecated
+Function plugin's *Call function* by name is the same shape, and a
+migration replaces it with a map ([pitfalls:
 Functions](../pitfalls/functions.md)). [manual:
 project-primitives/events/functions.md "Function maps"; example:
 function-maps, events 7 to 10; data/c3-ts-defs/preview/interfaces/IRuntime.d.ts
@@ -80,8 +81,8 @@ function-maps, events 7 to 10; data/c3-ts-defs/preview/interfaces/IRuntime.d.ts
 
 ## A cue that waits for a motion
 
-A cue such as "resize the box, then go on" starts a tween and must hold the
-sequence until the tween ends.
+A cue such as "resize the arena, then go on" starts a tween and must hold
+the sequence until the tween ends.
 
 1. The cue function starts the tween and stores the name of the cue to
    resume with, then sets `running` to 0.
@@ -92,13 +93,13 @@ sequence until the tween ends.
 3. A motion of several tweens, one per edge of a box, keeps a progress latch
    per tween, set to 1 in its *On finished*, and resumes when every latch is
    1. Clearing the stored name makes the resume run once, whichever tween
-   ends last ([feel.md](feel.md), "A battle box").
+   ends last ([feel.md](feel.md), "An arena box").
 
 [studied]
 
 ## Dialogue
 
-The baseline is the Text or Sprite Font object's own *Typewriter text*: the
+The baseline is the Text or Sprite Font object's own *Typewriter text*. The
 line appears over a duration, *Is running typewriter text* says that it
 still types, *On typewriter text finished* ends it, and *Finish typewriter*
 is the skip. Use it when the line needs no pause and no voice.
@@ -111,7 +112,7 @@ is the skip. Use it when the line needs no pause and no voice.
   pause mark at the count restarts the Timer with the pause's length, which
   *Start timer* on the same tag does. A skip sets the count to `len(line)`
   and stops the Timer. [manual: behavior-reference/timer.md "Start timer";
-  studied: a per-instance `Timer` variable minus `dt`, with the same shape]
+  studied]
 - **Parse the markup once per line.** A line such as `<color red>Hi<pause
   3> there` is split when the line starts, into the plain text and a second
   Array as long as the text, holding at each index the tag that applies
@@ -121,37 +122,35 @@ is the skip. Use it when the line needs no pause and no voice.
   with `mid` one character at a time, every tick, inside a *While*, is the
   smell row of the design guide. Write a colour in a tag as three numbers,
   `<color 255 0 0>`, or as a name that a Dictionary maps to `rgbEx`, so no
-  event decodes hex by hand. [studied: tags, a localisation key and a pause
-  mark parsed per character in a *While* of ninety events]
+  event decodes hex by hand. [studied]
 - **Glyphs that move.** Only when a glyph shakes or waves on its own does
   each one become an instance: one Sprite Font instance per character,
   made a child of the line's object with *Add child*, so it follows the
   line and is destroyed with it, with its own Sine or Tween. Its X is the
-  sum of `CharacterWidth` of the characters before it. The parent is a
-  hierarchy relation, not a UID written into the instance's coordinates.
-  [event-sheet-thinking.md rule 1; studied: the parent's UID passed as the
-  X of *Create object*]
+  sum of `CharacterWidth` of the characters before it. The link to the line
+  is the hierarchy, not a UID stored on the glyph
+  ([event-sheet-thinking.md](../event-sheet-thinking.md), rule 1). [studied]
 - **Arguments in a line.** `StringSub("{0} takes {1} damage", name, n)`
   ([event-sheet-style.md](../event-sheet-style.md), "UI text"), so a
   translator reorders the arguments by moving `{0}` and `{1}`. [manual:
-  system-reference/system-expressions.md "StringSub"; studied: `%` filled
-  in order]
+  system-reference/system-expressions.md "StringSub"]
 
 ## Localisation
 
 The Internationalization plugin holds the strings: one JSON file per
-language with a `locale` key and a `strings` object, loaded with *Load from
-JSON* from AJAX, *Set locale*, then `Lookup(path)` where a dot steps into a
-nested object. It also formats numbers and plurals for the locale. The
-examples' simpler form is an Array project file with one row per language
-and one column per string, read as `Strings.At(language, index)` when the
-language changes. A hand-written JSON with one root per language and a
-lookup function that returns the key when *Has key* fails works too, and
-then a missing translation shows its key on screen, where a tester sees it.
-In that JSON, a key with a dot in it must be escaped in the path
-([pitfalls: Expressions](../pitfalls/expressions.md)); keys without dots
-avoid it. A font per language is a Sprite Font per language, its widths in
-*Spacing data* ([pitfalls: Rendering](../pitfalls/rendering.md)). [manual:
+language with a `locale` key and a `strings` object. Load each with the
+plugin's *Load from JSON*, the string taken from `AJAX.LastData`, then *Set
+locale* and read `Lookup(path)`, where a dot steps into a nested object.
+The plugin also formats numbers and plurals for the locale. The examples'
+simpler form is an Array project file with one row per language and one
+column per string, read as `Strings.At(language, index)` when the language
+changes. A hand-written JSON with one root per language and a lookup
+function that returns the key when *Has key* fails works too, and then a
+missing translation shows its key on screen, where a tester sees it. In
+that JSON, a key with a dot in it must be escaped in the path ([pitfalls:
+Expressions](../pitfalls/expressions.md)); keys without dots avoid it. A
+font per language is a Sprite Font per language, its widths in *Spacing
+data* ([pitfalls: Rendering](../pitfalls/rendering.md)). [manual:
 plugin-reference/internationalization.md "The translation file", "Looking up
 localized strings"; examples: internationalization, languages-from-json
 events 2 to 5; studied]

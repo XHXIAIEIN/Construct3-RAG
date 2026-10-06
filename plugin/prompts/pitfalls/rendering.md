@@ -166,8 +166,7 @@ Sources and the rule for adding an entry are in the index,
   area's centre keeps the game where it was, and a bar sprite on the top
   layer covers the extra width on each side. [plugins/system.json
   `set-canvas-size`, "also altering the 'Window size' project property";
-  observation in a studied project, 2026-10-06: three border modes, each a
-  canvas size, a scroll and a mask]
+  observation in a studied project, 2026-10-06]
 - *Spacing data* and *Set character width* set the same per-character
   width. The property shows in the Layout View and takes a whole font at
   once, `[[10, "aeou"], [6, "il"]]`, so a font's widths belong there. The
@@ -175,9 +174,9 @@ Sources and the rule for adding an entry are in the index,
   is a character like any other, so give it its own width in a Japanese or
   Chinese font, or it takes the cell width. [manual:
   plugin-reference/sprite-font.md "Spacing data", "Set character width";
-  observation in a studied project, 2026-10-06: hundreds of *Set character
-  width* actions on start, per font and per kanji band, and the full-width
-  space tested by hand in every width expression]
+  observation in a studied project, 2026-10-06: a font's widths set by
+  actions on start, and the full-width space tested by hand in every width
+  expression]
 - A third-party effect that does not support WebGPU makes the whole project
   render with WebGL, whatever *Enable WebGPU* says. Before adding one, read
   Platform Info `Renderer` in a preview, and prefer the built-in effect of

@@ -39,9 +39,7 @@ where the fill ends. Clamp the poison to `hp - 1` where it is added, so
 draining alone never kills. Drain it with a Timer: *On timer* takes 1 from
 both values and restarts the timer with the duration of the current
 amount, shorter at a higher amount, rather than an accumulator compared
-against a ladder of thresholds every tick. [a studied project, 2026-10-06:
-the segment at `(hp - poison) / maxHp`, the clamp, and a `dt` accumulator
-against five thresholds]
+against a ladder of thresholds every tick. [a studied project, 2026-10-06]
 
 ## The object the art calls for
 

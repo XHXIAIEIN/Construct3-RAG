@@ -163,6 +163,4 @@ Sources and the rule for adding an entry are in the index,
   `confirm < lastConfirm`, and a touch layer added later writes the same
   numbers. The copy and the clear come before the groups that write, so a
   consumer anywhere below them reads this tick's state. [observation in a
-  studied project, 2026-10-06: one sprite with six controls and their last
-  values, a keyboard group and a gamepad group with a stick dead zone, and
-  menus reading the press as `confirm > lastConfirm`]
+  studied project, 2026-10-06]
