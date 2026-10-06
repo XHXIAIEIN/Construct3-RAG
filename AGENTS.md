@@ -214,6 +214,7 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | A new project's sheets, layers, objects and look: colours by role, text, pixel art, what other design skills do, and where its art comes from | `prompts/references/new-project.md`, `docs/decisions/game-look-from-design-skills.md`, `docs/decisions/art-from-the-image-tool.md` |
 | The project tools the skill carries into a game project: what each does, and changing and evaluating them | `skills/construct3-agent-plugin/SKILL.md`, `skills/AGENTS.md` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
+| Project and skill audit findings, reproduction boundaries and repair priorities | `docs/dev/skills-audit.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |
 | Delegating an ACE lookup or check to a Claude Code sub-agent | `.claude/agents/ace-lookup.md` |

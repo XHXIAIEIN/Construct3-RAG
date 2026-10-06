@@ -6,7 +6,7 @@ folder of its reader.
 | Folder | Reader | Contents |
 |--------|--------|----------|
 | `guide/` | People and agents using the data or API | `quick-start.md`, `api-reference.md`, `data-format.md` |
-| `dev/` | People and agents changing the code | `architecture.md`, `data-pipeline.md`, `published-game-analysis.md` |
+| `dev/` | People and agents changing the code | `architecture.md`, `data-pipeline.md`, `published-game-analysis.md`, `skills-audit.md` |
 | `decisions/` | Anyone asking why something is the way it is | one record per decision |
 
 `guide/` and `dev/` describe current behavior and change with the code that
