@@ -120,6 +120,7 @@ If you write expressions or name and place variables, read
 - *For* counts down when its end is below its start. Before `For 0 to count - 1`, test the count, or start ≤ end.
 - A local variable at sub-event level is visible to its siblings, not to the parent's own actions.
 - *Set mesh point* in *Relative* mode adds to the current position, so deriving it every tick accumulates.
+- JSON reads a dot in a path as a step into a nested key. Escape a dot inside a key as `\.` in the path, or keep dots out of keys; a Dictionary reads keys whole.
 
 ### Coordinates and angles
 
