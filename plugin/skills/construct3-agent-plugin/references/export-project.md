@@ -15,7 +15,10 @@ with only the files the editor reads, as `scripts/pack_project.py` packs them,
 exports it to Web (HTML5) as a zip with Offline support, Deduplicate images
 and Optimize images on, and unpacks the zip into `--to`, replacing what was
 there. Without `--to` the export goes to `.build/web`, where the products
-go and Git ignores them; the browser profile stays in `.tmp/`.
+go and Git ignores them; the browser profile stays in `.tmp/`. `--to` is a
+new or empty folder or one that holds an earlier export: the script refuses
+the project, a folder above it, a drive's root and a folder of other files
+with exit 2, before it opens anything.
 
 The copy handed to the editor sets *Use worker* to Auto, so the engine
 decides: a worker, unless the project has a script or an addon without worker

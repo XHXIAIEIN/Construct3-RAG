@@ -44,6 +44,31 @@ def test_export_bumps_the_last_export_and_carries_a_hand_edit(project):
     assert not (project / ".build").exists()                                             # a dry run writes nothing
 
 
+def test_export_refuses_a_folder_it_would_empty_of_other_files(project, tmp_path):
+    """The export replaces everything in --to, so the project, a folder above it, a drive's root, a
+    file and a folder of other files are refused before the browser starts, and stay as they were;
+    a new or empty folder and an earlier export are taken (the audit of 2026-10-07 emptied a
+    temporary project through --to .)."""
+    other = tmp_path / "notes"
+    other.mkdir()
+    (other / "todo.txt").write_text("keep", encoding="utf-8")
+    a_file = tmp_path / "a.txt"
+    a_file.write_text("keep", encoding="utf-8")
+    for to in (".", "..", str(other), str(a_file), str(Path(project.resolve().anchor))):
+        code, out = run(project, SCRIPT, "--to", to, "--dry-run")
+        assert code == 2 and "the export replaces everything in the folder" in out, (to, out)
+    assert (other / "todo.txt").read_text(encoding="utf-8") == "keep" and (project / "project.c3proj").is_file()
+    earlier, empty = project / "export" / "web", tmp_path / "empty"
+    earlier.mkdir(parents=True)
+    (earlier / "data.json").write_text(json.dumps({"project": ["Coins", "1.0.0.0"]}), encoding="utf-8")
+    empty.mkdir()
+    for to in ("export/web", str(empty), str(tmp_path / "new")):
+        code, out = run(project, SCRIPT, "--to", to, "--dry-run")
+        assert code == 0 and "would export" in out, (to, out)
+    export = load(SKILL / "scripts")
+    assert export.refused_folder(tmp_path / "game", Path(tmp_path.anchor)) == "it is the root of a drive"
+
+
 def test_export_hands_the_editor_the_version_to_export(project):
     """The .c3p the editor opens carries the version to export with Auto-increment version off, so
     that the export carries it unchanged, and Use worker Auto; it holds only the

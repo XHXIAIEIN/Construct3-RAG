@@ -22,7 +22,9 @@ project.c3proj, since an older one refuses it, with the files the editor reads, 
 pack_project.py packs them. The editor exports a zip with
 Offline support, Deduplicate images and Optimize images on and the other
 options as it remembers them; the zip replaces
-the contents of --to, by default .build/web of the project, a folder Git ignores. The export carries the version given by --version or
+the contents of --to, by default .build/web of the project, a folder Git ignores. --to is
+refused, before the browser starts, when it is the project, holds it, is a drive's root, or
+holds files and no data.json of an earlier export. The export carries the version given by --version or
 --bump, else the project's, with Auto-increment version off in the copy handed to
 the editor, and that version is written into project.c3proj when it differs. The
 copy also sets Use worker to Auto, which lets the engine decide, whatever the
@@ -70,8 +72,8 @@ output:
 
 exit codes: 0 exported; 1 the export did not finish: no subscription within 5 minutes,
 the project did not open, or a dialog stopped it; the copy is closed, the window is left
-open, and a run again goes on in it; 2 no project, a flag that cannot be used, or the
-editor did not load; 3 no Edge, Chrome or Chromium here
+open, and a run again goes on in it; 2 no project, a flag that cannot be used, a --to that
+holds the project or files other than an export, or the editor did not load; 3 no Edge, Chrome or Chromium here
 """
 
 LOGIN_WAIT = 300        # seconds the user has to log in
@@ -558,6 +560,24 @@ def pack(project: Path, version: str, skip: Path | None) -> bytes:
     return pp.zipped(staged)
 
 
+def refused_folder(project: Path, folder: Path) -> str | None:
+    """Why the export may not replace folder, or None. The export empties it, so it is never the
+    project, a folder that holds the project, a drive's root, or a folder of other files: only a
+    missing or empty folder, or one that holds an earlier export, its data.json."""
+    if folder == Path(folder.anchor):
+        return "it is the root of a drive"
+    if folder == project or folder in project.parents:
+        return "it holds the project"
+    if folder.exists() and not folder.is_dir():
+        return "it is a file"
+    if folder.is_dir() and any(folder.iterdir()):
+        if (folder / "project.c3proj").exists():
+            return "it holds a project"
+        if not (folder / "data.json").is_file():
+            return "it holds files that are not a Web export (no data.json)"
+    return None
+
+
 def unpack(data: bytes, folder: Path) -> None:
     with zipfile.ZipFile(io.BytesIO(data)) as z:
         if "data.json" not in z.namelist():
@@ -621,7 +641,8 @@ def main() -> int:
     ap.add_argument("--project", metavar="FOLDER",
                     help="the folder that holds project.c3proj (default: found from the current directory upward)")
     ap.add_argument("--to", metavar="FOLDER", type=Path,
-                    help="the folder the export replaces, relative to the project (default: .build/web)")
+                    help="the folder the export replaces, relative to the project (default: .build/web): a new or empty "
+                            "folder, or one that holds an earlier export")
     which = ap.add_mutually_exclusive_group()
     which.add_argument("--version", help="the version to export, 3 or 4 numbers of 0 to 99: 1.2.0.0")
     which.add_argument("--bump", action="store_true",
@@ -643,6 +664,11 @@ def main() -> int:
               f"pass --project <folder>", file=sys.stderr)
         return 2
     folder = (project / (args.to or Path(pp.BUILD) / "web")).resolve()
+    refused = refused_folder(project.resolve(), folder)
+    if refused:
+        print(f"--to {folder}: the export replaces everything in the folder, and {refused}; pass a new or "
+              f"empty folder, or the folder of an earlier export, such as the default .build/web", file=sys.stderr)
+        return 2
     version = args.version or (bumped(project, folder) if args.bump else project_version(project))
     if not VERSION_FORMAT.fullmatch(version or ""):
         print(f"the version to export is '{version}', not 3 or 4 numbers of 0 to 99; pass --version 1.0.0.0 or "
