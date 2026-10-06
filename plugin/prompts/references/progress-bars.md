@@ -31,6 +31,18 @@ ghost is a second, wider bar behind the first that is set later:
 template-monk-fight `cUnderHPBar` and `eUnderHPBar`, shown for a second by a
 Timer. Use a Tween or a ghost bar, not a per-tick lerp of the width.
 
+A second value drawn inside the fill, such as poison that will drain the
+health or damage not yet applied, is a second bar of the same object type
+over the fill, origin on the left, with `X` at `frame.X + (hp - poison) /
+maxHp × LENGTH` and `width` at `poison / maxHp × LENGTH`, so it ends
+where the fill ends. Clamp the poison to `hp - 1` where it is added, so
+draining alone never kills. Drain it with a Timer: *On timer* takes 1 from
+both values and restarts the timer with the duration of the current
+amount, shorter at a higher amount, rather than an accumulator compared
+against a ladder of thresholds every tick. [a studied project, 2026-10-06:
+the segment at `(hp - poison) / maxHp`, the clamp, and a `dt` accumulator
+against five thresholds]
+
 ## The object the art calls for
 
 | Art | Object for the fill | Why | Examples |

@@ -74,6 +74,7 @@ If the events define or call a function or a custom action, read
 - If a parameter and a variable of its function's group have names that differ only in case, the editor renames the one that comes later in the sheet. A parameter after the variable is renamed, so the function reads the variable. Name them apart by more than case (`launchSpeed` beside `SPEED`).
 - If two functions, or two custom actions of one object, have names that differ only in case, the editor renames the second, and every call runs the first. Name them apart by more than case.
 - A function without parameters is called without parentheses: `Functions.name`, not `Functions.name()`.
+- The deprecated Function plugin's call by a string is a function map in built-in functions: *Map function to string*, then *Call mapped function* with the string, or `Functions.CallMapped` for a value.
 
 ### Timer
 
@@ -119,6 +120,7 @@ If you write expressions or name and place variables, read
 - *For* counts down when its end is below its start. Before `For 0 to count - 1`, test the count, or start ≤ end.
 - A local variable at sub-event level is visible to its siblings, not to the parent's own actions.
 - *Set mesh point* in *Relative* mode adds to the current position, so deriving it every tick accumulates.
+- JSON reads a dot in a path as a step into a nested key. Escape a dot inside a key as `\.` in the path, or keep dots out of keys; a Dictionary reads keys whole.
 
 ### Coordinates and angles
 
@@ -160,6 +162,7 @@ picker, read [pitfalls/input.md](pitfalls/input.md).
 - Every instance with *Default controls* on moves with the arrow keys. Turn it off on each instance the player does not steer, such as a pushed crate, and move it with *Simulate control*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
+- Keyboard and Gamepad are separate conditions. Write both into one input object with a value per control and its last-tick copy, and read a press as `confirm > lastConfirm`.
 
 ### Audio
 
@@ -218,6 +221,9 @@ polygons or blend modes, read
 - Changing a Text's font size redraws and re-uploads its texture. Animate position, angle or opacity, or use a Sprite Font and tween its scale.
 - A Sprite Font draws whole cells and tints its outline with its colour. Draw glyphs left in the cell, one image per colour, in a box sized for the largest scale.
 - A Sprite Font's *Character spacing* is in layout pixels, not scaled by *Scale*, and only between characters. `TextWidth` includes it. Keep it 0 and put a space character where a gap is wanted.
+- *Set canvas size* also sets the project's window size, so a 4:3 game inside 16:9 shows more layout. *Scroll to position* back to the centre and cover the extra width with bars.
+- A Sprite Font's widths go in *Spacing data*, which the Layout View shows; *Set character width* is for a width that changes at runtime. A full-width space needs its own width.
+- A third-party effect without WebGPU support puts the whole project on WebGL. Read Platform Info `Renderer` in a preview.
 
 ### Tween
 
