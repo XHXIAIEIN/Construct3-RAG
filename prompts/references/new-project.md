@@ -90,7 +90,10 @@ Construct-Example-Projects, 2026-09-18]
 ## Layouts, sheets, folders and layers
 
 - One `ObjectRepository` layout, with no event sheet, holds one instance of
-  every type the events create, nothing else. No object is global.
+  every type the events create, nothing else. No object is global. It is
+  not the first layout. If the project's order puts it first, it gets a
+  sheet of one event, *On start of layout* then *Go to layout* the first
+  screen, so the player never sees it [a studied project, 2026-10-06].
 - `MainCode` is the only sheet up to about sixty types. Beyond that each
   screen has a sheet (`GameEvents`, `MenuEvents`, `CreditsEvents`),
   subsystems have included ones (`PlayerEvents`, `EnemyEvents`,
