@@ -308,8 +308,9 @@ def main() -> int:
     sheets = project.load_listed("eventSheets")
     if not sheets:
         scripts = project.scripts_summary()
-        print(f"no event sheets: the project's logic is in its scripts, read them as code: {scripts}" if scripts
-              else "no event sheets and no scripts: the project holds no logic yet")
+        print((f"no event sheets: the project's logic is in its scripts, read them as code: {scripts}" if scripts
+               else "no event sheets and no scripts: the project holds no logic yet")
+              + "; events go into a new sheet with edit_sheet.py SHEET PLAN.json --new")
         return 0
     for name in args.sheets:
         if name not in sheets:

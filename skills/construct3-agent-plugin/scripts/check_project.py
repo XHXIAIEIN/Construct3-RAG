@@ -1169,6 +1169,11 @@ class Checker:
         if "\\" in text:
             self.err(f"{where}: a backslash stands outside a text literal; the editor stops with \"Syntax error: "
                      f"Unknown character\". Inside text it is a plain character: Construct has no escapes")
+        # A list literal [a, b] of JavaScript: the editor stopped a QQ bot's sheet with it (2026-10-06).
+        if "[" in text or "]" in text:
+            self.err(f"{where}: a square bracket stands outside a text literal; the editor stops with \"Syntax "
+                     f"error: Unknown character\". Expressions have no lists: compare each value on its own, "
+                     f"a = 1 & b = 2, or keep the values in an Array object")
         scope_lower = {LOWER(k) for k in scope}
         self.check_find(where, expr)
         if self.style:

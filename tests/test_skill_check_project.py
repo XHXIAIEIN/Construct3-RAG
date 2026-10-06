@@ -1459,7 +1459,7 @@ def test_a_function_is_reached_as_its_return_type_says(project, returns, use, sa
 
 @pytest.mark.parametrize("text, said", [
     ("", "Empty expression"), ('"Score: ', "String missing finishing"), ("1 \\ 2", "Unknown character"),
-    ('"a\\b"', None),
+    ('"a\\b"', None), ("[1, 2] = 3", "Expressions have no lists"), ('"[1]"', None),
 ])
 def test_text_literals_as_the_editor_parses_them(project, text, said):
     act = {"id": "set-text", "objectClass": "ScoreText", "sid": 4, "parameters": {"text": text}}
