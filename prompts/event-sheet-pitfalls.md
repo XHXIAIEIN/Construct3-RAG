@@ -221,6 +221,9 @@ polygons or blend modes, read
 - Changing a Text's font size redraws and re-uploads its texture. Animate position, angle or opacity, or use a Sprite Font and tween its scale.
 - A Sprite Font draws whole cells and tints its outline with its colour. Draw glyphs left in the cell, one image per colour, in a box sized for the largest scale.
 - A Sprite Font's *Character spacing* is in layout pixels, not scaled by *Scale*, and only between characters. `TextWidth` includes it. Keep it 0 and put a space character where a gap is wanted.
+- *Set canvas size* also sets the project's window size, so a 4:3 game inside 16:9 shows more layout. *Scroll to position* back to the centre and cover the extra width with bars.
+- A Sprite Font's widths go in *Spacing data*, which the Layout View shows; *Set character width* is for a width that changes at runtime. A full-width space needs its own width.
+- A third-party effect without WebGPU support puts the whole project on WebGL. Read Platform Info `Renderer` in a preview.
 
 ### Tween
 
