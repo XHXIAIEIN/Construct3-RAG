@@ -2274,6 +2274,38 @@ class Checker:
                      f"it earlier in this top-level event, and a destroyed instance counts in Count until that event "
                      f"ends. Test it in a top-level event of its own, with the conditions {test}")
 
+    @staticmethod
+    def equals_constant(c: dict) -> tuple[str, str, str] | None:
+        """(object, instance variable, value) of X: variable = a number or text literal, not inverted."""
+        params = params_of(c)
+        value = str(params.get("value", "")).strip()
+        if (c.get("id") != "compare-instance-variable" or c.get("isInverted") or params.get("comparison") != 0
+                or not (NUMBER.fullmatch(value) or STRING_LITERAL.fullmatch(value))):
+            return None
+        return c.get("objectClass", ""), str(params.get("instance-variable", "")).lower(), value
+
+    def check_narrowed(self, c: dict, where: str, earlier: list[dict]) -> None:
+        """X: v = 0 below X: v = 1 in the same branch: each condition keeps the instances the one above kept, so
+        none passes both and the event never runs. A QQ bot wrote a tic-tac-toe row as nine Cell conditions
+        (Row = 0, Column = 0, Value = 1, Row = 0, Column = 1, ...), 2026-10-06. A Pick all of X in between
+        starts the narrowing again."""
+        mine = self.equals_constant(c)
+        if mine is None:
+            return
+        obj, var, value = mine
+        for e in reversed(earlier):
+            if e.get("id") == "pick-all" and str(params_of(e).get("object", "")).lower() == obj.lower():
+                return
+            other = self.equals_constant(e)
+            if other and other[0] == obj and other[1] == var and other[2] != value:
+                self.p.findings.style_finding(
+                    "narrowed", f"{where}: {obj}.{params_of(c).get('instance-variable')} = {value} below "
+                                f"{obj}.{params_of(e).get('instance-variable')} = {other[2]} in the same event never holds: each condition keeps only the {obj} "
+                                f"the conditions above it kept, so no instance passes both. To test that several "
+                                f"instances agree, narrow once and count: {obj}: Row = 0, {obj}: Value = 1, then "
+                                f"System: {obj}.PickedCount = 3, or keep the values in an Array and compare its cells")
+                return
+
     def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False,
                     paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
         """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
@@ -2291,6 +2323,7 @@ class Checker:
             if isinstance(c, dict):
                 self.check_none_left(c, f"{where} condition {i}", gone, earlier)
                 if not ev.get("isOrBlock"):
+                    self.check_narrowed(c, f"{where} condition {i}", earlier)
                     earlier.append(c)
         found: dict[str, str] = {}
         for i, a in enumerate(ev.get("actions", []), 1):
