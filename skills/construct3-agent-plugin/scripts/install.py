@@ -97,7 +97,10 @@ def add_block(project: Path, rag: Path, skill_path: str, dry_run: bool) -> list[
             notes.append(f"{name}: left as it is; its table has no row for this skill. The row to add: "
                          f"| Looking an ACE up, reading a sheet as events, putting events into a sheet, checking "
                          f"project files, generating the whole project | {row} |")
-        return notes or [f"{name}: already names the clone and this skill, left as it is"]
+        notes = notes or [f"{name}: already names the clone and this skill, left as it is"]
+        if name == "AGENTS.md":
+            notes += lead_claude_md(project, dry_run)
+        return notes
 
     block = BLOCK.read_text(encoding="utf-8")
     block = block.replace("<path-to>/Construct3-RAG", rag.as_posix()).replace(f"{DEFAULT_INTO}/{SKILL}", skill_path)
@@ -108,21 +111,27 @@ def add_block(project: Path, rag: Path, skill_path: str, dry_run: bool) -> list[
     did = "added" if before.strip() else "created with"
     notes.append(f"AGENTS.md: {'would be ' if dry_run else ''}{did} the Construct 3 block, "
                  f"Construct3-RAG: {rag.as_posix()}")
-    # Claude Code before 2.1.277 reads CLAUDE.md only, and any version reads it
-    # instead of AGENTS.md when both exist: one line there leads to the block.
-    claude = project / "CLAUDE.md"
-    had = claude.read_text(encoding="utf-8") if claude.exists() else ""
-    if "@AGENTS.md" not in had:
-        if not dry_run:
-            claude.write_text((had.rstrip("\n") + "\n\n" if had.strip() else "") + "@AGENTS.md\n",
-                              encoding="utf-8", newline="\n")
-        notes.append(f"CLAUDE.md: {'would be ' if dry_run else ''}{'added' if had.strip() else 'created with'} "
-                     f"the line @AGENTS.md, which Claude Code follows to the block")
+    notes += lead_claude_md(project, dry_run)
     # The block records the clone for this project alone, and nothing here writes outside the
     # project: the next project starts with no record of the clone anywhere on the machine.
     notes.append(f"memory: keep 'Construct3-RAG: {rag.as_posix()}' where your client stores notes between "
                  f"sessions; the next project starts without this block")
     return notes
+
+
+def lead_claude_md(project: Path, dry_run: bool) -> list[str]:
+    """Claude Code before 2.1.277 reads CLAUDE.md only, and any version reads it
+    instead of AGENTS.md when both exist: one line there leads to the block in
+    AGENTS.md, whether this run wrote the block or found it."""
+    claude = project / "CLAUDE.md"
+    had = claude.read_text(encoding="utf-8") if claude.exists() else ""
+    if "@AGENTS.md" in had or RAG_KEY.search(had):
+        return []
+    if not dry_run:
+        claude.write_text((had.rstrip("\n") + "\n\n" if had.strip() else "") + "@AGENTS.md\n",
+                          encoding="utf-8", newline="\n")
+    return [f"CLAUDE.md: {'would be ' if dry_run else ''}{'added' if had.strip() else 'created with'} "
+            f"the line @AGENTS.md, which Claude Code follows to the block"]
 
 
 def unnamed_clone(project: Path, rag: Path) -> list[str]:

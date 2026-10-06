@@ -157,6 +157,22 @@ def test_install_leads_claude_code_to_the_block_through_claude_md(tmp_path):
     assert "CLAUDE.md" not in out
 
 
+def test_install_adds_the_claude_md_line_when_agents_md_already_has_the_block(tmp_path):
+    """An AGENTS.md that already names the clone is left as it is, and a CLAUDE.md without @AGENTS.md still gets
+    the line (the audit of 2026-10-07 found it reported as complete); --no-block writes neither."""
+    root = new_project(tmp_path / "game")
+    code, out = install(root)
+    assert code == 0, out
+    agents = (root / "AGENTS.md").read_text(encoding="utf-8")
+    (root / "CLAUDE.md").write_text("# Mine\n", encoding="utf-8")
+    code, out = install(root, "--no-block")
+    assert code == 0 and (root / "CLAUDE.md").read_text(encoding="utf-8") == "# Mine\n"
+    code, out = install(root)
+    assert code == 0 and "AGENTS.md: already names the clone" in out and "CLAUDE.md: added the line @AGENTS.md" in out
+    assert (root / "CLAUDE.md").read_text(encoding="utf-8") == "# Mine\n\n@AGENTS.md\n"
+    assert (root / "AGENTS.md").read_text(encoding="utf-8") == agents
+
+
 # --- bootstrapping a machine from the clone alone ---------------------------------------------
 def bootstrap(root: Path, *args: str) -> tuple[int, str]:
     return run(root, REPO / "scripts" / "bootstrap.py", *args)
