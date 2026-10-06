@@ -12,7 +12,10 @@ the description it was started under in agent-<id>.meta.json beside it;
 The trace shows where a run lost turns: a lookup that found nothing, an edit
 that did not match, a script called for output it then could not use. A call
 counts as lost when its result is an error, except a run of check_project.py,
-whose exit code 1 is the findings it was asked for. --out writes the counts
+whose exit code 1 is the findings it was asked for. read_skill_md is true
+when this skill's SKILL.md reached the model: the Skill tool called with this
+skill, or its SKILL.md read, and the call's result came back without an
+error, as run_trigger_eval.py counts a trigger. --out writes the counts
 to RUN_DIR/trace.json, which grade.py adds to the benchmark. --full prints
 commands and results unshortened.
 
@@ -23,6 +26,8 @@ import json
 import re
 import sys
 from pathlib import Path
+
+from run_trigger_eval import loads_skill
 
 SCRIPT = re.compile(r"scripts[/\\](\w+)\.py\"?((?:\s+(?!\d*[<>])(?:\"[^\"]*\"|[^\s|;&<>]+))*)")     # 2>&1 is not an argument
 
@@ -44,7 +49,8 @@ def calls_of(path: Path) -> list[dict]:
             if part.get("type") == "tool_use":
                 given = part.get("input", {})
                 what = given.get("command") or given.get("file_path") or given.get("pattern") or given.get("skill") or given
-                by_id[part["id"]] = {"tool": part.get("name"), "what": str(what), "chars": None, "failed": False, "result": ""}
+                by_id[part["id"]] = {"tool": part.get("name"), "what": str(what), "chars": None, "failed": False,
+                                     "result": "", "loads_skill": loads_skill(part)}
                 calls.append(by_id[part["id"]])
             elif part.get("type") == "tool_result" and part.get("tool_use_id") in by_id:
                 body = part.get("content")
@@ -69,7 +75,7 @@ def summary(calls: list[dict]) -> dict:
         counts["failed"] += c["failed"]
     lost = [c for c in calls if c["failed"] and not (c["tool"] in SHELLS and "check_project.py" in c["what"])]
     return {"tool_calls": len(calls), "lost_calls": len(lost), "by_tool": by_tool, "scripts": scripts,
-            "read_skill_md": any(c["tool"] in ("Read", "Skill") and "SKILL.md" in c["what"] for c in calls)}
+            "read_skill_md": any(c["loads_skill"] and c["chars"] is not None and not c["failed"] for c in calls)}
 
 
 def main() -> int:

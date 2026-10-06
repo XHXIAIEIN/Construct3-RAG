@@ -171,3 +171,25 @@ def test_trigger_eval_writes_nothing_when_the_client_cannot_answer(tmp_path, que
     code, out, report = trigger_eval(tmp_path, [{"query": query, "should_trigger": True}])
     assert code == 2 and "no result written" in out and said in out
     assert not report.exists()
+
+
+@pytest.mark.parametrize("name, given, error, loaded", [
+    ("Skill", {"skill": "construct3-agent-plugin"}, False, True),
+    ("Skill", {"skill": "construct3:construct3-agent-plugin"}, False, True),
+    ("Read", {"file_path": "C:\\game\\.claude\\skills\\construct3-agent-plugin\\SKILL.md"}, False, True),
+    ("Read", {"file_path": "/game/.claude/skills/construct3-agent-plugin/SKILL.md"}, True, False),   # not there
+    ("Read", {"file_path": "/game/.claude/skills/unrelated/SKILL.md"}, False, False),
+    ("Skill", {"skill": "pdf"}, False, False),
+])
+def test_trace_counts_a_read_of_this_skill_that_came_back(tmp_path, name, given, error, loaded):
+    """read_skill_md of trace.json is the trigger of run_trigger_eval.py: this skill's Skill call or SKILL.md,
+    with a result that is no error (the audit of 2026-10-07 found the Skill call missed and another skill's
+    SKILL.md counted)."""
+    transcript = tmp_path / "agent.jsonl"
+    transcript.write_text("\n".join(json.dumps(e) for e in [
+        {"message": {"content": [{"type": "tool_use", "id": "t", "name": name, "input": given}]}},
+        {"message": {"content": [{"type": "tool_result", "tool_use_id": "t", "is_error": error, "content": "text"}]}},
+    ]), encoding="utf-8")
+    code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(tmp_path))
+    assert code == 0, out
+    assert json.loads((tmp_path / "trace.json").read_text(encoding="utf-8"))["read_skill_md"] is loaded
