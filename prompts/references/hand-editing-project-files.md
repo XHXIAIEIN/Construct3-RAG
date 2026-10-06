@@ -122,6 +122,12 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   (`"file": "DefaultProfile.json"`) and `"file": {"path": "data/enemy.json"}`
   for a file in a subfolder. A bare name for a subfolder file loads and is
   rewritten to the object form on save.
+- An `audiofile` parameter is the file's name without its extension, matched
+  in any case against the sound and music files. The official examples write
+  it as a string, `"audio-file": "Flash"`; a project saved by r495 writes
+  `"audio-file": {"path": "Flash"}`. Write the string: the editor opens the
+  examples that hold it, and the checker reads both forms. Scirra's format
+  guide does not describe the parameter.
 - You can omit parameters an ACE gained in a later release; the editor fills
   their defaults on load. `pick-nearestfurthest` loads with `which`, `x`, `y`
   alone, though the schema also lists `z` and `pick-all-tied`.

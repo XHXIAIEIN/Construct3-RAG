@@ -321,31 +321,52 @@ def test_key_written_as_a_name(project):
     assert code == 1 and "should be a key code" in out and "expected finite number" in out
 
 
-@pytest.mark.parametrize("value, refused", [
-    ("Pop", False), ("POP", False), ('"Pop"', False), ("0", True), ("Pop.webm", True), ("Popp", True)])
-def test_a_sound_is_named_as_a_sound_or_music_file(project, value, refused):
-    """The editor opened a copy of the audio-scheduling example with its sound written SFX1 for sfx1.webm, and with
-    it in inner quotes, and refused "0", "sfx1.webm" and a name it has not: "missing file '0'"."""
+def add_audio(project: Path, stems: list[str]) -> None:
+    """The Audio object and one sound file per stem, listed in project.c3proj."""
     (project / "objectTypes" / "Audio.json").write_text(json.dumps({
         "name": "Audio", "plugin-id": "Audio", "sid": 3,
         "singleglobal-inst": {"type": "Audio", "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
     (project / "sounds").mkdir(exist_ok=True)
-    (project / "sounds" / "pop.webm").write_bytes(b"")
+    for stem in stems:
+        (project / "sounds" / f"{stem}.webm").write_bytes(b"")
 
     def project_file(p):
         p["objectTypes"]["items"].append("Audio")
         p["usedAddons"].append({"type": "plugin", "id": "Audio", "name": "Audio", "author": "Scirra", "bundled": False})
         p.setdefault("rootFileFolders", {})["sound"] = {"items": [
-            {"name": "pop.webm", "type": "audio/webm; codecs=opus", "sid": 5, "file-info": {"purpose": "none"}}],
-            "subfolders": []}
+            {"name": f"{stem}.webm", "type": "audio/webm; codecs=opus", "sid": 500 + i, "file-info": {"purpose": "none"}}
+            for i, stem in enumerate(stems)], "subfolders": []}
     edit(project, "project.c3proj", project_file)
-    out = findings(project, lambda s: events(s)["add_score"]["actions"].append(
-        {"id": "play", "objectClass": "Audio", "sid": 6, "parameters": {
-            "audio-file": value, "loop": "not-looping", "volume": "0", "stereo-pan": "0", "tag-optional": '""'}}))
+
+
+def play(value) -> dict:
+    return {"id": "play", "objectClass": "Audio", "sid": 6, "parameters": {
+        "audio-file": value, "loop": "not-looping", "volume": "0", "stereo-pan": "0", "tag-optional": '""'}}
+
+
+@pytest.mark.parametrize("value, refused", [
+    ("Pop", False), ("POP", False), ('"Pop"', False), ("0", True), ("Pop.webm", True), ("Popp", True)])
+def test_a_sound_is_named_as_a_sound_or_music_file(project, value, refused):
+    """The editor opened a copy of the audio-scheduling example with its sound written SFX1 for sfx1.webm, and with
+    it in inner quotes, and refused "0", "sfx1.webm" and a name it has not: "missing file '0'"."""
+    add_audio(project, ["pop"])
+    out = findings(project, lambda s: events(s)["add_score"]["actions"].append(play(value)))
     assert ("is not a sound or music file of the project" in out) == refused, out
     if refused:
         assert "Write the file's name without its extension; " + ("the project has pop" if value == "0"
                                                                     else "closest: pop") in out, out
+
+
+def test_a_sound_written_as_a_path_object_is_read_like_the_string(project):
+    """A project saved by r495 writes the parameter as {"path": "Flash"}; the official examples write "Flash".
+    A user's project with 69 sounds had all 50 play actions reported missing, 2026-10-06."""
+    stems = [f"s{i:02d}" for i in range(10)]
+    add_audio(project, stems)
+    assert "is not a sound or music file" not in findings(
+        project, lambda s: events(s)["add_score"]["actions"].append(play({"path": "S03"})))
+    out = findings(project, lambda s: events(s)["add_score"]["actions"].append(play({"path": "0"})))
+    assert "audio-file={'path': '0'} is not a sound or music file of the project" in out, out
+    assert "the project has s00, s01, s02, s03, s04, s05, s06, s07 and 2 more" in out, out
 
 
 def set_var(name: str, value: str, sid: int = 51) -> dict:
