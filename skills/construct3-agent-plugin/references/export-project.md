@@ -18,7 +18,10 @@ there. Without `--to` the export goes to `.build/web`, where the products
 go and Git ignores them; the browser profile stays in `.tmp/`. `--to` is a
 new or empty folder or one that holds an earlier export: the script refuses
 the project, a folder above it, a drive's root and a folder of other files
-with exit 2, before it opens anything.
+with exit 2, before it opens anything. The zip is extracted beside `--to`,
+into `<folder>.new`, and takes the folder's place only when it carries the
+version to export; when the extraction, the check or the swap fails, the
+earlier export stays as it was.
 
 The copy handed to the editor sets *Use worker* to Auto, so the engine
 decides: a worker, unless the project has a script or an addon without worker

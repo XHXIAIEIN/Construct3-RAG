@@ -24,7 +24,9 @@ Offline support, Deduplicate images and Optimize images on and the other
 options as it remembers them; the zip replaces
 the contents of --to, by default .build/web of the project, a folder Git ignores. --to is
 refused, before the browser starts, when it is the project, holds it, is a drive's root, or
-holds files and no data.json of an earlier export. The export carries the version given by --version or
+holds files and no data.json of an earlier export. The zip is extracted beside --to and
+replaces it only when it carries the version to export, so a failed run leaves the earlier
+export as it was. The export carries the version given by --version or
 --bump, else the project's, with Auto-increment version off in the copy handed to
 the editor, and that version is written into project.c3proj when it differs. The
 copy also sets Use worker to Auto, which lets the engine decide, whatever the
@@ -578,18 +580,60 @@ def refused_folder(project: Path, folder: Path) -> str | None:
     return None
 
 
-def unpack(data: bytes, folder: Path) -> None:
-    with zipfile.ZipFile(io.BytesIO(data)) as z:
-        if "data.json" not in z.namelist():
-            raise Stop("the zip the editor made holds no data.json, so it is not a Web export")
-        shutil.rmtree(folder, ignore_errors=True)
-        z.extractall(folder)
+def beside(folder: Path) -> tuple[Path, Path]:
+    """The folders beside the export folder that unpack() extracts into and moves the earlier one to."""
+    return folder.with_name(folder.name + ".new"), folder.with_name(folder.name + ".old")
+
+
+def clear_beside(folder: Path) -> None:
+    """Removes the export a run that was killed left beside the export folder, so that no .c3p packs
+    it; a folder there that holds no export is someone's, and stops the run."""
+    for leftover in beside(folder):
+        if not leftover.exists():
+            continue
+        if not (leftover / "data.json").is_file():
+            raise Stop(f"{leftover} is in the way and holds no Web export; move or delete it by hand")
+        shutil.rmtree(leftover)
+
+
+def unpack(data: bytes, folder: Path, version: str) -> None:
+    """Extracts the export beside folder, checks that it carries version, then puts it in place of
+    folder. The earlier export in folder stays as it was until then, and comes back when the swap
+    fails; one left behind by a failed cleanup is named, not hidden."""
+    new, old = beside(folder)
+    clear_beside(folder)
+    try:
+        with zipfile.ZipFile(io.BytesIO(data)) as z:
+            if "data.json" not in z.namelist():
+                raise Stop("the zip the editor made holds no data.json, so it is not a Web export")
+            z.extractall(new)
+        if version not in exported_versions(new):
+            raise Stop(f"the export carries {exported_versions(new)}, not {version}; {folder} and "
+                       f"project.c3proj are left as they were")
+        if folder.exists():
+            folder.rename(old)
+        try:
+            new.rename(folder)
+        except OSError:
+            if old.exists():
+                old.rename(folder)
+            raise
+    except (Stop, OSError, zipfile.BadZipFile) as e:
+        shutil.rmtree(new, ignore_errors=True)      # a part of the new export, never the earlier one
+        raise e if isinstance(e, Stop) else Stop(f"the export could not be put in {folder}: {e}; the "
+                                                  f"earlier export there is left as it was") from e
+    if old.exists():
+        try:
+            shutil.rmtree(old)
+        except OSError as e:
+            print(f"the earlier export is left in {old}: {e}; delete it by hand", flush=True)
 
 
 # --- the run --------------------------------------------------------------------------
 def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | None) -> bool | None:
     """Exports; whether the export runs in a worker, as its main.js says."""
     staged = scratch(project) / "export-project.c3p"
+    clear_beside(folder)
     staged.write_bytes(pack(project, version, folder if folder.is_relative_to(project) else None))
     devtools, opened = None, False
     if spec:
@@ -624,10 +668,7 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
     elif opened:
         devtools.call("Target.closeTarget", targetId=page.target)
     staged.unlink(missing_ok=True)
-    unpack(data, folder)
-    if version not in exported_versions(folder):
-        raise Stop(f"the export in {folder} carries {exported_versions(folder)}, not {version}; "
-                   f"project.c3proj is left as it was")
+    unpack(data, folder, version)
     path = project / "project.c3proj"
     text = path.read_text(encoding="utf-8")
     if project_version(project) != version:
