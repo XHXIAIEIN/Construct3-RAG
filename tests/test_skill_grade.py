@@ -77,3 +77,44 @@ def test_a_countdown_on_a_one_second_timer_loses_one_per_second(tmp_path: Path, 
     result = next(g for g in graded if g["text"].startswith("The countdown loses one per second"))
     assert result["passed"] is counts, result
     assert 'on-timer("tick") -> set-eventvar-value(Countdown | Countdown - 1)' in result["evidence"]
+
+
+@pytest.mark.parametrize(("comparison", "value", "inverted", "restarts"), [
+    (3, "0", False, True),      # Countdown <= 0
+    (2, "0", False, True),      # Countdown < 0, which a countdown losing dt passes
+    (4, "0", False, False),     # Countdown > 0: holds from the start (the audit of 2026-10-07)
+    (4, "0", True, True),       # not Countdown > 0
+    (5, "30", False, False),    # Countdown >= 30
+])
+def test_the_restart_reads_the_countdown_running_out(tmp_path: Path, project: Path, comparison: int, value: str,
+                                                     inverted: bool, restarts: bool) -> None:
+    """A countdown from 30 that loses dt every tick, set back on start of layout and shown in ScoreText, restarts
+    the layout under a comparison of the countdown: it passes only when the comparison holds at 0 and not at 30."""
+    path = project / SHEET
+    sheet = json.loads(path.read_text(encoding="utf-8"))
+    sheet["events"].insert(0, {"eventType": "variable", "name": "Countdown", "type": "number", "initialValue": "30",
+                               "comment": "", "isStatic": False, "isConstant": False, "sid": 767136845493875})
+    setup = next(g for g in sheet["events"] if g.get("title") == "Setup")
+    start = next(ev for ev in setup["children"] if any(c["id"] == "on-start-of-layout" for c in ev.get("conditions", [])))
+    start["actions"].insert(0, {"id": "set-eventvar-value", "objectClass": "System", "sid": 101,
+                                "parameters": {"variable": "Countdown", "value": "30"}})
+    restart = {"id": "compare-eventvar", "objectClass": "System", "sid": 105,
+               "parameters": {"variable": "Countdown", "comparison": comparison, "value": value}}
+    if inverted:
+        restart["isInverted"] = True
+    setup["children"] += [
+        {"eventType": "block", "sid": 102, "conditions": [{"id": "every-tick", "objectClass": "System", "sid": 103}],
+         "actions": [{"id": "subtract-from-eventvar", "objectClass": "System", "sid": 104,
+                      "parameters": {"variable": "Countdown", "value": "dt"}}]},
+        {"eventType": "block", "sid": 106, "conditions": [restart],
+         "actions": [{"id": "restart-layout", "objectClass": "System", "sid": 107}]}]
+    path.write_text(json.dumps(sheet, indent="\t"), encoding="utf-8")
+    case = tmp_path / "it" / "add-countdown" / "with_skill"
+    shutil.copytree(project, case / "project")
+    (case / "fixture.json").write_text("{}", encoding="utf-8")
+
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
+    assert code == 0, out
+    graded = json.loads((case / "grading.json").read_text(encoding="utf-8"))["assertion_results"]
+    result = next(g for g in graded if g["text"].startswith("An event restarts the layout"))
+    assert result["passed"] is restarts, result

@@ -35,6 +35,9 @@ CASES = {c["name"]: c for c in json.loads((Path(__file__).parent / "evals.json")
 ORIGINAL_GLOBALS = {"score", "COIN_COUNT", "ROUND_COINS", "beat"}   # the stand-in's, before and after BEATS
 SIZE_ACTIONS = {"set-size", "set-scale", "set-width", "set-height"}
 TWEEN_ENDS = {"on-tweens-finished", "on-any-tweens-finished"}
+NUMBER = re.compile(r"-?\d+(?:\.\d+)?")
+COMPARE = {0: lambda a, b: a == b, 1: lambda a, b: a != b, 2: lambda a, b: a < b,      # the cmp parameter
+           3: lambda a, b: a <= b, 4: lambda a, b: a > b, 5: lambda a, b: a >= b}
 
 
 def checker(project: Path) -> tuple[int, str]:
@@ -123,11 +126,43 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
         per_second, seen = True, f"Timer started for {started[0]['parameters']['duration']} seconds, tag {sorted(tags)}"
     results.append((per_second, seen))
 
+    # A comparison of a countdown variable with a number has a direction: it holds once the countdown has
+    # run out and not while 30 seconds are left. Countdown > 0 reads the variable and restarts at once.
+    def runs_out(conds: list) -> bool | None:
+        """False when a comparison of a countdown variable with a number holds at 30 or never at 0;
+        None when no condition is such a comparison."""
+        verdicts = []
+        for c in conds:
+            p = c.get("parameters", {})
+            if c.get("id") == "compare-eventvar":
+                left, right = str(p.get("variable", "")), str(p.get("value", ""))
+            elif c.get("id") == "compare-two-values":
+                left, right = str(p.get("first-value", "")), str(p.get("second-value", ""))
+            else:
+                continue
+            left, right, op = left.strip(), right.strip(), COMPARE.get(p.get("comparison"))
+            if op is None:
+                continue
+            if left in timers and NUMBER.fullmatch(right):
+                at = {x: op(x, float(right)) for x in (30, 0, -0.5)}    # -0.5: a countdown that loses dt passes 0
+            elif right in timers and NUMBER.fullmatch(left):
+                at = {x: op(float(left), x) for x in (30, 0, -0.5)}
+            else:
+                continue
+            if c.get("isInverted"):
+                at = {x: not v for x, v in at.items()}
+            verdicts.append(not at[30] and (at[0] or at[-0.5]))
+        return all(verdicts) if verdicts else None
+
     restarts = [(ev, above) for ev, above in rows if any(a.get("id") == "restart-layout" for a in ev.get("actions", []))]
     hit = next((ev for ev, above in restarts if names.search(values(conditions_over(ev, above)))
+                and runs_out(conditions_over(ev, above)) is not False
                 or any(c.get("id") == "on-timer" and str(c.get("parameters", {}).get("tag", "")) in tags
                        for c in conditions_over(ev, above))), None)
+    backwards = [ev for ev, above in restarts if runs_out(conditions_over(ev, above)) is False]
     results.append((hit is not None, f"restart-layout under {values(hit['conditions'])}" if hit else
+                    f"restart-layout under {values(backwards[0]['conditions'])}, which holds while 30 seconds are "
+                    f"left or never at 0" if backwards else
                     f"{len(restarts)} event(s) restart the layout, none reads {timers or 'a countdown variable'}"
                     + (f" or is On timer {sorted(tags)}" if tags else "")))
 
