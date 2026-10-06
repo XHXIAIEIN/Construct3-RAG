@@ -81,7 +81,7 @@ class Findings:
     def __init__(self) -> None:
         self.errors: list[str] = []
         self.warnings: list[str] = []
-        self.style: list[tuple[str, str]] = []      # (kind, message), kind one of check_project.check_style's or a trap's: pathfinding, timer, control, count, picked, flip, flip-once
+        self.style: list[tuple[str, str]] = []      # (kind, message), kind one of check_project.check_style's or a trap's: pathfinding, timer, control, count, picked, flip, flip-once, undone
 
     def err(self, msg: str) -> None:
         if msg not in self.errors:

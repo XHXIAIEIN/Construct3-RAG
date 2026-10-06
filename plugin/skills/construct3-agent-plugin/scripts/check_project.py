@@ -260,6 +260,13 @@ OBJECT_EXPRESSION = re.compile(r"(?<![\w.])([A-Za-z_]\w*)\s*\.\s*([A-Za-z_]\w*)"
 SETS = {"set-eventvar-value": "variable", "set-boolean-eventvar": "variable", "toggle-boolean-eventvar": "variable",
         "set-instvar-value": "instance-variable", "set-boolean-instvar": "instance-variable",
         "toggle-boolean-instvar": "instance-variable"}
+# What an object action changes and a condition tests, as the words an expression reads it by: the state a
+# switch is kept in (check_undone).
+STATE_SETS = {"set-animation-frame": "animationframe", "set-animation": "animationname", "set-visible": "isvisible",
+              "set-instvar-value": None, "add-to-instvar": None, "subtract-from-instvar": None,
+              "set-boolean-instvar": None, "toggle-boolean-instvar": None}
+STATE_TESTS = {"compare-animation-frame": "animationframe", "is-animation-playing": "animationname",
+               "is-visible": "isvisible"}
 # System actions after which the event does not run again in the next tick.
 LEAVES = {"set-group-active", "go-to-layout", "go-to-layout-by-name", "restart-layout", "go-to-nextprevious-layout"}
 # Actions that flip a variable between two values: Toggle, and a Set of the variable to N - x, -x, x * -1,
@@ -2428,6 +2435,8 @@ class Checker:
             self.check_event_lists(ev, et, w)
             if self.style and et in ("block", "function-block", "custom-ace-block"):
                 self.check_style(ev, w, events, i, depth, group, counter[0])
+            if et == "block":
+                self.check_undone(events[:i], ev, w)
             if self.style and et == "block":
                 for subject, code in self.find_tests(ev):
                     find_tests.setdefault(subject, []).append((counter[0], w, code))
@@ -2654,6 +2663,79 @@ class Checker:
                 of_shape.setdefault(self.shape(ev), []).append(ev)
         return {id(ev): (n, len(evs)) for n, evs in enumerate(of_shape.values()) if len(evs) >= STYLE_LADDER
                 for ev in evs}
+
+    def trigger_of(self, ev: dict) -> dict | None:
+        """The event's first condition when it is a trigger, else None."""
+        conds = [c for c in ev.get("conditions") or [] if isinstance(c, dict)]
+        if not conds:
+            return None
+        entry = self.p.ace_entry("conditions", conds[0])
+        return conds[0] if (entry.get("isTrigger") if entry else str(conds[0].get("id", "")).startswith("on-")) \
+            else None
+
+    @staticmethod
+    def state_set(actions: list) -> set[str]:
+        """The variables these actions set, and Obj.animationframe and the like for the state of an object, up to
+        the first wait: what a wait leaves for later, the next event of the same input does not see."""
+        out = set()
+        for a in actions:
+            if Checker.waits(a):
+                break
+            params = params_of(a)
+            if a.get("id") in SETS or (a.get("objectClass") == "System" and a.get("id") in ("add-to-eventvar",
+                                                                                       "subtract-from-eventvar")):
+                out.add(str(params.get(SETS.get(a["id"], "variable"), "")).lower())
+            if a.get("id") in STATE_SETS and a.get("objectClass") != "System":
+                prop = STATE_SETS[a["id"]] or str(params.get("instance-variable", "")).lower()
+                out.add(f"{str(a.get('objectClass')).lower()}.{prop}")
+        return out
+
+    def state_read(self, conditions: list) -> set[str]:
+        """What these conditions test, in the form state_set() writes: variables, Obj.var, Obj.animationframe."""
+        out = set()
+        for c in conditions:
+            obj = str(c.get("objectClass")).lower()
+            if c.get("id") in STATE_TESTS:
+                out.add(f"{obj}.{STATE_TESTS[c['id']]}")
+            if c.get("id") in INSTANCE_VALUE_TESTS:
+                out.add(f"{obj}.{str(params_of(c).get('instance-variable', '')).lower()}")
+            for value in params_of(c).values():
+                if isinstance(value, str):
+                    out |= {m.lower() for m in re.findall(r"\w+\.\w+", value)} | {w.lower() for w in IDENT.findall(value)}
+        return out
+
+    def check_undone(self, before: list, ev: dict, where: str) -> None:
+        """A block with the same trigger as an earlier block in its list that tests what that block changed.
+        Both run on the one input, the later one after the earlier one's actions, so it sees the new value: a
+        switch written as "frame 0: set 1" and "frame 1: set 0" sets it back on every tap. Else does not reach
+        across two events with their own trigger; one event with the trigger and two case sub-events, the
+        second starting with Else, does."""
+        trigger = self.trigger_of(ev)
+        tests = [c for c in (ev.get("conditions") or [])[1:] if isinstance(c, dict)]
+        if trigger is None or not tests:
+            return
+        same = ("objectClass", "id", "parameters", "isInverted")
+        key = json.dumps({k: trigger.get(k) for k in same}, sort_keys=True)
+        read = self.state_read(tests)
+        for earlier in reversed(before):
+            if not isinstance(earlier, dict) or earlier.get("eventType") != "block":
+                continue
+            first = self.trigger_of(earlier)
+            if first is None or json.dumps({k: first.get(k) for k in same}, sort_keys=True) != key:
+                continue
+            actions = self.actions_below(earlier)
+            hit = sorted(self.state_set(actions) & read)
+            if not hit:
+                continue
+            case = json.dumps({"eventType": "block", "conditions": [{"id": "else", "objectClass": "System"}],
+                               "actions": ["..."]})
+            self.p.findings.style_finding(
+                "undone", f"{where}: it has the same trigger as an earlier event in its list and tests {', '.join(hit)}, "
+                          f"which that event's actions change. Both run on the same input, this one after the other, "
+                          f"so it sees the value just set and can set it back: a switch never stays switched. Write "
+                          f"one event with the trigger, and the cases as its sub-events: the first with the test, the "
+                          f"second {case}")
+            return
 
     def check_ladder(self, rungs: list[tuple[int, str]]) -> None:
         others = ", ".join(str(n) for n, _ in rungs[1:])

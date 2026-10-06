@@ -1342,6 +1342,39 @@ def test_a_flip_on_a_timeout_is_told_to_set_the_time_back(project, actions, told
     assert (len(said) == 1 and reset in said[0]) if told else not said, out
 
 
+PHASE_0 = cond("compare-eventvar", params={"variable": "phase", "comparison": 0, "value": "0"})
+UNDONE = "same trigger as an earlier event in its list and tests "
+FRAME_IS = {0: cond("compare-animation-frame", "Coin", {"comparison": 0, "number": "0"}),
+            1: cond("compare-animation-frame", "Coin", {"comparison": 0, "number": "1"})}
+
+
+def set_frame(n: int) -> dict:
+    return {"id": "set-animation-frame", "objectClass": "Coin", "sid": 60, "parameters": {"frame-number": str(n)}}
+
+
+@pytest.mark.parametrize("rows, said", [
+    # a switch written as two events of the same trigger: the second sees what the first set
+    ([block([TAPPED, PHASE_0], [set_var("phase", "1", 54)]), block([TAPPED, PHASE_IS], [set_var("phase", "0", 55)])],
+     UNDONE + "phase"),
+    ([block([TAPPED, FRAME_IS[0]], [set_frame(1)]), block([TAPPED, FRAME_IS[1]], [set_frame(0)])],
+     UNDONE + "coin.animationframe"),
+    # the cases as sub-events of one trigger, the second Else; a wait before the change; another property
+    ([block([TAPPED], [], [block([PHASE_0], [set_var("phase", "1", 54)]), block([cond("else")], [set_var("phase", "0", 55)])])],
+     None),
+    ([block([TAPPED, PHASE_0], [{"id": "wait", "objectClass": "System", "sid": 56, "parameters": {"seconds": "0.5"}},
+                                set_var("phase", "1", 54)]), block([TAPPED, PHASE_IS], [set_var("phase", "0", 55)])], None),
+    ([block([TAPPED, FRAME_IS[0]], [{"id": "set-x", "objectClass": "Coin", "sid": 57, "parameters": {"x": "0"}}]),
+      block([TAPPED, FRAME_IS[1]], [set_frame(0)])], None),
+])
+def test_a_second_event_of_the_same_trigger_that_tests_what_the_first_changed_is_named(project, rows, said):
+    """Events of one trigger run in order on the same input, so the second sees what the first set and sets it
+    back: the light switch a local model wrote (2026-10-06) never turned on. The examples write the cases as
+    sub-events of one trigger with Else; of the 524 official examples one is named, where the first event starts
+    a path and the second waits for it to finish."""
+    out = findings(project, side_and_phase(rows))
+    assert_one_warning(out, "same trigger as an earlier event", said)
+
+
 @pytest.mark.parametrize("ace_id, flipped", [("on-animation-finished", False), ("is-animation-playing", True)])
 def test_a_condition_without_a_schema_is_a_trigger_when_its_id_starts_with_on(project, ace_id, flipped):
     """A condition of an addon without a schema counts as a trigger when its id starts with on-, as Scirra's
