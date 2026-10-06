@@ -100,9 +100,12 @@ shows before the build and a bug in the events after it.
   The table is held to rows the player sees: each input changes, through
   its rules or rules that read what they change, a row stored in a text, a
   position, a frame, a visibility or a count of instances shown. A rule
-  fired by an input that writes a cell of an Array changes a count in the
-  same rule or its sub-rules, since a cell is not on screen and a status
-  line says nothing of the piece.
+  fired by an input that writes a cell of an Array changes, in the same
+  rule or its sub-rules, a row that shows the Array, since a cell is not on
+  screen: for a board, a count of the instances shown; for a list, such as
+  stacked shields, a text, position, frame or visibility whose expression
+  reads the Array, `line = "Shields " & (shields.At(0, 0) + shields.At(1, 0))`.
+  A status line that does not read the Array says nothing of the cell.
 - `win` and `lose`: expressions over the state, or `"none"` for a game
   never won or never lost. Some test must reach each, and neither may hold
   on the first screen, before the player does anything. A demo of one
@@ -113,8 +116,9 @@ shows before the build and a bug in the events after it.
   `{"expect": "score = 1"}` must hold; `{"set": "hole = 4"}` is a fixture
   that puts the game in a state, for what is random or slow; it cannot set a
   count of instances. Every rule must run in some test, every input be
-  done and be followed by an expect on a row the player sees, the count
-  where it writes a cell, and some test restart after the win or the lose.
+  done and be followed by an expect on a row the player sees, the row that
+  shows the Array where it writes a cell, and some test restart after the
+  win or the lose.
   After the last step the game runs 1 s more, and the expects at the end
   of the test are read again in the prototype; the editor reads again
   those that still hold. So a restart that a `wait` holds back fails the
