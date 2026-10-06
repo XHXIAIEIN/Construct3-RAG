@@ -1448,14 +1448,17 @@ class Checker:
                 self.err(f"{where}: {key}={value!r} is not a built-in ease{closest(value, eases)}")
         elif ptype == "audiofile":
             # The editor looks the name up among the sound and music files, without the extension and
-            # in any case, and refuses the project on any other value: "missing file '0'".
+            # in any case, and refuses the project on any other value: "missing file '0'". The official
+            # examples write the name as a string; a project saved by r495 writes {"path": "Name"}.
             stems = [Path(n["name"] if isinstance(n, dict) else n).stem
                      for kind in ("sound", "music")
                      for n, _ in folder_items(p.data.get("rootFileFolders", {}).get(kind, {}))]
-            name = unquote(value) if is_literal(value) else value
+            name = value["path"] if isinstance(value, dict) else value
+            name = unquote(name) if is_literal(name) else name
             if not isinstance(name, str) or LOWER(name) not in {LOWER(s) for s in stems}:
                 near = closest(Path(name).stem, stems) if isinstance(name, str) else ""
-                listed = f"; the project has {', '.join(stems[:8])}" if stems else "; the project has none"
+                shown = ", ".join(stems[:8]) + (f" and {len(stems) - 8} more" if len(stems) > 8 else "")
+                listed = f"; the project has {shown}" if stems else "; the project has none"
                 self.err(f"{where}: {key}={value!r} is not a sound or music file of the project; the editor stops "
                          f"with \"missing file {name!r}\". Write the file's name without its extension"
                          + (near or listed))
