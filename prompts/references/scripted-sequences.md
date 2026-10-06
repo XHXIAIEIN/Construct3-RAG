@@ -31,7 +31,8 @@ renumbering the rest. The block shows the row form only.
   axis, and `Array.At(0, row)` is the delay. A row that only names a label
   goes into a Dictionary as its row index when the file loads, so a jump
   finds it without a search. [manual: plugin-reference/csv.md "Parse CSV";
-  studied]
+  studied; observed in a minimal project, 2026-10-06: four rows parsed to
+  a width of 2 and a height of 4]
 - **Step with an accumulated clock.** One number `clock` gains `dt` each
   tick while the sequence runs. A *While* with the conditions `running`,
   `row < Array.Height` and `clock ≥ float(Array.At(0, row))` drains every
@@ -39,7 +40,9 @@ renumbering the rest. The block shows the row form only.
   the cue, and adds 1 to the row. Several cues with delay 0 fire in one
   tick, in file order, and a cue is never late by more than a tick, because
   the clock keeps what the tick overshot. A Timer per cue loses that
-  remainder at each restart. [studied]
+  remainder at each restart. [studied; observed in a minimal project,
+  2026-10-06: two rows with delay 0 fired in the first tick in file order,
+  and a row with delay 0.5 fired 0.506 s after them]
 - **Cap the steps.** Count the steps taken in one tick and stop the sequence
   with a message when the count passes a bound, such as 1000. A jump back to
   a label with no delay on the way never advances the clock, and without the
