@@ -13,6 +13,8 @@ A page saved from a browser then stands in for the fetch:
 ``refresh_guides(data_dir, saved=[page.html])``, or
 ``python scripts/init.py --guides-only --guide-html page.html``.
 """
+from __future__ import annotations
+
 import logging
 import re
 import urllib.request
@@ -45,12 +47,12 @@ class GuideError(ValueError):
 class _Node:
     tag: str
     attrs: dict[str, str] = field(default_factory=dict)
-    children: list = field(default_factory=list)    # _Node or str
+    children: list[_Node | str] = field(default_factory=list)
 
     def classes(self) -> set[str]:
         return set(self.attrs.get("class", "").split())
 
-    def find(self, match) -> "_Node | None":
+    def find(self, match: Callable[[_Node], bool]) -> _Node | None:
         for child in self.children:
             if isinstance(child, _Node):
                 if match(child):
@@ -60,8 +62,8 @@ class _Node:
                     return hit
         return None
 
-    def find_all(self, match) -> list["_Node"]:
-        out = []
+    def find_all(self, match: Callable[[_Node], bool]) -> list[_Node]:
+        out: list[_Node] = []
         for child in self.children:
             if isinstance(child, _Node):
                 if match(child):
@@ -81,22 +83,20 @@ class _TreeBuilder(HTMLParser):
         self.root = _Node("document")
         self.stack = [self.root]
 
-    def handle_starttag(self, tag, attrs):
+    # A self-closing tag goes through handle_starttag then handle_endtag, HTMLParser's default.
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         node = _Node(tag, {k: v or "" for k, v in attrs})
         self.stack[-1].children.append(node)
         if tag not in _VOID:
             self.stack.append(node)
 
-    def handle_startendtag(self, tag, attrs):
-        self.stack[-1].children.append(_Node(tag, {k: v or "" for k, v in attrs}))
-
-    def handle_endtag(self, tag):
+    def handle_endtag(self, tag: str) -> None:
         for i in range(len(self.stack) - 1, 0, -1):
             if self.stack[i].tag == tag:
                 del self.stack[i:]
                 return
 
-    def handle_data(self, data):
+    def handle_data(self, data: str) -> None:
         self.stack[-1].children.append(data)
 
 
@@ -114,7 +114,7 @@ class _Markdown:
         self.base_url = base_url
 
     def inline(self, node: _Node) -> str:
-        parts = []
+        parts: list[str] = []
         for child in node.children:
             if isinstance(child, str):
                 parts.append(re.sub(r"\s+", " ", child))
@@ -122,16 +122,17 @@ class _Markdown:
             if child.tag in ("ul", "ol"):
                 continue    # a list inside a list item is rendered by its item
             inner = self.inline(child)
-            if child.tag in ("strong", "b") and inner.strip():
-                parts.append(f"**{inner.strip()}**")
-            elif child.tag in ("em", "i") and inner.strip():
-                parts.append(f"*{inner.strip()}*")
+            stripped = inner.strip()
+            if child.tag in ("strong", "b") and stripped:
+                parts.append(f"**{stripped}**")
+            elif child.tag in ("em", "i") and stripped:
+                parts.append(f"*{stripped}*")
             elif child.tag == "code":
-                parts.append(f"`{inner.strip()}`")
+                parts.append(f"`{stripped}`")
             elif child.tag == "br":
                 parts.append("\n")
-            elif child.tag == "a" and inner.strip() and child.attrs.get("href"):
-                parts.append(f"[{inner.strip()}]({urljoin(self.base_url, child.attrs['href'])})")
+            elif child.tag == "a" and stripped and child.attrs.get("href"):
+                parts.append(f"[{stripped}]({urljoin(self.base_url, child.attrs['href'])})")
             elif child.tag == "img" and child.attrs.get("src"):
                 parts.append(f"![{child.attrs.get('alt', '')}]({urljoin(self.base_url, child.attrs['src'])})")
             else:
@@ -140,7 +141,7 @@ class _Markdown:
 
     def blocks(self, node: _Node, indent: str = "") -> list[str]:
         out: list[str] = []
-        loose: list = []    # inline content between blocks
+        loose: list[_Node | str] = []    # inline content between blocks
 
         def flush() -> None:
             text = self.inline(_Node("span", children=list(loose))).strip()
@@ -174,7 +175,7 @@ class _Markdown:
         return out
 
     def list_items(self, node: _Node, indent: str) -> str:
-        lines = []
+        lines: list[str] = []
         for n, item in enumerate((c for c in node.children if isinstance(c, _Node) and c.tag == "li"), 1):
             marker = f"{n}. " if node.tag == "ol" else "- "
             lines.append(f"{indent}{marker}{self.inline(item).strip()}")
@@ -201,10 +202,10 @@ def extract_guide(html: str, url: str) -> str:
     if not found:
         raise GuideError(f"{url}: the dates read {dates.text()!r}")
     published = _iso(found["published"])
-    updated = _iso(found["updated"]) if found["updated"] else published
+    updated = _iso(found["updated"] or found["published"])
 
     contributors = root.find(lambda n: n.attrs.get("id") == "ContributorsWrap")
-    authors = []
+    authors: list[str] = []
     for item in contributors.find_all(lambda n: n.tag == "li") if contributors else []:
         name_box = item.find(lambda n: "usernameTextWrap" in n.classes())
         name = name_box.find(lambda n: n.tag == "span") if name_box else None
@@ -217,10 +218,11 @@ def extract_guide(html: str, url: str) -> str:
         raise GuideError(f"{url}: the page names no contributors or no license")
 
     text = "\n\n".join(_Markdown(url).blocks(body))
+    heading = title.text()
     header = [
         "---",
         f"source: {url}",
-        f"title: {title.text()}",
+        f"title: {heading}",
         f"authors: {'; '.join(authors)}",
         f"license: {license_link.text()}, {license_link.attrs.get('href', '')}",
         f"published: {published}",
@@ -228,7 +230,7 @@ def extract_guide(html: str, url: str) -> str:
         "changes: the article converted to Markdown; the page's comments, side menu and navigation left out",
         "---",
     ]
-    return "\n".join(header) + f"\n\n# {title.text()}\n\n{text}\n"
+    return "\n".join(header) + f"\n\n# {heading}\n\n{text}\n"
 
 
 def _fetch(url: str) -> str:
@@ -254,12 +256,12 @@ def refresh_guides(data_dir: Path, saved: Sequence[Path] = (),
     (the fetch or the extraction failed, a warning says why, and the
     committed copy stays).
     """
-    pages = {}
+    pages: dict[str, str] = {}
     for path in saved:
         html = Path(path).read_text(encoding="utf-8")
         pages[guide_for_page(html)] = html
     out_dir = Path(data_dir) / GUIDES_DIR
-    result = {}
+    result: dict[str, str] = {}
     for name, url in GUIDES.items():
         target = out_dir / f"{name}.md"
         try:
