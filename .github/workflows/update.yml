@@ -40,22 +40,13 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
-      # data/c3-schemas/_index.json records the release data/ holds.
+      # data/c3-schemas/_index.json records the release data/ holds. A check
+      # that cannot read the CDN writes no output, so no data step runs; the
+      # guides' pull request still opens, and the last step fails the job.
       - name: Check for new version
         id: check
-        run: |
-          python -c "
-          import sys
-          sys.path.insert(0, '.')
-          from src.settings import load_settings
-          from src.ingest.c3_fetcher import latest_stable_version
-          current = load_settings().schema.version
-          latest = latest_stable_version()
-          outputs = [f'current={current}', f'latest={latest}', f'changed={str(latest != current).lower()}']
-          print(*outputs, sep=chr(10))
-          with open('$GITHUB_OUTPUT', 'a') as f:
-              print(*outputs, sep=chr(10), file=f)
-          " || echo "changed=false" >> $GITHUB_OUTPUT
+        continue-on-error: true
+        run: python scripts/check_c3_version.py --github-output
 
       - name: Fetch new data
         if: steps.check.outputs.changed == 'true'
@@ -157,3 +148,9 @@ jobs:
             sleep 10
           done
           gh pr merge "$PR_NUMBER" --auto --squash
+
+      - name: Fail when the version check failed
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "The version check could not read the CDN; see its step's log. data/ was not refreshed."
+          exit 1

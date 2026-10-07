@@ -46,6 +46,11 @@ refuses the directory spelling. See
 - Expiry: every Wednesday 08:00 Beijing time (aligned with Scirra's Tuesday UK evening releases)
 - Within one cache period, each endpoint is fetched at most once
 - `force=True` bypasses cache
+- A body is checked before it is cached: a JSON endpoint must parse and have
+  its top-level type and key, and a `.d.ts` or `.js` must not be an HTML
+  page. A refused body raises `ValueError` and nothing is cached
+- An HTTP 5xx, a connection error or a timeout is retried twice, one second
+  apart; a 4xx is not
 
 ### Schema Export
 
@@ -88,9 +93,9 @@ Scirra added, removed, or retranslated.
 cached file is written beside its place and then moved in: a run that stops
 during a write leaves no partial file. If a file fails to download, the export
 tries the rest, then stops with an error that names each failed file and writes
-no `.exported` marker. `export_to_data()` replaces `data/c3-ts-defs` whole, so
-a file that only logged a warning would drop out of the commit. The next run
-downloads only the files that are still missing.
+no `.exported` marker. An `offline.json` that lists no `.d.ts` stops it too.
+The next run downloads only the files that are still missing. A failed
+examples export stops `export_schemas()` the same way, with no marker.
 
 Each plugin/behavior file uses CDN field names:
 - Conditions/actions: `list-name`, `display-text`, `description`
@@ -189,7 +194,7 @@ or on a query.
 
 `data/c3-schemas/_index.json` records the release `data/` holds.
 `scripts/check_c3_version.py` compares it with the latest stable release in
-the CDN's `versions.json`. When Construct 3 releases a new version:
+the CDN's `versions.json`, and exits 1 when it cannot read it. When Construct 3 releases a new version:
 
 ```bash
 # Fetch the latest stable release (or --version <release>), replace data/,
@@ -214,7 +219,13 @@ Tests are not scanned, since the suite fails on its own.
 
 `C3Fetcher.export_to_data()` is the one place that maps the cache onto
 `data/`: it replaces `c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`
-whole, leaving cache markers behind. The TypeScript definitions are written
+whole, leaving cache markers behind. It builds the four in a
+`.data-staging-*` folder beside `data/` and checks them against what the CDN
+lists: complete schemas, every example in both locales, both language packs,
+every `.d.ts` of `offline.json` and the autocomplete listing. Then it renames
+them in, and a failed rename puts back the ones already moved. When an item
+is missing it raises an error naming it, and `data/` stays as it was. A
+staging folder left by a killed run can be deleted. The TypeScript definitions are written
 as the CDN ships them, some with CRLF; `.gitattributes` stores every text
 file as LF, so a refresh changes only what the release changed
 (`docs/decisions/lf-line-endings.md`). `scripts/init.py` and the update workflow
@@ -228,3 +239,8 @@ and no guide changed, and every other check on the pull request passed within
 10 minutes; otherwise the pull request waits for a person, with the end of the
 check log in its body when the checks failed. See
 `docs/decisions/release-schema-diff.md`.
+
+The workflow fails, and GitHub sends its failure email, when the version
+check cannot read the CDN or the refresh stops; `data/` is then not
+committed. A failed version check still lets a changed guide open its pull
+request. See `docs/decisions/update-fails-visibly.md`.

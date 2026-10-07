@@ -35,6 +35,7 @@ import json
 import logging
 import re
 import shutil
+import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -50,13 +51,17 @@ from src.ingest.common_aces import (
     load_common_availability,
 )
 from src.ingest.deprecated_addons import ADDON_KINDS, deprecated_ids, deprecated_list, extract_deprecation
-from src.lookup.schema_layout import SCHEMA_ACE_TYPES, SCHEMA_LOCALES
+from src.lookup.schema_layout import SCHEMA_ACE_TYPES, SCHEMA_LOCALES, schema_is_complete
 
 
 logger = logging.getLogger(__name__)
 
 _USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/145.0.0.0"
 _BEIJING = timezone(timedelta(hours=8))
+# A transient failure (HTTP 5xx, a dropped connection, a timeout) is tried
+# again this many times, this many seconds apart; a 4xx is not.
+_RETRIES = 2
+_RETRY_DELAY = 1.0
 # A release as versions.json names it: r503, r495.2.
 _RELEASE_NAME = re.compile(r"r\d+(?:\.\d+)?")
 
@@ -79,6 +84,46 @@ ENDPOINTS = {
 }
 
 
+# The top-level type of each JSON endpoint, and a key it must have, if any.
+# A CDN or proxy error page can come with status 200; the shape check keeps it
+# out of the cache, which would serve it until the weekly expiry.
+_JSON_SHAPES: dict[str, tuple[type, str | None]] = {
+    ENDPOINTS["plugin_aces"]:   (dict, None),
+    ENDPOINTS["behavior_aces"]: (dict, None),
+    ENDPOINTS["effects"]:       (dict, "all"),
+    ENDPOINTS["examples"]:      (dict, "projects"),
+    ENDPOINTS["plugin_list"]:   (dict, "pluginList"),
+    ENDPOINTS["behavior_list"]: (dict, "behaviorList"),
+    ENDPOINTS["offline"]:       (dict, "fileList"),
+    ENDPOINTS["autocomplete"]:  (dict, None),
+    **{ENDPOINTS["lang"].format(locale=locale): (dict, "text") for locale in SCHEMA_LOCALES},
+}
+
+
+def _check_body(path: str, raw: bytes) -> None:
+    """Raise ``ValueError`` when ``raw`` is not what the endpoint ``path`` serves."""
+    body = _strip_bom(raw)
+
+    def refuse(why: str) -> ValueError:
+        return ValueError(f"[CDN] {path}: {why}; the body starts with {body[:80]!r}")
+
+    if path.endswith((".d.ts", ".js")):
+        if body.lstrip().startswith(b"<"):
+            raise refuse("an HTML page, not a script")
+        return
+    if not path.endswith(".json"):
+        return
+    try:
+        data = json.loads(body)
+    except ValueError:
+        raise refuse("not JSON") from None
+    kind, key = _JSON_SHAPES.get(path, (object, None))
+    if not isinstance(data, kind):
+        raise refuse(f"a JSON {type(data).__name__}, not a {kind.__name__}")
+    if key is not None and key not in data:
+        raise refuse(f"no {key!r} key")
+
+
 def _cache_expired(cache_path: Path) -> bool:
     """Check if cache file is from before the most recent Wednesday 08:00 Beijing time.
 
@@ -98,10 +143,28 @@ def _cache_expired(cache_path: Path) -> bool:
 
 
 def _http_get(url: str) -> bytes:
-    """Fetch URL with browser User-Agent (CDN returns 403 without it)."""
+    """Fetch URL with browser User-Agent (CDN returns 403 without it).
+
+    Retries an HTTP 5xx, a connection error or a timeout ``_RETRIES`` times;
+    raises the last error after that, and a 4xx at once.
+    """
     req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return resp.read()
+    attempt = 0
+    while True:
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as e:
+            if e.code < 500 or attempt == _RETRIES:
+                raise
+            error: OSError = e
+        except (urllib.error.URLError, TimeoutError) as e:
+            if attempt == _RETRIES:
+                raise
+            error = e
+        attempt += 1
+        logger.warning(f"[CDN] {url}: {error}; retrying ({attempt}/{_RETRIES})")
+        time.sleep(_RETRY_DELAY)
 
 
 def _write_atomic(path: Path, data: bytes) -> None:
@@ -114,6 +177,29 @@ def _write_atomic(path: Path, data: bytes) -> None:
     part = path.with_name(path.name + ".part")
     part.write_bytes(data)
     part.replace(path)
+
+
+def _swap_in(stage: Path, targets: dict[str, Path]) -> None:
+    """Move ``stage/{name}`` to each target. The earlier targets go to
+    ``stage/earlier/`` first; if any move fails, every target moved so far
+    is put back and ``RuntimeError`` is raised."""
+    earlier = stage / "earlier"
+    earlier.mkdir()
+    placed: list[Path] = []
+    aside: list[tuple[Path, Path]] = []
+    try:
+        for name, target in targets.items():
+            if target.exists():
+                target.rename(earlier / name)
+                aside.append((target, earlier / name))
+            (stage / name).rename(target)
+            placed.append(target)
+    except OSError as e:
+        for target in placed:
+            shutil.rmtree(target)
+        for target, old in aside:
+            old.rename(target)
+        raise RuntimeError(f"[CDN] the export could not be moved into place: {e}; data/ is left as it was") from e
 
 
 def _strip_bom(raw: bytes) -> bytes:
@@ -221,9 +307,11 @@ class C3Fetcher:
         if marker.exists() and not _cache_expired(marker):
             return schemas_dir
         # export_to_data copies the whole directory, so a file an earlier
-        # export wrote for an addon this one leaves out would reach data/.
-        if schemas_dir.exists():
-            shutil.rmtree(schemas_dir)
+        # export wrote for an addon or example this one leaves out would reach data/.
+        examples_dir = schemas_dir.parent / "examples"
+        for stale in (schemas_dir, examples_dir):
+            if stale.exists():
+                shutil.rmtree(stale)
 
         aces_data = self.fetch_all_aces()
         lang_texts = {locale: self.fetch_lang(locale).get("text", {}) for locale in SCHEMA_LOCALES}
@@ -472,54 +560,52 @@ class C3Fetcher:
         logger.info(f"[CDN] Exported {len(index_data['effects'])} effects")
 
         # ── Examples (per-language, per-file) ─────────────────────────────
-        try:
-            examples_raw = self.fetch_examples()
+        # A failure stops the export with no marker, like any other endpoint:
+        # data/c3-examples is replaced whole, so a skipped export would empty it.
+        examples_raw = self.fetch_examples()
 
-            # Per-lang data sources:
-            #   - ui.start-page.projects.{id} → {name, description}  (localized title/desc)
-            #   - ui.example-browser.filters   → tag label translations
-            lang_projects: dict[str, dict] = {}
-            tag_maps: dict[str, dict[str, str]] = {}
-            for lang, text in lang_texts.items():
-                lang_projects[lang] = text.get("ui", {}).get("start-page", {}).get("projects", {})
-                filters = text.get("ui", {}).get("example-browser", {}).get("filters", {})
-                tmap: dict[str, str] = {}
-                for section_key in ("level", "category", "genre", "tag"):
-                    section = filters.get(section_key, {})
-                    for k, v in section.items():
-                        if k != "section-title" and isinstance(v, str):
-                            tmap[k] = v
-                tag_maps[lang] = tmap
+        # Per-lang data sources:
+        #   - ui.start-page.projects.{id} → {name, description}  (localized title/desc)
+        #   - ui.example-browser.filters   → tag label translations
+        lang_projects: dict[str, dict] = {}
+        tag_maps: dict[str, dict[str, str]] = {}
+        for lang, text in lang_texts.items():
+            lang_projects[lang] = text.get("ui", {}).get("start-page", {}).get("projects", {})
+            filters = text.get("ui", {}).get("example-browser", {}).get("filters", {})
+            tmap: dict[str, str] = {}
+            for section_key in ("level", "category", "genre", "tag"):
+                section = filters.get(section_key, {})
+                for k, v in section.items():
+                    if k != "section-title" and isinstance(v, str):
+                        tmap[k] = v
+            tag_maps[lang] = tmap
 
-            examples_dir = schemas_dir.parent / "examples"
-            for lang in lang_texts:
-                out_dir = examples_dir / lang
-                out_dir.mkdir(parents=True, exist_ok=True)
-                tmap = tag_maps.get(lang, {})
-                projects = lang_projects.get(lang, {})
-                for ex in examples_raw:
-                    eid = ex.get("id", "")
-                    if not eid:
-                        continue
-                    lp = projects.get(eid, {})
-                    entry: dict = {"id": eid}
-                    # Localized name and description from lang
-                    entry["name"] = lp.get("name", ex.get("name", eid))
-                    if lp.get("description"):
-                        entry["description"] = lp["description"]
-                    if ex.get("tags"):
-                        entry["tags"] = [tmap.get(t, t) for t in ex["tags"]]
-                    if ex.get("used-addons"):
-                        entry["used-addons"] = ex["used-addons"]
-                    entry["open"] = f"https://editor.construct.net/#open={eid}"
-                    (out_dir / f"{eid}.json").write_text(
-                        json.dumps(entry, ensure_ascii=False, indent=2), encoding="utf-8",
-                    )
+        for lang in lang_texts:
+            out_dir = examples_dir / lang
+            out_dir.mkdir(parents=True, exist_ok=True)
+            tmap = tag_maps.get(lang, {})
+            projects = lang_projects.get(lang, {})
+            for ex in examples_raw:
+                eid = ex.get("id", "")
+                if not eid:
+                    continue
+                lp = projects.get(eid, {})
+                entry: dict = {"id": eid}
+                # Localized name and description from lang
+                entry["name"] = lp.get("name", ex.get("name", eid))
+                if lp.get("description"):
+                    entry["description"] = lp["description"]
+                if ex.get("tags"):
+                    entry["tags"] = [tmap.get(t, t) for t in ex["tags"]]
+                if ex.get("used-addons"):
+                    entry["used-addons"] = ex["used-addons"]
+                entry["open"] = f"https://editor.construct.net/#open={eid}"
+                (out_dir / f"{eid}.json").write_text(
+                    json.dumps(entry, ensure_ascii=False, indent=2), encoding="utf-8",
+                )
 
-            index_data["examples"] = len(examples_raw)
-            logger.info(f"[CDN] Exported {len(examples_raw)} examples (per-language)")
-        except Exception as e:
-            logger.warning(f"[CDN] Failed to export examples: {e}")
+        index_data["examples"] = len(examples_raw)
+        logger.info(f"[CDN] Exported {len(examples_raw)} examples (per-language)")
 
         # ── Write _index.json (root + one per locale) ─────────────────────
         (schemas_dir / "_index.json").write_text(
@@ -587,11 +673,16 @@ class C3Fetcher:
         return terms
 
     def fetch_raw(self, path: str, force: bool = False) -> bytes:
-        """Fetch a raw file (text/binary), using local cache if fresh."""
+        """Fetch a raw file (text/binary), using local cache if fresh.
+
+        Raises ``ValueError`` and caches nothing when the body is not what the
+        endpoint serves (``_check_body``).
+        """
         cache_path = self.cache_dir / path.replace("/", "_")
         if not force and cache_path.exists() and not _cache_expired(cache_path):
             return cache_path.read_bytes()
         raw = self._download(path)
+        _check_body(path, raw)
         _write_atomic(cache_path, raw)
         return raw
 
@@ -617,6 +708,10 @@ class C3Fetcher:
         offline = self.fetch(ENDPOINTS["offline"])
         dts_paths = [f for f in offline.get("fileList", []) if f.endswith(".d.ts")]
         logger.info(f"[CDN] Found {len(dts_paths)} .d.ts files")
+        if not dts_paths:
+            raise RuntimeError(
+                f"[CDN] {ENDPOINTS['offline']} lists no .d.ts file, so data/c3-ts-defs is left as it is"
+            )
 
         fetched = 0
         failed: list[str] = []
@@ -666,47 +761,75 @@ class C3Fetcher:
         place that knows how the cache maps onto ``data/``; ``scripts/init.py``
         and the update workflow both call it.
 
+        The four targets are built in a staging folder beside ``data_dir`` and
+        checked against what the CDN lists: complete schemas, every example
+        of the examples list in both locales, both language packs, every
+        ``.d.ts`` of ``offline.json`` and the autocomplete listing. Only then
+        are they swapped in, and a failed swap puts the earlier ones back.
+        Raises ``RuntimeError`` naming what is missing, with ``data_dir`` as
+        it was.
+
         Returns the refreshed target directories keyed by their name.
         """
         schemas_dir = self.export_schemas()
         lang_dir = self.export_lang()
         ts_dir = self.export_ts_defs()
-        targets = {
-            "c3-schemas": data_dir / "c3-schemas",
-            "c3-examples": data_dir / "c3-examples",
-            "c3-lang": data_dir / "c3-lang",
-            "c3-ts-defs": data_dir / "c3-ts-defs",
-        }
+        targets = {name: data_dir / name for name in ("c3-schemas", "c3-examples", "c3-lang", "c3-ts-defs")}
 
-        def _replace(target: Path, source: Path) -> None:
-            if target.exists():
-                shutil.rmtree(target)
-            shutil.copytree(
-                source,
-                target,
-                ignore=lambda _dir, names: [n for n in names if n.startswith(".")],
-            )
-
-        _replace(targets["c3-schemas"], schemas_dir)
-        _replace(targets["c3-examples"], schemas_dir.parent / "examples")
-        _replace(targets["c3-lang"], lang_dir)
-
-        # ts-defs: only the interface files and the class listing, not the
-        # download bookkeeping the export leaves beside them.
-        ts_target = targets["c3-ts-defs"]
-        if ts_target.exists():
-            shutil.rmtree(ts_target)
-        for src_file in ts_dir.rglob("*.d.ts"):
-            dst = ts_target / src_file.relative_to(ts_dir)
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src_file, dst)
-        autocomplete = ts_dir / "autocomplete-data.json"
-        if autocomplete.exists():
-            ts_target.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(autocomplete, ts_target / autocomplete.name)
+        data_dir.mkdir(parents=True, exist_ok=True)
+        stage = Path(tempfile.mkdtemp(prefix=f".{data_dir.name}-staging-", dir=data_dir.parent))
+        try:
+            self._stage(stage, schemas_dir, lang_dir, ts_dir)
+            missing = self._missing_from(stage)
+            if missing:
+                raise RuntimeError(
+                    f"[CDN] the {self.version} export is short, so {data_dir} is left as it is: "
+                    + ", ".join(missing)
+                )
+            _swap_in(stage, targets)
+        finally:
+            try:
+                shutil.rmtree(stage)
+            except OSError as e:
+                logger.warning(f"[CDN] the staging folder {stage} is left behind: {e}; delete it by hand")
 
         logger.info(f"[CDN] Refreshed {data_dir} from {self.version} exports")
         return targets
+
+    @staticmethod
+    def _stage(stage: Path, schemas_dir: Path, lang_dir: Path, ts_dir: Path) -> None:
+        """Copy the exports into ``stage`` as data/ lays them out; a missing
+        export leaves its folder out, for ``_missing_from`` to name."""
+        def hidden(_dir: str, names: list[str]) -> list[str]:
+            return [n for n in names if n.startswith(".")]
+
+        for name, source in (("c3-schemas", schemas_dir), ("c3-examples", schemas_dir.parent / "examples"),
+                             ("c3-lang", lang_dir)):
+            if source.is_dir():
+                shutil.copytree(source, stage / name, ignore=hidden)
+        # ts-defs: only the interface files and the class listing, not the
+        # download bookkeeping the export leaves beside them.
+        ts_stage = stage / "c3-ts-defs"
+        ts_stage.mkdir()
+        for src_file in [*ts_dir.rglob("*.d.ts"), ts_dir / "autocomplete-data.json"]:
+            if src_file.is_file():
+                dst = ts_stage / src_file.relative_to(ts_dir)
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src_file, dst)
+
+    def _missing_from(self, stage: Path) -> list[str]:
+        """What the CDN lists for this release and ``stage`` lacks, as data/ paths."""
+        missing: list[str] = []
+        if not schema_is_complete(stage / "c3-schemas"):
+            missing.append("c3-schemas (incomplete: an addon type is empty, or a file _index.json names is missing or unreadable)")
+        example_ids = sorted({ex["id"] for ex in self.fetch_examples() if ex.get("id")})
+        expected = [f"c3-examples/{locale}/{eid}.json" for locale in SCHEMA_LOCALES for eid in example_ids]
+        expected += [f"c3-lang/{locale}.json" for locale in SCHEMA_LOCALES]
+        offline = self.fetch(ENDPOINTS["offline"])
+        expected += [f"c3-ts-defs/{f}" for f in offline.get("fileList", []) if f.endswith(".d.ts")]
+        expected.append("c3-ts-defs/autocomplete-data.json")
+        missing += [rel for rel in expected if not (stage / rel).is_file()]
+        return missing
 
     # ── Convenience methods ──────────────────────────────────────────────
 

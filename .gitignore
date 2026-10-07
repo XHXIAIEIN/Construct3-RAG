@@ -41,3 +41,6 @@ __pycache__/
 tmp/
 .trash/
 .remember/
+
+# A staging folder export_to_data left beside data/ when its run was killed
+/.data-staging-*/
