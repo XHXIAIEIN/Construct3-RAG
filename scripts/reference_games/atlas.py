@@ -18,6 +18,7 @@ from PIL import Image, ImageDraw
 from .catalog import DECODED
 
 CELL = 512
+IMAGE_EXT = {".png", ".webp", ".jpg", ".jpeg"}
 
 
 def checker(w: int, h: int, size: int = 16) -> Image.Image:
@@ -32,12 +33,12 @@ def checker(w: int, h: int, size: int = 16) -> Image.Image:
 def main() -> None:
     for arg in sys.argv[1:]:
         game = Path(arg)
-        files = sorted(p for p in (game / "images").glob("*") if p.suffix.lower() in {".png", ".webp", ".jpg", ".jpeg"})
+        files = sorted(p for p in (game / "images").glob("*") if p.suffix.lower() in IMAGE_EXT)
         if not files:
             print(f"{game.name}: no images")
             continue
-        colours: Counter = Counter()
-        thumbs = []
+        colours: Counter[tuple[int, int, int]] = Counter()
+        thumbs: list[Image.Image] = []
         for f in files:
             try:
                 im = Image.open(f).convert("RGBA")

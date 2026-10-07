@@ -12,18 +12,52 @@ object, variable, group and constant names survive.
 """
 from __future__ import annotations
 
+import functools
 import json
 import re
 import sys
+from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 from .catalog import DECODED, REPO
 
 SCHEMAS = REPO / "data" / "c3-schemas" / "en-US"
+# Where an export keeps its runtime, in the order searched; the worker build adds workermain.js.
+RUNTIME_FILES = ("scripts/c3runtime.js", "scripts/c3main.js")
+
+
+def nth(seq: list, i: int, default: Any = None) -> Any:
+    """``seq[i]``, or ``default`` when the export's record is shorter than that."""
+    return seq[i] if len(seq) > i else default
+
+
+def nth_list(seq: list, i: int) -> list:
+    """``seq[i]`` when it is a list, else ``[]``."""
+    item = nth(seq, i)
+    return item if isinstance(item, list) else []
+
+
+def data_file(folder: Path) -> Path:
+    """The export's project data: ``data.json``, or ``data.js`` where a Construct 2 export keeps it."""
+    return folder / "data.json" if (folder / "data.json").exists() else folder / "data.js"
 
 
 # ---------------------------------------------------------------- runtime tables
+
+@functools.lru_cache(maxsize=8)
+def runtime_source(path: Path) -> str:
+    """The text of one runtime file, read once: the reference tables, the eases and the tween properties all scan it."""
+    return path.read_text(encoding="utf-8", errors="replace")
+
+
+def runtime_sources(game: Path, names: tuple[str, ...]) -> Iterator[str]:
+    """The text of each runtime file the export has, in the order given."""
+    for name in names:
+        f = game / name
+        if f.exists():
+            yield runtime_source(f)
+
 
 def balanced(src: str, start: int) -> str:
     depth, i, quote, esc = 0, start, None, False
@@ -77,11 +111,7 @@ def split_top(body: str) -> list[str]:
 
 
 def runtime_tables(game: Path) -> tuple[list[str] | None, list[str] | None]:
-    for name in ("scripts/c3runtime.js", "scripts/c3main.js", "scripts/workermain.js"):
-        f = game / name
-        if not f.exists():
-            continue
-        src = f.read_text(encoding="utf-8", errors="replace")
+    for src in runtime_sources(game, (*RUNTIME_FILES, "scripts/workermain.js")):
         refs = funcs = None
         m = re.search(r"C3_GetObjectRefTable\s*=\s*function\s*\(\)\s*\{\s*return\s*", src)
         if m:
@@ -113,17 +143,10 @@ def runtime_tables(game: Path) -> tuple[list[str] | None, list[str] | None]:
 
 # ---------------------------------------------------------------- schemas
 
-_schema_cache: dict[str, dict] = {}
-
-
+@functools.lru_cache(maxsize=None)
 def schema_for(addon: str, kind: str) -> dict | None:
-    key = f"{kind}:{addon.lower()}"
-    if key in _schema_cache:
-        return _schema_cache[key]
     f = SCHEMAS / kind / f"{addon.lower()}.json"
-    data = json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
-    _schema_cache[key] = data
-    return data
+    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
 
 
 COMMON = schema_for("_common", "plugins")
@@ -131,10 +154,10 @@ COMMON = schema_for("_common", "plugins")
 # The schemas order combo items as the language file does; an export stores a combo as an
 # index into the editor's ACE definition, so the order comes from the cached allAces.json.
 ALL_ACES: dict[tuple[str, str, str], list[dict]] = {}
-_cache = sorted((REPO / ".cache" / "c3-cdn").glob("r*/plugins_allAces.json"))
-for kind_file in _cache[-1:]:
+_cdn = sorted((REPO / ".cache" / "c3-cdn").glob("r*/plugins_allAces.json"))
+if _cdn:
     for fname in ("plugins_allAces.json", "behaviors_allAces.json"):
-        data = json.loads((kind_file.parent / fname).read_text(encoding="utf-8"))
+        data = json.loads((_cdn[-1].parent / fname).read_text(encoding="utf-8"))
         for addon, cats in data.items():
             for cat in cats.values():
                 for table in ("conditions", "actions", "expressions"):
@@ -148,8 +171,12 @@ DEFAULT_EASES = ["default", "noease", "easeinsine", "easeoutsine", "easeinoutsin
                  "easeinoutquint", "easeincirc", "easeoutcirc", "easeinoutcirc", "easeinexpo", "easeoutexpo", "easeinoutexpo"]
 
 
+@functools.lru_cache(maxsize=None)
 def ace_schema(ref: str) -> tuple[str, list[tuple[str, dict]]]:
-    """'Behaviors.Tween.Acts.TweenOneProperty' -> ('Tween.TweenOneProperty', [(param id, spec)])."""
+    """'Behaviors.Tween.Acts.TweenOneProperty' -> ('Tween.TweenOneProperty', [(param id, spec)]).
+
+    Cached: every ACE of a game asks for its reference, and callers only read the specs.
+    """
     parts = ref.split(".")
     if len(parts) < 4:
         return ref, []
@@ -180,11 +207,7 @@ def ace_schema(ref: str) -> tuple[str, list[tuple[str, dict]]]:
 
 def tween_single_properties(game: Path) -> list[str] | None:
     """The Tween behavior's one-property list in this export's runtime; its order changed between releases."""
-    for name in ("scripts/c3runtime.js", "scripts/c3main.js"):
-        f = game / name
-        if not f.exists():
-            continue
-        src = f.read_text(encoding="utf-8", errors="replace")
+    for src in runtime_sources(game, RUNTIME_FILES):
         best: list[str] = []
         for m in re.finditer(r"offsetX\W{1,4}offsetY", src):
             run = re.match(r"[\w\s\",]*", src[m.start():]).group(0)
@@ -197,15 +220,12 @@ def tween_single_properties(game: Path) -> list[str] | None:
 
 
 def ease_names(game: Path) -> list[str]:
-    for name in ("scripts/c3runtime.js", "scripts/c3main.js"):
-        f = game / name
-        if f.exists():
-            src = f.read_text(encoding="utf-8", errors="replace")
-            i = src.find("_CreateEaseMap(){")
-            if i >= 0:
-                names = re.findall(r'_AddPredifinedEase\("([a-z]+)"', src[i:i + 30000])
-                if names:
-                    return names
+    for src in runtime_sources(game, RUNTIME_FILES):
+        i = src.find("_CreateEaseMap(){")
+        if i >= 0:
+            names = re.findall(r'_AddPredifinedEase\("([a-z]+)"', src[i:i + 30000])
+            if names:
+                return names
     return DEFAULT_EASES
 
 
@@ -214,25 +234,22 @@ def ease_names(game: Path) -> list[str]:
 class Game:
     def __init__(self, folder: Path) -> None:
         self.folder = folder
-        data = folder / "data.json" if (folder / "data.json").exists() else folder / "data.js"
-        self.p = json.loads(data.read_text(encoding="utf-8-sig"))["project"]
+        self.p = json.loads(data_file(folder).read_text(encoding="utf-8-sig"))["project"]
         self.refs, self.funcs = runtime_tables(folder)
         self.eases = ease_names(folder)
         self.tween_single = tween_single_properties(folder)
         p = self.p
         self.objs = p[3]
         self.objname = {i: o[0] for i, o in enumerate(self.objs)}
-        self.ivars = {}
+        self.ivars: dict[int, list[str]] = {}
+        self.behname: dict[int, list[str]] = {}
         for i, o in enumerate(self.objs):
             names = []
             for iv in o[3] if isinstance(o[3], list) else []:
                 s = next((x for x in iv if isinstance(x, str)), None) if isinstance(iv, list) else None
                 names.append(s or str(iv))
             self.ivars[i] = names
-        self.behname = {}
-        for i, o in enumerate(self.objs):
-            behs = o[8] if len(o) > 8 and isinstance(o[8], list) else []
-            self.behname[i] = [b[0] for b in behs if isinstance(b, list) and b and isinstance(b[0], str)]
+            self.behname[i] = [b[0] for b in nth_list(o, 8) if isinstance(b, list) and b and isinstance(b[0], str)]
         self.varname: dict[int, str] = {}
         for sheet in p[6]:
             self._collect_vars(sheet[1])
@@ -306,10 +323,11 @@ class Game:
         body = bm.group(1) if bm else src
         for v, nd in sorted(decl.items(), key=lambda kv: -len(kv[0])):
             d = self.node_desc(nd)
-            body = re.sub(r"\b" + re.escape(v) + r"\.\w+\(\)", d, body)
-            body = re.sub(r"\b" + re.escape(v) + r"\.\w+\(", d + "(", body)
-            body = re.sub(r"\b" + re.escape(v) + r"\(", d + "(", body)
-            body = re.sub(r"\b" + re.escape(v) + r"\b", d, body)
+            var = r"\b" + re.escape(v)
+            body = re.sub(var + r"\.\w+\(\)", d, body)
+            body = re.sub(var + r"\.\w+\(", d + "(", body)
+            body = re.sub(var + r"\(", d + "(", body)
+            body = re.sub(var + r"\b", d, body)
         return body.strip()
 
     def param(self, prm: Any, spec: tuple[str, dict] | None, obj: int | None = None) -> str:
@@ -383,35 +401,28 @@ class Game:
                 name = it[1][1]
                 out.append(f"{ind}GROUP \"{name}\"{'' if it[1][0] else ' (inactive)'}")
                 subs = next((x for x in it[6:] if isinstance(x, list) and x and isinstance(x[0], list) and isinstance(x[0][0], int) and len(x[0]) > 3), [])
-                conds, acts = (it[6] if len(it) > 6 else []), (it[7] if len(it) > 7 else [])
-                self._event_body(conds, acts, depth + 1, sheet, name, out, show_always=False)
-                self.walk(it[8] if len(it) > 8 else subs, depth + 1, sheet, name, out)
+                self._event_body(nth(it, 6, []), nth(it, 7, []), depth + 1, sheet, name, out, show_always=False)
+                self.walk(nth(it, 8, subs), depth + 1, sheet, name, out)
                 continue
             if isinstance(it[1], list) and it[1] and isinstance(it[1][0], str):
                 fn = it[1]
                 out.append(f"{ind}FUNCTION {fn[0]}")
-                self._event_body(it[6] if len(it) > 6 else [], it[7] if len(it) > 7 else [], depth + 1, sheet, group, out, show_always=False)
-                self.walk(it[8] if len(it) > 8 else [], depth + 1, sheet, group, out)
+                self._event_body(nth(it, 6, []), nth(it, 7, []), depth + 1, sheet, group, out, show_always=False)
+                self.walk(nth(it, 8, []), depth + 1, sheet, group, out)
                 continue
             if t in (0, 3, 4):
-                conds = it[6] if len(it) > 6 and isinstance(it[6], list) else []
-                acts = it[7] if len(it) > 7 and isinstance(it[7], list) else []
-                orb = " [OR]" if len(it) > 2 and it[2] is True else ""
-                heads = [self.ace(c, "cond", sheet, group) for c in conds if isinstance(c, list) and len(c) > 1]
-                out.append(f"{ind}EVENT{orb}: " + (" & ".join(heads) if heads else "(always)"))
-                for a in acts:
-                    if isinstance(a, list) and len(a) > 1:
-                        out.append(f"{ind}    -> {self.ace(a, 'act', sheet, group)}")
-                self.walk(it[8] if len(it) > 8 and isinstance(it[8], list) else [], depth + 1, sheet, group, out)
+                orb = " [OR]" if nth(it, 2) is True else ""
+                self._event_body(nth_list(it, 6), nth_list(it, 7), depth, sheet, group, out, head=f"EVENT{orb}")
+                self.walk(nth_list(it, 8), depth + 1, sheet, group, out)
                 continue
             out.append(f"{ind}? {json.dumps(it)[:160]}")
 
     def _event_body(self, conds: list, acts: list, depth: int, sheet: str, group: str | None, out: list[str],
-                    show_always: bool = True) -> None:
+                    show_always: bool = True, head: str = "EVENT") -> None:
         ind = "  " * depth
         heads = [self.ace(c, "cond", sheet, group) for c in conds if isinstance(c, list) and len(c) > 1]
         if heads or show_always:
-            out.append(f"{ind}EVENT: " + (" & ".join(heads) if heads else "(always)"))
+            out.append(f"{ind}{head}: " + (" & ".join(heads) if heads else "(always)"))
         for a in acts:
             if isinstance(a, list) and len(a) > 1:
                 out.append(f"{ind}    -> {self.ace(a, 'act', sheet, group)}")
@@ -423,64 +434,61 @@ class Game:
         objs = []
         for i, o in enumerate(self.objs):
             anims = []
-            for a in o[7] if len(o) > 7 and isinstance(o[7], list) else []:
+            for a in nth_list(o, 7):
                 if isinstance(a, list) and a and isinstance(a[0], str):
-                    frames = a[7] if len(a) > 7 and isinstance(a[7], list) else []
+                    frames = nth_list(a, 7)
                     size = [frames[0][4], frames[0][5]] if frames and len(frames[0]) > 5 else None
                     durs = sorted({f[7] for f in frames if isinstance(f, list) and len(f) > 7 and isinstance(f[7], (int, float))})
-                    anims.append({"name": a[0], "speed": a[1], "loop": a[2], "pingpong": a[5] if len(a) > 5 else None,
+                    anims.append({"name": a[0], "speed": a[1], "loop": a[2], "pingpong": nth(a, 5),
                                   "frames": len(frames), "size": size, "frame_durations": durs})
             behs = []
-            for b in o[8] if len(o) > 8 and isinstance(o[8], list) else []:
+            for b in nth_list(o, 8):
                 if isinstance(b, list) and b and isinstance(b[0], str):
                     behs.append({"name": b[0], "type": plugin_ref(b[1]) if self.refs else b[1]})
             effects = []
-            for e in o[12] if len(o) > 12 and isinstance(o[12], list) else []:
+            for e in nth_list(o, 12):
                 if isinstance(e, list) and e and isinstance(e[0], str):
                     effects.append(e[0] if len(e) < 2 else f"{e[0]}:{e[1]}")
-            image = o[6][0] if len(o) > 6 and isinstance(o[6], list) and o[6] and isinstance(o[6][0], str) else None
+            images = nth_list(o, 6)
+            image = images[0] if images and isinstance(images[0], str) else None
             objs.append({"name": o[0], "plugin": plugin_ref(o[1]), "family": o[2], "ivars": self.ivars[i],
                          "behaviors": behs, "animations": anims, "effects": effects, "image": image})
         layouts = []
-        tints: dict[str, int] = {}
+        tints: Counter[str] = Counter()
         beh_props: dict[str, list] = {}
         for L in p[5]:
             layers = []
-            counts: dict[str, int] = {}
-            for ly in L[9] if len(L) > 9 else []:
+            counts: Counter[str] = Counter()
+            for ly in nth(L, 9, []):
                 if not isinstance(ly, list) or not ly:
                     continue
-                insts = ly[14] if len(ly) > 14 and isinstance(ly[14], list) else []
+                insts = nth_list(ly, 14)
                 for inst in insts:
                     if not isinstance(inst, list) or len(inst) < 2:
                         continue
                     name = self.objname.get(inst[1], str(inst[1]))
-                    counts[name] = counts.get(name, 0) + 1
+                    counts[name] += 1
                     world = inst[0] if isinstance(inst[0], list) else []
                     col = next((x for x in world if isinstance(x, list) and len(x) == 4 and all(isinstance(c, (int, float)) for c in x)), None)
                     if col and col != [1, 1, 1, 1]:
-                        hexc = "#" + "".join(f"{round(max(0, min(1, c)) * 255):02x}" for c in col[:3])
-                        tints[hexc] = tints.get(hexc, 0) + 1
-                    if len(inst) > 4 and isinstance(inst[4], list) and inst[4]:
-                        for bi, bp in enumerate(inst[4]):
-                            bn = self.behname.get(inst[1], [])
-                            key = f"{name}.{bn[bi] if bi < len(bn) else bi}"
-                            if key not in beh_props:
-                                beh_props[key] = bp
-                effects = [e[0] if isinstance(e, list) and e else e for e in (ly[15] if len(ly) > 15 and isinstance(ly[15], list) else [])]
-                layers.append({"name": ly[0], "bg": ly[4] if len(ly) > 4 else None, "transparent": ly[5] if len(ly) > 5 else None,
-                               "parallax": [ly[6], ly[7]] if len(ly) > 7 else None, "opacity": ly[8] if len(ly) > 8 else None,
+                        tints["#" + "".join(f"{round(max(0, min(1, c)) * 255):02x}" for c in col[:3])] += 1
+                    bn = self.behname.get(inst[1], [])
+                    for bi, bp in enumerate(nth_list(inst, 4)):
+                        beh_props.setdefault(f"{name}.{bn[bi] if bi < len(bn) else bi}", bp)
+                effects = [e[0] if isinstance(e, list) and e else e for e in nth_list(ly, 15)]
+                layers.append({"name": ly[0], "bg": nth(ly, 4), "transparent": nth(ly, 5),
+                               "parallax": [ly[6], ly[7]] if len(ly) > 7 else None, "opacity": nth(ly, 8),
                                "instances": len(insts), "effects": effects})
-            layouts.append({"name": L[0], "size": [L[1], L[2]], "sheet": L[7] if len(L) > 7 else None,
+            layouts.append({"name": L[0], "size": [L[1], L[2]], "sheet": nth(L, 7),
                             "layers": layers, "top_objects": sorted(counts.items(), key=lambda kv: -kv[1])[:12]})
         return {
             "name": p[0], "first_layout": p[1], "viewport": [p[10], p[11]] if len(p) > 11 else None,
-            "sampling": p[14] if len(p) > 14 else None, "runtime_tables": bool(self.refs),
+            "sampling": nth(p, 14), "runtime_tables": bool(self.refs),
             "objects": objs, "families": [[self.objname.get(i, i) for i in f] for f in p[4]],
             "layouts": layouts, "instance_tints": sorted(tints.items(), key=lambda kv: -kv[1])[:40],
             "behavior_instance_props": beh_props,
-            "sheets": [s[0] for s in p[6]], "sounds": [s[0] for s in p[7]] if len(p) > 7 and isinstance(p[7], list) else [],
-            "timelines": p[33] if len(p) > 33 and isinstance(p[33], list) else [],
+            "sheets": [s[0] for s in p[6]], "sounds": [s[0] for s in nth_list(p, 7)],
+            "timelines": nth_list(p, 33),
         }
 
 
@@ -527,7 +535,7 @@ def decode(folder: Path) -> str:
 def main() -> None:
     for arg in sys.argv[1:]:
         folder = Path(arg)
-        if not (folder / "data.json").exists() and not (folder / "data.js").exists():
+        if not data_file(folder).exists():
             print(f"{folder.name}: no data.json or data.js")
             continue
         try:
