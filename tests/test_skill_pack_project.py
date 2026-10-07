@@ -34,8 +34,9 @@ def test_a_folder_project_is_packed_with_project_c3proj_at_the_root(project, tmp
     assert "left out: .agents/, AGENTS.md, art/, CLAUDE.md, tools/ (--keep NAME packs one)" in out, out
     assert "next: python " in out and "open_in_editor.py" in out
 
-    code, out = tool(project, "pack_project", "--out", str(tmp_path / "repro.zip"), "--keep", "tools")
-    assert code == 0 and "tools/build_project.py" in names(tmp_path / "repro.zip"), out
+    repro = tmp_path / "repro.zip"
+    code, out = tool(project, "pack_project", "--out", str(repro), "--keep", "tools")
+    assert code == 0 and "tools/build_project.py" in names(repro), out
     assert "note:" not in out, out
 
 
@@ -76,8 +77,9 @@ def test_an_archive_with_the_folder_inside_is_repacked_and_unpacked(project, tmp
                 z.write(f, f"game/{f.relative_to(project).as_posix()}")
     fixed = tmp_path / "fixed.c3p"
     code, out = tool(project, "pack_project", str(nested), "--out", str(fixed))
-    assert code == 0 and "project.c3proj" in names(fixed), out
-    assert not any(n.startswith("game/") for n in names(fixed))
+    packed = names(fixed)
+    assert code == 0 and "project.c3proj" in packed, out
+    assert not any(n.startswith("game/") for n in packed)
 
     folder = tmp_path / "unpacked"
     code, out = tool(project, "pack_project", str(fixed), "--out", str(folder))
@@ -100,6 +102,7 @@ def test_bundled_addons_are_packed(project, tmp_path):
     addon = project / "addons" / "effect" / "Custom_Glow.c3addon"
     addon.parent.mkdir(parents=True)
     addon.write_bytes(b"PK\x05\x06" + bytes(18))
-    code, out = tool(project, "pack_project", "--out", str(tmp_path / "bundled.c3p"))
-    assert code == 0 and "addons/effect/Custom_Glow.c3addon" in names(tmp_path / "bundled.c3p"), out
+    bundled = tmp_path / "bundled.c3p"
+    code, out = tool(project, "pack_project", "--out", str(bundled))
+    assert code == 0 and "addons/effect/Custom_Glow.c3addon" in names(bundled), out
     assert "addons/" not in out.split("left out:")[-1], out
