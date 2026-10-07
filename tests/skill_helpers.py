@@ -5,18 +5,51 @@ scripts run as subprocesses from there. The stand-in game of
 assets/build_project.py is generated once (conftest.py); a test breaks a
 private copy in one way and reads what a script says about it.
 """
+import importlib
+import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 from collections.abc import Iterator
 from pathlib import Path
+
+import pytest
 
 
 REPO = Path(__file__).resolve().parent.parent
 SKILL = REPO / "skills" / "construct3-agent-plugin"
 INSTALLED = ".agents/skills/construct3-agent-plugin"
 SHEET = "eventSheets/Game.json"
+
+
+def script_module(name: str, folder: Path = SKILL / "scripts"):
+    """A script of the skill as a module, the scripts beside it importable while it loads and
+    nothing left on sys.path. From the skill's own folders it is the module the other scripts import,
+    cached like any import; from an installed copy it is loaded by its file, so that what it finds
+    from its own location is that copy's."""
+    sys.path.insert(0, str(folder))
+    try:
+        if folder.is_relative_to(SKILL):
+            return importlib.import_module(name)
+        spec = importlib.util.spec_from_file_location(name, folder / f"{name}.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+    finally:
+        sys.path.remove(str(folder))
+
+
+EXAMPLES = script_module("c3project").siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"
+NEEDS_EXAMPLES = pytest.mark.skipif(not EXAMPLES.is_dir(), reason="the Construct-Example-Projects clone is not beside this one")
+NEEDS_GIT = pytest.mark.skipif(not shutil.which("git"), reason="git is not installed")
+
+
+def git(cwd: Path, *args: str, check: bool = True) -> None:
+    """git in a repository made under tmp_path, as a committer the machine need not have configured."""
+    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=cwd, check=check,
+                   capture_output=True, timeout=60)
 
 
 def run(root: Path, script: str | Path, *args: str) -> tuple[int, str]:
@@ -54,6 +87,55 @@ def edit(root: Path, rel: str, change) -> None:
     data = json.loads(path.read_text(encoding="utf-8"))
     change(data)
     path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8")
+
+
+def folder_project(root: Path, sheets: dict[str, list], types: dict[str, dict], layouts: dict[str, dict],
+                   **project) -> Path:
+    """The smallest folder project a script reads: eventSheets/<name>.json from `events`, objectTypes/<name>.json
+    and layouts/<name>.json from the rest of their files, each named first, and project.c3proj listing them
+    with the keys of `project`."""
+    files = {"eventSheets": {name: {"events": events} for name, events in sheets.items()},
+             "objectTypes": types, "layouts": layouts}
+    for folder, named in files.items():
+        (root / folder).mkdir(parents=True, exist_ok=True)
+        for name, data in named.items():
+            (root / folder / f"{name}.json").write_text(json.dumps({"name": name, **data}), encoding="utf-8")
+    listing = {folder: {"items": list(named), "subfolders": []} for folder, named in files.items()}
+    (root / "project.c3proj").write_text(json.dumps({"name": root.name, **project, **listing}), encoding="utf-8")
+    return root
+
+
+def add_addon(project: Path, kind: str, addon_id: str, name: str) -> None:
+    """The stand-in game's project.c3proj lists an addon it did not use before."""
+    edit(project, "project.c3proj", lambda p: p["usedAddons"].append(
+        {"type": kind, "id": addon_id, "name": name, "author": "Scirra", "bundled": False}))
+
+
+def add_keyboard(root: Path, key) -> None:
+    """A Keyboard object in the stand-in game, and an event on `key` pressed."""
+    (root / "objectTypes" / "Keyboard.json").write_text(json.dumps({
+        "name": "Keyboard", "plugin-id": "Keyboard", "sid": 3,
+        "singleglobal-inst": {"type": "Keyboard", "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
+
+    def project_file(p):
+        p["objectTypes"]["items"].append("Keyboard")
+        p["usedAddons"].append({"type": "plugin", "id": "Keyboard", "name": "Keyboard", "author": "Scirra", "bundled": False})
+    edit(root, "project.c3proj", project_file)
+    edit(root, SHEET, lambda s: s["events"].append(block([cond("on-key-pressed", "Keyboard", {"key": key})])))
+
+
+def pathfinding_coin(project: Path, obstacles: str = "solids") -> None:
+    """Coin gets Pathfinding, taking its obstacles from Solids, and the Backdrop, which no event changes, Solid."""
+    edit(project, "objectTypes/Coin.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "Pathfinding", "name": "Pathfinding", "sid": 11}))
+    edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["behaviors"].update(
+        Pathfinding={"properties": {"obstacles": obstacles}}))
+    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "solid", "name": "Solid", "sid": 12}))
+    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"][0].setdefault("behaviors", {}).update(
+        Solid={"properties": {}}))
+    add_addon(project, "behavior", "Pathfinding", "Pathfinding")
+    add_addon(project, "behavior", "solid", "Solid")
 
 
 def cond(ace_id: str, obj: str = "System", params: dict | None = None, **extra) -> dict:

@@ -8,7 +8,7 @@ import pytest
 
 from tests.skill_helpers import (
     REPO, SKILL, INSTALLED, SHEET, run, tool, check, edit, cond, block, events, every_event, collect_tween, warnings,
-    findings, plan,
+    findings, plan, add_addon, add_keyboard, pathfinding_coin,
 )
 
 
@@ -281,18 +281,6 @@ def test_else_where_the_editor_refuses_to_preview(project, place, reason):
 
 
 # --- parameters --------------------------------------------------------------------------------
-def add_keyboard(root: Path, key) -> None:
-    (root / "objectTypes" / "Keyboard.json").write_text(json.dumps({
-        "name": "Keyboard", "plugin-id": "Keyboard", "sid": 3,
-        "singleglobal-inst": {"type": "Keyboard", "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
-
-    def project_file(p):
-        p["objectTypes"]["items"].append("Keyboard")
-        p["usedAddons"].append({"type": "plugin", "id": "Keyboard", "name": "Keyboard", "author": "Scirra", "bundled": False})
-    edit(root, "project.c3proj", project_file)
-    edit(root, SHEET, lambda s: s["events"].append(block([cond("on-key-pressed", "Keyboard", {"key": key})])))
-
-
 def create_coin(template: str) -> dict:
     return block([cond("on-start-of-layout")], [{"id": "create-object", "objectClass": "System", "sid": 7, "parameters": {
         "object-to-create": "Coin", "layer": '"Game"', "x": "0", "y": "0", "create-hierarchy": False,
@@ -1105,25 +1093,6 @@ def assert_one_warning(out: str, marker: str, said: str | None) -> None:
     said_lines = [w for w in warnings(out) if marker in w]
     assert out.splitlines()[-1].startswith("ok:"), out
     assert (said in said_lines[0] if said else not said_lines) and len(said_lines) <= 1, out
-
-
-def add_addon(project, kind: str, addon_id: str, name: str) -> None:
-    edit(project, "project.c3proj", lambda p: p["usedAddons"].append(
-        {"type": kind, "id": addon_id, "name": name, "author": "Scirra", "bundled": False}))
-
-
-def pathfinding_coin(project, obstacles: str = "solids") -> None:
-    """Coin gets Pathfinding, taking its obstacles from Solids, and the Backdrop, which no event changes, Solid."""
-    edit(project, "objectTypes/Coin.json", lambda t: t["behaviorTypes"].append(
-        {"behaviorId": "Pathfinding", "name": "Pathfinding", "sid": 11}))
-    edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["behaviors"].update(
-        Pathfinding={"properties": {"obstacles": obstacles}}))
-    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
-        {"behaviorId": "solid", "name": "Solid", "sid": 12}))
-    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"][0].setdefault("behaviors", {}).update(
-        Solid={"properties": {}}))
-    add_addon(project, "behavior", "Pathfinding", "Pathfinding")
-    add_addon(project, "behavior", "solid", "Solid")
 
 
 FIND_PATH = {"id": "find-path", "objectClass": "Coin", "sid": 13, "behaviorType": "Pathfinding",

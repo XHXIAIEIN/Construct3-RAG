@@ -12,10 +12,9 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, INSTALLED, run, check, install, new_project, warnings
+from tests.skill_helpers import REPO, SKILL, INSTALLED, run, check, install, new_project, warnings, script_module
 
-sys.path.insert(0, str(SKILL / "scripts"))
-import c3project as c3  # noqa: E402
+c3 = script_module("c3project")
 
 
 # --- installing the skill in a game project ---------------------------------------------------

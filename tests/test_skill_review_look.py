@@ -1,21 +1,13 @@
 """review_look.py: the mechanical findings over the instances a layout holds, and
 what the run prints. The browser is not started: the checks are pure functions
 of what LOOK_JS reads from the runtime."""
-import sys
-
-from tests.skill_helpers import SKILL, INSTALLED, run
+from tests.skill_helpers import SKILL, INSTALLED, run, script_module
 
 LAYERS = {"Game": {"parallax": [1, 1], "shown": True, "view": [0, 0, 1280, 720]},
           "UI": {"parallax": [0, 0], "shown": True, "view": [0, 0, 1280, 720]}}
 
 
-def module():
-    sys.path.insert(0, str(SKILL / "scripts"))
-    try:
-        import review_look as rl
-    finally:
-        sys.path.pop(0)
-    return rl
+rl = script_module("review_look")
 
 
 def inst(uid, kind, box, layer="UI", **extra):
@@ -42,7 +34,6 @@ def rules(rl, *instances, **kw):
 def test_review_look_finds_a_text_its_box_cuts_or_wraps():
     """A text wider than its box is cut; one taller by a second line wraps beyond it.
     A single line a little taller than its box draws whole."""
-    rl = module()
     found = rl.findings(snap(
         text(1, "HelpText", [592, 170, 688, 202], "选择前进之路", [144, 28]),
         text(2, "ResultText", [560, 300, 720, 364], "得分 1500 最高 0", [92, 165]),
@@ -56,7 +47,6 @@ def test_review_look_finds_a_text_its_box_cuts_or_wraps():
 
 def test_review_look_finds_instances_created_and_never_moved_apart():
     """The names of five cards on one card: one finding for the group, with the texts."""
-    rl = module()
     names = ["木灵护体", "金刃风暴", "剑意通玄", "苍木缠身", "水火既济"]
     found = rl.findings(snap(*[text(10 + n, "CardName", [300, 420, 420, 450], w, [80, 24], layer="Game")
                                for n, w in enumerate(names)],
@@ -71,7 +61,6 @@ def test_review_look_finds_instances_created_and_never_moved_apart():
 def test_review_look_leaves_out_one_box_that_shows_different_frames():
     """A slot's fill frame under its rim frame, one type on one box, is drawn so on purpose;
     two of the same frame there were never moved apart."""
-    rl = module()
     slot = [100, 400, 172, 472]
 
     def frame(uid, animation, n):
@@ -82,7 +71,6 @@ def test_review_look_leaves_out_one_box_that_shows_different_frames():
 
 
 def test_review_look_finds_overlaps_on_the_hud_but_not_a_label_on_its_button():
-    rl = module()
     assert rules(rl,
                  inst(1, "Button", [100, 600, 260, 660]),
                  text(2, "ButtonLabel", [100, 600, 260, 660], "Start", [60, 24]),    # its label
@@ -107,7 +95,6 @@ def test_review_look_finds_overlaps_on_the_hud_but_not_a_label_on_its_button():
 def test_review_look_finds_text_over_text_off_the_hud_only():
     """On a layer that scrolls, a name over its body is left to the picture; a text
     over another text is not."""
-    rl = module()
     assert rules(rl, inst(1, "Enemy", [560, 100, 720, 240], layer="Game"),
                  text(2, "EnemyName", [560, 150, 720, 190], "青木妖", [90, 30], layer="Game")) == []
     assert rules(rl, text(1, "EnemyName", [560, 150, 720, 190], "青木妖", [90, 30], layer="Game"),
@@ -117,7 +104,6 @@ def test_review_look_finds_text_over_text_off_the_hud_only():
 def test_review_look_finds_a_hud_instance_the_screen_edge_cuts():
     """Not one waiting wholly off screen to move in, one wider than the screen, or
     art on a world layer that runs off the edge."""
-    rl = module()
     found = rl.findings(snap(inst(1, "Hint", [1200, 300, 1400, 340])))
     assert pairs(found) == [("edge", [1])], found
     assert "the right edge of the screen cuts it" in found[0]["line"]
@@ -130,7 +116,6 @@ def test_review_look_finds_a_hud_instance_the_screen_edge_cuts():
 def test_review_look_finds_kinds_drawn_with_one_frame():
     """Map nodes of three kinds all on frame 0 of 4; not when the frame plays, when
     the animation has one frame, or when a text on each tells them apart."""
-    rl = module()
 
     def node(uid, kind):    # COL differs too, and is no kind
         return inst(uid, "Node", [100 * uid, 300, 100 * uid + 48, 348], layer="Game", animation="Default", frame=0,
@@ -150,7 +135,6 @@ def test_review_look_finds_kinds_drawn_with_one_frame():
 
 
 def test_review_look_names_screenshots_by_layout_and_asks_the_questions_once():
-    rl = module()
     assert rl.file_name("第1幕 Map") == "第1幕-Map"
     assert rl.file_name("Game/Level:2") == "Game-Level-2"
     finding = rl.findings(snap(text(1, "HelpText", [592, 170, 688, 202], "选择前进之路", [144, 28])))

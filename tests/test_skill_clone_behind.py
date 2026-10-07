@@ -1,23 +1,14 @@
 """The checker's line about a Construct3-RAG clone that is behind its upstream,
 against a bare repository on disk as the upstream."""
-import shutil
-import subprocess
-import sys
 from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import SKILL
+from tests.skill_helpers import NEEDS_GIT, git, script_module
 
-sys.path.insert(0, str(SKILL / "scripts"))
-import c3project as c3  # noqa: E402
+c3 = script_module("c3project")
 
-pytestmark = pytest.mark.skipif(not shutil.which("git"), reason="git is not installed")
-
-
-def git(cwd: Path, *args: str) -> None:
-    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=cwd, check=True,
-                   capture_output=True)
+pytestmark = NEEDS_GIT
 
 
 @pytest.fixture

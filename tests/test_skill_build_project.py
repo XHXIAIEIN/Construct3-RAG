@@ -5,17 +5,16 @@ import json
 import re
 import shutil
 import symtable
-import sys
 from pathlib import Path
 
 import pytest
 
 from tests.skill_helpers import (
-    REPO, SKILL, INSTALLED, run, tool, check, edit, every_event, warnings, findings, template_module, png_pixels,
+    REPO, SKILL, INSTALLED, EXAMPLES, NEEDS_EXAMPLES, run, tool, check, edit, every_event, warnings, findings,
+    template_module, png_pixels, script_module,
 )
 
-sys.path.insert(0, str(SKILL / "scripts"))
-import c3project as c3  # noqa: E402
+c3 = script_module("c3project")
 
 # What a game's generator holds outside the markers and the helpers read: the settings above
 # them, and below them BEATS and the functions build_all() calls.
@@ -279,9 +278,6 @@ def test_stand_in_project_opens_in_the_editor(built):
     assert props["downscaling"] == "medium" and props["loaderStyle"] == "splash"
 
 
-EXAMPLES = REPO.parent / "Construct-Example-Projects" / "example-projects"
-
-
 # Keys the generated project does not write, with the reason the editor opens
 # without them: both loaders return from the project's own loader when the key is
 # missing (projectResources.js, sPn and G7s), and a generated project has no
@@ -321,7 +317,7 @@ def always_written(root: Path) -> dict[str, set[str]]:
     return {level: set.intersection(*files) for level, files in seen.items()}
 
 
-@pytest.mark.skipif(not EXAMPLES.is_dir(), reason="the Construct-Example-Projects clone is not beside this one")
+@NEEDS_EXAMPLES
 def test_generated_project_carries_what_the_editor_writes_into_every_project(built):
     """The comparison that finds a missing key before the editor does: the official
     examples are 524 projects the editor saved, so a key in every one of them is one

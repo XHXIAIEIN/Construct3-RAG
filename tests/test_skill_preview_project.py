@@ -2,17 +2,12 @@
 import json
 import os
 import re
-import sys
 
 import pytest
 
-from tests.skill_helpers import SKILL, INSTALLED, run
+from tests.skill_helpers import INSTALLED, run, script_module
 
-sys.path.insert(0, str(SKILL / "scripts"))
-try:
-    import preview_project as pp  # noqa: E402
-finally:
-    sys.path.pop(0)
+pp = script_module("preview_project")
 
 
 def test_preview_project_keeps_the_result_in_the_project_by_default(tmp_path):

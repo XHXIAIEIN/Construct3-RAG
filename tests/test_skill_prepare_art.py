@@ -3,18 +3,16 @@ by the generator in place of the stand-ins."""
 import json
 import math
 import os
-import sys
 from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import SKILL, edit, run, tool
+from tests.skill_helpers import edit, run, tool, script_module
 
 pytest.importorskip("PIL")
 from PIL import Image, ImageDraw, ImageFilter  # noqa: E402
 
-sys.path.insert(0, str(SKILL / "scripts"))
-import prepare_art  # noqa: E402
+prepare_art = script_module("prepare_art")
 
 MAGENTA = (255, 0, 255)
 KEYS = prepare_art.KEYS
