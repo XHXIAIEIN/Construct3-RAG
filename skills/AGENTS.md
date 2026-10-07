@@ -45,8 +45,9 @@ the block for the project's instruction file.
   (`docs/decisions/plugin-folder.md`).
 - Scripts use the standard library, except `prepare_art.py`, which needs
   Pillow to read, cut out and resample pictures, and `preview_project.py`,
-  where Pillow is optional and only joins a recording into a GIF when it is
-  installed and ffmpeg is missing (`open_in_editor.py`
+  where Pillow is optional: it numbers the frames of a recording's contact
+  sheet, which ffmpeg alone tiles unnumbered, and joins a recording into a
+  GIF when ffmpeg is missing (`open_in_editor.py`
   drives the machine's Edge or Chrome over the DevTools protocol, and prints
   its check as steps for the agent's own browser tool where there is
   neither), take everything from flags,

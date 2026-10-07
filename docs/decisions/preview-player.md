@@ -62,6 +62,18 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   ran and the errors on one clock; the agent gets the watched values' changes
   printed, the user a page beside the frames that plays them, steps through
   them and jumps to a step.
+- The agent judges a motion from a contact sheet, `NN-NAME-sheet.png`: up to
+  12 frames in one image, each numbered with its time. It holds the first
+  and last frames, the frames around the largest change between two frames,
+  the start and end of each step, and the cells left over spread over the
+  change, so a motion that runs between two steps is on it. The run asks for
+  the three worst defects, each with its time, what the frame shows and the
+  event to change, then a fix of only those and a new recording of that
+  part. Before it, the agent read the watched values and left the eye to the
+  user. The pattern is the contact sheet of code-rendered video production;
+  on a HealthBar recording of 70 frames, a sheet of the hit and the heal at
+  their step boundaries left out the lost-HP bar closing between them, and
+  spreading the spare cells over the change put it on the sheet.
 - What the user sees go wrong reaches the agent as a part of the recording.
   The user selects it on the page and copies it as a task for an agent that
   starts cold: what to find out, in their words or a default question, the
