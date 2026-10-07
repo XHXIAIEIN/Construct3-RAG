@@ -194,13 +194,13 @@ def test_template_patterns_tile_by_the_unit_and_meet_without_a_seam(tmp_path):
     assert all(((x - 68) - 28) % 32 == x % 32 for x in range(68, 132))      # texture x = (local - offset) / tile
     assert t.tiledbg_inst("HpFill", 100, 50, 64, 64)["properties"]["image-offset-x"] == 0   # a bar is no pattern
     back = t.backdrop("Backdrop")
-    assert (back["world"]["x"], back["world"]["y"], back["world"]["width"], back["world"]["height"]) == (0, 0, 720, 1280)
-    assert t.backdrop("Sheet")["world"]["width"] == 720
+    assert (back["world"]["x"], back["world"]["y"], back["world"]["width"], back["world"]["height"]) == (0, 0, 1920, 1080)
+    assert t.backdrop("Sheet")["world"]["width"] == 1920
     for name, kind in (("Backdrop", "checker"), ("Sheet", "plain")):
         with pytest.raises(SystemExit, match=rf"area\('{name}'\): the {kind} pattern is empty space, the backdrop alone"):
             t.area(name, 0, 0, 4, 4)
-    with pytest.raises(SystemExit, match=r"area\('Lava'\): 10x6 cells of hazard stripes; .* keep the shorter side to 5 cells"):
-        t.area("Lava", 0, 0, 10, 6)
+    with pytest.raises(SystemExit, match=r"area\('Lava'\): 12x10 cells of hazard stripes; .* keep the shorter side to 8 cells"):
+        t.area("Lava", 0, 0, 12, 10)
     t.area("Ledge", 0, 0, 10, 6)                                             # low stripes may cover more
     with pytest.raises(SystemExit, match=r"backdrop\('Door'\): the backdrop is the plain sheet or the checker"):
         t.backdrop("Door")
@@ -287,7 +287,7 @@ def test_stand_in_project_opens_in_the_editor(built):
     for key in ("description", "version", "author", "authorEmail", "authorWebsite", "appId"):
         assert isinstance(props[key], str), key
     assert props["fullscreenMode"] == "letterbox-scale" and props["fullscreenQuality"] == "high"
-    assert props["orientations"] == "portrait" and props["sampling"] == "trilinear"
+    assert props["orientations"] == "landscape" and props["sampling"] == "trilinear"
     assert props["downscaling"] == "medium" and props["loaderStyle"] == "splash"
 
 
@@ -397,19 +397,19 @@ def test_template_places_the_hud_on_the_grid(built):
     grid; the stand-in's HUD text and its tapped coin come from it, so a generated layout starts
     aligned and a small model fills cells instead of choosing coordinates."""
     t = template_module()
-    assert (t.VIEW_W, t.VIEW_H, t.UNIT, t.MARGIN, t.TOUCH) == (720, 1280, 32, 32, 96)
+    assert (t.VIEW_W, t.VIEW_H, t.UNIT, t.MARGIN, t.TOUCH) == (1920, 1080, 32, 32, 160)
     assert t.units(13) == 416 and t.snap(100) == 96 and t.snap(112) == 128
     assert t.anchor("top-left", 416, 64) == (32, 32)
-    assert t.anchor("top-right", 416, 64) == (720 - 32 - 416, 32)          # its right edge MARGIN from the viewport's
-    assert t.anchor("bottom", 96, 96, 0.5, 0.5) == (360, 1280 - 32 - 48)   # centred, its bottom edge MARGIN up
-    assert t.anchor("center", 96, 96, 0.5, 0.5) == (360, 640)
+    assert t.anchor("top-right", 416, 64) == (1920 - 32 - 416, 32)          # its right edge MARGIN from the viewport's
+    assert t.anchor("bottom", 96, 96, 0.5, 0.5) == (960, 1080 - 32 - 48)   # centred, its bottom edge MARGIN up
+    assert t.anchor("center", 96, 96, 0.5, 0.5) == (960, 540)
     assert t.anchor("top-left", 96, 96, 0.5, 0.5, dx=3) == (32 + 96 + 48, 32 + 48)
-    # A row of three fingers' width, one unit apart, centred on the top edge: 352 px wide from x 184.
-    assert t.row("top", 3, 96, 96) == [(232, 80), (360, 80), (488, 80)]
+    # A row of three 96 px boxes, one unit apart, centred on the top edge: 352 px wide from x 784.
+    assert t.row("top", 3, 96, 96) == [(832, 80), (960, 80), (1088, 80)]
     # A Text's size is in points, 4/3 px each, so a label's box fits its longest text
     # (8 x 0.6 em x 32 x 4/3 = 205 -> 224) and reads towards the side it hangs on.
     timer = t.hud_text("TimerText", "Time: 30", "top-right")
-    assert (timer["world"]["x"], timer["world"]["y"], timer["world"]["width"], timer["world"]["height"]) == (464, 32, 224, 64)
+    assert (timer["world"]["x"], timer["world"]["y"], timer["world"]["width"], timer["world"]["height"]) == (1664, 32, 224, 64)
     assert timer["properties"]["horizontal-alignment"] == "right"
     # A wide character is about 1 em, so a Chinese label's box holds its characters at full size.
     assert t.text_ems("Time: 30") == 4.8 and t.text_ems("结束回合，") == 5
@@ -428,7 +428,7 @@ def test_template_places_the_hud_on_the_grid(built):
     t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"),
                   t.hud_text("TimerText", "Time: 30", "top-left", dy=3)])
     assert t.hud_text("TimerText", "Time: 30", "top-left", dy=3)["world"]["y"] == 128
-    with pytest.raises(SystemExit, match="reaches past the 720x1280 viewport"):
+    with pytest.raises(SystemExit, match="reaches past the 1920x1080 viewport"):
         t.no_overlap([t.sprite_inst("Coin", 32, 32, 96, 96)])
     # A fill inside its frame is a layer on purpose, not a collision: the eighteen bar runs of
     # iteration 19 all met the guard here and worked around it.
@@ -451,12 +451,12 @@ def test_template_button_is_a_shape_and_its_label_that_never_come_apart(tmp_path
     move the button take the label along."""
     t = template_module()
     t.ROOT = tmp_path
-    assert t.button_size("继续") == (160, 96)                 # 3 units of text and one on each side; TOUCH high
+    assert t.button_size("继续") == (160, 160)                # 3 units of text and one on each side; TOUCH high
     assert t.button_size("A") == (t.TOUCH, t.TOUCH)        # never smaller than a finger
     t.shape("resume-default-000.png", "rect", *t.button_size("继续"), "solid")
     shape, label = t.button("Resume", "resume-default-000.png", "ResumeLabel", "继续", 3, 10)
     assert (label["world"]["x"], label["world"]["y"], label["world"]["width"], label["world"]["height"]) == \
-        (96, 320, 160, 96)
+        (96, 320, 160, 160)
     assert label["properties"]["horizontal-alignment"] == "center" and label["properties"]["size"] == t.TEXT_SIZE["body"]
     assert t.contrast(tuple(round(c * 255) for c in label["properties"]["color"][:3]), t.PALETTE["solid"]) >= 3
     assert shape["sceneGraphData"]["parent-uid"] is None
@@ -468,7 +468,7 @@ def test_template_button_is_a_shape_and_its_label_that_never_come_apart(tmp_path
     t.shape("big-default-000.png", "rect", 384, 192, "solid")
     assert t.button("Big", "big-default-000.png", "BigLabel", "继续", 0, 0)[1]["properties"]["size"] == t.TEXT_SIZE["title"]
     t.shape("small-default-000.png", "rect", 96, 96, "solid")
-    with pytest.raises(SystemExit, match=r"needs a shape of 256x96 px and images/small-default-000.png is 96x96; "
+    with pytest.raises(SystemExit, match=r"needs a shape of 256x160 px and images/small-default-000.png is 96x96; "
                                          r"draw it at button_size\('重新开始'\)"):
         t.button("Small", "small-default-000.png", "SmallLabel", "继续", 0, 0, longest="重新开始")
     # A hidden button starts with its label hidden.
@@ -484,20 +484,20 @@ def test_template_screen_is_named_bands_and_the_stage_sizes_its_main_object():
     computes every position; fit() sizes the stage's main object to a share of the stage, and
     labelled_bar() keeps a bar's name in front of it."""
     t = template_module()
-    assert t.bands() == {"title": (32, 32, 656, 128), "status": (32, 160, 656, 64), "stage": (32, 256, 656, 896),
-                         "hint": (32, 1184, 656, 64)}
-    assert t.bands(title=False)["status"] == (32, 32, 656, 64) and t.bands(title=False)["stage"] == (32, 128, 656, 1024)
-    assert t.fit(1, 1) == (12, 12) and t.fit(5, 3) == (12, 7)        # 60% of the stage across, proportions kept
-    assert t.stage_cell(12, 12) == (5, 16)
+    assert t.bands() == {"title": (32, 32, 1856, 128), "status": (32, 160, 1856, 64), "stage": (32, 256, 1856, 672),
+                         "hint": (32, 960, 1856, 64)}
+    assert t.bands(title=False)["status"] == (32, 32, 1856, 64) and t.bands(title=False)["stage"] == (32, 128, 1856, 800)
+    assert t.fit(1, 1) == (12, 12) and t.fit(5, 3) == (21, 12)       # 60% of the stage high, proportions kept
+    assert t.stage_cell(12, 12) == (24, 12)
     score = t.band_text("Score", "Score: 0", "status", "left", longest="Score: 999")
     timer = t.band_text("Timer", "Time: 30", "status", "right")
-    assert (score["world"]["x"], score["world"]["y"]) == (32, 160) and timer["world"]["x"] + timer["world"]["width"] == 688
+    assert (score["world"]["x"], score["world"]["y"]) == (32, 160) and timer["world"]["x"] + timer["world"]["width"] == 1888
     t.no_overlap([score, timer])
     title = t.band_text("Title", "开关按钮", "title")
     assert title["properties"]["size"] == t.TEXT_SIZE["title"] and title["world"]["y"] == 32
-    assert t.band_text("Title", "一个很长很长很长的标题", "title")["properties"]["size"] == t.TEXT_SIZE["body"]
-    with pytest.raises(SystemExit, match=r"the hint band 656; it holds about 15 Chinese characters"):
-        t.band_text("Hint", "点" * 20, "hint")
+    assert t.band_text("Title", "一个很长很长很长很长很长很长很长很长很长很长的标题", "title")["properties"]["size"] == t.TEXT_SIZE["body"]
+    with pytest.raises(SystemExit, match=r"the hint band 1856; it holds about 43 Chinese characters"):
+        t.band_text("Hint", "点" * 60, "hint")
     with pytest.raises(SystemExit, match=r"'side' is no band; the bands are title, status, stage, hint"):
         t.band_text("Hint", "x", "side")
     name, frame, fill = t.labelled_bar("HpName", "HP", "HpFrame", "HpFill", "top-left", 192)

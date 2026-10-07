@@ -130,8 +130,8 @@ def template_module(**replace: str):
     source = (SKILL / "assets" / "build_project.py").read_text(encoding="utf-8")
     view = replace.get("VIEW")
     if view:
-        assert "VIEW_W, VIEW_H = 720, 1280" in source
-        source = source.replace("VIEW_W, VIEW_H = 720, 1280", view)
+        assert "VIEW_W, VIEW_H = 1920, 1080" in source
+        source = source.replace("VIEW_W, VIEW_H = 1920, 1080", view)
     t = types.ModuleType("build_project")
     t.__file__ = str(SKILL / "assets" / "build_project.py")
     exec(compile(source, t.__file__, "exec"), t.__dict__)

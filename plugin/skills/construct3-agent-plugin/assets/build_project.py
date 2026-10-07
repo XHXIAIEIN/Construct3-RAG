@@ -44,10 +44,10 @@ ROOT = Path(__file__).resolve().parent.parent
 # Seeded so a rerun produces the same sids and the diff shows only what changed.
 random.seed(20170328)
 
-VIEW_W, VIEW_H = 720, 1280
+VIEW_W, VIEW_H = 1920, 1080
 PROJECT_NAME = "Coins"                     # the project's name in the editor
 FIRST_LAYOUT = "Game"                      # the layout the game starts on
-ORIENTATION = "portrait"                   # "portrait", "landscape" or "any"
+ORIENTATION = "landscape"                  # "portrait", "landscape" or "any"
 
 # --- placement grid -------------------------------------------------------------------
 # Every position and size is a whole number of UNITs, so that a layout reads as cells, not as
@@ -60,7 +60,7 @@ MARGIN = UNIT                              # the HUD's distance from the viewpor
 # The smallest object a finger taps: 48 dp on Android, 44 pt on iOS (Apple HIG, Accessibility;
 # Android accessibility help; WCAG 2.5.5). The viewport's shorter side is shown across a
 # phone's ~360 dp, so 48 dp is 48 * shorter side / 360 viewport px, rounded up to a unit:
-# 24 at 320x180, 96 at 720x1280, 160 at 1920x1080.
+# 24 at 320x180, 96 at 720x1280, 160 at 1920x1080, the default.
 TOUCH = math.ceil(48 * min(VIEW_W, VIEW_H) / 360 / UNIT) * UNIT
 
 COIN_SIZE = TOUCH                          # a coin is tapped, so it is never smaller than a finger

@@ -21,16 +21,16 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     (project / "images" / "dirty.png").write_bytes(      # a clear pixel with a colour under it
         b"\x89PNG\r\n\x1a\n" + png_chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0))
         + png_chunk(b"IDAT", zlib.compress(bytes([0, 9, 9, 9, 0]))) + png_chunk(b"IEND", b""))
-    edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x=50))
+    edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x=150))
     sheet = project / "eventSheets" / "Game.json"
-    sheet.write_text(sheet.read_text(encoding="utf-8").replace("32 * floor(random(1, 19)) + 48", "random(96, 624)"),
+    sheet.write_text(sheet.read_text(encoding="utf-8").replace("32 * floor(random(1, 55)) + 80", "random(96, 1728)"),
                      encoding="utf-8")
     code, out = tool(project, "check_look")
     assert code == 1, out
     assert "alpha.pure: images/dirty.png has 1 clear pixels that hold a colour, the first at (0,0)" in out
     assert re.search(r"alpha.pure: images/glow.png has alpha 37 at \(0,0\); the project's shadow is 128.*--painted glow.png", out)
     assert re.search(r"grid.world-placement: layout Objects layer Objects: Coin at \(\d+,\d+\) \d+x\d+ is off the 32 px grid", out)
-    assert "grid.runtime-spawn: sheet Game: create Coin at x = random(96, 624), a raw random()" in out
+    assert "grid.runtime-spawn: sheet Game: create Coin at x = random(96, 1728), a raw random()" in out
     assert out.splitlines()[-1].startswith("4 findings:")
     code, out = tool(project, "check_look", "--painted", "glow.png")
     assert "glow.png" not in out and out.splitlines()[-1].startswith("3 findings:")

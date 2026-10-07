@@ -324,7 +324,7 @@ def grade_find_in_a_long_sheet(run: Path) -> list[tuple[bool, str]]:
             unchanged(run)]
 
 
-VIEW_W, VIEW_H, UNIT, MARGIN, TOUCH = 720, 1280, 32, 32, 96      # the stand-in's viewport and its grid
+VIEW_W, VIEW_H, UNIT, MARGIN, TOUCH = 1920, 1080, 32, 32, 160     # the stand-in's viewport and its grid
 HUD_LAYERS = {"ui", "hud"}
 
 

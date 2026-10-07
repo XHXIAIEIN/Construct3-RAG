@@ -163,7 +163,7 @@ def test_prepare_art_lists_the_next_step_only(project):
     code, out = tool(project, "prepare_art", "--list")
     lines = out.splitlines()
     assert lines[0] == "style: Bright flat vector, thick dark outlines."
-    assert "make coin-default-000: ratio 1:1, for a 96x96 box -> art/raw/coin-default-000.png" in lines
+    assert "make coin-default-000: ratio 1:1, for a 160x160 box -> art/raw/coin-default-000.png" in lines
     assert ('  "Bright flat vector, thick dark outlines; a gold coin seen from the front. One subject, whole and '
             'centred with room around it, on a flat magenta #FF00FF background: no scenery, no shadow on the '
             'ground, no text."') in lines
@@ -248,21 +248,21 @@ def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
     code, out = tool(project, "prepare_art")
     assert code == 0, out
     assert ("coin-default-000: coin-default-000.jpg 512x512, background #" in out
-            and "-> art/coin-default-000.png 96x96" in out), out
+            and "-> art/coin-default-000.png 160x160" in out), out
     assert out.splitlines()[-1] == "ok: 1 pictures in art/; next: python tools/build_project.py"
     code, out = tool(project, "prepare_art", "--list")
     assert out.splitlines()[-1] == "ok: all 1 pictures done; next: python tools/build_project.py", out
     img = Image.open(project / "art" / "coin-default-000.png")
-    assert img.mode == "RGBA" and img.size == (96, 96) and img.info.get("c3-art") == "painted"
+    assert img.mode == "RGBA" and img.size == (160, 160) and img.info.get("c3-art") == "painted"
     px = img.load()
     assert px[0, 0] == (0, 0, 0, 0) and px[48, 48][3] == 255 and px[48, 48][0] > 200
-    shown = [px[x, y] for x in range(96) for y in range(96) if px[x, y][3]]
+    shown = [px[x, y] for x in range(160) for y in range(160) if px[x, y][3]]
     fringe = [p for p in shown if p[0] > 120 and p[1] < 60 and p[2] > 120 and p[3] > 32]
     assert not fringe, f"the key or its shadow is left: {fringe[:5]}"
-    assert all(px[x, y] == (0, 0, 0, 0) for x in range(96) for y in range(96) if not px[x, y][3])
+    assert all(px[x, y] == (0, 0, 0, 0) for x in range(160) for y in range(160) if not px[x, y][3])
     assert any(0 < p[3] < 255 for p in shown), "the edge is blended"
     hit = Image.open(project / "art" / "coin-default-000.hit.png").load()
-    assert all(hit[x, y][3] == px[x, y][3] for x in range(96) for y in range(96))
+    assert all(hit[x, y][3] == px[x, y][3] for x in range(160) for y in range(160))
     assert hit[48, 48] == (255, 255, 255, 255)
 
     code, out = run(project, "tools/build_project.py")
@@ -271,7 +271,7 @@ def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
         (project / "art" / "coin-default-000.png").read_bytes()
     coin = json.loads((project / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
     frames = coin["animations"]["items"][0]["frames"]
-    assert [(f["width"], f["height"], f["tag"]) for f in frames] == [(96, 96, ""), (96, 96, "hit")]
+    assert [(f["width"], f["height"], f["tag"]) for f in frames] == [(160, 160, ""), (160, 160, "hit")]
     assert len(frames[0]["collisionPoly"]["points"]) == 32          # the stand-in's circle
     code, out = tool(project, "check_look")
     assert code == 0 and out.splitlines()[-1].startswith("ok: 3 images"), out
@@ -304,7 +304,7 @@ def test_prepare_art_refuses_a_picture_it_cannot_cut_out(project):
                                     f"for the prompts of the pictures above, make them again, then python {script}")
     code, out = tool(project, "prepare_art", "--list")
     lines = out.splitlines()
-    assert ("make coin-default-000 again (refusal 1 of 3; after 3 it keeps its stand-in): ratio 1:1, for a 96x96 box "
+    assert ("make coin-default-000 again (refusal 1 of 3; after 3 it keeps its stand-in): ratio 1:1, for a 160x160 box "
             "-> art/raw/coin-default-000.png") in lines, out
     assert ('  "Bright flat vector; a gold coin seen from the front. One subject, whole and centred with room around '
             'it, on a flat magenta #FF00FF background: no scenery, no shadow on the ground, no text. Nothing but flat '
@@ -351,7 +351,7 @@ def test_prepare_art_fits_a_scene_and_keeps_a_picture_with_transparency(project)
     assert code == 0, out
     assert "sky-default-000: sky-default-000.jpg 1365x768 -> art/sky-default-000.png 720x1280, cropped to cover it" in out
     assert "coin-default-000.png 300x600, its own transparency" in out
-    assert "note: the subject, 24x96, fills 25% of its 96x96 box; give art() a box of the subject's shape" in out, out
+    assert "note: the subject, 40x160, fills 25% of its 160x160 box; give art() a box of the subject's shape" in out, out
     sky = Image.open(project / "art" / "sky-default-000.png")
     assert sky.size == (720, 1280) and sky.getpixel((0, 0))[3] == 255
 
