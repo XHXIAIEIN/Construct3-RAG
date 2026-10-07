@@ -87,7 +87,14 @@ class GitSource(Source):
     def __init__(self, revision: str, repo: Path) -> None:
         self.label = revision
         listing = _git(repo, "ls-tree", "-r", "--name-only", revision, "--", SCHEMAS)
-        paths = [line for line in listing.splitlines() if line.endswith(".json")]
+        # Only the root index and the primary locale are read (module docstring).
+        index_path = f"{SCHEMAS}/{SCHEMA_INDEX_FILE}"
+        locale_prefix = f"{SCHEMAS}/{PRIMARY_SCHEMA_LOCALE}/"
+        paths = [
+            line
+            for line in listing.splitlines()
+            if line.endswith(".json") and (line == index_path or line.startswith(locale_prefix))
+        ]
         self.files = _git_read_many(repo, revision, paths)
 
     def read(self, rel: str) -> Any | None:
@@ -353,8 +360,10 @@ def render_markdown(
     head = [f"## Construct 3 {base.version} → {target.version}", ""]
     if not changes:
         return "\n".join(head + ["No structural change in `data/c3-schemas`."]) + "\n"
-    counts = {s: sum(c.section == s for c in changes) for s in SECTION_TITLES}
-    head += [", ".join(f"{n} {s}" for s, n in counts.items() if n) + ".", ""]
+    by_section: dict[str, list[Change]] = {s: [] for s in SECTION_TITLES}
+    for change in changes:
+        by_section.setdefault(change.section, []).append(change)
+    head += [", ".join(f"{len(by_section[s])} {s}" for s in SECTION_TITLES if by_section[s]) + ".", ""]
 
     body: list[str] = []
     if mentions:
@@ -376,11 +385,10 @@ def render_markdown(
             body.append(f"- {what}: {places}")
         body.append("")
     for section, title in SECTION_TITLES.items():
-        rows = [c for c in changes if c.section == section]
-        if not rows:
+        if not by_section[section]:
             continue
         body += [f"### {title}", ""]
-        for change in rows:
+        for change in by_section[section]:
             line = f"- {change.title()}"
             if change.details:
                 line += ": " + "; ".join(change.details)
@@ -463,7 +471,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         sys.stdout.write(text)
     if args.github_output:
-        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+        with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as out:
             print(f"needs_review={'true' if mentions else 'false'}", file=out)
     return 0
 
