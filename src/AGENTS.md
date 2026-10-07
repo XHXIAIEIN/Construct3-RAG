@@ -25,12 +25,13 @@ modules.
   Undirected synonym groups and whole-category expansion were removed too:
   they chained words together, so `Array 保存` returned *Load*. What remains are
   directed, scoped, single-hop aliases, each with a rule ID.
-- Bad result: check data quality, field weights, routing and product scope
+- Bad result: check data quality, alias weights, routing and product scope
   before adding keywords, prompts or a model layer. A new keyword, alias or
   rule starts from a failing case in `tests/fixtures/query_gold.jsonl`;
   `tests/test_query_gold.py` runs the set.
-- Public API change: `interfaces/http/models.py`, docs and compatibility
-  tests in one change. Internal structures promise no compatibility.
+- Public API change: `interfaces/http/models.py`, `docs/guide/api-reference.md`,
+  `tests/test_api.py` and `tests/test_api_models.py` in one change. Internal
+  structures promise no compatibility.
 - Schema layout (`en-US`, `zh-CN`): `lookup/schema_layout.py` owns it.
 - Checks: after a change to `/search`, run it against the live service,
   started as in Entry Points, not only against the test client. `/health`
