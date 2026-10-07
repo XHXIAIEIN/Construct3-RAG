@@ -29,6 +29,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 - A type and its family are picked separately, so narrowing `Piece` never narrows `Pieces`. Refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
 - Picking a family never picks a type's container. Pick the type from the family in a sub-event, `Enemy: Pick by unique ID Enemies.UID`, one per member type.
+- An expression that names another member of a container reads the member of the same instance, in an action or a condition. A custom action called with a parameter of such an expression needs *For each* first, so each instance passes its own value.
 - *Pick children* picks only among the child type's current picks, which its container may have narrowed. Give the child type a family of its own with the one member and pick through it.
 - *Pick parent* with *Own* looks one level up only. A grandparent needs *All*, or the event silently picks nothing.
 - A Dictionary or JSON in a container gives each instance its own copy. Use it instead of a growing list of instance variables.
@@ -212,6 +213,7 @@ polygons or blend modes, read
 - *Set width* stretches a Sprite, repeats a Tiled Background and stretches a 9-patch's middle.
 - A Tiled Background's or 9-patch's image scale is a percentage in events and a fraction in the layout file, so multiply the fraction by 100. A growing Y offset moves the image down, so scroll upward with a falling offset. A 9-patch pops as one piece only if its image scale changes with its size.
 - A bar grows from its origin. Put the origin on the edge it grows from.
+- A 9-patch stretched far, with a border colour unlike its inside, blends the border into the middle at the seam. Give it *Nearest* sampling, or build flat art from two flat Tiled Backgrounds.
 - Drawing Canvas *Fill polygon* with *Convex* off draws nothing when two consecutive points coincide. Repeat no point.
 - A blend mode changes only the pixels under the object's own quad, and the layer needs *Force own texture*.
 - A Text object draws only the lines that fit its height. Size the box for the longest text.

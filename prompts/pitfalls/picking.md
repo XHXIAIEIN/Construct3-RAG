@@ -55,6 +55,23 @@ Sources and the rule for adding an entry are in the index,
   instance, whose variables and behaviors the first family's events cannot
   see. [Construct-bugs#7485, open; example: elemental-conveyors event 35,
   `Draggable` picked by `Base.UID`]
+- Inside a container, an expression that names another member reads the
+  member of the same instance, with no condition on a member, no pick and no
+  *For each*. So `Fill: Set width to clamp(Frame.hp / Frame.maxHp, 0, 1) *
+  (Frame.Width - 4)` in an *Every tick* event sets each fill from its own
+  frame, and a condition on one member that compares with an expression of
+  another, `Ghost: Compare width > <the same expression>`, reads the paired
+  instance too. A custom action called with a parameter that reads one
+  instance's variable, `SetMax(Frame.maxHp + 300)`, needs *For each*
+  `Frame` among the calling event's conditions, so that each bar passes its
+  own value. The custom action itself runs once for the picked instances (see
+  [Functions](functions.md)). [the manual describes the pairing for picks
+  only, project-primitives/objects/containers.md "What containers do";
+  observed in a minimal project, stable editor preview, 2026-10-07: seven
+  object types in one container, three instances with maximum hp 300, 1000
+  and 3000 and a frame 448 px wide; the fills were 222, 377.4 and 421.8 px at
+  hp 150, 850 and 2850, the compare condition read the paired frame, and the
+  call under *For each* passed 600, 1300 and 3300]
 - *Pick children* picks only among the child type's instances already picked.
   A child type in the parent's container is narrowed as soon as the parent
   is. In `Piece: On drop`, `PieceArt` is in `Piece`'s container and is
