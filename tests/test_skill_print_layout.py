@@ -1,12 +1,8 @@
 """print_layout.py: layers, instances and what a text lies on."""
 import json
-from pathlib import Path
 
 from tests.skill_helpers import tool
-
-
-def layout_file(project: Path) -> Path:
-    return next(p for p in (project / "layouts").rglob("*.json") if not p.name.endswith(".uistate.json"))
+from tests.test_skill_print_sheet import add_script
 
 
 def test_layout_prints_layers_and_instances(built):
@@ -20,7 +16,7 @@ def test_layout_prints_layers_and_instances(built):
 
 def test_a_label_off_its_button_says_so(project):
     # A generated menu had its labels 100 px above the button and the panel; nothing said so.
-    path = layout_file(project)
+    path = project / "layouts" / "Game.json"
     layout = json.loads(path.read_text(encoding="utf-8"))
     layer = layout["layers"][-1]
     sprite = next((i for L in layout["layers"] for i in L["instances"]
@@ -40,7 +36,6 @@ def test_a_label_off_its_button_says_so(project):
 
 def test_the_print_of_a_project_with_scripts_ends_with_the_runtime_sizes(project):
     # A size copied from this print into a script is wrong when the layout is resized
-    from tests.test_skill_print_sheet import add_script
     code, out = tool(project, "print_layout")
     assert code == 0 and "runtime.layout" not in out, out
     add_script(project)
