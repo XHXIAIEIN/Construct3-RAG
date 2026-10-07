@@ -115,7 +115,7 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
 ## Re-evaluate when
 
 - Most runs still deliver nothing: the steps a run may take, a stronger
-  model for the design, or a refusal that names the fix where it now names
+  model for the design, or a refusal that names the fix where it names
   only the fault.
 - A delivered game breaks in a way its tests did not read, such as a piece
   shown in the wrong place or with the wrong frame while the count is right:
