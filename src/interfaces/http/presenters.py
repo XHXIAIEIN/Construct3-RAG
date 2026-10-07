@@ -17,7 +17,6 @@ from .models import (
     HealthResponse,
     LookupDebug,
     LookupItemResult,
-    LookupMatchResult,
     LookupSection,
     SearchRequest,
     SearchResponse,
@@ -100,14 +99,12 @@ def _present_lookup(
 
     grouped_matches: dict[str, dict[str, list[LookupItemResult]]] = {}
     for match in result.matches:
-        response_match = LookupMatchResult(
+        name = {"en": _present_locale(match.en, include_display)}
+        if include_localized:
+            name["zh"] = _present_locale(match.zh, include_display)
+        item = LookupItemResult(
             ace_id=match.ace_id,
-            ace_type=match.ace_type,
-            plugin_id=match.plugin_id,
-            en=_present_locale(match.en, include_display),
-            localized=(
-                _present_locale(match.zh, include_display) if include_localized else None
-            ),
+            name=name,
             script_name=match.script_name if include_scripts else None,
             category=match.category or None,
             relevance=match.relevance or None,
@@ -116,13 +113,9 @@ def _present_lookup(
             is_async=match.is_async,
             return_type=match.return_type or None,
         )
-        payload = response_match.to_dict(lang if include_localized else "")
-        plugin_id = payload.pop("plugin_id")
-        ace_type = payload.pop("ace_type")
-        group_key = _GROUP_KEYS.get(ace_type, f"{ace_type}s")
-        grouped_matches.setdefault(plugin_id, {}).setdefault(group_key, []).append(
-            LookupItemResult.model_validate(payload)
-        )
+        group_key = _GROUP_KEYS.get(match.ace_type, f"{match.ace_type}s")
+        plugin_groups = grouped_matches.setdefault(match.plugin_id, {})
+        plugin_groups.setdefault(group_key, []).append(item)
 
     return LookupSection(
         matches=grouped_matches or None,
