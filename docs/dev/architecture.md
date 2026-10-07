@@ -51,11 +51,10 @@ section of `src/AGENTS.md`.
 The import paths are `src.interfaces.http.models` for the HTTP contracts,
 `src.domain.lookup` for the lookup records and `src.lookup` for the lookup.
 
-`src.settings.load_settings()` accepts an explicit environment mapping and
-repository root, returning a frozen tree of path, Schema, and runtime groups.
-Every field has a runtime reader. It reads no `.env` file and probes no
-external service; the schema version is the one the schema directory's
-`_index.json` records.
+`src.settings.load_settings()` takes an environment mapping and a repository
+root, both optional, and returns a frozen tree of `paths`, `schema` and
+`runtime` groups, every field of which has a runtime reader. What it reads,
+and what it does not, is in the `settings/` section of `src/AGENTS.md`.
 
 ## Dependency direction
 
@@ -142,7 +141,8 @@ Direct Lookup is deliberately conservative:
   `commonAces` lists, and a complete list includes them;
 - a topic narrows the ACE types only when it names one or is phrased as a
   predicate or an act; a noun topic searches all three;
-- examples, terms, script APIs, properties, and ACEs retain typed identities.
+- examples, terms, scripting API members, properties, and ACEs retain typed
+  identities;
 - example projects that use an addon come ordered by how much they are about
   it: named for it, described as showing it (whole words, so Platform is not
   "platforms"), tagged Feature example or Barebones template, fewest addons in
