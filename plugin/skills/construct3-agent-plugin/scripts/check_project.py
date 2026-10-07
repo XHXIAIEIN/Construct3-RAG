@@ -260,6 +260,13 @@ OBJECT_EXPRESSION = re.compile(r"(?<![\w.])([A-Za-z_]\w*)\s*\.\s*([A-Za-z_]\w*)"
 SETS = {"set-eventvar-value": "variable", "set-boolean-eventvar": "variable", "toggle-boolean-eventvar": "variable",
         "set-instvar-value": "instance-variable", "set-boolean-instvar": "instance-variable",
         "toggle-boolean-instvar": "instance-variable"}
+# What an object action changes and a condition tests, as the words an expression reads it by: the state a
+# switch is kept in (check_undone).
+STATE_SETS = {"set-animation-frame": "animationframe", "set-animation": "animationname", "set-visible": "isvisible",
+              "set-instvar-value": None, "add-to-instvar": None, "subtract-from-instvar": None,
+              "set-boolean-instvar": None, "toggle-boolean-instvar": None}
+STATE_TESTS = {"compare-animation-frame": "animationframe", "is-animation-playing": "animationname",
+               "is-visible": "isvisible"}
 # System actions after which the event does not run again in the next tick.
 LEAVES = {"set-group-active", "go-to-layout", "go-to-layout-by-name", "restart-layout", "go-to-nextprevious-layout"}
 # Actions that flip a variable between two values: Toggle, and a Set of the variable to N - x, -x, x * -1,
@@ -1169,6 +1176,11 @@ class Checker:
         if "\\" in text:
             self.err(f"{where}: a backslash stands outside a text literal; the editor stops with \"Syntax error: "
                      f"Unknown character\". Inside text it is a plain character: Construct has no escapes")
+        # A list literal [a, b] of JavaScript: the editor stopped a QQ bot's sheet with it (2026-10-06).
+        if "[" in text or "]" in text:
+            self.err(f"{where}: a square bracket stands outside a text literal; the editor stops with \"Syntax "
+                     f"error: Unknown character\". Expressions have no lists: compare each value on its own, "
+                     f"a = 1 & b = 2, or keep the values in an Array object")
         scope_lower = {LOWER(k) for k in scope}
         self.check_find(where, expr)
         if self.style:
@@ -1448,14 +1460,17 @@ class Checker:
                 self.err(f"{where}: {key}={value!r} is not a built-in ease{closest(value, eases)}")
         elif ptype == "audiofile":
             # The editor looks the name up among the sound and music files, without the extension and
-            # in any case, and refuses the project on any other value: "missing file '0'".
+            # in any case, and refuses the project on any other value: "missing file '0'". The official
+            # examples write the name as a string; a project saved by r495 writes {"path": "Name"}.
             stems = [Path(n["name"] if isinstance(n, dict) else n).stem
                      for kind in ("sound", "music")
                      for n, _ in folder_items(p.data.get("rootFileFolders", {}).get(kind, {}))]
-            name = unquote(value) if is_literal(value) else value
+            name = value["path"] if isinstance(value, dict) else value
+            name = unquote(name) if is_literal(name) else name
             if not isinstance(name, str) or LOWER(name) not in {LOWER(s) for s in stems}:
                 near = closest(Path(name).stem, stems) if isinstance(name, str) else ""
-                listed = f"; the project has {', '.join(stems[:8])}" if stems else "; the project has none"
+                shown = ", ".join(stems[:8]) + (f" and {len(stems) - 8} more" if len(stems) > 8 else "")
+                listed = f"; the project has {shown}" if stems else "; the project has none"
                 self.err(f"{where}: {key}={value!r} is not a sound or music file of the project; the editor stops "
                          f"with \"missing file {name!r}\". Write the file's name without its extension"
                          + (near or listed))
@@ -2269,6 +2284,38 @@ class Checker:
                      f"it earlier in this top-level event, and a destroyed instance counts in Count until that event "
                      f"ends. Test it in a top-level event of its own, with the conditions {test}")
 
+    @staticmethod
+    def equals_constant(c: dict) -> tuple[str, str, str] | None:
+        """(object, instance variable, value) of X: variable = a number or text literal, not inverted."""
+        params = params_of(c)
+        value = str(params.get("value", "")).strip()
+        if (c.get("id") != "compare-instance-variable" or c.get("isInverted") or params.get("comparison") != 0
+                or not (NUMBER.fullmatch(value) or STRING_LITERAL.fullmatch(value))):
+            return None
+        return c.get("objectClass", ""), str(params.get("instance-variable", "")).lower(), value
+
+    def check_narrowed(self, c: dict, where: str, earlier: list[dict]) -> None:
+        """X: v = 0 below X: v = 1 in the same branch: each condition keeps the instances the one above kept, so
+        none passes both and the event never runs. A QQ bot wrote a tic-tac-toe row as nine Cell conditions
+        (Row = 0, Column = 0, Value = 1, Row = 0, Column = 1, ...), 2026-10-06. A Pick all of X in between
+        starts the narrowing again."""
+        mine = self.equals_constant(c)
+        if mine is None:
+            return
+        obj, var, value = mine
+        for e in reversed(earlier):
+            if e.get("id") == "pick-all" and str(params_of(e).get("object", "")).lower() == obj.lower():
+                return
+            other = self.equals_constant(e)
+            if other and other[0] == obj and other[1] == var and other[2] != value:
+                self.p.findings.style_finding(
+                    "narrowed", f"{where}: {obj}.{params_of(c).get('instance-variable')} = {value} below "
+                                f"{obj}.{params_of(e).get('instance-variable')} = {other[2]} in the same event never holds: each condition keeps only the {obj} "
+                                f"the conditions above it kept, so no instance passes both. To test that several "
+                                f"instances agree, narrow once and count: {obj}: Row = 0, {obj}: Value = 1, then "
+                                f"System: {obj}.PickedCount = 3, or keep the values in an Array and compare its cells")
+                return
+
     def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False,
                     paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
         """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
@@ -2286,6 +2333,7 @@ class Checker:
             if isinstance(c, dict):
                 self.check_none_left(c, f"{where} condition {i}", gone, earlier)
                 if not ev.get("isOrBlock"):
+                    self.check_narrowed(c, f"{where} condition {i}", earlier)
                     earlier.append(c)
         found: dict[str, str] = {}
         for i, a in enumerate(ev.get("actions", []), 1):
@@ -2387,6 +2435,8 @@ class Checker:
             self.check_event_lists(ev, et, w)
             if self.style and et in ("block", "function-block", "custom-ace-block"):
                 self.check_style(ev, w, events, i, depth, group, counter[0])
+            if et == "block":
+                self.check_undone(events[:i], ev, w)
             if self.style and et == "block":
                 for subject, code in self.find_tests(ev):
                     find_tests.setdefault(subject, []).append((counter[0], w, code))
@@ -2613,6 +2663,79 @@ class Checker:
                 of_shape.setdefault(self.shape(ev), []).append(ev)
         return {id(ev): (n, len(evs)) for n, evs in enumerate(of_shape.values()) if len(evs) >= STYLE_LADDER
                 for ev in evs}
+
+    def trigger_of(self, ev: dict) -> dict | None:
+        """The event's first condition when it is a trigger, else None."""
+        conds = [c for c in ev.get("conditions") or [] if isinstance(c, dict)]
+        if not conds:
+            return None
+        entry = self.p.ace_entry("conditions", conds[0])
+        return conds[0] if (entry.get("isTrigger") if entry else str(conds[0].get("id", "")).startswith("on-")) \
+            else None
+
+    @staticmethod
+    def state_set(actions: list) -> set[str]:
+        """The variables these actions set, and Obj.animationframe and the like for the state of an object, up to
+        the first wait: what a wait leaves for later, the next event of the same input does not see."""
+        out = set()
+        for a in actions:
+            if Checker.waits(a):
+                break
+            params = params_of(a)
+            if a.get("id") in SETS or (a.get("objectClass") == "System" and a.get("id") in ("add-to-eventvar",
+                                                                                       "subtract-from-eventvar")):
+                out.add(str(params.get(SETS.get(a["id"], "variable"), "")).lower())
+            if a.get("id") in STATE_SETS and a.get("objectClass") != "System":
+                prop = STATE_SETS[a["id"]] or str(params.get("instance-variable", "")).lower()
+                out.add(f"{str(a.get('objectClass')).lower()}.{prop}")
+        return out
+
+    def state_read(self, conditions: list) -> set[str]:
+        """What these conditions test, in the form state_set() writes: variables, Obj.var, Obj.animationframe."""
+        out = set()
+        for c in conditions:
+            obj = str(c.get("objectClass")).lower()
+            if c.get("id") in STATE_TESTS:
+                out.add(f"{obj}.{STATE_TESTS[c['id']]}")
+            if c.get("id") in INSTANCE_VALUE_TESTS:
+                out.add(f"{obj}.{str(params_of(c).get('instance-variable', '')).lower()}")
+            for value in params_of(c).values():
+                if isinstance(value, str):
+                    out |= {m.lower() for m in re.findall(r"\w+\.\w+", value)} | {w.lower() for w in IDENT.findall(value)}
+        return out
+
+    def check_undone(self, before: list, ev: dict, where: str) -> None:
+        """A block with the same trigger as an earlier block in its list that tests what that block changed.
+        Both run on the one input, the later one after the earlier one's actions, so it sees the new value: a
+        switch written as "frame 0: set 1" and "frame 1: set 0" sets it back on every tap. Else does not reach
+        across two events with their own trigger; one event with the trigger and two case sub-events, the
+        second starting with Else, does."""
+        trigger = self.trigger_of(ev)
+        tests = [c for c in (ev.get("conditions") or [])[1:] if isinstance(c, dict)]
+        if trigger is None or not tests:
+            return
+        same = ("objectClass", "id", "parameters", "isInverted")
+        key = json.dumps({k: trigger.get(k) for k in same}, sort_keys=True)
+        read = self.state_read(tests)
+        for earlier in reversed(before):
+            if not isinstance(earlier, dict) or earlier.get("eventType") != "block":
+                continue
+            first = self.trigger_of(earlier)
+            if first is None or json.dumps({k: first.get(k) for k in same}, sort_keys=True) != key:
+                continue
+            actions = self.actions_below(earlier)
+            hit = sorted(self.state_set(actions) & read)
+            if not hit:
+                continue
+            case = json.dumps({"eventType": "block", "conditions": [{"id": "else", "objectClass": "System"}],
+                               "actions": ["..."]})
+            self.p.findings.style_finding(
+                "undone", f"{where}: it has the same trigger as an earlier event in its list and tests {', '.join(hit)}, "
+                          f"which that event's actions change. Both run on the same input, this one after the other, "
+                          f"so it sees the value just set and can set it back: a switch never stays switched. Write "
+                          f"one event with the trigger, and the cases as its sub-events: the first with the test, the "
+                          f"second {case}")
+            return
 
     def check_ladder(self, rungs: list[tuple[int, str]]) -> None:
         others = ", ".join(str(n) for n, _ in rungs[1:])

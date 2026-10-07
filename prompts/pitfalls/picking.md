@@ -144,3 +144,19 @@ Sources and the rule for adding an entry are in the index,
   both turrets aimed at their own team in 240 of 240 samples over 12 s; with
   *Acquire target* on the picked nearest enemy, 0 of 240, while a hull of
   their own team was nearer in 159]
+- A condition on an object holds when one instance passes it, and the next
+  condition tests only the instances it kept. So a row of three cells
+  written as `Cell: Row = 0`, `Cell: Column = 0`, `Cell: Value = 1`,
+  `Cell: Column = 1`, ... never holds: no cell has Column 0 and Column 1.
+  And `Cell: Value ≠ 0` holds once any cell is filled, not when all are.
+  To test that several instances agree, narrow once and count:
+  `Cell: Row = 0`, `Cell: Value = 1`, `System: Cell.PickedCount = 3`; the
+  board is full when `Cell: Value ≠ 0` keeps `Cell.Count` of them. A
+  diagonal is System *Pick by evaluate* `Cell.Row = Cell.Column`, the other
+  `Cell.Row + Cell.Column = 2`. [manual:
+  project-primitives/events/how-events-work.md, conditions filter the
+  picked instances progressively; found in a QQ bot's tic-tac-toe sheet,
+  2026-10-06, whose wins and draw were written so; observed in a copy of
+  it, stable editor preview, 2026-10-06: row 0 and the diagonal filled, the
+  counts held for row 0 and the diagonal and not for row 1 or a full
+  board, and `Cell: Value ≠ 0` alone held]

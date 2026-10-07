@@ -156,7 +156,7 @@ def test_print_of_a_project_without_sheets_points_to_its_scripts(project):
     add_script(project, 3)
     edit(project, "project.c3proj", lambda data: data["eventSheets"].update(items=[], subfolders=[]))
     code, out = tool(project, "print_sheet")
-    assert code == 0 and out.strip().endswith("logic is in its scripts, read them as code: scripts/main.js (3 lines)"), out
+    assert code == 0 and out.strip().endswith("logic is in its scripts, read them as code: scripts/main.js (3 lines); events go into a new sheet with edit_sheet.py SHEET PLAN.json --new"), out
     (project / "scripts" / "main.js").unlink()
     code, out = tool(project, "print_sheet")
     assert code == 0 and "no event sheets and no scripts" in out, out

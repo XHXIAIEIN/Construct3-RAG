@@ -10,8 +10,9 @@ effects, sub-rules), win and lose, and the acceptance tests. The script reads
 it and refuses a gap by its path: a missing table, a name nothing defines,
 a state no rule writes or nothing reads, a fact kept in two places, an input
 without feedback, no rule that restarts a game that ends, an input that changes nothing the
-player sees, and a cell of an Array an input writes with no count of the
-instances that show it.
+player sees, and a cell of an Array an input writes with nothing on screen
+that shows it: no count of instances, and no text or number whose expression
+reads the Array.
 
 Then it runs the rules as a prototype: each test from a first launch, 60
 ticks a second, an input followed by 0.15 s of play, as the editor runs the
@@ -192,21 +193,41 @@ def shows(design: gm.Design, name: str) -> dict[str, list[str]]:
     return {n: p for n, p in path.items() if design.state[n].seen}
 
 
+def showing(design: gm.Design, rules: list[gm.Rule], array: str) -> list[str]:
+    """The seen rows these rules set that show the Array: a count of instances, or a text, x, y, frame or visible
+    whose expression reads the Array (ARRAY.At(x, y), count(ARRAY, v) or its bare name)."""
+    out: list[str] = []
+    for r in rules:
+        for e in r.do:
+            if e[0] != "set" or e[1][1] is not None or e[1][0] in out:
+                continue
+            row = design.state[e[1][0]]
+            if row.shown or row.seen and array in gm.names_in(e[3]):
+                out.append(row.name)
+    return out
+
+
 def seen_after(design: gm.Design) -> None:
     """Refuse an input whose rules change only what the player does not see, and a cell of an Array written by an
-    input with no instance shown for it."""
+    input with nothing on screen that shows it: no count of instances, and no seen row whose expression reads it."""
     for name, i in design.inputs.items():
         fired = playing(design, name)
         if not fired:
             continue
         for x in below(fired):
-            arrays = cells_written(x)
-            if arrays and not any(design.state[n].shown for n in changes(chain(x))):
-                design.bad(x.path, f"rule {x.id} writes a cell of {arrays[0]}, and an Array is not on screen: "
-                           f"the player sees the cell as an instance. Add a row that counts the instances shown, "
-                           f"such as {{\"name\": \"pieces\", \"start\": 0, \"stored_in\": \"Piece.shown\"}} (or "
-                           f"\"Piece.shown(frame=1)\" for the pieces of frame 1), and change it in this rule beside "
-                           f"the cell: \"pieces += 1\", or \"pieces = count({arrays[0]}, 1)\"")
+            for a in dict.fromkeys(cells_written(x)):
+                if showing(design, chain(x), a):
+                    continue
+                design.bad(x.path, f"rule {x.id} writes a cell of {a}, and an Array is not on screen. Change in "
+                           f"this rule or its sub-rules a row that shows it. A board: the player sees the cell as "
+                           f"an instance, so add a row that counts the instances shown, such as {{\"name\": "
+                           f"\"pieces\", \"start\": 0, \"stored_in\": \"Piece.shown\"}} (or "
+                           f"\"Piece.shown(frame=1)\" for the pieces of frame 1), and change it beside the cell: "
+                           f"\"pieces += 1\", or \"pieces = count({a}, 1)\". A list, such as stacked shields: the "
+                           f"player reads it from a text or a number, so change a row stored in a text, x, y, "
+                           f"frame or visible whose expression reads {a}, such as \"line = \\\"Shields \\\" & "
+                           f"({a}.At(0, 0) + {a}.At(1, 0))\"; a text that does not read {a} shows nothing of the "
+                           f"cell")
         if not shows(design, name):
             rows = changes(below(fired))
             design.bad(i["path"], f"the input {name} changes only {', '.join(rows) or 'nothing'}, which the player "
@@ -216,11 +237,11 @@ def seen_after(design: gm.Design) -> None:
 
 
 def wanted(design: gm.Design, name: str) -> list[str]:
-    """The seen rows a test expects after the input: the counts of instances where its rules write an Array cell,
-    since the status line changing says nothing of the piece, else every seen row it changes."""
-    counts = [n for x in below(playing(design, name)) if cells_written(x)
-              for n in changes(chain(x)) if design.state[n].shown]
-    return list(dict.fromkeys(counts)) or list(shows(design, name))
+    """The seen rows a test expects after the input: where its rules write an Array cell, the rows that show the
+    Array, since a status line that does not read it says nothing of the piece; else every seen row it changes."""
+    rows = [n for x in below(playing(design, name)) for a in dict.fromkeys(cells_written(x))
+            for n in showing(design, chain(x), a)]
+    return list(dict.fromkeys(rows)) or list(shows(design, name))
 
 
 def expected_after(design: gm.Design) -> None:

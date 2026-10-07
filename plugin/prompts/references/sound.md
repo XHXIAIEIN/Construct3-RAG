@@ -72,6 +72,12 @@ with every stem on, set at −30 LUFS in the game.
 - A Repeat sound that starts within 0.25 s after a Key sound plays 3 dB
   lower at *Play*, so the foreground stays clear without changing playing
   instances.
+- A dialogue voice is a Repeat sound: one short file per speaker, played
+  once per character shown ([scripted-sequences.md](scripted-sequences.md),
+  "Dialogue"). Play it on one tag per speaker, *Stop* the tag and then
+  *Play*, so a fast line never piles the plays up. Skip it on a space and
+  while the player skips the line, because a voice at every character of a
+  skipped line is a buzz. [a studied project, 2026-10-06]
 - There is no master limiter, so peaks add. File ceilings leave room:
   −3 dBFS for effects, −12 dBFS for music. The stereo panner mixes the far
   channel into the near one and raises an attack 1.3, 2.3 and 3.2 dB at

@@ -31,6 +31,16 @@ ghost is a second, wider bar behind the first that is set later:
 template-monk-fight `cUnderHPBar` and `eUnderHPBar`, shown for a second by a
 Timer. Use a Tween or a ghost bar, not a per-tick lerp of the width.
 
+A second value drawn inside the fill, such as poison that will drain the
+health or damage not yet applied, is a second bar of the same object type
+over the fill, origin on the left, with `X` at `frame.X + (hp - poison) /
+maxHp × LENGTH` and `width` at `poison / maxHp × LENGTH`, so it ends
+where the fill ends. Clamp the poison to `hp - 1` where it is added, so
+draining alone never kills. Drain it with a Timer: *On timer* takes 1 from
+both values and restarts the timer with the duration of the current
+amount, shorter at a higher amount, rather than an accumulator compared
+against a ladder of thresholds every tick. [a studied project, 2026-10-06]
+
 ## The object the art calls for
 
 | Art | Object for the fill | Why | Examples |
@@ -42,8 +52,40 @@ Timer. Use a Tween or a ghost bar, not a per-tick lerp of the width.
 | A bar with caps, borders or rounded ends that must survive any length | 9-patch for the fill and for the frame, *Set size* or Tween *Width* | The corners keep their size, and the middle stretches or tiles. The manual calls it "useful for representing things like progress bars with special artwork at the end of the bar". The width must not go negative | car-selection-screen `StatusBar` in `StatusBarBackground`, both 9-patch, Tween *Width* 0.25 s |
 | A count of icons: hearts, stars, bullets | One Tiled Background of the full icon at `count × icon width`, over one Tiled Background of the empty icon at `max × icon width` | Two objects show any count, and one constant changes the maximum | tower-defense-game `Hearts` and `HeartsBackground`, 8×8 tiles, `Set width to 8 * PlayerBase.HeathPoints` |
 | The same, when each icon animates on its own | Instances of one Sprite with an index variable, picked by `Pick Life by evaluating Life.lifeID > lives` and destroyed or tweened away. Or one Sprite whose animation frame is the count | Each icon can fall, flash or fade. A frame strip needs one image per count | family-tree `Life` (Tween Y then destroy) with `LifeSpot` under it, tile-matcher `Life` |
+| Icons that show a fraction: a quarter heart, half a shield | A row of icon Sprites, and over it a cover: a Sprite of a 1×1 image in the empty colour, blend mode *Source in*, origin (1, 0) at the row's right end, on a layer with *Force own texture*. Tween its *Width* to `(max − value) × (icon width + gap)` | The cover changes only the icon pixels under it, so one rectangle empties any fraction of any number of icons. A second cover with a slower tween is the damage ghost | No official example; a user-shared project, 2026-10-06: `ui_hpbar` (black, *Source in*) over a row of `ui_heart` |
 | A gauge with a needle | A needle Sprite, *Set angle* from the value | One object, one angle | rally-drifting `SpeedometerPointer` |
 | A ring or arc that fills | A frame strip, one frame per step, its animation frame set from the value. For any fraction, a mesh on a ring texture: *Set mesh size*, then *Set mesh point* for the outer and inner points along the arc (`plugins/_common.json`). Or two half-ring Sprites rotated behind a cover | The frame strip is the cheapest; the mesh shows any fraction | None drives one. The examples use blend-mode masks (*Destination out* holes) for light and darkness, not for bars |
+
+## A bar on each of many objects
+
+Each enemy or player with its own bar needs the bar to follow its object and
+go with it. Two ways:
+
+- **Container.** Put the bar in the object's container. It is created,
+  picked and destroyed with its object, and an event on the object reaches
+  its own bar. Through a family, pick the type first
+  ([pitfalls/picking.md](../pitfalls/picking.md), containers).
+- **Hierarchy.** Make the HUD a child of the object, in the layout or with
+  *Add child*. It moves with the object and is destroyed with it. Initialise
+  it in *On hierarchy ready*
+  ([pitfalls/creating-objects.md](../pitfalls/creating-objects.md)).
+
+  To update it, keep `hp` and `maxHp` on a family of the objects. A custom
+  action on the family changes them, then calls the HUD's `Update` through
+  *Pick children*. `Update` compares `PickedCount` of its icons with the
+  value, creates the missing icons and destroys the extra ones. To stagger
+  their appear tween, start a Timer on each icon for `loopindex × step`
+  seconds. [a user-shared project, 2026-10-06]
+
+Use the container for one bar per object. Use the hierarchy for a HUD of
+several parts whose count changes.
+
+A child is placed in layout coordinates, so on a HUD layer with parallax 0
+it follows its object only while the camera stands still. To keep a bar on
+a UI layer over a moving object, move it every tick. eventide does this for
+its player's bar: the frame goes to `3DCamera.LayerToLayerX("World",
+"InGameUI", Player.X, Player.Y, Player.ZElevation) - 48` and the matching
+`LayerToLayerY`, and the fill is the frame's child.
 
 The `progressbar` plugin is a form control, a DOM element over the canvas.
 The examples use it for a file transfer, not in a game HUD.

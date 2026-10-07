@@ -287,6 +287,24 @@ def test_picked_count_of_none_below_a_pick(project):
     assert code == 0 and warnings(out) == [], out
 
 
+def test_one_instance_tested_for_two_values_is_refused(project):
+    """A QQ bot wrote a tic-tac-toe row as Cell: Row = 0, Column = 0, ..., Column = 1 in one event: each
+    condition keeps the instances the one above kept, so none passes both. Refused, naming the count to write;
+    a Pick all in between starts the narrowing again and goes through."""
+    before = (project / SHEET).read_bytes()
+    def equals(value: str) -> dict:
+        return {"id": "compare-instance-variable", "objectClass": "Coin",
+                "parameters": {"instance-variable": "value", "comparison": 0, "value": value}}
+    ev = {"eventType": "block", "conditions": [equals("1"), equals("2")], "actions": [SAY_DONE]}
+    code, out = plan(project, {"into": 0, "events": [comment("Say when two coins agree."), ev]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) condition 2: Coin.value = 2 below Coin.value = 1 "
+                    r"in the same event never holds", out) and "Coin.PickedCount = 3" in out, out
+    ev["conditions"].insert(1, {"id": "pick-all", "objectClass": "System", "parameters": {"object": "Coin"}})
+    code, out = plan(project, {"into": 0, "events": [comment("Say when two coins agree."), ev]}, flags=("--dry-run",))
+    assert code == 0 and "never holds" not in out, out
+
+
 def test_style_names_a_countdown_kept_by_hand(project):
     """Every 1 seconds, subtract 1 from a global: what every add-countdown run wrote, also as Add -1
     and Set v to v - 1. The plan goes through with the warning under it, which names the Timer

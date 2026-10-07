@@ -158,3 +158,26 @@ Sources and the rule for adding an entry are in the index,
   a game project, r504 preview, 2026-10-05: a three-character string at scale
   1/3 read `TextWidth` 72.33 at spacing 0 and 92.33 at spacing 10, and one
   character read the same at both]
+- *Set canvas size* changes the viewport's size and the project's *Window
+  size* with it, so a 4:3 game shown inside a 16:9 window grows its viewport
+  and shows more layout at the sides. *Scroll to position* back to the play
+  area's centre keeps the game where it was, and a bar sprite on the top
+  layer covers the extra width on each side. [plugins/system.json
+  `set-canvas-size`, "also altering the 'Window size' project property";
+  observation in a studied project, 2026-10-06]
+- *Spacing data* and *Set character width* set the same per-character
+  width. The property shows in the Layout View and takes a whole font at
+  once, `[[10, "aeou"], [6, "il"]]`, so a font's widths belong there. The
+  action is for a width that changes at runtime. A full-width space (U+3000)
+  is a character like any other, so give it its own width in a Japanese or
+  Chinese font, or it takes the cell width. [manual:
+  plugin-reference/sprite-font.md "Spacing data", "Set character width";
+  observation in a studied project, 2026-10-06: a font's widths set by
+  actions on start, and the full-width space tested by hand in every width
+  expression]
+- A third-party effect that does not support WebGPU makes the whole project
+  render with WebGL, whatever *Enable WebGPU* says. Before adding one, read
+  Platform Info `Renderer` in a preview, and prefer the built-in effect of
+  the same purpose where one exists. [manual:
+  project-primitives/projects.md "Enable WebGPU";
+  plugins/platforminfo.json `renderer`]

@@ -8,19 +8,20 @@ its own, follow those. If a rule here differs from what an example does, or
 a style check's threshold is in question, read
 `docs/decisions/event-sheet-design-guidance.md`.
 
-## Six habits to avoid
+## Seven habits to avoid
 
 In a project the agent wrote, `check_project.py --style` reports the last
 five. `edit_sheet.py` refuses a plan that adds the long block, the
 uncommented cases or the extra Every tick, since one comment or one
 deleted condition fixes each. It warns on the decision tree and the
-repeated event. No check detects the state globals; only this file covers
-them. To fix a warning, change the events to the right column's shape, not
-just enough to silence it.
+repeated event. No check detects the state globals or the migration
+leftovers; only this file covers them. To fix a warning, change the events
+to the right column's shape, not just enough to silence it.
 
 | Habit | The examples instead |
 |-------|----------------------|
 | State globals piled at the top of the sheet: `touchSX`, `foodX`, `tailUID`, `nextX` | Only what several groups read is global. State one group alone uses is declared first in it: a static local if it lasts between ticks (`touchStartX` in `Player Controls`), a plain local if it is recomputed each tick. A value one event computes and reads is that event's local, set in an unconditioned sub-event. An instance's property is its instance variable (`dir` on the head), not a global. A link to an instance is *Pick children* or a condition, not a stored UID |
+| Construct 2 leftovers after a migration: the Function plugin with `Function.Param(n)`, a globals plugin whose instances hold variables beside the sheet's globals, Dictionaries used as namespaces for them, hex colours decoded by hand with `find`, a script block for what an action does, such as the framerate mode | Built-in functions with named, typed parameters, and a function map for a call by a string ([pitfalls: Functions](pitfalls/functions.md)); one `Globals` sheet for what several sheets read; a Dictionary or JSON per record; colours as `rgbEx` numbers, written in data as three numbers; System *Set framerate mode* |
 | A long block of 20 actions without a comment action | A comment action every three to five actions: `Clear the board`, `Create the head`, `Show the start panel`. The block stays one block |
 | A decision as a tree three sub-events deep, one function call per leaf | One gate event with the shared conditions, then the cases as flat sibling sub-events with a comment each. `Else` with conditions is the else-if. If the outcomes differ only by a number, one expression: `(round(angle(x0, y0, Touch.X, Touch.Y) / 90) % 4 + 4) % 4` |
 | The same event five times over with other values, one per option, building or state: `wood < 4`, `wood < 8`, `wood < 12` | One event, with the differences in the option's instance variables (`costWood`, `kind`), a family, a Dictionary loaded from a project file, or the state's name inside the animation name |

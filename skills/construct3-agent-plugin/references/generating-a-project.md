@@ -97,7 +97,7 @@ Check the table before writing events: no scratch global; no global that
 one group alone writes and reads; no field packed in a string with a
 separator or a suffix; no row stored in two places. The reasons are in
 `Construct3-RAG/prompts/event-sheet-thinking.md` ("Native first", "Smell
-table") and `Construct3-RAG/prompts/event-sheet-style.md` ("Six habits to
+table") and `Construct3-RAG/prompts/event-sheet-style.md` ("Seven habits to
 avoid").
 
 ## Plan the art

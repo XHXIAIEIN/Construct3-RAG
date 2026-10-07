@@ -370,8 +370,13 @@ def test_an_array_cell_an_input_writes_needs_a_count_of_the_instances_shown(tmp_
     pieces shown, and a test expects it after the tap."""
     code, out = check(tmp_path, board_game(stones=False))
     assert code == 1
-    assert ("rules[1] 'place': rule place writes a cell of Board, and an Array is not on screen: the player sees the "
-            "cell as an instance. Add a row that counts the instances shown") in out
+    assert ("rules[1] 'place': rule place writes a cell of Board, and an Array is not on screen. Change in this rule "
+            "or its sub-rules a row that shows it. A board: the player sees the cell as an instance, so add a row "
+            "that counts the instances shown, such as {\"name\": \"pieces\", \"start\": 0, \"stored_in\": "
+            "\"Piece.shown\"}") in out
+    assert ("A list, such as stacked shields: the player reads it from a text or a number, so change a row stored in "
+            "a text, x, y, frame or visible whose expression reads Board, such as \"line = \\\"Shields \\\" & "
+            "(Board.At(0, 0) + Board.At(1, 0))\"; a text that does not read Board shows nothing of the cell") in out
     design = board_game()
     code, out = check(tmp_path, design)
     assert code == 0, out
@@ -384,6 +389,37 @@ def test_an_array_cell_an_input_writes_needs_a_count_of_the_instances_shown(tmp_
     design["tests"][0]["steps"].insert(0, {"set": "stones = 3"})
     code, out = check(tmp_path, design)
     assert "tests[0].steps[0].set: stones counts the Stone instances the player sees, and a fixture cannot" in out
+
+
+def shield_game(line: str) -> dict:
+    """Each tap stacks a shield in an Array; a text row set to `line` in the same rule is what the player reads."""
+    design = board_game(stones=False)
+    design.update(game="Shields", core_loop="Each tap stacks a shield; the text sums them", screen={"line": "centre"},
+                  state=[{"name": "shields", "size": [2, 1], "stored_in": "Array"},
+                         {"name": "line", "start": "Shields 0", "stored_in": "Line.text"}],
+                  inputs=[{"name": "shield", "player": "tap the screen", "game": {"tap": [0.5, 0.5]}}],
+                  rules=[{"id": "stack", "on": "shield", "do": ["shields.At(0, 0) = shields.At(0, 0) + 1", line],
+                          "feedback": "the text sums the shields"}],
+                  win="none", lose="none",
+                  tests=[{"name": "a tap adds a shield", "steps": [{"do": "shield"}, {"expect": "line = \"Shields 1\""}]}])
+    return design
+
+
+def test_an_array_cell_an_input_writes_is_shown_by_a_text_whose_expression_reads_the_array(tmp_path):
+    """A list of stacked shields has no instance per shield: the player reads the Array through a text that sums
+    its cells, and the test expects that text. A text that does not read the Array shows nothing of the cell."""
+    code, out = check(tmp_path, shield_game("line = \"Shields \" & (shields.At(0, 0) + shields.At(1, 0))"))
+    assert code == 0, out
+    design = shield_game("line = \"Shields \" & count(shields, 1)")
+    design["tests"][0]["steps"][1] = {"expect": "line = \"Shields 1\""}
+    code, out = check(tmp_path, design)
+    assert code == 0, out
+    design = shield_game("line = \"Shielded\"")
+    design["tests"][0]["steps"][1] = {"expect": "line = \"Shielded\""}
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert "rules[0] 'stack': rule stack writes a cell of shields, and an Array is not on screen." in out
+    assert "a text that does not read shields shows nothing of the cell" in out
 
 
 def test_an_input_that_changes_nothing_the_player_sees_is_refused(tmp_path):

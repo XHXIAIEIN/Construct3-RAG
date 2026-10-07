@@ -23,3 +23,29 @@ Sources and the rule for adding an entry are in the index,
   of children) gives a wrong result for that tick. Derive state from *Is
   playing* and from the instance whose tween it is. [observed in a game
   project, 2026-09-18]
+- The Timer behavior has no expression for the tag that fired, and *Start
+  timer* on a running tag restarts it. So one instance cannot time several
+  stacked buffs of one kind with tags. Shields (护盾) are the usual case:
+  several skills each grant a shield with its own duration and amount, any
+  number at once on one character, and the one that expires first is spent
+  first. Make each shield an instance of its own: a Shield object with an
+  `amount` variable and a Timer, created by the skill, made a child of the
+  character with *Add child* (destroy with parent on), and timed with
+  *Start timer* "expire" for its duration. *On timer* "expire" picks the
+  one shield whose time ran out: *Destroy* it. On damage, *Pick children*
+  Shield, then *For each (ordered)* Shield by
+  `Shield.Timer.Duration("expire") - Shield.Timer.CurrentTime("expire")`
+  ascending, and in its sub-events: if the damage left is 0, *Stop loop*;
+  else if `Shield.amount` is at most the damage, subtract it from the
+  damage and *Destroy* the shield; else subtract the damage from
+  `Shield.amount` and set the damage to 0. What is left comes off health.
+  *Pick children* works through the family of the characters, and a new
+  skill is one more *Create object* and *Add child*. A delimiter string
+  read with `tokenat` keeps the shields in the order they were granted, not
+  the order they expire. [manual: behavior-reference/timer.md "Timer
+  expressions", "Start timer"; plugin-reference/common-features/
+  common-conditions.md "Pick children"; observed in a minimal project,
+  editor preview, 2026-10-06: shields of 5 for 10 s, 4 for 20 s and 2 for
+  30 s, then a hit of 6, left the 20 s shield at 3 and the 30 s shield at
+  2, with health untouched; a user-shared project, 2026-10-06, picks
+  children through a family; QQ bot question, 2026-10-06]

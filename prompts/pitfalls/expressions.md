@@ -98,3 +98,13 @@ Sources and the rule for adding an entry are in the index,
   may go past it). A texture value of -1 leaves the texture position
   unchanged. [manual: plugin-reference/common-features/common-actions.md "Set
   mesh point"]
+- The JSON plugin reads a path as keys separated by dots, so a key with a
+  dot in it, `"menu.title"`, is looked for as `menu` and then `title`
+  inside it, and *Has key* fails. Escape the dot in the path with a
+  backslash, `my\.key`, and a backslash in a key with two, `my\\key`. An
+  expression string has no escape character of its own, only the doubled
+  quote, so `"my\.key"` is written as it is. Keys without dots need none
+  of this, and a Dictionary reads every key whole. [manual:
+  plugin-reference/json.md "Escaping",
+  project-primitives/events/expressions.md on double quotes; observation in
+  a studied project, 2026-10-06]

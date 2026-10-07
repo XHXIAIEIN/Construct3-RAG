@@ -522,3 +522,35 @@ def test_print_says_how_a_plan_names_a_variable(project):
     (project / "plan.json").write_text(json.dumps([json.loads(re.search(r"(\{\"variable\".*?\}\})", lines[-1]).group(1))]))
     assert tool(project, "edit_sheet", "Game", "plan.json", "--dry-run")[0] == 0
     assert "has no number" not in tool(project, "print_sheet", "Game", "--events", "4-5")[1]
+
+
+def test_new_makes_the_sheet_a_project_without_one_runs(project):
+    """A project of scripts has no sheet for a plan to change: --new lists one and sets it on the layouts that have none."""
+    layouts = list((project / "layouts").glob("*.json"))
+    (project / SHEET).unlink()
+    edit(project, "project.c3proj", lambda p: p["eventSheets"].update(items=[]))
+    for path in layouts:
+        edit(project, path.relative_to(project).as_posix(), lambda lay: lay.update(eventSheet=None))
+    start = {"into": 0, "events": [{"eventType": "comment", "text": "Score from zero."}, {
+        "eventType": "block", "conditions": [{"id": "on-start-of-layout", "objectClass": "System"}],
+        "actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Score: 0"'}}]}]}
+    code, out = plan(project, start)
+    assert code == 1 and "--new creates it" in out
+    code, out = plan(project, start, flags=("--new",))
+    assert code == 0, out
+    assert out.splitlines()[0].startswith("Game: a new event sheet in eventSheets/, listed in project.c3proj, run by layout")
+    sheet = sheet_on_disk(project)
+    assert list(sheet) == ["name", "events", "sid"] and len(str(sheet["sid"])) == 15
+    assert json.loads((project / "project.c3proj").read_text(encoding="utf-8"))["eventSheets"]["items"] == ["Game"]
+    assert all(json.loads(p.read_text(encoding="utf-8"))["eventSheet"] == "Game" for p in layouts)
+    assert "System: On start of layout" in printed(project) and check(project)[0] == 0
+
+
+def test_a_new_sheet_beside_others_says_no_layout_runs_it(project):
+    layouts = {p: p.read_bytes() for p in (project / "layouts").glob("*.json")}
+    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "variable", "name": "menuShown"}]}]),
+                                       encoding="utf-8")
+    code, out = tool(project, "edit_sheet", "Menu", "plan.json", "--new")
+    assert code == 0 and "run by no layout" in out, out
+    assert (project / "eventSheets" / "Menu.json").is_file()
+    assert all(p.read_bytes() == raw for p, raw in layouts.items())
