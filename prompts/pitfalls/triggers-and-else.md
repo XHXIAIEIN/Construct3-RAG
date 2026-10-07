@@ -48,6 +48,18 @@ Sources and the rule for adding an entry are in the index,
   observed in a generated board game, 2026-10-04: the turn change in a
   top-level *Else* after a test of the game state flipped the turn every
   tick]
+- Events with the same trigger run one after the other on the same input,
+  so a later one sees what an earlier one set. A switch written as two
+  events, "tapped and frame 0: set frame 1" and "tapped and frame 1: set
+  frame 0", turns on in the first and off again in the second, and never
+  changes. *Else* cannot follow the first, because each event holds its own
+  trigger. Write one event with the trigger and the cases as its
+  sub-events, the second starting with *Else*, or flip the value in one
+  action. A *Wait* before the change keeps it from the later event.
+  `check_project.py` warns about the second event, and `edit_sheet.py`
+  refuses it in an event a plan creates. [manual:
+  project-primitives/events/how-events-work.md "Events run top to bottom";
+  observed in a light switch a local model generated, 2026-10-06]
 - A trigger can fire with several instances picked. Timer *On timer* does
   this when timers elapse in the same tick. A *Pick nearest* or a function
   call written for one instance then runs once. Add *For each* after such

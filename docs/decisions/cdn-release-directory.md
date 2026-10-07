@@ -58,8 +58,7 @@ Option 3. `release_directory()` in `src/ingest/c3_fetcher.py` turns the
 release name into its directory, `r495.2` into `r495-2`, and
 `C3Fetcher.url()` builds every request from it. `fetch()` and `fetch_raw()`
 read nothing else: a 404 raises `FileNotFoundError` with the URL and the
-release. `export_ts_defs()` logs a `.d.ts` that fails and goes on, as it did
-for any error; every other fetch stops the refresh. `versions.json` stays at
+release, and stops the refresh (`update-fails-visibly.md`). `versions.json` stays at
 the root, read by `latest_stable_version()`.
 
 The release name labels everything else: the `version` of `_index.json`,

@@ -97,7 +97,7 @@ Check the table before writing events: no scratch global; no global that
 one group alone writes and reads; no field packed in a string with a
 separator or a suffix; no row stored in two places. The reasons are in
 `Construct3-RAG/prompts/event-sheet-thinking.md` ("Native first", "Smell
-table") and `Construct3-RAG/prompts/event-sheet-style.md` ("Six habits to
+table") and `Construct3-RAG/prompts/event-sheet-style.md` ("Seven habits to
 avoid").
 
 ## Plan the art
@@ -227,16 +227,29 @@ habits; they are what makes rerunning safe.
   are `row(where, n, w, h)`, spaced so they never touch. A second row on
   the same edge is `dy` in units on the same call, `dy=3` under a 2-unit
   label. The UI layer's instances go through `no_overlap()`, which stops
-  the run naming two boxes that meet, with the `dy` that clears them, or
-  one past the viewport. A value shown as a bar, health, fuel, progress, a
-  row of hearts, is `hud_bar(frame, fill, where, length)`: a frame and,
+  the run naming every pair of boxes that meet, with the `dy` that clears
+  them, and every box past the viewport. A value shown as a bar, health,
+  fuel, progress, a row of hearts, is
+  `hud_bar(frame, fill, where, length)`: a frame and,
   inside it, a fill whose origin is its left edge, both Tiled Backgrounds
   from `bar_types()` and `bar_images()` (9-patches with `caps=True`); the
   sheet sets the fill in the one place the value changes,
   `set_width(fill, bar_width(value, maximum, LENGTH))`, or slides it with
-  `tween_width()`. `UNIT` follows the viewport
-  (8 px for pixel art, 32 px otherwise) and `TOUCH` is the smallest object
-  a finger taps at that viewport; a tapped sprite is at least `TOUCH` wide.
+  `tween_width()`. A bar with its name in front of it is
+  `labelled_bar(label, text, frame, fill, where, length)`.
+- A button is `button(type, file, label, text, col, row)`, its shape drawn
+  at `button_size(text)`. The label is centred on the shape, in the colour
+  `text_on()` picks for its fill, at the size `label_size()` gives. It is
+  the shape's child in the layout's hierarchy (`link()`), so the events that
+  hide, move or destroy the button take the label along.
+- A one-screen layout can be named bands. `bands()` gives the boxes of the
+  title, the status line, the stage and the hint.
+  `band_text(type, text, band, align)` puts a label in one. `fit(w, h)`
+  sizes the stage's main object to `STAGE_SHARE` of the stage with its
+  proportions, and `stage_cell(cols, rows)` centres it there.
+- `UNIT` follows the viewport (8 px for pixel art, 32 px otherwise), and
+  `TOUCH` is the smallest object a finger taps at that viewport; a tapped
+  sprite is at least `TOUCH` wide.
   The middle of the screen is the game's; the HUD lives on the edges. The
   counts behind the grid are in
   `Construct3-RAG/prompts/references/new-project.md`.
@@ -275,7 +288,8 @@ habits; they are what makes rerunning safe.
   pinned to it, and the run stops on a squash of the mask. A label is
   `TEXT_SIZE["body"]`, a banner `TEXT_SIZE["title"]`, in `FONT`;
   `hud_text()` stops the run on a colour that reads below 4.5:1 on what is
-  behind it, 3:1 for a title, and names the roles that would read there. A
+  behind it, 3:1 from 18 pt up (`text_contrast()`), and names the roles
+  that would read there. A
   viewport 360 px high or less is pixel art: `PIXEL_ART` has the project
   sample *Nearest* at a whole-number scale.
 - The stand-in's look is a blockout. `PALETTE` holds two canvas greys,

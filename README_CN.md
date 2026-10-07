@@ -95,7 +95,7 @@ plugin 是 [`plugin/`](plugin/README.md) 文件夹，由 `scripts/build_plugin.p
 
 skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。除了需要 Pillow 的 `prepare_art.py`，它们只用 Python 标准库。它们只在两处联网：`check_project.py` 从 clone 的上游仓库 fetch，打开编辑器的脚本在你电脑上的浏览器里打开 Construct 3 编辑器和它的预览。
 
-- **只读**：`lookup_ace.py`、`lookup_script_api.py`、`search_guides.py`、`check_project.py`、`review_design.py`、`check_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。设置了 `CONSTRUCT3_RAG_OFFLINE` 时，它不 fetch。
+- **只读**：`lookup_ace.py`、`lookup_script_api.py`、`search_guides.py`、`check_project.py`、`review_design.py`、`check_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。`CONSTRUCT3_RAG_OFFLINE` 为 `1` 时，它不 fetch，并在输出里说明。
 - **写文件**：
   - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。
   - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。项目的 `tools/build_project.py` 里两行标记之间的辅助函数如果是旧版本、又没人改过，它会换成 skill 当前的版本，文件其余部分不动。加 `--dry-run` 可以先看会改什么。

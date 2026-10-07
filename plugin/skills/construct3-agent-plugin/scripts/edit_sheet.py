@@ -1,6 +1,6 @@
 """Change an event sheet from a plan: events put in, moved, replaced or taken out by the editor's numbers.
 
-    python scripts/edit_sheet.py SHEET PLAN.json [--dry-run] [--project FOLDER] [--rag FOLDER] [--locale en-US]
+    python scripts/edit_sheet.py SHEET PLAN.json [--dry-run] [--new] [--project FOLDER] [--rag FOLDER] [--locale en-US]
 
 PLAN.json is a list of operations. A number is an event number of the sheet
 as it is on disk, the one print_sheet.py prints and check_project.py names,
@@ -665,8 +665,9 @@ class Plan:
 # The style kinds of check_project.py a plan may not add: check_style's four whose fix is one comment or one
 # deleted condition, and the traps of the running game whose fix is one condition or one move: a Find path or a
 # Start timer that runs every tick, Simulate control under a trigger, X.Count = 0 after X's Destroy,
-# X.PickedCount = 0 after a pick of X, and a variable flipped every tick.
-REFUSED_STYLE = ("comment", "run", "cases", "tick", "pathfinding", "timer", "control", "count", "picked", "flip")
+# X.PickedCount = 0 after a pick of X, a variable flipped every tick, and X: v = 1 below X: v = 0.
+REFUSED_STYLE = ("comment", "run", "cases", "tick", "pathfinding", "timer", "control", "count", "picked", "flip", "narrowed",
+                 "undone")
 
 
 def findings_of(project: c3.Project, args, sheets: dict) -> tuple[check_project.Checker, c3.Findings]:
@@ -741,6 +742,34 @@ def as_on_disk(path: Path) -> Path:
     return next((path.with_name(n) for n in names if n.lower() == path.name.lower()), path)
 
 
+def write_editor_json(path: Path, data: dict) -> None:
+    """data in path as the editor lays its files out, tabs and LF, a byte order mark kept."""
+    bom = path.read_bytes().startswith(codecs.BOM_UTF8)
+    draft = path.with_name(path.name + ".tmp")
+    draft.write_bytes((codecs.BOM_UTF8 if bom else b"")
+                      + json.dumps(data, indent="\t", ensure_ascii=False).encode("utf-8"))
+    os.replace(draft, path)
+
+
+def put_back(sheet: Path, before: dict[Path, bytes]) -> list[str]:
+    """Removes a new sheet and its draft and writes the files of before back as they were; the ones that
+    could not be."""
+    left = []
+    for p in (sheet, sheet.with_name(sheet.name + ".tmp")):
+        try:
+            if p.is_file():         # a folder there is not one this run wrote
+                p.unlink()
+        except OSError:
+            left.append(str(p))
+    for p, raw in before.items():
+        try:
+            if p.read_bytes() != raw:
+                p.write_bytes(raw)
+        except OSError:
+            left.append(str(p))
+    return left
+
+
 def main() -> int:
     ap = c3.argument_parser(
         "Change an event sheet from a plan, a JSON file of operations addressed by the editor's event numbers: "
@@ -765,6 +794,7 @@ def main() -> int:
         "examples:\n"
         "  python scripts/edit_sheet.py Game plan.json\n"
         "  python scripts/edit_sheet.py Game plan.json --dry-run   check the plan and show the result, write nothing\n"
+        "  python scripts/edit_sheet.py Game plan.json --new       a project with no sheet: Game made, filled, run\n"
         "  python scripts/print_sheet.py Game --show 5             event 5 as JSON, to change and put back with replace\n\n"
         "exit codes: 0 written, or a dry run that would be; 1 nothing written: the plan cannot be read, names an\n"
         "event, variable or comment the sheet does not have, or adds a problem, or project/clone not found; 2 a\n"
@@ -772,6 +802,9 @@ def main() -> int:
     ap.add_argument("sheet", metavar="SHEET", help="the event sheet's name")
     ap.add_argument("plan", metavar="PLAN.json", help="the operations, a JSON list")
     ap.add_argument("--dry-run", action="store_true", help="check the plan and print the result, write nothing")
+    ap.add_argument("--new", action="store_true",
+                    help="create SHEET when the project has no sheet of that name, listed in project.c3proj; in a "
+                         "project with no other sheet, every layout runs it. The plan fills it from \"into\": 0")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()
@@ -779,16 +812,32 @@ def main() -> int:
     project = c3.Project.open(args, findings)
     c3.note_drift(project.rag)
 
-    path = project.listed_files("eventSheets").get(args.sheet)
-    if path is None:
-        sys.exit(f"no event sheet named {args.sheet!r}; sheets: {', '.join(project.listed_files('eventSheets'))}")
-    if c3.changed_since_stamp(path):
-        sys.exit(f"{args.sheet} changed on disk after print_sheet.py printed it, saved in the editor or by another "
-                 f"tool, so the plan's numbers may name other events; print it again, check the numbers and run "
-                 f"the plan again\nnothing was written")
-    raw = path.read_bytes()
-    on_disk = raw.decode("utf-8-sig")
-    sheet = json.loads(on_disk)
+    sheets = project.listed_files("eventSheets")
+    path = sheets.get(args.sheet)
+    new = args.new and path is None and args.sheet not in sheets
+    if new:
+        if not re.fullmatch(r"[^\\/:*?\"<>|]+", args.sheet) or args.sheet != args.sheet.strip():
+            sys.exit(f"{args.sheet!r} cannot be a file name; name the new sheet with letters, digits and spaces")
+        path = project.root / "eventSheets" / f"{args.sheet}.json"
+        if path.exists():
+            sys.exit(f"{path.name} is in eventSheets/ but project.c3proj does not list it; add {args.sheet!r} to "
+                     f"\"eventSheets\" \"items\" there, or name the new sheet differently")
+    elif path is None:
+        sys.exit(f"no event sheet named {args.sheet!r}; sheets: {', '.join(sheets) or 'none'}; "
+                 f"--new creates it, run by every layout when the project has no other sheet")
+    if new:
+        # The keys and order of a sheet the editor makes; its sid is one the project's checked sids are free of.
+        raw, on_disk = b"", ""
+        sheet = {"name": args.sheet, "events": [], "sid": 0}
+        give_sids(sheet, set(findings_of(project, args, {})[0].sids))
+    else:
+        if c3.changed_since_stamp(path):
+            sys.exit(f"{args.sheet} changed on disk after print_sheet.py printed it, saved in the editor or by another "
+                     f"tool, so the plan's numbers may name other events; print it again, check the numbers and run "
+                     f"the plan again\nnothing was written")
+        raw = path.read_bytes()
+        on_disk = raw.decode("utf-8-sig")
+        sheet = json.loads(on_disk)
     try:
         text = Path(args.plan).read_text(encoding="utf-8-sig")
     except OSError as e:
@@ -843,13 +892,43 @@ def main() -> int:
         return 1
 
     layout = json.dumps(plan.sheet, indent="\t", ensure_ascii=False)
+    # A new sheet runs only on a layout that names it. In a project without sheets every layout gets it; beside
+    # other sheets a layout without one is kept so (a layout that only holds objects), and the person chooses.
+    runs_on = ({name: p for name, p in project.listed_files("layouts").items()
+                if p and not json.loads(p.read_text(encoding="utf-8-sig")).get("eventSheet")}
+               if new and not sheets else {})
     if not args.dry_run:
-        if path.read_bytes() != raw:
+        if (path.exists() if new else path.read_bytes() != raw):
             sys.exit(f"{args.sheet} changed on disk while the plan was applied; run it again\nnothing was written")
-        draft = path.with_name(path.name + ".tmp")
-        draft.write_text(layout, encoding="utf-8", newline="\n")
-        os.replace(draft, as_on_disk(path))
+        # A new sheet writes three kinds of file; one that fails puts back those written before it, so that the
+        # project is as it was and the same plan runs again.
+        before = {p: p.read_bytes() for p in (project.root / "project.c3proj", *runs_on.values())} if new else {}
+        try:
+            path.parent.mkdir(exist_ok=True)
+            draft = path.with_name(path.name + ".tmp")
+            draft.write_text(layout, encoding="utf-8", newline="\n")
+            os.replace(draft, path if new else as_on_disk(path))
+            if new:
+                listed = project.data.setdefault("eventSheets", {"items": [], "subfolders": []})
+                listed.setdefault("items", []).append(args.sheet)
+                write_editor_json(project.root / "project.c3proj", project.data)
+                for p in runs_on.values():
+                    data = json.loads(p.read_text(encoding="utf-8-sig"))
+                    data["eventSheet"] = args.sheet
+                    write_editor_json(p, data)
+        except OSError as e:
+            if not new:
+                raise
+            left = put_back(path, before)
+            sys.exit(f"{args.sheet}: a file could not be written: {e}\n"
+                     + (f"these could not be put back as they were: {', '.join(left)}; restore them from Git"
+                        if left else "the files written before it are put back: nothing was written"))
         c3.stamp(path)
+    if new:
+        print(f"{args.sheet}: a new event sheet in eventSheets/, listed in project.c3proj, "
+              + (f"run by layout {', '.join(runs_on)}" if runs_on else
+                 "run by no layout yet: include it from a sheet a layout runs, or set it as a layout's Event sheet")
+              + (" (dry run)" if args.dry_run else ""))
 
     # What changed, as the editor words it, under the numbers the sheet has now.
     span = numbers(plan.sheet["events"], [0])
@@ -876,7 +955,7 @@ def main() -> int:
             print(f"warning: {w}")
     for note in left_alone(sheet["events"], plan.sheet["events"], span):
         print(note)
-    if on_disk.replace("\r\n", "\n") != json.dumps(sheet, indent="\t", ensure_ascii=False) and not args.dry_run:
+    if not new and on_disk.replace("\r\n", "\n") != json.dumps(sheet, indent="\t", ensure_ascii=False) and not args.dry_run:
         print(f"note: {path.name} was not laid out as the editor writes it (tabs, LF); it is now, so its diff is the whole file")
     if raw.startswith(codecs.BOM_UTF8) and not args.dry_run:
         print(f"note: {path.name} started with a byte order mark, which the editor does not write; it no longer does, "

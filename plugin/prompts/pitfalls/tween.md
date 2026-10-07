@@ -76,3 +76,19 @@ Sources and the rule for adding an entry are in the index,
   `GetTweenIncludingWaitingForRelease`, whose list puts active tweens first;
   observed in a game project, r503 preview, 2026-09-29: a crouch channel
   stopped as the jump squash started read 1 in that frame, 0 in the next]
+- A width tween that ends can leave the width a hair short of its end value,
+  so that both print 355.2 and `Width < target` still holds. An event that
+  starts the tween with `Width < target` and `NOT Is playing "grow"` then
+  starts a tween of no distance each time the last one ends. That empty tween
+  reads as playing for its whole 0.3 s, so a real change of the target in
+  that time starts no tween. Compare with a tolerance, `Width < target - 0.5`
+  starts the tween, and add an event for the gap that the tolerance leaves,
+  `Width < target` and `NOT Is playing "grow"`, which sets the width to
+  `target`. A trail tested with `Width > target` has the same gap and takes
+  the same two events. [observed in a minimal project, stable editor preview,
+  2026-10-07: three bars with a growth tween each; two of them held a
+  zero-distance tween in a loop, and when a heal raised their target they
+  grew 0.19 s late, only after the loop's current tween ended, while the
+  third bar, which had no such loop, started at once. Found by listing each
+  bar's tweens every tick, `[...inst.behaviors.Tween.allTweens()]`, with the
+  `tags` and `progress` of each]

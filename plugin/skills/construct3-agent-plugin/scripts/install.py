@@ -97,7 +97,10 @@ def add_block(project: Path, rag: Path, skill_path: str, dry_run: bool) -> list[
             notes.append(f"{name}: left as it is; its table has no row for this skill. The row to add: "
                          f"| Looking an ACE up, reading a sheet as events, putting events into a sheet, checking "
                          f"project files, generating the whole project | {row} |")
-        return notes or [f"{name}: already names the clone and this skill, left as it is"]
+        notes = notes or [f"{name}: already names the clone and this skill, left as it is"]
+        if name == "AGENTS.md":
+            notes += lead_claude_md(project, dry_run)
+        return notes
 
     block = BLOCK.read_text(encoding="utf-8")
     block = block.replace("<path-to>/Construct3-RAG", rag.as_posix()).replace(f"{DEFAULT_INTO}/{SKILL}", skill_path)
@@ -108,21 +111,27 @@ def add_block(project: Path, rag: Path, skill_path: str, dry_run: bool) -> list[
     did = "added" if before.strip() else "created with"
     notes.append(f"AGENTS.md: {'would be ' if dry_run else ''}{did} the Construct 3 block, "
                  f"Construct3-RAG: {rag.as_posix()}")
-    # Claude Code before 2.1.277 reads CLAUDE.md only, and any version reads it
-    # instead of AGENTS.md when both exist: one line there leads to the block.
-    claude = project / "CLAUDE.md"
-    had = claude.read_text(encoding="utf-8") if claude.exists() else ""
-    if "@AGENTS.md" not in had:
-        if not dry_run:
-            claude.write_text((had.rstrip("\n") + "\n\n" if had.strip() else "") + "@AGENTS.md\n",
-                              encoding="utf-8", newline="\n")
-        notes.append(f"CLAUDE.md: {'would be ' if dry_run else ''}{'added' if had.strip() else 'created with'} "
-                     f"the line @AGENTS.md, which Claude Code follows to the block")
+    notes += lead_claude_md(project, dry_run)
     # The block records the clone for this project alone, and nothing here writes outside the
     # project: the next project starts with no record of the clone anywhere on the machine.
     notes.append(f"memory: keep 'Construct3-RAG: {rag.as_posix()}' where your client stores notes between "
                  f"sessions; the next project starts without this block")
     return notes
+
+
+def lead_claude_md(project: Path, dry_run: bool) -> list[str]:
+    """Claude Code before 2.1.277 reads CLAUDE.md only, and any version reads it
+    instead of AGENTS.md when both exist: one line there leads to the block in
+    AGENTS.md, whether this run wrote the block or found it."""
+    claude = project / "CLAUDE.md"
+    had = claude.read_text(encoding="utf-8") if claude.exists() else ""
+    if "@AGENTS.md" in had or RAG_KEY.search(had):
+        return []
+    if not dry_run:
+        claude.write_text((had.rstrip("\n") + "\n\n" if had.strip() else "") + "@AGENTS.md\n",
+                          encoding="utf-8", newline="\n")
+    return [f"CLAUDE.md: {'would be ' if dry_run else ''}{'added' if had.strip() else 'created with'} "
+            f"the line @AGENTS.md, which Claude Code follows to the block"]
 
 
 def unnamed_clone(project: Path, rag: Path) -> list[str]:
@@ -139,16 +148,21 @@ def unnamed_clone(project: Path, rag: Path) -> list[str]:
 
 
 def again(flag: str) -> str:
-    """This run's command with one more flag."""
+    """This run's command with flag in place of any --replace-edited-helpers it had."""
     def quoted(s: str) -> str:
         return f'"{s}"' if " " in s else s
-    return " ".join(["python", quoted(Path(__file__).resolve().as_posix()), *map(quoted, sys.argv[1:]), flag])
+    kept = [a for a in sys.argv[1:] if a.split("=")[0] != "--replace-edited-helpers"]
+    return " ".join(["python", quoted(Path(__file__).resolve().as_posix()), *map(quoted, kept), flag])
 
 
-def generator(project: Path, rag: Path, replace_edited: bool, dry_run: bool) -> tuple[bool, list[str]]:
+def generator(project: Path, rag: Path, replace_edited: str | None, dry_run: bool) -> tuple[bool, list[str]]:
     """The helpers of the project's tools/build_project.py replaced with the skill's when they
     are an older version left unedited there; whether they are the skill's afterwards, and what
-    to print. Edits between the markers are the game's, so they are kept unless the run asks."""
+    to print. Edits between the markers are the game's, so they are kept unless the run asks
+    with replace_edited, and even then while one would be lost: a helper the game changed, with
+    no def of its name below the end marker, that is not among the names given. The game changed
+    a helper that differs from the template its part was copied from, found in the clone's
+    history; without that history, every helper that differs from the skill's counts."""
     h = c3.generator_helpers(project)
     name = c3.GENERATOR
     if h.state == "missing":
@@ -165,10 +179,32 @@ def generator(project: Path, rag: Path, replace_edited: bool, dry_run: bool) -> 
         return False, [f"{name}: its helpers are of {have}, newer than this skill's of {want}, "
                        f"and were left as they are; update the clone, git -C \"{rag}\" pull --ff-only, and run this "
                        f"again"]
-    if h.state == "edited" and not replace_edited:
+    if h.state == "edited":
+        copied = c3.copied_template(rag, h.have.stamp)
+        lost = c3.unkept_helpers(project, copied=copied)
+        if isinstance(lost, str):
+            return False, [f"{name}: {lost}; its helpers were left as they are"]
+        taken = {n.strip() for n in (replace_edited or "").split(",")}
+        lost = [entry for entry in lost if entry[0] not in taken]
+    if h.state == "edited" and replace_edited is None:
+        changed = f" ({', '.join(n for n, _, _ in lost)})" if copied and lost else ""
         return False, [f"{name}: its helpers, between the markers, were edited there, so they were left as they "
-                       f"are. Copy each helper changed there below the end marker, where a def of the same name "
-                       f"replaces the one between the markers, then run {again('--replace-edited-helpers')}"]
+                       f"are. Copy each helper changed there{changed} below the end marker, where a def of the same "
+                       f"name replaces the one between the markers, then run {again('--replace-edited-helpers')}"]
+    if h.state == "edited" and lost and copied:
+        return False, [f"{name}: replacing its helpers would lose these, which were edited there and have no def "
+                       f"of the same name below the end marker; nothing was written:",
+                       *(f"  {n}: here {here!r}, as copied {was!r}" for n, here, was in lost),
+                       f"Copy each one below the end marker, where it replaces the skill's, then run "
+                       f"{again('--replace-edited-helpers')}"]
+    if h.state == "edited":
+        if lost:
+            return False, [f"{name}: replacing its helpers would lose these, which differ from the skill's and "
+                           f"have no def of the same name below the end marker; nothing was written:",
+                           *(f"  {n}: here {here!r}, the skill's {skills!r}" for n, here, skills in lost),
+                           f"Copy below the end marker each one the game changed, where it replaces the skill's. "
+                           f"One that differs only because the skill's changed since needs no copy: name it, "
+                           f"then run {again('--replace-edited-helpers=NAME,NAME')}"]
     problem = c3.replace_helpers(project, dry_run=dry_run)
     if problem:
         return False, [f"{name}: {problem}; nothing was written"]
@@ -230,9 +266,11 @@ def main() -> int:
                     help=f"refresh only the helpers of the project's {c3.GENERATOR}, between its markers; no copy "
                          f"of the skill and no instruction file is written. For a project that uses the skill "
                          f"without a copy, as the Claude Code plugin does")
-    ap.add_argument("--replace-edited-helpers", action="store_true",
-                    help=f"replace the helpers of {c3.GENERATOR} even when they were edited there; copy each "
-                         f"edited helper below the end marker first, where it replaces the skill's")
+    ap.add_argument("--replace-edited-helpers", nargs="?", const="", metavar="NAME,NAME",
+                    help=f"replace the helpers of {c3.GENERATOR} even when they were edited there, once each "
+                         f"helper edited there has a def of its name below the end marker, where it replaces "
+                         f"the skill's, or is named here as one to take the skill's of. Without the clone's "
+                         f"history, every helper that differs from the skill's counts as edited")
     ap.add_argument("--dry-run", action="store_true", help="say what would be written, write nothing")
     args = ap.parse_args()
     c3.utf8_output()

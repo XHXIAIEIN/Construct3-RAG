@@ -149,7 +149,7 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 | File in `construct3-agent-plugin/evals/` | Holds |
 |-------------------------------------|-------|
 | `evals.json` | The test cases: prompt, expected output, assertions a script can check |
-| `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game or an official example, with this skill, the previous one or none |
+| `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game, an official example or the empty project of `new_project.py`, with this skill, the previous one or none |
 | `trace.py` | What a run did, from its transcript: every tool call, the ones it lost, `trace.json` |
 | `grade.py` | `grading.json` per run with the evidence, `benchmark.json` per iteration: mean and deviation per case and arm (`<arm>_2` is a second run of `<arm>`), and the difference between arms |
 | `measure_design.py` | What each rule of `scripts/review_design.py` finds over the official examples and game projects, with looser variants, and every hit as JSON to read before a rule becomes a finding |
@@ -195,6 +195,12 @@ python skills/construct3-agent-plugin/evals/run_trigger_eval.py skills/construct
   as `~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl`.
   When every assertion passes, the lost calls are what is left to improve:
   a lookup that found nothing, an edit that did not match.
+- `trace.py --out <run folder>` lists in `trace.json` the writes outside
+  that folder, such as a plan written to the launching session's
+  scratchpad or an answer one folder too high, and `grade.py` does not
+  score such a run. The list is a floor: it reads absolute paths from file
+  tools and from the words of shell commands, so a relative path, a
+  variable or a write made inside a script escapes it.
 - When a run's completion notice arrives, write the tokens and the duration
   it gives into the run's `timing.json`. A run without one has no time or
   tokens in the benchmark; nothing is estimated.

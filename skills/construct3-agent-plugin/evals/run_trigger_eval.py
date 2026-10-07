@@ -9,11 +9,24 @@ description alone decides:
 
     python scripts/install.py --project FOLDER --into .claude/skills --no-block
 
+Each run works in a copy of FOLDER of its own, made for it and removed after
+it, so that what one run writes is not what another one reads. Stopping a
+run stops every process the client started (taskkill /T on Windows, the
+process group elsewhere); a copy that cannot be removed afterwards, and a
+process that still holds the run's output, are printed.
+
 A run counts as triggered when the stream shows the Skill tool called with
-this skill, or SKILL.md of this skill read. It is stopped there, or after
---max-tools other tool calls, or at the client's result. A query passes when
-its trigger rate is at least --threshold and it should trigger, or below it
-and it should not (https://agentskills.io/skill-creation/optimizing-descriptions).
+this skill, or SKILL.md of this skill read, and the call's result is not an
+error. It is stopped there, or after --max-tools other tool calls, or at the
+client's result. Every run is recorded with what ended it: triggered, not
+triggered at the client's result, or the tool budget spent, counted as not
+triggered; or one of three that are no answer: the load failed, the run timed
+out, or the client stopped without a result. The trigger rate is over the
+runs that answered; the others are counted apart, with the end of the
+client's stderr. A query passes when its rate is at least --threshold and it
+should trigger, or below it and it should not
+(https://agentskills.io/skill-creation/optimizing-descriptions); a query
+without a run that answered does not pass.
 
 Revise the description from the failures of the train set only, and choose
 between descriptions by the pass rate of the validation set.
@@ -27,8 +40,11 @@ import argparse
 import json
 import os
 import shlex
+import shutil
+import signal
 import subprocess
 import sys
+import tempfile
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -41,56 +57,133 @@ class ClientError(RuntimeError):
 
 
 def loads_skill(tool: dict) -> bool:
-    """A tool call that puts this skill's SKILL.md in front of the model."""
+    """A tool call that puts this skill's SKILL.md in front of the model: the Skill tool with this
+    skill's name, with a plugin's prefix or without, or a Read of SKILL.md in a folder of that name."""
     name, given = tool.get("name"), tool.get("input") or {}
     if name == "Skill":
         return str(given.get("skill", "")).split(":")[-1] == SKILL
     if name == "Read":
-        return f"{SKILL}/SKILL.md" in str(given.get("file_path", "")).replace("\\", "/")
+        return ("/" + str(given.get("file_path", "")).replace("\\", "/")).endswith(f"/{SKILL}/SKILL.md")
     return False
 
 
-def run_once(client: str, query: str, project: Path, model: str | None, max_tools: int, timeout: int) -> bool:
+# What ended a run. The first three answer the query; the others are left out of its rate.
+ANSWERED = ("triggered", "not triggered", "tool budget")
+NO_ANSWER = ("load failed", "timed out", "client stopped")
+IGNORED = shutil.ignore_patterns(".git", ".build", ".tmp")    # not what the client reads to decide
+
+
+def run_once(client: str, query: str, project: Path, model: str | None, max_tools: int,
+             timeout: int) -> tuple[str, str]:
+    """What ended a run of query in a copy of project, and the end of the client's stderr when it
+    did not answer."""
     cmd = [*shlex.split(client), "-p", query, "--output-format", "stream-json", "--verbose"]
     cmd += ["--model", model] if model else []
     env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}     # set inside a session, it refuses a nested one
+    tmp = Path(tempfile.mkdtemp(prefix="trigger-"))
     try:
-        proc = subprocess.Popen(cmd, cwd=project, env=env, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                                text=True, encoding="utf-8", errors="replace")
+        copy = tmp / project.name
+        shutil.copytree(project, copy, ignore=IGNORED)
+        with open(tmp / "stderr.txt", "w+", encoding="utf-8", errors="replace") as err:
+            status, held = watch(cmd, copy, env, err, client, max_tools, timeout)
+            if held:
+                print(f"  {held}: {query[:80]}", file=sys.stderr)
+            err.seek(0)
+            return status, err.read()[-2000:] if status in NO_ANSWER else ""
+    finally:
+        try:
+            shutil.rmtree(tmp)
+        except OSError as e:
+            print(f"  left behind: {tmp}, which a process of the run may still hold: {e}", file=sys.stderr)
+
+
+def watch(cmd: list[str], copy: Path, env: dict, err, client: str, max_tools: int,
+          timeout: int) -> tuple[str, str]:
+    """What ended a run of cmd in copy, and a sentence when a process it started still held its output
+    after the run was stopped. The client runs in a process group of its own, so that stopping it at
+    the timeout, or once the stream has answered, stops every process it started."""
+    try:
+        proc = subprocess.Popen(cmd, cwd=copy, env=env, stdout=subprocess.PIPE, stderr=err, text=True,
+                                encoding="utf-8", errors="replace", start_new_session=os.name != "nt",
+                                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0)
     except OSError as e:
         raise ClientError(f"{client} could not be started: {e}") from e
-    timer = threading.Timer(timeout, proc.kill)
-    timer.start()
-    tools, known = 0, False
-    try:
-        for line in proc.stdout:
+    ended: dict = {}
+
+    def read() -> None:
+        try:
+            ended["status"] = read_stream(proc, client, max_tools)
+        except ClientError as e:
+            ended["error"] = e
+    reader = threading.Thread(target=read, daemon=True)
+    reader.start()
+    reader.join(timeout)
+    timed_out = reader.is_alive()
+    stop_tree(proc)
+    reader.join(STOP_WAIT)
+    held = (f"{client} was stopped, and a process it started still held its output {STOP_WAIT} seconds later"
+            if reader.is_alive() else "")
+    if "error" in ended:
+        raise ended["error"]
+    status = ended.get("status") or ("timed out" if timed_out else "client stopped")
+    return status, held
+
+
+# Seconds to wait for a stopped run's processes to end and its output to close.
+STOP_WAIT = 5
+
+
+def stop_tree(proc: subprocess.Popen) -> None:
+    """Stop proc and every process it started, then wait for it, at most STOP_WAIT seconds."""
+    if proc.poll() is None:
+        if os.name == "nt":
+            subprocess.run(["taskkill", "/T", "/F", "/PID", str(proc.pid)], capture_output=True, timeout=60)
+        else:
             try:
-                event = json.loads(line)
-            except ValueError:
-                continue
-            if event.get("type") == "result":
-                if event.get("is_error"):
-                    raise ClientError(str(event.get("result", "the client reported an error")))
-                return False
-            if event.get("type") != "assistant":
-                continue
-            known = True
-            for part in event.get("message", {}).get("content", []):
-                if part.get("type") != "tool_use":
-                    continue
-                if loads_skill(part):
-                    return True
-                tools += 1
-                if tools >= max_tools:
-                    return False
-        if not known:
-            raise ClientError(f"the stream of {client} held no assistant or result event; its format may have changed")
-        return False
-    finally:
-        timer.cancel()
+                os.killpg(proc.pid, signal.SIGKILL)
+            except OSError:
+                pass
         if proc.poll() is None:
             proc.kill()
-        proc.wait()
+    try:
+        proc.wait(STOP_WAIT)
+    except subprocess.TimeoutExpired:
+        pass
+
+
+def read_stream(proc: subprocess.Popen, client: str, max_tools: int) -> str | None:
+    """What the stream says ended the run; None when it ends without saying."""
+    tools, known, loading = 0, False, None
+    for line in proc.stdout:
+        try:
+            event = json.loads(line)
+        except ValueError:
+            continue
+        kind = event.get("type")
+        if kind == "result":
+            if event.get("is_error"):
+                raise ClientError(str(event.get("result", "the client reported an error")))
+            return "load failed" if loading else "not triggered"
+        if kind not in ("assistant", "user"):
+            continue
+        known = True
+        content = event.get("message", {}).get("content", [])
+        for part in content if isinstance(content, list) else []:
+            if not isinstance(part, dict):
+                continue
+            if part.get("type") == "tool_result" and loading and part.get("tool_use_id") == loading:
+                return "load failed" if part.get("is_error") else "triggered"
+            if part.get("type") != "tool_use" or loading:
+                continue
+            if loads_skill(part):
+                loading = part.get("id") or "?"     # its result says whether it loaded
+                continue
+            tools += 1
+            if tools >= max_tools:
+                return "tool budget"
+    if not known:
+        raise ClientError(f"the stream of {client} held no assistant or result event; its format may have changed")
+    return None
 
 
 def main() -> int:
@@ -102,7 +195,8 @@ def main() -> int:
     ap.add_argument("--threshold", type=float, default=0.5, help="trigger rate that counts as triggering (default: 0.5)")
     ap.add_argument("--model", help="model for claude -p (default: the client's own)")
     ap.add_argument("--max-tools", type=int, default=5,
-                    help="other tool calls after which a run counts as not triggered (default: 5)")
+                    help="other tool calls after which a run ends as tool budget, counted as not "
+                         "triggered (default: 5)")
     ap.add_argument("--timeout", type=int, default=180, help="seconds before a run is stopped (default: 180)")
     ap.add_argument("--workers", type=int, default=4, help="runs in parallel (default: 4)")
     ap.add_argument("--client", default="claude",
@@ -117,13 +211,19 @@ def main() -> int:
     queries = json.loads(Path(args.queries).read_text(encoding="utf-8"))
 
     def rate(item: dict) -> dict:
-        hits = sum(run_once(args.client, item["query"], project, args.model, args.max_tools, args.timeout)
-                   for _ in range(args.runs))
-        passed = (hits / args.runs >= args.threshold) == item["should_trigger"]
-        print(f"  {hits}/{args.runs} {'ok  ' if passed else 'FAIL'} "
-              f"{'should' if item['should_trigger'] else 'should not'}: {item['query'][:80]}", file=sys.stderr)
-        return {**item, "triggers": hits, "runs": args.runs, "trigger_rate": round(hits / args.runs, 3),
-                "pass": passed}
+        runs = [run_once(args.client, item["query"], project, args.model, args.max_tools, args.timeout)
+                for _ in range(args.runs)]
+        ends = {status: sum(s == status for s, _ in runs) for status in (*ANSWERED, *NO_ANSWER)}
+        answered, hits = sum(ends[s] for s in ANSWERED), ends["triggered"]
+        rate = hits / answered if answered else None
+        passed = rate is not None and (rate >= args.threshold) == item["should_trigger"]
+        print(f"  {hits}/{answered} {'ok  ' if passed else 'FAIL'} "
+              f"{'should' if item['should_trigger'] else 'should not'}: {item['query'][:80]}"
+              + "".join(f"; {ends[s]} {s}" for s in NO_ANSWER if ends[s]), file=sys.stderr)
+        return {**item, "triggers": hits, "runs": args.runs, "answered": answered,
+                "trigger_rate": None if rate is None else round(rate, 3), "pass": passed,
+                "ends": {s: n for s, n in ends.items() if n},
+                "stderr": [e for s, e in runs if s in NO_ANSWER and e]}
 
     try:
         run_once(args.client, queries[0]["query"], project, args.model, 1, args.timeout)    # fail before sixty runs do

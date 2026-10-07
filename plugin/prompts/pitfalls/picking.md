@@ -55,6 +55,26 @@ Sources and the rule for adding an entry are in the index,
   instance, whose variables and behaviors the first family's events cannot
   see. [Construct-bugs#7485, open; example: elemental-conveyors event 35,
   `Draggable` picked by `Base.UID`]
+- Inside a container, an expression that names another member reads the
+  member of the same instance, in an action and in a condition, with no pick
+  and no *For each*. So `Fill: Set width to clamp(Frame.hp / Frame.maxHp, 0,
+  1) * (Frame.Width - 4)` in an *Every tick* event sets each fill from its own
+  frame, and `Fill: Compare width > <the same expression>` picks each fill
+  that is wider than its own frame's value. A custom action called with a
+  parameter that reads one instance's variable, `SetMax(Frame.maxHp + 300)`,
+  needs *For each* `Frame` among the calling event's conditions, so that each
+  bar passes its own value. The custom action itself runs once for the picked
+  instances (see [Functions](functions.md)). [the manual describes the pairing
+  for picks only, project-primitives/objects/containers.md "What containers
+  do"; observed in a minimal project, stable editor preview, 2026-10-07: seven
+  object types in one container, three instances with maximum hp 300, 1000
+  and 3000 and a frame 448 px wide; the fills were 222, 377.4 and 421.8 px at
+  hp 150, 850 and 2850, and the call under *For each* passed 600, 1300 and
+  3300. Fills of 88.8, 399.6 and 355.2 px were given targets of 44.4, 377.4
+  and 370 px, under `Fill: Width > target`, which sets the width at once, and
+  `Fill: Width < target - 0.5`, which starts a tween. One tick later the
+  first two were at their targets and the third was growing. A read of any
+  one frame would have tweened the first fill or set the third at once]
 - *Pick children* picks only among the child type's instances already picked.
   A child type in the parent's container is narrowed as soon as the parent
   is. In `Piece: On drop`, `PieceArt` is in `Piece`'s container and is
@@ -144,3 +164,19 @@ Sources and the rule for adding an entry are in the index,
   both turrets aimed at their own team in 240 of 240 samples over 12 s; with
   *Acquire target* on the picked nearest enemy, 0 of 240, while a hull of
   their own team was nearer in 159]
+- A condition on an object holds when one instance passes it, and the next
+  condition tests only the instances it kept. So a row of three cells
+  written as `Cell: Row = 0`, `Cell: Column = 0`, `Cell: Value = 1`,
+  `Cell: Column = 1`, ... never holds: no cell has Column 0 and Column 1.
+  And `Cell: Value ≠ 0` holds once any cell is filled, not when all are.
+  To test that several instances agree, narrow once and count:
+  `Cell: Row = 0`, `Cell: Value = 1`, `System: Cell.PickedCount = 3`; the
+  board is full when `Cell: Value ≠ 0` keeps `Cell.Count` of them. A
+  diagonal is System *Pick by evaluate* `Cell.Row = Cell.Column`, the other
+  `Cell.Row + Cell.Column = 2`. [manual:
+  project-primitives/events/how-events-work.md, conditions filter the
+  picked instances progressively; found in a QQ bot's tic-tac-toe sheet,
+  2026-10-06, whose wins and draw were written so; observed in a copy of
+  it, stable editor preview, 2026-10-06: row 0 and the diagonal filled, the
+  counts held for row 0 and the diagonal and not for row 1 or a full
+  board, and `Cell: Value ≠ 0` alone held]

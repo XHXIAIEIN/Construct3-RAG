@@ -43,9 +43,9 @@ Construct-Example-Projects, 2026-09-18]
   with hard edges in 35 colours, and 9 of them cover 95% of its opaque
   pixels. Labels use one to three colours, white in two of three, and two
   sizes, rarely more than four. Every label has 4.5:1 contrast with what is
-  behind it, 3:1 from the title size up (WCAG 2.2, 1.4.3). All 159 studio
-  projects at 360 px or less sample *Nearest*, and 116 of them use *Letterbox
-  integer scale*. The generator template holds these as `PALETTE` and
+  behind it, 3:1 from 18 pt up, large-scale text (WCAG 2.2, 1.4.3). All 159
+  studio projects at 360 px or less sample *Nearest*, and 116 of them use
+  *Letterbox integer scale*. The generator template holds these as `PALETTE` and
   `rgb()`, the colour check of `write_png()`, `FONT` and `TEXT_SIZE`, the
   contrast check of `hud_text()`, and `PIXEL_ART`.
 - Until the art arrives, a generated game is a blockout. Lightness shows the
@@ -79,11 +79,22 @@ Construct-Example-Projects, 2026-09-18]
   spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. The
   generator template holds these as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`,
   `hud_text()`, `row()` and `no_overlap()`.
+- A button's text is its label, centred on it, and the two move and hide
+  together; a bar's name stands in front of the bar. A one-screen layout is
+  bands: the title, the status line, the stage in the middle and the hint at
+  the bottom, with the stage's main object at a large share of the stage.
+  The generator template holds these as `button()`, `labelled_bar()`,
+  `bands()`, `band_text()` and `fit()`; the record is
+  `docs/decisions/layout-by-name.md`.
 
 ## Layouts, sheets, folders and layers
 
 - One `ObjectRepository` layout, with no event sheet, holds one instance of
-  every type the events create, nothing else. No object is global.
+  every type the events create, nothing else. No object is global. Keep
+  it out of the first place in the project, because the first layout is
+  the one the game opens on. If the order puts it first anyway, it gets a
+  sheet of one event, *On start of layout* then *Go to layout* the first
+  screen [a studied project, 2026-10-06].
 - `MainCode` is the only sheet up to about sixty types. Beyond that each
   screen has a sheet (`GameEvents`, `MenuEvents`, `CreditsEvents`),
   subsystems have included ones (`PlayerEvents`, `EnemyEvents`,

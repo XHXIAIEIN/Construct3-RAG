@@ -18,6 +18,15 @@ SKILL = REPO / "skills" / "construct3-agent-plugin"
 INSTALLED = ".agents/skills/construct3-agent-plugin"
 SHEET = "eventSheets/Game.json"
 
+sys.path.insert(0, str(SKILL / "scripts"))
+from c3project import siblings_folder  # noqa: E402
+
+# The sibling clones are beside the main clone, also when the tests run in one of its
+# worktrees: build every sibling path from siblings_folder, never from REPO.parent.
+EXAMPLES = siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"
+NO_EXAMPLES = (f"no Construct-Example-Projects clone at {EXAMPLES.parent}; "
+               f"python {(REPO / 'scripts' / 'bootstrap.py').as_posix()} clones it")
+
 
 def run(root: Path, script: str | Path, *args: str) -> tuple[int, str]:
     """A script run from the project folder. No CONSTRUCT3_RAG and an empty home:

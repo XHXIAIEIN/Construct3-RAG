@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from src.lookup import SchemaIndex
+from src.lookup.schema_index import SchemaIndex
 from src.lookup.schema_layout import (
     SchemaManifest,
     load_locale_index,

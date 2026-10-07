@@ -13,7 +13,9 @@ trace.json (evals/trace.py --out) adds its tool calls and the ones it lost.
 
 A run that did not keep to its arm is not scored: put the reason in
 <case>/<arm>/void.txt, for example a baseline whose answer lists a script of
-this skill among its commands. A run without timing.json has no time or
+this skill among its commands. A run whose trace.json lists a write outside
+its folder is not scored either, with the paths as the reason; the list is a
+floor (evals/trace.py). A run without timing.json has no time or
 tokens in the benchmark; nothing is filled in for it.
 
 exit codes: 0 graded, 1 ITERATION_DIR holds no run of a known case
@@ -35,6 +37,9 @@ CASES = {c["name"]: c for c in json.loads((Path(__file__).parent / "evals.json")
 ORIGINAL_GLOBALS = {"score", "COIN_COUNT", "ROUND_COINS", "beat"}   # the stand-in's, before and after BEATS
 SIZE_ACTIONS = {"set-size", "set-scale", "set-width", "set-height"}
 TWEEN_ENDS = {"on-tweens-finished", "on-any-tweens-finished"}
+NUMBER = re.compile(r"-?\d+(?:\.\d+)?")
+COMPARE = {0: lambda a, b: a == b, 1: lambda a, b: a != b, 2: lambda a, b: a < b,      # the cmp parameter
+           3: lambda a, b: a <= b, 4: lambda a, b: a > b, 5: lambda a, b: a >= b}
 
 
 def checker(project: Path) -> tuple[int, str]:
@@ -93,26 +98,73 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
     names = re.compile("|".join([*map(re.escape, timers), r"\b(?:Duration|CurrentTime|TotalTime|NormalizedProgress)\s*\("])
                        if timers or started else r"$^", re.I)
 
+    # A Timer started for 1 second, Regular, fires On timer once a second: the variable it takes 1 from counts down.
+    ticks = {str(a["parameters"].get("tag", "")) for a, _ in acts if a.get("id") == "start-timer"
+             and str(a.get("parameters", {}).get("duration", "")).strip() in {"1", "1.0"}
+             and str(a["parameters"].get("type", "")).lower() == "regular"}
+
+    def by_one(a: dict) -> bool:
+        p = a.get("parameters", {})
+        value = str(p.get("value", "")).strip()
+        return (a.get("id") == "subtract-from-eventvar" and value in ("1", "1.0")
+                or a.get("id") == "add-to-eventvar" and value in ("-1", "-1.0")
+                or a.get("id") == "set-eventvar-value"
+                and re.fullmatch(rf"{re.escape(str(p.get('variable', '')))}\s*-\s*1(?:\.0)?", value) is not None)
+
     ticking = [(ev, above, a) for ev, above in rows for a in ev.get("actions", [])
                if a.get("id") in ("subtract-from-eventvar", "add-to-eventvar", "set-eventvar-value") and names.search(values([a]))]
     per_second, seen = False, "no action writes a countdown variable"
     for ev, above, a in ticking:
         conds = conditions_over(ev, above)
         every = [c for c in conds if c.get("id") == "every-x-seconds"]
+        on_tick = any(c.get("id") == "on-timer" and str(c.get("parameters", {}).get("tag", "")) in ticks for c in conds)
         worded = "; ".join(c.get("id", "?") + "(" + values([c]) + ")" for c in conds) or "no condition"
         seen = f"{worded} -> {a['id']}({values([a])})"
-        if any(values([c]).strip() in ("1", "1.0") for c in every) or re.search(r"\bdt\b", values([a]), re.I):
+        if (any(values([c]).strip() in ("1", "1.0") for c in every) or re.search(r"\bdt\b", values([a]), re.I)
+                or on_tick and by_one(a)):
             per_second = True
             break
     if not per_second and started:
         per_second, seen = True, f"Timer started for {started[0]['parameters']['duration']} seconds, tag {sorted(tags)}"
     results.append((per_second, seen))
 
+    # A comparison of a countdown variable with a number has a direction: it holds once the countdown has
+    # run out and not while 30 seconds are left. Countdown > 0 reads the variable and restarts at once.
+    def runs_out(conds: list) -> bool | None:
+        """False when a comparison of a countdown variable with a number holds at 30 or never at 0;
+        None when no condition is such a comparison."""
+        verdicts = []
+        for c in conds:
+            p = c.get("parameters", {})
+            if c.get("id") == "compare-eventvar":
+                left, right = str(p.get("variable", "")), str(p.get("value", ""))
+            elif c.get("id") == "compare-two-values":
+                left, right = str(p.get("first-value", "")), str(p.get("second-value", ""))
+            else:
+                continue
+            left, right, op = left.strip(), right.strip(), COMPARE.get(p.get("comparison"))
+            if op is None:
+                continue
+            if left in timers and NUMBER.fullmatch(right):
+                at = {x: op(x, float(right)) for x in (30, 0, -0.5)}    # -0.5: a countdown that loses dt passes 0
+            elif right in timers and NUMBER.fullmatch(left):
+                at = {x: op(float(left), x) for x in (30, 0, -0.5)}
+            else:
+                continue
+            if c.get("isInverted"):
+                at = {x: not v for x, v in at.items()}
+            verdicts.append(not at[30] and (at[0] or at[-0.5]))
+        return all(verdicts) if verdicts else None
+
     restarts = [(ev, above) for ev, above in rows if any(a.get("id") == "restart-layout" for a in ev.get("actions", []))]
     hit = next((ev for ev, above in restarts if names.search(values(conditions_over(ev, above)))
+                and runs_out(conditions_over(ev, above)) is not False
                 or any(c.get("id") == "on-timer" and str(c.get("parameters", {}).get("tag", "")) in tags
                        for c in conditions_over(ev, above))), None)
+    backwards = [ev for ev, above in restarts if runs_out(conditions_over(ev, above)) is False]
     results.append((hit is not None, f"restart-layout under {values(hit['conditions'])}" if hit else
+                    f"restart-layout under {values(backwards[0]['conditions'])}, which holds while 30 seconds are "
+                    f"left or never at 0" if backwards else
                     f"{len(restarts)} event(s) restart the layout, none reads {timers or 'a countdown variable'}"
                     + (f" or is On timer {sorted(tags)}" if tags else "")))
 
@@ -200,20 +252,32 @@ def grade_fix_load_errors(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
+def system_text(locale: str, kind: str, ace: str) -> str:
+    """The display text of a System condition or action in one locale, without its markup."""
+    aces = json.loads((REPO / "data" / "c3-schemas" / locale / "plugins" / "system.json").read_text(encoding="utf-8"))[kind]
+    return re.sub(r"\[/?[bi]\]", "", next(a["display-text"] for a in aces if a["id"] == ace))
+
+
+# A run that answers in Chinese uses the zh-CN editor's wording: "事件 9", "仅触发一次", "等待 1 秒".
+ZH_TRIGGER_ONCE = system_text("zh-CN", "conditions", "trigger-once-while-true")
+ZH_SECONDS = system_text("zh-CN", "actions", "wait").split("{0}")[1].split()[0]
+EVENT_NUMBER = re.compile(r"(?:\bevent(?:\s+number)?|事件(?:编号)?)[\s:：*#`]*(\d+)", re.I)
+
+
 def grade_name_the_restart_event(run: Path) -> list[tuple[bool, str]]:
-    path = run / "outputs" / "answer.md"
-    text = path.read_text(encoding="utf-8") if path.exists() else ""
-    answer = re.split(r"^#+\s*commands?\s+run", text, flags=re.I | re.M)[0]
-    given = re.compile(r"\bevent(?:\s+number)?[\s:*#`]*(\d+)", re.I)
-    numbers = sorted(set(map(int, given.findall(answer))))
-    # 9 restarts; 8 is the group it sits in, and an answer may say so on a line that calls it the group.
-    beside = sorted({int(n) for line in answer.splitlines() if not re.search(r"\bgroup\b", line, re.I)
-                     for n in given.findall(line)} - {9})
-    results = [(9 in numbers and not beside, f"event numbers the answer gives: {numbers or 'none'}"
-                + (f"; as the event, not as its group: {beside}" if beside else ""))]
+    answer = answer_of(run)
+    numbers = [int(n) for n in EVENT_NUMBER.findall(answer)]
+    # 9 restarts and 8 is the group it sits in. The first number is the answer; a later one may name another
+    # event as context ("Setup (event 2) runs again"), and 8 may stand on a line that calls it the group.
+    as_event = {int(n) for line in answer.splitlines() if not re.search(r"\bgroup\b|组", line, re.I)
+                for n in EVENT_NUMBER.findall(line)}
+    results = [(numbers[:1] == [9] and 8 not in as_event, f"event numbers the answer gives, in order: {numbers or 'none'}"
+                + ("; 8 as the event, not as its group" if 8 in as_event else ""))]
+    # "仅" is "only"; answers drop it.
+    trigger_once = rf"trigger\s+once|{re.escape(ZH_TRIGGER_ONCE).replace('仅', '仅?')}"
     parts = {"Coin.Count = 0": re.search(r"coin\.count`?\s*=+\s*`?0", answer, re.I),
-             "Trigger once": re.search(r"trigger\s+once", answer, re.I),
-             "1 second wait": re.search(r"\b(1|one)[\s-]*(s\b|sec)", answer, re.I)}
+             "Trigger once": re.search(trigger_once, answer, re.I),
+             "1 second wait": re.search(rf"\b(1|one)[\s-]*(s\b|sec)|(1|一)\s*{ZH_SECONDS}", answer, re.I)}
     results.append((all(parts.values()), "stated: " + ", ".join(k for k, v in parts.items() if v)
                     + ("; missing: " + ", ".join(k for k, v in parts.items() if not v) if not all(parts.values()) else "")))
     results.append(unchanged(run))
@@ -1193,6 +1257,27 @@ def grade_platform_state_in_chinese(run: Path) -> list[tuple[bool, str]]:
             unchanged(run)]
 
 
+def grade_design_a_catch_game(run: Path) -> list[tuple[bool, str]]:
+    project = run / "project"
+    design = project / "tools" / "design.json"
+    if design.exists():
+        p = subprocess.run([sys.executable, str(SKILL / "scripts" / "check_design.py"), str(design), "--project",
+                            str(project), "--rag", str(REPO), "--limit", "0"],
+                           capture_output=True, text=True, encoding="utf-8", env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+        lines = (p.stdout + p.stderr).strip().splitlines()
+        checked = (p.returncode == 0, f"exit {p.returncode}: {lines[-1] if lines else 'no output'}")
+        try:
+            example = (json.loads(design.read_text(encoding="utf-8")).get("reference") or {}).get("example")
+        except (ValueError, AttributeError):
+            example = None
+    else:
+        checked, example = (False, "no tools/design.json"), None
+    ids = {path.stem for path in (REPO / "data" / "c3-examples" / "en-US").glob("*.json")}
+    return [checked,
+            (isinstance(example, str) and example in ids, f"reference.example: {example!r}"),
+            unchanged(run, ("tools/",))]
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
@@ -1203,7 +1288,8 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "fix-turn-flip": grade_fix_turn_flip, "two-player-turns": grade_two_player_turns,
            "two-player-turn-limit": grade_two_player_turns, "find-a-drag-example": grade_find_a_drag_example,
            "script-shift-and-edges": grade_script_shift_and_edges,
-           "platform-state-in-chinese": grade_platform_state_in_chinese}
+           "platform-state-in-chinese": grade_platform_state_in_chinese,
+           "design-a-catch-game": grade_design_a_catch_game}
 
 
 METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")
@@ -1246,10 +1332,12 @@ def main() -> int:
     for name, case in CASES.items():
         for run in sorted(p for p in (iteration / name).glob("*") if (p / "project").is_dir()):
             reason = (run / "void.txt").read_text(encoding="utf-8").strip() if (run / "void.txt").exists() else None
+            wrote = [w["path"] for w in optional_json(run / "trace.json").get("outside", [])]
+            reason = reason or (f"it wrote outside its folder: {', '.join(dict.fromkeys(wrote))}" if wrote else None)
             if reason:
                 (run / "grading.json").write_text(json.dumps({"void": reason}, indent=2) + "\n", encoding="utf-8")
                 void.append({"run": f"{name}/{run.name}", "reason": reason})
-                print(f"{name}/{run.name}: void, not scored")
+                print(f"{name}/{run.name}: void, not scored" + (f": {reason}" if wrote else ""))
                 continue
             graded = [{"text": text, "passed": ok, "evidence": evidence}
                       for text, (ok, evidence) in zip(case["assertions"], GRADERS[name](run), strict=True)]

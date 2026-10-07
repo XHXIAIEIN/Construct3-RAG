@@ -59,6 +59,13 @@ Sources and the rule for adding an entry are in the index,
   `-1`. To wrap an index that steps backwards, use `(n % max + max) % max`.
   [manual: project-primitives/events/expressions.md "%"; cheat sheet "Useful
   expressions and formulas", Wrapping around a number]
+- `%` is applied before `*`, so `a * b % c` is `a * (b % c)`. The test
+  `loopindex("i") * 100 % 1000 = 0` reads `loopindex("i") * 100 = 0` and
+  holds for no tick of a loop from 1. Put the product in parentheses:
+  `(loopindex("i") * 100) % 1000 = 0`. [observed in a minimal project,
+  stable editor preview, 2026-10-07: a loop drew a line 4 px wide where the
+  test held and 2 px wide otherwise; with the parentheses the wide lines
+  stood at 1000, 2000 and 3000, and without them every line was 2 px wide]
 - There is no null or undefined. An expression is a number or a text, and a
   missing value reads as the number 0. `Array.At` outside the array,
   `Dictionary.Get` of a key that is not there, `Functions.ReturnValue` when
@@ -98,3 +105,13 @@ Sources and the rule for adding an entry are in the index,
   may go past it). A texture value of -1 leaves the texture position
   unchanged. [manual: plugin-reference/common-features/common-actions.md "Set
   mesh point"]
+- The JSON plugin reads a path as keys separated by dots, so a key with a
+  dot in it, `"menu.title"`, is looked for as `menu` and then `title`
+  inside it, and *Has key* fails. Escape the dot in the path with a
+  backslash, `my\.key`, and a backslash in a key with two, `my\\key`. An
+  expression string has no escape character of its own, only the doubled
+  quote, so `"my\.key"` is written as it is. Keys without dots need none
+  of this, and a Dictionary reads every key whole. [manual:
+  plugin-reference/json.md "Escaping",
+  project-primitives/events/expressions.md on double quotes; observation in
+  a studied project, 2026-10-06]

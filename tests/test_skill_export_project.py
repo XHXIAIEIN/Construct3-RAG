@@ -44,6 +44,31 @@ def test_export_bumps_the_last_export_and_carries_a_hand_edit(project):
     assert not (project / ".build").exists()                                             # a dry run writes nothing
 
 
+def test_export_refuses_a_folder_it_would_empty_of_other_files(project, tmp_path):
+    """The export replaces everything in --to, so the project, a folder above it, a drive's root, a
+    file and a folder of other files are refused before the browser starts, and stay as they were;
+    a new or empty folder and an earlier export are taken (the audit of 2026-10-07 emptied a
+    temporary project through --to .)."""
+    other = tmp_path / "notes"
+    other.mkdir()
+    (other / "todo.txt").write_text("keep", encoding="utf-8")
+    a_file = tmp_path / "a.txt"
+    a_file.write_text("keep", encoding="utf-8")
+    for to in (".", "..", str(other), str(a_file), str(Path(project.resolve().anchor))):
+        code, out = run(project, SCRIPT, "--to", to, "--dry-run")
+        assert code == 2 and "the export replaces everything in the folder" in out, (to, out)
+    assert (other / "todo.txt").read_text(encoding="utf-8") == "keep" and (project / "project.c3proj").is_file()
+    earlier, empty = project / "export" / "web", tmp_path / "empty"
+    earlier.mkdir(parents=True)
+    (earlier / "data.json").write_text(json.dumps({"project": ["Coins", "1.0.0.0"]}), encoding="utf-8")
+    empty.mkdir()
+    for to in ("export/web", str(empty), str(tmp_path / "new")):
+        code, out = run(project, SCRIPT, "--to", to, "--dry-run")
+        assert code == 0 and "would export" in out, (to, out)
+    export = load(SKILL / "scripts")
+    assert export.refused_folder(tmp_path / "game", Path(tmp_path.anchor)) == "it is the root of a drive"
+
+
 def test_export_hands_the_editor_the_version_to_export(project):
     """The .c3p the editor opens carries the version to export with Auto-increment version off, so
     that the export carries it unchanged, and Use worker Auto; it holds only the
@@ -175,3 +200,58 @@ def test_export_reads_where_the_runtime_starts(tmp_path):
         assert export.exported_worker(tmp_path) is expected
     main.write_text("", encoding="utf-8")
     assert export.exported_worker(tmp_path) is None
+
+
+def zipped_export(version: str) -> bytes:
+    data = io.BytesIO()
+    with zipfile.ZipFile(data, "w") as z:
+        z.writestr("data.json", json.dumps({"project": ["Coins", version]}))
+        z.writestr("index.html", version)
+    return data.getvalue()
+
+
+def test_a_failed_unpack_keeps_the_earlier_export(monkeypatch, tmp_path):
+    """The new export is extracted beside the folder and checked before it takes the folder's place,
+    so an extraction that fails, a version that differs and a swap that fails leave the earlier export
+    as it was (the audit of 2026-10-07 lost it to a failed extraction)."""
+    export = load(SKILL / "scripts")
+    web = tmp_path / "web"
+    web.mkdir()
+    (web / "data.json").write_text(json.dumps({"project": ["Coins", "1.0.0.0"]}), encoding="utf-8")
+    (web / "index.html").write_text("1.0.0.0", encoding="utf-8")
+    before = {f.name: f.read_bytes() for f in web.iterdir()}
+
+    def kept() -> bool:
+        return {f.name: f.read_bytes() for f in web.iterdir()} == before and sorted(tmp_path.iterdir()) == [web]
+
+    with pytest.raises(export.Stop, match="not 1.0.1.0"):
+        export.unpack(zipped_export("1.0.2.0"), web, "1.0.1.0")
+    assert kept()
+    with monkeypatch.context() as m:
+        def fail(*_):
+            raise OSError("disk full")
+        m.setattr(zipfile.ZipFile, "extractall", fail)
+        with pytest.raises(export.Stop, match="disk full.*earlier export there is left as it was"):
+            export.unpack(zipped_export("1.0.1.0"), web, "1.0.1.0")
+    assert kept()
+    with monkeypatch.context() as m:
+        rename = Path.rename
+
+        def fail_new(self, target):
+            if self.name == "web.new":
+                raise OSError("in use")
+            return rename(self, target)
+        m.setattr(Path, "rename", fail_new)
+        with pytest.raises(export.Stop, match="in use"):
+            export.unpack(zipped_export("1.0.1.0"), web, "1.0.1.0")
+    assert kept()
+    export.unpack(zipped_export("1.0.1.0"), web, "1.0.1.0")
+    assert (web / "index.html").read_text(encoding="utf-8") == "1.0.1.0" and sorted(tmp_path.iterdir()) == [web]
+    export.unpack(zipped_export("1.0.2.0"), tmp_path / "first", "1.0.2.0")     # no earlier export
+    assert (tmp_path / "first" / "index.html").read_text(encoding="utf-8") == "1.0.2.0"
+    mine = tmp_path / "first.old"
+    mine.mkdir()
+    (mine / "notes.txt").write_text("keep", encoding="utf-8")
+    with pytest.raises(export.Stop, match="holds no Web export"):
+        export.unpack(zipped_export("1.0.3.0"), tmp_path / "first", "1.0.3.0")
+    assert (mine / "notes.txt").is_file() and (tmp_path / "first" / "index.html").read_text(encoding="utf-8") == "1.0.2.0"

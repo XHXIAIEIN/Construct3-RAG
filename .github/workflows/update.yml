@@ -7,12 +7,18 @@ on:
   workflow_dispatch:  # manual trigger
 
 jobs:
-  check-and-update:
+  update:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     permissions:
       contents: write
       pull-requests: write
       actions: write
+    outputs:
+      pr: ${{ steps.pr.outputs.pull-request-number }}
+      sha: ${{ steps.pr.outputs.pull-request-head-sha }}
+      needs_review: ${{ steps.diff.outputs.needs_review }}
+      guides_changed: ${{ steps.guides.outputs.changed }}
 
     steps:
       - uses: actions/checkout@v5
@@ -20,11 +26,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      # The lookup-only requirements: src.settings imports the lookup package,
-      # which needs jieba.
-      - name: Install lookup-only deps
-        run: pip install -r src/requirements.txt
 
       # Scirra's guides are pages, not release data: fetched every week and
       # written only when their text changed. A failed fetch keeps the
@@ -40,22 +41,13 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
-      # data/c3-schemas/_index.json records the release data/ holds.
+      # data/c3-schemas/_index.json records the release data/ holds. A check
+      # that cannot read the CDN writes no output, so no data step runs; the
+      # guides' pull request still opens, and the last step fails the job.
       - name: Check for new version
         id: check
-        run: |
-          python -c "
-          import sys
-          sys.path.insert(0, '.')
-          from src.settings import load_settings
-          from src.ingest.c3_fetcher import latest_stable_version
-          current = load_settings().schema.version
-          latest = latest_stable_version()
-          outputs = [f'current={current}', f'latest={latest}', f'changed={str(latest != current).lower()}']
-          print(*outputs, sep=chr(10))
-          with open('$GITHUB_OUTPUT', 'a') as f:
-              print(*outputs, sep=chr(10), file=f)
-          " || echo "changed=false" >> $GITHUB_OUTPUT
+        continue-on-error: true
+        run: python scripts/check_c3_version.py --github-output
 
       - name: Fetch new data
         if: steps.check.outputs.changed == 'true'
@@ -93,27 +85,84 @@ jobs:
           branch: ${{ steps.check.outputs.changed == 'true' && format('c3-{0}', steps.check.outputs.latest) || 'c3-guides' }}
           delete-branch: true
 
-      # A release that touches what the repository quotes waits for a person,
-      # and so does a changed guide.
-      - name: Enable auto-merge for PR
-        if: steps.pr.outputs.pull-request-number != '' && steps.diff.outputs.needs_review != 'true' && steps.guides.outputs.changed != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+      - name: Fail when the version check failed
+        if: steps.check.outcome == 'failure'
         run: |
-          # Wait for status checks to complete (max 10 minutes)
-          for i in {1..60}; do
-            STATUS=$(gh pr checks $PR_NUMBER --json state --jq '.[0].state // "pending"' 2>/dev/null || echo "pending")
-            if [ "$STATUS" = "PASS" ]; then
-              echo "✓ All checks passed"
-              break
-            elif [ "$STATUS" = "FAIL" ]; then
-              echo "✗ Checks failed, skipping auto-merge"
+          echo "The version check could not read the CDN; see its step's log. data/ was not refreshed."
+          exit 1
+
+  # A pull request opened with GITHUB_TOKEN starts no other workflow, so the
+  # checks of AGENTS.md run here, on the pull request's commit, through the
+  # same workflow that checks every push and pull request.
+  checks:
+    needs: update
+    if: always() && needs.update.outputs.pr != ''
+    permissions:
+      contents: read
+    uses: ./.github/workflows/checks.yml
+    with:
+      ref: ${{ needs.update.outputs.sha }}
+
+  # The check report goes into the pull request's body: a failure's log and
+  # every skipped test. A release that touches what the repository quotes
+  # waits for a person, and so does a changed guide or a failed check. Other
+  # checks on the pull request, if any, must all pass: a failure, a cancel,
+  # or one still pending after 10 minutes stops the merge.
+  report:
+    needs: [update, checks]
+    if: always() && needs.update.outputs.pr != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      PR_NUMBER: ${{ needs.update.outputs.pr }}
+    steps:
+      - name: Add the check report to the pull request
+        env:
+          REPORT: ${{ needs.checks.outputs.report }}
+          RESULT: ${{ needs.checks.result }}
+        run: |
+          {
+            if [ "$RESULT" != success ] && [ -z "$REPORT" ]; then
+              echo "The checks did not finish ($RESULT), so this pull request waits for a person."
+              echo
+            fi
+            if [ -n "$REPORT" ]; then echo "$REPORT"; echo; fi
+            gh pr view "$PR_NUMBER" --json body --jq .body
+          } > "$RUNNER_TEMP/pr-body.md"
+          gh pr edit "$PR_NUMBER" --body-file "$RUNNER_TEMP/pr-body.md"
+
+      - name: Enable auto-merge for PR
+        if: needs.checks.result == 'success' && needs.update.outputs.needs_review != 'true' && needs.update.outputs.guides_changed != 'true'
+        run: |
+          for i in $(seq 1 60); do
+            # gh exits non-zero while a check is pending, and when there is none
+            OUT=$(gh pr checks "$PR_NUMBER" --json name,bucket 2>&1) || true
+            if ! echo "$OUT" | jq -e 'type == "array"' > /dev/null 2>&1; then
+              case "$OUT" in
+                *"no checks reported"*) OUT='[]' ;;
+                *) echo "Could not read the checks: $OUT"; exit 1 ;;
+              esac
+            fi
+            FAILED=$(echo "$OUT" | jq -r '[.[] | select(.bucket == "fail" or .bucket == "cancel") | .name] | join(", ")')
+            PENDING=$(echo "$OUT" | jq '[.[] | select(.bucket == "pending")] | length')
+            if [ -n "$FAILED" ]; then
+              echo "Checks failed: $FAILED; not merging"
               exit 1
             fi
-            echo "Waiting for checks... ($i/60)"
+            if [ "$PENDING" = "0" ]; then
+              echo "Checks on the pull request: $(echo "$OUT" | jq length), none failed or pending"
+              break
+            fi
+            if [ "$i" = "60" ]; then
+              echo "$PENDING checks still pending after 10 minutes; not merging"
+              exit 1
+            fi
+            echo "Waiting for $PENDING checks... ($i/60)"
             sleep 10
           done
-
-          # Merge PR with squash strategy
-          gh pr merge $PR_NUMBER --auto --squash || echo "Could not enable auto-merge (may already be merged)"
+          gh pr merge "$PR_NUMBER" --auto --squash

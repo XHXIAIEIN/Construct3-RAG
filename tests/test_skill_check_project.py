@@ -321,31 +321,52 @@ def test_key_written_as_a_name(project):
     assert code == 1 and "should be a key code" in out and "expected finite number" in out
 
 
-@pytest.mark.parametrize("value, refused", [
-    ("Pop", False), ("POP", False), ('"Pop"', False), ("0", True), ("Pop.webm", True), ("Popp", True)])
-def test_a_sound_is_named_as_a_sound_or_music_file(project, value, refused):
-    """The editor opened a copy of the audio-scheduling example with its sound written SFX1 for sfx1.webm, and with
-    it in inner quotes, and refused "0", "sfx1.webm" and a name it has not: "missing file '0'"."""
+def add_audio(project: Path, stems: list[str]) -> None:
+    """The Audio object and one sound file per stem, listed in project.c3proj."""
     (project / "objectTypes" / "Audio.json").write_text(json.dumps({
         "name": "Audio", "plugin-id": "Audio", "sid": 3,
         "singleglobal-inst": {"type": "Audio", "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
     (project / "sounds").mkdir(exist_ok=True)
-    (project / "sounds" / "pop.webm").write_bytes(b"")
+    for stem in stems:
+        (project / "sounds" / f"{stem}.webm").write_bytes(b"")
 
     def project_file(p):
         p["objectTypes"]["items"].append("Audio")
         p["usedAddons"].append({"type": "plugin", "id": "Audio", "name": "Audio", "author": "Scirra", "bundled": False})
         p.setdefault("rootFileFolders", {})["sound"] = {"items": [
-            {"name": "pop.webm", "type": "audio/webm; codecs=opus", "sid": 5, "file-info": {"purpose": "none"}}],
-            "subfolders": []}
+            {"name": f"{stem}.webm", "type": "audio/webm; codecs=opus", "sid": 500 + i, "file-info": {"purpose": "none"}}
+            for i, stem in enumerate(stems)], "subfolders": []}
     edit(project, "project.c3proj", project_file)
-    out = findings(project, lambda s: events(s)["add_score"]["actions"].append(
-        {"id": "play", "objectClass": "Audio", "sid": 6, "parameters": {
-            "audio-file": value, "loop": "not-looping", "volume": "0", "stereo-pan": "0", "tag-optional": '""'}}))
+
+
+def play(value) -> dict:
+    return {"id": "play", "objectClass": "Audio", "sid": 6, "parameters": {
+        "audio-file": value, "loop": "not-looping", "volume": "0", "stereo-pan": "0", "tag-optional": '""'}}
+
+
+@pytest.mark.parametrize("value, refused", [
+    ("Pop", False), ("POP", False), ('"Pop"', False), ("0", True), ("Pop.webm", True), ("Popp", True)])
+def test_a_sound_is_named_as_a_sound_or_music_file(project, value, refused):
+    """The editor opened a copy of the audio-scheduling example with its sound written SFX1 for sfx1.webm, and with
+    it in inner quotes, and refused "0", "sfx1.webm" and a name it has not: "missing file '0'"."""
+    add_audio(project, ["pop"])
+    out = findings(project, lambda s: events(s)["add_score"]["actions"].append(play(value)))
     assert ("is not a sound or music file of the project" in out) == refused, out
     if refused:
         assert "Write the file's name without its extension; " + ("the project has pop" if value == "0"
                                                                     else "closest: pop") in out, out
+
+
+def test_a_sound_written_as_a_path_object_is_read_like_the_string(project):
+    """A project saved by r495 writes the parameter as {"path": "Flash"}; the official examples write "Flash".
+    A user's project with 69 sounds had all 50 play actions reported missing, 2026-10-06."""
+    stems = [f"s{i:02d}" for i in range(10)]
+    add_audio(project, stems)
+    assert "is not a sound or music file" not in findings(
+        project, lambda s: events(s)["add_score"]["actions"].append(play({"path": "S03"})))
+    out = findings(project, lambda s: events(s)["add_score"]["actions"].append(play({"path": "0"})))
+    assert "audio-file={'path': '0'} is not a sound or music file of the project" in out, out
+    assert "the project has s00, s01, s02, s03, s04, s05, s06, s07 and 2 more" in out, out
 
 
 def set_var(name: str, value: str, sid: int = 51) -> dict:
@@ -1321,6 +1342,39 @@ def test_a_flip_on_a_timeout_is_told_to_set_the_time_back(project, actions, told
     assert (len(said) == 1 and reset in said[0]) if told else not said, out
 
 
+PHASE_0 = cond("compare-eventvar", params={"variable": "phase", "comparison": 0, "value": "0"})
+UNDONE = "same trigger as an earlier event in its list and tests "
+FRAME_IS = {0: cond("compare-animation-frame", "Coin", {"comparison": 0, "number": "0"}),
+            1: cond("compare-animation-frame", "Coin", {"comparison": 0, "number": "1"})}
+
+
+def set_frame(n: int) -> dict:
+    return {"id": "set-animation-frame", "objectClass": "Coin", "sid": 60, "parameters": {"frame-number": str(n)}}
+
+
+@pytest.mark.parametrize("rows, said", [
+    # a switch written as two events of the same trigger: the second sees what the first set
+    ([block([TAPPED, PHASE_0], [set_var("phase", "1", 54)]), block([TAPPED, PHASE_IS], [set_var("phase", "0", 55)])],
+     UNDONE + "phase"),
+    ([block([TAPPED, FRAME_IS[0]], [set_frame(1)]), block([TAPPED, FRAME_IS[1]], [set_frame(0)])],
+     UNDONE + "coin.animationframe"),
+    # the cases as sub-events of one trigger, the second Else; a wait before the change; another property
+    ([block([TAPPED], [], [block([PHASE_0], [set_var("phase", "1", 54)]), block([cond("else")], [set_var("phase", "0", 55)])])],
+     None),
+    ([block([TAPPED, PHASE_0], [{"id": "wait", "objectClass": "System", "sid": 56, "parameters": {"seconds": "0.5"}},
+                                set_var("phase", "1", 54)]), block([TAPPED, PHASE_IS], [set_var("phase", "0", 55)])], None),
+    ([block([TAPPED, FRAME_IS[0]], [{"id": "set-x", "objectClass": "Coin", "sid": 57, "parameters": {"x": "0"}}]),
+      block([TAPPED, FRAME_IS[1]], [set_frame(0)])], None),
+])
+def test_a_second_event_of_the_same_trigger_that_tests_what_the_first_changed_is_named(project, rows, said):
+    """Events of one trigger run in order on the same input, so the second sees what the first set and sets it
+    back: the light switch a local model wrote (2026-10-06) never turned on. The examples write the cases as
+    sub-events of one trigger with Else; of the 524 official examples one is named, where the first event starts
+    a path and the second waits for it to finish."""
+    out = findings(project, side_and_phase(rows))
+    assert_one_warning(out, "same trigger as an earlier event", said)
+
+
 @pytest.mark.parametrize("ace_id, flipped", [("on-animation-finished", False), ("is-animation-playing", True)])
 def test_a_condition_without_a_schema_is_a_trigger_when_its_id_starts_with_on(project, ace_id, flipped):
     """A condition of an addon without a schema counts as a trigger when its id starts with on-, as Scirra's
@@ -1459,7 +1513,7 @@ def test_a_function_is_reached_as_its_return_type_says(project, returns, use, sa
 
 @pytest.mark.parametrize("text, said", [
     ("", "Empty expression"), ('"Score: ', "String missing finishing"), ("1 \\ 2", "Unknown character"),
-    ('"a\\b"', None),
+    ('"a\\b"', None), ("[1, 2] = 3", "Expressions have no lists"), ('"[1]"', None),
 ])
 def test_text_literals_as_the_editor_parses_them(project, text, said):
     act = {"id": "set-text", "objectClass": "ScoreText", "sid": 4, "parameters": {"text": text}}
@@ -1563,11 +1617,11 @@ def test_committed_schemas_mark_what_the_editor_treats_as_a_trigger(rel, ace_id)
         assert entry.get("isTrigger") is True, (locale, rel, ace_id)
 
 
-def test_ok_line_names_the_scripts_the_check_does_not_read(project):
+def test_ok_line_names_the_scripts_the_check_does_not_run(project):
     from tests.test_skill_print_sheet import add_script
     add_script(project, 4)
     code, out = tool(project, "check_project")
-    assert code == 0 and "; scripts, which this check does not read: scripts/main.js (4 lines);" in out, out
+    assert code == 0 and "; scripts, which this check does not run or type-check: scripts/main.js (4 lines);" in out, out
     assert re.search(r"; when you write or change a script, look up each API it calls: "
                      r"python \S*lookup_script_api\.py NAME; next,", out), out
     # A review reads the project and changes no script
@@ -1575,7 +1629,55 @@ def test_ok_line_names_the_scripts_the_check_does_not_read(project):
     assert code == 0 and "scripts/main.js (4 lines)" in out and "lookup_script_api" not in out, out
 
 
+def test_ok_line_names_a_layout_size_written_into_a_script(project):
+    """A script that writes the sizes of a layout as numbers gets a clause with what to read at run
+    time. Sizes in a comment or a string do not count, and an instance's size is named only beside
+    its layout's."""
+    from tests.test_skill_print_sheet import add_script
+    add_script(project)
+    edit(project, "layouts/Game.json", lambda layout: layout.update(width=1280, height=1024))
+    layout = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
+    # The smallest instance that is not square, so that it is not a background as big as a layout
+    inst = min((i for layer in layout["layers"] for i in layer["instances"]
+                if i.get("world", {}).get("width") not in (None, i["world"].get("height"))),
+               key=lambda i: i["world"]["width"] * i["world"]["height"])
+    w, h = inst["world"]["width"], inst["world"]["height"]
+
+    def ok_line(script: str, *args: str) -> str:
+        (project / "scripts" / "main.js").write_text(script, encoding="utf-8")
+        code, out = check(project, *args)
+        assert code == 0, out
+        return out.splitlines()[-1]
+
+    # Sizes in a comment or a string do not count
+    assert "as numbers" not in ok_line('// the layout is 1280 x 1024\nconst label = "1024";\nconst w = 1280;')
+    line = ok_line("const w = 1280, h = 1024;")
+    assert ("; scripts/main.js writes these sizes as numbers: layout 'Game' (width 1280, height 1024). Replace them "
+            "with runtime.layout.width and runtime.layout.height. A number copied from the layout is wrong when the "
+            "layout is resized; when you write or change a script") in line, line
+    # An instance's size is named beside its layout's
+    line = ok_line(f"const w = 1280, h = 1024, pw = {w}, ph = {h};")
+    assert (f"layout 'Game' (width 1280, height 1024), {inst['type']} in it (width {w:.10g}, height {h:.10g}). "
+            f"Replace the layout's numbers with runtime.layout.width and runtime.layout.height, and each object's "
+            f"numbers with the width and height of its instance. A number copied from the layout is wrong when the "
+            f"layout or an instance is resized;") in line, line
+    assert "as numbers" not in ok_line(f"const pw = {w}, ph = {h};")
+    # A review changes no script
+    assert "as numbers" not in ok_line("const w = 1280, h = 1024;", "--review")
+    # A square layout needs its side written twice
+    edit(project, "layouts/Game.json", lambda layout: layout.update(width=800, height=800))
+    assert "as numbers" not in ok_line("clamp(y, 200, 800);")
+    assert "layout 'Game' (width 800, height 800)" in ok_line("const w = 800, h = 800;")
+
+
 def test_an_invalid_project_property_is_named_in_the_editor_language(project):
     edit(project, "project.c3proj", lambda p: p["properties"].update(fullscreenMode="scale"))
     code, out = check(project, "--locale", "zh-CN")
     assert code == 1 and "fullscreenMode (缩放模式) 'scale' is not one of letterbox-scale (比例缩放)" in out, out
+
+
+def test_offline_says_the_clone_was_not_compared(built):
+    """CONSTRUCT3_RAG_OFFLINE=1, which every run here sets, leaves a trace in the output."""
+    code, out = check(built)
+    assert code == 0, out
+    assert f"note: CONSTRUCT3_RAG_OFFLINE is 1, so the clone at {REPO} was not compared with its upstream" in out

@@ -6,7 +6,7 @@ folder of its reader.
 | Folder | Reader | Contents |
 |--------|--------|----------|
 | `guide/` | People and agents using the data or API | `quick-start.md`, `api-reference.md`, `data-format.md` |
-| `dev/` | People and agents changing the code | `architecture.md`, `data-pipeline.md`, `published-game-analysis.md` |
+| `dev/` | People and agents changing the code | `architecture.md`, `data-pipeline.md`, `published-game-analysis.md`, `skills-audit.md` |
 | `decisions/` | Anyone asking why something is the way it is | one record per decision |
 
 `guide/` and `dev/` describe current behavior and change with the code that
@@ -45,6 +45,7 @@ Data and schemas:
 | `version-from-data-manifest.md` | Why the Construct release is read from `data/` and not from a setting |
 | `cdn-release-directory.md` | Which CDN directory a release is fetched from, and why the root is never read for it |
 | `release-schema-diff.md` | What the update pull request reports about a release, and when it waits for a person instead of merging itself |
+| `update-fails-visibly.md` | Why a failed version check, a wrong CDN body or a short export fails the update and leaves `data/` as committed |
 | `lf-line-endings.md` | Why every text file is LF in the repository and in every checkout, the CDN's TypeScript definitions included |
 
 The project skill and the prompts:
@@ -68,6 +69,7 @@ The project skill and the prompts:
 | `published-game-visual-language.md` | Which visual, motion, camera and pacing rules repeated across published Construct games, and which of them the template took |
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
+| `layout-by-name.md` | Why a generated screen is laid out by names, a button with its label, named bands and a main object sized to the stage, with the positions computed and checked as numbers |
 | `art-from-the-image-tool.md` | Why a generated game's art comes from the agent's image tool through `art()` and `prepare_art.py`, and is not drawn in code |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |
 | `skill-and-plugin-names.md` | The names of the skill and the Claude Code plugin |

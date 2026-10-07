@@ -65,3 +65,11 @@ Sources and the rule for adding an entry are in the index,
   Scirra/Construct-bugs#3554 (2019) and #5178 (2021); runtime: exported
   c3runtime.js r503, `EventSheet.Run` calls `FlushPendingInstances()` after
   each top-level event, `_ExecuteTrigger` after the outermost trigger]
+- When a hierarchy is created, the order of its instances' *On created* is
+  not fixed. In one instance's *On created*, the others may not have run
+  theirs yet, so code there cannot rely on how the rest of the hierarchy is
+  set up. *On hierarchy ready* fires on the root once every instance of the
+  hierarchy is created and has run *On created*. Initialise the hierarchy
+  there. [manual: plugin-reference/common-features/common-conditions.md "On
+  hierarchy ready"; scripting-reference/object-interfaces/iworldinstance.md
+  "hierarchyready"; none of the 524 official examples uses the condition]

@@ -8,6 +8,7 @@ Not a command. check_project.py, print_sheet.py and lookup_ace.py import it
 from the folder they sit in.
 """
 import argparse
+import ast
 import difflib
 import hashlib
 import json
@@ -50,6 +51,12 @@ NUMBERED = ("block", "group", "function-block", "custom-ace-block", "script")
 # A text literal of an expression: a quote inside it is written twice, "say ""hi""".
 STRING_LITERAL = re.compile(r'"(?:[^"]|"")*"')
 
+# A comment or a string in a JavaScript or TypeScript file.
+# The leftmost match wins, so // inside a string is not a comment.
+SCRIPT_TEXT = re.compile(r"//[^\n]*|/\*.*?\*/|\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`", re.S)
+# A number written as a literal, not the digits of a name, a hex number or an exponent.
+SCRIPT_NUMBER = re.compile(r"(?<![\w.$])(?:\d+(?:\.\d+)?|\.\d+)(?![\w.])")
+
 # What a deprecated addon or ACE is, in the words of the Addon SDK reference
 # (SetIsDeprecated, isDeprecated, is-deprecated).
 DEPRECATED = "Construct 3 no longer offers it and keeps it only so that old projects open"
@@ -75,7 +82,7 @@ class Findings:
     def __init__(self) -> None:
         self.errors: list[str] = []
         self.warnings: list[str] = []
-        self.style: list[tuple[str, str]] = []      # (kind, message), kind one of check_project.check_style's or a trap's: pathfinding, timer, control, count, picked, flip, flip-once
+        self.style: list[tuple[str, str]] = []      # (kind, message), kind one of check_project.check_style's or a trap's: pathfinding, timer, control, count, picked, flip, flip-once, undone
 
     def err(self, msg: str) -> None:
         if msg not in self.errors:
@@ -275,6 +282,37 @@ def siblings_folder(rag: Path) -> Path:
     return main.parent.parent if main and main.name == ".git" else clone.parent
 
 
+EXAMPLES_CLONE = "Construct-Example-Projects"
+EXAMPLES_URL = "https://github.com/Scirra/Construct-Example-Projects"
+
+
+def examples_clone_command(rag: Path | None) -> str:
+    """The command that puts the examples clone where the scripts look for it: the clone's bootstrap.py,
+    or the git clone itself from a plugin that holds no bootstrap.py."""
+    if rag is None:
+        return "python <Construct3-RAG>/scripts/bootstrap.py"
+    bootstrap = clone_root(rag) / "scripts" / "bootstrap.py"
+    if bootstrap.is_file():
+        return f"python {bootstrap.as_posix()}"
+    return f'git clone --depth 1 {EXAMPLES_URL} "{(siblings_folder(rag) / EXAMPLES_CLONE).as_posix()}"'
+
+
+def missing_example(folder: Path, override: str | None) -> str | None:
+    """Why --project names no project when it is a folder of the examples clone that is not there, with
+    the next step: the clone to get, or the search that lists the examples. None for any other folder."""
+    parts = [p.lower() for p in folder.parts]
+    if folder.exists() or EXAMPLES_CLONE.lower() not in parts:
+        return None
+    clone = Path(*folder.parts[:parts.index(EXAMPLES_CLONE.lower()) + 1])
+    if clone.is_dir():
+        return (f"no example project at {folder}; python {(SKILL_DIR / 'scripts' / 'search_guides.py').as_posix()} "
+                f"WORD lists the examples that hold a word, each with the folder to read")
+    rag = locate_rag(None, override)[0]
+    into = f" into {siblings_folder(rag) / EXAMPLES_CLONE}" if rag else ""
+    return (f"no example project at {folder}: the {EXAMPLES_CLONE} clone is not at {clone}; "
+            f"{examples_clone_command(rag)} clones it{into}")
+
+
 def locate_rag(root: Path | None, override: str | None) -> tuple[Path | None, list[str]]:
     """The clone or None, and the places tried before it; for a script that runs without a clone."""
     tried = []
@@ -393,14 +431,21 @@ def git_out(rag: Path, *args: str, wait: float = 5) -> str | None:
     return p.stdout.strip() if p.returncode == 0 else None
 
 
+def offline() -> bool:
+    """CONSTRUCT3_RAG_OFFLINE=1: the clone is neither fetched nor compared with its upstream. Only "1"
+    sets it, so that 0 or an empty value keeps the check."""
+    return os.environ.get("CONSTRUCT3_RAG_OFFLINE") == "1"
+
+
 def clone_behind(rag: Path) -> tuple[str, bool] | None:
     """A sentence when the clone's branch is behind its upstream, and whether the
     agent updates it. A clone with no commits or changes of its own fast-forwards:
-    the sentence gives the pull and, for a copy of the skill, its refresh. A clone
-    that holds the user's work is the user's to update. The clone is fetched at most
-    every FETCH_EVERY seconds; offline, or with no upstream, nothing is said."""
+    the sentence gives the fast-forward to the fetched upstream, which needs no network,
+    and, for a copy of the skill, its refresh. A clone that holds the user's work is
+    the user's to update. The clone is fetched at most every FETCH_EVERY seconds;
+    offline(), or with no upstream, nothing is said."""
     rag = clone_root(rag)
-    if os.environ.get("CONSTRUCT3_RAG_OFFLINE") or not (rag / ".git").exists() or not shutil.which("git"):
+    if offline() or not (rag / ".git").exists() or not shutil.which("git"):
         return None
     upstream = git_out(rag, "rev-parse", "--abbrev-ref", "@{u}")
     if not upstream:        # detached, or a branch that tracks nothing
@@ -431,7 +476,7 @@ def clone_behind(rag: Path) -> tuple[str, bool] | None:
     if own:
         return f"{lag}, and it holds {' and '.join(own)} of its own; tell the user, who decides how to update it", False
     refresh = refresh_command(rag)
-    return (f"{lag}, so the scripts lack the fixes and checks of those commits. Run git -C \"{rag}\" pull --ff-only, "
+    return (f"{lag}, so the scripts lack the fixes and checks of those commits. Run git -C \"{rag}\" merge --ff-only {upstream}, "
             f"{f'then {refresh}, ' if refresh else ''}then run this check again"), True
 
 
@@ -541,6 +586,72 @@ def generator_helpers(root: Path, template: Path = TEMPLATE) -> HelperState:
     return HelperState("newer" if have.version > want.version else "older", have=have, want=want)
 
 
+def top_level_defs(lines: list[str]) -> list[tuple[str, int, list[str]]]:
+    """Each top-level def of a module's lines: its name, the index of its first line, and its lines,
+    decorators included. Raises SyntaxError when the lines do not parse."""
+    found = []
+    for node in ast.parse("\n".join(lines)).body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            first = min([node.lineno, *(d.lineno for d in node.decorator_list)]) - 1
+            found.append((node.name, first, lines[first:node.end_lineno]))
+    return found
+
+
+TEMPLATE_IN_CLONE = f"skills/{SKILL}/assets/build_project.py"
+
+
+def copied_template(rag: Path, stamp: str) -> list[str] | None:
+    """The template's lines at the newest commit of the clone whose marked part carries stamp and
+    matches it: the template a game's generator was copied from, before the game edited it. None
+    without the clone's history, as in the plugin cache, or when no commit has that stamp."""
+    clone = clone_root(rag)
+    if not (clone / ".git").exists() or not shutil.which("git"):
+        return None
+    log = git_out(clone, "log", "--follow", "--format=commit %H", "--name-only", "--", TEMPLATE_IN_CLONE, wait=30)
+    commits: list[list[str]] = []
+    for line in (log or "").splitlines():
+        if line.startswith("commit "):
+            # a merge lists no file: it has the path of the commit above it
+            commits.append([line[7:], commits[-1][1] if commits else TEMPLATE_IN_CLONE])
+        elif line.strip() and commits:
+            commits[-1][1] = line.strip()
+    for sha, path in commits:
+        lines = (git_out(clone, "show", f"{sha}:{path}") or "").replace("\r\n", "\n").split("\n")
+        found = helpers_in(lines)
+        if not isinstance(found, Helpers):
+            return None             # the commits below this one are older than the markers
+        if found.stamp == stamp == found.actual:
+            return lines
+    return None
+
+
+def unkept_helpers(root: Path, template: Path = TEMPLATE,
+                   copied: list[str] | None = None) -> list[tuple[str, str, str]] | str:
+    """What replacing the marked part of root's generator would lose: each def between its markers
+    that no def of the same name below the end marker replaces and that the game changed. With copied,
+    the template the part was copied from (copied_template), a def the game changed is one whose lines
+    differ from copied's def of that name, or that copied lacks; without it, every def that differs from
+    the template's counts, since the stamp cannot tell the game's edits from the template's. Each comes
+    with the first line that differs, here and in the template it is compared with ('' where one has no
+    such line). A sentence when the file does not parse."""
+    lines, template_lines = text_lines(root / GENERATOR)[0], copied or text_lines(template)[0]
+    have, want = helpers_in(lines), helpers_in(template_lines)
+    try:
+        ours, theirs = top_level_defs(lines), top_level_defs(template_lines)
+    except SyntaxError as e:
+        return f"it does not parse, line {e.lineno}: {e.msg}"
+    below = {name for name, first, _ in ours if first > have.end}
+    skills = {name: src for name, first, src in theirs if want.begin < first < want.end}
+    lost = []
+    for name, first, src in ours:
+        if not have.begin < first < have.end or name in below or skills.get(name) == src:
+            continue
+        other = skills.get(name, [])
+        k = next(k for k in range(max(len(src), len(other))) if src[k:k + 1] != other[k:k + 1])
+        lost.append((name, src[k] if k < len(src) else "", other[k] if k < len(other) else ""))
+    return lost
+
+
 def replace_helpers(root: Path, template: Path = TEMPLATE, dry_run: bool = False) -> str | None:
     """Put the template's marked part, both markers included, in place of the one in root's
     tools/build_project.py; every line outside the markers, the line ends and a byte order mark
@@ -623,6 +734,9 @@ class Project:
     def open(cls, args: argparse.Namespace, findings: Findings, needs_project: bool = True) -> "Project":
         root = find_project(args.project)
         if root and not (root / "project.c3proj").exists():
+            example = missing_example(root, args.rag)
+            if example:
+                sys.exit(example)
             sys.exit(f"no project.c3proj in {root}: --project is the folder the editor saved the project into"
                      f"{START_ONE}")
         if root is None and needs_project:
@@ -658,6 +772,15 @@ class Project:
         def lines(path: Path) -> int:
             return len((self.root / path).read_text(encoding="utf-8", errors="replace").splitlines())
         return ", ".join(f"{path.as_posix()} ({lines(path)} lines)" for path in self.script_files())
+
+    def script_numbers(self, path: Path) -> dict[float, int]:
+        """How often each number is written as a literal in the code of a script; comments and
+        strings do not count."""
+        code = SCRIPT_TEXT.sub(" ", (self.root / path).read_text(encoding="utf-8", errors="replace"))
+        counts: dict[float, int] = {}
+        for m in SCRIPT_NUMBER.finditer(code):
+            counts[float(m.group(0))] = counts.get(float(m.group(0)), 0) + 1
+        return counts
 
     def load_listed(self, kind: str) -> dict[str, dict]:
         out = {}

@@ -9,9 +9,10 @@ regions, the state table, the inputs, the rules as data (trigger, conditions,
 effects, sub-rules), win and lose, and the acceptance tests. The script reads
 it and refuses a gap by its path: a missing table, a name nothing defines,
 a state no rule writes or nothing reads, a fact kept in two places, an input
-without feedback, no rule that restarts, an input that changes nothing the
-player sees, and a cell of an Array an input writes with no count of the
-instances that show it.
+without feedback, no rule that restarts a game that ends, an input that changes nothing the
+player sees, and a cell of an Array an input writes with nothing on screen
+that shows it: no count of instances, and no text or number whose expression
+reads the Array.
 
 Then it runs the rules as a prototype: each test from a first launch, 60
 ticks a second, an input followed by 0.15 s of play, as the editor runs the
@@ -96,9 +97,10 @@ def coverage(design: gm.Design) -> None:
         if not read[n] and not s.seen and not s.keep:
             design.bad(f"{s.path}", f"nothing reads {n}: no condition, effect, win or lose uses it and the player "
                                     f"does not see it; drop the row, or use it where the game decides something")
-    if not any(e[0] == "restart" for r in design.all_rules() for e in r.do):
+    if design.ends and not any(e[0] == "restart" for r in design.all_rules() for e in r.do):
         design.bad("rules", "no rule restarts the game: add one, fired by the input that starts a new game, whose "
-                            "effects end with \"restart\"")
+                            "effects end with \"restart\". A demo of one mechanic that is never won or lost writes "
+                            "\"win\": \"none\" and \"lose\": \"none\" instead, and needs no restart")
     seen_after(design)
 
 
@@ -169,22 +171,43 @@ def shows(design: gm.Design, name: str) -> dict[str, list[str]]:
     return {n: p for n, p in path.items() if design.state[n].seen}
 
 
+def showing(design: gm.Design, rules: list[gm.Rule], array: str) -> list[str]:
+    """The seen rows these rules set that show the Array: a count of instances, or a text, x, y, frame or visible
+    whose expression reads the Array (ARRAY.At(x, y), count(ARRAY, v) or its bare name)."""
+    out: list[str] = []
+    for r in rules:
+        for e in r.do:
+            if e[0] != "set" or e[1][1] is not None or e[1][0] in out:
+                continue
+            row = design.state[e[1][0]]
+            if row.shown or row.seen and array in gm.names_in(e[3]):
+                out.append(row.name)
+    return out
+
+
 def seen_after(design: gm.Design) -> None:
     """Refuse an input whose rules change only what the player does not see, and a cell of an Array written by an
-    input with no instance shown for it."""
+    input with nothing on screen that shows it: no count of instances, and no seen row whose expression reads it."""
     for name, i in design.inputs.items():
         fired = playing(design, name)
         if not fired:
             continue
         for r in fired:
             for x in chain(r):
-                arrays = [e[1][0] for e in x.do if e[0] == "set" and e[1][1] is not None]
-                if arrays and not any(design.state[n].shown for n in changes(chain(x))):
-                    design.bad(x.path, f"rule {x.id} writes a cell of {arrays[0]}, and an Array is not on screen: "
-                               f"the player sees the cell as an instance. Add a row that counts the instances shown, "
-                               f"such as {{\"name\": \"pieces\", \"start\": 0, \"stored_in\": \"Piece.shown\"}} (or "
-                               f"\"Piece.shown(frame=1)\" for the pieces of frame 1), and change it in this rule beside "
-                               f"the cell: \"pieces += 1\", or \"pieces = count({arrays[0]}, 1)\"")
+                arrays = list(dict.fromkeys(e[1][0] for e in x.do if e[0] == "set" and e[1][1] is not None))
+                for a in arrays:
+                    if showing(design, chain(x), a):
+                        continue
+                    design.bad(x.path, f"rule {x.id} writes a cell of {a}, and an Array is not on screen. Change in "
+                               f"this rule or its sub-rules a row that shows it. A board: the player sees the cell as "
+                               f"an instance, so add a row that counts the instances shown, such as {{\"name\": "
+                               f"\"pieces\", \"start\": 0, \"stored_in\": \"Piece.shown\"}} (or "
+                               f"\"Piece.shown(frame=1)\" for the pieces of frame 1), and change it beside the cell: "
+                               f"\"pieces += 1\", or \"pieces = count({a}, 1)\". A list, such as stacked shields: the "
+                               f"player reads it from a text or a number, so change a row stored in a text, x, y, "
+                               f"frame or visible whose expression reads {a}, such as \"line = \\\"Shields \\\" & "
+                               f"({a}.At(0, 0) + {a}.At(1, 0))\"; a text that does not read {a} shows nothing of the "
+                               f"cell")
         if not shows(design, name):
             rows = changes([x for r in fired for x in chain(r)])
             design.bad(i["path"], f"the input {name} changes only {', '.join(rows) or 'nothing'}, which the player "
@@ -194,12 +217,12 @@ def seen_after(design: gm.Design) -> None:
 
 
 def wanted(design: gm.Design, name: str) -> list[str]:
-    """The seen rows a test expects after the input: the counts of instances where its rules write an Array cell,
-    since the status line changing says nothing of the piece, else every seen row it changes."""
+    """The seen rows a test expects after the input: where its rules write an Array cell, the rows that show the
+    Array, since a status line that does not read it says nothing of the piece; else every seen row it changes."""
     rules = [x for r in playing(design, name) for x in chain(r)]
-    counts = [n for x in rules if any(e[0] == "set" and e[1][1] is not None for e in x.do)
-              for n in changes(chain(x)) if design.state[n].shown]
-    return list(dict.fromkeys(counts)) or list(shows(design, name))
+    rows = [n for x in rules for a in dict.fromkeys(e[1][0] for e in x.do if e[0] == "set" and e[1][1] is not None)
+            for n in showing(design, chain(x), a)]
+    return list(dict.fromkeys(rows)) or list(shows(design, name))
 
 
 def expected_after(design: gm.Design) -> None:
@@ -236,7 +259,8 @@ def launch(design: gm.Design) -> None:
             design.bad(key, f"{design.data.get(key)} holds on the first screen, before the player does anything"
                             + (f" ({seen} after the start rules)" if seen else "") + ": the game is over at launch. "
                             f"Give the rows it reads the start of a new game, in the state's start and in a \"start\" "
-                            f"rule, and play the tests from there rather than from a fixture")
+                            f"rule, and play the tests from there rather than from a fixture. If the game is never "
+                            f"{'won' if key == 'win' else 'lost'}, as a demo of one mechanic, write \"{key}\": \"none\"")
 
 
 def run_test(design: gm.Design, t: dict) -> dict:
@@ -372,7 +396,7 @@ def play(design: gm.Design) -> list[str]:
         design.bad("win", "no test reaches the win: add a test that plays to it and expects it")
     if design.lose and not lost:
         design.bad("lose", "no test reaches the lose: add a test that plays to it and expects it")
-    if not restarted and not any(p[0] == "rules" for p in design.problems):
+    if design.ends and not restarted and not any(p[0] == "rules" for p in design.problems):
         design.bad("tests", "no test restarts the game: after the win or lose, do the input that starts a new game, "
                             "wait, and expect the state of a new game")
     return lines
@@ -482,8 +506,10 @@ def main() -> int:
     if n:
         out.append(f"design: {n} finding{'s' if n != 1 else ''}; fix each at its path and run this again")
     else:
-        out.append(f"ok: design complete; {len(design.tests)} tests pass in the prototype, win"
-                   + (" and lose" if design.lose else "") + " reached, restart checked. Next, build the game, one "
+        ends = " and ".join(k for k, node in (("win", design.win), ("lose", design.lose)) if node is not None)
+        out.append(f"ok: design complete; {len(design.tests)} tests pass in the prototype, "
+                   + (f"{ends} reached, restart checked" if ends else "no win or lose: a demo that never ends")
+                   + ". Next, build the game, one "
                    "event per rule with the rule's id in the comment above it, then play the same tests in the "
                    "editor: python scripts/play_design.py " + str(args.design))
     shown = c3.fitting(out, args.limit)

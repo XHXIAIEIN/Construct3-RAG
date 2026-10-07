@@ -238,7 +238,7 @@ def test_preview_project_stops_with_the_steps_kept_when_a_reload_breaks_off_a_js
 
 def test_preview_project_joins_a_recording_into_a_gif_without_ffmpeg(tmp_path, monkeypatch):
     """Each frame stays up for as long as the window showed it."""
-    image = pytest.importorskip("PIL.Image")
+    image = pytest.importorskip("PIL.Image", reason="Pillow is not installed; pip install pillow")
     frames = [tmp_path / "0001.jpg", tmp_path / "0002.jpg"]
     for frame, colour in zip(frames, ("red", "blue")):
         image.new("RGB", (8, 8), colour).save(frame)

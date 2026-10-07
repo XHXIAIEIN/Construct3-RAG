@@ -124,7 +124,7 @@ hand or changing it, read `prompts/game-project-AGENTS.md`.
 - An installed copy says when it differs from `skills/construct3-agent-plugin/`
   here and prints the command that refreshes it. `check_project.py` also
   fails when the clone is behind its upstream and holds no work of the
-  user's, and prints the pull and the refresh. Run what they print.
+  user's, and prints the fast-forward and the refresh. Run what they print.
 - The user does not want it in the project: remove the copy, run the
   scripts from this repository in place,
   `python <this repository>/skills/construct3-agent-plugin/scripts/<script>.py
@@ -179,7 +179,10 @@ Rules:
   cannot be taken back. A source line in a document may use the short form;
   only commits, issues and PRs are parsed.
 
-Before finishing, plus the checks in the touched directories' `AGENTS.md`:
+Before finishing, plus the checks in the touched directories' `AGENTS.md`;
+`.github/workflows/checks.yml` runs the first two of them and
+`build_plugin.py --check` on every push to `main` and every pull request,
+and the update workflow calls it:
 
 ```bash
 python -m pytest -q
@@ -210,10 +213,11 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | Data files and fields | `docs/guide/data-format.md` |
 | Event sheet design, sourced pitfalls, the examples' authoring style | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md` and its topic files in `prompts/pitfalls/`, `prompts/event-sheet-style.md`, `docs/decisions/event-sheet-design-guidance.md` |
 | Published-game visual language, motion statistics and the reproducible analyzer | `docs/decisions/published-game-visual-language.md`, `docs/dev/published-game-analysis.md`, `scripts/reference_games/` |
-| Slot case as a program, hand-editing project JSON, bars and life counters by the art they have, feel recipes, sounds and placeholder audio | `prompts/references/` |
+| Slot case as a program, hand-editing project JSON, bars and life counters by the art they have, feel recipes, sounds and placeholder audio, sequences and dialogue run from a data file | `prompts/references/` |
 | A new project's sheets, layers, objects and look: colours by role, text, pixel art, what other design skills do, and where its art comes from | `prompts/references/new-project.md`, `docs/decisions/game-look-from-design-skills.md`, `docs/decisions/art-from-the-image-tool.md` |
 | The project tools the skill carries into a game project: what each does, and changing and evaluating them | `skills/construct3-agent-plugin/SKILL.md`, `skills/AGENTS.md` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
+| Project and skill audit findings, reproduction boundaries and repair priorities | `docs/dev/skills-audit.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
 | Why features were kept or removed | `docs/decisions/` |
 | Delegating an ACE lookup or check to a Claude Code sub-agent | `.claude/agents/ace-lookup.md` |

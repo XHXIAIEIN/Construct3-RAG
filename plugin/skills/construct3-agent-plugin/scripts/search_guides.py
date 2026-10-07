@@ -105,8 +105,11 @@ def main() -> int:
             lines += [f"{file}:{line}", f"  {text}", ""]
     found_examples = ranked(examples(rag, args.locale), example_text, args.words)[: args.examples]
     if found_examples:
-        clone = c3.siblings_folder(rag) / "Construct-Example-Projects" / "example-projects"
+        clone = c3.siblings_folder(rag) / c3.EXAMPLES_CLONE / "example-projects"
         lines.append("examples:")
+        if not clone.parent.is_dir():
+            lines.append(f"(no {c3.EXAMPLES_CLONE} clone at {clone.parent}; {c3.examples_clone_command(rag)} "
+                         f"clones it, and each example then gets the command that reads its events)")
         for e in found_examples:
             lines.append(f"{e['id']}: {e.get('name', '')}. {e.get('description', '')}")
             # an example written in both languages is two folders, <id>-js and <id>-ts

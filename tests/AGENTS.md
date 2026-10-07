@@ -10,6 +10,11 @@ The pytest suite is offline: it needs no service, no model and no network.
 - `SearchStage` has exactly three stable values: `initialize`, `lookup`,
   `respond`. Request validation happens inside `initialize`; do not add a
   validation stage.
+- A skip reason names the command that supplies what is missing
+  (`python scripts/bootstrap.py`, `pip install pillow`). A sibling clone's
+  path comes from `siblings_folder`, as `EXAMPLES` in `skill_helpers.py`
+  does: in a worktree `REPO.parent` is not the folder that holds the
+  clones, and `test_sibling_paths.py` fails on it.
 
 ## Gold set
 
@@ -31,9 +36,10 @@ A new keyword, alias or routing rule starts from a failing case here.
 The evals of the `construct3-agent-plugin` skill are not here. They run agents,
 not the service, and live with the skill: `skills/AGENTS.md`, "Evals".
 `test_skill_spec.py` tests the skill's format and, against a stand-in client,
-the trigger runner `run_trigger_eval.py`. The skill's tests share
-`skill_helpers.py` and, in `conftest.py`, the stand-in game, generated once a
-run.
+the trigger runner `run_trigger_eval.py`. `test_skill_grade.py` grades
+recorded answers from `fixtures/restart_event_answers/` with `grade.py` and
+pins what `grading.json` says. The skill's tests share `skill_helpers.py`
+and, in `conftest.py`, the stand-in game, generated once a run.
 
 ## Commands
 

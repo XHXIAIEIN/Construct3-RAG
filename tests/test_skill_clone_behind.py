@@ -51,7 +51,18 @@ def test_behind_gives_the_pull_for_the_agent(clones):
     push_one(other)
     line, agent_updates = c3.clone_behind(mine)
     assert agent_updates and "is 1 commit behind origin/main" in line
-    assert f'git -C "{mine}" pull --ff-only, then run this check again' in line
+    assert f'git -C "{mine}" merge --ff-only origin/main, then run this check again' in line
+
+
+def test_the_printed_update_works_with_the_upstream_out_of_reach(clones, tmp_path):
+    """The line comes from the last fetch; the command it gives must not need the network again."""
+    mine, other = clones
+    push_one(other)
+    line, _ = c3.clone_behind(mine)
+    (tmp_path / "upstream.git").rename(tmp_path / "gone.git")
+    command = line.split("Run ", 1)[1].split(", then")[0]
+    assert subprocess.run(command, shell=True, capture_output=True, timeout=60).returncode == 0, command
+    assert c3.clone_behind(mine) is None
 
 
 def test_behind_with_a_copy_of_the_skill_gives_its_refresh_too(clones, monkeypatch):
@@ -60,7 +71,7 @@ def test_behind_with_a_copy_of_the_skill_gives_its_refresh_too(clones, monkeypat
     push_one(other)
     monkeypatch.setattr(c3, "refresh_command", lambda rag: "python install.py --into skills")
     line, agent_updates = c3.clone_behind(mine)
-    assert agent_updates and "pull --ff-only, then python install.py --into skills, then run this check again" in line
+    assert agent_updates and "merge --ff-only origin/main, then python install.py --into skills, then run this check again" in line
 
 
 @pytest.mark.parametrize("own", ["commit", "change"])
@@ -92,6 +103,9 @@ def test_offline_or_untracked_says_nothing(clones, monkeypatch):
     git(mine, "fetch", "-q")
     monkeypatch.setenv("CONSTRUCT3_RAG_OFFLINE", "1")
     assert c3.clone_behind(mine) is None
+    for value in ("0", "", "true"):         # only 1 turns the check off
+        monkeypatch.setenv("CONSTRUCT3_RAG_OFFLINE", value)
+        assert c3.clone_behind(mine) is not None, value
     monkeypatch.delenv("CONSTRUCT3_RAG_OFFLINE")
     git(mine, "switch", "-q", "--detach")
     assert c3.clone_behind(mine) is None

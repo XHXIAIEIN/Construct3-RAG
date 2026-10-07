@@ -29,6 +29,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 - A type and its family are picked separately, so narrowing `Piece` never narrows `Pieces`. Refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
 - Picking a family never picks a type's container. Pick the type from the family in a sub-event, `Enemy: Pick by unique ID Enemies.UID`, one per member type.
+- An expression that names another member of a container reads the member of the same instance, in an action and in a condition. A custom action called with a parameter of such an expression needs *For each* first, so each instance passes its own value.
 - *Pick children* picks only among the child type's current picks, which its container may have narrowed. Give the child type a family of its own with the one member and pick through it.
 - *Pick parent* with *Own* looks one level up only. A grandparent needs *All*, or the event silently picks nothing.
 - A Dictionary or JSON in a container gives each instance its own copy. Use it instead of a growing list of instance variables.
@@ -38,6 +39,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 - A destroyed instance still counts in `Count` until the top-level event ends. Test "none left" in a top-level event of its own.
 - A pick of no instance stops its event, *Pick all* included, so `PickedCount = 0` never holds below a pick of that type. Test "none left" with `Count = 0` in an event that does not pick the type.
 - A destroyed child still counts as a child until the top-level event ends. Count from a later top-level event or with *Pick children* plus `PickedCount`.
+- A condition holds when one instance passes it, and the next tests only those kept. So `Row = 0` then `Column = 0` then `Column = 1` never holds, and `Value ≠ 0` means any, not all. Narrow once and compare `PickedCount`.
 - Turret *Add object to target* takes the whole type or family, whatever the event picked. To target only some instances, leave it out and run *Acquire target* on one picked instance.
 
 ### Triggers and Else
@@ -52,6 +54,7 @@ variable that flips, read
 - A trigger, a loop, *Else*, *Trigger once* and the conditions that only pick cannot be inverted. For "not on collision", invert *Is overlapping*.
 - *Trigger once* and *Every X seconds* do nothing useful under a trigger, and the editor does not offer them there.
 - An event runs every tick unless a trigger, *Every X seconds* or *Trigger once* is in it or above it, so a variable it flips with *Toggle* or `3 - x` changes on every tick. Flip it in the event whose trigger causes the change, or in a sub-event of it, such as a pause flag in *On key pressed*; a timeout flips it in the event that tests the time left and sets the time back there; *Trigger once* flips it once when the conditions turn true, not once per input.
+- Events with the same trigger run in order on one input, so a switch written as two of them ("frame 0: set 1", "frame 1: set 0") sets itself back. Write one event with the trigger and the cases as sub-events, the second starting with *Else*.
 - A trigger can fire with several instances picked, Timer *On timer* included. If a *Pick nearest* or a function call is written for one, add *For each* after the trigger.
 - Else is decided per block, not per instance. Branch per instance with a second event and the inverted condition, or override a default.
 - Else does not narrow. It cannot directly follow a trigger block, only a normal sub-event inside one.
@@ -72,6 +75,7 @@ If the events define or call a function or a custom action, read
 - If a parameter and a variable of its function's group have names that differ only in case, the editor renames the one that comes later in the sheet. A parameter after the variable is renamed, so the function reads the variable. Name them apart by more than case (`launchSpeed` beside `SPEED`).
 - If two functions, or two custom actions of one object, have names that differ only in case, the editor renames the second, and every call runs the first. Name them apart by more than case.
 - A function without parameters is called without parentheses: `Functions.name`, not `Functions.name()`.
+- The deprecated Function plugin's call by a string is a function map in built-in functions: *Map function to string*, then *Call mapped function* with the string, or `Functions.CallMapped` for a value.
 
 ### Timer
 
@@ -80,6 +84,7 @@ If the events use the Timer behavior, read [pitfalls/timer.md](pitfalls/timer.md
 - *Start timer* on an existing tag restarts it. After *Stop* or a *Once* timer's end its expressions return 0.
 - A timer is state you start and stop, so list every transition before choosing it.
 - A timer and a tween scheduled to end together end a tick apart.
+- One instance cannot time stacked buffs of one kind with Timer tags: no expression names the tag that fired, and a re-cast restarts the tag. Make each shield or buff an instance with its own Timer and amount, a child of its holder; spend them with *Pick children* and *For each (ordered)* by the time left.
 
 ### Wait and time scale
 
@@ -111,11 +116,13 @@ If you write expressions or name and place variables, read
 - If the factor comes from the engine, such as a tween's value, `lerp` needs no time of its own.
 - `lerp` and `unlerp` do not clamp.
 - `%` keeps the sign of the left operand, so `-1 % 5` is `-1`.
+- `%` is applied before `*`, so `a * b % c` is `a * (b % c)`. Write `(a * b) % c`.
 - There is no null, and a missing value reads as 0. Ask *Has key* or the size first.
 - JSON `Type(path)` is `"undefined"` for a missing path, so it can test presence inside an expression.
 - *For* counts down when its end is below its start. Before `For 0 to count - 1`, test the count, or start ≤ end.
 - A local variable at sub-event level is visible to its siblings, not to the parent's own actions.
 - *Set mesh point* in *Relative* mode adds to the current position, so deriving it every tick accumulates.
+- JSON reads a dot in a path as a step into a nested key. Escape a dot inside a key as `\.` in the path, or keep dots out of keys; a Dictionary reads keys whole.
 
 ### Coordinates and angles
 
@@ -157,6 +164,7 @@ picker, read [pitfalls/input.md](pitfalls/input.md).
 - Every instance with *Default controls* on moves with the arrow keys. Turn it off on each instance the player does not steer, such as a pushed crate, and move it with *Simulate control*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
+- Keyboard and Gamepad are separate conditions. Write both into one input object with a value per control and its last-tick copy, and read a press as `confirm > lastConfirm`.
 
 ### Audio
 
@@ -206,6 +214,7 @@ polygons or blend modes, read
 - *Set width* stretches a Sprite, repeats a Tiled Background and stretches a 9-patch's middle.
 - A Tiled Background's or 9-patch's image scale is a percentage in events and a fraction in the layout file, so multiply the fraction by 100. A growing Y offset moves the image down, so scroll upward with a falling offset. A 9-patch pops as one piece only if its image scale changes with its size.
 - A bar grows from its origin. Put the origin on the edge it grows from.
+- A 9-patch stretched far, with a border colour unlike its inside, blends the border into the middle at the seam. Give it *Nearest* sampling, or build flat art from two flat Tiled Backgrounds.
 - Drawing Canvas *Fill polygon* with *Convex* off draws nothing when two consecutive points coincide. Repeat no point.
 - A blend mode changes only the pixels under the object's own quad, and the layer needs *Force own texture*.
 - A Text object draws only the lines that fit its height. Size the box for the longest text.
@@ -215,12 +224,16 @@ polygons or blend modes, read
 - Changing a Text's font size redraws and re-uploads its texture. Animate position, angle or opacity, or use a Sprite Font and tween its scale.
 - A Sprite Font draws whole cells and tints its outline with its colour. Draw glyphs left in the cell, one image per colour, in a box sized for the largest scale.
 - A Sprite Font's *Character spacing* is in layout pixels, not scaled by *Scale*, and only between characters. `TextWidth` includes it. Keep it 0 and put a space character where a gap is wanted.
+- *Set canvas size* also sets the project's window size, so a 4:3 game inside 16:9 shows more layout. *Scroll to position* back to the centre and cover the extra width with bars.
+- A Sprite Font's widths go in *Spacing data*, which the Layout View shows; *Set character width* is for a width that changes at runtime. A full-width space needs its own width.
+- A third-party effect without WebGPU support puts the whole project on WebGL. Read Platform Info `Renderer` in a preview.
 
 ### Tween
 
 If a tween must drive something Tween has no property for, if a tween's
-end starts the next step, or if several animations share one property,
-read [pitfalls/tween.md](pitfalls/tween.md).
+end starts the next step, if several animations share one property, or if
+an event tests a value every tick to start a tween, read
+[pitfalls/tween.md](pitfalls/tween.md).
 
 - A value tween read under *Is playing* drives what Tween cannot address, a full 360° turn included.
 - *On finished* runs before *Destroy on complete* destroys the instance, and *On any finished* runs for that tween too.
@@ -228,6 +241,7 @@ read [pitfalls/tween.md](pitfalls/tween.md).
 - `Tween.Value(tag)` reads 0 once the tween ends. Animate a channel as what is left of it, from the full amount to 0.
 - *Stop* releases a tween at the end of the tick. `Value(tag)` reads the stopped value until then.
 - A property tween adds each tick's change. A *Set* on that property while it plays is kept, and the tween's rest adds to it. Guard it with *NOT Is playing*.
+- A width tween can end a hair short of its end value, so `Width < target` starts a tween of no distance again and again, and that empty tween blocks a real one for 0.3 s. Start the tween on `Width < target - 0.5`, and set the width to `target` in an event on `Width < target` and `NOT Is playing`. A trail tested with `Width > target` takes the same two events.
 
 ### Timeline
 
@@ -261,6 +275,7 @@ Sprite, read [pitfalls/creating-objects.md](pitfalls/creating-objects.md).
 - A runtime-created instance copies an existing instance or template, and without one its behavior properties read 0. Keep one per object in a layout that never runs.
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
 - A created instance is found outside its own event only by UID, until the top-level event ends.
+- The instances of a new hierarchy run *On created* in no fixed order. Initialise the hierarchy in *On hierarchy ready* of its root, which fires once all of them have.
 
 ### Restarting a layout
 

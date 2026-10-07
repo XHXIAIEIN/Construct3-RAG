@@ -157,6 +157,22 @@ def test_install_leads_claude_code_to_the_block_through_claude_md(tmp_path):
     assert "CLAUDE.md" not in out
 
 
+def test_install_adds_the_claude_md_line_when_agents_md_already_has_the_block(tmp_path):
+    """An AGENTS.md that already names the clone is left as it is, and a CLAUDE.md without @AGENTS.md still gets
+    the line (the audit of 2026-10-07 found it reported as complete); --no-block writes neither."""
+    root = new_project(tmp_path / "game")
+    code, out = install(root)
+    assert code == 0, out
+    agents = (root / "AGENTS.md").read_text(encoding="utf-8")
+    (root / "CLAUDE.md").write_text("# Mine\n", encoding="utf-8")
+    code, out = install(root, "--no-block")
+    assert code == 0 and (root / "CLAUDE.md").read_text(encoding="utf-8") == "# Mine\n"
+    code, out = install(root)
+    assert code == 0 and "AGENTS.md: already names the clone" in out and "CLAUDE.md: added the line @AGENTS.md" in out
+    assert (root / "CLAUDE.md").read_text(encoding="utf-8") == "# Mine\n\n@AGENTS.md\n"
+    assert (root / "AGENTS.md").read_text(encoding="utf-8") == agents
+
+
 # --- bootstrapping a machine from the clone alone ---------------------------------------------
 def bootstrap(root: Path, *args: str) -> tuple[int, str]:
     return run(root, REPO / "scripts" / "bootstrap.py", *args)
@@ -205,6 +221,18 @@ def test_bootstrap_creates_the_project_from_the_template_and_installs_the_skill(
     code, out = bootstrap(tmp_path, "--beside", str(beside), "--project", str(game))
     assert code == 0 and "already current" in out and "created from" not in out
     assert (game / "AGENTS.md").read_text(encoding="utf-8") == block
+
+
+def test_bootstrap_without_the_examples_says_what_they_are_missing_for(tmp_path):
+    beside = tmp_path / "GitHub"
+    for name in ("Construct3-Manual", "Construct-Addon-SDK"):
+        (beside / name).mkdir(parents=True)
+        (beside / name / "README.md").write_text("", encoding="utf-8")
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--no-examples")
+    assert code == 0, out
+    assert ("Construct-Example-Projects: not cloned (--no-examples), so print_sheet.py reads no official "
+            "example and search_guides.py gives each one's editor URL; run this again without --no-examples "
+            "to clone it") in out, out
 
 
 def test_bootstrap_puts_a_named_project_beside_the_clones_whatever_the_directory(tmp_path):
@@ -377,13 +405,109 @@ def test_install_keeps_helpers_edited_in_the_game_and_says_how_to_take_the_new_o
         'if __name__ == "__main__":', 'def snap(v: float) -> int:\n    """v moved to the grid line under it."""\n'
         '    return int(v // UNIT) * UNIT\n\n\nif __name__ == "__main__":')
     generator.write_text(text, encoding="utf-8", newline="\n")
-    code, out = install(project, "--helpers-only", "--replace-edited-helpers")
+    code, out = install(project, "--helpers-only", "--replace-edited-helpers=units")
     assert code == 0 and "replaced its helpers of 2026-09-01" in out, out
     lines = generator.read_text(encoding="utf-8").split("\n")
     helpers = c3.helpers_in(lines)
     assert lines[helpers.begin:helpers.end + 1] == TEMPLATE[TEMPLATE_HELPERS.begin:TEMPLATE_HELPERS.end + 1]
     game = runpy.run_path(str(generator), run_name="generator")
     assert game["snap"].__doc__ == "v moved to the grid line under it." and game["snap"](40) == 32
+
+
+def test_replacing_edited_helpers_refuses_while_an_edit_would_be_lost(project):
+    """The printed command run before the edit is copied below the end marker must not drop the edit:
+    it names each helper that differs from the skill's and has no def below the end marker, with the
+    first line that differs, and writes nothing."""
+    before = older_generator(project, edited=True)
+    generator = project / "tools" / "build_project.py"
+    code, out = install(project, "--helpers-only", "--replace-edited-helpers")
+    assert code == 1 and generator.read_bytes() == before, out
+    assert "snap: here '    \"\"\"v moved to the grid line under it.\"\"\"', the skill's " in out, out
+    assert "units: here " in out and "Copy below the end marker each one the game changed" in out, out
+    assert out.rstrip().endswith("--helpers-only --replace-edited-helpers=NAME,NAME"), out
+
+    # snap() copied below the end marker; units() differs because the skill's changed since
+    text = generator.read_text(encoding="utf-8").replace(
+        'if __name__ == "__main__":', 'def snap(v: float) -> int:\n    """v moved to the grid line under it."""\n'
+        '    return int(v // UNIT) * UNIT\n\n\nif __name__ == "__main__":')
+    generator.write_text(text, encoding="utf-8", newline="\n")
+    code, out = install(project, "--helpers-only", "--replace-edited-helpers")
+    assert code == 1 and "snap:" not in out and "units: here " in out, out
+    code, out = install(project, "--helpers-only", "--replace-edited-helpers=units")
+    assert code == 0 and "replaced its helpers of 2026-09-01" in out, out
+    game = runpy.run_path(str(generator), run_name="generator")
+    assert game["snap"].__doc__ == "v moved to the grid line under it."
+
+
+def git(folder: Path, *args: str) -> str:
+    return subprocess.run(["git", "-C", str(folder), "-c", "user.name=t", "-c", "user.email=t@t",
+                           "-c", "core.autocrlf=false", *args],
+                          check=True, capture_output=True, text=True, encoding="utf-8").stdout
+
+
+def older_template() -> list[str]:
+    """The template as older_generator() copies it, before the game changes anything."""
+    lines = list(TEMPLATE)
+    del lines[at(lines, "def tween_width("):at(lines, "def tween_value(")]
+    del lines[at(lines, '    """n grid units in pixels')]
+    helpers = c3.helpers_in(lines)
+    lines[helpers.end] = c3.helpers_end_line("2026-09-01", helpers.actual)
+    return lines
+
+
+def clone_with_history(folder: Path) -> Path:
+    """A clone of the skill alone with three commits of the generator template: one from before the
+    markers, the one older_generator() copies, then the current one."""
+    skill = folder / "skills" / SKILL.name
+    shutil.copytree(SKILL, skill, ignore=shutil.ignore_patterns("evals", "__pycache__"))
+    index = folder / "data" / "c3-schemas" / "_index.json"
+    index.parent.mkdir(parents=True)
+    shutil.copy(REPO / "data" / "c3-schemas" / "_index.json", index)
+    git(folder, "init", "-q")
+    for k, lines in enumerate([["# before the markers"], older_template(), TEMPLATE]):
+        (skill / "assets" / "build_project.py").write_bytes("\n".join(lines).encode("utf-8"))
+        git(folder, "add", "-A")
+        git(folder, "commit", "-q", "-m", f"template {k}")
+    return folder
+
+
+SNAP_BELOW = ('def snap(v: float) -> int:\n    """v moved to the grid line under it."""\n'
+              '    return int(v // UNIT) * UNIT\n\n\nif __name__ == "__main__":')
+
+
+@pytest.mark.skipif(not shutil.which("git"), reason="needs git")
+def test_with_the_clones_history_only_the_helpers_the_game_edited_block(tmp_path):
+    """The clone's history holds the template the game's part was copied from, so a helper is the
+    game's edit only when it differs from that template's: units(), which differs because the
+    skill's changed since, needs neither a copy below the end marker nor a name in the flag."""
+    script = clone_with_history(tmp_path / "rag") / "skills" / SKILL.name / "scripts" / "install.py"
+    project = new_project(tmp_path / "game")
+    before = older_generator(project, edited=True)
+    generator = project / "tools" / "build_project.py"
+    code, out = run(project, script, "--helpers-only")
+    assert code == 1 and "snap" in out and "units" not in out, out
+    code, out = run(project, script, "--helpers-only", "--replace-edited-helpers")
+    assert code == 1 and generator.read_bytes() == before, out
+    assert "snap: here '    \"\"\"v moved to the grid line under it.\"\"\"'" in out and "units" not in out, out
+    assert out.rstrip().endswith("--helpers-only --replace-edited-helpers"), out
+
+    generator.write_text(generator.read_text(encoding="utf-8").replace('if __name__ == "__main__":', SNAP_BELOW),
+                         encoding="utf-8", newline="\n")
+    code, out = run(project, script, "--helpers-only", "--replace-edited-helpers")
+    assert code == 0 and "replaced its helpers of 2026-09-01" in out, out
+    game = runpy.run_path(str(generator), run_name="generator")
+    assert game["snap"].__doc__ == "v moved to the grid line under it."
+
+
+@pytest.mark.skipif(not shutil.which("git"), reason="needs git")
+def test_copied_template_is_the_newest_commit_whose_part_has_the_stamp(tmp_path):
+    stamp = c3.helpers_in(older_template()).stamp
+    assert c3.copied_template(tmp_path, stamp) is None                  # no .git
+    clone = clone_with_history(tmp_path / "rag")
+    # the lines as git prints them, without the empty line after the file's last newline
+    assert c3.copied_template(clone, stamp) == older_template()[:len(older_template()) - 1]
+    assert c3.copied_template(clone, TEMPLATE_HELPERS.stamp) == TEMPLATE[:len(TEMPLATE) - 1]
+    assert c3.copied_template(clone, "0" * 12) is None                  # no commit has it, down to the one without markers
 
 
 def test_install_helpers_only_refreshes_the_generator_alone(tmp_path):
