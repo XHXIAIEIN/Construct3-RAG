@@ -1,11 +1,13 @@
 """lookup_script_api.py: the scripting API's interfaces and members, with the file and line of each."""
 from tests.skill_helpers import REPO, install, new_project, tool
 
+TS_DEFS = f"{REPO.as_posix()}/data/c3-ts-defs"    # the header line prints the declaration's file as a posix path
+
 
 def test_an_addon_by_name_prints_its_interface_and_what_it_extends(built):
     code, out = tool(built, "lookup_script_api", "Timer")
     assert code == 0
-    assert out.startswith(f"class ITimerBehaviorInstance   {REPO.as_posix()}/data/c3-ts-defs/behaviors/general/timer/")
+    assert out.startswith(f"class ITimerBehaviorInstance   {TS_DEFS}/behaviors/general/timer/")
     assert "  startTimer(duration: number, name: string, type?: TimerBehaviorTimerType): void;" in out
     assert "members of IBehaviorInstance are ITimerBehaviorInstance's too" in out
 
@@ -14,7 +16,7 @@ def test_a_member_prints_its_interface_declaration_and_doc(built):
     """A member of an instance, such as runtime.callFunction, prints its interface, declaration and doc comment."""
     code, out = tool(built, "lookup_script_api", "runtime.callFunction")
     assert code == 0
-    assert out.startswith(f"IRuntime.callFunction   {REPO.as_posix()}/data/c3-ts-defs/preview/interfaces/IRuntime.d.ts:")
+    assert out.startswith(f"IRuntime.callFunction   {TS_DEFS}/preview/interfaces/IRuntime.d.ts:")
     assert "callFunction(name: string, ...params: CallFunctionParameter[]): CallFunctionReturnValue;" in out
     assert "/** Call a function in an event sheet" in out
 
