@@ -29,7 +29,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 - A type and its family are picked separately, so narrowing `Piece` never narrows `Pieces`. Refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
 - Picking a family never picks a type's container. Pick the type from the family in a sub-event, `Enemy: Pick by unique ID Enemies.UID`, one per member type.
-- An expression that names another member of a container reads the member of the same instance, in an action or a condition. A custom action called with a parameter of such an expression needs *For each* first, so each instance passes its own value.
+- An expression that names another member of a container reads the member of the same instance, in an action. A custom action called with a parameter of such an expression needs *For each* first, so each instance passes its own value.
 - *Pick children* picks only among the child type's current picks, which its container may have narrowed. Give the child type a family of its own with the one member and pick through it.
 - *Pick parent* with *Own* looks one level up only. A grandparent needs *All*, or the event silently picks nothing.
 - A Dictionary or JSON in a container gives each instance its own copy. Use it instead of a growing list of instance variables.
@@ -230,8 +230,9 @@ polygons or blend modes, read
 ### Tween
 
 If a tween must drive something Tween has no property for, if a tween's
-end starts the next step, or if several animations share one property,
-read [pitfalls/tween.md](pitfalls/tween.md).
+end starts the next step, if several animations share one property, or if
+an event tests a value every tick to start a tween, read
+[pitfalls/tween.md](pitfalls/tween.md).
 
 - A value tween read under *Is playing* drives what Tween cannot address, a full 360° turn included.
 - *On finished* runs before *Destroy on complete* destroys the instance, and *On any finished* runs for that tween too.
@@ -239,6 +240,7 @@ read [pitfalls/tween.md](pitfalls/tween.md).
 - `Tween.Value(tag)` reads 0 once the tween ends. Animate a channel as what is left of it, from the full amount to 0.
 - *Stop* releases a tween at the end of the tick. `Value(tag)` reads the stopped value until then.
 - A property tween adds each tick's change. A *Set* on that property while it plays is kept, and the tween's rest adds to it. Guard it with *NOT Is playing*.
+- A width tween can end a hair short of its end value, so `Width < target` starts a tween of no distance again and again, and that empty tween blocks a real one for 0.3 s. Start the tween on `Width < target - 0.5`, and set the width to `target` in an event on `Width < target` and `NOT Is playing`. A trail tested with `Width > target` takes the same two events.
 
 ### Timeline
 
