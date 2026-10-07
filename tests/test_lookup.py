@@ -7,9 +7,11 @@ import json
 import pytest
 
 from src.domain.lookup import LookupIntent
-from src.lookup import (
-    SchemaIndex, TermIndex, IntentClassifier, LookupEngine, ExamplesIndex,
-)
+from src.lookup.examples_index import ExamplesIndex
+from src.lookup.intent import IntentClassifier
+from src.lookup.schema_index import SchemaIndex
+from src.lookup.service import LookupEngine
+from src.lookup.term_index import TermIndex
 from src.settings import load_settings
 
 

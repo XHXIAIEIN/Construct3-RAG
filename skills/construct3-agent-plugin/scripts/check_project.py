@@ -3300,6 +3300,8 @@ def main() -> int:
     findings = c3.Findings()
     c3.stop_with_a_sentence("check_project.py", findings)
     project = c3.Project.open(args, findings)
+    if c3.offline():
+        print(f"note: CONSTRUCT3_RAG_OFFLINE is 1, so the clone at {project.rag} was not compared with its upstream")
     # Stale tools are a problem to fix first: a warning above a passing check's last line goes unread
     behind = c3.clone_behind(project.rag)
     if behind:

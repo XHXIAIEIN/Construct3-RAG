@@ -99,6 +99,10 @@ def main() -> int:
     wanted = dict(SIBLINGS)
     if args.no_examples:
         wanted.pop("Construct-Example-Projects")
+        if not (folder / "Construct-Example-Projects").is_dir():
+            print("Construct-Example-Projects: not cloned (--no-examples), so print_sheet.py reads no official "
+                  "example and search_guides.py gives each one's editor URL; run this again without "
+                  "--no-examples to clone it")
     project = game_folder(args.project, folder) if args.project else None
     template = Path(args.template).expanduser().resolve() if args.template else TEMPLATE
     for name, (url, shallow) in wanted.items():

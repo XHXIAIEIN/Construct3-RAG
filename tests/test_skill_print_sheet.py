@@ -208,3 +208,20 @@ def test_print_names_a_renamed_functions_object(project):
     assert code == 0, out
     assert out.startswith("note: Calls is this project's name for the built-in Functions object"), out
     assert "Calls: Call AddScore(" in out and "Functions: Call" not in out, out
+
+
+@pytest.mark.parametrize("clone_there", [False, True])
+def test_an_example_that_is_not_there_names_the_clone_not_a_new_project(built, tmp_path, clone_there):
+    """An official example is read from the examples clone; with no such folder, starting a game
+    project is the wrong next step."""
+    clone = tmp_path / "Construct-Example-Projects"
+    if clone_there:
+        (clone / "example-projects").mkdir(parents=True)
+    example = clone / "example-projects" / "template-snake"
+    code, out = tool(built, "print_sheet", "--project", str(example))
+    assert code == 1 and "new_project.py" not in out, out
+    if clone_there:
+        assert f"no example project at {example}" in out and "search_guides.py" in out, out
+    else:
+        assert f"the Construct-Example-Projects clone is not at {clone}" in out, out
+        assert f"python {(REPO / 'scripts' / 'bootstrap.py').as_posix()} clones it" in out, out

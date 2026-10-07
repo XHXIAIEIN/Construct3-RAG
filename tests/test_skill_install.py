@@ -223,6 +223,18 @@ def test_bootstrap_creates_the_project_from_the_template_and_installs_the_skill(
     assert (game / "AGENTS.md").read_text(encoding="utf-8") == block
 
 
+def test_bootstrap_without_the_examples_says_what_they_are_missing_for(tmp_path):
+    beside = tmp_path / "GitHub"
+    for name in ("Construct3-Manual", "Construct-Addon-SDK"):
+        (beside / name).mkdir(parents=True)
+        (beside / name / "README.md").write_text("", encoding="utf-8")
+    code, out = bootstrap(tmp_path, "--beside", str(beside), "--no-examples")
+    assert code == 0, out
+    assert ("Construct-Example-Projects: not cloned (--no-examples), so print_sheet.py reads no official "
+            "example and search_guides.py gives each one's editor URL; run this again without --no-examples "
+            "to clone it") in out, out
+
+
 def test_bootstrap_puts_a_named_project_beside_the_clones_whatever_the_directory(tmp_path):
     """The README's `--project MyGame` is a name, and a name goes where the clones are: a user or an
     agent that runs the command from somewhere else gets one set of folders, not a second one."""
@@ -393,13 +405,38 @@ def test_install_keeps_helpers_edited_in_the_game_and_says_how_to_take_the_new_o
         'if __name__ == "__main__":', 'def snap(v: float) -> int:\n    """v moved to the grid line under it."""\n'
         '    return int(v // UNIT) * UNIT\n\n\nif __name__ == "__main__":')
     generator.write_text(text, encoding="utf-8", newline="\n")
-    code, out = install(project, "--helpers-only", "--replace-edited-helpers")
+    code, out = install(project, "--helpers-only", "--replace-edited-helpers=units")
     assert code == 0 and "replaced its helpers of 2026-09-01" in out, out
     lines = generator.read_text(encoding="utf-8").split("\n")
     helpers = c3.helpers_in(lines)
     assert lines[helpers.begin:helpers.end + 1] == TEMPLATE[TEMPLATE_HELPERS.begin:TEMPLATE_HELPERS.end + 1]
     game = runpy.run_path(str(generator), run_name="generator")
     assert game["snap"].__doc__ == "v moved to the grid line under it." and game["snap"](40) == 32
+
+
+def test_replacing_edited_helpers_refuses_while_an_edit_would_be_lost(project):
+    """The printed command run before the edit is copied below the end marker must not drop the edit:
+    it names each helper that differs from the skill's and has no def below the end marker, with the
+    first line that differs, and writes nothing."""
+    before = older_generator(project, edited=True)
+    generator = project / "tools" / "build_project.py"
+    code, out = install(project, "--helpers-only", "--replace-edited-helpers")
+    assert code == 1 and generator.read_bytes() == before, out
+    assert "snap: here '    \"\"\"v moved to the grid line under it.\"\"\"', the skill's " in out, out
+    assert "units: here " in out and "Copy below the end marker each one the game changed" in out, out
+    assert out.rstrip().endswith("--helpers-only --replace-edited-helpers=NAME,NAME"), out
+
+    # snap() copied below the end marker; units() differs because the skill's changed since
+    text = generator.read_text(encoding="utf-8").replace(
+        'if __name__ == "__main__":', 'def snap(v: float) -> int:\n    """v moved to the grid line under it."""\n'
+        '    return int(v // UNIT) * UNIT\n\n\nif __name__ == "__main__":')
+    generator.write_text(text, encoding="utf-8", newline="\n")
+    code, out = install(project, "--helpers-only", "--replace-edited-helpers")
+    assert code == 1 and "snap:" not in out and "units: here " in out, out
+    code, out = install(project, "--helpers-only", "--replace-edited-helpers=units")
+    assert code == 0 and "replaced its helpers of 2026-09-01" in out, out
+    game = runpy.run_path(str(generator), run_name="generator")
+    assert game["snap"].__doc__ == "v moved to the grid line under it."
 
 
 def test_install_helpers_only_refreshes_the_generator_alone(tmp_path):

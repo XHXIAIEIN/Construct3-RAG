@@ -12,7 +12,7 @@ import pytest
 
 from src.ingest.c3_fetcher import C3Fetcher, _cache_expired, _http_get, latest_stable_version
 from src.ingest.common_aces import COMMON_PROPERTIES
-from src.lookup import SchemaIndex
+from src.lookup.schema_index import SchemaIndex
 from src.lookup.schema_layout import schema_is_complete
 
 LOCALES = ("en-US", "zh-CN")

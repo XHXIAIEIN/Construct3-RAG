@@ -1674,3 +1674,10 @@ def test_an_invalid_project_property_is_named_in_the_editor_language(project):
     edit(project, "project.c3proj", lambda p: p["properties"].update(fullscreenMode="scale"))
     code, out = check(project, "--locale", "zh-CN")
     assert code == 1 and "fullscreenMode (缩放模式) 'scale' is not one of letterbox-scale (比例缩放)" in out, out
+
+
+def test_offline_says_the_clone_was_not_compared(built):
+    """CONSTRUCT3_RAG_OFFLINE=1, which every run here sets, leaves a trace in the output."""
+    code, out = check(built)
+    assert code == 0, out
+    assert f"note: CONSTRUCT3_RAG_OFFLINE is 1, so the clone at {REPO} was not compared with its upstream" in out

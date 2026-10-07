@@ -17,7 +17,7 @@ The scripts need Python 3.10 or later. Cutting pictures out of an image tool's o
 
 - The scripts run on the machine with Python, on the files of the project and of this plugin.
 - Opening, previewing, exporting or taking a picture of a project starts Edge, Chrome or Chromium, or the agent's browser tool, on the Construct 3 editor at `editor.construct.net`, with the project loaded from the machine. A preview runs at `preview.construct.net`. An export uses the Construct account that the user signs in to in that browser; the scripts store no password.
-- When the plugin is a Git clone of its repository, the checker fetches that clone's remote at most once an hour to say when it is behind. Set `CONSTRUCT3_RAG_OFFLINE` to turn this off.
+- When the plugin is a Git clone of its repository, the checker fetches that clone's remote at most once an hour to say when it is behind. Set `CONSTRUCT3_RAG_OFFLINE=1` to turn this off; the checker then says that it did not compare the clone.
 
 ## Source
 

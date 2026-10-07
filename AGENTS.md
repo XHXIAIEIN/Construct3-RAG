@@ -124,7 +124,7 @@ hand or changing it, read `prompts/game-project-AGENTS.md`.
 - An installed copy says when it differs from `skills/construct3-agent-plugin/`
   here and prints the command that refreshes it. `check_project.py` also
   fails when the clone is behind its upstream and holds no work of the
-  user's, and prints the pull and the refresh. Run what they print.
+  user's, and prints the fast-forward and the refresh. Run what they print.
 - The user does not want it in the project: remove the copy, run the
   scripts from this repository in place,
   `python <this repository>/skills/construct3-agent-plugin/scripts/<script>.py

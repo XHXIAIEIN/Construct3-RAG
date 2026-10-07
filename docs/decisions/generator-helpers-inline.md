@@ -72,7 +72,14 @@ Option 4.
   part stays as it is: the edits are the game's. install.py says to copy
   each changed helper below the end marker, where a def of the same name
   replaces the one between the markers, then to run it again with
-  `--replace-edited-helpers`. `--helpers-only` refreshes the generator
+  `--replace-edited-helpers`. That run still refuses, and writes nothing,
+  while a def between the markers differs from the skill's and has no def
+  of its name below the end marker: it names each one with the first line
+  that differs. A helper that differs only because the skill's changed is
+  named in the flag, `--replace-edited-helpers=units`, to take the skill's.
+  The stamp covers the whole part, so it cannot tell the game's edits from
+  the template's own changes; the names given are that decision, in the
+  run's output. `--helpers-only` refreshes the generator
   alone, for a project used through the Claude Code plugin, which holds no
   copy of the skill.
 - `check_project.py`, and so every run of the generator, warns when the

@@ -1,17 +1,5 @@
-"""Canonical deterministic Lookup package."""
+"""Canonical deterministic Lookup package.
 
-from .examples_index import ExamplesIndex
-from .intent import IntentClassifier
-from .schema_index import SchemaIndex
-from .scripting_index import ScriptingIndex
-from .service import LookupEngine
-from .term_index import TermIndex
-
-__all__ = [
-    "ExamplesIndex",
-    "IntentClassifier",
-    "LookupEngine",
-    "SchemaIndex",
-    "ScriptingIndex",
-    "TermIndex",
-]
+Each module is imported by its own path, so that importing one, such as
+`schema_layout` for the data scripts, needs only what that module imports.
+"""

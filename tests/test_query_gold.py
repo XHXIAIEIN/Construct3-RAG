@@ -16,7 +16,7 @@ from typing import Any
 import pytest
 
 from src.domain.lookup import LookupIntent, LookupResponse
-from src.lookup import LookupEngine
+from src.lookup.service import LookupEngine
 from src.settings import load_settings
 
 
