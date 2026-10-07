@@ -23,7 +23,7 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
         + png_chunk(b"IDAT", zlib.compress(bytes([0, 9, 9, 9, 0]))) + png_chunk(b"IEND", b""))
     edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x=50))
     sheet = project / "eventSheets" / "Game.json"
-    sheet.write_text(sheet.read_text(encoding="utf-8").replace("32 * floor(random(0, 20)) + 48", "random(96, 624)"),
+    sheet.write_text(sheet.read_text(encoding="utf-8").replace("32 * floor(random(1, 19)) + 48", "random(96, 624)"),
                      encoding="utf-8")
     code, out = tool(project, "check_look")
     assert code == 1, out

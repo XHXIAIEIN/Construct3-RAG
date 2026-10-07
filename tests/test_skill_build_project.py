@@ -99,7 +99,7 @@ def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
     template = template_module()
     template.ROOT = tmp_path
     style = template.SHAPE_STYLE
-    style.update(outline_width=4, shadow_distance=10, shadow_angle=90, shadow_opacity=0.5)
+    style.update(outline=True, shadow=True, outline_width=4, shadow_distance=10, shadow_angle=90, shadow_opacity=0.5)
     ink, fill = template.rgb(style["outline_role"]), template.rgb("reward")
 
     f = template.shape("on.png", "rect", 64, 32, "reward")
@@ -125,48 +125,57 @@ def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
     assert png_pixels(tmp_path / "images" / "one.png")[0][0] == (*ink, 255)
 
 
-def test_template_draws_an_accent_with_its_outline_and_a_fill_the_outline_shows_on(tmp_path):
-    """An accent loses to the backdrop on value and shows by its ink outline, so it is never drawn
-    without one; a fill too near the ink hides its own outline."""
+def test_template_draws_an_accent_that_shows_without_its_outline_and_a_fill_the_outline_shows_on(tmp_path):
+    """The plain sheet draws no outline, so an accent reads 3:1 on canvas_alt or is drawn with its
+    outline; a fill too near the ink hides its own outline."""
     t = template_module()
     t.ROOT = tmp_path
-    with pytest.raises(SystemExit, match=r"spike.png: danger is an accent, .* draw it with its outline, or in a grey role"):
-        t.shape("spike.png", "triangle", 32, 32, "danger", outline=False)
-    t.shape("wall.png", "rect", 32, 32, "solid", outline=False)                  # a grey may go without
-    t.shape("player.png", "rect", 32, 64, "ink")                                 # the player is ink, its outline too
-    with pytest.raises(SystemExit, match=r"shade.png: its dim fill reads 2\.\d:1 against its ink outline, which needs "
+    t.shape("spike.png", "triangle", 32, 32, "danger")                          # 3.5:1, shows alone
+    t.PALETTE["danger"] = (245, 120, 110)
+    with pytest.raises(SystemExit, match=r"spike.png: danger \(245, 120, 110\) reads 2\.\d\d:1 on canvas_alt, and an "
+                                         r"accent without an outline needs 3:1 .* darken danger, or draw it with its outline"):
+        t.shape("spike.png", "triangle", 32, 32, "danger")
+    t.shape("spike.png", "triangle", 32, 32, "danger", outline=True)
+    t.shape("wall.png", "rect", 32, 32, "solid")                                 # a grey may go without
+    t.shape("player.png", "rect", 32, 64, "ink", outline=True)                   # the player is ink, its outline too
+    t.PALETTE["dim"] = (60, 60, 60)
+    with pytest.raises(SystemExit, match=r"shade.png: its dim fill reads 1\.\d:1 against its ink outline, which needs "
                                          r"3:1 to show; fill it in one of canvas, canvas_alt, solid, reward, danger, flash"):
-        t.shape("shade.png", "rect", 32, 32, "dim")
+        t.shape("shade.png", "rect", 32, 32, "dim", outline=True)
 
 
 def test_template_palette_keeps_the_ratios_of_the_blockout():
-    """The draft's greys: the backdrop's two at most 1.2:1, structure 3:1 on the darker; the run
-    stops on a palette that loses either, naming the role to move."""
+    """The sheet's greys: the checker's two at most 1.2:1, structure 3:1 on the darker, and the
+    accents 3:1 on it as well, so every shape shows without an outline; the run stops on a palette
+    that loses the greys' ratios, naming the role to move."""
     t = template_module()
     ratios = {pair: round(t.contrast(t.rgb(pair[0]), t.rgb(pair[1])), 2) for pair in (
-        ("canvas", "canvas_alt"), ("solid", "canvas_alt"), ("ink", "solid"), ("ink", "reward"), ("ink", "danger"))}
-    assert ratios == {("canvas", "canvas_alt"): 1.16, ("solid", "canvas_alt"): 3.11, ("ink", "solid"): 4.32,
-                      ("ink", "reward"): 10.45, ("ink", "danger"): 3.98}
+        ("canvas", "canvas_alt"), ("solid", "canvas_alt"), ("reward", "canvas_alt"), ("danger", "canvas_alt"),
+        ("ink", "solid"), ("ink", "reward"), ("ink", "danger"))}
+    assert ratios == {("canvas", "canvas_alt"): 1.11, ("solid", "canvas_alt"): 3.23, ("reward", "canvas_alt"): 3.1,
+                      ("danger", "canvas_alt"): 4.12, ("ink", "solid"): 5.03, ("ink", "reward"): 5.24,
+                      ("ink", "danger"): 3.94}
     t.check_palette()
     assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger"]
     t.PALETTE["canvas_alt"] = (200, 200, 200)
     with pytest.raises(SystemExit, match=r"PALETTE: canvas .* and canvas_alt .* are 1\.\d\d:1; the backdrop's two greys "
                                          r"stay at most 1\.2:1"):
         t.check_palette()
-    t.PALETTE.update(canvas_alt=(228, 228, 228), solid=(160, 160, 160))
+    t.PALETTE.update(canvas_alt=(238, 238, 234), solid=(160, 160, 160))
     with pytest.raises(SystemExit, match=r"PALETTE: solid \(160, 160, 160\) on canvas_alt .* reads 2\.\d\d:1; structure "
                                          r"needs 3:1 .* Darken solid"):
         t.check_palette()
 
 
 def test_template_patterns_tile_by_the_unit_and_meet_without_a_seam(tmp_path):
-    """An area is a Tiled Background of one of four patterns; its image offset is minus its
-    corner modulo the tile, which the runtime subtracts from the texture coordinate, so every
-    piece lines up with the layout. The checker is the backdrop's alone, the high-contrast
+    """An area is a Tiled Background of a pattern; its image offset is minus its corner modulo
+    the tile, which the runtime subtracts from the texture coordinate, so every piece lines up
+    with the layout. The plain sheet and the checker are the backdrop's alone, the high-contrast
     stripes strips and small zones."""
     t = template_module()
     t.ROOT = tmp_path
-    for name, kind in (("Backdrop", "checker"), ("Ledge", "low"), ("Door", "caution"), ("Lava", "hazard")):
+    for name, kind in (("Sheet", "plain"), ("Backdrop", "checker"), ("Ledge", "low"), ("Door", "caution"),
+                       ("Lava", "hazard")):
         t.pattern(name, kind)
         px = png_pixels(tmp_path / "images" / f"{name.lower()}.png")
         assert (len(px), len(px[0])) == (32, 32)
@@ -186,12 +195,14 @@ def test_template_patterns_tile_by_the_unit_and_meet_without_a_seam(tmp_path):
     assert t.tiledbg_inst("HpFill", 100, 50, 64, 64)["properties"]["image-offset-x"] == 0   # a bar is no pattern
     back = t.backdrop("Backdrop")
     assert (back["world"]["x"], back["world"]["y"], back["world"]["width"], back["world"]["height"]) == (0, 0, 720, 1280)
-    with pytest.raises(SystemExit, match=r"area\('Backdrop'\): the checker is empty space, the backdrop alone"):
-        t.area("Backdrop", 0, 0, 4, 4)
+    assert t.backdrop("Sheet")["world"]["width"] == 720
+    for name, kind in (("Backdrop", "checker"), ("Sheet", "plain")):
+        with pytest.raises(SystemExit, match=rf"area\('{name}'\): the {kind} pattern is empty space, the backdrop alone"):
+            t.area(name, 0, 0, 4, 4)
     with pytest.raises(SystemExit, match=r"area\('Lava'\): 10x6 cells of hazard stripes; .* keep the shorter side to 5 cells"):
         t.area("Lava", 0, 0, 10, 6)
     t.area("Ledge", 0, 0, 10, 6)                                             # low stripes may cover more
-    with pytest.raises(SystemExit, match=r"backdrop\('Door'\): the backdrop is the checker"):
+    with pytest.raises(SystemExit, match=r"backdrop\('Door'\): the backdrop is the plain sheet or the checker"):
         t.backdrop("Door")
     with pytest.raises(SystemExit, match=r"area\('Wall'\): not a pattern"):
         t.area("Wall", 0, 0, 1, 1)
@@ -406,7 +417,7 @@ def test_template_places_the_hud_on_the_grid(built):
     assert banner["world"]["width"] >= len("选择前进之路") * 48 * 4 / 3
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
     score = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "ScoreText")["world"]
-    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 32, 256, 64)
+    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 32, 512, 128)   # title size
     for k in ("x", "y", "width", "height"):
         assert score[k] % t.UNIT == 0, k
     # Two HUD boxes that meet, or one past the viewport, stop the generator and name them.
@@ -532,9 +543,9 @@ def test_template_draws_only_the_colours_of_its_palette(built, tmp_path):
         assert {px[:3] for px in row if px[3]} <= set(t.PALETTE.values())
     t.write_png("half.png", 2, 1, lambda x, y: (*t.PALETTE["danger"], 128 if x else 255))   # the shadow's alpha
     t.write_png("clear.png", 1, 1, lambda x, y: (1, 2, 3, 0))                                # a pixel that does not show
-    assert png_pixels(tmp_path / "images" / "half.png") == [[(226, 59, 46, 255), (226, 59, 46, 128)]]
+    assert png_pixels(tmp_path / "images" / "half.png") == [[(220, 38, 60, 255), (220, 38, 60, 128)]]
     with pytest.raises(SystemExit, match=r"images/heart.png: \(230, 40, 60\) at \(1,0\) is no colour of PALETTE, "
-                                         r"nor are 1 more of its colours; the nearest is danger \(226, 59, 46\)\. "
+                                         r"nor are 1 more of its colours; the nearest is danger \(220, 38, 60\)\. "
                                          r"Draw with rgb\('danger'\), or add the colour to PALETTE"):
         t.write_png("heart.png", 3, 1, lambda x, y: [(0, 0, 0, 0), (230, 40, 60, 255), (9, 9, 9, 255)][x])
     assert not (tmp_path / "images" / "heart.png").exists()
@@ -557,20 +568,20 @@ def test_template_labels_read_on_what_is_behind_them():
     assert (score["properties"]["font"], score["properties"]["size"], score["properties"]["color"]) == \
         ("Arial", 32, t.rgba(t.PALETTE["ink"]))
     assert (t.text_contrast(8), t.text_contrast(17), t.text_contrast(18), t.text_contrast(32)) == (4.5, 4.5, 3, 3)
-    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.5:1 on the backdrop's darker cell
+    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.8:1 on the checker's darker cell
     t.hud_text("TimerText", "Time: 30", "top-right", color="dim")          # 32 pt is large-scale: 3:1 is enough
-    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(228, 228, 228\) reads 3\.5:1; "
+    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(238, 238, 234\) reads 3\.8:1; "
                                          r"text of size 12 needs 4\.5:1\. Roles that read on canvas_alt: ink;"):
         t.hud_text("TimerText", "Time: 30", "top-right", size=12, color="dim")
-    t.PALETTE["dim"] = (150, 150, 150)                                   # 2.3:1
+    t.PALETTE["dim"] = (150, 150, 150)                                   # 2.6:1
     with pytest.raises(SystemExit, match=r"text of size 32 needs 3:1"):
         t.hud_text("TimerText", "Time: 30", "top-right", color="dim")
     t.PALETTE["dim"] = (120, 120, 120)
     banner = t.hud_text("WinText", "YOU WIN", "center", size=t.TEXT_SIZE["title"], color="dim")
     assert banner["properties"]["size"] == 64 and banner["properties"]["color"][:3] == [120 / 255] * 3
-    with pytest.raises(SystemExit, match=r"LivesText: flash \(255, 255, 255\) on reward \(245, 197, 24\) reads 1\.\d:1; "
-                                         r".* Roles that read on reward: ink;"):
-        t.hud_text("LivesText", "Lives", "top", color="flash", on="reward")
+    with pytest.raises(SystemExit, match=r"LivesText: flash \(255, 255, 255\) on canvas \(250, 250, 247\) reads 1\.0:1; "
+                                         r".* Roles that read on canvas: solid, dim, ink, reward, danger;"):
+        t.hud_text("LivesText", "Lives", "top", color="flash", on="canvas")
     game = t.layout("Game", [t.layer("Background", transparent=False), t.layer("UI", parallax=0)], sheet="Game")
     assert [layer["backgroundColor"] for layer in game["layers"]] == [t.rgba(t.PALETTE["canvas"]), [1, 1, 1, 1]]
 
@@ -642,7 +653,7 @@ def test_template_art_shows_the_stand_in_until_its_picture_is_there(tmp_path):
     f = t.art("gem-default-000.png", "circle", 64, 64, "reward", "a red gem")
     assert t.DRAWN_AS["gem-default-000.png"][0] == "circle" and t.ART["gem-default-000.png"]["subject"] == "a red gem"
     stand_in = (tmp_path / "images" / "gem-default-000.png").read_bytes()
-    assert f["width"] > 64                                          # the shadow widens the stand-in
+    assert f["width"] == 64                                         # the plain sheet casts no shadow
     t.art("sky-default-000.png", "scene", 128, 64, "canvas", "a night sky")
     assert t.drawn("sky-default-000.png")["width"] == 128           # a flat rectangle, no shadow
     with pytest.raises(SystemExit, match=r"art\('x.png'\): 'star' is no kind; art\(\) takes rect, circle, triangle or scene"):

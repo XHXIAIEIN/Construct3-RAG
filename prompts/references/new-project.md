@@ -48,11 +48,14 @@ Construct-Example-Projects, 2026-09-18]
   *Letterbox integer scale*. The generator template holds these as `PALETTE` and
   `rgb()`, the colour check of `write_png()`, `FONT` and `TEXT_SIZE`, the
   contrast check of `hud_text()`, and `PIXEL_ART`.
-- Until the art arrives, a generated game is a blockout. Lightness shows the
-  hierarchy, from a light checker backdrop through a solid grey to ink. Two
-  accents mark what is collected and what hurts, each shown by its ink
-  outline. A rectangle is the player or structure, a circle what is
-  collected, a triangle what hurts. An area or an edge is a striped Tiled
+- Until the art arrives, a generated game is a plain sheet: flat shapes on
+  an off-white canvas that fills the screen, without outlines, shadows,
+  cards or panels. Lightness shows the hierarchy, from the canvas through a
+  solid grey to ink. Two accents mark what is collected and what hurts, each
+  at least 3:1 on the canvas. A rectangle is the player or structure, a
+  circle what is collected, a triangle what hurts. Where something is
+  transparent, a mask, or a background still to come, the backdrop is the
+  transparency checker instead. An area or an edge is a striped Tiled
   Background, and objects stay flat. A level is a run of beats, each asking
   one thing, with a rest after every hard one. The generator template holds
   these as `PALETTE`, `shape()`, `PATTERNS`, `area()`, `backdrop()` and

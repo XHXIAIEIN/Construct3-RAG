@@ -292,15 +292,19 @@ habits; they are what makes rerunning safe.
   that would read there. A
   viewport 360 px high or less is pixel art: `PIXEL_ART` has the project
   sample *Nearest* at a whole-number scale.
-- The stand-in's look is a blockout. `PALETTE` holds two canvas greys,
+- The stand-in's look is a plain sheet: flat shapes on an off-white
+  canvas, no outline and no shadow. `PALETTE` holds two canvas greys,
   `solid`, `dim`, `ink`, the accents `reward` and `danger`, and `flash`;
   keep the roles and change values only. `check_palette()` stops the run
-  when the backdrop's greys pass 1.2:1 or `solid` falls under 3:1 on them,
-  and `shape()` stops on an accent drawn without its outline or a fill
-  under 3:1 against the ink. The player is an ink rectangle, structure a
-  solid one, a pickup a circle, a hazard a triangle. The backdrop is the
-  checker, `backdrop("Backdrop")` on a layer at parallax 1, its cells two to
-  a unit: it is the ruler, so draw no grid. An area or an edge is
+  when the checker's greys pass 1.2:1 or `solid` falls under 3:1 on them,
+  and `shape()` stops on an accent under 3:1 on `canvas_alt` drawn without
+  its outline, or a fill under 3:1 against the ink. The player is an ink
+  rectangle, structure a solid one, a pickup a circle, a hazard a
+  triangle. The backdrop is `backdrop("Backdrop")` on a layer at parallax
+  1, of `pattern("Backdrop", "plain")`. A game with something transparent,
+  a mask or a background still to come draws it as `"checker"` instead,
+  as editors show transparency; its cells, two to a unit, are then the
+  ruler, so draw no grid. An area or an edge is
   `area(type, col, row, cols, rows)` of a type whose tile `pattern(name,
   kind)` drew in `build_images()` and `pattern_type(name)` declares: `low`
   stripes for a harmless special surface, `caution` for what moves or

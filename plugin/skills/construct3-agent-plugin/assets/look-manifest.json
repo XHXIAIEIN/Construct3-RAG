@@ -76,16 +76,16 @@
     {
       "id": "outline.width",
       "status": "adopted",
-      "says": "An ink outline inside every shape's edge.",
+      "says": "An ink outline inside a shape's edge where SHAPE_STYLE turns it on; off on the plain sheet, always on a hit frame.",
       "template": "SHAPE_STYLE['outline_width']",
       "value": "max(1, UNIT // 4)"
     },
     {
       "id": "shadow.form",
       "status": "adopted",
-      "says": "A hard cast shadow: one unblurred copy of the shape, one direction for the whole scene.",
+      "says": "No cast shadow on the plain sheet. A game that turns it on gets a hard one: one unblurred copy of the shape, one direction for the whole scene.",
       "template": "SHAPE_STYLE['shadow']",
-      "value": "True"
+      "value": "False"
     },
     {
       "id": "shadow.distance",
@@ -112,27 +112,27 @@
       "id": "palette.greys",
       "status": "enforced",
       "strict": true,
-      "says": "Two canvas greys, one solid grey, dim, ink and two accents, plus the hit's flash; the player in ink. The backdrop's greys at most 1.2:1, solid at least 3:1 on the darker of them.",
+      "says": "Two canvas greys, one solid grey, dim, ink and two accents, plus the hit's flash; the player in ink. The checker's greys at most 1.2:1, solid at least 3:1 on the darker of them.",
       "template": "{role: '#%02X%02X%02X' % colour for role, colour in PALETTE.items()}",
-      "value": "{'canvas': '#F4F4F4', 'canvas_alt': '#E4E4E4', 'solid': '#808080', 'dim': '#5A5A5A', 'ink': '#1C1C1C', 'reward': '#F5C518', 'danger': '#E23B2E', 'flash': '#FFFFFF'}",
+      "value": "{'canvas': '#FAFAF7', 'canvas_alt': '#EEEEEA', 'solid': '#848480', 'dim': '#646460', 'ink': '#111111', 'reward': '#D06C00', 'danger': '#DC263C', 'flash': '#FFFFFF'}",
       "helpers": "check_palette()"
     },
     {
-      "id": "colour.accent-outline",
+      "id": "colour.accent-contrast",
       "status": "enforced",
       "strict": true,
-      "says": "An accent, a role that is a hue and not a grey, loses to the backdrop on value and is drawn with its ink outline; every outlined fill reads at least 3:1 against the ink.",
+      "says": "An accent, a role that is a hue and not a grey, reads at least 3:1 on canvas_alt when drawn without an outline, or is drawn with its ink outline; every outlined fill reads at least 3:1 against the ink.",
       "template": "[role for role in PALETTE if accent(role)]",
       "value": "['reward', 'danger']",
       "helpers": "accent(), shape()"
     },
     {
-      "id": "backdrop.checker",
+      "id": "backdrop.sheet",
       "status": "enforced",
       "strict": true,
-      "says": "The transparency checker behind everything, one Tiled Background from the layout's origin, cells of UNIT / 2 in canvas and canvas_alt; it is the ruler, in place of a grid, and no area elsewhere.",
-      "template": "PATTERNS['checker']",
-      "value": "('canvas', 'canvas_alt')",
+      "says": "One Tiled Background behind everything from the layout's origin, and no area elsewhere: the plain sheet in canvas, or, in a game with something transparent, a mask or a background still to come, the transparency checker, cells of UNIT / 2 in canvas and canvas_alt, the ruler in place of a grid.",
+      "template": "{kind: PATTERNS[kind] for kind in BACKDROPS}",
+      "value": "{'plain': ('canvas', 'canvas'), 'checker': ('canvas', 'canvas_alt')}",
       "helpers": "pattern(), pattern_type(), backdrop()"
     },
     {
@@ -140,7 +140,7 @@
       "status": "enforced",
       "strict": true,
       "says": "Objects stay flat; an area or an edge is a Tiled Background of a pattern: low stripes for a harmless special surface, caution stripes for what moves or triggers, hazard stripes for what hurts. Stripes at 45 degrees, a one-unit tile, offset so pieces meet without a seam; the caution and hazard stripes cover strips and small zones, their shorter side a quarter of the viewport's at most.",
-      "template": "{kind: roles for kind, roles in PATTERNS.items() if kind != 'checker'}",
+      "template": "{kind: roles for kind, roles in PATTERNS.items() if kind not in BACKDROPS}",
       "value": "{'low': ('solid', 'dim'), 'caution': ('reward', 'ink'), 'hazard': ('danger', 'ink')}",
       "helpers": "pattern(), area(), tiledbg_inst()"
     },
@@ -166,7 +166,7 @@
       "id": "motion.hit",
       "status": "enforced",
       "strict": true,
-      "says": "A hit shows the shape's hit frame, filled in the flash role with the same outline and shadow, for 0.08 s of real time, then frame 0; never the Flash behavior.",
+      "says": "A hit shows the shape's hit frame, filled in the flash role inside the ink outline with the same shadow, for 0.08 s of real time, then frame 0; never the Flash behavior.",
       "template": "HIT_FLASH['seconds']",
       "value": "0.08",
       "helpers": "hit_frame(), hit_flash(), beh_def()",
@@ -232,7 +232,7 @@
     "Copy assets/build_project.py to the project's tools/ and rewrite only the game, above the helpers' begin marker and below their end marker: PROJECT_NAME, PALETTE's values by role, ART_STYLE, BEATS, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
     "Keep SHAPE_STYLE and the helpers between the markers; a helper the game changes is defined again below the end marker. Give every sprite an art() in whole units, which draws its stand-in until its picture arrives, and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
     "With an image tool in the session: run prepare_art.py --list, make each picture with the prompt it prints, run prepare_art.py, then the generator. Never draw the art in code: it looks worse than the stand-ins and mixes styles.",
-    "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area or an edge is area() of a pattern(), the backdrop the checker's backdrop().",
+    "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area or an edge is area() of a pattern(); the backdrop is backdrop() of the plain pattern, or of the checker where something is transparent, a mask or a background still to come.",
     "Write BEATS for the game's zones or rounds, and read the curve the generator prints; measure every gap of a platformer level with jump().",
     "Give every object that can be hit a hit_frame() after its shape and the Tween behavior, and show a hit with hit(obj), last in its block; never the Flash behavior.",
     "Squash a landing and a jump with squash(art, \"land\") and squash(art, \"jump\"), on the art pinned to the collision mask, never on the mask.",

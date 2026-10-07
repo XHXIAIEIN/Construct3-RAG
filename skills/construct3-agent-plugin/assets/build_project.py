@@ -73,20 +73,20 @@ COIN_SIZE = TOUCH                          # a coin is tapped, so it is never sm
 # examples keep to few colours with hard edges, 9 covering 95% of a project's opaque pixels
 # and 35 its whole art at the median, and their text to one or two colours in two sizes
 # (Construct3-RAG/docs/decisions/game-look-from-design-skills.md).
-# The stand-in is a blockout: value carries the hierarchy, greys from the canvas to ink, and two
-# accents for what must be noticed wherever the eye is. An accent loses to its background on
-# value and shows by the ink outline round it, so shape() draws an accent with its outline, and
-# check_palette() stops the run on greys that lose the ratios below
+# The stand-in is a plain sheet: flat shapes on an off-white canvas that fills the screen, value
+# carrying the hierarchy from the canvas to ink, and two accents for what must be noticed
+# wherever the eye is. Every fill reads at least 3:1 on canvas_alt, so a shape shows without an
+# outline or a shadow; check_palette() and shape() stop the run on one that does not
 # (Construct3-RAG/docs/decisions/greybox-blockout.md). A game adds a third accent only for a role
 # the two do not cover, a goal for instance.
 PALETTE = {
-    "canvas": (244, 244, 244),         # the backdrop's light cells; an opaque layer's fill
-    "canvas_alt": (228, 228, 228),     # the backdrop's dark cells, at most 1.2:1 from canvas
-    "solid": (128, 128, 128),          # structure, at least 3:1 on the backdrop; a bar's frame
-    "dim": (90, 90, 90),               # a secondary label
-    "ink": (28, 28, 28),               # the player, outlines, shadows, labels, a bar's fill
-    "reward": (245, 197, 24),          # what the player collects: the coin
-    "danger": (226, 59, 46),           # what hurts or is lost
+    "canvas": (250, 250, 247),         # the sheet: an opaque layer's fill; the checker's light cells
+    "canvas_alt": (238, 238, 234),     # the checker's dark cells, at most 1.2:1 from canvas
+    "solid": (132, 132, 128),          # structure, at least 3:1 on canvas_alt; a bar's frame
+    "dim": (100, 100, 96),             # a secondary label
+    "ink": (17, 17, 17),               # the player, outlines, labels, a bar's fill
+    "reward": (208, 108, 0),           # what the player collects: the coin
+    "danger": (220, 38, 60),           # what hurts or is lost
     "flash": (255, 255, 255),          # the fill of an object for the instant it is hit
 }
 # The outline and the cast shadow of every image shape() draws, one switch for the game. They
@@ -95,19 +95,21 @@ PALETTE = {
 # outline lies inside the shape's edge, so the shape keeps its size on the grid; the shadow is
 # a hard copy of the shape, offset, and widens the image on its side. Being in the image, a
 # shadow turns with a rotating sprite and darkens where two shadows overlap: draw such a sprite
-# with shape(..., shadow=False). Values: Construct3-RAG/docs/decisions/greybox-blockout.md.
+# with shape(..., shadow=False). Both are off on the plain sheet; a game turns them on for a
+# look that wants them. Values: Construct3-RAG/docs/decisions/greybox-blockout.md.
 SHAPE_STYLE = {
-    "outline": True,
+    "outline": False,
     "outline_width": max(1, UNIT // 4),                      # px, inside the edge
     "outline_role": "ink",
-    "shadow": True,
+    "shadow": False,
     "shadow_distance": round(0.027 * min(VIEW_W, VIEW_H)),   # px: 2.7% of the shorter side
     "shadow_angle": 45,                                      # degrees clockwise from rightwards: 90 is down
     "shadow_opacity": 0.5,
     "shadow_role": "ink",
 }
 # A hit shows as a colour for an instant: the shape's second frame, drawn by hit_frame() in the
-# role below with the same outline and shadow, shown by hit_flash() for `seconds` of real time.
+# role below with the same shadow and always with the outline, which keeps a white flash
+# visible on the sheet, shown by hit_flash() for `seconds` of real time.
 # Not the Flash behavior, which blinks the object's opacity: a colour set for 0.05 to 0.1 s, white
 # or danger, reads as a hit. An object's colour in Construct multiplies its image, so it cannot
 # turn a yellow shape white; a frame can.
@@ -618,9 +620,10 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
                  f"so give it units(n) or TOUCH, {math.ceil(w / UNIT) * UNIT}x{math.ceil(h / UNIT) * UNIT} here")
     style = SHAPE_STYLE
     edge = style["outline_width"] if (style["outline"] if outline is None else outline) else 0
-    if not edge and accent(role):
-        sys.exit(f"{rel}: {role} is an accent, which loses to the backdrop on value and shows by the outline round "
-                 f"it; draw it with its outline, or in a grey role")
+    ratio = contrast(rgb(role), rgb("canvas_alt"))
+    if not edge and accent(role) and ratio < 3:
+        sys.exit(f"{rel}: {role} {PALETTE[role]} reads {ratio:.2f}:1 on canvas_alt, and an accent without an outline "
+                 f"needs 3:1 to show (WCAG 2.2, 1.4.11); darken {role}, or draw it with its outline")
     ratio = contrast(rgb(role), rgb(style["outline_role"]))
     if edge and role != style["outline_role"] and ratio < 3:
         fits = [r for r in PALETTE if contrast(PALETTE[r], rgb(style["outline_role"])) >= 3]
@@ -650,7 +653,7 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
 
 def hit_frame(rel: str) -> dict:
     """The hit frame of the image shape() or art() drew as images/<rel>, "coin-default-000.png":
-    the same shape, outline and shadow filled in HIT_FLASH's role, or the picture's silhouette in
+    the same shape and shadow filled in HIT_FLASH's role inside the outline, or the picture's silhouette in
     that colour, written as the next frame's file and tagged "hit". Put it after the first frame
     in the animation; hit_flash() shows it."""
     if rel not in DRAWN_AS or not rel.endswith("-000.png"):
@@ -667,7 +670,7 @@ def hit_frame(rel: str) -> dict:
         FRAMES[hit] = {**FRAMES[rel], "imageSpriteId": image_id(), "tag": "hit"}
         return FRAMES[hit]
     kind, w, h, ox, oy, outline, shadow = DRAWN_AS[rel]
-    f = shape(hit, kind, w, h, HIT_FLASH["role"], ox, oy, outline, shadow)
+    f = shape(hit, kind, w, h, HIT_FLASH["role"], ox, oy, True, shadow)
     f["tag"] = "hit"
     return f
 
@@ -747,15 +750,17 @@ def write_wanted() -> None:
 
 
 # Objects are flat; an area or an edge carries a pattern, a Tiled Background, which repeats its
-# image at any size without stretching it. Four patterns, each two roles of PALETTE and one job.
-# A red triangle is one hazard, a red-striped area a hazardous region; a yellow circle is a
-# pickup, a yellow-striped strip a door or a plate.
+# image at any size without stretching it. Each pattern is two roles of PALETTE and one job.
+# A red triangle is one hazard, a red-striped area a hazardous region; an amber circle is a
+# pickup, an amber-striped strip a door or a plate.
 PATTERNS = {
-    "checker": ("canvas", "canvas_alt"),   # empty space, and the ruler: the backdrop only
+    "plain": ("canvas", "canvas"),         # the sheet: the backdrop only
+    "checker": ("canvas", "canvas_alt"),   # transparency, a mask, a background to come: the backdrop only
     "low": ("solid", "dim"),               # a surface special and harmless: a one-way platform, a safe zone
     "caution": ("reward", "ink"),          # what moves, triggers or blocks on a condition: a door, a plate
     "hazard": ("danger", "ink"),           # an area that hurts: lava, a kill zone
 }
+BACKDROPS = ("plain", "checker")           # the patterns of backdrop() alone
 PATTERN_OF: dict[str, str] = {}            # the pattern of each type pattern() drew, by type name
 TILES: dict[str, int] = {}                 # its tile in px, which tiledbg_inst() aligns to the layout
 
@@ -769,7 +774,7 @@ def pattern(name: str, kind: str) -> None:
         sys.exit(f"pattern({name!r}, {kind!r}): the patterns are {', '.join(PATTERNS)}")
     a, b = PATTERNS[kind]
     half = UNIT // 2
-    if kind == "checker":
+    if kind in BACKDROPS:
         def pixel(x, y):
             return (*rgb(a if (x // half + y // half) % 2 == 0 else b), 255)
     else:
@@ -1514,13 +1519,15 @@ def area(otype: str, col: int, row: int, cols: int, rows: int, ivars=None, behav
     """An area or an edge in the pattern type `otype` of pattern_type(), covering cols x rows grid
     cells from cell (col, row): a one-way platform in low stripes, a door in caution stripes, lava
     in hazard stripes. The high-contrast stripes cover strips and small zones, their shorter side
-    a quarter of the viewport's at most; the checker is the backdrop's alone, backdrop()."""
+    a quarter of the viewport's at most; the plain sheet and the checker are the backdrop's alone,
+    backdrop()."""
     kind = PATTERN_OF.get(otype)
     if not kind:
         sys.exit(f"area({otype!r}): not a pattern; draw it with pattern({otype!r}, kind) in build_images() and give "
                  f"it pattern_type({otype!r}) in build_object_types()")
-    if kind == "checker":
-        sys.exit(f"area({otype!r}): the checker is empty space, the backdrop alone; place it with backdrop({otype!r})")
+    if kind in BACKDROPS:
+        sys.exit(f"area({otype!r}): the {kind} pattern is empty space, the backdrop alone; place it with "
+                 f"backdrop({otype!r})")
     most = min(VIEW_W, VIEW_H) // 4 // UNIT
     if kind in ("caution", "hazard") and min(cols, rows) > most:
         sys.exit(f"area({otype!r}): {cols}x{rows} cells of {kind} stripes; these cover strips and small zones, never "
@@ -1529,12 +1536,14 @@ def area(otype: str, col: int, row: int, cols: int, rows: int, ivars=None, behav
 
 
 def backdrop(otype: str, width: int | None = None, height: int | None = None) -> dict:
-    """The checker of pattern `otype` behind everything: one Tiled Background from the layout's
+    """The backdrop of pattern `otype` behind everything: one Tiled Background from the layout's
     origin over `width` x `height`, the layout's size, the viewport's unless given, on a layer at
-    parallax 1, so its cells are the ruler that sizes and distances are counted in. It replaces a
-    grid: never both."""
-    if PATTERN_OF.get(otype) != "checker":
-        sys.exit(f"backdrop({otype!r}): the backdrop is the checker; draw it with pattern({otype!r}, \"checker\")")
+    parallax 1. It is the plain sheet, or the checker in a game with something transparent, a
+    mask or a background still to come, as editors show transparency; the checker's cells are then
+    the ruler that sizes and distances are counted in, in place of a grid."""
+    if PATTERN_OF.get(otype) not in BACKDROPS:
+        sys.exit(f"backdrop({otype!r}): the backdrop is the plain sheet or the checker; draw it with "
+                 f"pattern({otype!r}, \"plain\") or pattern({otype!r}, \"checker\")")
     return tiledbg_inst(otype, 0, 0, VIEW_W if width is None else width, VIEW_H if height is None else height, 0, 0)
 
 
@@ -1933,7 +1942,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-05, stamp 1aab510f86cb ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-07, stamp 8d965fb695ac ================
 
 
 # --- the game ---------------------------------------------------------------------------
@@ -1956,6 +1965,8 @@ BEATS = [
     beat("climax", 3, ["tap"], coins=10),
     beat("exit", 0, ["tap"], coins=1),
 ]
+# Coins land below the score and a unit clear of it, never under the HUD.
+PLAY_TOP = MARGIN + label_box("", TEXT_SIZE["title"])[1] + UNIT
 
 
 def build_files() -> None:
@@ -1968,7 +1979,7 @@ def build_files() -> None:
 
 
 def build_images() -> None:
-    pattern("Backdrop", "checker")
+    pattern("Backdrop", "plain")
     art("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward", "a gold coin seen from the front")
     hit_frame("coin-default-000.png")
 
@@ -1994,16 +2005,19 @@ def build_layouts() -> dict[str, dict]:
         layer("Game"),
         layer("UI", parallax=0),
     ], sheet="Game")
-    # The checker behind everything is the ruler: two cells a unit. An area or an edge in a
-    # pattern is area(type, col, row, cols, rows) on the Game layer.
+    # The backdrop is the plain sheet. A game with something transparent, a mask or a background
+    # still to come draws it as pattern("Backdrop", "checker"), as editors show transparency, and
+    # its cells are then the ruler: two a unit. An area or an edge in a pattern is
+    # area(type, col, row, cols, rows) on the Game layer.
     game["layers"][0]["instances"].append(backdrop("Backdrop"))
     # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
     # row(), anything else by anchor(); the middle of the screen is the game's. no_overlap()
     # stops the run when two HUD boxes meet or one leaves the viewport. A label is
-    # TEXT_SIZE["body"] in rgb("ink"), a banner TEXT_SIZE["title"], and hud_text() stops the
-    # run on a colour that does not read on what is behind it.
+    # TEXT_SIZE["body"] in rgb("ink"); the number the player plays for, and a banner, are
+    # TEXT_SIZE["title"]. hud_text() stops the run on a colour that does not read on what is
+    # behind it.
     ui = game["layers"][2]["instances"]
-    ui.append(hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"))
+    ui.append(hud_text("ScoreText", "Score: 0", "top-left", size=TEXT_SIZE["title"], longest="Score: 999"))
     # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
     # types from bar_types() and images from bar_images(), and the sheet sets the fill with
     # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
@@ -2030,8 +2044,8 @@ def module_setup() -> dict:
         event("Empty the score and deal this round's coins",
               [on_start()], [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))], children=[
                   block([for_loop("i", "0", f"int(tokenat(ROUND_COINS, beat, {q(',')})) - 1")], [
-                      create("Coin", "Game", f"{grid_random(0, VIEW_W - COIN_SIZE)} + {COIN_SIZE // 2}",
-                             f"{grid_random(snap(1.5 * COIN_SIZE), VIEW_H - COIN_SIZE)} + {COIN_SIZE // 2}"),
+                      create("Coin", "Game", f"{grid_random(MARGIN, VIEW_W - MARGIN - COIN_SIZE)} + {COIN_SIZE // 2}",
+                             f"{grid_random(PLAY_TOP, VIEW_H - MARGIN - COIN_SIZE)} + {COIN_SIZE // 2}"),
                       set_ivar("Coin", "value", "choose(1, 5)"),
                   ]),
               ]),

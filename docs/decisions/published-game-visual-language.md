@@ -86,7 +86,8 @@ separate beat.
 Option 3. No characters, skins, fonts, shaders, exact palettes, ads or
 progression systems are copied.
 
-The generator template holds these (`greybox-blockout.md`):
+The generator template holds these (`greybox-blockout.md`), the outline and
+shadow as switches that its plain-sheet default leaves off:
 
 - outline `UNIT / 4`, drawn into the image;
 - checker contrast at most 1.2;
