@@ -17,7 +17,7 @@
   "grid": {
     "UNIT": "8 when the viewport is 360 px high or less, else 32",
     "world": "every instance outside the HUD starts on a whole UNIT, and a shape covers whole cells",
-    "hud": "held against the viewport's edges by anchor(), MARGIN inside them"
+    "hud": "held against the viewport's edges by anchor(), MARGIN inside them, and to the screen's edges by the Anchor behavior of anchored()"
   },
   "rules": [
     {
@@ -72,6 +72,22 @@
       "strict": true,
       "says": "A viewport 360 px high or less samples Nearest at a whole-number scale.",
       "template": "PIXEL_ART, build_project()"
+    },
+    {
+      "id": "screen.fill",
+      "status": "adopted",
+      "says": "The project fills the screen at any aspect ratio: Scale outer, and Integer scale outer for pixel art, never a Letterbox mode with bars. A HUD element held to an edge carries the Anchor behavior for that edge; a backdrop or a dim reaches SCREEN_PAD past the viewport on every side.",
+      "template": "FULLSCREEN",
+      "value": "'integer-scale-outer' if PIXEL_ART else 'scale-outer'",
+      "helpers": "anchored(), hud_text(), hud_bar(), labelled_bar(), band_text(), screen_box(), backdrop(), anchor_types()",
+      "confirm": "check_look.py: screen.fill (a warning)"
+    },
+    {
+      "id": "layer.z-order",
+      "status": "adopted",
+      "says": "Each layer lists its instances as an editor user would arrange them, back to front: the backdrop, the areas, then the rest by the Y of their feet; a child after its parent, a box inside another box after it unless the outer one is a label.",
+      "template": "z_order()",
+      "helpers": "z_order(), build_all()"
     },
     {
       "id": "outline.width",
@@ -130,7 +146,7 @@
       "id": "backdrop.sheet",
       "status": "enforced",
       "strict": true,
-      "says": "One Tiled Background behind everything from the layout's origin, and no area elsewhere: the plain sheet in canvas, or, in a game with something transparent, a mask or a background still to come, the transparency checker, cells of UNIT / 2 in canvas and canvas_alt, the ruler in place of a grid.",
+      "says": "One Tiled Background behind everything, over the layout and SCREEN_PAD past it on every side, and no area elsewhere: the plain sheet in canvas, or, in a game with something transparent, a mask or a background still to come, the transparency checker, cells of UNIT / 2 in canvas and canvas_alt, the ruler in place of a grid.",
       "template": "{kind: PATTERNS[kind] for kind in BACKDROPS}",
       "value": "{'plain': ('canvas', 'canvas'), 'checker': ('canvas', 'canvas_alt')}",
       "helpers": "pattern(), pattern_type(), backdrop()"
@@ -233,6 +249,7 @@
     "Keep SHAPE_STYLE and the helpers between the markers; a helper the game changes is defined again below the end marker. Give every sprite an art() in whole units, which draws its stand-in until its picture arrives, and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
     "With an image tool in the session: run prepare_art.py --list, make each picture with the prompt it prints, run prepare_art.py, then the generator. Never draw the art in code: it looks worse than the stand-ins and mixes styles.",
     "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area or an edge is area() of a pattern(); the backdrop is backdrop() of the plain pattern, or of the checker where something is transparent, a mask or a background still to come.",
+    "Place the HUD with hud_text(), hud_bar(), labelled_bar() or band_text(), which hold it to the screen's edges with the Anchor behavior; an instance placed by anchor() or row() takes behaviors=anchored(where). Lay a popup's dim over screen_box(), on the popup's own layer. Leave FULLSCREEN and z_order() as they are: they fill the screen and order each layer for any game.",
     "Write BEATS for the game's zones or rounds, and read the curve the generator prints; measure every gap of a platformer level with jump().",
     "Give every object that can be hit a hit_frame() after its shape and the Tween behavior, and show a hit with hit(obj), last in its block; never the Flash behavior.",
     "Squash a landing and a jump with squash(art, \"land\") and squash(art, \"jump\"), on the art pinned to the collision mask, never on the mask.",

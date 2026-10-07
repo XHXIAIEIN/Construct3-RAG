@@ -192,6 +192,12 @@ habits; they are what makes rerunning safe.
   `Cards.Get("strike.cost")`. Each object is a `nonworld_type()` with a
   `nonworld_inst()` in the layout, the AJAX object added with them. A few
   named values, such as settings, are a `dictionary_file()`.
+- Instances go into a layer in any order: the run lists every layer in
+  `z_order()`, back to front as an editor user arranges it, the backdrop
+  and the areas first, then the rest by the Y of their feet, a child after
+  its parent and a box after the box that holds it. A game that draws by
+  another rule, a 3D layer by depth, defines `z_order()` below the end
+  marker.
 - `random.seed(...)` before the first `sid()`: a rerun then produces the same
   ids and the diff shows only what changed.
 - One helper per ACE, named for what it does, its parameters in the
@@ -236,7 +242,13 @@ habits; they are what makes rerunning safe.
   sheet sets the fill in the one place the value changes,
   `set_width(fill, bar_width(value, maximum, LENGTH))`, or slides it with
   `tween_width()`. A bar with its name in front of it is
-  `labelled_bar(label, text, frame, fill, where, length)`.
+  `labelled_bar(label, text, frame, fill, where, length)`. The project
+  fills the screen: `FULLSCREEN` is *Scale outer*, or *Integer scale
+  outer* for pixel art. The screen then shows more than the viewport on its
+  longer side. These helpers and `band_text()` hold their element to the screen's
+  edge with the Anchor behavior of `anchored(where)`; an instance placed
+  by `anchor()` or `row()` takes `behaviors=anchored(where)`, and the run
+  gives its type the behavior.
 - A button is `button(type, file, label, text, col, row)`, its shape drawn
   at `button_size(text)`. The label is centred on the shape, in the colour
   `text_on()` picks for its fill, at the size `label_size()` gives. It is
@@ -301,7 +313,9 @@ habits; they are what makes rerunning safe.
   an ink outline, or on a fill under 3:1 against the ink. The player is an ink
   rectangle, structure a solid one, a pickup a circle, a hazard a
   triangle. The backdrop is `backdrop("Backdrop")` on a layer at parallax
-  1, of `pattern("Backdrop", "plain")`. A game with something transparent,
+  1, of `pattern("Backdrop", "plain")`, reaching `SCREEN_PAD` past the
+  viewport so the screen shows no edge of it. A popup's dim is laid out
+  over `screen_box()` on the popup's own layer. A game with something transparent,
   a mask or a background still to come draws it as `"checker"` instead,
   as editors show transparency; its cells, two to a unit, are then the
   ruler, so draw no grid. An area or an edge is

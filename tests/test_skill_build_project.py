@@ -194,9 +194,14 @@ def test_template_patterns_tile_by_the_unit_and_meet_without_a_seam(tmp_path):
     assert (off["properties"]["image-offset-x"], off["properties"]["image-offset-y"]) == (28, 14)
     assert all(((x - 68) - 28) % 32 == x % 32 for x in range(68, 132))      # texture x = (local - offset) / tile
     assert t.tiledbg_inst("HpFill", 100, 50, 64, 64)["properties"]["image-offset-x"] == 0   # a bar is no pattern
+    # The backdrop reaches SCREEN_PAD, twice the viewport's longer side, past the layout on every
+    # side, so Scale outer shows no edge of it on a screen up to 4:1, and its tiles meet the layout's.
     back = t.backdrop("Backdrop")
-    assert (back["world"]["x"], back["world"]["y"], back["world"]["width"], back["world"]["height"]) == (0, 0, 1920, 1080)
-    assert t.backdrop("Sheet")["world"]["width"] == 1920
+    assert t.SCREEN_PAD == 3840
+    assert (back["world"]["x"], back["world"]["y"], back["world"]["width"], back["world"]["height"]) ==         (-3840, -3840, 1920 + 7680, 1080 + 7680)
+    assert (back["properties"]["image-offset-x"], back["properties"]["image-offset-y"]) == (0, 0)
+    assert t.backdrop("Sheet", 4000, 1080)["world"]["width"] == 4000 + 7680
+    assert t.screen_box(ox=0.5, oy=0.5) == (960, 540, 1920 + 7680, 1080 + 7680)   # a dim centred on the viewport
     for name, kind in (("Backdrop", "checker"), ("Sheet", "plain")):
         with pytest.raises(SystemExit, match=rf"area\('{name}'\): the {kind} pattern is empty space, the backdrop alone"):
             t.area(name, 0, 0, 4, 4)
@@ -287,7 +292,7 @@ def test_stand_in_project_opens_in_the_editor(built):
     props = proj["properties"]
     for key in ("description", "version", "author", "authorEmail", "authorWebsite", "appId"):
         assert isinstance(props[key], str), key
-    assert props["fullscreenMode"] == "letterbox-scale" and props["fullscreenQuality"] == "high"
+    assert props["fullscreenMode"] == "scale-outer" and props["fullscreenQuality"] == "high"
     assert props["orientations"] == "landscape" and props["sampling"] == "trilinear"
     assert props["downscaling"] == "medium" and props["loaderStyle"] == "splash"
 
@@ -445,6 +450,83 @@ def test_template_places_the_hud_on_the_grid(built):
     assert len(said) == 4 and "reaches past" in said[0] and all("overlaps" in line for line in said[1:])
 
 
+def test_template_holds_the_hud_to_the_screens_edges(built):
+    """Scale outer shows more than the viewport on the screen's longer side and keeps a parallax 0
+    layer centred on the viewport. So every helper that holds a HUD element to an edge gives it the
+    Anchor behavior for that edge, in the keys and values the editor writes. A centred axis holds
+    nothing. build_all() gives the object type the behavior, and its other instances a block that
+    holds nothing, since the editor reads a block on every instance."""
+    t = template_module()
+
+    def edges(inst: dict) -> tuple:
+        block = inst["behaviors"].get("Anchor", {}).get("properties", {})
+        return block.get("left-edge"), block.get("top-edge")
+
+    blocks = {where: t.anchored(where).get("Anchor", {}).get("properties") for where in
+              ("top-left", "top", "top-right", "left", "center", "right", "bottom-left", "bottom", "bottom-right")}
+    assert blocks["bottom-left"] == {"left-edge": "window-left", "top-edge": "window-bottom", "right-edge": "none",
+                                     "bottom-edge": "none", "enabled": True}
+    assert [(b or {}).get("left-edge") for b in blocks.values()] ==         ["window-left", "none", "window-right", "window-left", None, "window-right", "window-left", "none", "window-right"]
+    assert [(b or {}).get("top-edge") for b in blocks.values()] ==         ["window-top", "window-top", "window-top", "none", None, "none", "window-bottom", "window-bottom", "window-bottom"]
+    schema = json.loads((REPO / "data" / "c3-schemas" / "en-US" / "behaviors" / "anchor.json").read_text(encoding="utf-8"))
+    for block in filter(None, blocks.values()):
+        assert list(block) == list(schema["properties"])
+        assert all(block[k] in schema["properties"][k]["items"] for k in block if k != "enabled")
+    assert edges(t.hud_text("TimerText", "Time: 30", "top-right")) == ("window-right", "window-top")
+    assert [edges(i) for i in t.hud_bar("HpFrame", "HpFill", "bottom-left", 384)] == [("window-left", "window-bottom")] * 2
+    assert "Tween" in t.hud_bar("HpFrame", "HpFill", "bottom-left", 384)[1]["behaviors"]
+    assert {edges(i) for i in t.labelled_bar("HpName", "HP", "HpFrame", "HpFill", "top-right", 192)} ==         {("window-right", "window-top")}
+    assert edges(t.band_text("Hint", "Tap a coin", "hint")) == ("none", "window-bottom")
+    assert edges(t.band_text("Score", "Score: 0", "status", "left")) == ("window-left", "window-top")
+    assert "Anchor" not in t.band_text("Big", "GO", "stage")["behaviors"]
+    # The stand-in's labels are held, and their types carry the behavior.
+    game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
+    # A one-screen layout scrolls unbounded, so Scale outer keeps the game centred with the HUD;
+    # a larger layout keeps its camera inside it.
+    assert game["unboundedScrolling"] is True and t.layout("Level", [], None, width=4000)["unboundedScrolling"] is False
+    ui = next(layer for layer in game["layers"] if layer["name"] == "UI")["instances"]
+    assert {i["type"]: edges(i) for i in ui} == {"ScoreLabel": ("window-left", "window-top"),
+                                                 "ScoreText": ("window-left", "window-top"),
+                                                 "RoundText": ("window-right", "window-top")}
+    score_type = json.loads((built / "objectTypes" / "ScoreText.json").read_text(encoding="utf-8"))
+    assert [b["behaviorId"] for b in score_type["behaviorTypes"]] == ["Anchor"]
+    # A type with one held instance gets the behavior once; its other instance holds nothing.
+    types = {"Hint": t.text_type("Hint"), "Coin": t.sprite_type("Coin", [])}
+    held, loose = t.hud_text("Hint", "Tap", "bottom"), t.text_inst("Hint", "Tap", 0, 0, 96, 64)
+    lay = t.layout("Game", [t.layer("UI", parallax=0)], sheet=None)
+    lay["layers"][0]["instances"] += [held, loose]
+    t.anchor_types(types, {"Game": lay})
+    t.anchor_types(types, {"Game": lay})
+    assert [b["behaviorId"] for b in types["Hint"]["behaviorTypes"]] == ["Anchor"] and types["Coin"]["behaviorTypes"] == []
+    assert loose["behaviors"]["Anchor"]["properties"] == {"left-edge": "none", "top-edge": "none", "right-edge": "none",
+                                                          "bottom-edge": "none", "enabled": False}
+
+
+def test_template_orders_each_layer_as_an_editor_user_would(built, tmp_path):
+    """build_all() lists every layer's instances back to front: the backdrop, the areas, then the
+    rest by the Y of their feet. A child of link() follows its parent, and a box inside another
+    box follows it unless the outer box is a label. Placement order decides nothing an editor
+    user would see."""
+    t = template_module()
+    t.ROOT = tmp_path
+    t.pattern("Backdrop", "plain")
+    t.pattern("Lava", "hazard")
+    near = t.sprite_inst("Tree", 400, 600, 64, 64)                    # feet at 632
+    far = t.sprite_inst("Tree", 500, 300, 64, 64)                     # feet at 332
+    fill, frame = t.sprite_inst("HpFill", 100, 900, 90, 20), t.sprite_inst("HpFrame", 100, 900, 100, 30)
+    t.shape("go-default-000.png", "rect", *t.button_size("Go"), "solid")
+    shape, label = t.button("Go", "go-default-000.png", "GoLabel", "Go", 10, 12)   # feet at 544
+    words = t.text_inst("Note", "", 400 - 16, 600 - 16, 32, 32)       # a label inside the near tree's box
+    lava, back = t.area("Lava", 0, 20, 4, 2), t.backdrop("Backdrop")
+    ordered = t.z_order([near, label, fill, words, far, lava, shape, frame, back])
+    assert [i["type"] for i in ordered] == ["Backdrop", "Lava", "Tree", "Go", "GoLabel", "Tree", "Note", "HpFrame",
+                                            "HpFill"]
+    assert ordered[2] is far and ordered[5] is near
+    assert t.z_order(ordered) == ordered
+    game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
+    assert [[i["type"] for i in layer["instances"]] for layer in game["layers"]] ==         [["Backdrop", "Board"], [], ["ScoreLabel", "RoundText", "ScoreText"]]
+
+
 def test_template_button_is_a_shape_and_its_label_that_never_come_apart(tmp_path):
     """button() puts a label on its shape as one part: the shape at least button_size() of its
     text, the label centred on the same box in a colour that reads on the fill, and linked as the
@@ -587,17 +669,19 @@ def test_template_labels_read_on_what_is_behind_them():
     assert [layer["backgroundColor"] for layer in game["layers"]] == [t.rgba(t.PALETTE["canvas"]), [1, 1, 1, 1]]
 
 
-def test_template_samples_a_pixel_art_viewport_nearest_and_scales_it_by_whole_numbers():
-    """The viewport decides the art: at 360 px high or less the grid is 8 px, the text sizes follow
-    it and the project samples Nearest at a whole-number scale, as every official example at that
-    size samples and 116 of 159 scale; a larger viewport keeps what the project has."""
+def test_template_fills_the_screen_and_samples_a_pixel_art_viewport_nearest():
+    """The project fills the screen at any aspect ratio: Scale outer in place of the editor's
+    Letterbox scale, which a project saved by the editor holds. At 360 px high or less the grid is
+    8 px and the text sizes follow it. The project samples Nearest at a whole-number scale, as the
+    official examples at that size do, so pixel art takes Integer scale outer. A larger viewport
+    keeps the sampling the project has."""
     t = template_module()
-    p = t.build_project({"properties": {}}, {}, {}, [], {}, [])
-    assert (t.PIXEL_ART, p["properties"]["sampling"], p["properties"]["fullscreenMode"]) == (False, "trilinear", "letterbox-scale")
+    p = t.build_project({"properties": {"fullscreenMode": "letterbox-scale"}}, {}, {}, [], {}, [])
+    assert (t.PIXEL_ART, p["properties"]["sampling"], p["properties"]["fullscreenMode"]) == (False, "trilinear", "scale-outer")
     small = template_module(VIEW="VIEW_W, VIEW_H = 320, 180")
     assert (small.UNIT, small.TOUCH, small.PIXEL_ART, small.TEXT_SIZE) == (8, 24, True, {"body": 8, "title": 16})
     p = small.build_project({"properties": {"sampling": "trilinear"}}, {}, {}, [], {}, [])
-    assert (p["properties"]["sampling"], p["properties"]["fullscreenMode"]) == ("nearest", "letterbox-integer-scale")
+    assert (p["properties"]["sampling"], p["properties"]["fullscreenMode"]) == ("nearest", "integer-scale-outer")
 
 
 def test_look_manifest_matches_the_template():

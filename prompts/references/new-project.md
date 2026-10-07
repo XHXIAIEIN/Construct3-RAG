@@ -35,19 +35,26 @@ Construct-Example-Projects, 2026-09-18]
 
 ## Viewport, look and HUD
 
-- Pixel art uses a 320×180 viewport, *Nearest* sampling and *Letterbox
-  integer scale*; other art 1920×1080 and *Trilinear*. A one-screen game's
-  layout is the viewport's size.
+- Pixel art uses a 320×180 viewport, *Nearest* sampling and *Integer scale
+  outer*; other art 1920×1080, *Trilinear* and *Scale outer*. Both fill the
+  screen at any aspect ratio. The screen then shows more than the viewport
+  on its longer side. So a HUD element held to an edge carries the Anchor
+  behavior for that edge, and a backdrop or a dim reaches far past the
+  viewport
+  ([coordinates-and-angles.md](../pitfalls/coordinates-and-angles.md),
+  [input.md](../pitfalls/input.md)). A one-screen game's layout is the
+  viewport's size, with *Unbounded scrolling* on so that the game stays
+  centred with the HUD.
 - Use few colours, each for a role: the player, what hurts, what is
   collected, the panels, the text. The median pixel-art project draws its art
   with hard edges in 35 colours, and 9 of them cover 95% of its opaque
   pixels. Labels use one to three colours, white in two of three, and two
   sizes, rarely more than four. Every label has 4.5:1 contrast with what is
-  behind it, 3:1 from 18 pt up, large-scale text (WCAG 2.2, 1.4.3). All 159
-  studio projects at 360 px or less sample *Nearest*, and 116 of them use
-  *Letterbox integer scale*. The generator template holds these as `PALETTE` and
+  behind it, 3:1 from 18 pt up, large-scale text (WCAG 2.2, 1.4.3). Every
+  studio project at 360 px or less samples *Nearest*, and most scale by
+  whole numbers. The generator template holds these as `PALETTE` and
   `rgb()`, the colour check of `write_png()`, `FONT` and `TEXT_SIZE`, the
-  contrast check of `hud_text()`, and `PIXEL_ART`.
+  contrast check of `hud_text()`, `PIXEL_ART` and `FULLSCREEN`.
 - Until the art arrives, a generated game is a plain sheet: flat shapes on
   an off-white canvas that fills the screen, without outlines, shadows,
   cards or panels. Lightness shows the hierarchy, from the canvas through a
@@ -84,7 +91,8 @@ Construct-Example-Projects, 2026-09-18]
   longest text and aligned to the edge it is anchored to. A row of hearts is
   spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. The
   generator template holds these as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`,
-  `hud_text()`, `row()` and `no_overlap()`.
+  `hud_text()`, `row()` and `no_overlap()`, and holds the HUD to the screen's
+  edges with `anchored()`.
 - A button's text is its label, centred on it, and the two move and hide
   together; a bar's name stands in front of the bar. A one-screen layout is
   bands: the title, the status line, the stage in the middle and the hint at
@@ -127,6 +135,11 @@ Construct-Example-Projects, 2026-09-18]
 - Layers, bottom to top: `Background`, `World`, then `UI` (or `HUD`) and
   `Fader`, each at parallax 0; `Tutorial` has its own layer. A layout has
   two or three.
+- A layer lists its instances in the order they draw, back to front, as
+  an editor user arranges them: the backdrop and the flat areas, then what
+  stands, from far to near by the Y of its feet, a child after its parent
+  and a label after its board or bar. The generator template puts every
+  layer in this order, `z_order()`.
 
 ## Objects
 

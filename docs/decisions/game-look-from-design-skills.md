@@ -119,7 +119,7 @@ Option 3, with one bullet of option 2 in
   `hud_text()` take their size from it and stop below 4.5:1, or 3:1 from 18 pt
   up (`text_contrast()`; WCAG 2.2, 1.4.3), naming the roles that would read.
 - `PIXEL_ART` (a viewport 360 px high or less): *Nearest* sampling at
-  *Letterbox integer scale*.
+  *Integer scale outer*, which fills the screen (`fill-the-screen.md`).
 - `layer()` fills an opaque layer from a role, `canvas` unless named.
 
 Option 5, as a mechanical report and a fixed checklist, after the editor's

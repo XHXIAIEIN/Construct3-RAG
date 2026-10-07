@@ -22,6 +22,9 @@ layouts and event sheets the editor would load and checks:
   motion.squash-art     a squash, a size set to a share of the image's size,
                         acts on the drawn art, not on an object whose
                         behavior collides
+  screen.fill           a warning, not a finding: the project fills the
+                        screen, Scale outer or Integer scale outer, not a
+                        Letterbox mode, which shows bars
 
 UNIT is 8 for a viewport 360 px high or less, else 32, as in the template.
 A layer at parallax 0 is the HUD, held to the viewport's edges, and is not
@@ -260,6 +263,19 @@ def check_hit(root: Path, out: list[str]) -> None:
                                f"hit_frame() and show it with hit_flash(), then remove the behavior")
 
 
+def check_screen(project: dict, warned: list[str]) -> None:
+    """screen.fill over project.c3proj, a warning: a Letterbox mode shows bars around the game on a
+    screen whose shape differs from the viewport's, where the template fills the screen."""
+    mode = (project.get("properties") or {}).get("fullscreenMode", "")
+    if mode.startswith("letterbox"):
+        want = "integer-scale-outer" if "integer" in mode else "scale-outer"
+        warned.append(f"warning: screen.fill: project.c3proj has fullscreenMode {mode}, which shows bars where the "
+                      f"screen's shape differs from the viewport's; the template's build_project() writes {want} "
+                      f"(FULLSCREEN). Run the generator again, or remove the line that sets another mode. The "
+                      f"generator also holds the HUD to the screen's edges (anchored()) and extends the backdrop "
+                      f"past the viewport (backdrop()).")
+
+
 def main() -> int:
     c3.utf8_output()
     ap = c3.argument_parser(__doc__.split("\n\n")[0], "examples:\n"
@@ -283,6 +299,10 @@ def main() -> int:
     creates = check_spawn(root, out)
     check_hit(root, out)
     check_squash(root, out)
+    warned: list[str] = []
+    check_screen(project, warned)
+    for line in warned:
+        print(line)
     shown = c3.fitting(out, args.limit)
     for line in out[:shown]:
         print(line)

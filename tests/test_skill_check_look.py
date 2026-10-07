@@ -43,3 +43,16 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     code, out = tool(project, "check_look", "--painted", "glow.png")
     assert ("motion.squash-art: sheet Game: Coin is squashed but has solid, so its collision box grows into the "
             "floor; squash its art") in out
+
+
+def test_check_look_warns_of_a_letterbox_mode(project):
+    """The template fills the screen; a project in a Letterbox mode passes with a warning that
+    names the mode to write, since the editor accepts it and the bars are the user's call."""
+    edit(project, "project.c3proj", lambda p: p["properties"].update(fullscreenMode="letterbox-integer-scale"))
+    code, out = tool(project, "check_look")
+    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
+    assert ("warning: screen.fill: project.c3proj has fullscreenMode letterbox-integer-scale, which shows bars "
+            "where the screen's shape differs from the viewport's; the template's build_project() writes "
+            "integer-scale-outer") in out
+    edit(project, "project.c3proj", lambda p: p["properties"].update(fullscreenMode="scale-outer"))
+    assert "screen.fill" not in tool(project, "check_look")[1]

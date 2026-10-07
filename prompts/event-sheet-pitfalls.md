@@ -137,7 +137,7 @@ If the events place, move or rotate objects or read the viewport, read
 - The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
 - Tile movement's *Set grid position* takes a column and a row, not pixels. Convert a position with `round((X - offset X) / grid width)`.
 - `ViewportLeft` and the rest take a layer. `LayoutWidth` and `ViewportWidth(layer)` differ.
-- *Scale outer* keeps a parallax-0 HUD centred on the design area. Pin a screen-edge HUD with Anchor and stretch a backdrop to the screen with Anchor's left and right edges.
+- *Scale outer* keeps a parallax-0 HUD centred on the design area. Pin a screen-edge HUD with Anchor. Stretch a backdrop to the screen with Anchor's left and right edges. In a one-screen layout, turn on *Unbounded scrolling* so the game stays centred too.
 - Drag & Drop moves the instance only on pointer moves. Put a trailing or lifted look on a child.
 
 ### Moving toward a target

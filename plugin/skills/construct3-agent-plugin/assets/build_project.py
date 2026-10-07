@@ -127,7 +127,7 @@ SQUASH = {
 FONT = "system-ui"                         # one font for every label: the platform's own UI face, no font file
 TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
-# as every official example at that size samples and 116 of 159 scale (build_project()).
+# as the official examples at that size sample, and most scale (FULLSCREEN, build_project()).
 PIXEL_ART = UNIT == 8
 # The art direction in one sentence, the look the user agreed. It fixes the technique, the
 # outline, the colours and the shading, never a subject: "flat vector, thick dark outlines, warm
@@ -184,7 +184,8 @@ def anchor(where: str, w: float, h: float, ox: float = 0, oy: float = 0, dx: flo
     the dy that clears a box that is in the way. A box held to
     the left or top lands on the grid; one held to the right, the bottom or the middle
     sits exactly MARGIN from that edge, or exactly centred, which is what the eye checks
-    there. The centre of the screen is where the game is; the HUD lives on the edges."""
+    there. The centre of the screen is where the game is; the HUD lives on the edges. An
+    instance placed here takes behaviors=anchored(where), which holds it to the screen's edge."""
     vert, horiz = sides(where)
     x = {"left": MARGIN, "middle": (VIEW_W - w) / 2, "right": VIEW_W - MARGIN - w}[horiz]
     y = {"top": MARGIN, "middle": (VIEW_H - h) / 2, "bottom": VIEW_H - MARGIN - h}[vert]
@@ -209,10 +210,53 @@ def row(where: str, n: int, w: float, h: float, gap: float = 1, ox: float = 0.5,
         dx: float = 0, dy: float = 0) -> list[tuple[int, int]]:
     """n boxes of w x h side by side, `gap` units apart, the row as a whole held by anchor():
     three hearts top centre are row("top", 3, TOUCH, TOUCH). Returns each box's origin
-    point, (ox, oy) as for anchor(), so the items never touch, whatever their size."""
+    point, (ox, oy) as for anchor(), so the items never touch, whatever their size. Each
+    instance takes behaviors=anchored(where), so the row moves to the screen's edge as one."""
     step = w + units(gap)
     x0, y0 = anchor(where, n * step - units(gap), h, 0, 0, dx, dy)
     return [(int(round(x0 + i * step + ox * w)), int(round(y0 + oy * h))) for i in range(n)]
+
+
+# --- the screen ---------------------------------------------------------------------------
+# The project fills the screen at any aspect ratio. Scale outer shows more than the viewport on
+# the screen's longer side, split evenly; pixel art takes Integer scale outer, which keeps its
+# pixels square. A HUD layer at parallax 0 stays centred on the viewport. So an element held to
+# an edge carries the Anchor behavior, which moves it to the screen's edge (anchored()). A
+# backdrop or a cover reaches SCREEN_PAD past the viewport on every side (screen_box()). A
+# one-screen layout scrolls unbounded, so the game stays centred with the HUD (layout()).
+# Construct3-RAG/docs/decisions/fill-the-screen.md.
+FULLSCREEN = "integer-scale-outer" if PIXEL_ART else "scale-outer"
+# Twice the viewport's longer side, in whole units: a backdrop or a cover this far past each edge
+# covers any screen up to 4:1 in either orientation, a shaking camera included.
+SCREEN_PAD = math.ceil(2 * max(VIEW_W, VIEW_H) / UNIT) * UNIT
+
+
+def anchored(where: str) -> dict:
+    """The Anchor behavior's block that holds an instance of a parallax 0 layer at the screen's
+    edge or corner named by `where`, as anchor() names it. The instance's left edge keeps its
+    distance from the screen's left or right edge, and its top from the top or bottom. A centred
+    axis stays centred, as the viewport does, so "center" returns {}. hud_text(), hud_bar(),
+    labelled_bar() and band_text() give the block; an instance placed by anchor() or row() takes
+    behaviors=anchored(where). build_all() gives the object type the behavior (anchor_types())."""
+    vert, horiz = sides(where)
+    if vert == horiz == "middle":
+        return {}
+    return {"Anchor": {"properties": {"left-edge": {"left": "window-left", "right": "window-right"}.get(horiz, "none"),
+                                      "top-edge": {"top": "window-top", "bottom": "window-bottom"}.get(vert, "none"),
+                                      "right-edge": "none", "bottom-edge": "none", "enabled": True}}}
+
+
+def screen_box(width: int | None = None, height: int | None = None, ox: float = 0, oy: float = 0) -> tuple[int, int, int, int]:
+    """(x, y, w, h) of a box over the layout's `width` x `height`, the viewport's unless given,
+    reaching SCREEN_PAD past it on every side, with (x, y) its origin (ox, oy): what Scale outer
+    shows past the viewport is covered on any screen. backdrop() is laid out over it, and so is
+    a popup's dim, sprite_inst("Dim", *screen_box(ox=0.5, oy=0.5)) on the popup's layer. A dim
+    that closes the popup on a tap still tests the tap against the panel, Touch's On any touch
+    start and NOT Is touching the panel, so its size decides nothing about input
+    (Construct3-RAG/prompts/pitfalls/input.md)."""
+    w = (VIEW_W if width is None else width) + 2 * SCREEN_PAD
+    h = (VIEW_H if height is None else height) + 2 * SCREEN_PAD
+    return int(-SCREEN_PAD + ox * w), int(-SCREEN_PAD + oy * h), w, h
 
 
 def no_overlap(instances: list, where: str = "layer UI") -> None:
@@ -1333,10 +1377,14 @@ def layer(name: str, bg: str | None = None, transparent: bool = True, parallax: 
 
 def layout(name: str, layers: list, sheet: str | None, nonworld: list = (), width: int | None = None,
            height: int | None = None) -> dict:
-    """A layout of the viewport's size unless width and height say otherwise."""
+    """A layout of the viewport's size unless width and height say otherwise. A layout of the
+    viewport's size, one screen, scrolls unbounded: under Scale outer the screen shows more than
+    the layout, and bounded scrolling would hold the layout's left and top edges to the screen's,
+    sliding the game off centre while the HUD stays centred. A larger layout scrolls bounded."""
+    width, height = VIEW_W if width is None else width, VIEW_H if height is None else height
     return {"name": name, "layers": layers, "sid": sid(), "nonworld-instances": list(nonworld), "effectTypes": [],
-            "width": VIEW_W if width is None else width, "height": VIEW_H if height is None else height,
-            "unboundedScrolling": False, "sampling": "auto", "ambientLight": 0.03,
+            "width": width, "height": height,
+            "unboundedScrolling": (width, height) == (VIEW_W, VIEW_H), "sampling": "auto", "ambientLight": 0.03,
             "vpX": 0.5, "vpY": 0.5, "projection": "perspective", "eventSheet": sheet}
 
 
@@ -1476,13 +1524,14 @@ def hud_text(otype: str, text: str, where: str, size: float | None = None, longe
     the side the box hangs on, so a right-hand label grows leftwards and two labels on one
     edge never meet. `longest` is the widest text the label shows at runtime, "Score: 999"
     for a label that starts as "Score: 0". The size is TEXT_SIZE["body"] unless a banner
-    asks for TEXT_SIZE["title"]; color and on are roles of PALETTE, as for text_inst()."""
+    asks for TEXT_SIZE["title"]; color and on are roles of PALETTE, as for text_inst(). The
+    Anchor behavior of anchored() holds it to the screen's edge."""
     size = size or TEXT_SIZE["body"]
     w, h = label_box(longest or text, size)
     halign = {"left": "left", "middle": "center", "right": "right"}[sides(where)[1]]
     x, y = anchor(where, w, h, 0, 0, dx, dy)
     return text_inst(otype, text, x, y, w, h, size=size, halign=halign, bold=bold, color=color, on=on,
-                     ivars=ivars, behaviors=behaviors)
+                     ivars=ivars, behaviors={**anchored(where), **(behaviors or {})})
 
 
 def label_box(text: str, size: float | None = None) -> tuple[int, int]:
@@ -1536,15 +1585,16 @@ def area(otype: str, col: int, row: int, cols: int, rows: int, ivars=None, behav
 
 
 def backdrop(otype: str, width: int | None = None, height: int | None = None) -> dict:
-    """The backdrop of pattern `otype` behind everything: one Tiled Background from the layout's
-    origin over `width` x `height`, the layout's size, the viewport's unless given, on a layer at
+    """The backdrop of pattern `otype` behind everything: one Tiled Background over `width` x
+    `height`, the layout's size, the viewport's unless given, and SCREEN_PAD past it on every
+    side (screen_box()), so the screen shows no edge of it at any aspect ratio, on a layer at
     parallax 1. It is the plain sheet, or the checker in a game with something transparent, a
     mask or a background still to come, as editors show transparency; the checker's cells are then
     the ruler that sizes and distances are counted in, in place of a grid."""
     if PATTERN_OF.get(otype) not in BACKDROPS:
         sys.exit(f"backdrop({otype!r}): the backdrop is the plain sheet or the checker; draw it with "
                  f"pattern({otype!r}, \"plain\") or pattern({otype!r}, \"checker\")")
-    return tiledbg_inst(otype, 0, 0, VIEW_W if width is None else width, VIEW_H if height is None else height, 0, 0)
+    return tiledbg_inst(otype, *screen_box(width, height), 0, 0)
 
 
 def ninepatch_inst(otype: str, x: float, y: float, w: float, h: float, ox: float = 0, oy: float = 0.5, margin: int = 2,
@@ -1566,19 +1616,20 @@ def hud_bar(frame_name: str, fill_name: str, where: str, length: float, height: 
         set_width(fill, bar_width("hp", "HP_MAX", HP_BAR_LENGTH))
     or slides it there with tween_width(); HP_BAR_LENGTH = length - 2 * inset is a constant of
     the sheet. A count of icons is a bar too: the fill `count * icon` wide over a frame that
-    shows the empty icon. Returns (frame instance, fill instance)."""
+    shows the empty icon. Both carry the Anchor behavior of anchored(), which holds the bar to
+    the screen's edge. Returns (frame instance, fill instance)."""
     height = height or units(1)
     cx, cy = anchor(where, length, height, 0.5, 0.5, dx, dy)
-    return bar_at(frame_name, fill_name, cx, cy, length, height, inset, caps)
+    return bar_at(frame_name, fill_name, cx, cy, length, height, inset, caps, anchored(where))
 
 
 def bar_at(frame_name: str, fill_name: str, cx: float, cy: float, length: float, height: float, inset: float = 2,
-           caps: bool = False) -> tuple[dict, dict]:
-    """hud_bar()'s frame and fill, the frame's centre at (cx, cy)."""
+           caps: bool = False, behaviors: dict | None = None) -> tuple[dict, dict]:
+    """hud_bar()'s frame and fill, the frame's centre at (cx, cy); `behaviors` go on both."""
     make = ninepatch_inst if caps else tiledbg_inst
-    frame_inst = make(frame_name, cx, cy, length, height, 0.5, 0.5)
+    frame_inst = make(frame_name, cx, cy, length, height, 0.5, 0.5, behaviors=dict(behaviors or {}))
     fill_inst = make(fill_name, cx - length / 2 + inset, cy, length - 2 * inset, height - 2 * inset, 0, 0.5,
-                     behaviors=dict(TWEEN))
+                     behaviors={**TWEEN, **(behaviors or {})})
     return frame_inst, fill_inst
 
 
@@ -1679,14 +1730,16 @@ def labelled_bar(label: str, text: str, frame_name: str, fill_name: str, where: 
                  color: str = "ink", on: str = "canvas_alt") -> tuple[dict, dict, dict]:
     """A bar with its name in front of it, held to an edge or corner by anchor() as one box: the
     label `text` in the Text type `label`, a unit of space, then hud_bar()'s frame `length` px long
-    and its fill, so the name never lands on the bar. Returns (label, frame, fill); the sheet sets
-    the fill as for hud_bar()."""
+    and its fill, so the name never lands on the bar, the three held to the screen's edge by
+    anchored(). Returns (label, frame, fill); the sheet sets the fill as for hud_bar()."""
     height = height or units(1)
     lw, lh = label_box(text)
     box_h = max(lh, height)
     x, y = anchor(where, lw + UNIT + length, box_h, 0, 0, dx, dy)
-    name = text_inst(label, text, x, y, lw, box_h, halign="left", bold=True, color=color, on=on)
-    return (name, *bar_at(frame_name, fill_name, x + lw + UNIT + length / 2, y + box_h / 2, length, height, inset, caps))
+    name = text_inst(label, text, x, y, lw, box_h, halign="left", bold=True, color=color, on=on,
+                     behaviors=anchored(where))
+    return (name, *bar_at(frame_name, fill_name, x + lw + UNIT + length / 2, y + box_h / 2, length, height, inset, caps,
+                          anchored(where)))
 
 
 SCREENS = ("stage",)
@@ -1719,7 +1772,9 @@ def band_text(otype: str, text: str, band: str, align: str = "center", longest: 
     `text`) and a line high, as hud_text() sizes it. The "title" and "stage" bands take
     TEXT_SIZE["title"], or the body size when the text is wider than the band at that size. In the
     "stage" band the label is centred vertically. The "status" and "hint" bands take the body
-    size. A text the band cannot hold stops the run with the characters that fit."""
+    size. A text the band cannot hold stops the run with the characters that fit. The label is
+    held to the screen's edges by anchored(): the title and status bands to the top, the hint to
+    the bottom, and a label aligned left or right to that side."""
     box = bands(screen, title).get(band)
     if box is None:
         sys.exit(f"band_text({otype!r}): {band!r} is no band; the bands are {', '.join(bands(screen, title))}")
@@ -1736,8 +1791,10 @@ def band_text(otype: str, text: str, band: str, align: str = "center", longest: 
                  f"{chars} Chinese characters or {int(chars / 0.6)} letters, so shorten it")
     x = {"left": x0, "center": x0 + (bw - w) // 2, "right": x0 + bw - w}[align]
     y = y0 + (bh - h) // 2 if band == "stage" else y0
+    edge = {"title": "top", "status": "top", "hint": "bottom"}.get(band)
+    where = "-".join(side for side in (edge, None if align == "center" else align) if side) or "center"
     return text_inst(otype, text, x, y, w, h, size, align, bold=True, color=color, on=on, ivars=ivars,
-                     behaviors=behaviors)
+                     behaviors={**anchored(where), **(behaviors or {})})
 
 
 def fit(w: float, h: float, screen: str = "stage", share: float = STAGE_SHARE, title: bool = True) -> tuple[int, int]:
@@ -1753,6 +1810,95 @@ def stage_cell(cols: int, rows: int, screen: str = "stage", title: bool = True) 
     """The cell (col, row) that centres a box of cols x rows units in the stage of bands()."""
     x, y, w, h = bands(screen, title)["stage"]
     return (x + (w - cols * UNIT) // 2) // UNIT, (y + (h - rows * UNIT) // 2) // UNIT
+
+
+# --- the order of each layer and the HUD's behavior --------------------------------------------
+# build_all() runs both over the layouts of build_layouts() before it writes a file: every layer
+# lists its instances in z_order(), the order an editor user would arrange them in, and the types
+# of the instances anchored() holds get the Anchor behavior (anchor_types()).
+def layers_in(layers: list):
+    """Every layer of `layers` and of their sublayers, a parent before its sublayers."""
+    for lay in layers:
+        yield lay
+        yield from layers_in(lay.get("subLayers", []))
+
+
+def z_order(instances: list) -> list:
+    """A layer's instances in the order the Layout View draws them, back to front. The backdrop
+    comes first, then the areas of pattern(), then the rest by the Y of their feet, the bottom of
+    their box, so a nearer object covers a farther one in a top-down or a side view. Equals keep
+    the order they were placed in. A child of link() follows its parent. A box wholly inside
+    another box follows it, unless the outer box is a label: a fill follows its frame, a label its
+    panel, each with what lies inside it in turn. build_all() puts every layer in this order. A
+    game that wants another, such as a 3D layer drawn by depth, defines z_order() again below the
+    end marker."""
+    def box(inst: dict) -> tuple | None:
+        w = inst.get("world")
+        if not w:
+            return None
+        left, top = w["x"] - w.get("originX", 0) * w["width"], w["y"] - w.get("originY", 0) * w["height"]
+        return left, top, left + w["width"], top + w["height"]
+
+    boxes = [box(inst) for inst in instances]
+    keys = []
+    for n, inst in enumerate(instances):
+        kind = PATTERN_OF.get(inst["type"])
+        rank = 0 if kind in BACKDROPS else 1 if kind else 2
+        keys.append((rank, boxes[n][3] if rank == 2 and boxes[n] else 0, n))
+    # Who each instance follows: its parent in the hierarchy, else the smallest box that holds it
+    # among the rest (not a label, and for an equal box the one placed first).
+    holders = sorted((m for m, inst in enumerate(instances) if keys[m][0] == 2 and boxes[m]
+                      and "text" not in inst.get("properties", {})),
+                     key=lambda m: ((boxes[m][2] - boxes[m][0]) * (boxes[m][3] - boxes[m][1]), m))
+    at = {inst.get("uid"): n for n, inst in enumerate(instances)}
+    follows = {}
+    for n, inst in enumerate(instances):
+        parent = (inst.get("sceneGraphData") or {}).get("parent-uid")
+        if parent in at and at[parent] != n:
+            follows[n] = at[parent]
+        elif keys[n][0] == 2 and boxes[n]:
+            b = boxes[n]
+            for m in holders:
+                h = boxes[m]
+                if m != n and h[0] <= b[0] and h[1] <= b[1] and b[2] <= h[2] and b[3] <= h[3] and (h != b or m < n):
+                    follows[n] = m
+                    break
+    for n in list(follows):                  # cut a loop of followers, which a cyclic parent chain makes
+        seen, m = {n}, follows.get(n)
+        while m is not None and m not in seen:
+            seen.add(m)
+            m = follows.get(m)
+        if m == n:
+            del follows[n]
+    after: dict[int, list[int]] = {}
+    for n, m in follows.items():
+        after.setdefault(m, []).append(n)
+    ordered: list[dict] = []
+
+    def put(n: int) -> None:
+        ordered.append(instances[n])
+        for c in sorted(after.get(n, []), key=keys.__getitem__):
+            put(c)
+
+    for n in sorted((n for n in range(len(instances)) if n not in follows), key=keys.__getitem__):
+        put(n)
+    return ordered
+
+
+def anchor_types(types: dict, layouts: dict) -> None:
+    """Gives the Anchor behavior to every object type with an instance that anchored() holds to the
+    screen, and to that type's other instances a block that holds nothing, since the editor reads
+    a block on every instance for each behavior of its type."""
+    instances = [inst for lay in layouts.values() for layer_ in layers_in(lay["layers"]) for inst in layer_["instances"]]
+    held = sorted({inst["type"] for inst in instances if "Anchor" in inst.get("behaviors", {})} & set(types))
+    for name in held:
+        behaviors = types[name].setdefault("behaviorTypes", [])
+        if not any(b["name"] == "Anchor" for b in behaviors):
+            behaviors.append(beh_def("Anchor"))
+    for inst in instances:
+        if inst["type"] in held and "Anchor" not in inst.get("behaviors", {}):
+            inst["behaviors"] = {**inst.get("behaviors", {}), "Anchor": {"properties": {
+                "left-edge": "none", "top-edge": "none", "right-edge": "none", "bottom-edge": "none", "enabled": False}}}
 
 
 # The properties block a layout instance writes for a behavior, keyed by the name
@@ -1824,7 +1970,7 @@ PROJECT_DEFAULTS = {"projectFormatVersion": 1, "savedWithRelease": 49502, "runti
 PROPERTY_DEFAULTS = {"description": "", "version": "1.0.0.0", "autoIncrementVersion": False,
                      "author": "", "authorEmail": "", "authorWebsite": "", "appId": "",
                      "pixelRounding": False, "zAxisScale": "regular", "fov": 0.7853981633974483,
-                     "useLoaderLayout": False, "fullscreenMode": "letterbox-scale",
+                     "useLoaderLayout": False, "fullscreenMode": FULLSCREEN,
                      "fullscreenQuality": "high", "viewportFit": "auto",
                      "backgroundColor": [0, 0, 0, 0], "splashColor": [1, 1, 1, 0],
                      "useThemeColor": False, "themeColor": [1, 1, 1, 0], "webgpu": "auto",
@@ -1850,8 +1996,9 @@ def with_files(block: dict, kind: str) -> dict:
 def build_project(existing: dict, types: dict, families: dict, containers: list, layouts: dict,
                   sheets: list) -> dict:
     """Only the keys this script owns change; uniqueId, icons, scripts and the
-    properties the project already has stay. The name, the first layout and the
-    orientation are PROJECT_NAME, FIRST_LAYOUT and ORIENTATION."""
+    properties the project already has stay. The name, the first layout, the
+    orientation and the fullscreen mode are PROJECT_NAME, FIRST_LAYOUT, ORIENTATION
+    and FULLSCREEN."""
     p = dict(existing)
     for key, value in PROJECT_DEFAULTS.items():
         p.setdefault(key, value)
@@ -1878,11 +2025,12 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
         general["items"] = [e for e in general.get("items", []) if e.get("name") not in ours] + _general_files
     p["viewportWidth"] = VIEW_W
     p["viewportHeight"] = VIEW_H
+    # The project fills the screen at any aspect ratio, in place of the editor's Letterbox scale.
+    p["properties"]["fullscreenMode"] = FULLSCREEN
     if PIXEL_ART:
-        # The viewport decides the art: pixel art sampled Nearest stays crisp, and scaled by
-        # whole numbers every pixel stays square.
+        # The viewport decides the art: pixel art sampled Nearest stays crisp, and FULLSCREEN
+        # scales it by whole numbers, so every pixel stays square.
         p["properties"]["sampling"] = "nearest"
-        p["properties"]["fullscreenMode"] = "letterbox-integer-scale"
     p["firstLayout"] = FIRST_LAYOUT
     p["properties"]["orientations"] = ORIENTATION
     return p
@@ -1903,11 +2051,15 @@ def build_all() -> None:
     write_wanted()
     build_files()
     types, families, containers = build_object_types()
+    layouts = build_layouts()
+    anchor_types(types, layouts)
+    for lay in layouts.values():
+        for layer_ in layers_in(lay["layers"]):
+            layer_["instances"] = z_order(layer_["instances"])
     for name, t in types.items():
         write_json(f"objectTypes/{name}.json", t)
     for name, f in families.items():
         write_json(f"families/{name}.json", f)
-    layouts = build_layouts()
     for name, lay in layouts.items():
         write_json(f"layouts/{name}.json", lay)
     sheet = build_event_sheet()
@@ -1942,7 +2094,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-07, stamp 8d965fb695ac ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-07, stamp b492a4d88e33 ================
 
 
 # --- the game ---------------------------------------------------------------------------
@@ -2025,14 +2177,17 @@ def build_layouts() -> dict[str, dict]:
         layer("Game"),
         layer("UI", parallax=0),
     ], sheet="Game")
-    # The backdrop is the plain sheet. A game with something transparent, a mask or a background
-    # still to come draws it as pattern("Backdrop", "checker"), as editors show transparency, and
-    # its cells are then the ruler: two a unit. An area or an edge in a pattern is
-    # area(type, col, row, cols, rows) on the Game layer.
+    # The backdrop is the plain sheet, reaching past the viewport so the screen shows no edge of it.
+    # A game with something transparent, a mask or a background still to come draws it as
+    # pattern("Backdrop", "checker"), as editors show transparency, and its cells are then the
+    # ruler: two a unit. An area or an edge in a pattern is area(type, col, row, cols, rows) on the
+    # Game layer. Instances go in in any order: build_all() puts every layer in z_order().
     game["layers"][0]["instances"].append(backdrop("Backdrop"))
     game["layers"][0]["instances"].append(tiledbg_inst("Board", BOARD_LEFT, BOARD_TOP, BOARD_W, BOARD_H, 0, 0))
     # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
-    # row(), anything else by anchor(); the middle of the screen is the game's. no_overlap()
+    # row(), anything else by anchor(); the middle of the screen is the game's. Each carries the
+    # Anchor behavior of anchored(), which hud_text() and hud_bar() give, so it stays at the
+    # screen's edge when the screen is wider or taller than the viewport. no_overlap()
     # stops the run when two HUD boxes meet or one leaves the viewport. A label is
     # TEXT_SIZE["body"] in rgb("ink"); the number the player plays for, and a banner, are
     # TEXT_SIZE["title"]. hud_text() stops the run on a colour that does not read on what is
