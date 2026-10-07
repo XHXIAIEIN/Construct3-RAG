@@ -10,7 +10,7 @@ import pytest
 
 from tests.skill_helpers import SKILL, edit, run, tool
 
-pytest.importorskip("PIL")
+pytest.importorskip("PIL", reason="Pillow is not installed; pip install pillow")
 from PIL import Image, ImageDraw, ImageFilter  # noqa: E402
 
 sys.path.insert(0, str(SKILL / "scripts"))

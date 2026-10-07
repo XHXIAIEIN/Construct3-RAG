@@ -9,12 +9,12 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, SHEET, run, tool, check, edit, events, every_event, collect_tween, plan
+from tests.skill_helpers import (EXAMPLES, NO_EXAMPLES, REPO, SKILL, SHEET, run, tool, check, edit, events,
+                                 every_event, collect_tween, plan)
 
 sys.path.insert(0, str(SKILL / "scripts"))
-from c3project import NUMBERED, siblings_folder  # noqa: E402
+from c3project import NUMBERED  # noqa: E402
 
-EXAMPLES = siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"
 # What a copy of an example leaves out: the scripts read no image, sound or font.
 MEDIA = ("*.png", "*.jpg", "*.webp", "*.webm", "*.ogg", "*.m4a", "*.mp3", "*.wav", "*.woff", "*.woff2", "*.ttf")
 
@@ -286,7 +286,7 @@ def test_an_event_put_back_as_print_sheet_shows_it_leaves_the_sheet_byte_for_byt
 
 # One event of an official example for each way a round trip changed a sheet, found by
 # evals/sweep_round_trip.py, which puts back every event of every example.
-@pytest.mark.skipif(not EXAMPLES.is_dir(), reason="the Construct-Example-Projects clone is not beside this one")
+@pytest.mark.skipif(not EXAMPLES.is_dir(), reason=NO_EXAMPLES)
 @pytest.mark.parametrize("example, file, n", [
     pytest.param("date-time", "event sheet 1.json", 3, id="a function saved before functionCopyPicked"),
     pytest.param("high-tech-vision", "Events.json", 45, id="functionCopyPicked after functionName"),
