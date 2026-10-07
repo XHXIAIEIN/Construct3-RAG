@@ -1,6 +1,6 @@
 # Greybox Blockout: The Stand-in Look and the Level's Pacing
 
-Date: 2026-09-26; the look revised 2026-10-08
+Date: 2026-09-26; the look revised 2026-10-08, spacing and balance 2026-10-08
 Schema: Construct 3 r495.2
 
 ## Problem
@@ -184,11 +184,49 @@ The shadow widens the image on its side; the origin and polygon stay on the
 shape. A sprite that rotates is drawn with `shadow=False`.
 
 The score is its name at `TEXT_SIZE["body"]` in `dim` over the number at
-`TEXT_SIZE["title"]`, neither bold. Coins land on the board, `COLS` ×
-`ROWS` slots a coin wide and a unit apart, one Tiled Background of a slot
-tile, centred on the screen below the HUD. A round deals the cells
+`TEXT_SIZE["title"]`, neither bold, one group of `hud_stat()`. Coins land
+on the board, `COLS` × `ROWS` slots a coin wide and a unit apart, one Tiled
+Background of a slot tile, in the middle of the play area the HUD leaves
+(*Spacing and balance*). A round deals the cells
 `(deal + i × STRIDE) mod CELLS`, with `STRIDE` and `CELLS` coprime, so no
 two coins meet, and the run stops on a round with more coins than slots.
+
+### Spacing and balance
+
+The user saw two faults on the stand-in: the dim SCORE sat a full line
+above its number while the HUD sat close to the board, and the board was
+centred on the screen rather than in the space under the HUD. Slide and
+poster skills put the gap between two groups at 1.5 to 2 times the gap
+inside one, and they centre the content in the space the fixed parts leave.
+Studies of model judges of layout find that a model looking at a render
+catches gross errors but misses small offsets, so both rules are computed
+from the boxes the generator writes.
+
+| Value | Holds |
+|-------|-------|
+| `GAP_IN` | A quarter unit, 8 px at 32: between a value and its name. A line's box adds about a quarter of an em above and below its letters, so the gap a player sees is larger |
+| `GAP_OUT` | One unit: the least between the HUD and the playfield |
+| `GROUP_RATIO` | 1.5: the gap between two groups over the gap inside either, at least |
+| `OPTICAL_LIFT` | 0.05 of the play area's height: how far the playfield is raised above its middle |
+
+- `hud_stat()` puts a value under its name as one group, each box one line
+  high, so a caller no longer places the second line with `dy`.
+- `play_area(hud)` is the viewport, `MARGIN` inside it, less the HUD's boxes
+  and `GAP_OUT` around them; `centred(w, h, area)` puts a box in its middle
+  on the grid, raised by `OPTICAL_LIFT`.
+- `spaced(groups)` stops the run when two groups sit closer than
+  `GROUP_RATIO` times the gap inside either, with the helpers that fix it.
+  It stops, as `no_overlap()` does, because the helpers always pass it and
+  a failure is a placement made by hand.
+- `balanced(content, area)` prints a warning when the playfield's centre is
+  more than a unit from the lifted middle of the play area. It warns and
+  does not stop, because a game may hold its playfield off the middle on
+  purpose, beside a panel or in a level wider than the screen, and the boxes
+  do not say which.
+
+The 5% lift is a rule of thumb from design guides; no source found measures
+it. On the stand-in it raises the board one unit, so the board's gap to the
+HUD is 125 px against 157 px without it.
 
 ### Colour
 
@@ -304,6 +342,11 @@ template value it names drift apart.
   grades what the model does with that stop.
 - The score is at the title size with its label; the eval cases that grade
   the HUD have not run on it.
+- `OPTICAL_LIFT` waits on the user's choice between 0.05 and 0, `open` in
+  the manifest. Two further checks from the same sources wait on a
+  calibration over the official examples: the main object at least 1.5
+  times the area of the next element, and the playfield covering 25 to 60%
+  of the screen.
 - Not in the template: camera-zone helpers; Sine
   bobbing for pickups; the juice functions, camera-zone fields and
   five-level worlds of `published-game-visual-language.md`, `proposed` in
@@ -318,5 +361,7 @@ template value it names drift apart.
   differ by more than one unit.
 - A game needs more than three accents: the vocabulary is too small for it,
   or the game is past the blockout.
+- `spaced()` stops a layout the user accepts, or `balanced()` warns on most
+  games that hold their playfield off the middle on purpose.
 - Real art arrives, from the user or an image model: the blockout gives
   way, and its grids and pacing stay.

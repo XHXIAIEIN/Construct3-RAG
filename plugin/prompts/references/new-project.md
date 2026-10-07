@@ -89,9 +89,14 @@ Construct-Example-Projects, 2026-09-18]
   unit, it is 24 px at 320×180 and 160 px at
   1920×1080, with 8 dp between two targets. A label's box is as wide as its
   longest text and aligned to the edge it is anchored to. A row of hearts is
-  spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. The
+  spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. A
+  value sits close under its name, and the gap between two groups is at
+  least 1.5 times the gap inside one, the ratio slide and poster layout
+  guides ask, so the HUD stands apart from the playfield. The playfield is
+  centred in what the HUD leaves, not on the whole screen. The
   generator template holds these as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`,
-  `hud_text()`, `row()` and `no_overlap()`, and holds the HUD to the screen's
+  `hud_text()`, `hud_stat()`, `row()`, `no_overlap()`, `play_area()`,
+  `centred()` and `spaced()`, and holds the HUD to the screen's
   edges with `anchored()`.
 - A button's text is its label, centred on it, and the two move and hide
   together; a bar's name stands in front of the bar. A one-screen layout is

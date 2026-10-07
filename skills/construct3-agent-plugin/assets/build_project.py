@@ -268,11 +268,9 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
     passed. Every box in the way is named in one message, one line each."""
     boxes, said = [], []
     for inst in instances:
-        w = inst.get("world")
-        if w:
-            left = w["x"] - w.get("originX", 0) * w["width"]
-            top = w["y"] - w.get("originY", 0) * w["height"]
-            boxes.append((inst["type"], left, top, left + w["width"], top + w["height"], "text" in inst.get("properties", {})))
+        b = box_of(inst)
+        if b:
+            boxes.append((inst["type"], *b, "text" in inst.get("properties", {})))
     for kind, l, t, r, b, _ in boxes:
         if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H:
             said.append(f"{where}: {kind} ({l:g},{t:g})-({r:g},{b:g}) reaches past the {VIEW_W}x{VIEW_H} viewport; "
@@ -1542,6 +1540,12 @@ def label_box(text: str, size: float | None = None) -> tuple[int, int]:
             math.ceil(size * PX_PER_PT * LINE_EMS / UNIT) * UNIT)
 
 
+def line_height(size: float | None = None) -> int:
+    """The height in px of one line of text at `size`, TEXT_SIZE["body"] unless given, rounded up
+    to a whole px: a box that holds the line and no more."""
+    return math.ceil((size or TEXT_SIZE["body"]) * PX_PER_PT * LINE_EMS)
+
+
 def origin_name(ox: float, oy: float) -> str:
     """The "origin" property of a Tiled Background or 9-patch for an (ox, oy) origin."""
     v = {0: "top", 0.5: "", 1: "bottom"}[oy]
@@ -1812,6 +1816,160 @@ def stage_cell(cols: int, rows: int, screen: str = "stage", title: bool = True) 
     return (x + (w - cols * UNIT) // 2) // UNIT, (y + (h - rows * UNIT) // 2) // UNIT
 
 
+# --- groups and the play area -----------------------------------------------------------------
+# What belongs together sits closer than what does not. A value and its name are one group,
+# GAP_IN apart. Two groups, such as a HUD group and the playfield, sit at least GROUP_RATIO times
+# the gap inside either apart; slide and poster skills ask 1.5 to 2. hud_stat() places a group,
+# play_area() and centred() keep the playfield GAP_OUT from the HUD, and spaced() stops the run on
+# groups closer than that. The HUD is held to the screen's edges, off the grid, so GAP_IN is a
+# share of a unit; a line's box adds about a quarter of an em above and below its letters.
+# The playfield sits in the middle of what the HUD leaves, raised by OPTICAL_LIFT of that space's
+# height, since the eye puts the middle a little above the measured one; balanced() warns on
+# content away from that point. Construct3-RAG/docs/decisions/greybox-blockout.md, *Spacing and balance*.
+GAP_IN = max(1, UNIT // 4)                 # px between the parts of a group
+GAP_OUT = UNIT                             # px at least between the HUD and the playfield
+GROUP_RATIO = 1.5                          # the gap between groups over the gap inside a group, at least
+OPTICAL_LIFT = 0.05                        # a rule of thumb, not a measurement; 0 centres exactly
+
+
+def hud_stat(name_type: str, value_type: str, name: str, where: str, value: str = "0", longest: str | None = None,
+             dx: float = 0, dy: float = 0, name_color: str = "dim", color: str = "ink", on: str = "canvas_alt",
+             ivars=None, behaviors=None) -> list[dict]:
+    """A value the player watches under its name, held to an edge or corner by anchor() as one group:
+    the name in TEXT_SIZE["body"] and `name_color`, then GAP_IN lower the value in TEXT_SIZE["title"]
+    and `color`, as wide as `longest`, the widest value shown at runtime. Each box is one line high.
+    Both are aligned to the side the group hangs on and held to the screen's edge by anchored().
+    `ivars` and `behaviors` go on the value. Returns [name, value], one group of spaced():
+        HUD = [hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-left", longest="999"), ...]"""
+    body, title = TEXT_SIZE["body"], TEXT_SIZE["title"]
+    nw, vw = label_box(name, body)[0], label_box(longest or value, title)[0]
+    nh, vh = line_height(body), line_height(title)
+    gw = max(nw, vw)
+    x, y = anchor(where, gw, nh + GAP_IN + vh, 0, 0, dx, dy)
+    horiz = sides(where)[1]
+    halign = {"left": "left", "middle": "center", "right": "right"}[horiz]
+    share = {"left": 0, "middle": 0.5, "right": 1}[horiz]
+    name_ = text_inst(name_type, name, round(x + share * (gw - nw)), y, nw, nh, body, halign, False, name_color, on,
+                      behaviors=anchored(where))
+    value_ = text_inst(value_type, value, round(x + share * (gw - vw)), y + nh + GAP_IN, vw, vh, title, halign, False,
+                       color, on, ivars=ivars, behaviors={**anchored(where), **(behaviors or {})})
+    return [name_, value_]
+
+
+def box_of(inst: dict) -> tuple[float, float, float, float] | None:
+    """(left, top, right, bottom) of a layout instance's box; None for an instance with no world."""
+    w = inst.get("world")
+    if not w:
+        return None
+    left, top = w["x"] - w.get("originX", 0) * w["width"], w["y"] - w.get("originY", 0) * w["height"]
+    return left, top, left + w["width"], top + w["height"]
+
+
+def gap(a: tuple, b: tuple) -> float:
+    """The space between two boxes of box_of(): across when they share rows, down when they share
+    columns, else the smaller of the two, since the eye reads a box beside or above another's
+    edge as near it however far it lies along that edge. 0 when they meet."""
+    across, down = max(0, b[0] - a[2], a[0] - b[2]), max(0, b[1] - a[3], a[1] - b[3])
+    return min(across, down) if across and down else max(across, down)
+
+
+def spaced(groups: list, where: str = "layout Game") -> None:
+    """Stops the generator when two groups of layout instances sit closer than GROUP_RATIO times the
+    gap inside either: a name far from its value and near the board reads as the board's. A group is
+    a list of instances: hud_stat()'s pair, [a label] or [the board]. The gap inside it is the
+    largest gap from one of its parts to its nearest other part. Pass every HUD group and the
+    playfield's content, from any layer."""
+    found = [[(i["type"], box_of(i)) for i in g if box_of(i)] for g in groups]
+    found = [g for g in found if g]
+
+    def inner(parts: list) -> float:
+        return max((min(gap(a, b) for m, (_, b) in enumerate(parts) if m != n) for n, (_, a) in enumerate(parts)),
+                   default=0) if len(parts) > 1 else 0
+
+    def hull(parts: list) -> tuple:
+        boxes = [b for _, b in parts]
+        return min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes)
+
+    def named(parts: list) -> str:
+        return " + ".join(name for name, _ in parts)
+
+    said = []
+    for n, a in enumerate(found):
+        for b in found[n + 1:]:
+            between = gap(hull(a), hull(b))
+            inside, tight = max((inner(a), a), (inner(b), b), key=lambda p: p[0])
+            if between < GROUP_RATIO * inside:
+                said.append(f"{where}: {named(a)} and {named(b)} are {between:g} px apart, and {named(tight)} holds "
+                            f"its parts {inside:g} px apart: groups need {GROUP_RATIO:g} times that between them, "
+                            f"{GROUP_RATIO * inside:g} px. Put a value under its name with hud_stat(), GAP_IN apart, "
+                            f"and the playfield at centred(w, h, play_area(hud)), GAP_OUT from the HUD.")
+    if said:
+        sys.exit("\n".join(said))
+
+
+def play_area(hud: list) -> tuple[int, int, int, int]:
+    """(x, y, w, h) in px of what the HUD leaves for the playfield: MARGIN inside the viewport and
+    GAP_OUT clear of the box of every instance in `hud`, measured at the design viewport. A box in
+    the top third of the screen ends the area's top, one in the bottom third its bottom, and one
+    between them the left or right side it is on. bands() divides a screen into fixed bands
+    instead; play_area() measures the HUD a game built."""
+    left, top, right, bottom = MARGIN, MARGIN, VIEW_W - MARGIN, VIEW_H - MARGIN
+    for inst in hud:
+        b = box_of(inst)
+        if not b:
+            continue
+        cx, cy = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2
+        if cy < VIEW_H / 3:
+            top = max(top, math.ceil(b[3] + GAP_OUT))
+        elif cy > 2 * VIEW_H / 3:
+            bottom = min(bottom, math.floor(b[1] - GAP_OUT))
+        elif cx < VIEW_W / 2:
+            left = max(left, math.ceil(b[2] + GAP_OUT))
+        else:
+            right = min(right, math.floor(b[0] - GAP_OUT))
+    if right <= left or bottom <= top:
+        sys.exit(f"play_area(): the HUD leaves no room, ({left},{top})-({right},{bottom}); move a HUD element to "
+                 f"another edge or make it smaller")
+    return left, top, right - left, bottom - top
+
+
+def centred(w: float, h: float, area: tuple, lift: float = OPTICAL_LIFT) -> tuple[int, int]:
+    """The top-left (x, y), on the grid, of a w x h px box centred in `area`, the (x, y, w, h) of
+    play_area(), and raised by `lift` of the area's height. The box stays inside the area. A box
+    larger than the area stops the run with the room there is."""
+    ax, ay, aw, ah = area
+    if w > aw or h > ah:
+        sys.exit(f"centred(): a {w:g}x{h:g} px box does not fit the {aw}x{ah} px play area at ({ax},{ay}); make it "
+                 f"smaller, with fewer or smaller cells, or move a HUD element to another edge")
+
+    def place(start: int, room: int, size: float, raised: float) -> int:
+        lo, hi = math.ceil(start / UNIT) * UNIT, math.floor((start + room - size) / UNIT) * UNIT
+        v = snap(start + (room - size) / 2 - raised)
+        return v if lo > hi else min(max(v, lo), hi)
+
+    return place(ax, aw, w, 0), place(ay, ah, h, lift * ah)
+
+
+def balanced(content: list, area: tuple, lift: float = OPTICAL_LIFT, where: str = "layout Game") -> None:
+    """Prints a warning when the box around `content`, the playfield's instances, has its centre more
+    than a unit from the centre of `area`, play_area()'s box, raised by `lift` of its height: the
+    playfield then looks pushed off the middle of what the HUD leaves. A warning and not a stop,
+    because a game may hold its playfield off the middle on purpose, beside a panel or in a level
+    wider than the screen."""
+    boxes = [b for b in map(box_of, content) if b]
+    if not boxes:
+        return
+    cx = (min(b[0] for b in boxes) + max(b[2] for b in boxes)) / 2
+    cy = (min(b[1] for b in boxes) + max(b[3] for b in boxes)) / 2
+    ax, ay, aw, ah = area
+    tx, ty = ax + aw / 2, ay + ah / 2 - lift * ah
+    if max(abs(cx - tx), abs(cy - ty)) > UNIT:
+        names = " + ".join(dict.fromkeys(i["type"] for i in content if box_of(i)))
+        print(f"warning: {where}: {names} is centred at ({cx:g},{cy:g}) and the middle of the play area the HUD "
+              f"leaves is ({tx:g},{ty:g}), {abs(cx - tx):g} px across and {abs(cy - ty):g} px down; place it at "
+              f"centred(w, h, play_area(hud)), or keep it there if the offset is meant")
+
+
 # --- the order of each layer and the HUD's behavior --------------------------------------------
 # build_all() runs both over the layouts of build_layouts() before it writes a file: every layer
 # lists its instances in z_order(), the order an editor user would arrange them in, and the types
@@ -1832,14 +1990,7 @@ def z_order(instances: list) -> list:
     panel, each with what lies inside it in turn. build_all() puts every layer in this order. A
     game that wants another, such as a 3D layer drawn by depth, defines z_order() again below the
     end marker."""
-    def box(inst: dict) -> tuple | None:
-        w = inst.get("world")
-        if not w:
-            return None
-        left, top = w["x"] - w.get("originX", 0) * w["width"], w["y"] - w.get("originY", 0) * w["height"]
-        return left, top, left + w["width"], top + w["height"]
-
-    boxes = [box(inst) for inst in instances]
+    boxes = [box_of(inst) for inst in instances]
     keys = []
     for n, inst in enumerate(instances):
         kind = PATTERN_OF.get(inst["type"])
@@ -2094,7 +2245,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-07, stamp b492a4d88e33 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 69a12f463da4 ================
 
 
 # --- the game ---------------------------------------------------------------------------
@@ -2117,7 +2268,7 @@ BEATS = [
     beat("climax", 3, ["tap"], coins=10),
     beat("exit", 0, ["tap"], coins=1),
 ]
-# Coins land on a small board centred on the screen, below the score's label and number: COLS x
+# Coins land on a small board in the middle of what the HUD leaves: COLS x
 # ROWS slots a coin wide, a unit apart, the empty ones drawn in canvas_alt. A round deals the cells
 # (deal + i * STRIDE) mod CELLS, which differ for every i below CELLS because STRIDE and CELLS share
 # no factor, so no two coins meet. The run stops on a round that deals more coins than slots.
@@ -2126,9 +2277,14 @@ CELLS = COLS * ROWS
 STRIDE = next(s for s in (7, 11, 13, 17, 19, 23) if math.gcd(s, CELLS) == 1)
 PITCH = COIN_SIZE + UNIT
 BOARD_W, BOARD_H = COLS * PITCH - UNIT, ROWS * PITCH - UNIT
-HUD_BOTTOM = MARGIN + label_box("", TEXT_SIZE["body"])[1] + label_box("", TEXT_SIZE["title"])[1]
-BOARD_LEFT = snap((VIEW_W - BOARD_W) / 2)
-BOARD_TOP = max(HUD_BOTTOM + UNIT, snap((VIEW_H - BOARD_H) / 2))
+# The HUD, built here so the board can be placed in what it leaves, as groups: the score under
+# its name, large in ink under small dim capitals, and the round on its own. build_layouts() puts
+# them on the UI layer. The board is centred in the play area under the HUD (play_area(),
+# centred()), and the events deal coins from BOARD_LEFT and BOARD_TOP.
+HUD = [hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-left", longest="999"),
+       [hud_text("RoundText", "ROUND 1 / 6", "top-right", longest="ROUND 10 / 10", bold=False, color="dim")]]
+PLAY_AREA = play_area(flat(HUD))
+BOARD_LEFT, BOARD_TOP = centred(BOARD_W, BOARD_H, PLAY_AREA)
 if max(b["coins"] for b in BEATS) > CELLS:
     sys.exit(f"BEATS deal up to {max(b['coins'] for b in BEATS)} coins and the board has {CELLS} slots; "
              f"widen COLS or ROWS")
@@ -2183,7 +2339,8 @@ def build_layouts() -> dict[str, dict]:
     # ruler: two a unit. An area or an edge in a pattern is area(type, col, row, cols, rows) on the
     # Game layer. Instances go in in any order: build_all() puts every layer in z_order().
     game["layers"][0]["instances"].append(backdrop("Backdrop"))
-    game["layers"][0]["instances"].append(tiledbg_inst("Board", BOARD_LEFT, BOARD_TOP, BOARD_W, BOARD_H, 0, 0))
+    board = tiledbg_inst("Board", BOARD_LEFT, BOARD_TOP, BOARD_W, BOARD_H, 0, 0)
+    game["layers"][0]["instances"].append(board)
     # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
     # row(), anything else by anchor(); the middle of the screen is the game's. Each carries the
     # Anchor behavior of anchored(), which hud_text() and hud_bar() give, so it stays at the
@@ -2191,16 +2348,17 @@ def build_layouts() -> dict[str, dict]:
     # stops the run when two HUD boxes meet or one leaves the viewport. A label is
     # TEXT_SIZE["body"] in rgb("ink"); the number the player plays for, and a banner, are
     # TEXT_SIZE["title"]. hud_text() stops the run on a colour that does not read on what is
-    # behind it.
+    # behind it. A value under its name is one group, hud_stat(); spaced() stops the run when two
+    # groups sit closer than the parts of one, and balanced() warns when the board is off the middle
+    # of the play area.
     ui = game["layers"][2]["instances"]
-    # The number the player plays for is large and regular under its name, small, in dim capitals.
-    ui.append(hud_text("ScoreLabel", "SCORE", "top-left", bold=False, color="dim"))
-    ui.append(hud_text("ScoreText", "0", "top-left", size=TEXT_SIZE["title"], longest="999", bold=False, dy=2))
-    ui.append(hud_text("RoundText", "ROUND 1 / 6", "top-right", longest="ROUND 10 / 10", bold=False, color="dim"))
+    ui.extend(flat(HUD))
     # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
     # types from bar_types() and images from bar_images(), and the sheet sets the fill with
     # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
     no_overlap(ui)
+    spaced([*HUD, [board]])
+    balanced([board], PLAY_AREA)
     # Everything outside the HUD starts on the grid: a shape by shape_inst() on a cell, one
     # created at runtime at grid_random(); on_grid() stops the run on an instance that does not.
     on_grid(game["layers"][1]["instances"], "layer Game")

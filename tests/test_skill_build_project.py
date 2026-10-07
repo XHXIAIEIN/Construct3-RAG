@@ -423,9 +423,8 @@ def test_template_places_the_hud_on_the_grid(built):
     assert banner["world"]["width"] >= len("选择前进之路") * 48 * 4 / 3
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
     score = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "ScoreText")["world"]
-    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 96, 160, 128)   # the number at the title size, under its label
-    for k in ("x", "y", "width", "height"):
-        assert score[k] % t.UNIT == 0, k
+    # The number at the title size, GAP_IN under its label, each box one line high: the HUD is off the grid.
+    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 92, 160, 103)
     # Two HUD boxes that meet, or one past the viewport, stop the generator and name them.
     with pytest.raises(SystemExit, match=r"ScoreText \(32,32\)-\(288,96\) overlaps TimerText .* Move TimerText down 3 units: dy=3"):
         t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"),
@@ -560,6 +559,51 @@ def test_template_button_is_a_shape_and_its_label_that_never_come_apart(tmp_path
     child = t.text_inst("PanelText", "", 0, 0, 96, 96)
     t.link(hidden, child)
     assert child["properties"]["initially-visible"] is False
+
+
+def test_template_groups_a_value_with_its_name_and_centres_the_playfield_under_the_hud(built, capsys):
+    """hud_stat() puts a value GAP_IN under its name as one group; play_area() is what the HUD leaves,
+    GAP_OUT clear of it; centred() puts the board in its middle on the grid, raised by OPTICAL_LIFT.
+    spaced() stops groups that sit closer than GROUP_RATIO times the gap inside one, the stand-in's
+    old fault of a name far from its number and the number near the board; balanced() warns on a
+    board off the middle of the play area."""
+    t = template_module()
+    assert (t.GAP_IN, t.GAP_OUT, t.GROUP_RATIO, t.OPTICAL_LIFT) == (8, 32, 1.5, 0.05)
+    assert t.GAP_OUT >= t.GROUP_RATIO * t.GAP_IN
+    name, value = t.hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-left", longest="999")
+    assert t.box_of(name) == (32, 32, 160, 84) and t.box_of(value) == (32, 92, 192, 195)
+    assert (name["properties"]["size"], value["properties"]["size"]) == (t.TEXT_SIZE["body"], t.TEXT_SIZE["title"])
+    best = t.hud_stat("BestLabel", "BestText", "BEST", "top-right", longest="999")
+    assert t.box_of(best[0])[2] == t.box_of(best[1])[2] == 1888
+    assert best[1]["properties"]["horizontal-alignment"] == "right" and "Anchor" in best[1]["behaviors"]
+    area = t.play_area([name, value, t.hud_text("RoundText", "ROUND 1 / 6", "top-right")])
+    assert area == (32, 195 + 32, 1920 - 64, 1048 - 227)
+    assert t.play_area([t.hud_text("Hint", "Tap", "bottom")])[1::2] == (32, 1080 - 32 - 64 - 32 - 32)
+    assert t.centred(928, 544, area) == (512, 320) and t.centred(928, 544, area, lift=0) == (512, 352)
+    with pytest.raises(SystemExit, match=r"centred\(\): a 2000x100 px box does not fit the 1856x821 px play area"):
+        t.centred(2000, 100, area)
+    board = t.tiledbg_inst("Board", 512, 320, 928, 544, 0, 0)
+    t.spaced([[name, value], [best[0], best[1]], [board]])
+    t.balanced([board], area)
+    assert capsys.readouterr().out == ""
+    # A board 5 px under the number, whose parts are 8 px apart: a box below another's bottom edge is
+    # as far from it as that edge, wherever it lies along it.
+    assert t.gap((0, 0, 10, 10), (100, 15, 200, 20)) == 5 and t.gap((0, 0, 10, 10), (40, 0, 50, 10)) == 30
+    with pytest.raises(SystemExit, match=r"ScoreLabel \+ ScoreText and Board are 5 px apart, and ScoreLabel \+ "
+                                         r"ScoreText holds its parts 8 px apart: groups need 1.5 times that"):
+        t.spaced([[name, value], [t.tiledbg_inst("Board", 512, 200, 928, 544, 0, 0)]])
+    # A name a unit above its number, and the board a unit under the number.
+    label = t.hud_text("ScoreLabel", "SCORE", "top-left")
+    number = t.hud_text("ScoreText", "0", "top-left", size=t.TEXT_SIZE["title"], dy=3)
+    with pytest.raises(SystemExit, match=r"are 32 px apart, and ScoreLabel \+ ScoreText holds its parts 32 px apart"):
+        t.spaced([[label, number], [t.tiledbg_inst("Board", 512, 288, 928, 544, 0, 0)]])
+    # A board centred on the whole screen is off the middle of what the HUD leaves.
+    t.balanced([t.tiledbg_inst("Board", 512, 256, 928, 544, 0, 0)], area)
+    assert capsys.readouterr().out.startswith("warning: layout Game: Board is centred at (976,528)")
+    # The stand-in's board is where centred() puts it.
+    game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
+    placed = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "Board")["world"]
+    assert (placed["x"], placed["y"]) == (512, 320)
 
 
 def test_template_screen_is_named_bands_and_the_stage_sizes_its_main_object():

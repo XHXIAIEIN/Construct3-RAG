@@ -90,6 +90,26 @@
       "helpers": "z_order(), build_all()"
     },
     {
+      "id": "layout.proximity",
+      "status": "enforced",
+      "says": "A value and its name are one group, GAP_IN apart; two groups, a HUD group and the playfield among them, sit at least 1.5 times the gap inside either apart, so a name stays with its value and not with the board.",
+      "template": "GROUP_RATIO",
+      "value": "1.5",
+      "helpers": "hud_stat(), spaced(), play_area(), centred()"
+    },
+    {
+      "id": "layout.balance",
+      "status": "open",
+      "says": "The playfield's content is centred in what the HUD leaves, not on the whole screen, raised by OPTICAL_LIFT of that space's height; a centre more than a unit off prints a warning. The 5% lift is a rule of thumb with no measurement found behind it.",
+      "template": "OPTICAL_LIFT",
+      "value": "0.05",
+      "options": [
+        "0.05: the board a little above the middle of the play area, where the eye puts the middle",
+        "0: the board exactly in the middle of the play area"
+      ],
+      "helpers": "play_area(), centred(), balanced()"
+    },
+    {
       "id": "outline.width",
       "status": "adopted",
       "says": "An ink outline inside a shape's edge where SHAPE_STYLE turns it on; off on the plain sheet, always on a hit frame.",
@@ -249,7 +269,7 @@
     "Keep SHAPE_STYLE and the helpers between the markers; a helper the game changes is defined again below the end marker. Give every sprite an art() in whole units, which draws its stand-in until its picture arrives, and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
     "With an image tool in the session: run prepare_art.py --list, make each picture with the prompt it prints, run prepare_art.py, then the generator. Never draw the art in code: it looks worse than the stand-ins and mixes styles.",
     "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area or an edge is area() of a pattern(); the backdrop is backdrop() of the plain pattern, or of the checker where something is transparent, a mask or a background still to come.",
-    "Place the HUD with hud_text(), hud_bar(), labelled_bar() or band_text(), which hold it to the screen's edges with the Anchor behavior; an instance placed by anchor() or row() takes behaviors=anchored(where). Lay a popup's dim over screen_box(), on the popup's own layer. Leave FULLSCREEN and z_order() as they are: they fill the screen and order each layer for any game.",
+    "Place the HUD with hud_text(), hud_stat() for a value under its name, hud_bar(), labelled_bar() or band_text(), which hold it to the screen's edges with the Anchor behavior, and the playfield at centred(w, h, play_area(hud)); pass the HUD's groups and the playfield to spaced(). An instance placed by anchor() or row() takes behaviors=anchored(where). Lay a popup's dim over screen_box(), on the popup's own layer. Leave FULLSCREEN and z_order() as they are: they fill the screen and order each layer for any game.",
     "Write BEATS for the game's zones or rounds, and read the curve the generator prints; measure every gap of a platformer level with jump().",
     "Give every object that can be hit a hit_frame() after its shape and the Tween behavior, and show a hit with hit(obj), last in its block; never the Flash behavior.",
     "Squash a landing and a jump with squash(art, \"land\") and squash(art, \"jump\"), on the art pinned to the collision mask, never on the mask.",

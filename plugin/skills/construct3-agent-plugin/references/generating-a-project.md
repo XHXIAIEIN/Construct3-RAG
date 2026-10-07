@@ -232,7 +232,14 @@ habits; they are what makes rerunning safe.
   side it hangs on. Repeated items, hearts or stars,
   are `row(where, n, w, h)`, spaced so they never touch. A second row on
   the same edge is `dy` in units on the same call, `dy=3` under a 2-unit
-  label. The UI layer's instances go through `no_overlap()`, which stops
+  label. A value under its name, the score under SCORE, is one group,
+  `hud_stat(name_type, value_type, name, where, longest=...)`: the name in
+  the body size, `GAP_IN` above the value in the title size. The playfield
+  goes in the middle of what the HUD leaves, `centred(w, h, play_area(hud))`,
+  at least `GAP_OUT` from it. `spaced(groups)` stops the run when two groups
+  sit closer than 1.5 times the gap inside either, and `balanced(content,
+  area)` warns when the playfield is off that middle.
+  The UI layer's instances go through `no_overlap()`, which stops
   the run naming every pair of boxes that meet, with the `dy` that clears
   them, and every box past the viewport. A value shown as a bar, health,
   fuel, progress, a row of hearts, is
