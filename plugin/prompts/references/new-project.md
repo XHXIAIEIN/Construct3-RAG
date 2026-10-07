@@ -89,6 +89,21 @@ Construct-Example-Projects, 2026-09-18]
   The generator template holds these as `button()`, `labelled_bar()`,
   `bands()`, `band_text()` and `fit()`; the record is
   `docs/decisions/layout-by-name.md`.
+- Each class of object keeps one kind of motion, so the eye knows what
+  matters. The HUD and menus fade and slide: of the studio cohort's 480
+  one-shot tweens on objects of a parallax-0 layer, in 71 projects, 73%
+  tween the opacity, 92% use a sine ease, mostly `easeinoutsine`, the
+  middle half lasts 0.5 to 1 s, and 7 overshoot. A button's press is
+  quicker, 0.1 to 0.5 s on its size or opacity. The camera moves slowly
+  and evenly, 1 s or more with `easeinoutsine`, though only 4 projects
+  tween it.
+  Overshoot (`easeoutback`, `easeoutbounce`, an elastic ease) belongs to
+  world objects: 102 of their 1613 tweens, mostly a vertical offset or the
+  size, as in a hit, a landing or a pop ([feel.md](feel.md)). Give a HUD
+  element a bounce only when it is the moment's subject, such as a title
+  card. [survey of the Tween actions in the examples' studio cohort,
+  2026-10-08: each action's object classed as HUD when it has an instance
+  on a layer of parallax 0, else as world or camera]
 
 ## Layouts, sheets, folders and layers
 

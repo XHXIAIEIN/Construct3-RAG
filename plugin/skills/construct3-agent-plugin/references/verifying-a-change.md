@@ -199,7 +199,9 @@ kinds takes the rows of each.
 - Random seed: an Advanced Random object with *Replace system random* and a
   fixed *Seed* makes `random()` and the randomness of behaviors repeat from
   run to run; *Update seed* changes it from an event, such as a debug
-  key or a function the plan calls.
+  key or a function the plan calls. Fix the seed before recording a motion
+  twice to compare the two contact sheets, so the frames differ only by
+  the change.
   [manual: plugin-reference/advanced-random.md "Seed", "Replace system
   random", "Update seed"]
 - Sound: the preview runs muted, and a sound is checked by recording it in
