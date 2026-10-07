@@ -42,36 +42,24 @@ class TermIndex:
     def load_from_schema(self, schema_index: "SchemaIndex") -> None:
         """Extract en/zh name pairs through the SchemaIndex public iterator."""
         seen_keys = {term["key"] for term in self._terms if term.get("key")}
-        added = 0
-        for addon_type, plugin_id, schema in schema_index.iter_schemas():
-            name_en = schema.get("name_en", "")
-            name_zh = schema.get("name_zh", "")
-            if name_en and name_zh and name_en != name_zh:
-                term_key = f"{addon_type}.{plugin_id}.name"
-                if term_key not in seen_keys:
-                    seen_keys.add(term_key)
-                    self._terms.append(
-                        {"key": term_key, "zh": name_zh, "en": name_en}
-                    )
-                    added += 1
+        before = len(self._terms)
 
+        def add(term_key: str, record: dict[str, Any]) -> None:
+            en = record.get("name_en", "")
+            zh = record.get("name_zh", "")
+            if en and zh and en != zh and term_key not in seen_keys:
+                seen_keys.add(term_key)
+                self._terms.append({"key": term_key, "zh": zh, "en": en})
+
+        for addon_type, plugin_id, schema in schema_index.iter_schemas():
+            add(f"{addon_type}.{plugin_id}.name", schema)
             for ace_type in SCHEMA_ACE_TYPES:
                 for item in schema.get(ace_type, []):
-                    en = item.get("name_en", "")
-                    zh = item.get("name_zh", "")
-                    if not en or not zh or en == zh:
-                        continue
                     ace_id = item.get("id", "")
-                    term_key = f"{addon_type}.{plugin_id}.{ace_type}.{ace_id}"
-                    if term_key in seen_keys:
-                        continue
-                    seen_keys.add(term_key)
-                    self._terms.append(
-                        {"key": term_key, "zh": zh, "en": en}
-                    )
-                    added += 1
+                    add(f"{addon_type}.{plugin_id}.{ace_type}.{ace_id}", item)
 
         self._loaded = True
+        added = len(self._terms) - before
         if added:
             logger.info("[TermIndex] Added %d terms from schema data", added)
 
