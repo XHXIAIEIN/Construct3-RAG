@@ -214,6 +214,15 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   false; both frames in the editor's order came back without
   `collisionPoly` and with their `useCollisionPoly`, the other two as
   written]
+- Every `image` block and every animation frame carries an `imageSpriteId`,
+  an integer that no other image or frame of the project has. The editor
+  stops on a repeated one with `id already in use`. An object type copied
+  from another one's file keeps the original's ids, so give the copy a new
+  `name` and a new 15-digit `sid`. Then give its `image` block, or each of
+  its frames, an unused `imageSpriteId`; `check_project.py` prints one for
+  each id that repeats. [observed in a game project, r504, 2026-10-06: a
+  Sprite Font copied from another Sprite Font's file did not open until the
+  copy had its own `imageSpriteId`]
 - A Sprite Font has `"plugin-id": "Spritefont2"` and an `image` block in its
   object type file, as a Tiled Background has. Its picture is
   `images/<lowercase name>.png`, its `usedAddons` entry `{"type": "plugin",
@@ -318,7 +327,7 @@ place here with `--project <folder>`. It checks that:
 - the JSON parses
 - every `objectClass`, instance variable and behavior name exists, families
   included
-- `sid` and `uid` are unique
+- `sid`, `uid` and `imageSpriteId` are unique
 - every ACE `id` and parameter key is in `data/c3-schemas/`
 - every called function is defined with the right parameter count
 - every object created at runtime has a template instance in some layout

@@ -881,11 +881,41 @@ class Checker:
             self.check_collision_polys(name, sub)
 
     def check_images(self) -> None:
+        sprite_ids: dict[int, list[str]] = {}    # imageSpriteId -> each image or frame that has it
+        files = self.p.listed_files("objectTypes")
         for name, t in self.p.types.items():
+            shown = (f"{name} ({files[name].relative_to(self.p.root).as_posix()})" if files.get(name)
+                     else name)
             if isinstance(t.get("image"), dict):
                 self.check_image(name.lower(), t["image"])
+                sprite_ids.setdefault(t["image"].get("imageSpriteId"), []).append(f"the image of {shown}")
             for stem, fr in frames_of(t.get("animations", {}), f"{name.lower()}-"):
                 self.check_image(stem, fr)
+                if isinstance(fr, dict):
+                    sprite_ids.setdefault(fr.get("imageSpriteId"), []).append(f"the frame images/{stem}.png of {shown}")
+        self.check_sprite_ids(sprite_ids)
+
+    def check_sprite_ids(self, sprite_ids: dict) -> None:
+        """Report an imageSpriteId that two images or frames share.
+        The editor keeps one set of these ids for the project and stops on a repeated one.
+        -1 is skipped, because the editor's loader gives it a new id."""
+        taken = {s for s in sprite_ids if isinstance(s, int)}
+        for s, owners in sprite_ids.items():
+            if not isinstance(s, int) or s < 0 or len(owners) < 2:
+                continue
+            free = []
+            n = s
+            while len(free) < len(owners) - 1:
+                # seven digits, as the editor and the generator write them
+                n = n + 1 if n + 1 < 10**7 else 10**6
+                if n not in taken:
+                    free.append(n)
+                    taken.add(n)
+            self.err(f"{' and '.join(owners)} share the imageSpriteId {s}, and the editor stops with \"id already "
+                     f"in use\" before the project opens. Keep {s} on one of them. Give "
+                     + ("the other" if len(owners) == 2 else "each other one")
+                     + " an imageSpriteId that no image or frame of the project has, for example "
+                     + ", ".join(str(n) for n in free))
 
     # --- layouts ----------------------------------------------------------------------------
     def collect_sids(self, obj, in_ace: bool = False) -> None:
