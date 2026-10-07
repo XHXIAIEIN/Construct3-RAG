@@ -107,10 +107,34 @@ HOLDS_EVENTS = ("block", "group", "function-block", "custom-ace-block")
 VARIABLE_KEYS = ("initialValue", "isConstant", "isStatic")
 UNNUMBERED = {"variable": "name", "comment": "text"}      # rows a plan names, and the key that names them
 PLACES = ("after", "before", "into")
+SID_IN = re.compile(r"\(sid (\d+)\)")      # how a finding of check_project.py names an entry
 
 
 class PlanError(Exception):
     pass
+
+
+def is_index(n) -> bool:
+    """A whole number a plan may count with; JSON's true and false are ints to Python and are not."""
+    return isinstance(n, int) and not isinstance(n, bool)
+
+
+def as_initial(value) -> str:
+    """A variable's initialValue as the editor keeps it: a string, a boolean in lower case."""
+    return str(value).lower() if isinstance(value, bool) else str(value)
+
+
+def comment_text(row: dict) -> str:
+    return str(row.get("text", ""))
+
+
+def first_line(row: dict) -> str:
+    return comment_text(row).split("\n")[0]
+
+
+def template_of(entry: dict) -> list:
+    """The editor's keys for an event by its eventType, or for a condition or action by what it calls."""
+    return EVENTS.get(entry.get("eventType")) or next((keys for kind, keys in ACES.items() if kind in entry), [])
 
 
 # --- what the plan holds, written the way the editor writes it ----------------------------------
@@ -137,9 +161,9 @@ def filled(given: dict, keys: list, where: str, own: dict | None = None) -> dict
     if "initialValue" in out and "type" in out:
         if out["type"] not in INITIAL:
             raise PlanError(f"{where}: type is 'number', 'string' or 'boolean', not {out['type']!r}")
-        value = given.get("initialValue", INITIAL[out["type"]])
-        out["initialValue"] = str(value).lower() if isinstance(value, bool) else str(value)   # the editor keeps a string
-    out = {**out, **{k: v for k, v in given.items() if k not in out}}
+        out["initialValue"] = as_initial(given.get("initialValue", INITIAL[out["type"]]))   # the editor keeps a string
+    for key, value in given.items():
+        out.setdefault(key, value)
     if old is None:
         return out
     order = list(old)
@@ -148,8 +172,7 @@ def filled(given: dict, keys: list, where: str, own: dict | None = None) -> dict
 
 def in_order(entry: dict) -> None:
     """The keys of an event, condition or action that is already in the sheet, as the editor orders them; none added."""
-    template = EVENTS.get(entry.get("eventType")) or next((keys for kind, keys in ACES.items() if kind in entry), [])
-    kept = {**{key: entry[key] for key, _ in template if key in entry}, **entry}
+    kept = {**{key: entry[key] for key, _ in template_of(entry) if key in entry}, **entry}
     entry.clear()
     entry.update(kept)
 
@@ -158,9 +181,8 @@ def assign(entry: dict, values: dict, name: str, fixed: tuple[str, ...]) -> None
     """values into entry: a parameter at a time, null to take a key out. Only
     keys the editor writes for this kind of entry, or that it already has: a
     key of the plan's own making would stay in the file and mean nothing."""
-    template = EVENTS.get(entry.get("eventType")) or next((keys for kind, keys in ACES.items() if kind in entry), [])
     rare = RARE_KEYS.get(entry.get("eventType"), ())
-    known = [key for key in dict.fromkeys([*(key for key, _ in template), *entry, *rare]) if key not in fixed]
+    known = [key for key in dict.fromkeys([*(key for key, _ in template_of(entry)), *entry, *rare]) if key not in fixed]
     what = f"a {entry['eventType']}" if "eventType" in entry else "a condition or action"
     for key, value in values.items():
         if key in fixed:
@@ -279,7 +301,7 @@ def give_sids(obj, used: set[int], again: collections.Counter | None = None) -> 
     if isinstance(obj, dict):
         if "sid" in obj:
             sid = obj["sid"]
-            valid = isinstance(sid, int) and not isinstance(sid, bool) and sid > 0
+            valid = is_index(sid) and sid > 0
             if valid and again and again[sid] > 0:
                 again[sid] -= 1
             elif not valid or sid in used:
@@ -348,7 +370,7 @@ class Plan:
         self.unnamed: dict[str, str] = {}                 # a variable's name a plan removed or renamed -> which operation
 
     def event(self, n, op: str, zero: bool = False) -> dict | None:
-        if isinstance(n, bool) or not isinstance(n, int) or not (0 if zero else 1) <= n <= self.total:
+        if not is_index(n) or not (0 if zero else 1) <= n <= self.total:
             raise PlanError(f"{op}: {json.dumps(n)} is not an event of the sheet, which has {self.total}"
                             + ("; 0 is the sheet itself" if zero else ""))
         return self.by_number.get(n)
@@ -359,6 +381,12 @@ class Plan:
             raise PlanError(f"{op}: event {n} is gone, {self.gone.get(id(node), 'an operation before this one took it out')}; "
                             f"what is kept of an event goes into the \"events\" that replace it, or a \"move\" takes it out first")
         return found
+
+    def present(self, n, op: str) -> dict:
+        """Event n, which the sheet still holds."""
+        target = self.event(n, op)
+        self.place(target, n, op)
+        return target
 
     def forget(self, taken: list[dict], said: str) -> None:
         numbers = {id(ev): n for n, ev in self.by_number.items()}
@@ -399,14 +427,12 @@ class Plan:
     def new_events(self, op: dict, name: str, own: dict | None = None) -> list[dict]:
         if not op.get("events"):
             raise PlanError(f"{name} needs \"events\": [...], the events to put there")
-        events = [new_event(ev, f"{name} event {i}", own) for i, ev in enumerate(as_list(op["events"], f"{name} events"), 1)]
-        return events
+        return [new_event(ev, f"{name} event {i}", own) for i, ev in enumerate(as_list(op["events"], f"{name} events"), 1)]
 
     def amend(self, op: dict, n, name: str) -> None:
         """Values of an event, or of one of its conditions or actions, set; or a condition or action taken out.
         The place is the one a finding names: sheet Game event 5 condition 1."""
-        target = self.event(n, name)
-        self.place(target, n, name)
+        target = self.present(n, name)
         kinds = [k for k in ("condition", "action") if k in op]
         if len(kinds) > 1 or {"add-actions", "add-conditions", "position"} & set(op) or ("set" in op) == ("remove" in op):
             raise PlanError(f'{name} is one of {{"event": N, "set": {{...}}}}, {{"event": N, "condition"|"action": J, '
@@ -423,7 +449,7 @@ class Plan:
             entries = target.get(kind + "s")
             if entries is None:
                 raise PlanError(f"{name}: event {n} is a {target.get('eventType')}, which has no {kind}s")
-            if isinstance(j, bool) or not isinstance(j, int) or not 1 <= j <= len(entries):
+            if not is_index(j) or not 1 <= j <= len(entries):
                 raise PlanError(f"{name}: event {n} has {count(entries, kind)}, and {json.dumps(j)} is not one of them")
             if "remove" in op:
                 if op["remove"] is not True:
@@ -449,12 +475,16 @@ class Plan:
         walk(self.sheet["events"], [])
         return found
 
+    def number_of(self, holder: dict) -> int | None:
+        """The number of an event the sheet had before the plan; None for one the plan added."""
+        return next((n for n, ev in self.by_number.items() if ev is holder), None)
+
     def scope_of(self, above: list[dict]) -> str:
         """Where a variable or comment is, in the words of a plan's "in"."""
         if not above:
             return "at the top level"
         holder = above[-1]
-        n = next((n for n, ev in self.by_number.items() if ev is holder), None)
+        n = self.number_of(holder)
         et = holder.get("eventType")
         what = {"group": f"group {holder.get('title')}", "function-block": f"function {holder.get('functionName')}",
                 "custom-ace-block": f"custom action {holder.get('objectClass')}.{holder.get('aceName')}"}.get(et, et)
@@ -486,16 +516,16 @@ class Plan:
         if kind == "variable":
             hits = [r for r in rows if r[0][r[1]].get("name") == key]
         else:
-            hits = [r for r in rows if key in str(r[0][r[1]].get("text", ""))]
-            whole = [r for r in hits if str(r[0][r[1]].get("text", "")).strip() == key.strip()]
+            hits = [r for r in rows if key in comment_text(r[0][r[1]])]
+            whole = [r for r in hits if comment_text(r[0][r[1]]).strip() == key.strip()]
             hits = whole if len(whole) == 1 else hits
         if len(hits) == 1:
             return hits[0]
         inside = "" if within is None else " at the top level" if within == 0 else f" in event {within}"
         if hits:
             places = [self.scope_of(above) + ("" if kind == "variable" else " " + json.dumps(
-                str(v[i].get("text", "")).split("\n")[0][:60], ensure_ascii=False)) for v, i, above in hits]
-            first = next((int(m.group(1)) for m in (re.match(r"in event (\d+)", p) for p in places) if m), 0)
+                first_line(v[i])[:60], ensure_ascii=False)) for v, i, above in hits]
+            first = next((n for _, _, above in hits if above and (n := self.number_of(above[-1]))), 0)
             example = {kind: key, "in": first, **{k: op[k] for k in ("set", "remove") if k in op}}
             raise PlanError(f"{name}: {len(hits)} {kind}s{inside} {'are named' if kind == 'variable' else 'hold'} "
                             f"{key!r}: {'; '.join(places)}. Name the event that holds the one to change with "
@@ -511,7 +541,7 @@ class Plan:
                                + (f" and {len(listed) - 40} more" if len(listed) > 40 else "")
                                if listed else ". It has none; a new one goes in with "
                                '{"before": 1, "events": [{"eventType": "variable", "name": "...", "initialValue": "0"}]}'))
-        texts = [str(v[i].get("text", "")).split("\n")[0] for v, i, _ in everywhere]
+        texts = [first_line(v[i]) for v, i, _ in everywhere]
         near = difflib.get_close_matches(key, texts, n=5, cutoff=0.4) or texts[:10]
         raise PlanError(f"{name}: no comment of the sheet holds {key!r}{inside}"
                         + (". Write words of one as print_sheet.py prints it after //, such as "
@@ -537,7 +567,7 @@ class Plan:
                 self.unnamed[key] = f"operation {i} removed it"
                 self.done.append((f"variable {key} removed", []))
             else:
-                self.done.append((f"comment // {str(row.get('text', '')).split(chr(10))[0]} removed", []))
+                self.done.append((f"comment // {first_line(row)} removed", []))
             return
         values = op["set"]
         if not isinstance(values, dict):
@@ -552,15 +582,14 @@ class Plan:
                 raise PlanError(f"{name}: type is 'number', 'string' or 'boolean', not {values['type']!r}")
         assign(row, values, name, ("sid", "eventType"))
         if kind == "variable":
-            value = row.get("initialValue")
-            if isinstance(value, (bool, int, float)):       # the editor keeps a string
-                row["initialValue"] = str(value).lower() if isinstance(value, bool) else str(value)
+            if isinstance(row.get("initialValue"), (bool, int, float)):       # the editor keeps a string
+                row["initialValue"] = as_initial(row["initialValue"])
             if row.get("name") != key:
                 self.unnamed[key] = f"operation {i} renamed it {row.get('name')}"
             self.done.append((f"variable {key} changed: {self.variable_line(row, above)}"
                               + (f" {self.scope_of(above)}" if above else ""), []))
         else:
-            self.done.append((f"comment changed: // {str(row.get('text', '')).split(chr(10))[0]}", []))
+            self.done.append((f"comment changed: // {first_line(row)}", []))
 
     def apply(self, op, i: int) -> None:
         self.change(op, i)
@@ -602,7 +631,7 @@ class Plan:
             self.done.append((f"{count(events, 'event')} {verb} event {n}" if n else f"{count(events, 'event')} at the end", events))
         elif verb == "replace":
             # What it replaces may come back, as print_sheet.py --show printed it, partly or whole.
-            replaced = self.by_number.get(n) if isinstance(n, int) and not isinstance(n, bool) else None
+            replaced = self.by_number.get(n) if is_index(n) else None
             events = self.new_events(op, name, entries_by_sid(replaced))
             siblings, at = self.place(self.event(n, name), n, name)
             again = collections.Counter(sids_of(siblings[at]))
@@ -642,8 +671,7 @@ class Plan:
         elif {"condition", "action", "set", "remove"} & set(op):
             self.amend(op, n, name)
         else:
-            target = self.event(n, name)
-            self.place(target, n, name)
+            target = self.present(n, name)
             lists = [k for k in ("add-conditions", "add-actions") if k in op]
             if not lists or ("position" in op and len(lists) > 1):
                 raise PlanError(f"{name} needs \"add-actions\" or \"add-conditions\"; \"position\" goes with one of them")
@@ -653,7 +681,7 @@ class Plan:
                     raise PlanError(f"{name}: event {n} is a {target.get('eventType')}, which has no {kind}")
                 aces = [new_ace(a, f"{name} {kind[:-1]} {j}") for j, a in enumerate(as_list(op[key], f"{name} {key}"), 1)]
                 at = op.get("position", len(target[kind]) + 1)
-                if isinstance(at, bool) or not isinstance(at, int) or not 1 <= at <= len(target[kind]) + 1:
+                if not is_index(at) or not 1 <= at <= len(target[kind]) + 1:
                     raise PlanError(f"{name}: position is 1 to {len(target[kind]) + 1}, event {n} has {len(target[kind])} {kind}")
                 target[kind][at - 1:at - 1] = aces
                 self.sids_given += give_sids(aces, self.used)
@@ -669,23 +697,29 @@ class Plan:
 REFUSED_STYLE = ("comment", "run", "cases", "tick", "pathfinding", "timer", "control", "count", "picked", "flip")
 
 
-def findings_of(project: c3.Project, args, sheets: dict) -> tuple[check_project.Checker, c3.Findings]:
+def findings_of(project: c3.Project, locale: str, sheets: dict) -> tuple[check_project.Checker, c3.Findings]:
     """The project checked, with the sheet of the plan, before or after it, in the place of its file."""
     fresh = c3.Findings()
     # Style warnings on: what a plan adds is the agent's own writing, and only the
     # warnings new after the plan are printed, so the sheet's older events stay quiet.
-    checker = check_project.Checker(c3.Project(project.root, project.rag, args.locale, fresh), sheets=sheets, style=True)
+    checker = check_project.Checker(c3.Project(project.root, project.rag, locale, fresh), sheets=sheets, style=True)
     checker.check()
     return checker, fresh
 
 
-def unnumbered(finding: str) -> str:
+def without_number(finding: str) -> str:
     """A finding without its event number and its place among its group's children,
     which an insert above it changes; the sid stays."""
     return re.sub(r" entry \d+ in ", " entry in ", re.sub(r" event \d+ ", " event ", finding))
 
 
 LEADING_TEXT = re.compile(r'\s*"((?:[^"]|"")+)"')
+
+
+def lead(text: str) -> str | None:
+    """The text literal an expression opens with, "Score: " of "Score: " & score."""
+    m = LEADING_TEXT.match(text)
+    return m and m.group(1)
 
 
 def actions_in(events: list, span: dict | None = None):
@@ -713,23 +747,25 @@ def left_alone(original: list, events: list, span: dict) -> list[str]:
         for key, value in params.items():
             if isinstance(value, str) and (old is None or old.get(key) != value):
                 written.setdefault((a["objectClass"], a["id"], key), set()).add(value)
-    def lead(text: str) -> str | None:
-        m = LEADING_TEXT.match(text)
-        return m and m.group(1)
-
     notes = []
     for n, j, a in kept:
         for key, value in a.get("parameters", {}).items():
-            if not isinstance(value, str) or not lead(value):
+            opening = isinstance(value, str) and lead(value)
+            if not opening:
                 continue
             # A plan may also write a fixed start text, "Score: 0  Time: 30": only the values that open alike count.
-            alike = {v for v in written.get((a["objectClass"], a["id"], key), ()) if lead(v) == lead(value)}
+            alike = {v for v in written.get((a["objectClass"], a["id"], key), ()) if lead(v) == opening}
             if len(alike) == 1 and value not in alike:
                 wrote = alike.pop()
                 notes.append(f"note: event {n} action {j} ({a['objectClass']} {a['id']}) still has {key} {value}, "
                              f"which this plan writes elsewhere as {wrote}; if both show the same thing, change it too: "
                              + json.dumps({"event": n, "action": j, "set": {"parameters": {key: wrote}}}, ensure_ascii=False))
     return notes
+
+
+def laid_out(sheet: dict) -> str:
+    """The sheet's JSON laid out as the editor writes it: tabs, no newline at the end."""
+    return json.dumps(sheet, indent="\t", ensure_ascii=False)
 
 
 def as_on_disk(path: Path) -> Path:
@@ -800,9 +836,9 @@ def main() -> int:
                  + ("; it holds <new sid>: leave \"sid\" out, every new entry gets one" if "<new sid>" in text else ""))
 
     # The sheet checked as a plan's sheet on both sides, so that a finding is worded alike before and after.
-    before, found_before = findings_of(project, args, {args.sheet: sheet})
+    before, found_before = findings_of(project, args.locale, {args.sheet: sheet})
     existing = set(before.sids) | set(before.ace_sids)      # the sheet's events before the plan; the rest it creates
-    plan = Plan(sheet, set(existing))
+    plan = Plan(sheet, existing)
     try:
         if not operations:
             raise PlanError(f"{args.plan} holds no operation; a plan is a list such as "
@@ -812,9 +848,9 @@ def main() -> int:
     except PlanError as e:
         sys.exit(f"{e}\nnothing was written")
 
-    after, found_after = findings_of(project, args, {args.sheet: plan.sheet})
-    known = {unnumbered(e) for e in found_before.errors}
-    added = [e for e in found_after.errors if unnumbered(e) not in known]
+    after, found_after = findings_of(project, args.locale, {args.sheet: plan.sheet})
+    known = {without_number(e) for e in found_before.errors}
+    added = [e for e in found_after.errors if without_number(e) not in known]
     # An event the plan created, without a comment above it, with eight actions in a row
     # and no comment action, or with case sub-events and no comment above any of them, is
     # refused like a problem: the fix is one comment, and a
@@ -823,12 +859,12 @@ def main() -> int:
     # a finding on it prints as a warning below. A Find path every tick is refused too: in the Haiku
     # runs of 2026-10-03 both arms wrote one, and the run warned four times kept it as intentional.
     # The other traps of the running game are refused too (event-sheet-design-guidance.md).
-    known_style = {unnumbered(m) for _, m in found_before.style}
-    added += [m for kind, m in found_after.style if kind in REFUSED_STYLE and unnumbered(m) not in known_style
-              and (sid := re.search(r"\(sid (\d+)\)", m)) and int(sid.group(1)) not in existing]
+    known_style = {without_number(m) for _, m in found_before.style}
+    added += [m for kind, m in found_after.style if kind in REFUSED_STYLE and without_number(m) not in known_style
+              and (sid := SID_IN.search(m)) and int(sid.group(1)) not in existing]
     if added:
         # The event number of a finding is one the sheet would have; the plan's author knows the operation.
-        sid_in = [re.search(r"\(sid (\d+)\)", e) for e in added]
+        sid_in = [SID_IN.search(e) for e in added]
         added = [(f"operation {plan.operation_of[int(m.group(1))]}: " if m and int(m.group(1)) in plan.operation_of else "") + e
                  for e, m in zip(added, sid_in)]
         fit = max(c3.fitting(added, args.limit and max(args.limit - 300, 3)), 1)
@@ -842,7 +878,7 @@ def main() -> int:
               + f"the plan adds {len(added)} problem(s) to the project; nothing was written")
         return 1
 
-    layout = json.dumps(plan.sheet, indent="\t", ensure_ascii=False)
+    layout = laid_out(plan.sheet)
     if not args.dry_run:
         if path.read_bytes() != raw:
             sys.exit(f"{args.sheet} changed on disk while the plan was applied; run it again\nnothing was written")
@@ -870,13 +906,13 @@ def main() -> int:
         if room is None or room > 0:
             print("\n".join(lines))
             room = None if room is None else room - sum(len(line) + 1 for line in lines)
-    known_warnings = {unnumbered(w) for w in found_before.warnings}
+    known_warnings = {without_number(w) for w in found_before.warnings}
     for w in found_after.warnings:
-        if unnumbered(w) not in known_warnings:
+        if without_number(w) not in known_warnings:
             print(f"warning: {w}")
     for note in left_alone(sheet["events"], plan.sheet["events"], span):
         print(note)
-    if on_disk.replace("\r\n", "\n") != json.dumps(sheet, indent="\t", ensure_ascii=False) and not args.dry_run:
+    if on_disk.replace("\r\n", "\n") != laid_out(sheet) and not args.dry_run:
         print(f"note: {path.name} was not laid out as the editor writes it (tabs, LF); it is now, so its diff is the whole file")
     if raw.startswith(codecs.BOM_UTF8) and not args.dry_run:
         print(f"note: {path.name} started with a byte order mark, which the editor does not write; it no longer does, "
