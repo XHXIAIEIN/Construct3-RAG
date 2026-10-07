@@ -73,13 +73,18 @@ Option 4.
   each changed helper below the end marker, where a def of the same name
   replaces the one between the markers, then to run it again with
   `--replace-edited-helpers`. That run still refuses, and writes nothing,
-  while a def between the markers differs from the skill's and has no def
-  of its name below the end marker: it names each one with the first line
-  that differs. A helper that differs only because the skill's changed is
-  named in the flag, `--replace-edited-helpers=units`, to take the skill's.
-  The stamp covers the whole part, so it cannot tell the game's edits from
-  the template's own changes; the names given are that decision, in the
-  run's output. `--helpers-only` refreshes the generator
+  while a def the game changed between the markers has no def of its name
+  below the end marker: it names each one with the first line that
+  differs. The stamp covers the whole part, so on its own it cannot tell
+  the game's edits from the template's own changes. The clone's Git history
+  can: the newest commit whose marked part carries the game's stamp holds
+  the template the part was copied from, and a def the game changed is one
+  that differs from that template's. Both refusals name those defs, and a
+  def that differs only because the skill's changed since needs nothing.
+  Without that history, as in the plugin cache, every def that differs
+  from the skill's counts, and one that differs only because the skill's
+  changed is named in the flag, `--replace-edited-helpers=units`, to take
+  the skill's. `--helpers-only` refreshes the generator
   alone, for a project used through the Claude Code plugin, which holds no
   copy of the skill.
 - `check_project.py`, and so every run of the generator, warns when the

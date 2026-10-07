@@ -159,8 +159,10 @@ def generator(project: Path, rag: Path, replace_edited: str | None, dry_run: boo
     """The helpers of the project's tools/build_project.py replaced with the skill's when they
     are an older version left unedited there; whether they are the skill's afterwards, and what
     to print. Edits between the markers are the game's, so they are kept unless the run asks
-    with replace_edited, and even then while one would be lost: a helper that differs from the
-    skill's, has no def of its name below the end marker and is not among the names given."""
+    with replace_edited, and even then while one would be lost: a helper the game changed, with
+    no def of its name below the end marker, that is not among the names given. The game changed
+    a helper that differs from the template its part was copied from, found in the clone's
+    history; without that history, every helper that differs from the skill's counts."""
     h = c3.generator_helpers(project)
     name = c3.GENERATOR
     if h.state == "missing":
@@ -177,16 +179,25 @@ def generator(project: Path, rag: Path, replace_edited: str | None, dry_run: boo
         return False, [f"{name}: its helpers are of {have}, newer than this skill's of {want}, "
                        f"and were left as they are; update the clone, git -C \"{rag}\" pull --ff-only, and run this "
                        f"again"]
-    if h.state == "edited" and replace_edited is None:
-        return False, [f"{name}: its helpers, between the markers, were edited there, so they were left as they "
-                       f"are. Copy each helper changed there below the end marker, where a def of the same name "
-                       f"replaces the one between the markers, then run {again('--replace-edited-helpers')}"]
     if h.state == "edited":
-        lost = c3.unkept_helpers(project)
+        copied = c3.copied_template(rag, h.have.stamp)
+        lost = c3.unkept_helpers(project, copied=copied)
         if isinstance(lost, str):
             return False, [f"{name}: {lost}; its helpers were left as they are"]
-        taken = {n.strip() for n in replace_edited.split(",")}
+        taken = {n.strip() for n in (replace_edited or "").split(",")}
         lost = [entry for entry in lost if entry[0] not in taken]
+    if h.state == "edited" and replace_edited is None:
+        changed = f" ({', '.join(n for n, _, _ in lost)})" if copied and lost else ""
+        return False, [f"{name}: its helpers, between the markers, were edited there, so they were left as they "
+                       f"are. Copy each helper changed there{changed} below the end marker, where a def of the same "
+                       f"name replaces the one between the markers, then run {again('--replace-edited-helpers')}"]
+    if h.state == "edited" and lost and copied:
+        return False, [f"{name}: replacing its helpers would lose these, which were edited there and have no def "
+                       f"of the same name below the end marker; nothing was written:",
+                       *(f"  {n}: here {here!r}, as copied {was!r}" for n, here, was in lost),
+                       f"Copy each one below the end marker, where it replaces the skill's, then run "
+                       f"{again('--replace-edited-helpers')}"]
+    if h.state == "edited":
         if lost:
             return False, [f"{name}: replacing its helpers would lose these, which differ from the skill's and "
                            f"have no def of the same name below the end marker; nothing was written:",
@@ -257,8 +268,9 @@ def main() -> int:
                          f"without a copy, as the Claude Code plugin does")
     ap.add_argument("--replace-edited-helpers", nargs="?", const="", metavar="NAME,NAME",
                     help=f"replace the helpers of {c3.GENERATOR} even when they were edited there, once each "
-                         f"helper that differs from the skill's has a def of its name below the end marker, "
-                         f"where it replaces the skill's, or is named here as one to take the skill's of")
+                         f"helper edited there has a def of its name below the end marker, where it replaces "
+                         f"the skill's, or is named here as one to take the skill's of. Without the clone's "
+                         f"history, every helper that differs from the skill's counts as edited")
     ap.add_argument("--dry-run", action="store_true", help="say what would be written, write nothing")
     args = ap.parse_args()
     c3.utf8_output()

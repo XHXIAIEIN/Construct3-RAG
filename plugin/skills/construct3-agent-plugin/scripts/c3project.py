@@ -597,12 +597,44 @@ def top_level_defs(lines: list[str]) -> list[tuple[str, int, list[str]]]:
     return found
 
 
-def unkept_helpers(root: Path, template: Path = TEMPLATE) -> list[tuple[str, str, str]] | str:
+TEMPLATE_IN_CLONE = f"skills/{SKILL}/assets/build_project.py"
+
+
+def copied_template(rag: Path, stamp: str) -> list[str] | None:
+    """The template's lines at the newest commit of the clone whose marked part carries stamp and
+    matches it: the template a game's generator was copied from, before the game edited it. None
+    without the clone's history, as in the plugin cache, or when no commit has that stamp."""
+    clone = clone_root(rag)
+    if not (clone / ".git").exists() or not shutil.which("git"):
+        return None
+    log = git_out(clone, "log", "--follow", "--format=commit %H", "--name-only", "--", TEMPLATE_IN_CLONE, wait=30)
+    commits: list[list[str]] = []
+    for line in (log or "").splitlines():
+        if line.startswith("commit "):
+            # a merge lists no file: it has the path of the commit above it
+            commits.append([line[7:], commits[-1][1] if commits else TEMPLATE_IN_CLONE])
+        elif line.strip() and commits:
+            commits[-1][1] = line.strip()
+    for sha, path in commits:
+        lines = (git_out(clone, "show", f"{sha}:{path}") or "").replace("\r\n", "\n").split("\n")
+        found = helpers_in(lines)
+        if not isinstance(found, Helpers):
+            return None             # the commits below this one are older than the markers
+        if found.stamp == stamp == found.actual:
+            return lines
+    return None
+
+
+def unkept_helpers(root: Path, template: Path = TEMPLATE,
+                   copied: list[str] | None = None) -> list[tuple[str, str, str]] | str:
     """What replacing the marked part of root's generator would lose: each def between its markers
-    whose lines differ from the template's def of that name, or that the template lacks, and that no
-    def of the same name below the end marker replaces. Each comes with the first line that differs,
-    here and in the template ('' where one has no such line). A sentence when the file does not parse."""
-    lines, template_lines = text_lines(root / GENERATOR)[0], text_lines(template)[0]
+    that no def of the same name below the end marker replaces and that the game changed. With copied,
+    the template the part was copied from (copied_template), a def the game changed is one whose lines
+    differ from copied's def of that name, or that copied lacks; without it, every def that differs from
+    the template's counts, since the stamp cannot tell the game's edits from the template's. Each comes
+    with the first line that differs, here and in the template it is compared with ('' where one has no
+    such line). A sentence when the file does not parse."""
+    lines, template_lines = text_lines(root / GENERATOR)[0], copied or text_lines(template)[0]
     have, want = helpers_in(lines), helpers_in(template_lines)
     try:
         ours, theirs = top_level_defs(lines), top_level_defs(template_lines)

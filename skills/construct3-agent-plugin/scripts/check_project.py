@@ -3245,11 +3245,12 @@ def open_command(root: Path) -> str:
     return script_command(root, "open_in_editor.py", " --preview")
 
 
-def helpers_behind(root: Path) -> str | None:
+def helpers_behind(root: Path, rag: Path) -> str | None:
     """A sentence when the helpers of the project's generator are an older version than the
     skill's, with the command that refreshes them; a generator whose markers are broken is
     named too, since nothing can refresh it. Edits there, with nothing newer to take, and a
-    generator from before the markers say nothing."""
+    generator from before the markers say nothing. The helpers edited there are named when the
+    clone's history holds the template they were copied from, as install.py names them."""
     h = c3.generator_helpers(root)
     command = script_command(root, "install.py", " --helpers-only")
     if h.state == "broken":
@@ -3261,8 +3262,11 @@ def helpers_behind(root: Path) -> str | None:
                 f"then run python {c3.GENERATOR}")
     if h.state == "edited" and h.have.stamp != h.want.stamp and h.have.version <= h.want.version:
         have, want = c3.versions(h.have, h.want)
+        copied = c3.copied_template(rag, h.have.stamp)
+        lost = c3.unkept_helpers(root, copied=copied) if copied else None
+        changed = f" ({', '.join(n for n, _, _ in lost)})" if isinstance(lost, list) and lost else ""
         return (f"{c3.GENERATOR}: its helpers, between the markers, are the skill's of {have} with edits made "
-                f"there, and the skill's are now of {want}. Copy each helper changed there below "
+                f"there, and the skill's are now of {want}. Copy each helper changed there{changed} below "
                 f"the end marker, where a def of the same name replaces the one between the markers, then run "
                 f"{command} --replace-edited-helpers and python {c3.GENERATOR}")
     return None
@@ -3310,7 +3314,7 @@ def main() -> int:
     drift = None if behind and behind[1] else c3.skill_drift(project.rag)     # the update above refreshes the copy too
     if drift:
         findings.err(drift)
-    helpers = helpers_behind(project.root)
+    helpers = helpers_behind(project.root, project.rag)
     if helpers:
         findings.warn(helpers)
     return Checker(project, args.limit, style=args.style, review=args.review).run()
