@@ -53,14 +53,14 @@ but the set kept its shape:
   to every effect that has it. `lookup_ace.py` takes an effect by id or name
   and prints its parameters.
 - A list case sets `complete_list`, and the test counts the list from the
-  entity's schema file. No case or rationale pins a release's list size as
-  `min_results` or as the rank a required entry had to reach (16, 56, 83):
-  each release changed them.
-- Properties are grouped under `properties`, the schema's section name, not
-  `propertys`.
+  entity's schema file. The cases used to pin each release's list sizes as
+  `min_results` and as the rank a required entry had to reach (16, 56, 83),
+  and some rationales stated them.
+- Properties are grouped under `properties`, the schema's section name; the
+  presenter used to add an `s` and wrote `propertys`.
 - `mode=list` names ACEs only. A hit without ACE names, an effect, a
-  property list, a term, an example or a script member, returns its matches
-  as `lookup` mode does, not an empty `lookup` object.
+  property list, a term, an example or a script member, now returns its
+  matches as `lookup` mode does, where it returned an empty `lookup` object.
 
 ## Re-evaluate when
 
