@@ -193,6 +193,12 @@ python skills/construct3-agent-plugin/evals/run_trigger_eval.py skills/construct
   as `~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl`.
   When every assertion passes, the lost calls are what is left to improve:
   a lookup that found nothing, an edit that did not match.
+- `trace.py --out <run folder>` lists in `trace.json` the writes outside
+  that folder, such as a plan written to the launching session's
+  scratchpad or an answer one folder too high, and `grade.py` does not
+  score such a run. The list is a floor: it reads absolute paths from file
+  tools and from the words of shell commands, so a relative path, a
+  variable or a write made inside a script escapes it.
 - When a run's completion notice arrives, write the tokens and the duration
   it gives into the run's `timing.json`. A run without one has no time or
   tokens in the benchmark; nothing is estimated.

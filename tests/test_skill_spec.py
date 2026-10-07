@@ -1,8 +1,11 @@
 """The construct3-agent-plugin skill as the Agent Skills format defines it, and the trigger evaluation of its
 description against a stand-in for the client."""
 import json
+import os
 import re
+import subprocess
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -116,6 +119,13 @@ elif "slow" in query:
 elif "stops" in query:
     tool("Bash", command="ls")
     sys.stderr.write("crashed")
+elif "orphan" in query:     # a child that holds a file of the copy open and outlives the timeout
+    import os, subprocess
+    child = "import os, pathlib, time; f = open('held.txt', 'w'); time.sleep(60)"
+    pid = subprocess.Popen([sys.executable, "-c", child]).pid
+    pathlib.Path(os.environ["CHILD_PIDS"], str(pid)).touch()
+    tool("Bash", command="ls")
+    time.sleep(60)
 else:
     tool("Bash", command="ls")
     say({"type": "result", "is_error": False, "result": "done"})
@@ -165,6 +175,42 @@ def test_trigger_eval_leaves_a_run_without_an_answer_out_of_the_rate(tmp_path):
     assert results[1]["stderr"] == ["still thinking"] * 2 and results[2]["stderr"] == ["crashed"] * 2
 
 
+def running(pid: int) -> bool:
+    if sys.platform == "win32":
+        out = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True, text=True,
+                             timeout=60).stdout
+        return str(pid) in out.split()
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    return True
+
+
+def test_trigger_eval_stops_a_timed_out_run_with_its_children(tmp_path, monkeypatch):
+    """A timeout ends the client and every process it started: a child left running holds the run's copy
+    and its output pipe, so the run would wait on it and the copy would stay behind in the temp folder."""
+    pids, temp = tmp_path / "pids", tmp_path / "temp"
+    pids.mkdir()
+    temp.mkdir()
+    monkeypatch.setenv("CHILD_PIDS", str(pids))
+    for name in ("TEMP", "TMP", "TMPDIR"):
+        monkeypatch.setenv(name, str(temp))
+    started = time.monotonic()
+    try:
+        code, out, report = trigger_eval(tmp_path, [{"query": "an orphan", "should_trigger": False}], "--timeout", "3")
+        took = time.monotonic() - started
+        assert [r["ends"] for r in json.loads(report.read_text(encoding="utf-8"))["results"]] == [{"timed out": 2}]
+        assert [p.name for p in pids.iterdir() if running(int(p.name))] == []
+        assert list(temp.glob("trigger-*")) == [], out
+        assert took < 40, f"{took:.0f} s: the run waited for the child"
+    finally:
+        for p in pids.iterdir():
+            if running(int(p.name)):
+                subprocess.run(["taskkill", "/F", "/PID", p.name] if sys.platform == "win32" else
+                               ["kill", "-9", p.name], capture_output=True, timeout=60)
+
+
 @pytest.mark.parametrize("query, said", [("signed out", "Failed to authenticate"), ("silent", "no assistant or result event")])
 def test_trigger_eval_writes_nothing_when_the_client_cannot_answer(tmp_path, query, said):
     """A client that is signed out has not declined to trigger: no rate of 0 is recorded for it."""
@@ -193,3 +239,34 @@ def test_trace_counts_a_read_of_this_skill_that_came_back(tmp_path, name, given,
     code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(tmp_path))
     assert code == 0, out
     assert json.loads((tmp_path / "trace.json").read_text(encoding="utf-8"))["read_skill_md"] is loaded
+
+
+def test_trace_lists_writes_outside_the_run_folder(tmp_path):
+    """A run that writes outside its folder changed something another run or the clone reads; trace.json
+    names each such write, and a read outside is listed apart. A relative path and a variable in shell
+    text are not resolved: the list is a floor."""
+    run_dir = tmp_path / "case" / "with_skill"
+    (run_dir / "project").mkdir(parents=True)
+    elsewhere = (tmp_path / "clone" / "skills" / "notes.md").as_posix()
+    inside = (run_dir / "project" / "eventSheets" / "Game.json").as_posix()
+    calls = [
+        ("Write", {"file_path": elsewhere, "content": "x"}),
+        ("Edit", {"file_path": inside, "old_string": "a", "new_string": "b"}),
+        ("Bash", {"command": f'python check.py > "{tmp_path.as_posix()}/scratch/out.txt" 2>&1'}),
+        ("PowerShell", {"command": f"Copy-Item {inside} {tmp_path / 'clone' / 'Game.json'}"}),
+        ("Bash", {"command": f"cat {tmp_path.as_posix()}/clone/data/c3-schemas/_index.json"}),
+        ("Read", {"file_path": f"{tmp_path.as_posix()}/clone/AGENTS.md"}),
+    ]
+    transcript = tmp_path / "agent.jsonl"
+    transcript.write_text("\n".join(json.dumps({"message": {"content": [
+        {"type": "tool_use", "id": f"t{n}", "name": name, "input": given}]}}) for n, (name, given) in enumerate(calls)),
+        encoding="utf-8")
+    code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(run_dir))
+    assert code == 0, out
+    trace = json.loads((run_dir / "trace.json").read_text(encoding="utf-8"))
+    assert [(w["tool"], Path(w["path"])) for w in trace["outside"]] == [
+        ("Write", Path(elsewhere)), ("Bash", tmp_path / "scratch" / "out.txt"),
+        ("PowerShell", tmp_path / "clone" / "Game.json")]
+    assert [Path(r["path"]) for r in trace["outside_reads"]] == [
+        tmp_path / "clone" / "data" / "c3-schemas" / "_index.json", tmp_path / "clone" / "AGENTS.md"]
+    assert "3 writes outside" in out, out

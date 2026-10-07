@@ -10,7 +10,10 @@ description alone decides:
     python scripts/install.py --project FOLDER --into .claude/skills --no-block
 
 Each run works in a copy of FOLDER of its own, made for it and removed after
-it, so that what one run writes is not what another one reads.
+it, so that what one run writes is not what another one reads. Stopping a
+run stops every process the client started (taskkill /T on Windows, the
+process group elsewhere); a copy that cannot be removed afterwards, and a
+process that still holds the run's output, are printed.
 
 A run counts as triggered when the stream shows the Skill tool called with
 this skill, or SKILL.md of this skill read, and the call's result is not an
@@ -38,6 +41,7 @@ import json
 import os
 import shlex
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -76,33 +80,75 @@ def run_once(client: str, query: str, project: Path, model: str | None, max_tool
     cmd = [*shlex.split(client), "-p", query, "--output-format", "stream-json", "--verbose"]
     cmd += ["--model", model] if model else []
     env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}     # set inside a session, it refuses a nested one
-    with tempfile.TemporaryDirectory(prefix="trigger-", ignore_cleanup_errors=True) as tmp:
-        copy = Path(tmp) / project.name
+    tmp = Path(tempfile.mkdtemp(prefix="trigger-"))
+    try:
+        copy = tmp / project.name
         shutil.copytree(project, copy, ignore=IGNORED)
-        with open(Path(tmp) / "stderr.txt", "w+", encoding="utf-8", errors="replace") as err:
-            try:
-                proc = subprocess.Popen(cmd, cwd=copy, env=env, stdout=subprocess.PIPE, stderr=err,
-                                        text=True, encoding="utf-8", errors="replace")
-            except OSError as e:
-                raise ClientError(f"{client} could not be started: {e}") from e
-            timed_out = threading.Event()
-
-            def stop() -> None:
-                timed_out.set()
-                proc.kill()
-            timer = threading.Timer(timeout, stop)
-            timer.start()
-            try:
-                status = read_stream(proc, client, max_tools)
-            finally:
-                timer.cancel()
-                if proc.poll() is None:
-                    proc.kill()
-                proc.wait()
-            if status is None:
-                status = "timed out" if timed_out.is_set() else "client stopped"
+        with open(tmp / "stderr.txt", "w+", encoding="utf-8", errors="replace") as err:
+            status, held = watch(cmd, copy, env, err, client, max_tools, timeout)
+            if held:
+                print(f"  {held}: {query[:80]}", file=sys.stderr)
             err.seek(0)
             return status, err.read()[-2000:] if status in NO_ANSWER else ""
+    finally:
+        try:
+            shutil.rmtree(tmp)
+        except OSError as e:
+            print(f"  left behind: {tmp}, which a process of the run may still hold: {e}", file=sys.stderr)
+
+
+def watch(cmd: list[str], copy: Path, env: dict, err, client: str, max_tools: int,
+          timeout: int) -> tuple[str, str]:
+    """What ended a run of cmd in copy, and a sentence when a process it started still held its output
+    after the run was stopped. The client runs in a process group of its own, so that stopping it at
+    the timeout, or once the stream has answered, stops every process it started."""
+    try:
+        proc = subprocess.Popen(cmd, cwd=copy, env=env, stdout=subprocess.PIPE, stderr=err, text=True,
+                                encoding="utf-8", errors="replace", start_new_session=os.name != "nt",
+                                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0)
+    except OSError as e:
+        raise ClientError(f"{client} could not be started: {e}") from e
+    ended: dict = {}
+
+    def read() -> None:
+        try:
+            ended["status"] = read_stream(proc, client, max_tools)
+        except ClientError as e:
+            ended["error"] = e
+    reader = threading.Thread(target=read, daemon=True)
+    reader.start()
+    reader.join(timeout)
+    timed_out = reader.is_alive()
+    stop_tree(proc)
+    reader.join(STOP_WAIT)
+    held = (f"{client} was stopped, and a process it started still held its output {STOP_WAIT} seconds later"
+            if reader.is_alive() else "")
+    if "error" in ended:
+        raise ended["error"]
+    status = ended.get("status") or ("timed out" if timed_out else "client stopped")
+    return status, held
+
+
+# Seconds to wait for a stopped run's processes to end and its output to close.
+STOP_WAIT = 5
+
+
+def stop_tree(proc: subprocess.Popen) -> None:
+    """Stop proc and every process it started, then wait for it, at most STOP_WAIT seconds."""
+    if proc.poll() is None:
+        if os.name == "nt":
+            subprocess.run(["taskkill", "/T", "/F", "/PID", str(proc.pid)], capture_output=True, timeout=60)
+        else:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except OSError:
+                pass
+        if proc.poll() is None:
+            proc.kill()
+    try:
+        proc.wait(STOP_WAIT)
+    except subprocess.TimeoutExpired:
+        pass
 
 
 def read_stream(proc: subprocess.Popen, client: str, max_tools: int) -> str | None:

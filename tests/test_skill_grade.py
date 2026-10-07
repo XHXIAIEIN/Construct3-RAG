@@ -118,3 +118,23 @@ def test_the_restart_reads_the_countdown_running_out(tmp_path: Path, project: Pa
     graded = json.loads((case / "grading.json").read_text(encoding="utf-8"))["assertion_results"]
     result = next(g for g in graded if g["text"].startswith("An event restarts the layout"))
     assert result["passed"] is restarts, result
+
+
+def test_a_run_that_wrote_outside_its_folder_is_not_scored(tmp_path: Path) -> None:
+    """Its grade would count work that is not in its project, or that another run reads."""
+    case = tmp_path / "it" / "name-the-restart-event" / "with_skill"
+    (case / "project").mkdir(parents=True)
+    (case / "outputs").mkdir()
+    (case / "fixture.json").write_text("{}", encoding="utf-8")
+    (case / "outputs" / "answer.md").write_text(CHINESE_ALL_THREE, encoding="utf-8")
+    elsewhere = str(tmp_path / "scratchpad" / "plan.json")
+    (case / "trace.json").write_text(json.dumps({"tool_calls": 3, "lost_calls": 0, "outside": [
+        {"tool": "Write", "path": elsewhere}], "outside_reads": []}), encoding="utf-8")
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
+    assert code == 0, out
+    assert f"name-the-restart-event/with_skill: void, not scored: it wrote outside its folder: {elsewhere}" in out
+    assert json.loads((case / "grading.json").read_text(encoding="utf-8")) == {
+        "void": f"it wrote outside its folder: {elsewhere}"}
+    benchmark = json.loads((tmp_path / "it" / "benchmark.json").read_text(encoding="utf-8"))
+    assert benchmark["void_runs"] == [{"run": "name-the-restart-event/with_skill",
+                                       "reason": f"it wrote outside its folder: {elsewhere}"}]

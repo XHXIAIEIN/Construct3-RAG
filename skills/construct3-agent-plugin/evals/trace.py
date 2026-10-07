@@ -12,7 +12,13 @@ the description it was started under in agent-<id>.meta.json beside it;
 The trace shows where a run lost turns: a lookup that found nothing, an edit
 that did not match, a script called for output it then could not use. A call
 counts as lost when its result is an error, except a run of check_project.py,
-whose exit code 1 is the findings it was asked for. read_skill_md is true
+whose exit code 1 is the findings it was asked for. outside lists the writes
+outside the run folder (--root, by default RUN_DIR of --out): an absolute
+path given to Write, Edit or NotebookEdit, and one a shell command redirects
+to or gives to a command that writes (cp, mv, mkdir, rm, tee, Set-Content,
+Copy-Item ...); outside_reads lists the other absolute paths outside it. A
+relative path, a variable and a path built inside a script are not
+resolved, so the list is a floor: an empty one proves nothing. read_skill_md is true
 when this skill's SKILL.md reached the model: the Skill tool called with this
 skill, or its SKILL.md read, and the call's result came back without an
 error, as run_trigger_eval.py counts a trigger. --out writes the counts
@@ -23,6 +29,7 @@ exit codes: 0 read, 1 the file holds no tool call
 """
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -50,7 +57,7 @@ def calls_of(path: Path) -> list[dict]:
                 given = part.get("input", {})
                 what = given.get("command") or given.get("file_path") or given.get("pattern") or given.get("skill") or given
                 by_id[part["id"]] = {"tool": part.get("name"), "what": str(what), "chars": None, "failed": False,
-                                     "result": "", "loads_skill": loads_skill(part)}
+                                     "result": "", "loads_skill": loads_skill(part), "input": given}
                 calls.append(by_id[part["id"]])
             elif part.get("type") == "tool_result" and part.get("tool_use_id") in by_id:
                 body = part.get("content")
@@ -63,6 +70,85 @@ def calls_of(path: Path) -> list[dict]:
 
 # The tools a run starts a script with: Bash, or PowerShell on Windows.
 SHELLS = ("Bash", "PowerShell")
+
+
+# Shell text in words: 2>&1, a redirection, a separator, a quoted string, or a bare word.
+WORD = re.compile(r"""\d?>>?&\d|\d?>>?|&&|\|\||[|;&\n]|"[^"]*"|'[^']*'|[^\s"'|;&>]+""")
+REDIRECT = re.compile(r"\d?>>?")
+SEPARATORS = {"&&", "||", "|", ";", "&", "\n"}
+NOWHERE = {"/dev/null", "$null", "nul"}
+WRITES_EVERY = {"mkdir", "md", "rm", "rmdir", "rd", "del", "erase", "touch", "tee", "tee-object", "new-item", "ni",
+                "remove-item", "ri", "set-content", "sc", "add-content", "ac", "out-file"}
+WRITES_LAST = {"cp", "mv", "copy", "move", "copy-item", "cpi", "move-item", "mi", "rsync"}
+FILE_WRITES = {"Write": "file_path", "Edit": "file_path", "MultiEdit": "file_path", "NotebookEdit": "notebook_path"}
+FILE_READS = {"Read": "file_path", "Glob": "path", "Grep": "path"}
+
+
+def absolute(word: str) -> str | None:
+    """word as an absolute path, or None: a relative path or a variable is not resolved.
+    Git Bash's /c/Users is C:/Users."""
+    word = word.strip("\"'")
+    if word.lower() in NOWHERE:
+        return None
+    word = re.sub(r"^/([A-Za-z])(?=/|$)", r"\1:", word)
+    word = os.path.expanduser(word) if word.startswith("~") else word
+    return os.path.abspath(word) if re.match(r"[A-Za-z]:[\\/]|/|\\\\", word) else None
+
+
+def shell_paths(command: str) -> tuple[list[str], list[str]]:
+    """The absolute paths a shell command writes and the ones it only names, as far as its words say."""
+    writes, named = [], []
+    segment: list[str] = []
+
+    def close() -> None:
+        words = [w.split("=", 1)[1] if w.startswith("-") and "=" in w else w for w in segment]
+        paths = [p for w in words[1:] if not w.startswith("-") and (p := absolute(w))]
+        name = Path(words[0].strip("\"'")).name.lower().removesuffix(".exe") if words else ""
+        if name in WRITES_EVERY or (name == "sed" and any(w.startswith("-i") for w in words)):
+            writes.extend(paths)
+        elif name in WRITES_LAST and paths:
+            writes.append(paths[-1])
+            named.extend(paths[:-1])
+        else:
+            named.extend(paths)
+        segment.clear()
+
+    words = WORD.findall(command)
+    i = 0
+    while i < len(words):
+        if words[i] in SEPARATORS:
+            close()
+        elif REDIRECT.fullmatch(words[i]):
+            i += 1
+            target = absolute(words[i]) if i < len(words) else None
+            if target:
+                writes.append(target)
+        elif "&" not in words[i]:      # 2>&1
+            segment.append(words[i])
+        i += 1
+    close()
+    return writes, named
+
+
+def outside(calls: list[dict], root: Path) -> tuple[list[dict], list[dict]]:
+    """The writes and the reads of absolute paths outside root, each with its tool."""
+    base = os.path.normcase(os.path.abspath(root)).rstrip("\\/")
+
+    def out_of_root(path: str) -> bool:
+        path = os.path.normcase(path)
+        return path != base and not path.startswith(base + os.sep)
+
+    writes, reads = [], []
+    for c in calls:
+        given = c["input"] if isinstance(c["input"], dict) else {}
+        if c["tool"] in SHELLS:
+            wrote, named = shell_paths(str(given.get("command", "")))
+        else:
+            path = absolute(str(given.get(FILE_WRITES.get(c["tool"]) or FILE_READS.get(c["tool"]) or "", "")))
+            wrote, named = ([path], []) if c["tool"] in FILE_WRITES and path else ([], [path] if path else [])
+        writes += [{"tool": c["tool"], "path": p} for p in wrote if out_of_root(p)]
+        reads += [{"tool": c["tool"], "path": p} for p in named if out_of_root(p)]
+    return writes, reads
 
 
 def summary(calls: list[dict]) -> dict:
@@ -82,6 +168,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("transcript", nargs="?", metavar="TRANSCRIPT.jsonl")
     ap.add_argument("--out", metavar="RUN_DIR", help="write the counts to RUN_DIR/trace.json")
+    ap.add_argument("--root", metavar="FOLDER",
+                    help="the folder the run may write in, for outside (default: RUN_DIR of --out)")
     ap.add_argument("--full", action="store_true", help="print commands and results unshortened")
     ap.add_argument("--list", metavar="SESSION_DIR", help="print the subagent transcripts of a session with their descriptions")
     args = ap.parse_args()
@@ -107,6 +195,12 @@ def main() -> int:
     counts = summary(calls)
     print(f"{counts['tool_calls']} tool calls, {counts['lost_calls']} lost; scripts run: "
           + ", ".join(f"{s['script']} {s['args']}".strip() + (" (failed)" if s["failed"] else "") for s in counts["scripts"]))
+    root = args.root or args.out
+    if root:
+        counts["outside"], counts["outside_reads"] = outside(calls, Path(root))
+        writes = counts["outside"]
+        print(f"{len(writes)} write{'s' if len(writes) != 1 else ''} outside {Path(root).resolve()}"
+              + "".join(f"\n  {w['tool']}: {w['path']}" for w in writes))
     if args.out:
         (Path(args.out) / "trace.json").write_text(json.dumps(counts, indent=2) + "\n", encoding="utf-8")
     return 0

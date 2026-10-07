@@ -13,7 +13,9 @@ trace.json (evals/trace.py --out) adds its tool calls and the ones it lost.
 
 A run that did not keep to its arm is not scored: put the reason in
 <case>/<arm>/void.txt, for example a baseline whose answer lists a script of
-this skill among its commands. A run without timing.json has no time or
+this skill among its commands. A run whose trace.json lists a write outside
+its folder is not scored either, with the paths as the reason; the list is a
+floor (evals/trace.py). A run without timing.json has no time or
 tokens in the benchmark; nothing is filled in for it.
 
 exit codes: 0 graded, 1 ITERATION_DIR holds no run of a known case
@@ -1330,10 +1332,12 @@ def main() -> int:
     for name, case in CASES.items():
         for run in sorted(p for p in (iteration / name).glob("*") if (p / "project").is_dir()):
             reason = (run / "void.txt").read_text(encoding="utf-8").strip() if (run / "void.txt").exists() else None
+            wrote = [w["path"] for w in optional_json(run / "trace.json").get("outside", [])]
+            reason = reason or (f"it wrote outside its folder: {', '.join(dict.fromkeys(wrote))}" if wrote else None)
             if reason:
                 (run / "grading.json").write_text(json.dumps({"void": reason}, indent=2) + "\n", encoding="utf-8")
                 void.append({"run": f"{name}/{run.name}", "reason": reason})
-                print(f"{name}/{run.name}: void, not scored")
+                print(f"{name}/{run.name}: void, not scored" + (f": {reason}" if wrote else ""))
                 continue
             graded = [{"text": text, "passed": ok, "evidence": evidence}
                       for text, (ok, evidence) in zip(case["assertions"], GRADERS[name](run), strict=True)]
