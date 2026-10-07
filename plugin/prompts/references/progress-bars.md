@@ -37,11 +37,10 @@ loss leaves the old width showing and a gain never leaves it shorter. One
 event with the conditions `Ghost: Compare width > Fill.Width`, `Frame: NOT
 Timer "ghost" is running` and `Ghost: NOT Tween "ghost" is playing` starts a
 0.5 s Timer, and its *On timer* tweens the ghost's width to `Fill.Width` in
-0.4 s. Put *On timer* above the start event,
-because both run in sheet order and the start event tests the tween that *On
-timer* starts. [observed in a minimal project, stable editor preview,
-2026-10-07: two hits 0.7 s apart, the second while the ghost was closing,
-ended with the ghost equal to the fill on every bar]
+0.4 s. [observed in a minimal project, stable editor preview, 2026-10-07:
+the *On timer* event was written above the start event; two hits 0.7 s
+apart, the second while the ghost was closing, ended with the ghost equal to
+the fill on every bar]
 
 A second value drawn inside the fill, such as poison that will drain the
 health or damage not yet applied, is a second bar of the same object type
