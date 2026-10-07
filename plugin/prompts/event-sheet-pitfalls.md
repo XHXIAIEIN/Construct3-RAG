@@ -304,7 +304,7 @@ exported for the web or uses File System, read [pitfalls/storage-and-export.md](
 If the events draw at random and a seed must reproduce the result, such as
 a daily challenge or a replayable run, read [pitfalls/random.md](pitfalls/random.md).
 
-- Advanced Random's `Random`, weighted draws and permutation tables share one sequence, and *Update seed* restarts it. Set the seed to the run's seed, the use and a counter before each draw, so one kind of draw does not shift another.
+- Advanced Random's `Random`, weighted draws and permutation tables share one sequence, and *Update seed* restarts it. Set the seed to the run's seed, the use and a counter before each draw, so one kind of draw does not shift another. Such a run replays offline with `advanced_random.py`; after a Construct update, run its `--check` before trusting the numbers.
 - `random()`, `choose()` and *Pick random instance* ignore the seed while *Replace system random* is off. Write a seeded draw as `floor(AdvancedRandom.Random * n)`, or *Pick nth instance* of `floor(AdvancedRandom.Random * PickedCount)`.
 
 ## Adding an entry
