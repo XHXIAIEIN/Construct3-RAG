@@ -38,25 +38,27 @@ SIBLINGS = {
 TEMPLATE = ROOT / "data" / "c3-new-project"
 
 
-def git() -> str | None:
-    return shutil.which("git")
-
-
-def clone(name: str, url: str, shallow: bool, folder: Path, dry_run: bool) -> str:
-    """One sibling: present, cloned, or the command to run by hand."""
+def clone(name: str, url: str, shallow: bool, folder: Path, dry_run: bool) -> tuple[str, bool]:
+    """One sibling: present, cloned, or the command to run by hand; and
+    whether it is in place or on its way."""
     target = folder / name
     if target.exists() and any(target.iterdir()):
-        return f"{name}: already at {target}"
+        return f"{name}: already at {target}", True
     cmd = ["git", "clone", *(["--depth", "1"] if shallow else []), url, str(target)]
     if dry_run:
-        return f"{name}: would run {' '.join(cmd)}"
-    if not git():
+        return f"{name}: would run {' '.join(cmd)}", True
+    if not shutil.which("git"):
         return (f"{name}: git is not installed, so it was not cloned. Install Git (https://git-scm.com), "
-                f"or download {url} and unpack it as {target}")
+                f"or download {url} and unpack it as {target}"), False
     p = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     if p.returncode != 0:
-        return f"{name}: git clone failed; run by hand: {' '.join(cmd)}\n{p.stderr.strip()}"
-    return f"{name}: cloned to {target}"
+        return f"{name}: git clone failed; run by hand: {' '.join(cmd)}\n{p.stderr.strip()}", False
+    return f"{name}: cloned to {target}", True
+
+
+def resolved(given: str) -> Path:
+    """A path from a flag: `~` expanded, read from the current directory."""
+    return Path(given).expanduser().resolve()
 
 
 def game_folder(given: str, folder: Path) -> Path:
@@ -66,7 +68,23 @@ def game_folder(given: str, folder: Path) -> Path:
     desktop or from here. A path spelt out — a separator, a drive letter, `~`,
     `.` — is read from the current directory, as a path is anywhere else."""
     spelt_out = given.startswith(("~", ".")) or any(c in given for c in "/\\:")
-    return Path(given).expanduser().resolve() if spelt_out else (folder / given).resolve()
+    return resolved(given) if spelt_out else (folder / given).resolve()
+
+
+def name_clones(project: Path, folder: Path, names: list[str]) -> str:
+    """The block expects the clones beside this repository. Cloned elsewhere,
+    each gets its line under the Construct3-RAG line, once."""
+    agents = project / "AGENTS.md"
+    text = agents.read_text(encoding="utf-8") if agents.exists() else ""
+    missing = [n for n in names if f"{n}:" not in text]
+    key = "- Construct3-RAG:"
+    if not missing or key not in text:
+        return "AGENTS.md: the clones are already named"
+    lines = "".join(f"- {n}: {(folder / n).as_posix()}\n" for n in missing)
+    head, _, tail = text.partition(key)
+    line, _, rest = tail.partition("\n")
+    agents.write_text(head + key + line + "\n" + lines + rest, encoding="utf-8", newline="\n")
+    return f"AGENTS.md: named {', '.join(missing)} under {folder.as_posix()}, which is not beside Construct3-RAG"
 
 
 def main() -> int:
@@ -94,16 +112,16 @@ def main() -> int:
     args = ap.parse_args()
     c3.utf8_output()
 
-    folder = Path(args.beside).expanduser().resolve() if args.beside else ROOT.parent
+    folder = resolved(args.beside) if args.beside else ROOT.parent
     failed = False
     wanted = dict(SIBLINGS)
     if args.no_examples:
         wanted.pop("Construct-Example-Projects")
     project = game_folder(args.project, folder) if args.project else None
-    template = Path(args.template).expanduser().resolve() if args.template else TEMPLATE
+    template = resolved(args.template) if args.template else TEMPLATE
     for name, (url, shallow) in wanted.items():
-        line = clone(name, url, shallow, folder, args.dry_run)
-        failed |= "not cloned" in line or "failed" in line
+        line, ok = clone(name, url, shallow, folder, args.dry_run)
+        failed |= not ok
         print(line)
 
     if project is None:
@@ -128,22 +146,6 @@ def main() -> int:
         lines.insert(-1, name_clones(project, folder, list(wanted)))
     print("\n".join(lines))
     return 1 if failed or p.returncode else 0
-
-
-def name_clones(project: Path, folder: Path, names: list[str]) -> str:
-    """The block expects the clones beside this repository. Cloned elsewhere,
-    each gets its line under the Construct3-RAG line, once."""
-    agents = project / "AGENTS.md"
-    text = agents.read_text(encoding="utf-8") if agents.exists() else ""
-    missing = [n for n in names if f"{n}:" not in text]
-    key = "- Construct3-RAG:"
-    if not missing or key not in text:
-        return "AGENTS.md: the clones are already named"
-    lines = "".join(f"- {n}: {(folder / n).as_posix()}\n" for n in missing)
-    head, _, tail = text.partition(key)
-    line, _, rest = tail.partition("\n")
-    agents.write_text(head + key + line + "\n" + lines + rest, encoding="utf-8", newline="\n")
-    return f"AGENTS.md: named {', '.join(missing)} under {folder.as_posix()}, which is not beside Construct3-RAG"
 
 
 if __name__ == "__main__":
