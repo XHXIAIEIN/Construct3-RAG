@@ -44,11 +44,6 @@ def _get_lookup_engine():
     return _lookup_engine
 
 
-def _search_workflow() -> SearchWorkflow:
-    """Bind the lazy lookup provider to one request workflow."""
-    return SearchWorkflow(get_lookup_engine=_get_lookup_engine)
-
-
 @app.get("/playground")
 def playground() -> Response:
     """Serve the lightweight API playground without caching it."""
@@ -69,7 +64,8 @@ def health() -> HealthResponse:
 @app.post("/search", response_model=SearchResponse, response_model_exclude_none=True)
 def search(request: SearchRequest) -> SearchResponse:
     try:
-        outcome = _search_workflow().execute(request_to_command(request))
+        workflow = SearchWorkflow(get_lookup_engine=_get_lookup_engine)
+        outcome = workflow.execute(request_to_command(request))
         return present_search_outcome(outcome)
     except InvalidSearchRequestError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
