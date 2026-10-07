@@ -108,7 +108,7 @@ skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。
   - 浏览器默认无头运行，加 `--headed` 才显示窗口。它使用项目 `.tmp/` 下单独的配置目录，`--profile` 可以换到别的文件夹。
   - 浏览器打开 Scirra 提供的编辑器 `https://editor.construct.net/`，预览时还会打开 `https://preview.construct.net`。脚本在浏览器里把项目交给编辑器页面，所以项目文件留在你的电脑上。
   - 脚本通过 `127.0.0.1` 上的 DevTools 端口控制浏览器。计划里的 `js` 和 `until` 步骤会在预览里运行 JavaScript。`--install-addon` 会把 `.c3addon` 装进这个配置目录里的编辑器。
-  - 结果、截图和录像保存在项目的 `.tmp/`。如果装了 ffmpeg，录像合成视频；否则如果装了 Pillow，录像合成 GIF。
+  - 结果、截图和录像保存在项目的 `.tmp/`。如果装了 ffmpeg，录像合成视频；否则如果装了 Pillow，录像合成 GIF。两者任一还会把录像的关键帧拼成一张联系表，供 agent 判断动效。
   - 每次运行前，`preview_project.py` 会清掉之前预览留在配置目录里的存档，除非计划里设了 `keep_saves`。
   - 如果本机没有这几种浏览器，脚本什么也不启动，而是打印步骤，交给 agent 自己的浏览器工具。
 - **导出**：`export_project.py` 在有界面的浏览器里操作同一个编辑器。

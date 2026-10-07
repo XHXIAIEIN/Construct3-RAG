@@ -249,6 +249,44 @@ def test_preview_project_joins_a_recording_into_a_gif_without_ffmpeg(tmp_path, m
         assert gif.n_frames == 2 and gif.info["duration"] == 250
 
 
+def test_preview_project_picks_the_frames_of_a_contact_sheet():
+    """The ends, each step's start and end, the frames around the largest change, each with why,
+    and the cells left over where the picture moves: here the slide of frames 1 to 30."""
+    frames = [{"t": i / 30, "watch": {"x": 50 + min(i, 30) * 4 + (200 if i >= 40 else 0), "label": "a"}}
+              for i in range(60)]
+    change = pp.frame_change([], frames)        # no frame files: the watched numbers tell
+    assert max(range(60), key=change.__getitem__) == 40
+    steps = [{"step": 3, "start": 0.2, "end": 1.0}]
+    assert pp.sheet_frames(frames, steps, change) == [
+        (0, "start"), (6, "step 3 starts"), (9, ""), (24, ""), (30, "step 3 ends"), (39, ""), (40, "largest change"),
+        (41, ""), (59, "end")]
+    many = [{"step": n, "start": n / 10, "end": n / 10 + 0.05} for n in range(1, 19)]
+    picked = pp.sheet_frames(frames, many, [0.0] * 60)
+    assert len(picked) == pp.SHEET_CELLS and picked[0] == (0, "start") and picked[-1] == (59, "end")
+    assert [i for i, _ in pp.sheet_frames(frames[:3], [], [0.0] * 3)] == [0, 1, 2]
+
+
+@pytest.mark.parametrize("pillow", [True, False])
+def test_preview_project_joins_the_sheet_frames_into_one_image(tmp_path, monkeypatch, pillow):
+    """With Pillow each frame is numbered with its time; ffmpeg alone tiles them, a short last row included."""
+    image = pytest.importorskip("PIL.Image", reason="Pillow is not installed; pip install pillow")
+    if not pillow and not (pp.shutil.which("ffmpeg") and pp.shutil.which("ffprobe")):
+        pytest.skip("ffmpeg is not installed")
+    paths = []
+    for k in range(7):
+        paths.append(tmp_path / f"{k + 1:04d}.jpg")
+        image.new("RGB", (430, 932), (k * 30, 0, 0)).save(paths[-1])
+    if not pillow:
+        real = __import__
+        monkeypatch.setattr("builtins.__import__", lambda name, *a, **k: (_ for _ in ()).throw(ImportError(name))
+                            if name.startswith("PIL") else real(name, *a, **k))
+    made = pp.make_sheet(paths, [k / 10 for k in range(7)], tmp_path / "02-merge-sheet.png")
+    monkeypatch.undo()
+    assert made == str(tmp_path / "02-merge-sheet.png")
+    with image.open(made) as sheet:
+        assert max(sheet.size) <= pp.SHEET_SIDE and sheet.size[0] > sheet.size[1] / 2
+
+
 def test_preview_project_prints_how_the_watched_values_changed():
     """The agent reviews a recording from these lines: each change once, with its time."""
     frames = [{"t": 0.0, "watch": {"coins": 40, "y": None}}, {"t": 0.5, "watch": {"coins": 40, "y": 662}},

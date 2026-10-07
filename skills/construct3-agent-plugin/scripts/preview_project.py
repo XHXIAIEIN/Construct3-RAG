@@ -54,7 +54,11 @@ Steps, each an object with one of these keys, and "note" for a label:
                                 of the plan, as NN-NAME.mp4 with ffmpeg, NN-NAME.gif with Pillow,
                                 and always the frames, NN-NAME/0001.jpg ...; false stops it.
                                 watch is {"label": EXPRESSION, ...}, read at every frame. The
-                                recording leaves NN-NAME.html to review it: the frames, the steps
+                                recording leaves NN-NAME-sheet.png, up to 12 of its frames in one
+                                image, each numbered with its time: the ends, the steps' starts
+                                and ends, the largest change and where the picture moves most,
+                                for the agent to judge the motion from (unnumbered with ffmpeg
+                                and no Pillow); NN-NAME.html to review it: the frames, the steps
                                 that ran and the watched values, frame by frame, and a part
                                 selected there copied as a task for an agent; and
                                 NN-NAME/timeline.json with the same. index.html in --shots
@@ -125,6 +129,11 @@ output:
     3 state Piece: <as open_in_editor.py --state prints it>
     4 shot after-merge: .tmp/preview/04-after-merge.png
     recorded merge: 95 frames in 3.4 s, .tmp/preview/02-merge.mp4
+      sheet .tmp/preview/02-merge-sheet.png: 10 frames, numbered left to right, top down: 1 at 0 ms (start),
+      2 at 35 ms (largest change), ..., 10 at 3380 ms (end)
+        judge the motion from the sheet, not from what the events meant to do: open it with the image tool,
+        name the three worst defects, each with its time, what the frame shows and the event to change, fix
+        only those, and record that part again
       review .tmp/preview/02-merge.html: the user plays it there, selects the part that looks wrong and
       copies it to you as a task; .tmp/preview/index.html lists every recording
       frames and timeline.json in .tmp/preview/02-merge
@@ -509,10 +518,21 @@ class Recorder(threading.Thread):
         page = self.video.with_suffix(".html")
         page.write_text(REVIEW.replace("/*TIMELINE*/null", script_json(timeline)), encoding="utf-8")
         index = write_index(self.video.parent)
-        lines = [f"{len(frames)} frames in {sum(seconds):.1f} s, {made or 'no ffmpeg or Pillow here to join them'}",
-                 f"review {page}: the user plays it there, selects the part that looks wrong and copies it to you "
-                 f"as a task; {index} lists every recording",
-                 f"frames and timeline.json in {self.folder}"]
+        lines = [f"{len(frames)} frames in {sum(seconds):.1f} s, {made or 'no ffmpeg or Pillow here to join them'}"]
+        paths = [self.folder / f["file"] for f in frames]
+        cells = sheet_frames(timeline["frames"], timeline["steps"], frame_change(paths, timeline["frames"]))
+        sheet = make_sheet([paths[i] for i, _ in cells], [timeline["frames"][i]["t"] for i, _ in cells],
+                           self.folder.with_name(self.folder.name + "-sheet.png"))
+        if sheet:
+            listed = ", ".join(f"{k} at {round(timeline['frames'][i]['t'] * 1000)} ms" + (f" ({why})" if why else "")
+                               for k, (i, why) in enumerate(cells, 1))
+            lines += [f"sheet {sheet}: {len(cells)} frames, numbered left to right, top down: {listed}",
+                      "  judge the motion from the sheet, not from what the events meant to do: open it with the image "
+                      "tool, name the three worst defects, each with its time, what the frame shows and the event to "
+                      "change, fix only those, and record that part again"]
+        lines += [f"review {page}: the user plays it there, selects the part that looks wrong and copies it to you "
+                  f"as a task; {index} lists every recording",
+                  f"frames and timeline.json in {self.folder}"]
         return "\n    ".join(lines + watch_lines(timeline["frames"]))
 
 
@@ -587,6 +607,145 @@ def make_video(frames: list[Path], seconds: list[float], video: Path) -> str | N
     images[0].save(gif, save_all=True, append_images=images[1:], loop=0,
                    duration=[max(20, round(s * 1000)) for s in seconds])
     return str(gif)
+
+
+SHEET_CELLS, SHEET_SIDE, SHEET_GAP = 12, 1600, 4
+
+
+def frame_change(paths: list[Path], frames: list[dict]) -> list[float]:
+    """How much each frame differs from the one before it, 0 for the first: the mean
+    difference of small grey copies with Pillow, else the watched numbers' changes,
+    each over its own range; all 0 when neither tells."""
+    try:
+        from PIL import Image, ImageChops, ImageStat
+        if not paths or len(paths) != len(frames):
+            raise OSError("no frame for each time")
+        small = []
+        for p in paths:
+            with Image.open(p) as image:
+                image.draft("L", (64, 64))
+                small.append(image.convert("L").resize((64, 64)))
+        return [0.0] + [ImageStat.Stat(ImageChops.difference(a, b)).mean[0] for a, b in zip(small, small[1:])]
+    except (ImportError, OSError):
+        pass
+    numbers: dict[str, list[float | None]] = {}
+    for f in frames:
+        for name, value in (f.get("watch") or {}).items():
+            numbers.setdefault(name, [])
+    for name, values in numbers.items():
+        for f in frames:
+            value = (f.get("watch") or {}).get(name)
+            values.append(value if isinstance(value, (int, float)) and not isinstance(value, bool) else None)
+    change = [0.0] * len(frames)
+    for values in numbers.values():
+        known = [v for v in values if v is not None]
+        span = (max(known) - min(known)) if known else 0
+        if not span:
+            continue
+        for i in range(1, len(values)):
+            if values[i] is not None and values[i - 1] is not None:
+                change[i] += abs(values[i] - values[i - 1]) / span
+    return change
+
+
+def sheet_frames(frames: list[dict], steps: list[dict], change: list[float]) -> list[tuple[int, str]]:
+    """The frames of a recording's contact sheet, in order, each with why it is there:
+    the first and the last, the frames around the largest change, then the start and end
+    of each step, thinned evenly to fit; the cells left over go where the picture changes
+    most, so a motion between two steps is on the sheet too."""
+    if not frames:
+        return []
+    times = [f["t"] for f in frames]
+
+    def nearest(t: float) -> int:
+        return min(range(len(times)), key=lambda i: abs(times[i] - t))
+
+    kept = {0: "start", len(frames) - 1: "end"}
+    peak = max(range(len(change)), key=change.__getitem__) if change and max(change) > 0 else None
+    if peak is not None:
+        for i in (peak - 1, peak + 1):
+            if 0 <= i < len(frames):
+                kept.setdefault(i, "")
+        kept[peak] = "largest change"
+    rest: dict[int, str] = {}
+    for s in steps:
+        rest.setdefault(nearest(s["start"]), f"step {s['step']} starts")
+        rest.setdefault(nearest(s["end"]), f"step {s['step']} ends")
+    rest = {i: why for i, why in rest.items() if i not in kept}
+    room = SHEET_CELLS - len(kept)
+    chosen = sorted(rest)
+    if len(chosen) > room:
+        chosen = [chosen[round(k * (len(chosen) - 1) / max(room - 1, 1))] for k in range(room)] if room > 0 else []
+    kept |= {i: rest[i] for i in chosen}
+    spare = min(SHEET_CELLS, len(frames)) - len(kept)
+    if spare > 0:       # spread over the change, so the frames fall where the picture moves
+        total, run = sum(change), []
+        for c in change:
+            run.append((run[-1] if run else 0) + c)
+        for k in range(spare):
+            share = (k + 0.5) / spare
+            kept.setdefault(next(j for j, r in enumerate(run) if r >= share * total) if total
+                            else round(share * (len(frames) - 1)), "")
+    return sorted(kept.items())
+
+
+def make_sheet(paths: list[Path], times: list[float], out: Path) -> str | None:
+    """The frames side by side in one image of at most SHEET_SIDE pixels a side, each
+    numbered with its time: with Pillow, else unnumbered with ffmpeg; None with neither."""
+    if not paths:
+        return None
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        Image = None
+    if Image:
+        with Image.open(paths[0]) as first:
+            w, h = first.size
+    else:
+        ffprobe = shutil.which("ffprobe")
+        if not ffprobe or not shutil.which("ffmpeg"):
+            return None
+        probe = subprocess.run([ffprobe, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                                "-of", "csv=p=0", str(paths[0])], capture_output=True, text=True, timeout=60)
+        try:
+            w, h = (int(v) for v in probe.stdout.strip().split(","))
+        except ValueError:
+            return None
+    n = len(paths)
+
+    def scale(cols: int) -> float:
+        rows = math.ceil(n / cols)
+        return min(1.0, (SHEET_SIDE - SHEET_GAP * (cols + 1)) / (cols * w), (SHEET_SIDE - SHEET_GAP * (rows + 1)) / (rows * h))
+
+    cols = max(range(1, n + 1), key=scale)
+    rows, s = math.ceil(n / cols), scale(cols)
+    cw, ch = max(2, int(w * s) // 2 * 2), max(2, int(h * s) // 2 * 2)
+    if Image:
+        sheet = Image.new("RGB", (cols * cw + (cols + 1) * SHEET_GAP, rows * ch + (rows + 1) * SHEET_GAP), (34, 34, 34))
+        draw = ImageDraw.Draw(sheet)
+        try:
+            font = ImageFont.load_default(size=max(12, min(cw, ch) // 16))
+        except TypeError:       # Pillow before 10.1 has one size
+            font = ImageFont.load_default()
+        for k, (p, t) in enumerate(zip(paths, times)):
+            x, y = SHEET_GAP + (k % cols) * (cw + SHEET_GAP), SHEET_GAP + (k // cols) * (ch + SHEET_GAP)
+            with Image.open(p) as frame:
+                sheet.paste(frame.convert("RGB").resize((cw, ch)), (x, y))
+            label = f"{k + 1}  {round(t * 1000)} ms"
+            box = draw.textbbox((x + 4, y + 4), label, font=font)
+            draw.rectangle((box[0] - 3, box[1] - 3, box[2] + 3, box[3] + 3), fill=(0, 0, 0))
+            draw.text((x + 4, y + 4), label, fill=(255, 255, 255), font=font)
+        sheet.save(out)
+        return str(out)
+    listing = out.with_suffix(".txt")
+    listing.write_text("ffconcat version 1.0\n" + "".join(f"file '{p.resolve().as_posix()}'\n" for p in paths),
+                       encoding="utf-8")
+    g = SHEET_GAP
+    done = subprocess.run([shutil.which("ffmpeg"), "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
+                           "-i", str(listing), "-vf", f"scale={cw}:{ch},tile={cols}x{rows}:padding={g}:margin={g}"
+                           ":color=0x222222", "-frames:v", "1", str(out)], capture_output=True, text=True, timeout=120)
+    listing.unlink(missing_ok=True)
+    return str(out) if done.returncode == 0 and out.exists() else None
 
 
 def emulate(page: oe.DevTools, viewport: list[int] | None, ratio: float = 1) -> tuple[int, int] | None:

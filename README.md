@@ -108,7 +108,7 @@ The skill's scripts read this repository's `data/` and the projects and files th
   - The browser runs headless unless you add `--headed`. It uses a profile of its own in the project's `.tmp/`, unless `--profile` names another folder.
   - The browser opens `https://editor.construct.net/`, the editor that Scirra serves. A preview opens `https://preview.construct.net`. The scripts pass the project to the editor page inside the browser, so the project files stay on your machine.
   - The scripts drive the browser over a DevTools port on `127.0.0.1`. The `js` and `until` steps of a plan run JavaScript in the preview. `--install-addon` installs a `.c3addon` in the editor of that profile.
-  - Results, screenshots and recordings go to the project's `.tmp/`. If ffmpeg is installed, a recording becomes a video. Otherwise, if Pillow is installed, it becomes a GIF.
+  - Results, screenshots and recordings go to the project's `.tmp/`. If ffmpeg is installed, a recording becomes a video. Otherwise, if Pillow is installed, it becomes a GIF. Either one also joins its key frames into a contact sheet for the agent to judge the motion from.
   - Before each run, `preview_project.py` clears the saves that earlier previews left in its profile, unless the plan sets `keep_saves`.
   - If the machine has none of these browsers, the scripts start nothing. They print the steps for a browser tool of the agent instead.
 - **Exporting**: `export_project.py` drives the same editor in a visible browser.
