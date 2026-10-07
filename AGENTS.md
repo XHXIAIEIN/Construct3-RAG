@@ -179,7 +179,10 @@ Rules:
   cannot be taken back. A source line in a document may use the short form;
   only commits, issues and PRs are parsed.
 
-Before finishing, plus the checks in the touched directories' `AGENTS.md`:
+Before finishing, plus the checks in the touched directories' `AGENTS.md`;
+`.github/workflows/checks.yml` runs the first two of them and
+`build_plugin.py --check` on every push to `main` and every pull request,
+and the update workflow calls it:
 
 ```bash
 python -m pytest -q
