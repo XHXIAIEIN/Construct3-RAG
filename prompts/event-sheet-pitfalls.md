@@ -299,6 +299,14 @@ exported for the web or uses File System, read [pitfalls/storage-and-export.md](
 - Android and iOS exports have no File System. Save with Local Storage and hand files over with Share.
 - JSON has no merge. Merge data files with *For each* at `""` and *Set JSON* `GetAsCompactString(CurrentKey)` per top-level key; requests sharing one AJAX tag each fire *On completed* with their own `LastData`, so count them down.
 
+### Random
+
+If the events draw at random and a seed must reproduce the result, such as
+a daily challenge or a replayable run, read [pitfalls/random.md](pitfalls/random.md).
+
+- Advanced Random's `Random`, weighted draws and permutation tables share one sequence, and *Update seed* restarts it. Set the seed to the run's seed, the use and a counter before each draw, so one kind of draw does not shift another.
+- `random()`, `choose()` and *Pick random instance* ignore the seed while *Replace system random* is off. Write a seeded draw as `floor(AdvancedRandom.Random * n)`, or *Pick nth instance* of `floor(AdvancedRandom.Random * PickedCount)`.
+
 ## Adding an entry
 
 A pitfall is a runtime behaviour of events that changes which events an
