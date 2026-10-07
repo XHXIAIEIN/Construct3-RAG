@@ -31,6 +31,18 @@ ghost is a second, wider bar behind the first that is set later:
 template-monk-fight `cUnderHPBar` and `eUnderHPBar`, shown for a second by a
 Timer. Use a Tween or a ghost bar, not a per-tick lerp of the width.
 
+The ghost can be derived from the fill every tick. `Ghost: Set width to
+max(Ghost.Width, Fill.Width)` keeps it at least as wide as the fill, so a
+loss leaves the old width showing and a gain never leaves it shorter. One
+event with the conditions `Ghost: Compare width > Fill.Width`, `Frame: NOT
+Timer "ghost" is running` and `Ghost: NOT Tween "ghost" is playing` starts a
+0.5 s Timer, and its *On timer* tweens the ghost's width to `Fill.Width` in
+0.4 s. Put *On timer* above the start event,
+because both run in sheet order and the start event tests the tween that *On
+timer* starts. [observed in a minimal project, stable editor preview,
+2026-10-07: two hits 0.7 s apart, the second while the ghost was closing,
+ended with the ghost equal to the fill on every bar]
+
 A second value drawn inside the fill, such as poison that will drain the
 health or damage not yet applied, is a second bar of the same object type
 over the fill, origin on the left, with `X` at `frame.X + (hp - poison) /
@@ -40,6 +52,54 @@ draining alone never kills. Drain it with a Timer: *On timer* takes 1 from
 both values and restarts the timer with the duration of the current
 amount, shorter at a higher amount, rather than an accumulator compared
 against a ladder of thresholds every tick. [a studied project, 2026-10-06]
+
+A heal on its way is a part of the same kind as the poison part. It starts
+where the fill ends, at `frame.X + hp / maxHp × LENGTH`, has the width
+`min(incomingHeal, maxHp - hp) / maxHp × LENGTH` and is drawn behind the fill.
+Incoming damage is the poison part with the width `min(incomingDamage, hp) /
+maxHp × LENGTH`, drawn over the fill in a dark colour at 55 % opacity so that
+the fill's colour still shows. Both numbers are instance variables of the
+bar, and a Timer lands them: `hp = clamp(hp - incomingDamage + incomingHeal,
+0, maxHp)`, then both are set to 0. [observed in a minimal project, stable
+editor preview, 2026-10-07]
+
+A colour by tier is one *Set color* on a white Tiled Background:
+`share < LOW ? c1 : (share < WARN ? c2 : c3)`, with `share` as `hp / maxHp`
+and a colour expression for each of `c1` to `c3`. It evaluates for each bar,
+so the tiers need no sub-events and no *Else*. Write `<`, not `<=`, because a
+share exactly on a threshold then stays in the upper tier. [observed in a
+minimal project, stable editor preview, 2026-10-07: three bars at the same
+time showed green, yellow and red as their hp differed, with red below 0.25
+and yellow below 0.5, and shares of exactly 0.5 and exactly 0.25 stayed in the
+upper tier]
+
+## Ticks at a fixed value step
+
+A Tiled Background's *Set image scale X* stretches the tile image, so it
+changes the tile pitch and the thickness of a line drawn in the tile
+together, and ticks spaced by value cannot keep one width that way. Make each
+tick a Sprite and create them in a loop. This is one custom action on the
+frame, with the frame's origin on its left edge, `step` the value between two
+ticks and `pad` the thickness of the frame's border:
+
+1. Pick the frame's old ticks with *Pick children* and destroy them.
+2. In a second event, put the condition `ceil(Frame.maxHp / step) - 1 >= 1`
+   before `For i = 1 to ceil(Frame.maxHp / step) - 1`, because *For* counts
+   down when its end is below its start
+   ([pitfalls/expressions.md](../pitfalls/expressions.md)). Put *For each*
+   `Frame` first, so that each frame reads its own `maxHp`.
+3. In the loop, create a tick on the frame's layer, with `Frame.LayerName` as
+   the layer parameter, at X `round(Frame.X + pad + (Frame.Width - 2 * pad) *
+   loopindex("i") * step / Frame.maxHp)`. Set its height from the frame's
+   inner height, then *Add child* of the frame with destroy with parent on.
+
+Call the action at layout start and whenever the maximum changes. For a
+thicker tick at every 1000, set the width to `loopindex("i") * step % 1000 =
+0 ? 4 : 2`. [manual: plugin-reference/tiled-background.md "Set image X
+scale"; observed in a minimal project, stable editor preview, 2026-10-07:
+with 444 px of bar and a step of 100, a maximum of 3000 gave a
+spacing of 14.8 px, and bars with a maximum of 300, 1000 and 3000 held 2, 9
+and 29 ticks; after 300 was added to each maximum they held 5, 12 and 32]
 
 ## The object the art calls for
 
