@@ -63,8 +63,8 @@ variable that flips, read
 If the events define or call a function or a custom action, read
 [pitfalls/functions.md](pitfalls/functions.md).
 
-- A function with a return type is the expression `Functions.MyFunction`; parentheses only carry parameters.
 - Function locals are out of scope for the function block's own top-level actions.
+- A function with a return type is the expression `Functions.MyFunction`; parentheses only carry parameters.
 - Without *Copy picked* a function runs with every object reset to all picked.
 - With *Copy picked*, type and family picks are copied separately. Logic on the caller's picks is a custom action.
 - A custom action runs once with all the caller's picks, and a System condition in it reads the first. If it decides per instance, put *For each* first.
@@ -90,14 +90,14 @@ group turned off to pause, read
 - *Wait* does not stop a loop, so the remaining iterations run in the same tick.
 - A *Wait* keeps the instances its event picked: *Wait 2 seconds* then *Destroy* destroys the instance that started it, with no UID stored.
 - *Wait for previous actions* waits only for asynchronous actions.
-- Of two overlapping *Wait* hit stops, the shorter ends both. Count the stops under way, and restore the time scale when the count is back to 0. A `wallclocktime` deadline runs on another clock than the *Wait* and leaves the game slowed.
-- A hit stop slows tweens and `dt` too. If a tween must end on an audio beat, set its object's time scale to 1 and restore it in *On finished*. If a blend must keep real time, use `dt / timescale`.
-- Scroll To *Shake* replaces the running shake and is scaled by the object's time scale. Call it only if the new magnitude is not smaller than the remaining one. To shake through a hit stop, set the camera object's time scale to 1.
 - A *Wait* delays only the rest of its own block and its sub-events. Sibling events run at once.
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.
 - *Wait 0* resumes at the start of the next tick, not at the end of the event or sheet. Leave it out unless a trigger fires before the tick applies what it reports.
 - Deactivating a group stops its events, not its behaviors, timers or tweens, so it does not pause.
 - A hit stop is *Set time scale* 0.1, *Wait*, *Set time scale* 1. A smooth ramp is a value tween.
+- Of two overlapping *Wait* hit stops, the shorter ends both. Count the stops under way, and restore the time scale when the count is back to 0. A `wallclocktime` deadline runs on another clock than the *Wait* and leaves the game slowed.
+- A hit stop slows tweens and `dt` too. If a tween must end on an audio beat, set its object's time scale to 1 and restore it in *On finished*. If a blend must keep real time, use `dt / timescale`.
+- Scroll To *Shake* replaces the running shake and is scaled by the object's time scale. Call it only if the new magnitude is not smaller than the remaining one. To shake through a hit stop, set the camera object's time scale to 1.
 
 ### Expressions
 
@@ -179,9 +179,9 @@ files, read
 - Delay `mix` is 0 to 100 and scales only the echoes: first echo = mix × feedback.
 - *Fade volume* also reaches instances scheduled but not started, so fading a one-off tag to -100 dB cancels a play scheduled ahead.
 - On resume every suspended sound restarts at once. Run *Stop all* in *On resumed* and restart the schedule.
-- *Play by name* looks a sound up by its folder path, `Board/spawn`. Keep sounds played by computed names out of folders.
 - Stereo pan mixes a stereo sound's channels, +2.3 dB at ±20. Narrow the pan of loud sounds and keep them off each other's grid point.
 - Dictionary *Set key* ignores a missing key. Write with *Add key*.
+- *Play by name* looks a sound up by its folder path, `Board/spawn`. Keep sounds played by computed names out of folders.
 - A sound is heard `OutputLatency` after its scheduled time.
 - A WebM Opus file encoded to an exact length decodes to that length at 48 kHz in Chrome, and a mono file to one channel.
 
@@ -226,8 +226,8 @@ read [pitfalls/tween.md](pitfalls/tween.md).
 - *On finished* runs before *Destroy on complete* destroys the instance, and *On any finished* runs for that tween too.
 - A new tween on a property stops the ones already on it, so they never finish or destroy. Let a Timer destroy a dying instance, not its death tween.
 - `Tween.Value(tag)` reads 0 once the tween ends. Animate a channel as what is left of it, from the full amount to 0.
-- *Stop* releases a tween at the end of the tick. `Value(tag)` reads the stopped value until then.
 - A property tween adds each tick's change. A *Set* on that property while it plays is kept, and the tween's rest adds to it. Guard it with *NOT Is playing*.
+- *Stop* releases a tween at the end of the tick. `Value(tag)` reads the stopped value until then.
 
 ### Timeline
 
@@ -242,12 +242,12 @@ keyframes or playback rate, read [pitfalls/timeline.md](pitfalls/timeline.md).
 - *Stop* rewinds to 0 and takes a relative track's offsets back, and *Pause* holds. A finished timeline ignores both *Stop* and *Resume* and keeps its offsets. *Set time* 0 before replaying or putting the instance back.
 - *Set time* pauses and never fires *On keyframe reached*.
 - *On keyframe reached* picks nothing. Pick the instance back from the UID in `Timeline.TimelineTags`.
-- A negative playback rate fires *On keyframe reached* again for each keyframe it passes on the way back. Flag the rewind and test the flag in the keyframe event.
 - *On keyframe reached* sees the previous tick's pose, so *Wait 0* before reading where the keyframe put the instance.
 - A negative playback rate rewinds to 0 and finishes there. Set it positive again before the next *Resume*.
 - A timeline stopped at its end ignores *Resume* at any rate. *Set time* just before the end, then rewind.
 - A copy started this tick reads `Time` 0 while *Is playing* is true. Test *Is playing* to know a move is under way.
 - Rewinding a copy that reads `Time` 0 starts it backwards from its end and leaves a relative track off by its end pose. Rewind only when `Time > 0`, else *Set time* 0.
+- A negative playback rate fires *On keyframe reached* again for each keyframe it passes on the way back. Flag the rewind and test the flag in the keyframe event.
 - With *Use system timescale* on, the default, a hit stop slows the timeline too.
 
 ### Creating objects

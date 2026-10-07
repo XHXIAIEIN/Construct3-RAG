@@ -30,13 +30,13 @@ Sources and the rule for adding an entry are in the index,
   offset (1, 0) and (0, 1) true]
 - While a dragged or tweening instance has collisions disabled, the slot
   where it will land reads empty until it lands, the slot it is flying back
-  to included. The
-  drop events expect that. But an event that fills empty slots on its own (a
-  buy button or a spawn) puts a new instance there, and the returning one
-  lands on top of it. Make such an event wait while any instance is being
-  dragged or its landing tween is playing. [observed in a game project, r504
-  preview, 2026-10-01: a piece dropped back on its slot, the buy button
-  pressed within its 0.2 s snap, the bought weapon landed on the piece]
+  to included. The drop events expect that. But an event that fills empty
+  slots on its own (a buy button or a spawn) puts a new instance there, and
+  the returning one lands on top of it. Make such an event wait while any
+  instance is being dragged or its landing tween is playing. [observed in a
+  game project, r504 preview, 2026-10-01: a piece dropped back on its slot,
+  the buy button pressed within its 0.2 s snap, the bought weapon landed on
+  the piece]
 - A type and its family are picked separately, so narrowing Sprite `Piece`
   never narrows its family `Pieces`. Use this for two picks of one type in
   one event. Refer to the name the caller narrowed (see

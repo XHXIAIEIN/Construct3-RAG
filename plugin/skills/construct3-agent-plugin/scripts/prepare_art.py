@@ -51,6 +51,7 @@ import json
 import math
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 import c3project as c3
@@ -100,6 +101,8 @@ LINEUP = 4                                 # subjects in the key picture
 WORK = 4                                   # a picture is cut out at up to this many times its box
 REFUSED = "art/refused.json"               # the pictures this script refused, which --list reads
 TRIES = 3                                  # refusals before a picture keeps its stand-in
+STAND_IN = (f"{TRIES} times, so it keeps its stand-in. To try again, change its subject in art(), which starts the "
+            f"count again")
 MARK = "c3-art"                            # the PNG text key check_look.py reads as a painting
 
 
@@ -124,6 +127,20 @@ def key_for(item: dict, style: str) -> tuple[str, tuple]:
 
 def hex_of(c: tuple) -> str:
     return "#%02X%02X%02X" % tuple(c[:3])
+
+
+def stem_of(rel: str) -> str:
+    """The name of a picture art() asks for, from its file name without .png."""
+    return rel[:-len(".png")]
+
+
+def refusal(n: int) -> str:
+    return f"(refusal {n} of {TRIES}; after {TRIES} it keeps its stand-in)"
+
+
+def again_on(name: str) -> str:
+    """What to make instead when the cut needs the other key, or a clean one."""
+    return f"make it again on a flat {name} {hex_of(KEYS[name])} background, or with a transparent one"
 
 
 def ratio(w: int, h: int) -> str:
@@ -151,8 +168,7 @@ def prompt(item: dict, style: str, reference: bool = False) -> str:
 
 
 def raw_of(root: Path, rel: str) -> Path | None:
-    stem = rel[:-len(".png")]
-    found = [root / "art" / "raw" / (stem + ext) for ext in RAW_TYPES]
+    found = [root / "art" / "raw" / (stem_of(rel) + ext) for ext in RAW_TYPES]
     found = [p for p in found if p.exists()]
     return max(found, key=lambda p: p.stat().st_mtime) if found else None
 
@@ -224,18 +240,18 @@ def warnings(items: list[dict], style: str) -> list[str]:
         return ", ".join(found[:5]) + (f" and {len(found) - 5} more" if len(found) > 5 else "")
 
     def stem(item: dict) -> str:
-        return item["file"][:-len(".png")]
+        return stem_of(item["file"])
 
     sprites = [item for item in items if item["kind"] != "scene"]
     out = []
-    for what, among, why in (
-            ("a background", sprites, "A sprite is made on the key colour alone and cut out, so take the background "
-                                      "out of the subject, or make the picture a scene"),
-            ("a shadow", sprites, "The cut removes a shadow together with the background, so take it out of the "
-                                  "subject"),
-            ("text", items, "The image tool misspells words, so take them out of the subject and write them with a "
-                            "Text object")):
-        if found := [stem(item) for item in among if named(item["subject"], NAMES[what.split()[-1]])]:
+    for words, what, among, why in (
+            ("background", "a background", sprites, "A sprite is made on the key colour alone and cut out, so take "
+                                                    "the background out of the subject, or make the picture a scene"),
+            ("shadow", "a shadow", sprites, "The cut removes a shadow together with the background, so take it out "
+                                            "of the subject"),
+            ("text", "text", items, "The image tool misspells words, so take them out of the subject and write them "
+                                    "with a Text object")):
+        if found := [stem(item) for item in among if named(item["subject"], NAMES[words])]:
             out.append(f"warning: {listed(found)}: the subject names {what}. {why}")
     styles = {}
     for item in items:
@@ -266,7 +282,7 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
     style, items = wanted.get("style", ""), wanted["images"]
     refused = refusals(root, wanted)
     states = {item["file"]: state(root, item, refused) for item in items}
-    counts = {k: list(states.values()).count(k) for k in ("make", "again", "prepare", "done", "stand-in")}
+    counts = Counter(states.values())
     to_make = counts["make"] + counts["again"]
     count = f"to make: {to_make}, to prepare: {counts['prepare']}, done: {counts['done']}" + \
         (f", stand-ins: {counts['stand-in']}" if counts["stand-in"] else "")
@@ -278,7 +294,8 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
                 f"{count}; next: write ART_STYLE, run python tools/build_project.py, then python {skill}/scripts/"
                 f"prepare_art.py --list again"]
     out = ([f"style: {style}"] if style.strip() else []) + warnings(making, style)
-    if len(sprites) > 1 and raw_of(root, "_key.png") is None:
+    key_picture = raw_of(root, "_key.png")
+    if len(sprites) > 1 and key_picture is None:
         shown = lineup(sprites)
         subjects = "; ".join(item["subject"].rstrip("。. ") for item in shown)
         name, key = key_for({"subject": subjects}, style)
@@ -287,21 +304,18 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
                       f"one they choose. Save it as art/raw/_key.png",
                       f"{count}; next: make the key picture, then python {skill}/scripts/prepare_art.py --list for "
                       f"the prompts of the others"]
-    key_picture = raw_of(root, "_key.png")
     for item in items:
         rel, s = item["file"], states[item["file"]]
-        stem = rel[:-len(".png")]
+        stem = stem_of(rel)
         if s in ("make", "again"):
             reference = key_picture is not None and item["kind"] != "scene"
-            tried = (f" again (refusal {len(refused[rel]['pictures'])} of {TRIES}; after {TRIES} it keeps its "
-                     f"stand-in)") if s == "again" else ""
+            tried = f" again {refusal(len(refused[rel]['pictures']))}" if s == "again" else ""
             out.append(f"make {stem}{tried}: ratio {ratio(item['width'], item['height'])}, for a {item['width']}x"
                        f"{item['height']} box" + (f", art/raw/{key_picture.name} as the reference image" if reference
                                                   else "") + f" -> art/raw/{stem}.png")
             out.append(f"  \"{prompt(with_refusal(item, refused), style, reference)}\"")
         elif s == "stand-in":
-            out.append(f"stand-in {stem}: refused {TRIES} times, so it keeps its stand-in. "
-                       f"To try again, change its subject in art(), which starts the count again")
+            out.append(f"stand-in {stem}: refused {STAND_IN}")
         else:
             out.append(f"{s} {stem}: {raw.name if (raw := raw_of(root, rel)) else 'art/' + rel}")
     if to_make:
@@ -332,7 +346,7 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     rgba = img.convert("RGBA")
     w, h = rgba.size
     data = rgba.tobytes()
-    edge = [i for i in range(w)] + [(h - 1) * w + i for i in range(w)] + \
+    edge = list(range(w)) + list(range((h - 1) * w, h * w)) + \
            [y * w for y in range(1, h - 1)] + [y * w + w - 1 for y in range(1, h - 1)]
     if min(data[4 * i + 3] for i in edge) < 250:
         return rgba, "its own transparency"
@@ -340,11 +354,10 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     bg = tuple(sorted(c[k] for c in colours)[len(colours) // 2] for k in range(3))
     near = sum(sum((a - b) ** 2 for a, b in zip(c, bg)) < NEAR ** 2 for c in colours) / len(colours)
     name = next(n for n, c in KEYS.items() if c == key)
+    flat = (f"Nothing but flat {name} {hex_of(key)} around the subject, out to every edge, or a transparent "
+            f"background.")
     if near < 0.5:
-        raise Unusable(f"its edge is not one flat colour, {near:.0%} of it near {hex_of(bg)}",
-                       f"make it again on a flat {name} {hex_of(key)} background, or with a transparent one",
-                       f"Nothing but flat {name} {hex_of(key)} around the subject, out to every edge, or a "
-                       f"transparent background.")
+        raise Unusable(f"its edge is not one flat colour, {near:.0%} of it near {hex_of(bg)}", again_on(name), flat)
     # the background is the key asked for, or the other one, as a model paints it: the keyed
     # channels lit, the others dark, as in (216, 46, 147) or (8, 162, 24)
     painted = [n for n, k in KEYS.items()
@@ -352,10 +365,7 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
                and max(c for c, on in zip(bg, k) if not on) <= 0.35 * min(c for c, on in zip(bg, k) if on)]
     if not painted:
         raise Unusable(f"its background is {hex_of(bg)}, neither magenta nor green, and a cut on it would also "
-                       f"remove the subject's parts in that colour",
-                       f"make it again on a flat {name} {hex_of(key)} background, or with a transparent one",
-                       f"Nothing but flat {name} {hex_of(key)} around the subject, out to every edge, or a "
-                       f"transparent background.")
+                       f"remove the subject's parts in that colour", again_on(name), flat)
     name = painted[0]
     key = KEYS[name]
     if near < 0.9:
@@ -508,8 +518,7 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     if left > max(FRINGE_MIN, FRINGE * band):
         other = next(k for k in KEYS if k != name)
         raise Unusable(f"after the cut, {left} of the {band} pixels along the subject's edge lean to {name}: a "
-                       f"fringe the cut left, or a subject too near the key",
-                       f"make it again on a flat {other} {hex_of(KEYS[other])} background, or with a transparent one",
+                       f"fringe the cut left, or a subject too near the key", again_on(other),
                        f"Keep {name} out of the subject and its edge, or make the background transparent.", other)
     return cut, f"background {hex_of(bg)}, {gaps} px cleared in gaps, {spill} px of key light recoloured"
 
@@ -576,7 +585,7 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
     """Fits one picture; returns its line and any note on it."""
     from PIL import Image
     rel, w, h = item["file"], item["width"], item["height"]
-    stem = rel[:-len(".png")]
+    stem = stem_of(rel)
     raw = raw_of(root, rel)
     try:
         img = Image.open(raw)
@@ -595,13 +604,14 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
     s = min(1.0, min(WORK * max(w, h), 1024) / max(rw, rh))
     work = img if s == 1 else resample(img.convert("RGBA"), (max(1, round(rw * s)), max(1, round(rh * s))),
                                        Image.HAMMING)
-    cut, how = cut_out(work, key_for(item, wanted.get("style", ""))[1])
+    key_name, key = key_for(item, wanted.get("style", ""))
+    cut, how = cut_out(work, key)
     alpha = cut.getchannel("A")
     solid = alpha.point(lambda a: 255 if a >= 128 else 0).getbbox()
     if solid is None:
         raise Unusable(f"nothing is left of the subject once the background is removed ({how})",
                        "make the subject in colours far from the background",
-                       f"Draw the subject in colours far from {key_for(item, wanted.get('style', ''))[0]}.")
+                       f"Draw the subject in colours far from {key_name}.")
     if solid[0] == 0 or solid[1] == 0 or solid[2] == cut.width or solid[3] == cut.height:
         notes.append(f"  note: the subject touches the picture's edge and may be cut off; make it whole, with room "
                      f"around it")
@@ -647,15 +657,16 @@ def main() -> int:
               f"tools/build_project.py and run it, which writes the list", file=sys.stderr)
         return 2
     wanted = json.loads(wanted_path.read_text(encoding="utf-8"))
-    skill = Path(__file__).resolve().parent.parent
+    skill_dir = Path(__file__).resolve().parent.parent
     try:
-        skill = skill.relative_to(root)
+        skill_dir = skill_dir.relative_to(root)
     except ValueError:
         pass
+    skill = skill_dir.as_posix()
     failed = 0
     if args.list:
         (root / "art" / "raw").mkdir(parents=True, exist_ok=True)      # where the pictures are saved
-        out = list_prompts(root, wanted, skill.as_posix())
+        out = list_prompts(root, wanted, skill)
     else:
         try:
             import PIL  # noqa: F401
@@ -666,11 +677,10 @@ def main() -> int:
         out, waiting, done, kept = [], 0, 0, 0
         for item in wanted["images"]:
             rel = item["file"]
-            stem, raw = rel[:-len(".png")], raw_of(root, rel)
+            stem, raw = stem_of(rel), raw_of(root, rel)
             if state(root, item, refused) == "stand-in":
                 kept += 1
-                out.append(f"{stem}: refused {TRIES} times, so it keeps its stand-in. "
-                           f"To try again, change its subject in art(), which starts the count again")
+                out.append(f"{stem}: refused {STAND_IN}")
                 continue
             if raw is None:
                 if (root / "art" / rel).exists():
@@ -693,10 +703,9 @@ def main() -> int:
                         r["key"] = e.key
                     if len(r["pictures"]) >= TRIES:
                         kept += 1
-                        out.append(f"{line}. Refused {TRIES} times, so it keeps its stand-in. "
-                                   f"To try again, change its subject in art(), which starts the count again")
+                        out.append(f"{line}. Refused {STAND_IN}")
                         continue
-                    line += f" (refusal {len(r['pictures'])} of {TRIES}; after {TRIES} it keeps its stand-in)"
+                    line += f" {refusal(len(r['pictures']))}"
                 failed += 1
                 out.append(line)
         if refused or (root / REFUSED).exists():
@@ -704,10 +713,10 @@ def main() -> int:
         counts = f"prepared: {done}, could not use: {failed}, still to make: {waiting}" + \
             (f", kept as stand-ins: {kept}" if kept else "")
         if failed:
-            out.append(f"{counts}; next: python {skill.as_posix()}/scripts/prepare_art.py --list for the prompts of "
-                       f"the pictures above, make them again, then python {skill.as_posix()}/scripts/prepare_art.py")
+            out.append(f"{counts}; next: python {skill}/scripts/prepare_art.py --list for the prompts of the "
+                       f"pictures above, make them again, then python {skill}/scripts/prepare_art.py")
         elif waiting:
-            out.append(f"{counts}; next: python {skill.as_posix()}/scripts/prepare_art.py --list for their prompts")
+            out.append(f"{counts}; next: python {skill}/scripts/prepare_art.py --list for their prompts")
         elif kept:
             out.append(f"{counts}; next: python tools/build_project.py")
         else:

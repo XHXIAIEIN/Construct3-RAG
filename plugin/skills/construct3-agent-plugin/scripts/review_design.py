@@ -43,6 +43,7 @@ import itertools
 import json
 import re
 import sys
+from collections import Counter
 from dataclasses import dataclass, field
 from typing import Callable, Iterator
 
@@ -90,6 +91,9 @@ NAME_KEYS = {"variable", "instance-variable", "object", "layout", "comparison", 
 NUMBER_LITERAL = re.compile(r"(?<![\w.])\d+(?:\.\d+)?(?:e[+-]?\d+)?(?![\w.])", re.I)
 IDENT = re.compile(r"(?<![\w.])([A-Za-z_]\w*)(?!\s*\()")
 CALL = re.compile(r"(?<![\w.])([A-Za-z_][\w.]*)\s*\(")
+SPACES = re.compile(r"\s+")
+MEMBER = re.compile(r"\s*(\w+)\s*\.\s*\w+\s*")          # Object.Field: the object that owns a value
+PAREN = {"(": 1, ")": -1}                               # what a character adds to the parentheses depth
 SCRATCH = re.compile(r"(?i)^(tmp|temp|scratch)[a-z]?\d*$")
 UID_OF = re.compile(r"(?i)^\s*(\w+)\s*\.\s*uid\s*$")
 WRITES = {"set-eventvar-value", "add-to-eventvar", "subtract-from-eventvar", "set-boolean-eventvar",
@@ -169,6 +173,12 @@ class Ev:
             yield e
             e = e.parent
 
+    def subtree(self) -> Iterator["Ev"]:
+        """This row, then every row below it in document order."""
+        yield self
+        for k in self.children:
+            yield from k.subtree()
+
 
 def walk(sheet: str, events: list, counter: list[int] | None = None, parent: Ev | None = None,
          group: str | None = None, function: str | None = None, scope: frozenset = frozenset(),
@@ -210,14 +220,25 @@ def blank(expr: str) -> str:
 def normal(expr: str) -> str:
     """An expression with its texts and numbers replaced, and no spaces: two expressions
     equal here differ only by their constants."""
-    return re.sub(r"\s+", "", NUMBER_LITERAL.sub("#", STRING_LITERAL.sub("$", expr)))
+    return unspaced(NUMBER_LITERAL.sub("#", STRING_LITERAL.sub("$", expr)))
 
 
-def is_literal(expr) -> bool:
+def unspaced(expr: str) -> str:
+    return SPACES.sub("", expr)
+
+
+def is_literal(expr: object) -> bool:
     if not isinstance(expr, str):
         return True
     s = expr.strip()
     return bool(STRING_LITERAL.fullmatch(s) or re.fullmatch(r"-?\d+(\.\d+)?", s))
+
+
+def params_of(ace: dict) -> dict:
+    """The parameters of a condition or action by name; {} when it has none, or a list,
+    as a function call's are."""
+    params = ace.get("parameters")
+    return params if isinstance(params, dict) else {}
 
 
 def key(ace: dict) -> tuple:
@@ -240,6 +261,10 @@ class Design:
 
     def __post_init__(self) -> None:
         self.rows = {name: list(walk(name, sheet.get("events", []))) for name, sheet in self.sheets.items()}
+        self._globals: dict[str, tuple[str, dict]] = {}
+        for e in self.all_rows():
+            if e.depth == 0 and e.kind == "variable" and not e.ev.get("isConstant"):
+                self._globals.setdefault(str(e.ev.get("name", "")).lower(), (e.sheet, e.ev))
 
     @classmethod
     def of(cls, p: c3.Project, sheets: dict[str, dict] | None = None) -> "Design":
@@ -264,6 +289,11 @@ class Design:
                    p.load_listed("layouts"), p.types, words, p.data.get("containers") or [])
 
     # --- shared reads ---------------------------------------------------------------------
+    def all_rows(self) -> Iterator[Ev]:
+        """Every row of every sheet, the sheets in the project's order."""
+        for rows in self.rows.values():
+            yield from rows
+
     def blocks(self, sheet: str) -> list[Ev]:
         return [e for e in self.rows[sheet] if e.kind == "block"]
 
@@ -291,12 +321,7 @@ class Design:
 
     def globals(self) -> dict[str, tuple[str, dict]]:
         """lower-case name -> (sheet, variable event) of every global that is not a constant."""
-        out = {}
-        for sheet, rows in self.rows.items():
-            for e in rows:
-                if e.depth == 0 and e.kind == "variable" and not e.ev.get("isConstant"):
-                    out.setdefault(str(e.ev.get("name", "")).lower(), (sheet, e.ev))
-        return out
+        return self._globals
 
 
 def finding(rule: str, e: Ev | None, line: str, sheet: str | None = None, events: list[int] | None = None,
@@ -329,36 +354,37 @@ def conditions_rule(d: Design) -> list[dict]:
 def guard_rule(d: Design) -> list[dict]:
     """The same conditions of objects, three or more, in three or more events of a sheet:
     a guard written again in each event instead of once above them."""
-    out = []
+    out: list[dict] = []
     for sheet in d.rows:
-        sets: dict[int, tuple[Ev, set]] = {}
+        sets: dict[Ev, set] = {}
         for e in d.blocks(sheet):
             if e.ev.get("isOrBlock"):
                 continue
             own = {key(c) for c in d.filters(e) if c.get("objectClass") != "System"}
             if len(own) >= GUARD_SIZE:
-                sets[id(e)] = (e, own)
-        by_combo: dict[frozenset, list[int]] = {}
-        for i, (e, own) in sets.items():
+                sets[e] = own
+        by_combo: dict[frozenset, list[Ev]] = {}
+        for e, own in sets.items():
             for combo in itertools.combinations(sorted(own, key=str)[:12], GUARD_SIZE):
-                by_combo.setdefault(frozenset(combo), []).append(i)
-        seen: set[frozenset] = set()
-        for combo, ids in by_combo.items():
-            if len(ids) < GUARD_EVENTS:
+                by_combo.setdefault(frozenset(combo), []).append(e)
+        seen: set[tuple[frozenset, frozenset]] = set()
+        for evs in by_combo.values():
+            if len(evs) < GUARD_EVENTS:
                 continue
-            shared = frozenset.intersection(*(frozenset(sets[i][1]) for i in ids))
-            group = frozenset(ids)
+            shared = frozenset.intersection(*(frozenset(sets[e]) for e in evs))
+            group = frozenset(evs)
             if (shared, group) in seen or any(s >= shared and g == group for s, g in seen):
                 continue
             seen.add((shared, group))
-            evs = sorted((sets[i][0] for i in ids), key=lambda x: x.n)
-            sample = next(c for c in d.filters(evs[0]) if key(c) in shared)
-            names = "; ".join(d.say("conditions", c) for c in d.filters(evs[0]) if key(c) in shared)
-            out.append(finding("guard", evs[0], f"{evs[0].place}: with events {', '.join(str(x.n) for x in evs[1:])}, "
-                       f"the same {len(shared)} conditions ({names}) in {len(evs)} events; test them once: a parent "
-                       f"event or a group with these conditions and the events as its sub-events, or one condition "
-                       f"that says the same, such as a state instance variable on {sample.get('objectClass')}",
-                       events=[x.n for x in evs]))
+            evs = sorted(evs, key=lambda x: x.n)
+            guard = [c for c in d.filters(evs[0]) if key(c) in shared]
+            names = "; ".join(d.say("conditions", c) for c in guard)
+            out.append(finding(
+                "guard", evs[0], f"{evs[0].place}: with events {', '.join(str(x.n) for x in evs[1:])}, "
+                f"the same {len(shared)} conditions ({names}) in {len(evs)} events; test them once: a parent "
+                f"event or a group with these conditions and the events as its sub-events, or one condition "
+                f"that says the same, such as a state instance variable on {guard[0].get('objectClass')}",
+                events=[x.n for x in evs]))
     # one finding per guard: the largest set first, its smaller copies on the same events dropped
     out.sort(key=lambda f: -f["line"].count(";"))
     kept: list[dict] = []
@@ -380,9 +406,9 @@ def idle_rule(d: Design) -> list[dict]:
             by_object: dict[str, list[dict]] = {}
             for c in inverted:
                 by_object.setdefault(c["objectClass"], []).append(c)
-            obj, conds = max(by_object.items(), key=lambda kv: len(kv[1]), default=(None, []))
+            on_one_object = max(map(len, by_object.values()), default=0)
             variant = "+".join(v for v, hit in (("mechanisms", len(mechanisms) >= IDLE_INVERTED),
-                                                ("object", len(conds) >= IDLE_INVERTED)) if hit)
+                                                ("object", on_one_object >= IDLE_INVERTED)) if hit)
             if variant:
                 out.append(finding("idle", e, f"{e.place}: {len(inverted)} inverted conditions "
                            f"({'; '.join(d.say('conditions', c) for c in inverted)}), a test that the instance is "
@@ -455,10 +481,8 @@ def trigger_rule(d: Design) -> list[dict]:
     globals_ = d.globals()
 
     def global_test(e: Ev) -> bool:
-        for c in d.filters(e):
-            if c.get("id") in READS and str((c.get("parameters") or {}).get("variable", "")).lower() in globals_:
-                return True
-        return False
+        return any(c.get("id") in READS and str(params_of(c).get("variable", "")).lower() in globals_
+                   for c in d.filters(e))
     for sheet in d.rows:
         lists: dict[int, list[Ev]] = {}
         for e in d.blocks(sheet):
@@ -492,26 +516,25 @@ def trigger_rule(d: Design) -> list[dict]:
 # --- f: one fact written into an Array and an instance variable --------------------------
 def twice_rule(d: Design) -> list[dict]:
     out = []
-    for sheet in d.rows:
-        for e in d.rows[sheet]:
-            acts = e.actions
-            for a in acts:
-                axes = ARRAY_SETS.get(a.get("id"))
-                params = a.get("parameters") if isinstance(a.get("parameters"), dict) else {}
-                if not axes or not all(isinstance(params.get(x), str) for x in axes):
-                    continue
-                owners = {m.group(1) for x in axes for m in [re.fullmatch(r"\s*(\w+)\s*\.\s*\w+\s*", params[x])] if m}
-                value = re.sub(r"\s+", "", str(params.get("value", "")))
-                for b in acts:
-                    bp = b.get("parameters") if isinstance(b.get("parameters"), dict) else {}
-                    if b.get("id") == "set-instvar-value" and b.get("objectClass") in owners and \
-                            re.sub(r"\s+", "", str(bp.get("value", ""))) == value:
-                        obj, var = b["objectClass"], bp.get("instance-variable")
-                        out.append(finding("twice", e, f"{e.place}: writes {params['value']} into "
-                                   f"{a.get('objectClass')} at ({', '.join(params[x] for x in axes)}) and into "
-                                   f"{obj}.{var}, two copies of one fact that the events must keep equal; keep it in "
-                                   f"one place: {obj}.{var} when each {obj} stands for its cell (read and test it "
-                                   f"there), or the Array alone with {obj} drawing from it"))
+    for e in d.all_rows():
+        acts = e.actions
+        for a in acts:
+            axes = ARRAY_SETS.get(a.get("id"))
+            params = params_of(a)
+            if not axes or not all(isinstance(params.get(x), str) for x in axes):
+                continue
+            owners = {m.group(1) for m in map(MEMBER.fullmatch, (params[x] for x in axes)) if m}
+            value = unspaced(str(params.get("value", "")))
+            for b in acts:
+                bp = params_of(b)
+                if b.get("id") == "set-instvar-value" and b.get("objectClass") in owners and \
+                        unspaced(str(bp.get("value", ""))) == value:
+                    obj, var = b["objectClass"], bp.get("instance-variable")
+                    out.append(finding("twice", e, f"{e.place}: writes {params['value']} into "
+                               f"{a.get('objectClass')} at ({', '.join(params[x] for x in axes)}) and into "
+                               f"{obj}.{var}, two copies of one fact that the events must keep equal; keep it in "
+                               f"one place: {obj}.{var} when each {obj} stands for its cell (read and test it "
+                               f"there), or the Array alone with {obj} drawing from it"))
     return out
 
 
@@ -527,21 +550,20 @@ def global_uses(d: Design) -> dict[str, list[Use]]:
     in scope taking the name over."""
     globals_ = d.globals()
     uses: dict[str, list[Use]] = {g: [] for g in globals_}
-    for sheet, rows in d.rows.items():
-        for e in rows:
-            if e.kind == "variable":
-                continue
-            for kind, aces in (("conditions", e.conditions), ("actions", e.actions)):
-                for ace in aces:
-                    params = ace.get("parameters") if isinstance(ace.get("parameters"), dict) else {}
-                    named = str(params.get("variable", "")).lower()
-                    if named in uses and named not in e.scope and (ace.get("id") in WRITES or ace.get("id") in READS):
-                        uses[named].append(Use(e, ace.get("id") in WRITES))
-                    for v in d.expressions(kind, ace).values():
-                        for m in IDENT.finditer(blank(v)):
-                            name = m.group(1).lower()
-                            if name in uses and name not in e.scope:
-                                uses[name].append(Use(e, False))
+    for e in d.all_rows():
+        if e.kind == "variable":
+            continue
+        for kind, aces in (("conditions", e.conditions), ("actions", e.actions)):
+            for ace in aces:
+                ace_id = ace.get("id")
+                named = str(params_of(ace).get("variable", "")).lower()
+                if named in uses and named not in e.scope and (ace_id in WRITES or ace_id in READS):
+                    uses[named].append(Use(e, ace_id in WRITES))
+                for v in d.expressions(kind, ace).values():
+                    for m in IDENT.finditer(blank(v)):
+                        name = m.group(1).lower()
+                        if name in uses and name not in e.scope:
+                            uses[name].append(Use(e, False))
     return uses
 
 
@@ -549,7 +571,6 @@ def global_rule(d: Design) -> list[dict]:
     out = []
     globals_ = d.globals()
     uses = global_uses(d)
-    writers_of: dict[str, set] = {}
     for g, us in uses.items():
         sheet, var = globals_[g]
         name = var.get("name")
@@ -559,24 +580,26 @@ def global_rule(d: Design) -> list[dict]:
             continue
         functions = {u.e.function for u in us}
         groups = {u.e.group for u in us}
-        writers_of[g] = {u.e.function for u in written}
+        writers = {u.e.function for u in written}
         if SCRATCH.match(str(name)):
             out.append(finding("global", None, f"{place}: a scratch global, written in "
                        f"{describe_owners(written)} and read in {describe_owners([u for u in us if not u.write])}; "
                        f"a value one event computes is a local of that event, and one handed to a function is its "
                        f"parameter or its return value", sheet=sheet, variant="scratch"))
         elif len(functions) == 1 and None not in functions:
+            (owner,) = functions
             out.append(finding("global", None, f"{place}: read and written only in function "
-                       f"{next(iter(functions))}; declare it there as a local variable, static when it keeps its value "
+                       f"{owner}; declare it there as a local variable, static when it keeps its value "
                        f"between calls", sheet=sheet, variant="function",
-                       short=f"global {name} in function {next(iter(functions))}"))
-        elif len(groups) == 1 and None not in groups and len(functions - {None}) == 0:
-            out.append(finding("global", None, f"{place}: read and written only in group {next(iter(groups))}; declare it "
+                       short=f"global {name} in function {owner}"))
+        elif len(groups) == 1 and None not in groups and functions == {None}:
+            (owner,) = groups
+            out.append(finding("global", None, f"{place}: read and written only in group {owner}; declare it "
                        f"as the group's first child, a static local when it keeps its value from tick to tick",
-                       sheet=sheet, variant="group", short=f"global {name} in group {next(iter(groups))}"))
-        elif len(writers_of[g] - {None}) >= 2 and any(u.e.function not in writers_of[g] for u in us if not u.write):
+                       sheet=sheet, variant="group", short=f"global {name} in group {owner}"))
+        elif len(writers - {None}) >= 2 and any(u.e.function not in writers for u in us if not u.write):
             out.append(finding("global", None, f"{place}: written in functions "
-                       f"{', '.join(sorted(f for f in writers_of[g] if f))} and read elsewhere, a value handed "
+                       f"{', '.join(sorted(f for f in writers if f))} and read elsewhere, a value handed "
                        f"between functions through a global; return it from the function that computes it, or "
                        f"pass it as a parameter", sheet=sheet, variant="handoff"))
     laid = {lay.get("eventSheet") for lay in d.layouts.values()}
@@ -609,54 +632,48 @@ def globals_count(d: Design) -> dict[str, int]:
 def uid_rule(d: Design) -> list[dict]:
     out = []
     picks: dict[str, list[Ev]] = {}
-    for rows in d.rows.values():
-        for e in rows:
-            for c in e.conditions:
-                if c.get("id") == "pick-by-unique-id":
-                    v = str((c.get("parameters") or {}).get("unique-id", ""))
-                    for m in re.finditer(r"(\w+)\s*\.\s*(\w+)", blank(v)):
-                        picks.setdefault(m.group(2).lower(), []).append(e)
-    seen = set()
-    for rows in d.rows.values():
-        for e in rows:
-            for a in e.actions:
-                params = a.get("parameters") if isinstance(a.get("parameters"), dict) else {}
-                m = UID_OF.match(str(params.get("value", "")))
-                var = str(params.get("instance-variable", ""))
-                if a.get("id") != "set-instvar-value" or not m or var.lower() not in picks:
-                    continue
-                if (a.get("objectClass"), var) in seen:
-                    continue
-                seen.add((a.get("objectClass"), var))
-                where = picks[var.lower()][0]
-                made = any(b.get("id") in ("create-object", "spawn-another-object") and m.group(1).lower() in
-                           {str(v).lower() for v in (b.get("parameters") or {}).values()} for b in e.actions)
-                out.append(finding("uid", e, f"{e.place}: sets {a.get('objectClass')}.{var} to {m.group(1)}.UID, "
-                           f"and {where.place} picks {m.group(1)} back by it; link the two as the engine does: a "
-                           f"container when they are created and destroyed together (picking one picks the other), "
-                           f"or {m.group(1)} as a child of {a.get('objectClass')} in a hierarchy (Pick children)",
-                           variant="created" if made else "kept", short=f"{a.get('objectClass')}.{var}"))
+    for e in d.all_rows():
+        for c in e.conditions:
+            if c.get("id") == "pick-by-unique-id":
+                v = str(params_of(c).get("unique-id", ""))
+                for m in re.finditer(r"(\w+)\s*\.\s*(\w+)", blank(v)):
+                    picks.setdefault(m.group(2).lower(), []).append(e)
+    seen: set[tuple[str | None, str]] = set()
+    for e in d.all_rows():
+        for a in e.actions:
+            params = params_of(a)
+            m = UID_OF.match(str(params.get("value", "")))
+            var = str(params.get("instance-variable", ""))
+            if a.get("id") != "set-instvar-value" or not m or var.lower() not in picks:
+                continue
+            if (a.get("objectClass"), var) in seen:
+                continue
+            seen.add((a.get("objectClass"), var))
+            where = picks[var.lower()][0]
+            made = any(b.get("id") in ("create-object", "spawn-another-object") and m.group(1).lower() in
+                       {str(v).lower() for v in params_of(b).values()} for b in e.actions)
+            out.append(finding("uid", e, f"{e.place}: sets {a.get('objectClass')}.{var} to {m.group(1)}.UID, "
+                       f"and {where.place} picks {m.group(1)} back by it; link the two as the engine does: a "
+                       f"container when they are created and destroyed together (picking one picks the other), "
+                       f"or {m.group(1)} as a child of {a.get('objectClass')} in a hierarchy (Pick children)",
+                       variant="created" if made else "kept", short=f"{a.get('objectClass')}.{var}"))
     return out
 
 
 # --- i: a table written as actions -------------------------------------------------------
 def data_rule(d: Design) -> list[dict]:
     out = []
-    for sheet in d.rows:
-        for e in d.rows[sheet]:
-            counts: dict[tuple, int] = {}
-            for a in e.actions:
-                values = d.expressions("actions", a)
-                if values and all(is_literal(v) for v in values.values()):
-                    counts[(a.get("objectClass"), a.get("id"))] = counts.get((a.get("objectClass"), a.get("id")), 0) + 1
-            for (obj, ace_id), n in counts.items():
-                if n >= DATA_ACTIONS:
-                    out.append(finding("data", e, f"{e.place}: {n} {obj} {ace_id} actions with literal values, a "
-                               f"table written as events; keep it in a project file, an Array with one record per row "
-                               f"and one field per column under Files, load it at start with AJAX Request project "
-                               f"file and Load from AJAX.LastData, and copy it into {obj} with a For loop over its "
-                               f"rows and fields. A generator writes the file with record_table() and the events "
-                               f"with load_data_file() and table_to_dictionary(), in assets/build_project.py"))
+    for e in d.all_rows():
+        counts = Counter((a.get("objectClass"), a.get("id")) for a in e.actions
+                         if (values := d.expressions("actions", a)) and all(is_literal(v) for v in values.values()))
+        for (obj, ace_id), n in counts.items():
+            if n >= DATA_ACTIONS:
+                out.append(finding("data", e, f"{e.place}: {n} {obj} {ace_id} actions with literal values, a "
+                           f"table written as events; keep it in a project file, an Array with one record per row "
+                           f"and one field per column under Files, load it at start with AJAX Request project "
+                           f"file and Load from AJAX.LastData, and copy it into {obj} with a For loop over its "
+                           f"rows and fields. A generator writes the file with record_table() and the events "
+                           f"with load_data_file() and table_to_dictionary(), in assets/build_project.py"))
     return out
 
 
@@ -678,8 +695,8 @@ def restart_rule(d: Design) -> list[dict]:
         if sheet not in d.rows:
             continue
         sheets = reached(sheet, set())
-        again = any(a.get("id") == "restart-layout" or a.get("id") == "go-to-layout"
-                    and str((a.get("parameters") or {}).get("layout", "")) == layout
+        again = any(a.get("id") == "restart-layout"
+                    or (a.get("id") == "go-to-layout" and str(params_of(a).get("layout", "")) == layout)
                     for s in sheets for e in d.rows.get(s, []) for a in e.actions)
         if not again:
             continue
@@ -690,12 +707,12 @@ def restart_rule(d: Design) -> list[dict]:
                 t = d.trigger(e)
                 if not t or (t.get("objectClass"), t.get("id")) != ("System", "on-start-of-layout"):
                     continue
-                for row in [e, *descendants(e)]:
+                for row in e.subtree():
                     for c in row.conditions:
-                        obj = (c.get("parameters") or {}).get("object") if c.get("id") == "pick-all" else None
+                        obj = params_of(c).get("object") if c.get("id") == "pick-all" else None
                         if not obj or d.types.get(obj, {}).get("isGlobal"):
                             continue
-                        sets = [a for r in [row, *descendants(row)] for a in r.actions
+                        sets = [a for r in row.subtree() for a in r.actions
                                 if a.get("objectClass") == obj and SETS_ON_INSTANCES.match(str(a.get("id")))]
                         if sets:
                             out.append(finding("restart", row, f"{row.place}: On start of layout picks all {obj} "
@@ -706,12 +723,6 @@ def restart_rule(d: Design) -> list[dict]:
     return out
 
 
-def descendants(e: Ev) -> Iterator[Ev]:
-    for k in e.children:
-        yield k
-        yield from descendants(k)
-
-
 # --- k: an expression that should be a function ------------------------------------------
 def calls(expr: str) -> list[str]:
     """Every call in an expression, as written from its name to its closing parenthesis,
@@ -720,9 +731,9 @@ def calls(expr: str) -> list[str]:
     for m in CALL.finditer(plain):
         depth = 0
         for j in range(m.end() - 1, len(plain)):
-            depth += {"(": 1, ")": -1}.get(plain[j], 0)
+            depth += PAREN.get(plain[j], 0)
             if depth == 0:
-                out.append(re.sub(r"\s+", "", expr[m.start():j + 1]))
+                out.append(unspaced(expr[m.start():j + 1]))
                 break
     return out
 
@@ -730,33 +741,30 @@ def calls(expr: str) -> list[str]:
 def nesting(expr: str) -> int:
     depth = deepest = 0
     for ch in expr:
-        depth += {"(": 1, ")": -1}.get(ch, 0)
+        depth += PAREN.get(ch, 0)
         deepest = max(deepest, depth)
     return deepest
 
 
 def expression_shape(expr: str) -> tuple[int, str]:
     """(parentheses deep, the longest call written twice) of an expression, texts emptied."""
-    counted: dict[str, int] = {}
-    for c in calls(expr):
-        counted[c] = counted.get(c, 0) + 1
+    counted = Counter(calls(expr))
     repeated = max((c for c, n in counted.items() if n > 1), key=len, default="")
     return nesting(blank(expr)), repeated
 
 
 def expression_rule(d: Design) -> list[dict]:
     out = []
-    for sheet in d.rows:
-        for e in d.rows[sheet]:
-            for kind, param, i, v in d.all_expressions(e):
-                deep, repeated = expression_shape(v)
-                if len(repeated) >= REPEATED_CALL and deep >= DEEP:
-                    shown = repeated if len(repeated) <= 60 else repeated[:57] + "..."
-                    out.append(finding("expression", e, f"{e.place} {kind[:-1]} {i} ({param}): computes {shown} "
-                               f"more than once, {deep} parentheses deep; write a function that returns the value, "
-                               f"with a local variable for the repeated part and a sub-event per decision, and call "
-                               f"it here (a ?: for a two-way choice, an Array or Advanced Random for a table or a "
-                               f"weighted pick)"))
+    for e in d.all_rows():
+        for kind, param, i, v in d.all_expressions(e):
+            deep, repeated = expression_shape(v)
+            if len(repeated) >= REPEATED_CALL and deep >= DEEP:
+                shown = repeated if len(repeated) <= 60 else repeated[:57] + "..."
+                out.append(finding("expression", e, f"{e.place} {kind[:-1]} {i} ({param}): computes {shown} "
+                           f"more than once, {deep} parentheses deep; write a function that returns the value, "
+                           f"with a local variable for the repeated part and a sub-event per decision, and call "
+                           f"it here (a ?: for a two-way choice, an Array or Advanced Random for a table or a "
+                           f"weighted pick)"))
     return out
 
 
@@ -769,7 +777,7 @@ TWEEN_MOVES = {"position", "offsetx", "offsety"}
 def moves(a: dict) -> bool:
     if a.get("id") in MOVES and not a.get("behaviorType"):
         return True
-    prop = str((a.get("parameters") or {}).get("property", "")).lower() if isinstance(a.get("parameters"), dict) else ""
+    prop = str(params_of(a).get("property", "")).lower()
     return str(a.get("id", "")).startswith("tween-") and prop in TWEEN_MOVES
 
 
@@ -785,11 +793,10 @@ def has_parent(d: Design) -> set[str]:
                 for child in graph.get("children") or []:
                     parent_of[child.get("uid")] = inst.get("uid")
     children = {type_of.get(child) for child in parent_of}
-    for rows in d.rows.values():
-        for e in rows:
-            for a in e.actions:
-                if a.get("id") == "add-child":
-                    children.add((a.get("parameters") or {}).get("child"))
+    for e in d.all_rows():
+        for a in e.actions:
+            if a.get("id") == "add-child":
+                children.add(params_of(a).get("child"))
     return children
 
 
@@ -800,11 +807,9 @@ def together_made(d: Design) -> set[tuple[str, str]]:
     for c in d.containers:
         members = [str(m) for m in c.get("members", [])]
         out |= {(a, b) for a in members for b in members if a != b}
-    for rows in d.rows.values():
-        for e in rows:
-            made = [str((a.get("parameters") or {}).get("object-to-create", "")) for a in e.actions
-                    if a.get("id") == "create-object"]
-            out |= {(a, b) for a in made for b in made if a != b}
+    for e in d.all_rows():
+        made = [str(params_of(a).get("object-to-create", "")) for a in e.actions if a.get("id") == "create-object"]
+        out |= {(a, b) for a in made for b in made if a != b}
     return out
 
 
@@ -817,20 +822,19 @@ def follow_rule(d: Design) -> list[dict]:
     """A part set to an object's position in one event, then the object moved by another
     event that leaves the part behind: a label that stays where a card was drawn."""
     placed: dict[tuple[str, str], list[Ev]] = {}
-    for rows in d.rows.values():
-        for e in rows:
-            for a in e.actions:
-                part = a.get("objectClass")
-                if not part or not moves(a) or a.get("behaviorType"):
-                    continue
-                text = " ".join(blank(v) for v in d.expressions("actions", a).values())
-                owners = {m.group(1) for m in re.finditer(r"(?<![\w.])(\w+)\s*\.\s*(?:x|y|imagepointx|imagepointy)\b",
-                                                          text, re.I)}
-                if a.get("id") == "set-position-to-another-object":
-                    owners.add(str((a.get("parameters") or {}).get("object", "")))
-                for owner in owners:
-                    if owner in d.types and owner != part:
-                        placed.setdefault((owner, part), []).append(e)
+    for e in d.all_rows():
+        for a in e.actions:
+            part = a.get("objectClass")
+            if not part or not moves(a) or a.get("behaviorType"):
+                continue
+            text = " ".join(blank(v) for v in d.expressions("actions", a).values())
+            owners = {m.group(1) for m in re.finditer(r"(?<![\w.])(\w+)\s*\.\s*(?:x|y|imagepointx|imagepointy)\b",
+                                                      text, re.I)}
+            if a.get("id") == "set-position-to-another-object":
+                owners.add(str(params_of(a).get("object", "")))
+            for owner in owners:
+                if owner in d.types and owner != part:
+                    placed.setdefault((owner, part), []).append(e)
     children, pinned = has_parent(d), {n for n, t in d.types.items()
                                 for b in t.get("behaviorTypes", []) if b.get("behaviorId") == "Pin"}
     together = together_made(d)
@@ -839,14 +843,12 @@ def follow_rule(d: Design) -> list[dict]:
         if (owner, part) not in together or part in children or part in pinned \
                 or any(every_tick(d, e) for e in where):
             continue
-        for rows in d.rows.values():
-            for e in rows:
-                acts = [a for r in [e, *descendants(e)] for a in r.actions]
-                if not any(a.get("objectClass") == owner and moves(a) for a in e.actions):
-                    continue
-                if any(a.get("objectClass") == part for a in acts) or e in where:
-                    continue
-                left.setdefault((id(e), owner), (e, [], where[0]))[1].append(part)
+        for e in d.all_rows():
+            if not any(a.get("objectClass") == owner and moves(a) for a in e.actions):
+                continue
+            if e in where or any(a.get("objectClass") == part for r in e.subtree() for a in r.actions):
+                continue
+            left.setdefault((id(e), owner), (e, [], where[0]))[1].append(part)
     out = []
     for (_, owner), (e, parts, first) in left.items():
         names = " and ".join(sorted(parts))
@@ -890,13 +892,19 @@ def questions(found: list[dict], shown: set[str]) -> list[str]:
              f"edit_sheet.py, and run this review again:"]
     for n, (ask, text) in enumerate(QUESTIONS.items(), 1):
         named = [f for f in found if f["ask"] == ask and f["sheet"] in shown]
-        named.sort(key=lambda f: (-int((re.match(r"\d+", f["short"]) or [0])[0]), f["sheet"], f["event"] or 0))
+        named.sort(key=lambda f: (-leading_count(f["short"]), f["sheet"], f["event"] or 0))
         places = [f"{f['sheet']} {f['event']} ({f['short']})" if f["event"] else f"{f['sheet']} ({f['short']})"
                   for f in named[:SHOWN]]
         more = f" and {len(named) - SHOWN} more" if len(named) > SHOWN else ""
         lines.append(f"  {n}. {text}" + (f" Events: {', '.join(places)}{more}." if places else
                                          " No event named: answer it for the sheets you changed."))
     return lines
+
+
+def leading_count(short: str) -> int:
+    """The number a short description starts with ("11 conditions"), 0 when it starts with none."""
+    m = re.match(r"\d+", short)
+    return int(m.group()) if m else 0
 
 
 def report(found: list[dict], sheets: list[str]) -> tuple[list[str], list[str]]:
