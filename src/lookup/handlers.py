@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import jieba
+from typing import NamedTuple
 
 from src.domain.lookup import ACELocale, LookupIntent, LookupMatch
 from src.locale.resources import ACE_DIRECTED_ALIASES
@@ -14,10 +14,11 @@ from src.lookup.formatting import (
     TERM_TABLE_SEPARATOR,
     TERM_TRANSLATE_HEADER,
     build_zh_line,
-    format_condition_sig,
     format_params,
+    format_signature,
     match_from_item,
 )
+from src.lookup.intent import expand_cjk_tokens
 from src.lookup.schema_index import SchemaIndex
 from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 from src.lookup.term_index import TermIndex
@@ -30,10 +31,45 @@ _SINGULAR = {
     "expressions": "expression",
 }
 
+# The ace_type of a translated term, per list its key names.
+_TERM_SINGULAR = {**_SINGULAR, "properties": "property"}
+
 
 def _ace_types_of(intent: LookupIntent) -> list[str]:
     """The ACE lists an intent names, from its comma-separated ``ace_type``."""
     return [value.strip() for value in intent.ace_type.split(",") if value.strip()]
+
+
+def _collection(intent: LookupIntent) -> str:
+    return "behaviors" if intent.is_behavior else "plugins"
+
+
+def _description(item: dict) -> str:
+    return item.get("description_en", "") or item.get("description_zh", "")
+
+
+def _plugin_en(schema: dict, plugin_id: str) -> str:
+    return schema.get("name_en", schema.get("originalId", plugin_id))
+
+
+def _zh_line(schema: dict, plugin_id: str, zh_pairs: list[tuple[str, str]]) -> str:
+    """The compatibility mapping line of an addon's result, empty when nothing maps."""
+    return build_zh_line(_plugin_en(schema, plugin_id), schema.get("name_zh", ""), zh_pairs)
+
+
+class _Candidate(NamedTuple):
+    """One ACE whose name holds a filter word, with what ranks it."""
+
+    score: float
+    match_count: int
+    first_position: int
+    schema_order: int
+    type_order: int
+    item_order: int
+    source_id: str
+    schema: dict
+    ace_type: str
+    item: dict
 
 
 class LookupHandlers:
@@ -75,6 +111,15 @@ class LookupHandlers:
         )
         return ExamplesIndex.format_for_ace(example_records)
 
+    def _common_schema_of(self, schema: dict) -> dict | None:
+        """The part of ``_common`` the schema's ``commonAces`` lists, or None."""
+        if not schema.get("commonAces"):
+            return None
+        common_schema = self.schema_index.get_schema("_common", False)
+        if not common_schema:
+            return None
+        return self._plugin_common_aces(common_schema, schema)
+
     def _format_ace_list(
         self,
         intent: LookupIntent,
@@ -86,49 +131,41 @@ class LookupHandlers:
         if not schema:
             return "", []
 
-        ace_types = _ace_types_of(intent)
-        if len(ace_types) > 1:
-            contexts = []
-            all_matches = []
-            for ace_type in ace_types:
-                sub_intent = LookupIntent(
-                    intent_type="ace_list",
-                    plugin_id=intent.plugin_id,
-                    ace_type=ace_type,
-                    is_behavior=intent.is_behavior,
-                    tier=intent.tier,
-                    confidence=intent.confidence,
-                    matched_tags=intent.matched_tags,
-                )
-                context, matches = self._format_ace_list(sub_intent)
-                if context:
-                    contexts.append(context)
-                    all_matches.extend(matches)
-            return "\n".join(contexts), all_matches
+        example_line = self._example_line(schema, intent)
+        contexts: list[str] = []
+        matches: list[LookupMatch] = []
+        for ace_type in _ace_types_of(intent) or [intent.ace_type]:
+            context, type_matches = self._ace_list_of_type(
+                schema, intent, ace_type, example_line
+            )
+            if context:
+                contexts.append(context)
+                matches.extend(type_matches)
+        return "\n".join(contexts), matches
 
-        ace_type = ace_types[0] if ace_types else intent.ace_type
+    def _ace_list_of_type(
+        self,
+        schema: dict,
+        intent: LookupIntent,
+        ace_type: str,
+        example_line: str,
+    ) -> tuple[str, list[LookupMatch]]:
         # The complete list is the addon's own ACEs, then the shared ones its
         # commonAces lists from _common.json, keyed there.
         sources: list[tuple[str, str, list[dict]]] = [
             (intent.plugin_id, schema.get("name_zh", ""), schema.get(ace_type, []))
         ]
-        if schema.get("commonAces"):
-            common_schema = self.schema_index.get_schema("_common", False)
-            if common_schema:
-                sources.append((
-                    "_common",
-                    common_schema.get("name_zh", ""),
-                    self._plugin_common_aces(common_schema, schema).get(ace_type, []),
-                ))
+        common_schema = self._common_schema_of(schema)
+        if common_schema:
+            sources.append((
+                "_common",
+                common_schema.get("name_zh", ""),
+                common_schema.get(ace_type, []),
+            ))
         if not any(items for _, _, items in sources):
             return "", []
 
         prefix = ACE_PREFIX.get(ace_type, "?")
-        plugin_en = schema.get(
-            "name_en",
-            schema.get("originalId", intent.plugin_id),
-        )
-        plugin_zh = schema.get("name_zh", "")
         lines = []
         zh_pairs: list[tuple[str, str]] = []
         matches: list[LookupMatch] = []
@@ -136,16 +173,9 @@ class LookupHandlers:
             for item in items:
                 name_en = item.get("name_en", "")
                 name_zh = item.get("name_zh", "")
-                description = item.get("description_en", "") or item.get(
-                    "description_zh", ""
-                )
                 params = item.get("params", [])
-                signature = (
-                    format_condition_sig(name_en, params)
-                    if ace_type == "conditions"
-                    else f"{name_en}({format_params(params)})"
-                )
-                lines.append(f"{prefix}: {signature}: {description}")
+                signature = format_signature(ace_type, name_en, params)
+                lines.append(f"{prefix}: {signature}: {_description(item)}")
                 if name_zh and name_zh != name_en:
                     zh_pairs.append((name_en, name_zh))
                 matches.append(
@@ -157,14 +187,11 @@ class LookupHandlers:
                         name_en,
                         name_zh,
                         params,
-                        collection=(
-                            "behaviors" if intent.is_behavior else "plugins"
-                        ),
+                        collection=_collection(intent),
                     )
                 )
 
-        lines.append(build_zh_line(plugin_en, plugin_zh, zh_pairs))
-        example_line = self._example_line(schema, intent)
+        lines.append(_zh_line(schema, intent.plugin_id, zh_pairs))
         if example_line:
             lines.extend(("", example_line))
         return "\n".join(line for line in lines if line), matches
@@ -181,48 +208,35 @@ class LookupHandlers:
             return "", []
 
         target = intent.ace_name.strip().lower()
-        found_item = None
-        found_type = ""
-        for ace_type in ("actions", "conditions", "expressions"):
-            for item in schema.get(ace_type, []):
+        found = next(
+            (
+                (ace_type, item)
+                for ace_type in ("actions", "conditions", "expressions")
+                for item in schema.get(ace_type, [])
                 if any(
-                    target in value
-                    for value in (
-                        item.get("name_zh", "").lower(),
-                        item.get("name_en", "").lower(),
-                        item.get("id", "").lower(),
-                    )
-                ):
-                    found_item = item
-                    found_type = ace_type
-                    break
-            if found_item:
-                break
-        if not found_item:
+                    target in item.get(key, "").lower()
+                    for key in ("name_zh", "name_en", "id")
+                )
+            ),
+            None,
+        )
+        if found is None:
             return "", []
+        found_type, found_item = found
 
-        plugin_en = schema.get("name_en", intent.plugin_id)
         plugin_zh = schema.get("name_zh", "")
         name_en = found_item.get("name_en", "")
         name_zh = found_item.get("name_zh", "")
-        description = found_item.get("description_en", "") or found_item.get(
-            "description_zh", ""
-        )
         params = found_item.get("params", [])
-        signature = (
-            format_condition_sig(name_en, params)
-            if found_type == "conditions"
-            else f"{name_en}({format_params(params)})"
-        )
-        lines = [f"{ACE_PREFIX.get(found_type, '?')}: {signature}: {description}"]
+        signature = format_signature(found_type, name_en, params)
+        lines = [
+            f"{ACE_PREFIX.get(found_type, '?')}: {signature}: {_description(found_item)}"
+        ]
         for param in params:
-            param_name = param.get("name_en", "")
-            param_type = param.get("type", "")
-            param_description = param.get("desc_en", "") or param.get(
-                "desc_zh", ""
-            )
+            param_description = param.get("desc_en", "") or param.get("desc_zh", "")
             lines.append(
-                f"  - {param_name} ({param_type}): {param_description}"
+                f"  - {param.get('name_en', '')} ({param.get('type', '')}): "
+                f"{param_description}"
             )
 
         zh_pairs = (
@@ -230,7 +244,7 @@ class LookupHandlers:
             if name_zh and name_zh != name_en
             else []
         )
-        lines.append(build_zh_line(plugin_en, plugin_zh, zh_pairs))
+        lines.append(_zh_line(schema, intent.plugin_id, zh_pairs))
         example_line = self._example_line(schema, intent)
         if example_line:
             lines.extend(("", example_line))
@@ -243,7 +257,7 @@ class LookupHandlers:
             name_en,
             name_zh,
             params,
-            collection="behaviors" if intent.is_behavior else "plugins",
+            collection=_collection(intent),
         )
         return "\n".join(line for line in lines if line), [match]
 
@@ -318,19 +332,10 @@ class LookupHandlers:
         if not schema:
             return "", []
 
-        raw_words = [
-            word for word in intent.filter_term.lower().split() if word
-        ]
+        raw_words = intent.filter_term.lower().split()
         if not raw_words:
             return "", []
-        filter_words = set(raw_words)
-        for word in raw_words:
-            if any("\u4e00" <= char <= "\u9fff" for char in word):
-                filter_words.update(
-                    segment
-                    for segment in jieba.lcut(word, cut_all=True)
-                    if len(segment) >= 2
-                )
+        filter_words = expand_cjk_tokens(raw_words)
 
         ace_types = sorted(
             _ace_types_of(intent),
@@ -339,22 +344,13 @@ class LookupHandlers:
         if not ace_types:
             return "", []
 
-        schemas_to_search: list[tuple[str, dict, bool]] = [
-            (intent.plugin_id, schema, intent.is_behavior)
-        ]
-        if schema.get("commonAces"):
-            common_schema = self.schema_index.get_schema("_common", False)
-            if common_schema:
-                schemas_to_search.append(
-                    ("_common", self._plugin_common_aces(common_schema, schema), False)
-                )
+        schemas_to_search: list[tuple[str, dict]] = [(intent.plugin_id, schema)]
+        common_schema = self._common_schema_of(schema)
+        if common_schema:
+            schemas_to_search.append(("_common", common_schema))
 
-        candidates: list[
-            tuple[float, int, int, int, int, int, str, dict, str, dict]
-        ] = []
-        for schema_order, (source_id, current_schema, _) in enumerate(
-            schemas_to_search
-        ):
+        candidates: list[_Candidate] = []
+        for schema_order, (source_id, current_schema) in enumerate(schemas_to_search):
             for ace_type in ace_types:
                 scoped_words, excluded_ids = self._scoped_filter_words(
                     filter_words,
@@ -386,71 +382,56 @@ class LookupHandlers:
                         if word in name
                     )
                     candidates.append(
-                        (
-                            sum(scoped_words[word] for word in matched_words),
-                            len(matched_words),
-                            first_position,
-                            schema_order,
-                            ACE_SORT_ORDER.get(ace_type, 99),
-                            item_order,
-                            source_id,
-                            current_schema,
-                            ace_type,
-                            item,
+                        _Candidate(
+                            score=sum(scoped_words[word] for word in matched_words),
+                            match_count=len(matched_words),
+                            first_position=first_position,
+                            schema_order=schema_order,
+                            type_order=ACE_SORT_ORDER.get(ace_type, 99),
+                            item_order=item_order,
+                            source_id=source_id,
+                            schema=current_schema,
+                            ace_type=ace_type,
+                            item=item,
                         )
                     )
         if not candidates:
             return "", []
 
-        best_score = max(candidate[0] for candidate in candidates)
+        best_score = max(candidate.score for candidate in candidates)
         candidates = [
             candidate
             for candidate in candidates
-            if candidate[0] >= best_score / 2
+            if candidate.score >= best_score / 2
         ]
         candidates.sort(
             key=lambda candidate: (
-                -candidate[0],
-                -candidate[1],
-                candidate[4],
-                candidate[2],
-                candidate[3],
-                candidate[5],
+                -candidate.score,
+                -candidate.match_count,
+                candidate.type_order,
+                candidate.first_position,
+                candidate.schema_order,
+                candidate.item_order,
             )
         )
 
-        plugin_en = schema.get(
-            "name_en",
-            schema.get("originalId", intent.plugin_id),
-        )
-        plugin_zh = schema.get("name_zh", "")
         lines: list[str] = []
         zh_pairs: list[tuple[str, str]] = []
         matches: list[LookupMatch] = []
-        for (
-            _,
-            match_count,
-            _,
-            _,
-            _,
-            _,
-            source_id,
-            current_schema,
-            ace_type,
-            item,
-        ) in candidates:
+        for candidate in candidates:
+            item = candidate.item
             name_en = item.get("name_en", "")
             name_zh = item.get("name_zh", "")
-            description = item.get("description_en", "") or item.get(
-                "description_zh", ""
-            )
             params = item.get("params", [])
             signature = (
                 name_en
-                if ace_type == "conditions"
+                if candidate.ace_type == "conditions"
                 else f"{name_en}({format_params(params)})"
             )
-            line = f"[{ACE_PREFIX.get(ace_type, '?')}] {signature}: {description}"
+            line = (
+                f"[{ACE_PREFIX.get(candidate.ace_type, '?')}] {signature}: "
+                f"{_description(item)}"
+            )
             display = item.get("display_en") or item.get("display_zh", "")
             if display:
                 line += f' display="{display}"'
@@ -464,18 +445,18 @@ class LookupHandlers:
 
             match = match_from_item(
                 item,
-                _SINGULAR.get(ace_type, ace_type),
-                source_id,
-                current_schema.get("name_zh", ""),
+                _SINGULAR.get(candidate.ace_type, candidate.ace_type),
+                candidate.source_id,
+                candidate.schema.get("name_zh", ""),
                 name_en,
                 name_zh,
                 params,
-                collection="behaviors" if intent.is_behavior else "plugins",
+                collection=_collection(intent),
             )
-            match.relevance = match_count
+            match.relevance = candidate.match_count
             matches.append(match)
 
-        lines.append(build_zh_line(plugin_en, plugin_zh, zh_pairs))
+        lines.append(_zh_line(schema, intent.plugin_id, zh_pairs))
         return "\n".join(line for line in lines if line), matches
 
     def _format_prop_list(
@@ -492,10 +473,6 @@ class LookupHandlers:
         if not items:
             return "", []
 
-        plugin_en = schema.get(
-            "name_en",
-            schema.get("originalId", intent.plugin_id),
-        )
         plugin_zh = schema.get("name_zh", "")
         lines = []
         zh_pairs: list[tuple[str, str]] = []
@@ -503,10 +480,7 @@ class LookupHandlers:
         for item in items:
             name_en = item.get("name_en", "")
             name_zh = item.get("name_zh", "")
-            description = item.get("description_en", "") or item.get(
-                "description_zh", ""
-            )
-            lines.append(f"P: {name_en}: {description}")
+            lines.append(f"P: {name_en}: {_description(item)}")
             if name_zh and name_zh != name_en:
                 zh_pairs.append((name_en, name_zh))
             matches.append(
@@ -517,12 +491,10 @@ class LookupHandlers:
                     plugin_zh,
                     name_en,
                     name_zh,
-                    collection=(
-                        "behaviors" if intent.is_behavior else "plugins"
-                    ),
+                    collection=_collection(intent),
                 )
             )
-        lines.append(build_zh_line(plugin_en, plugin_zh, zh_pairs))
+        lines.append(_zh_line(schema, intent.plugin_id, zh_pairs))
         return "\n".join(line for line in lines if line), matches
 
     def _format_term_translate(
@@ -560,12 +532,7 @@ class LookupHandlers:
                 ace_type = "plugin"
                 ace_id = "name"
             elif len(parts) >= 4:
-                ace_type = {
-                    "actions": "action",
-                    "conditions": "condition",
-                    "expressions": "expression",
-                    "properties": "property",
-                }.get(parts[2], parts[2].removesuffix("s"))
+                ace_type = _TERM_SINGULAR.get(parts[2], parts[2].removesuffix("s"))
                 ace_id = parts[3]
             else:
                 ace_type = "term"
