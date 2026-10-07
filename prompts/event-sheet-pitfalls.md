@@ -116,6 +116,7 @@ If you write expressions or name and place variables, read
 - If the factor comes from the engine, such as a tween's value, `lerp` needs no time of its own.
 - `lerp` and `unlerp` do not clamp.
 - `%` keeps the sign of the left operand, so `-1 % 5` is `-1`.
+- `%` is applied before `*`, so `a * b % c` is `a * (b % c)`. Write `(a * b) % c`.
 - There is no null, and a missing value reads as 0. Ask *Has key* or the size first.
 - JSON `Type(path)` is `"undefined"` for a missing path, so it can test presence inside an expression.
 - *For* counts down when its end is below its start. Before `For 0 to count - 1`, test the count, or start ≤ end.

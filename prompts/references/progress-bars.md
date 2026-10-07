@@ -97,31 +97,45 @@ upper tier]
 
 ## Ticks at a fixed value step
 
-A Tiled Background's *Set image scale X* stretches the tile image, so it
-changes the tile pitch and the thickness of a line drawn in the tile
-together, and ticks spaced by value cannot keep one width that way. Make each
-tick a Sprite and create them in a loop. This is one custom action on the
-frame, with the frame's origin on its left edge, `step` the value between two
-ticks and `pad` the thickness of the frame's border:
+A Tiled Background's *Set image scale X* scales the tile pitch and the line
+drawn in the tile together, so one tile image cannot draw ticks spaced by
+value at one width. A tenth of the scale draws a line a tenth as wide, and a
+line under a pixel wide shows faint and uneven. Draw the ticks on a Drawing
+Canvas: origin top-left, the size of the frame's inner area, over the fill,
+and a child of the frame. This is one custom action on the frame, with
+`step` the value between two ticks:
 
-1. Pick the frame's old ticks with *Pick children* and destroy them.
-2. In a second event, put the condition `ceil(Frame.maxHp / step) - 1 >= 1`
-   before `For i = 1 to ceil(Frame.maxHp / step) - 1`, because *For* counts
-   down when its end is below its start
-   ([pitfalls/expressions.md](../pitfalls/expressions.md)). Put *For each*
-   `Frame` first, so that each frame reads its own `maxHp`.
-3. In the loop, create a tick on the frame's layer, with `Frame.LayerName` as
-   the layer parameter, at X `round(Frame.X + pad + (Frame.Width - 2 * pad) *
-   loopindex("i") * step / Frame.maxHp)`. Set its height from the frame's
-   inner height, then *Add child* of the frame with destroy with parent on.
+1. Put *For each* `Frame` first, so that each frame reads its own `maxHp`,
+   then *Pick children* `Canvas`. *Clear canvas* to transparent.
+2. Draw a *Dashed line* through the middle of the canvas, from X
+   `Canvas.Width * step / Frame.maxHp` to `Canvas.Width`, with the thickness
+   `Canvas.Height` and the dash length half the spacing, `Canvas.Width *
+   step / Frame.maxHp / 2`.
+3. *Set drawing blend* to *Destination out*, draw the same line 2 px further
+   right, from `Canvas.Width * step / Frame.maxHp + 2` to `Canvas.Width + 2`,
+   then set the blend back to *Normal*. The second line cuts each dash down
+   to its first 2 px, so one tick stands at each step.
 
-Call the action at layout start and whenever the maximum changes. For a
-thicker tick at every 1000, set the width to `loopindex("i") * step % 1000 =
-0 ? 4 : 2`. [manual: plugin-reference/tiled-background.md "Set image X
-scale"; observed in a minimal project, stable editor preview, 2026-10-07:
-with 444 px of bar and a step of 100, a maximum of 3000 gave a
-spacing of 14.8 px, and bars with a maximum of 300, 1000 and 3000 held 2, 9
-and 29 ticks; after 300 was added to each maximum they held 5, 12 and 32]
+Call the action from the canvas's *On resolution changed*, after *Pick
+parent* `Frame`, and whenever the maximum changes. The canvas clears when its
+resolution changes, and the trigger also runs at start. At a pixel ratio of
+1, a tick at a fractional X covers 3 pixels.
+
+For ticks that differ, such as a thicker tick at every 1000, draw each with
+*Line* in a loop. Put the condition `ceil(Frame.maxHp / step) - 1 >= 1`
+before `For i = 1 to ceil(Frame.maxHp / step) - 1`, because *For* counts down
+when its end is below its start
+([pitfalls/expressions.md](../pitfalls/expressions.md)). Draw from Y 0 to
+`Canvas.Height` at X `round(Canvas.Width * loopindex("i") * step /
+Frame.maxHp) + w / 2`, with the thickness `w` as `(loopindex("i") * step) %
+1000 = 0 ? 4 : 2`. Keep the parentheses, because `%` is applied before `*`.
+[manual: plugin-reference/tiled-background.md "Set image X scale",
+plugin-reference/drawing-canvas.md "Handling resizing and resolution";
+observed in a minimal project, stable editor preview, 2026-10-07: a 32 px
+tile with a 1 px line at 46.25 % showed ticks at 25 to 46 % of full
+contrast; on 444 px of bar with a step of 100, both ways drew 2 and 29 ticks
+for a maximum of 300 and 3000, and 5 and 32 after 300 was added to each
+maximum, with the loop's 4 px ticks at 1000, 2000 and 3000]
 
 ## The object the art calls for
 
