@@ -46,6 +46,14 @@ end of this file.
 - `*.uistate.json` files and `uistate` folders hold the state of the editor's
   interface; deleting them loses nothing else. Palettes and tilemap brushes
   have folders of their own, `palettes/` and `tilemapBrushes/`.
+- The project property *Preview effects* (Project Properties, Editor) is
+  kept in `project.uistate.json` as `"previewEffects"`, not in
+  `project.c3proj`. Turned off, the Layout View draws every image without
+  its effects and blend mode. A 3D layout with depth effects such as Fog
+  (exponential) needs it off to be edited, since the editor's camera stands
+  far from the layout and the fog covers everything. The setting stays on
+  the machine that saved it. [manual: project-primitives/projects.md
+  "Preview effects"; observed in a game project, r505, 2026-10-08]
 
 ## Encodings
 
@@ -188,6 +196,17 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   `Sin` Sine. `solid`, `scrollto`, `jumpthru`, `bound`, `wrap`, `destroy` and
   `gamepad` are lowercase. Any other spelling stops the load with
   `missing plugin id`.
+- `savedWithRelease` in `project.c3proj` is the release that last saved the
+  project, the release number times 100 plus its patch: `49502` for r495.2,
+  `50500` for r505. An editor older than that refuses to open the project
+  ("saved in a newer version of Construct"). A save in a newer release can
+  be taken back by hand when no file but `project.c3proj` changed: set
+  `savedWithRelease` back and remove the project properties the older
+  release does not know. r505 adds `saveLLMContextFile` and changes some
+  display names in `usedAddons`, such as `bound` to "Bound to"; write
+  those names back as the older release spells them. [observed in a game
+  project, 2026-10-08: saved once in r505, refused by r495.2, opened and
+  previewed in r495.2 after these changes]
 - A family is `families/<Name>.json` (`name`, `plugin-id`, `sid`,
   `instanceVariables`, `behaviorTypes`, `effectTypes`, `members`), listed under
   `families` in `project.c3proj` like an object type. A container has no file:

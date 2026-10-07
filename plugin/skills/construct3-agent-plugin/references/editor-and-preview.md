@@ -168,3 +168,18 @@ which cases to play and how to reach and read them to
   (`c3_srcOriginToNorm` in WGSL), its size `abs(layoutEnd - layoutStart)`.
   [r495.2 effect sources; observed in r504 previews at 640x400 and
   1400x860, 2026-10-03: the same cells, scaled]
+- The stable editor, `https://editor.construct.net/`, and the beta,
+  `https://editor.construct.net/beta`, which redirects to the latest beta
+  release, are two releases. One save in the beta raises the project's
+  `savedWithRelease`, and the stable editor then refuses the project as
+  "saved in a newer version of Construct". A beta tab that stays open saves
+  the newer release again on its next save, so close it before putting the
+  project back, as `Construct3-RAG/prompts/references/hand-editing-project-files.md`
+  says under `savedWithRelease`. `open_in_editor.py` and
+  `preview_project.py` open such a project in the latest beta and pass; the
+  `opened` line names the beta only in its title, `Construct 3 beta,
+  https://editor.construct.net/r505/`. While `savedWithRelease` is above the
+  stable release, a pass says nothing about the editor the user opens.
+  [observed in a game project, 2026-10-08: saved once in r505, refused by
+  r495.2, and back at r505 after the fix, from a second save in the r505
+  tab]
