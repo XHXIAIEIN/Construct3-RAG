@@ -150,9 +150,9 @@ If an object chases, follows or walks to another object, read
 ### Input
 
 If the events use Mouse and Touch together, tell a finger from a mouse,
-hide what can be pressed or dragged, read a touch's speed, bind keys, steer
-a movement behavior, or ask the browser for fullscreen, a permission or a
-picker, read [pitfalls/input.md](pitfalls/input.md).
+hide what can be pressed or dragged, close a popup by a tap outside it,
+read a touch's speed, bind keys, steer a movement behavior, or ask the
+browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfalls/input.md).
 
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too. Detect the input method with it off.
@@ -165,6 +165,7 @@ picker, read [pitfalls/input.md](pitfalls/input.md).
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
 - Keyboard and Gamepad are separate conditions. Write both into one input object with a value per control and its last-tick copy, and read a press as `confirm > lastConfirm`.
+- Under *Scale outer* a dim sized to the design area leaves strips uncovered, and a tap on them misses *On touched* the dim. Size the cover 8000×8000 and close on *On any touch start* with *NOT Is touching* the panel and its buttons.
 
 ### Audio
 
@@ -286,8 +287,8 @@ If the events restart a layout or go to one, such as a new round, read
 
 ### Storage and export
 
-If the project saves data, is exported for the web or uses File System,
-read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md).
+If the project saves data, loads several data files with AJAX, is
+exported for the web or uses File System, read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md).
 
 - A web export looks for an update only when the page loads.
 - The Browser object holds back the browser's install banner. Offer installing with *Request install* after *On install available*.
@@ -295,6 +296,7 @@ read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md).
 - No tag names the Construct project folder. Save to `<current-app-data>`.
 - In a browser File System needs desktop Chromium and a user input trigger, and a save picker erases the file.
 - Android and iOS exports have no File System. Save with Local Storage and hand files over with Share.
+- JSON has no merge. Merge data files with *For each* at `""` and *Set JSON* `GetAsCompactString(CurrentKey)` per top-level key; requests sharing one AJAX tag each fire *On completed* with their own `LastData`, so count them down.
 
 ## Adding an entry
 

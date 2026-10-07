@@ -164,3 +164,22 @@ Sources and the rule for adding an entry are in the index,
   numbers. The copy and the clear come before the groups that write, so a
   consumer anywhere below them reads this tick's state. [observation in a
   studied project, 2026-10-06]
+- A popup closed by a tap on its dim, Touch *On touched object* with the
+  dim, closes only where the dim reaches. Under *Scale outer* the viewport
+  grows with the window's aspect ratio, so a dim sized to the design area
+  leaves strips at the sides of a wide window or above and below a tall one.
+  There the game shows through and a tap closes nothing. Size a full-screen
+  cover far past any aspect ratio, such as 8000×8000 around the centre of
+  the design area. A Sprite does this without a layer of its own texture,
+  which a layer background faded by layer opacity needs. Test the tap
+  against the panel instead of the cover: *On any touch start* and *NOT Is
+  touching object* for the panel and for each of its buttons, in a group
+  that is active only while the popup is open. Then the cover only draws,
+  and its size decides nothing about input. [manual:
+  system-reference/system-expressions.md "OriginalViewportWidth", the
+  viewport size that *Scale outer* changes with the screen;
+  interface/debugger/gpu-profile-tab.md, the cost of a layer's own
+  texture; observed in a game project, r504 preview, 2026-10-06: popup
+  dims 1400×2000 on a 430×932 *Scale outer* design area left both sides of
+  a wide window uncovered, and taps there did not close the popup; dims at
+  8000×8000 and the touch test above fixed both]
