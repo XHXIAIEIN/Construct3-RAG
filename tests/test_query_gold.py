@@ -32,11 +32,9 @@ FIELDS = {
 SINGULAR = {"conditions": "condition", "actions": "action", "expressions": "expression", "properties": "property"}
 
 
-def _cases() -> list[dict[str, Any]]:
-    return [json.loads(line) for line in GOLD.read_text(encoding="utf-8").splitlines() if line.strip()]
-
-
-CASES = _cases()
+CASES: list[dict[str, Any]] = [
+    json.loads(line) for line in GOLD.read_text(encoding="utf-8").splitlines() if line.strip()
+]
 
 
 @pytest.fixture(scope="module")
@@ -61,7 +59,7 @@ def _schema_list_size(case: dict[str, Any]) -> int:
     )
 
 
-def _entity(engine: LookupEngine, intent: LookupIntent | None, response: LookupResponse | None) -> dict[str, str] | None:
+def _entity(intent: LookupIntent | None, response: LookupResponse | None) -> dict[str, str] | None:
     if intent is not None and intent.plugin_id:
         kind = intent.entity_kind or ("behavior" if intent.is_behavior else "plugin")
         return {"kind": kind, "id": intent.plugin_id}
@@ -130,7 +128,7 @@ def test_gold_case(engine: LookupEngine, case: dict[str, Any]) -> None:
         assert response.intent.intent_type == case["expected_intent"]
 
     if "expected_entity" in case:
-        actual = _entity(engine, classified or (response.intent if response else None), response)
+        actual = _entity(classified or (response.intent if response else None), response)
         assert _same_entity(engine, case["expected_entity"], actual), f"entity {actual}"
 
     if case.get("expected_ace_types"):

@@ -1,3 +1,5 @@
+"""Schema layout: the manifest, the locale indexes and the completeness check."""
+
 import json
 from pathlib import Path
 
