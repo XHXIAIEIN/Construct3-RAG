@@ -50,7 +50,6 @@ Sources and the rule for adding an entry are in the index,
   both ways from the middle. [examples: berry-harvester ProgressBar, jetpack
   FuelBar, flatland-golf PowerBarCover, test-your-might MightLevelBar (0.5,
   1)]
-
 - Drawing Canvas *Fill polygon* with *Convex* off draws nothing if two
   consecutive points of the polygon coincide, including a closing point that
   repeats the first one. The rest of the sheet runs on, with no error logged.
@@ -90,7 +89,6 @@ Sources and the rule for adding an entry are in the index,
   - Direction and horizontal alignment decide the edge a line starts from, so
     a widened RTL or right-aligned text with a left origin moves. [inference
     from the manual's property descriptions, unverified at runtime]
-
   [manual: plugin-reference/text.md "Wrapping", "Vertical alignment", "Text
   direction", "Origin", "TextWidth"; examples: text-based-adventure
   `Set height to min(Self.TextHeight + 4, 644)`, flowchart-questionnaire sizes
@@ -134,7 +132,6 @@ Sources and the rule for adding an entry are in the index,
   [manual: plugin-reference/text.md "Set resolution
   mode"; observed in a game project, r504 export, runtime `_SetText` source
   and a counter on `_OnBeforeRender`, 2026-09-30]
-
 - A Sprite Font draws each character as its whole cell of the image, then
   moves on by the character's width from *Spacing data*. So a glyph is drawn
   against the left edge of its cell. An outline that reaches past that width
@@ -151,8 +148,9 @@ Sources and the rule for adding an entry are in the index,
 - A Sprite Font's *Character spacing* property, which *Set character
   spacing* changes, is added between characters, in layout pixels. Its
   *Scale* property and *Set scale* do not scale it, and nothing is added
-  after the last character. `TextWidth` is in layout pixels after the scale: the widths
-  from *Spacing data* times the scale, plus the spacing between characters.
+  after the last character. `TextWidth` is in layout pixels after the scale:
+  the widths from *Spacing data* times the scale, plus the spacing between
+  characters.
   So two characters 20 px wide at a scale of 1/3 read 13.33 at spacing 0. The
   spacing is the same between every pair of characters, so a wide spacing
   splits a number of several digits into digits that read apart. Keep the
