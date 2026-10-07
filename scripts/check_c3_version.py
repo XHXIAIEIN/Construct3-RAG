@@ -14,7 +14,7 @@ from src.settings import load_settings
 from src.ingest.c3_fetcher import latest_stable_version
 
 
-def main():
+def main() -> None:
     settings = load_settings()
     current = settings.schema.version
     try:
