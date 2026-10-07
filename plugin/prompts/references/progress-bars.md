@@ -31,16 +31,21 @@ ghost is a second, wider bar behind the first that is set later:
 template-monk-fight `cUnderHPBar` and `eUnderHPBar`, shown for a second by a
 Timer. Use a Tween or a ghost bar, not a per-tick lerp of the width.
 
-The ghost can be derived from the fill every tick. `Ghost: Set width to
-max(Ghost.Width, Fill.Width)` keeps it at least as wide as the fill, so a
-loss leaves the old width showing and a gain never leaves it shorter. One
-event with the conditions `Ghost: Compare width > Fill.Width`, `Frame: NOT
-Timer "ghost" is running` and `Ghost: NOT Tween "ghost" is playing` starts a
-0.5 s Timer, and its *On timer* tweens the ghost's width to `Fill.Width` in
-0.4 s. [observed in a minimal project, stable editor preview, 2026-10-07:
-the *On timer* event was written above the start event; two hits 0.7 s
-apart, the second while the ghost was closing, ended with the ghost equal to
-the fill on every bar]
+The ghost can be derived every tick from `target`, the width the value
+gives, `clamp(hp / maxHp, 0, 1) × LENGTH`. `Ghost: Set width to
+max(Ghost.Width, target)` keeps it at least as wide as the value, so a loss
+leaves the old width showing. One event with the conditions `Ghost: Compare
+width > target + 0.5`, `Frame: NOT Timer "ghost" is running` and `Ghost: NOT
+Tween "ghost" is playing` starts a 0.5 s Timer, and its *On timer* tweens the
+ghost's width to `target` in 0.4 s. A second event with the same timer and
+tween conditions and `Ghost: Compare width > target` sets the width to
+`target`, because a tween can end a hair off its end value
+([pitfalls/tween.md](../pitfalls/tween.md)). During a gain the ghost stands
+at `target` ahead of the growing fill, so draw it under the heal part
+described below. [observed in a minimal project, stable editor preview,
+2026-10-07: the *On timer* event was written above the start event; two hits
+0.7 s apart, the second while the ghost was closing, ended with the ghost
+equal to the fill on every bar]
 
 A loss cuts the fill at once, and a gain grows it. For a loss, the event with
 `Fill.Width > target` runs `Fill: Set width to target` and *Stop* "grow", so
