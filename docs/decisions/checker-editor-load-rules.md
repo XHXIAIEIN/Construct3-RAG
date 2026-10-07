@@ -81,8 +81,8 @@ Option 2 as the default, and option 3 as the step after it.
   opened and previewed in both releases. `Set Com1 to self` read the
   variable `self`, and in an object's own action `self + Self.Width`
   read the variable and then the object. The checker had refused the bare
-  `self` there as `Invalid use of 'self'`; it now reads a bare `self` as
-  a variable of that name in scope. No official example or game folder
+  `self` there as `Invalid use of 'self'`; it reads a bare `self` as a
+  variable of that name in scope. No official example or game folder
   names an object this way, and the sweep changed no output. The probes
   and what the editor printed are in
   `.local/docs/evidence/skill-evals/construct3-agent-plugin/reserved-names-2026-10-04/`.
@@ -194,8 +194,8 @@ Option 2 as the default, and option 3 as the step after it.
   wrote for a parameter type it had no entry for, and the checker skipped
   the type. The 277 sound parameters of the official examples all name a
   listed file without its extension, and the sweep changed no finding.
-  `lookup_ace.py` now also writes a function, a tilemap brush, an effect,
-  tags, an object name and a 3D animation the way the examples do.
+  `lookup_ace.py` also writes a function, a tilemap brush, an effect, tags,
+  an object name and a 3D animation the way the examples do.
 - The 91 projects of the eval runs and the game folders that passed the
   checker on 2026-09-28 were opened in the editor. Three failed: a variable
   written by hand without `comment`, and two snapshots whose listed icons
@@ -286,8 +286,8 @@ Option 2 as the default, and option 3 as the step after it.
   (legacy SDK v1)`. Functions are built in: `project.c3proj` names the
   object in `functionsName`, and the official examples write
   `"objectClass": "Functions"` with no object type or `usedAddons` entry
-  for it. The checker now refuses an object type named like
-  `functionsName`, and a plugin or behavior id that `usedAddons` lists by
+  for it. The checker refuses an object type named like `functionsName`,
+  and a plugin or behavior id that `usedAddons` lists by
   Scirra but the schema index lacks, since the index holds every addon by
   Scirra; an id by another author stays a warning. None of the 524 official
   examples has either finding.
@@ -295,21 +295,21 @@ Option 2 as the default, and option 3 as the step after it.
   listed `Timeline 1` and `Flowchart 1` without the `timelines/` and
   `flowcharts/` folders; the editor stopped with `missing file path
   'timelines\Timeline 1.json'`. The checker read the files of object
-  types, families, layouts and sheets but not of these two lists, and now
+  types, families, layouts and sheets but not of these two lists, and
   refuses a listed timeline or flowchart without its file. The generator
   template writes neither, so it keeps only the names that have a file.
   None of the 524 official examples has the finding.
 - A sheet of the same project wrote `LocalStorage.ItemValue("best")`; the
   editor stopped with `Incorrect parameters: 'LocalStorage.ItemValue' does
-  not accept 1 parameters`. The checker now counts the top-level arguments
-  of every plugin, shared, behavior and System expression call and compares
+  not accept 1 parameters`. The checker counts the top-level arguments of
+  every plugin, shared, behavior and System expression call and compares
   them with the schema's `params`. Counted against `params` alone, the
   official examples gave 840 findings, all on calls the editor accepts:
   `loopindex("i")`, `Array.At(x, y)`, `Mouse.X("HUD")`, Touch `XAt(0,
   "HUD")`. The editor marks these expressions `isVariadicParameters` in
   `plugins/allAces.json`, 20 of them, `max`, `min`, `choose` and `random`
-  among them; the export now keeps the flag, and a call to one may pass
-  more than `params` lists. With the flag, the 524 examples give no
+  among them; the export keeps the flag, and a call to one may pass more
+  than `params` lists. With the flag, the 524 examples give no
   finding. The message for too few arguments was not probed.
 - Two keys a Haiku eval left out on 2026-10-03, in projects the checker
   passed, stopped the editor; a copy with the key added opened and
@@ -387,8 +387,8 @@ variables, instance counts and the instances of the types named.
   updated or will drop, the legacy Flat export file structure or the
   Normalized Z axis scale, over a project whose title has turned to its
   name. Over the official examples (2026-10-02, stable r495-2) 56 of 524
-  were reported `failed` for that dialog alone; they are now `opened` with
-  the notice as a `warning:` line, and no other result changed. The notice
+  were reported `failed` for that dialog alone; they are `opened` with the
+  notice as a `warning:` line, and no other result changed. The notice
   is closed so that `--preview` can go on. The title alone does not decide:
   `#crashReportDialog`, "Oops! Something went wrong", also comes after the
   title has turned. The runs are in
