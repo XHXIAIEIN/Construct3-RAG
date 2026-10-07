@@ -9,6 +9,40 @@ project with automatic combat, drag-and-drop merging and three music
 stems. It verified them in an r504 preview and an offline mix, 2026-09-30
 to 2026-10-02. Its numbers are starting points, not constants.
 
+## One entry for every sound
+
+When the game has more than a handful of sounds, the events that make
+things happen name the moment, not the file: `cue("merge", X, tier, 0)`.
+One sheet decides what each moment plays, when, how often and where in
+the stereo field. Then a new set of sounds, or a new rule, changes that
+sheet only. In the source project, replacing every sound and rule changed
+the sound sheet throughout and the four gameplay sheets in about 130
+lines.
+
+- If every moment plays its own file at once, the entry needs no map.
+  Name the files after the moments and play them with Audio *Play by
+  name*, as the official examples do.
+- If moments follow different rules, such as at once, on the grid, at most
+  once in a gap, or one reward per cell, the entry is a function
+  `cue(name, x, a, b)` that runs *Call mapped function* on map `"cue"`
+  with the string `name`, forwarding from index 0. Each rule is one
+  function with the same four parameters, so it reads `name` and serves
+  every moment mapped to it: one function for the immediate sounds, one
+  for the gated ones, one per rewarded moment. Group the *Map function to
+  string* actions by the function they map to, in *On start of layout*.
+  Each group then lists the moments that share a rule.
+- Map the default to a function that plays nothing. Then gameplay can
+  call a moment before its sound exists, and the sound arrives later
+  without touching gameplay. The default gets the whole parameter list
+  ([pitfalls: Functions](../pitfalls/functions.md)), the same four.
+- Write the meaning of `a` and `b` per moment in one table of the
+  project's sound document, because each moment uses them differently
+  (a level, a weapon kind, a count, a switch).
+
+[example: function-maps; observed in a game project, r504, 2026-10-04 to
+2026-10-07: 37 moments, 20 rule functions and a silent default; the sound
+system replaced on 2026-10-05]
+
 ## Three roles
 
 Every sound is a reward, an impact or a music stem. A reward is a pitched

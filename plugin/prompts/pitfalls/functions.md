@@ -95,3 +95,19 @@ Sources and the rule for adding an entry are in the index,
   project-primitives/events/functions.md "Function maps"; example:
   function-maps, events 7 to 10; observation in a studied project,
   2026-10-06]
+- *Call mapped function* forwards the caller's parameters from its index
+  only to a function mapped to the string. The default function always
+  gets every parameter from index 0. So the default function's parameter
+  list is the caller's whole list, and a dispatcher that forwards from 0
+  gives every mapped function and the default the same list. Map names and
+  strings ignore case. A string with no entry and no default, a map name
+  never mapped, a function in a disabled group and a function with a return
+  type are each skipped with only a console warning, so a silent call means
+  one of these. Call a function with a return type through
+  `Functions.CallMapped`. Mapping a string again overwrites it and also
+  warns, so map once, in *On start of layout*. [example: function-maps,
+  the comment of event 10; runtime: exported c3runtime.js r504, System
+  `CallMappedFunction` sets the forward index to 0 for the default
+  function, lowercases the map name and the string, and warns "call
+  ignored" for each case above; `MapFunction` warns "already in map;
+  overwriting entry"]
