@@ -2,9 +2,7 @@
 
 Everything under `data/` is committed and readable without the service.
 `data/c3-schemas/_index.json` records the Construct version, the exported
-locales, and per-addon ACE counts. Treat it as the source of truth. It is
-language neutral; each locale directory has its own `_index.json` with the
-display names in that language.
+locales, and per-addon ACE counts. Treat it as the source of truth.
 
 ## Contents
 
@@ -151,7 +149,7 @@ Each file describes one addon. Field names match the official CDN.
 | `category` | all | Key into `aceCategories`. Identical across locales. |
 | `description` | all | Tooltip or help text. |
 | `params` | all | Parameter map keyed by parameter id, described below. |
-| `isTrigger` | conditions | `true` for every condition the editor draws and treats as a trigger, such as `On start of layout`, `On collision` and `On timer`: one per event branch, none inside a function, never inverted, no `Else` after it. Absent otherwise. |
+| `isTrigger` | conditions | `true` for every condition the editor draws and treats as a trigger, such as `On start of layout`, `On collision` and `On timer`: one per event branch, none inside a function, never inverted, no `Else` after it. The export writes it for a CDN `isTrigger`, `isFakeTrigger` or `isFastTrigger`, since the editor holds all three to the same rules. Absent otherwise. |
 | `isFakeTrigger` | conditions | `true`, next to `isTrigger`, when the runtime tests the condition in sheet order each tick instead of firing it out of band: `On collision with another object`, Timer `On timer`, the Gamepad button conditions. Absent otherwise. |
 | `isLooping` | conditions | `true` for loops: `For`, `For each`, `Repeat`, `While`, Array `For each element`. A loop cannot be inverted and `Else` cannot follow it. Absent otherwise. |
 | `isInvertible` | conditions | `false` where the editor does not allow invert: `Else`, `Trigger once` and the conditions that only pick, such as `Pick all`, `Pick by comparison`, `Pick nearest/furthest` and `Pick children`. Absent means invertible, unless the condition is a trigger or a loop. |

@@ -3,6 +3,14 @@
 The service answers at `http://localhost:8765` unless it was started on
 another port (`docs/guide/quick-start.md`).
 
+## Contents
+
+- [Endpoints](#endpoints)
+- [POST /search](#post-search): request, validation errors, modes,
+  response with the `list`, `lookup` and `debug` examples
+- [GET /health](#get-health)
+- [Usage Examples](#usage-examples)
+
 ## Endpoints
 
 | Method | Path | Description |
@@ -71,8 +79,6 @@ are omitted from the response.
   "lookup": { ... }
 }
 ```
-
----
 
 ### mode=list
 
