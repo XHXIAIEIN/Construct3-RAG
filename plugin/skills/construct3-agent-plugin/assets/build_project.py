@@ -85,7 +85,7 @@ PALETTE = {
     "solid": (132, 132, 128),          # structure, at least 3:1 on canvas_alt; a bar's frame
     "dim": (100, 100, 96),             # a secondary label
     "ink": (17, 17, 17),               # the player, outlines, labels, a bar's fill
-    "reward": (208, 108, 0),           # what the player collects: the coin
+    "reward": (37, 99, 235),           # what the player collects: the coin, a cobalt that reads alone
     "danger": (220, 38, 60),           # what hurts or is lost
     "flash": (255, 255, 255),          # the fill of an object for the instant it is hit
 }
@@ -124,7 +124,7 @@ SQUASH = {
     "land": {"width": 1.2, "height": 0.8, "hold": 0, "seconds": 0.5, "ease": "easeoutelastic"},
     "jump": {"width": 0.7, "height": 1.3, "hold": 0.2, "seconds": 0.75, "ease": "easeoutelastic"},
 }
-FONT = "Arial"                             # one font for every label
+FONT = "system-ui"                         # one font for every label: the platform's own UI face, no font file
 TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
 # as every official example at that size samples and 116 of 159 scale (build_project()).
@@ -1965,8 +1965,21 @@ BEATS = [
     beat("climax", 3, ["tap"], coins=10),
     beat("exit", 0, ["tap"], coins=1),
 ]
-# Coins land below the score and a unit clear of it, never under the HUD.
-PLAY_TOP = MARGIN + label_box("", TEXT_SIZE["title"])[1] + UNIT
+# Coins land on a small board centred on the screen, below the score's label and number: COLS x
+# ROWS slots a coin wide, a unit apart, the empty ones drawn in canvas_alt. A round deals the cells
+# (deal + i * STRIDE) mod CELLS, which differ for every i below CELLS because STRIDE and CELLS share
+# no factor, so no two coins meet. The run stops on a round that deals more coins than slots.
+COLS, ROWS = 5, 3
+CELLS = COLS * ROWS
+STRIDE = next(s for s in (7, 11, 13, 17, 19, 23) if math.gcd(s, CELLS) == 1)
+PITCH = COIN_SIZE + UNIT
+BOARD_W, BOARD_H = COLS * PITCH - UNIT, ROWS * PITCH - UNIT
+HUD_BOTTOM = MARGIN + label_box("", TEXT_SIZE["body"])[1] + label_box("", TEXT_SIZE["title"])[1]
+BOARD_LEFT = snap((VIEW_W - BOARD_W) / 2)
+BOARD_TOP = max(HUD_BOTTOM + UNIT, snap((VIEW_H - BOARD_H) / 2))
+if max(b["coins"] for b in BEATS) > CELLS:
+    sys.exit(f"BEATS deal up to {max(b['coins'] for b in BEATS)} coins and the board has {CELLS} slots; "
+             f"widen COLS or ROWS")
 
 
 def build_files() -> None:
@@ -1980,6 +1993,10 @@ def build_files() -> None:
 
 def build_images() -> None:
     pattern("Backdrop", "plain")
+    # One slot of the board, a coin-sized disc in canvas_alt with a unit of clear space after it,
+    # which the Board's Tiled Background repeats COLS x ROWS times.
+    write_png("board.png", PITCH, PITCH, lambda x, y: (*rgb("canvas_alt"), 255)
+              if inside("circle", COIN_SIZE, COIN_SIZE, x + 0.5, y + 0.5) else (0, 0, 0, 0))
     art("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward", "a gold coin seen from the front")
     hit_frame("coin-default-000.png")
 
@@ -1991,7 +2008,10 @@ def build_object_types() -> tuple[dict, dict, list]:
                                    ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
                             behaviors=[beh_def("Tween")]),
         "Backdrop": pattern_type("Backdrop"),
+        "Board": image_type("Board", "TiledBg", PITCH, PITCH, 0, 0),
+        "ScoreLabel": text_type("ScoreLabel"),
         "ScoreText": text_type("ScoreText"),
+        "RoundText": text_type("RoundText"),
         "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True}),
     }
     families = {}
@@ -2010,6 +2030,7 @@ def build_layouts() -> dict[str, dict]:
     # its cells are then the ruler: two a unit. An area or an edge in a pattern is
     # area(type, col, row, cols, rows) on the Game layer.
     game["layers"][0]["instances"].append(backdrop("Backdrop"))
+    game["layers"][0]["instances"].append(tiledbg_inst("Board", BOARD_LEFT, BOARD_TOP, BOARD_W, BOARD_H, 0, 0))
     # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
     # row(), anything else by anchor(); the middle of the screen is the game's. no_overlap()
     # stops the run when two HUD boxes meet or one leaves the viewport. A label is
@@ -2017,7 +2038,10 @@ def build_layouts() -> dict[str, dict]:
     # TEXT_SIZE["title"]. hud_text() stops the run on a colour that does not read on what is
     # behind it.
     ui = game["layers"][2]["instances"]
-    ui.append(hud_text("ScoreText", "Score: 0", "top-left", size=TEXT_SIZE["title"], longest="Score: 999"))
+    # The number the player plays for is large and regular under its name, small, in dim capitals.
+    ui.append(hud_text("ScoreLabel", "SCORE", "top-left", bold=False, color="dim"))
+    ui.append(hud_text("ScoreText", "0", "top-left", size=TEXT_SIZE["title"], longest="999", bold=False, dy=2))
+    ui.append(hud_text("RoundText", "ROUND 1 / 6", "top-right", longest="ROUND 10 / 10", bold=False, color="dim"))
     # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
     # types from bar_types() and images from bar_images(), and the sheet sets the fill with
     # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
@@ -2042,10 +2066,15 @@ def module_setup() -> dict:
         # Restart layout keeps every global variable: a value the round starts from is set here,
         # before any text shows it.
         event("Empty the score and deal this round's coins",
-              [on_start()], [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))], children=[
+              [on_start()], [set_var("score", "0"), set_text("ScoreText", q("0")),
+                             set_text("RoundText", f'{q("ROUND ")} & (beat + 1) & {q(" / ")} & '
+                                                   f'tokencount(ROUND_COINS, {q(",")})'),
+                             set_var("deal", f"floor(random({CELLS}))")], children=[
                   block([for_loop("i", "0", f"int(tokenat(ROUND_COINS, beat, {q(',')})) - 1")], [
-                      create("Coin", "Game", f"{grid_random(MARGIN, VIEW_W - MARGIN - COIN_SIZE)} + {COIN_SIZE // 2}",
-                             f"{grid_random(PLAY_TOP, VIEW_H - MARGIN - COIN_SIZE)} + {COIN_SIZE // 2}"),
+                      create("Coin", "Game",
+                             f'{BOARD_LEFT + COIN_SIZE // 2} + {PITCH} * ((deal + (loopindex("i") * {STRIDE})) % {COLS})',
+                             f'{BOARD_TOP + COIN_SIZE // 2} + {PITCH} * floor(((deal + (loopindex("i") * {STRIDE})) '
+                             f'% {CELLS}) / {COLS})'),
                       set_ivar("Coin", "value", "choose(1, 5)"),
                   ]),
               ]),
@@ -2072,7 +2101,7 @@ def scoring() -> list:
         ))),
         *procedure("Add points and show the score", func("AddScore", [
             add_var("score", "points"),
-            set_text("ScoreText", q("Score: ") + " & score"),
+            set_text("ScoreText", "score"),
         ], params=[param("points", "number", 0)])),
     ]
 
@@ -2097,6 +2126,7 @@ def build_event_sheet() -> dict:
         comment("Gameplay variables"),
         var("score", "number", 0, "Points collected this round"),
         var("beat", "number", 0, "The round being played, from 0; a global keeps it across the restart"),
+        var("deal", "number", 0, "The grid cell this round's first coin lands on; the others step from it"),
         module_setup(),
         module_input(),
         *scoring(),

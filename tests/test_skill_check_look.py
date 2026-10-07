@@ -12,7 +12,7 @@ def png_chunk(tag: bytes, data: bytes) -> bytes:
 
 def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     code, out = tool(project, "check_look")
-    assert code == 0 and out.splitlines()[-1].startswith("ok: 3 images, 2 world instances on a 32 px grid, "
+    assert code == 0 and out.splitlines()[-1].startswith("ok: 4 images, 3 world instances on a 32 px grid, "
                                                           "1 runtime creations"), out
     t = template_module()
     t.ROOT = project
@@ -23,8 +23,8 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
         + png_chunk(b"IDAT", zlib.compress(bytes([0, 9, 9, 9, 0]))) + png_chunk(b"IEND", b""))
     edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x=150))
     sheet = project / "eventSheets" / "Game.json"
-    sheet.write_text(sheet.read_text(encoding="utf-8").replace("32 * floor(random(1, 55)) + 80", "random(96, 1728)"),
-                     encoding="utf-8")
+    sheet.write_text(re.sub(r'"x": "(?:[^"\\]|\\.)*loopindex(?:[^"\\]|\\.)*"', '"x": "random(96, 1728)"',
+                            sheet.read_text(encoding="utf-8"), count=1), encoding="utf-8")
     code, out = tool(project, "check_look")
     assert code == 1, out
     assert "alpha.pure: images/dirty.png has 1 clear pixels that hold a colour, the first at (0,0)" in out

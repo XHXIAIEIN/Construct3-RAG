@@ -114,7 +114,7 @@
       "strict": true,
       "says": "Two canvas greys, one solid grey, dim, ink and two accents, plus the hit's flash; the player in ink. The checker's greys at most 1.2:1, solid at least 3:1 on the darker of them.",
       "template": "{role: '#%02X%02X%02X' % colour for role, colour in PALETTE.items()}",
-      "value": "{'canvas': '#FAFAF7', 'canvas_alt': '#EEEEEA', 'solid': '#848480', 'dim': '#646460', 'ink': '#111111', 'reward': '#D06C00', 'danger': '#DC263C', 'flash': '#FFFFFF'}",
+      "value": "{'canvas': '#FAFAF7', 'canvas_alt': '#EEEEEA', 'solid': '#848480', 'dim': '#646460', 'ink': '#111111', 'reward': '#2563EB', 'danger': '#DC263C', 'flash': '#FFFFFF'}",
       "helpers": "check_palette()"
     },
     {

@@ -52,7 +52,10 @@ Construct-Example-Projects, 2026-09-18]
   an off-white canvas that fills the screen, without outlines, shadows,
   cards or panels. Lightness shows the hierarchy, from the canvas through a
   solid grey to ink. Two accents mark what is collected and what hurts, each
-  at least 3:1 on the canvas. A rectangle is the player or structure, a
+  at least 3:1 on the canvas by colour alone.
+  Labels are in the platform's own face, `system-ui`, with no font file;
+  a number the player plays for is large and regular under a small dim
+  name. A rectangle is the player or structure, a
   circle what is collected, a triangle what hurts. Where something is
   transparent, a mask, or a background still to come, the backdrop is the
   transparency checker instead. An area or an edge is a striped Tiled

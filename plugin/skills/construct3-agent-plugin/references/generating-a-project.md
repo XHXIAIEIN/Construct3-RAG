@@ -298,7 +298,7 @@ habits; they are what makes rerunning safe.
   keep the roles and change values only. `check_palette()` stops the run
   when the checker's greys pass 1.2:1 or `solid` falls under 3:1 on them,
   and `shape()` stops on an accent under 3:1 on `canvas_alt` drawn without
-  its outline, or a fill under 3:1 against the ink. The player is an ink
+  an ink outline, or on a fill under 3:1 against the ink. The player is an ink
   rectangle, structure a solid one, a pickup a circle, a hazard a
   triangle. The backdrop is `backdrop("Backdrop")` on a layer at parallax
   1, of `pattern("Backdrop", "plain")`. A game with something transparent,

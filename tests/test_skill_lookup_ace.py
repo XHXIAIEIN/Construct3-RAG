@@ -296,7 +296,7 @@ def test_a_behavior_looked_up_under_system_names_where_it_is(built):
 
 def test_a_plugin_looked_up_under_another_object_names_the_object_that_is_one(built):
     code, out = tool(built, "lookup_ace", "Coin", "text", "set")
-    assert out.splitlines()[0] == "Text is a plugin, not part of Coin: lookup_ace.py ScoreText set, a Text object of the project"
+    assert out.splitlines()[0] == "Text is a plugin, not part of Coin: lookup_ace.py ScoreLabel set, a Text object of the project"
 
 
 def test_a_behavior_inside_a_quoted_word_is_named_too(built):

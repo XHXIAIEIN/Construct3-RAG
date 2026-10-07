@@ -58,8 +58,9 @@ def test_plan_puts_events_in_by_the_numbers_the_sheet_has_now(project):
     assert out.splitlines()[-1].startswith("ok:") and "open_in_editor" not in out     # the closing check names it
     sheet = printed(project)
     assert ("     global number beat = 0\n         // The round being played, from 0; a global keeps it across the "
-            "restart\n     global number timeLeft = 30\n   1 group Setup") in sheet
-    assert '-> ScoreText: Set text to "Score: 0"\n           -> ScoreText: Set text to "Time: " & timeLeft' in sheet
+            "restart\n     global number deal = 0\n         // The grid cell this round's first coin lands on; "
+            "the others step from it\n     global number timeLeft = 30\n   1 group Setup") in sheet
+    assert '-> System: Set deal to floor(random(15))\n           -> ScoreText: Set text to "Time: " & timeLeft' in sheet
     assert "   4       (runs with its parent)\n               -> Coin: Set scale to 1.5" in sheet
     assert "     // Countdown.\n  11 group Timer\n       // Count down.\n  12   System: Every 1 seconds" in sheet
     assert check(project)[0] == 0
@@ -215,6 +216,9 @@ def test_plan_shows_a_condition_or_action_it_disables_as_disabled(project):
 
 def test_plan_names_an_older_form_of_a_text_it_left_alone(project):
     """Eval runs changed the score text at the start and left the one in AddScore, event 7, as it was."""
+    code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": '"Score: 0"'}}},
+                     {"event": 7, "action": 2, "set": {"parameters": {"text": '"Score: " & score'}}})
+    assert code == 0, out                               # the labelled score those runs started from
     both = '"Score: " & score & "  Time: " & round(time)'
     code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": both}}}, flags=("--dry-run",))
     assert code == 0, out
@@ -382,7 +386,7 @@ def test_dry_run_checks_and_shows_and_writes_nothing(project):
                                       "parameters": {"tag": '"t"'}}]}, "closest: behaviorType"),
     ({"event": 2, "add-actions": [{"type": "comment", "txt": "Score."}]}, "'txt' is not a key of a comment row"),
     ({"event": 1, "add-actions": [SET_TIME]}, "event 1 is a group, which has no actions"),
-    ({"event": 2, "add-actions": [SET_TIME], "position": 5}, "position is 1 to 3"),
+    ({"event": 2, "add-actions": [SET_TIME], "position": 7}, "position is 1 to 5"),
     ({"into": 5, "events": [{"eventType": "variable", "name": "n", "type": "int"}]}, "'number', 'string' or 'boolean'"),
     ({"move": 1, "into": 3}, "event 3 is event 1 or inside it"),
 ])

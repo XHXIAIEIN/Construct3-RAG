@@ -100,9 +100,9 @@ def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
     template.ROOT = tmp_path
     style = template.SHAPE_STYLE
     style.update(outline=True, shadow=True, outline_width=4, shadow_distance=10, shadow_angle=90, shadow_opacity=0.5)
-    ink, fill = template.rgb(style["outline_role"]), template.rgb("reward")
+    ink, fill = template.rgb(style["outline_role"]), template.rgb("danger")
 
-    f = template.shape("on.png", "rect", 64, 32, "reward")
+    f = template.shape("on.png", "rect", 64, 32, "danger")
     px = png_pixels(tmp_path / "images" / "on.png")
     w, h = len(px[0]), len(px)
     assert (w, h) == (f["width"], f["height"]) == (64, 42)
@@ -113,7 +113,7 @@ def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
     assert template.drawn("on.png") is f
 
     style.update(shadow_angle=180)
-    f = template.shape("left.png", "circle", 32, 32, "reward")
+    f = template.shape("left.png", "circle", 32, 32, "danger")
     assert (f["width"], f["height"], f["originX"]) == (42, 32, 26 / 42)
 
     style.update(outline=False, shadow=False)
@@ -121,7 +121,8 @@ def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
     px = png_pixels(tmp_path / "images" / "off.png")
     w, h = len(px[0]), len(px)
     assert (w, h) == (32, 32) and {p[:3] for row in px for p in row if p[3]} == {template.rgb("solid")}
-    f = template.shape("one.png", "rect", 32, 32, "reward", outline=True)
+    f = template.shape("one.png", "rect", 32, 32, "danger", outline=True)
+    assert png_pixels(tmp_path / "images" / "one.png")[0][0] == (*ink, 255)
     assert png_pixels(tmp_path / "images" / "one.png")[0][0] == (*ink, 255)
 
 
@@ -152,8 +153,8 @@ def test_template_palette_keeps_the_ratios_of_the_blockout():
     ratios = {pair: round(t.contrast(t.rgb(pair[0]), t.rgb(pair[1])), 2) for pair in (
         ("canvas", "canvas_alt"), ("solid", "canvas_alt"), ("reward", "canvas_alt"), ("danger", "canvas_alt"),
         ("ink", "solid"), ("ink", "reward"), ("ink", "danger"))}
-    assert ratios == {("canvas", "canvas_alt"): 1.11, ("solid", "canvas_alt"): 3.23, ("reward", "canvas_alt"): 3.1,
-                      ("danger", "canvas_alt"): 4.12, ("ink", "solid"): 5.03, ("ink", "reward"): 5.24,
+    assert ratios == {("canvas", "canvas_alt"): 1.11, ("solid", "canvas_alt"): 3.23, ("reward", "canvas_alt"): 4.44,
+                      ("danger", "canvas_alt"): 4.12, ("ink", "solid"): 5.03, ("ink", "reward"): 3.65,
                       ("ink", "danger"): 3.94}
     t.check_palette()
     assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger"]
@@ -417,7 +418,7 @@ def test_template_places_the_hud_on_the_grid(built):
     assert banner["world"]["width"] >= len("选择前进之路") * 48 * 4 / 3
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
     score = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "ScoreText")["world"]
-    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 32, 512, 128)   # title size
+    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 96, 160, 128)   # the number at the title size, under its label
     for k in ("x", "y", "width", "height"):
         assert score[k] % t.UNIT == 0, k
     # Two HUD boxes that meet, or one past the viewport, stop the generator and name them.
@@ -566,7 +567,7 @@ def test_template_labels_read_on_what_is_behind_them():
     assert round(t.contrast((255, 255, 255), (0, 0, 0)), 2) == 21 and t.contrast((30, 34, 48), (30, 34, 48)) == 1
     score = t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999")
     assert (score["properties"]["font"], score["properties"]["size"], score["properties"]["color"]) == \
-        ("Arial", 32, t.rgba(t.PALETTE["ink"]))
+        ("system-ui", 32, t.rgba(t.PALETTE["ink"]))
     assert (t.text_contrast(8), t.text_contrast(17), t.text_contrast(18), t.text_contrast(32)) == (4.5, 4.5, 3, 3)
     t.PALETTE["dim"] = (120, 120, 120)                                   # 3.8:1 on the checker's darker cell
     t.hud_text("TimerText", "Time: 30", "top-right", color="dim")          # 32 pt is large-scale: 3:1 is enough
@@ -766,11 +767,8 @@ def test_template_writes_a_data_file_lists_it_and_loads_it_at_start(project):
             ('    ], sheet="Game")',
              '    ], sheet="Game", nonworld=[nonworld_inst("CardTable", {"width": 1, "height": 1, "depth": 1}), '
              'nonworld_inst("Cards"), nonworld_inst("Settings")])'),
-            ('[on_start()], [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))], children=[',
-             '[on_start()], steps(("Load the cards", load_data_file("CardTable", "CardTable.json")), '
-             '("Load the settings", load_data_file("Settings", "Settings.json")), '
-             '("Empty the score", [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))])), children=['
-             '*table_to_dictionary("CardTable", "Cards"), ')):
+            ('[on_start()], [set_var("score", "0"), set_text("ScoreText", q("0")),\n                             set_text("RoundText", f\'{q("ROUND ")} & (beat + 1) & {q(" / ")} & \'\n                                                   f\'tokencount(ROUND_COINS, {q(",")})\'),\n                             set_var("deal", f"floor(random({CELLS}))")], children=[',
+             '[on_start()], steps(("Load the cards", load_data_file("CardTable", "CardTable.json")),\n                             ("Load the settings", load_data_file("Settings", "Settings.json")),\n                             ("Empty the score", [set_var("score", "0"), set_text("ScoreText", q("0")),\n                             set_text("RoundText", f\'{q("ROUND ")} & (beat + 1) & {q(" / ")} & \'\n                                                   f\'tokencount(ROUND_COINS, {q(",")})\'),\n                             set_var("deal", f"floor(random({CELLS}))")])), children=[*table_to_dictionary("CardTable", "Cards"), ')):
         assert text.count(old) == 1, old
         text = text.replace(old, new)
     source.write_text(text, encoding="utf-8")

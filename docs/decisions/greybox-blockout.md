@@ -43,6 +43,15 @@ Over reference blockouts and mock-ups of the stand-in:
   a plain sheet, a two-ink print and an ink line, the user chose the plain
   sheet: flat fills on an off-white canvas, no outline, no shadow, the
   number large.
+- The sheet's details (2026-10-08, a second round of mock-ups at
+  1920×1080). The score is its name in small dim capitals over a large
+  number of regular weight, the round in the top right corner. The coin is
+  cobalt with no outline: colour alone keeps the sheet simple, and a gold
+  reads 1.5:1 on near white without one. The coins sit on a small board
+  centred on the screen, 5 × 3 slots with the empty ones in `canvas_alt`;
+  scattered over the screen, or on a board as wide as the screen, they
+  read as untidy. Every label is in `system-ui`, the generic family the
+  editor's font picker lists as System UI: no font file ships with a game.
 - Where something is transparent, a mask, or a background still to come,
   the backdrop is the grey-and-white checker editors show for transparency.
 - Where a game turns them on, the shadow is hard at half opacity and the
@@ -70,26 +79,25 @@ of `contrast()` in the template; L* is CIE lightness.
 | `solid` | #848480 | 55 |
 | `dim` | #646460 | 42 |
 | `ink` | #111111 | 5 |
-| `reward` | #D06C00 | 56 |
+| `reward` | #2563EB | 46 |
 | `danger` | #DC263C | 48 |
 
 | Pair | Ratio | Reading |
 |------|------:|---------|
 | `canvas` / `canvas_alt` | 1.11 | The checker reads as texture, not an object |
 | `solid` / `canvas_alt` | 3.23 | Above 3:1, WCAG 2.2 1.4.11, without an outline |
-| `reward` / `canvas_alt` | 3.10 | A pickup shows without an outline |
+| `reward` / `canvas_alt` | 4.44 | A pickup shows without an outline |
 | `danger` / `canvas_alt` | 4.12 | A hazard shows without an outline |
 | `ink` / `solid` | 5.03 | The player on a platform |
 | `ink` / `canvas_alt` | 16.23 | The player or a label on the backdrop |
 | `dim` / `canvas_alt` | 5.11 | A secondary label |
-| `reward` / `danger` | 1.33 | Told apart by hue and shape, not value |
-| `ink` / `reward` | 5.24 | An outline, where a game turns it on |
+| `reward` / `danger` | 1.08 | Told apart by hue and shape, not value |
+| `ink` / `reward` | 3.65 | An outline, where a game turns it on |
 | `ink` / `danger` | 3.94 | An outline, where a game turns it on |
 | `solid` / `dim` | 1.58 | The low-contrast stripe pair |
 
 Every fill reads at least 3:1 on the darker checker grey, so a shape shows
-on the sheet and on the checker alone. A yellow cannot reach 3:1 on a near
-white, so the pickup is amber.
+on the sheet and on the checker alone.
 
 ### Level design
 
@@ -175,8 +183,12 @@ turns them on gets them drawn into the image.
 The shadow widens the image on its side; the origin and polygon stay on the
 shape. A sprite that rotates is drawn with `shadow=False`.
 
-The score is `TEXT_SIZE["title"]`, and runtime objects land below it, from
-`PLAY_TOP`, and a margin inside the other edges.
+The score is its name at `TEXT_SIZE["body"]` in `dim` over the number at
+`TEXT_SIZE["title"]`, neither bold. Coins land on the board, `COLS` ×
+`ROWS` slots a coin wide and a unit apart, one Tiled Background of a slot
+tile, centred on the screen below the HUD. A round deals the cells
+`(deal + i × STRIDE) mod CELLS`, with `STRIDE` and `CELLS` coprime, so no
+two coins meet, and the run stops on a round with more coins than slots.
 
 ### Colour
 
@@ -284,9 +296,8 @@ template value it names drift apart.
 ## Open
 
 - The plain sheet has been previewed on the coin stand-in only, not on a
-  game with structure, hazards or a player, and the user has not yet seen
-  the amber pickup, which is darker than the mock-up's yellow. The reach
-  bands wait on a measured jump.
+  game with structure, hazards or a player. The reach bands wait on a
+  measured jump.
 - No small-model iteration has run on this template. The eval case
   `readable-on-a-dark-background` asks for a navy backdrop, on which the
   labels' `ink` reads 1.4:1: `readable()` stops the generator, and the case
