@@ -104,6 +104,18 @@ def _http_get(url: str) -> bytes:
         return resp.read()
 
 
+def _write_atomic(path: Path, data: bytes) -> None:
+    """Write ``data`` beside ``path``, then move it into place.
+
+    The cache and the .d.ts export skip a file that exists, so a write cut
+    short must leave no file at ``path``.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    part = path.with_name(path.name + ".part")
+    part.write_bytes(data)
+    part.replace(path)
+
+
 def _strip_bom(raw: bytes) -> bytes:
     """Remove UTF-8 BOM if present."""
     return raw[3:] if raw[:3] == b"\xef\xbb\xbf" else raw
@@ -580,8 +592,7 @@ class C3Fetcher:
         if not force and cache_path.exists() and not _cache_expired(cache_path):
             return cache_path.read_bytes()
         raw = self._download(path)
-        cache_path.parent.mkdir(parents=True, exist_ok=True)
-        cache_path.write_bytes(raw)
+        _write_atomic(cache_path, raw)
         return raw
 
     def export_ts_defs(self) -> Path:
@@ -591,7 +602,11 @@ class C3Fetcher:
         and caches locally. Adds a small delay between requests to avoid
         overwhelming the CDN.
 
-        Returns the ts-defs output directory path.
+        Returns the ts-defs output directory path. Raises ``RuntimeError``
+        naming every file that failed, after trying them all, and writes no
+        marker then: ``export_to_data`` replaces ``data/c3-ts-defs`` whole, so
+        a missing file would drop out of the commit. The next run fetches only
+        the files still missing.
         """
         ts_dir = self.cache_dir / "ts-defs"
         marker = ts_dir / ".exported"
@@ -604,32 +619,39 @@ class C3Fetcher:
         logger.info(f"[CDN] Found {len(dts_paths)} .d.ts files")
 
         fetched = 0
+        failed: list[str] = []
         for dts_path in dts_paths:
             out_path = ts_dir / dts_path
             if out_path.exists():
                 continue  # already cached
-            out_path.parent.mkdir(parents=True, exist_ok=True)
             try:
-                out_path.write_bytes(_strip_bom(self.fetch_raw(dts_path)))
+                _write_atomic(out_path, _strip_bom(self.fetch_raw(dts_path)))
                 fetched += 1
                 # Throttle: 100ms between requests to be respectful
                 if fetched % 10 == 0:
                     time.sleep(1)
                 elif fetched > 0:
                     time.sleep(0.1)
-            except Exception as e:
+            except OSError as e:  # URLError and the 404 FileNotFoundError included
                 logger.warning(f"[CDN] Failed to fetch {dts_path}: {e}")
+                failed.append(dts_path)
 
         # Also fetch autocomplete-data.json
         try:
             autocomplete = self.fetch(ENDPOINTS["autocomplete"])
-            (ts_dir / "autocomplete-data.json").write_text(
-                json.dumps(autocomplete, ensure_ascii=False, indent=2),
-                encoding="utf-8",
+            _write_atomic(
+                ts_dir / "autocomplete-data.json",
+                json.dumps(autocomplete, ensure_ascii=False, indent=2).encode("utf-8"),
             )
-        except Exception as e:
+        except (OSError, ValueError) as e:
             logger.warning(f"[CDN] Failed to fetch autocomplete-data: {e}")
+            failed.append(ENDPOINTS["autocomplete"])
 
+        if failed:
+            raise RuntimeError(
+                f"[CDN] {len(failed)} ts-defs file(s) failed, so data/c3-ts-defs is left as it is: "
+                + ", ".join(failed)
+            )
         marker.write_text(self.version)
         logger.info(f"[CDN] Exported {fetched} new .d.ts files to {ts_dir}")
         return ts_dir

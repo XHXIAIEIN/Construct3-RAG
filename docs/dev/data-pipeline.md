@@ -84,6 +84,14 @@ The `lang/` files are the CDN text unchanged apart from indentation, so a
 release-to-release diff of `data/c3-lang/` shows exactly which strings
 Scirra added, removed, or retranslated.
 
+`export_ts_defs()` skips a `.d.ts` file that is already in the cache, so each
+cached file is written beside its place and then moved in: a run that stops
+during a write leaves no partial file. If a file fails to download, the export
+tries the rest, then stops with an error that names each failed file and writes
+no `.exported` marker. `export_to_data()` replaces `data/c3-ts-defs` whole, so
+a file that only logged a warning would drop out of the commit. The next run
+downloads only the files that are still missing.
+
 Each plugin/behavior file uses CDN field names:
 - Conditions/actions: `list-name`, `display-text`, `description`
 - Expressions: `translated-name`, `description`

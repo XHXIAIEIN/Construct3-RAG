@@ -562,3 +562,69 @@ def test_export_to_data_replaces_committed_directories_without_cache_markers(fet
     assert (data_dir / "c3-ts-defs" / "plugins" / "sprite.d.ts").exists()
     assert (data_dir / "c3-ts-defs" / "autocomplete-data.json").exists()
     assert not (data_dir / "c3-ts-defs" / ".exported").exists()
+
+
+def _ts_cdn(fetcher: C3Fetcher, failing: frozenset[str] = frozenset()):
+    """A CDN with two .d.ts files; a path in ``failing`` raises as a dropped connection does."""
+    files = {
+        "offline.json": json.dumps({"fileList": ["a/one.d.ts", "b/two.d.ts", "main.js"]}).encode(),
+        "a/one.d.ts": b"interface One {}",
+        "b/two.d.ts": b"interface Two {}",
+        "media/autocomplete-data.json": b"{}",
+    }
+
+    def get(url: str) -> bytes:
+        path = url.removeprefix(fetcher.url(""))
+        if path in failing:
+            raise urllib.error.URLError("connection reset")
+        return files[path]
+
+    return get
+
+
+def test_export_ts_defs_stops_without_a_marker_when_a_file_fails(fetcher):
+    """A file that fails must not drop out of data/: the export stops, and the next run fetches it."""
+    with patch.object(fetcher, "_http_get", side_effect=_ts_cdn(fetcher, frozenset({"b/two.d.ts"}))):
+        with pytest.raises(RuntimeError, match="b/two.d.ts"):
+            fetcher.export_ts_defs()
+    ts_dir = fetcher.cache_dir / "ts-defs"
+    assert not (ts_dir / ".exported").exists()
+    assert (ts_dir / "a" / "one.d.ts").exists()
+
+    with patch.object(fetcher, "_http_get", side_effect=_ts_cdn(fetcher)) as cdn:
+        assert fetcher.export_ts_defs() == ts_dir
+    assert (ts_dir / "b" / "two.d.ts").read_bytes() == b"interface Two {}"
+    assert (ts_dir / ".exported").exists()
+    assert not any(c.args[0].endswith("a/one.d.ts") for c in cdn.call_args_list)
+
+
+def test_export_ts_defs_stops_when_the_autocomplete_listing_fails(fetcher):
+    cdn = _ts_cdn(fetcher, frozenset({"media/autocomplete-data.json"}))
+    with patch.object(fetcher, "_http_get", side_effect=cdn):
+        with pytest.raises(RuntimeError, match="autocomplete"):
+            fetcher.export_ts_defs()
+    assert not (fetcher.cache_dir / "ts-defs" / ".exported").exists()
+
+
+def test_an_interrupted_write_leaves_no_file_that_looks_complete(fetcher):
+    """The export skips a .d.ts that exists, so a half-written one would stay for good."""
+    real_write = Path.write_bytes
+
+    def dies_writing_in(folder: Path):
+        def write(self, data):
+            if self.parent != folder:
+                return real_write(self, data)
+            real_write(self, data[: len(data) // 2])
+            raise KeyboardInterrupt
+        return write
+
+    cache_one = fetcher.cache_dir / "a_one.d.ts"
+    ts_one = fetcher.cache_dir / "ts-defs" / "a" / "one.d.ts"
+    with patch.object(fetcher, "_http_get", side_effect=_ts_cdn(fetcher)):
+        with patch.object(Path, "write_bytes", dies_writing_in(cache_one.parent)), pytest.raises(KeyboardInterrupt):
+            fetcher.fetch_raw("a/one.d.ts")
+        assert not cache_one.exists()
+
+        with patch.object(Path, "write_bytes", dies_writing_in(ts_one.parent)), pytest.raises(KeyboardInterrupt):
+            fetcher.export_ts_defs()
+        assert not ts_one.exists()
