@@ -42,6 +42,19 @@ the *On timer* event was written above the start event; two hits 0.7 s
 apart, the second while the ghost was closing, ended with the ghost equal to
 the fill on every bar]
 
+A loss cuts the fill at once, and a gain grows it. For a loss, the event with
+`Fill.Width > target` runs `Fill: Set width to target` and *Stop* "grow", so
+that a growth under way does not add its rest to the cut
+([pitfalls/tween.md](../pitfalls/tween.md)). For a gain, the event with
+`Fill.Width < target - 0.5` and `NOT Fill: Is playing "grow"` tweens the
+fill's width to `target` in 0.3 s. A third event, `Fill.Width < target` and
+`NOT Is playing "grow"`, sets the width to `target`, because a tween can end a
+hair short of its end value and the tolerance leaves that gap. A fill that
+grows takes its colour tier from the length it shows, `Fill.Width < LOW *
+LENGTH`, so the colour changes where the growing fill crosses the line, not
+0.3 s before. [observed in a minimal project, stable editor preview,
+2026-10-07: three bars, a heal landing grew all three fills in the same 0.3 s]
+
 A second value drawn inside the fill, such as poison that will drain the
 health or damage not yet applied, is a second bar of the same object type
 over the fill, origin on the left, with `X` at `frame.X + (hp - poison) /
@@ -53,19 +66,24 @@ amount, shorter at a higher amount, rather than an accumulator compared
 against a ladder of thresholds every tick. [a studied project, 2026-10-06]
 
 A heal on its way is a part of the same kind as the poison part. It starts
-where the fill ends, at `frame.X + hp / maxHp × LENGTH`, has the width
-`min(incomingHeal, maxHp - hp) / maxHp × LENGTH` and is drawn behind the fill.
-Incoming damage is the poison part with the width `min(incomingDamage, hp) /
-maxHp × LENGTH`, drawn over the fill in a dark colour at 55 % opacity so that
-the fill's colour still shows. Both numbers are instance variables of the
-bar, and a Timer lands them: `hp = clamp(hp - incomingDamage + incomingHeal,
-0, maxHp)`, then both are set to 0. [observed in a minimal project, stable
-editor preview, 2026-10-07]
+where the fill ends, at `Fill.X + Fill.Width`, and ends at `hp +
+min(incomingHeal, maxHp - hp)` as a share of the bar, `frame.X + (hp +
+min(incomingHeal, maxHp - hp)) / maxHp × LENGTH`. It is drawn behind the fill.
+It shortens as the fill grows into it, and it is continuous when a pending
+heal lands, because its far end stays where it was. Incoming damage is the
+poison part with the width `min(incomingDamage, hp) / maxHp × LENGTH`, drawn
+over the fill in a dark colour at 55 % opacity so that the fill's colour
+still shows. Both numbers are instance variables of the bar, and a Timer
+lands them: `hp = clamp(hp - incomingDamage + incomingHeal, 0, maxHp)`, then
+both are set to 0. [observed in a minimal project, stable editor preview,
+2026-10-07: three bars, and the heal part covered the gap between the fill
+and its target on every tick]
 
 A colour by tier is one *Set color* on a white Tiled Background:
 `share < LOW ? c1 : (share < WARN ? c2 : c3)`, with `share` as `hp / maxHp`
-and a colour expression for each of `c1` to `c3`. It evaluates for each bar,
-so the tiers need no sub-events and no *Else*. Write `<`, not `<=`, because a
+for a fill that is set at once and a colour expression for each of `c1` to
+`c3`. It evaluates for each bar, so the tiers need no sub-events and no
+*Else*. Write `<`, not `<=`, because a
 share exactly on a threshold then stays in the upper tier. [observed in a
 minimal project, stable editor preview, 2026-10-07: three bars at the same
 time showed green, yellow and red as their hp differed, with red below 0.25
