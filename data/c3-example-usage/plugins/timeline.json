@@ -1,0 +1,21 @@
+{
+  "conditions": {
+    "is-any-playing": {"examples": 3, "read": [["tasty-cappuccino", "Events", 3, 3], ["solar-system", "Events", 30, 32], ["bucket-warrior", "Events", 36, 36]]},
+    "is-playing-by-tags": {"examples": 4, "read": [["timeline-drawing", "MainEventSheet", 2, 2], ["solar-system", "Events", 12, 16], ["alien-battle", "MainCode", 50, 50]]},
+    "on-any-timeline-finished": {"examples": 2, "read": [["synth-sunset", "Events", 12, 12], ["samuroof", "Menu", 51, 51]]},
+    "on-keyframe-reached": {"examples": 11, "read": [["animated-title-screen", "MainCode", 2, 2], ["blacksmith-forge", "Code", 2, 3], ["tasty-cappuccino", "Events", 4, 4]]},
+    "on-timeline-finished-by-tags": {"examples": 8, "read": [["robotic-loader", "Code", 2, 2], ["cave-bridge", "MainCode", 9, 10], ["solar-system", "Events", 11, 11]]}
+  },
+  "actions": {
+    "play-timeline": {"examples": 16, "read": [["timeline-basics", "Event sheet 1", 1, 1], ["timeline-drawing", "MainEventSheet", 1, 1], ["timeline-instances", "Event sheet 1", 1, 1]]},
+    "play-timeline-by-name": {"examples": 1, "read": [["tasty-cappuccino", "Events", 3, 3]]},
+    "set-instance": {"examples": 2, "read": [["timeline-drawing", "MainEventSheet", 1, 1], ["timeline-instances", "Event sheet 1", 2, 2]]},
+    "set-timeline-time-by-tags": {"examples": 1, "read": [["perseverance", "Events", 3, 3]]},
+    "stop-all-timelines": {"examples": 1, "read": [["segmented-boss-fight", "MainCode", 42, 42]]},
+    "stop-timeline-by-tags": {"examples": 1, "read": [["bumble-beep", "Events", 28, 28]]}
+  },
+  "expressions": {
+    "total-time": {"examples": 2, "read": [["cave-bridge", "MainCode", 8, 8], ["segmented-boss-fight", "MainCode", 45, 45]]},
+    "value": {"examples": 2, "read": [["synth-sunset", "Events", 14, 14], ["solar-system", "Events", 12, 16]]}
+  }
+}

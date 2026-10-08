@@ -342,3 +342,40 @@ def test_preview_project_lists_every_recording_in_an_index_page(tmp_path):
     assert {k: listed[0][k] for k in ("page", "project", "frames", "seconds", "steps", "failed", "errors")} == {
         "page": "05-drop.html", "project": "D:/G", "frames": 2, "seconds": 1.5, "steps": 1, "failed": 1, "errors": 1}
     assert "let timeline = /*TIMELINE*/null" in page     # it opens as the list, not as one recording
+
+
+def test_preview_project_replays_the_kept_plans_and_names_the_one_that_fails_now():
+    """--all: one line per kept plan; a failed step, a runtime error or a refused plan fails it."""
+    def done(steps, planned=None, errors=()):
+        return {"started": True, "errors": list(errors), "steps": steps, "planned": planned or len(steps),
+                "seconds": 2.04}
+    ok = {"step": 1, "line": "1 wait 0.5 s", "ok": True, "said": "ok", "errors": []}
+    bad = {"step": 2, "line": "2 until vars.merged", "ok": False, "said": "still false after 10 s", "errors": []}
+    logged = {**ok, "errors": ["Event sheet 1, event 4, action 2: TypeError\n    at stack"]}
+    result = {"project": "Game", "status": "opened", "title": "Game - Construct 3", "editor": "e", "preview": {
+        "plans": {"merge": done([ok, bad], 3), "hint": done([ok]), "buy": done([logged])}}}
+    lines, failed = pp.replay_report(result, {"old": ["step 1 has none of tap, hold"]})
+    assert failed == 3
+    assert lines[1:] == [
+        "  FAIL  buy (tools/plans/buy.json): runtime: Event sheet 1, event 4, action 2: TypeError",
+        "  ok    hint: 1 step in 2.0 s",
+        "  FAIL  merge (tools/plans/merge.json): 2 until vars.merged: FAILED, still false after 10 s",
+        "  FAIL  old (tools/plans/old.json): the plan is refused: step 1 has none of tap, hold",
+        "  replayed: 1 of 4 kept plans pass, 1 runtime error",
+    ], lines
+
+
+def test_preview_project_keeps_a_plan_in_the_project_and_needs_one_to_replay(project, tmp_path):
+    plan = tmp_path / "plan.json"
+    plan.write_text('{"steps": [{"wait": 1}]}\n', encoding="utf-8")
+    kept = pp.keep(plan, project, "merge-two")
+    assert kept == project / "tools" / "plans" / "merge-two.json"
+    assert kept.read_bytes() == plan.read_bytes()
+    assert pp.kept_plans(project) == [kept]
+    code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "plan.json", "--keep", "a b")
+    assert code == 2 and "--keep takes a NAME of letters, digits, - and _" in out, out
+    code, out = run(project, f"{INSTALLED}/scripts/preview_project.py")
+    assert code == 2 and "give a PLAN.json to play, or --all" in out, out
+    kept.unlink()
+    code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "--all")
+    assert code in (2, 3) and ("no kept plan in" in out or "no Edge, Chrome or Chromium" in out), out

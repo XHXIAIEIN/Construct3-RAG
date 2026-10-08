@@ -518,6 +518,15 @@ def tables(design: gm.Design) -> list[str]:
     lines.append("state, stored in, written by, read by:")
     for n, s in design.state.items():
         lines.append(f"  {n}  {s.stored_in}  {', '.join(written[n]) or '-'}  {', '.join(read[n]) or '-'}")
+    places = gm.screen_places(design)
+    if places:
+        lines.append("screen, place, checked by:")
+        for p in places:
+            said = " ".join([p.third] + [f"{side} {ref}" for side, ref in p.sides]).strip()
+            lines.append(f"  {p.key}  {p.text}  " + (f"play_design.py: {said}" if p.measured else "review_look.py"))
+        if not all(p.measured for p in places):
+            lines.append(f"  play_design.py measures a place whose words before the first comma are only "
+                         f"{gm.SCREEN_WORDS}; review_look.py asks about the others")
     return lines
 
 

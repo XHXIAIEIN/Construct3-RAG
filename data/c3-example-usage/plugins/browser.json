@@ -1,0 +1,11 @@
+{
+  "actions": {
+    "cancel-fullscreen": {"examples": 1, "read": [["kiwi-story", "eMenus", 21, 21]]},
+    "close": {"examples": 12, "read": [["gravitational-field", "MainCode", 53, 53], ["cannon-launch", "MainCode", 50, 50], ["snake-shape", "MainCode", 64, 64]]},
+    "invoke-download": {"examples": 7, "read": [["mandelbrot-set-js", "SaveImage", 1, 1], ["taking-screenshots", "Event sheet 1", 4, 4], ["screen-recording", "Event sheet 1", 11, 11]]},
+    "log": {"examples": 6, "read": [["multiplayer-binary-transfer", "Room events", 1, 1], ["overloaded-underqualified", "SoundEvents", 14, 18], ["jungle-master", "Events", 7, 10]]},
+    "open-url-in-new-window": {"examples": 3, "read": [["geolocation", "Event sheet 1", 8, 8], ["flowchart-questionnaire", "Event sheet 1", 13, 13], ["solar-system", "Events", 40, 40]]},
+    "request-fullscreen": {"examples": 1, "read": [["kiwi-story", "eMenus", 22, 22]]},
+    "vibrate": {"examples": 1, "read": [["vibrate", "Event sheet 1", 1, 1]]}
+  }
+}

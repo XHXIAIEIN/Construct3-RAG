@@ -1,0 +1,24 @@
+{
+  "conditions": {
+    "compare-value": {"examples": 2, "read": [["mythinsects", "MenuEvents", 10, 10], ["fuji-leaper", "MenuEvents", 13, 13]]},
+    "is-processing-gets": {"examples": 10, "read": [["rat-purrsuit", "MenuEvents", 27, 27], ["mythinsects", "MenuEvents", 26, 33], ["avalanche", "MenuEvents", 34, 37]]},
+    "is-processing-sets": {"examples": 10, "read": [["rat-purrsuit", "MenuEvents", 27, 27], ["mythinsects", "MenuEvents", 26, 33], ["avalanche", "MenuEvents", 34, 37]]},
+    "on-all-gets-complete": {"examples": 1, "read": [["offline-builder", "Events", 22, 24]]},
+    "on-item-exists": {"examples": 23, "read": [["localstorage-hiscore", "Event sheet 1", 3, 3], ["level-selection", "esLevelSelection", 4, 4], ["rotating-maze", "MenuEvents", 3, 3]]},
+    "on-item-get": {"examples": 21, "read": [["rotating-maze", "MenuEvents", 5, 6], ["tick-tock-toppings", "TitleEvents", 4, 6], ["keyboard-mapping", "KeyboardMappingEvents", 8, 9]]},
+    "on-item-missing": {"examples": 22, "read": [["demonoire", "eTitleScreen", 2, 3], ["localstorage-hiscore", "Event sheet 1", 2, 2], ["level-selection", "esLevelSelection", 5, 5]]},
+    "on-item-removed": {"examples": 1, "read": [["level-selection", "esLevelSelection", 11, 11]]},
+    "on-item-set": {"examples": 1, "read": [["level-selection", "esLevelCommon", 6, 6]]},
+    "on-storage-cleared": {"examples": 1, "read": [["ghost-racer", "MainCode", 34, 34]]}
+  },
+  "actions": {
+    "check-item-exists": {"examples": 23, "read": [["localstorage-hiscore", "Event sheet 1", 1, 1], ["level-selection", "esLevelSelection", 2, 2], ["rotating-maze", "MenuEvents", 2, 2]]},
+    "clear-storage": {"examples": 11, "read": [["mythinsects", "MenuEvents", 32, 32], ["offline-builder", "Events", 34, 34], ["avalanche", "MenuEvents", 43, 43]]},
+    "get-item": {"examples": 21, "read": [["rotating-maze", "MenuEvents", 3, 3], ["tick-tock-toppings", "TitleEvents", 3, 3], ["keyboard-mapping", "KeyboardMappingEvents", 7, 7]]},
+    "remove-item": {"examples": 4, "read": [["localstorage-hiscore", "Event sheet 1", 7, 7], ["level-selection", "esLevelSelection", 10, 10], ["pusha-pusha", "TitleScreen", 20, 20]]},
+    "set-item": {"examples": 23, "read": [["level-selection", "esLevelCommon", 5, 5], ["samuroof", "Credits", 6, 6], ["localstorage-hiscore", "Event sheet 1", 2, 2]]}
+  },
+  "expressions": {
+    "itemvalue": {"examples": 23, "read": [["localstorage-hiscore", "Event sheet 1", 3, 3], ["level-selection", "esLevelSelection", 4, 4], ["rotating-maze", "MenuEvents", 5, 6]]}
+  }
+}

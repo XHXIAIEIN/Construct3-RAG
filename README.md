@@ -69,7 +69,7 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 
 [`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) tells the agent which script to run and when. Every script below except the `assets/build_project.py` template prints its options and examples with `--help`.
 
-- `lookup_ace.py` looks up the conditions, actions and expressions of an object in the project, of `System`, or of a plugin or behavior. It prints each one with its parameters, its event sheet wording and the JSON to write. For an effect, it prints the effect's parameters.
+- `lookup_ace.py` looks up the conditions, actions and expressions of an object in the project, of `System`, or of a plugin or behavior. It prints each one with its parameters, its event sheet wording, the JSON to write, and the official examples that use it with the command that prints each use. For an effect, it prints the effect's parameters.
 - `lookup_script_api.py` looks up the scripting API. Given an interface, a plugin or a behavior, it prints the members. Given a member, it prints the declaration, the interface that declares it and the file and line, inherited members included.
 - `search_guides.py` searches the event sheet pitfalls and the official examples by words. It prints the matching pitfall entries in full, and for each matching example the command that prints its events.
 - `print_sheet.py` prints an event sheet in the editor's words, with the editor's event numbers. It reads the official examples the same way.
@@ -82,8 +82,8 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 - `check_look.py` checks the files of a generated game against the strict rules in `assets/look-manifest.json`, such as a clean alpha channel, instances on the grid and a hit shown as a colour.
 - `prepare_art.py` brings in art from the agent's image tool. It prints a prompt for each picture that the generator asks for. Then it cuts each picture that the tool made out of its background and fits it to the box of its stand-in shape. It needs Pillow.
 - `open_in_editor.py` opens the project in the Construct 3 editor and reports that it opened, or gives the editor's message. With `--preview`, it runs the game for a few seconds and reports the runtime errors with their events. With `--typescript`, the editor writes the project's TypeScript definitions into `scripts/ts-defs/`.
-- `preview_project.py` plays a preview from a plan of taps, drags, key presses and waits. It takes screenshots and records parts of the run. You can review a recording frame by frame and give a part of it to the agent as a task.
-- `review_look.py` previews the project, visits every layout and takes a screenshot of each. It reports what the runtime shows wrong there, such as a text that its box cuts or instances stacked on one spot. Then it asks the agent fixed questions to answer from the screenshots.
+- `preview_project.py` plays a preview from a plan of taps, drags, key presses and waits. It takes screenshots and records parts of the run. You can review a recording frame by frame and give a part of it to the agent as a task. A plan that passes can be kept in the project, and after each later change every kept plan is replayed.
+- `review_look.py` previews the project, visits every layout and takes a screenshot of each. It reports what the runtime shows wrong there, such as a text that its box cuts or instances stacked on one spot. Then it asks fixed questions to answer from the screenshots, and writes them with the screenshots into a brief for a sub-agent that has not seen the project.
 - `screenshot_sheet.py` takes a picture of an event sheet, or of one group in it, as the editor shows it, for a forum post, a bug report or a document. The picture is in English and cropped to the sheet, and each column is as wide as its longest line.
 - `export_project.py` makes the editor export the project to Web (HTML5), with your subscribed account.
 - `pack_project.py` saves the project as a `.c3p` or `.zip` that the editor opens. It also unpacks a `.c3p` or `.zip` into a project folder.
@@ -125,7 +125,7 @@ Run lookups from the clone that [Set up](#set-up) makes. For a condition, action
 python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait
 ```
 
-It prints each match with its parameters, its wording and the JSON to write. Use it for `System` and for the ACEs that every world object shares. Look a shared ACE up under any world object, such as `Sprite overlap`. The files of these ACEs, `plugins/system.json` and `plugins/_common.json`, are too long for most file tools to read at once. Such a tool shows only the first part of a file, so an ACE after that part looks missing.
+It prints each match with its parameters, its wording and the JSON to write. Under each match printed in full, it gives the number of official examples that use it, and a `print_sheet.py` command for each of up to three uses, the smallest sheets first. Seven or more matches print one line each, without counts. Use it for `System` and for the ACEs that every world object shares. Look a shared ACE up under any world object, such as `Sprite overlap`. The files of these ACEs, `plugins/system.json` and `plugins/_common.json`, are too long for most file tools to read at once. Such a tool shows only the first part of a file, so an ACE after that part looks missing.
 
 Read everything else from the files under `data/`. In the paths below, `{locale}` is one of the `languages` in `c3-schemas/_index.json`, such as `en-US`:
 
@@ -139,6 +139,7 @@ Read everything else from the files under `data/`. In the paths below, `{locale}
 | `c3-schemas/{locale}/effects/{id}.json` | Effect parameters and categories |
 | `c3-schemas/{locale}/_deprecated.json` | Plugins, behaviors, effects and ACEs that the editor has deprecated, with the current ACE of the same name where one exists |
 | `c3-examples/{locale}/{id}.json` | Example name, description, tags, used addons, open URL |
+| `c3-example-usage/{plugins,behaviors}/{id}.json` | Which official examples use each ACE of the plugin or behavior: their number, and up to three uses as example folder, sheet and events. Built from the event sheets in the `Construct-Example-Projects` repository |
 | `c3-lang/{locale}.json` | The editor's language pack from the CDN, one string per line |
 | `c3-ts-defs/autocomplete-data.json` | Scripting classes with their methods and properties |
 | `c3-ts-defs/**/*.d.ts` | Full TypeScript interface signatures |
@@ -176,7 +177,7 @@ For events written into a project, [`prompts/event-sheet-style.md`](prompts/even
 | Repository | Content | How it fits |
 |---|---|---|
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, the Addon SDK guide and the Game Services docs, as Markdown | `data/c3-schemas/` gives the names and parameters; the manual says what they do. |
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as a folder project | `data/c3-examples/` holds the metadata; the projects are in that repository. |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as a folder project | `data/c3-examples/` holds the metadata, and `data/c3-example-usage/` holds which examples use each ACE; the projects are in that repository. |
 | [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects and themes | `data/c3-ts-defs/sdk/` holds the typed interface; the SDK shows how to use it. |
 
 ## Lookup service (optional)
@@ -200,6 +201,7 @@ plugin/                 The Claude Code plugin, built by scripts/build_plugin.py
 data/                   Committed reference data, read directly
   c3-schemas/           ACE definitions and effects, one folder per locale
   c3-examples/          Example project metadata
+  c3-example-usage/     Which examples use each ACE
   c3-lang/              CDN language packs
   c3-ts-defs/           TypeScript scripting interfaces
   c3-guides/            Scirra's guide to the project format

@@ -46,6 +46,7 @@ Data and schemas:
 | `cdn-release-directory.md` | Which CDN directory a release is fetched from, and why the root is never read for it |
 | `release-schema-diff.md` | What the update pull request reports about a release, and when it waits for a person instead of merging itself |
 | `update-fails-visibly.md` | Why a failed version check, a wrong CDN body or a short export fails the update and leaves `data/` as committed |
+| `example-usage-index.md` | Which official examples use each ACE: how the index is built from the examples clone and refreshed, and what `lookup_ace.py` prints of it |
 | `lf-line-endings.md` | Why every text file is LF in the repository and in every checkout, the CDN's TypeScript definitions included |
 
 The project skill and the prompts:

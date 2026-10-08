@@ -1,0 +1,23 @@
+{
+  "conditions": {
+    "is-recognising-speech": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 21, 21]]},
+    "on-check-language-available-result": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 10, 10]]},
+    "on-end": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 25, 25]]},
+    "on-error": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 26, 26]]},
+    "on-install-on-device-recongition-result": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 17, 17]]},
+    "on-result": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 27, 27]]},
+    "on-start": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 24, 24]]},
+    "supports-speech-recognition": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 3, 3]]}
+  },
+  "actions": {
+    "check-language-available": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 8, 8]]},
+    "install-on-device-recognition": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 16, 16]]},
+    "request-speech-recognition": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 22, 22]]},
+    "stop-speech-recognition": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 21, 21]]}
+  },
+  "expressions": {
+    "finaltranscript": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 27, 27]]},
+    "interimtranscript": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 27, 27]]},
+    "speecherror": {"examples": 1, "read": [["speech-recognition", "Event sheet 1", 26, 26]]}
+  }
+}

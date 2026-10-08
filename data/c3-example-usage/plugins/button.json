@@ -1,0 +1,9 @@
+{
+  "conditions": {
+    "is-checked": {"examples": 6, "read": [["child-particles", "Event sheet 1", 3, 3], ["back-face-culling", "Event sheet 1", 3, 3], ["tile-randomization", "Event sheet 1", 1, 1]]},
+    "on-clicked": {"examples": 50, "read": [["bbc-micro-bit-raw", "ReadingsEvents", 1, 1], ["camera-average-color-js", "Event sheet 1", 1, 1], ["drawingcanvas-generate-image-js", "Event sheet 1", 1, 1]]}
+  },
+  "actions": {
+    "set-text": {"examples": 3, "read": [["internationalization", "DateLocalizationEventSheet", 5, 5], ["speech-recognition", "Event sheet 1", 21, 21], ["quest-flowcharts", "Event sheet 1", 13, 14]]}
+  }
+}

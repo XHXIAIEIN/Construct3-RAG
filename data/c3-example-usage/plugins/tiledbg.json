@@ -1,0 +1,20 @@
+{
+  "actions": {
+    "load-image-from-url": {"examples": 1, "read": [["planet-generator", "Events", 96, 96]]},
+    "set-blend-mode": {"examples": 1, "read": [["mask-effect-puzzle", "MainCode", 30, 30]]},
+    "set-image-offset-x": {"examples": 69, "read": [["reveal-the-tiles", "CongratsEvents", 2, 2], ["tick-tock-toppings", "CreditsEvents", 3, 4], ["living-card", "Code", 4, 4]]},
+    "set-image-offset-y": {"examples": 50, "read": [["reveal-the-tiles", "CongratsEvents", 2, 2], ["meowgix", "CreditsEvents", 4, 5], ["living-card", "Code", 4, 4]]},
+    "set-image-scale-x": {"examples": 1, "read": [["tile-randomization", "Event sheet 1", 3, 3]]},
+    "set-image-scale-y": {"examples": 1, "read": [["tile-randomization", "Event sheet 1", 3, 3]]},
+    "set-tile-angle-random": {"examples": 1, "read": [["tile-randomization", "Event sheet 1", 6, 6]]},
+    "set-tile-blend-margin": {"examples": 1, "read": [["tile-randomization", "Event sheet 1", 7, 7]]},
+    "set-tile-pos-random": {"examples": 1, "read": [["tile-randomization", "Event sheet 1", 5, 5]]},
+    "set-tile-randomization-enabled": {"examples": 1, "read": [["tile-randomization", "Event sheet 1", 1, 1]]}
+  },
+  "expressions": {
+    "image-offset-x": {"examples": 59, "read": [["reveal-the-tiles", "CongratsEvents", 2, 2], ["tick-tock-toppings", "CreditsEvents", 3, 4], ["living-card", "Code", 4, 4]]},
+    "image-offset-y": {"examples": 44, "read": [["reveal-the-tiles", "CongratsEvents", 2, 2], ["meowgix", "CreditsEvents", 4, 5], ["living-card", "Code", 4, 4]]},
+    "imageheight": {"examples": 3, "read": [["synth-sunset", "Events", 16, 16], ["hook-shot", "MainCode", 51, 53], ["object-time-freezing", "MainCode", 51, 51]]},
+    "imagewidth": {"examples": 5, "read": [["synth-sunset", "Events", 16, 16], ["dig-the-way", "EventsGame", 18, 24], ["avalanche", "PlayerEvents", 3, 4]]}
+  }
+}

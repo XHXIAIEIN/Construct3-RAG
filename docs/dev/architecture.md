@@ -74,6 +74,7 @@ domain/* <-------------------------+
 Explicit maintenance path:
 
 scripts/init.py -----> ingest/c3_fetcher.py -----> data/
+                 \---> scripts/example_usage.py -> data/c3-example-usage/
                  \---> ingest/guides.py --------> data/c3-guides/
 ```
 
@@ -159,8 +160,10 @@ reads the committed dataset, or the directory `C3_SCHEMA_DIR` names. A refresh
 replaces `data/` itself, so the cache is never read at query time.
 
 No ordinary import or query refreshes the CDN. `scripts/init.py` fetches,
-exports into the cache, and replaces the `data/` directories, then writes
-each of Scirra's guides whose text changed; the update workflow runs the
+exports into the cache, and replaces the `data/` directories. It then
+rebuilds `data/c3-example-usage/` from the examples clone when the clone
+lies beside the repository, and writes each of Scirra's guides whose text
+changed; the update workflow runs the
 same script, `--guides-only` every week, then `scripts/schema_diff.py` for
 the body of its pull request.
 

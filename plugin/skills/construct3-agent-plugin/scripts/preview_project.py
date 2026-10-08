@@ -2,9 +2,10 @@
 and drag the game's own instances, press keys, wait for what the events do, run
 scripts against the runtime, and read the state, take screenshots and record between steps.
 
-    python scripts/preview_project.py PLAN.json [--project FOLDER] [--release rNNN] [--browser EXE]
-                                      [--shots DIR] [--out RESULT.json] [--headed] [--profile FOLDER]
-                                      [--locale en-US]
+    python scripts/preview_project.py PLAN.json [--keep NAME] [--project FOLDER] [--release rNNN]
+                                      [--browser EXE] [--shots DIR] [--out RESULT.json] [--headed]
+                                      [--profile FOLDER] [--locale en-US]
+    python scripts/preview_project.py --all [--project FOLDER] ...
 
 Use it to check what a player does: a merge, a drop, a jump, a purchase. The
 plan is JSON, the steps run in order, and a step that fails stops the run:
@@ -86,6 +87,12 @@ leaves a screenshot, NN-failed.png. Screenshots and recordings go to --shots, by
 --out, by default .tmp/preview-project.json; .tmp/ is ignored by Git. The last
 line names both: read a cut-off result there instead of playing the plan again.
 
+A plan that passes is kept with --keep NAME as tools/plans/NAME.json in the
+project, committed with the change it checks; the editor ignores the folder.
+--all replays every kept plan in one editor session, each from a first launch,
+and names each one that fails, because a later change broke what it checks. Its result goes to .tmp/preview-plans.json and its screenshots
+to .tmp/preview-plans/NAME/.
+
 The result holds what the editor did, as open_in_editor.py writes it, and the
 run under "preview"; the steps are in preview.steps, one object per step that ran:
   {"project", "status": "opened", "title", "editor", "warnings", ...,
@@ -118,6 +125,8 @@ import open_in_editor as oe
 EPILOG = """examples:
   python scripts/preview_project.py .tmp/merge-plan.json
   python scripts/preview_project.py plan.json --project "D:/Games/Merge" --headed
+  python scripts/preview_project.py .tmp/merge-plan.json --keep merge-two-pieces
+  python scripts/preview_project.py --all
 
 output:
   opened   <project>  (<window title>, <the editor it opened in>)
@@ -140,11 +149,19 @@ output:
       watch coins: 40 at 0 ms, 30 at 900 ms
     ran: 4 of 4 steps in 9.6 s, 1 runtime error
 
-exit codes: 0 every step ran and the game logged no error; 1 a step failed, the game logged an error, or
-the project did not open; 2 the plan, the project, the editor or --locale could not be used; 3 no browser here
+--all prints one line per kept plan instead of its steps:
+    ok    merge-two-pieces: 6 steps in 4.1 s
+    FAIL  hint-after-idle (tools/plans/hint-after-idle.json): step 3 until ...: FAILED, false after 10 s
+  replayed: 1 of 2 kept plans pass, no runtime errors
+
+exit codes: 0 every step ran and the game logged no error (--all: in every kept plan); 1 a step failed, the
+game logged an error, or the project did not open; 2 the plan, the project, the editor or --locale could not be
+used, or --all found no kept plan; 3 no browser here
 """
 
 STEPS = ("tap", "hold", "drag", "key", "wait", "until", "js", "state", "shot", "record")
+# Where a project keeps the plans that passed, one per change they checked.
+KEPT = Path("tools") / "plans"
 FIELDS = {"tap": set(), "hold": {"seconds"}, "drag": {"to", "seconds", "through", "rest"}, "key": {"seconds"}, "wait": set(),
           "until": {"timeout"}, "js": {"timeout"}, "state": set(), "shot": set(), "record": {"watch"}}
 PRESS = {"hold": 0.5, "drag": 0.4, "key": 0.1}
@@ -1030,10 +1047,136 @@ def where(out: Path, shots: Path) -> str:
     return f"full result in {out}, screenshots in {shots}"
 
 
+def kept_plans(project: Path) -> list[Path]:
+    folder = project / KEPT
+    return sorted(folder.glob("*.json")) if folder.is_dir() else []
+
+
+def keep(plan: Path, project: Path, name: str) -> Path:
+    """The plan copied as it was written into the project's kept plans."""
+    to = project / KEPT / f"{name}.json"
+    to.parent.mkdir(parents=True, exist_ok=True)
+    to.write_bytes(plan.read_bytes())
+    return to
+
+
+def play_all(plans: dict[str, dict], shots: Path, project: Path) -> Callable[[oe.Browser, str, oe.DevTools], dict]:
+    """The `then` of open_in_editor.open_one: each plan previews the game afresh, in one editor session."""
+    def run(browser: oe.Browser, target: str, page: oe.DevTools) -> dict:
+        ran = {}
+        for name, plan in plans.items():
+            (shots / name).mkdir(parents=True, exist_ok=True)
+            ran[name] = play(plan, shots / name, project)(browser, target, page)
+        return {"started": True, "plans": ran}
+    return run
+
+
+def replay_report(result: dict, refused: dict[str, list[str]],
+                  label: Callable[[str], str] = oe.key_name) -> tuple[list[str], int]:
+    """One line per kept plan, ok or FAIL with the step that failed or the first runtime error, and how many
+    failed."""
+    if result["status"] != "opened":
+        return oe.report(result, label), len(refused) + 1
+    lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
+    lines += [f"  warning: {w}" for w in result.get("warnings", [])]
+    ran = (result.get("preview") or {}).get("plans", {})
+    failed, errors = 0, 0
+    for name in sorted(set(ran) | set(refused)):
+        where = (KEPT / f"{name}.json").as_posix()
+        if name in refused:
+            failed += 1
+            lines.append(f"  FAIL  {name} ({where}): the plan is refused: {'; '.join(refused[name])}")
+            continue
+        done = ran[name]
+        if not done["started"]:
+            failed += 1
+            lines.append(f"  FAIL  {name} ({where}): the preview did not run: {'; '.join(done['errors'])}")
+            continue
+        logged = [e.splitlines()[0] for e in done["errors"] + [e for d in done["steps"] for e in d["errors"]]]
+        errors += len(logged)
+        bad = next((d for d in done["steps"] if not d["ok"]), None)
+        if bad or logged or len(done["steps"]) < done["planned"]:
+            failed += 1
+            why = (f"{bad['line']}: FAILED, {bad['said']}" if bad else f"runtime: {logged[0]}" if logged
+                   else f"stopped after {len(done['steps'])} of {done['planned']} steps")
+            lines.append(f"  FAIL  {name} ({where}): {why}")
+            lines += [f"    runtime: {e}" for e in logged[1 if not bad else 0:][:3]]
+        else:
+            lines.append(f"  ok    {name}: {done['planned']} step{'s' if done['planned'] != 1 else ''} in "
+                         f"{done['seconds']:.1f} s")
+    total = len(ran) + len(refused)
+    lines.append(f"  replayed: {total - failed} of {total} kept plans pass, {errors or 'no'} runtime "
+                 f"error{'' if errors == 1 else 's'}")
+    return lines, failed
+
+
+def replay(args: argparse.Namespace, project: Path, exe: str, editor: str) -> int:
+    """--all: every kept plan, one editor session."""
+    plans, refused = {}, {}
+    for path in kept_plans(project):
+        try:
+            plan, problems = check_plan(json.loads(path.read_text(encoding="utf-8")))
+        except (OSError, ValueError) as e:
+            plan, problems = {}, [str(e)]
+        if problems:
+            refused[path.stem] = problems
+        else:
+            plans[path.stem] = plan
+    if not plans and not refused:
+        print(f"no kept plan in {project / KEPT}: when a plan passes, run it again with --keep NAME to keep it there",
+              file=sys.stderr)
+        return 2
+    out, shots = oe.kept(args.out, args.shots, project, "preview-plans.json", "preview-plans")
+    shots.mkdir(parents=True, exist_ok=True)
+    if plans:
+        try:
+            browser = oe.Browser(exe, (args.profile or oe.scratch(project)) / f"editor-{Path(exe).stem.lower()}",
+                                 args.headed)
+        except (oe.DevToolsError, OSError) as e:
+            print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
+            return 2
+        try:
+            result = oe.open_one(browser, editor, project, browser.profile / "project-play.c3p", None,
+                                 bool(args.release), play_all(plans, shots, project))
+        except oe.EditorNotLoaded as e:
+            print(f"the editor did not load: {e}. Check the network connection and --release, and run again.",
+                  file=sys.stderr)
+            return 2
+        except (oe.DevToolsError, OSError) as e:
+            print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
+            return 2
+        finally:
+            browser.close()
+    else:
+        result = {"status": "opened", "project": str(project), "title": "not opened: every kept plan is refused",
+                  "editor": "-", "preview": {"plans": {}}}
+    out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
+    lines, failed = replay_report(result, refused)
+    shown = c3.fitting(lines, args.limit)
+    print("\n".join(lines[:shown]))
+    if shown < len(lines):
+        print(f"{len(lines) - shown} lines not printed: {out} keeps everything, --limit 0 prints it")
+    print(where(out, shots))
+    if result["status"] != "opened":
+        print(oe.NEXT)
+    elif failed:
+        print("next: a kept plan passed when the change it checks was made, so one that fails now names what a later "
+              "change broke. Read its failing step and the events that step reads, fix the events, not the plan, and "
+              "run --all again. Change a kept plan only when the game was meant to change what it checks.")
+    return 1 if failed or result["status"] != "opened" else 0
+
+
 def main() -> int:
     c3.utf8_output()
     ap = argparse.ArgumentParser(description=__doc__, epilog=EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("plan", type=Path, metavar="PLAN.json", help="the steps to play, as described above")
+    ap.add_argument("plan", type=Path, nargs="?", metavar="PLAN.json",
+                    help="the steps to play, as described above (none with --all)")
+    ap.add_argument("--keep", metavar="NAME",
+                    help="when every step passes, keep the plan as tools/plans/NAME.json in the project, to commit "
+                         "with the change it checks; NAME is letters, digits, - and _")
+    ap.add_argument("--all", action="store_true",
+                    help="replay every plan kept in tools/plans of the project, each from a first launch, and name "
+                         "each one that fails")
     ap.add_argument("--project", metavar="FOLDER",
                     help="the folder that holds project.c3proj (default: found from the current directory upward)")
     ap.add_argument("--release", metavar="rNNN", help="open in this release of the editor, as open_in_editor.py does")
@@ -1053,6 +1196,22 @@ def main() -> int:
                          f"everything (default: {c3.LIMIT})")
     args = ap.parse_args()
 
+    if bool(args.plan) == args.all:
+        ap.error("give a PLAN.json to play, or --all to replay the kept plans")
+    if args.keep is not None and (args.all or not re.fullmatch(r"[A-Za-z0-9_-]+", args.keep)):
+        ap.error("--keep takes a NAME of letters, digits, - and _, with a PLAN.json")
+    if args.all:
+        project = c3.find_project(args.project)
+        if not project:
+            print(f"no project.c3proj found from {args.project or Path.cwd()} upward; run this in the project folder "
+                  f"or pass --project <folder>", file=sys.stderr)
+            return 2
+        exe = args.browser or oe.browser_path()
+        if not exe:
+            print("no Edge, Chrome or Chromium found here, and replaying the kept plans needs one this script can "
+                  "drive: install one, or play each plan in tools/plans with a browser tool of this session.")
+            return 3
+        return replay(args, project, exe, f"{oe.EDITOR}{args.release.strip('/')}/" if args.release else oe.EDITOR)
     try:
         plan, problems = check_plan(json.loads(args.plan.read_text(encoding="utf-8")))
     except (OSError, ValueError) as e:
@@ -1118,7 +1277,20 @@ def main() -> int:
               f"(add a state step before it) and the sheet, fix the events or the plan, and run this again.")
     if errors:
         print(oe.NEXT_PREVIEW.replace("run this again with --preview", "run this again"))
-    return 0 if result["status"] == "opened" and ran.get("started") and not failed and not errors else 1
+    passed = result["status"] == "opened" and ran.get("started") and not failed and not errors
+    others = [p for p in kept_plans(project) if args.keep is None or p.stem != args.keep]
+    if passed and args.keep:
+        print(f"kept: {keep(args.plan, project, args.keep)}; commit it with the change it checks"
+              + (f", and replay it with the {len(others)} other kept plan{'s' if len(others) != 1 else ''} after "
+                 f"every change: python scripts/preview_project.py --all" if others else
+                 "; after every change, replay the kept plans: python scripts/preview_project.py --all"))
+    elif args.keep:
+        print(f"not kept: only a plan that passes is kept. A plan that checks a bug fails until the fix works: fix "
+              f"the events until it passes, then run it again with --keep {args.keep}")
+    elif passed:
+        print("keep: this plan passes; keep it as a check of this change with --keep NAME, and replay every kept plan "
+              "after the next change with --all" + (f" ({len(others)} kept)" if others else ""))
+    return 0 if passed else 1
 
 
 if __name__ == "__main__":
