@@ -108,7 +108,9 @@ Construct-Example-Projects, 2026-09-18]
   `bands()`, `band_text()` and `fit()`; the record is
   `docs/decisions/layout-by-name.md`. The template's `press()` presses a
   button and `count_up()` counts a score ([feel.md](feel.md);
-  `docs/decisions/count-up-and-press.md`).
+  `docs/decisions/count-up-and-press.md`). A settings screen's slider,
+  toggle and text input are its `slider()`, `toggle()` and `text_input()`
+  (`docs/decisions/input-controls.md`).
 - Each class of object keeps one kind of motion, so the eye knows what
   matters. The HUD and menus fade and slide: of the studio cohort's 480
   one-shot tweens on objects of a parallax-0 layer, in 71 projects, 73%

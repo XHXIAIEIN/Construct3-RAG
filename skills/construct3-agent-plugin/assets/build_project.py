@@ -267,8 +267,8 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
     """Stops the generator when two of these instances' boxes overlap or one reaches past the
     viewport: a HUD is read at a glance, so nothing on it hides behind anything else. A box
     wholly inside another is a layer on purpose, a bar's fill in its frame or an icon on its
-    panel, and passes, unless the outer one is a label, which anything on top of it hides. So do
-    two parts of one component that link() made, a slider's knob reaching past its track.
+    panel, and passes, unless the outer one is a label, which anything on top of it hides. Two
+    parts of one component that link() made also pass, such as a slider's knob reaching past its track.
     Called on the UI layer in build_layouts(); a layer whose art is meant to stack is not
     passed. Every box in the way is named in one message, one line each."""
     boxes, parts, said = [], [], []
@@ -298,8 +298,8 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
         return u
 
     def linked(m: int, n: int) -> bool:
-        """Two parts of one component, in one hierarchy of link(), which the helper that made them
-        laid out together."""
+        """True when two parts share one hierarchy of link(): the helper that made them laid them out
+        together."""
         return root(parts[m]) == root(parts[n]) and (parent_of[parts[m]["uid"]] is not None
                                                    or parent_of[parts[n]["uid"]] is not None)
 
@@ -1786,8 +1786,7 @@ def link(parent: dict, *children: dict, size: bool = False) -> None:
     graph = parent.get("sceneGraphData") or {"parent-uid": None, "uid": parent["uid"], "children": [],
                                               "flags": dict(own), "preview": dict(preview)}
     if "children" not in graph:
-        # a child that becomes a parent too, a slider's knob with its value: "children" after "uid", as
-        # the editor writes a node in the middle of a hierarchy
+        # A child that gets children, a slider's knob with its value: the editor writes "children" after "uid"
         graph = {k: v for key, value in graph.items()
                  for k, v in ((key, value), *((("children", []),) if key == "uid" else ()))}
     flags = {**SCENE_FLAGS, "w": size, "h": size}
@@ -1953,7 +1952,7 @@ SLIDER = {"track": "SliderTrack", "fill": "SliderFill", "knob": "SliderKnob", "l
 TOGGLE = {"switch": "Toggle", "label": "ToggleLabel"}
 TEXT_INPUT = {"box": "TextInput", "label": "TextInputLabel"}
 # What shows of a control inside its TOUCH-high row: the slider's bar and its knob, the toggle's
-# switch. Near Material's and Apple's sizes at the 360 dp TOUCH assumes: a 4 to 16 dp track, a
+# switch. Near Material's sizes at the 360 dp TOUCH assumes: a 4 to 16 dp track, a
 # 20 dp knob, a 52 x 32 dp switch.
 CONTROL_SIZE = {"bar": max(2, UNIT // 2), "knob": units(2), "switch": (units(4), units(2))}
 SLIDER_REACH = math.ceil(TOUCH / 2 / UNIT) * UNIT   # px the knob's hit box reaches past either end of its track
@@ -1991,12 +1990,12 @@ def need_contrast(what: str, a: str, b: str) -> None:
 
 
 def slider_types(track_role: str = "solid", fill_role: str = "ink", knob_role: str = "ink") -> dict:
-    """The object types of slider() and their images, drawn here, so call it in build_object_types():
+    """The object types of slider() and their images, drawn here: call it in build_object_types(),
     types.update(slider_types()). The track is a Tiled Background TOUCH high with the bar drawn across
-    its middle, so a finger anywhere along it is on it; the fill is a Tiled Background as thick as the
-    bar, which the events set as wide as the knob is far along; the knob is a Sprite, a disc of
-    CONTROL_SIZE["knob"] in a TOUCH box, with Drag & Drop along X and its value in instance variables.
-    The labels are Texts. Names: SLIDER."""
+    its middle, so a finger anywhere along it is on it. The fill is a Tiled Background as thick as the
+    bar, which the events size to reach the knob. The knob is a Sprite, a disc of CONTROL_SIZE["knob"]
+    in a TOUCH box, with Drag & Drop along X and its value in instance variables. The labels are
+    Texts. Names: SLIDER."""
     need_contrast("slider fill", fill_role, track_role)
     need_contrast("slider knob", knob_role, "canvas_alt")
     bar, knob = CONTROL_SIZE["bar"], CONTROL_SIZE["knob"]
@@ -2083,7 +2082,7 @@ def slider_events(sets: dict | None = None) -> list:
             f"Self.lo, Self.hi)"
     show = [comment("Fill the track up to the knob"),
             block([pick_children(track, fill)], [set_width(fill, f"{knob}.X - {fill}.X")]),
-            comment("Show the value, rounded so that a step of 0.1 shows no long tail"),
+            comment("Show the value rounded to three places"),
             block([cond("pick-children", track, {"child": shown, "which": "all"})],
                   [set_text(shown, f"str(round({knob}.value * 1000) / 1000)")])]
     for n, v in (sets or {}).items():
@@ -2141,7 +2140,8 @@ def toggle(name: str, col: int, row: int, on: bool = False, text: str = "", labe
            behind: str = "canvas_alt") -> list[dict]:
     """A toggle named `name` whose row starts at cell (col, row), TOUCH high: the label `text` when
     given, a unit, then the switch, on or off as `on` says. The label is the switch's child. Types:
-    toggle_types(); events: toggle_events(). Returns [switch, label]; put them on one layer. `behind`
+    toggle_types(); events: toggle_events(). Returns [switch], then the label when `text` is given;
+    put them on one layer. `behind`
     is the role of PALETTE behind the label."""
     label, x = control_label(TOGGLE["label"], text, col, row, label_cols, behind)
     w = max(TOUCH, CONTROL_SIZE["switch"][0])
@@ -2197,7 +2197,8 @@ def text_input(name: str, col: int, row: int, cols: int, text: str = "", placeho
     or search, which picks the phone's keyboard. The field is an HTML element: it draws over every
     layer of the canvas, so keep popups and anything else away from it, or hide it while they show.
     text_input_events() gives it the look's font, size and colours, which the editor does not show.
-    The label is the field's child. Returns [field, label]; put them on one layer."""
+    The label is the field's child. Returns [field], then the label when `label` is given; put them
+    on one layer."""
     kinds = ("text", "password", "email", "number", "telephone-number", "url", "search")
     if kind not in kinds:
         sys.exit(f"text_input({name!r}): kind {kind!r}; one of {', '.join(kinds)}")
@@ -2213,9 +2214,10 @@ def text_input(name: str, col: int, row: int, cols: int, text: str = "", placeho
 
 
 def css_px(px: float) -> str:
-    """A length of `px` px at the viewport's size as CSS that scales with the canvas, which Scale outer
-    and Integer scale outer scale by the smaller of the window's width and height over the viewport's:
-    an HTML element over the canvas then keeps its size against what the canvas draws."""
+    """CSS for a length of `px` px at the viewport's size. It scales as Scale outer scales the canvas,
+    by the smaller of the window's width and height over the viewport's, so an HTML element over the
+    canvas keeps its size against the drawing. Integer scale outer rounds that scale down to a whole
+    number, so under it the element can come out larger than the canvas around it."""
     return f"min({100 * px / VIEW_W:.4g}vw, {100 * px / VIEW_H:.4g}vh)"
 
 
@@ -2698,7 +2700,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 726366adb2c0 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 8808586ee972 ================
 
 
 # --- the game ---------------------------------------------------------------------------

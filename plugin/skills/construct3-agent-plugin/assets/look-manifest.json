@@ -183,6 +183,14 @@
       "helpers": "accent(), shape()"
     },
     {
+      "id": "control.parts",
+      "status": "enforced",
+      "says": "A drawn control is a row TOUCH high whose whole box takes the finger, however small its drawing, and each of its parts reads at least 3:1 on what it lies on: a slider's fill on its track and its knob on canvas_alt, a toggle's switch on canvas_alt and its knob on the switch, off and on (WCAG 2.2, 1.4.11).",
+      "template": "CONTROL_SIZE",
+      "value": "{'bar': UNIT // 2, 'knob': units(2), 'switch': (units(4), units(2))}",
+      "helpers": "need_contrast(), slider_types(), toggle_types(), slider(), toggle(), text_input()"
+    },
+    {
       "id": "backdrop.sheet",
       "status": "enforced",
       "strict": true,
