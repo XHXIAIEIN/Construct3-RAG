@@ -38,6 +38,16 @@ Sources and the rule for adding an entry are in the index,
   to 0, destroy on complete), its landing squash started a size tween 0.15 s
   later, the collapse was gone from `allTweens()` at once, and the enemy
   stayed at full size with collisions off until the stage was stuck]
+- A second *Tween (value)* under a tag that a value tween already plays runs
+  beside the first, and `Value(tag)` reads the first until it ends. So a count
+  restarted mid-way shows the old count's number for the rest of its time,
+  then jumps to the new one. Put *Stop* of the tag before the restart.
+  [runtime: exported c3runtime.js r504, Tween `CreateTween` calls
+  `ReleaseTweens(property)` unless `Maps.IsValueId`; observed in a minimal
+  project, stable editor preview, 2026-10-08: a score counting from 0 to 6
+  got a gain of 10 when the count read 5.3; without the *Stop* its text
+  stayed 6 for 0.18 s while the second count, from 6 to 16, passed 11, then
+  jumped to 12]
 - `Tween.Value(tag)` reads 0 once the tween has finished, not its end value.
   The runtime releases a finished tween, and the expression returns 0 when no
   tween of the tag is left. So a finished value tween cannot hold a state,

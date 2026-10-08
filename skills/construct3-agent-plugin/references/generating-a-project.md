@@ -257,11 +257,19 @@ habits; they are what makes rerunning safe.
   edge with the Anchor behavior of `anchored(where)`; an instance placed
   by `anchor()` or `row()` takes `behaviors=anchored(where)`, and the run
   gives its type the behavior.
+- A number that counts to its new value takes `count_up(text, value)` in
+  the actions where the value changes, and `counting(text, value)` among a
+  module's events. The Text shows the number alone and has the Tween
+  behavior.
 - A button is `button(type, file, label, text, col, row)`, its shape drawn
   at `button_size(text)`. The label is centred on the shape, in the colour
   `text_on()` picks for its fill, at the size `label_size()` gives. It is
   the shape's child in the layout's hierarchy (`link()`), so the events that
-  hide, move or destroy the button take the label along.
+  hide, move, squash or destroy the button take the label along.
+  `press(type, actions)` among a module's events presses the button down
+  under the finger and runs `actions` when the touch ends on it. Give the
+  shape's type the Tween behavior; `build_all()` adds the boolean instance
+  variable `pressed` to it.
 - A one-screen layout can be named bands. `bands()` gives the boxes of the
   title, the status line, the stage and the hint.
   `band_text(type, text, band, align)` puts a label in one. `fit(w, h)`
@@ -299,8 +307,9 @@ habits; they are what makes rerunning safe.
   `hit_frame(file)` draws the shape's second frame in the `flash` role,
   tagged `hit`, and `hit_flash(obj)` gives the actions that show it for
   `HIT_FLASH["seconds"]` and return to frame 0. `squash(obj, kind)` sets
-  the share of the image's size that `SQUASH` gives for `"hit"`, `"land"` or
-  `"jump"`, holds it and tweens back, and `hit(obj)` gives the hit's squash
+  the share of the image's size that `SQUASH` gives for `"hit"`, `"land"`
+  or `"jump"`, and `SQUASH_PRESS` for `"press"` unless `SQUASH` has one,
+  holds it and tweens back, and `hit(obj)` gives the hit's squash
   with the flash, last in their block, as the coin's `Collect` does; the
   object needs the Tween behavior. The Flash behavior stops the run. A
   squash acts on the art, never on an object that collides: a player is an

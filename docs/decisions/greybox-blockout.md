@@ -292,7 +292,8 @@ quarter of the viewport's shorter side. `tiledbg_inst()` writes
   and tweens back under the tag `squash`: a hit 0.8 × 1.2 back in 0.25 s
   `easeoutback`, a landing 1.2 × 0.8 in 0.5 s `easeoutelastic`, a jump
   0.7 × 1.3 held 0.2 s, back in 0.75 s `easeoutelastic`. `hit(obj)` gives the
-  hit's squash with the flash, as the coin's `Collect` does.
+  hit's squash with the flash, as the coin's `Collect` does. A button's press
+  is a squash too, held while the finger stays (`count-up-and-press.md`).
 - A squash acts on the art: a player is an invisible mask with Platform and
   its art, drawn with `shape(..., oy=1)`, pinned to it. The run stops on a
   squash of an object whose behavior collides.

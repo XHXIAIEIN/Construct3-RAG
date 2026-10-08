@@ -240,6 +240,7 @@ an event tests a value every tick to start a tween, read
 - A value tween read under *Is playing* drives what Tween cannot address, a full 360° turn included.
 - *On finished* runs before *Destroy on complete* destroys the instance, and *On any finished* runs for that tween too.
 - A new tween on a property stops the ones already on it, so they never finish or destroy. Let a Timer destroy a dying instance, not its death tween.
+- A second value tween under a tag that already plays runs beside the first, and `Value(tag)` reads the first. *Stop* the tag before starting it again.
 - `Tween.Value(tag)` reads 0 once the tween ends. Animate a channel as what is left of it, from the full amount to 0.
 - *Stop* releases a tween at the end of the tick. `Value(tag)` reads the stopped value until then.
 - A property tween adds each tick's change. A *Set* on that property while it plays is kept, and the tween's rest adds to it. Guard it with *NOT Is playing*.

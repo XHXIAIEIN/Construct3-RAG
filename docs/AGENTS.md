@@ -72,6 +72,7 @@ The project skill and the prompts:
 | `landscape-viewport.md` | Why the generator template starts a game at 1920×1080 landscape, and what follows from it |
 | `fill-the-screen.md` | Why a generated game fills the screen with *Scale outer* or *Integer scale outer*, its HUD held to the screen's edges by Anchor, and each layer listed back to front |
 | `layout-by-name.md` | Why a generated screen is laid out by names, a button with its label, named bands and a main object sized to the stage, with the positions computed and checked as numbers |
+| `count-up-and-press.md` | Why a generated score counts to its new value and a button presses under the finger, and the numbers each takes |
 | `art-from-the-image-tool.md` | Why a generated game's art comes from the agent's image tool through `art()` and `prepare_art.py`, and is not drawn in code |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |
 | `skill-and-plugin-names.md` | The names of the skill and the Claude Code plugin |
