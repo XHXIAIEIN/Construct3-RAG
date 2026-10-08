@@ -4,8 +4,11 @@ The answers in fixtures/restart_event_answers/ are runs' answer.md files of the 
 with their run folder replaced by <run>. The project of each of those runs is empty and so is its fixture.json,
 so the third assertion passes throughout. An add-countdown run is the stand-in game with the events it wrote.
 """
+import importlib.util
 import json
 import shutil
+import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -138,3 +141,163 @@ def test_a_run_that_wrote_outside_its_folder_is_not_scored(tmp_path: Path) -> No
     benchmark = json.loads((tmp_path / "it" / "benchmark.json").read_text(encoding="utf-8"))
     assert benchmark["void_runs"] == [{"run": "name-the-restart-event/with_skill",
                                        "reason": f"it wrote outside its folder: {elsewhere}"}]
+
+
+sys.path.insert(0, str(SKILL / "evals"))
+sys.path.insert(0, str(SKILL / "scripts"))
+import grade as grader  # noqa: E402
+import play_cases  # noqa: E402
+import preview_project  # noqa: E402
+
+# evals/trace.py by its path: the standard library has a module named trace.
+tracer = importlib.util.module_from_spec(spec := importlib.util.spec_from_file_location("eval_trace", SKILL / "evals" / "trace.py"))
+spec.loader.exec_module(tracer)
+
+CASES = {c["name"]: c for c in json.loads((SKILL / "evals" / "evals.json").read_text(encoding="utf-8"))["evals"]}
+
+
+@pytest.mark.parametrize("name", sorted(play_cases.PLANS))
+def test_every_plan_is_one_preview_project_plays(name: str) -> None:
+    """A plan preview_project.py refuses would fail every run of its case; a check's text names its assertion."""
+    assert name in CASES
+    plan, problems = preview_project.check_plan(play_cases.plan_for(name))
+    assert not problems, problems
+    texts = play_cases.check_texts(name)
+    assert len(texts) == len(set(texts)) >= 2 and texts[-1] == play_cases.NO_ERROR
+
+
+def test_held_out_cases_have_a_plan() -> None:
+    """A held-out case is judged by what its game does; its file assertions only say that it still opens."""
+    held = [n for n, c in CASES.items() if c.get("held_out")]
+    assert held and all(n in play_cases.PLANS for n in held)
+
+
+def played(case: Path, oks: list[bool]) -> None:
+    """A play/result.json in which the plan's checks returned oks in order, as preview_project.py writes it."""
+    plan = play_cases.plan_for(case.parent.name)
+    steps, verdicts = [], iter(oks)
+    for n, step in enumerate(plan["steps"], 1):
+        done = {"step": n, "line": f"{n} {next(iter(step))} ...", "ok": True, "said": "", "errors": []}
+        if step.get("note", "").startswith(play_cases.CHECK):
+            done["value"] = {"ok": next(verdicts), "said": f"check {n}"}
+        steps.append(done)
+    (case / "play").mkdir()
+    (case / "play" / "result.json").write_text(json.dumps({"status": "opened", "preview": {
+        "started": True, "errors": [], "steps": steps}}), encoding="utf-8")
+
+
+def test_runtime_checks_are_graded_from_the_played_result(tmp_path: Path, project: Path) -> None:
+    case = tmp_path / "it" / "fix-next-round" / "with_skill"
+    shutil.copytree(project, case / "project")
+    (case / "fixture.json").write_text("{}", encoding="utf-8")
+    played(case, [True, False])
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
+    assert code == 0, out
+    grading = json.loads((case / "grading.json").read_text(encoding="utf-8"))
+    runtime = [(g["passed"], g["evidence"]) for g in grading["assertion_results"] if g["level"] == "runtime"]
+    checks = [n for n, s in enumerate(play_cases.plan_for("fix-next-round")["steps"], 1)
+              if s.get("note", "").startswith(play_cases.CHECK)]
+    assert runtime == [(True, f"check {checks[0]}"), (False, f"check {checks[1]}"), (True, "no runtime error")]
+    assert grading["summary"]["runtime"] == {"passed": 2, "total": 3}
+    assert "FAIL [runtime] The next round deals 3 coins" in out
+
+
+def test_an_unplayed_plan_is_not_scored(tmp_path: Path, project: Path) -> None:
+    """Grading without --play compares with iterations graded before the plans: the runtime checks are listed
+    and left out of the scores."""
+    case = tmp_path / "it" / "fix-next-round" / "with_skill"
+    shutil.copytree(project, case / "project")
+    (case / "fixture.json").write_text("{}", encoding="utf-8")
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
+    assert code == 0, out
+    grading = json.loads((case / "grading.json").read_text(encoding="utf-8"))
+    assert grading["summary"]["runtime"] == "not played"
+    assert grading["summary"]["total"] == len(CASES["fix-next-round"]["assertions"])
+    assert {g["passed"] for g in grading["assertion_results"] if g["level"] == "runtime"} == {None}
+
+
+def test_a_held_out_case_is_aggregated_apart_and_its_failures_are_not_printed(tmp_path: Path, project: Path) -> None:
+    case = tmp_path / "it" / "coins-in-a-ring" / "with_skill"
+    shutil.copytree(project, case / "project")
+    (case / "fixture.json").write_text("{}", encoding="utf-8")
+    played(case, [False, False, True])
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
+    assert code == 0, out
+    assert "coins-in-a-ring/with_skill: held out, " in out and "FAIL" not in out
+    benchmark = json.loads((tmp_path / "it" / "benchmark.json").read_text(encoding="utf-8"))
+    assert "coins-in-a-ring" not in benchmark["by_case"] and "coins-in-a-ring" in benchmark["held_out"]["by_case"]
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"), "--show-held-out")
+    assert "FAIL [runtime] Round 2's three coins sit evenly" in out
+
+
+def test_make_fixtures_lays_out_a_held_out_case_only_when_asked(tmp_path: Path) -> None:
+    code, out = run(tmp_path, SKILL / "evals" / "make_fixtures.py", str(tmp_path / "runs"), "--cases", "coins-in-a-ring")
+    assert code == 1 and "held out of tuning" in out and "--held-out" in out
+
+
+@pytest.mark.parametrize(("k", "n", "interval"), [(0, 0, [0.0, 1.0]), (2, 2, [0.342, 1.0]), (1, 2, [0.095, 0.905]),
+                                                  (8, 10, [0.49, 0.943])])
+def test_the_interval_of_fully_passed_runs(k: int, n: int, interval: list[float]) -> None:
+    assert grader.wilson(k, n) == interval
+
+
+@pytest.mark.parametrize(("levels", "reached"), [
+    ({"checker": [True], "files": [True], "runtime": [True]}, "runtime"),
+    ({"checker": [True], "files": [True], "runtime": [None]}, "files"),
+    ({"checker": [True], "files": [False], "runtime": [True]}, "checker"),
+    ({"checker": [False], "files": [True]}, "none"),
+])
+def test_the_level_a_run_reached(levels: dict, reached: str) -> None:
+    graded = [{"level": level, "passed": p} for level, ps in levels.items() for p in ps]
+    assert grader.reached(graded) == reached
+
+
+def test_trace_reads_turns_tokens_and_time(tmp_path: Path) -> None:
+    """A response with two content blocks is written twice with one message id: one turn."""
+    def entry(t: str, mid: str | None, out: int) -> str:
+        message = {"id": mid, "model": "m", "usage": {"input_tokens": 2, "cache_creation_input_tokens": 10,
+                                                       "cache_read_input_tokens": 100, "output_tokens": out}}
+        return json.dumps({"type": "assistant" if mid else "user", "timestamp": t, "message": message if mid else {}})
+    path = tmp_path / "agent.jsonl"
+    path.write_text("\n".join([entry("2026-10-08T10:00:00Z", None, 0), entry("2026-10-08T10:00:05Z", "a", 50),
+                               entry("2026-10-08T10:00:05Z", "a", 50), entry("2026-10-08T10:01:30Z", "b", 70)]),
+                    encoding="utf-8")
+    assert tracer.usage_of(path) == {"turns": 2, "output_tokens": 120, "input_tokens": 224, "seconds": 90.0, "model": "m"}
+
+
+def screenshots(tmp_path: Path, fill: Callable[[int, float], tuple], lit: tuple[float, float]) -> dict:
+    """A result with before and after screenshots of a 400 px bar lit to lit[0] and then lit[1] of its length,
+    its pixel at x coloured fill(x, lit), and the bar's box as the UI layer's only object."""
+    from PIL import Image
+    shots = []
+    for name, part in zip(("before", "after"), lit):
+        im = Image.new("RGB", (500, 100), (2, 48, 71))
+        for x in range(50, 50 + int(400 * part)):
+            for y in range(40, 60):
+                im.putpixel((x, y), fill(x - 50, part))
+        im.save(tmp_path / f"{name}.png")
+        shots.append(tmp_path / f"{name}.png")
+    box = [{"type": "Bar", "text": False, "box": {"l": 50, "t": 40, "r": 450, "b": 60}}]
+    steps = [{"step": 1, "line": "1 js ... (boxes before)", "ok": True, "value": box},
+             {"step": 2, "line": "2 shot before", "ok": True, "said": str(shots[0])},
+             {"step": 3, "line": "3 shot after", "ok": True, "said": str(shots[1])},
+             {"step": 4, "line": "4 js ... (boxes after)", "ok": True, "value": box}]
+    return {"status": "opened", "preview": {"started": True, "errors": [], "steps": steps}}
+
+
+def green_to_red(x: int, part: float) -> tuple:
+    u = x / 400
+    return round(255 * u), round(255 * (1 - u)), 0
+
+
+def stretched(x: int, part: float) -> tuple:
+    u = x / (400 * part)
+    return round(255 * u), round(255 * (1 - u)), 0
+
+
+@pytest.mark.parametrize(("fill", "kept"), [(green_to_red, True), (stretched, False)])
+def test_a_gradient_bar_is_revealed_not_stretched(tmp_path: Path, fill: Callable, kept: bool) -> None:
+    pytest.importorskip("PIL")
+    lit, colours = play_cases.gradient_checks(screenshots(tmp_path, fill, (0.5, 0.6)))
+    assert lit[0], lit
+    assert colours[0] is kept, colours

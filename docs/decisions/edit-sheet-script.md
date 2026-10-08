@@ -117,8 +117,10 @@ variables and comments.
   A `note:` names each action the plan did not touch that still writes an
   older form of a text the plan writes elsewhere: runs changed the score
   text in one place and left the other showing the old one. After a write,
-  a `note:` says to reopen the project in an editor that has it open, whose
-  next save would write back the sheet it had loaded. In a project that
+  a `note:` says to reopen the project in an editor that has it open. The
+  editor keeps the sheet it loaded, so a save after an edit to that sheet
+  there writes the editor's copy over the plan's (`borrowed-numbers.md`,
+  "An editor open while files change"). In a project that
   `tools/build_project.py` generates, a `note:` says that the generator's
   next run writes the sheet over the change, which belongs in the generator.
   It is a note and not a refusal because no eval run on a generated project

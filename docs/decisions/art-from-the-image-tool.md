@@ -83,6 +83,17 @@ A published sprite tool that draws several poses in one picture reports
 four a picture as stable, and repeated or dropped subjects at nine and
 twelve.
 
+The key picture was passed as a reference to the image tool of each
+client below. One coding agent's built-in image tool takes a list of local
+picture paths as references. Given two drawn characters, it drew both in
+one picture, with features that the prompt did not describe. Given one,
+it drew the same character in a new pose. Its pictures came back opaque,
+on a magenta that varied by up to 20 levels per channel. A Claude Code
+session has no image tool of its own, and a design connector's image
+tool takes a prompt only. A chat client's agent mode edits from a list
+of reference picture URLs. The clients, the pictures and the calls are
+in `.local/docs/evidence/borrowed-numbers/image-refs/`.
+
 ## Options
 
 1. **A line in `SKILL.md`: use the image tool.** The model went back to
@@ -190,11 +201,13 @@ Option 3.
   images; `art()` covers sprites and backdrops.
 - Contrast of the art against the backdrop is the user's call on a
   screenshot, as `review_look.py` asks it; no check measures it.
-- Whether a client's image tool takes a reference image, and whether it
-  carries one picture into the next, is not known. The English warning
-  words were tried on subjects written for the tests, not on a model's
-  run. The cap of three refusals and the four subjects of the key picture
-  are choices; neither was measured on an image tool here.
+- No game's whole set of pictures was made with the key picture as the
+  reference, so whether it holds one style across them is untested. A
+  client whose image tool takes no reference, such as a prompt-only one,
+  gets the style from `ART_STYLE` alone. The English warning words were
+  tried on subjects written for the tests, not on a model's run. The cap
+  of three refusals and the four subjects of the key picture are choices;
+  neither was measured on an image tool here.
 - The dimensions of `DIMENSIONS` are a choice. No run here has shown that
   naming them steadies the pictures, and their words were tried on the
   template's examples and the tests' sentences only.

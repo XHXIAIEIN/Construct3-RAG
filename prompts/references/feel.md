@@ -2,13 +2,20 @@
 
 The table below applies the Native first table of
 [event-sheet-thinking.md](../event-sheet-thinking.md) to the effects the
-player notices first. Each row names its source in the Example column: an
-official example; `observed` for what a game project settled in its r504
-preview, 2026-09-30 to 2026-10-05, or what a probe in the stable editor's
-preview showed on 2026-10-08; `studied` for a mechanism read in a studied
-project's sheets, 2026-10-06. Before adding the sounds that go with
-these effects, read [sound.md](sound.md), which says which sounds play,
-when and how loud.
+player notices first. Each row names its source in the Example column:
+
+- an official example's id;
+- `observed`: what a game project settled in its r504 preview, 2026-09-30
+  to 2026-10-05, or what a probe project showed in the stable editor's
+  preview on 2026-10-08, recorded in `docs/decisions/count-up-and-press.md`
+  of the Construct3-RAG repository;
+- `studied`: a mechanism read in a studied project's sheets, 2026-10-06;
+- `measured`: a probe project played in a preview at 60 and 144 Hz, with
+  its numbers in `docs/decisions/borrowed-numbers.md` of the
+  Construct3-RAG repository.
+
+Before adding the sounds that go with these effects, read
+[sound.md](sound.md), which says which sounds play, when and how loud.
 
 | Need | Use | Example |
 |------|-----|---------|
@@ -20,6 +27,8 @@ when and how loud.
 | A keyframed motion of one part: a weapon swing, a wind-up and strike, a skill | A Timeline on the part as a hierarchy child, *Relative* tracks that start and end at 0, so it adds to what the parent's channels do and repeats without shifting. Each instance has a copy tagged with its UID. The weight is in custom Eases from the Eases folder on each keyframe, not in numbers in events. Use *Set time* 0 before a replay, and to take a finished timeline's offsets off the part ([pitfalls: Timeline](../pitfalls/timeline.md)) | observed |
 | A score or a currency that counts to its new value | *Stop* the count's tag, then *Tween (value)* from the number the text shows, `int(Text.Text)`, to the new value, 0.5 s `easeoutquad`. Under *Is playing*, set the text to the value rounded towards the target, `ceil` up and `floor` down, so a gain of 1 shows at once. *On finished* sets the exact value, since the value reads 0 once the tween ends ([pitfalls: Tween](../pitfalls/tween.md)). The generator template's `count_up()` and `counting()` | dig-the-way, tick-tock-toppings; observed |
 | A button that presses under the finger | On the touch's start on the button, mark it pressed and show it pressed at once, with a *Pressed* frame or its size set to 0.9 of its image. On any touch's end, send the pressed button back with its size tweened in 0.1 s `easeoutsine`, and run its action under *Is touching* the button, so a finger that slides off cancels. A label linked to the button as a hierarchy child follows its width and height only when the link says so, and its letters then scale too. The generator template's `press()` | fuji-leaper, grukkle-onslaught, chess-checkmate; observed |
+| A pickup waiting to be collected: a coin, a gem, a key | Sine *Vertical*, period 1 to 2 s, magnitude 5 to 15 % of the pickup's height. A pickup that pulses takes Sine *Size* with the same period and share of its size | template-invert-gravity, kiwi-story, relic-hunter, balloon-blower |
+| A jump just after walking off a ledge (coyote time), and a jump pressed just before landing (a jump buffer) | The player has Platform, a Timer and a boolean `JumpUsed`. The windows are globals of 0.1 s, `CoyoteTime` and `BufferTime`: the variables to tune. The events, in order: 1. *On jump* sets `JumpUsed`. 2. *On fall* with `JumpUsed` not set starts timer "coyote" for `CoyoteTime`. 3. The jump key's *On key pressed*, on the floor: *Simulate control* Jump. 4. Else, while "coyote" runs: *Set vector Y* to `-Self.Platform.JumpStrength`, set `JumpUsed` and stop "coyote", because a simulated jump does nothing in the air ([pitfalls: Input](../pitfalls/input.md)). 5. Else: start timer "buffer" for `BufferTime`. 6. *On landed* clears `JumpUsed` and stops "coyote"; while "buffer" runs, it simulates Jump and stops "buffer". Both windows hold to within one tick at 60 and 144 Hz, and a press after the top of a jump does not jump again | measured |
 | Hit feedback | Flash *Flash* from `On collision`; Tween *Color* to `rgbEx(...)` and back; a Brightness effect set to its peak at once and tweened back to 100. A game built from the skill's generator template shows a hit as a frame instead, `hit_frame()` and `hit()`, and its `check_look.py` refuses Flash (`motion.hit`) | bewitched-torches, turret-predictive-aim; pinball, shifting-dungeon; observed |
 | Telegraph what a drop will do | While the dragged instance hovers a target that will take it, the target wobbles (two sines summed into its angle) and brightens, and the slot shows its highlight frame. The slot is larger than the piece, so the highlight shows around it | observed |
 | A dragged thing that lags and overshoots like a spring | An invisible base takes Drag & Drop, the drop test and the snap. The visible parts, hierarchy children of a follower, follow it on a damped spring stepped every tick and lean by how far they lag. Step the spring implicitly (acceleration from the lag, then divide the velocity by `1 + damping·dt + stiffness·dt²`), or the lag differs between 30 and 144 fps. Moving the base itself breaks the drag: Drag & Drop writes its position only while the pointer moves | observed |

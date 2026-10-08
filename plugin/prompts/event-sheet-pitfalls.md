@@ -162,6 +162,7 @@ browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfa
 - Drag & Drop drags the front instance under the pointer, by layer and then Z, visible or not. Stop drags under a popup with *Set layer interactive* on the pieces' layer or *Set enabled* on the behavior.
 - Touch speed reads 0 once the finger has been still for about 50 ms, and the release adds no move. So a flick tested in *On any touch end* passes only for a release made in motion.
 - *Simulate control* acts only in the tick it runs. Put it in an event whose condition stays true while the control is held: *Key is down*, not *On key pressed*.
+- Platform's *Simulate control* Jump does nothing in the air with *Double jump* off. Jump from the air, as in coyote time, with *Set vector Y* to `-Self.Platform.JumpStrength`. *On jump* does not fire for it, so run there what *On jump* would run.
 - Every instance with *Default controls* on moves with the arrow keys. Turn it off on each instance the player does not steer, such as a pushed crate, and move it with *Simulate control*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
@@ -276,6 +277,7 @@ Sprite, read [pitfalls/creating-objects.md](pitfalls/creating-objects.md).
 - A part in both the parent's container and its template hierarchy is created once. Put it in both to have it picked with the parent and follow it.
 - *Create object* runs once per event, however many instances are picked.
 - A runtime-created instance copies an existing instance or template, and without one its behavior properties read 0. Keep one per object in a layout that never runs.
+- An object created only by events loads its images when created and draws nothing until they arrive, so a screen-sized picture shows late. Call *Load object images* for it in *On start of layout*.
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
 - A created instance is found outside its own event only by UID, until the top-level event ends.
 - The instances of a new hierarchy run *On created* in no fixed order. Initialise the hierarchy in *On hierarchy ready* of its root, which fires once all of them have.

@@ -314,6 +314,60 @@
         "The design's reference.example is the id of an official example",
         "No project file but tools/ differs from the fixture"
       ]
+    },
+    {
+      "id": 21,
+      "name": "double-jump",
+      "fixture": "example:template-platformer",
+      "prompt": "this is construct's platformer template, folder <project> . let the player jump a second time while in the air, but only once per jump: after landing it can double jump again. a normal single jump has to stay exactly as it is now",
+      "expected_output": "Player's Platform behavior gets its Double-jump property on, in the layout's instance or by Set double-jump at the start, or events that give one more jump in the air and reset it on landing. A single jump rises as before, a second press in the air jumps again, a third does not, and after landing the double jump works again. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning on an event the run added: the example's own warnings stay out",
+        "Every event of the original sheet is still in it, by sid"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "stay-on-screen",
+      "fixture": "example:families",
+      "prompt": "this is the families example from construct, folder <project> . the player ship can fly off the screen. keep the whole ship visible on the screen: it has to stop at every edge of what you see in the game window. shooting and the enemies stay as they are",
+      "expected_output": "The layout is 1280x1024 behind a 640x480 viewport that does not scroll, so Bound to layout alone keeps the ship in the layout and still lets it leave the screen. The ship's position is clamped to the visible area, read from ViewportLeft, ViewportRight, ViewportTop and ViewportBottom and its own size, or the layout is made the viewport's size before Bound to layout. Space still fires. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning on an event the run added: the example's own warnings stay out",
+        "Every event of the original sheet is still in it, by sid"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "walls-stop-the-player",
+      "fixture": "persistent-walls",
+      "held_out": true,
+      "prompt": "this is the persistent layouts example from construct, folder <project> . the player is supposed to be stopped by the wall bars at the top and bottom of each room, but it walks right through them. fix it so the bars stop it. walking off the left or right side still has to take you to the next room",
+      "expected_output": "In the fixture, SolidBarrier has no Solid behavior. The fix adds the behavior to the object type and to its instances, and lists the addon in project.c3proj, so 8 Direction stops the player at the bars; the events that change rooms stay. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning on an event the run added: the example's own warnings stay out",
+        "Every event of the example is still in it, by sid"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "coins-in-a-ring",
+      "fixture": "coins",
+      "held_out": true,
+      "prompt": "in my coins game the coins of a round are dealt on a grid. deal them on a ring around the middle of the board instead, evenly spaced, and every coin has to stay on the board. the project folder is <project> , its all in eventSheets/Game.json",
+      "expected_output": "The Create object action of the deal places coin i of n at the board's centre plus r times cos and sin of an angle that steps by 360 / n, r small enough that the coins stay inside the board. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning",
+        "Every event of the original sheet is still in it, by sid"
+      ]
     }
   ]
 }

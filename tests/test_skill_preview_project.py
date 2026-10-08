@@ -148,6 +148,28 @@ def test_preview_project_reports_each_step_with_the_errors_it_caused():
     ], lines
 
 
+def test_preview_project_prints_an_error_raised_every_tick_once_with_its_count():
+    """An error raised every tick comes hundreds of times; printed once a line it pushed a different
+    error past the output's limit in a probe. Each distinct error is one line, in the order it
+    first came, with how many times it came; the total stays in the ran line."""
+    root = "Game, event 10, action 1: TypeError: Cannot read properties of null (reading 'limit')"
+    tick = "Game, event 11, action 1: TypeError: Cannot read properties of undefined (reading 'push')"
+    other = "Game, event 12, action 1: RangeError: a separate failure"
+    errors = [root + "\n    at stack", *[tick] * 300, other, *[tick] * 200, other]
+    steps = [{"step": 1, "line": "1 wait 5 s", "ok": True, "said": "ok", "errors": errors}]
+    lines = pp.report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
+                       "editor": "https://editor.construct.net/", "dialogs": [], "exception": "",
+                       "preview": {"started": True, "layout": "Game", "runtime": "page", "viewport": [430, 932],
+                                   "touch": False, "errors": [], "steps": steps, "planned": 1, "seconds": 5.1}})
+    assert lines[2:] == [
+        "  1 wait 5 s: ok",
+        f"    runtime: {root}",
+        f"    runtime: {tick} (500 times)",
+        f"    runtime: {other} (2 times)",
+        "  ran: 1 of 1 steps in 5.1 s, 503 runtime errors",
+    ], lines
+
+
 class ReloadingGame:
     """A game whose page reloads: each step's outcomes in turn, and what reloaded() answers after each try."""
 
