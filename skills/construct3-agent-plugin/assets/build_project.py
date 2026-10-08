@@ -129,11 +129,14 @@ TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner titl
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
 # as the official examples at that size sample, and most scale (FULLSCREEN, build_project()).
 PIXEL_ART = UNIT == 8
-# The art direction in one sentence, the look the user agreed. It fixes the technique, the
-# outline, the colours and the shading, never a subject: "flat vector, thick dark outlines, warm
-# colours, soft cel shading", or "ink wash on rice paper, dry brush edges, muted greens, no
-# outlines". Every prompt the skill's scripts/prepare_art.py prints for the image tool starts
-# with it, so the pictures art() asks for share one style.
+# The art direction in one sentence, the look the user agreed. It fixes the rendering, the
+# linework, the colour temperature, the light direction, the proportions and the framing, never a
+# subject: "flat vector with soft cel shading, thick dark outlines, warm colours, light from the
+# top left, chunky proportions, side view", or "ink wash on rice paper, dry brush edges, cool
+# muted greens, light from above, slender proportions, three-quarter view from above". Every prompt
+# the skill's scripts/prepare_art.py prints for the image tool starts with it, so the pictures
+# art() asks for share one style, and prepare_art.py --list warns of a dimension the sentence
+# leaves out.
 ART_STYLE = ""
 
 

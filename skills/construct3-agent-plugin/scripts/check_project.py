@@ -3302,6 +3302,30 @@ def helpers_behind(root: Path, rag: Path) -> str | None:
     return None
 
 
+def block_behind(root: Path) -> str | None:
+    """A sentence when the Construct 3 block of the project's instruction file is an older version
+    than the skill's, with the command that refreshes it, as helpers_behind says it of the generator.
+    An edited block with a newer version to take gets the command that lists the edits, and a block
+    whose markers are broken is named, since nothing can refresh it. Edits with nothing newer to
+    take, and an instruction file without a block that install.py wrote, say nothing."""
+    b = c3.instruction_block(root)
+    command = script_command(root, "install.py", " --block-only")
+    if b.state == "broken":
+        return f"{b.file}: {b.detail}; until then the skill cannot refresh its Construct 3 block"
+    if b.state == "older":
+        have, want = c3.versions(b.have, b.want)
+        before = "" if b.have.marked else ", written before the block had markers,"
+        return (f"{b.file}: its Construct 3 block is the skill's of {have}{before} and the skill's is now of {want}; "
+                f"refresh it, which keeps the lines that name a clone's folder and every line outside the block: "
+                f"{command}")
+    if b.state == "edited" and b.have.stamp != b.want.stamp and b.have.version <= b.want.version:
+        have, want = c3.versions(b.have, b.want)
+        return (f"{b.file}: its Construct 3 block is the skill's of {have} with edits made between its markers, and "
+                f"the skill's is now of {want}. {command} lists the lines that differ; move the project's own below "
+                f"the end marker, then run it with --replace-edited-block")
+    return None
+
+
 def main() -> int:
     ap = c3.argument_parser(
         "Check a Construct 3 folder project against the Construct3-RAG schemas and the rules the editor applies "
@@ -3347,6 +3371,9 @@ def main() -> int:
     helpers = helpers_behind(project.root, project.rag)
     if helpers:
         findings.warn(helpers)
+    block = block_behind(project.root)
+    if block:
+        findings.warn(block)
     return Checker(project, args.limit, style=args.style, review=args.review).run()
 
 

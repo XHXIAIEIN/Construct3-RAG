@@ -38,7 +38,7 @@ Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construc
 - 想从自己的空项目开始，加 `--template <文件夹>`。
 - 如果 agent 从别的文件夹读 skill，加 `--into <文件夹>`，比如 TRAE 写 `--into .trae/skills`。
 
-要更新时，先在 clone 里运行 `git pull`，再运行一次 `bootstrap.py`，按 clone 更新项目里的 skill。已有的 clone 和指令文件保持原样。clone 落后于上游仓库、又没有你自己的改动时，`check_project.py` 会报问题，并给出更新 clone 和项目里 skill 的命令。给 `bootstrap.py` 加 `--help` 可以列出全部参数。
+要更新时，先在 clone 里运行 `git pull`，再运行一次 `bootstrap.py`，按 clone 更新项目里的 skill。已有的 clone 保持原样。指令文件里它只更新自己写入的 Construct 3 说明，而且只在没人改过时更新。clone 落后于上游仓库、又没有你自己的改动时，`check_project.py` 会报问题，并给出更新 clone 和项目里 skill 的命令。给 `bootstrap.py` 加 `--help` 可以列出全部参数。
 
 如果 agent 的指令文件是 `GEMINI.md` 这样的其他文件，在那个文件里加一行。这一行让 agent 去读 `AGENTS.md`。
 
@@ -77,18 +77,18 @@ plugin 是 [`plugin/`](plugin/README.md) 文件夹，由 `scripts/build_plugin.p
 - `print_layout.py` 从下到上打印每个场景的图层，以及每个图层上按显示顺序排列的实例。每个实例都带所占的矩形、大小、不透明度和文本。文本还会注明它压在哪个对象上，所以输出能显示哪个标签没落在按钮上。
 - `check_project.py` 按 schemas 和编辑器打开项目时的规则，检查每个项目文件。每条问题都指出位置，能给出写法时也一并给出。审查别人问到的项目时加 `--review`，它和 `print_sheet.py` 的输出最后会写明审查该报告什么：先说项目做了什么，只报会让某个功能失效的问题。
 - `review_design.py` 读取事件表，报告设计上难读或容易出错的地方，比如条件太多的事件、同一个事实存在两处、临时用的全局变量。每条问题都指出事件，并给出应该换成的写法。然后它给 agent 一组固定的问题，让它对照 `print_sheet.py` 的输出回答。
-- `check_design.py` 在写任何项目文件之前检查新游戏的设计：核心循环、状态表、输入、规则、胜负和验收测试。然后它直接在规则上跑这些测试，相当于一个不用编辑器的原型。每条问题都指出它在设计里的位置，没通过的测试会指出是哪一步，以及当时各个状态的值。
+- `check_design.py` 在写任何项目文件之前检查新游戏的设计：用户原话的需求、这一轮留到以后做的部分、核心循环、状态表、输入、规则、胜负和验收测试。然后它直接在规则上跑这些测试，相当于一个不用编辑器的原型，并拒绝玩家什么都不做也能赢的游戏，除非设计写明等待本身就是取胜方式。每条问题都指出它在设计里的位置，没通过的测试会指出是哪一步，以及当时各个状态的值。设计通过时，最后一行会复述需求和留到以后的部分。
 - `play_design.py` 在 Construct 3 编辑器里，对照设计做出来的游戏再跑一遍同样的测试。它先对照项目文件，检查设计里的名字和初始值。每个失败都指出测试、步骤，以及要对照的规则对应的事件。
 - `check_look.py` 按 `assets/look-manifest.json` 里的硬性规则，检查生成的游戏的项目文件，比如干净的透明通道、实例对齐网格、受击用颜色表示。
 - `prepare_art.py` 把 agent 的生图工具画的图接进游戏。它为生成器要的每张图打印一条提示词。然后它把生图工具画好的每张图从背景里抠出来，缩放进对应占位图形的框里。它需要 Pillow。
 - `open_in_editor.py` 在 Construct 3 编辑器里打开项目，报告打开成功，或者给出编辑器的提示。加 `--preview` 时，它把游戏运行几秒，报告运行时错误和出错的事件。加 `--typescript` 时，编辑器把项目的 TypeScript 类型定义写进 `scripts/ts-defs/`。
-- `preview_project.py` 按一份点击、拖动、按键和等待的计划操作预览。它会截图，也会录下运行的片段。录像可以逐帧回看，其中一段可以作为任务交给 agent。
-- `review_look.py` 预览项目，逐个进入每个场景并截图。它报告运行时能看出的问题，比如文字被文本框截断、多个实例叠在同一位置。然后它给 agent 一组固定的问题，让它看着截图回答。
+- `preview_project.py` 按一份点击、拖动、按键和等待的计划操作预览。它会截图，也会录下运行的片段。录像可以逐帧回看，其中一段可以作为任务交给 agent。通过的计划可以存进项目，之后每次改动都把存下的计划全部重放一遍。
+- `review_look.py` 预览项目，逐个进入每个场景并截图。它报告运行时能看出的问题，比如文字被文本框截断、多个实例叠在同一位置。然后它给出一组固定的问题，看着截图回答；问题和截图也写进一份 brief，交给没看过项目的子 agent 回答。
 - `screenshot_sheet.py` 按编辑器里的样子，给事件表或其中一个事件组截图，用于论坛回帖、bug 报告或文档。截图是英文界面，只裁事件表本身，每一列的宽度正好放下它最长的一行。
 - `export_project.py` 用你的订阅账号，让编辑器把项目导出为 Web (HTML5)。
 - `pack_project.py` 把项目保存成编辑器能打开的 `.c3p` 或 `.zip`。它也能把 `.c3p` 或 `.zip` 解成项目文件夹。
 - `new_project.py` 在空文件夹里新建游戏项目，内容来自编辑器 **项目** > **新建** 保存的空项目。
-- `install.py` 把 skill 装进游戏项目，或者按 clone 更新已有的副本。它也会把游戏 `tools/build_project.py` 里的辅助函数更新到当前版本，加 `--helpers-only` 时只做这一件事。
+- `install.py` 把 skill 装进游戏项目，或者按 clone 更新已有的副本。它也会把游戏 `AGENTS.md` 里的 Construct 3 说明和 `tools/build_project.py` 里的辅助函数更新到当前版本，加 `--block-only` 或 `--helpers-only` 时只更新其中一项。
 - `assets/build_project.py` 是一个模板，用来写生成整个项目的 Python 脚本。它的辅助函数放在两行标记之间，游戏的设置在标记上方，游戏本身在标记下方。
 
 ### skill 的脚本读写和访问的范围
@@ -98,7 +98,7 @@ skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。
 - **只读**：`lookup_ace.py`、`lookup_script_api.py`、`search_guides.py`、`check_project.py`、`review_design.py`、`check_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。`CONSTRUCT3_RAG_OFFLINE` 为 `1` 时，它不 fetch，并在输出里说明。
 - **写文件**：
   - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。
-  - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。项目的 `tools/build_project.py` 里两行标记之间的辅助函数如果是旧版本、又没人改过，它会换成 skill 当前的版本，文件其余部分不动。加 `--dry-run` 可以先看会改什么。
+  - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。`AGENTS.md` 里的说明和 `tools/build_project.py` 里的辅助函数都放在两行标记之间，如果是旧版本、又没人改过，它会换成 skill 当前的版本，文件其余部分不动。加 `--dry-run` 可以先看会改什么。
   - `play_design.py --adopt-starts` 在原型用项目的初始值仍然通过时，把这些初始值写回设计文件。
   - `prepare_art.py` 把处理好的图写进项目的 `art/`。它读取 `art/raw/` 里的原图，不改动它们。
   - `screenshot_sheet.py` 把截图写到项目的 `.build/sheets/`，或 `--out` 指定的文件夹。
