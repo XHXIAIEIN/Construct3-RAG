@@ -167,6 +167,22 @@ def test_review_look_names_screenshots_by_layout_and_asks_the_questions_once():
     assert all(line.isascii() for line in rl.QUESTIONS)
 
 
+
+def test_review_look_asks_about_the_design_places_play_design_does_not_measure(tmp_path):
+    import json
+    rl = module()
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "project.c3proj").write_text(json.dumps({"objectTypes": {"items": ["ScoreText", "Board"]}}),
+                                             encoding="utf-8")
+    (tmp_path / "tools" / "design.json").write_text(json.dumps({"screen": {
+        "score": "top-left", "board": "a 5 x 3 grid in the middle", "lives": "top-right"}}), encoding="utf-8")
+    places = rl.unmeasured(tmp_path, None)
+    assert places == ['board "a 5 x 3 grid in the middle"', 'lives "top-right"']
+    asked = rl.ask(False, places)
+    assert asked[-1] == ("  7. On a screenshot that shows it, does an object sit elsewhere than the design's screen "
+                         'says: board "a 5 x 3 grid in the middle"; lives "top-right"?')
+    assert rl.unmeasured(tmp_path, tmp_path / "none.json") == []
+
 def test_review_look_prints_its_help_and_needs_a_project(tmp_path, project):
     code, out = run(project, f"{INSTALLED}/scripts/review_look.py", "--help")
     assert code == 0 and "stacked" in out and "exit codes:" in out, out

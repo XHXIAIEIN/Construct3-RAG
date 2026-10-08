@@ -41,6 +41,11 @@ and the built game is held to the same tests.
 - A value read in the running game has moved on by the time it is read; a
   start value read from the project files has not. Where an instance lands
   is the layout grid's to say, not the design's.
+- The screen's entries, as models write them, mix a place with what the
+  region does: "top-left", "bottom-center, follows the mouse", "fall from
+  random positions at the top", "center overlay when game ends". A place
+  stated in a few words of thirds and sides, before a comma, is something
+  the first screen can be measured against; the rest is not.
 - The design step trades logic errors for games that are not delivered: a
   game that is delivered passed tests its model stated, and a game that
   fails says why. It does not by itself raise the share of games that play.
@@ -111,6 +116,15 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
   without input: each shown text, frame or count that holds still in the
   prototype through the first two seconds, and the win and the lose, must
   match the prototype.
+- A `screen` entry whose words before the first comma are only top, bottom,
+  left, right, centre (thirds of the screen) and above, below, left of,
+  right of another entry is a place: on the first screen the middle of the
+  instances its key names lies in that third or past that side, or
+  `play_design.py` names the object, where its middle is and where the place
+  puts it. A key names the type of that name, the object a state row of
+  that name is kept in, or every type whose name holds its words, as one
+  region. `check_design.py` prints which entries are places; `review_look.py`
+  asks about the others as one question on its screenshots.
 
 ## Re-evaluate when
 
@@ -125,6 +139,9 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
 - A tapped object lies inside a screen input's region, which only the
   editor run shows: the binding of a tap on an object would carry where the
   object lies.
+- A design's place and the screen disagree where the player sees no fault,
+  such as a HUD band whose middle falls outside the third its words name:
+  the place is measured by the box's edges instead of its middle.
 - A genre needs what the expression language cannot state, such as physics
   or a behavior's motion: the design abstracts it, and a test that depends
   on it is left to the editor run.

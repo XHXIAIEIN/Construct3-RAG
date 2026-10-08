@@ -252,6 +252,87 @@ def test_play_design_finds_a_play_area_off_the_middle():
     assert pd.centre_findings({"viewport": [720, 1280], "layers": layers, "instances": [board]}) == []
 
 
+
+def test_a_screen_place_is_read_in_its_words_and_names_an_object():
+    gm = module("game_model")
+    read = {k: gm.place(k, v) for k, v in {"score": "top-left", "lives": "top left below score",
+                                            "basket": "bottom-center, follows the mouse", "board": "centre",
+                                            "hint": "to the right of the board", "apples": "fall from the top",
+                                            "area": "centre and bottom"}.items()}
+    assert [(p.vertical, p.horizontal, p.sides) for p in read.values() if p.measured] == [
+        ("top", "left", []), ("top", "left", [("below", "score")]), ("bottom", "middle", []),
+        ("middle", "middle", []), (None, None, [("right of", "board")])]
+    assert not read["apples"].measured and not read["area"].measured
+    design = gm.Design(example())
+    types = ["ScoreText", "Hole", "Mole", "Message", "MessageShadow"]
+    assert gm.screen_objects("score", design, types) == ["ScoreText"]
+    assert gm.screen_objects("holes", design, types) == ["Hole"]
+    assert gm.screen_objects("message", design, types) == ["Message"]      # the state row stored in Message.text
+    assert gm.screen_objects("hint", design, types) == []
+    assert gm.screen_objects("score_display", design, ["ScoreLabel", "ScoreText", "Round"]) == ["ScoreLabel", "ScoreText"]
+    assert gm.screen_objects("text", design, ["ScoreText", "TitleText"]) == []
+
+
+def test_play_design_finds_an_object_outside_the_place_the_design_names():
+    gm, pd = module("game_model"), module("play_design")
+    design = gm.Design({**example(), "screen": {"score": "top-left", "holes": "centre", "message": "below the holes",
+                                                "Mole": "in a hole", "Lives": "top-right"}})
+    layers = {"Game": {"parallax": [1, 1], "shown": True, "view": [100, 0, 820, 1280]},
+              "HUD": {"parallax": [0, 0], "shown": True, "view": [0, 0, 720, 1280]}}
+
+    def inst(uid, kind, box, layer="Game", **extra):
+        return {"type": kind, "uid": uid, "layer": layer, "box": box, "shown": True, "angle": 0, "root": uid, **extra}
+    holes = [inst(10 + n, "Hole", [160 + 200 * (n % 3), 400 + 200 * (n // 3), 320 + 200 * (n % 3),
+                                   560 + 200 * (n // 3)]) for n in range(9)]
+    score = inst(1, "ScoreText", [20, 20, 400, 80], "HUD", text="Score: 0", textSize=[150, 40], align=["left", "top"])
+    message = inst(2, "Message", [60, 300, 660, 360], "HUD", text="Tap", textSize=[60, 40], align=["center", "center"])
+    found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
+                                      {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
+    assert [f["uids"] for f in found] == [[2]]
+    assert found[0]["line"] == ('screen.message "below the holes": Message uid 2 "Tap" has its middle at (360, 330) '
+                                "on layer 'HUD', and the design's place puts its middle at y > 960 (below Hole) there: "
+                                "move it in the layout")
+    assert notes == ["3 of 5 places checked (score, holes, message)",
+                     f"review_look.py asks about Mole: no words of {gm.SCREEN_WORDS} alone before the first comma",
+                     "Lives names no object: write the key as the object type's name"]
+    score["box"] = [400, 20, 700, 80]
+    message["box"] = [60, 1100, 660, 1160]
+    found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
+                                      {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
+    assert [f["uids"] for f in found] == [[1]]
+    assert "has its middle at (475, 40) on layer 'HUD', and the design's place puts its middle at x 0 to 240 there"         in found[0]["line"]
+    message["shown"] = False
+    found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
+                                      {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
+    assert notes[0] == "2 of 5 places checked (score, holes)" and notes[-1] == "message not on the first screen"
+
+
+
+def test_play_design_prints_the_screen_places_under_the_first_screen():
+    gm, pd = module("game_model"), module("play_design")
+    design = gm.Design({**example(), "screen": {"score": "top-right", "holes": "a 3 x 3 grid"}})
+    layers = {"HUD": {"parallax": [0, 0], "shown": True, "view": [0, 0, 720, 1280]}}
+    score = {"type": "ScoreText", "uid": 1, "layer": "HUD", "box": [20, 20, 200, 80], "shown": True, "angle": 0, "root": 1}
+    snap = {"viewport": [720, 1280], "layers": layers, "instances": [score]}
+    result = {"status": "opened", "project": "p", "title": "t", "editor": "e", "preview": {"plans": [
+        {"started": True, "errors": [], "steps": [{"ok": True}, {"ok": True, "value": snap}, {"ok": True}]}]}}
+    lines, code = pd.report(design, [], result, ["ScoreText", "Hole"])
+    assert code == 1
+    assert lines[1] == ("  first screen: 1 finding; screen places: 1 of 2 places checked (score); review_look.py asks "
+                        f"about holes: no words of {gm.SCREEN_WORDS} alone before the first comma")
+    assert lines[2].startswith('    screen: screen.score "top-right": ScoreText uid 1 has its middle at (110, 50)')
+
+def test_check_design_prints_which_screen_places_play_design_measures(tmp_path):
+    design = example()
+    design["screen"]["board"] = "a 3 x 3 grid in the middle"
+    code, out = check(tmp_path, design)
+    assert code == 0, out
+    assert "  score  top-left  play_design.py: top-left" in out
+    assert "  message  below the holes  play_design.py: below holes" in out
+    assert "  board  a 3 x 3 grid in the middle  review_look.py" in out
+    assert "play_design.py measures a place whose words before the first comma are only top, bottom" in out
+
+
 EXPRESSIONS = ["1 + 2 * 3", "\"a\" & 1 & \"b\"", "1 & 0", "2 | 0", "score = 3 ? \"yes\" : \"no\"", "-score + 10 % 4",
                "max(1, score, 2) - min(4, 5)", "clamp(score * 3, 0, 5)", "floor(7 / 2) + ceil(0.2) + round(2.5)",
                "find(label, \"OVER\")", "len(label) + abs(-2)", "label = \"Game over\"", "score <> 3",

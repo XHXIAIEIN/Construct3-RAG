@@ -32,6 +32,10 @@ the object type, the instance's UID and what to change:
 Then it prints the questions to answer from the screenshot, which the script
 cannot judge: open each screenshot with the image tool of this session, answer
 every question with yes or no, and for each yes name the object to change.
+When the project has a design (--design, by default tools/design.json), one
+question names the design's screen entries that play_design.py cannot
+measure: words other than top, bottom, left, right, centre, above, below, or
+a key that names no object of the project.
 
 A layout reached by goToLayout starts without what the game's flow sets up
 before it, so a layout that needs a run in progress may show less than in
@@ -53,6 +57,7 @@ import sys
 from pathlib import Path
 
 import c3project as c3
+import game_model as gm
 import open_in_editor as oe
 import preview_project as play
 
@@ -412,15 +417,41 @@ def review(only: list[str] | None, settle: float, viewport: list[int] | None, sh
     return run
 
 
-def ask(several: bool) -> list[str]:
-    """The questions the script cannot answer, put to the agent about every screenshot."""
+def unmeasured(project: Path, design: Path | None) -> list[str]:
+    """The design's screen entries play_design.py does not measure, each as key "words": in words outside its
+    vocabulary, or under a key that names no object type of the project."""
+    path = design or project / "tools" / "design.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError):
+        return []
+    types = [n for n, _ in c3.folder_items(c3.load(project / "project.c3proj").get("objectTypes", {}))]
+    model = gm.Design(data)
+    out = []
+    for p in gm.screen_places(model):
+        named = [gm.screen_objects(k, model, types) for k in [p.key] + [ref for _, ref in p.sides]]
+        if not p.measured or not all(named):
+            out.append(f"{p.key} {json.dumps(p.text, ensure_ascii=False)}")
+    return out
+
+
+def questions(several: bool, places: list[str] = ()) -> list[str]:
+    """The questions the script cannot answer, about every screenshot."""
+    out = list(QUESTIONS)
+    if places:
+        out.append(f"On a screenshot that shows it, does an object sit elsewhere than the design's screen says: "
+                   f"{'; '.join(places)}?")
+    if several:
+        out.append(ACROSS)
+    return out
+
+
+def ask(several: bool, places: list[str] = ()) -> list[str]:
+    """The questions, put to the agent about every screenshot."""
     lines = ["questions: open each screenshot above with your image tool, one at a time. Answer every question "
              "yes or no from what the picture shows. For each yes, name the layout, the object type to change and "
              "what to change:"]
-    lines += [f"  {n}. {q}" for n, q in enumerate(QUESTIONS, 1)]
-    if several:
-        lines.append(f"  {len(QUESTIONS) + 1}. {ACROSS}")
-    return lines
+    return lines + [f"  {n}. {q}" for n, q in enumerate(questions(several, places), 1)]
 
 
 def report(result: dict) -> list[str]:
@@ -445,7 +476,7 @@ def report(result: dict) -> list[str]:
         lines += [f"  {f['rule']}: {f['line']}" for f in done.get("findings", [])]
         lines += [f"  runtime: {e.splitlines()[0]}" for e in done["errors"]]
     if any(d.get("shot") for d in ran["layouts"]):
-        lines += ask(total > 1)
+        lines += ask(total > 1, result.get("places", []))
     return lines
 
 
@@ -476,6 +507,9 @@ def main() -> int:
     ap.add_argument("--shots", type=Path, help="the folder for the screenshots (default: .tmp/look in the project)")
     ap.add_argument("--out", type=Path, help="write the result, every instance read included, as JSON "
                                              "(default: .tmp/review-look.json in the project)")
+    ap.add_argument("--design", type=Path, metavar="DESIGN.json",
+                    help="the game's design, whose screen entries play_design.py does not measure become a question "
+                         "(default: tools/design.json in the project, when there is one)")
     ap.add_argument("--headed", action="store_true", help="show the browser window")
     ap.add_argument("--profile", type=Path, metavar="FOLDER",
                     help="keep the browser profile in FOLDER/editor-<browser> instead of the project's .tmp/")
@@ -522,6 +556,7 @@ def main() -> int:
                 print(f"the editor did not load: {e}. Check the network connection and --release, and run again.",
                       file=sys.stderr)
                 return 2
+            result["places"] = unmeasured(project, args.design)
             results.append(result)
             out.write_text(json.dumps(results if len(projects) > 1 else result, ensure_ascii=False, indent=1),
                            encoding="utf-8")       # kept as each project ends, should a later one stop the run

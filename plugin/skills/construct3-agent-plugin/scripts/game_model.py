@@ -868,6 +868,103 @@ def how_tapped(inp: dict) -> str:
     return "a tap on the screen"
 
 
+# --- the screen ---------------------------------------------------------------------------
+# A screen entry is measured when the words before its first comma are these and no others: top, bottom,
+# left, right and centre name thirds of the screen, and above, below, left of, right of name a side of
+# another entry or object. play_design.py checks a measured entry on the first screen; review_look.py
+# asks about the others on its screenshots.
+VERTICAL = {"top": "top", "upper": "top", "bottom": "bottom", "lower": "bottom"}
+HORIZONTAL = {"left": "left", "right": "right"}
+MIDDLE = {"centre", "center", "middle", "centred", "centered", "central"}
+FILLER = {"a", "an", "the", "in", "at", "on", "of", "screen", "corner", "band", "edge", "side", "third"}
+RELATION = re.compile(r"\b(above|below|under|beneath|(?:to the )?left of|(?:to the )?right of)\s+(?:the\s+)?"
+                      r"([A-Za-z][A-Za-z0-9_-]*)", re.I)
+SIDES = {"above": "above", "below": "below", "under": "below", "beneath": "below"}
+SCREEN_WORDS = "top, bottom, left, right, centre, above X, below X, left of X, right of X"
+# Words of a key that name how a region is drawn, not what it shows: score_display is the score.
+GENERIC = {"display", "text", "label", "area", "ui", "hud", "value"}
+
+
+@dataclass
+class Place:
+    key: str
+    text: str
+    path: str
+    vertical: str | None = None     # top, middle or bottom third; None for any
+    horizontal: str | None = None   # left, middle or right third; None for any
+    sides: list = field(default_factory=list)   # (above, below, left of or right of, the key or object X)
+    measured: bool = False
+
+    @property
+    def region(self) -> str:
+        """The third the words name, as the design would write it."""
+        if self.vertical == self.horizontal == "middle":
+            return "centre"
+        parts = [p for p in (self.vertical, self.horizontal) if p]
+        return "-".join("centre" if p == "middle" else p for p in parts)
+
+
+def place(key: str, text: str) -> Place:
+    """A screen entry read in the words above; measured is False when another word stands in its first clause."""
+    out = Place(key, text, f"screen.{key}")
+    clause = re.split(r"[,;(]", text, maxsplit=1)[0]
+    for m in RELATION.finditer(clause):
+        side = m.group(1).lower().replace("to the ", "")
+        out.sides.append((SIDES.get(side, side), m.group(2)))
+    rest = RELATION.sub(" ", clause).lower()
+    words = re.findall(r"[a-z0-9]+", rest)
+    if any(w not in VERTICAL and w not in HORIZONTAL and w not in MIDDLE and w not in FILLER for w in words):
+        return out
+    vertical = {VERTICAL[w] for w in words if w in VERTICAL}
+    horizontal = {HORIZONTAL[w] for w in words if w in HORIZONTAL}
+    middle = any(w in MIDDLE for w in words)
+    if len(vertical) > 1 or len(horizontal) > 1 or middle and vertical and horizontal:
+        return out
+    if middle:
+        vertical, horizontal = vertical or {"middle"}, horizontal or {"middle"}
+    out.vertical = next(iter(vertical), None)
+    out.horizontal = next(iter(horizontal), None)
+    out.measured = bool(out.vertical or out.horizontal or out.sides)
+    return out
+
+
+def screen_places(design: "Design") -> list[Place]:
+    screen = design.data.get("screen")
+    if not isinstance(screen, dict):
+        return []
+    return [place(str(k), v) for k, v in screen.items() if isinstance(v, str) and v.strip()]
+
+
+def name_words(name: str) -> set[str]:
+    """The words of a name, lower case and singular: ScoreText, score_text and scores all hold score."""
+    parts = re.findall(r"[A-Z]+(?![a-z])|[A-Z]?[a-z]+|[0-9]+", name)
+    out = set()
+    for p in (p.lower() for p in parts):
+        if len(p) > 3 and p.endswith(("ches", "shes", "xes", "sses")):
+            p = p[:-2]
+        elif len(p) > 3 and p.endswith("s") and not p.endswith("ss"):
+            p = p[:-1]
+        out.add(p)
+    return out
+
+
+def screen_objects(key: str, design: "Design", types) -> list[str]:
+    """The object types a screen key names: the type of that name, the object a state row of that name is stored
+    in, or every type whose name holds the key's words (score -> ScoreLabel and ScoreText, holes -> Hole). Empty
+    when it names none."""
+    types = list(types)
+    flat = {re.sub(r"[^a-z0-9]", "", t.lower()): t for t in types}
+    if re.sub(r"[^a-z0-9]", "", key.lower()) in flat:
+        return [flat[re.sub(r"[^a-z0-9]", "", key.lower())]]
+    st = design.state.get(key)
+    if st and st.stored_in not in ("global", "Array"):
+        obj = st.shown[0] if st.shown else st.stored_in.split(".", 1)[0]
+        if obj in types:
+            return [obj]
+    want = name_words(key) - GENERIC
+    return [t for t in types if want and want <= name_words(t)]
+
+
 # --- the simulator -----------------------------------------------------------------------
 class Sim:
     """The design's state machine at 60 ticks a second."""

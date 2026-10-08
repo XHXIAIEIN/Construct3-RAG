@@ -102,7 +102,8 @@ What a measurement cannot judge, the script asks: one list of yes/no
 questions about visible facts: cut or overlapping text, objects that
 cover others, the edge of the screen, mixed drawing styles, a backdrop that
 outshines what the player acts on, kinds that look alike, and decoration
-repeated on every layout. Open each screenshot it
+repeated on every layout, and, when the project has a design, the screen
+entries that `play_design.py` cannot measure. Open each screenshot it
 names with the image tool, answer each question from the picture, and for
 each yes name the layout and the object type to change. A question answered
 from memory of the events, not from the picture, is not answered.
