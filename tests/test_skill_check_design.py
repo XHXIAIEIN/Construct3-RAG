@@ -43,15 +43,40 @@ def test_check_design_passes_the_reference_example_and_prints_its_tables(tmp_pat
     assert "hit (tap a hole): hit -> the mole jumps to another hole" in out
     assert "  escapes  global  new-game, escape  escape, lose" in out
     assert "ok    three escapes lose, a tap restarts: 7 steps, lose reached, restarted" in out
-    assert out.splitlines()[-1].startswith("ok: design complete; 4 tests pass in the prototype, win and lose reached")
+    last = out.splitlines()[-1]
+    assert last.startswith("ok: design complete; 4 tests pass in the prototype, win and lose reached, restart "
+                           "checked, not won in 120 s without input. Request: \"a whack-a-mole: a mole pops out")
+    assert (" ...\"; left for later: sounds; moles that get faster. When you report, name what is left for later. "
+            "Next, build the game") in last
+    assert last.endswith("design.json")
 
 
 def test_check_design_names_every_missing_table(tmp_path):
     code, out = check(tmp_path, {"game": "X"})
     assert code == 1
-    for key in ("core_loop", "reference", "screen", "state", "inputs", "rules", "win", "lose", "tests"):
+    for key in ("request", "later", "core_loop", "reference", "screen", "state", "inputs", "rules", "win", "lose",
+                "tests"):
         assert re.search(rf"^{key}: missing", out, re.M), (key, out)
     assert "the tests did not run" in out
+
+
+def test_later_names_what_the_round_leaves_out_or_says_nothing_is(tmp_path):
+    """An empty list is refused with what to write; the one item "nothing left out" stands for a whole build."""
+    design = example()
+    design["later"] = []
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert ("later: empty; what this round leaves for later: each thing the request names or takes for granted that "
+            "this design does not build, in a few words, such as [\"sound\", \"a best score\", \"levels after the "
+            "first\"]. If the design builds the whole request, write [\"nothing left out\"]") in out
+    design["later"] = ["nothing left out", "sounds"]
+    code, out = check(tmp_path, design)
+    assert code == 1 and "later: \"nothing left out\" is only ever the one item." in out
+    design["later"] = ["Nothing left out"]
+    code, out = check(tmp_path, design)
+    assert code == 0, out
+    last = out.splitlines()[-1]
+    assert "; nothing is left for later. Next, build the game" in last and "When you report" not in last
 
 
 def test_check_design_names_the_test_step_and_the_values_of_a_failed_expect(tmp_path):
@@ -128,8 +153,8 @@ def test_the_prototype_runs_events_as_the_runtime_does():
     logical and on numbers, At() outside an Array is 0, comparisons give 1 or 0."""
     gm = module("game_model")
     design = gm.Design({
-        "game": "probe", "core_loop": "one tap", "reference": {"example": "x", "takes": "nothing"},
-        "screen": {"all": "screen"},
+        "game": "probe", "request": "one tap", "later": ["nothing left out"], "core_loop": "one tap",
+        "reference": {"example": "x", "takes": "nothing"}, "screen": {"all": "screen"},
         "state": [{"name": "a", "start": 0, "stored_in": "global"}, {"name": "b", "start": 0, "stored_in": "global"},
                   {"name": "t", "start": "", "stored_in": "Label.text"},
                   {"name": "G", "size": [3, 3], "stored_in": "Array"}],
@@ -359,7 +384,8 @@ def board_game(stones: bool = True) -> dict:
         place.append("stones += 1")
     five = [{"do": "place", "c": x, "r": r} for x in range(5) for r in (0, 1)][:9]
     return {
-        "game": "Five", "core_loop": "Two players place stones in turn; five in a row wins",
+        "game": "Five", "request": "two players place stones in turn and five in a row wins", "later": ["sound"],
+        "core_loop": "Two players place stones in turn; five in a row wins",
         "reference": {"example": sorted(p.stem for p in (REPO / "data" / "c3-examples" / "en-US").glob("*.json"))[0],
                       "takes": "a board of cells tapped by their col and row"},
         "screen": {"board": "centre", "status": "below the board"},
@@ -464,6 +490,32 @@ def test_a_game_over_at_launch_is_refused_though_a_fixture_steps_past_it(tmp_pat
             "rules): the game is over at launch") in out
 
 
+def test_a_win_that_comes_without_input_is_refused_unless_the_design_says_waiting_wins(tmp_path):
+    """The prototype plays on without input; a win before the lose names the rule that set what it reads."""
+    design = example()
+    design.update(win="over = 1", lose="none")      # three escapes now win: a player who does nothing wins
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert ("win: over = 1 holds after 3.0 s without any input: rule lose (a sub-rule of escape), fired by every 1, "
+            "set over. A player who does nothing wins.") in out
+    assert "write \"won_by_waiting\": \"<what the player does while it runs>\"" in out
+    design["won_by_waiting"] = "taps each mole before it hides until three have escaped"
+    code, out = check(tmp_path, design)
+    assert code == 0, out
+    assert (", won by waiting as the design says: taps each mole before it hides until three have escaped. "
+            "Request: ") in out.splitlines()[-1]
+    design = example()      # the lose comes first: the field says what the game does not do
+    design["won_by_waiting"] = "taps moles"
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert ("won_by_waiting: without any input the game is not won: the lose holds after 3.0 s. The field is for a "
+            "game won by outlasting a timer; drop it") in out
+    design = toggle()
+    design["won_by_waiting"] = "flips the label"
+    code, out = check(tmp_path, design)
+    assert "won_by_waiting: the game has no win, so it is not won by waiting; drop the field" in out
+
+
 def stone_project(root, placed):
     write_project(root, {"turn": ("number", "1"), "over": ("number", "0")},
                   {"Stone": ("Sprite", []), "Cell": ("Sprite", ["col", "row"]), "Status": ("Text", []),
@@ -519,7 +571,8 @@ def test_the_first_screen_is_held_to_the_prototype():
 
 def tapping(restart_if, win_do, tests=None) -> dict:
     """A board game in small: three taps on a cell win, a tap on the screen starts a new game."""
-    return {"game": "Three", "core_loop": "tap cells until three are placed", "reference": example()["reference"],
+    return {"game": "Three", "request": "three taps win", "later": ["sound"],
+            "core_loop": "tap cells until three are placed", "reference": example()["reference"],
             "screen": {"board": "centre"},
             "state": [{"name": "n", "start": 0, "stored_in": "global"}, {"name": "over", "start": 0, "stored_in": "global"},
                       {"name": "pieces", "start": 0, "stored_in": "Piece.shown"}],
