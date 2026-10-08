@@ -19,6 +19,18 @@ def test_a_passing_check_ends_with_the_command_that_opens_the_project(built):
     code, out = run(built.parent, SKILL / "scripts" / "check_project.py", "--rag", str(REPO), "--project", str(built))
     assert code == 0 and out.splitlines()[-1].endswith(
         f"open_in_editor.py --project {built.resolve().as_posix()} --preview"), out
+    assert "play_design.py" not in out
+
+
+def test_a_passing_check_of_a_designed_game_ends_with_its_tests(project):
+    (project / "tools" / "design.json").write_text("{}", encoding="utf-8")
+    code, out = check(project)
+    assert code == 0 and out.splitlines()[-1].endswith(
+        f"--preview, then play the design's tests in the editor: "
+        f"python {INSTALLED}/scripts/play_design.py tools/design.json"), out
+    code, out = run(project.parent, SKILL / "scripts" / "check_project.py", "--rag", str(REPO), "--project", str(project))
+    assert code == 0 and out.splitlines()[-1].endswith(
+        f"play_design.py --project {project.resolve().as_posix()} game/tools/design.json"), out
 
 
 def test_checker_prints_the_findings_that_fit_and_counts_the_rest(project):

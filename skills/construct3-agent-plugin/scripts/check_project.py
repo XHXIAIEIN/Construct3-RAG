@@ -55,6 +55,7 @@ RESOURCE_FOLDERS = ("objectTypes", "families", "layouts", "eventSheets", "timeli
 UNLISTED_ROOT_FILES = ("general", "icon", "sound", "music", "video", "font")
 # Sound and music are WebM Opus; the editor converts what it imports.
 AUDIO_TYPE = "audio/webm; codecs=opus"
+DESIGN = Path("tools") / "design.json"     # where references/designing-a-game.md writes the design
 # how a layout instance writes the value of an instance variable of each type
 JSON_TYPES = {"number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
               "string": lambda v: isinstance(v, str), "boolean": lambda v: isinstance(v, bool)}
@@ -3211,9 +3212,14 @@ class Checker:
             line += "".join(f"; {clause}" for clause in copied_sizes(p, self.layouts))
             line += (f"; when you write or change a script, look up each API it calls: "
                      f"{script_command(p.root, 'lookup_script_api.py')} NAME")
-        return (f"{line}; next, review the design of the sheets and act on what it prints, "
+        line = (f"{line}; next, review the design of the sheets and act on what it prints, "
                 f"{script_command(p.root, 'review_design.py')}, then open and preview it in the editor, which also "
                 f"reads the expressions and runs the events: {open_command(p.root)}")
+        design = p.root / DESIGN
+        if design.is_file():
+            line += (f", then play the design's tests in the editor: "
+                     f"{script_command(p.root, 'play_design.py', ' ' + shown_path(design))}")
+        return line
 
 
 def copied_sizes(p: c3.Project, layouts: dict[str, dict]) -> list[str]:
@@ -3259,15 +3265,20 @@ def copied_sizes(p: c3.Project, layouts: dict[str, dict]) -> list[str]:
     return out
 
 
+def quoted(s: str) -> str:
+    return f'"{s}"' if " " in s else s
+
+
+def shown_path(path: Path) -> str:
+    """path as a command run from the current directory names it, quoted when it holds a space."""
+    path, cwd = path.resolve(), Path.cwd()
+    return quoted(path.relative_to(cwd).as_posix() if path.is_relative_to(cwd) else path.as_posix())
+
+
 def script_command(root: Path, name: str, flags: str = "") -> str:
     """A script of this folder run on root, as it runs from the current directory."""
-    def quoted(s: str) -> str:
-        return f'"{s}"' if " " in s else s
-    script = Path(__file__).resolve().parent / name
-    cwd = Path.cwd()
-    shown = script.relative_to(cwd).as_posix() if script.is_relative_to(cwd) else script.as_posix()
     where = "" if c3.find_project(None) == root.resolve() else f" --project {quoted(root.resolve().as_posix())}"
-    return f"python {quoted(shown)}{where}{flags}"
+    return f"python {shown_path(Path(__file__).parent / name)}{where}{flags}"
 
 
 def open_command(root: Path) -> str:
