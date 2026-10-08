@@ -43,6 +43,24 @@ The template's `TOUCH`, the 48 dp a finger needs, is 15% of the shorter
 side at 1920×1080. It sizes what is tapped, and a player moved by keys is
 smaller than that in most examples.
 
+### HUD share
+
+`measure_examples.py hud` reads the play layouts of the game examples:
+the visible instances of their layers at parallax 0. It leaves out
+full-screen overlays, objects named for a moment (a tutorial, a game-over
+message, a popup) and Texts longer than 30 characters, which are
+instructions. Two shares are measured:
+
+| Share | Quartiles | Most |
+|-------|-----------|------|
+| Of the screen, covered by the HUD's objects together, a Text by its whole box | 3%, 4%, 22% | 99% |
+| Of the height, taken by the strips along the top and bottom edges that hold them | 9%, 13%, 58% | 100% |
+
+The upper quarter are games whose interface is a frame around the play
+area, an inventory bar or a dashboard. A game whose HUD shares a scrolling
+layer is not counted. The template's stand-in game covers 2% of its
+screen, in strips of 18% of its height.
+
 ## Decision
 
 - Player height: no default and no warning. Within one way of moving,
@@ -50,9 +68,15 @@ smaller than that in most examples.
   sample, so a single default would copy that studio. The borrowed height
   for a platformer, 8%, agrees with the examples' median; the others have
   no counterpart here.
+- HUD share: no cap. A borrowed cap of 20 to 25% of the screen falls
+  inside the examples' upper quarter, games built around their interface,
+  and would flag them. What a cap guards against, a HUD that crowds the
+  playfield, shows in the playfield's share, and `filled()` warns on that
+  under `PLAYFIELD_MIN` (`greybox-blockout.md`).
 
 ## Re-evaluate when
 
 - A generated game's player falls outside the examples' range and reads
   wrong in a preview, or a template for one genre is added: it takes that
   genre's median.
+- A generated game's HUD covers its playfield while `filled()` passes it.
