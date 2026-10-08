@@ -305,8 +305,8 @@ def test_a_behavior_inside_a_quoted_word_is_named_too(built):
 
 
 def usage_rag(folder: Path, index: bool = True, examples: bool = True) -> tuple[Path, Path]:
-    """A Construct3-RAG with the System and shared schemas and, with index, an index that has two examples
-    use Wait; with examples, the Construct-Example-Projects clone beside it. (rag, example-projects)."""
+    """A Construct3-RAG folder with the System and shared schemas. index: add an index in which two examples
+    use Wait. examples: create the Construct-Example-Projects folder beside it. Returns (rag, example-projects)."""
     rag = folder / "Construct3-RAG"
     for rel in ("_index.json", "en-US/_index.json", "en-US/_deprecated.json", "en-US/plugins/system.json",
                 "en-US/plugins/_common.json"):
@@ -357,3 +357,10 @@ def test_the_commands_of_the_examples_are_left_out_of_an_entry_that_fits_only_wi
     code, out = run(tmp_path, SKILL / "scripts" / "lookup_ace.py", "System", "wait", "--limit", "700", "--rag", str(rag))
     assert code == 0 and out.startswith("action wait - Wait [system]") and "official example" not in out
     assert out.splitlines()[-1].startswith("2 more did not fit 700 characters (--limit): ")
+
+
+def test_the_note_on_a_missing_clone_counts_against_the_limit(tmp_path):
+    rag, _ = usage_rag(tmp_path, examples=False)
+    for limit in ("900", "1100", "1500"):
+        code, out = run(tmp_path, SKILL / "scripts" / "lookup_ace.py", "System", "wait", "--limit", limit, "--rag", str(rag))
+        assert code == 0 and len(out) <= int(limit), (limit, out)

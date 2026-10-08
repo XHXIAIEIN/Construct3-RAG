@@ -19,7 +19,7 @@ The index is read offline by the skill's lookup_ace.py. It is rebuilt from the
 clone only, so the same commit gives the same files; scripts/init.py runs it
 after the CDN export, and without a clone it keeps the committed index.
 
-exit codes: 0 written or kept, 1 the clone was not found
+exit codes: 0 written or kept, 1 the folder given to --clone has no example-projects/
 """
 import argparse
 import json
@@ -34,6 +34,7 @@ sys.path.insert(0, str(ROOT / "skills" / "construct3-agent-plugin" / "scripts"))
 import c3project as c3  # noqa: E402
 
 OUT = ROOT / "data" / "c3-example-usage"
+SOURCE = "_source.json"     # the clone and commit the index was built from
 KINDS = ("conditions", "actions", "expressions")
 SHOWN = 3           # the uses kept per ACE, the ones lookup_ace.py prints
 SPAN = 8            # the most events of one use printed: the event and its first sub-events
@@ -67,7 +68,6 @@ class Example:
     """One example project and the keys of the ACEs its sheets use."""
 
     def __init__(self, folder: Path, rag: Path) -> None:
-        self.folder = folder
         self.p = c3.Project(folder, rag, "en-US", c3.Findings())
 
     def key(self, kind: str, ace: dict) -> tuple[str, str, str, str] | None:
@@ -191,7 +191,7 @@ def build(clone: Path, rag: Path = ROOT) -> dict[str, dict]:
         found.sort()
         entry = {"examples": len(found), "read": [list(use[1:]) for use in found[:SHOWN]]}
         files.setdefault(f"{addon_kind}/{addon}.json", {}).setdefault(kind, {})[ace] = entry
-    files["_source.json"] = {"clone": c3.EXAMPLES_CLONE, "commit": commit_of(clone), "examples": examples}
+    files[SOURCE] = {"clone": c3.EXAMPLES_CLONE, "commit": commit_of(clone), "examples": examples}
     return files
 
 
@@ -205,9 +205,7 @@ def commit_of(clone: Path) -> str | None:
 
 
 def dump(content: dict) -> str:
-    """One ACE per line: a diff between two clones shows the ACEs whose uses changed."""
-    if "examples" in content and "clone" in content:
-        return json.dumps(content, indent=2) + "\n"
+    """An addon's file with one ACE per line: a diff between two clones shows the ACEs whose uses changed."""
     lines = ["{"]
     kinds = [k for k in KINDS if k in content]
     for i, kind in enumerate(kinds):
@@ -222,13 +220,14 @@ def dump(content: dict) -> str:
 
 
 def write(files: dict[str, dict], out: Path = OUT) -> None:
-    """Replace out with files: an addon no example uses any more leaves the index."""
+    """Replace out with files: an addon that no example in the clone uses leaves the index."""
     stage = out.with_name(f".{out.name}-staging")
     shutil.rmtree(stage, ignore_errors=True)
     for name, content in files.items():
         path = stage / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(dump(content).encode("utf-8"))
+        text = json.dumps(content, indent=2) + "\n" if name == SOURCE else dump(content)
+        path.write_bytes(text.encode("utf-8"))
     shutil.rmtree(out, ignore_errors=True)
     stage.rename(out)
 
@@ -241,7 +240,7 @@ def refresh(clone: Path | None = None, out: Path = OUT) -> str:
                 f"{c3.examples_clone_command(ROOT)} clones it")
     files = build(clone)
     write(files, out)
-    source = files["_source.json"]
+    source = files[SOURCE]
     return (f"{source['examples']} examples at {str(source['commit'])[:12]}, "
             f"{sum(len(f.get(k, {})) for f in files.values() for k in KINDS)} ACEs in {len(files) - 1} files")
 
@@ -252,7 +251,7 @@ def main() -> int:
     ap.add_argument("--clone", type=Path, help=f"the {c3.EXAMPLES_CLONE} clone (default: beside this repository)")
     args = ap.parse_args()
     if args.clone and not (args.clone / "example-projects").is_dir():
-        sys.exit(f"no example-projects folder in {args.clone}")
+        sys.exit(f"no example-projects folder in {args.clone}: pass the folder of the {c3.EXAMPLES_CLONE} clone")
     print(f"data/c3-example-usage/: {refresh(args.clone)}")
     return 0
 

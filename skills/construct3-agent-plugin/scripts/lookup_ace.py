@@ -223,8 +223,8 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, w
 
 class Usage:
     """Which official examples use an ACE, from Construct3-RAG/data/c3-example-usage/, an index of the
-    Construct-Example-Projects clone that scripts/example_usage.py builds. A clone without the index
-    prints nothing of it."""
+    Construct-Example-Projects clone that scripts/example_usage.py builds. Without the index,
+    nothing of it is printed."""
 
     def __init__(self, rag) -> None:
         self.rag = rag
@@ -232,7 +232,7 @@ class Usage:
         self._files: dict[str, dict] = {}
 
     def tails(self, entries: list[tuple]) -> list[list[str]]:
-        """The lines of each (owner, behavior, addon, kind, entry), in step with them."""
+        """The lines of each (owner, behavior, addon, kind, entry): one list per entry, in the same order."""
         return [self.lines(behavior, addon, kind, it["id"]) for _, behavior, addon, kind, it in entries]
 
     def lines(self, behavior: str | None, addon: str, kind: str, ace_id: str) -> list[str]:
@@ -269,9 +269,10 @@ def print_in_full(blocks: list[list[str]], ids: list[str], limit: int, usage: Us
     of Audio, each parameter described, run past 10 000 characters. The tail of a block,
     the official examples that use the entry, is left out when only the block fits."""
     tails = tails or [[] for _ in blocks]
-    # The note on the rest takes a few hundred characters of the limit.
+    note = usage.note() if usage and any(tails) else None
+    # The note on the rest takes a few hundred characters of the limit, and the note on the clone its own.
     room = c3.fitting([line for block, tail in zip(blocks, tails) for line in block + tail],
-                      max(limit - 400, 1) if limit else 0)
+                      max(limit - 400 - len(note or ""), 1) if limit else 0)
     counted = False
     for n, (block, tail) in enumerate(zip(blocks, tails)):
         if len(block) > room and n:
@@ -282,8 +283,7 @@ def print_in_full(blocks: list[list[str]], ids: list[str], limit: int, usage: Us
         room -= len(lines)
     else:
         n = len(blocks)
-    note = usage.note() if usage and counted else None
-    if note:
+    if note and counted:
         print(note)
     if n < len(blocks):
         print(f"{len(blocks) - n} more did not fit {limit} characters (--limit): {', '.join(ids[n:])}; "
