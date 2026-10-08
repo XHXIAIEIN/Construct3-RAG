@@ -28,6 +28,9 @@ opened once before it is handed over.
   environment variable, or the `Construct3-RAG: <folder>` line in the
   project's `AGENTS.md` or `CLAUDE.md`. `Construct3-RAG not found`: fill that
   line in; ask the user for the folder instead of guessing it.
+- `check_project.py` fetches the clone at most once an hour to say when it
+  is behind its upstream. `CONSTRUCT3_RAG_OFFLINE=1` turns the fetch and the
+  comparison off.
 - Loaded as the Claude Code plugin (the skill is named
   `construct3:construct3-agent-plugin`): the game project needs no copy; run
   the scripts from this folder. In the files of this skill, `Construct3-RAG/`
