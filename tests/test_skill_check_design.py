@@ -617,3 +617,24 @@ def test_play_design_reads_the_last_expects_again_after_the_settle(tmp_path):
     assert code == 1
     assert ("FAIL  a hit scores: tests[0].steps[2] expect score = 1: held at its step and is false 1 s after the "
             "test's last step in the game") in "\n".join(lines)
+
+
+def test_a_failed_play_says_to_fix_the_game_not_the_test(tmp_path, monkeypatch, capsys):
+    """The prototype passes the design's tests, so a test that fails in the editor sends the agent to the
+    events and the layout; the test and the design's numbers change only when the user agrees."""
+    pd = module("play_design")
+    design = tmp_path / "design.json"
+    design.write_text(json.dumps(example()), encoding="utf-8")
+    whack_project(tmp_path / "game")
+    failed = {"started": True, "steps": [{"ok": True}] * 3 + [{"ok": True, "value": {"ok": False, "seen": {"score": 0}}}]}
+    first = {"started": True, "steps": [{"ok": True}, {"ok": True, "value": {}}]}
+    monkeypatch.setattr(pd.oe, "browser_path", lambda: "browser")
+    monkeypatch.setattr(pd, "run_all", lambda *a: {"status": "opened", "project": "p", "title": "t", "editor": "e",
+                                                   "preview": {"plans": [first, failed]}})
+    monkeypatch.setattr(sys, "argv", ["play_design.py", str(design), "--project", str(tmp_path / "game"),
+                                      "--out", str(tmp_path / "result.json")])
+    assert pd.main() == 1
+    last = capsys.readouterr().out.splitlines()[-1]
+    assert last.startswith("next: fix the game where each line says, its events or, for a look: or start: line")
+    assert "Change neither a test nor a number of the design to make it pass" in last
+    assert "only when the user agrees that it was wrong" in last

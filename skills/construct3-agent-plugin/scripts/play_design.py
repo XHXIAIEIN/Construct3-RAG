@@ -49,6 +49,14 @@ import open_in_editor as oe
 import preview_project as play
 import review_look as look
 
+# A failed test is a difference between the game and a design whose prototype passes it, so the fix
+# goes into the game. A model that may edit the test or the design's numbers instead makes it pass
+# without the game changing.
+FIX_THE_GAME = ("next: fix the game where each line says, its events or, for a look: or start: line, its layout, "
+                "and run this again. Change neither a test nor a number of the design to make it pass: the "
+                "prototype passes them, so the game is what differs from the design. Change the design only when "
+                "the user agrees that it was wrong, then run check_design.py on it again")
+
 EPILOG = """examples:
   python scripts/play_design.py tools/design.json
   python scripts/play_design.py design.json --project "D:/Games/Gomoku" --plan-only .tmp/design-plans.json
@@ -692,8 +700,7 @@ def main() -> int:
         print(f"{len(lines) - shown} lines not printed: {out} keeps everything")
     print(f"ran in {time.monotonic() - began:.0f} s; full result in {out}")
     if code and result["status"] == "opened":
-        print("next: fix each line where it says, in the events or in the design (then check_design.py again), "
-              "and run this again")
+        print(FIX_THE_GAME)
     elif result["status"] != "opened":
         print(oe.NEXT)
     return code
