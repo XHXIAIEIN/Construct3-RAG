@@ -1044,27 +1044,36 @@ def hit_flash(obj: str) -> list:
 SQUASHED: set[str] = set()                 # the objects squash() acts on, checked in build_all()
 # the behaviors whose object collides, by behaviorId; squash() stops the run on one of them
 COLLIDING = ("Platform", "EightDir", "Physics", "Car", "solid", "jumpthru")
+# The squash of a button under a finger, press(): its two halves are the touch's start and end.
+# A game tunes it as a kind of SQUASH, "press".
+SQUASH_PRESS = {"width": 0.9, "height": 0.9, "hold": 0, "seconds": 0.1, "ease": "easeoutsine"}
 
 
-def squash(obj: str, kind: str, tween: str = "Tween") -> list:
-    """The actions of a squash of SQUASH, "hit", "land" or "jump": stop the squash obj is in,
-    set its size to the kind's share of its image's size, hold it, and tween it back under the
-    tag "squash". The rest size is the image's, the size shape_inst() writes. obj is the art,
+def squash(obj: str, kind: str, tween: str = "Tween", half: str = "both") -> list:
+    """The actions of a squash of SQUASH, "hit", "land", "jump" or "press": stop the squash obj
+    is in, set its size to the kind's share of its image's size, hold it, and tween it back under
+    the tag "squash". The rest size is the image's, the size shape_inst() writes. obj is the art,
     not the object that collides, and needs the Tween behavior, named `tween` on it; a hold
-    waits, so the actions go last in their block.
+    waits, so the actions go last in their block. half="down" gives the actions through the hold,
+    half="back" the tween back, and the default "both" all of them, for a squash that two events
+    share, as press() shares one.
 
         event("Squash the art on landing", [cond("on-landed", "Player", beh="Platform")],
               squash("PlayerArt", "land"))"""
-    if kind not in SQUASH:
-        sys.exit(f"squash({obj!r}, {kind!r}): the kinds are {', '.join(SQUASH)}; add one to SQUASH")
-    k = SQUASH[kind]
+    kinds = {**SQUASH, "press": SQUASH.get("press", SQUASH_PRESS)}
+    if kind not in kinds:
+        sys.exit(f"squash({obj!r}, {kind!r}): the kinds are {', '.join(kinds)}; add one to SQUASH")
+    if half not in ("both", "down", "back"):
+        sys.exit(f"squash({obj!r}, {kind!r}, half={half!r}): half is both, down or back")
+    k = kinds[kind]
     SQUASHED.add(obj)
-    return [act("stop-tweens", obj, {"tags": q("squash")}, beh=tween),
+    down = [act("stop-tweens", obj, {"tags": q("squash")}, beh=tween),
             act("set-size", obj, {"width": f"Self.ImageWidth * {k['width']:g}",
                                   "height": f"Self.ImageHeight * {k['height']:g}"}),
-            *([wait(f"{k['hold']:g}", use_timescale=False)] if k["hold"] else []),
-            tween2(obj, "squash", "size", "Self.ImageWidth", "Self.ImageHeight", f"{k['seconds']:g}",
-                   k["ease"], beh=tween)]
+            *([wait(f"{k['hold']:g}", use_timescale=False)] if k["hold"] else [])]
+    back = [tween2(obj, "squash", "size", "Self.ImageWidth", "Self.ImageHeight", f"{k['seconds']:g}", k["ease"],
+                   beh=tween)]
+    return {"both": down + back, "down": down, "back": back}[half]
 
 
 def squash_the_art(types: dict, families: dict) -> None:
@@ -1081,6 +1090,67 @@ def squash_the_art(types: dict, families: dict) -> None:
 def hit(obj: str, tween: str = "Tween") -> list:
     """A hit: the squash of SQUASH["hit"], then the colour flash, whose wait makes it last in its block."""
     return [*squash(obj, "hit", tween), *hit_flash(obj)]
+
+
+PRESSED: set[str] = set()                  # the object types press() acts on, given "pressed" in build_all()
+
+
+def press(obj: str, actions: list, tween: str = "Tween") -> list:
+    """The two events of a button's press. obj is the object type of a button()'s shape, with
+    the Tween behavior. The touch that lands on it marks it pressed and squashes it at once, as
+    the "press" kind of squash() says. The end of a touch springs the pressed one back and runs
+    `actions` if the touch ends on it, so a finger that slides off cancels. build_all() gives the
+    type the boolean instance variable "pressed". Entries of a module's events:
+        module("Menu", events=[*press("Restart", [restart_layout()])])"""
+    PRESSED.add(obj)
+    return [*event(f"Press {obj} down under the finger", [on_touched(obj)],
+                   [set_bool(obj, "pressed", True), *squash(obj, "press", tween, "down")]),
+            *event(f"Let {obj} spring back when the touch ends, and act when it ends on it",
+                   [cond("on-any-touch-end", "Touch"), is_bool(obj, "pressed")],
+                   [set_bool(obj, "pressed", False), *squash(obj, "press", tween, "back")],
+                   children=[block([cond("is-touching-object", "Touch", {"object": obj})], actions)])]
+
+
+def press_types(types: dict, layouts: dict) -> None:
+    """Gives each object type press() acts on the boolean instance variable "pressed", and each of
+    its instances the value false, since an instance lists every instance variable of its type."""
+    for name in sorted(PRESSED & set(types)):
+        ivars = types[name].setdefault("instanceVariables", [])
+        if not any(v["name"] == "pressed" for v in ivars):
+            ivars.append(ivar_def("pressed", "boolean", "Held down by a finger: press() sets it on the touch's "
+                                                        "start and clears it on its end."))
+    for lay in layouts.values():
+        for layer_ in layers_in(lay["layers"]):
+            for inst in layer_["instances"]:
+                if inst["type"] in PRESSED:
+                    inst["instanceVariables"].setdefault("pressed", False)
+
+
+# count_up() counts a number to its new value in "seconds" with "ease".
+COUNT_UP = {"seconds": 0.5, "ease": "easeoutquad"}
+
+
+def count_up(obj: str, value: str, tag: str = "count", tween: str = "Tween") -> list:
+    """The actions that count the Text obj, which shows a number alone, to `value`, an expression
+    such as a variable. They stop the count that runs, because a second value tween under the same
+    tag runs beside the first. They then start a value tween under `tag` from the number shown,
+    over COUNT_UP["seconds"], so a gain mid-count goes on from the number on the screen. obj has
+    the Tween behavior, named `tween` on it, and the events of counting() show the count.
+        func("AddScore", [add_var("score", "points"), *count_up("ScoreText", "score")], ...)"""
+    return [stop_tweens(obj, tag, beh=tween),
+            tween_value(obj, tag, f"int({obj}.Text)", value, f"{COUNT_UP['seconds']:g}", COUNT_UP["ease"], beh=tween)]
+
+
+def counting(obj: str, value: str, tag: str = "count", tween: str = "Tween") -> list:
+    """The two events that show the count of count_up() on obj. While the count plays, the text is
+    the tween's value rounded towards `value`, so a gain of 1 shows at once. When the count ends,
+    the text is `value`, because the tween's value reads 0 once the tween has ended. Entries of a
+    module's events."""
+    v = f"Self.{tween}.Value({q(tag)})"
+    return [*event(f"Show {obj}'s count while it runs", [is_playing(obj, tag, beh=tween)],
+                   [set_text(obj, f"{v} < {value} ? ceil({v}) : floor({v})")]),
+            *event(f"End {obj}'s count on the exact value", [on_tween_finished(obj, tag, beh=tween)],
+                   [set_text(obj, value)])]
 
 
 def grid_random(lo: int, hi: int) -> str:
@@ -1650,11 +1720,13 @@ SCENE_FLAGS = {"x": True, "y": True, "z": False, "w": False, "h": False, "a": Fa
 STAGE_SHARE = 0.6                          # the share of the stage, across or down, its main object covers
 
 
-def link(parent: dict, *children: dict) -> None:
+def link(parent: dict, *children: dict, size: bool = False) -> None:
     """Makes `children` follow the layout instance `parent` in the layout's hierarchy, written as
     the editor writes it: their position, opacity and visibility follow the parent's, and they are
-    destroyed with it, so "Set invisible" on a button hides its label too. Each child starts
-    visible when the parent does. Put a child on the parent's layer, after it."""
+    destroyed with it, so "Set invisible" on a button hides its label too. With size=True their
+    width and height follow too, and a Text's letters scale with its box, so a squash of the
+    parent squashes the label. Each child starts visible when the parent does. Put a child on the
+    parent's layer, after it."""
     preview = {"transformX": 0, "transformY": 0, "transformZElevation": 0, "transformW": 0, "transformH": 0,
                "transformA": 0, "transformSX": 0, "transformSY": 0, "transformO": 0, "previewSceneGraph": False}
     own = {"x": True, "y": True, "z": True, "w": True, "h": True, "a": True, "o": False, "v": False, "d": True,
@@ -1670,9 +1742,10 @@ def link(parent: dict, *children: dict) -> None:
 
     graph = parent.get("sceneGraphData") or {"parent-uid": None, "uid": parent["uid"], "children": [],
                                               "flags": dict(own), "preview": dict(preview)}
+    flags = {**SCENE_FLAGS, "w": size, "h": size}
     for child in children:
-        graph["children"].append({"uid": child["uid"], "flags": dict(SCENE_FLAGS)})
-        put(child, {"parent-uid": parent["uid"], "uid": child["uid"], "flags": dict(SCENE_FLAGS),
+        graph["children"].append({"uid": child["uid"], "flags": dict(flags)})
+        put(child, {"parent-uid": parent["uid"], "uid": child["uid"], "flags": dict(flags),
                     "preview": dict(preview)})
         child["properties"]["initially-visible"] = parent["properties"].get("initially-visible", True)
     put(parent, graph)
@@ -1707,10 +1780,11 @@ def button(otype: str, rel: str, label: str, text: str, col: int, row: int, size
            longest: str | None = None, color: str | None = None, ivars=None, behaviors=None, label_ivars=None,
            label_behaviors=None) -> tuple[dict, dict]:
     """A button: the shape of images/<rel> on cell (col, row), as shape_inst() places it, and the
-    Text type `label` showing `text` centred on the same box, in a role that reads on the shape's
-    fill (text_on()) unless `color` names one, linked to the shape as its child (link()), at
-    `size` or the size label_size() gives the shape. `longest` is the widest text the label shows.
-    A shape smaller than button_size() of that text stops the run with the size to draw. Returns
+    Text type `label` showing `text` centred on the same box, at `size` or the size label_size()
+    gives the shape, in a role that reads on the shape's fill (text_on()) unless `color` names one.
+    The label is the shape's child (link()), size included, so a press() squashes both. `longest`
+    is the widest text the label shows. A shape smaller than button_size() of that text stops the
+    run with the size to draw. Returns
     (shape, label); put both on one layer, in that order, so the label draws on top."""
     if rel not in DRAWN_AS:
         sys.exit(f"button({otype!r}): draw images/{rel} first, shape({rel!r}, \"rect\", *button_size({text!r}), "
@@ -1725,7 +1799,7 @@ def button(otype: str, rel: str, label: str, text: str, col: int, row: int, size
     on = FILLS.get(rel, "canvas_alt")
     text_ = text_inst(label, text, units(col), units(row), w, h, size, "center", bold=True,
                       color=color or text_on(on, size), on=on, ivars=label_ivars, behaviors=label_behaviors)
-    link(shape_, text_)
+    link(shape_, text_, size=True)
     return shape_, text_
 
 
@@ -2229,13 +2303,16 @@ def build_all() -> None:
     for lay in layouts.values():
         for layer_ in layers_in(lay["layers"]):
             layer_["instances"] = z_order(layer_["instances"])
+    # The sheet builds before the types and layouts are written: press() records its types while it
+    # builds, and press_types() gives them their variable.
+    sheet = build_event_sheet()
+    press_types(types, layouts)
     for name, t in types.items():
         write_json(f"objectTypes/{name}.json", t)
     for name, f in families.items():
         write_json(f"families/{name}.json", f)
     for name, lay in layouts.items():
         write_json(f"layouts/{name}.json", lay)
-    sheet = build_event_sheet()
     if _ajax_used and "AJAX" not in types:
         types["AJAX"] = single_global_type("AJAX", "AJAX", {})
         write_json("objectTypes/AJAX.json", types["AJAX"])
@@ -2267,7 +2344,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 0ea1fe342010 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 841c10f12481 ================
 
 
 # --- the game ---------------------------------------------------------------------------
