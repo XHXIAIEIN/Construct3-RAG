@@ -154,6 +154,14 @@ So a save writes each file edited in the editor, from the copy the editor
 loaded, over any change made to it on disk. A folder on disk is reached
 through the same kind of folder handle; that case was not run.
 
+### Design size and build success
+
+The borrowed cap keeps a first version to about seven items. Of the
+skill's eval cases, one writes a design, `design-a-catch-game`. Its six
+runs wrote five to seven rules each, all six passed `check_design.py`,
+and the case ends at the design, so no run built a game from it. The
+sample has neither failures nor a spread of sizes, so it relates nothing.
+
 ## Decision
 
 - Player height: no default and no warning. Within one way of moving,
@@ -187,6 +195,8 @@ through the same kind of folder handle; that case was not run.
   before the files change, and to open it again after, because the loss
   is silent. `edit_sheet.py`'s note after a write states the same
   behaviour.
+- Design size: no warning in `check_design.py`. A threshold needs runs
+  that build games from designs of different sizes, some of which fail.
 
 ## Re-evaluate when
 
@@ -202,3 +212,5 @@ through the same kind of folder handle; that case was not run.
   then decide on a warning.
 - The editor reloads a folder project from disk, or warns of a file
   changed there: the skill's bullet and the note change with it.
+- An eval case builds a game from its design in a preview: count the
+  design's rules against the build's outcome over its runs.
