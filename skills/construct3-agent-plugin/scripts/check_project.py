@@ -609,6 +609,7 @@ class Checker:
         self.check_calls()
         self.check_uniqueness()
         self.check_files_and_addons()
+        self.check_secrets()
         self.warn_deprecated()
 
     def deprecated_use(self, where: str, what: str) -> None:
@@ -3080,6 +3081,13 @@ class Checker:
             self.err(f"duplicate uids: {dup_uids[:5]}{' ...' if len(dup_uids) > 5 else ''}; the editor gives all "
                      f"but one of them another uid, so a hierarchy link or a Pick by UID written for one may reach "
                      f"the other: give the copies a uid no instance or single-global object type has")
+
+    def check_secrets(self) -> None:
+        """A string shaped like a key in what a web export ships, which every player can read."""
+        for s, what, shown in c3.secrets_in(c3.shipped_strings(self.p.root, self.p.data, self.sheets)):
+            self.warn(f"{s.place}: a string shaped like {what} ({shown}), and a web export ships every string to "
+                      f"the players, who can read it. Move the key to a server that the game calls. If it is meant "
+                      f"to be public, write {c3.ALLOW} in {s.mark}")
 
     def check_files_and_addons(self) -> None:
         p = self.p

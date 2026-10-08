@@ -11,7 +11,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, run
+from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, edit, run
 
 # The result of a project the editor opened, before a preview or the TypeScript definitions.
 OPENED = {"project": "Game", "status": "opened", "title": "Game - Construct 3",
@@ -391,3 +391,59 @@ def test_install_addon_reads_addon_json_before_the_editor(tmp_path):
 def test_open_in_editor_says_what_a_passing_preview_left_untested_only_when_it_passed():
     lines = opened_with({"ticks": 597, "wallTime": 4.3545, "errors": ["Event sheet 1, event 3: TypeError"]})
     assert lines[1] == "  preview: layout 'Game', runtime in the worker, 597 ticks in 4.4 s, 1 error", lines
+
+
+def refused(project, dialog: str, **more) -> dict:
+    """The result of a project the editor refused, as open_one returns it."""
+    return {**OPENED, "project": str(project), "status": "failed", "title": "", "release": "r495.2",
+            "dialogs": [dialog], **more}
+
+
+def test_a_refusal_the_checker_passed_is_offered_as_a_report_without_the_projects_names(project):
+    """The checker lacks a rule the editor applies: the user decides whether the repository hears of it."""
+    oe = opener()
+    home = str(oe.Path.home())
+    result = refused(project, 'Invalid expressions: Game, event 5, condition 1: Type mismatch in Coin.value & "Bonus"',
+                     exception=f"Error: ScoreText at {home}\\editor.js:1\n    at stack")
+    offer = oe.failure_report(result)
+    assert offer[0].startswith("report: check_project.py passes this project and the editor refused it"), offer
+    command = offer[-1]
+    body_file = project / ".tmp" / re.search(r"editor-report-\w{12}\.md", command).group(0)
+    assert f'gh issue create --repo {oe.REPOSITORY} --title "Editor refused a project the checker passed' in command
+    assert f'--body-file "{body_file}"' in command and "Send nothing unless the user says yes" in offer[0]
+    body = body_file.read_text(encoding="utf-8")
+    assert "\n".join(offer[1:-1]) + "\n" == body
+    assert "<sheet 1>, event 5, condition 1: Type mismatch in <object 1>.<variable 1> & \"…\"" in body, body
+    assert "Error: <object 5> at ~\\editor.js:1\n" in body and "at stack" not in body, body
+    assert "   5   <object 7>: On touched <object 1> (start)" in body, body
+    assert "- Construct: the editor r495.2" in body and "schemas r" in body, body
+    for name in ("Game", "Coin", "ScoreText", "Bonus", "Collect", home):
+        assert name not in body, name
+    again = oe.failure_report(result)
+    assert len(again) == 1 and "do not offer it again" in again[0] and str(body_file) in again[0], again
+
+
+def test_no_report_when_the_checker_finds_the_problem_or_the_editor_lacks_an_addon(project):
+    oe = opener()
+    edit(project, "project.c3proj", lambda data: data["usedAddons"].append(
+        {"type": "plugin", "id": "Ghost_Cursor", "name": "Ghost cursor", "author": "Someone", "version": "1.0.0.0"}))
+    assert oe.failure_report(refused(project, "Missing addons: Ghost cursor (Ghost_Cursor) by Someone")) == []
+    assert oe.failure_report({**OPENED, "project": str(project)}) == []
+    edit(project, SHEET, lambda sheet: sheet["events"].append(
+        {"eventType": "block", "conditions": [{"id": "no-such-condition", "objectClass": "System", "sid": 9}],
+         "actions": [], "sid": 10}))
+    assert oe.failure_report(refused(project, "missing condition id")) == []
+    assert not (project / ".tmp" / oe.OFFERED).exists()
+
+
+def test_a_crash_report_while_building_the_preview_is_a_refusal_too(project):
+    oe = opener()
+    crash = "Assertion failure: invalid collision polygon"
+    result = {**OPENED, "project": str(project), "release": "", "preview": {"errors": [], "editor": crash}}
+    text = "\n".join(oe.failure_report(result))
+    assert crash in text and "- Construct: the editor https://editor.construct.net/," in text, text
+
+
+def test_the_report_goes_to_the_repository_skill_md_names():
+    oe = opener()
+    assert f"source: https://github.com/{oe.REPOSITORY}\n" in (SKILL / "SKILL.md").read_text(encoding="utf-8")

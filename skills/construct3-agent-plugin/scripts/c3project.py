@@ -13,6 +13,7 @@ import ast
 import difflib
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -596,6 +597,189 @@ def clone_behind(rag: Path) -> tuple[str, bool] | None:
             f"{f'then {refresh}, ' if refresh else ''}then run this check again"), True
 
 
+def project_file(root: Path, kind: str, name: str, folder: Path) -> Path | None:
+    """The JSON file for a listed item. Older projects keep the files flat even
+    when project.c3proj has subfolders, so fall back to a search by name."""
+    direct = root / kind / folder / f"{name}.json"
+    if direct.exists():
+        return direct
+    hits = [p for p in (root / kind).rglob(f"{name}.json") if not p.name.endswith(".uistate.json")]
+    return hits[0] if hits else None
+
+
+def listed_files(root: Path, data: dict, kind: str) -> dict[str, Path | None]:
+    """The file of every item project.c3proj lists under kind; None for one that has no file."""
+    return {name: project_file(root, kind, name, folder) for name, folder in folder_items(data.get(kind, {}))}
+
+
+# --- the strings a web export ships -------------------------------------------------------
+# A web export ships every string of the events, the scripts and the project files to every player, who
+# can read it in the browser's tools, so every player can read a key there. The shapes below are the keys
+# of common services, and the first matching shape names the key. A random-looking token in a text
+# literal, 32 to 512 letters, digits and -_+/=, is the key of some other service; a longer one is data.
+# ALLOW on the line, in the comment above the event or in a variable's comment marks a key meant to be
+# public.
+# Evidence: docs/decisions/secret-scan.md.
+KEY_SHAPES = (
+    (re.compile(r"\bsk-ant-[A-Za-z0-9_-]{20,}"), "an Anthropic API key"),
+    (re.compile(r"\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{32,}"), "an OpenAI API key"),
+    (re.compile(r"\bAIza[0-9A-Za-z_-]{35}"), "a Google API key"),
+    (re.compile(r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"), "an AWS access key"),
+    (re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{40,})"), "a GitHub token"),
+    (re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{10,}"), "a Slack token"),
+    (re.compile(r"\b[rs]k_live_[0-9A-Za-z]{20,}"), "a Stripe secret key"),
+    (re.compile(r"-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----"), "a private key"),
+    (re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}"), "a signed token (JWT)"),
+)
+TOKEN = re.compile(r"(?<![\w+/=-])[A-Za-z0-9+/=_-]{32,512}(?![\w+/=-])")
+DATA_URI = re.compile(r"data:[\w/+.-]*;base64,[A-Za-z0-9+/=]*")
+URL = re.compile(r"\b(?:https?|wss?)://([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+)(?::\d+)?([^\s\"'`<>?#]*)", re.I)
+LOCAL_HOSTS = re.compile(r"localhost|127(?:\.\d+){3}|0\.0\.0\.0", re.I)
+WORDS = re.compile(r"(?:[A-Z]?[a-z]{2,}|[A-Z]{2,}|\d{1,3})+")      # a name: CamelCase words and short numbers
+JS_LITERAL = re.compile(r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`")
+ALLOW = "allow-secret"
+TEXT_FILES = (".json", ".txt", ".csv", ".tsv", ".xml", ".html", ".htm", ".md", ".yaml", ".yml", ".ini", ".cfg")
+SCRIPT_FILES = (".js", ".mjs", ".ts")
+
+
+class Shipped(NamedTuple):
+    place: str      # sheet Game event 5 action 2, scripts/main.js line 12, files/config.json line 3
+    text: str
+    allowed: bool   # marked ALLOW where the place can carry a mark
+    mark: str       # where an ALLOW goes for this place
+    literals: re.Pattern | None = None     # code: the text literals in it hold its strings
+
+    def strings(self) -> list[str]:
+        """The text of the strings it holds: its literals in code, else all of it."""
+        if self.literals is None:
+            return [self.text]
+        return [m.group(0)[1:-1] for m in self.literals.finditer(self.text)]
+
+
+def shipped_strings(root: Path, data: dict, sheets: dict[str, dict]) -> Iterator[Shipped]:
+    """Every string a web export of the project ships: the parameters of conditions and actions, the values
+    of variables and the lines of scripts in the sheets, the lines of the script files and of the text files
+    project.c3proj lists. Comments, group descriptions and names stay in the editor."""
+    above = "the comment above the event"
+
+    def values(obj) -> Iterator[str]:
+        if isinstance(obj, str):
+            yield obj
+        elif isinstance(obj, dict):
+            for v in obj.values():
+                yield from values(v)
+        elif isinstance(obj, list):
+            for v in obj:
+                yield from values(v)
+
+    def script_lines(script) -> list[str]:
+        return script.splitlines() if isinstance(script, str) else [str(s) for s in script or []]
+
+    def walk(sheet: str, events: list, counter: list[int]) -> Iterator[Shipped]:
+        noted = ""      # the comments right above the next event
+        for ev in events:
+            et = ev.get("eventType")
+            if et == "comment":
+                noted += str(ev.get("text", ""))
+                continue
+            allowed = ALLOW in noted
+            noted = ""
+            if et in NUMBERED:
+                counter[0] += 1
+            where = f"sheet {sheet} event {counter[0]}"
+            if et == "variable":
+                for text in values(ev.get("initialValue")):
+                    yield Shipped(f"sheet {sheet} variable {ev.get('name')}", text,
+                                  allowed or ALLOW in str(ev.get("comment", "")), "its comment")
+            if et == "script":
+                for n, line in enumerate(script_lines(ev.get("script")), 1):
+                    yield Shipped(f"{where} script line {n}", line, allowed or ALLOW in line,
+                                  "a comment on that line", JS_LITERAL)
+            for kind in ("conditions", "actions"):
+                for n, ace in enumerate(ev.get(kind) or [], 1):
+                    if not isinstance(ace, dict) or ace.get("type") == "comment":
+                        continue
+                    place = f"{where} {kind[:-1]} {n}"
+                    if ace.get("type") == "script":
+                        for k, line in enumerate(script_lines(ace.get("script")), 1):
+                            yield Shipped(f"{place} line {k}", line, allowed or ALLOW in line,
+                                          "a comment on that line", JS_LITERAL)
+                    for text in values(ace.get("parameters")):
+                        yield Shipped(place, text, allowed, above, STRING_LITERAL)
+            yield from walk(sheet, ev.get("children") or [], counter)
+
+    for name, sheet in sheets.items():
+        if isinstance(sheet, dict):
+            yield from walk(name, sheet.get("events") or [], [0])
+    folders = data.get("rootFileFolders") or {}
+    for kind, folder in (("script", "scripts"), ("general", "files")):
+        for item, sub in folder_items(folders.get(kind) or {}):
+            name = item.get("name") if isinstance(item, dict) else item
+            path = root / folder / sub / str(name)
+            code = path.suffix.lower() in SCRIPT_FILES
+            if not isinstance(name, str) or not (code or path.suffix.lower() in TEXT_FILES) or not path.is_file() \
+                    or path.stat().st_size > 4_000_000:
+                continue
+            rel = (Path(folder) / sub / name).as_posix()
+            for n, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                yield Shipped(f"{rel} line {n}", line, ALLOW in line,
+                              "a comment on that line" if code else "that line", JS_LITERAL if code else None)
+
+
+def entropy(text: str) -> float:
+    """Bits per character of text, from how often each character comes."""
+    counts: dict[str, int] = {}
+    for c in text:
+        counts[c] = counts.get(c, 0) + 1
+    return -sum(n / len(text) * math.log2(n / len(text)) for n in counts.values())
+
+
+def key_shape(s: Shipped) -> tuple[str, str] | None:
+    """The kind of key a shipped string holds, and the key's first characters; None when it holds none."""
+    for pattern, what in KEY_SHAPES:
+        m = pattern.search(s.text)
+        if m:
+            return what, m.group(0)[:6] + "…"
+    for text in s.strings():
+        bare = URL.sub(" ", DATA_URI.sub(" ", text))     # an address up to its query, a picture in a data URI
+        for m in TOKEN.finditer(bare):
+            token = m.group(0)
+            # A key mixes letters and digits and repeats some characters; an alphabet written out does not,
+            # and a name such as Draco_Float32Array_GetValue_1 is words and short numbers
+            if not (re.search(r"\d", token) and re.search(r"[A-Za-z]", token)) or len(set(token)) == len(token) \
+                    or all(WORDS.fullmatch(part) for part in re.split(r"[_-]+", token) if part):
+                continue
+            if re.fullmatch(r"[0-9a-fA-F]+", token):
+                random = entropy(token) >= 3.0
+            else:
+                random = re.search(r"[a-z]", token) and re.search(r"[A-Z]", token) and entropy(token) >= 4.3
+            if random:
+                return "a random token, such as a key", f"{token[:4]}… ({len(token)} characters)"
+    return None
+
+
+def secrets_in(strings) -> list[tuple[Shipped, str, str]]:
+    """Each shipped string shaped like a key that no ALLOW marks, with what it is and its first characters."""
+    out = []
+    for s in strings:
+        found = None if s.allowed else key_shape(s)
+        if found:
+            out.append((s, *found))
+    return out
+
+
+def hosts_in(strings) -> dict[str, str]:
+    """Each host an address in the shipped strings names, the machine's own aside, with the first place."""
+    hosts: dict[str, str] = {}
+    for s in strings:
+        for text in s.strings():
+            for m in URL.finditer(text):
+                host = m.group(1).lower()
+                if not LOCAL_HOSTS.fullmatch(host):
+                    hosts.setdefault(host, s.place)
+    return hosts
+
+
 # --- the generator's helpers ----------------------------------------------------------
 # assets/build_project.py keeps its helpers between a begin and an end marker, and the end
 # marker carries their version and the stamp of the lines between. A game's copy,
@@ -1077,17 +1261,11 @@ class Project:
 
     # --- files ------------------------------------------------------------------------
     def project_file(self, kind: str, name: str, folder: Path) -> Path | None:
-        """The JSON file for a listed item. Older projects keep the files flat even
-        when project.c3proj has subfolders, so fall back to a search by name."""
-        direct = self.root / kind / folder / f"{name}.json"
-        if direct.exists():
-            return direct
-        hits = [p for p in (self.root / kind).rglob(f"{name}.json") if not p.name.endswith(".uistate.json")]
-        return hits[0] if hits else None
+        return project_file(self.root, kind, name, folder)
 
     def listed_files(self, kind: str) -> dict[str, Path | None]:
         """The file of every item project.c3proj lists under kind; None for one that has no file."""
-        return {name: self.project_file(kind, name, folder) for name, folder in folder_items(self.data.get(kind, {}))}
+        return listed_files(self.root, self.data, kind)
 
     def script_files(self) -> list[Path]:
         """The JavaScript and TypeScript files project.c3proj lists, relative to the project folder."""

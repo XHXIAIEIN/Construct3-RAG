@@ -225,3 +225,91 @@ def test_an_example_that_is_not_there_names_the_clone_not_a_new_project(built, t
     else:
         assert f"the Construct-Example-Projects clone is not at {clone}" in out, out
         assert f"python {(REPO / 'scripts' / 'bootstrap.py').as_posix()} clones it" in out, out
+
+
+def committed(root: Path) -> None:
+    """The project's files in a commit of a repository of its own, as a game project keeps them."""
+    def git(*args: str) -> None:
+        p = subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                           capture_output=True, text=True)
+        assert p.returncode == 0, p.stderr
+    git("init", "-q")
+    git("add", "project.c3proj", "eventSheets", "objectTypes")
+    git("commit", "-qm", "before")
+
+
+def test_since_lists_what_changed_as_events(project):
+    """A review of the agents branch reads the events, not a diff of the sheet's JSON."""
+    committed(project)
+
+    def change(sheet):
+        rows = events(sheet)
+        rows["add_score"]["actions"][1]["parameters"]["text"] = '"Score: " & score'
+        rows["restart_block"]["conditions"].pop(1)     # Trigger once
+        rows["input_group"]["children"].append(block([{"id": "on-start-of-layout", "objectClass": "System", "sid": 5}]))
+        sheet["events"] = [e for e in sheet["events"] if e.get("name") != "deal"]
+        rows["restart"]["children"].remove(rows["restart_block"])
+        rows["input_group"]["children"].append(rows["restart_block"])
+    edit(project, SHEET, change)
+    code, out = tool(project, "print_sheet", "--since", "HEAD")
+    assert code == 0, out
+    lines = out.splitlines()
+    assert re.fullmatch(r"== Game since HEAD \(\w+\): 1 added, 2 changed, 1 removed; event numbers as the sheet is on disk",
+                        lines[0]), out
+    assert "-     global number deal = 0  [removed]" in lines, out
+    assert "    4 group Input  [context]" in lines and "+   6   System: On start of layout  [added]" in lines, out
+    at = lines.index("    9 function AddScore(points: number)  [changed]")    # 8 before the move into Input
+    assert lines[at + 2:at + 4] == ["-         -> ScoreText: Set text to score",
+                                    '+         -> ScoreText: Set text to "Score: " & score'], out
+    assert "    7   System: Coin.Count = 0  [changed, moved from event 9 in HEAD]" in lines, out
+    assert "-       System: Trigger once" in lines, out
+
+
+def test_since_knows_an_event_whose_sid_a_generator_gave_anew(project):
+    """A generator run gives every sid after its first changed line anew: the same content is the same event."""
+    committed(project)
+    fresh = iter(range(10 ** 14, 10 ** 15, 7919))
+
+    def renumber(node):
+        if isinstance(node, dict):
+            node.update({"sid": next(fresh)} if "sid" in node else {})
+            for value in node.values():
+                renumber(value)
+        elif isinstance(node, list):
+            for value in node:
+                renumber(value)
+    edit(project, SHEET, renumber)
+    code, out = tool(project, "print_sheet", "--since", "HEAD")
+    assert code == 0 and re.fullmatch(r"no event changed since HEAD \(\w+\) in Game", out.strip()), out
+
+    edit(project, SHEET, lambda sheet: events(sheet)["add_score"]["actions"][1]["parameters"].update(text='"Score"'))
+    code, out = tool(project, "print_sheet", "Game", "--since", "HEAD")
+    assert code == 0 and ": 1 changed;" in out.splitlines()[0] and out.count("[") == 1, out
+
+
+def test_since_names_what_it_cannot_compare(project):
+    code, out = tool(project, "print_sheet", "--since", "HEAD")
+    assert code == 1 and "in no git repository" in out and "git init" in out, out
+    committed(project)
+    code, out = tool(project, "print_sheet", "--since", "nope")
+    assert code == 1 and "no such commit, branch or tag" in out and "before" in out, out
+    code, out = tool(project, "print_sheet", "--since=--output=x")
+    assert code == 1 and "takes a commit" in out, out
+    code, out = tool(project, "print_sheet", "--since", "HEAD", "--show", "1")
+    assert code == 1 and "--outline and --show read the sheet as it is on disk" in out, out
+
+
+def test_since_stops_at_the_limit_and_names_the_part_that_continues(project):
+    committed(project)
+    edit(project, SHEET, lambda sheet: sheet["events"].extend(
+        block([{"id": "every-tick", "objectClass": "System", "sid": 5}],
+              [{"id": "set-eventvar-value", "objectClass": "System", "sid": 6,
+                "parameters": {"variable": "score", "value": str(n)}}]) for n in range(40)))
+    code, out = tool(project, "print_sheet", "--since", "HEAD", "--limit", "1500")
+    assert code == 0 and len(out) < 1500, out
+    last = out.splitlines()[-1]
+    assert re.search(r"before event (\d+) of 49\. The rest: python \S+print_sheet.py Game --since HEAD --events \1- "
+                     r".*--limit 1500$", last), last
+    start = re.search(r"--events (\d+)-", last).group(1)
+    code, rest = tool(project, "print_sheet", "Game", "--since", "HEAD", "--events", f"{start}-", "--limit", "0")
+    assert code == 0 and f"+{int(start):>4} System: Every tick  [added]" in rest, rest

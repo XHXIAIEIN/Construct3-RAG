@@ -61,6 +61,8 @@ The project skill and the prompts:
 | `plan-names-the-event-line.md` | Why an operation of a plan may carry the line its event prints, and not a hash of the sheet |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
 | `fix-loop-cap.md` | Why the checker counts the changes to each finding's place and stops the fix loop after two, and what it keeps in the project to count them |
+| `editor-refusal-report.md` | What the report of a refusal the checker passed holds, what it leaves out, and why the user sends it |
+| `secret-scan.md` | Which strings shaped like a key the checker warns of and the export stops on, and how one meant to be public is marked |
 | `clone-update-check.md` | Why the checker fetches the clone and fails when it is behind its upstream, and how plugin users get updates |
 | `project-format-guide.md` | Where each statement of Scirra's project format guide, the one `llm-context.md` links, is written and what checks it, and how its copy in `data/c3-guides/` is kept |
 | `preview-player.md` | Why a preview is played from a JSON plan of steps, and what the steps cover |
