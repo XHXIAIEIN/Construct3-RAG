@@ -15,10 +15,13 @@ import json
 import os
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
 import time
+import zlib
+from collections import Counter
 from collections.abc import Iterator
 from pathlib import Path, PurePosixPath
 from typing import NamedTuple
@@ -138,6 +141,85 @@ def stop_with_a_sentence(script: str, findings: Findings) -> None:
         os._exit(2)     # sys.exit would raise inside the hook and print a second traceback
 
     sys.excepthook = stopped
+
+
+def png_rgba(data: bytes) -> tuple[int, int, list[tuple]] | None:
+    """Width, height and RGBA pixels of an 8-bit, non-interlaced PNG; None for another kind."""
+    if data[:8] != b"\x89PNG\r\n\x1a\n":
+        return None
+    pos, idat, palette, trns = 8, b"", [], b""
+    w = h = depth = ctype = interlace = 0
+    while pos + 8 <= len(data):
+        n, tag = struct.unpack(">I", data[pos:pos + 4])[0], data[pos + 4:pos + 8]
+        body = data[pos + 8:pos + 8 + n]
+        if tag == b"IHDR":
+            w, h, depth, ctype, _, _, interlace = struct.unpack(">IIBBBBB", body)
+        elif tag == b"PLTE":
+            palette = [tuple(body[i:i + 3]) for i in range(0, len(body), 3)]
+        elif tag == b"tRNS":
+            trns = body
+        elif tag == b"IDAT":
+            idat += body
+        pos += 12 + n
+    channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}.get(ctype)
+    if depth != 8 or interlace or not channels:
+        return None
+    raw, stride = zlib.decompress(idat), w * channels
+    rows, prev = [], bytearray(stride)
+    for y in range(h):
+        kind, line = raw[y * (stride + 1)], bytearray(raw[y * (stride + 1) + 1:(y + 1) * (stride + 1)])
+        for i in range(stride):
+            a = line[i - channels] if i >= channels else 0
+            b, c = prev[i], prev[i - channels] if i >= channels else 0
+            if kind == 1:
+                line[i] = (line[i] + a) & 255
+            elif kind == 2:
+                line[i] = (line[i] + b) & 255
+            elif kind == 3:
+                line[i] = (line[i] + (a + b) // 2) & 255
+            elif kind == 4:
+                p = a + b - c
+                pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+                line[i] = (line[i] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
+        rows.append(line)
+        prev = line
+    pixels = []
+    for line in rows:
+        for x in range(w):
+            v = line[x * channels:(x + 1) * channels]
+            if ctype == 6:
+                pixels.append(tuple(v))
+            elif ctype == 2:
+                pixels.append((*v, 255))
+            elif ctype == 4:
+                pixels.append((v[0], v[0], v[0], v[1]))
+            elif ctype == 0:
+                pixels.append((v[0], v[0], v[0], 255))
+            else:
+                pixels.append((*palette[v[0]], trns[v[0]] if v[0] < len(trns) else 255))
+    return w, h, pixels
+
+
+# A screenshot whose pixels are one colour, dark or clear over this share is not drawn yet. Over
+# 601 screenshots that review_look, open_in_editor and preview plans took of games, the most
+# one-coloured picture that showed something was 99.03% (a layout holding one coin), and a layout
+# that drew a 4 px bar and nothing else was 99.99%.
+BLANK = 0.999
+
+
+def blank_share(data: bytes) -> float | None:
+    """The share of a PNG's pixels that are one colour (within 8 in each channel of the commonest),
+    dark or clear, when it is BLANK or more: a screenshot the game has not drawn yet. None when the
+    picture shows something, or the PNG is of a kind png_rgba does not read."""
+    read = png_rgba(data)
+    if not read or not read[2]:
+        return None
+    pixels = read[2]
+    top = Counter(pixels).most_common(1)[0][0]
+    shares = (sum(all(abs(p[i] - top[i]) <= 8 for i in range(4)) for p in pixels),
+              sum(max(p[:3]) < 16 for p in pixels), sum(p[3] < 16 for p in pixels))
+    share = max(shares) / len(pixels)
+    return share if share >= BLANK else None
 
 
 def utf8_output() -> None:

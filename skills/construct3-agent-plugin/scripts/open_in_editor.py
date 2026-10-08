@@ -1039,6 +1039,15 @@ def addon_report(result: dict) -> list[str]:
     return lines
 
 
+def blank(page: DevTools) -> float | None:
+    """c3project.blank_share of the window drawn at an eighth of its size: reading a full
+    1920x1080 screenshot here takes about 4 s, an eighth of it a few hundredths."""
+    w, h = page.evaluate("[innerWidth, innerHeight]")
+    shot = page.call("Page.captureScreenshot", format="png",
+                     clip={"x": 0, "y": 0, "width": w, "height": h, "scale": 0.125})
+    return c3.blank_share(base64.b64decode(shot["data"]))
+
+
 def untested(ran: dict) -> str:
     """What a preview that passed did not prove: a passing line read alone reads as the game working."""
     wall = ran.get("wallTime")

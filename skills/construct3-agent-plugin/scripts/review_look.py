@@ -29,6 +29,10 @@ the object type, the instance's UID and what to change:
             animation that has more, though a text instance variable differs
             between them and no text on each tells them apart
 
+A screenshot that is one colour, black or clear over 99.9% of it is not drawn
+yet: it is taken again 1 s later, twice at most. A layout still of one colour
+is named as drawing nothing in view, and no question is asked about it.
+
 Then it prints the questions to answer from the screenshot, which the script
 cannot judge: open each screenshot with the image tool of this session, answer
 every question with yes or no, and for each yes name the object to change.
@@ -50,6 +54,7 @@ import base64
 import json
 import re
 import sys
+import time
 from pathlib import Path
 
 import c3project as c3
@@ -89,6 +94,10 @@ WRAPPED = 1.5
 OVERLAP_SHARE = 0.5
 # Share of the screen past which an instance is an overlay drawn over the HUD on purpose.
 OVERLAY = 0.5
+# A screenshot that is one colour (c3project.BLANK) is taken again this many times in all, this
+# many seconds apart, before the layout is named as drawing nothing.
+BLANK_TRIES = 3
+BLANK_WAIT = 1.0
 
 QUESTIONS = (
     "Is any text cut off at an edge, broken onto a line of its own, or drawn over another object?",
@@ -395,7 +404,14 @@ def review(only: list[str] | None, settle: float, viewport: list[int] | None, sh
                     visited.append(done)
                     continue
                 shot = shots / f"{file_name(layout)}.png"
+                for tries in range(1, BLANK_TRIES + 1):
+                    share = oe.blank(win)
+                    if share is None or tries == BLANK_TRIES:
+                        break
+                    time.sleep(BLANK_WAIT)
                 shot.write_bytes(base64.b64decode(win.call("Page.captureScreenshot")["data"]))
+                if tries > 1:
+                    done["blank"] = {"tries": tries, "share": share}
                 try:
                     snap = win.evaluate(LOOK_JS, wait=20, session=session)
                     done.update(shot=str(shot), findings=findings(snap), snapshot=snap)
@@ -433,9 +449,16 @@ def report(result: dict) -> list[str]:
         return lines + [f"  preview did not run: {e}" for e in ran["errors"]]
     total = len(ran["layouts"])
     for n, done in enumerate(ran["layouts"], 1):
-        shot = done.get("shot")
-        if shot:
-            lines.append(f"layout {done['layout']!r} ({n} of {total}): screenshot {shot}")
+        shot, blank = done.get("shot"), done.get("blank") or {}
+        if shot and blank.get("share"):
+            lines.append(f"layout {done['layout']!r} ({n} of {total}): screenshot {shot} is one colour over "
+                         f"{c3.BLANK:.1%} of it or more after {blank['tries']} shots {BLANK_WAIT:g} s apart: the layout "
+                         f"draws nothing in view at its start, or the preview did not draw it, so its questions are "
+                         f"not asked")
+        elif shot:
+            again = (f", taken when the layout was drawn; the {blank['tries'] - 1} shot"
+                     f"{'s' if blank['tries'] > 2 else ''} before showed one colour, not drawn yet" if blank else "")
+            lines.append(f"layout {done['layout']!r} ({n} of {total}): screenshot {shot}{again}")
         elif done.get("left"):
             lines.append(f"layout {done['layout']!r} ({n} of {total}): started, and its events went on to "
                          f"{done['left']!r} before the screenshot; it needs what the game sets up before it: play to "
@@ -444,7 +467,7 @@ def report(result: dict) -> list[str]:
             lines.append(f"layout {done['layout']!r} ({n} of {total}): not reached in 10 seconds")
         lines += [f"  {f['rule']}: {f['line']}" for f in done.get("findings", [])]
         lines += [f"  runtime: {e.splitlines()[0]}" for e in done["errors"]]
-    if any(d.get("shot") for d in ran["layouts"]):
+    if any(d.get("shot") and not (d.get("blank") or {}).get("share") for d in ran["layouts"]):
         lines += ask(total > 1)
     return lines
 

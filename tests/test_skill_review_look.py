@@ -184,3 +184,49 @@ def test_review_look_says_what_a_clean_run_left_unseen():
         "look: 0 findings on 1 layout, 0 runtime errors; each layout ran 1 s after a jump to it, without play, so a "
         "scene the game reaches only in play is unseen; full result in .tmp/review-look.json, screenshots in .tmp/look")
     assert "unseen" not in rl.look_line([found], 1.0, ".tmp/review-look.json", ".tmp/look")
+
+
+def png(w, h, pixel) -> bytes:
+    """An RGBA PNG whose pixel at (x, y) is pixel(x, y)."""
+    import struct
+    import zlib
+
+    def chunk(tag, body):
+        return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", zlib.crc32(tag + body))
+    raw = b"".join(b"\0" + b"".join(bytes(pixel(x, y)) for x in range(w)) for y in range(h))
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
+
+
+def test_a_screenshot_of_one_colour_dark_or_clear_is_blank():
+    """Over 601 screenshots of games the most one-coloured one that showed something was 99.03%."""
+    sys.path.insert(0, str(SKILL / "scripts"))
+    try:
+        import c3project as c3
+    finally:
+        sys.path.pop(0)
+    assert c3.blank_share(png(100, 100, lambda x, y: (30, 90, 200, 255))) == 1
+    assert c3.blank_share(png(100, 100, lambda x, y: ((x * 7 + y) % 16, 0, 5, 255))) == 1      # near black, noisy
+    assert c3.blank_share(png(100, 100, lambda x, y: (x % 255, y, 9, x % 15))) == 1           # clear
+    coin = lambda x, y: (40, 100, 240, 255) if (x - 10) ** 2 + (y - 10) ** 2 < 36 else (0, 0, 0, 255)
+    assert c3.blank_share(png(100, 100, coin)) is None          # a coin on black: 1.1% drawn
+    assert c3.blank_share(png(100, 100, lambda x, y: (255, 255, 255, 255) if x else (0, 0, 0, 255))) is None
+
+
+def test_review_look_retakes_a_blank_screenshot_and_asks_nothing_about_one_that_stays_blank():
+    rl = module()
+    lines = rl.report({"project": "Game", "status": "opened", "title": "Game - Construct 3", "editor": "e",
+                       "warnings": [], "preview": {"started": True, "errors": [], "layouts": [
+                           {"layout": "Objects", "shot": ".tmp/look/Objects.png", "findings": [], "errors": [],
+                            "blank": {"tries": 3, "share": 0.99995}}]}})
+    assert lines[1] == ("layout 'Objects' (1 of 1): screenshot .tmp/look/Objects.png is one colour over 99.9% of it "
+                        "or more after 3 shots 1 s apart: the layout draws nothing in view at its start, or the preview did "
+                        "not draw it, so its questions are not asked")
+    assert not any(line.startswith("questions:") for line in lines)
+    lines = rl.report({"project": "Game", "status": "opened", "title": "Game - Construct 3", "editor": "e",
+                       "warnings": [], "preview": {"started": True, "errors": [], "layouts": [
+                           {"layout": "Map", "shot": ".tmp/look/Map.png", "findings": [], "errors": [],
+                            "blank": {"tries": 2, "share": None}}]}})
+    assert lines[1] == ("layout 'Map' (1 of 1): screenshot .tmp/look/Map.png, taken when the layout was drawn; the 1 "
+                        "shot before showed one colour, not drawn yet")
+    assert lines[2].startswith("questions:")
