@@ -50,7 +50,7 @@ import review_look as rl            # noqa: E402
 import run_trigger_eval as rte      # noqa: E402
 
 # A line of a reply: the screenshot's name, the question's number, the answer.
-ANSWER = re.compile(r"^\W*(?P<shot>.+?)\W+(?P<q>\d+)\s*[:.)\-]\s*\**(?P<a>yes|no)\b", re.I)
+ANSWER = re.compile(r"^\W*(?P<shot>.+?)\W+(?:q(?:uestion)?\s*)?(?P<q>\d+)\s*[:.)\-][\s*]*(?P<a>yes|no)\b", re.I)
 
 
 def names(group: list[dict]) -> list[str]:
