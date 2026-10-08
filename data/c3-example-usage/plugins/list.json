@@ -1,0 +1,20 @@
+{
+  "conditions": {
+    "compare-item-text-at": {"examples": 2, "read": [["multiplayer-chat", "Chat events", 17, 17], ["multiplayer-binary-transfer", "Room events", 15, 15]]},
+    "compare-selected-item-text": {"examples": 4, "read": [["cgs-cloud-save", "LoginEvents", 2, 2], ["cgs-auth-providers", "Event sheet 1", 2, 2], ["cgs-leaderboards", "SubmitScoreEvents", 4, 4]]},
+    "compare-selection": {"examples": 4, "read": [["mesh-relative-displacement", "Event sheet 1", 2, 3], ["speech-synthesis", "Event sheet 1", 5, 5], ["qr-code-maker", "Event sheet 1", 5, 5]]},
+    "on-selection-changed": {"examples": 6, "read": [["internationalization", "DateLocalizationEventSheet", 3, 3], ["noise-textures", "Event sheet 1", 2, 2], ["pathfinding-direct-movement", "Event sheet 1", 6, 9]]}
+  },
+  "actions": {
+    "add-item": {"examples": 8, "read": [["microphone-input", "Event sheet 1", 4, 4], ["speech-synthesis", "Event sheet 1", 1, 3], ["camera-input", "Event sheet 1", 2, 2]]},
+    "clear": {"examples": 8, "read": [["microphone-input", "Event sheet 1", 3, 4], ["speech-synthesis", "Event sheet 1", 1, 3], ["camera-input", "Event sheet 1", 1, 2]]},
+    "remove": {"examples": 2, "read": [["multiplayer-chat", "Chat events", 17, 17], ["multiplayer-binary-transfer", "Room events", 15, 15]]},
+    "set-selection": {"examples": 5, "read": [["speech-synthesis", "Event sheet 1", 1, 3], ["noise-textures", "Event sheet 1", 1, 1], ["qr-code-maker", "Event sheet 1", 1, 2]]},
+    "set-tooltip": {"examples": 1, "read": [["internationalization", "DateLocalizationEventSheet", 5, 5]]}
+  },
+  "expressions": {
+    "itemcount": {"examples": 2, "read": [["multiplayer-chat", "Chat events", 17, 17], ["multiplayer-binary-transfer", "Room events", 15, 15]]},
+    "selectedindex": {"examples": 9, "read": [["microphone-input", "Event sheet 1", 8, 8], ["speech-synthesis", "Event sheet 1", 6, 6], ["noise-textures", "Event sheet 1", 3, 10]]},
+    "selectedtext": {"examples": 8, "read": [["internationalization", "DateLocalizationEventSheet", 4, 4], ["function-maps", "Event sheet 1", 9, 9], ["noise-textures", "Event sheet 1", 3, 10]]}
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "conditions": {
+    "is-supported": {"examples": 2, "read": [["midi-input", "Event sheet 1", 3, 3], ["midi-output", "Event sheet 1", 3, 3]]},
+    "on-any-device-closed": {"examples": 2, "read": [["midi-input", "Event sheet 1", 14, 14], ["midi-output", "Event sheet 1", 14, 14]]},
+    "on-any-device-error": {"examples": 2, "read": [["midi-input", "Event sheet 1", 15, 15], ["midi-output", "Event sheet 1", 15, 15]]},
+    "on-any-device-opened": {"examples": 2, "read": [["midi-input", "Event sheet 1", 13, 13], ["midi-output", "Event sheet 1", 13, 13]]},
+    "on-any-message": {"examples": 1, "read": [["midi-input", "Event sheet 1", 17, 18]]},
+    "on-devices-state-changed": {"examples": 2, "read": [["midi-input", "Event sheet 1", 9, 11], ["midi-output", "Event sheet 1", 9, 11]]},
+    "on-request-access-failed": {"examples": 2, "read": [["midi-input", "Event sheet 1", 7, 7], ["midi-output", "Event sheet 1", 7, 7]]},
+    "on-request-access-success": {"examples": 2, "read": [["midi-input", "Event sheet 1", 6, 6], ["midi-output", "Event sheet 1", 6, 6]]}
+  },
+  "actions": {
+    "close-device": {"examples": 2, "read": [["midi-input", "Event sheet 1", 12, 12], ["midi-output", "Event sheet 1", 12, 12]]},
+    "open-device": {"examples": 2, "read": [["midi-input", "Event sheet 1", 11, 11], ["midi-output", "Event sheet 1", 11, 11]]},
+    "request-midi-access": {"examples": 2, "read": [["midi-input", "Event sheet 1", 2, 4], ["midi-output", "Event sheet 1", 2, 4]]},
+    "schedule-next-message": {"examples": 1, "read": [["midi-output", "Event sheet 1", 20, 20]]},
+    "send-note-message": {"examples": 1, "read": [["midi-output", "Event sheet 1", 20, 20]]}
+  },
+  "expressions": {
+    "current-device-id": {"examples": 2, "read": [["midi-input", "Event sheet 1", 13, 13], ["midi-output", "Event sheet 1", 13, 13]]},
+    "input-count": {"examples": 2, "read": [["midi-input", "Event sheet 1", 10, 10], ["midi-output", "Event sheet 1", 11, 11]]},
+    "input-id-at": {"examples": 1, "read": [["midi-input", "Event sheet 1", 10, 10]]},
+    "input-manufacturer-at": {"examples": 1, "read": [["midi-input", "Event sheet 1", 10, 10]]},
+    "input-name-at": {"examples": 1, "read": [["midi-input", "Event sheet 1", 10, 10]]},
+    "note-name": {"examples": 1, "read": [["midi-input", "Event sheet 1", 17, 18]]},
+    "note-name-to-number": {"examples": 1, "read": [["midi-output", "Event sheet 1", 19, 20]]},
+    "note-number": {"examples": 1, "read": [["midi-input", "Event sheet 1", 17, 18]]},
+    "output-count": {"examples": 1, "read": [["midi-output", "Event sheet 1", 10, 10]]},
+    "output-id-at": {"examples": 1, "read": [["midi-output", "Event sheet 1", 10, 10]]},
+    "output-manufacturer-at": {"examples": 1, "read": [["midi-output", "Event sheet 1", 10, 10]]},
+    "output-name-at": {"examples": 1, "read": [["midi-output", "Event sheet 1", 10, 10]]},
+    "velocity": {"examples": 1, "read": [["midi-input", "Event sheet 1", 17, 18]]}
+  }
+}

@@ -69,7 +69,7 @@ plugin 是 [`plugin/`](plugin/README.md) 文件夹，由 `scripts/build_plugin.p
 
 [`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) 告诉 agent 什么时候运行哪个脚本。下面的脚本除了 `assets/build_project.py` 模板，加 `--help` 都会列出参数和示例。
 
-- `lookup_ace.py` 查项目里某个对象、`System`、某个插件或行为的条件、动作和表达式。每条都带参数、中文或英文的显示文本，以及要写的 JSON。给它一个滤镜，它会列出滤镜的参数。
+- `lookup_ace.py` 查项目里某个对象、`System`、某个插件或行为的条件、动作和表达式。每条都带参数、中文或英文的显示文本、要写的 JSON，以及用到它的官方示例和打印每处用法的命令。给它一个滤镜，它会列出滤镜的参数。
 - `lookup_script_api.py` 查脚本 API。给它一个接口、插件或行为，它列出成员；给它一个成员，它打印声明、声明它的接口以及所在的文件和行号，继承来的成员也查得到。
 - `search_guides.py` 按关键词搜索事件表的坑点和官方示例。它完整打印匹配的坑点条目；对每个匹配的示例，给出打印其事件的命令。
 - `print_sheet.py` 按编辑器的写法和事件编号打印事件表。官方示例也能这样读。
@@ -125,7 +125,7 @@ skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。
 python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale zh-CN
 ```
 
-它列出每个匹配项的参数、显示文本，以及要写的 JSON。查 `System` 和所有世界对象共有的 ACE 时，用这个脚本。查共有 ACE 时随便写一个世界对象就行，比如 `Sprite overlap`。这些 ACE 所在的 `plugins/system.json` 和 `plugins/_common.json` 太长，大多数读文件工具一次读不完。这类工具只显示文件的前一部分，所以后面的 ACE 看起来就像不存在。
+它列出每个匹配项的参数、显示文本，以及要写的 JSON。每个完整打印的匹配项下面，给出用到它的官方示例个数，并为其中最多三处用法各给一条 `print_sheet.py` 命令，事件表小的排在前面。匹配项有七条或更多时，每条只打印一行，不带个数。查 `System` 和所有世界对象共有的 ACE 时，用这个脚本。查共有 ACE 时随便写一个世界对象就行，比如 `Sprite overlap`。这些 ACE 所在的 `plugins/system.json` 和 `plugins/_common.json` 太长，大多数读文件工具一次读不完。这类工具只显示文件的前一部分，所以后面的 ACE 看起来就像不存在。
 
 其他内容直接读 `data/` 下的文件。下表路径里的 `{locale}` 是 `c3-schemas/_index.json` 的 `languages` 里的一种语言，比如 `zh-CN`：
 
@@ -139,6 +139,7 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 | `c3-schemas/{locale}/effects/{id}.json` | 滤镜的参数和分类 |
 | `c3-schemas/{locale}/_deprecated.json` | 编辑器已弃用的插件、行为、滤镜和 ACE；有同名的现行 ACE 时也一并列出 |
 | `c3-examples/{locale}/{id}.json` | 示例的名称、描述、标签、用到的插件、打开链接 |
+| `c3-example-usage/{plugins,behaviors}/{id}.json` | 插件或行为的每个 ACE 被哪些官方示例用到：示例个数，以及最多三处用法所在的示例文件夹、事件表和事件。由 `Construct-Example-Projects` 仓库里的事件表生成 |
 | `c3-lang/{locale}.json` | CDN 上编辑器的语言包，每行一条 |
 | `c3-ts-defs/autocomplete-data.json` | 脚本里每个类的方法和属性 |
 | `c3-ts-defs/**/*.d.ts` | 完整的 TypeScript 接口定义 |
@@ -176,7 +177,7 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 | 仓库 | 内容 | 和本仓库的关系 |
 |---|---|---|
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档，Markdown 格式 | `data/c3-schemas/` 给出名称和参数，手册说明它们的作用 |
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 案例库里的所有示例，以项目文件夹形式保存 | `data/c3-examples/` 是示例的元数据，项目本身在那个仓库里 |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 案例库里的所有示例，以项目文件夹形式保存 | `data/c3-examples/` 是示例的元数据，`data/c3-example-usage/` 记录每个 ACE 被哪些示例用到，项目本身在那个仓库里 |
 | [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、滤镜和主题的模板和文档 | `data/c3-ts-defs/sdk/` 是类型定义，SDK 讲怎么用 |
 
 ## 查找服务（可选）
@@ -200,6 +201,7 @@ plugin/                 Claude Code plugin，由 scripts/build_plugin.py 构建
 data/                   提交在仓库里的参考数据，直接读取
   c3-schemas/           ACE 定义和滤镜，每种语言一个文件夹
   c3-examples/          示例项目元数据
+  c3-example-usage/     每个 ACE 被哪些示例用到
   c3-lang/              CDN 语言包
   c3-ts-defs/           TypeScript 脚本接口
   c3-guides/            Scirra 的项目格式指南

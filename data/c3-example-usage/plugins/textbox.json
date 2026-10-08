@@ -1,0 +1,15 @@
+{
+  "conditions": {
+    "compare-text": {"examples": 5, "read": [["multiplayer-binary-transfer", "Login events", 3, 3], ["multiplayer-chat", "Login events", 3, 3], ["multiplayer-game", "Login events", 3, 3]]},
+    "on-text-changed": {"examples": 8, "read": [["hashing", "Event sheet 1", 1, 1], ["multiplayer-binary-transfer", "Login events", 2, 4], ["multiplayer-chat", "Login events", 2, 4]]}
+  },
+  "actions": {
+    "scroll-to-bottom": {"examples": 1, "read": [["multiplayer-chat", "Chat events", 2, 2]]},
+    "set-max-length": {"examples": 1, "read": [["multiplayer-time-attack", "Login events", 1, 2]]},
+    "set-read-only": {"examples": 1, "read": [["multiplayer-chat", "Chat events", 7, 9]]},
+    "set-text": {"examples": 9, "read": [["localstorage-script-js", "Event sheet 1", 2, 2], ["compression", "Event sheet 1", 2, 2], ["encryption", "Event sheet 1", 2, 2]]}
+  },
+  "expressions": {
+    "text": {"examples": 18, "read": [["localstorage-script-js", "Event sheet 1", 2, 2], ["hashing", "Event sheet 1", 1, 1], ["bbc-micro-bit-plugin", "LEDEvents", 6, 6]]}
+  }
+}

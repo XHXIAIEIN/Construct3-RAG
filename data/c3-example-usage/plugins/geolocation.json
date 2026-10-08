@@ -1,0 +1,23 @@
+{
+  "conditions": {
+    "is-supported": {"examples": 1, "read": [["geolocation", "Event sheet 1", 1, 1]]},
+    "on-error": {"examples": 1, "read": [["geolocation", "Event sheet 1", 4, 4]]},
+    "on-location-update": {"examples": 1, "read": [["geolocation", "Event sheet 1", 3, 3]]}
+  },
+  "actions": {
+    "request-location": {"examples": 1, "read": [["geolocation", "Event sheet 1", 5, 5]]},
+    "stop-watching": {"examples": 1, "read": [["geolocation", "Event sheet 1", 7, 7]]},
+    "watch-location": {"examples": 1, "read": [["geolocation", "Event sheet 1", 6, 6]]}
+  },
+  "expressions": {
+    "accuracy": {"examples": 1, "read": [["geolocation", "Event sheet 1", 2, 2]]},
+    "altitude": {"examples": 1, "read": [["geolocation", "Event sheet 1", 2, 2]]},
+    "altitudeaccuracy": {"examples": 1, "read": [["geolocation", "Event sheet 1", 2, 2]]},
+    "errormessage": {"examples": 1, "read": [["geolocation", "Event sheet 1", 4, 4]]},
+    "heading": {"examples": 1, "read": [["geolocation", "Event sheet 1", 2, 2]]},
+    "latitude": {"examples": 1, "read": [["geolocation", "Event sheet 1", 2, 2]]},
+    "longitude": {"examples": 1, "read": [["geolocation", "Event sheet 1", 2, 2]]},
+    "speed": {"examples": 1, "read": [["geolocation", "Event sheet 1", 2, 2]]},
+    "timestamp": {"examples": 1, "read": [["geolocation", "Event sheet 1", 2, 2]]}
+  }
+}

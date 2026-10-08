@@ -1,0 +1,49 @@
+{
+  "conditions": {
+    "is-tag-playing": {"examples": 16, "read": [["poplab", "eTitleScreen", 2, 2], ["kiwi-story", "eMusic", 2, 2], ["audio-player", "Event sheet 1", 8, 13]]},
+    "on-ended": {"examples": 4, "read": [["overloaded-underqualified", "SoundEvents", 37, 37], ["music-player", "Events", 50, 50], ["rat-purrsuit", "GameEvents", 34, 34]]}
+  },
+  "actions": {
+    "add-analyser-effect": {"examples": 5, "read": [["audio-analyser", "Event sheet 1", 1, 2], ["microphone-input", "Event sheet 1", 1, 2], ["balloon-blower", "EventsSettings", 8, 8]]},
+    "add-compressor-effect": {"examples": 1, "read": [["audio-effects", "Event sheet 1", 10, 10]]},
+    "add-convolution-effect": {"examples": 1, "read": [["audio-effects", "Event sheet 1", 11, 11]]},
+    "add-delay-effect": {"examples": 1, "read": [["audio-effects", "Event sheet 1", 7, 7]]},
+    "add-distortion-effect": {"examples": 1, "read": [["audio-effects", "Event sheet 1", 17, 17]]},
+    "add-filter-effect": {"examples": 3, "read": [["audio-effects", "Event sheet 1", 5, 5], ["ghost-chaser", "Code", 2, 5], ["coral-savior", "Events", 4, 4]]},
+    "add-flanger-effect": {"examples": 1, "read": [["audio-effects", "Event sheet 1", 8, 8]]},
+    "add-mute-effect": {"examples": 3, "read": [["microphone-input", "Event sheet 1", 1, 2], ["balloon-blower", "EventsSettings", 8, 8], ["voice-recorder", "Event sheet 1", 23, 24]]},
+    "add-phaser-effect": {"examples": 1, "read": [["audio-effects", "Event sheet 1", 9, 9]]},
+    "add-remote-url": {"examples": 2, "read": [["voice-recorder", "Event sheet 1", 13, 15], ["music-player", "Events", 32, 34]]},
+    "add-ring-mod-effect": {"examples": 1, "read": [["audio-effects", "Event sheet 1", 16, 16]]},
+    "add-tremolo-effect": {"examples": 1, "read": [["audio-effects", "Event sheet 1", 15, 15]]},
+    "fade-volume": {"examples": 14, "read": [["fuji-leaper", "CreditsEvents", 3, 3], ["rat-purrsuit", "CreditsEvents", 2, 2], ["avalanche", "SoundEvents", 11, 11]]},
+    "play": {"examples": 20, "read": [["kiwi-story", "eOpening", 1, 1], ["poplab", "eOpening", 1, 1], ["rhythm-square-js", "Events", 2, 2]]},
+    "play-at-object": {"examples": 1, "read": [["audio-positioning", "Event sheet 1", 2, 3]]},
+    "play-at-position": {"examples": 1, "read": [["audio-positioning", "Event sheet 1", 4, 4]]},
+    "play-at-position-by-name": {"examples": 1, "read": [["ghost-chaser", "Code", 8, 9]]},
+    "play-by-name": {"examples": 23, "read": [["avalanche", "SoundEvents", 5, 5], ["tick-tock-toppings", "SoundEvents", 3, 3], ["audio-effects", "Event sheet 1", 3, 3]]},
+    "preload": {"examples": 6, "read": [["rhythm-square-js", "Events", 1, 1], ["synth-sunset", "Events", 2, 2], ["rat-purrsuit", "MenuEvents", 13, 13]]},
+    "remove-all-effects": {"examples": 2, "read": [["audio-effects", "Event sheet 1", 18, 18], ["ghost-chaser", "Code", 2, 5]]},
+    "schedule-next-play": {"examples": 1, "read": [["audio-scheduling", "Event sheet 1", 3, 3]]},
+    "seek-to": {"examples": 2, "read": [["audio-player", "Event sheet 1", 6, 6], ["music-player", "Events", 40, 40]]},
+    "set-effect-parameter": {"examples": 2, "read": [["ghost-chaser", "Code", 30, 30], ["coral-savior", "Events", 3, 3]]},
+    "set-listener-object": {"examples": 2, "read": [["audio-positioning", "Event sheet 1", 2, 3], ["ghost-chaser", "Code", 2, 5]]},
+    "set-listener-orientation": {"examples": 1, "read": [["ghost-chaser", "Code", 29, 31]]},
+    "set-listener-z": {"examples": 1, "read": [["ghost-chaser", "Code", 2, 5]]},
+    "set-paused": {"examples": 1, "read": [["music-player", "Events", 13, 13]]},
+    "set-playback-rate": {"examples": 11, "read": [["avalanche", "SoundEvents", 6, 6], ["tick-tock-toppings", "SoundEvents", 4, 4], ["meowgix", "SoundEvents", 6, 6]]},
+    "set-silent": {"examples": 1, "read": [["pusha-pusha", "Global", 21, 21]]},
+    "set-volume": {"examples": 9, "read": [["demonoire", "eDungeon_Intro", 2, 2], ["glokar", "eMusic", 5, 5], ["audio-player", "Event sheet 1", 8, 13]]},
+    "stop": {"examples": 16, "read": [["space-blaster", "Title events", 2, 2], ["glokar", "eMissionObjective", 1, 1], ["instant-hit-laser", "Event sheet 1", 7, 7]]},
+    "stop-all": {"examples": 4, "read": [["demonoire", "eCredits", 1, 1], ["poplab", "eCredits", 3, 3], ["glokar", "eTitleScreen", 2, 2]]}
+  },
+  "expressions": {
+    "analyserfreqbinat": {"examples": 4, "read": [["audio-analyser", "Event sheet 1", 3, 3], ["microphone-input", "Event sheet 1", 5, 5], ["voice-recorder", "Event sheet 1", 25, 25]]},
+    "analyserpeaklevel": {"examples": 2, "read": [["audio-analyser", "Event sheet 1", 5, 5], ["microphone-input", "Event sheet 1", 6, 6]]},
+    "analyserrmslevel": {"examples": 3, "read": [["audio-analyser", "Event sheet 1", 5, 5], ["microphone-input", "Event sheet 1", 6, 6], ["balloon-blower", "EventsSettings", 17, 18]]},
+    "currenttime": {"examples": 1, "read": [["audio-scheduling", "Event sheet 1", 2, 3]]},
+    "duration": {"examples": 2, "read": [["audio-player", "Event sheet 1", 8, 13], ["music-player", "Events", 40, 40]]},
+    "playbacktime": {"examples": 2, "read": [["audio-player", "Event sheet 1", 8, 13], ["music-player", "Events", 47, 47]]},
+    "volume": {"examples": 1, "read": [["demonoire", "eDungeon_Intro", 2, 2]]}
+  }
+}

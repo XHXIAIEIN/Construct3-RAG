@@ -1,0 +1,32 @@
+{
+  "conditions": {
+    "compare-node-tag": {"examples": 2, "read": [["chess-checkmate", "MainEvents", 27, 29], ["labyrinth", "MinotaurEvents", 11, 18]]},
+    "compare-output-name": {"examples": 2, "read": [["chess-checkmate", "MainEvents", 47, 47], ["labyrinth", "MinotaurEvents", 13, 13]]},
+    "has-flow-chart": {"examples": 2, "read": [["quest-flowcharts", "Event sheet 1", 22, 22], ["chess-checkmate", "MainEvents", 3, 3]]},
+    "has-output": {"examples": 3, "read": [["flowchart-questionnaire", "Event sheet 1", 4, 5], ["visual-novel-sniff-and-fetch", "Events", 8, 8], ["text-based-adventure", "Events", 8, 8]]},
+    "is-at-start-node": {"examples": 2, "read": [["quest-flowcharts", "Event sheet 1", 6, 6], ["labyrinth", "MinotaurEvents", 23, 25]]},
+    "on-any-node-change": {"examples": 2, "read": [["flowchart-questionnaire", "Event sheet 1", 3, 6], ["quest-flowcharts", "Event sheet 1", 5, 7]]},
+    "on-flowchart-change": {"examples": 1, "read": [["quest-flowcharts", "Event sheet 1", 8, 8]]}
+  },
+  "actions": {
+    "end-flowchart-by-tag": {"examples": 1, "read": [["quest-flowcharts", "Event sheet 1", 38, 38]]},
+    "goto-any-flowchart-node": {"examples": 1, "read": [["text-based-adventure", "Events", 34, 34]]},
+    "goto-next-flowchart-node": {"examples": 7, "read": [["flowcharts-and-containers", "Event sheet 1", 2, 2], ["flowchart-questionnaire", "Event sheet 1", 7, 7], ["visual-novel-sniff-and-fetch", "Events", 13, 13]]},
+    "goto-parent-flowchart-node": {"examples": 1, "read": [["text-based-adventure", "Events", 27, 27]]},
+    "goto-previous-flowchart-node": {"examples": 1, "read": [["quest-flowcharts", "Event sheet 1", 29, 29]]},
+    "reset-flowchart": {"examples": 5, "read": [["flowchart-questionnaire", "Event sheet 1", 14, 14], ["visual-novel-sniff-and-fetch", "Events", 22, 22], ["text-based-adventure", "Events", 26, 26]]},
+    "reset-flowchart-by-tag": {"examples": 1, "read": [["quest-flowcharts", "Event sheet 1", 22, 22]]},
+    "set-flowchart": {"examples": 1, "read": [["quest-flowcharts", "Event sheet 1", 6, 6]]},
+    "start-flowchart": {"examples": 7, "read": [["flowcharts-and-containers", "Event sheet 1", 1, 1], ["flowchart-questionnaire", "Event sheet 1", 2, 2], ["visual-novel-sniff-and-fetch", "Events", 3, 3]]},
+    "start-flowchart-by-name": {"examples": 1, "read": [["quest-flowcharts", "Event sheet 1", 23, 23]]}
+  },
+  "expressions": {
+    "current-flowchart-tag": {"examples": 1, "read": [["quest-flowcharts", "Event sheet 1", 11, 15]]},
+    "current-node-output-count": {"examples": 4, "read": [["flowchart-questionnaire", "Event sheet 1", 5, 5], ["text-based-adventure", "Events", 31, 31], ["quest-flowcharts", "Event sheet 1", 12, 14]]},
+    "current-node-output-name-at": {"examples": 2, "read": [["text-based-adventure", "Events", 31, 31], ["quest-flowcharts", "Event sheet 1", 13, 14]]},
+    "current-node-output-name-at-in-flowchart": {"examples": 1, "read": [["quest-flowcharts", "Event sheet 1", 15, 15]]},
+    "current-node-output-value": {"examples": 6, "read": [["flowcharts-and-containers", "Event sheet 1", 1, 1], ["flowchart-questionnaire", "Event sheet 1", 3, 6], ["visual-novel-sniff-and-fetch", "Events", 10, 10]]},
+    "current-node-output-value-in-flowchart": {"examples": 1, "read": [["quest-flowcharts", "Event sheet 1", 15, 15]]},
+    "current-node-tag": {"examples": 3, "read": [["text-based-adventure", "Events", 8, 8], ["quest-flowcharts", "Event sheet 1", 22, 22], ["chess-checkmate", "MainEvents", 26, 33]]}
+  }
+}

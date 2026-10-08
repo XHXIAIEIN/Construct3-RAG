@@ -1,0 +1,19 @@
+{
+  "conditions": {
+    "compare-speed": {"examples": 2, "read": [["template-asteroid-shooter", "MainCode", 11, 11], ["airborne-explorer", "PlayerEvents", 35, 35]]}
+  },
+  "actions": {
+    "accelerate": {"examples": 4, "read": [["custom-movement-asteroids", "Event sheet 1", 2, 2], ["particle-thruster", "Event sheet 1", 2, 2], ["template-flying-along", "Event sheet 1", 9, 9]]},
+    "accelerate-toward-angle": {"examples": 4, "read": [["custom-movement-asteroids", "Event sheet 1", 1, 1], ["particle-thruster", "Event sheet 1", 1, 1], ["template-asteroid-shooter", "MainCode", 9, 9]]},
+    "push-out-solid-at-angle": {"examples": 1, "read": [["first-person-platformer", "Event sheet 1", 13, 13]]},
+    "set-angle-of-motion": {"examples": 1, "read": [["shy-ghost", "MainCode", 24, 24]]},
+    "set-enabled": {"examples": 1, "read": [["airborne-explorer", "PlayerEvents", 27, 27]]},
+    "set-speed": {"examples": 4, "read": [["shy-ghost", "MainCode", 24, 24], ["template-asteroid-shooter", "MainCode", 11, 11], ["air-combat", "MainCode", 13, 13]]}
+  },
+  "expressions": {
+    "dx": {"examples": 1, "read": [["airborne-explorer", "PlayerEvents", 54, 54]]},
+    "dy": {"examples": 1, "read": [["airborne-explorer", "PlayerEvents", 35, 35]]},
+    "movingangle": {"examples": 1, "read": [["shy-ghost", "MainCode", 24, 24]]},
+    "speed": {"examples": 2, "read": [["template-asteroid-shooter", "MainCode", 11, 11], ["air-combat", "MainCode", 13, 13]]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "conditions": {
+    "has-target": {"examples": 1, "read": [["template-real-time-strategy", "Event sheet 1", 12, 12]]},
+    "on-shoot": {"examples": 6, "read": [["turret-behavior", "Event sheet 1", 2, 2], ["turret-predictive-aim", "Event sheet 1", 2, 2], ["template-turret-defense", "Event sheet 1", 11, 11]]}
+  },
+  "actions": {
+    "add-object-to-target": {"examples": 7, "read": [["turret-behavior", "Event sheet 1", 1, 1], ["turret-predictive-aim", "Event sheet 1", 1, 1], ["template-turret-defense", "Event sheet 1", 10, 10]]},
+    "set-enabled": {"examples": 1, "read": [["mythinsects", "GameEvents", 114, 118]]},
+    "set-rate-of-fire": {"examples": 1, "read": [["grukkle-onslaught", "EveGameplay", 98, 99]]}
+  },
+  "expressions": {
+    "range": {"examples": 2, "read": [["turret-behavior", "Event sheet 1", 3, 3], ["turret-predictive-aim", "Event sheet 1", 4, 4]]},
+    "rotatespeed": {"examples": 1, "read": [["template-real-time-strategy", "Event sheet 1", 12, 12]]},
+    "targetuid": {"examples": 1, "read": [["grukkle-onslaught", "EveGameplay", 256, 263]]}
+  }
+}

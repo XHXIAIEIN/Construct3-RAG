@@ -1,0 +1,14 @@
+{
+  "conditions": {
+    "key-code-is-down": {"examples": 1, "read": [["keyboard-mapping", "TestMappingEvents", 2, 2]]},
+    "key-is-down": {"examples": 141, "read": [["custom-movement-asteroids", "Event sheet 1", 1, 1], ["physics-rolling-platformer", "Event sheet 1", 3, 3], ["gamepad-control", "Event sheet 1", 1, 2]]},
+    "on-any-key-pressed": {"examples": 26, "read": [["construct-animate-splash", "Event sheet 1", 1, 1], ["detecting-input-method", "Title events", 2, 2], ["poplab", "eCredits", 2, 3]]},
+    "on-key-pressed": {"examples": 182, "read": [["tesla-twist", "GameOver", 2, 2], ["localstorage-script-js", "Event sheet 1", 1, 2], ["space-blaster", "Title events", 2, 2]]},
+    "on-key-released": {"examples": 9, "read": [["cellf-defense", "Login events", 10, 10], ["jetpack", "MainCode", 17, 17], ["foggy-outbreak", "MainCode", 24, 25]]}
+  },
+  "expressions": {
+    "lastkeycode": {"examples": 5, "read": [["cellf-defense", "Login events", 6, 6], ["keyboard-mapping", "KeyboardMappingEvents", 22, 22], ["console-typist", "Events", 14, 20]]},
+    "stringfromkeycode": {"examples": 1, "read": [["keyboard-mapping", "KeyboardMappingEvents", 4, 4]]},
+    "typed-key": {"examples": 5, "read": [["cellf-defense", "Login events", 6, 6], ["console-typist", "Events", 16, 19], ["bamboo-strike", "Gameplay", 15, 16]]}
+  }
+}
