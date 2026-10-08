@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import INSTALLED, SKILL, run
+from tests.skill_helpers import INSTALLED, SHEET, SKILL, edit, events, run
 
 SCRIPT = f"{INSTALLED}/scripts/export_project.py"
 
@@ -255,3 +255,25 @@ def test_a_failed_unpack_keeps_the_earlier_export(monkeypatch, tmp_path):
     with pytest.raises(export.Stop, match="holds no Web export"):
         export.unpack(zipped_export("1.0.3.0"), tmp_path / "first", "1.0.3.0")
     assert (mine / "notes.txt").is_file() and (tmp_path / "first" / "index.html").read_text(encoding="utf-8") == "1.0.2.0"
+
+
+def test_export_stops_on_a_key_it_would_ship_and_names_the_hosts(project):
+    """Every player of a web export can read its strings; the run stops before the browser starts."""
+    key = "sk-" + "proj-" + "Ab1" * 12     # built from parts, so that no file of the repository holds one
+
+    def put(sheet):
+        events(sheet)["add_score"]["actions"][1]["parameters"]["text"] = f'"{key}" & "https://api.example.com/v1"'
+    edit(project, SHEET, put)
+    code, out = run(project, SCRIPT, "--dry-run")
+    assert code == 1 and out.startswith("not exported: the export ships every string of the project"), out
+    assert "  sheet Game event 7 action 2: an OpenAI API key (sk-pro…); to keep it, write allow-secret in the " \
+           "comment above the event" in out and key not in out and "would export" not in out, out
+
+    def mark(sheet):
+        rows = sheet["events"]
+        rows[rows.index(events(sheet)["add_score"]) - 1]["text"] += " allow-secret"
+    edit(project, SHEET, mark)
+    code, out = run(project, SCRIPT, "--dry-run")
+    assert code == 0, out
+    assert out.startswith("the game holds addresses of api.example.com (sheet Game event 7 action 2): tell the user "
+                          "which hosts the game contacts\nwould export"), out

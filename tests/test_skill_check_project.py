@@ -1,7 +1,10 @@
 """check_project.py: each rule the editor enforces when it opens or previews a project, broken
 once in a private copy of the stand-in game (docs/decisions/checker-editor-load-rules.md)."""
+import hashlib
 import json
+import random
 import re
+import string
 from pathlib import Path
 
 import pytest
@@ -1696,3 +1699,60 @@ def test_offline_says_the_clone_was_not_compared(built):
     code, out = check(built)
     assert code == 0, out
     assert f"note: CONSTRUCT3_RAG_OFFLINE is 1, so the clone at {REPO} was not compared with its upstream" in out
+
+
+# --- what a web export ships --------------------------------------------------------------------
+# Every key below is built from parts, so that no file of the repository holds a string shaped like one.
+RANDOM_TOKEN = "".join(random.Random(7).choices(string.ascii_letters + string.digits, k=40))
+
+
+@pytest.mark.parametrize("text, code, said", [
+    ('"' + "sk-" + "ant-" + "a1" * 20 + '"', True, "an Anthropic API key"),
+    ('"' + "AIza" + "Q1" * 17 + "x" + '"', True, "a Google API key"),
+    ("Bearer " + "sk-" + "proj-" + "Ab1" * 12, False, "an OpenAI API key"),
+    ("-----BEGIN " + "PRIVATE KEY-----", False, "a private key"),
+    (f'"{RANDOM_TOKEN}"', True, "a random token, such as a key"),
+    (f'"{hashlib.sha1(b"seed").hexdigest()}"', True, "a random token, such as a key"),
+    (f'"https://api.example.com/v1?key={RANDOM_TOKEN}"', True, "a random token, such as a key"),
+    (f"const {RANDOM_TOKEN} = 1;", True, None),                           # code outside a literal
+    (f'"https://cdn.example.com/{RANDOM_TOKEN}/coin.png"', True, None),  # an address's path
+    (f'"data:image/png;base64,{RANDOM_TOKEN * 3}"', True, None),          # a picture
+    ('"' + string.ascii_uppercase + string.ascii_lowercase + string.digits + '+/"', True, None),   # an alphabet
+    ('"Collect every coin before the timer runs out"', True, None),
+])
+def test_a_string_shaped_like_a_key_is_told_from_text_and_code(text, code, said):
+    import c3project as c3
+    literals = c3.JS_LITERAL if code else None
+    found = c3.key_shape(c3.Shipped("here", text, False, "that line", literals))
+    assert (found and found[0]) == said, found
+
+
+def test_a_key_the_export_would_ship_is_named_with_its_place_unless_marked_public(project):
+    """A web export ships every string to the players; a warning names the place and the mark that keeps it."""
+    key = "sk-" + "proj-" + "Ab1" * 12
+
+    def put(sheet):
+        events(sheet)["add_score"]["actions"][1]["parameters"]["text"] = f'"{key}"'
+    out = findings(project, put)
+    said = [w for w in warnings(out) if "shaped like" in w]
+    assert said == ["warning: sheet Game event 7 action 2: a string shaped like an OpenAI API key (sk-pro…), and a "
+                    "web export ships every string to the players, who can read it. Move the key to a server that "
+                    "the game calls. If it is meant to be public, write allow-secret in the comment above the "
+                    "event"], out
+    assert key not in out and out.splitlines()[-1].startswith("ok:"), out
+
+    def mark(sheet):
+        rows = sheet["events"]
+        at = rows.index(events(sheet)["add_score"])
+        rows[at - 1]["text"] += " (allow-secret: the service issues this key for web pages)"
+    assert "shaped like" not in findings(project, mark)
+
+    (project / "scripts").mkdir()
+    (project / "scripts" / "main.js").write_text(f'const KEY = "{RANDOM_TOKEN}";\n', encoding="utf-8")
+    edit(project, "project.c3proj", lambda data: data.setdefault("rootFileFolders", {}).update(
+        script={"items": [{"name": "main.js", "type": "application/javascript", "sid": 101, "fileType": "module"}],
+                "subfolders": []}))
+    code, out = check(project)
+    assert "warning: scripts/main.js line 1: a string shaped like a random token, such as a key " \
+           f"({RANDOM_TOKEN[:4]}… (40 characters))" in out, out
+    assert "If it is meant to be public, write allow-secret in a comment on that line" in out, out
