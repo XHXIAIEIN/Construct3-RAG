@@ -8,32 +8,34 @@ Schema: Construct 3 r495.2
 A plan of `edit_sheet.py` names events by the numbers `print_sheet.py`
 printed. A number from an older print, or a miscounted one, names another
 event. The plan then changes, replaces or removes that event, passes the
-checker and is written. The hash that `print_sheet.py` keeps catches a save
-between the print and the plan. But `edit_sheet.py` keeps the new hash after
-its own write, so it does not catch a second plan that uses the first print's
-numbers after the first plan was written. It also does not catch a
-miscounted number.
+checker and is written. `print_sheet.py` keeps a hash of each sheet it
+prints, the stored hash, and a plan is refused when the sheet no longer
+matches it, which catches a save between the print and the plan. But
+`edit_sheet.py` stores the new hash after its own write, so the stored hash
+does not catch a second plan that uses the first print's numbers after the
+first plan was written. It does not catch a miscounted number either.
 
 ## Evidence
 
-- The skill's eval runs (iterations 36 to 47) hold 14 runs that wrote a
-  second plan after a first one was written, without a full print in
-  between. Every number in them was right. Eight came from the first plan's
-  output, which prints the changed events under their new numbers. Six came
-  from a print that the first plan had not shifted. In four of the runs, the
-  first print's number would have named another event.
-- Over the official examples, an event one to three numbers away from
-  another prints the same first line about 3 times in 100. A stale number
-  passes a check by line only when it lands on such an event.
+- In the skill's eval runs (`.local/docs/evidence/skill-evals/`), agents
+  often wrote a second plan after a first one was written, without a full
+  print in between. They took its numbers from the first plan's output,
+  which prints the changed events under their new numbers, or from a print
+  that the first plan had not shifted, and every number was right. In some
+  of these runs the first print's number had moved, so an agent that reused
+  it would have changed another event.
+- In the official examples, an event seldom prints the same first line as an
+  event one to three numbers away from it. A stale number passes a check by
+  line only when it lands on such an event.
 
 ## Options
 
 1. A hash of the sheet on the first line of the print, which the plan
-   carries. It catches every change since the print. It also refuses every
-   plan that follows the agent's own write until the agent prints again: in
-   the 14 runs, 14 refusals and none needed. If `edit_sheet.py` printed the
-   new hash to spare them, an agent could carry that hash with a number from
-   the first print, which is the case the hash is for.
+   carries: the carried hash. It catches every change since the print. It
+   also refuses every plan that follows the agent's own write until the
+   agent prints again, although those plans were right in the eval runs. If
+   `edit_sheet.py` printed the new hash for the agent to carry, a stale
+   number would pass with it, and that is the case the carried hash is for.
 2. The line that the print shows for the event, carried by the operation
    that names it. It checks the event that each operation changes, whatever
    moved it: an earlier plan, a save in the editor or a miscount. The agent
@@ -42,13 +44,12 @@ miscounted number.
    passes.
 3. The event's sid. The default print shows none, so the agent reads the
    sheet a second time with `--outline` or `--show`.
-4. A stored value that the tool updates to the current sheet. This removes
-   the check.
+4. The stored hash alone, updated after each write as `edit_sheet.py` does.
+   A stale number from before the write then passes.
 
 ## Decision
 
-Option 2. The hash of the print stays, for a save between the print and the
-plan.
+Option 2. The stored hash stays, for a save between the print and the plan.
 
 - `"line"` belongs to the event that the operation's number names: for
   `move`, the event that moves, and for `after`, `before` and `into`, the
@@ -65,13 +66,13 @@ plan.
   the plan's number prints. The fix is the number, and a line copied from
   the message would pass the check.
 - A plan without `"line"` is carried out, and a `note:` names its operations
-  with an example made from the first one. The field stays optional because
-  the checker's findings name a place by its number alone, `sheet Game event
-  5 condition 1`, and the plans and evals written before it carry none.
+  with an example made from the first one. The field is optional because the
+  checker's findings name a place by its number alone, `sheet Game event 5
+  condition 1`, so a plan made from a finding has no line to copy.
 - The ready-made operation in the note about a text left in its older form
   carries the line of its event.
-- `edit_sheet.py` never writes a plan's line from the sheet, because a value
-  that the tool makes current protects nothing.
+- `edit_sheet.py` never fills in a plan's line from the sheet, because a line
+  that the tool fills in always matches and checks nothing.
 
 ## Re-evaluate when
 

@@ -942,12 +942,12 @@ def test_template_writes_a_data_file_lists_it_and_loads_it_at_start(project):
 
 
 def test_record_table_stops_on_a_field_outside_fields_and_warns_on_a_misspelt_one(tmp_path, capsys):
-    """A misspelt field would read 0 in the game: outside fields= it stops the run, and without fields= a field
-    one record alone has, spelt like another, is a warning. Records that differ on purpose pass."""
+    """A misspelt field would read 0 in the game. Outside fields= it stops the run. Without fields=, a field that
+    only one record has, spelt like a field of the other records, is a warning. Records that differ on purpose pass."""
     t = template_module()
     t.ROOT = tmp_path
     with pytest.raises(SystemExit, match=r"^record_table\('Cards'\): record 'guard' has the field 'blok', which fields= "
-                                         r"does not list.*'cost', 'dmg', 'block' \(the nearest is 'block'\), or add it"):
+                                         r"does not list\..*'cost', 'dmg', 'block' \(the nearest is 'block'\), or add it"):
         t.record_table("Cards", {"strike": {"cost": 1, "dmg": 6}, "guard": {"cost": 1, "blok": 5}},
                        fields=["cost", "dmg", "block"])
     t.record_table("Cards", {"strike": {"name": "Strike", "cost": 1, "dmg": 6},
@@ -958,6 +958,6 @@ def test_record_table_stops_on_a_field_outside_fields_and_warns_on_a_misspelt_on
                                "slime": {"nme": "Slime", "sped": 1}})
     assert capsys.readouterr().out.splitlines() == [
         "warning: record_table('Enemies'): only record 'slime' has the field 'nme', and 2 records have 'name'; "
-        "if they are one field, write 'name' in 'slime', which reads \"\" for it otherwise",
+        "if they are one field, write 'name' in 'slime'. Otherwise 'name' reads \"\" for 'slime'",
         "warning: record_table('Enemies'): only record 'slime' has the field 'sped', and 2 records have 'speed'; "
-        "if they are one field, write 'speed' in 'slime', which reads 0 for it otherwise"]
+        "if they are one field, write 'speed' in 'slime'. Otherwise 'speed' reads 0 for 'slime'"]

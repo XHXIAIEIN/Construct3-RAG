@@ -590,7 +590,7 @@ def test_a_new_sheet_beside_others_says_no_layout_runs_it(project):
 
 
 def test_a_generated_project_is_told_the_change_belongs_in_the_generator(project):
-    """The generator's next run writes the sheet over an edit: the note says so, written or not."""
+    """The generator's next run writes the sheet over an edit: the note says so after a write and in a dry run."""
     timer = {"before": 1, "events": [{"eventType": "variable", "name": "timeLeft"}]}
     code, out = plan(project, timer, flags=("--dry-run",))
     assert code == 0 and ("note: tools/build_project.py generates this project, and its next run writes "
@@ -608,18 +608,18 @@ STALE = {"event": 6, "line": "function AddScore(points: number)", "add-actions":
 
 
 def test_a_plan_from_an_older_print_is_refused_with_where_its_line_is_now(project):
-    """Eval runs wrote a second plan after the first had been written, from the numbers the first print or the
-    first plan's output showed. A number that has since moved names another event: the line refuses it."""
+    """A second plan that uses the numbers of an earlier print names another event once an earlier plan has
+    moved it. The line refuses it."""
     code, out = plan(project, {"before": 7, "line": "AddScore", "events": [
         {"eventType": "comment", "text": "Points."},
         {"eventType": "function-block", "functionName": "Bonus", "actions": []}]})
     assert code == 0 and "named an event by number alone" not in out, out
     before = (project / SHEET).read_bytes()
-    code, out = plan(project, {**STALE, "event": 7})                  # AddScore was 7 in the print, and is 8 now
+    code, out = plan(project, {**STALE, "event": 7})      # AddScore prints as event 7 before the first plan, 8 after
     assert code == 1 and out.splitlines()[0] == (
-        'operation 1 (event 7): "function AddScore(points: number)" is event 8 now, and event 7 prints '
-        '"function Bonus()": the plan\'s numbers come from an older print of the sheet, or 7 is miscounted. Take each '
-        "number and its line from print_sheet.py as it prints the sheet now"), out
+        'operation 1 (event 7): "function AddScore(points: number)" is event 8 now. Event 7 prints "function Bonus()". '
+        "The plan's numbers may come from an older print of the sheet, or 7 may be miscounted. Take each number and "
+        "its line from print_sheet.py as it prints the sheet now"), out
     assert (project / SHEET).read_bytes() == before
     code, out = plan(project, {**STALE, "event": 8}, flags=("--dry-run",))
     assert code == 0, out
@@ -643,12 +643,14 @@ def test_a_line_copied_from_a_print_in_another_locale_names_the_event(project):
 
 
 def test_a_plan_without_lines_is_carried_out_and_noted(project):
-    """Plans written before the line, and a finding's place, which names no line: noted, not refused."""
+    """A plan without lines, such as one made from a finding's place, which names no line, is carried out with a
+    note."""
     code, out = plan(project, {"event": 7, "add-actions": STALE["add-actions"]}, {"remove": 5},
                      {"into": 0, "events": [{"eventType": "comment", "text": "End."}]}, flags=("--dry-run",))
-    assert code == 0 and ('note: operations 1 and 2 named events by number alone. Give each the line print_sheet.py '
-                          'prints for its event, {"event": 7, "line": "function AddScore(points: number)", ...}: a '
-                          'number from an older print is then refused instead of changing another event') in out, out
+    assert code == 0 and ('note: operations 1 and 2 named events by number alone. Add "line" to each: the line '
+                          'print_sheet.py prints for its event, as in {"event": 7, "line": "function AddScore(points: '
+                          'number)", ...}. A number from an older print is then refused instead of changing another '
+                          'event') in out, out
     code, out = plan(project, {"into": 0, "line": "x", "events": [{"eventType": "comment", "text": "End."}]})
     assert code == 1 and 'operation 1 (into 0): 0 is the sheet itself, which prints no line; leave "line" out' in out
     code, out = plan(project, {"variable": "score", "line": "x", "set": {"initialValue": "1"}})

@@ -27,14 +27,16 @@ whatever the operations before it do:
     {"variable": "n", "in": 4, "remove": true}             "in": the event that holds a local, 0 the top level
     {"comment": "Start the next", "set": {"text": "..."}}  a comment by its text or a part of it; or "remove": true
 
-An operation that names an event by its number carries the line the
-print shows for it, without the number, so that a number from an older
-print, or a miscounted one, is refused instead of changing another event:
+An operation that names an event by its number may carry the line the
+print shows for it, without the number. If the event does not print that
+line, the plan is refused, so a number from an older print, or a miscounted
+one, changes no other event:
 
     {"replace": 5, "line": "Keyboard: On Space pressed", "events": [...]}
 
-Any line of the event's conditions or a part of one will do. An operation
-without "line" is carried out, and a note under the result names it.
+Any line the event prints above its actions, or a part of one, will do. For
+"move" it is the line of the event that moves. A note after the result names
+each operation without "line".
 
 A variable, comment or include has no number of its own, so a plan names a
 variable by its name and a comment by its text. A name that more than one
@@ -52,8 +54,8 @@ like check_project.py checks the project, and a problem the plan would add is
 printed instead, with the file left as it was. A problem that was there
 before does not stop it. It ends with the changed events as the editor words
 them, under their new numbers, and the checker's last line. In a project
-that tools/build_project.py generates, a note above that line says that the
-generator's next run writes the sheet over the change, which belongs in the
+that tools/build_project.py generates, a note before that line says that the
+generator's next run writes over the change. The change belongs in the
 generator.
 
 print_sheet.py SHEET --show N prints event N as JSON, to change and put back
@@ -428,9 +430,10 @@ class Plan:
         raise PlanError(f"{name}: " + (f"{line} is event {found[0]} now" if len(found) == 1 else
                                        f"events {', '.join(map(str, found))} print {line} now" if found else
                                        f"no event prints {line} now")
-                        + f", and event {n} prints {json.dumps(self.lines[n][0], ensure_ascii=False)}: the plan's numbers "
-                        f"come from an older print of the sheet, or {n} is miscounted. Take each number and its line "
-                        f"from print_sheet.py as it prints the sheet now")
+                        + f". Event {n} prints {json.dumps(self.lines[n][0], ensure_ascii=False)}. "
+                        + (f"The plan's numbers may come from an older print of the sheet, or {n} may be miscounted. "
+                           if found else "")
+                        + "Take each number and its line from print_sheet.py as it prints the sheet now")
 
     def put(self, events: list[dict], where: str, n: int, op: str) -> None:
         if where == "into":
@@ -1035,11 +1038,10 @@ def main() -> int:
         ops = [str(i) for i, _, _ in plan.unguarded]
         i, verb, n = plan.unguarded[0]
         print(f"note: operation{'s' if len(ops) > 1 else ''} {', '.join(ops[:-1]) + ' and ' if len(ops) > 1 else ''}"
-              f"{ops[-1]} named {'events' if len(ops) > 1 else 'an event'} by number alone. Give "
-              f"{'each' if len(ops) > 1 else 'it'} the line "
-              f"print_sheet.py prints for its event, "
+              f"{ops[-1]} named {'events' if len(ops) > 1 else 'an event'} by number alone. Add \"line\" to "
+              f"{'each' if len(ops) > 1 else 'it'}: the line print_sheet.py prints for its event, as in "
               + json.dumps({verb: n, "line": plan.lines[n][0]}, ensure_ascii=False)[:-1]
-              + ", ...}: a number from an older print is then refused instead of changing another event")
+              + ", ...}. A number from an older print is then refused instead of changing another event")
     if not new and on_disk.replace("\r\n", "\n") != json.dumps(sheet, indent="\t", ensure_ascii=False) and not args.dry_run:
         print(f"note: {path.name} was not laid out as the editor writes it (tabs, LF); it is now, so its diff is the whole file")
     if raw.startswith(codecs.BOM_UTF8) and not args.dry_run:

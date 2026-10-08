@@ -205,10 +205,11 @@ python scripts/edit_sheet.py Game plan.json
 ```
 
 Every number is an event number of the sheet as it prints now, whatever the
-operations above it do, so one print serves a whole plan. Beside it,
-`"line"` is the line the print shows for that event, or a part of it: a
-number from an older print, or a miscounted one, is then refused with where
-that line is now, instead of changing another event. An event replaced
+operations above it do, so one print serves a whole plan. An operation
+that names an event by its number also carries `"line"`: the line the print
+shows for that event, or a part of it. If the event does not print that
+line, the plan is refused, which catches a number from an older print or a
+miscounted one. An event replaced
 by one event keeps its number for the operations below. Its sub-events go
 with it: write the ones to keep into the `"events"` that replace it, or
 `move` them out in an operation above.
