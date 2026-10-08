@@ -110,8 +110,8 @@ BLANK_TRIES = 3
 BLANK_WAIT = 1.0
 
 # Each question asks what a player sees as a mistake, not a fact about the picture: worded as facts (two
-# outline weights, an object over another, anything the edge cuts), a judge answered yes on most screens a
-# person would ship (docs/decisions/look-judge-calibration.md).
+# outline weights, an object over another, anything the edge cuts), a judge answered yes on most screens
+# without a fault (docs/decisions/look-judge-calibration.md).
 QUESTIONS = (
     "Is any text cut off, broken onto a line of its own, too small or too faint to read, or partly hidden by "
     "another object?",
