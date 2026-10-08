@@ -17,8 +17,9 @@
   },
   "expressions": {
     "as-html": {"examples": 1, "read": [["text-icons-to-html", "Event sheet 1", 1, 1]]},
-    "text": {"examples": 10, "read": [["animated-text-effects", "Event sheet 1", 1, 1], ["kitty-katcher", "Credits", 4, 4], ["custom-visual-novel-engine", "Events", 31, 31]]},
-    "textheight": {"examples": 2, "read": [["flowchart-questionnaire", "Event sheet 1", 5, 5], ["kitty-katcher", "Gameplay", 35, 35]]},
+    "facesize": {"examples": 2, "read": [["fruit-merger", "Events", 18, 18], ["reveal-the-tiles", "GameEvents", 48, 48]]},
+    "text": {"examples": 25, "read": [["icons-in-text", "Event sheet 1", 1, 1], ["animated-text-effects", "Event sheet 1", 1, 1], ["kitty-katcher", "Credits", 4, 4]]},
+    "textheight": {"examples": 3, "read": [["flowchart-questionnaire", "Event sheet 1", 5, 5], ["kitty-katcher", "Gameplay", 35, 35], ["text-based-adventure", "Events", 4, 4]]},
     "textwidth": {"examples": 2, "read": [["flowchart-questionnaire", "Event sheet 1", 5, 5], ["kitty-katcher", "Gameplay", 35, 35]]}
   }
 }

@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, tool, check, edit
+from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, run, tool, check, edit
 
 
 @pytest.fixture
@@ -302,3 +302,58 @@ def test_a_plugin_looked_up_under_another_object_names_the_object_that_is_one(bu
 def test_a_behavior_inside_a_quoted_word_is_named_too(built):
     code, out = tool(built, "lookup_ace", "System", "start timer")
     assert out.splitlines()[0].startswith("Timer is a behavior, not part of System") and "lookup_ace.py Timer start" in out
+
+
+def usage_rag(folder: Path, index: bool = True, examples: bool = True) -> tuple[Path, Path]:
+    """A Construct3-RAG with the System and shared schemas and, with index, an index that has two examples
+    use Wait; with examples, the Construct-Example-Projects clone beside it. (rag, example-projects)."""
+    rag = folder / "Construct3-RAG"
+    for rel in ("_index.json", "en-US/_index.json", "en-US/_deprecated.json", "en-US/plugins/system.json",
+                "en-US/plugins/_common.json"):
+        (rag / "data" / "c3-schemas" / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(REPO / "data" / "c3-schemas" / rel, rag / "data" / "c3-schemas" / rel)
+    if index:
+        (rag / "data" / "c3-example-usage" / "plugins").mkdir(parents=True)
+        (rag / "data" / "c3-example-usage" / "plugins" / "system.json").write_text(json.dumps({"actions": {"wait": {
+            "examples": 2, "read": [["kiwi", "Main", 3, 4], ["poplab", "Event sheet 1", 1, 1]]}}}), encoding="utf-8")
+    projects = folder / "Construct-Example-Projects" / "example-projects"
+    if examples:
+        projects.mkdir(parents=True)
+    return rag, projects
+
+
+def lookup_wait(rag: Path, cwd: Path) -> str:
+    code, out = run(cwd, SKILL / "scripts" / "lookup_ace.py", "System", "wait", "--rag", str(rag))
+    assert code == 0, out
+    return out
+
+
+def test_ace_lookup_prints_the_commands_that_read_the_examples_using_it(tmp_path):
+    rag, projects = usage_rag(tmp_path)
+    lines = lookup_wait(rag, tmp_path).splitlines()
+    at = lines.index("  used in 2 official examples; read 2 of them, smallest sheet first:")
+    assert lines[at - 1].lstrip().startswith("(JSON true or false") and lines[at + 1:at + 3] == [
+        f'    python scripts/print_sheet.py "Main" --events 3-4 --project "{projects / "kiwi"}"',
+        f'    python scripts/print_sheet.py "Event sheet 1" --events 1 --project "{projects / "poplab"}"']
+    # Wait for signal, used in no example, prints no count
+    assert sum("used in" in line for line in lines) == 1
+
+
+def test_without_the_examples_clone_the_count_says_how_to_get_it(tmp_path):
+    rag, _ = usage_rag(tmp_path, examples=False)
+    out = lookup_wait(rag, tmp_path)
+    assert "  used in 2 official examples\n" in out and "print_sheet.py" not in out
+    assert f"(no Construct-Example-Projects clone at {tmp_path / 'Construct-Example-Projects'}; " in out
+
+
+def test_without_the_index_the_lookup_prints_no_count(tmp_path):
+    rag, _ = usage_rag(tmp_path, index=False)
+    out = lookup_wait(rag, tmp_path)
+    assert "action wait - Wait [system]" in out and "official example" not in out
+
+
+def test_the_commands_of_the_examples_are_left_out_of_an_entry_that_fits_only_without_them(tmp_path):
+    rag, _ = usage_rag(tmp_path)
+    code, out = run(tmp_path, SKILL / "scripts" / "lookup_ace.py", "System", "wait", "--limit", "700", "--rag", str(rag))
+    assert code == 0 and out.startswith("action wait - Wait [system]") and "official example" not in out
+    assert out.splitlines()[-1].startswith("2 more did not fit 700 characters (--limit): ")

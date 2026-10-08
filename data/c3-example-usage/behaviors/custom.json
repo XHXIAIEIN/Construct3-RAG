@@ -11,8 +11,9 @@
     "set-speed": {"examples": 4, "read": [["shy-ghost", "MainCode", 24, 24], ["template-asteroid-shooter", "MainCode", 11, 11], ["air-combat", "MainCode", 13, 13]]}
   },
   "expressions": {
-    "dx": {"examples": 1, "read": [["airborne-explorer", "PlayerEvents", 60, 60]]},
+    "dx": {"examples": 1, "read": [["airborne-explorer", "PlayerEvents", 54, 54]]},
     "dy": {"examples": 1, "read": [["airborne-explorer", "PlayerEvents", 35, 35]]},
-    "speed": {"examples": 2, "read": [["template-asteroid-shooter", "MainCode", 13, 13], ["air-combat", "MainCode", 13, 13]]}
+    "movingangle": {"examples": 1, "read": [["shy-ghost", "MainCode", 24, 24]]},
+    "speed": {"examples": 2, "read": [["template-asteroid-shooter", "MainCode", 11, 11], ["air-combat", "MainCode", 13, 13]]}
   }
 }

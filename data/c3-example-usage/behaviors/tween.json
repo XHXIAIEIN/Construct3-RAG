@@ -14,7 +14,7 @@
     "tween-value": {"examples": 95, "read": [["animated-title-screen", "MainCode", 4, 4], ["samuroof", "Credits", 3, 3], ["sunset-runner", "Code", 1, 1]]}
   },
   "expressions": {
-    "progress": {"examples": 7, "read": [["tile-matcher", "Events", 21, 21], ["rhythm-game", "MainCode", 17, 17], ["jumpy-monster", "Events", 19, 19]]},
-    "value": {"examples": 56, "read": [["animated-title-screen", "MainCode", 5, 5], ["samuroof", "Credits", 5, 5], ["sunset-runner", "Code", 10, 10]]}
+    "progress": {"examples": 8, "read": [["tile-matcher", "Events", 21, 21], ["rhythm-game", "MainCode", 17, 17], ["jumpy-monster", "Events", 19, 19]]},
+    "value": {"examples": 90, "read": [["animated-title-screen", "MainCode", 5, 5], ["samuroof", "Credits", 5, 5], ["sunset-runner", "Code", 10, 10]]}
   }
 }

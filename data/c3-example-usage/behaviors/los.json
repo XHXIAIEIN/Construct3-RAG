@@ -9,12 +9,12 @@
   },
   "expressions": {
     "coneofview": {"examples": 1, "read": [["stealth-example", "Event sheet 1", 34, 34]]},
-    "hitdistance": {"examples": 11, "read": [["surface-jump", "MainCode", 16, 16], ["space-bricks", "MainCode", 15, 15], ["laser-turret", "MainCode", 19, 19]]},
+    "hitdistance": {"examples": 25, "read": [["top-down-hook", "MainCode", 12, 12], ["surface-jump", "MainCode", 16, 16], ["space-bricks", "MainCode", 15, 15]]},
     "hituid": {"examples": 1, "read": [["run-n-gun-weapons", "MainCode", 66, 66]]},
-    "hitx": {"examples": 13, "read": [["raycast-reflections", "Event sheet 1", 4, 4], ["instant-hit-laser", "Event sheet 1", 5, 5], ["top-down-hook", "MainCode", 12, 12]]},
-    "hity": {"examples": 16, "read": [["raycast-reflections", "Event sheet 1", 4, 4], ["instant-hit-laser", "Event sheet 1", 5, 5], ["top-down-hook", "MainCode", 12, 12]]},
+    "hitx": {"examples": 15, "read": [["raycast-reflections", "Event sheet 1", 4, 4], ["instant-hit-laser", "Event sheet 1", 5, 5], ["top-down-hook", "MainCode", 12, 12]]},
+    "hity": {"examples": 18, "read": [["raycast-reflections", "Event sheet 1", 4, 4], ["instant-hit-laser", "Event sheet 1", 5, 5], ["top-down-hook", "MainCode", 12, 12]]},
     "normalangle": {"examples": 6, "read": [["surface-jump", "MainCode", 16, 16], ["laser-turret", "MainCode", 19, 19], ["tesla-twist", "Gameplay", 15, 15]]},
-    "range": {"examples": 3, "read": [["space-bricks", "MainCode", 13, 15], ["stealth-example", "Event sheet 1", 22, 22], ["hook-shot", "MainCode", 50, 53]]},
+    "range": {"examples": 29, "read": [["top-down-hook", "MainCode", 11, 12], ["ceiling-trap", "MainCode", 15, 16], ["surface-jump", "MainCode", 16, 16]]},
     "reflectionangle": {"examples": 1, "read": [["space-bricks", "MainCode", 15, 15]]},
     "reflectionx": {"examples": 1, "read": [["raycast-reflections", "Event sheet 1", 4, 4]]},
     "reflectiony": {"examples": 1, "read": [["raycast-reflections", "Event sheet 1", 4, 4]]}

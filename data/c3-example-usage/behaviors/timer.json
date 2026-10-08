@@ -13,7 +13,7 @@
   },
   "expressions": {
     "currenttime": {"examples": 3, "read": [["template-quiz", "Quiz events", 15, 17], ["mythinsects", "GameEvents", 84, 84], ["grukkle-onslaught", "EveGameplay", 152, 153]]},
-    "duration": {"examples": 3, "read": [["drag-on", "Events", 14, 14], ["mythinsects", "GameEvents", 145, 145], ["grukkle-onslaught", "EveGameplay", 152, 153]]},
+    "duration": {"examples": 4, "read": [["drag-on", "Events", 14, 14], ["rat-purrsuit", "GameEvents", 74, 74], ["mythinsects", "GameEvents", 145, 145]]},
     "normalized-progress": {"examples": 2, "read": [["mythinsects", "GameEvents", 131, 131], ["overloaded-underqualified", "GameEvents", 120, 120]]},
     "totaltime": {"examples": 2, "read": [["drag-on", "Events", 14, 14], ["mythinsects", "GameEvents", 145, 145]]}
   }

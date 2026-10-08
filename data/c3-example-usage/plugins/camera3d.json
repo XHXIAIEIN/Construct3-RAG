@@ -9,11 +9,11 @@
     "set-position": {"examples": 6, "read": [["first-person-platformer", "Event sheet 1", 10, 10], ["foggy-outbreak", "MainCode", 3, 3], ["toolbox-wheel", "Events", 21, 21]]}
   },
   "expressions": {
-    "camera-x": {"examples": 22, "read": [["spinning-stick", "MainCode", 7, 7], ["eventide", "EventsCredits", 6, 6], ["8-sided-billboard", "MainCode", 11, 11]]},
+    "camera-x": {"examples": 26, "read": [["spinning-stick", "MainCode", 7, 7], ["eventide", "EventsCredits", 6, 6], ["8-sided-billboard", "MainCode", 11, 11]]},
     "camera-x-rotation": {"examples": 5, "read": [["first-person-platformer", "Event sheet 1", 10, 10], ["foggy-outbreak", "MainCode", 19, 19], ["toolbox-wheel", "Events", 19, 19]]},
-    "camera-y": {"examples": 23, "read": [["spinning-stick", "MainCode", 7, 7], ["eventide", "EventsCredits", 6, 6], ["8-sided-billboard", "MainCode", 11, 11]]},
+    "camera-y": {"examples": 25, "read": [["spinning-stick", "MainCode", 7, 7], ["eventide", "EventsCredits", 6, 6], ["8-sided-billboard", "MainCode", 11, 11]]},
     "camera-y-rotation": {"examples": 1, "read": [["portals", "Events", 35, 35]]},
-    "camera-z": {"examples": 12, "read": [["eventide", "EventsCredits", 6, 6], ["synth-sunset", "Events", 16, 16], ["skyscraper-builder", "MainCode", 7, 7]]},
+    "camera-z": {"examples": 15, "read": [["eventide", "EventsCredits", 6, 6], ["synth-sunset", "Events", 16, 16], ["skyscraper-builder", "MainCode", 7, 7]]},
     "forward-x": {"examples": 1, "read": [["ghost-chaser", "Code", 29, 31]]},
     "forward-y": {"examples": 1, "read": [["ghost-chaser", "Code", 29, 31]]},
     "forward-z": {"examples": 1, "read": [["ghost-chaser", "Code", 29, 31]]},
@@ -21,7 +21,7 @@
     "layer-to-canvas-y": {"examples": 6, "read": [["living-card", "Code", 5, 5], ["bamboo-strike", "Gameplay", 7, 10], ["box-breaker", "Events", 42, 42]]},
     "layer-to-layer-x": {"examples": 3, "read": [["rock-and-rush", "Events", 49, 49], ["eventide", "EventsGame", 31, 31], ["pusha-pusha", "Gameplay", 87, 87]]},
     "layer-to-layer-y": {"examples": 2, "read": [["rock-and-rush", "Events", 49, 49], ["eventide", "EventsGame", 31, 31]]},
-    "look-x": {"examples": 12, "read": [["eventide", "EventsCredits", 6, 6], ["pixel-data-reader", "Code", 15, 15], ["pusha-pusha", "TitleScreen", 11, 11]]},
+    "look-x": {"examples": 13, "read": [["eventide", "EventsCredits", 6, 6], ["pixel-data-reader", "Code", 15, 15], ["pusha-pusha", "TitleScreen", 11, 11]]},
     "look-y": {"examples": 12, "read": [["eventide", "EventsCredits", 6, 6], ["pixel-data-reader", "Code", 15, 15], ["pusha-pusha", "TitleScreen", 11, 11]]},
     "look-z": {"examples": 7, "read": [["synth-sunset", "Events", 16, 16], ["skyscraper-builder", "MainCode", 7, 7], ["flatland-golf", "Code", 33, 33]]},
     "up-x": {"examples": 1, "read": [["ghost-chaser", "Code", 29, 31]]},

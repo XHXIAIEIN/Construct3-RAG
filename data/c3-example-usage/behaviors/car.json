@@ -17,7 +17,7 @@
   },
   "expressions": {
     "deceleration": {"examples": 1, "read": [["ghost-racer", "MainCode", 47, 47]]},
-    "maxspeed": {"examples": 1, "read": [["abductractor", "Events", 32, 32]]},
+    "maxspeed": {"examples": 3, "read": [["vehicle-switching", "MainCode", 15, 15], ["abductractor", "Events", 32, 32], ["overloaded-underqualified", "GameEvents", 337, 337]]},
     "movingangle": {"examples": 1, "read": [["template-race-track", "Event sheet 1", 29, 29]]},
     "speed": {"examples": 5, "read": [["template-driving", "Event sheet 1", 1, 1], ["license-test", "Events", 5, 5], ["template-race-track", "Event sheet 1", 7, 7]]}
   }

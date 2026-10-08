@@ -25,7 +25,7 @@
   },
   "expressions": {
     "angularvelocity": {"examples": 1, "read": [["dig-the-way", "EventsGame", 37, 37]]},
-    "velocityx": {"examples": 2, "read": [["eventide", "EventsEnemy", 28, 28], ["blackball-billiard", "Events", 27, 34]]},
-    "velocityy": {"examples": 1, "read": [["blackball-billiard", "Events", 27, 34]]}
+    "velocityx": {"examples": 3, "read": [["draw-the-line", "Events", 39, 39], ["eventide", "EventsEnemy", 27, 29], ["blackball-billiard", "Events", 27, 34]]},
+    "velocityy": {"examples": 3, "read": [["draw-the-line", "Events", 38, 38], ["eventide", "EventsEnemy", 27, 29], ["blackball-billiard", "Events", 27, 34]]}
   }
 }

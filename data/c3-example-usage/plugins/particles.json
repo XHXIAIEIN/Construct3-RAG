@@ -11,6 +11,7 @@
   },
   "expressions": {
     "particlecount": {"examples": 4, "read": [["particle-fountain", "Event sheet 1", 2, 2], ["particles", "Event sheet 1", 2, 2], ["fireworks", "Event sheet 1", 4, 4]]},
-    "timeout": {"examples": 1, "read": [["wood-chopping", "Code", 9, 10]]}
+    "timeout": {"examples": 1, "read": [["wood-chopping", "Code", 9, 10]]},
+    "yrandom": {"examples": 1, "read": [["object-time-freezing", "MainCode", 73, 74]]}
   }
 }

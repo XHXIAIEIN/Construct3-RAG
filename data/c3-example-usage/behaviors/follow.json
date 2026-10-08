@@ -18,9 +18,9 @@
     "stop-following": {"examples": 2, "read": [["follow-record-replay", "Event sheet 1", 5, 5], ["follow-rewind-time", "Event sheet 1", 4, 4]]}
   },
   "expressions": {
-    "delay": {"examples": 1, "read": [["follow-record-replay", "Event sheet 1", 6, 6]]},
+    "delay": {"examples": 2, "read": [["follow-record-replay", "Event sheet 1", 6, 6], ["simple-snake-game", "Event sheet 1", 10, 10]]},
     "delayed-custom-property-value": {"examples": 1, "read": [["follow-custom-properties", "Event sheet 1", 3, 3]]},
     "history-as-json": {"examples": 1, "read": [["follow-record-replay", "Event sheet 1", 5, 5]]},
-    "max-delay": {"examples": 1, "read": [["follow-rewind-time", "Event sheet 1", 13, 13]]}
+    "max-delay": {"examples": 2, "read": [["simple-snake-game", "Event sheet 1", 10, 10], ["follow-rewind-time", "Event sheet 1", 13, 13]]}
   }
 }

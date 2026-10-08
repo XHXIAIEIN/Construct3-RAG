@@ -14,7 +14,7 @@
     "set-speed": {"examples": 41, "read": [["blacksmith-forge", "Code", 5, 5], ["glokar", "ePowerups", 7, 7], ["fireworks", "Event sheet 1", 7, 7]]}
   },
   "expressions": {
-    "angleofmotion": {"examples": 4, "read": [["gun-boots", "MainCode", 21, 21], ["manual-elevator", "MainCode", 47, 47], ["run-n-gun-weapons", "MainCode", 100, 100]]},
-    "speed": {"examples": 6, "read": [["spell-caster", "Event sheet 1", 5, 5], ["template-endless-runner", "Event sheet 1", 5, 5], ["template-flying-along", "Event sheet 1", 3, 3]]}
+    "angleofmotion": {"examples": 15, "read": [["fireworks", "Event sheet 1", 5, 5], ["arcade-shooter", "MainCode", 27, 27], ["top-down-shooter-3d", "MainCode", 44, 44]]},
+    "speed": {"examples": 17, "read": [["spell-caster", "Event sheet 1", 5, 5], ["template-endless-runner", "Event sheet 1", 5, 5], ["template-vertical-space-shooter", "Event sheet 1", 10, 10]]}
   }
 }

@@ -14,6 +14,6 @@
   },
   "expressions": {
     "characterscale": {"examples": 1, "read": [["poplab", "eGlobal", 32, 32]]},
-    "text": {"examples": 9, "read": [["dig-the-way", "EventsScore", 8, 8], ["animated-spritefont-effects", "Event sheet 1", 1, 1], ["demonoire", "eGlobal", 27, 27]]}
+    "text": {"examples": 15, "read": [["dig-the-way", "EventsScore", 8, 8], ["animated-spritefont-effects", "Event sheet 1", 1, 1], ["samuroof", "EndOfLevel", 5, 5]]}
   }
 }

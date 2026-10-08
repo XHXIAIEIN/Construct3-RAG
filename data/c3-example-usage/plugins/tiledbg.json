@@ -12,8 +12,9 @@
     "set-tile-randomization-enabled": {"examples": 1, "read": [["tile-randomization", "Event sheet 1", 1, 1]]}
   },
   "expressions": {
-    "image-offset-x": {"examples": 1, "read": [["3d-castle-maze", "GameplayCode", 8, 8]]},
-    "image-offset-y": {"examples": 1, "read": [["morph-runner", "Events", 9, 9]]},
-    "imageheight": {"examples": 1, "read": [["hook-shot", "MainCode", 51, 53]]}
+    "image-offset-x": {"examples": 59, "read": [["reveal-the-tiles", "CongratsEvents", 2, 2], ["tick-tock-toppings", "CreditsEvents", 3, 4], ["living-card", "Code", 4, 4]]},
+    "image-offset-y": {"examples": 44, "read": [["reveal-the-tiles", "CongratsEvents", 2, 2], ["meowgix", "CreditsEvents", 4, 5], ["living-card", "Code", 4, 4]]},
+    "imageheight": {"examples": 3, "read": [["synth-sunset", "Events", 16, 16], ["hook-shot", "MainCode", 51, 53], ["object-time-freezing", "MainCode", 51, 51]]},
+    "imagewidth": {"examples": 5, "read": [["synth-sunset", "Events", 16, 16], ["dig-the-way", "EventsGame", 18, 24], ["avalanche", "PlayerEvents", 3, 4]]}
   }
 }

@@ -35,7 +35,7 @@ def clone(tmp_path: Path) -> Path:
              {"eventType": "block",
               "conditions": [{"id": "is-on-floor", "objectClass": "Player", "behaviorType": "Platform"}],
               "actions": [{"id": "set-animation", "objectClass": "Player",
-                           "parameters": {"animation": "\"dt\"", "from": "beginning"}}]}]}])
+                           "parameters": {"animation": "\"dt\" & Self.AnimationName", "from": "beginning"}}]}]}])
     # one example in both languages: two folders with the same events
     for name in ("ticker-js", "ticker-ts"):
         example(folder, name, [{"eventType": "block", "conditions": [EVERY_TICK], "actions": []}])
@@ -51,7 +51,9 @@ def test_each_ace_is_keyed_by_its_addon_with_the_events_of_its_first_use(tmp_pat
                                             "expressions": {"x": [["platformer", "Game", 1, 2]]}}
     assert read["behaviors/platform.json"] == {"conditions": {"is-on-floor": [["platformer", "Game", 2, 2]]},
                                                "expressions": {"vectorx": [["platformer", "Game", 1, 2]]}}
-    assert read["plugins/sprite.json"] == {"actions": {"set-animation": [["platformer", "Game", 2, 2]]}}
+    # Self is the object of the action
+    assert read["plugins/sprite.json"] == {"actions": {"set-animation": [["platformer", "Game", 2, 2]]},
+                                           "expressions": {"animationname": [["platformer", "Game", 2, 2]]}}
     # a variable named time is not the System expression, and "dt" in quotes is text
     assert read["plugins/system.json"]["expressions"] == {"random": [["platformer", "Game", 1, 2]]}
 

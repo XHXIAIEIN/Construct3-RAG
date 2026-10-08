@@ -75,7 +75,7 @@
     "toggle-boolean-instvar": {"examples": 6, "read": [["ice-beam", "MainCode", 32, 32], ["pair-of-knights", "Events", 30, 30], ["ship-repair-js", "Events", 32, 32]]}
   },
   "expressions": {
-    "angle": {"examples": 78, "read": [["instant-hit-laser", "Event sheet 1", 1, 1], ["fireworks", "Event sheet 1", 2, 2], ["particle-thruster", "Event sheet 1", 6, 6]]},
+    "angle": {"examples": 107, "read": [["custom-movement-asteroids", "Event sheet 1", 1, 1], ["raycast-reflections", "Event sheet 1", 2, 5], ["template-physics-catapult", "Event sheet 1", 3, 3]]},
     "bboxbottom": {"examples": 21, "read": [["mesh-distortion", "Event sheet 1", 1, 2], ["cave-bridge", "MainCode", 16, 16], ["fireworks-designer", "Code", 28, 28]]},
     "bboxleft": {"examples": 22, "read": [["mesh-distortion", "Event sheet 1", 1, 2], ["cave-bridge", "MainCode", 16, 16], ["skyscraper-builder", "MainCode", 13, 15]]},
     "bboxmidx": {"examples": 2, "read": [["back-face-culling", "Event sheet 1", 1, 1], ["free-the-key", "Gameplay", 2, 2]]},
@@ -86,20 +86,20 @@
     "color-value": {"examples": 5, "read": [["tile-matcher", "Events", 16, 16], ["cell-linking", "Events", 4, 4], ["palette-sorting", "Code", 10, 12]]},
     "count": {"examples": 94, "read": [["template-physics-puzzle", "Event sheet 1", 3, 3], ["template-spot-the-difference", "Event sheet 1", 1, 1], ["mythinsects", "CreditsEvents", 3, 5]]},
     "get-tag-at": {"examples": 13, "read": [["tick-tock-toppings", "CreditsEvents", 4, 4], ["avalanche", "CreditsEvents", 7, 7], ["eventide", "EventsCredits", 8, 10]]},
-    "height": {"examples": 59, "read": [["9-patch-plugin", "Event sheet 1", 1, 1], ["kiwi-story", "eCamera", 3, 3], ["poplab", "eTitleScreen", 4, 4]]},
+    "height": {"examples": 93, "read": [["9-patch-plugin", "Event sheet 1", 1, 1], ["kiwi-story", "eCamera", 3, 3], ["custom-action-overrides", "Event sheet 1", 3, 3]]},
     "iid": {"examples": 8, "read": [["console-typist", "Events", 18, 18], ["template-snake", "Event sheet 1", 7, 7], ["winter-tree", "Events", 37, 37]]},
-    "layername": {"examples": 10, "read": [["blacksmith-forge", "Code", 2, 3], ["glokar", "ePowerups", 7, 7], ["hidden-anagrams", "MainCode", 3, 3]]},
+    "layername": {"examples": 11, "read": [["blacksmith-forge", "Code", 2, 3], ["glokar", "ePowerups", 7, 7], ["hidden-anagrams", "MainCode", 3, 3]]},
     "mesh-columns": {"examples": 3, "read": [["mesh-distortion", "Event sheet 1", 2, 2], ["mesh-relative-displacement", "Event sheet 1", 3, 3], ["pusha-pusha", "TitleScreen", 5, 5]]},
     "mesh-rows": {"examples": 3, "read": [["mesh-distortion", "Event sheet 1", 2, 2], ["mesh-relative-displacement", "Event sheet 1", 3, 3], ["pusha-pusha", "TitleScreen", 4, 6]]},
     "objecttypename": {"examples": 13, "read": [["space-bricks", "MainCode", 17, 18], ["layout-transition", "EventsMain", 7, 7], ["gold-mining", "MainCode", 5, 5]]},
-    "opacity": {"examples": 2, "read": [["ghost-shooter-rain-demo", "GameEvents", 5, 5], ["grukkle-onslaught", "EveGameplay", 108, 108]]},
+    "opacity": {"examples": 13, "read": [["kiwi-story", "eCredits", 2, 2], ["glokar", "eCredits", 3, 3], ["demonoire", "eGlobal", 12, 13]]},
     "pickedcount": {"examples": 20, "read": [["wood-chopping", "Code", 7, 14], ["farming-lines", "Code", 28, 28], ["labyrinth", "GameEvents", 3, 3]]},
-    "template-name": {"examples": 14, "read": [["balloon-blower", "EventsGame", 21, 21], ["rpg-encounter", "CombatEvents", 17, 17], ["fruit-merger", "Events", 21, 23]]},
+    "template-name": {"examples": 15, "read": [["balloon-blower", "EventsGame", 21, 21], ["rpg-encounter", "CombatEvents", 17, 17], ["fruit-merger", "Events", 21, 23]]},
     "uid": {"examples": 85, "read": [["kiwi-story", "eCamera", 2, 2], ["unique-ids", "Event sheet 1", 2, 2], ["falling-blocks", "Event sheet 1", 4, 4]]},
-    "width": {"examples": 95, "read": [["9-patch-plugin", "Event sheet 1", 1, 1], ["kiwi-story", "eCamera", 3, 3], ["poplab", "eTitleScreen", 4, 4]]},
-    "x": {"examples": 231, "read": [["shadows-blending-multiple", "Event sheet 1", 1, 1], ["tweening", "Event sheet 1", 1, 1], ["rotating-platformer", "Event sheet 1", 1, 1]]},
-    "y": {"examples": 231, "read": [["shadows-blending-multiple", "Event sheet 1", 1, 1], ["tweening", "Event sheet 1", 1, 1], ["glokar", "eMain", 2, 2]]},
-    "z-elevation": {"examples": 42, "read": [["living-card", "Code", 5, 5], ["pusha-pusha", "Credits", 9, 9], ["eventide", "EventsCredits", 6, 6]]},
+    "width": {"examples": 128, "read": [["9-patch-plugin", "Event sheet 1", 1, 1], ["custom-actions", "Event sheet 1", 1, 1], ["kiwi-story", "eCamera", 3, 3]]},
+    "x": {"examples": 258, "read": [["9-patch-plugin", "Event sheet 1", 1, 1], ["shadows-blending-multiple", "Event sheet 1", 1, 1], ["tweening", "Event sheet 1", 1, 1]]},
+    "y": {"examples": 257, "read": [["9-patch-plugin", "Event sheet 1", 1, 1], ["shadows-blending-multiple", "Event sheet 1", 1, 1], ["tweening", "Event sheet 1", 1, 1]]},
+    "z-elevation": {"examples": 46, "read": [["living-card", "Code", 5, 5], ["pusha-pusha", "Credits", 8, 9], ["eventide", "EventsCredits", 6, 6]]},
     "zindex": {"examples": 2, "read": [["match-the-pose", "Events", 52, 52], ["nail-artist", "Events", 65, 65]]}
   }
 }

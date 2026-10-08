@@ -4,6 +4,6 @@
     "set-speed": {"examples": 30, "read": [["spinning-stick", "MainCode", 10, 10], ["dynamic-camera-system", "MainCode", 11, 11], ["grukkle-onslaught", "EveCredits", 10, 15]]}
   },
   "expressions": {
-    "speed": {"examples": 1, "read": [["spinning-stick", "MainCode", 8, 9]]}
+    "speed": {"examples": 3, "read": [["spinning-stick", "MainCode", 8, 9], ["air-combat", "MainCode", 25, 25], ["shooting-cube", "MainCode", 36, 36]]}
   }
 }

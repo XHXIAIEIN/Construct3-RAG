@@ -30,8 +30,10 @@
   },
   "expressions": {
     "gravityangle": {"examples": 3, "read": [["gravity-portal", "MainCode", 3, 3], ["template-invert-gravity", "MainCode", 4, 6], ["fuji-leaper", "GameEvents", 12, 12]]},
-    "jumpstrength": {"examples": 1, "read": [["samuroof", "Game", 80, 80]]},
-    "vectorx": {"examples": 11, "read": [["cave-bridge", "MainCode", 5, 5], ["charge-shot", "MainCode", 32, 32], ["relic-hunter", "Code", 21, 21]]},
-    "vectory": {"examples": 2, "read": [["pair-of-knights", "Events", 45, 45], ["kiwi-story", "ePlayer", 26, 26]]}
+    "jumpstrength": {"examples": 3, "read": [["kiwi-story", "eLevelObjects", 17, 17], ["tank-pilot", "MainCode", 40, 42], ["samuroof", "Game", 80, 80]]},
+    "maxfallspeed": {"examples": 2, "read": [["jetpack", "MainCode", 20, 21], ["ledge-climb", "MainCode", 43, 43]]},
+    "maxspeed": {"examples": 1, "read": [["kiwi-story", "eEnemies", 36, 36]]},
+    "vectorx": {"examples": 12, "read": [["cave-bridge", "MainCode", 5, 5], ["gravity-portal", "MainCode", 10, 10], ["charge-shot", "MainCode", 32, 32]]},
+    "vectory": {"examples": 5, "read": [["gravity-portal", "MainCode", 10, 10], ["jetpack", "MainCode", 20, 21], ["gamepad-local-multiplayer", "MainCode", 20, 20]]}
   }
 }

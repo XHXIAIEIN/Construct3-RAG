@@ -69,7 +69,6 @@ class Example:
     def __init__(self, folder: Path, rag: Path) -> None:
         self.folder = folder
         self.p = c3.Project(folder, rag, "en-US", c3.Findings())
-        self._written: dict[tuple[str, str], dict[str, str]] = {}
 
     def key(self, kind: str, ace: dict) -> tuple[str, str, str, str] | None:
         """(plugins or behaviors, addon id, kind, ACE id) of a condition or action; None when
@@ -85,13 +84,15 @@ class Example:
         allowed = {it["id"] for it in (part or schema).get("expressions", [])}
         return {c3.LOWER(name): ace for ace, name in names.items() if ace in allowed}
 
-    def expressions(self, expr: str, scope: set[str]) -> set[tuple[str, str, str, str]]:
-        """The keys of the expressions an expression string calls."""
+    def expressions(self, expr: str, scope: set[str], owner: str | None) -> set[tuple[str, str, str, str]]:
+        """The keys of the expressions an expression string calls. owner: the object of its
+        condition or action, which Self names."""
         p = self.p
         text = c3.STRING_LITERAL.sub('""', expr)
         out = set()
         for m in MEMBER.finditer(text):
-            obj = p.objects_lower.get(c3.LOWER(m.group(1)))
+            name = owner if c3.LOWER(m.group(1)) == "self" else m.group(1)
+            obj = p.objects_lower.get(c3.LOWER(name or ""))
             if obj is None or obj == "System" or c3.LOWER(obj) == c3.LOWER(p.functions_object):
                 continue
             member, sub = c3.LOWER(m.group(2)), c3.LOWER(m.group(3) or "")
@@ -132,7 +133,7 @@ class Example:
                     if not isinstance(ace, dict):
                         continue
                     if "callFunction" in ace:
-                        values = ace.get("parameters", [])
+                        values, owner = ace.get("parameters", []), None
                     elif "id" in ace:
                         key = self.key(kind, ace)
                         if key:
@@ -141,11 +142,12 @@ class Example:
                         given = ace.get("parameters", {}) if isinstance(ace.get("parameters"), dict) else {}
                         values = [v for k, v in given.items()
                                   if (entry.get("params") or {}).get(k, {}).get("type") in EXPRESSION_TYPES]
+                        owner = ace.get("objectClass")
                     else:
                         continue
                     for value in values:
                         if isinstance(value, str):
-                            keys |= self.expressions(value, scope)
+                            keys |= self.expressions(value, scope, owner)
             for key in keys:
                 found.setdefault(key, (n, n + min(descendants(ev), SPAN - 1)))
         return found

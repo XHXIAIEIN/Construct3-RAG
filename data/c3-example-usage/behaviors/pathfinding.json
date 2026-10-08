@@ -24,10 +24,13 @@
     "stop": {"examples": 5, "read": [["pixel-data-reader", "Code", 16, 17], ["catch-the-rats", "Events", 37, 39], ["stealth-example", "Event sheet 1", 55, 55]]}
   },
   "expressions": {
+    "acceleration": {"examples": 1, "read": [["template-real-time-strategy", "Event sheet 1", 13, 13]]},
     "cellsize": {"examples": 4, "read": [["pathfinding", "Event sheet 1", 8, 8], ["pathfinding-direct-movement", "Event sheet 1", 16, 16], ["pathfinding-path-cost", "Event sheet 1", 11, 11]]},
+    "maxspeed": {"examples": 1, "read": [["template-real-time-strategy", "Event sheet 1", 13, 13]]},
     "movingangle": {"examples": 1, "read": [["pixel-data-reader", "Code", 22, 22]]},
-    "nodecount": {"examples": 7, "read": [["pathfinding-groups", "Event sheet 1", 10, 12], ["pathfinding", "Event sheet 1", 11, 13], ["pathfinding-direct-movement", "Event sheet 1", 12, 14]]},
-    "nodexat": {"examples": 7, "read": [["pathfinding-groups", "Event sheet 1", 9, 12], ["pathfinding", "Event sheet 1", 11, 13], ["pathfinding-direct-movement", "Event sheet 1", 11, 14]]},
-    "nodeyat": {"examples": 7, "read": [["pathfinding-groups", "Event sheet 1", 9, 12], ["pathfinding", "Event sheet 1", 11, 13], ["pathfinding-direct-movement", "Event sheet 1", 11, 14]]}
+    "nodecount": {"examples": 7, "read": [["pathfinding-groups", "Event sheet 1", 10, 12], ["pathfinding", "Event sheet 1", 11, 13], ["labyrinth", "PlayerEvents", 5, 5]]},
+    "nodexat": {"examples": 7, "read": [["pathfinding-groups", "Event sheet 1", 9, 12], ["pathfinding", "Event sheet 1", 11, 13], ["labyrinth", "PlayerEvents", 3, 3]]},
+    "nodeyat": {"examples": 7, "read": [["pathfinding-groups", "Event sheet 1", 9, 12], ["pathfinding", "Event sheet 1", 11, 13], ["labyrinth", "PlayerEvents", 3, 3]]},
+    "speed": {"examples": 1, "read": [["template-real-time-strategy", "Event sheet 1", 13, 13]]}
   }
 }

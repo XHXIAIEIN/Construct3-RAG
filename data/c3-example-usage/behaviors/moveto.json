@@ -15,8 +15,8 @@
     "stop": {"examples": 8, "read": [["labyrinth", "GameEvents", 12, 12], ["insect-hunters", "Events", 36, 36], ["dock-fishing", "Events", 39, 39]]}
   },
   "expressions": {
-    "maxspeed": {"examples": 1, "read": [["tile-based-pathfinding", "MainCode", 78, 78]]},
-    "movingangle": {"examples": 4, "read": [["labyrinth", "PlayerEvents", 8, 8], ["arcade-shooter", "MainCode", 7, 7], ["pair-of-knights", "Events", 32, 32]]},
+    "maxspeed": {"examples": 2, "read": [["traffic-jam", "Events", 14, 14], ["tile-based-pathfinding", "MainCode", 78, 78]]},
+    "movingangle": {"examples": 5, "read": [["labyrinth", "PlayerEvents", 8, 8], ["arcade-shooter", "MainCode", 7, 7], ["pair-of-knights", "Events", 32, 32]]},
     "speed": {"examples": 2, "read": [["airborne-explorer", "EnemyEvents", 43, 43], ["tile-based-pathfinding", "MainCode", 77, 77]]},
     "targetx": {"examples": 4, "read": [["wall-jump", "MainCode", 21, 21], ["template-gravityless-labyrinth", "MainCode", 11, 12], ["airborne-explorer", "EnemyEvents", 43, 43]]},
     "targety": {"examples": 3, "read": [["wall-jump", "MainCode", 21, 21], ["template-gravityless-labyrinth", "MainCode", 11, 12], ["grukkle-onslaught", "EveGameplay", 234, 234]]}

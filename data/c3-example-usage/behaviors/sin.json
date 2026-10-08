@@ -11,6 +11,6 @@
     "update-initial-state": {"examples": 1, "read": [["scaffold-shuffle", "Events", 5, 5]]}
   },
   "expressions": {
-    "value": {"examples": 8, "read": [["sine-behavior-types", "Event sheet 1", 1, 1], ["slide-puzzle-3d", "MainCode", 14, 14], ["top-down-jump", "MainCode", 26, 26]]}
+    "value": {"examples": 19, "read": [["mesh-z-elevation", "Event sheet 1", 1, 1], ["sine-behavior-types", "Event sheet 1", 1, 1], ["console-typist", "Events", 11, 11]]}
   }
 }

@@ -25,7 +25,8 @@ fetched, HOME is an empty folder, and each side's clone and temporary folders ar
 replaced by <rag>, <game> and <tmp> before the comparison. The two clones' paths
 differ in length, which moves the point where a script's --limit cuts a line
 that holds one, so every case passes --limit 0 except lookup_ace, whose output
-names no path. A refactor shows no difference; a change of output shows exactly
+names no clone's path: the example folders it names lie beside the main working
+tree for both sides. A refactor shows no difference; a change of output shows exactly
 the cases it was meant for, and the pull request names them.
 
 The first differing cases are printed with their first differing line, then a

@@ -15,7 +15,7 @@
   },
   "expressions": {
     "asjson": {"examples": 10, "read": [["samuroof", "Credits", 6, 6], ["tick-tock-toppings", "TitleEvents", 8, 8], ["grukkle-onslaught", "EveAudio", 14, 14]]},
-    "currentkey": {"examples": 3, "read": [["dig-the-way", "EventsScore", 8, 8], ["airborne-explorer", "GameEvents", 48, 48], ["demonoire", "eGameRoom", 305, 306]]},
+    "currentkey": {"examples": 3, "read": [["dig-the-way", "EventsScore", 8, 8], ["airborne-explorer", "PlayerEvents", 34, 34], ["demonoire", "eGameRoom", 305, 306]]},
     "currentvalue": {"examples": 2, "read": [["dig-the-way", "EventsScore", 8, 8], ["airborne-explorer", "GameEvents", 48, 48]]},
     "get": {"examples": 20, "read": [["kiwi-story", "eHUD", 2, 2], ["glokar", "eHUD", 1, 1], ["eventide", "EventsCredits", 2, 4]]},
     "keycount": {"examples": 1, "read": [["grukkle-onslaught", "EveAudio", 8, 8]]}

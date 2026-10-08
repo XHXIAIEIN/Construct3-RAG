@@ -25,7 +25,7 @@
     "at": {"examples": 53, "read": [["html-layers", "Event sheet 1", 3, 3], ["html-table", "Event sheet 1", 3, 3], ["rotating-maze", "MenuEvents", 6, 6]]},
     "back": {"examples": 2, "read": [["tick-tock-toppings", "GameEvents", 77, 77], ["eventide", "EventsPlayer", 145, 145]]},
     "curvalue": {"examples": 8, "read": [["chess-checkmate", "ToolEvents", 3, 3], ["multiplayer-pong", "Game events", 5, 5], ["cell-linking", "Events", 10, 10]]},
-    "curx": {"examples": 2, "read": [["template-race-track", "Event sheet 1", 41, 44], ["stealth-example", "Event sheet 1", 40, 40]]},
+    "curx": {"examples": 3, "read": [["template-race-track", "Event sheet 1", 41, 44], ["stealth-example", "Event sheet 1", 40, 40], ["ship-repair-js", "Events", 44, 44]]},
     "height": {"examples": 14, "read": [["html-layers", "Event sheet 1", 3, 3], ["html-table", "Event sheet 1", 3, 3], ["eventide", "EventsCredits", 3, 3]]},
     "indexof": {"examples": 1, "read": [["template-eat-em-all", "Event sheet 1", 13, 13]]},
     "join-string": {"examples": 1, "read": [["ship-repair-js", "Events", 53, 53]]},

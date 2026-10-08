@@ -9,6 +9,6 @@
     "face-image-point-x": {"examples": 3, "read": [["living-card", "Code", 5, 5], ["light-gun", "Gameplay", 32, 32], ["rock-and-rush", "Events", 49, 49]]},
     "face-image-point-y": {"examples": 3, "read": [["living-card", "Code", 5, 5], ["light-gun", "Gameplay", 32, 32], ["rock-and-rush", "Events", 49, 49]]},
     "face-image-point-z": {"examples": 3, "read": [["living-card", "Code", 5, 5], ["light-gun", "Gameplay", 32, 32], ["rock-and-rush", "Events", 49, 49]]},
-    "z-height": {"examples": 18, "read": [["first-person-platformer", "Event sheet 1", 18, 20], ["farming-lines", "Code", 3, 3], ["test-your-might", "Gameplay", 21, 22]]}
+    "z-height": {"examples": 24, "read": [["synth-sunset", "Events", 4, 4], ["first-person-platformer", "Event sheet 1", 18, 20], ["farming-lines", "Code", 3, 3]]}
   }
 }
