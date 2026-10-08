@@ -1,0 +1,5 @@
+{
+  "actions": {
+    "shake": {"examples": 5, "read": [["cave-bridge", "MainCode", 8, 8], ["template-gravityless-labyrinth", "MainCode", 13, 13], ["meowgix", "PlayerEvents", 9, 11]]}
+  }
+}

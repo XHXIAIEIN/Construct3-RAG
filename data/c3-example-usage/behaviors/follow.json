@@ -1,0 +1,26 @@
+{
+  "conditions": {
+    "has-follow-data": {"examples": 2, "read": [["follow-behavior", "Event sheet 1", 4, 4], ["follow-custom-properties", "Event sheet 1", 6, 6]]}
+  },
+  "actions": {
+    "clear-history": {"examples": 2, "read": [["follow-behavior", "Event sheet 1", 6, 6], ["follow-custom-properties", "Event sheet 1", 8, 8]]},
+    "follow-object": {"examples": 4, "read": [["follow-behavior", "Event sheet 1", 1, 1], ["follow-custom-properties", "Event sheet 1", 1, 1], ["simple-snake-game", "Event sheet 1", 1, 1]]},
+    "follow-self": {"examples": 2, "read": [["follow-record-replay", "Event sheet 1", 1, 1], ["follow-rewind-time", "Event sheet 1", 1, 1]]},
+    "load-history-json": {"examples": 1, "read": [["follow-record-replay", "Event sheet 1", 6, 6]]},
+    "rewind-history": {"examples": 1, "read": [["follow-rewind-time", "Event sheet 1", 3, 3]]},
+    "set-custom-property-value": {"examples": 1, "read": [["follow-custom-properties", "Event sheet 1", 3, 3]]},
+    "set-delay": {"examples": 3, "read": [["simple-snake-game", "Event sheet 1", 10, 10], ["follow-rewind-time", "Event sheet 1", 14, 14], ["relic-hunter", "Code", 34, 34]]},
+    "set-enabled": {"examples": 2, "read": [["follow-record-replay", "Event sheet 1", 5, 5], ["relic-hunter", "Code", 29, 29]]},
+    "set-max-delay": {"examples": 2, "read": [["simple-snake-game", "Event sheet 1", 10, 10], ["relic-hunter", "Code", 34, 34]]},
+    "set-paused": {"examples": 1, "read": [["follow-rewind-time", "Event sheet 1", 3, 3]]},
+    "set-property-interpolation": {"examples": 4, "read": [["follow-behavior", "Event sheet 1", 1, 1], ["follow-record-replay", "Event sheet 1", 1, 1], ["follow-custom-properties", "Event sheet 1", 1, 1]]},
+    "start-following-custom-property": {"examples": 1, "read": [["follow-custom-properties", "Event sheet 1", 1, 1]]},
+    "stop-following": {"examples": 2, "read": [["follow-record-replay", "Event sheet 1", 5, 5], ["follow-rewind-time", "Event sheet 1", 4, 4]]}
+  },
+  "expressions": {
+    "delay": {"examples": 1, "read": [["follow-record-replay", "Event sheet 1", 6, 6]]},
+    "delayed-custom-property-value": {"examples": 1, "read": [["follow-custom-properties", "Event sheet 1", 3, 3]]},
+    "history-as-json": {"examples": 1, "read": [["follow-record-replay", "Event sheet 1", 5, 5]]},
+    "max-delay": {"examples": 1, "read": [["follow-rewind-time", "Event sheet 1", 13, 13]]}
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "conditions": {
+    "compare-speed": {"examples": 2, "read": [["template-real-time-strategy", "Event sheet 1", 13, 13], ["avalanche", "EnemyEvents", 109, 109]]},
+    "is-calculating-path": {"examples": 1, "read": [["stealth-example", "Event sheet 1", 8, 8]]},
+    "is-cell-obstacle": {"examples": 4, "read": [["pathfinding", "Event sheet 1", 8, 8], ["pathfinding-direct-movement", "Event sheet 1", 16, 16], ["pathfinding-path-cost", "Event sheet 1", 11, 11]]},
+    "is-enabled": {"examples": 1, "read": [["catch-the-rats", "Events", 37, 39]]},
+    "is-moving-along-path": {"examples": 4, "read": [["pixel-data-reader", "Code", 22, 22], ["light-gun", "Gameplay", 8, 9], ["template-real-time-strategy", "Event sheet 1", 13, 13]]},
+    "on-arrived": {"examples": 7, "read": [["pathfinding", "Event sheet 1", 4, 4], ["pathfinding-path-cost", "Event sheet 1", 7, 7], ["catch-the-rats", "Events", 19, 19]]},
+    "on-failed-to-find-path": {"examples": 8, "read": [["pathfinding-groups", "Event sheet 1", 6, 6], ["pathfinding", "Event sheet 1", 3, 3], ["pathfinding-direct-movement", "Event sheet 1", 4, 4]]},
+    "on-path-found": {"examples": 12, "read": [["pathfinding-groups", "Event sheet 1", 9, 12], ["pathfinding", "Event sheet 1", 10, 13], ["labyrinth", "PlayerEvents", 3, 3]]}
+  },
+  "actions": {
+    "add-obstacle": {"examples": 2, "read": [["labyrinth", "MinotaurEvents", 2, 2], ["avalanche", "EnemyEvents", 10, 10]]},
+    "add-path-cost": {"examples": 1, "read": [["pathfinding-path-cost", "Event sheet 1", 2, 2]]},
+    "end-path-group": {"examples": 1, "read": [["pathfinding-groups", "Event sheet 1", 5, 5]]},
+    "find-path": {"examples": 13, "read": [["pathfinding-groups", "Event sheet 1", 4, 4], ["pathfinding", "Event sheet 1", 2, 2], ["labyrinth", "PlayerEvents", 2, 2]]},
+    "move-along-path": {"examples": 9, "read": [["pathfinding", "Event sheet 1", 2, 2], ["template-turret-defense", "Event sheet 1", 2, 2], ["pathfinding-path-cost", "Event sheet 1", 5, 5]]},
+    "regenerate-obstacle-map": {"examples": 2, "read": [["pixel-data-reader", "Code", 16, 17], ["catch-the-rats", "Events", 40, 40]]},
+    "set-direct-movement": {"examples": 1, "read": [["pathfinding-direct-movement", "Event sheet 1", 7, 7]]},
+    "set-enabled": {"examples": 2, "read": [["catch-the-rats", "Events", 37, 39], ["stealth-example", "Event sheet 1", 17, 20]]},
+    "set-max-speed": {"examples": 1, "read": [["pathfinding-path-cost", "Event sheet 1", 3, 3]]},
+    "set-speed": {"examples": 2, "read": [["template-real-time-strategy", "Event sheet 1", 13, 13], ["avalanche", "EnemyEvents", 59, 59]]},
+    "start-path-group": {"examples": 1, "read": [["pathfinding-groups", "Event sheet 1", 3, 3]]},
+    "stop": {"examples": 5, "read": [["pixel-data-reader", "Code", 16, 17], ["catch-the-rats", "Events", 37, 39], ["stealth-example", "Event sheet 1", 55, 55]]}
+  },
+  "expressions": {
+    "cellsize": {"examples": 4, "read": [["pathfinding", "Event sheet 1", 8, 8], ["pathfinding-direct-movement", "Event sheet 1", 16, 16], ["pathfinding-path-cost", "Event sheet 1", 11, 11]]},
+    "movingangle": {"examples": 1, "read": [["pixel-data-reader", "Code", 22, 22]]},
+    "nodecount": {"examples": 7, "read": [["pathfinding-groups", "Event sheet 1", 10, 12], ["pathfinding", "Event sheet 1", 11, 13], ["pathfinding-direct-movement", "Event sheet 1", 12, 14]]},
+    "nodexat": {"examples": 7, "read": [["pathfinding-groups", "Event sheet 1", 9, 12], ["pathfinding", "Event sheet 1", 11, 13], ["pathfinding-direct-movement", "Event sheet 1", 11, 14]]},
+    "nodeyat": {"examples": 7, "read": [["pathfinding-groups", "Event sheet 1", 9, 12], ["pathfinding", "Event sheet 1", 11, 13], ["pathfinding-direct-movement", "Event sheet 1", 11, 14]]}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "conditions": {
+    "compare-text": {"examples": 7, "read": [["demonoire", "eTitleScreen", 3, 3], ["kiwi-story", "eMenus", 18, 18], ["graphing-calculator-js", "Events", 21, 21]]},
+    "has-tag-at-position": {"examples": 1, "read": [["bbcode-tag-range", "Event sheet 1", 3, 3]]},
+    "is-running-typewriter-text": {"examples": 1, "read": [["avalanche", "MenuEvents", 29, 29]]},
+    "on-typewriter-text-finished": {"examples": 1, "read": [["template-on-rails-shooter", "MainCode", 60, 60]]}
+  },
+  "actions": {
+    "append-text": {"examples": 2, "read": [["animated-spritefont-effects", "Event sheet 1", 3, 3], ["code-panel", "Gameplay", 4, 4]]},
+    "set-horizontal-alignment": {"examples": 2, "read": [["kiwi-story", "eLevelObjects", 26, 26], ["rock-and-rush", "Events", 15, 15]]},
+    "set-scale": {"examples": 4, "read": [["kiwi-story", "eLevelObjects", 26, 26], ["high-tech-vision", "Events", 21, 21], ["poplab", "eGlobal", 29, 29]]},
+    "set-text": {"examples": 61, "read": [["kiwi-story", "eHUD", 2, 2], ["bbcode-tag-range", "Event sheet 1", 3, 3], ["glokar", "eHUD", 4, 4]]},
+    "typewriter-text": {"examples": 9, "read": [["animated-spritefont-effects", "Event sheet 1", 11, 11], ["samuroof", "Story", 3, 3], ["pusha-pusha", "Global", 25, 25]]}
+  },
+  "expressions": {
+    "characterscale": {"examples": 1, "read": [["poplab", "eGlobal", 32, 32]]},
+    "text": {"examples": 9, "read": [["dig-the-way", "EventsScore", 8, 8], ["animated-spritefont-effects", "Event sheet 1", 1, 1], ["demonoire", "eGlobal", 27, 27]]}
+  }
+}

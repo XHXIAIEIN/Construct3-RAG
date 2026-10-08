@@ -1,0 +1,20 @@
+{
+  "conditions": {
+    "is-any-playing": {"examples": 46, "read": [["tesla-twist", "GameOver", 2, 2], ["hamburger-chef", "TutorialEvents", 3, 3], ["overloaded-underqualified", "CreditsEvents", 4, 4]]},
+    "is-playing": {"examples": 115, "read": [["animated-title-screen", "MainCode", 5, 5], ["samuroof", "Credits", 5, 5], ["spinning-stick", "MainCode", 10, 10]]},
+    "on-any-tweens-finished": {"examples": 2, "read": [["scaffold-shuffle", "Events", 25, 25], ["input-sequence", "MainCode", 19, 19]]},
+    "on-tweens-finished": {"examples": 111, "read": [["family-tree", "SuccessEvents", 4, 4], ["hamburger-chef", "TutorialEvents", 4, 4], ["animated-title-screen", "MainCode", 6, 6]]}
+  },
+  "actions": {
+    "set-enabled": {"examples": 2, "read": [["rpg-encounter", "OverworldEvents", 2, 2], ["digiautos", "Events", 31, 31]]},
+    "stop-all-tweens": {"examples": 36, "read": [["first-person-platformer", "Event sheet 1", 19, 19], ["labyrinth", "GameEvents", 12, 12], ["foggy-outbreak", "MainCode", 25, 25]]},
+    "stop-tweens": {"examples": 31, "read": [["animated-title-screen", "MainCode", 4, 4], ["test-your-might", "Gameplay", 4, 4], ["infinite-dash", "MainCode", 13, 15]]},
+    "tween-one-property": {"examples": 188, "read": [["tweening", "Event sheet 1", 1, 1], ["custom-actions", "Event sheet 1", 1, 1], ["reveal-the-tiles", "CongratsEvents", 1, 1]]},
+    "tween-two-properties": {"examples": 141, "read": [["tweening", "Event sheet 1", 1, 1], ["blacksmith-forge", "Code", 3, 3], ["living-card", "Code", 7, 7]]},
+    "tween-value": {"examples": 95, "read": [["animated-title-screen", "MainCode", 4, 4], ["samuroof", "Credits", 3, 3], ["sunset-runner", "Code", 1, 1]]}
+  },
+  "expressions": {
+    "progress": {"examples": 7, "read": [["tile-matcher", "Events", 21, 21], ["rhythm-game", "MainCode", 17, 17], ["jumpy-monster", "Events", 19, 19]]},
+    "value": {"examples": 56, "read": [["animated-title-screen", "MainCode", 5, 5], ["samuroof", "Credits", 5, 5], ["sunset-runner", "Code", 10, 10]]}
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": {
+    "compare-speed": {"examples": 1, "read": [["labyrinth", "MinotaurEvents", 51, 51]]},
+    "is-moving": {"examples": 9, "read": [["move-along-curved-path", "Event sheet 1", 2, 2], ["move-along-path", "Event sheet 1", 2, 2], ["template-gravityless-labyrinth", "MainCode", 6, 10]]},
+    "on-arrived": {"examples": 20, "read": [["move-along-curved-path", "Event sheet 1", 2, 2], ["move-along-path", "Event sheet 1", 2, 2], ["template-slide-puzzle", "Event sheet 1", 7, 9]]},
+    "on-hit-solid": {"examples": 4, "read": [["wall-jump", "MainCode", 22, 22], ["template-gravityless-labyrinth", "MainCode", 13, 13], ["traffic-jam", "Events", 16, 18]]}
+  },
+  "actions": {
+    "move-along-timeline": {"examples": 2, "read": [["move-along-curved-path", "Event sheet 1", 1, 1], ["move-along-path", "Event sheet 1", 1, 1]]},
+    "move-to-object": {"examples": 8, "read": [["traffic-jam", "Events", 24, 24], ["tesla-twist", "Gameplay", 44, 45], ["bewitched-torches", "Events", 23, 23]]},
+    "move-to-position": {"examples": 20, "read": [["move-to", "Event sheet 1", 1, 1], ["template-slide-puzzle", "Event sheet 1", 3, 3], ["gallery-swipe-gesture", "Event sheet 1", 8, 8]]},
+    "set-enabled": {"examples": 5, "read": [["template-gravityless-labyrinth", "MainCode", 17, 17], ["dash-slash", "MainCode", 30, 30], ["dock-fishing", "Events", 36, 36]]},
+    "set-max-speed": {"examples": 6, "read": [["traffic-jam", "Events", 19, 19], ["labyrinth", "GameEvents", 12, 12], ["jungle-master", "Events", 37, 37]]},
+    "set-speed": {"examples": 3, "read": [["grukkle-onslaught", "EveCredits", 10, 15], ["jungle-master", "Events", 37, 37], ["tesla-twist", "Gameplay", 44, 45]]},
+    "stop": {"examples": 8, "read": [["labyrinth", "GameEvents", 12, 12], ["insect-hunters", "Events", 36, 36], ["dock-fishing", "Events", 39, 39]]}
+  },
+  "expressions": {
+    "maxspeed": {"examples": 1, "read": [["tile-based-pathfinding", "MainCode", 78, 78]]},
+    "movingangle": {"examples": 4, "read": [["labyrinth", "PlayerEvents", 8, 8], ["arcade-shooter", "MainCode", 7, 7], ["pair-of-knights", "Events", 32, 32]]},
+    "speed": {"examples": 2, "read": [["airborne-explorer", "EnemyEvents", 43, 43], ["tile-based-pathfinding", "MainCode", 77, 77]]},
+    "targetx": {"examples": 4, "read": [["wall-jump", "MainCode", 21, 21], ["template-gravityless-labyrinth", "MainCode", 11, 12], ["airborne-explorer", "EnemyEvents", 43, 43]]},
+    "targety": {"examples": 3, "read": [["wall-jump", "MainCode", 21, 21], ["template-gravityless-labyrinth", "MainCode", 11, 12], ["grukkle-onslaught", "EveGameplay", 234, 234]]}
+  }
+}

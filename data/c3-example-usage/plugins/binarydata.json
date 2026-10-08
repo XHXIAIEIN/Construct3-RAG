@@ -1,0 +1,27 @@
+{
+  "conditions": {
+    "compare-value": {"examples": 1, "read": [["bbc-micro-bit-raw", "ButtonReading", 4, 4]]},
+    "on-compression-failed": {"examples": 1, "read": [["compression", "Event sheet 1", 5, 5]]},
+    "on-compression-finished": {"examples": 1, "read": [["compression", "Event sheet 1", 2, 2]]},
+    "on-decompression-failed": {"examples": 1, "read": [["compression", "Event sheet 1", 6, 6]]},
+    "on-decompression-finished": {"examples": 1, "read": [["compression", "Event sheet 1", 4, 4]]}
+  },
+  "actions": {
+    "compress": {"examples": 1, "read": [["compression", "Event sheet 1", 1, 1]]},
+    "decompress": {"examples": 1, "read": [["compression", "Event sheet 1", 3, 3]]},
+    "fill": {"examples": 1, "read": [["bbc-micro-bit-raw", "ChangeLED", 2, 4]]},
+    "set-from-string": {"examples": 3, "read": [["hashing", "Event sheet 1", 1, 1], ["compression", "Event sheet 1", 1, 1], ["encryption", "Event sheet 1", 1, 1]]},
+    "set-length": {"examples": 1, "read": [["bbc-micro-bit-raw", "ChangeLED", 2, 4]]},
+    "set-value": {"examples": 1, "read": [["bbc-micro-bit-raw", "ChangeLED", 3, 3]]}
+  },
+  "expressions": {
+    "bytelength": {"examples": 1, "read": [["compression", "Event sheet 1", 1, 1]]},
+    "get-all-text": {"examples": 2, "read": [["compression", "Event sheet 1", 4, 4], ["encryption", "Event sheet 1", 5, 5]]},
+    "get-base64": {"examples": 2, "read": [["compression", "Event sheet 1", 2, 2], ["encryption", "Event sheet 1", 2, 2]]},
+    "get-int16": {"examples": 1, "read": [["bbc-micro-bit-raw", "AccelerometerReading", 3, 3]]},
+    "get-int8": {"examples": 1, "read": [["bbc-micro-bit-raw", "TemperatureReading", 3, 3]]},
+    "get-uint16": {"examples": 1, "read": [["bbc-micro-bit-raw", "MagnetometerReading", 3, 3]]},
+    "get-uint8": {"examples": 1, "read": [["bbc-micro-bit-raw", "ChangeLED", 3, 3]]},
+    "get-url": {"examples": 2, "read": [["multiplayer-binary-transfer", "Room events", 30, 30], ["music-player", "Events", 32, 34]]}
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "conditions": {
+    "is-enabled": {"examples": 3, "read": [["top-down-shooter-3d", "MainCode", 24, 24], ["tilemap-switching", "MainCode", 32, 32], ["segmented-boss-fight", "MainCode", 86, 86]]}
+  },
+  "actions": {
+    "set-enabled": {"examples": 14, "read": [["switch-block", "MainCode", 17, 17], ["first-person-platformer", "Event sheet 1", 23, 23], ["template-4-direction-bomb", "MainCode", 24, 24]]}
+  }
+}

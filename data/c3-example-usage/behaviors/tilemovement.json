@@ -1,0 +1,20 @@
+{
+  "conditions": {
+    "can-move-direction": {"examples": 2, "read": [["rpg-encounter", "OverworldEvents", 5, 5], ["shooting-cube", "MainCode", 14, 14]]},
+    "is-moving": {"examples": 8, "read": [["template-tile-based-game", "Event sheet 1", 6, 6], ["labyrinth", "PlayerEvents", 10, 10], ["dynamic-camera-system", "MainCode", 6, 8]]},
+    "is-moving-direction": {"examples": 6, "read": [["template-tile-based-game", "Event sheet 1", 2, 2], ["labyrinth", "PlayerEvents", 11, 11], ["bewitched-torches", "Events", 10, 10]]}
+  },
+  "actions": {
+    "set-enabled": {"examples": 3, "read": [["bewitched-torches", "Events", 19, 19], ["stealth-example", "Event sheet 1", 17, 20], ["magnetic-mover", "Events", 32, 32]]},
+    "set-grid-position": {"examples": 2, "read": [["template-snake", "Event sheet 1", 10, 10], ["stealth-example", "Event sheet 1", 10, 13]]},
+    "set-ignoring-input": {"examples": 3, "read": [["labyrinth", "GameEvents", 2, 3], ["bewitched-torches", "Events", 15, 15], ["stealth-example", "Event sheet 1", 54, 54]]},
+    "set-speed": {"examples": 1, "read": [["stealth-example", "Event sheet 1", 55, 55]]},
+    "simulate-control": {"examples": 7, "read": [["dynamic-camera-system", "MainCode", 2, 2], ["template-4-direction-bomb", "MainCode", 5, 5], ["bewitched-torches", "Events", 6, 6]]}
+  },
+  "expressions": {
+    "grid-x": {"examples": 2, "read": [["template-snake", "Event sheet 1", 9, 13], ["stealth-example", "Event sheet 1", 10, 13]]},
+    "grid-y": {"examples": 2, "read": [["template-snake", "Event sheet 1", 9, 13], ["stealth-example", "Event sheet 1", 10, 13]]},
+    "target-x": {"examples": 1, "read": [["tile-based-pathfinding", "MainCode", 19, 19]]},
+    "target-y": {"examples": 1, "read": [["tile-based-pathfinding", "MainCode", 19, 19]]}
+  }
+}

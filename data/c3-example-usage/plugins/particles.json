@@ -1,0 +1,16 @@
+{
+  "actions": {
+    "fast-forward": {"examples": 1, "read": [["child-particles", "Event sheet 1", 1, 1]]},
+    "set-blend-mode": {"examples": 1, "read": [["mask-effect-puzzle", "MainCode", 30, 30]]},
+    "set-rate": {"examples": 44, "read": [["fireworks", "Event sheet 1", 6, 6], ["spinning-stick", "MainCode", 11, 11], ["robotic-loader", "Code", 7, 7]]},
+    "set-size": {"examples": 1, "read": [["cellf-defense", "Game events", 126, 128]]},
+    "set-speed": {"examples": 1, "read": [["cellf-defense", "Game events", 126, 128]]},
+    "set-spraying": {"examples": 1, "read": [["particle-thruster", "Event sheet 1", 7, 7]]},
+    "set-x-randomiser": {"examples": 1, "read": [["cellf-defense", "Game events", 126, 128]]},
+    "set-y-randomiser": {"examples": 2, "read": [["winter-tree", "Events", 6, 6], ["cellf-defense", "Game events", 126, 128]]}
+  },
+  "expressions": {
+    "particlecount": {"examples": 4, "read": [["particle-fountain", "Event sheet 1", 2, 2], ["particles", "Event sheet 1", 2, 2], ["fireworks", "Event sheet 1", 4, 4]]},
+    "timeout": {"examples": 1, "read": [["wood-chopping", "Code", 9, 10]]}
+  }
+}

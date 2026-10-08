@@ -1,0 +1,24 @@
+{
+  "conditions": {
+    "compare-text": {"examples": 6, "read": [["music-player", "Events", 19, 19], ["airborne-explorer", "MenuEvents", 37, 37], ["multiplayer-time-attack", "Game events", 61, 61]]},
+    "has-tag-at-position": {"examples": 3, "read": [["bbcode-tag-range", "Event sheet 1", 1, 1], ["flowchart-questionnaire", "Event sheet 1", 11, 11], ["solar-system", "Events", 39, 40]]},
+    "is-running-typewriter-text": {"examples": 4, "read": [["custom-visual-novel-engine", "Events", 29, 29], ["visual-novel-sniff-and-fetch", "Events", 6, 6], ["kitty-katcher", "Gameplay", 36, 38]]},
+    "on-typewriter-text-finished": {"examples": 4, "read": [["kitty-katcher", "Credits", 6, 8], ["custom-visual-novel-engine", "Events", 19, 21], ["visual-novel-sniff-and-fetch", "Events", 18, 18]]}
+  },
+  "actions": {
+    "append-text": {"examples": 18, "read": [["system-wait", "Event sheet 1", 1, 1], ["json", "Event sheet 1", 3, 4], ["xml", "Event sheet 1", 3, 4]]},
+    "set-font-color": {"examples": 24, "read": [["effects-glass", "Event sheet 1", 1, 1], ["effects-oldtv", "Event sheet 1", 1, 1], ["effects-haze", "Event sheet 1", 1, 1]]},
+    "set-font-face": {"examples": 3, "read": [["cgs-leaderboards", "ShowScoresEvents", 5, 5], ["audio-positioning", "Event sheet 1", 3, 3], ["audio-effects", "Event sheet 1", 19, 19]]},
+    "set-font-size": {"examples": 5, "read": [["gift-guesser", "Code", 11, 11], ["fruit-merger", "Events", 18, 18], ["reveal-the-tiles", "GameEvents", 50, 50]]},
+    "set-text": {"examples": 134, "read": [["effects-glass", "Event sheet 1", 1, 1], ["effects-oldtv", "Event sheet 1", 1, 1], ["sine-behavior-types", "Event sheet 1", 1, 1]]},
+    "typewriter-finish": {"examples": 5, "read": [["custom-visual-novel-engine", "Events", 29, 29], ["visual-novel-sniff-and-fetch", "Events", 6, 6], ["kitty-katcher", "Gameplay", 33, 33]]},
+    "typewriter-text": {"examples": 10, "read": [["icons-in-text", "Event sheet 1", 1, 1], ["animated-text-effects", "Event sheet 1", 8, 8], ["kitty-katcher", "Credits", 4, 4]]},
+    "update-html": {"examples": 1, "read": [["text-icons-to-html", "Event sheet 1", 1, 1]]}
+  },
+  "expressions": {
+    "as-html": {"examples": 1, "read": [["text-icons-to-html", "Event sheet 1", 1, 1]]},
+    "text": {"examples": 10, "read": [["animated-text-effects", "Event sheet 1", 1, 1], ["kitty-katcher", "Credits", 4, 4], ["custom-visual-novel-engine", "Events", 31, 31]]},
+    "textheight": {"examples": 2, "read": [["flowchart-questionnaire", "Event sheet 1", 5, 5], ["kitty-katcher", "Gameplay", 35, 35]]},
+    "textwidth": {"examples": 2, "read": [["flowchart-questionnaire", "Event sheet 1", 5, 5], ["kitty-katcher", "Gameplay", 35, 35]]}
+  }
+}

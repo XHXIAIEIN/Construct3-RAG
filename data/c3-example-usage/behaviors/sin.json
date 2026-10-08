@@ -1,0 +1,16 @@
+{
+  "conditions": {
+    "compare-movement": {"examples": 1, "read": [["sine-behavior-types", "Event sheet 1", 1, 1]]},
+    "is-active": {"examples": 7, "read": [["eventide", "EventsEnemy", 31, 31], ["airborne-explorer", "MenuEvents", 22, 24], ["ship-repair-js", "Events", 14, 14]]}
+  },
+  "actions": {
+    "set-active": {"examples": 25, "read": [["robotic-loader", "Code", 5, 5], ["dynamic-camera-system", "MainCode", 14, 14], ["rat-purrsuit", "MenuEvents", 14, 14]]},
+    "set-cycle-position": {"examples": 13, "read": [["skyscraper-builder", "MainCode", 21, 21], ["tile-matcher", "Events", 12, 12], ["labyrinth", "GameEvents", 23, 23]]},
+    "set-magnitude": {"examples": 5, "read": [["audio-positioning", "Event sheet 1", 1, 1], ["insect-hunters", "Events", 5, 5], ["jungle-master", "Events", 37, 37]]},
+    "set-period": {"examples": 7, "read": [["tile-matcher", "Events", 12, 12], ["toolbox-wheel", "Events", 19, 19], ["hamburger-chef", "GameEvents", 40, 40]]},
+    "update-initial-state": {"examples": 1, "read": [["scaffold-shuffle", "Events", 5, 5]]}
+  },
+  "expressions": {
+    "value": {"examples": 8, "read": [["sine-behavior-types", "Event sheet 1", 1, 1], ["slide-puzzle-3d", "MainCode", 14, 14], ["top-down-jump", "MainCode", 26, 26]]}
+  }
+}

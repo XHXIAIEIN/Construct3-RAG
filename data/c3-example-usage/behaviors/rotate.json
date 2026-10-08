@@ -1,0 +1,9 @@
+{
+  "actions": {
+    "set-enabled": {"examples": 3, "read": [["manual-gps", "Gameplay", 5, 8], ["rhythm-game", "MainCode", 33, 33], ["segmented-boss-fight", "MainCode", 81, 81]]},
+    "set-speed": {"examples": 30, "read": [["spinning-stick", "MainCode", 10, 10], ["dynamic-camera-system", "MainCode", 11, 11], ["grukkle-onslaught", "EveCredits", 10, 15]]}
+  },
+  "expressions": {
+    "speed": {"examples": 1, "read": [["spinning-stick", "MainCode", 8, 9]]}
+  }
+}

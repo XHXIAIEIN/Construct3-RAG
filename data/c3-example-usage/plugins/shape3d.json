@@ -1,0 +1,14 @@
+{
+  "actions": {
+    "set-back-face-culling": {"examples": 1, "read": [["back-face-culling", "Event sheet 1", 3, 3]]},
+    "set-face-object": {"examples": 19, "read": [["8-sided-billboard", "MainCode", 9, 9], ["skyscraper-builder", "MainCode", 18, 22], ["farming-lines", "Code", 3, 3]]},
+    "set-face-visible": {"examples": 2, "read": [["template-first-person-shooter", "Event sheet 1", 2, 2], ["orthographic-projection", "Event sheet 1", 1, 1]]},
+    "set-z-height": {"examples": 13, "read": [["synth-sunset", "Events", 4, 4], ["tank-movement", "MainCode", 27, 27], ["hanoi-tower", "MainCode", 32, 32]]}
+  },
+  "expressions": {
+    "face-image-point-x": {"examples": 3, "read": [["living-card", "Code", 5, 5], ["light-gun", "Gameplay", 32, 32], ["rock-and-rush", "Events", 49, 49]]},
+    "face-image-point-y": {"examples": 3, "read": [["living-card", "Code", 5, 5], ["light-gun", "Gameplay", 32, 32], ["rock-and-rush", "Events", 49, 49]]},
+    "face-image-point-z": {"examples": 3, "read": [["living-card", "Code", 5, 5], ["light-gun", "Gameplay", 32, 32], ["rock-and-rush", "Events", 49, 49]]},
+    "z-height": {"examples": 18, "read": [["first-person-platformer", "Event sheet 1", 18, 20], ["farming-lines", "Code", 3, 3], ["test-your-might", "Gameplay", 21, 22]]}
+  }
+}
