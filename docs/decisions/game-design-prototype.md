@@ -46,6 +46,14 @@ and the built game is held to the same tests.
   random positions at the top", "center overlay when game ends". The first
   screen can be measured against a place of a few words, thirds and sides,
   before the first comma, but not against the rest.
+- A design that holds only the rules loses the request. A review then holds
+  the game to the design, which is the model's reading of the request, and
+  a part the model dropped leaves no trace: the next session either builds
+  it unasked or never learns that it was asked for.
+- A game can pass every test and still be won by a player who does nothing:
+  a timer that ends the round and counts as the win, or a timer that raises
+  the score. Every test plays inputs, so none shows it; a run without input
+  does.
 - The design step trades logic errors for games that are not delivered: a
   game that is delivered passed tests its model stated, and a game that
   fails says why. It does not by itself raise the share of games that play.
@@ -67,14 +75,19 @@ and the built game is held to the same tests.
 Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
 `scripts/game_model.py`, and `references/designing-a-game.md`.
 
-- The design holds the core loop, the official example it was read
+- The design holds the user's request in their words, what this round
+  leaves for later, the core loop, the official example it was read
   against, the screen's regions, the state table, the inputs with how each
   is done in the game, the rules (trigger, conditions, effects, sub-rules,
   Else), win and lose, and the tests. Each rule becomes one event.
-- The check refuses a gap by its path: a state no rule writes or nothing
-  reads, a fact stored twice, an input without feedback, no restart, a
-  sub-rule with no condition beside siblings that test a case, a design of
-  more than 10 state rows or 14 rules.
+- The check refuses a gap by its path: no request, an empty list of what is
+  left for later, a state no rule writes or nothing reads, a fact stored
+  twice, an input without feedback, no restart, a sub-rule with no
+  condition beside siblings that test a case, a design of more than 10
+  state rows or 14 rules. A round that builds the whole request writes
+  `["nothing left out"]` as its `later`. The line that passes a design
+  repeats the request, cut to about 100 characters, and the items left for
+  later, and asks the report to name them.
 - The prototype runs the rules at 60 ticks a second in the runtime's order:
   actions, then sub-events, Else after a sibling that did not run, Wait
   deferring the rest of the event, a restart that resets what the layout
@@ -91,6 +104,14 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
   test expects one such row after it. A rule fired by an input that writes
   an Array cell changes a count in its own chain, since the cell is not on
   screen. Neither the win nor the lose may hold before the first input.
+- The prototype plays on from the first screen without input for up to
+  120 s, and a win that comes before the lose is refused with the rule that
+  last set what the win reads. A game won by outlasting a timer, where the
+  rules do not model the danger, says so in `won_by_waiting`: what the
+  player does while it runs. The ok line repeats it, and the check refuses
+  the field when the game is not won without input. The bound is a choice,
+  not a measurement: six times the 20 s a test may wait, and the run takes
+  milliseconds.
 - Every tap is a tap on the screen: it runs the rules of every screen input
   whose region holds it, in the design's order, before the rules of the
   object it taps. An input on a point may name its region; a tap on an
@@ -142,6 +163,10 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
 - A design's place and the screen disagree where the player sees no fault,
   such as a HUD band whose middle falls outside the third its words name:
   the place is measured by the box's edges instead of its middle.
+- A game is won without input only after 120 s: the design states the
+  length of its round, and the run without input lasts that long.
+- A report after the build leaves out what was left for later although the
+  ok line asks for it: the result of `play_design.py` repeats the list too.
 - A genre needs what the expression language cannot state, such as physics
   or a behavior's motion: the design abstracts it, and a test that depends
   on it is left to the editor run.

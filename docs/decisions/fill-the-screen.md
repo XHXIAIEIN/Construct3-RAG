@@ -19,6 +19,10 @@ Filling the screen has two traps, both in `prompts/pitfalls/`:
   uncovered. The layer's colour shows there, and a tap there misses the
   dim (`input.md`).
 
+A phone with a notch or rounded corners has two edges to fill to: the
+physical screen's, or those of the safe area, the rectangle inside it that
+is always visible. A HUD held to the physical edge can sit under the notch.
+
 The Layout View draws a layer in the order its file lists the instances.
 An order left to placement shows an order no user would choose, and a
 label listed before its panel draws under it.
@@ -34,6 +38,14 @@ label listed before its panel draws under it.
   distance from the viewport edge they name, without resizing it. *Right
   edge* and *Bottom edge* resize it. An anchored object belongs on a layer
   at parallax 0 (`behavior-reference/anchor.md`).
+- The manual, *Viewport fit*: on a non-rectangular screen the default
+  *Auto* adds borders so that the whole viewport is visible. *Cover* fills
+  the physical screen, and a notch or a rounded corner can then hide part
+  of the viewport (`project-primitives/projects.md`). Platform Info's
+  `SafeAreaInsetLeft`, `Top`, `Right` and `Bottom` give the safe area's
+  insets in CSS pixels, 0 on a rectangular screen
+  (`plugin-reference/platform-info.md`). The editor's new project,
+  `data/c3-new-project/`, writes *Auto*.
 - A game generated from the template needed all three: *Scale outer*, an
   anchored hint, and layers sorted by the Y of each object's feet.
 - Previews of the stand-in game at 430×932, 1280×720 and 1600×700, and at
@@ -55,6 +67,13 @@ For pixel art, *Integer scale outer* is chosen because every pixel stays
 square. The cost is a margin that varies with the screen. *Scale outer*
 would fill exactly but scale the pixels unevenly.
 
+For a notch or rounded corners, *Viewport fit* stays *Auto*. The manual
+says *Auto* keeps the whole viewport visible, so the HUD that Anchor holds
+to the screen's edges is not cut by the notch. The cost is a border beside
+the notch. *Cover* would
+fill the physical screen, but every edge element would then need an
+offset by the safe-area insets, which the helpers do not compute.
+
 ## Decision
 
 - `FULLSCREEN` is `scale-outer`, or `integer-scale-outer` when `PIXEL_ART`.
@@ -69,6 +88,14 @@ would fill exactly but scale the pixels unevenly.
   instance placed by `anchor()` or `row()` takes it as `behaviors=`.
   `build_all()` gives each type with an anchored instance the behavior, and
   that type's other instances a block that holds nothing (`anchor_types()`).
+- `PROPERTY_DEFAULTS` gives `viewportFit` the value `auto`, and
+  `build_project()` keeps the value a project already holds, so the edges
+  `anchored()` names lie inside the safe area on a screen with a notch or
+  rounded corners. A game that
+  sets *Cover* in the editor offsets its edge elements by Platform Info's
+  `SafeAreaInset` expressions itself. Not verified on a device: no phone
+  with a notch or rounded corners has run a generated game, so this rests
+  on the manual.
 - `backdrop()` and `screen_box()` reach `SCREEN_PAD`, twice the viewport's
   longer side, past the viewport on every side. This covers a screen up to
   4:1 in either orientation. A dim is laid out over `screen_box()`. The tap
@@ -104,3 +131,6 @@ would fill exactly but scale the pixels unevenly.
   which needs *Right edge* or *Bottom edge*.
 - Users of the skill ask for bars, such as for a game designed to one
   fixed screen shape.
+- A phone with a notch or rounded corners shows an anchored HUD element
+  cut under *Auto*, or a game needs its art under the notch, which takes
+  *Cover* and offsets by the safe-area insets.
