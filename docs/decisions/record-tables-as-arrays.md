@@ -40,6 +40,12 @@ the event that copies each cell to the key `<id>.<field>`. `dictionary_file()`
 stays for a few named values, such as settings. The `data` finding of
 `review_design.py` names the same form.
 
+A field that a record lacks reads 0 or `""` in the game, so a misspelt field
+fails without a word. A record with a field outside `fields=` stops the
+generator with the record, the field and the nearest listed one. Without
+`fields=`, a field that one record alone has, spelt like a field of the
+other records, prints a warning, because records may differ on purpose.
+
 ## Re-evaluate when
 
 The runtime gains a way to read an Array cell by a header name, or a project

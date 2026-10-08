@@ -192,10 +192,10 @@ are.
 
 ```json
 [
-  {"before": 1, "events": [{"eventType": "variable", "name": "best", "initialValue": "0"}]},
-  {"event": 2, "action": 2, "set": {"parameters": {"text": "\"Score: 0  Best: \" & best"}}},
-  {"event": 7, "action": 2, "set": {"parameters": {"text": "\"Score: \" & score & \"  Best: \" & best"}}},
-  {"event": 9, "position": 1, "add-actions": [
+  {"before": 1, "line": "group Setup", "events": [{"eventType": "variable", "name": "best", "initialValue": "0"}]},
+  {"event": 2, "line": "On start of layout", "action": 2, "set": {"parameters": {"text": "\"Score: 0  Best: \" & best"}}},
+  {"event": 7, "line": "function AddScore", "action": 2, "set": {"parameters": {"text": "\"Score: \" & score & \"  Best: \" & best"}}},
+  {"event": 9, "line": "Coin.Count = 0", "position": 1, "add-actions": [
     {"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "best", "value": "max(best, score)"}}]}
 ]
 ```
@@ -205,7 +205,10 @@ python scripts/edit_sheet.py Game plan.json
 ```
 
 Every number is an event number of the sheet as it prints now, whatever the
-operations above it do, so one print serves a whole plan. An event replaced
+operations above it do, so one print serves a whole plan. Beside it,
+`"line"` is the line the print shows for that event, or a part of it: a
+number from an older print, or a miscounted one, is then refused with where
+that line is now, instead of changing another event. An event replaced
 by one event keeps its number for the operations below. Its sub-events go
 with it: write the ones to keep into the `"events"` that replace it, or
 `move` them out in an operation above.

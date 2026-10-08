@@ -415,7 +415,7 @@ def test_the_plan_skill_md_shows_is_one_the_script_takes(project):
     shown = text.split("## Change a sheet with a plan")[1].split("```json\n")[1].split("```")[0]
     (project / "plan.json").write_text(shown, encoding="utf-8")
     code, out = tool(project, "edit_sheet", "Game", "plan.json")
-    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
+    assert code == 0 and out.splitlines()[-1].startswith("ok:") and "by number alone" not in out, out
 
 
 def test_new_sid_left_in_a_plan_is_named(project):
