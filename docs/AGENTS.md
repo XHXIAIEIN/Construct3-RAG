@@ -54,6 +54,7 @@ The project skill and the prompts:
 |--------|-----------------|
 | `project-tools-skill.md` | Why the project tools ship as an Agent Skill, and what keeps small models on them |
 | `generator-helpers-inline.md` | Why the generator template keeps its helpers in the file the agent edits, between markers that let a game's copy take the skill's current ones, and what was measured |
+| `instruction-block-refresh.md` | Why the block in a game project's `AGENTS.md` carries a version and a stamp between markers, when `install.py` replaces it, and how an edited block or one from before the markers is treated |
 | `record-tables-as-arrays.md` | Why the generator template writes a table of records as an Array file with field names in row 0, and copies it into a Dictionary at start |
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON, and how a plan names a variable or a comment |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
@@ -72,7 +73,7 @@ The project skill and the prompts:
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
 | `landscape-viewport.md` | Why the generator template starts a game at 1920×1080 landscape, and what follows from it |
-| `fill-the-screen.md` | Why a generated game fills the screen with *Scale outer* or *Integer scale outer*, its HUD held to the screen's edges by Anchor, and each layer listed back to front |
+| `fill-the-screen.md` | Why a generated game fills the screen with *Scale outer* or *Integer scale outer*, its HUD held to the screen's edges by Anchor, *Viewport fit* left at *Auto*, which keeps the whole viewport visible on a notched phone, and each layer listed back to front |
 | `layout-by-name.md` | Why a generated screen is laid out by names, a button with its label, named bands and a main object sized to the stage, with the positions computed and checked as numbers |
 | `art-from-the-image-tool.md` | Why a generated game's art comes from the agent's image tool through `art()` and `prepare_art.py`, and is not drawn in code |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |

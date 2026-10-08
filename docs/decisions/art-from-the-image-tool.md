@@ -131,6 +131,17 @@ Option 3.
     their colour, shade and element words.
 
   A word after "no", "without", "无" or "不含" does not count.
+- `--list` also warns, above the prompts, when `ART_STYLE` names nothing
+  of one of the dimensions of `DIMENSIONS`: the rendering, the linework,
+  the colour temperature, the light direction, the proportions and the
+  framing. Each prompt leaves such a dimension to the image tool, picture
+  by picture. A dimension counts when the sentence names a word of its
+  list, English or Chinese. A negated word counts too, since "no outlines"
+  fixes the linework, and `<dimension> unspecified` leaves one open on
+  purpose. The line that asks for an empty `ART_STYLE` names the
+  dimensions, and so does the comment above `ART_STYLE` in the template,
+  whose two examples pass. It stays a warning, because a sentence can fix a
+  dimension in words that no list holds.
 - `scripts/prepare_art.py` keeps a picture's own transparency. Otherwise it
   refuses a picture whose edge is not one flat colour, is neither key, or
   is crossed by the subject, saying what to make instead. It removes the
@@ -184,6 +195,9 @@ Option 3.
   words were tried on subjects written for the tests, not on a model's
   run. The cap of three refusals and the four subjects of the key picture
   are choices; neither was measured on an image tool here.
+- The dimensions of `DIMENSIONS` are a choice. No run here has shown that
+  naming them steadies the pictures, and their words were tried on the
+  template's examples and the tests' sentences only.
 - The buttons of the card game are one thing in several colours, as
   meant, and get the colour warning; it says that it applies to different
   things.
@@ -206,6 +220,9 @@ Option 3.
 - A warning fires on a subject that comes out right, or a subject comes
   out wrong without one: change the word lists in `prepare_art.py`, and
   add the subject to the ones above.
+- The style warning names a dimension that the sentence fixes in other
+  words, or pictures from a sentence without the warning still differ in
+  one way: add the words, or the dimension, to `DIMENSIONS`.
 - A picture keeps its stand-in after three refusals that a fourth picture
   would have fixed, or the image tool itself refuses a prompt: the cap or
   the refusal's sentence needs that run's evidence.

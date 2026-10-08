@@ -24,9 +24,16 @@ about the editor or the preview goes to `editor-and-preview.md`.
    must not fire, the case the game falls back to there, and a
    follow-through: the player does what the game asked and the state that
    asked for it clears. Play every one; a plan that plays only the first
-   passes a condition that fires everywhere. A change with no condition of
-   its own, a colour, a size, a duration, a volume, has one case: reach the
-   scene where it shows and read it as step 4 says. [observed in a game project, r504 preview, 2026-10-02: an
+   passes a condition that fires everywhere. If the game restarts the
+   layout or goes to it again (a new round, a retry, a return from a
+   menu), play the cases a second time. *Restart layout* and *Go to
+   layout* bring the instances back as placed but keep every global
+   variable and static local at its end value, so a case that passes the
+   first time can fail the second
+   (`Construct3-RAG/prompts/pitfalls/restarting-a-layout.md`). A change
+   with no condition of its own, a colour, a size, a duration, a volume,
+   has one case: reach the scene where it shows and read it as step 4
+   says. [observed in a game project, r504 preview, 2026-10-02: an
    idle hint to deploy a piece was played with the slot's column holding an
    enemy, without one, where it had to fall back to a merge hint, and
    followed through by dragging as the hand showed]
