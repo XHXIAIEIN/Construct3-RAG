@@ -3,11 +3,13 @@ acceptance tests on the design's own rules, without the editor.
 
     python scripts/check_design.py DESIGN.json [--rag FOLDER] [--limit CHARS]
 
-The design is JSON, as references/designing-a-game.md describes: the core
-loop, the closest official example and what it takes from it, the screen's
-regions, the state table, the inputs, the rules as data (trigger, conditions,
+The design is JSON, as references/designing-a-game.md describes: the user's
+request in their words, what this round leaves for later, the core loop, the
+closest official example and what it takes from it, the screen's regions,
+the state table, the inputs, the rules as data (trigger, conditions,
 effects, sub-rules), win and lose, and the acceptance tests. The script reads
-it and refuses a gap by its path: a missing table, a name nothing defines,
+it and refuses a gap by its path: a missing table, an empty list of what is
+left for later, a name nothing defines,
 a state no rule writes or nothing reads, a fact kept in two places, an input
 without feedback, no rule that restarts a game that ends, an input that changes nothing the
 player sees, and a cell of an Array an input writes with nothing on screen
@@ -21,11 +23,13 @@ region holds it, before the tapped object's rules, as the runtime does. After
 the last step the game runs 1 s more and the test's last expects are read
 again, so a restart that a Wait holds back shows. It refuses a failed expect
 with the values the state held, a rule no test reaches, a win or a lose no
-test reaches or that holds at launch, an input after which no test expects
-what the player sees, a restart that leaves a value other than a new game's,
-and rules that fire each other without end.
-A design that passes holds a game whose rules close the loop; build it, one
-rule per event, then play the same tests in the editor with play_design.py.
+test reaches or that holds at launch, a win that comes within 120 s without
+any input unless the design says waiting is the win, an input after which no
+test expects what the player sees, a restart that leaves a value other than
+a new game's, and rules that fire each other without end.
+A design that passes holds a game whose rules close the loop; its ok line
+repeats the request and what is left for later. Build it, one rule per
+event, then play the same tests in the editor with play_design.py.
 """
 from __future__ import annotations
 
@@ -265,7 +269,8 @@ def expected_after(design: gm.Design) -> None:
 
 
 def launch(design: gm.Design) -> None:
-    """Refuse a win or a lose that holds on the first screen, before the player does anything."""
+    """Refuse a win or a lose that holds on the first screen, before the player does anything; then play on without
+    input and refuse a win that comes before the lose."""
     try:
         sim = gm.Sim(design)
         sim.advance(0.5)
@@ -279,6 +284,61 @@ def launch(design: gm.Design) -> None:
                             f"Give the rows it reads the start of a new game, in the state's start and in a \"start\" "
                             f"rule, and play the tests from there rather than from a fixture. If the game is never "
                             f"{'won' if key == 'win' else 'lost'}, as a demo of one mechanic, write \"{key}\": \"none\"")
+    if not (sim.won or sim.lost):
+        idle(design, sim)
+
+
+def idle(design: gm.Design, sim: gm.Sim) -> None:
+    """Play on without input up to gm.IDLE seconds. A win that comes before the lose asks nothing of the player, so
+    it is refused, unless "won_by_waiting" says that outlasting a timer is the win. That field is refused when the
+    game is not won without input."""
+    if design.win is None:
+        return
+    try:
+        while sim.t < gm.IDLE and not (sim.won or sim.lost):
+            sim.ops = 0         # OPS_MAX bounds one test, not this run; the rules bound what one tick runs
+            sim.tick()
+    except gm.ModelError:
+        return      # play() names it with the test
+    at = f"{sim.t:.1f} s"
+    if sim.won and not sim.lost and not design.waiting:
+        names = gm.names_in(design.win)
+        hit = next(((n, rid) for n, rid in reversed(sim.set_by.items()) if n in names), None)
+        by = "no rule set what it reads"
+        if hit:
+            top = top_rule(design, hit[1])
+            by = (f"rule {hit[1]}" + (f" (a sub-rule of {top.id})" if top.id != hit[1] else "")
+                  + f", fired by {top.on}, set {hit[0]}")
+        design.bad("win", f"{design.data.get('win')} holds after {at} without any input"
+                          + (", before the lose" if design.lose is not None else "") + f": {by}. A player who does "
+                          f"nothing wins. Make the win need the player: give the rule that ends the round a condition "
+                          f"that only the inputs make true, such as a score that the player's hits raise. Or let the "
+                          f"end of the timer be the lose. If outlasting a timer is the win, as in a game where the "
+                          f"player survives until it runs out, write \"won_by_waiting\": \"<what the player does while "
+                          f"it runs>\"")
+    elif not sim.won and design.waiting:
+        how = f"the lose holds after {at}" if sim.lost else f"neither the win nor the lose holds in {gm.IDLE:g} s"
+        design.bad("won_by_waiting", f"without any input the game is not won: {how}. The field is for a game won by "
+                                     f"outlasting a timer; drop it")
+
+
+def top_rule(design: gm.Design, rid: str) -> gm.Rule:
+    """The top-level rule whose sub-rules hold the rule, or the rule itself."""
+    parents = {c.id: r for r in design.all_rules() for c in r.children}
+    rule = design.by_id[rid]
+    while rule.id in parents:
+        rule = parents[rule.id]
+    return rule
+
+
+def brief(text: str, most: int = 100) -> str:
+    """The text on one line, cut after a word near `most` characters."""
+    line = " ".join(text.split())
+    if len(line) <= most:
+        return line
+    cut = line[:most]
+    space = cut.rfind(" ")
+    return (cut[:space] if space > most // 2 else cut).rstrip(",;:") + " ..."
 
 
 def run_test(design: gm.Design, t: dict) -> dict:
@@ -480,6 +540,15 @@ def tables(design: gm.Design) -> list[str]:
     lines.append("state, stored in, written by, read by:")
     for n, s in design.state.items():
         lines.append(f"  {n}  {s.stored_in}  {', '.join(written[n]) or '-'}  {', '.join(read[n]) or '-'}")
+    places = gm.screen_places(design)
+    if places:
+        lines.append("screen, place, checked by:")
+        for p in places:
+            said = " ".join([p.third] + [f"{side} {ref}" for side, ref in p.sides]).strip()
+            lines.append(f"  {p.key}  {p.text}  " + (f"play_design.py: {said}" if p.measured else "review_look.py"))
+        if not all(p.measured for p in places):
+            lines.append(f"  play_design.py measures a place whose words before the first comma are only "
+                         f"{gm.SCREEN_WORDS}; review_look.py asks about the others")
     return lines
 
 
@@ -529,11 +598,17 @@ def main() -> int:
         out.append(f"design: {n} finding{'s' if n != 1 else ''}; fix each at its path and run this again")
     else:
         ends = " and ".join(k for k, node in (("win", design.win), ("lose", design.lose)) if node is not None)
-        out.append(f"ok: design complete; {len(design.tests)} tests pass in the prototype, "
-                   + (f"{ends} reached, restart checked" if ends else "no win or lose: a demo that never ends")
-                   + ". Next, build the game, one "
-                   "event per rule with the rule's id in the comment above it, then play the same tests in the "
-                   "editor: python scripts/play_design.py " + str(args.design))
+        said = f"{ends} reached, restart checked" if ends else "no win or lose: a demo that never ends"
+        if design.win is not None:
+            said += (f", won by waiting as the design says: {brief(design.waiting, 80)}" if design.waiting
+                     else f", not won in {gm.IDLE:g} s without input")
+        whole = [v.lower() for v in design.later] == [gm.NOTHING_LATER]
+        later = "nothing is left for later" if whole else "left for later: " + "; ".join(design.later)
+        out.append(f"ok: design complete; {len(design.tests)} tests pass in the prototype, {said}. Request: "
+                   f"\"{brief(design.request)}\"; {later}."
+                   + ("" if whole else " When you report, name what is left for later.")
+                   + " Next, build the game, one event per rule with the rule's id in the comment above it, then play "
+                   f"the same tests in the editor: python scripts/play_design.py {args.design}")
     shown = c3.fitting(out, args.limit)
     print("\n".join(out[:shown]))
     if shown < len(out):

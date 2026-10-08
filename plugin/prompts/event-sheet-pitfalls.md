@@ -29,6 +29,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 - A type and its family are picked separately, so narrowing `Piece` never narrows `Pieces`. Refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
 - Picking a family never picks a type's container. Pick the type from the family in a sub-event, `Enemy: Pick by unique ID Enemies.UID`, one per member type.
+- An expression that names another member of a container reads the member of the same instance, in an action and in a condition. A custom action called with a parameter of such an expression needs *For each* first, so each instance passes its own value.
 - *Pick children* picks only among the child type's current picks, which its container may have narrowed. Give the child type a family of its own with the one member and pick through it.
 - *Pick parent* with *Own* looks one level up only. A grandparent needs *All*, or the event silently picks nothing.
 - A Dictionary or JSON in a container gives each instance its own copy. Use it instead of a growing list of instance variables.
@@ -75,6 +76,7 @@ If the events define or call a function or a custom action, read
 - If two functions, or two custom actions of one object, have names that differ only in case, the editor renames the second, and every call runs the first. Name them apart by more than case.
 - A function without parameters is called without parentheses: `Functions.name`, not `Functions.name()`.
 - The deprecated Function plugin's call by a string is a function map in built-in functions: *Map function to string*, then *Call mapped function* with the string, or `Functions.CallMapped` for a value.
+- *Call mapped function* forwards from its index only to a mapped function; the default gets every parameter from 0. A call that finds nothing to run only warns in the console. Give the default the caller's whole parameter list.
 
 ### Timer
 
@@ -115,6 +117,7 @@ If you write expressions or name and place variables, read
 - If the factor comes from the engine, such as a tween's value, `lerp` needs no time of its own.
 - `lerp` and `unlerp` do not clamp.
 - `%` keeps the sign of the left operand, so `-1 % 5` is `-1`.
+- `%` is applied before `*`, so `a * b % c` is `a * (b % c)`. Write `(a * b) % c`.
 - There is no null, and a missing value reads as 0. Ask *Has key* or the size first.
 - JSON `Type(path)` is `"undefined"` for a missing path, so it can test presence inside an expression.
 - *For* counts down when its end is below its start. Before `For 0 to count - 1`, test the count, or start ≤ end.
@@ -134,7 +137,7 @@ If the events place, move or rotate objects or read the viewport, read
 - The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
 - Tile movement's *Set grid position* takes a column and a row, not pixels. Convert a position with `round((X - offset X) / grid width)`.
 - `ViewportLeft` and the rest take a layer. `LayoutWidth` and `ViewportWidth(layer)` differ.
-- *Scale outer* keeps a parallax-0 HUD centred on the design area. Pin a screen-edge HUD with Anchor and stretch a backdrop to the screen with Anchor's left and right edges.
+- *Scale outer* keeps a parallax-0 HUD centred on the design area. Pin a screen-edge HUD with Anchor. Stretch a backdrop to the screen with Anchor's left and right edges. In a one-screen layout, turn on *Unbounded scrolling* so the game stays centred too.
 - Drag & Drop moves the instance only on pointer moves. Put a trailing or lifted look on a child.
 
 ### Moving toward a target
@@ -148,9 +151,9 @@ If an object chases, follows or walks to another object, read
 ### Input
 
 If the events use Mouse and Touch together, tell a finger from a mouse,
-hide what can be pressed or dragged, read a touch's speed, bind keys, steer
-a movement behavior, or ask the browser for fullscreen, a permission or a
-picker, read [pitfalls/input.md](pitfalls/input.md).
+hide what can be pressed or dragged, close a popup by a tap outside it,
+read a touch's speed, bind keys, steer a movement behavior, or ask the
+browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfalls/input.md).
 
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too. Detect the input method with it off.
@@ -159,10 +162,12 @@ picker, read [pitfalls/input.md](pitfalls/input.md).
 - Drag & Drop drags the front instance under the pointer, by layer and then Z, visible or not. Stop drags under a popup with *Set layer interactive* on the pieces' layer or *Set enabled* on the behavior.
 - Touch speed reads 0 once the finger has been still for about 50 ms, and the release adds no move. So a flick tested in *On any touch end* passes only for a release made in motion.
 - *Simulate control* acts only in the tick it runs. Put it in an event whose condition stays true while the control is held: *Key is down*, not *On key pressed*.
+- Platform's *Simulate control* Jump does nothing in the air with *Double jump* off. Jump from the air, as in coyote time, with *Set vector Y* to `-Self.Platform.JumpStrength`. *On jump* does not fire for it, so run there what *On jump* would run.
 - Every instance with *Default controls* on moves with the arrow keys. Turn it off on each instance the player does not steer, such as a pushed crate, and move it with *Simulate control*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
 - Keyboard and Gamepad are separate conditions. Write both into one input object with a value per control and its last-tick copy, and read a press as `confirm > lastConfirm`.
+- Under *Scale outer* a dim sized to the design area leaves strips uncovered, and a tap on them misses *On touched* the dim. Size the cover 8000×8000 and close on *On any touch start* with *NOT Is touching* the panel and its buttons.
 
 ### Audio
 
@@ -212,6 +217,7 @@ polygons or blend modes, read
 - *Set width* stretches a Sprite, repeats a Tiled Background and stretches a 9-patch's middle.
 - A Tiled Background's or 9-patch's image scale is a percentage in events and a fraction in the layout file, so multiply the fraction by 100. A growing Y offset moves the image down, so scroll upward with a falling offset. A 9-patch pops as one piece only if its image scale changes with its size.
 - A bar grows from its origin. Put the origin on the edge it grows from.
+- A 9-patch stretched far, with a border colour unlike its inside, blends the border into the middle at the seam. Give it *Nearest* sampling, or build flat art from two flat Tiled Backgrounds.
 - Drawing Canvas *Fill polygon* with *Convex* off draws nothing when two consecutive points coincide. Repeat no point.
 - A blend mode changes only the pixels under the object's own quad, and the layer needs *Force own texture*.
 - A Text object draws only the lines that fit its height. Size the box for the longest text.
@@ -228,15 +234,18 @@ polygons or blend modes, read
 ### Tween
 
 If a tween must drive something Tween has no property for, if a tween's
-end starts the next step, or if several animations share one property,
-read [pitfalls/tween.md](pitfalls/tween.md).
+end starts the next step, if several animations share one property, or if
+an event tests a value every tick to start a tween, read
+[pitfalls/tween.md](pitfalls/tween.md).
 
 - A value tween read under *Is playing* drives what Tween cannot address, a full 360° turn included.
 - *On finished* runs before *Destroy on complete* destroys the instance, and *On any finished* runs for that tween too.
 - A new tween on a property stops the ones already on it, so they never finish or destroy. Let a Timer destroy a dying instance, not its death tween.
+- A second value tween under a tag that already plays runs beside the first, and `Value(tag)` reads the first. *Stop* the tag before starting it again.
 - `Tween.Value(tag)` reads 0 once the tween ends. Animate a channel as what is left of it, from the full amount to 0.
 - A property tween adds each tick's change. A *Set* on that property while it plays is kept, and the tween's rest adds to it. Guard it with *NOT Is playing*.
 - *Stop* releases a tween at the end of the tick. `Value(tag)` reads the stopped value until then.
+- A width tween can end a hair short of its end value, so `Width < target` starts a tween of no distance again and again, and that empty tween blocks a real one for 0.3 s. Start the tween on `Width < target - 0.5`, and set the width to `target` in an event on `Width < target` and `NOT Is playing`. A trail tested with `Width > target` takes the same two events.
 
 ### Timeline
 
@@ -268,6 +277,7 @@ Sprite, read [pitfalls/creating-objects.md](pitfalls/creating-objects.md).
 - A part in both the parent's container and its template hierarchy is created once. Put it in both to have it picked with the parent and follow it.
 - *Create object* runs once per event, however many instances are picked.
 - A runtime-created instance copies an existing instance or template, and without one its behavior properties read 0. Keep one per object in a layout that never runs.
+- An object created only by events loads its images when created and draws nothing until they arrive, so a screen-sized picture shows late. Call *Load object images* for it in *On start of layout*.
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
 - A created instance is found outside its own event only by UID, until the top-level event ends.
 - The instances of a new hierarchy run *On created* in no fixed order. Initialise the hierarchy in *On hierarchy ready* of its root, which fires once all of them have.
@@ -281,8 +291,8 @@ If the events restart a layout or go to one, such as a new round, read
 
 ### Storage and export
 
-If the project saves data, is exported for the web or uses File System,
-read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md).
+If the project saves data, loads several data files with AJAX, is
+exported for the web or uses File System, read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md).
 
 - A web export looks for an update only when the page loads.
 - The Browser object holds back the browser's install banner. Offer installing with *Request install* after *On install available*.
@@ -290,6 +300,15 @@ read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md).
 - No tag names the Construct project folder. Save to `<current-app-data>`.
 - In a browser File System needs desktop Chromium and a user input trigger, and a save picker erases the file.
 - Android and iOS exports have no File System. Save with Local Storage and hand files over with Share.
+- JSON has no merge. Merge data files with *For each* at `""` and *Set JSON* `GetAsCompactString(CurrentKey)` per top-level key; requests sharing one AJAX tag each fire *On completed* with their own `LastData`, so count them down.
+
+### Random
+
+If the events draw at random and a seed must reproduce the result, such as
+a daily challenge or a replayable run, read [pitfalls/random.md](pitfalls/random.md).
+
+- Advanced Random's `Random`, weighted draws and permutation tables share one sequence, and *Update seed* restarts it. Set the seed to the run's seed, the use and a counter before each draw, so one kind of draw does not shift another. Such a run replays offline with `advanced_random.py`; after a Construct update, run its `--check` before trusting the numbers.
+- `random()`, `choose()` and *Pick random instance* ignore the seed while *Replace system random* is off. Write a seeded draw as `floor(AdvancedRandom.Random * n)`, or *Pick nth instance* of `floor(AdvancedRandom.Random * PickedCount)`.
 
 ## Adding an entry
 

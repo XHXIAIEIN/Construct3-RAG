@@ -35,24 +35,37 @@ Construct-Example-Projects, 2026-09-18]
 
 ## Viewport, look and HUD
 
-- Pixel art uses a 320×180 viewport, *Nearest* sampling and *Letterbox
-  integer scale*; other art 1920×1080 and *Trilinear*. A one-screen game's
-  layout is the viewport's size.
+- Pixel art uses a 320×180 viewport, *Nearest* sampling and *Integer scale
+  outer*; other art 1920×1080, *Trilinear* and *Scale outer*. Both fill the
+  screen at any aspect ratio. The screen then shows more than the viewport
+  on its longer side. So a HUD element held to an edge carries the Anchor
+  behavior for that edge, and a backdrop or a dim reaches far past the
+  viewport
+  ([coordinates-and-angles.md](../pitfalls/coordinates-and-angles.md),
+  [input.md](../pitfalls/input.md)). A one-screen game's layout is the
+  viewport's size, with *Unbounded scrolling* on so that the game stays
+  centred with the HUD.
 - Use few colours, each for a role: the player, what hurts, what is
   collected, the panels, the text. The median pixel-art project draws its art
   with hard edges in 35 colours, and 9 of them cover 95% of its opaque
   pixels. Labels use one to three colours, white in two of three, and two
   sizes, rarely more than four. Every label has 4.5:1 contrast with what is
-  behind it, 3:1 from 18 pt up, large-scale text (WCAG 2.2, 1.4.3). All 159
-  studio projects at 360 px or less sample *Nearest*, and 116 of them use
-  *Letterbox integer scale*. The generator template holds these as `PALETTE` and
+  behind it, 3:1 from 18 pt up, large-scale text (WCAG 2.2, 1.4.3). Every
+  studio project at 360 px or less samples *Nearest*, and most scale by
+  whole numbers. The generator template holds these as `PALETTE` and
   `rgb()`, the colour check of `write_png()`, `FONT` and `TEXT_SIZE`, the
-  contrast check of `hud_text()`, and `PIXEL_ART`.
-- Until the art arrives, a generated game is a blockout. Lightness shows the
-  hierarchy, from a light checker backdrop through a solid grey to ink. Two
-  accents mark what is collected and what hurts, each shown by its ink
-  outline. A rectangle is the player or structure, a circle what is
-  collected, a triangle what hurts. An area or an edge is a striped Tiled
+  contrast check of `hud_text()`, `PIXEL_ART` and `FULLSCREEN`.
+- Until the art arrives, a generated game is a plain sheet: flat shapes on
+  an off-white canvas that fills the screen, without outlines, shadows,
+  cards or panels. Lightness shows the hierarchy, from the canvas through a
+  solid grey to ink. Two accents mark what is collected and what hurts, each
+  at least 3:1 on the canvas by colour alone.
+  Labels are in the platform's own face, `system-ui`, with no font file;
+  a number the player plays for is large and regular under a small dim
+  name. A rectangle is the player or structure, a
+  circle what is collected, a triangle what hurts. Where something is
+  transparent, a mask, or a background still to come, the backdrop is the
+  transparency checker instead. An area or an edge is a striped Tiled
   Background, and objects stay flat. A level is a run of beats, each asking
   one thing, with a rest after every hard one. The generator template holds
   these as `PALETTE`, `shape()`, `PATTERNS`, `area()`, `backdrop()` and
@@ -76,16 +89,42 @@ Construct-Example-Projects, 2026-09-18]
   unit, it is 24 px at 320×180 and 160 px at
   1920×1080, with 8 dp between two targets. A label's box is as wide as its
   longest text and aligned to the edge it is anchored to. A row of hearts is
-  spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. The
+  spaced by a unit. Nothing on the HUD overlaps or leaves the viewport. A
+  value sits close under its name, and the gap between two groups is at
+  least 1.5 times the gap inside one, the ratio slide and poster layout
+  guides ask, so the HUD stands apart from the playfield. The playfield is
+  centred in what the HUD leaves, not on the whole screen, and covers at
+  least 15% of it: the official game examples' one-screen layouts cover 80%
+  at the median. The
   generator template holds these as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`,
-  `hud_text()`, `row()` and `no_overlap()`.
+  `hud_text()`, `hud_stat()`, `row()`, `no_overlap()`, `play_area()`,
+  `centred()`, `spaced()` and `filled()`, and holds the HUD to the screen's
+  edges with `anchored()`.
 - A button's text is its label, centred on it, and the two move and hide
   together; a bar's name stands in front of the bar. A one-screen layout is
   bands: the title, the status line, the stage in the middle and the hint at
   the bottom, with the stage's main object at a large share of the stage.
   The generator template holds these as `button()`, `labelled_bar()`,
   `bands()`, `band_text()` and `fit()`; the record is
-  `docs/decisions/layout-by-name.md`.
+  `docs/decisions/layout-by-name.md`. The template's `press()` presses a
+  button and `count_up()` counts a score ([feel.md](feel.md);
+  `docs/decisions/count-up-and-press.md`).
+- Each class of object keeps one kind of motion, so the eye knows what
+  matters. The HUD and menus fade and slide: of the studio cohort's 480
+  one-shot tweens on objects of a parallax-0 layer, in 71 projects, 73%
+  tween the opacity, 92% use a sine ease, mostly `easeinoutsine`, the
+  middle half lasts 0.5 to 1 s, and 7 overshoot. A button's press is
+  quicker, 0.1 to 0.5 s on its size or opacity, or a pressed frame swapped
+  at once. The camera moves slowly
+  and evenly, 1 s or more with `easeinoutsine`, though only 4 projects
+  tween it.
+  Overshoot (`easeoutback`, `easeoutbounce`, an elastic ease) belongs to
+  world objects: 102 of their 1613 tweens, mostly a vertical offset or the
+  size, as in a hit, a landing or a pop ([feel.md](feel.md)). Give a HUD
+  element a bounce only when it is the moment's subject, such as a title
+  card. [survey of the Tween actions in the examples' studio cohort,
+  2026-10-08: each action's object classed as HUD when it has an instance
+  on a layer of parallax 0, else as world or camera]
 
 ## Layouts, sheets, folders and layers
 
@@ -106,6 +145,11 @@ Construct-Example-Projects, 2026-09-18]
 - Layers, bottom to top: `Background`, `World`, then `UI` (or `HUD`) and
   `Fader`, each at parallax 0; `Tutorial` has its own layer. A layout has
   two or three.
+- A layer lists its instances in the order they draw, back to front, as
+  an editor user arranges them: the backdrop and the flat areas, then what
+  stands, from far to near by the Y of its feet, a child after its parent
+  and a label after its board or bar. The generator template puts every
+  layer in this order, `z_order()`.
 
 ## Objects
 

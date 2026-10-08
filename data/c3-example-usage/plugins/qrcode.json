@@ -1,0 +1,6 @@
+{
+  "actions": {
+    "set-correction-level": {"examples": 1, "read": [["qr-code-maker", "Event sheet 1", 5, 5]]},
+    "set-text": {"examples": 1, "read": [["qr-code-maker", "Event sheet 1", 4, 8]]}
+  }
+}

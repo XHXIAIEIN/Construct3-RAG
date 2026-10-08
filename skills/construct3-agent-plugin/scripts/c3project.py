@@ -2,22 +2,28 @@
 Construct3-RAG clone, reading the files project.c3proj lists, the schemas,
 the object model (types, families, behaviors, instance variables), the
 schema entry behind a condition or an action, what the editor has
-deprecated, and the helpers of a game's generator against the template's.
+deprecated, the helpers of a game's generator against the template's, and
+the Construct 3 block of its instruction file against the skill's.
 
 Not a command. check_project.py, print_sheet.py and lookup_ace.py import it
 from the folder they sit in.
 """
 import argparse
+import ast
 import difflib
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
 import time
+import zlib
+from collections import Counter
 from collections.abc import Iterator
 from pathlib import Path, PurePosixPath
 from typing import NamedTuple
@@ -97,17 +103,51 @@ class Findings:
         self.warn(msg)
 
 
+# What a project file's shape raises in the scripts, measured by changing one value at a time in
+# a generated game: a missing key (KeyError), a value of another type (TypeError, AttributeError,
+# IndexError) and a file that is not UTF-8 (UnicodeDecodeError, a ValueError). Any other exception
+# is a fault of the script.
+PROJECT_SHAPE = (KeyError, TypeError, AttributeError, IndexError, ValueError)
+
+
+def file_read(tb) -> Path | None:
+    """The last project file a traceback's frames hold in a variable: the one being read."""
+    found = None
+    while tb:
+        for value in tb.tb_frame.f_locals.values():
+            if isinstance(value, Path) and value.suffix in (".json", ".c3proj"):
+                found = value
+        tb = tb.tb_next
+    return found
+
+
 def stop_with_a_sentence(script: str, findings: Findings) -> None:
     """A file that lacks a key the editor always writes stops the run; say which
-    key and where the script was, instead of a traceback."""
+    key and where the script was, instead of a traceback. An exception that no
+    project file causes is the script's own error: say so, so that the agent
+    reports it instead of changing a project that is not at fault."""
     def stopped(exc_type, exc, tb) -> None:
+        if issubclass(exc_type, KeyboardInterrupt):
+            sys.__excepthook__(exc_type, exc, tb)
+            return
+        read = file_read(tb)
         while tb.tb_next:
             tb = tb.tb_next
         what = f"missing key {exc}" if exc_type is KeyError else f"{exc_type.__name__}: {exc}"
         code = tb.tb_frame.f_code
+        if issubclass(exc_type, UnicodeDecodeError):
+            cause = (f"{read or 'A project file'} is not UTF-8 text, which the editor writes. Write it again as "
+                     f"UTF-8.")
+        elif issubclass(exc_type, PROJECT_SHAPE):
+            cause = ("A project file lacks a key the editor always writes, or holds a value of another type. "
+                     "Compare it with a file that assets/build_project.py generates, or with an official example. "
+                     "If the file matches, the error is the script's: leave the project as it is and report this "
+                     "line to the user.")
+        else:
+            cause = (f"This is an error in {script}, not a finding about the project: leave the project as it is "
+                     f"and report this line to the user.")
         print(f"{script} stopped at {Path(code.co_filename).name} line {tb.tb_lineno} ({code.co_name}): {what}. "
-              f"A project file lacks a key the editor always writes, or holds a value of another type than the "
-              f"editor writes; compare it with a file assets/build_project.py generates, or with an official example.")
+              f"{cause}")
         for w in findings.warnings:
             print(f"warning: {w}")
         if findings.errors:
@@ -116,6 +156,84 @@ def stop_with_a_sentence(script: str, findings: Findings) -> None:
         os._exit(2)     # sys.exit would raise inside the hook and print a second traceback
 
     sys.excepthook = stopped
+
+
+def png_rgba(data: bytes) -> tuple[int, int, list[tuple]] | None:
+    """Width, height and RGBA pixels of an 8-bit, non-interlaced PNG; None for another kind."""
+    if data[:8] != b"\x89PNG\r\n\x1a\n":
+        return None
+    pos, idat, palette, trns = 8, b"", [], b""
+    w = h = depth = ctype = interlace = 0
+    while pos + 8 <= len(data):
+        n, tag = struct.unpack(">I", data[pos:pos + 4])[0], data[pos + 4:pos + 8]
+        body = data[pos + 8:pos + 8 + n]
+        if tag == b"IHDR":
+            w, h, depth, ctype, _, _, interlace = struct.unpack(">IIBBBBB", body)
+        elif tag == b"PLTE":
+            palette = [tuple(body[i:i + 3]) for i in range(0, len(body), 3)]
+        elif tag == b"tRNS":
+            trns = body
+        elif tag == b"IDAT":
+            idat += body
+        pos += 12 + n
+    channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}.get(ctype)
+    if depth != 8 or interlace or not channels:
+        return None
+    raw, stride = zlib.decompress(idat), w * channels
+    rows, prev = [], bytearray(stride)
+    for y in range(h):
+        kind, line = raw[y * (stride + 1)], bytearray(raw[y * (stride + 1) + 1:(y + 1) * (stride + 1)])
+        for i in range(stride):
+            a = line[i - channels] if i >= channels else 0
+            b, c = prev[i], prev[i - channels] if i >= channels else 0
+            if kind == 1:
+                line[i] = (line[i] + a) & 255
+            elif kind == 2:
+                line[i] = (line[i] + b) & 255
+            elif kind == 3:
+                line[i] = (line[i] + (a + b) // 2) & 255
+            elif kind == 4:
+                p = a + b - c
+                pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+                line[i] = (line[i] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
+        rows.append(line)
+        prev = line
+    pixels = []
+    for line in rows:
+        for x in range(w):
+            v = line[x * channels:(x + 1) * channels]
+            if ctype == 6:
+                pixels.append(tuple(v))
+            elif ctype == 2:
+                pixels.append((*v, 255))
+            elif ctype == 4:
+                pixels.append((v[0], v[0], v[0], v[1]))
+            elif ctype == 0:
+                pixels.append((v[0], v[0], v[0], 255))
+            else:
+                pixels.append((*palette[v[0]], trns[v[0]] if v[0] < len(trns) else 255))
+    return w, h, pixels
+
+
+# A screenshot is not drawn yet when this share of its pixels or more is one colour, dark or clear.
+# Over the screenshots the scripts took of games, the most one-coloured one that showed something
+# was 99.03%, a layout holding one coin; a layout that drew only a 4 px bar was 99.99%.
+BLANK = 0.999
+
+
+def blank_share(data: bytes) -> float | None:
+    """The share of a PNG's pixels that are one colour, dark or clear, when it is BLANK or more.
+    One colour is within 8 in each channel of the commonest. None for a picture that shows
+    something, or a PNG of a kind png_rgba does not read."""
+    read = png_rgba(data)
+    if not read or not read[2]:
+        return None
+    pixels = read[2]
+    top = Counter(pixels).most_common(1)[0][0]
+    shares = (sum(all(abs(p[i] - top[i]) <= 8 for i in range(4)) for p in pixels),
+              sum(max(p[:3]) < 16 for p in pixels), sum(p[3] < 16 for p in pixels))
+    share = max(shares) / len(pixels)
+    return share if share >= BLANK else None
 
 
 def utf8_output() -> None:
@@ -281,6 +399,37 @@ def siblings_folder(rag: Path) -> Path:
     return main.parent.parent if main and main.name == ".git" else clone.parent
 
 
+EXAMPLES_CLONE = "Construct-Example-Projects"
+EXAMPLES_URL = "https://github.com/Scirra/Construct-Example-Projects"
+
+
+def examples_clone_command(rag: Path | None) -> str:
+    """The command that puts the examples clone where the scripts look for it: the clone's bootstrap.py,
+    or the git clone itself from a plugin that holds no bootstrap.py."""
+    if rag is None:
+        return "python <Construct3-RAG>/scripts/bootstrap.py"
+    bootstrap = clone_root(rag) / "scripts" / "bootstrap.py"
+    if bootstrap.is_file():
+        return f"python {bootstrap.as_posix()}"
+    return f'git clone --depth 1 {EXAMPLES_URL} "{(siblings_folder(rag) / EXAMPLES_CLONE).as_posix()}"'
+
+
+def missing_example(folder: Path, override: str | None) -> str | None:
+    """Why --project names no project when it is a folder of the examples clone that is not there, with
+    the next step: the clone to get, or the search that lists the examples. None for any other folder."""
+    parts = [p.lower() for p in folder.parts]
+    if folder.exists() or EXAMPLES_CLONE.lower() not in parts:
+        return None
+    clone = Path(*folder.parts[:parts.index(EXAMPLES_CLONE.lower()) + 1])
+    if clone.is_dir():
+        return (f"no example project at {folder}; python {(SKILL_DIR / 'scripts' / 'search_guides.py').as_posix()} "
+                f"WORD lists the examples that hold a word, each with the folder to read")
+    rag = locate_rag(None, override)[0]
+    into = f" into {siblings_folder(rag) / EXAMPLES_CLONE}" if rag else ""
+    return (f"no example project at {folder}: the {EXAMPLES_CLONE} clone is not at {clone}; "
+            f"{examples_clone_command(rag)} clones it{into}")
+
+
 def locate_rag(root: Path | None, override: str | None) -> tuple[Path | None, list[str]]:
     """The clone or None, and the places tried before it; for a script that runs without a clone."""
     tried = []
@@ -399,14 +548,21 @@ def git_out(rag: Path, *args: str, wait: float = 5) -> str | None:
     return p.stdout.strip() if p.returncode == 0 else None
 
 
+def offline() -> bool:
+    """CONSTRUCT3_RAG_OFFLINE=1: the clone is neither fetched nor compared with its upstream. Only "1"
+    sets it, so that 0 or an empty value keeps the check."""
+    return os.environ.get("CONSTRUCT3_RAG_OFFLINE") == "1"
+
+
 def clone_behind(rag: Path) -> tuple[str, bool] | None:
     """A sentence when the clone's branch is behind its upstream, and whether the
     agent updates it. A clone with no commits or changes of its own fast-forwards:
-    the sentence gives the pull and, for a copy of the skill, its refresh. A clone
-    that holds the user's work is the user's to update. The clone is fetched at most
-    every FETCH_EVERY seconds; offline, or with no upstream, nothing is said."""
+    the sentence gives the fast-forward to the fetched upstream, which needs no network,
+    and, for a copy of the skill, its refresh. A clone that holds the user's work is
+    the user's to update. The clone is fetched at most every FETCH_EVERY seconds;
+    offline(), or with no upstream, nothing is said."""
     rag = clone_root(rag)
-    if os.environ.get("CONSTRUCT3_RAG_OFFLINE") or not (rag / ".git").exists() or not shutil.which("git"):
+    if offline() or not (rag / ".git").exists() or not shutil.which("git"):
         return None
     upstream = git_out(rag, "rev-parse", "--abbrev-ref", "@{u}")
     if not upstream:        # detached, or a branch that tracks nothing
@@ -437,8 +593,191 @@ def clone_behind(rag: Path) -> tuple[str, bool] | None:
     if own:
         return f"{lag}, and it holds {' and '.join(own)} of its own; tell the user, who decides how to update it", False
     refresh = refresh_command(rag)
-    return (f"{lag}, so the scripts lack the fixes and checks of those commits. Run git -C \"{rag}\" pull --ff-only, "
+    return (f"{lag}, so the scripts lack the fixes and checks of those commits. Run git -C \"{rag}\" merge --ff-only {upstream}, "
             f"{f'then {refresh}, ' if refresh else ''}then run this check again"), True
+
+
+def project_file(root: Path, kind: str, name: str, folder: Path) -> Path | None:
+    """The JSON file for a listed item. Older projects keep the files flat even
+    when project.c3proj has subfolders, so fall back to a search by name."""
+    direct = root / kind / folder / f"{name}.json"
+    if direct.exists():
+        return direct
+    hits = [p for p in (root / kind).rglob(f"{name}.json") if not p.name.endswith(".uistate.json")]
+    return hits[0] if hits else None
+
+
+def listed_files(root: Path, data: dict, kind: str) -> dict[str, Path | None]:
+    """The file of every item project.c3proj lists under kind; None for one that has no file."""
+    return {name: project_file(root, kind, name, folder) for name, folder in folder_items(data.get(kind, {}))}
+
+
+# --- the strings a web export ships -------------------------------------------------------
+# A web export ships every string of the events, the scripts and the project files to every player, who
+# can read it in the browser's tools, so every player can read a key there. The shapes below are the keys
+# of common services, and the first matching shape names the key. A random-looking token in a text
+# literal, 32 to 512 letters, digits and -_+/=, is the key of some other service; a longer one is data.
+# ALLOW on the line, in the comment above the event or in a variable's comment marks a key meant to be
+# public.
+# Evidence: docs/decisions/secret-scan.md.
+KEY_SHAPES = (
+    (re.compile(r"\bsk-ant-[A-Za-z0-9_-]{20,}"), "an Anthropic API key"),
+    (re.compile(r"\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{32,}"), "an OpenAI API key"),
+    (re.compile(r"\bAIza[0-9A-Za-z_-]{35}"), "a Google API key"),
+    (re.compile(r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"), "an AWS access key"),
+    (re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{40,})"), "a GitHub token"),
+    (re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{10,}"), "a Slack token"),
+    (re.compile(r"\b[rs]k_live_[0-9A-Za-z]{20,}"), "a Stripe secret key"),
+    (re.compile(r"-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----"), "a private key"),
+    (re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}"), "a signed token (JWT)"),
+)
+TOKEN = re.compile(r"(?<![\w+/=-])[A-Za-z0-9+/=_-]{32,512}(?![\w+/=-])")
+DATA_URI = re.compile(r"data:[\w/+.-]*;base64,[A-Za-z0-9+/=]*")
+URL = re.compile(r"\b(?:https?|wss?)://([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+)(?::\d+)?([^\s\"'`<>?#]*)", re.I)
+LOCAL_HOSTS = re.compile(r"localhost|127(?:\.\d+){3}|0\.0\.0\.0", re.I)
+WORDS = re.compile(r"(?:[A-Z]?[a-z]{2,}|[A-Z]{2,}|\d{1,3})+")      # a name: CamelCase words and short numbers
+JS_LITERAL = re.compile(r"\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`")
+ALLOW = "allow-secret"
+TEXT_FILES = (".json", ".txt", ".csv", ".tsv", ".xml", ".html", ".htm", ".md", ".yaml", ".yml", ".ini", ".cfg")
+SCRIPT_FILES = (".js", ".mjs", ".ts")
+
+
+class Shipped(NamedTuple):
+    place: str      # sheet Game event 5 action 2, scripts/main.js line 12, files/config.json line 3
+    text: str
+    allowed: bool   # marked ALLOW where the place can carry a mark
+    mark: str       # where an ALLOW goes for this place
+    literals: re.Pattern | None = None     # code: the text literals in it hold its strings
+
+    def strings(self) -> list[str]:
+        """The text of the strings it holds: its literals in code, else all of it."""
+        if self.literals is None:
+            return [self.text]
+        return [m.group(0)[1:-1] for m in self.literals.finditer(self.text)]
+
+
+def shipped_strings(root: Path, data: dict, sheets: dict[str, dict]) -> Iterator[Shipped]:
+    """Every string a web export of the project ships: the parameters of conditions and actions, the values
+    of variables and the lines of scripts in the sheets, the lines of the script files and of the text files
+    project.c3proj lists. Comments, group descriptions and names stay in the editor."""
+    above = "the comment above the event"
+
+    def values(obj) -> Iterator[str]:
+        if isinstance(obj, str):
+            yield obj
+        elif isinstance(obj, dict):
+            for v in obj.values():
+                yield from values(v)
+        elif isinstance(obj, list):
+            for v in obj:
+                yield from values(v)
+
+    def script_lines(script) -> list[str]:
+        return script.splitlines() if isinstance(script, str) else [str(s) for s in script or []]
+
+    def walk(sheet: str, events: list, counter: list[int]) -> Iterator[Shipped]:
+        noted = ""      # the comments right above the next event
+        for ev in events:
+            et = ev.get("eventType")
+            if et == "comment":
+                noted += str(ev.get("text", ""))
+                continue
+            allowed = ALLOW in noted
+            noted = ""
+            if et in NUMBERED:
+                counter[0] += 1
+            where = f"sheet {sheet} event {counter[0]}"
+            if et == "variable":
+                for text in values(ev.get("initialValue")):
+                    yield Shipped(f"sheet {sheet} variable {ev.get('name')}", text,
+                                  allowed or ALLOW in str(ev.get("comment", "")), "its comment")
+            if et == "script":
+                for n, line in enumerate(script_lines(ev.get("script")), 1):
+                    yield Shipped(f"{where} script line {n}", line, allowed or ALLOW in line,
+                                  "a comment on that line", JS_LITERAL)
+            for kind in ("conditions", "actions"):
+                for n, ace in enumerate(ev.get(kind) or [], 1):
+                    if not isinstance(ace, dict) or ace.get("type") == "comment":
+                        continue
+                    place = f"{where} {kind[:-1]} {n}"
+                    if ace.get("type") == "script":
+                        for k, line in enumerate(script_lines(ace.get("script")), 1):
+                            yield Shipped(f"{place} line {k}", line, allowed or ALLOW in line,
+                                          "a comment on that line", JS_LITERAL)
+                    for text in values(ace.get("parameters")):
+                        yield Shipped(place, text, allowed, above, STRING_LITERAL)
+            yield from walk(sheet, ev.get("children") or [], counter)
+
+    for name, sheet in sheets.items():
+        if isinstance(sheet, dict):
+            yield from walk(name, sheet.get("events") or [], [0])
+    folders = data.get("rootFileFolders") or {}
+    for kind, folder in (("script", "scripts"), ("general", "files")):
+        for item, sub in folder_items(folders.get(kind) or {}):
+            name = item.get("name") if isinstance(item, dict) else item
+            path = root / folder / sub / str(name)
+            code = path.suffix.lower() in SCRIPT_FILES
+            if not isinstance(name, str) or not (code or path.suffix.lower() in TEXT_FILES) or not path.is_file() \
+                    or path.stat().st_size > 4_000_000:
+                continue
+            rel = (Path(folder) / sub / name).as_posix()
+            for n, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                yield Shipped(f"{rel} line {n}", line, ALLOW in line,
+                              "a comment on that line" if code else "that line", JS_LITERAL if code else None)
+
+
+def entropy(text: str) -> float:
+    """Bits per character of text, from how often each character comes."""
+    counts: dict[str, int] = {}
+    for c in text:
+        counts[c] = counts.get(c, 0) + 1
+    return -sum(n / len(text) * math.log2(n / len(text)) for n in counts.values())
+
+
+def key_shape(s: Shipped) -> tuple[str, str] | None:
+    """The kind of key a shipped string holds, and the key's first characters; None when it holds none."""
+    for pattern, what in KEY_SHAPES:
+        m = pattern.search(s.text)
+        if m:
+            return what, m.group(0)[:6] + "…"
+    for text in s.strings():
+        bare = URL.sub(" ", DATA_URI.sub(" ", text))     # an address up to its query, a picture in a data URI
+        for m in TOKEN.finditer(bare):
+            token = m.group(0)
+            # A key mixes letters and digits and repeats some characters; an alphabet written out does not,
+            # and a name such as Draco_Float32Array_GetValue_1 is words and short numbers
+            if not (re.search(r"\d", token) and re.search(r"[A-Za-z]", token)) or len(set(token)) == len(token) \
+                    or all(WORDS.fullmatch(part) for part in re.split(r"[_-]+", token) if part):
+                continue
+            if re.fullmatch(r"[0-9a-fA-F]+", token):
+                random = entropy(token) >= 3.0
+            else:
+                random = re.search(r"[a-z]", token) and re.search(r"[A-Z]", token) and entropy(token) >= 4.3
+            if random:
+                return "a random token, such as a key", f"{token[:4]}… ({len(token)} characters)"
+    return None
+
+
+def secrets_in(strings) -> list[tuple[Shipped, str, str]]:
+    """Each shipped string shaped like a key that no ALLOW marks, with what it is and its first characters."""
+    out = []
+    for s in strings:
+        found = None if s.allowed else key_shape(s)
+        if found:
+            out.append((s, *found))
+    return out
+
+
+def hosts_in(strings) -> dict[str, str]:
+    """Each host an address in the shipped strings names, the machine's own aside, with the first place."""
+    hosts: dict[str, str] = {}
+    for s in strings:
+        for text in s.strings():
+            for m in URL.finditer(text):
+                host = m.group(1).lower()
+                if not LOCAL_HOSTS.fullmatch(host):
+                    hosts.setdefault(host, s.place)
+    return hosts
 
 
 # --- the generator's helpers ----------------------------------------------------------
@@ -474,9 +813,9 @@ class HelperState(NamedTuple):
     want: Helpers | None = None
 
 
-def versions(have: Helpers, want: Helpers) -> tuple[str, str]:
-    """The two versions in words, "2026-09-01" and "2026-10-04", with their stamps when the
-    dates are the same."""
+def versions(have: "Helpers | Block", want: "Helpers | Block") -> tuple[str, str]:
+    """The two versions of a marked part in words, "2026-09-01" and "2026-10-04", with their
+    stamps when the dates are the same."""
     if have.version != want.version:
         return have.version, want.version
     return f"{have.version}, stamp {have.stamp}", f"{want.version}, stamp {want.stamp}"
@@ -547,6 +886,78 @@ def generator_helpers(root: Path, template: Path = TEMPLATE) -> HelperState:
     return HelperState("newer" if have.version > want.version else "older", have=have, want=want)
 
 
+def top_level_defs(lines: list[str]) -> list[tuple[str, int, list[str]]]:
+    """Each top-level def of a module's lines: its name, the index of its first line, and its lines,
+    decorators included. Raises SyntaxError when the lines do not parse."""
+    found = []
+    for node in ast.parse("\n".join(lines)).body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            first = min([node.lineno, *(d.lineno for d in node.decorator_list)]) - 1
+            found.append((node.name, first, lines[first:node.end_lineno]))
+    return found
+
+
+TEMPLATE_IN_CLONE = f"skills/{SKILL}/assets/build_project.py"
+
+
+def copied_template(rag: Path, stamp: str) -> list[str] | None:
+    """The template's lines at the newest commit of the clone whose marked part carries stamp and
+    matches it: the template a game's generator was copied from, before the game edited it. None
+    without the clone's history, as in the plugin cache, or when no commit has that stamp."""
+    return copied_from(rag, TEMPLATE_IN_CLONE, stamp, helpers_in)
+
+
+def copied_from(rag: Path, rel: str, stamp: str, part_in) -> list[str] | None:
+    """The lines of the clone's file rel at its newest commit whose marked part, as part_in reads it,
+    carries stamp and matches it. None without the clone's history or when no commit has that stamp."""
+    clone = clone_root(rag)
+    if not (clone / ".git").exists() or not shutil.which("git"):
+        return None
+    log = git_out(clone, "log", "--follow", "--format=commit %H", "--name-only", "--", rel, wait=30)
+    commits: list[list[str]] = []
+    for line in (log or "").splitlines():
+        if line.startswith("commit "):
+            # a merge lists no file: it has the path of the commit above it
+            commits.append([line[7:], commits[-1][1] if commits else rel])
+        elif line.strip() and commits:
+            commits[-1][1] = line.strip()
+    for sha, path in commits:
+        lines = (git_out(clone, "show", f"{sha}:{path}") or "").replace("\r\n", "\n").split("\n")
+        found = part_in(lines)
+        if not isinstance(found, tuple):
+            return None             # the commits below this one are older than the markers
+        if found.stamp == stamp == found.actual:
+            return lines
+    return None
+
+
+def unkept_helpers(root: Path, template: Path = TEMPLATE,
+                   copied: list[str] | None = None) -> list[tuple[str, str, str]] | str:
+    """What replacing the marked part of root's generator would lose: each def between its markers
+    that no def of the same name below the end marker replaces and that the game changed. With copied,
+    the template the part was copied from (copied_template), a def the game changed is one whose lines
+    differ from copied's def of that name, or that copied lacks; without it, every def that differs from
+    the template's counts, since the stamp cannot tell the game's edits from the template's. Each comes
+    with the first line that differs, here and in the template it is compared with ('' where one has no
+    such line). A sentence when the file does not parse."""
+    lines, template_lines = text_lines(root / GENERATOR)[0], copied or text_lines(template)[0]
+    have, want = helpers_in(lines), helpers_in(template_lines)
+    try:
+        ours, theirs = top_level_defs(lines), top_level_defs(template_lines)
+    except SyntaxError as e:
+        return f"it does not parse, line {e.lineno}: {e.msg}"
+    below = {name for name, first, _ in ours if first > have.end}
+    skills = {name: src for name, first, src in theirs if want.begin < first < want.end}
+    lost = []
+    for name, first, src in ours:
+        if not have.begin < first < have.end or name in below or skills.get(name) == src:
+            continue
+        other = skills.get(name, [])
+        k = next(k for k in range(max(len(src), len(other))) if src[k:k + 1] != other[k:k + 1])
+        lost.append((name, src[k] if k < len(src) else "", other[k] if k < len(other) else ""))
+    return lost
+
+
 def replace_helpers(root: Path, template: Path = TEMPLATE, dry_run: bool = False) -> str | None:
     """Put the template's marked part, both markers included, in place of the one in root's
     tools/build_project.py; every line outside the markers, the line ends and a byte order mark
@@ -562,11 +973,220 @@ def replace_helpers(root: Path, template: Path = TEMPLATE, dry_run: bool = False
     except SyntaxError as e:
         return f"with the skill's helpers it would not compile, line {e.lineno}: {e.msg}"
     if not dry_run:
-        draft = path.with_name(f".{path.name}.{os.getpid()}")
-        draft.write_bytes((b"\xef\xbb\xbf" if bom else b"") + text.encode("utf-8"))
-        shutil.copymode(path, draft)
-        os.replace(draft, path)
+        write_whole(path, text, bom)
     return None
+
+
+def write_whole(path: Path, text: str, bom: bool) -> None:
+    """Write text over path in one step, through a draft beside it, with path's mode and,
+    when bom, a byte order mark."""
+    draft = path.with_name(f".{path.name}.{os.getpid()}")
+    draft.write_bytes((b"\xef\xbb\xbf" if bom else b"") + text.encode("utf-8"))
+    shutil.copymode(path, draft)
+    os.replace(draft, path)
+
+
+# --- the Construct 3 block of the project's instruction file ----------------------------
+# install.py writes assets/game-project-block.md into the project's AGENTS.md between a begin
+# and an end marker, HTML comments that the rendered file does not show. As with the generator's
+# helpers, the end marker carries a version and a stamp. The stamp covers the block's text: not
+# the lines that name a clone's folder (Construct3-RAG: and those the project adds beside it), and
+# not the folder the skill was installed in, which is read as the template writes it. A block
+# whose text still matches its stamp was not edited there, and install.py replaces it when the
+# skill's is newer, keeping the lines that name a clone's folder and every line outside the block.
+BLOCK_TEMPLATE = SKILL_DIR / "assets" / "game-project-block.md"
+BLOCK_IN_CLONE = f"skills/{SKILL}/assets/game-project-block.md"
+BLOCK_BEGIN = re.compile(r"<!-- construct3-agent-plugin block: begin\b")
+BLOCK_END = re.compile(r"<!-- construct3-agent-plugin block: end\b")
+BLOCK_HEADING = "# Construct 3"
+BLOCK_PLACE = re.compile(r"^[ \t>*-]*(?:Construct3-RAG|Construct3-Manual|Construct-Example-Projects|"
+                         r"Construct-Addon-SDK|<?path-to>?)[ \t]*[:=]")
+# The skill's folder as the block names it, inside backticks; construct3-project is its former name
+BLOCK_SKILL = re.compile(r"(?<=`)(python )?([^`]*?/)construct3-(?:agent-plugin|project)(?=/)")
+BLOCK_SKILL_DEFAULT = f".agents/skills/{SKILL}"
+INSTRUCTION_FILES = ("AGENTS.md", "CLAUDE.md")
+# The blocks install.py wrote before the block had markers, by the stamp of their text: the
+# version, and the number of lines of that text, which tells where such a block ends.
+PAST_BLOCKS = {
+    "da35bc2297c8": ("2026-09-21", 28),
+    "ddc0bcd1cf8a": ("2026-09-22", 28),
+    "21f37f50500c": ("2026-09-22", 26),
+    "2a76542cad05": ("2026-09-22", 32),
+    "c11c6eaa6efc": ("2026-09-22", 35),
+    "36802b113b7f": ("2026-09-22", 32),
+    "4567e8432d87": ("2026-09-22", 29),
+    "171fa27de276": ("2026-09-22", 31),
+    "e50212bfc1a3": ("2026-10-03", 32),
+}
+
+
+class Block(NamedTuple):
+    """The Construct 3 block of an instruction file: the indexes of its first and last line (its
+    markers, when marked), the version and stamp it carries, and the stamp of its text as it is
+    now. A block from before the markers carries the version and stamp of the text it matches."""
+    begin: int
+    end: int
+    version: str
+    stamp: str
+    actual: str
+    marked: bool = True
+
+
+class BlockState(NamedTuple):
+    """How the block of a project's instruction file stands against the skill's: missing (no
+    block that install.py wrote), broken (detail says what is wrong), current, older, newer, or
+    edited (its text matches neither its stamp nor the skill's). file is the instruction file."""
+    state: str
+    file: str = ""
+    detail: str = ""
+    have: Block | None = None
+    want: Block | None = None
+
+
+def block_text(lines: list[str]) -> list[tuple[int, str]]:
+    """The block's own text among lines, each line with its index: every line but those that name
+    a clone's folder, with the skill's folder written as the template writes it."""
+    return [(i, BLOCK_SKILL.sub(lambda m: (m[1] or "") + BLOCK_SKILL_DEFAULT, line))
+            for i, line in enumerate(lines) if not BLOCK_PLACE.match(line)]
+
+
+def block_stamp(lines: list[str]) -> str:
+    return helpers_stamp([line for _, line in block_text(lines)])
+
+
+def block_end_line(version: str, stamp: str) -> str:
+    """The end marker as the template writes it."""
+    return f"<!-- construct3-agent-plugin block: end; version {version}, stamp {stamp} -->"
+
+
+def block_in(lines: list[str], past: bool = True) -> Block | str | None:
+    """The Construct 3 block among an instruction file's lines: the part between its markers, else,
+    with past, a block install.py wrote before the markers, which matches one of PAST_BLOCKS line for
+    line. None when there is neither, and a sentence saying what to write when the markers are broken."""
+    begins = [i for i, line in enumerate(lines) if BLOCK_BEGIN.match(line)]
+    ends = [i for i, line in enumerate(lines) if BLOCK_END.match(line)]
+    if not begins and not ends:
+        return past_block(lines) if past else None
+    copy = "copy the marker lines of the skill's assets/game-project-block.md around the block"
+    if len(begins) != 1 or len(ends) != 1:
+        return f"it has {len(begins)} begin and {len(ends)} end markers of the Construct 3 block, not one of each; {copy}"
+    if ends[0] < begins[0]:
+        return f"the end marker of its Construct 3 block stands above the begin marker; {copy}"
+    found = HELPERS_VERSION.search(lines[ends[0]])
+    if not found:
+        return f"the end marker of its Construct 3 block has lost its version and stamp; {copy}"
+    return Block(begins[0], ends[0], found[1], found[2], block_stamp(lines[begins[0] + 1:ends[0]]))
+
+
+def past_block(lines: list[str]) -> Block | None:
+    """A block that install.py wrote before the markers: from its heading, as many lines of text as
+    a version in PAST_BLOCKS has, with the same stamp."""
+    for i, line in enumerate(lines):
+        if line.rstrip() != BLOCK_HEADING:
+            continue
+        for stamp, (version, count) in PAST_BLOCKS.items():
+            end, n = i, 0
+            while end < len(lines) and n < count:
+                n += not BLOCK_PLACE.match(lines[end])
+                end += 1
+            if n == count and block_stamp(lines[i:end]) == stamp:
+                return Block(i, end - 1, version, stamp, stamp, marked=False)
+    return None
+
+
+def instruction_block(root: Path, template: Path = BLOCK_TEMPLATE) -> BlockState:
+    """How the block in root's AGENTS.md, else its CLAUDE.md, stands against the template's. Older and
+    newer go by the version on the end markers; edited is a block whose text matches neither the stamp
+    on its own end marker nor the template's text. A block from before the markers is current while
+    its text is the template's, and older once the template has changed."""
+    template_lines = text_lines(template)[0]
+    want = block_in(template_lines, past=False)
+    if not isinstance(want, Block):
+        return BlockState("broken", "AGENTS.md", f"the skill's own assets/game-project-block.md: {want or 'no markers'}")
+    for name in INSTRUCTION_FILES:
+        path = root / name
+        if not path.is_file():
+            continue
+        try:
+            lines = text_lines(path)[0]
+        except UnicodeDecodeError:
+            return BlockState("broken", name, "it is not UTF-8 text; save it as UTF-8")
+        have = block_in(lines)
+        if have is None:
+            continue
+        if isinstance(have, str):
+            return BlockState("broken", name, have)
+        markers = (lines[have.begin], lines[have.end]) == (template_lines[want.begin], template_lines[want.end])
+        if have.actual == want.stamp and (markers or not have.marked):
+            state = "current"
+        elif have.actual not in (have.stamp, want.stamp):
+            state = "edited"
+        elif have.version > want.version:
+            state = "newer"
+        else:
+            state = "older"
+        return BlockState(state, name, have=have, want=want)
+    return BlockState("missing")
+
+
+def block_lines(rag: Path, skill_path: str, places: list[str] | None = None,
+                template: Path = BLOCK_TEMPLATE) -> list[str]:
+    """The template's block as install.py writes it, markers included: the clone's path on its
+    Construct3-RAG line, or in place of that line the given lines that name a clone's folder, and
+    the folder the skill is installed in."""
+    lines = text_lines(template)[0]
+    if lines and not lines[-1]:
+        lines.pop()
+    lines = [line.replace("<path-to>/Construct3-RAG", rag.as_posix()).replace(BLOCK_SKILL_DEFAULT, skill_path)
+             for line in lines]
+    if places:
+        at = next(i for i, line in enumerate(lines) if BLOCK_PLACE.match(line))
+        lines[at:at + 1] = places
+    return lines
+
+
+def replace_block(root: Path, found: BlockState, rag: Path, skill_path: str | None = None,
+                  dry_run: bool = False) -> None:
+    """Put the template's block, markers included, in place of the one found: its lines that name a
+    clone's folder stay, and so do every line outside the block, the line ends and a byte order
+    mark. The skill's folder is skill_path, else the one the block named, under the skill's name."""
+    path = root / found.file
+    lines, newline, bom = text_lines(path)
+    part = lines[found.have.begin:found.have.end + 1]
+    if skill_path is None:
+        named = next((m for m in map(BLOCK_SKILL.search, part) if m), None)
+        skill_path = named[2] + SKILL if named else BLOCK_SKILL_DEFAULT
+    places = [line for line in part if BLOCK_PLACE.match(line)]
+    text = newline.join(lines[:found.have.begin] + block_lines(rag, skill_path, places) + lines[found.have.end + 1:])
+    if not dry_run:
+        write_whole(path, text, bom)
+
+
+def block_changes(root: Path, found: BlockState, reference: list[str], limit: int = 4) -> list[str]:
+    """The changes between the text of the marked block found and the block in reference, the lines
+    of a template. Each change gives its line number in the instruction file, its first line in the
+    project ("here") and in the reference ("there"). Past limit changes, a last entry counts the rest."""
+    lines = text_lines(root / found.file)[0]
+    first = found.have.begin + 1
+    ours = [(first + i, line) for i, line in block_text(lines[first:found.have.end])]
+    ref = block_in(reference, past=False)
+    theirs = [line for _, line in block_text(reference[ref.begin + 1:ref.end])] if isinstance(ref, Block) else []
+
+    def cut(line: str) -> str:
+        return repr(line if len(line) <= 90 else line[:87] + "...")
+    opcodes = [op for op in difflib.SequenceMatcher(None, [t for _, t in ours], theirs, autojunk=False).get_opcodes()
+               if op[0] != "equal"]
+    changes = []
+    for _, i1, i2, j1, j2 in opcodes[:limit]:
+        at = ours[i1][0] if i1 < len(ours) else found.have.end      # a line the block lacks at its end
+        there = cut(theirs[j1]) if j1 < j2 else "nothing"
+        if i1 < i2:
+            changes.append(f"line {at + 1}: here {cut(lines[at])}, there {there}")
+        else:
+            changes.append(f"before line {at + 1}: here nothing, there {there}")
+    if len(opcodes) > limit:
+        changes.append(f"and {len(opcodes) - limit} more")
+    return changes
 
 
 def argument_parser(description: str, epilog: str) -> argparse.ArgumentParser:
@@ -629,6 +1249,9 @@ class Project:
     def open(cls, args: argparse.Namespace, findings: Findings, needs_project: bool = True) -> "Project":
         root = find_project(args.project)
         if root and not (root / "project.c3proj").exists():
+            example = missing_example(root, args.rag)
+            if example:
+                sys.exit(example)
             sys.exit(f"no project.c3proj in {root}: --project is the folder the editor saved the project into"
                      f"{START_ONE}")
         if root is None and needs_project:
@@ -638,17 +1261,11 @@ class Project:
 
     # --- files ------------------------------------------------------------------------
     def project_file(self, kind: str, name: str, folder: Path) -> Path | None:
-        """The JSON file for a listed item. Older projects keep the files flat even
-        when project.c3proj has subfolders, so fall back to a search by name."""
-        direct = self.root / kind / folder / f"{name}.json"
-        if direct.exists():
-            return direct
-        hits = [p for p in (self.root / kind).rglob(f"{name}.json") if not p.name.endswith(".uistate.json")]
-        return hits[0] if hits else None
+        return project_file(self.root, kind, name, folder)
 
     def listed_files(self, kind: str) -> dict[str, Path | None]:
         """The file of every item project.c3proj lists under kind; None for one that has no file."""
-        return {name: self.project_file(kind, name, folder) for name, folder in folder_items(self.data.get(kind, {}))}
+        return listed_files(self.root, self.data, kind)
 
     def script_files(self) -> list[Path]:
         """The JavaScript and TypeScript files project.c3proj lists, relative to the project folder."""

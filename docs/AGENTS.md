@@ -6,7 +6,7 @@ folder of its reader.
 | Folder | Reader | Contents |
 |--------|--------|----------|
 | `guide/` | People and agents using the data or API | `quick-start.md`, `api-reference.md`, `data-format.md` |
-| `dev/` | People and agents changing the code | `architecture.md`, `data-pipeline.md`, `published-game-analysis.md` |
+| `dev/` | People and agents changing the code | `architecture.md`, `data-pipeline.md`, `published-game-analysis.md`, `skills-audit.md` |
 | `decisions/` | Anyone asking why something is the way it is | one record per decision |
 
 `guide/` and `dev/` describe current behavior and change with the code that
@@ -45,6 +45,8 @@ Data and schemas:
 | `version-from-data-manifest.md` | Why the Construct release is read from `data/` and not from a setting |
 | `cdn-release-directory.md` | Which CDN directory a release is fetched from, and why the root is never read for it |
 | `release-schema-diff.md` | What the update pull request reports about a release, and when it waits for a person instead of merging itself |
+| `update-fails-visibly.md` | Why a failed version check, a wrong CDN body or a short export fails the update and leaves `data/` as committed |
+| `example-usage-index.md` | Which official examples use each ACE: how the index is built from the examples clone and refreshed, and what `lookup_ace.py` prints of it |
 | `lf-line-endings.md` | Why every text file is LF in the repository and in every checkout, the CDN's TypeScript definitions included |
 
 The project skill and the prompts:
@@ -53,22 +55,32 @@ The project skill and the prompts:
 |--------|-----------------|
 | `project-tools-skill.md` | Why the project tools ship as an Agent Skill, and what keeps small models on them |
 | `generator-helpers-inline.md` | Why the generator template keeps its helpers in the file the agent edits, between markers that let a game's copy take the skill's current ones, and what was measured |
+| `instruction-block-refresh.md` | Why the block in a game project's `AGENTS.md` carries a version and a stamp between markers, when `install.py` replaces it, and how an edited block or one from before the markers is treated |
 | `record-tables-as-arrays.md` | Why the generator template writes a table of records as an Array file with field names in row 0, and copies it into a Dictionary at start |
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON, and how a plan names a variable or a comment |
+| `plan-names-the-event-line.md` | Why an operation of a plan may carry the line its event prints, and not a hash of the sheet |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
+| `fix-loop-cap.md` | Why the checker counts the changes to each finding's place and stops the fix loop after two, and what it keeps in the project to count them |
+| `editor-refusal-report.md` | What the report of a refusal the checker passed holds, what it leaves out, and why the user sends it |
+| `secret-scan.md` | Which strings shaped like a key the checker warns of and the export stops on, and how one meant to be public is marked |
 | `clone-update-check.md` | Why the checker fetches the clone and fails when it is behind its upstream, and how plugin users get updates |
 | `project-format-guide.md` | Where each statement of Scirra's project format guide, the one `llm-context.md` links, is written and what checks it, and how its copy in `data/c3-guides/` is kept |
 | `preview-player.md` | Why a preview is played from a JSON plan of steps, and what the steps cover |
+| `runtime-graded-evals.md` | Why the skill's evals play each run's game from a plan beside the file assertions, which cases are held out of tuning, and what each run records |
 | `sheet-screenshot.md` | Why a picture of an event sheet is taken in the editor by `screenshot_sheet.py`, with its columns fitted and the picture cropped to the sheet |
 | `typescript-definitions-from-the-editor.md` | Why the editor writes a project's own TypeScript definitions, through `open_in_editor.py --typescript`, and when the checker warns that they are stale |
 | `game-design-prototype.md` | Why a new game starts as a design whose rules a local prototype plays before the build, and how the same tests reach the editor |
 | `event-sheet-design-guidance.md` | The event sheet prompts, the style checks and the generator's placement helpers |
 | `pitfalls-index-and-topics.md` | Why the pitfalls are an index of one-line conclusions with a topic file per group, and which lessons belong in them |
 | `prompt-references-by-task.md` | Which parts of the design and style prompts live in `prompts/references/`, why Native first stays inline, and what a row of Native first holds |
+| `borrowed-numbers.md` | Which numbers and rules of other agent frameworks were measured here before the template or a check took them, and the result for each: player height, HUD share, popups, idle motion, coyote time, images of created objects, an editor open while files change, design size, safe area, the first runtime error |
 | `published-game-visual-language.md` | Which visual, motion, camera and pacing rules repeated across published Construct games, and which of them the template took |
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
+| `landscape-viewport.md` | Why the generator template starts a game at 1920×1080 landscape, and what follows from it |
+| `fill-the-screen.md` | Why a generated game fills the screen with *Scale outer* or *Integer scale outer*, its HUD held to the screen's edges by Anchor, *Viewport fit* left at *Auto*, which keeps the whole viewport visible on a notched phone, and each layer listed back to front |
 | `layout-by-name.md` | Why a generated screen is laid out by names, a button with its label, named bands and a main object sized to the stage, with the positions computed and checked as numbers |
+| `count-up-and-press.md` | Why a generated score counts to its new value and a button presses under the finger, and the numbers each takes |
 | `art-from-the-image-tool.md` | Why a generated game's art comes from the agent's image tool through `art()` and `prepare_art.py`, and is not drawn in code |
 | `bootstrap-from-the-url.md` | How a machine holding only the repository URL reaches a game project with the skill installed |
 | `skill-and-plugin-names.md` | The names of the skill and the Claude Code plugin |

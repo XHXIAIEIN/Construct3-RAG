@@ -133,6 +133,9 @@ above. Then:
    python tools/build_project.py
    ```
 
+   If the last line starts with `stop:`, it names a finding that two changes
+   left standing. Do not change the part of the generator that writes that
+   place again, and give the finding to the user as the line says.
    Warnings do not fail the run; read them anyway, a generated project should
    have none. Then read the sheet once as events, `python
    scripts/print_sheet.py`, before anyone opens the editor.
@@ -192,6 +195,12 @@ habits; they are what makes rerunning safe.
   `Cards.Get("strike.cost")`. Each object is a `nonworld_type()` with a
   `nonworld_inst()` in the layout, the AJAX object added with them. A few
   named values, such as settings, are a `dictionary_file()`.
+- Instances go into a layer in any order: the run lists every layer in
+  `z_order()`, back to front as an editor user arranges it, the backdrop
+  and the areas first, then the rest by the Y of their feet, a child after
+  its parent and a box after the box that holds it. A game that draws by
+  another rule, a 3D layer by depth, defines `z_order()` below the end
+  marker.
 - `random.seed(...)` before the first `sid()`: a rerun then produces the same
   ids and the diff shows only what changed.
 - One helper per ACE, named for what it does, its parameters in the
@@ -226,7 +235,15 @@ habits; they are what makes rerunning safe.
   side it hangs on. Repeated items, hearts or stars,
   are `row(where, n, w, h)`, spaced so they never touch. A second row on
   the same edge is `dy` in units on the same call, `dy=3` under a 2-unit
-  label. The UI layer's instances go through `no_overlap()`, which stops
+  label. A value under its name, the score under SCORE, is one group,
+  `hud_stat(name_type, value_type, name, where, longest=...)`: the name in
+  the body size, `GAP_IN` above the value in the title size. The playfield
+  goes in the middle of what the HUD leaves, `centred(w, h, play_area(hud))`,
+  at least `GAP_OUT` from it. `spaced(groups)` stops the run when two groups
+  sit closer than 1.5 times the gap inside either. `balanced(content,
+  area)` warns when the playfield is off that middle, and `filled(content)`
+  when it covers less than `PLAYFIELD_MIN`, 15%, of the screen.
+  The UI layer's instances go through `no_overlap()`, which stops
   the run naming every pair of boxes that meet, with the `dy` that clears
   them, and every box past the viewport. A value shown as a bar, health,
   fuel, progress, a row of hearts, is
@@ -236,12 +253,26 @@ habits; they are what makes rerunning safe.
   sheet sets the fill in the one place the value changes,
   `set_width(fill, bar_width(value, maximum, LENGTH))`, or slides it with
   `tween_width()`. A bar with its name in front of it is
-  `labelled_bar(label, text, frame, fill, where, length)`.
+  `labelled_bar(label, text, frame, fill, where, length)`. The project
+  fills the screen: `FULLSCREEN` is *Scale outer*, or *Integer scale
+  outer* for pixel art. The screen then shows more than the viewport on its
+  longer side. These helpers and `band_text()` hold their element to the screen's
+  edge with the Anchor behavior of `anchored(where)`; an instance placed
+  by `anchor()` or `row()` takes `behaviors=anchored(where)`, and the run
+  gives its type the behavior.
+- A number that counts to its new value takes `count_up(text, value)` in
+  the actions where the value changes, and `counting(text, value)` among a
+  module's events. The Text shows the number alone and has the Tween
+  behavior.
 - A button is `button(type, file, label, text, col, row)`, its shape drawn
   at `button_size(text)`. The label is centred on the shape, in the colour
   `text_on()` picks for its fill, at the size `label_size()` gives. It is
   the shape's child in the layout's hierarchy (`link()`), so the events that
-  hide, move or destroy the button take the label along.
+  hide, move, squash or destroy the button take the label along.
+  `press(type, actions)` among a module's events presses the button down
+  under the finger and runs `actions` when the touch ends on it. Give the
+  shape's type the Tween behavior; `build_all()` adds the boolean instance
+  variable `pressed` to it.
 - A one-screen layout can be named bands. `bands()` gives the boxes of the
   title, the status line, the stage and the hint.
   `band_text(type, text, band, align)` puts a label in one. `fit(w, h)`
@@ -279,8 +310,9 @@ habits; they are what makes rerunning safe.
   `hit_frame(file)` draws the shape's second frame in the `flash` role,
   tagged `hit`, and `hit_flash(obj)` gives the actions that show it for
   `HIT_FLASH["seconds"]` and return to frame 0. `squash(obj, kind)` sets
-  the share of the image's size that `SQUASH` gives for `"hit"`, `"land"` or
-  `"jump"`, holds it and tweens back, and `hit(obj)` gives the hit's squash
+  the share of the image's size that `SQUASH` gives for `"hit"`, `"land"`
+  or `"jump"`, and `SQUASH_PRESS` for `"press"` unless `SQUASH` has one,
+  holds it and tweens back, and `hit(obj)` gives the hit's squash
   with the flash, last in their block, as the coin's `Collect` does; the
   object needs the Tween behavior. The Flash behavior stops the run. A
   squash acts on the art, never on an object that collides: a player is an
@@ -292,15 +324,21 @@ habits; they are what makes rerunning safe.
   that would read there. A
   viewport 360 px high or less is pixel art: `PIXEL_ART` has the project
   sample *Nearest* at a whole-number scale.
-- The stand-in's look is a blockout. `PALETTE` holds two canvas greys,
+- The stand-in's look is a plain sheet: flat shapes on an off-white
+  canvas, no outline and no shadow. `PALETTE` holds two canvas greys,
   `solid`, `dim`, `ink`, the accents `reward` and `danger`, and `flash`;
   keep the roles and change values only. `check_palette()` stops the run
-  when the backdrop's greys pass 1.2:1 or `solid` falls under 3:1 on them,
-  and `shape()` stops on an accent drawn without its outline or a fill
-  under 3:1 against the ink. The player is an ink rectangle, structure a
-  solid one, a pickup a circle, a hazard a triangle. The backdrop is the
-  checker, `backdrop("Backdrop")` on a layer at parallax 1, its cells two to
-  a unit: it is the ruler, so draw no grid. An area or an edge is
+  when the checker's greys pass 1.2:1 or `solid` falls under 3:1 on them,
+  and `shape()` stops on an accent under 3:1 on `canvas_alt` drawn without
+  an ink outline, or on a fill under 3:1 against the ink. The player is an ink
+  rectangle, structure a solid one, a pickup a circle, a hazard a
+  triangle. The backdrop is `backdrop("Backdrop")` on a layer at parallax
+  1, of `pattern("Backdrop", "plain")`, reaching `SCREEN_PAD` past the
+  viewport so the screen shows no edge of it. A popup's dim is laid out
+  over `screen_box()` on the popup's own layer. A game with something transparent,
+  a mask or a background still to come draws it as `"checker"` instead,
+  as editors show transparency; its cells, two to a unit, are then the
+  ruler, so draw no grid. An area or an edge is
   `area(type, col, row, cols, rows)` of a type whose tile `pattern(name,
   kind)` drew in `build_images()` and `pattern_type(name)` declares: `low`
   stripes for a harmless special surface, `caution` for what moves or

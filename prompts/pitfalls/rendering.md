@@ -50,6 +50,21 @@ Sources and the rule for adding an entry are in the index,
   both ways from the middle. [examples: berry-harvester ProgressBar, jetpack
   FuelBar, flatland-golf PowerBarCover, test-your-might MightLevelBar (0.5,
   1)]
+- A 9-patch whose border colour differs from its inside shows a seam where a
+  far-stretched middle meets the border. With the default, bilinear,
+  sampling the last half texel of the stretched middle blends with the
+  border's texel, so the band next to the border takes some of its colour and
+  a 1 px line of another tone runs along the inside edge. Give the 9-patch
+  *Nearest* sampling, or, for flat art, build the bar from a flat Tiled
+  Background frame with a flat Tiled Background inside it. [manual:
+  project-primitives/objects/instances.md "Sampling",
+  project-primitives/projects.md "Sampling"; observed in a minimal project,
+  stable editor preview, 2026-10-07: a 16 × 16 image with a 2 px dark border
+  and a grey inside, stretched to 448 × 32, darkened from 90 to 63 over the
+  last 17 px beside the right border, and a 1 px lighter line ran along the
+  top inside edge; two flat Tiled Backgrounds in its place kept the row at 90
+  up to the border; *Nearest* was not played]
+
 - Drawing Canvas *Fill polygon* with *Convex* off draws nothing if two
   consecutive points of the polygon coincide, including a closing point that
   repeats the first one. The rest of the sheet runs on, with no error logged.

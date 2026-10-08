@@ -1,0 +1,82 @@
+name: Checks
+
+# The checks of AGENTS.md, section 5, on every push to main and every pull
+# request. The update workflow calls this one for the pull request it opens:
+# a pull request opened with GITHUB_TOKEN starts no workflow of its own.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+    inputs:
+      ref:
+        description: The commit to check; the caller's commit when empty
+        type: string
+        default: ''
+    outputs:
+      report:
+        description: Markdown for a pull request body, the failed log's end and the skipped tests
+        value: ${{ jobs.checks.outputs.report }}
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      report: ${{ steps.report.outputs.report }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # The service's requirements and Pillow, which prepare_art.py and its
+      # tests need. The sibling clones are not cloned, so the tests that
+      # read them skip, and the report lists every skip.
+      - name: Install the requirements of the tests
+        run: pip install -r src/requirements.txt pytest httpx pillow
+
+      # git diff --check of AGENTS.md checks uncommitted changes, which a
+      # fresh checkout has none of.
+      - name: Run the checks
+        id: run
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          {
+            python -m pytest -q -rs
+            python -m compileall -q src scripts tests skills
+            python scripts/build_plugin.py --check
+          } 2>&1 | tee "$RUNNER_TEMP/checks.log"
+
+      - name: Report
+        id: report
+        run: |
+          {
+            echo 'report<<CHECKS_REPORT_END'
+            if [ "${{ steps.run.outcome }}" = failure ]; then
+              echo "The checks failed, so this pull request waits for a person:"
+              echo
+              echo '```'
+              tail -n 60 "$RUNNER_TEMP/checks.log"
+              echo '```'
+              echo
+            fi
+            if grep -q '^SKIPPED' "$RUNNER_TEMP/checks.log"; then
+              echo "Tests that skipped in the check run:"
+              echo
+              echo '```'
+              grep '^SKIPPED' "$RUNNER_TEMP/checks.log"
+              echo '```'
+            fi
+            echo 'CHECKS_REPORT_END'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Fail when a check failed
+        if: steps.run.outcome == 'failure'
+        run: exit 1

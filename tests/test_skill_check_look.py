@@ -3,7 +3,7 @@ import re
 import struct
 import zlib
 
-from tests.skill_helpers import tool, edit, template_module
+from tests.skill_helpers import tool, edit, template_module, cond, block
 
 
 def png_chunk(tag: bytes, data: bytes) -> bytes:
@@ -12,7 +12,7 @@ def png_chunk(tag: bytes, data: bytes) -> bytes:
 
 def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     code, out = tool(project, "check_look")
-    assert code == 0 and out.splitlines()[-1].startswith("ok: 3 images, 2 world instances on a 32 px grid, "
+    assert code == 0 and out.splitlines()[-1].startswith("ok: 4 images, 3 world instances on a 32 px grid, "
                                                           "1 runtime creations"), out
     t = template_module()
     t.ROOT = project
@@ -21,16 +21,16 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     (project / "images" / "dirty.png").write_bytes(      # a clear pixel with a colour under it
         b"\x89PNG\r\n\x1a\n" + png_chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0))
         + png_chunk(b"IDAT", zlib.compress(bytes([0, 9, 9, 9, 0]))) + png_chunk(b"IEND", b""))
-    edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x=50))
+    edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x=150))
     sheet = project / "eventSheets" / "Game.json"
-    sheet.write_text(sheet.read_text(encoding="utf-8").replace("32 * floor(random(0, 20)) + 48", "random(96, 624)"),
-                     encoding="utf-8")
+    sheet.write_text(re.sub(r'"x": "(?:[^"\\]|\\.)*loopindex(?:[^"\\]|\\.)*"', '"x": "random(96, 1728)"',
+                            sheet.read_text(encoding="utf-8"), count=1), encoding="utf-8")
     code, out = tool(project, "check_look")
     assert code == 1, out
     assert "alpha.pure: images/dirty.png has 1 clear pixels that hold a colour, the first at (0,0)" in out
     assert re.search(r"alpha.pure: images/glow.png has alpha 37 at \(0,0\); the project's shadow is 128.*--painted glow.png", out)
     assert re.search(r"grid.world-placement: layout Objects layer Objects: Coin at \(\d+,\d+\) \d+x\d+ is off the 32 px grid", out)
-    assert "grid.runtime-spawn: sheet Game: create Coin at x = random(96, 624), a raw random()" in out
+    assert "grid.runtime-spawn: sheet Game: create Coin at x = random(96, 1728), a raw random()" in out
     assert out.splitlines()[-1].startswith("4 findings:")
     _, out = tool(project, "check_look", "--painted", "glow.png")
     assert "glow.png" not in out and out.splitlines()[-1].startswith("3 findings:")
@@ -43,3 +43,34 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     _, out = tool(project, "check_look", "--painted", "glow.png")
     assert ("motion.squash-art: sheet Game: Coin is squashed but has solid, so its collision box grows into the "
             "floor; squash its art") in out
+
+
+def test_check_look_warns_of_a_letterbox_mode(project):
+    """The template fills the screen; a project in a Letterbox mode passes with a warning that
+    names the mode to write, since the editor accepts it and the bars are the user's call."""
+    edit(project, "project.c3proj", lambda p: p["properties"].update(fullscreenMode="letterbox-integer-scale"))
+    code, out = tool(project, "check_look")
+    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
+    assert ("warning: screen.fill: project.c3proj has fullscreenMode letterbox-integer-scale, which shows bars "
+            "where the screen's shape differs from the viewport's; the template's build_project() writes "
+            "integer-scale-outer") in out
+    edit(project, "project.c3proj", lambda p: p["properties"].update(fullscreenMode="scale-outer"))
+    assert "screen.fill" not in tool(project, "check_look")[1]
+
+
+def test_check_look_warns_of_a_viewport_under_the_notch(project):
+    """Viewport fit Cover draws under a notch, where the anchored HUD then lies: a warning until an
+    event reads the safe area's insets, since the editor accepts the setting."""
+    edit(project, "project.c3proj", lambda p: p["properties"].update(viewportFit="cover"))
+    code, out = tool(project, "check_look")
+    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
+    assert ("warning: screen.safe-area: project.c3proj has viewportFit cover, which draws the game under a "
+            "phone's notch") in out
+    edit(project, "eventSheets/Game.json", lambda s: s["events"].append(
+        {"eventType": "comment", "text": "PlatformInfo.SafeAreaInsetTop is read nowhere yet"}))
+    assert "screen.safe-area" in tool(project, "check_look")[1]
+    edit(project, "eventSheets/Game.json", lambda s: s["events"].append(block(
+        [cond("on-start-of-layout")], [cond("set-y", "ScoreLabel", {"y": "MARGIN + PlatformInfo.SafeAreaInsetTop"})])))
+    assert "screen.safe-area" not in tool(project, "check_look")[1]
+    edit(project, "project.c3proj", lambda p: p["properties"].update(viewportFit="auto"))
+    assert "screen.safe-area" not in tool(project, "check_look")[1]

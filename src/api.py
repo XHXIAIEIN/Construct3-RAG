@@ -38,7 +38,7 @@ def _get_lookup_engine():
     """Construct the offline deterministic lookup adapter lazily."""
     global _lookup_engine
     if _lookup_engine is None:
-        from src.lookup import LookupEngine
+        from src.lookup.service import LookupEngine
 
         _lookup_engine = LookupEngine(schema_dir=SETTINGS.schema.directory)
     return _lookup_engine

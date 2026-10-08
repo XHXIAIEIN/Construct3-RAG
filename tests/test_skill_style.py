@@ -57,8 +57,8 @@ def test_style_findings_come_only_when_asked(project):
 def test_style_names_a_long_run_of_actions(project):
     edit(project, SHEET, lambda s: events(s)["setup"]["actions"].extend(STYLE_ACTIONS))
     code, out = check(project, "--style")
-    assert code == 0 and "event 2 (sid" in out and "10 actions in a row without a comment action" in out, out
-    edit(project, SHEET, lambda s: events(s)["setup"]["actions"].insert(4, {"type": "comment", "text": "Reset the text."}))
+    assert code == 0 and "event 2 (sid" in out and "12 actions in a row without a comment action" in out, out
+    edit(project, SHEET, lambda s: events(s)["setup"]["actions"].insert(6, {"type": "comment", "text": "Reset the text."}))
     assert "actions in a row" not in check(project, "--style")[1]
 
 

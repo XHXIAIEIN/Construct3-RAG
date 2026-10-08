@@ -10,6 +10,11 @@ The pytest suite is offline: it needs no service, no model and no network.
 - `SearchStage` has exactly three stable values: `initialize`, `lookup`,
   `respond`. Request validation happens inside `initialize`; do not add a
   validation stage.
+- A skip reason names the command that supplies what is missing
+  (`python scripts/bootstrap.py`, `pip install pillow`). A sibling clone's
+  path comes from `siblings_folder`, as `EXAMPLES` in `skill_helpers.py`
+  does: in a worktree `REPO.parent` is not the folder that holds the
+  clones, and `test_sibling_paths.py` fails on it.
 
 ## Gold set
 

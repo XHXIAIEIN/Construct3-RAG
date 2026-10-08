@@ -109,14 +109,23 @@ variables and comments.
   sheet it prints in the system's temporary folder, not in the project, and
   a plan is refused when the sheet no longer matches it: a save in the
   editor in between can move the events the numbers name. A written plan
-  keeps the new hash.
+  keeps the new hash. An operation that names an event by its number may
+  also carry the line the print shows for that event, which catches a
+  number from an older print or a miscount (`plan-names-the-event-line.md`).
 - Output: what each operation did, the changed events as the editor words
   them under their new numbers, new warnings, and the checker's last line.
   A `note:` names each action the plan did not touch that still writes an
   older form of a text the plan writes elsewhere: runs changed the score
   text in one place and left the other showing the old one. After a write,
-  a `note:` says to reopen the project in an editor that has it open, whose
-  next save would write back the sheet it had loaded.
+  a `note:` says to reopen the project in an editor that has it open. The
+  editor keeps the sheet it loaded, so a save after an edit to that sheet
+  there writes the editor's copy over the plan's (`borrowed-numbers.md`,
+  "An editor open while files change"). In a project that
+  `tools/build_project.py` generates, a `note:` says that the generator's
+  next run writes the sheet over the change, which belongs in the generator.
+  It is a note and not a refusal because no eval run on a generated project
+  changed its sheet with a plan: the prompts told those runs to change the
+  generator.
 
 ## Re-evaluate when
 
@@ -131,3 +140,6 @@ variables and comments.
   the print's line: a checker warning for a plan that multiplies every read
   of a constant by the same factor.
 - An agent needs to change or remove an include.
+- A run changes a generated project's sheet with a plan and leaves the
+  generator as it was: refuse such a plan unless a flag says the project
+  does not use the generator.

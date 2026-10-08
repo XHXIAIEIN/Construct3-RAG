@@ -3,7 +3,7 @@
 Contents: [Data Sources](#data-sources),
 [CDN Fetching](#cdn-fetching-c3fetcher) (release directory, cache, export,
 deprecation filter), [Scirra's Guides](#scirras-guides),
-[Version Update](#version-update).
+[Example Usage](#example-usage), [Version Update](#version-update).
 
 ## Data Sources
 
@@ -23,9 +23,10 @@ patch release written as a dash, `r495-2` for r495.2. `versions.json`, which
 names the current Beta, Stable and LTS releases, is the one file at the root.
 
 The manual, the Addon SDK samples and the example projects are separate clones
-(`Construct3-Manual`, `Construct-Addon-SDK`, `Construct-Example-Projects`).
-Nothing here reads or copies them; `AGENTS.md` section 2 says where an agent
-finds them.
+(`Construct3-Manual`, `Construct-Addon-SDK`, `Construct-Example-Projects`);
+`AGENTS.md` section 2 says where an agent finds them. The pipeline copies
+none of them. It reads one: the event sheets of the example projects, for
+the index of [Example Usage](#example-usage).
 
 ## CDN Fetching (C3Fetcher)
 
@@ -46,6 +47,11 @@ refuses the directory spelling. See
 - Expiry: every Wednesday 08:00 Beijing time (aligned with Scirra's Tuesday UK evening releases)
 - Within one cache period, each endpoint is fetched at most once
 - `force=True` bypasses cache
+- A body is checked before it is cached: a JSON endpoint must parse and have
+  its top-level type and key, and a `.d.ts` or `.js` must not be an HTML
+  page. A refused body raises `ValueError` and nothing is cached
+- An HTTP 5xx, a connection error or a timeout is retried twice, one second
+  apart; a 4xx is not
 
 ### Schema Export
 
@@ -83,6 +89,14 @@ CDN-native field names. It writes `schemas/` and `examples/` in the cache,
 The `lang/` files are the CDN text unchanged apart from indentation, so a
 release-to-release diff of `data/c3-lang/` shows exactly which strings
 Scirra added, removed, or retranslated.
+
+`export_ts_defs()` skips a `.d.ts` file that is already in the cache, so each
+cached file is written beside its place and then moved in: a run that stops
+during a write leaves no partial file. If a file fails to download, the export
+tries the rest, then stops with an error that names each failed file and writes
+no `.exported` marker. An `offline.json` that lists no `.d.ts` stops it too.
+The next run downloads only the files that are still missing. A failed
+examples export stops `export_schemas()` the same way, with no marker.
 
 Each plugin/behavior file uses CDN field names:
 - Conditions/actions: `list-name`, `display-text`, `description`
@@ -177,11 +191,30 @@ which waits for a person: compare it with
 `docs/decisions/project-format-guide.md`. Nothing reads the network on import
 or on a query.
 
+## Example Usage
+
+`scripts/example_usage.py` writes `data/c3-example-usage/`, which says which
+official examples use each condition, action and expression
+(`docs/guide/data-format.md`, "Example usage"). It reads the event sheets of
+every project in the `Construct-Example-Projects` clone beside this
+repository, or in `--clone`. It resolves each object to its plugin and
+behaviors through the project's object types and families, as the skill's
+scripts do. The folder is replaced whole, so an addon that no example in
+the clone uses leaves it. The same commit of the clone gives the same bytes.
+
+`scripts/init.py` runs it after the CDN export. Without the clone it keeps
+the committed index and prints the command that clones it. The update
+workflow has no clone, so a release leaves the index as committed;
+`_source.json` names the commit it was built from. After you pull the
+clone, run `python scripts/example_usage.py`. Review
+`git diff data/c3-example-usage`. Then build `plugin/` again. See
+`docs/decisions/example-usage-index.md`.
+
 ## Version Update
 
 `data/c3-schemas/_index.json` records the release `data/` holds.
 `scripts/check_c3_version.py` compares it with the latest stable release in
-the CDN's `versions.json`. When Construct 3 releases a new version:
+the CDN's `versions.json`, and exits 1 when it cannot read it. When Construct 3 releases a new version:
 
 ```bash
 # Fetch the latest stable release (or --version <release>), replace data/,
@@ -206,13 +239,30 @@ Tests are not scanned, since the suite fails on its own.
 
 `C3Fetcher.export_to_data()` is the one place that maps the cache onto
 `data/`: it replaces `c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`
-whole, leaving cache markers behind. The TypeScript definitions are written
+whole, leaving cache markers behind. It builds the four in a
+`.data-staging-*` folder beside `data/` and checks them against what the CDN
+lists: complete schemas, every example in both locales, both language packs,
+every `.d.ts` of `offline.json` and the autocomplete listing. Then it renames
+them in, and a failed rename puts back the ones already moved. When an item
+is missing it raises an error naming it, and `data/` stays as it was. A
+staging folder left by a killed run can be deleted. The TypeScript definitions are written
 as the CDN ships them, some with CRLF; `.gitattributes` stores every text
 file as LF, so a refresh changes only what the release changed
 (`docs/decisions/lf-line-endings.md`). `scripts/init.py` and the update workflow
 both call it, so generated and committed layouts stay identical. The workflow
 opens a pull request with the result and the `schema_diff.py` report, against
-the data on `main`, as its body. It enables auto-merge only when the report
-watches no mentioned id and no guide changed; otherwise the pull request
-waits for a person. See
-`docs/decisions/release-schema-diff.md`.
+the data on `main`, as its body. A pull request opened with `GITHUB_TOKEN`
+starts no other workflow, so the update workflow then calls
+`.github/workflows/checks.yml`, the checks of `AGENTS.md` (pytest with `-rs`,
+compileall, `build_plugin.py --check`) that also run on every push to `main`
+and every pull request, on the pull request's commit. The tests that skipped
+there, and the end of the log when a check failed, are added to the pull
+request's body. The workflow enables auto-merge only when the checks passed,
+the report watches no mentioned id and no guide changed, and every other check
+on the pull request passed within 10 minutes; otherwise the pull request waits
+for a person. See `docs/decisions/release-schema-diff.md`.
+
+The workflow fails, and GitHub sends its failure email, when the version
+check cannot read the CDN or the refresh stops; `data/` is then not
+committed. A failed version check still lets a changed guide open its pull
+request. See `docs/decisions/update-fails-visibly.md`.

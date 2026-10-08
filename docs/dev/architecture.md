@@ -12,15 +12,10 @@ Construct3-RAG is a versioned, bilingual Construct 3 reference dataset first.
 The lookup service is an optional access layer over that data, and Direct Lookup
 is all it does: deterministic, offline, with no model and no database behind it.
 
-The `construct3-agent-plugin` skill under `skills/` is outside this layout.
-Its scripts import the standard library and each other. `prepare_art.py` also
-imports Pillow, and `preview_project.py` imports it when it is installed, to
-save a recording as a GIF where ffmpeg is missing. The scripts read
-`data/c3-schemas/` directly and run from a copy inside a game project with
-neither `src/` nor the service. `scripts/build_plugin.py` copies the skill
-and the data it reads into `plugin/`, the Claude Code plugin, where the
-TypeScript definitions and the examples are bundles that
-`c3project.data_texts` reads (`docs/decisions/plugin-folder.md`). Before
+The `construct3-agent-plugin` skill under `skills/` is outside this layout:
+its scripts read `data/c3-schemas/` directly and run from a copy inside a
+game project with neither `src/` nor the service. How the Claude Code plugin
+gets the skill and its data: `docs/decisions/plugin-folder.md`. Before
 changing the skill, read `skills/AGENTS.md`.
 
 The project follows four dependency rules:
@@ -78,6 +73,7 @@ domain/* <-------------------------+
 Explicit maintenance path:
 
 scripts/init.py -----> ingest/c3_fetcher.py -----> data/
+                 \---> scripts/example_usage.py -> data/c3-example-usage/
                  \---> ingest/guides.py --------> data/c3-guides/
 ```
 
@@ -164,8 +160,10 @@ reads the committed dataset, or the directory `C3_SCHEMA_DIR` names. A refresh
 replaces `data/` itself, so the cache is never read at query time.
 
 No ordinary import or query refreshes the CDN. `scripts/init.py` fetches,
-exports into the cache, and replaces the `data/` directories, then writes
-each of Scirra's guides whose text changed; the update workflow runs the
+exports into the cache, and replaces the `data/` directories. It then
+rebuilds `data/c3-example-usage/` from the examples clone when the clone
+lies beside the repository, and writes each of Scirra's guides whose text
+changed; the update workflow runs the
 same script, `--guides-only` every week, then `scripts/schema_diff.py` for
 the body of its pull request.
 

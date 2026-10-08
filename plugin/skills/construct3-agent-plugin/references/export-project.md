@@ -15,7 +15,13 @@ with only the files the editor reads, as `scripts/pack_project.py` packs them,
 exports it to Web (HTML5) as a zip with Offline support, Deduplicate images
 and Optimize images on, and unpacks the zip into `--to`, replacing what was
 there. Without `--to` the export goes to `.build/web`, where the products
-go and Git ignores them; the browser profile stays in `.tmp/`.
+go and Git ignores them; the browser profile stays in `.tmp/`. `--to` is a
+new or empty folder or one that holds an earlier export: the script refuses
+the project, a folder above it, a drive's root and a folder of other files
+with exit 2, before it opens anything. The zip is extracted beside `--to`,
+into `<folder>.new`, and takes the folder's place only when it carries the
+version to export; when the extraction, the check or the swap fails, the
+earlier export stays as it was.
 
 The copy handed to the editor sets *Use worker* to Auto, so the engine
 decides: a worker, unless the project has a script or an addon without worker
@@ -29,6 +35,11 @@ last number, or takes the project's Version when that is greater;
 project's Version. The script writes the version into `project.c3proj` too,
 so the project and its export agree. `--dry-run` prints the version, the
 editor and the folder, and opens nothing.
+
+The export ships every string of the project to every player. Before the
+browser starts, the script reads them as `scripts/check_project.py` does,
+stops on a string shaped like a key, and names the hosts of the addresses
+the game holds: tell the user which hosts the game contacts.
 
 A project over the Free edition's limits exports only from an account with a
 subscription. The script drives a window of its own, and when the editor
@@ -70,6 +81,10 @@ closes it after the export or when the run stops.
   what is open and runs the export once more with pauses three times as
   long. When that run stops too, or on a machine already known to be slow,
   pass `--slow`, which uses the longer pauses from the start.
+- Exit 1 and `not exported:` with strings `shaped like a key`, before the
+  browser starts: each line names the place. Move each key to a server that
+  the game calls. If a key is meant to be public, write `allow-secret` where
+  the line says. Then run the same command again.
 - Exit 2: a bad flag, project or editor page.
 - Exit 3: no Edge, Chrome or Chromium. Export by hand in the editor, or
   attach to a browser.

@@ -56,7 +56,7 @@ LOOKUPS = [["System"], ["System", "wait"], ["System", "action"], ["System", "exp
 def run(scripts: Path, args: list[str], extra: list[str]) -> dict:
     rag = scripts.parent.parent.parent
     p = subprocess.run([sys.executable, str(scripts / args[0]), *args[1:], "--rag", str(rag), *extra],
-                       capture_output=True, env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+                       capture_output=True, env=dict(os.environ, PYTHONIOENCODING="utf-8", CONSTRUCT3_RAG_NO_RECORD="1"))
     out, err = (s.replace(b"\r\n", b"\n") for s in (p.stdout, p.stderr))
     return {"exit": p.returncode, "stdout": hashlib.sha256(out).hexdigest()[:16], "stdout_chars": len(out.decode("utf-8", "replace")),
             "stderr": hashlib.sha256(err).hexdigest()[:16], "stderr_chars": len(err.decode("utf-8", "replace"))}

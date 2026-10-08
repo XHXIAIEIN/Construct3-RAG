@@ -19,8 +19,8 @@ def test_a_label_off_its_button_says_so(project):
     path = project / "layouts" / "Game.json"
     layout = json.loads(path.read_text(encoding="utf-8"))
     layer = layout["layers"][-1]
-    sprite = next((i for L in layout["layers"] for i in L["instances"]
-                   if "text" not in (i.get("properties") or {})), None)
+    sprite = min((i for L in layout["layers"] for i in L["instances"] if "text" not in (i.get("properties") or {})),
+                 key=lambda i: i["world"]["width"] * i["world"]["height"], default=None)
     assert sprite, "the stand-in game has a sprite"
     w = sprite["world"]
     label = {"type": sprite["type"], "properties": {"text": "Start"},

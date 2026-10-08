@@ -17,7 +17,7 @@
   "grid": {
     "UNIT": "8 when the viewport is 360 px high or less, else 32",
     "world": "every instance outside the HUD starts on a whole UNIT, and a shape covers whole cells",
-    "hud": "held against the viewport's edges by anchor(), MARGIN inside them"
+    "hud": "held against the viewport's edges by anchor(), MARGIN inside them, and to the screen's edges by the Anchor behavior of anchored()"
   },
   "rules": [
     {
@@ -74,18 +74,74 @@
       "template": "PIXEL_ART, build_project()"
     },
     {
+      "id": "screen.fill",
+      "status": "adopted",
+      "says": "The project fills the screen at any aspect ratio: Scale outer, and Integer scale outer for pixel art, never a Letterbox mode with bars. A HUD element held to an edge carries the Anchor behavior for that edge; a backdrop or a dim reaches SCREEN_PAD past the viewport on every side.",
+      "template": "FULLSCREEN",
+      "value": "'integer-scale-outer' if PIXEL_ART else 'scale-outer'",
+      "helpers": "anchored(), hud_text(), hud_bar(), labelled_bar(), band_text(), screen_box(), backdrop(), anchor_types()",
+      "confirm": "check_look.py: screen.fill (a warning)"
+    },
+    {
+      "id": "screen.safe-area",
+      "status": "adopted",
+      "says": "The whole viewport stays inside the safe area of a screen with a notch or rounded corners: Viewport fit Auto, as the empty project has it. A game that draws under the notch with Cover moves its HUD in by PlatformInfo's SafeAreaInset expressions.",
+      "template": "PROPERTY_DEFAULTS",
+      "confirm": "check_look.py: screen.safe-area (a warning)"
+    },
+    {
+      "id": "layer.z-order",
+      "status": "adopted",
+      "says": "Each layer lists its instances as an editor user would arrange them, back to front: the backdrop, the areas, then the rest by the Y of their feet; a child after its parent, a box inside another box after it unless the outer one is a label.",
+      "template": "z_order()",
+      "helpers": "z_order(), build_all()"
+    },
+    {
+      "id": "layout.proximity",
+      "status": "enforced",
+      "says": "A value and its name are one group, GAP_IN apart; two groups, a HUD group and the playfield among them, sit at least 1.5 times the gap inside either apart, so a name stays with its value and not with the board.",
+      "template": "GROUP_RATIO",
+      "value": "1.5",
+      "helpers": "hud_stat(), spaced(), play_area(), centred()"
+    },
+    {
+      "id": "layout.balance",
+      "status": "open",
+      "says": "The playfield's content is centred in what the HUD leaves, not on the whole screen, raised by OPTICAL_LIFT of that space's height; a centre more than a unit off prints a warning. The 5% lift is a rule of thumb with no measurement found behind it.",
+      "template": "OPTICAL_LIFT",
+      "value": "0.05",
+      "options": [
+        "0.05: the board a little above the middle of the play area, where the eye puts the middle",
+        "0: the board exactly in the middle of the play area"
+      ],
+      "helpers": "play_area(), centred(), balanced()"
+    },
+    {
+      "id": "layout.fill",
+      "status": "adopted",
+      "says": "The box around the playfield's content covers at least 15% of the screen, else the run prints a warning. Of the official 2D game examples' one-screen layouts, 95 in 100 cover more and the median covers 80%; the 25 to 60% band of slide and poster skills would flag 83% of them, so it is not used.",
+      "template": "PLAYFIELD_MIN",
+      "value": "0.15",
+      "helpers": "filled()"
+    },
+    {
+      "id": "layout.focal",
+      "status": "rejected",
+      "says": "A check that the largest object is at least 1.5 times the area of the next: only 31% of the official 2D game examples' one-screen layouts pass it, since a grid of equal tiles, a deck of cards or two paddles is a sound game screen with no single largest object."
+    },
+    {
       "id": "outline.width",
       "status": "adopted",
-      "says": "An ink outline inside every shape's edge.",
+      "says": "An ink outline inside a shape's edge where SHAPE_STYLE turns it on; off on the plain sheet, always on a hit frame.",
       "template": "SHAPE_STYLE['outline_width']",
       "value": "max(1, UNIT // 4)"
     },
     {
       "id": "shadow.form",
       "status": "adopted",
-      "says": "A hard cast shadow: one unblurred copy of the shape, one direction for the whole scene.",
+      "says": "No cast shadow on the plain sheet. A game that turns it on gets a hard one: one unblurred copy of the shape, one direction for the whole scene.",
       "template": "SHAPE_STYLE['shadow']",
-      "value": "True"
+      "value": "False"
     },
     {
       "id": "shadow.distance",
@@ -112,27 +168,27 @@
       "id": "palette.greys",
       "status": "enforced",
       "strict": true,
-      "says": "Two canvas greys, one solid grey, dim, ink and two accents, plus the hit's flash; the player in ink. The backdrop's greys at most 1.2:1, solid at least 3:1 on the darker of them.",
+      "says": "Two canvas greys, one solid grey, dim, ink and two accents, plus the hit's flash; the player in ink. The checker's greys at most 1.2:1, solid at least 3:1 on the darker of them.",
       "template": "{role: '#%02X%02X%02X' % colour for role, colour in PALETTE.items()}",
-      "value": "{'canvas': '#F4F4F4', 'canvas_alt': '#E4E4E4', 'solid': '#808080', 'dim': '#5A5A5A', 'ink': '#1C1C1C', 'reward': '#F5C518', 'danger': '#E23B2E', 'flash': '#FFFFFF'}",
+      "value": "{'canvas': '#FAFAF7', 'canvas_alt': '#EEEEEA', 'solid': '#848480', 'dim': '#646460', 'ink': '#111111', 'reward': '#2563EB', 'danger': '#DC263C', 'flash': '#FFFFFF'}",
       "helpers": "check_palette()"
     },
     {
-      "id": "colour.accent-outline",
+      "id": "colour.accent-contrast",
       "status": "enforced",
       "strict": true,
-      "says": "An accent, a role that is a hue and not a grey, loses to the backdrop on value and is drawn with its ink outline; every outlined fill reads at least 3:1 against the ink.",
+      "says": "An accent, a role that is a hue and not a grey, reads at least 3:1 on canvas_alt when drawn without an outline, or is drawn with its ink outline; every outlined fill reads at least 3:1 against the ink.",
       "template": "[role for role in PALETTE if accent(role)]",
       "value": "['reward', 'danger']",
       "helpers": "accent(), shape()"
     },
     {
-      "id": "backdrop.checker",
+      "id": "backdrop.sheet",
       "status": "enforced",
       "strict": true,
-      "says": "The transparency checker behind everything, one Tiled Background from the layout's origin, cells of UNIT / 2 in canvas and canvas_alt; it is the ruler, in place of a grid, and no area elsewhere.",
-      "template": "PATTERNS['checker']",
-      "value": "('canvas', 'canvas_alt')",
+      "says": "One Tiled Background behind everything, over the layout and SCREEN_PAD past it on every side, and no area elsewhere: the plain sheet in canvas, or, in a game with something transparent, a mask or a background still to come, the transparency checker, cells of UNIT / 2 in canvas and canvas_alt, the ruler in place of a grid.",
+      "template": "{kind: PATTERNS[kind] for kind in BACKDROPS}",
+      "value": "{'plain': ('canvas', 'canvas'), 'checker': ('canvas', 'canvas_alt')}",
       "helpers": "pattern(), pattern_type(), backdrop()"
     },
     {
@@ -140,7 +196,7 @@
       "status": "enforced",
       "strict": true,
       "says": "Objects stay flat; an area or an edge is a Tiled Background of a pattern: low stripes for a harmless special surface, caution stripes for what moves or triggers, hazard stripes for what hurts. Stripes at 45 degrees, a one-unit tile, offset so pieces meet without a seam; the caution and hazard stripes cover strips and small zones, their shorter side a quarter of the viewport's at most.",
-      "template": "{kind: roles for kind, roles in PATTERNS.items() if kind != 'checker'}",
+      "template": "{kind: roles for kind, roles in PATTERNS.items() if kind not in BACKDROPS}",
       "value": "{'low': ('solid', 'dim'), 'caution': ('reward', 'ink'), 'hazard': ('danger', 'ink')}",
       "helpers": "pattern(), area(), tiledbg_inst()"
     },
@@ -166,7 +222,7 @@
       "id": "motion.hit",
       "status": "enforced",
       "strict": true,
-      "says": "A hit shows the shape's hit frame, filled in the flash role with the same outline and shadow, for 0.08 s of real time, then frame 0; never the Flash behavior.",
+      "says": "A hit shows the shape's hit frame, filled in the flash role inside the ink outline with the same shadow, for 0.08 s of real time, then frame 0; never the Flash behavior.",
       "template": "HIT_FLASH['seconds']",
       "value": "0.08",
       "helpers": "hit_frame(), hit_flash(), beh_def()",
@@ -232,7 +288,8 @@
     "Copy assets/build_project.py to the project's tools/ and rewrite only the game, above the helpers' begin marker and below their end marker: PROJECT_NAME, PALETTE's values by role, ART_STYLE, BEATS, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
     "Keep SHAPE_STYLE and the helpers between the markers; a helper the game changes is defined again below the end marker. Give every sprite an art() in whole units, which draws its stand-in until its picture arrives, and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
     "With an image tool in the session: run prepare_art.py --list, make each picture with the prompt it prints, run prepare_art.py, then the generator. Never draw the art in code: it looks worse than the stand-ins and mixes styles.",
-    "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area or an edge is area() of a pattern(), the backdrop the checker's backdrop().",
+    "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area or an edge is area() of a pattern(); the backdrop is backdrop() of the plain pattern, or of the checker where something is transparent, a mask or a background still to come.",
+    "Place the HUD with hud_text(), hud_stat() for a value under its name, hud_bar(), labelled_bar() or band_text(), which hold it to the screen's edges with the Anchor behavior, and the playfield at centred(w, h, play_area(hud)); pass the HUD's groups and the playfield to spaced(). An instance placed by anchor() or row() takes behaviors=anchored(where). Lay a popup's dim over screen_box(), on the popup's own layer. Leave FULLSCREEN and z_order() as they are: they fill the screen and order each layer for any game.",
     "Write BEATS for the game's zones or rounds, and read the curve the generator prints; measure every gap of a platformer level with jump().",
     "Give every object that can be hit a hit_frame() after its shape and the Tween behavior, and show a hit with hit(obj), last in its block; never the Flash behavior.",
     "Squash a landing and a jump with squash(art, \"land\") and squash(art, \"jump\"), on the art pinned to the collision mask, never on the mask.",

@@ -110,6 +110,16 @@ Sources and the rule for adding an entry are in the index,
   event the player moves for one tick and stops. [manual:
   behavior-reference.md "Custom controls", the tip that the input events
   must be continually true]
+- Platform's *Simulate control* Jump jumps from the floor only, or in the
+  air as the one extra jump that *Double jump* allows. Pressed in the air
+  with *Double jump* off, it does nothing. A jump from the air, such as a
+  coyote-time jump just after walking off a ledge, is *Set vector Y* to
+  `-Self.Platform.JumpStrength`. *On jump* does not fire for it, so that
+  event also runs what *On jump* would run. [manual:
+  behavior-reference/platform.md "Double jump"; observed in a probe
+  project, r495.2 preview at 60 and 144 Hz, 2026-10-08: *Simulate control*
+  Jump pressed 7 to 208 ms after walking off a ledge never jumped, and
+  *Set vector Y* jumped at every press within the 0.1 s window]
 - *Default controls* is a property of each instance, and every instance
   with it on moves with the arrow keys. A crate given Platform to be pushed,
   or an enemy given 8 Direction, has it on by default and walks with the
@@ -165,3 +175,22 @@ Sources and the rule for adding an entry are in the index,
   numbers. The copy and the clear come before the groups that write, so a
   consumer anywhere below them reads this tick's state. [observation in a
   studied project, 2026-10-06]
+- A popup closed by a tap on its dim, Touch *On touched object* with the
+  dim, closes only where the dim reaches. Under *Scale outer* the viewport
+  grows with the window's aspect ratio, so a dim sized to the design area
+  leaves strips at the sides of a wide window or above and below a tall one.
+  There the game shows through and a tap closes nothing. Size a full-screen
+  cover far past any aspect ratio, such as 8000×8000 around the centre of
+  the design area. A Sprite does this without a layer of its own texture,
+  which a layer background faded by layer opacity needs. Test the tap
+  against the panel instead of the cover: *On any touch start* and *NOT Is
+  touching object* for the panel and for each of its buttons, in a group
+  that is active only while the popup is open. Then the cover only draws,
+  and its size decides nothing about input. [manual:
+  system-reference/system-expressions.md "OriginalViewportWidth", the
+  viewport size that *Scale outer* changes with the screen;
+  interface/debugger/gpu-profile-tab.md, the cost of a layer's own
+  texture; observed in a game project, r504 preview, 2026-10-06: popup
+  dims 1400×2000 on a 430×932 *Scale outer* design area left both sides of
+  a wide window uncovered, and taps there did not close the popup; dims at
+  8000×8000 and the touch test above fixed both]

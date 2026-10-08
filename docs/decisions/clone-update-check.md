@@ -18,7 +18,7 @@ each session, fetches the clone and reports a clone that is behind its
 upstream as a problem, with the commands that update it:
 
 ```
-Construct3-RAG at <clone> is 3 commits behind origin/main, so the scripts lack the fixes and checks of those commits. Run git -C "<clone>" pull --ff-only, then python "<clone>/skills/construct3-agent-plugin/scripts/install.py" --into "<game>/.agents/skills", then run this check again
+Construct3-RAG at <clone> is 3 commits behind origin/main, so the scripts lack the fixes and checks of those commits. Run git -C "<clone>" merge --ff-only origin/main, then python "<clone>/skills/construct3-agent-plugin/scripts/install.py" --into "<game>/.agents/skills", then run this check again
 ```
 
 - The line is an error, so the check exits 1 and the line is the first
@@ -26,10 +26,15 @@ Construct3-RAG at <clone> is 3 commits behind origin/main, so the scripts lack t
   ...`, for its next step (`ok_line` in `check_project.py`). Small-model
   runs in the skill evals left a warning that printed on every run unacted,
   so a warning above that last line goes unread.
-- One line carries both steps: the pull, and for a game project that holds
-  a copy of the skill, the `install.py` that refreshes the copy. Run from the
-  clone itself (the Claude Code plugin linked to a clone, or the scripts run
-  in place), the line gives the pull alone.
+- One line carries both steps: the fast-forward, and for a game project that
+  holds a copy of the skill, the `install.py` that refreshes the copy. Run
+  from the clone itself (the Claude Code plugin linked to a clone, or the
+  scripts run in place), the line gives the fast-forward alone.
+- The fast-forward is a merge of the upstream branch the last fetch brought,
+  not a pull. The behind count comes from that fetch, so the commits are
+  already in the clone, and the merge needs no network; a pull fetches
+  again and fails offline, which would leave the check failing with no
+  command that clears it.
 - A copy that differs from the clone it was made from is an error of the
   checker too, with the `install.py` command. The other scripts print it as
   their first line and go on.
@@ -51,9 +56,11 @@ Construct3-RAG at <clone> is 3 commits behind origin/main, so the scripts lack t
 - Nothing is said for a clone that is not a Git repository (the plugin
   cache), a detached HEAD, a branch with no upstream, a failed fetch, or a
   clone that is only ahead.
-- `CONSTRUCT3_RAG_OFFLINE` set to any value skips the check. The tests set
-  it, so that a test run reads no network and its output does not depend on
-  the remote.
+- `CONSTRUCT3_RAG_OFFLINE=1` skips the check, and `check_project.py` then
+  prints a `note:` line saying the clone was not compared with its
+  upstream. Only `1` sets it, so that `0` keeps the check. The tests set it,
+  so that a test run reads no network and its output does not depend on the
+  remote.
 
 ## The Claude Code plugin
 

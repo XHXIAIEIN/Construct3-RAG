@@ -38,6 +38,12 @@ part that was asked for. Six matches or fewer print in full, each parameter
 with what it is and the way it is written; more print one line each, and more than fit
 --limit print as counts per category. When no entry has every word, the
 entries that have some of them are listed.
+
+An entry printed in full ends with the number of official examples that use
+it, from `Construct3-RAG/data/c3-example-usage/`, and the print_sheet.py
+commands that print up to three of those uses, the smallest sheets first. The
+commands need the Construct-Example-Projects clone beside Construct3-RAG. An
+entry that no example uses prints no count.
 """
 import json
 import sys
@@ -224,25 +230,73 @@ def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, w
     return lines
 
 
-def print_in_full(blocks: list[list[str]], ids: list[str], limit: int) -> None:
+class Usage:
+    """Which official examples use an ACE, from Construct3-RAG/data/c3-example-usage/, an index of the
+    Construct-Example-Projects clone that scripts/example_usage.py builds. Without the index,
+    nothing of it is printed."""
+
+    def __init__(self, rag) -> None:
+        self.rag = rag
+        self.examples = c3.siblings_folder(rag) / c3.EXAMPLES_CLONE / "example-projects"
+        self._files: dict[str, dict] = {}
+
+    def tails(self, entries: list[tuple]) -> list[list[str]]:
+        """The lines of each (owner, behavior, addon, kind, entry): one list per entry, in the same order."""
+        return [self.lines(behavior, addon, kind, it["id"]) for _, behavior, addon, kind, it in entries]
+
+    def lines(self, behavior: str | None, addon: str, kind: str, ace_id: str) -> list[str]:
+        """How many examples use the ACE, and the commands that print the smallest uses."""
+        name = f"{'behaviors' if behavior else 'plugins'}/{addon}.json"
+        if name not in self._files:
+            texts = c3.data_texts(self.rag, "data/c3-example-usage", name)
+            self._files[name] = json.loads(texts[name]) if name in texts else {}
+        entry = self._files[name].get(kind, {}).get(ace_id)
+        if not entry:
+            return []
+        n, read = entry["examples"], entry["read"]
+        count = f"  used in {n} official example{'' if n == 1 else 's'}"
+        if not self.examples.is_dir():
+            return [count]
+        lines = [count + ("; read it:" if n == 1 else f"; read {len(read)} of them, smallest sheet first:")]
+        for folder, sheet, first, last in read:
+            events = f"{first}-{last}" if last > first else f"{first}"
+            lines.append(f'    python scripts/print_sheet.py "{sheet}" --events {events} '
+                         f'--project "{self.examples / folder}"')
+        return lines
+
+    def note(self) -> str | None:
+        """The line under counts printed without their commands: the clone is missing."""
+        if self.examples.is_dir():
+            return None
+        return (f"(no {c3.EXAMPLES_CLONE} clone at {self.examples.parent}; {c3.examples_clone_command(self.rag)} "
+                f"clones it, and each count then gets the commands that print the examples' events)")
+
+
+def print_in_full(blocks: list[list[str]], ids: list[str], limit: int, usage: Usage | None = None,
+                  tails: list[list[str]] | None = None) -> None:
     """Prints the entries in full while they fit --limit and names the rest: six entries
-    of Audio, each parameter described, run past 10 000 characters."""
-    # The note on the rest takes a few hundred characters of the limit.
-    room = c3.fitting([line for block in blocks for line in block], max(limit - 400, 1) if limit else 0)
-    for n, block in enumerate(blocks):
+    of Audio, each parameter described, run past 10 000 characters. The tail of a block,
+    the official examples that use the entry, is left out when only the block fits."""
+    tails = tails or [[] for _ in blocks]
+    note = usage.note() if usage and any(tails) else None
+    # The note on the rest takes a few hundred characters of the limit, and the note on the clone its own.
+    room = c3.fitting([line for block, tail in zip(blocks, tails) for line in block + tail],
+                      max(limit - 400 - len(note or ""), 1) if limit else 0)
+    counted = False
+    for n, (block, tail) in enumerate(zip(blocks, tails)):
         if len(block) > room and n:
-            print(f"{len(blocks) - n} more did not fit {limit} characters (--limit): {', '.join(ids[n:])}; "
-                  f"add a word to narrow them or raise --limit")
-            return
-        print("\n".join(block))
-        room -= len(block)
-
-
-def print_entries(found: list[tuple], written: dict[tuple, str], limit: int) -> None:
-    """Six entries or fewer, each in full: (owner, behavior, addon, kind, entry) tuples, an
-    expression under the name `written` gives for (behavior, addon, its id)."""
-    print_in_full([in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)
-                   for e in found], [e[4]["id"] for e in found], limit)
+            break
+        lines = block + tail if len(block) + len(tail) <= room else block
+        counted = counted or len(lines) > len(block)
+        print("\n".join(lines))
+        room -= len(lines)
+    else:
+        n = len(blocks)
+    if note and counted:
+        print(note)
+    if n < len(blocks):
+        print(f"{len(blocks) - n} more did not fit {limit} characters (--limit): {', '.join(ids[n:])}; "
+              f"add a word to narrow them or raise --limit")
 
 
 def effects_of(p: c3.Project, target: str) -> list[str]:
@@ -338,6 +392,7 @@ def addon_word_lines(p: c3.Project, sources: list[tuple[str, str | None, dict]],
 
 def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
     sources = sources_of(p, target)
+    usage = Usage(p.rag)
     if LOWER(target) == LOWER(p.functions_object):
         # A model that has not met it writes an object type and a usedAddons entry, and the editor
         # reports a missing legacy addon.
@@ -406,14 +461,17 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
                 print(f"{target} has these, in plugins/_common.json rather than in its own plugin:" if plugins
                       else "every world object has these, in plugins/_common.json rather than in its own plugin:")
                 # <Object>, not the <object> a parameter of that type is written with.
-                print_in_full([in_full("<Object>", None, "_common", kind, it) for kind, it in shared],
-                              [it["id"] for _, it in shared], limit)
+                common = [("<Object>", None, "_common", kind, it) for kind, it in shared]
+                print_in_full([in_full(*e) for e in common], [it["id"] for _, it in shared], limit,
+                              usage, usage.tails(common))
                 print(f"<Object> is {'a ' + target + ' object' if plugins else 'any object'} of the project; "
                       f"lookup_ace.py <Object> {query} writes its name in")
             if in_params:
                 print(f"no name under {target} has every word of {query!r}; a parameter of these takes it as a value:")
                 if len(in_params) <= 6:
-                    print_entries(in_params, written, limit)
+                    print_in_full([in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)
+                                   for e in in_params], [e[4]["id"] for e in in_params], limit,
+                                  usage, usage.tails(in_params))
                 else:
                     for e in in_params[:20]:
                         print("  " + brief(*e))
@@ -439,7 +497,8 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         return 1
 
     if len(found) <= 6:
-        print_entries(found, written, limit)
+        print_in_full([in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)
+                       for e in found], [e[4]["id"] for e in found], limit, usage, usage.tails(found))
         if by_category:
             print(f"by category, not by name: {', '.join(e[4]['id'] for e in by_category[:20])}"
                   + (" ..." if len(by_category) > 20 else ""))
@@ -473,7 +532,8 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
 def main() -> int:
     ap = c3.argument_parser(
         "Look up conditions, actions and expressions of an object of the project, of System, or of a plugin or "
-        "behavior by id or display name, and print each with its parameters and the JSON to write. Use it "
+        "behavior by id or display name, and print each with its parameters, the JSON to write and the "
+        "official examples that use it. Use it "
         "instead of reading plugins/system.json or plugins/_common.json, which are longer than most tools read.",
         "examples:\n"
         "  python scripts/lookup_ace.py Coin tween two         an object of the project: plugin, shared ACEs, behaviors\n"

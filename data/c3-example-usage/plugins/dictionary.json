@@ -1,0 +1,23 @@
+{
+  "conditions": {
+    "compare-current-value": {"examples": 1, "read": [["demonoire", "eGameRoom", 306, 306]]},
+    "compare-value": {"examples": 10, "read": [["meowgix", "CreditsEvents", 3, 3], ["airborne-explorer", "CreditsEvents", 5, 5], ["avalanche", "SoundEvents", 5, 5]]},
+    "for-each-key": {"examples": 3, "read": [["dig-the-way", "EventsScore", 8, 8], ["airborne-explorer", "PlayerEvents", 34, 34], ["demonoire", "eGameRoom", 305, 306]]},
+    "has-key": {"examples": 5, "read": [["overloaded-underqualified", "MenuEvents", 36, 37], ["airborne-explorer", "EnemyEvents", 22, 22], ["procedural-terrain-generation", "Event sheet 1", 52, 52]]},
+    "is-empty": {"examples": 1, "read": [["avalanche", "MenuEvents", 17, 17]]}
+  },
+  "actions": {
+    "add-key": {"examples": 8, "read": [["kiwi-story", "eMain", 1, 1], ["glokar", "ePowerups", 2, 2], ["demonoire", "eGlobal", 4, 4]]},
+    "clear": {"examples": 2, "read": [["poplab", "eGameModeSelection", 5, 5], ["dig-the-way", "EventsGame", 9, 9]]},
+    "delete-key": {"examples": 1, "read": [["airborne-explorer", "PlayerEvents", 34, 34]]},
+    "load": {"examples": 16, "read": [["template-quiz", "Quiz events", 2, 2], ["tick-tock-toppings", "TitleEvents", 4, 6], ["grukkle-onslaught", "EveAudio", 8, 8]]},
+    "set-key": {"examples": 12, "read": [["samuroof", "Credits", 6, 6], ["grukkle-onslaught", "EveAudio", 14, 14], ["visual-novel-sniff-and-fetch", "Events", 28, 28]]}
+  },
+  "expressions": {
+    "asjson": {"examples": 10, "read": [["samuroof", "Credits", 6, 6], ["tick-tock-toppings", "TitleEvents", 8, 8], ["grukkle-onslaught", "EveAudio", 14, 14]]},
+    "currentkey": {"examples": 3, "read": [["dig-the-way", "EventsScore", 8, 8], ["airborne-explorer", "PlayerEvents", 34, 34], ["demonoire", "eGameRoom", 305, 306]]},
+    "currentvalue": {"examples": 2, "read": [["dig-the-way", "EventsScore", 8, 8], ["airborne-explorer", "GameEvents", 48, 48]]},
+    "get": {"examples": 20, "read": [["kiwi-story", "eHUD", 2, 2], ["glokar", "eHUD", 1, 1], ["eventide", "EventsCredits", 2, 4]]},
+    "keycount": {"examples": 1, "read": [["grukkle-onslaught", "EveAudio", 8, 8]]}
+  }
+}

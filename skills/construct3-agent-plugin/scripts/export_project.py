@@ -22,11 +22,22 @@ project.c3proj, since an older one refuses it, with the files the editor reads, 
 pack_project.py packs them. The editor exports a zip with
 Offline support, Deduplicate images and Optimize images on and the other
 options as it remembers them; the zip replaces
-the contents of --to, by default .build/web of the project, a folder Git ignores. The export carries the version given by --version or
+the contents of --to, by default .build/web of the project, a folder Git ignores. --to is
+refused, before the browser starts, when it is the project, holds it, is a drive's root, or
+holds files and no data.json of an earlier export. The zip is extracted beside --to and
+replaces it only when it carries the version to export, so a failed run leaves the earlier
+export as it was. The export carries the version given by --version or
 --bump, else the project's, with Auto-increment version off in the copy handed to
 the editor, and that version is written into project.c3proj when it differs. The
 copy also sets Use worker to Auto, which lets the engine decide, whatever the
 project sets for preview.
+
+The export ships every string of the events, the scripts and the project files
+to every player. Before the browser starts, a string shaped like a key stops the
+run with its place, as check_project.py warns of it; allow-secret in the comment
+above the event, in a variable's comment or on the line keeps one meant to be
+public. The hosts of the addresses the game holds are named, for the user to
+confirm.
 """
 from __future__ import annotations
 
@@ -65,13 +76,15 @@ one it opens a tab and closes it after the export, or when the run stops. A tab 
 user's is left on the start page either way.
 
 output:
+  the game holds addresses of <host> (<place>), ...: tell the user which hosts the game contacts
   logged in as <name>, exporting <version>
   exported <version> into <folder>, runtime in the worker|page; project.c3proj version <version>
 
-exit codes: 0 exported; 1 the export did not finish: no subscription within 5 minutes,
+exit codes: 0 exported; 1 a string of the project is shaped like a key, before the browser
+starts, or the export did not finish: no subscription within 5 minutes,
 the project did not open, or a dialog stopped it; the copy is closed, the window is left
-open, and a run again goes on in it; 2 no project, a flag that cannot be used, or the
-editor did not load; 3 no Edge, Chrome or Chromium here
+open, and a run again goes on in it; 2 no project, a flag that cannot be used, a --to that
+holds the project or files other than an export, or the editor did not load; 3 no Edge, Chrome or Chromium here
 """
 
 LOGIN_WAIT = 300        # seconds the user has to log in
@@ -79,6 +92,8 @@ EXPORT_WAIT = 300       # seconds the editor has to export
 UI_WAIT = 30            # seconds a menu item or a dialog has to appear
 CHUNK = 3 << 20         # bytes of the zip read from the page per call
 SLOW = 3                # how much longer the pauses between clicks are with --slow or after a missed step
+KEYS_SHOWN = 20         # strings shaped like a key named before the rest are counted
+HOSTS_SHOWN = 10        # hosts named before the rest are counted
 pace = 1.0
 
 
@@ -558,18 +573,78 @@ def pack(project: Path, version: str, skip: Path | None) -> bytes:
     return pp.zipped(staged)
 
 
-def unpack(data: bytes, folder: Path) -> None:
-    with zipfile.ZipFile(io.BytesIO(data)) as z:
-        if "data.json" not in z.namelist():
-            raise Stop("the zip the editor made holds no data.json, so it is not a Web export")
-        shutil.rmtree(folder, ignore_errors=True)
-        z.extractall(folder)
+def refused_folder(project: Path, folder: Path) -> str | None:
+    """Why the export may not replace folder, or None. The export empties it, so it is never the
+    project, a folder that holds the project, a drive's root, or a folder of other files: only a
+    missing or empty folder, or one that holds an earlier export, its data.json."""
+    if folder == Path(folder.anchor):
+        return "it is the root of a drive"
+    if folder == project or folder in project.parents:
+        return "it holds the project"
+    if folder.exists() and not folder.is_dir():
+        return "it is a file"
+    if folder.is_dir() and any(folder.iterdir()):
+        if (folder / "project.c3proj").exists():
+            return "it holds a project"
+        if not (folder / "data.json").is_file():
+            return "it holds files that are not a Web export (no data.json)"
+    return None
+
+
+def beside(folder: Path) -> tuple[Path, Path]:
+    """The folders beside the export folder that unpack() extracts into and moves the earlier one to."""
+    return folder.with_name(folder.name + ".new"), folder.with_name(folder.name + ".old")
+
+
+def clear_beside(folder: Path) -> None:
+    """Removes the export a run that was killed left beside the export folder, so that no .c3p packs
+    it; a folder there that holds no export is someone's, and stops the run."""
+    for leftover in beside(folder):
+        if not leftover.exists():
+            continue
+        if not (leftover / "data.json").is_file():
+            raise Stop(f"{leftover} is in the way and holds no Web export; move or delete it by hand")
+        shutil.rmtree(leftover)
+
+
+def unpack(data: bytes, folder: Path, version: str) -> None:
+    """Extracts the export beside folder, checks that it carries version, then puts it in place of
+    folder. The earlier export in folder stays as it was until then, and comes back when the swap
+    fails; one left behind by a failed cleanup is named, not hidden."""
+    new, old = beside(folder)
+    clear_beside(folder)
+    try:
+        with zipfile.ZipFile(io.BytesIO(data)) as z:
+            if "data.json" not in z.namelist():
+                raise Stop("the zip the editor made holds no data.json, so it is not a Web export")
+            z.extractall(new)
+        if version not in exported_versions(new):
+            raise Stop(f"the export carries {exported_versions(new)}, not {version}; {folder} and "
+                       f"project.c3proj are left as they were")
+        if folder.exists():
+            folder.rename(old)
+        try:
+            new.rename(folder)
+        except OSError:
+            if old.exists():
+                old.rename(folder)
+            raise
+    except (Stop, OSError, zipfile.BadZipFile) as e:
+        shutil.rmtree(new, ignore_errors=True)      # a part of the new export, never the earlier one
+        raise e if isinstance(e, Stop) else Stop(f"the export could not be put in {folder}: {e}; the "
+                                                  f"earlier export there is left as it was") from e
+    if old.exists():
+        try:
+            shutil.rmtree(old)
+        except OSError as e:
+            print(f"the earlier export is left in {old}: {e}; delete it by hand", flush=True)
 
 
 # --- the run --------------------------------------------------------------------------
 def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | None) -> bool | None:
     """Exports; whether the export runs in a worker, as its main.js says."""
     staged = scratch(project) / "export-project.c3p"
+    clear_beside(folder)
     staged.write_bytes(pack(project, version, folder if folder.is_relative_to(project) else None))
     devtools, opened = None, False
     if spec:
@@ -604,15 +679,27 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
     elif opened:
         devtools.call("Target.closeTarget", targetId=page.target)
     staged.unlink(missing_ok=True)
-    unpack(data, folder)
-    if version not in exported_versions(folder):
-        raise Stop(f"the export in {folder} carries {exported_versions(folder)}, not {version}; "
-                   f"project.c3proj is left as it was")
+    unpack(data, folder, version)
     path = project / "project.c3proj"
     text = path.read_text(encoding="utf-8")
     if project_version(project) != version:
         path.write_bytes(with_version(text, version).encode("utf-8"))
     return exported_worker(folder)
+
+
+def shipped_check(project: Path) -> tuple[list[str], str | None]:
+    """The strings shaped like keys the export would ship, a line each, and the line that names the hosts the
+    game holds addresses of."""
+    data = c3.load(project / "project.c3proj")
+    sheets = {name: c3.load(path) for name, path in c3.listed_files(project, data, "eventSheets").items() if path}
+    strings = list(c3.shipped_strings(project, data, sheets))
+    keys = [f"  {s.place}: {what} ({shown}); to keep it, write {c3.ALLOW} in {s.mark}"
+            for s, what, shown in c3.secrets_in(strings)]
+    hosts = list(c3.hosts_in(strings).items())
+    named = ", ".join(f"{host} ({place})" for host, place in hosts[:HOSTS_SHOWN])
+    more = f", and {len(hosts) - HOSTS_SHOWN} more" if len(hosts) > HOSTS_SHOWN else ""
+    return keys, (f"the game holds addresses of {named}{more}: tell the user which hosts the game contacts"
+                  if hosts else None)
 
 
 def main() -> int:
@@ -621,7 +708,8 @@ def main() -> int:
     ap.add_argument("--project", metavar="FOLDER",
                     help="the folder that holds project.c3proj (default: found from the current directory upward)")
     ap.add_argument("--to", metavar="FOLDER", type=Path,
-                    help="the folder the export replaces, relative to the project (default: .build/web)")
+                    help="the folder the export replaces, relative to the project (default: .build/web): a new or empty "
+                            "folder, or one that holds an earlier export")
     which = ap.add_mutually_exclusive_group()
     which.add_argument("--version", help="the version to export, 3 or 4 numbers of 0 to 99: 1.2.0.0")
     which.add_argument("--bump", action="store_true",
@@ -643,11 +731,26 @@ def main() -> int:
               f"pass --project <folder>", file=sys.stderr)
         return 2
     folder = (project / (args.to or Path(pp.BUILD) / "web")).resolve()
+    refused = refused_folder(project.resolve(), folder)
+    if refused:
+        print(f"--to {folder}: the export replaces everything in the folder, and {refused}; pass a new or "
+              f"empty folder, or the folder of an earlier export, such as the default .build/web", file=sys.stderr)
+        return 2
     version = args.version or (bumped(project, folder) if args.bump else project_version(project))
     if not VERSION_FORMAT.fullmatch(version or ""):
         print(f"the version to export is '{version}', not 3 or 4 numbers of 0 to 99; pass --version 1.0.0.0 or "
               f"set Version in the project properties", file=sys.stderr)
         return 2
+    keys, hosts = shipped_check(project)
+    if keys:
+        print(f"not exported: the export ships every string of the project to every player, who can read it, and "
+              f"{len(keys)} {'is' if len(keys) == 1 else 'are'} shaped like a key:")
+        print("\n".join(keys[:KEYS_SHOWN]) + (f"\n  and {len(keys) - KEYS_SHOWN} more" if len(keys) > KEYS_SHOWN else ""))
+        print("Move each key to a server that the game calls. If a key is meant to be public, as some services "
+              "issue for web pages, write allow-secret where its line says, then run the export again")
+        return 1
+    if hosts:
+        print(hosts)
     if args.dry_run:
         print(f"would export {version} in {editor_url(project)} into {folder}; project.c3proj version "
               f"{project_version(project)}{f' -> {version}' if version != project_version(project) else ''}")

@@ -76,3 +76,17 @@ def test_examples_are_found_beside_the_main_working_tree_from_a_git_worktree(tmp
     for rag in (worktree, plugin):
         out = snake_output(rag, tmp_path)
         assert f'print_sheet.py --project "{example}"' in out, (rag, out)
+
+
+def test_examples_without_the_clone_say_how_to_get_it(tmp_path):
+    """Without the examples clone each example shows its editor URL, and one line names the clone."""
+    rag = fake_rag(tmp_path / "Construct3-RAG", snake=True)
+    (rag / "scripts").mkdir()
+    (rag / "scripts" / "bootstrap.py").write_text("", encoding="utf-8")
+    out = snake_output(rag, tmp_path)
+    assert "https://editor.construct.net/#open=template-snake" in out, out
+    assert (f"(no Construct-Example-Projects clone at {tmp_path / 'Construct-Example-Projects'}; "
+            f"python {(rag / 'scripts' / 'bootstrap.py').as_posix()} clones it") in out, out
+    plugin = fake_rag(tmp_path / "Plugin", snake=True)
+    assert (f'git clone --depth 1 https://github.com/Scirra/Construct-Example-Projects '
+            f'"{(tmp_path / "Construct-Example-Projects").as_posix()}" clones it') in snake_output(plugin, tmp_path)

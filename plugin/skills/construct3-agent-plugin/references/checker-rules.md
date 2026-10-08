@@ -1,7 +1,10 @@
 # What `check_project.py` checks
 
 Read this when a finding needs explaining, when the editor reports an error
-the checker let through, or before adding a rule.
+the checker let through, or before adding a rule. For an error the checker
+let through, `scripts/open_in_editor.py` also prints a report for the user to
+send to the skill's repository, once per refusal; it is sent only when the
+user says so.
 
 ## Against the schemas and the project
 
@@ -204,6 +207,7 @@ How each was read from the editor and confirmed:
 | A frame's `collisionPoly` holds three or more x, y pairs; a frame without the key takes the whole image | the project opens, and the preview stops on the crash report `assertion failure: must have at least three points in a collision poly`, or `must have an even number of elements in collision poly points array` |
 | An object type's or family's `instanceVariables`, `behaviorTypes` and `effectTypes` are each an array, `[]` when empty, never a folder `{"items": [], "subfolders": []}` | `TypeError: ... is not iterable` |
 | A `TiledBg`, `Spritefont2`, `Particles`, `Tilemap` or `NinePatch` object type carries one `image` block, not `animations`: `width` and `height` of `images/<name in lower case>.png`, `originX`, `originY`, `originalSource`, `exportFormat`, `exportQuality`, `imageSpriteId`, `useCollisionPoly` | `TypeError: expected object` |
+| Every `image` block and every animation frame has an `imageSpriteId` that no other image or frame in the project uses. An object type copied from another one's JSON keeps the original's ids, so give the copy new ones | `id already in use` |
 | A layout has a `name`, a `width` and a `height` of at least 2, and a `layers` array | `TypeError: expected string`, `expected finite number`, `invalid layout width` |
 | A layer has a `name`, `parallaxX`, `parallaxY`, `scaleRate`, a `blendMode` the editor knows, and an `instances` array, empty when nothing is on it | `TypeError: expected finite number`, `invalid blend mode` |
 | An instance on a layer carries `world` with `x`, `y`, `width`, `height`, `originX` and `originY` | `TypeError: expected finite number` |
@@ -223,10 +227,16 @@ owns an ACE written without `behaviorType`, the editor's id for a display
 name (`Array` is `Arr`), the project's object behind a plugin name in an
 expression (`JSON.Get` is `Levels.Get`), a combo value written with inner
 quotes, a text value written without them. A file that lacks a key the editor
-always writes stops the run with the key and the place, exit code 2. A long
-report prints the findings that fit 10 000 characters, warnings in at most a
-third of them and problems in the rest, and counts what it left out: fix
-those and run again, or pass `--limit 0`.
+always writes stops the run with the key and the place, exit code 2. An
+exception that no project file causes also stops the run with exit code 2,
+and the line says that the error is the script's: leave the project as it is
+and give the line to the user. Each run keeps its findings in
+`.tmp/check-project.json`; when two changes to a finding's place leave it
+standing, the last line starts with `stop:`
+(`Construct3-RAG/docs/decisions/fix-loop-cap.md`). A long report prints the
+findings that fit 10 000 characters, warnings in at most a third of them and
+problems in the rest, and counts what it left out: fix those and run again,
+or pass `--limit 0`.
 
 A finding in an event sheet is placed as `sheet Game event 15 action 2`. The
 event number is the editor's: the one in the margin of the event sheet and
@@ -267,6 +277,27 @@ A style warning is never an error: the editor accepts all ten, and an
 official example may carry one. What the shape should be instead is
 `Construct3-RAG/prompts/event-sheet-style.md`, and for the last three the
 Native first table of `Construct3-RAG/prompts/event-sheet-thinking.md`.
+
+## What a web export ships
+
+Every player of a web export can read its strings in the browser's tools.
+So a string shaped like a key is a warning wherever the export ships it: in
+a parameter of a condition or an action, a variable's value, a line of a
+script block, or a line of a script file or a text file the project lists.
+These are the shapes:
+
+- the key of a common service: OpenAI, Anthropic, Google, AWS, GitHub, Slack
+  or Stripe;
+- a private key or a signed token (JWT);
+- a random-looking token in a text literal, 32 to 512 letters, digits and
+  `-_+/=`.
+
+The warning shows the first characters, never the key. `allow-secret` in the
+comment above the event, in a variable's comment or on the line marks a key
+meant to be public, such as one a service issues for web pages.
+`scripts/export_project.py` stops on the same finding before the browser
+starts. The shapes and the measurement behind them:
+`Construct3-RAG/docs/decisions/secret-scan.md`.
 
 ## What it does not see
 

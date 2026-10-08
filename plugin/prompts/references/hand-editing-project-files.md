@@ -46,6 +46,14 @@ end of this file.
 - `*.uistate.json` files and `uistate` folders hold the state of the editor's
   interface; deleting them loses nothing else. Palettes and tilemap brushes
   have folders of their own, `palettes/` and `tilemapBrushes/`.
+- The project property *Preview effects* (Project Properties, Editor) is
+  kept in `project.uistate.json` as `"previewEffects"`, not in
+  `project.c3proj`. Turned off, the Layout View draws every image without
+  its effects and blend mode. A 3D layout with depth effects such as Fog
+  (exponential) needs it off to be edited, since the editor's camera stands
+  far from the layout and the fog covers everything. The setting stays on
+  the machine that saved it. [manual: project-primitives/projects.md
+  "Preview effects"; observed in a game project, r505, 2026-10-08]
 
 ## Encodings
 
@@ -188,6 +196,17 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   `Sin` Sine. `solid`, `scrollto`, `jumpthru`, `bound`, `wrap`, `destroy` and
   `gamepad` are lowercase. Any other spelling stops the load with
   `missing plugin id`.
+- `savedWithRelease` in `project.c3proj` is the release that last saved the
+  project, the release number times 100 plus its patch: `49502` for r495.2,
+  `50500` for r505. An editor older than that refuses to open the project
+  ("saved in a newer version of Construct"). A save in a newer release can
+  be taken back by hand when no file but `project.c3proj` changed: set
+  `savedWithRelease` back and remove the project properties the older
+  release does not know. r505 adds `saveLLMContextFile` and changes some
+  display names in `usedAddons`, such as `bound` to "Bound to"; write
+  those names back as the older release spells them. [observed in a game
+  project, 2026-10-08: saved once in r505, refused by r495.2, opened and
+  previewed in r495.2 after these changes]
 - A family is `families/<Name>.json` (`name`, `plugin-id`, `sid`,
   `instanceVariables`, `behaviorTypes`, `effectTypes`, `members`), listed under
   `families` in `project.c3proj` like an object type. A container has no file:
@@ -214,6 +233,15 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   false; both frames in the editor's order came back without
   `collisionPoly` and with their `useCollisionPoly`, the other two as
   written]
+- Every `image` block and every animation frame carries an `imageSpriteId`,
+  an integer that no other image or frame of the project has. The editor
+  stops on a repeated one with `id already in use`. An object type copied
+  from another one's file keeps the original's ids, so give the copy a new
+  `name` and a new 15-digit `sid`. Then give its `image` block, or each of
+  its frames, an unused `imageSpriteId`; `check_project.py` prints one for
+  each id that repeats. [observed in a game project, r504, 2026-10-06: a
+  Sprite Font copied from another Sprite Font's file did not open until the
+  copy had its own `imageSpriteId`]
 - A Sprite Font has `"plugin-id": "Spritefont2"` and an `image` block in its
   object type file, as a Tiled Background has. Its picture is
   `images/<lowercase name>.png`, its `usedAddons` entry `{"type": "plugin",
@@ -318,7 +346,7 @@ place here with `--project <folder>`. It checks that:
 - the JSON parses
 - every `objectClass`, instance variable and behavior name exists, families
   included
-- `sid` and `uid` are unique
+- `sid`, `uid` and `imageSpriteId` are unique
 - every ACE `id` and parameter key is in `data/c3-schemas/`
 - every called function is defined with the right parameter count
 - every object created at runtime has a template instance in some layout

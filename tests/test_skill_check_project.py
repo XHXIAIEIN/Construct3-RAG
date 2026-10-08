@@ -1,7 +1,10 @@
 """check_project.py: each rule the editor enforces when it opens or previews a project, broken
 once in a private copy of the stand-in game (docs/decisions/checker-editor-load-rules.md)."""
+import hashlib
 import json
+import random
 import re
+import string
 from pathlib import Path
 
 import pytest
@@ -19,6 +22,18 @@ def test_a_passing_check_ends_with_the_command_that_opens_the_project(built):
     code, out = run(built.parent, SKILL / "scripts" / "check_project.py", "--rag", str(REPO), "--project", str(built))
     assert code == 0 and out.splitlines()[-1].endswith(
         f"open_in_editor.py --project {built.resolve().as_posix()} --preview"), out
+    assert "play_design.py" not in out
+
+
+def test_a_passing_check_of_a_designed_game_ends_with_its_tests(project):
+    (project / "tools" / "design.json").write_text("{}", encoding="utf-8")
+    code, out = check(project)
+    assert code == 0 and out.splitlines()[-1].endswith(
+        f"--preview, then play the design's tests in the editor: "
+        f"python {INSTALLED}/scripts/play_design.py tools/design.json"), out
+    code, out = run(project.parent, SKILL / "scripts" / "check_project.py", "--rag", str(REPO), "--project", str(project))
+    assert code == 0 and out.splitlines()[-1].endswith(
+        f"play_design.py --project {project.resolve().as_posix()} game/tools/design.json"), out
 
 
 def test_checker_prints_the_findings_that_fit_and_counts_the_rest(project):
@@ -1043,6 +1058,21 @@ def test_object_types_sharing_a_sid_stop_the_editor(project):
     assert "Coin" in line and "ScoreText" in line and "object class sid already in use" in line, out
 
 
+def test_images_sharing_an_image_sprite_id_stop_the_editor(project):
+    """Two images or frames with one imageSpriteId stop the r504 editor with "id already in use".
+    A project that gives one of them the id in the finding opens."""
+    coin = json.loads((project / "objectTypes/Coin.json").read_text(encoding="utf-8"))
+    frame_id = coin["animations"]["items"][0]["frames"][0]["imageSpriteId"]
+    out = findings(project, lambda t: t["image"].update(imageSpriteId=frame_id), "objectTypes/Backdrop.json")
+    line = next((x for x in out.splitlines() if "imageSpriteId" in x), "")
+    assert ("the frame images/coin-default-000.png of Coin (objectTypes/Coin.json) and the image of Backdrop "
+            f"(objectTypes/Backdrop.json) share the imageSpriteId {frame_id}, and the editor stops with \"id "
+            "already in use\"") in line, out
+    offered = int(line.rsplit(" ", 1)[-1])
+    out = findings(project, lambda t: t["image"].update(imageSpriteId=offered), "objectTypes/Backdrop.json")
+    assert "imageSpriteId" not in out and out.splitlines()[-1].startswith("ok:"), out
+
+
 def test_another_repeated_sid_is_a_warning(project):
     """The editor opens a project whose events, instances, layers or animations repeat a sid."""
     def repeat(sheet):
@@ -1570,6 +1600,47 @@ def test_missing_key_stops_with_a_sentence(project):
     out = findings(project, change)
     assert "check_project.py stopped at check_project.py line" in out
     assert "missing key 'functionParameters'" in out
+    assert "A project file lacks a key the editor always writes" in out and "not a finding" not in out
+
+
+def test_a_value_of_another_type_stops_with_the_project_sentence(project):
+    def change(lay):
+        lay["layers"][0]["instances"][0]["world"] = "x"
+    out = findings(project, change, "layouts/Objects.json")
+    assert "check_project.py stopped at" in out and "AttributeError" in out
+    assert "holds a value of another type. Compare it with a file that assets/build_project.py generates" in out
+
+
+def test_a_file_that_is_not_utf8_is_named_as_such(project):
+    (project / "layouts" / "Game.json").write_bytes("{}".encode("utf-16"))
+    code, out = check(project)
+    assert code == 2 and "UnicodeDecodeError" in out
+    assert out.splitlines()[-1].endswith(f"{project / 'layouts' / 'Game.json'} is not UTF-8 text, which the editor "
+                                         f"writes. Write it again as UTF-8."), out
+
+
+def test_an_error_of_the_script_is_not_a_finding(monkeypatch, capsys):
+    """An exception that no project file raises is the script's own: the project is left alone."""
+    import c3project
+
+    class Exited(Exception):
+        pass
+
+    def exit_(code):
+        raise Exited(code)
+    monkeypatch.setattr(c3project.os, "_exit", exit_)
+    monkeypatch.setattr(c3project.sys, "excepthook", c3project.sys.excepthook)
+    c3project.stop_with_a_sentence("check_project.py", c3project.Findings())
+    try:
+        undefined_name  # noqa: F821
+    except NameError as exc:
+        with pytest.raises(Exited):
+            c3project.sys.excepthook(type(exc), exc, exc.__traceback__)
+    out = capsys.readouterr().out
+    assert out.startswith("check_project.py stopped at test_skill_check_project.py line ")
+    assert ("NameError: name 'undefined_name' is not defined. This is an error in check_project.py, not a finding "
+            "about the project: leave the project as it is and report this line to the user.") in out
+    assert "lacks a key" not in out
 
 
 # --- the data the rules read ---------------------------------------------------------------------
@@ -1643,3 +1714,137 @@ def test_an_invalid_project_property_is_named_in_the_editor_language(project):
     edit(project, "project.c3proj", lambda p: p["properties"].update(fullscreenMode="scale"))
     code, out = check(project, "--locale", "zh-CN")
     assert code == 1 and "fullscreenMode (缩放模式) 'scale' is not one of letterbox-scale (比例缩放)" in out, out
+
+
+def test_offline_says_the_clone_was_not_compared(built):
+    """CONSTRUCT3_RAG_OFFLINE=1, which every run here sets, leaves a trace in the output."""
+    code, out = check(built)
+    assert code == 0, out
+    assert f"note: CONSTRUCT3_RAG_OFFLINE is 1, so the clone at {REPO} was not compared with its upstream" in out
+
+
+# --- the fix loop ----------------------------------------------------------------------------------
+def misspell(word: str):
+    """The first action of AddScore given another id: a finding in that event that names the id."""
+    def change(sheet):
+        events(sheet)["add_score"]["actions"][0]["id"] = word
+    return change
+
+
+def test_two_changes_that_leave_a_finding_stop_the_fix_loop(project):
+    out = findings(project, misspell("add-to-x"))
+    first = [line for line in out.splitlines() if "add-to-x" in line]
+    assert len(first) == 1 and "stop:" not in out, out
+    out = findings(project, misspell("add-to-y"))
+    assert "stop:" not in out and out.splitlines()[-1] == "1 problem(s)", out
+    out = findings(project, misspell("add-to-z"))
+    last = out.splitlines()[-1]
+    assert re.match(r"stop: do not change event \d+ of eventSheets/Game\.json again\. 2 changes left this "
+                    r"finding standing", last), out
+    assert ": sheet Game event " in last and "add-to-z" in last
+    assert "git diff eventSheets/Game.json tools/build_project.py shows the changes" in last
+    assert "the changes stay in the project" in last
+    record = json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))
+    assert [e["changes"] for e in record["findings"]] == [2]
+    assert (project / ".tmp" / ".gitignore").read_text(encoding="utf-8") == "*\n"
+
+
+def test_a_rerun_with_nothing_changed_counts_no_change(project):
+    findings(project, misspell("add-to-x"))
+    for _ in range(3):
+        code, out = check(project)
+        assert code == 1 and "stop:" not in out, out
+        note = out.splitlines()[-2]
+        assert note.startswith("nothing changed in project.c3proj or the editor's JSON files since the last run"), out
+        assert note.endswith("tools/build_project.py writes the files: run python tools/build_project.py after a "
+                             "change to it."), out
+    record = json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))
+    assert [e["changes"] for e in record["findings"]] == [0]
+
+
+def test_a_change_elsewhere_and_a_new_finding_count_apart(project):
+    """A change to another event is no change to this finding; a finding that is new starts from none,
+    and one that is fixed leaves the record."""
+    original = (project / SHEET).read_text(encoding="utf-8")
+    findings(project, misspell("add-to-x"))
+
+    def collect_too(sheet):
+        collect_tween(sheet)["id"] = "tween-x"
+    findings(project, collect_too)
+    record = json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))
+    assert sorted(e["changes"] for e in record["findings"]) == [0, 0], record
+    findings(project, misspell("add-to-y"))
+    record = json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))
+    assert sorted(e["changes"] for e in record["findings"]) == [0, 1], record
+    (project / SHEET).write_text(original, encoding="utf-8")
+    code, out = check(project)
+    assert code == 0, out
+    assert json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))["findings"] == []
+
+
+def test_review_and_the_evals_keep_no_record(project, monkeypatch):
+    edit(project, SHEET, misspell("add-to-x"))
+    check(project, "--review")
+    assert not (project / ".tmp" / "check-project.json").exists()
+    monkeypatch.setenv("CONSTRUCT3_RAG_NO_RECORD", "1")
+    for _ in range(2):
+        code, out = check(project)
+        assert code == 1 and "nothing changed" not in out
+    assert not (project / ".tmp" / "check-project.json").exists()
+
+
+# --- what a web export ships --------------------------------------------------------------------
+# Every key below is built from parts, so that no file of the repository holds a string shaped like one.
+RANDOM_TOKEN = "".join(random.Random(7).choices(string.ascii_letters + string.digits, k=40))
+
+
+@pytest.mark.parametrize("text, code, said", [
+    ('"' + "sk-" + "ant-" + "a1" * 20 + '"', True, "an Anthropic API key"),
+    ('"' + "AIza" + "Q1" * 17 + "x" + '"', True, "a Google API key"),
+    ("Bearer " + "sk-" + "proj-" + "Ab1" * 12, False, "an OpenAI API key"),
+    ("-----BEGIN " + "PRIVATE KEY-----", False, "a private key"),
+    (f'"{RANDOM_TOKEN}"', True, "a random token, such as a key"),
+    (f'"{hashlib.sha1(b"seed").hexdigest()}"', True, "a random token, such as a key"),
+    (f'"https://api.example.com/v1?key={RANDOM_TOKEN}"', True, "a random token, such as a key"),
+    (f"const {RANDOM_TOKEN} = 1;", True, None),                           # code outside a literal
+    (f'"https://cdn.example.com/{RANDOM_TOKEN}/coin.png"', True, None),  # an address's path
+    (f'"data:image/png;base64,{RANDOM_TOKEN * 3}"', True, None),          # a picture
+    ('"' + string.ascii_uppercase + string.ascii_lowercase + string.digits + '+/"', True, None),   # an alphabet
+    ('"Collect every coin before the timer runs out"', True, None),
+])
+def test_a_string_shaped_like_a_key_is_told_from_text_and_code(text, code, said):
+    import c3project as c3
+    literals = c3.JS_LITERAL if code else None
+    found = c3.key_shape(c3.Shipped("here", text, False, "that line", literals))
+    assert (found and found[0]) == said, found
+
+
+def test_a_key_the_export_would_ship_is_named_with_its_place_unless_marked_public(project):
+    """A web export ships every string to the players; a warning names the place and the mark that keeps it."""
+    key = "sk-" + "proj-" + "Ab1" * 12
+
+    def put(sheet):
+        events(sheet)["add_score"]["actions"][1]["parameters"]["text"] = f'"{key}"'
+    out = findings(project, put)
+    said = [w for w in warnings(out) if "shaped like" in w]
+    assert said == ["warning: sheet Game event 7 action 2: a string shaped like an OpenAI API key (sk-pro…), and a "
+                    "web export ships every string to the players, who can read it. Move the key to a server that "
+                    "the game calls. If it is meant to be public, write allow-secret in the comment above the "
+                    "event"], out
+    assert key not in out and out.splitlines()[-1].startswith("ok:"), out
+
+    def mark(sheet):
+        rows = sheet["events"]
+        at = rows.index(events(sheet)["add_score"])
+        rows[at - 1]["text"] += " (allow-secret: the service issues this key for web pages)"
+    assert "shaped like" not in findings(project, mark)
+
+    (project / "scripts").mkdir()
+    (project / "scripts" / "main.js").write_text(f'const KEY = "{RANDOM_TOKEN}";\n', encoding="utf-8")
+    edit(project, "project.c3proj", lambda data: data.setdefault("rootFileFolders", {}).update(
+        script={"items": [{"name": "main.js", "type": "application/javascript", "sid": 101, "fileType": "module"}],
+                "subfolders": []}))
+    code, out = check(project)
+    assert "warning: scripts/main.js line 1: a string shaped like a random token, such as a key " \
+           f"({RANDOM_TOKEN[:4]}… (40 characters))" in out, out
+    assert "If it is meant to be public, write allow-secret in a comment on that line" in out, out

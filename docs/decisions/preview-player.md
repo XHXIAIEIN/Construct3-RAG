@@ -41,6 +41,10 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   `shot`, one per object, with `note` for a label. A plan sets the
   `viewport` and whether presses are `touch`. The first failing step stops
   the run, since later steps assume it.
+- A `key` step holds one key or a list of keys, such as
+  `["ShiftLeft", "ArrowRight"]`. The keys go down in order and come up in
+  reverse. Each key event carries the modifier bits of the Shift, Control
+  and Alt keys that are down at that moment, as a browser's events do.
 - A target is an instance named the way the project names it (`"Piece 2"`,
   `"uid 12"`), a position on a layer, or JavaScript returning either. The
   script presses the middle of the instance's bounding box, converted by the
@@ -62,6 +66,18 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   ran and the errors on one clock; the agent gets the watched values' changes
   printed, the user a page beside the frames that plays them, steps through
   them and jumps to a step.
+- The agent judges a motion from a contact sheet, `NN-NAME-sheet.png`: up to
+  12 frames in one image, each numbered with its time. It holds the first
+  and last frames, the frames around the largest change between two frames,
+  the start and end of each step, and the cells left over spread over the
+  change, so a motion that runs between two steps is on it. The run asks for
+  the three worst defects, each with its time, what the frame shows and the
+  event to change, then a fix of only those and a new recording of that
+  part. Before it, the agent read the watched values and left the eye to the
+  user. The pattern is the contact sheet of code-rendered video production;
+  on a HealthBar recording of 70 frames, a sheet of the hit and the heal at
+  their step boundaries left out the lost-HP bar closing between them, and
+  spreading the spare cells over the change put it on the sheet.
 - What the user sees go wrong reaches the agent as a part of the recording.
   The user selects it on the page and copies it as a task for an agent that
   starts cold: what to find out, in their words or a default question, the
@@ -74,6 +90,26 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   beside the recordings, the same page listing every one with a link to its
   review page, and the page without a recording takes the game project or
   its `.tmp/preview/` and lists the recordings it finds there.
+- A bug is played before it is fixed. The agent writes the report as given,
+  doing, produces and instead of, and plays the plan on the unchanged
+  project until it fails at the step that reads the produces, for the
+  reported reason. A plan that never failed passes whether the fix works
+  or not, and one that fails elsewhere tests another fault.
+- A word of feel becomes a number. Floaty or slow names no value, so the
+  agent names the variable behind it, reads its current value, and
+  measures what the player feels with `record` and `watch`, against a
+  target in the same measure from `prompts/references/feel.md` or the user.
+  The change ends when the measure meets the target; a motion judged only
+  by eye is changed again on every review.
+- A plan that passed is kept as a check of its change. `--keep NAME` copies
+  it into the project as `tools/plans/NAME.json`, where the generator and the
+  design live and the editor reads nothing it is not told to, and the plan is
+  committed with the change. `--all` replays every kept plan in one editor
+  session, each from a first launch, and names each one that fails, since a
+  later change broke what it checks. Each run overwrites `.tmp/preview/` and
+  its result, so a plan that is not kept is played once. A passing run says
+  how to keep it and how many plans are kept, and a refused kept plan fails
+  the replay like a failed step.
 - The run's output tells the agent what the page does for the user, so the
   agent points the user to it: a part that looks wrong comes back as a task.
 - The review page follows a technical drawing: compact ruled panels,

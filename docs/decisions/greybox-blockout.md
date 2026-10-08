@@ -1,6 +1,6 @@
 # Greybox Blockout: The Stand-in Look and the Level's Pacing
 
-Date: 2026-09-26
+Date: 2026-09-26; the look revised 2026-10-08, spacing and balance 2026-10-08
 Schema: Construct 3 r495.2
 
 ## Problem
@@ -33,13 +33,32 @@ Over reference blockouts and mock-ups of the stand-in:
   highly recognisable accents.
 - Placeholders are three shapes: rectangle, triangle, circle.
 - Pattern marks areas and edges, not objects, as Tiled Backgrounds.
-- The backdrop is the grey-and-white checker image editors show for
-  transparency, and it is the ruler.
-- A hard shadow at half opacity and an outline of a quarter unit, both drawn
-  into the images, one switch for the game. Soft translucent shadows read as
-  a smear.
+- The look is neutral and costs a model no decisions: a template default it
+  keeps, not a style it chooses per game.
+- The stand-in is a plain sheet (2026-10-08). The user compared the
+  template's preview, with the checker, a hard grey shadow and ink outlines,
+  against six mock-ups of one coin screen. Three drew an app interface,
+  with rounded cards, a score pill and a shadow on everything; the user
+  read them as a template and as AI-made. Of three full-screen directions,
+  a plain sheet, a two-ink print and an ink line, the user chose the plain
+  sheet: flat fills on an off-white canvas, no outline, no shadow, the
+  number large.
+- The sheet's details (2026-10-08, a second round of mock-ups at
+  1920×1080). The score is its name in small dim capitals over a large
+  number of regular weight, the round in the top right corner. The coin is
+  cobalt with no outline: colour alone keeps the sheet simple, and a gold
+  reads 1.5:1 on near white without one. The coins sit on a small board
+  centred on the screen, 5 × 3 slots with the empty ones in `canvas_alt`;
+  scattered over the screen, or on a board as wide as the screen, they
+  read as untidy. Every label is in `system-ui`, the generic family the
+  editor's font picker lists as System UI: no font file ships with a game.
+- Where something is transparent, a mask, or a background still to come,
+  the backdrop is the grey-and-white checker editors show for transparency.
+- Where a game turns them on, the shadow is hard at half opacity and the
+  outline a quarter unit, both drawn into the images. Soft translucent
+  shadows read as a smear.
 - A hit is a colour set with a size punch, and landing and jumping squash;
-  the shadow falls at 45°, down and to the right.
+  a shadow, when on, falls at 45°, down and to the right.
 - Level zoning follows a grid and camera zones, placed from a director's
   view that controls the rhythm of tension and rest.
 - The look is metadata an agent can hand a model and confirm against, with
@@ -55,29 +74,30 @@ of `contrast()` in the template; L* is CIE lightness.
 
 | Role | Colour | L* |
 |------|--------|---:|
-| `canvas` | #F4F4F4 | 96 |
-| `canvas_alt` | #E4E4E4 | 91 |
-| `solid` | #808080 | 54 |
-| `dim` | #5A5A5A | 38 |
-| `ink` | #1C1C1C | 10 |
-| `reward` | #F5C518 | 82 |
-| `danger` | #E23B2E | 51 |
+| `canvas` | #FAFAF7 | 98 |
+| `canvas_alt` | #EEEEEA | 94 |
+| `solid` | #848480 | 55 |
+| `dim` | #646460 | 42 |
+| `ink` | #111111 | 5 |
+| `reward` | #2563EB | 46 |
+| `danger` | #DC263C | 48 |
 
 | Pair | Ratio | Reading |
 |------|------:|---------|
-| `canvas` / `canvas_alt` | 1.16 | Texture, not an object |
-| `solid` / `canvas_alt` | 3.11 | Above 3:1, WCAG 2.2 1.4.11, without an outline |
-| `ink` / `solid` | 4.32 | The player on a platform |
-| `ink` / `canvas_alt` | 13.40 | The player, an outline or a label on the backdrop |
-| `dim` / `canvas_alt` | 5.42 | A secondary label |
-| `reward` / `canvas_alt` | 1.28 | Invisible without its outline |
-| `danger` / `solid` | 1.09 | Invisible without its outline |
-| `ink` / `reward` | 10.45 | What makes a pickup show |
-| `ink` / `danger` | 3.98 | What makes a hazard show |
-| `solid` / `dim` | 1.75 | The low-contrast stripe pair |
+| `canvas` / `canvas_alt` | 1.11 | The checker reads as texture, not an object |
+| `solid` / `canvas_alt` | 3.23 | Above 3:1, WCAG 2.2 1.4.11, without an outline |
+| `reward` / `canvas_alt` | 4.44 | A pickup shows without an outline |
+| `danger` / `canvas_alt` | 4.12 | A hazard shows without an outline |
+| `ink` / `solid` | 5.03 | The player on a platform |
+| `ink` / `canvas_alt` | 16.23 | The player or a label on the backdrop |
+| `dim` / `canvas_alt` | 5.11 | A secondary label |
+| `reward` / `danger` | 1.08 | Told apart by hue and shape, not value |
+| `ink` / `reward` | 3.65 | An outline, where a game turns it on |
+| `ink` / `danger` | 3.94 | An outline, where a game turns it on |
+| `solid` / `dim` | 1.58 | The low-contrast stripe pair |
 
-The accents lose to their backgrounds on value, so they are read by the ink
-outline around them and understood by their hue.
+Every fill reads at least 3:1 on the darker checker grey, so a shape shows
+on the sheet and on the checker alone.
 
 ### Level design
 
@@ -117,16 +137,26 @@ outline around them and understood by their hue.
 3. **A fixed vocabulary, values and checks in the template.** Chosen.
 4. **Soft drop shadows and a light top edge.** A translucent, blurred shadow
    over the checker reads as a smear.
-5. **Depth layers in parallax, each farther one lighter.** A misreading of
+5. **An app interface: a stage card, a score pill, a shadow under every
+   element.** It looks finished in a mock-up, and the user read it as a
+   template and as AI-made: a game's screen is the scene, not a dashboard.
+6. **A two-ink print or an ink line.** Both have a character of their own,
+   which a neutral default does not want, and the print's overprint and
+   grain cost generation steps.
+7. **The checker, outline and hard shadow by default.** The look of this
+   record until 2026-10-08; on the preview the checker read as an image not
+   yet loaded and the grey shadow as dirt. The checker stays for
+   transparency, the outline and shadow as switches.
+8. **Depth layers in parallax, each farther one lighter.** A misreading of
    the checker backdrop.
-6. **Shadow Light in every game.** Right where light is a mechanic; as a
+9. **Shadow Light in every game.** Right where light is a mechanic; as a
    default, a cost with no role.
-7. **The shadow as an ink twin of each object on a layer below.** Each
-   object then needs a twin kept in step with it, one more thing a small
-   model writes wrong; drawn into the image, the shadow needs nothing at run
-   time.
-8. **The Flash behavior for a hit.** The evidence shows none using it for hits,
-   and it blinks the whole image, shadow included.
+10. **The shadow as an ink twin of each object on a layer below.** Each
+    object then needs a twin kept in step with it, one more thing a small
+    model writes wrong; drawn into the image, the shadow needs nothing at
+    run time.
+11. **The Flash behavior for a hit.** The evidence shows none using it for
+    hits, and it blinks the whole image, shadow included.
 
 ## Decision
 
@@ -138,19 +168,80 @@ Option 3, in `skills/construct3-agent-plugin/assets/build_project.py`.
 |-----------|------|--------|
 | Shape | What a thing is | Rectangle: the player and structure. Circle: what is collected. Triangle: what hurts. |
 | Colour | What role it plays | The roles of `PALETTE` |
-| Pattern | What an area or an edge does | The four of `PATTERNS` |
+| Pattern | What an area or an edge does | The stripes of `PATTERNS` |
 
 An object is `shape(file, kind, w, h, role)` in `build_images()`: one flat
-colour, whole units wide and high, its collision polygon the shape's, with
-the outline and cast shadow of `SHAPE_STYLE` drawn into the image.
+colour, whole units wide and high, its collision polygon the shape's. The
+outline and cast shadow of `SHAPE_STYLE` are off by default; a game that
+turns them on gets them drawn into the image.
 
-| `SHAPE_STYLE` | Default |
+| `SHAPE_STYLE` | When on |
 |---------------|---------|
 | Outline | `max(1, UNIT / 4)` px of `ink`, inside the edge, so a shape keeps its size on the grid |
 | Shadow | `ink` at 0.5 opacity, hard, 2.7% of the viewport's shorter side at 45° |
 
 The shadow widens the image on its side; the origin and polygon stay on the
 shape. A sprite that rotates is drawn with `shadow=False`.
+
+The score is its name at `TEXT_SIZE["body"]` in `dim` over the number at
+`TEXT_SIZE["title"]`, neither bold, one group of `hud_stat()`. Coins land
+on the board, `COLS` × `ROWS` slots a coin wide and a unit apart, one Tiled
+Background of a slot tile, in the middle of the play area the HUD leaves
+(*Spacing and balance*). A round deals the cells
+`(deal + i × STRIDE) mod CELLS`, with `STRIDE` and `CELLS` coprime, so no
+two coins meet, and the run stops on a round with more coins than slots.
+
+### Spacing and balance
+
+The user saw two faults on the stand-in: the dim SCORE sat a full line
+above its number while the HUD sat close to the board, and the board was
+centred on the screen rather than in the space under the HUD. Slide and
+poster skills put the gap between two groups at 1.5 to 2 times the gap
+inside one, and they centre the content in the space the fixed parts leave.
+Studies of model judges of layout find that a model looking at a render
+catches gross errors but misses small offsets, so both rules are computed
+from the boxes the generator writes.
+
+| Value | Holds |
+|-------|-------|
+| `GAP_IN` | A quarter unit, 8 px at 32: between a value and its name. A line's box adds about a quarter of an em above and below its letters, so the gap a player sees is larger |
+| `GAP_OUT` | One unit: the least between the HUD and the playfield |
+| `GROUP_RATIO` | 1.5: the gap between two groups over the gap inside either, at least |
+| `OPTICAL_LIFT` | 0.05 of the play area's height: how far the playfield is raised above its middle |
+
+- `hud_stat()` puts a value under its name as one group, each box one line
+  high, so a caller no longer places the second line with `dy`.
+- `play_area(hud)` is the viewport, `MARGIN` inside it, less the HUD's boxes
+  and `GAP_OUT` around them; `centred(w, h, area)` puts a box in its middle
+  on the grid, raised by `OPTICAL_LIFT`.
+- `spaced(groups)` stops the run when two groups sit closer than
+  `GROUP_RATIO` times the gap inside either, with the helpers that fix it.
+  It stops, as `no_overlap()` does, because the helpers always pass it and
+  a failure is a placement made by hand.
+- `balanced(content, area)` prints a warning when the playfield's centre is
+  more than a unit from the lifted middle of the play area. It warns and
+  does not stop, because a game may hold its playfield off the middle on
+  purpose, beside a panel or in a level wider than the screen, and the boxes
+  do not say which.
+
+Two more rules from the same sources were measured on the official 2D game
+examples before either became a check: 81 one-screen layouts of the
+examples tagged as games, their content the visible instances of the
+scrolling layers less Text and backdrops
+(`skills/construct3-agent-plugin/evals/measure_layout.py`).
+
+| Rule from slide and poster skills | Official layouts that pass | Outcome |
+|-----------------------------------|----------------------------|---------|
+| The content covers 25 to 60% of the screen | 11%; 83% cover more, median 80% | `filled()` warns under `PLAYFIELD_MIN`, 15%, which 5% of the layouts fall under: a tilemap or a panel that covers the screen, which the measurement takes for a backdrop, or a level drawn at runtime |
+| The largest object is at least 1.5 times the next | 31%; median 1.0 | Rejected: a grid of equal tiles, cards or two paddles has no single largest object |
+
+A game screen fills more of the screen than a slide, so the band does not
+transfer, and the floor catches a board too small for the screen. The
+stand-in's board covers 24%.
+
+The 5% lift is a rule of thumb from design guides; no source found measures
+it. On the stand-in it raises the board one unit, so the board's gap to the
+HUD is 125 px against 157 px without it.
 
 ### Colour
 
@@ -162,41 +253,47 @@ pass, when:
 
 - `canvas` and `canvas_alt` pass 1.2:1, or `solid` falls under 3:1 on
   `canvas_alt` (`check_palette()`);
-- an accent, a role that is a hue rather than a grey, is drawn without its
-  outline, or an outlined fill falls under 3:1 against `ink` (`shape()`);
+- an accent, a role that is a hue rather than a grey, falls under 3:1 on
+  `canvas_alt` and is drawn without its outline, or an outlined fill falls
+  under 3:1 against `ink` (`shape()`);
 - a label reads under 4.5:1, or under 3:1 from 18 pt up, large-scale text
   (`text_contrast()`, through `hud_text()` and every label).
 
 ### Backdrop and patterns
 
-`backdrop()` lays the checker, cells of `UNIT / 2` in `canvas` and
-`canvas_alt`, on a layer at parallax 1 from the layout's origin. It is the
-ruler: never a grid as well. In a top-down game it is the floor.
+`backdrop()` lays a backdrop pattern on a layer at parallax 1 from the
+layout's origin: the plain sheet by default, or, in a game with something
+transparent, a mask or a background still to come, the checker, cells of
+`UNIT / 2` in `canvas` and `canvas_alt`. The checker is then the ruler:
+never a grid as well. In a top-down game the backdrop is the floor.
 
 | Pattern | Colours | Marks |
 |---------|---------|-------|
-| Checker | `canvas`, `canvas_alt` | Empty space: the backdrop only |
+| Plain | `canvas` | Empty space: the backdrop only |
+| Checker | `canvas`, `canvas_alt` | Empty space over transparency: the backdrop only |
 | Low stripes | `solid`, `dim` | A surface that is special and harmless: a one-way platform, a safe zone |
 | Caution stripes | `reward`, `ink` | What moves, triggers or blocks on a condition |
 | Hazard stripes | `danger`, `ink` | An area that hurts |
 
 `pattern(name, kind)` draws a one-unit tile, stripes at 45°;
 `pattern_type()` declares its Tiled Background and `area()` places it on
-grid cells, refusing the checker and caution or hazard stripes wider than a
+grid cells, refusing the backdrop patterns and caution or hazard stripes wider than a
 quarter of the viewport's shorter side. `tiledbg_inst()` writes
 `image-offset = -corner mod tile`.
 
 ### Motion
 
 - A hit is a frame: `hit_frame(file)` draws the shape's second frame in
-  `flash`, tagged `hit`; `hit_flash(obj)` shows it for
+  `flash` inside the ink outline, which keeps a white flash visible on the
+  sheet, tagged `hit`; `hit_flash(obj)` shows it for
   `HIT_FLASH["seconds"]`, 0.08 s of real time so slow motion does not
   stretch it. `beh_def("Flash")` stops the run.
 - `squash(obj, kind)` sets the size to the share `SQUASH` gives, holds it
   and tweens back under the tag `squash`: a hit 0.8 × 1.2 back in 0.25 s
   `easeoutback`, a landing 1.2 × 0.8 in 0.5 s `easeoutelastic`, a jump
   0.7 × 1.3 held 0.2 s, back in 0.75 s `easeoutelastic`. `hit(obj)` gives the
-  hit's squash with the flash, as the coin's `Collect` does.
+  hit's squash with the flash, as the coin's `Collect` does. A button's press
+  is a squash too, held while the finger stays (`count-up-and-press.md`).
 - A squash acts on the art: a player is an invisible mask with Platform and
   its art, drawn with `shape(..., oy=1)`, pinned to it. The run stops on a
   squash of an object whose behavior collides.
@@ -252,15 +349,21 @@ template value it names drift apart.
 
 ## Open
 
-- The stand-in has been opened in the editor, not previewed: whether it
-  looks designed is the user's call on the running game, and the reach
-  bands wait on a measured jump.
+- The plain sheet has been previewed on the coin stand-in only, not on a
+  game with structure, hazards or a player. The reach bands wait on a
+  measured jump.
 - No small-model iteration has run on this template. The eval case
   `readable-on-a-dark-background` asks for a navy backdrop, on which the
   labels' `ink` reads 1.4:1: `readable()` stops the generator, and the case
   grades what the model does with that stop.
-- Not in the template: a number at the title size with its label in `dim`,
-  which changes the HUD the eval cases grade; camera-zone helpers; Sine
+- The score is at the title size with its label; the eval cases that grade
+  the HUD have not run on it.
+- `OPTICAL_LIFT` waits on the user's choice between 0.05 and 0, `open` in
+  the manifest.
+- `measure_layout.py` reads the layout files, so content an example creates
+  at runtime is not counted; a measurement from previews would raise the
+  low end of the coverage.
+- Not in the template: camera-zone helpers; Sine
   bobbing for pickups; the juice functions, camera-zone fields and
   five-level worlds of `published-game-visual-language.md`, `proposed` in
   the manifest.
@@ -274,5 +377,7 @@ template value it names drift apart.
   differ by more than one unit.
 - A game needs more than three accents: the vocabulary is too small for it,
   or the game is past the blockout.
+- `spaced()` stops a layout the user accepts, or `balanced()` warns on most
+  games that hold their playfield off the middle on purpose.
 - Real art arrives, from the user or an image model: the blockout gives
   way, and its grids and pacing stay.

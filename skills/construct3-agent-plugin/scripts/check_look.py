@@ -22,6 +22,12 @@ layouts and event sheets the editor would load and checks:
   motion.squash-art     a squash, a size set to a share of the image's size,
                         acts on the drawn art, not on an object whose
                         behavior collides
+  screen.fill           a warning, not a finding: the project fills the
+                        screen, Scale outer or Integer scale outer, not a
+                        Letterbox mode, which shows bars
+  screen.safe-area      a warning, not a finding: a project whose Viewport
+                        fit is Cover, which draws under a phone's notch,
+                        reads the safe area's insets in its events or scripts
 
 UNIT is 8 for a viewport 360 px high or less, else 32, as in the template.
 A layer at parallax 0 is the HUD, held to the viewport's edges, and is not
@@ -35,7 +41,6 @@ import json
 import re
 import struct
 import sys
-import zlib
 from pathlib import Path
 
 import c3project as c3
@@ -55,64 +60,6 @@ def painted_mark(path: Path) -> bool:
     return False
 
 
-def png_rgba(path: Path) -> tuple[int, int, list[tuple]] | None:
-    """Width, height and RGBA pixels of an 8-bit, non-interlaced PNG; None for another kind."""
-    data = path.read_bytes()
-    if data[:8] != b"\x89PNG\r\n\x1a\n":
-        return None
-    pos, idat, palette, trns = 8, b"", [], b""
-    w = h = depth = ctype = interlace = 0
-    while pos + 8 <= len(data):
-        n, tag = struct.unpack(">I", data[pos:pos + 4])[0], data[pos + 4:pos + 8]
-        body = data[pos + 8:pos + 8 + n]
-        if tag == b"IHDR":
-            w, h, depth, ctype, _, _, interlace = struct.unpack(">IIBBBBB", body)
-        elif tag == b"PLTE":
-            palette = [tuple(body[i:i + 3]) for i in range(0, len(body), 3)]
-        elif tag == b"tRNS":
-            trns = body
-        elif tag == b"IDAT":
-            idat += body
-        pos += 12 + n
-    channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}.get(ctype)
-    if depth != 8 or interlace or not channels:
-        return None
-    raw, stride = zlib.decompress(idat), w * channels
-    rows, prev = [], bytearray(stride)
-    for y in range(h):
-        kind, line = raw[y * (stride + 1)], bytearray(raw[y * (stride + 1) + 1:(y + 1) * (stride + 1)])
-        for i in range(stride):
-            a = line[i - channels] if i >= channels else 0
-            b, c = prev[i], prev[i - channels] if i >= channels else 0
-            if kind == 1:
-                line[i] = (line[i] + a) & 255
-            elif kind == 2:
-                line[i] = (line[i] + b) & 255
-            elif kind == 3:
-                line[i] = (line[i] + (a + b) // 2) & 255
-            elif kind == 4:
-                p = a + b - c
-                pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
-                line[i] = (line[i] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
-        rows.append(line)
-        prev = line
-    pixels = []
-    for line in rows:
-        for x in range(w):
-            v = line[x * channels:(x + 1) * channels]
-            if ctype == 6:
-                pixels.append(tuple(v))
-            elif ctype == 2:
-                pixels.append((*v, 255))
-            elif ctype == 4:
-                pixels.append((v[0], v[0], v[0], v[1]))
-            elif ctype == 0:
-                pixels.append((v[0], v[0], v[0], 255))
-            else:
-                pixels.append((*palette[v[0]], trns[v[0]] if v[0] < len(trns) else 255))
-    return w, h, pixels
-
-
 def check_alpha(root: Path, painted: list[str], out: list[str]) -> int:
     """alpha.pure over images/; returns how many images were read."""
     partial: dict[str, dict[int, tuple[int, int]]] = {}      # image: {alpha: first (x, y)}
@@ -121,7 +68,7 @@ def check_alpha(root: Path, painted: list[str], out: list[str]) -> int:
         rel = png.relative_to(root).as_posix()
         if any(fnmatch.fnmatch(png.name, p) or fnmatch.fnmatch(rel, p) for p in painted):
             continue
-        img = png_rgba(png)
+        img = c3.png_rgba(png.read_bytes())
         if img is None:
             out.append(f"alpha.pure: {rel} is not an 8-bit non-interlaced PNG; write it as the template's "
                        f"write_png() does, or name it with --painted")
@@ -260,6 +207,51 @@ def check_hit(root: Path, out: list[str]) -> None:
                                f"hit_frame() and show it with hit_flash(), then remove the behavior")
 
 
+def check_screen(project: dict, warned: list[str]) -> None:
+    """screen.fill over project.c3proj, a warning: a Letterbox mode shows bars around the game on a
+    screen whose shape differs from the viewport's, where the template fills the screen."""
+    mode = (project.get("properties") or {}).get("fullscreenMode", "")
+    if mode.startswith("letterbox"):
+        want = "integer-scale-outer" if "integer" in mode else "scale-outer"
+        warned.append(f"warning: screen.fill: project.c3proj has fullscreenMode {mode}, which shows bars where the "
+                      f"screen's shape differs from the viewport's; the template's build_project() writes {want} "
+                      f"(FULLSCREEN). Run the generator again, or remove the line that sets another mode. The "
+                      f"generator also holds the HUD to the screen's edges (anchored()) and extends the backdrop "
+                      f"past the viewport (backdrop()).")
+
+
+# PlatformInfo's four SafeAreaInset expressions in an event, or the CSS env() names in a script.
+SAFE_AREA = re.compile(r"safe.?area.?inset", re.I)
+
+
+def check_safe_area(root: Path, project: dict, warned: list[str]) -> None:
+    """screen.safe-area over project.c3proj, a warning. Viewport fit Cover draws the viewport under a
+    notch and rounded corners, where the HUD that anchored() holds MARGIN from the edges then lies.
+    An event expression or a script that reads the insets silences it."""
+    if (project.get("properties") or {}).get("viewportFit") != "cover":
+        return
+    def expressions(node):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key == "parameters" and isinstance(value, dict):
+                    yield from (str(v) for v in value.values())
+                else:
+                    yield from expressions(value)
+        elif isinstance(node, list):
+            for item in node:
+                yield from expressions(item)
+    texts = [e for f in (root / "eventSheets").rglob("*.json") if not f.name.endswith(".uistate.json")
+             for e in expressions(c3.load(f))]
+    texts += [f.read_text(encoding="utf-8", errors="replace") for f in (root / "scripts").rglob("*.[jt]s")]
+    if any(SAFE_AREA.search(t) for t in texts):
+        return
+    warned.append("warning: screen.safe-area: project.c3proj has viewportFit cover, which draws the game under a "
+                  "phone's notch and rounded corners. No event or script reads the safe area's insets, so the HUD "
+                  "held to the screen's edges lies under the notch. Set viewportFit to auto, which keeps the whole "
+                  "viewport visible, or move the HUD in by PlatformInfo.SafeAreaInsetTop and the other three insets, "
+                  "which are CSS pixels.")
+
+
 def main() -> int:
     c3.utf8_output()
     ap = c3.argument_parser(__doc__.split("\n\n")[0], "examples:\n"
@@ -283,6 +275,11 @@ def main() -> int:
     creates = check_spawn(root, out)
     check_hit(root, out)
     check_squash(root, out)
+    warned: list[str] = []
+    check_screen(project, warned)
+    check_safe_area(root, project, warned)
+    for line in warned:
+        print(line)
     shown = c3.fitting(out, args.limit)
     for line in out[:shown]:
         print(line)

@@ -25,7 +25,8 @@ fetched, HOME is an empty folder, and each side's clone and temporary folders ar
 replaced by <rag>, <game> and <tmp> before the comparison. The two clones' paths
 differ in length, which moves the point where a script's --limit cuts a line
 that holds one, so every case passes --limit 0 except lookup_ace, whose output
-names no path. A refactor shows no difference; a change of output shows exactly
+names no path of either side's clone: the example folders it prints are the
+same on both sides. A refactor shows no difference; a change of output shows exactly
 the cases it was meant for, and the pull request names them.
 
 The first differing cases are printed with their first differing line, then a
@@ -253,7 +254,7 @@ def git(*args: str) -> str | None:
 def environment(home: Path) -> dict[str, str]:
     env = {k: v for k, v in os.environ.items() if k not in ("CONSTRUCT3_RAG", "PYTHONSTARTUP")}
     env.update(PYTHONIOENCODING="utf-8", PYTHONHASHSEED="0", PYTHONDONTWRITEBYTECODE="1",
-               CONSTRUCT3_RAG_OFFLINE="1", HOME=str(home), USERPROFILE=str(home))
+               CONSTRUCT3_RAG_OFFLINE="1", CONSTRUCT3_RAG_NO_RECORD="1", HOME=str(home), USERPROFILE=str(home))
     return env
 
 

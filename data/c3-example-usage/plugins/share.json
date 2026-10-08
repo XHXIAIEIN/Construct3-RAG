@@ -1,0 +1,9 @@
+{
+  "conditions": {
+    "is-sharing-files-supported": {"examples": 2, "read": [["taking-screenshots", "Event sheet 1", 2, 2], ["voice-recorder", "Event sheet 1", 14, 14]]}
+  },
+  "actions": {
+    "add-file": {"examples": 5, "read": [["pottery-js", "Events", 1, 1], ["taking-screenshots", "Event sheet 1", 5, 5], ["qr-code-maker", "Event sheet 1", 11, 11]]},
+    "share-text": {"examples": 5, "read": [["pottery-js", "Events", 1, 1], ["taking-screenshots", "Event sheet 1", 5, 5], ["qr-code-maker", "Event sheet 1", 11, 11]]}
+  }
+}

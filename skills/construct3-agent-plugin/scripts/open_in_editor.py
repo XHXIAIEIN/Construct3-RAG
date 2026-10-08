@@ -58,6 +58,15 @@ Update over an installed copy, in whatever language the editor shows; the profil
 project that uses a custom plugin, behavior or effect opens only after that.
 An addon the editor refuses stops the run with its message and exception.
 
+When the editor refuses the one folder project it opened, by a dialog or by
+the crash report of the preview, and check_project.py finds no problem in
+it, the checker lacks a rule. The run then ends with a report of the
+refusal for the user to send to the skill's repository, written to
+.tmp/editor-report-<fingerprint>.md with placeholders for the names the
+project gives, and the gh command that files it. The script sends nothing.
+.tmp/editor-reports.json keeps the fingerprints offered, so that each
+refusal is offered once (docs/decisions/editor-refusal-report.md).
+
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder
 above them: every project.c3proj and .c3p below it is opened, .tmp/ and .build/ left out.
@@ -66,9 +75,11 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
 import json
 import math
 import os
+import re
 import shutil
 import socket
 import subprocess
@@ -83,7 +94,9 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import c3project as c3
+import check_project
 import pack_project as pp
+import print_sheet
 
 EPILOG = """examples:
   python scripts/open_in_editor.py
@@ -104,7 +117,7 @@ output, one entry per addon with --install-addon, then one per project:
     warning: <a notice the editor showed over the opened project, deprecated features: tell the user>
     preview: layout '<name>', runtime in the worker, 600 ticks in 4.2 s, 1 error      with --preview
     editor: <the crash report the editor showed while it built the preview>
-    runtime: <the first line of each error; --out keeps the stack>
+    runtime: <the first line of each distinct error, and (N times) when it came more than once; --out keeps each with its stack>
     globals: Score 0, Lives 3                                                         with --state
     objects: Player 1, Enemy 6, Coin 12
     Player: 1 instance                                                                with --state Player
@@ -114,6 +127,7 @@ output, one entry per addon with --install-addon, then one per project:
   failed   <project>
     editor: <the dialog's text, which names the sheet, event and parameter at fault>
     exception: <the first line of the exception the editor logged>
+  report: <when check_project.py passes the project the editor refused: a report for the user to send>
 
 exit codes: 0 every project opened, and with --preview ran without errors; 1 at least one did not, or an
 --install-addon was refused; 2 no project
@@ -320,7 +334,8 @@ NEXT = ("next: a message that names a place, `Game, event 12, condition 1`, is e
         "need no object type or usedAddons entry). A missing addon by another author is installed in the "
         "editor, not written into the files: tell the user which.")
 NEXT_PREVIEW = ("next: a runtime error names its place, `Event sheet 1, event 3, action 1` for a script in an event, "
-                "numbered as scripts/print_sheet.py numbers it: fix it and run this again with --preview. The preview "
+                "numbered as scripts/print_sheet.py numbers it. Fix the first error first, because the errors after it "
+                "can follow from it. Then run this again with --preview. The preview "
                 "starts on the layout the editor shows after opening, as F5 does: firstLayout, or the one the editor "
                 "last left open in project.uistate.json.")
 
@@ -763,6 +778,17 @@ def runtime_errors(win: DevTools) -> list[str]:
     return errors
 
 
+def runtime_lines(errors: list[str], indent: str = "  ") -> list[str]:
+    """One `runtime:` line per distinct error, in the order each first came, with how many times it
+    came. An error raised every tick is logged hundreds of times, and a line for each would push a
+    different error past the output's limit."""
+    counts: dict[str, int] = {}
+    for e in errors:
+        first = e.splitlines()[0]
+        counts[first] = counts.get(first, 0) + 1
+    return [f"{indent}runtime: {first}" + (f" ({n} times)" if n > 1 else "") for first, n in counts.items()]
+
+
 def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float, state: list[str] | None = None) -> dict:
     """Preview the layout the editor shows, let it run for `seconds`, then read what
     the runtime reported, and with `state` what the game holds.
@@ -931,6 +957,8 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
             target, page = browser.page(editor)
             load(page, editor)
         editor = page.evaluate("location.origin + location.pathname")
+        major, minor = (page.evaluate(RELEASE_JS) + [0, 0])[:2]
+        release = release_name(major * 100 + minor) if major else ""
         ready = page.evaluate(f"({SETUP_JS})()", wait=SETUP_WAIT)
         if ready != "ready":
             raise EditorNotLoaded(ready)
@@ -962,7 +990,7 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
     status = "opened" if result["opened"] else "failed" if result["dialogs"] or result["errors"] else "timeout"
     return {"project": str(project), "status": status, "title": result["title"], "dialogs": result["dialogs"],
             "warnings": result["warnings"], "exception": next(iter(result["errors"]), ""), "editor": editor,
-            "seconds": round(time.monotonic() - started, 1), **({"preview": ran} if ran else {})}
+            "release": release, "seconds": round(time.monotonic() - started, 1), **({"preview": ran} if ran else {})}
 
 
 def typescript(page: DevTools, project: Path) -> dict:
@@ -1039,6 +1067,21 @@ def addon_report(result: dict) -> list[str]:
     return lines
 
 
+def blank(page: DevTools) -> float | None:
+    """c3project.blank_share of the window drawn at an eighth of its width and height: the
+    PNG reader of c3project, in plain Python, is slow on a full-size screenshot."""
+    w, h = page.evaluate("[innerWidth, innerHeight]")
+    shot = page.call("Page.captureScreenshot", format="png",
+                     clip={"x": 0, "y": 0, "width": w, "height": h, "scale": 0.125})
+    return c3.blank_share(base64.b64decode(shot["data"]))
+
+
+def untested(ran: dict) -> str:
+    """What a preview that passed did not prove: a passing line read alone reads as the game working."""
+    wall = ran.get("wallTime")
+    return f"; it ran without input{f' for {wall:.1f} s' if wall is not None else ''}, so what a player does is untested"
+
+
 def report(result: dict, label: Callable[[str], str] = key_name) -> list[str]:
     if result["status"] == "error":
         return [f"error    {result['project']}: {result['exception']}"]
@@ -1058,10 +1101,10 @@ def report(result: dict, label: Callable[[str], str] = key_name) -> list[str]:
             ticks = (f"{ran['ticks']} ticks in {ran['wallTime']:.1f} s, "
                      if ran.get("ticks") is not None and ran.get("wallTime") is not None else "")
             lines.append(f"  preview: layout {ran['layout']!r}, runtime in the {ran['runtime']}, {ticks}"
-                         f"{n or 'no'} error{'' if n == 1 else 's'}")
+                         f"{n or 'no'} error{'' if n == 1 else 's'}{'' if n else untested(ran)}")
             if ran.get("editor"):
                 lines.append(f"  editor: {ran['editor']}")
-            lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
+            lines += runtime_lines(ran["errors"])
             if ran.get("state"):
                 lines += state_lines(ran["state"], label)
         elif ran:
@@ -1088,6 +1131,201 @@ def summary(results: list[dict], previewed: bool, out: Path, shots: Path) -> str
     done = "opened and ran without errors" if previewed else "opened"
     return (f"{sum(not failed(r) for r in results)} of {len(results)} {done}; full results in {out}, "
             f"screenshots in {shots}")
+
+
+# --- a refusal the checker passed: a report for the user to send --------------------------------
+# The skill's repository, where a rule the checker lacks is reported: SKILL.md's metadata source.
+REPOSITORY = "XHXIAIEIN/Construct3-RAG"
+OFFERED = "editor-reports.json"     # in .tmp/: the fingerprint of each refusal already offered to the user
+PLACE = re.compile(r", event (\d+)")
+
+
+def refusal(result: dict) -> list[str]:
+    """What the editor said when it refused the project: the dialog that stopped the open, or the crash
+    report it showed while it built the preview."""
+    if result["status"] == "failed":
+        return result["dialogs"] or [result["exception"]]
+    crash = result.get("preview", {}).get("editor")
+    return [crash] if crash else []
+
+
+def checker_passes(p: c3.Project) -> bool | None:
+    """Whether check_project.py finds no problem in the project; None when it stops on a file."""
+    findings = c3.Findings()
+    try:
+        check_project.Checker(c3.Project(p.root, p.rag, "en-US", findings)).check()
+    except (SystemExit, KeyError, TypeError, ValueError, AttributeError, IndexError, OSError):
+        return None
+    return not findings.errors
+
+
+def given_names(p: c3.Project) -> dict[str, str]:
+    """Each name the project gives, with its kind: the names of its sheets, layouts, objects, variables,
+    functions, groups, layers, behaviors, effects, animations and files, and of the project itself."""
+    names: dict[str, str] = {}
+
+    def add(kind: str, name) -> None:
+        if isinstance(name, str) and len(name.strip()) > 1:
+            names.setdefault(name, kind)
+
+    def animations(folder: dict) -> None:
+        for a in folder.get("items", []):
+            add("animation", a.get("name") if isinstance(a, dict) else None)
+        for sub in folder.get("subfolders", []):
+            animations(sub)
+
+    def events(rows: list) -> None:
+        for ev in rows:
+            et = ev.get("eventType")
+            if et == "variable":
+                add("variable", ev.get("name"))
+            elif et == "group":
+                add("group", ev.get("title"))
+            elif et in ("function-block", "custom-ace-block"):
+                add("function", ev.get("functionName") or ev.get("aceName"))
+                for fp in ev.get("functionParameters", []):
+                    add("variable", fp.get("name"))
+            events(ev.get("children", []))
+
+    add("project", p.data.get("name"))
+    for kind, what in (("eventSheets", "sheet"), ("layouts", "layout"), ("objectTypes", "object"),
+                       ("families", "object"), ("timelines", "timeline"), ("flowcharts", "flowchart")):
+        for name, _ in c3.folder_items(p.data.get(kind) or {}):
+            add(what, name)
+    for folder in (p.data.get("rootFileFolders") or {}).values():
+        for item, _ in c3.folder_items(folder if isinstance(folder, dict) else {}):
+            add("file", Path(str(item.get("name", "")) if isinstance(item, dict) else str(item)).stem)
+    for data in (*p.types.values(), *p.families.values()):
+        for key, kind in (("instanceVariables", "variable"), ("behaviorTypes", "behavior"), ("effectTypes", "effect")):
+            for entry in data.get(key, []):
+                add(kind, entry.get("name") if isinstance(entry, dict) else None)
+        animations(data.get("animations") or {})
+    for layout in p.load_listed("layouts").values():
+        for layer, _ in c3.layers_of(layout.get("layers", [])):
+            add("layer", layer.get("name"))
+    for sheet in p.load_listed("eventSheets").values():
+        events(sheet.get("events", []))
+    return names
+
+
+def redactor(p: c3.Project, names: dict[str, str]) -> Callable[[str], str]:
+    """A text with every name the project gives in place of a placeholder of its kind, <object 1>, text in
+    quotes as "…", the project's folder as <project folder> and the home folder as ~."""
+    shown: dict[str, str] = {}
+    counts: dict[str, int] = {}
+    for name, kind in names.items():
+        counts[kind] = counts.get(kind, 0) + 1
+        shown[name] = f"<{kind} {counts[kind]}>"
+    by_length = sorted(shown, key=len, reverse=True)
+    plain = [n for n in by_length if n.isascii()]
+    words = re.compile(r"(?<!\w)(?:" + "|".join(map(re.escape, plain)) + r")(?!\w)") if plain else None
+    others = [n for n in by_length if not n.isascii()]
+    wide = re.compile("|".join(map(re.escape, others))) if others else None
+    folders = [(str(p.root.resolve()), "<project folder>"), (str(Path.home()), "~")]
+
+    def redact(text: str) -> str:
+        for folder, written in folders:
+            for spelt in (folder, folder.replace("\\", "/")):
+                text = re.sub(re.escape(spelt), written, text, flags=re.I)
+        text = c3.STRING_LITERAL.sub('"…"', text)
+        for pattern in (words, wide):
+            text = pattern.sub(lambda m: shown[m.group(0)], text) if pattern else text
+        return text
+    return redact
+
+
+def event_named(p: c3.Project, said: str) -> tuple[str, int, list[str]] | None:
+    """The sheet and event a message names, `Game, event 12`, with the event as print_sheet.py prints it."""
+    sheets = p.load_listed("eventSheets")
+    for name in sorted(sheets, key=len, reverse=True):
+        for m in PLACE.finditer(said):
+            if said[:m.start()].endswith(name):
+                n = int(m.group(1))
+                rows = [r for r in print_sheet.sheet_rows(p, sheets[name].get("events", []), [0])
+                        if r.number == n and r.event.get("eventType") in c3.NUMBERED]
+                return name, n, [*rows[0].head, *rows[0].body] if rows else []
+    return None
+
+
+def checker_version(rag: Path) -> str:
+    """The version of the skill that checked the project: the plugin's, else the clone's commit."""
+    manifest = c3.SKILL_DIR.parent.parent / ".claude-plugin" / "plugin.json"
+    try:
+        return f"the construct3 plugin {json.loads(manifest.read_text(encoding='utf-8'))['version']}"
+    except (OSError, ValueError, KeyError):
+        pass
+    commit = c3.git_out(c3.clone_root(rag), "rev-parse", "--short", "HEAD") or "of an unknown commit"
+    copy = "" if c3.refresh_command(rag) is None else \
+        ", run from a copy that differs from it" if c3.skill_drift(rag) else ", run from a copy"
+    return f"Construct3-RAG {commit}{copy}"
+
+
+def release_name(release: int) -> str:
+    """50200 as r502, 49502 as r495.2."""
+    return f"r{release // 100}" + (f".{release % 100}" if release % 100 else "")
+
+
+def failure_report(result: dict) -> list[str]:
+    """When the checker passes a project the editor refused, the lines that offer the user a report of it
+    without the project's names, written to .tmp/, once for each fingerprint; [] otherwise."""
+    said = refusal(result)
+    project = Path(result["project"])
+    if not said or not project.is_dir():
+        return []
+    rag, _ = c3.locate_rag(project, None)
+    if rag is None:
+        return []
+    try:
+        p = c3.Project(project, rag, "en-US", c3.Findings())
+    except SystemExit:      # a file that is not JSON, which the checker reports first
+        return []
+    # An addon by another author is installed in the editor: its absence is no rule of the checker's
+    others = [a for a in p.data.get("usedAddons", []) if isinstance(a, dict)
+              and a.get("id", "").lower() not in p.index.get(a.get("type", "") + "s", {})]
+    if any(word and word in text for a in others for word in (a.get("id"), a.get("name")) for text in said):
+        return []
+    if checker_passes(p) is not True:
+        return []
+    redact = redactor(p, given_names(p))
+    exception = redact(result["exception"].splitlines()[0]) if result["exception"] else ""
+    shown = [redact(text) for text in said]
+    fingerprint = hashlib.sha1(re.sub(r"\d+", "N", "\n".join([*shown, exception])).encode("utf-8")).hexdigest()[:12]
+    folder = scratch(project)
+    body_file = folder / f"editor-report-{fingerprint}.md"
+    record = folder / OFFERED
+    try:
+        offered = json.loads(record.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        offered = {}
+    if fingerprint in offered:
+        return [f"report: the editor refused this project the same way on {offered[fingerprint]}, and the report "
+                f"{body_file} was offered to the user then; do not offer it again"]
+    place = event_named(p, said[0])
+    body = ["The checker of the construct3-agent-plugin skill passed a project that the Construct 3 editor "
+            "refused.", "", "Editor:", "```", *shown, "```"]
+    if exception:
+        body += ["Exception:", "```", exception, "```"]
+    if place and place[2]:
+        body += [f"Event {place[1]} of the sheet the message names, as print_sheet.py prints it:",
+                 "```", *map(redact, place[2]), "```"]
+    saved = saved_release(project)
+    body += [f"- Construct: the editor {result.get('release') or result['editor']}"
+             + (f", the project saved with {release_name(saved)}" if saved else ""),
+             f"- Checker: {checker_version(rag)}, schemas {p.index.get('version', '?')}",
+             f"- Fingerprint: {fingerprint}", "",
+             "The names the project gives are replaced by placeholders such as `<object 1>`, text in quotes by "
+             "`\"…\"`, and the home folder by `~`."]
+    body_file.write_text("\n".join(body) + "\n", encoding="utf-8")
+    offered[fingerprint] = time.strftime("%Y-%m-%d")
+    record.write_text(json.dumps(offered, indent=1), encoding="utf-8")
+    title = f"Editor refused a project the checker passed ({fingerprint})"
+    return [f"report: check_project.py passes this project and the editor refused it, so the checker lacks a "
+            f"rule. Show the user the report below, which {body_file} holds. Ask whether to send it to the "
+            f"skill's repository; placeholders stand for the names the project gives. Send nothing unless the "
+            f"user says yes, because the report comes from the user's project. This offer is made once.", *body,
+            f"to send it, under the user's GitHub account: gh issue create --repo {REPOSITORY} --title \"{title}\" "
+            f"--body-file \"{body_file}\"; without gh, open https://github.com/{REPOSITORY}/issues/new and paste "
+            f"the file"]
 
 
 def run(projects: list[Path], editor: str, exe: str, args, label: Callable[[str], str] = key_name) -> list[dict]:
@@ -1276,6 +1514,10 @@ def main() -> int:
         print(NEXT)
     if any(r.get("preview", {}).get("errors") for r in results):
         print(NEXT_PREVIEW)
+    if len(results) == 1:
+        offer = failure_report(results[0])
+        if offer:
+            print("\n".join(offer))
     return 1 if any(failed(r) for r in results) else 0
 
 

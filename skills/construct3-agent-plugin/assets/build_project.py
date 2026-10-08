@@ -44,10 +44,10 @@ ROOT = Path(__file__).resolve().parent.parent
 # Seeded so a rerun produces the same sids and the diff shows only what changed.
 random.seed(20170328)
 
-VIEW_W, VIEW_H = 720, 1280
+VIEW_W, VIEW_H = 1920, 1080
 PROJECT_NAME = "Coins"                     # the project's name in the editor
 FIRST_LAYOUT = "Game"                      # the layout the game starts on
-ORIENTATION = "portrait"                   # "portrait", "landscape" or "any"
+ORIENTATION = "landscape"                  # "portrait", "landscape" or "any"
 
 # --- placement grid -------------------------------------------------------------------
 # Every position and size is a whole number of UNITs, so that a layout reads as cells, not as
@@ -60,7 +60,7 @@ MARGIN = UNIT                              # the HUD's distance from the viewpor
 # The smallest object a finger taps: 48 dp on Android, 44 pt on iOS (Apple HIG, Accessibility;
 # Android accessibility help; WCAG 2.5.5). The viewport's shorter side is shown across a
 # phone's ~360 dp, so 48 dp is 48 * shorter side / 360 viewport px, rounded up to a unit:
-# 24 at 320x180, 96 at 720x1280, 160 at 1920x1080.
+# 24 at 320x180, 96 at 720x1280, 160 at 1920x1080, the default.
 TOUCH = math.ceil(48 * min(VIEW_W, VIEW_H) / 360 / UNIT) * UNIT
 
 COIN_SIZE = TOUCH                          # a coin is tapped, so it is never smaller than a finger
@@ -73,20 +73,20 @@ COIN_SIZE = TOUCH                          # a coin is tapped, so it is never sm
 # examples keep to few colours with hard edges, 9 covering 95% of a project's opaque pixels
 # and 35 its whole art at the median, and their text to one or two colours in two sizes
 # (Construct3-RAG/docs/decisions/game-look-from-design-skills.md).
-# The stand-in is a blockout: value carries the hierarchy, greys from the canvas to ink, and two
-# accents for what must be noticed wherever the eye is. An accent loses to its background on
-# value and shows by the ink outline round it, so shape() draws an accent with its outline, and
-# check_palette() stops the run on greys that lose the ratios below
+# The stand-in is a plain sheet: flat shapes on an off-white canvas that fills the screen, value
+# carrying the hierarchy from the canvas to ink, and two accents for what must be noticed
+# wherever the eye is. Every fill reads at least 3:1 on canvas_alt, so a shape shows without an
+# outline or a shadow; check_palette() and shape() stop the run on one that does not
 # (Construct3-RAG/docs/decisions/greybox-blockout.md). A game adds a third accent only for a role
 # the two do not cover, a goal for instance.
 PALETTE = {
-    "canvas": (244, 244, 244),         # the backdrop's light cells; an opaque layer's fill
-    "canvas_alt": (228, 228, 228),     # the backdrop's dark cells, at most 1.2:1 from canvas
-    "solid": (128, 128, 128),          # structure, at least 3:1 on the backdrop; a bar's frame
-    "dim": (90, 90, 90),               # a secondary label
-    "ink": (28, 28, 28),               # the player, outlines, shadows, labels, a bar's fill
-    "reward": (245, 197, 24),          # what the player collects: the coin
-    "danger": (226, 59, 46),           # what hurts or is lost
+    "canvas": (250, 250, 247),         # the sheet: an opaque layer's fill; the checker's light cells
+    "canvas_alt": (238, 238, 234),     # the checker's dark cells, at most 1.2:1 from canvas
+    "solid": (132, 132, 128),          # structure, at least 3:1 on canvas_alt; a bar's frame
+    "dim": (100, 100, 96),             # a secondary label
+    "ink": (17, 17, 17),               # the player, outlines, labels, a bar's fill
+    "reward": (37, 99, 235),           # what the player collects: the coin, a cobalt that reads alone
+    "danger": (220, 38, 60),           # what hurts or is lost
     "flash": (255, 255, 255),          # the fill of an object for the instant it is hit
 }
 # The outline and the cast shadow of every image shape() draws, one switch for the game. They
@@ -95,19 +95,21 @@ PALETTE = {
 # outline lies inside the shape's edge, so the shape keeps its size on the grid; the shadow is
 # a hard copy of the shape, offset, and widens the image on its side. Being in the image, a
 # shadow turns with a rotating sprite and darkens where two shadows overlap: draw such a sprite
-# with shape(..., shadow=False). Values: Construct3-RAG/docs/decisions/greybox-blockout.md.
+# with shape(..., shadow=False). Both are off on the plain sheet; a game turns them on for a
+# look that wants them. Values: Construct3-RAG/docs/decisions/greybox-blockout.md.
 SHAPE_STYLE = {
-    "outline": True,
+    "outline": False,
     "outline_width": max(1, UNIT // 4),                      # px, inside the edge
     "outline_role": "ink",
-    "shadow": True,
+    "shadow": False,
     "shadow_distance": round(0.027 * min(VIEW_W, VIEW_H)),   # px: 2.7% of the shorter side
     "shadow_angle": 45,                                      # degrees clockwise from rightwards: 90 is down
     "shadow_opacity": 0.5,
     "shadow_role": "ink",
 }
 # A hit shows as a colour for an instant: the shape's second frame, drawn by hit_frame() in the
-# role below with the same outline and shadow, shown by hit_flash() for `seconds` of real time.
+# role below with the same shadow and always with the outline, which keeps a white flash
+# visible on the sheet, shown by hit_flash() for `seconds` of real time.
 # Not the Flash behavior, which blinks the object's opacity: a colour set for 0.05 to 0.1 s, white
 # or danger, reads as a hit. An object's colour in Construct multiplies its image, so it cannot
 # turn a yellow shape white; a frame can.
@@ -122,16 +124,19 @@ SQUASH = {
     "land": {"width": 1.2, "height": 0.8, "hold": 0, "seconds": 0.5, "ease": "easeoutelastic"},
     "jump": {"width": 0.7, "height": 1.3, "hold": 0.2, "seconds": 0.75, "ease": "easeoutelastic"},
 }
-FONT = "Arial"                             # one font for every label
+FONT = "system-ui"                         # one font for every label: the platform's own UI face, no font file
 TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
-# as every official example at that size samples and 116 of 159 scale (build_project()).
+# as the official examples at that size sample, and most scale (FULLSCREEN, build_project()).
 PIXEL_ART = UNIT == 8
-# The art direction in one sentence, the look the user agreed. It fixes the technique, the
-# outline, the colours and the shading, never a subject: "flat vector, thick dark outlines, warm
-# colours, soft cel shading", or "ink wash on rice paper, dry brush edges, muted greens, no
-# outlines". Every prompt the skill's scripts/prepare_art.py prints for the image tool starts
-# with it, so the pictures art() asks for share one style.
+# The art direction in one sentence, the look the user agreed. It fixes the rendering, the
+# linework, the colour temperature, the light direction, the proportions and the framing, never a
+# subject: "flat vector with soft cel shading, thick dark outlines, warm colours, light from the
+# top left, chunky proportions, side view", or "ink wash on rice paper, dry brush edges, cool
+# muted greens, light from above, slender proportions, three-quarter view from above". Every prompt
+# the skill's scripts/prepare_art.py prints for the image tool starts with it, so the pictures
+# art() asks for share one style, and prepare_art.py --list warns of a dimension the sentence
+# leaves out.
 ART_STYLE = ""
 
 
@@ -141,6 +146,7 @@ ART_STYLE = ""
 # when the skill is refreshed, and leaves the part as it is once it is edited here. To change a
 # helper for this game, define it again below the end marker: a def or a constant there replaces
 # the one of the same name here, and a refresh keeps it.
+import difflib
 import json
 import math
 import random
@@ -182,7 +188,8 @@ def anchor(where: str, w: float, h: float, ox: float = 0, oy: float = 0, dx: flo
     the dy that clears a box that is in the way. A box held to
     the left or top lands on the grid; one held to the right, the bottom or the middle
     sits exactly MARGIN from that edge, or exactly centred, which is what the eye checks
-    there. The centre of the screen is where the game is; the HUD lives on the edges."""
+    there. The centre of the screen is where the game is; the HUD lives on the edges. An
+    instance placed here takes behaviors=anchored(where), which holds it to the screen's edge."""
     vert, horiz = sides(where)
     x = {"left": MARGIN, "middle": (VIEW_W - w) / 2, "right": VIEW_W - MARGIN - w}[horiz]
     y = {"top": MARGIN, "middle": (VIEW_H - h) / 2, "bottom": VIEW_H - MARGIN - h}[vert]
@@ -207,10 +214,53 @@ def row(where: str, n: int, w: float, h: float, gap: float = 1, ox: float = 0.5,
         dx: float = 0, dy: float = 0) -> list[tuple[int, int]]:
     """n boxes of w x h side by side, `gap` units apart, the row as a whole held by anchor():
     three hearts top centre are row("top", 3, TOUCH, TOUCH). Returns each box's origin
-    point, (ox, oy) as for anchor(), so the items never touch, whatever their size."""
+    point, (ox, oy) as for anchor(), so the items never touch, whatever their size. Each
+    instance takes behaviors=anchored(where), so the row moves to the screen's edge as one."""
     step = w + units(gap)
     x0, y0 = anchor(where, n * step - units(gap), h, 0, 0, dx, dy)
     return [(int(round(x0 + i * step + ox * w)), int(round(y0 + oy * h))) for i in range(n)]
+
+
+# --- the screen ---------------------------------------------------------------------------
+# The project fills the screen at any aspect ratio. Scale outer shows more than the viewport on
+# the screen's longer side, split evenly; pixel art takes Integer scale outer, which keeps its
+# pixels square. A HUD layer at parallax 0 stays centred on the viewport. So an element held to
+# an edge carries the Anchor behavior, which moves it to the screen's edge (anchored()). A
+# backdrop or a cover reaches SCREEN_PAD past the viewport on every side (screen_box()). A
+# one-screen layout scrolls unbounded, so the game stays centred with the HUD (layout()).
+# Construct3-RAG/docs/decisions/fill-the-screen.md.
+FULLSCREEN = "integer-scale-outer" if PIXEL_ART else "scale-outer"
+# Twice the viewport's longer side, in whole units: a backdrop or a cover this far past each edge
+# covers any screen up to 4:1 in either orientation, a shaking camera included.
+SCREEN_PAD = math.ceil(2 * max(VIEW_W, VIEW_H) / UNIT) * UNIT
+
+
+def anchored(where: str) -> dict:
+    """The Anchor behavior's block that holds an instance of a parallax 0 layer at the screen's
+    edge or corner named by `where`, as anchor() names it. The instance's left edge keeps its
+    distance from the screen's left or right edge, and its top from the top or bottom. A centred
+    axis stays centred, as the viewport does, so "center" returns {}. hud_text(), hud_bar(),
+    labelled_bar() and band_text() give the block; an instance placed by anchor() or row() takes
+    behaviors=anchored(where). build_all() gives the object type the behavior (anchor_types())."""
+    vert, horiz = sides(where)
+    if vert == horiz == "middle":
+        return {}
+    return {"Anchor": {"properties": {"left-edge": {"left": "window-left", "right": "window-right"}.get(horiz, "none"),
+                                      "top-edge": {"top": "window-top", "bottom": "window-bottom"}.get(vert, "none"),
+                                      "right-edge": "none", "bottom-edge": "none", "enabled": True}}}
+
+
+def screen_box(width: int | None = None, height: int | None = None, ox: float = 0, oy: float = 0) -> tuple[int, int, int, int]:
+    """(x, y, w, h) of a box over the layout's `width` x `height`, the viewport's unless given,
+    reaching SCREEN_PAD past it on every side, with (x, y) its origin (ox, oy): what Scale outer
+    shows past the viewport is covered on any screen. backdrop() is laid out over it, and so is
+    a popup's dim, sprite_inst("Dim", *screen_box(ox=0.5, oy=0.5)) on the popup's layer. A dim
+    that closes the popup on a tap still tests the tap against the panel, Touch's On any touch
+    start and NOT Is touching the panel, so its size decides nothing about input
+    (Construct3-RAG/prompts/pitfalls/input.md)."""
+    w = (VIEW_W if width is None else width) + 2 * SCREEN_PAD
+    h = (VIEW_H if height is None else height) + 2 * SCREEN_PAD
+    return int(-SCREEN_PAD + ox * w), int(-SCREEN_PAD + oy * h), w, h
 
 
 def no_overlap(instances: list, where: str = "layer UI") -> None:
@@ -222,11 +272,9 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
     passed. Every box in the way is named in one message, one line each."""
     boxes, said = [], []
     for inst in instances:
-        w = inst.get("world")
-        if w:
-            left = w["x"] - w.get("originX", 0) * w["width"]
-            top = w["y"] - w.get("originY", 0) * w["height"]
-            boxes.append((inst["type"], left, top, left + w["width"], top + w["height"], "text" in inst.get("properties", {})))
+        b = box_of(inst)
+        if b:
+            boxes.append((inst["type"], *b, "text" in inst.get("properties", {})))
     for kind, l, t, r, b, _ in boxes:
         if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H:
             said.append(f"{where}: {kind} ({l:g},{t:g})-({r:g},{b:g}) reaches past the {VIEW_W}x{VIEW_H} viewport; "
@@ -437,11 +485,32 @@ def record_table(name: str, records: dict, fields: list | None = None) -> str:
     "id" and the field names, column 0 the ids:
         record_table("Cards", {"strike": {"name": "Strike", "cost": 1, "dmg": 6},
                                "guard": {"name": "Guard", "cost": 1, "block": 5}})
-    A field a record lacks is 0, or "" when the field holds text elsewhere. Load it with
-    load_data_file() and turn it into a Dictionary with table_to_dictionary(), read as
+    A field a record lacks is 0, or "" when the field holds text elsewhere. fields= fixes the
+    columns and their order. A record with a field outside fields= stops the run, because the table
+    would leave its value out. Without fields=, a field that only one record has, spelt like a field
+    of the other records, prints a warning, because a misspelt key reads 0 in the game. Load the
+    file with load_data_file() and turn it into a Dictionary with table_to_dictionary(), read as
     Cards.Get("strike.dmg")."""
-    fields = fields or list(dict.fromkeys(f for r in records.values() for f in r))
+    where = f"record_table({name!r})"
+    for rid, r in records.items():
+        for f in r if fields else ():
+            if f not in fields:
+                near = difflib.get_close_matches(f, fields, n=1)
+                sys.exit(f"{where}: record {rid!r} has the field {f!r}, which fields= does not list. The table "
+                         f"would leave its value out. Write it as one of {', '.join(map(repr, fields))}"
+                         + (f" (the nearest is {near[0]!r})" if near else "") + ", or add it to fields=")
     texts = {f for r in records.values() for f, v in r.items() if isinstance(v, str)}
+    if not fields:
+        fields = list(dict.fromkeys(f for r in records.values() for f in r))
+        held = {f: [rid for rid, r in records.items() if f in r] for f in fields}
+        for f in (f for f in fields if len(held[f]) == 1):
+            rid = held[f][0]
+            near = difflib.get_close_matches(f, [g for g in fields if g not in records[rid]], n=1, cutoff=0.8)
+            if near:
+                g = near[0]
+                print(f"warning: {where}: only record {rid!r} has the field {f!r}, and {len(held[g])} "
+                      f"record{'s have' if len(held[g]) > 1 else ' has'} {g!r}; if they are one field, write {g!r} "
+                      f"in {rid!r}. Otherwise {g!r} reads {'""' if g in texts else 0} for {rid!r}")
     rows = [["id", *fields]] + [[rid, *(r.get(f, "" if f in texts else 0) for f in fields)]
                                 for rid, r in records.items()]
     return array_file(name, [list(column) for column in zip(*rows)])
@@ -618,9 +687,10 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
                  f"so give it units(n) or TOUCH, {math.ceil(w / UNIT) * UNIT}x{math.ceil(h / UNIT) * UNIT} here")
     style = SHAPE_STYLE
     edge = style["outline_width"] if (style["outline"] if outline is None else outline) else 0
-    if not edge and accent(role):
-        sys.exit(f"{rel}: {role} is an accent, which loses to the backdrop on value and shows by the outline round "
-                 f"it; draw it with its outline, or in a grey role")
+    ratio = contrast(rgb(role), rgb("canvas_alt"))
+    if not edge and accent(role) and ratio < 3:
+        sys.exit(f"{rel}: {role} {PALETTE[role]} reads {ratio:.2f}:1 on canvas_alt, and an accent without an outline "
+                 f"needs 3:1 to show (WCAG 2.2, 1.4.11); darken {role}, or draw it with its outline")
     ratio = contrast(rgb(role), rgb(style["outline_role"]))
     if edge and role != style["outline_role"] and ratio < 3:
         fits = [r for r in PALETTE if contrast(PALETTE[r], rgb(style["outline_role"])) >= 3]
@@ -650,7 +720,7 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
 
 def hit_frame(rel: str) -> dict:
     """The hit frame of the image shape() or art() drew as images/<rel>, "coin-default-000.png":
-    the same shape, outline and shadow filled in HIT_FLASH's role, or the picture's silhouette in
+    the same shape and shadow filled in HIT_FLASH's role inside the outline, or the picture's silhouette in
     that colour, written as the next frame's file and tagged "hit". Put it after the first frame
     in the animation; hit_flash() shows it."""
     if rel not in DRAWN_AS or not rel.endswith("-000.png"):
@@ -667,7 +737,7 @@ def hit_frame(rel: str) -> dict:
         FRAMES[hit] = {**FRAMES[rel], "imageSpriteId": image_id(), "tag": "hit"}
         return FRAMES[hit]
     kind, w, h, ox, oy, outline, shadow = DRAWN_AS[rel]
-    f = shape(hit, kind, w, h, HIT_FLASH["role"], ox, oy, outline, shadow)
+    f = shape(hit, kind, w, h, HIT_FLASH["role"], ox, oy, True, shadow)
     f["tag"] = "hit"
     return f
 
@@ -747,15 +817,17 @@ def write_wanted() -> None:
 
 
 # Objects are flat; an area or an edge carries a pattern, a Tiled Background, which repeats its
-# image at any size without stretching it. Four patterns, each two roles of PALETTE and one job.
-# A red triangle is one hazard, a red-striped area a hazardous region; a yellow circle is a
-# pickup, a yellow-striped strip a door or a plate.
+# image at any size without stretching it. Each pattern is two roles of PALETTE and one job.
+# A red triangle is one hazard, a red-striped area a hazardous region; an amber circle is a
+# pickup, an amber-striped strip a door or a plate.
 PATTERNS = {
-    "checker": ("canvas", "canvas_alt"),   # empty space, and the ruler: the backdrop only
+    "plain": ("canvas", "canvas"),         # the sheet: the backdrop only
+    "checker": ("canvas", "canvas_alt"),   # transparency, a mask, a background to come: the backdrop only
     "low": ("solid", "dim"),               # a surface special and harmless: a one-way platform, a safe zone
     "caution": ("reward", "ink"),          # what moves, triggers or blocks on a condition: a door, a plate
     "hazard": ("danger", "ink"),           # an area that hurts: lava, a kill zone
 }
+BACKDROPS = ("plain", "checker")           # the patterns of backdrop() alone
 PATTERN_OF: dict[str, str] = {}            # the pattern of each type pattern() drew, by type name
 TILES: dict[str, int] = {}                 # its tile in px, which tiledbg_inst() aligns to the layout
 
@@ -769,7 +841,7 @@ def pattern(name: str, kind: str) -> None:
         sys.exit(f"pattern({name!r}, {kind!r}): the patterns are {', '.join(PATTERNS)}")
     a, b = PATTERNS[kind]
     half = UNIT // 2
-    if kind == "checker":
+    if kind in BACKDROPS:
         def pixel(x, y):
             return (*rgb(a if (x // half + y // half) % 2 == 0 else b), 255)
     else:
@@ -997,27 +1069,36 @@ def hit_flash(obj: str) -> list:
 SQUASHED: set[str] = set()                 # the objects squash() acts on, checked in build_all()
 # the behaviors whose object collides, by behaviorId; squash() stops the run on one of them
 COLLIDING = ("Platform", "EightDir", "Physics", "Car", "solid", "jumpthru")
+# The squash of a button under a finger, press(): its two halves are the touch's start and end.
+# A game tunes it as a kind of SQUASH, "press".
+SQUASH_PRESS = {"width": 0.9, "height": 0.9, "hold": 0, "seconds": 0.1, "ease": "easeoutsine"}
 
 
-def squash(obj: str, kind: str, tween: str = "Tween") -> list:
-    """The actions of a squash of SQUASH, "hit", "land" or "jump": stop the squash obj is in,
-    set its size to the kind's share of its image's size, hold it, and tween it back under the
-    tag "squash". The rest size is the image's, the size shape_inst() writes. obj is the art,
+def squash(obj: str, kind: str, tween: str = "Tween", half: str = "both") -> list:
+    """The actions of a squash of SQUASH, "hit", "land", "jump" or "press": stop the squash obj
+    is in, set its size to the kind's share of its image's size, hold it, and tween it back under
+    the tag "squash". The rest size is the image's, the size shape_inst() writes. obj is the art,
     not the object that collides, and needs the Tween behavior, named `tween` on it; a hold
-    waits, so the actions go last in their block.
+    waits, so the actions go last in their block. half="down" gives the actions through the hold,
+    half="back" the tween back, and the default "both" all of them, for a squash that two events
+    share, as press() shares one.
 
         event("Squash the art on landing", [cond("on-landed", "Player", beh="Platform")],
               squash("PlayerArt", "land"))"""
-    if kind not in SQUASH:
-        sys.exit(f"squash({obj!r}, {kind!r}): the kinds are {', '.join(SQUASH)}; add one to SQUASH")
-    k = SQUASH[kind]
+    kinds = {**SQUASH, "press": SQUASH.get("press", SQUASH_PRESS)}
+    if kind not in kinds:
+        sys.exit(f"squash({obj!r}, {kind!r}): the kinds are {', '.join(kinds)}; add one to SQUASH")
+    if half not in ("both", "down", "back"):
+        sys.exit(f"squash({obj!r}, {kind!r}, half={half!r}): half is both, down or back")
+    k = kinds[kind]
     SQUASHED.add(obj)
-    return [act("stop-tweens", obj, {"tags": q("squash")}, beh=tween),
+    down = [act("stop-tweens", obj, {"tags": q("squash")}, beh=tween),
             act("set-size", obj, {"width": f"Self.ImageWidth * {k['width']:g}",
                                   "height": f"Self.ImageHeight * {k['height']:g}"}),
-            *([wait(f"{k['hold']:g}", use_timescale=False)] if k["hold"] else []),
-            tween2(obj, "squash", "size", "Self.ImageWidth", "Self.ImageHeight", f"{k['seconds']:g}",
-                   k["ease"], beh=tween)]
+            *([wait(f"{k['hold']:g}", use_timescale=False)] if k["hold"] else [])]
+    back = [tween2(obj, "squash", "size", "Self.ImageWidth", "Self.ImageHeight", f"{k['seconds']:g}", k["ease"],
+                   beh=tween)]
+    return {"both": down + back, "down": down, "back": back}[half]
 
 
 def squash_the_art(types: dict, families: dict) -> None:
@@ -1034,6 +1115,67 @@ def squash_the_art(types: dict, families: dict) -> None:
 def hit(obj: str, tween: str = "Tween") -> list:
     """A hit: the squash of SQUASH["hit"], then the colour flash, whose wait makes it last in its block."""
     return [*squash(obj, "hit", tween), *hit_flash(obj)]
+
+
+PRESSED: set[str] = set()                  # the object types press() acts on, given "pressed" in build_all()
+
+
+def press(obj: str, actions: list, tween: str = "Tween") -> list:
+    """The two events of a button's press. obj is the object type of a button()'s shape, with
+    the Tween behavior. The touch that lands on it marks it pressed and squashes it at once, as
+    the "press" kind of squash() says. The end of a touch springs the pressed one back and runs
+    `actions` if the touch ends on it, so a finger that slides off cancels. build_all() gives the
+    type the boolean instance variable "pressed". Entries of a module's events:
+        module("Menu", events=[*press("Restart", [restart_layout()])])"""
+    PRESSED.add(obj)
+    return [*event(f"Press {obj} down under the finger", [on_touched(obj)],
+                   [set_bool(obj, "pressed", True), *squash(obj, "press", tween, "down")]),
+            *event(f"Let {obj} spring back when the touch ends, and act when it ends on it",
+                   [cond("on-any-touch-end", "Touch"), is_bool(obj, "pressed")],
+                   [set_bool(obj, "pressed", False), *squash(obj, "press", tween, "back")],
+                   children=[block([cond("is-touching-object", "Touch", {"object": obj})], actions)])]
+
+
+def press_types(types: dict, layouts: dict) -> None:
+    """Gives each object type press() acts on the boolean instance variable "pressed", and each of
+    its instances the value false, since an instance lists every instance variable of its type."""
+    for name in sorted(PRESSED & set(types)):
+        ivars = types[name].setdefault("instanceVariables", [])
+        if not any(v["name"] == "pressed" for v in ivars):
+            ivars.append(ivar_def("pressed", "boolean", "Held down by a finger: press() sets it on the touch's "
+                                                        "start and clears it on its end."))
+    for lay in layouts.values():
+        for layer_ in layers_in(lay["layers"]):
+            for inst in layer_["instances"]:
+                if inst["type"] in PRESSED:
+                    inst["instanceVariables"].setdefault("pressed", False)
+
+
+# count_up() counts a number to its new value in "seconds" with "ease".
+COUNT_UP = {"seconds": 0.5, "ease": "easeoutquad"}
+
+
+def count_up(obj: str, value: str, tag: str = "count", tween: str = "Tween") -> list:
+    """The actions that count the Text obj, which shows a number alone, to `value`, an expression
+    such as a variable. They stop the count that runs, because a second value tween under the same
+    tag runs beside the first. They then start a value tween under `tag` from the number shown,
+    over COUNT_UP["seconds"], so a gain mid-count goes on from the number on the screen. obj has
+    the Tween behavior, named `tween` on it, and the events of counting() show the count.
+        func("AddScore", [add_var("score", "points"), *count_up("ScoreText", "score")], ...)"""
+    return [stop_tweens(obj, tag, beh=tween),
+            tween_value(obj, tag, f"int({obj}.Text)", value, f"{COUNT_UP['seconds']:g}", COUNT_UP["ease"], beh=tween)]
+
+
+def counting(obj: str, value: str, tag: str = "count", tween: str = "Tween") -> list:
+    """The two events that show the count of count_up() on obj. While the count plays, the text is
+    the tween's value rounded towards `value`, so a gain of 1 shows at once. When the count ends,
+    the text is `value`, because the tween's value reads 0 once the tween has ended. Entries of a
+    module's events."""
+    v = f"Self.{tween}.Value({q(tag)})"
+    return [*event(f"Show {obj}'s count while it runs", [is_playing(obj, tag, beh=tween)],
+                   [set_text(obj, f"{v} < {value} ? ceil({v}) : floor({v})")]),
+            *event(f"End {obj}'s count on the exact value", [on_tween_finished(obj, tag, beh=tween)],
+                   [set_text(obj, value)])]
 
 
 def grid_random(lo: int, hi: int) -> str:
@@ -1328,10 +1470,14 @@ def layer(name: str, bg: str | None = None, transparent: bool = True, parallax: 
 
 def layout(name: str, layers: list, sheet: str | None, nonworld: list = (), width: int | None = None,
            height: int | None = None) -> dict:
-    """A layout of the viewport's size unless width and height say otherwise."""
+    """A layout of the viewport's size unless width and height say otherwise. A layout of the
+    viewport's size, one screen, scrolls unbounded: under Scale outer the screen shows more than
+    the layout, and bounded scrolling would hold the layout's left and top edges to the screen's,
+    sliding the game off centre while the HUD stays centred. A larger layout scrolls bounded."""
+    width, height = VIEW_W if width is None else width, VIEW_H if height is None else height
     return {"name": name, "layers": layers, "sid": sid(), "nonworld-instances": list(nonworld), "effectTypes": [],
-            "width": VIEW_W if width is None else width, "height": VIEW_H if height is None else height,
-            "unboundedScrolling": False, "sampling": "auto", "ambientLight": 0.03,
+            "width": width, "height": height,
+            "unboundedScrolling": (width, height) == (VIEW_W, VIEW_H), "sampling": "auto", "ambientLight": 0.03,
             "vpX": 0.5, "vpY": 0.5, "projection": "perspective", "eventSheet": sheet}
 
 
@@ -1471,13 +1617,14 @@ def hud_text(otype: str, text: str, where: str, size: float | None = None, longe
     the side the box hangs on, so a right-hand label grows leftwards and two labels on one
     edge never meet. `longest` is the widest text the label shows at runtime, "Score: 999"
     for a label that starts as "Score: 0". The size is TEXT_SIZE["body"] unless a banner
-    asks for TEXT_SIZE["title"]; color and on are roles of PALETTE, as for text_inst()."""
+    asks for TEXT_SIZE["title"]; color and on are roles of PALETTE, as for text_inst(). The
+    Anchor behavior of anchored() holds it to the screen's edge."""
     size = size or TEXT_SIZE["body"]
     w, h = label_box(longest or text, size)
     halign = {"left": "left", "middle": "center", "right": "right"}[sides(where)[1]]
     x, y = anchor(where, w, h, 0, 0, dx, dy)
     return text_inst(otype, text, x, y, w, h, size=size, halign=halign, bold=bold, color=color, on=on,
-                     ivars=ivars, behaviors=behaviors)
+                     ivars=ivars, behaviors={**anchored(where), **(behaviors or {})})
 
 
 def label_box(text: str, size: float | None = None) -> tuple[int, int]:
@@ -1486,6 +1633,12 @@ def label_box(text: str, size: float | None = None) -> tuple[int, int]:
     size = size or TEXT_SIZE["body"]
     return (math.ceil(text_ems(text) * size * PX_PER_PT / UNIT) * UNIT,
             math.ceil(size * PX_PER_PT * LINE_EMS / UNIT) * UNIT)
+
+
+def line_height(size: float | None = None) -> int:
+    """The height in px of one line of text at `size`, TEXT_SIZE["body"] unless given, rounded up
+    to a whole px: a box that holds the line and no more."""
+    return math.ceil((size or TEXT_SIZE["body"]) * PX_PER_PT * LINE_EMS)
 
 
 def origin_name(ox: float, oy: float) -> str:
@@ -1514,13 +1667,15 @@ def area(otype: str, col: int, row: int, cols: int, rows: int, ivars=None, behav
     """An area or an edge in the pattern type `otype` of pattern_type(), covering cols x rows grid
     cells from cell (col, row): a one-way platform in low stripes, a door in caution stripes, lava
     in hazard stripes. The high-contrast stripes cover strips and small zones, their shorter side
-    a quarter of the viewport's at most; the checker is the backdrop's alone, backdrop()."""
+    a quarter of the viewport's at most; the plain sheet and the checker are the backdrop's alone,
+    backdrop()."""
     kind = PATTERN_OF.get(otype)
     if not kind:
         sys.exit(f"area({otype!r}): not a pattern; draw it with pattern({otype!r}, kind) in build_images() and give "
                  f"it pattern_type({otype!r}) in build_object_types()")
-    if kind == "checker":
-        sys.exit(f"area({otype!r}): the checker is empty space, the backdrop alone; place it with backdrop({otype!r})")
+    if kind in BACKDROPS:
+        sys.exit(f"area({otype!r}): the {kind} pattern is empty space, the backdrop alone; place it with "
+                 f"backdrop({otype!r})")
     most = min(VIEW_W, VIEW_H) // 4 // UNIT
     if kind in ("caution", "hazard") and min(cols, rows) > most:
         sys.exit(f"area({otype!r}): {cols}x{rows} cells of {kind} stripes; these cover strips and small zones, never "
@@ -1529,13 +1684,16 @@ def area(otype: str, col: int, row: int, cols: int, rows: int, ivars=None, behav
 
 
 def backdrop(otype: str, width: int | None = None, height: int | None = None) -> dict:
-    """The checker of pattern `otype` behind everything: one Tiled Background from the layout's
-    origin over `width` x `height`, the layout's size, the viewport's unless given, on a layer at
-    parallax 1, so its cells are the ruler that sizes and distances are counted in. It replaces a
-    grid: never both."""
-    if PATTERN_OF.get(otype) != "checker":
-        sys.exit(f"backdrop({otype!r}): the backdrop is the checker; draw it with pattern({otype!r}, \"checker\")")
-    return tiledbg_inst(otype, 0, 0, VIEW_W if width is None else width, VIEW_H if height is None else height, 0, 0)
+    """The backdrop of pattern `otype` behind everything: one Tiled Background over `width` x
+    `height`, the layout's size, the viewport's unless given, and SCREEN_PAD past it on every
+    side (screen_box()), so the screen shows no edge of it at any aspect ratio, on a layer at
+    parallax 1. It is the plain sheet, or the checker in a game with something transparent, a
+    mask or a background still to come, as editors show transparency; the checker's cells are then
+    the ruler that sizes and distances are counted in, in place of a grid."""
+    if PATTERN_OF.get(otype) not in BACKDROPS:
+        sys.exit(f"backdrop({otype!r}): the backdrop is the plain sheet or the checker; draw it with "
+                 f"pattern({otype!r}, \"plain\") or pattern({otype!r}, \"checker\")")
+    return tiledbg_inst(otype, *screen_box(width, height), 0, 0)
 
 
 def ninepatch_inst(otype: str, x: float, y: float, w: float, h: float, ox: float = 0, oy: float = 0.5, margin: int = 2,
@@ -1557,19 +1715,20 @@ def hud_bar(frame_name: str, fill_name: str, where: str, length: float, height: 
         set_width(fill, bar_width("hp", "HP_MAX", HP_BAR_LENGTH))
     or slides it there with tween_width(); HP_BAR_LENGTH = length - 2 * inset is a constant of
     the sheet. A count of icons is a bar too: the fill `count * icon` wide over a frame that
-    shows the empty icon. Returns (frame instance, fill instance)."""
+    shows the empty icon. Both carry the Anchor behavior of anchored(), which holds the bar to
+    the screen's edge. Returns (frame instance, fill instance)."""
     height = height or units(1)
     cx, cy = anchor(where, length, height, 0.5, 0.5, dx, dy)
-    return bar_at(frame_name, fill_name, cx, cy, length, height, inset, caps)
+    return bar_at(frame_name, fill_name, cx, cy, length, height, inset, caps, anchored(where))
 
 
 def bar_at(frame_name: str, fill_name: str, cx: float, cy: float, length: float, height: float, inset: float = 2,
-           caps: bool = False) -> tuple[dict, dict]:
-    """hud_bar()'s frame and fill, the frame's centre at (cx, cy)."""
+           caps: bool = False, behaviors: dict | None = None) -> tuple[dict, dict]:
+    """hud_bar()'s frame and fill, the frame's centre at (cx, cy); `behaviors` go on both."""
     make = ninepatch_inst if caps else tiledbg_inst
-    frame_inst = make(frame_name, cx, cy, length, height, 0.5, 0.5)
+    frame_inst = make(frame_name, cx, cy, length, height, 0.5, 0.5, behaviors=dict(behaviors or {}))
     fill_inst = make(fill_name, cx - length / 2 + inset, cy, length - 2 * inset, height - 2 * inset, 0, 0.5,
-                     behaviors=dict(TWEEN))
+                     behaviors={**TWEEN, **(behaviors or {})})
     return frame_inst, fill_inst
 
 
@@ -1586,11 +1745,13 @@ SCENE_FLAGS = {"x": True, "y": True, "z": False, "w": False, "h": False, "a": Fa
 STAGE_SHARE = 0.6                          # the share of the stage, across or down, its main object covers
 
 
-def link(parent: dict, *children: dict) -> None:
+def link(parent: dict, *children: dict, size: bool = False) -> None:
     """Makes `children` follow the layout instance `parent` in the layout's hierarchy, written as
     the editor writes it: their position, opacity and visibility follow the parent's, and they are
-    destroyed with it, so "Set invisible" on a button hides its label too. Each child starts
-    visible when the parent does. Put a child on the parent's layer, after it."""
+    destroyed with it, so "Set invisible" on a button hides its label too. With size=True their
+    width and height follow too, and a Text's letters scale with its box, so a squash of the
+    parent squashes the label. Each child starts visible when the parent does. Put a child on the
+    parent's layer, after it."""
     preview = {"transformX": 0, "transformY": 0, "transformZElevation": 0, "transformW": 0, "transformH": 0,
                "transformA": 0, "transformSX": 0, "transformSY": 0, "transformO": 0, "previewSceneGraph": False}
     own = {"x": True, "y": True, "z": True, "w": True, "h": True, "a": True, "o": False, "v": False, "d": True,
@@ -1606,9 +1767,10 @@ def link(parent: dict, *children: dict) -> None:
 
     graph = parent.get("sceneGraphData") or {"parent-uid": None, "uid": parent["uid"], "children": [],
                                               "flags": dict(own), "preview": dict(preview)}
+    flags = {**SCENE_FLAGS, "w": size, "h": size}
     for child in children:
-        graph["children"].append({"uid": child["uid"], "flags": dict(SCENE_FLAGS)})
-        put(child, {"parent-uid": parent["uid"], "uid": child["uid"], "flags": dict(SCENE_FLAGS),
+        graph["children"].append({"uid": child["uid"], "flags": dict(flags)})
+        put(child, {"parent-uid": parent["uid"], "uid": child["uid"], "flags": dict(flags),
                     "preview": dict(preview)})
         child["properties"]["initially-visible"] = parent["properties"].get("initially-visible", True)
     put(parent, graph)
@@ -1643,10 +1805,11 @@ def button(otype: str, rel: str, label: str, text: str, col: int, row: int, size
            longest: str | None = None, color: str | None = None, ivars=None, behaviors=None, label_ivars=None,
            label_behaviors=None) -> tuple[dict, dict]:
     """A button: the shape of images/<rel> on cell (col, row), as shape_inst() places it, and the
-    Text type `label` showing `text` centred on the same box, in a role that reads on the shape's
-    fill (text_on()) unless `color` names one, linked to the shape as its child (link()), at
-    `size` or the size label_size() gives the shape. `longest` is the widest text the label shows.
-    A shape smaller than button_size() of that text stops the run with the size to draw. Returns
+    Text type `label` showing `text` centred on the same box, at `size` or the size label_size()
+    gives the shape, in a role that reads on the shape's fill (text_on()) unless `color` names one.
+    The label is the shape's child (link()), size included, so a press() squashes both. `longest`
+    is the widest text the label shows. A shape smaller than button_size() of that text stops the
+    run with the size to draw. Returns
     (shape, label); put both on one layer, in that order, so the label draws on top."""
     if rel not in DRAWN_AS:
         sys.exit(f"button({otype!r}): draw images/{rel} first, shape({rel!r}, \"rect\", *button_size({text!r}), "
@@ -1661,7 +1824,7 @@ def button(otype: str, rel: str, label: str, text: str, col: int, row: int, size
     on = FILLS.get(rel, "canvas_alt")
     text_ = text_inst(label, text, units(col), units(row), w, h, size, "center", bold=True,
                       color=color or text_on(on, size), on=on, ivars=label_ivars, behaviors=label_behaviors)
-    link(shape_, text_)
+    link(shape_, text_, size=True)
     return shape_, text_
 
 
@@ -1670,14 +1833,16 @@ def labelled_bar(label: str, text: str, frame_name: str, fill_name: str, where: 
                  color: str = "ink", on: str = "canvas_alt") -> tuple[dict, dict, dict]:
     """A bar with its name in front of it, held to an edge or corner by anchor() as one box: the
     label `text` in the Text type `label`, a unit of space, then hud_bar()'s frame `length` px long
-    and its fill, so the name never lands on the bar. Returns (label, frame, fill); the sheet sets
-    the fill as for hud_bar()."""
+    and its fill, so the name never lands on the bar, the three held to the screen's edge by
+    anchored(). Returns (label, frame, fill); the sheet sets the fill as for hud_bar()."""
     height = height or units(1)
     lw, lh = label_box(text)
     box_h = max(lh, height)
     x, y = anchor(where, lw + UNIT + length, box_h, 0, 0, dx, dy)
-    name = text_inst(label, text, x, y, lw, box_h, halign="left", bold=True, color=color, on=on)
-    return (name, *bar_at(frame_name, fill_name, x + lw + UNIT + length / 2, y + box_h / 2, length, height, inset, caps))
+    name = text_inst(label, text, x, y, lw, box_h, halign="left", bold=True, color=color, on=on,
+                     behaviors=anchored(where))
+    return (name, *bar_at(frame_name, fill_name, x + lw + UNIT + length / 2, y + box_h / 2, length, height, inset, caps,
+                          anchored(where)))
 
 
 SCREENS = ("stage",)
@@ -1710,7 +1875,9 @@ def band_text(otype: str, text: str, band: str, align: str = "center", longest: 
     `text`) and a line high, as hud_text() sizes it. The "title" and "stage" bands take
     TEXT_SIZE["title"], or the body size when the text is wider than the band at that size. In the
     "stage" band the label is centred vertically. The "status" and "hint" bands take the body
-    size. A text the band cannot hold stops the run with the characters that fit."""
+    size. A text the band cannot hold stops the run with the characters that fit. The label is
+    held to the screen's edges by anchored(): the title and status bands to the top, the hint to
+    the bottom, and a label aligned left or right to that side."""
     box = bands(screen, title).get(band)
     if box is None:
         sys.exit(f"band_text({otype!r}): {band!r} is no band; the bands are {', '.join(bands(screen, title))}")
@@ -1727,8 +1894,10 @@ def band_text(otype: str, text: str, band: str, align: str = "center", longest: 
                  f"{chars} Chinese characters or {int(chars / 0.6)} letters, so shorten it")
     x = {"left": x0, "center": x0 + (bw - w) // 2, "right": x0 + bw - w}[align]
     y = y0 + (bh - h) // 2 if band == "stage" else y0
+    edge = {"title": "top", "status": "top", "hint": "bottom"}.get(band)
+    where = "-".join(side for side in (edge, None if align == "center" else align) if side) or "center"
     return text_inst(otype, text, x, y, w, h, size, align, bold=True, color=color, on=on, ivars=ivars,
-                     behaviors=behaviors)
+                     behaviors={**anchored(where), **(behaviors or {})})
 
 
 def fit(w: float, h: float, screen: str = "stage", share: float = STAGE_SHARE, title: bool = True) -> tuple[int, int]:
@@ -1744,6 +1913,264 @@ def stage_cell(cols: int, rows: int, screen: str = "stage", title: bool = True) 
     """The cell (col, row) that centres a box of cols x rows units in the stage of bands()."""
     x, y, w, h = bands(screen, title)["stage"]
     return (x + (w - cols * UNIT) // 2) // UNIT, (y + (h - rows * UNIT) // 2) // UNIT
+
+
+# --- groups and the play area -----------------------------------------------------------------
+# What belongs together sits closer than what does not. A value and its name are one group,
+# GAP_IN apart. Two groups, such as a HUD group and the playfield, sit at least GROUP_RATIO times
+# the gap inside either apart; slide and poster skills ask 1.5 to 2. hud_stat() places a group,
+# play_area() and centred() keep the playfield GAP_OUT from the HUD, and spaced() stops the run on
+# groups closer than that. The HUD is held to the screen's edges, off the grid, so GAP_IN is a
+# share of a unit; a line's box adds about a quarter of an em above and below its letters.
+# The playfield sits in the middle of what the HUD leaves, raised by OPTICAL_LIFT of that space's
+# height, since the eye puts the middle a little above the measured one; balanced() warns on
+# content away from that point, and filled() on content that covers too little of the screen. Construct3-RAG/docs/decisions/greybox-blockout.md, *Spacing and balance*.
+GAP_IN = max(1, UNIT // 4)                 # px between the parts of a group
+GAP_OUT = UNIT                             # px at least between the HUD and the playfield
+GROUP_RATIO = 1.5                          # the gap between groups over the gap inside a group, at least
+OPTICAL_LIFT = 0.05                        # a rule of thumb, not a measurement; 0 centres exactly
+# The least share of the screen the box around the playfield's content covers; filled() warns
+# under it. Of the official 2D game examples' one-screen layouts, 95 in 100 cover more, and
+# their median covers 0.8 (Construct3-RAG/skills/construct3-agent-plugin/evals/measure_layout.py).
+PLAYFIELD_MIN = 0.15
+
+
+def hud_stat(name_type: str, value_type: str, name: str, where: str, value: str = "0", longest: str | None = None,
+             dx: float = 0, dy: float = 0, name_color: str = "dim", color: str = "ink", on: str = "canvas_alt",
+             ivars=None, behaviors=None) -> list[dict]:
+    """A value the player watches under its name, held to an edge or corner by anchor() as one group:
+    the name in TEXT_SIZE["body"] and `name_color`, then GAP_IN lower the value in TEXT_SIZE["title"]
+    and `color`, as wide as `longest`, the widest value shown at runtime. Each box is one line high.
+    Both are aligned to the side the group hangs on and held to the screen's edge by anchored().
+    `ivars` and `behaviors` go on the value. Returns [name, value], one group of spaced():
+        HUD = [hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-left", longest="999"), ...]"""
+    body, title = TEXT_SIZE["body"], TEXT_SIZE["title"]
+    nw, vw = label_box(name, body)[0], label_box(longest or value, title)[0]
+    nh, vh = line_height(body), line_height(title)
+    gw = max(nw, vw)
+    x, y = anchor(where, gw, nh + GAP_IN + vh, 0, 0, dx, dy)
+    horiz = sides(where)[1]
+    halign = {"left": "left", "middle": "center", "right": "right"}[horiz]
+    share = {"left": 0, "middle": 0.5, "right": 1}[horiz]
+    name_ = text_inst(name_type, name, round(x + share * (gw - nw)), y, nw, nh, body, halign, False, name_color, on,
+                      behaviors=anchored(where))
+    value_ = text_inst(value_type, value, round(x + share * (gw - vw)), y + nh + GAP_IN, vw, vh, title, halign, False,
+                       color, on, ivars=ivars, behaviors={**anchored(where), **(behaviors or {})})
+    return [name_, value_]
+
+
+def box_of(inst: dict) -> tuple[float, float, float, float] | None:
+    """(left, top, right, bottom) of a layout instance's box; None for an instance with no world."""
+    w = inst.get("world")
+    if not w:
+        return None
+    left, top = w["x"] - w.get("originX", 0) * w["width"], w["y"] - w.get("originY", 0) * w["height"]
+    return left, top, left + w["width"], top + w["height"]
+
+
+def gap(a: tuple, b: tuple) -> float:
+    """The space between two boxes of box_of(): across when they share rows, down when they share
+    columns, else the smaller of the two, since the eye reads a box beside or above another's
+    edge as near it however far it lies along that edge. 0 when they meet."""
+    across, down = max(0, b[0] - a[2], a[0] - b[2]), max(0, b[1] - a[3], a[1] - b[3])
+    return min(across, down) if across and down else max(across, down)
+
+
+def spaced(groups: list, where: str = "layout Game") -> None:
+    """Stops the generator when two groups of layout instances sit closer than GROUP_RATIO times the
+    gap inside either: a name far from its value and near the board reads as the board's. A group is
+    a list of instances: hud_stat()'s pair, [a label] or [the board]. The gap inside it is the
+    largest gap from one of its parts to its nearest other part. Pass every HUD group and the
+    playfield's content, from any layer."""
+    found = [[(i["type"], box_of(i)) for i in g if box_of(i)] for g in groups]
+    found = [g for g in found if g]
+
+    def inner(parts: list) -> float:
+        return max((min(gap(a, b) for m, (_, b) in enumerate(parts) if m != n) for n, (_, a) in enumerate(parts)),
+                   default=0) if len(parts) > 1 else 0
+
+    def hull(parts: list) -> tuple:
+        boxes = [b for _, b in parts]
+        return min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes)
+
+    def named(parts: list) -> str:
+        return " + ".join(name for name, _ in parts)
+
+    said = []
+    for n, a in enumerate(found):
+        for b in found[n + 1:]:
+            between = gap(hull(a), hull(b))
+            inside, tight = max((inner(a), a), (inner(b), b), key=lambda p: p[0])
+            if between < GROUP_RATIO * inside:
+                said.append(f"{where}: {named(a)} and {named(b)} are {between:g} px apart, and {named(tight)} holds "
+                            f"its parts {inside:g} px apart: groups need {GROUP_RATIO:g} times that between them, "
+                            f"{GROUP_RATIO * inside:g} px. Put a value under its name with hud_stat(), GAP_IN apart, "
+                            f"and the playfield at centred(w, h, play_area(hud)), GAP_OUT from the HUD.")
+    if said:
+        sys.exit("\n".join(said))
+
+
+def play_area(hud: list) -> tuple[int, int, int, int]:
+    """(x, y, w, h) in px of what the HUD leaves for the playfield: MARGIN inside the viewport and
+    GAP_OUT clear of the box of every instance in `hud`, measured at the design viewport. A box in
+    the top third of the screen ends the area's top, one in the bottom third its bottom, and one
+    between them the left or right side it is on. bands() divides a screen into fixed bands
+    instead; play_area() measures the HUD a game built."""
+    left, top, right, bottom = MARGIN, MARGIN, VIEW_W - MARGIN, VIEW_H - MARGIN
+    for inst in hud:
+        b = box_of(inst)
+        if not b:
+            continue
+        cx, cy = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2
+        if cy < VIEW_H / 3:
+            top = max(top, math.ceil(b[3] + GAP_OUT))
+        elif cy > 2 * VIEW_H / 3:
+            bottom = min(bottom, math.floor(b[1] - GAP_OUT))
+        elif cx < VIEW_W / 2:
+            left = max(left, math.ceil(b[2] + GAP_OUT))
+        else:
+            right = min(right, math.floor(b[0] - GAP_OUT))
+    if right <= left or bottom <= top:
+        sys.exit(f"play_area(): the HUD leaves no room, ({left},{top})-({right},{bottom}); move a HUD element to "
+                 f"another edge or make it smaller")
+    return left, top, right - left, bottom - top
+
+
+def centred(w: float, h: float, area: tuple, lift: float = OPTICAL_LIFT) -> tuple[int, int]:
+    """The top-left (x, y), on the grid, of a w x h px box centred in `area`, the (x, y, w, h) of
+    play_area(), and raised by `lift` of the area's height. The box stays inside the area. A box
+    larger than the area stops the run with the room there is."""
+    ax, ay, aw, ah = area
+    if w > aw or h > ah:
+        sys.exit(f"centred(): a {w:g}x{h:g} px box does not fit the {aw}x{ah} px play area at ({ax},{ay}); make it "
+                 f"smaller, with fewer or smaller cells, or move a HUD element to another edge")
+
+    def place(start: int, room: int, size: float, raised: float) -> int:
+        lo, hi = math.ceil(start / UNIT) * UNIT, math.floor((start + room - size) / UNIT) * UNIT
+        v = snap(start + (room - size) / 2 - raised)
+        return v if lo > hi else min(max(v, lo), hi)
+
+    return place(ax, aw, w, 0), place(ay, ah, h, lift * ah)
+
+
+def balanced(content: list, area: tuple, lift: float = OPTICAL_LIFT, where: str = "layout Game") -> None:
+    """Prints a warning when the box around `content`, the playfield's instances, has its centre more
+    than a unit from the centre of `area`, play_area()'s box, raised by `lift` of its height: the
+    playfield then looks pushed off the middle of what the HUD leaves. A warning and not a stop,
+    because a game may hold its playfield off the middle on purpose, beside a panel or in a level
+    wider than the screen."""
+    boxes = [b for b in map(box_of, content) if b]
+    if not boxes:
+        return
+    cx = (min(b[0] for b in boxes) + max(b[2] for b in boxes)) / 2
+    cy = (min(b[1] for b in boxes) + max(b[3] for b in boxes)) / 2
+    ax, ay, aw, ah = area
+    tx, ty = ax + aw / 2, ay + ah / 2 - lift * ah
+    if max(abs(cx - tx), abs(cy - ty)) > UNIT:
+        names = " + ".join(dict.fromkeys(i["type"] for i in content if box_of(i)))
+        print(f"warning: {where}: {names} is centred at ({cx:g},{cy:g}) and the middle of the play area the HUD "
+              f"leaves is ({tx:g},{ty:g}), {abs(cx - tx):g} px across and {abs(cy - ty):g} px down; place it at "
+              f"centred(w, h, play_area(hud)), or keep it there if the offset is meant")
+
+
+def filled(content: list, where: str = "layout Game") -> None:
+    """Prints a warning when the box around `content`, the playfield's instances as the layout
+    holds them, covers less than PLAYFIELD_MIN of the viewport: a small board in an empty screen.
+    A warning and not a stop, because a game that creates its playfield at runtime shows less in
+    the layout than in play."""
+    boxes = [b for b in map(box_of, content) if b]
+    if not boxes:
+        return
+    w = min(max(b[2] for b in boxes), VIEW_W) - max(min(b[0] for b in boxes), 0)
+    h = min(max(b[3] for b in boxes), VIEW_H) - max(min(b[1] for b in boxes), 0)
+    covers = max(0, w) * max(0, h) / (VIEW_W * VIEW_H)
+    if covers < PLAYFIELD_MIN:
+        names = " + ".join(dict.fromkeys(i["type"] for i in content if box_of(i)))
+        print(f"warning: {where}: {names} covers {covers:.0%} of the {VIEW_W}x{VIEW_H} screen, under "
+              f"PLAYFIELD_MIN {PLAYFIELD_MIN:.0%}; the official game examples' one-screen layouts cover 80% at the "
+              f"median. Make it larger, bigger cells or more of them, or fit(w, h) for its size on the stage")
+
+
+# --- the order of each layer and the HUD's behavior --------------------------------------------
+# build_all() runs both over the layouts of build_layouts() before it writes a file: every layer
+# lists its instances in z_order(), the order an editor user would arrange them in, and the types
+# of the instances anchored() holds get the Anchor behavior (anchor_types()).
+def layers_in(layers: list):
+    """Every layer of `layers` and of their sublayers, a parent before its sublayers."""
+    for lay in layers:
+        yield lay
+        yield from layers_in(lay.get("subLayers", []))
+
+
+def z_order(instances: list) -> list:
+    """A layer's instances in the order the Layout View draws them, back to front. The backdrop
+    comes first, then the areas of pattern(), then the rest by the Y of their feet, the bottom of
+    their box, so a nearer object covers a farther one in a top-down or a side view. Equals keep
+    the order they were placed in. A child of link() follows its parent. A box wholly inside
+    another box follows it, unless the outer box is a label: a fill follows its frame, a label its
+    panel, each with what lies inside it in turn. build_all() puts every layer in this order. A
+    game that wants another, such as a 3D layer drawn by depth, defines z_order() again below the
+    end marker."""
+    boxes = [box_of(inst) for inst in instances]
+    keys = []
+    for n, inst in enumerate(instances):
+        kind = PATTERN_OF.get(inst["type"])
+        rank = 0 if kind in BACKDROPS else 1 if kind else 2
+        keys.append((rank, boxes[n][3] if rank == 2 and boxes[n] else 0, n))
+    # Who each instance follows: its parent in the hierarchy, else the smallest box that holds it
+    # among the rest (not a label, and for an equal box the one placed first).
+    holders = sorted((m for m, inst in enumerate(instances) if keys[m][0] == 2 and boxes[m]
+                      and "text" not in inst.get("properties", {})),
+                     key=lambda m: ((boxes[m][2] - boxes[m][0]) * (boxes[m][3] - boxes[m][1]), m))
+    at = {inst.get("uid"): n for n, inst in enumerate(instances)}
+    follows = {}
+    for n, inst in enumerate(instances):
+        parent = (inst.get("sceneGraphData") or {}).get("parent-uid")
+        if parent in at and at[parent] != n:
+            follows[n] = at[parent]
+        elif keys[n][0] == 2 and boxes[n]:
+            b = boxes[n]
+            for m in holders:
+                h = boxes[m]
+                if m != n and h[0] <= b[0] and h[1] <= b[1] and b[2] <= h[2] and b[3] <= h[3] and (h != b or m < n):
+                    follows[n] = m
+                    break
+    for n in list(follows):                  # cut a loop of followers, which a cyclic parent chain makes
+        seen, m = {n}, follows.get(n)
+        while m is not None and m not in seen:
+            seen.add(m)
+            m = follows.get(m)
+        if m == n:
+            del follows[n]
+    after: dict[int, list[int]] = {}
+    for n, m in follows.items():
+        after.setdefault(m, []).append(n)
+    ordered: list[dict] = []
+
+    def put(n: int) -> None:
+        ordered.append(instances[n])
+        for c in sorted(after.get(n, []), key=keys.__getitem__):
+            put(c)
+
+    for n in sorted((n for n in range(len(instances)) if n not in follows), key=keys.__getitem__):
+        put(n)
+    return ordered
+
+
+def anchor_types(types: dict, layouts: dict) -> None:
+    """Gives the Anchor behavior to every object type with an instance that anchored() holds to the
+    screen, and to that type's other instances a block that holds nothing, since the editor reads
+    a block on every instance for each behavior of its type."""
+    instances = [inst for lay in layouts.values() for layer_ in layers_in(lay["layers"]) for inst in layer_["instances"]]
+    held = sorted({inst["type"] for inst in instances if "Anchor" in inst.get("behaviors", {})} & set(types))
+    for name in held:
+        behaviors = types[name].setdefault("behaviorTypes", [])
+        if not any(b["name"] == "Anchor" for b in behaviors):
+            behaviors.append(beh_def("Anchor"))
+    for inst in instances:
+        if inst["type"] in held and "Anchor" not in inst.get("behaviors", {}):
+            inst["behaviors"] = {**inst.get("behaviors", {}), "Anchor": {"properties": {
+                "left-edge": "none", "top-edge": "none", "right-edge": "none", "bottom-edge": "none", "enabled": False}}}
 
 
 # The properties block a layout instance writes for a behavior, keyed by the name
@@ -1815,7 +2242,7 @@ PROJECT_DEFAULTS = {"projectFormatVersion": 1, "savedWithRelease": 49502, "runti
 PROPERTY_DEFAULTS = {"description": "", "version": "1.0.0.0", "autoIncrementVersion": False,
                      "author": "", "authorEmail": "", "authorWebsite": "", "appId": "",
                      "pixelRounding": False, "zAxisScale": "regular", "fov": 0.7853981633974483,
-                     "useLoaderLayout": False, "fullscreenMode": "letterbox-scale",
+                     "useLoaderLayout": False, "fullscreenMode": FULLSCREEN,
                      "fullscreenQuality": "high", "viewportFit": "auto",
                      "backgroundColor": [0, 0, 0, 0], "splashColor": [1, 1, 1, 0],
                      "useThemeColor": False, "themeColor": [1, 1, 1, 0], "webgpu": "auto",
@@ -1841,8 +2268,9 @@ def with_files(block: dict, kind: str) -> dict:
 def build_project(existing: dict, types: dict, families: dict, containers: list, layouts: dict,
                   sheets: list) -> dict:
     """Only the keys this script owns change; uniqueId, icons, scripts and the
-    properties the project already has stay. The name, the first layout and the
-    orientation are PROJECT_NAME, FIRST_LAYOUT and ORIENTATION."""
+    properties the project already has stay. The name, the first layout, the
+    orientation and the fullscreen mode are PROJECT_NAME, FIRST_LAYOUT, ORIENTATION
+    and FULLSCREEN."""
     p = dict(existing)
     for key, value in PROJECT_DEFAULTS.items():
         p.setdefault(key, value)
@@ -1869,11 +2297,12 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
         general["items"] = [e for e in general.get("items", []) if e.get("name") not in ours] + _general_files
     p["viewportWidth"] = VIEW_W
     p["viewportHeight"] = VIEW_H
+    # The project fills the screen at any aspect ratio, in place of the editor's Letterbox scale.
+    p["properties"]["fullscreenMode"] = FULLSCREEN
     if PIXEL_ART:
-        # The viewport decides the art: pixel art sampled Nearest stays crisp, and scaled by
-        # whole numbers every pixel stays square.
+        # The viewport decides the art: pixel art sampled Nearest stays crisp, and FULLSCREEN
+        # scales it by whole numbers, so every pixel stays square.
         p["properties"]["sampling"] = "nearest"
-        p["properties"]["fullscreenMode"] = "letterbox-integer-scale"
     p["firstLayout"] = FIRST_LAYOUT
     p["properties"]["orientations"] = ORIENTATION
     return p
@@ -1894,14 +2323,21 @@ def build_all() -> None:
     write_wanted()
     build_files()
     types, families, containers = build_object_types()
+    layouts = build_layouts()
+    anchor_types(types, layouts)
+    for lay in layouts.values():
+        for layer_ in layers_in(lay["layers"]):
+            layer_["instances"] = z_order(layer_["instances"])
+    # The sheet builds before the types and layouts are written: press() records its types while it
+    # builds, and press_types() gives them their variable.
+    sheet = build_event_sheet()
+    press_types(types, layouts)
     for name, t in types.items():
         write_json(f"objectTypes/{name}.json", t)
     for name, f in families.items():
         write_json(f"families/{name}.json", f)
-    layouts = build_layouts()
     for name, lay in layouts.items():
         write_json(f"layouts/{name}.json", lay)
-    sheet = build_event_sheet()
     if _ajax_used and "AJAX" not in types:
         types["AJAX"] = single_global_type("AJAX", "AJAX", {})
         write_json("objectTypes/AJAX.json", types["AJAX"])
@@ -1933,7 +2369,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-05, stamp 1aab510f86cb ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp f99d33eec6b7 ================
 
 
 # --- the game ---------------------------------------------------------------------------
@@ -1956,6 +2392,26 @@ BEATS = [
     beat("climax", 3, ["tap"], coins=10),
     beat("exit", 0, ["tap"], coins=1),
 ]
+# Coins land on a small board in the middle of what the HUD leaves: COLS x
+# ROWS slots a coin wide, a unit apart, the empty ones drawn in canvas_alt. A round deals the cells
+# (deal + i * STRIDE) mod CELLS, which differ for every i below CELLS because STRIDE and CELLS share
+# no factor, so no two coins meet. The run stops on a round that deals more coins than slots.
+COLS, ROWS = 5, 3
+CELLS = COLS * ROWS
+STRIDE = next(s for s in (7, 11, 13, 17, 19, 23) if math.gcd(s, CELLS) == 1)
+PITCH = COIN_SIZE + UNIT
+BOARD_W, BOARD_H = COLS * PITCH - UNIT, ROWS * PITCH - UNIT
+# The HUD, built here so the board can be placed in what it leaves, as groups: the score under
+# its name, large in ink under small dim capitals, and the round on its own. build_layouts() puts
+# them on the UI layer. The board is centred in the play area under the HUD (play_area(),
+# centred()), and the events deal coins from BOARD_LEFT and BOARD_TOP.
+HUD = [hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-left", longest="999"),
+       [hud_text("RoundText", "ROUND 1 / 6", "top-right", longest="ROUND 10 / 10", bold=False, color="dim")]]
+PLAY_AREA = play_area(flat(HUD))
+BOARD_LEFT, BOARD_TOP = centred(BOARD_W, BOARD_H, PLAY_AREA)
+if max(b["coins"] for b in BEATS) > CELLS:
+    sys.exit(f"BEATS deal up to {max(b['coins'] for b in BEATS)} coins and the board has {CELLS} slots; "
+             f"widen COLS or ROWS")
 
 
 def build_files() -> None:
@@ -1968,7 +2424,11 @@ def build_files() -> None:
 
 
 def build_images() -> None:
-    pattern("Backdrop", "checker")
+    pattern("Backdrop", "plain")
+    # One slot of the board, a coin-sized disc in canvas_alt with a unit of clear space after it,
+    # which the Board's Tiled Background repeats COLS x ROWS times.
+    write_png("board.png", PITCH, PITCH, lambda x, y: (*rgb("canvas_alt"), 255)
+              if inside("circle", COIN_SIZE, COIN_SIZE, x + 0.5, y + 0.5) else (0, 0, 0, 0))
     art("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward", "a gold coin seen from the front")
     hit_frame("coin-default-000.png")
 
@@ -1980,7 +2440,10 @@ def build_object_types() -> tuple[dict, dict, list]:
                                    ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
                             behaviors=[beh_def("Tween")]),
         "Backdrop": pattern_type("Backdrop"),
+        "Board": image_type("Board", "TiledBg", PITCH, PITCH, 0, 0),
+        "ScoreLabel": text_type("ScoreLabel"),
         "ScoreText": text_type("ScoreText"),
+        "RoundText": text_type("RoundText"),
         "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True}),
     }
     families = {}
@@ -1994,20 +2457,33 @@ def build_layouts() -> dict[str, dict]:
         layer("Game"),
         layer("UI", parallax=0),
     ], sheet="Game")
-    # The checker behind everything is the ruler: two cells a unit. An area or an edge in a
-    # pattern is area(type, col, row, cols, rows) on the Game layer.
+    # The backdrop is the plain sheet, reaching past the viewport so the screen shows no edge of it.
+    # A game with something transparent, a mask or a background still to come draws it as
+    # pattern("Backdrop", "checker"), as editors show transparency, and its cells are then the
+    # ruler: two a unit. An area or an edge in a pattern is area(type, col, row, cols, rows) on the
+    # Game layer. Instances go in in any order: build_all() puts every layer in z_order().
     game["layers"][0]["instances"].append(backdrop("Backdrop"))
+    board = tiledbg_inst("Board", BOARD_LEFT, BOARD_TOP, BOARD_W, BOARD_H, 0, 0)
+    game["layers"][0]["instances"].append(board)
     # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
-    # row(), anything else by anchor(); the middle of the screen is the game's. no_overlap()
+    # row(), anything else by anchor(); the middle of the screen is the game's. Each carries the
+    # Anchor behavior of anchored(), which hud_text() and hud_bar() give, so it stays at the
+    # screen's edge when the screen is wider or taller than the viewport. no_overlap()
     # stops the run when two HUD boxes meet or one leaves the viewport. A label is
-    # TEXT_SIZE["body"] in rgb("ink"), a banner TEXT_SIZE["title"], and hud_text() stops the
-    # run on a colour that does not read on what is behind it.
+    # TEXT_SIZE["body"] in rgb("ink"); the number the player plays for, and a banner, are
+    # TEXT_SIZE["title"]. hud_text() stops the run on a colour that does not read on what is
+    # behind it. A value under its name is one group, hud_stat(); spaced() stops the run when two
+    # groups sit closer than the parts of one; balanced() warns when the board is off the middle of
+    # the play area, and filled() when it covers too little of the screen.
     ui = game["layers"][2]["instances"]
-    ui.append(hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"))
+    ui.extend(flat(HUD))
     # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
     # types from bar_types() and images from bar_images(), and the sheet sets the fill with
     # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
     no_overlap(ui)
+    spaced([*HUD, [board]])
+    balanced([board], PLAY_AREA)
+    filled([board])
     # Everything outside the HUD starts on the grid: a shape by shape_inst() on a cell, one
     # created at runtime at grid_random(); on_grid() stops the run on an instance that does not.
     on_grid(game["layers"][1]["instances"], "layer Game")
@@ -2028,10 +2504,15 @@ def module_setup() -> dict:
         # Restart layout keeps every global variable: a value the round starts from is set here,
         # before any text shows it.
         event("Empty the score and deal this round's coins",
-              [on_start()], [set_var("score", "0"), set_text("ScoreText", q("Score: 0"))], children=[
+              [on_start()], [set_var("score", "0"), set_text("ScoreText", q("0")),
+                             set_text("RoundText", f'{q("ROUND ")} & (beat + 1) & {q(" / ")} & '
+                                                   f'tokencount(ROUND_COINS, {q(",")})'),
+                             set_var("deal", f"floor(random({CELLS}))")], children=[
                   block([for_loop("i", "0", f"int(tokenat(ROUND_COINS, beat, {q(',')})) - 1")], [
-                      create("Coin", "Game", f"{grid_random(0, VIEW_W - COIN_SIZE)} + {COIN_SIZE // 2}",
-                             f"{grid_random(snap(1.5 * COIN_SIZE), VIEW_H - COIN_SIZE)} + {COIN_SIZE // 2}"),
+                      create("Coin", "Game",
+                             f'{BOARD_LEFT + COIN_SIZE // 2} + {PITCH} * ((deal + (loopindex("i") * {STRIDE})) % {COLS})',
+                             f'{BOARD_TOP + COIN_SIZE // 2} + {PITCH} * floor(((deal + (loopindex("i") * {STRIDE})) '
+                             f'% {CELLS}) / {COLS})'),
                       set_ivar("Coin", "value", "choose(1, 5)"),
                   ]),
               ]),
@@ -2058,7 +2539,7 @@ def scoring() -> list:
         ))),
         *procedure("Add points and show the score", func("AddScore", [
             add_var("score", "points"),
-            set_text("ScoreText", q("Score: ") + " & score"),
+            set_text("ScoreText", "score"),
         ], params=[param("points", "number", 0)])),
     ]
 
@@ -2083,6 +2564,7 @@ def build_event_sheet() -> dict:
         comment("Gameplay variables"),
         var("score", "number", 0, "Points collected this round"),
         var("beat", "number", 0, "The round being played, from 0; a global keeps it across the restart"),
+        var("deal", "number", 0, "The grid cell this round's first coin lands on; the others step from it"),
         module_setup(),
         module_input(),
         *scoring(),

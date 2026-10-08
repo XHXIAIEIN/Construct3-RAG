@@ -1,16 +1,18 @@
 """Tests for C3Fetcher — CDN access layer with weekly cache expiry."""
 import json
 import os
+import re
+import shutil
 import time
 import urllib.error
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.ingest.c3_fetcher import C3Fetcher, _cache_expired, latest_stable_version
+from src.ingest.c3_fetcher import C3Fetcher, _cache_expired, _http_get, latest_stable_version
 from src.ingest.common_aces import COMMON_PROPERTIES
-from src.lookup import SchemaIndex
+from src.lookup.schema_index import SchemaIndex
 from src.lookup.schema_layout import schema_is_complete
 
 LOCALES = ("en-US", "zh-CN")
@@ -522,45 +524,277 @@ def test_export_stops_when_language_pack_names_an_unknown_common_ace(fetcher):
     assert not (fetcher.cache_dir / "schemas" / ".exported").exists()
 
 
-def test_export_to_data_replaces_committed_directories_without_cache_markers(fetcher, tmp_path):
-    """data/ mirrors the four exports; stale files and dot-markers do not survive."""
-    schemas_dir = fetcher.cache_dir / "schemas"
-    (schemas_dir / "en-US" / "plugins").mkdir(parents=True)
-    (schemas_dir / "en-US" / "plugins" / "sprite.json").write_text("{}", encoding="utf-8")
-    (schemas_dir / "_index.json").write_text("{}", encoding="utf-8")
-    (schemas_dir / ".exported").write_text(fetcher.version, encoding="utf-8")
-    examples_dir = fetcher.cache_dir / "examples" / "zh-CN"
-    examples_dir.mkdir(parents=True)
-    (examples_dir / "demo.json").write_text("{}", encoding="utf-8")
+_SPRITE_ACES = {
+    "plugins": {"Sprite": {"general": {"conditions": [{"id": "is-visible", "scriptName": "isVisible"}]}}},
+    "behaviors": {"Platform": {"general": {"actions": [{"id": "jump", "scriptName": "simulateJump"}]}}},
+}
+_SPRITE_EFFECTS = [{"id": "blur", "category": "blur", "parameters": []}]
+_SPRITE_TEXTS = {
+    locale: {"text": {
+        "plugins": {"sprite": {"name": name, "conditions": {"is-visible": {"list-name": name}}}},
+        "behaviors": {"platform": {"name": name, "actions": {"jump": {"list-name": name}}}},
+        "effects": {"blur": {"name": name}},
+    }}
+    for locale, name in (("en-US", "Sprite"), ("zh-CN", "精灵"))
+}
+
+
+def _full_cache(fetcher: C3Fetcher) -> dict[str, Path]:
+    """A cache holding every export of one release, with the CDN files that
+    say what each must hold: example "demo", and a/one.d.ts in offline.json."""
+    schemas_dir = _export_with(fetcher, _SPRITE_TEXTS, aces=_SPRITE_ACES, effects=_SPRITE_EFFECTS)
+    for locale in LOCALES:
+        (fetcher.cache_dir / "examples" / locale / "demo.json").write_text("{}", encoding="utf-8")
+    (fetcher.cache_dir / "media_example-project-data.json").write_text(
+        json.dumps({"projects": [{"id": "demo"}]}), encoding="utf-8")
+    (fetcher.cache_dir / "offline.json").write_text(
+        json.dumps({"fileList": ["a/one.d.ts", "main.js"]}), encoding="utf-8")
     lang_dir = fetcher.cache_dir / "lang"
     lang_dir.mkdir()
-    (lang_dir / "en-US.json").write_text("{}", encoding="utf-8")
+    for locale in LOCALES:
+        (lang_dir / f"{locale}.json").write_text("{}", encoding="utf-8")
     ts_dir = fetcher.cache_dir / "ts-defs"
-    (ts_dir / "plugins").mkdir(parents=True)
-    (ts_dir / "plugins" / "sprite.d.ts").write_text("interface X {}", encoding="utf-8")
+    (ts_dir / "a").mkdir(parents=True)
+    (ts_dir / "a" / "one.d.ts").write_text("interface One {}", encoding="utf-8")
     (ts_dir / "autocomplete-data.json").write_text("{}", encoding="utf-8")
     (ts_dir / ".exported").write_text(fetcher.version, encoding="utf-8")
+    return {"schemas": schemas_dir, "lang": lang_dir, "ts": ts_dir}
 
+
+_TARGETS = ("c3-schemas", "c3-examples", "c3-lang", "c3-ts-defs")
+
+
+def _committed_data(tmp_path: Path) -> Path:
+    """A data/ whose four targets each hold one file of the release before."""
     data_dir = tmp_path / "data"
-    stale = data_dir / "c3-schemas" / "en-US" / "plugins" / "retired.json"
-    stale.parent.mkdir(parents=True)
-    stale.write_text("{}", encoding="utf-8")
+    for name in _TARGETS:
+        (data_dir / name).mkdir(parents=True)
+        (data_dir / name / "before.txt").write_text(name, encoding="utf-8")
+    return data_dir
 
-    with (
-        patch.object(fetcher, "export_schemas", return_value=schemas_dir) as schemas,
-        patch.object(fetcher, "export_lang", return_value=lang_dir) as lang,
-        patch.object(fetcher, "export_ts_defs", return_value=ts_dir) as ts,
-    ):
-        targets = fetcher.export_to_data(data_dir)
 
-    assert schemas.called and lang.called and ts.called
+def _export_to_data(fetcher: C3Fetcher, cache: dict[str, Path], data_dir: Path) -> dict[str, Path]:
+    with patch.object(fetcher, "export_schemas", return_value=cache["schemas"]),          patch.object(fetcher, "export_lang", return_value=cache["lang"]),          patch.object(fetcher, "export_ts_defs", return_value=cache["ts"]),          patch.object(fetcher, "_http_get", side_effect=AssertionError("no CDN call")):
+        return fetcher.export_to_data(data_dir)
+
+
+def _left_as_it_was(data_dir: Path) -> bool:
+    return sorted(p.relative_to(data_dir).as_posix() for p in data_dir.rglob("*") if p.is_file()) ==         sorted(f"{name}/before.txt" for name in _TARGETS) and         sorted(p.name for p in data_dir.parent.iterdir()) == ["data", "r476"]
+
+
+def test_export_to_data_replaces_committed_directories_without_cache_markers(fetcher, tmp_path):
+    """data/ mirrors the four exports; stale files and dot-markers do not survive."""
+    cache = _full_cache(fetcher)
+    data_dir = _committed_data(tmp_path)
+
+    targets = _export_to_data(fetcher, cache, data_dir)
+
     assert targets["c3-schemas"] == data_dir / "c3-schemas"
     assert (data_dir / "c3-schemas" / "en-US" / "plugins" / "sprite.json").exists()
     assert (data_dir / "c3-schemas" / "_index.json").exists()
-    assert not stale.exists()
+    assert not any((data_dir / name / "before.txt").exists() for name in _TARGETS)
     assert not (data_dir / "c3-schemas" / ".exported").exists()
     assert (data_dir / "c3-examples" / "zh-CN" / "demo.json").exists()
     assert (data_dir / "c3-lang" / "en-US.json").exists()
-    assert (data_dir / "c3-ts-defs" / "plugins" / "sprite.d.ts").exists()
+    assert (data_dir / "c3-ts-defs" / "a" / "one.d.ts").exists()
     assert (data_dir / "c3-ts-defs" / "autocomplete-data.json").exists()
     assert not (data_dir / "c3-ts-defs" / ".exported").exists()
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["data", "r476"]
+
+
+@pytest.mark.parametrize("break_cache, named", [
+    (lambda cache: shutil.rmtree(cache["schemas"].parent / "examples"), "examples"),
+    (lambda cache: (cache["schemas"].parent / "examples" / "zh-CN" / "demo.json").unlink(), "zh-CN/demo.json"),
+    (lambda cache: (cache["ts"] / "a" / "one.d.ts").unlink(), "a/one.d.ts"),
+    (lambda cache: (cache["ts"] / "autocomplete-data.json").unlink(), "autocomplete-data.json"),
+    (lambda cache: (cache["lang"] / "zh-CN.json").unlink(), "zh-CN.json"),
+    (lambda cache: (cache["schemas"] / "zh-CN" / "plugins" / "sprite.json").unlink(), "c3-schemas"),
+])
+def test_export_to_data_leaves_data_as_it_was_when_an_export_is_short(fetcher, tmp_path, break_cache, named):
+    """A missing file must not reach data/ as a deletion, nor leave two releases there."""
+    cache = _full_cache(fetcher)
+    break_cache(cache)
+    data_dir = _committed_data(tmp_path)
+
+    with pytest.raises(RuntimeError, match=re.escape(named)):
+        _export_to_data(fetcher, cache, data_dir)
+    assert _left_as_it_was(data_dir)
+
+
+def test_export_to_data_puts_every_target_back_when_a_swap_fails(fetcher, tmp_path):
+    cache = _full_cache(fetcher)
+    data_dir = _committed_data(tmp_path)
+    real_rename = Path.rename
+    failed: list[Path] = []
+
+    def rename(self, target):
+        if Path(target) == data_dir / "c3-lang" and not failed:
+            failed.append(self)
+            raise PermissionError("held open by another process")
+        return real_rename(self, target)
+
+    with patch.object(Path, "rename", rename), pytest.raises(RuntimeError, match="held open"):
+        _export_to_data(fetcher, cache, data_dir)
+    assert _left_as_it_was(data_dir)
+
+
+def test_a_failed_swap_removes_a_target_that_was_not_there(fetcher, tmp_path):
+    cache = _full_cache(fetcher)
+    data_dir = _committed_data(tmp_path)
+    shutil.rmtree(data_dir / "c3-examples")
+    real_rename = Path.rename
+
+    def rename(self, target):
+        if Path(target) == data_dir / "c3-ts-defs" and self.parent.name != "earlier":
+            raise PermissionError("held open by another process")
+        return real_rename(self, target)
+
+    with patch.object(Path, "rename", rename), pytest.raises(RuntimeError, match="held open"):
+        _export_to_data(fetcher, cache, data_dir)
+    assert sorted(p.name for p in data_dir.iterdir()) == ["c3-lang", "c3-schemas", "c3-ts-defs"]
+    assert all((data_dir / name / "before.txt").exists() for name in ("c3-lang", "c3-schemas", "c3-ts-defs"))
+
+
+def test_export_schemas_stops_without_a_marker_when_the_examples_fail(fetcher):
+    with patch.object(fetcher, "fetch_examples", side_effect=ValueError("[CDN] media/example-project-data.json: not JSON")),          pytest.raises(ValueError, match="example-project-data"):
+        with patch.object(fetcher, "fetch_all_aces", return_value=_SPRITE_ACES),              patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(_SPRITE_ACES)),              patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": _SPRITE_TEXTS[locale]),              patch.object(fetcher, "fetch_effects", return_value=_SPRITE_EFFECTS):
+            fetcher.export_schemas()
+    assert not (fetcher.cache_dir / "schemas" / ".exported").exists()
+
+
+def test_export_ts_defs_stops_when_offline_json_lists_no_definitions(fetcher):
+    listing = json.dumps({"fileList": ["main.js"]}).encode()
+    with patch.object(fetcher, "_http_get", return_value=listing),          pytest.raises(RuntimeError, match="offline.json lists no .d.ts"):
+        fetcher.export_ts_defs()
+    assert not (fetcher.cache_dir / "ts-defs" / ".exported").exists()
+
+
+def _ts_cdn(fetcher: C3Fetcher, failing: frozenset[str] = frozenset()):
+    """A CDN with two .d.ts files; a path in ``failing`` raises as a dropped connection does."""
+    files = {
+        "offline.json": json.dumps({"fileList": ["a/one.d.ts", "b/two.d.ts", "main.js"]}).encode(),
+        "a/one.d.ts": b"interface One {}",
+        "b/two.d.ts": b"interface Two {}",
+        "media/autocomplete-data.json": b"{}",
+    }
+
+    def get(url: str) -> bytes:
+        path = url.removeprefix(fetcher.url(""))
+        if path in failing:
+            raise urllib.error.URLError("connection reset")
+        return files[path]
+
+    return get
+
+
+def test_export_ts_defs_stops_without_a_marker_when_a_file_fails(fetcher):
+    """A file that fails must not drop out of data/: the export stops, and the next run fetches it."""
+    with patch.object(fetcher, "_http_get", side_effect=_ts_cdn(fetcher, frozenset({"b/two.d.ts"}))):
+        with pytest.raises(RuntimeError, match="b/two.d.ts"):
+            fetcher.export_ts_defs()
+    ts_dir = fetcher.cache_dir / "ts-defs"
+    assert not (ts_dir / ".exported").exists()
+    assert (ts_dir / "a" / "one.d.ts").exists()
+
+    with patch.object(fetcher, "_http_get", side_effect=_ts_cdn(fetcher)) as cdn:
+        assert fetcher.export_ts_defs() == ts_dir
+    assert (ts_dir / "b" / "two.d.ts").read_bytes() == b"interface Two {}"
+    assert (ts_dir / ".exported").exists()
+    assert not any(c.args[0].endswith("a/one.d.ts") for c in cdn.call_args_list)
+
+
+def test_export_ts_defs_stops_when_the_autocomplete_listing_fails(fetcher):
+    cdn = _ts_cdn(fetcher, frozenset({"media/autocomplete-data.json"}))
+    with patch.object(fetcher, "_http_get", side_effect=cdn):
+        with pytest.raises(RuntimeError, match="autocomplete"):
+            fetcher.export_ts_defs()
+    assert not (fetcher.cache_dir / "ts-defs" / ".exported").exists()
+
+
+def test_an_interrupted_write_leaves_no_file_that_looks_complete(fetcher):
+    """The export skips a .d.ts that exists, so a half-written one would stay for good."""
+    real_write = Path.write_bytes
+
+    def dies_writing_in(folder: Path):
+        def write(self, data):
+            if self.parent != folder:
+                return real_write(self, data)
+            real_write(self, data[: len(data) // 2])
+            raise KeyboardInterrupt
+        return write
+
+    cache_one = fetcher.cache_dir / "a_one.d.ts"
+    ts_one = fetcher.cache_dir / "ts-defs" / "a" / "one.d.ts"
+    with patch.object(fetcher, "_http_get", side_effect=_ts_cdn(fetcher)):
+        with patch.object(Path, "write_bytes", dies_writing_in(cache_one.parent)), pytest.raises(KeyboardInterrupt):
+            fetcher.fetch_raw("a/one.d.ts")
+        assert not cache_one.exists()
+
+        with patch.object(Path, "write_bytes", dies_writing_in(ts_one.parent)), pytest.raises(KeyboardInterrupt):
+            fetcher.export_ts_defs()
+        assert not ts_one.exists()
+
+
+@pytest.mark.parametrize("path, body", [
+    ("plugins/pluginList.json", b"<html>Service Unavailable</html>"),
+    ("plugins/allAces.json", b"[]"),
+    ("loader/lang/precompiled-en-US.json", b'{"languageTag": "en-US"}'),
+    ("offline.json", b'{"version": 49502}'),
+    ("a/one.d.ts", b"\xef\xbb\xbf  <!DOCTYPE html><html>Bad Gateway</html>"),
+    ("main.js", b"<html>Service Unavailable</html>"),
+])
+def test_a_body_of_the_wrong_shape_is_refused_and_not_cached(fetcher, path, body):
+    """An error page served with 200 must not stay in the cache until next week."""
+    good = b"interface One {}" if path.endswith(".d.ts") else b"// main" if path.endswith(".js") else \
+        json.dumps({"text": {}, "fileList": [], "pluginList": {}}).encode()
+    with patch.object(fetcher, "_http_get", side_effect=[body, good]) as cdn:
+        with pytest.raises(ValueError, match=re.escape(path)):
+            fetcher.fetch_raw(path)
+        assert not (fetcher.cache_dir / path.replace("/", "_")).exists()
+        assert fetcher.fetch_raw(path) == good
+    assert cdn.call_count == 2
+
+
+def _status(code: int):
+    return urllib.error.HTTPError("https://cdn", code, "status", None, None)
+
+
+@pytest.mark.parametrize("transient", [_status(503), urllib.error.URLError("connection reset"), TimeoutError("timed out")])
+def test_a_transient_failure_is_retried(transient, caplog):
+    body = b'{"fileList": []}'
+    with patch("src.ingest.c3_fetcher._RETRY_DELAY", 0), \
+         patch("urllib.request.urlopen", side_effect=[transient, _response(body)]) as urlopen:
+        assert _http_get("https://cdn/offline.json") == body
+    assert urlopen.call_count == 2
+    assert "retrying" in caplog.text
+
+
+def test_retries_stop_after_two():
+    with patch("src.ingest.c3_fetcher._RETRY_DELAY", 0), \
+         patch("urllib.request.urlopen", side_effect=[_status(502)] * 3 + [_response(b"{}")]) as urlopen:
+        with pytest.raises(urllib.error.HTTPError):
+            _http_get("https://cdn/offline.json")
+    assert urlopen.call_count == 3
+
+
+@pytest.mark.parametrize("code", [403, 404])
+def test_a_client_error_is_not_retried(code):
+    with patch("src.ingest.c3_fetcher._RETRY_DELAY", 0), \
+         patch("urllib.request.urlopen", side_effect=[_status(code), _response(b"{}")]) as urlopen:
+        with pytest.raises(urllib.error.HTTPError):
+            _http_get("https://cdn/offline.json")
+    assert urlopen.call_count == 1
+
+
+def _response(body: bytes) -> MagicMock:
+    response = MagicMock()
+    response.__enter__.return_value.read.return_value = body
+    return response
+
+
+def test_export_to_data_creates_a_data_folder_that_is_not_there(fetcher, tmp_path):
+    cache = _full_cache(fetcher)
+    data_dir = tmp_path / "fresh" / "data"
+    _export_to_data(fetcher, cache, data_dir)
+    assert sorted(p.name for p in data_dir.iterdir()) == sorted(_TARGETS)
+    assert sorted(p.name for p in data_dir.parent.iterdir()) == ["data"]

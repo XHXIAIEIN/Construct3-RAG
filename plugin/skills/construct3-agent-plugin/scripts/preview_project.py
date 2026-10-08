@@ -2,9 +2,10 @@
 and drag the game's own instances, press keys, wait for what the events do, run
 scripts against the runtime, and read the state, take screenshots and record between steps.
 
-    python scripts/preview_project.py PLAN.json [--project FOLDER] [--release rNNN] [--browser EXE]
-                                      [--shots DIR] [--out RESULT.json] [--headed] [--profile FOLDER]
-                                      [--locale en-US]
+    python scripts/preview_project.py PLAN.json [--keep NAME] [--project FOLDER] [--release rNNN]
+                                      [--browser EXE] [--shots DIR] [--out RESULT.json] [--headed]
+                                      [--profile FOLDER] [--locale en-US]
+    python scripts/preview_project.py --all [--project FOLDER] ...
 
 Use it to check what a player does: a merge, a drop, a jump, a purchase. The
 plan is JSON, the steps run in order, and a step that fails stops the run:
@@ -19,6 +20,7 @@ plan is JSON, the steps run in order, and a step that fails stops the run:
      {"drag": "Card", "to": {"x": 215, "y": 100}, "seconds": 0.15, "rest": 0},
      {"hold": {"x": 40, "y": 600, "layer": "UI"}, "seconds": 1},
      {"key": "ArrowRight", "seconds": 0.5},
+     {"key": ["ShiftLeft", "ArrowRight"], "seconds": 0.5},
      {"wait": 1.5, "note": "the merge animation"},
      {"state": ["Piece", "BattleSlot"]},
      {"shot": "after-merge"}]}
@@ -42,19 +44,26 @@ Steps, each an object with one of these keys, and "note" for a label:
                                 still on "to" before the release (default 0.05). For a flick,
                                 give 0: the release follows the last move, since Touch reads a
                                 speed of 0 from a pointer that has been still about 50 ms
-  key NAME, seconds             press a key: ArrowLeft, Space, Enter, Escape, KeyA or a, Digit1 or 1
-                                (default 0.1 s)
+  key NAME or [NAME, ...], seconds
+                                press a key: ArrowLeft, Space, Enter, Escape, KeyA or a, Digit1 or 1
+                                (default 0.1 s). A list of names holds them together, pressed in
+                                order and released in reverse: ["ShiftLeft", "ArrowRight"]
   wait SECONDS                  let the game run
   until EXPRESSION, timeout     wait until the JavaScript expression is true (default 10 s)
   js CODE                       run JavaScript against the runtime and print what it returns
   state [TYPE ...]              the globals, every type's count, the named types' instances with
                                 their inspector values, named in --locale
-  shot NAME                     a screenshot, NN-NAME.png in --shots
+  shot NAME                     a screenshot, NN-NAME.png in --shots; named as not drawn yet when
+                                99.9% or more of it is one colour, black or clear
   record NAME, watch            record the window from here to the next record step or the end
                                 of the plan, as NN-NAME.mp4 with ffmpeg, NN-NAME.gif with Pillow,
                                 and always the frames, NN-NAME/0001.jpg ...; false stops it.
                                 watch is {"label": EXPRESSION, ...}, read at every frame. The
-                                recording leaves NN-NAME.html to review it: the frames, the steps
+                                recording leaves NN-NAME-sheet.png, up to 12 of its frames in one
+                                image, each numbered with its time: the ends, the steps' starts
+                                and ends, the largest change and where the picture moves most,
+                                for the agent to judge the motion from (unnumbered with ffmpeg
+                                and no Pillow); NN-NAME.html to review it: the frames, the steps
                                 that ran and the watched values, frame by frame, and a part
                                 selected there copied as a task for an agent; and
                                 NN-NAME/timeline.json with the same. index.html in --shots
@@ -81,6 +90,12 @@ leaves a screenshot, NN-failed.png. Screenshots and recordings go to --shots, by
 .tmp/preview/ in the project, and the whole result, every value and state, to
 --out, by default .tmp/preview-project.json; .tmp/ is ignored by Git. The last
 line names both: read a cut-off result there instead of playing the plan again.
+
+A plan that passes is kept with --keep NAME as tools/plans/NAME.json in the
+project, committed with the change it checks; the editor ignores the folder.
+--all replays every kept plan in one editor session, each from a first launch,
+and names each one that fails, because a later change broke what it checks. Its result goes to .tmp/preview-plans.json and its screenshots
+to .tmp/preview-plans/NAME/.
 
 The result holds what the editor did, as open_in_editor.py writes it, and the
 run under "preview"; the steps are in preview.steps, one object per step that ran:
@@ -114,6 +129,8 @@ import open_in_editor as oe
 EPILOG = """examples:
   python scripts/preview_project.py .tmp/merge-plan.json
   python scripts/preview_project.py plan.json --project "D:/Games/Merge" --headed
+  python scripts/preview_project.py .tmp/merge-plan.json --keep merge-two-pieces
+  python scripts/preview_project.py --all
 
 output:
   opened   <project>  (<window title>, <the editor it opened in>)
@@ -121,21 +138,35 @@ output:
     preview: layout 'Game', runtime in the worker, viewport 430x932, touch
     1 until runtime.objects.Enemy.getAllInstances().length >= 3: true after 1.4 s
     2 drag Piece 0 to BattleSlot 1: (120, 712) to (215, 388) in 0.4 s
-      runtime: <an error the game logged during the step, with its event>
-    3 state Piece: <as open_in_editor.py --state prints it>
-    4 shot after-merge: .tmp/preview/04-after-merge.png
+      runtime: <an error the game logged during the step, with its event, and (N times) when it came more than once>
+    3 key ShiftLeft+ArrowRight: held 0.5 s
+    4 state Piece: <as open_in_editor.py --state prints it>
+    5 shot after-merge: .tmp/preview/05-after-merge.png
     recorded merge: 95 frames in 3.4 s, .tmp/preview/02-merge.mp4
+      sheet .tmp/preview/02-merge-sheet.png: 10 frames, numbered left to right, top down: 1 at 0 ms (start),
+      2 at 35 ms (largest change), ..., 10 at 3380 ms (end)
+        judge the motion from the sheet, not from what the events meant to do: open it with the image tool,
+        name the three worst defects, each with its time, what the frame shows and the event to change, fix
+        only those, and record that part again
       review .tmp/preview/02-merge.html: the user plays it there, selects the part that looks wrong and
       copies it to you as a task; .tmp/preview/index.html lists every recording
       frames and timeline.json in .tmp/preview/02-merge
       watch coins: 40 at 0 ms, 30 at 900 ms
-    ran: 4 of 4 steps in 9.6 s, 1 runtime error
+    ran: 5 of 5 steps in 9.6 s, 1 runtime error
 
-exit codes: 0 every step ran and the game logged no error; 1 a step failed, the game logged an error, or
-the project did not open; 2 the plan, the project, the editor or --locale could not be used; 3 no browser here
+--all prints one line per kept plan instead of its steps:
+    ok    merge-two-pieces: 6 steps in 4.1 s
+    FAIL  hint-after-idle (tools/plans/hint-after-idle.json): step 3 until ...: FAILED, false after 10 s
+  replayed: 1 of 2 kept plans pass, no runtime errors
+
+exit codes: 0 every step ran and the game logged no error (--all: in every kept plan); 1 a step failed, the
+game logged an error, or the project did not open; 2 the plan, the project, the editor or --locale could not be
+used, or --all found no kept plan; 3 no browser here
 """
 
 STEPS = ("tap", "hold", "drag", "key", "wait", "until", "js", "state", "shot", "record")
+# Where a project keeps the plans that passed, one per change they checked.
+KEPT = Path("tools") / "plans"
 FIELDS = {"tap": set(), "hold": {"seconds"}, "drag": {"to", "seconds", "through", "rest"}, "key": {"seconds"}, "wait": set(),
           "until": {"timeout"}, "js": {"timeout"}, "state": set(), "shot": set(), "record": {"watch"}}
 PRESS = {"hold": 0.5, "drag": 0.4, "key": 0.1}
@@ -214,6 +245,23 @@ def key_event(name: str) -> dict | None:
     return None
 
 
+def key_names(value: object) -> list:
+    """The keys a key step holds together: one name, or a list of names."""
+    return value if isinstance(value, list) else [value]
+
+
+# The bit of the DevTools protocol's "modifiers" that a held key adds to each key event.
+MODIFIERS = {"Alt": 1, "Control": 2, "Shift": 8}
+
+
+def modifiers(held: list[dict]) -> int:
+    """The modifiers value of a key event sent while the keys of `held` are down."""
+    bits = 0
+    for event in held:
+        bits |= MODIFIERS.get(event["key"], 0)
+    return bits
+
+
 def statements(line: str) -> bool:
     """Whether a line holds a `;` outside brackets and strings, so more than one statement."""
     depth, quote, escaped = 0, "", False
@@ -287,9 +335,17 @@ def check_plan(plan: object) -> tuple[dict, list[str]]:
         if kind == "drag" and "through" in step and not (isinstance(step["through"], list) and step["through"]
                                                          and all(map(target_ok, step["through"]))):
             problems.append(f"step {n} (drag): through is a list of targets like the one it drags")
-        if kind == "key" and (not isinstance(value, str) or not key_event(value)):
-            problems.append(f"step {n} (key): {value!r} is no key this script presses; use a letter (a or KeyA), "
-                            f"a digit (1 or Digit1) or one of {', '.join(NAMED_KEYS)}")
+        if kind == "key":
+            names = key_names(value)
+            wrong = [k for k in names if not (isinstance(k, str) and key_event(k))]
+            if wrong or not names:
+                what = (f"{', '.join(map(repr, wrong))} {'is not a key' if len(wrong) == 1 else 'are not keys'} this "
+                        f"script presses" if wrong else "the list is empty")
+                problems.append(f"step {n} (key): {what}; a key is a letter (a or KeyA), a digit (1 or Digit1) or one "
+                                f"of {', '.join(NAMED_KEYS)}, and a list of keys holds them together")
+            elif len({key_event(k)["code"] for k in names}) < len(names):
+                problems.append(f"step {n} (key) names a key twice: {value!r}; list each key once (a and KeyA are "
+                                f"one key)")
         if kind == "wait" and not (isinstance(value, (int, float)) and value >= 0):
             problems.append(f"step {n} (wait) takes seconds, a number")
         if kind in ("until", "js") and not (isinstance(value, str) or isinstance(value, list) and value
@@ -509,10 +565,21 @@ class Recorder(threading.Thread):
         page = self.video.with_suffix(".html")
         page.write_text(REVIEW.replace("/*TIMELINE*/null", script_json(timeline)), encoding="utf-8")
         index = write_index(self.video.parent)
-        lines = [f"{len(frames)} frames in {sum(seconds):.1f} s, {made or 'no ffmpeg or Pillow here to join them'}",
-                 f"review {page}: the user plays it there, selects the part that looks wrong and copies it to you "
-                 f"as a task; {index} lists every recording",
-                 f"frames and timeline.json in {self.folder}"]
+        lines = [f"{len(frames)} frames in {sum(seconds):.1f} s, {made or 'no ffmpeg or Pillow here to join them'}"]
+        paths = [self.folder / f["file"] for f in frames]
+        cells = sheet_frames(timeline["frames"], timeline["steps"], frame_change(paths, timeline["frames"]))
+        sheet = make_sheet([paths[i] for i, _ in cells], [timeline["frames"][i]["t"] for i, _ in cells],
+                           self.folder.with_name(self.folder.name + "-sheet.png"))
+        if sheet:
+            listed = ", ".join(f"{k} at {round(timeline['frames'][i]['t'] * 1000)} ms" + (f" ({why})" if why else "")
+                               for k, (i, why) in enumerate(cells, 1))
+            lines += [f"sheet {sheet}: {len(cells)} frames, numbered left to right, top down: {listed}",
+                      "  judge the motion from the sheet, not from what the events meant to do: open it with the image "
+                      "tool, name the three worst defects, each with its time, what the frame shows and the event to "
+                      "change, fix only those, and record that part again"]
+        lines += [f"review {page}: the user plays it there, selects the part that looks wrong and copies it to you "
+                  f"as a task; {index} lists every recording",
+                  f"frames and timeline.json in {self.folder}"]
         return "\n    ".join(lines + watch_lines(timeline["frames"]))
 
 
@@ -589,6 +656,145 @@ def make_video(frames: list[Path], seconds: list[float], video: Path) -> str | N
     return str(gif)
 
 
+SHEET_CELLS, SHEET_SIDE, SHEET_GAP = 12, 1600, 4
+
+
+def frame_change(paths: list[Path], frames: list[dict]) -> list[float]:
+    """How much each frame differs from the one before it, 0 for the first: the mean
+    difference of small grey copies with Pillow, else the watched numbers' changes,
+    each over its own range; all 0 when neither tells."""
+    try:
+        from PIL import Image, ImageChops, ImageStat
+        if not paths or len(paths) != len(frames):
+            raise OSError("no frame for each time")
+        small = []
+        for p in paths:
+            with Image.open(p) as image:
+                image.draft("L", (64, 64))
+                small.append(image.convert("L").resize((64, 64)))
+        return [0.0] + [ImageStat.Stat(ImageChops.difference(a, b)).mean[0] for a, b in zip(small, small[1:])]
+    except (ImportError, OSError):
+        pass
+    numbers: dict[str, list[float | None]] = {}
+    for f in frames:
+        for name, value in (f.get("watch") or {}).items():
+            numbers.setdefault(name, [])
+    for name, values in numbers.items():
+        for f in frames:
+            value = (f.get("watch") or {}).get(name)
+            values.append(value if isinstance(value, (int, float)) and not isinstance(value, bool) else None)
+    change = [0.0] * len(frames)
+    for values in numbers.values():
+        known = [v for v in values if v is not None]
+        span = (max(known) - min(known)) if known else 0
+        if not span:
+            continue
+        for i in range(1, len(values)):
+            if values[i] is not None and values[i - 1] is not None:
+                change[i] += abs(values[i] - values[i - 1]) / span
+    return change
+
+
+def sheet_frames(frames: list[dict], steps: list[dict], change: list[float]) -> list[tuple[int, str]]:
+    """The frames of a recording's contact sheet, in order, each with why it is there:
+    the first and the last, the frames around the largest change, then the start and end
+    of each step, thinned evenly to fit; the cells left over go where the picture changes
+    most, so a motion between two steps is on the sheet too."""
+    if not frames:
+        return []
+    times = [f["t"] for f in frames]
+
+    def nearest(t: float) -> int:
+        return min(range(len(times)), key=lambda i: abs(times[i] - t))
+
+    kept = {0: "start", len(frames) - 1: "end"}
+    peak = max(range(len(change)), key=change.__getitem__) if change and max(change) > 0 else None
+    if peak is not None:
+        for i in (peak - 1, peak + 1):
+            if 0 <= i < len(frames):
+                kept.setdefault(i, "")
+        kept[peak] = "largest change"
+    rest: dict[int, str] = {}
+    for s in steps:
+        rest.setdefault(nearest(s["start"]), f"step {s['step']} starts")
+        rest.setdefault(nearest(s["end"]), f"step {s['step']} ends")
+    rest = {i: why for i, why in rest.items() if i not in kept}
+    room = SHEET_CELLS - len(kept)
+    chosen = sorted(rest)
+    if len(chosen) > room:
+        chosen = [chosen[round(k * (len(chosen) - 1) / max(room - 1, 1))] for k in range(room)] if room > 0 else []
+    kept |= {i: rest[i] for i in chosen}
+    spare = min(SHEET_CELLS, len(frames)) - len(kept)
+    if spare > 0:       # spread over the change, so the frames fall where the picture moves
+        total, run = sum(change), []
+        for c in change:
+            run.append((run[-1] if run else 0) + c)
+        for k in range(spare):
+            share = (k + 0.5) / spare
+            kept.setdefault(next(j for j, r in enumerate(run) if r >= share * total) if total
+                            else round(share * (len(frames) - 1)), "")
+    return sorted(kept.items())
+
+
+def make_sheet(paths: list[Path], times: list[float], out: Path) -> str | None:
+    """The frames side by side in one image of at most SHEET_SIDE pixels a side, each
+    numbered with its time: with Pillow, else unnumbered with ffmpeg; None with neither."""
+    if not paths:
+        return None
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        Image = None
+    if Image:
+        with Image.open(paths[0]) as first:
+            w, h = first.size
+    else:
+        ffprobe = shutil.which("ffprobe")
+        if not ffprobe or not shutil.which("ffmpeg"):
+            return None
+        probe = subprocess.run([ffprobe, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                                "-of", "csv=p=0", str(paths[0])], capture_output=True, text=True, timeout=60)
+        try:
+            w, h = (int(v) for v in probe.stdout.strip().split(","))
+        except ValueError:
+            return None
+    n = len(paths)
+
+    def scale(cols: int) -> float:
+        rows = math.ceil(n / cols)
+        return min(1.0, (SHEET_SIDE - SHEET_GAP * (cols + 1)) / (cols * w), (SHEET_SIDE - SHEET_GAP * (rows + 1)) / (rows * h))
+
+    cols = max(range(1, n + 1), key=scale)
+    rows, s = math.ceil(n / cols), scale(cols)
+    cw, ch = max(2, int(w * s) // 2 * 2), max(2, int(h * s) // 2 * 2)
+    if Image:
+        sheet = Image.new("RGB", (cols * cw + (cols + 1) * SHEET_GAP, rows * ch + (rows + 1) * SHEET_GAP), (34, 34, 34))
+        draw = ImageDraw.Draw(sheet)
+        try:
+            font = ImageFont.load_default(size=max(12, min(cw, ch) // 16))
+        except TypeError:       # Pillow before 10.1 has one size
+            font = ImageFont.load_default()
+        for k, (p, t) in enumerate(zip(paths, times)):
+            x, y = SHEET_GAP + (k % cols) * (cw + SHEET_GAP), SHEET_GAP + (k // cols) * (ch + SHEET_GAP)
+            with Image.open(p) as frame:
+                sheet.paste(frame.convert("RGB").resize((cw, ch)), (x, y))
+            label = f"{k + 1}  {round(t * 1000)} ms"
+            box = draw.textbbox((x + 4, y + 4), label, font=font)
+            draw.rectangle((box[0] - 3, box[1] - 3, box[2] + 3, box[3] + 3), fill=(0, 0, 0))
+            draw.text((x + 4, y + 4), label, fill=(255, 255, 255), font=font)
+        sheet.save(out)
+        return str(out)
+    listing = out.with_suffix(".txt")
+    listing.write_text("ffconcat version 1.0\n" + "".join(f"file '{p.resolve().as_posix()}'\n" for p in paths),
+                       encoding="utf-8")
+    g = SHEET_GAP
+    done = subprocess.run([shutil.which("ffmpeg"), "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
+                           "-i", str(listing), "-vf", f"scale={cw}:{ch},tile={cols}x{rows}:padding={g}:margin={g}"
+                           ":color=0x222222", "-frames:v", "1", str(out)], capture_output=True, text=True, timeout=120)
+    listing.unlink(missing_ok=True)
+    return str(out) if done.returncode == 0 and out.exists() else None
+
+
 def emulate(page: oe.DevTools, viewport: list[int] | None, ratio: float = 1) -> tuple[int, int] | None:
     """Give the window the plan's viewport and pixel ratio, and the size the page then
     reports, None when it answered nothing; without a viewport the window keeps its
@@ -633,7 +839,7 @@ def step_line(n: int, step: dict) -> str:
     value = step[kind]
     what = {"tap": lambda: target_text(value), "hold": lambda: target_text(value),
             "drag": lambda: " through ".join(map(target_text, [value, *step.get("through", [])]))
-            + f" to {target_text(step['to'])}", "key": lambda: value,
+            + f" to {target_text(step['to'])}", "key": lambda: "+".join(key_names(value)),
             "wait": lambda: f"{value:g} s", "until": lambda: one_line(value), "js": lambda: one_line(value),
             "state": lambda: " ".join([value] if isinstance(value, str) else value) or "counts",
             "shot": lambda: value, "record": lambda: value or "stop"}[kind]()
@@ -679,11 +885,15 @@ def do_step(game: Game, step: dict, n: int, shots: Path) -> tuple[str, dict | No
         moving = ", released moving" if rest == 0 else ""
         return f"{where} to ({points[-1][0]:.0f}, {points[-1][1]:.0f}) in {seconds:g} s{moving}", None
     if kind == "key":
-        event, seconds = key_event(value), step.get("seconds", PRESS["key"])
-        down = "keyDown" if "text" in event else "rawKeyDown"
-        game.win.call("Input.dispatchKeyEvent", type=down, **event)
+        events = [key_event(k) for k in key_names(value)]
+        seconds = step.get("seconds", PRESS["key"])
+        for i, event in enumerate(events):
+            down = "keyDown" if "text" in event else "rawKeyDown"
+            game.win.call("Input.dispatchKeyEvent", type=down, modifiers=modifiers(events[:i + 1]), **event)
         time.sleep(seconds)
-        game.win.call("Input.dispatchKeyEvent", type="keyUp", **{k: v for k, v in event.items() if k != "text"})
+        for i in reversed(range(len(events))):
+            game.win.call("Input.dispatchKeyEvent", type="keyUp", modifiers=modifiers(events[:i]),
+                          **{k: v for k, v in events[i].items() if k != "text"})
         return f"held {seconds:g} s", None
     if kind == "until":
         timeout = step.get("timeout", 10)
@@ -714,7 +924,9 @@ def do_step(game: Game, step: dict, n: int, shots: Path) -> tuple[str, dict | No
 
 def screenshot(game: Game, path: Path) -> str:
     path.write_bytes(base64.b64decode(game.win.call("Page.captureScreenshot")["data"]))
-    return str(path)
+    share = oe.blank(game.win)
+    return (f"{path}: {c3.BLANK:.1%} or more of it is one colour, so the game had not drawn yet or draws nothing "
+            f"in view here; add a wait or until step before this shot" if share else str(path))
 
 
 def play(plan: dict, shots: Path, project: Path) -> Callable[[oe.Browser, str, oe.DevTools], dict]:
@@ -847,19 +1059,21 @@ def report(result: dict, label: Callable[[str], str] = oe.key_name) -> list[str]
     ratio = f" at pixel ratio {ran['pixel_ratio']:g}" if ran.get("pixel_ratio", 1) != 1 else ""
     lines.append(f"  preview: layout {ran['layout']!r} at the end, runtime in the {ran['runtime']}, "
                  f"viewport {ran['viewport'][0]}x{ran['viewport'][1]}{ratio}{touch}")
-    lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
+    lines += oe.runtime_lines(ran["errors"])
     for done in ran["steps"]:
         said = f": {done['said']}" if done["said"] else ""
         lines.append(f"  {done['line']}{said}" if done["ok"] else f"  {done['line']}: FAILED, {done['said']}")
         if "state" in done:
             lines += ["  " + line for line in oe.state_lines(done["state"], label)]
-        lines += [f"    runtime: {e.splitlines()[0]}" for e in done["errors"]]
+        lines += oe.runtime_lines(done["errors"], "    ")
     if ran.get("recorded"):
         lines.append(f"  {ran['recorded']}")
     errors = len(ran["errors"]) + sum(len(d["errors"]) for d in ran["steps"])
     ok = sum(d["ok"] for d in ran["steps"])
+    passed = ok == ran["planned"] and not errors
     lines.append(f"  ran: {ok} of {ran['planned']} steps in {ran['seconds']:.1f} s, "
-                 f"{errors or 'no'} runtime error{'' if errors == 1 else 's'}")
+                 f"{errors or 'no'} runtime error{'' if errors == 1 else 's'}"
+                 f"{'; what the steps of the plan do not do is untested' if passed else ''}")
     return lines
 
 
@@ -871,10 +1085,137 @@ def where(out: Path, shots: Path) -> str:
     return f"full result in {out}, screenshots in {shots}"
 
 
+def kept_plans(project: Path) -> list[Path]:
+    folder = project / KEPT
+    return sorted(folder.glob("*.json")) if folder.is_dir() else []
+
+
+def keep(plan: Path, project: Path, name: str) -> Path:
+    """The plan copied as it was written into the project's kept plans."""
+    to = project / KEPT / f"{name}.json"
+    to.parent.mkdir(parents=True, exist_ok=True)
+    to.write_bytes(plan.read_bytes())
+    return to
+
+
+def play_all(plans: dict[str, dict], shots: Path, project: Path) -> Callable[[oe.Browser, str, oe.DevTools], dict]:
+    """The `then` of open_in_editor.open_one: each plan previews the game afresh, in one editor session."""
+    def run(browser: oe.Browser, target: str, page: oe.DevTools) -> dict:
+        ran = {}
+        for name, plan in plans.items():
+            (shots / name).mkdir(parents=True, exist_ok=True)
+            ran[name] = play(plan, shots / name, project)(browser, target, page)
+        return {"started": True, "plans": ran}
+    return run
+
+
+def replay_report(result: dict, refused: dict[str, list[str]],
+                  label: Callable[[str], str] = oe.key_name) -> tuple[list[str], int]:
+    """One line per kept plan, ok or FAIL with the step that failed or the first runtime error, and how many
+    failed."""
+    if result["status"] != "opened":
+        return oe.report(result, label), len(refused) + 1
+    lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
+    lines += [f"  warning: {w}" for w in result.get("warnings", [])]
+    ran = (result.get("preview") or {}).get("plans", {})
+    failed, errors = 0, 0
+    for name in sorted(set(ran) | set(refused)):
+        where = (KEPT / f"{name}.json").as_posix()
+        if name in refused:
+            failed += 1
+            lines.append(f"  FAIL  {name} ({where}): the plan is refused: {'; '.join(refused[name])}")
+            continue
+        done = ran[name]
+        if not done["started"]:
+            failed += 1
+            lines.append(f"  FAIL  {name} ({where}): the preview did not run: {'; '.join(done['errors'])}")
+            continue
+        raw = done["errors"] + [e for d in done["steps"] for e in d["errors"]]
+        logged = oe.runtime_lines(raw, "    ")
+        errors += len(raw)
+        bad = next((d for d in done["steps"] if not d["ok"]), None)
+        if bad or logged or len(done["steps"]) < done["planned"]:
+            failed += 1
+            why = (f"{bad['line']}: FAILED, {bad['said']}" if bad else logged[0].strip() if logged
+                   else f"stopped after {len(done['steps'])} of {done['planned']} steps")
+            lines.append(f"  FAIL  {name} ({where}): {why}")
+            lines += logged[1 if not bad else 0:][:3]
+        else:
+            lines.append(f"  ok    {name}: {done['planned']} step{'s' if done['planned'] != 1 else ''} in "
+                         f"{done['seconds']:.1f} s")
+    total = len(ran) + len(refused)
+    lines.append(f"  replayed: {total - failed} of {total} kept plans pass, {errors or 'no'} runtime "
+                 f"error{'' if errors == 1 else 's'}")
+    return lines, failed
+
+
+def replay(args: argparse.Namespace, project: Path, exe: str, editor: str) -> int:
+    """--all: every kept plan, one editor session."""
+    plans, refused = {}, {}
+    for path in kept_plans(project):
+        try:
+            plan, problems = check_plan(json.loads(path.read_text(encoding="utf-8")))
+        except (OSError, ValueError) as e:
+            plan, problems = {}, [str(e)]
+        if problems:
+            refused[path.stem] = problems
+        else:
+            plans[path.stem] = plan
+    if not plans and not refused:
+        print(f"no kept plan in {project / KEPT}: when a plan passes, run it again with --keep NAME to keep it there",
+              file=sys.stderr)
+        return 2
+    out, shots = oe.kept(args.out, args.shots, project, "preview-plans.json", "preview-plans")
+    shots.mkdir(parents=True, exist_ok=True)
+    if plans:
+        try:
+            browser = oe.Browser(exe, (args.profile or oe.scratch(project)) / f"editor-{Path(exe).stem.lower()}",
+                                 args.headed)
+        except (oe.DevToolsError, OSError) as e:
+            print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
+            return 2
+        try:
+            result = oe.open_one(browser, editor, project, browser.profile / "project-play.c3p", None,
+                                 bool(args.release), play_all(plans, shots, project))
+        except oe.EditorNotLoaded as e:
+            print(f"the editor did not load: {e}. Check the network connection and --release, and run again.",
+                  file=sys.stderr)
+            return 2
+        except (oe.DevToolsError, OSError) as e:
+            print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
+            return 2
+        finally:
+            browser.close()
+    else:
+        result = {"status": "opened", "project": str(project), "title": "not opened: every kept plan is refused",
+                  "editor": "-", "preview": {"plans": {}}}
+    out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
+    lines, failed = replay_report(result, refused)
+    shown = c3.fitting(lines, args.limit)
+    print("\n".join(lines[:shown]))
+    if shown < len(lines):
+        print(f"{len(lines) - shown} lines not printed: {out} keeps everything, --limit 0 prints it")
+    print(where(out, shots))
+    if result["status"] != "opened":
+        print(oe.NEXT)
+    elif failed:
+        print("next: a kept plan passed when the change it checks was made, so one that fails now names what a later "
+              "change broke. Read its failing step and the events that step reads, fix the events, not the plan, and "
+              "run --all again. Change a kept plan only when the game was meant to change what it checks.")
+    return 1 if failed or result["status"] != "opened" else 0
+
+
 def main() -> int:
     c3.utf8_output()
     ap = argparse.ArgumentParser(description=__doc__, epilog=EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("plan", type=Path, metavar="PLAN.json", help="the steps to play, as described above")
+    ap.add_argument("plan", type=Path, nargs="?", metavar="PLAN.json",
+                    help="the steps to play, as described above (none with --all)")
+    ap.add_argument("--keep", metavar="NAME",
+                    help="when every step passes, keep the plan as tools/plans/NAME.json in the project, to commit "
+                         "with the change it checks; NAME is letters, digits, - and _")
+    ap.add_argument("--all", action="store_true",
+                    help="replay every plan kept in tools/plans of the project, each from a first launch, and name "
+                         "each one that fails")
     ap.add_argument("--project", metavar="FOLDER",
                     help="the folder that holds project.c3proj (default: found from the current directory upward)")
     ap.add_argument("--release", metavar="rNNN", help="open in this release of the editor, as open_in_editor.py does")
@@ -894,6 +1235,22 @@ def main() -> int:
                          f"everything (default: {c3.LIMIT})")
     args = ap.parse_args()
 
+    if bool(args.plan) == args.all:
+        ap.error("give a PLAN.json to play, or --all to replay the kept plans")
+    if args.keep is not None and (args.all or not re.fullmatch(r"[A-Za-z0-9_-]+", args.keep)):
+        ap.error("--keep takes a NAME of letters, digits, - and _, with a PLAN.json")
+    if args.all:
+        project = c3.find_project(args.project)
+        if not project:
+            print(f"no project.c3proj found from {args.project or Path.cwd()} upward; run this in the project folder "
+                  f"or pass --project <folder>", file=sys.stderr)
+            return 2
+        exe = args.browser or oe.browser_path()
+        if not exe:
+            print("no Edge, Chrome or Chromium found here, and replaying the kept plans needs one this script can "
+                  "drive: install one, or play each plan in tools/plans with a browser tool of this session.")
+            return 3
+        return replay(args, project, exe, f"{oe.EDITOR}{args.release.strip('/')}/" if args.release else oe.EDITOR)
     try:
         plan, problems = check_plan(json.loads(args.plan.read_text(encoding="utf-8")))
     except (OSError, ValueError) as e:
@@ -959,7 +1316,20 @@ def main() -> int:
               f"(add a state step before it) and the sheet, fix the events or the plan, and run this again.")
     if errors:
         print(oe.NEXT_PREVIEW.replace("run this again with --preview", "run this again"))
-    return 0 if result["status"] == "opened" and ran.get("started") and not failed and not errors else 1
+    passed = result["status"] == "opened" and ran.get("started") and not failed and not errors
+    others = [p for p in kept_plans(project) if args.keep is None or p.stem != args.keep]
+    if passed and args.keep:
+        print(f"kept: {keep(args.plan, project, args.keep)}; commit it with the change it checks"
+              + (f", and replay it with the {len(others)} other kept plan{'s' if len(others) != 1 else ''} after "
+                 f"every change: python scripts/preview_project.py --all" if others else
+                 "; after every change, replay the kept plans: python scripts/preview_project.py --all"))
+    elif args.keep:
+        print(f"not kept: only a plan that passes is kept. A plan that checks a bug fails until the fix works: fix "
+              f"the events until it passes, then run it again with --keep {args.keep}")
+    elif passed:
+        print("keep: this plan passes; keep it as a check of this change with --keep NAME, and replay every kept plan "
+              "after the next change with --all" + (f" ({len(others)} kept)" if others else ""))
+    return 0 if passed else 1
 
 
 if __name__ == "__main__":

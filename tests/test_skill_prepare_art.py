@@ -9,7 +9,7 @@ import pytest
 
 from tests.skill_helpers import edit, run, tool, script_module
 
-pytest.importorskip("PIL")
+pytest.importorskip("PIL", reason="Pillow is not installed; pip install pillow")
 from PIL import Image, ImageDraw, ImageFilter  # noqa: E402
 
 prepare_art = script_module("prepare_art")
@@ -151,8 +151,9 @@ def test_prepare_art_lists_the_next_step_only(project):
     code, out = tool(project, "prepare_art", "--list")
     assert code == 0, out
     assert out.splitlines() == [
-        "style: none. Write ART_STYLE in tools/build_project.py, one sentence of art direction the user agreed, so "
-        "that every picture shares it",
+        "style: none. Write ART_STYLE in tools/build_project.py: one sentence of art direction, agreed with the user, "
+        "that fixes the rendering, linework, colour temperature, light direction, proportions and framing, so that "
+        "every picture shares it",
         "to make: 1, to prepare: 0, done: 0; next: write ART_STYLE, run python tools/build_project.py, then python "
         ".agents/skills/construct3-agent-plugin/scripts/prepare_art.py --list again"]
     assert (project / "art" / "raw").is_dir()
@@ -161,7 +162,7 @@ def test_prepare_art_lists_the_next_step_only(project):
     code, out = tool(project, "prepare_art", "--list")
     lines = out.splitlines()
     assert lines[0] == "style: Bright flat vector, thick dark outlines."
-    assert "make coin-default-000: ratio 1:1, for a 96x96 box -> art/raw/coin-default-000.png" in lines
+    assert "make coin-default-000: ratio 1:1, for a 160x160 box -> art/raw/coin-default-000.png" in lines
     assert ('  "Bright flat vector, thick dark outlines; a gold coin seen from the front. One subject, whole and '
             'centred with room around it, on a flat magenta #FF00FF background: no scenery, no shadow on the '
             'ground, no text."') in lines
@@ -175,6 +176,9 @@ def test_prepare_art_lists_the_next_step_only(project):
     code, out = tool(project, "prepare_art", "--list")
     assert out.splitlines() == [
         "style: Bright flat vector, thick dark outlines.",
+        'warning: ART_STYLE names no colour temperature, light direction, proportions or framing, so each prompt '
+        'leaves them to the image tool and the pictures can differ in them. Name them in ART_STYLE, or write "colour '
+        'temperature unspecified" there to leave one open. Then run python tools/build_project.py.',
         'key picture: "Bright flat vector, thick dark outlines; a line-up of a gold coin seen from the front; a pink '
         'rose; a silver coin, side by side on a flat green #00FF00 background, no text". If the user is in the '
         'session, show it and keep the one they choose. Save it as art/raw/_key.png',
@@ -236,9 +240,45 @@ def test_prepare_art_warns_of_subjects_that_come_out_wrong(project):
     Image.new("RGB", (64, 32), (255, 0, 255)).save(project / "art" / "raw" / "_key.png")
     code, out = tool(project, "prepare_art", "--list", "--limit", "0")
     lines = out.splitlines()
-    assert code == 0 and lines[1].startswith("warning: tree-default-000") and lines[6].startswith("warning: slime"), out
+    assert code == 0 and lines[1].startswith("warning: ART_STYLE names no colour temperature"), out
+    assert lines[2].startswith("warning: tree-default-000") and lines[7].startswith("warning: slime"), out
     assert ("make knight-default-000: ratio 1:1, for a 64x64 box, art/raw/_key.png as the reference image -> "
             "art/raw/knight-default-000.png") in lines
+
+
+FULL_STYLE = ("flat vector with soft cel shading, thick dark outlines, warm colours, light from the top left, chunky "
+              "proportions, side view")
+
+
+@pytest.mark.parametrize("style, left", [
+    (FULL_STYLE, []),
+    ("ink wash on rice paper, dry brush edges, cool muted greens, light from above, slender proportions, "
+     "three-quarter view from above", []),
+    ("扁平矢量，粗描边，暖色调，左上方光源，Q版比例，侧视", []),
+    ("pixel art, no outlines, cool palette, top-lit, chibi, framing: unspecified", []),
+    ("Bright flat vector.", ["linework", "colour temperature", "light direction", "proportions", "framing"]),
+    ("bright colours and framing unspecified",
+     ["rendering", "linework", "colour temperature", "light direction", "proportions"]),
+])
+def test_prepare_art_finds_what_art_style_leaves_to_the_image_tool(style, left):
+    """A dimension counts when ART_STYLE names one of its words, a negated one too ("no outlines"
+    fixes the linework), or leaves it open as "<dimension> unspecified"."""
+    assert prepare_art.left_open(style) == left
+
+
+def test_prepare_art_warns_of_a_thin_art_style_only_while_pictures_are_to_make(project):
+    """A full style prints no warning; a thin one is warned of above the prompts, which print all the
+    same (test_prepare_art_lists_the_next_step_only); with every picture done, nothing is said."""
+    edit(project, "art/wanted.json", lambda wanted: wanted.update(style=FULL_STYLE))
+    code, out = tool(project, "prepare_art", "--list")
+    lines = out.splitlines()
+    assert code == 0 and lines[0] == f"style: {FULL_STYLE}" and lines[1].startswith("make coin-default-000"), out
+
+    edit(project, "art/wanted.json", lambda wanted: wanted.update(style="Bright flat vector."))
+    (project / "art" / "coin-default-000.png").write_bytes(b"")
+    code, out = tool(project, "prepare_art", "--list")
+    assert out.splitlines() == ["style: Bright flat vector.", "done coin-default-000: art/coin-default-000.png",
+                                "ok: all 1 pictures done; next: python tools/build_project.py"], out
 
 
 def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
@@ -246,21 +286,21 @@ def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
     code, out = tool(project, "prepare_art")
     assert code == 0, out
     assert ("coin-default-000: coin-default-000.jpg 512x512, background #" in out
-            and "-> art/coin-default-000.png 96x96" in out), out
+            and "-> art/coin-default-000.png 160x160" in out), out
     assert out.splitlines()[-1] == "ok: 1 pictures in art/; next: python tools/build_project.py"
     code, out = tool(project, "prepare_art", "--list")
     assert out.splitlines()[-1] == "ok: all 1 pictures done; next: python tools/build_project.py", out
     img = Image.open(project / "art" / "coin-default-000.png")
-    assert img.mode == "RGBA" and img.size == (96, 96) and img.info.get("c3-art") == "painted"
+    assert img.mode == "RGBA" and img.size == (160, 160) and img.info.get("c3-art") == "painted"
     px = img.load()
     assert px[0, 0] == (0, 0, 0, 0) and px[48, 48][3] == 255 and px[48, 48][0] > 200
-    shown = [px[x, y] for x in range(96) for y in range(96) if px[x, y][3]]
+    shown = [px[x, y] for x in range(160) for y in range(160) if px[x, y][3]]
     fringe = [p for p in shown if p[0] > 120 and p[1] < 60 and p[2] > 120 and p[3] > 32]
     assert not fringe, f"the key or its shadow is left: {fringe[:5]}"
-    assert all(px[x, y] == (0, 0, 0, 0) for x in range(96) for y in range(96) if not px[x, y][3])
+    assert all(px[x, y] == (0, 0, 0, 0) for x in range(160) for y in range(160) if not px[x, y][3])
     assert any(0 < p[3] < 255 for p in shown), "the edge is blended"
     hit = Image.open(project / "art" / "coin-default-000.hit.png").load()
-    assert all(hit[x, y][3] == px[x, y][3] for x in range(96) for y in range(96))
+    assert all(hit[x, y][3] == px[x, y][3] for x in range(160) for y in range(160))
     assert hit[48, 48] == (255, 255, 255, 255)
 
     code, out = run(project, "tools/build_project.py")
@@ -269,10 +309,10 @@ def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
         (project / "art" / "coin-default-000.png").read_bytes()
     coin = json.loads((project / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
     frames = coin["animations"]["items"][0]["frames"]
-    assert [(f["width"], f["height"], f["tag"]) for f in frames] == [(96, 96, ""), (96, 96, "hit")]
+    assert [(f["width"], f["height"], f["tag"]) for f in frames] == [(160, 160, ""), (160, 160, "hit")]
     assert len(frames[0]["collisionPoly"]["points"]) == 32          # the stand-in's circle
     code, out = tool(project, "check_look")
-    assert code == 0 and out.splitlines()[-1].startswith("ok: 3 images"), out
+    assert code == 0 and out.splitlines()[-1].startswith("ok: 4 images"), out
 
 
 def test_prepare_art_scales_a_picture_without_new_colours():
@@ -302,7 +342,7 @@ def test_prepare_art_refuses_a_picture_it_cannot_cut_out(project):
                                     f"for the prompts of the pictures above, make them again, then python {script}")
     code, out = tool(project, "prepare_art", "--list")
     lines = out.splitlines()
-    assert ("make coin-default-000 again (refusal 1 of 3; after 3 it keeps its stand-in): ratio 1:1, for a 96x96 box "
+    assert ("make coin-default-000 again (refusal 1 of 3; after 3 it keeps its stand-in): ratio 1:1, for a 160x160 box "
             "-> art/raw/coin-default-000.png") in lines, out
     assert ('  "Bright flat vector; a gold coin seen from the front. One subject, whole and centred with room around '
             'it, on a flat magenta #FF00FF background: no scenery, no shadow on the ground, no text. Nothing but flat '
@@ -349,7 +389,7 @@ def test_prepare_art_fits_a_scene_and_keeps_a_picture_with_transparency(project)
     assert code == 0, out
     assert "sky-default-000: sky-default-000.jpg 1365x768 -> art/sky-default-000.png 720x1280, cropped to cover it" in out
     assert "coin-default-000.png 300x600, its own transparency" in out
-    assert "note: the subject, 24x96, fills 25% of its 96x96 box; give art() a box of the subject's shape" in out, out
+    assert "note: the subject, 40x160, fills 25% of its 160x160 box; give art() a box of the subject's shape" in out, out
     sky = Image.open(project / "art" / "sky-default-000.png")
     assert sky.size == (720, 1280) and sky.getpixel((0, 0))[3] == 255
 

@@ -57,8 +57,9 @@ def test_plan_puts_events_in_by_the_numbers_the_sheet_has_now(project):
     assert out.splitlines()[-1].startswith("ok:") and "open_in_editor" not in out     # the closing check names it
     sheet = printed(project)
     assert ("     global number beat = 0\n         // The round being played, from 0; a global keeps it across the "
-            "restart\n     global number timeLeft = 30\n   1 group Setup") in sheet
-    assert '-> ScoreText: Set text to "Score: 0"\n           -> ScoreText: Set text to "Time: " & timeLeft' in sheet
+            "restart\n     global number deal = 0\n         // The grid cell this round's first coin lands on; "
+            "the others step from it\n     global number timeLeft = 30\n   1 group Setup") in sheet
+    assert '-> System: Set deal to floor(random(15))\n           -> ScoreText: Set text to "Time: " & timeLeft' in sheet
     assert "   4       (runs with its parent)\n               -> Coin: Set scale to 1.5" in sheet
     assert "     // Countdown.\n  11 group Timer\n       // Count down.\n  12   System: Every 1 seconds" in sheet
     assert check(project)[0] == 0
@@ -209,13 +210,17 @@ def test_plan_shows_a_condition_or_action_it_disables_as_disabled(project):
 
 def test_plan_names_an_older_form_of_a_text_it_left_alone(project):
     """Eval runs changed the score text at the start and left the one in AddScore, event 7, as it was."""
+    code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": '"Score: 0"'}}},
+                     {"event": 7, "action": 2, "set": {"parameters": {"text": '"Score: " & score'}}})
+    assert code == 0, out                               # the labelled score those runs started from
     both = '"Score: " & score & "  Time: " & round(time)'
     code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": both}}}, flags=("--dry-run",))
     assert code == 0, out
     note = [line for line in out.splitlines() if line.startswith("note: event")]
     assert note == ['note: event 7 action 2 (ScoreText set-text) still has text "Score: " & score, which this plan '
                     f'writes elsewhere as {both}; if both show the same thing, change it too: '
-                    + json.dumps({"event": 7, "action": 2, "set": {"parameters": {"text": both}}})], out
+                    + json.dumps({"event": 7, "line": "function AddScore(points: number)", "action": 2,
+                                  "set": {"parameters": {"text": both}}})], out
     code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": both}}},
                      {"event": 7, "action": 2, "set": {"parameters": {"text": both}}}, flags=("--dry-run",))
     assert code == 0 and "note: event" not in out, out
@@ -376,7 +381,7 @@ def test_dry_run_checks_and_shows_and_writes_nothing(project):
                                       "parameters": {"tag": '"t"'}}]}, "closest: behaviorType"),
     ({"event": 2, "add-actions": [{"type": "comment", "txt": "Score."}]}, "'txt' is not a key of a comment row"),
     ({"event": 1, "add-actions": [SET_TIME]}, "event 1 is a group, which has no actions"),
-    ({"event": 2, "add-actions": [SET_TIME], "position": 5}, "position is 1 to 3"),
+    ({"event": 2, "add-actions": [SET_TIME], "position": 7}, "position is 1 to 5"),
     ({"into": 5, "events": [{"eventType": "variable", "name": "n", "type": "int"}]}, "'number', 'string' or 'boolean'"),
     ({"move": 1, "into": 3}, "event 3 is event 1 or inside it"),
 ])
@@ -404,7 +409,7 @@ def test_the_plan_skill_md_shows_is_one_the_script_takes(project):
     shown = text.split("## Change a sheet with a plan")[1].split("```json\n")[1].split("```")[0]
     (project / "plan.json").write_text(shown, encoding="utf-8")
     code, out = tool(project, "edit_sheet", "Game", "plan.json")
-    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
+    assert code == 0 and out.splitlines()[-1].startswith("ok:") and "by number alone" not in out, out
 
 
 def test_new_sid_left_in_a_plan_is_named(project):
@@ -546,6 +551,28 @@ def test_new_makes_the_sheet_a_project_without_one_runs(project):
     assert "System: On start of layout" in printed(project) and check(project)[0] == 0
 
 
+@pytest.mark.parametrize("blocked", ["eventSheets/Game.json.tmp", "project.c3proj.tmp", "layout"])
+def test_new_puts_back_what_it_wrote_when_a_later_file_fails(project, blocked):
+    """--new writes the sheet, project.c3proj and the layouts that run it; a write that fails, here on a folder
+    where its draft goes, leaves every file as it was, and the same plan runs once the way is clear (the audit
+    of 2026-10-07 left a sheet that project.c3proj did not list, which the plan then refused)."""
+    layouts = list((project / "layouts").glob("*.json"))
+    (project / SHEET).unlink()
+    edit(project, "project.c3proj", lambda p: p["eventSheets"].update(items=[]))
+    for path in layouts:
+        edit(project, path.relative_to(project).as_posix(), lambda lay: lay.update(eventSheet=None))
+    files = {p: p.read_bytes() for p in (project / "project.c3proj", *layouts)}
+    folder = project / (f"layouts/{layouts[-1].name}.tmp" if blocked == "layout" else blocked)
+    folder.mkdir()
+    start = {"into": 0, "events": [{"eventType": "comment", "text": "Score from zero."}]}
+    code, out = plan(project, start, flags=("--new",))
+    assert code == 1 and "could not be written" in out and "nothing was written" in out, out
+    assert all(p.read_bytes() == raw for p, raw in files.items()) and not (project / SHEET).exists()
+    folder.rmdir()
+    code, out = plan(project, start, flags=("--new",))
+    assert code == 0 and (project / SHEET).is_file(), out
+
+
 def test_a_new_sheet_beside_others_says_no_layout_runs_it(project):
     layouts = {p: p.read_bytes() for p in (project / "layouts").glob("*.json")}
     (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "variable", "name": "menuShown"}]}]),
@@ -554,3 +581,71 @@ def test_a_new_sheet_beside_others_says_no_layout_runs_it(project):
     assert code == 0 and "run by no layout" in out, out
     assert (project / "eventSheets" / "Menu.json").is_file()
     assert all(p.read_bytes() == raw for p, raw in layouts.items())
+
+
+def test_a_generated_project_is_told_the_change_belongs_in_the_generator(project):
+    """The generator's next run writes the sheet over an edit: the note says so after a write and in a dry run."""
+    timer = {"before": 1, "events": [{"eventType": "variable", "name": "timeLeft"}]}
+    code, out = plan(project, timer, flags=("--dry-run",))
+    assert code == 0 and ("note: tools/build_project.py generates this project, and its next run writes "
+                          "eventSheets/Game.json over what this plan would write") in out, out
+    code, out = plan(project, timer)
+    assert code == 0 and "writes eventSheets/Game.json over this change: make the change in the generator" in out, out
+    assert out.splitlines()[-1].startswith("ok:")
+    shutil.rmtree(project / "tools")
+    code, out = plan(project, {"remove": 1}, flags=("--dry-run",))
+    assert code == 0 and "build_project" not in out, out
+
+
+STALE = {"event": 6, "line": "function AddScore(points: number)", "add-actions": [
+    {"id": "wait", "objectClass": "System", "parameters": {"seconds": "0"}}]}
+
+
+def test_a_plan_from_an_older_print_is_refused_with_where_its_line_is_now(project):
+    """A second plan that uses the numbers of an earlier print names another event once an earlier plan has
+    moved it. The line refuses it."""
+    code, out = plan(project, {"before": 7, "line": "AddScore", "events": [
+        {"eventType": "comment", "text": "Points."},
+        {"eventType": "function-block", "functionName": "Bonus", "actions": []}]})
+    assert code == 0 and "named an event by number alone" not in out, out
+    before = (project / SHEET).read_bytes()
+    code, out = plan(project, {**STALE, "event": 7})      # AddScore prints as event 7 before the first plan, 8 after
+    assert code == 1 and out.splitlines()[0] == (
+        'operation 1 (event 7): "function AddScore(points: number)" is event 8 now. Event 7 prints "function Bonus()". '
+        "The plan's numbers may come from an older print of the sheet, or 7 may be miscounted. Take each number and "
+        "its line from print_sheet.py as it prints the sheet now"), out
+    assert (project / SHEET).read_bytes() == before
+    code, out = plan(project, {**STALE, "event": 8}, flags=("--dry-run",))
+    assert code == 0, out
+
+
+@pytest.mark.parametrize("line", ["   7 function AddScore(points: number)", "AddScore(points",
+                                  "function AddScore(points: number)  [event disabled]"])
+def test_a_line_is_found_as_print_sheet_prints_it_or_in_part(project, line):
+    """The line with its number or a mark print_sheet.py adds, or a part of it."""
+    code, out = plan(project, {**STALE, "event": 7, "line": line}, flags=("--dry-run",))
+    assert code == 0, out
+
+
+def test_a_line_copied_from_a_print_in_another_locale_names_the_event(project):
+    """A print with --locale zh-CN words the line in Chinese; the plan runs without --locale."""
+    printed = tool(project, "print_sheet", "Game", "--events", "5", "--locale", "zh-CN")[1]
+    line = next(row for row in printed.splitlines() if row.startswith("   5 "))[5:].strip()
+    assert line != "Touch: On touched Coin (start)", printed
+    code, out = plan(project, {"event": 5, "line": line, "action": 1, "set": {"disabled": True}}, flags=("--dry-run",))
+    assert code == 0, out
+
+
+def test_a_plan_without_lines_is_carried_out_and_noted(project):
+    """A plan without lines, such as one made from a finding's place, which names no line, is carried out with a
+    note."""
+    code, out = plan(project, {"event": 7, "add-actions": STALE["add-actions"]}, {"remove": 5},
+                     {"into": 0, "events": [{"eventType": "comment", "text": "End."}]}, flags=("--dry-run",))
+    assert code == 0 and ('note: operations 1 and 2 named events by number alone. Add "line" to each: the line '
+                          'print_sheet.py prints for its event, as in {"event": 7, "line": "function AddScore(points: '
+                          'number)", ...}. A number from an older print is then refused instead of changing another '
+                          'event') in out, out
+    code, out = plan(project, {"into": 0, "line": "x", "events": [{"eventType": "comment", "text": "End."}]})
+    assert code == 1 and 'operation 1 (into 0): 0 is the sheet itself, which prints no line; leave "line" out' in out
+    code, out = plan(project, {"variable": "score", "line": "x", "set": {"initialValue": "1"}})
+    assert code == 1 and "a variable is changed with" in out, out

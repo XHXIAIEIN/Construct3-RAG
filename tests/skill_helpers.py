@@ -23,6 +23,15 @@ SKILL = REPO / "skills" / "construct3-agent-plugin"
 INSTALLED = ".agents/skills/construct3-agent-plugin"
 SHEET = "eventSheets/Game.json"
 
+sys.path.insert(0, str(SKILL / "scripts"))
+from c3project import siblings_folder  # noqa: E402
+
+# The sibling clones are beside the main clone, also when the tests run in one of its
+# worktrees: build every sibling path from siblings_folder, never from REPO.parent.
+EXAMPLES = siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"
+NO_EXAMPLES = (f"no Construct-Example-Projects clone at {EXAMPLES.parent}; "
+               f"python {(REPO / 'scripts' / 'bootstrap.py').as_posix()} clones it")
+
 
 def script_module(name: str, folder: Path = SKILL / "scripts"):
     """A script of the skill as a module, the scripts beside it importable while it loads and
@@ -41,8 +50,7 @@ def script_module(name: str, folder: Path = SKILL / "scripts"):
         sys.path.remove(str(folder))
 
 
-EXAMPLES = script_module("c3project").siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"
-NEEDS_EXAMPLES = pytest.mark.skipif(not EXAMPLES.is_dir(), reason="the Construct-Example-Projects clone is not beside this one")
+NEEDS_EXAMPLES = pytest.mark.skipif(not EXAMPLES.is_dir(), reason=NO_EXAMPLES)
 NEEDS_GIT = pytest.mark.skipif(not shutil.which("git"), reason="git is not installed")
 
 
@@ -203,8 +211,8 @@ def template_module(**replace: str):
     source = (SKILL / "assets" / "build_project.py").read_text(encoding="utf-8")
     view = replace.get("VIEW")
     if view:
-        assert "VIEW_W, VIEW_H = 720, 1280" in source
-        source = source.replace("VIEW_W, VIEW_H = 720, 1280", view)
+        assert "VIEW_W, VIEW_H = 1920, 1080" in source
+        source = source.replace("VIEW_W, VIEW_H = 1920, 1080", view)
     t = types.ModuleType("build_project")
     t.__file__ = str(SKILL / "assets" / "build_project.py")
     exec(compile(source, t.__file__, "exec"), t.__dict__)

@@ -1,0 +1,17 @@
+{
+  "conditions": {
+    "compare-axis": {"examples": 8, "read": [["gamepad-control", "Event sheet 1", 3, 3], ["tilemap-switching", "MainCode", 11, 11], ["hook-shot", "MainCode", 6, 6]]},
+    "has-gamepads": {"examples": 1, "read": [["gamepad-control", "Event sheet 1", 7, 7]]},
+    "is-button-down": {"examples": 88, "read": [["gamepad-control", "Event sheet 1", 1, 2], ["spinning-stick", "MainCode", 2, 2], ["eventide", "EventsCredits", 12, 13]]},
+    "on-any-button-pressed": {"examples": 7, "read": [["construct-animate-splash", "Event sheet 1", 1, 1], ["poplab", "eCredits", 2, 3], ["rocket-barrel", "StartScreen", 3, 3]]},
+    "on-any-button-released": {"examples": 1, "read": [["samuroof", "Menu", 58, 58]]},
+    "on-button-pressed": {"examples": 95, "read": [["samuroof", "EndOfLevel", 14, 14], ["top-down-hook", "MainCode", 10, 12], ["orbiting-platforms", "MainCode", 7, 7]]},
+    "on-button-released": {"examples": 7, "read": [["jetpack", "MainCode", 17, 17], ["flatland-golf", "Code", 16, 16], ["tower-climbing", "Gameplay", 11, 14]]}
+  },
+  "expressions": {
+    "axis": {"examples": 2, "read": [["toolbox-wheel", "Events", 5, 7], ["template-gamepad-twin-stick-shooter", "MainCode", 4, 4]]},
+    "gamepad-index": {"examples": 1, "read": [["samuroof", "Menu", 58, 58]]},
+    "gamepadcount": {"examples": 1, "read": [["samuroof", "Menu", 57, 58]]},
+    "gamepadid": {"examples": 1, "read": [["gamepad-control", "Event sheet 1", 7, 7]]}
+  }
+}

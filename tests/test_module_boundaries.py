@@ -1,6 +1,8 @@
 """Regression tests for runtime module compatibility and dependency boundaries."""
 
 import ast
+import subprocess
+import sys
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -151,3 +153,21 @@ def test_validation_precedes_the_lookup_provider():
         workflow.execute(SearchCommand(query="   "))
 
     get_lookup.assert_not_called()
+
+
+# What src/requirements.txt installs for the service; the data scripts run before it is installed.
+_SERVICE_PACKAGES = ("fastapi", "uvicorn", "pydantic", "jieba")
+
+
+@pytest.mark.parametrize("module", [
+    "scripts.setup", "scripts.init", "scripts.check_c3_version", "scripts.schema_diff",
+    "scripts.extract_common_aces", "src.ingest.c3_fetcher", "src.settings",
+])
+def test_data_scripts_import_without_the_service_packages(module):
+    """setup.py installs the service's packages, so it and the data scripts must import without them."""
+    blocked = "; ".join(f"sys.modules[{name!r}] = None" for name in _SERVICE_PACKAGES)
+    result = subprocess.run(
+        [sys.executable, "-c", f"import sys; {blocked}; import {module}"],
+        cwd=_SRC_ROOT.parent, capture_output=True, text=True, timeout=60,
+    )
+    assert result.returncode == 0, result.stderr
