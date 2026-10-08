@@ -1,4 +1,3 @@
-<!-- construct3-agent-plugin block: begin. install.py replaces it up to the end marker with a newer version while it is unedited. Write the project's own text outside the markers. -->
 # Construct 3
 
 - Construct3-RAG: <path-to>/Construct3-RAG
@@ -30,6 +29,4 @@ eventSheets/*.json. Do not answer it from memory.
 | Writing a plugin, behavior, ACE, effect or script name, or looking for how an official example does it | Construct3-RAG/AGENTS.md section 2 |
 | Writing an addon: a new plugin, behavior, effect or theme for the Addon Manager, not an event that uses one | Construct3-Manual/Construct3-Addon-SDK/index.md, then a sample under Construct-Addon-SDK/ |
 | Changing eventSheets/, layouts/, objectTypes/ JSON or clipboard JSON by hand; naming an event, or reading one the user names ("event 15", a screenshot, a Find result) | Construct3-RAG/prompts/references/hand-editing-project-files.md; for the event numbers, "Naming an event to the user" |
-| Adding, renaming or moving a file of the project: an image, a sound, a script, a new sheet or layout | Construct3-RAG/data/c3-guides/constructs-project-format.md, Scirra's guide to the format, which the llm-context.md here links; then "The project folder" in hand-editing-project-files.md |
 | Following a `[manual: ...]` reference in those files | Construct3-Manual/Construct3-Manual/<that path> |
-<!-- construct3-agent-plugin block: end; version 2026-10-08, stamp e50212bfc1a3 -->
