@@ -109,9 +109,10 @@ hand or changing it, read `prompts/game-project-AGENTS.md`.
 
   It copies the skill, adds the block to the project's `AGENTS.md` when
   no instruction file there names this repository, with the path filled in,
-  and the line `@AGENTS.md` to `CLAUDE.md`. In a game generated from the
-  template it also replaces the helpers between the markers of
-  `tools/build_project.py` when they are an older version left unedited.
+  and the line `@AGENTS.md` to `CLAUDE.md`. The block, and in a game
+  generated from the template the helpers of `tools/build_project.py`, sit
+  between markers. `install.py` replaces either with the current version
+  when it is an older one that nobody edited.
   It changes no other file. Say in one sentence what it wrote, then read
   the installed `SKILL.md`.
   `--into .claude/skills` for Claude Code, `--into .trae/skills` for TRAE;

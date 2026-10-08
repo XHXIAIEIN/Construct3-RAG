@@ -73,6 +73,13 @@ the block for the project's instruction file.
   prints is pasted. A helper reads nothing outside the markers but what
   every game's generator has, so a setting a new helper needs gets its
   default between the markers.
+- The block for the project's instruction file,
+  `assets/game-project-block.md`, works the same way: its end marker
+  carries its version and the stamp of its text, without the lines that
+  name a clone's folder. A change to its text fails
+  `tests/test_skill_install.py` until the end line it prints is pasted.
+  The blocks `install.py` wrote before the markers are known by their stamps
+  in `PAST_BLOCKS` of `scripts/c3project.py`, a closed list.
 - A script that changes a project file checks the result before it writes
   it, writes the whole file or nothing, in the editor's layout (tabs, LF, no
   newline at the end, the editor's keys in the editor's order), and has

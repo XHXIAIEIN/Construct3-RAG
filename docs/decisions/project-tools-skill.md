@@ -43,9 +43,11 @@ project used with the Claude Code plugin holds no copy
 - `install.py` copies the folder into `.agents/skills/`, or the folder
   `--into` names, refreshes every copy the project holds when run again, and
   appends the block to `AGENTS.md` with the clone's path filled in when no
-  instruction file names the clone. Installing is the agent's step, by the
-  maintainer's call; `--no-block` and `--dry-run` serve a user who wants it
-  otherwise.
+  instruction file names the clone. It replaces a block it wrote, between
+  the block's markers, with the skill's current one while the project has
+  not edited it (`instruction-block-refresh.md`). Installing is the agent's
+  step, by the maintainer's call; `--no-block` and `--dry-run` serve a user
+  who wants it otherwise.
 - A copy compares its files with the clone's on every run. While it differs,
   the first line of every script's output is the command that refreshes it.
 - The generator is copied into the game as `tools/build_project.py` and
