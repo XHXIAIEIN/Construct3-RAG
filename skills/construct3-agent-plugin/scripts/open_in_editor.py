@@ -1248,7 +1248,10 @@ def failure_report(result: dict) -> list[str]:
     rag, _ = c3.locate_rag(project, None)
     if rag is None:
         return []
-    p = c3.Project(project, rag, "en-US", c3.Findings())
+    try:
+        p = c3.Project(project, rag, "en-US", c3.Findings())
+    except SystemExit:      # a file that is not JSON, which the checker reports first
+        return []
     # An addon by another author is installed in the editor: its absence is no rule of the checker's
     others = [a for a in p.data.get("usedAddons", []) if isinstance(a, dict)
               and a.get("id", "").lower() not in p.index.get(a.get("type", "") + "s", {})]
@@ -1290,9 +1293,9 @@ def failure_report(result: dict) -> list[str]:
     record.write_text(json.dumps(offered, indent=1), encoding="utf-8")
     title = f"Editor refused a project the checker passed ({fingerprint})"
     return [f"report: check_project.py passes this project and the editor refused it, so the checker lacks a "
-            f"rule. Show the user the report below, which {body_file} holds, and ask whether to send it to the "
+            f"rule. Show the user the report below, which {body_file} holds. Ask whether to send it to the "
             f"skill's repository; placeholders stand for the names the project gives. Send nothing unless the "
-            f"user says yes; this offer is made once.", *body,
+            f"user says yes, because the report comes from the user's project. This offer is made once.", *body,
             f"to send it, under the user's GitHub account: gh issue create --repo {REPOSITORY} --title \"{title}\" "
             f"--body-file \"{body_file}\"; without gh, open https://github.com/{REPOSITORY}/issues/new and paste "
             f"the file"]

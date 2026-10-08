@@ -254,7 +254,7 @@ def test_since_lists_what_changed_as_events(project):
     code, out = tool(project, "print_sheet", "--since", "HEAD")
     assert code == 0, out
     lines = out.splitlines()
-    assert re.fullmatch(r"== Game since HEAD \(\w+\): 1 added, 2 changed, 1 removed; event numbers are the sheet's now",
+    assert re.fullmatch(r"== Game since HEAD \(\w+\): 1 added, 2 changed, 1 removed; event numbers as the sheet is on disk",
                         lines[0]), out
     assert "-     global number deal = 0  [removed]" in lines, out
     assert "    4 group Input  [context]" in lines and "+   6   System: On start of layout  [added]" in lines, out
@@ -296,7 +296,7 @@ def test_since_names_what_it_cannot_compare(project):
     code, out = tool(project, "print_sheet", "--since=--output=x")
     assert code == 1 and "takes a commit" in out, out
     code, out = tool(project, "print_sheet", "--since", "HEAD", "--show", "1")
-    assert code == 1 and "--outline and --show read the sheet as it is now" in out, out
+    assert code == 1 and "--outline and --show read the sheet as it is on disk" in out, out
 
 
 def test_since_stops_at_the_limit_and_names_the_part_that_continues(project):

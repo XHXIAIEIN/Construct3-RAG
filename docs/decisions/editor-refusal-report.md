@@ -7,11 +7,10 @@ Date: 2026-10-08
 The checker learns each load rule from a message of the editor
 (`checker-editor-load-rules.md`). When the editor refuses a project that
 `check_project.py` passes, that message is the next rule, and it reaches this
-repository only if a user posts it. `open_in_editor.py` told the agent to pass
-the message on to the user, and there it stopped. The message, the exception
-and the event behind them carry the names of the user's game, paths of the
-user's machine and the text of its strings, so they leave the machine only
-when the user sends them.
+repository only if a user posts it. The message, the exception and the event
+behind them carry the names of the user's game, paths of the user's machine
+and the text of its strings, so they leave the machine only when the user
+sends them.
 
 ## Options
 
@@ -24,15 +23,17 @@ when the user sends them.
 
 ## Decision
 
-The third. When `open_in_editor.py` opened one folder project, the editor
-refused it, by the dialog that stopped the open or by the crash report it
-showed while it built the preview, and `check_project.py` finds no problem in
-it, the run ends with a `report:` line, the report, and the
+The third. The report comes when `open_in_editor.py` opened one folder
+project, the editor refused it, and `check_project.py` finds no problem in
+it. A refusal is the dialog that stopped the open, or the crash report the
+editor showed while it built the preview.
+
+The run then ends with a `report:` line, the report, and the
 `gh issue create` command that files it, or the repository's new-issue page
 to paste it into. The report is also written to
-`.tmp/editor-report-<fingerprint>.md`. The script sends nothing; its line
+`.tmp/editor-report-<fingerprint>.md`. The script sends nothing. Its line
 tells the agent to show the report and to send nothing unless the user says
-yes.
+yes, because the report comes from the user's project.
 
 The report holds these fields and no others:
 
@@ -59,8 +60,8 @@ In each of them:
   screenshot stay out.
 
 The redaction replaces what the files name. A word of the game that is no
-such name stays as the editor wrote it, so the user reads the report, a dozen
-lines, before it is sent, and may also write names back into the file.
+such name stays as the editor wrote it, so the user reads the report before
+sending it, and can edit a name that remains or write a name back.
 
 The fingerprint is a hash of the redacted message and exception with every
 number written as `N`: the same refusal at another event is the same report.
@@ -68,11 +69,13 @@ number written as `N`: the same refusal at another event is the same report.
 and a later run with the same fingerprint prints one line that says it was
 offered and not to offer it again.
 
-There is no report when the message names an addon by another author that
-the project uses, which the user installs in the editor and the checker
-cannot know; when the checker reports a problem, which comes first, or stops
-on a file; for a `.c3p`, which the checker does not read; and when one run
-opened several projects, as an eval iteration does.
+There is no report in four cases:
+
+- The message names an addon by another author that the project uses. The
+  user installs it in the editor, and the checker cannot know it.
+- The checker reports a problem, which comes first, or stops on a file.
+- The project is a `.c3p`, which the checker does not read.
+- One run opened several projects, as an eval iteration does.
 
 ## Re-evaluate when
 

@@ -31,13 +31,14 @@ the string to search the sheet's JSON for. --show N prints one event as
 JSON, for a plan of edit_sheet.py that puts it back changed.
 
 --since COMMIT prints what changed in the sheets since a commit, branch or
-tag of the project's git history, the files on disk included: each event
-added (+), removed (-) or changed (its lines that changed, - before and +
-after), and each one moved to another place, under the numbers of the sheet
-now and the events it sits in, marked [context]. An event is the same event
-when its content is, conditions, actions and values, or else when its sid is;
-the sids alone do not say it, because a generator run gives them anew. The old
-sheet is worded from the object types the commit holds.
+tag of the project's git history, the files on disk included. It prints each
+event added (+), removed (-), changed (the lines that changed, - before and +
+after) or moved to another place. The numbers are those of the sheet on disk,
+and the events a change sits in print above it, marked [context]. An event is
+the same event when its content is the same: its conditions, actions and
+values. If not, it is the same when its sid is. The sids alone do not decide,
+because a generator run gives them anew. The old sheet is worded from the
+object types the commit holds.
 
 A harness cuts long tool output, so printing stops at --limit characters, at
 an event, and the last line gives the --events range that continues. A part
@@ -358,7 +359,7 @@ def matched(old: list[Row], new: list[Row]) -> dict[int, int]:
     """Old row index -> new row index of the same event: the same sid and content, then the same content,
     then the same sid, then a row of the same kind in the same place with lines alike, such as an edited
     comment, which has no sid. When most events kept their content under another sid, the sids were given
-    anew, as a generator run does, and a sid no longer names one event."""
+    anew, as a generator run does, and a sid does not identify one event."""
     keys = {id(row): json.dumps(content(row.event), sort_keys=True, ensure_ascii=False) for row in (*old, *new)}
 
     def sid(row: Row):
@@ -420,8 +421,8 @@ def matched(old: list[Row], new: list[Row]) -> dict[int, int]:
 
 
 def moved(old: list[Row], new: list[Row], pairs: dict[int, int]) -> set[int]:
-    """The new rows of matched events that sit in another event, or in another order among the events that
-    stayed beside them: out of the longest run of them that kept its order."""
+    """The new rows of matched events that moved: into another event, or to another place among the events
+    beside them. Among siblings, the longest run that kept its old order stays, and the rest moved."""
     index = {id(r): k for rows in (old, new) for k, r in enumerate(rows)}
     parent_old = [index[id(r.above[-1])] if r.above else None for r in old]
     parent_new = [index[id(r.above[-1])] if r.above else None for r in new]
@@ -449,12 +450,12 @@ def compared(row: Row) -> list[str]:
 
 
 def unnumbered(line: str) -> str:
-    """A line of the old sheet, whose numbers would read as the sheet's now."""
+    """A line of the old sheet, without its numbers, which would read as those of the sheet on disk."""
     return "     " + SUB_EVENTS.sub("", line)[5:]
 
 
 def changes(old: list[Row], new: list[Row], since: str) -> tuple[list[tuple[int, list[str]]], collections.Counter]:
-    """The changes of one sheet in the order of the sheet now, each with the number of the event it prints
+    """The changes of one sheet in the order of the sheet on disk, each with the number of the event it prints
     at, and how many rows were added, changed, moved and removed. An added or changed row prints at its own
     number, a removed one before the next event that stayed, or at the end, under the events it sat in."""
     pairs = matched(old, new)
@@ -558,7 +559,7 @@ def print_since(args, project: c3.Project, sheets: dict[str, dict]) -> int:
         old_sheets = then.load_listed("eventSheets") if then else {}
         for name in args.sheets:
             if name not in sheets and name not in old_sheets:
-                sys.exit(f"no event sheet named {name!r} now or in {since}; sheets: {', '.join(sheets)}")
+                sys.exit(f"no event sheet named {name!r} on disk or in {since}; sheets: {', '.join(sheets)}")
         names = args.sheets or [*sheets, *(n for n in old_sheets if n not in sheets)]
         if args.events and len(names) != 1:
             sys.exit(f"--events reads one sheet; name it: {', '.join(names)}")
@@ -585,7 +586,7 @@ def print_since(args, project: c3.Project, sheets: dict[str, dict]) -> int:
                 head = (f"== {name} since {since}: "
                         + ", ".join(f"{counts[kind]} {kind}" for kind in ("added", "changed", "moved", "removed")
                                     if counts[kind])
-                        + "; event numbers are the sheet's now")
+                        + "; event numbers as the sheet is on disk")
             else:
                 chunks = [(r.number, [f"+{line}" for line in (*r.head, *r.body)]) for r in new]
                 head = f"== {name}: new since {since}, {total} events"
@@ -636,7 +637,7 @@ def main() -> int:
                     help="for a project someone else wrote and asked about: end with what a review reports")
     ap.add_argument("--since", metavar="COMMIT",
                     help="print only the events added, changed, moved and removed since this commit, branch or tag "
-                         "of the project's git history, the files as they are now included")
+                         "of the project's git history, the files on disk included")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()
@@ -647,7 +648,7 @@ def main() -> int:
     sheets = project.load_listed("eventSheets")
     if args.since is not None:
         if args.outline or args.show is not None:
-            sys.exit("--since prints what changed, as events; --outline and --show read the sheet as it is now")
+            sys.exit("--since prints what changed, as events; --outline and --show read the sheet as it is on disk")
         for name, path in project.listed_files("eventSheets").items():
             if path and name in (args.sheets or sheets):
                 c3.stamp(path)
