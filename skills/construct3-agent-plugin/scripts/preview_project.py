@@ -49,8 +49,8 @@ Steps, each an object with one of these keys, and "note" for a label:
   js CODE                       run JavaScript against the runtime and print what it returns
   state [TYPE ...]              the globals, every type's count, the named types' instances with
                                 their inspector values, named in --locale
-  shot NAME                     a screenshot, NN-NAME.png in --shots; one of one colour, black
-                                or clear is named as not drawn yet
+  shot NAME                     a screenshot, NN-NAME.png in --shots; named as not drawn yet when
+                                99.9% or more of it is one colour, black or clear
   record NAME, watch            record the window from here to the next record step or the end
                                 of the plan, as NN-NAME.mp4 with ffmpeg, NN-NAME.gif with Pillow,
                                 and always the frames, NN-NAME/0001.jpg ...; false stops it.
@@ -875,8 +875,8 @@ def do_step(game: Game, step: dict, n: int, shots: Path) -> tuple[str, dict | No
 def screenshot(game: Game, path: Path) -> str:
     path.write_bytes(base64.b64decode(game.win.call("Page.captureScreenshot")["data"]))
     share = oe.blank(game.win)
-    return (f"{path}, which is one colour over {c3.BLANK:.1%} of it or more: the game had not drawn yet, or draws "
-            f"nothing in view here; wait before this shot" if share else str(path))
+    return (f"{path}: {c3.BLANK:.1%} or more of it is one colour, so the game had not drawn yet or draws nothing "
+            f"in view here; add a wait or until step before this shot" if share else str(path))
 
 
 def play(plan: dict, shots: Path, project: Path) -> Callable[[oe.Browser, str, oe.DevTools], dict]:

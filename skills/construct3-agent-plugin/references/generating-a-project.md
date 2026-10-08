@@ -133,6 +133,9 @@ above. Then:
    python tools/build_project.py
    ```
 
+   If the last line starts with `stop:`, it names a finding that two changes
+   left standing. Do not change the part of the generator that writes that
+   place again, and give the finding to the user as the line says.
    Warnings do not fail the run; read them anyway, a generated project should
    have none. Then read the sheet once as events, `python
    scripts/print_sheet.py`, before anyone opens the editor.

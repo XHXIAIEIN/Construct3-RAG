@@ -52,10 +52,10 @@ import review_look as look
 # A failed test is a difference between the game and a design whose prototype passes it, so the fix
 # goes into the game. A model that may edit the test or the design's numbers instead makes it pass
 # without the game changing.
-FIX_THE_GAME = ("next: fix the game where each line says, its events or, for a look: or start: line, its layout, "
-                "and run this again. Change neither a test nor a number of the design to make it pass: the "
-                "prototype passes them, so the game is what differs from the design. Change the design only when "
-                "the user agrees that it was wrong, then run check_design.py on it again")
+FIX_THE_GAME = ("next: fix the game where each line says: its events, or its layout for a look: or start: line. "
+                "Then run this again. Do not change a test or a number of the design to make it pass: the "
+                "prototype passes them, so the game differs from the design. Change the design only when the user "
+                "agrees that it was wrong, then run check_design.py on it again")
 
 EPILOG = """examples:
   python scripts/play_design.py tools/design.json

@@ -219,14 +219,15 @@ def test_review_look_retakes_a_blank_screenshot_and_asks_nothing_about_one_that_
                        "warnings": [], "preview": {"started": True, "errors": [], "layouts": [
                            {"layout": "Objects", "shot": ".tmp/look/Objects.png", "findings": [], "errors": [],
                             "blank": {"tries": 3, "share": 0.99995}}]}})
-    assert lines[1] == ("layout 'Objects' (1 of 1): screenshot .tmp/look/Objects.png is one colour over 99.9% of it "
-                        "or more after 3 shots 1 s apart: the layout draws nothing in view at its start, or the preview did "
-                        "not draw it, so its questions are not asked")
+    assert lines[1] == ("layout 'Objects' (1 of 1): screenshot .tmp/look/Objects.png: 99.9% or more of it is one "
+                        "colour after 3 shots 1 s apart, so the layout draws nothing in view at its start, or the preview "
+                        "did not draw it. No question is asked about it. If it should show something, raise --settle, "
+                        "or reach it in play with a shot step of a preview_project.py plan")
     assert not any(line.startswith("questions:") for line in lines)
     lines = rl.report({"project": "Game", "status": "opened", "title": "Game - Construct 3", "editor": "e",
                        "warnings": [], "preview": {"started": True, "errors": [], "layouts": [
                            {"layout": "Map", "shot": ".tmp/look/Map.png", "findings": [], "errors": [],
                             "blank": {"tries": 2, "share": None}}]}})
-    assert lines[1] == ("layout 'Map' (1 of 1): screenshot .tmp/look/Map.png, taken when the layout was drawn; the 1 "
+    assert lines[1] == ("layout 'Map' (1 of 1): screenshot .tmp/look/Map.png, taken when the layout was drawn; the "
                         "shot before showed one colour, not drawn yet")
     assert lines[2].startswith("questions:")

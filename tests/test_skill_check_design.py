@@ -635,8 +635,8 @@ def test_a_failed_play_says_to_fix_the_game_not_the_test(tmp_path, monkeypatch, 
                                       "--out", str(tmp_path / "result.json")])
     assert pd.main() == 1
     last = capsys.readouterr().out.splitlines()[-1]
-    assert last.startswith("next: fix the game where each line says, its events or, for a look: or start: line")
-    assert "Change neither a test nor a number of the design to make it pass" in last
+    assert last.startswith("next: fix the game where each line says: its events, or its layout for a look: or start:")
+    assert "Do not change a test or a number of the design to make it pass" in last
     assert "only when the user agrees that it was wrong" in last
 
 

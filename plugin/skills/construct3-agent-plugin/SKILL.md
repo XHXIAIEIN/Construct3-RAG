@@ -256,7 +256,10 @@ not held to this. `--dry-run` does all of that and writes nothing.
 3. Fix every line it prints, all of them in one plan: each names its place,
    `sheet Game event 15 action 2`, and says what to write where it can.
    Warnings do not fail the run; a project an agent wrote should have none.
-4. Repeat until the last line starts with `ok:`. Then run
+4. Repeat until the last line starts with `ok:`. If it starts with `stop:`
+   instead, it names a finding that two changes left standing: do not change
+   that place again, fix the other findings, and give that finding to the
+   user as the line says before you go on. After `ok:`, run
    `python scripts/review_design.py` and act on it before the editor: fix
    each finding line and answer each question from `print_sheet.py`.
 5. Open and preview it in the editor:
@@ -297,7 +300,8 @@ not held to this. `--dry-run` does all of that and writes nothing.
 
 In the hand-over, name the last of these steps that passed: checked,
 reviewed, opened, previewed, played or looked. Then say what that step
-does not prove, as its passing line says.
+leaves untested. The passing lines from opened on say it; after a check or
+a review, the game has not run.
 
 `ok:` is about the files, not the game. The checker cannot run the events:
 which instances a condition picks, what order triggers fire in and what a
@@ -312,10 +316,9 @@ the official examples give a sheet, which the style warnings enforce only in
 part. What the preview teaches goes, with its source, where "Adding an
 entry" of `Construct3-RAG/prompts/event-sheet-pitfalls.md` says.
 
-Exit code 2 and `stopped at`: a file lacks a key the editor always writes.
-Compare it with a file `assets/build_project.py` generates or with an
-official example. If the line says the error is the script's, leave the
-project as it is and report the line to the user. Read [references/checker-rules.md](references/checker-rules.md)
+Exit code 2 and `stopped at`: the line says the cause and what to do.
+Compare a file that lacks a key with a file `assets/build_project.py`
+generates or with an official example. Read [references/checker-rules.md](references/checker-rules.md)
 when a finding needs explaining or the editor reports an error the checker
 let through.
 

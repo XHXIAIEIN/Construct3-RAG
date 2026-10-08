@@ -101,11 +101,22 @@ class Findings:
         self.warn(msg)
 
 
-# What a project file's shape raises in the scripts: a key deleted or a value of another type
-# written raised KeyError, TypeError, AttributeError and IndexError in check_project, print_sheet,
-# print_layout and review_design over 2 900 single changes to the stand-in game, and a file that is
-# not UTF-8 raised UnicodeDecodeError, a ValueError. Anything else is a fault of the script.
+# What a project file's shape raises in the scripts, measured by changing one value at a time in
+# a generated game: a missing key (KeyError), a value of another type (TypeError, AttributeError,
+# IndexError) and a file that is not UTF-8 (UnicodeDecodeError, a ValueError). Any other exception
+# is a fault of the script.
 PROJECT_SHAPE = (KeyError, TypeError, AttributeError, IndexError, ValueError)
+
+
+def file_read(tb) -> Path | None:
+    """The last project file a traceback's frames hold in a variable: the one being read."""
+    found = None
+    while tb:
+        for value in tb.tb_frame.f_locals.values():
+            if isinstance(value, Path) and value.suffix in (".json", ".c3proj"):
+                found = value
+        tb = tb.tb_next
+    return found
 
 
 def stop_with_a_sentence(script: str, findings: Findings) -> None:
@@ -117,17 +128,19 @@ def stop_with_a_sentence(script: str, findings: Findings) -> None:
         if issubclass(exc_type, KeyboardInterrupt):
             sys.__excepthook__(exc_type, exc, tb)
             return
+        read = file_read(tb)
         while tb.tb_next:
             tb = tb.tb_next
         what = f"missing key {exc}" if exc_type is KeyError else f"{exc_type.__name__}: {exc}"
         code = tb.tb_frame.f_code
         if issubclass(exc_type, UnicodeDecodeError):
-            cause = "A project file is not UTF-8 text, which the editor writes; write it again as UTF-8."
+            cause = (f"{read or 'A project file'} is not UTF-8 text, which the editor writes. Write it again as "
+                     f"UTF-8.")
         elif issubclass(exc_type, PROJECT_SHAPE):
-            cause = ("A project file lacks a key the editor always writes, or holds a value of another type than "
-                     "the editor writes; compare it with a file assets/build_project.py generates, or with an "
-                     "official example. If the file matches them, the error is the script's: leave the project "
-                     "as it is and report this line to the user.")
+            cause = ("A project file lacks a key the editor always writes, or holds a value of another type. "
+                     "Compare it with a file that assets/build_project.py generates, or with an official example. "
+                     "If the file matches, the error is the script's: leave the project as it is and report this "
+                     "line to the user.")
         else:
             cause = (f"This is an error in {script}, not a finding about the project: leave the project as it is "
                      f"and report this line to the user.")
@@ -200,17 +213,16 @@ def png_rgba(data: bytes) -> tuple[int, int, list[tuple]] | None:
     return w, h, pixels
 
 
-# A screenshot whose pixels are one colour, dark or clear over this share is not drawn yet. Over
-# 601 screenshots that review_look, open_in_editor and preview plans took of games, the most
-# one-coloured picture that showed something was 99.03% (a layout holding one coin), and a layout
-# that drew a 4 px bar and nothing else was 99.99%.
+# A screenshot is not drawn yet when this share of its pixels or more is one colour, dark or clear.
+# Over the screenshots the scripts took of games, the most one-coloured one that showed something
+# was 99.03%, a layout holding one coin; a layout that drew only a 4 px bar was 99.99%.
 BLANK = 0.999
 
 
 def blank_share(data: bytes) -> float | None:
-    """The share of a PNG's pixels that are one colour (within 8 in each channel of the commonest),
-    dark or clear, when it is BLANK or more: a screenshot the game has not drawn yet. None when the
-    picture shows something, or the PNG is of a kind png_rgba does not read."""
+    """The share of a PNG's pixels that are one colour, dark or clear, when it is BLANK or more.
+    One colour is within 8 in each channel of the commonest. None for a picture that shows
+    something, or a PNG of a kind png_rgba does not read."""
     read = png_rgba(data)
     if not read or not read[2]:
         return None

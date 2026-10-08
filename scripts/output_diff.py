@@ -253,7 +253,7 @@ def git(*args: str) -> str | None:
 def environment(home: Path) -> dict[str, str]:
     env = {k: v for k, v in os.environ.items() if k not in ("CONSTRUCT3_RAG", "PYTHONSTARTUP")}
     env.update(PYTHONIOENCODING="utf-8", PYTHONHASHSEED="0", PYTHONDONTWRITEBYTECODE="1",
-               CONSTRUCT3_RAG_OFFLINE="1", HOME=str(home), USERPROFILE=str(home))
+               CONSTRUCT3_RAG_OFFLINE="1", CONSTRUCT3_RAG_NO_RECORD="1", HOME=str(home), USERPROFILE=str(home))
     return env
 
 

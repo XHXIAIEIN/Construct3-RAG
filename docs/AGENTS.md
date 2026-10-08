@@ -57,6 +57,7 @@ The project skill and the prompts:
 | `record-tables-as-arrays.md` | Why the generator template writes a table of records as an Array file with field names in row 0, and copies it into a Dictionary at start |
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON, and how a plan names a variable or a comment |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
+| `fix-loop-cap.md` | Why the checker counts the changes to each finding's place and stops the fix loop after two, and what it keeps in the project to count them |
 | `clone-update-check.md` | Why the checker fetches the clone and fails when it is behind its upstream, and how plugin users get updates |
 | `project-format-guide.md` | Where each statement of Scirra's project format guide, the one `llm-context.md` links, is written and what checks it, and how its copy in `data/c3-guides/` is kept |
 | `preview-player.md` | Why a preview is played from a JSON plan of steps, and what the steps cover |

@@ -1636,15 +1636,15 @@ def test_a_value_of_another_type_stops_with_the_project_sentence(project):
         lay["layers"][0]["instances"][0]["world"] = "x"
     out = findings(project, change, "layouts/Objects.json")
     assert "check_project.py stopped at" in out and "AttributeError" in out
-    assert "holds a value of another type than the editor writes" in out
+    assert "holds a value of another type. Compare it with a file that assets/build_project.py generates" in out
 
 
 def test_a_file_that_is_not_utf8_is_named_as_such(project):
     (project / "layouts" / "Game.json").write_bytes("{}".encode("utf-16"))
     code, out = check(project)
     assert code == 2 and "UnicodeDecodeError" in out
-    assert out.splitlines()[-1].endswith("A project file is not UTF-8 text, which the editor writes; "
-                                         "write it again as UTF-8.")
+    assert out.splitlines()[-1].endswith(f"{project / 'layouts' / 'Game.json'} is not UTF-8 text, which the editor "
+                                         f"writes. Write it again as UTF-8."), out
 
 
 def test_an_error_of_the_script_is_not_a_finding(monkeypatch, capsys):
@@ -1749,3 +1749,73 @@ def test_offline_says_the_clone_was_not_compared(built):
     code, out = check(built)
     assert code == 0, out
     assert f"note: CONSTRUCT3_RAG_OFFLINE is 1, so the clone at {REPO} was not compared with its upstream" in out
+
+
+# --- the fix loop ----------------------------------------------------------------------------------
+def misspell(word: str):
+    """The first action of AddScore given another id: a finding in that event that names the id."""
+    def change(sheet):
+        events(sheet)["add_score"]["actions"][0]["id"] = word
+    return change
+
+
+def test_two_changes_that_leave_a_finding_stop_the_fix_loop(project):
+    out = findings(project, misspell("add-to-x"))
+    first = [line for line in out.splitlines() if "add-to-x" in line]
+    assert len(first) == 1 and "stop:" not in out, out
+    out = findings(project, misspell("add-to-y"))
+    assert "stop:" not in out and out.splitlines()[-1] == "1 problem(s)", out
+    out = findings(project, misspell("add-to-z"))
+    last = out.splitlines()[-1]
+    assert re.match(r"stop: do not change event \d+ of eventSheets/Game\.json again\. 2 changes left this "
+                    r"finding standing", last), out
+    assert ": sheet Game event " in last and "add-to-z" in last
+    assert "git diff eventSheets/Game.json tools/build_project.py shows the changes" in last
+    assert "the changes stay in the project" in last
+    record = json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))
+    assert [e["changes"] for e in record["findings"]] == [2]
+    assert (project / ".tmp" / ".gitignore").read_text(encoding="utf-8") == "*\n"
+
+
+def test_a_rerun_with_nothing_changed_counts_no_change(project):
+    findings(project, misspell("add-to-x"))
+    for _ in range(3):
+        code, out = check(project)
+        assert code == 1 and "stop:" not in out, out
+        note = out.splitlines()[-2]
+        assert note.startswith("nothing changed in project.c3proj or the editor's JSON files since the last run"), out
+        assert note.endswith("tools/build_project.py writes the files: run python tools/build_project.py after a "
+                             "change to it."), out
+    record = json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))
+    assert [e["changes"] for e in record["findings"]] == [0]
+
+
+def test_a_change_elsewhere_and_a_new_finding_count_apart(project):
+    """A change to another event is no change to this finding; a finding that is new starts from none,
+    and one that is fixed leaves the record."""
+    original = (project / SHEET).read_text(encoding="utf-8")
+    findings(project, misspell("add-to-x"))
+
+    def collect_too(sheet):
+        collect_tween(sheet)["id"] = "tween-x"
+    findings(project, collect_too)
+    record = json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))
+    assert sorted(e["changes"] for e in record["findings"]) == [0, 0], record
+    findings(project, misspell("add-to-y"))
+    record = json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))
+    assert sorted(e["changes"] for e in record["findings"]) == [0, 1], record
+    (project / SHEET).write_text(original, encoding="utf-8")
+    code, out = check(project)
+    assert code == 0, out
+    assert json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))["findings"] == []
+
+
+def test_review_and_the_evals_keep_no_record(project, monkeypatch):
+    edit(project, SHEET, misspell("add-to-x"))
+    check(project, "--review")
+    assert not (project / ".tmp" / "check-project.json").exists()
+    monkeypatch.setenv("CONSTRUCT3_RAG_NO_RECORD", "1")
+    for _ in range(2):
+        code, out = check(project)
+        assert code == 1 and "nothing changed" not in out
+    assert not (project / ".tmp" / "check-project.json").exists()

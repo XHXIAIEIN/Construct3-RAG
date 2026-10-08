@@ -29,9 +29,9 @@ the object type, the instance's UID and what to change:
             animation that has more, though a text instance variable differs
             between them and no text on each tells them apart
 
-A screenshot that is one colour, black or clear over 99.9% of it is not drawn
-yet: it is taken again 1 s later, twice at most. A layout still of one colour
-is named as drawing nothing in view, and no question is asked about it.
+A screenshot is not drawn yet when 99.9% or more of it is one colour, black
+or clear. It is taken again 1 s later, twice at most. A layout still of one
+colour is named as drawing nothing in view, and no question is asked about it.
 
 Then it prints the questions to answer from the screenshot, which the script
 cannot judge: open each screenshot with the image tool of this session, answer
@@ -94,8 +94,7 @@ WRAPPED = 1.5
 OVERLAP_SHARE = 0.5
 # Share of the screen past which an instance is an overlay drawn over the HUD on purpose.
 OVERLAY = 0.5
-# A screenshot that is one colour (c3project.BLANK) is taken again this many times in all, this
-# many seconds apart, before the layout is named as drawing nothing.
+# Shots of one layout in all while it is one colour (c3project.BLANK), and the seconds between them.
 BLANK_TRIES = 3
 BLANK_WAIT = 1.0
 
@@ -451,13 +450,15 @@ def report(result: dict) -> list[str]:
     for n, done in enumerate(ran["layouts"], 1):
         shot, blank = done.get("shot"), done.get("blank") or {}
         if shot and blank.get("share"):
-            lines.append(f"layout {done['layout']!r} ({n} of {total}): screenshot {shot} is one colour over "
-                         f"{c3.BLANK:.1%} of it or more after {blank['tries']} shots {BLANK_WAIT:g} s apart: the layout "
-                         f"draws nothing in view at its start, or the preview did not draw it, so its questions are "
-                         f"not asked")
+            lines.append(f"layout {done['layout']!r} ({n} of {total}): screenshot {shot}: {c3.BLANK:.1%} or more "
+                         f"of it is one colour after {blank['tries']} shots {BLANK_WAIT:g} s apart, so the layout "
+                         f"draws nothing in view at its start, or the preview did not draw it. No question is asked "
+                         f"about it. If it should show something, raise --settle, or reach it in play with a shot "
+                         f"step of a preview_project.py plan")
         elif shot:
-            again = (f", taken when the layout was drawn; the {blank['tries'] - 1} shot"
-                     f"{'s' if blank['tries'] > 2 else ''} before showed one colour, not drawn yet" if blank else "")
+            before = "the shot" if blank.get("tries") == 2 else f"the {blank.get('tries', 1) - 1} shots"
+            again = f", taken when the layout was drawn; {before} before showed one colour, not drawn yet" if blank \
+                else ""
             lines.append(f"layout {done['layout']!r} ({n} of {total}): screenshot {shot}{again}")
         elif done.get("left"):
             lines.append(f"layout {done['layout']!r} ({n} of {total}): started, and its events went on to "

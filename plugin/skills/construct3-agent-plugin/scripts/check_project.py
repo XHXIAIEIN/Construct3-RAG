@@ -15,13 +15,23 @@ number the editor prints in the margin; print_sheet.py prints that numbering.
 Under --limit the findings that fit are printed and the rest counted; the
 last line, `ok:` or the number of problems, always prints.
 
+Each run keeps its findings in .tmp/check-project.json, so that the next run
+counts the changes to each one: a change to the event, layer or file that a
+finding names, after which the finding is still there. After two changes,
+the last line starts with `stop:`. The agent does not change that place a
+third time, and the finding goes to the user. A run with nothing changed
+counts no change and says so. --review keeps no record.
+
 Exit 0: no errors; warnings do not fail the run. Exit 1: findings, or the
-project or the clone was not found. Exit 2: a project file lacks a key the
-editor always writes, and the run stopped there.
+project or the clone was not found. Exit 2: the run stopped, because a
+project file lacks a key the editor always writes or because the script
+failed; its line says which.
 """
 import difflib
+import hashlib
 import json
 import math
+import os
 import re
 import sys
 import unicodedata
@@ -29,6 +39,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 import c3project as c3
+import pack_project as pp
 from c3project import LOWER, NUMBERED, STRING_LITERAL, closest, describe, folder_items, squash
 
 # Names. The editor passes every name through a filter when it opens the
@@ -56,6 +67,14 @@ UNLISTED_ROOT_FILES = ("general", "icon", "sound", "music", "video", "font")
 # Sound and music are WebM Opus; the editor converts what it imports.
 AUDIO_TYPE = "audio/webm; codecs=opus"
 DESIGN = Path("tools") / "design.json"     # where references/designing-a-game.md writes the design
+# The findings of the last run, kept in the project's .tmp/ so that the fix loop stops after CAP
+# changes that left one finding standing (docs/decisions/fix-loop-cap.md). CONSTRUCT3_RAG_NO_RECORD=1
+# keeps no record, for the evals that run the checker over many projects at once.
+RECORD = "check-project.json"
+CAP = 2
+PLACES = {"sheet": "eventSheets", "layout": "layouts", "object type": "objectTypes", "family": "families"}
+EVENT_PLACE = re.compile(r" event (\d+) \(sid ([^)]*)\)")
+QUOTED = re.compile(r"(?<!\w)'(?:[^'\\]|\\.)*'(?!\w)|\"(?:[^\"\\]|\\.)*\"")
 # how a layout instance writes the value of an instance variable of each type
 JSON_TYPES = {"number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
               "string": lambda v: isinstance(v, str), "boolean": lambda v: isinstance(v, bool)}
@@ -529,9 +548,10 @@ class Checker:
     the functions and groups of every sheet."""
 
     def __init__(self, p: c3.Project, limit: int = 0, sheets: dict[str, dict] | None = None,
-                 style: bool = False, review: bool = False) -> None:
+                 style: bool = False, review: bool = False, record: bool = False) -> None:
         self.p = p
         self.review = review            # someone else's project: no omitted parameters, no next steps
+        self.record = record            # keep the findings in .tmp/ and stop the fix loop at CAP
         self.limit = limit
         self.unsaved = sheets or {}     # edit_sheet.py checks a sheet before it writes it
         self.style = style              # the warnings of check_style, off unless asked
@@ -3189,8 +3209,13 @@ class Checker:
                 print(f"... and {len(lines) - fit} more {rest} (--limit 0 prints all)")
         if self.review:
             print(c3.REVIEW)
+        notes, stops = fix_loop(p, errors) if self.record else ([], [])
+        if notes:
+            print("\n".join(notes))
         if errors:
             print(f"{len(errors)} problem(s)")
+            if stops:
+                print("\n".join(stops))
             return 1
         print(self.ok_line(then_open=not self.review))
         return 0
@@ -3220,6 +3245,148 @@ class Checker:
             line += (f", then play the design's tests in the editor: "
                      f"{script_command(p.root, 'play_design.py', ' ' + shown_path(design))}")
         return line
+
+
+def digest(value) -> str:
+    return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()[:16]
+
+
+def own_part(node):
+    """An event without its sub-events, a layer without its sublayers: a change below it is not a
+    change to it."""
+    return {k: v for k, v in node.items() if k not in ("children", "subLayers")} if isinstance(node, dict) else node
+
+
+def event_in(events: list, sid: str, number: int) -> dict | None:
+    """The event of a sheet with this sid, else its numbered event of this number."""
+    def every(rows):
+        for ev in rows if isinstance(rows, list) else []:
+            if isinstance(ev, dict):
+                yield ev
+                yield from every(ev.get("children"))
+    found = next((ev for ev in every(events) if str(ev.get("sid")) == sid), None)
+    if found is None and isinstance(events, list):
+        found = next((ev for n, ev in enumerate(c3.numbered_events([e for e in events if isinstance(e, dict)]), 1)
+                      if n == number), None)
+    return found
+
+
+def layer_in(layers: list, name: str) -> dict | None:
+    for layer in layers if isinstance(layers, list) else []:
+        if isinstance(layer, dict):
+            if layer.get("name") == name:
+                return layer
+            found = layer_in(layer.get("subLayers"), name)
+            if found is not None:
+                return found
+    return None
+
+
+def plain(text: str, numbers: bool = False) -> str:
+    """The words of a finding in lowercase letters only, and with `numbers` the numbers too (action
+    2): what stays when a change alters a name, an id or a value that the finding names."""
+    return " ".join(w for w in QUOTED.sub(" ", text).replace(";", " ").replace(",", " ").split()
+                    if (numbers and w.isdigit()) or (w.isascii() and w.isalpha() and w.islower()))
+
+
+def finding_place(p: c3.Project, finding: str) -> dict | None:
+    """Where a finding is, as the fix loop counts it, or None for a finding that names no project
+    file, such as a clone that is behind. The place is the file, the event (by sid and number) or
+    layer that the finding names in it, and the rest of its place (action 2). The plain words of
+    the message tell two findings at one place apart, and a digest holds what the place holds now."""
+    where, _, message = finding.partition(": ")
+    if not message:
+        return None
+    if where == "project.c3proj" or where.startswith("project.c3proj "):
+        path, rest = p.root / "project.c3proj", where[len("project.c3proj"):]
+    else:
+        prefix = next((pre for pre in PLACES if where.startswith(pre + " ")), None)
+        if prefix is None:
+            return None
+        files = p.listed_files(PLACES[prefix])
+        names = [n for n in files if where == f"{prefix} {n}" or where.startswith(f"{prefix} {n} ")]
+        if not names or files[max(names, key=len)] is None:
+            return None
+        name = max(names, key=len)
+        path, rest = files[name], where[len(prefix) + 1 + len(name):]
+    try:
+        node = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError):
+        node = path.read_bytes().hex() if path.is_file() else None
+    event = sid = None
+    part = plain(rest, numbers=True)
+    m = EVENT_PLACE.match(rest)
+    if m and isinstance(node, dict):
+        event, sid, part = int(m.group(1)), m.group(2), plain(rest[m.end():], numbers=True)
+        node = event_in(node.get("events"), sid, event) or node
+    elif rest.startswith(" layer ") and isinstance(node, dict):
+        part = rest.strip()
+        node = layer_in(node.get("layers"), rest[len(" layer "):]) or node
+    return {"file": path.resolve().relative_to(p.root.resolve()).as_posix(), "event": event, "sid": sid,
+            "part": part, "words": plain(message), "digest": digest(own_part(node))}
+
+
+def project_digest(p: c3.Project) -> str:
+    """A digest of project.c3proj and every JSON file of the folders the editor reads."""
+    files = [p.root / "project.c3proj"] + sorted(f for folder in RESOURCE_FOLDERS
+                                                 for f in (p.root / folder).rglob("*.json"))
+    h = hashlib.sha256()
+    for f in files:
+        if f.is_file():
+            h.update(f.relative_to(p.root).as_posix().encode("utf-8") + b"\0" + f.read_bytes())
+    return h.hexdigest()[:16]
+
+
+def fix_loop(p: c3.Project, errors: list[str]) -> tuple[list[str], list[str]]:
+    """Count the changes to each finding's place against the record of the last run, and keep the
+    new record. A change counts when the place differs from the last run and the finding is still
+    there. A rerun with nothing changed counts none and says so; a finding fixed, or a new one,
+    starts from none. Returns the notes, and a stop line for each finding that CAP changes left
+    standing. Nothing in the project is undone: which change to keep is the user's call."""
+    record = p.root / pp.SCRATCH / RECORD
+    try:
+        last = json.loads(record.read_text(encoding="utf-8"))
+        before = last["findings"] if isinstance(last.get("findings"), list) else []
+    except (OSError, ValueError, AttributeError, KeyError):
+        last, before = {}, []
+
+    def key(e: dict, by: str) -> tuple:
+        return e.get("file"), by, e.get(by), e.get("part"), e.get("words")
+    earlier = {key(e, by): e for e in before if isinstance(e, dict) for by in ("sid", "event")}
+    now, entries, seen = project_digest(p), [], set()
+    for finding in errors:
+        place = finding_place(p, finding)
+        if place is None or key(place, "sid") in seen:
+            continue
+        seen.add(key(place, "sid"))
+        was = earlier.get(key(place, "sid")) if place["sid"] is not None else None
+        was = was or earlier.get(key(place, "event"))
+        changes = was.get("changes", 0) + (was.get("digest") != place["digest"]) if was else 0
+        entries.append({**place, "finding": finding, "changes": changes})
+    if errors or record.exists():
+        pp.ignored_folder(record.parent)
+        record.write_text(json.dumps({"project": now, "findings": entries}, ensure_ascii=False, indent=1),
+                          encoding="utf-8")
+    generated = (p.root / c3.GENERATOR).is_file()
+    notes = []
+    if errors and last.get("project") == now:
+        notes.append(f"nothing changed in project.c3proj or the editor's JSON files since the last run, so no "
+                     f"finding counts as changed: change the project where each finding says, then run this again."
+                     + (f" {c3.GENERATOR} writes the files: run python {c3.GENERATOR} after a change to it."
+                        if generated else ""))
+    stops = []
+    for e in entries:
+        if e["changes"] < CAP:
+            continue
+        where = f"event {e['event']}" if e["event"] else e["part"] if e["part"].startswith("layer ") else ""
+        at = f"{where} of {e['file']}" if where else e["file"]
+        diff = f"git diff {e['file']}" + (f" {c3.GENERATOR}" if generated else "")
+        stops.append(f"stop: do not change {at} again. {e['changes']} changes left this finding standing, so the "
+                     f"fix it names was misread or does not fit there: {e['finding']}. {diff} shows the changes "
+                     f"(git log -p after they are committed). Tell the user the finding and what each change "
+                     f"tried, and let them decide; the changes stay in the project. Fix the other findings as "
+                     f"they say.")
+    return notes, stops
 
 
 def copied_sizes(p: c3.Project, layouts: dict[str, dict]) -> list[str]:
@@ -3323,8 +3490,11 @@ def main() -> int:
         "  python scripts/check_project.py --project ../OtherGame\n\n"
         "  python scripts/check_project.py --style        # a project the agent wrote\n"
         "  python scripts/check_project.py --review       # a project someone asked about\n\n"
+        "the last line: ok: and the next step, the number of problems, or stop: and a finding that two\n"
+        "changes left standing, which goes to the user\n\n"
         "exit codes: 0 no errors (warnings do not fail the run), 1 findings or project/clone not found,\n"
-        "2 a project file lacks a key the editor always writes and the run stopped there")
+        "2 the run stopped: a project file lacks a key the editor always writes, or the script failed,\n"
+        "as its line says")
     ap.add_argument("--style", action="store_true",
                     help="also warn where a sheet departs from the authoring style of the official examples: "
                          f"{STYLE_RUN} or more actions in a row without a comment action, a top-level event with "
@@ -3358,7 +3528,8 @@ def main() -> int:
     helpers = helpers_behind(project.root, project.rag)
     if helpers:
         findings.warn(helpers)
-    return Checker(project, args.limit, style=args.style, review=args.review).run()
+    record = not args.review and os.environ.get("CONSTRUCT3_RAG_NO_RECORD") != "1"
+    return Checker(project, args.limit, style=args.style, review=args.review, record=record).run()
 
 
 if __name__ == "__main__":

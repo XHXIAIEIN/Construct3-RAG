@@ -45,7 +45,8 @@ COMPARE = {0: lambda a, b: a == b, 1: lambda a, b: a != b, 2: lambda a, b: a < b
 def checker(project: Path) -> tuple[int, str]:
     p = subprocess.run([sys.executable, str(SKILL / "scripts" / "check_project.py"),
                         "--project", str(project), "--rag", str(REPO)],
-                       capture_output=True, text=True, encoding="utf-8", env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+                       capture_output=True, text=True, encoding="utf-8",
+                       env=dict(os.environ, PYTHONIOENCODING="utf-8", CONSTRUCT3_RAG_NO_RECORD="1"))
     return p.returncode, (p.stdout + p.stderr).strip()
 
 

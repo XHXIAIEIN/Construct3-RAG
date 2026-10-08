@@ -1040,8 +1040,8 @@ def addon_report(result: dict) -> list[str]:
 
 
 def blank(page: DevTools) -> float | None:
-    """c3project.blank_share of the window drawn at an eighth of its size: reading a full
-    1920x1080 screenshot here takes about 4 s, an eighth of it a few hundredths."""
+    """c3project.blank_share of the window drawn at an eighth of its width and height: the
+    PNG reader of c3project, in plain Python, is slow on a full-size screenshot."""
     w, h = page.evaluate("[innerWidth, innerHeight]")
     shot = page.call("Page.captureScreenshot", format="png",
                      clip={"x": 0, "y": 0, "width": w, "height": h, "scale": 0.125})
