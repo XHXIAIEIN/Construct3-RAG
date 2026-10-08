@@ -30,15 +30,31 @@ plan changes them with "set" on the group's number or the variable's name,
 the string to search the sheet's JSON for. --show N prints one event as
 JSON, for a plan of edit_sheet.py that puts it back changed.
 
+--since COMMIT prints what changed in the sheets since a commit, branch or
+tag of the project's git history, the files on disk included: each event
+added (+), removed (-) or changed (its lines that changed, - before and +
+after), and each one moved to another place, under the numbers of the sheet
+now and the events it sits in, marked [context]. An event is the same event
+when its content is, conditions, actions and values, or else when its sid is;
+the sids alone do not say it, because a generator run gives them anew. The old
+sheet is worded from the object types the commit holds.
+
 A harness cuts long tool output, so printing stops at --limit characters, at
 an event, and the last line gives the --events range that continues. A part
 printed with --events starts with the events it sits in, marked [context]
 and without their actions. Without a sheet name, a project whose sheets do
 not fit the limit prints the list of its sheets instead.
 """
+import collections
+import difflib
+import io
 import json
 import re
+import subprocess
 import sys
+import tarfile
+import tempfile
+from pathlib import Path, PurePosixPath
 from typing import Iterator, NamedTuple
 
 import c3project as c3
@@ -53,6 +69,7 @@ class Row(NamedTuple):
     head: list[str]     # the row as printed; of a block, the function line and the conditions
     body: list[str]     # the actions of a block
     above: tuple        # the rows this one sits in, outermost first
+    event: dict | None = None   # the event, comment or variable printed
 
 
 def outline_rows(events: list, counter: list[int], above: tuple = ()) -> Iterator[Row]:
@@ -185,7 +202,7 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
                     for i, line in enumerate(lines or [unconditional])]
             body = [f"     {pad}    -> {wording(p, 'actions', a)}" + (" [action disabled]" if a.get("disabled") else "")
                     for a in ev.get("actions", [])]
-        row = Row(counter[0] if et in NUMBERED else counter[0] + 1, head, body, above)
+        row = Row(counter[0] if et in NUMBERED else counter[0] + 1, head, body, above, ev)
         yield row
         yield from sheet_rows(p, ev.get("children", []), counter, (*above, row), top and et == "group")
 
@@ -267,12 +284,329 @@ def again(args, sheets: list[str], events: str | None) -> str:
     def quoted(value) -> str:
         return str(value) if re.fullmatch(r"[\w./\\:-]+", str(value)) else f'"{value}"'
     words = ["python", quoted(sys.argv[0]), *map(quoted, sheets)]
+    words += ["--since", quoted(args.since)] if args.since else []
     words += ["--events", events] if events else []
     words += ["--outline"] if args.outline else []
     for flag, default in (("project", None), ("rag", None), ("locale", "en-US"), ("limit", c3.LIMIT)):
         if getattr(args, flag) != default:
             words += [f"--{flag}", quoted(getattr(args, flag))]
     return " ".join(words)
+
+
+# --- --since: the events that changed since a commit ----------------------------------------------
+PROJECT_PARTS = ("project.c3proj", "objectTypes", "families", "eventSheets")     # what words a sheet
+SUB_EVENTS = re.compile(r"  \[sub-events? \d+(?:-\d+)?\]$")
+
+
+def git(root: Path, *args: str, binary: bool = False, wait: float = 60) -> subprocess.CompletedProcess:
+    """git run in the project folder, which reads paths relative to it."""
+    try:
+        return subprocess.run(["git", "-C", str(root), *args], capture_output=True, timeout=wait,
+                              **({} if binary else {"text": True, "encoding": "utf-8", "errors": "replace"}))
+    except FileNotFoundError:
+        sys.exit("--since reads the project's history with git, which was not found here; install git")
+    except subprocess.TimeoutExpired:
+        sys.exit(f"git {args[0]} did not answer in {wait:.0f} seconds; run this again")
+
+
+def commit_of(root: Path, ref: str) -> tuple[str, str]:
+    """The commit ref names, in full and short."""
+    if ref.startswith("-"):
+        sys.exit(f"--since takes a commit, a branch or a tag, such as main or HEAD~3; got {ref!r}")
+    if git(root, "rev-parse", "--git-dir").returncode:
+        sys.exit(f"--since compares with a commit of the project's history, and {root} is in no git repository: "
+                 f"git init and commit before the first edit")
+    found = git(root, "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}")
+    if found.returncode:
+        recent = git(root, "log", "--oneline", "-5").stdout.strip().splitlines()
+        sys.exit(f"--since {ref}: no such commit, branch or tag here"
+                 + (f"; the latest commits: {'; '.join(recent)}" if recent else "; the repository has no commit yet"))
+    full = found.stdout.strip()
+    return full, git(root, "rev-parse", "--short", full).stdout.strip() or full[:7]
+
+
+def project_at(p: c3.Project, commit: str, into: Path) -> c3.Project | None:
+    """The project as the commit holds it, as much of it as words its sheets, written into `into`;
+    None when the commit holds no project.c3proj in this folder."""
+    held = git(p.root, "ls-tree", "--name-only", commit, "--", *PROJECT_PARTS).stdout.split()
+    if "project.c3proj" not in held:
+        return None
+    archive = git(p.root, "archive", "--format=tar", commit, "--", *held, binary=True)
+    if archive.returncode:
+        sys.exit(f"git archive {commit[:7]} failed: {archive.stderr.decode('utf-8', 'replace').strip()}")
+    with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
+        for member in tar.getmembers():
+            path = into.joinpath(*PurePosixPath(member.name).parts)
+            if member.isfile() and ".." not in PurePosixPath(member.name).parts:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(tar.extractfile(member).read())
+    try:
+        return c3.Project(into, p.rag, p.locale, c3.Findings())
+    except SystemExit:      # a file the commit holds is not valid JSON: its sheets read as they are worded now
+        return None
+
+
+def content(obj):
+    """An event's own content, to compare: without its sub-events, and without the sids, which a generator
+    run gives anew from its first changed line on."""
+    if isinstance(obj, dict):
+        return {k: content(v) for k, v in obj.items() if k not in ("sid", "children")}
+    return [content(v) for v in obj] if isinstance(obj, list) else obj
+
+
+def matched(old: list[Row], new: list[Row]) -> dict[int, int]:
+    """Old row index -> new row index of the same event: the same sid and content, then the same content,
+    then the same sid, then a row of the same kind in the same place with lines alike, such as an edited
+    comment, which has no sid. When most events kept their content under another sid, the sids were given
+    anew, as a generator run does, and a sid no longer names one event."""
+    keys = {id(row): json.dumps(content(row.event), sort_keys=True, ensure_ascii=False) for row in (*old, *new)}
+
+    def sid(row: Row):
+        s = row.event.get("sid")
+        return s if isinstance(s, int) else None
+
+    counts = collections.Counter(sid(r) for r in (*old, *new))
+    unique = {s for s, n in counts.items() if s is not None and n == 2}
+    old_by_sid = {sid(r): i for i, r in enumerate(old) if sid(r) in unique}
+    pairs: dict[int, int] = {}
+    for j, row in enumerate(new):
+        i = old_by_sid.get(sid(row))
+        if i is not None and keys[id(old[i])] == keys[id(row)]:
+            pairs[i] = j
+    taken = set(pairs.values())
+    waiting: dict[str, collections.deque] = {}
+    for i, row in enumerate(old):
+        if i not in pairs:
+            waiting.setdefault(keys[id(row)], collections.deque()).append(i)
+    for j, row in enumerate(new):
+        queue = waiting.get(keys[id(row)]) if j not in taken else None
+        if queue:
+            pairs[queue.popleft()] = j
+    taken = set(pairs.values())
+    kept = [sid(old[i]) == sid(new[j]) for i, j in pairs.items() if sid(old[i]) is not None]
+    if not kept or sum(kept) * 2 >= len(kept):
+        for j, row in enumerate(new):
+            i = old_by_sid.get(sid(row))
+            if (j not in taken and i is not None and i not in pairs
+                    and old[i].event.get("eventType") == row.event.get("eventType")):
+                pairs[i] = j
+                taken.add(j)
+    # The rest by place: before the same matched row, in the same matched parent
+    at_old = {id(r): k for k, r in enumerate(old)}
+    at_new = {id(r): k for k, r in enumerate(new)}
+
+    def place(rows: list[Row], k: int, at: dict, to_new) -> tuple:
+        after = next((to_new(m) for m in range(k + 1, len(rows)) if to_new(m) is not None), len(new))
+        parent = to_new(at[id(rows[k].above[-1])]) if rows[k].above else -1
+        return after, parent, rows[k].event.get("eventType")
+
+    spots: dict[tuple, list[int]] = {}
+    for i in range(len(old)):
+        if i not in pairs:
+            spots.setdefault(place(old, i, at_old, pairs.get), []).append(i)
+    for j in range(len(new)):
+        if j in taken:
+            continue
+        here = spots.get(place(new, j, at_new, lambda m: m if m in taken else None), [])
+        lines = compared(new[j])
+        for i in here:
+            if difflib.SequenceMatcher(a=compared(old[i]), b=lines, autojunk=False).ratio() >= 0.5 \
+                    or difflib.SequenceMatcher(a="\n".join(compared(old[i])), b="\n".join(lines),
+                                               autojunk=False).ratio() >= 0.6:
+                pairs[i] = j
+                here.remove(i)
+                break
+    return pairs
+
+
+def moved(old: list[Row], new: list[Row], pairs: dict[int, int]) -> set[int]:
+    """The new rows of matched events that sit in another event, or in another order among the events that
+    stayed beside them: out of the longest run of them that kept its order."""
+    index = {id(r): k for rows in (old, new) for k, r in enumerate(rows)}
+    parent_old = [index[id(r.above[-1])] if r.above else None for r in old]
+    parent_new = [index[id(r.above[-1])] if r.above else None for r in new]
+    out, siblings = set(), {}
+    for i, j in sorted(pairs.items(), key=lambda pair: pair[1]):
+        po, pn = parent_old[i], parent_new[j]
+        if (pairs.get(po) if po is not None else None) != pn or (po is None) != (pn is None):
+            out.add(j)
+        else:
+            siblings.setdefault(pn, []).append((i, j))
+    for kids in siblings.values():
+        # the longest increasing run of old indexes, in new order
+        best: list[list[tuple[int, int]]] = []
+        for pair in kids:
+            longest = max((run for run in best if run[-1][0] < pair[0]), key=len, default=[])
+            best.append([*longest, pair])
+        keep = set(max(best, key=len, default=[]))
+        out.update(j for pair in kids if pair not in keep for _, j in [pair])
+    return out
+
+
+def compared(row: Row) -> list[str]:
+    """A row's lines without its number and its sub-event numbers, which an edit elsewhere changes."""
+    return [SUB_EVENTS.sub("", line)[5:] for line in (*row.head, *row.body)]
+
+
+def unnumbered(line: str) -> str:
+    """A line of the old sheet, whose numbers would read as the sheet's now."""
+    return "     " + SUB_EVENTS.sub("", line)[5:]
+
+
+def changes(old: list[Row], new: list[Row], since: str) -> tuple[list[tuple[int, list[str]]], collections.Counter]:
+    """The changes of one sheet in the order of the sheet now, each with the number of the event it prints
+    at, and how many rows were added, changed, moved and removed. An added or changed row prints at its own
+    number, a removed one before the next event that stayed, or at the end, under the events it sat in."""
+    pairs = matched(old, new)
+    back = {j: i for i, j in pairs.items()}
+    shifted = moved(old, new, pairs)
+    at_old = {id(r): k for k, r in enumerate(old)}
+    at_new = {id(r): k for k, r in enumerate(new)}
+    added = {j for j in range(len(new)) if j not in back}
+    edited = {j for j, i in back.items() if content(old[i].event) != content(new[j].event)}
+    counts = collections.Counter(added=len(added), changed=len(edited), moved=len(shifted - edited),
+                                 removed=len(old) - len(pairs))
+    shown: set[int] = set()     # new rows whose first line is printed, as a change or as context
+
+    def context(chain) -> list[str]:
+        lines = []
+        for above in chain:
+            if at_new[id(above)] not in shown:
+                shown.add(at_new[id(above)])
+                lines.append(f" {above.head[0]}  [context]")
+        return lines
+
+    def numbered(row: Row) -> bool:
+        return row.event.get("eventType") in NUMBERED
+
+    def removal(i: int) -> list[str]:
+        row = old[i]
+        top = not row.above or at_old[id(row.above[-1])] in pairs
+        where = f"removed; event {row.number} in {since}" if numbered(row) else "removed"
+        chain = [new[pairs[at_old[id(a)]]] for a in row.above if at_old[id(a)] in pairs] if top else []
+        return context(chain) + [f"-{unnumbered(line)}" + (f"  [{where}]" if n == 0 and top else "")
+                                 for n, line in enumerate((*row.head, *row.body))]
+
+    def addition(j: int) -> list[str]:
+        row = new[j]
+        top = not row.above or at_new[id(row.above[-1])] not in added
+        shown.add(j)
+        return (context(row.above) if top else []) + [
+            f"+{line}" + ("  [added]" if n == 0 and top else "") for n, line in enumerate((*row.head, *row.body))]
+
+    def change(j: int) -> list[str]:
+        row, was = new[j], old[back[j]]
+        shown.add(j)
+        notes = ["changed"] if j in edited else []
+        if j in shifted:
+            notes.append(f"moved from event {was.number} in {since}" if numbered(was) else "moved")
+        note = ", ".join(notes)
+        a, b = compared(was), compared(row)
+        if a == b:
+            if j in edited:
+                old_keys, new_keys = content(was.event), content(row.event)
+                keys = sorted(k for k in {*old_keys, *new_keys} if old_keys.get(k) != new_keys.get(k))
+                note += f" in {', '.join(keys)}, which the print does not show"
+            return context(row.above) + [f" {row.head[0]}  [{note}]"]
+        old_lines, new_lines = [*was.head, *was.body], [*row.head, *row.body]
+        ops = difflib.SequenceMatcher(a=a, b=b, autojunk=False).get_opcodes()
+        # Each changed line with the line before and after it, and the event's first line
+        wanted = {("new", 0)}
+        for tag, i1, i2, j1, j2 in ops:
+            if tag != "equal":
+                wanted.update(("old", k) for k in range(i1, i2))
+                wanted.update(("new", k) for k in range(j1 - 1, j2 + 1) if 0 <= k < len(b))
+        out, gap = [], False
+        for tag, i1, i2, j1, j2 in ops:
+            sides = [("old", k) for k in range(i1, i2) if tag != "equal"] + [("new", k) for k in range(j1, j2)]
+            for side, k in sides:
+                if (side, k) not in wanted:
+                    gap = True
+                    continue
+                if gap and out:
+                    out.append("             ...")
+                gap = False
+                out.append(f"-{unnumbered(old_lines[k])}" if side == "old"
+                           else f"{' ' if tag == 'equal' else '+'}{new_lines[k]}")
+        out[0] += f"  [{note}]"
+        return context(row.above) + out
+
+    removed_at: dict[int, list[int]] = {}
+    for i in range(len(old)):
+        if i not in pairs:
+            after = next((pairs[k] for k in range(i + 1, len(old)) if k in pairs), len(new))
+            removed_at.setdefault(after, []).append(i)
+    end = (new[-1].number + 1) if new else 1
+    chunks: list[tuple[int, list[str]]] = []
+    for j, row in enumerate(new):
+        chunks += [(row.number, removal(i)) for i in removed_at.get(j, [])]
+        if j in added:
+            chunks.append((row.number, addition(j)))
+        elif j in edited or j in shifted:
+            chunks.append((row.number, change(j)))
+    chunks += [(end, removal(i)) for i in removed_at.get(len(new), [])]
+    return chunks, counts
+
+
+def print_since(args, project: c3.Project, sheets: dict[str, dict]) -> int:
+    """The events added, changed, moved and removed since --since, sheet by sheet, as the editor words them."""
+    commit, short = commit_of(project.root, args.since)
+    since = short if short.startswith(args.since) else f"{args.since} ({short})"
+    first, last = events_range(args.events)
+    with tempfile.TemporaryDirectory(prefix="print-sheet-since-") as tmp:
+        then = project_at(project, commit, Path(tmp))
+        old_sheets = then.load_listed("eventSheets") if then else {}
+        for name in args.sheets:
+            if name not in sheets and name not in old_sheets:
+                sys.exit(f"no event sheet named {name!r} now or in {since}; sheets: {', '.join(sheets)}")
+        names = args.sheets or [*sheets, *(n for n in old_sheets if n not in sheets)]
+        if args.events and len(names) != 1:
+            sys.exit(f"--events reads one sheet; name it: {', '.join(names)}")
+        room = args.limit - 600 if args.limit else None     # the last line names a whole command
+        same: list[str] = []
+        for k, name in enumerate(names):
+            if room is not None and room <= 0:
+                print(f"-- stopped at the limit of {args.limit} characters (--limit). The rest: "
+                      f"{again(args, names[k:], None)}")
+                return 0
+            if name not in sheets:
+                line = (f"== {name}: removed since {since}, with its "
+                        f"{sum(1 for _ in c3.numbered_events(old_sheets[name]['events']))} events")
+                print(line)
+                room = room and room - len(line) - 1
+                continue
+            new = list(sheet_rows(project, sheets[name]["events"], [0]))
+            total = sum(1 for _ in c3.numbered_events(sheets[name]["events"]))
+            if name in old_sheets:
+                chunks, counts = changes(list(sheet_rows(then, old_sheets[name]["events"], [0])), new, args.since)
+                if not chunks:
+                    same.append(name)
+                    continue
+                head = (f"== {name} since {since}: "
+                        + ", ".join(f"{counts[kind]} {kind}" for kind in ("added", "changed", "moved", "removed")
+                                    if counts[kind])
+                        + "; event numbers are the sheet's now")
+            else:
+                chunks = [(r.number, [f"+{line}" for line in (*r.head, *r.body)]) for r in new]
+                head = f"== {name}: new since {since}, {total} events"
+            print(head)
+            used = len(head) + 1
+            for n, lines in chunks:
+                if n < first or (last is not None and n > last):
+                    continue
+                size = sum(len(line) + 1 for line in lines)
+                if room is not None and used + size > room and used > len(head) + 1:
+                    more = [again(args, [name], f"{n}-{last or ''}")] + (
+                        [again(args, names[k + 1:], None)] if names[k + 1:] else [])
+                    print(f"-- stopped at the limit of {args.limit} characters (--limit), before event {n} of "
+                          f"{total}. The rest: {'  then  '.join(more)}")
+                    return 0
+                print("\n".join(lines))
+                used += size
+            room = room and room - used
+        if same:
+            print(f"no event changed since {since} in {', '.join(same)}")
+    return 0
 
 
 def main() -> int:
@@ -286,9 +620,11 @@ def main() -> int:
         "  python scripts/print_sheet.py Game --show 5         event 5 as JSON\n"
         "  python scripts/print_sheet.py --project <Construct-Example-Projects>/example-projects/template-snake\n"
         "  python scripts/print_sheet.py Game --locale zh-CN   the editor's Chinese wording\n"
-        "  python scripts/print_sheet.py --review              a project someone asked about\n\n"
-        "exit codes: 0 printed, whole or the part that fits; 1 no such sheet, a range past the sheet's end, or\n"
-        "project/clone not found; 2 a sheet lacks a key the editor writes")
+        "  python scripts/print_sheet.py --review              a project someone asked about\n"
+        "  python scripts/print_sheet.py --since main          what changed since main, for a review or a hand-over\n\n"
+        "exit codes: 0 printed, whole or the part that fits; 1 no such sheet, a range past the sheet's end,\n"
+        "project/clone not found, or a --since the project's history does not hold; 2 a sheet lacks a key the\n"
+        "editor writes")
     ap.add_argument("sheets", nargs="*", metavar="SHEET", help="event sheet names (default: every sheet)")
     ap.add_argument("--events", metavar="A-B",
                     help="print only the events numbered A to B of one sheet; 40- runs to the end, 40 is one event")
@@ -298,6 +634,9 @@ def main() -> int:
                     help="print event N of one sheet as JSON, to change and put back with edit_sheet.py's replace")
     ap.add_argument("--review", action="store_true",
                     help="for a project someone else wrote and asked about: end with what a review reports")
+    ap.add_argument("--since", metavar="COMMIT",
+                    help="print only the events added, changed, moved and removed since this commit, branch or tag "
+                         "of the project's git history, the files as they are now included")
     args = ap.parse_args()
     c3.utf8_output()
     findings = c3.Findings()
@@ -306,6 +645,13 @@ def main() -> int:
     c3.note_drift(project.rag)
 
     sheets = project.load_listed("eventSheets")
+    if args.since is not None:
+        if args.outline or args.show is not None:
+            sys.exit("--since prints what changed, as events; --outline and --show read the sheet as it is now")
+        for name, path in project.listed_files("eventSheets").items():
+            if path and name in (args.sheets or sheets):
+                c3.stamp(path)
+        return print_since(args, project, sheets)
     if not sheets:
         scripts = project.scripts_summary()
         print((f"no event sheets: the project's logic is in its scripts, read them as code: {scripts}" if scripts
