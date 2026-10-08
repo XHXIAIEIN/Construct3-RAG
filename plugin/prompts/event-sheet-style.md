@@ -92,7 +92,8 @@ put one. Keep the period between two sentences.
 | A section of globals or of inputs | A noun | `Settings` `Gameplay variables` `Keyboard inputs` |
 | The sheet | One line on what it covers | `This is the main gameplay event sheet. Each game component has a dedicated event sheet` |
 
-A function or custom action takes the same sentence as its description.
+A function's or custom action's description is the sentence of the
+comment above it, as `Coin: Collect()` shows in the shape above.
 
 ## Names
 

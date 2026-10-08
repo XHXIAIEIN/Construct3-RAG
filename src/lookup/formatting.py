@@ -51,6 +51,13 @@ def format_condition_sig(name_en: str, params: list[dict]) -> str:
     return f"{name_en}({param_text})" if param_text else name_en
 
 
+def format_signature(ace_type: str, name_en: str, params: list[dict]) -> str:
+    """The signature of an ACE as a list or detail line shows it."""
+    if ace_type == "conditions":
+        return format_condition_sig(name_en, params)
+    return f"{name_en}({format_params(params)})"
+
+
 def build_zh_line(
     plugin_en: str,
     plugin_zh: str,

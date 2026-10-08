@@ -18,7 +18,7 @@ Open `http://localhost:8765/playground` to test.
 ## Setup Options
 
 ```bash
-python scripts/setup.py                 # install deps, start the lookup server
+python scripts/setup.py                 # install deps, start the lookup service
 python scripts/setup.py --refresh-data  # explicitly refresh Construct data
 python scripts/setup.py --skip-deps     # skip pip install
 python scripts/setup.py --version <release>  # refresh data/ from a specific release
@@ -42,8 +42,9 @@ no CDN request. `scripts/init.py` and `--refresh-data` fetch the latest stable
 release, `--version` a named one, into `C3_CACHE_DIR` and replace
 `data/c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`. Both then
 rebuild `data/c3-example-usage` from the `Construct-Example-Projects` clone
-when it lies beside this repository. Review the result with `git diff`
-before committing.
+when it lies beside this repository, and write each guide in
+`data/c3-guides/` whose text changed; `init.py` then builds `plugin/` again.
+Review the result with `git diff` before committing.
 
 ## Test
 

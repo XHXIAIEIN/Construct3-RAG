@@ -119,7 +119,7 @@ r495.2 the two disagree on 28 ACEs outside the deprecated addons:
 The 15 stay in the schema, flagged `isDeprecated`. Counting conditions and
 actions only, 31 official examples use one of them (`pin-to-object` in 14,
 `set-z-height` in 9, `effects-are-supported` in 9); dropped, each use would
-read to the checker as a missing ACE and to the sheet printer as a row it
+read to the checker as a missing ACE and to `print_sheet.py` as a row it
 cannot word.
 
 `{locale}/_deprecated.json` lists what the editor has deprecated, kept in the

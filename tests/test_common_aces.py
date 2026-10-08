@@ -24,12 +24,16 @@ SCHEMAS = ROOT / "data" / "c3-schemas"
 LOCALES = ("en-US", "zh-CN")
 
 
+def _read_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def _lang_pack(locale: str) -> dict:
-    return json.loads((ROOT / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))
+    return _read_json(ROOT / "data" / "c3-lang" / f"{locale}.json")
 
 
 def _exported_common(locale: str) -> dict:
-    return json.loads((SCHEMAS / locale / "plugins" / "_common.json").read_text(encoding="utf-8"))
+    return _read_json(SCHEMAS / locale / "plugins" / "_common.json")
 
 
 def _structural_index(categories: dict) -> dict[tuple[str, str], dict]:
@@ -69,7 +73,7 @@ def test_committed_extract_covers_the_language_pack(locale):
 
 
 def test_committed_extract_states_its_source():
-    data = json.loads(COMMON_ACES_PATH.read_text(encoding="utf-8"))
+    data = _read_json(COMMON_ACES_PATH)
     assert data["_source"]["file"] == "main.js"
     assert data["_source"]["script"] == "scripts/extract_common_aces.py"
     assert data["_source"]["release"].startswith("r")
@@ -258,7 +262,7 @@ def test_committed_extract_gives_text_no_set_color():
 
 
 def test_committed_extract_requirements_cover_every_shared_ace():
-    data = json.loads(COMMON_ACES_PATH.read_text(encoding="utf-8"))
+    data = _read_json(COMMON_ACES_PATH)
     structural = _structural_index(data["categories"])
     assert {(t, ace_id) for t in ACE_TYPES for ace_id in data["requires"][t]} == set(structural)
     assert data["_source"]["plugins"].startswith("plugins/allEditorPlugins.js")
@@ -335,11 +339,11 @@ def test_exported_plugins_list_the_shared_aces_they_get():
     available = load_common_availability()
     common = _exported_common("en-US")
     ids = {t: {a["id"] for a in common[t]} for t in ACE_TYPES}
-    index = json.loads((SCHEMAS / "_index.json").read_text(encoding="utf-8"))["plugins"]
+    index = _read_json(SCHEMAS / "_index.json")["plugins"]
     for plugin_id, entry in index.items():
         if plugin_id == "_common":
             continue
-        en, zh = (json.loads((SCHEMAS / locale / entry["file"]).read_text(encoding="utf-8")) for locale in LOCALES)
+        en, zh = (_read_json(SCHEMAS / locale / entry["file"]) for locale in LOCALES)
         assert en["commonAces"] == zh["commonAces"], plugin_id
         assert en["commonAces"] == available[entry["originalId"]], plugin_id
         for t in ACE_TYPES:

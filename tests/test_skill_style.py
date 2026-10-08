@@ -5,8 +5,9 @@ import json
 import re
 from pathlib import Path
 
-from tests.skill_helpers import SHEET, check, edit, cond, block, events, findings, warnings, plan
-from tests.test_skill_check_project import add_addon, add_keyboard, pathfinding_coin
+from tests.skill_helpers import (
+    SHEET, check, edit, cond, block, events, findings, warnings, plan, add_addon, add_keyboard, pathfinding_coin,
+)
 
 
 STYLE_ACTIONS = [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": f'"{i}"'}} for i in range(8)]

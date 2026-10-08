@@ -2,7 +2,7 @@
 
 **English** | [中文](README_CN.md)
 
-Construct3-RAG lets an AI agent make and change [Construct 3](https://www.construct.net) games that are saved as project folders. It holds every condition, action, expression and effect as the editor defines them, in JSON files that the agent and the scripts read directly. The scripts come with the [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill. With them, the agent looks up the JSON to write and reads and edits event sheets. It also checks the project, and opens and plays it in the Construct 3 editor.
+Construct3-RAG lets an AI agent make and change [Construct 3](https://www.construct.net) games that are saved as folder projects. It holds every condition, action, expression and effect as the editor defines them, in JSON files that the agent and the scripts read directly. The scripts come with the [`construct3-agent-plugin`](skills/construct3-agent-plugin/SKILL.md) skill. With them, the agent looks up the JSON to write and reads and edits event sheets. It also checks the project, and opens and plays it in the Construct 3 editor.
 
 > [!IMPORTANT]
 > **AI agents: answer this question before you write a project file.** Is this repository cloned on the user's machine? Can you run `python <clone>/skills/construct3-agent-plugin/scripts/check_project.py --project <game folder>` there and read its output?

@@ -35,6 +35,8 @@ MEMBER = re.compile(r"^\s*(?:(?:readonly|static|get|set|async|abstract)\s+)*([\w
 # the suffixes an addon's interface carries after its name: Timer is ITimerBehaviorInstance
 SUFFIXES = ("behaviorinstance", "instance", "behaviortype", "objecttype", "behaviors", "behavior", "plugin", "")
 FULL = 6    # this many member hits or fewer print with their doc comment
+# The declarations that hold members and answer to an addon's name; a type alias, function or const does not.
+TYPES = ("class", "interface", "namespace")
 # What a size member measures, where its name does not say. From the manual's scripting reference: iruntime,
 # plugin-interfaces/sprite and plugin-interfaces/tiled-background. Printed under the member.
 VIEWPORT = ("the project's viewport size from Project Properties, not the layout's size, which is "
@@ -187,8 +189,13 @@ def ancestors(api: dict[str, list[Declaration]], name: str) -> list[Declaration]
     return out
 
 
+def heading(d: Declaration) -> list[str]:
+    """The declaration's kind, name and place, then its header line."""
+    return [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}"]
+
+
 def print_declaration(d: Declaration) -> list[str]:
-    lines = [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}"]
+    lines = heading(d)
     sizes = [SIZE_NOTES.get((d.name, m.name)) for m in d.members]
     for i, m in enumerate(d.members):
         lines += [f"  {m.text}", *notes(m.text)]
@@ -223,10 +230,11 @@ def lookup(decls: list[Declaration], query: str) -> tuple[list[str], bool]:
         known = {squash(n): n for n in by_name}
         target = known.get(squash(owner))
         if target:
-            hits = [(d, m) for d in ancestors(by_name, target) for m in d.members if m.name.lower() == member.lower()]
+            line = ancestors(by_name, target)
+            hits = [(d, m) for d in line for m in d.members if m.name.lower() == member.lower()]
             if hits:
                 return print_members(hits), True
-            names = sorted({m.name for d in ancestors(by_name, target) for m in d.members})
+            names = sorted({m.name for d in line for m in d.members})
             return [f"{target} and the interfaces it extends declare no {member!r}{closest(member, names)}; "
                     f"lookup_script_api.py {target} lists its members"], False
         # `runtime.callFunction`, `this.x`: an instance, not an interface; look the member up anywhere
@@ -234,11 +242,10 @@ def lookup(decls: list[Declaration], query: str) -> tuple[list[str], bool]:
 
     lines: list[str] = []
     key = squash(query)
-    named = [d for d in decls if d.kind in ("class", "interface", "namespace") and key in addon_keys(d.name)]
-    named += [d for d in decls if d.kind not in ("class", "interface", "namespace") and squash(d.name) == key]
+    named = [d for d in decls if d.kind in TYPES and key in addon_keys(d.name)]
+    named += [d for d in decls if d.kind not in TYPES and squash(d.name) == key]
     for d in named:
-        lines += print_declaration(d) if d.kind in ("class", "interface", "namespace") else \
-            [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}", *notes(d.header)]
+        lines += print_declaration(d) if d.kind in TYPES else [*heading(d), *notes(d.header)]
     exact = [(d, m) for d in decls for m in d.members if m.name.lower() == query.lower()]
     if exact:
         lines += print_members(exact)

@@ -94,10 +94,25 @@ WRITING = {
 # number there. These types write it; a layer's default "" names no layer.
 EDITOR_DEFAULT = {
     "boolean": lambda v: "true" if str(v).lower() == "true" else "false",
-    "number": lambda v: json.dumps(str(v)),
-    "string": lambda v: json.dumps(str(v)),
-    "any": lambda v: json.dumps(str(v)),
+    **dict.fromkeys(("number", "string", "any"), lambda v: json.dumps(str(v))),
 }
+# The fields an ACE is searched by; `scriptName` is the name a script calls it by.
+NAME_KEYS = ("id", "list-name", "translated-name", "scriptName")
+
+
+def ace_names(it: dict, *where: str) -> str:
+    """The names of an ACE and the words for where it lives (the behavior, the addon, its
+    category, the kind), squashed into one string a word is searched in."""
+    return squash(" ".join([*(str(it.get(k, "")) for k in NAME_KEYS), *where]))
+
+
+def title_of(it: dict) -> str | None:
+    return it.get("list-name") or it.get("translated-name")
+
+
+def via(behavior: str | None, addon: str) -> str:
+    """Where the ACE comes from, after its title: ` [behavior Tween, tween]` or ` [sprite]`."""
+    return f" [behavior {behavior}, {addon}]" if behavior else f" [{addon}]"
 
 
 def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]:
@@ -151,30 +166,24 @@ def shared_matches(p: c3.Project, words: list[str], plugins: list[dict]) -> list
         for it in p.common.get(kind, []):
             if it["id"] not in allowed:
                 continue
-            names = squash(" ".join([*(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")),
-                                     kind, it.get("category", "")]))
-            if all(squash(w) in names for w in words):
+            if all(squash(w) in ace_names(it, kind, it.get("category", "")) for w in words):
                 out.append((kind, it))
     return out
 
 
 def brief(owner: str, behavior: str | None, addon: str, kind: str, it: dict) -> str:
-    title = it.get("list-name") or it.get("translated-name")
-    via = f" [behavior {behavior}, {addon}]" if behavior else f" [{addon}]"
     params = it.get("params") or {}
-    return (f"{kind[:-1]:<10} {it['id']:<34} {title}{via}" + (f"  ({', '.join(params)})" if params else "")
-            + ("  <deprecated>" if it.get("isDeprecated") else ""))
+    return (f"{kind[:-1]:<10} {it['id']:<34} {title_of(it)}{via(behavior, addon)}"
+            + (f"  ({', '.join(params)})" if params else "") + ("  <deprecated>" if it.get("isDeprecated") else ""))
 
 
 def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, written: str | None = None) -> list[str]:
     """written: the name an expression has in a project file, English in every locale."""
-    title = it.get("list-name") or it.get("translated-name")
     flags = [f for f in ("isTrigger", "isLooping", "isAsync") if it.get(f)] + \
             (["not invertible"] if it.get("isInvertible") is False else []) + \
             (["deprecated"] if it.get("isDeprecated") else [])
-    via = f" [behavior {behavior}, {addon}]" if behavior else f" [{addon}]"
     params = it.get("params") or {}
-    lines = [f"{kind[:-1]} {it['id']} - {title}{via}" + (f"  <{', '.join(flags)}>" if flags else ""),
+    lines = [f"{kind[:-1]} {it['id']} - {title_of(it)}{via(behavior, addon)}" + (f"  <{', '.join(flags)}>" if flags else ""),
              f"  {it.get('description', '')}"]
     if it.get("isDeprecated"):
         lines.append(f"  deprecated: {c3.DEPRECATED}"
@@ -326,14 +335,16 @@ def effect_lookup(p: c3.Project, effect_id: str, words: list[str]) -> int:
 def retired_note(p: c3.Project, sources: list[tuple[str, str | None, dict]], words: list[str]) -> list[str]:
     """The deprecated ACEs of these addons that the schema left out and that have
     every word, for a project that still uses one. None without words."""
+    if not words:
+        return []
     hits = []
-    for _, behavior, s in sources if words else []:
+    for _, behavior, s in sources:
         if not s:
             continue
         kept = {(kind, it["id"]) for kind in KINDS for it in s.get(kind, [])}
         for kind in KINDS:
             for ace_id, entry in p.deprecated_aces(f"{s.get('type')}s", s.get("id", ""), kind).items():
-                title = entry.get("list-name") or entry.get("translated-name") or ace_id
+                title = title_of(entry) or ace_id
                 names = squash(" ".join([ace_id, title, behavior or "", s.get("id", ""), s.get("name", ""), kind]))
                 if (kind, ace_id) not in kept and all(squash(w) in names for w in words):
                     hits.append(f"  {kind[:-1]:<10} {ace_id:<34} {title} [{s.get('id', '')}]"
@@ -398,8 +409,7 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
                     current = p.deprecated_aces(f"{s.get('type')}s", s.get("id", ""), kind).get(it["id"], {}).get("current")
                     it = {**it, "current": current} if current else it
                 # A word may also name where the ACE lives: the behavior, the addon, "condition".
-                names = squash(" ".join([*(str(it.get(k, "")) for k in ("id", "list-name", "translated-name", "scriptName")),
-                                         behavior or "", s.get("id", ""), s.get("name", ""), kind]))
+                names = ace_names(it, behavior or "", s.get("id", ""), s.get("name", ""), kind)
                 # Set return value and the function maps are in the System schema, and a
                 # project writes them under the Functions object's name.
                 writer = p.functions_object if s.get("id") == "system" and c3.is_functions_ace(it) else owner
@@ -471,7 +481,6 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         some = sorted(((sum(squash(w) in e[0] for w in words), sum(squash(w) in e[1] for w in words), e[2:])
                        for e in entries), key=lambda x: (-x[0], -x[1]))
         some = [e for _, n, e in some if n]
-        entries = [e[1:] for e in entries]
         # The miss is the answer, on stdout like a hit: a harness that shows stdout alone
         # would print nothing, and PowerShell wraps every stderr line in an error record.
         print(f"nothing under {target} has every word of {query!r}")
@@ -482,8 +491,8 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
             if len(some) > 12:
                 print(f"  ... and {len(some) - 12} more")
         else:
-            near = closest(" ".join(words), [e[5]["id"] for e in entries], n=6)
-            categories = sorted({e[5].get("category", "") for e in entries} - {""})
+            near = closest(" ".join(words), [e[6]["id"] for e in entries], n=6)
+            categories = sorted({e[6].get("category", "") for e in entries} - {""})
             print((near.lstrip("; ") + "\n" if near else "") + f"categories, each a word too: {', '.join(categories)}")
         return 1
 

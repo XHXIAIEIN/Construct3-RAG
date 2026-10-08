@@ -3,11 +3,10 @@
 Committed Construct 3 reference data, read directly or through the lookup
 service in `src/`. The prompts in `prompts/` point to its files, and the
 scripts in `skills/construct3-agent-plugin/` read it for a game project.
-`c3-schemas/_index.json` is the source of truth for version and counts.
 
 | Path | Content |
 |------|---------|
-| `c3-schemas/_index.json` | Plugin, behavior, and effect index. Language neutral. |
+| `c3-schemas/_index.json` | Plugin, behavior and effect index, language neutral; the source of truth for version and counts |
 | `c3-schemas/{locale}/_index.json` | Display names for that locale, keyed by the same ids |
 | `c3-schemas/{locale}/` | Schema files per locale (`en-US`, `zh-CN`): `plugins/`, `behaviors/`, `effects/` |
 | `c3-schemas/{locale}/_deprecated.json` | What the editor has deprecated: addons and ACEs, kept in the schema or not |

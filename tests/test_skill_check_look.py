@@ -32,15 +32,15 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     assert re.search(r"grid.world-placement: layout Objects layer Objects: Coin at \(\d+,\d+\) \d+x\d+ is off the 32 px grid", out)
     assert "grid.runtime-spawn: sheet Game: create Coin at x = random(96, 1728), a raw random()" in out
     assert out.splitlines()[-1].startswith("4 findings:")
-    code, out = tool(project, "check_look", "--painted", "glow.png")
+    _, out = tool(project, "check_look", "--painted", "glow.png")
     assert "glow.png" not in out and out.splitlines()[-1].startswith("3 findings:")
     edit(project, "objectTypes/Coin.json", lambda d: d["behaviorTypes"].append(
         {"behaviorId": "Flash", "name": "Flash", "sid": 633333333333333}))
-    code, out = tool(project, "check_look", "--painted", "glow.png")
+    _, out = tool(project, "check_look", "--painted", "glow.png")
     assert "motion.hit: Coin has the Flash behavior Flash; a hit shows as a colour for an instant" in out
     edit(project, "objectTypes/Coin.json", lambda d: d["behaviorTypes"].append(
         {"behaviorId": "solid", "name": "Solid", "sid": 644444444444444}))
-    code, out = tool(project, "check_look", "--painted", "glow.png")
+    _, out = tool(project, "check_look", "--painted", "glow.png")
     assert ("motion.squash-art: sheet Game: Coin is squashed but has solid, so its collision box grows into the "
             "floor; squash its art") in out
 

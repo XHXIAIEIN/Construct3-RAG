@@ -207,6 +207,16 @@ def _strip_bom(raw: bytes) -> bytes:
     return raw[3:] if raw[:3] == b"\xef\xbb\xbf" else raw
 
 
+def _write_json(path: Path, data: dict | list) -> None:
+    """Write ``data`` as the indented, unescaped UTF-8 JSON every export file uses."""
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _unwrap(data: dict | list, key: str) -> dict | list:
+    """The list or mapping under ``key`` when the CDN wraps it in an object."""
+    return data.get(key, data) if isinstance(data, dict) else data
+
+
 def latest_stable_version(base_url: str = "https://editor.construct.net") -> str:
     """Return the release name of the newest Stable build in versions.json."""
     url = f"{base_url.rstrip('/')}/{ENDPOINTS['versions']}"
@@ -361,10 +371,6 @@ class C3Fetcher:
         for addon_type, plugin_type in type_map.items():
             for plugin_id, categories in aces_data.get(addon_type, {}).items():
                 pid_lower = plugin_id.lower()
-                # zh-CN has no name for _common; keep the value the locale
-                # index has always carried (docs/decisions/schema-index-per-locale-split.md).
-                fallback_name = COMMON_ADDON_NAME if plugin_id == COMMON_ADDON_ID else plugin_id
-
                 if plugin_id in deprecated[addon_type]:
                     continue
                 # Every locale file takes its ACE list from the zh-CN pack
@@ -372,6 +378,9 @@ class C3Fetcher:
                 zh_p = lang_texts["zh-CN"].get(addon_type, {}).get(pid_lower, {})
                 if not zh_p:
                     continue
+                # zh-CN has no name for _common; keep the value the locale
+                # index has always carried (docs/decisions/schema-index-per-locale-split.md).
+                fallback_name = COMMON_ADDON_NAME if plugin_id == COMMON_ADDON_ID else plugin_id
 
                 for lang, text in lang_texts.items():
                     lp = text.get(addon_type, {}).get(pid_lower, {})
@@ -414,12 +423,8 @@ class C3Fetcher:
                                         "desc": l_param.get("desc", ""),
                                     }
                                     if "items" in p:
-                                        # Merge item labels from lang
-                                        l_items = l_param.get("items", {})
-                                        if l_items:
-                                            param_entry["items"] = l_items
-                                        else:
-                                            param_entry["items"] = {k: k for k in p["items"]}
+                                        # Item labels from lang, else the ids label themselves
+                                        param_entry["items"] = l_param.get("items") or {k: k for k in p["items"]}
                                     # The value the editor fills in when the ACE is added:
                                     # Wait's "use time scale" is ticked, "true".
                                     if p.get("initialValue") is not None:
@@ -482,11 +487,7 @@ class C3Fetcher:
                         else lp.get("properties", {})
                     )
 
-                    out_path = out_dir / f"{pid_lower}.json"
-                    out_path.write_text(
-                        json.dumps(plugin_json, ensure_ascii=False, indent=2),
-                        encoding="utf-8",
-                    )
+                    _write_json(out_dir / f"{pid_lower}.json", plugin_json)
                     locale_index[lang][addon_type][pid_lower] = {
                         "name": plugin_json["name"],
                         "file": f"{addon_type}/{pid_lower}.json",
@@ -508,8 +509,11 @@ class C3Fetcher:
 
         # ── Effects ───────────────────────────────────────────────────────
         # allEffects.json flags the effects the Add effect dialog hides.
-        all_effects = [item.get("json", item) for item in self.fetch_effects()]
-        effects = [data for data in all_effects if not data.get("is-deprecated")]
+        effects: list[dict] = []
+        retired_effects: list[dict] = []
+        for item in self.fetch_effects():
+            data = item.get("json", item)
+            (retired_effects if data.get("is-deprecated") else effects).append(data)
         for lang, text in lang_texts.items():
             out_dir = schemas_dir / lang / "effects"
             out_dir.mkdir(parents=True, exist_ok=True)
@@ -539,23 +543,17 @@ class C3Fetcher:
                         "name": l_param.get("name", pid_param),
                         "desc": l_param.get("desc", ""),
                     })
-                (out_dir / f"{eid}.json").write_text(
-                    json.dumps(fx_json, ensure_ascii=False, indent=2), encoding="utf-8",
-                )
+                _write_json(out_dir / f"{eid}.json", fx_json)
                 locale_index[lang]["effects"][eid] = {
                     "name": fx_json["name"],
                     "file": f"effects/{eid}.json",
                 }
-
-            # Index effects
-            if lang == "en-US":
-                for data in effects:
-                    eid = data.get("id", "")
-                    if l_effects.get(eid):
-                        index_data["effects"][eid] = {
-                            "file": f"effects/{eid}.json",
-                            "category": data.get("category", ""),
-                        }
+                # The root index lists the effects the en-US pack names.
+                if lang == "en-US":
+                    index_data["effects"][eid] = {
+                        "file": f"effects/{eid}.json",
+                        "category": fx_json["category"],
+                    }
 
         logger.info(f"[CDN] Exported {len(index_data['effects'])} effects")
 
@@ -608,24 +606,14 @@ class C3Fetcher:
         logger.info(f"[CDN] Exported {len(examples_raw)} examples (per-language)")
 
         # ── Write _index.json (root + one per locale) ─────────────────────
-        (schemas_dir / "_index.json").write_text(
-            json.dumps(index_data, ensure_ascii=False, indent=2), encoding="utf-8",
-        )
+        _write_json(schemas_dir / "_index.json", index_data)
         for lang, data in locale_index.items():
-            (schemas_dir / lang / "_index.json").write_text(
-                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8",
-            )
+            _write_json(schemas_dir / lang / "_index.json", data)
 
         # ── Write _deprecated.json (one per locale) ───────────────────────
-        retired = deprecated_list(
-            aces_data, deprecated,
-            [data for data in all_effects if data.get("is-deprecated")],
-            lang_texts, self.version,
-        )
+        retired = deprecated_list(aces_data, deprecated, retired_effects, lang_texts, self.version)
         for lang, data in retired.items():
-            (schemas_dir / lang / "_deprecated.json").write_text(
-                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8",
-            )
+            _write_json(schemas_dir / lang / "_deprecated.json", data)
 
         marker.write_text(self.version)
         logger.info(f"[CDN] Exported schemas to {schemas_dir}")
@@ -864,8 +852,7 @@ class C3Fetcher:
 
     def fetch_effects(self) -> list:
         """Fetch all effect definitions."""
-        data = self.fetch(ENDPOINTS["effects"])
-        return data.get("all", data) if isinstance(data, dict) else data
+        return _unwrap(self.fetch(ENDPOINTS["effects"]), "all")
 
     def fetch_addon_deprecation(self) -> dict[str, dict[str, bool]]:
         """``{"plugins": {id: deprecated}, "behaviors": {...}}`` from the
@@ -879,15 +866,12 @@ class C3Fetcher:
 
     def fetch_examples(self) -> list:
         """Fetch example project metadata list."""
-        data = self.fetch(ENDPOINTS["examples"])
-        return data.get("projects", data) if isinstance(data, dict) else data
+        return _unwrap(self.fetch(ENDPOINTS["examples"]), "projects")
 
     def fetch_plugin_list(self) -> dict:
         """Fetch plugin ID → path mapping."""
-        data = self.fetch(ENDPOINTS["plugin_list"])
-        return data.get("pluginList", data) if isinstance(data, dict) else data
+        return _unwrap(self.fetch(ENDPOINTS["plugin_list"]), "pluginList")
 
     def fetch_behavior_list(self) -> dict:
         """Fetch behavior ID → path mapping."""
-        data = self.fetch(ENDPOINTS["behavior_list"])
-        return data.get("behaviorList", data) if isinstance(data, dict) else data
+        return _unwrap(self.fetch(ENDPOINTS["behavior_list"]), "behaviorList")

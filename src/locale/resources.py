@@ -29,15 +29,15 @@ if not SUPPORTED_LOCALES or len(_LOCALE_SET) != len(SUPPORTED_LOCALES):
 if set(QUERY_LOCALE_ORDER) != _LOCALE_SET:
     raise ValueError("query_locale_order must contain every supported locale once")
 
+_SOURCE_PREFIXES = set(CATALOG["catalog_contract"]["source_prefixes"])
+_QUERY = CATALOG["query"]
+
 
 def _localized(value: Any, path: str) -> dict[str, Any]:
     """Validate and return one mapping containing every supported locale."""
     if not isinstance(value, dict) or set(value) != _LOCALE_SET:
         raise ValueError(f"{path} must define exactly {sorted(_LOCALE_SET)}")
     return value
-
-
-_SOURCE_PREFIXES = set(CATALOG["catalog_contract"]["source_prefixes"])
 
 
 def _validate_metadata(resource: dict[str, Any], path: str) -> None:
@@ -55,10 +55,8 @@ def _validate_metadata(resource: dict[str, Any], path: str) -> None:
         ):
             raise ValueError(f"{path}.{field} must be a non-empty string list")
     unknown_prefixes = {
-        source.partition(":")[0]
-        for source in resource["source"]
-        if source.partition(":")[0] not in _SOURCE_PREFIXES
-    }
+        source.partition(":")[0] for source in resource["source"]
+    } - _SOURCE_PREFIXES
     if unknown_prefixes:
         raise ValueError(f"{path}.source has unknown prefixes: {sorted(unknown_prefixes)}")
 
@@ -72,7 +70,6 @@ def _query_list(*keys: str) -> tuple[Any, ...]:
     return tuple(item for locale in QUERY_LOCALE_ORDER for item in localized[locale])
 
 
-_QUERY = CATALOG["query"]
 _ACE_TYPES = _QUERY["ace_types"]
 _SUPPORTED_ACE_TYPES = ("conditions", "actions", "expressions", "properties")
 if tuple(_ACE_TYPES) != _SUPPORTED_ACE_TYPES:
@@ -91,17 +88,13 @@ for _intent, _rules in _QUERY["grammar"].items():
         _validate_metadata(_rule, f"query.grammar.{_intent}.{_rule_id}")
         _localized(_rule["patterns"], f"query.grammar.{_intent}.{_rule_id}.patterns")
 
-for _name, _resource in _QUERY["howto"].items():
-    _validate_metadata(_resource, f"query.howto.{_name}")
-    _localized(_resource["values"], f"query.howto.{_name}.values")
-_validate_metadata(_QUERY["example_keywords"], "query.example_keywords")
-_localized(_QUERY["example_keywords"]["values"], "query.example_keywords.values")
-for _name, _resource in _QUERY["tokenization"].items():
-    _validate_metadata(_resource, f"query.tokenization.{_name}")
-    _localized(_resource["values"], f"query.tokenization.{_name}.values")
-for _name, _resource in _QUERY["ambiguity"].items():
-    _validate_metadata(_resource, f"query.ambiguity.{_name}")
-    _localized(_resource["values"], f"query.ambiguity.{_name}.values")
+for _section in ("howto", "tokenization", "ambiguity"):
+    for _name, _resource in _QUERY[_section].items():
+        _validate_metadata(_resource, f"query.{_section}.{_name}")
+        _localized(_resource["values"], f"query.{_section}.{_name}.values")
+for _name in ("example_keywords", "effect_keywords"):
+    _validate_metadata(_QUERY[_name], f"query.{_name}")
+    _localized(_QUERY[_name]["values"], f"query.{_name}.values")
 
 _DIRECTED_ALIAS_DATA = CATALOG["expansion"]["directed_aliases"]
 for _rule_id, _rule in _DIRECTED_ALIAS_DATA.items():
@@ -220,19 +213,20 @@ class DirectedAliasRule:
             raise ValueError("production directed aliases must remain single-hop")
 
 
+def _enabled_terms(raw: dict[str, Any], field: str) -> frozenset[str]:
+    """Casefold the ``field`` terms of every locale the alias rule enables."""
+    return frozenset(
+        term.casefold()
+        for locale in raw["enabled_locales"]
+        for term in raw[field][locale]
+    )
+
+
 ACE_DIRECTED_ALIASES: tuple[DirectedAliasRule, ...] = tuple(
     DirectedAliasRule(
         rule_id=rule_id,
-        triggers=frozenset(
-            term.casefold()
-            for locale in raw["enabled_locales"]
-            for term in raw["triggers"][locale]
-        ),
-        additions=frozenset(
-            term.casefold()
-            for locale in raw["enabled_locales"]
-            for term in raw["additions"][locale]
-        ),
+        triggers=_enabled_terms(raw, "triggers"),
+        additions=_enabled_terms(raw, "additions"),
         exclude_ids=frozenset(raw["exclude_ids"]),
         plugin_ids=frozenset(raw["plugin_ids"]),
         ace_types=frozenset(raw["ace_types"]),

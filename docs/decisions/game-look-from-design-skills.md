@@ -91,8 +91,8 @@ once their exceptions were in place.
    sampling.** A sampling warning would fire on small projects that are not
    pixel art.
 5. **A render-and-look loop** over the running game: the mechanism most
-   skills share. The preview player made it reachable: the runtime gives
-   every instance's box, layer, text size and frame.
+   skills share. `scripts/preview_project.py` makes it reachable: the
+   runtime gives every instance's box, layer, text size and frame.
 6. **A critic sub-agent that judges the look freely, or a model-scored
    rubric.** It finds what no check does and cannot be scored; an eval may
    use one, the flow does not need it.

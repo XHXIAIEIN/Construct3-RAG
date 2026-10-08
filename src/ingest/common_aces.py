@@ -148,13 +148,14 @@ def build_common_properties(lang_text: dict) -> dict[str, dict[str, str]]:
 # ── Editor bundle extraction ─────────────────────────────────────────────
 
 
-def _literal_at(source: str, start: int) -> str:
-    """Return the object literal that starts at ``source[start] == "{"``.
+def _group_end(source: str, start: int) -> int:
+    """Return the offset just past the bracket that closes ``source[start]``.
 
-    Brace matching skips string contents; the registration block contains
-    no regular expressions or template literals.
+    Bracket matching skips string contents; the editor bundle's blocks read
+    here hold no regular expression literals.
     """
-    depth = 0
+    closing = {"(": ")", "[": "]", "{": "}"}
+    stack: list[str] = []
     quote: str | None = None
     i = start
     while i < len(source):
@@ -165,16 +166,22 @@ def _literal_at(source: str, start: int) -> str:
                 continue
             if ch == quote:
                 quote = None
-        elif ch in "\"'":
+        elif ch in "\"'`":
             quote = ch
-        elif ch == "{":
-            depth += 1
-        elif ch == "}":
-            depth -= 1
-            if depth == 0:
-                return source[start:i + 1]
+        elif ch in closing:
+            stack.append(closing[ch])
+        elif ch in ")]}":
+            if not stack or stack.pop() != ch:
+                raise ValueError(f"unbalanced {ch!r} at offset {i}")
+            if not stack:
+                return i + 1
         i += 1
-    raise ValueError(f"unterminated object literal at offset {start}")
+    raise ValueError(f"unterminated group at offset {start}")
+
+
+def _literal_at(source: str, start: int) -> str:
+    """Return the bracketed literal that starts at ``source[start]``, an object literal ``{...}`` here."""
+    return source[start:_group_end(source, start)]
 
 
 _KEY_RE = re.compile(r"[A-Za-z_$][\w$]*(?=\s*:)")
@@ -240,12 +247,11 @@ def _js_literal_to_json(literal: str) -> dict:
 
 
 def _function_body(source: str, anchor_pos: int) -> tuple[int, str]:
-    """Return the offset and text of the function body enclosing ``anchor_pos``."""
+    """Return the offset of the ``function(`` head enclosing ``anchor_pos`` and the text of its body."""
     head = source.rfind("function(", 0, anchor_pos)
     if head == -1:
         raise ValueError("no function head before the _common anchor")
-    body_start = source.index("{", head)
-    return body_start, _literal_at(source, body_start)
+    return head, _literal_at(source, source.index("{", head))
 
 
 def _bundle_anchor(main_js: str) -> int:
@@ -275,7 +281,7 @@ def extract_common_aces(main_js: str, lang_common: dict) -> dict[str, dict[str, 
     """
     _, body = _function_body(main_js, _bundle_anchor(main_js))
 
-    categories = set(lang_common.get("aceCategories", {}))
+    categories = sorted(lang_common.get("aceCategories", {}))
     lang_ids = _lang_ids(lang_common)
 
     # The receiver that registers ACEs also sets the category, e.g. t.$("angle").
@@ -284,7 +290,7 @@ def extract_common_aces(main_js: str, lang_common: dict) -> dict[str, dict[str, 
         raise ValueError("no ACE registration found in the _common block")
     receiver = re.escape(first.group(1))
     category_re = re.compile(
-        rf'(?<![\w$]){receiver}\.[\w$]+\("({"|".join(map(re.escape, sorted(categories)))})"\)'
+        rf'(?<![\w$]){receiver}\.[\w$]+\("({"|".join(map(re.escape, categories))})"\)'
     )
     category_at = [(m.start(), m.group(1)) for m in category_re.finditer(body)]
 
@@ -369,33 +375,8 @@ def _assert_same_params(first: dict, other: dict) -> None:
 INFO_CLASS_ANCHOR = "plugin type 'object' cannot use common ACEs"
 SDK_INFO_ANCHOR = "window.SDK.IPluginInfo=class{"
 PLUGIN_INFO_RE = re.compile(r"(?:const ([\w$]+)=)?this\.p=[\w$]+\.m\((?:self|globalThis)\.v,([\w$]+)\)")
-
-
-def _group_end(source: str, start: int) -> int:
-    """Return the offset just past the bracket that closes ``source[start]``."""
-    closing = {"(": ")", "[": "]", "{": "}"}
-    stack: list[str] = []
-    quote: str | None = None
-    i = start
-    while i < len(source):
-        ch = source[i]
-        if quote:
-            if ch == "\\":
-                i += 2
-                continue
-            if ch == quote:
-                quote = None
-        elif ch in "\"'`":
-            quote = ch
-        elif ch in closing:
-            stack.append(closing[ch])
-        elif ch in ")]}":
-            if not stack or stack.pop() != ch:
-                raise ValueError(f"unbalanced {ch!r} at offset {i}")
-            if not stack:
-                return i + 1
-        i += 1
-    raise ValueError(f"unterminated group at offset {start}")
+# The head of the _common block: ``function(registrar, plugin info)``.
+BLOCK_HEAD_RE = re.compile(r"function\(([\w$]+),([\w$]+)\)")
 
 
 def _top_level(body: str) -> list[bool]:
@@ -424,6 +405,7 @@ def _top_level(body: str) -> list[bool]:
 
 
 def _js_value(token: str) -> bool | str:
+    """``!0``, ``!1`` or a quoted string of minified JS as a Python value."""
     token = token.strip()
     if token == "!0":
         return True
@@ -432,6 +414,38 @@ def _js_value(token: str) -> bool | str:
     if len(token) >= 2 and token[0] in "\"'" and token[-1] == token[0]:
         return token[1:-1]
     raise ValueError(f"not a literal: {token!r}")
+
+
+def _call_args(body: str, after_paren: int) -> str:
+    """The text between the parentheses of the call whose ``(`` ends at ``after_paren``."""
+    return body[after_paren:_group_end(body, after_paren - 1) - 1]
+
+
+def _id_before(bundle_js: str, variable: str, offset: int) -> str | None:
+    """The string last assigned to ``variable`` before ``offset``: the addon id
+    a constructor passes to its info, ``t="Sprite"`` ... ``X.m(self.v,t)``."""
+    ids = re.findall(rf'(?<![\w$.]){re.escape(variable)}="([^"]+)"', bundle_js[:offset])
+    return ids[-1] if ids else None
+
+
+def _sdk_class(main_js: str, anchor: str) -> str:
+    """The body of the public SDK class that ``anchor`` opens, ``window.SDK.IPluginInfo=class{``."""
+    at = main_js.find(anchor)
+    if at == -1:
+        raise ValueError(f"no {anchor!r} in main.js")
+    start = at + len(anchor) - 1
+    return main_js[start:_group_end(main_js, start)]
+
+
+def _constructor_body(bundle_js: str, before: int, addon: str) -> tuple[str, list[bool]]:
+    """The body of the ``constructor(){...}`` in which ``addon`` builds its
+    info before offset ``before``, and ``_top_level`` of it."""
+    head = bundle_js.rfind("constructor(){", 0, before)
+    if head == -1:
+        raise ValueError(f"{addon} builds its info outside a constructor")
+    body_start = head + len("constructor()")
+    body = bundle_js[body_start:_group_end(bundle_js, body_start)]
+    return body, _top_level(body)
 
 
 def _info_class(main_js: str) -> tuple[dict[str, str], dict[str, str], dict[str, bool | str]]:
@@ -454,23 +468,17 @@ def _info_class(main_js: str) -> tuple[dict[str, str], dict[str, str], dict[str,
 
 def _sdk_names(main_js: str) -> dict[str, str]:
     """Internal setter -> public method of window.SDK.IPluginInfo."""
-    anchor = main_js.find(SDK_INFO_ANCHOR)
-    if anchor == -1:
-        raise ValueError(f"no {SDK_INFO_ANCHOR!r} in main.js")
-    start = anchor + len(SDK_INFO_ANCHOR) - 1
-    text = main_js[start:_group_end(main_js, start)]
     return {m.group(2): m.group(1) for m in re.finditer(
-        r'([A-Z]\w*)\([\w,]*\)\{[\w$]+\.get\(this\)\.([\w$]+)\(', text)}
+        r'([A-Z]\w*)\([\w,]*\)\{[\w$]+\.get\(this\)\.([\w$]+)\(', _sdk_class(main_js, SDK_INFO_ANCHOR))}
 
 
 def _common_guards(main_js: str, lang_common: dict) -> tuple[list[tuple[int, str, dict]], list[tuple[int, int, str, str]]]:
     """The registrations of the _common block and its guards, each guard as
     ``(start, end, requirement, field of the info class)``."""
-    anchor = _bundle_anchor(main_js)
-    params = re.match(r"function\(([\w$]+),([\w$]+)\)", main_js[main_js.rfind("function(", 0, anchor):])
+    head, body = _function_body(main_js, _bundle_anchor(main_js))
+    params = BLOCK_HEAD_RE.match(main_js, head)
     if params is None:
         raise ValueError("the _common block does not take (registrar, plugin info)")
-    _, body = _function_body(main_js, anchor)
     registrations = list(_registrations(body, _lang_ids(lang_common)))
 
     setters, getters, _ = _info_class(main_js)
@@ -528,22 +536,19 @@ def extract_plugin_flags(main_js: str, plugins_js: str, lang_common: dict) -> di
 
     plugins: dict[str, dict[str, bool | str]] = {}
     for m in PLUGIN_INFO_RE.finditer(plugins_js):
-        ids = list(re.finditer(rf'(?<![\w$.]){re.escape(m.group(2))}="([^"]+)"', plugins_js[:m.start()]))
-        if not ids:
+        plugin_id = _id_before(plugins_js, m.group(2), m.start())
+        if plugin_id is None:
             raise ValueError(f"cannot resolve the plugin id at offset {m.start()} of allEditorPlugins.js")
-        plugin_id = ids[-1].group(1)
         if plugin_id in plugins:
             raise ValueError(f"plugin {plugin_id!r} is defined twice in allEditorPlugins.js")
         receiver = re.escape(m.group(1)) if m.group(1) else r"this\.p"
-        body_start = plugins_js.rfind("constructor(){", 0, m.start()) + len("constructor()")
-        body = plugins_js[body_start:_group_end(plugins_js, body_start)]
-        top = _top_level(body)
+        body, top = _constructor_body(plugins_js, m.start(), f"plugin {plugin_id!r}")
         flags = {name: initial.get(field, False) for field, name in name_of.items()}
         for call in re.finditer(rf'(?<![\w$.]){receiver}\.([\w$]+)\(', body):
             field = setters.get(call.group(1))
             if field not in name_of or not top[call.start()]:
                 continue
-            args = body[call.end():_group_end(body, call.end() - 1) - 1]
+            args = _call_args(body, call.end())
             flags[name_of[field]] = _js_value(args) if args else True
         plugins[plugin_id] = dict(sorted(flags.items()))
     return dict(sorted(plugins.items(), key=lambda kv: kv[0].lower()))

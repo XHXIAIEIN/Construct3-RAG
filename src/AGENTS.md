@@ -30,8 +30,9 @@ modules.
   alias or routing rule, write its failing case in
   `tests/fixtures/query_gold.jsonl` as `tests/AGENTS.md`, "Gold set",
   describes.
-- Public API change: `interfaces/http/models.py`, docs and compatibility
-  tests in one change. Internal structures promise no compatibility.
+- Public API change: `interfaces/http/models.py`, `docs/guide/api-reference.md`,
+  `tests/test_api.py` and `tests/test_api_models.py` in one change. Internal
+  structures promise no compatibility.
 - Schema layout (`en-US`, `zh-CN`): `lookup/schema_layout.py` owns it.
 - Checks: after a change to `/search`, run it against the live service,
   started as in Entry Points, not only against the test client. `/health`

@@ -10,6 +10,10 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+_IDENTIFIER = r"[A-Za-z_][A-Za-z0-9_]*"
+_QUALIFIED_NAME = re.compile(rf"(?P<class>{_IDENTIFIER})\.(?P<method>{_IDENTIFIER})")
+_BARE_NAME = re.compile(_IDENTIFIER)
+
 
 class ScriptingIndex:
     """Search scripting API methods from ``autocomplete-data.json``."""
@@ -38,6 +42,13 @@ class ScriptingIndex:
         self._data = data.get("properties", {})
         logger.info("[ScriptingIndex] Loaded %d classes", len(self._data))
 
+    def _class_methods(self, class_lower: str) -> tuple[str, list[str]] | None:
+        """The first class whose name matches case-insensitively, with its methods."""
+        for class_name, methods in self._data.items():
+            if class_name.lower() == class_lower:
+                return class_name, methods
+        return None
+
     def search(self, query: str, max_results: int = 20) -> list[dict]:
         """Search exact TypeScript identifiers only.
 
@@ -47,32 +58,29 @@ class ScriptingIndex:
         """
         self.ensure_loaded()
         identifier = query.strip()
-        qualified = re.fullmatch(
-            r"(?P<class>[A-Za-z_][A-Za-z0-9_]*)\."
-            r"(?P<method>[A-Za-z_][A-Za-z0-9_]*)",
-            identifier,
-        )
+        qualified = _QUALIFIED_NAME.fullmatch(identifier)
         if qualified:
-            class_lower = qualified.group("class").lower()
+            found = self._class_methods(qualified.group("class").lower())
+            if found is None:
+                return []
+            class_name, methods = found
             method_lower = qualified.group("method").lower()
-            for class_name, methods in self._data.items():
-                if class_name.lower() != class_lower:
-                    continue
-                for method in methods:
-                    if method.lower() == method_lower:
-                        return [{"class": class_name, "method": method}]
+            for method in methods:
+                if method.lower() == method_lower:
+                    return [{"class": class_name, "method": method}]
             return []
 
-        if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", identifier):
+        if not _BARE_NAME.fullmatch(identifier):
             return []
 
         identifier_lower = identifier.lower()
-        for class_name, methods in self._data.items():
-            if class_name.lower() == identifier_lower:
-                return [
-                    {"class": class_name, "method": method}
-                    for method in methods[:max_results]
-                ]
+        found = self._class_methods(identifier_lower)
+        if found is not None:
+            class_name, methods = found
+            return [
+                {"class": class_name, "method": method}
+                for method in methods[:max_results]
+            ]
 
         results = []
         for class_name, methods in self._data.items():

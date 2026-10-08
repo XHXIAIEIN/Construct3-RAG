@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Optional
+from collections.abc import Iterable
 
 import jieba
 
@@ -44,15 +44,26 @@ _HOWTO_NOISE_LOWER: frozenset[str] = frozenset(
 
 
 def _infer_ace_types(query_tokens: set[str]) -> list[str]:
-    """Infer ACE types from query tokens using keyword mapping.
+    """The ACE types whose keywords the query tokens hold, e.g. ["conditions", "actions"]."""
+    return [
+        ace_type
+        for ace_type, keywords in ACE_INTENT_KEYWORDS.items()
+        if query_tokens & keywords
+    ]
 
-    Returns list of matched ACE types (e.g. ["conditions", "actions"]).
-    """
-    matched = []
-    for ace_type, keywords in ACE_INTENT_KEYWORDS.items():
-        if query_tokens & keywords:
-            matched.append(ace_type)
-    return matched
+
+def expand_cjk_tokens(tokens: Iterable[str]) -> set[str]:
+    """The tokens plus the jieba full-mode segments of two or more characters
+    of the ones that hold Chinese: "数组排序" also yields "排序"."""
+    expanded = set(tokens)
+    for token in tokens:
+        if any("\u4e00" <= char <= "\u9fff" for char in token):
+            expanded.update(
+                segment
+                for segment in jieba.lcut(token, cut_all=True)
+                if len(segment) >= 2
+            )
+    return expanded
 
 
 class IntentClassifier:
@@ -66,7 +77,7 @@ class IntentClassifier:
     ):
         self.schema = schema_index
 
-    def classify(self, query: str) -> Optional[LookupIntent]:
+    def classify(self, query: str) -> LookupIntent | None:
         """
         Classify a query using explicit grammar and versioned schema names.
         Returns LookupIntent if matched. None, or the ``declined`` intent,
@@ -100,12 +111,11 @@ class IntentClassifier:
         # Keyword inference (plugin + topic → ace_search)
         intent = self._keyword_infer(query)
         if intent:
-            if intent.intent_type == "declined":
-                return intent
-            logger.info(
-                f"[Lookup] topic hit: ace_search plugin={intent.plugin_id} "
-                f"ace_type={intent.ace_type} filter={intent.filter_term}"
-            )
+            if intent.intent_type != "declined":
+                logger.info(
+                    f"[Lookup] topic hit: ace_search plugin={intent.plugin_id} "
+                    f"ace_type={intent.ace_type} filter={intent.filter_term}"
+                )
             return intent
 
         return self._detect_effect(query)
@@ -118,7 +128,7 @@ class IntentClassifier:
             or any(marker in q_lower for marker in DECLINE_MARKERS_EN)
         )
 
-    def _detect_effect(self, query: str) -> Optional[LookupIntent]:
+    def _detect_effect(self, query: str) -> LookupIntent | None:
         """An effect name answers with its parameters when the query says it means an effect."""
         effect = self.schema.find_effect_in_query(query)
         if effect is None:
@@ -147,7 +157,7 @@ class IntentClassifier:
             flags=re.IGNORECASE,
         ).strip()
 
-    def _detect_translation(self, query: str) -> Optional[LookupIntent]:
+    def _detect_translation(self, query: str) -> LookupIntent | None:
         for pat in _TRANSLATE_PATTERNS:
             m = pat.search(query)
             if not m:
@@ -164,7 +174,7 @@ class IntentClassifier:
 
     # -- Example-find detection -------------------------------------------
 
-    def _detect_example_find(self, query: str) -> Optional[LookupIntent]:
+    def _detect_example_find(self, query: str) -> LookupIntent | None:
         """Detect example-seeking queries like '有没有Tween的示例'."""
         q_lower = query.lower()
         if not any(kw in q_lower for kw in EXAMPLE_QUERY_KEYWORDS_ZH_EN):
@@ -187,54 +197,55 @@ class IntentClassifier:
 
     # -- Explicit rule grammar --------------------------------------------
 
-    def _rule_based(self, query: str) -> Optional[LookupIntent]:
+    def _rule_based(self, query: str) -> LookupIntent | None:
         """Match query against known regex patterns."""
 
         # Try list patterns
         for pat in _LIST_PATTERNS:
             m = pat.search(query)
-            if m:
-                plugin_name = self._normalize_entity_phrase(m.group("plugin"))
-                ace_type_raw = m.group("ace_type").strip().lower()
-                ace_type = ACE_TYPE_ALIASES.get(ace_type_raw, "")
-                if not ace_type:
-                    continue
-
-                resolved = self.schema.resolve_name(plugin_name)
-                if resolved:
-                    pid, is_beh = resolved
-                    return LookupIntent(
-                        intent_type="ace_list" if ace_type != "properties" else "prop_list",
-                        plugin_id=pid,
-                        ace_type=ace_type,
-                        is_behavior=is_beh,
-                        tier=1,
-                        confidence=0.95,
-                    )
+            if not m:
+                continue
+            ace_type = ACE_TYPE_ALIASES.get(m.group("ace_type").strip().lower(), "")
+            if not ace_type:
+                continue
+            resolved = self.schema.resolve_name(
+                self._normalize_entity_phrase(m.group("plugin"))
+            )
+            if resolved:
+                pid, is_beh = resolved
+                return LookupIntent(
+                    intent_type="ace_list" if ace_type != "properties" else "prop_list",
+                    plugin_id=pid,
+                    ace_type=ace_type,
+                    is_behavior=is_beh,
+                    tier=1,
+                    confidence=0.95,
+                )
 
         # Try detail patterns (last, as they're most greedy)
         for pat in _DETAIL_PATTERNS:
             m = pat.search(query)
-            if m:
-                plugin_name = self._normalize_entity_phrase(m.group("plugin"))
-                ace_name = m.group("ace_name").strip()
-                resolved = self.schema.resolve_name(plugin_name)
-                if resolved:
-                    pid, is_beh = resolved
-                    return LookupIntent(
-                        intent_type="ace_detail",
-                        plugin_id=pid,
-                        ace_name=ace_name,
-                        is_behavior=is_beh,
-                        tier=1,
-                        confidence=0.95,
-                    )
+            if not m:
+                continue
+            resolved = self.schema.resolve_name(
+                self._normalize_entity_phrase(m.group("plugin"))
+            )
+            if resolved:
+                pid, is_beh = resolved
+                return LookupIntent(
+                    intent_type="ace_detail",
+                    plugin_id=pid,
+                    ace_name=m.group("ace_name").strip(),
+                    is_behavior=is_beh,
+                    tier=1,
+                    confidence=0.95,
+                )
 
         return None
 
     # -- Exact entity plus topic inference --------------------------------
 
-    def _keyword_infer(self, query: str) -> Optional[LookupIntent]:
+    def _keyword_infer(self, query: str) -> LookupIntent | None:
         """Infer a narrow ACE search from an exact entity span plus topic."""
         entity = self.schema.find_name_in_query(query)
         if entity is None:
@@ -268,8 +279,8 @@ class IntentClassifier:
             if remaining_lower and remaining_lower <= GENERIC_QUERY_WORDS_EN:
                 return None
 
-        # 3. Count meaningful tokens to detect complex multi-concept queries.
-        #    Skip words and single-char noise are filtered out.
+        # Count meaningful tokens to detect complex multi-concept queries.
+        # Skip words and single-char noise are filtered out.
         useful_tokens = [
             t
             for t in remaining_tokens
@@ -278,7 +289,6 @@ class IntentClassifier:
         if len(useful_tokens) > 3:
             return None  # complex multi-concept query: decline
 
-        # 4. Build filter term
         if not useful_tokens:
             # Bare plugin name (e.g. "Sprite") → return ace_list for all types
             return LookupIntent(
@@ -303,23 +313,14 @@ class IntentClassifier:
                 confidence=0.90,
             )
 
-        # 5. Build topic token set (jieba full-mode for ACE type inference)
-        topic_tokens = set(remaining_tokens)
-        for token in remaining_tokens:
-            if any('\u4e00' <= c <= '\u9fff' for c in token):
-                topic_tokens.update(seg for seg in jieba.lcut(token, cut_all=True) if len(seg) >= 2)
+        # Infer ACE types from the topic tokens (narrow search if possible)
+        ace_types = _infer_ace_types(expand_cjk_tokens(remaining_tokens)) or list(
+            SCHEMA_ACE_TYPES
+        )
 
-        # 6. Infer ACE types from topic tokens (narrow search if possible)
-        ace_types = _infer_ace_types(topic_tokens)
-        if not ace_types:
-            ace_types = list(SCHEMA_ACE_TYPES)
-
-        # Confidence: base 0.70 + bonus for specific ACE types and useful tokens
-        conf = 0.70
-        if len(ace_types) < len(SCHEMA_ACE_TYPES):
-            conf += 0.10  # narrowed ACE types = higher confidence
-        if useful_tokens:
-            conf += 0.05  # explicit filter keywords present
+        # Confidence: 0.75 for an entity with a topic, 0.85 when the topic
+        # also narrowed the ACE types.
+        narrowed = len(ace_types) < len(SCHEMA_ACE_TYPES)
         return LookupIntent(
             intent_type="ace_search",
             plugin_id=plugin_id,
@@ -327,5 +328,5 @@ class IntentClassifier:
             filter_term=filter_term,
             is_behavior=is_behavior,
             tier=1,
-            confidence=min(conf, 0.90),
+            confidence=0.85 if narrowed else 0.75,
         )

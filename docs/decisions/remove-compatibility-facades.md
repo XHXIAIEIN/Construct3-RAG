@@ -25,7 +25,7 @@ retrieval pipeline had no element that used them.
   `configure_lookup_defaults()` and `configure_schema_default()` are gone.
 - `src/observability/`, the `trace` parameters and every `_trace()` call are
   gone; `logger.info` in the classifier stays.
-- The gold set passed unchanged before and after. It runs in pytest now
+- The gold set passed unchanged before and after; it runs in pytest
   (`query-gold-in-pytest.md`).
 - The playground keeps only the confidence badge styles.
 

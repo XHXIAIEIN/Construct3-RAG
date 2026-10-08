@@ -41,10 +41,10 @@ def _ace_count(addons: dict) -> int:
 
 def refresh_guides(data_dir: Path, saved: list[Path]) -> None:
     """Write each guide whose text changed; report what happened to each."""
-    from src.ingest.guides import GUIDES_DIR, refresh_guides as refresh
+    from src.ingest import guides
 
-    for name, outcome in refresh(data_dir, saved).items():
-        print(f"  {GUIDES_DIR}/{name}.md: {outcome}")
+    for name, outcome in guides.refresh_guides(data_dir, saved).items():
+        print(f"  {guides.GUIDES_DIR}/{name}.md: {outcome}")
 
 
 def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
@@ -112,7 +112,7 @@ def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
     print("\nReview with `git diff --stat data/`, then commit.")
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Refresh data/ from the Construct 3 CDN, and Scirra's guides")
     parser.add_argument("--version", type=str, help="Release to fetch (default: latest stable on the CDN)")
     parser.add_argument("--guides-only", action="store_true",

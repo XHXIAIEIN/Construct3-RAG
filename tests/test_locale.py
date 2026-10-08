@@ -48,10 +48,8 @@ def test_every_catalog_resource_explains_origin_usage_and_coverage():
     resources = list(_catalog_resources())
     assert resources
     assert all(required <= set(resource) for resource in resources)
-    assert all(resource["purpose"] for resource in resources)
-    assert all(resource["source"] for resource in resources)
-    assert all(resource["consumers"] for resource in resources)
-    assert all(resource["tests"] for resource in resources)
+    for field in required:
+        assert all(resource[field] for resource in resources), field
     repo_root = Path(__file__).parent.parent
     for resource in resources:
         for reference in resource["tests"]:

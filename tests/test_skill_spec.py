@@ -12,10 +12,12 @@ import pytest
 
 from tests.skill_helpers import REPO, SKILL, run, install, new_project
 
+SKILL_MD = SKILL / "SKILL.md"
+
 
 # --- the skill as the Agent Skills format defines it (https://agentskills.io/specification) -----
 def frontmatter() -> dict[str, str]:
-    text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+    text = SKILL_MD.read_text(encoding="utf-8")
     assert text.startswith("---\n")
     return dict(re.findall(r"^([a-z-]+): (.+)$", text.split("---\n")[1], re.M))
 
@@ -23,7 +25,7 @@ def frontmatter() -> dict[str, str]:
 def skill_docs() -> list[tuple[str, str]]:
     """SKILL.md and the references, each file name with its text."""
     return [(doc.name, doc.read_text(encoding="utf-8"))
-            for doc in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]]
+            for doc in [SKILL_MD, *(SKILL / "references").glob("*.md")]]
 
 
 def test_skill_name_and_description_meet_the_specification():
@@ -37,12 +39,12 @@ def test_skill_name_and_description_meet_the_specification():
 
 
 def test_skill_body_stays_within_what_is_loaded_on_activation():
-    assert len((SKILL / "SKILL.md").read_text(encoding="utf-8").splitlines()) < 500
+    assert len(SKILL_MD.read_text(encoding="utf-8").splitlines()) < 500
 
 
 def test_skill_md_reads_under_any_locale_codec():
     """skills-ref and plain clients read SKILL.md without naming an encoding; under cp936 a UTF-8 sign does not decode."""
-    (SKILL / "SKILL.md").read_bytes().decode("ascii")
+    SKILL_MD.read_bytes().decode("ascii")
 
 
 def test_every_file_the_skill_names_is_in_it():
@@ -136,11 +138,12 @@ def trigger_eval(tmp_path: Path, queries: list[dict], *extra: str) -> tuple[int,
     root = new_project(tmp_path / "game")
     code, out = install(root, "--into", ".claude/skills", "--no-block")
     assert code == 0, out
-    (tmp_path / "client.py").write_text(FAKE_CLIENT, encoding="utf-8")
+    client = tmp_path / "client.py"
+    client.write_text(FAKE_CLIENT, encoding="utf-8")
     (tmp_path / "queries.json").write_text(json.dumps(queries), encoding="utf-8")
     report = tmp_path / "report.json"
     code, out = run(tmp_path, SKILL / "evals" / "run_trigger_eval.py", "queries.json", "--project", str(root),
-                    "--client", f"{Path(sys.executable).as_posix()} {(tmp_path / 'client.py').as_posix()}",
+                    "--client", f"{Path(sys.executable).as_posix()} {client.as_posix()}",
                     "--runs", "2", "--output", str(report), *extra)
     assert not (root / "written-by-a-run.txt").exists(), "a run wrote into the project the others read"
     return code, out, report

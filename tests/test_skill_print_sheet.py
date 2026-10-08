@@ -175,12 +175,12 @@ def test_print_marks_what_the_editor_has_disabled(project):
         rows["restart_block"]["disabled"] = True
         rows["restart_block"]["conditions"][0]["disabled"] = True
     edit(project, SHEET, disable)
-    for locale in ("en-US", "zh-CN"):
-        code, out = tool(project, "print_sheet", "Game", "--locale", locale)
+    printed = {locale: tool(project, "print_sheet", "Game", "--locale", locale) for locale in ("en-US", "zh-CN")}
+    for code, out in printed.values():
         assert code == 0, out
         assert out.count(" [condition disabled]") == 2 and out.count(" [action disabled]") == 2, out
         assert out.count(" [event disabled]") == 2, out
-    code, out = tool(project, "print_sheet", "Game")
+    _, out = printed["en-US"]
     assert "   5   Touch: On touched Coin (start)\n       Coin: NOT Is any Tween playing [condition disabled]\n" \
            "           -> Coin: Collect() [action disabled]" in out
     assert "   7 function AddScore(points: number)\n         -> System: Add points to score [action disabled]" in out

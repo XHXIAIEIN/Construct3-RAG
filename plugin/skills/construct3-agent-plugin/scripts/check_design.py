@@ -61,6 +61,40 @@ exit codes: 0 the design is complete and every test passes in the prototype; 1 f
 """
 
 
+def names_read(rule: gm.Rule) -> set[str]:
+    """The names the rule's conditions and effects read: a set's value and indexes, a wait's time; the row
+    a += or -= changes is not counted."""
+    out: set[str] = set()
+    for c in rule.when:
+        out |= gm.names_in(c)
+    for e in rule.do:
+        if e[0] == "set":
+            for node in [e[3], *(e[1][1] or [])]:
+                out |= gm.names_in(node)
+        elif e[0] == "wait":
+            out |= gm.names_in(e[1])
+    return out
+
+
+def sets(rule: gm.Rule, names: set[str]) -> bool:
+    """Whether an effect of the rule changes one of the names."""
+    return any(e[0] == "set" and e[1][0] in names for e in rule.do)
+
+
+def restarts(rule: gm.Rule) -> bool:
+    return any(e[0] == "restart" for e in rule.do)
+
+
+def cells_written(rule: gm.Rule) -> list[str]:
+    """The Arrays whose cells the rule's effects set."""
+    return [e[1][0] for e in rule.do if e[0] == "set" and e[1][1] is not None]
+
+
+def do_step(name: str, inp: dict) -> str:
+    """The test step that does the input, with a place for each argument: {"do": "place", "x": ...}."""
+    return f"{{\"do\": \"{name}\"" + "".join(f', "{a}": ...' for a in inp["args"]) + "}"
+
+
 def where_read(design: gm.Design) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
     """Which rules write and which read each state row; win and lose read too."""
     written: dict[str, list[str]] = {n: [] for n in design.state}
@@ -71,20 +105,13 @@ def where_read(design: gm.Design) -> tuple[dict[str, list[str]], dict[str, list[
             table[name].append(rid)
 
     for r in design.all_rules():
-        for c in r.when:
-            for n in gm.names_in(c):
-                add(read, n, r.id)
+        for n in names_read(r):
+            add(read, n, r.id)
         for e in r.do:
             if e[0] == "set":
                 add(written, e[1][0], r.id)
-                for node in [e[3], *(e[1][1] or [])]:
-                    for n in gm.names_in(node):
-                        add(read, n, r.id)
                 if e[2] != "=":
                     add(read, e[1][0], r.id)
-            elif e[0] == "wait":
-                for n in gm.names_in(e[1]):
-                    add(read, n, r.id)
     for key, node in (("win", design.win), ("lose", design.lose)):
         for n in gm.names_in(node) if node else ():
             add(read, n, key)
@@ -96,12 +123,12 @@ def coverage(design: gm.Design) -> None:
     written, read = where_read(design)
     for n, s in design.state.items():
         if not written[n] and not s.const:
-            design.bad(f"{s.path}", f"no rule changes {n}: write the rule that does, or mark the row \"const\": true "
-                                    f"when it is a tuning value the game never changes")
+            design.bad(s.path, f"no rule changes {n}: write the rule that does, or mark the row \"const\": true "
+                               f"when it is a tuning value the game never changes")
         if not read[n] and not s.seen and not s.keep:
-            design.bad(f"{s.path}", f"nothing reads {n}: no condition, effect, win or lose uses it and the player "
-                                    f"does not see it; drop the row, or use it where the game decides something")
-    if design.ends and not any(e[0] == "restart" for r in design.all_rules() for e in r.do):
+            design.bad(s.path, f"nothing reads {n}: no condition, effect, win or lose uses it and the player "
+                               f"does not see it; drop the row, or use it where the game decides something")
+    if design.ends and not any(restarts(r) for r in design.all_rules()):
         design.bad("rules", "no rule restarts the game: add one, fired by the input that starts a new game, whose "
                             "effects end with \"restart\". A demo of one mechanic that is never won or lost writes "
                             "\"win\": \"none\" and \"lose\": \"none\" instead, and needs no restart")
@@ -114,6 +141,11 @@ def chain(rule: gm.Rule) -> list[gm.Rule]:
     for c in rule.children:
         out += chain(c)
     return out
+
+
+def below(rules: list[gm.Rule]) -> list[gm.Rule]:
+    """These rules and their sub-rules, all levels down, in order."""
+    return [x for r in rules for x in chain(r)]
 
 
 def changes(rules: list[gm.Rule]) -> list[str]:
@@ -132,15 +164,7 @@ def reads(design: gm.Design) -> dict[str, set[str]]:
     out: dict[str, set[str]] = {}
 
     def walk(r: gm.Rule, above: set[str]) -> None:
-        mine = set(above)
-        for c in r.when:
-            mine |= gm.names_in(c)
-        for e in r.do:
-            if e[0] == "set":
-                for node in [e[3], *(e[1][1] or [])]:
-                    mine |= gm.names_in(node)
-            elif e[0] == "wait":
-                mine |= gm.names_in(e[1])
+        mine = above | names_read(r)
         out[r.id] = mine
         for c in r.children:
             walk(c, mine)
@@ -151,15 +175,13 @@ def reads(design: gm.Design) -> dict[str, set[str]]:
 
 def playing(design: gm.Design, name: str) -> list[gm.Rule]:
     """The rules the input fires that do not restart: a restart shows the player a new game."""
-    return [r for r in design.rules if r.on == name and not any(e[0] == "restart" for x in chain(r) for e in x.do)]
+    return [r for r in design.rules if r.on == name and not any(restarts(x) for x in chain(r))]
 
 
 def shows(design: gm.Design, name: str) -> dict[str, list[str]]:
     """What the player sees after the input: the rows its rules change, or that change through rules reading
     them, each seen row with the names that lead to it."""
-    fired = playing(design, name)
-    changed = changes([x for r in fired for x in chain(r)])
-    path = {n: [n] for n in changed}
+    path = {n: [n] for n in changes(below(playing(design, name)))}
     read_by = reads(design)
     grew = True
     while grew:
@@ -196,24 +218,22 @@ def seen_after(design: gm.Design) -> None:
         fired = playing(design, name)
         if not fired:
             continue
-        for r in fired:
-            for x in chain(r):
-                arrays = list(dict.fromkeys(e[1][0] for e in x.do if e[0] == "set" and e[1][1] is not None))
-                for a in arrays:
-                    if showing(design, chain(x), a):
-                        continue
-                    design.bad(x.path, f"rule {x.id} writes a cell of {a}, and an Array is not on screen. Change in "
-                               f"this rule or its sub-rules a row that shows it. A board: the player sees the cell as "
-                               f"an instance, so add a row that counts the instances shown, such as {{\"name\": "
-                               f"\"pieces\", \"start\": 0, \"stored_in\": \"Piece.shown\"}} (or "
-                               f"\"Piece.shown(frame=1)\" for the pieces of frame 1), and change it beside the cell: "
-                               f"\"pieces += 1\", or \"pieces = count({a}, 1)\". A list, such as stacked shields: the "
-                               f"player reads it from a text or a number, so change a row stored in a text, x, y, "
-                               f"frame or visible whose expression reads {a}, such as \"line = \\\"Shields \\\" & "
-                               f"({a}.At(0, 0) + {a}.At(1, 0))\"; a text that does not read {a} shows nothing of the "
-                               f"cell")
+        for x in below(fired):
+            for a in dict.fromkeys(cells_written(x)):
+                if showing(design, chain(x), a):
+                    continue
+                design.bad(x.path, f"rule {x.id} writes a cell of {a}, and an Array is not on screen. Change in "
+                           f"this rule or its sub-rules a row that shows it. A board: the player sees the cell as "
+                           f"an instance, so add a row that counts the instances shown, such as {{\"name\": "
+                           f"\"pieces\", \"start\": 0, \"stored_in\": \"Piece.shown\"}} (or "
+                           f"\"Piece.shown(frame=1)\" for the pieces of frame 1), and change it beside the cell: "
+                           f"\"pieces += 1\", or \"pieces = count({a}, 1)\". A list, such as stacked shields: the "
+                           f"player reads it from a text or a number, so change a row stored in a text, x, y, "
+                           f"frame or visible whose expression reads {a}, such as \"line = \\\"Shields \\\" & "
+                           f"({a}.At(0, 0) + {a}.At(1, 0))\"; a text that does not read {a} shows nothing of the "
+                           f"cell")
         if not shows(design, name):
-            rows = changes([x for r in fired for x in chain(r)])
+            rows = changes(below(fired))
             design.bad(i["path"], f"the input {name} changes only {', '.join(rows) or 'nothing'}, which the player "
                        f"does not see (a global, an Array, an instance variable). Store what shows it where the "
                        f"player sees it, an object's text, x, y, frame or visible, or a count of instances, "
@@ -223,8 +243,7 @@ def seen_after(design: gm.Design) -> None:
 def wanted(design: gm.Design, name: str) -> list[str]:
     """The seen rows a test expects after the input: where its rules write an Array cell, the rows that show the
     Array, since a status line that does not read it says nothing of the piece; else every seen row it changes."""
-    rules = [x for r in playing(design, name) for x in chain(r)]
-    rows = [n for x in rules for a in dict.fromkeys(e[1][0] for e in x.do if e[0] == "set" and e[1][1] is not None)
+    rows = [n for x in below(playing(design, name)) for a in dict.fromkeys(cells_written(x))
             for n in showing(design, chain(x), a)]
     return list(dict.fromkeys(rows)) or list(shows(design, name))
 
@@ -245,9 +264,8 @@ def expected_after(design: gm.Design) -> None:
         if not hit:
             row = design.state[rows[0]]
             design.bad(i["path"], f"no test expects what the player sees after {name}: {', '.join(rows)}. After a "
-                       f"step {{\"do\": \"{name}\"" + "".join(f', "{a}": ...' for a in i["args"]) + f"}}, add "
-                       f"{{\"expect\": \"{rows[0]} = ...\"}}, the value the game shows then; the editor reads it "
-                       f"from {row.stored_in}")
+                       f"step {do_step(name, i)}, add {{\"expect\": \"{rows[0]} = ...\"}}, the value the game "
+                       f"shows then; the editor reads it from {row.stored_in}")
 
 
 def launch(design: gm.Design) -> None:
@@ -341,32 +359,32 @@ def run_test(design: gm.Design, t: dict) -> dict:
             elif step["kind"] == "set":
                 sim.set(step["effect"])
             elif not gm.truth(sim.ev(step["node"], {})):
-                seen = ", ".join(f"{n} = {state_text(sim, n)}" for n in sorted(gm.names_in(step["node"])))
                 rules = ", ".join(f"{rid} x{c}" for rid, c in sim.ran.items()) or "none"
+                seen = seen_text(sim, step["node"])
                 failed = (step["path"], f"expect {step['text']}: false in the prototype; {seen}. Rules that "
-                                        f"ran in this test so far: {rules}." + echo_note(design, sim, last_do, step["node"])
+                                        f"ran in this test so far: {rules}."
+                                        + echo_note(design, sim, last_do, step["node"])
                                         + why_not(design, sim, step["node"])
                                         + " Change the rules, or the test when it expects the wrong thing")
                 break
         except gm.ModelError as e:
             failed = (step["path"], f"the prototype stopped here: {e}")
             break
-    tail = []
-    for step in reversed(t["steps"]):
-        if step["kind"] != "expect":
-            break
-        tail.insert(0, step)
+    steps = t["steps"]
+    first_tail = len(steps)
+    while first_tail and steps[first_tail - 1]["kind"] == "expect":
+        first_tail -= 1
+    tail = steps[first_tail:]
     stable: list[dict] = []
-    seen_by_steps = {"ran": dict(sim.ran), "won": sim.won, "lost": sim.lost, "restarts": sim.restarts,
-                     "after_restart": list(sim.after_restart)}       # coverage counts the steps, not the settle
+    cover = {"ran": dict(sim.ran), "won": sim.won, "lost": sim.lost, "restarts": sim.restarts,
+             "after_restart": list(sim.after_restart)}       # coverage counts the steps, not the settle
     if failed or not tail:
-        return {"sim": sim, "cover": seen_by_steps, "failed": failed, "stable": stable}
+        return {"sim": sim, "cover": cover, "failed": failed, "stable": stable}
     try:
         sim.settle()
     except gm.ModelError as e:
-        return {"sim": sim, "cover": seen_by_steps, "failed": (t["path"], f"in the {gm.SETTLE:g} s after the last "
-                                                                          f"step the prototype stopped: {e}"),
-                "stable": stable}
+        failed = (t["path"], f"in the {gm.SETTLE:g} s after the last step the prototype stopped: {e}")
+        return {"sim": sim, "cover": cover, "failed": failed, "stable": stable}
     for step in tail:
         if gm.truth(sim.ev(step["node"], {})):
             stable.append(step)
@@ -374,15 +392,14 @@ def run_test(design: gm.Design, t: dict) -> dict:
         late = [(n, *sim.late[n]) for n in sorted(gm.names_in(step["node"])) if n in sim.late]
         if late and not failed:
             n, rid, said = late[0]
-            seen = ", ".join(f"{m} = {state_text(sim, m)}" for m in sorted(gm.names_in(step["node"])))
             failed = (step["path"], f"expect {step['text']} held at its step and is false {gm.SETTLE:g} s after the "
-                                    f"test's last step; {seen}. {n} was changed by {said}: the player sees that, and a "
-                                    f"test that ends sooner does not. If the step should not start that restart, give "
-                                    f"rule {rid} a condition that is false then, such as a state that the end sets after "
-                                    f"a wait, or a \"region\" for a tap on the screen that the other tap lies outside. "
-                                    f"If the change is meant, end the test after it with a wait, then expects of the "
-                                    f"state it leaves")
-    return {"sim": sim, "cover": seen_by_steps, "failed": failed, "stable": stable}
+                                    f"test's last step; {seen_text(sim, step['node'])}. {n} was changed by {said}: the "
+                                    f"player sees that, and a test that ends sooner does not. If the step should not "
+                                    f"start that restart, give rule {rid} a condition that is false then, such as a "
+                                    f"state that the end sets after a wait, or a \"region\" for a tap on the screen "
+                                    f"that the other tap lies outside. If the change is meant, end the test after it "
+                                    f"with a wait, then expects of the state it leaves")
+    return {"sim": sim, "cover": cover, "failed": failed, "stable": stable}
 
 
 def echo_note(design: gm.Design, sim: gm.Sim, step: dict | None, node: gm.Node) -> str:
@@ -391,8 +408,7 @@ def echo_note(design: gm.Design, sim: gm.Sim, step: dict | None, node: gm.Node) 
         return ""
     names = gm.names_in(node)
     hit = [(screen, rid) for screen, rid in sim.echoed
-           if any(e[0] == "set" and e[1][0] in names for e in design.by_id[rid].do)
-           or any(e[0] == "restart" for e in design.by_id[rid].do)]
+           if sets(design.by_id[rid], names) or restarts(design.by_id[rid])]
     if not hit:
         return ""
     screen, rid = hit[0]
@@ -449,8 +465,7 @@ def play(design: gm.Design) -> list[str]:
                                 f"an expect on what it must say, such as {{\"expect\": \"find({n}, \\\"...\\\") >= 0\"}}")
     for name, i in design.inputs.items():
         if name not in done_inputs:
-            design.bad(i["path"], f"no test does {name}: add a step {{\"do\": \"{name}\"" +
-                                  "".join(f', "{a}": ...' for a in i["args"]) + "}")
+            design.bad(i["path"], f"no test does {name}: add a step {do_step(name, i)}")
     expected_after(design)
     if design.win and not won:
         design.bad("win", "no test reaches the win: add a test that plays to it and expects it")
@@ -472,20 +487,20 @@ def why_not(design: gm.Design, sim: gm.Sim, node: gm.Node) -> str:
             parents[c.id] = r
     said = []
     for r in design.all_rules():
-        if sim.ran.get(r.id) and any(e[0] == "set" and e[1][0] in names for e in r.do):
+        if sim.ran.get(r.id) and sets(r, names):
             said.append(f"{r.id} ran {sim.ran[r.id]} time(s) and changed it, "
                         + (f"its conditions {', '.join(r.when_text)}" if r.when_text else
                            "with no condition of its own, so it runs every time its trigger or parent does"))
     for r in design.all_rules():
-        if sim.ran.get(r.id) or not any(e[0] == "set" and e[1][0] in names for e in r.do):
+        if sim.ran.get(r.id) or not sets(r, names):
             continue
-        chain, up = [], r
+        lineage, up = [], r          # the rule's parents down to it, the top rule first
         while up:
-            chain.insert(0, up)
+            lineage.insert(0, up)
             up = parents.get(up.id)
-        trigger = chain[0].on
+        trigger = lineage[0].on
         parts = []
-        for rule in chain:
+        for rule in lineage:
             for text, cond in zip(rule.when_text, rule.when):
                 try:
                     held = gm.truth(sim.ev(cond, {"dt": gm.TICK}))
@@ -501,7 +516,13 @@ def why_not(design: gm.Design, sim: gm.Sim, node: gm.Node) -> str:
     return (" " + ". ".join(said[:4]) + ".") if said else ""
 
 
+def seen_text(sim: gm.Sim, node: gm.Node) -> str:
+    """The values the expression's names hold now, "a = 1, b = 2"."""
+    return ", ".join(f"{n} = {state_text(sim, n)}" for n in sorted(gm.names_in(node)))
+
+
 def state_text(sim: gm.Sim, name: str) -> str:
+    """A row's value as the failed expect reports it: an Array by its count of cells not 0."""
     if name in sim.arrays:
         grid = sim.arrays[name]
         filled = sum(v != 0 for col in grid for v in col)
@@ -510,6 +531,7 @@ def state_text(sim: gm.Sim, name: str) -> str:
 
 
 def tables(design: gm.Design) -> list[str]:
+    """The lines of the two tables: input, rule and feedback; state row, where it is stored, who writes and reads it."""
     written, read = where_read(design)
     lines = ["input -> rule -> feedback:"]
     for r in design.rules:

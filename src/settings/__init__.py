@@ -53,24 +53,22 @@ def load_settings(
     deterministic. The only filesystem read is the schema manifest's version.
     """
     source = os.environ if environ is None else environ
-    root = Path(base_dir) if base_dir is not None else Path(__file__).parent.parent.parent
+    root = Path(base_dir) if base_dir is not None else Path(__file__).parents[2]
     data_dir = root / "data"
 
-    paths = PathSettings(base_dir=root, data_dir=data_dir)
-
-    explicit_schema = source.get("C3_SCHEMA_DIR")
-    directory = Path(explicit_schema) if explicit_schema else data_dir / "c3-schemas"
-    schema = SchemaSettings(
-        version=schema_version(directory),
-        cdn_base=source.get("C3_CDN_BASE", "https://editor.construct.net"),
-        cache_dir=Path(source.get("C3_CACHE_DIR", root / ".cache" / "c3-cdn")),
-        directory=directory,
+    directory = Path(source.get("C3_SCHEMA_DIR") or data_dir / "c3-schemas")
+    return AppSettings(
+        paths=PathSettings(base_dir=root, data_dir=data_dir),
+        schema=SchemaSettings(
+            version=schema_version(directory),
+            cdn_base=source.get("C3_CDN_BASE", "https://editor.construct.net"),
+            cache_dir=Path(source.get("C3_CACHE_DIR", root / ".cache" / "c3-cdn")),
+            directory=directory,
+        ),
+        runtime=RuntimeSettings(
+            server_port=int(source.get("RAG_SERVER_PORT", 8765)),
+        ),
     )
-
-    runtime = RuntimeSettings(
-        server_port=int(source.get("RAG_SERVER_PORT", 8765)),
-    )
-    return AppSettings(paths=paths, schema=schema, runtime=runtime)
 
 
 __all__ = [

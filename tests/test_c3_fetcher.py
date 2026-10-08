@@ -27,12 +27,10 @@ def test_fetch_caches_locally(fetcher):
     """Fetched data is cached to disk."""
     mock_data = {"pluginList": {"Sprite": {"path": "general/sprite"}}}
     with patch.object(fetcher, "_http_get", return_value=json.dumps(mock_data).encode()):
-        result = fetcher.fetch("plugins/pluginList.json")
-        assert result == mock_data
-        # Second call should use cache, not HTTP
-        fetcher._http_get = MagicMock(side_effect=Exception("should not be called"))
-        result2 = fetcher.fetch("plugins/pluginList.json")
-        assert result2 == mock_data
+        assert fetcher.fetch("plugins/pluginList.json") == mock_data
+    # Second call should use cache, not HTTP
+    with patch.object(fetcher, "_http_get", side_effect=Exception("should not be called")):
+        assert fetcher.fetch("plugins/pluginList.json") == mock_data
 
 
 def test_fetch_force_bypasses_cache(fetcher):
@@ -204,11 +202,13 @@ def _export_with(fetcher: C3Fetcher, texts: dict[str, dict], aces: dict | None =
         aces = {"plugins": {}, "behaviors": {}}
     if flags is None:
         flags = _editor_flags(aces)
-    with patch.object(fetcher, "fetch_all_aces", return_value=aces), \
-         patch.object(fetcher, "fetch_addon_deprecation", return_value=flags), \
-         patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]), \
-         patch.object(fetcher, "fetch_effects", return_value=effects or []), \
-         patch.object(fetcher, "fetch_examples", return_value=[]):
+    with (
+        patch.object(fetcher, "fetch_all_aces", return_value=aces),
+        patch.object(fetcher, "fetch_addon_deprecation", return_value=flags),
+        patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]),
+        patch.object(fetcher, "fetch_effects", return_value=effects or []),
+        patch.object(fetcher, "fetch_examples", return_value=[]),
+    ):
         return fetcher.export_schemas()
 
 

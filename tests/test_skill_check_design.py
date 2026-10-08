@@ -1,7 +1,6 @@
 """check_design.py and play_design.py: a game's design as data, its prototype, and the same tests as
 preview plans. The editor is not opened: play_design's bindings, plans and generated JavaScript are
 checked offline, the JavaScript against the prototype under Node when the machine has it."""
-import copy
 import json
 import re
 import shutil
@@ -10,17 +9,9 @@ import sys
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, run
+from tests.skill_helpers import REPO, SKILL, run, script_module, folder_project
 
 REFERENCE = SKILL / "references" / "designing-a-game.md"
-
-
-def module(name):
-    sys.path.insert(0, str(SKILL / "scripts"))
-    try:
-        return __import__(name)
-    finally:
-        sys.path.pop(0)
 
 
 def example() -> dict:
@@ -151,7 +142,7 @@ def test_check_design_reads_the_sheet_syntax_and_says_what_to_write(tmp_path):
 def test_the_prototype_runs_events_as_the_runtime_does():
     """Else after a sibling that ran is skipped, a Wait defers the sub-events too, & joins text and is a
     logical and on numbers, At() outside an Array is 0, comparisons give 1 or 0."""
-    gm = module("game_model")
+    gm = script_module("game_model")
     design = gm.Design({
         "game": "probe", "request": "one tap", "later": ["nothing left out"], "core_loop": "one tap",
         "reference": {"example": "x", "takes": "nothing"}, "screen": {"all": "screen"},
@@ -177,23 +168,15 @@ def test_the_prototype_runs_events_as_the_runtime_does():
 
 def write_project(root, globals_, types, placed, viewport=(720, 1280)):
     """The files play_design reads: project.c3proj, the types, one sheet, the first layout."""
-    (root / "objectTypes").mkdir(parents=True)
-    (root / "eventSheets").mkdir()
-    (root / "layouts").mkdir()
-    (root / "project.c3proj").write_text(json.dumps({
-        "name": "probe", "viewportWidth": viewport[0], "viewportHeight": viewport[1], "firstLayout": "Game",
-        "objectTypes": {"items": list(types), "subfolders": []}, "eventSheets": {"items": ["Game"], "subfolders": []},
-        "layouts": {"items": ["Game"], "subfolders": []}}), encoding="utf-8")
-    for name, (plugin, ivars) in types.items():
-        (root / "objectTypes" / f"{name}.json").write_text(json.dumps(
-            {"name": name, "plugin-id": plugin, "instanceVariables": [{"name": v} for v in ivars]}), encoding="utf-8")
-    (root / "eventSheets" / "Game.json").write_text(json.dumps({"name": "Game", "events": [
-        {"eventType": "variable", "name": n, "type": t, "initialValue": v} for n, (t, v) in globals_.items()]}),
-        encoding="utf-8")
-    (root / "layouts" / "Game.json").write_text(json.dumps({"name": "Game", "layers": [
-        {"name": "Game", "parallaxX": 1, "parallaxY": 1, "instances": [i for i in placed if i.get("layer") != "UI"]},
-        {"name": "UI", "parallaxX": 0, "parallaxY": 0, "instances": [i for i in placed if i.get("layer") == "UI"]}]}),
-        encoding="utf-8")
+    folder_project(
+        root,
+        {"Game": [{"eventType": "variable", "name": n, "type": t, "initialValue": v} for n, (t, v) in globals_.items()]},
+        {name: {"plugin-id": plugin, "instanceVariables": [{"name": v} for v in ivars]}
+         for name, (plugin, ivars) in types.items()},
+        {"Game": {"layers": [
+            {"name": "Game", "parallaxX": 1, "parallaxY": 1, "instances": [i for i in placed if i.get("layer") != "UI"]},
+            {"name": "UI", "parallaxX": 0, "parallaxY": 0, "instances": [i for i in placed if i.get("layer") == "UI"]}]}},
+        name="probe", viewportWidth=viewport[0], viewportHeight=viewport[1], firstLayout="Game")
 
 
 def whack_project(root):
@@ -267,7 +250,7 @@ def test_play_design_takes_the_project_start_only_when_the_prototype_still_passe
 
 
 def test_play_design_finds_a_play_area_off_the_middle():
-    pd = module("play_design")
+    pd = script_module("play_design")
     layers = {"Game": {"parallax": [1, 1], "shown": True, "view": [0, 0, 720, 1280]}}
     board = {"type": "Board", "uid": 3, "layer": "Game", "box": [0, 300, 480, 780], "shown": True, "angle": 0, "root": 3}
     found = pd.centre_findings({"viewport": [720, 1280], "layers": layers, "instances": [board]})
@@ -279,7 +262,7 @@ def test_play_design_finds_a_play_area_off_the_middle():
 
 
 def test_a_screen_place_is_read_in_its_words_and_names_an_object():
-    gm = module("game_model")
+    gm = script_module("game_model")
     read = {k: gm.place(k, v) for k, v in {"score": "top-left", "lives": "top left below score",
                                             "basket": "bottom-center, follows the mouse", "board": "centre",
                                             "hint": "to the right of the board", "apples": "fall from the top",
@@ -299,7 +282,7 @@ def test_a_screen_place_is_read_in_its_words_and_names_an_object():
 
 
 def test_play_design_finds_an_object_outside_the_place_the_design_names():
-    gm, pd = module("game_model"), module("play_design")
+    gm, pd = script_module("game_model"), script_module("play_design")
     design = gm.Design({**example(), "screen": {"score": "top-left", "holes": "centre", "message": "below the holes",
                                                 "Mole": "in a hole", "Lives": "top-right"}})
     layers = {"Game": {"parallax": [1, 1], "shown": True, "view": [100, 0, 820, 1280]},
@@ -333,7 +316,7 @@ def test_play_design_finds_an_object_outside_the_place_the_design_names():
     assert notes[0] == "2 of 5 checked (score, holes)" and notes[-1] == "message has no instance on the first screen"
 
 def test_play_design_prints_the_screen_places_under_the_first_screen():
-    gm, pd = module("game_model"), module("play_design")
+    gm, pd = script_module("game_model"), script_module("play_design")
     design = gm.Design({**example(), "screen": {"score": "top-right", "holes": "a 3 x 3 grid"}})
     layers = {"HUD": {"parallax": [0, 0], "shown": True, "view": [0, 0, 720, 1280]}}
     score = {"type": "ScoreText", "uid": 1, "layer": "HUD", "box": [20, 20, 200, 80], "shown": True, "angle": 0, "root": 1}
@@ -371,7 +354,7 @@ def test_the_generated_javascript_evaluates_as_the_prototype(tmp_path):
     node = shutil.which("node")
     if not node:
         pytest.skip("no Node here")
-    gm, pd = module("game_model"), module("play_design")
+    gm, pd = script_module("game_model"), script_module("play_design")
     design = gm.Design({"game": "probe", "core_loop": "none", "reference": {"example": "x", "takes": "x"},
                         "screen": {"a": "b"}, "state": [
                             {"name": "score", "start": 3, "stored_in": "global"},
@@ -635,7 +618,7 @@ def test_play_design_counts_the_instances_shown_from_the_layout_and_in_the_runti
 
 def test_the_first_screen_is_held_to_the_prototype():
     """A value the first screen shows, and a win or lose there, read in the game against the prototype."""
-    gm, pd = module("game_model"), module("play_design")
+    gm, pd = script_module("game_model"), script_module("play_design")
     design = gm.Design(example())
     still = pd.launch_values(design)
     assert still["ends"] == {"win": False, "lose": False}
@@ -739,7 +722,7 @@ def test_play_design_reads_the_last_expects_again_after_the_settle(tmp_path):
     assert [s["js"] for s in again] == [s["js"] for s in hit[at - 2:at]]
     settled = [s["js"] for s in written[4]["steps"] if s.get("note") == "settled"]
     assert len(settled) == 1 and "over" in settled[0]      # escapes goes on with the timer: not read again
-    pd, gm, cd = module("play_design"), module("game_model"), module("check_design")
+    pd, gm, cd = script_module("play_design"), script_module("game_model"), script_module("check_design")
     data = gm.Design(example())
     _, origin = pd.test_plan(data.tests[0], data, pd.Model(tmp_path / "game"), cd.run_test(data, data.tests[0])["stable"])
     steps = [{"ok": True, "value": {"ok": not (o and o["kind"] == "settled" and o["text"] == "score = 1"),
@@ -755,7 +738,7 @@ def test_play_design_reads_the_last_expects_again_after_the_settle(tmp_path):
 def test_a_failed_play_says_to_fix_the_game_not_the_test(tmp_path, monkeypatch, capsys):
     """The prototype passes the design's tests, so a test that fails in the editor sends the agent to the
     events and the layout; the test and the design's numbers change only when the user agrees."""
-    pd = module("play_design")
+    pd = script_module("play_design")
     design = tmp_path / "design.json"
     design.write_text(json.dumps(example()), encoding="utf-8")
     whack_project(tmp_path / "game")
@@ -774,7 +757,7 @@ def test_a_failed_play_says_to_fix_the_game_not_the_test(tmp_path, monkeypatch, 
 
 
 def test_a_passing_play_says_what_the_tests_left_untested(tmp_path):
-    pd, gm, cd = module("play_design"), module("game_model"), module("check_design")
+    pd, gm, cd = script_module("play_design"), script_module("game_model"), script_module("check_design")
     whack_project(tmp_path / "game")
     data = gm.Design(example())
     model = pd.Model(tmp_path / "game")

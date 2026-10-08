@@ -78,22 +78,13 @@ def test_canonical_packages_do_not_import_compatibility_or_maintenance_layers(
     package,
     forbidden,
 ):
-    violations: list[str] = []
-    for path in (_SRC_ROOT / package).rglob("*.py"):
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                names = [alias.name for alias in node.names]
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                names = [node.module]
-            else:
-                continue
-            for name in names:
-                if any(
-                    name == prefix or name.startswith(f"{prefix}.")
-                    for prefix in forbidden
-                ):
-                    violations.append(f"{path.relative_to(_SRC_ROOT)} -> {name}")
+    package_root = _SRC_ROOT / package
+    violations = sorted(
+        f"{path.relative_to(_SRC_ROOT)} -> {target}"
+        for module, path in _source_modules().items()
+        if path.is_relative_to(package_root)
+        for target in _module_imports(module, path, set(forbidden))
+    )
     assert violations == []
 
 
