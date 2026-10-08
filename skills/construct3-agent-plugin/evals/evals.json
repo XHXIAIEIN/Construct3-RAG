@@ -278,11 +278,11 @@
       "name": "script-shift-and-edges",
       "fixture": "example:simple-keyboard-movement-ts",
       "prompt": "this is the simple keyboard movement example from construct, the typescript one, folder <project> . two changes in scripts/main.ts: holding shift makes the player move twice as fast, and the player cant leave the layout any more, it stops at the edges so the whole sprite stays inside. keep it all in typescript, no event sheets",
-      "expected_output": "scripts/main.ts is edited. The arrow keys still move the player, and a Shift key tested with isKeyDown doubles the speed. The position is clamped between the player's half size and the layout's size less that half, read from runtime.layout and the instance. lookup_script_api.py prints each API with the file and line of its declaration. No other file changes, but for the TypeScript definitions that open_in_editor.py --typescript writes.",
+      "expected_output": "scripts/main.ts is edited. The arrow keys still move the player, and isKeyDown tests ShiftLeft or ShiftRight, the codes it matches, to double the speed. The position is clamped between the player's half size and the layout's size less that half, read from runtime.layout and the instance. lookup_script_api.py prints each API with the file and line of its declaration. No other file changes, but for the TypeScript definitions that open_in_editor.py --typescript writes.",
       "files": [],
       "assertions": [
         "main.ts still moves the player with the four arrow keys through isKeyDown",
-        "main.ts tests a Shift key with isKeyDown and doubles the speed",
+        "main.ts tests ShiftLeft or ShiftRight with isKeyDown and doubles the speed",
         "main.ts reads the layout's width and height and the player's size or bounding box",
         "No project file differs from the fixture, but for scripts/main.ts and the scripts/ts-defs/ and scripts/tsconfig.json that open_in_editor.py --typescript writes"
       ]

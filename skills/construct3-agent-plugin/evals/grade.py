@@ -1246,13 +1246,16 @@ def grade_script_shift_and_edges(run: Path) -> list[tuple[bool, str]]:
     code = re.sub(r"getLayout\([^)]*\)", "layout", code)            # a layout got by name is read as runtime.layout
     keys = [k or n for k, n in re.findall(r"isKeyDown\(\s*(?:[\"'`](\w+)[\"'`]|(\d+))\s*\)", code)]
     arrows = {"ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"} - set(keys)
-    shift = [k for k in keys if k.lower().startswith("shift") or k == "16"]
+    named = [k for k in keys if k.lower().startswith("shift") or k == "16"]
+    shift = [k for k in named if k in ("ShiftLeft", "ShiftRight", "16")]      # isKeyDown matches a code, never "Shift"
     double = re.search(r"\*\s*2(?![\d.])|(?<![\w.])2\s*\*|\?\s*2(?![\d.])|=\s*2\s*;|\b400\b", code)
     layout = [w for w in ("width", "height") if re.search(rf"layout\.{w}\b", code)]
     own = re.search(r"(?<!layout)\.(?:width|height)\b|getBoundingBox", code)
     return [(bool(code) and not arrows, f"arrow keys tested: {sorted(set(keys) & {'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'})}"
                                         + (f"; missing: {sorted(arrows)}" if arrows else "")),
-            (bool(shift and double), f"Shift keys tested: {shift or 'none'}; doubled: {double.group(0) if double else 'no'}"),
+            (bool(shift and double), f"Shift keys tested: {named or 'none'}"
+                                     + (", none a code isKeyDown matches" if named and not shift else "")
+                                     + f"; doubled: {double.group(0) if double else 'no'}"),
             (len(layout) == 2 and bool(own), f"layout sides read: {layout or 'none'}; the player's size: "
                                              f"{own.group(0) if own else 'not read'}"),
             # open_in_editor.py --typescript writes scripts/ts-defs/ and scripts/tsconfig.json

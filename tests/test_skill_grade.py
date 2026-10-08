@@ -172,6 +172,18 @@ def test_held_out_cases_have_a_plan() -> None:
     assert held and all(n in play_cases.PLANS for n in held)
 
 
+@pytest.mark.parametrize(("test", "passed"), [
+    ('keyboard.isKeyDown("Shift")', False),
+    ('keyboard.isKeyDown("ShiftLeft") || keyboard.isKeyDown("ShiftRight")', True),
+    ("keyboard.isKeyDown(16)", True)])
+def test_a_shift_key_counts_only_by_a_code_iskeydown_matches(tmp_path: Path, test: str, passed: bool) -> None:
+    """isKeyDown matches a key's code: a run that tests "Shift" never doubles its speed in the game."""
+    (tmp_path / "project" / "scripts").mkdir(parents=True)
+    (tmp_path / "fixture.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "project" / "scripts" / "main.ts").write_text(f"const speed = {test} ? 400 : 200;", encoding="utf-8")
+    assert grader.grade_script_shift_and_edges(tmp_path)[1][0] is passed
+
+
 def played(case: Path, oks: list[bool]) -> None:
     """A play/result.json in which the plan's checks returned oks in order, as preview_project.py writes it."""
     plan = play_cases.plan_for(case.parent.name)

@@ -483,13 +483,30 @@ def edges(watch: str, holds: list[tuple[str, float]], area: str, stays: str, rea
                   "return {ok: vars.edge.length > 0 && !far.length, said: Object.entries(gap).map(([k, g]) => `${k} ${g.toFixed(0)} px`).join(', ')};")]
 
 
+def speed(keys: list[str]) -> list[dict]:
+    """Hold the keys 1 s from the middle of the layout, where no edge stops the player. Its speed in px/s is how far
+    the watched box's centre moved between the first and the last tick it moved, kept in vars.speeds."""
+    name = "+".join(keys)
+    return [js("const p = vars.h.first('Player'); p.x = runtime.layout.width / 2; p.y = runtime.layout.height / 2;",
+               "vars.watch.mid = () => { const b = vars.h.box(vars.h.first('Player')); return (b.l + b.r) / 2; };",
+               "return [p.x, p.y]"),
+            {"wait": 0.3}, js("vars.mark = vars.h.now(); return vars.mark"), {"key": keys, "seconds": 1.0}, {"wait": 0.2},
+            js("const s = vars.h.since('mid', vars.mark), a = s[0], b = s[s.length - 1];",
+               f"(vars.speeds = vars.speeds || {{}})['{name}'] = s.length > 2 ? vars.h.round((b.v - a.v) / (b.at - a.at)) : 0;",
+               f"return {{ticks: s.length, speed: vars.speeds['{name}']}}")]
+
+
 def script_shift_and_edges() -> dict:
     watch = ("() => { const p = vars.h.first('Player'); if (!p) return null; "
              "return {...vars.h.box(p), L: 0, T: 0, R: runtime.layout.width, B: runtime.layout.height}; }")
     return {"steps": [*ready(PLAYER), *keys_move({"ArrowRight": (1, 0)}),
                       moved("The arrow keys move the player", {"ArrowRight": (1, 0)}),
                       *edges(watch, [("ArrowLeft", 2.5), ("ArrowUp", 2.0), ("ArrowRight", 7.5), ("ArrowDown", 6.5)],
-                             "layout", "The player never leaves the layout", "The player reaches every edge of the layout", 8)]}
+                             "layout", "The player never leaves the layout", "The player reaches every edge of the layout", 8),
+                      *speed(["ArrowRight"]), *speed(["ShiftLeft", "ArrowRight"]),
+                      check("Holding Shift doubles the player's speed",
+                            "const s = vars.speeds, a = s.ArrowRight, b = s['ShiftLeft+ArrowRight'], r = a > 0 ? b / a : 0;",
+                            "return {ok: r >= 1.8 && r <= 2.2, said: `ArrowRight ${a} px/s, with ShiftLeft ${b} px/s: ${r.toFixed(2)} times`};")]}
 
 
 def stay_on_screen() -> dict:
