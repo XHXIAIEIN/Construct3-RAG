@@ -2,7 +2,8 @@
 Construct3-RAG clone, reading the files project.c3proj lists, the schemas,
 the object model (types, families, behaviors, instance variables), the
 schema entry behind a condition or an action, what the editor has
-deprecated, and the helpers of a game's generator against the template's.
+deprecated, the helpers of a game's generator against the template's, and
+the Construct 3 block of its instruction file against the skill's.
 
 Not a command. check_project.py, print_sheet.py and lookup_ace.py import it
 from the folder they sit in.
@@ -513,9 +514,9 @@ class HelperState(NamedTuple):
     want: Helpers | None = None
 
 
-def versions(have: Helpers, want: Helpers) -> tuple[str, str]:
-    """The two versions in words, "2026-09-01" and "2026-10-04", with their stamps when the
-    dates are the same."""
+def versions(have: "Helpers | Block", want: "Helpers | Block") -> tuple[str, str]:
+    """The two versions of a marked part in words, "2026-09-01" and "2026-10-04", with their
+    stamps when the dates are the same."""
     if have.version != want.version:
         return have.version, want.version
     return f"{have.version}, stamp {have.stamp}", f"{want.version}, stamp {want.stamp}"
@@ -604,21 +605,27 @@ def copied_template(rag: Path, stamp: str) -> list[str] | None:
     """The template's lines at the newest commit of the clone whose marked part carries stamp and
     matches it: the template a game's generator was copied from, before the game edited it. None
     without the clone's history, as in the plugin cache, or when no commit has that stamp."""
+    return copied_from(rag, TEMPLATE_IN_CLONE, stamp, helpers_in)
+
+
+def copied_from(rag: Path, rel: str, stamp: str, part_in) -> list[str] | None:
+    """The lines of the clone's file rel at its newest commit whose marked part, as part_in reads it,
+    carries stamp and matches it. None without the clone's history or when no commit has that stamp."""
     clone = clone_root(rag)
     if not (clone / ".git").exists() or not shutil.which("git"):
         return None
-    log = git_out(clone, "log", "--follow", "--format=commit %H", "--name-only", "--", TEMPLATE_IN_CLONE, wait=30)
+    log = git_out(clone, "log", "--follow", "--format=commit %H", "--name-only", "--", rel, wait=30)
     commits: list[list[str]] = []
     for line in (log or "").splitlines():
         if line.startswith("commit "):
             # a merge lists no file: it has the path of the commit above it
-            commits.append([line[7:], commits[-1][1] if commits else TEMPLATE_IN_CLONE])
+            commits.append([line[7:], commits[-1][1] if commits else rel])
         elif line.strip() and commits:
             commits[-1][1] = line.strip()
     for sha, path in commits:
         lines = (git_out(clone, "show", f"{sha}:{path}") or "").replace("\r\n", "\n").split("\n")
-        found = helpers_in(lines)
-        if not isinstance(found, Helpers):
+        found = part_in(lines)
+        if not isinstance(found, tuple):
             return None             # the commits below this one are older than the markers
         if found.stamp == stamp == found.actual:
             return lines
@@ -667,11 +674,220 @@ def replace_helpers(root: Path, template: Path = TEMPLATE, dry_run: bool = False
     except SyntaxError as e:
         return f"with the skill's helpers it would not compile, line {e.lineno}: {e.msg}"
     if not dry_run:
-        draft = path.with_name(f".{path.name}.{os.getpid()}")
-        draft.write_bytes((b"\xef\xbb\xbf" if bom else b"") + text.encode("utf-8"))
-        shutil.copymode(path, draft)
-        os.replace(draft, path)
+        write_whole(path, text, bom)
     return None
+
+
+def write_whole(path: Path, text: str, bom: bool) -> None:
+    """Write text over path in one step, through a draft beside it, with path's mode and,
+    when bom, a byte order mark."""
+    draft = path.with_name(f".{path.name}.{os.getpid()}")
+    draft.write_bytes((b"\xef\xbb\xbf" if bom else b"") + text.encode("utf-8"))
+    shutil.copymode(path, draft)
+    os.replace(draft, path)
+
+
+# --- the Construct 3 block of the project's instruction file ----------------------------
+# install.py writes assets/game-project-block.md into the project's AGENTS.md between a begin
+# and an end marker, HTML comments that the rendered file does not show. As with the generator's
+# helpers, the end marker carries a version and a stamp. The stamp covers the block's text: not
+# the lines that name a clone's folder (Construct3-RAG: and those the project adds beside it), and
+# not the folder the skill was installed in, which is read as the template writes it. A block
+# whose text still matches its stamp was not edited there, and install.py replaces it when the
+# skill's is newer, keeping the lines that name a clone's folder and every line outside the block.
+BLOCK_TEMPLATE = SKILL_DIR / "assets" / "game-project-block.md"
+BLOCK_IN_CLONE = f"skills/{SKILL}/assets/game-project-block.md"
+BLOCK_BEGIN = re.compile(r"<!-- construct3-agent-plugin block: begin\b")
+BLOCK_END = re.compile(r"<!-- construct3-agent-plugin block: end\b")
+BLOCK_HEADING = "# Construct 3"
+BLOCK_PLACE = re.compile(r"^[ \t>*-]*(?:Construct3-RAG|Construct3-Manual|Construct-Example-Projects|"
+                         r"Construct-Addon-SDK|<?path-to>?)[ \t]*[:=]")
+# The skill's folder as the block names it, inside backticks; construct3-project is its former name
+BLOCK_SKILL = re.compile(r"(?<=`)(python )?([^`]*?/)construct3-(?:agent-plugin|project)(?=/)")
+BLOCK_SKILL_DEFAULT = f".agents/skills/{SKILL}"
+INSTRUCTION_FILES = ("AGENTS.md", "CLAUDE.md")
+# The blocks install.py wrote before the block had markers, by the stamp of their text: the
+# version, and the number of lines of that text, which tells where such a block ends.
+PAST_BLOCKS = {
+    "da35bc2297c8": ("2026-09-21", 28),
+    "ddc0bcd1cf8a": ("2026-09-22", 28),
+    "21f37f50500c": ("2026-09-22", 26),
+    "2a76542cad05": ("2026-09-22", 32),
+    "c11c6eaa6efc": ("2026-09-22", 35),
+    "36802b113b7f": ("2026-09-22", 32),
+    "4567e8432d87": ("2026-09-22", 29),
+    "171fa27de276": ("2026-09-22", 31),
+    "e50212bfc1a3": ("2026-10-03", 32),
+}
+
+
+class Block(NamedTuple):
+    """The Construct 3 block of an instruction file: the indexes of its first and last line (its
+    markers, when marked), the version and stamp it carries, and the stamp of its text as it is
+    now. A block from before the markers carries the version and stamp of the text it matches."""
+    begin: int
+    end: int
+    version: str
+    stamp: str
+    actual: str
+    marked: bool = True
+
+
+class BlockState(NamedTuple):
+    """How the block of a project's instruction file stands against the skill's: missing (no
+    block that install.py wrote), broken (detail says what is wrong), current, older, newer, or
+    edited (its text matches neither its stamp nor the skill's). file is the instruction file."""
+    state: str
+    file: str = ""
+    detail: str = ""
+    have: Block | None = None
+    want: Block | None = None
+
+
+def block_text(lines: list[str]) -> list[tuple[int, str]]:
+    """The block's own text among lines, each line with its index: every line but those that name
+    a clone's folder, with the skill's folder written as the template writes it."""
+    return [(i, BLOCK_SKILL.sub(lambda m: (m[1] or "") + BLOCK_SKILL_DEFAULT, line))
+            for i, line in enumerate(lines) if not BLOCK_PLACE.match(line)]
+
+
+def block_stamp(lines: list[str]) -> str:
+    return helpers_stamp([line for _, line in block_text(lines)])
+
+
+def block_end_line(version: str, stamp: str) -> str:
+    """The end marker as the template writes it."""
+    return f"<!-- construct3-agent-plugin block: end; version {version}, stamp {stamp} -->"
+
+
+def block_in(lines: list[str], past: bool = True) -> Block | str | None:
+    """The Construct 3 block among an instruction file's lines: the part between its markers, else,
+    with past, a block install.py wrote before the markers, which matches one of PAST_BLOCKS line for
+    line. None when there is neither, and a sentence saying what to write when the markers are broken."""
+    begins = [i for i, line in enumerate(lines) if BLOCK_BEGIN.match(line)]
+    ends = [i for i, line in enumerate(lines) if BLOCK_END.match(line)]
+    if not begins and not ends:
+        return past_block(lines) if past else None
+    copy = "copy the marker lines of the skill's assets/game-project-block.md around the block"
+    if len(begins) != 1 or len(ends) != 1:
+        return f"it has {len(begins)} begin and {len(ends)} end markers of the Construct 3 block, not one of each; {copy}"
+    if ends[0] < begins[0]:
+        return f"the end marker of its Construct 3 block stands above the begin marker; {copy}"
+    found = HELPERS_VERSION.search(lines[ends[0]])
+    if not found:
+        return f"the end marker of its Construct 3 block has lost its version and stamp; {copy}"
+    return Block(begins[0], ends[0], found[1], found[2], block_stamp(lines[begins[0] + 1:ends[0]]))
+
+
+def past_block(lines: list[str]) -> Block | None:
+    """A block that install.py wrote before the markers: from its heading, as many lines of text as
+    a version in PAST_BLOCKS has, with the same stamp."""
+    for i, line in enumerate(lines):
+        if line.rstrip() != BLOCK_HEADING:
+            continue
+        for stamp, (version, count) in PAST_BLOCKS.items():
+            end, n = i, 0
+            while end < len(lines) and n < count:
+                n += not BLOCK_PLACE.match(lines[end])
+                end += 1
+            if n == count and block_stamp(lines[i:end]) == stamp:
+                return Block(i, end - 1, version, stamp, stamp, marked=False)
+    return None
+
+
+def instruction_block(root: Path, template: Path = BLOCK_TEMPLATE) -> BlockState:
+    """How the block in root's AGENTS.md, else its CLAUDE.md, stands against the template's. Older and
+    newer go by the version on the end markers; edited is a block whose text matches neither the stamp
+    on its own end marker nor the template's text. A block from before the markers is current while
+    its text is the template's, and older once the template has changed."""
+    template_lines = text_lines(template)[0]
+    want = block_in(template_lines, past=False)
+    if not isinstance(want, Block):
+        return BlockState("broken", "AGENTS.md", f"the skill's own assets/game-project-block.md: {want or 'no markers'}")
+    for name in INSTRUCTION_FILES:
+        path = root / name
+        if not path.is_file():
+            continue
+        try:
+            lines = text_lines(path)[0]
+        except UnicodeDecodeError:
+            return BlockState("broken", name, "it is not UTF-8 text; save it as UTF-8")
+        have = block_in(lines)
+        if have is None:
+            continue
+        if isinstance(have, str):
+            return BlockState("broken", name, have)
+        markers = (lines[have.begin], lines[have.end]) == (template_lines[want.begin], template_lines[want.end])
+        if have.actual == want.stamp and (markers or not have.marked):
+            state = "current"
+        elif have.actual not in (have.stamp, want.stamp):
+            state = "edited"
+        elif have.version > want.version:
+            state = "newer"
+        else:
+            state = "older"
+        return BlockState(state, name, have=have, want=want)
+    return BlockState("missing")
+
+
+def block_lines(rag: Path, skill_path: str, places: list[str] | None = None,
+                template: Path = BLOCK_TEMPLATE) -> list[str]:
+    """The template's block as install.py writes it, markers included: the clone's path on its
+    Construct3-RAG line, or in place of that line the given lines that name a clone's folder, and
+    the folder the skill is installed in."""
+    lines = text_lines(template)[0]
+    if lines and not lines[-1]:
+        lines.pop()
+    lines = [line.replace("<path-to>/Construct3-RAG", rag.as_posix()).replace(BLOCK_SKILL_DEFAULT, skill_path)
+             for line in lines]
+    if places:
+        at = next(i for i, line in enumerate(lines) if BLOCK_PLACE.match(line))
+        lines[at:at + 1] = places
+    return lines
+
+
+def replace_block(root: Path, found: BlockState, rag: Path, skill_path: str | None = None,
+                  dry_run: bool = False) -> None:
+    """Put the template's block, markers included, in place of the one found: its lines that name a
+    clone's folder stay, and so do every line outside the block, the line ends and a byte order
+    mark. The skill's folder is skill_path, else the one the block named, under the skill's name."""
+    path = root / found.file
+    lines, newline, bom = text_lines(path)
+    part = lines[found.have.begin:found.have.end + 1]
+    if skill_path is None:
+        named = next((m for m in map(BLOCK_SKILL.search, part) if m), None)
+        skill_path = named[2] + SKILL if named else BLOCK_SKILL_DEFAULT
+    places = [line for line in part if BLOCK_PLACE.match(line)]
+    text = newline.join(lines[:found.have.begin] + block_lines(rag, skill_path, places) + lines[found.have.end + 1:])
+    if not dry_run:
+        write_whole(path, text, bom)
+
+
+def block_changes(root: Path, found: BlockState, reference: list[str], limit: int = 4) -> list[str]:
+    """The changes between the text of the marked block found and the block in reference, the lines
+    of a template. Each change gives its line number in the instruction file, its first line in the
+    project ("here") and in the reference ("there"). Past limit changes, a last entry counts the rest."""
+    lines = text_lines(root / found.file)[0]
+    first = found.have.begin + 1
+    ours = [(first + i, line) for i, line in block_text(lines[first:found.have.end])]
+    ref = block_in(reference, past=False)
+    theirs = [line for _, line in block_text(reference[ref.begin + 1:ref.end])] if isinstance(ref, Block) else []
+
+    def cut(line: str) -> str:
+        return repr(line if len(line) <= 90 else line[:87] + "...")
+    opcodes = [op for op in difflib.SequenceMatcher(None, [t for _, t in ours], theirs, autojunk=False).get_opcodes()
+               if op[0] != "equal"]
+    changes = []
+    for _, i1, i2, j1, j2 in opcodes[:limit]:
+        at = ours[i1][0] if i1 < len(ours) else found.have.end      # a line the block lacks at its end
+        there = cut(theirs[j1]) if j1 < j2 else "nothing"
+        if i1 < i2:
+            changes.append(f"line {at + 1}: here {cut(lines[at])}, there {there}")
+        else:
+            changes.append(f"before line {at + 1}: here nothing, there {there}")
+    if len(opcodes) > limit:
+        changes.append(f"and {len(opcodes) - limit} more")
+    return changes
 
 
 def argument_parser(description: str, epilog: str) -> argparse.ArgumentParser:
