@@ -40,8 +40,10 @@ The service reads the committed `data/` directory and reports the release its
 `_index.json` records. Default setup and direct Uvicorn startup therefore make
 no CDN request. `scripts/init.py` and `--refresh-data` fetch the latest stable
 release, `--version` a named one, into `C3_CACHE_DIR` and replace
-`data/c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`; review the
-result with `git diff` before committing.
+`data/c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`. Both then
+rebuild `data/c3-example-usage` from the `Construct-Example-Projects` clone
+when it lies beside this repository. Review the result with `git diff`
+before committing.
 
 ## Test
 

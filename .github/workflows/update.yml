@@ -56,6 +56,8 @@ jobs:
           # Same refresh a developer runs locally: export into the cache,
           # then replace data/c3-schemas, c3-examples, c3-lang and c3-ts-defs
           # (and fetch the guides again, which the step above wrote).
+          # data/c3-example-usage stays as committed: the runner has no
+          # Construct-Example-Projects clone to build it from.
           python scripts/init.py --version "${{ steps.check.outputs.latest }}"
 
       # What the release changed, against the data on main, as the PR body.

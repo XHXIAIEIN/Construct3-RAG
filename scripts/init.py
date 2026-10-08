@@ -3,12 +3,15 @@
 
 Fetches the latest stable release (or --version), exports schemas,
 example metadata, language packs and TypeScript definitions into the cache,
-then replaces the matching directories under data/. It then fetches the
-guides of src/ingest/guides.py into data/c3-guides/, writing a guide only
-when its text changed; a guide that cannot be fetched keeps its committed
-copy. The runtime reads data/, so the refresh shows in `git diff` before it
-is committed. Last, it builds plugin/ again from the refreshed data. The
-update workflow runs this same command, and --guides-only every week.
+then replaces the matching directories under data/. It then indexes which
+official examples use each ACE into data/c3-example-usage/, from the
+Construct-Example-Projects clone beside this repository; without the clone
+the committed index stays. Next it fetches the guides of
+src/ingest/guides.py into data/c3-guides/, writing a guide only when its
+text changed; a guide that cannot be fetched keeps its committed copy. The
+runtime reads data/, so the refresh shows in `git diff` before it is
+committed. Last, it builds plugin/ again from the refreshed data. The update
+workflow runs this same command, and --guides-only every week.
 
 Usage:
     python scripts/init.py
@@ -62,27 +65,27 @@ def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
     )
 
     # 1. Fetch core data
-    print("[1/6] Fetching ACE definitions...")
+    print("[1/7] Fetching ACE definitions...")
     aces = fetcher.fetch_all_aces()
     p_count, b_count = _ace_count(aces["plugins"]), _ace_count(aces["behaviors"])
     print(f"  {len(aces['plugins'])} plugins ({p_count} ACEs)")
     print(f"  {len(aces['behaviors'])} behaviors ({b_count} ACEs)")
 
-    print("[2/6] Fetching language data...")
+    print("[2/7] Fetching language data...")
     packs = {locale: fetcher.fetch_lang(locale) for locale in SCHEMA_LOCALES}
     for locale, pack in packs.items():
         print(f"  {locale}: {len(pack.get('text', {}).get('plugins', {}))} plugins")
 
-    print("[3/6] Fetching effects...")
+    print("[3/7] Fetching effects...")
     effects = fetcher.fetch_effects()
     print(f"  {len(effects)} effects")
 
-    print("[4/6] Fetching example project data...")
+    print("[4/7] Fetching example project data...")
     examples = fetcher.fetch_examples()
     print(f"  {len(examples)} example projects")
 
     # 2. Export, then replace the committed copies
-    print("[5/6] Exporting schemas, language packs, and TypeScript definitions...")
+    print("[5/7] Exporting schemas, language packs, and TypeScript definitions...")
     targets = fetcher.export_to_data(settings.paths.data_dir)
     counts = schema_counts(targets["c3-schemas"])
     print(f"  {counts['plugins']} plugin schemas")
@@ -91,11 +94,16 @@ def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
     print(f"  language packs: {', '.join(sorted(p.stem for p in targets['c3-lang'].glob('*.json')))}")
     print(f"  ts-defs: {len(list(targets['c3-ts-defs'].rglob('*.d.ts')))} files")
 
-    # 3. Scirra's guides: pages, not release data
-    print("[6/6] Fetching Scirra's guides...")
+    # 3. Which official examples use each ACE: from the examples clone, not the CDN
+    print("[6/7] Indexing the official examples' ACEs...")
+    import example_usage
+    print(f"  {example_usage.refresh()}")
+
+    # 4. Scirra's guides: pages, not release data
+    print("[7/7] Fetching Scirra's guides...")
     refresh_guides(settings.paths.data_dir, saved)
 
-    # 4. Summary
+    # 5. Summary
     print(f"\n{'='*50}")
     print(f"  Construct 3 {version} — data refreshed")
     print(f"  Cache: {fetcher.cache_dir}")

@@ -1,0 +1,11 @@
+{
+  "conditions": {
+    "for-each-node": {"examples": 1, "read": [["xml", "Event sheet 1", 3, 4]]}
+  },
+  "actions": {
+    "load": {"examples": 1, "read": [["xml", "Event sheet 1", 2, 4]]}
+  },
+  "expressions": {
+    "stringvalue": {"examples": 1, "read": [["xml", "Event sheet 1", 3, 4]]}
+  }
+}

@@ -15,6 +15,7 @@ display names in that language.
   parameters, properties, shared ACEs and properties, a worked example
 - [Effect files](#effect-files)
 - [Example projects](#example-projects)
+- [Example usage](#example-usage)
 - [Language packs](#language-packs)
 - [Scripting interfaces](#scripting-interfaces)
 - [Guides](#guides)
@@ -33,6 +34,10 @@ data/
     {locale}/behaviors/{id}.json   behavior ACEs
     {locale}/effects/{id}.json     effect parameters and categories
   c3-examples/{locale}/{id}.json   example project metadata
+  c3-example-usage/
+    _source.json                   the examples clone and commit the index was built from
+    plugins/{id}.json              per ACE of the plugin: how many examples use it, and where
+    behaviors/{id}.json            the same for a behavior
   c3-lang/{locale}.json            raw CDN language pack, pretty printed
   c3-ts-defs/
     autocomplete-data.json         scripting class to member listings
@@ -297,6 +302,35 @@ Each file in `c3-examples/{locale}/` describes one official example:
 
 To find examples for a plugin, filter on `used-addons`. To find examples for
 a topic, filter on `tags`.
+
+## Example usage
+
+`c3-example-usage/` says which official examples use each condition, action
+and expression. `scripts/example_usage.py` builds it from the event sheets of
+the `Construct-Example-Projects` clone, and `_source.json` names the clone's
+commit. A file is named after the id of its plugin or behavior, as in the
+schemas. The ACEs shared by every world object are in
+`plugins/_common.json`. The numbers below show the format only:
+
+```json
+{
+  "actions": {
+    "wait": {"examples": 12, "read": [["kiwi-story", "eOpening", 1, 1], ...]}
+  }
+}
+```
+
+| Field | Meaning |
+|-------|---------|
+| `examples` | How many examples use the ACE. An example in both scripting languages, `<id>-js` and `<id>-ts`, counts once |
+| `read` | Up to three uses, the smallest sheets first: the example's folder under `example-projects/`, the sheet's name, and the first and last event of the use as `print_sheet.py` numbers them. A use is the event and up to seven of its sub-events |
+
+An expression counts where a parameter that takes an expression writes it:
+`Player.X`, `Player.Platform.VectorX`, `Self.X`, or a System expression by
+name. Text in quotes and the names of the project's variables do not count.
+`lookup_ace.py` prints the count and the `print_sheet.py` command of each
+use; why the index has this form is in
+`docs/decisions/example-usage-index.md`.
 
 ## Language packs
 

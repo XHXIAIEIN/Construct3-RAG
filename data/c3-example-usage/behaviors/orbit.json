@@ -1,0 +1,10 @@
+{
+  "actions": {
+    "pin": {"examples": 2, "read": [["solar-system", "Events", 8, 8], ["grukkle-onslaught", "EveMainMenu", 22, 22]]},
+    "set-enabled": {"examples": 1, "read": [["grukkle-onslaught", "EveMainMenu", 33, 33]]},
+    "set-offset-angle": {"examples": 4, "read": [["orbiting-platforms", "MainCode", 16, 16], ["fire-bars", "MainCode", 17, 17], ["solar-system", "Events", 8, 8]]},
+    "set-radius": {"examples": 3, "read": [["orbiting-platforms", "MainCode", 16, 16], ["fire-bars", "MainCode", 17, 17], ["grukkle-onslaught", "EveMainMenu", 23, 23]]},
+    "set-speed": {"examples": 3, "read": [["orbiting-platforms", "MainCode", 16, 16], ["fire-bars", "MainCode", 17, 17], ["solar-system", "Events", 16, 16]]},
+    "set-target": {"examples": 1, "read": [["back-face-culling", "Event sheet 1", 1, 1]]}
+  }
+}

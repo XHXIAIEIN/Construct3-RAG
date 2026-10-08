@@ -1,0 +1,19 @@
+{
+  "conditions": {
+    "is-on-android": {"examples": 4, "read": [["kitty-katcher", "TitleScreen", 3, 3], ["surface-jump", "MainCode", 13, 15], ["template-card-memory-match", "MainCode", 41, 41]]},
+    "is-on-chromeos": {"examples": 2, "read": [["kitty-katcher", "TitleScreen", 4, 4], ["surface-jump", "MainCode", 11, 12]]},
+    "is-on-ios": {"examples": 4, "read": [["kitty-katcher", "TitleScreen", 3, 3], ["surface-jump", "MainCode", 13, 15], ["template-card-memory-match", "MainCode", 41, 41]]},
+    "is-on-linux": {"examples": 2, "read": [["kitty-katcher", "TitleScreen", 4, 4], ["surface-jump", "MainCode", 11, 12]]},
+    "is-on-macos": {"examples": 2, "read": [["kitty-katcher", "TitleScreen", 4, 4], ["surface-jump", "MainCode", 11, 12]]},
+    "is-on-mobile": {"examples": 11, "read": [["tick-tock-toppings", "TitleEvents", 17, 17], ["mythinsects", "MenuEvents", 3, 3], ["level-editor-template", "MainCode", 2, 4]]},
+    "is-on-windows": {"examples": 2, "read": [["kitty-katcher", "TitleScreen", 4, 4], ["surface-jump", "MainCode", 11, 12]]}
+  },
+  "actions": {
+    "request-wake-lock": {"examples": 3, "read": [["template-infinite-jumping", "Start screen events", 3, 3], ["rocket-barrel", "StartScreen", 4, 4], ["fuji-leaper", "MenuEvents", 72, 72]]}
+  },
+  "expressions": {
+    "canvas-css-height": {"examples": 7, "read": [["living-card", "Code", 5, 5], ["bamboo-strike", "Gameplay", 7, 10], ["box-breaker", "Events", 40, 40]]},
+    "canvas-css-width": {"examples": 8, "read": [["living-card", "Code", 5, 5], ["bamboo-strike", "Gameplay", 7, 10], ["box-breaker", "Events", 40, 40]]},
+    "canvas-device-width": {"examples": 8, "read": [["3d-castle-maze", "GameplayCode", 29, 29], ["cannon-launch", "MainCode", 47, 47], ["snake-shape", "MainCode", 61, 61]]}
+  }
+}

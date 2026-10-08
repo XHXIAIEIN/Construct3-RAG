@@ -1,0 +1,28 @@
+{
+  "conditions": {
+    "compare-tile-at": {"examples": 7, "read": [["level-editor-template", "MainCode", 12, 12], ["tilemap-destruction", "MainCode", 32, 32], ["dig-the-way", "EventsGame", 4, 4]]}
+  },
+  "actions": {
+    "erase-tile": {"examples": 4, "read": [["level-editor-template", "MainCode", 22, 22], ["tilemap-destruction", "MainCode", 32, 32], ["procedural-terrain-generation", "Event sheet 1", 28, 28]]},
+    "erase-tile-range": {"examples": 1, "read": [["procedural-terrain-generation", "Event sheet 1", 16, 16]]},
+    "erase-tile-with-brush": {"examples": 2, "read": [["dig-the-way", "EventsGame", 20, 20], ["eventide", "EventsGame", 14, 14]]},
+    "load": {"examples": 1, "read": [["level-editor-template", "MainCode", 28, 28]]},
+    "set-tile": {"examples": 5, "read": [["pathfinding-direct-movement", "Event sheet 1", 16, 16], ["level-editor-template", "MainCode", 21, 21], ["ground-shift", "MainCode", 18, 18]]},
+    "set-tile-range": {"examples": 2, "read": [["procedural-terrain-generation", "Event sheet 1", 17, 17], ["eventide", "EventsGame", 12, 19]]},
+    "set-tile-with-brush": {"examples": 1, "read": [["eventide", "EventsGame", 16, 16]]}
+  },
+  "expressions": {
+    "map-display-height": {"examples": 2, "read": [["ghost-chaser", "Code", 3, 5], ["pusha-pusha", "Gameplay", 5, 12]]},
+    "map-display-width": {"examples": 2, "read": [["ghost-chaser", "Code", 3, 5], ["pusha-pusha", "Gameplay", 5, 12]]},
+    "positiontotilex": {"examples": 5, "read": [["rpg-encounter", "OverworldEvents", 10, 10], ["level-editor-template", "MainCode", 2, 4], ["dig-the-way", "EventsGame", 20, 20]]},
+    "positiontotiley": {"examples": 5, "read": [["rpg-encounter", "OverworldEvents", 10, 10], ["level-editor-template", "MainCode", 12, 12], ["dig-the-way", "EventsGame", 20, 20]]},
+    "snapx": {"examples": 1, "read": [["ghost-racer", "MainCode", 37, 38]]},
+    "snapy": {"examples": 1, "read": [["ghost-racer", "MainCode", 37, 38]]},
+    "tile-height": {"examples": 3, "read": [["labyrinth", "GameEvents", 2, 3], ["dig-the-way", "EventsGame", 4, 4], ["eventide", "EventsGame", 12, 19]]},
+    "tile-width": {"examples": 3, "read": [["labyrinth", "GameEvents", 2, 3], ["dig-the-way", "EventsGame", 3, 4], ["eventide", "EventsGame", 12, 19]]},
+    "tileat": {"examples": 7, "read": [["labyrinth", "ToolsEvents", 1, 1], ["rpg-encounter", "OverworldEvents", 10, 10], ["ghost-chaser", "Code", 4, 4]]},
+    "tilesjson": {"examples": 1, "read": [["level-editor-template", "MainCode", 25, 25]]},
+    "tiletopositionx": {"examples": 9, "read": [["level-editor-template", "MainCode", 2, 4], ["tilemap-destruction", "MainCode", 32, 32], ["ghost-chaser", "Code", 4, 4]]},
+    "tiletopositiony": {"examples": 9, "read": [["level-editor-template", "MainCode", 2, 4], ["tilemap-destruction", "MainCode", 32, 32], ["ghost-chaser", "Code", 4, 4]]}
+  }
+}

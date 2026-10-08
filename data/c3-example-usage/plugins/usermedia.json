@@ -1,0 +1,24 @@
+{
+  "conditions": {
+    "on-media-request-approved": {"examples": 4, "read": [["camera-effects", "Event sheet 1", 2, 2], ["camera-input", "Event sheet 1", 4, 4], ["balloon-blower", "EventsSettings", 8, 8]]},
+    "on-media-request-declined": {"examples": 4, "read": [["camera-effects", "Event sheet 1", 3, 3], ["camera-input", "Event sheet 1", 5, 5], ["balloon-blower", "EventsSettings", 9, 10]]},
+    "on-retrieved-media-sources": {"examples": 2, "read": [["microphone-input", "Event sheet 1", 3, 4], ["balloon-blower", "EventsSettings", 7, 7]]}
+  },
+  "actions": {
+    "get-media-sources": {"examples": 4, "read": [["microphone-input", "Event sheet 1", 1, 2], ["camera-input", "Event sheet 1", 1, 2], ["balloon-blower", "EventsSettings", 6, 6]]},
+    "request-camera": {"examples": 2, "read": [["camera-effects", "Event sheet 1", 1, 1], ["camera-input", "Event sheet 1", 3, 3]]},
+    "request-microphone": {"examples": 3, "read": [["microphone-input", "Event sheet 1", 8, 8], ["balloon-blower", "EventsSettings", 7, 7], ["voice-recorder", "Event sheet 1", 7, 7]]},
+    "snapshot": {"examples": 1, "read": [["camera-input", "Event sheet 1", 12, 12]]},
+    "stop": {"examples": 2, "read": [["camera-effects", "Event sheet 1", 5, 5], ["camera-input", "Event sheet 1", 10, 10]]}
+  },
+  "expressions": {
+    "audiosourcecount": {"examples": 3, "read": [["microphone-input", "Event sheet 1", 4, 4], ["balloon-blower", "EventsSettings", 12, 12], ["voice-recorder", "Event sheet 1", 4, 5]]},
+    "audiosourcelabelat": {"examples": 3, "read": [["microphone-input", "Event sheet 1", 4, 4], ["balloon-blower", "EventsSettings", 8, 8], ["voice-recorder", "Event sheet 1", 5, 5]]},
+    "camerasourcecount": {"examples": 1, "read": [["camera-input", "Event sheet 1", 2, 2]]},
+    "camerasourcefacingat": {"examples": 1, "read": [["camera-input", "Event sheet 1", 2, 2]]},
+    "camerasourcelabelat": {"examples": 1, "read": [["camera-input", "Event sheet 1", 2, 2]]},
+    "snapshoturl": {"examples": 1, "read": [["camera-input", "Event sheet 1", 12, 12]]},
+    "videoheight": {"examples": 2, "read": [["camera-effects", "Event sheet 1", 4, 4], ["camera-input", "Event sheet 1", 6, 6]]},
+    "videowidth": {"examples": 2, "read": [["camera-effects", "Event sheet 1", 4, 4], ["camera-input", "Event sheet 1", 6, 6]]}
+  }
+}

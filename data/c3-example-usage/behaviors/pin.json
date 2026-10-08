@@ -1,0 +1,9 @@
+{
+  "actions": {
+    "pin-to-object": {"examples": 17, "read": [["template-tile-based-game", "Event sheet 1", 1, 1], ["fire-bars", "MainCode", 3, 3], ["switch-block", "MainCode", 3, 3]]},
+    "pin-to-object-distance": {"examples": 2, "read": [["pin-rope-style", "Event sheet 1", 1, 1], ["pin-chain-style", "Event sheet 1", 2, 2]]},
+    "pin-to-object-imagepoint": {"examples": 9, "read": [["template-gamepad-twin-stick-shooter", "MainCode", 24, 24], ["tilemap-destruction", "MainCode", 27, 27], ["template-crossing-frog", "MainCode", 6, 6]]},
+    "pin-to-object-properties": {"examples": 6, "read": [["template-card-memory-match", "MainCode", 36, 36], ["tilemap-switching", "MainCode", 6, 6], ["stealth-example", "Event sheet 1", 2, 2]]},
+    "unpin": {"examples": 2, "read": [["template-invert-gravity", "MainCode", 12, 12], ["demonoire", "eGameRoom", 220, 220]]}
+  }
+}
