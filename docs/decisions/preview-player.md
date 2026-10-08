@@ -86,6 +86,26 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   beside the recordings, the same page listing every one with a link to its
   review page, and the page without a recording takes the game project or
   its `.tmp/preview/` and lists the recordings it finds there.
+- A bug is played before it is fixed. The agent writes the report as given,
+  doing, produces and instead of, and plays the plan on the unchanged
+  project until it fails at the step that reads the produces, for the
+  reported reason. A plan that never failed passes whether the fix works
+  or not, and one that fails elsewhere tests another fault.
+- A word of feel becomes a number. Floaty or slow names no value, so the
+  agent names the variable behind it, reads its current value, and
+  measures what the player feels with `record` and `watch`, against a
+  target in the same measure from `prompts/references/feel.md` or the user.
+  The change ends when the measure meets the target; a motion judged only
+  by eye is changed again on every review.
+- A plan that passed is kept as a check of its change. `--keep NAME` copies
+  it into the project as `tools/plans/NAME.json`, where the generator and the
+  design live and the editor reads nothing it is not told to, and the plan is
+  committed with the change. `--all` replays every kept plan in one editor
+  session, each from a first launch, and names each one that fails, since a
+  later change broke what it checks. Each run overwrites `.tmp/preview/` and
+  its result, so a plan that is not kept is played once. A passing run says
+  how to keep it and how many plans are kept, and a refused kept plan fails
+  the replay like a failed step.
 - The run's output tells the agent what the page does for the user, so the
   agent points the user to it: a part that looks wrong comes back as a task.
 - The review page follows a technical drawing: compact ruled panels,

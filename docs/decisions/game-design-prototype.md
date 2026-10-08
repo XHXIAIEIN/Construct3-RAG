@@ -41,6 +41,11 @@ and the built game is held to the same tests.
 - A value read in the running game has moved on by the time it is read; a
   start value read from the project files has not. Where an instance lands
   is the layout grid's to say, not the design's.
+- The screen's entries, as models write them, mix a place with what the
+  region does: "top-left", "bottom-center, follows the mouse", "fall from
+  random positions at the top", "center overlay when game ends". The first
+  screen can be measured against a place of a few words, thirds and sides,
+  before the first comma, but not against the rest.
 - A design that holds only the rules loses the request. A review then holds
   the game to the design, which is the model's reading of the request, and
   a part the model dropped leaves no trace: the next session either builds
@@ -132,6 +137,15 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
   without input: each shown text, frame or count that holds still in the
   prototype through the first two seconds, and the win and the lose, must
   match the prototype.
+- A `screen` entry is a place when the words before its first comma are
+  only top, bottom, left, right, centre (thirds of the screen) and above,
+  below, left of, right of another entry. On the first screen the middle of
+  the instances its key names must lie in that third or past that side. If
+  it does not, `play_design.py` names the object, where its middle is and
+  where the place wants it. A key names the type of that name, the object
+  that a state row of that name is kept in, or every type whose name holds
+  its words. `check_design.py` prints which entries are places, and
+  `review_look.py` asks about the others in one question on its screenshots.
 
 ## Re-evaluate when
 
@@ -146,6 +160,9 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
 - A tapped object lies inside a screen input's region, which only the
   editor run shows: the binding of a tap on an object would carry where the
   object lies.
+- A design's place and the screen disagree where the player sees no fault,
+  such as a HUD band whose middle falls outside the third its words name:
+  the place is measured by the box's edges instead of its middle.
 - A game is won without input only after 120 s: the design states the
   length of its round, and the run without input lasts that long.
 - A report after the build leaves out what was left for later although the

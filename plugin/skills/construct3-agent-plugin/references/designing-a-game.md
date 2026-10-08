@@ -36,7 +36,7 @@ shows before the build and a bug in the events after it.
  "later": ["sounds", "moles that get faster"],
  "core_loop": "A mole shows in one of nine holes; tap it before it moves on. Three escapes end the game",
  "reference": {"example": "<id of the example read>", "takes": "what the design takes from how it is built"},
- "screen": {"score": "top-left", "holes": "a 3 x 3 grid in the middle", "message": "below the holes"},
+ "screen": {"score": "top-left", "holes": "centre, a 3 x 3 grid", "message": "below the holes"},
  "state": [
   {"name": "score", "start": 0, "stored_in": "global"},
   {"name": "scoreLine", "start": "Score: 0", "stored_in": "ScoreText.text"},
@@ -73,6 +73,18 @@ shows before the build and a bug in the events after it.
   neither builds them again nor forgets them. An empty list is refused. If
   the design builds the whole request, write `["nothing left out"]`. The
   ok line of the check lists the items.
+- `screen`: each region the player sees and where it sits. The key is the
+  object type that shows the region (`Board`), a state row kept in an
+  object (`message` for `Message.text`), or words of type names. Words of
+  type names match every type whose name holds them: `score` matches
+  `ScoreLabel` and `ScoreText` together. The words before the first comma
+  give the place: `top`, `bottom`, `left`, `right`, `centre` as thirds of
+  the screen (`top-left`, `bottom centre`), and `above KEY`, `below KEY`,
+  `left of KEY`, `right of KEY` for another entry or object; a comment may
+  follow the comma. `play_design.py` checks such a place on the first
+  screen: the middle of the object's instances lies in that third, or past
+  that side of the other entry. `review_look.py` asks about a place written
+  in other words.
 - `state`: one row per piece of state, the table of `generating-a-project.md`,
   "Plan the state". `stored_in` is `"global"` (a global variable of the same
   name), `"Array"` (an Array object of the same name, with `"size": [w, h]`
@@ -216,5 +228,5 @@ its `start` as the text, a count as that many visible instances on the first
 layout. `play_design.py` reads each one in the project's files before it
 opens the editor and refuses a start that differs from the design's. In the
 editor it then reads the first screen without input: a text, a frame or a
-count that differs from the prototype's, or a win or a lose that holds
-there, is a finding.
+count that differs from the prototype's, a win or a lose that holds there,
+or an object outside the place its `screen` entry names is a finding.

@@ -32,12 +32,27 @@ about the editor or the preview goes to `editor-and-preview.md`.
    first time can fail the second
    (`Construct3-RAG/prompts/pitfalls/restarting-a-layout.md`). A change
    with no condition of its own, a colour, a size, a duration, a volume,
-   has one case: reach the scene where it shows and read it as step 4
+   has one case: reach the scene where it shows and read it as step 5
    says. [observed in a game project, r504 preview, 2026-10-02: an
    idle hint to deploy a piece was played with the slot's column holding an
    enemy, without one, where it had to fall back to a merge hint, and
    followed through by dragging as the hand showed]
-2. **Reach each scene the way the game does.** Play to it when that is
+2. **For a bug, see the plan fail before the fix.** Write the report in
+   four parts:
+   - given: the scene and the state the game is in
+   - doing: the input, or the time that passes
+   - produces: what the game does
+   - instead of: what it should do
+
+   The plan reaches the given, does the doing and reads the produces where
+   the player sees it. Play it on the project before any event changes,
+   and see it fail at that read for the reason the report gives. A plan
+   that passes there, or fails at an earlier step, has not reached the
+   bug. A fix played against it shows nothing, so change the plan until it
+   fails as reported. Then change the events and play the same plan until
+   it passes. [design: docs/decisions/preview-player.md, the bullet on a
+   bug's plan]
+3. **Reach each scene the way the game does.** Play to it when that is
    short; otherwise call the game's own functions with
    `runtime.callFunction`, which run the events that keep related values in
    step. Write a value directly only when no event reaches it, and then
@@ -51,7 +66,7 @@ about the editor or the preview goes to `editor-and-preview.md`.
    up as enemies spawn, drove a progress ratio near -20000 and a low-pass
    frequency computed from it to 0, logging a RangeError per call that the
    same steps without the write did not]
-3. **Meet the conditions that start the flow.** Read the trigger chain of
+4. **Meet the conditions that start the flow.** Read the trigger chain of
    the event under test back to its first trigger: a countdown that a touch
    starts, an audio clock that stands still until the first input, a
    tutorial or a save flag. Each run starts from a first launch, so a game
@@ -60,7 +75,7 @@ about the editor or the preview goes to `editor-and-preview.md`.
    timer of a hint starts in *On any touch start*, and a plan that set the
    scene up through `runtime` alone waited 15 seconds for a hint that never
    came, until a tap on an empty spot came first]
-4. **Read the result where the player sees it.** A variable that says the
+5. **Read the result where the player sees it.** A variable that says the
    flow ran is not the flow: read what is on screen, positions, opacity,
    the layer shown, and for anything that moves, read it over time. A
    tween caught in one screenshot shows a point on its way. Put a `record`
@@ -75,7 +90,18 @@ about the editor or the preview goes to `editor-and-preview.md`.
    a guide hand that fades in, presses and drags was read as "from bench
    slot 3 to battle slot 0" from the first two samples less than 0.5 px
    apart and the last sample after 1.5 s]
-5. **Keep what the run logs apart from what the change did.** A run that
+6. **Turn a word of feel into a number.** Floaty, slow, sluggish or heavy
+   names no value to change. Name the variable behind the word: a jump's
+   gravity and strength, a tween's duration and ease, a speed, a delay.
+   Read its current value in the project. Then measure what the player
+   feels in a `record` step with that value in `watch`: the time from the
+   press to the top of a jump, how long a tween takes to rest, how far a
+   dragged piece lags. Write the target in the same measure, from the row
+   for the effect in `Construct3-RAG/prompts/references/feel.md` where
+   there is one, otherwise from the user. The change is done when the
+   recording measures the target, not when the motion looks better.
+   [design: docs/decisions/preview-player.md, the bullet on a word of feel]
+7. **Keep what the run logs apart from what the change did.** A run that
    logs no error and never reached the event says nothing; a run that logs
    an error after a direct write may say nothing about the events either.
    Report which cases were played, the result read in each, and any value
@@ -93,6 +119,16 @@ about the editor or the preview goes to `editor-and-preview.md`.
    frame, select a part that looks wrong and copy it back as a task.
    [design: docs/decisions/preview-player.md, the bullets on
    `record` and the review page]
+8. **Keep the plan, and replay every kept plan after each change.** Once a
+   plan passes, run it again with `--keep NAME`. It is copied to
+   `tools/plans/NAME.json` in the project, beside the generator and the
+   design, and is committed with the change it checks; the editor ignores
+   the folder. After every later change, `preview_project.py --all` plays
+   each kept plan from a first launch in one editor session and names each
+   one that fails. Fix the events the failing step reads, not the plan,
+   because the plan passed when its change was made. Change a kept plan
+   only when the game was meant to change what it checks.
+   [design: docs/decisions/preview-player.md, the bullet on kept plans]
 
 ## The look of each layout
 
@@ -109,10 +145,16 @@ What a measurement cannot judge, the script asks: one list of yes/no
 questions about visible facts: cut or overlapping text, objects that
 cover others, the edge of the screen, mixed drawing styles, a backdrop that
 outshines what the player acts on, kinds that look alike, and decoration
-repeated on every layout. Open each screenshot it
-names with the image tool, answer each question from the picture, and for
-each yes name the layout and the object type to change. A question answered
-from memory of the events, not from the picture, is not answered.
+repeated on every layout, and, when the project has a design, the screen
+entries that `play_design.py` cannot measure. The agent that wrote the
+events reads its own screenshots by what it meant them to show. So the
+script also writes the screenshots and the questions into `brief.md` beside
+them, for a reviewer that has not seen the project. Where you can start a
+sub-agent, give it the brief as its whole task, and for each yes in its
+reply name the layout and the object type at the place it describes.
+Otherwise open each screenshot with the image tool, answer each question
+from the picture, and name the same for each yes. A question answered from
+memory of the events, not from the picture, is not answered.
 
 A layout reached by `goToLayout` starts without what the game's flow sets up
 before it, and one whose start events leave at once is printed as left for
