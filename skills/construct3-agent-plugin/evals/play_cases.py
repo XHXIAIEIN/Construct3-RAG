@@ -504,10 +504,11 @@ def script_shift_and_edges() -> dict:
                       moved("The arrow keys move the player", {"ArrowRight": (1, 0)}),
                       *edges(watch, [("ArrowLeft", 2.5), ("ArrowUp", 2.0), ("ArrowRight", 7.5), ("ArrowDown", 6.5)],
                              "layout", "The player never leaves the layout", "The player reaches every edge of the layout", 8),
-                      *speed(["ArrowRight"]), *speed(["ShiftLeft", "ArrowRight"]),
-                      check("Holding Shift doubles the player's speed",
-                            "const s = vars.speeds, a = s.ArrowRight, b = s['ShiftLeft+ArrowRight'], r = a > 0 ? b / a : 0;",
-                            "return {ok: r >= 1.8 && r <= 2.2, said: `ArrowRight ${a} px/s, with ShiftLeft ${b} px/s: ${r.toFixed(2)} times`};")]}
+                      *speed(["ArrowRight"]), *speed(["ShiftLeft", "ArrowRight"]), *speed(["ShiftRight", "ArrowRight"]),
+                      check("Holding either Shift key doubles the player's speed",
+                            "const s = vars.speeds, a = s.ArrowRight, r = k => a > 0 ? s[k + '+ArrowRight'] / a : 0;",
+                            "const sides = ['ShiftLeft', 'ShiftRight'], ok = sides.every(k => r(k) >= 1.8 && r(k) <= 2.2);",
+                            "return {ok, said: `ArrowRight ${a} px/s; ` + sides.map(k => `with ${k} ${r(k).toFixed(2)} times`).join(', ')};")]}
 
 
 def stay_on_screen() -> dict:

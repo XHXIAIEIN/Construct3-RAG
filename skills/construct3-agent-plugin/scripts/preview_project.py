@@ -45,9 +45,10 @@ Steps, each an object with one of these keys, and "note" for a label:
                                 give 0: the release follows the last move, since Touch reads a
                                 speed of 0 from a pointer that has been still about 50 ms
   key NAME or [NAME, ...], seconds
-                                press a key: ArrowLeft, Space, Enter, Escape, KeyA or a, Digit1 or 1
-                                (default 0.1 s). A list of names holds them together, pressed in
-                                order and released in reverse: ["ShiftLeft", "ArrowRight"]
+                                press a key: ArrowLeft, Space, Enter, Escape, KeyA or a, Digit1 or 1,
+                                ShiftLeft or ShiftRight (default 0.1 s). A list of names holds them
+                                together, pressed in order and released in reverse:
+                                ["ShiftLeft", "ArrowRight"]
   wait SECONDS                  let the game run
   until EXPRESSION, timeout     wait until the JavaScript expression is true (default 10 s)
   js CODE                       run JavaScript against the runtime and print what it returns
@@ -230,14 +231,19 @@ NOT_STARTED = re.compile(r"ReferenceError: c3(probe|play) is not defined")
 
 # The key, its code and the Windows key code a keyboard event carries.
 NAMED_KEYS = {"ArrowLeft": 37, "ArrowUp": 38, "ArrowRight": 39, "ArrowDown": 40, "Space": 32, "Enter": 13,
-              "Escape": 27, "Tab": 9, "Backspace": 8, "ShiftLeft": 16, "ControlLeft": 17, "AltLeft": 18}
+              "Escape": 27, "Tab": 9, "Backspace": 8, "ShiftLeft": 16, "ShiftRight": 16, "ControlLeft": 17,
+              "ControlRight": 17, "AltLeft": 18, "AltRight": 18}
+# A modifier's code, its key and the side of the keyboard it is on, the protocol's location
+SIDES = {f"{key}{side}": (key, location) for key in ("Shift", "Control", "Alt")
+         for side, location in (("Left", 1), ("Right", 2))}
 
 
 def key_event(name: str) -> dict | None:
     """What Input.dispatchKeyEvent needs for a key named by its code or its character."""
     if name in NAMED_KEYS:
-        key = {"Space": " ", "ShiftLeft": "Shift", "ControlLeft": "Control", "AltLeft": "Alt"}.get(name, name)
-        return {"key": key, "code": name, "windowsVirtualKeyCode": NAMED_KEYS[name], **({"text": " "} if key == " " else {})}
+        key, location = SIDES.get(name, (" " if name == "Space" else name, 0))
+        return {"key": key, "code": name, "windowsVirtualKeyCode": NAMED_KEYS[name],
+                **({"location": location} if location else {}), **({"text": " "} if key == " " else {})}
     char = name[-1] if (name.startswith("Key") or name.startswith("Digit")) and len(name) in (4, 6) else name
     if len(char) == 1 and char.isalnum():
         code = f"Key{char.upper()}" if char.isalpha() else f"Digit{char}"
