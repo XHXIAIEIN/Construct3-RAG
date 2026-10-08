@@ -31,6 +31,13 @@ export as it was. The export carries the version given by --version or
 the editor, and that version is written into project.c3proj when it differs. The
 copy also sets Use worker to Auto, which lets the engine decide, whatever the
 project sets for preview.
+
+The export ships every string of the events, the scripts and the project files
+to every player. Before the browser starts, a string shaped like a key stops the
+run with its place, as check_project.py warns of it; allow-secret in the comment
+above the event, in a variable's comment or on the line keeps one meant to be
+public. The hosts of the addresses the game holds are named, for the user to
+confirm.
 """
 from __future__ import annotations
 
@@ -69,10 +76,12 @@ one it opens a tab and closes it after the export, or when the run stops. A tab 
 user's is left on the start page either way.
 
 output:
+  the game holds addresses of <host> (<place>), ...: tell the user which hosts the game contacts
   logged in as <name>, exporting <version>
   exported <version> into <folder>, runtime in the worker|page; project.c3proj version <version>
 
-exit codes: 0 exported; 1 the export did not finish: no subscription within 5 minutes,
+exit codes: 0 exported; 1 a string of the project is shaped like a key, before the browser
+starts, or the export did not finish: no subscription within 5 minutes,
 the project did not open, or a dialog stopped it; the copy is closed, the window is left
 open, and a run again goes on in it; 2 no project, a flag that cannot be used, a --to that
 holds the project or files other than an export, or the editor did not load; 3 no Edge, Chrome or Chromium here
@@ -83,6 +92,8 @@ EXPORT_WAIT = 300       # seconds the editor has to export
 UI_WAIT = 30            # seconds a menu item or a dialog has to appear
 CHUNK = 3 << 20         # bytes of the zip read from the page per call
 SLOW = 3                # how much longer the pauses between clicks are with --slow or after a missed step
+KEYS_SHOWN = 20         # strings shaped like a key named before the rest are counted
+HOSTS_SHOWN = 10        # hosts named before the rest are counted
 pace = 1.0
 
 
@@ -676,6 +687,21 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
     return exported_worker(folder)
 
 
+def shipped_check(project: Path) -> tuple[list[str], str | None]:
+    """The strings shaped like keys the export would ship, a line each, and the line that names the hosts the
+    game holds addresses of."""
+    data = c3.load(project / "project.c3proj")
+    sheets = {name: c3.load(path) for name, path in c3.listed_files(project, data, "eventSheets").items() if path}
+    strings = list(c3.shipped_strings(project, data, sheets))
+    keys = [f"  {s.place}: {what} ({shown}); to keep it, write {c3.ALLOW} in {s.mark}"
+            for s, what, shown in c3.secrets_in(strings)]
+    hosts = list(c3.hosts_in(strings).items())
+    named = ", ".join(f"{host} ({place})" for host, place in hosts[:HOSTS_SHOWN])
+    more = f", and {len(hosts) - HOSTS_SHOWN} more" if len(hosts) > HOSTS_SHOWN else ""
+    return keys, (f"the game holds addresses of {named}{more}: tell the user which hosts the game contacts"
+                  if hosts else None)
+
+
 def main() -> int:
     c3.utf8_output()
     ap = argparse.ArgumentParser(description=__doc__, epilog=EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -715,6 +741,16 @@ def main() -> int:
         print(f"the version to export is '{version}', not 3 or 4 numbers of 0 to 99; pass --version 1.0.0.0 or "
               f"set Version in the project properties", file=sys.stderr)
         return 2
+    keys, hosts = shipped_check(project)
+    if keys:
+        print(f"not exported: the export ships every string of the project to every player, who can read it, and "
+              f"{len(keys)} {'is' if len(keys) == 1 else 'are'} shaped like a key:")
+        print("\n".join(keys[:KEYS_SHOWN]) + (f"\n  and {len(keys) - KEYS_SHOWN} more" if len(keys) > KEYS_SHOWN else ""))
+        print("Move each key to a server that the game calls. If a key is meant to be public, as some services "
+              "issue for web pages, write allow-secret where its line says, then run the export again")
+        return 1
+    if hosts:
+        print(hosts)
     if args.dry_run:
         print(f"would export {version} in {editor_url(project)} into {folder}; project.c3proj version "
               f"{project_version(project)}{f' -> {version}' if version != project_version(project) else ''}")

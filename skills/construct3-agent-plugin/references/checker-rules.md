@@ -1,7 +1,10 @@
 # What `check_project.py` checks
 
 Read this when a finding needs explaining, when the editor reports an error
-the checker let through, or before adding a rule.
+the checker let through, or before adding a rule. For an error the checker
+let through, `scripts/open_in_editor.py` also prints a report for the user to
+send to the skill's repository, once per refusal; it is sent only when the
+user says so.
 
 ## Against the schemas and the project
 
@@ -268,6 +271,27 @@ A style warning is never an error: the editor accepts all ten, and an
 official example may carry one. What the shape should be instead is
 `Construct3-RAG/prompts/event-sheet-style.md`, and for the last three the
 Native first table of `Construct3-RAG/prompts/event-sheet-thinking.md`.
+
+## What a web export ships
+
+Every player of a web export can read its strings in the browser's tools.
+So a string shaped like a key is a warning wherever the export ships it: in
+a parameter of a condition or an action, a variable's value, a line of a
+script block, or a line of a script file or a text file the project lists.
+These are the shapes:
+
+- the key of a common service: OpenAI, Anthropic, Google, AWS, GitHub, Slack
+  or Stripe;
+- a private key or a signed token (JWT);
+- a random-looking token in a text literal, 32 to 512 letters, digits and
+  `-_+/=`.
+
+The warning shows the first characters, never the key. `allow-secret` in the
+comment above the event, in a variable's comment or on the line marks a key
+meant to be public, such as one a service issues for web pages.
+`scripts/export_project.py` stops on the same finding before the browser
+starts. The shapes and the measurement behind them:
+`Construct3-RAG/docs/decisions/secret-scan.md`.
 
 ## What it does not see
 
