@@ -162,6 +162,7 @@ browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfa
 - Drag & Drop drags the front instance under the pointer, by layer and then Z, visible or not. Stop drags under a popup with *Set layer interactive* on the pieces' layer or *Set enabled* on the behavior.
 - Touch speed reads 0 once the finger has been still for about 50 ms, and the release adds no move. So a flick tested in *On any touch end* passes only for a release made in motion.
 - *Simulate control* acts only in the tick it runs. Put it in an event whose condition stays true while the control is held: *Key is down*, not *On key pressed*.
+- Platform's *Simulate control* Jump does nothing in the air without *Double jump*. Jump from the air, as in coyote time, with *Set vector Y* to `-Self.Platform.JumpStrength`, and do there what *On jump* does, since it does not fire.
 - Every instance with *Default controls* on moves with the arrow keys. Turn it off on each instance the player does not steer, such as a pushed crate, and move it with *Simulate control*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.

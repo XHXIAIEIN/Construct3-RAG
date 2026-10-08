@@ -89,6 +89,29 @@ borrowed idle periods, 0.7 Hz and 3 Hz, that is 1.4 s and 0.33 s, differ
 fourfold. The examples' pickups agree with the slower one, and none bobs
 at 3 Hz.
 
+### Coyote time and a jump buffer
+
+The borrowed windows are about 0.1 s each. They were built into a copy of
+the platformer template example, with the Timer behavior on the player and
+`CoyoteTime` and `BufferTime` as globals of 0.1, the recipe of
+`prompts/references/feel.md`. `preview_project.py` played them in the
+stable editor's preview at the display's 144 Hz, and at 60 Hz with the
+browser's GPU off, which makes a headless page draw every 16.7 ms. A
+script in the page logged every tick: when the jump key went down, the
+fall or the landing, and the vertical speed.
+
+| Trial | 144 Hz | 60 Hz |
+|-------|--------|-------|
+| Jump pressed after walking off a ledge | jumped up to 97 ms, not from 118 ms | jumped up to 100 ms, not from 133 ms |
+| Jump pressed before landing | jumped on landing up to 90 ms, not from 111 ms | up to 83 ms, not from 100 ms |
+| Jump pressed again 7 to 67 ms after the top of a jump | no jump | no jump |
+
+So both windows hold at either rate to within one tick, because a Timer
+counts seconds, not ticks. With *Simulate control* Jump in place of
+*Set vector Y* for the coyote jump, no press jumped: Platform jumps from
+the floor only, unless *Double jump* is on (manual:
+`behavior-reference/platform.md`).
+
 ## Decision
 
 - Player height: no default and no warning. Within one way of moving,
@@ -108,6 +131,10 @@ at 3 Hz.
   tenth of its height, or Sine *Size* for a pulse. The template's `SINE`
   block keeps its values, because it is the shape of the properties, not
   a motion the stand-in game shows.
+- Coyote time and a jump buffer: a row in `feel.md` with the measured
+  recipe, naming `CoyoteTime` and `BufferTime` as the variables to tune.
+  The in-air jump goes into the Input pitfalls, because it changes which
+  action an agent writes.
 
 ## Re-evaluate when
 
@@ -115,3 +142,6 @@ at 3 Hz.
   wrong in a preview, or a template for one genre is added: it takes that
   genre's median.
 - A generated game's HUD covers its playfield while `filled()` passes it.
+- A preview at another rate, or a Construct release, moves a jump window
+  by more than a tick: rerun the probe, whose plan and log reader are in
+  `.local/docs/evidence/w11-measurements/coyote/`.

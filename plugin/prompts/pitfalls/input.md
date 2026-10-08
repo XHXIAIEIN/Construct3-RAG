@@ -109,6 +109,16 @@ Sources and the rule for adding an entry are in the index,
   event the player moves for one tick and stops. [manual:
   behavior-reference.md "Custom controls", the tip that the input events
   must be continually true]
+- Platform's *Simulate control* Jump jumps from the floor only, or in the
+  air as the one extra jump that *Double jump* allows. Pressed in the air
+  without it, it does nothing. A jump from the air, such as a coyote-time
+  jump just after walking off a ledge, is *Set vector Y* to
+  `-Self.Platform.JumpStrength`. *On jump* does not fire for it, so what
+  *On jump* does is done in that event as well. [manual:
+  behavior-reference/platform.md "Double jump"; observed in a probe
+  project, r495.2 preview at 60 and 144 Hz, 2026-10-08: *Simulate control*
+  Jump pressed 7 to 208 ms after walking off a ledge never jumped, and
+  *Set vector Y* jumped at every press within the 0.1 s window]
 - *Default controls* is a property of each instance, and every instance
   with it on moves with the arrow keys. A crate given Platform to be pushed,
   or an enemy given 8 Direction, has it on by default and walks with the
