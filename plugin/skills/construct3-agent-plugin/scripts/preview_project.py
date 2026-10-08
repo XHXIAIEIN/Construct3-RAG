@@ -20,6 +20,7 @@ plan is JSON, the steps run in order, and a step that fails stops the run:
      {"drag": "Card", "to": {"x": 215, "y": 100}, "seconds": 0.15, "rest": 0},
      {"hold": {"x": 40, "y": 600, "layer": "UI"}, "seconds": 1},
      {"key": "ArrowRight", "seconds": 0.5},
+     {"key": ["ShiftLeft", "ArrowRight"], "seconds": 0.5},
      {"wait": 1.5, "note": "the merge animation"},
      {"state": ["Piece", "BattleSlot"]},
      {"shot": "after-merge"}]}
@@ -44,7 +45,8 @@ Steps, each an object with one of these keys, and "note" for a label:
                                 give 0: the release follows the last move, since Touch reads a
                                 speed of 0 from a pointer that has been still about 50 ms
   key NAME, seconds             press a key: ArrowLeft, Space, Enter, Escape, KeyA or a, Digit1 or 1
-                                (default 0.1 s)
+                                (default 0.1 s). A list of names holds them together, pressed in
+                                order and released in reverse: ["ShiftLeft", "ArrowRight"]
   wait SECONDS                  let the game run
   until EXPRESSION, timeout     wait until the JavaScript expression is true (default 10 s)
   js CODE                       run JavaScript against the runtime and print what it returns
@@ -136,8 +138,9 @@ output:
     1 until runtime.objects.Enemy.getAllInstances().length >= 3: true after 1.4 s
     2 drag Piece 0 to BattleSlot 1: (120, 712) to (215, 388) in 0.4 s
       runtime: <an error the game logged during the step, with its event, and (N times) when it came more than once>
-    3 state Piece: <as open_in_editor.py --state prints it>
-    4 shot after-merge: .tmp/preview/04-after-merge.png
+    3 key ShiftLeft+ArrowRight: held 0.5 s
+    4 state Piece: <as open_in_editor.py --state prints it>
+    5 shot after-merge: .tmp/preview/05-after-merge.png
     recorded merge: 95 frames in 3.4 s, .tmp/preview/02-merge.mp4
       sheet .tmp/preview/02-merge-sheet.png: 10 frames, numbered left to right, top down: 1 at 0 ms (start),
       2 at 35 ms (largest change), ..., 10 at 3380 ms (end)
@@ -148,7 +151,7 @@ output:
       copies it to you as a task; .tmp/preview/index.html lists every recording
       frames and timeline.json in .tmp/preview/02-merge
       watch coins: 40 at 0 ms, 30 at 900 ms
-    ran: 4 of 4 steps in 9.6 s, 1 runtime error
+    ran: 5 of 5 steps in 9.6 s, 1 runtime error
 
 --all prints one line per kept plan instead of its steps:
     ok    merge-two-pieces: 6 steps in 4.1 s
@@ -241,6 +244,23 @@ def key_event(name: str) -> dict | None:
     return None
 
 
+def key_names(value: object) -> list:
+    """The keys a key step holds together: one name, or a list of names."""
+    return value if isinstance(value, list) else [value]
+
+
+# The bit of CDP's modifiers that a key sets on every key event while it is down.
+MODIFIERS = {"Alt": 1, "Control": 2, "Shift": 8}
+
+
+def modifiers(held: list[dict]) -> int:
+    """The modifiers of a key event sent while the keys of these events are down."""
+    bits = 0
+    for event in held:
+        bits |= MODIFIERS.get(event["key"], 0)
+    return bits
+
+
 def statements(line: str) -> bool:
     """Whether a line holds a `;` outside brackets and strings, so more than one statement."""
     depth, quote, escaped = 0, "", False
@@ -314,9 +334,16 @@ def check_plan(plan: object) -> tuple[dict, list[str]]:
         if kind == "drag" and "through" in step and not (isinstance(step["through"], list) and step["through"]
                                                          and all(map(target_ok, step["through"]))):
             problems.append(f"step {n} (drag): through is a list of targets like the one it drags")
-        if kind == "key" and (not isinstance(value, str) or not key_event(value)):
-            problems.append(f"step {n} (key): {value!r} is no key this script presses; use a letter (a or KeyA), "
-                            f"a digit (1 or Digit1) or one of {', '.join(NAMED_KEYS)}")
+        if kind == "key":
+            names = key_names(value)
+            wrong = [k for k in names if not (isinstance(k, str) and key_event(k))]
+            if wrong or not names:
+                what = (f"{', '.join(map(repr, wrong))} {'is no key' if len(wrong) == 1 else 'are no keys'} this "
+                        f"script presses" if wrong else "the list is empty")
+                problems.append(f"step {n} (key): {what}; use a letter (a or KeyA), a digit (1 or Digit1) or one of "
+                                f"{', '.join(NAMED_KEYS)}, or a list of them to hold together")
+            elif len({key_event(k)["code"] for k in names}) < len(names):
+                problems.append(f"step {n} (key) names a key twice: {value!r}")
         if kind == "wait" and not (isinstance(value, (int, float)) and value >= 0):
             problems.append(f"step {n} (wait) takes seconds, a number")
         if kind in ("until", "js") and not (isinstance(value, str) or isinstance(value, list) and value
@@ -810,7 +837,7 @@ def step_line(n: int, step: dict) -> str:
     value = step[kind]
     what = {"tap": lambda: target_text(value), "hold": lambda: target_text(value),
             "drag": lambda: " through ".join(map(target_text, [value, *step.get("through", [])]))
-            + f" to {target_text(step['to'])}", "key": lambda: value,
+            + f" to {target_text(step['to'])}", "key": lambda: "+".join(key_names(value)),
             "wait": lambda: f"{value:g} s", "until": lambda: one_line(value), "js": lambda: one_line(value),
             "state": lambda: " ".join([value] if isinstance(value, str) else value) or "counts",
             "shot": lambda: value, "record": lambda: value or "stop"}[kind]()
@@ -856,11 +883,15 @@ def do_step(game: Game, step: dict, n: int, shots: Path) -> tuple[str, dict | No
         moving = ", released moving" if rest == 0 else ""
         return f"{where} to ({points[-1][0]:.0f}, {points[-1][1]:.0f}) in {seconds:g} s{moving}", None
     if kind == "key":
-        event, seconds = key_event(value), step.get("seconds", PRESS["key"])
-        down = "keyDown" if "text" in event else "rawKeyDown"
-        game.win.call("Input.dispatchKeyEvent", type=down, **event)
+        events = [key_event(k) for k in key_names(value)]
+        seconds = step.get("seconds", PRESS["key"])
+        for i, event in enumerate(events):
+            down = "keyDown" if "text" in event else "rawKeyDown"
+            game.win.call("Input.dispatchKeyEvent", type=down, modifiers=modifiers(events[:i + 1]), **event)
         time.sleep(seconds)
-        game.win.call("Input.dispatchKeyEvent", type="keyUp", **{k: v for k, v in event.items() if k != "text"})
+        for i in reversed(range(len(events))):
+            game.win.call("Input.dispatchKeyEvent", type="keyUp", modifiers=modifiers(events[:i]),
+                          **{k: v for k, v in events[i].items() if k != "text"})
         return f"held {seconds:g} s", None
     if kind == "until":
         timeout = step.get("timeout", 10)

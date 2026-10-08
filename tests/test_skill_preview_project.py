@@ -33,7 +33,8 @@ def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
         {"tap": "Button", "seconds": 1}, {"until": "true", "timout": 3}, {"record": "a b"}, {"record": False},
         {"record": "r", "watch": {"coins": 3}}, {"record": False, "watch": {"coins": "1"}},
         {"drag": "Ball", "to": "Ball", "through": "Goal", "rest": -1},
-        {"drag": "Ball", "to": "Ball", "through": [{"x": 1, "y": 2}], "rest": 0}],
+        {"drag": "Ball", "to": "Ball", "through": [{"x": 1, "y": 2}], "rest": 0},
+        {"key": []}, {"key": ["ShiftLeft", "F13"]}, {"key": ["a", "KeyA"]}, {"key": ["ShiftLeft", "ArrowRight"]}],
         "keep_saves": True, "pixel_ratio": 0}), encoding="utf-8")
     code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "plan.json")
     assert code == 2, out
@@ -44,9 +45,11 @@ def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
                      'step 10 (record): watch is {"label": "EXPRESSION", ...}',
                      'step 11 (record): watch is {"label": "EXPRESSION", ...} on a step that starts',
                      "step 12 (drag): through is a list of targets", "step 12 (drag): rest is a number of seconds",
-                     "pixel_ratio is device pixels per CSS pixel"):
+                     "pixel_ratio is device pixels per CSS pixel", "step 14 (key): the list is empty",
+                     "step 15 (key): 'F13' is no key", "or a list of them to hold together",
+                     "step 16 (key) names a key twice"):
         assert expected in out, (expected, out)
-    assert "step 9" not in out and "step 13" not in out, out     # false stops a recording
+    assert "step 9" not in out and "step 13" not in out and "step 17" not in out, out     # false stops a recording
     assert "has 'keep_saves'" not in out and "has 'pixel_ratio'" not in out, out
     assert not (project / ".tmp" / "preview").exists()
 
@@ -68,6 +71,25 @@ def test_preview_project_reads_a_step_of_code_and_a_key_as_the_page_needs_them()
         {"key": "z", "code": "KeyZ", "windowsVirtualKeyCode": 90, "text": "z"}
     assert pp.key_event("1")["code"] == "Digit1" and pp.key_event("Space")["text"] == " "
     assert pp.key_event("F13") is None
+
+
+def test_preview_project_holds_keys_together_with_their_modifiers(monkeypatch, tmp_path):
+    """Keys pressed in order and released in reverse; while Shift is down every
+    later event says so, and one key is pressed as before."""
+    game = pp.Game(None, None, False, (430, 932), "", None, tmp_path)
+    sent = []
+    monkeypatch.setattr(game, "win", type("Win", (), {"call": lambda self, method, **e: sent.append(e)})())
+    monkeypatch.setattr(pp.time, "sleep", lambda s: None)
+    step = {"key": ["ShiftLeft", "ArrowRight"], "seconds": 1}
+    assert pp.do_step(game, step, 3, tmp_path) == ("held 1 s", None)
+    assert pp.step_line(3, step) == "3 key ShiftLeft+ArrowRight"
+    assert [(e["type"], e["code"], e["modifiers"]) for e in sent] == [
+        ("rawKeyDown", "ShiftLeft", 8), ("rawKeyDown", "ArrowRight", 8),
+        ("keyUp", "ArrowRight", 8), ("keyUp", "ShiftLeft", 0)]
+    sent.clear()
+    pp.do_step(game, {"key": "a"}, 1, tmp_path)
+    assert [(e["type"], e["key"], e["modifiers"], e.get("text")) for e in sent] == [
+        ("keyDown", "a", 0, "a"), ("keyUp", "a", 0, None)]
 
 
 def test_preview_project_waits_until_the_window_has_taken_the_viewport(monkeypatch):
