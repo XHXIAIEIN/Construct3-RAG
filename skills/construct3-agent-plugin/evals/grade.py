@@ -1254,7 +1254,7 @@ def grade_script_shift_and_edges(run: Path) -> list[tuple[bool, str]]:
     return [(bool(code) and not arrows, f"arrow keys tested: {sorted(set(keys) & {'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'})}"
                                         + (f"; missing: {sorted(arrows)}" if arrows else "")),
             (bool(shift and double), f"Shift keys tested: {named or 'none'}"
-                                     + (", none a code isKeyDown matches" if named and not shift else "")
+                                     + ("; isKeyDown matches none of them" if named and not shift else "")
                                      + f"; doubled: {double.group(0) if double else 'no'}"),
             (len(layout) == 2 and bool(own), f"layout sides read: {layout or 'none'}; the player's size: "
                                              f"{own.group(0) if own else 'not read'}"),

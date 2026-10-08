@@ -44,7 +44,8 @@ Steps, each an object with one of these keys, and "note" for a label:
                                 still on "to" before the release (default 0.05). For a flick,
                                 give 0: the release follows the last move, since Touch reads a
                                 speed of 0 from a pointer that has been still about 50 ms
-  key NAME, seconds             press a key: ArrowLeft, Space, Enter, Escape, KeyA or a, Digit1 or 1
+  key NAME or [NAME, ...], seconds
+                                press a key: ArrowLeft, Space, Enter, Escape, KeyA or a, Digit1 or 1
                                 (default 0.1 s). A list of names holds them together, pressed in
                                 order and released in reverse: ["ShiftLeft", "ArrowRight"]
   wait SECONDS                  let the game run
@@ -249,12 +250,12 @@ def key_names(value: object) -> list:
     return value if isinstance(value, list) else [value]
 
 
-# The bit of CDP's modifiers that a key sets on every key event while it is down.
+# The bit of the DevTools protocol's "modifiers" that a held key adds to each key event.
 MODIFIERS = {"Alt": 1, "Control": 2, "Shift": 8}
 
 
 def modifiers(held: list[dict]) -> int:
-    """The modifiers of a key event sent while the keys of these events are down."""
+    """The modifiers value of a key event sent while the keys of `held` are down."""
     bits = 0
     for event in held:
         bits |= MODIFIERS.get(event["key"], 0)
@@ -338,12 +339,13 @@ def check_plan(plan: object) -> tuple[dict, list[str]]:
             names = key_names(value)
             wrong = [k for k in names if not (isinstance(k, str) and key_event(k))]
             if wrong or not names:
-                what = (f"{', '.join(map(repr, wrong))} {'is no key' if len(wrong) == 1 else 'are no keys'} this "
+                what = (f"{', '.join(map(repr, wrong))} {'is not a key' if len(wrong) == 1 else 'are not keys'} this "
                         f"script presses" if wrong else "the list is empty")
-                problems.append(f"step {n} (key): {what}; use a letter (a or KeyA), a digit (1 or Digit1) or one of "
-                                f"{', '.join(NAMED_KEYS)}, or a list of them to hold together")
+                problems.append(f"step {n} (key): {what}; a key is a letter (a or KeyA), a digit (1 or Digit1) or one "
+                                f"of {', '.join(NAMED_KEYS)}, and a list of keys holds them together")
             elif len({key_event(k)["code"] for k in names}) < len(names):
-                problems.append(f"step {n} (key) names a key twice: {value!r}")
+                problems.append(f"step {n} (key) names a key twice: {value!r}; list each key once (a and KeyA are "
+                                f"one key)")
         if kind == "wait" and not (isinstance(value, (int, float)) and value >= 0):
             problems.append(f"step {n} (wait) takes seconds, a number")
         if kind in ("until", "js") and not (isinstance(value, str) or isinstance(value, list) and value

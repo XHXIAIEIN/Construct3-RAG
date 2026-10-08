@@ -41,11 +41,10 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   `shot`, one per object, with `note` for a label. A plan sets the
   `viewport` and whether presses are `touch`. The first failing step stops
   the run, since later steps assume it.
-- A `key` step holds one key, or a list of keys together, such as
-  `["ShiftLeft", "ArrowRight"]`. A list avoids parsing a `+` in a key's
-  name. The keys go down in order and come up in reverse, and while Shift,
-  Control or Alt is down every later key event carries it as a modifier,
-  as a browser's would.
+- A `key` step holds one key or a list of keys, such as
+  `["ShiftLeft", "ArrowRight"]`. The keys go down in order and come up in
+  reverse. Each key event carries the modifier bits of the Shift, Control
+  and Alt keys that are down at that moment, as a browser's events do.
 - A target is an instance named the way the project names it (`"Piece 2"`,
   `"uid 12"`), a position on a layer, or JavaScript returning either. The
   script presses the middle of the instance's bounding box, converted by the

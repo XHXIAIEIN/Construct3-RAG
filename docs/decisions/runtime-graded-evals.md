@@ -46,8 +46,9 @@ such run was read, and in each the defect was real:
 - two tap events both fire on one touch, so the turn passes twice;
 - a player clamped by its centre, or by its unrotated width, leaves the
   layout;
-- the speed tests `isKeyDown("Shift")`, which matches a key's code,
-  `ShiftLeft` or `ShiftRight`, so holding Shift never doubles it.
+- the speed tests `isKeyDown("Shift")`, but `isKeyDown` matches a key's
+  code (`ShiftLeft`, `ShiftRight`), never `Shift`, so holding Shift does
+  not double it.
 
 The file assertions failed one run that works: its countdown reads the
 system expression `time`. The same replays found mistakes in the plans,

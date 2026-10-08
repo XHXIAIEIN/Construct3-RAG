@@ -484,8 +484,9 @@ def edges(watch: str, holds: list[tuple[str, float]], area: str, stays: str, rea
 
 
 def speed(keys: list[str]) -> list[dict]:
-    """Hold the keys 1 s from the middle of the layout, where no edge stops the player. Its speed in px/s is how far
-    the watched box's centre moved between the first and the last tick it moved, kept in vars.speeds."""
+    """Hold the keys for 1 s from the middle of the layout, where no edge stops the player. Store the player's speed
+    in px/s in vars.speeds, under the key names joined with +. The speed is the move of the watched box's centre from
+    its first to its last change."""
     name = "+".join(keys)
     return [js("const p = vars.h.first('Player'); p.x = runtime.layout.width / 2; p.y = runtime.layout.height / 2;",
                "vars.watch.mid = () => { const b = vars.h.box(vars.h.first('Player')); return (b.l + b.r) / 2; };",

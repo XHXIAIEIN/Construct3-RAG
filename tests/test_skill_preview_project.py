@@ -46,10 +46,11 @@ def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
                      'step 11 (record): watch is {"label": "EXPRESSION", ...} on a step that starts',
                      "step 12 (drag): through is a list of targets", "step 12 (drag): rest is a number of seconds",
                      "pixel_ratio is device pixels per CSS pixel", "step 14 (key): the list is empty",
-                     "step 15 (key): 'F13' is no key", "or a list of them to hold together",
+                     "step 15 (key): 'F13' is not a key", "and a list of keys holds them together",
                      "step 16 (key) names a key twice"):
         assert expected in out, (expected, out)
-    assert "step 9" not in out and "step 13" not in out and "step 17" not in out, out     # false stops a recording
+    # valid: steps 9 and 13 stop a recording, step 17 holds two keys
+    assert "step 9" not in out and "step 13" not in out and "step 17" not in out, out
     assert "has 'keep_saves'" not in out and "has 'pixel_ratio'" not in out, out
     assert not (project / ".tmp" / "preview").exists()
 
@@ -74,8 +75,8 @@ def test_preview_project_reads_a_step_of_code_and_a_key_as_the_page_needs_them()
 
 
 def test_preview_project_holds_keys_together_with_their_modifiers(monkeypatch, tmp_path):
-    """Keys pressed in order and released in reverse; while Shift is down every
-    later event says so, and one key is pressed as before."""
+    """Keys pressed in order and released in reverse; each event carries the Shift
+    that is down at that moment. A single key carries no modifier."""
     game = pp.Game(None, None, False, (430, 932), "", None, tmp_path)
     sent = []
     monkeypatch.setattr(game, "win", type("Win", (), {"call": lambda self, method, **e: sent.append(e)})())
