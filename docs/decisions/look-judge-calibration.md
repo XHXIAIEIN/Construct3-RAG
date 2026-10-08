@@ -21,7 +21,10 @@ The set has 35 screenshots of 14 of the user's own and generated games:
   backdrop, a smooth gradient sign in a pixel-art scene, every kind of map
   node drawn alike
 
-Layouts that only store object types are left out. On the page of
+Most of these games are throwaway projects that small models built with
+early versions of the skill. Their faults are many and plain, and few of
+their screens are finished. Layouts that only store object types are left
+out. On the page of
 `evals/label_look.py`, the user answered every question for every
 screenshot. The user also said whether the screen would ship, with a note.
 
