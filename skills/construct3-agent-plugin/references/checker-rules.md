@@ -224,7 +224,10 @@ owns an ACE written without `behaviorType`, the editor's id for a display
 name (`Array` is `Arr`), the project's object behind a plugin name in an
 expression (`JSON.Get` is `Levels.Get`), a combo value written with inner
 quotes, a text value written without them. A file that lacks a key the editor
-always writes stops the run with the key and the place, exit code 2. A long
+always writes stops the run with the key and the place, exit code 2. An
+exception that no project file raises stops it with exit code 2 too, and the
+line says that the error is the script's: the project stays as it is, and
+the line goes to the user. A long
 report prints the findings that fit 10 000 characters, warnings in at most a
 third of them and problems in the rest, and counts what it left out: fix
 those and run again, or pass `--limit 0`.

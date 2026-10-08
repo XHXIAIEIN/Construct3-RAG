@@ -98,17 +98,38 @@ class Findings:
         self.warn(msg)
 
 
+# What a project file's shape raises in the scripts: a key deleted or a value of another type
+# written raised KeyError, TypeError, AttributeError and IndexError in check_project, print_sheet,
+# print_layout and review_design over 2 900 single changes to the stand-in game, and a file that is
+# not UTF-8 raised UnicodeDecodeError, a ValueError. Anything else is a fault of the script.
+PROJECT_SHAPE = (KeyError, TypeError, AttributeError, IndexError, ValueError)
+
+
 def stop_with_a_sentence(script: str, findings: Findings) -> None:
     """A file that lacks a key the editor always writes stops the run; say which
-    key and where the script was, instead of a traceback."""
+    key and where the script was, instead of a traceback. An exception that no
+    project file causes is the script's own error: say so, so that the agent
+    reports it instead of changing a project that is not at fault."""
     def stopped(exc_type, exc, tb) -> None:
+        if issubclass(exc_type, KeyboardInterrupt):
+            sys.__excepthook__(exc_type, exc, tb)
+            return
         while tb.tb_next:
             tb = tb.tb_next
         what = f"missing key {exc}" if exc_type is KeyError else f"{exc_type.__name__}: {exc}"
         code = tb.tb_frame.f_code
+        if issubclass(exc_type, UnicodeDecodeError):
+            cause = "A project file is not UTF-8 text, which the editor writes; write it again as UTF-8."
+        elif issubclass(exc_type, PROJECT_SHAPE):
+            cause = ("A project file lacks a key the editor always writes, or holds a value of another type than "
+                     "the editor writes; compare it with a file assets/build_project.py generates, or with an "
+                     "official example. If the file matches them, the error is the script's: leave the project "
+                     "as it is and report this line to the user.")
+        else:
+            cause = (f"This is an error in {script}, not a finding about the project: leave the project as it is "
+                     f"and report this line to the user.")
         print(f"{script} stopped at {Path(code.co_filename).name} line {tb.tb_lineno} ({code.co_name}): {what}. "
-              f"A project file lacks a key the editor always writes, or holds a value of another type than the "
-              f"editor writes; compare it with a file assets/build_project.py generates, or with an official example.")
+              f"{cause}")
         for w in findings.warnings:
             print(f"warning: {w}")
         if findings.errors:

@@ -1616,6 +1616,47 @@ def test_missing_key_stops_with_a_sentence(project):
     out = findings(project, change)
     assert "check_project.py stopped at check_project.py line" in out
     assert "missing key 'functionParameters'" in out
+    assert "A project file lacks a key the editor always writes" in out and "not a finding" not in out
+
+
+def test_a_value_of_another_type_stops_with_the_project_sentence(project):
+    def change(lay):
+        lay["layers"][0]["instances"][0]["world"] = "x"
+    out = findings(project, change, "layouts/Objects.json")
+    assert "check_project.py stopped at" in out and "AttributeError" in out
+    assert "holds a value of another type than the editor writes" in out
+
+
+def test_a_file_that_is_not_utf8_is_named_as_such(project):
+    (project / "layouts" / "Game.json").write_bytes("{}".encode("utf-16"))
+    code, out = check(project)
+    assert code == 2 and "UnicodeDecodeError" in out
+    assert out.splitlines()[-1].endswith("A project file is not UTF-8 text, which the editor writes; "
+                                         "write it again as UTF-8.")
+
+
+def test_an_error_of_the_script_is_not_a_finding(monkeypatch, capsys):
+    """An exception that no project file raises is the script's own: the project is left alone."""
+    import c3project
+
+    class Exited(Exception):
+        pass
+
+    def exit_(code):
+        raise Exited(code)
+    monkeypatch.setattr(c3project.os, "_exit", exit_)
+    monkeypatch.setattr(c3project.sys, "excepthook", c3project.sys.excepthook)
+    c3project.stop_with_a_sentence("check_project.py", c3project.Findings())
+    try:
+        undefined_name  # noqa: F821
+    except NameError as exc:
+        with pytest.raises(Exited):
+            c3project.sys.excepthook(type(exc), exc, exc.__traceback__)
+    out = capsys.readouterr().out
+    assert out.startswith("check_project.py stopped at test_skill_check_project.py line ")
+    assert ("NameError: name 'undefined_name' is not defined. This is an error in check_project.py, not a finding "
+            "about the project: leave the project as it is and report this line to the user.") in out
+    assert "lacks a key" not in out
 
 
 # --- the data the rules read ---------------------------------------------------------------------

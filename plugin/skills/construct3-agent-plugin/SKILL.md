@@ -310,7 +310,8 @@ entry" of `Construct3-RAG/prompts/event-sheet-pitfalls.md` says.
 
 Exit code 2 and `stopped at`: a file lacks a key the editor always writes.
 Compare it with a file `assets/build_project.py` generates or with an
-official example. Read [references/checker-rules.md](references/checker-rules.md)
+official example. If the line says the error is the script's, leave the
+project as it is and report the line to the user. Read [references/checker-rules.md](references/checker-rules.md)
 when a finding needs explaining or the editor reports an error the checker
 let through.
 
