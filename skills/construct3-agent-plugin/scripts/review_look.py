@@ -66,7 +66,7 @@ output:
   layout 'Map' (2 of 3): screenshot .tmp/look/Map.png
     text: Text Title uid 12 "Choose your path": the text needs 212x40 px and its box is 160x40 ...
     stacked: Text CardName: 5 instances on one box at (300, 420) 120x30, uids 41, 42, 43 ...
-    runtime: <an error the layout logged, with its event>
+    runtime: <an error the layout logged, with its event, once with how many times it came>
   layout 'Combat' (3 of 3): started, and its events went on to 'Map' before the screenshot; ...
   questions: open each screenshot above with your image tool, one at a time, and answer every question ...
     1. Is any text cut off at an edge, broken onto a line of its own, or drawn over another object?
@@ -443,7 +443,7 @@ def report(result: dict) -> list[str]:
         else:
             lines.append(f"layout {done['layout']!r} ({n} of {total}): not reached in 10 seconds")
         lines += [f"  {f['rule']}: {f['line']}" for f in done.get("findings", [])]
-        lines += [f"  runtime: {e.splitlines()[0]}" for e in done["errors"]]
+        lines += oe.runtime_lines(done["errors"])
     if any(d.get("shot") for d in ran["layouts"]):
         lines += ask(total > 1)
     return lines

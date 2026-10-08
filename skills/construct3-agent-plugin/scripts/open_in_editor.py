@@ -104,7 +104,7 @@ output, one entry per addon with --install-addon, then one per project:
     warning: <a notice the editor showed over the opened project, deprecated features: tell the user>
     preview: layout '<name>', runtime in the worker, 600 ticks in 4.2 s, 1 error      with --preview
     editor: <the crash report the editor showed while it built the preview>
-    runtime: <the first line of each error; --out keeps the stack>
+    runtime: <the first line of each error, once, with how many times it came; --out keeps each with its stack>
     globals: Score 0, Lives 3                                                         with --state
     objects: Player 1, Enemy 6, Coin 12
     Player: 1 instance                                                                with --state Player
@@ -320,7 +320,8 @@ NEXT = ("next: a message that names a place, `Game, event 12, condition 1`, is e
         "need no object type or usedAddons entry). A missing addon by another author is installed in the "
         "editor, not written into the files: tell the user which.")
 NEXT_PREVIEW = ("next: a runtime error names its place, `Event sheet 1, event 3, action 1` for a script in an event, "
-                "numbered as scripts/print_sheet.py numbers it: fix it and run this again with --preview. The preview "
+                "numbered as scripts/print_sheet.py numbers it: fix the first one first, since the errors after it can "
+                "follow from it, and run this again with --preview. The preview "
                 "starts on the layout the editor shows after opening, as F5 does: firstLayout, or the one the editor "
                 "last left open in project.uistate.json.")
 
@@ -763,6 +764,17 @@ def runtime_errors(win: DevTools) -> list[str]:
     return errors
 
 
+def runtime_lines(errors: list[str], indent: str = "  ") -> list[str]:
+    """A `runtime:` line per distinct error, in the order each first came, with how many times it
+    came: an error raised every tick or every call is logged hundreds of times, and printed one a
+    line it pushes a different error past the output's limit."""
+    counts: dict[str, int] = {}
+    for e in errors:
+        first = e.splitlines()[0]
+        counts[first] = counts.get(first, 0) + 1
+    return [f"{indent}runtime: {first}" + (f" ({n} times)" if n > 1 else "") for first, n in counts.items()]
+
+
 def preview(browser: Browser, editor: tuple[str, DevTools], seconds: float, state: list[str] | None = None) -> dict:
     """Preview the layout the editor shows, let it run for `seconds`, then read what
     the runtime reported, and with `state` what the game holds.
@@ -1061,7 +1073,7 @@ def report(result: dict, label: Callable[[str], str] = key_name) -> list[str]:
                          f"{n or 'no'} error{'' if n == 1 else 's'}")
             if ran.get("editor"):
                 lines.append(f"  editor: {ran['editor']}")
-            lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
+            lines += runtime_lines(ran["errors"])
             if ran.get("state"):
                 lines += state_lines(ran["state"], label)
         elif ran:

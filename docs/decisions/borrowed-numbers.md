@@ -180,6 +180,21 @@ and the page's meta viewport named neither. The anchored HUD lay 13 to
 its top HUD under a notch, and a preview cannot show the borders that
 *Auto* adds on the phone.
 
+### The first runtime error
+
+The borrowed rule is to fix the first runtime error first. A probe gave
+the template's stand-in game three script actions: one in *On start of
+layout* that fails once, before it sets up a list; one in *Every tick*
+that uses the list and so fails every tick; and a separate failure every
+2 seconds. A 5-second preview logged over 600 errors: the setup's once,
+the one that follows from it at every tick, the separate one twice.
+`open_in_editor.py` printed a `runtime:` line per error until its output
+limit, so the separate failure, logged at the 289th and 578th place, was
+not printed. With the setup fixed, only the separate failure was left.
+
+So the first error can be the cause of a flood that hides the others.
+The scripts' order already puts the first error first.
+
 ## Decision
 
 - Player height: no default and no warning. Within one way of moving,
@@ -221,6 +236,11 @@ its top HUD under a notch, and a preview cannot show the borders that
   expression or script reads the insets; the look manifest holds the
   rule. It is a warning, because the editor accepts the setting and a game
   may move its HUD by other means.
+- The first runtime error: `open_in_editor.py`, `preview_project.py` and
+  `review_look.py` print each distinct error once, in the order it first
+  came, with how many times it came, and the total stays in the summary
+  line. The `next:` line after a preview with errors says to fix the first
+  one first, since the errors after it can follow from it.
 
 ## Re-evaluate when
 
@@ -240,3 +260,6 @@ its top HUD under a notch, and a preview cannot show the borders that
   design's rules against the build's outcome over its runs.
 - The preview applies *Viewport fit*, or a phone shows the template's HUD
   under its notch with *Auto*: then a screenshot question can ask it.
+- Runs fix a later error before the first, or two errors that differ only
+  in a value print as separate lines in a flood: group by the error
+  without its values.
