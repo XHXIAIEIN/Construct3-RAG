@@ -54,6 +54,10 @@ opened once before it is handed over.
   place: git keeps its history, so no scripts that patch it. At the
   hand-over, give the user the events that changed, not the JSON diff:
   `python scripts/print_sheet.py --since <the user's branch>`.
+- The user has the project open in the Construct 3 editor: ask them to
+  save and close it before you change its files, and to open it again
+  after. The editor keeps the files as it loaded them, so a save there
+  writes each file edited in the editor over your change, with no warning.
 
 ## Scripts
 

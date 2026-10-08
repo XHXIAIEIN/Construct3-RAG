@@ -1048,8 +1048,9 @@ def main() -> int:
         print(f"note: {path.name} started with a byte order mark, which the editor does not write; it no longer does, "
               f"so its first line shows in the diff")
     if not args.dry_run:
-        print("note: if the project is open in the Construct 3 editor, close it there without saving and open it "
-              "again; a save from the editor writes back the sheet it had loaded, over this change")
+        print("note: if the project is open in the Construct 3 editor, close it there without saving, then open it "
+              "again. The editor keeps the sheet as it loaded it, so a save after an edit to that sheet there writes "
+              "the editor's copy over this change")
     if (project.root / c3.GENERATOR).is_file():
         # A generated project's sheets are the generator's output: an edit here lasts until its next run.
         print(f"note: {c3.GENERATOR} generates this project, and its next run writes "

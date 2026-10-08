@@ -3,7 +3,7 @@ import re
 import struct
 import zlib
 
-from tests.skill_helpers import tool, edit, template_module
+from tests.skill_helpers import tool, edit, template_module, cond, block
 
 
 def png_chunk(tag: bytes, data: bytes) -> bytes:
@@ -56,3 +56,21 @@ def test_check_look_warns_of_a_letterbox_mode(project):
             "integer-scale-outer") in out
     edit(project, "project.c3proj", lambda p: p["properties"].update(fullscreenMode="scale-outer"))
     assert "screen.fill" not in tool(project, "check_look")[1]
+
+
+def test_check_look_warns_of_a_viewport_under_the_notch(project):
+    """Viewport fit Cover draws under a notch, where the anchored HUD then lies: a warning until an
+    event reads the safe area's insets, since the editor accepts the setting."""
+    edit(project, "project.c3proj", lambda p: p["properties"].update(viewportFit="cover"))
+    code, out = tool(project, "check_look")
+    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
+    assert ("warning: screen.safe-area: project.c3proj has viewportFit cover, which draws the game under a "
+            "phone's notch") in out
+    edit(project, "eventSheets/Game.json", lambda s: s["events"].append(
+        {"eventType": "comment", "text": "PlatformInfo.SafeAreaInsetTop is read nowhere yet"}))
+    assert "screen.safe-area" in tool(project, "check_look")[1]
+    edit(project, "eventSheets/Game.json", lambda s: s["events"].append(block(
+        [cond("on-start-of-layout")], [cond("set-y", "ScoreLabel", {"y": "MARGIN + PlatformInfo.SafeAreaInsetTop"})])))
+    assert "screen.safe-area" not in tool(project, "check_look")[1]
+    edit(project, "project.c3proj", lambda p: p["properties"].update(viewportFit="auto"))
+    assert "screen.safe-area" not in tool(project, "check_look")[1]
