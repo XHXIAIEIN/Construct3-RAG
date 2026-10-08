@@ -66,7 +66,7 @@ The project skill and the prompts:
 | `event-sheet-design-guidance.md` | The event sheet prompts, the style checks and the generator's placement helpers |
 | `pitfalls-index-and-topics.md` | Why the pitfalls are an index of one-line conclusions with a topic file per group, and which lessons belong in them |
 | `prompt-references-by-task.md` | Which parts of the design and style prompts live in `prompts/references/`, why Native first stays inline, and what a row of Native first holds |
-| `borrowed-numbers.md` | Which numbers of other agent frameworks a generated game takes, measured on the official examples or in the editor first: player height, HUD share, popup and idle timings |
+| `borrowed-numbers.md` | Which rules and numbers of other agent frameworks were measured here first, on the official examples or in the editor, and what each changed: player height, HUD share, popup and idle motion, coyote time, images of created objects, an open editor, design size, the notch, repeated runtime errors |
 | `published-game-visual-language.md` | Which visual, motion, camera and pacing rules repeated across published Construct games, and which of them the template took |
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
