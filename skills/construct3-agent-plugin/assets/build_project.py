@@ -267,14 +267,16 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
     """Stops the generator when two of these instances' boxes overlap or one reaches past the
     viewport: a HUD is read at a glance, so nothing on it hides behind anything else. A box
     wholly inside another is a layer on purpose, a bar's fill in its frame or an icon on its
-    panel, and passes, unless the outer one is a label, which anything on top of it hides.
+    panel, and passes, unless the outer one is a label, which anything on top of it hides. So do
+    two parts of one component that link() made, a slider's knob reaching past its track.
     Called on the UI layer in build_layouts(); a layer whose art is meant to stack is not
     passed. Every box in the way is named in one message, one line each."""
-    boxes, said = [], []
+    boxes, parts, said = [], [], []
     for inst in instances:
         b = box_of(inst)
         if b:
             boxes.append((inst["type"], *b, "text" in inst.get("properties", {})))
+            parts.append(inst)
     for kind, l, t, r, b, _ in boxes:
         if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H:
             said.append(f"{where}: {kind} ({l:g},{t:g})-({r:g},{b:g}) reaches past the {VIEW_W}x{VIEW_H} viewport; "
@@ -285,9 +287,25 @@ def no_overlap(instances: list, where: str = "layer UI") -> None:
         return (not outer[5] and outer[1] <= inner[1] and outer[2] <= inner[2]
                 and inner[3] <= outer[3] and inner[4] <= outer[4])
 
+    parent_of = {inst["uid"]: (inst.get("sceneGraphData") or {}).get("parent-uid") for inst in parts}
+
+    def root(inst: dict) -> int:
+        """The uid at the top of the instance's hierarchy among these instances."""
+        u, seen = inst["uid"], set()
+        while parent_of.get(u) in parent_of and u not in seen:
+            seen.add(u)
+            u = parent_of[u]
+        return u
+
+    def linked(m: int, n: int) -> bool:
+        """Two parts of one component, in one hierarchy of link(), which the helper that made them
+        laid out together."""
+        return root(parts[m]) == root(parts[n]) and (parent_of[parts[m]["uid"]] is not None
+                                                   or parent_of[parts[n]["uid"]] is not None)
+
     for i, a in enumerate(boxes):
-        for b in boxes[i + 1:]:
-            if layered(a, b) or layered(b, a):
+        for j, b in enumerate(boxes[i + 1:], i + 1):
+            if layered(a, b) or layered(b, a) or linked(i, j):
                 continue
             if min(a[3], b[3]) - max(a[1], b[1]) > 0 and min(a[4], b[4]) - max(a[2], b[2]) > 0:
                 dy = math.ceil((a[4] + UNIT - b[2]) / UNIT)
@@ -1767,6 +1785,11 @@ def link(parent: dict, *children: dict, size: bool = False) -> None:
 
     graph = parent.get("sceneGraphData") or {"parent-uid": None, "uid": parent["uid"], "children": [],
                                               "flags": dict(own), "preview": dict(preview)}
+    if "children" not in graph:
+        # a child that becomes a parent too, a slider's knob with its value: "children" after "uid", as
+        # the editor writes a node in the middle of a hierarchy
+        graph = {k: v for key, value in graph.items()
+                 for k, v in ((key, value), *((("children", []),) if key == "uid" else ()))}
     flags = {**SCENE_FLAGS, "w": size, "h": size}
     for child in children:
         graph["children"].append({"uid": child["uid"], "flags": dict(flags)})
@@ -1913,6 +1936,312 @@ def stage_cell(cols: int, rows: int, screen: str = "stage", title: bool = True) 
     """The cell (col, row) that centres a box of cols x rows units in the stage of bands()."""
     x, y, w, h = bands(screen, title)["stage"]
     return (x + (w - cols * UNIT) // 2) // UNIT, (y + (h - rows * UNIT) // 2) // UNIT
+
+
+# --- input controls -----------------------------------------------------------------------------
+# A slider, a toggle and a text input, each placed by one call as a row TOUCH high from a grid cell:
+# its label when it has one, then the control. The slider and the toggle are drawn on the canvas in
+# roles of PALETTE, so they take the layers, the look and the Tween of everything else. The text
+# input is Construct's Text input form control, an HTML element over the canvas, because a caret,
+# a selection, paste and an input method for Chinese are the browser's. Every slider is an instance
+# of the same object types, and so is every toggle and every text input: the events tell them apart
+# by the instance variable "name". A control's parts are children of its first part (link()), so
+# hiding, moving or destroying it takes them along. The events of each kind set a global variable
+# for each name. Construct3-RAG/docs/decisions/input-controls.md.
+SLIDER = {"track": "SliderTrack", "fill": "SliderFill", "knob": "SliderKnob", "label": "SliderLabel",
+          "value": "SliderValue"}
+TOGGLE = {"switch": "Toggle", "label": "ToggleLabel"}
+TEXT_INPUT = {"box": "TextInput", "label": "TextInputLabel"}
+# What shows of a control inside its TOUCH-high row: the slider's bar and its knob, the toggle's
+# switch. Near Material's and Apple's sizes at the 360 dp TOUCH assumes: a 4 to 16 dp track, a
+# 20 dp knob, a 52 x 32 dp switch.
+CONTROL_SIZE = {"bar": max(2, UNIT // 2), "knob": units(2), "switch": (units(4), units(2))}
+SLIDER_REACH = math.ceil(TOUCH / 2 / UNIT) * UNIT   # px the knob's hit box reaches past either end of its track
+
+
+def control_label(otype: str, text: str, col: int, row: int, cols: int | None, on: str) -> tuple[dict | None, int]:
+    """The label of a control's row, a Text of `text` in TEXT_SIZE["body"], `cols` units wide or as
+    wide as the text, TOUCH high with its text centred down, at cell (col, row). Returns (the label
+    or None for no text, the x in px where the control starts: a unit after the label)."""
+    x = units(col)
+    if not text:
+        return None, x
+    w = units(cols) if cols else label_box(text)[0]
+    if label_box(text)[0] > w:
+        sys.exit(f"{otype}: {text!r} needs {label_box(text)[0] // UNIT} units and label_cols is {cols}; widen it")
+    return text_inst(otype, text, x, units(row), w, TOUCH, color=text_on(on), on=on), x + w + UNIT
+
+
+def control_frame(rel: str, w: int, h: int, pixel, tag: str = "") -> dict:
+    """images/<rel> from `pixel`, and its frame: origin in the centre, the whole box as its collision
+    polygon, so a finger anywhere in the box hits the control however small its drawing."""
+    write_png(rel, w, h, pixel)
+    FRAMES[rel] = {**frame(w, h), "tag": tag}
+    PADS[rel] = (0, 0)
+    return FRAMES[rel]
+
+
+def need_contrast(what: str, a: str, b: str) -> None:
+    """Stops the run when the roles `a` and `b` of a control read under 3:1 against each other, which a
+    part of a control needs to show against what it lies on (WCAG 2.2, 1.4.11)."""
+    if contrast(rgb(a), rgb(b)) < 3:
+        fits = [r for r in PALETTE if contrast(PALETTE[r], rgb(b)) >= 3]
+        sys.exit(f"{what}: {a} on {b} reads {contrast(rgb(a), rgb(b)):.1f}:1, and a control's part needs 3:1 to "
+                 f"show; use one of {', '.join(fits)}")
+
+
+def slider_types(track_role: str = "solid", fill_role: str = "ink", knob_role: str = "ink") -> dict:
+    """The object types of slider() and their images, drawn here, so call it in build_object_types():
+    types.update(slider_types()). The track is a Tiled Background TOUCH high with the bar drawn across
+    its middle, so a finger anywhere along it is on it; the fill is a Tiled Background as thick as the
+    bar, which the events set as wide as the knob is far along; the knob is a Sprite, a disc of
+    CONTROL_SIZE["knob"] in a TOUCH box, with Drag & Drop along X and its value in instance variables.
+    The labels are Texts. Names: SLIDER."""
+    need_contrast("slider fill", fill_role, track_role)
+    need_contrast("slider knob", knob_role, "canvas_alt")
+    bar, knob = CONTROL_SIZE["bar"], CONTROL_SIZE["knob"]
+    track = image_type(SLIDER["track"], "TiledBg", UNIT, TOUCH, 0, 0.5)
+    write_png(f"{SLIDER['track'].lower()}.png", UNIT, TOUCH, lambda x, y: (*rgb(track_role), 255)
+              if abs(y + 0.5 - TOUCH / 2) < bar / 2 else (0, 0, 0, 0))
+    fill = image_type(SLIDER["fill"], "TiledBg", UNIT, bar, 0, 0.5)
+    write_png(f"{SLIDER['fill'].lower()}.png", UNIT, bar, lambda x, y: (*rgb(fill_role), 255))
+    edge = SHAPE_STYLE["outline_width"] if SHAPE_STYLE["outline"] else 0
+    rel = f"{SLIDER['knob'].lower()}-default-000.png"
+
+    def disc(x, y):
+        px, py = x + 0.5 - (TOUCH - knob) / 2, y + 0.5 - (TOUCH - knob) / 2
+        if not inside("circle", knob, knob, px, py):
+            return (0, 0, 0, 0)
+        return (*rgb(knob_role if inside("circle", knob, knob, px, py, edge) else SHAPE_STYLE["outline_role"]), 255)
+
+    knob_type = sprite_type(SLIDER["knob"], [animation("Default", [control_frame(rel, TOUCH, TOUCH, disc)])],
+                            ivars=[ivar_def("name", "string", "Which slider: the events set the global of this name."),
+                                   ivar_def("value", "number", "The value the knob stands at, from lo to hi."),
+                                   ivar_def("lo", "number", "The value at the track's left end."),
+                                   ivar_def("hi", "number", "The value at the track's right end."),
+                                   ivar_def("step", "number", "The value moves in steps of this size.")],
+                            behaviors=[beh_def("DragnDrop", "DragDrop")])
+    return {SLIDER["track"]: track, SLIDER["fill"]: fill, SLIDER["knob"]: knob_type,
+            SLIDER["label"]: text_type(SLIDER["label"]), SLIDER["value"]: text_type(SLIDER["value"])}
+
+
+def slider(name: str, col: int, row: int, length: int, lo: float = 0, hi: float = 100, value: float | None = None,
+           step: float = 1, text: str = "", label_cols: int | None = None, value_at: str = "end",
+           on: str = "canvas_alt") -> list[dict]:
+    """A slider named `name` whose row starts at cell (col, row), TOUCH high: the label `text` when
+    given, then SLIDER_REACH of room for the knob, the track `length` px long (whole units), the room
+    again, and the value. The knob stands at `value`, lo unless given, and moves from lo at the
+    track's left end to hi at its right in steps of `step`. `value_at` puts the value "end", after
+    the track, "knob", over the knob, which it follows, or None for none. `label_cols` widens the
+    label so that a column of sliders starts their tracks together. The fill, knob and labels are
+    the track's children. Types: slider_types(); events: slider_events(). Returns the instances, the
+    track first; put them on one layer. A game reads the value from the global slider_events() sets,
+    or as SliderKnob.value picked by name."""
+    if length % UNIT or length <= 0:
+        sys.exit(f"slider({name!r}): length {length} is not whole units of {UNIT} px; give it units(n)")
+    if not hi > lo or step <= 0:
+        sys.exit(f"slider({name!r}): lo {lo:g}, hi {hi:g}, step {step:g}; a slider runs from a lower lo to a higher "
+                 f"hi in a step above 0")
+    if value_at not in ("end", "knob", None):
+        sys.exit(f"slider({name!r}): value_at {value_at!r}; \"end\", \"knob\" or None")
+    value = lo if value is None else min(max(value, lo), hi)
+    label, x = control_label(SLIDER["label"], text, col, row, label_cols, on)
+    tx, cy = x + SLIDER_REACH, units(row) + TOUCH / 2
+    kx = tx + length * (value - lo) / (hi - lo)
+    track = tiledbg_inst(SLIDER["track"], tx, cy, length, TOUCH, 0, 0.5)
+    fill = tiledbg_inst(SLIDER["fill"], tx, cy, kx - tx, CONTROL_SIZE["bar"], 0, 0.5)
+    knob = sprite_inst(SLIDER["knob"], kx, cy, TOUCH, TOUCH,
+                       ivars={"name": name, "value": value, "lo": lo, "hi": hi, "step": step},
+                       behaviors={"DragDrop": {"properties": {"axes": "horizontal-only", "enabled": True}}})
+    parts = [track, fill, knob, *([label] if label else [])]
+    widest = max((f"{v:g}" for v in (lo, hi, lo + step)), key=text_ems)
+    vw, vh = label_box(widest)[0], line_height()
+    shown = None
+    if value_at == "end":
+        shown = text_inst(SLIDER["value"], f"{value:g}", tx + length + SLIDER_REACH, units(row), vw, TOUCH,
+                          halign="right", color=text_on(on), on=on)
+        parts.append(shown)
+    link(track, *parts[1:])
+    if value_at == "knob":
+        shown = text_inst(SLIDER["value"], f"{value:g}", kx - vw / 2, cy - CONTROL_SIZE["knob"] / 2 - GAP_IN - vh, vw,
+                          vh, halign="center", color=text_on(on), on=on)
+        link(knob, shown)
+        parts.append(shown)
+    return parts
+
+
+def slider_events(sets: dict | None = None) -> list:
+    """The rows of a module's events that work every slider(): the custom action Slide, which puts a
+    knob on its track, on a step, and shows its value, then the events that call it. A dragged knob
+    slides; a finger that holds the track elsewhere draws the knob to it, so a tap jumps and a drag
+    from the track slides; at the start each knob shows its value. `sets` names the global variable
+    each slider sets, {"volume": "volume"}, for slider("volume", ...); declare it as a number.
+        module("Settings", events=[*slider_events({"volume": "volume"}), ...])"""
+    knob, track, fill, shown = SLIDER["knob"], SLIDER["track"], SLIDER["fill"], SLIDER["value"]
+    left, right = f"{track}.BBoxLeft", f"{track}.BBoxRight"
+    value = f"clamp(Self.lo + round(unlerp({left}, {right}, Self.X) * (Self.hi - Self.lo) / Self.step) * Self.step, " \
+            f"Self.lo, Self.hi)"
+    show = [comment("Fill the track up to the knob"),
+            block([pick_children(track, fill)], [set_width(fill, f"{knob}.X - {fill}.X")]),
+            comment("Show the value, rounded so that a step of 0.1 shows no long tail"),
+            block([cond("pick-children", track, {"child": shown, "which": "all"})],
+                  [set_text(shown, f"str(round({knob}.value * 1000) / 1000)")])]
+    for n, v in (sets or {}).items():
+        show += [comment(f"The {n} slider sets {v}"), block([ivar_cmp(knob, "name", EQ, q(n))], [set_var(v, f"{knob}.value")])]
+    return [
+        *procedure("Put each picked knob on its track at a step, then show its value and set its global",
+                   custom_action(knob, "Slide", [], children=[
+                       block([for_each(knob), cond("pick-parent", knob, {"parent": track, "which": "own"})], [
+                           set_ivar(knob, "value", value),
+                           act("set-x", knob, {"x": f"lerp({left}, {right}, unlerp(Self.lo, Self.hi, Self.value))"}),
+                       ], children=show)])),
+        *event("Show each slider at its knob's value", [on_start()], [call_custom(knob, "Slide")]),
+        *event("Slide a dragged knob along its track", [cond("is-dragging", knob, beh="DragDrop")],
+               [call_custom(knob, "Slide")]),
+        *event("Draw a knob to the finger that holds its track elsewhere",
+               [cond("is-touching-object", "Touch", {"object": track})], [], children=[
+                   block([pick_children(track, knob), cond("is-dragging", knob, beh="DragDrop", inverted=True)],
+                         [act("set-x", knob, {"x": f"Touch.X({track}.LayerName)"}), call_custom(knob, "Slide")])]),
+    ]
+
+
+def toggle_types(off_role: str = "solid", on_role: str = "ink", knob_role: str = "canvas") -> dict:
+    """The object types of toggle() and their images, drawn here: types.update(toggle_types()). The
+    toggle is a Sprite of two frames, "off" and "on", a switch of CONTROL_SIZE["switch"] centred in a
+    box TOUCH high, its knob at the left when off and at the right when on, with Tween for press().
+    Its label is a Text. Names: TOGGLE."""
+    for state in (off_role, on_role):
+        need_contrast("toggle switch", state, "canvas_alt")
+        need_contrast("toggle knob", knob_role, state)
+    sw, sh = CONTROL_SIZE["switch"]
+    w, h = max(TOUCH, sw), TOUCH
+    left, top, r = (w - sw) / 2, (h - sh) / 2, sh / 2
+    inset = max(1, UNIT // 4)
+    frames = []
+    for n, (tag, role) in enumerate((("off", off_role), ("on", on_role))):
+        kx = left + (r if tag == "off" else sw - r)
+
+        def pixel(x, y, role=role, kx=kx):
+            px, py = x + 0.5, y + 0.5
+            if math.hypot(px - kx, py - h / 2) <= r - inset:
+                return (*rgb(knob_role), 255)
+            cx = min(max(px, left + r), left + sw - r)
+            return (*rgb(role), 255) if math.hypot(px - cx, py - h / 2) <= r else (0, 0, 0, 0)
+
+        frames.append(control_frame(f"{TOGGLE['switch'].lower()}-default-{n:03d}.png", w, h, pixel, tag))
+    return {TOGGLE["switch"]: sprite_type(TOGGLE["switch"], [animation("Default", frames)],
+                                          ivars=[ivar_def("name", "string", "Which toggle: the events set the global "
+                                                                            "of this name."),
+                                                 ivar_def("on", "boolean", "Whether the toggle is on.")],
+                                          behaviors=[beh_def("Tween")]),
+            TOGGLE["label"]: text_type(TOGGLE["label"])}
+
+
+def toggle(name: str, col: int, row: int, on: bool = False, text: str = "", label_cols: int | None = None,
+           behind: str = "canvas_alt") -> list[dict]:
+    """A toggle named `name` whose row starts at cell (col, row), TOUCH high: the label `text` when
+    given, a unit, then the switch, on or off as `on` says. The label is the switch's child. Types:
+    toggle_types(); events: toggle_events(). Returns [switch, label]; put them on one layer. `behind`
+    is the role of PALETTE behind the label."""
+    label, x = control_label(TOGGLE["label"], text, col, row, label_cols, behind)
+    w = max(TOUCH, CONTROL_SIZE["switch"][0])
+    switch = sprite_inst(TOGGLE["switch"], x + w / 2, units(row) + TOUCH / 2, w, TOUCH,
+                         ivars={"name": name, "on": on}, behaviors=dict(TWEEN))
+    switch["properties"]["initial-frame"] = 1 if on else 0
+    if label:
+        link(switch, label)
+    return [switch, *([label] if label else [])]
+
+
+def toggle_events(sets: dict | None = None) -> list:
+    """The rows of a module's events that work every toggle(): the custom action Show, which shows a
+    toggle's frame and sets its global, then press(), whose release on the toggle flips it, and the
+    start, which shows each. `sets` names the boolean global variable each toggle sets,
+    {"sound": "sound"}, for toggle("sound", ...).
+        module("Settings", events=[*toggle_events({"sound": "sound"}), ...])"""
+    t = TOGGLE["switch"]
+    names: list = []
+    for n, v in (sets or {}).items():
+        names += [comment(f"The {n} toggle sets {v}"),
+                  cases([ivar_cmp(t, "name", EQ, q(n))], [("On", [is_bool(t, "on")], [set_bool_var(v, True)]),
+                                                          ("Off", None, [set_bool_var(v, False)])])]
+    return [
+        *procedure("Show each picked toggle's state and set its global",
+                   custom_action(t, "Show", [], children=[block([for_each(t)], [], children=[
+                       comment("On: the knob at the right"),
+                       block([is_bool(t, "on")], [act("set-animation-frame", t, {"frame-number": q("on")})]),
+                       comment("Off: the knob at the left"),
+                       block([else_()], [act("set-animation-frame", t, {"frame-number": q("off")})]),
+                       *names])])),
+        *event("Show each toggle as it starts", [on_start()], [call_custom(t, "Show")]),
+        *press(t, [act("toggle-boolean-instvar", t, {"instance-variable": "on"}), call_custom(t, "Show")]),
+    ]
+
+
+def text_input_types() -> dict:
+    """The object types of text_input(): the Text input form control, with the instance variable
+    "name", and its label, a Text. Names: TEXT_INPUT."""
+    box = {"name": TEXT_INPUT["box"], "plugin-id": "TextBox", "sid": sid(), "isGlobal": False,
+           "editorNewInstanceIsReplica": True,
+           "instanceVariables": [ivar_def("name", "string", "Which text input: the events set the global of this "
+                                                            "name.")],
+           "behaviorTypes": []}
+    return {TEXT_INPUT["box"]: box, TEXT_INPUT["label"]: text_type(TEXT_INPUT["label"])}
+
+
+def text_input(name: str, col: int, row: int, cols: int, text: str = "", placeholder: str = "", kind: str = "text",
+               label: str = "", label_cols: int | None = None, on: str = "canvas_alt") -> list[dict]:
+    """A text input named `name` whose row starts at cell (col, row), TOUCH high: the label `label`
+    when given, a unit, then the field, `cols` units wide, holding `text`, or `placeholder` faintly
+    when empty. `kind` is the Text input's type: text, password, email, number, telephone-number, url
+    or search, which picks the phone's keyboard. The field is an HTML element: it draws over every
+    layer of the canvas, so keep popups and anything else away from it, or hide it while they show.
+    text_input_events() gives it the look's font, size and colours, which the editor does not show.
+    The label is the field's child. Returns [field, label]; put them on one layer."""
+    kinds = ("text", "password", "email", "number", "telephone-number", "url", "search")
+    if kind not in kinds:
+        sys.exit(f"text_input({name!r}): kind {kind!r}; one of {', '.join(kinds)}")
+    caption, x = control_label(TEXT_INPUT["label"], label, col, row, label_cols, on)
+    field = instance(TEXT_INPUT["box"], {"text": text, "placeholder": placeholder, "tooltip": "",
+                                         "initially-visible": True, "enabled": True, "read-only": False,
+                                         "spell-check": False, "type": kind, "auto-font-size": False, "id": "",
+                                         "class": ""},
+                     world(x, units(row), units(cols), TOUCH, 0, 0), {"name": name})
+    if caption:
+        link(field, caption)
+    return [field, *([caption] if caption else [])]
+
+
+def css_px(px: float) -> str:
+    """A length of `px` px at the viewport's size as CSS that scales with the canvas, which Scale outer
+    and Integer scale outer scale by the smaller of the window's width and height over the viewport's:
+    an HTML element over the canvas then keeps its size against what the canvas draws."""
+    return f"min({100 * px / VIEW_W:.4g}vw, {100 * px / VIEW_H:.4g}vh)"
+
+
+def text_input_events(sets: dict | None = None) -> list:
+    """The rows of a module's events that work every text_input(): at the start the look's FONT,
+    TEXT_SIZE["body"], ink on canvas and a frame in solid, set as CSS since the field is an HTML
+    element; then each change sets the global variable `sets` names for the field, {"player": "player"}
+    for text_input("player", ...); declare it as a string."""
+    box = TEXT_INPUT["box"]
+    style = {"font-family": FONT, "font-size": css_px(TEXT_SIZE["body"] * PX_PER_PT), "color": "rgb({}, {}, {})"
+             .format(*rgb("ink")), "background-color": "rgb({}, {}, {})".format(*rgb("canvas")),
+             "border": f"{css_px(max(1, UNIT // 8))} solid " + "rgb({}, {}, {})".format(*rgb("solid")),
+             "border-radius": "0", "padding": f"0 {css_px(UNIT / 2)}"}
+    def names() -> list:
+        out: list = []
+        for n, v in (sets or {}).items():
+            out += [comment(f"The {n} field sets {v}"), block([ivar_cmp(box, "name", EQ, q(n))], [set_var(v, f"{box}.Text")])]
+        return out
+
+    look = event("Give each text input the look's font, size and colours", [on_start()],
+                 [act("set-css-style", box, {"property-name": q(k), "value": q(v)}) for k, v in style.items()])
+    if not sets:
+        return look
+    return [*look,
+            *event("Start each text input's global at its text", [on_start(), for_each(box)], [], children=names()),
+            *event("Keep a text input's global its text", [cond("on-text-changed", box)], [], children=names())]
 
 
 # --- groups and the play area -----------------------------------------------------------------
@@ -2369,7 +2698,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp f99d33eec6b7 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 726366adb2c0 ================
 
 
 # --- the game ---------------------------------------------------------------------------
