@@ -49,6 +49,10 @@ opened once before it is handed over.
   finished change, one commit per fix or review item, the message naming it;
   the user reviews `agents` and merges it. Edit `tools/build_project.py` in
   place: git keeps its history, so no scripts that patch it.
+- The user has the project open in the Construct 3 editor: ask them to
+  close it without saving before you change its files, and to open it again
+  after. The editor shows the files as it loaded them, and a save writes
+  each file edited there over your change to it, without a warning.
 
 ## Scripts
 

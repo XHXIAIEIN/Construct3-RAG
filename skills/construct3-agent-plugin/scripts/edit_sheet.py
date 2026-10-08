@@ -962,7 +962,8 @@ def main() -> int:
               f"so its first line shows in the diff")
     if not args.dry_run:
         print("note: if the project is open in the Construct 3 editor, close it there without saving and open it "
-              "again; a save from the editor writes back the sheet it had loaded, over this change")
+              "again; the editor shows the sheet as it loaded it, and a save after an edit to that sheet in the "
+              "editor writes its copy over this change")
     if found_after.errors:
         print(f"{len(found_after.errors)} problem(s) were in the project before this plan and still are: "
               f"check_project.py lists them")

@@ -135,6 +135,25 @@ pause; a large picture shows late. The preview serves the pictures from
 the editor's memory, so an exported game that downloads them shows them
 later still.
 
+### An editor open while files change
+
+The borrowed rule asks for an explicit refresh after files change on
+disk. A probe opened the template's stand-in game in the stable editor
+and saved it as a project folder into the page's origin-private file
+system, through a stubbed folder picker. A script then changed files in
+that folder as another tool would: a comment added to the event sheet, an
+instance moved 7 px in the layout, a new text file. The editor showed no
+dialog and kept the files as it had loaded them. Then it saved:
+
+| Before the save | Written by the save | The outside changes |
+|-----------------|---------------------|---------------------|
+| No edit in the editor | one file of the editor's own interface state | all kept |
+| Every instance of the layout nudged 1 px in the editor | that layout and interface state | the sheet's and the new file kept; the layout's lost, the instance at the editor's position plus 1 px |
+
+So a save writes each file edited in the editor, from the copy the editor
+loaded, over any change made to it on disk. A folder on disk is reached
+through the same kind of folder handle; that case was not run.
+
 ## Decision
 
 - Player height: no default and no warning. Within one way of moving,
@@ -163,6 +182,11 @@ later still.
   checker warning: the template's small sprites show by the next tick, its
   scene pictures are placed in their layouts, and only a large picture
   created by events shows late.
+- An editor open while files change: a bullet in the skill's "Before the
+  first command" says to ask the user to close the project without saving
+  before the files change, and to open it again after, because the loss
+  is silent. `edit_sheet.py`'s note after a write states the same
+  behaviour.
 
 ## Re-evaluate when
 
@@ -176,3 +200,5 @@ later still.
 - An exported game shows a flicker or a blank sprite on creation, or a
   generated game creates large pictures by events: measure the export,
   then decide on a warning.
+- The editor reloads a folder project from disk, or warns of a file
+  changed there: the skill's bullet and the note change with it.
