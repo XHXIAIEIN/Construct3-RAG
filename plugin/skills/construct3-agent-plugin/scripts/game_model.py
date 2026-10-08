@@ -869,10 +869,8 @@ def how_tapped(inp: dict) -> str:
 
 
 # --- the screen ---------------------------------------------------------------------------
-# A screen entry is measured when the words before its first comma are these and no others: top, bottom,
-# left, right and centre name thirds of the screen, and above, below, left of, right of name a side of
-# another entry or object. play_design.py checks a measured entry on the first screen; review_look.py
-# asks about the others on its screenshots.
+# The words of a screen entry's place: top, bottom, left, right, centre are thirds of the screen; above,
+# below, left of, right of are sides of another entry
 VERTICAL = {"top": "top", "upper": "top", "bottom": "bottom", "lower": "bottom"}
 HORIZONTAL = {"left": "left", "right": "right"}
 MIDDLE = {"centre", "center", "middle", "centred", "centered", "central"}
@@ -880,7 +878,8 @@ FILLER = {"a", "an", "the", "in", "at", "on", "of", "screen", "corner", "band", 
 RELATION = re.compile(r"\b(above|below|under|beneath|(?:to the )?left of|(?:to the )?right of)\s+(?:the\s+)?"
                       r"([A-Za-z][A-Za-z0-9_-]*)", re.I)
 SIDES = {"above": "above", "below": "below", "under": "below", "beneath": "below"}
-SCREEN_WORDS = "top, bottom, left, right, centre, above X, below X, left of X, right of X"
+SCREEN_WORDS = ("top, bottom, left, right, centre, and above KEY, below KEY, left of KEY, right of KEY for another "
+                "screen entry or object KEY")
 # Words of a key that name how a region is drawn, not what it shows: score_display is the score.
 GENERIC = {"display", "text", "label", "area", "ui", "hud", "value"}
 
@@ -896,7 +895,7 @@ class Place:
     measured: bool = False
 
     @property
-    def region(self) -> str:
+    def third(self) -> str:
         """The third the words name, as the design would write it."""
         if self.vertical == self.horizontal == "middle":
             return "centre"
@@ -905,7 +904,8 @@ class Place:
 
 
 def place(key: str, text: str) -> Place:
-    """A screen entry read in the words above; measured is False when another word stands in its first clause."""
+    """A screen entry read for its place; measured is False when a word outside the lists above stands before its
+    first comma."""
     out = Place(key, text, f"screen.{key}")
     clause = re.split(r"[,;(]", text, maxsplit=1)[0]
     for m in RELATION.finditer(clause):

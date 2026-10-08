@@ -43,9 +43,9 @@ and the built game is held to the same tests.
   is the layout grid's to say, not the design's.
 - The screen's entries, as models write them, mix a place with what the
   region does: "top-left", "bottom-center, follows the mouse", "fall from
-  random positions at the top", "center overlay when game ends". A place
-  stated in a few words of thirds and sides, before a comma, is something
-  the first screen can be measured against; the rest is not.
+  random positions at the top", "center overlay when game ends". The first
+  screen can be measured against a place of a few words, thirds and sides,
+  before the first comma, but not against the rest.
 - The design step trades logic errors for games that are not delivered: a
   game that is delivered passed tests its model stated, and a game that
   fails says why. It does not by itself raise the share of games that play.
@@ -116,15 +116,15 @@ Option 4: `scripts/check_design.py`, `scripts/play_design.py`,
   without input: each shown text, frame or count that holds still in the
   prototype through the first two seconds, and the win and the lose, must
   match the prototype.
-- A `screen` entry whose words before the first comma are only top, bottom,
-  left, right, centre (thirds of the screen) and above, below, left of,
-  right of another entry is a place: on the first screen the middle of the
-  instances its key names lies in that third or past that side, or
-  `play_design.py` names the object, where its middle is and where the place
-  puts it. A key names the type of that name, the object a state row of
-  that name is kept in, or every type whose name holds its words, as one
-  region. `check_design.py` prints which entries are places; `review_look.py`
-  asks about the others as one question on its screenshots.
+- A `screen` entry is a place when the words before its first comma are
+  only top, bottom, left, right, centre (thirds of the screen) and above,
+  below, left of, right of another entry. On the first screen the middle of
+  the instances its key names must lie in that third or past that side. If
+  it does not, `play_design.py` names the object, where its middle is and
+  where the place wants it. A key names the type of that name, the object
+  that a state row of that name is kept in, or every type whose name holds
+  its words. `check_design.py` prints which entries are places, and
+  `review_look.py` asks about the others in one question on its screenshots.
 
 ## Re-evaluate when
 

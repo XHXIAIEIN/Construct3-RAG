@@ -62,15 +62,17 @@ shows before the build and a bug in the events after it.
 ```
 
 - `screen`: each region the player sees and where it sits. The key is the
-  object type that shows it (`Board`), a state row kept in an object
-  (`message` for `Message.text`), or words of type names: `score` is every
-  type whose name holds score, `ScoreLabel` and `ScoreText` together. The words before the first comma give the
-  place: `top`, `bottom`, `left`, `right`, `centre` as thirds of the screen
-  (`top-left`, `bottom centre`), and `above X`, `below X`, `left of X`,
-  `right of X` for another key or object X; a comment may follow the comma.
-  `play_design.py` checks such a place on the first screen: the middle of
-  the object's instances lies in that third, or past that side of X.
-  `review_look.py` asks about a place written in other words.
+  object type that shows the region (`Board`), a state row kept in an
+  object (`message` for `Message.text`), or words of type names. Words of
+  type names match every type whose name holds them: `score` matches
+  `ScoreLabel` and `ScoreText` together. The words before the first comma
+  give the place: `top`, `bottom`, `left`, `right`, `centre` as thirds of
+  the screen (`top-left`, `bottom centre`), and `above KEY`, `below KEY`,
+  `left of KEY`, `right of KEY` for another entry or object; a comment may
+  follow the comma. `play_design.py` checks such a place on the first
+  screen: the middle of the object's instances lies in that third, or past
+  that side of the other entry. `review_look.py` asks about a place written
+  in other words.
 - `state`: one row per piece of state, the table of `generating-a-project.md`,
   "Plan the state". `stored_in` is `"global"` (a global variable of the same
   name), `"Array"` (an Array object of the same name, with `"size": [w, h]`

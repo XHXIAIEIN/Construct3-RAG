@@ -290,24 +290,22 @@ def test_play_design_finds_an_object_outside_the_place_the_design_names():
                                       {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
     assert [f["uids"] for f in found] == [[2]]
     assert found[0]["line"] == ('screen.message "below the holes": Message uid 2 "Tap" has its middle at (360, 330) '
-                                "on layer 'HUD', and the design's place puts its middle at y > 960 (below Hole) there: "
+                                "on layer 'HUD', and the design's place wants it at y > 960 (below Hole) on that layer: "
                                 "move it in the layout")
-    assert notes == ["3 of 5 places checked (score, holes, message)",
-                     f"review_look.py asks about Mole: no words of {gm.SCREEN_WORDS} alone before the first comma",
+    assert notes == ["3 of 5 checked (score, holes, message)",
+                     "review_look.py asks about Mole, whose words before the first comma are not a place",
                      "Lives names no object: write the key as the object type's name"]
     score["box"] = [400, 20, 700, 80]
     message["box"] = [60, 1100, 660, 1160]
     found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
                                       {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
     assert [f["uids"] for f in found] == [[1]]
-    assert ("has its middle at (475, 40) on layer 'HUD', and the design's place puts its middle at x 0 to 240 there"
+    assert ("has its middle at (475, 40) on layer 'HUD', and the design's place wants it at x 0 to 240 on that layer"
             in found[0]["line"])
     message["shown"] = False
     found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
                                       {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
-    assert notes[0] == "2 of 5 places checked (score, holes)" and notes[-1] == "message not on the first screen"
-
-
+    assert notes[0] == "2 of 5 checked (score, holes)" and notes[-1] == "message has no instance on the first screen"
 
 def test_play_design_prints_the_screen_places_under_the_first_screen():
     gm, pd = module("game_model"), module("play_design")
@@ -319,8 +317,8 @@ def test_play_design_prints_the_screen_places_under_the_first_screen():
         {"started": True, "errors": [], "steps": [{"ok": True}, {"ok": True, "value": snap}, {"ok": True}]}]}}
     lines, code = pd.report(design, [], result, ["ScoreText", "Hole"])
     assert code == 1
-    assert lines[1] == ("  first screen: 1 finding; screen places: 1 of 2 places checked (score); review_look.py asks "
-                        f"about holes: no words of {gm.SCREEN_WORDS} alone before the first comma")
+    assert lines[1] == ("  first screen: 1 finding; places: 1 of 2 checked (score); review_look.py asks about holes, "
+                        "whose words before the first comma are not a place")
     assert lines[2].startswith('    screen: screen.score "top-right": ScoreText uid 1 has its middle at (110, 50)')
 
 def test_check_design_prints_which_screen_places_play_design_measures(tmp_path):

@@ -30,11 +30,11 @@ Before the tests it previews the game once without input and checks the first
 screen: what it shows (texts, frames, counts of instances) and whether the
 win or the lose holds there, against the prototype, and the faults
 review_look.py finds (a text cut by its box, two labels over each other, a HUD
-instance cut by the screen's edge, instances stacked on one box), a play
-area off the screen's middle, and each object a screen entry of the design
-places in a third of the screen (top-left, bottom, centre) or beside another
-entry (below the board) whose middle sits elsewhere. An entry in other words
-is left to review_look.py's questions.
+instance cut by the screen's edge, instances stacked on one box), and a play
+area off the screen's middle. It also names each object whose middle lies
+outside the place its screen entry gives: a third of the screen (top-left,
+bottom, centre) or a side of another entry (below the board). An entry in
+other words is left to the questions of review_look.py.
 
 --plan-only writes the plans to OUT.json and plays nothing.
 """
@@ -58,7 +58,7 @@ EPILOG = """examples:
 
 output:
   opened   <project>  (<window title>, <the editor it opened in>)
-  first screen: 2 findings; screen places: 2 of 3 places checked (board, status); review_look.py asks about ...
+  first screen: 2 findings; places: 2 of 3 checked (board, status); review_look.py asks about ...
     look: Text Status uid 9 "White wins! Tap to play again": the text needs 380x40 px and its box is 288x40 ...
     screen: screen.status "below the board": Text Status uid 9 has its middle at (360, 300) on layer 'HUD' ...
   tests:
@@ -572,19 +572,20 @@ def screen_findings(design: gm.Design, types, snap: dict) -> tuple[list[dict], l
         if wrong:
             found.append({"rule": "screen", "uids": [i["uid"] for i in mine], "line":
                           f"{p.path} {json.dumps(p.text, ensure_ascii=False)}: {what} has its middle at "
-                          f"({coord(0, mx)}, {coord(1, my)}) on layer {layer!r}, and the design's place puts its middle at "
-                          f"{' and '.join(wrong)} there: move it in the layout"})
+                          f"({coord(0, mx)}, {coord(1, my)}) on layer {layer!r}, and the design's place wants it at "
+                          f"{' and '.join(wrong)} on that layer: move it in the layout"})
     notes = []
     if places:
-        notes.append(f"{len(checked)} of {len(places)} places checked" + (f" ({', '.join(checked)})" if checked else ""))
+        notes.append(f"{len(checked)} of {len(places)} checked" + (f" ({', '.join(checked)})" if checked else ""))
         if words:
-            notes.append(f"review_look.py asks about {', '.join(words)}: no words of {gm.SCREEN_WORDS} alone "
-                         f"before the first comma")
+            notes.append(f"review_look.py asks about {', '.join(words)}, whose words before the first comma are not "
+                         f"a place")
         if unnamed:
             notes.append(f"{', '.join(unnamed)} name{'s' if len(unnamed) == 1 else ''} no object: write the key as "
                          f"the object type's name")
         if absent:
-            notes.append(f"{', '.join(absent)} not on the first screen")
+            notes.append(f"{', '.join(absent)} {'has' if len(absent) == 1 else 'have'} no instance on the first "
+                         f"screen")
     return found, notes
 
 
@@ -640,7 +641,7 @@ def report(design: gm.Design, plans_meta: list, result: dict, types=()) -> tuple
     for d in first.get("steps", []):
         errors += d.get("errors", [])
     lines.append(f"  first screen: {len(screen) or 'no'} finding{'s' if len(screen) != 1 else ''}"
-                 + (f"; screen places: {'; '.join(places)}" if places else ""))
+                 + (f"; places: {'; '.join(places)}" if places else ""))
     lines += screen
     problems += len(screen)
     lines.append("  tests:")

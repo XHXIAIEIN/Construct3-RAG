@@ -31,16 +31,20 @@ about the editor or the preview goes to `editor-and-preview.md`.
    enemy, without one, where it had to fall back to a merge hint, and
    followed through by dragging as the hand showed]
 2. **For a bug, see the plan fail before the fix.** Write the report in
-   four parts: given, the scene and the state the game is in; doing, the
-   input or the time that passes; produces, what the game does now;
-   instead of, what it should do. The plan reaches the given, does the
-   doing and reads the produces where the player sees it. Play it on the
-   project before any event changes, and see it fail at that read for the
-   reason the report gives. A plan that passes there, or fails at an
-   earlier step, has not reached the bug, and a fix played against it shows
-   nothing: change the plan until it fails as reported. Then change the
-   events and play the same plan until it passes. [design:
-   docs/decisions/preview-player.md, the bullet on a bug's plan]
+   four parts:
+   - given: the scene and the state the game is in
+   - doing: the input, or the time that passes
+   - produces: what the game does
+   - instead of: what it should do
+
+   The plan reaches the given, does the doing and reads the produces where
+   the player sees it. Play it on the project before any event changes,
+   and see it fail at that read for the reason the report gives. A plan
+   that passes there, or fails at an earlier step, has not reached the
+   bug. A fix played against it shows nothing, so change the plan until it
+   fails as reported. Then change the events and play the same plan until
+   it passes. [design: docs/decisions/preview-player.md, the bullet on a
+   bug's plan]
 3. **Reach each scene the way the game does.** Play to it when that is
    short; otherwise call the game's own functions with
    `runtime.callFunction`, which run the events that keep related values in
@@ -108,6 +112,16 @@ about the editor or the preview goes to `editor-and-preview.md`.
    frame, select a part that looks wrong and copy it back as a task.
    [design: docs/decisions/preview-player.md, the bullets on
    `record` and the review page]
+8. **Keep the plan, and replay every kept plan after each change.** Once a
+   plan passes, run it again with `--keep NAME`. It is copied to
+   `tools/plans/NAME.json` in the project, beside the generator and the
+   design, and is committed with the change it checks; the editor ignores
+   the folder. After every later change, `preview_project.py --all` plays
+   each kept plan from a first launch in one editor session and names each
+   one that fails. Fix the events the failing step reads, not the plan,
+   because the plan passed when its change was made. Change a kept plan
+   only when the game was meant to change what it checks.
+   [design: docs/decisions/preview-player.md, the bullet on kept plans]
 
 ## The look of each layout
 
@@ -126,7 +140,7 @@ cover others, the edge of the screen, mixed drawing styles, a backdrop that
 outshines what the player acts on, kinds that look alike, and decoration
 repeated on every layout, and, when the project has a design, the screen
 entries that `play_design.py` cannot measure. The agent that wrote the
-events reads its own screenshots by what it meant them to show, so the
+events reads its own screenshots by what it meant them to show. So the
 script also writes the screenshots and the questions into `brief.md` beside
 them, for a reviewer that has not seen the project. Where you can start a
 sub-agent, give it the brief as its whole task, and for each yes in its

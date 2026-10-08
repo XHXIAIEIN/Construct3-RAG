@@ -29,13 +29,12 @@ the object type, the instance's UID and what to change:
             animation that has more, though a text instance variable differs
             between them and no text on each tells them apart
 
-Then it prints the questions to answer from the screenshot, which the script
-cannot judge: open each screenshot with the image tool of this session, answer
-every question with yes or no, and for each yes name the object to change.
-When the project has a design (--design, by default tools/design.json), one
-question names the design's screen entries that play_design.py cannot
-measure: words other than top, bottom, left, right, centre, above, below, or
-a key that names no object of the project.
+Then it prints the questions to answer from the screenshots, which the script
+cannot judge: each is answered yes or no, and each yes names the object to
+change. When the project has a design (--design, by default tools/design.json),
+one question lists the design's screen entries that play_design.py cannot
+measure: entries with other words before the first comma, and entries whose
+key names no object of the project.
 
 A layout reached by goToLayout starts without what the game's flow sets up
 before it, so a layout that needs a run in progress may show less than in
@@ -47,10 +46,11 @@ Screenshots go to --shots, by default .tmp/look/ in the project, as
 <layout>.png; the whole result to --out, by default .tmp/review-look.json.
 Beside the screenshots it writes brief.md: the screenshots, the questions and
 the form of the answer, for a reviewer that has not seen the project. The
-agent that built the game reads its own pictures by what it meant to build;
-an agent that can start a sub-agent gives it the brief and answers from its
-reply, and one that cannot answers from the screenshots itself. The last
-lines name the result, the screenshots and the brief, and what to do next.
+agent that built the game reads its own pictures by what it meant to build.
+So an agent that can start a sub-agent gives it the brief and takes the
+answers from its reply, and one that cannot answers from the screenshots
+itself. The last three lines are look:, with the result and the screenshots,
+next:, and brief:, which says who answers the questions.
 """
 from __future__ import annotations
 
@@ -78,12 +78,13 @@ output:
     stacked: Text CardName: 5 instances on one box at (300, 420) 120x30, uids 41, 42, 43 ...
     runtime: <an error the layout logged, with its event>
   layout 'Combat' (3 of 3): started, and its events went on to 'Map' before the screenshot; ...
-  questions: open each screenshot above with your image tool, one at a time, and answer every question ...
+  questions: answer every question yes or no for each screenshot above, through the brief as the last line ...
     1. Is any text cut off at an edge, broken onto a line of its own, or drawn over another object?
     ...
     7. Does the same decoration, not the HUD, appear on every screenshot?
   look: 2 findings on 3 layouts, 0 runtime errors; full result in .tmp/review-look.json, screenshots in .tmp/look
-  next: <what to do, and the brief for a sub-agent: .tmp/look/brief.md>
+  next: <what to do>
+  brief: if you can start a sub-agent, give it .tmp/look/brief.md as its whole task ...
 
 exit codes: 0 every layout was visited with no finding and no runtime error; 1 a finding, a runtime error,
 or the project did not open; 2 the project or the editor could not be used; 3 no browser here
@@ -444,7 +445,7 @@ def questions(several: bool, places: list[str] = ()) -> list[str]:
     """The questions the script cannot answer, about every screenshot."""
     out = list(QUESTIONS)
     if places:
-        out.append(f"On a screenshot that shows it, does an object sit elsewhere than the design's screen says: "
+        out.append(f"On a screenshot that shows it, does an object sit away from the place given for it: "
                    f"{'; '.join(places)}?")
     if several:
         out.append(ACROSS)
@@ -453,9 +454,9 @@ def questions(several: bool, places: list[str] = ()) -> list[str]:
 
 def ask(several: bool, places: list[str] = ()) -> list[str]:
     """The questions, put to the agent about every screenshot."""
-    lines = ["questions: open each screenshot above with your image tool, one at a time. Answer every question "
-             "yes or no from what the picture shows. For each yes, name the layout, the object type to change and "
-             "what to change:"]
+    lines = ["questions: answer every question yes or no for each screenshot above, through the brief as the last "
+             "line says, or with your image tool, one screenshot at a time. For each yes, name the layout, the object "
+             "type to change and what to change:"]
     return lines + [f"  {n}. {q}" for n, q in enumerate(questions(several, places), 1)]
 
 
@@ -467,17 +468,16 @@ def brief(result: dict) -> str:
     asked = questions(len(layouts) > 1, result.get("places", []))
     lines = ["# Look review", "",
              "You have not seen this game's project, its events or how it was built, and you do not need to. Judge "
-             "only what the screenshots show: a thing you cannot see in a picture is a no, and a name or a kind of "
-             "game is no reason for a yes.", "",
+             "only what the screenshots show. If a picture does not show it, answer no.", "",
              "Open each screenshot with your image tool, one at a time:", ""]
     lines += [f"{n}. {layout}: {shot}" for n, (layout, shot) in enumerate(shots, 1)]
     lines += ["", "Answer every question for every screenshot, yes or no:", ""]
     lines += [f"{n}. {q}" for n, q in enumerate(asked, 1)]
-    lines += ["", "Reply with one line per screenshot and question, and nothing else. A yes says where on the "
-                  "screenshot the thing is and what looks wrong; a no is the word alone:", "", "```"]
+    lines += ["", "Reply with one line per screenshot and question, and nothing else. Start each line with the "
+                  "screenshot's name and the question's number. A yes says where on the screenshot the thing is and "
+                  "what looks wrong; a no is the word alone. The form, not the content:", "", "```"]
     first = shots[0][0] if shots else "Layout"
-    lines += [f"{first} 1: no", f"{first} 2: yes - the round counter at the top right covers half of the coin icon",
-              "...", "```", ""]
+    lines += [f"{first} 1: no", f"{first} 2: yes - <where on the screenshot>: <what looks wrong>", "...", "```", ""]
     return "\n".join(lines)
 
 
@@ -535,7 +535,7 @@ def main() -> int:
     ap.add_argument("--out", type=Path, help="write the result, every instance read included, as JSON "
                                              "(default: .tmp/review-look.json in the project)")
     ap.add_argument("--design", type=Path, metavar="DESIGN.json",
-                    help="the game's design, whose screen entries play_design.py does not measure become a question "
+                    help="the game's design; a screen entry that play_design.py does not measure becomes a question "
                          "(default: tools/design.json in the project, when there is one)")
     ap.add_argument("--headed", action="store_true", help="show the browser window")
     ap.add_argument("--profile", type=Path, metavar="FOLDER",
@@ -614,9 +614,9 @@ def main() -> int:
           "leads there, so play to it with preview_project.py before blaming the events. Then have the questions "
           "answered and fix each yes. Run this again until it prints no finding and every answer is no.")
     if briefs:
-        print(f"questions: if you can start a sub-agent, give it {' and '.join(briefs)} as its whole task, without "
-              f"telling it what the game should show, and take each yes from its reply: it has not seen the project, "
-              f"so it judges the pictures as a player does. Otherwise open each screenshot and answer them yourself.")
+        print(f"brief: if you can start a sub-agent, give it {' and '.join(briefs)} as its whole task and take each "
+              f"yes from its reply. Tell it nothing more about the game: it has not seen the project, so it judges the "
+              f"pictures as a player does. Otherwise open each screenshot and answer the questions yourself.")
     return 1 if found or errors else 0
 
 
