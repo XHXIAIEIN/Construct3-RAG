@@ -60,9 +60,10 @@ plan.
   count. The lines are first compared in the locale of the run and then in
   the schemas' other locales, so a line copied from a print with
   `--locale zh-CN` names its event in a run without that option.
-- A line that does not match refuses the plan. The message gives the line
-  that the event prints and the numbers of the events that print the given
-  line now.
+- A line that does not match refuses the plan. The message first gives the
+  numbers of the events that print the given line now, then the line that
+  the plan's number prints. The fix is the number, and a line copied from
+  the message would pass the check.
 - A plan without `"line"` is carried out, and a `note:` names its operations
   with an example made from the first one. The field stays optional because
   the checker's findings name a place by its number alone, `sheet Game event

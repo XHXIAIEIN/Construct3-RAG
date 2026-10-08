@@ -617,9 +617,9 @@ def test_a_plan_from_an_older_print_is_refused_with_where_its_line_is_now(projec
     before = (project / SHEET).read_bytes()
     code, out = plan(project, {**STALE, "event": 7})                  # AddScore was 7 in the print, and is 8 now
     assert code == 1 and out.splitlines()[0] == (
-        'operation 1 (event 7): event 7 prints "function Bonus()", not "function AddScore(points: number)", so the '
-        "plan names it by a number from an older print of the sheet or a miscounted one; that line is event 8 now. "
-        "Take each number and its line from print_sheet.py as it prints the sheet now"), out
+        'operation 1 (event 7): "function AddScore(points: number)" is event 8 now, and event 7 prints '
+        '"function Bonus()": the plan\'s numbers come from an older print of the sheet, or 7 is miscounted. Take each '
+        "number and its line from print_sheet.py as it prints the sheet now"), out
     assert (project / SHEET).read_bytes() == before
     code, out = plan(project, {**STALE, "event": 8}, flags=("--dry-run",))
     assert code == 0, out

@@ -415,21 +415,22 @@ class Plan:
             return
         given = op["line"]
         if not isinstance(given, str) or not line_text(given):
-            raise PlanError(f"{name}: \"line\" is the text print_sheet.py prints for event {n}, such as "
-                            f"{json.dumps(self.lines[n][0], ensure_ascii=False)}")
+            raise PlanError(f"{name}: \"line\" is a string, the line print_sheet.py prints for event {n} or a part of it")
         want = line_text(given)
 
         def prints(lines: list[str]) -> bool:       # one of its lines, or a part of one, or of them all in a row
             return any(want in text for text in [*lines, " ".join(lines)])
         if prints(self.lines[n]) or prints(self.other_lines().get(n, [])):
             return
+        # Where the line is comes first: the fix is the number, and a line copied from this message would pass.
         found = [m for m, lines in self.lines.items() if prints(lines)]
-        raise PlanError(f"{name}: event {n} prints {json.dumps(self.lines[n][0], ensure_ascii=False)}, not "
-                        f"{json.dumps(given, ensure_ascii=False)}, so the plan names it by a number from an older print "
-                        f"of the sheet or a miscounted one; "
-                        + (f"that line is event {found[0]} now" if len(found) == 1 else
-                           f"events {', '.join(map(str, found))} print that line now" if found else "no event prints that line now")
-                        + ". Take each number and its line from print_sheet.py as it prints the sheet now")
+        line = json.dumps(given, ensure_ascii=False)
+        raise PlanError(f"{name}: " + (f"{line} is event {found[0]} now" if len(found) == 1 else
+                                       f"events {', '.join(map(str, found))} print {line} now" if found else
+                                       f"no event prints {line} now")
+                        + f", and event {n} prints {json.dumps(self.lines[n][0], ensure_ascii=False)}: the plan's numbers "
+                        f"come from an older print of the sheet, or {n} is miscounted. Take each number and its line "
+                        f"from print_sheet.py as it prints the sheet now")
 
     def put(self, events: list[dict], where: str, n: int, op: str) -> None:
         if where == "into":
