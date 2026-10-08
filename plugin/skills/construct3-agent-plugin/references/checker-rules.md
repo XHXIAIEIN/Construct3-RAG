@@ -1,7 +1,10 @@
 # What `check_project.py` checks
 
 Read this when a finding needs explaining, when the editor reports an error
-the checker let through, or before adding a rule.
+the checker let through, or before adding a rule. For an error the checker
+let through, `scripts/open_in_editor.py` also prints a report for the user to
+send to the skill's repository, once per refusal; it is sent only when the
+user says so.
 
 ## Against the schemas and the project
 
