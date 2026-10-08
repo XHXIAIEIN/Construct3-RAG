@@ -586,3 +586,17 @@ def test_a_new_sheet_beside_others_says_no_layout_runs_it(project):
     assert code == 0 and "run by no layout" in out, out
     assert (project / "eventSheets" / "Menu.json").is_file()
     assert all(p.read_bytes() == raw for p, raw in layouts.items())
+
+
+def test_a_generated_project_is_told_the_change_belongs_in_the_generator(project):
+    """The generator's next run writes the sheet over an edit: the note says so, written or not."""
+    timer = {"before": 1, "events": [{"eventType": "variable", "name": "timeLeft"}]}
+    code, out = plan(project, timer, flags=("--dry-run",))
+    assert code == 0 and ("note: tools/build_project.py generates this project, and its next run writes "
+                          "eventSheets/Game.json over what this plan would write") in out, out
+    code, out = plan(project, timer)
+    assert code == 0 and "writes eventSheets/Game.json over this change: make the change in the generator" in out, out
+    assert out.splitlines()[-1].startswith("ok:")
+    shutil.rmtree(project / "tools")
+    code, out = plan(project, {"remove": 1}, flags=("--dry-run",))
+    assert code == 0 and "build_project" not in out, out

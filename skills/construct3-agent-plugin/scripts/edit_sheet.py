@@ -42,7 +42,10 @@ Nothing is written unless the whole plan holds: the sheet it makes is checked
 like check_project.py checks the project, and a problem the plan would add is
 printed instead, with the file left as it was. A problem that was there
 before does not stop it. It ends with the changed events as the editor words
-them, under their new numbers, and the checker's last line.
+them, under their new numbers, and the checker's last line. In a project
+that tools/build_project.py generates, a note above that line says that the
+generator's next run writes the sheet over the change, which belongs in the
+generator.
 
 print_sheet.py SHEET --show N prints event N as JSON, to change and put back
 with "replace". Its entries keep their keys, in their order, and their sids,
@@ -963,6 +966,11 @@ def main() -> int:
     if not args.dry_run:
         print("note: if the project is open in the Construct 3 editor, close it there without saving and open it "
               "again; a save from the editor writes back the sheet it had loaded, over this change")
+    if (project.root / c3.GENERATOR).is_file():
+        # A generated project's sheets are the generator's output: an edit here lasts until its next run.
+        print(f"note: {c3.GENERATOR} generates this project, and its next run writes "
+              f"{path.relative_to(project.root).as_posix()} over {'what this plan would write' if args.dry_run else 'this change'}: "
+              f"make the change in the generator, then run python {c3.GENERATOR}")
     if found_after.errors:
         print(f"{len(found_after.errors)} problem(s) were in the project before this plan and still are: "
               f"check_project.py lists them")
