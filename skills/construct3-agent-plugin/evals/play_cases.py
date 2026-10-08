@@ -4,22 +4,22 @@
     python evals/play_cases.py CASE --project FOLDER [--out FOLDER] [--release rNNN] [--browser EXE]
 
 A case whose request changes what the game does has a plan of
-scripts/preview_project.py here. The first form prints it as JSON. The
-second plays it on one project, writes plan.json, result.json and the
-screenshots into --out (default: a new folder under the system's temporary
-directory) and prints one line per check: the tool for checking a plan
-against a project that does what the case asks and against its fixture.
-grade.py --play plays the plan of every run.
+scripts/preview_project.py here. The first form prints the plan as JSON.
+The second plays it on one project and writes plan.json, result.json and
+the screenshots into --out (default: a new folder under the system's
+temporary directory). It prints the verdict and the evidence of each check.
+Use it to try a plan on a project that does what the case asks, and on the
+case's fixture. grade.py --play plays the plan of every run.
 
 A check is a js step whose note starts with "check: " and whose code returns
-{ok, said}. It reads the running game: input goes in through the plan's tap
-and key steps, and a tick2 listener, installed by the first js step, records
+{ok, said}. It reads the running game. Input goes in through the plan's tap
+and key steps. A tick2 listener, installed by the first js step, records
 what changes between two samples (vars.watch, vars.seen). A setup step that
 fails stops the plan, and every check after it fails as not reached. A few
-checks read the plan's screenshots instead (POST). Every plan also checks
-that the game logged no runtime error. A plan finds what the run made by what
-it does where the run chooses its name: the UI instance that widens when a
-coin is collected is the fill, the variable that goes from 40 to 50 is hp.
+checks read the plan's screenshots instead (the POST table). Every plan also
+checks that the game logged no runtime error. Where the run chooses the name
+of an object or a variable, the plan finds it by what it does: the UI
+instance that widens when a coin is collected is the fill.
 
 exit codes: 0 every check passed or the plan was printed, 1 a check failed or
 the plan did not play, 2 no plan for CASE
@@ -76,9 +76,19 @@ HELPERS = r"""if (!vars.h) {
   h.text = name => { const i = h.first(name); return i && h.isText(i) ? i.text : null; };
   h.count = name => runtime.objects[name] ? runtime.objects[name].getAllInstances().length : 0;
   h.since = (k, t) => (vars.seen[k] || []).filter(e => e.at > t);
+  // What changed after t, from the value at t: the watch's first sample is no change.
+  h.changes = (k, t) => { let last = h.at(k, t); return h.since(k, t).filter(e => {
+    const moved = JSON.stringify(e.v) !== JSON.stringify(last); last = e.v; return moved; }); };
   h.at = (k, t) => { let v; for (const e of vars.seen[k] || []) { if (e.at <= t) v = e.v; else break; } return v; };
   h.fresh = type => { const c = runtime.objects[type].getAllInstances().find(c => !vars.tapped.has(c));
     if (c) { vars.tapped.add(c); vars.tapAt = runtime.wallTime; vars.taps.push(runtime.wallTime); vars.before = vars.starts; }
+    return c; };
+  // A point of a fresh coin that no other coin covers, near its middle, so that a touch picks that one alone.
+  h.spot = type => { const c = h.fresh(type); if (!c) return c;
+    const others = runtime.objects[type].getAllInstances().filter(o => o !== c).map(o => o.getBoundingBox()), b = c.getBoundingBox();
+    for (const [fx, fy] of [[.5, .5], [.3, .5], [.7, .5], [.5, .3], [.5, .7], [.35, .35], [.65, .65], [.35, .65], [.65, .35]]) {
+      const x = b.left + b.width * fx, y = b.top + b.height * fy;
+      if (!others.some(o => x >= o.left && x <= o.right && y >= o.top && y <= o.bottom)) return {x, y, layer: c.layer.name}; }
     return c; };
   h.numbers = () => { const out = {};
     for (const k in runtime.globalVars) if (typeof runtime.globalVars[k] === 'number') out['g:' + k] = runtime.globalVars[k];
@@ -106,13 +116,13 @@ def check(text: str, *lines: str) -> dict:
 
 
 def tap(kind: str = "Coin") -> dict:
-    return {"tap": {"js": f"vars.h.fresh('{kind}')"}}
+    return {"tap": {"js": f"vars.h.spot('{kind}')"}}
 
 
 def collect(most: int = 10) -> list[dict]:
     """Tap every coin of the round, however many it dealt, then wait for the next round: a tap with no coin
     left presses an empty corner."""
-    return [*[{"tap": {"js": "vars.h.fresh('Coin') || {x: 4, y: 4}"}} for _ in range(most)], *next_round()]
+    return [*[{"tap": {"js": "vars.h.spot('Coin') || {x: 4, y: 4}"}} for _ in range(most)], *next_round()]
 
 
 def ready(expression: str) -> list[dict]:
@@ -175,13 +185,13 @@ def fix_load_errors() -> dict:
     return {"touch": True, "steps": [
         *COINS,
         js("vars.coin = runtime.objects.Coin.getFirstInstance(); vars.uid = vars.coin.uid;",
-           "vars.value = vars.coin.instVars.value; vars.score0 = +vars.h.text('ScoreText'); vars.w0 = vars.h.round(vars.coin.width);",
+           "vars.value = vars.coin.instVars.value; vars.score0 = vars.h.lastNumber(vars.h.text('ScoreText')); vars.w0 = vars.h.round(vars.coin.width);",
            "vars.watch.coin = () => { const c = runtime.getInstanceByUid(vars.uid); return c ? vars.h.round(c.width) : null; };",
            "return {value: vars.value, score: vars.score0}"),
         {"tap": {"js": "vars.tapped.add(vars.coin), vars.tapAt = vars.h.now(), vars.coin"}},
         check("A tapped coin adds its value to the score text",
               "await wait(0.6); const s = h.text('ScoreText');",
-              "return {ok: +s === vars.score0 + vars.value, said: `score ${vars.score0}, a coin worth ${vars.value}, then ScoreText says ${JSON.stringify(s)}`};"),
+              "return {ok: h.lastNumber(s) === vars.score0 + vars.value, said: `score ${vars.score0}, a coin worth ${vars.value}, then ScoreText says ${JSON.stringify(s)}`};"),
         check("The tapped coin shrinks and is gone within 1.5 s",
               "await wait(0.9); const seen = h.since('coin', vars.tapAt).map(e => e.v), w = seen.filter(v => v !== null);",
               "const start = vars.w0, gone = seen.includes(null);",
@@ -233,13 +243,13 @@ def turns(limit: bool = False) -> dict:
     With a limit, first in round 1: without a tap the turn passes once about every 5 seconds, and the seconds
     shown count down."""
     steps = [*COINS, js("vars.watch.turn = () => vars.h.player(vars.h.text('ScoreText'));",
-                        "vars.watch.text = () => vars.h.text('ScoreText'); return vars.h.text('ScoreText')")]
+                        "vars.watch.text = () => vars.h.text('ScoreText'); return vars.h.text('ScoreText')"), {"wait": 0.3}]
     if limit:
         steps += [
             check("Without a tap the turn passes to the other player about every 5 s",
                   "const t0 = h.now(), first = h.player(h.text('ScoreText'));",
-                  "for (let n = 0; n < 140 && h.since('turn', t0).length < 2; n++) await wait(0.1);",
-                  "await wait(0.6); const ch = h.since('turn', t0);",
+                  "for (let n = 0; n < 140 && h.changes('turn', t0).length < 2; n++) await wait(0.1);",
+                  "await wait(0.6); const ch = h.changes('turn', t0);",
                   "if (ch.length < 2) return {ok: false, said: `turn ${first}, then ${ch.map(e => e.v).join(', ') || 'no change'} in 14 s`};",
                   "const gap = ch[1].at - ch[0].at, flips = ch[0].v === 3 - first && ch[1].v === first;",
                   "const quick = ch.slice(2).filter(e => e.at - ch[1].at < 0.5).length;",
@@ -254,14 +264,14 @@ def turns(limit: bool = False) -> dict:
         tap(), *next_round(),
         js("vars.turn0 = vars.h.at('turn', vars.h.now()); return vars.turn0"), tap(), {"wait": 0.8},
         check("A collected coin passes the turn to the other player once",
-              "const ch = h.since('turn', vars.tapAt).map(e => e.v), now = h.at('turn', h.now());",
+              "const ch = h.changes('turn', vars.tapAt).map(e => e.v), now = h.at('turn', h.now());",
               "return {ok: ch.length === 1 && now === 3 - vars.turn0, said: `turn ${vars.turn0}; after the collect ${ch.slice(0, 8).join(', ') || 'no change'}${ch.length > 8 ? ` ... (${ch.length} changes)` : ''}`};"),
         check("Without input the turn shown holds still",
-              "const t = h.now(); await wait(1); const ch = h.since('turn', t), now = h.at('turn', h.now());",
+              "const t = h.now(); await wait(1); const ch = h.changes('turn', t), now = h.at('turn', h.now());",
               "return {ok: (now === 1 || now === 2) && !ch.length, said: `turn ${now}; ${ch.length} change(s) in 1 s; ScoreText says ${JSON.stringify(h.text('ScoreText'))}`};"),
         js("vars.turn1 = vars.h.at('turn', vars.h.now()); return vars.turn1"), tap(), {"wait": 0.8},
         check("The next collected coin passes it back",
-              "const ch = h.since('turn', vars.tapAt).map(e => e.v), now = h.at('turn', h.now());",
+              "const ch = h.changes('turn', vars.tapAt).map(e => e.v), now = h.at('turn', h.now());",
               "return {ok: ch.length === 1 && now === 3 - vars.turn1, said: `turn ${vars.turn1}; after the collect ${ch.slice(0, 8).join(', ') || 'no change'}`};"),
     ]
     return {"touch": True, "steps": steps}
@@ -390,26 +400,34 @@ def reveal_the_gradient() -> dict:
     ]}
 
 
-# Over the six coins of round 3, the number that drops by one twice, three coins apart, and does not change
-# otherwise: the lives, counted across rounds or per round. The drops are the taps that caused them.
-LIVES = r"""const t = vars.taps.slice(-6), at = s => vars.h.at('numbers', s) || {}, start = at(t[0] - 0.05);
-const values = k => [...t.map(s => at(s - 0.05)[k]), at(t[5] + 0.9)[k]];
-const steps = k => { const v = values(k); return v.slice(1).map((x, i) => v[i] - x); };
-vars.lives = Object.keys(start).find(k => { const d = steps(k); return d.filter(x => x === 1).length === 2 && d.every(x => x === 0 || x === 1); }) || null;
-vars.drops = vars.lives ? steps(vars.lives).map((x, i) => x ? i + 1 : 0).filter(Boolean) : [];
-vars.livesSeen = Object.keys(start).map(k => `${k.slice(2)}: ${values(k).join(' ')}`);
-return {lives: vars.lives, drops: vars.drops, values: vars.livesSeen};"""
+# The lives are the number that drops by one twice over round 3 and does not change otherwise. They may be
+# counted across rounds or per round. Between the two drops the score changes once per coin collected, so it
+# changes three times when a life goes every third coin. The count comes from the score, not from the taps,
+# because one touch can take two coins that overlap. A drop belongs to the last tap of the plan before it, and
+# the screenshots before and after that tap show the heart it took.
+LIVES = r"""const r3 = vars.r3, end = Math.min(r3[r3.length - 1] + 0.9, ...vars.endAt.filter(t => t > r3[0])), at = s => vars.h.at('numbers', s) || {}, start = at(r3[0] - 0.05);
+const moves = k => vars.h.changes('numbers', r3[0] - 0.05).filter(e => e.at <= end).map(e => ({at: e.at, v: e.v[k]}))
+  .filter((e, i, all) => e.v !== (i ? all[i - 1].v : start[k]));
+vars.lives = Object.keys(start).find(k => k !== 'g:score' && (m => m.length === 2 && m[0].v === start[k] - 1
+  && m[1].v === start[k] - 2)(moves(k))) || null;
+const drops = vars.lives ? moves(vars.lives) : [];
+vars.drops = drops.map(d => r3.filter(t => t <= d.at).length);
+vars.between = drops.length === 2 ? moves('g:score').filter(e => e.at > drops[0].at && e.at <= drops[1].at).length : null;
+vars.livesSeen = Object.keys(start).map(k => `${k.slice(2)}: ${start[k]}${moves(k).map(e => ' ' + e.v).join('')}`);
+return {lives: vars.lives, drops: vars.drops, between: vars.between, after: drops.length ? drops[0].v : null, values: vars.livesSeen};"""
 
 
 def lives_as_hearts() -> dict:
-    after = [step for k in range(1, 7) for step in (tap(), {"wait": 1.0}, {"shot": f"tap{k}"})]
+    after = [step for k in range(1, 7) for step in (js("vars.r3.push(vars.h.now()); return vars.r3.length"),
+                                                    {"tap": {"js": "vars.h.spot('Coin') || {x: 4, y: 4}"}},
+                                                    {"wait": 1.0}, {"shot": f"tap{k}"})]
     return {"viewport": [1920, 1080], "touch": True, "steps": [
-        *COINS, js("vars.watch.numbers = () => vars.h.numbers(); return vars.h.numbers()"), {"wait": 0.3},
+        *COINS, js("vars.watch.numbers = () => vars.h.numbers(); vars.r3 = []; return vars.h.numbers()"), {"wait": 0.3},
         *collect(), *collect(), boxes_step("hearts"), {"shot": "tap0"}, *after,
         {"js": LIVES, "note": "lives drops"},
         check("Every third coin of a round costs one life",
-              "return {ok: !!vars.lives && vars.drops.length === 2 && vars.drops[1] - vars.drops[0] === 3, "
-              "said: vars.lives ? `${vars.lives.slice(2)} drops after coins ${vars.drops.join(' and ')} of round 3` "
+              "return {ok: !!vars.lives && vars.between === 3, "
+              "said: vars.lives ? `${vars.lives.slice(2)} drops twice over round 3, ${vars.between} coin(s) apart` "
               ": `no number drops by one twice over round 3: ${vars.livesSeen.join('; ')}`};"),
     ]}
 
@@ -449,8 +467,8 @@ def walk_with_wasd() -> dict:
 
 
 def edges(watch: str, holds: list[tuple[str, float]], area: str, stays: str, reaches: str, margin: int) -> list[dict]:
-    """Hold keys toward the edges while the box is read every tick; then whether it stayed in the area and
-    reached each side of it. watch returns {l, t, r, b} and the area as {L, T, R, B}."""
+    """Hold keys toward the edges while the box is read every tick. Then check that the box stayed in the area
+    and that it reached each side of it. watch returns {l, t, r, b} and the area as {L, T, R, B}."""
     return [js(f"vars.watch.edge = {watch}; return vars.watch.edge()"),
             *[{"key": k, "seconds": s} for k, s in holds],
             js("vars.edge = (vars.seen.edge || []).map(e => e.v).filter(v => v && typeof v === 'object'); return vars.edge.length"),
@@ -665,9 +683,11 @@ def gradient_checks(result: dict) -> list[tuple[bool, str]]:
 
 
 def hearts_checks(result: dict) -> list[tuple[bool, str]]:
-    """When the first life of round 3 is lost, only the rightmost fifth of the hearts' box changes, and what is
-    there after it is not the backdrop: an empty heart is drawn."""
-    drops = (value_of(result, "lives drops") or {}).get("drops") or []
+    """When the first life of round 3 is lost, only the slot of that life changes. A slot is a fifth of the
+    hearts' box, counted from the left by the lives left. After the loss the slot does not show the backdrop:
+    an empty heart is drawn there."""
+    lost = value_of(result, "lives drops") or {}
+    drops, left = lost.get("drops") or [], lost.get("after")
     if not drops:
         return [(False, "no life was lost over the six coins of round 3")] * 2
     got = images(result, f"tap{drops[0] - 1}", f"tap{drops[0]}", ("boxes hearts",))
@@ -682,11 +702,13 @@ def hearts_checks(result: dict) -> list[tuple[bool, str]]:
     diff = changed(a, b, box, texts)
     if not diff:
         return [(False, f"nothing changed in the hearts' box {box} when coin {drops[0]} of round 3 cost a life")] * 2
-    right = box[2] - (box[2] - box[0]) / 5 - 2
-    stray = [p for p in diff if p[0] < right]
-    where = (not stray, f"{len(diff)} pixels changed in the hearts' box x {box[0]} to {box[2]}; "
-                        + (f"{len(stray)} left of the rightmost fifth, from x {min(x for x, _ in stray)}" if stray
-                           else f"all from x {min(x for x, _ in diff)}, in the rightmost fifth"))
+    fifth = (box[2] - box[0]) / 5
+    slot = (box[0] + fifth * left - 2, box[0] + fifth * (left + 1) + 2) if isinstance(left, (int, float)) else (0, 0)
+    stray = [p for p in diff if not slot[0] <= p[0] <= slot[1]]
+    xs0 = [x for x, _ in diff]
+    where = (not stray, f"{len(diff)} pixels changed in the hearts' box x {box[0]} to {box[2]}, from x {min(xs0)} to "
+                        f"{max(xs0)}; the slot of heart {left + 1 if isinstance(left, (int, float)) else '?'} is x "
+                        f"{slot[0]:.0f} to {slot[1]:.0f}" + (f"; {len(stray)} outside it" if stray else ""))
     # The backdrop beside the hearts, left of their box or right of it, outside every UI box.
     ys = range(box[1], box[3])
     band = [(x, y) for x in range(max(0, box[0] - 40), max(0, box[0] - 8)) for y in ys] or \
@@ -708,7 +730,7 @@ def hearts_checks(result: dict) -> list[tuple[bool, str]]:
 POST: dict[str, tuple[list[str], Callable[[dict], list[tuple[bool, str]]]]] = {
     "reveal-the-gradient": (["Collecting a coin lights more of the bar",
                              "The colours the bar already showed stay where they are"], gradient_checks),
-    "lives-as-hearts": (["Only the rightmost heart changes when a life is lost",
+    "lives-as-hearts": (["Only the heart of the life lost changes",
                          "The emptied heart stays drawn"], hearts_checks),
 }
 

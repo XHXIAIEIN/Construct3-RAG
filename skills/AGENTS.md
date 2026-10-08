@@ -206,31 +206,38 @@ python skills/construct3-agent-plugin/evals/run_trigger_eval.py skills/construct
   variable or a write made inside a script escapes it.
 - When a run's completion notice arrives, write the tokens and the duration
   it gives into the run's `timing.json`. `trace.py` reads the turns, the
-  output and input tokens and the seconds from the transcript as well, and
-  the benchmark takes the time from it where `timing.json` is missing;
-  nothing is estimated.
+  output and input tokens and the seconds from the transcript. The
+  benchmark's `tokens` come from `timing.json` alone; its `seconds` come
+  from `timing.json`, else from the trace. Nothing is estimated.
 - An assertion has a level: `checker`, `files` or `runtime`. A case whose
   request changes what the game does has a plan in `play_cases.py`, and
-  `grade.py --play` plays it on each run's project in the editor's preview,
-  one plan at a time, 15 to 60 seconds each. A check reads the running game
-  and finds what the run made by what it does, not by the name the run gave
-  it. A file assertion and a runtime check that disagree on a run are read
-  against the run before either is trusted. A new or changed plan is played
-  on its unfixed fixture, where the asked behaviour must fail, and on a
+  each check of the plan is a runtime assertion. `grade.py --play` plays
+  the plans on the runs' projects in the editor's preview, one at a time.
+  A check finds what the run made by what it does, not by the name the run
+  gave it. When a file assertion and a runtime assertion disagree on a run,
+  read the run before you trust either. Play a new or changed plan on its
+  unfixed fixture, where the asked behaviour must fail. Then play it on a
   project that does what the case asks, where every check must pass
   (`docs/decisions/runtime-graded-evals.md`).
-- A case marked `held_out` stays out of the loop that shapes a change:
+- A case marked `held_out` stays out of the loop that shapes a change.
   `make_fixtures.py` lays it out only with `--held-out`, and `grade.py`
-  aggregates it apart and prints its failures only with `--show-held-out`.
-  Run the held-out cases once the change is otherwise done, and do not read
-  their transcripts or gradings while it is open. A held-out failure is
-  first reproduced as a new tuning case; the held-out case then joins the
-  tuning set and a new one takes its place.
+  reports it separately and prints its failures only with
+  `--show-held-out`. Run the held-out cases once the change is otherwise
+  done. Do not read their transcripts or gradings while the change is open,
+  because a case that shapes the change no longer measures it. Reproduce a
+  held-out failure as a new tuning case first; the held-out case then joins
+  the tuning set, and a new case takes its place.
+- For each change to the skill, run the tuning cases it targets with
+  `with_skill` and `old_skill`, two or three runs each, and grade with
+  `--play`. Before a change to the skill is merged, or weekly, run every
+  tuning case twice with `with_skill`. After an accepted batch of changes,
+  run the held-out cases with both arms, two runs each. `benchmark.json`
+  records what each run cost.
 - One run per case and arm gives counts, not a spread. Lay a cell out more
   than once, `--arms with_skill with_skill_2`, before quoting a deviation;
   lost calls vary from 1 to 6 between two runs of the same cell. The
   benchmark gives the runs that passed every assertion as k of n with a
-  Wilson 95% interval; at two to four runs it spans most of 0 to 1, so
-  quote n with it.
+  Wilson 95% interval. At two to four runs the interval spans most of 0 to
+  1, so quote n with it.
 - The description changes on the failures of the train queries only, and
   the validation queries choose between descriptions.

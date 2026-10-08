@@ -21,10 +21,10 @@ relative path, a variable and a path built inside a script are not
 resolved, so the list is a floor: an empty one proves nothing. read_skill_md is true
 when this skill's SKILL.md reached the model: the Skill tool called with this
 skill, or its SKILL.md read, and the call's result came back without an
-error, as run_trigger_eval.py counts a trigger. turns, output_tokens,
-input_tokens (cache writes and reads included) and seconds, first entry to
-last, are what the run cost, read from the model's responses in the
-transcript. --out writes the counts to RUN_DIR/trace.json, which grade.py
+error, as run_trigger_eval.py counts a trigger. turns, output_tokens and
+input_tokens (cache writes and reads included) are read from the model's
+responses in the transcript, and seconds from its first and last
+timestamps: what the run cost. --out writes the counts to RUN_DIR/trace.json, which grade.py
 adds to the benchmark. --full prints commands and results unshortened.
 
 exit codes: 0 read, 1 the file holds no tool call
@@ -155,9 +155,10 @@ def outside(calls: list[dict], root: Path) -> tuple[list[dict], list[dict]]:
 
 
 def usage_of(path: Path) -> dict:
-    """What the run cost, from its transcript: turns (one per model response, which the transcript writes once per
-    content block, so counted by message id), output tokens, input tokens with cache writes and reads, the seconds
-    from its first entry to its last, and the model."""
+    """What the run cost, from its transcript. turns counts the model's responses by message id, because the
+    transcript writes a response once per content block. output_tokens and input_tokens add up the responses'
+    usage, input with cache writes and reads. seconds runs from the first timestamp to the last. model is the
+    responses' model."""
     seen: dict[str, dict] = {}
     times, model = [], None
     for line in path.read_text(encoding="utf-8").splitlines():

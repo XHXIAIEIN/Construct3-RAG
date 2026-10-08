@@ -8,27 +8,29 @@ evals/evals.json is checked by code against the files the run left, with the
 clone's own checker, and written to <case>/<arm>/grading.json with the
 evidence and its level: checker or files. A case whose request changes what
 the game does also has the runtime assertions of its plan in
-evals/play_cases.py: --play plays it on the run's project in the editor's
-preview, into <case>/<arm>/play/, and a later grading without --play reads
-play/result.json again. Unplayed, they are listed with passed null and left
-out of the scores. level_reached is the highest level up to which every
-scored assertion passed.
+evals/play_cases.py. --play plays the plan on the run's project in the
+editor's preview, into <case>/<arm>/play/. Without --play, grade.py reads a
+play/result.json that the run already has. Runtime assertions that were not
+played are listed with passed null and left out of the scores.
+level_reached is the highest level up to which every scored assertion
+passed.
 
 benchmark.json gives, per case and arm, the mean of every measure and its
 deviation once a cell has more than one run (<arm>_2, <arm>_3 are further
 runs of <arm>), the runs that passed every assertion with a Wilson 95%
 interval, and with_skill less each other arm. A run with a trace.json
 (evals/trace.py --out) adds its tool calls, the ones it lost, its turns and
-output tokens; time comes from timing.json, else from the trace. A case
-marked held_out in evals.json is aggregated apart, under held_out, and its
-failed assertions are printed only with --show-held-out.
+output tokens. Time comes from timing.json, else from the trace; tokens come
+from timing.json. A case marked held_out in evals.json is reported
+separately, under held_out, and its failed assertions are printed only with
+--show-held-out.
 
 A run that did not keep to its arm is not scored: put the reason in
 <case>/<arm>/void.txt, for example a baseline whose answer lists a script of
 this skill among its commands. A run whose trace.json lists a write outside
 its folder is not scored either, with the paths as the reason; the list is a
-floor (evals/trace.py). A run without timing.json has no time or
-tokens in the benchmark; nothing is filled in for it.
+floor (evals/trace.py). A run without timing.json has no tokens in the
+benchmark, and no time unless its trace has one; nothing is estimated.
 
 exit codes: 0 graded, 1 ITERATION_DIR holds no run of a known case
 """
@@ -1349,7 +1351,8 @@ def spread(numbers: list[float]) -> dict | None:
 
 
 def wilson(k: int, n: int, z: float = 1.96) -> list[float]:
-    """The Wilson score interval of k successes in n runs, 95% by default: honest at small n, never outside 0..1."""
+    """The Wilson score interval of k successes in n runs; z = 1.96 gives 95%. It stays within 0..1, and it is
+    not a single point when k is 0 or n."""
     if not n:
         return [0.0, 1.0]
     p, d = k / n, 1 + z * z / n
@@ -1396,8 +1399,8 @@ def optional_json(path: Path) -> dict:
 
 
 def runtime_of(name: str, run: Path, args: argparse.Namespace) -> tuple[list[dict], float | None]:
-    """The run's runtime assertions, played now with --play or read from play/result.json; a case without a
-    plan has none. Unplayed, each is listed with passed null and left out of the scores."""
+    """The run's runtime assertions, played with --play or read from play/result.json. A case without a plan
+    has none. When the plan was not played, each is listed with passed null and left out of the scores."""
     texts = play_cases.check_texts(name)
     if not texts:
         return [], None
@@ -1419,7 +1422,9 @@ def runtime_of(name: str, run: Path, args: argparse.Namespace) -> tuple[list[dic
 
 
 def reached(graded: list[dict]) -> str:
-    """The highest level up to which every scored assertion passed: checker, files, runtime, or none."""
+    """The highest level up to which every scored assertion passed: checker, files, runtime, or none. The
+    runtime level needs at least one scored runtime assertion, so a case without a plan, or with an unplayed
+    one, stops at files."""
     out = "none"
     for level in LEVELS:
         mine = [g for g in graded if g["level"] == level and g["passed"] is not None]
@@ -1435,8 +1440,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("iteration", metavar="ITERATION_DIR")
     ap.add_argument("--play", action="store_true",
-                    help="play each run's plan in the editor's preview now (evals/play_cases.py); without it, a "
-                         "play/result.json a run already has is graded again")
+                    help="play each run's plan in the editor's preview (evals/play_cases.py); without it, "
+                         "grade.py reads a play/result.json that the run already has")
     ap.add_argument("--release", metavar="rNNN", help="the editor release the plans open in (default: the current one)")
     ap.add_argument("--browser", metavar="EXE", help="the Chromium-based browser preview_project.py starts")
     ap.add_argument("--show-held-out", action="store_true",

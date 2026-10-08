@@ -181,8 +181,8 @@ def seed_turn_flip(root: Path) -> None:
 
 
 def seed_no_solid(root: Path) -> None:
-    """SolidBarrier without its Solid behavior, on the type, on every instance and in the used addons: the
-    player's 8 Direction walks through the walls it was stopped by."""
+    """SolidBarrier without its Solid behavior, on the type and on every instance, and in the used addons when
+    no other type uses it: the player's 8 Direction walks through the walls that stop it in the example."""
     def edit(path: Path, change) -> None:
         data = json.loads(path.read_text(encoding="utf-8"))
         change(data)
@@ -199,7 +199,7 @@ def seed_no_solid(root: Path) -> None:
         edit(root / "project.c3proj", lambda p: p.update(usedAddons=[a for a in p["usedAddons"] if a["id"] != "solid"]))
 
 
-# fixture -> (the fixture it starts from, the mistake written into it). The seeded entries' sids start
+# fixture -> (the fixture it starts from, the fault written into it). The seeded entries' sids start
 # with 6333, 6444 or 6555, so a grader can tell the example's own events from them.
 SEEDS = {"families-key-pressed": ("example:families", seed_key_pressed),
          "coins-timer-restart": ("coins", seed_timer_restart),
@@ -240,7 +240,7 @@ def main() -> int:
     ap.add_argument("--cases", nargs="+", metavar="NAME",
                     help="test cases by name (default: all of evals.json but the held-out ones)")
     ap.add_argument("--held-out", action="store_true",
-                    help="lay out the held-out cases too, or the ones --cases names; only once a change is done")
+                    help="lay out the held-out cases too, or the ones --cases names. Use it once a change is otherwise done")
     ap.add_argument("--old-clone", metavar="FOLDER", help="a checkout of the clone before the change, for old_... arms")
     ap.add_argument("--examples", metavar="FOLDER",
                     default=str(c3.siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"),

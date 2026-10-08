@@ -320,7 +320,7 @@
       "name": "double-jump",
       "fixture": "example:template-platformer",
       "prompt": "this is construct's platformer template, folder <project> . let the player jump a second time while in the air, but only once per jump: after landing it can double jump again. a normal single jump has to stay exactly as it is now",
-      "expected_output": "Player's Platform behavior gets its Double jump property on, in the layout's instance or by Set double-jump enabled at the start, or events that give one more jump in the air and reset it on landing. A single jump rises as before, a second press in the air jumps again, a third does not, and after landing the double jump works again. The checker passes.",
+      "expected_output": "Player's Platform behavior gets its Double-jump property on, in the layout's instance or by Set double-jump at the start, or events that give one more jump in the air and reset it on landing. A single jump rises as before, a second press in the air jumps again, a third does not, and after landing the double jump works again. The checker passes.",
       "files": [],
       "assertions": [
         "check_project.py of the clone exits 0 on the edited project",
@@ -347,7 +347,7 @@
       "fixture": "persistent-walls",
       "held_out": true,
       "prompt": "this is the persistent layouts example from construct, folder <project> . the player is supposed to be stopped by the wall bars at the top and bottom of each room, but it walks right through them. fix it so the bars stop it. walking off the left or right side still has to take you to the next room",
-      "expected_output": "SolidBarrier has lost its Solid behavior. It gets it back on the object type and its instances, with the addon listed in project.c3proj, so 8 Direction stops the player at the bars; the events that change rooms stay. The checker passes.",
+      "expected_output": "In the fixture, SolidBarrier has no Solid behavior. The fix adds the behavior to the object type and to its instances, and lists the addon in project.c3proj, so 8 Direction stops the player at the bars; the events that change rooms stay. The checker passes.",
       "files": [],
       "assertions": [
         "check_project.py of the clone exits 0 on the edited project",
