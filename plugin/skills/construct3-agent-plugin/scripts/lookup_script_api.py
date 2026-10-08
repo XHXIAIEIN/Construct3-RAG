@@ -47,6 +47,18 @@ SIZE_NOTES = {
     **{("ITiledBackgroundInstance", name): f"the size in pixels of the image without the tiling, {IN_LAYOUT}"
        for name in ("imageWidth", "imageHeight", "getImageSize")},
 }
+# What a value of a type is, where the declaration does not say. From the manual's scripting reference:
+# plugin-interfaces/keyboard, isKeyDown. Printed under the type and under each member that takes it.
+TYPE_NOTES = {
+    "KeyboardKeyOrCode": 'a physical key\'s KeyboardEvent.code, such as "KeyA", "Space", "ArrowUp" or "ShiftLeft"; '
+                         'a KeyboardEvent.key such as "a" or "Shift" never matches, so for either Shift key test '
+                         'isKeyDown("ShiftLeft") || isKeyDown("ShiftRight")',
+}
+
+
+def notes(text: str) -> list[str]:
+    """The `-- ` lines of the types the text of a declaration names."""
+    return [f"  -- {name} is {note}" for name, note in TYPE_NOTES.items() if re.search(rf"\b{name}\b", text)]
 
 
 @dataclass
@@ -179,7 +191,7 @@ def print_declaration(d: Declaration) -> list[str]:
     lines = [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}"]
     sizes = [SIZE_NOTES.get((d.name, m.name)) for m in d.members]
     for i, m in enumerate(d.members):
-        lines.append(f"  {m.text}")
+        lines += [f"  {m.text}", *notes(m.text)]
         # members side by side that measure the same size share one line, under the last of them
         if sizes[i] and (i + 1 == len(sizes) or sizes[i + 1] != sizes[i]):
             lines.append(f"  -- {sizes[i]}")
@@ -193,7 +205,7 @@ def print_members(hits: list[tuple[Declaration, Member]]) -> list[str]:
     lines = []
     for d, m in hits:
         lines.append(f"{d.name}.{m.name}   {where(d, m)}")
-        lines.append(f"  {m.text}")
+        lines += [f"  {m.text}", *notes(m.text)]
         if (d.name, m.name) in SIZE_NOTES:
             lines.append(f"  -- {SIZE_NOTES[d.name, m.name]}")
         if m.doc and len(hits) <= FULL:
@@ -226,7 +238,7 @@ def lookup(decls: list[Declaration], query: str) -> tuple[list[str], bool]:
     named += [d for d in decls if d.kind not in ("class", "interface", "namespace") and squash(d.name) == key]
     for d in named:
         lines += print_declaration(d) if d.kind in ("class", "interface", "namespace") else \
-            [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}"]
+            [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}", *notes(d.header)]
     exact = [(d, m) for d in decls for m in d.members if m.name.lower() == query.lower()]
     if exact:
         lines += print_members(exact)

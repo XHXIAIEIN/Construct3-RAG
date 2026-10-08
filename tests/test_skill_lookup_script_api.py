@@ -39,6 +39,17 @@ def test_a_size_member_says_what_it_measures(built):
     assert len(notes) == 1 and lines[notes[0] - 1] == "  getViewportSize(): Vec2Arr;", out
 
 
+def test_a_member_that_takes_a_key_says_it_is_the_code(built):
+    # isKeyDown matches KeyboardEvent.code ("ShiftLeft"), never KeyboardEvent.key ("Shift")
+    for name in ("isKeyDown", "Keyboard", "KeyboardKeyOrCode"):
+        code, out = tool(built, "lookup_script_api", name)
+        assert code == 0
+        assert '  -- KeyboardKeyOrCode is a physical key\'s KeyboardEvent.code, such as "KeyA"' in out, out
+        assert 'isKeyDown("ShiftLeft") || isKeyDown("ShiftRight")' in out, out
+    code, out = tool(built, "lookup_script_api", "IRuntime")
+    assert "KeyboardEvent.code" not in out, out
+
+
 def test_a_name_the_api_does_not_declare_prints_the_near_ones(built):
     code, out = tool(built, "lookup_script_api", "callFuncton")
     assert code == 1 and out.startswith("the scripting API declares no 'callFuncton'; closest: callFunction")
