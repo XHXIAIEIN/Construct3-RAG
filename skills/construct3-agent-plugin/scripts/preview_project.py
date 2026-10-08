@@ -1092,15 +1092,16 @@ def replay_report(result: dict, refused: dict[str, list[str]],
             failed += 1
             lines.append(f"  FAIL  {name} ({where}): the preview did not run: {'; '.join(done['errors'])}")
             continue
-        logged = [e.splitlines()[0] for e in done["errors"] + [e for d in done["steps"] for e in d["errors"]]]
-        errors += len(logged)
+        raw = done["errors"] + [e for d in done["steps"] for e in d["errors"]]
+        logged = oe.runtime_lines(raw, "    ")
+        errors += len(raw)
         bad = next((d for d in done["steps"] if not d["ok"]), None)
         if bad or logged or len(done["steps"]) < done["planned"]:
             failed += 1
-            why = (f"{bad['line']}: FAILED, {bad['said']}" if bad else f"runtime: {logged[0]}" if logged
+            why = (f"{bad['line']}: FAILED, {bad['said']}" if bad else logged[0].strip() if logged
                    else f"stopped after {len(done['steps'])} of {done['planned']} steps")
             lines.append(f"  FAIL  {name} ({where}): {why}")
-            lines += [f"    runtime: {e}" for e in logged[1 if not bad else 0:][:3]]
+            lines += logged[1 if not bad else 0:][:3]
         else:
             lines.append(f"  ok    {name}: {done['planned']} step{'s' if done['planned'] != 1 else ''} in "
                          f"{done['seconds']:.1f} s")
