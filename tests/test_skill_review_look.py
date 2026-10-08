@@ -174,3 +174,13 @@ def test_review_look_prints_its_help_and_needs_a_project(tmp_path, project):
     empty.mkdir()
     code, out = run(empty, SKILL / "scripts" / "review_look.py")
     assert code == 2 and "no project.c3proj found" in out, out
+
+
+def test_review_look_says_what_a_clean_run_left_unseen():
+    rl = module()
+    clean = {"status": "opened", "preview": {"layouts": [{"layout": "Map", "findings": [], "errors": []}]}}
+    found = {"status": "opened", "preview": {"layouts": [{"layout": "Map", "findings": [{}], "errors": []}]}}
+    assert rl.look_line([clean], 1.0, ".tmp/review-look.json", ".tmp/look") == (
+        "look: 0 findings on 1 layout, 0 runtime errors; each layout ran 1 s after a jump to it, without play, so a "
+        "scene the game reaches only in play is unseen; full result in .tmp/review-look.json, screenshots in .tmp/look")
+    assert "unseen" not in rl.look_line([found], 1.0, ".tmp/review-look.json", ".tmp/look")

@@ -455,6 +455,15 @@ def counts(result: dict) -> tuple[int, int, int]:
     return (sum(len(d.get("findings", [])) for d in layouts), sum(len(d["errors"]) for d in layouts), len(layouts))
 
 
+def look_line(results: list[dict], settle: float, out: Path, base: Path) -> str:
+    """The count of findings, and when there is none, what the run did not see."""
+    found, errors, layouts = map(sum, zip(*(counts(r) for r in results)))
+    unseen = "" if found or errors else (f"; each layout ran {settle:g} s after a jump to it, without play, so a "
+                                         f"scene the game reaches only in play is unseen")
+    return (f"look: {found} finding{'' if found == 1 else 's'} on {layouts} layout{'' if layouts == 1 else 's'}, "
+            f"{errors} runtime error{'' if errors == 1 else 's'}{unseen}; full result in {out}, screenshots in {base}")
+
+
 def main() -> int:
     c3.utf8_output()
     ap = argparse.ArgumentParser(description=__doc__, epilog=EPILOG, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -538,9 +547,8 @@ def main() -> int:
         return 2
     finally:
         browser.close()
-    found, errors, layouts = map(sum, zip(*(counts(r) for r in results)))
-    print(f"look: {found} finding{'' if found == 1 else 's'} on {layouts} layout{'' if layouts == 1 else 's'}, "
-          f"{errors} runtime error{'' if errors == 1 else 's'}; full result in {out}, screenshots in {base}")
+    found, errors, _ = map(sum, zip(*(counts(r) for r in results)))
+    print(look_line(results, args.settle, out, base))
     if any(r["status"] != "opened" for r in results):
         print(oe.NEXT)
         return 1

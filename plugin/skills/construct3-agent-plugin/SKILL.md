@@ -295,6 +295,10 @@ not held to this. `--dry-run` does all of that and writes nothing.
    hand-over. A scene the game reaches only in play is read the same way
    from a `shot` of a plan.
 
+In the hand-over, name the last of these steps that passed: checked,
+reviewed, opened, previewed, played or looked. Then say what that step
+does not prove, as its passing line says.
+
 `ok:` is about the files, not the game. The checker cannot run the events:
 which instances a condition picks, what order triggers fire in and what a
 tick later looks like are the preview's to judge. Design with

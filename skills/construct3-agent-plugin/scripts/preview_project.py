@@ -1017,8 +1017,10 @@ def report(result: dict, label: Callable[[str], str] = oe.key_name) -> list[str]
         lines.append(f"  {ran['recorded']}")
     errors = len(ran["errors"]) + sum(len(d["errors"]) for d in ran["steps"])
     ok = sum(d["ok"] for d in ran["steps"])
+    passed = ok == ran["planned"] and not errors
     lines.append(f"  ran: {ok} of {ran['planned']} steps in {ran['seconds']:.1f} s, "
-                 f"{errors or 'no'} runtime error{'' if errors == 1 else 's'}")
+                 f"{errors or 'no'} runtime error{'' if errors == 1 else 's'}"
+                 f"{'; what the steps of the plan do not do is untested' if passed else ''}")
     return lines
 
 

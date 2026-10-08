@@ -231,18 +231,21 @@ def test_open_in_editor_reports_how_long_the_game_ran_in_the_preview():
     """A 5 s preview ran the game 3.7 to 4.7 s, once 0.7 s: the window loads first. The line
     says what the runtime ran, ticks and its own wall time (measured 2026-10-02, r504)."""
     lines = opened_with({"ticks": 597, "wallTime": 4.3545})
-    assert lines[1] == "  preview: layout 'Game', runtime in the worker, 597 ticks in 4.4 s, no errors", lines
+    assert lines[1] == ("  preview: layout 'Game', runtime in the worker, 597 ticks in 4.4 s, no errors; it ran "
+                        "without input for 4.4 s, so what a player does is untested"), lines
 
 
 def test_open_in_editor_leaves_the_ticks_out_when_the_runtime_gave_none():
     lines = opened_with({"ticks": None, "wallTime": None})
-    assert lines[1] == "  preview: layout 'Game', runtime in the worker, no errors", lines
+    assert lines[1] == ("  preview: layout 'Game', runtime in the worker, no errors; it ran without input, so what "
+                        "a player does is untested"), lines
 
 
 def test_open_in_editor_leaves_the_ticks_out_when_the_wall_time_is_missing():
     """A release whose runtime gave no wall time must not end the run of every project."""
     lines = opened_with({"ticks": 597, "wallTime": None})
-    assert lines[1] == "  preview: layout 'Game', runtime in the worker, no errors", lines
+    assert lines[1] == ("  preview: layout 'Game', runtime in the worker, no errors; it ran without input, so what "
+                        "a player does is untested"), lines
 
 
 def test_open_in_editor_reports_the_crash_report_the_preview_left_in_the_editor(monkeypatch):
@@ -383,3 +386,8 @@ def test_install_addon_reads_addon_json_before_the_editor(tmp_path):
     assert "zip the files of the addon, not its folder" in oe.addon_json(folder)
     assert "not valid JSON" in oe.addon_json(broken)
     assert "not a zip file" in oe.addon_json(tmp_path / "missing.c3addon")
+
+
+def test_open_in_editor_says_what_a_passing_preview_left_untested_only_when_it_passed():
+    lines = opened_with({"ticks": 597, "wallTime": 4.3545, "errors": ["Event sheet 1, event 3: TypeError"]})
+    assert lines[1] == "  preview: layout 'Game', runtime in the worker, 597 ticks in 4.4 s, 1 error", lines

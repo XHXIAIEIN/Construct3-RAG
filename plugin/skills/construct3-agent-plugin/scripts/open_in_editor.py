@@ -1039,6 +1039,12 @@ def addon_report(result: dict) -> list[str]:
     return lines
 
 
+def untested(ran: dict) -> str:
+    """What a preview that passed did not prove: a passing line read alone reads as the game working."""
+    wall = ran.get("wallTime")
+    return f"; it ran without input{f' for {wall:.1f} s' if wall is not None else ''}, so what a player does is untested"
+
+
 def report(result: dict, label: Callable[[str], str] = key_name) -> list[str]:
     if result["status"] == "error":
         return [f"error    {result['project']}: {result['exception']}"]
@@ -1058,7 +1064,7 @@ def report(result: dict, label: Callable[[str], str] = key_name) -> list[str]:
             ticks = (f"{ran['ticks']} ticks in {ran['wallTime']:.1f} s, "
                      if ran.get("ticks") is not None and ran.get("wallTime") is not None else "")
             lines.append(f"  preview: layout {ran['layout']!r}, runtime in the {ran['runtime']}, {ticks}"
-                         f"{n or 'no'} error{'' if n == 1 else 's'}")
+                         f"{n or 'no'} error{'' if n == 1 else 's'}{'' if n else untested(ran)}")
             if ran.get("editor"):
                 lines.append(f"  editor: {ran['editor']}")
             lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]

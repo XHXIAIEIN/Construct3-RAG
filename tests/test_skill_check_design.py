@@ -638,3 +638,19 @@ def test_a_failed_play_says_to_fix_the_game_not_the_test(tmp_path, monkeypatch, 
     assert last.startswith("next: fix the game where each line says, its events or, for a look: or start: line")
     assert "Change neither a test nor a number of the design to make it pass" in last
     assert "only when the user agrees that it was wrong" in last
+
+
+def test_a_passing_play_says_what_the_tests_left_untested(tmp_path):
+    pd, gm, cd = module("play_design"), module("game_model"), module("check_design")
+    whack_project(tmp_path / "game")
+    data = gm.Design(example())
+    model = pd.Model(tmp_path / "game")
+    meta = [pd.test_plan(t, data, model, cd.run_test(data, t)["stable"])[1] for t in data.tests]
+    runs = [{"started": True, "steps": [{"ok": True}, {"ok": True, "value": {}}]}]
+    runs += [{"started": True, "steps": [{"ok": True, "value": {"ok": True, "seen": {}}} for _ in origin]}
+             for origin in meta]
+    lines, code = pd.report(data, meta, {"status": "opened", "project": "p", "title": "t", "editor": "e",
+                                         "preview": {"plans": runs}})
+    assert code == 0, lines
+    assert lines[-1] == (f"  played: {len(data.tests)} of {len(data.tests)} tests pass, 0 findings on the first "
+                         f"screen, 0 runtime errors; what the tests of the design do not play is untested")

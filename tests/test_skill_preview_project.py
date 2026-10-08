@@ -148,6 +148,15 @@ def test_preview_project_reports_each_step_with_the_errors_it_caused():
     ], lines
 
 
+def test_preview_project_says_what_a_passing_plan_left_untested():
+    steps = [{"step": 1, "line": "1 tap Button (buy)", "ok": True, "said": "at (352, 882)", "errors": []}]
+    lines = pp.report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
+                       "editor": "https://editor.construct.net/", "dialogs": [], "exception": "",
+                       "preview": {"started": True, "layout": "Game", "runtime": "page", "viewport": [430, 932],
+                                   "touch": False, "errors": [], "steps": steps, "planned": 1, "seconds": 1.2}})
+    assert lines[-1] == "  ran: 1 of 1 steps in 1.2 s, no runtime errors; what the steps of the plan do not do is untested"
+
+
 class ReloadingGame:
     """A game whose page reloads: each step's outcomes in turn, and what reloaded() answers after each try."""
 

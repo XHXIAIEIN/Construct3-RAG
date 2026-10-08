@@ -610,7 +610,8 @@ def report(design: gm.Design, plans_meta: list, result: dict) -> tuple[list[str]
     problems += len(unique)
     lines.append(f"  played: {passed} of {len(design.tests)} tests pass, {len(screen)} finding"
                  f"{'s' if len(screen) != 1 else ''} on the first screen, {len(unique)} runtime error"
-                 f"{'s' if len(unique) != 1 else ''}")
+                 f"{'s' if len(unique) != 1 else ''}"
+                 f"{'' if problems else '; what the tests of the design do not play is untested'}")
     return lines, 1 if problems else 0
 
 
