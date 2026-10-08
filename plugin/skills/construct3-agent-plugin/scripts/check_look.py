@@ -25,6 +25,9 @@ layouts and event sheets the editor would load and checks:
   screen.fill           a warning, not a finding: the project fills the
                         screen, Scale outer or Integer scale outer, not a
                         Letterbox mode, which shows bars
+  screen.safe-area      a warning, not a finding: a project whose Viewport
+                        fit is Cover, which draws under a phone's notch,
+                        reads the safe area's insets in its events or scripts
 
 UNIT is 8 for a viewport 360 px high or less, else 32, as in the template.
 A layer at parallax 0 is the HUD, held to the viewport's edges, and is not
@@ -276,6 +279,38 @@ def check_screen(project: dict, warned: list[str]) -> None:
                       f"past the viewport (backdrop()).")
 
 
+# PlatformInfo's SafeAreaInsetTop and the other three in an expression, or the CSS env() name in a script.
+SAFE_AREA = re.compile(r"safe.?area.?inset", re.I)
+
+
+def check_safe_area(root: Path, project: dict, warned: list[str]) -> None:
+    """screen.safe-area over project.c3proj, a warning: Viewport fit Cover draws the viewport under
+    a notch and rounded corners, and the HUD that anchored() holds MARGIN from the screen's edges
+    then lies under them, unless the events or scripts move it by the insets."""
+    if (project.get("properties") or {}).get("viewportFit") != "cover":
+        return
+    def expressions(node):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key == "parameters" and isinstance(value, dict):
+                    yield from (str(v) for v in value.values())
+                else:
+                    yield from expressions(value)
+        elif isinstance(node, list):
+            for item in node:
+                yield from expressions(item)
+    texts = [e for f in (root / "eventSheets").rglob("*.json") if not f.name.endswith(".uistate.json")
+             for e in expressions(c3.load(f))]
+    texts += [f.read_text(encoding="utf-8", errors="replace") for f in (root / "scripts").rglob("*.[jt]s")]
+    if any(SAFE_AREA.search(t) for t in texts):
+        return
+    warned.append("warning: screen.safe-area: project.c3proj has viewportFit cover, which draws the game under a "
+                  "phone's notch and rounded corners, and no event or script reads the safe area's insets, so the "
+                  "HUD held to the screen's edges lies under the notch. Set viewportFit to auto, which keeps the "
+                  "whole viewport visible, or move the HUD in by PlatformInfo.SafeAreaInsetTop and the other insets, "
+                  "which are CSS pixels.")
+
+
 def main() -> int:
     c3.utf8_output()
     ap = c3.argument_parser(__doc__.split("\n\n")[0], "examples:\n"
@@ -301,6 +336,7 @@ def main() -> int:
     check_squash(root, out)
     warned: list[str] = []
     check_screen(project, warned)
+    check_safe_area(root, project, warned)
     for line in warned:
         print(line)
     shown = c3.fitting(out, args.limit)

@@ -83,6 +83,12 @@
       "confirm": "check_look.py: screen.fill (a warning)"
     },
     {
+      "id": "screen.safe-area",
+      "status": "adopted",
+      "says": "The whole viewport stays inside the safe area of a screen with a notch or rounded corners: Viewport fit Auto, as the empty project has it. A game that draws under the notch with Cover moves its HUD in by PlatformInfo's SafeAreaInset expressions.",
+      "confirm": "check_look.py: screen.safe-area (a warning)"
+    },
+    {
       "id": "layer.z-order",
       "status": "adopted",
       "says": "Each layer lists its instances as an editor user would arrange them, back to front: the backdrop, the areas, then the rest by the Y of their feet; a child after its parent, a box inside another box after it unless the outer one is a label.",

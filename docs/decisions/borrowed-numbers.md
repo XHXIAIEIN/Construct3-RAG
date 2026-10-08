@@ -162,6 +162,24 @@ runs wrote five to seven rules each, all six passed `check_design.py`,
 and the case ends at the design, so no run built a game from it. The
 sample has neither failures nor a spread of sizes, so it relates nothing.
 
+### Safe area and notch
+
+The borrowed rule asks about edge controls under a notch. The project
+property *Viewport fit* decides it: *Auto*, which a new project has, adds
+borders so that the whole viewport is visible on a screen with a notch,
+and *Cover* draws under the notch and the rounded corners (manual:
+`project-primitives/projects.md`). PlatformInfo's `SafeAreaInsetTop` and
+the other three insets give the hidden edges in CSS pixels.
+
+The template's stand-in game was made portrait, 1080×1920, and previewed
+at 430×932 with a safe-area inset of 59 CSS px at the top, which the
+browser emulates as a phone with a notch reports it. The preview ignores
+*Viewport fit*: with *Auto* and with *Cover* the canvas filled the window
+and the page's meta viewport named neither. The anchored HUD lay 13 to
+78 px from the top, under the 59 px band. So a game set to *Cover* puts
+its top HUD under a notch, and a preview cannot show the borders that
+*Auto* adds on the phone.
+
 ## Decision
 
 - Player height: no default and no warning. Within one way of moving,
@@ -197,6 +215,12 @@ sample has neither failures nor a spread of sizes, so it relates nothing.
   behaviour.
 - Design size: no warning in `check_design.py`. A threshold needs runs
   that build games from designs of different sizes, some of which fail.
+- Safe area: no question in `review_look.py`, whose screenshots come from
+  the preview and cannot show a notch. `check_look.py` warns,
+  `screen.safe-area`, when `viewportFit` is `cover` and no event
+  expression or script reads the insets; the look manifest holds the
+  rule. It is a warning, because the editor accepts the setting and a game
+  may move its HUD by other means.
 
 ## Re-evaluate when
 
@@ -214,3 +238,5 @@ sample has neither failures nor a spread of sizes, so it relates nothing.
   changed there: the skill's bullet and the note change with it.
 - An eval case builds a game from its design in a preview: count the
   design's rules against the build's outcome over its runs.
+- The preview applies *Viewport fit*, or a phone shows the template's HUD
+  under its notch with *Auto*: then a screenshot question can ask it.
