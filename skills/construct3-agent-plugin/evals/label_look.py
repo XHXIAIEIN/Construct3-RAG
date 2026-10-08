@@ -1,7 +1,7 @@
 """Serve a page on which a person answers the questions of scripts/review_look.py about a set
 of screenshots, and keep the answers: the labels that evals/judge_look.py compares a judge with.
 
-    python evals/label_look.py SET.json [--labels LABELS.json] [--port 8770]
+    python evals/label_look.py SET.json [--labels LABELS.json] [--words WORDS.json] [--port 8770]
 
 SET.json lists the screenshots, each path relative to the folder of SET.json:
 
@@ -21,17 +21,25 @@ screenshots ends with a page that shows them together and asks review_look.ACROS
 is written to LABELS.json (default: labels.json beside SET.json) when it is given, with the
 wording of every question, so the labels say which wording they answer.
 
+WORDS.json puts the page in the person's language: {"lang": "zh-CN", "questions": {"1": ..., "ship": ...,
+"across": ...}, "page": {"yes": ..., "no": ..., "ship": ..., "not": ..., "note": ..., "keys": ...,
+"open": ..., "of": ..., "answered": ..., "saving": ..., "saved": ..., "not saved": ...}}, any
+key left out staying English. A translated question shows above its English wording, which is
+what a judge reads and what the labels keep.
+
 Keys on the page: 1 to 6 answer that question yes, and no at the next press; Y and N answer
 whether it would ship; Enter answers no to every question still open and goes on; the arrow
 keys move between screenshots.
 
-Exit codes: 0 stopped with Ctrl+C, 2 the set or the labels could not be read.
+Exit codes: 0 stopped with Ctrl+C, 2 the set, the labels or the words could not be read, or the
+port is in use.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import os
 import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -112,9 +120,23 @@ class Labels:
             return dict(got)
 
 
-def handler(shots: list[dict], labels: Labels):
+def load_words(path: Path | None) -> dict:
+    """The page's words in the person's language; SystemExit names a bad file."""
+    if not path:
+        return {}
+    try:
+        words = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        raise SystemExit(f"{path}: not readable as words ({e}); see --help for its form")
+    unknown = sorted(set(words.get("questions", {})) - set(questions()))
+    if unknown:
+        raise SystemExit(f"{path}: no question {', '.join(unknown)}; the keys are {', '.join(questions())}")
+    return words
+
+
+def handler(shots: list[dict], labels: Labels, words: dict | None = None):
     by_id = {s["id"]: s for s in shots}
-    state = {"questions": questions(), "note": NOTE, "items": items(shots),
+    state = {"questions": questions(), "note": NOTE, "items": items(shots), "words": words or {},
              "layouts": {s["id"]: s["layout"] for s in shots}}
 
     class Handler(BaseHTTPRequestHandler):
@@ -153,6 +175,12 @@ def handler(shots: list[dict], labels: Labels):
     return Handler
 
 
+class Server(ThreadingHTTPServer):
+    # On Windows the address reuse that HTTPServer asks for lets a second server bind a port in use,
+    # and the first one goes on answering.
+    allow_reuse_address = os.name != "nt"
+
+
 def progress(shots: list[dict], labels: Labels) -> str:
     asked = items(shots)
     done = sum(all(k in labels.data["labels"].get(i["id"], {}) for k in i["ask"]) for i in asked)
@@ -164,10 +192,13 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("set", type=Path, metavar="SET.json", help="the screenshots to label, in the form above")
     ap.add_argument("--labels", type=Path, help="where the answers go (default: labels.json beside SET.json)")
+    ap.add_argument("--words", type=Path, metavar="WORDS.json",
+                    help="the questions and the page's words in the person's language, in the form above")
     ap.add_argument("--port", type=int, default=8770, help="the port on 127.0.0.1 (default 8770)")
     args = ap.parse_args()
     try:
         shots = load_set(args.set)
+        words = load_words(args.words)
         labels = Labels(args.labels or args.set.parent / "labels.json", args.set)
     except SystemExit as e:
         print(e, file=sys.stderr)
@@ -175,7 +206,11 @@ def main() -> int:
     for k in labels.changed:
         print(f"warning: question {k} reads differently in review_look.py now; its labels answer the wording kept "
               f"in {labels.path}, so label the set again into a new --labels file to measure the new wording")
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), handler(shots, labels))
+    try:
+        server = Server(("127.0.0.1", args.port), handler(shots, labels, words))
+    except OSError as e:
+        print(f"port {args.port} is not free ({e}); stop the server on it or pass another --port", file=sys.stderr)
+        return 2
     print(f"labelling {len(shots)} screenshots: open http://127.0.0.1:{args.port}/ ; {progress(shots, labels)}",
           flush=True)
     try:
@@ -210,6 +245,7 @@ main { display: flex; gap: 16px; padding: 16px; height: calc(100vh - 49px); }
 aside { width: 460px; flex: none; overflow: auto; }
 .q { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .q .n { color: var(--dim); }
+.q .en { display: block; color: var(--dim); font-size: 13px; font-weight: 400; margin-top: 2px; }
 .q .ab { display: flex; gap: 4px; }
 .q button.on.yes { background: var(--yes); border-color: var(--yes); color: #fff; }
 .q button.on.no { background: var(--no); border-color: var(--no); color: #fff; }
@@ -227,23 +263,26 @@ textarea { width: 100%; min-height: 70px; margin-top: 10px; font: inherit; color
 <script>
 let S, at = 0;
 const $ = id => document.getElementById(id);
+const W = (key, english) => (S.words.page || {})[key] || english;
+const asked = k => { const t = (S.words.questions || {})[k];
+  return t ? `${t}<span class="en">${S.questions[k]}</span>` : S.questions[k]; };
 const answers = id => S.labels[id] || (S.labels[id] = {});
 const complete = it => it.ask.every(k => k in answers(it.id));
 async function post(item, key, value) {
-  $('saved').textContent = 'saving...';
+  $('saved').textContent = W('saving', 'saving...');
   try {
     const r = await fetch('/answer', {method: 'POST', body: JSON.stringify({item, key, value})});
     if (!r.ok) throw new Error((await r.json()).error);
     S.labels[item] = await r.json();
-    $('saved').textContent = 'saved';
-  } catch (e) { $('saved').textContent = 'not saved: ' + e.message; }
+    $('saved').textContent = W('saved', 'saved');
+  } catch (e) { $('saved').textContent = W('not saved', 'not saved') + ': ' + e.message; }
   draw();
 }
 function set(key, value) { post(S.items[at].id, key, value); }
 function draw() {
   const it = S.items[at], got = answers(it.id);
-  $('where').textContent = `${at + 1} of ${S.items.length}`;
-  $('done').textContent = `${S.items.filter(complete).length} of ${S.items.length} answered`;
+  $('where').textContent = `${at + 1} ${W('of', 'of')} ${S.items.length}`;
+  $('done').textContent = `${S.items.filter(complete).length} ${W('of', 'of')} ${S.items.length} ${W('answered', 'answered')}`;
   const box = $('shots');
   if (box.dataset.item !== it.id) {
     box.dataset.item = it.id;
@@ -254,15 +293,15 @@ function draw() {
   }
   const rows = it.ask.map((k, i) => {
     const v = got[k], label = k === 'ship' ? 'S' : k === 'across' ? 'A' : k;
-    const yes = k === 'ship' ? 'ship' : 'yes', no = k === 'ship' ? 'not' : 'no';
-    return `<div class="q ${k in got ? '' : 'open'}"><span class="n">${label}</span><span class="text">${S.questions[k]}</span>
+    const yes = k === 'ship' ? W('ship', 'ship') : W('yes', 'yes'), no = k === 'ship' ? W('not', 'not') : W('no', 'no');
+    return `<div class="q ${k in got ? '' : 'open'}"><span class="n">${label}</span><span class="text">${asked(k)}</span>
       <span class="ab"><button class="yes ${v === true ? 'on' : ''}" data-k="${k}" data-v="1">${yes}</button>
       <button class="no ${v === false ? 'on' : ''}" data-k="${k}" data-v="0">${no}</button></span></div>`;
   }).join('');
   const panel = $('panel'), note = document.activeElement && document.activeElement.id === 'note';
   if (!note) {
-    panel.innerHTML = rows + `<textarea id="note" placeholder="${S.note}"></textarea>` +
-      `<div class="keys">1-6: yes, then no &middot; Y / N: ship or not &middot; Enter: no to the rest, next &middot; arrows: move</div>`;
+    panel.innerHTML = rows + `<textarea id="note" placeholder="${W('note', S.note)}"></textarea>` +
+      `<div class="keys">${W('keys', '1-6: yes, then no &middot; Y / N: ship or not &middot; Enter: no to the rest, next &middot; arrows: move')}</div>`;
     $('note').value = got.note || '';
     $('note').addEventListener('change', e => set('note', e.target.value));
     panel.querySelectorAll('button').forEach(b => b.onclick = () => set(b.dataset.k, b.dataset.v === '1'));
@@ -289,7 +328,8 @@ document.addEventListener('keydown', e => {
 $('prev').onclick = () => go(at - 1);
 $('next').onclick = () => go(at + 1);
 $('open').onclick = () => { const n = S.items.findIndex(it => !complete(it)); go(n < 0 ? at : n); };
-fetch('/state').then(r => r.json()).then(s => { S = s; const n = S.items.findIndex(it => !complete(it));
+fetch('/state').then(r => r.json()).then(s => { S = s; $('open').textContent = W('open', 'first open page');
+  document.documentElement.lang = S.words.lang || 'en'; const n = S.items.findIndex(it => !complete(it));
   go(n < 0 ? 0 : n); });
 </script></body></html>
 """
