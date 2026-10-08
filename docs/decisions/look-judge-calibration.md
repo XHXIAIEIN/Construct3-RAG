@@ -92,9 +92,53 @@ once, so these labels answer the round-1 wording:
   decorations brighter than the board and several bright elements that
   compete for the eye.
 
+A label can be wrong, and a label for the old wording can be right for it
+and wrong for the new one. So every screenshot and question on which the
+user and the two round-2 judges did not all agree, 48 of 210, went to a
+third Opus sub-agent. It saw the screenshot, the current question and each
+answer with its reason or the user's note, under letters in a shuffled
+order. It was told that any reviewer, a majority too, may be wrong, and it
+gave a verdict from the picture. Its verdicts kept the user's answer on 15
+of the 48 and turned it on 33:
+
+- 29 times the user stood against both judges, and the verdict kept the
+  user's answer 3 times.
+- Some turns are faults the picture shows that the user did not mark: a
+  text cut by its box, a price cut to its last digit by the screen's edge,
+  a shop tray running off the screen.
+- 7 turns are question 4, which the user answered in its old wording.
+- 5 turns are question 5, where the user saw clutter and competing colours
+  and the verdict saw no backdrop or glow pulling the eye. That is taste,
+  and on taste the user's answer is the one to match.
+
+Scored against the labels with the verdicts in:
+
+| Question, round 2 wording | Labels yes | Haiku agrees | Opus agrees | All no agrees |
+|---------------------------|------------|--------------|-------------|---------------|
+| 1. Text | 12 | 29 | 32 | 23 |
+| 2. An object hides what the player reads or uses | 5 | 31 | 34 | 30 |
+| 3. HUD cut by the screen's edge | 8 | 35 | 34 | 27 |
+| 4. A stand-in or an odd style | 8 | 33 | 32 | 27 |
+| 5. A background or glow catches the eye first | 2 | 32 | 34 | 33 |
+| 6. Two kinds look identical | 0 | 34 | 35 | 35 |
+
+Opus beats the baseline on questions 1 to 5 and Haiku on 1 to 4. These
+numbers are an upper bound. The third judge is the model of one judge and
+read both judges' reasons. It sided with the two judges against the user
+26 times of 29, so the labels moved toward the judges. The labels without
+the verdicts, in the table before, are the lower bound. Question 5 is
+measured by the user's own labels, and against them the judges miss 5 of
+the user's 6.
+
+Question 6 is not measured: no label says yes after the verdicts. Under the
+round-2 wording neither judge, nor the user, answered yes on the copy whose
+map nodes all look alike. A judge that has not seen the project cannot
+tell from a picture that two alike objects stand for different things. The
+`frame` finding of `review_look.py` measures that case from the instances.
+
 The sample is 35 screenshots labelled by one person, with one run per brief.
 Round 2 was tuned and scored on the same set, against labels for the old
-wording. The numbers show a direction for these games, not a rate to expect
+wording and against those labels with a model's verdicts in. The numbers show a direction for these games, not a rate to expect
 elsewhere. The set, the labels, every reply and the scores are in
 `.local/docs/evidence/look-judge/`. `judge_look.py --model` runs
 `claude -p` as the judge when the client is signed in. The runs here used
@@ -116,14 +160,18 @@ sub-agents.
 Option 3. `review_look.py` asks the round-2 questions and its brief says
 that art layered on purpose is no mistake. The set in
 `.local/docs/evidence/look-judge/` is the regression set. A change to the
-questions or the brief runs both judges over it with `judge_look.py`, and
-the change keeps the score at or above these numbers.
+questions or the brief runs both judges over it with `judge_look.py` and
+scores them against both label files, `labels.json` and
+`labels-adjudicated.json`. The change keeps both scores at or above these
+numbers.
 
 ## Re-evaluate when
 
 - The user labels the round-2 wording (`label_look.py --ask 1 2 3 4 5 6`
-  into a new labels file). That score replaces round 2's.
+  into a new labels file). That score replaces both round-2 scores.
 - A question stays below the baseline on those labels. Reword it again, or
-  replace it with a measurement.
+  replace it with a measurement. Question 5 is the first to look at.
+- A screen shows two kinds alike that the `frame` finding misses: question 6
+  needs to know the kinds, from the design or the instances.
 - A screen the user would not ship gets every answer no. Its note names the
   question that is missing.
