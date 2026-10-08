@@ -277,6 +277,17 @@ def test_trace_reads_turns_tokens_and_time(tmp_path: Path) -> None:
     assert tracer.usage_of(path) == {"turns": 2, "output_tokens": 120, "input_tokens": 224, "seconds": 90.0, "model": "m"}
 
 
+@pytest.mark.parametrize("command", [
+    "sed -i '/^function Tick/,/^}/ s/^\\r$//' /d/run/main.ts",
+    "sed -i -e '/^}/d' /d/run/main.ts",
+    "sed -n '/^x/p' /d/run/main.ts > /d/run/out.txt"])
+def test_trace_takes_a_sed_script_for_no_path(command: str) -> None:
+    """A sed script can start with /, and Git Bash's /d is D:; only the file the command names is written."""
+    writes, named = tracer.shell_paths(command)
+    files = [Path(p).name for p in writes + named]
+    assert files == (["out.txt", "main.ts"] if ">" in command else ["main.ts"]), (writes, named)
+
+
 def screenshots(tmp_path: Path, fill: Callable[[int, float], tuple], lit: tuple[float, float]) -> dict:
     """A result with before and after screenshots of a 400 px bar lit to lit[0] and then lit[1] of its length,
     its pixel at x coloured fill(x, lit), and the bar's box as the UI layer's only object."""

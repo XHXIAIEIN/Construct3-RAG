@@ -45,6 +45,9 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   `["ShiftLeft", "ArrowRight"]`. The keys go down in order and come up in
   reverse. Each key event carries the modifier bits of the Shift, Control
   and Alt keys that are down at that moment, as a browser's events do.
+  Shift, Control and Alt are pressed by their code, left or right
+  (`ShiftRight`), because `isKeyDown` matches the code, and a game that
+  tests both sides is checked on both.
 - A target is an instance named the way the project names it (`"Piece 2"`,
   `"uid 12"`), a position on a layer, or JavaScript returning either. The
   script presses the middle of the instance's bounding box, converted by the

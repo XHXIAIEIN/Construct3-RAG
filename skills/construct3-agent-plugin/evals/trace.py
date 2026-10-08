@@ -98,6 +98,22 @@ def absolute(word: str) -> str | None:
     return os.path.abspath(word) if re.match(r"[A-Za-z]:[\\/]|/|\\\\", word) else None
 
 
+def without_sed_script(words: list[str]) -> list[str]:
+    """A sed command's words without its script, which can start with / (`/^}/d`): the word after -e or -f, or else
+    the first word that is not an option."""
+    out, given, skip = [words[0]], any(w in ("-e", "-f") for w in words), False
+    for w in words[1:]:
+        if skip:
+            skip = False
+        elif w in ("-e", "-f"):
+            skip = True
+        elif not given and not w.startswith("-"):
+            given = True
+        else:
+            out.append(w)
+    return out
+
+
 def shell_paths(command: str) -> tuple[list[str], list[str]]:
     """The absolute paths a shell command writes and the ones it only names, as far as its words say."""
     writes, named = [], []
@@ -105,8 +121,10 @@ def shell_paths(command: str) -> tuple[list[str], list[str]]:
 
     def close() -> None:
         words = [w.split("=", 1)[1] if w.startswith("-") and "=" in w else w for w in segment]
-        paths = [p for w in words[1:] if not w.startswith("-") and (p := absolute(w))]
         name = Path(words[0].strip("\"'")).name.lower().removesuffix(".exe") if words else ""
+        if name == "sed":
+            words = without_sed_script(words)
+        paths = [p for w in words[1:] if not w.startswith("-") and (p := absolute(w))]
         if name in WRITES_EVERY or (name == "sed" and any(w.startswith("-i") for w in words)):
             writes.extend(paths)
         elif name in WRITES_LAST and paths:

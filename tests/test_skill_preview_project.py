@@ -83,6 +83,11 @@ def test_preview_project_holds_keys_together_with_their_modifiers(monkeypatch, t
         ("rawKeyDown", "ShiftLeft", 8), ("rawKeyDown", "ArrowRight", 8),
         ("keyUp", "ArrowRight", 8), ("keyUp", "ShiftLeft", 0)]
     sent.clear()
+    # isKeyDown matches the code, so the right-hand Shift is a key of its own, on the right side
+    pp.do_step(game, {"key": ["ShiftRight", "ArrowRight"]}, 1, tmp_path)
+    assert [(e["type"], e["key"], e["code"], e.get("location"), e["modifiers"]) for e in sent][:2] == [
+        ("rawKeyDown", "Shift", "ShiftRight", 2, 8), ("rawKeyDown", "ArrowRight", "ArrowRight", None, 8)]
+    sent.clear()
     pp.do_step(game, {"key": "a"}, 1, tmp_path)
     assert [(e["type"], e["key"], e["modifiers"], e.get("text")) for e in sent] == [
         ("keyDown", "a", 0, "a"), ("keyUp", "a", 0, None)]
