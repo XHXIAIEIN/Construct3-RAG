@@ -61,6 +61,34 @@ area, an inventory bar or a dashboard. A game whose HUD shares a scrolling
 layer is not counted. The template's stand-in game covers 2% of its
 screen, in strips of 18% of its height.
 
+### Popups and idle motion
+
+`measure_examples.py popups` reads every Tween action on a popup's
+objects: objects of a layer at parallax 0 whose own name or layer's name
+says pause, menu, shop, result, game over or the like. Nearly all fade the
+opacity with `easeinoutsine`; a few slide a menu in by X or Y, and none
+scales a popup. Opening and closing both take 0.25 to 1 s in the middle
+half, 0.5 s at the median. The HUD's motion measured in
+`prompts/references/new-project.md` agrees: fades, sine eases, 0.5 to 1 s.
+
+`measure_examples.py sine` reads the Sine behavior on the first instance
+of each object type, enabled and with the sine wave:
+
+| Movement | Period, quartiles | Magnitude, quartiles |
+|----------|-------------------|----------------------|
+| Vertical | 1, 3, 4 s | 3%, 6%, 15% of the object's height |
+| Angle | 2, 2, 4 s | 5°, 10°, 30° |
+| Size | 0.5, 2, 4 s | 3%, 8%, 13% of the longer side |
+| Opacity | 0.5, 1, 1 s | 5, 15, 25 |
+
+Vertical Sine also moves enemies, platforms and water. An object that
+waits to be collected, named as a coin, gem, key, power-up or the like,
+bobs or pulses with a period of 1 to 2 s, 1.5 s at the median, and a
+magnitude of 5% to 15% of its height, 12.5% at the median. The two
+borrowed idle periods, 0.7 Hz and 3 Hz, that is 1.4 s and 0.33 s, differ
+fourfold. The examples' pickups agree with the slower one, and none bobs
+at 3 Hz.
+
 ## Decision
 
 - Player height: no default and no warning. Within one way of moving,
@@ -73,6 +101,13 @@ screen, in strips of 18% of its height.
   and would flag them. What a cap guards against, a HUD that crowds the
   playfield, shows in the playfield's share, and `filled()` warns on that
   under `PLAYFIELD_MIN` (`greybox-blockout.md`).
+- Popups: no `popup()` helper with a scale pop. A popup fades, as the
+  HUD's motion in `new-project.md` already says for menus.
+- Idle motion: a row in `prompts/references/feel.md` for an object that
+  waits to be collected, Sine *Vertical* with a period of 1 to 2 s and a
+  tenth of its height, or Sine *Size* for a pulse. The template's `SINE`
+  block keeps its values, because it is the shape of the properties, not
+  a motion the stand-in game shows.
 
 ## Re-evaluate when
 
