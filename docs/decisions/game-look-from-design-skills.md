@@ -142,7 +142,7 @@ prints
   the screen's edge, a stand-in or an object drawn in a style of its own, a
   backdrop that catches the eye before what the player acts on, kinds that
   look alike, decoration repeated on every layout. Their wording comes from
-  a judge's agreement with the user's own labels
+  a judge's agreement with labels that agents gave
   (`look-judge-calibration.md`).
 
 The script also writes `brief.md` beside the screenshots: the screenshots,

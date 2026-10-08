@@ -1,11 +1,12 @@
 """Put the questions of scripts/review_look.py about a labelled set of screenshots to a judge that
-has not seen the games, and measure how often its answers agree with the person's labels.
+has not seen the games, and measure how often its answers agree with the labels.
 
     python evals/judge_look.py SET.json --briefs FOLDER
     python evals/judge_look.py SET.json --briefs FOLDER --model MODEL --out REPLIES [--runs 1] [--jobs 4]
     python evals/judge_look.py SET.json --briefs FOLDER --score REPLIES [--labels LABELS.json ...]
 
-SET.json is the set of evals/label_look.py; its labels.json holds the person's answers.
+SET.json is the set of evals/label_look.py, and labels.json beside it the labels that the labellers and
+the adjudicator of label_look.py gave.
 
 --briefs writes one folder per brief of the set, b01, b02 and on, numbered in an order shuffled
 by the brief's id, each with copies of its screenshots and the brief.md that review_look.py would
@@ -19,13 +20,12 @@ skills, plugins or any tool but Read, and what each run cost goes to REPLIES/<b0
 client must be signed in (run `claude` once).
 
 --score reads every reply in REPLIES and prints, per question, the screenshots both answered and
-how many agree, the person's yes and the judge's yes, the faults the judge missed and the ones it
-saw that the person did not, and the agreement a judge that always answered no would reach. The
-ship line compares "every answer no" with the person's "would ship"; the person's own answers are
+how many agree, the labels' yes and the judge's yes, the faults the judge missed and the ones it
+saw that the labels do not, and the agreement a judge that always answered no would reach. The
+ship line compares "every answer no" with the labels' "would ship"; the labels' own answers are
 compared with it too, which says what the questions leave out. A screenshot the reply does not
 answer counts as unanswered, not as no. Several --labels files are read in turn, an answer in a
-later one taking the place of the same answer in an earlier one: the labels of questions reworded
-since, made with label_look.py --ask, over the first labels. The whole score goes to
+later one taking the place of the same answer in an earlier one. The whole score goes to
 REPLIES/score.json.
 
 Exit codes: 0 done, 1 some run got no reply, 2 bad arguments, no labels, or no client.
@@ -159,9 +159,9 @@ def parse(reply: str, ids: list[str], shown: list[str]) -> dict[str, dict[str, b
 
 
 def agreement(pairs: list[tuple[bool, bool]]) -> dict:
-    """Counts over (person, judge) pairs of yes (True) and no (False)."""
+    """Counts over (label, judge) pairs of yes (True) and no (False)."""
     n = len(pairs)
-    return {"n": n, "agree": sum(a == b for a, b in pairs), "person_yes": sum(a for a, _ in pairs),
+    return {"n": n, "agree": sum(a == b for a, b in pairs), "labels_yes": sum(a for a, _ in pairs),
             "judge_yes": sum(b for _, b in pairs), "missed": sum(a and not b for a, b in pairs),
             "extra": sum(b and not a for a, b in pairs), "always_no": sum(not a for a, _ in pairs)}
 
@@ -180,7 +180,7 @@ def score(replies: Path, index: dict, labels: dict) -> dict:
         answers = parse(f.read_text(encoding="utf-8"), ids, shown)
         for sid in ids:
             said, mine = answers.get(sid, {}), labels.get(sid, {})
-            rows.append({"shot": sid, "reply": f.name, "judge": said, "person": mine})
+            rows.append({"shot": sid, "reply": f.name, "judge": said, "labels": mine})
             if not all(q in said for q in numbered):
                 unanswered.append(f"{f.name}: {sid}")
             for q in numbered:
@@ -202,12 +202,12 @@ def print_score(result: dict, wording: dict[str, str]) -> None:
     def line(key: str, a: dict) -> str:
         rate = f"{a['agree'] / a['n']:.0%}" if a["n"] else "-"
         base = f"{a['always_no'] / a['n']:.0%}" if a["n"] else "-"
-        return (f"  {key:>6}: {a['agree']}/{a['n']} agree ({rate}; always no {base}), person yes {a['person_yes']}, "
+        return (f"  {key:>6}: {a['agree']}/{a['n']} agree ({rate}; always no {base}), labels yes {a['labels_yes']}, "
                 f"judge yes {a['judge_yes']}, missed {a['missed']}, extra {a['extra']}")
     for key, a in result["questions"].items():
         said = "any yes vs would not ship" if key == "ship" else wording.get(key, "")[:70]
         print(f"{line(key, a)}  {said}")
-    print(f"{line('own', result['own'])}  the person's own answers: any yes vs would not ship")
+    print(f"{line('own', result['own'])}  the labels' own answers: any yes vs would not ship")
     if result["unanswered"]:
         print(f"  unanswered: {len(result['unanswered'])}: {', '.join(result['unanswered'][:8])}")
 
@@ -226,7 +226,7 @@ def main() -> int:
     ap.add_argument("--client", default="claude", help="the client's command (default: claude)")
     ap.add_argument("--score", type=Path, metavar="REPLIES", help="score the replies in REPLIES")
     ap.add_argument("--labels", type=Path, nargs="+",
-                    help="the person's answers, later files over earlier ones (default: labels.json beside SET.json)")
+                    help="the labels, later files over earlier ones (default: labels.json beside SET.json)")
     args = ap.parse_args()
     try:
         shots = ll.load_set(args.set)
