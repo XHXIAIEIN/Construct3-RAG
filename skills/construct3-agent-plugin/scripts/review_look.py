@@ -45,7 +45,12 @@ shot step.
 
 Screenshots go to --shots, by default .tmp/look/ in the project, as
 <layout>.png; the whole result to --out, by default .tmp/review-look.json.
-The last line names both and what to do next.
+Beside the screenshots it writes brief.md: the screenshots, the questions and
+the form of the answer, for a reviewer that has not seen the project. The
+agent that built the game reads its own pictures by what it meant to build;
+an agent that can start a sub-agent gives it the brief and answers from its
+reply, and one that cannot answers from the screenshots itself. The last
+lines name the result, the screenshots and the brief, and what to do next.
 """
 from __future__ import annotations
 
@@ -78,7 +83,7 @@ output:
     ...
     7. Does the same decoration, not the HUD, appear on every screenshot?
   look: 2 findings on 3 layouts, 0 runtime errors; full result in .tmp/review-look.json, screenshots in .tmp/look
-  next: <what to do>
+  next: <what to do, and the brief for a sub-agent: .tmp/look/brief.md>
 
 exit codes: 0 every layout was visited with no finding and no runtime error; 1 a finding, a runtime error,
 or the project did not open; 2 the project or the editor could not be used; 3 no browser here
@@ -454,6 +459,28 @@ def ask(several: bool, places: list[str] = ()) -> list[str]:
     return lines + [f"  {n}. {q}" for n, q in enumerate(questions(several, places), 1)]
 
 
+def brief(result: dict) -> str:
+    """The questions as a task for a reviewer that has not seen the project: the screenshots, the questions and
+    the form of the answer, and nothing of what the game was meant to show."""
+    layouts = (result.get("preview") or {}).get("layouts", [])
+    shots = [(d["layout"], d["shot"]) for d in layouts if d.get("shot")]
+    asked = questions(len(layouts) > 1, result.get("places", []))
+    lines = ["# Look review", "",
+             "You have not seen this game's project, its events or how it was built, and you do not need to. Judge "
+             "only what the screenshots show: a thing you cannot see in a picture is a no, and a name or a kind of "
+             "game is no reason for a yes.", "",
+             "Open each screenshot with your image tool, one at a time:", ""]
+    lines += [f"{n}. {layout}: {shot}" for n, (layout, shot) in enumerate(shots, 1)]
+    lines += ["", "Answer every question for every screenshot, yes or no:", ""]
+    lines += [f"{n}. {q}" for n, q in enumerate(asked, 1)]
+    lines += ["", "Reply with one line per screenshot and question, and nothing else. A yes says where on the "
+                  "screenshot the thing is and what looks wrong; a no is the word alone:", "", "```"]
+    first = shots[0][0] if shots else "Layout"
+    lines += [f"{first} 1: no", f"{first} 2: yes - the round counter at the top right covers half of the coin icon",
+              "...", "```", ""]
+    return "\n".join(lines)
+
+
 def report(result: dict) -> list[str]:
     if result["status"] != "opened":
         return oe.report(result)
@@ -557,6 +584,9 @@ def main() -> int:
                       file=sys.stderr)
                 return 2
             result["places"] = unmeasured(project, args.design)
+            if any(d.get("shot") for d in (result.get("preview") or {}).get("layouts", [])):
+                result["brief"] = str(shots / "brief.md")
+                (shots / "brief.md").write_text(brief(result), encoding="utf-8")
             results.append(result)
             out.write_text(json.dumps(results if len(projects) > 1 else result, ensure_ascii=False, indent=1),
                            encoding="utf-8")       # kept as each project ends, should a later one stop the run
@@ -579,10 +609,14 @@ def main() -> int:
     if any(r["status"] != "opened" for r in results):
         print(oe.NEXT)
         return 1
-    print("next: fix every finding line, then answer the questions for each screenshot and fix each yes; a runtime "
-          "error on a layout reached straight away may need the run that leads there, so play to it with "
-          "preview_project.py before blaming the events. Run this again until it prints no finding and every "
-          "answer is no.")
+    briefs = [r["brief"] for r in results if r.get("brief")]
+    print("next: fix every finding line; a runtime error on a layout reached straight away may need the run that "
+          "leads there, so play to it with preview_project.py before blaming the events. Then have the questions "
+          "answered and fix each yes. Run this again until it prints no finding and every answer is no.")
+    if briefs:
+        print(f"questions: if you can start a sub-agent, give it {' and '.join(briefs)} as its whole task, without "
+              f"telling it what the game should show, and take each yes from its reply: it has not seen the project, "
+              f"so it judges the pictures as a player does. Otherwise open each screenshot and answer them yourself.")
     return 1 if found or errors else 0
 
 

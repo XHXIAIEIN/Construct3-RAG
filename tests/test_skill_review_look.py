@@ -183,6 +183,23 @@ def test_review_look_asks_about_the_design_places_play_design_does_not_measure(t
                          'says: board "a 5 x 3 grid in the middle"; lives "top-right"?')
     assert rl.unmeasured(tmp_path, tmp_path / "none.json") == []
 
+
+def test_review_look_writes_a_brief_for_a_reviewer_that_has_not_seen_the_project():
+    rl = module()
+    result = {"places": ['lives "top-right"'], "preview": {"layouts": [
+        {"layout": "Map", "shot": "/g/.tmp/look/Map.png", "findings": [{"rule": "text", "line": "HelpText uid 1"}],
+         "errors": []},
+        {"layout": "Combat", "left": "End", "errors": []}]}}
+    text = rl.brief(result)
+    assert text.startswith("# Look review\n\nYou have not seen this game's project")
+    assert "1. Map: /g/.tmp/look/Map.png\n" in text and "Combat" not in text
+    assert "HelpText" not in text             # the findings are the builder's, not the reviewer's
+    assert f"1. {rl.QUESTIONS[0]}\n" in text
+    assert ("7. On a screenshot that shows it, does an object sit elsewhere than the design's screen says: lives "
+            "\"top-right\"?\n8. Does the same decoration") in text
+    assert "Map 1: no\nMap 2: yes - " in text
+
+
 def test_review_look_prints_its_help_and_needs_a_project(tmp_path, project):
     code, out = run(project, f"{INSTALLED}/scripts/review_look.py", "--help")
     assert code == 0 and "stacked" in out and "exit codes:" in out, out

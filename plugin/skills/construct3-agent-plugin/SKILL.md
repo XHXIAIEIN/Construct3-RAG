@@ -289,8 +289,8 @@ not held to this. `--dry-run` does all of that and writes nothing.
    Exit code 3: the machine has no browser the script can drive; follow the
    steps it printed instead.
 6. Once the preview passes, run `python scripts/review_look.py` and do what
-   it prints: fix every finding line, open each screenshot it names with the
-   image tool of this session and answer its questions, then fix each yes
+   it prints: fix every finding line, have its questions answered from the
+   screenshots as its last line says, then fix each yes
    and run it again; a run with no finding and every answer no is the
    hand-over. A scene the game reaches only in play is read the same way
    from a `shot` of a plan.

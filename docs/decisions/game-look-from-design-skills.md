@@ -135,12 +135,24 @@ prints
   the rule: a text and its shadow, an overlay over half the screen, an
   instance waiting wholly off screen, art running off the edge of a world
   layer, hidden state such as a mine's, a kind told apart by its label.
-- a fixed list of yes/no questions about visible facts that the agent
-  answers from each screenshot with its own image tool, each yes naming the
+- a fixed list of yes/no questions about visible facts, each yes naming the
   object to change: cut or overlapping text, objects that cover others,
   the edge of the screen, mixed drawing styles, a backdrop that outshines
   what the player acts on, kinds that look alike, decoration repeated on
   every layout.
+- `brief.md` beside the screenshots: the screenshots, the questions and the
+  form of the answer, for a reviewer that has not seen the project. The last
+  line tells an agent that can start a sub-agent to give it the brief and
+  take each yes from its reply; another agent answers from the screenshots
+  itself. An agent that built a card game had reported a screenshot with
+  five cards' labels stacked on one card as rendering normally. On a
+  generated card game of seven layouts, where the measured checks found
+  nothing, a sub-agent given only the brief answered yes for text drawn over
+  the map's nodes and a shelf panel over the shop's cards, both visible on
+  the screenshots. Its reply is about 600 tokens; the seven screenshots it
+  read in its own context are about 8 600 image tokens that the main agent
+  would otherwise keep for the rest of its session, at the cost of the
+  sub-agent's own run.
 
 The script judges no taste and calls no model; the default path stays
 offline apart from the editor, as the opener is. Option 6 stays out of the

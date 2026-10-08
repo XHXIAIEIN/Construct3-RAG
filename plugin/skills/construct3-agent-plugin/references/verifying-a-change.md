@@ -103,10 +103,15 @@ questions about visible facts: cut or overlapping text, objects that
 cover others, the edge of the screen, mixed drawing styles, a backdrop that
 outshines what the player acts on, kinds that look alike, and decoration
 repeated on every layout, and, when the project has a design, the screen
-entries that `play_design.py` cannot measure. Open each screenshot it
-names with the image tool, answer each question from the picture, and for
-each yes name the layout and the object type to change. A question answered
-from memory of the events, not from the picture, is not answered.
+entries that `play_design.py` cannot measure. The agent that wrote the
+events reads its own screenshots by what it meant them to show, so the
+script also writes the screenshots and the questions into `brief.md` beside
+them, for a reviewer that has not seen the project. Where you can start a
+sub-agent, give it the brief as its whole task, and for each yes in its
+reply name the layout and the object type at the place it describes.
+Otherwise open each screenshot with the image tool, answer each question
+from the picture, and name the same for each yes. A question answered from
+memory of the events, not from the picture, is not answered.
 
 A layout reached by `goToLayout` starts without what the game's flow sets up
 before it, and one whose start events leave at once is printed as left for

@@ -300,7 +300,8 @@ def test_play_design_finds_an_object_outside_the_place_the_design_names():
     found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
                                       {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
     assert [f["uids"] for f in found] == [[1]]
-    assert "has its middle at (475, 40) on layer 'HUD', and the design's place puts its middle at x 0 to 240 there"         in found[0]["line"]
+    assert ("has its middle at (475, 40) on layer 'HUD', and the design's place puts its middle at x 0 to 240 there"
+            in found[0]["line"])
     message["shown"] = False
     found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
                                       {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
