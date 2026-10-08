@@ -112,6 +112,29 @@ counts seconds, not ticks. With *Simulate control* Jump in place of
 the floor only, unless *Double jump* is on (manual:
 `behavior-reference/platform.md`).
 
+### Images of objects created by events
+
+The borrowed rule preloads the images of every object that events create.
+The manual says that a layout loads the images of the objects placed in
+it, and that an object created only by events loads its images when it is
+created, while the game keeps running (`tips-and-guides/memory-usage.md`).
+The template keeps its coin in a layout that never runs and creates it on
+the game's layout, which is that case.
+
+A probe added Sprites of noise to the template's stand-in game and created
+them by a script, 1.5 s into a fresh preview. A script read every tick
+whether the first frame had a texture:
+
+| Picture | Not loaded before | Placed in the layout, or *Load object images* at the start |
+|---------|-------------------|-------------------------------------------------------------|
+| 160×160, the template's coin | texture by the next tick | texture at once |
+| 1920×1080, a scene picture | no texture for 62 to 100 ms, 6 to 10 ticks | texture at once |
+
+No tick took longer than usual, at 60 Hz or at 144 Hz, so the game does not
+pause; a large picture shows late. The preview serves the pictures from
+the editor's memory, so an exported game that downloads them shows them
+later still.
+
 ## Decision
 
 - Player height: no default and no warning. Within one way of moving,
@@ -135,6 +158,11 @@ the floor only, unless *Double jump* is on (manual:
   recipe, naming `CoyoteTime` and `BufferTime` as the variables to tune.
   The in-air jump goes into the Input pitfalls, because it changes which
   action an agent writes.
+- Images of objects created by events: a pitfall under Creating objects,
+  *Load object images* in *On start of layout* for a large picture. No
+  checker warning: the template's small sprites show by the next tick, its
+  scene pictures are placed in their layouts, and only a large picture
+  created by events shows late.
 
 ## Re-evaluate when
 
@@ -145,3 +173,6 @@ the floor only, unless *Double jump* is on (manual:
 - A preview at another rate, or a Construct release, moves a jump window
   by more than a tick: rerun the probe, whose plan and log reader are in
   `.local/docs/evidence/w11-measurements/coyote/`.
+- An exported game shows a flicker or a blank sprite on creation, or a
+  generated game creates large pictures by events: measure the export,
+  then decide on a warning.

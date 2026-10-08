@@ -276,6 +276,7 @@ Sprite, read [pitfalls/creating-objects.md](pitfalls/creating-objects.md).
 - A part in both the parent's container and its template hierarchy is created once. Put it in both to have it picked with the parent and follow it.
 - *Create object* runs once per event, however many instances are picked.
 - A runtime-created instance copies an existing instance or template, and without one its behavior properties read 0. Keep one per object in a layout that never runs.
+- An object created only by events loads its images when created and draws nothing until they arrive, about 0.1 s for a screen-sized picture. Load it with *Load object images* in *On start of layout*.
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
 - A created instance is found outside its own event only by UID, until the top-level event ends.
 - The instances of a new hierarchy run *On created* in no fixed order. Initialise the hierarchy in *On hierarchy ready* of its root, which fires once all of them have.
