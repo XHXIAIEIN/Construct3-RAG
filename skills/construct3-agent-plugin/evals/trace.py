@@ -21,9 +21,11 @@ relative path, a variable and a path built inside a script are not
 resolved, so the list is a floor: an empty one proves nothing. read_skill_md is true
 when this skill's SKILL.md reached the model: the Skill tool called with this
 skill, or its SKILL.md read, and the call's result came back without an
-error, as run_trigger_eval.py counts a trigger. --out writes the counts
-to RUN_DIR/trace.json, which grade.py adds to the benchmark. --full prints
-commands and results unshortened.
+error, as run_trigger_eval.py counts a trigger. turns, output_tokens and
+input_tokens (cache writes and reads included) are read from the model's
+responses in the transcript, and seconds from its first and last
+timestamps: what the run cost. --out writes the counts to RUN_DIR/trace.json, which grade.py
+adds to the benchmark. --full prints commands and results unshortened.
 
 exit codes: 0 read, 1 the file holds no tool call
 """
@@ -32,6 +34,7 @@ import json
 import os
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from run_trigger_eval import loads_skill
@@ -151,6 +154,31 @@ def outside(calls: list[dict], root: Path) -> tuple[list[dict], list[dict]]:
     return writes, reads
 
 
+def usage_of(path: Path) -> dict:
+    """What the run cost, from its transcript. turns counts the model's responses by message id, because the
+    transcript writes a response once per content block. output_tokens and input_tokens add up the responses'
+    usage, input with cache writes and reads. seconds runs from the first timestamp to the last. model is the
+    responses' model."""
+    seen: dict[str, dict] = {}
+    times, model = [], None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue
+        if entry.get("timestamp"):
+            times.append(entry["timestamp"])
+        message = entry.get("message") or {}
+        if entry.get("type") == "assistant" and message.get("id") and isinstance(message.get("usage"), dict):
+            seen[message["id"]] = message["usage"]
+            model = message.get("model") or model
+    stamps = sorted(datetime.fromisoformat(t.replace("Z", "+00:00")) for t in times)
+    return {"turns": len(seen), "output_tokens": sum(u.get("output_tokens", 0) for u in seen.values()),
+            "input_tokens": sum(u.get("input_tokens", 0) + u.get("cache_creation_input_tokens", 0)
+                                + u.get("cache_read_input_tokens", 0) for u in seen.values()),
+            "seconds": round((stamps[-1] - stamps[0]).total_seconds(), 1) if len(stamps) > 1 else None, "model": model}
+
+
 def summary(calls: list[dict]) -> dict:
     scripts = [{"script": m.group(1), "args": m.group(2).strip(), "failed": c["failed"], "chars": c["chars"]}
                for c in calls if c["tool"] in SHELLS for m in SCRIPT.finditer(c["what"])]
@@ -192,7 +220,9 @@ def main() -> int:
     for n, c in enumerate(calls, 1):
         print(f"{n:>3} {c['tool']:<6} {short(c['what'], width)}")
         print(f"      -> {c['chars']} chars{' FAILED' if c['failed'] else ''}: {short(c['result'], width)}")
-    counts = summary(calls)
+    counts = summary(calls) | usage_of(Path(args.transcript))
+    print(f"{counts['turns']} turns, {counts['output_tokens']} output tokens, {counts['input_tokens']} input tokens, "
+          f"{counts['seconds']} s, {counts['model']}")
     print(f"{counts['tool_calls']} tool calls, {counts['lost_calls']} lost; scripts run: "
           + ", ".join(f"{s['script']} {s['args']}".strip() + (" (failed)" if s["failed"] else "") for s in counts["scripts"]))
     root = args.root or args.out

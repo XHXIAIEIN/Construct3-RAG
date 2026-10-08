@@ -542,7 +542,8 @@ def test_template_button_is_a_shape_and_its_label_that_never_come_apart(tmp_path
     assert label["properties"]["horizontal-alignment"] == "center" and label["properties"]["size"] == t.TEXT_SIZE["body"]
     assert t.contrast(tuple(round(c * 255) for c in label["properties"]["color"][:3]), t.PALETTE["solid"]) >= 3
     assert shape["sceneGraphData"]["parent-uid"] is None
-    assert shape["sceneGraphData"]["children"] == [{"uid": label["uid"], "flags": t.SCENE_FLAGS}]
+    # The label follows the shape's size too, so a press() squashes both; Text letters scale with the box.
+    assert shape["sceneGraphData"]["children"] == [{"uid": label["uid"], "flags": {**t.SCENE_FLAGS, "w": True, "h": True}}]
     assert label["sceneGraphData"]["parent-uid"] == shape["uid"] and label["sceneGraphData"]["flags"]["v"] is True
     assert list(label)[list(label).index("sceneGraphData") + 1] == "showing"
     t.no_overlap([shape, label])                            # a label inside its shape is a layer on purpose
@@ -828,12 +829,68 @@ def test_template_squashes_the_art_on_a_hit_a_landing_and_a_jump():
     _, jump, hold, back = t.squash("PlayerArt", "jump")
     assert (jump["parameters"]["height"], hold["parameters"]["seconds"], back["parameters"]["time"]) == \
         ("Self.ImageHeight * 1.3", "0.2", "0.75")
-    with pytest.raises(SystemExit, match=r"squash\('PlayerArt', 'spin'\): the kinds are hit, land, jump"):
+    with pytest.raises(SystemExit, match=r"squash\('PlayerArt', 'spin'\): the kinds are hit, land, jump, press"):
         t.squash("PlayerArt", "spin")
+    # Two events can share a squash: the actions up to the hold, and the tween back.
+    assert [a["id"] for a in t.squash("PlayerArt", "jump", half="down")] == ["stop-tweens", "set-size", "wait"]
+    assert [a["id"] for a in t.squash("PlayerArt", "jump", half="back")] == ["tween-two-properties"]
+    with pytest.raises(SystemExit, match=r"half is both, down or back"):
+        t.squash("PlayerArt", "jump", half="up")
     t.squash_the_art({"PlayerArt": {"behaviorTypes": [t.beh_def("Tween")]}}, {})
     with pytest.raises(SystemExit, match=r"squash\('Player'\): Player has Platform and collides, .* squash its art"):
         t.squash("Player", "land")
         t.squash_the_art({"Player": {"behaviorTypes": [t.beh_def("Platform"), t.beh_def("Tween")]}}, {})
+
+
+def test_template_presses_a_button_down_while_the_finger_holds_it():
+    """press() writes a button's press in two events, as the official examples press one. The touch
+    that lands on the button marks it pressed and squashes it at once. The end of a touch springs
+    the pressed one back and runs the actions only when the touch ends on it, so a finger that
+    slides off cancels. build_all() gives the type its "pressed" variable and its instances the
+    value false, and a game tunes the press as SQUASH["press"]."""
+    t = template_module()
+    note, down, note2, up = t.press("Restart", [t.restart_layout()])
+    assert note["text"] == "Press Restart down under the finger"
+    assert down["conditions"] == [{**down["conditions"][0], "id": "on-touched-object", "objectClass": "Touch",
+                                   "parameters": {"object": "Restart", "type": "start"}}]
+    assert [a["id"] for a in down["actions"]] == ["set-boolean-instvar", "stop-tweens", "set-size"]
+    assert down["actions"][0]["parameters"] == {"instance-variable": "pressed", "value": "true"}
+    assert down["actions"][2]["parameters"] == {"width": "Self.ImageWidth * 0.9", "height": "Self.ImageHeight * 0.9"}
+    assert [(c["id"], c.get("parameters")) for c in up["conditions"]] ==         [("on-any-touch-end", None), ("is-boolean-instance-variable-set", {"instance-variable": "pressed"})]
+    assert up["actions"][0]["parameters"] == {"instance-variable": "pressed", "value": "false"}
+    back = up["actions"][1]["parameters"]
+    assert (back["property"], back["end-x"], back["time"], back["ease"]) == ("size", "Self.ImageWidth", "0.1",
+                                                                             "easeoutsine")
+    act_on_it = up["children"][0]
+    assert act_on_it["conditions"][0]["id"] == "is-touching-object" and         act_on_it["conditions"][0]["parameters"] == {"object": "Restart"}
+    assert act_on_it["actions"][0]["id"] == "restart-layout"
+    types = {"Restart": t.sprite_type("Restart", [], behaviors=[t.beh_def("Tween")]), "Coin": t.sprite_type("Coin", [])}
+    restart, coin = t.sprite_inst("Restart", 0, 0, 160, 160), t.sprite_inst("Coin", 0, 0, 96, 96)
+    lay = t.layout("Menu", [t.layer("UI", parallax=0)], sheet=None)
+    lay["layers"][0]["instances"] += [restart, coin]
+    t.press_types(types, {"Menu": lay})
+    t.press_types(types, {"Menu": lay})
+    assert [(v["name"], v["type"]) for v in types["Restart"]["instanceVariables"]] == [("pressed", "boolean")]
+    assert restart["instanceVariables"] == {"pressed": False} and coin["instanceVariables"] == {}
+    assert types["Coin"]["instanceVariables"] == []
+    t.SQUASH["press"] = {"width": 0.8, "height": 0.8, "hold": 0, "seconds": 0.2, "ease": "easeoutback"}
+    assert t.press("Restart", [])[1]["actions"][2]["parameters"]["width"] == "Self.ImageWidth * 0.8"
+
+
+def test_template_counts_a_number_up_from_the_number_it_shows():
+    """count_up() stops the count that runs, then tweens a value from the number a Text shows to
+    the new one, so a gain mid-count goes on from the number on the screen. counting() shows the
+    value rounded towards the target while the count runs. When it ends, counting() shows the exact
+    value, since the tween's value reads 0 then."""
+    t = template_module()
+    stop, start = t.count_up("ScoreText", "score")
+    assert (stop["id"], stop["parameters"]) == ("stop-tweens", {"tags": '"count"'})
+    assert (start["id"], start["parameters"]["start-value"], start["parameters"]["end-value"],
+            start["parameters"]["time"], start["parameters"]["ease"]) ==         ("tween-value", "int(ScoreText.Text)", "score", "0.5", "easeoutquad")
+    _, running, _, ended = t.counting("ScoreText", "score")
+    assert running["conditions"][0]["id"] == "is-playing"
+    assert running["actions"][0]["parameters"]["text"] ==         'Self.Tween.Value("count") < score ? ceil(Self.Tween.Value("count")) : floor(Self.Tween.Value("count"))'
+    assert (ended["conditions"][0]["id"], ended["actions"][0]["parameters"]["text"]) == ("on-tweens-finished", "score")
 
 
 def test_template_shows_a_hit_as_a_frame_of_the_flash_colour(built, tmp_path):

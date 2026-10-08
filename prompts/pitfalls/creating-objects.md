@@ -43,6 +43,21 @@ Sources and the rule for adding an entry are in the index,
   2026-10-02: the Laser of the official example families, its one layout
   instance removed, was created 52×27 and visible with Bullet speed 0; with
   the instance kept, speed 400]
+- A layout loads the images of the objects placed in it when it starts. An
+  object created only by events, its template kept in a layout that never
+  runs, loads its images when it is created: the game keeps running and the
+  instance draws nothing until they arrive. A picture the size of the screen
+  shows a moment late, so an object meant to cover something flickers; a
+  small one is ready by the next tick. For a large picture created by
+  events, put *Load object images* in *On start of layout*, or place an
+  instance in that layout and destroy it at the start. [manual:
+  tips-and-guides/memory-usage.md "Layout-by-layout loading",
+  tips-and-guides/importing-c2-projects.md, system-reference/system-actions.md
+  "Load object images"; observed in a probe project, r495.2 preview,
+  2026-10-08: a 1920×1080 Sprite created by a script mid-game had no texture
+  for 62 to 100 ms, 6 to 10 ticks, with no tick longer than usual; placed
+  in the layout or loaded at the start, it had one at once, and a 160×160
+  one by the next tick]
 - A Particles object given a Sprite as its *Object* spawns real instances.
   *On created* fires for each, and they are not children of the emitter (the
   example parents them by hand). Per-particle state such as a colour frame

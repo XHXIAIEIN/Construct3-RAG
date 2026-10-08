@@ -106,13 +106,16 @@ Construct-Example-Projects, 2026-09-18]
   the bottom, with the stage's main object at a large share of the stage.
   The generator template holds these as `button()`, `labelled_bar()`,
   `bands()`, `band_text()` and `fit()`; the record is
-  `docs/decisions/layout-by-name.md`.
+  `docs/decisions/layout-by-name.md`. The template's `press()` presses a
+  button and `count_up()` counts a score ([feel.md](feel.md);
+  `docs/decisions/count-up-and-press.md`).
 - Each class of object keeps one kind of motion, so the eye knows what
   matters. The HUD and menus fade and slide: of the studio cohort's 480
   one-shot tweens on objects of a parallax-0 layer, in 71 projects, 73%
   tween the opacity, 92% use a sine ease, mostly `easeinoutsine`, the
   middle half lasts 0.5 to 1 s, and 7 overshoot. A button's press is
-  quicker, 0.1 to 0.5 s on its size or opacity. The camera moves slowly
+  quicker, 0.1 to 0.5 s on its size or opacity, or a pressed frame swapped
+  at once. The camera moves slowly
   and evenly, 1 s or more with `easeinoutsine`, though only 4 projects
   tween it.
   Overshoot (`easeoutback`, `easeoutbounce`, an elastic ease) belongs to

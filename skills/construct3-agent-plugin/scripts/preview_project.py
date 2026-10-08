@@ -135,7 +135,7 @@ output:
     preview: layout 'Game', runtime in the worker, viewport 430x932, touch
     1 until runtime.objects.Enemy.getAllInstances().length >= 3: true after 1.4 s
     2 drag Piece 0 to BattleSlot 1: (120, 712) to (215, 388) in 0.4 s
-      runtime: <an error the game logged during the step, with its event>
+      runtime: <an error the game logged during the step, with its event, and (N times) when it came more than once>
     3 state Piece: <as open_in_editor.py --state prints it>
     4 shot after-merge: .tmp/preview/04-after-merge.png
     recorded merge: 95 frames in 3.4 s, .tmp/preview/02-merge.mp4
@@ -1026,13 +1026,13 @@ def report(result: dict, label: Callable[[str], str] = oe.key_name) -> list[str]
     ratio = f" at pixel ratio {ran['pixel_ratio']:g}" if ran.get("pixel_ratio", 1) != 1 else ""
     lines.append(f"  preview: layout {ran['layout']!r} at the end, runtime in the {ran['runtime']}, "
                  f"viewport {ran['viewport'][0]}x{ran['viewport'][1]}{ratio}{touch}")
-    lines += [f"  runtime: {e.splitlines()[0]}" for e in ran["errors"]]
+    lines += oe.runtime_lines(ran["errors"])
     for done in ran["steps"]:
         said = f": {done['said']}" if done["said"] else ""
         lines.append(f"  {done['line']}{said}" if done["ok"] else f"  {done['line']}: FAILED, {done['said']}")
         if "state" in done:
             lines += ["  " + line for line in oe.state_lines(done["state"], label)]
-        lines += [f"    runtime: {e.splitlines()[0]}" for e in done["errors"]]
+        lines += oe.runtime_lines(done["errors"], "    ")
     if ran.get("recorded"):
         lines.append(f"  {ran['recorded']}")
     errors = len(ran["errors"]) + sum(len(d["errors"]) for d in ran["steps"])
@@ -1097,15 +1097,16 @@ def replay_report(result: dict, refused: dict[str, list[str]],
             failed += 1
             lines.append(f"  FAIL  {name} ({where}): the preview did not run: {'; '.join(done['errors'])}")
             continue
-        logged = [e.splitlines()[0] for e in done["errors"] + [e for d in done["steps"] for e in d["errors"]]]
-        errors += len(logged)
+        raw = done["errors"] + [e for d in done["steps"] for e in d["errors"]]
+        logged = oe.runtime_lines(raw, "    ")
+        errors += len(raw)
         bad = next((d for d in done["steps"] if not d["ok"]), None)
         if bad or logged or len(done["steps"]) < done["planned"]:
             failed += 1
-            why = (f"{bad['line']}: FAILED, {bad['said']}" if bad else f"runtime: {logged[0]}" if logged
+            why = (f"{bad['line']}: FAILED, {bad['said']}" if bad else logged[0].strip() if logged
                    else f"stopped after {len(done['steps'])} of {done['planned']} steps")
             lines.append(f"  FAIL  {name} ({where}): {why}")
-            lines += [f"    runtime: {e}" for e in logged[1 if not bad else 0:][:3]]
+            lines += logged[1 if not bad else 0:][:3]
         else:
             lines.append(f"  ok    {name}: {done['planned']} step{'s' if done['planned'] != 1 else ''} in "
                          f"{done['seconds']:.1f} s")

@@ -1,25 +1,40 @@
 """Grade the runs of one eval iteration and aggregate them.
 
-    python evals/grade.py ITERATION_DIR
+    python evals/grade.py ITERATION_DIR [--play] [--release rNNN] [--browser EXE] [--show-held-out]
 
 ITERATION_DIR holds <case>/<arm>/ with project/, outputs/answer.md,
 fixture.json and, once the run has reported, timing.json. Every assertion of
 evals/evals.json is checked by code against the files the run left, with the
 clone's own checker, and written to <case>/<arm>/grading.json with the
-evidence. benchmark.json gives, per case and arm, the mean of every measure
-and its deviation once a cell has more than one run (<arm>_2, <arm>_3 are
-further runs of <arm>), and with_skill less each other arm. A run with a
-trace.json (evals/trace.py --out) adds its tool calls and the ones it lost.
+evidence and its level: checker or files. A case whose request changes what
+the game does also has the runtime assertions of its plan in
+evals/play_cases.py. --play plays the plan on the run's project in the
+editor's preview, into <case>/<arm>/play/. Without --play, grade.py reads a
+play/result.json that the run already has. Runtime assertions that were not
+played are listed with passed null and left out of the scores.
+level_reached is the highest level up to which every scored assertion
+passed.
+
+benchmark.json gives, per case and arm, the mean of every measure and its
+deviation once a cell has more than one run (<arm>_2, <arm>_3 are further
+runs of <arm>), the runs that passed every assertion with a Wilson 95%
+interval, and with_skill less each other arm. A run with a trace.json
+(evals/trace.py --out) adds its tool calls, the ones it lost, its turns and
+output tokens. Time comes from timing.json, else from the trace; tokens come
+from timing.json. A case marked held_out in evals.json is reported
+separately, under held_out, and its failed assertions are printed only with
+--show-held-out.
 
 A run that did not keep to its arm is not scored: put the reason in
 <case>/<arm>/void.txt, for example a baseline whose answer lists a script of
 this skill among its commands. A run whose trace.json lists a write outside
 its folder is not scored either, with the paths as the reason; the list is a
-floor (evals/trace.py). A run without timing.json has no time or
-tokens in the benchmark; nothing is filled in for it.
+floor (evals/trace.py). A run without timing.json has no tokens in the
+benchmark, and no time unless its trace has one; nothing is estimated.
 
 exit codes: 0 graded, 1 ITERATION_DIR holds no run of a known case
 """
+import argparse
 import hashlib
 import json
 import os
@@ -29,7 +44,10 @@ import statistics
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
+
+import play_cases
 
 SKILL = Path(__file__).resolve().parent.parent
 REPO = SKILL.parent.parent
@@ -289,7 +307,7 @@ def unchanged(run: Path, allowed: tuple[str, ...] = ()) -> tuple[bool, str]:
     """Whether no project file differs from the fixture, with the list of those that do. A path that starts
     with one of `allowed` is skipped, and so are .tmp, where the skill's scripts write their results, and .git,
     which SKILL.md tells a run to create."""
-    want = {k: v for k, v in json.loads((run / "fixture.json").read_text(encoding="utf-8")).items() if not k.endswith(".sids")}
+    want = {k: v for k, v in json.loads((run / "fixture.json").read_text(encoding="utf-8")).items() if not k.endswith((".sids", ".warnings"))}
     project = run / "project"
     have = {p.relative_to(project).as_posix(): hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
             for p in sorted(project.rglob("*"))
@@ -1279,6 +1297,25 @@ def grade_design_a_catch_game(run: Path) -> list[tuple[bool, str]]:
             unchanged(run, ("tools/",))]
 
 
+def grade_kept(run: Path, own_warnings: bool = True) -> list[tuple[bool, str]]:
+    """The file assertions of a case whose request the plan judges: the checker passes, it warns on no event the
+    run added (on none at all without own_warnings), and every event of the fixture's sheets is still there."""
+    project = run / "project"
+    code, out = checker(project)
+    fixture = json.loads((run / "fixture.json").read_text(encoding="utf-8"))
+    original = [s for k, v in fixture.items() if k.endswith(".sids") for s in v]
+    # The fixture's own: the lines make_fixtures.py recorded, or a line on an event of the fixture.
+    own = set(fixture.get("check_project.warnings", [])) if own_warnings else set()
+    warnings = [line for line in out.splitlines() if line.startswith("warning:") and line not in own and not (
+        own_warnings and (m := re.search(r"\(sid (\d+)\)", line)) and int(m.group(1)) in set(original))]
+    have = {ev.get("sid") for ev, _ in sheet_rows(project)}
+    lost = [s for s in original if s not in have]
+    lines = out.splitlines() or [""]
+    return [(code == 0, f"exit {code}: {lines[0] if code else lines[-1]}"),
+            (not warnings, warnings[0] if warnings else "no warning line" + (" on an added event" if own_warnings else "")),
+            (bool(original) and not lost, f"{len(original) - len(lost)} of {len(original)} original event sids present")]
+
+
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
@@ -1290,10 +1327,18 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "two-player-turn-limit": grade_two_player_turns, "find-a-drag-example": grade_find_a_drag_example,
            "script-shift-and-edges": grade_script_shift_and_edges,
            "platform-state-in-chinese": grade_platform_state_in_chinese,
-           "design-a-catch-game": grade_design_a_catch_game}
+           "design-a-catch-game": grade_design_a_catch_game,
+           "double-jump": grade_kept, "stay-on-screen": grade_kept, "walls-stop-the-player": grade_kept,
+           "coins-in-a-ring": lambda run: grade_kept(run, own_warnings=False)}
 
 
-METRICS = ("pass_rate", "seconds", "tokens", "tool_calls", "lost_calls")
+METRICS = ("pass_rate", "runtime_rate", "seconds", "tokens", "turns", "output_tokens", "tool_calls", "lost_calls",
+           "play_seconds")
+LEVELS = ("checker", "files", "runtime")      # in the order a run reaches them
+
+
+def level_of(text: str) -> str:
+    return "checker" if "check_project.py" in text else "files"
 
 
 def spread(numbers: list[float]) -> dict | None:
@@ -1304,6 +1349,22 @@ def spread(numbers: list[float]) -> dict | None:
     if len(numbers) > 1:
         out["stddev"] = round(statistics.stdev(numbers), 3)
     return out
+
+
+def wilson(k: int, n: int, z: float = 1.96) -> list[float]:
+    """The Wilson score interval of k successes in n runs; z = 1.96 gives 95%. It stays within 0..1, and it is
+    not a single point when k is 0 or n."""
+    if not n:
+        return [0.0, 1.0]
+    p, d = k / n, 1 + z * z / n
+    mid, half = (p + z * z / (2 * n)) / d, z * ((p * (1 - p) + z * z / (4 * n)) / n) ** 0.5 / d
+    return [round(max(0.0, mid - half), 3), round(min(1.0, mid + half), 3)]
+
+
+def full_runs(runs: list[dict]) -> dict:
+    """How many runs passed every assertion they were scored on, of how many, with the interval."""
+    k, n = sum(r["full"] for r in runs), len(runs)
+    return {"k": k, "n": n, "interval_95": wilson(k, n)}
 
 
 def deltas(by_case: dict[str, dict[str, dict]]) -> dict:
@@ -1318,17 +1379,78 @@ def deltas(by_case: dict[str, dict[str, dict]]) -> dict:
     return out
 
 
+def aggregate(cells: dict[str, dict[str, list[dict]]]) -> tuple[dict, dict]:
+    """Per case and arm, the spread of each measure and the fully passed runs; per arm, the mean of its cases'
+    means (a deviation across different cases would measure the cases) and the fully passed runs pooled."""
+    by_case = {name: {arm: {"runs": runs, "full_runs": full_runs(runs),
+                            **{key: spread([r[key] for r in runs if r.get(key) is not None]) for key in METRICS}}
+                      for arm, runs in arms.items()} for name, arms in cells.items()}
+    arms = sorted({arm for case in by_case.values() for arm in case})
+    summary = {arm: {**{key: round(statistics.mean(means), 3) for key in METRICS
+                        if (means := [case[arm][key]["mean"] for case in by_case.values() if arm in case and case[arm].get(key)])},
+                     "full_runs": full_runs([r for case in cells.values() for r in case.get(arm, [])])}
+               for arm in arms}
+    summary["delta"] = deltas(by_case)
+    return by_case, summary
+
+
 def optional_json(path: Path) -> dict:
     """A file a run has only once it has reported (timing.json) or been traced (trace.json); {} without it."""
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
 
 
+def runtime_of(name: str, run: Path, args: argparse.Namespace) -> tuple[list[dict], float | None]:
+    """The run's runtime assertions, played with --play or read from play/result.json. A case without a plan
+    has none. When the plan was not played, each is listed with passed null and left out of the scores."""
+    texts = play_cases.check_texts(name)
+    if not texts:
+        return [], None
+    folder, seconds = run / "play", None
+    if args.play:
+        began = time.monotonic()
+        result, said = play_cases.play(play_cases.plan_for(name), run / "project", folder, args.release, args.browser)
+        seconds = round(time.monotonic() - began, 1)
+        (folder / "seconds.txt").write_text(f"{seconds}\n", encoding="utf-8")
+    elif (folder / "result.json").exists():
+        result = json.loads((folder / "result.json").read_text(encoding="utf-8"))
+        said = ""
+        seconds = float((folder / "seconds.txt").read_text(encoding="utf-8")) if (folder / "seconds.txt").exists() else None
+    else:
+        return [{"text": t, "passed": None, "evidence": "not played: grade.py --play plays it", "level": "runtime"}
+                for t in texts], None
+    return [{"text": t, "passed": ok, "evidence": evidence, "level": "runtime"}
+            for t, (ok, evidence) in zip(texts, play_cases.verdicts(name, result, said), strict=True)], seconds
+
+
+def reached(graded: list[dict]) -> str:
+    """The highest level up to which every scored assertion passed: checker, files, runtime, or none. The
+    runtime level needs at least one scored runtime assertion, so a case without a plan, or with an unplayed
+    one, stops at files."""
+    out = "none"
+    for level in LEVELS:
+        mine = [g for g in graded if g["level"] == level and g["passed"] is not None]
+        if not mine and level == "runtime":
+            break
+        if not all(g["passed"] for g in mine):
+            break
+        out = level
+    return out
+
+
 def main() -> int:
-    if len(sys.argv) != 2 or sys.argv[1] in ("-h", "--help"):
-        print(__doc__)
-        return 0 if len(sys.argv) == 2 else 1
-    iteration = Path(sys.argv[1]).resolve()
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("iteration", metavar="ITERATION_DIR")
+    ap.add_argument("--play", action="store_true",
+                    help="play each run's plan in the editor's preview (evals/play_cases.py); without it, "
+                         "grade.py reads a play/result.json that the run already has")
+    ap.add_argument("--release", metavar="rNNN", help="the editor release the plans open in (default: the current one)")
+    ap.add_argument("--browser", metavar="EXE", help="the Chromium-based browser preview_project.py starts")
+    ap.add_argument("--show-held-out", action="store_true",
+                    help="print the failed assertions of held-out cases too; leave it off while a change is open")
+    args = ap.parse_args()
+    iteration = Path(args.iteration).resolve()
     cells: dict[str, dict[str, list[dict]]] = {}      # case -> arm -> its runs
+    held: dict[str, dict[str, list[dict]]] = {}
     void = []
     for name, case in CASES.items():
         for run in sorted(p for p in (iteration / name).glob("*") if (p / "project").is_dir()):
@@ -1340,38 +1462,54 @@ def main() -> int:
                 void.append({"run": f"{name}/{run.name}", "reason": reason})
                 print(f"{name}/{run.name}: void, not scored" + (f": {reason}" if wrote else ""))
                 continue
-            graded = [{"text": text, "passed": ok, "evidence": evidence}
+            graded = [{"text": text, "passed": ok, "evidence": evidence, "level": level_of(text)}
                       for text, (ok, evidence) in zip(case["assertions"], GRADERS[name](run), strict=True)]
-            passed = sum(g["passed"] for g in graded)
-            score = f"{passed}/{len(graded)}"
-            summary = {"passed": passed, "failed": len(graded) - passed, "total": len(graded),
-                       "pass_rate": round(passed / len(graded), 3)}
+            runtime, play_seconds = runtime_of(name, run, args)
+            graded += runtime
+            scored = [g for g in graded if g["passed"] is not None]
+            passed = sum(g["passed"] for g in scored)
+            played = [g for g in runtime if g["passed"] is not None]
+            summary = {"passed": passed, "failed": len(scored) - passed, "total": len(scored),
+                       "pass_rate": round(passed / len(scored), 3), "level_reached": reached(graded),
+                       "runtime": ({"passed": sum(g["passed"] for g in played), "total": len(played)} if played
+                                   else "not played" if runtime else "no plan")}
             (run / "grading.json").write_text(json.dumps({"assertion_results": graded, "summary": summary},
                                                          indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
             timing = optional_json(run / "timing.json")
             trace = optional_json(run / "trace.json")
             arm = re.sub(r"_\d+$", "", run.name)           # with_skill_2 is a second run of with_skill
-            cells.setdefault(name, {}).setdefault(arm, []).append({
-                "run": run.name, "passed": score, "pass_rate": summary["pass_rate"],
-                "tokens": timing.get("total_tokens"), "seconds": round(timing["duration_ms"] / 1000, 1) if timing else None,
-                **{k: trace[k] for k in ("tool_calls", "lost_calls") if k in trace}})
-            print(f"{name}/{run.name}: {score}" + ("" if timing else "  (no timing.json)"))
-            for g in graded:
+            seconds = round(timing["duration_ms"] / 1000, 1) if timing else trace.get("seconds")
+            (held if case.get("held_out") else cells).setdefault(name, {}).setdefault(arm, []).append({
+                "run": run.name, "passed": f"{passed}/{len(scored)}", "pass_rate": summary["pass_rate"],
+                "full": passed == len(scored), "level_reached": summary["level_reached"],
+                "runtime_rate": round(summary["runtime"]["passed"] / summary["runtime"]["total"], 3) if played else None,
+                "tokens": timing.get("total_tokens"), "seconds": seconds, "play_seconds": play_seconds,
+                **{k: trace[k] for k in ("tool_calls", "lost_calls", "turns", "output_tokens") if k in trace}})
+            note = "" if timing or trace.get("seconds") else "  (no timing.json or traced time)"
+            runtime_said = (f", runtime {summary['runtime']['passed']}/{summary['runtime']['total']}" if played
+                            else ", runtime not played" if runtime else "")
+            if case.get("held_out") and not args.show_held_out:
+                print(f"{name}/{run.name}: held out, {passed}/{len(scored)}{runtime_said}")
+                continue
+            print(f"{name}/{run.name}: {passed}/{len(scored)}{runtime_said}, reached {summary['level_reached']}{note}")
+            for g in scored:
                 if not g["passed"]:
-                    print(f"    FAIL {g['text']}\n         {g['evidence']}")
-    if not cells and not void:
+                    print(f"    FAIL [{g['level']}] {g['text']}\n         {g['evidence']}")
+    if not cells and not held and not void:
         sys.exit(f"{iteration} holds no <case>/<arm>/project of a case in evals.json")
 
-    by_case = {name: {arm: {"runs": runs, **{key: spread([r[key] for r in runs if r.get(key) is not None]) for key in METRICS}}
-                      for arm, runs in arms.items()} for name, arms in cells.items()}
-    # Per arm, the mean of its cases' means: a deviation across different cases would measure the cases.
-    arms = sorted({arm for case in by_case.values() for arm in case})
-    run_summary = {arm: {key: round(statistics.mean(means), 3) for key in METRICS
-                         if (means := [case[arm][key]["mean"] for case in by_case.values() if arm in case and case[arm].get(key)])}
-                   for arm in arms}
-    run_summary["delta"] = deltas(by_case)
-    (iteration / "benchmark.json").write_text(json.dumps(
-        {"run_summary": run_summary, "by_case": by_case, "void_runs": void}, indent=2) + "\n", encoding="utf-8")
+    by_case, run_summary = aggregate(cells)
+    out = {"run_summary": run_summary, "by_case": by_case, "void_runs": void}
+    if held:
+        held_cases, held_summary = aggregate(held)
+        out["held_out"] = {"run_summary": held_summary, "by_case": held_cases}
+    (iteration / "benchmark.json").write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
+    for label, summary in (("", run_summary), ("held out, ", out.get("held_out", {}).get("run_summary", {}))):
+        for arm, s in summary.items():
+            if arm != "delta":
+                f = s["full_runs"]
+                print(f"{label}{arm}: {f['k']} of {f['n']} runs passed every assertion they were scored on, "
+                      f"95% interval {f['interval_95'][0]:.2f}-{f['interval_95'][1]:.2f}")
     print(f"wrote {iteration / 'benchmark.json'}")
     return 0
 
