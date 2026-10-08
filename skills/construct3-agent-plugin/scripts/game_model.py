@@ -114,7 +114,7 @@ class Node:
     args: list = field(default_factory=list)
 
 
-# Each function: (fewest arguments, most arguments or None for any, what it does in words)
+# Each function: (fewest arguments, most arguments or None for any)
 FUNCTIONS = {
     "abs": (1, 1), "floor": (1, 1), "ceil": (1, 1), "round": (1, 1), "sqrt": (1, 1), "int": (1, 1),
     "min": (2, None), "max": (2, None), "clamp": (3, 3), "len": (1, 1), "find": (2, 2), "str": (1, 1),
@@ -256,9 +256,7 @@ def parse(text: str) -> Node:
 def names_in(node: Node) -> set[str]:
     """The state names and arguments an expression reads; an Array counts by its name."""
     found: set[str] = set()
-    if node.kind == "name":
-        found.add(node.value)
-    elif node.kind in ("at",):
+    if node.kind in ("name", "at"):
         found.add(node.value)
     elif node.kind == "prop":
         found.add(node.value[0])
@@ -409,8 +407,9 @@ class Design:
             self.bad("rules", "missing; a list of rules, each one event: trigger, conditions, effects")
         else:
             self.rules = [rule for i, item in enumerate(rules) if (rule := self.read_rule(item, f"rules[{i}]", top=True))]
-            if len(self.all_rules()) > RULES_MAX:
-                self.bad("rules", f"{len(self.all_rules())} rules, sub-rules counted; at most {RULES_MAX}. Keep the "
+            count = len(self.all_rules())
+            if count > RULES_MAX:
+                self.bad("rules", f"{count} rules, sub-rules counted; at most {RULES_MAX}. Keep the "
                                   f"game small: one rule per thing the player does or the game does by itself")
             for name in self.inputs:
                 fired = [r for r in self.rules if r.on == name]
@@ -793,7 +792,7 @@ class Design:
 
         values = set(self.state)
 
-        def rule(r: Rule, allowed: set[str], tick: bool) -> None:
+        def rule(r: Rule, allowed: set[str]) -> None:
             for k, c in enumerate(r.when):
                 scope_ok(c, allowed, f"{r.path}.if[{k}]")
             for k, e in enumerate(r.do):
@@ -814,11 +813,11 @@ class Design:
                 elif e[0] == "restart" and r.on == "start":
                     self.bad(f"{r.path}.do[{k}]", "a start rule that restarts restarts forever")
             for c in r.children:
-                rule(c, allowed, tick)
+                rule(c, allowed)
 
         for r in self.rules:
             args = set(self.inputs[r.on]["args"]) if r.on in self.inputs else set()
-            rule(r, values | args | ({"dt"} if r.on == "tick" else set()), r.on == "tick")
+            rule(r, values | args | ({"dt"} if r.on == "tick" else set()))
         for key, node in (("win", self.win), ("lose", self.lose)):
             if node:
                 scope_ok(node, values, key)
@@ -867,9 +866,9 @@ def effect(text) -> tuple:
     index = None
     if p.peek("."):
         p.take(".")
-        if p.take()[1] != "At":
-            p.i -= 1
-            raise ModelError(object_member(s, name, p.take()[1]))
+        member = p.take()[1]
+        if member != "At":
+            raise ModelError(object_member(s, name, member))
         p.take("(")
         index = p.arguments()
         if not 1 <= len(index) <= 2:
@@ -1029,7 +1028,6 @@ class Sim:
         self.order = 0
         self.after_restart: list[tuple[str, object, object]] = []
         self.reset(first=True)
-        self.baseline = dict(self.values)
         self.run_start()
         self.baseline = dict(self.values)
         self.watch()
@@ -1060,12 +1058,8 @@ class Sim:
                 return TICK
             return self.values[node.value]
         if k == "at":
-            grid = self.arrays[node.value]
-            idx = [int(math.floor(num(self.ev(a, scope)))) for a in node.args] + [0]
-            x, y = idx[0], idx[1]
-            if 0 <= x < len(grid) and 0 <= y < len(grid[0]):
-                return grid[x][y]
-            return 0.0
+            cell = self.cell(node.value, node.args, scope)
+            return cell[0][cell[1]][cell[2]] if cell else 0.0
         if k == "prop":
             grid = self.arrays[node.value[0]]
             return float(len(grid) if node.value[1] == "Width" else len(grid[0]))
@@ -1128,6 +1122,16 @@ class Sim:
         if f == "choose":
             return self.rng.choice(a)
         raise ModelError(f"no function {f}")
+
+    def cell(self, name: str, index: list[Node], scope: dict) -> tuple[list[list[float]], int, int] | None:
+        """An Array's grid and the cell its indexes name, or None when they lie outside it. One index is
+        a column; the row is then 0."""
+        grid = self.arrays[name]
+        idx = [int(math.floor(num(self.ev(a, scope)))) for a in index] + [0]
+        x, y = idx[0], idx[1]
+        if 0 <= x < len(grid) and 0 <= y < len(grid[0]):
+            return grid, x, y
+        return None
 
     def unplaced(self, name: str) -> str:
         rule = self.rule
@@ -1258,20 +1262,22 @@ class Sim:
             self.restart_due = None
             self.restarts += 1
             self.pending = []
-            before = (dict(self.values), json.dumps(self.arrays))
+            before = self.snapshot() if self.settling else {}
             self.reset(first=False)
             self.run_start()
             if self.settling:
                 said = f"the restart of rule {rid}" + (f", started by {cause.strip()}" if cause.strip() else "")
-                old_arrays = json.loads(before[1])
-                for n in self.d.state:
-                    old = old_arrays.get(n) if n in self.arrays else before[0].get(n)
-                    if old != (self.arrays.get(n) if n in self.arrays else self.values.get(n)):
+                for n, now in self.snapshot().items():
+                    if before.get(n) != now:
                         self.late.setdefault(n, (rid, said))
             for n, s in self.d.state.items():
                 if s.kind != "array" and not s.keep and self.values[n] != self.baseline[n]:
                     self.after_restart.append((n, self.values[n], self.baseline[n]))
         self.watch()
+
+    def snapshot(self) -> dict[str, object]:
+        """Every state row's value now, an Array's grid copied."""
+        return {n: [col[:] for col in self.arrays[n]] if n in self.arrays else self.values.get(n) for n in self.d.state}
 
     def advance(self, seconds: float) -> None:
         for _ in range(max(1, round(seconds / TICK))):

@@ -61,15 +61,14 @@ class SearchWorkflow:
     def __init__(self, *, get_lookup_engine: LookupProvider) -> None:
         self._get_lookup_engine = get_lookup_engine
 
-    def run(self, request: SearchRequest | SearchCommand) -> SearchResponse:
+    def run(self, request: SearchRequest) -> SearchResponse:
         """Compatibility entry point accepting the historical HTTP request model."""
         from src.interfaces.http.presenters import (
             present_search_outcome,
             request_to_command,
         )
 
-        command = request if isinstance(request, SearchCommand) else request_to_command(request)
-        return present_search_outcome(self.execute(command))
+        return present_search_outcome(self.execute(request_to_command(request)))
 
     def execute(self, command: SearchCommand) -> SearchOutcome:
         """Run the canonical SOP and return transport-independent state."""
@@ -79,7 +78,7 @@ class SearchWorkflow:
             lang=command.lang or detect_language(command.query),
         )
 
-        self._validate(execution)
+        self._validate(command)
 
         execution.stage = SearchStage.LOOKUP
         lookup_started_at = time.perf_counter()
@@ -96,8 +95,7 @@ class SearchWorkflow:
         )
 
     @staticmethod
-    def _validate(execution: SearchExecution) -> None:
-        command = execution.command
+    def _validate(command: SearchCommand) -> None:
         if not command.query.strip():
             raise InvalidSearchRequestError("query must not be blank")
         if command.lang is not None and command.lang not in _LANGUAGES:

@@ -200,9 +200,9 @@ decision.
 ## 6. Entry points
 
 ```bash
-python scripts/setup.py                       # lookup server
+python scripts/setup.py                       # lookup service
 python scripts/init.py                        # refresh CDN data, export schemas
-python -m uvicorn src.api:app --port 8765     # server only
+python -m uvicorn src.api:app --port 8765     # service only
 python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 ```
 

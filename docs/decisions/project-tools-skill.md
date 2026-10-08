@@ -104,6 +104,21 @@ Each of these was a failure seen in an eval run or a game project.
   the layout's and the instance's size. The one run that met these lines
   read the right sizes; the other runs met none. The runs behind these
   three entries are in `.local/docs/evidence/skill-evals/`.
+- `isKeyDown` takes a `KeyboardKeyOrCode`, which the declaration types as
+  `number | string`. The manual says that the string is the physical key's
+  `KeyboardEvent.code`, such as `ShiftLeft`, so the `KeyboardEvent.key`
+  `Shift` never matches. In iteration 47 of `script-shift-and-edges` with
+  Haiku, 5 of 6 runs tested `"Shift"`, and holding Shift did nothing in
+  their game. So `lookup_script_api.py` prints a line under the
+  type and under each member that takes it: the code, with the test for
+  either Shift key. The line is keyed by the type, not by the member, so a
+  member that takes the type later gets the line too. With the line, 3 of
+  3 runs met it in their first lookup and tested `ShiftLeft` and
+  `ShiftRight` in their first edit. Without it, 3 of 3 runs searched the
+  clone for a key name after the lookup and found it in this repository's
+  own eval record, grader or preview tool. Before their first edit, they
+  read the clone outside its scripts 6 to 13 times. The runs with the line
+  did so 0 to 3 times, never for a key name.
 - A run that reads a size from `layouts/*.json` or `objectTypes/*.json`
   copies the numbers into a script and meets none of the lines above. A
   paragraph in `SKILL.md` that says to read sizes at run time does not stop

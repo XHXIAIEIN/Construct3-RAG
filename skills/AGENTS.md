@@ -52,8 +52,8 @@ the block for the project's instruction file.
   its check as steps for the agent's own browser tool where there is
   neither), take everything from flags,
   never prompt, print `--help` with examples and exit codes, and say in
-  every error what to write or run next. They find the project from
-  the current directory upward and this repository through the project's
+  every error what to write or run next. They find the project from the
+  current directory upward and this repository through the project's
   `Construct3-RAG:` line; what they share is in `scripts/c3project.py`.
 - What a script prints is read by a harness, not a terminal. It is UTF-8
   whatever the code page (`utf8_output`), and it stops at `--limit`, about
@@ -83,8 +83,12 @@ the block for the project's instruction file.
 - A script that changes a project file checks the result before it writes
   it, writes the whole file or nothing, in the editor's layout (tabs, LF, no
   newline at the end, the editor's keys in the editor's order), and has
-  `--dry-run`. `edit_sheet.py` is the one that does; the keys the editor
-  writes per kind of event, in order, are its templates.
+  `--dry-run`. `edit_sheet.py` is the one that does all of that; its
+  templates are the keys the editor writes per kind of event, in order. Two
+  more write `project.c3proj` and take `--dry-run`: `new_project.py` sets
+  the name and `uniqueId` of the copied template and leaves the check to
+  `check_project.py`; `export_project.py` replaces the version line once
+  the export carries it.
 - The skill's text and its scripts' own wording are English; `--locale`
   switches the schema wording a script prints, not the script's own.
 - A rule about what a project file must hold is read from the editor's loader

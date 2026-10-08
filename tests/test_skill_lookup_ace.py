@@ -264,11 +264,11 @@ def test_every_shared_template_writes_its_expressions_as_text(project):
     write: line into a sheet: the checker finds no parameter that should be an expression
     string. The placeholders, <variable> and the like, are findings of their own."""
     schema = REPO / "data" / "c3-schemas" / "en-US" / "plugins" / "sprite.json"
-    wanted = [(kind, ace) for kind in ("conditions", "actions")
-              for ace in json.loads(schema.read_text(encoding="utf-8"))["commonAces"][kind]]
+    common = json.loads(schema.read_text(encoding="utf-8"))["commonAces"]
+    wanted = [(kind, ace) for kind in ("condition", "action") for ace in common[kind + "s"]]
     with ThreadPoolExecutor(8) as pool:
-        outs = list(pool.map(lambda w: tool(project, "lookup_ace", "Coin", w[1], w[0][:-1])[1], wanted))
-    written = {"conditions": [], "actions": []}
+        outs = list(pool.map(lambda w: tool(project, "lookup_ace", "Coin", w[1], w[0])[1], wanted))
+    written = {"condition": [], "action": []}
     for n, ((kind, ace), out) in enumerate(zip(wanted, outs)):
         line = next((line for line in out.splitlines() if line.startswith(f'  write: {{"id": "{ace}"')), None)
         assert line, out
@@ -277,8 +277,8 @@ def test_every_shared_template_writes_its_expressions_as_text(project):
 
     def add(sheet):
         sheet["events"] += [{"eventType": "block", "conditions": [c], "actions": [], "sid": next(sid)}
-                            for c in written["conditions"]]
-        sheet["events"].append({"eventType": "block", "conditions": [], "actions": written["actions"], "sid": next(sid)})
+                            for c in written["condition"]]
+        sheet["events"].append({"eventType": "block", "conditions": [], "actions": written["action"], "sid": next(sid)})
     edit(project, SHEET, add)
     code, out = check(project, "--limit", "0")
     assert code == 1 and "<variable>" in out, out

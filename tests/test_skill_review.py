@@ -1,13 +1,13 @@
 """--review of print_sheet.py and check_project.py: a project someone asked about ends with what a review reports."""
-from tests.skill_helpers import tool
+from tests.skill_helpers import check, tool
 
 
 def test_check_project_says_what_a_review_reports_above_its_last_line(built):
-    code, out = tool(built, "check_project", "--review")
+    code, out = check(built, "--review")
     lines = out.splitlines()
     assert code == 0 and lines[-2].startswith("review: say first what the project does.")
     assert lines[-1].startswith("ok: ") and "next, review the design" not in lines[-1]
-    assert not any("is omitted; the editor fills its default" in line for line in lines)
+    assert "is omitted; the editor fills its default" not in out
 
 
 def test_print_sheet_ends_with_it_and_a_cut_print_still_names_the_rest(built):

@@ -120,9 +120,9 @@ with every stem on, set at −30 LUFS in the game.
 - Do not retune pitched sounds at random. For variation, use three variants
   and a random −1.5 to 0 dB. Retune by whole semitones
   (`rate = 2^(n/12)`), per play, on a one-off tag.
-- Pitched sounds follow the current chord. An immediate sound uses only
-  notes that fit every chord. A scheduled chord reads the chord of its
-  cell and retunes to it. A scale that climbs with the level is the
+- Pitched sounds follow the current chord. A scheduled chord reads the
+  chord of its cell and retunes to it; an immediate sound uses the notes
+  of "Immediate or on the grid". A scale that climbs with the level is the
   cheapest success sound in games, and the game uses a different root
   each time.
 

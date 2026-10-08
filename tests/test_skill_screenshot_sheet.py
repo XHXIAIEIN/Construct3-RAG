@@ -1,17 +1,6 @@
 """screenshot_sheet.py: what it refuses before it starts a browser. Taking the picture needs the
 editor online and is checked by running the script on a project, not here."""
-import sys
-
-from tests.skill_helpers import SKILL, INSTALLED, run
-
-
-def module():
-    sys.path.insert(0, str(SKILL / "scripts"))
-    try:
-        import screenshot_sheet as ss
-    finally:
-        sys.path.pop(0)
-    return ss
+from tests.skill_helpers import SKILL, INSTALLED, run, script_module
 
 
 def test_screenshot_sheet_prints_its_help(project):
@@ -32,7 +21,7 @@ def test_screenshot_sheet_needs_a_project(tmp_path):
 
 
 def test_screenshot_sheet_keeps_the_picture_inside_the_sheet_view():
-    clip = module().clip
+    clip = script_module("screenshot_sheet").clip
     view = {"left": 300, "top": 34, "right": 1500}
     assert clip({"left": 300, "top": 34, "right": 1200, "bottom": 600}, view) == \
         {"x": 300, "y": 34, "width": 910, "height": 576, "scale": 1}

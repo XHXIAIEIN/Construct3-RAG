@@ -45,7 +45,10 @@ such run was read, and in each the defect was real:
 - a label counts the collected coin until that coin is destroyed;
 - two tap events both fire on one touch, so the turn passes twice;
 - a player clamped by its centre, or by its unrotated width, leaves the
-  layout.
+  layout;
+- the speed tests `isKeyDown("Shift")`, but `isKeyDown` matches a key's
+  code (`ShiftLeft`, `ShiftRight`), never `Shift`, so holding Shift does
+  not double it.
 
 The file assertions failed one run that works: its countdown reads the
 system expression `time`. The same replays found mistakes in the plans,
@@ -78,8 +81,8 @@ Option 3, beside the file assertions, which stay.
   finds it by what it does: the UI instance that widens when a coin is
   collected is the fill. A `tick2` listener reads what moves between two
   samples, and `afteranylayoutstart` counts the restarts.
-- Requests a plan cannot play stay file assertions: an answer about events,
-  a design, and a key held with another key, since a `key` step holds one.
+- Requests a plan cannot play stay file assertions: an answer about events
+  and a design.
 - Cases. Four cases cover the requests agents fail most: a double jump on
   the platformer template (character), a ship kept on a screen smaller than
   its layout (layout and movement), walls the player walks through

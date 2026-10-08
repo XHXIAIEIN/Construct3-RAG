@@ -42,6 +42,13 @@ from src.ingest.common_aces import (
 from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 
 
+def _bundle_text(fetcher: C3Fetcher, local: Path | None, endpoint: str) -> str:
+    """The text of an editor bundle: the local copy when one is given, else the release's on the CDN."""
+    if local:
+        return local.read_text(encoding="utf-8", errors="replace")
+    return fetcher.fetch_raw(ENDPOINTS[endpoint]).decode("utf-8", errors="replace")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Extract shared ACE definitions from main.js")
     parser.add_argument("--main-js", type=Path, help="Use a local main.js instead of fetching it")
@@ -62,16 +69,9 @@ def main() -> None:
     if not lang_common:
         sys.exit("en-US language pack has no plugins._common section")
 
-    if args.main_js:
-        main_js = args.main_js.read_text(encoding="utf-8", errors="replace")
-        source_version = args.release or "local file " + args.main_js.name
-    else:
-        main_js = fetcher.fetch_raw(ENDPOINTS["main_js"]).decode("utf-8", errors="replace")
-        source_version = latest
-    if args.plugins_js:
-        plugins_js = args.plugins_js.read_text(encoding="utf-8", errors="replace")
-    else:
-        plugins_js = fetcher.fetch_raw(ENDPOINTS["plugin_js"]).decode("utf-8", errors="replace")
+    main_js = _bundle_text(fetcher, args.main_js, "main_js")
+    plugins_js = _bundle_text(fetcher, args.plugins_js, "plugin_js")
+    source_version = (args.release or "local file " + args.main_js.name) if args.main_js else latest
 
     categories = extract_common_aces(main_js, lang_common)
     check_common_coverage(categories, lang_common)

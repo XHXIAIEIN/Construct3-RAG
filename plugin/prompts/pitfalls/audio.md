@@ -42,9 +42,9 @@ which runs Web Audio).
 - The project property *Preload sounds* loads the files of the Sounds folder
   only, never those of the Music folder. *Unload audio* and *Unload audio
   (by name)* release a file's data and stop every instance still playing
-  it. So a track unloaded while *Fade volume*
-  takes it down is cut in the middle of the fade. Unload a track in *On fade
-  ended* for its tag, or after its fade has had its full time. [manual:
+  it. So a track unloaded while *Fade volume* takes it down is cut in the
+  middle of the fade. Unload a track in *On fade ended* for its tag, or after
+  its fade has had its full time. [manual:
   plugin-reference/audio.md "Preloading sounds", "Audio memory actions";
   runtime: c3runtime.js `GetAudioToPreload` skips a file with `isMusic`;
   main.js `_Unload` calls the buffer's `Release`, which calls
@@ -62,8 +62,8 @@ which runs Web Audio).
   that the browser grants only after input, on the same tap
   ([input.md](input.md)). Music played on that screen starts at the same
   tap, as the game begins. So a track meant for the title screen needs a
-  screen that waits for a second tap. A mobile app export has no
-  such limit, and an installed web app may have none.
+  screen that waits for a second tap. A mobile app export has no such limit,
+  and an installed web app may have none.
   [manual: plugin-reference/audio.md "Autoplay restrictions"; example:
   detecting-input-method, `Title events`: a flashing prompt, then one event
   per input method that sets a global and goes to the game]

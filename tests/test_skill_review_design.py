@@ -1,24 +1,15 @@
 """review_design.py: each kept rule on a small project that has the shape and on one that
 has the sound form beside it, and what the run prints. The rules are pure functions of
 the parsed sheets; the projects are written here, the smallest the Project class reads."""
-import json
-import sys
 from pathlib import Path
 
-from tests.skill_helpers import REPO, SKILL, edit, run
+from tests.skill_helpers import REPO, SKILL, edit, run, script_module, folder_project
 
 SCRIPT = SKILL / "scripts" / "review_design.py"
 SID = iter(range(100_000_000_000_001, 100_000_000_099_999))
 
 
-def module():
-    sys.path.insert(0, str(SKILL / "scripts"))
-    try:
-        import c3project as c3
-        import review_design as rd
-    finally:
-        sys.path.pop(0)
-    return c3, rd
+c3, rd = script_module("c3project"), script_module("review_design")
 
 
 # --- writing a project ---------------------------------------------------------------------
@@ -61,27 +52,17 @@ def write(root: Path, sheets: dict, types: dict, layouts: dict | None = None) ->
     """A folder project: sheets {name: events}, types {name: (plugin, [instance variable names])},
     layouts {name: sheet}."""
     layouts = layouts if layouts is not None else {name: name for name in sheets}
-    for folder in ("eventSheets", "objectTypes", "layouts"):
-        (root / folder).mkdir(parents=True, exist_ok=True)
-    for name, events in sheets.items():
-        (root / "eventSheets" / f"{name}.json").write_text(json.dumps({"name": name, "events": events}), "utf-8")
-    for name, (plugin, ivars) in types.items():
-        (root / "objectTypes" / f"{name}.json").write_text(json.dumps({
-            "name": name, "plugin-id": plugin, "sid": next(SID), "isGlobal": False, "behaviorTypes": [],
-            "instanceVariables": [{"name": v, "type": "number", "sid": next(SID)} for v in ivars]}), "utf-8")
-    for name, sheet in layouts.items():
-        (root / "layouts" / f"{name}.json").write_text(json.dumps({"name": name, "eventSheet": sheet, "layers": []}),
-                                                       "utf-8")
-    listing = {k: {"items": list(v), "subfolders": []} for k, v in
-               (("eventSheets", sheets), ("objectTypes", types), ("layouts", layouts))}
-    (root / "project.c3proj").write_text(json.dumps({"name": root.name, "families": {"items": [], "subfolders": []},
-                                                     **listing}), "utf-8")
-    return root
+    return folder_project(
+        root, sheets,
+        {name: {"plugin-id": plugin, "sid": next(SID), "isGlobal": False, "behaviorTypes": [],
+                "instanceVariables": [{"name": v, "type": "number", "sid": next(SID)} for v in ivars]}
+         for name, (plugin, ivars) in types.items()},
+        {name: {"eventSheet": sheet, "layers": []} for name, sheet in layouts.items()},
+        families={"items": [], "subfolders": []})
 
 
 def found(root: Path) -> list[tuple]:
     """(rule, variant, ask, sheet, event) of every candidate a rule kept."""
-    c3, rd = module()
     d = rd.Design.of(c3.Project(root, REPO, "en-US", c3.Findings()))
     return [(f["rule"], f["variant"], f["ask"], f["sheet"], f["event"]) for f in rd.review(d)]
 
@@ -250,14 +231,12 @@ def test_merge_game_expression_that_repeats_a_long_call(tmp_path):
 
 def test_expression_shape_keeps_texts_apart():
     """Get("a") and Get("b") are two calls; a parenthesis inside a text is not counted."""
-    _, rd = module()
     assert rd.expression_shape('CardTable.Get("a") & CardTable.Get("b")') == (1, "")
     assert rd.expression_shape('f(g("((("), g("((("))')[0] == 2
 
 
 def test_numbering_follows_print_sheet(tmp_path):
     """Variables and comments take no number; groups, functions and sub-events do."""
-    _, rd = module()
     rows = list(rd.walk("S", [var("x"), {"eventType": "group", "title": "G", "sid": 1, "children": [
         {"eventType": "comment", "text": "c"}, ev([], [], [ev([])])]}, function("f", [ev([])])]))
     assert [(r.kind, r.n) for r in rows] == [("variable", 1), ("group", 1), ("comment", 2), ("block", 2),

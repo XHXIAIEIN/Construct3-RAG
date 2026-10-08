@@ -39,7 +39,7 @@ but the set kept its shape:
   and the alternatives that fed only nDCG are gone.
 - Both eval scripts are deleted. The cases of `eval_lookup.py` that the set
   lacked (bare addon names, `Sprite 重叠`, `Sprite字体`, an unqualified
-  `simulateControl`, `custom action`) are gold cases now.
+  `simulateControl`, `custom action`) are gold cases.
 - `LookupEngine` loses `directed_aliases_provider`, which only the `literal`
   strategy used.
 - A declined query is the `declined` intent and task family, and the

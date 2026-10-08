@@ -78,10 +78,11 @@ Sources and the rule for adding an entry are in the index,
   pointer: the one on the highest layer, then the one highest in Z order on
   that layer. It considers only instances whose behavior is enabled and
   whose layer is interactive, of every object type that has the behavior. It
-  ignores visibility, of the instance and of its layer. A popup without Drag & Drop takes no part, so the pieces under it
-  can still be dragged, and a hidden piece or a piece on a hidden layer is
-  dragged too. To stop drags while a popup shows, turn the pieces' layer off
-  with *Set layer interactive*, or the behavior with *Set enabled*. [runtime:
+  ignores visibility, of the instance and of its layer. A popup without
+  Drag & Drop takes no part, so the pieces under it can still be dragged, and
+  a hidden piece or a piece on a hidden layer is dragged too. To stop drags
+  while a popup shows, turn the pieces' layer off with
+  *Set layer interactive*, or the behavior with *Set enabled*. [runtime:
   exported c3runtime.js r504, `Behaviors.DragnDrop` `_OnInputDown` skips an
   instance whose behavior is disabled or whose layer fails
   `IsSelfAndParentsInteractive`, then keeps the instance with the highest

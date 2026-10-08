@@ -1,14 +1,11 @@
 """The version build_plugin.py writes into plugin.json: the published one while the plugin's files are
 the published files, its patch raised by one once they differ, never below the floor
 (docs/decisions/plugin-tracks-commits.md)."""
-import shutil
-import subprocess
 from pathlib import Path
-
-import pytest
 
 from scripts import build_plugin
 from scripts.build_plugin import release_version
+from tests.skill_helpers import NEEDS_GIT, git
 
 PUBLISHED = {"README.md": "a1", "skills/x/SKILL.md": "b1"}
 
@@ -48,11 +45,6 @@ def test_blob_id_is_the_id_git_gives():
     assert build_plugin.blob_id(b"hello\n") == "ce013625030ba8dba906f756967f9e9ca394464a"
 
 
-def git(cwd: Path, *args: str, check: bool = True) -> None:
-    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=cwd, check=check,
-                   capture_output=True)
-
-
 def commit(repo: Path, files: dict[str, bytes], message: str) -> None:
     for rel, data in files.items():
         (repo / rel).parent.mkdir(parents=True, exist_ok=True)
@@ -61,7 +53,7 @@ def commit(repo: Path, files: dict[str, bytes], message: str) -> None:
     git(repo, "commit", "-q", "-m", message)
 
 
-@pytest.mark.skipif(not shutil.which("git"), reason="git is not installed")
+@NEEDS_GIT
 def test_published_reads_the_commit_shared_with_origin_main_or_head(tmp_path, monkeypatch):
     monkeypatch.setattr(build_plugin, "ROOT", tmp_path)
     git(tmp_path, "init", "-q", "-b", "main")

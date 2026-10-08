@@ -20,6 +20,7 @@ from src.lookup.schema_layout import (
 
 logger = logging.getLogger(__name__)
 
+
 def _is_ascii_identifier_char(char: str) -> bool:
     return char == "_" or "0" <= char <= "9" or "a" <= char.lower() <= "z"
 
@@ -29,6 +30,101 @@ def _is_whole_word(text: str, start: int, end: int) -> bool:
     return (start == 0 or not _is_ascii_identifier_char(text[start - 1])) and (
         end == len(text) or not _is_ascii_identifier_char(text[end])
     )
+
+
+def _find_whole_word(text: str, needle: str) -> tuple[int, int] | None:
+    """Span of the first occurrence of ``needle`` that stands as a whole word.
+
+    A non-ASCII needle has no word boundaries, so its first occurrence counts.
+    """
+    start = text.find(needle)
+    while start >= 0:
+        end = start + len(needle)
+        if not needle.isascii() or _is_whole_word(text, start, end):
+            return start, end
+        start = text.find(needle, start + 1)
+    return None
+
+
+def _localized(zh_map: Any, key: str) -> dict:
+    """The zh-CN record for ``key``, or an empty one when the pack has none."""
+    return zh_map.get(key, {}) if isinstance(zh_map, dict) else {}
+
+
+def _merge_param(param_id: str, en_param: dict, zh_param: dict) -> dict[str, Any]:
+    name_en = en_param.get("name", param_id)
+    param: dict[str, Any] = {
+        "id": param_id,
+        "type": en_param.get("type", "any"),
+        "name_en": name_en,
+        "name_zh": zh_param.get("name", name_en),
+        "desc_en": en_param.get("desc", ""),
+        "desc_zh": zh_param.get("desc", ""),
+    }
+    if "items" in en_param:
+        en_items = en_param["items"]
+        if isinstance(en_items, dict):
+            zh_items = zh_param.get("items", {})
+            if not isinstance(zh_items, dict):
+                zh_items = {}
+            param["items"] = list(en_items.keys())
+            param["items_i18n"] = {
+                key: {"en": value, "zh": zh_items.get(key, value)}
+                for key, value in en_items.items()
+            }
+        else:
+            param["items"] = en_items
+    if en_param.get("initialValue"):
+        param["initialValue"] = en_param["initialValue"]
+    return param
+
+
+def _merge_ace(ace_type: str, en_item: dict, zh_item: dict) -> dict[str, Any]:
+    ace_id = en_item.get("id", "")
+    name_key = "translated-name" if ace_type == "expressions" else "list-name"
+    name_en = en_item.get(name_key, ace_id)
+    entry: dict[str, Any] = {
+        "id": ace_id,
+        "name_en": name_en,
+        "name_zh": zh_item.get(name_key, name_en),
+        "description_en": en_item.get("description", ""),
+        "description_zh": zh_item.get("description", ""),
+        "display_en": en_item.get("display-text", ""),
+        "display_zh": zh_item.get("display-text", ""),
+        "scriptName": en_item.get("scriptName", ""),
+        "category": en_item.get("category", ""),
+    }
+
+    en_params = en_item.get("params", {})
+    zh_params = zh_item.get("params", {})
+    params_list: list[dict[str, Any]] = []
+    if isinstance(en_params, dict):
+        params_list = [
+            _merge_param(param_id, en_param, _localized(zh_params, param_id))
+            for param_id, en_param in en_params.items()
+        ]
+    elif isinstance(en_params, list):
+        params_list = en_params
+    entry["params"] = params_list
+
+    if en_item.get("isTrigger"):
+        entry["isTrigger"] = True
+    if en_item.get("isAsync"):
+        entry["isAsync"] = True
+    if en_item.get("returnType"):
+        entry["returnType"] = en_item["returnType"]
+    return entry
+
+
+def _merge_property(property_id: str, en_property: dict, zh_property: dict) -> dict[str, Any]:
+    name_en = en_property.get("name", property_id)
+    return {
+        "id": property_id,
+        "name_en": name_en,
+        "name_zh": zh_property.get("name", name_en),
+        "description_en": en_property.get("desc", ""),
+        "description_zh": zh_property.get("desc", ""),
+    }
 
 
 def _merge_bilingual(en: dict, zh: dict) -> dict:
@@ -46,107 +142,20 @@ def _merge_bilingual(en: dict, zh: dict) -> dict:
     }
 
     for ace_type in SCHEMA_ACE_TYPES:
-        zh_map = {
-            item.get("id", ""): item for item in zh.get(ace_type, [])
-        }
-        merged_items = []
-        for en_item in en.get(ace_type, []):
-            ace_id = en_item.get("id", "")
-            zh_item = zh_map.get(ace_id, {})
-            entry: dict[str, Any] = {"id": ace_id}
-            if ace_type == "expressions":
-                entry["name_en"] = en_item.get("translated-name", ace_id)
-                entry["name_zh"] = zh_item.get(
-                    "translated-name", entry["name_en"]
-                )
-            else:
-                entry["name_en"] = en_item.get("list-name", ace_id)
-                entry["name_zh"] = zh_item.get("list-name", entry["name_en"])
-
-            entry["description_en"] = en_item.get("description", "")
-            entry["description_zh"] = zh_item.get("description", "")
-            entry["display_en"] = en_item.get("display-text", "")
-            entry["display_zh"] = zh_item.get("display-text", "")
-            entry["scriptName"] = en_item.get("scriptName", "")
-            entry["category"] = en_item.get("category", "")
-
-            en_params = en_item.get("params", {})
-            zh_params = zh_item.get("params", {})
-            params_list: list[dict[str, Any]] = []
-            if isinstance(en_params, dict):
-                for param_id, en_param in en_params.items():
-                    zh_param = (
-                        zh_params.get(param_id, {})
-                        if isinstance(zh_params, dict)
-                        else {}
-                    )
-                    param: dict[str, Any] = {
-                        "id": param_id,
-                        "type": en_param.get("type", "any"),
-                        "name_en": en_param.get("name", param_id),
-                        "name_zh": zh_param.get(
-                            "name", en_param.get("name", param_id)
-                        ),
-                        "desc_en": en_param.get("desc", ""),
-                        "desc_zh": zh_param.get("desc", ""),
-                    }
-                    if "items" in en_param:
-                        en_items = en_param["items"]
-                        param["items"] = (
-                            list(en_items.keys())
-                            if isinstance(en_items, dict)
-                            else en_items
-                        )
-                        zh_items = zh_param.get("items", {})
-                        if isinstance(en_items, dict):
-                            param["items_i18n"] = {
-                                key: {
-                                    "en": value,
-                                    "zh": (
-                                        zh_items.get(key, value)
-                                        if isinstance(zh_items, dict)
-                                        else value
-                                    ),
-                                }
-                                for key, value in en_items.items()
-                            }
-                    if en_param.get("initialValue"):
-                        param["initialValue"] = en_param["initialValue"]
-                    params_list.append(param)
-            elif isinstance(en_params, list):
-                params_list = en_params
-            entry["params"] = params_list
-
-            if en_item.get("isTrigger"):
-                entry["isTrigger"] = True
-            if en_item.get("isAsync"):
-                entry["isAsync"] = True
-            if en_item.get("returnType"):
-                entry["returnType"] = en_item["returnType"]
-            merged_items.append(entry)
-        merged[ace_type] = merged_items
+        zh_map = {item.get("id", ""): item for item in zh.get(ace_type, [])}
+        merged[ace_type] = [
+            _merge_ace(ace_type, en_item, zh_map.get(en_item.get("id", ""), {}))
+            for en_item in en.get(ace_type, [])
+        ]
 
     en_properties = en.get("properties", {})
     zh_properties = zh.get("properties", {})
-    properties = []
+    properties: list[dict[str, Any]] = []
     if isinstance(en_properties, dict):
-        for property_id, en_property in en_properties.items():
-            zh_property = (
-                zh_properties.get(property_id, {})
-                if isinstance(zh_properties, dict)
-                else {}
-            )
-            properties.append(
-                {
-                    "id": property_id,
-                    "name_en": en_property.get("name", property_id),
-                    "name_zh": zh_property.get(
-                        "name", en_property.get("name", property_id)
-                    ),
-                    "description_en": en_property.get("desc", ""),
-                    "description_zh": zh_property.get("desc", ""),
-                }
-            )
+        properties = [
+            _merge_property(property_id, en_property, _localized(zh_properties, property_id))
+            for property_id, en_property in en_properties.items()
+        ]
     elif isinstance(en_properties, list):
         properties = en_properties
     merged["properties"] = properties
@@ -206,8 +215,6 @@ class SchemaIndex:
                 continue
 
             for path in sorted(en_dir.glob("*.json")):
-                if path.stem == "index":
-                    continue
                 try:
                     en_data = json.loads(path.read_text(encoding="utf-8"))
                     zh_path = zh_dir / path.name
@@ -309,16 +316,12 @@ class SchemaIndex:
         query_lower = query.lower()
         candidates: list[tuple[int, int, int, str, bool]] = []
         for registered, (plugin_id, is_behavior) in self._name_map.items():
-            start = query_lower.find(registered)
-            while start >= 0:
-                end = start + len(registered)
-                if registered.isascii() and not _is_whole_word(query_lower, start, end):
-                    start = query_lower.find(registered, start + 1)
-                    continue
+            span = _find_whole_word(query_lower, registered)
+            if span is not None:
+                start, end = span
                 candidates.append(
                     (len(registered), -start, end, plugin_id, is_behavior)
                 )
-                break
         if not candidates:
             return None
         _, negative_start, end, plugin_id, is_behavior = max(candidates)
@@ -362,6 +365,19 @@ class SchemaIndex:
                 return None
         en, zh = records["en-US"], records["zh-CN"]
         zh_params = {param.get("id"): param for param in zh.get("parameters", [])}
+        params = []
+        for param in en.get("parameters", []):
+            zh_param = zh_params.get(param.get("id"), {})
+            params.append(
+                {
+                    "id": param.get("id", ""),
+                    "type": param.get("type", ""),
+                    "name_en": param.get("name", ""),
+                    "name_zh": zh_param.get("name", ""),
+                    "desc_en": param.get("desc", ""),
+                    "desc_zh": zh_param.get("desc", ""),
+                }
+            )
         effect = {
             "id": effect_id,
             "name_en": en.get("name", effect_id),
@@ -369,17 +385,7 @@ class SchemaIndex:
             "description_en": en.get("description", ""),
             "description_zh": zh.get("description", ""),
             "category": en.get("category", ""),
-            "params": [
-                {
-                    "id": param.get("id", ""),
-                    "type": param.get("type", ""),
-                    "name_en": param.get("name", ""),
-                    "name_zh": zh_params.get(param.get("id"), {}).get("name", ""),
-                    "desc_en": param.get("desc", ""),
-                    "desc_zh": zh_params.get(param.get("id"), {}).get("desc", ""),
-                }
-                for param in en.get("parameters", [])
-            ],
+            "params": params,
         }
         self._effects[effect_id] = effect
         return effect

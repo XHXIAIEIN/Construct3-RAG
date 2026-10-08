@@ -1,11 +1,13 @@
 """lookup_script_api.py: the scripting API's interfaces and members, with the file and line of each."""
 from tests.skill_helpers import REPO, install, new_project, tool
 
+TS_DEFS = f"{REPO.as_posix()}/data/c3-ts-defs"    # the header line prints the declaration's file as a posix path
+
 
 def test_an_addon_by_name_prints_its_interface_and_what_it_extends(built):
     code, out = tool(built, "lookup_script_api", "Timer")
     assert code == 0
-    assert out.startswith(f"class ITimerBehaviorInstance   {REPO.as_posix()}/data/c3-ts-defs/behaviors/general/timer/")
+    assert out.startswith(f"class ITimerBehaviorInstance   {TS_DEFS}/behaviors/general/timer/")
     assert "  startTimer(duration: number, name: string, type?: TimerBehaviorTimerType): void;" in out
     assert "members of IBehaviorInstance are ITimerBehaviorInstance's too" in out
 
@@ -14,7 +16,7 @@ def test_a_member_prints_its_interface_declaration_and_doc(built):
     """A member of an instance, such as runtime.callFunction, prints its interface, declaration and doc comment."""
     code, out = tool(built, "lookup_script_api", "runtime.callFunction")
     assert code == 0
-    assert out.startswith(f"IRuntime.callFunction   {REPO.as_posix()}/data/c3-ts-defs/preview/interfaces/IRuntime.d.ts:")
+    assert out.startswith(f"IRuntime.callFunction   {TS_DEFS}/preview/interfaces/IRuntime.d.ts:")
     assert "callFunction(name: string, ...params: CallFunctionParameter[]): CallFunctionReturnValue;" in out
     assert "/** Call a function in an event sheet" in out
 
@@ -37,6 +39,17 @@ def test_a_size_member_says_what_it_measures(built):
     lines = out.splitlines()
     notes = [i for i, line in enumerate(lines) if line.startswith("  -- the project's viewport size")]
     assert len(notes) == 1 and lines[notes[0] - 1] == "  getViewportSize(): Vec2Arr;", out
+
+
+def test_a_member_that_takes_a_key_says_it_is_the_code(built):
+    # isKeyDown matches KeyboardEvent.code ("ShiftLeft"), never KeyboardEvent.key ("Shift")
+    for name in ("isKeyDown", "Keyboard", "KeyboardKeyOrCode"):
+        code, out = tool(built, "lookup_script_api", name)
+        assert code == 0
+        assert '  -- KeyboardKeyOrCode is a physical key\'s KeyboardEvent.code, such as "KeyA"' in out, out
+        assert 'isKeyDown("ShiftLeft") || isKeyDown("ShiftRight")' in out, out
+    code, out = tool(built, "lookup_script_api", "IRuntime")
+    assert "KeyboardEvent.code" not in out, out
 
 
 def test_a_name_the_api_does_not_declare_prints_the_near_ones(built):

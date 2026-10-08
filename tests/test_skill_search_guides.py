@@ -1,12 +1,8 @@
 """search_guides.py: the pitfall entries and official examples that hold the words."""
 import json
-import shutil
-import subprocess
 from pathlib import Path
 
-import pytest
-
-from tests.skill_helpers import REPO, SKILL, run, tool
+from tests.skill_helpers import REPO, SKILL, NEEDS_GIT, git, run, tool
 
 
 def test_the_entry_with_most_of_the_words_comes_first_in_full(built):
@@ -63,7 +59,7 @@ def test_examples_are_found_beside_the_clone_when_the_scripts_run_from_its_plugi
     assert f'print_sheet.py --project "{example}"' in out, out
 
 
-@pytest.mark.skipif(not shutil.which("git"), reason="git is not installed")
+@NEEDS_GIT
 def test_examples_are_found_beside_the_main_working_tree_from_a_git_worktree(tmp_path):
     """A worktree of the clone lies inside it, under .claude/worktrees/, and the worktree has its own plugin/
     folder. The example projects lie beside the main working tree, which the worktree's .git file and the
@@ -72,8 +68,7 @@ def test_examples_are_found_beside_the_main_working_tree_from_a_git_worktree(tmp
     main.mkdir()
     for args in (("init", "-q"), ("commit", "-q", "--allow-empty", "-m", "first"),
                  ("worktree", "add", "-q", "-b", "agent", str(main / ".claude" / "worktrees" / "agent"))):
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=main, check=True,
-                       capture_output=True, timeout=60)
+        git(main, *args)
     worktree = fake_rag(main / ".claude" / "worktrees" / "agent", snake=True)
     plugin = fake_rag(worktree / "plugin", snake=True)
     example = tmp_path / "Construct-Example-Projects" / "example-projects" / "template-snake"

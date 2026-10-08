@@ -69,7 +69,6 @@ def _manifest_entry(
         relative_file.is_absolute()
         or ".." in relative_file.parts
         or relative_file.suffix.lower() != ".json"
-        or not relative_file.parts
         or relative_file.parts[0] != addon_type
     ):
         raise SchemaManifestError(
@@ -195,9 +194,8 @@ def schema_is_complete(root: Path) -> bool:
 
     for entries in manifest.sections.values():
         for entry in entries.values():
-            relative_path = Path(*entry.relative_file.parts)
             for locale in SCHEMA_LOCALES:
-                if not _schema_file_is_valid(root / locale / relative_path):
+                if not _schema_file_is_valid(root / locale / entry.relative_file):
                     return False
     return all(
         _locale_index_is_valid(root, locale, manifest) for locale in SCHEMA_LOCALES

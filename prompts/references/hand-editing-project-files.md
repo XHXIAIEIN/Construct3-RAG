@@ -124,8 +124,8 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   on the member, the editor saves the call with
   `"customActionObjectClass": "<family>"`. A call that runs the member's own
   block is saved without it. A call written without the key still loads.
-  [observed: Merge Game, r504, October 2026: 13 calls on `base` and `body`
-  gained it on save, the calls of `base`'s own `arm` and `toTop` did not]
+  [observed in a game project, r504, October 2026: 13 calls on two member
+  types gained it on save, the calls of one member's own two blocks did not]
 - A `projectfile` parameter is the bare file name for a file at the root
   (`"file": "DefaultProfile.json"`) and `"file": {"path": "data/enemy.json"}`
   for a file in a subfolder. A bare name for a subfolder file loads and is
@@ -319,8 +319,8 @@ game project the editor r504 opened and previewed on 2026-09-30.
   of the custom eases the timeline uses. The editor reads them only when the
   timeline is pasted, so `[]` is right in a file. [editor r504
   `projectResources.js`; the exported `c3runtime.js` has no `virtualPosition`;
-  observed: Merge Game, r504, October 2026: 2047 written with and without
-  `version` came back 16383]
+  observed in a game project, r504, October 2026: 2047 written with and
+  without `version` came back 16383]
 
 ## Naming an event to the user
 

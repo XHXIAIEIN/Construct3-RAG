@@ -161,9 +161,7 @@ class ExamplesIndex:
                 slug = record.get("slug", "")
                 if not slug:
                     continue
-                if slug not in scores:
-                    scores[slug] = {"record": record, "score": 0}
-                scores[slug]["score"] += 1
+                scores.setdefault(slug, {"record": record, "score": 0})["score"] += 1
 
         def names_addon(text: str) -> bool:
             return bool(pattern and pattern.search(text.lower()))
@@ -183,17 +181,22 @@ class ExamplesIndex:
         return [item["record"] for item in ranked[:max_results]]
 
     @staticmethod
-    def format_for_ace(records: list[dict[str, Any]]) -> str:
-        """Compact format for appending example links to ACE results."""
-        parts = [
-            f"{record['title']} ({record['slug']})"
-            for record in records
-            if record.get("slug")
-        ]
+    def _related_examples(parts: list[str]) -> str:
         return "Related examples: " + ", ".join(parts) if parts else ""
 
-    @staticmethod
-    def format_for_find(records: list[dict[str, Any]]) -> str:
+    @classmethod
+    def format_for_ace(cls, records: list[dict[str, Any]]) -> str:
+        """Compact format for appending example links to ACE results."""
+        return cls._related_examples(
+            [
+                f"{record['title']} ({record['slug']})"
+                for record in records
+                if record.get("slug")
+            ]
+        )
+
+    @classmethod
+    def format_for_find(cls, records: list[dict[str, Any]]) -> str:
         """Format example-find results with genre and behavior hints."""
         parts = []
         for record in records:
@@ -202,4 +205,4 @@ class ExamplesIndex:
             tag_parts = record.get("genres", []) + record.get("behaviors", [])
             tag_text = f" [{', '.join(tag_parts[:3])}]" if tag_parts else ""
             parts.append(f"{record['title']} ({record['slug']}){tag_text}")
-        return "Related examples: " + ", ".join(parts) if parts else ""
+        return cls._related_examples(parts)

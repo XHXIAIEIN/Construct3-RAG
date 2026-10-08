@@ -2,7 +2,7 @@
 """One-command setup for Construct3-RAG.
 
 Usage:
-    python scripts/setup.py                 # install deps, start the lookup server
+    python scripts/setup.py                 # install deps, start the lookup service
     python scripts/setup.py --refresh-data  # explicitly refresh Construct data
     python scripts/setup.py --version <release>  # refresh data/ from a specific release
 """

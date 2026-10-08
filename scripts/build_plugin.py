@@ -28,6 +28,7 @@ docs/decisions/plugin-tracks-commits.md.
 exit codes: 0 built or equal, 1 plugin/ differs or breaks a limit
 """
 import argparse
+import contextlib
 import filecmp
 import hashlib
 import json
@@ -35,6 +36,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Iterator
 from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -63,7 +65,7 @@ IMAGES = (".png",)
 
 
 def tracked(path: str) -> list[str]:
-    """The files under path that Git tracks or would track, in the order git lists them."""
+    """The files under path that Git tracks or would track, sorted."""
     p = subprocess.run(["git", "-C", str(ROOT), "ls-files", "--cached", "--others", "--exclude-standard", "--", path],
                        capture_output=True, text=True, encoding="utf-8", check=True)
     return sorted({line for line in p.stdout.splitlines()
@@ -83,19 +85,20 @@ def copy(src: Path, dst: Path) -> None:
     dst.write_bytes(data if src.name.endswith(IMAGES) else data.replace(b"\r\n", b"\n"))
 
 
+def dump(bundle: dict[str, str]) -> str:
+    """A bundle as the text of its file."""
+    return json.dumps(bundle, ensure_ascii=False, indent=1, sort_keys=True) + "\n"
+
+
 def bundles(folder: str, pattern: str) -> list[tuple[str, str]]:
     """The bundles of a folder, <folder>.bundle-<n>.json, each under BUNDLE_SIZE."""
-    files = {}
+    out: list[str] = []
+    part: dict[str, str] = {}
     for rel in tracked(folder):
         inner = rel[len(folder) + 1:]
-        if PurePosixPath(inner).match(pattern) and "sdk" not in inner.split("/"):
-            files[inner] = (ROOT / rel).read_text(encoding="utf-8-sig")
-    out, part = [], {}
-
-    def dump(d: dict) -> str:
-        return json.dumps(d, ensure_ascii=False, indent=1, sort_keys=True) + "\n"
-
-    for inner, text in files.items():
+        if not PurePosixPath(inner).match(pattern) or "sdk" in inner.split("/"):
+            continue
+        text = (ROOT / rel).read_text(encoding="utf-8-sig")
         if part and len(dump({**part, inner: text}).encode("utf-8")) > BUNDLE_SIZE:
             out.append(dump(part))
             part = {}
@@ -107,7 +110,7 @@ def bundles(folder: str, pattern: str) -> list[tuple[str, str]]:
 
 def lang_subset(locale: str) -> str:
     pack = json.loads((ROOT / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8-sig"))
-    out: dict = {}
+    out: dict[str, dict] = {}
     for keys in LANG_KEYS:
         src, dst = pack, out
         for k in keys[:-1]:
@@ -115,7 +118,7 @@ def lang_subset(locale: str) -> str:
         dst[keys[-1]] = src[keys[-1]]
     for kind in ("plugins", "behaviors"):
         for addon, texts in pack["text"][kind].items():
-            kept = {part: texts[part] for part in ADDON_TEXTS if isinstance(texts, dict) and part in texts}
+            kept = {part: texts[part] for part in ADDON_TEXTS if part in texts} if isinstance(texts, dict) else {}
             if kept:
                 out["text"].setdefault(kind, {})[addon] = kept
     return json.dumps(out, ensure_ascii=False, indent="\t", sort_keys=True) + "\n"
@@ -130,7 +133,7 @@ def build(out: Path) -> None:
             write(out / rel, text)
     for locale in ("en-US", "zh-CN"):
         write(out / "data" / "c3-lang" / f"{locale}.json", lang_subset(locale))
-    copy(SOURCES / "plugin.json", out / ".claude-plugin" / "plugin.json")
+    copy(SOURCES / "plugin.json", out / MANIFEST)
     # The listing icon, which plugin.json names in "icon"; .claude-plugin/ holds the manifest only
     copy(SOURCES / "icon.png", out / "icon.png")
     copy(SOURCES / "README.md", out / "README.md")
@@ -160,7 +163,7 @@ def published() -> tuple[str | None, dict[str, str]]:
         text = git("show", f"{base}:{path}")
         if text and (version := json.loads(text).get("version")):
             break
-    blobs = {}
+    blobs: dict[str, str] = {}
     for entry in (git("ls-tree", "-r", "-z", f"{base}:plugin") or "").split("\0"):
         if entry:
             meta, path = entry.split("\t", 1)
@@ -207,8 +210,9 @@ def limits(folder: Path) -> list[str]:
     for rel, p in found.items():
         if rel.endswith(IMAGES):
             continue
-        if p.stat().st_size > MAX_SIZE:
-            problems.append(f"{rel}: {p.stat().st_size // 1024} KiB, more than {MAX_SIZE // 1024}")
+        size = p.stat().st_size
+        if size > MAX_SIZE:
+            problems.append(f"{rel}: {size // 1024} KiB, more than {MAX_SIZE // 1024}")
         try:
             p.read_text(encoding="utf-8")
         except UnicodeDecodeError:
@@ -224,15 +228,21 @@ def differences(built: Path, committed: Path) -> list[str]:
     return out
 
 
-def rebuild() -> list[str]:
-    """plugin/ replaced by a fresh build, and what in it breaks the limits. A folder
-    there that holds no plugin is left alone."""
-    if OUT.exists() and not (OUT / ".claude-plugin" / "plugin.json").exists():
-        sys.exit(f"{OUT} holds no .claude-plugin/plugin.json; not overwritten")
+@contextlib.contextmanager
+def fresh_build() -> Iterator[tuple[Path, str]]:
+    """A fresh build in a temporary folder, with its version; the folder goes at the end of the block."""
     with tempfile.TemporaryDirectory() as tmp:
         fresh = Path(tmp) / "plugin"
         build(fresh)
-        set_version(fresh)
+        yield fresh, set_version(fresh)
+
+
+def rebuild() -> list[str]:
+    """plugin/ replaced by a fresh build, and what in it breaks the limits. A folder
+    there that holds no plugin is left alone."""
+    if OUT.exists() and not (OUT / MANIFEST).exists():
+        sys.exit(f"{OUT} holds no .claude-plugin/plugin.json; not overwritten")
+    with fresh_build() as (fresh, _):
         if OUT.exists():
             shutil.rmtree(OUT)
         shutil.copytree(fresh, OUT)
@@ -246,13 +256,11 @@ def version_in(folder: Path) -> str | None:
 
 def check() -> list[str]:
     """How plugin/ differs from a fresh build, and what in the build breaks the limits."""
-    with tempfile.TemporaryDirectory() as tmp:
-        fresh = Path(tmp) / "plugin"
-        build(fresh)
-        version = set_version(fresh)
+    with fresh_build() as (fresh, version):
         problems = limits(fresh) + differences(fresh, OUT)
-    if version_in(OUT) != version:
-        problems.append(f"version: {version_in(OUT)} in plugin/, {version} in a fresh build")
+    committed = version_in(OUT)
+    if committed != version:
+        problems.append(f"version: {committed} in plugin/, {version} in a fresh build")
     return problems
 
 

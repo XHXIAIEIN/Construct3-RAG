@@ -81,7 +81,7 @@ every place that routes a lesson (the root `AGENTS.md`, the
 By that test, where the preview starts and how a script drags in it went to
 `editor-and-preview.md`, and the Local Storage key that a rewritten
 `project.c3proj` must keep went to `hand-editing-project-files.md`; the
-group they left is now *Storage and export*. A sprite drawn facing right
+group they left is *Storage and export*. A sprite drawn facing right
 stays: given art that faces up, the agent writes every *Set angle* wrong
 without it. An entry the checker also enforces stays too, since the prompts
 serve as a system prompt where no checker runs.

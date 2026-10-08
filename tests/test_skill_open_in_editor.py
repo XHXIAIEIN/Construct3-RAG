@@ -11,20 +11,14 @@ from types import SimpleNamespace
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, edit, run
+from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, edit, run, script_module
 
 # The result of a project the editor opened, before a preview or the TypeScript definitions.
 OPENED = {"project": "Game", "status": "opened", "title": "Game - Construct 3",
           "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [], "exception": ""}
 
 
-def opener():
-    sys.path.insert(0, str(SKILL / "scripts"))
-    try:
-        import open_in_editor as oe
-    finally:
-        sys.path.pop(0)
-    return oe
+oe = script_module("open_in_editor")
 
 
 def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in(project, tmp_path):
@@ -73,7 +67,6 @@ def test_open_in_editor_keeps_the_preview_indexeddb_inside_max_path(tmp_path):
     preview on a profile past 189 characters stopped answering (observed in Edge, 2026-10-01).
     A long profile goes by its 8.3 short name where the volume keeps one; one still too deep
     is refused before the preview."""
-    oe = opener()
     assert not oe.too_deep("\\\\?\\" + "C:\\" + "x" * 186) and oe.too_deep("\\\\?\\" + "C:\\" + "x" * 187)
     assert oe.user_data_dir(tmp_path) == str(tmp_path.resolve())
     deep = tmp_path / ("y" * 100) / ("z" * 100) / ".tmp" / "editor-msedge"
@@ -91,7 +84,6 @@ def test_open_in_editor_closes_the_start_up_window_once_when_projects_open_at_on
     """--jobs 2: both jobs found the browser's start-up window among the targets before either
     closed it, and the second close failed its project with "Target.closeTarget: No target with
     given id found" (timer-1 to timer-3, 2026-10-03). The first page to open closes it, once."""
-    oe = opener()
     created = threading.Barrier(2)
 
     class Browser:
@@ -148,14 +140,12 @@ def test_open_in_editor_keeps_the_results_and_screenshots_in_the_project_by_defa
     """A run piped through tail or head loses the lines it cut, and a run without --shots shows
     nothing: sessions ran the same preview again only to see them (game projects' transcripts,
     2026-09-27 to 10-02). Both are kept whatever the flags."""
-    oe = opener()
     assert oe.kept(None, None, tmp_path) == (tmp_path / ".tmp" / "open-in-editor.json", tmp_path / ".tmp" / "shots")
     assert (tmp_path / ".tmp" / ".gitignore").read_text(encoding="utf-8") == "*\n"
     assert oe.kept(tmp_path / "a.json", tmp_path / "s", tmp_path) == (tmp_path / "a.json", tmp_path / "s")
 
 
 def test_open_in_editor_names_where_it_kept_them_in_its_last_line(tmp_path):
-    oe = opener()
     opened = {"status": "opened", "preview": {"errors": []}}
     line = oe.summary([opened, {"status": "failed"}], True, tmp_path / "r.json", tmp_path / "shots")
     assert line == f"1 of 2 opened and ran without errors; full results in {tmp_path / 'r.json'}, " \
@@ -163,7 +153,6 @@ def test_open_in_editor_names_where_it_kept_them_in_its_last_line(tmp_path):
 
 
 def opened_with(preview: dict, locale: str | None = None) -> list[str]:
-    oe = opener()
     return oe.report({**OPENED, "preview": {"started": True, "layout": "Game", "runtime": "worker",
                                             "errors": [], **preview}},
                      oe.labeler(None, locale)[0] if locale else oe.key_name)
@@ -176,7 +165,6 @@ def test_open_in_editor_reports_a_notice_over_the_opened_project_as_a_warning():
     notice by its id, not by the title."""
     notice = ("Deprecated features This project uses some deprecated features. ... This project used the "
               "legacy Flat export file structure mode. It has been updated to the modern Folders mode.")
-    oe = opener()
     lines = oe.report({**OPENED, "project": "Quiz", "title": "Quiz template - Construct 3", "warnings": [notice]})
     assert lines == ["opened   Quiz  (Quiz template - Construct 3, https://editor.construct.net/)",
                      f"  warning: {notice}"], lines
@@ -187,7 +175,6 @@ def test_open_in_editor_writes_the_typescript_definitions_the_editor_wrote(tmp_p
     """Save as project folder, then Set up TypeScript for external editor, wrote 57 files under
     scripts/ts-defs of a game project, a class per object type among them (2026-10-04, r495-2). They go over
     the ones there; a tsconfig.json the project has is the user's and stays."""
-    oe = opener()
 
     class Page:
         def evaluate(self, expression, wait=None):
@@ -216,7 +203,7 @@ def test_open_in_editor_finds_the_typescript_menus_by_the_keys_of_their_labels()
     """Menu items carry no id, so their labels are read from the editor's language file by key:
     an editor in Chinese wrote the same 57 files (2026-10-04, r495-2). Each key names the label
     the steps click, in the language files this repository keeps."""
-    keys = re.findall(r"'((?:main-menu|ui\.bars)\.[\w.-]+)'", opener().TYPESCRIPT_JS)
+    keys = re.findall(r"'((?:main-menu|ui\.bars)\.[\w.-]+)'", oe.TYPESCRIPT_JS)
     assert len(keys) == 6, keys
     for locale in ("en-US", "zh-CN"):
         text = json.loads((REPO / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))["text"]
@@ -253,7 +240,6 @@ def test_open_in_editor_reports_the_crash_report_the_preview_left_in_the_editor(
     report, "assertion failure: must have at least three points in a collision poly", while the
     preview window opened and ran behind it, and the run said "no errors" (2026-10-04, r495-2).
     The editor's page is read once the preview has run, and its crash report fails the project."""
-    oe = opener()
     crash = ("Construct Oops! Something went wrong. ... Type: assertion failure Message: must have at least "
              "three points in a collision poly")
 
@@ -333,7 +319,7 @@ def test_open_in_editor_names_the_debuggers_values_in_the_locale_and_keeps_a_key
         f'      Platform: {platform["debugger"]["vector-x"]} 128, {platform["properties"]["enabled"]["name"]} true, '
         f'{platform["debugger"]["animation-mode"]} {platform["debugger"]["anim-moving"]}',
     ], lines
-    label, note = opener().labeler(None, "en-US")
+    label, note = oe.labeler(None, "en-US")
     assert note is None and label("plugins.myaddon.debugger.charge") == "charge"
     assert label("plugins.myaddon.properties.power.name") == "power"
 
@@ -374,7 +360,6 @@ def test_open_in_editor_says_when_the_state_was_not_read():
 
 def test_install_addon_reads_addon_json_before_the_editor(tmp_path):
     """A .c3addon whose addon.json the editor could not read is refused here, with what to fix."""
-    oe = opener()
     good, folder, broken = tmp_path / "good.c3addon", tmp_path / "folder.c3addon", tmp_path / "broken.c3addon"
     with zipfile.ZipFile(good, "w") as z:
         z.writestr("addon.json", '{"id": "MyFx", "type": "effect", "name": "My Fx", "version": "1.0.0.0"}')
@@ -401,7 +386,6 @@ def refused(project, dialog: str, **more) -> dict:
 
 def test_a_refusal_the_checker_passed_is_offered_as_a_report_without_the_projects_names(project):
     """The checker lacks a rule the editor applies: the user decides whether the repository hears of it."""
-    oe = opener()
     home = str(oe.Path.home())
     result = refused(project, 'Invalid expressions: Game, event 5, condition 1: Type mismatch in Coin.value & "Bonus"',
                      exception=f"Error: ScoreText at {home}\\editor.js:1\n    at stack")
@@ -424,7 +408,6 @@ def test_a_refusal_the_checker_passed_is_offered_as_a_report_without_the_project
 
 
 def test_no_report_when_the_checker_finds_the_problem_or_the_editor_lacks_an_addon(project):
-    oe = opener()
     edit(project, "project.c3proj", lambda data: data["usedAddons"].append(
         {"type": "plugin", "id": "Ghost_Cursor", "name": "Ghost cursor", "author": "Someone", "version": "1.0.0.0"}))
     assert oe.failure_report(refused(project, "Missing addons: Ghost cursor (Ghost_Cursor) by Someone")) == []
@@ -437,7 +420,6 @@ def test_no_report_when_the_checker_finds_the_problem_or_the_editor_lacks_an_add
 
 
 def test_a_crash_report_while_building_the_preview_is_a_refusal_too(project):
-    oe = opener()
     crash = "Assertion failure: invalid collision polygon"
     result = {**OPENED, "project": str(project), "release": "", "preview": {"errors": [], "editor": crash}}
     text = "\n".join(oe.failure_report(result))
@@ -445,5 +427,4 @@ def test_a_crash_report_while_building_the_preview_is_a_refusal_too(project):
 
 
 def test_the_report_goes_to_the_repository_skill_md_names():
-    oe = opener()
     assert f"source: https://github.com/{oe.REPOSITORY}\n" in (SKILL / "SKILL.md").read_text(encoding="utf-8")

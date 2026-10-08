@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import re
 
-from src.ingest.common_aces import _group_end, _js_value, _top_level
+from src.ingest.common_aces import _call_args, _constructor_body, _id_before, _js_value, _sdk_class
 from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 
 ADDON_KINDS = ("plugins", "behaviors")
@@ -42,11 +42,7 @@ ADDON_INFO_RE = re.compile(r"(?:const ([\w$]+)=)?this\.p=[\w$]+\.m\((?:self|glob
 def deprecated_setter(main_js: str, kind: str) -> str:
     """The minified setter that ``SetIsDeprecated`` of the ``kind`` info class calls."""
     anchor = SDK_INFO_ANCHORS[kind]
-    at = main_js.find(anchor)
-    if at == -1:
-        raise ValueError(f"no {anchor!r} in main.js")
-    start = at + len(anchor) - 1
-    body = main_js[start:_group_end(main_js, start)]
+    body = _sdk_class(main_js, anchor)
     m = re.search(r"SetIsDeprecated\([\w$]*\)\{[\w$]+\.get\(this\)\.([\w$]+)\(", body)
     if m is None:
         raise ValueError(f"{anchor!r} has no SetIsDeprecated that calls the internal info")
@@ -64,24 +60,18 @@ def extract_deprecation(main_js: str, bundle_js: str, kind: str) -> dict[str, bo
     setter = re.escape(deprecated_setter(main_js, kind))
     result: dict[str, bool] = {}
     for m in ADDON_INFO_RE.finditer(bundle_js):
-        ids = list(re.finditer(rf'(?<![\w$.]){re.escape(m.group(2))}="([^"]+)"', bundle_js[:m.start()]))
-        if not ids:
+        addon_id = _id_before(bundle_js, m.group(2), m.start())
+        if addon_id is None:
             raise ValueError(f"cannot resolve the {kind[:-1]} id at offset {m.start()} of the editor bundle")
-        addon_id = ids[-1].group(1)
         if addon_id in result:
             raise ValueError(f"{kind[:-1]} {addon_id!r} is constructed twice in the editor bundle")
-        head = bundle_js.rfind("constructor(){", 0, m.start())
-        if head == -1:
-            raise ValueError(f"{kind[:-1]} {addon_id!r} builds its info outside a constructor")
-        body_start = head + len("constructor()")
-        body = bundle_js[body_start:_group_end(bundle_js, body_start)]
-        top = _top_level(body)
+        body, top = _constructor_body(bundle_js, m.start(), f"{kind[:-1]} {addon_id!r}")
         receivers = r"this\.p" + (f"|{re.escape(m.group(1))}" if m.group(1) else "")
         deprecated = False
         for call in re.finditer(rf"(?<![\w$.])(?:{receivers})\.{setter}\(", body):
             if not top[call.start()]:
                 continue
-            value = _js_value(body[call.end():_group_end(body, call.end() - 1) - 1])
+            value = _js_value(_call_args(body, call.end()))
             if not isinstance(value, bool):
                 raise ValueError(f"{kind[:-1]} {addon_id!r} calls SetIsDeprecated with {value!r}")
             deprecated = value
@@ -131,8 +121,8 @@ def deprecated_list(
         lang: {
             "version": version,
             "language": lang,
-            "addons": {"plugins": {}, "behaviors": {}, "effects": {}},
-            "aces": {"plugins": {}, "behaviors": {}},
+            "addons": {**{kind: {} for kind in ADDON_KINDS}, "effects": {}},
+            "aces": {kind: {} for kind in ADDON_KINDS},
         }
         for lang in texts
     }
@@ -162,18 +152,17 @@ def deprecated_list(
                 items = [a for c in categories.values() for a in c.get(ace_type, [])]
                 en_aces = en.get(kind, {}).get(pid, {}).get(ace_type, {})
                 in_schema = zh.get(kind, {}).get(pid, {}).get(ace_type, {})
+                # The English name of each ACE, lower-cased; "" when the pack has none.
+                english = {a["id"]: str(en_aces.get(a["id"], {}).get(name_key, "")).lower() for a in items}
 
-                def english(ace_id: str) -> str:
-                    return str(en_aces.get(ace_id, {}).get(name_key, "")).lower()
-
-                live: dict[str, list[str]] = {}
+                live: dict[str, list[str]] = {}    # English name -> ids of the current ACEs
                 for a in items:
-                    if not a.get("isDeprecated") and in_schema.get(a["id"]) and english(a["id"]):
-                        live.setdefault(english(a["id"]), []).append(a["id"])
+                    if not a.get("isDeprecated") and in_schema.get(a["id"]) and english[a["id"]]:
+                        live.setdefault(english[a["id"]], []).append(a["id"])
                 for a in items:
                     if not a.get("isDeprecated"):
                         continue
-                    same = live.get(english(a["id"]), []) if english(a["id"]) else []
+                    same = live.get(english[a["id"]], [])
                     for lang in texts:
                         t = text(lang, kind, pid, ace_type, a["id"])
                         entry = {name_key: t.get(name_key, a["id"]), "description": t.get("description", "")}
