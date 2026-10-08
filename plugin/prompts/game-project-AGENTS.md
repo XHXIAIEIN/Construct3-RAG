@@ -22,8 +22,9 @@ python <Construct3-RAG>/skills/construct3-agent-plugin/scripts/install.py
 It copies [`skills/construct3-agent-plugin/`](../skills/construct3-agent-plugin/SKILL.md)
 to the project's `.agents/skills/`. If no instruction file of the project
 names this repository, it also appends the block to `AGENTS.md`, with the
-path of this clone on its `Construct3-RAG:` line. It changes no instruction
-file that names this repository. `--into .claude/skills` installs where
+path of this clone on its `Construct3-RAG:` line. In an instruction file
+that names this repository, it changes only the block that it wrote, as
+"Refreshing the block" below says. `--into .claude/skills` installs where
 Claude Code finds skills, `--into .trae/skills` where TRAE does. Most other
 agents read `.agents/skills/`. The block names the installed `SKILL.md`
 either way, so an agent without skill support reaches it too.
@@ -32,11 +33,11 @@ either way, so an agent without skill support reaches it too.
 
 The text is
 [`skills/construct3-agent-plugin/assets/game-project-block.md`](../skills/construct3-agent-plugin/assets/game-project-block.md).
-To place it by hand, copy it into the project's `AGENTS.md`. Then fill in
-the one path at the top: this clone, or a symlink in the project that
-points to it. Replace `<path-to>` in place, or keep it and add a line
-`- path-to = <folder>` above it for the folder that holds the clones; the
-skill's scripts read both. The block expects the `Construct3-Manual`,
+To place it by hand, copy it into the project's `AGENTS.md`, with its two
+marker lines. Then fill in the one path at the top: this clone, or a
+symlink in the project that points to it. Replace `<path-to>` in place, or
+keep it and add a line `- path-to = <folder>` above it for the folder that
+holds the clones; the skill's scripts read both. The block expects the `Construct3-Manual`,
 `Construct-Example-Projects` and `Construct-Addon-SDK` clones beside this
 repository, where the README places them; a clone kept elsewhere gets its
 own line. Leave the rest of the block as it is.
@@ -76,6 +77,24 @@ work needs it. If the agent keeps skipping them, add this line at the end:
 `@<path-to>/Construct3-RAG/prompts/event-sheet-thinking.md`. Claude Code
 then inlines that file into every session of the project, at the cost of
 its full length each time. Other tools ignore the line.
+
+## Refreshing the block
+
+The block sits between two HTML comments, which a rendered `AGENTS.md`
+does not show. The end marker carries the block's version and the stamp of
+its text. The stamp leaves out the lines that name a clone's folder and the
+folder the skill was installed in, so filling in a path or adding a line
+that names a clone's folder is not an edit. When the skill's block is newer
+and the text still matches the stamp, `install.py` replaces the block and
+keeps those lines and every line outside the markers. `--block-only` does
+that alone, for a project used through the Claude Code plugin.
+`check_project.py` warns when the block is older, or its markers are
+broken, and prints the command. An edited block is left as it is:
+`install.py` names the lines that differ, and `--replace-edited-block`
+takes the skill's once the project's own lines are below the end marker.
+A block written before the markers is refreshed when its text is exactly
+one that `install.py` wrote; any other text is the project's
+(`docs/decisions/instruction-block-refresh.md`).
 
 ## Before the project exists
 

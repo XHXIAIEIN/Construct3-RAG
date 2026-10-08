@@ -31,7 +31,10 @@ screen: what it shows (texts, frames, counts of instances) and whether the
 win or the lose holds there, against the prototype, and the faults
 review_look.py finds (a text cut by its box, two labels over each other, a HUD
 instance cut by the screen's edge, instances stacked on one box), and a play
-area off the screen's middle.
+area off the screen's middle. It also names each object whose middle lies
+outside the place its screen entry gives: a third of the screen (top-left,
+bottom, centre) or a side of another entry (below the board). An entry in
+other words is left to the questions of review_look.py.
 
 --plan-only writes the plans to OUT.json and plays nothing.
 """
@@ -63,8 +66,9 @@ EPILOG = """examples:
 
 output:
   opened   <project>  (<window title>, <the editor it opened in>)
-  first screen: 1 finding
+  first screen: 2 findings; places: 2 of 3 checked (board, status); review_look.py asks about ...
     look: Text Status uid 9 "White wins! Tap to play again": the text needs 380x40 px and its box is 288x40 ...
+    screen: screen.status "below the board": Text Status uid 9 has its middle at (360, 300) on layer 'HUD' ...
   tests:
     ok    a blocked four does not win: 12 steps
     FAIL  white wins on a diagonal: tests[2].steps[10] expect over >= 1: false in the game ...
@@ -77,6 +81,11 @@ error, or the project did not open; 2 the design, the project or the editor coul
 TAP_PAUSE = gm.AFTER_INPUT
 CENTRE_SLACK = 0.06        # share of the viewport's width the play area's middle may sit off the screen's
 PLAY_AREA = 0.4            # a sprite at least this share of the viewport's width or height is the play area
+# Where the middle of an object a screen entry names may sit, as shares of the screen, per word of the design.
+THIRDS = {"top": (0, 1 / 3), "left": (0, 1 / 3), "middle": (1 / 3, 2 / 3), "bottom": (2 / 3, 1), "right": (2 / 3, 1)}
+# For "X above Y": the axis (0 x, 1 y), the edge of Y's box (0 left, 1 top, 2 right, 3 bottom), and whether X's
+# middle comes before that edge.
+SIDE_OF = {"above": (1, 1, True), "below": (1, 3, False), "left of": (0, 0, True), "right of": (0, 2, False)}
 
 # Shared by every generated step: how the design's expressions read and write the runtime.
 HELPERS = r"""const H = {
@@ -511,6 +520,83 @@ def centre_findings(snap: dict) -> list[dict]:
     return []
 
 
+def on_screen(insts: list[dict], snap: dict) -> list[float]:
+    """The box that holds the drawn parts of instances, in shares of the screen: each layer's view is the screen."""
+    boxes = []
+    for i in insts:
+        v = snap["layers"][i["layer"]]["view"]
+        b = look.drawn(i) if (i.get("text") or "").strip() else i["box"]
+        w, h = (v[2] - v[0]) or 1, (v[3] - v[1]) or 1
+        boxes.append([(b[0] - v[0]) / w, (b[1] - v[1]) / h, (b[2] - v[0]) / w, (b[3] - v[1]) / h])
+    return [min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes)]
+
+
+def screen_findings(design: gm.Design, types, snap: dict) -> tuple[list[dict], list[str]]:
+    """Each object a measured screen entry names that sits outside its third or on the wrong side of the entry it
+    names, read on the first screen; and what was not checked, with why."""
+    shown: dict[str, list[dict]] = {}
+    for i in snap["instances"]:
+        if look.sized(i) and i["layer"] in snap["layers"]:
+            shown.setdefault(i["type"], []).append(i)
+    vw, vh = snap["viewport"]
+    slack = (look.TOLERANCE / vw, look.TOLERANCE / vh)
+    places = gm.screen_places(design)
+    found, checked, words, unnamed, absent = [], [], [], [], []
+    for p in places:
+        if not p.measured:
+            words.append(p.key)
+            continue
+        objs = gm.screen_objects(p.key, design, types)
+        refs = {ref: gm.screen_objects(ref, design, types) for _, ref in p.sides}
+        if not objs or not all(refs.values()):
+            unnamed.append(p.key)
+            continue
+        mine = [i for o in objs for i in shown.get(o, [])]
+        others = {ref: [i for o in names for i in shown.get(o, [])] for ref, names in refs.items()}
+        if not mine or not all(others.values()):
+            absent.append(p.key)
+            continue
+        checked.append(p.key)
+        box = on_screen(mine, snap)
+        mx, my = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
+        what = look.name(mine[0]) if len(mine) == 1 else f"{', '.join(objs)} ({len(mine)} instances)"
+        layer = mine[0]["layer"]
+        view = snap["layers"][layer]["view"]
+
+        def coord(axis: int, share: float) -> int:
+            """A share of the screen as a coordinate of the layer: axis 0 is x, 1 is y."""
+            return round(view[axis] + share * (view[axis + 2] - view[axis]))
+        wrong = []
+        for axis, third, middle in ((1, p.vertical, my), (0, p.horizontal, mx)):
+            span = THIRDS.get(third)
+            if span and not span[0] - slack[axis] <= middle <= span[1] + slack[axis]:
+                wrong.append(f"{'xy'[axis]} {coord(axis, span[0])} to {coord(axis, span[1])}")
+        for side, ref in p.sides:
+            other = on_screen(others[ref], snap)
+            axis, edge, before = SIDE_OF[side]
+            middle, limit = (mx, my)[axis], other[edge]
+            if not (middle < limit + slack[axis] if before else middle > limit - slack[axis]):
+                wrong.append(f"{'xy'[axis]} {'<' if before else '>'} {coord(axis, limit)} ({side} {', '.join(refs[ref])})")
+        if wrong:
+            found.append({"rule": "screen", "uids": [i["uid"] for i in mine], "line":
+                          f"{p.path} {json.dumps(p.text, ensure_ascii=False)}: {what} has its middle at "
+                          f"({coord(0, mx)}, {coord(1, my)}) on layer {layer!r}, and the design's place wants it at "
+                          f"{' and '.join(wrong)} on that layer: move it in the layout"})
+    notes = []
+    if places:
+        notes.append(f"{len(checked)} of {len(places)} checked" + (f" ({', '.join(checked)})" if checked else ""))
+        if words:
+            notes.append(f"review_look.py asks about {', '.join(words)}, whose words before the first comma are not "
+                         f"a place")
+        if unnamed:
+            notes.append(f"{', '.join(unnamed)} name{'s' if len(unnamed) == 1 else ''} no object: write the key as "
+                         f"the object type's name")
+        if absent:
+            notes.append(f"{', '.join(absent)} {'has' if len(absent) == 1 else 'have'} no instance on the first "
+                         f"screen")
+    return found, notes
+
+
 def same(game_value, design_value) -> bool:
     if isinstance(design_value, float) and isinstance(game_value, (int, float)) and not isinstance(game_value, bool):
         return abs(game_value - design_value) < 0.5
@@ -535,7 +621,7 @@ def run_all(project: Path, plans: list[dict], exe: str, profile: Path | None, sh
         browser.close()
 
 
-def report(design: gm.Design, plans_meta: list, result: dict) -> tuple[list[str], int]:
+def report(design: gm.Design, plans_meta: list, result: dict, types=()) -> tuple[list[str], int]:
     lines: list[str] = []
     if result["status"] != "opened":
         return oe.report(result), 1
@@ -551,15 +637,19 @@ def report(design: gm.Design, plans_meta: list, result: dict) -> tuple[list[str]
     errors += first.get("errors", [])
     by_note = dict(enumerate(first.get("steps", []), 1))
     snap = by_note.get(2, {}).get("value")
+    places: list[str] = []
     if isinstance(snap, dict) and "instances" in snap:
         for f in look.findings(snap) + centre_findings(snap):
             screen.append(f"    look: {f['line']}")
+        placed, places = screen_findings(design, types, snap)
+        screen += [f"    screen: {f['line']}" for f in placed]
     start = by_note.get(3, {}).get("value")
     if isinstance(start, dict):
         screen += [f"    start: {line}" for line in launch_findings(design, start)]
     for d in first.get("steps", []):
         errors += d.get("errors", [])
-    lines.append(f"  first screen: {len(screen) or 'no'} finding{'s' if len(screen) != 1 else ''}")
+    lines.append(f"  first screen: {len(screen) or 'no'} finding{'s' if len(screen) != 1 else ''}"
+                 + (f"; places: {'; '.join(places)}" if places else ""))
     lines += screen
     problems += len(screen)
     lines.append("  tests:")
@@ -694,7 +784,7 @@ def main() -> int:
         print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
         return 2
     out.write_text(json.dumps(result, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-    lines, code = report(design, meta, result)
+    lines, code = report(design, meta, result, model.types)
     shown = c3.fitting(lines, args.limit)
     print("\n".join(lines[:shown]))
     if shown < len(lines):

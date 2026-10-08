@@ -1,0 +1,34 @@
+{
+  "conditions": {
+    "compare-at-x": {"examples": 5, "read": [["keyboard-mapping", "KeyboardMappingEvents", 22, 22], ["music-player", "Events", 24, 27], ["stealth-example", "Event sheet 1", 44, 44]]},
+    "compare-at-xy": {"examples": 10, "read": [["level-selection", "esLevelCommon", 2, 2], ["custom-visual-novel-engine", "Events", 11, 11], ["follow-path", "MainCode", 20, 20]]},
+    "compare-current-value": {"examples": 1, "read": [["ship-repair-js", "Events", 44, 44]]},
+    "compare-size": {"examples": 8, "read": [["level-selection", "esLevelSelection", 8, 8], ["chess-checkmate", "ToolEvents", 14, 14], ["multiplayer-pong", "Game events", 3, 3]]},
+    "contains-value": {"examples": 2, "read": [["template-eat-em-all", "Event sheet 1", 21, 21], ["quest-flowcharts", "Event sheet 1", 36, 36]]},
+    "for-each-element": {"examples": 11, "read": [["chess-checkmate", "ToolEvents", 3, 3], ["multiplayer-pong", "Game events", 5, 5], ["template-race-track", "Event sheet 1", 41, 44]]},
+    "is-empty": {"examples": 3, "read": [["place-stickers", "Events", 2, 2], ["ghost-racer", "MainCode", 27, 27], ["tick-tock-toppings", "GameEvents", 148, 148]]}
+  },
+  "actions": {
+    "clear": {"examples": 11, "read": [["kitty-katcher", "Credits", 2, 2], ["level-selection", "esLevelSelection", 5, 5], ["layout-transition", "EventsMain", 33, 36]]},
+    "delete": {"examples": 3, "read": [["marble-spiral-clash", "Events", 27, 27], ["template-eat-em-all", "Event sheet 1", 13, 13], ["ship-repair-js", "Events", 44, 44]]},
+    "insert": {"examples": 2, "read": [["follow-path", "MainCode", 19, 20], ["marble-spiral-clash", "Events", 30, 30]]},
+    "load": {"examples": 33, "read": [["html-layers", "Event sheet 1", 2, 3], ["html-table", "Event sheet 1", 2, 3], ["level-selection", "esLevelSelection", 4, 4]]},
+    "pop": {"examples": 13, "read": [["chess-checkmate", "ToolEvents", 14, 14], ["place-stickers", "Events", 2, 2], ["follow-path", "MainCode", 19, 20]]},
+    "push": {"examples": 28, "read": [["eventide", "EventsCredits", 3, 3], ["chess-checkmate", "ToolEvents", 13, 15], ["tick-tock-toppings", "TitleEvents", 19, 19]]},
+    "set-at-x": {"examples": 9, "read": [["rotating-maze", "MenuEvents", 4, 4], ["place-stickers", "Events", 7, 7], ["keyboard-mapping", "KeyboardMappingEvents", 2, 4]]},
+    "set-at-xy": {"examples": 16, "read": [["level-selection", "esLevelCommon", 5, 5], ["audio-player", "Event sheet 1", 2, 2], ["follow-path", "MainCode", 19, 20]]},
+    "set-size": {"examples": 30, "read": [["kitty-katcher", "Credits", 2, 2], ["level-selection", "esLevelSelection", 5, 5], ["eventide", "EventsCredits", 2, 4]]},
+    "shuffle": {"examples": 9, "read": [["eventide", "EventsCredits", 4, 4], ["tick-tock-toppings", "TitleEvents", 19, 19], ["place-stickers", "Events", 8, 8]]}
+  },
+  "expressions": {
+    "asjson": {"examples": 8, "read": [["level-selection", "esLevelCommon", 5, 5], ["rotating-maze", "GameEvents", 20, 20], ["keyboard-mapping", "KeyboardMappingEvents", 2, 4]]},
+    "at": {"examples": 53, "read": [["html-layers", "Event sheet 1", 3, 3], ["html-table", "Event sheet 1", 3, 3], ["rotating-maze", "MenuEvents", 6, 6]]},
+    "back": {"examples": 2, "read": [["tick-tock-toppings", "GameEvents", 77, 77], ["eventide", "EventsPlayer", 145, 145]]},
+    "curvalue": {"examples": 8, "read": [["chess-checkmate", "ToolEvents", 3, 3], ["multiplayer-pong", "Game events", 5, 5], ["cell-linking", "Events", 10, 10]]},
+    "curx": {"examples": 3, "read": [["template-race-track", "Event sheet 1", 41, 44], ["stealth-example", "Event sheet 1", 40, 40], ["ship-repair-js", "Events", 44, 44]]},
+    "height": {"examples": 14, "read": [["html-layers", "Event sheet 1", 3, 3], ["html-table", "Event sheet 1", 3, 3], ["eventide", "EventsCredits", 3, 3]]},
+    "indexof": {"examples": 1, "read": [["template-eat-em-all", "Event sheet 1", 13, 13]]},
+    "join-string": {"examples": 1, "read": [["ship-repair-js", "Events", 53, 53]]},
+    "width": {"examples": 27, "read": [["audio-player", "Event sheet 1", 17, 17], ["place-stickers", "Events", 7, 7], ["gift-guesser", "Code", 22, 22]]}
+  }
+}

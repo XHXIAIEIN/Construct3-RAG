@@ -93,8 +93,9 @@ once their exceptions were in place.
 5. **A render-and-look loop** over the running game: the mechanism most
    skills share. The preview player made it reachable: the runtime gives
    every instance's box, layer, text size and frame.
-6. **A critic subagent or a model-scored rubric.** It finds what no check
-   does and cannot be scored; an eval may use one, the flow does not need it.
+6. **A critic sub-agent that judges the look freely, or a model-scored
+   rubric.** It finds what no check does and cannot be scored; an eval may
+   use one, the flow does not need it.
 7. **Copy an official example's art into the project.** The examples'
    images carry no names that say what an asset is or what part it plays,
    so an agent cannot choose one for a role.
@@ -135,17 +136,30 @@ prints
   the rule: a text and its shadow, an overlay over half the screen, an
   instance waiting wholly off screen, art running off the edge of a world
   layer, hidden state such as a mine's, a kind told apart by its label.
-- a fixed list of yes/no questions about visible facts that the agent
-  answers from each screenshot with its own image tool, each yes naming the
+- a fixed list of yes/no questions about visible facts, each yes naming the
   object to change: cut or overlapping text, objects that cover others,
   the edge of the screen, mixed drawing styles, a backdrop that outshines
   what the player acts on, kinds that look alike, decoration repeated on
   every layout.
 
+The script also writes `brief.md` beside the screenshots: the screenshots,
+the questions and the form of the answer, for a reviewer that has not seen
+the project. Its last line tells an agent that can start a sub-agent to give
+it the brief and take each yes from its reply; another agent answers the
+questions itself. The model that built the card game above judged its own
+screenshots by what it meant to build. On another generated card game, where
+the measured checks found nothing, a sub-agent given only the brief answered
+yes for text drawn over the map's nodes and a panel over the shop's cards,
+both visible on the screenshots. Its reply of a few hundred tokens takes the
+place of the screenshots, about 1 200 image tokens each, in the main agent's
+context, at the cost of the sub-agent's own run.
+
 The script judges no taste and calls no model; the default path stays
-offline apart from the editor, as the opener is. Option 6 stays out of the
-flow: a critic or a scored rubric is a second model to run and calibrate,
-while a small model reading tool output answers concrete questions.
+offline apart from the editor, as the opener is. A sub-agent given the brief
+answers the same fixed questions the agent would. Option 6 stays out of the
+flow: a free critic or a scored rubric is a second model to run and
+calibrate, while a small model reading tool output answers concrete
+questions.
 
 ## Re-evaluate when
 

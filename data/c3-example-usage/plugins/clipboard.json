@@ -1,0 +1,6 @@
+{
+  "actions": {
+    "copy-binary": {"examples": 2, "read": [["taking-screenshots", "Event sheet 1", 6, 6], ["qr-code-maker", "Event sheet 1", 12, 12]]},
+    "copy-text": {"examples": 1, "read": [["hashing", "Event sheet 1", 4, 4]]}
+  }
+}

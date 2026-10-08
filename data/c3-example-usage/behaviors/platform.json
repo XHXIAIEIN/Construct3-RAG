@@ -1,0 +1,39 @@
+{
+  "conditions": {
+    "compare-speed": {"examples": 1, "read": [["alien-battle", "MainCode", 12, 12]]},
+    "is-by-wall": {"examples": 3, "read": [["wall-jump", "MainCode", 19, 19], ["ledge-climb", "MainCode", 38, 41], ["kiwi-story", "ePlayer", 30, 30]]},
+    "is-double-jump-enabled": {"examples": 1, "read": [["samuroof", "Game", 46, 46]]},
+    "is-enabled": {"examples": 12, "read": [["wall-jump", "MainCode", 6, 6], ["floating-orbs", "MainCode", 17, 21], ["gamepad-local-multiplayer", "MainCode", 30, 34]]},
+    "is-falling": {"examples": 55, "read": [["keyboard-mapping", "TestMappingEvents", 10, 10], ["orbiting-platforms", "MainCode", 13, 13], ["fire-bars", "MainCode", 13, 13]]},
+    "is-jumping": {"examples": 55, "read": [["keyboard-mapping", "TestMappingEvents", 9, 9], ["orbiting-platforms", "MainCode", 12, 12], ["fire-bars", "MainCode", 12, 12]]},
+    "is-moving": {"examples": 58, "read": [["keyboard-mapping", "TestMappingEvents", 7, 7], ["orbiting-platforms", "MainCode", 10, 10], ["cave-bridge", "MainCode", 13, 13]]},
+    "is-on-floor": {"examples": 62, "read": [["template-endless-runner", "Event sheet 1", 3, 3], ["template-infinite-jumping", "Game events", 4, 4], ["keyboard-mapping", "TestMappingEvents", 6, 8]]},
+    "on-fall": {"examples": 1, "read": [["samuroof", "Menu", 48, 48]]},
+    "on-jump": {"examples": 36, "read": [["patrolling-traps", "MainCode", 19, 19], ["wall-creature", "MainCode", 19, 19], ["follow-path", "MainCode", 15, 15]]},
+    "on-landed": {"examples": 42, "read": [["template-endless-runner", "Event sheet 1", 10, 10], ["patrolling-traps", "MainCode", 18, 18], ["wall-creature", "MainCode", 18, 18]]},
+    "on-stopped": {"examples": 1, "read": [["procedural-terrain-generation", "Event sheet 1", 56, 56]]}
+  },
+  "actions": {
+    "fall-through": {"examples": 2, "read": [["template-platformer", "Event sheet 1", 1, 1], ["pair-of-knights", "Events", 49, 49]]},
+    "reset-double-jump": {"examples": 2, "read": [["cannon-launch", "MainCode", 60, 60], ["samuroof", "Game", 50, 50]]},
+    "set-acceleration": {"examples": 1, "read": [["kiwi-story", "ePlayer", 41, 41]]},
+    "set-angle-of-gravity": {"examples": 6, "read": [["rotating-platformer", "Event sheet 1", 1, 1], ["gravity-portal", "MainCode", 10, 10], ["template-invert-gravity", "MainCode", 12, 12]]},
+    "set-deceleration": {"examples": 1, "read": [["kiwi-story", "ePlayer", 41, 41]]},
+    "set-enabled": {"examples": 32, "read": [["follow-record-replay", "Event sheet 1", 5, 5], ["follow-rewind-time", "Event sheet 1", 3, 3], ["wall-jump", "MainCode", 21, 21]]},
+    "set-gravity": {"examples": 2, "read": [["bucket-warrior", "Events", 20, 21], ["magic-feather", "MainCode", 56, 56]]},
+    "set-ignoring-input": {"examples": 4, "read": [["cave-bridge", "MainCode", 8, 8], ["gravity-portal", "MainCode", 29, 29], ["pair-of-knights", "Events", 3, 3]]},
+    "set-max-fall-speed": {"examples": 1, "read": [["magic-hammer", "MainCode", 60, 63]]},
+    "set-max-speed": {"examples": 4, "read": [["gun-boots", "MainCode", 10, 10], ["kiwi-story", "eEnemies", 36, 36], ["lava-pillars", "MainCode", 42, 42]]},
+    "set-vector-x": {"examples": 28, "read": [["wall-jump", "MainCode", 21, 21], ["raycast-teleport", "MainCode", 18, 20], ["gravity-portal", "MainCode", 10, 10]]},
+    "set-vector-y": {"examples": 35, "read": [["template-flapping-bird", "Game events", 2, 2], ["wall-jump", "MainCode", 21, 21], ["raycast-teleport", "MainCode", 18, 20]]},
+    "simulate-control": {"examples": 63, "read": [["template-platformer", "Event sheet 1", 2, 2], ["template-endless-runner", "Event sheet 1", 3, 3], ["template-infinite-jumping", "Game events", 4, 4]]}
+  },
+  "expressions": {
+    "gravityangle": {"examples": 3, "read": [["gravity-portal", "MainCode", 3, 3], ["template-invert-gravity", "MainCode", 4, 6], ["fuji-leaper", "GameEvents", 12, 12]]},
+    "jumpstrength": {"examples": 3, "read": [["kiwi-story", "eLevelObjects", 17, 17], ["tank-pilot", "MainCode", 40, 42], ["samuroof", "Game", 80, 80]]},
+    "maxfallspeed": {"examples": 2, "read": [["jetpack", "MainCode", 20, 21], ["ledge-climb", "MainCode", 43, 43]]},
+    "maxspeed": {"examples": 1, "read": [["kiwi-story", "eEnemies", 36, 36]]},
+    "vectorx": {"examples": 12, "read": [["cave-bridge", "MainCode", 5, 5], ["gravity-portal", "MainCode", 10, 10], ["charge-shot", "MainCode", 32, 32]]},
+    "vectory": {"examples": 5, "read": [["gravity-portal", "MainCode", 10, 10], ["jetpack", "MainCode", 20, 21], ["gamepad-local-multiplayer", "MainCode", 20, 20]]}
+  }
+}

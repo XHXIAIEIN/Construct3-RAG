@@ -3,7 +3,7 @@
 Contents: [Data Sources](#data-sources),
 [CDN Fetching](#cdn-fetching-c3fetcher) (release directory, cache, export,
 deprecation filter), [Scirra's Guides](#scirras-guides),
-[Version Update](#version-update).
+[Example Usage](#example-usage), [Version Update](#version-update).
 
 ## Data Sources
 
@@ -23,9 +23,10 @@ patch release written as a dash, `r495-2` for r495.2. `versions.json`, which
 names the current Beta, Stable and LTS releases, is the one file at the root.
 
 The manual, the Addon SDK samples and the example projects are separate clones
-(`Construct3-Manual`, `Construct-Addon-SDK`, `Construct-Example-Projects`).
-Nothing here reads or copies them; `AGENTS.md` section 2 says where an agent
-finds them.
+(`Construct3-Manual`, `Construct-Addon-SDK`, `Construct-Example-Projects`);
+`AGENTS.md` section 2 says where an agent finds them. The pipeline copies
+none of them. It reads one: the event sheets of the example projects, for
+the index of [Example Usage](#example-usage).
 
 ## CDN Fetching (C3Fetcher)
 
@@ -189,6 +190,25 @@ week before it checks for a release. A changed guide opens a pull request,
 which waits for a person: compare it with
 `docs/decisions/project-format-guide.md`. Nothing reads the network on import
 or on a query.
+
+## Example Usage
+
+`scripts/example_usage.py` writes `data/c3-example-usage/`, which says which
+official examples use each condition, action and expression
+(`docs/guide/data-format.md`, "Example usage"). It reads the event sheets of
+every project in the `Construct-Example-Projects` clone beside this
+repository, or in `--clone`. It resolves each object to its plugin and
+behaviors through the project's object types and families, as the skill's
+scripts do. The folder is replaced whole, so an addon that no example in
+the clone uses leaves it. The same commit of the clone gives the same bytes.
+
+`scripts/init.py` runs it after the CDN export. Without the clone it keeps
+the committed index and prints the command that clones it. The update
+workflow has no clone, so a release leaves the index as committed;
+`_source.json` names the commit it was built from. After you pull the
+clone, run `python scripts/example_usage.py`. Review
+`git diff data/c3-example-usage`. Then build `plugin/` again. See
+`docs/decisions/example-usage-index.md`.
 
 ## Version Update
 

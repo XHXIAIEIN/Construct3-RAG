@@ -1,0 +1,24 @@
+{
+  "conditions": {
+    "has-picker-tag": {"examples": 1, "read": [["file-system-text-editor", "Event sheet 1", 7, 7]]},
+    "is-supported": {"examples": 5, "read": [["taking-screenshots", "Event sheet 1", 3, 3], ["qr-code-maker", "Event sheet 1", 2, 2], ["voice-recorder", "Event sheet 1", 15, 15]]},
+    "on-file-operation-complete": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 5, 5], ["spritefont-maker-js", "Events", 10, 12], ["music-player", "Events", 32, 34]]},
+    "on-file-operation-error": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 6, 6], ["spritefont-maker-js", "Events", 13, 13], ["music-player", "Events", 36, 36]]},
+    "on-picker-complete": {"examples": 7, "read": [["taking-screenshots", "Event sheet 1", 8, 8], ["qr-code-maker", "Event sheet 1", 14, 14], ["file-system-text-editor", "Event sheet 1", 3, 3]]},
+    "on-picker-error": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 4, 4], ["spritefont-maker-js", "Events", 9, 9], ["music-player", "Events", 35, 35]]}
+  },
+  "actions": {
+    "add-accept-type": {"examples": 6, "read": [["taking-screenshots", "Event sheet 1", 7, 7], ["qr-code-maker", "Event sheet 1", 13, 13], ["file-system-text-editor", "Event sheet 1", 2, 2]]},
+    "read-binary-file": {"examples": 2, "read": [["spritefont-maker-js", "Events", 8, 8], ["music-player", "Events", 31, 31]]},
+    "read-text-file": {"examples": 1, "read": [["file-system-text-editor", "Event sheet 1", 3, 3]]},
+    "show-folder-picker": {"examples": 1, "read": [["spritefont-maker-js", "Events", 35, 35]]},
+    "show-open-file-picker": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 2, 2], ["spritefont-maker-js", "Events", 7, 7], ["music-player", "Events", 29, 29]]},
+    "show-save-file-picker": {"examples": 5, "read": [["taking-screenshots", "Event sheet 1", 7, 7], ["qr-code-maker", "Event sheet 1", 13, 13], ["file-system-text-editor", "Event sheet 1", 10, 10]]},
+    "write-binary-file": {"examples": 5, "read": [["taking-screenshots", "Event sheet 1", 8, 8], ["qr-code-maker", "Event sheet 1", 14, 14], ["voice-recorder", "Event sheet 1", 21, 21]]},
+    "write-text-file": {"examples": 1, "read": [["file-system-text-editor", "Event sheet 1", 11, 11]]}
+  },
+  "expressions": {
+    "file-name-at": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 3, 3], ["spritefont-maker-js", "Events", 11, 11], ["music-player", "Events", 32, 34]]},
+    "file-text": {"examples": 1, "read": [["file-system-text-editor", "Event sheet 1", 5, 5]]}
+  }
+}

@@ -1,5 +1,6 @@
 """install.py and scripts/bootstrap.py: the skill reaches a game project, and its scripts find the
 clone through the project alone."""
+import datetime
 import json
 import os
 import re
@@ -16,6 +17,9 @@ from tests.skill_helpers import REPO, SKILL, INSTALLED, run, check, install, new
 
 sys.path.insert(0, str(SKILL / "scripts"))
 import c3project as c3  # noqa: E402
+
+BLOCK_LINES = c3.text_lines(c3.BLOCK_TEMPLATE)[0]
+BLOCK_VERSION = c3.block_in(BLOCK_LINES, past=False).version
 
 
 # --- installing the skill in a game project ---------------------------------------------------
@@ -43,7 +47,8 @@ def test_a_copy_holds_no_evals_and_is_current_without_them(project):
 def test_install_again_changes_nothing(project):
     before = (project / "AGENTS.md").read_text(encoding="utf-8")
     code, out = install(project)
-    assert code == 0 and "already current" in out and "left as it is" in out
+    assert code == 0 and f"{INSTALLED}: " in out and "files, already current" in out
+    assert f"AGENTS.md: its Construct 3 block is the skill's of {BLOCK_VERSION}, already current" in out
     assert (project / "AGENTS.md").read_text(encoding="utf-8") == before
 
 
@@ -168,7 +173,8 @@ def test_install_adds_the_claude_md_line_when_agents_md_already_has_the_block(tm
     code, out = install(root, "--no-block")
     assert code == 0 and (root / "CLAUDE.md").read_text(encoding="utf-8") == "# Mine\n"
     code, out = install(root)
-    assert code == 0 and "AGENTS.md: already names the clone" in out and "CLAUDE.md: added the line @AGENTS.md" in out
+    assert code == 0 and f"AGENTS.md: its Construct 3 block is the skill's of {BLOCK_VERSION}, already current" in out
+    assert "CLAUDE.md: added the line @AGENTS.md" in out
     assert (root / "CLAUDE.md").read_text(encoding="utf-8") == "# Mine\n\n@AGENTS.md\n"
     assert (root / "AGENTS.md").read_text(encoding="utf-8") == agents
 
@@ -571,6 +577,180 @@ def test_install_leaves_a_generator_it_cannot_refresh(project, make, said, check
     assert code == 0 and said in out
     code, out = check(project)
     assert (checked in out) if checked else "tools/build_project.py" not in out, out
+
+
+# --- refreshing the Construct 3 block of the instruction file ------------------------------------
+# The lines that name a clone's folder in a project: the Construct3-RAG line install.py fills in, and one
+# that bootstrap.py adds for a clone kept elsewhere. Neither counts as an edit of the block.
+PLACES = [f"- Construct3-RAG: {REPO.as_posix()}", "- Construct3-Manual: D:/Elsewhere/Construct3-Manual"]
+ABOVE = ["# Gems", "", "The project's own notes.", ""]
+BELOW = ["", "## Ours", "", "A line the project keeps below the block.", ""]
+# The block as the skill held it on 2026-10-02, before the block had markers. Its text dates from
+# 2026-09-22, the version PAST_BLOCKS gives it, and a later version added a row.
+PAST_BLOCK = (REPO / "tests" / "fixtures" / "game-project-block-2026-10-02.md").read_text(encoding="utf-8")
+
+
+def rendered(places: list[str] = PLACES, skill: str = INSTALLED) -> list[str]:
+    """The skill's block as a project holds it, markers included: its lines that name a clone's folder
+    in place of the template's one, and the folder its copy of the skill is in."""
+    lines = [line.replace(".agents/skills/construct3-agent-plugin", skill) for line in BLOCK_LINES[:-1]]
+    at = lines.index("- Construct3-RAG: <path-to>/Construct3-RAG")
+    return lines[:at] + places + lines[at + 1:]
+
+
+def write_agents_md(root: Path, block: list[str], newline: str = "\n") -> bytes:
+    data = newline.join(ABOVE + block + BELOW).encode("utf-8")
+    (root / "AGENTS.md").write_bytes(data)
+    return data
+
+
+def older_block(root: Path, version: str = "2026-09-01", edited: bool = False, newline: str = "\n",
+                skill: str = INSTALLED) -> bytes:
+    """AGENTS.md with the block of an older version between text of the project's own: the last row
+    of the table not written yet, the end marker stamped for that text and dated earlier. edited
+    changes a line of the text afterwards, as an agent's edit there does."""
+    lines = rendered(skill=skill)
+    del lines[-2]
+    lines[-1] = c3.block_end_line(version, c3.block_stamp(lines[1:-1]))
+    if edited:
+        lines[lines.index("eventSheets/*.json. Do not answer it from memory.")] = "eventSheets/*.json. Ask first."
+    return write_agents_md(root, lines, newline)
+
+
+def test_template_stamps_its_block():
+    """The block's end marker carries its version and the stamp of its text, so that a project's
+    block tells an older version, which install.py replaces, from one edited there, which it keeps.
+    Changed text fails here until the end marker carries its stamp."""
+    block = c3.block_in(BLOCK_LINES, past=False)
+    assert isinstance(block, c3.Block), block
+    today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+    assert block.stamp == block.actual, (
+        f"the text of assets/game-project-block.md changed, so its version and stamp did: replace line "
+        f"{block.end + 1}, the end marker, with\n{c3.block_end_line(today, block.actual)}")
+    assert BLOCK_LINES[block.end] == c3.block_end_line(block.version, block.stamp)
+    # install.py appends the file whole, so everything in it is between the markers
+    assert block.begin == 0 and BLOCK_LINES[block.end + 1:] == [""]
+
+
+def test_install_writes_the_block_between_markers(tmp_path):
+    root = new_project(tmp_path / "game")
+    code, out = install(root)
+    assert code == 0, out
+    lines = (root / "AGENTS.md").read_text(encoding="utf-8").split("\n")
+    assert lines[:-1] == rendered(PLACES[:1])
+    assert c3.instruction_block(root).state == "current"
+
+
+def test_install_refreshes_an_older_block_and_keeps_the_project(project):
+    """A project's block keeps the text of the day it was written. When the skill is refreshed, the
+    block becomes the skill's, since nothing in it was edited, and its lines that name a clone's folder
+    and every line outside it stay as the project had them, line ends included."""
+    older_block(project, newline="\r\n")
+    code, out = check(project)
+    assert code == 0 and (f"warning: AGENTS.md: its Construct 3 block is the skill's of 2026-09-01 and the skill's "
+                          f"is now of {BLOCK_VERSION}; refresh it") in out, out
+    assert "scripts/install.py --block-only" in out
+    code, out = install(project)
+    assert code == 0 and (f"AGENTS.md: replaced its Construct 3 block of 2026-09-01 with the skill's of "
+                          f"{BLOCK_VERSION}; the lines that name a clone's folder and every line outside the block "
+                          f"are as they were") in out, out
+    assert (project / "AGENTS.md").read_bytes() == "\r\n".join(ABOVE + rendered() + BELOW).encode("utf-8")
+    code, out = check(project)
+    assert "Construct 3 block" not in out, out
+    code, out = install(project)
+    assert code == 0 and f"AGENTS.md: its Construct 3 block is the skill's of {BLOCK_VERSION}, already current" in out
+
+
+def test_install_keeps_a_block_edited_in_the_project_and_says_where(project):
+    """An edit between the markers is the project's: the refresh leaves the block as it is, names the
+    lines that differ, and takes the skill's block only when asked, after the edit has moved below it."""
+    before = older_block(project, edited=True)
+    code, out = check(project)
+    assert code == 0 and "its Construct 3 block is the skill's of 2026-09-01 with edits made between its " \
+                         "markers" in out and "install.py --block-only lists the lines that differ" in out, out
+    assert "--replace-edited-block" in out
+    code, out = install(project)
+    assert code == 0 and "AGENTS.md: its Construct 3 block was edited between its markers, so it was left as it " \
+                         "is" in out, out
+    at = len(ABOVE) + rendered().index("eventSheets/*.json. Do not answer it from memory.") + 1
+    assert f"  line {at}: here 'eventSheets/*.json. Ask first.', there 'eventSheets/*.json. Do not answer it " \
+           f"from memory.'" in out
+    assert "--replace-edited-block" in out and (project / "AGENTS.md").read_bytes() == before
+    code, out = install(project, "--block-only", "--replace-edited-block")
+    assert code == 0 and "replaced its Construct 3 block of 2026-09-01" in out, out
+    assert (project / "AGENTS.md").read_text(encoding="utf-8").split("\n") == ABOVE + rendered() + BELOW
+
+
+def test_an_edit_with_nothing_newer_to_take_is_said_by_install_alone(project):
+    lines = rendered()
+    lines[lines.index("eventSheets/*.json. Do not answer it from memory.")] = "eventSheets/*.json. Ask first."
+    before = write_agents_md(project, lines)
+    code, out = install(project, "--block-only")
+    assert code == 1 and "has not changed since it was written; a line the project adds belongs below the end " \
+                         "marker" in out, out
+    assert (project / "AGENTS.md").read_bytes() == before
+    code, out = check(project)
+    assert "Construct 3 block" not in out, out
+
+
+def test_install_refreshes_a_block_written_before_the_markers(project):
+    """A block install.py wrote before the block had markers is known by its text, which must be that
+    of a version it wrote: then it is replaced, markers and all. Any other text is the project's."""
+    past = [line.replace("<path-to>/Construct3-RAG", REPO.as_posix()) for line in PAST_BLOCK.split("\n")[:-1]]
+    at = past.index(PLACES[0])
+    past[at + 1:at + 1] = PLACES[1:]
+    write_agents_md(project, past)
+    code, out = check(project)
+    assert ("warning: AGENTS.md: its Construct 3 block is the skill's of 2026-09-22, written before the block had "
+            "markers, and the skill's is now of") in out, out
+    code, out = install(project)
+    assert code == 0 and "AGENTS.md: replaced its Construct 3 block of 2026-09-22, written before the block had " \
+                         "markers, with the skill's of" in out, out
+    assert (project / "AGENTS.md").read_text(encoding="utf-8").split("\n") == ABOVE + rendered() + BELOW
+    # one word changed: not a version install.py wrote, so the file is the project's
+    past[past.index("eventSheets/*.json. Do not answer it from memory.")] = "eventSheets/*.json. Ask first."
+    before = write_agents_md(project, past)
+    code, out = install(project)
+    assert code == 0 and "AGENTS.md: already names the clone and this skill, left as it is. It holds no block " \
+                         "that this script wrote" in out, out
+    assert (project / "AGENTS.md").read_bytes() == before
+    code, out = check(project)
+    assert "Construct 3 block" not in out, out
+
+
+def test_install_block_only_refreshes_the_block_alone(tmp_path):
+    """A project used through the Claude Code plugin holds no copy of the skill: --block-only refreshes
+    the block, which keeps naming the folder it named, and writes nothing else."""
+    root = new_project(tmp_path / "game")
+    older_block(root, skill=".claude/skills/construct3-agent-plugin")
+    code, out = install(root, "--block-only", "--dry-run")
+    assert code == 0 and "would replace its Construct 3 block of 2026-09-01" in out and "nothing was written" in out
+    assert c3.instruction_block(root).have.version == "2026-09-01"
+    code, out = install(root, "--block-only")
+    assert code == 0 and "replaced its Construct 3 block of 2026-09-01" in out, out
+    assert sorted(p.name for p in root.iterdir()) == ["AGENTS.md", "project.c3proj"]
+    assert (root / "AGENTS.md").read_text(encoding="utf-8").split("\n") == \
+        ABOVE + rendered(skill=".claude/skills/construct3-agent-plugin") + BELOW
+    code, out = install(root, "--block-only")
+    assert code == 0 and "already current" in out
+    (root / "AGENTS.md").unlink()
+    code, out = install(root, "--block-only")
+    assert code == 1 and "AGENTS.md: holds no Construct 3 block that this script wrote" in out
+
+
+@pytest.mark.parametrize("change, said", [
+    (lambda lines: [line for line in lines if "block: end" not in line],
+     "AGENTS.md: it has 1 begin and 0 end markers of the Construct 3 block, not one of each"),
+    (lambda lines: [c3.block_end_line("2099-01-01", c3.block_stamp(lines[1:-1])) if "block: end" in line else line
+                    for line in lines], "its Construct 3 block is of 2099-01-01, newer than this skill's"),
+])
+def test_install_leaves_a_block_it_cannot_refresh(project, change, said):
+    before = write_agents_md(project, change(rendered()))
+    code, out = install(project, "--block-only")
+    assert code == 1 and said in out, out
+    assert (project / "AGENTS.md").read_bytes() == before
+    code, out = install(project)
+    assert code == 0 and said in out and (project / "AGENTS.md").read_bytes() == before
 
 
 # --- finding the schemas ---------------------------------------------------------------

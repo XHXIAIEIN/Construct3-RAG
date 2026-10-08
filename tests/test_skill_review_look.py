@@ -162,9 +162,41 @@ def test_review_look_names_screenshots_by_layout_and_asks_the_questions_once():
     assert lines[2].startswith('  text: HelpText uid 1 "选择前进之路"')
     assert lines[3].startswith("layout 'Combat' (2 of 2): started, and its events went on to 'Reward'")
     assert lines[4] == "  runtime: Event sheet 2, event 4: TypeError"
-    assert lines[5].startswith("questions: open each screenshot above with your image tool")
+    assert lines[5].startswith("questions: answer every question yes or no for each screenshot above, through the brief")
     assert [line[:5] for line in lines[6:]] == [f"  {n}. " for n in range(1, 8)]
     assert all(line.isascii() for line in rl.QUESTIONS)
+
+
+def test_review_look_asks_about_the_design_places_play_design_does_not_measure(tmp_path):
+    import json
+    rl = module()
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "project.c3proj").write_text(json.dumps({"objectTypes": {"items": ["ScoreText", "Board"]}}),
+                                             encoding="utf-8")
+    (tmp_path / "tools" / "design.json").write_text(json.dumps({"screen": {
+        "score": "top-left", "board": "a 5 x 3 grid in the middle", "lives": "top-right"}}), encoding="utf-8")
+    places = rl.unmeasured(tmp_path, None)
+    assert places == ['board "a 5 x 3 grid in the middle"', 'lives "top-right"']
+    asked = rl.ask(False, places)
+    assert asked[-1] == ("  7. On a screenshot that shows it, does an object sit away from the place given for it: "
+                         'board "a 5 x 3 grid in the middle"; lives "top-right"?')
+    assert rl.unmeasured(tmp_path, tmp_path / "none.json") == []
+
+
+def test_review_look_writes_a_brief_for_a_reviewer_that_has_not_seen_the_project():
+    rl = module()
+    result = {"places": ['lives "top-right"'], "preview": {"layouts": [
+        {"layout": "Map", "shot": "/g/.tmp/look/Map.png", "findings": [{"rule": "text", "line": "HelpText uid 1"}],
+         "errors": []},
+        {"layout": "Combat", "left": "End", "errors": []}]}}
+    text = rl.brief(result)
+    assert text.startswith("# Look review\n\nYou have not seen this game's project")
+    assert "1. Map: /g/.tmp/look/Map.png\n" in text and "Combat" not in text
+    assert "HelpText" not in text             # the findings are the builder's, not the reviewer's
+    assert f"1. {rl.QUESTIONS[0]}\n" in text
+    assert ("7. On a screenshot that shows it, does an object sit away from the place given for it: lives "
+            "\"top-right\"?\n8. Does the same decoration") in text
+    assert "Map 1: no\nMap 2: yes - " in text
 
 
 def test_review_look_prints_its_help_and_needs_a_project(tmp_path, project):
@@ -215,10 +247,12 @@ def test_a_screenshot_of_one_colour_dark_or_clear_is_blank():
 
 def test_review_look_retakes_a_blank_screenshot_and_asks_nothing_about_one_that_stays_blank():
     rl = module()
-    lines = rl.report({"project": "Game", "status": "opened", "title": "Game - Construct 3", "editor": "e",
-                       "warnings": [], "preview": {"started": True, "errors": [], "layouts": [
-                           {"layout": "Objects", "shot": ".tmp/look/Objects.png", "findings": [], "errors": [],
-                            "blank": {"tries": 3, "share": 0.99995}}]}})
+    blank = {"project": "Game", "status": "opened", "title": "Game - Construct 3", "editor": "e",
+             "warnings": [], "preview": {"started": True, "errors": [], "layouts": [
+                 {"layout": "Objects", "shot": ".tmp/look/Objects.png", "findings": [], "errors": [],
+                  "blank": {"tries": 3, "share": 0.99995}}]}}
+    lines = rl.report(blank)
+    assert "Objects.png" not in rl.brief(blank)
     assert lines[1] == ("layout 'Objects' (1 of 1): screenshot .tmp/look/Objects.png: 99.9% or more of it is one "
                         "colour after 3 shots 1 s apart, so the layout draws nothing in view at its start, or the preview "
                         "did not draw it. No question is asked about it. If it should show something, raise --settle, "

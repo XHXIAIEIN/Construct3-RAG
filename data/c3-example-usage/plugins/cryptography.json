@@ -1,0 +1,16 @@
+{
+  "conditions": {
+    "on-decryption-failed": {"examples": 1, "read": [["encryption", "Event sheet 1", 6, 6]]},
+    "on-decryption-finished": {"examples": 1, "read": [["encryption", "Event sheet 1", 5, 5]]},
+    "on-encryption-failed": {"examples": 1, "read": [["encryption", "Event sheet 1", 3, 3]]},
+    "on-encryption-finished": {"examples": 1, "read": [["encryption", "Event sheet 1", 2, 2]]}
+  },
+  "actions": {
+    "decrypt-binary": {"examples": 1, "read": [["encryption", "Event sheet 1", 4, 4]]},
+    "encrypt-binary": {"examples": 1, "read": [["encryption", "Event sheet 1", 1, 1]]},
+    "hash-binary": {"examples": 1, "read": [["hashing", "Event sheet 1", 3, 3]]}
+  },
+  "expressions": {
+    "hash": {"examples": 1, "read": [["hashing", "Event sheet 1", 3, 3]]}
+  }
+}

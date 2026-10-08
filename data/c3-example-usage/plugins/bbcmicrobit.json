@@ -1,0 +1,28 @@
+{
+  "conditions": {
+    "is-device-connected": {"examples": 1, "read": [["bbc-micro-bit-plugin", "Common", 2, 2]]},
+    "is-supported": {"examples": 1, "read": [["bbc-micro-bit-controller", "StartEvents", 1, 1]]},
+    "on-accelerometer-reading": {"examples": 2, "read": [["bbc-micro-bit-controller", "StartEvents", 6, 6], ["bbc-micro-bit-plugin", "ReadingsEvents", 3, 3]]},
+    "on-bearing-reading": {"examples": 1, "read": [["bbc-micro-bit-plugin", "ReadingsEvents", 4, 4]]},
+    "on-button-pressed": {"examples": 2, "read": [["bbc-micro-bit-plugin", "ReadingsEvents", 8, 8], ["bbc-micro-bit-controller", "GameEvents", 4, 4]]},
+    "on-device-connected": {"examples": 2, "read": [["bbc-micro-bit-controller", "StartEvents", 3, 3], ["bbc-micro-bit-plugin", "Common", 4, 4]]},
+    "on-device-disconnected": {"examples": 2, "read": [["bbc-micro-bit-controller", "StartEvents", 4, 4], ["bbc-micro-bit-plugin", "Common", 5, 5]]},
+    "on-request-device-failed": {"examples": 2, "read": [["bbc-micro-bit-controller", "StartEvents", 5, 5], ["bbc-micro-bit-plugin", "Common", 6, 6]]},
+    "on-temperature-reading": {"examples": 1, "read": [["bbc-micro-bit-plugin", "ReadingsEvents", 7, 7]]}
+  },
+  "actions": {
+    "clear-led-state": {"examples": 1, "read": [["bbc-micro-bit-plugin", "LEDEvents", 3, 5]]},
+    "request-device": {"examples": 2, "read": [["bbc-micro-bit-controller", "StartEvents", 2, 2], ["bbc-micro-bit-plugin", "Common", 1, 1]]},
+    "scroll-text": {"examples": 1, "read": [["bbc-micro-bit-plugin", "LEDEvents", 6, 6]]},
+    "set-led-state": {"examples": 1, "read": [["bbc-micro-bit-plugin", "LEDEvents", 4, 4]]},
+    "update-leds": {"examples": 1, "read": [["bbc-micro-bit-plugin", "LEDEvents", 5, 5]]}
+  },
+  "expressions": {
+    "accelerometer-smoothed-x": {"examples": 2, "read": [["bbc-micro-bit-plugin", "ReadingsEvents", 3, 3], ["bbc-micro-bit-controller", "GameEvents", 2, 2]]},
+    "accelerometer-smoothed-y": {"examples": 2, "read": [["bbc-micro-bit-plugin", "ReadingsEvents", 3, 3], ["bbc-micro-bit-controller", "GameEvents", 2, 2]]},
+    "accelerometer-smoothed-z": {"examples": 1, "read": [["bbc-micro-bit-plugin", "ReadingsEvents", 3, 3]]},
+    "bearing": {"examples": 1, "read": [["bbc-micro-bit-plugin", "ReadingsEvents", 6, 6]]},
+    "device-id": {"examples": 1, "read": [["bbc-micro-bit-plugin", "Common", 4, 4]]},
+    "temperature": {"examples": 1, "read": [["bbc-micro-bit-plugin", "ReadingsEvents", 7, 7]]}
+  }
+}

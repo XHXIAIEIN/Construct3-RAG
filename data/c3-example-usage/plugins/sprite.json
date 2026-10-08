@@ -1,0 +1,44 @@
+{
+  "conditions": {
+    "collisions-enabled": {"examples": 4, "read": [["bouncy-ball", "MainCode", 20, 20], ["bucket-warrior", "Events", 62, 62], ["magnetic-mover", "Events", 20, 20]]},
+    "compare-animation-frame": {"examples": 29, "read": [["bbc-micro-bit-raw", "ChangeLED", 3, 3], ["bbc-micro-bit-plugin", "LEDEvents", 4, 4], ["gallery-swipe-gesture", "Event sheet 1", 8, 8]]},
+    "compare-animation-frame-tag": {"examples": 4, "read": [["hamburger-chef", "GameEvents", 18, 18], ["airborne-explorer", "EnemyEvents", 43, 43], ["bucket-warrior", "Events", 29, 29]]},
+    "compare-animation-speed": {"examples": 1, "read": [["arcade-shooter", "MainCode", 21, 21]]},
+    "is-animation-playing": {"examples": 63, "read": [["glokar", "ePowerups", 2, 2], ["rat-purrsuit", "CreditsEvents", 10, 10], ["tic-tac-toe-js", "GameEvents", 22, 23]]},
+    "is-flipped": {"examples": 1, "read": [["template-gamepad-twin-stick-shooter", "MainCode", 27, 27]]},
+    "is-mirrored": {"examples": 6, "read": [["raycast-teleport", "MainCode", 16, 16], ["shy-ghost", "MainCode", 19, 19], ["follow-path", "MainCode", 24, 24]]},
+    "on-animation-finished": {"examples": 72, "read": [["blacksmith-forge", "Code", 6, 6], ["cave-bridge", "MainCode", 18, 18], ["tic-tac-toe-js", "GameEvents", 11, 13]]},
+    "on-animation-frame-changed": {"examples": 13, "read": [["offline-builder", "Events", 30, 30], ["coral-savior", "Events", 18, 18], ["rock-and-rush", "Events", 44, 47]]},
+    "on-any-animation-finished": {"examples": 26, "read": [["instant-hit-laser", "Event sheet 1", 8, 8], ["bullet-stepping", "Event sheet 1", 2, 2], ["glokar", "eGlobal", 5, 5]]}
+  },
+  "actions": {
+    "load-image-from-url": {"examples": 3, "read": [["taking-screenshots", "Event sheet 1", 1, 3], ["camera-input", "Event sheet 1", 12, 12], ["layout-transition", "EventsMain", 21, 21]]},
+    "set-animation": {"examples": 182, "read": [["poplab", "eTitleScreen", 4, 4], ["glokar", "eHUD", 3, 3], ["rocket-barrel", "StartScreen", 6, 6]]},
+    "set-animation-frame": {"examples": 85, "read": [["bbc-micro-bit-raw", "LEDEvents", 1, 1], ["flowcharts-and-containers", "Event sheet 1", 1, 1], ["kiwi-story", "eHUD", 1, 1]]},
+    "set-animation-speed": {"examples": 15, "read": [["kiwi-story", "eEffects", 3, 3], ["arcade-shooter", "MainCode", 8, 8], ["plumber-puzzle", "MainCode", 23, 23]]},
+    "set-blend-mode": {"examples": 4, "read": [["mask-effect-puzzle", "MainCode", 30, 30], ["ground-shift", "MainCode", 39, 39], ["ship-repair-js", "Events", 4, 4]]},
+    "set-collisions-enabled": {"examples": 35, "read": [["glokar", "ePowerups", 8, 8], ["spinning-stick", "MainCode", 8, 9], ["gravity-portal", "MainCode", 29, 29]]},
+    "set-flipped": {"examples": 1, "read": [["template-gamepad-twin-stick-shooter", "MainCode", 19, 19]]},
+    "set-mirrored": {"examples": 55, "read": [["follow-behavior", "Event sheet 1", 2, 2], ["follow-record-replay", "Event sheet 1", 2, 2], ["follow-custom-properties", "Event sheet 1", 4, 4]]},
+    "set-scale": {"examples": 16, "read": [["blacksmith-forge", "Code", 5, 5], ["template-vertical-space-shooter", "Event sheet 1", 10, 10], ["grukkle-onslaught", "EveCredits", 10, 15]]},
+    "set-solid-collision-filter": {"examples": 5, "read": [["top-down-hook", "MainCode", 3, 3], ["bucket-warrior", "Events", 20, 21], ["meowgix", "ProjectileEvents", 6, 6]]},
+    "spawn-another-object": {"examples": 124, "read": [["8-direction-behavior", "Event sheet 1", 2, 2], ["bouncing-bullets", "Event sheet 1", 2, 2], ["turret-behavior", "Event sheet 1", 2, 2]]},
+    "start-animation": {"examples": 13, "read": [["infinite-dash", "MainCode", 11, 11], ["template-crossing-frog", "MainCode", 25, 25], ["tower-defense-game", "MainCode", 12, 15]]},
+    "stop-animation": {"examples": 6, "read": [["insect-hunters", "Events", 36, 36], ["pair-of-knights", "Events", 23, 23], ["jumpy-monster", "Events", 13, 13]]}
+  },
+  "expressions": {
+    "animationframe": {"examples": 16, "read": [["template-slide-puzzle", "Event sheet 1", 8, 8], ["gallery-swipe-gesture", "Event sheet 1", 9, 9], ["rat-purrsuit", "MenuEvents", 24, 24]]},
+    "animationframecount": {"examples": 6, "read": [["gallery-swipe-gesture", "Event sheet 1", 2, 2], ["pixel-data-reader", "Code", 18, 21], ["gift-guesser", "Code", 17, 17]]},
+    "animationframetag": {"examples": 1, "read": [["bumble-beep", "Events", 17, 17]]},
+    "animationname": {"examples": 65, "read": [["glokar", "ePowerups", 2, 2], ["avalanche", "CreditsEvents", 7, 7], ["perseverance", "Events", 9, 9]]},
+    "animationspeed": {"examples": 2, "read": [["pixel-data-reader", "Code", 18, 21], ["template-alien-invasion", "MainCode", 20, 20]]},
+    "imageheight": {"examples": 36, "read": [["fuji-leaper", "CreditsEvents", 5, 5], ["perseverance", "Events", 7, 7], ["tick-tock-toppings", "TitleEvents", 19, 19]]},
+    "imagepointcount": {"examples": 2, "read": [["template-falling-shapes", "Event sheet 1", 16, 16], ["plumber-puzzle", "MainCode", 26, 30]]},
+    "imagepointx": {"examples": 73, "read": [["timeline-drawing", "MainEventSheet", 1, 1], ["blacksmith-forge", "Code", 2, 3], ["instant-hit-laser", "Event sheet 1", 4, 4]]},
+    "imagepointy": {"examples": 80, "read": [["timeline-drawing", "MainEventSheet", 1, 1], ["blacksmith-forge", "Code", 2, 3], ["instant-hit-laser", "Event sheet 1", 4, 4]]},
+    "imagewidth": {"examples": 69, "read": [["rat-purrsuit", "CreditsEvents", 5, 5], ["keyboard-mapping", "TestMappingEvents", 2, 2], ["perseverance", "Events", 7, 7]]},
+    "poly-point-count": {"examples": 1, "read": [["wave-distortion", "MainCode", 46, 46]]},
+    "poly-point-x-at": {"examples": 1, "read": [["wave-distortion", "MainCode", 46, 46]]},
+    "poly-point-y-at": {"examples": 1, "read": [["wave-distortion", "MainCode", 46, 46]]}
+  }
+}
