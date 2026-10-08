@@ -42,6 +42,7 @@ it, still opens old projects that use it, and a new project should not.
 | JavaScript or TypeScript API | `python skills/construct3-agent-plugin/scripts/lookup_script_api.py NAME`: an interface, a plugin or behavior, or a member, from the `.d.ts` files of `data/c3-ts-defs/`; global names in `data/c3-ts-defs/autocomplete-data.json` |
 | Types for an addon under development | editor `data/c3-ts-defs/sdk/`, runtime `data/c3-ts-defs/preview/interfaces/sdk/`; guide and samples in the `Construct3-Manual` and `Construct-Addon-SDK` clones |
 | Example projects for a topic | `python skills/construct3-agent-plugin/scripts/search_guides.py WORD ...`, which also prints the pitfall entries that hold the words, or `data/c3-examples/{locale}/*.json` by `tags` and `used-addons`; event sheets in the `Construct-Example-Projects` clone, `example-projects/{id}/eventSheets/`, read as events with `python skills/construct3-agent-plugin/scripts/print_sheet.py --project <example folder>` |
+| Official examples that use an ACE | `lookup_ace.py` ends each entry it prints in full with the number of those examples and the `print_sheet.py` commands of up to three uses, from `data/c3-example-usage/` |
 | Translation of a string, editor text outside the schemas | `data/c3-lang/{locale}.json`, `text` |
 | What a project folder holds: what `project.c3proj` lists, image file names, the formats of sounds, fonts and icons, which files the editor ignores | `data/c3-guides/constructs-project-format.md`, Scirra's guide that the `llm-context.md` of every project links; how this repository applies it: `prompts/references/hand-editing-project-files.md`, "The project folder" |
 | What a field means before writing an event or a script | `data/AGENTS.md`; full reference `docs/guide/data-format.md` |
@@ -108,9 +109,10 @@ hand or changing it, read `prompts/game-project-AGENTS.md`.
 
   It copies the skill, adds the block to the project's `AGENTS.md` when
   no instruction file there names this repository, with the path filled in,
-  and the line `@AGENTS.md` to `CLAUDE.md`. In a game generated from the
-  template it also replaces the helpers between the markers of
-  `tools/build_project.py` when they are an older version left unedited.
+  and the line `@AGENTS.md` to `CLAUDE.md`. The block, and in a game
+  generated from the template the helpers of `tools/build_project.py`, sit
+  between markers. `install.py` replaces either with the current version
+  when it is an older one that nobody edited.
   It changes no other file. Say in one sentence what it wrote, then read
   the installed `SKILL.md`.
   `--into .claude/skills` for Claude Code, `--into .trae/skills` for TRAE;

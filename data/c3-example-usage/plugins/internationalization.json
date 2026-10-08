@@ -1,0 +1,21 @@
+{
+  "actions": {
+    "load-from-json": {"examples": 1, "read": [["internationalization", "DateLocalizationEventSheet", 2, 2]]},
+    "pop-context": {"examples": 1, "read": [["internationalization", "DateLocalizationEventSheet", 5, 5]]},
+    "push-context": {"examples": 1, "read": [["internationalization", "DateLocalizationEventSheet", 5, 5]]},
+    "set-locale": {"examples": 1, "read": [["internationalization", "DateLocalizationEventSheet", 5, 5]]}
+  },
+  "expressions": {
+    "currency-name": {"examples": 1, "read": [["internationalization", "CurrencyLocalizationEventSheet", 9, 9]]},
+    "format-number-as-currency": {"examples": 1, "read": [["internationalization", "CurrencyLocalizationEventSheet", 9, 9]]},
+    "format-number-as-decimal": {"examples": 1, "read": [["internationalization", "CurrencyLocalizationEventSheet", 9, 9]]},
+    "format-number-as-percent": {"examples": 1, "read": [["internationalization", "CurrencyLocalizationEventSheet", 9, 9]]},
+    "format-number-with-unit": {"examples": 1, "read": [["internationalization", "CurrencyLocalizationEventSheet", 9, 9]]},
+    "language-name": {"examples": 1, "read": [["internationalization", "DateLocalizationEventSheet", 5, 5]]},
+    "look-up": {"examples": 1, "read": [["internationalization", "DateLocalizationEventSheet", 5, 5]]},
+    "look-up-plural": {"examples": 1, "read": [["internationalization", "PluralRulesEventSheet", 5, 6]]},
+    "plural-categorie-count": {"examples": 1, "read": [["internationalization", "PluralRulesEventSheet", 5, 6]]},
+    "plural-category-at": {"examples": 1, "read": [["internationalization", "PluralRulesEventSheet", 6, 6]]},
+    "region-name": {"examples": 1, "read": [["internationalization", "DateLocalizationEventSheet", 5, 5]]}
+  }
+}

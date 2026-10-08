@@ -1,0 +1,26 @@
+{
+  "conditions": {
+    "compare-speed": {"examples": 4, "read": [["template-challenge-room", "MainCode", 28, 29], ["toggle-camera-perspective", "MainCode", 36, 36], ["ghost-shooter-rain-demo", "GameEvents", 17, 20]]},
+    "is-enabled": {"examples": 3, "read": [["laser-turret", "MainCode", 11, 14], ["template-ladder-climbing", "MainCode", 29, 36], ["magic-feather", "MainCode", 50, 50]]},
+    "is-moving": {"examples": 11, "read": [["laser-turret", "MainCode", 12, 12], ["top-down-jump", "MainCode", 6, 6], ["arcade-shooter", "MainCode", 20, 21]]}
+  },
+  "actions": {
+    "set-acceleration": {"examples": 2, "read": [["glokar", "ePlayer", 36, 36], ["demonoire", "eGameRoom", 106, 108]]},
+    "set-deceleration": {"examples": 4, "read": [["glokar", "eTitleScreen", 10, 11], ["toggle-camera-perspective", "MainCode", 27, 27], ["avalanche", "PlayerEvents", 48, 50]]},
+    "set-enabled": {"examples": 12, "read": [["spinning-stick", "MainCode", 8, 9], ["top-down-hook", "MainCode", 12, 12], ["laser-turret", "MainCode", 26, 26]]},
+    "set-ignoring-input": {"examples": 1, "read": [["demonoire", "eGameRoom", 67, 67]]},
+    "set-max-speed": {"examples": 6, "read": [["glokar", "eTitleScreen", 10, 11], ["foggy-outbreak", "MainCode", 23, 23], ["avalanche", "PlayerEvents", 27, 27]]},
+    "set-speed": {"examples": 1, "read": [["coral-savior", "Events", 34, 34]]},
+    "set-vector-x": {"examples": 14, "read": [["top-down-hook", "MainCode", 12, 12], ["foggy-outbreak", "MainCode", 18, 18], ["top-down-jump", "MainCode", 23, 23]]},
+    "set-vector-y": {"examples": 16, "read": [["glokar", "eTitleScreen", 10, 11], ["top-down-hook", "MainCode", 12, 12], ["foggy-outbreak", "MainCode", 18, 18]]},
+    "simulate-control": {"examples": 30, "read": [["gamepad-control", "Event sheet 1", 3, 3], ["template-top-down-shooter", "Event sheet 1", 5, 5], ["spinning-stick", "MainCode", 2, 2]]},
+    "stop": {"examples": 1, "read": [["avalanche", "PlayerEvents", 2, 2]]}
+  },
+  "expressions": {
+    "maxspeed": {"examples": 10, "read": [["foggy-outbreak", "MainCode", 19, 19], ["toolbox-wheel", "Events", 19, 19], ["template-gamepad-twin-stick-shooter", "MainCode", 4, 4]]},
+    "movingangle": {"examples": 9, "read": [["laser-turret", "MainCode", 12, 12], ["top-down-jump", "MainCode", 6, 6], ["arcade-shooter", "MainCode", 20, 21]]},
+    "speed": {"examples": 2, "read": [["eventide", "EventsEnemy", 42, 42], ["coral-savior", "Events", 34, 34]]},
+    "vectorx": {"examples": 4, "read": [["top-down-jump", "MainCode", 23, 23], ["template-challenge-room", "MainCode", 25, 25], ["template-alien-invasion", "MainCode", 38, 38]]},
+    "vectory": {"examples": 3, "read": [["top-down-jump", "MainCode", 23, 23], ["coral-savior", "Events", 32, 32], ["eventide", "EventsGame", 62, 62]]}
+  }
+}

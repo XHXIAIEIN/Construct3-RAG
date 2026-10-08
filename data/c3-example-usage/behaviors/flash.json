@@ -1,0 +1,10 @@
+{
+  "conditions": {
+    "is-flashing": {"examples": 6, "read": [["glokar", "ePlayer", 24, 26], ["tesla-twist", "Gameplay", 9, 11], ["bewitched-torches", "Events", 18, 20]]},
+    "on-flash-ended": {"examples": 12, "read": [["meteor-destroyer", "MainCode", 4, 4], ["fruit-slicing", "Gameplay", 4, 4], ["template-falling-shapes", "Event sheet 1", 31, 31]]}
+  },
+  "actions": {
+    "flash": {"examples": 63, "read": [["detecting-input-method", "Title events", 1, 1], ["space-blaster", "Title events", 1, 1], ["rocket-barrel", "StartScreen", 1, 1]]},
+    "stop-flashing": {"examples": 18, "read": [["balloon-blower", "EventsSettings", 8, 8], ["samuroof", "Story", 4, 4], ["rat-purrsuit", "MenuEvents", 17, 19]]}
+  }
+}

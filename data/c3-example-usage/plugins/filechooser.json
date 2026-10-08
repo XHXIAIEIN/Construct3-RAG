@@ -1,0 +1,10 @@
+{
+  "conditions": {
+    "on-changed": {"examples": 2, "read": [["hashing", "Event sheet 1", 2, 2], ["multiplayer-binary-transfer", "Room events", 18, 18]]}
+  },
+  "expressions": {
+    "filenameat": {"examples": 1, "read": [["multiplayer-binary-transfer", "Room events", 21, 21]]},
+    "filetypeat": {"examples": 1, "read": [["multiplayer-binary-transfer", "Room events", 21, 21]]},
+    "fileurlat": {"examples": 2, "read": [["hashing", "Event sheet 1", 2, 2], ["multiplayer-binary-transfer", "Room events", 18, 18]]}
+  }
+}

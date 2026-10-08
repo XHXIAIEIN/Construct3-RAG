@@ -1,0 +1,20 @@
+{
+  "conditions": {
+    "is-recording": {"examples": 1, "read": [["camera-input", "Event sheet 1", 9, 9]]},
+    "is-recording-supported": {"examples": 2, "read": [["screen-recording", "Event sheet 1", 3, 3], ["voice-recorder", "Event sheet 1", 3, 5]]},
+    "is-screen-recording-supported": {"examples": 1, "read": [["screen-recording", "Event sheet 1", 4, 4]]},
+    "on-recording-error": {"examples": 1, "read": [["voice-recorder", "Event sheet 1", 16, 16]]},
+    "on-recording-ready": {"examples": 3, "read": [["screen-recording", "Event sheet 1", 11, 11], ["camera-input", "Event sheet 1", 11, 11], ["voice-recorder", "Event sheet 1", 13, 15]]}
+  },
+  "actions": {
+    "start-recording-2": {"examples": 1, "read": [["screen-recording", "Event sheet 1", 8, 8]]},
+    "start-screen-recording-2": {"examples": 1, "read": [["screen-recording", "Event sheet 1", 9, 9]]},
+    "start-user-media-recording-2": {"examples": 2, "read": [["camera-input", "Event sheet 1", 7, 7], ["voice-recorder", "Event sheet 1", 11, 11]]},
+    "stop-recording": {"examples": 3, "read": [["screen-recording", "Event sheet 1", 10, 10], ["camera-input", "Event sheet 1", 9, 9], ["voice-recorder", "Event sheet 1", 12, 12]]}
+  },
+  "expressions": {
+    "recording-file-extension": {"examples": 3, "read": [["screen-recording", "Event sheet 1", 11, 11], ["camera-input", "Event sheet 1", 15, 15], ["voice-recorder", "Event sheet 1", 18, 18]]},
+    "recording-type": {"examples": 1, "read": [["voice-recorder", "Event sheet 1", 13, 15]]},
+    "recordingurl": {"examples": 3, "read": [["screen-recording", "Event sheet 1", 11, 11], ["camera-input", "Event sheet 1", 15, 15], ["voice-recorder", "Event sheet 1", 13, 15]]}
+  }
+}

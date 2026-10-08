@@ -1,0 +1,20 @@
+{
+  "conditions": {
+    "compare-distance-travelled": {"examples": 9, "read": [["turret-behavior", "Event sheet 1", 3, 3], ["turret-predictive-aim", "Event sheet 1", 4, 4], ["template-turret-defense", "Event sheet 1", 12, 12]]},
+    "compare-speed": {"examples": 4, "read": [["template-asteroid-shooter", "MainCode", 38, 38], ["template-eat-em-all", "Event sheet 1", 1, 6], ["glokar", "eEnemies", 23, 23]]},
+    "is-enabled": {"examples": 5, "read": [["tower-defense-game", "MainCode", 17, 17], ["gravitational-field", "MainCode", 9, 11], ["cannon-launch", "MainCode", 58, 60]]},
+    "on-step": {"examples": 1, "read": [["bullet-stepping", "Event sheet 1", 7, 7]]}
+  },
+  "actions": {
+    "set-acceleration": {"examples": 1, "read": [["glokar", "eEnemies", 21, 21]]},
+    "set-angle-of-motion": {"examples": 68, "read": [["effects-haze", "Event sheet 1", 2, 2], ["poplab", "eTitleScreen", 4, 4], ["blacksmith-forge", "Code", 5, 5]]},
+    "set-bounce-off-solids": {"examples": 1, "read": [["block-breaking", "MainCode", 84, 84]]},
+    "set-enabled": {"examples": 14, "read": [["multiplayer-pong", "Game events", 24, 24], ["tower-defense-game", "MainCode", 17, 17], ["tesla-twist", "Gameplay", 40, 40]]},
+    "set-gravity": {"examples": 2, "read": [["cannon-launch", "MainCode", 56, 56], ["pusha-pusha", "Gameplay", 114, 114]]},
+    "set-speed": {"examples": 41, "read": [["blacksmith-forge", "Code", 5, 5], ["glokar", "ePowerups", 7, 7], ["fireworks", "Event sheet 1", 7, 7]]}
+  },
+  "expressions": {
+    "angleofmotion": {"examples": 15, "read": [["fireworks", "Event sheet 1", 5, 5], ["arcade-shooter", "MainCode", 27, 27], ["top-down-shooter-3d", "MainCode", 44, 44]]},
+    "speed": {"examples": 17, "read": [["spell-caster", "Event sheet 1", 5, 5], ["template-endless-runner", "Event sheet 1", 5, 5], ["template-vertical-space-shooter", "Event sheet 1", 10, 10]]}
+  }
+}

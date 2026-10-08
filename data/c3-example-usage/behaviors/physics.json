@@ -1,0 +1,31 @@
+{
+  "conditions": {
+    "compare-velocity": {"examples": 3, "read": [["template-golf", "MainCode", 4, 4], ["blackball-billiard", "Events", 38, 38], ["object-time-freezing", "MainCode", 71, 71]]}
+  },
+  "actions": {
+    "apply-force": {"examples": 3, "read": [["physics-rolling-platformer", "Event sheet 1", 3, 3], ["dig-the-way", "EventsGame", 41, 41], ["eventide", "EventsEnemy", 27, 29]]},
+    "apply-force-at-angle": {"examples": 5, "read": [["template-golf", "MainCode", 8, 8], ["rotating-maze", "GameEvents", 10, 10], ["template-physics-soccer", "MainCode", 30, 30]]},
+    "apply-force-towards-position": {"examples": 7, "read": [["physics-force-point", "Event sheet 1", 2, 2], ["physics-revolute-joint", "Event sheet 1", 2, 2], ["physics-vehicle", "Event sheet 1", 2, 2]]},
+    "apply-impulse": {"examples": 1, "read": [["physics-rolling-platformer", "Event sheet 1", 2, 2]]},
+    "apply-impulse-at-angle": {"examples": 3, "read": [["template-physics-catapult", "Event sheet 1", 4, 4], ["draw-the-line", "Events", 37, 37], ["pinball", "MainCode", 17, 17]]},
+    "apply-torque": {"examples": 1, "read": [["dig-the-way", "EventsGame", 37, 37]]},
+    "apply-torque-towards-angle": {"examples": 1, "read": [["drag-on", "Events", 10, 10]]},
+    "create-distance-joint": {"examples": 1, "read": [["physics-distance-joint", "Event sheet 1", 1, 1]]},
+    "create-limited-revolute-joint": {"examples": 1, "read": [["drag-on", "Events", 48, 50]]},
+    "create-revolute-joint": {"examples": 4, "read": [["physics-revolute-joint", "Event sheet 1", 1, 1], ["physics-vehicle", "Event sheet 1", 1, 1], ["physics-ragdoll", "Event sheet 1", 1, 1]]},
+    "enabledisable-collisions": {"examples": 1, "read": [["rotating-maze", "GameEvents", 2, 3]]},
+    "remove-all-joints": {"examples": 1, "read": [["physics-ragdoll", "Event sheet 1", 3, 3]]},
+    "set-angular-velocity": {"examples": 2, "read": [["physics-rolling-platformer", "Event sheet 1", 3, 3], ["blackball-billiard", "Events", 38, 38]]},
+    "set-enabled": {"examples": 6, "read": [["fruit-merger", "Events", 8, 8], ["draw-the-line", "Events", 24, 26], ["blackball-billiard", "Events", 10, 10]]},
+    "set-immovable": {"examples": 1, "read": [["object-time-freezing", "MainCode", 49, 51]]},
+    "set-stepping-iterations": {"examples": 3, "read": [["template-physics-catapult", "Event sheet 1", 1, 1], ["rotating-maze", "GameEvents", 2, 3], ["pinball", "MainCode", 2, 2]]},
+    "set-stepping-mode": {"examples": 4, "read": [["rotating-maze", "GameEvents", 2, 3], ["template-physics-soccer", "MainCode", 15, 15], ["pinball", "MainCode", 2, 2]]},
+    "set-velocity": {"examples": 5, "read": [["template-golf", "MainCode", 8, 8], ["template-physics-soccer", "MainCode", 30, 30], ["draw-the-line", "Events", 37, 37]]},
+    "set-world-gravity": {"examples": 8, "read": [["physics-force-point", "Event sheet 1", 1, 1], ["physics-rolling-platformer", "Event sheet 1", 1, 1], ["rotating-maze", "GameEvents", 2, 3]]}
+  },
+  "expressions": {
+    "angularvelocity": {"examples": 1, "read": [["dig-the-way", "EventsGame", 37, 37]]},
+    "velocityx": {"examples": 3, "read": [["draw-the-line", "Events", 39, 39], ["eventide", "EventsEnemy", 27, 29], ["blackball-billiard", "Events", 27, 34]]},
+    "velocityy": {"examples": 3, "read": [["draw-the-line", "Events", 38, 38], ["eventide", "EventsEnemy", 27, 29], ["blackball-billiard", "Events", 27, 34]]}
+  }
+}

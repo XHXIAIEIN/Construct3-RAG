@@ -1,0 +1,20 @@
+{
+  "conditions": {
+    "is-timer-paused": {"examples": 1, "read": [["hamburger-chef", "GameEvents", 16, 16]]},
+    "is-timer-running": {"examples": 47, "read": [["rat-purrsuit", "CreditsEvents", 10, 10], ["template-quiz", "Quiz events", 15, 17], ["ceiling-trap", "MainCode", 21, 21]]},
+    "on-timer": {"examples": 118, "read": [["skyrra-squadron-title", "AnimationCode", 3, 4], ["rat-purrsuit", "CreditsEvents", 8, 8], ["eventide", "EventsCredits", 8, 10]]}
+  },
+  "actions": {
+    "pause-resume-all-timers": {"examples": 1, "read": [["airborne-explorer", "GameEvents", 74, 74]]},
+    "pause-resume-timer": {"examples": 1, "read": [["hamburger-chef", "GameEvents", 6, 7]]},
+    "start-timer": {"examples": 129, "read": [["skyrra-squadron-title", "AnimationCode", 1, 2], ["rat-purrsuit", "CreditsEvents", 7, 7], ["eventide", "EventsCredits", 2, 4]]},
+    "stop-all-timers": {"examples": 22, "read": [["labyrinth", "GameEvents", 12, 12], ["console-typist", "Events", 34, 34], ["offline-builder", "Events", 27, 27]]},
+    "stop-timer": {"examples": 42, "read": [["template-car-lanes", "Event sheet 1", 20, 20], ["gift-guesser", "Code", 11, 11], ["wood-chopping", "Code", 6, 13]]}
+  },
+  "expressions": {
+    "currenttime": {"examples": 3, "read": [["template-quiz", "Quiz events", 15, 17], ["mythinsects", "GameEvents", 84, 84], ["grukkle-onslaught", "EveGameplay", 152, 153]]},
+    "duration": {"examples": 4, "read": [["drag-on", "Events", 14, 14], ["rat-purrsuit", "GameEvents", 74, 74], ["mythinsects", "GameEvents", 145, 145]]},
+    "normalized-progress": {"examples": 2, "read": [["mythinsects", "GameEvents", 131, 131], ["overloaded-underqualified", "GameEvents", 120, 120]]},
+    "totaltime": {"examples": 2, "read": [["drag-on", "Events", 14, 14], ["mythinsects", "GameEvents", 145, 145]]}
+  }
+}

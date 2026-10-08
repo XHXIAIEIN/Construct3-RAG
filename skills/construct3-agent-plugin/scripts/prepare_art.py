@@ -17,7 +17,15 @@ prompt then gives it as the reference image.
 --list also warns of subjects that will come out wrong. A subject must not
 name a background, a shadow, text, or a drawing style that ART_STYLE does not
 name. Several subjects that differ only in colour or element words come out
-as one figure in several colours. Without --list, each picture there is:
+as one figure in several colours.
+
+--list also warns when ART_STYLE names nothing of the rendering, the
+linework, the colour temperature, the light direction, the proportions or the
+framing. Each prompt leaves such a dimension to the image tool, so the
+pictures can differ in it. "framing unspecified" in ART_STYLE leaves the
+framing open on purpose.
+
+Without --list, each picture there is:
 
   cut out    a picture with transparency keeps it. Any other picture was
              asked for on a flat magenta or green, the key. The key is
@@ -71,6 +79,31 @@ STYLE_WORDS = ("pixel", "8-bit", "16-bit", "vector", "cartoon", "anime", "manga"
                "oil paint", "painterly", "sketch", "line art", "cel-shad", "cel shad", "low poly", "low-poly", "3d",
                "outline", "像素", "矢量", "扁平", "卡通", "动漫", "二次元", "写实", "水彩", "油画", "素描", "手绘",
                "线稿", "描边", "赛璐璐", "低多边形", "厚涂", "风格")
+# The words by which ART_STYLE fixes each dimension. --list warns of a dimension with none of them.
+# "<dimension> unspecified" leaves it open on purpose. A negated word counts: "no outlines" fixes
+# the linework. An English word matches as a whole word, with an optional plural; a Chinese word
+# matches anywhere. docs/decisions/art-from-the-image-tool.md.
+DIMENSIONS = {
+    "rendering": ("flat", "vector", "pixel", "pixelated", "8-bit", "16-bit", "cartoon", "anime", "manga", "realistic",
+                  "painterly", "painted", "watercolor", "watercolour", "gouache", "oil", "ink", "pencil", "crayon",
+                  "sketch", "cel", "shaded", "shading", "gradient", "textured", "low-poly", "low poly", "3d", "voxel",
+                  "clay", "hand-drawn", "像素", "矢量", "扁平", "平涂", "卡通", "动漫", "二次元", "写实", "水彩", "油画", "水墨",
+                  "素描", "手绘", "赛璐璐", "厚涂", "低多边形", "渲染"),
+    "linework": ("outline", "outlined", "line", "lineart", "linework", "lineless", "stroke", "contour", "edge",
+                 "描边", "线条", "线稿", "勾线", "轮廓"),
+    "colour temperature": ("warm", "cool", "cold", "neutral", "temperature", "暖", "冷", "中性"),
+    "light direction": ("lit", "lighting", "light from", "light source", "backlit", "backlight", "rim light",
+                        "top light", "side light", "overhead", "from above", "from the left", "from the right",
+                        "top-left", "top left", "top-right", "top right", "upper left", "upper right", "光照", "光源",
+                        "打光", "顶光", "侧光", "逆光", "背光", "光向", "左上", "右上"),
+    "proportions": ("proportion", "chibi", "super-deformed", "big-headed", "heads tall", "head-to-body", "stocky",
+                    "chunky", "slender", "lanky", "elongated", "squat", "stubby", "比例", "头身", "q版", "大头", "修长",
+                    "矮胖"),
+    "framing": ("view", "framing", "full body", "full-body", "half body", "half-body", "bust", "portrait", "close-up",
+                "profile", "isometric", "top-down", "three-quarter", "3/4", "side-on", "front-facing", "seen from",
+                "angle", "全身", "半身", "正面", "侧面", "侧视", "俯视", "俯瞰", "等距", "视角", "特写", "构图",
+                "四分之三"),
+}
 NEGATION = re.compile(r"(?:\b(?:no|not|without|free of)\b(?:\W+\w+){0,2}\W*|无|不含|没有|不带|不要|去掉)$")
 # Colour and element words: subjects the same without them come out as one figure in several colours.
 COLOUR_WORDS = ("red", "green", "blue", "yellow", "orange", "purple", "pink", "violet", "white", "black", "grey",
@@ -217,6 +250,37 @@ def named(subject: str, words, whole: bool = True) -> list[str]:
     return found
 
 
+def joined(names: list[str], last: str) -> str:
+    """The names joined by commas, with `last` before the final name."""
+    return names[0] if len(names) == 1 else f"{', '.join(names[:-1])} {last} {names[-1]}"
+
+
+def left_open(style: str) -> list[str]:
+    """The dimensions that ART_STYLE neither names a word of nor marks "<dimension> unspecified"
+    ("light: unspecified" counts too)."""
+    low = style.lower().replace("color", "colour")
+
+    def says(w: str) -> bool:
+        return w in low if not w.isascii() else bool(re.search(rf"(?<![a-z0-9]){re.escape(w)}s?(?![a-z0-9])", low))
+
+    def open_on_purpose(dim: str) -> bool:
+        first, *rest = dim.split()
+        name = rf"{first.rstrip('s')}\w*" + "".join(rf"(?:\s+{w})?" for w in rest)
+        return bool(re.search(rf"(?<![a-z0-9]){name}[\s:=-]*unspecified", low))
+
+    return [dim for dim, words in DIMENSIONS.items() if not any(map(says, words)) and not open_on_purpose(dim)]
+
+
+def style_warning(style: str) -> list[str]:
+    """A warning when ART_STYLE leaves a dimension of DIMENSIONS to the image tool."""
+    if not (left := left_open(style)):
+        return []
+    them = "it" if len(left) == 1 else "them"
+    return [f"warning: ART_STYLE names no {joined(left, 'or')}, so each prompt leaves {them} to the image tool and "
+            f"the pictures can differ in {them}. Name {them} in ART_STYLE, or write \"{left[0]} unspecified\" there "
+            f"to leave {'it' if len(left) == 1 else 'one'} open. Then run python tools/build_project.py."]
+
+
 def warnings(items: list[dict], style: str) -> list[str]:
     """One warning for each thing a subject says that its prompt or ART_STYLE already decides, and
     one for the groups of subjects that differ only in colour or element words."""
@@ -273,11 +337,13 @@ def list_prompts(root: Path, wanted: dict, skill: str) -> list[str]:
     making = [item for item in items if states[item["file"]] in ("make", "again")]
     sprites = [item for item in making if item["kind"] != "scene"]
     if to_make and not style.strip():
-        return ["style: none. Write ART_STYLE in tools/build_project.py, one sentence of art direction the user "
-                "agreed, so that every picture shares it", *warnings(making, style),
+        return ["style: none. Write ART_STYLE in tools/build_project.py: one sentence of art direction, agreed with "
+                f"the user, that fixes the {joined(list(DIMENSIONS), 'and')}, so that every picture shares it",
+                *warnings(making, style),
                 f"{count}; next: write ART_STYLE, run python tools/build_project.py, then python {skill}/scripts/"
                 f"prepare_art.py --list again"]
-    out = ([f"style: {style}"] if style.strip() else []) + warnings(making, style)
+    out = ([f"style: {style}"] if style.strip() else []) + (style_warning(style) if making else []) + \
+        warnings(making, style)
     if len(sprites) > 1 and raw_of(root, "_key.png") is None:
         shown = lineup(sprites)
         subjects = "; ".join(item["subject"].rstrip("。. ") for item in shown)

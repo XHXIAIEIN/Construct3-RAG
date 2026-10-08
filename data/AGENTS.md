@@ -12,6 +12,7 @@ scripts in `skills/construct3-agent-plugin/` read it for a game project.
 | `c3-schemas/{locale}/` | Schema files per locale (`en-US`, `zh-CN`): `plugins/`, `behaviors/`, `effects/` |
 | `c3-schemas/{locale}/_deprecated.json` | What the editor has deprecated: addons and ACEs, kept in the schema or not |
 | `c3-examples/{locale}/` | Example projects: id (the file name), name, description, tags, used-addons, open URL |
+| `c3-example-usage/` | Which official examples use each ACE, per plugin and behavior id: the count and up to three uses as folder, sheet and events. Built from the `Construct-Example-Projects` clone; `_source.json` names its commit |
 | `c3-lang/{locale}.json` | Raw CDN language pack, pretty printed. Source text behind the schemas; diff it between releases. |
 | `c3-ts-defs/autocomplete-data.json` | Scripting class to method and property listings |
 | `c3-ts-defs/**/*.d.ts` | Full TypeScript interface signatures |
@@ -69,7 +70,11 @@ with a new empty project saved from the editor as a folder, with UID
 allocation set to Random (`docs/decisions/random-uid-allocation.md`), when a release
 changes what the editor writes (`savedWithRelease` says which one saved it).
 `c3-guides/` is fetched every week by the update workflow and written only
-when a guide's text changed (`src/ingest/guides.py`). When construct.net
+when a guide's text changed (`src/ingest/guides.py`).
+`c3-example-usage/` is built from the `Construct-Example-Projects` clone
+beside this repository, by `scripts/init.py` or alone by
+`python scripts/example_usage.py`. The update workflow has no clone, so it
+keeps the committed copy. When construct.net
 answers the script with a browser check, the copy stays as committed; save
 the page from a browser and run
 `python scripts/init.py --guides-only --guide-html <saved page>`.

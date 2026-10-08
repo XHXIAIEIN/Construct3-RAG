@@ -1,8 +1,9 @@
 # Designing a new game before building it
 
-A new game starts as a design in JSON, before any project file: the core
-loop, the closest official example, the screen, the state table, the inputs,
-the rules as data, win and lose, and acceptance tests. `scripts/check_design.py`
+A new game starts as a design in JSON, before any project file: the user's
+request, what this round leaves for later, the core loop, the closest
+official example, the screen, the state table, the inputs, the rules as
+data, win and lose, and acceptance tests. `scripts/check_design.py`
 checks that the design is complete and plays the tests on the rules
 themselves, a prototype that runs in milliseconds without the editor. Only a
 design whose tests pass is built. After the build, `scripts/play_design.py`
@@ -31,9 +32,11 @@ shows before the build and a bug in the events after it.
 
 ```json
 {"game": "Whack",
+ "request": "a whack-a-mole: a mole pops out of one of nine holes and I tap it before it hides, I score for each hit, three escapes and it's over, with sounds and moles that get faster",
+ "later": ["sounds", "moles that get faster"],
  "core_loop": "A mole shows in one of nine holes; tap it before it moves on. Three escapes end the game",
  "reference": {"example": "<id of the example read>", "takes": "what the design takes from how it is built"},
- "screen": {"score": "top-left", "holes": "a 3 x 3 grid in the middle", "message": "below the holes"},
+ "screen": {"score": "top-left", "holes": "centre, a 3 x 3 grid", "message": "below the holes"},
  "state": [
   {"name": "score", "start": 0, "stored_in": "global"},
   {"name": "scoreLine", "start": "Score: 0", "stored_in": "ScoreText.text"},
@@ -61,6 +64,27 @@ shows before the build and a bug in the events after it.
    {"expect": "find(message, \"Over\") >= 0"}, {"do": "again"}, {"wait": 0.3}, {"expect": "over = 0"}, {"expect": "escapes = 0"}]}]}
 ```
 
+- `request`: the user's request in their own words, copied, not summed up.
+  A review holds the game to it, and a summary drifts toward what was
+  built. The ok line of the check repeats its start.
+- `later`: what this round leaves for later, each in a few words: the
+  parts of the request the design does not build, and what the request
+  takes for granted, such as sound or a best score. The next session then
+  neither builds them again nor forgets them. An empty list is refused. If
+  the design builds the whole request, write `["nothing left out"]`. The
+  ok line of the check lists the items.
+- `screen`: each region the player sees and where it sits. The key is the
+  object type that shows the region (`Board`), a state row kept in an
+  object (`message` for `Message.text`), or words of type names. Words of
+  type names match every type whose name holds them: `score` matches
+  `ScoreLabel` and `ScoreText` together. The words before the first comma
+  give the place: `top`, `bottom`, `left`, `right`, `centre` as thirds of
+  the screen (`top-left`, `bottom centre`), and `above KEY`, `below KEY`,
+  `left of KEY`, `right of KEY` for another entry or object; a comment may
+  follow the comma. `play_design.py` checks such a place on the first
+  screen: the middle of the object's instances lies in that third, or past
+  that side of the other entry. `review_look.py` asks about a place written
+  in other words.
 - `state`: one row per piece of state, the table of `generating-a-project.md`,
   "Plan the state". `stored_in` is `"global"` (a global variable of the same
   name), `"Array"` (an Array object of the same name, with `"size": [w, h]`
@@ -111,6 +135,12 @@ shows before the build and a bug in the events after it.
   on the first screen, before the player does anything. A demo of one
   mechanic (a toggle, a countdown, a drag that snaps) writes `"none"` for
   both: it never ends, so it needs no restart rule and no test restarts it.
+- A player who does nothing must not win. The prototype plays on from the
+  first screen without input for up to 120 s, and refuses a win that comes
+  before the lose, with the rule that set what the win reads. A game won by
+  outlasting a timer, where the rules do not model the danger (a rock to
+  dodge), writes `"won_by_waiting": "<what the player does while it runs>"`.
+  The check refuses that field when the game is not won without input.
 - `tests`: from a first launch each. `{"do": "hit", "h": 4}` does an input,
   then lets the game run 0.15 s; `{"wait": 1}` lets it run;
   `{"expect": "score = 1"}` must hold; `{"set": "hole = 4"}` is a fixture
@@ -198,5 +228,5 @@ its `start` as the text, a count as that many visible instances on the first
 layout. `play_design.py` reads each one in the project's files before it
 opens the editor and refuses a start that differs from the design's. In the
 editor it then reads the first screen without input: a text, a frame or a
-count that differs from the prototype's, or a win or a lose that holds
-there, is a finding.
+count that differs from the prototype's, a win or a lose that holds there,
+or an object outside the place its `screen` entry names is a finding.

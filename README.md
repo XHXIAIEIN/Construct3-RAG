@@ -38,7 +38,7 @@ You can add these options to `bootstrap.py`:
 - To start from an empty project of your own, add `--template <folder>`.
 - If your agent reads skills from another folder, add `--into <folder>`, such as `--into .trae/skills` for TRAE.
 
-To update, run `git pull` in the clone, then run `bootstrap.py` again to refresh the skill in the project. It leaves the clones and instruction files that exist as they are. When the clone is behind its upstream and holds no work of your own, `check_project.py` reports it as a problem and gives the commands that update the clone and the skill in the project. Add `--help` to `bootstrap.py` to see every option.
+To update, run `git pull` in the clone, then run `bootstrap.py` again to refresh the skill in the project. It leaves the clones that exist as they are. In the instruction files, it refreshes only the Construct 3 block it wrote, and only while nobody edited it. When the clone is behind its upstream and holds no work of your own, `check_project.py` reports it as a problem and gives the commands that update the clone and the skill in the project. Add `--help` to `bootstrap.py` to see every option.
 
 If your agent reads its instructions from another file, such as `GEMINI.md`, add a line there. The line tells the agent to read `AGENTS.md`.
 
@@ -69,7 +69,7 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 
 [`SKILL.md`](skills/construct3-agent-plugin/SKILL.md) tells the agent which script to run and when. Every script below except the `assets/build_project.py` template prints its options and examples with `--help`.
 
-- `lookup_ace.py` looks up the conditions, actions and expressions of an object in the project, of `System`, or of a plugin or behavior. It prints each one with its parameters, its event sheet wording and the JSON to write. For an effect, it prints the effect's parameters.
+- `lookup_ace.py` looks up the conditions, actions and expressions of an object in the project, of `System`, or of a plugin or behavior. It prints each one with its parameters, its event sheet wording, the JSON to write, and the official examples that use it with the command that prints each use. For an effect, it prints the effect's parameters.
 - `lookup_script_api.py` looks up the scripting API. Given an interface, a plugin or a behavior, it prints the members. Given a member, it prints the declaration, the interface that declares it and the file and line, inherited members included.
 - `search_guides.py` searches the event sheet pitfalls and the official examples by words. It prints the matching pitfall entries in full, and for each matching example the command that prints its events.
 - `print_sheet.py` prints an event sheet in the editor's words, with the editor's event numbers. It reads the official examples the same way.
@@ -77,18 +77,18 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 - `print_layout.py` prints the layers of each layout from bottom to top, and the instances on each layer in Z order. Each instance comes with its box, size, opacity and text. A text also names the object that it lies on, so the output shows a label that misses its button.
 - `check_project.py` checks every project file against the schemas and against the rules that the editor applies when it opens a project. Each finding names its place and, where it can, what to write. With `--review`, for a project that someone asks about, it and `print_sheet.py` end with what a review reports: what the project does first, and only the problems that stop something from working.
 - `review_design.py` reads the event sheets and reports where their design is hard to read or fragile, such as an event with too many conditions, one fact kept in two places or a scratch global. Each finding names the event and the form to write instead. Then it asks the agent fixed questions to answer from `print_sheet.py`.
-- `check_design.py` checks the design of a new game before any project file is written: the core loop, the state table, the inputs, the rules, win and lose, and acceptance tests. Then it plays the tests on the rules themselves, as a prototype that runs without the editor. Each finding names its place in the design, and a failed test names the step and the values that the state held.
+- `check_design.py` checks the design of a new game before any project file is written: the user's request in their words, what this round leaves for later, the core loop, the state table, the inputs, the rules, win and lose, and acceptance tests. Then it plays the tests on the rules themselves, as a prototype that runs without the editor, and refuses a game that a player wins by doing nothing, unless the design says that waiting is the win. Each finding names its place in the design, and a failed test names the step and the values that the state held. When the design passes, the last line repeats the request and what is left for later.
 - `play_design.py` plays the same tests in the Construct 3 editor on the game built from the design. First it checks the names and start values of the design against the project files. Each failure names the test, the step and the rules whose events to compare.
 - `check_look.py` checks the files of a generated game against the strict rules in `assets/look-manifest.json`, such as a clean alpha channel, instances on the grid and a hit shown as a colour.
 - `prepare_art.py` brings in art from the agent's image tool. It prints a prompt for each picture that the generator asks for. Then it cuts each picture that the tool made out of its background and fits it to the box of its stand-in shape. It needs Pillow.
 - `open_in_editor.py` opens the project in the Construct 3 editor and reports that it opened, or gives the editor's message. With `--preview`, it runs the game for a few seconds and reports the runtime errors with their events. With `--typescript`, the editor writes the project's TypeScript definitions into `scripts/ts-defs/`.
-- `preview_project.py` plays a preview from a plan of taps, drags, key presses and waits. It takes screenshots and records parts of the run. You can review a recording frame by frame and give a part of it to the agent as a task.
-- `review_look.py` previews the project, visits every layout and takes a screenshot of each. It reports what the runtime shows wrong there, such as a text that its box cuts or instances stacked on one spot. Then it asks the agent fixed questions to answer from the screenshots.
+- `preview_project.py` plays a preview from a plan of taps, drags, key presses and waits. It takes screenshots and records parts of the run. You can review a recording frame by frame and give a part of it to the agent as a task. A plan that passes can be kept in the project, and after each later change every kept plan is replayed.
+- `review_look.py` previews the project, visits every layout and takes a screenshot of each. It reports what the runtime shows wrong there, such as a text that its box cuts or instances stacked on one spot. Then it asks fixed questions to answer from the screenshots, and writes them with the screenshots into a brief for a sub-agent that has not seen the project.
 - `screenshot_sheet.py` takes a picture of an event sheet, or of one group in it, as the editor shows it, for a forum post, a bug report or a document. The picture is in English and cropped to the sheet, and each column is as wide as its longest line.
 - `export_project.py` makes the editor export the project to Web (HTML5), with your subscribed account.
 - `pack_project.py` saves the project as a `.c3p` or `.zip` that the editor opens. It also unpacks a `.c3p` or `.zip` into a project folder.
 - `new_project.py` starts a game project in an empty folder from the empty project that the editor saves for **Project** > **New**.
-- `install.py` installs the skill in a game project, or refreshes a copy from the clone. It also brings the helpers in a game's `tools/build_project.py` up to date, and `--helpers-only` does only that.
+- `install.py` installs the skill in a game project, or refreshes a copy from the clone. It also brings the Construct 3 block in the game's `AGENTS.md` and the helpers in its `tools/build_project.py` up to date; `--block-only` and `--helpers-only` do one of those alone.
 - `assets/build_project.py` is a template for a Python script that generates a whole project. Its helpers sit between two markers, apart from the game's settings above them and the game below them.
 
 ### What the skill's scripts read, write and reach
@@ -98,7 +98,7 @@ The skill's scripts read this repository's `data/` and the projects and files th
 - **Read only**: `lookup_ace.py`, `lookup_script_api.py`, `search_guides.py`, `check_project.py`, `review_design.py`, `check_design.py`, `check_look.py` and `print_sheet.py`. `print_sheet.py` keeps a hash of each sheet that it prints, in `construct3-sheet-stamps/` of the system's temporary folder. With this hash, `edit_sheet.py` notices a save made between the print and the edit. `check_project.py` runs `git fetch` in the clone at most once an hour, to say when the clone is behind its upstream. If `CONSTRUCT3_RAG_OFFLINE` is `1`, it skips the fetch and says so.
 - **Writing files**:
   - `edit_sheet.py` writes the event sheets that you give it, and their hashes beside those of `print_sheet.py`.
-  - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. In the project's `tools/build_project.py`, it replaces the helpers between the two markers with the skill's when they are an older version that nobody edited there, and keeps the rest of the file. `--dry-run` shows the changes first.
+  - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. The block in `AGENTS.md` and the helpers in `tools/build_project.py` each sit between two markers. `install.py` replaces either with the skill's when it is an older version that nobody edited there, and keeps the rest of the file. `--dry-run` shows the changes first.
   - `play_design.py --adopt-starts` writes the start values of the project into the design file, when the prototype still passes with them.
   - `prepare_art.py` writes the fitted pictures into the project's `art/`. It reads the pictures in `art/raw/` and changes none of them.
   - `screenshot_sheet.py` writes its pictures in the project's `.build/sheets/`, or in the folder that `--out` names.
@@ -125,7 +125,7 @@ Run lookups from the clone that [Set up](#set-up) makes. For a condition, action
 python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait
 ```
 
-It prints each match with its parameters, its wording and the JSON to write. Use it for `System` and for the ACEs that every world object shares. Look a shared ACE up under any world object, such as `Sprite overlap`. The files of these ACEs, `plugins/system.json` and `plugins/_common.json`, are too long for most file tools to read at once. Such a tool shows only the first part of a file, so an ACE after that part looks missing.
+It prints each match with its parameters, its wording and the JSON to write. Under each match printed in full, it gives the number of official examples that use it, and a `print_sheet.py` command for each of up to three uses, the smallest sheets first. Seven or more matches print one line each, without counts. Use it for `System` and for the ACEs that every world object shares. Look a shared ACE up under any world object, such as `Sprite overlap`. The files of these ACEs, `plugins/system.json` and `plugins/_common.json`, are too long for most file tools to read at once. Such a tool shows only the first part of a file, so an ACE after that part looks missing.
 
 Read everything else from the files under `data/`. In the paths below, `{locale}` is one of the `languages` in `c3-schemas/_index.json`, such as `en-US`:
 
@@ -139,6 +139,7 @@ Read everything else from the files under `data/`. In the paths below, `{locale}
 | `c3-schemas/{locale}/effects/{id}.json` | Effect parameters and categories |
 | `c3-schemas/{locale}/_deprecated.json` | Plugins, behaviors, effects and ACEs that the editor has deprecated, with the current ACE of the same name where one exists |
 | `c3-examples/{locale}/{id}.json` | Example name, description, tags, used addons, open URL |
+| `c3-example-usage/{plugins,behaviors}/{id}.json` | Which official examples use each ACE of the plugin or behavior: their number, and up to three uses as example folder, sheet and events. Built from the event sheets in the `Construct-Example-Projects` repository |
 | `c3-lang/{locale}.json` | The editor's language pack from the CDN, one string per line |
 | `c3-ts-defs/autocomplete-data.json` | Scripting classes with their methods and properties |
 | `c3-ts-defs/**/*.d.ts` | Full TypeScript interface signatures |
@@ -176,7 +177,7 @@ For events written into a project, [`prompts/event-sheet-style.md`](prompts/even
 | Repository | Content | How it fits |
 |---|---|---|
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, the Addon SDK guide and the Game Services docs, as Markdown | `data/c3-schemas/` gives the names and parameters; the manual says what they do. |
-| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as a folder project | `data/c3-examples/` holds the metadata; the projects are in that repository. |
+| [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as a folder project | `data/c3-examples/` holds the metadata, and `data/c3-example-usage/` holds which examples use each ACE; the projects are in that repository. |
 | [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects and themes | `data/c3-ts-defs/sdk/` holds the typed interface; the SDK shows how to use it. |
 
 ## Lookup service (optional)
@@ -200,6 +201,7 @@ plugin/                 The Claude Code plugin, built by scripts/build_plugin.py
 data/                   Committed reference data, read directly
   c3-schemas/           ACE definitions and effects, one folder per locale
   c3-examples/          Example project metadata
+  c3-example-usage/     Which examples use each ACE
   c3-lang/              CDN language packs
   c3-ts-defs/           TypeScript scripting interfaces
   c3-guides/            Scirra's guide to the project format

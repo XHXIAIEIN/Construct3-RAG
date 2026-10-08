@@ -41,6 +41,7 @@ paths in its scripts, `SKILL.md`, `references/` and the game-project block:
 | `data/c3-schemas/` | every script, and agents directly | its files, a few hundred |
 | `data/c3-ts-defs/` except `sdk/` | `lookup_script_api.py`, which skips `sdk/` | one bundle |
 | `data/c3-examples/` | `search_guides.py`, `check_design.py` | two bundles per locale, from about a thousand small files |
+| `data/c3-example-usage/` | `lookup_ace.py` | one bundle, from about a hundred small files |
 | `data/c3-lang/` | `check_project.py`, two subtrees of about 10 KiB; `open_in_editor.py`, `preview_project.py` and agents, the texts of the plugins and behaviors that label a preview's inspector values (`reading-the-runtime.md`) | the two subtrees and those texts, about 100 KiB per locale |
 | `data/c3-guides/`, `prompts/` | agents, from `SKILL.md` and the block | their files |
 | `skills/construct3-agent-plugin/` except `evals/` | | its files |
@@ -75,13 +76,14 @@ The build:
   `data/c3-ts-defs/autocomplete-data.json` to the same paths.
   The skill's scripts find `data/` in the folder above them as they do in
   the clone, and an agent opens a schema at the same relative path.
-- Writes `data/c3-ts-defs/` except `sdk/`, and each locale of
-  `data/c3-examples/`, as bundles: JSON objects from relative path to file
-  content, each under 256 KiB. One loader in `c3project.py` reads a data
-  folder from its files in the clone and from its bundles in the plugin.
-  `lookup_script_api.py`, `search_guides.py` and `check_design.py` read
-  through it, so in the plugin the TypeScript definitions and the examples
-  are read through those scripts only.
+- Writes `data/c3-ts-defs/` except `sdk/`, each locale of
+  `data/c3-examples/`, and `data/c3-example-usage/`, as bundles: JSON
+  objects from relative path to file content, each under 256 KiB. One
+  loader in `c3project.py` reads a data folder from its files in the clone
+  and from its bundles in the plugin. `lookup_script_api.py`,
+  `search_guides.py`, `check_design.py` and `lookup_ace.py` read through
+  it, so in the plugin the TypeScript definitions, the examples and their
+  index are read through those scripts only.
 - Writes `data/c3-lang/{locale}.json` with the two subtrees that
   `check_project.py` reads. It also keeps the `name`, `properties` and
   `debugger` texts of every plugin and behavior, at the same JSON paths.

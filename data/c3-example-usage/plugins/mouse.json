@@ -1,0 +1,28 @@
+{
+  "conditions": {
+    "cursor-is-over-object": {"examples": 27, "read": [["unique-ids", "Event sheet 1", 2, 2], ["html-dialog", "Event sheet 1", 5, 5], ["flowchart-questionnaire", "Event sheet 1", 10, 10]]},
+    "has-pointer-lock": {"examples": 7, "read": [["foggy-outbreak", "MainCode", 6, 6], ["classic-raycaster", "Code", 7, 7], ["toolbox-wheel", "Events", 4, 4]]},
+    "mouse-button-is-down": {"examples": 26, "read": [["bouncing-bullets", "Event sheet 1", 2, 2], ["physics-force-point", "Event sheet 1", 2, 2], ["physics-revolute-joint", "Event sheet 1", 2, 2]]},
+    "on-any-click": {"examples": 14, "read": [["particle-explosions", "Event sheet 1", 1, 1], ["detecting-input-method", "Title events", 2, 2], ["template-infinite-jumping", "Start screen events", 2, 2]]},
+    "on-button-released": {"examples": 7, "read": [["cellf-defense", "Login events", 16, 17], ["solar-system", "Events", 33, 38], ["blackball-billiard", "Events", 10, 10]]},
+    "on-click": {"examples": 24, "read": [["8-direction-behavior", "Event sheet 1", 2, 2], ["physics-ragdoll", "Event sheet 1", 3, 3], ["unique-ids", "Event sheet 1", 3, 3]]},
+    "on-mouse-wheel": {"examples": 8, "read": [["interior-designer", "Events", 3, 3], ["graphing-calculator-js", "Events", 4, 4], ["winter-tree", "Events", 22, 22]]},
+    "on-movement": {"examples": 12, "read": [["first-person-platformer", "Event sheet 1", 12, 12], ["foggy-outbreak", "MainCode", 4, 4], ["graphing-calculator-js", "Events", 3, 3]]},
+    "on-object-clicked": {"examples": 18, "read": [["bbc-micro-bit-raw", "LEDEvents", 1, 1], ["custom-actions", "Event sheet 1", 2, 2], ["flowcharts-and-containers", "Event sheet 1", 2, 2]]},
+    "on-pointer-locked": {"examples": 1, "read": [["meowgix", "MenuEvents", 40, 40]]}
+  },
+  "actions": {
+    "request-pointer-lock": {"examples": 8, "read": [["first-person-platformer", "Event sheet 1", 11, 11], ["foggy-outbreak", "MainCode", 6, 6], ["classic-raycaster", "Code", 7, 7]]},
+    "set-cursor-from-sprite": {"examples": 1, "read": [["ghost-shooter-rain-demo", "GameEvents", 2, 2]]},
+    "set-cursor-style2": {"examples": 1, "read": [["meowgix", "MenuEvents", 35, 39]]}
+  },
+  "expressions": {
+    "absolutex": {"examples": 3, "read": [["light-gun", "Gameplay", 35, 42], ["template-real-time-strategy", "Event sheet 1", 28, 28], ["mythinsects", "GameEvents", 50, 50]]},
+    "absolutey": {"examples": 2, "read": [["light-gun", "Gameplay", 35, 42], ["template-real-time-strategy", "Event sheet 1", 30, 30]]},
+    "movement-x": {"examples": 9, "read": [["first-person-platformer", "Event sheet 1", 12, 12], ["foggy-outbreak", "MainCode", 4, 4], ["graphing-calculator-js", "Events", 3, 3]]},
+    "movement-y": {"examples": 8, "read": [["first-person-platformer", "Event sheet 1", 12, 12], ["foggy-outbreak", "MainCode", 4, 4], ["graphing-calculator-js", "Events", 3, 3]]},
+    "wheel-delta-y": {"examples": 2, "read": [["graphing-calculator-js", "Events", 4, 4], ["kitty-katcher", "Global", 25, 25]]},
+    "x": {"examples": 46, "read": [["9-patch-plugin", "Event sheet 1", 1, 1], ["particle-explosions", "Event sheet 1", 1, 1], ["simple-lighting", "Event sheet 1", 1, 1]]},
+    "y": {"examples": 45, "read": [["9-patch-plugin", "Event sheet 1", 1, 1], ["particle-explosions", "Event sheet 1", 1, 1], ["simple-lighting", "Event sheet 1", 1, 1]]}
+  }
+}

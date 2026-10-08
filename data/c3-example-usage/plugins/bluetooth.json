@@ -1,0 +1,21 @@
+{
+  "conditions": {
+    "is-supported": {"examples": 2, "read": [["bluetooth-device-name", "Event sheet 1", 1, 1], ["bbc-micro-bit-raw", "RequestingDevice", 3, 3]]},
+    "on-characteristic-notification": {"examples": 1, "read": [["bbc-micro-bit-raw", "AccelerometerReading", 3, 3]]},
+    "on-characteristic-read": {"examples": 1, "read": [["bluetooth-device-name", "Event sheet 1", 5, 5]]},
+    "on-characteristic-read-error": {"examples": 2, "read": [["bluetooth-device-name", "Event sheet 1", 7, 7], ["bbc-micro-bit-raw", "RequestingDevice", 8, 8]]},
+    "on-device-connected": {"examples": 2, "read": [["bbc-micro-bit-raw", "AccelerometerReading", 2, 2], ["bluetooth-device-name", "Event sheet 1", 4, 4]]},
+    "on-device-disconnected": {"examples": 2, "read": [["bluetooth-device-name", "Event sheet 1", 6, 6], ["bbc-micro-bit-raw", "RequestingDevice", 7, 7]]},
+    "on-request-device-failed": {"examples": 2, "read": [["bluetooth-device-name", "Event sheet 1", 3, 3], ["bbc-micro-bit-raw", "RequestingDevice", 5, 5]]}
+  },
+  "actions": {
+    "read-characteristic-value": {"examples": 1, "read": [["bluetooth-device-name", "Event sheet 1", 4, 4]]},
+    "request-device": {"examples": 2, "read": [["bluetooth-device-name", "Event sheet 1", 2, 2], ["bbc-micro-bit-raw", "RequestingDevice", 4, 4]]},
+    "start-stop-characteristic-notifications": {"examples": 1, "read": [["bbc-micro-bit-raw", "AccelerometerReading", 2, 2]]},
+    "write-characteristic-binary": {"examples": 1, "read": [["bbc-micro-bit-raw", "ChangeLED", 4, 4]]}
+  },
+  "expressions": {
+    "characteristic-text": {"examples": 1, "read": [["bluetooth-device-name", "Event sheet 1", 5, 5]]},
+    "device-id": {"examples": 2, "read": [["bbc-micro-bit-raw", "AccelerometerReading", 2, 2], ["bluetooth-device-name", "Event sheet 1", 4, 4]]}
+  }
+}

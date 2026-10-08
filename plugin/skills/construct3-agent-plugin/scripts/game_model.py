@@ -46,6 +46,8 @@ STATE_MAX = 10              # a small game: what a small model can keep consiste
 RULES_MAX = 14
 STEPS_MAX = 60              # steps of one test
 WAIT_MAX = 20.0             # seconds one test may wait in all
+IDLE = 120.0                # seconds the prototype plays without input: a win in that time is won by waiting
+NOTHING_LATER = "nothing left out"      # the one item of "later" when a round builds the whole request
 NAME = re.compile(r"[A-Za-z][A-Za-z0-9_]{0,31}$")
 KEY = re.compile(r"(Arrow(Left|Right|Up|Down)|Space|Enter|Escape|Key[A-Z]|Digit[0-9]|[a-z0-9])$")
 PROPS = ("x", "y", "text", "frame", "visible", "angle", "width", "height", "opacity")
@@ -53,7 +55,8 @@ SEEN = ("text", "x", "y", "frame", "visible", "angle", "width", "height", "opaci
 # "Stone.shown" counts the Stone instances the player sees; "Stone.shown(frame=1)" those showing frame 1
 SHOWN = re.compile(r"([A-Za-z][A-Za-z0-9_]*)\.shown(?:\(frame\s*=\s*(\d+)\))?")
 
-DESIGN_KEYS = {"game", "core_loop", "reference", "screen", "state", "inputs", "rules", "win", "lose", "tests"}
+DESIGN_KEYS = {"game", "request", "later", "core_loop", "reference", "screen", "state", "inputs", "rules", "win", "lose",
+               "won_by_waiting", "tests"}
 STATE_KEYS = {"name", "start", "size", "stored_in", "means", "keep", "const"}
 INPUT_KEYS = {"name", "player", "args", "game"}
 RULE_KEYS = {"id", "on", "if", "do", "children", "else", "feedback"}
@@ -342,6 +345,9 @@ class Design:
         self.win: Node | None = None
         self.lose: Node | None = None
         self.tests: list[dict] = []
+        self.request = ""
+        self.later: list[str] = []
+        self.waiting = ""               # what the player does while a timer runs, in a game won by outlasting it
         if not isinstance(data, dict):
             self.bad("design", "is not a JSON object; write the design as references/designing-a-game.md shows")
             return
@@ -383,6 +389,9 @@ class Design:
         d = self.data
         self.keys(d, DESIGN_KEYS, "design")
         self.text("game", "the game's name as the player sees it")
+        self.request = self.text("request", "the user's request in their own words, copied as they wrote it, so that "
+                                            "a review holds the game to what was asked")
+        self.later = self.read_later(d.get("later"))
         self.text("core_loop", "one sentence: what the player does again and again, and what it leads to")
         ref = d.get("reference")
         if not isinstance(ref, dict) or not isinstance(ref.get("example"), str) or not isinstance(ref.get("takes"), str) \
@@ -421,6 +430,15 @@ class Design:
                              'has no losing (two players, one of whom wins)')
         elif lose != "none":
             self.lose = self.expr(lose, "lose")
+        waiting = d.get("won_by_waiting")
+        if waiting is not None:
+            if not isinstance(waiting, str) or len(waiting.strip()) < 3:
+                self.bad("won_by_waiting", "what the player does while the timer runs, in words, for a game won by "
+                                           "outlasting it: \"dodges the falling rocks until the timer runs out\"")
+            elif win == "none":
+                self.bad("won_by_waiting", "the game has no win, so it is not won by waiting; drop the field")
+            else:
+                self.waiting = waiting.strip()
         tests = d.get("tests")
         if not isinstance(tests, list) or not tests:
             self.bad("tests", "missing; acceptance tests that play the rules: input, wait, expect")
@@ -430,6 +448,26 @@ class Design:
             for i, t in enumerate(tests):
                 self.read_test(t, f"tests[{i}]")
         self.check_names()
+
+    def read_later(self, later) -> list[str]:
+        """What this round leaves for later, so that the next session neither builds it again nor forgets it."""
+        what = (f'what this round leaves for later: each thing the request names or takes for granted that this '
+                f'design does not build, in a few words, such as ["sound", "a best score", "levels after the first"]. '
+                f'If the design builds the whole request, write ["{NOTHING_LATER}"]')
+        if later is None:
+            self.bad("later", f"missing; {what}")
+            return []
+        if not isinstance(later, list) or not all(isinstance(v, str) and v.strip() for v in later):
+            self.bad("later", f"a list of texts; {what}")
+            return []
+        if not later:
+            self.bad("later", f"empty; {what}")
+            return []
+        items = [v.strip() for v in later]
+        if len(items) > 1 and any(v.lower() == NOTHING_LATER for v in items):
+            self.bad("later", f'"{NOTHING_LATER}" is only ever the one item. If something is left for later, remove '
+                              f'"{NOTHING_LATER}". If the design builds the whole request, remove the other items')
+        return items
 
     def read_state(self) -> None:
         rows = self.data.get("state")
@@ -868,6 +906,103 @@ def how_tapped(inp: dict) -> str:
     return "a tap on the screen"
 
 
+# --- the screen ---------------------------------------------------------------------------
+# The words of a screen entry's place: top, bottom, left, right, centre are thirds of the screen; above,
+# below, left of, right of are sides of another entry
+VERTICAL = {"top": "top", "upper": "top", "bottom": "bottom", "lower": "bottom"}
+HORIZONTAL = {"left": "left", "right": "right"}
+MIDDLE = {"centre", "center", "middle", "centred", "centered", "central"}
+FILLER = {"a", "an", "the", "in", "at", "on", "of", "screen", "corner", "band", "edge", "side", "third"}
+RELATION = re.compile(r"\b(above|below|under|beneath|(?:to the )?left of|(?:to the )?right of)\s+(?:the\s+)?"
+                      r"([A-Za-z][A-Za-z0-9_-]*)", re.I)
+SIDES = {"above": "above", "below": "below", "under": "below", "beneath": "below"}
+SCREEN_WORDS = ("top, bottom, left, right, centre, and above KEY, below KEY, left of KEY, right of KEY for another "
+                "screen entry or object KEY")
+# Words of a key that name how a region is drawn, not what it shows: score_display is the score.
+GENERIC = {"display", "text", "label", "area", "ui", "hud", "value"}
+
+
+@dataclass
+class Place:
+    key: str
+    text: str
+    path: str
+    vertical: str | None = None     # top, middle or bottom third; None for any
+    horizontal: str | None = None   # left, middle or right third; None for any
+    sides: list = field(default_factory=list)   # (above, below, left of or right of, the key or object X)
+    measured: bool = False
+
+    @property
+    def third(self) -> str:
+        """The third the words name, as the design would write it."""
+        if self.vertical == self.horizontal == "middle":
+            return "centre"
+        parts = [p for p in (self.vertical, self.horizontal) if p]
+        return "-".join("centre" if p == "middle" else p for p in parts)
+
+
+def place(key: str, text: str) -> Place:
+    """A screen entry read for its place; measured is False when a word outside the lists above stands before its
+    first comma."""
+    out = Place(key, text, f"screen.{key}")
+    clause = re.split(r"[,;(]", text, maxsplit=1)[0]
+    for m in RELATION.finditer(clause):
+        side = m.group(1).lower().replace("to the ", "")
+        out.sides.append((SIDES.get(side, side), m.group(2)))
+    rest = RELATION.sub(" ", clause).lower()
+    words = re.findall(r"[a-z0-9]+", rest)
+    if any(w not in VERTICAL and w not in HORIZONTAL and w not in MIDDLE and w not in FILLER for w in words):
+        return out
+    vertical = {VERTICAL[w] for w in words if w in VERTICAL}
+    horizontal = {HORIZONTAL[w] for w in words if w in HORIZONTAL}
+    middle = any(w in MIDDLE for w in words)
+    if len(vertical) > 1 or len(horizontal) > 1 or middle and vertical and horizontal:
+        return out
+    if middle:
+        vertical, horizontal = vertical or {"middle"}, horizontal or {"middle"}
+    out.vertical = next(iter(vertical), None)
+    out.horizontal = next(iter(horizontal), None)
+    out.measured = bool(out.vertical or out.horizontal or out.sides)
+    return out
+
+
+def screen_places(design: "Design") -> list[Place]:
+    screen = design.data.get("screen")
+    if not isinstance(screen, dict):
+        return []
+    return [place(str(k), v) for k, v in screen.items() if isinstance(v, str) and v.strip()]
+
+
+def name_words(name: str) -> set[str]:
+    """The words of a name, lower case and singular: ScoreText, score_text and scores all hold score."""
+    parts = re.findall(r"[A-Z]+(?![a-z])|[A-Z]?[a-z]+|[0-9]+", name)
+    out = set()
+    for p in (p.lower() for p in parts):
+        if len(p) > 3 and p.endswith(("ches", "shes", "xes", "sses")):
+            p = p[:-2]
+        elif len(p) > 3 and p.endswith("s") and not p.endswith("ss"):
+            p = p[:-1]
+        out.add(p)
+    return out
+
+
+def screen_objects(key: str, design: "Design", types) -> list[str]:
+    """The object types a screen key names: the type of that name, the object a state row of that name is stored
+    in, or every type whose name holds the key's words (score -> ScoreLabel and ScoreText, holes -> Hole). Empty
+    when it names none."""
+    types = list(types)
+    flat = {re.sub(r"[^a-z0-9]", "", t.lower()): t for t in types}
+    if re.sub(r"[^a-z0-9]", "", key.lower()) in flat:
+        return [flat[re.sub(r"[^a-z0-9]", "", key.lower())]]
+    st = design.state.get(key)
+    if st and st.stored_in not in ("global", "Array"):
+        obj = st.shown[0] if st.shown else st.stored_in.split(".", 1)[0]
+        if obj in types:
+            return [obj]
+    want = name_words(key) - GENERIC
+    return [t for t in types if want and want <= name_words(t)]
+
+
 # --- the simulator -----------------------------------------------------------------------
 class Sim:
     """The design's state machine at 60 ticks a second."""
@@ -889,6 +1024,7 @@ class Sim:
         self.late: dict[str, tuple[str, str]] = {}  # in the settle: what a restart changed, by state name
         self.restarts = 0
         self.ran: dict[str, int] = {}
+        self.set_by: dict[str, str] = {}    # the rule that set each name last; the last one set comes last
         self.won = self.lost = False
         self.order = 0
         self.after_restart: list[tuple[str, object, object]] = []
@@ -1038,6 +1174,8 @@ class Sim:
                     old = grid[idx[0]][idx[1]]
                     grid[idx[0]][idx[1]] = num(v) if op == "=" and not is_text(v) else (
                         v if op == "=" else num(old) + num(v) if op == "+=" else num(old) - num(v))
+            self.set_by.pop(name, None)
+            self.set_by[name] = r.id
         self.children(r, scope)
         return True
 
