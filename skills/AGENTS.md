@@ -149,10 +149,11 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 
 | File in `construct3-agent-plugin/evals/` | Holds |
 |-------------------------------------|-------|
-| `evals.json` | The test cases: prompt, expected output, assertions a script can check |
+| `evals.json` | The test cases: prompt, expected output, assertions a script can check, `held_out` on the cases kept out of tuning |
 | `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game, an official example or the empty project of `new_project.py`, with this skill, the previous one or none |
-| `trace.py` | What a run did, from its transcript: every tool call, the ones it lost, `trace.json` |
-| `grade.py` | `grading.json` per run with the evidence, `benchmark.json` per iteration: mean and deviation per case and arm (`<arm>_2` is a second run of `<arm>`), and the difference between arms |
+| `play_cases.py` | The plan of `scripts/preview_project.py` for each case whose request changes what the game does, and the runtime verdicts read from it; `play_cases.py CASE --project FOLDER` plays one |
+| `trace.py` | What a run did, from its transcript: every tool call, the ones it lost, its turns, tokens and seconds, `trace.json` |
+| `grade.py` | `grading.json` per run with the evidence and the level of each assertion, `benchmark.json` per iteration: mean and deviation per case and arm (`<arm>_2` is a second run of `<arm>`), runs that passed everything with a 95% interval, and the difference between arms |
 | `measure_design.py` | What each rule of `scripts/review_design.py` finds over the official examples and game projects, with looser variants, and every hit as JSON to read before a rule becomes a finding |
 | `measure_layout.py` | How much of the screen the official 2D game examples' one-screen layouts cover, and how much larger their largest object is than the next: the thresholds of the generator template's playfield checks |
 | `sweep_outputs.py` | What the scripts print over every example and game project, a dry run of a small plan included, recorded and compared |
@@ -170,8 +171,8 @@ python skills/construct3-agent-plugin/evals/sweep_outputs.py --compare .local/do
 python skills/construct3-agent-plugin/evals/make_fixtures.py <folder outside the clone>/iteration-N --arms with_skill old_skill --old-clone <folder outside the clone>/rag-old
 # after each run has reported
 python skills/construct3-agent-plugin/evals/trace.py <transcript>.jsonl --out <run folder>
-# after the last run of the iteration
-python skills/construct3-agent-plugin/evals/grade.py .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N
+# after the last run of the iteration: the file assertions, and the plans played in the editor's preview
+python skills/construct3-agent-plugin/evals/grade.py .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N --play
 python skills/construct3-agent-plugin/scripts/open_in_editor.py .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N --out .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N/opened.json
 # after a change to the description
 python skills/construct3-agent-plugin/evals/run_trigger_eval.py skills/construct3-agent-plugin/evals/train_queries.json --project <game with .claude/skills>
@@ -204,10 +205,32 @@ python skills/construct3-agent-plugin/evals/run_trigger_eval.py skills/construct
   tools and from the words of shell commands, so a relative path, a
   variable or a write made inside a script escapes it.
 - When a run's completion notice arrives, write the tokens and the duration
-  it gives into the run's `timing.json`. A run without one has no time or
-  tokens in the benchmark; nothing is estimated.
+  it gives into the run's `timing.json`. `trace.py` reads the turns, the
+  output and input tokens and the seconds from the transcript as well, and
+  the benchmark takes the time from it where `timing.json` is missing;
+  nothing is estimated.
+- An assertion has a level: `checker`, `files` or `runtime`. A case whose
+  request changes what the game does has a plan in `play_cases.py`, and
+  `grade.py --play` plays it on each run's project in the editor's preview,
+  one plan at a time, 15 to 60 seconds each. A check reads the running game
+  and finds what the run made by what it does, not by the name the run gave
+  it. A file assertion and a runtime check that disagree on a run are read
+  against the run before either is trusted. A new or changed plan is played
+  on its unfixed fixture, where the asked behaviour must fail, and on a
+  project that does what the case asks, where every check must pass
+  (`docs/decisions/runtime-graded-evals.md`).
+- A case marked `held_out` stays out of the loop that shapes a change:
+  `make_fixtures.py` lays it out only with `--held-out`, and `grade.py`
+  aggregates it apart and prints its failures only with `--show-held-out`.
+  Run the held-out cases once the change is otherwise done, and do not read
+  their transcripts or gradings while it is open. A held-out failure is
+  first reproduced as a new tuning case; the held-out case then joins the
+  tuning set and a new one takes its place.
 - One run per case and arm gives counts, not a spread. Lay a cell out more
   than once, `--arms with_skill with_skill_2`, before quoting a deviation;
-  lost calls vary from 1 to 6 between two runs of the same cell.
+  lost calls vary from 1 to 6 between two runs of the same cell. The
+  benchmark gives the runs that passed every assertion as k of n with a
+  Wilson 95% interval; at two to four runs it spans most of 0 to 1, so
+  quote n with it.
 - The description changes on the failures of the train queries only, and
   the validation queries choose between descriptions.

@@ -1,6 +1,6 @@
 """Lay out the project folders of one eval iteration, one per test case and arm.
 
-    python evals/make_fixtures.py RUNS_DIR [--arms with_skill without_skill] [--cases NAME ...]
+    python evals/make_fixtures.py RUNS_DIR [--arms with_skill without_skill] [--cases NAME ...] [--held-out]
                                   [--old-clone FOLDER] [--examples FOLDER]
 
 RUNS_DIR must lie outside the Construct3-RAG clone: an agent started below
@@ -11,8 +11,9 @@ that the task is a hand edit of a project made in the editor. A fixture
 `example:<id>` is a copy of that official example from --examples. A fixture
 `empty` is the project that new_project.py creates, for a case that designs a
 game before any file exists. A fixture of SEEDS is a stand-in game or an
-example with a mistake small models make written into it, for a case that
-asks to fix it.
+example with a fault written into it, most of them a mistake small models
+make, for a case that asks to fix it. A case marked held_out in evals.json is
+left out unless --held-out is given (skills/AGENTS.md, Evals).
 
 An arm named with_... holds the skill and the block as install.py leaves
 them, without_... holds neither, and old_... holds the previous version of
@@ -27,6 +28,7 @@ an example or the old clone is missing
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -178,11 +180,31 @@ def seed_turn_flip(root: Path) -> None:
     path.write_text(json.dumps(sheet, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
 
 
+def seed_no_solid(root: Path) -> None:
+    """SolidBarrier without its Solid behavior, on the type, on every instance and in the used addons: the
+    player's 8 Direction walks through the walls it was stopped by."""
+    def edit(path: Path, change) -> None:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        change(data)
+        path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+
+    types = {p: json.loads(p.read_text(encoding="utf-8")) for p in (root / "objectTypes").glob("*.json")}
+    wall = next(p for p, t in types.items() if t.get("name") == "SolidBarrier")
+    edit(wall, lambda t: t.update(behaviorTypes=[b for b in t["behaviorTypes"] if b["behaviorId"] != "solid"]))
+    for path in (root / "layouts").glob("*.json"):
+        if not path.name.endswith(".uistate.json"):
+            edit(path, lambda d: [i.get("behaviors", {}).pop("Solid", None) for layer in d["layers"]
+                                  for i in layer["instances"] if i["type"] == "SolidBarrier"])
+    if not any(b["behaviorId"] == "solid" for p, t in types.items() if p != wall for b in t.get("behaviorTypes", [])):
+        edit(root / "project.c3proj", lambda p: p.update(usedAddons=[a for a in p["usedAddons"] if a["id"] != "solid"]))
+
+
 # fixture -> (the fixture it starts from, the mistake written into it). The seeded entries' sids start
 # with 6333, 6444 or 6555, so a grader can tell the example's own events from them.
 SEEDS = {"families-key-pressed": ("example:families", seed_key_pressed),
          "coins-timer-restart": ("coins", seed_timer_restart),
-         "coins-turn-flip": ("coins", seed_turn_flip)}
+         "coins-turn-flip": ("coins", seed_turn_flip),
+         "persistent-walls": ("example:persistent-layouts", seed_no_solid)}
 
 
 def digest(project: Path) -> dict:
@@ -202,12 +224,23 @@ def digest(project: Path) -> dict:
     return out
 
 
+def warnings_of(project: Path) -> list[str]:
+    """The checker's warning lines on the fixture: the project's own, which grade.py does not charge to a run."""
+    p = subprocess.run([sys.executable, str(SKILL / "scripts" / "check_project.py"), "--project", str(project),
+                        "--rag", str(REPO), "--limit", "0"], capture_output=True, text=True, encoding="utf-8",
+                       env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+    return [line for line in p.stdout.splitlines() if line.startswith("warning:")]
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("runs_dir", metavar="RUNS_DIR", help="a new or empty folder outside the clone, one per iteration")
     ap.add_argument("--arms", nargs="+", default=["with_skill", "without_skill"], metavar="ARM",
                     help="folders to lay out per test case; without_... gets no skill, old_... the one of --old-clone")
-    ap.add_argument("--cases", nargs="+", metavar="NAME", help="test cases by name (default: all of evals.json)")
+    ap.add_argument("--cases", nargs="+", metavar="NAME",
+                    help="test cases by name (default: all of evals.json but the held-out ones)")
+    ap.add_argument("--held-out", action="store_true",
+                    help="lay out the held-out cases too, or the ones --cases names; only once a change is done")
     ap.add_argument("--old-clone", metavar="FOLDER", help="a checkout of the clone before the change, for old_... arms")
     ap.add_argument("--examples", metavar="FOLDER",
                     default=str(c3.siblings_folder(REPO) / "Construct-Example-Projects" / "example-projects"),
@@ -228,10 +261,15 @@ def main() -> int:
     unknown = set(args.cases or []) - {c["name"] for c in CASES}
     if unknown:
         sys.exit(f"no test case named {', '.join(sorted(unknown))}; evals.json has: {', '.join(c['name'] for c in CASES)}")
+    held = sorted(c["name"] for c in CASES if c.get("held_out") and c["name"] in (args.cases or []))
+    if held and not args.held_out:
+        sys.exit(f"{', '.join(held)} {'is' if len(held) == 1 else 'are'} held out of tuning (skills/AGENTS.md, Evals): "
+                 f"add --held-out once the change is otherwise done, or name the other cases")
+    chosen = [c for c in CASES if (c["name"] in args.cases if args.cases else args.held_out or not c.get("held_out"))]
 
     with tempfile.TemporaryDirectory() as tmp:
         game = stand_in(Path(tmp) / "coins")
-        for case in (c for c in CASES if not args.cases or c["name"] in args.cases):
+        for case in chosen:
             fixture, seed = SEEDS.get(case["fixture"], (case["fixture"], None))
             source = game
             if fixture == "empty":
@@ -265,7 +303,8 @@ def main() -> int:
                     (target / "tools").mkdir()
                     shutil.copy(installer.parent.parent / "assets" / "build_project.py", target / "tools" / "build_project.py")
                     run("tools/build_project.py", cwd=target)
-                (target.parent / "fixture.json").write_text(json.dumps(digest(target), indent=2), encoding="utf-8")
+                (target.parent / "fixture.json").write_text(json.dumps(digest(target) | {
+                    "check_project.warnings": warnings_of(target)}, indent=2), encoding="utf-8")
                 print(target)
     return 0
 
