@@ -58,6 +58,7 @@ The project skill and the prompts:
 | `instruction-block-refresh.md` | Why the block in a game project's `AGENTS.md` carries a version and a stamp between markers, when `install.py` replaces it, and how an edited block or one from before the markers is treated |
 | `record-tables-as-arrays.md` | Why the generator template writes a table of records as an Array file with field names in row 0, and copies it into a Dictionary at start |
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON, and how a plan names a variable or a comment |
+| `plan-names-the-event-line.md` | Why an operation of a plan may carry the line its event prints, and not a hash of the sheet |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
 | `editor-refusal-report.md` | What the report of a refusal the checker passed holds, what it leaves out, and why the user sends it |
 | `secret-scan.md` | Which strings shaped like a key the checker warns of and the export stops on, and how one meant to be public is marked |
