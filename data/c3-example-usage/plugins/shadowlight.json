@@ -1,0 +1,9 @@
+{
+  "actions": {
+    "set-shadow-color": {"examples": 1, "read": [["shadows-colors", "Event sheet 1", 1, 1]]}
+  },
+  "expressions": {
+    "lightx": {"examples": 2, "read": [["shadows-light-height", "Event sheet 1", 3, 3], ["shadows-soft-penumbras", "Event sheet 1", 3, 3]]},
+    "lighty": {"examples": 2, "read": [["shadows-light-height", "Event sheet 1", 3, 3], ["shadows-soft-penumbras", "Event sheet 1", 3, 3]]}
+  }
+}

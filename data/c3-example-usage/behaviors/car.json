@@ -1,0 +1,24 @@
+{
+  "conditions": {
+    "compare-speed": {"examples": 3, "read": [["vehicle-switching", "MainCode", 15, 15], ["abductractor", "Events", 32, 32], ["overloaded-underqualified", "GameEvents", 341, 341]]}
+  },
+  "actions": {
+    "set-acceleration": {"examples": 2, "read": [["abductractor", "Events", 46, 46], ["overloaded-underqualified", "GameEvents", 10, 17]]},
+    "set-deceleration": {"examples": 3, "read": [["ghost-racer", "MainCode", 48, 48], ["abductractor", "Events", 46, 46], ["overloaded-underqualified", "GameEvents", 10, 17]]},
+    "set-drift-recover": {"examples": 2, "read": [["license-test", "Events", 5, 5], ["overloaded-underqualified", "GameEvents", 324, 324]]},
+    "set-enabled": {"examples": 3, "read": [["license-test", "Events", 2, 2], ["multiplayer-time-attack", "Game events", 3, 3], ["abductractor", "Events", 87, 88]]},
+    "set-ignoring-input": {"examples": 3, "read": [["template-race-track", "Event sheet 1", 2, 3], ["ghost-racer", "MainCode", 48, 48], ["overloaded-underqualified", "GameEvents", 17, 18]]},
+    "set-max-speed": {"examples": 3, "read": [["license-test", "Events", 5, 5], ["abductractor", "Events", 46, 46], ["overloaded-underqualified", "GameEvents", 10, 17]]},
+    "set-speed": {"examples": 2, "read": [["abductractor", "Events", 32, 32], ["overloaded-underqualified", "GameEvents", 269, 269]]},
+    "set-steer-speed": {"examples": 3, "read": [["license-test", "Events", 5, 5], ["abductractor", "Events", 34, 34], ["overloaded-underqualified", "GameEvents", 324, 324]]},
+    "set-turn-while-stopped": {"examples": 1, "read": [["overloaded-underqualified", "GameEvents", 325, 325]]},
+    "simulate-control": {"examples": 6, "read": [["license-test", "Events", 6, 6], ["template-race-track", "Event sheet 1", 17, 17], ["vehicle-switching", "MainCode", 14, 15]]},
+    "stop": {"examples": 2, "read": [["template-race-track", "Event sheet 1", 18, 18], ["multiplayer-time-attack", "Game events", 3, 3]]}
+  },
+  "expressions": {
+    "deceleration": {"examples": 1, "read": [["ghost-racer", "MainCode", 47, 47]]},
+    "maxspeed": {"examples": 3, "read": [["vehicle-switching", "MainCode", 15, 15], ["abductractor", "Events", 32, 32], ["overloaded-underqualified", "GameEvents", 337, 337]]},
+    "movingangle": {"examples": 1, "read": [["template-race-track", "Event sheet 1", 29, 29]]},
+    "speed": {"examples": 5, "read": [["template-driving", "Event sheet 1", 1, 1], ["license-test", "Events", 5, 5], ["template-race-track", "Event sheet 1", 7, 7]]}
+  }
+}

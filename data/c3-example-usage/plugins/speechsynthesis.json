@@ -1,0 +1,16 @@
+{
+  "conditions": {
+    "supports-speech-synthesis": {"examples": 1, "read": [["speech-synthesis", "Event sheet 1", 3, 3]]}
+  },
+  "actions": {
+    "pause-speaking": {"examples": 1, "read": [["speech-synthesis", "Event sheet 1", 7, 7]]},
+    "resume-speaking": {"examples": 1, "read": [["speech-synthesis", "Event sheet 1", 8, 8]]},
+    "speak-text": {"examples": 1, "read": [["speech-synthesis", "Event sheet 1", 5, 5]]}
+  },
+  "expressions": {
+    "voicecount": {"examples": 1, "read": [["speech-synthesis", "Event sheet 1", 2, 2]]},
+    "voicelangat": {"examples": 1, "read": [["speech-synthesis", "Event sheet 1", 2, 2]]},
+    "voicenameat": {"examples": 1, "read": [["speech-synthesis", "Event sheet 1", 2, 2]]},
+    "voiceuriat": {"examples": 1, "read": [["speech-synthesis", "Event sheet 1", 2, 2]]}
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "conditions": {
+    "on-completed": {"examples": 24, "read": [["html-layers", "Event sheet 1", 2, 3], ["html-table", "Event sheet 1", 2, 3], ["json", "Event sheet 1", 2, 4]]}
+  },
+  "actions": {
+    "request-project-file": {"examples": 36, "read": [["html-layers", "Event sheet 1", 1, 1], ["html-table", "Event sheet 1", 1, 1], ["json", "Event sheet 1", 1, 1]]},
+    "request-url": {"examples": 8, "read": [["pottery-js", "Events", 1, 1], ["hashing", "Event sheet 1", 2, 2], ["taking-screenshots", "Event sheet 1", 1, 3]]},
+    "set-response-binary": {"examples": 7, "read": [["pottery-js", "Events", 1, 1], ["hashing", "Event sheet 1", 2, 2], ["taking-screenshots", "Event sheet 1", 1, 3]]}
+  },
+  "expressions": {
+    "lastdata": {"examples": 36, "read": [["html-layers", "Event sheet 1", 2, 3], ["html-table", "Event sheet 1", 2, 3], ["json", "Event sheet 1", 2, 4]]}
+  }
+}

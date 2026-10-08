@@ -1,0 +1,8 @@
+{
+  "conditions": {
+    "on-changing": {"examples": 1, "read": [["tile-randomization", "Event sheet 1", 5, 5]]}
+  },
+  "expressions": {
+    "value": {"examples": 2, "read": [["tile-randomization", "Event sheet 1", 5, 5], ["midi-output", "Event sheet 1", 19, 20]]}
+  }
+}
