@@ -225,7 +225,8 @@ def test_plan_names_an_older_form_of_a_text_it_left_alone(project):
     note = [line for line in out.splitlines() if line.startswith("note: event")]
     assert note == ['note: event 7 action 2 (ScoreText set-text) still has text "Score: " & score, which this plan '
                     f'writes elsewhere as {both}; if both show the same thing, change it too: '
-                    + json.dumps({"event": 7, "action": 2, "set": {"parameters": {"text": both}}})], out
+                    + json.dumps({"event": 7, "line": "function AddScore(points: number)", "action": 2,
+                                  "set": {"parameters": {"text": both}}})], out
     code, out = plan(project, {"event": 2, "action": 2, "set": {"parameters": {"text": both}}},
                      {"event": 7, "action": 2, "set": {"parameters": {"text": both}}}, flags=("--dry-run",))
     assert code == 0 and "note: event" not in out, out
@@ -600,3 +601,55 @@ def test_a_generated_project_is_told_the_change_belongs_in_the_generator(project
     shutil.rmtree(project / "tools")
     code, out = plan(project, {"remove": 1}, flags=("--dry-run",))
     assert code == 0 and "build_project" not in out, out
+
+
+STALE = {"event": 6, "line": "function AddScore(points: number)", "add-actions": [
+    {"id": "wait", "objectClass": "System", "parameters": {"seconds": "0"}}]}
+
+
+def test_a_plan_from_an_older_print_is_refused_with_where_its_line_is_now(project):
+    """Eval runs wrote a second plan after the first had been written, from the numbers the first print or the
+    first plan's output showed. A number that has since moved names another event: the line refuses it."""
+    code, out = plan(project, {"before": 7, "line": "AddScore", "events": [
+        {"eventType": "comment", "text": "Points."},
+        {"eventType": "function-block", "functionName": "Bonus", "actions": []}]})
+    assert code == 0 and "named an event by number alone" not in out, out
+    before = (project / SHEET).read_bytes()
+    code, out = plan(project, {**STALE, "event": 7})                  # AddScore was 7 in the print, and is 8 now
+    assert code == 1 and out.splitlines()[0] == (
+        'operation 1 (event 7): event 7 prints "function Bonus()", not "function AddScore(points: number)", so the '
+        "plan names it by a number from an older print of the sheet or a miscounted one; that line is event 8 now. "
+        "Take each number and its line from print_sheet.py as it prints the sheet now"), out
+    assert (project / SHEET).read_bytes() == before
+    code, out = plan(project, {**STALE, "event": 8}, flags=("--dry-run",))
+    assert code == 0, out
+
+
+@pytest.mark.parametrize("line", ["   7 function AddScore(points: number)", "AddScore(points",
+                                  "function AddScore(points: number)  [event disabled]"])
+def test_a_line_is_found_as_print_sheet_prints_it_or_in_part(project, line):
+    """The line with its number or a mark print_sheet.py adds, or a part of it."""
+    code, out = plan(project, {**STALE, "event": 7, "line": line}, flags=("--dry-run",))
+    assert code == 0, out
+
+
+def test_a_line_copied_from_a_print_in_another_locale_names_the_event(project):
+    """A print with --locale zh-CN words the line in Chinese; the plan runs without --locale."""
+    printed = tool(project, "print_sheet", "Game", "--events", "5", "--locale", "zh-CN")[1]
+    line = next(row for row in printed.splitlines() if row.startswith("   5 "))[5:].strip()
+    assert line != "Touch: On touched Coin (start)", printed
+    code, out = plan(project, {"event": 5, "line": line, "action": 1, "set": {"disabled": True}}, flags=("--dry-run",))
+    assert code == 0, out
+
+
+def test_a_plan_without_lines_is_carried_out_and_noted(project):
+    """Plans written before the line, and a finding's place, which names no line: noted, not refused."""
+    code, out = plan(project, {"event": 7, "add-actions": STALE["add-actions"]}, {"remove": 5},
+                     {"into": 0, "events": [{"eventType": "comment", "text": "End."}]}, flags=("--dry-run",))
+    assert code == 0 and ('note: operations 1 and 2 named events by number alone. Give each the line print_sheet.py '
+                          'prints for its event, {"event": 7, "line": "function AddScore(points: number)", ...}: a '
+                          'number from an older print is then refused instead of changing another event') in out, out
+    code, out = plan(project, {"into": 0, "line": "x", "events": [{"eventType": "comment", "text": "End."}]})
+    assert code == 1 and 'operation 1 (into 0): 0 is the sheet itself, which prints no line; leave "line" out' in out
+    code, out = plan(project, {"variable": "score", "line": "x", "set": {"initialValue": "1"}})
+    assert code == 1 and "a variable is changed with" in out, out

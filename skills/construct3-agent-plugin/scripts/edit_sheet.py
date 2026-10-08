@@ -27,6 +27,15 @@ whatever the operations before it do:
     {"variable": "n", "in": 4, "remove": true}             "in": the event that holds a local, 0 the top level
     {"comment": "Start the next", "set": {"text": "..."}}  a comment by its text or a part of it; or "remove": true
 
+An operation that names an event by its number carries the line the
+print shows for it, without the number, so that a number from an older
+print, or a miscounted one, is refused instead of changing another event:
+
+    {"replace": 5, "line": "Keyboard: On Space pressed", "events": [...]}
+
+Any line of the event's conditions or a part of one will do. An operation
+without "line" is carried out, and a note under the result names it.
+
 A variable, comment or include has no number of its own, so a plan names a
 variable by its name and a comment by its text. A name that more than one
 local holds is refused with the events that hold them, to name with "in".
@@ -54,14 +63,16 @@ byte order mark, no newline at the end, under the name it has on disk.
 
 exit codes: 0 written, or a dry run that would be; 1 nothing written: the plan
 cannot be read, names an event, variable or comment the sheet does not have,
-or a name more than one variable has, or adds a problem, or the sheet changed
-on disk since print_sheet.py printed it; or the project or the clone was not
-found; 2 a project file lacks a key the editor always writes
+or a name more than one variable has, gives a "line" its event does not
+print, or adds a problem, or the sheet changed on disk since print_sheet.py
+printed it; or the project or the clone was not found; 2 a project file lacks
+a key the editor always writes
 """
 import codecs
 import collections
 import copy
 import difflib
+import functools
 import json
 import os
 import random
@@ -330,6 +341,20 @@ def drop_empty_children(events: list, emptied: list) -> None:
             drop_empty_children(children, emptied)
 
 
+# What print_sheet.py adds to a line of an event: a "line" copied with them still names it.
+MARKS = re.compile(r"\s*\[(?:sub-events? [\d-]+|event disabled|condition disabled|context)\]")
+
+
+def line_text(line: str) -> str:
+    """A printed line of an event without its number, its indent and the marks print_sheet.py adds."""
+    return " ".join(re.sub(r"^\s*\d*\s", "", MARKS.sub("", line), count=1).split())
+
+
+def printed_lines(rows) -> dict[int, list[str]]:
+    """The lines each numbered event prints above its actions, by its number: the rows of print_sheet.sheet_rows()."""
+    return {row.number: [line_text(line) for line in row.head] for row in rows if re.match(r"\s*\d+ ", row.head[0])}
+
+
 def with_comments(siblings: list, i: int) -> int:
     """The index of the first of the comments directly above siblings[i]: they are about it."""
     while i and siblings[i - 1].get("eventType") == "comment":
@@ -338,7 +363,11 @@ def with_comments(siblings: list, i: int) -> int:
 
 
 class Plan:
-    def __init__(self, sheet: dict, used: set[int]) -> None:
+    def __init__(self, sheet: dict, used: set[int], lines: dict[int, list[str]],
+                 other_lines=lambda: {}) -> None:
+        self.lines = lines                                # what each event prints, in the locale of the run
+        self.other_lines = other_lines                    # the same in the other locales, read when a line does not match
+        self.unguarded: list[tuple[int, str, int]] = []   # operations that name an event by its number alone
         self.sheet = copy.deepcopy(sheet)
         self.used = set(used)
         self.by_number = dict(enumerate(c3.numbered_events(self.sheet["events"]), 1))
@@ -373,6 +402,34 @@ class Plan:
                 ev = stack.pop()
                 self.gone[id(ev)] = held
                 stack.extend(ev.get("children", []))
+
+    def check_line(self, op: dict, verb: str, n, name: str, i: int) -> None:
+        """The line a plan says event n prints, against the line it prints: a plan made against an older print,
+        or with a miscounted number, would change another event. A plan without it is noted, not refused."""
+        if self.event(n, name, zero=verb == "into") is None:
+            if "line" in op:
+                raise PlanError(f"{name}: 0 is the sheet itself, which prints no line; leave \"line\" out")
+            return
+        if "line" not in op:
+            self.unguarded.append((i, verb, n))
+            return
+        given = op["line"]
+        if not isinstance(given, str) or not line_text(given):
+            raise PlanError(f"{name}: \"line\" is the text print_sheet.py prints for event {n}, such as "
+                            f"{json.dumps(self.lines[n][0], ensure_ascii=False)}")
+        want = line_text(given)
+
+        def prints(lines: list[str]) -> bool:       # one of its lines, or a part of one, or of them all in a row
+            return any(want in text for text in [*lines, " ".join(lines)])
+        if prints(self.lines[n]) or prints(self.other_lines().get(n, [])):
+            return
+        found = [m for m, lines in self.lines.items() if prints(lines)]
+        raise PlanError(f"{name}: event {n} prints {json.dumps(self.lines[n][0], ensure_ascii=False)}, not "
+                        f"{json.dumps(given, ensure_ascii=False)}, so the plan names it by a number from an older print "
+                        f"of the sheet or a miscounted one; "
+                        + (f"that line is event {found[0]} now" if len(found) == 1 else
+                           f"events {', '.join(map(str, found))} print that line now" if found else "no event prints that line now")
+                        + ". Take each number and its line from print_sheet.py as it prints the sheet now")
 
     def put(self, events: list[dict], where: str, n: int, op: str) -> None:
         if where == "into":
@@ -586,7 +643,7 @@ class Plan:
         verb = "move" if "move" in op else "event" if "event" in op else places[0] if len(places) == 1 else None
         allowed = {"move": {"move", *PLACES}, "remove": {"remove"},
                    "event": {"event", "add-actions", "add-conditions", "position", "condition", "action", "set", "remove"},
-                   }.get(verb, {verb, "events"})
+                   }.get(verb, {verb, "events"}) | {"line"}
         if verb == "event" and "add-events" in op:
             raise PlanError(f"{name}: sub-events go into an event with {{\"into\": {json.dumps(op['event'])}, \"events\": [...]}}")
         if verb is None or set(op) - allowed:
@@ -595,9 +652,12 @@ class Plan:
                             '{"move": N, "after"|"before"|"into": M}, {"event": N, "add-actions"|"add-conditions": [...]}, '
                             '{"event": N, "condition"|"action": J, "set": {...}}, {"event": N, "set": {...}}, '
                             '{"event": N, "condition"|"action": J, "remove": true}, '
-                            '{"variable": "name", "set": {...}}, {"comment": "its text", "remove": true}')
+                            '{"variable": "name", "set": {...}}, {"comment": "its text", "remove": true}; '
+                            'one that names an event by its number also carries "line": the line of the event as '
+                            'print_sheet.py prints it')
         n = op[verb]
         name = f"{name} ({verb} {json.dumps(n)})"
+        self.check_line(op, verb, n, name, i)
         if verb in PLACES:
             events = self.new_events(op, name)
             self.put(events, verb, n, name)
@@ -701,7 +761,7 @@ def actions_in(events: list, span: dict | None = None):
         yield from actions_in(ev.get("children", []), span)
 
 
-def left_alone(original: list, events: list, span: dict) -> list[str]:
+def left_alone(original: list, events: list, span: dict, lines: dict[int, list[str]]) -> list[str]:
     """Actions the plan did not touch that write an older form of a text the plan
     now writes elsewhere: the same action on the same object, the parameter opening
     with the same words. A display changed in some of its places and not in the
@@ -732,7 +792,8 @@ def left_alone(original: list, events: list, span: dict) -> list[str]:
                 wrote = alike.pop()
                 notes.append(f"note: event {n} action {j} ({a['objectClass']} {a['id']}) still has {key} {value}, "
                              f"which this plan writes elsewhere as {wrote}; if both show the same thing, change it too: "
-                             + json.dumps({"event": n, "action": j, "set": {"parameters": {key: wrote}}}, ensure_ascii=False))
+                             + json.dumps({"event": n, "line": lines[n][0], "action": j,
+                                           "set": {"parameters": {key: wrote}}}, ensure_ascii=False))
     return notes
 
 
@@ -854,7 +915,18 @@ def main() -> int:
     # The sheet checked as a plan's sheet on both sides, so that a finding is worded alike before and after.
     before, found_before = findings_of(project, args, {args.sheet: sheet})
     existing = set(before.sids) | set(before.ace_sids)      # the sheet's events before the plan; the rest it creates
-    plan = Plan(sheet, set(existing))
+
+    @functools.cache
+    def other_lines() -> dict[int, list[str]]:
+        """What each event prints in the other locales: a "line" copied from a print in another --locale."""
+        other: dict[int, list[str]] = {}
+        for locale in before.p.index.get("languages", []):
+            if locale != args.locale:
+                p = c3.Project(project.root, project.rag, locale, c3.Findings())
+                for n, lines in printed_lines(print_sheet.sheet_rows(p, sheet["events"], [0])).items():
+                    other.setdefault(n, []).extend(lines)
+        return other
+    plan = Plan(sheet, set(existing), printed_lines(print_sheet.sheet_rows(before.p, sheet["events"], [0])), other_lines)
     try:
         if not operations:
             raise PlanError(f"{args.plan} holds no operation; a plan is a list such as "
@@ -956,8 +1028,17 @@ def main() -> int:
     for w in found_after.warnings:
         if unnumbered(w) not in known_warnings:
             print(f"warning: {w}")
-    for note in left_alone(sheet["events"], plan.sheet["events"], span):
+    for note in left_alone(sheet["events"], plan.sheet["events"], span, printed_lines(rows)):
         print(note)
+    if plan.unguarded:
+        ops = [str(i) for i, _, _ in plan.unguarded]
+        i, verb, n = plan.unguarded[0]
+        print(f"note: operation{'s' if len(ops) > 1 else ''} {', '.join(ops[:-1]) + ' and ' if len(ops) > 1 else ''}"
+              f"{ops[-1]} named {'events' if len(ops) > 1 else 'an event'} by number alone. Give "
+              f"{'each' if len(ops) > 1 else 'it'} the line "
+              f"print_sheet.py prints for its event, "
+              + json.dumps({verb: n, "line": plan.lines[n][0]}, ensure_ascii=False)[:-1]
+              + ", ...}: a number from an older print is then refused instead of changing another event")
     if not new and on_disk.replace("\r\n", "\n") != json.dumps(sheet, indent="\t", ensure_ascii=False) and not args.dry_run:
         print(f"note: {path.name} was not laid out as the editor writes it (tabs, LF); it is now, so its diff is the whole file")
     if raw.startswith(codecs.BOM_UTF8) and not args.dry_run:
