@@ -125,7 +125,7 @@ output:
     preview: layout 'Game', runtime in the worker, viewport 430x932, touch
     1 until runtime.objects.Enemy.getAllInstances().length >= 3: true after 1.4 s
     2 drag Piece 0 to BattleSlot 1: (120, 712) to (215, 388) in 0.4 s
-      runtime: <an error the game logged during the step, with its event, once with how many times it came>
+      runtime: <an error the game logged during the step, with its event, and (N times) when it came more than once>
     3 state Piece: <as open_in_editor.py --state prints it>
     4 shot after-merge: .tmp/preview/04-after-merge.png
     recorded merge: 95 frames in 3.4 s, .tmp/preview/02-merge.mp4

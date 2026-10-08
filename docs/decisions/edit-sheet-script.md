@@ -115,10 +115,10 @@ variables and comments.
   A `note:` names each action the plan did not touch that still writes an
   older form of a text the plan writes elsewhere: runs changed the score
   text in one place and left the other showing the old one. After a write,
-  a `note:` says to reopen the project in an editor that has it open: the
-  editor shows the sheet it loaded, and a save after an edit to that sheet
-  there writes its copy over the plan's (`borrowed-numbers.md`, "An editor
-  open while files change").
+  a `note:` says to reopen the project in an editor that has it open. The
+  editor keeps the sheet it loaded, so a save after an edit to that sheet
+  there writes the editor's copy over the plan's (`borrowed-numbers.md`,
+  "An editor open while files change").
 
 ## Re-evaluate when
 

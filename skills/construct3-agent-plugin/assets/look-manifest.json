@@ -86,6 +86,7 @@
       "id": "screen.safe-area",
       "status": "adopted",
       "says": "The whole viewport stays inside the safe area of a screen with a notch or rounded corners: Viewport fit Auto, as the empty project has it. A game that draws under the notch with Cover moves its HUD in by PlatformInfo's SafeAreaInset expressions.",
+      "template": "PROPERTY_DEFAULTS",
       "confirm": "check_look.py: screen.safe-area (a warning)"
     },
     {

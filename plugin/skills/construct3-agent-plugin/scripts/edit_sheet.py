@@ -961,9 +961,9 @@ def main() -> int:
         print(f"note: {path.name} started with a byte order mark, which the editor does not write; it no longer does, "
               f"so its first line shows in the diff")
     if not args.dry_run:
-        print("note: if the project is open in the Construct 3 editor, close it there without saving and open it "
-              "again; the editor shows the sheet as it loaded it, and a save after an edit to that sheet in the "
-              "editor writes its copy over this change")
+        print("note: if the project is open in the Construct 3 editor, close it there without saving, then open it "
+              "again. The editor keeps the sheet as it loaded it, so a save after an edit to that sheet there writes "
+              "the editor's copy over this change")
     if found_after.errors:
         print(f"{len(found_after.errors)} problem(s) were in the project before this plan and still are: "
               f"check_project.py lists them")

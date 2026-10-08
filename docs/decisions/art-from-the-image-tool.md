@@ -83,16 +83,16 @@ A published sprite tool that draws several poses in one picture reports
 four a picture as stable, and repeated or dropped subjects at nine and
 twelve.
 
-Whether the key picture can reach the image tool was tried on the clients
-at hand. Codex CLI's built-in image tool takes a list of local picture
-paths as references. Given two drawn characters, it drew both in one
-picture, with features that the prompt did not describe. Given one, it
-drew the same character in a new pose. Its pictures came back opaque, on
-a magenta that varied by up to 20 levels per channel. A Claude Code
-session has no image tool of its own, and the Figma connector's image
-tool takes a prompt only. A chat client's agent mode edits from a list of
-reference picture URLs. The pictures and calls are in
-`.local/docs/evidence/w11-measurements/image-refs/`.
+The key picture was passed as a reference to the image tool of each
+client below. One coding agent's built-in image tool takes a list of local
+picture paths as references. Given two drawn characters, it drew both in
+one picture, with features that the prompt did not describe. Given one,
+it drew the same character in a new pose. Its pictures came back opaque,
+on a magenta that varied by up to 20 levels per channel. A Claude Code
+session has no image tool of its own, and a design connector's image
+tool takes a prompt only. A chat client's agent mode edits from a list
+of reference picture URLs. The clients, the pictures and the calls are
+in `.local/docs/evidence/borrowed-numbers/image-refs/`.
 
 ## Options
 

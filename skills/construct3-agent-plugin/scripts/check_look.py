@@ -279,14 +279,14 @@ def check_screen(project: dict, warned: list[str]) -> None:
                       f"past the viewport (backdrop()).")
 
 
-# PlatformInfo's SafeAreaInsetTop and the other three in an expression, or the CSS env() name in a script.
+# PlatformInfo's four SafeAreaInset expressions in an event, or the CSS env() names in a script.
 SAFE_AREA = re.compile(r"safe.?area.?inset", re.I)
 
 
 def check_safe_area(root: Path, project: dict, warned: list[str]) -> None:
-    """screen.safe-area over project.c3proj, a warning: Viewport fit Cover draws the viewport under
-    a notch and rounded corners, and the HUD that anchored() holds MARGIN from the screen's edges
-    then lies under them, unless the events or scripts move it by the insets."""
+    """screen.safe-area over project.c3proj, a warning. Viewport fit Cover draws the viewport under a
+    notch and rounded corners, where the HUD that anchored() holds MARGIN from the edges then lies.
+    An event expression or a script that reads the insets silences it."""
     if (project.get("properties") or {}).get("viewportFit") != "cover":
         return
     def expressions(node):
@@ -305,9 +305,9 @@ def check_safe_area(root: Path, project: dict, warned: list[str]) -> None:
     if any(SAFE_AREA.search(t) for t in texts):
         return
     warned.append("warning: screen.safe-area: project.c3proj has viewportFit cover, which draws the game under a "
-                  "phone's notch and rounded corners, and no event or script reads the safe area's insets, so the "
-                  "HUD held to the screen's edges lies under the notch. Set viewportFit to auto, which keeps the "
-                  "whole viewport visible, or move the HUD in by PlatformInfo.SafeAreaInsetTop and the other insets, "
+                  "phone's notch and rounded corners. No event or script reads the safe area's insets, so the HUD "
+                  "held to the screen's edges lies under the notch. Set viewportFit to auto, which keeps the whole "
+                  "viewport visible, or move the HUD in by PlatformInfo.SafeAreaInsetTop and the other three insets, "
                   "which are CSS pixels.")
 
 

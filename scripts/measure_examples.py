@@ -7,10 +7,12 @@ open and close, and the Sine behavior's idle motion.
     python scripts/measure_examples.py popups --examples ...
     python scripts/measure_examples.py sine --examples ...
 
-Each subcommand prints a summary and, with --out, writes every measured row as JSON. Examples
-tagged "3D" are left out. Genres are the examples' tags in data/c3-examples/en-US. The decision
-records under docs/decisions/ cite the summaries; the rows stay in .local/docs/evidence/.
-Exit codes: 0 measured, 2 bad arguments.
+Each subcommand prints a summary and, with --out, writes every measured row as JSON. actors and
+hud leave out the examples tagged "3D"; popups and sine read every example, since a popup or an idle
+motion on a 2D layer is the same in a 3D game. Genres are the examples' tags in data/c3-examples.
+docs/decisions/borrowed-numbers.md cites the summaries; the rows stay in .local/docs/evidence/.
+actors needs Pillow, to read the opaque height of the player's picture.
+Exit codes: 0 done (a line says when nothing was measured), 2 bad arguments or no Pillow for actors.
 """
 from __future__ import annotations
 
@@ -23,6 +25,10 @@ from collections import defaultdict
 from pathlib import Path
 
 RAG = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(RAG))
+
+from src.lookup.schema_layout import PRIMARY_SCHEMA_LOCALE  # noqa: E402
+
 GENRES = ("Platformer", "Shooter", "Arcade", "Puzzle", "Action", "Adventure", "Racing", "Strategy", "RPG")
 # A behavior the player moves by; an enemy can have one too, so a name that says player wins.
 CONTROL = {"Platform", "EightDir", "Car", "TileMovement"}
@@ -36,7 +42,7 @@ NOT_BODY = re.compile(r"light|shadow|laser|bullet|gun|weapon|input|name|text|par
 def examples_meta(rag: Path) -> dict[str, dict]:
     """The metadata of every example that is not 3D, by id."""
     meta = {}
-    for f in sorted((rag / "data" / "c3-examples" / "en-US").glob("*.json")):
+    for f in sorted((rag / "data" / "c3-examples" / PRIMARY_SCHEMA_LOCALE).glob("*.json")):
         m = json.loads(f.read_text(encoding="utf-8"))
         if "3D" not in m.get("tags", []):
             meta[m["id"]] = m
@@ -86,10 +92,7 @@ def quantiles(values: list[float]) -> str:
 # --- actors -------------------------------------------------------------------------------
 def opaque_share(folder: Path, otype: dict) -> float:
     """The share of the first frame's height its opaque pixels span; 1 when the image is missing."""
-    try:
-        from PIL import Image
-    except ImportError:
-        return 1.0
+    from PIL import Image
     anims = otype.get("animations", {}).get("items", [])
     if not anims:
         return 1.0
@@ -118,6 +121,11 @@ def player_type(folder: Path) -> dict | None:
 
 
 def measure_actors(examples: Path, rag: Path) -> list[dict]:
+    try:
+        import PIL  # noqa: F401
+    except ImportError:
+        print("actors reads the players' pictures with Pillow: pip install Pillow", file=sys.stderr)
+        raise SystemExit(2)
     rows = []
     for gid, meta in examples_meta(rag).items():
         folder = examples / gid
@@ -260,8 +268,16 @@ def report_hud(rows: list[dict]) -> None:
 
 # --- popups -------------------------------------------------------------------------------------
 # An object or layer that shows for a moment over play: a pause or game-over screen, a menu, a shop.
-POPUP = re.compile(r"pause|menu|shop|popup|gameover|game_?over|skill|inventory|info|result|win|lose|dialog|panel|"
-                   r"window|confirm|upgrade|complete|reward", re.I)
+# Matched by the words of its name, so that WinDefeat is one and WindDirection is not.
+POPUP = {"pause", "menu", "shop", "popup", "gameover", "skill", "inventory", "info", "result", "win", "lose",
+         "dialog", "panel", "window", "confirm", "upgrade", "complete", "reward", "closeup"}
+
+
+def popup_name(name: str) -> bool:
+    words = [w.lower() for w in re.findall(r"[A-Z]+(?![a-z])|[A-Z]?[a-z]+", name)]
+    return any(w in POPUP for w in words) or any(a + b in POPUP for a, b in zip(words, words[1:]))
+
+
 TWEENS = ("tween-one-property", "tween-two-properties")
 
 
@@ -287,12 +303,12 @@ def measure_popups(examples: Path, rag: Path) -> list[dict]:
         for _, layer, inst in instances(folder):
             if layer.get("parallaxX", 1) == 0:
                 on[inst["type"]].add(layer["name"])
-                if POPUP.search(layer["name"]):
+                if popup_name(layer["name"]):
                     popup_layers.add(layer["name"])
         for f in sorted((folder / "eventSheets").glob("*.json")):
             for act in actions_in(load(f).get("events", [])):
                 p, obj = act.get("parameters", {}), act.get("objectClass")
-                if act.get("id") in TWEENS and obj in on and (POPUP.search(obj) or any(map(POPUP.search, on[obj]))):
+                if act.get("id") in TWEENS and obj in on and (popup_name(obj) or any(map(popup_name, on[obj]))):
                     end = number(p.get("end-value"))
                     rows.append({"example": gid, "object": obj, "action": "tween", "property": p.get("property"),
                                  "end": end, "time": number(p.get("time")), "ease": p.get("ease"),
@@ -375,7 +391,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0], formatter_class=argparse.RawDescriptionHelpFormatter,
                                  epilog="example: python scripts/measure_examples.py actors --examples "
                                         "../Construct-Example-Projects/example-projects "
-                                        "--out .local/docs/evidence/w11-measurements/actors.json")
+                                        "--out .local/docs/evidence/borrowed-numbers/actors.json")
     ap.add_argument("measure", choices=sorted(MEASURES))
     ap.add_argument("--examples", type=Path, required=True, help="the example-projects folder of the clone")
     ap.add_argument("--out", type=Path, help="write every measured row here as JSON")

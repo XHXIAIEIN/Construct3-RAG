@@ -95,10 +95,7 @@ offset by the safe-area insets, which the helpers do not compute.
   sets *Cover* in the editor offsets its edge elements by Platform Info's
   `SafeAreaInset` expressions itself. Not verified on a device: no phone
   with a notch or rounded corners has run a generated game, so this rests
-  on the manual. Under *Cover*, a preview with a notch emulated put the
-  stand-in game's top HUD under the notch, and `check_look.py` warns,
-  `screen.safe-area`, when no expression or script reads the insets
-  (`borrowed-numbers.md`, "Safe area and notch").
+  on the manual.
 - `backdrop()` and `screen_box()` reach `SCREEN_PAD`, twice the viewport's
   longer side, past the viewport on every side. This covers a screen up to
   4:1 in either orientation. A dim is laid out over `screen_box()`. The tap
@@ -119,6 +116,11 @@ offset by the safe-area insets, which the helpers do not compute.
 - `check_look.py` warns, `screen.fill`, when `project.c3proj` is in a
   *Letterbox* mode. It is a warning, not a finding, because the editor
   accepts the mode and the bars can be a choice.
+- `check_look.py` warns, `screen.safe-area`, when *Viewport fit* is
+  *Cover* and no event expression or script reads the insets. It is a
+  warning, because the editor accepts *Cover* and a game may move its HUD
+  by other means. A preview with a notch emulated put the stand-in game's
+  top HUD under the notch (`borrowed-numbers.md`, "Safe area and notch").
 - `check_look.py` does not flag an edge HUD element without Anchor.
   Position alone does not tell an edge element from a centred one, so the
   check would give false findings.
