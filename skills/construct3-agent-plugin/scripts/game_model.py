@@ -46,6 +46,8 @@ STATE_MAX = 10              # a small game: what a small model can keep consiste
 RULES_MAX = 14
 STEPS_MAX = 60              # steps of one test
 WAIT_MAX = 20.0             # seconds one test may wait in all
+IDLE = 120.0                # seconds the prototype plays without input: a win in that time is won by waiting
+NOTHING_LATER = "nothing left out"      # the one item of "later" when a round builds the whole request
 NAME = re.compile(r"[A-Za-z][A-Za-z0-9_]{0,31}$")
 KEY = re.compile(r"(Arrow(Left|Right|Up|Down)|Space|Enter|Escape|Key[A-Z]|Digit[0-9]|[a-z0-9])$")
 PROPS = ("x", "y", "text", "frame", "visible", "angle", "width", "height", "opacity")
@@ -53,7 +55,8 @@ SEEN = ("text", "x", "y", "frame", "visible", "angle", "width", "height", "opaci
 # "Stone.shown" counts the Stone instances the player sees; "Stone.shown(frame=1)" those showing frame 1
 SHOWN = re.compile(r"([A-Za-z][A-Za-z0-9_]*)\.shown(?:\(frame\s*=\s*(\d+)\))?")
 
-DESIGN_KEYS = {"game", "core_loop", "reference", "screen", "state", "inputs", "rules", "win", "lose", "tests"}
+DESIGN_KEYS = {"game", "request", "later", "core_loop", "reference", "screen", "state", "inputs", "rules", "win", "lose",
+               "won_by_waiting", "tests"}
 STATE_KEYS = {"name", "start", "size", "stored_in", "means", "keep", "const"}
 INPUT_KEYS = {"name", "player", "args", "game"}
 RULE_KEYS = {"id", "on", "if", "do", "children", "else", "feedback"}
@@ -342,6 +345,9 @@ class Design:
         self.win: Node | None = None
         self.lose: Node | None = None
         self.tests: list[dict] = []
+        self.request = ""
+        self.later: list[str] = []
+        self.waiting = ""               # what the player does while a timer runs, in a game won by outlasting it
         if not isinstance(data, dict):
             self.bad("design", "is not a JSON object; write the design as references/designing-a-game.md shows")
             return
@@ -383,6 +389,9 @@ class Design:
         d = self.data
         self.keys(d, DESIGN_KEYS, "design")
         self.text("game", "the game's name as the player sees it")
+        self.request = self.text("request", "the user's request in their own words, copied as they wrote it, so that "
+                                            "a review holds the game to what was asked")
+        self.later = self.read_later(d.get("later"))
         self.text("core_loop", "one sentence: what the player does again and again, and what it leads to")
         ref = d.get("reference")
         if not isinstance(ref, dict) or not isinstance(ref.get("example"), str) or not isinstance(ref.get("takes"), str) \
@@ -421,6 +430,15 @@ class Design:
                              'has no losing (two players, one of whom wins)')
         elif lose != "none":
             self.lose = self.expr(lose, "lose")
+        waiting = d.get("won_by_waiting")
+        if waiting is not None:
+            if not isinstance(waiting, str) or len(waiting.strip()) < 3:
+                self.bad("won_by_waiting", "what the player does while the timer runs, in words, for a game won by "
+                                           "outlasting it: \"dodges the falling rocks until the timer runs out\"")
+            elif win == "none":
+                self.bad("won_by_waiting", "the game has no win, so it is not won by waiting; drop the field")
+            else:
+                self.waiting = waiting.strip()
         tests = d.get("tests")
         if not isinstance(tests, list) or not tests:
             self.bad("tests", "missing; acceptance tests that play the rules: input, wait, expect")
@@ -430,6 +448,26 @@ class Design:
             for i, t in enumerate(tests):
                 self.read_test(t, f"tests[{i}]")
         self.check_names()
+
+    def read_later(self, later) -> list[str]:
+        """What this round leaves for later, so that the next session neither builds it again nor forgets it."""
+        what = (f'what this round leaves for later: each thing the request names or takes for granted that this '
+                f'design does not build, in a few words, such as ["sound", "a best score", "levels after the first"]. '
+                f'If the design builds the whole request, write ["{NOTHING_LATER}"]')
+        if later is None:
+            self.bad("later", f"missing; {what}")
+            return []
+        if not isinstance(later, list) or not all(isinstance(v, str) and v.strip() for v in later):
+            self.bad("later", f"a list of texts; {what}")
+            return []
+        if not later:
+            self.bad("later", f"empty; {what}")
+            return []
+        items = [v.strip() for v in later]
+        if len(items) > 1 and any(v.lower() == NOTHING_LATER for v in items):
+            self.bad("later", f'"{NOTHING_LATER}" is only ever the one item. If something is left for later, remove '
+                              f'"{NOTHING_LATER}". If the design builds the whole request, remove the other items')
+        return items
 
     def read_state(self) -> None:
         rows = self.data.get("state")
@@ -889,6 +927,7 @@ class Sim:
         self.late: dict[str, tuple[str, str]] = {}  # in the settle: what a restart changed, by state name
         self.restarts = 0
         self.ran: dict[str, int] = {}
+        self.set_by: dict[str, str] = {}    # the rule that set each name last; the last one set comes last
         self.won = self.lost = False
         self.order = 0
         self.after_restart: list[tuple[str, object, object]] = []
@@ -1038,6 +1077,8 @@ class Sim:
                     old = grid[idx[0]][idx[1]]
                     grid[idx[0]][idx[1]] = num(v) if op == "=" and not is_text(v) else (
                         v if op == "=" else num(old) + num(v) if op == "+=" else num(old) - num(v))
+            self.set_by.pop(name, None)
+            self.set_by[name] = r.id
         self.children(r, scope)
         return True
 
