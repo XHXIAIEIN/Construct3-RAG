@@ -66,7 +66,7 @@ def round_trip(sheet: dict, n: int) -> str:
     shown = io.StringIO()
     with contextlib.redirect_stdout(shown):
         print_sheet.show(sheet, sheet.get("name", ""), n, 0)
-    plan = edit_sheet.Plan(sheet, set(edit_sheet.sids_of(sheet)))
+    plan = edit_sheet.Plan(sheet, set(edit_sheet.sids_of(sheet)), {})     # a plan without lines: none to check
     plan.apply({"replace": n, "events": [json.loads(shown.getvalue())]}, 1)
     return json.dumps(plan.sheet, indent="\t", ensure_ascii=False)
 
