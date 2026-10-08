@@ -84,7 +84,7 @@ output:
     runtime: <an error the layout logged, with its event, and (N times) when it came more than once>
   layout 'Combat' (3 of 3): started, and its events went on to 'Map' before the screenshot; ...
   questions: answer every question yes or no for each screenshot above, through the brief as the last line ...
-    1. Is any text cut off at an edge, broken onto a line of its own, or drawn over another object?
+    1. Is any text cut off, broken onto a line of its own, too small or too faint to read, or partly hidden ...
     ...
     7. Does the same decoration, not the HUD, appear on every screenshot?
   look: 2 findings on 3 layouts, 0 runtime errors; full result in .tmp/review-look.json, screenshots in .tmp/look
@@ -109,16 +109,21 @@ OVERLAY = 0.5
 BLANK_TRIES = 3
 BLANK_WAIT = 1.0
 
+# Each question asks what a player sees as a mistake, not a fact about the picture: worded as facts (two
+# outline weights, an object over another, anything the edge cuts), a judge answered yes on most screens a
+# person would ship (docs/decisions/look-judge-calibration.md).
 QUESTIONS = (
-    "Is any text cut off at an edge, broken onto a line of its own, or drawn over another object?",
-    "Does any object cover part of another object that is not its own background, such as a name over a body "
-    "or a character inside the cards?",
-    "Is any object cut off by the edge of the screen?",
-    "Do two outline weights, two kinds of shadow (hard and blurred), flat and gradient fills, or pixel and "
-    "smooth edges appear on screen together?",
-    "Is a background or a decoration larger or brighter than the objects the player taps or moves?",
+    "Is any text cut off, broken onto a line of its own, too small or too faint to read, or partly hidden by "
+    "another object?",
+    "Does an object cover a text, a number, a button or the face of a card, so that the player cannot read or "
+    "use it?",
+    "Is a button, a text, a counter or another part of the HUD cut off by the edge of the screen?",
+    "Is any object a stand-in or drawn in a style of its own: a plain box or shape among finished art, a smooth "
+    "or blurred shape among pixel art, or a blurred edge among sharp ones?",
+    "Does a background, a decoration or a glow catch the eye before the objects the player taps or moves, or "
+    "make them hard to pick out?",
     "Do two objects that stand for different things (two enemy types, two kinds of map node, two cards) look "
-    "identical?",
+    "identical, with no label, colour or icon to tell them apart?",
 )
 ACROSS = "Does the same decoration, not the HUD, appear on every screenshot?"
 
@@ -488,7 +493,9 @@ def brief(result: dict) -> str:
     asked = questions(len(layouts) > 1, result.get("places", []))
     lines = ["# Look review", "",
              "You have not seen this game's project, its events or how it was built, and you do not need to. Judge "
-             "only what the screenshots show. If a picture does not show it, answer no.", "",
+             "only what the screenshots show. If a picture does not show it, answer no. Answer yes only for "
+             "what a player would see as a mistake: art layered on purpose is none, such as a character in "
+             "front of the ground or scenery that runs past the edge of the screen.", "",
              "Open each screenshot with your image tool, one at a time:", ""]
     lines += [f"{n}. {layout}: {shot}" for n, (layout, shot) in enumerate(shots, 1)]
     lines += ["", "Answer every question for every screenshot, yes or no:", ""]

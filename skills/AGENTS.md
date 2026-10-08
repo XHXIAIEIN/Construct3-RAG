@@ -171,6 +171,8 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 | `grade.py` | `grading.json` per run with the evidence and the level of each assertion, `benchmark.json` per iteration: mean and deviation per case and arm (`<arm>_2` is a second run of `<arm>`), runs that passed everything with a 95% interval, and the difference between arms |
 | `measure_design.py` | What each rule of `scripts/review_design.py` finds over the official examples and game projects, with looser variants, and every hit as JSON to read before a rule becomes a finding |
 | `measure_layout.py` | How much of the screen the official 2D game examples' one-screen layouts cover, and how much larger their largest object is than the next: the thresholds of the generator template's playfield checks |
+| `label_look.py` | A page on which a person answers the questions of `scripts/review_look.py` about a set of screenshots, and whether each screen would ship, every answer saved as it is given |
+| `judge_look.py` | Those questions put to a judge that has not seen the games, through the brief `review_look.py` writes, and its agreement with the person per question (`docs/decisions/look-judge-calibration.md`) |
 | `sweep_outputs.py` | What the scripts print over every example and game project, a dry run of a small plan included, recorded and compared |
 | `sweep_round_trip.py` | Every event of every example put back as `print_sheet.py --show` prints it, and the events after which `edit_sheet.py` would write a different sheet |
 | `train_queries.json`, `validation_queries.json` | Trigger queries, a fixed 60/40 split; near misses as the negatives |

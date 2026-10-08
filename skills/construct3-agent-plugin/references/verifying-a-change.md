@@ -142,11 +142,14 @@ instance the screen's edge cuts (`edge`), and a type whose kinds show one
 frame (`frame`). None of them fires on the official examples. Fix every one.
 
 What a measurement cannot judge, the script asks: one list of yes/no
-questions about visible facts: cut or overlapping text, objects that
-cover others, the edge of the screen, mixed drawing styles, a backdrop that
-outshines what the player acts on, kinds that look alike, and decoration
-repeated on every layout, and, when the project has a design, the screen
-entries that `play_design.py` cannot measure. The agent that wrote the
+questions about what a player sees as a mistake: text cut, too small, too
+faint or partly hidden, an object over a text, a button or a card's face,
+the HUD cut by the screen's edge, a stand-in or an object drawn in a style
+of its own, a backdrop that catches the eye before what the player acts on,
+kinds that look alike, and decoration repeated on every layout, and, when
+the project has a design, the screen entries that `play_design.py` cannot
+measure. Art layered on purpose, such as scenery running past the edge, is
+no mistake. The agent that wrote the
 events reads its own screenshots by what it meant them to show. So the
 script also writes the screenshots and the questions into `brief.md` beside
 them, for a reviewer that has not seen the project. Where you can start a
