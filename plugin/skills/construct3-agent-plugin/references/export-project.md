@@ -36,6 +36,11 @@ project's Version. The script writes the version into `project.c3proj` too,
 so the project and its export agree. `--dry-run` prints the version, the
 editor and the folder, and opens nothing.
 
+The export ships every string of the project to every player. Before the
+browser starts, the script reads them as `scripts/check_project.py` does,
+stops on a string shaped like a key, and names the hosts of the addresses
+the game holds: tell the user which hosts the game contacts.
+
 A project over the Free edition's limits exports only from an account with a
 subscription. The script drives a window of its own, and when the editor
 shows Guest or Free edition it waits up to 5 minutes: tell the user to log
@@ -76,6 +81,10 @@ closes it after the export or when the run stops.
   what is open and runs the export once more with pauses three times as
   long. When that run stops too, or on a machine already known to be slow,
   pass `--slow`, which uses the longer pauses from the start.
+- Exit 1 and `not exported:` with strings `shaped like a key`, before the
+  browser starts: each line names the place. Move each key to a server that
+  the game calls. If a key is meant to be public, write `allow-secret` where
+  the line says. Then run the same command again.
 - Exit 2: a bad flag, project or editor page.
 - Exit 3: no Edge, Chrome or Chromium. Export by hand in the editor, or
   attach to a browser.
