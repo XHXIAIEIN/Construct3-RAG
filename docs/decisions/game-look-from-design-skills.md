@@ -136,11 +136,14 @@ prints
   the rule: a text and its shadow, an overlay over half the screen, an
   instance waiting wholly off screen, art running off the edge of a world
   layer, hidden state such as a mine's, a kind told apart by its label.
-- a fixed list of yes/no questions about visible facts, each yes naming the
-  object to change: cut or overlapping text, objects that cover others,
-  the edge of the screen, mixed drawing styles, a backdrop that outshines
-  what the player acts on, kinds that look alike, decoration repeated on
-  every layout.
+- a fixed list of yes/no questions about what a player sees as a mistake,
+  each yes naming the object to change: text cut, too small, too faint or
+  hidden, an object over a text, a button or a card's face, the HUD cut by
+  the screen's edge, a stand-in or an object drawn in a style of its own, a
+  backdrop that catches the eye before what the player acts on, kinds that
+  look alike, decoration repeated on every layout. Their wording comes from
+  a judge's agreement with the user's own labels
+  (`look-judge-calibration.md`).
 
 The script also writes `brief.md` beside the screenshots: the screenshots,
 the questions and the form of the answer, for a reviewer that has not seen
@@ -171,7 +174,7 @@ questions.
   picture shows nothing wrong: narrow the rule, or drop it.
 - An agent answers the questions "no" over a screenshot that shows the
   fault: the question is not concrete enough for it, or option 6 is due,
-  measured on the eval cases.
+  measured on the set of `look-judge-calibration.md`.
 - A fault the picture shows recurs across generated games and the runtime
   can measure it: it becomes a finding line.
 - Most faults sit in scenes `goToLayout` cannot reach: let the script play a

@@ -38,6 +38,8 @@ def test_the_page_asks_every_screenshot_then_each_brief_of_several(shots: Path) 
     assert asked[0]["ask"] == [str(n) for n in range(1, len(rl.QUESTIONS) + 1)] + ["ship"]
     assert asked[4:] == [{"id": "across:g1", "shots": ["g1-menu", "g1-map"], "ask": ["across"]}]
     assert [i["id"] for i in ll.items(ll.load_set(shots))] == [i["id"] for i in asked]
+    again = ll.items(ll.load_set(shots), ["4"])
+    assert [i["id"] for i in again] == [i["id"] for i in asked[:4]] and all(i["ask"] == ["4"] for i in again)
 
 
 def test_a_set_entry_without_its_file_is_named(shots: Path) -> None:

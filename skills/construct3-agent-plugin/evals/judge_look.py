@@ -3,7 +3,7 @@ has not seen the games, and measure how often its answers agree with the person'
 
     python evals/judge_look.py SET.json --briefs FOLDER
     python evals/judge_look.py SET.json --briefs FOLDER --model MODEL --out REPLIES [--runs 1] [--jobs 4]
-    python evals/judge_look.py SET.json --briefs FOLDER --score REPLIES [--labels LABELS.json]
+    python evals/judge_look.py SET.json --briefs FOLDER --score REPLIES [--labels LABELS.json ...]
 
 SET.json is the set of evals/label_look.py; its labels.json holds the person's answers.
 
@@ -23,7 +23,10 @@ how many agree, the person's yes and the judge's yes, the faults the judge misse
 saw that the person did not, and the agreement a judge that always answered no would reach. The
 ship line compares "every answer no" with the person's "would ship"; the person's own answers are
 compared with it too, which says what the questions leave out. A screenshot the reply does not
-answer counts as unanswered, not as no. The whole score goes to REPLIES/score.json.
+answer counts as unanswered, not as no. Several --labels files are read in turn, an answer in a
+later one taking the place of the same answer in an earlier one: the labels of questions reworded
+since, made with label_look.py --ask, over the first labels. The whole score goes to
+REPLIES/score.json.
 
 Exit codes: 0 done, 1 some run got no reply, 2 bad arguments, no labels, or no client.
 """
@@ -222,7 +225,8 @@ def main() -> int:
     ap.add_argument("--timeout", type=int, default=300, help="seconds a run may take (default 300)")
     ap.add_argument("--client", default="claude", help="the client's command (default: claude)")
     ap.add_argument("--score", type=Path, metavar="REPLIES", help="score the replies in REPLIES")
-    ap.add_argument("--labels", type=Path, help="the person's answers (default: labels.json beside SET.json)")
+    ap.add_argument("--labels", type=Path, nargs="+",
+                    help="the person's answers, later files over earlier ones (default: labels.json beside SET.json)")
     args = ap.parse_args()
     try:
         shots = ll.load_set(args.set)
@@ -232,19 +236,26 @@ def main() -> int:
     index = prepare(shots, args.briefs)
     print(f"{len(index)} briefs in {args.briefs}, each a folder with its brief.md")
     if args.score:
-        path = args.labels or args.set.parent / "labels.json"
-        try:
-            kept = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, ValueError) as e:
-            print(f"{path}: no labels to score against ({e}); label the set with evals/label_look.py first",
-                  file=sys.stderr)
-            return 2
-        changed = [k for k, q in ll.questions().items() if kept.get("questions", {}).get(k, q) != q]
+        paths = args.labels or [args.set.parent / "labels.json"]
+        labels: dict[str, dict] = {}
+        wording: dict[str, str] = {}
+        for path in paths:
+            try:
+                kept = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, ValueError) as e:
+                print(f"{path}: no labels to score against ({e}); label the set with evals/label_look.py first",
+                      file=sys.stderr)
+                return 2
+            answered = {k for got in kept.get("labels", {}).values() for k in got}
+            wording.update({k: q for k, q in kept.get("questions", {}).items() if k in answered})
+            for sid, got in kept.get("labels", {}).items():
+                labels.setdefault(sid, {}).update(got)
+        changed = [k for k, q in ll.questions().items() if wording.get(k, q) != q]
         if changed:
             print(f"warning: questions {', '.join(changed)} read differently now than when they were labelled")
-        result = score(args.score, index, kept.get("labels", {}))
-        print(f"agreement of the replies in {args.score} with {path}:")
-        print_score(result, kept.get("questions", {}))
+        result = score(args.score, index, labels)
+        print(f"agreement of the replies in {args.score} with {', '.join(map(str, paths))}:")
+        print_score(result, wording)
         (args.score / "score.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
         return 0
     if args.model:

@@ -1,7 +1,8 @@
 """Serve a page on which a person answers the questions of scripts/review_look.py about a set
 of screenshots, and keep the answers: the labels that evals/judge_look.py compares a judge with.
 
-    python evals/label_look.py SET.json [--labels LABELS.json] [--words WORDS.json] [--port 8770]
+    python evals/label_look.py SET.json [--labels LABELS.json] [--words WORDS.json] [--ask KEY ...]
+                               [--port 8770]
 
 SET.json lists the screenshots, each path relative to the folder of SET.json:
 
@@ -19,7 +20,8 @@ does not follow its original. It asks each question of review_look.QUESTIONS and
 whether the screen would ship as it looks, with a note for what is wrong. A brief of several
 screenshots ends with a page that shows them together and asks review_look.ACROSS. Each answer
 is written to LABELS.json (default: labels.json beside SET.json) when it is given, with the
-wording of every question, so the labels say which wording they answer.
+wording of every question, so the labels say which wording they answer. --ask asks only the
+questions named, such as the ones reworded since the last labels, into a new LABELS.json.
 
 WORDS.json puts the page in the person's language: {"lang": "zh-CN", "questions": {"1": ..., "ship": ...,
 "across": ...}, "page": {"yes": ..., "no": ..., "ship": ..., "not": ..., "note": ..., "keys": ...,
@@ -78,16 +80,18 @@ def load_set(path: Path) -> list[dict]:
     return shots
 
 
-def items(shots: list[dict]) -> list[dict]:
+def items(shots: list[dict], ask: list[str] | None = None) -> list[dict]:
     """What the page asks, in order: each screenshot, shuffled by a hash of its id, then one page per
-    brief of several screenshots."""
-    numbered = [k for k in questions() if k.isdigit()]
-    out = [{"id": s["id"], "shots": [s["id"]], "ask": numbered + ["ship"]}
-           for s in sorted(shots, key=lambda s: hashlib.sha256(s["id"].encode()).hexdigest())]
+    brief of several screenshots; only the questions in ask when it is given."""
+    ask = ask or list(questions())
+    numbered = [k for k in questions() if k != "across" and k in ask]
+    out = [{"id": s["id"], "shots": [s["id"]], "ask": numbered}
+           for s in sorted(shots, key=lambda s: hashlib.sha256(s["id"].encode()).hexdigest())] if numbered else []
     briefs: dict[str, list[str]] = {}
     for s in shots:
         briefs.setdefault(s["brief"], []).append(s["id"])
-    out += [{"id": f"across:{b}", "shots": ids, "ask": ["across"]} for b, ids in briefs.items() if len(ids) > 1]
+    if "across" in ask:
+        out += [{"id": f"across:{b}", "shots": ids, "ask": ["across"]} for b, ids in briefs.items() if len(ids) > 1]
     return out
 
 
@@ -134,9 +138,9 @@ def load_words(path: Path | None) -> dict:
     return words
 
 
-def handler(shots: list[dict], labels: Labels, words: dict | None = None):
+def handler(shots: list[dict], labels: Labels, words: dict | None = None, ask: list[str] | None = None):
     by_id = {s["id"]: s for s in shots}
-    state = {"questions": questions(), "note": NOTE, "items": items(shots), "words": words or {},
+    state = {"questions": questions(), "note": NOTE, "items": items(shots, ask), "words": words or {},
              "layouts": {s["id"]: s["layout"] for s in shots}}
 
     class Handler(BaseHTTPRequestHandler):
@@ -181,8 +185,8 @@ class Server(ThreadingHTTPServer):
     allow_reuse_address = os.name != "nt"
 
 
-def progress(shots: list[dict], labels: Labels) -> str:
-    asked = items(shots)
+def progress(shots: list[dict], labels: Labels, ask: list[str] | None = None) -> str:
+    asked = items(shots, ask)
     done = sum(all(k in labels.data["labels"].get(i["id"], {}) for k in i["ask"]) for i in asked)
     return f"{done} of {len(asked)} pages answered in {labels.path}"
 
@@ -194,6 +198,9 @@ def main() -> int:
     ap.add_argument("--labels", type=Path, help="where the answers go (default: labels.json beside SET.json)")
     ap.add_argument("--words", type=Path, metavar="WORDS.json",
                     help="the questions and the page's words in the person's language, in the form above")
+    ap.add_argument("--ask", nargs="+", metavar="KEY", choices=list(questions()),
+                    help="ask only these questions, such as the ones reworded since the last labels: "
+                         f"{', '.join(questions())} (default: all)")
     ap.add_argument("--port", type=int, default=8770, help="the port on 127.0.0.1 (default 8770)")
     args = ap.parse_args()
     try:
@@ -207,11 +214,11 @@ def main() -> int:
         print(f"warning: question {k} reads differently in review_look.py now; its labels answer the wording kept "
               f"in {labels.path}, so label the set again into a new --labels file to measure the new wording")
     try:
-        server = Server(("127.0.0.1", args.port), handler(shots, labels, words))
+        server = Server(("127.0.0.1", args.port), handler(shots, labels, words, args.ask))
     except OSError as e:
         print(f"port {args.port} is not free ({e}); stop the server on it or pass another --port", file=sys.stderr)
         return 2
-    print(f"labelling {len(shots)} screenshots: open http://127.0.0.1:{args.port}/ ; {progress(shots, labels)}",
+    print(f"labelling {len(shots)} screenshots: open http://127.0.0.1:{args.port}/ ; {progress(shots, labels, args.ask)}",
           flush=True)
     try:
         server.serve_forever()
@@ -219,7 +226,7 @@ def main() -> int:
         pass
     finally:
         server.server_close()
-    print(progress(shots, labels))
+    print(progress(shots, labels, args.ask))
     return 0
 
 
