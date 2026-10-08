@@ -667,6 +667,214 @@ def test_template_bar_grows_from_its_left_edge_inside_its_frame():
         assert not unknown, (plugin, unknown)
 
 
+def test_template_slider_is_a_row_a_finger_holds_with_its_knob_on_the_track(tmp_path):
+    """slider() lays a row TOUCH high from a grid cell: the label, room for the knob's reach, the track
+    on the grid, the room again, the value. The knob stands at its value, a TOUCH box that drags along
+    X; the fill reaches it; every part is the track's child, so the row hides and moves as one, and
+    no_overlap() passes the knob reaching past the track."""
+    t = template_module()
+    t.ROOT = tmp_path
+    types = t.slider_types()
+    assert [types[k]["plugin-id"] for k in t.SLIDER.values()] == ["TiledBg", "TiledBg", "Sprite", "Text", "Text"]
+    assert types["SliderTrack"]["image"]["height"] == t.TOUCH
+    assert types["SliderFill"]["image"]["height"] == t.CONTROL_SIZE["bar"]
+    knob_type = types["SliderKnob"]
+    assert [(b["behaviorId"], b["name"]) for b in knob_type["behaviorTypes"]] == [("DragnDrop", "DragDrop")]
+    assert [v["name"] for v in knob_type["instanceVariables"]] == ["name", "value", "lo", "hi", "step"]
+    knob_frame = knob_type["animations"]["items"][0]["frames"][0]
+    assert (knob_frame["width"], knob_frame["height"], knob_frame["collisionPoly"]["points"]) == \
+        (160, 160, [0, 0, 1, 0, 1, 1, 0, 1])
+    disc = png_pixels(tmp_path / "images" / "sliderknob-default-000.png")
+    assert disc[80][80][:3] == t.PALETTE["ink"] and disc[80][40][3] == 0       # a 64 px disc in a 160 px box
+    track_png = png_pixels(tmp_path / "images" / "slidertrack.png")
+    assert [row[0][3] for row in track_png].count(255) == t.CONTROL_SIZE["bar"]  # the bar across the middle alone
+    track, fill, knob, label, shown = t.slider("volume", 4, 5, t.units(24), value=50, text="Volume", label_cols=6)
+    assert t.box_of(label) == (128, 160, 320, 320)
+    assert t.box_of(track) == (448, 160, 1216, 320)                            # label, a unit, the knob's reach
+    assert (knob["world"]["x"], knob["world"]["y"], knob["world"]["width"]) == (832, 240, 160)
+    assert knob["instanceVariables"] == {"name": "volume", "value": 50, "lo": 0, "hi": 100, "step": 1}
+    assert knob["behaviors"]["DragDrop"]["properties"] == {"axes": "horizontal-only", "enabled": True}
+    assert t.box_of(fill) == (448, 232, 832, 248)
+    assert (shown["properties"]["text"], t.box_of(shown)) == ("50", (1312, 160, 1408, 320))
+    assert shown["properties"]["horizontal-alignment"] == "right"
+    assert [c["uid"] for c in track["sceneGraphData"]["children"]] == [fill["uid"], knob["uid"], label["uid"],
+                                                                         shown["uid"]]
+    t.no_overlap([track, fill, knob, label, shown])
+    with pytest.raises(SystemExit, match=r"layer UI: SliderKnob .* overlaps Coin"):
+        t.no_overlap([track, knob, t.sprite_inst("Coin", 900, 240, 96, 96)])
+    # The value over the knob follows it: a child of the knob, itself a child of the track.
+    track, fill, knob, shown = t.slider("speed", 0, 10, t.units(12), lo=0.5, hi=2.5, step=0.5, value_at="knob")
+    assert knob["world"]["x"] == t.SLIDER_REACH and shown["properties"]["text"] == "0.5"
+    assert list(knob["sceneGraphData"]) == ["parent-uid", "uid", "children", "flags", "preview"]
+    assert knob["sceneGraphData"]["children"][0]["uid"] == shown["uid"]
+    assert t.box_of(shown)[3] == 400 - t.CONTROL_SIZE["knob"] / 2 - t.GAP_IN      # over the drawn knob
+    t.no_overlap([track, fill, knob, shown])
+    assert len(t.slider("quiet", 0, 0, t.units(8), value_at=None)) == 3
+    with pytest.raises(SystemExit, match=r"slider\('volume'\): length 100 is not whole units of 32 px"):
+        t.slider("volume", 0, 0, 100)
+    with pytest.raises(SystemExit, match=r"lo 1, hi 1, step 1; a slider runs from a lower lo to a higher hi"):
+        t.slider("volume", 0, 0, 320, lo=1, hi=1)
+    small = template_module(VIEW="VIEW_W, VIEW_H = 320, 180")
+    small.ROOT = tmp_path
+    small.slider_types()
+    track, fill, knob = small.slider("volume", 1, 1, small.units(8), value_at=None)
+    assert (small.TOUCH, small.SLIDER_REACH, small.CONTROL_SIZE["knob"]) == (24, 16, 16)
+    assert small.box_of(track) == (24, 8, 88, 32) and knob["world"]["width"] == small.TOUCH
+
+
+def test_template_slider_events_clamp_the_knob_to_its_track_on_a_step():
+    """slider_events() writes Slide, which puts each picked knob on its own track: the value from the
+    knob's X across the track, rounded to a step and clamped to lo..hi, the knob set back on that step,
+    the fill and the value shown, and the global of its name set. A dragged knob slides; a finger on the
+    track away from a knob that is not dragged draws it there; the start shows every knob."""
+    t = template_module()
+    note, slide, *events = t.slider_events({"volume": "volume"})
+    loop = slide["children"][0]
+    assert [c["id"] for c in loop["conditions"]] == ["for-each", "pick-parent"]
+    assert loop["conditions"][1]["parameters"] == {"parent": "SliderTrack", "which": "own"}
+    assert loop["actions"][0]["parameters"]["value"] == (
+        "clamp(Self.lo + round(unlerp(SliderTrack.BBoxLeft, SliderTrack.BBoxRight, Self.X) * (Self.hi - Self.lo) "
+        "/ Self.step) * Self.step, Self.lo, Self.hi)")
+    assert loop["actions"][1]["parameters"]["x"] == \
+        "lerp(SliderTrack.BBoxLeft, SliderTrack.BBoxRight, unlerp(Self.lo, Self.hi, Self.value))"
+    shows = [c for c in loop["children"] if c.get("eventType") == "block"]
+    assert shows[0]["actions"][0]["parameters"]["width"] == "SliderKnob.X - SliderFill.X"
+    assert shows[1]["conditions"][0]["parameters"] == {"child": "SliderValue", "which": "all"}
+    assert shows[2]["conditions"][0]["parameters"]["value"] == '"volume"'
+    assert shows[2]["actions"][0]["parameters"] == {"variable": "volume", "value": "SliderKnob.value"}
+    blocks = [e for e in events if e.get("eventType") == "block"]
+    assert [[c["id"] for c in b["conditions"]] for b in blocks] == \
+        [["on-start-of-layout"], ["is-dragging"], ["is-touching-object"]]
+    draw = blocks[2]["children"][0]
+    assert draw["conditions"][1]["isInverted"] is True
+    assert draw["actions"][0]["parameters"]["x"] == "Touch.X(SliderTrack.LayerName)"
+
+
+def test_template_toggle_is_two_frames_flipped_by_a_press(tmp_path):
+    """toggle_types() draws the switch off and on as two frames tagged "off" and "on", in a box TOUCH
+    high whose whole area takes the finger; toggle() starts on the frame of `on` with its label as its
+    child; toggle_events() flips it on the release of press() and sets the boolean global of its name.
+    A knob or a state that does not read 3:1 stops the run."""
+    t = template_module()
+    t.ROOT = tmp_path
+    types = t.toggle_types()
+    frames = types["Toggle"]["animations"]["items"][0]["frames"]
+    assert [(f["tag"], f["width"], f["height"]) for f in frames] == [("off", 160, 160), ("on", 160, 160)]
+    assert [b["behaviorId"] for b in types["Toggle"]["behaviorTypes"]] == ["Tween"]
+    off, on = (png_pixels(tmp_path / "images" / f"toggle-default-00{n}.png") for n in (0, 1))
+    assert off[80][48][:3] == t.PALETTE["canvas"] and on[80][48][:3] == t.PALETTE["ink"]      # the knob moves
+    assert off[80][112][:3] == t.PALETTE["solid"] and on[80][112][:3] == t.PALETTE["canvas"]
+    switch, label = t.toggle("sound", 4, 17, on=True, text="Sound", label_cols=6)
+    assert (switch["world"]["x"], switch["world"]["y"], switch["properties"]["initial-frame"]) == (432, 624, 1)
+    assert switch["instanceVariables"] == {"name": "sound", "on": True} and "Tween" in switch["behaviors"]
+    assert label["sceneGraphData"]["parent-uid"] == switch["uid"]
+    assert len(t.toggle("mute", 0, 0)) == 1
+    with pytest.raises(SystemExit, match=r"toggle knob: solid on solid reads 1.0:1, and a control's part needs 3:1"):
+        t.toggle_types(knob_role="solid")
+    rows = t.toggle_events({"sound": "sound"})
+    show = rows[1]["children"][0]
+    assert [b["actions"][0]["parameters"] for b in show["children"] if b.get("eventType") == "block" and b["actions"]] \
+        == [{"frame-number": '"on"'}, {"frame-number": '"off"'}]
+    flip = rows[-1]["children"][0]["actions"]
+    assert flip[0]["id"] == "toggle-boolean-instvar" and flip[1]["customAction"] == "Show"
+    assert "Toggle" in t.PRESSED
+
+
+def test_template_text_input_is_the_form_control_in_the_look():
+    """text_input() places Construct's Text input on the grid, TOUCH high, its font size its own and
+    not the editor's automatic one; text_input_events() sets the look's font, size and colours as CSS
+    lengths that scale with the canvas, and keeps the string global of its name its text."""
+    t = template_module()
+    types = t.text_input_types()
+    assert types["TextInput"]["plugin-id"] == "TextBox" and types["TextInput"]["instanceVariables"][0]["name"] == "name"
+    field, label = t.text_input("player", 26, 17, 18, placeholder="Your name", label="Name")
+    left = 26 * 32 + label["world"]["width"] + 32
+    assert t.box_of(field) == (left, 544, left + 576, 704)
+    assert field["properties"]["auto-font-size"] is False and field["properties"]["placeholder"] == "Your name"
+    schema = json.loads((REPO / "data" / "c3-schemas" / "en-US" / "plugins" / "textbox.json").read_text(encoding="utf-8"))
+    assert set(field["properties"]) == set(schema["properties"])
+    assert label["sceneGraphData"]["parent-uid"] == field["uid"]
+    with pytest.raises(SystemExit, match=r"kind 'textarea'; one of text, password"):
+        t.text_input("note", 0, 0, 8, kind="textarea")
+    assert t.css_px(t.TEXT_SIZE["body"] * t.PX_PER_PT) == "min(2.222vw, 3.951vh)"   # 42.7 px at 1920x1080
+    look, start, changed = (b for b in t.text_input_events({"player": "player"}) if b.get("eventType") == "block")
+    css = {a["parameters"]["property-name"]: a["parameters"]["value"] for a in look["actions"]}
+    assert css['"font-size"'] == '"min(2.222vw, 3.951vh)"' and css['"color"'] == '"rgb(17, 17, 17)"'
+    assert changed["conditions"][0]["id"] == "on-text-changed"
+    assert changed["children"][1]["actions"][0]["parameters"] == {"variable": "player", "value": "TextInput.Text"}
+    assert len(t.text_input_events()) == 2
+
+
+CONTROLS_GAME = '''
+
+BEATS = [beat("intro", 0), beat("teach", 1, ["tap"]), beat("practice", 1, ["tap"]), beat("rest", 0, holds="pickup"),
+         beat("climax", 2, ["tap"]), beat("exit", 0)]
+FIRST_LAYOUT = "Settings"
+
+
+def build_files() -> None:
+    pass
+
+
+def build_images() -> None:
+    pattern("Backdrop", "plain")
+
+
+def build_object_types() -> tuple[dict, dict, list]:
+    types = {"Backdrop": pattern_type("Backdrop"),
+             "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True})}
+    types.update(slider_types())
+    types.update(toggle_types())
+    types.update(text_input_types())
+    return types, {}, []
+
+
+def build_layouts() -> dict[str, dict]:
+    lay = layout("Settings", [layer("Background", transparent=False), layer("UI", parallax=0)], sheet="Settings")
+    lay["layers"][0]["instances"].append(backdrop("Backdrop"))
+    ui = lay["layers"][1]["instances"]
+    ui += slider("volume", 4, 5, units(24), value=50, text="Volume", label_cols=6)
+    ui += slider("speed", 4, 12, units(24), lo=0.5, hi=2.5, value=1, step=0.5, text="Speed", label_cols=6,
+                 value_at="knob")
+    ui += toggle("sound", 4, 18, on=True, text="Sound", label_cols=6)
+    ui += text_input("player", 26, 18, 18, placeholder="Your name", label="Name")
+    no_overlap(ui)
+    return {"Settings": lay}
+
+
+def build_event_sheet() -> dict:
+    return {"name": "Settings", "events": [
+        comment("Settings. A slider, a toggle and a text input set the globals"),
+        var("volume", "number", 0, "The volume slider's value"),
+        var("speed", "number", 0, "The speed slider's value"),
+        var("sound", "boolean", "false", "Whether the sound toggle is on"),
+        var("player", "string", "", "The name typed in the player field"),
+        module("Controls", events=[*slider_events({"volume": "volume", "speed": "speed"}),
+                                   *toggle_events({"sound": "sound"}), *text_input_events({"player": "player"})]),
+    ], "sid": sid()}
+
+
+if __name__ == "__main__":
+    build_and_check()
+'''
+
+
+def test_template_controls_generate_a_project_the_checker_passes(project):
+    """A screen of the three controls, each placed by one call, generates a project that the checker
+    passes without a warning."""
+    source = project / "tools" / "build_project.py"
+    text = source.read_text(encoding="utf-8")
+    end = text.index("\n", text.index("# ==== construct3-agent-plugin helpers: end")) + 1
+    source.write_text(text[:end] + CONTROLS_GAME, encoding="utf-8")
+    for folder in ("layouts", "eventSheets", "objectTypes"):          # the stand-in's files
+        shutil.rmtree(project / folder)
+    code, out = run(project, "tools/build_project.py")
+    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
+    assert warnings(out) == [], out
+    written = json.loads((project / "project.c3proj").read_text(encoding="utf-8"))
+    assert {"TextBox", "DragnDrop", "TiledBg", "Tween"} <= {a["id"] for a in written["usedAddons"]}
+
+
 def test_template_draws_only_the_colours_of_its_palette(built, tmp_path):
     """Every pixel the generator draws that shows is a colour of PALETTE: a new object reuses the
     game's colours or names the role a new one plays, and the message says which role is nearest."""
