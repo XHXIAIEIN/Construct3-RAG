@@ -38,7 +38,7 @@ You can add these options to `bootstrap.py`:
 - To start from an empty project of your own, add `--template <folder>`.
 - If your agent reads skills from another folder, add `--into <folder>`, such as `--into .trae/skills` for TRAE.
 
-To update, run `git pull` in the clone, then run `bootstrap.py` again to refresh the skill in the project. It leaves the clones and instruction files that exist as they are. When the clone is behind its upstream and holds no work of your own, `check_project.py` reports it as a problem and gives the commands that update the clone and the skill in the project. Add `--help` to `bootstrap.py` to see every option.
+To update, run `git pull` in the clone, then run `bootstrap.py` again to refresh the skill in the project. It leaves the clones that exist as they are. In the instruction files, it refreshes only the Construct 3 block it wrote, and only while nobody edited it. When the clone is behind its upstream and holds no work of your own, `check_project.py` reports it as a problem and gives the commands that update the clone and the skill in the project. Add `--help` to `bootstrap.py` to see every option.
 
 If your agent reads its instructions from another file, such as `GEMINI.md`, add a line there. The line tells the agent to read `AGENTS.md`.
 
@@ -88,7 +88,7 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 - `export_project.py` makes the editor export the project to Web (HTML5), with your subscribed account.
 - `pack_project.py` saves the project as a `.c3p` or `.zip` that the editor opens. It also unpacks a `.c3p` or `.zip` into a project folder.
 - `new_project.py` starts a game project in an empty folder from the empty project that the editor saves for **Project** > **New**.
-- `install.py` installs the skill in a game project, or refreshes a copy from the clone. It also brings the helpers in a game's `tools/build_project.py` up to date, and `--helpers-only` does only that.
+- `install.py` installs the skill in a game project, or refreshes a copy from the clone. It also brings the Construct 3 block in the game's `AGENTS.md` and the helpers in its `tools/build_project.py` up to date; `--block-only` and `--helpers-only` do one of those alone.
 - `assets/build_project.py` is a template for a Python script that generates a whole project. Its helpers sit between two markers, apart from the game's settings above them and the game below them.
 
 ### What the skill's scripts read, write and reach
@@ -98,7 +98,7 @@ The skill's scripts read this repository's `data/` and the projects and files th
 - **Read only**: `lookup_ace.py`, `lookup_script_api.py`, `search_guides.py`, `check_project.py`, `review_design.py`, `check_design.py`, `check_look.py` and `print_sheet.py`. `print_sheet.py` keeps a hash of each sheet that it prints, in `construct3-sheet-stamps/` of the system's temporary folder. With this hash, `edit_sheet.py` notices a save made between the print and the edit. `check_project.py` runs `git fetch` in the clone at most once an hour, to say when the clone is behind its upstream. If `CONSTRUCT3_RAG_OFFLINE` is `1`, it skips the fetch and says so.
 - **Writing files**:
   - `edit_sheet.py` writes the event sheets that you give it, and their hashes beside those of `print_sheet.py`.
-  - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. In the project's `tools/build_project.py`, it replaces the helpers between the two markers with the skill's when they are an older version that nobody edited there, and keeps the rest of the file. `--dry-run` shows the changes first.
+  - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. The block in `AGENTS.md` and the helpers in `tools/build_project.py` each sit between two markers. `install.py` replaces either with the skill's when it is an older version that nobody edited there, and keeps the rest of the file. `--dry-run` shows the changes first.
   - `play_design.py --adopt-starts` writes the start values of the project into the design file, when the prototype still passes with them.
   - `prepare_art.py` writes the fitted pictures into the project's `art/`. It reads the pictures in `art/raw/` and changes none of them.
   - `screenshot_sheet.py` writes its pictures in the project's `.build/sheets/`, or in the folder that `--out` names.
