@@ -143,6 +143,7 @@ ART_STYLE = ""
 # when the skill is refreshed, and leaves the part as it is once it is edited here. To change a
 # helper for this game, define it again below the end marker: a def or a constant there replaces
 # the one of the same name here, and a refresh keeps it.
+import difflib
 import json
 import math
 import random
@@ -481,11 +482,32 @@ def record_table(name: str, records: dict, fields: list | None = None) -> str:
     "id" and the field names, column 0 the ids:
         record_table("Cards", {"strike": {"name": "Strike", "cost": 1, "dmg": 6},
                                "guard": {"name": "Guard", "cost": 1, "block": 5}})
-    A field a record lacks is 0, or "" when the field holds text elsewhere. Load it with
+    A field a record lacks is 0, or "" when the field holds text elsewhere. fields= fixes the
+    columns and their order, and a record with a field outside it stops the run, since the table
+    would leave its value out. Without it, a field that one record alone has, spelt like a field of
+    the others, prints a warning: a misspelt key reads 0 in the game. Load it with
     load_data_file() and turn it into a Dictionary with table_to_dictionary(), read as
     Cards.Get("strike.dmg")."""
-    fields = fields or list(dict.fromkeys(f for r in records.values() for f in r))
+    where = f"record_table({name!r})"
+    for rid, r in records.items():
+        for f in r if fields else ():
+            if f not in fields:
+                near = difflib.get_close_matches(f, fields, n=1)
+                sys.exit(f"{where}: record {rid!r} has the field {f!r}, which fields= does not list, so the table "
+                         f"would leave its value out; write it as one of {', '.join(map(repr, fields))}"
+                         + (f" (the nearest is {near[0]!r})" if near else "") + ", or add it to fields=")
     texts = {f for r in records.values() for f, v in r.items() if isinstance(v, str)}
+    if not fields:
+        fields = list(dict.fromkeys(f for r in records.values() for f in r))
+        held = {f: [rid for rid, r in records.items() if f in r] for f in fields}
+        for f in (f for f in fields if len(held[f]) == 1):
+            rid = held[f][0]
+            near = difflib.get_close_matches(f, [g for g in fields if g not in records[rid]], n=1, cutoff=0.8)
+            if near:
+                g = near[0]
+                print(f"warning: {where}: only record {rid!r} has the field {f!r}, and {len(held[g])} "
+                      f"record{'s have' if len(held[g]) > 1 else ' has'} {g!r}; if they are one field, write {g!r} "
+                      f"in {rid!r}, which reads {'""' if g in texts else 0} for it otherwise")
     rows = [["id", *fields]] + [[rid, *(r.get(f, "" if f in texts else 0) for f in fields)]
                                 for rid, r in records.items()]
     return array_file(name, [list(column) for column in zip(*rows)])
@@ -2267,7 +2289,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 0ea1fe342010 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 5f9b148004a6 ================
 
 
 # --- the game ---------------------------------------------------------------------------
