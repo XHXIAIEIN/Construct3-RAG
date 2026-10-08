@@ -93,10 +93,12 @@ Construct-Example-Projects, 2026-09-18]
   value sits close under its name, and the gap between two groups is at
   least 1.5 times the gap inside one, the ratio slide and poster layout
   guides ask, so the HUD stands apart from the playfield. The playfield is
-  centred in what the HUD leaves, not on the whole screen. The
+  centred in what the HUD leaves, not on the whole screen, and covers at
+  least 15% of it: the official game examples' one-screen layouts cover 80%
+  at the median. The
   generator template holds these as `UNIT`, `MARGIN`, `TOUCH`, `anchor()`,
   `hud_text()`, `hud_stat()`, `row()`, `no_overlap()`, `play_area()`,
-  `centred()` and `spaced()`, and holds the HUD to the screen's
+  `centred()`, `spaced()` and `filled()`, and holds the HUD to the screen's
   edges with `anchored()`.
 - A button's text is its label, centred on it, and the two move and hide
   together; a bar's name stands in front of the bar. A one-screen layout is

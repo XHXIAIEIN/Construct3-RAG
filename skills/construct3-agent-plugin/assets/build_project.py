@@ -1825,11 +1825,15 @@ def stage_cell(cols: int, rows: int, screen: str = "stage", title: bool = True) 
 # share of a unit; a line's box adds about a quarter of an em above and below its letters.
 # The playfield sits in the middle of what the HUD leaves, raised by OPTICAL_LIFT of that space's
 # height, since the eye puts the middle a little above the measured one; balanced() warns on
-# content away from that point. Construct3-RAG/docs/decisions/greybox-blockout.md, *Spacing and balance*.
+# content away from that point, and filled() on content that covers too little of the screen. Construct3-RAG/docs/decisions/greybox-blockout.md, *Spacing and balance*.
 GAP_IN = max(1, UNIT // 4)                 # px between the parts of a group
 GAP_OUT = UNIT                             # px at least between the HUD and the playfield
 GROUP_RATIO = 1.5                          # the gap between groups over the gap inside a group, at least
 OPTICAL_LIFT = 0.05                        # a rule of thumb, not a measurement; 0 centres exactly
+# The least share of the screen the box around the playfield's content covers; filled() warns
+# under it. Of the official 2D game examples' one-screen layouts, 95 in 100 cover more, and
+# their median covers 0.8 (Construct3-RAG/skills/construct3-agent-plugin/evals/measure_layout.py).
+PLAYFIELD_MIN = 0.15
 
 
 def hud_stat(name_type: str, value_type: str, name: str, where: str, value: str = "0", longest: str | None = None,
@@ -1968,6 +1972,24 @@ def balanced(content: list, area: tuple, lift: float = OPTICAL_LIFT, where: str 
         print(f"warning: {where}: {names} is centred at ({cx:g},{cy:g}) and the middle of the play area the HUD "
               f"leaves is ({tx:g},{ty:g}), {abs(cx - tx):g} px across and {abs(cy - ty):g} px down; place it at "
               f"centred(w, h, play_area(hud)), or keep it there if the offset is meant")
+
+
+def filled(content: list, where: str = "layout Game") -> None:
+    """Prints a warning when the box around `content`, the playfield's instances as the layout
+    holds them, covers less than PLAYFIELD_MIN of the viewport: a small board in an empty screen.
+    A warning and not a stop, because a game that creates its playfield at runtime shows less in
+    the layout than in play."""
+    boxes = [b for b in map(box_of, content) if b]
+    if not boxes:
+        return
+    w = min(max(b[2] for b in boxes), VIEW_W) - max(min(b[0] for b in boxes), 0)
+    h = min(max(b[3] for b in boxes), VIEW_H) - max(min(b[1] for b in boxes), 0)
+    covers = max(0, w) * max(0, h) / (VIEW_W * VIEW_H)
+    if covers < PLAYFIELD_MIN:
+        names = " + ".join(dict.fromkeys(i["type"] for i in content if box_of(i)))
+        print(f"warning: {where}: {names} covers {covers:.0%} of the {VIEW_W}x{VIEW_H} screen, under "
+              f"PLAYFIELD_MIN {PLAYFIELD_MIN:.0%}; the official game examples' one-screen layouts cover 80% at the "
+              f"median. Make it larger, bigger cells or more of them, or fit(w, h) for its size on the stage")
 
 
 # --- the order of each layer and the HUD's behavior --------------------------------------------
@@ -2245,7 +2267,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 69a12f463da4 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 0ea1fe342010 ================
 
 
 # --- the game ---------------------------------------------------------------------------
@@ -2349,8 +2371,8 @@ def build_layouts() -> dict[str, dict]:
     # TEXT_SIZE["body"] in rgb("ink"); the number the player plays for, and a banner, are
     # TEXT_SIZE["title"]. hud_text() stops the run on a colour that does not read on what is
     # behind it. A value under its name is one group, hud_stat(); spaced() stops the run when two
-    # groups sit closer than the parts of one, and balanced() warns when the board is off the middle
-    # of the play area.
+    # groups sit closer than the parts of one; balanced() warns when the board is off the middle of
+    # the play area, and filled() when it covers too little of the screen.
     ui = game["layers"][2]["instances"]
     ui.extend(flat(HUD))
     # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
@@ -2359,6 +2381,7 @@ def build_layouts() -> dict[str, dict]:
     no_overlap(ui)
     spaced([*HUD, [board]])
     balanced([board], PLAY_AREA)
+    filled([board])
     # Everything outside the HUD starts on the grid: a shape by shape_inst() on a cell, one
     # created at runtime at grid_random(); on_grid() stops the run on an instance that does not.
     on_grid(game["layers"][1]["instances"], "layer Game")

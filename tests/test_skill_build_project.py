@@ -600,6 +600,13 @@ def test_template_groups_a_value_with_its_name_and_centres_the_playfield_under_t
     # A board centred on the whole screen is off the middle of what the HUD leaves.
     t.balanced([t.tiledbg_inst("Board", 512, 256, 928, 544, 0, 0)], area)
     assert capsys.readouterr().out.startswith("warning: layout Game: Board is centred at (976,528)")
+    # A board under PLAYFIELD_MIN of the screen warns; the stand-in's covers 24%.
+    assert t.PLAYFIELD_MIN == 0.15
+    t.filled([board])
+    assert capsys.readouterr().out == ""
+    t.filled([t.tiledbg_inst("Board", 800, 400, 320, 192, 0, 0)])
+    assert capsys.readouterr().out.startswith("warning: layout Game: Board covers 3% of the 1920x1080 screen, under "
+                                              "PLAYFIELD_MIN 15%")
     # The stand-in's board is where centred() puts it.
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
     placed = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "Board")["world"]

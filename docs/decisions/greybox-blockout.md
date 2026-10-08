@@ -224,6 +224,21 @@ from the boxes the generator writes.
   purpose, beside a panel or in a level wider than the screen, and the boxes
   do not say which.
 
+Two more rules from the same sources were measured on the official 2D game
+examples before either became a check: 81 one-screen layouts of the
+examples tagged as games, their content the visible instances of the
+scrolling layers less Text and backdrops
+(`skills/construct3-agent-plugin/evals/measure_layout.py`).
+
+| Rule from slide and poster skills | Official layouts that pass | Outcome |
+|-----------------------------------|----------------------------|---------|
+| The content covers 25 to 60% of the screen | 11%; 83% cover more, median 80% | `filled()` warns under `PLAYFIELD_MIN`, 15%, which 5% of the layouts fall under: a tilemap or a panel that covers the screen, which the measurement takes for a backdrop, or a level drawn at runtime |
+| The largest object is at least 1.5 times the next | 31%; median 1.0 | Rejected: a grid of equal tiles, cards or two paddles has no single largest object |
+
+A game screen fills more of the screen than a slide, so the band does not
+transfer, and the floor catches a board too small for the screen. The
+stand-in's board covers 24%.
+
 The 5% lift is a rule of thumb from design guides; no source found measures
 it. On the stand-in it raises the board one unit, so the board's gap to the
 HUD is 125 px against 157 px without it.
@@ -343,10 +358,10 @@ template value it names drift apart.
 - The score is at the title size with its label; the eval cases that grade
   the HUD have not run on it.
 - `OPTICAL_LIFT` waits on the user's choice between 0.05 and 0, `open` in
-  the manifest. Two further checks from the same sources wait on a
-  calibration over the official examples: the main object at least 1.5
-  times the area of the next element, and the playfield covering 25 to 60%
-  of the screen.
+  the manifest.
+- `measure_layout.py` reads the layout files, so content an example creates
+  at runtime is not counted; a measurement from previews would raise the
+  low end of the coverage.
 - Not in the template: camera-zone helpers; Sine
   bobbing for pickups; the juice functions, camera-zone fields and
   five-level worlds of `published-game-visual-language.md`, `proposed` in

@@ -110,6 +110,19 @@
       "helpers": "play_area(), centred(), balanced()"
     },
     {
+      "id": "layout.fill",
+      "status": "adopted",
+      "says": "The box around the playfield's content covers at least 15% of the screen, else the run prints a warning. Of the official 2D game examples' one-screen layouts, 95 in 100 cover more and the median covers 80%; the 25 to 60% band of slide and poster skills would flag 83% of them, so it is not used.",
+      "template": "PLAYFIELD_MIN",
+      "value": "0.15",
+      "helpers": "filled()"
+    },
+    {
+      "id": "layout.focal",
+      "status": "rejected",
+      "says": "A check that the largest object is at least 1.5 times the area of the next: only 31% of the official 2D game examples' one-screen layouts pass it, since a grid of equal tiles, a deck of cards or two paddles is a sound game screen with no single largest object."
+    },
+    {
       "id": "outline.width",
       "status": "adopted",
       "says": "An ink outline inside a shape's edge where SHAPE_STYLE turns it on; off on the plain sheet, always on a hit frame.",
