@@ -43,13 +43,17 @@ def test_cases_cover_every_listed_sheet_and_layout(tmp_path):
     (project / "project.c3proj").write_text(json.dumps({
         "eventSheets": {"items": ["Main"], "subfolders": [{"items": ["Enemies"], "subfolders": []}]},
         "layouts": {"items": ["Level 1"], "subfolders": []}}), encoding="utf-8")
-    matrix = od.cases(list(od.KINDS), [project], tmp_path / "plan.json")
+    plans = {kind: tmp_path / f"{kind}.json" for kind in ("edit_sheet", *od.REFUSED)}
+    matrix = od.cases(list(od.KINDS), [project], plans)
     names = {(c.kind, c.name) for c in matrix}
     assert {("print_sheet", "example/Main"), ("print_sheet", "example/Enemies"),
             ("print_layout", "example/Level 1"), ("check_project", "example"), ("check_style", "example"),
-            ("edit_sheet", "example")} <= names
+            ("review_design", "example"), ("edit_sheet", "example"), ("edit_sheet_line", "example"),
+            ("edit_sheet_key", "example"), ("help", "edit_sheet.py")} <= names
     assert len([c for c in matrix if c.kind == "lookup_ace"]) == len(od.LOOKUPS["lookup_ace"])
-    assert not od.cases(["print_layout"], [], tmp_path / "plan.json")
+    assert [c.args for c in matrix if c.kind == "edit_sheet_key"] == \
+        [["edit_sheet.py", "Main", str(plans["edit_sheet_key"]), "--dry-run", "--project", str(project)]]
+    assert not od.cases(["print_layout"], [], plans)
 
 
 def run(*args: str) -> subprocess.CompletedProcess:
