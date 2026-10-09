@@ -19,7 +19,8 @@ editor reads them. Layout instances must carry every instance variable and
 behavior block of their type and only properties the schema has. Layers,
 layouts, animations, groups, timelines, flowcharts, project files, images and
 called functions and custom actions must exist, with the right parameter
-count. An image is `images/<object type>-<animation>-<frame, three
+count, and so must the function a *Map function* or *Map default function*
+names, matched without case. An image is `images/<object type>-<animation>-<frame, three
 digits>.png`, or `images/<object type>.png` for a single image, in lower
 case; one imported in a lossy format and not edited since keeps that format,
 which the entry's `fileType` names. Its size is not compared with the

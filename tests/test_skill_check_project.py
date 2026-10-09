@@ -11,7 +11,7 @@ import pytest
 
 from tests.skill_helpers import (
     REPO, SKILL, INSTALLED, SHEET, run, tool, check, edit, cond, block, events, every_event, collect_tween, warnings,
-    findings, plan, add_addon, add_keyboard, pathfinding_coin,
+    findings, plan, add_addon, add_keyboard, pathfinding_coin, EXAMPLES, NEEDS_EXAMPLES,
 )
 
 
@@ -1508,6 +1508,34 @@ def test_a_function_is_reached_as_its_return_type_says(project, returns, use, sa
             "eventType": "function-block", "conditions": [], "actions": [], "sid": 2}
     out = findings(project, lambda s: s["events"].extend([func, block([cond("on-start-of-layout")], [use])]))
     assert said in out, out
+
+
+MAP_RED = {"id": "map-function", "objectClass": "Functions", "sid": 4,
+           "parameters": {"name": '"Colors"', "string": '"red"', "function": "FnRed"}}
+
+
+@pytest.mark.parametrize("defined, said", [
+    ([], "function='FnRed' is not a function of the project; the editor stops with \"cannot find function 'FnRed'\""),
+    # defined after the event that maps it, and without case: the editor opens both (r495.2, 2026-10-09)
+    (["FnRed"], None),
+    (["fnred"], None),
+])
+def test_a_mapped_function_must_be_a_function_block(project, defined, said):
+    rows = [block([cond("on-start-of-layout")], [MAP_RED, {**MAP_RED, "id": "map-function-default", "sid": 5,
+                                                           "parameters": {"name": '"Colors"', "function": "FnRed"}}])]
+    out = findings(project, lambda s: s["events"].extend(rows + [function(n, 6, []) for n in defined]))
+    if said:
+        errors = [line for line in out.splitlines() if said in line]
+        assert len(errors) == 2 and "Add a function block named FnRed" in errors[0], out
+    else:
+        assert out.splitlines()[-1].startswith("ok:"), out
+
+
+@NEEDS_EXAMPLES
+def test_the_official_function_maps_example_passes(tmp_path):
+    code, out = run(tmp_path, SKILL / "scripts" / "check_project.py", "--rag", str(REPO),
+                    "--project", str(EXAMPLES / "function-maps"))
+    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
 
 
 @pytest.mark.parametrize("text, said", [

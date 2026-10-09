@@ -1526,7 +1526,19 @@ class Checker:
                 self.err(f"{where}: {key}={value!r} is not a sound or music file of the project; the editor stops "
                          f"with \"missing file {name!r}\". Write the file's name without its extension"
                          + (near or listed))
-        elif ptype in ("tilemapbrush", "function", "model3d", "objecteffect"):
+        elif ptype == "function":
+            # Map function and Map default function name a function block, without case; for any
+            # other name the editor stops with "cannot find function 'FnRed'" (r495.2, 2026-10-09).
+            # declared_functions() has read every sheet before the walk, so a later block counts.
+            if not isinstance(value, str) or LOWER(value) not in {LOWER(f) for f in self.functions}:
+                shown = ", ".join(list(self.functions)[:8]) + (
+                    f" and {len(self.functions) - 8} more" if len(self.functions) > 8 else "")
+                listed = f"; the project has {shown}" if self.functions else "; the project has none"
+                self.err(f"{where}: {key}={value!r} is not a function of the project; the editor stops with "
+                         f"\"cannot find function {value!r}\". Add a function block named {value} or name one "
+                         f"the project has"
+                         + (bare(value, self.functions) or closest(value, self.functions) or listed))
+        elif ptype in ("tilemapbrush", "model3d", "objecteffect"):
             return
         elif ptype == "template":
             # a name in an expression, "\"\"" for none; written "" the editor does not open the project
