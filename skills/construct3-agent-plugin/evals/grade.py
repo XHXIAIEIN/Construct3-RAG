@@ -20,10 +20,25 @@ deviation once a cell has more than one run (<arm>_2, <arm>_3 are further
 runs of <arm>), the runs that passed every assertion with a Wilson 95%
 interval, and with_skill less each other arm. A run with a trace.json
 (evals/trace.py --out) adds its tool calls, the ones it lost, its turns and
-output tokens. Time comes from timing.json, else from the trace; tokens come
-from timing.json. A case marked held_out in evals.json is reported
-separately, under held_out, and its failed assertions are printed only with
---show-held-out.
+output tokens, and the route columns of its transcript: read_skill_md,
+chain_depth, chain_attempts, preview_failed, help_reads, repeat_help,
+plan_refusals, hand_edits, lookups_before_first_edit, data_reads,
+other_clone_reads, entry_chars and printed_command_failures, averaged like
+the cost columns; first_script and chain_end are counted per cell. Time
+comes from timing.json, else from the trace; tokens come from timing.json. A
+case marked held_out in evals.json is reported separately, under held_out,
+and its failed assertions are printed only with --show-held-out.
+
+An iteration decides on one column chosen before its runs: decision.json
+in ITERATION_DIR holds {"cases": [...], "metric": "chain_depth",
+"direction": "up", "n_per_cell": 3, "guards": {"pass_rate": "not down"},
+"concurrency": 3, "arms": ["with_skill", "old_skill"]} (arms optional,
+"alpha" optional, 0.05). grade.py compares the arms on the metric with the
+within-task permutation test of evals/compare.py, checks each guard on the
+means (not down: the first arm's is not lower; not up: not higher), prints
+the verdict and writes it to benchmark.json under decision. A cell with
+fewer scored runs than n_per_cell makes the verdict "underpowered: k of n"
+and the benchmark is aggregated all the same.
 
 A run that did not keep to its arm is not scored: put the reason in
 <case>/<arm>/void.txt, for example a baseline whose answer lists a script of
@@ -45,8 +60,10 @@ import subprocess
 import sys
 import tempfile
 import time
+from collections import Counter
 from pathlib import Path
 
+import compare
 import play_cases
 
 SKILL = Path(__file__).resolve().parent.parent
@@ -1335,8 +1352,16 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "coins-in-a-ring": lambda run: grade_kept(run, own_warnings=False)}
 
 
+# The route columns trace.py counts from a transcript, after the four cost columns it always gave.
+TRACE_COLUMNS = ("tool_calls", "lost_calls", "turns", "output_tokens", "read_skill_md", "first_script", "chain_depth",
+                 "chain_end", "chain_attempts", "preview_failed", "help_reads", "repeat_help", "plan_refusals",
+                 "hand_edits", "lookups_before_first_edit", "data_reads", "other_clone_reads", "entry_chars",
+                 "printed_command_failures")
 METRICS = ("pass_rate", "runtime_rate", "seconds", "tokens", "turns", "output_tokens", "tool_calls", "lost_calls",
-           "play_seconds")
+           "play_seconds", "read_skill_md", "chain_depth", "chain_attempts", "preview_failed", "help_reads",
+           "repeat_help", "plan_refusals", "hand_edits", "lookups_before_first_edit", "data_reads",
+           "other_clone_reads", "entry_chars", "printed_command_failures")
+COUNTED = ("first_script", "chain_end")       # per cell: how many runs started with, or got as far as, each
 LEVELS = ("checker", "files", "runtime")      # in the order a run reaches them
 
 
@@ -1382,19 +1407,66 @@ def deltas(by_case: dict[str, dict[str, dict]]) -> dict:
     return out
 
 
+def counted(runs: list[dict], key: str) -> dict[str, int] | None:
+    """How many of the runs have each value of key; a run without a trace does not count, one that reached no step
+    counts as none."""
+    traced = [r for r in runs if "tool_calls" in r]
+    return dict(sorted(Counter(str(r.get(key) or "none") for r in traced).items())) if traced else None
+
+
 def aggregate(cells: dict[str, dict[str, list[dict]]]) -> tuple[dict, dict]:
-    """Per case and arm, the spread of each measure and the fully passed runs; per arm, the mean of its cases'
-    means (a deviation across different cases would measure the cases) and the fully passed runs pooled."""
+    """Per case and arm, the spread of each measure, the counts of the counted columns and the fully passed runs;
+    per arm, the mean of its cases' means (a deviation across different cases would measure the cases), the
+    counts pooled and the fully passed runs pooled."""
     by_case = {name: {arm: {"runs": runs, "full_runs": full_runs(runs),
-                            **{key: spread([r[key] for r in runs if r.get(key) is not None]) for key in METRICS}}
+                            **{key: spread([r[key] for r in runs if r.get(key) is not None]) for key in METRICS},
+                            **{key: counted(runs, key) for key in COUNTED}}
                       for arm, runs in arms.items()} for name, arms in cells.items()}
     arms = sorted({arm for case in by_case.values() for arm in case})
     summary = {arm: {**{key: round(statistics.mean(means), 3) for key in METRICS
                         if (means := [case[arm][key]["mean"] for case in by_case.values() if arm in case and case[arm].get(key)])},
+                     **{key: counted([r for case in cells.values() for r in case.get(arm, [])], key) for key in COUNTED},
                      "full_runs": full_runs([r for case in cells.values() for r in case.get(arm, [])])}
                for arm in arms}
     summary["delta"] = deltas(by_case)
     return by_case, summary
+
+
+def decide(iteration: Path, cells: dict[str, dict[str, list[dict]]]) -> dict | None:
+    """The verdict of the iteration's decision.json over the scored runs, printed and returned; None without
+    the file. A cell short of n_per_cell makes it underpowered, with the benchmark still aggregated."""
+    path = iteration / "decision.json"
+    if not path.exists():
+        return None
+    given = json.loads(path.read_text(encoding="utf-8"))
+    arms, metric, direction, n = given.get("arms", ["with_skill", "old_skill"]), given["metric"], given["direction"], given["n_per_cell"]
+    runs = {case: {arm: [r for r in cells.get(case, {}).get(arm, []) if r.get(metric) is not None] for arm in arms}
+            for case in given["cases"]}
+    record = {"cases": given["cases"], "metric": metric, "direction": direction, "arms": arms, "n_per_cell": n,
+              "concurrency": given.get("concurrency")}
+    short = [f"{case}/{arm}: {len(cell)} of {n}" for case, by_arm in runs.items() for arm, cell in by_arm.items()
+             if len(cell) < n]
+    if short:
+        record |= {"verdict": "underpowered", "short": short}
+        print(f"underpowered: {', '.join(short)}; no verdict on {metric} until the cells are full")
+        return record
+    test = compare.permutation_test({case: [(arm, r[metric]) for arm in arms for r in by_arm[arm]]
+                                     for case, by_arm in runs.items()}, arms[0], direction)
+    guards = {}
+    for key, rule in given.get("guards", {}).items():
+        means = [statistics.mean(statistics.mean(r[key] for r in by_arm[arm]) for by_arm in runs.values()
+                                 if all(r.get(key) is not None for r in by_arm[arm])) for arm in arms]
+        guards[key] = {"rule": rule, arms[0]: round(means[0], 3), arms[1]: round(means[1], 3),
+                       "holds": means[0] >= means[1] if rule == "not down" else means[0] <= means[1]}
+    alpha = given.get("alpha", 0.05)
+    verdict = "holds" if test["p"] <= alpha and all(g["holds"] for g in guards.values()) else "does not hold"
+    record |= test | {"alpha": alpha, "guards": guards, "verdict": verdict}
+    print(f"decision: {compare.said(test, metric, arms, direction, len(runs))}"
+          + "".join(f"; guard {k} {g['rule']} {'holds' if g['holds'] else 'fails'} ({g[arms[0]]} vs {g[arms[1]]})"
+                    for k, g in guards.items())
+          + f"; verdict: {verdict} at alpha {alpha}"
+          + (f", {record['concurrency']} runs at once" if record["concurrency"] else ""))
+    return record
 
 
 def optional_json(path: Path) -> dict:
@@ -1487,7 +1559,7 @@ def main() -> int:
                 "full": passed == len(scored), "level_reached": summary["level_reached"],
                 "runtime_rate": round(summary["runtime"]["passed"] / summary["runtime"]["total"], 3) if played else None,
                 "tokens": timing.get("total_tokens"), "seconds": seconds, "play_seconds": play_seconds,
-                **{k: trace[k] for k in ("tool_calls", "lost_calls", "turns", "output_tokens") if k in trace}})
+                **{k: trace[k] for k in TRACE_COLUMNS if k in trace}})
             note = "" if timing or trace.get("seconds") else "  (no timing.json or traced time)"
             runtime_said = (f", runtime {summary['runtime']['passed']}/{summary['runtime']['total']}" if played
                             else ", runtime not played" if runtime else "")
@@ -1506,13 +1578,16 @@ def main() -> int:
     if held:
         held_cases, held_summary = aggregate(held)
         out["held_out"] = {"run_summary": held_summary, "by_case": held_cases}
-    (iteration / "benchmark.json").write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     for label, summary in (("", run_summary), ("held out, ", out.get("held_out", {}).get("run_summary", {}))):
         for arm, s in summary.items():
             if arm != "delta":
                 f = s["full_runs"]
                 print(f"{label}{arm}: {f['k']} of {f['n']} runs passed every assertion they were scored on, "
                       f"95% interval {f['interval_95'][0]:.2f}-{f['interval_95'][1]:.2f}")
+    decision = decide(iteration, cells)
+    if decision:
+        out["decision"] = decision
+    (iteration / "benchmark.json").write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {iteration / 'benchmark.json'}")
     return 0
 

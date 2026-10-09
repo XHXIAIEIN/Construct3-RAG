@@ -324,3 +324,177 @@ def test_a_gradient_bar_is_revealed_not_stretched(tmp_path: Path, fill: Callable
     lit, colours = play_cases.gradient_checks(screenshots(tmp_path, fill, (0.5, 0.6)))
     assert lit[0], lit
     assert colours[0] is kept, colours
+
+
+def transcript_of(path: Path, calls: list[tuple[str, dict, str, bool]]) -> Path:
+    """A transcript of (tool, input, result, failed) calls, each with its result in the next entry."""
+    lines = []
+    for n, (tool, given, result, failed) in enumerate(calls):
+        lines.append(json.dumps({"message": {"content": [{"type": "tool_use", "id": f"t{n}", "name": tool, "input": given}]}}))
+        lines.append(json.dumps({"message": {"content": [
+            {"type": "tool_result", "tool_use_id": f"t{n}", "is_error": failed, "content": result}]}}))
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
+
+
+def test_trace_counts_the_route_of_a_run(tmp_path: Path) -> None:
+    """Each route column of trace.json, from a transcript that holds one of everything it counts: a cat of
+    SKILL.md, reads of the clone, the check chain up to a passing plan, two --help reads of one script, a copied
+    command that fails, a hand edit of a layout, a refused plan beside a dry run, a failed check with findings and
+    one without, and a preview that never opened."""
+    run_dir = tmp_path / "it" / "double-jump" / "with_skill"
+    project, clone = run_dir / "project", tmp_path / "clone"
+    (project / "layouts").mkdir(parents=True)
+    (project / "AGENTS.md").write_text(f"- Construct3-RAG: {clone.as_posix()}\n", encoding="utf-8")
+    scripts = f"{project.as_posix()}/.agents/skills/construct3-agent-plugin/scripts"
+    ok_line = ("ok: 7 object types, 0 families, 1 layouts, 1 sheets; next, review the design: python "
+               ".agents/skills/construct3-agent-plugin/scripts/review_design.py, then open it: python "
+               ".agents/skills/construct3-agent-plugin/scripts/open_in_editor.py --preview")
+    calls = [
+        ("Bash", {"command": f'cat "{project.as_posix()}/.agents/skills/construct3-agent-plugin/SKILL.md"'}, "x" * 6000, False),
+        ("Read", {"file_path": f"{clone.as_posix()}/data/c3-schemas/_index.json"}, "{}", False),
+        ("Grep", {"pattern": "jump", "path": clone.as_posix()}, "No matches found", False),
+        ("Bash", {"command": f'cd "{project.as_posix()}" && python {scripts}/check_project.py --project "{project.as_posix()}"'}, ok_line, False),
+        ("Bash", {"command": f"python {scripts}/preview_project.py --help 2>&1 | head -c 6000"}, "usage: preview_project.py", False),
+        ("Bash", {"command": f'S="{scripts}" && python "$S/preview_project.py" --help | tail -c +6000'}, "a plan is", False),
+        ("Bash", {"command": "python scripts/review_design.py"}, "Exit code 2\npython: can't open file 'scripts/review_design.py'", True),
+        ("Edit", {"file_path": f"{project.as_posix()}/layouts/x.json", "old_string": "a", "new_string": "b"}, "updated", False),
+        ("Bash", {"command": f'python {scripts}/edit_sheet.py "Event sheet 1" .tmp/plan.json'},
+         "Exit code 1\noperation 1: event 9 does not print the line given\nnothing was written", True),
+        ("Bash", {"command": f'python {scripts}/edit_sheet.py "Event sheet 1" .tmp/plan.json --dry-run'},
+         "Event sheet 1: 1 operation, 8 events before and 9 now (dry run)\ndry run: nothing was written", False),
+        ("Bash", {"command": f"python {scripts}/check_project.py"},
+         "Exit code 1\nwarning: Event sheet 1 event 3: no comment above it\nEvent sheet 1 event 9: parameter omitted\n1 problem(s)", True),
+        ("Bash", {"command": f"python {scripts}/check_project.py --nonsense"},
+         "Exit code 2\nusage: check_project.py [-h]\ncheck_project.py: error: unrecognized arguments: --nonsense", True),
+        ("Bash", {"command": f"python {scripts}/open_in_editor.py --preview"},
+         "no preview window in 20 seconds\n0 of 1 opened and ran without errors; full results in .tmp/open-in-editor.json", False),
+        ("Bash", {"command": f"python {scripts}/preview_project.py .tmp/plan.json"},
+         "opened   project\n  1 key ArrowRight 0.5 s  ok\nkeep: this plan passes; keep it with --keep NAME", False),
+    ]
+    transcript = transcript_of(tmp_path / "agent.jsonl", calls)
+    code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(run_dir))
+    assert code == 0, out
+    trace = json.loads((run_dir / "trace.json").read_text(encoding="utf-8"))
+    assert {k: trace[k] for k in grader.TRACE_COLUMNS} == {
+        "tool_calls": 14, "lost_calls": 4, "turns": 0, "output_tokens": 0, "read_skill_md": True,
+        "first_script": "check_project", "chain_depth": 4, "chain_end": "preview_project", "chain_attempts": 6,
+        "preview_failed": 1, "help_reads": 2, "repeat_help": 1, "plan_refusals": 1, "hand_edits": 1,
+        "lookups_before_first_edit": 7, "data_reads": 1, "other_clone_reads": 1, "entry_chars": 6018,
+        "printed_command_failures": 1}
+    assert trace["chain"] == {"check_project": {"calls": 3, "passed": True}, "review_design": {"calls": 1, "passed": False},
+                              "open_in_editor": {"calls": 1, "passed": False}, "preview_project": {"calls": 1, "passed": True},
+                              "review_look": {"calls": 0, "passed": False}}
+    assert trace["help_reads_by_script"] == {"preview_project": 2}
+    assert trace["outside"] == [] and len(trace["outside_reads"]) == 2
+    assert Path(trace["transcript"]) == transcript.resolve()
+    assert (run_dir / "transcript.jsonl").read_bytes() == transcript.read_bytes()
+    assert "first script check_project, chain to preview_project (4 of 5, 6 calls), 2 help reads, 1 refused plans" in out
+
+
+@pytest.mark.parametrize(("command", "edit"), [
+    ('cd "{p}" && python.exe - <<\'PY\'\nimport pathlib\np = pathlib.Path("scripts/main.ts")\n'
+     'p.write_bytes(p.read_bytes().replace(b"200", b"400"))\nPY', True),
+    ('python.exe - <<\'PY\'\np = "{p}/scripts/main.ts"\nopen(p, "wb").write(open(p, "rb").read())\nPY', True),
+    ('cd "{p}" && cat > scripts/main.ts <<\'EOF\'\nconst a = 1;\nEOF', True),
+    ('cd "{p}" && python -c "import json; print(json.load(open(\'objectTypes/Player.json\'))[\'name\'])"', False),
+    ('cd "{p}" && cat > .tmp/plan.json <<\'EOF\'\n[]\nEOF', False),
+])
+def test_trace_sees_a_write_made_inside_a_script(tmp_path: Path, command: str, edit: bool) -> None:
+    """A heredoc or an inline script that writes a project file is the run's edit, relative to the cd before it;
+    a read, and a write under .tmp/, are not."""
+    project = tmp_path / "project"
+    project.mkdir()
+    call = {"tool": "Bash", "what": "", "failed": False, "result": "", "input": {"command": command.format(p=project.as_posix())}}
+    assert bool(tracer.project_edits(call, project)) is edit, tracer.inline_writes(call["input"]["command"])
+
+
+@pytest.mark.parametrize(("command", "reads"), [
+    ('cd "{c}" && cat prompts/event-sheet-thinking.md | head -c 9000', ["prompts/event-sheet-thinking.md"]),
+    ('cd "{c}" && ls data/c3-schemas/ && ls data/c3-schemas/en-US/', ["data/c3-schemas", "data/c3-schemas/en-US"]),
+    ('cd "{c}" && python skills/construct3-agent-plugin/scripts/print_sheet.py --project "{c}/x" Game', []),
+    ('cd "{c}" && grep -rn "isKeyDown" --include=*.md . | head', ["."]),
+    ('python check.py --rag "{c}" --project "{c}/game"', []),
+])
+def test_trace_reads_relative_to_the_cd_of_a_command(tmp_path: Path, command: str, reads: list[str]) -> None:
+    """A path after a cd is read in that folder; a script run from the clone and a folder a script is pointed
+    at are not reads of it."""
+    clone = tmp_path / "clone"
+    found = tracer.read_paths(command.format(c=clone.as_posix()))
+    assert [Path(p) for p in found] == [(clone / r).resolve() for r in reads]
+
+
+def restart_runs(tmp_path: Path, depths: dict[str, list[int]]) -> Path:
+    """An iteration of name-the-restart-event runs that all pass, each traced with the chain depth given."""
+    iteration = tmp_path / "it"
+    ends = {1: "check_project", 2: "review_design", 4: "preview_project", 5: "review_look"}
+    for arm, cell in depths.items():
+        for n, depth in enumerate(cell):
+            case = iteration / "name-the-restart-event" / (arm if n == 0 else f"{arm}_{n + 1}")
+            (case / "project").mkdir(parents=True)
+            (case / "outputs").mkdir()
+            (case / "fixture.json").write_text("{}", encoding="utf-8")
+            (case / "outputs" / "answer.md").write_text((ANSWERS / "english_all_three.md").read_text(encoding="utf-8"),
+                                                        encoding="utf-8")
+            (case / "trace.json").write_text(json.dumps({
+                "tool_calls": 20 + depth, "lost_calls": 1, "turns": 15, "output_tokens": 3000, "read_skill_md": True,
+                "first_script": "check_project", "chain_depth": depth, "chain_end": ends[depth], "chain_attempts": depth + 1,
+                "preview_failed": 0, "help_reads": 1, "repeat_help": 0, "plan_refusals": 0, "hand_edits": 0,
+                "lookups_before_first_edit": 8, "data_reads": 1, "other_clone_reads": 0, "entry_chars": 30000,
+                "printed_command_failures": 0, "outside": [], "outside_reads": []}), encoding="utf-8")
+    return iteration
+
+
+def test_grade_carries_the_route_columns_and_decides_on_one(tmp_path: Path) -> None:
+    """benchmark.json holds every column per run, averaged or counted per cell and in the arm delta, and the
+    verdict of decision.json; compare.py gives the same test from the file."""
+    iteration = restart_runs(tmp_path, {"with_skill": [5, 5, 4], "old_skill": [1, 2, 1]})
+    (iteration / "decision.json").write_text(json.dumps({
+        "cases": ["name-the-restart-event"], "metric": "chain_depth", "direction": "up", "n_per_cell": 3,
+        "guards": {"pass_rate": "not down"}, "concurrency": 3}), encoding="utf-8")
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(iteration))
+    assert code == 0, out
+    assert ("decision: chain_depth up: with_skill - old_skill = +10 over 1 case, one-sided p = 0.050 (exact, 20 "
+            "reassignments); guard pass_rate not down holds (1.0 vs 1.0); verdict: holds at alpha 0.05, 3 runs at once") in out
+    benchmark = json.loads((iteration / "benchmark.json").read_text(encoding="utf-8"))
+    with_skill = benchmark["by_case"]["name-the-restart-event"]["with_skill"]
+    assert with_skill["chain_depth"] == {"mean": 4.667, "runs": 3, "stddev": 0.577}
+    assert with_skill["chain_end"] == {"preview_project": 1, "review_look": 2} and with_skill["first_script"] == {"check_project": 3}
+    assert set(grader.TRACE_COLUMNS) <= set(with_skill["runs"][0])
+    assert with_skill["runs"][0]["tool_calls"] == 25 and with_skill["lost_calls"]["mean"] == 1
+    assert benchmark["run_summary"]["delta"]["with_skill - old_skill"]["chain_depth"] == pytest.approx(10 / 3, abs=0.01)
+    assert benchmark["run_summary"]["with_skill"]["chain_end"] == {"preview_project": 1, "review_look": 2}
+    assert benchmark["decision"]["verdict"] == "holds" and benchmark["decision"]["p"] == 0.05
+    code, out = run(tmp_path, SKILL / "evals" / "compare.py", str(iteration / "benchmark.json"), "chain_depth")
+    assert code == 0 and out.strip() == ("chain_depth up: with_skill - old_skill = +10 over 1 case, one-sided p = 0.050 "
+                                         "(exact, 20 reassignments)")
+    code, out = run(tmp_path, SKILL / "evals" / "compare.py", str(iteration / "benchmark.json"), "chain_depth", "--direction", "down")
+    assert "p = 1.000" in out
+
+
+def test_grade_says_underpowered_and_aggregates_all_the_same(tmp_path: Path) -> None:
+    iteration = restart_runs(tmp_path, {"with_skill": [5, 5, 4], "old_skill": [1, 2]})
+    (iteration / "decision.json").write_text(json.dumps({
+        "cases": ["name-the-restart-event"], "metric": "chain_depth", "direction": "up", "n_per_cell": 3}), encoding="utf-8")
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(iteration))
+    assert code == 0, out
+    assert "underpowered: name-the-restart-event/old_skill: 2 of 3; no verdict on chain_depth" in out
+    benchmark = json.loads((iteration / "benchmark.json").read_text(encoding="utf-8"))
+    assert benchmark["decision"]["verdict"] == "underpowered"
+    assert benchmark["by_case"]["name-the-restart-event"]["old_skill"]["chain_depth"]["mean"] == 1.5
+
+
+import compare  # noqa: E402
+
+
+def test_the_permutation_test_reassigns_within_each_case() -> None:
+    one = {"a": [("with", 5), ("with", 5), ("with", 4), ("old", 1), ("old", 2), ("old", 1)]}
+    assert compare.permutation_test(one, "with", "up") == {"observed": 10, "p": 0.05, "permutations": 20, "exact": True}
+    assert compare.permutation_test(one, "with", "down")["p"] == 1.0
+    two = one | {"b": [("with", 3), ("with", 3), ("old", 3), ("old", 3)]}
+    assert compare.permutation_test(two, "with", "up") == {"observed": 10, "p": 0.05, "permutations": 120, "exact": True}
+    assert compare.permutation_test(one | {"c": [("with", 9)]}, "with", "up")["permutations"] == 20
+    with pytest.raises(ValueError):
+        compare.permutation_test({"c": [("with", 9)]}, "with", "up")
+    sampled = compare.permutation_test(one, "with", "up", exact_up_to=10)
+    assert sampled["exact"] is False and sampled["permutations"] == 10 and 0 < sampled["p"] <= 1
