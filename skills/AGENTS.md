@@ -127,8 +127,9 @@ the block for the project's instruction file.
   difference; a change of output shows exactly the runs it was meant for.
   `scripts/output_diff.py [REF]` makes the comparison against a git ref in
   one command and prints the first differing line of each case; it covers
-  the official examples, `new_project.py` and the generator template, and
-  `sweep_outputs.py` also takes the game projects. `output_diff.py`,
+  the official examples and, with `--projects`, the game projects, two
+  plans `edit_sheet.py` refuses, every script's `--help`, `new_project.py`
+  and the generator template. `output_diff.py`,
   `sweep_outputs.py` and `grade.py` set `CONSTRUCT3_RAG_NO_RECORD=1`. The
   checker then keeps no record of the fix loop
   (`docs/decisions/fix-loop-cap.md`), so its output does not depend on an
