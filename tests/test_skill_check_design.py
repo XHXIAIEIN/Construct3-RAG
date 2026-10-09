@@ -694,6 +694,25 @@ def test_a_tap_whose_position_the_prototype_does_not_know_is_refused_where_a_rul
     assert "tests[0].steps[0]: the prototype stopped here" in out and "tests[1].steps[2]" not in out, out
 
 
+def test_a_tap_anywhere_on_the_screen_bound_to_an_object_is_refused(tmp_path):
+    """A model bound "点击屏幕" to an invisible TouchPad Sprite, built 397 px square in one corner of a 720 x 1280
+    layout; taps elsewhere did nothing (2026-10-09 hosted-model batch, ask 10)."""
+    design = example()
+    design["inputs"][1]["game"] = {"tap": "Hole"}
+    code, out = check(tmp_path, design)
+    assert code == 1
+    assert ("inputs[1].game: 'tap anywhere once it is over' is a tap anywhere on the screen, but {\"tap\": \"Hole\"} "
+            "is Touch On touched Hole, which fires only inside Hole's box") in out
+    assert "Write {\"tap\": [0.5, 0.5]}, Touch On any touch start" in out
+    gm = script_module("game_model")
+    for words in ("tap the screen", "click anywhere", "tap anywhere on the screen", "点击屏幕", "点屏幕任意处",
+                  "点击画面任意位置"):
+        assert gm.SCREEN_WIDE.search(words), words
+    for words in ("tap a hole", "tap a dot on the screen", "tap anywhere on the board", "tap the screen's corner",
+                  "点击屏幕上的格子", "点一下屏幕下方的提示", "点菜单任意位置", "点全屏按钮"):
+        assert not gm.SCREEN_WIDE.search(words), words
+
+
 def test_a_region_belongs_to_a_tap_on_a_point_and_holds_it(tmp_path):
     design = example()
     design["inputs"][1]["game"]["region"] = [0, 0, 1, 0.5]

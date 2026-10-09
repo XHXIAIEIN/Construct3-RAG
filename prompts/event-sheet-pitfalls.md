@@ -152,8 +152,9 @@ If an object chases, follows or walks to another object, read
 ### Input
 
 If the events use Mouse and Touch together, tell a finger from a mouse,
-hide what can be pressed or dragged, close a popup by a tap outside it,
-read a touch's speed, bind keys, steer a movement behavior, or ask the
+take a tap anywhere on the screen, hide what can be pressed or dragged,
+close a popup by a tap outside it, read a touch's speed, bind keys, steer a
+movement behavior, or ask the
 browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfalls/input.md).
 
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
@@ -168,6 +169,7 @@ browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfa
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
 - Keyboard and Gamepad are separate conditions. Write both into one input object with a value per control and its last-tick copy, and read a press as `confirm > lastConfirm`.
+- A tap anywhere on the screen is *On any touch start* with no object. *On touched* an invisible Sprite as the tap area misses every tap outside its box.
 - Under *Scale outer* a dim sized to the design area leaves strips uncovered, and a tap on them misses *On touched* the dim. Size the cover 8000×8000 and close on *On any touch start* with *NOT Is touching* the panel and its buttons.
 
 ### Audio
