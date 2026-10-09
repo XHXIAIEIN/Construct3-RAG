@@ -431,6 +431,8 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
             return 1
         # Destroy outside, Wrap, Bound to layout, No save: a model told "third-party" leaves the behavior out.
         for _, _, s in sources:
+            if not s:
+                continue        # no schema at all: a third-party addon, not one without ACEs
             props = "; ".join(f"{k} ({' | '.join(spec['items'])})" if spec.get("items") else k
                               for k, spec in (s.get("properties") or {}).items())
             print(f"{s.get('name')} is a {s.get('type')} with no conditions, actions or expressions: it works by "
@@ -439,7 +441,9 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
                   f"\"<behavior name on the object>\", \"sid\": <new sid>}}, and to usedAddons in project.c3proj"
                   + (f". {s['description']}" if s.get("description") else ""))
             return 0
-        sys.exit(f"the clone has no schema for {target}, a third-party addon: nothing to look up")
+        # An answer, not a failure to run: on stdout, like a miss.
+        print(f"the clone has no schema for {target}, a third-party addon: nothing to look up")
+        return 1
     retired_lines = retired_note(p, sources, words)
     # By name first, so that a category which shares a word with a name does not
     # turn six entries printed in full into a list: `Physics force` is the three

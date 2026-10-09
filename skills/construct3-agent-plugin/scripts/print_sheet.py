@@ -560,7 +560,8 @@ def print_since(args, project: c3.Project, sheets: dict[str, dict]) -> int:
         old_sheets = then.load_listed("eventSheets") if then else {}
         for name in args.sheets:
             if name not in sheets and name not in old_sheets:
-                sys.exit(f"no event sheet named {name!r} on disk or in {since}; sheets: {', '.join(sheets)}")
+                print(f"no event sheet named {name!r} on disk or in {since}; sheets: {', '.join(sheets)}")
+                return 1        # an answer: on stdout
         names = args.sheets or [*sheets, *(n for n in old_sheets if n not in sheets)]
         if args.events and len(names) != 1:
             sys.exit(f"--events reads one sheet; name it: {', '.join(names)}")
@@ -686,7 +687,8 @@ def main() -> int:
         rows[name] = list(outline_rows(events, counter) if args.outline else sheet_rows(project, events, counter))
         totals[name] = counter[0]
     if args.events and first > totals[names[0]]:
-        sys.exit(f"sheet {names[0]} has {totals[names[0]]} events; --events {args.events} starts past its end")
+        print(f"sheet {names[0]} has {totals[names[0]]} events; --events {args.events} starts past its end")
+        return 1        # an answer: on stdout
 
     whole = {name: part(rows[name], first, last, None)[0] for name in names}
     size = {name: sum(len(line) + 1 for line in [f"== {name}", *whole[name]]) for name in names}

@@ -244,7 +244,8 @@ def cases(kinds: list[str], projects: list[Path], plans: dict[str, Path]) -> lis
     for kind in LOOKUP_KINDS:
         if kind in kinds:
             out += [Case(kind, " ".join(words), [f"{kind}.py", *words]) for words in LOOKUPS[kind]]
-    if "help" in kinds:     # the working tree's scripts; one REF lacks fails on its side, as a difference
+    # The working tree's scripts: one that REF lacks fails on the old side, which shows as a difference.
+    if "help" in kinds:
         out += [Case("help", p.name, [p.name, "--help"])
                 for p in sorted((ROOT / SKILL / "scripts").glob("*.py")) if p.stem != "c3project"]
     return out

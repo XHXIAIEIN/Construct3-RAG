@@ -62,9 +62,11 @@ def git(cwd: Path, *args: str, check: bool = True) -> None:
 
 def streams(root: Path, script: str | Path, *args: str) -> subprocess.CompletedProcess:
     """A script run from the project folder, its stdout and stderr apart. No CONSTRUCT3_RAG and an
-    empty home: the clone and the skill are found through the project alone, and the clone is not fetched."""
+    empty home: the clone and the skill are found through the project alone, and the clone is not fetched.
+    COLUMNS is 80: argparse wraps --help at the width it finds, and a test measures the text."""
     env = {k: v for k, v in os.environ.items() if k != "CONSTRUCT3_RAG"}
-    env.update(PYTHONIOENCODING="utf-8", CONSTRUCT3_RAG_OFFLINE="1", HOME=str(root / ".home"), USERPROFILE=str(root / ".home"))
+    env.update(PYTHONIOENCODING="utf-8", CONSTRUCT3_RAG_OFFLINE="1", HOME=str(root / ".home"), USERPROFILE=str(root / ".home"),
+               COLUMNS="80")
     return subprocess.run([sys.executable, str(script), *args], cwd=root, env=env,
                           capture_output=True, text=True, encoding="utf-8")
 

@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, run, tool, check, edit
+from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, run, streams, tool, check, edit
 
 
 @pytest.fixture
@@ -115,6 +115,22 @@ def test_a_behavior_without_aces_is_named_as_one_and_how_to_add(skill_only):
     assert code == 0 and "third-party" not in out, out
     assert out.startswith("Destroy outside is a behavior with no conditions, actions or expressions"), out
     assert "region (layout | viewport)" in out and '{"behaviorId": "destroy", "name": "<behavior name on the object>"' in out
+
+
+def test_an_object_of_a_plugin_the_schemas_lack_is_named_as_third_party_on_stdout(project):
+    """The object exists and its plugin has no schema: an answer, on stdout with exit code 1, like a miss. The
+    missing schema is not read as a behavior without ACEs, which named None as one."""
+    (project / "objectTypes" / "Gadget.json").write_text(json.dumps({
+        "name": "Gadget", "plugin-id": "GadgetPlugin", "sid": 5,
+        "singleglobal-inst": {"type": "Gadget", "properties": {}, "uid": 950, "sid": 951, "tags": ""}}), encoding="utf-8")
+
+    def listed(p):
+        p["objectTypes"]["items"].append("Gadget")
+        p["usedAddons"].append({"type": "plugin", "id": "GadgetPlugin", "name": "Gadget", "author": "Someone", "bundled": False})
+    edit(project, "project.c3proj", listed)
+    p = streams(project, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), "Gadget")
+    assert p.returncode == 1 and p.stderr == "", (p.stdout, p.stderr)
+    assert p.stdout == "the clone has no schema for Gadget, a third-party addon: nothing to look up\n", p.stdout
 
 
 def test_ace_lookup_offers_the_nearest_id(built):

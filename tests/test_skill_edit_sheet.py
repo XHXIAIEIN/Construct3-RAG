@@ -651,6 +651,15 @@ def test_a_plan_without_lines_is_carried_out_and_noted(project):
     assert code == 1 and "a variable is changed with" in out, out
 
 
+def test_help_teaches_line_on_the_plan_example(project):
+    """One operation of the plan example in --help carries "line", and a sentence after the example says what
+    it is: the rule is read from the tool as the plan is written, not from prose."""
+    code, out = run(project, SKILL / "scripts" / "edit_sheet.py", "--help")
+    assert code == 0 and '{"event": 9, "line": "Player: On collision with Coin", "add-actions": [' in out, out
+    assert ('"line" is the line print_sheet.py prints for that event, or a part of it;\n'
+            'a number from an older print is then refused.') in out, out
+
+
 # --- every refusal on stdout --------------------------------------------------------------------
 def refused(root: Path, *args: str, said: str) -> None:
     """edit_sheet.py refuses with said on stdout, nothing on stderr and exit code 1: a refusal answers the

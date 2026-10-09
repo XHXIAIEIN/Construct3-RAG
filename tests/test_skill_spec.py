@@ -69,7 +69,8 @@ def test_every_flag_the_skill_names_is_one_its_script_takes(tmp_path):
     """A flag renamed in a script and left in SKILL.md or a reference ends the agent's run in a usage error.
     A flag after a script's name on a line is that script's; one with no script before it, any script's.
     A --help is read whole or not at all, so it stays under the cut the scripts apply to their own output:
-    a harness cuts longer tool output, not always at the end and not always saying so."""
+    a harness cuts longer tool output, not always at the end and not always saying so. The size is measured
+    at the 80 columns streams() pins, because argparse wraps the text at the width it finds."""
     takes: dict[str, set[str]] = {}
     over = []
     for script in sorted((SKILL / "scripts").glob("*.py")):
