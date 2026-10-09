@@ -368,6 +368,19 @@
         "check_project.py prints no warning",
         "Every event of the original sheet is still in it, by sid"
       ]
+    },
+    {
+      "id": 25,
+      "name": "key-opens-door",
+      "fixture": "platformer-door",
+      "prompt": "this is construct's platformer template, folder <project> . i put a Key and a Door in the level. the door should stop the player until they have the key: walking into the key picks it up (the key disappears), and when the player walks into the door while carrying the key, the door opens. it stays where it is but turns half transparent, and then the player can walk through it. without the key the door stays shut",
+      "expected_output": "Touching the Key destroys or hides it and records that the player has it. The player walking into the Door is tested with Is overlapping at offset towards the Door, or another test that holds while a Solid stops the player at its edge; Is overlapping alone never holds there. With the key, the Door's opacity becomes about 50 and its Solid is disabled with Set enabled, so the player walks through; without the key the Door blocks. The checker passes.",
+      "files": [],
+      "assertions": [
+        "check_project.py of the clone exits 0 on the edited project",
+        "check_project.py prints no warning on an event the run added: the example's own warnings stay out",
+        "Every event of the original sheet is still in it, by sid"
+      ]
     }
   ]
 }

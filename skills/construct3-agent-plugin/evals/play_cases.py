@@ -576,6 +576,41 @@ def walls_stop_the_player() -> dict:
     ]}
 
 
+def key_opens_door() -> dict:
+    """The player walks into the Door without the key, is put on the Key, then walks into the Door again. The
+    floor ends 64 px past the Door, so a player that gets through falls and the layout restarts: the watches keep
+    what happened before that."""
+    door = "vars.h.first('Door')"
+    return {"steps": [
+        {"until": f"{PLAYER} && {FLOOR}", "timeout": 20}, js(HELPERS),
+        js("vars.watch.box = () => vars.h.box(vars.h.first('Player'));",
+           f"vars.watch.door = () => {{ const d = {door}; return d ? vars.h.round(d.opacity, 100) : null; }};",
+           f"vars.door = vars.h.box({door}); vars.mark0 = vars.h.now(); return vars.door"),
+        {"key": "ArrowRight", "seconds": 1.5}, {"wait": 0.3},
+        js("vars.shut = {right: Math.max(...vars.h.since('box', vars.mark0).map(e => e.v.r)),",
+           "  opacity: vars.h.since('door', vars.mark0).map(e => e.v)}; return vars.shut"),
+        js("const p = vars.h.first('Player'), k = vars.h.first('Key'); if (!k) return false;",
+           "p.x = k.x; p.y = k.y; return [k.x, k.y]"),
+        {"wait": 0.5}, {"until": FLOOR, "timeout": 4},
+        js("const k = vars.h.first('Key'); vars.key = {count: vars.h.count('Key'), visible: !!(k && k.isVisible)};",
+           "vars.mark = vars.h.now(); vars.starts0 = vars.starts; return vars.key"),
+        {"key": "ArrowRight", "seconds": 2.0}, {"wait": 0.5},
+        check("Without the key the Door stops the player and stays shut",
+              "const s = vars.shut, d = vars.door;",
+              "return {ok: s.right <= d.l + 2 && s.opacity.every(o => o === 1), "
+              "said: `player's right edge reached ${s.right}, the door's left is ${d.l}; door opacity ${s.opacity.join(', ')}`};"),
+        check("Walking into the Key picks it up: it is destroyed or hidden",
+              "const k = vars.key; return {ok: k.count === 0 || !k.visible, said: `Key instances ${k.count}, visible ${k.visible}`};"),
+        check("With the key, walking into the Door turns it half transparent, and it stays",
+              "const o = vars.h.since('door', vars.mark).map(e => e.v);",
+              "return {ok: o.some(v => v !== null && v >= 0.3 && v <= 0.7) && !o.includes(null), "
+              "said: `door opacity after the key: ${o.join(', ') || 'unchanged'}`};"),
+        check("With the key, the player walks through the Door",
+              "const left = Math.max(...vars.h.since('box', vars.mark).map(e => e.v.l));",
+              "return {ok: left >= vars.door.r - 2, said: `player's left edge reached ${left}, the door's right is ${vars.door.r}`};"),
+    ]}
+
+
 RING = r"""const b = vars.h.box(vars.h.first('Board')), c = runtime.objects.Coin.getAllInstances().map(i => vars.h.box(i));
 (vars.rings = vars.rings || []).push({board: b, coins: c}); return {board: b, coins: c.length}"""
 
@@ -614,6 +649,7 @@ PLANS: dict[str, Callable[[], dict]] = {
     "fix-turn-flip": turns, "two-player-turns": turns, "two-player-turn-limit": lambda: turns(limit=True),
     "script-shift-and-edges": script_shift_and_edges, "double-jump": double_jump, "stay-on-screen": stay_on_screen,
     "walls-stop-the-player": walls_stop_the_player, "coins-in-a-ring": coins_in_a_ring,
+    "key-opens-door": key_opens_door,
 }
 
 
