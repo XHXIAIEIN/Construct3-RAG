@@ -7,6 +7,24 @@ Sources and the rule for adding an entry are in the index,
   a *Once* timer fires, the tag's expressions return 0. Remaining time is
   `Duration(tag) - CurrentTime(tag)`. `CurrentTime` resets at every *On
   timer*. [manual: behavior-reference/timer.md]
+- A reset after N seconds without input (inactivity), such as a combo (连击) that
+  drops to 0 one second after the last tap or an idle screen, is one
+  *Once* timer that every input restarts. In the input's trigger, add 1
+  and *Start timer* "reset" for N seconds, *Once*: on a running tag it
+  starts over, so the timer ends N seconds after the last input. *On
+  timer* "reset" sets the combo to 0. No variable counts the time. A
+  short tick timer that only its own *On timer* restarts, under a
+  condition such as combo > 0, stops for good the first time it ends with
+  the condition false, and the reset never runs again. *Every X seconds*
+  runs at a regular interval that no tap restarts, so it does not measure
+  the time since the last tap.
+  `check_project.py` warns about the stopped timer. [manual:
+  behavior-reference/timer.md "Start timer"; system-reference/
+  system-conditions.md "Every X seconds"; observed in a hosted model's
+  project, r495.2 preview, 2026-10-09: a 0.1 s tick restarted only while
+  combo > 0 left the combo climbing past 11 after 3 s without taps, and
+  the same project with the timer started for 1 s on every tap reset 0.96 s
+  after the last tap and kept counting through 0.85 s gaps]
 - A timer is state that events start and stop. Before choosing one, list
   every transition. For example, an instance's timer starts or stops by
   overlap when the instance settles, and stops when it is picked up or

@@ -77,6 +77,15 @@ Traps of the running game are warnings:
   leaves the group or layout, and when the branch tests *Is timer running*
   or what changes as the game plays: an overlap, a key, a position, a
   function;
+- a *Once* timer that its own *On timer* starts again only under a
+  further condition, and that nothing else starts but *On start of
+  layout*. The first time the condition is false when the timer ends,
+  nothing starts it, and *On timer* never fires again
+  [`Construct3-RAG/prompts/pitfalls/timer.md`]. The finding names the
+  input trigger to start it in. It passes when a *Regular* start, an *Else*
+  branch or an unconditional restart keeps it going, and when another
+  trigger, a function or an event that runs every tick starts it. Over the
+  524 official examples it adds no finding;
 - a variable flipped in an event that runs every tick: *Toggle*, or *Set*
   to `N - x`, `-x`, `x * -1` or `x = a ? b : a` of the same variable. The
   event runs again on the next tick and flips it back, so the value an
@@ -174,10 +183,11 @@ Traps of the running game are warnings:
 every tick. For them, a condition of an addon without a schema counts as a
 trigger when its id starts with `on-`.
 
-`edit_sheet.py` refuses the findings on *Find path*, *Start timer*,
-*Simulate control*, `Count`, `PickedCount`, a variable flipped every tick,
-*Is overlapping* a Solid from a Platform object and a dragged object drawn
-under its target in an event a plan creates, as it refuses the style findings below; in
+`edit_sheet.py` refuses the findings on *Find path*, *Start timer*, a
+timer that stops for good, *Simulate control*, `Count`, `PickedCount`, a
+variable flipped every tick, *Is overlapping* a Solid from a Platform
+object and a dragged object drawn under its target in an event a plan
+creates, as it refuses the style findings below; in
 the user's own events they stay warnings. A gesture action, a *Find path*,
 a *Start timer*, a *Simulate control* or a flip in a function passes, since
 a trigger or an event that runs every tick may call it.

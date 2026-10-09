@@ -615,6 +615,7 @@ class Checker:
         self.action_lists: list[tuple[list, str]] = []     # (actions, where) of every block
         self.solid_overlaps: list[tuple[str, dict, str, str, set[int]]] = []  # (where, condition, Platform object, Solid, ids of its event's action lists)
         self.drops: list[tuple[str, dict, str, str]] = []  # (where, condition or action, Drag & Drop object, what it is dropped on)
+        self.timer_starts: list[tuple[str, dict, tuple, bool | None]] = []    # (where, Start timer, line, paced)
         self._summaries: dict[int, tuple | None] = {}
 
     def check(self) -> None:
@@ -2540,6 +2541,60 @@ class Checker:
                 said.add((piece, target))
                 break
 
+    def check_dead_timers(self) -> None:
+        """A Once timer that only its own On timer starts again, under a condition, and otherwise only On start of
+        layout: the first time the condition is false when the timer ends, nothing starts it, and On timer never
+        fires again. A reset after N seconds without input was written this way: a 0.1 s tick restarted while
+        combo > 0, never started by the tap, so it stopped at the first tick (a hosted model, 2026-10-09). Over
+        the 524 official examples it adds no finding."""
+        by_tag: dict[tuple[str, str], list[tuple[str, dict, tuple, bool | None]]] = {}
+        for w, a, line, paced in self.timer_starts:
+            tag = params_of(a).get("tag")
+            if isinstance(tag, str):
+                by_tag.setdefault((str(a.get("objectClass")), unquote(tag).lower()), []).append((w, a, line, paced))
+
+        def fires(c: dict, obj: str, tag: str) -> bool:
+            t = params_of(c).get("tag")
+            return c.get("id") == "on-timer" and c.get("objectClass") == obj and self.behavior_of(c) == "timer" \
+                and isinstance(t, str) and unquote(t).lower() == tag
+
+        for (obj, tag), starts in by_tag.items():
+            if any(str(params_of(a).get("type")).lower() != "once" for _, a, _, _ in starts):
+                continue
+            restarts = []
+            for w, a, line, paced in starts:
+                at = next((i for i, e in enumerate(line) if any(fires(c, obj, tag) for c in e.get("conditions", [])
+                                                                if isinstance(c, dict))), None)
+                if at is None:
+                    if paced is None or not any(isinstance(c, dict) and c.get("objectClass") == "System" and
+                                                c.get("id") == "on-start-of-layout"
+                                                for e in line for c in e.get("conditions", [])):
+                        break                 # started by another trigger, a function or every tick
+                    continue
+                extra = [c for e in line[at:] for c in e.get("conditions", []) if isinstance(c, dict)
+                         and not fires(c, obj, tag)]
+                if not extra or any(c.get("objectClass") == "System" and c.get("id") == "else" for c in extra):
+                    break                     # On timer starts it again whatever the state
+                restarts.append((w, a, extra))
+            else:
+                if not restarts:
+                    continue
+                w, a, extra = restarts[0]
+                shown = params_of(a).get("tag")
+                start = json.dumps({"id": "start-timer", "objectClass": obj, "behaviorType": a.get("behaviorType"),
+                                    "parameters": {"duration": "<seconds>", "type": "once", "tag": shown}},
+                                   ensure_ascii=False)
+                self.p.findings.style_finding(
+                    "dead-timer",
+                    f"{w}: Start timer {shown} runs again only from its own On timer {shown}, under "
+                    f"{' and '.join(describe(c) + ' ' + json.dumps(params_of(c), ensure_ascii=False) for c in extra)}, "
+                    f"and otherwise only On start of layout starts it. "
+                    f"The first time that condition is false when the timer ends, nothing starts it again, and On "
+                    f"timer {shown} never fires after that. Start it in the trigger of what it times: for a reset N "
+                    f"seconds after the last tap or key (a combo, an idle screen), start it in the input's trigger "
+                    f"on every input, {start}, which restarts it, and reset in On timer {shown}; no variable "
+                    f"needs to count the time (Construct3-RAG/prompts/pitfalls/timer.md)")
+
     def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False,
                     paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
         """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
@@ -2569,6 +2624,8 @@ class Checker:
             self.check_pathfinding(a, w, found, paced)
             self.check_held_control(a, w, held, paced)
             self.check_timer_restart(a, w, line, held, paced)
+            if a.get("id") == "start-timer" and self.behavior_of(a) == "timer":
+                self.timer_starts.append((w, a, line, paced))
             self.check_flip(a, w, line, paced)
             if isinstance(a, dict):
                 self.note_drop(a, w)
@@ -3081,6 +3138,7 @@ class Checker:
                         "(manual: behavior-reference/pathfinding.md)")
         self.check_solid_overlaps()
         self.check_drops()
+        self.check_dead_timers()
         self.check_pending_instances()
         for t in self.created:
             if t in p.types and t not in self.templates:

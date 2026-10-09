@@ -83,6 +83,7 @@ If the events define or call a function or a custom action, read
 If the events use the Timer behavior, read [pitfalls/timer.md](pitfalls/timer.md).
 
 - *Start timer* on an existing tag restarts it. After *Stop* or a *Once* timer's end its expressions return 0.
+- A reset N seconds after the last input (a combo, an idle screen): *Start timer* for N, *Once*, in the input's trigger on every input, and reset in *On timer*. A tick timer that only its own *On timer* restarts under a condition stops for good.
 - A timer is state you start and stop, so list every transition before choosing it.
 - A timer and a tween scheduled to end together end a tick apart.
 - One instance cannot time stacked buffs of one kind with Timer tags: no expression names the tag that fired, and a re-cast restarts the tag. Make each shield or buff an instance with its own Timer and amount, a child of its holder; spend them with *Pick children* and *For each (ordered)* by the time left.

@@ -214,6 +214,46 @@ def test_timer_started_under_a_trigger_or_by_an_overlap_is_left_alone(project):
         assert "runs every tick" not in out and out.splitlines()[-1].startswith("ok:"), out
 
 
+def on_timer(tag: str) -> dict:
+    return {"id": "on-timer", "objectClass": "ScoreText", "behaviorType": "Timer", "parameters": {"tag": f'"{tag}"'}}
+
+
+def start_timer(tag: str, seconds: str) -> dict:
+    return {"id": "start-timer", "objectClass": "ScoreText", "behaviorType": "Timer",
+            "parameters": {"duration": seconds, "type": "once", "tag": f'"{tag}"'}}
+
+
+def test_plan_refuses_a_timer_only_its_own_on_timer_restarts_under_a_condition(project):
+    """A hosted model's combo reset of 2026-10-09: a 0.1 s tick started at the start of the layout and
+    restarted in its own On timer only while coins are left, never by the tap, so it stopped for good at the
+    first tick. Refused, naming the input trigger and the Start timer to write there; the timer restarted by
+    the tap, or by an Else branch of the On timer, goes through."""
+    give_behavior(project, "ScoreText", "Timer", "Timer")
+    before = (project / SHEET).read_bytes()
+    some_left = {**NONE_LEFT, "parameters": {**NONE_LEFT["parameters"], "comparison": 4}}
+    start = {"eventType": "block", "conditions": [cond("on-start-of-layout")], "actions": [start_timer("tick", "0.1")]}
+    tick = {"eventType": "block", "conditions": [on_timer("tick")], "actions": [],
+            "children": [{"eventType": "block", "conditions": [some_left], "actions": [start_timer("tick", "0.1")]}]}
+    code, out = plan(project, {"into": 0, "events": [comment("Start the tick."), start, comment("Tick."), tick]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r'operation 1: sheet Game event \d+ \(sid \d+\) action 1: Start timer "tick" runs again only '
+                    r'from its own On timer "tick", under System:compare-two-values', out), out
+    assert 'never fires after that' in out and json.dumps(
+        {"id": "start-timer", "objectClass": "ScoreText", "behaviorType": "Timer",
+         "parameters": {"duration": "<seconds>", "type": "once", "tag": '"tick"'}}) in out.splitlines()[0], out
+    tick["children"][:0] = [comment("Coins left: tick on.")]
+    tick["children"] += [comment("None left: tick slower."),
+                         {"eventType": "block", "conditions": [cond("else")], "actions": [start_timer("tick", "1")]}]
+    code, out = plan(project, {"into": 0, "events": [comment("Start the tick."), start, comment("Tick."), tick]},
+                     flags=("--dry-run",))
+    assert code == 0 and "runs again only" not in out, out
+    tap = {"eventType": "block", "conditions": [TOUCH_COIN], "actions": [start_timer("reset", "1")]}
+    reset = {"eventType": "block", "conditions": [on_timer("reset")], "actions": [SAY_DONE]}
+    code, out = plan(project, {"into": 0, "events": [comment("A tap restarts the reset."), tap,
+                                                     comment("A second without taps."), reset]}, flags=("--dry-run",))
+    assert code == 0 and warnings(out) == [], out
+
+
 def test_simulate_control_under_a_trigger(project):
     """Every new-game plan of the prompt evals walked under On key pressed: Simulate control holds the
     control for that tick alone. Refused in a new event with the condition that holds, its key kept;
