@@ -100,6 +100,7 @@ group turned off to pause, read
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.
 - *Wait 0* resumes at the start of the next tick, not at the end of the event or sheet. Leave it out unless a trigger fires before the tick applies what it reports.
 - Deactivating a group stops its events, not its behaviors, timers or tweens, so it does not pause.
+- *Set time scale* 0 stops animations too. To keep one playing through a pause (an ultimate, a cutscene), *Set object time scale* 1 on it, and restore both in the Sprite's *On finished*.
 - A hit stop is *Set time scale* 0.1, *Wait*, *Set time scale* 1. A smooth ramp is a value tween.
 - Of two overlapping *Wait* hit stops, the shorter ends both. Count the stops under way, and restore the time scale when the count is back to 0. A `wallclocktime` deadline runs on another clock than the *Wait* and leaves the game slowed.
 - A hit stop slows tweens and `dt` too. If a tween must end on an audio beat, set its object's time scale to 1 and restore it in *On finished*. If a blend must keep real time, use `dt / timescale`.
