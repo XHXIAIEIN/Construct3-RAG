@@ -493,3 +493,49 @@ def test_platform_overlapping_a_solid_is_refused(project):
                  comment("Say it."), {"eventType": "block", "conditions": [overlap], "actions": [SAY_DONE]}]
     code, out = plan(project, {"into": 0, "events": elsewhere}, flags=("--dry-run",))
     assert code == 0 and warnings(out) == [], out
+
+
+def coin_dragged_under_board(project: Path) -> None:
+    """Coin gets Drag & Drop and an instance on the Background layer, listed before the Board."""
+    edit(project, "objectTypes/Coin.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "DragnDrop", "name": "DragDrop", "sid": 9200}))
+    objects = json.loads((project / "layouts" / "Objects.json").read_text(encoding="utf-8"))
+    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"].insert(0, {
+        **json.loads(json.dumps(next(i for i in objects["layers"][0]["instances"] if i["type"] == "Coin"))),
+        "uid": 9201, "sid": 9202}))
+    for rel in ("layouts/Game.json", "layouts/Objects.json"):
+        edit(project, rel, lambda d: [i.setdefault("behaviors", {}).update(DragDrop={"properties": {}})
+                                      for layer in d["layers"] for i in layer["instances"] if i["type"] == "Coin"])
+    add_addon(project, "behavior", "DragnDrop", "Drag & Drop")
+
+
+def test_a_dragged_object_drawn_under_its_target_is_refused(project):
+    """A hosted model's drag-and-snap demo listed the Block before the Target on one layer, so the block it
+    snapped into the target was drawn under it and looked gone. Refused, naming the order and Move to top in
+    On drag start; the Coin listed after the Board, or raised as it is picked up, goes through."""
+    coin_dragged_under_board(project)
+    before = (project / SHEET).read_bytes()
+    drop = {"eventType": "block",
+            "conditions": [{"id": "on-any-touch-end", "objectClass": "Touch"},
+                           {"id": "is-overlapping-another-object", "objectClass": "Coin", "parameters": {"object": "Board"}}],
+            "actions": [{"id": "set-position-to-another-object", "objectClass": "Coin",
+                         "parameters": {"object": "Board", "image-point-optional": "0"}}, SAY_DONE]}
+    ops = {"into": 0, "events": [comment("Snap the coin onto the board."), drop]}
+    code, out = plan(project, ops)
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) condition 2: Coin:is-overlapping-another-object "
+                    r"drops Coin on Board, and layout Game draws Coin under Board: on layer 'Background' Coin comes "
+                    r"before Board", out), out
+    assert '"on-drag-start"' in out.splitlines()[0] and '"move-to-top"' in out.splitlines()[0], out
+    raise_it = {"eventType": "block", "conditions": [{"id": "on-drag-start", "objectClass": "Coin", "behaviorType": "DragDrop"}],
+                "actions": [{"id": "move-to-top", "objectClass": "Coin"}]}
+    code, out = plan(project, {"into": 0, "events": [comment("Lift the coin."), raise_it, *ops["events"]]},
+                     flags=("--dry-run",))
+    assert code == 0 and "drops Coin on Board" not in out, out
+
+    def coin_last(d):
+        rows = d["layers"][0]["instances"]
+        rows.append(rows.pop(0))
+    edit(project, "layouts/Game.json", coin_last)
+    code, out = plan(project, ops, flags=("--dry-run",))
+    assert code == 0 and "drops Coin on Board" not in out, out

@@ -213,7 +213,7 @@ If the events use image points, animations or frames, read
 
 If the events colour, size or space Text or a Sprite Font, scale or scroll
 the image of a Tiled Background or a 9-patch, or draw bars, Drawing Canvas
-polygons or blend modes, read
+polygons or blend modes, or drop a dragged object onto another, read
 [pitfalls/rendering.md](pitfalls/rendering.md).
 
 - A Text object has no *Set color*. Colour it with *Set font color*, or the project does not open.
@@ -226,6 +226,7 @@ polygons or blend modes, read
 - A Text object draws only the lines that fit its height. Size the box for the longest text.
 - A single line taller than its Text box draws with the bottom of its glyphs cut off.
 - *Move to top* leaves a hierarchy's children where they were. Move each part.
+- An instance listed earlier on a layer is drawn under the later ones, so a dragged piece listed before its target vanishes behind it when dropped. List it after the target, or *Move to top* in *On drag start*.
 - *Set color* multiplies. Draw a tinted part white and keep highlights on an untinted child.
 - Changing a Text's font size redraws and re-uploads its texture. Animate position, angle or opacity, or use a Sprite Font and tween its scale.
 - A Sprite Font draws whole cells and tints its outline with its colour. Draw glyphs left in the cell, one image per colour, in a box sized for the largest scale.

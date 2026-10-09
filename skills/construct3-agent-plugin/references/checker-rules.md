@@ -125,6 +125,18 @@ Traps of the running game are warnings:
   event other than the test's own, or a layout instance, switches the
   Solid off, and for *On collision*, which the behavior fires as it pushes
   out. Over the 524 official examples it adds no finding;
+- a Drag & Drop object tested for overlap or collision with another object,
+  or set to its position, when a layout draws it under that object: on a
+  lower layer, or listed before it on the same layer. Dropped there, the
+  piece disappears behind its target
+  [`Construct3-RAG/prompts/pitfalls/rendering.md`]. The finding names both
+  ways out, the order in the layout and *Move to top* in *On drag start*,
+  with its JSON. It passes when an action changes the Z order of either
+  object (*Move to top*, *Move to bottom*, *Move to layer*, *Move to object*,
+  *Sort Z order*, a Z elevation), when the target starts invisible, and when
+  the two stand at different Z elevations. Over the 524 official examples it
+  adds no finding: 10 of them test a dragged object against a target, and 7
+  of those raise it at runtime;
 - text a Sprite Font cannot draw, in a layout instance's text or in a
   literal that *Set text*, *Append text* or *Typewriter text* joins at the
   top level of its expression: a character outside the Character set shows
@@ -163,9 +175,9 @@ every tick. For them, a condition of an addon without a schema counts as a
 trigger when its id starts with `on-`.
 
 `edit_sheet.py` refuses the findings on *Find path*, *Start timer*,
-*Simulate control*, `Count`, `PickedCount`, a variable flipped every tick
-and *Is overlapping* a Solid from a Platform object in an event a plan
-creates, as it refuses the style findings below; in
+*Simulate control*, `Count`, `PickedCount`, a variable flipped every tick,
+*Is overlapping* a Solid from a Platform object and a dragged object drawn
+under its target in an event a plan creates, as it refuses the style findings below; in
 the user's own events they stay warnings. A gesture action, a *Find path*,
 a *Start timer*, a *Simulate control* or a flip in a function passes, since
 a trigger or an event that runs every tick may call it.

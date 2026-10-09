@@ -256,6 +256,15 @@ MOVES = {"set-x", "set-y", "set-position", "set-position-to-another-object", "mo
 MOVERS = {"tween", "bullet", "moveto", "sin", "pin", "physics", "eightdir", "car", "tilemovement", "orbit",
           "follow", "dragndrop", "custom", "turret", "rotate"}
 REGENERATE = {"regenerate-obstacle-map", "regenerate-region", "regenerate-region-around-object"}
+# A Drag & Drop object dropped on another, tested by overlap or collision or snapped onto it, is drawn under
+# it when the layout puts it lower in the Z order: on a lower layer, or listed before it on the same layer
+# (manual: project-primitives/objects/instances.md "Z index", 0 is the bottom; layers.md: a layer's own
+# objects come above its sub-layers). The dropped piece then disappears behind its target. An action that
+# changes the Z order of either, or a Z elevation, decides it at runtime instead.
+DROP_TESTS = {"is-overlapping-another-object", "is-overlapping-at-offset", "on-collision-another-object"}
+DROP_SNAPS = {"set-position-to-another-object"}
+RESTACKS = {"move-to-top", "move-to-bottom", "move-to-layer", "move-to-object", "set-z-elevation",
+            "set-position-3d", "sort-z-order"}
 # A found path is there only after On path found: Move along path, and the node expressions, in the same
 # actions as Find path read the previous path, unless Wait for previous actions to complete stands between.
 PATH_NODES = re.compile(r"(\w+)\s*\.\s*(\w+)\s*\.\s*(?:nodecount|nodexat|nodeyat)\b", re.I)
@@ -605,6 +614,7 @@ class Checker:
         self.answered: dict[int, dict] = {}         # id(event that starts with Else) -> the event before it
         self.action_lists: list[tuple[list, str]] = []     # (actions, where) of every block
         self.solid_overlaps: list[tuple[str, dict, str, str, set[int]]] = []  # (where, condition, Platform object, Solid, ids of its event's action lists)
+        self.drops: list[tuple[str, dict, str, str]] = []  # (where, condition or action, Drag & Drop object, what it is dropped on)
         self._summaries: dict[int, tuple | None] = {}
 
     def check(self) -> None:
@@ -2453,6 +2463,83 @@ class Checker:
                 f"\"1\" below; two events, or an OR block, for both sides. {mover} On collision with {solid} also "
                 f"fires when they touch (Construct3-RAG/prompts/pitfalls/picking.md)")
 
+    def dragged(self, obj) -> bool:
+        """An object type with Drag & Drop, or a family that has it or has a member with it."""
+        return isinstance(obj, str) and any(b.lower() == "dragndrop" for n in self.names_of(obj)
+                                            if n in self.p.plugin_of for b in self.p.behaviors_of(n).values())
+
+    def note_drop(self, ace: dict, where: str) -> None:
+        """A Drag & Drop object tested for overlap or collision with another, or set to another's position: the
+        other is what it is dropped on. Kept for check_drops once every layout and action is known."""
+        a, b = ace.get("objectClass"), params_of(ace).get("object")
+        if ace.get("isInverted") or not isinstance(b, str) or a == b:
+            return
+        if ace.get("id") in DROP_TESTS:
+            pairs = ((a, b), (b, a))
+        elif ace.get("id") in DROP_SNAPS:
+            pairs = ((a, b),)
+        else:
+            return
+        for piece, target in pairs:
+            if self.dragged(piece) and not self.dragged(target):
+                self.drops.append((where, ace, piece, target))
+                return
+
+    def check_drops(self) -> None:
+        """A dropped piece drawn under what it is dropped on: see DROP_TESTS."""
+        p = self.p
+        if not self.drops:
+            return
+        restacked = {a.get("objectClass") for actions, _ in self.action_lists for a in actions
+                     if isinstance(a, dict) and a.get("id") in RESTACKS}
+        restacked |= {params_of(a).get("object") for actions, _ in self.action_lists for a in actions
+                      if isinstance(a, dict) and a.get("id") == "sort-z-order"}
+
+        def types_of(obj: str) -> set[str]:
+            return {obj} if obj in p.types else set(p.families.get(obj, {}).get("members", []))
+
+        def drawn(layers, out: list) -> list:
+            """(layer name, instance) bottom to top: a layer's sub-layers below its own instances."""
+            for layer in layers if isinstance(layers, list) else []:
+                if isinstance(layer, dict):
+                    drawn(layer.get("subLayers"), out)
+                    out += [(layer.get("name", ""), i) for i in layer.get("instances") or [] if isinstance(i, dict)]
+            return out
+
+        def shown(inst: dict) -> bool:
+            color = (inst.get("world") or {}).get("color")
+            alpha = color[3] if isinstance(color, list) and len(color) == 4 else 1
+            return (inst.get("properties") or {}).get("initially-visible", True) is not False and alpha != 0
+
+        said = set()
+        for where, ace, piece, target in self.drops:
+            if (piece, target) in said or self.names_of(piece) & restacked or self.names_of(target) & restacked:
+                continue
+            pieces, targets = types_of(piece), types_of(target)
+            for lname, lay in self.layouts.items():
+                order = drawn(lay.get("layers") if isinstance(lay, dict) else [], [])
+                under = next(((i, j) for i, (_, pi) in enumerate(order) if pi.get("type") in pieces
+                              for j, (_, ti) in enumerate(order) if ti.get("type") in targets and j > i and shown(ti)
+                              and (pi.get("world") or {}).get("z", 0) == (ti.get("world") or {}).get("z", 0)), None)
+                if under is None:
+                    continue
+                (pl, pi), (tl, ti) = order[under[0]], order[under[1]]
+                how = (f"on layer {pl!r} {pi['type']} comes before {ti['type']} in the instances, and one listed later "
+                       f"is drawn in front" if pl == tl else
+                       f"{pi['type']} is on layer {pl!r}, below {ti['type']}'s layer {tl!r}")
+                behavior = next((n for n, b in p.behaviors_of(pi["type"]).items() if b.lower() == "dragndrop"), "DragDrop")
+                top = json.dumps({"eventType": "block", "conditions": [{"id": "on-drag-start", "objectClass": piece,
+                                                                        "behaviorType": behavior}],
+                                  "actions": [{"id": "move-to-top", "objectClass": piece}]})
+                self.p.findings.style_finding(
+                    "drop-under",
+                    f"{where}: {describe(ace)} drops {piece} on {target}, and layout {lname} draws {piece} under "
+                    f"{target}: {how}. Dropped there, {piece} disappears behind {target}. List {piece}'s instance "
+                    f"after {target}'s on the same layer, or put it on a layer above; or raise it as it is picked "
+                    f"up, {top} (manual: project-primitives/objects/instances.md \"Z index\")")
+                said.add((piece, target))
+                break
+
     def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False,
                     paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
         """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
@@ -2470,6 +2557,7 @@ class Checker:
             if isinstance(c, dict):
                 self.check_none_left(c, f"{where} condition {i}", gone, earlier)
                 self.note_solid_overlap(c, f"{where} condition {i}", ev)
+                self.note_drop(c, f"{where} condition {i}")
                 if not ev.get("isOrBlock"):
                     self.check_narrowed(c, f"{where} condition {i}", earlier)
                     earlier.append(c)
@@ -2482,6 +2570,8 @@ class Checker:
             self.check_held_control(a, w, held, paced)
             self.check_timer_restart(a, w, line, held, paced)
             self.check_flip(a, w, line, paced)
+            if isinstance(a, dict):
+                self.note_drop(a, w)
             if gone is not None and a.get("id") == "destroy" and a.get("objectClass") in self.p.plugin_of:
                 gone.setdefault(a["objectClass"], w)
             if a.get("type") == "script":
@@ -2990,6 +3080,7 @@ class Checker:
                         "it takes effect the next tick, so a Find path right after it waits first "
                         "(manual: behavior-reference/pathfinding.md)")
         self.check_solid_overlaps()
+        self.check_drops()
         self.check_pending_instances()
         for t in self.created:
             if t in p.types and t not in self.templates:
