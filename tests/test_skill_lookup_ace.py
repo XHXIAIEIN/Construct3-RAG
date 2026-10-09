@@ -108,6 +108,15 @@ def test_ace_lookup_needs_no_project_and_takes_a_display_name(skill_only):
     assert "action set-max-speed" in out and "[behavior <behavior name on the object>, eightdir]" in out
 
 
+def test_a_behavior_without_aces_is_named_as_one_and_how_to_add(skill_only):
+    """A model shooting blocks looked Destroy outside up, read that the clone had no schema for a third-party
+    addon, and left its bullets flying forever (2026-10-09 batch, ask 06)."""
+    code, out = tool(skill_only, "lookup_ace", "Destroy outside")
+    assert code == 0 and "third-party" not in out, out
+    assert out.startswith("Destroy outside is a behavior with no conditions, actions or expressions"), out
+    assert "region (layout | viewport)" in out and '{"behaviorId": "destroy", "name": "<behavior name on the object>"' in out
+
+
 def test_ace_lookup_offers_the_nearest_id(built):
     code, out = tool(built, "lookup_ace", "System", "wiat")
     assert code != 0 and "closest: wait" in out

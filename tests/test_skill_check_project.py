@@ -1180,6 +1180,89 @@ def test_a_solid_changed_beside_custom_obstacles_is_not_named(project):
     assert not [w for w in warnings(out) if "changes a Solid" in w], out
 
 
+BULLET_PROPERTIES = {"speed": 400, "acceleration": 0, "gravity": 0, "bounce-off-solids": False, "set-angle": True,
+                     "step": False, "enabled": True}
+
+
+def shot_type(project: Path) -> None:
+    """Shot, a copy of Coin with the Bullet behavior alone, placed in the Objects layout as the model for
+    the Shots the events create."""
+    shot = json.loads((project / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
+    ids = iter(range(9000, 9100))
+    shot.update(name="Shot", sid=9100, behaviorTypes=[{"behaviorId": "Bullet", "name": "Bullet", "sid": 9101}],
+                instanceVariables=[])
+    for anim in shot["animations"]["items"]:
+        anim["sid"] = next(ids)
+        for frame in anim["frames"]:
+            frame["imageSpriteId"] = next(ids)
+    (project / "objectTypes" / "Shot.json").write_text(json.dumps(shot), encoding="utf-8")
+    for image in (project / "images").glob("coin-*.png"):
+        (project / "images" / image.name.replace("coin-", "shot-")).write_bytes(image.read_bytes())
+    edit(project, "project.c3proj", lambda d: d["objectTypes"]["items"].append("Shot"))
+
+    def place(d):
+        layer = d["layers"][0]
+        coin = next(i for i in layer["instances"] if i["type"] == "Coin")
+        layer["instances"].append({**json.loads(json.dumps(coin)), "type": "Shot", "uid": 9103, "sid": 9104,
+                                   "properties": {**coin["properties"], "initial-animation": shot["animations"]["items"][0]["name"]},
+                                   "behaviors": {"Bullet": {"properties": BULLET_PROPERTIES}}, "instanceVariables": {}})
+    edit(project, "layouts/Objects.json", place)
+    add_addon(project, "behavior", "Bullet", "Bullet")
+
+
+FIRE = block([START], [{"id": "create-object", "objectClass": "System", "sid": 19, "parameters": {
+    "object-to-create": "Shot", "layer": '"Game"', "x": "100", "y": "100", "create-hierarchy": False,
+    "template-name": '""'}}])
+DESTROY_SHOT = {"id": "destroy", "objectClass": "Shot", "sid": 20}
+HIT_BOARD = block([cond("on-collision-with-another-object", "Shot", {"object": "Board"})], [DESTROY_SHOT])
+HIT_BACKDROP = block([cond("on-collision-with-another-object", "Shot", {"object": "Backdrop"})], [DESTROY_SHOT])
+OUTSIDE = block([cond("is-outside-layout", "Shot")], [DESTROY_SHOT])
+STRAY = "moves with the Bullet behavior and the events create it, but nothing removes one that misses"
+
+
+@pytest.mark.parametrize("rows, said", [
+    ([FIRE], "no event destroys it"),
+    ([FIRE, HIT_BOARD], "every Destroy of Shot is under a hit on Board, none of them a Solid"),
+    ([FIRE, HIT_BOARD, OUTSIDE], None),
+    ([FIRE, HIT_BOARD, block([START], [{"id": "wait", "objectClass": "System", "sid": 21, "parameters": {
+        "seconds": "2"}}, DESTROY_SHOT])], None),
+    ([HIT_BOARD], None),         # placed, not fired
+])
+def test_a_fired_bullet_that_nothing_removes_after_a_miss_is_named(project, rows, said):
+    """Ask 06 of the 2026-10-09 batch: bullets destroyed only when they hit a block flew on forever after a
+    miss (manual: behavior-reference/destroy-outside.md)."""
+    shot_type(project)
+    out = findings(project, lambda s: s["events"].extend(rows))
+    assert_one_warning(out, STRAY, said)
+
+
+def test_a_bullet_that_hits_a_solid_or_has_destroy_outside_is_not_named(project):
+    """The official examples' bullets end on Solid walls and ground; and the behavior the finding writes,
+    added as it says, ends the finding without another one."""
+    shot_type(project)
+    out = findings(project, lambda s: s["events"].extend([FIRE, HIT_BOARD]))
+    said = next(w for w in warnings(out) if STRAY in w)
+    behavior = json.loads(re.search(r"Shot: (\{.*?\}) in its behaviorTypes", said)[1].replace("<new sid>", "9105"))
+    used = json.loads(re.search(r"and (\{.*?\}) in usedAddons", said)[1])
+    edit(project, "objectTypes/Shot.json", lambda t: t["behaviorTypes"].append(behavior))
+    edit(project, "layouts/Objects.json", lambda d: next(i for i in d["layers"][0]["instances"] if i["type"] == "Shot")
+         ["behaviors"].update(DestroyOutsideLayout={"properties": {"region": "layout"}}))
+    edit(project, "project.c3proj", lambda p: p["usedAddons"].append(used))
+    code, out = check(project)
+    assert code == 0 and not [w for w in warnings(out) if "Shot" in w], out
+
+    edit(project, "objectTypes/Shot.json", lambda t: t["behaviorTypes"].pop())
+    edit(project, "layouts/Objects.json", lambda d: next(i for i in d["layers"][0]["instances"] if i["type"] == "Shot")
+         ["behaviors"].pop("DestroyOutsideLayout"))
+    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "solid", "name": "Solid", "sid": 12}))
+    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"][0].setdefault("behaviors", {}).update(
+        Solid={"properties": {}}))
+    add_addon(project, "behavior", "solid", "Solid")
+    out = findings(project, lambda s: s["events"].append(HIT_BACKDROP))
+    assert_one_warning(out, STRAY, None)
+
+
 def platform_instances(project, *placed: tuple[str, dict]) -> None:
     """Coin and Backdrop get Platform. The Objects layout holds one instance per (type, Platform properties)
     instead of the Coin it had. The Game layout's Backdrop, the model for a Backdrop there, has Default

@@ -428,6 +428,16 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
             print(f"{target} is a {retired.get('originalId')} ({retired.get('name')}) object, a deprecated plugin: "
                   f"{c3.DEPRECATED}. The clone has no schema for it: nothing to look up")
             return 1
+        # Destroy outside, Wrap, Bound to layout, No save: a model told "third-party" leaves the behavior out.
+        for _, _, s in sources:
+            props = "; ".join(f"{k} ({' | '.join(spec['items'])})" if spec.get("items") else k
+                              for k, spec in (s.get("properties") or {}).items())
+            print(f"{s.get('name')} is a {s.get('type')} with no conditions, actions or expressions: it works by "
+                  f"itself once an object has it" + (f", set by its properties, {props}" if props else "") + ". "
+                  f"Add it to the object's behaviorTypes, {{\"behaviorId\": \"{s.get('id')}\", \"name\": "
+                  f"\"<behavior name on the object>\", \"sid\": <new sid>}}, and to usedAddons in project.c3proj"
+                  + (f". {s['description']}" if s.get("description") else ""))
+            return 0
         sys.exit(f"the clone has no schema for {target}, a third-party addon: nothing to look up")
     retired_lines = retired_note(p, sources, words)
     # By name first, so that a category which shares a word with a name does not

@@ -146,6 +146,20 @@ Traps of the running game are warnings:
   the two stand at different Z elevations. Over the 524 official examples it
   adds no finding: 10 of them test a dragged object against a target, and 7
   of those raise it at runtime;
+- an object type with the Bullet behavior that the events create, with
+  nothing to remove one that misses: no Destroy outside, Wrap, Bound to
+  layout, Fade or Tween behavior, no action that places it again, and every
+  Destroy of it under a collision or overlap with objects none of which is
+  a Solid or a Tilemap, an input or a plain pick. A missed shot flies on
+  outside the layout forever, and the instances pile up and slow the game
+  [manual: behavior-reference/destroy-outside.md]. The finding writes the
+  Destroy outside behavior for the object type, its layout instances and
+  `usedAddons`. A Destroy under another condition, such as *Is outside
+  layout*, a position or a timer, or after a *Wait*, passes, as does a
+  bullet that hits a Solid, the walls and ground the official examples'
+  bullets end on. Over the 524 official examples it names four objects, an
+  enemy plane, a projectile and two kinds of debris, that do fly on
+  forever;
 - text a Sprite Font cannot draw, in a layout instance's text or in a
   literal that *Set text*, *Append text* or *Typewriter text* joins at the
   top level of its expression: a character outside the Character set shows

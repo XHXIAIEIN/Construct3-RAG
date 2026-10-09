@@ -286,6 +286,7 @@ Sprite, read [pitfalls/creating-objects.md](pitfalls/creating-objects.md).
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
 - A created instance is found outside its own event only by UID, until the top-level event ends.
 - The instances of a new hierarchy run *On created* in no fixed order. Initialise the hierarchy in *On hierarchy ready* of its root, which fires once all of them have.
+- A fired bullet that misses flies on outside the layout forever, since its hit events destroy only the ones that hit. Give it the Destroy outside behavior.
 
 ### Restarting a layout
 

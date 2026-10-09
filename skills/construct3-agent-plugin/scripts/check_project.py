@@ -255,6 +255,16 @@ MOVES = {"set-x", "set-y", "set-position", "set-position-to-another-object", "mo
          "set-width", "set-height", "set-size"}
 MOVERS = {"tween", "bullet", "moveto", "sin", "pin", "physics", "eightdir", "car", "tilemovement", "orbit",
           "follow", "dragndrop", "custom", "turret", "rotate"}
+# A Bullet object the events fire that nothing removes once it misses flies on outside the layout forever, and
+# the instances pile up (manual: behavior-reference/destroy-outside.md). It is removed by one of these behaviors,
+# by a Destroy under a condition other than a hit, an input or a plain pick (a position, a timer, a Wait before
+# it), or by hitting a Solid or a Tilemap, which in the official examples are the walls and ground that stop it.
+HITS = {"on-collision-with-another-object", "is-overlapping-another-object", "is-overlapping-at-offset"}
+INPUTS = {"keyboard", "mouse", "touch", "gamepad"}
+PLAIN_PICKS = {"pick-nth-instance", "pick-random-instance", "pick-all", "for-each", "trigger-once", "every-tick"}
+REMOVERS = {"destroy", "wrap", "bound", "fade", "tween"}
+PLACINGS = {"set-x", "set-y", "set-position", "set-position-to-another-object"}
+USED_DESTROY = '{"type": "behavior", "id": "destroy", "name": "Destroy outside layout", "author": "Scirra", "bundled": false}'
 REGENERATE = {"regenerate-obstacle-map", "regenerate-region", "regenerate-region-around-object"}
 # A Drag & Drop object dropped on another, tested by overlap or collision or snapped onto it, is drawn under
 # it when the layout puts it lower in the Z order: on a lower layer, or listed before it on the same layer
@@ -616,6 +626,8 @@ class Checker:
         self.solid_overlaps: list[tuple[str, dict, str, str, set[int]]] = []  # (where, condition, Platform object, Solid, ids of its event's action lists)
         self.drops: list[tuple[str, dict, str, str]] = []  # (where, condition or action, Drag & Drop object, what it is dropped on)
         self.timer_starts: list[tuple[str, dict, tuple, bool | None]] = []    # (where, Start timer, line, paced)
+        self.hit_pairs: list[tuple] = []        # (object, the object it hits) of each collision or overlap test
+        self.destroys: list[tuple] = []         # (object, whether it can be a bullet that missed) of each Destroy
         self._summaries: dict[int, tuple | None] = {}
 
     def check(self) -> None:
@@ -2595,6 +2607,48 @@ class Checker:
                     f"on every input, {start}, which restarts it, and reset in On timer {shown}; no variable "
                     f"needs to count the time (Construct3-RAG/prompts/pitfalls/timer.md)")
 
+    def not_leaving(self, c: dict) -> bool:
+        """Whether a condition above a Destroy says nothing about an instance on its way out: a hit, an input or a
+        plain pick. An inverted hit, a position, a timer or anything else may be."""
+        if c.get("id") in HITS:
+            return not c.get("isInverted")
+        plugin = self.p.plugin_of.get(c.get("objectClass", ""), "")
+        return plugin.lower() in INPUTS or (c.get("objectClass") == "System" and c.get("id") in PLAIN_PICKS)
+
+    def is_wall(self, obj) -> bool:
+        """A Solid or a Tilemap, or a family of them: what the official examples' bullets end on."""
+        return isinstance(obj, str) and any(
+            "solid" in {v.lower() for v in self.p.behaviors_of(n).values()} or self.p.plugin_of.get(n, "").lower() == "tilemap"
+            for n in self.names_of(obj))
+
+    def check_stray_bullets(self) -> None:
+        p = self.p
+        actions = [a for acts, _ in self.action_lists for a in acts if isinstance(a, dict)]
+        for t in sorted(p.types):
+            if "bullet" not in {v.lower() for v in p.behaviors_of(t).values()} \
+                    or {v.lower() for v in p.behaviors_of(t).values()} & REMOVERS:
+                continue
+            names = self.names_of(t)
+            if not any(self.made_by(a) in names for a in actions) \
+                    or any(a.get("objectClass") in names and a.get("id") in PLACINGS for a in actions) \
+                    or any(o in names and leaving for o, leaving in self.destroys):
+                continue
+            hit = sorted({b if a in names else a for a, b in self.hit_pairs if a in names or b in names} - {None},
+                         key=str)
+            if any(self.is_wall(o) for o in hit):
+                continue
+            behavior = '{"behaviorId": "destroy", "name": "DestroyOutsideLayout", "sid": <new sid>}'
+            self.warn(f"{t} moves with the Bullet behavior and the events create it, but nothing removes one that misses: "
+                      + (f"every Destroy of {t} is under a hit on {', '.join(map(str, hit))}, none of them a Solid, "
+                         if any(o in names for o, _ in self.destroys) else "no event destroys it, ")
+                      + f"so a {t} that hits nothing flies on outside the layout forever, and the instances pile up "
+                        f"and slow the game. Add the Destroy outside behavior to {t}: {behavior} in its "
+                        f"behaviorTypes, and \"DestroyOutsideLayout\": {{\"properties\": {{\"region\": \"layout\"}}}} "
+                        f"in the behaviors of its layout instances, and {USED_DESTROY} in usedAddons of project.c3proj "
+                        f"unless it is there; region \"viewport\" removes it at the screen's "
+                        f"edge when the layout is larger. It has no conditions or actions "
+                        f"(manual: behavior-reference/destroy-outside.md)")
+
     def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False,
                     paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
         """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
@@ -2613,6 +2667,8 @@ class Checker:
                 self.check_none_left(c, f"{where} condition {i}", gone, earlier)
                 self.note_solid_overlap(c, f"{where} condition {i}", ev)
                 self.note_drop(c, f"{where} condition {i}")
+                if c.get("id") in HITS:
+                    self.hit_pairs.append((c.get("objectClass"), params_of(c).get("object")))
                 if not ev.get("isOrBlock"):
                     self.check_narrowed(c, f"{where} condition {i}", earlier)
                     earlier.append(c)
@@ -2631,6 +2687,10 @@ class Checker:
                 self.note_drop(a, w)
             if gone is not None and a.get("id") == "destroy" and a.get("objectClass") in self.p.plugin_of:
                 gone.setdefault(a["objectClass"], w)
+            if a.get("id") == "destroy":
+                waited = any(self.waits(b) for b in ev["actions"][:i - 1] if isinstance(b, dict))
+                self.destroys.append((a.get("objectClass"), waited or not held
+                                      or not all(self.not_leaving(c) for c in held)))
             if a.get("type") == "script":
                 self.check_script(a.get("script"), scope, w)
             if a.get("type") in ("comment", "script"):
@@ -3139,6 +3199,7 @@ class Checker:
         self.check_solid_overlaps()
         self.check_drops()
         self.check_dead_timers()
+        self.check_stray_bullets()
         self.check_pending_instances()
         for t in self.created:
             if t in p.types and t not in self.templates:
