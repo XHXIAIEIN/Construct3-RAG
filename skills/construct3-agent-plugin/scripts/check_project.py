@@ -246,6 +246,15 @@ SOLID_CHANGES = {"destroy", "set-x", "set-y", "set-position", "set-position-to-a
                  "set-tile-range", "set-tile-with-brush", "erase-tile-with-brush", "set-tile-with-brush-by-name",
                  "erase-tile-with-brush-by-name", "set-tile-with-patch-brush", "erase-tile-with-patch-brush",
                  "set-tile-with-patch-brush-by-name", "erase-tile-with-patch-brush-by-name"}
+# Is overlapping between a Platform object and a Solid (Construct3-RAG/prompts/pitfalls/picking.md): the
+# Platform behavior pushes its object out of every enabled Solid each tick, so the two touch and do not overlap.
+# On collision still fires, because the behavior registers the collision as it pushes out (exported c3runtime.js,
+# Platform: PushOutSolidAxis, then RegisterCollision). An object that something else moves, or a Solid switched
+# off by another event, can overlap, so neither is a finding.
+MOVES = {"set-x", "set-y", "set-position", "set-position-to-another-object", "move-forward", "move-at-angle",
+         "set-width", "set-height", "set-size"}
+MOVERS = {"tween", "bullet", "moveto", "sin", "pin", "physics", "eightdir", "car", "tilemovement", "orbit",
+          "follow", "dragndrop", "custom", "turret", "rotate"}
 REGENERATE = {"regenerate-obstacle-map", "regenerate-region", "regenerate-region-around-object"}
 # A found path is there only after On path found: Move along path, and the node expressions, in the same
 # actions as Find path read the previous path, unless Wait for previous actions to complete stands between.
@@ -595,6 +604,7 @@ class Checker:
         self.event_where: dict[int, str] = {}       # id(event) -> where it is, for a finding about another event
         self.answered: dict[int, dict] = {}         # id(event that starts with Else) -> the event before it
         self.action_lists: list[tuple[list, str]] = []     # (actions, where) of every block
+        self.solid_overlaps: list[tuple[str, dict, str, str, set[int]]] = []  # (where, condition, Platform object, Solid, ids of its event's action lists)
         self._summaries: dict[int, tuple | None] = {}
 
     def check(self) -> None:
@@ -2380,6 +2390,69 @@ class Checker:
                                 f"System: {obj}.PickedCount = 3, or keep the values in an Array and compare its cells")
                 return
 
+    def note_solid_overlap(self, c: dict, where: str, ev: dict) -> None:
+        """Is overlapping between an object with Platform and a Solid, kept for check_solid_overlaps once every
+        action of the project is known."""
+        if c.get("id") != "is-overlapping-another-object" or c.get("isInverted"):
+            return
+        a, b = c.get("objectClass"), params_of(c).get("object")
+        for mover, solid in ((a, b), (b, a)):
+            if (isinstance(mover, str) and isinstance(solid, str) and mover in self.p.plugin_of
+                    and "platform" in {v.lower() for v in self.p.behaviors_of(mover).values()} and self.is_solid(solid)):
+                lists = set()
+
+                def own(e: dict) -> None:
+                    if isinstance(e.get("actions"), list):
+                        lists.add(id(e["actions"]))
+                    for k in e.get("children") or []:
+                        if isinstance(k, dict):
+                            own(k)
+                own(ev)
+                self.solid_overlaps.append((where, c, mover, solid, lists))
+                return
+
+    def names_of(self, obj: str) -> set[str]:
+        """The object, the families it is in and, for a family, its members: the names an action on it is under."""
+        p = self.p
+        return {obj, *(p.families_of(obj) if obj in p.types else []),
+                *(p.families[obj].get("members", []) if obj in p.families else [])}
+
+    def moved_otherwise(self, obj: str) -> bool:
+        """Whether something besides its Platform moves the object: another movement behavior, an action, or its
+        Platform switched off."""
+        names = self.names_of(obj)
+        if any(b.lower() in MOVERS for n in names if n in self.p.plugin_of for b in self.p.behaviors_of(n).values()):
+            return True
+        return any(isinstance(a, dict) and a.get("objectClass") in names
+                   and (self.behavior_of(a) in MOVERS or (self.behavior_of(a) == "platform" and a.get("id") == "set-enabled")
+                        or (not self.behavior_of(a) and a.get("id") in MOVES))
+                   for actions, _ in self.action_lists for a in actions)
+
+    def check_solid_overlaps(self) -> None:
+        for where, c, mover, solid, lists in self.solid_overlaps:
+            names = self.names_of(solid)
+            off_elsewhere = any(isinstance(a, dict) and a.get("objectClass") in names and self.behavior_of(a) == "solid"
+                                and a.get("id") == "set-enabled" for actions, _ in self.action_lists
+                                if id(actions) not in lists for a in actions)
+            off_at_start = any(inst.get("type") in names and isinstance(block, dict)
+                               and (block.get("properties") or {}).get("enabled") is False
+                               for lay in self.layouts.values() if isinstance(lay, dict)
+                               for inst in layer_instances(lay.get("layers") or [])
+                               for b, block in (inst.get("behaviors") or {}).items()
+                               if self.p.behaviors_of(inst.get("type", "")).get(b, "").lower() == "solid")
+            if off_elsewhere or off_at_start or self.moved_otherwise(mover) or self.moved_otherwise(solid):
+                continue
+            offset = json.dumps({"id": "is-overlapping-at-offset", "objectClass": mover,
+                                 "parameters": {"object": solid, "offset-x": "1", "offset-y": "0"}})
+            self.p.findings.style_finding(
+                "solid-overlap",
+                f"{where}: {describe(c)} never holds while {solid}'s Solid is enabled: the Platform behavior pushes "
+                f"{mover} out of every Solid each tick, so the two touch and do not overlap, and the event "
+                f"never runs. Test touching with Is overlapping at offset, 1 pixel towards {solid}: {offset} for a "
+                f"{solid} on the right, \"offset-x\": \"-1\" on the left, \"offset-x\": \"0\", \"offset-y\": "
+                f"\"1\" below; two events, or an OR block, for both sides. {mover} On collision with {solid} also "
+                f"fires when they touch (Construct3-RAG/prompts/pitfalls/picking.md)")
+
     def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False,
                     paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
         """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
@@ -2396,6 +2469,7 @@ class Checker:
             self.note_signal(c, f"{where} condition {i}")
             if isinstance(c, dict):
                 self.check_none_left(c, f"{where} condition {i}", gone, earlier)
+                self.note_solid_overlap(c, f"{where} condition {i}", ev)
                 if not ev.get("isOrBlock"):
                     self.check_narrowed(c, f"{where} condition {i}", earlier)
                     earlier.append(c)
@@ -2915,6 +2989,7 @@ class Checker:
                         "Regenerate region around object on the Solid, or for many changes Regenerate obstacle map; "
                         "it takes effect the next tick, so a Find path right after it waits first "
                         "(manual: behavior-reference/pathfinding.md)")
+        self.check_solid_overlaps()
         self.check_pending_instances()
         for t in self.created:
             if t in p.types and t not in self.templates:

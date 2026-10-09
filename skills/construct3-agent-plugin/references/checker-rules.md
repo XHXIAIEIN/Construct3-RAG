@@ -115,6 +115,16 @@ Traps of the running game are warnings:
   that picks no X stops its event, and *Pick all* is false when no X
   exists, so the test never holds [manual:
   project-primitives/events/how-events-work.md];
+- *Is overlapping* between an object with Platform and a Solid: the
+  behavior pushes its object out of every enabled Solid each tick, so the
+  two touch and the test never holds
+  [`Construct3-RAG/prompts/pitfalls/picking.md`]. The finding writes *Is
+  overlapping at offset*, 1 pixel towards the Solid. It passes when
+  something else moves either object (another movement behavior, a
+  position, size or tween action, the Platform switched off), when an
+  event other than the test's own, or a layout instance, switches the
+  Solid off, and for *On collision*, which the behavior fires as it pushes
+  out. Over the 524 official examples it adds no finding;
 - text a Sprite Font cannot draw, in a layout instance's text or in a
   literal that *Set text*, *Append text* or *Typewriter text* joins at the
   top level of its expression: a character outside the Character set shows
@@ -153,8 +163,9 @@ every tick. For them, a condition of an addon without a schema counts as a
 trigger when its id starts with `on-`.
 
 `edit_sheet.py` refuses the findings on *Find path*, *Start timer*,
-*Simulate control*, `Count`, `PickedCount` and a variable flipped every
-tick in an event a plan creates, as it refuses the style findings below; in
+*Simulate control*, `Count`, `PickedCount`, a variable flipped every tick
+and *Is overlapping* a Solid from a Platform object in an event a plan
+creates, as it refuses the style findings below; in
 the user's own events they stay warnings. A gesture action, a *Find path*,
 a *Start timer*, a *Simulate control* or a flip in a function passes, since
 a trigger or an event that runs every tick may call it.

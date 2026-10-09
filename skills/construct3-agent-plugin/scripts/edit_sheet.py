@@ -762,7 +762,7 @@ class Plan:
 # Start timer that runs every tick, Simulate control under a trigger, X.Count = 0 after X's Destroy,
 # X.PickedCount = 0 after a pick of X, a variable flipped every tick, and X: v = 1 below X: v = 0.
 REFUSED_STYLE = ("comment", "run", "cases", "tick", "pathfinding", "timer", "control", "count", "picked", "flip", "narrowed",
-                 "undone")
+                 "undone", "solid-overlap")
 
 
 def findings_of(project: c3.Project, locale: str, sheets: dict) -> tuple[check_project.Checker, c3.Findings]:

@@ -435,3 +435,61 @@ def test_style_names_sibling_events_dispatching_on_find(project):
     assert '"b" also matches "bu"' in found[0] and "compared with =" in found[0], found
     edit(project, SHEET, lambda s: events(s)["input"].update(children=finds("B")))
     assert "picks a branch by testing" not in check(project, "--style")[1]
+
+
+def platform_hero_and_solid_backdrop(project: Path) -> None:
+    """Hero, a copy of Coin without its behaviors, walks with Platform, and nothing else moves it; Backdrop is
+    Solid, and no event switches it off."""
+    hero = json.loads((project / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
+    ids = iter(range(9000, 9100))
+    hero.update(name="Hero", sid=9100, behaviorTypes=[{"behaviorId": "Platform", "name": "Platform", "sid": 9101}],
+                instanceVariables=[])
+    for anim in hero["animations"]["items"]:
+        anim["sid"] = next(ids)
+        for frame in anim["frames"]:
+            frame["imageSpriteId"] = next(ids)
+    (project / "objectTypes" / "Hero.json").write_text(json.dumps(hero), encoding="utf-8")
+    for image in (project / "images").glob("coin-*.png"):
+        (project / "images" / image.name.replace("coin-", "hero-")).write_bytes(image.read_bytes())
+    edit(project, "project.c3proj", lambda d: d["objectTypes"]["items"].append("Hero"))
+    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "solid", "name": "Solid", "sid": 9102}))
+
+    def blocks(d):
+        layer = d["layers"][0]
+        board = next(i for i in layer["instances"] if i["type"] == "Board")
+        layer["instances"].append({**json.loads(json.dumps(board)), "type": "Hero", "uid": 9103,
+                                   "properties": {"initially-visible": True, "initial-animation": hero["animations"]["items"][0]["name"],
+                                                  "initial-frame": 0, "enable-collisions": True, "live-preview": False},
+                                   "behaviors": {"Platform": {"properties": {}}}, "instanceVariables": {}})
+        for i in layer["instances"]:
+            if i["type"] == "Backdrop":
+                i.setdefault("behaviors", {})["Solid"] = {"properties": {}}
+    edit(project, "layouts/Game.json", blocks)
+    add_addon(project, "behavior", "Platform", "Platform")
+    add_addon(project, "behavior", "solid", "Solid")
+
+
+def test_platform_overlapping_a_solid_is_refused(project):
+    """Key-and-door tasks: Player Is overlapping Door, the Door Solid, never holds, since Platform pushes the
+    player out of every Solid. Refused, naming Is overlapping at offset; that test goes through, and so does
+    the overlap when another event switches the Solid off."""
+    platform_hero_and_solid_backdrop(project)
+    before = (project / SHEET).read_bytes()
+    overlap = {"id": "is-overlapping-another-object", "objectClass": "Hero", "parameters": {"object": "Backdrop"}}
+    off = {"id": "set-enabled", "objectClass": "Backdrop", "behaviorType": "Solid", "parameters": {"state": "disabled"}}
+    ev = {"eventType": "block", "conditions": [overlap], "actions": [SAY_DONE, off]}
+    code, out = plan(project, {"into": 0, "events": [comment("Open the backdrop."), ev]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) condition 1: Hero:is-overlapping-another-object "
+                    r"never holds while Backdrop's Solid is enabled", out), out
+    at_offset = {"id": "is-overlapping-at-offset", "objectClass": "Hero",
+                 "parameters": {"object": "Backdrop", "offset-x": "1", "offset-y": "0"}}
+    assert json.dumps(at_offset) in out.splitlines()[0], out
+    ev = {**ev, "conditions": [at_offset]}
+    code, out = plan(project, {"into": 0, "events": [comment("Open the backdrop."), ev]}, flags=("--dry-run",))
+    assert code == 0 and warnings(out) == [], out
+    elsewhere = [comment("Open the backdrop."), {"eventType": "block", "conditions": [ONCE], "actions": [off]},
+                 comment("Say it."), {"eventType": "block", "conditions": [overlap], "actions": [SAY_DONE]}]
+    code, out = plan(project, {"into": 0, "events": elsewhere}, flags=("--dry-run",))
+    assert code == 0 and warnings(out) == [], out
