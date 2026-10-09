@@ -352,9 +352,12 @@ def test_ace_lookup_prints_the_commands_that_read_the_examples_using_it(tmp_path
     rag, projects = usage_rag(tmp_path)
     lines = lookup_wait(rag, tmp_path).splitlines()
     at = lines.index("  used in 2 official examples; read 2 of them, smallest sheet first:")
+    # the command as it runs from the current directory, which is in no project: the script by its absolute path,
+    # the example folder after --project, the sheet quoted when its name holds a space
+    print_sheet = (SKILL / "scripts" / "print_sheet.py").as_posix()
     assert lines[at - 1].lstrip().startswith("(JSON true or false") and lines[at + 1:at + 3] == [
-        f'    python scripts/print_sheet.py "Main" --events 3-4 --project "{projects / "kiwi"}"',
-        f'    python scripts/print_sheet.py "Event sheet 1" --events 1 --project "{projects / "poplab"}"']
+        f'    python {print_sheet} --project {(projects / "kiwi").as_posix()} Main --events 3-4',
+        f'    python {print_sheet} --project {(projects / "poplab").as_posix()} "Event sheet 1" --events 1']
     # Wait for signal, used in no example, prints no count
     assert sum("used in" in line for line in lines) == 1
 

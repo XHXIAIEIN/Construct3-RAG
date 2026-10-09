@@ -572,9 +572,9 @@ def main() -> int:
     except (OSError, ValueError) as e:
         print(f"{args.design}: {e}. Write the design as JSON, as references/designing-a-game.md shows.", file=sys.stderr)
         return 2
-    rag = None
+    root, rag = c3.find_project(args.project), None
     try:
-        rag = c3.find_rag(c3.find_project(args.project), args.rag)
+        rag = c3.find_rag(root, args.rag)
     except SystemExit:
         pass        # without the clone the example's id is not checked
     design = gm.Design(data)
@@ -608,7 +608,8 @@ def main() -> int:
                    f"\"{brief(design.request)}\"; {later}."
                    + ("" if whole else " When you report, name what is left for later.")
                    + " Next, build the game, one event per rule with the rule's id in the comment above it, then play "
-                   f"the same tests in the editor: python scripts/play_design.py {args.design}")
+                   f"the same tests in the editor: "
+                   f"{c3.script_command(root, 'play_design.py', ' ' + c3.shown_path(args.design))}")
     shown = c3.fitting(out, args.limit)
     print("\n".join(out[:shown]))
     if shown < len(out):

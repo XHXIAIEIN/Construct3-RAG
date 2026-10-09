@@ -262,8 +262,8 @@ class Usage:
         lines = [count + ("; read it:" if n == 1 else f"; read {len(read)} of them, smallest sheet first:")]
         for folder, sheet, first, last in read:
             events = f"{first}-{last}" if last > first else f"{first}"
-            lines.append(f'    python scripts/print_sheet.py "{sheet}" --events {events} '
-                         f'--project "{self.examples / folder}"')
+            lines.append("    " + c3.script_command(self.examples / folder, "print_sheet.py",
+                                                   f" {c3.quoted(sheet)} --events {events}"))
         return lines
 
     def note(self) -> str | None:

@@ -34,8 +34,9 @@ RAG_KEY = re.compile(r"^[ \t>*-]*Construct3-RAG\s*[:=]", re.M)
 
 def new_project(folder: str) -> str:
     """install.py fills a project; new_project.py of this skill creates one first."""
-    folder = f'"{folder}"' if " " in folder else folder
-    return f". To start a new project, run python {(SKILL_DIR / 'scripts' / 'new_project.py').as_posix()} {folder}"
+    folder = f'"{folder}"' if " " in folder else folder      # or the placeholder <folder>, which stays bare
+    return (f". To start a new project, run python {c3.quoted((SKILL_DIR / 'scripts' / 'new_project.py').as_posix())} "
+            f"{folder}")
 
 
 def targets(project: Path | None, into: str | None) -> list[Path]:

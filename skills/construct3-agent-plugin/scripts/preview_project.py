@@ -1325,10 +1325,11 @@ def main() -> int:
     passed = result["status"] == "opened" and ran.get("started") and not failed and not errors
     others = [p for p in kept_plans(project) if args.keep is None or p.stem != args.keep]
     if passed and args.keep:
+        all_kept = c3.script_command(project, "preview_project.py", " --all")
         print(f"kept: {keep(args.plan, project, args.keep)}; commit it with the change it checks"
               + (f", and replay it with the {len(others)} other kept plan{'s' if len(others) != 1 else ''} after "
-                 f"every change: python scripts/preview_project.py --all" if others else
-                 "; after every change, replay the kept plans: python scripts/preview_project.py --all"))
+                 f"every change: {all_kept}" if others else
+                 f"; after every change, replay the kept plans: {all_kept}"))
     elif args.keep:
         print(f"not kept: only a plan that passes is kept. A plan that checks a bug fails until the fix works: fix "
               f"the events until it passes, then run it again with --keep {args.keep}")

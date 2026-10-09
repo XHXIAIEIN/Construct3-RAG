@@ -282,15 +282,13 @@ def show(sheet: dict, name: str, n: int, limit: int) -> int:
 
 def again(args, sheets: list[str], events: str | None) -> str:
     """The command that prints sheets, or a range of one, with the options of this run."""
-    def quoted(value) -> str:
-        return str(value) if re.fullmatch(r"[\w./\\:-]+", str(value)) else f'"{value}"'
-    words = ["python", quoted(sys.argv[0]), *map(quoted, sheets)]
-    words += ["--since", quoted(args.since)] if args.since else []
+    words = ["python", c3.quoted(sys.argv[0]), *map(c3.quoted, sheets)]
+    words += ["--since", c3.quoted(args.since)] if args.since else []
     words += ["--events", events] if events else []
     words += ["--outline"] if args.outline else []
     for flag, default in (("project", None), ("rag", None), ("locale", "en-US"), ("limit", c3.LIMIT)):
         if getattr(args, flag) != default:
-            words += [f"--{flag}", quoted(getattr(args, flag))]
+            words += [f"--{flag}", c3.quoted(getattr(args, flag))]
     return " ".join(words)
 
 
