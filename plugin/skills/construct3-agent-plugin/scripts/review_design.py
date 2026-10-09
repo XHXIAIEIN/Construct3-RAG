@@ -935,8 +935,8 @@ def main() -> int:
     d = Design.of(project)
     for name in args.sheets or []:
         if name not in d.sheets:
-            print(f"no event sheet named {name!r}{c3.closest(name, d.sheets)}; sheets: {', '.join(d.sheets)}",
-                  file=sys.stderr)
+            # An answer, not a failure to run: on stdout, with the exit code it had on stderr.
+            print(f"no event sheet named {name!r}{c3.closest(name, d.sheets)}; sheets: {', '.join(d.sheets)}")
             return 2
     sheets = args.sheets or list(d.sheets)
     found = review(d)

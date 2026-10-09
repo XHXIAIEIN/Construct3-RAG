@@ -8,7 +8,17 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, INSTALLED, SHEET, tool, check, edit, block, events
+from tests.skill_helpers import REPO, INSTALLED, SHEET, tool, streams, check, edit, block, events
+
+
+def test_a_miss_of_print_sheet_prints_on_stdout(built):
+    """An unknown sheet, a --show past the end and an event too long to show are answers: on stdout, with
+    the exit code 1 they had on stderr, where a harness that shows stdout alone showed nothing."""
+    for args, said in ((("Gmae",), "no event sheet named 'Gmae'; sheets: Game"),
+                       (("Game", "--show", "40"), "sheet Game has 9 events; --show 40 is not one of them"),
+                       (("Game", "--show", "1", "--limit", "20"), "characters of JSON, over the limit of 20 (--limit)")):
+        p = streams(built, f"{INSTALLED}/scripts/print_sheet.py", "--rag", str(REPO), *args)
+        assert p.returncode == 1 and p.stderr == "" and said in p.stdout, (args, p.stdout, p.stderr)
 
 
 def test_outline_numbers_events_as_the_editor_does(built):

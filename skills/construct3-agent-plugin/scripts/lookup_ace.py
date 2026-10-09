@@ -152,9 +152,10 @@ def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]
             sys.exit(1)
         names = [v.get("name", k) for kind in ("plugins", "behaviors", "effects")
                  for k, v in c3.load(p.schemas / "_index.json").get(kind, {}).items()]
-        sys.exit(f"{target!r} is not an object of this project, System, or the id or display name of a plugin, "
-                 f"behavior or effect" + closest(target, [*p.plugin_of, *names, *p.index["plugins"],
-                                                           *p.index["behaviors"], *p.index["effects"]]))
+        print(f"{target!r} is not an object of this project, System, or the id or display name of a plugin, "
+              f"behavior or effect" + closest(target, [*p.plugin_of, *names, *p.index["plugins"],
+                                                        *p.index["behaviors"], *p.index["effects"]]))
+        sys.exit(1)
     return sources
 
 

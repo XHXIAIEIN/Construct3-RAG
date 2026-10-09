@@ -243,7 +243,7 @@ def test_ace_lookup_prints_a_miss_on_stdout(built):
     assert p.stdout.startswith("nothing under Sprite has every word of 'aniamtion'\n") and "set-animation" in p.stdout
     assert p.stderr == ""
     p = lookup("Sprte")
-    assert p.returncode == 1 and p.stdout == "" and "is not an object of this project" in p.stderr
+    assert p.returncode == 1 and p.stderr == "" and "is not an object of this project" in p.stdout
 
 
 def test_a_chinese_miss_asks_for_the_english_term(built):

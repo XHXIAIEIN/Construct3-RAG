@@ -270,12 +270,15 @@ def events_range(spec: str | None) -> tuple[int, int | None]:
 def show(sheet: dict, name: str, n: int, limit: int) -> int:
     """Event n as JSON, two spaces deep: what edit_sheet.py takes back under "replace"."""
     events = list(c3.numbered_events(sheet["events"]))
+    # A miss answers the model: on stdout, with the exit code it had on stderr.
     if not 1 <= n <= len(events):
-        sys.exit(f"sheet {name} has {len(events)} events; --show {n} is not one of them")
+        print(f"sheet {name} has {len(events)} events; --show {n} is not one of them")
+        return 1
     text = json.dumps(events[n - 1], indent=2, ensure_ascii=False)
     if limit and len(text) > limit:
-        sys.exit(f"event {n} is {len(text)} characters of JSON, over the limit of {limit} (--limit): show one of its "
-                 f"sub-events, or pass --limit 0 and send it to a file")
+        print(f"event {n} is {len(text)} characters of JSON, over the limit of {limit} (--limit): show one of its "
+              f"sub-events, or pass --limit 0 and send it to a file")
+        return 1
     print(text)
     return 0
 
@@ -659,7 +662,8 @@ def main() -> int:
         return 0
     for name in args.sheets:
         if name not in sheets:
-            sys.exit(f"no event sheet named {name!r}; sheets: {', '.join(sheets)}")
+            print(f"no event sheet named {name!r}; sheets: {', '.join(sheets)}")      # an answer: on stdout
+            return 1
     names = args.sheets or list(sheets)
     if (args.events or args.show is not None) and len(names) != 1:
         sys.exit(f"--events and --show read one sheet; name it: {', '.join(sheets)}")
