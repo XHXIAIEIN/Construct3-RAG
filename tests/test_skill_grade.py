@@ -378,8 +378,8 @@ def test_trace_counts_the_route_of_a_run(tmp_path: Path) -> None:
     trace = json.loads((run_dir / "trace.json").read_text(encoding="utf-8"))
     assert {k: trace[k] for k in grader.TRACE_COLUMNS} == {
         "tool_calls": 14, "lost_calls": 4, "turns": 0, "output_tokens": 0, "read_skill_md": True,
-        "first_script": "check_project", "chain_depth": 4, "chain_end": "preview_project", "chain_attempts": 6,
-        "preview_failed": 1, "help_reads": 2, "repeat_help": 1, "plan_refusals": 1, "hand_edits": 1,
+        "first_script": "check_project", "chain_depth": 4, "chain_end": "preview_project", "chain_reached": "preview_project",
+        "chain_attempts": 6, "preview_failed": 1, "help_reads": 2, "repeat_help": 1, "plan_refusals": 1, "hand_edits": 1,
         "lookups_before_first_edit": 7, "data_reads": 1, "other_clone_reads": 1, "entry_chars": 6018,
         "printed_command_failures": 1}
     assert trace["chain"] == {"check_project": {"calls": 3, "passed": True}, "review_design": {"calls": 1, "passed": False},
@@ -438,7 +438,8 @@ def restart_runs(tmp_path: Path, depths: dict[str, list[int]]) -> Path:
                                                         encoding="utf-8")
             (case / "trace.json").write_text(json.dumps({
                 "tool_calls": 20 + depth, "lost_calls": 1, "turns": 15, "output_tokens": 3000, "read_skill_md": True,
-                "first_script": "check_project", "chain_depth": depth, "chain_end": ends[depth], "chain_attempts": depth + 1,
+                "first_script": "check_project", "chain_depth": depth, "chain_end": ends[depth],
+                "chain_reached": "review_look", "chain_attempts": depth + 1,
                 "preview_failed": 0, "help_reads": 1, "repeat_help": 0, "plan_refusals": 0, "hand_edits": 0,
                 "lookups_before_first_edit": 8, "data_reads": 1, "other_clone_reads": 0, "entry_chars": 30000,
                 "printed_command_failures": 0, "outside": [], "outside_reads": []}), encoding="utf-8")
@@ -460,6 +461,7 @@ def test_grade_carries_the_route_columns_and_decides_on_one(tmp_path: Path) -> N
     with_skill = benchmark["by_case"]["name-the-restart-event"]["with_skill"]
     assert with_skill["chain_depth"] == {"mean": 4.667, "runs": 3, "stddev": 0.577}
     assert with_skill["chain_end"] == {"preview_project": 1, "review_look": 2} and with_skill["first_script"] == {"check_project": 3}
+    assert with_skill["chain_reached"] == {"review_look": 3}
     assert set(grader.TRACE_COLUMNS) <= set(with_skill["runs"][0])
     assert with_skill["runs"][0]["tool_calls"] == 25 and with_skill["lost_calls"]["mean"] == 1
     assert benchmark["run_summary"]["delta"]["with_skill - old_skill"]["chain_depth"] == pytest.approx(10 / 3, abs=0.01)

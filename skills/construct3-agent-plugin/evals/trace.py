@@ -42,8 +42,9 @@ calls and their results:
   run ends on: "ok:", "design: 0 findings", "N of N opened and ran without
   errors", "keep:" or "kept:", "look: 0 findings ... 0 runtime errors".
   chain_depth is the position of the deepest step that passed (0 to 5),
-  chain_end its name, chain_attempts the calls of chain scripts, and chain
-  the calls and the outcome of each step.
+  chain_end its name, chain_reached the deepest step called whether it
+  passed or not, chain_attempts the calls of chain scripts, and chain the
+  calls and the outcome of each step.
 - preview_failed: script calls whose result says that no preview window
   opened or that the editor did not load.
 - help_reads, repeat_help, help_reads_by_script: --help reads, the reads
@@ -409,8 +410,10 @@ def chain_of(calls: list[dict]) -> dict:
         for name in work_scripts(c) & set(CHAIN):
             steps[name]["calls"] += 1
             steps[name]["passed"] |= step_passed(name, c["result"])
-    passed = [n for n, name in enumerate(CHAIN, 1) if steps[name]["passed"]]
-    return {"chain_depth": passed[-1] if passed else 0, "chain_end": CHAIN[passed[-1] - 1] if passed else None,
+    passed = [name for name in CHAIN if steps[name]["passed"]]
+    reached = [name for name in CHAIN if steps[name]["calls"]]
+    return {"chain_depth": CHAIN.index(passed[-1]) + 1 if passed else 0, "chain_end": passed[-1] if passed else None,
+            "chain_reached": reached[-1] if reached else None,
             "chain_attempts": sum(s["calls"] for s in steps.values()), "chain": steps}
 
 
