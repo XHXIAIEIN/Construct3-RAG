@@ -17,6 +17,7 @@ skill scripts and with the working tree's:
   edit_sheet_line, edit_sheet_key   edit_sheet.py --dry-run of a plan it refuses, on the same sheet: a
                  "line" no event prints, and an operation with a key no operation takes
   lookup_ace, lookup_script_api, search_guides   a fixed list of lookups
+  help           every script's --help
   new_project    new_project.py into an empty folder: what it prints and every file it writes
   build_project  assets/build_project.py in a stand-in game, as the tests generate it:
                  what install.py and the generator print, and every file the generator writes
@@ -27,7 +28,7 @@ or masked: the hash seed and the random module are seeded, the clone is not
 fetched, HOME is an empty folder, and each side's clone and temporary folders are
 replaced by <rag>, <game> and <tmp> before the comparison. The two clones' paths
 differ in length, which moves the point where a script's --limit cuts a line
-that holds one, so every case passes --limit 0. A refactor shows no difference;
+that holds one, so every case but help passes --limit 0. A refactor shows no difference;
 a change of output shows exactly the cases it was meant for, and the pull
 request names them.
 
@@ -64,7 +65,7 @@ EXAMPLE_KINDS = ("print_sheet", "print_layout", "check_project", "check_style", 
                  "edit_sheet_line", "edit_sheet_key")
 LOOKUP_KINDS = ("lookup_ace", "lookup_script_api", "search_guides")
 GENERATOR_KINDS = ("new_project", "build_project")
-KINDS = EXAMPLE_KINDS + LOOKUP_KINDS + GENERATOR_KINDS
+KINDS = EXAMPLE_KINDS + LOOKUP_KINDS + ("help",) + GENERATOR_KINDS
 LOOKUPS = {
     "lookup_ace": [["System"], ["System", "wait"], ["System", "every"], ["System", "for", "each"],
                    ["Sprite", "animation"], ["Sprite", "aniamtion"], ["Text", "set"], ["8 Direction", "speed"],
@@ -163,8 +164,8 @@ def run(side: Side, script: Path, args: list[str], cwd: Path) -> str:
 
 
 def tool_output(side: Side, case: Case) -> str:
-    return run(side, side.rag / SKILL / "scripts" / case.args[0],
-               [*case.args[1:], "--rag", str(side.rag), "--limit", "0"], side.tmp / "cwd")
+    extra = [] if case.kind == "help" else ["--rag", str(side.rag), "--limit", "0"]
+    return run(side, side.rag / SKILL / "scripts" / case.args[0], [*case.args[1:], *extra], side.tmp / "cwd")
 
 
 def files(folder: Path, side: Side, skip: tuple[str, ...]) -> dict[str, str]:
@@ -243,6 +244,9 @@ def cases(kinds: list[str], projects: list[Path], plans: dict[str, Path]) -> lis
     for kind in LOOKUP_KINDS:
         if kind in kinds:
             out += [Case(kind, " ".join(words), [f"{kind}.py", *words]) for words in LOOKUPS[kind]]
+    if "help" in kinds:     # the working tree's scripts; one REF lacks fails on its side, as a difference
+        out += [Case("help", p.name, [p.name, "--help"])
+                for p in sorted((ROOT / SKILL / "scripts").glob("*.py")) if p.stem != "c3project"]
     return out
 
 

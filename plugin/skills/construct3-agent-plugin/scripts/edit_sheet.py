@@ -885,7 +885,7 @@ def main() -> int:
         "that adds a problem changes nothing.",
         "a plan:\n"
         '  [{"before": 1, "events": [{"eventType": "variable", "name": "best", "initialValue": "0"}]},\n'
-        '   {"event": 9, "add-actions": [{"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "best", "value": "max(best, score)"}}]},\n'
+        '   {"event": 9, "line": "Player: On collision with Coin", "add-actions": [{"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "best", "value": "max(best, score)"}}]},\n'
         '   {"event": 7, "action": 2, "set": {"parameters": {"text": "\\"Score: \\" & score"}}},\n'
         '   {"event": 5, "condition": 1, "set": {"isInverted": null}}, {"event": 6, "action": 3, "remove": true},\n'
         '   {"into": 3, "events": [{"eventType": "block", "conditions": [...], "actions": [...]}]},\n'
@@ -894,9 +894,10 @@ def main() -> int:
         '   {"variable": "SPEED", "set": {"initialValue": "0.5"}}, {"variable": "n", "in": 4, "remove": true},\n'
         '   {"comment": "Start the next round", "set": {"text": "Start the next round after a second"}}]\n'
         "Every number is one of the sheet as print_sheet.py prints it now, and as a finding of check_project.py\n"
-        "names it: event 5 condition 1. \"into\": 0 is the end of the sheet. A variable or comment has no number:\n"
-        "a plan names a variable by its name and a comment by words of its text, and \"in\": N by the event that\n"
-        "holds it when more than one matches.\n\n"
+        "names it: event 5 condition 1. \"line\" is the line print_sheet.py prints for that event, or a part of it;\n"
+        "a number from an older print is then refused. \"into\": 0 is the end of the sheet. A variable or comment\n"
+        "has no number: a plan names a variable by its name and a comment by words of its text, and \"in\": N by\n"
+        "the event that holds it when more than one matches.\n\n"
         "examples:\n"
         "  python scripts/edit_sheet.py Game plan.json\n"
         "  python scripts/edit_sheet.py Game plan.json --dry-run   check the plan and show the result, write nothing\n"

@@ -25,50 +25,32 @@ plan is JSON, the steps run in order, and a step that fails stops the run:
      {"state": ["Piece", "BattleSlot"]},
      {"shot": "after-merge"}]}
 
-viewport  CSS pixels of the preview window, [width, height]; a phone's, 430 x 932,
-          for a game designed for one (default: the window the editor opens)
-touch     taps, holds and drags as touches instead of the mouse (default: false)
-keep_saves  start from what earlier runs saved, Local Storage and IndexedDB, instead of
-          from a first launch (default: false); the browser profile keeps them
-pixel_ratio  device pixels per CSS pixel: the game draws, and screenshots and recordings
-          come out, at that scale, 2 or 3 for a phone (default: 1)
+viewport     CSS pixels of the preview window, [width, height]; a phone's is 430 x 932 (default: the editor's)
+touch        taps, holds and drags as touches instead of the mouse (default: false)
+keep_saves   start from what earlier runs saved in Local Storage and IndexedDB (default: false)
+pixel_ratio  device pixels per CSS pixel, 2 or 3 for a phone; screenshots come out at that scale (default: 1)
 
 Steps, each an object with one of these keys, and "note" for a label:
   tap TARGET                    press and release
   hold TARGET, seconds          press, wait, release (default 0.5 s)
   drag TARGET, to TARGET, seconds, through, rest
-                                press, move in steps, release (default 0.4 s). through is a list
-                                of TARGETs the pointer passes on the way, the time shared by
-                                distance; every target is aimed before the press, so "to" can be
-                                where the drag started. rest is the seconds the pointer stays
-                                still on "to" before the release (default 0.05). For a flick,
-                                give 0: the release follows the last move, since Touch reads a
-                                speed of 0 from a pointer that has been still about 50 ms
+                                press, move in steps, release (default 0.4 s); through is a list of
+                                TARGETs passed on the way, and rest the seconds the pointer stays still
+                                on "to" before the release (default 0.05; 0 for a flick)
   key NAME or [NAME, ...], seconds
-                                press a key: ArrowLeft, Space, Enter, Escape, KeyA or a, Digit1 or 1,
-                                ShiftLeft or ShiftRight (default 0.1 s). A list of names holds them
-                                together, pressed in order and released in reverse:
-                                ["ShiftLeft", "ArrowRight"]
+                                press a key for the time (default 0.1 s): ArrowLeft, Space, Enter, Escape,
+                                KeyA or a, Digit1 or 1, ShiftLeft; a list holds the keys together
   wait SECONDS                  let the game run
   until EXPRESSION, timeout     wait until the JavaScript expression is true (default 10 s)
   js CODE                       run JavaScript against the runtime and print what it returns
   state [TYPE ...]              the globals, every type's count, the named types' instances with
                                 their inspector values, named in --locale
-  shot NAME                     a screenshot, NN-NAME.png in --shots; named as not drawn yet when
-                                99.9% or more of it is one colour, black or clear
-  record NAME, watch            record the window from here to the next record step or the end
-                                of the plan, as NN-NAME.mp4 with ffmpeg, NN-NAME.gif with Pillow,
-                                and always the frames, NN-NAME/0001.jpg ...; false stops it.
-                                watch is {"label": EXPRESSION, ...}, read at every frame. The
-                                recording leaves NN-NAME-sheet.png, up to 12 of its frames in one
-                                image, each numbered with its time: the ends, the steps' starts
-                                and ends, the largest change and where the picture moves most,
-                                for the agent to judge the motion from (unnumbered with ffmpeg
-                                and no Pillow); NN-NAME.html to review it: the frames, the steps
-                                that ran and the watched values, frame by frame, and a part
-                                selected there copied as a task for an agent; and
-                                NN-NAME/timeline.json with the same. index.html in --shots
-                                lists every recording there
+  shot NAME                     a screenshot, NN-NAME.png in --shots; named as not drawn yet when it
+                                is one colour
+  record NAME, watch            record from here to the next record step or the end: NN-NAME.mp4 with
+                                ffmpeg or .gif with Pillow, the frames, a contact sheet of up to 12
+                                numbered frames to judge the motion from, and NN-NAME.html to review
+                                it; watch is {"label": EXPRESSION, ...}, read at every frame; false stops
 
 TARGET is where to press, the middle of an instance's bounding box:
   "Button"                      the first instance of an object type, as the project spells it
@@ -81,32 +63,22 @@ CODE and EXPRESSION see `runtime`, the scripting API (IRuntime), `vars`, an obje
 kept from step to step, and `wait(seconds)`. A single expression is returned as it
 is; longer code says `return`. A list of strings is joined into lines.
 
-The game starts on the layout the editor opens on, as with F5. A game that
-reloads its page, with Browser Reload, starts again in the new page, and the plan
-goes on there: the step's line says that the page reloaded. A step the reload
-broke off runs again, except a js step whose code had started, which fails.
+The game starts on the layout the editor opens on, as with F5. A game that reloads
+its page goes on in the new page: the step the reload broke off runs again, except
+a js step whose code had started, which fails.
 
-The browser runs headless and silent; --headed shows it. A step that fails
-leaves a screenshot, NN-failed.png. Screenshots and recordings go to --shots, by default
-.tmp/preview/ in the project, and the whole result, every value and state, to
---out, by default .tmp/preview-project.json; .tmp/ is ignored by Git. The last
-line names both: read a cut-off result there instead of playing the plan again.
+The browser runs headless and silent; --headed shows it. A step that fails leaves
+NN-failed.png. Screenshots and recordings go to --shots, by default .tmp/preview/ in
+the project, and the whole result to --out, by default .tmp/preview-project.json; the
+last line names both, so read a cut-off result there instead of playing the plan again.
 
-A plan that passes is kept with --keep NAME as tools/plans/NAME.json in the
-project, committed with the change it checks; the editor ignores the folder.
---all replays every kept plan in one editor session, each from a first launch,
-and names each one that fails, because a later change broke what it checks. Its result goes to .tmp/preview-plans.json and its screenshots
-to .tmp/preview-plans/NAME/.
+A plan that passes is kept with --keep NAME as tools/plans/NAME.json in the project,
+committed with the change it checks. --all replays every kept plan from a first
+launch and names each one that fails; its result goes to .tmp/preview-plans.json.
 
-The result holds what the editor did, as open_in_editor.py writes it, and the
-run under "preview"; the steps are in preview.steps, one object per step that ran:
-  {"project", "status": "opened", "title", "editor", "warnings", ...,
-   "preview": {"started": true, "layout" at the end, "runtime", "viewport",
-     "pixel_ratio", "touch", "seconds", "planned" steps, "errors" before the first step,
-     "recorded",
-     "steps": [{"step": 1, "line", "ok", "said", "errors" the step caused,
-                "value" of a js step, "state" of a state step,
-                "reloaded": [seconds the game took to start again] after the page reloaded}]}}
+The result is what open_in_editor.py writes, plus "preview": {"started", "layout", "runtime",
+"viewport", "pixel_ratio", "touch", "seconds", "planned", "errors", "recorded", "steps": [{"step",
+"line", "ok", "said", "errors", "value" of a js step, "state" of a state step, "reloaded"}]}.
 """
 from __future__ import annotations
 

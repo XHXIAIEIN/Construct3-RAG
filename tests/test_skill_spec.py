@@ -10,9 +10,10 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, run, install, new_project
+from tests.skill_helpers import REPO, SKILL, run, install, new_project, script_module
 
 SKILL_MD = SKILL / "SKILL.md"
+LIMIT = script_module("c3project").LIMIT      # where the scripts cut their own output
 
 
 # --- the skill as the Agent Skills format defines it (https://agentskills.io/specification) -----
@@ -66,13 +67,19 @@ OTHER_PROGRAMS = {"--mute-audio", "--user-data-dir"}     # the browser's, where 
 
 def test_every_flag_the_skill_names_is_one_its_script_takes(tmp_path):
     """A flag renamed in a script and left in SKILL.md or a reference ends the agent's run in a usage error.
-    A flag after a script's name on a line is that script's; one with no script before it, any script's."""
+    A flag after a script's name on a line is that script's; one with no script before it, any script's.
+    A --help is read whole or not at all, so it stays under the cut the scripts apply to their own output:
+    a harness cuts longer tool output, not always at the end and not always saying so."""
     takes: dict[str, set[str]] = {}
+    over = []
     for script in sorted((SKILL / "scripts").glob("*.py")):
         if script.stem != "c3project":
             code, out = run(tmp_path, script, "--help")
             assert code == 0, out
+            if len(out) >= LIMIT:
+                over.append(f"{script.name} ({len(out)} characters)")
             takes[script.name] = set(re.findall(r"^\s+(?:-\w(?: \S+)?, )?(--[a-z][\w-]*)", out, re.M))
+    assert not over, f"--help over the {LIMIT} characters the scripts cut their own output at: {', '.join(over)}"
     any_script = set().union(*takes.values())
     for name, text in skill_docs():
         for line in text.splitlines():
