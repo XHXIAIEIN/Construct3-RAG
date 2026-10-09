@@ -138,6 +138,14 @@ C_OPERATORS = {"==": "=", "!=": "<>", "&&": "&", "||": "|", "**": "^"}
 C_OPERATOR = re.compile(r"==|!=|&&|\|\||\*\*|!")
 # What a variable or parameter named like another one, compared without case, can be called instead.
 SHADOW_SUFFIX = {"string": "Text", "number": "Value", "boolean": "Flag"}
+# Text the player reads on the layout as it starts, warnings (checker-rules.md, the traps of the running game).
+# A text whose aligned side lies less than TEXT_EDGE px from the screen's edge touches it; the template keeps
+# its HUD a UNIT in. A text reads TEXT_CONTRAST:1 against the layer behind it, WCAG 2.2 1.4.3 for large text
+# and the template's floor for a title. A layout has no background colour of its own (manual: Layouts), and
+# behind layers that are all transparent the preview shows black (r495.2 preview, 2026-10-09).
+TEXT_EDGE = 1
+TEXT_CONTRAST = 3
+SHORT_TEXT = 12             # characters: a number or a word, the thing a screen of one or two texts is about
 # Instances created in a top-level event or trigger join the instance lists when it ends: until then only
 # Pick by unique ID finds them outside the creating event (prompts/pitfalls/creating-objects.md). The
 # actions that create an instance of a named type, with the parameter that names it; spawn-another-object
@@ -524,6 +532,19 @@ def effect_names(holder: dict) -> set[str]:
     return {e["name"] for e in holder.get("effectTypes", []) if isinstance(e.get("name"), str)}
 
 
+def contrast_ratio(a: list, b: list) -> float:
+    """WCAG 2.2 contrast of two colours written as the editor writes them, 0 to 1 per channel."""
+    def luminance(c: list) -> float:
+        r, g, b_ = (v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in map(float, c[:3]))
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b_
+    hi, lo = sorted((luminance(a), luminance(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def hex_colour(c: list) -> str:
+    return "#" + "".join(f"{round(min(max(float(v), 0), 1) * 255):02x}" for v in c[:3])
+
+
 def layer_instances(layers: list):
     """Every instance on these layers and their sublayers, in the order the file lists them."""
     for layer in layers if isinstance(layers, list) else []:
@@ -585,6 +606,7 @@ class Checker:
         self.style = style              # the warnings of check_style, off unless asked
         self.err, self.warn = p.err, p.warn
         self.layouts: dict[str, dict] = {}
+        self.global_layers: set[str] | None = None     # layer names some layout marks global
         self.sheets: dict[str, dict] = {}
         self.layers: set[str] = set()
         self.templates: set[str] = set()      # types with an instance in some layout
@@ -1157,6 +1179,7 @@ class Checker:
                 continue
             self.walk_layers(f"layout {lname}", lay["layers"])
             self.check_default_controls(lname, lay["layers"])
+            self.check_screen_text(lname, lay)
             for inst in lay.get("nonworld-instances", []):
                 self.check_instance(f"layout {lname}", inst)
             self.check_effects(lay.get("effectTypes", []))
@@ -1206,6 +1229,108 @@ class Checker:
                   f"of the others \"default-controls\": false in its behavior's properties, and move it with "
                   f"Simulate control or the behavior's actions (manual: behavior-reference/platform.md "
                   f"\"Default controls\")")
+
+    def check_screen_text(self, lname: str, lay: dict) -> None:
+        """Warnings on the texts a layout shows as it starts: one whose aligned side touches the screen's edge,
+        one that reads under TEXT_CONTRAST:1 against the layer colour behind it, and a short text that is all
+        the screen shows drawn under the template's title size. A text behind which another object, an effect
+        or a global layer may lie is left out of the contrast, since what shows there is not known here."""
+        data = self.p.data
+        vw, vh = data.get("viewportWidth"), data.get("viewportHeight")
+        if not all(isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0 for v in (vw, vh)):
+            return
+        unit = 8 if vh <= 360 else 32           # the template's UNIT and MARGIN; its title is 2 UNIT pt
+        if self.global_layers is None:
+            self.global_layers = {layer.get("name") for other in self.layouts.values() if isinstance(other, dict)
+                                  for layer, _ in c3.layers_of(other.get("layers") or []) if layer.get("global")}
+        viewport_sized = (lay.get("width"), lay.get("height")) == (vw, vh)
+        backdrop = None         # (layer name, colour) of the nearest opaque layer below
+        unknown = False         # an effect or a global layer at or below: what shows behind is not known
+        behind: list[tuple] = []    # boxes of the other objects drawn so far
+        texts: list[tuple] = []     # (place, type, text, size, in the middle of the screen) of each text shown
+        other_shown = False
+        for layer, _ in c3.layers_of(lay["layers"]):
+            if not isinstance(layer, dict):
+                continue
+            if layer.get("isTransparent") is False and isinstance(layer.get("backgroundColor"), list):
+                backdrop, behind = (layer.get("name"), layer["backgroundColor"]), []
+            unknown = unknown or bool(layer.get("effectTypes")) or layer.get("name") in self.global_layers
+            hud = layer.get("parallaxX") == 0 and layer.get("parallaxY") == 0
+            here = f"layout {lname} layer {layer.get('name')}"
+            for inst in layer.get("instances") or []:
+                world, props = inst.get("world"), inst.get("properties") or {}
+                if not isinstance(world, dict) or not all(isinstance(world.get(k), (int, float))
+                                                          for k in ("x", "y", "width", "height")):
+                    continue
+                t = self.p.types.get(inst.get("type")) or {}
+                shown = props.get("initially-visible", True) is not False
+                if t.get("plugin-id") != "Text":
+                    if shown:
+                        other_shown = True
+                        behind.append(c3.box(world))
+                    continue
+                if not shown or world.get("angle"):
+                    continue
+                text = props.get("text") if isinstance(props.get("text"), str) else ""
+                box = c3.box(world)
+                size = props.get("size", 12)
+                if text.strip() and isinstance(size, (int, float)):
+                    # in the middle of the screen, not a HUD line held to an edge
+                    middle = (hud or viewport_sized) and vh / 3 <= (box[1] + box[3]) / 2 <= 2 * vh / 3
+                    texts.append((here, inst.get("type"), text, size, middle))
+                name = f"{inst.get('type')} {text[:20]!r}" if text.strip() else str(inst.get("type"))
+                if hud or viewport_sized:
+                    self.text_at_edge(here, name, world, props, vw, vh, unit)
+                colour = props.get("color")
+                covered = any(b[0] < box[2] and b[2] > box[0] and b[1] < box[3] and b[3] > box[1] for b in behind)
+                if (text.strip() and not unknown and not covered and not inst.get("effects") and not t.get("effectTypes")
+                        and not re.search(r"\[(outline|color)=", text) and isinstance(colour, list) and len(colour) >= 3):
+                    self.text_on_backdrop(here, name, colour, backdrop)
+        if other_shown or not 1 <= len(texts) <= 2 or any(len(t) > SHORT_TEXT or "\n" in t for _, _, t, _, _ in texts):
+            return
+        here, otype, text, size, middle = max(texts, key=lambda t: t[3])
+        if middle and size < 2 * unit:
+            self.warn(f"{here}: {otype} {text!r} stands in the middle of a screen that shows nothing but "
+                      f"{'two short texts' if len(texts) > 1 else 'this text'}, so it is what the screen is about, "
+                      f"and at {size:g} pt it draws about {round(size * 4 / 3)} px high on a {vh:g} px high "
+                      f"viewport. Set its \"size\" to {2 * unit} or more, the template's title size "
+                      f"(TEXT_SIZE[\"title\"]), and its box to fit")
+
+    def text_at_edge(self, here: str, name: str, world: dict, props: dict, vw: float, vh: float, unit: int) -> None:
+        """A text on the screen whose aligned side lies at or past the screen's edge: its first or last letter
+        touches the edge, and a phone's rounded corner cuts it."""
+        left, top, right, bottom = c3.box(world)
+        # edge -> (axis, distance from that edge, direction away from it), for the sides the text is aligned to
+        edges = {"left": ("x", left, 1), "right": ("x", vw - right, -1),
+                 "top": ("y", top, 1), "bottom": ("y", vh - bottom, -1)}
+        for edge in (props.get("horizontal-alignment", "left"), props.get("vertical-alignment", "top")):
+            if edge not in edges:
+                continue
+            axis, gap, sign = edges[edge]
+            span = right - left if axis == "x" else bottom - top
+            if -span < gap < TEXT_EDGE:
+                self.warn(f"{here}: {name} is {edge}-aligned {gap:g} px from the {edge} edge of the screen, so its "
+                          f"text touches the edge. Set world.{axis} to {world[axis] + sign * (unit - gap):g}, "
+                          f"{unit} px in, the template's MARGIN")
+
+    def text_on_backdrop(self, here: str, name: str, colour: list, backdrop: tuple | None) -> None:
+        """A text that reads under TEXT_CONTRAST:1 against the colour of the opaque layer behind it, or against
+        black when every layer at or below it is transparent."""
+        under = backdrop[1] if backdrop else [0, 0, 0]
+        if not all(isinstance(v, (int, float)) for v in [*colour[:3], *under[:3]]):
+            return
+        ratio = contrast_ratio(colour, under)
+        if ratio >= TEXT_CONTRAST:
+            return
+        best = max(([0, 0, 0], [1, 1, 1]), key=lambda c: contrast_ratio(c, under))
+        behind = (f"the background colour of layer {backdrop[0]}, {hex_colour(under)}" if backdrop else "black")
+        why = ("" if backdrop else " Every layer at or below it is transparent, and a layout has no background "
+                                   "colour of its own, so the screen behind it is black.")
+        self.warn(f"{here}: {name} is {hex_colour(colour)} on {behind}, {ratio:.1f}:1, and text needs "
+                  f"{TEXT_CONTRAST}:1 to read (WCAG 2.2, 1.4.3).{why} "
+                  + ("Set its color to one that contrasts, such as " + json.dumps(best) if backdrop else
+                     "Make the bottom layer opaque, \"isTransparent\": false, with a \"backgroundColor\" the text "
+                     f"reads on, or set the text's color to one that reads on black, such as {json.dumps(best)}"))
 
     def check_namespace(self, obj: str) -> None:
         """`Enemy.Angle` has to mean one thing, so the editor refuses an instance

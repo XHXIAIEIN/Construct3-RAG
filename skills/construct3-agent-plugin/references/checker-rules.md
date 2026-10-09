@@ -173,6 +173,22 @@ Traps of the running game are warnings:
   *Character height*: the editor fills the values that fit its own font
   image, so an image drawn in another order or cell size shows the wrong
   characters;
+- a visible Text on a layer at parallax 0, or on a layout the size of the
+  viewport, whose aligned side lies less than 1 px from the screen's edge:
+  its first letter touches the edge, and a phone's rounded corner cuts it.
+  The finding moves it the template's MARGIN in. Over the 524 official
+  examples: 10 findings in 8 projects, each a text drawn at or past an edge;
+- a Text that reads under 3:1 against the colour of the opaque layer behind
+  it, or against black when every layer at or below it is transparent: a
+  layout has no background colour of its own [manual:
+  project-primitives/layouts.md], and the r495.2 preview showed black there
+  (2026-10-09). A text over another object, under an effect or a global
+  layer, or coloured by BBCode is left out, since what shows behind it is
+  not known here. Over the official examples: 6 findings in 6 projects;
+- a Text of 12 characters or fewer, on one line, in the middle third of a
+  screen that shows nothing but one or two such texts, drawn under the
+  template's title size, 2 UNIT pt: it is what the screen is about, a
+  countdown or a count. Over the official examples it adds no finding;
 - `find` or `findcase` whose first argument is a one-character text literal
   and whose second is not a literal: `find(text, find)` searches the first,
   so `find("^", LASTPOP)` is -1 unless `LASTPOP` is `^` or empty. None of

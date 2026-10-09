@@ -1959,3 +1959,90 @@ def test_a_key_the_export_would_ship_is_named_with_its_place_unless_marked_publi
     assert "warning: scripts/main.js line 1: a string shaped like a random token, such as a key " \
            f"({RANDOM_TOKEN[:4]}… (40 characters))" in out, out
     assert "If it is meant to be public, write allow-secret in a comment on that line" in out, out
+
+
+# --- text on the screen ---------------------------------------------------------------------------------------
+def screen_text(project: Path, change) -> str:
+    """The Game layout emptied but for one ScoreLabel on the HUD layer, 64 px in from the top left, left- and
+    top-aligned, dark on the bottom layer, opaque white; the layers above it are transparent. change(layers, text)
+    then breaks it once."""
+    def rebuild(d):
+        def flat(layers):
+            for layer in layers:
+                yield layer
+                yield from flat(layer.get("subLayers", []))
+        hud = next(layer for layer in flat(d["layers"]) if layer.get("parallaxX") == 0)
+        text = next(i for i in hud["instances"] if i["type"] == "ScoreLabel")
+        for layer in flat(d["layers"]):
+            layer.update(instances=[], isTransparent=True)
+        hud["instances"] = [text]
+        d["layers"][0].update(isTransparent=False, backgroundColor=[1, 1, 1, 1])
+        text["world"].update(x=64, y=64, originX=0, originY=0)
+        text["properties"].update({"horizontal-alignment": "left", "vertical-alignment": "top",
+                                   "color": [0.1, 0.1, 0.1, 1], "text": "Score: 0", "size": 32})
+        change(d["layers"], text)
+    return findings(project, rebuild, "layouts/Game.json")
+
+
+@pytest.mark.parametrize("change, said", [
+    (lambda layers, t: None, None),
+    (lambda layers, t: t["world"].update(x=0), "ScoreLabel 'Score: 0' is left-aligned 0 px from the left edge of "
+                                               "the screen, so its text touches the edge. Set world.x to 32"),
+    (lambda layers, t: t["world"].update(y=-2), "is top-aligned -2 px from the top edge of the screen"),
+    (lambda layers, t: (t["properties"].update({"horizontal-alignment": "center"}), t["world"].update(x=0)), None),
+])
+def test_a_text_that_touches_the_screen_edge_is_named(project, change, said):
+    """The judged score glued to the left edge at x 0 (2026-10-09). Only a side the text is aligned to counts."""
+    out = screen_text(project, change)
+    lines = [w for w in warnings(out) if "touches the edge" in w]
+    assert (len(lines) == 1 and said in lines[0] if said else not lines), out
+    assert out.splitlines()[-1].startswith("ok:"), out
+
+
+def all_transparent(layers, text):
+    layers[0]["isTransparent"] = True
+
+
+@pytest.mark.parametrize("change, said", [
+    (lambda layers, t: None, None),
+    (lambda layers, t: t["properties"].update(color=[0.9, 0.9, 0.9, 1]),
+     "is #e6e6e6 on the background colour of layer"),
+    (all_transparent, "is #1a1a1a on black, 1.2:1"),
+    (lambda layers, t: (all_transparent(layers, t), t["properties"].update(color=[1, 1, 1, 1])), None),
+    (lambda layers, t: t["properties"].update(color=[0.9, 0.9, 0.9, 1], text="[outline=#000000]Score: 0"), None),
+])
+def test_text_that_does_not_read_on_the_layer_behind_it_is_named(project, change, said):
+    """The judged dark combo on a screen of transparent layers, black in the r495.2 preview (2026-10-09)."""
+    out = screen_text(project, change)
+    lines = [w for w in warnings(out) if "to read (WCAG" in w]
+    assert (len(lines) == 1 and said in lines[0] if said else not lines), out
+
+
+def test_text_over_another_object_is_left_to_the_eye(project):
+    """A Backdrop under the text: what shows behind it is an image, which this check does not read."""
+    def cover(layers, text):
+        layers[0]["isTransparent"] = True
+        under = json.loads(json.dumps(text))
+        under.update(type="Backdrop", properties={}, uid=900, sid=901)
+        layers[0]["instances"] = [under]
+    out = screen_text(project, cover)
+    assert not [w for w in warnings(out) if "to read (WCAG" in w], out
+
+
+def centred(layers, text, size=32):
+    text["world"].update(x=960, y=540, originX=0.5, originY=0.5)
+    text["properties"].update({"horizontal-alignment": "center", "text": "30", "size": size})
+
+
+@pytest.mark.parametrize("change, said", [
+    (centred, "ScoreLabel '30' stands in the middle of a screen that shows nothing but this text"),
+    (lambda layers, t: centred(layers, t, 64), None),
+    (lambda layers, t: None, None),
+    (lambda layers, t: (centred(layers, t), t["properties"].update(text="Tap anywhere to start")), None),
+])
+def test_a_short_text_alone_in_the_middle_of_the_screen_is_drawn_at_title_size(project, change, said):
+    """The judged countdown drawn at body size, the only thing on its screen (2026-10-09). A HUD line in a
+    corner, a title-sized number and a sentence pass."""
+    out = screen_text(project, change)
+    lines = [w for w in warnings(out) if "title size" in w]
+    assert (len(lines) == 1 and said in lines[0] and 'Set its "size" to 64' in lines[0] if said else not lines), out
