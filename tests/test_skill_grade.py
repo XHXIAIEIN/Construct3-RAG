@@ -339,19 +339,23 @@ def transcript_of(path: Path, calls: list[tuple[str, dict, str, bool]]) -> Path:
 
 def test_trace_counts_the_route_of_a_run(tmp_path: Path) -> None:
     """Each route column of trace.json, from a transcript that holds one of everything it counts: a cat of
-    SKILL.md, reads of the clone, the check chain up to a passing plan, two --help reads of one script, a copied
-    command that fails, a hand edit of a layout, a refused plan beside a dry run, a failed check with findings and
-    one without, and a preview that never opened."""
+    SKILL.md, an instruction file whose clone line keeps <path-to>, reads of the clone, the check chain up to a
+    passing plan, two --help reads of one script, a copied command that fails, a hand edit of a layout, a refused
+    plan beside a dry run, a copied check and another that fail with findings, one that fails without, and a
+    preview that never opened."""
     run_dir = tmp_path / "it" / "double-jump" / "with_skill"
     project, clone = run_dir / "project", tmp_path / "clone"
     (project / "layouts").mkdir(parents=True)
-    (project / "AGENTS.md").write_text(f"- Construct3-RAG: {clone.as_posix()}\n", encoding="utf-8")
+    block = ("path-to = " + clone.parent.as_posix() + "\n- Construct3-RAG: <path-to>/clone\n"
+             "1. Run `python .agents/skills/construct3-agent-plugin/scripts/check_project.py` from the project folder.\n")
+    (project / "AGENTS.md").write_text(block, encoding="utf-8")
     scripts = f"{project.as_posix()}/.agents/skills/construct3-agent-plugin/scripts"
     ok_line = ("ok: 7 object types, 0 families, 1 layouts, 1 sheets; next, review the design: python "
                ".agents/skills/construct3-agent-plugin/scripts/review_design.py, then open it: python "
                ".agents/skills/construct3-agent-plugin/scripts/open_in_editor.py --preview")
     calls = [
         ("Bash", {"command": f'cat "{project.as_posix()}/.agents/skills/construct3-agent-plugin/SKILL.md"'}, "x" * 6000, False),
+        ("Read", {"file_path": f"{project.as_posix()}/AGENTS.md"}, block, False),
         ("Read", {"file_path": f"{clone.as_posix()}/data/c3-schemas/_index.json"}, "{}", False),
         ("Grep", {"pattern": "jump", "path": clone.as_posix()}, "No matches found", False),
         ("Bash", {"command": f'cd "{project.as_posix()}" && python {scripts}/check_project.py --project "{project.as_posix()}"'}, ok_line, False),
@@ -363,6 +367,8 @@ def test_trace_counts_the_route_of_a_run(tmp_path: Path) -> None:
          "Exit code 1\noperation 1: event 9 does not print the line given\nnothing was written", True),
         ("Bash", {"command": f'python {scripts}/edit_sheet.py "Event sheet 1" .tmp/plan.json --dry-run'},
          "Event sheet 1: 1 operation, 8 events before and 9 now (dry run)\ndry run: nothing was written", False),
+        ("Bash", {"command": f'cd "{project.as_posix()}" && python .agents/skills/construct3-agent-plugin/scripts/check_project.py'},
+         "Exit code 1\nEvent sheet 1 event 9: parameter omitted\n1 problem(s)", True),
         ("Bash", {"command": f"python {scripts}/check_project.py"},
          "Exit code 1\nwarning: Event sheet 1 event 3: no comment above it\nEvent sheet 1 event 9: parameter omitted\n1 problem(s)", True),
         ("Bash", {"command": f"python {scripts}/check_project.py --nonsense"},
@@ -377,19 +383,23 @@ def test_trace_counts_the_route_of_a_run(tmp_path: Path) -> None:
     assert code == 0, out
     trace = json.loads((run_dir / "trace.json").read_text(encoding="utf-8"))
     assert {k: trace[k] for k in grader.TRACE_COLUMNS} == {
-        "tool_calls": 14, "lost_calls": 4, "turns": 0, "output_tokens": 0, "read_skill_md": True,
+        "tool_calls": 16, "lost_calls": 4, "turns": 0, "output_tokens": 0, "read_skill_md": True,
         "first_script": "check_project", "chain_depth": 4, "chain_end": "preview_project", "chain_reached": "preview_project",
-        "chain_attempts": 6, "preview_failed": 1, "help_reads": 2, "repeat_help": 1, "plan_refusals": 1, "hand_edits": 1,
-        "lookups_before_first_edit": 7, "data_reads": 1, "other_clone_reads": 1, "entry_chars": 6018,
+        "chain_attempts": 7, "preview_failed": 1, "help_reads": 2, "repeat_help": 1, "plan_refusals": 1, "hand_edits": 1,
+        "lookups_before_first_edit": 8, "data_reads": 1, "other_clone_reads": 1, "entry_chars": 6018 + len(block),
         "printed_command_failures": 1}
-    assert trace["chain"] == {"check_project": {"calls": 3, "passed": True}, "review_design": {"calls": 1, "passed": False},
+    assert trace["chain"] == {"check_project": {"calls": 4, "passed": True}, "review_design": {"calls": 1, "passed": False},
                               "open_in_editor": {"calls": 1, "passed": False}, "preview_project": {"calls": 1, "passed": True},
                               "review_look": {"calls": 0, "passed": False}}
     assert trace["help_reads_by_script"] == {"preview_project": 2}
     assert trace["outside"] == [] and len(trace["outside_reads"]) == 2
     assert Path(trace["transcript"]) == transcript.resolve()
     assert (run_dir / "transcript.jsonl").read_bytes() == transcript.read_bytes()
-    assert "first script check_project, chain to preview_project (4 of 5, 6 calls), 2 help reads, 1 refused plans" in out
+    assert ("first script check_project, chain to preview_project (4 of 5, 7 calls), 2 help reads, 1 refused plans, "
+            "1 hand edits, 8 calls before the first edit") in out
+    code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript))
+    assert code == 0, out
+    assert "1 refused plans, hand edits and calls before the first edit need --out or --root with its project/" in out
 
 
 @pytest.mark.parametrize(("command", "edit"), [
@@ -484,6 +494,22 @@ def test_grade_says_underpowered_and_aggregates_all_the_same(tmp_path: Path) -> 
     benchmark = json.loads((iteration / "benchmark.json").read_text(encoding="utf-8"))
     assert benchmark["decision"]["verdict"] == "underpowered"
     assert benchmark["by_case"]["name-the-restart-event"]["old_skill"]["chain_depth"]["mean"] == 1.5
+
+
+@pytest.mark.parametrize(("text", "error"), [
+    ('{"cases": ["name-the-restart-event"], "direction": "up", "n_per_cell": 3}', 'missing key "metric"'),
+    ('{"cases": [', "not JSON ("),
+])
+def test_grade_writes_the_benchmark_when_decision_json_cannot_be_read(tmp_path: Path, text: str, error: str) -> None:
+    """A misspelled key or a broken file costs the verdict, not the aggregation."""
+    iteration = restart_runs(tmp_path, {"with_skill": [5, 5, 4], "old_skill": [1, 2, 1]})
+    (iteration / "decision.json").write_text(text, encoding="utf-8")
+    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(iteration))
+    assert code == 0, out
+    assert f"decision.json: {error}" in out and "benchmark written without a verdict" in out
+    benchmark = json.loads((iteration / "benchmark.json").read_text(encoding="utf-8"))
+    assert benchmark["decision"]["verdict"] == "not read" and benchmark["decision"]["error"].startswith(error)
+    assert benchmark["by_case"]["name-the-restart-event"]["with_skill"]["chain_depth"]["mean"] == 4.667
 
 
 import compare  # noqa: E402

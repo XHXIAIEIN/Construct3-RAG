@@ -60,13 +60,18 @@ calls and their results:
   failed or not, or an edit_sheet.py run, a dry run included, because
   the plan it checks is the edit; null when nothing did.
 - data_reads, other_clone_reads: calls that read the clone the project's
-  Construct3-RAG: line names, under its data/ and elsewhere in it, a
-  relative path resolved against the cd before it. A script run from the
-  clone, and a --rag or --project value, are not reads.
+  Construct3-RAG: line names, read as scripts/c3project.py reads it (a
+  path with spaces, or <path-to> defined above), under its data/ and
+  elsewhere in it, a relative path resolved against the cd before it. A
+  script run from the clone, and a --rag or --project value, are not
+  reads.
 - entry_chars: the characters that came back before the first script
   call: the skill, the instruction files, the listing of the project.
-- printed_command_failures: failed shell calls whose script path an
-  earlier result printed, as a word or as the end of a longer one.
+- printed_command_failures: lost shell calls whose script path an earlier
+  result printed, as a word or as the end of a longer one. A check that
+  reported findings is not lost, so the fix loop a printed check starts
+  does not count; a refused plan is lost and counts here as well as in
+  plan_refusals.
 
 hand_edits, lookups_before_first_edit and the clone reads need the run
 folder (--out or --root) with its project/; without it they are null.
@@ -86,6 +91,8 @@ from run_trigger_eval import loads_skill
 
 SKILL_DIR = Path(__file__).resolve().parent.parent
 SKILL = SKILL_DIR.name
+sys.path.insert(0, str(SKILL_DIR / "scripts"))
+import c3project  # noqa: E402
 # The scripts of this skill, so that a call of one is found whatever path form it is run by ($S/x.py too).
 SCRIPT_NAMES = sorted(p.stem for p in (SKILL_DIR / "scripts").glob("*.py") if not p.stem.startswith("_"))
 SCRIPT = re.compile(r"(?<![\w.-])(" + "|".join(SCRIPT_NAMES) + r")\.py\"?"
@@ -109,7 +116,6 @@ DESIGN_FINDINGS = re.compile(r"^design: \d+ findings?; fix", re.M)
 NO_MATCH = ("No matches found", "No files found")
 REFUSED = "nothing was written"
 DRY_RUN_LINE = "dry run: nothing was written"
-RAG_LINE = re.compile(r"Construct3-RAG:\s*(\S+)")
 PROJECT_FILES = (".json", ".c3proj")
 SKILL_READ_CHARS = 5000
 
@@ -439,14 +445,14 @@ def edits(c: dict, project: Path) -> bool:
 
 
 def clone_of(project: Path | None) -> Path | None:
-    """The clone the project's instruction file names on its Construct3-RAG: line."""
+    """The clone the project's instruction file names on its Construct3-RAG: line, read as the scripts read it."""
     for name in ("AGENTS.md", "CLAUDE.md"):
         try:
-            m = RAG_LINE.search((project / name).read_text(encoding="utf-8")) if project else None
+            value = c3project.rag_line((project / name).read_text(encoding="utf-8")) if project else None
         except OSError:
-            m = None
-        if m:
-            return Path(m.group(1).strip("\"'`"))
+            value = None
+        if value:
+            return Path(value)
     return None
 
 
@@ -468,11 +474,12 @@ def clone_reads(calls: list[dict], clone: Path) -> tuple[int, int]:
 
 
 def printed_command_failures(calls: list[dict]) -> int:
-    """Failed shell calls whose script word an earlier result printed, as a word or at the end of a longer path."""
+    """Lost shell calls whose script word an earlier result printed, as a word or at the end of a longer path. A
+    check that reported findings is not lost, so a copied check in the fix loop does not count."""
     seen: list[str] = []
     count = 0
     for c in calls:
-        if c["tool"] in SHELLS and c["failed"] and scripts_of(c):
+        if c["tool"] in SHELLS and is_lost(c) and scripts_of(c):
             words = [a or b for a, b in SCRIPT_WORD.findall(c["what"]) if Path(a or b).stem in SCRIPT_NAMES]
             if any(w in r for w in words for r in seen):
                 count += 1
@@ -555,7 +562,9 @@ def main() -> int:
           + ", ".join(f"{s['script']} {s['args']}".strip() + (" (failed)" if s["failed"] else "") for s in counts["scripts"]))
     print(f"first script {counts['first_script']}, chain to {counts['chain_end']} ({counts['chain_depth']} of {len(CHAIN)}, "
           f"{counts['chain_attempts']} calls), {counts['help_reads']} help reads, {counts['plan_refusals']} refused plans, "
-          f"{counts['hand_edits']} hand edits, {counts['lookups_before_first_edit']} calls before the first edit")
+          + (f"{counts['hand_edits']} hand edits, {counts['lookups_before_first_edit']} calls before the first edit"
+             if counts["hand_edits"] is not None else
+             "hand edits and calls before the first edit need --out or --root with its project/"))
     if root:
         counts["outside"], counts["outside_reads"] = outside(calls, root)
         writes = counts["outside"]

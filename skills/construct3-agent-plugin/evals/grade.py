@@ -39,7 +39,8 @@ within-task permutation test of evals/compare.py, checks each guard on the
 means (not down: the first arm's is not lower; not up: not higher), prints
 the verdict and writes it to benchmark.json under decision. A cell with
 fewer scored runs than n_per_cell makes the verdict "underpowered: k of n"
-and the benchmark is aggregated all the same.
+and the benchmark is aggregated all the same; so does a decision.json that
+is not JSON or lacks a key, with the verdict "not read" and the reason.
 
 A run that did not keep to its arm is not scored: put the reason in
 <case>/<arm>/void.txt, for example a baseline whose answer lists a script of
@@ -1435,15 +1436,22 @@ def aggregate(cells: dict[str, dict[str, list[dict]]]) -> tuple[dict, dict]:
 
 def decide(iteration: Path, cells: dict[str, dict[str, list[dict]]]) -> dict | None:
     """The verdict of the iteration's decision.json over the scored runs, printed and returned; None without
-    the file. A cell short of n_per_cell makes it underpowered, with the benchmark still aggregated."""
+    the file. A cell short of n_per_cell makes it underpowered, and a file that is not JSON or lacks a key makes
+    it "not read", with the benchmark still aggregated either way."""
     path = iteration / "decision.json"
     if not path.exists():
         return None
-    given = json.loads(path.read_text(encoding="utf-8"))
-    arms, metric, direction, n = given.get("arms", ["with_skill", "old_skill"]), given["metric"], given["direction"], given["n_per_cell"]
+    try:
+        given = json.loads(path.read_text(encoding="utf-8"))
+        arms, metric, direction, n = given.get("arms", ["with_skill", "old_skill"]), given["metric"], given["direction"], given["n_per_cell"]
+        cases = given["cases"]
+    except (ValueError, KeyError) as e:
+        error = f'missing key "{e.args[0]}"' if isinstance(e, KeyError) else f"not JSON ({e})"
+        print(f"decision.json: {error}; benchmark written without a verdict")
+        return {"verdict": "not read", "error": error}
     runs = {case: {arm: [r for r in cells.get(case, {}).get(arm, []) if r.get(metric) is not None] for arm in arms}
-            for case in given["cases"]}
-    record = {"cases": given["cases"], "metric": metric, "direction": direction, "arms": arms, "n_per_cell": n,
+            for case in cases}
+    record = {"cases": cases, "metric": metric, "direction": direction, "arms": arms, "n_per_cell": n,
               "concurrency": given.get("concurrency")}
     short = [f"{case}/{arm}: {len(cell)} of {n}" for case, by_arm in runs.items() for arm, cell in by_arm.items()
              if len(cell) < n]
