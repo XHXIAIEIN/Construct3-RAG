@@ -138,6 +138,14 @@ C_OPERATORS = {"==": "=", "!=": "<>", "&&": "&", "||": "|", "**": "^"}
 C_OPERATOR = re.compile(r"==|!=|&&|\|\||\*\*|!")
 # What a variable or parameter named like another one, compared without case, can be called instead.
 SHADOW_SUFFIX = {"string": "Text", "number": "Value", "boolean": "Flag"}
+# Text the player reads on the layout as it starts, warnings (checker-rules.md, the traps of the running game).
+# A text whose aligned side lies less than TEXT_EDGE px from the screen's edge touches it; the template keeps
+# its HUD a UNIT in. A text reads TEXT_CONTRAST:1 against the layer behind it, WCAG 2.2 1.4.3 for large text
+# and the template's floor for a title. A layout has no background colour of its own (manual: Layouts), and
+# behind layers that are all transparent the preview shows black (r495.2 preview, 2026-10-09).
+TEXT_EDGE = 1
+TEXT_CONTRAST = 3
+SHORT_TEXT = 12             # characters: a number or a word, the thing a screen of one or two texts is about
 # Instances created in a top-level event or trigger join the instance lists when it ends: until then only
 # Pick by unique ID finds them outside the creating event (prompts/pitfalls/creating-objects.md). The
 # actions that create an instance of a named type, with the parameter that names it; spawn-another-object
@@ -246,7 +254,35 @@ SOLID_CHANGES = {"destroy", "set-x", "set-y", "set-position", "set-position-to-a
                  "set-tile-range", "set-tile-with-brush", "erase-tile-with-brush", "set-tile-with-brush-by-name",
                  "erase-tile-with-brush-by-name", "set-tile-with-patch-brush", "erase-tile-with-patch-brush",
                  "set-tile-with-patch-brush-by-name", "erase-tile-with-patch-brush-by-name"}
+# Is overlapping between a Platform object and a Solid (Construct3-RAG/prompts/pitfalls/picking.md): the
+# Platform behavior pushes its object out of every enabled Solid each tick, so the two touch and do not overlap.
+# On collision still fires, because the behavior registers the collision as it pushes out (exported c3runtime.js,
+# Platform: PushOutSolidAxis, then RegisterCollision). An object that something else moves, or a Solid switched
+# off by another event, can overlap, so neither is a finding.
+MOVES = {"set-x", "set-y", "set-position", "set-position-to-another-object", "move-forward", "move-at-angle",
+         "set-width", "set-height", "set-size"}
+MOVERS = {"tween", "bullet", "moveto", "sin", "pin", "physics", "eightdir", "car", "tilemovement", "orbit",
+          "follow", "dragndrop", "custom", "turret", "rotate"}
+# A Bullet object the events fire that nothing removes once it misses flies on outside the layout forever, and
+# the instances pile up (manual: behavior-reference/destroy-outside.md). It is removed by one of these behaviors,
+# by a Destroy under a condition other than a hit, an input or a plain pick (a position, a timer, a Wait before
+# it), or by hitting a Solid or a Tilemap, which in the official examples are the walls and ground that stop it.
+HITS = {"on-collision-with-another-object", "is-overlapping-another-object", "is-overlapping-at-offset"}
+INPUTS = {"keyboard", "mouse", "touch", "gamepad"}
+PLAIN_PICKS = {"pick-nth-instance", "pick-random-instance", "pick-all", "for-each", "trigger-once", "every-tick"}
+REMOVERS = {"destroy", "wrap", "bound", "fade", "tween"}
+PLACINGS = {"set-x", "set-y", "set-position", "set-position-to-another-object"}
+USED_DESTROY = '{"type": "behavior", "id": "destroy", "name": "Destroy outside layout", "author": "Scirra", "bundled": false}'
 REGENERATE = {"regenerate-obstacle-map", "regenerate-region", "regenerate-region-around-object"}
+# A Drag & Drop object dropped on another, tested by overlap or collision or snapped onto it, is drawn under
+# it when the layout puts it lower in the Z order: on a lower layer, or listed before it on the same layer
+# (manual: project-primitives/objects/instances.md "Z index", 0 is the bottom; layers.md: a layer's own
+# objects come above its sub-layers). The dropped piece then disappears behind its target. An action that
+# changes the Z order of either, or a Z elevation, decides it at runtime instead.
+DROP_TESTS = {"is-overlapping-another-object", "is-overlapping-at-offset", "on-collision-another-object"}
+DROP_SNAPS = {"set-position-to-another-object"}
+RESTACKS = {"move-to-top", "move-to-bottom", "move-to-layer", "move-to-object", "set-z-elevation",
+            "set-position-3d", "sort-z-order"}
 # A found path is there only after On path found: Move along path, and the node expressions, in the same
 # actions as Find path read the previous path, unless Wait for previous actions to complete stands between.
 PATH_NODES = re.compile(r"(\w+)\s*\.\s*(\w+)\s*\.\s*(?:nodecount|nodexat|nodeyat)\b", re.I)
@@ -496,6 +532,19 @@ def effect_names(holder: dict) -> set[str]:
     return {e["name"] for e in holder.get("effectTypes", []) if isinstance(e.get("name"), str)}
 
 
+def contrast_ratio(a: list, b: list) -> float:
+    """WCAG 2.2 contrast of two colours written as the editor writes them, 0 to 1 per channel."""
+    def luminance(c: list) -> float:
+        r, g, b_ = (v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in map(float, c[:3]))
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b_
+    hi, lo = sorted((luminance(a), luminance(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def hex_colour(c: list) -> str:
+    return "#" + "".join(f"{round(min(max(float(v), 0), 1) * 255):02x}" for v in c[:3])
+
+
 def layer_instances(layers: list):
     """Every instance on these layers and their sublayers, in the order the file lists them."""
     for layer in layers if isinstance(layers, list) else []:
@@ -557,6 +606,7 @@ class Checker:
         self.style = style              # the warnings of check_style, off unless asked
         self.err, self.warn = p.err, p.warn
         self.layouts: dict[str, dict] = {}
+        self.global_layers: set[str] | None = None     # layer names some layout marks global
         self.sheets: dict[str, dict] = {}
         self.layers: set[str] = set()
         self.templates: set[str] = set()      # types with an instance in some layout
@@ -595,6 +645,11 @@ class Checker:
         self.event_where: dict[int, str] = {}       # id(event) -> where it is, for a finding about another event
         self.answered: dict[int, dict] = {}         # id(event that starts with Else) -> the event before it
         self.action_lists: list[tuple[list, str]] = []     # (actions, where) of every block
+        self.solid_overlaps: list[tuple[str, dict, str, str, set[int]]] = []  # (where, condition, Platform object, Solid, ids of its event's action lists)
+        self.drops: list[tuple[str, dict, str, str]] = []  # (where, condition or action, Drag & Drop object, what it is dropped on)
+        self.timer_starts: list[tuple[str, dict, tuple, bool | None]] = []    # (where, Start timer, line, paced)
+        self.hit_pairs: list[tuple] = []        # (object, the object it hits) of each collision or overlap test
+        self.destroys: list[tuple] = []         # (object, whether it can be a bullet that missed) of each Destroy
         self._summaries: dict[int, tuple | None] = {}
 
     def check(self) -> None:
@@ -1124,6 +1179,7 @@ class Checker:
                 continue
             self.walk_layers(f"layout {lname}", lay["layers"])
             self.check_default_controls(lname, lay["layers"])
+            self.check_screen_text(lname, lay)
             for inst in lay.get("nonworld-instances", []):
                 self.check_instance(f"layout {lname}", inst)
             self.check_effects(lay.get("effectTypes", []))
@@ -1173,6 +1229,108 @@ class Checker:
                   f"of the others \"default-controls\": false in its behavior's properties, and move it with "
                   f"Simulate control or the behavior's actions (manual: behavior-reference/platform.md "
                   f"\"Default controls\")")
+
+    def check_screen_text(self, lname: str, lay: dict) -> None:
+        """Warnings on the texts a layout shows as it starts: one whose aligned side touches the screen's edge,
+        one that reads under TEXT_CONTRAST:1 against the layer colour behind it, and a short text that is all
+        the screen shows drawn under the template's title size. A text behind which another object, an effect
+        or a global layer may lie is left out of the contrast, since what shows there is not known here."""
+        data = self.p.data
+        vw, vh = data.get("viewportWidth"), data.get("viewportHeight")
+        if not all(isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0 for v in (vw, vh)):
+            return
+        unit = 8 if vh <= 360 else 32           # the template's UNIT and MARGIN; its title is 2 UNIT pt
+        if self.global_layers is None:
+            self.global_layers = {layer.get("name") for other in self.layouts.values() if isinstance(other, dict)
+                                  for layer, _ in c3.layers_of(other.get("layers") or []) if layer.get("global")}
+        viewport_sized = (lay.get("width"), lay.get("height")) == (vw, vh)
+        backdrop = None         # (layer name, colour) of the nearest opaque layer below
+        unknown = False         # an effect or a global layer at or below: what shows behind is not known
+        behind: list[tuple] = []    # boxes of the other objects drawn so far
+        texts: list[tuple] = []     # (place, type, text, size, in the middle of the screen) of each text shown
+        other_shown = False
+        for layer, _ in c3.layers_of(lay["layers"]):
+            if not isinstance(layer, dict):
+                continue
+            if layer.get("isTransparent") is False and isinstance(layer.get("backgroundColor"), list):
+                backdrop, behind = (layer.get("name"), layer["backgroundColor"]), []
+            unknown = unknown or bool(layer.get("effectTypes")) or layer.get("name") in self.global_layers
+            hud = layer.get("parallaxX") == 0 and layer.get("parallaxY") == 0
+            here = f"layout {lname} layer {layer.get('name')}"
+            for inst in layer.get("instances") or []:
+                world, props = inst.get("world"), inst.get("properties") or {}
+                if not isinstance(world, dict) or not all(isinstance(world.get(k), (int, float))
+                                                          for k in ("x", "y", "width", "height")):
+                    continue
+                t = self.p.types.get(inst.get("type")) or {}
+                shown = props.get("initially-visible", True) is not False
+                if t.get("plugin-id") != "Text":
+                    if shown:
+                        other_shown = True
+                        behind.append(c3.box(world))
+                    continue
+                if not shown or world.get("angle"):
+                    continue
+                text = props.get("text") if isinstance(props.get("text"), str) else ""
+                box = c3.box(world)
+                size = props.get("size", 12)
+                if text.strip() and isinstance(size, (int, float)):
+                    # in the middle of the screen, not a HUD line held to an edge
+                    middle = (hud or viewport_sized) and vh / 3 <= (box[1] + box[3]) / 2 <= 2 * vh / 3
+                    texts.append((here, inst.get("type"), text, size, middle))
+                name = f"{inst.get('type')} {text[:20]!r}" if text.strip() else str(inst.get("type"))
+                if hud or viewport_sized:
+                    self.text_at_edge(here, name, world, props, vw, vh, unit)
+                colour = props.get("color")
+                covered = any(b[0] < box[2] and b[2] > box[0] and b[1] < box[3] and b[3] > box[1] for b in behind)
+                if (text.strip() and not unknown and not covered and not inst.get("effects") and not t.get("effectTypes")
+                        and not re.search(r"\[(outline|color)=", text) and isinstance(colour, list) and len(colour) >= 3):
+                    self.text_on_backdrop(here, name, colour, backdrop)
+        if other_shown or not 1 <= len(texts) <= 2 or any(len(t) > SHORT_TEXT or "\n" in t for _, _, t, _, _ in texts):
+            return
+        here, otype, text, size, middle = max(texts, key=lambda t: t[3])
+        if middle and size < 2 * unit:
+            self.warn(f"{here}: {otype} {text!r} stands in the middle of a screen that shows nothing but "
+                      f"{'two short texts' if len(texts) > 1 else 'this text'}, so it is what the screen is about, "
+                      f"and at {size:g} pt it draws about {round(size * 4 / 3)} px high on a {vh:g} px high "
+                      f"viewport. Set its \"size\" to {2 * unit} or more, the template's title size "
+                      f"(TEXT_SIZE[\"title\"]), and its box to fit")
+
+    def text_at_edge(self, here: str, name: str, world: dict, props: dict, vw: float, vh: float, unit: int) -> None:
+        """A text on the screen whose aligned side lies at or past the screen's edge: its first or last letter
+        touches the edge, and a phone's rounded corner cuts it."""
+        left, top, right, bottom = c3.box(world)
+        # edge -> (axis, distance from that edge, direction away from it), for the sides the text is aligned to
+        edges = {"left": ("x", left, 1), "right": ("x", vw - right, -1),
+                 "top": ("y", top, 1), "bottom": ("y", vh - bottom, -1)}
+        for edge in (props.get("horizontal-alignment", "left"), props.get("vertical-alignment", "top")):
+            if edge not in edges:
+                continue
+            axis, gap, sign = edges[edge]
+            span = right - left if axis == "x" else bottom - top
+            if -span < gap < TEXT_EDGE:
+                self.warn(f"{here}: {name} is {edge}-aligned {gap:g} px from the {edge} edge of the screen, so its "
+                          f"text touches the edge. Set world.{axis} to {world[axis] + sign * (unit - gap):g}, "
+                          f"{unit} px in, the template's MARGIN")
+
+    def text_on_backdrop(self, here: str, name: str, colour: list, backdrop: tuple | None) -> None:
+        """A text that reads under TEXT_CONTRAST:1 against the colour of the opaque layer behind it, or against
+        black when every layer at or below it is transparent."""
+        under = backdrop[1] if backdrop else [0, 0, 0]
+        if not all(isinstance(v, (int, float)) for v in [*colour[:3], *under[:3]]):
+            return
+        ratio = contrast_ratio(colour, under)
+        if ratio >= TEXT_CONTRAST:
+            return
+        best = max(([0, 0, 0], [1, 1, 1]), key=lambda c: contrast_ratio(c, under))
+        behind = (f"the background colour of layer {backdrop[0]}, {hex_colour(under)}" if backdrop else "black")
+        why = ("" if backdrop else " Every layer at or below it is transparent, and a layout has no background "
+                                   "colour of its own, so the screen behind it is black.")
+        self.warn(f"{here}: {name} is {hex_colour(colour)} on {behind}, {ratio:.1f}:1, and text needs "
+                  f"{TEXT_CONTRAST}:1 to read (WCAG 2.2, 1.4.3).{why} "
+                  + ("Set its color to one that contrasts, such as " + json.dumps(best) if backdrop else
+                     "Make the bottom layer opaque, \"isTransparent\": false, with a \"backgroundColor\" the text "
+                     f"reads on, or set the text's color to one that reads on black, such as {json.dumps(best)}"))
 
     def check_namespace(self, obj: str) -> None:
         """`Enemy.Angle` has to mean one thing, so the editor refuses an instance
@@ -1526,7 +1684,19 @@ class Checker:
                 self.err(f"{where}: {key}={value!r} is not a sound or music file of the project; the editor stops "
                          f"with \"missing file {name!r}\". Write the file's name without its extension"
                          + (near or listed))
-        elif ptype in ("tilemapbrush", "function", "model3d", "objecteffect"):
+        elif ptype == "function":
+            # Map function and Map default function name a function block, without case; for any
+            # other name the editor stops with "cannot find function 'FnRed'" (r495.2, 2026-10-09).
+            # declared_functions() has read every sheet before the walk, so a later block counts.
+            if not isinstance(value, str) or LOWER(value) not in {LOWER(f) for f in self.functions}:
+                shown = ", ".join(list(self.functions)[:8]) + (
+                    f" and {len(self.functions) - 8} more" if len(self.functions) > 8 else "")
+                listed = f"; the project has {shown}" if self.functions else "; the project has none"
+                self.err(f"{where}: {key}={value!r} is not a function of the project; the editor stops with "
+                         f"\"cannot find function {value!r}\". Add a function block named {value} or name one "
+                         f"the project has"
+                         + (bare(value, self.functions) or closest(value, self.functions) or listed))
+        elif ptype in ("tilemapbrush", "model3d", "objecteffect"):
             return
         elif ptype == "template":
             # a name in an expression, "\"\"" for none; written "" the editor does not open the project
@@ -2368,6 +2538,242 @@ class Checker:
                                 f"System: {obj}.PickedCount = 3, or keep the values in an Array and compare its cells")
                 return
 
+    def note_solid_overlap(self, c: dict, where: str, ev: dict) -> None:
+        """Is overlapping between an object with Platform and a Solid, kept for check_solid_overlaps once every
+        action of the project is known."""
+        if c.get("id") != "is-overlapping-another-object" or c.get("isInverted"):
+            return
+        a, b = c.get("objectClass"), params_of(c).get("object")
+        for mover, solid in ((a, b), (b, a)):
+            if (isinstance(mover, str) and isinstance(solid, str) and mover in self.p.plugin_of
+                    and "platform" in {v.lower() for v in self.p.behaviors_of(mover).values()} and self.is_solid(solid)):
+                lists = set()
+
+                def own(e: dict) -> None:
+                    if isinstance(e.get("actions"), list):
+                        lists.add(id(e["actions"]))
+                    for k in e.get("children") or []:
+                        if isinstance(k, dict):
+                            own(k)
+                own(ev)
+                self.solid_overlaps.append((where, c, mover, solid, lists))
+                return
+
+    def names_of(self, obj: str) -> set[str]:
+        """The object, the families it is in and, for a family, its members: the names an action on it is under."""
+        p = self.p
+        return {obj, *(p.families_of(obj) if obj in p.types else []),
+                *(p.families[obj].get("members", []) if obj in p.families else [])}
+
+    def moved_otherwise(self, obj: str) -> bool:
+        """Whether something besides its Platform moves the object: another movement behavior, an action, or its
+        Platform switched off."""
+        names = self.names_of(obj)
+        if any(b.lower() in MOVERS for n in names if n in self.p.plugin_of for b in self.p.behaviors_of(n).values()):
+            return True
+        return any(isinstance(a, dict) and a.get("objectClass") in names
+                   and (self.behavior_of(a) in MOVERS or (self.behavior_of(a) == "platform" and a.get("id") == "set-enabled")
+                        or (not self.behavior_of(a) and a.get("id") in MOVES))
+                   for actions, _ in self.action_lists for a in actions)
+
+    def check_solid_overlaps(self) -> None:
+        for where, c, mover, solid, lists in self.solid_overlaps:
+            names = self.names_of(solid)
+            off_elsewhere = any(isinstance(a, dict) and a.get("objectClass") in names and self.behavior_of(a) == "solid"
+                                and a.get("id") == "set-enabled" for actions, _ in self.action_lists
+                                if id(actions) not in lists for a in actions)
+            off_at_start = any(inst.get("type") in names and isinstance(block, dict)
+                               and (block.get("properties") or {}).get("enabled") is False
+                               for lay in self.layouts.values() if isinstance(lay, dict)
+                               for inst in layer_instances(lay.get("layers") or [])
+                               for b, block in (inst.get("behaviors") or {}).items()
+                               if self.p.behaviors_of(inst.get("type", "")).get(b, "").lower() == "solid")
+            if off_elsewhere or off_at_start or self.moved_otherwise(mover) or self.moved_otherwise(solid):
+                continue
+            offset = json.dumps({"id": "is-overlapping-at-offset", "objectClass": mover,
+                                 "parameters": {"object": solid, "offset-x": "1", "offset-y": "0"}})
+            self.p.findings.style_finding(
+                "solid-overlap",
+                f"{where}: {describe(c)} never holds while {solid}'s Solid is enabled: the Platform behavior pushes "
+                f"{mover} out of every Solid each tick, so the two touch and do not overlap, and the event "
+                f"never runs. Test touching with Is overlapping at offset, 1 pixel towards {solid}: {offset} for a "
+                f"{solid} on the right, \"offset-x\": \"-1\" on the left, \"offset-x\": \"0\", \"offset-y\": "
+                f"\"1\" below; two events, or an OR block, for both sides. {mover} On collision with {solid} also "
+                f"fires when they touch (Construct3-RAG/prompts/pitfalls/picking.md)")
+
+    def dragged(self, obj) -> bool:
+        """An object type with Drag & Drop, or a family that has it or has a member with it."""
+        return isinstance(obj, str) and any(b.lower() == "dragndrop" for n in self.names_of(obj)
+                                            if n in self.p.plugin_of for b in self.p.behaviors_of(n).values())
+
+    def note_drop(self, ace: dict, where: str) -> None:
+        """A Drag & Drop object tested for overlap or collision with another, or set to another's position: the
+        other is what it is dropped on. Kept for check_drops once every layout and action is known."""
+        a, b = ace.get("objectClass"), params_of(ace).get("object")
+        if ace.get("isInverted") or not isinstance(b, str) or a == b:
+            return
+        if ace.get("id") in DROP_TESTS:
+            pairs = ((a, b), (b, a))
+        elif ace.get("id") in DROP_SNAPS:
+            pairs = ((a, b),)
+        else:
+            return
+        for piece, target in pairs:
+            if self.dragged(piece) and not self.dragged(target):
+                self.drops.append((where, ace, piece, target))
+                return
+
+    def check_drops(self) -> None:
+        """A dropped piece drawn under what it is dropped on: see DROP_TESTS."""
+        p = self.p
+        if not self.drops:
+            return
+        restacked = {a.get("objectClass") for actions, _ in self.action_lists for a in actions
+                     if isinstance(a, dict) and a.get("id") in RESTACKS}
+        restacked |= {params_of(a).get("object") for actions, _ in self.action_lists for a in actions
+                      if isinstance(a, dict) and a.get("id") == "sort-z-order"}
+
+        def types_of(obj: str) -> set[str]:
+            return {obj} if obj in p.types else set(p.families.get(obj, {}).get("members", []))
+
+        def drawn(layers, out: list) -> list:
+            """(layer name, instance) bottom to top: a layer's sub-layers below its own instances."""
+            for layer in layers if isinstance(layers, list) else []:
+                if isinstance(layer, dict):
+                    drawn(layer.get("subLayers"), out)
+                    out += [(layer.get("name", ""), i) for i in layer.get("instances") or [] if isinstance(i, dict)]
+            return out
+
+        def shown(inst: dict) -> bool:
+            color = (inst.get("world") or {}).get("color")
+            alpha = color[3] if isinstance(color, list) and len(color) == 4 else 1
+            return (inst.get("properties") or {}).get("initially-visible", True) is not False and alpha != 0
+
+        said = set()
+        for where, ace, piece, target in self.drops:
+            if (piece, target) in said or self.names_of(piece) & restacked or self.names_of(target) & restacked:
+                continue
+            pieces, targets = types_of(piece), types_of(target)
+            for lname, lay in self.layouts.items():
+                order = drawn(lay.get("layers") if isinstance(lay, dict) else [], [])
+                under = next(((i, j) for i, (_, pi) in enumerate(order) if pi.get("type") in pieces
+                              for j, (_, ti) in enumerate(order) if ti.get("type") in targets and j > i and shown(ti)
+                              and (pi.get("world") or {}).get("z", 0) == (ti.get("world") or {}).get("z", 0)), None)
+                if under is None:
+                    continue
+                (pl, pi), (tl, ti) = order[under[0]], order[under[1]]
+                how = (f"on layer {pl!r} {pi['type']} comes before {ti['type']} in the instances, and one listed later "
+                       f"is drawn in front" if pl == tl else
+                       f"{pi['type']} is on layer {pl!r}, below {ti['type']}'s layer {tl!r}")
+                behavior = next((n for n, b in p.behaviors_of(pi["type"]).items() if b.lower() == "dragndrop"), "DragDrop")
+                top = json.dumps({"eventType": "block", "conditions": [{"id": "on-drag-start", "objectClass": piece,
+                                                                        "behaviorType": behavior}],
+                                  "actions": [{"id": "move-to-top", "objectClass": piece}]})
+                self.p.findings.style_finding(
+                    "drop-under",
+                    f"{where}: {describe(ace)} drops {piece} on {target}, and layout {lname} draws {piece} under "
+                    f"{target}: {how}. Dropped there, {piece} disappears behind {target}. List {piece}'s instance "
+                    f"after {target}'s on the same layer, or put it on a layer above; or raise it as it is picked "
+                    f"up, {top} (manual: project-primitives/objects/instances.md \"Z index\")")
+                said.add((piece, target))
+                break
+
+    def check_dead_timers(self) -> None:
+        """A Once timer that only its own On timer starts again, under a condition, and otherwise only On start of
+        layout: the first time the condition is false when the timer ends, nothing starts it, and On timer never
+        fires again. A reset after N seconds without input was written this way: a 0.1 s tick restarted while
+        combo > 0, never started by the tap, so it stopped at the first tick (a hosted model, 2026-10-09). Over
+        the 524 official examples it adds no finding."""
+        by_tag: dict[tuple[str, str], list[tuple[str, dict, tuple, bool | None]]] = {}
+        for w, a, line, paced in self.timer_starts:
+            tag = params_of(a).get("tag")
+            if isinstance(tag, str):
+                by_tag.setdefault((str(a.get("objectClass")), unquote(tag).lower()), []).append((w, a, line, paced))
+
+        def fires(c: dict, obj: str, tag: str) -> bool:
+            t = params_of(c).get("tag")
+            return c.get("id") == "on-timer" and c.get("objectClass") == obj and self.behavior_of(c) == "timer" \
+                and isinstance(t, str) and unquote(t).lower() == tag
+
+        for (obj, tag), starts in by_tag.items():
+            if any(str(params_of(a).get("type")).lower() != "once" for _, a, _, _ in starts):
+                continue
+            restarts = []
+            for w, a, line, paced in starts:
+                at = next((i for i, e in enumerate(line) if any(fires(c, obj, tag) for c in e.get("conditions", [])
+                                                                if isinstance(c, dict))), None)
+                if at is None:
+                    if paced is None or not any(isinstance(c, dict) and c.get("objectClass") == "System" and
+                                                c.get("id") == "on-start-of-layout"
+                                                for e in line for c in e.get("conditions", [])):
+                        break                 # started by another trigger, a function or every tick
+                    continue
+                extra = [c for e in line[at:] for c in e.get("conditions", []) if isinstance(c, dict)
+                         and not fires(c, obj, tag)]
+                if not extra or any(c.get("objectClass") == "System" and c.get("id") == "else" for c in extra):
+                    break                     # On timer starts it again whatever the state
+                restarts.append((w, a, extra))
+            else:
+                if not restarts:
+                    continue
+                w, a, extra = restarts[0]
+                shown = params_of(a).get("tag")
+                start = json.dumps({"id": "start-timer", "objectClass": obj, "behaviorType": a.get("behaviorType"),
+                                    "parameters": {"duration": "<seconds>", "type": "once", "tag": shown}},
+                                   ensure_ascii=False)
+                self.p.findings.style_finding(
+                    "dead-timer",
+                    f"{w}: Start timer {shown} runs again only from its own On timer {shown}, under "
+                    f"{' and '.join(describe(c) + ' ' + json.dumps(params_of(c), ensure_ascii=False) for c in extra)}, "
+                    f"and otherwise only On start of layout starts it. "
+                    f"The first time that condition is false when the timer ends, nothing starts it again, and On "
+                    f"timer {shown} never fires after that. Start it in the trigger of what it times: for a reset N "
+                    f"seconds after the last tap or key (a combo, an idle screen), start it in the input's trigger "
+                    f"on every input, {start}, which restarts it, and reset in On timer {shown}; no variable "
+                    f"needs to count the time (Construct3-RAG/prompts/pitfalls/timer.md)")
+
+    def not_leaving(self, c: dict) -> bool:
+        """Whether a condition above a Destroy says nothing about an instance on its way out: a hit, an input or a
+        plain pick. An inverted hit, a position, a timer or anything else may be."""
+        if c.get("id") in HITS:
+            return not c.get("isInverted")
+        plugin = self.p.plugin_of.get(c.get("objectClass", ""), "")
+        return plugin.lower() in INPUTS or (c.get("objectClass") == "System" and c.get("id") in PLAIN_PICKS)
+
+    def is_wall(self, obj) -> bool:
+        """A Solid or a Tilemap, or a family of them: what the official examples' bullets end on."""
+        return isinstance(obj, str) and any(
+            "solid" in {v.lower() for v in self.p.behaviors_of(n).values()} or self.p.plugin_of.get(n, "").lower() == "tilemap"
+            for n in self.names_of(obj))
+
+    def check_stray_bullets(self) -> None:
+        p = self.p
+        actions = [a for acts, _ in self.action_lists for a in acts if isinstance(a, dict)]
+        for t in sorted(p.types):
+            if "bullet" not in {v.lower() for v in p.behaviors_of(t).values()} \
+                    or {v.lower() for v in p.behaviors_of(t).values()} & REMOVERS:
+                continue
+            names = self.names_of(t)
+            if not any(self.made_by(a) in names for a in actions) \
+                    or any(a.get("objectClass") in names and a.get("id") in PLACINGS for a in actions) \
+                    or any(o in names and leaving for o, leaving in self.destroys):
+                continue
+            hit = sorted({b if a in names else a for a, b in self.hit_pairs if a in names or b in names} - {None},
+                         key=str)
+            if any(self.is_wall(o) for o in hit):
+                continue
+            behavior = '{"behaviorId": "destroy", "name": "DestroyOutsideLayout", "sid": <new sid>}'
+            self.warn(f"{t} moves with the Bullet behavior and the events create it, but nothing removes one that misses: "
+                      + (f"every Destroy of {t} is under a hit on {', '.join(map(str, hit))}, none of them a Solid, "
+                         if any(o in names for o, _ in self.destroys) else "no event destroys it, ")
+                      + f"so a {t} that hits nothing flies on outside the layout forever, and the instances pile up "
+                        f"and slow the game. Add the Destroy outside behavior to {t}: {behavior} in its "
+                        f"behaviorTypes, and \"DestroyOutsideLayout\": {{\"properties\": {{\"region\": \"layout\"}}}} "
+                        f"in the behaviors of its layout instances, and {USED_DESTROY} in usedAddons of project.c3proj "
+                        f"unless it is there; region \"viewport\" removes it at the screen's "
+                        f"edge when the layout is larger. It has no conditions or actions "
+                        f"(manual: behavior-reference/destroy-outside.md)")
+
     def check_block(self, ev: dict, scope: dict, where: str, by_input: bool | None = False,
                     paced: bool | None = False, line: tuple = (), gone: dict[str, str] | None = None) -> None:
         """by_input as check_gesture's; paced: whether the event or one above it is triggered, on a timer
@@ -2384,6 +2790,10 @@ class Checker:
             self.note_signal(c, f"{where} condition {i}")
             if isinstance(c, dict):
                 self.check_none_left(c, f"{where} condition {i}", gone, earlier)
+                self.note_solid_overlap(c, f"{where} condition {i}", ev)
+                self.note_drop(c, f"{where} condition {i}")
+                if c.get("id") in HITS:
+                    self.hit_pairs.append((c.get("objectClass"), params_of(c).get("object")))
                 if not ev.get("isOrBlock"):
                     self.check_narrowed(c, f"{where} condition {i}", earlier)
                     earlier.append(c)
@@ -2395,9 +2805,17 @@ class Checker:
             self.check_pathfinding(a, w, found, paced)
             self.check_held_control(a, w, held, paced)
             self.check_timer_restart(a, w, line, held, paced)
+            if a.get("id") == "start-timer" and self.behavior_of(a) == "timer":
+                self.timer_starts.append((w, a, line, paced))
             self.check_flip(a, w, line, paced)
+            if isinstance(a, dict):
+                self.note_drop(a, w)
             if gone is not None and a.get("id") == "destroy" and a.get("objectClass") in self.p.plugin_of:
                 gone.setdefault(a["objectClass"], w)
+            if a.get("id") == "destroy":
+                waited = any(self.waits(b) for b in ev["actions"][:i - 1] if isinstance(b, dict))
+                self.destroys.append((a.get("objectClass"), waited or not held
+                                      or not all(self.not_leaving(c) for c in held)))
             if a.get("type") == "script":
                 self.check_script(a.get("script"), scope, w)
             if a.get("type") in ("comment", "script"):
@@ -2903,6 +3321,10 @@ class Checker:
                         "Regenerate region around object on the Solid, or for many changes Regenerate obstacle map; "
                         "it takes effect the next tick, so a Find path right after it waits first "
                         "(manual: behavior-reference/pathfinding.md)")
+        self.check_solid_overlaps()
+        self.check_drops()
+        self.check_dead_timers()
+        self.check_stray_bullets()
         self.check_pending_instances()
         for t in self.created:
             if t in p.types and t not in self.templates:

@@ -564,6 +564,14 @@ class Design:
                     self.bad(f"{path}.args", f"{a!r} is a state name too; give the argument another name")
             game = row.get("game")
             self.read_binding(game, args, f"{path}.game")
+            if input_kind(game) == "object" and isinstance(row.get("player"), str) and SCREEN_WIDE.search(row["player"]):
+                tap = game["tap"]
+                self.bad(f"{path}.game", f"{row['player']!r} is a tap anywhere on the screen, but {{\"tap\": "
+                                         f"\"{tap}\"}} is Touch On touched {tap}, which fires only inside {tap}'s "
+                                         f"box: a tap anywhere else does nothing. Write {{\"tap\": [0.5, 0.5]}}, "
+                                         f"Touch On any touch start, which fires wherever the tap lands, or "
+                                         f"{{\"tap\": \"screen\", \"args\": {{\"x\": \"x\"}}}} when a rule reads "
+                                         f"where; no object stands for the screen")
             self.inputs[name] = {"args": args, "game": game if isinstance(game, dict) else {}, "path": path,
                                  "player": str(row.get("player") or ""), "kind": input_kind(game)}
 
@@ -878,6 +886,18 @@ def effect(text) -> tuple:
     op = p.take()[1]
     value = p.whole()
     return ("set", (name, index), op, value)
+
+
+# The player's words for a tap that lands anywhere on the screen rather than on one thing in it: "tap the
+# screen", "tap anywhere", "点击屏幕", "点屏幕任意处". "tap a dot on the screen", "anywhere on the board",
+# "点一下屏幕下方的提示" and "点菜单任意位置" name a part of it. An input bound to an object with these words
+# built an invisible Sprite as the tap area, which takes only the taps inside it (2026-10-09 hosted-model batch)
+SCREEN_WIDE = re.compile(
+    r"\banywhere\b(?!\s+(?:on|in|inside|within)\s+(?!(?:the\s+)?(?:screen|window)\b)\w)"
+    r"|\b(?:tap|taps|tapping|click|clicks|clicking|touch|touches|touching|press|presses|pressing)\s+(?:on\s+)?"
+    r"(?:the\s+)?(?:whole\s+|entire\s+)?(?:screen|window)\b(?!'s|\s+(?:edge|corner|side|button))"
+    r"|(?:点|点击|点按|轻点|轻触|触摸|触碰|按)(?:一下|一次)?(?:整个)?(?:屏幕|画面)(?![上中下左右的边顶底里内角])"
+    r"|(?:^|[点击按触摸碰下]|屏幕|画面)(?:任意|任何)(?:位置|地方|处|一处)", re.I)
 
 
 def input_kind(game) -> str:

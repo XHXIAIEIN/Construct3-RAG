@@ -199,12 +199,59 @@ def seed_no_solid(root: Path) -> None:
         edit(root / "project.c3proj", lambda p: p.update(usedAddons=[a for a in p["usedAddons"] if a["id"] != "solid"]))
 
 
+def seed_door(root: Path) -> None:
+    """A Door, a TiledBg with Solid standing on the first floor between the player and the floor's end, and a
+    Key, a Sprite with no behaviors behind the player: the platformer template with the art of a locked door
+    and no events for it."""
+    def load(path: Path) -> dict:
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def save(path: Path, data: dict) -> None:
+        path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+
+    types = root / "objectTypes"
+    all_types = [load(p) for p in types.glob("*.json")]
+    sprite_ids = [t["image"]["imageSpriteId"] for t in all_types if "image" in t] + \
+                 [f["imageSpriteId"] for t in all_types for a in t.get("animations", {}).get("items", []) for f in a["frames"]]
+    door = load(types / "solidtile.json")
+    door.update(name="Door", sid=6666000000001)
+    door["behaviorTypes"][0]["sid"] = 6666000000002
+    door["image"]["imageSpriteId"] = max(sprite_ids) + 1
+    save(types / "door.json", door)
+    shutil.copy(root / "images" / "solidtile.png", root / "images" / "door.png")
+    key = load(types / "player.json")
+    key.update(name="Key", sid=6666000000003, behaviorTypes=[])
+    key["animations"]["items"][0]["sid"] = 6666000000004
+    key["animations"]["items"][0]["frames"][0]["imageSpriteId"] = max(sprite_ids) + 2
+    save(types / "key.json", key)
+    shutil.copy(root / "images" / "player-default-000.png", root / "images" / "key-default-000.png")
+
+    project = load(root / "project.c3proj")
+    project["objectTypes"]["items"] += ["Door", "Key"]
+    save(root / "project.c3proj", project)
+    layout_path = root / "layouts" / "layout 1.json"
+    layout = load(layout_path)
+    game = next(layer for layer in layout["layers"] if layer["name"] == "Game")
+    # Single-global objects (Keyboard) keep their uid in their object type file.
+    uid = max([i["uid"] for layer in layout["layers"] for i in layer["instances"]]
+              + [t["singleglobal-inst"]["uid"] for t in all_types if "singleglobal-inst" in t])
+    tile = next(i for i in game["instances"] if i["type"] == "SolidTile")
+    player = next(i for i in game["instances"] if i["type"] == "Player")
+    game["instances"] += [
+        {**json.loads(json.dumps(tile)), "type": "Door", "uid": uid + 1,
+         "world": {**tile["world"], "x": 288, "y": 704, "width": 32, "height": 64, "color": [0.6, 0.35, 0.15, 1]}},
+        {**json.loads(json.dumps(player)), "type": "Key", "uid": uid + 2, "behaviors": {},
+         "world": {**player["world"], "x": 80, "y": 768, "width": 24, "height": 24, "color": [1, 0.85, 0.2, 1]}}]
+    save(layout_path, layout)
+
+
 # fixture -> (the fixture it starts from, the fault written into it). The seeded entries' sids start
 # with 6333, 6444 or 6555, so a grader can tell the example's own events from them.
 SEEDS = {"families-key-pressed": ("example:families", seed_key_pressed),
          "coins-timer-restart": ("coins", seed_timer_restart),
          "coins-turn-flip": ("coins", seed_turn_flip),
-         "persistent-walls": ("example:persistent-layouts", seed_no_solid)}
+         "persistent-walls": ("example:persistent-layouts", seed_no_solid),
+         "platformer-door": ("example:template-platformer", seed_door)}
 
 
 def digest(project: Path) -> dict:

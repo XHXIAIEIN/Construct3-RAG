@@ -11,7 +11,7 @@ effects, sub-rules), win and lose, and the acceptance tests. The script reads
 it and refuses a gap by its path: a missing table, an empty list of what is
 left for later, a name nothing defines,
 a state no rule writes or nothing reads, a fact kept in two places, an input
-without feedback, no rule that restarts a game that ends, an input that changes nothing the
+without feedback, a tap on the whole screen bound to an object, no rule that restarts a game that ends, an input that changes nothing the
 player sees, and a cell of an Array an input writes with nothing on screen
 that shows it: no count of instances, and no text or number whose expression
 reads the Array.

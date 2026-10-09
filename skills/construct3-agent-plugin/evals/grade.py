@@ -1331,7 +1331,7 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "script-shift-and-edges": grade_script_shift_and_edges,
            "platform-state-in-chinese": grade_platform_state_in_chinese,
            "design-a-catch-game": grade_design_a_catch_game,
-           "double-jump": grade_kept, "stay-on-screen": grade_kept, "walls-stop-the-player": grade_kept,
+           "double-jump": grade_kept, "key-opens-door": grade_kept, "stay-on-screen": grade_kept, "walls-stop-the-player": grade_kept,
            "coins-in-a-ring": lambda run: grade_kept(run, own_warnings=False)}
 
 

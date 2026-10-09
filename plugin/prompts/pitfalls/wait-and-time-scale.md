@@ -69,6 +69,18 @@ Sources and the rule for adding an entry are in the index,
   else. Behaviors, timers and tweens it started keep running. So it turns a
   phase off but does not pause. [manual: system-reference/system-actions.md
   "Set group active"; examples: every pause is *Set time scale* 0]
+- *Set time scale* 0 stops every animation as well, so a cutscene, an
+  ultimate's full-screen animation or a pause menu's own animation stops
+  with the battle. Pause with *Set time scale* 0, then *Set object time
+  scale* 1 on the object that must keep playing. In the Sprite's *On
+  finished* for that animation, *Set time scale* 1 and *Restore object time
+  scale* on the object. *Set object time scale* also drives the object's
+  animation, though the manual names only its behaviors and its `dt`.
+  [manual: system-reference/system-actions.md "Set object time scale";
+  observed in effects-screen-blend, r495.2 preview, 2026-10-09: at time
+  scale 0, a 15 fps explosion whose instances got time scale 1 from a
+  script, the value the action sets, went from frame 7 to 22
+  in 1 s, and the other explosion stayed on frame 7]
 - A hit stop is *Set time scale* 0.1, *Wait* and *Set time scale* 1 in one
   block. A smooth ramp is a *Tween (value)* on any object read into *Set time
   scale* while *Is playing*. [examples: segmented-boss-fight BossHeath;

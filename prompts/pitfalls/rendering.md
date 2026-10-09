@@ -125,6 +125,20 @@ Sources and the rule for adding an entry are in the index,
   observed in a minimal project, r504 preview, 2026-10-02, through the
   scripting `moveToTop()`: the parent went from Z index 10 to the top, its
   child stayed below an instance created after it]
+- A layout draws its layers bottom to top, and on one layer the instances in
+  the order the layout file lists them: the first is at the back. A
+  draggable piece listed before the slot or box it is dropped on is drawn
+  under it, so the piece snapped into the box disappears. Put the piece on a
+  layer above, list it after its target, or raise it as it is picked up with
+  *Move to top* in Drag & Drop *On drag start*. Seven of the ten official
+  examples that test a dragged object against a target raise it at runtime
+  (`alchemist`, `family-tree`, `place-stickers` among them).
+  `check_project.py` warns on a drop test or a snap whose piece the layout
+  draws under its target, and `edit_sheet.py` refuses one a plan adds.
+  [manual: project-primitives/objects/instances.md "Z index", 0 is the
+  bottom; interface/bars/z-order-bar.md; observed in a generated drag-and-snap
+  demo, r495.2 preview, 2026-10-09: the block, listed before the target on
+  one layer, snapped to the target's centre and was hidden behind it]
 - *Set color* is a tint: it multiplies each channel of the image by the
   colour, and white restores the original. A part drawn in white takes the
   colour exactly, and black outlines stay black. But white highlights take the

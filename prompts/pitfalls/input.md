@@ -175,6 +175,15 @@ Sources and the rule for adding an entry are in the index,
   numbers. The copy and the clear come before the groups that write, so a
   consumer anywhere below them reads this tick's state. [observation in a
   studied project, 2026-10-06]
+- A tap on the screen, a tap anywhere, is Touch *On any touch start*, which
+  fires for a touch wherever it lands. *On touched object* fires only for a
+  touch that starts inside the object, so an invisible Sprite laid out as the
+  tap area misses every tap outside its box: one built 397 px square in a
+  corner of a 720×1280 layout counted the taps in that corner and none in
+  the middle. Use *On any touch start* with no object, and `Touch.X` and
+  `Touch.Y` where the rule reads where the tap landed. [manual:
+  plugin-reference/touch.md "On any touch start", "On touched object";
+  observed in a generated project, editor preview, 2026-10-09]
 - A popup closed by a tap on its dim, Touch *On touched object* with the
   dim, closes only where the dim reaches. Under *Scale outer* the viewport
   grows with the window's aspect ratio, so a dim sized to the design area

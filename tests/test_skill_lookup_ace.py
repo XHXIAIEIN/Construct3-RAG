@@ -108,6 +108,15 @@ def test_ace_lookup_needs_no_project_and_takes_a_display_name(skill_only):
     assert "action set-max-speed" in out and "[behavior <behavior name on the object>, eightdir]" in out
 
 
+def test_a_behavior_without_aces_is_named_as_one_and_how_to_add(skill_only):
+    """A model shooting blocks looked Destroy outside up, read that the clone had no schema for a third-party
+    addon, and left its bullets flying forever (2026-10-09 batch, ask 06)."""
+    code, out = tool(skill_only, "lookup_ace", "Destroy outside")
+    assert code == 0 and "third-party" not in out, out
+    assert out.startswith("Destroy outside is a behavior with no conditions, actions or expressions"), out
+    assert "region (layout | viewport)" in out and '{"behaviorId": "destroy", "name": "<behavior name on the object>"' in out
+
+
 def test_ace_lookup_offers_the_nearest_id(built):
     code, out = tool(built, "lookup_ace", "System", "wiat")
     assert code != 0 and "closest: wait" in out
@@ -235,6 +244,17 @@ def test_ace_lookup_prints_a_miss_on_stdout(built):
     assert p.stderr == ""
     p = lookup("Sprte")
     assert p.returncode == 1 and p.stdout == "" and "is not an object of this project" in p.stderr
+
+
+def test_a_chinese_miss_asks_for_the_english_term(built):
+    """A model guessed 时间尺度 for 时间速率 and looked it up in Chinese thirteen times; the English term
+    finds it, and the hit prints the zh-CN name."""
+    code, out = tool(built, "lookup_ace", "System", "时间尺度", "--locale", "zh-CN")
+    assert code == 1 and "translate it into the English term" in out
+    code, out = tool(built, "lookup_ace", "System", "time", "scale", "--locale", "zh-CN")
+    assert code == 0 and "设置时间速率" in out
+    code, out = tool(built, "lookup_ace", "System", "aniamtion")
+    assert code == 1 and "English term" not in out
 
 
 def test_lookup_writes_a_sound_bare(built):

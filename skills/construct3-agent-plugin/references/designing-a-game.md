@@ -105,7 +105,10 @@ shows before the build and a bug in the events after it.
   `{"tap": [0.5, 0.9]}` taps that point of the screen, as shares of its width
   and height; `{"tap": "screen", "args": {"x": "x"}}` taps where the argument
   `x` says, in px of the layout, for a game that follows the finger;
-  `{"key": "ArrowLeft"}` presses a key. A design reads only its own state and
+  `{"key": "ArrowLeft"}` presses a key. A tap anywhere on the screen is a
+  point, never an object: a Sprite as a tap area takes only the taps inside
+  it, and the check refuses an object for an input whose `player` says the
+  screen or anywhere. A design reads only its own state and
   the arguments: a basket's position is a state row stored in `Basket.x`, not
   `Basket.X` in a rule.
 - Every tap is also a tap on the screen: a screen input fires on every tap,

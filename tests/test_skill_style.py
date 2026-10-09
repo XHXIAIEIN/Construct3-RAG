@@ -214,6 +214,46 @@ def test_timer_started_under_a_trigger_or_by_an_overlap_is_left_alone(project):
         assert "runs every tick" not in out and out.splitlines()[-1].startswith("ok:"), out
 
 
+def on_timer(tag: str) -> dict:
+    return {"id": "on-timer", "objectClass": "ScoreText", "behaviorType": "Timer", "parameters": {"tag": f'"{tag}"'}}
+
+
+def start_timer(tag: str, seconds: str) -> dict:
+    return {"id": "start-timer", "objectClass": "ScoreText", "behaviorType": "Timer",
+            "parameters": {"duration": seconds, "type": "once", "tag": f'"{tag}"'}}
+
+
+def test_plan_refuses_a_timer_only_its_own_on_timer_restarts_under_a_condition(project):
+    """A hosted model's combo reset of 2026-10-09: a 0.1 s tick started at the start of the layout and
+    restarted in its own On timer only while coins are left, never by the tap, so it stopped for good at the
+    first tick. Refused, naming the input trigger and the Start timer to write there; the timer restarted by
+    the tap, or by an Else branch of the On timer, goes through."""
+    give_behavior(project, "ScoreText", "Timer", "Timer")
+    before = (project / SHEET).read_bytes()
+    some_left = {**NONE_LEFT, "parameters": {**NONE_LEFT["parameters"], "comparison": 4}}
+    start = {"eventType": "block", "conditions": [cond("on-start-of-layout")], "actions": [start_timer("tick", "0.1")]}
+    tick = {"eventType": "block", "conditions": [on_timer("tick")], "actions": [],
+            "children": [{"eventType": "block", "conditions": [some_left], "actions": [start_timer("tick", "0.1")]}]}
+    code, out = plan(project, {"into": 0, "events": [comment("Start the tick."), start, comment("Tick."), tick]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r'operation 1: sheet Game event \d+ \(sid \d+\) action 1: Start timer "tick" runs again only '
+                    r'from its own On timer "tick", under System:compare-two-values', out), out
+    assert 'never fires after that' in out and json.dumps(
+        {"id": "start-timer", "objectClass": "ScoreText", "behaviorType": "Timer",
+         "parameters": {"duration": "<seconds>", "type": "once", "tag": '"tick"'}}) in out.splitlines()[0], out
+    tick["children"][:0] = [comment("Coins left: tick on.")]
+    tick["children"] += [comment("None left: tick slower."),
+                         {"eventType": "block", "conditions": [cond("else")], "actions": [start_timer("tick", "1")]}]
+    code, out = plan(project, {"into": 0, "events": [comment("Start the tick."), start, comment("Tick."), tick]},
+                     flags=("--dry-run",))
+    assert code == 0 and "runs again only" not in out, out
+    tap = {"eventType": "block", "conditions": [TOUCH_COIN], "actions": [start_timer("reset", "1")]}
+    reset = {"eventType": "block", "conditions": [on_timer("reset")], "actions": [SAY_DONE]}
+    code, out = plan(project, {"into": 0, "events": [comment("A tap restarts the reset."), tap,
+                                                     comment("A second without taps."), reset]}, flags=("--dry-run",))
+    assert code == 0 and warnings(out) == [], out
+
+
 def test_simulate_control_under_a_trigger(project):
     """Every new-game plan of the prompt evals walked under On key pressed: Simulate control holds the
     control for that tick alone. Refused in a new event with the condition that holds, its key kept;
@@ -435,3 +475,107 @@ def test_style_names_sibling_events_dispatching_on_find(project):
     assert '"b" also matches "bu"' in found[0] and "compared with =" in found[0], found
     edit(project, SHEET, lambda s: events(s)["input"].update(children=finds("B")))
     assert "picks a branch by testing" not in check(project, "--style")[1]
+
+
+def platform_hero_and_solid_backdrop(project: Path) -> None:
+    """Hero, a copy of Coin without its behaviors, walks with Platform, and nothing else moves it; Backdrop is
+    Solid, and no event switches it off."""
+    hero = json.loads((project / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
+    ids = iter(range(9000, 9100))
+    hero.update(name="Hero", sid=9100, behaviorTypes=[{"behaviorId": "Platform", "name": "Platform", "sid": 9101}],
+                instanceVariables=[])
+    for anim in hero["animations"]["items"]:
+        anim["sid"] = next(ids)
+        for frame in anim["frames"]:
+            frame["imageSpriteId"] = next(ids)
+    (project / "objectTypes" / "Hero.json").write_text(json.dumps(hero), encoding="utf-8")
+    for image in (project / "images").glob("coin-*.png"):
+        (project / "images" / image.name.replace("coin-", "hero-")).write_bytes(image.read_bytes())
+    edit(project, "project.c3proj", lambda d: d["objectTypes"]["items"].append("Hero"))
+    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "solid", "name": "Solid", "sid": 9102}))
+
+    def blocks(d):
+        layer = d["layers"][0]
+        board = next(i for i in layer["instances"] if i["type"] == "Board")
+        layer["instances"].append({**json.loads(json.dumps(board)), "type": "Hero", "uid": 9103,
+                                   "properties": {"initially-visible": True, "initial-animation": hero["animations"]["items"][0]["name"],
+                                                  "initial-frame": 0, "enable-collisions": True, "live-preview": False},
+                                   "behaviors": {"Platform": {"properties": {}}}, "instanceVariables": {}})
+        for i in layer["instances"]:
+            if i["type"] == "Backdrop":
+                i.setdefault("behaviors", {})["Solid"] = {"properties": {}}
+    edit(project, "layouts/Game.json", blocks)
+    add_addon(project, "behavior", "Platform", "Platform")
+    add_addon(project, "behavior", "solid", "Solid")
+
+
+def test_platform_overlapping_a_solid_is_refused(project):
+    """Key-and-door tasks: Player Is overlapping Door, the Door Solid, never holds, since Platform pushes the
+    player out of every Solid. Refused, naming Is overlapping at offset; that test goes through, and so does
+    the overlap when another event switches the Solid off."""
+    platform_hero_and_solid_backdrop(project)
+    before = (project / SHEET).read_bytes()
+    overlap = {"id": "is-overlapping-another-object", "objectClass": "Hero", "parameters": {"object": "Backdrop"}}
+    off = {"id": "set-enabled", "objectClass": "Backdrop", "behaviorType": "Solid", "parameters": {"state": "disabled"}}
+    ev = {"eventType": "block", "conditions": [overlap], "actions": [SAY_DONE, off]}
+    code, out = plan(project, {"into": 0, "events": [comment("Open the backdrop."), ev]})
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) condition 1: Hero:is-overlapping-another-object "
+                    r"never holds while Backdrop's Solid is enabled", out), out
+    at_offset = {"id": "is-overlapping-at-offset", "objectClass": "Hero",
+                 "parameters": {"object": "Backdrop", "offset-x": "1", "offset-y": "0"}}
+    assert json.dumps(at_offset) in out.splitlines()[0], out
+    ev = {**ev, "conditions": [at_offset]}
+    code, out = plan(project, {"into": 0, "events": [comment("Open the backdrop."), ev]}, flags=("--dry-run",))
+    assert code == 0 and warnings(out) == [], out
+    elsewhere = [comment("Open the backdrop."), {"eventType": "block", "conditions": [ONCE], "actions": [off]},
+                 comment("Say it."), {"eventType": "block", "conditions": [overlap], "actions": [SAY_DONE]}]
+    code, out = plan(project, {"into": 0, "events": elsewhere}, flags=("--dry-run",))
+    assert code == 0 and warnings(out) == [], out
+
+
+def coin_dragged_under_board(project: Path) -> None:
+    """Coin gets Drag & Drop and an instance on the Background layer, listed before the Board."""
+    edit(project, "objectTypes/Coin.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "DragnDrop", "name": "DragDrop", "sid": 9200}))
+    objects = json.loads((project / "layouts" / "Objects.json").read_text(encoding="utf-8"))
+    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"].insert(0, {
+        **json.loads(json.dumps(next(i for i in objects["layers"][0]["instances"] if i["type"] == "Coin"))),
+        "uid": 9201, "sid": 9202}))
+    for rel in ("layouts/Game.json", "layouts/Objects.json"):
+        edit(project, rel, lambda d: [i.setdefault("behaviors", {}).update(DragDrop={"properties": {}})
+                                      for layer in d["layers"] for i in layer["instances"] if i["type"] == "Coin"])
+    add_addon(project, "behavior", "DragnDrop", "Drag & Drop")
+
+
+def test_a_dragged_object_drawn_under_its_target_is_refused(project):
+    """A hosted model's drag-and-snap demo listed the Block before the Target on one layer, so the block it
+    snapped into the target was drawn under it and looked gone. Refused, naming the order and Move to top in
+    On drag start; the Coin listed after the Board, or raised as it is picked up, goes through."""
+    coin_dragged_under_board(project)
+    before = (project / SHEET).read_bytes()
+    drop = {"eventType": "block",
+            "conditions": [{"id": "on-any-touch-end", "objectClass": "Touch"},
+                           {"id": "is-overlapping-another-object", "objectClass": "Coin", "parameters": {"object": "Board"}}],
+            "actions": [{"id": "set-position-to-another-object", "objectClass": "Coin",
+                         "parameters": {"object": "Board", "image-point-optional": "0"}}, SAY_DONE]}
+    ops = {"into": 0, "events": [comment("Snap the coin onto the board."), drop]}
+    code, out = plan(project, ops)
+    assert code == 1 and (project / SHEET).read_bytes() == before, out
+    assert re.match(r"operation 1: sheet Game event \d+ \(sid \d+\) condition 2: Coin:is-overlapping-another-object "
+                    r"drops Coin on Board, and layout Game draws Coin under Board: on layer 'Background' Coin comes "
+                    r"before Board", out), out
+    assert '"on-drag-start"' in out.splitlines()[0] and '"move-to-top"' in out.splitlines()[0], out
+    raise_it = {"eventType": "block", "conditions": [{"id": "on-drag-start", "objectClass": "Coin", "behaviorType": "DragDrop"}],
+                "actions": [{"id": "move-to-top", "objectClass": "Coin"}]}
+    code, out = plan(project, {"into": 0, "events": [comment("Lift the coin."), raise_it, *ops["events"]]},
+                     flags=("--dry-run",))
+    assert code == 0 and "drops Coin on Board" not in out, out
+
+    def coin_last(d):
+        rows = d["layers"][0]["instances"]
+        rows.append(rows.pop(0))
+    edit(project, "layouts/Game.json", coin_last)
+    code, out = plan(project, ops, flags=("--dry-run",))
+    assert code == 0 and "drops Coin on Board" not in out, out

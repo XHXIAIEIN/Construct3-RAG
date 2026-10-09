@@ -24,7 +24,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 
 - An instance with collisions disabled fails every overlap and collision test, both ways. Use this for a dragged or tweening instance, not an `isMoving` flag.
 - A Solid blocks while its behavior is enabled, so a door that only plays an open animation keeps blocking. Disable its Solid with *Set enabled*, or destroy it.
-- A Solid stops a Platform object at its edge, so *Is overlapping* stays false against a wall or on the floor. Test touching with *Is overlapping at offset*, 1 pixel towards the Solid.
+- A Solid stops a Platform object at its edge, so *Is overlapping* stays false against a wall or on the floor. Test touching with *Is overlapping at offset*, 1 pixel towards the Solid; *On collision* still fires.
 - The slot a dragged or tweening instance will land on reads empty until it lands. An event that fills empty slots on its own waits for it.
 - A type and its family are picked separately, so narrowing `Piece` never narrows `Pieces`. Refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
@@ -83,6 +83,7 @@ If the events define or call a function or a custom action, read
 If the events use the Timer behavior, read [pitfalls/timer.md](pitfalls/timer.md).
 
 - *Start timer* on an existing tag restarts it. After *Stop* or a *Once* timer's end its expressions return 0.
+- A reset N seconds after the last input (a combo, an idle screen): *Start timer* for N, *Once*, in the input's trigger on every input, and reset in *On timer*. A tick timer that only its own *On timer* restarts under a condition stops for good.
 - A timer is state you start and stop, so list every transition before choosing it.
 - A timer and a tween scheduled to end together end a tick apart.
 - One instance cannot time stacked buffs of one kind with Timer tags: no expression names the tag that fired, and a re-cast restarts the tag. Make each shield or buff an instance with its own Timer and amount, a child of its holder; spend them with *Pick children* and *For each (ordered)* by the time left.
@@ -100,6 +101,7 @@ group turned off to pause, read
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.
 - *Wait 0* resumes at the start of the next tick, not at the end of the event or sheet. Leave it out unless a trigger fires before the tick applies what it reports.
 - Deactivating a group stops its events, not its behaviors, timers or tweens, so it does not pause.
+- *Set time scale* 0 stops animations too. To keep one playing through a pause (an ultimate, a cutscene), *Set object time scale* 1 on it, and restore both in the Sprite's *On finished*.
 - A hit stop is *Set time scale* 0.1, *Wait*, *Set time scale* 1. A smooth ramp is a value tween.
 - Of two overlapping *Wait* hit stops, the shorter ends both. Count the stops under way, and restore the time scale when the count is back to 0. A `wallclocktime` deadline runs on another clock than the *Wait* and leaves the game slowed.
 - A hit stop slows tweens and `dt` too. If a tween must end on an audio beat, set its object's time scale to 1 and restore it in *On finished*. If a blend must keep real time, use `dt / timescale`.
@@ -151,8 +153,9 @@ If an object chases, follows or walks to another object, read
 ### Input
 
 If the events use Mouse and Touch together, tell a finger from a mouse,
-hide what can be pressed or dragged, close a popup by a tap outside it,
-read a touch's speed, bind keys, steer a movement behavior, or ask the
+take a tap anywhere on the screen, hide what can be pressed or dragged,
+close a popup by a tap outside it, read a touch's speed, bind keys, steer a
+movement behavior, or ask the
 browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfalls/input.md).
 
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
@@ -167,6 +170,7 @@ browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfa
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
 - Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
 - Keyboard and Gamepad are separate conditions. Write both into one input object with a value per control and its last-tick copy, and read a press as `confirm > lastConfirm`.
+- A tap anywhere on the screen is *On any touch start* with no object. *On touched* an invisible Sprite as the tap area misses every tap outside its box.
 - Under *Scale outer* a dim sized to the design area leaves strips uncovered, and a tap on them misses *On touched* the dim. Size the cover 8000×8000 and close on *On any touch start* with *NOT Is touching* the panel and its buttons.
 
 ### Audio
@@ -210,7 +214,7 @@ If the events use image points, animations or frames, read
 
 If the events colour, size or space Text or a Sprite Font, scale or scroll
 the image of a Tiled Background or a 9-patch, or draw bars, Drawing Canvas
-polygons or blend modes, read
+polygons or blend modes, or drop a dragged object onto another, read
 [pitfalls/rendering.md](pitfalls/rendering.md).
 
 - A Text object has no *Set color*. Colour it with *Set font color*, or the project does not open.
@@ -223,6 +227,7 @@ polygons or blend modes, read
 - A Text object draws only the lines that fit its height. Size the box for the longest text.
 - A single line taller than its Text box draws with the bottom of its glyphs cut off.
 - *Move to top* leaves a hierarchy's children where they were. Move each part.
+- An instance listed earlier on a layer is drawn under the later ones, so a dragged piece listed before its target vanishes behind it when dropped. List it after the target, or *Move to top* in *On drag start*.
 - *Set color* multiplies. Draw a tinted part white and keep highlights on an untinted child.
 - Changing a Text's font size redraws and re-uploads its texture. Animate position, angle or opacity, or use a Sprite Font and tween its scale.
 - A Sprite Font draws whole cells and tints its outline with its colour. Draw glyphs left in the cell, one image per colour, in a box sized for the largest scale.
@@ -281,6 +286,7 @@ Sprite, read [pitfalls/creating-objects.md](pitfalls/creating-objects.md).
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
 - A created instance is found outside its own event only by UID, until the top-level event ends.
 - The instances of a new hierarchy run *On created* in no fixed order. Initialise the hierarchy in *On hierarchy ready* of its root, which fires once all of them have.
+- A fired bullet that misses flies on outside the layout forever, since its hit events destroy only the ones that hit. Give it the Destroy outside behavior.
 
 ### Restarting a layout
 

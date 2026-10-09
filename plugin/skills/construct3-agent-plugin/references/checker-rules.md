@@ -19,7 +19,8 @@ editor reads them. Layout instances must carry every instance variable and
 behavior block of their type and only properties the schema has. Layers,
 layouts, animations, groups, timelines, flowcharts, project files, images and
 called functions and custom actions must exist, with the right parameter
-count. An image is `images/<object type>-<animation>-<frame, three
+count, and so must the function a *Map function* or *Map default function*
+names, matched without case. An image is `images/<object type>-<animation>-<frame, three
 digits>.png`, or `images/<object type>.png` for a single image, in lower
 case; one imported in a lossy format and not edited since keeps that format,
 which the entry's `fileType` names. Its size is not compared with the
@@ -76,6 +77,15 @@ Traps of the running game are warnings:
   leaves the group or layout, and when the branch tests *Is timer running*
   or what changes as the game plays: an overlap, a key, a position, a
   function;
+- a *Once* timer that its own *On timer* starts again only under a
+  further condition, and that nothing else starts but *On start of
+  layout*. The first time the condition is false when the timer ends,
+  nothing starts it, and *On timer* never fires again
+  [`Construct3-RAG/prompts/pitfalls/timer.md`]. The finding names the
+  input trigger to start it in. It passes when a *Regular* start, an *Else*
+  branch or an unconditional restart keeps it going, and when another
+  trigger, a function or an event that runs every tick starts it. Over the
+  524 official examples it adds no finding;
 - a variable flipped in an event that runs every tick: *Toggle*, or *Set*
   to `N - x`, `-x`, `x * -1` or `x = a ? b : a` of the same variable. The
   event runs again on the next tick and flips it back, so the value an
@@ -114,6 +124,42 @@ Traps of the running game are warnings:
   that picks no X stops its event, and *Pick all* is false when no X
   exists, so the test never holds [manual:
   project-primitives/events/how-events-work.md];
+- *Is overlapping* between an object with Platform and a Solid: the
+  behavior pushes its object out of every enabled Solid each tick, so the
+  two touch and the test never holds
+  [`Construct3-RAG/prompts/pitfalls/picking.md`]. The finding writes *Is
+  overlapping at offset*, 1 pixel towards the Solid. It passes when
+  something else moves either object (another movement behavior, a
+  position, size or tween action, the Platform switched off), when an
+  event other than the test's own, or a layout instance, switches the
+  Solid off, and for *On collision*, which the behavior fires as it pushes
+  out. Over the 524 official examples it adds no finding;
+- a Drag & Drop object tested for overlap or collision with another object,
+  or set to its position, when a layout draws it under that object: on a
+  lower layer, or listed before it on the same layer. Dropped there, the
+  piece disappears behind its target
+  [`Construct3-RAG/prompts/pitfalls/rendering.md`]. The finding names both
+  ways out, the order in the layout and *Move to top* in *On drag start*,
+  with its JSON. It passes when an action changes the Z order of either
+  object (*Move to top*, *Move to bottom*, *Move to layer*, *Move to object*,
+  *Sort Z order*, a Z elevation), when the target starts invisible, and when
+  the two stand at different Z elevations. Over the 524 official examples it
+  adds no finding: 10 of them test a dragged object against a target, and 7
+  of those raise it at runtime;
+- an object type with the Bullet behavior that the events create, with
+  nothing to remove one that misses: no Destroy outside, Wrap, Bound to
+  layout, Fade or Tween behavior, no action that places it again, and every
+  Destroy of it under a collision or overlap with objects none of which is
+  a Solid or a Tilemap, an input or a plain pick. A missed shot flies on
+  outside the layout forever, and the instances pile up and slow the game
+  [manual: behavior-reference/destroy-outside.md]. The finding writes the
+  Destroy outside behavior for the object type, its layout instances and
+  `usedAddons`. A Destroy under another condition, such as *Is outside
+  layout*, a position or a timer, or after a *Wait*, passes, as does a
+  bullet that hits a Solid, the walls and ground the official examples'
+  bullets end on. Over the 524 official examples it names four objects, an
+  enemy plane, a projectile and two kinds of debris, that do fly on
+  forever;
 - text a Sprite Font cannot draw, in a layout instance's text or in a
   literal that *Set text*, *Append text* or *Typewriter text* joins at the
   top level of its expression: a character outside the Character set shows
@@ -127,6 +173,22 @@ Traps of the running game are warnings:
   *Character height*: the editor fills the values that fit its own font
   image, so an image drawn in another order or cell size shows the wrong
   characters;
+- a visible Text on a layer at parallax 0, or on a layout the size of the
+  viewport, whose aligned side lies less than 1 px from the screen's edge:
+  its first letter touches the edge, and a phone's rounded corner cuts it.
+  The finding moves it the template's MARGIN in. Over the 524 official
+  examples: 10 findings in 8 projects, each a text drawn at or past an edge;
+- a Text that reads under 3:1 against the colour of the opaque layer behind
+  it, or against black when every layer at or below it is transparent: a
+  layout has no background colour of its own [manual:
+  project-primitives/layouts.md], and the r495.2 preview showed black there
+  (2026-10-09). A text over another object, under an effect or a global
+  layer, or coloured by BBCode is left out, since what shows behind it is
+  not known here. Over the official examples: 6 findings in 6 projects;
+- a Text of 12 characters or fewer, on one line, in the middle third of a
+  screen that shows nothing but one or two such texts, drawn under the
+  template's title size, 2 UNIT pt: it is what the screen is about, a
+  countdown or a count. Over the official examples it adds no finding;
 - `find` or `findcase` whose first argument is a one-character text literal
   and whose second is not a literal: `find(text, find)` searches the first,
   so `find("^", LASTPOP)` is -1 unless `LASTPOP` is `^` or empty. None of
@@ -151,9 +213,11 @@ Traps of the running game are warnings:
 every tick. For them, a condition of an addon without a schema counts as a
 trigger when its id starts with `on-`.
 
-`edit_sheet.py` refuses the findings on *Find path*, *Start timer*,
-*Simulate control*, `Count`, `PickedCount` and a variable flipped every
-tick in an event a plan creates, as it refuses the style findings below; in
+`edit_sheet.py` refuses the findings on *Find path*, *Start timer*, a
+timer that stops for good, *Simulate control*, `Count`, `PickedCount`, a
+variable flipped every tick, *Is overlapping* a Solid from a Platform
+object and a dragged object drawn under its target in an event a plan
+creates, as it refuses the style findings below; in
 the user's own events they stay warnings. A gesture action, a *Find path*,
 a *Start timer*, a *Simulate control* or a flip in a function passes, since
 a trigger or an event that runs every tick may call it.

@@ -23,11 +23,16 @@ Sources and the rule for adding an entry are in the index,
   offset*, 1 pixel towards the Solid. That is (1, 0) for a wall on the
   right and (0, 1) for the floor. The offset moves the object the condition
   belongs to, so a test from the crate's side takes the opposite sign.
-  [manual: plugin-reference/common-features/common-conditions.md "Is
-  overlapping at offset"; observed in a copy of the official example
-  follow-rewind-time, stable r495.2 preview, 2026-10-04: a Platform player
-  held against a Solid wall on a Solid floor, *Is overlapping* false, at
-  offset (1, 0) and (0, 1) true]
+  *On collision* still fires, because the behavior registers the collision
+  as it pushes the object out. [manual:
+  plugin-reference/common-features/common-conditions.md "Is overlapping at
+  offset"; observed in a copy of the official example follow-rewind-time,
+  stable r495.2 preview, 2026-10-04: a Platform player held against a Solid
+  wall on a Solid floor, *Is overlapping* false, at offset (1, 0) and
+  (0, 1) true; observed in the platformer template with a Solid door,
+  stable r495.2 preview, 2026-10-09: *Is overlapping* the door never held,
+  at offset (1, 0) it did; runtime: exported c3runtime.js, Platform calls
+  `RegisterCollision` after `PushOutSolidAxis`]
 - While a dragged or tweening instance has collisions disabled, the slot
   where it will land reads empty until it lands, the slot it is flying back
   to included. The drop events expect that. But an event that fills empty

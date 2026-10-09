@@ -11,7 +11,7 @@ import pytest
 
 from tests.skill_helpers import (
     REPO, SKILL, INSTALLED, SHEET, run, tool, check, edit, cond, block, events, every_event, collect_tween, warnings,
-    findings, plan, add_addon, add_keyboard, pathfinding_coin,
+    findings, plan, add_addon, add_keyboard, pathfinding_coin, EXAMPLES, NEEDS_EXAMPLES,
 )
 
 
@@ -1180,6 +1180,89 @@ def test_a_solid_changed_beside_custom_obstacles_is_not_named(project):
     assert not [w for w in warnings(out) if "changes a Solid" in w], out
 
 
+BULLET_PROPERTIES = {"speed": 400, "acceleration": 0, "gravity": 0, "bounce-off-solids": False, "set-angle": True,
+                     "step": False, "enabled": True}
+
+
+def shot_type(project: Path) -> None:
+    """Shot, a copy of Coin with the Bullet behavior alone, placed in the Objects layout as the model for
+    the Shots the events create."""
+    shot = json.loads((project / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
+    ids = iter(range(9000, 9100))
+    shot.update(name="Shot", sid=9100, behaviorTypes=[{"behaviorId": "Bullet", "name": "Bullet", "sid": 9101}],
+                instanceVariables=[])
+    for anim in shot["animations"]["items"]:
+        anim["sid"] = next(ids)
+        for frame in anim["frames"]:
+            frame["imageSpriteId"] = next(ids)
+    (project / "objectTypes" / "Shot.json").write_text(json.dumps(shot), encoding="utf-8")
+    for image in (project / "images").glob("coin-*.png"):
+        (project / "images" / image.name.replace("coin-", "shot-")).write_bytes(image.read_bytes())
+    edit(project, "project.c3proj", lambda d: d["objectTypes"]["items"].append("Shot"))
+
+    def place(d):
+        layer = d["layers"][0]
+        coin = next(i for i in layer["instances"] if i["type"] == "Coin")
+        layer["instances"].append({**json.loads(json.dumps(coin)), "type": "Shot", "uid": 9103, "sid": 9104,
+                                   "properties": {**coin["properties"], "initial-animation": shot["animations"]["items"][0]["name"]},
+                                   "behaviors": {"Bullet": {"properties": BULLET_PROPERTIES}}, "instanceVariables": {}})
+    edit(project, "layouts/Objects.json", place)
+    add_addon(project, "behavior", "Bullet", "Bullet")
+
+
+FIRE = block([START], [{"id": "create-object", "objectClass": "System", "sid": 19, "parameters": {
+    "object-to-create": "Shot", "layer": '"Game"', "x": "100", "y": "100", "create-hierarchy": False,
+    "template-name": '""'}}])
+DESTROY_SHOT = {"id": "destroy", "objectClass": "Shot", "sid": 20}
+HIT_BOARD = block([cond("on-collision-with-another-object", "Shot", {"object": "Board"})], [DESTROY_SHOT])
+HIT_BACKDROP = block([cond("on-collision-with-another-object", "Shot", {"object": "Backdrop"})], [DESTROY_SHOT])
+OUTSIDE = block([cond("is-outside-layout", "Shot")], [DESTROY_SHOT])
+STRAY = "moves with the Bullet behavior and the events create it, but nothing removes one that misses"
+
+
+@pytest.mark.parametrize("rows, said", [
+    ([FIRE], "no event destroys it"),
+    ([FIRE, HIT_BOARD], "every Destroy of Shot is under a hit on Board, none of them a Solid"),
+    ([FIRE, HIT_BOARD, OUTSIDE], None),
+    ([FIRE, HIT_BOARD, block([START], [{"id": "wait", "objectClass": "System", "sid": 21, "parameters": {
+        "seconds": "2"}}, DESTROY_SHOT])], None),
+    ([HIT_BOARD], None),         # placed, not fired
+])
+def test_a_fired_bullet_that_nothing_removes_after_a_miss_is_named(project, rows, said):
+    """Ask 06 of the 2026-10-09 batch: bullets destroyed only when they hit a block flew on forever after a
+    miss (manual: behavior-reference/destroy-outside.md)."""
+    shot_type(project)
+    out = findings(project, lambda s: s["events"].extend(rows))
+    assert_one_warning(out, STRAY, said)
+
+
+def test_a_bullet_that_hits_a_solid_or_has_destroy_outside_is_not_named(project):
+    """The official examples' bullets end on Solid walls and ground; and the behavior the finding writes,
+    added as it says, ends the finding without another one."""
+    shot_type(project)
+    out = findings(project, lambda s: s["events"].extend([FIRE, HIT_BOARD]))
+    said = next(w for w in warnings(out) if STRAY in w)
+    behavior = json.loads(re.search(r"Shot: (\{.*?\}) in its behaviorTypes", said)[1].replace("<new sid>", "9105"))
+    used = json.loads(re.search(r"and (\{.*?\}) in usedAddons", said)[1])
+    edit(project, "objectTypes/Shot.json", lambda t: t["behaviorTypes"].append(behavior))
+    edit(project, "layouts/Objects.json", lambda d: next(i for i in d["layers"][0]["instances"] if i["type"] == "Shot")
+         ["behaviors"].update(DestroyOutsideLayout={"properties": {"region": "layout"}}))
+    edit(project, "project.c3proj", lambda p: p["usedAddons"].append(used))
+    code, out = check(project)
+    assert code == 0 and not [w for w in warnings(out) if "Shot" in w], out
+
+    edit(project, "objectTypes/Shot.json", lambda t: t["behaviorTypes"].pop())
+    edit(project, "layouts/Objects.json", lambda d: next(i for i in d["layers"][0]["instances"] if i["type"] == "Shot")
+         ["behaviors"].pop("DestroyOutsideLayout"))
+    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "solid", "name": "Solid", "sid": 12}))
+    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"][0].setdefault("behaviors", {}).update(
+        Solid={"properties": {}}))
+    add_addon(project, "behavior", "solid", "Solid")
+    out = findings(project, lambda s: s["events"].append(HIT_BACKDROP))
+    assert_one_warning(out, STRAY, None)
+
+
 def platform_instances(project, *placed: tuple[str, dict]) -> None:
     """Coin and Backdrop get Platform. The Objects layout holds one instance per (type, Platform properties)
     instead of the Coin it had. The Game layout's Backdrop, the model for a Backdrop there, has Default
@@ -1508,6 +1591,34 @@ def test_a_function_is_reached_as_its_return_type_says(project, returns, use, sa
             "eventType": "function-block", "conditions": [], "actions": [], "sid": 2}
     out = findings(project, lambda s: s["events"].extend([func, block([cond("on-start-of-layout")], [use])]))
     assert said in out, out
+
+
+MAP_RED = {"id": "map-function", "objectClass": "Functions", "sid": 4,
+           "parameters": {"name": '"Colors"', "string": '"red"', "function": "FnRed"}}
+
+
+@pytest.mark.parametrize("defined, said", [
+    ([], "function='FnRed' is not a function of the project; the editor stops with \"cannot find function 'FnRed'\""),
+    # defined after the event that maps it, and without case: the editor opens both (r495.2, 2026-10-09)
+    (["FnRed"], None),
+    (["fnred"], None),
+])
+def test_a_mapped_function_must_be_a_function_block(project, defined, said):
+    rows = [block([cond("on-start-of-layout")], [MAP_RED, {**MAP_RED, "id": "map-function-default", "sid": 5,
+                                                           "parameters": {"name": '"Colors"', "function": "FnRed"}}])]
+    out = findings(project, lambda s: s["events"].extend(rows + [function(n, 6, []) for n in defined]))
+    if said:
+        errors = [line for line in out.splitlines() if said in line]
+        assert len(errors) == 2 and "Add a function block named FnRed" in errors[0], out
+    else:
+        assert out.splitlines()[-1].startswith("ok:"), out
+
+
+@NEEDS_EXAMPLES
+def test_the_official_function_maps_example_passes(tmp_path):
+    code, out = run(tmp_path, SKILL / "scripts" / "check_project.py", "--rag", str(REPO),
+                    "--project", str(EXAMPLES / "function-maps"))
+    assert code == 0 and out.splitlines()[-1].startswith("ok:"), out
 
 
 @pytest.mark.parametrize("text, said", [
@@ -1848,3 +1959,90 @@ def test_a_key_the_export_would_ship_is_named_with_its_place_unless_marked_publi
     assert "warning: scripts/main.js line 1: a string shaped like a random token, such as a key " \
            f"({RANDOM_TOKEN[:4]}… (40 characters))" in out, out
     assert "If it is meant to be public, write allow-secret in a comment on that line" in out, out
+
+
+# --- text on the screen ---------------------------------------------------------------------------------------
+def screen_text(project: Path, change) -> str:
+    """The Game layout emptied but for one ScoreLabel on the HUD layer, 64 px in from the top left, left- and
+    top-aligned, dark on the bottom layer, opaque white; the layers above it are transparent. change(layers, text)
+    then breaks it once."""
+    def rebuild(d):
+        def flat(layers):
+            for layer in layers:
+                yield layer
+                yield from flat(layer.get("subLayers", []))
+        hud = next(layer for layer in flat(d["layers"]) if layer.get("parallaxX") == 0)
+        text = next(i for i in hud["instances"] if i["type"] == "ScoreLabel")
+        for layer in flat(d["layers"]):
+            layer.update(instances=[], isTransparent=True)
+        hud["instances"] = [text]
+        d["layers"][0].update(isTransparent=False, backgroundColor=[1, 1, 1, 1])
+        text["world"].update(x=64, y=64, originX=0, originY=0)
+        text["properties"].update({"horizontal-alignment": "left", "vertical-alignment": "top",
+                                   "color": [0.1, 0.1, 0.1, 1], "text": "Score: 0", "size": 32})
+        change(d["layers"], text)
+    return findings(project, rebuild, "layouts/Game.json")
+
+
+@pytest.mark.parametrize("change, said", [
+    (lambda layers, t: None, None),
+    (lambda layers, t: t["world"].update(x=0), "ScoreLabel 'Score: 0' is left-aligned 0 px from the left edge of "
+                                               "the screen, so its text touches the edge. Set world.x to 32"),
+    (lambda layers, t: t["world"].update(y=-2), "is top-aligned -2 px from the top edge of the screen"),
+    (lambda layers, t: (t["properties"].update({"horizontal-alignment": "center"}), t["world"].update(x=0)), None),
+])
+def test_a_text_that_touches_the_screen_edge_is_named(project, change, said):
+    """The judged score glued to the left edge at x 0 (2026-10-09). Only a side the text is aligned to counts."""
+    out = screen_text(project, change)
+    lines = [w for w in warnings(out) if "touches the edge" in w]
+    assert (len(lines) == 1 and said in lines[0] if said else not lines), out
+    assert out.splitlines()[-1].startswith("ok:"), out
+
+
+def all_transparent(layers, text):
+    layers[0]["isTransparent"] = True
+
+
+@pytest.mark.parametrize("change, said", [
+    (lambda layers, t: None, None),
+    (lambda layers, t: t["properties"].update(color=[0.9, 0.9, 0.9, 1]),
+     "is #e6e6e6 on the background colour of layer"),
+    (all_transparent, "is #1a1a1a on black, 1.2:1"),
+    (lambda layers, t: (all_transparent(layers, t), t["properties"].update(color=[1, 1, 1, 1])), None),
+    (lambda layers, t: t["properties"].update(color=[0.9, 0.9, 0.9, 1], text="[outline=#000000]Score: 0"), None),
+])
+def test_text_that_does_not_read_on_the_layer_behind_it_is_named(project, change, said):
+    """The judged dark combo on a screen of transparent layers, black in the r495.2 preview (2026-10-09)."""
+    out = screen_text(project, change)
+    lines = [w for w in warnings(out) if "to read (WCAG" in w]
+    assert (len(lines) == 1 and said in lines[0] if said else not lines), out
+
+
+def test_text_over_another_object_is_left_to_the_eye(project):
+    """A Backdrop under the text: what shows behind it is an image, which this check does not read."""
+    def cover(layers, text):
+        layers[0]["isTransparent"] = True
+        under = json.loads(json.dumps(text))
+        under.update(type="Backdrop", properties={}, uid=900, sid=901)
+        layers[0]["instances"] = [under]
+    out = screen_text(project, cover)
+    assert not [w for w in warnings(out) if "to read (WCAG" in w], out
+
+
+def centred(layers, text, size=32):
+    text["world"].update(x=960, y=540, originX=0.5, originY=0.5)
+    text["properties"].update({"horizontal-alignment": "center", "text": "30", "size": size})
+
+
+@pytest.mark.parametrize("change, said", [
+    (centred, "ScoreLabel '30' stands in the middle of a screen that shows nothing but this text"),
+    (lambda layers, t: centred(layers, t, 64), None),
+    (lambda layers, t: None, None),
+    (lambda layers, t: (centred(layers, t), t["properties"].update(text="Tap anywhere to start")), None),
+])
+def test_a_short_text_alone_in_the_middle_of_the_screen_is_drawn_at_title_size(project, change, said):
+    """The judged countdown drawn at body size, the only thing on its screen (2026-10-09). A HUD line in a
+    corner, a title-sized number and a sentence pass."""
+    out = screen_text(project, change)
+    lines = [w for w in warnings(out) if "title size" in w]
+    assert (len(lines) == 1 and said in lines[0] and 'Set its "size" to 64' in lines[0] if said else not lines), out

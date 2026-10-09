@@ -88,3 +88,17 @@ Sources and the rule for adding an entry are in the index,
   there. [manual: plugin-reference/common-features/common-conditions.md "On
   hierarchy ready"; scripting-reference/object-interfaces/iworldinstance.md
   "hierarchyready"; none of the 524 official examples uses the condition]
+- A created bullet that hits nothing keeps flying outside the layout
+  forever, and the instances pile up and slow the game. A Destroy in its
+  hit events removes the bullets that hit, not the ones that miss. Give a
+  fired object the Destroy outside behavior, region `layout`, or `viewport`
+  when the layout is larger than the screen. It has no conditions or
+  actions. In the official examples the bullets without it end on Solid
+  walls and ground. `check_project.py` warns when nothing removes a fired
+  Bullet object that misses. [manual: behavior-reference/destroy-outside.md;
+  observed in a generated shooter, stable r495.2 preview, 2026-10-09: a shot
+  through an empty column was at y -658 three seconds later, and with
+  Destroy outside it was gone; the 524 official examples: 58 of the 169
+  Bullet objects their events create have Destroy outside, and all but four
+  of the rest have Fade, Wrap or Tween, are destroyed or placed again by
+  events, or hit a Solid]
