@@ -237,6 +237,17 @@ def test_ace_lookup_prints_a_miss_on_stdout(built):
     assert p.returncode == 1 and p.stdout == "" and "is not an object of this project" in p.stderr
 
 
+def test_a_chinese_miss_asks_for_the_english_term(built):
+    """A model guessed 时间尺度 for 时间速率 and looked it up in Chinese thirteen times; the English term
+    finds it, and the hit prints the zh-CN name."""
+    code, out = tool(built, "lookup_ace", "System", "时间尺度", "--locale", "zh-CN")
+    assert code == 1 and "translate it into the English term" in out
+    code, out = tool(built, "lookup_ace", "System", "time", "scale", "--locale", "zh-CN")
+    assert code == 0 and "设置时间速率" in out
+    code, out = tool(built, "lookup_ace", "System", "aniamtion")
+    assert code == 1 and "English term" not in out
+
+
 def test_lookup_writes_a_sound_bare(built):
     code, out = tool(built, "lookup_ace", "Audio", "play-at-object")
     assert code == 0 and '"audio-file": "<sound>"' in out and "without its extension" in out, out

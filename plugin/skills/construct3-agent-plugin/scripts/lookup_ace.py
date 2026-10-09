@@ -11,6 +11,8 @@ list name or the script name, or name where the ACE lives: the behavior, the
 addon, its category (`time`, `loops`, `size-position`), `condition`, `action`
 or `expression`. A word is matched as written, not by meaning: `every`,
 `seconds` or the category `time` finds *Every X seconds*, `timer` does not.
+A Chinese word that matches nothing asks for its English term, which the ids
+and the en-US names hold.
 When no name has every word, a parameter name or a value of a combo parameter
 counts: `Tween color` finds *Tween (one property)*, whose property
 `offsetColor` is Color. Looked up on a plugin or a behavior, the ACEs every
@@ -484,6 +486,12 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         # The miss is the answer, on stdout like a hit: a harness that shows stdout alone
         # would print nothing, and PowerShell wraps every stderr line in an error record.
         print(f"nothing under {target} has every word of {query!r}")
+        if any("一" <= ch <= "鿿" for w in words for ch in w):
+            # 2026-10-09: a model guessed 时间尺度 for 时间速率 and looked it up on thirteen objects in Chinese;
+            # time scale finds it at once, and the hit prints the zh-CN name to give the user.
+            print("a Chinese word matches only a name that holds it as written: translate it into the English "
+                  "term and look up again (时间尺度 -> time scale finds 设置时间速率); "
+                  "the hit prints the zh-CN name to give the user")
         if some:
             print("entries with some of them, the most first:")
             for e in some[:12]:
