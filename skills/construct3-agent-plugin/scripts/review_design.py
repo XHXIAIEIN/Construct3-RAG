@@ -55,6 +55,9 @@ EPILOG = """examples:
   python scripts/review_design.py
   python scripts/review_design.py --sheets Combat Map
   python scripts/review_design.py --project ../OtherGame --limit 0
+  python scripts/review_design.py --prepare .tmp/design-review
+  python scripts/review_design.py --check --prepare .tmp/design-review --resume --limit 0
+  python scripts/review_design.py --prepare .tmp/design-review --answers answers.json --batch 1 --resume
 
 output:
   == Combat
@@ -69,7 +72,7 @@ output:
   next: <what to do>
 
 exit codes: 0 the review printed, with findings or without; 1 the project or the clone was not found;
-2 a sheet named with --sheets is not in the project"""
+2 an unknown sheet, invalid answer, output path or batch; nothing in the project is edited"""
 
 # Thresholds, from the measurement over the 524 official examples (verifying-a-change.md).
 CONDITIONS_FINDING = 12     # the examples' most is 11, besides the trigger
@@ -926,7 +929,20 @@ def main() -> int:
     ap.add_argument("--sheets", nargs="+", metavar="NAME", help="print the findings and questions of these sheets "
                                                                 "only (default: every sheet); globals are read over "
                                                                 "the whole project either way")
+    ap.add_argument("--prepare", metavar="FOLDER", help="save complete question batches inside the game, with "
+                    "printed events, schema evidence and dependency versions; preserves the text-only default")
+    ap.add_argument("--answers", metavar="FILE", help="validate and save JSON answers against current inputs; "
+                    "requires --prepare, saves no edits")
+    ap.add_argument("--batch", type=int, metavar="N", help="validate answers to pending batch N only")
+    ap.add_argument("--resume", action="store_true", help="reuse validated static answers whose dependencies match")
+    ap.add_argument("--check", action="store_true", help="run check_project.py first; stop on failure and keep its "
+                    "complete result in the prepare folder")
+    ap.add_argument("--style", action="store_true", help="pass --style to the checker; requires --check")
     args = ap.parse_args()
+    if (args.answers or args.batch is not None or args.resume or args.check) and not args.prepare:
+        ap.error("--answers, --batch, --resume and --check require --prepare FOLDER")
+    if args.style and not args.check:
+        ap.error("--style requires --check")
     c3.utf8_output()
     findings = c3.Findings()
     c3.stop_with_a_sentence("review_design.py", findings)
@@ -940,6 +956,14 @@ def main() -> int:
             return 2
     sheets = args.sheets or list(d.sheets)
     found = review(d)
+    if args.prepare:
+        import design_review
+        try:
+            return design_review.run(project, d, found, sheets, QUESTIONS, args)
+        except (OSError, ValueError, TypeError) as error:
+            print(f"design review stopped: {error}; prepare again and read answer-format.json; "
+                  "no project file was edited", file=sys.stderr)
+            return 2
     lines, asked = report(found, sheets)
     room = args.limit - sum(len(q) + 1 for q in asked) - 600 if args.limit else 0
     shown = c3.fitting(lines, max(room, 1)) if args.limit else len(lines)
