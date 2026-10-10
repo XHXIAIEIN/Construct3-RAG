@@ -71,6 +71,7 @@ The project skill and the prompts:
 | `typescript-definitions-from-the-editor.md` | Why the editor writes a project's own TypeScript definitions, through `open_in_editor.py --typescript`, and when the checker warns that they are stale |
 | `game-design-prototype.md` | Why a new game starts as a design whose rules a local prototype plays before the build, and how the same tests reach the editor |
 | `event-sheet-design-guidance.md` | The event sheet prompts, the style checks and the generator's placement helpers |
+| `design-review-packets.md` | Why design questions carry evidence, how static judgements are reused, and which runtime checks still run |
 | `pitfalls-index-and-topics.md` | Why the pitfalls are an index of one-line conclusions with a topic file per group, and which lessons belong in them |
 | `prompt-references-by-task.md` | Which parts of the design and style prompts live in `prompts/references/`, why Native first stays inline, and what a row of Native first holds |
 | `borrowed-numbers.md` | Which numbers and rules of other agent frameworks were measured here before the template or a check took them, and the result for each: player height, HUD share, popups, idle motion, coyote time, images of created objects, an editor open while files change, design size, safe area, the first runtime error |

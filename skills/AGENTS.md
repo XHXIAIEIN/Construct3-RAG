@@ -13,6 +13,22 @@ equal to this folder.
 Construct 3 folder project, listed under "Scripts" in its `SKILL.md`, and
 the block for the project's instruction file.
 
+## Change a project tool
+
+Read the row for the task, then the named source and its tests.
+These pointers locate contracts; the current source determines behavior.
+
+| Task | Responsibility and interface | Read together | Constraint and source |
+|------|------------------------------|---------------|-----------------------|
+| Prepare or resume a design review | `scripts/review_design.py --check --prepare FOLDER --resume`; `scripts/design_review.py` prepares evidence and validates answers | `print_sheet.py`, `c3project.py`, `tests/test_skill_design_review.py`, `references/design-review.md` | Versions protect judgements; printed lines protect edits. `docs/decisions/plan-names-the-event-line.md` |
+| Apply an event edit | `scripts/edit_sheet.py SHEET PLAN.json --dry-run` checks the whole project with an unsaved sheet | `check_project.py`, `print_sheet.py`, `tests/test_skill_edit_sheet.py` | It refuses added problems but can leave existing ones. Keep the final full checker and its fix-loop record |
+| Open or play a game | `scripts/open_in_editor.py --preview`; `scripts/preview_project.py PLAN.json` drives inputs and reads state | `references/editor-and-preview.md`, `evals/play_cases.py`, `tests/test_skill_preview_project.py` | Opening without input tests startup. Reaching a scene directly does not test the path to it |
+| Ship the skill to a game | `scripts/install.py --project FOLDER` mirrors the skill except `evals/` | `assets/game-project-block.md`, `c3project.py`, `tests/test_skill_install.py` | Edited instruction blocks and generator helpers retain their edits until explicitly replaced |
+| Ship the plugin | `Construct3-RAG/scripts/build_plugin.py` builds the skill, data and prompts | `tests/test_plugin_folder.py`, `docs/decisions/plugin-folder.md`, `docs/decisions/plugin-tracks-commits.md` | Change sources and build the generated folder. Its version follows the commit baseline |
+
+Paths in this table are under `construct3-agent-plugin/`, except explicit
+`Construct3-RAG/`, `tests/` and `docs/` paths, which start at the repository root.
+
 ## Rules
 
 - The folder is what ships: `install.py` mirrors every file in it into the
