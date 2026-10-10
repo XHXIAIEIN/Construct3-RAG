@@ -236,3 +236,55 @@ def test_output_cannot_replace_project_sources(tmp_path):
     code, said = run(root, SCRIPT, "--rag", str(REPO), "--prepare", "eventSheets")
     assert code == 2 and "under the game's .tmp/" in said
     assert (root / "eventSheets/Game.json").read_bytes() == before
+
+
+def test_coverage_follows_includes_and_shared_uses_without_unrelated_sheets(tmp_path):
+    root = write(tmp_path, {"Game": [var("Shared"), {"eventType": "include", "includeSheet": "Included"}],
+        "Included": [ev([], [setv("Shared", "2")]), {"eventType": "include", "includeSheet": "Nested"}],
+        "Nested": [ev([c("every-tick")])], "Other": [ev([c("on-start-of-layout")])],
+        "Consumer": [ev([c("compare-eventvar", variable="Shared", comparison=0, value="1")])]}, {})
+    qs = bundle(root)["questions"]
+    assert {q["location"]["question"] for q in qs} == set(rd.QUESTIONS)
+    for q in qs:
+        sources = {e["source"].split(":")[0] for e in q["evidence"]}
+        assert "eventSheets/Other" not in sources
+        assert {"eventSheets/Game", "eventSheets/Included", "eventSheets/Nested", "eventSheets/Consumer"} <= sources
+    edit(root, "eventSheets/Other.json", lambda s: s["events"].append({"eventType": "script", "script": "run()"}))
+    for q in bundle(root)["questions"]:
+        assert any(e["source"].startswith("eventSheets/Other:") for e in q["evidence"])
+        assert q["missing"]
+        with pytest.raises(ValueError, match="lacks dependencies"):
+            pack.validate([q], [answer(q)])
+
+
+def test_container_picking_and_initial_hierarchy_are_evidence(tmp_path):
+    root = write(tmp_path, {"Game": [ev([c("compare-x", "Token", comparison=0, value="0")])]},
+                 {"Token": ("Sprite", []), "Label": ("Text", [])})
+    edit(root, "project.c3proj", lambda s: s.update(containers=[{"members": ["Token", "Label"]}]))
+    layout = {"eventSheet": "Game", "layers": [{"instances": [
+        {"type": "Token", "uid": 1, "sceneGraphData": {"children": [{"uid": 2, "flags": 3}]}},
+        {"type": "Label", "uid": 2, "properties": {"text": "Initial value"}, "sceneGraphData": {"parent-uid": 1}}]}]}
+    edit(root, "layouts/Game.json", lambda s: s.update(layout))
+    qs = bundle(root)["questions"]
+    for q in qs:
+        assert any(e["source"] == "objectTypes/Label" for e in q["evidence"])
+        assert any(r["kind"] == "container_member" and r["to"] == "Label" for r in q["relations"])
+        assert any('"parent-uid": 1' in e["text"] and "Initial value" in e["text"] for e in q["evidence"])
+    batch = pack.batch_document(qs)
+    assert len(batch["questions"]) == len(qs)
+    assert batch["review"]["preserve"] and batch["review"]["criterion"]
+    assert all(set(batch["evidence_groups"][q["evidence"]]) <= {e["id"] for e in batch["evidence"]}
+               for q in batch["questions"])
+
+
+def test_check_without_packets_runs_full_checker_and_stops_on_failure(project):
+    assert install(project)[0] == 0
+    args = ("--rag", str(REPO), "--check", "--limit", "0")
+    code, said = run(project, SCRIPT, *args)
+    assert code == 0 and "design:" in said, said
+    assert not (project / ".tmp/design-review/current.json").exists()
+    edit(project, "project.c3proj", lambda s: s.update(viewportWidth=-1))
+    code, said = run(project, SCRIPT, *args)
+    assert code == 1 and "stopped before design questions" in said, said
+    log = json.loads((project / ".tmp/design-review/check.json").read_text(encoding="utf-8"))
+    assert log["exit"] == 1 and log["stdout"]

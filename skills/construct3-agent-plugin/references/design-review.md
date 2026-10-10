@@ -1,7 +1,12 @@
 # Review the changed sheets
 
-`review_design.py --prepare` puts the printed events and their evidence in
-complete question batches. It reads the listed project files directly.
+`review_design.py --check` runs the full checker and prints design questions.
+Read the changed sheets with `print_sheet.py`, then follow their calls and
+shared state to judge every question. The complete checker log is saved in
+`.tmp/design-review/check.json`.
+
+Use optional `--prepare` for complete evidence batches and saved judgements.
+It reads the listed project files directly.
 
 ```bash
 python scripts/review_design.py --check --prepare .tmp/design-review --resume --sheets Game --limit 0
@@ -15,6 +20,8 @@ Pass `--style` for a project the agent wrote.
 
 Read the findings in `current.json`, then the batches it lists.
 Each batch contains its own evidence, scopes, relations and rule versions.
+The `review` object supplies constraints shared by every question in the batch.
+Batch JSON uses compact whitespace; every question and evidence text stays whole.
 A question's `evidence` key selects a list in `evidence_groups`; those ids
 select the actual text in `evidence`. Its other keys select the named tables.
 `--limit` groups complete questions by character size; a large question stays
@@ -49,8 +56,12 @@ Then repeat the checked preparation on the changed sheets.
 `--resume` reuses static judgements only when their inputs still match.
 It recomputes relations from the current files on every invocation.
 Local context includes parents, children and adjacent events.
+Coverage questions start with all events in the selected sheet. Included
+sheets and shared symbols extend that scope; unrelated sheets stay outside it.
 Shared state and calls extend that context to definitions and other uses.
 Object, family, layout, schema and rule changes invalidate dependent answers.
+Container members carry their object definitions and explicit membership.
+Relevant layouts retain complete initial values, hierarchy and instance data.
 Lexical closure can include extra events; it is a conservative dependency scope.
 Relations marked `project_format` come from explicit event or project fields.
 Their evidence keys identify the actual source in the batch.

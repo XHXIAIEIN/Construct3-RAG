@@ -936,11 +936,11 @@ def main() -> int:
     ap.add_argument("--batch", type=int, metavar="N", help="validate answers to pending batch N only")
     ap.add_argument("--resume", action="store_true", help="reuse validated static answers whose dependencies match")
     ap.add_argument("--check", action="store_true", help="run check_project.py first; stop on failure and keep its "
-                    "complete result in the prepare folder")
+                    "complete result in the prepare folder, or .tmp/design-review/check.json")
     ap.add_argument("--style", action="store_true", help="pass --style to the checker; requires --check")
     args = ap.parse_args()
-    if (args.answers or args.batch is not None or args.resume or args.check) and not args.prepare:
-        ap.error("--answers, --batch, --resume and --check require --prepare FOLDER")
+    if (args.answers or args.batch is not None or args.resume) and not args.prepare:
+        ap.error("--answers, --batch and --resume require --prepare FOLDER")
     if args.style and not args.check:
         ap.error("--style requires --check")
     c3.utf8_output()
@@ -948,6 +948,16 @@ def main() -> int:
     c3.stop_with_a_sentence("review_design.py", findings)
     project = c3.Project.open(args, findings)
     c3.note_drift(project.rag)
+    if args.check and not args.prepare:
+        import design_review
+        try:
+            code = design_review.run_check(project, args, project.root / ".tmp" / "design-review")
+        except (OSError, ValueError) as error:
+            print(f"design review stopped: {error}; rerun --check", file=sys.stderr)
+            return 2
+        if code:
+            return code
+        project = c3.Project(project.root, project.rag, project.locale, c3.Findings())
     d = Design.of(project)
     for name in args.sheets or []:
         if name not in d.sheets:
