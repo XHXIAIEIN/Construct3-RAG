@@ -929,7 +929,7 @@ def main() -> int:
     ap.add_argument("--sheets", nargs="+", metavar="NAME", help="print the findings and questions of these sheets "
                                                                 "only (default: every sheet); globals are read over "
                                                                 "the whole project either way")
-    ap.add_argument("--prepare", metavar="FOLDER", help="save complete question batches inside the game, with "
+    ap.add_argument("--prepare", metavar="FOLDER", help="save complete question batches under the game's .tmp/, with "
                     "printed events, schema evidence and dependency versions; preserves the text-only default")
     ap.add_argument("--answers", metavar="FILE", help="validate and save JSON answers against current inputs; "
                     "requires --prepare, saves no edits")

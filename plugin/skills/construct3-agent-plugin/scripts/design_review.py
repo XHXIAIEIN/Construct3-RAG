@@ -54,13 +54,17 @@ def context(d, seeds: list, broad: bool) -> tuple[list, list[str]]:
         selected.update(r for r in rows if r.parent is e.parent and r.sheet == e.sheet
                         and (e.parent is not None or abs(r.n - e.n) <= 1))
     missing = []
+    if any(e.kind == "script" or any(a.get("type") == "script" or "mapped" in str(a.get("id", ""))
+                                     for a in e.actions) for e in rows):
+        selected.update(rows)
+        missing.append("Dynamic script or dispatch effects are unresolved; verify them at runtime")
     functions = {str(e.ev.get("functionName", "")) for e in rows if e.kind == "function-block"}
     while True:
         before = set(selected)
         for e in list(selected):
             selected.update(e.ancestors())
             selected.update(e.subtree())
-            if e.kind in {"script", "include", "custom-ace-block"}:
+            if e.kind in {"script", "include"}:
                 selected.update(rows)
             if e.kind == "include" and e.ev.get("includeSheet") not in d.sheets:
                 missing.append(f"Included sheet {e.ev.get('includeSheet')!r} is missing")
@@ -119,9 +123,13 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
         for e in selected:
             sid = e.ev.get("sid")
             row = printed[e.sheet][id(e.ev)]
-            source = f"eventSheets/{e.sheet}:sid={sid}"
+            anchor = f"sid={sid}" if sid is not None else f"row={d.rows[e.sheet].index(e)}"
+            source = f"eventSheets/{e.sheet}:{anchor}"
             add(source, "\n".join([*row.head, *row.body]), own(e))
-            targets.append({"sheet": e.sheet, "sid": sid, "event": e.n})
+            if isinstance(sid, int):
+                targets.append({"sheet": e.sheet, "sid": sid, "event": e.n})
+            elif e.kind in c3.NUMBERED:
+                missing.append(f"{e.place} lacks a stable sid; run check_project.py")
             caller = {"sheet": e.sheet, "sid": sid}
             if e.kind == "include":
                 relate("includes_sheet", caller, e.ev.get("includeSheet"), source)
@@ -154,16 +162,28 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
                     if isinstance(params, dict) and ace.get("id") in {"set-eventvar-value", "add-to-eventvar",
                             "subtract-from-eventvar", "set-boolean-eventvar", "toggle-boolean-eventvar"}:
                         relate("writes_variable", caller, params.get("variable"), source)
+                    if isinstance(params, dict) and ace.get("id") in {"compare-eventvar", "compare-boolean-eventvar"}:
+                        relate("reads_variable", caller, params.get("variable"), source)
                     for expression in d.expressions(kind, ace).values():
-                        for name in d.globals():
-                            if re.search(rf"\b{re.escape(name)}\b", rd_blank(expression), re.I):
+                        for name in [r.ev.get("name", "") for r in d.all_rows() if r.kind == "variable" and r.depth == 0]:
+                            if name.lower() not in e.scope and re.search(rf"\b{re.escape(name)}\b", rd_blank(expression), re.I):
                                 relate("reads_variable", caller, name, source)
+                        for called in re.findall(rf"\b{re.escape(p.functions_object)}\.(\w+)", rd_blank(expression)):
+                            if called in {r.ev.get("functionName") for r in selected if r.kind == "function-block"}:
+                                relate("calls_function_expression", caller, called, source)
+                            else:
+                                missing.append(f"Function expression {called!r} is unresolved")
                     entry = p.ace_entry(kind, ace) if ace.get("objectClass") in p.plugin_of else None
                     ace_source = f"schema/{ace.get('objectClass')}/{ace.get('behaviorType', '')}/{kind}/{ace.get('id')}"
                     if entry is None:
                         missing.append(f"No schema evidence for {ace_source}")
                     else:
-                        add(ace_source, json.dumps(entry, ensure_ascii=False, sort_keys=True), entry)
+                        facts = {k: entry[k] for k in ("id", "display-text", "description", "params", "isTrigger", "isAsync")
+                                 if k in entry}
+                        if "params" in facts:
+                            facts["params"] = {name: {k: v for k, v in param.items() if k in {"type", "items"}}
+                                               for name, param in facts["params"].items()}
+                        add(ace_source, json.dumps(facts, ensure_ascii=False, sort_keys=True), entry)
         for name in sorted(used_objects):
             if name in p.types:
                 add(f"objectTypes/{name}", json.dumps(p.types[name], ensure_ascii=False), p.types[name])
@@ -218,8 +238,15 @@ def rd_blank(expression: str) -> str:
 def batch_document(items: list[dict]) -> dict:
     """Share identical evidence within one complete batch."""
     evidence = {e["id"]: e for q in items for e in q["evidence"]}
+    scopes = {digest(q["targets"])[:20]: q["targets"] for q in items}
+    relations = {digest(q["relations"])[:20]: q["relations"] for q in items}
+    rulesets = {digest(q["rules"])[:20]: q["rules"] for q in items}
+    groups = {digest([e["id"] for e in q["evidence"]])[:20]: [e["id"] for e in q["evidence"]] for q in items}
     return {"format": FORMAT, "evidence": list(evidence.values()),
-            "questions": [{**q, "evidence": [e["id"] for e in q["evidence"]]} for q in items]}
+            "evidence_groups": groups, "scopes": scopes, "relations": relations, "rules": rulesets,
+            "questions": [{**{k: v for k, v in q.items() if k not in {"dependencies", "rules", "targets", "relations", "evidence"}},
+                           "evidence": digest([e["id"] for e in q["evidence"]])[:20], "scope": digest(q["targets"])[:20],
+                           "relations": digest(q["relations"])[:20], "rules": digest(q["rules"])[:20]} for q in items]}
 
 
 def validate(items: list[dict], answers: object, complete: bool = True) -> list[dict]:
@@ -260,6 +287,8 @@ def validate(items: list[dict], answers: object, complete: bool = True) -> list[
         allowed = {(t["sheet"], t["sid"]) for t in item["targets"]}
         if not isinstance(suggestions, list) or (verdict == "needs_change" and not suggestions):
             raise ValueError(f"{key}: needs_change needs a scoped suggestion")
+        if verdict != "needs_change" and suggestions:
+            raise ValueError(f"{key}: suggestions require needs_change")
         for suggestion in suggestions:
             if not isinstance(suggestion, dict) or set(suggestion) != {"sheet", "sid", "text"} \
                     or not isinstance(suggestion["sheet"], str) or not isinstance(suggestion["sid"], int) \
@@ -274,8 +303,8 @@ def validate(items: list[dict], answers: object, complete: bool = True) -> list[
 def run(p, d, found, sheets, questions, args) -> int:
     folder = Path(args.prepare)
     folder = (p.root / folder).resolve() if not folder.is_absolute() else folder.resolve()
-    if not folder.is_relative_to(p.root.resolve()) or folder == p.root.resolve():
-        raise ValueError("--prepare must name an output folder inside the game, such as .tmp/design-review")
+    if not folder.is_relative_to((p.root / ".tmp").resolve()) or not folder.is_relative_to(p.root.resolve()):
+        raise ValueError("--prepare must name a folder under the game's .tmp/, such as .tmp/design-review")
     if args.check:
         command = [sys.executable, str(Path(__file__).with_name("check_project.py")), "--project", str(p.root),
                    "--rag", str(p.rag), "--locale", p.locale, "--limit", "0"]
