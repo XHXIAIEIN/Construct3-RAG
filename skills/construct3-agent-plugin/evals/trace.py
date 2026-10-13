@@ -487,6 +487,15 @@ def printed_command_failures(calls: list[dict]) -> int:
     return count
 
 
+def whole_sheet(args: list[str]) -> bool:
+    """A print_sheet.py call that asked for whole sheets past its limit: --limit 0 without a part, a name to find,
+    one event or the changes since a commit."""
+    words = [a.strip("\"'") for a in args]
+    unlimited = any(w in ("--limit=0",) for w in words) or any(
+        w == "--limit" and n + 1 < len(words) and words[n + 1] == "0" for n, w in enumerate(words))
+    return unlimited and not {"--events", "--find", "--show", "--since"} & {w.split("=")[0] for w in words}
+
+
 def summary(calls: list[dict], root: Path | None = None) -> dict:
     scripts = [{"script": name, "args": " ".join(args), "failed": c["failed"], "chars": c["chars"]}
                for c in calls for name, args in scripts_of(c)]
@@ -512,7 +521,11 @@ def summary(calls: list[dict], root: Path | None = None) -> dict:
            "help_reads_by_script": helps, "plan_refusals": sum(refused_plan(c) for c in calls),
            "hand_edits": None, "lookups_before_first_edit": None, "data_reads": None, "other_clone_reads": None,
            "entry_chars": sum(c["chars"] or 0 for c in calls[:before_first]),
-           "printed_command_failures": printed_command_failures(calls)}
+           "printed_command_failures": printed_command_failures(calls),
+           # each call once, though its command runs print_sheet.py more than once: the characters the run read back
+           "print_sheet_chars": sum(c["chars"] or 0 for c in calls if any(n == "print_sheet" for n, _ in scripts_of(c))),
+           "whole_sheet_prints": sum(1 for c in calls for name, args in scripts_of(c) if name == "print_sheet"
+                                     and whole_sheet(args))}
     project = root / "project" if root else None
     if project and project.is_dir():
         out["hand_edits"] = sum(1 for c in calls if not c["failed"]

@@ -15,4 +15,7 @@ def test_print_sheet_ends_with_it_and_a_cut_print_still_names_the_rest(built):
     assert code == 0 and out.splitlines()[-1].startswith("review: say first what the project does.")
     code, out = tool(built, "print_sheet", "--review", "--limit", "1200")
     lines = out.splitlines()
+    assert code == 0 and lines[-2].startswith("review: ") and lines[-1].startswith("-- print one part")
+    code, out = tool(built, "print_sheet", "Game", "--review", "--events", "1-", "--limit", "1200")
+    lines = out.splitlines()
     assert code == 0 and lines[-2].startswith("review: ") and lines[-1].startswith("-- stopped at the limit")

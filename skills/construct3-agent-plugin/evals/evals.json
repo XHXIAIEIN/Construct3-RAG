@@ -381,6 +381,20 @@
         "check_project.py prints no warning on an event the run added: the example's own warnings stay out",
         "Every event of the original sheet is still in it, by sid"
       ]
+    },
+    {
+      "id": 26,
+      "name": "find-in-a-big-sheet",
+      "fixture": "coins-big-sheet",
+      "prompt": "the sheet Waves of my coins game is huge, folder <project> . which event pays out the bonus at the end of wave 17, and how many points is that bonus? give me the event number like the editor shows it in the margin. just looking, dont change anything",
+      "expected_output": "Event 284, in the group Wave 17 score (280-285) inside Wave 17 (273-289), calls GiveBonus(454) once when wave = 17, spawnLeft = 0 and Coin.Count = 0, and adds 1 to wave; GiveBonus, event 410, passes the points to AddScore. The bonus is 454 points. The sheet prints about 52 000 characters as events, over the limit, so the answer comes from its groups, a part printed with --events, or --find. The project is left unchanged.",
+      "files": [],
+      "assertions": [
+        "The answer gives 284 as the event that pays the bonus of wave 17",
+        "The answer says the bonus is 454 points",
+        "Every event number the answer gives lies between 273 and 289, the group Wave 17, or is 409 or 410, the functions the waves call",
+        "No project file differs from the fixture"
+      ]
     }
   ]
 }

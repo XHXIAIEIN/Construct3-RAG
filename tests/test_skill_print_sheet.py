@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, INSTALLED, SHEET, tool, streams, check, edit, block, events
+from tests.skill_helpers import REPO, INSTALLED, SHEET, SKILL, tool, streams, check, edit, block, events, script_module
 
 
 def committed(root: Path) -> None:
@@ -37,10 +37,12 @@ def test_a_miss_of_print_sheet_prints_on_stdout(project):
 
 
 def test_outline_numbers_events_as_the_editor_does(built):
+    """A comment keeps its first 30 characters: an outline is read for its numbers, and the full comments of a
+    long sheet, a token a character in Chinese, made outlines of 15 000 to 60 000 characters."""
     code, out = tool(built, "print_sheet", "--outline", "Game")
     rows = [line.split("[sid")[0].rstrip() for line in out.splitlines()]
     assert code == 0
-    assert rows[:4] == ["== Game", "   (1) // Coins. Tap a coin to collect it; when the last one is gone the next round starts.",
+    assert rows[:4] == ["== Game", "   (1) // Coins. Tap a coin to collect i…",
                         "   (1) // Settings", "   (1) string ROUND_COINS = 1,3,6,2,10,1"]
     assert "   1 group Setup" in rows and "   2   System:on-start-of-layout" in rows
 
@@ -327,3 +329,95 @@ def test_since_stops_at_the_limit_and_names_the_part_that_continues(project):
     start = re.search(r"--events (\d+)-", last).group(1)
     code, rest = tool(project, "print_sheet", "Game", "--since", "HEAD", "--events", f"{start}-", "--limit", "0")
     assert code == 0 and f"+{int(start):>4} System: Every tick  [added]" in rest, rest
+
+
+def big(project: Path) -> Path:
+    """The stand-in game with the eval fixture's sheet of 24 waves, 410 events under Chinese comments."""
+    script_module("make_fixtures", SKILL / "evals").seed_big_sheet(project)
+    return project
+
+
+def test_a_sheet_over_the_limit_prints_its_groups_and_functions(project):
+    """The first 10 000 characters of a long sheet named nothing of the rest, and a model that wanted one event
+    printed the whole sheet with --limit 0; the list of its groups says which part to print."""
+    code, out = tool(big(project), "print_sheet", "Waves")
+    lines = out.splitlines()
+    assert code == 0 and len(out) < 10_000, out[-500:]
+    assert lines[0].startswith("== Waves: 410 events, ") and "over the limit of 10000 (--limit)" in lines[0]
+    assert "     1-17  group Wave 1" in lines and "      2-7    group Wave 1 spawn" in lines
+    assert "  273-289  group Wave 17" in lines and "  280-285    group Wave 17 score" in lines
+    assert "      410  function GiveBonus" in lines
+    assert not any("->" in line for line in lines[:-1])
+    assert lines[-1].startswith("-- print one part, a group or a function, by its events: python ")
+    assert "Waves --events 1-17" in lines[-1] and "Waves --find NAME" in lines[-1]
+    code, part = tool(project, "print_sheet", "Waves", "--events", "280-285")
+    assert code == 0 and "-> Functions: Call GiveBonus(454)" in part and "-- stopped" not in part
+
+
+def test_the_list_of_groups_leaves_the_deeper_ones_out_to_fit(project):
+    code, out = tool(big(project), "print_sheet", "Waves", "--limit", "1500")
+    lines = out.splitlines()
+    assert code == 0 and "    18-34  group Wave 2" in lines and not any("Wave 2 spawn" in line for line in lines)
+    assert "(72 groups and functions inside these are left out to stay under the limit)" in out
+    code, out = tool(project, "print_sheet", "Waves", "--outline")
+    assert code == 0 and out.startswith("== Waves: 410 events, ") and " characters as an outline, " in out
+    assert "Waves --events 1-17 --outline" in out.splitlines()[-1]
+
+
+def test_a_sheet_that_fits_prints_as_before(built):
+    """Under the limit nothing changes: the whole sheet, no list of groups."""
+    code, out = tool(built, "print_sheet", "Game")
+    assert code == 0 and out.startswith("== Game\n") and "Its groups and functions" not in out
+
+
+def test_find_prints_the_events_that_use_a_name_under_the_events_they_sit_in(built):
+    """By its name in conditions, actions and expressions, in any case; a comment, a description and quoted
+    text do not count."""
+    code, out = tool(built, "print_sheet", "Game", "--find", "SCORE")
+    lines = out.splitlines()
+    assert code == 0 and lines[0].startswith("== Game: 3 events use SCORE, each under the events it sits in")
+    assert lines[1:4] == ["     global number score = 0", "         // Points collected this round",
+                          "   1 group Setup  [context]"]
+    assert "           -> System: Set score to 0" in lines and "   7 function AddScore(points: number)" in lines
+    assert not any("Collect" in line for line in lines)       # its description and comment say "Score"
+    code, out = tool(built, "print_sheet", "--find", "squash")   # only a quoted tag holds it
+    assert code == 1 and out.startswith("no event uses squash in Game")
+    code, out = tool(built, "print_sheet", "--find", "AddScor")
+    assert code == 1 and "closest: AddScore" in out
+
+
+def test_find_stops_at_the_limit_and_names_the_part_that_continues(project):
+    big(project)
+    seen, span = [], None
+    while True:
+        code, out = tool(project, "print_sheet", "Waves", "--find", "spawnLeft", "--limit", "3000",
+                         *(["--events", span] if span else []))
+        assert code == 0 and len(out) < 3600, out[-300:]
+        seen += [line.split()[0] for line in out.splitlines()[1:] if line[:4].strip().isdigit() and "[context]" not in line]
+        last = out.splitlines()[-1]
+        if not last.startswith("-- stopped at the limit"):
+            break
+        assert "Waves --find spawnLeft --events " in last
+        span = re.search(r"--events (\d+-)", last).group(1)
+    assert len(seen) == len(set(seen)) > 100
+
+
+def test_find_takes_no_outline_show_or_since(built):
+    p = streams(built, f"{INSTALLED}/scripts/print_sheet.py", "--rag", str(REPO), "--find", "score", "--outline")
+    assert p.returncode == 2 and "--find prints events as the sheet words them" in p.stderr
+
+
+def test_the_big_sheet_fixture_is_long_and_passes_the_checker(project):
+    """The eval fixture of a long sheet: 400 and more events, comments in Chinese, a project the checker passes."""
+    make = script_module("make_fixtures", SKILL / "evals")
+    sheet = make.big_sheet()
+
+    def comments(events: list) -> list[str]:
+        return [t for e in events for t in ([e["text"]] if e.get("eventType") == "comment" else [])
+                + comments(e.get("children", []))]
+
+    assert sum(1 for _ in script_module("c3project").numbered_events(sheet["events"])) >= 400
+    assert len(comments(sheet["events"])) >= 190 and all(re.search("[一-鿿]", t) for t in comments(sheet["events"]))
+    assert make.wave_bonus(make.BIG_SHEET_FOCUS) == 454 and len({make.wave_bonus(n) for n in range(1, 25)}) == 24
+    code, out = check(big(project))
+    assert code == 0 and out.splitlines()[-1].startswith("ok: "), out[-800:]

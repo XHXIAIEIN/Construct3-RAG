@@ -46,7 +46,7 @@ def test_cases_cover_every_listed_sheet_and_layout(tmp_path):
     plans = {kind: tmp_path / f"{kind}.json" for kind in ("edit_sheet", *od.REFUSED)}
     matrix = od.cases(list(od.KINDS), [project], plans)
     names = {(c.kind, c.name) for c in matrix}
-    assert {("print_sheet", "example/Main"), ("print_sheet", "example/Enemies"),
+    assert {("print_sheet", "example/Main"), ("print_sheet", "example/Enemies"), ("print_sheet_limit", "example/Main"),
             ("print_layout", "example/Level 1"), ("check_project", "example"), ("check_style", "example"),
             ("review_design", "example"), ("edit_sheet", "example"), ("edit_sheet_line", "example"),
             ("edit_sheet_key", "example"), ("help", "edit_sheet.py")} <= names
