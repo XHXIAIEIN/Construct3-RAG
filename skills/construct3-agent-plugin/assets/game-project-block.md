@@ -32,4 +32,10 @@ eventSheets/*.json. Do not answer it from memory.
 | Changing eventSheets/, layouts/, objectTypes/ JSON or clipboard JSON by hand; naming an event, or reading one the user names ("event 15", a screenshot, a Find result) | Construct3-RAG/prompts/references/hand-editing-project-files.md; for the event numbers, "Naming an event to the user" |
 | Adding, renaming or moving a file of the project: an image, a sound, a script, a new sheet or layout | Construct3-RAG/data/c3-guides/constructs-project-format.md, Scirra's guide to the format, which the llm-context.md here links; then "The project folder" in hand-editing-project-files.md |
 | Following a `[manual: ...]` reference in those files | Construct3-Manual/Construct3-Manual/<that path> |
-<!-- construct3-agent-plugin block: end; version 2026-10-08, stamp e50212bfc1a3 -->
+
+A Markdown file of this project that is longer than about 300 lines is
+read in parts: list its headings with their line numbers (`grep -n '^#'
+<file>`, or `Select-String '^#' <file>` in PowerShell), then read the
+section the work needs. Each whole read stays in the context of every
+later turn of the session.
+<!-- construct3-agent-plugin block: end; version 2026-10-14, stamp 89851c659f11 -->
