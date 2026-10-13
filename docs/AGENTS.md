@@ -91,6 +91,7 @@ The project skill and the prompts:
 | `plugin-tracks-commits.md` | How the build sets `plugin.json`'s version so that a change to `plugin/` reaches an install, and why a linked clone needs no copy in the project |
 | `directory-listing.md` | Why the plugin is in Claude's directory and also installs from this repository, and why a reviewer publishes each directory version |
 | `plugin-folder.md` | Why the plugin is the built folder `plugin/`, what it carries from the repository, and the test that keeps it equal to its sources |
+| `project-worker-agent.md` | Why the plugin ships a sub-agent type whose tools are the ones the scripts need, what it saves, and how its route compared with a general-purpose sub-agent's |
 | `build-folder.md` | Why a game project's packed `.c3p`, export and sheet pictures go in `.build/`, apart from the scratch of `.tmp/` |
 | `random-uid-allocation.md` | Why the projects this repository starts give new instances random uids |
 

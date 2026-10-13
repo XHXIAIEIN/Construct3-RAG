@@ -15,7 +15,7 @@
 | `extract_common_aces.py` | Regenerate `src/ingest/common_aces.json` (shared world-object ACEs) from the editor bundle | `python scripts/extract_common_aces.py` |
 | `measure_examples.py` | Measure the official examples for a number before the template or a check takes it: the player's height, the HUD's share of the screen, popup tweens, Sine idle motion (`docs/decisions/borrowed-numbers.md`) | `python scripts/measure_examples.py <actors\|hud\|popups\|sine> --examples <example-projects> [--out .local/docs/evidence/borrowed-numbers/<measure>.json]` |
 | `reference_games/` | Download public Construct exports into `.local`, decode their event data, build contact sheets and compare motion statistics | `python -m scripts.reference_games <fetch|decode|atlas|report|all>` |
-| `plugin/` | The plugin's manifest, README and icon that `build_plugin.py` copies into `plugin/`; `version` in `plugin.json` is the floor the build never goes below, raised by hand for a minor or major release (`docs/decisions/plugin-tracks-commits.md`) | edit, then `python scripts/build_plugin.py` |
+| `plugin/` | The plugin's manifest, README, icon and `agents/`, its sub-agent types, that `build_plugin.py` copies into `plugin/`; `version` in `plugin.json` is the floor the build never goes below, raised by hand for a minor or major release (`docs/decisions/plugin-tracks-commits.md`) | edit, then `python scripts/build_plugin.py` |
 
 `init.py` and `setup.py` read the canonical `en-US`/`zh-CN` schema layout from
 `src/lookup/schema_layout.py`; do not duplicate locale directory names in new scripts.

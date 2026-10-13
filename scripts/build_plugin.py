@@ -41,7 +41,7 @@ from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "plugin"
-SOURCES = ROOT / "scripts" / "plugin"          # the manifest, README and icon of the plugin
+SOURCES = ROOT / "scripts" / "plugin"          # the manifest, README, icon and agents of the plugin
 SKILL = "skills/construct3-agent-plugin"
 MANIFEST = ".claude-plugin/plugin.json"
 
@@ -137,6 +137,9 @@ def build(out: Path) -> None:
     # The listing icon, which plugin.json names in "icon"; .claude-plugin/ holds the manifest only
     copy(SOURCES / "icon.png", out / "icon.png")
     copy(SOURCES / "README.md", out / "README.md")
+    # The plugin's subagent types: a file under agents/ is one, read by Claude Code from the plugin's folder
+    for agent in sorted((SOURCES / "agents").glob("*.md")):
+        copy(agent, out / "agents" / agent.name)
     copy(ROOT / "LICENSE", out / "LICENSE")
 
 

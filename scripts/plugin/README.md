@@ -13,6 +13,8 @@ Install the plugin, then ask Claude for a change to a Construct 3 project in its
 
 The scripts need Python 3.10 or later. Cutting pictures out of an image tool's output needs Pillow.
 
+The plugin also adds the sub-agent type `construct3:project-worker`, for a change or a lookup that the main agent hands over. It has only the tools the scripts need (shell, file reading and editing, search and the skill), so it starts with a fraction of the context a general-purpose sub-agent starts with.
+
 ## What runs and what reaches the network
 
 - The scripts run on the machine with Python, on the files of the project and of this plugin.

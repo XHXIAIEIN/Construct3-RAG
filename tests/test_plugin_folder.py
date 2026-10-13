@@ -109,3 +109,18 @@ def test_scripts_in_the_plugin_read_the_bundled_data_and_print_what_opens(tmp_pa
     pitfalls = re.findall(r"^(.+\.md):\d+$", out, re.M)
     assert pitfalls and all(Path(p).is_file() and Path(p).is_relative_to(plugin) for p in pitfalls), out
     assert "\n  https://editor.construct.net/#open=3d-platformer\n" in out and "beside Construct3-RAG" not in out, out
+
+
+def test_the_plugin_agent_carries_only_the_tools_the_scripts_need():
+    """A general-purpose sub-agent starts with every tool and server of the session, about 42 000 tokens before
+    its first step; the plugin's agent type names the tools the skill's scripts are run and read with
+    (docs/decisions/project-worker-agent.md). A plain frontmatter parser reads it: no ': ' in a value."""
+    agent = PLUGIN / "agents" / "project-worker.md"
+    text = agent.read_text(encoding="utf-8")
+    head, body = text.split("\n---\n", 1)
+    fields = dict(line.split(": ", 1) for line in head.removeprefix("---\n").splitlines())
+    assert fields["name"] == "project-worker" and len(fields["description"]) < 1024
+    assert [t.strip() for t in fields["tools"].split(",")] == ["Bash", "PowerShell", "Read", "Edit", "Write", "Grep",
+                                                               "Glob", "Skill"]
+    assert "construct3:construct3-agent-plugin" in body and "SKILL.md" in body
+    assert agent.read_bytes() == (build_plugin.SOURCES / "agents" / "project-worker.md").read_bytes()

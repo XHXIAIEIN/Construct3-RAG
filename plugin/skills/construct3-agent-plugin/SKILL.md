@@ -36,6 +36,8 @@ opened once before it is handed over.
   the scripts from this folder. In the files of this skill, `Construct3-RAG/`
   before `data/` or `prompts/` stands for `${CLAUDE_PLUGIN_ROOT}/`. Other
   `Construct3-RAG/` paths, such as `docs/`, are not in the plugin; skip them.
+  To hand a sheet change or a lookup to a sub-agent, start it as
+  `construct3:project-worker`, which has only the tools these scripts need.
 - Otherwise, reading this inside the clone while the work is in a game
   project: install the skill there first,
   `python scripts/install.py --project <game folder>`.

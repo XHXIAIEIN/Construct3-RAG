@@ -118,6 +118,9 @@ The build:
   "Prepare for the security scan" asks the README to describe everything
   the plugin runs, sends or fetches. This repository's README names
   `plugin/` as the plugin folder.
+- Copies `scripts/plugin/agents/` to `agents/`, the sub-agent types Claude
+  Code reads from a plugin's folder: `project-worker`, whose tools are the
+  ones the skill's scripts need (`project-worker-agent.md`).
 
 Copied text files are written with LF line endings, as Git stores them, so
 a checkout with CRLF files (`lf-line-endings.md`) builds the same folder as
