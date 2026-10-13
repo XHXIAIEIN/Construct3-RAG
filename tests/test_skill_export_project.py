@@ -277,3 +277,31 @@ def test_export_stops_on_a_key_it_would_ship_and_names_the_hosts(project):
     assert code == 0, out
     assert out.startswith("the game holds addresses of api.example.com (sheet Game event 7 action 2): tell the user "
                           "which hosts the game contacts\nwould export"), out
+
+
+def test_an_export_whose_version_cannot_be_written_says_where_it_is_and_how_to_set_it(monkeypatch, project, capsys):
+    """The export is put in place first and the version written after it, on purpose; a project.c3proj that
+    cannot be written then stopped the run with a traceback, the export installed with the new version and the
+    project left on the old one. The run now names both and how to set the version, with exit code 4."""
+    export = load(SKILL / "scripts")
+    path = project / "project.c3proj"
+    before = path.read_bytes()
+    old = export.project_version(project)
+    write_bytes = Path.write_bytes
+
+    def refuse(self, data):
+        if self.name == "project.c3proj":
+            raise PermissionError(13, "Access is denied", str(self))
+        return write_bytes(self, data)
+    monkeypatch.setattr(Path, "write_bytes", refuse)
+    monkeypatch.setattr(export.oe, "browser_path", lambda: "browser")
+    monkeypatch.setattr(export, "run", lambda project, folder, version, spec, exe: True)
+    monkeypatch.setattr(sys, "argv", ["export_project.py", "--project", str(project), "--version", "1.2.0.0"])
+    assert export.main() == 4
+    out = capsys.readouterr().out.splitlines()[-1]
+    assert out.startswith(f"exported 1.2.0.0 into {project / '.build' / 'web'}, runtime in the worker; project.c3proj "
+                          f"was not changed and still says version {old}: ")
+    assert "Access is denied" in out and "set Version to 1.2.0.0" in out
+    assert path.read_bytes() == before
+    monkeypatch.setattr(Path, "write_bytes", write_bytes)
+    assert export.main() == 0 and export.project_version(project) == "1.2.0.0"

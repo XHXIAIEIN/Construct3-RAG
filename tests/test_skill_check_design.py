@@ -789,3 +789,26 @@ def test_a_passing_play_says_what_the_tests_left_untested(tmp_path):
     assert code == 0, lines
     assert lines[-1] == (f"  played: {len(data.tests)} of {len(data.tests)} tests pass, 0 findings on the first "
                          f"screen, 0 runtime errors; what the tests of the design do not play is untested")
+
+
+def test_play_design_keeps_the_reason_a_preview_did_not_run_and_counts_the_runs_it_lacks():
+    """A preview that could not start comes back without plans; its own error says why and what to do, and the
+    report printed "no preview" instead. Test runs the result lacks were zipped away: a result without them said
+    "0 of N tests pass" with exit 0. They are now not evaluated, each a problem."""
+    pd, gm = script_module("play_design"), script_module("game_model")
+    design = gm.Design(example())
+    head = {"status": "opened", "project": "p", "title": "t", "editor": "e"}
+    why = "the browser profile C:/x is 300 characters long: copy the project to a shorter folder"
+    lines, code = pd.report(design, [], {**head, "preview": {"started": False, "layout": None, "runtime": None,
+                                                             "errors": [why]}})
+    assert code == 1 and lines[-1] == f"  preview did not run: {why}"
+    first = {"started": True, "errors": [], "steps": [{"ok": True}, {"ok": True, "value": {}}, {"ok": True}]}
+    n = len(design.tests)
+    lines, code = pd.report(design, [[None]] * n, {**head, "preview": {"plans": [first]}})
+    assert code == 1
+    assert [line for line in lines if "not evaluated" in line and "played" not in line] == [
+        f"    not evaluated  {t['name']}: the preview returned 0 test runs for {n} tests; play it again" for t in design.tests]
+    assert lines[-1].startswith(f"  played: 0 of {n} tests pass, {n} not evaluated, ")
+    one = {"started": True, "errors": [], "steps": []}
+    lines, code = pd.report(design, [[]] * n, {**head, "preview": {"plans": [first] + [one] * (n + 1)}})
+    assert code == 1 and f"  runs: the preview returned {n + 1} test runs for {n} tests" in "\n".join(lines)

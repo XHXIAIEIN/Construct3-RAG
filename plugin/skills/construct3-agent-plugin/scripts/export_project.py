@@ -84,7 +84,8 @@ exit codes: 0 exported; 1 a string of the project is shaped like a key, before t
 starts, or the export did not finish: no subscription within 5 minutes,
 the project did not open, or a dialog stopped it; the copy is closed, the window is left
 open, and a run again goes on in it; 2 no project, a flag that cannot be used, a --to that
-holds the project or files other than an export, or the editor did not load; 3 no Edge, Chrome or Chromium here
+holds the project or files other than an export, or the editor did not load; 3 no Edge, Chrome or Chromium here;
+4 exported, but project.c3proj could not be written and keeps its old version, which the last line says how to set
 """
 
 LOGIN_WAIT = 300        # seconds the user has to log in
@@ -680,11 +681,16 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
         devtools.call("Target.closeTarget", targetId=page.target)
     staged.unlink(missing_ok=True)
     unpack(data, folder, version)
+    return exported_worker(folder)
+
+
+def write_version(project: Path, version: str) -> None:
+    """The version the export carries, into project.c3proj, once the export is in place: an export that stopped
+    leaves the project's version as it was. Raises OSError when the file cannot be written."""
     path = project / "project.c3proj"
     text = path.read_text(encoding="utf-8")
     if project_version(project) != version:
         path.write_bytes(with_version(text, version).encode("utf-8"))
-    return exported_worker(folder)
 
 
 def shipped_check(project: Path) -> tuple[list[str], str | None]:
@@ -777,6 +783,16 @@ def main() -> int:
         print(f"not exported: {e}")
         return 1
     where = {True: "the worker", False: "the page", None: "a place scripts/main.js does not name"}[in_worker]
+    before = project_version(project)
+    try:
+        write_version(project, version)
+    except OSError as e:
+        # The export is in place and carries the new version; only the project's own line was not written
+        print(f"exported {version} into {folder}, runtime in {where}; project.c3proj was not changed and still "
+              f"says version {before or 'nothing'}: {e}. Make the file writable and set Version to {version}, in the "
+              f"editor's project properties or on the \"version\" line of project.c3proj; the export needs nothing "
+              f"more, and --bump goes on from the version in {folder}")
+        return 4
     print(f"exported {version} into {folder}, runtime in {where}; project.c3proj version {version}")
     return 0
 

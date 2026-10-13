@@ -633,7 +633,9 @@ def report(design: gm.Design, plans_meta: list, result: dict, types=()) -> tuple
     first = runs[0] if runs else {}
     screen: list[str] = []
     if not first.get("started"):
-        return lines + [f"  preview did not run: {e}" for e in first.get("errors", ["no preview"])], 1
+        # open_one answers without plans when the preview could not start: its errors say why and what to do
+        why = first.get("errors") or ran.get("errors") or ["no preview"]
+        return lines + [f"  preview did not run: {e}" for e in why], 1
     errors += first.get("errors", [])
     by_note = dict(enumerate(first.get("steps", []), 1))
     snap = by_note.get(2, {}).get("value")
@@ -653,8 +655,17 @@ def report(design: gm.Design, plans_meta: list, result: dict, types=()) -> tuple
     lines += screen
     problems += len(screen)
     lines.append("  tests:")
-    passed = 0
-    for test, origin, run in zip(design.tests, plans_meta, runs[1:]):
+    passed = unplayed = 0
+    played = runs[1:]
+    for n, test in enumerate(design.tests):
+        if n >= len(played) or n >= len(plans_meta):
+            # A run the preview did not return is no pass: it says nothing about the game
+            lines.append(f"    not evaluated  {test['name']}: the preview returned {len(played)} test run"
+                         f"{'s' if len(played) != 1 else ''} for {len(design.tests)} tests; play it again")
+            problems += 1
+            unplayed += 1
+            continue
+        origin, run = plans_meta[n], played[n]
         if not run.get("started"):
             lines.append(f"    FAIL  {test['name']}: the preview did not run: {'; '.join(run.get('errors', []))[:300]}")
             problems += 1
@@ -698,7 +709,12 @@ def report(design: gm.Design, plans_meta: list, result: dict, types=()) -> tuple
     unique = list(dict.fromkeys(e.splitlines()[0] for e in errors))
     lines += [f"  runtime: {e}" for e in unique[:8]]
     problems += len(unique)
-    lines.append(f"  played: {passed} of {len(design.tests)} tests pass, {len(screen)} finding"
+    if len(played) > len(design.tests):
+        lines.append(f"  runs: the preview returned {len(played)} test runs for {len(design.tests)} tests; the ones past "
+                     f"the last test are not read")
+        problems += 1
+    lines.append(f"  played: {passed} of {len(design.tests)} tests pass"
+                 + (f", {unplayed} not evaluated" if unplayed else "") + f", {len(screen)} finding"
                  f"{'s' if len(screen) != 1 else ''} on the first screen, {len(unique)} runtime error"
                  f"{'s' if len(unique) != 1 else ''}"
                  f"{'' if problems else '; what the tests of the design do not play is untested'}")

@@ -573,6 +573,36 @@ def test_new_puts_back_what_it_wrote_when_a_later_file_fails(project, blocked):
     assert code == 0 and (project / SHEET).is_file(), out
 
 
+def test_new_leaves_no_draft_when_a_file_cannot_take_its_place(project, monkeypatch, capsys):
+    """Each file is written as a draft beside it that then takes its place. On Windows a read-only layout
+    refuses that last step: the files were put back and the run said nothing was written, but the layout's
+    draft stayed beside it."""
+    import sys
+    layouts = list((project / "layouts").glob("*.json"))
+    (project / SHEET).unlink()
+    edit(project, "project.c3proj", lambda p: p["eventSheets"].update(items=[]))
+    for path in layouts:
+        edit(project, path.relative_to(project).as_posix(), lambda lay: lay.update(eventSheet=None))
+    files = {p: p.read_bytes() for p in (project / "project.c3proj", *layouts)}
+    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [
+        {"eventType": "comment", "text": "Score from zero."}]}]), encoding="utf-8")
+    edit_sheet = script_module("edit_sheet", project / INSTALLED / "scripts")
+    replace = os.replace
+
+    def refuse(src, dst):
+        if Path(dst) == layouts[-1]:
+            raise PermissionError(13, "Access is denied", str(dst))
+        return replace(src, dst)
+    monkeypatch.setattr(os, "replace", refuse)
+    monkeypatch.setattr(sys, "argv", ["edit_sheet.py", "--project", str(project), "--rag", str(REPO), "Game",
+                                      str(project / "plan.json"), "--new"])
+    assert edit_sheet.main() == 1
+    out = capsys.readouterr().out
+    assert "could not be written" in out and "nothing was written" in out, out
+    assert sorted(p.relative_to(project).as_posix() for p in project.rglob("*.tmp")) == []
+    assert all(p.read_bytes() == raw for p, raw in files.items()) and not (project / SHEET).exists()
+
+
 def test_a_new_sheet_beside_others_says_no_layout_runs_it(project):
     layouts = {p: p.read_bytes() for p in (project / "layouts").glob("*.json")}
     (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "variable", "name": "menuShown"}]}]),

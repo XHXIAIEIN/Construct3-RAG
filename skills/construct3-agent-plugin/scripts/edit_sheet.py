@@ -72,6 +72,7 @@ a key the editor always writes
 """
 import codecs
 import collections
+import contextlib
 import copy
 import difflib
 import functools
@@ -849,12 +850,18 @@ def as_on_disk(path: Path) -> Path:
 
 
 def write_editor_json(path: Path, data: dict) -> None:
-    """data in path as the editor lays its files out, tabs and LF, a byte order mark kept."""
+    """data in path as the editor lays its files out, tabs and LF, a byte order mark kept. The draft it writes
+    beside path goes again when path cannot take its place, so that a failed write leaves nothing behind."""
     bom = path.read_bytes().startswith(codecs.BOM_UTF8)
     draft = path.with_name(path.name + ".tmp")
-    draft.write_bytes((codecs.BOM_UTF8 if bom else b"")
-                      + json.dumps(data, indent="\t", ensure_ascii=False).encode("utf-8"))
-    os.replace(draft, path)
+    try:
+        draft.write_bytes((codecs.BOM_UTF8 if bom else b"")
+                          + json.dumps(data, indent="\t", ensure_ascii=False).encode("utf-8"))
+        os.replace(draft, path)
+    except OSError:
+        with contextlib.suppress(OSError):
+            draft.unlink(missing_ok=True)
+        raise
 
 
 def put_back(sheet: Path, before: dict[Path, bytes]) -> list[str]:
