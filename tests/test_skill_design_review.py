@@ -166,7 +166,9 @@ def test_resume_and_partial_validation_preserve_saved_batches(tmp_path):
     assert run(root, SCRIPT, *args)[0] == 0
     folder = root / ".tmp/review"
     old_batches = {p: p.read_bytes() for p in folder.rglob("batch-*.json")}
-    first = json.loads(next(iter(old_batches)).read_text(encoding="utf-8"))["questions"][0]["id"]
+    # Batch 1 by its name: the order rglob lists files in is the file system's.
+    first_batch = next(p for p in old_batches if p.name == "batch-1.json")
+    first = json.loads(first_batch.read_text(encoding="utf-8"))["questions"][0]["id"]
     q = next(q for q in bundle(root)["questions"] if q["id"] == first)
     path = root / "answers.json"
     path.write_text(json.dumps([answer(q)]), encoding="utf-8")

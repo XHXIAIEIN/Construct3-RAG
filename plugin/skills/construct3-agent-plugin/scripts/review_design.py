@@ -2,10 +2,15 @@
 fragile, with the form to write instead, then fixed questions to answer.
 
     python scripts/review_design.py [--project FOLDER] [--sheets NAME ...] [--limit CHARS]
-                                    [--rag FOLDER] [--locale en-US]
+                                    [--rag FOLDER] [--locale en-US] [--check [--style]]
+                                    [--prepare FOLDER [--resume] [--answers FILE [--batch N]]]
 
-Run it after check_project.py passes and before the editor. It reads the files,
-starts no browser and changes nothing. A finding names its place as
+Run it after check_project.py passes and before the editor, or with --check,
+which runs check_project.py first and stops when it fails. It reads the files,
+starts no browser and edits no project file. What it writes stays under the
+project's .tmp/: --check keeps the checker's complete result in
+.tmp/design-review/check.json, or in the --prepare folder, and --prepare
+writes the batches and the saved judgements there. A finding names its place as
 print_sheet.py numbers it, `sheet Game event 15`, says what to change and
 names the form to write instead. Each rule below finds nothing, or next to
 nothing, in the 524 official examples:
@@ -55,6 +60,7 @@ EPILOG = """examples:
   python scripts/review_design.py
   python scripts/review_design.py --sheets Combat Map
   python scripts/review_design.py --project ../OtherGame --limit 0
+  python scripts/review_design.py --check --limit 0
   python scripts/review_design.py --prepare .tmp/design-review
   python scripts/review_design.py --check --prepare .tmp/design-review --resume --limit 0
   python scripts/review_design.py --prepare .tmp/design-review --answers answers.json --batch 1 --resume
@@ -924,8 +930,10 @@ def report(found: list[dict], sheets: list[str]) -> tuple[list[str], list[str]]:
 def main() -> int:
     ap = c3.argument_parser(
         "Review the design of a project's event sheets: where an event, a global or a link is hard to read or "
-        "fragile, with the form to write instead, then fixed questions to answer from print_sheet.py. Reads "
-        "the files only; run it after check_project.py passes and before the editor.", EPILOG)
+        "fragile, with the form to write instead, then fixed questions to answer from print_sheet.py. Edits no "
+        "project file; --check runs check_project.py first and keeps its complete result in "
+        ".tmp/design-review/check.json. Run it after check_project.py passes, or with --check, before the "
+        "editor.", EPILOG)
     ap.add_argument("--sheets", nargs="+", metavar="NAME", help="print the findings and questions of these sheets "
                                                                 "only (default: every sheet); globals are read over "
                                                                 "the whole project either way")

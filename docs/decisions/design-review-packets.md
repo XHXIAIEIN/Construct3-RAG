@@ -11,26 +11,40 @@ Invocation counts alone cannot establish a lower task cost.
 
 ## Evidence
 
-Same-input scripted first, cached and local-change reviews show that
-sharing constraints and compact JSON reduce complete packet input.
+Characters each review path returns on one test project, scripted with the
+same input, three repeats each with equal results; these are characters, not
+model tokens or cost:
+
+| Path | Characters |
+|------|------------|
+| Checker, plain review and printed sheet, before complete packets | 6,107 |
+| First complete packet when it became the default | 46,223 |
+| First complete packet, before and after scoping evidence by question | 49,161 and 38,995 |
+| Same, reused judgements (cached) | 7,484 and 7,480 |
+| Same, after a local change | 49,870 and 39,704 |
+| `--check --limit 0`, the default now | 6,181 |
+
 Coverage questions start from the selected sheet and follow shared symbols
 and includes. Unrelated sheets stay outside their evidence. Relevant
 layouts retain complete instance, initial-value and hierarchy data because
-those fields can affect picking and behavior.
+those fields can affect picking and behavior. Cached judgements avoid a
+batch read, but their manifest carries accepted reasons and citations, and a
+change in shared timing can invalidate every question.
 
-The first complete packet still supplies substantially more characters
-than checking and printing the sheet. Cached judgements avoid a batch read,
-but their manifest carries accepted reasons and citations. A change in
-shared timing can invalidate every question. These results support an
-optional reuse path, not a default claim of lower task cost.
+The model comparison is one static review per arm (n = 1): from the packets
+before and after scoping, both answered the seven questions alike (six pass,
+one needs a change) with no supplemental project read, in 144 and 135
+seconds. One run per arm gives no spread, and a static review is not a
+repair task, so this shows that scoping lost no answer here, not that either
+path costs less. When complete packets became the default, a clean model
+comparison could not run at all: the CLI's OAuth session had expired and the
+agent session's quota was spent. Model turns, tokens and cost of a full
+repair task remain unmeasured for every path.
 
-Clean static model reviews answer the same questions from each packet.
-This comparison measures static judgement and supplemental reading.
-It does not measure a full repair task, model token cost or repeated-run
-variation. Scripted validation replays use synthetic answers and establish
-transport size and invalidation only. Raw input, answers, commands and
-failure logs are retained in
-`.local/docs/evidence/skill-evals/rag-review-scope/`.
+Scripted validation replays use synthetic answers and establish transport
+size and invalidation only. Raw input, answers, commands and failure logs:
+`.local/docs/evidence/skill-evals/rag-tool-flow/` for the first default,
+`.local/docs/evidence/skill-evals/rag-review-scope/` for the scoping.
 
 ## Options
 
@@ -73,6 +87,8 @@ The current source determines behavior.
 
 ## Re-evaluate when
 
+The skill's change to this default owes its eval iteration (`skills/AGENTS.md`,
+"Evals"); its route counts and lost calls decide whether the default stays.
 Measure complete repair tasks with repeated clean model runs before choosing
 complete packets as the default. Record actual tokens and cost when exposed
 by the model session. Extend relation parsing with a real project
