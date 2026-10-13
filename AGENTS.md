@@ -214,7 +214,9 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | HTTP API | `docs/guide/api-reference.md` |
 | Data files and fields | `docs/guide/data-format.md` |
 | Event sheet design, sourced pitfalls, the examples' authoring style | `prompts/event-sheet-thinking.md`, `prompts/event-sheet-pitfalls.md` and its topic files in `prompts/pitfalls/`, `prompts/event-sheet-style.md`, `docs/decisions/event-sheet-design-guidance.md` |
+| Complete design questions, answer validation and conservative static reuse | `skills/construct3-agent-plugin/references/design-review.md`, `docs/decisions/design-review-packets.md` |
 | Published-game visual language, motion statistics and the reproducible analyzer | `docs/decisions/published-game-visual-language.md`, `docs/dev/published-game-analysis.md`, `scripts/reference_games/` |
+| Tool-page design tokens: the recording review page and the API playground, their palettes, type scale, motion and contrast contract | `docs/decisions/design-tokens.md`, `docs/decisions/preview-player.md` |
 | Slot case as a program, hand-editing project JSON, bars and life counters by the art they have, feel recipes, sounds and placeholder audio, sequences and dialogue run from a data file | `prompts/references/` |
 | A new project's sheets, layers, objects and look: colours by role, text, pixel art, what other design skills do, and where its art comes from | `prompts/references/new-project.md`, `docs/decisions/game-look-from-design-skills.md`, `docs/decisions/art-from-the-image-tool.md` |
 | The project tools the skill carries into a game project: what each does, and changing and evaluating them | `skills/construct3-agent-plugin/SKILL.md`, `skills/AGENTS.md` |
