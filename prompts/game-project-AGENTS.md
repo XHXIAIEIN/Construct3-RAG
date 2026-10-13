@@ -78,6 +78,15 @@ work needs it. If the agent keeps skipping them, add this line at the end:
 then inlines that file into every session of the project, at the cost of
 its full length each time. Other tools ignore the line.
 
+The block ends with a rule for the project's own long Markdown files, such
+as design documents: list the headings, then read the section the work
+needs. A file read whole stays in the context and is read again on every
+later turn, so in one game project's sessions whole reads of its design
+documents were the largest single cost after the context itself
+(`docs/decisions/long-docs-in-parts.md`). The rule names this project's
+files only; the files of this repository that the table names are read
+whole, because each one says what to read next.
+
 ## Refreshing the block
 
 The block sits between two HTML comments, which a rendered `AGENTS.md`
