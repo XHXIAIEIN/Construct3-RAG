@@ -283,9 +283,10 @@ python skills/construct3-agent-plugin/evals/run_trigger_eval.py skills/construct
   the check chain got and in how many calls), `preview_failed`,
   `help_reads` and `repeat_help`, `plan_refusals`, `hand_edits`,
   `lookups_before_first_edit`, `data_reads` and `other_clone_reads`,
-  `entry_chars` and `printed_command_failures`, averaged per cell like the
-  others; `first_script`, `chain_end` (the deepest step that passed) and
-  `chain_reached` (the deepest step called) are counted per cell. The
+  `entry_chars`, `printed_command_failures`, `print_sheet_chars` and
+  `whole_sheet_prints`, averaged per cell like the others; `first_script`,
+  `chain_end` (the deepest step that passed) and `chain_reached` (the
+  deepest step called) are counted per cell. The
   iteration's `decision.json` names the cases, the column, its direction,
   the runs per cell, the guards (`pass_rate` not down) and how many runs
   ran at once; `grade.py` reads it, compares the arms with the within-task

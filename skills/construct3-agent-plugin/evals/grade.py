@@ -23,8 +23,8 @@ interval, and with_skill less each other arm. A run with a trace.json
 output tokens, and the route columns of its transcript: read_skill_md,
 chain_depth, chain_attempts, preview_failed, help_reads, repeat_help,
 plan_refusals, hand_edits, lookups_before_first_edit, data_reads,
-other_clone_reads, entry_chars and printed_command_failures, averaged like
-the cost columns; first_script, chain_end and chain_reached are counted
+other_clone_reads, entry_chars, printed_command_failures, print_sheet_chars
+and whole_sheet_prints, averaged like the cost columns; first_script, chain_end and chain_reached are counted
 per cell. Time
 comes from timing.json, else from the trace; tokens come from timing.json. A
 case marked held_out in evals.json is reported separately, under held_out,
@@ -359,6 +359,18 @@ def grade_find_in_a_long_sheet(run: Path) -> list[tuple[bool, str]]:
              "stated: " + ", ".join(w for w in ("player", "success", "fail") if re.search(w, answer, re.I))),
             # 87 to 91 abduct the player's tractor, the other way to game over; naming them is no error.
             (bool(numbers) and all(102 <= n <= 108 or 87 <= n <= 91 for n in numbers), said),
+            unchanged(run)]
+
+
+def grade_find_in_a_big_sheet(run: Path) -> list[tuple[bool, str]]:
+    """The sheet of make_fixtures.big_sheet(): wave 17's bonus is event 284, which calls GiveBonus(454)."""
+    answer = answer_of(run)
+    # The wave and the bonus can stand near the word "event" ("event 284, wave 17, gives 454"): not event numbers.
+    numbers = [n for n in event_numbers(answer) if n not in (17, 454)]
+    said = f"event numbers the answer gives: {numbers or 'none'}"
+    return [(284 in numbers, said),
+            (bool(re.search(r"(?<![\d.])454(?![\d.])", answer)), "454 stated" if "454" in answer else "454 not stated"),
+            (bool(numbers) and all(273 <= n <= 289 or n in (409, 410) for n in numbers), said),
             unchanged(run)]
 
 
@@ -1340,6 +1352,7 @@ def grade_kept(run: Path, own_warnings: bool = True) -> list[tuple[bool, str]]:
 
 GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_load_errors,
            "name-the-restart-event": grade_name_the_restart_event, "find-in-a-long-sheet": grade_find_in_a_long_sheet,
+           "find-in-a-big-sheet": grade_find_in_a_big_sheet,
            "lay-out-the-hud": grade_lay_out_the_hud, "show-hp-as-a-bar": grade_show_hp_as_a_bar,
            "reveal-the-gradient": grade_reveal_the_gradient, "lives-as-hearts": grade_lives_as_hearts,
            "readable-on-a-dark-background": grade_readable_on_a_dark_background,
@@ -1358,11 +1371,11 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
 TRACE_COLUMNS = ("tool_calls", "lost_calls", "turns", "output_tokens", "read_skill_md", "first_script", "chain_depth",
                  "chain_end", "chain_reached", "chain_attempts", "preview_failed", "help_reads", "repeat_help",
                  "plan_refusals", "hand_edits", "lookups_before_first_edit", "data_reads", "other_clone_reads",
-                 "entry_chars", "printed_command_failures")
+                 "entry_chars", "printed_command_failures", "print_sheet_chars", "whole_sheet_prints")
 METRICS = ("pass_rate", "runtime_rate", "seconds", "tokens", "turns", "output_tokens", "tool_calls", "lost_calls",
            "play_seconds", "read_skill_md", "chain_depth", "chain_attempts", "preview_failed", "help_reads",
            "repeat_help", "plan_refusals", "hand_edits", "lookups_before_first_edit", "data_reads",
-           "other_clone_reads", "entry_chars", "printed_command_failures")
+           "other_clone_reads", "entry_chars", "printed_command_failures", "print_sheet_chars", "whole_sheet_prints")
 COUNTED = ("first_script", "chain_end", "chain_reached")    # per cell: how many runs started with, passed, or called each
 LEVELS = ("checker", "files", "runtime")      # in the order a run reaches them
 

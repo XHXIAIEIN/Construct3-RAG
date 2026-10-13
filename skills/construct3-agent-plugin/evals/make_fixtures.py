@@ -245,13 +245,148 @@ def seed_door(root: Path) -> None:
     save(layout_path, layout)
 
 
+BIG_SHEET = "Waves"
+WAVES = 24
+BIG_SHEET_FOCUS = 17
+
+
+def wave_bonus(wave: int) -> int:
+    """The points the end of a wave adds: a different number for each wave, rising with it."""
+    return 100 + 20 * wave + (wave % 3) * 7
+
+
+def big_sheet() -> dict:
+    """A sheet of 24 waves in the shape a long game's sheets take, 400 and more numbered events, every group and
+    most events under a comment in Chinese, the language whose comments make an outline long: a group per wave
+    with a spawn group and a scoring group inside, then the functions the waves call. Built here, from numbers,
+    not copied from anyone's game."""
+    sid = iter(range(666666666600001, 666666666699999))
+
+    def ace(id_: str, obj: str = "System", **params: object) -> dict:
+        return {"id": id_, "objectClass": obj, "sid": next(sid), **({"parameters": params} if params else {})}
+
+    def block(conditions: list, actions: list, children: list | None = None) -> dict:
+        ev = {"eventType": "block", "conditions": conditions, "actions": actions, "sid": next(sid)}
+        return ev | ({"children": children} if children else {})
+
+    def comment(text: str) -> dict:
+        return {"eventType": "comment", "text": text}
+
+    def group(title: str, description: str, children: list) -> dict:
+        return {"eventType": "group", "disabled": False, "title": title, "description": description,
+                "isActiveOnStart": True, "children": children, "sid": next(sid)}
+
+    def variable(name: str, value: str, note: str, kind: str = "number") -> dict:
+        return {"eventType": "variable", "name": name, "type": kind, "initialValue": value, "comment": note,
+                "isStatic": False, "isConstant": False, "sid": next(sid)}
+
+    def wave_is(n: int) -> dict:
+        return ace("compare-eventvar", variable="wave", comparison=0, value=str(n))
+
+    events: list = [
+        comment("波次表：每一波生成的金币数量、生成间隔和结束奖励都写在这里，按波次分组，改数值时只改对应的那一组"),
+        variable("wave", "1", "当前波次，从 1 开始，打完最后一波后回到 1"),
+        variable("spawnLeft", "0", "本波还要生成的金币数量，生成一个减一"),
+        variable("spawnGap", "1", "本波两次生成之间的秒数"),
+        variable("waveScore", "0", "本波已经拿到的分数，换波时清零"),
+    ]
+    for n in range(1, WAVES + 1):
+        count, gap = 4 + n % 5 + n // 6, round(1.6 - 0.04 * n, 2)
+        spawn = group(f"Wave {n} spawn", f"第{n}波的生成规则：数量 {count}，间隔 {gap} 秒", [
+            comment(f"第{n}波开始：设定本波数量和间隔，清空本波分数"),
+            block([wave_is(n), ace("trigger-once-while-true")],
+                  [ace("set-eventvar-value", variable="spawnLeft", value=str(count)),
+                   ace("set-eventvar-value", variable="spawnGap", value=str(gap)),
+                   ace("set-eventvar-value", variable="waveScore", value="0")],
+                  [block([ace("compare-eventvar", variable="spawnLeft", comparison=4, value="6")],
+                         [ace("set-eventvar-value", variable="spawnGap", value=str(round(gap * 0.9, 2)))])]),
+            comment("按间隔生成金币，生成一个就把剩余数量减一"),
+            block([wave_is(n), ace("every-x-seconds", **{"interval-seconds": "spawnGap"}),
+                   ace("compare-eventvar", variable="spawnLeft", comparison=4, value="0")],
+                  [ace("subtract-from-eventvar", variable="spawnLeft", value="1")],
+                  [block([], [{"callFunction": "SpawnCoin", "sid": next(sid),
+                               "parameters": [f"{n % 3}", f"{(n * 7) % 5}"]}])]),
+            comment("剩下最后两个的时候加快生成，让波次的结尾更紧张"),
+            block([wave_is(n), ace("compare-eventvar", variable="spawnLeft", comparison=3, value="2")],
+                  [ace("set-eventvar-value", variable="spawnGap", value=str(round(gap / 2, 2)))]),
+        ])
+        score = group(f"Wave {n} score", f"第{n}波的计分：每个金币的分数和本波结束时的奖励", [
+            comment("本波每拿到一个金币，本波分数加上这一波的倍数"),
+            block([wave_is(n), ace("compare-two-values", **{"first-value": "Coin.Count", "comparison": 2,
+                                                             "second-value": "spawnLeft + 1"})],
+                  [ace("add-to-eventvar", variable="waveScore", value=str(1 + n // 4))]),
+            comment("本波分数超过门槛时额外加一分，门槛随波次升高"),
+            block([wave_is(n), ace("compare-eventvar", variable="waveScore", comparison=5, value=str(10 + 2 * n)),
+                   ace("trigger-once-while-true")],
+                  [ace("add-to-eventvar", variable="waveScore", value="1")]),
+            block([wave_is(n), ace("compare-eventvar", variable="waveScore", comparison=5, value=str(20 + 3 * n)),
+                   ace("trigger-once-while-true")],
+                  [ace("add-to-eventvar", variable="waveScore", value="2")]),
+            comment(f"第{n}波结束：金币全部生成并且被收走，发放本波奖励，然后进入下一波"),
+            block([wave_is(n), ace("compare-eventvar", variable="spawnLeft", comparison=0, value="0"),
+                   ace("compare-two-values", **{"first-value": "Coin.Count", "comparison": 0, "second-value": "0"}),
+                   ace("trigger-once-while-true")],
+                  [{"callFunction": "GiveBonus", "sid": next(sid), "parameters": [str(wave_bonus(n))]},
+                   ace("add-to-eventvar", variable="wave", value="1")]),
+            comment("最后一波之后回到第一波"),
+            block([ace("compare-eventvar", variable="wave", comparison=4, value=str(WAVES))],
+                  [ace("set-eventvar-value", variable="wave", value="1")]),
+        ])
+        text = group(f"Wave {n} text", f"第{n}波的提示文字", [
+            comment("波次开始时在回合文字上显示第几波，清场时换成清场提示"),
+            block([wave_is(n), ace("trigger-once-while-true")],
+                  [ace("set-text", "RoundText", text=f'"第{n}波"')]),
+            block([wave_is(n), ace("compare-eventvar", variable="spawnLeft", comparison=0, value="0"),
+                   ace("compare-two-values", **{"first-value": "Coin.Count", "comparison": 0, "second-value": "0"})],
+                  [ace("set-text", "RoundText", text='"清场"')]),
+            block([wave_is(n), ace("compare-eventvar", variable="waveScore", comparison=5, value=str(30 + 3 * n))],
+                  [ace("set-text", "ScoreLabel", text='"好"')]),
+        ])
+        events.append(group(f"Wave {n}", f"第{n}波：先生成，再计分", [spawn, score, text]))
+    events += [
+        comment("生成一个金币：列和行由调用的波次给出，位置落在棋盘的格子上"),
+        {"functionName": "SpawnCoin", "functionDescription": "在棋盘的一个格子上生成一个金币", "functionCategory": "",
+         "functionReturnType": "none", "functionCopyPicked": False, "functionIsAsync": False,
+         "functionParameters": [{"name": "column", "type": "number", "initialValue": "0", "comment": "列", "sid": next(sid)},
+                                {"name": "row", "type": "number", "initialValue": "0", "comment": "行", "sid": next(sid)}],
+         "eventType": "function-block", "conditions": [],
+         "actions": [ace("create-object", **{"object-to-create": "Coin", "layer": "\"Game\"",
+                                             "x": "592 + 192 * column", "y": "400 + 192 * row",
+                                             "create-hierarchy": False, "template-name": "\"\""})],
+         "sid": next(sid)},
+        comment("发放奖励：把奖励加进总分，并在分数文字上显示出来"),
+        {"functionName": "GiveBonus", "functionDescription": "加上一波的奖励分数", "functionCategory": "",
+         "functionReturnType": "none", "functionCopyPicked": False, "functionIsAsync": False,
+         "functionParameters": [{"name": "points", "type": "number", "initialValue": "0", "comment": "奖励的分数",
+                                 "sid": next(sid)}],
+         "eventType": "function-block", "conditions": [],
+         "actions": [{"callFunction": "AddScore", "sid": next(sid), "parameters": ["points"]}],
+         "sid": next(sid)},
+    ]
+    return {"name": BIG_SHEET, "events": events, "sid": next(sid)}
+
+
+def seed_big_sheet(root: Path) -> None:
+    """A second sheet of 400 and more events beside the stand-in's own, listed in project.c3proj and used by no
+    layout, so the coins game plays as before; the case reads it."""
+    def save(path: Path, data: dict) -> None:
+        path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+
+    save(root / "eventSheets" / f"{BIG_SHEET}.json", big_sheet())
+    path = root / "project.c3proj"
+    project = json.loads(path.read_text(encoding="utf-8"))
+    project["eventSheets"]["items"].append(BIG_SHEET)
+    save(path, project)
+
+
 # fixture -> (the fixture it starts from, the fault written into it). The seeded entries' sids start
-# with 6333, 6444 or 6555, so a grader can tell the example's own events from them.
+# with 6333, 6444, 6555 or 6666, so a grader can tell the example's own events from them.
 SEEDS = {"families-key-pressed": ("example:families", seed_key_pressed),
          "coins-timer-restart": ("coins", seed_timer_restart),
          "coins-turn-flip": ("coins", seed_turn_flip),
          "persistent-walls": ("example:persistent-layouts", seed_no_solid),
-         "platformer-door": ("example:template-platformer", seed_door)}
+         "platformer-door": ("example:template-platformer", seed_door),
+         "coins-big-sheet": ("coins", seed_big_sheet)}
 
 
 def digest(project: Path) -> dict:

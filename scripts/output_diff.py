@@ -9,6 +9,8 @@ working tree as the working tree's do. The same cases then run with REF's
 skill scripts and with the working tree's:
 
   print_sheet    print_sheet.py on every sheet of every official example
+  print_sheet_limit   the same at print_sheet.py's own limit: a sheet that fits prints whole, a longer one
+                 prints the list of its groups and functions
   print_layout   print_layout.py on every layout of every official example
   check_project  check_project.py on every official example
   check_style    check_project.py --style on every official example
@@ -28,7 +30,8 @@ or masked: the hash seed and the random module are seeded, the clone is not
 fetched, HOME is an empty folder, and each side's clone and temporary folders are
 replaced by <rag>, <game> and <tmp> before the comparison. The two clones' paths
 differ in length, which moves the point where a script's --limit cuts a line
-that holds one, so every case but help passes --limit 0. A refactor shows no difference;
+that holds one, so every case but help and print_sheet_limit passes --limit 0;
+print_sheet.py counts no path against its limit. A refactor shows no difference;
 a change of output shows exactly the cases it was meant for, and the pull
 request names them.
 
@@ -61,8 +64,8 @@ from typing import NamedTuple
 ROOT = Path(__file__).resolve().parent.parent
 SKILL = Path("skills/construct3-agent-plugin")
 REPORT = Path(tempfile.gettempdir()) / "construct3-output-diff.txt"
-EXAMPLE_KINDS = ("print_sheet", "print_layout", "check_project", "check_style", "review_design", "edit_sheet",
-                 "edit_sheet_line", "edit_sheet_key")
+EXAMPLE_KINDS = ("print_sheet", "print_sheet_limit", "print_layout", "check_project", "check_style", "review_design",
+                 "edit_sheet", "edit_sheet_line", "edit_sheet_key")
 LOOKUP_KINDS = ("lookup_ace", "lookup_script_api", "search_guides")
 GENERATOR_KINDS = ("new_project", "build_project")
 KINDS = EXAMPLE_KINDS + LOOKUP_KINDS + ("help",) + GENERATOR_KINDS
@@ -164,7 +167,8 @@ def run(side: Side, script: Path, args: list[str], cwd: Path) -> str:
 
 
 def tool_output(side: Side, case: Case) -> str:
-    extra = [] if case.kind == "help" else ["--rag", str(side.rag), "--limit", "0"]
+    extra = [] if case.kind == "help" else ["--rag", str(side.rag)] if case.kind == "print_sheet_limit" \
+        else ["--rag", str(side.rag), "--limit", "0"]
     return run(side, side.rag / SKILL / "scripts" / case.args[0], [*case.args[1:], *extra], side.tmp / "cwd")
 
 
@@ -229,6 +233,8 @@ def cases(kinds: list[str], projects: list[Path], plans: dict[str, Path]) -> lis
         sheets = listed(p, "eventSheets")
         if "print_sheet" in kinds:
             out += [Case("print_sheet", f"{p.name}/{s}", ["print_sheet.py", s, *at]) for s in sheets]
+        if "print_sheet_limit" in kinds:
+            out += [Case("print_sheet_limit", f"{p.name}/{s}", ["print_sheet.py", s, *at]) for s in sheets]
         if "print_layout" in kinds:
             out += [Case("print_layout", f"{p.name}/{lay}", ["print_layout.py", lay, *at])
                     for lay in listed(p, "layouts")]

@@ -146,6 +146,7 @@ def test_a_run_that_wrote_outside_its_folder_is_not_scored(tmp_path: Path) -> No
 sys.path.insert(0, str(SKILL / "evals"))
 sys.path.insert(0, str(SKILL / "scripts"))
 import grade as grader  # noqa: E402
+import make_fixtures  # noqa: E402
 import play_cases  # noqa: E402
 import preview_project  # noqa: E402
 
@@ -387,7 +388,7 @@ def test_trace_counts_the_route_of_a_run(tmp_path: Path) -> None:
         "first_script": "check_project", "chain_depth": 4, "chain_end": "preview_project", "chain_reached": "preview_project",
         "chain_attempts": 7, "preview_failed": 1, "help_reads": 2, "repeat_help": 1, "plan_refusals": 1, "hand_edits": 1,
         "lookups_before_first_edit": 8, "data_reads": 1, "other_clone_reads": 1, "entry_chars": 6018 + len(block),
-        "printed_command_failures": 1}
+        "printed_command_failures": 1, "print_sheet_chars": 0, "whole_sheet_prints": 0}
     assert trace["chain"] == {"check_project": {"calls": 4, "passed": True}, "review_design": {"calls": 1, "passed": False},
                               "open_in_editor": {"calls": 1, "passed": False}, "preview_project": {"calls": 1, "passed": True},
                               "review_look": {"calls": 0, "passed": False}}
@@ -452,7 +453,8 @@ def restart_runs(tmp_path: Path, depths: dict[str, list[int]]) -> Path:
                 "chain_reached": "review_look", "chain_attempts": depth + 1,
                 "preview_failed": 0, "help_reads": 1, "repeat_help": 0, "plan_refusals": 0, "hand_edits": 0,
                 "lookups_before_first_edit": 8, "data_reads": 1, "other_clone_reads": 0, "entry_chars": 30000,
-                "printed_command_failures": 0, "outside": [], "outside_reads": []}), encoding="utf-8")
+                "printed_command_failures": 0, "print_sheet_chars": 9000, "whole_sheet_prints": 0, "outside": [],
+                "outside_reads": []}), encoding="utf-8")
     return iteration
 
 
@@ -526,3 +528,38 @@ def test_the_permutation_test_reassigns_within_each_case() -> None:
         compare.permutation_test({"c": [("with", 9)]}, "with", "up")
     sampled = compare.permutation_test(one, "with", "up", exact_up_to=10)
     assert sampled["exact"] is False and sampled["permutations"] == 10 and 0 < sampled["p"] <= 1
+
+
+def test_find_in_a_big_sheet_grades_the_event_and_the_bonus(tmp_path: Path) -> None:
+    """Wave 17's bonus is event 284 of the fixture's sheet, GiveBonus(454); the wave and the bonus written near
+    "event" are not taken for event numbers."""
+    run = tmp_path / "run"
+    (run / "project").mkdir(parents=True)
+    (run / "outputs").mkdir()
+    (run / "project" / "project.c3proj").write_text("{}", encoding="utf-8")
+    (run / "fixture.json").write_text(json.dumps(make_fixtures.digest(run / "project")), encoding="utf-8")
+    answer = run / "outputs" / "answer.md"
+    answer.write_text("Event 284, in the group Wave 17 score (event 280), pays the bonus of wave 17: it calls "
+                      "GiveBonus(454), event 410, so the bonus is 454 points.\n\n## Commands run\n"
+                      "python scripts/print_sheet.py Waves --events 1-17", encoding="utf-8")
+    assert [ok for ok, _ in grader.grade_find_in_a_big_sheet(run)] == [True, True, True, True]
+    answer.write_text("Event 300 pays it: 380 points.", encoding="utf-8")
+    assert [ok for ok, _ in grader.grade_find_in_a_big_sheet(run)] == [False, False, False, True]
+    assert make_fixtures.wave_bonus(make_fixtures.BIG_SHEET_FOCUS) == 454 and "coins-big-sheet" in make_fixtures.SEEDS
+
+
+@pytest.mark.parametrize("command, whole", [
+    ("python scripts/print_sheet.py Waves --limit 0", True),
+    ('python scripts/print_sheet.py "Waves" --outline --limit=0', True),
+    ("python scripts/print_sheet.py Waves --limit 0 --events 1-40", False),
+    ("python scripts/print_sheet.py Waves --find GiveBonus --limit 0", False),
+    ("python scripts/print_sheet.py Waves", False),
+    ("python scripts/print_sheet.py Waves --limit 0 | grep -c Wave; python scripts/print_sheet.py Game", True),
+])
+def test_trace_counts_whole_sheet_prints_and_print_sheet_characters(tmp_path: Path, command: str, whole: bool) -> None:
+    """The metric of a long sheet's list (docs/decisions/long-sheet-contents.md): what print_sheet.py printed, and
+    how often a run asked for whole sheets past the limit."""
+    transcript = transcript_of(tmp_path / "agent.jsonl", [("Bash", {"command": command}, "x" * 1234, False)])
+    code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(tmp_path))
+    trace = json.loads((tmp_path / "trace.json").read_text(encoding="utf-8"))
+    assert code == 0 and trace["print_sheet_chars"] == 1234 and trace["whole_sheet_prints"] == int(whole)
