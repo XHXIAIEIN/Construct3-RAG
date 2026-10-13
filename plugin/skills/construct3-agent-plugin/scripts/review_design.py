@@ -891,14 +891,14 @@ def review(d: Design) -> list[dict]:
 
 
 # --- what it prints ----------------------------------------------------------------------
-def questions(found: list[dict], shown: set[str]) -> list[str]:
+def questions(found: list[dict], shown: set[str], root: Path) -> list[str]:
     """The fixed questions, each naming the events of the sheets shown that it asks about,
     the ones with the most conditions or cases first."""
     first = next((f for f in found if f["ask"] and f["event"] and f["sheet"] in shown), None)
-    example = f"{first['sheet']} --events {first['event']}" if first else "<sheet> --events <number>"
+    example = f"{c3.quoted(first['sheet'])} --events {first['event']}" if first else "<sheet> --events <number>"
     lines = ["questions: answer each one yes or no, reading the events it names with print_sheet.py, for example "
-             f"python scripts/print_sheet.py {example}. For each yes, change the sheet as the question says, with "
-             f"edit_sheet.py, and run this review again:"]
+             f"{c3.script_command(root, 'print_sheet.py', ' ' + example)}. For each yes, change the sheet as the "
+             f"question says, with edit_sheet.py, and run this review again:"]
     for n, (ask, text) in enumerate(QUESTIONS.items(), 1):
         named = [f for f in found if f["ask"] == ask and f["sheet"] in shown]
         named.sort(key=lambda f: (-leading_count(f["short"]), f["sheet"], f["event"] or 0))
@@ -916,7 +916,7 @@ def leading_count(short: str) -> int:
     return int(m.group()) if m else 0
 
 
-def report(found: list[dict], sheets: list[str]) -> tuple[list[str], list[str]]:
+def report(found: list[dict], sheets: list[str], root: Path) -> tuple[list[str], list[str]]:
     """The finding lines by sheet, and the questions."""
     lines = []
     for sheet in sheets:
@@ -924,7 +924,7 @@ def report(found: list[dict], sheets: list[str]) -> tuple[list[str], list[str]]:
         if here:
             lines.append(f"== {sheet}")
             lines += [f"  {f['rule']}: {f['line']}" for f in here]
-    return lines, questions(found, set(sheets))
+    return lines, questions(found, set(sheets), root)
 
 
 def main() -> int:
@@ -969,8 +969,8 @@ def main() -> int:
     d = Design.of(project)
     for name in args.sheets or []:
         if name not in d.sheets:
-            print(f"no event sheet named {name!r}{c3.closest(name, d.sheets)}; sheets: {', '.join(d.sheets)}",
-                  file=sys.stderr)
+            # An answer, not a failure to run: on stdout, with the exit code it had on stderr.
+            print(f"no event sheet named {name!r}{c3.closest(name, d.sheets)}; sheets: {', '.join(d.sheets)}")
             return 2
     sheets = args.sheets or list(d.sheets)
     found = review(d)
@@ -982,7 +982,7 @@ def main() -> int:
             print(f"design review stopped: {error}; prepare again and read answer-format.json; "
                   "no project file was edited", file=sys.stderr)
             return 2
-    lines, asked = report(found, sheets)
+    lines, asked = report(found, sheets, project.root)
     room = args.limit - sum(len(q) + 1 for q in asked) - 600 if args.limit else 0
     shown = c3.fitting(lines, max(room, 1)) if args.limit else len(lines)
     if lines[:shown]:

@@ -16,56 +16,39 @@ title turns to the project's name, or a dialog says why it did not open, with
 the exception the editor logged. The file is handed to the page in the
 browser, not uploaded to a server.
 
-It starts the Microsoft Edge, Google Chrome or Chromium the machine has,
-headless, with a profile of its own in .tmp/editor-<browser>, and drives it
-over the DevTools protocol with Python's standard library: no package to
-install and nothing asked of the agent. The profile keeps the editor's
-scripts cached, about 15 MB and at most 100: the first run takes 7 to 40
-seconds, each later one 4 to 7. .tmp/ holds a .gitignore of *. With
-no such browser, or with --steps, it writes the project as
-.tmp/open-in-editor.c3p in the project folder and prints the same check as
-steps for a browser tool of the agent: one that opens a page, runs
-JavaScript in it and puts a file on a file input.
+It starts the Microsoft Edge, Google Chrome or Chromium the machine has, headless,
+with a profile of its own in .tmp/editor-<browser>, and drives it over the DevTools
+protocol with Python's standard library; the profile keeps the editor cached, so
+the first run takes 7 to 40 seconds and each later one 4 to 7. With no such
+browser, or with --steps, it writes .tmp/open-in-editor.c3p and prints the same
+check as steps for a browser tool of the agent.
 
-With --preview it then runs a preview, F5 in the editor, for some seconds and
-prints the layout it started on and what the runtime reported: uncaught
-exceptions and console errors, each with the event it came from. With --state it
-then prints what the game holds at the end: the global variables, how many
-instances each object type has, and every instance of the types named, its
-position, instance variables and inspector values, the values of the
-debugger's Inspect tab, each under the name the editor gives it in --locale.
-On Windows the preview needs the profile within about 190 characters; a
-deeper project, on a volume without 8.3 short names, is refused with how to
-pass --profile, a shorter folder for it.
+--preview runs a preview, F5 in the editor, for some seconds and prints the layout
+it started on, the uncaught exceptions and the console errors, each with its event.
+--state then prints the global variables, every object type's instance count and
+the named types' instances with their inspector values, named in --locale. On
+Windows the preview needs the profile within about 190 characters; a deeper
+project is refused with how to pass --profile.
 
-Every result, the error stacks and the state included, goes to
-.tmp/open-in-editor.json and a screenshot of the editor per project to
-.tmp/shots/; the last line names both. Read a cut-off result there instead of
-running the project again.
+Every result goes to .tmp/open-in-editor.json and a screenshot of the editor per
+project to .tmp/shots/; the last line names both, so read a cut-off result there
+instead of running the project again.
 
-With --typescript it has the editor write the project's TypeScript
-definitions, as Set up TypeScript for external editor does on the Scripts
-folder: the runtime API and the project's own types, InstanceType.<object>
-with its behaviors and instance variables among them, go into
-scripts/ts-defs/, over the files there, and scripts/tsconfig.json is written
-when the project has none. The editor writes them only for what the project
-holds when it runs, so run it again after adding an object, a behavior or a
-variable. It takes about 10 seconds more.
+--typescript has the editor write the project's TypeScript definitions into
+scripts/ts-defs/, and scripts/tsconfig.json when there is none, as Set up
+TypeScript for external editor does; run it again after adding an object, a
+behavior or a variable, since the editor writes only what the project holds.
 
-With --install-addon FILE.c3addon it first installs the addon into the editor of
-the browser profile, as a user drops it on the editor and clicks Install, or
-Update over an installed copy, in whatever language the editor shows; the profile keeps it for every later run. A
-project that uses a custom plugin, behavior or effect opens only after that.
-An addon the editor refuses stops the run with its message and exception.
+--install-addon FILE.c3addon first installs the addon into the editor of the
+browser profile, as a user drops it on the editor and clicks Install or Update;
+a project that uses a custom addon opens only after that, and an addon the
+editor refuses stops the run with its message.
 
-When the editor refuses the one folder project it opened, by a dialog or by
-the crash report of the preview, and check_project.py finds no problem in
-it, the checker lacks a rule. The run then ends with a report of the
-refusal for the user to send to the skill's repository, written to
-.tmp/editor-report-<fingerprint>.md with placeholders for the names the
-project gives, and the gh command that files it. The script sends nothing.
-.tmp/editor-reports.json keeps the fingerprints offered, so that each
-refusal is offered once (docs/decisions/editor-refusal-report.md).
+When the editor refuses the one folder project it opened and check_project.py
+finds no problem in it, the checker lacks a rule: the run ends with a report for
+the user to send to the skill's repository, .tmp/editor-report-<fingerprint>.md,
+and the gh command that files it; the script sends nothing
+(docs/decisions/editor-refusal-report.md).
 
 Without a PATH it opens the project the current directory is in. A PATH is a
 folder project (the folder that holds project.c3proj), a .c3p, or any folder

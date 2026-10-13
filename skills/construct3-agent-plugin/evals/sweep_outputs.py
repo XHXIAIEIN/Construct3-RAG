@@ -38,7 +38,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 COMMANDS = {"check": ["check_project.py"], "style": ["check_project.py", "--style"], "print": ["print_sheet.py"],
-            "outline": ["print_sheet.py", "--outline"], "layout": ["print_layout.py"]}
+            "outline": ["print_sheet.py", "--outline"], "layout": ["print_layout.py"], "review": ["review_design.py"]}
 # A plan every project takes: a comment, a variable and an event that uses it, at the end of its first sheet.
 PLAN = [{"into": 0, "events": [
     {"eventType": "comment", "text": "sweep"}, {"eventType": "variable", "name": "SweepProbe"},

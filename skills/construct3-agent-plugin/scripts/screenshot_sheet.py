@@ -2,10 +2,11 @@
 a bug report or a page of documentation.
 
     python scripts/screenshot_sheet.py [SHEET] [--group TITLE ...] [--scale 2] [--out FOLDER]
-                                       [--project FOLDER] [--release rNNN] [--browser EXE] [--profile FOLDER]
+                                       [--dark] [--project FOLDER] [--release rNNN] [--browser EXE]
+                                       [--profile FOLDER]
 
 It opens the project in the editor as open_in_editor.py does, opens SHEET from the Project Bar, and
-captures it in English with the editor's own icons and colours. Three things make the picture read
+captures it in English with the editor's own icons and colours. Four things make the picture read
 well outside the editor:
 
 - The conditions column is as wide as the longest condition, and the actions column as wide as the
@@ -16,6 +17,8 @@ well outside the editor:
   of Windows' subpixel text turn into halos once a forum or a viewer scales the picture.
 - The window grows to the sheet's height, so a long sheet is one picture, and anything the editor
   shows over the sheet, a notice or a banner, is hidden first.
+- The sheet is light, as the default theme draws it on a system in light mode, whatever the mode of
+  this machine: the default theme follows the system's colour scheme. --dark draws it dark.
 
 Each picture is written to .build/sheets/ of the project, a folder Git ignores: <SHEET>@<scale>x.png
 for the whole sheet and <SHEET> - <group>@<scale>x.png for each --group. At --scale 2 a picture stays
@@ -51,11 +54,15 @@ COND_CAP = 600          # the widest the conditions column grows to; a longer co
 ACT_CAP = 900           # the same for the actions column
 TALLEST = 30000         # CSS px; Chromium draws no screenshot much taller than this at scale 2
 PAD = 10                # CSS px of the sheet's own background around a picture
+AIR = 24                # CSS px after the longest condition and the longest action, so no line meets its edge
 OPEN_WAIT = 15          # seconds for a sheet to show, its double-click repeated; it takes about 1
 
 # Grayscale antialiasing, no LCD subpixel colour; the CSS below turns hinting off and thickens stems a
 # little, as macOS draws text. The editor follows the browser's language, and the pictures are English.
 BROWSER_ARGS = ("--disable-lcd-text", "--lang=en-US")
+# The default theme draws light or dark by the system's colour scheme, read once as the editor loads;
+# Blink's preferredColorScheme is 0 for dark and 1 for light.
+SCHEME_ARG = "--blink-settings=preferredColorScheme={}"
 SMOOTH_CSS = ("* { text-rendering: geometricPrecision !important; -webkit-font-smoothing: antialiased !important;"
               " -webkit-text-stroke: 0.25px currentColor; }")
 
@@ -81,7 +88,7 @@ STYLE_JS = (f"document.head.appendChild(Object.assign(document.createElement('st
 # only the cells between top and bottom count when they are given, those of one group.
 # The condition blocks size themselves from --conditions-column-size, the editor's divider; the actions
 # take the grid's last track, fixed here instead of the rest of the window.
-FIT_JS = r"""(async (condCap, actCap, top, bottom) => {
+FIT_JS = r"""(async (condCap, actCap, top, bottom, air) => {
   const root = %s;
   const inside = c => { const r = c.getBoundingClientRect(); return r.width > 0 && (top === null || (r.top >= top && r.bottom <= bottom)); };
   const cells = {'.conditionDescCell': [...root.querySelectorAll('.conditionDescCell')].filter(inside),
@@ -110,7 +117,7 @@ FIT_JS = r"""(async (condCap, actCap, top, bottom) => {
   // A comment spans both columns: the actions column widens until no comment wraps either.
   const [ac, commentWraps] = await narrowest('.eventCommentWrap', v => act = v, a, actCap);
   a = Math.max(a, ac);
-  cond = c + 8; act = a + 8; await apply();       // a little air after the longest line
+  cond = c + air; act = a + air; await apply();
   return {margin, cond, act, condWraps, actWraps, commentWraps};
 })""" % ROOT_JS
 # The sheet's box and, for each group title asked for, the box from its header to the row that adds an
@@ -180,7 +187,7 @@ def fit_columns(page: oe.DevTools, lines: list[str], what: str, top: float | Non
                 bottom: float | None = None) -> dict:
     """Fit both columns to the cells between top and bottom, or to the whole sheet, and say how wide."""
     fit = page.evaluate(f"({FIT_JS})({COND_CAP}, {ACT_CAP}, {'null' if top is None else top}, "
-                        f"{'null' if bottom is None else bottom})", wait=60)
+                        f"{'null' if bottom is None else bottom}, {AIR})", wait=60)
     lines.append(f"columns of {what}: conditions {fit['cond']} px, actions {fit['act']} px"
                  + "".join(f"; some {kind} still wrap at the cap of {cap} px"
                            for kind, cap, wraps in (("conditions", COND_CAP, fit["condWraps"]),
@@ -262,6 +269,8 @@ def main() -> int:
     ap.add_argument("--scale", type=int, default=2, choices=(1, 2, 3),
                     help="device pixels per CSS pixel: 2 stays sharp at half size, 1 is the size the editor "
                          "shows (default 2)")
+    ap.add_argument("--dark", action="store_true",
+                    help="draw the sheet in the default theme's dark mode instead of its light mode")
     ap.add_argument("--out", type=Path, metavar="FOLDER",
                     help="where the pictures go (default: .build/sheets in the project)")
     ap.add_argument("--project", metavar="FOLDER",
@@ -299,7 +308,8 @@ def main() -> int:
     editor = f"{oe.EDITOR}{args.release.strip('/')}/" if args.release else oe.EDITOR
     profile = (args.profile.resolve() if args.profile else oe.scratch(project)) / f"editor-{Path(exe).stem.lower()}"
     try:
-        browser = oe.Browser(exe, profile, headed=False, extra=BROWSER_ARGS)
+        browser = oe.Browser(exe, profile, headed=False,
+                              extra=(*BROWSER_ARGS, SCHEME_ARG.format(0 if args.dark else 1)))
     except (oe.DevToolsError, OSError) as e:
         print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
         return 2

@@ -8,7 +8,32 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, INSTALLED, SHEET, tool, check, edit, block, events
+from tests.skill_helpers import REPO, INSTALLED, SHEET, tool, streams, check, edit, block, events
+
+
+def committed(root: Path) -> None:
+    """The project's files in a commit of a repository of its own, as a game project keeps them."""
+    def git(*args: str) -> None:
+        p = subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                           capture_output=True, text=True)
+        assert p.returncode == 0, p.stderr
+    git("init", "-q")
+    git("add", "project.c3proj", "eventSheets", "objectTypes")
+    git("commit", "-qm", "before")
+
+
+def test_a_miss_of_print_sheet_prints_on_stdout(project):
+    """An unknown sheet, on disk or in the commit of --since, a --show or --events past the end and an event
+    too long to show are answers: on stdout, with the exit code 1 they had on stderr, where a harness that
+    shows stdout alone showed nothing."""
+    committed(project)
+    for args, said in ((("Gmae",), "no event sheet named 'Gmae'; sheets: Game"),
+                       (("Gmae", "--since", "HEAD"), "no event sheet named 'Gmae' on disk or in HEAD ("),
+                       (("Game", "--show", "40"), "sheet Game has 9 events; --show 40 is not one of them"),
+                       (("Game", "--events", "40"), "sheet Game has 9 events; --events 40 starts past its end"),
+                       (("Game", "--show", "1", "--limit", "20"), "characters of JSON, over the limit of 20 (--limit)")):
+        p = streams(project, f"{INSTALLED}/scripts/print_sheet.py", "--rag", str(REPO), *args)
+        assert p.returncode == 1 and p.stderr == "" and said in p.stdout, (args, p.stdout, p.stderr)
 
 
 def test_outline_numbers_events_as_the_editor_does(built):
@@ -225,17 +250,6 @@ def test_an_example_that_is_not_there_names_the_clone_not_a_new_project(built, t
     else:
         assert f"the Construct-Example-Projects clone is not at {clone}" in out, out
         assert f"python {(REPO / 'scripts' / 'bootstrap.py').as_posix()} clones it" in out, out
-
-
-def committed(root: Path) -> None:
-    """The project's files in a commit of a repository of its own, as a game project keeps them."""
-    def git(*args: str) -> None:
-        p = subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
-                           capture_output=True, text=True)
-        assert p.returncode == 0, p.stderr
-    git("init", "-q")
-    git("add", "project.c3proj", "eventSheets", "objectTypes")
-    git("commit", "-qm", "before")
 
 
 def test_since_lists_what_changed_as_events(project):

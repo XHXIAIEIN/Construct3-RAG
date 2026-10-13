@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, run, tool, check, edit
+from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, run, streams, tool, check, edit
 
 
 @pytest.fixture
@@ -115,6 +115,22 @@ def test_a_behavior_without_aces_is_named_as_one_and_how_to_add(skill_only):
     assert code == 0 and "third-party" not in out, out
     assert out.startswith("Destroy outside is a behavior with no conditions, actions or expressions"), out
     assert "region (layout | viewport)" in out and '{"behaviorId": "destroy", "name": "<behavior name on the object>"' in out
+
+
+def test_an_object_of_a_plugin_the_schemas_lack_is_named_as_third_party_on_stdout(project):
+    """The object exists and its plugin has no schema: an answer, on stdout with exit code 1, like a miss. The
+    missing schema is not read as a behavior without ACEs, which named None as one."""
+    (project / "objectTypes" / "Gadget.json").write_text(json.dumps({
+        "name": "Gadget", "plugin-id": "GadgetPlugin", "sid": 5,
+        "singleglobal-inst": {"type": "Gadget", "properties": {}, "uid": 950, "sid": 951, "tags": ""}}), encoding="utf-8")
+
+    def listed(p):
+        p["objectTypes"]["items"].append("Gadget")
+        p["usedAddons"].append({"type": "plugin", "id": "GadgetPlugin", "name": "Gadget", "author": "Someone", "bundled": False})
+    edit(project, "project.c3proj", listed)
+    p = streams(project, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), "Gadget")
+    assert p.returncode == 1 and p.stderr == "", (p.stdout, p.stderr)
+    assert p.stdout == "the clone has no schema for Gadget, a third-party addon: nothing to look up\n", p.stdout
 
 
 def test_ace_lookup_offers_the_nearest_id(built):
@@ -243,7 +259,7 @@ def test_ace_lookup_prints_a_miss_on_stdout(built):
     assert p.stdout.startswith("nothing under Sprite has every word of 'aniamtion'\n") and "set-animation" in p.stdout
     assert p.stderr == ""
     p = lookup("Sprte")
-    assert p.returncode == 1 and p.stdout == "" and "is not an object of this project" in p.stderr
+    assert p.returncode == 1 and p.stderr == "" and "is not an object of this project" in p.stdout
 
 
 def test_a_chinese_miss_asks_for_the_english_term(built):
@@ -352,9 +368,12 @@ def test_ace_lookup_prints_the_commands_that_read_the_examples_using_it(tmp_path
     rag, projects = usage_rag(tmp_path)
     lines = lookup_wait(rag, tmp_path).splitlines()
     at = lines.index("  used in 2 official examples; read 2 of them, smallest sheet first:")
+    # the command as it runs from the current directory, which is in no project: the script by its absolute path,
+    # the example folder after --project, the sheet quoted when its name holds a space
+    print_sheet = (SKILL / "scripts" / "print_sheet.py").as_posix()
     assert lines[at - 1].lstrip().startswith("(JSON true or false") and lines[at + 1:at + 3] == [
-        f'    python scripts/print_sheet.py "Main" --events 3-4 --project "{projects / "kiwi"}"',
-        f'    python scripts/print_sheet.py "Event sheet 1" --events 1 --project "{projects / "poplab"}"']
+        f'    python {print_sheet} --project {(projects / "kiwi").as_posix()} Main --events 3-4',
+        f'    python {print_sheet} --project {(projects / "poplab").as_posix()} "Event sheet 1" --events 1']
     # Wait for signal, used in no example, prints no count
     assert sum("used in" in line for line in lines) == 1
 

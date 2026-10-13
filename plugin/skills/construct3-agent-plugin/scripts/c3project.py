@@ -30,8 +30,15 @@ from typing import NamedTuple
 
 SKILL = "construct3-agent-plugin"
 SKILL_DIR = Path(__file__).resolve().parent.parent
+
+
+def quoted(value) -> str:
+    """value as one word of a printed command: quoted when it holds a space or a character a shell reads."""
+    return str(value) if re.fullmatch(r"[\w./\\:-]+", str(value)) else f'"{value}"'
+
+
 # The end of every "no project.c3proj" message: where a project comes from when there is none yet
-START_ONE = f"; to start a new project, run python {(SKILL_DIR / 'scripts' / 'new_project.py').as_posix()} <folder>"
+START_ONE = f"; to start a new project, run python {quoted((SKILL_DIR / 'scripts' / 'new_project.py').as_posix())} <folder>"
 LOWER = str.lower  # expressions are case-insensitive: scrolly, SCROLLY and ScrollY are one name
 
 # An agent's harness cuts tool output somewhere between ten and thirty thousand
@@ -354,6 +361,30 @@ def find_project(given: str | None) -> Path | None:
     if given:
         return Path(given).resolve()
     return above(Path.cwd(), "project.c3proj") or above(SKILL_DIR, "project.c3proj")
+
+
+# --- the commands a script prints ---------------------------------------------------------
+# One form for every command a script prints for the agent to run next, from the current
+# directory: the script by its path relative to it, or absolute, and --project only when
+# the current directory is not in the project the command works on.
+def shown_path(path: Path) -> str:
+    """path as a command run from the current directory names it: relative when it is under it, else absolute."""
+    path, cwd = path.resolve(), Path.cwd()
+    return quoted(path.relative_to(cwd).as_posix() if path.is_relative_to(cwd) else path.as_posix())
+
+
+def script_command(root: Path | None, name: str, flags: str = "") -> str:
+    """A script of this folder run on the project at root, as it runs from the current directory;
+    with root None, on the project of the current directory."""
+    where = ""
+    if root is not None and find_project(None) != root.resolve():
+        where = f" --project {quoted(root.resolve().as_posix())}"
+    return f"python {shown_path(SKILL_DIR / 'scripts' / name)}{where}{flags}"
+
+
+def open_command(root: Path) -> str:
+    """open_in_editor.py --preview for root, as it runs from the current directory."""
+    return script_command(root, "open_in_editor.py", " --preview")
 
 
 def rag_line(text: str) -> str | None:

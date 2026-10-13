@@ -885,7 +885,7 @@ def main() -> int:
         "that adds a problem changes nothing.",
         "a plan:\n"
         '  [{"before": 1, "events": [{"eventType": "variable", "name": "best", "initialValue": "0"}]},\n'
-        '   {"event": 9, "add-actions": [{"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "best", "value": "max(best, score)"}}]},\n'
+        '   {"event": 9, "line": "Player: On collision with Coin", "add-actions": [{"id": "set-eventvar-value", "objectClass": "System", "parameters": {"variable": "best", "value": "max(best, score)"}}]},\n'
         '   {"event": 7, "action": 2, "set": {"parameters": {"text": "\\"Score: \\" & score"}}},\n'
         '   {"event": 5, "condition": 1, "set": {"isInverted": null}}, {"event": 6, "action": 3, "remove": true},\n'
         '   {"into": 3, "events": [{"eventType": "block", "conditions": [...], "actions": [...]}]},\n'
@@ -894,9 +894,10 @@ def main() -> int:
         '   {"variable": "SPEED", "set": {"initialValue": "0.5"}}, {"variable": "n", "in": 4, "remove": true},\n'
         '   {"comment": "Start the next round", "set": {"text": "Start the next round after a second"}}]\n'
         "Every number is one of the sheet as print_sheet.py prints it now, and as a finding of check_project.py\n"
-        "names it: event 5 condition 1. \"into\": 0 is the end of the sheet. A variable or comment has no number:\n"
-        "a plan names a variable by its name and a comment by words of its text, and \"in\": N by the event that\n"
-        "holds it when more than one matches.\n\n"
+        "names it: event 5 condition 1. \"line\" is the line print_sheet.py prints for that event, or a part of it;\n"
+        "a number from an older print is then refused. \"into\": 0 is the end of the sheet. A variable or comment\n"
+        "has no number: a plan names a variable by its name and a comment by words of its text, and \"in\": N by\n"
+        "the event that holds it when more than one matches.\n\n"
         "examples:\n"
         "  python scripts/edit_sheet.py Game plan.json\n"
         "  python scripts/edit_sheet.py Game plan.json --dry-run   check the plan and show the result, write nothing\n"
@@ -918,19 +919,25 @@ def main() -> int:
     project = c3.Project.open(args, findings)
     c3.note_drift(project.rag)
 
+    # A refusal answers the model, so it prints on stdout with exit code 1: on stderr, a harness that shows
+    # stdout alone showed nothing, and PowerShell wrapped each line in an error record.
     sheets = project.listed_files("eventSheets")
     path = sheets.get(args.sheet)
     new = args.new and path is None and args.sheet not in sheets
     if new:
         if not re.fullmatch(r"[^\\/:*?\"<>|]+", args.sheet) or args.sheet != args.sheet.strip():
-            sys.exit(f"{args.sheet!r} cannot be a file name; name the new sheet with letters, digits and spaces")
+            print(f"{args.sheet!r} cannot be a file name; name the new sheet with letters, digits and spaces")
+            return 1
         path = project.root / "eventSheets" / f"{args.sheet}.json"
         if path.exists():
-            sys.exit(f"{path.name} is in eventSheets/ but project.c3proj does not list it; add {args.sheet!r} to "
-                     f"\"eventSheets\" \"items\" there, or name the new sheet differently")
+            print(f"{path.name} is in eventSheets/ but project.c3proj does not list it; add {args.sheet!r} to "
+                  f"\"eventSheets\" \"items\" there, or name the new sheet differently")
+            return 1
     elif path is None:
-        sys.exit(f"no event sheet named {args.sheet!r}; sheets: {', '.join(sheets) or 'none'}; "
-                 f"--new creates it, run by every layout when the project has no other sheet")
+        print(f"no event sheet named {args.sheet!r}{c3.closest(args.sheet, sheets)}; sheets: "
+              f"{', '.join(sheets) or 'none'}; --new creates it, run by every layout when the project has no other "
+              f"sheet")
+        return 1
     if new:
         # The keys and order of a sheet the editor makes; its sid is one the project's checked sids are free of.
         raw, on_disk = b"", ""
@@ -938,21 +945,24 @@ def main() -> int:
         give_sids(sheet, set(findings_of(project, args.locale, {})[0].sids))
     else:
         if c3.changed_since_stamp(path):
-            sys.exit(f"{args.sheet} changed on disk after print_sheet.py printed it, saved in the editor or by another "
-                     f"tool, so the plan's numbers may name other events; print it again, check the numbers and run "
-                     f"the plan again\nnothing was written")
+            print(f"{args.sheet} changed on disk after print_sheet.py printed it, saved in the editor or by another "
+                  f"tool, so the plan's numbers may name other events; print it again, check the numbers and run "
+                  f"the plan again\nnothing was written")
+            return 1
         raw = path.read_bytes()
         on_disk = raw.decode("utf-8-sig")
         sheet = json.loads(on_disk)
     try:
         text = Path(args.plan).read_text(encoding="utf-8-sig")
     except OSError as e:
-        sys.exit(f"{args.plan}: {e.strerror}; PLAN.json is a file with the operations as a JSON list")
+        print(f"{args.plan}: {e.strerror}; PLAN.json is a file with the operations as a JSON list")
+        return 1
     try:
         operations = json.loads(text)
     except json.JSONDecodeError as e:
-        sys.exit(f"{args.plan} is not valid JSON, line {e.lineno} column {e.colno}: {e.msg}"
-                 + ("; it holds <new sid>: leave \"sid\" out, every new entry gets one" if "<new sid>" in text else ""))
+        print(f"{args.plan} is not valid JSON, line {e.lineno} column {e.colno}: {e.msg}"
+              + ("; it holds <new sid>: leave \"sid\" out, every new entry gets one" if "<new sid>" in text else ""))
+        return 1
 
     # The sheet checked as a plan's sheet on both sides, so that a finding is worded alike before and after.
     before, found_before = findings_of(project, args.locale, {args.sheet: sheet})
@@ -976,7 +986,8 @@ def main() -> int:
         for i, op in enumerate(operations if isinstance(operations, list) else [operations], 1):
             plan.apply(op, i)
     except PlanError as e:
-        sys.exit(f"{e}\nnothing was written")
+        print(f"{e}\nnothing was written")
+        return 1
 
     after, found_after = findings_of(project, args.locale, {args.sheet: plan.sheet})
     known = {without_number(e) for e in found_before.errors}
@@ -1016,7 +1027,8 @@ def main() -> int:
                if new and not sheets else {})
     if not args.dry_run:
         if (path.exists() if new else path.read_bytes() != raw):
-            sys.exit(f"{args.sheet} changed on disk while the plan was applied; run it again\nnothing was written")
+            print(f"{args.sheet} changed on disk while the plan was applied; run it again\nnothing was written")
+            return 1
         # A new sheet writes three kinds of file; one that fails puts back those written before it, so that the
         # project is as it was and the same plan runs again.
         before = {p: p.read_bytes() for p in (project.root / "project.c3proj", *runs_on.values())} if new else {}
@@ -1037,9 +1049,10 @@ def main() -> int:
             if not new:
                 raise
             left = put_back(path, before)
-            sys.exit(f"{args.sheet}: a file could not be written: {e}\n"
-                     + (f"these could not be put back as they were: {', '.join(left)}; restore them from Git"
-                        if left else "the files written before it are put back: nothing was written"))
+            print(f"{args.sheet}: a file could not be written: {e}\n"
+                  + (f"these could not be put back as they were: {', '.join(left)}; restore them from Git"
+                     if left else "the files written before it are put back: nothing was written"))
+            return 1
         c3.stamp(path)
     if new:
         print(f"{args.sheet}: a new event sheet in eventSheets/, listed in project.c3proj, "

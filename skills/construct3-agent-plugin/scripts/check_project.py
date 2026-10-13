@@ -40,7 +40,9 @@ from typing import NamedTuple
 
 import c3project as c3
 import pack_project as pp
-from c3project import LOWER, NUMBERED, STRING_LITERAL, closest, describe, folder_items, squash
+from c3project import (
+    LOWER, NUMBERED, STRING_LITERAL, closest, describe, folder_items, open_command, script_command, shown_path, squash,
+)
 
 # Names. The editor passes every name through a filter when it opens the
 # project and keeps the result, so a name the filter changes no longer matches
@@ -3860,27 +3862,6 @@ def copied_sizes(p: c3.Project, layouts: dict[str, dict]) -> list[str]:
                        f"{' or an instance' if named else ''} is resized")
             break
     return out
-
-
-def quoted(s: str) -> str:
-    return f'"{s}"' if " " in s else s
-
-
-def shown_path(path: Path) -> str:
-    """path as a command run from the current directory names it, quoted when it holds a space."""
-    path, cwd = path.resolve(), Path.cwd()
-    return quoted(path.relative_to(cwd).as_posix() if path.is_relative_to(cwd) else path.as_posix())
-
-
-def script_command(root: Path, name: str, flags: str = "") -> str:
-    """A script of this folder run on root, as it runs from the current directory."""
-    where = "" if c3.find_project(None) == root.resolve() else f" --project {quoted(root.resolve().as_posix())}"
-    return f"python {shown_path(Path(__file__).parent / name)}{where}{flags}"
-
-
-def open_command(root: Path) -> str:
-    """open_in_editor.py --preview for root, as it runs from the current directory."""
-    return script_command(root, "open_in_editor.py", " --preview")
 
 
 def helpers_behind(root: Path, rag: Path) -> str | None:

@@ -270,27 +270,28 @@ def events_range(spec: str | None) -> tuple[int, int | None]:
 def show(sheet: dict, name: str, n: int, limit: int) -> int:
     """Event n as JSON, two spaces deep: what edit_sheet.py takes back under "replace"."""
     events = list(c3.numbered_events(sheet["events"]))
+    # A miss answers the model: on stdout, with the exit code it had on stderr.
     if not 1 <= n <= len(events):
-        sys.exit(f"sheet {name} has {len(events)} events; --show {n} is not one of them")
+        print(f"sheet {name} has {len(events)} events; --show {n} is not one of them")
+        return 1
     text = json.dumps(events[n - 1], indent=2, ensure_ascii=False)
     if limit and len(text) > limit:
-        sys.exit(f"event {n} is {len(text)} characters of JSON, over the limit of {limit} (--limit): show one of its "
-                 f"sub-events, or pass --limit 0 and send it to a file")
+        print(f"event {n} is {len(text)} characters of JSON, over the limit of {limit} (--limit): show one of its "
+              f"sub-events, or pass --limit 0 and send it to a file")
+        return 1
     print(text)
     return 0
 
 
 def again(args, sheets: list[str], events: str | None) -> str:
     """The command that prints sheets, or a range of one, with the options of this run."""
-    def quoted(value) -> str:
-        return str(value) if re.fullmatch(r"[\w./\\:-]+", str(value)) else f'"{value}"'
-    words = ["python", quoted(sys.argv[0]), *map(quoted, sheets)]
-    words += ["--since", quoted(args.since)] if args.since else []
+    words = ["python", c3.quoted(sys.argv[0]), *map(c3.quoted, sheets)]
+    words += ["--since", c3.quoted(args.since)] if args.since else []
     words += ["--events", events] if events else []
     words += ["--outline"] if args.outline else []
     for flag, default in (("project", None), ("rag", None), ("locale", "en-US"), ("limit", c3.LIMIT)):
         if getattr(args, flag) != default:
-            words += [f"--{flag}", quoted(getattr(args, flag))]
+            words += [f"--{flag}", c3.quoted(getattr(args, flag))]
     return " ".join(words)
 
 
@@ -559,7 +560,8 @@ def print_since(args, project: c3.Project, sheets: dict[str, dict]) -> int:
         old_sheets = then.load_listed("eventSheets") if then else {}
         for name in args.sheets:
             if name not in sheets and name not in old_sheets:
-                sys.exit(f"no event sheet named {name!r} on disk or in {since}; sheets: {', '.join(sheets)}")
+                print(f"no event sheet named {name!r} on disk or in {since}; sheets: {', '.join(sheets)}")
+                return 1        # an answer: on stdout
         names = args.sheets or [*sheets, *(n for n in old_sheets if n not in sheets)]
         if args.events and len(names) != 1:
             sys.exit(f"--events reads one sheet; name it: {', '.join(names)}")
@@ -661,7 +663,8 @@ def main() -> int:
         return 0
     for name in args.sheets:
         if name not in sheets:
-            sys.exit(f"no event sheet named {name!r}; sheets: {', '.join(sheets)}")
+            print(f"no event sheet named {name!r}; sheets: {', '.join(sheets)}")      # an answer: on stdout
+            return 1
     names = args.sheets or list(sheets)
     if (args.events or args.show is not None) and len(names) != 1:
         sys.exit(f"--events and --show read one sheet; name it: {', '.join(sheets)}")
@@ -684,7 +687,8 @@ def main() -> int:
         rows[name] = list(outline_rows(events, counter) if args.outline else sheet_rows(project, events, counter))
         totals[name] = counter[0]
     if args.events and first > totals[names[0]]:
-        sys.exit(f"sheet {names[0]} has {totals[names[0]]} events; --events {args.events} starts past its end")
+        print(f"sheet {names[0]} has {totals[names[0]]} events; --events {args.events} starts past its end")
+        return 1        # an answer: on stdout
 
     whole = {name: part(rows[name], first, last, None)[0] for name in names}
     size = {name: sum(len(line) + 1 for line in [f"== {name}", *whole[name]]) for name in names}

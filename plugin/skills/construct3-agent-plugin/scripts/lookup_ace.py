@@ -152,9 +152,10 @@ def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]
             sys.exit(1)
         names = [v.get("name", k) for kind in ("plugins", "behaviors", "effects")
                  for k, v in c3.load(p.schemas / "_index.json").get(kind, {}).items()]
-        sys.exit(f"{target!r} is not an object of this project, System, or the id or display name of a plugin, "
-                 f"behavior or effect" + closest(target, [*p.plugin_of, *names, *p.index["plugins"],
-                                                           *p.index["behaviors"], *p.index["effects"]]))
+        print(f"{target!r} is not an object of this project, System, or the id or display name of a plugin, "
+              f"behavior or effect" + closest(target, [*p.plugin_of, *names, *p.index["plugins"],
+                                                        *p.index["behaviors"], *p.index["effects"]]))
+        sys.exit(1)
     return sources
 
 
@@ -262,8 +263,8 @@ class Usage:
         lines = [count + ("; read it:" if n == 1 else f"; read {len(read)} of them, smallest sheet first:")]
         for folder, sheet, first, last in read:
             events = f"{first}-{last}" if last > first else f"{first}"
-            lines.append(f'    python scripts/print_sheet.py "{sheet}" --events {events} '
-                         f'--project "{self.examples / folder}"')
+            lines.append("    " + c3.script_command(self.examples / folder, "print_sheet.py",
+                                                   f" {c3.quoted(sheet)} --events {events}"))
         return lines
 
     def note(self) -> str | None:
@@ -430,6 +431,8 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
             return 1
         # Destroy outside, Wrap, Bound to layout, No save: a model told "third-party" leaves the behavior out.
         for _, _, s in sources:
+            if not s:
+                continue        # no schema at all: a third-party addon, not one without ACEs
             props = "; ".join(f"{k} ({' | '.join(spec['items'])})" if spec.get("items") else k
                               for k, spec in (s.get("properties") or {}).items())
             print(f"{s.get('name')} is a {s.get('type')} with no conditions, actions or expressions: it works by "
@@ -438,7 +441,9 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
                   f"\"<behavior name on the object>\", \"sid\": <new sid>}}, and to usedAddons in project.c3proj"
                   + (f". {s['description']}" if s.get("description") else ""))
             return 0
-        sys.exit(f"the clone has no schema for {target}, a third-party addon: nothing to look up")
+        # An answer, not a failure to run: on stdout, like a miss.
+        print(f"the clone has no schema for {target}, a third-party addon: nothing to look up")
+        return 1
     retired_lines = retired_note(p, sources, words)
     # By name first, so that a category which shares a word with a name does not
     # turn six entries printed in full into a list: `Physics force` is the three

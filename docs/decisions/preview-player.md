@@ -115,16 +115,26 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   the replay like a failed step.
 - The run's output tells the agent what the page does for the user, so the
   agent points the user to it: a part that looks wrong comes back as a task.
-- The review page follows a technical drawing: compact ruled panels,
-  collapsible recording details, blue for what the page marks and red
-  for what failed, the selected part dimensioned on the timeline and the
-  marks for its ends over the playhead, line icons whose tooltips name their
+- The review page follows the design language of the host UI kits (the
+  MCP Apps Figma kit and its design guidelines): one warm neutral scale
+  for structure, one accent for what the page marks and selects, one
+  info color for data and red for what failed; a closed set of radii,
+  borders, type sizes and weights; short transitions on standard easing;
+  light and dark declared together. The selected part is dimensioned on
+  the timeline and the marks for its ends over the playhead, the
+  recording details collapsible, line icons whose tooltips name their
   keys. Repeated instructions live in tooltips; one selection hint stays
-  visible until a part is selected. This keeps the preview and watched values
-  in view without shrinking their type. A path shows by its last part, the
-  whole path in its tooltip and copied by a click; the task for the agent keeps paths whole, since the
+  visible until a part is selected. This keeps the preview and watched
+  values in view without shrinking their type. A path shows by its last
+  part, the whole path in its tooltip and copied by a click; the task for the agent keeps paths whole, since the
   agent opens the files by them. It loads no font or script from the
-  network, so it opens offline as the recording does.
+  network, so it opens offline as the recording does. The token names
+  are the host kits' (--color-background-*, --font-text-*-size,
+  --border-radius-*), the values this dense tool calls for. The earlier
+  technical drawing, its blue marks and compact ruled panels, gave way
+  to this on the user's ask of 2026-10-13; a before/after rendering of
+  one recording through both templates is the evidence, and it is kept
+  beside the demo of the page.
 - A run starts from a first launch: the browser profile is kept between runs
   for its cache, and with it the preview's Local Storage and IndexedDB, where
   a game keeps its save, so one run's save changed the next run's start.

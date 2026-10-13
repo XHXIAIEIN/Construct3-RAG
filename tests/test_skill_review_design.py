@@ -3,7 +3,7 @@ has the sound form beside it, and what the run prints. The rules are pure functi
 the parsed sheets; the projects are written here, the smallest the Project class reads."""
 from pathlib import Path
 
-from tests.skill_helpers import REPO, SKILL, edit, run, script_module, folder_project
+from tests.skill_helpers import REPO, SKILL, edit, run, streams, script_module, folder_project
 
 SCRIPT = SKILL / "scripts" / "review_design.py"
 SID = iter(range(100_000_000_000_001, 100_000_000_099_999))
@@ -266,8 +266,10 @@ def test_review_cuts_findings_at_the_limit_and_keeps_the_questions(tmp_path):
 
 
 def test_review_refuses_a_sheet_it_does_not_have(tmp_path):
-    code, out = run(tictactoe(tmp_path), SCRIPT, "--rag", str(REPO), "--sheets", "Gmae")
-    assert code == 2 and "no event sheet named 'Gmae'; closest: Game" in out, out
+    """The refusal answers the model, so it prints on stdout; the exit code stays 2."""
+    p = streams(tictactoe(tmp_path), SCRIPT, "--rag", str(REPO), "--sheets", "Gmae")
+    assert p.returncode == 2 and p.stderr == "", p.stderr
+    assert "no event sheet named 'Gmae'; closest: Game" in p.stdout, p.stdout
 
 
 def test_review_without_a_project(tmp_path):

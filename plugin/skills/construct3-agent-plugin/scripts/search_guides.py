@@ -115,7 +115,7 @@ def main() -> int:
             lines.append(f"{e['id']}: {e.get('name', '')}. {e.get('description', '')}")
             # an example written in both languages is two folders, <id>-js and <id>-ts
             folders = [f for f in (clone / f"{e['id']}{end}" for end in ("", "-js", "-ts")) if f.is_dir()]
-            lines += [f"  python scripts/print_sheet.py --project \"{f}\"" for f in folders] or [f"  {e.get('open', '')}"]
+            lines += [f"  {c3.script_command(f, 'print_sheet.py')}" for f in folders] or [f"  {e.get('open', '')}"]
     if not lines:
         print(f"nothing holds {' or '.join(args.words)}; try fewer words, another English word for the same "
               f"thing, or the name of the condition or behavior (`overlapping`, `tween`, `wait`)")

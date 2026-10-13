@@ -9,8 +9,8 @@ from pathlib import Path
 import pytest
 
 from tests.skill_helpers import (
-    REPO, SKILL, SHEET, EXAMPLES, NEEDS_EXAMPLES, run, tool, check, edit, events, every_event, collect_tween, plan,
-    script_module,
+    REPO, SKILL, INSTALLED, SHEET, EXAMPLES, NEEDS_EXAMPLES, run, streams, tool, check, edit, events, every_event,
+    collect_tween, plan, script_module,
 )
 
 NUMBERED = script_module("c3project").NUMBERED
@@ -649,3 +649,85 @@ def test_a_plan_without_lines_is_carried_out_and_noted(project):
     assert code == 1 and 'operation 1 (into 0): 0 is the sheet itself, which prints no line; leave "line" out' in out
     code, out = plan(project, {"variable": "score", "line": "x", "set": {"initialValue": "1"}})
     assert code == 1 and "a variable is changed with" in out, out
+
+
+def test_help_teaches_line_on_the_plan_example(project):
+    """One operation of the plan example in --help carries "line", and a sentence after the example says what
+    it is: the rule is read from the tool as the plan is written, not from prose."""
+    code, out = run(project, SKILL / "scripts" / "edit_sheet.py", "--help")
+    assert code == 0 and '{"event": 9, "line": "Player: On collision with Coin", "add-actions": [' in out, out
+    assert ('"line" is the line print_sheet.py prints for that event, or a part of it;\n'
+            'a number from an older print is then refused.') in out, out
+
+
+# --- every refusal on stdout --------------------------------------------------------------------
+def refused(root: Path, *args: str, said: str) -> None:
+    """edit_sheet.py refuses with said on stdout, nothing on stderr and exit code 1: a refusal answers the
+    model, and on stderr a harness that shows stdout alone showed nothing, while PowerShell wrapped each
+    line in an error record."""
+    p = streams(root, f"{INSTALLED}/scripts/edit_sheet.py", "--rag", str(REPO), *args)
+    assert p.returncode == 1 and p.stderr == "" and said in p.stdout, (args, p.stdout, p.stderr)
+
+
+def test_a_sheet_the_plan_cannot_name_is_refused_on_stdout(project):
+    comment = [{"into": 0, "events": [{"eventType": "comment", "text": "End."}]}]
+    (project / "plan.json").write_text(json.dumps(comment), encoding="utf-8")
+    refused(project, "bad/name", "plan.json", "--new", said="'bad/name' cannot be a file name")
+    (project / "eventSheets" / "Extra.json").write_text('{"name": "Extra", "events": [], "sid": 1}', encoding="utf-8")
+    refused(project, "Extra", "plan.json", "--new",
+            said="Extra.json is in eventSheets/ but project.c3proj does not list it")
+    refused(project, "Gmae", "plan.json", said="no event sheet named 'Gmae'; closest: Game; sheets: Game; --new creates it")
+
+
+def test_a_plan_that_cannot_be_read_is_refused_on_stdout(project):
+    refused(project, "Game", "missing.json", said="missing.json: ")
+    assert "PLAN.json is a file with the operations as a JSON list" in \
+        streams(project, f"{INSTALLED}/scripts/edit_sheet.py", "--rag", str(REPO), "Game", "missing.json").stdout
+    (project / "plan.json").write_text("{", encoding="utf-8")
+    refused(project, "Game", "plan.json", said="plan.json is not valid JSON, line 1 column 2")
+    (project / "plan.json").write_text(json.dumps([{"event": 1, "line": "no such line", "set": {"disabled": True}}]),
+                                       encoding="utf-8")
+    refused(project, "Game", "plan.json", said='operation 1 (event 1): no event prints "no such line" now')
+    p = streams(project, f"{INSTALLED}/scripts/edit_sheet.py", "--rag", str(REPO), "Game", "plan.json")
+    assert p.stdout.endswith("nothing was written\n"), p.stdout
+
+
+def test_a_new_sheet_that_cannot_be_written_is_refused_on_stdout(project):
+    """A folder where the draft of the new sheet goes stops the write; the project is put back as it was."""
+    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "comment", "text": "End."}]}]),
+                                       encoding="utf-8")
+    (project / "eventSheets" / "Menu.json.tmp").mkdir()
+    before = (project / "project.c3proj").read_bytes()
+    refused(project, "Menu", "plan.json", "--new", said="Menu: a file could not be written: ")
+    assert "the files written before it are put back: nothing was written" in \
+        streams(project, f"{INSTALLED}/scripts/edit_sheet.py", "--rag", str(REPO), "Menu", "plan.json", "--new").stdout
+    assert (project / "project.c3proj").read_bytes() == before and not (project / "eventSheets" / "Menu.json").exists()
+
+
+def test_a_sheet_that_changes_while_the_plan_is_applied_is_refused_on_stdout(project):
+    """The editor saves the sheet between the read and the write: the plan is laid out, then the file is found
+    changed. Reached by a save made from inside the run, since nothing outside it can hit that moment."""
+    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "comment", "text": "End."}]}]),
+                                       encoding="utf-8")
+    code = (
+        "import pathlib, sys\n"
+        f"sys.path.insert(0, {str(SKILL / 'scripts')!r})\n"
+        "import edit_sheet\n"
+        "laid_out = edit_sheet.laid_out\n"
+        "def saved_in_the_editor(sheet):\n"
+        f"    p = pathlib.Path({str(project / SHEET)!r}); p.write_bytes(p.read_bytes() + b'\\n')\n"
+        "    return laid_out(sheet)\n"
+        "edit_sheet.laid_out = saved_in_the_editor\n"
+        f"sys.argv = ['edit_sheet.py', 'Game', 'plan.json', '--project', {str(project)!r}, '--rag', {str(REPO)!r}]\n"
+        "sys.exit(edit_sheet.main())\n")
+    p = streams(project, "-c", code)
+    assert p.returncode == 1 and p.stderr == "", (p.stdout, p.stderr)
+    assert p.stdout.endswith("Game changed on disk while the plan was applied; run it again\nnothing was written\n"), p.stdout
+
+
+def test_a_sheet_saved_after_it_was_printed_is_refused_on_stdout(project):
+    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "comment", "text": "End."}]}]),
+                                       encoding="utf-8")
+    tool(project, "print_sheet", "Game")
+    edit(project, SHEET, lambda s: s["events"].insert(0, {"eventType": "comment", "text": "Saved in the editor."}))
+    refused(project, "Game", "plan.json", "--dry-run", said="Game changed on disk after print_sheet.py printed it")

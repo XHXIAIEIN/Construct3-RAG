@@ -12,8 +12,12 @@ skill scripts and with the working tree's:
   print_layout   print_layout.py on every layout of every official example
   check_project  check_project.py on every official example
   check_style    check_project.py --style on every official example
+  review_design  review_design.py on every official example
   edit_sheet     edit_sheet.py --dry-run of a small plan on the first sheet of every official example
+  edit_sheet_line, edit_sheet_key   edit_sheet.py --dry-run of a plan it refuses, on the same sheet: a
+                 "line" no event prints, and an operation with a key no operation takes
   lookup_ace, lookup_script_api, search_guides   a fixed list of lookups
+  help           every script's --help
   new_project    new_project.py into an empty folder: what it prints and every file it writes
   build_project  assets/build_project.py in a stand-in game, as the tests generate it:
                  what install.py and the generator print, and every file the generator writes
@@ -24,20 +28,21 @@ or masked: the hash seed and the random module are seeded, the clone is not
 fetched, HOME is an empty folder, and each side's clone and temporary folders are
 replaced by <rag>, <game> and <tmp> before the comparison. The two clones' paths
 differ in length, which moves the point where a script's --limit cuts a line
-that holds one, so every case passes --limit 0 except lookup_ace, whose output
-names no path of either side's clone: the example folders it prints are the
-same on both sides. A refactor shows no difference; a change of output shows exactly
-the cases it was meant for, and the pull request names them.
+that holds one, so every case but help passes --limit 0. A refactor shows no difference;
+a change of output shows exactly the cases it was meant for, and the pull
+request names them.
 
 The first differing cases are printed with their first differing line, then a
 count per kind; the system temp folder keeps every case in
 construct3-output-diff.txt.
 
 The official examples are read from the Construct-Example-Projects clone beside
-the main working tree of this repository, or from --examples.
+the main working tree of this repository, or from --examples. --projects adds
+game projects, each a folder that holds project.c3proj, to the example kinds.
 
 exit codes: 0 every case is the same; 1 a case differs; 2 bad arguments, REF is
-not a commit, or the example clone is missing
+not a commit, the example clone is missing, or a --projects folder holds no
+project.c3proj
 """
 import argparse
 import hashlib
@@ -56,10 +61,11 @@ from typing import NamedTuple
 ROOT = Path(__file__).resolve().parent.parent
 SKILL = Path("skills/construct3-agent-plugin")
 REPORT = Path(tempfile.gettempdir()) / "construct3-output-diff.txt"
-EXAMPLE_KINDS = ("print_sheet", "print_layout", "check_project", "check_style", "edit_sheet")
+EXAMPLE_KINDS = ("print_sheet", "print_layout", "check_project", "check_style", "review_design", "edit_sheet",
+                 "edit_sheet_line", "edit_sheet_key")
 LOOKUP_KINDS = ("lookup_ace", "lookup_script_api", "search_guides")
 GENERATOR_KINDS = ("new_project", "build_project")
-KINDS = EXAMPLE_KINDS + LOOKUP_KINDS + GENERATOR_KINDS
+KINDS = EXAMPLE_KINDS + LOOKUP_KINDS + ("help",) + GENERATOR_KINDS
 LOOKUPS = {
     "lookup_ace": [["System"], ["System", "wait"], ["System", "every"], ["System", "for", "each"],
                    ["Sprite", "animation"], ["Sprite", "aniamtion"], ["Text", "set"], ["8 Direction", "speed"],
@@ -75,6 +81,9 @@ PLAN = [{"into": 0, "events": [
     {"eventType": "comment", "text": "output diff"}, {"eventType": "variable", "name": "DiffProbe"},
     {"eventType": "block", "conditions": [], "actions": [
         {"id": "add-to-eventvar", "objectClass": "System", "parameters": {"variable": "DiffProbe", "value": "1"}}]}]}]
+# Two plans every sheet refuses: a "line" no event prints, and an operation with a key no operation takes.
+REFUSED = {"edit_sheet_line": [{"event": 1, "line": "output diff: a line no event prints", "set": {"disabled": True}}],
+           "edit_sheet_key": [{"event": 1, "output-diff": True}]}
 # Runs a script as `python script.py` does, with the random module seeded: new_project.py draws the
 # project's uniqueId from it, and a tool that starts to draw from it stays comparable.
 RUNNER = ("import os, random, runpy, sys; random.seed(0); sys.argv = sys.argv[1:]; "
@@ -155,9 +164,8 @@ def run(side: Side, script: Path, args: list[str], cwd: Path) -> str:
 
 
 def tool_output(side: Side, case: Case) -> str:
-    whole = [] if case.kind == "lookup_ace" else ["--limit", "0"]
-    return run(side, side.rag / SKILL / "scripts" / case.args[0], [*case.args[1:], "--rag", str(side.rag), *whole],
-               side.tmp / "cwd")
+    extra = [] if case.kind == "help" else ["--rag", str(side.rag), "--limit", "0"]
+    return run(side, side.rag / SKILL / "scripts" / case.args[0], [*case.args[1:], *extra], side.tmp / "cwd")
 
 
 def files(folder: Path, side: Side, skip: tuple[str, ...]) -> dict[str, str]:
@@ -214,7 +222,7 @@ def listed(project: Path, kind: str) -> list[str]:
     return names(json.loads((project / "project.c3proj").read_text(encoding="utf-8-sig")).get(kind, {}))
 
 
-def cases(kinds: list[str], projects: list[Path], plan: Path) -> list[Case]:
+def cases(kinds: list[str], projects: list[Path], plans: dict[str, Path]) -> list[Case]:
     out = []
     for p in projects:
         at = ["--project", str(p)]
@@ -228,11 +236,18 @@ def cases(kinds: list[str], projects: list[Path], plan: Path) -> list[Case]:
             out.append(Case("check_project", p.name, ["check_project.py", *at]))
         if "check_style" in kinds:
             out.append(Case("check_style", p.name, ["check_project.py", "--style", *at]))
-        if "edit_sheet" in kinds and sheets:
-            out.append(Case("edit_sheet", p.name, ["edit_sheet.py", sheets[0], str(plan), "--dry-run", *at]))
+        if "review_design" in kinds:
+            out.append(Case("review_design", p.name, ["review_design.py", *at]))
+        for kind, plan in plans.items():
+            if kind in kinds and sheets:
+                out.append(Case(kind, p.name, ["edit_sheet.py", sheets[0], str(plan), "--dry-run", *at]))
     for kind in LOOKUP_KINDS:
         if kind in kinds:
             out += [Case(kind, " ".join(words), [f"{kind}.py", *words]) for words in LOOKUPS[kind]]
+    # The working tree's scripts: one that REF lacks fails on the old side, which shows as a difference.
+    if "help" in kinds:
+        out += [Case("help", p.name, [p.name, "--help"])
+                for p in sorted((ROOT / SKILL / "scripts").glob("*.py")) if p.stem != "c3project"]
     return out
 
 
@@ -274,9 +289,11 @@ def remove(folder: Path) -> None:
 
 def compare_sides(args: argparse.Namespace, old: Side, new: Side, projects: list[Path], tmp: Path) -> list[tuple]:
     """(kind, name, difference or None) for every case, in the order of the matrix."""
-    plan = tmp / "plan.json"
-    plan.write_text(json.dumps(PLAN), encoding="utf-8")
-    matrix = cases(args.only, projects, plan)
+    plans = {}
+    for kind, operations in {"edit_sheet": PLAN, **REFUSED}.items():
+        plans[kind] = tmp / f"{kind}.json"
+        plans[kind].write_text(json.dumps(operations), encoding="utf-8")
+    matrix = cases(args.only, projects, plans)
 
     def one(case: Case) -> tuple:
         return case.kind, case.name, first_difference(tool_output(old, case), tool_output(new, case))
@@ -325,6 +342,8 @@ def main() -> int:
     ap.add_argument("--only", nargs="+", choices=KINDS, metavar="KIND", help=f"only these kinds: {', '.join(KINDS)}")
     ap.add_argument("--limit", type=int, metavar="N", help="only the first N official examples, by folder name")
     ap.add_argument("--examples", metavar="FOLDER", help="the example-projects folder of Construct-Example-Projects")
+    ap.add_argument("--projects", nargs="+", default=[], metavar="FOLDER",
+                    help="game projects, each a folder that holds project.c3proj, run through the example kinds too")
     ap.add_argument("--show", type=int, default=40, metavar="N", help="differing cases printed (default: 40)")
     ap.add_argument("--verbose", action="store_true", help="print the cases that are the same as well")
     ap.add_argument("--workers", type=int, default=min(16, os.cpu_count() or 4), help="runs in parallel")
@@ -341,6 +360,7 @@ def main() -> int:
               file=sys.stderr)
         return 2
     projects: list[Path] = []
+    games = [Path(p).resolve() for p in args.projects]
     if any(k in EXAMPLE_KINDS for k in args.only):
         folder = examples_folder(args.examples)
         projects = [p.parent for p in sorted(folder.glob("*/project.c3proj"))][: args.limit]
@@ -349,6 +369,11 @@ def main() -> int:
                   f"beside this repository, pass --examples <its example-projects folder>, or leave the example "
                   f"kinds out with --only {' '.join(LOOKUP_KINDS + GENERATOR_KINDS)}", file=sys.stderr)
             return 2
+        for game in games:
+            if not (game / "project.c3proj").is_file():
+                print(f"--projects {game}: no project.c3proj there; pass the folder that holds it", file=sys.stderr)
+                return 2
+        projects += games
     ref = f"{args.ref} ({sha[:7]})"
     start = time.monotonic()
     tmp = Path(tempfile.mkdtemp(prefix="construct3-output-diff-"))
@@ -358,7 +383,8 @@ def main() -> int:
             print(f"git worktree add of {ref} into {checkout} failed", file=sys.stderr)
             return 2
         old, new = side_at("old", checkout, tmp), side_at("new", ROOT, tmp)
-        print(f"comparing {ref} with the working tree: {len(projects)} official examples, {', '.join(args.only)}")
+        print(f"comparing {ref} with the working tree: {len(projects) - len(games)} official examples"
+              + (f" and {len(games)} game projects" if games else "") + f", {', '.join(args.only)}")
         sys.stdout.flush()
         results = compare_sides(args, old, new, projects, tmp)
     finally:

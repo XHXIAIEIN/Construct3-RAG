@@ -2,7 +2,9 @@
 import json
 from pathlib import Path
 
-from tests.skill_helpers import REPO, SKILL, NEEDS_GIT, git, run, tool
+from tests.skill_helpers import REPO, SKILL, NEEDS_GIT, git, run, tool, script_module
+
+c3 = script_module("c3project")
 
 
 def test_the_entry_with_most_of_the_words_comes_first_in_full(built):
@@ -56,7 +58,7 @@ def test_examples_are_found_beside_the_clone_when_the_scripts_run_from_its_plugi
     example = tmp_path / "Construct-Example-Projects" / "example-projects" / "template-snake"
     example.mkdir(parents=True)
     out = snake_output(plugin, tmp_path)
-    assert f'print_sheet.py --project "{example}"' in out, out
+    assert f"print_sheet.py --project {c3.quoted(example.as_posix())}" in out, out
 
 
 @NEEDS_GIT
@@ -75,7 +77,7 @@ def test_examples_are_found_beside_the_main_working_tree_from_a_git_worktree(tmp
     example.mkdir(parents=True)
     for rag in (worktree, plugin):
         out = snake_output(rag, tmp_path)
-        assert f'print_sheet.py --project "{example}"' in out, (rag, out)
+        assert f"print_sheet.py --project {c3.quoted(example.as_posix())}" in out, (rag, out)
 
 
 def test_examples_without_the_clone_say_how_to_get_it(tmp_path):
