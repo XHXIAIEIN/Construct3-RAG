@@ -35,6 +35,13 @@ names, not values, and no page invents a grey.
   background, tiered border and accent family above were read.
 - Anthropic's brand guidance is warm paper and ink with a coral accent,
   which gives the warm neutrals below their hue rather than a flat grey.
+- The host application's own implementation, as read off its shipped styles
+  and kept in the user's notes (Tailwind CSS, native `@keyframes` for the
+  CPU-cheap animation, Framer Motion's spring model for the interactive):
+  its two signature animations, its numerals practice and its clay
+  `#d97757` are in "Motion" and rule 7 below. It is the same coral and the
+  same standard easing this record carries, so the two agree by
+  measurement, not by coincidence.
 - The preview and watched values are read on these pages, not a game, so
   density matters: the review page holds a frame strip, a step list and
   watched values beside each other without shrinking their type, and its
@@ -133,14 +140,39 @@ The playground adds, for its own readers: `--color-accent-hover`
 - Radii: `--border-radius-sm` 4px, `--border-radius-md` 6px,
   `--border-radius-lg` 8px. A closed set; a square corner is `0` on the
   same ladder, not outside it.
-- Motion: one short duration on standard easing,
-  `--dur-1` 120ms with `--ease` `cubic-bezier(0.4, 0, 0.2, 1)`; the
-  playground declares `--dur-2` 180ms for what it raises. A transition that
-  does not tell the user something is removed, and
-  `@media (prefers-reduced-motion: reduce)` collapses them all to 0.01ms.
+- Motion: the two families below, each whole or not at all; the pages
+  declare the durations of the ordinary kind.
 - Shadows: `--shadow-hairline` and `--shadow-sm` on the review page,
   `--shadow-card` and `--shadow-menu` on the playground; values scale with
   the theme's alpha.
+
+### Motion
+
+The host implementation runs two animation families, each on its own
+duration and easing, and neither is a compromise between them:
+
+| Family | Duration | Easing | What it does |
+|--------|----------|--------|--------------|
+| Reveal | 90ms | `cubic-bezier(.215, .61, .355, 1)` (easeOutQuart) | text arriving glyph by glyph: opacity 0 to 1 and `blur(6px)` to `blur(0)`, each glyph `calc(var(--i, 0) * 30ms)` after the one before it |
+| Quiet | 1.9s, loop | `cubic-bezier(0.4, 0, 0.2, 1)` | the thinking indicator: three 3px dots in the clay accent `#d97757`, rising 2px and settling back, 0, 0.15s and 0.3s apart |
+
+Both easings and the clay are values this record already carried, which is
+the cross-check that the palette and the motion pacing here are the host's
+own rather than a local invention: `--color-accent` `#d97757` and `--ease`
+`cubic-bezier(0.4, 0, 0.2, 1)` are what the implementation uses, clay for
+its quiet dots and standard easing for the loop that carries them.
+
+Neither page has a state those families serve: no page streams text, so
+there is no reveal to run, and no page thinks aloud, so there is no quiet
+loop to placate. What the pages declare is the ordinary kind —
+`--dur-1` 120ms, and `--dur-2` 180ms on the playground, on `--ease` — for
+hover, selection and state changes. A page that later streams an answer
+adopts the reveal family whole, at 90ms on its own curve and never on a
+duration between the two, and a page that later waits adopts the quiet
+family whole; a curve between them is neither and is refused. A transition
+that does not tell the user something is removed, and
+`@media (prefers-reduced-motion: reduce)` collapses all of it to 0.01ms
+here, the pages' own fallback.
 
 ### Rules the two pages follow
 
@@ -163,6 +195,12 @@ The playground adds, for its own readers: `--color-accent-hover`
    `scripts/preview_project.py` replaces when it reads the template. The
    design language lives in the `<style>` alone; the DOM and the script are
    not part of it.
+7. A numeral that changes while the user watches is tabular:
+   `font-variant-numeric: tabular-nums`, which the host does for its 03:02
+   clocks and its 1,024-token counts. The review page sets it on every
+   number it shows — frame times, step lists, watched values — and the
+   playground sets it on its latency, so a 337ms turning 200ms shifts
+   digits rather than the line.
 
 ## Keeping the contract
 
