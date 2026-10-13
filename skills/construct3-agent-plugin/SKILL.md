@@ -70,7 +70,7 @@ opened once before it is handed over.
 | `scripts/print_layout.py [LAYOUT ...] [--layer NAME]` | Layers bottom to top and each instance in Z order with its box, size, opacity and text, and the object a text lies on; read it to say where things are, and after generating a layout, where `on no object` marks a label off its button |
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed, variables and comments by name; checked before anything is written; `--new` creates the sheet first |
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules, and a warning for a string shaped like a key, which a web export ships to every player; exit 0 when the last line starts with `ok:`. `--style` adds ten warnings from the official examples' style, for a project the agent wrote. For a project someone asks about, pass `--review` to this and to `print_sheet.py`: they then end with what a review reports |
-| `scripts/review_design.py` | Read the sheets and print where their design is hard to read or fragile: an event with too many conditions, a guard repeated, one trigger split by globals, one fact kept twice, scratch globals, a UID link, a table written as actions, an expression that repeats itself. Each finding names the event and the form to write instead; then fixed yes/no questions name the events to read with `print_sheet.py`. Reads the files only |
+| `scripts/review_design.py` | Design findings and questions; `--check --prepare FOLDER --resume` checks the project and prepares complete batches with printed events, source evidence and call relations. `--answers FILE` validates static judgements against live inputs. Read [references/design-review.md](references/design-review.md) before preparing or resuming a review |
 | `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then previews it for 5 seconds, of which the game runs about 4, and prints the ticks the runtime ran and its errors, each with its event; `--state [TYPE ...]` adds what the game holds at the end: global variables, instance counts, and the instances of the types named. `--typescript` has the editor write the project's TypeScript definitions into `scripts/ts-defs/`. `--install-addon FILE.c3addon` first installs a custom addon the project uses, or prints the editor's refusal. A refusal of a project the checker passes ends with a report for the user to send, which goes out only at the user's word. It drives the Edge, Chrome or Chromium of the machine headless, about 4 seconds a run; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
 | `scripts/preview_project.py PLAN.json` | Preview the project and play it from a plan: tap, hold and drag the game's instances by name, press keys, wait `until` an expression holds, run JavaScript against the runtime, read the state, take screenshots and record the window between steps, a recording with a contact sheet of its key frames to judge the motion from and a page to review it frame by frame beside the steps and the values it watched; one line per step with the runtime errors it caused. Each run starts from a first launch, with no save. `--keep NAME` keeps a plan that passes in `tools/plans/`, and `--all` replays every kept plan. `--help` describes the plan |
 | `scripts/check_design.py DESIGN.json` | A new game's design before any project file: refuses a gap by its path (no request in the user's words or an empty `later` list, state nobody writes or reads, an input without feedback or that changes nothing the player sees, no restart of a game that ends, a win without input), then plays its acceptance tests on the rules as a prototype, without the editor, and names the failed step with the values the state held |
@@ -264,18 +264,24 @@ not held to this. `--dry-run` does all of that and writes nothing.
 
 1. Change a sheet with `edit_sheet.py`, edit another project file, or rerun
    the generator.
-2. Run `python scripts/check_project.py`, after a plan that ended with `ok:`
-   too: the work ends on this command, whose last line names the next step.
+2. Run `python scripts/review_design.py --check --prepare .tmp/design-review
+   --resume --limit 0`, after a plan that ended with `ok:` too.
+   It runs the full checker and stops on failure, then prepares pending
+   questions with their actual events. Read
+   [references/design-review.md](references/design-review.md) for the batches and answers.
 3. Fix every line it prints, all of them in one plan: each names its place,
    `sheet Game event 15 action 2`, and says what to write where it can.
    Warnings do not fail the run; a project an agent wrote should have none.
-4. Repeat until the last line starts with `ok:`. If it starts with `stop:`
+4. Repeat until the checker prints `ok:`. If it prints `stop:`
    instead, it names a finding that two changes left standing: do not change
    that place again, fix the other findings, and give that finding to the
-   user as the line says before you go on. After `ok:`, run
-   `python scripts/review_design.py` and act on it before the editor: fix
-   each finding line and answer each question from `print_sheet.py`.
+   user as the line says before you go on. After `ok:`, read the prepared
+   findings and answer every pending question from its batch evidence.
+   Validate those answers with `--answers FILE`; use `edit_sheet.py` for
+   changes, then repeat step 2. Reused judgements keep their reasons.
 5. Open and preview it in the editor:
+   run `python scripts/check_project.py` as the final complete file check,
+   then
    `python scripts/open_in_editor.py --preview`.
    The browser runs headless, so the user sees no window and may think
    the editor never opened: show them the saved screenshot,

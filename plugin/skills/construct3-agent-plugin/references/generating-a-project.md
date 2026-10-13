@@ -273,6 +273,21 @@ habits; they are what makes rerunning safe.
   under the finger and runs `actions` when the touch ends on it. Give the
   shape's type the Tween behavior; `build_all()` adds the boolean instance
   variable `pressed` to it.
+- A slider, a toggle and a text input are one call each, a row `TOUCH`
+  high from a grid cell with an optional label:
+  `slider(name, col, row, length, lo, hi, value, step, text=...)`,
+  `toggle(name, col, row, on, text=...)` and
+  `text_input(name, col, row, cols, placeholder=..., label=...)`.
+  `types.update(slider_types())`, `toggle_types()` and
+  `text_input_types()` in `build_object_types()` give their types and
+  draw their images. `slider_events(sets)`, `toggle_events(sets)` and
+  `text_input_events(sets)` among a module's events work every control
+  of the kind. `sets` maps a control's name to the global it sets, a
+  number, a boolean or a string that the sheet declares. The slider's
+  knob drags along its track, and a finger on the track draws the knob
+  there. The toggle flips on the release of `press()`. The text input is
+  Construct's Text input, an HTML element that draws over every layer.
+  Its events give it the look's font and colours at the start.
 - A one-screen layout can be named bands. `bands()` gives the boxes of the
   title, the status line, the stage and the hint.
   `band_text(type, text, band, align)` puts a label in one. `fit(w, h)`
