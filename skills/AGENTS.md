@@ -184,6 +184,7 @@ The method is <https://agentskills.io/skill-creation/evaluating-skills> and
 | `make_fixtures.py` | One project per case and arm, outside the clone: the stand-in game, an official example or the empty project of `new_project.py`, with this skill, the previous one or none |
 | `play_cases.py` | The plan of `scripts/preview_project.py` for each case whose request changes what the game does, and the runtime verdicts read from it; `play_cases.py CASE --project FOLDER` plays one |
 | `trace.py` | What a run did, from its transcript: every tool call, the ones it lost, its turns, tokens and seconds, `trace.json` |
+| `token_share.py` | Where the tokens of one transcript or many went: the cost at Opus price ratios shared out among the baseline, each script's output, the reads by file kind, the model's tool inputs and its output, the sum checked against the cost from usage; `--files` gives each transcript's first context |
 | `grade.py` | `grading.json` per run with the evidence and the level of each assertion, `benchmark.json` per iteration: mean and deviation per case and arm (`<arm>_2` is a second run of `<arm>`), runs that passed everything with a 95% interval, and the difference between arms |
 | `measure_design.py` | What each rule of `scripts/review_design.py` finds over the official examples and game projects, with looser variants, and every hit as JSON to read before a rule becomes a finding |
 | `measure_layout.py` | How much of the screen the official 2D game examples' one-screen layouts cover, and how much larger their largest object is than the next: the thresholds of the generator template's playfield checks |
@@ -204,6 +205,8 @@ python skills/construct3-agent-plugin/evals/sweep_outputs.py --compare .local/do
 python skills/construct3-agent-plugin/evals/make_fixtures.py <folder outside the clone>/iteration-N --arms with_skill old_skill --old-clone <folder outside the clone>/rag-old
 # after each run has reported
 python skills/construct3-agent-plugin/evals/trace.py <transcript>.jsonl --out <run folder>
+# where the tokens of the runs went, before and after a change that should save them
+python skills/construct3-agent-plugin/evals/token_share.py <transcript, folder or @list> ... --out .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N/token-share.json
 # after the last run of the iteration: the file assertions, and the plans played in the editor's preview
 python skills/construct3-agent-plugin/evals/grade.py .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N --play
 python skills/construct3-agent-plugin/scripts/open_in_editor.py .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N --out .local/docs/evidence/skill-evals/construct3-agent-plugin/iteration-N/opened.json
