@@ -838,13 +838,26 @@ def grade_reveal_the_gradient(run: Path) -> list[tuple[bool, str]]:
     return results
 
 
+def lives_from_count(rows: list, starts: set[str]) -> list[tuple[str, str]]:
+    """Lives that follow from a count instead of a variable of their own: an expression that takes from one of
+    `starts` a variable the events add 1 to, divided by what a life costs, `HEARTS - floor(taken / 3)`. The pairs
+    (start, count) found."""
+    counts = {n for n in variables_starting_at(rows, "0")
+              if any(a.get("id", "").startswith("add") or "+" in values([a]) for a in steps_by(rows, {n}, "1"))}
+    text = " | ".join(values(ev.get("conditions", []) + ev.get("actions", [])) for ev, _ in rows)
+    return sorted((s, c) for s in starts for c in counts
+                  if re.search(rf"(?<![\w.]){re.escape(s)}\s*-\s*(?:floor|int|round|ceil)?\s*\(?\s*{re.escape(c)}\s*/", text))
+
+
 def grade_lives_as_hearts(run: Path) -> list[tuple[bool, str]]:
     project = run / "project"
     results = [checker_line(project)]
     rows = sheet_rows(project)
     lives = aliases_of(rows, variables_starting_at(rows, "5") | ivars_starting_at(project, 5))
     subs = [a for a in steps_by(rows, lives, "1") if a.get("id").startswith("subtract") or "-" in values([a])]
-    results.append((bool(lives) and bool(subs), f"variables at 5: {sorted(lives) or 'none'}; actions taking 1: {len(subs)}"))
+    counted = lives_from_count(rows, lives)
+    results.append((bool(lives) and bool(subs or counted), f"variables at 5: {sorted(lives) or 'none'}; actions taking 1: "
+                                                           f"{len(subs)}; lives drawn from a count: {counted or 'none'}"))
     pat = re.compile("|".join(map(re.escape, lives)) or r"$^")
     by_width = width_drivers(rows, lives)
     # A count of icons on a Sprite whose frame is the count, or on instances picked against it: the

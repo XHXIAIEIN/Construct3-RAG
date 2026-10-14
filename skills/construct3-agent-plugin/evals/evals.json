@@ -130,7 +130,7 @@
       "files": [],
       "assertions": [
         "check_project.py of the clone exits 0 on the regenerated project",
-        "A variable starts at 5 and an action subtracts 1 from it",
+        "The lives start at 5 and drop by one: a variable at 5 an action takes 1 from, or a value at 5 less a count the events add 1 to, divided by what a life costs",
         "The hearts are driven by the count: a Set width or Tween of Width reading it, or an animation frame set from it, or instances picked by comparing an index with it",
         "An empty heart stays visible: a second object under the full hearts, or two or more frames on the heart, or a set-frame, set-animation or opacity action on the picked hearts, not a destroy",
         "Five at the start comes from one number: a variable or constant with initial value 5 that the hearts' width, frames or creation reads, and no event compares the count with more than two different literal numbers",

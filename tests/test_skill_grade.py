@@ -646,3 +646,20 @@ def test_the_lives_plan_counts_the_hearts_that_still_look_full() -> None:
     code = "\n".join(line for step in plan["steps"] if "js" in step for line in step["js"])
     assert "vars.h.fullHearts = () =>" in code and f"stand = {json.dumps(play_cases.STAND_IN_HUD)}" in code
     assert "vars.watch.numbers = () => Object.assign(vars.h.numbers(), vars.h.fullHearts())" in code
+
+
+def test_lives_drawn_from_a_count_of_coins_start_at_5_and_drop_by_one() -> None:
+    """`HEARTS - floor(taken / COINS_PER_LIFE)`, with HEARTS a constant at 5 and `Add 1 to taken` on a collect, are
+    lives that start at 5 and drop by one, as a variable at 5 that loses 1 is; a count nothing adds 1 to is not."""
+    def rows(step: str) -> list:
+        return [({"eventType": "variable", "name": "HEARTS", "initialValue": 5}, []),
+                ({"eventType": "variable", "name": "taken", "initialValue": 0}, []),
+                ({"eventType": "block", "actions": [
+                    {"id": "add-to-eventvar", "objectClass": "System", "parameters": {"variable": "taken", "value": step}}]}, []),
+                ({"eventType": "block", "conditions": [
+                    {"id": "compare-instance-variable", "objectClass": "Heart",
+                     "parameters": {"instance-variable": "slot", "comparison": 4,
+                                    "value": "HEARTS - floor(taken / COINS_PER_LIFE)"}}]}, [])]
+
+    assert grader.lives_from_count(rows("1"), {"HEARTS", "slot"}) == [("HEARTS", "taken")]
+    assert grader.lives_from_count(rows("2"), {"HEARTS", "slot"}) == []
