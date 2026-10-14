@@ -182,8 +182,12 @@ python -m fontTools.subset extras/ttf/Inter-Regular.ttf --unicodes="U+0020-007E,
 ```
 
 The template copies the files `FONT` names into the project's `fonts/` and
-lists them in `project.c3proj`. It stops when a file is in neither place,
-because a missing font draws the game's Latin text in a serif face.
+lists them in `project.c3proj`. A weight whose file is in neither place
+draws in `system-ui`, and the run prints a warning that names the file,
+because a Text whose font the project lacks draws its Latin text in a serif
+face. This is the case in the Claude Code plugin, which carries no font
+files (`plugin-folder.md`): there a game takes the look in the platform's
+face until its `fonts/` holds the three files.
 
 ### The colours
 
@@ -291,10 +295,6 @@ out, as the user decided; the hit keeps the template's flash and squash.
 - The text sizes suit a desktop window, the template's audience
   (`landscape-viewport.md`); on a phone held sideways a 12 pt name of a
   1920×1080 viewport is about 5 dp high.
-- Claude's plugin directory holds a version for a reviewer when a script of
-  the plugin uses a bundled image or font file (`plugin-folder.md`); whether
-  the generator's copy of the font files counts as one is not known until a
-  version is published.
 
 ## Re-evaluate when
 
@@ -302,5 +302,5 @@ out, as the user decided; the hit keeps the template's flash and squash.
 - A game's Latin text shows in a serif face: a font file did not reach the
   project.
 - A platform draws the fallback Chinese in a serif face.
-- Claude's plugin directory holds a version for the font files.
+- Claude's plugin directory accepts a plugin that holds font files.
 - Most generated games are played on phones.
