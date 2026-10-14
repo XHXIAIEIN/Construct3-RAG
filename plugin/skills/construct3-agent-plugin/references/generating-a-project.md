@@ -229,15 +229,24 @@ habits; they are what makes rerunning safe.
   edge or corner, `MARGIN` inside the viewport, with the instance's origin
   passed so the point returned is the one the file stores. A HUD label is
   `hud_text(type, text, where, longest=...)`: its box fits its longest text,
-  0.6 em a Latin character and 1 em a Chinese, Japanese, Korean or
-  full-width one (`text_ems()`), where 1 em is the size times `PX_PER_PT`
-  (4/3) in px because a Text's size is in points, and it reads towards the
-  side it hangs on. Repeated items, hearts or stars,
+  and it reads towards the side it hangs on. A printable ASCII character
+  counts at its width in Inter Medium, a Chinese, Japanese, Korean or
+  full-width one at 1 em and any other at 0.6 em (`text_ems()`), where 1 em
+  is the size times `PX_PER_PT` (4/3) in px because a Text's size is in
+  points. Repeated items, hearts or stars,
   are `row(where, n, w, h)`, spaced so they never touch. A second row on
   the same edge is `dy` in units on the same call, `dy=3` under a 2-unit
   label. A value under its name, the score under SCORE, is one group,
   `hud_stat(name_type, value_type, name, where, longest=...)`: the name in
-  the body size, `GAP_IN` above the value in the title size. The playfield
+  `TEXT_SIZE["name"]`, `GAP_IN` above the value in `TEXT_SIZE["number"]`
+  and the light weight. What the player is on, a round, a level or a mode, is
+  `hud_tag(type, text)` top left, a small tracked tag, and the events set it
+  with `tracked_expr()`; the screen the player plays on shows no game name,
+  and `hud_header()` puts a title before a tag on a menu or a result
+  screen. The controls are
+  `hud_keys(box_type, key_type, verb_type, [(key, verb), ...])` bottom
+  left, a key in a thin ink box with its verb beside it, and `hints(box_type)`
+  is the group that dims the keys once the player has used them. The playfield
   goes in the middle of what the HUD leaves, `centred(w, h, play_area(hud))`,
   at least `GAP_OUT` from it. `spaced(groups)` stops the run when two groups
   sit closer than 1.5 times the gap inside either. `balanced(content,
@@ -319,9 +328,10 @@ habits; they are what makes rerunning safe.
   A shape is whole units wide and high, and `shape_inst(type, file, col,
   row)` places it by the grid cell of its top-left corner; `on_grid()`
   stops the run on a world instance off the grid, and an object created at
-  runtime goes to `grid_random(lo, hi)`, never a raw `random()`. A drawn
-  image holds three alpha values, clear, opaque and the shadow's, and a
-  clear pixel is written with no colour under it. A hit shows as a colour:
+  runtime goes to `grid_random(lo, hi)`, never a raw `random()`. A
+  pixel-art image holds three alpha values, clear, opaque and the shadow's;
+  in a viewport taller than 360 px the edges are antialiased. A clear pixel
+  is written with no colour under it. A hit shows as a colour:
   `hit_frame(file)` draws the shape's second frame in the `flash` role,
   tagged `hit`, and `hit_flash(obj)` gives the actions that show it for
   `HIT_FLASH["seconds"]` and return to frame 0. `squash(obj, kind)` sets
@@ -333,31 +343,45 @@ habits; they are what makes rerunning safe.
   squash acts on the art, never on an object that collides: a player is an
   invisible mask with Platform and its art, drawn with `shape(..., oy=1)`,
   pinned to it, and the run stops on a squash of the mask. A label is
-  `TEXT_SIZE["body"]`, a banner `TEXT_SIZE["title"]`, in `FONT`;
+  `TEXT_SIZE["body"]`, a screen's title `TEXT_SIZE["title"]`, the count
+  `TEXT_SIZE["number"]` and a banner `TEXT_SIZE["display"]`, each in the
+  weight `TEXT_WEIGHT` gives it, a font of `FONT`, never bold. `FONT` names
+  Inter's three files, which the generator copies from the skill's
+  `assets/fonts/` into `fonts/` and lists; `FONT = "system-ui"` ships none.
   `hud_text()` stops the run on a colour that reads below 4.5:1 on what is
   behind it, 3:1 from 18 pt up (`text_contrast()`), and names the roles
   that would read there. A
   viewport 360 px high or less is pixel art: `PIXEL_ART` has the project
   sample *Nearest* at a whole-number scale.
-- The stand-in's look is a plain sheet: flat shapes on an off-white
-  canvas, no outline and no shadow. `PALETTE` holds two canvas greys,
-  `solid`, `dim`, `ink`, the accents `reward` and `danger`, and `flash`;
-  keep the roles and change values only. `check_palette()` stops the run
-  when the checker's greys pass 1.2:1 or `solid` falls under 3:1 on them,
-  and `shape()` stops on an accent under 3:1 on `canvas_alt` drawn without
-  an ink outline, or on a fill under 3:1 against the ink. The player is an ink
-  rectangle, structure a solid one, a pickup a circle, a hazard a
-  triangle. The backdrop is `backdrop("Backdrop")` on a layer at parallax
+- The stand-in's look is paper and ink: flat shapes on a warm paper, no
+  outline and no shadow. `PALETTE` holds `canvas`, the paper, and its faint
+  fill `canvas_alt`, `line` for structure the eye
+  reads past, `solid` for edges, `dim`, `ink`, `reward` and `danger`, one
+  accent between them, and `flash`; keep the roles and change values only.
+  `check_palette()` stops the run when the paper and its fill pass 1.2:1 or
+  `solid` falls under 3:1 on the fill, and `shape()` stops on an accent
+  under 3:1 on `canvas_alt` drawn without an ink outline, or on a fill under
+  3:1 against the ink. The player is an ink rectangle, structure a solid
+  one, a pickup a circle, a hazard a triangle. The player, a pickup and a
+  hazard are each drawn `SUBJECT` across; structure takes the size it
+  needs. What is tapped is drawn `inset` inside a `TOUCH` box,
+  `shape(file, kind, TOUCH, TOUCH, role, inset=(TOUCH - SUBJECT) // 2)`. A
+  board, a region or a range is a zone drawn as lines,
+  `zone(type, col, row, cols, rows)` of a `zone_image(type)` and
+  `zone_type(type)`, a `LINE` px edge in `solid` over the fill, and a slot
+  or a reach is a `ring()`, dashed for a reach.
+  The backdrop is `backdrop("Backdrop")` on a layer at parallax
   1, of `pattern("Backdrop", "plain")`, reaching `SCREEN_PAD` past the
   viewport so the screen shows no edge of it. A popup's dim is laid out
   over `screen_box()` on the popup's own layer. A game with something transparent,
   a mask or a background still to come draws it as `"checker"` instead,
   as editors show transparency; its cells, two to a unit, are then the
-  ruler, so draw no grid. An area or an edge is
+  ruler, so draw no grid. An area with a rule of its own is
   `area(type, col, row, cols, rows)` of a type whose tile `pattern(name,
   kind)` drew in `build_images()` and `pattern_type(name)` declares: `low`
-  stripes for a harmless special surface, `caution` for what moves or
-  triggers, `hazard` for what hurts, the last two on strips and small zones
+  stripes for a harmless special surface, `caution`, ink stripes, for what
+  moves or triggers, `hazard`, accent stripes, for what hurts, the last two
+  on strips and small zones
   only. `tiledbg_inst()` offsets a pattern so neighbouring pieces meet
   without a seam.
 - `BEATS` paces the game: one beat per camera zone of a level, or per

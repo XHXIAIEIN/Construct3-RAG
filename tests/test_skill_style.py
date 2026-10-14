@@ -152,7 +152,7 @@ def test_plan_warns_on_a_find_path_every_tick_in_an_event_it_did_not_create(proj
     pathfinding_coin(project)
     edit(project, SHEET, lambda s: s["events"].append(with_own_sids(
         block([cond("every-tick")], STYLE_ACTIONS[:1]), 940_000_000_000_000)))
-    code, out = plan(project, {"event": 10, "add-actions": [FIND_PATH]}, flags=("--dry-run",))
+    code, out = plan(project, {"event": 13, "add-actions": [FIND_PATH]}, flags=("--dry-run",))
     assert code == 0 and "Traceback" not in out, out
     assert [w for w in warnings(out) if "Find path runs every tick" in w], out
 
@@ -389,7 +389,7 @@ def test_plan_refuses_new_events_without_their_comments(project):
     before = (project / SHEET).read_bytes()
     code, out = plan(project, {"into": 0, "events": [{"eventType": "block", "conditions": [], "actions": STYLE_ACTIONS}]})
     assert code == 1 and (project / SHEET).read_bytes() == before, out
-    assert "operation 1: sheet Game event 10 (sid" in out
+    assert "operation 1: sheet Game event 13 (sid" in out
     assert "8 actions in a row without a comment action" in out and "no comment above it" in out
     assert "event 5 (sid" not in out and out.splitlines()[-1] == "the plan adds 2 problem(s) to the project; nothing was written"
     stepped = STYLE_ACTIONS[:4] + [{"type": "comment", "text": "Then the rest."}] + STYLE_ACTIONS[4:]

@@ -29,8 +29,8 @@ def test_a_miss_of_print_sheet_prints_on_stdout(project):
     committed(project)
     for args, said in ((("Gmae",), "no event sheet named 'Gmae'; sheets: Game"),
                        (("Gmae", "--since", "HEAD"), "no event sheet named 'Gmae' on disk or in HEAD ("),
-                       (("Game", "--show", "40"), "sheet Game has 9 events; --show 40 is not one of them"),
-                       (("Game", "--events", "40"), "sheet Game has 9 events; --events 40 starts past its end"),
+                       (("Game", "--show", "40"), "sheet Game has 12 events; --show 40 is not one of them"),
+                       (("Game", "--events", "40"), "sheet Game has 12 events; --events 40 starts past its end"),
                        (("Game", "--show", "1", "--limit", "20"), "characters of JSON, over the limit of 20 (--limit)")):
         p = streams(project, f"{INSTALLED}/scripts/print_sheet.py", "--rag", str(REPO), *args)
         assert p.returncode == 1 and p.stderr == "" and said in p.stdout, (args, p.stdout, p.stderr)
@@ -87,8 +87,8 @@ def test_print_says_every_tick_only_where_an_event_without_conditions_runs_every
     assert "   6     (runs with its parent)\n             -> Coin: Set scale to 1.5" in out
     assert "   8 function AddScore(points: number)\n" in out
     assert "   9   (runs with its parent)\n           -> Coin: Set scale to 1.5" in out
-    assert "  12 (every tick)\n         -> Coin: Set scale to 1.5" in out
-    assert "  13 group Idle\n  14   (every tick)\n           -> Coin: Set scale to 1.5" in out
+    assert "  15 (every tick)\n         -> Coin: Set scale to 1.5" in out
+    assert "  16 group Idle\n  17   (every tick)\n           -> Coin: Set scale to 1.5" in out
     assert out.count("(every tick)") == 2 and out.count("(runs with its parent)") == 2, out
 
 
@@ -134,13 +134,13 @@ def test_print_stops_at_the_limit_and_names_the_part_that_continues(built):
 def test_print_of_a_part_starts_with_the_events_it_sits_in(built):
     code, out = tool(built, "print_sheet", "Game", "--events", "9")
     assert code == 0
-    assert out.splitlines()[:4] == ["== Game: events 9-9 of 9; a [context] row is an event these sit in, without its actions",
+    assert out.splitlines()[:4] == ["== Game: events 9-9 of 12; a [context] row is an event these sit in, without its actions",
                                     "   8 group Restart  [context]", "       // Start the next round when the last coin is gone",
                                     "   9   System: Coin.Count = 0"]
     assert "Touch: On touched" not in out
 
 
-@pytest.mark.parametrize("span, said", [("40-", "has 9 events"), ("x", "40-80, 40- or 40"), ("5-2", "ends before it starts")])
+@pytest.mark.parametrize("span, said", [("40-", "has 12 events"), ("x", "40-80, 40- or 40"), ("5-2", "ends before it starts")])
 def test_print_refuses_a_range_it_cannot_read(built, span, said):
     code, out = tool(built, "print_sheet", "Game", "--events", span)
     assert code == 1 and said in out
@@ -151,7 +151,7 @@ def test_print_without_a_name_lists_the_sheets_that_do_not_fit(project):
     edit(project, "project.c3proj", lambda data: data["eventSheets"]["items"].append("Menu"))
     code, out = tool(project, "print_sheet", "--limit", "900")
     assert code == 0
-    assert "2 event sheets" in out and re.search(r"Game +9 events +\d+ characters", out) and "-> " not in out
+    assert "2 event sheets" in out and re.search(r"Game +12 events +\d+ characters", out) and "-> " not in out
     code, out = tool(project, "print_sheet")
     assert code == 0 and "== Game\n" in out and "== Menu\n" in out
 
@@ -324,7 +324,7 @@ def test_since_stops_at_the_limit_and_names_the_part_that_continues(project):
     code, out = tool(project, "print_sheet", "--since", "HEAD", "--limit", "1500")
     assert code == 0 and len(out) < 1500, out
     last = out.splitlines()[-1]
-    assert re.search(r"before event (\d+) of 49\. The rest: python \S+print_sheet.py Game --since HEAD --events \1- "
+    assert re.search(r"before event (\d+) of 52\. The rest: python \S+print_sheet.py Game --since HEAD --events \1- "
                      r".*--limit 1500$", last), last
     start = re.search(r"--events (\d+)-", last).group(1)
     code, rest = tool(project, "print_sheet", "Game", "--since", "HEAD", "--events", f"{start}-", "--limit", "0")

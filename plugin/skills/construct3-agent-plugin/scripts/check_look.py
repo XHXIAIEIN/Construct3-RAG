@@ -6,9 +6,12 @@ Run it after the generator's own check ends with ok:, on a project built from
 assets/build_project.py, whoever edited the generator. It reads the images,
 layouts and event sheets the editor would load and checks:
 
-  alpha.pure            a clear pixel holds no colour, and the project's images
-                        hold one alpha value between clear and opaque, the
-                        shadow's; a painting meant to keep soft edges is
+  alpha.pure            a clear pixel holds no colour, and a pixel-art
+                        project's images hold one alpha value between clear
+                        and opaque, the shadow's; in a viewport taller than
+                        360 px the images keep the antialiased edges the
+                        template draws. A
+                        painting meant to keep soft edges in pixel art is
                         named with --painted, and the art prepare_art.py
                         wrote is known by the mark it leaves in the file
   grid.world-placement  an instance of a world layer starts on the grid: its
@@ -60,8 +63,10 @@ def painted_mark(path: Path) -> bool:
     return False
 
 
-def check_alpha(root: Path, painted: list[str], out: list[str]) -> int:
-    """alpha.pure over images/; returns how many images were read."""
+def check_alpha(root: Path, painted: list[str], out: list[str], soft: bool = False) -> int:
+    """alpha.pure over images/; returns how many images were read. `soft`: the viewport is taller
+    than 360 px, where the template antialiases every edge, so only a colour hidden under a clear
+    pixel is a finding."""
     partial: dict[str, dict[int, tuple[int, int]]] = {}      # image: {alpha: first (x, y)}
     read = 0
     for png in sorted((root / "images").rglob("*.png")):
@@ -79,7 +84,7 @@ def check_alpha(root: Path, painted: list[str], out: list[str]) -> int:
         if hidden:
             out.append(f"alpha.pure: {rel} has {len(hidden)} clear pixels that hold a colour, the first at "
                        f"({hidden[0] % w},{hidden[0] // w}); write a clear pixel as (0, 0, 0, 0)")
-        if painted_mark(png):       # art from prepare_art.py keeps the soft edges of its picture
+        if soft or painted_mark(png):       # an antialiased edge, or the soft edges of a picture of prepare_art.py
             continue
         for i, p in enumerate(pixels):
             if 0 < p[3] < 255:
@@ -270,7 +275,7 @@ def main() -> int:
     project = c3.load(root / "project.c3proj")
     unit = args.unit or (8 if project.get("viewportHeight", 1080) <= 360 else 32)
     out: list[str] = []
-    images = check_alpha(root, args.painted, out)
+    images = check_alpha(root, args.painted, out, soft=unit != 8)
     instances = check_grid(root, unit, out)
     creates = check_spawn(root, out)
     check_hit(root, out)

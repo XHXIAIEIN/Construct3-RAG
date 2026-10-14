@@ -56,14 +56,21 @@ ORIENTATION = "landscape"                  # "portrait", "landscape" or "any"
 # fifths of their widths); a HUD element sits 0, one or two units from the viewport edge
 # (Construct3-RAG/docs/decisions/event-sheet-design-guidance.md, placement survey 2026-09-22).
 UNIT = 8 if VIEW_H <= 360 else 32          # the grid; a pixel-art viewport gets the small one
-MARGIN = UNIT                              # the HUD's distance from the viewport edge
+# The HUD's distance from the viewport edge: a fifteenth of the shorter side, as the paper-and-ink
+# look keeps it, in whole units rounded down: 64 px at 1080, 32 px at 720 and 8 px at 320x180
+# (Construct3-RAG/docs/decisions/paper-and-ink-look.md).
+MARGIN = max(1, int(min(VIEW_W, VIEW_H) / 15 / UNIT)) * UNIT
 # The smallest object a finger taps: 48 dp on Android, 44 pt on iOS (Apple HIG, Accessibility;
 # Android accessibility help; WCAG 2.5.5). The viewport's shorter side is shown across a
 # phone's ~360 dp, so 48 dp is 48 * shorter side / 360 viewport px, rounded up to a unit:
 # 24 at 320x180, 96 at 720x1280, 160 at 1920x1080, the default.
 TOUCH = math.ceil(48 * min(VIEW_W, VIEW_H) / 360 / UNIT) * UNIT
+# The size the player and what it acts on are drawn at: 6% of the shorter side in whole units, 64 px
+# at 1080, small subjects in a large field. What is tapped keeps a box TOUCH wide around its
+# drawing, shape(..., inset=...), so a finger still hits it.
+SUBJECT = max(UNIT, round(0.06 * min(VIEW_W, VIEW_H) / UNIT) * UNIT)
 
-COIN_SIZE = TOUCH                          # a coin is tapped, so it is never smaller than a finger
+COIN_SIZE = SUBJECT                        # a coin's drawing, in a box TOUCH wide that a finger hits
 
 # --- look -----------------------------------------------------------------------------
 # Decided once, here, as named values: each colour by the role it plays, the text sizes, the
@@ -73,20 +80,23 @@ COIN_SIZE = TOUCH                          # a coin is tapped, so it is never sm
 # examples keep to few colours with hard edges, 9 covering 95% of a project's opaque pixels
 # and 35 its whole art at the median, and their text to one or two colours in two sizes
 # (Construct3-RAG/docs/decisions/game-look-from-design-skills.md).
-# The stand-in is a plain sheet: flat shapes on an off-white canvas that fills the screen, value
-# carrying the hierarchy from the canvas to ink, and two accents for what must be noticed
-# wherever the eye is. Every fill reads at least 3:1 on canvas_alt, so a shape shows without an
-# outline or a shadow; check_palette() and shape() stop the run on one that does not
-# (Construct3-RAG/docs/decisions/greybox-blockout.md). A game adds a third accent only for a role
-# the two do not cover, a goal for instance.
+# The stand-in is paper and ink: flat shapes on a warm paper that fills the screen, the player and
+# the labels in ink, one accent for what is hit or must be noticed, and areas, ranges and slots
+# drawn as lines, a thin edge over a faint fill. Value carries the hierarchy: the player is the
+# one solid ink mass, structure the faintest thing on the screen. Every fill reads at least 3:1
+# on canvas_alt, so a shape shows without an outline or a shadow; check_palette() and shape()
+# stop the run on one that does not (Construct3-RAG/docs/decisions/paper-and-ink-look.md). The
+# accent marks what is collected and what hurts alike, and the shape tells them apart; a game
+# that needs a second hue gives one of the two roles its own colour.
 PALETTE = {
-    "canvas": (250, 250, 247),         # the sheet: an opaque layer's fill; the checker's light cells
-    "canvas_alt": (238, 238, 234),     # the checker's dark cells, at most 1.2:1 from canvas
-    "solid": (132, 132, 128),          # structure, at least 3:1 on canvas_alt; a bar's frame
-    "dim": (100, 100, 96),             # a secondary label
-    "ink": (17, 17, 17),               # the player, outlines, labels, a bar's fill
-    "reward": (37, 99, 235),           # what the player collects: the coin, a cobalt that reads alone
-    "danger": (220, 38, 60),           # what hurts or is lost
+    "canvas": (236, 234, 228),         # the paper: an opaque layer's fill; the checker's light cells
+    "canvas_alt": (223, 221, 215),     # 6% ink over the paper: an area's fill; the checker's dark cells
+    "line": (207, 202, 192),           # a slot or a ring drawn as a line; under 3:1, so never the only sign of a thing
+    "solid": (117, 116, 112),          # 55% ink: the edge of an area or a range, structure, a bar's frame
+    "dim": (101, 97, 90),              # a secondary label, 4.5:1 on canvas_alt
+    "ink": (20, 19, 17),               # the player, labels, a key's box, a bar's fill
+    "reward": (224, 69, 43),           # what the player collects: the one accent
+    "danger": (224, 69, 43),           # what hurts: the same accent, on a triangle
     "flash": (255, 255, 255),          # the fill of an object for the instant it is hit
 }
 # The outline and the cast shadow of every image shape() draws, one switch for the game. They
@@ -95,11 +105,11 @@ PALETTE = {
 # outline lies inside the shape's edge, so the shape keeps its size on the grid; the shadow is
 # a hard copy of the shape, offset, and widens the image on its side. Being in the image, a
 # shadow turns with a rotating sprite and darkens where two shadows overlap: draw such a sprite
-# with shape(..., shadow=False). Both are off on the plain sheet; a game turns them on for a
+# with shape(..., shadow=False). Both are off on the paper; a game turns them on for a
 # look that wants them. Values: Construct3-RAG/docs/decisions/greybox-blockout.md.
 SHAPE_STYLE = {
     "outline": False,
-    "outline_width": max(1, UNIT // 4),                      # px, inside the edge
+    "outline_width": max(1, round(min(VIEW_W, VIEW_H) / 360)),   # px, inside the edge: 3 at 1080
     "outline_role": "ink",
     "shadow": False,
     "shadow_distance": round(0.027 * min(VIEW_W, VIEW_H)),   # px: 2.7% of the shorter side
@@ -124,8 +134,25 @@ SQUASH = {
     "land": {"width": 1.2, "height": 0.8, "hold": 0, "seconds": 0.5, "ease": "easeoutelastic"},
     "jump": {"width": 0.7, "height": 1.3, "hold": 0.2, "seconds": 0.75, "ease": "easeoutelastic"},
 }
-FONT = "system-ui"                         # one font for every label: the platform's own UI face, no font file
-TEXT_SIZE = {"body": UNIT, "title": 2 * UNIT}   # a label is body, a banner title: two sizes
+# The type is Inter, which the skill ships in three weights under assets/fonts/ with its license
+# (SIL Open Font License 1.1). A weight is a font of its own, named by its file in fonts/ without
+# the extension; build_all() copies the files named here and lists them in project.c3proj. Text
+# outside Latin, Chinese among it, draws in the platform's own face. FONT = "system-ui" draws every
+# label in the platform's face and ships no file.
+FONT = {"light": "InterDisplay-Light", "regular": "Inter-Regular", "medium": "Inter-Medium"}
+# Each kind of text has a size in points and a weight of FONT. The sizes scale the paper-and-ink
+# prototype's, drawn at 720 px high, to the viewport's shorter side (1 px is 0.75 pt): a tracked
+# tag, the name of a stat or a key, body text and a key's verb, a screen's title, the count the
+# player plays for, and a banner across the stage. In pixel art the small kinds are one unit and
+# the large kinds two.
+TEXT_SIZE = ({"tag": UNIT, "name": UNIT, "body": UNIT, "title": 2 * UNIT, "number": 2 * UNIT, "display": 2 * UNIT}
+             if UNIT == 8 else
+             {kind: round(px * min(VIEW_W, VIEW_H) / 720 * 0.75)
+              for kind, px in (("tag", 10), ("name", 11), ("body", 12), ("title", 20), ("number", 40))}
+             | {"display": 2 * UNIT})
+TEXT_WEIGHT = {"tag": "regular", "name": "regular", "body": "regular", "title": "medium", "number": "light",
+               "display": "medium", "key": "medium"}
+LINE = max(1, round(min(VIEW_W, VIEW_H) / 720))   # px of a line: a slot, an area's edge, a key's box; 2 at 1080
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
 # as the official examples at that size sample, and most scale (FULLSCREEN, build_project()).
 PIXEL_ART = UNIT == 8
@@ -156,6 +183,14 @@ import sys
 import unicodedata
 import zlib
 from pathlib import Path
+
+# A generator written for an older template lacks these settings; install.py refreshes the helpers,
+# so they default here.
+TEXT_WEIGHT = globals().get("TEXT_WEIGHT", {})
+LINE = globals().get("LINE", max(1, round(min(VIEW_W, VIEW_H) / 720)))
+# Px of this viewport per px of the paper-and-ink prototype, which was drawn at 720 px high: the
+# gaps of the keys and the header scale by it.
+REF = min(VIEW_W, VIEW_H) / 720
 
 
 # --- grid and pacing --------------------------------------------------------------------
@@ -597,19 +632,21 @@ def check_palette() -> None:
 
 
 def alphas() -> set[int]:
-    """The alpha values a drawn image may hold: clear, opaque, and the shadow of SHAPE_STYLE."""
+    """The alpha values a drawn pixel-art image may hold: clear, opaque, and the shadow of SHAPE_STYLE.
+    In a viewport taller than 360 px an edge is antialiased, and its alpha is how much of the pixel it
+    covers."""
     return {0, 255, round(255 * SHAPE_STYLE["shadow_opacity"])}
 
 
 def write_png(rel: str, w: int, h: int, pixel, painted: bool = False) -> None:
     """images/<rel> from an RGBA function of (x, y). Every pixel that shows is a colour of
-    PALETTE, its alpha one of alphas(); painted=True is for a picture meant to hold its own
-    colours and soft edges, a gradient or a photograph, and skips both checks. A clear pixel
-    is written as (0, 0, 0, 0) whatever the function returns: a colour hidden under alpha 0
-    bleeds into the edge when the image is scaled with linear sampling."""
+    PALETTE; in pixel art its alpha is one of alphas(), so the edges stay hard. painted=True is
+    for a picture meant to hold its own colours, a gradient or a photograph, and skips both
+    checks. A clear pixel is written as (0, 0, 0, 0) whatever the function returns: a colour
+    hidden under alpha 0 bleeds into the edge when the image is scaled with linear sampling."""
     raw = bytearray()
     colours = set(PALETTE.values())
-    allowed = alphas()
+    allowed = alphas() if PIXEL_ART else set(range(256))
     stray: dict = {}
     for y in range(h):
         raw.append(0)
@@ -692,17 +729,24 @@ def corners(kind: str) -> list[tuple[float, float]]:
 
 
 def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: float = 0.5,
-          outline: bool | None = None, shadow: bool | None = None) -> dict:
-    """images/<rel>: a flat `kind` of SHAPES, w x h px in whole units, in the colour of `role`, with the outline
-    and shadow of SHAPE_STYLE unless outline or shadow says otherwise for this image. Returns
-    the frame for sprite_type(), kept in FRAMES[rel] as well: its origin is (ox, oy) of the
-    shape, its collision polygon the shape's, and its size the image's, the shadow included,
-    which is the size an instance of it is written at (drawn(rel))."""
+          outline: bool | None = None, shadow: bool | None = None, inset: int = 0) -> dict:
+    """images/<rel>: a flat `kind` of SHAPES in a box of w x h px in whole units, in the colour of `role`,
+    with the outline and shadow of SHAPE_STYLE unless outline or shadow says otherwise for this
+    image. `inset` px of the box stay clear on every side, so the drawing is smaller than the box.
+    The box keeps its place on the grid and its collision polygon: a coin drawn SUBJECT wide in a
+    TOUCH box takes a finger anywhere in the box, inset=(TOUCH - SUBJECT) // 2. In a viewport taller
+    than 360 px the edge is antialiased. Returns the frame for sprite_type(), kept in FRAMES[rel]: its
+    origin is (ox, oy) of the box, its collision polygon the shape across the box, and its size
+    the image's, the shadow included, which is the size an instance of it is written at
+    (drawn(rel))."""
     if kind not in SHAPES:
         sys.exit(f"{rel}: {kind!r} is no shape; shape() draws {', '.join(SHAPES)}")
     if w % UNIT or h % UNIT:
         sys.exit(f"{rel}: {w}x{h} is not whole units of {UNIT} px; a shape covers whole cells of the grid, "
                  f"so give it units(n) or TOUCH, {math.ceil(w / UNIT) * UNIT}x{math.ceil(h / UNIT) * UNIT} here")
+    if inset < 0 or 2 * inset >= min(w, h):
+        sys.exit(f"{rel}: inset {inset} leaves nothing of a {w}x{h} box to draw; keep it under {min(w, h) // 2}, "
+                 f"(TOUCH - SUBJECT) // 2 for a small drawing in a box a finger hits")
     style = SHAPE_STYLE
     edge = style["outline_width"] if (style["outline"] if outline is None else outline) else 0
     ratio = contrast(rgb(role), rgb("canvas_alt"))
@@ -718,20 +762,35 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
     left, top = max(0, -dx), max(0, -dy)
     iw, ih = w + abs(dx), h + abs(dy)
     alpha = round(255 * style["shadow_opacity"])
+    sw, sh = w - 2 * inset, h - 2 * inset
+    # Pixel art samples a pixel at its centre; a larger viewport at 4 x 4 points where the edge crosses it.
+    n = 1 if PIXEL_ART else 4
+    points = [((i + 0.5) / n, (j + 0.5) / n) for j in range(n) for i in range(n)]
+
+    def share(u: float, v: float, pad: float = 0) -> float:
+        """The share of the pixel with its corner at (u, v) of the drawing that lies `pad` px inside it."""
+        if n > 1:
+            held = {inside(kind, sw, sh, u + a, v + b, pad) for a in (0, 1) for b in (0, 1)}
+            if len(held) == 1:
+                return float(held.pop())
+        return sum(inside(kind, sw, sh, u + a, v + b, pad) for a, b in points) / len(points)
 
     def pixel(x, y):
-        px, py = x + 0.5 - left, y + 0.5 - top
-        if inside(kind, w, h, px, py):
-            return (*rgb(role if inside(kind, w, h, px, py, edge) else style["outline_role"]), 255)
-        if (dx or dy) and inside(kind, w, h, px - dx, py - dy):
-            return (*rgb(style["shadow_role"]), alpha)
+        u, v = x - left - inset, y - top - inset
+        cover = share(u, v)
+        cast = share(u - dx, v - dy) if (dx or dy) and cover < 1 else 0
+        if cover:
+            colour = role if not edge or share(u, v, edge) >= 0.5 else style["outline_role"]
+            return (*rgb(colour), round(255 * cover + alpha * cast * (1 - cover)))
+        if cast:
+            return (*rgb(style["shadow_role"]), round(alpha * cast))
         return (0, 0, 0, 0)
 
     write_png(rel, iw, ih, pixel)
     poly = [round(v, 4) for cx, cy in corners(kind) for v in ((left + cx * w) / iw, (top + cy * h) / ih)]
     FRAMES[rel] = frame(iw, ih, (left + ox * w) / iw, (top + oy * h) / ih, poly)
     PADS[rel] = (left, top)
-    DRAWN_AS[rel] = (kind, w, h, ox, oy, outline, shadow)
+    DRAWN_AS[rel] = (kind, w, h, ox, oy, outline, shadow, inset)
     FILLS[rel] = role
     return FRAMES[rel]
 
@@ -754,8 +813,8 @@ def hit_frame(rel: str) -> dict:
         (ROOT / "images" / hit).write_bytes(source.read_bytes())
         FRAMES[hit] = {**FRAMES[rel], "imageSpriteId": image_id(), "tag": "hit"}
         return FRAMES[hit]
-    kind, w, h, ox, oy, outline, shadow = DRAWN_AS[rel]
-    f = shape(hit, kind, w, h, HIT_FLASH["role"], ox, oy, True, shadow)
+    kind, w, h, ox, oy, outline, shadow, inset = DRAWN_AS[rel]
+    f = shape(hit, kind, w, h, HIT_FLASH["role"], ox, oy, True, shadow, inset)
     f["tag"] = "hit"
     return f
 
@@ -769,6 +828,79 @@ def drawn(rel: str) -> dict:
     return FRAMES[rel]
 
 
+# --- lines -------------------------------------------------------------------------------
+# Areas, ranges and slots are drawn as lines, LINE px thick; objects stay flat fills. A line takes a
+# role of PALETTE: "line" for structure the eye reads past, a slot or a ring around the play, and
+# "solid" for an edge that marks where something applies, an area or a reach. An area is a 9-patch
+# of zone_image(), its edge over a canvas_alt fill, laid on grid cells by zone(); a ring or a dashed
+# reach is an image of ring(). Construct3-RAG/docs/decisions/paper-and-ink-look.md.
+ZONES: dict[str, int] = {}                 # the side in px of each 9-patch zone_image() drew, by type name
+
+
+def ring_cover(x: float, y: float, cx: float, cy: float, d: float, width: float, dash: float = 0) -> float:
+    """How much of the pixel (x, y) a ring covers, from 0 to 1: the ring centred on (cx, cy), `d` px
+    across its outer edge, a line `width` px thick, in dashes about `dash` px long with gaps three
+    times that when dash is above 0. A pixel of pixel art is in or out."""
+    r = (d - width) / 2
+    dist = math.hypot(x + 0.5 - cx, y + 0.5 - cy)
+    cover = min(1.0, max(0.0, width / 2 + 0.5 - abs(dist - r)))
+    if dash and cover:
+        period = 2 * math.pi * r / max(1, round(2 * math.pi * r / (4 * dash)))
+        if (math.atan2(y + 0.5 - cy, x + 0.5 - cx) % (2 * math.pi)) * r % period >= period / 4:
+            return 0.0
+    return float(cover >= 0.5) if PIXEL_ART else cover
+
+
+def ring(rel: str, d: int, role: str = "line", width: int = 0, dash: float = 0) -> dict:
+    """images/<rel>: a ring `d` px across in whole units, a line `width` px thick, LINE unless given,
+    in the colour of `role`, whole or in dashes `dash` px long: a slot, a ring around the play,
+    or the reach of an attack, ring("reach.png", units(9), "solid", dash=3 * LINE). Returns the
+    frame for sprite_type(); place an instance with shape_inst(), collisions off for decoration."""
+    if d % UNIT:
+        sys.exit(f"{rel}: {d} px is not whole units of {UNIT} px; give the ring units(n), "
+                 f"{math.ceil(d / UNIT) * UNIT} here")
+    width = width or LINE
+    write_png(rel, d, d, lambda x, y: (*rgb(role), round(255 * ring_cover(x, y, d / 2, d / 2, d, width, dash))))
+    FRAMES[rel] = frame(d, d, 0.5, 0.5, [round(v, 4) for point in corners("circle") for v in point])
+    PADS[rel] = (0, 0)
+    FILLS[rel] = "canvas"
+    return FRAMES[rel]
+
+
+def zone_image(name: str, fill: str | None = "canvas_alt", edge: str = "solid") -> None:
+    """images/<name lower>.png: the 9-patch of an area drawn as lines, a LINE px edge in the role
+    `edge` round a fill in the role `fill`, or clear inside when fill is None. zone_type(name)
+    declares its type and zone() lays an area of it on the grid; hud_keys() draws a key's box
+    with zone_image(box, None, "ink"). Its parts are tiled at their size: stretched, a few pixels
+    of fill would blend into the edge across the whole area under linear sampling."""
+    size = 2 * LINE + 2
+
+    def pixel(x, y):
+        if min(x, y, size - 1 - x, size - 1 - y) < LINE:
+            return (*rgb(edge), 255)
+        return (*rgb(fill), 255) if fill else (0, 0, 0, 0)
+
+    write_png(f"{name.lower()}.png", size, size, pixel)
+    ZONES[name] = size
+
+
+def zone_type(name: str, ivars: list = (), behaviors: list = ()) -> dict:
+    """The 9-patch type of the area zone_image() drew for `name` in build_images()."""
+    if name not in ZONES:
+        sys.exit(f"zone_type({name!r}): draw its 9-patch first with zone_image({name!r}) in build_images()")
+    return image_type(name, "NinePatch", ZONES[name], ZONES[name], 0, 0, ivars, behaviors)
+
+
+def zone(name: str, col: int, row: int, cols: int, rows: int, ivars=None, behaviors=None) -> dict:
+    """An area drawn as lines over cols x rows grid cells from cell (col, row), in the 9-patch type
+    `name` of zone_type(): a board, a region, a range that does not turn. Its edge keeps LINE px at
+    any size."""
+    if name not in ZONES:
+        sys.exit(f"zone({name!r}): draw its 9-patch first with zone_image({name!r}) in build_images()")
+    return ninepatch_inst(name, units(col), units(row), units(cols), units(rows), 0, 0, LINE, "tile", "tile",
+                          ivars=ivars, behaviors=behaviors, seams="exact")
+
+
 # --- art -------------------------------------------------------------------------------
 # A sprite whose art the game will have is art(): it asks for a picture of `subject` in a box of
 # whole units and shows the stand-in shape() until the picture is in art/. The skill's
@@ -780,10 +912,11 @@ ART: dict[str, dict] = {}                  # what art() asked for, by file name:
 
 
 def art(rel: str, kind: str, w: int, h: int, role: str, subject: str, ox: float = 0.5, oy: float = 0.5,
-        outline: bool | None = None, shadow: bool | None = None) -> dict:
+        outline: bool | None = None, shadow: bool | None = None, inset: int = 0) -> dict:
     """images/<rel>: the picture art/<rel> when it is there, else the stand-in
-    shape(rel, kind, w, h, role, ...). `subject` says what the picture shows, in words for its
-    prompt: "a gold coin seen from the front". Kind "scene" is an opaque picture that fills its
+    shape(rel, kind, w, h, role, ..., inset). `subject` says what the picture shows, in words for its
+    prompt: "a gold coin seen from the front". The picture fills its box; `inset` keeps the
+    stand-in's drawing that far inside it. Kind "scene" is an opaque picture that fills its
     box, a backdrop, with a flat rectangle of `role` as its stand-in. Returns the frame, as
     shape() does; hit_frame() works on both."""
     scene = kind == "scene"
@@ -797,7 +930,7 @@ def art(rel: str, kind: str, w: int, h: int, role: str, subject: str, ox: float 
     if not picture.exists():
         if scene:
             return shape(rel, "rect", w, h, role, ox, oy, outline=False, shadow=False)
-        return shape(rel, kind, w, h, role, ox, oy, outline, shadow)
+        return shape(rel, kind, w, h, role, ox, oy, outline, shadow, inset)
     if w % UNIT or h % UNIT:
         sys.exit(f"art({rel!r}): {w}x{h} is not whole units of {UNIT} px; give it units(n) or TOUCH, "
                  f"{math.ceil(w / UNIT) * UNIT}x{math.ceil(h / UNIT) * UNIT} here, then run prepare_art.py again")
@@ -836,13 +969,13 @@ def write_wanted() -> None:
 
 # Objects are flat; an area or an edge carries a pattern, a Tiled Background, which repeats its
 # image at any size without stretching it. Each pattern is two roles of PALETTE and one job.
-# A red triangle is one hazard, a red-striped area a hazardous region; an amber circle is a
-# pickup, an amber-striped strip a door or a plate.
+# A triangle in the accent is one hazard, an area striped in it a hazardous region; a circle in
+# the accent is a pickup, and an ink-striped strip a door or a plate.
 PATTERNS = {
-    "plain": ("canvas", "canvas"),         # the sheet: the backdrop only
+    "plain": ("canvas", "canvas"),         # the paper: the backdrop only
     "checker": ("canvas", "canvas_alt"),   # transparency, a mask, a background to come: the backdrop only
     "low": ("solid", "dim"),               # a surface special and harmless: a one-way platform, a safe zone
-    "caution": ("reward", "ink"),          # what moves, triggers or blocks on a condition: a door, a plate
+    "caution": ("ink", "canvas"),          # what moves, triggers or blocks on a condition: a door, a plate
     "hazard": ("danger", "ink"),           # an area that hurts: lava, a kill zone
 }
 BACKDROPS = ("plain", "checker")           # the patterns of backdrop() alone
@@ -1600,16 +1733,18 @@ def readable(otype: str, color: str, on: str, size: float) -> None:
 
 def text_inst(otype: str, text: str, x: float, y: float, w: float, h: float, size: float | None = None,
               halign: str = "left", bold: bool = False, color: str = "ink", on: str = "canvas_alt",
-              ivars=None, behaviors=None) -> dict:
-    """A Text in FONT at a size of TEXT_SIZE, its colour the role `color` of PALETTE; `on` is
-    the role of what lies behind it, which it must read on (readable()): the backdrop's darker
-    cell unless a panel is behind it."""
+              ivars=None, behaviors=None, weight: str = "regular", valign: str = "center") -> dict:
+    """A Text at a size of TEXT_SIZE in the font of `weight` of FONT, its colour the role `color`
+    of PALETTE; `on` is the role of what lies behind it, which it must read on (readable()): the
+    backdrop's darker cell unless a panel is behind it. A weight is a font file, so `bold` stays
+    off with Inter, whose bold the browser would fake."""
     size = size or TEXT_SIZE["body"]
     readable(otype, color, on, size)
-    return instance(otype, {"text": text, "enable-bbcode": False, "font": FONT, "size": size, "line-height": 0,
-                            "bold": bold, "italic": False, "color": rgba(rgb(color)), "horizontal-alignment": halign,
-                            "vertical-alignment": "center", "wrapping": "word", "text-direction": "ltr",
-                            "icon-set": -1, "initially-visible": True, "origin": "top-left", "read-aloud": False},
+    return instance(otype, {"text": text, "enable-bbcode": False, "font": face(weight), "size": size,
+                            "line-height": 0, "bold": bold, "italic": False, "color": rgba(rgb(color)),
+                            "horizontal-alignment": halign, "vertical-alignment": valign, "wrapping": "word",
+                            "text-direction": "ltr", "icon-set": -1, "initially-visible": True, "origin": "top-left",
+                            "read-aloud": False},
                     world(x, y, w, h, 0, 0), ivars, behaviors)
 
 
@@ -1619,30 +1754,64 @@ PX_PER_PT = 4 / 3
 LINE_EMS = 1.2                             # one line is 1.05 to 1.17 em high in Arial, measured
 
 
+# The advance of each printable ASCII character in em, space to tilde, measured in Inter Medium, the
+# widest weight of FONT at text sizes.
+LATIN_EMS = dict(zip(map(chr, range(32, 127)), (
+    0.27, 0.3, 0.49, 0.64, 0.65, 0.99, 0.65, 0.31, 0.37, 0.37, 0.52, 0.67, 0.3, 0.46, 0.3, 0.37, 0.65, 0.42, 0.62,
+    0.63, 0.66, 0.6, 0.63, 0.57, 0.63, 0.63, 0.3, 0.32, 0.67, 0.67, 0.67, 0.53, 0.98, 0.71, 0.66, 0.73, 0.72, 0.6,
+    0.59, 0.75, 0.74, 0.27, 0.58, 0.69, 0.57, 0.91, 0.76, 0.77, 0.64, 0.77, 0.65, 0.65, 0.65, 0.74, 0.71, 1, 0.7,
+    0.7, 0.64, 0.37, 0.37, 0.37, 0.48, 0.46, 0.34, 0.57, 0.62, 0.58, 0.62, 0.59, 0.38, 0.62, 0.6, 0.25, 0.25, 0.56,
+    0.25, 0.89, 0.6, 0.6, 0.62, 0.62, 0.39, 0.54, 0.34, 0.6, 0.57, 0.83, 0.56, 0.58, 0.56, 0.44, 0.35, 0.44, 0.67)))
+
+
 def text_ems(text: str) -> float:
     """The width of `text` in em: an East Asian wide or full-width character (Chinese,
-    Japanese, Korean, the full-width comma and colon) is 1 em, any other at most about
-    0.6 em, so text_ems(s) * size * PX_PER_PT is the width of s in px at that size."""
-    return round(sum(1.0 if unicodedata.east_asian_width(c) in ("W", "F") else 0.6 for c in text), 6)
+    Japanese, Korean, the full-width comma and colon) is 1 em, a printable ASCII one its
+    width in LATIN_EMS, a space of U+2002 to U+200A its own width, any other 0.6 em, so
+    text_ems(s) * size * PX_PER_PT is the width of s in px at that size."""
+    spaces = {"\u2002": 0.5, "\u2003": 1, "\u2004": 0.33, "\u2005": 0.25, "\u2006": 0.17, "\u2007": 0.65,
+              "\u2008": 0.29, "\u2009": 0.18, "\u200a": 0.09}
+    return round(sum(1.0 if unicodedata.east_asian_width(c) in ("W", "F")
+                     else LATIN_EMS.get(c) or spaces.get(c, 0.6) for c in text), 6)
+
+
+def text_size(kind: str) -> float:
+    """The size in points of a kind of text, a key of TEXT_SIZE: tag, name, body, title, number or
+    display. A game whose TEXT_SIZE has body and title alone gives the small kinds body and the
+    large ones title."""
+    return TEXT_SIZE.get(kind) or TEXT_SIZE["title" if kind in ("title", "number", "display") else "body"]
+
+
+def face(weight: str = "regular") -> str:
+    """The font of a weight of FONT, "light", "regular" or "medium": the name of its file in fonts/
+    without the extension. A FONT that is one name, "system-ui", is every weight."""
+    if isinstance(FONT, str):
+        return FONT
+    return FONT.get(weight) or FONT.get("regular") or next(iter(FONT.values()))
+
+
+def face_of(kind: str) -> str:
+    """The font of a kind of text, by its weight in TEXT_WEIGHT, regular when it names none."""
+    return face(TEXT_WEIGHT.get(kind, "regular"))
 
 
 def hud_text(otype: str, text: str, where: str, size: float | None = None, longest: str | None = None,
-             bold: bool = True, color: str = "ink", on: str = "canvas_alt", dx: float = 0, dy: float = 0,
-             ivars=None, behaviors=None) -> dict:
+             bold: bool = False, color: str = "ink", on: str = "canvas_alt", dx: float = 0, dy: float = 0,
+             ivars=None, behaviors=None, weight: str = "regular") -> dict:
     """A HUD label held against an edge or corner by anchor(). Its box is as wide as its
     longest text and as high as a line (text_ems() and LINE_EMS at the size in px, rounded
     up to a unit), and the text is aligned to
     the side the box hangs on, so a right-hand label grows leftwards and two labels on one
     edge never meet. `longest` is the widest text the label shows at runtime, "Score: 999"
     for a label that starts as "Score: 0". The size is TEXT_SIZE["body"] unless a banner
-    asks for TEXT_SIZE["title"]; color and on are roles of PALETTE, as for text_inst(). The
-    Anchor behavior of anchored() holds it to the screen's edge."""
+    asks for text_size("display"); color and on are roles of PALETTE and weight one of FONT,
+    as for text_inst(). The Anchor behavior of anchored() holds it to the screen's edge."""
     size = size or TEXT_SIZE["body"]
     w, h = label_box(longest or text, size)
     halign = {"left": "left", "middle": "center", "right": "right"}[sides(where)[1]]
     x, y = anchor(where, w, h, 0, 0, dx, dy)
     return text_inst(otype, text, x, y, w, h, size=size, halign=halign, bold=bold, color=color, on=on,
-                     ivars=ivars, behaviors={**anchored(where), **(behaviors or {})})
+                     ivars=ivars, behaviors={**anchored(where), **(behaviors or {})}, weight=weight)
 
 
 def label_box(text: str, size: float | None = None) -> tuple[int, int]:
@@ -1685,7 +1854,7 @@ def area(otype: str, col: int, row: int, cols: int, rows: int, ivars=None, behav
     """An area or an edge in the pattern type `otype` of pattern_type(), covering cols x rows grid
     cells from cell (col, row): a one-way platform in low stripes, a door in caution stripes, lava
     in hazard stripes. The high-contrast stripes cover strips and small zones, their shorter side
-    a quarter of the viewport's at most; the plain sheet and the checker are the backdrop's alone,
+    a quarter of the viewport's at most; the plain paper and the checker are the backdrop's alone,
     backdrop()."""
     kind = PATTERN_OF.get(otype)
     if not kind:
@@ -1705,21 +1874,23 @@ def backdrop(otype: str, width: int | None = None, height: int | None = None) ->
     """The backdrop of pattern `otype` behind everything: one Tiled Background over `width` x
     `height`, the layout's size, the viewport's unless given, and SCREEN_PAD past it on every
     side (screen_box()), so the screen shows no edge of it at any aspect ratio, on a layer at
-    parallax 1. It is the plain sheet, or the checker in a game with something transparent, a
+    parallax 1. It is the plain paper, or the checker in a game with something transparent, a
     mask or a background still to come, as editors show transparency; the checker's cells are then
     the ruler that sizes and distances are counted in, in place of a grid."""
     if PATTERN_OF.get(otype) not in BACKDROPS:
-        sys.exit(f"backdrop({otype!r}): the backdrop is the plain sheet or the checker; draw it with "
+        sys.exit(f"backdrop({otype!r}): the backdrop is the plain paper or the checker; draw it with "
                  f"pattern({otype!r}, \"plain\") or pattern({otype!r}, \"checker\")")
     return tiledbg_inst(otype, *screen_box(width, height), 0, 0)
 
 
 def ninepatch_inst(otype: str, x: float, y: float, w: float, h: float, ox: float = 0, oy: float = 0.5, margin: int = 2,
-                   edges: str = "stretch", fill: str = "stretch", ivars=None, behaviors=None) -> dict:
-    """A 9-patch instance; `margin` is the border its corners keep, in image pixels (car-selection-screen StatusBar)."""
+                   edges: str = "stretch", fill: str = "stretch", ivars=None, behaviors=None,
+                   seams: str = "overlap") -> dict:
+    """A 9-patch instance; `margin` is the border its corners keep, in image pixels (car-selection-screen StatusBar).
+    Seams "overlap" lays each part a pixel over the next, so no gap shows; "exact" keeps a line its width."""
     return instance(otype, {"left-margin": margin, "right-margin": margin, "top-margin": margin, "bottom-margin": margin,
                             "edges": edges, "fill": fill, "initially-visible": True, "origin": origin_name(ox, oy),
-                            "seams": "overlap"},
+                            "seams": seams},
                     world(x, y, w, h, ox, oy), ivars, behaviors)
 
 
@@ -1844,8 +2015,9 @@ def button(otype: str, rel: str, label: str, text: str, col: int, row: int, size
                  f"images/{rel} is {w}x{h}; draw it at button_size({longest or text!r}), or shorten the text")
     shape_ = shape_inst(otype, rel, col, row, ivars=ivars, behaviors=behaviors)
     on = FILLS.get(rel, "canvas_alt")
-    text_ = text_inst(label, text, units(col), units(row), w, h, size, "center", bold=True,
-                      color=color or text_on(on, size), on=on, ivars=label_ivars, behaviors=label_behaviors)
+    text_ = text_inst(label, text, units(col), units(row), w, h, size, "center",
+                      color=color or text_on(on, size), on=on, ivars=label_ivars, behaviors=label_behaviors,
+                      weight=TEXT_WEIGHT.get("key", "medium"))
     link(shape_, text_, size=True)
     return shape_, text_
 
@@ -1861,8 +2033,8 @@ def labelled_bar(label: str, text: str, frame_name: str, fill_name: str, where: 
     lw, lh = label_box(text)
     box_h = max(lh, height)
     x, y = anchor(where, lw + UNIT + length, box_h, 0, 0, dx, dy)
-    name = text_inst(label, text, x, y, lw, box_h, halign="left", bold=True, color=color, on=on,
-                     behaviors=anchored(where))
+    name = text_inst(label, text, x, y, lw, box_h, halign="left", color=color, on=on,
+                     behaviors=anchored(where), weight=TEXT_WEIGHT.get("key", "medium"))
     return (name, *bar_at(frame_name, fill_name, x + lw + UNIT + length / 2, y + box_h / 2, length, height, inset, caps,
                           anchored(where)))
 
@@ -1894,9 +2066,9 @@ def band_text(otype: str, text: str, band: str, align: str = "center", longest: 
               screen: str = "stage", title: bool = True, color: str = "ink", on: str = "canvas_alt", ivars=None,
               behaviors=None) -> dict:
     """A label in the band `band` of bands(), at its `align` side, as wide as `longest` (or
-    `text`) and a line high, as hud_text() sizes it. The "title" and "stage" bands take
-    TEXT_SIZE["title"], or the body size when the text is wider than the band at that size. In the
-    "stage" band the label is centred vertically. The "status" and "hint" bands take the body
+    `text`) and a line high, as hud_text() sizes it. The "title" band takes TEXT_SIZE["title"]
+    and the "stage" band text_size("display"), or the body size when the text is wider than the
+    band at that size. In the "stage" band the label is centred vertically. The "status" and "hint" bands take the body
     size. A text the band cannot hold stops the run with the characters that fit. The label is
     held to the screen's edges by anchored(): the title and status bands to the top, the hint to
     the bottom, and a label aligned left or right to that side."""
@@ -1906,7 +2078,7 @@ def band_text(otype: str, text: str, band: str, align: str = "center", longest: 
     if align not in ("left", "center", "right"):
         sys.exit(f"band_text({otype!r}): align {align!r}; left, center or right")
     x0, y0, bw, bh = box
-    size = TEXT_SIZE["title"] if band in ("title", "stage") else TEXT_SIZE["body"]
+    size = {"title": TEXT_SIZE["title"], "stage": text_size("display")}.get(band, TEXT_SIZE["body"])
     if label_box(longest or text, size)[0] > bw:
         size = TEXT_SIZE["body"]
     w, h = label_box(longest or text, size)
@@ -1918,8 +2090,9 @@ def band_text(otype: str, text: str, band: str, align: str = "center", longest: 
     y = y0 + (bh - h) // 2 if band == "stage" else y0
     edge = {"title": "top", "status": "top", "hint": "bottom"}.get(band)
     where = "-".join(side for side in (edge, None if align == "center" else align) if side) or "center"
-    return text_inst(otype, text, x, y, w, h, size, align, bold=True, color=color, on=on, ivars=ivars,
-                     behaviors={**anchored(where), **(behaviors or {})})
+    return text_inst(otype, text, x, y, w, h, size, align, color=color, on=on, ivars=ivars,
+                     behaviors={**anchored(where), **(behaviors or {})},
+                     weight=TEXT_WEIGHT.get("title", "medium") if band in ("title", "stage") else "regular")
 
 
 def fit(w: float, h: float, screen: str = "stage", share: float = STAGE_SHARE, title: bool = True) -> tuple[int, int]:
@@ -2222,12 +2395,13 @@ def css_px(px: float) -> str:
 
 
 def text_input_events(sets: dict | None = None) -> list:
-    """The rows of a module's events that work every text_input(): at the start the look's FONT,
-    TEXT_SIZE["body"], ink on canvas and a frame in solid, set as CSS since the field is an HTML
-    element; then each change sets the global variable `sets` names for the field, {"player": "player"}
-    for text_input("player", ...); declare it as a string."""
+    """The rows of a module's events that work every text_input(): at the start the look's regular
+    face, the platform's where the page lacks it, TEXT_SIZE["body"], ink on canvas and a frame in
+    solid, set as CSS since the field is an HTML element; then each change sets the global variable
+    `sets` names for the field, {"player": "player"} for text_input("player", ...); declare it as a
+    string."""
     box = TEXT_INPUT["box"]
-    style = {"font-family": FONT, "font-size": css_px(TEXT_SIZE["body"] * PX_PER_PT), "color": "rgb({}, {}, {})"
+    style = {"font-family": f"{face()}, system-ui, sans-serif", "font-size": css_px(TEXT_SIZE["body"] * PX_PER_PT), "color": "rgb({}, {}, {})"
              .format(*rgb("ink")), "background-color": "rgb({}, {}, {})".format(*rgb("canvas")),
              "border": f"{css_px(max(1, UNIT // 8))} solid " + "rgb({}, {}, {})".format(*rgb("solid")),
              "border-radius": "0", "padding": f"0 {css_px(UNIT / 2)}"}
@@ -2244,6 +2418,118 @@ def text_input_events(sets: dict | None = None) -> list:
     return [*look,
             *event("Start each text input's global at its text", [on_start(), for_each(box)], [], children=names()),
             *event("Keep a text input's global its text", [cond("on-text-changed", box)], [], children=names())]
+
+
+# --- tags, headers and keys -----------------------------------------------------------------------
+# The HUD of the paper-and-ink look: what the player is on, a round, a level or a mode, as a small
+# tracked tag top left (hud_tag()); the count the player plays for top right (hud_stat()); and the
+# controls bottom left as keys, each a short name in a thin ink box with its verb beside it, which dim
+# once the player has used them (hints()). The game's name stays off the screen the player plays on:
+# a menu or a result screen that shows it sets it with hud_header(). Gaps scale the prototype's px by
+# REF. Construct3-RAG/docs/decisions/paper-and-ink-look.md.
+TRACK = "\u2005"                           # a quarter em: the space between the letters of a tracked tag
+HINT_OPACITY = 35                          # % the row of keys keeps once the player has used the controls
+
+
+def tracked(text: str) -> str:
+    """`text` in capitals with TRACK between its characters, the way a Latin tag is set: the Text
+    object has no letter spacing. tracked("Round · 01") spaces out ROUND · 01."""
+    return TRACK.join(text.upper())
+
+
+def tracked_expr(expr: str) -> str:
+    """An expression for a tag the events change: the text `expr` gives at runtime, in capitals with
+    TRACK between its characters. set_text("RoundTag", tracked_expr('"Round " & zeropad(beat + 1, 2)'))."""
+    return f'RegexReplace(uppercase({expr}), "(.)(?=.)", "g", "$1{TRACK}")'
+
+
+def text_width(text: str, size: float) -> int:
+    """The width in px of a box that holds one line of `text` at `size`, by text_ems(), with 2 px to spare."""
+    return math.ceil(text_ems(text) * size * PX_PER_PT) + 2
+
+
+def hud_tag(otype: str, text: str, where: str = "top-left", longest: str | None = None, on: str = "canvas_alt",
+            dx: float = 0, dy: float = 0) -> dict:
+    """What the player is on, a round, a level or a mode, held to an edge or corner by anchor(): one
+    Text in text_size("tag"), dim, in tracked() capitals, as wide as `longest`, the widest text shown
+    at runtime, which the events set with tracked_expr(). One group of spaced() on its own:
+        HUD = [[hud_tag("RoundTag", "Round · 01 / 06", longest="Round · 10 / 10")], ...]"""
+    size = text_size("tag")
+    w, h = text_width(tracked(longest or text), size), line_height(size)
+    halign = {"left": "left", "middle": "center", "right": "right"}[sides(where)[1]]
+    x, y = anchor(where, w, h, 0, 0, dx, dy)
+    return text_inst(otype, tracked(text), x, y, w, h, size, halign, color="dim", on=on, behaviors=anchored(where),
+                     weight=TEXT_WEIGHT.get("tag", "regular"))
+
+
+def hud_header(title_type: str, tag_type: str, title: str, tag: str = "", where: str = "top-left",
+               longest_tag: str | None = None, on: str = "canvas_alt", dx: float = 0, dy: float = 0) -> list[dict]:
+    """A screen's title, for a menu or a result screen that names the game or the moment, held to an
+    edge or corner by anchor() as one group. The title is in text_size("title") and its weight, in
+    ink. The tag follows it, 0.6 em of the title away, in text_size("tag"), dim and tracked(), on the
+    title's baseline. The screen the player plays on shows no title, only hud_tag(). Returns
+    [title, tag], or [title] without a tag, one group of spaced():
+        hud_header("ResultTitle", "ResultTag", "Round clear", "Round · 03")"""
+    big, small = text_size("title"), text_size("tag")
+    tw, h = text_width(title, big), line_height(big)
+    gap = round(0.6 * big * PX_PER_PT) if tag else 0
+    gw = text_width(tracked(longest_tag or tag), small) if tag else 0
+    x, y = anchor(where, tw + gap + gw, h, 0, 0, dx, dy)
+    title_ = text_inst(title_type, title, x, y, tw, h, big, "left", color="ink", on=on, behaviors=anchored(where),
+                       weight=TEXT_WEIGHT.get("title", "medium"), valign="bottom")
+    if not tag:
+        return [title_]
+    # Bottom-aligned, a line keeps its descent under the baseline, about a quarter em of its size
+    lift = round(0.24 * (big - small) * PX_PER_PT)
+    tag_ = text_inst(tag_type, tracked(tag), x + tw + gap, y - lift, gw, h, small, "left", color="dim", on=on,
+                     behaviors=anchored(where), weight=TEXT_WEIGHT.get("tag", "regular"), valign="bottom")
+    return [title_, tag_]
+
+
+def hud_keys(box_type: str, key_type: str, verb_type: str, keys: list, where: str = "bottom-left",
+             on: str = "canvas_alt", dx: float = 0, dy: float = 0) -> list[dict]:
+    """The controls as a row of keys, held to an edge or corner by anchor(): each key's name in
+    text_size("name") and the "key" weight, centred in a LINE px ink box, the 9-patch type
+    `box_type` of zone_image(box_type, None, "ink") with the Tween behavior, and its verb in
+    TEXT_SIZE["body"], dim, after it. `keys` is [(key, verb), ...], the verb one word or two of what
+    the player does: [("Tap", "collect"), ("R", "restart")]. Every part is a child of the first box
+    (link()), so hints(box_type) dims the whole row through that box. Returns the instances, one group
+    of spaced():
+        HUD = [..., hud_keys("KeyBox", "KeyText", "KeyVerb", [("Tap", "collect")])]"""
+    small, body = text_size("name"), TEXT_SIZE["body"]
+    h = max(round(20 * REF), line_height(small))
+    pad, near, far = round(7 * REF), round(8 * REF), round(24 * REF)
+    widths = [(text_width(key, small) + 2 * pad, text_width(verb, body)) for key, verb in keys]
+    x, y = anchor(where, sum(kw + near + vw for kw, vw in widths) + far * (len(keys) - 1), h, 0, 0, dx, dy)
+    parts: list[dict] = []
+    for (key, verb), (kw, vw) in zip(keys, widths):
+        parts += [ninepatch_inst(box_type, x, y, kw, h, 0, 0, LINE, "tile", "transparent", behaviors=dict(TWEEN),
+                                 seams="exact"),
+                  text_inst(key_type, key, x, y, kw, h, small, "center", color="ink", on=on,
+                            weight=TEXT_WEIGHT.get("key", "medium")),
+                  text_inst(verb_type, verb, x + kw + near, y, vw, h, body, "left", color="dim", on=on)]
+        x += kw + near + vw + far
+    parts[0]["behaviors"] = {**anchored(where), **parts[0]["behaviors"]}
+    link(parts[0], *parts[1:])
+    return parts
+
+
+def hints(box_type: str, inputs: list | None = None, tween: str = "Tween") -> dict:
+    """The group that dims the row of hud_keys() to HINT_OPACITY on the player's first input and
+    keeps it so across a restart of the layout: `box_type` is the row's box type, and `inputs` the
+    triggers that count, Touch's On any touch start unless given; a game played with keys adds
+    cond("on-any-key-pressed", "Keyboard")."""
+    used = cond("compare-boolean-eventvar", "System", {"variable": "used"})
+    events = event("Keep the keys dim after a restart once the player has used them", [on_start(), used],
+                   [act("set-opacity", box_type, {"opacity": str(HINT_OPACITY)})])
+    for trigger in inputs or [cond("on-any-touch-start", "Touch")]:
+        events += event("Dim the keys on the player's first input",
+                        [trigger, cond("compare-boolean-eventvar", "System", {"variable": "used"}, inverted=True)],
+                        [set_bool_var("used", True),
+                         tween1(box_type, "hint", "offsetOpacity", str(HINT_OPACITY), "0.5", beh=tween)])
+    return module("Hints", events, variables=[var("used", "boolean", "false",
+                                                  "The player has used the controls; kept across a restart",
+                                                  static=True)])
 
 
 # --- groups and the play area -----------------------------------------------------------------
@@ -2270,23 +2556,25 @@ def hud_stat(name_type: str, value_type: str, name: str, where: str, value: str 
              dx: float = 0, dy: float = 0, name_color: str = "dim", color: str = "ink", on: str = "canvas_alt",
              ivars=None, behaviors=None) -> list[dict]:
     """A value the player watches under its name, held to an edge or corner by anchor() as one group:
-    the name in TEXT_SIZE["body"] and `name_color`, then GAP_IN lower the value in TEXT_SIZE["title"]
-    and `color`, as wide as `longest`, the widest value shown at runtime. Each box is one line high.
-    Both are aligned to the side the group hangs on and held to the screen's edge by anchored().
-    `ivars` and `behaviors` go on the value. Returns [name, value], one group of spaced():
-        HUD = [hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-left", longest="999"), ...]"""
-    body, title = TEXT_SIZE["body"], TEXT_SIZE["title"]
-    nw, vw = label_box(name, body)[0], label_box(longest or value, title)[0]
-    nh, vh = line_height(body), line_height(title)
+    the name in text_size("name") and `name_color`, then GAP_IN lower the value in
+    text_size("number"), in the light weight, and `color`, as wide as `longest`, the widest value
+    shown at runtime. Each box is one line high. Both are aligned to the side the group hangs on
+    and held to the screen's edge by anchored(). `ivars` and `behaviors` go on the value. Returns
+    [name, value], one group of spaced():
+        HUD = [hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-right", longest="999"), ...]"""
+    small, large = text_size("name"), text_size("number")
+    nw, vw = label_box(name, small)[0], label_box(longest or value, large)[0]
+    nh, vh = line_height(small), line_height(large)
     gw = max(nw, vw)
     x, y = anchor(where, gw, nh + GAP_IN + vh, 0, 0, dx, dy)
     horiz = sides(where)[1]
     halign = {"left": "left", "middle": "center", "right": "right"}[horiz]
     share = {"left": 0, "middle": 0.5, "right": 1}[horiz]
-    name_ = text_inst(name_type, name, round(x + share * (gw - nw)), y, nw, nh, body, halign, False, name_color, on,
-                      behaviors=anchored(where))
-    value_ = text_inst(value_type, value, round(x + share * (gw - vw)), y + nh + GAP_IN, vw, vh, title, halign, False,
-                       color, on, ivars=ivars, behaviors={**anchored(where), **(behaviors or {})})
+    name_ = text_inst(name_type, name, round(x + share * (gw - nw)), y, nw, nh, small, halign, False, name_color, on,
+                      behaviors=anchored(where), weight=TEXT_WEIGHT.get("name", "regular"))
+    value_ = text_inst(value_type, value, round(x + share * (gw - vw)), y + nh + GAP_IN, vw, vh, large, halign, False,
+                       color, on, ivars=ivars, behaviors={**anchored(where), **(behaviors or {})},
+                       weight=TEXT_WEIGHT.get("number", "regular"))
     return [name_, value_]
 
 
@@ -2596,6 +2884,44 @@ def with_files(block: dict, kind: str) -> dict:
             "subfolders": [with_files(sub, kind) for sub in block.get("subfolders", []) if isinstance(sub, dict)]}
 
 
+def skill_file(rel: str) -> Path | None:
+    """The file `rel` of the construct3-agent-plugin skill's folder: in the copy installed in this
+    project under a client's skills folder, else in the one installed once for the user; None when
+    neither has it."""
+    path = f"skills/construct3-agent-plugin/{rel}"
+    found = sorted(ROOT.glob(f".*/{path}")) or sorted(Path.home().glob(f".*/{path}"))
+    return found[0] if found else None
+
+
+# Faces a browser draws with no file: the generic families and the fonts of the editor's own picker.
+PLATFORM_FACES = ("system-ui", "sans-serif", "serif", "monospace", "Arial", "Courier New", "Georgia", "Impact",
+                  "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana")
+FONT_TYPES = {".woff": "application/font-woff", ".ttf": "application/font-sfnt", ".otf": "application/font-sfnt"}
+_font_files: list[str] = []
+
+
+def copy_fonts() -> None:
+    """Puts the file of every font FONT names in fonts/, from the skill's assets/fonts/ when the
+    project lacks it, for build_project() to list. A name with a file in neither place, and no
+    face of PLATFORM_FACES, stops the run: a Text whose font the project lacks draws its Latin
+    letters in the browser's serif."""
+    names = [FONT] if isinstance(FONT, str) else list(dict.fromkeys(FONT.values()))
+    for name in names:
+        if name in PLATFORM_FACES:
+            continue
+        held = [ROOT / "fonts" / f"{name}{ext}" for ext in FONT_TYPES if (ROOT / "fonts" / f"{name}{ext}").exists()]
+        if not held:
+            source = skill_file(f"assets/fonts/{name}.woff")
+            if source is None:
+                sys.exit(f"FONT names {name!r}, and fonts/ holds no {name}.woff: copy it from the skill's "
+                         f"assets/fonts/, put the game's own font file there, or set FONT = \"system-ui\"")
+            (ROOT / "fonts").mkdir(exist_ok=True)
+            held = [ROOT / "fonts" / source.name]
+            held[0].write_bytes(source.read_bytes())
+        if held[0].name not in _font_files:
+            _font_files.append(held[0].name)
+
+
 def build_project(existing: dict, types: dict, families: dict, containers: list, layouts: dict,
                   sheets: list) -> dict:
     """Only the keys this script owns change; uniqueId, icons, scripts and the
@@ -2626,6 +2952,14 @@ def build_project(existing: dict, types: dict, families: dict, containers: list,
         ours = {e["name"] for e in _general_files}
         general = folders["general"] = dict(folders["general"])
         general["items"] = [e for e in general.get("items", []) if e.get("name") not in ours] + _general_files
+    if _font_files:
+        # the fonts of copy_fonts(), listed as the editor lists an imported font, in place of a listed
+        # one of the same name, so their sids come from this run; the others stay
+        folders = p["rootFileFolders"] = dict(p.get("rootFileFolders") or {})
+        font = folders["font"] = dict(folders.get("font") or {"items": [], "subfolders": []})
+        font["items"] = [e for e in font.get("items", []) if e.get("name") not in _font_files] + [
+            {"name": name, "type": FONT_TYPES[Path(name).suffix], "sid": sid(), "file-info": {"purpose": "none"}}
+            for name in _font_files]
     p["viewportWidth"] = VIEW_W
     p["viewportHeight"] = VIEW_H
     # The project fills the screen at any aspect ratio, in place of the editor's Letterbox scale.
@@ -2650,6 +2984,7 @@ def build_all() -> None:
     check_palette()
     for line in pace(BEATS):
         print(line)
+    copy_fonts()
     build_images()
     write_wanted()
     build_files()
@@ -2687,9 +3022,8 @@ def build_and_check() -> None:
     # Generating without checking is how a project reaches the editor with a mistake
     # the checker names in one line; the two always run together. The skill is
     # installed in the project, or once for the user, under a client's skills folder.
-    checker = "skills/construct3-agent-plugin/scripts/check_project.py"
-    found = sorted(ROOT.glob(f".*/{checker}")) or sorted(Path.home().glob(f".*/{checker}"))
-    if not found:
+    checker = skill_file("scripts/check_project.py")
+    if checker is None:
         sys.exit("generated, not checked: the construct3-agent-plugin skill is not installed in this project; "
                  "run python <Construct3-RAG>/skills/construct3-agent-plugin/scripts/install.py here, then "
                  "its scripts/check_project.py")
@@ -2697,10 +3031,10 @@ def build_and_check() -> None:
     sys.stdout.flush()
     # --style: the agent wrote every event, so the readability warnings of the official
     # examples' style apply to all of them.
-    sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
+    sys.exit(subprocess.run([sys.executable, str(checker), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-08, stamp 8808586ee972 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 4fc7b9636709 ================
 
 
 # --- the game ---------------------------------------------------------------------------
@@ -2723,21 +3057,24 @@ BEATS = [
     beat("climax", 3, ["tap"], coins=10),
     beat("exit", 0, ["tap"], coins=1),
 ]
-# Coins land on a small board in the middle of what the HUD leaves: COLS x
-# ROWS slots a coin wide, a unit apart, the empty ones drawn in canvas_alt. A round deals the cells
-# (deal + i * STRIDE) mod CELLS, which differ for every i below CELLS because STRIDE and CELLS share
-# no factor, so no two coins meet. The run stops on a round that deals more coins than slots.
+# Coins land on a small board in the middle of what the HUD leaves: an area drawn as lines holding
+# COLS x ROWS slots, each a cell TOUCH wide that a finger hits, a unit apart, with a ring the size of
+# a coin's drawing in it. A round deals the cells (deal + i * STRIDE) mod CELLS, which differ for
+# every i below CELLS because STRIDE and CELLS share no factor, so no two coins meet. The run stops
+# on a round that deals more coins than slots.
 COLS, ROWS = 5, 3
 CELLS = COLS * ROWS
 STRIDE = next(s for s in (7, 11, 13, 17, 19, 23) if math.gcd(s, CELLS) == 1)
-PITCH = COIN_SIZE + UNIT
+PITCH = TOUCH + UNIT
 BOARD_W, BOARD_H = COLS * PITCH - UNIT, ROWS * PITCH - UNIT
-# The HUD, built here so the board can be placed in what it leaves, as groups: the score under
-# its name, large in ink under small dim capitals, and the round on its own. build_layouts() puts
-# them on the UI layer. The board is centred in the play area under the HUD (play_area(),
-# centred()), and the events deal coins from BOARD_LEFT and BOARD_TOP.
-HUD = [hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-left", longest="999"),
-       [hud_text("RoundText", "ROUND 1 / 6", "top-right", longest="ROUND 10 / 10", bold=False, color="dim")]]
+# The HUD, built here so the board can be placed in what it leaves, as groups: the round top left as
+# a tag; the score top right, a large light number under its small dim name; the controls bottom
+# left, which dim once the player has used them (hints()).
+# build_layouts() puts them on the UI layer. The board is centred in the play area the HUD leaves
+# (play_area(), centred()), and the events deal coins from BOARD_LEFT and BOARD_TOP.
+HUD = [[hud_tag("RoundTag", "Round · 01 / 06", longest="Round · 10 / 10")],
+       hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-right", longest="999"),
+       hud_keys("KeyBox", "KeyText", "KeyVerb", [("Tap", "collect")])]
 PLAY_AREA = play_area(flat(HUD))
 BOARD_LEFT, BOARD_TOP = centred(BOARD_W, BOARD_H, PLAY_AREA)
 if max(b["coins"] for b in BEATS) > CELLS:
@@ -2756,11 +3093,14 @@ def build_files() -> None:
 
 def build_images() -> None:
     pattern("Backdrop", "plain")
-    # One slot of the board, a coin-sized disc in canvas_alt with a unit of clear space after it,
-    # which the Board's Tiled Background repeats COLS x ROWS times.
-    write_png("board.png", PITCH, PITCH, lambda x, y: (*rgb("canvas_alt"), 255)
-              if inside("circle", COIN_SIZE, COIN_SIZE, x + 0.5, y + 0.5) else (0, 0, 0, 0))
-    art("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward", "a gold coin seen from the front")
+    zone_image("BoardArea")
+    zone_image("KeyBox", None, "ink")
+    # One slot of the board, a ring the size of a coin in the middle of a TOUCH cell with a unit of
+    # clear space after it, which the Board's Tiled Background repeats COLS x ROWS times.
+    write_png("board.png", PITCH, PITCH, lambda x, y: (
+        *rgb("line"), round(255 * ring_cover(x, y, TOUCH / 2, TOUCH / 2, COIN_SIZE, LINE))))
+    art("coin-default-000.png", "circle", TOUCH, TOUCH, "reward", "a gold coin seen from the front",
+        inset=(TOUCH - COIN_SIZE) // 2)
     hit_frame("coin-default-000.png")
 
 
@@ -2771,10 +3111,14 @@ def build_object_types() -> tuple[dict, dict, list]:
                                    ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
                             behaviors=[beh_def("Tween")]),
         "Backdrop": pattern_type("Backdrop"),
+        "BoardArea": zone_type("BoardArea"),
         "Board": image_type("Board", "TiledBg", PITCH, PITCH, 0, 0),
+        "RoundTag": text_type("RoundTag"),
         "ScoreLabel": text_type("ScoreLabel"),
         "ScoreText": text_type("ScoreText"),
-        "RoundText": text_type("RoundText"),
+        "KeyBox": zone_type("KeyBox", behaviors=[beh_def("Tween")]),
+        "KeyText": text_type("KeyText"),
+        "KeyVerb": text_type("KeyVerb"),
         "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True}),
     }
     families = {}
@@ -2788,33 +3132,36 @@ def build_layouts() -> dict[str, dict]:
         layer("Game"),
         layer("UI", parallax=0),
     ], sheet="Game")
-    # The backdrop is the plain sheet, reaching past the viewport so the screen shows no edge of it.
+    # The backdrop is the plain paper, reaching past the viewport so the screen shows no edge of it.
     # A game with something transparent, a mask or a background still to come draws it as
     # pattern("Backdrop", "checker"), as editors show transparency, and its cells are then the
     # ruler: two a unit. An area or an edge in a pattern is area(type, col, row, cols, rows) on the
-    # Game layer. Instances go in in any order: build_all() puts every layer in z_order().
+    # Game layer. An area, a range or a board is drawn as lines, zone() of a zone_image(), and a slot
+    # or a reach as a ring of ring(). Instances go in in any order: build_all() puts every layer in
+    # z_order().
     game["layers"][0]["instances"].append(backdrop("Backdrop"))
+    area = zone("BoardArea", BOARD_LEFT // UNIT, BOARD_TOP // UNIT, BOARD_W // UNIT, BOARD_H // UNIT)
     board = tiledbg_inst("Board", BOARD_LEFT, BOARD_TOP, BOARD_W, BOARD_H, 0, 0)
-    game["layers"][0]["instances"].append(board)
+    game["layers"][0]["instances"].extend([area, board])
     # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
     # row(), anything else by anchor(); the middle of the screen is the game's. Each carries the
     # Anchor behavior of anchored(), which hud_text() and hud_bar() give, so it stays at the
     # screen's edge when the screen is wider or taller than the viewport. no_overlap()
     # stops the run when two HUD boxes meet or one leaves the viewport. A label is
-    # TEXT_SIZE["body"] in rgb("ink"); the number the player plays for, and a banner, are
-    # TEXT_SIZE["title"]. hud_text() stops the run on a colour that does not read on what is
-    # behind it. A value under its name is one group, hud_stat(); spaced() stops the run when two
-    # groups sit closer than the parts of one; balanced() warns when the board is off the middle of
-    # the play area, and filled() when it covers too little of the screen.
+    # TEXT_SIZE["body"] in rgb("ink"), a tag text_size("tag") in hud_tag(), the number the player
+    # plays for text_size("number") in hud_stat(), and a banner text_size("display").
+    # hud_text() stops the run on a colour that does not read on what is behind it. spaced() stops
+    # the run when two groups sit closer than the parts of one; balanced() warns when the board is
+    # off the middle of the play area, and filled() when it covers too little of the screen.
     ui = game["layers"][2]["instances"]
     ui.extend(flat(HUD))
     # A value shown as a bar: ui.extend(hud_bar("HpFrame", "HpFill", "top-left", units(12), dy=3)), its
     # types from bar_types() and images from bar_images(), and the sheet sets the fill with
     # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
     no_overlap(ui)
-    spaced([*HUD, [board]])
-    balanced([board], PLAY_AREA)
-    filled([board])
+    spaced([*HUD, [area, board]])
+    balanced([area], PLAY_AREA)
+    filled([area])
     # Everything outside the HUD starts on the grid: a shape by shape_inst() on a cell, one
     # created at runtime at grid_random(); on_grid() stops the run on an instance that does not.
     on_grid(game["layers"][1]["instances"], "layer Game")
@@ -2836,13 +3183,14 @@ def module_setup() -> dict:
         # before any text shows it.
         event("Empty the score and deal this round's coins",
               [on_start()], [set_var("score", "0"), set_text("ScoreText", q("0")),
-                             set_text("RoundText", f'{q("ROUND ")} & (beat + 1) & {q(" / ")} & '
-                                                   f'tokencount(ROUND_COINS, {q(",")})'),
+                             set_text("RoundTag", tracked_expr(f'{q("Round · ")} & zeropad(beat + 1, 2) & '
+                                                               f'{q(" / ")} & zeropad(tokencount(ROUND_COINS, '
+                                                               f'{q(",")}), 2)')),
                              set_var("deal", f"floor(random({CELLS}))")], children=[
                   block([for_loop("i", "0", f"int(tokenat(ROUND_COINS, beat, {q(',')})) - 1")], [
                       create("Coin", "Game",
-                             f'{BOARD_LEFT + COIN_SIZE // 2} + {PITCH} * ((deal + (loopindex("i") * {STRIDE})) % {COLS})',
-                             f'{BOARD_TOP + COIN_SIZE // 2} + {PITCH} * floor(((deal + (loopindex("i") * {STRIDE})) '
+                             f'{BOARD_LEFT + TOUCH // 2} + {PITCH} * ((deal + (loopindex("i") * {STRIDE})) % {COLS})',
+                             f'{BOARD_TOP + TOUCH // 2} + {PITCH} * floor(((deal + (loopindex("i") * {STRIDE})) '
                              f'% {CELLS}) / {COLS})'),
                       set_ivar("Coin", "value", "choose(1, 5)"),
                   ]),
@@ -2900,6 +3248,7 @@ def build_event_sheet() -> dict:
         module_input(),
         *scoring(),
         module_restart(),
+        hints("KeyBox"),
     ]
     return {"name": "Game", "events": events, "sid": sid()}
 

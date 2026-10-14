@@ -2,6 +2,7 @@
 import builtins
 import datetime
 import json
+import math
 import re
 import shutil
 import symtable
@@ -125,13 +126,13 @@ def test_shape_style_switches_the_baked_outline_and_shadow(tmp_path):
 
 
 def test_template_draws_an_accent_that_shows_without_its_outline_and_a_fill_the_outline_shows_on(tmp_path):
-    """The plain sheet draws no outline, so an accent reads 3:1 on canvas_alt or is drawn with its
+    """The paper draws no outline, so an accent reads 3:1 on canvas_alt or is drawn with its
     outline; a fill too near the ink hides its own outline."""
     t = template_module()
     t.ROOT = tmp_path
-    t.shape("spike.png", "triangle", 32, 32, "danger")                          # 3.5:1, shows alone
+    t.shape("spike.png", "triangle", 32, 32, "danger")                          # 3.1:1, shows alone
     t.PALETTE["danger"] = (245, 120, 110)
-    with pytest.raises(SystemExit, match=r"spike.png: danger \(245, 120, 110\) reads 2\.\d\d:1 on canvas_alt, and an "
+    with pytest.raises(SystemExit, match=r"spike.png: danger \(245, 120, 110\) reads 1\.\d\d:1 on canvas_alt, and an "
                                          r"accent without an outline needs 3:1 .* darken danger, or draw it with its outline"):
         t.shape("spike.png", "triangle", 32, 32, "danger")
     t.shape("spike.png", "triangle", 32, 32, "danger", outline=True)
@@ -139,7 +140,7 @@ def test_template_draws_an_accent_that_shows_without_its_outline_and_a_fill_the_
     t.shape("player.png", "rect", 32, 64, "ink", outline=True)                   # the player is ink, its outline too
     t.PALETTE["dim"] = (60, 60, 60)
     with pytest.raises(SystemExit, match=r"shade.png: its dim fill reads 1\.\d:1 against its ink outline, which needs "
-                                         r"3:1 to show; fill it in one of canvas, canvas_alt, solid, reward, danger, flash"):
+                                         r"3:1 to show; fill it in one of canvas, canvas_alt, line, solid, reward, danger, flash"):
         t.shape("shade.png", "rect", 32, 32, "dim", outline=True)
 
 
@@ -151,9 +152,9 @@ def test_template_palette_keeps_the_ratios_of_the_blockout():
     ratios = {pair: round(t.contrast(t.rgb(pair[0]), t.rgb(pair[1])), 2) for pair in (
         ("canvas", "canvas_alt"), ("solid", "canvas_alt"), ("reward", "canvas_alt"), ("danger", "canvas_alt"),
         ("ink", "solid"), ("ink", "reward"), ("ink", "danger"))}
-    assert ratios == {("canvas", "canvas_alt"): 1.11, ("solid", "canvas_alt"): 3.23, ("reward", "canvas_alt"): 4.44,
-                      ("danger", "canvas_alt"): 4.12, ("ink", "solid"): 5.03, ("ink", "reward"): 3.65,
-                      ("ink", "danger"): 3.94}
+    assert ratios == {("canvas", "canvas_alt"): 1.13, ("solid", "canvas_alt"): 3.44, ("reward", "canvas_alt"): 3.06,
+                      ("danger", "canvas_alt"): 3.06, ("ink", "solid"): 3.97, ("ink", "reward"): 4.47,
+                      ("ink", "danger"): 4.47}
     t.check_palette()
     assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger"]
     t.PALETTE["canvas_alt"] = (200, 200, 200)
@@ -169,7 +170,7 @@ def test_template_palette_keeps_the_ratios_of_the_blockout():
 def test_template_patterns_tile_by_the_unit_and_meet_without_a_seam(tmp_path):
     """An area is a Tiled Background of a pattern; its image offset is minus its corner modulo
     the tile, which the runtime subtracts from the texture coordinate, so every piece lines up
-    with the layout. The plain sheet and the checker are the backdrop's alone, the high-contrast
+    with the layout. The plain paper and the checker are the backdrop's alone, the high-contrast
     stripes strips and small zones."""
     t = template_module()
     t.ROOT = tmp_path
@@ -206,7 +207,7 @@ def test_template_patterns_tile_by_the_unit_and_meet_without_a_seam(tmp_path):
     with pytest.raises(SystemExit, match=r"area\('Lava'\): 12x10 cells of hazard stripes; .* keep the shorter side to 8 cells"):
         t.area("Lava", 0, 0, 12, 10)
     t.area("Ledge", 0, 0, 10, 6)                                             # low stripes may cover more
-    with pytest.raises(SystemExit, match=r"backdrop\('Door'\): the backdrop is the plain sheet or the checker"):
+    with pytest.raises(SystemExit, match=r"backdrop\('Door'\): the backdrop is the plain paper or the checker"):
         t.backdrop("Door")
     with pytest.raises(SystemExit, match=r"area\('Wall'\): not a pattern"):
         t.area("Wall", 0, 0, 1, 1)
@@ -401,36 +402,37 @@ def test_template_places_the_hud_on_the_grid(built):
     grid; the stand-in's HUD text and its tapped coin come from it, so a generated layout starts
     aligned and a small model fills cells instead of choosing coordinates."""
     t = template_module()
-    assert (t.VIEW_W, t.VIEW_H, t.UNIT, t.MARGIN, t.TOUCH) == (1920, 1080, 32, 32, 160)
+    assert (t.VIEW_W, t.VIEW_H, t.UNIT, t.MARGIN, t.TOUCH, t.SUBJECT) == (1920, 1080, 32, 64, 160, 64)
     assert t.units(13) == 416 and t.snap(100) == 96 and t.snap(112) == 128
-    assert t.anchor("top-left", 416, 64) == (32, 32)
-    assert t.anchor("top-right", 416, 64) == (1920 - 32 - 416, 32)          # its right edge MARGIN from the viewport's
-    assert t.anchor("bottom", 96, 96, 0.5, 0.5) == (960, 1080 - 32 - 48)   # centred, its bottom edge MARGIN up
+    assert t.anchor("top-left", 416, 64) == (64, 64)
+    assert t.anchor("top-right", 416, 64) == (1920 - 64 - 416, 64)          # its right edge MARGIN from the viewport's
+    assert t.anchor("bottom", 96, 96, 0.5, 0.5) == (960, 1080 - 64 - 48)   # centred, its bottom edge MARGIN up
     assert t.anchor("center", 96, 96, 0.5, 0.5) == (960, 540)
-    assert t.anchor("top-left", 96, 96, 0.5, 0.5, dx=3) == (32 + 96 + 48, 32 + 48)
+    assert t.anchor("top-left", 96, 96, 0.5, 0.5, dx=3) == (64 + 96 + 48, 64 + 48)
     # A row of three 96 px boxes, one unit apart, centred on the top edge: 352 px wide from x 784.
-    assert t.row("top", 3, 96, 96) == [(832, 80), (960, 80), (1088, 80)]
+    assert t.row("top", 3, 96, 96) == [(832, 112), (960, 112), (1088, 112)]
     # A Text's size is in points, 4/3 px each, so a label's box fits its longest text
-    # (8 x 0.6 em x 32 x 4/3 = 205 -> 224) and reads towards the side it hangs on.
+    # (4.23 em x 14 x 4/3 = 79 -> 96) and reads towards the side it hangs on.
     timer = t.hud_text("TimerText", "Time: 30", "top-right")
-    assert (timer["world"]["x"], timer["world"]["y"], timer["world"]["width"], timer["world"]["height"]) == (1664, 32, 224, 64)
+    assert (timer["world"]["x"], timer["world"]["y"], timer["world"]["width"], timer["world"]["height"]) == (1760, 64, 96, 32)
     assert timer["properties"]["horizontal-alignment"] == "right"
-    # A wide character is about 1 em, so a Chinese label's box holds its characters at full size.
-    assert t.text_ems("Time: 30") == 4.8 and t.text_ems("结束回合，") == 5
+    # A Latin letter is its measured width in Inter, a wide character 1 em, so a label's box holds its text.
+    assert t.text_ems("Time: 30") == 4.23 and t.text_ems("结束回合，") == 5 and t.text_ems("A\u2005B") == 1.62
     banner = t.hud_text("MapTitle", "地图", "top", size=48, longest="选择前进之路")
     assert banner["world"]["width"] >= len("选择前进之路") * 48 * 4 / 3
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
     score = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "ScoreText")["world"]
-    # The number at the title size, GAP_IN under its label, each box one line high: the HUD is off the grid.
-    assert (score["x"], score["y"], score["width"], score["height"]) == (32, 92, 160, 103)
+    # The number at the number size, GAP_IN under its label, each box one line high, held to the top
+    # right: the HUD is off the grid.
+    assert (score["x"], score["y"], score["width"], score["height"]) == (1728, 92, 128, 72)
     # Two HUD boxes that meet, or one past the viewport, stop the generator and name them.
-    with pytest.raises(SystemExit, match=r"ScoreText \(32,32\)-\(288,96\) overlaps TimerText .* Move TimerText down 3 units: dy=3"):
+    with pytest.raises(SystemExit, match=r"ScoreText \(64,64\)-\(192,96\) overlaps TimerText .* Move TimerText down 2 units: dy=2"):
         t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"),
                       t.hud_text("TimerText", "Time: 30", "top-left")])
     # The dy the guard names puts the second label's top one unit under the first.
     t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"),
-                  t.hud_text("TimerText", "Time: 30", "top-left", dy=3)])
-    assert t.hud_text("TimerText", "Time: 30", "top-left", dy=3)["world"]["y"] == 128
+                  t.hud_text("TimerText", "Time: 30", "top-left", dy=2)])
+    assert t.hud_text("TimerText", "Time: 30", "top-left", dy=2)["world"]["y"] == 128
     with pytest.raises(SystemExit, match="reaches past the 1920x1080 viewport"):
         t.no_overlap([t.sprite_inst("Coin", 32, 32, 96, 96)])
     # A fill inside its frame is a layer on purpose, not a collision: the eighteen bar runs of
@@ -482,9 +484,11 @@ def test_template_holds_the_hud_to_the_screens_edges(built):
     # a larger layout keeps its camera inside it.
     assert game["unboundedScrolling"] is True and t.layout("Level", [], None, width=4000)["unboundedScrolling"] is False
     ui = next(layer for layer in game["layers"] if layer["name"] == "UI")["instances"]
-    assert {i["type"]: edges(i) for i in ui} == {"ScoreLabel": ("window-left", "window-top"),
-                                                 "ScoreText": ("window-left", "window-top"),
-                                                 "RoundText": ("window-right", "window-top")}
+    assert {i["type"]: edges(i) for i in ui} == {"RoundTag": ("window-left", "window-top"),
+                                                 "ScoreLabel": ("window-right", "window-top"),
+                                                 "ScoreText": ("window-right", "window-top"),
+                                                 "KeyBox": ("window-left", "window-bottom"),
+                                                 "KeyText": (None, None), "KeyVerb": (None, None)}
     score_type = json.loads((built / "objectTypes" / "ScoreText.json").read_text(encoding="utf-8"))
     assert [b["behaviorId"] for b in score_type["behaviorTypes"]] == ["Anchor"]
     # A type with one held instance gets the behavior once; its other instance holds nothing.
@@ -521,7 +525,8 @@ def test_template_orders_each_layer_as_an_editor_user_would(built, tmp_path):
     assert ordered[2] is far and ordered[5] is near
     assert t.z_order(ordered) == ordered
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
-    assert [[i["type"] for i in layer["instances"]] for layer in game["layers"]] ==         [["Backdrop", "Board"], [], ["ScoreLabel", "RoundText", "ScoreText"]]
+    assert [[i["type"] for i in layer["instances"]] for layer in game["layers"]] ==         [["Backdrop", "BoardArea", "Board"], [],
+         ["RoundTag", "ScoreLabel", "ScoreText", "KeyBox", "KeyText", "KeyVerb"]]
 
 
 def test_template_button_is_a_shape_and_its_label_that_never_come_apart(tmp_path):
@@ -537,7 +542,8 @@ def test_template_button_is_a_shape_and_its_label_that_never_come_apart(tmp_path
     shape, label = t.button("Resume", "resume-default-000.png", "ResumeLabel", "继续", 3, 10)
     assert (label["world"]["x"], label["world"]["y"], label["world"]["width"], label["world"]["height"]) == \
         (96, 320, 160, 160)
-    assert label["properties"]["horizontal-alignment"] == "center" and label["properties"]["size"] == t.TEXT_SIZE["body"]
+    assert label["properties"]["horizontal-alignment"] == "center" and label["properties"]["size"] == t.TEXT_SIZE["title"]
+    assert (label["properties"]["font"], label["properties"]["bold"]) == ("Inter-Medium", False)
     assert t.contrast(tuple(round(c * 255) for c in label["properties"]["color"][:3]), t.PALETTE["solid"]) >= 3
     assert shape["sceneGraphData"]["parent-uid"] is None
     # The label follows the shape's size too, so a press() squashes both; Text letters scale with the box.
@@ -549,7 +555,7 @@ def test_template_button_is_a_shape_and_its_label_that_never_come_apart(tmp_path
     t.shape("big-default-000.png", "rect", 384, 192, "solid")
     assert t.button("Big", "big-default-000.png", "BigLabel", "继续", 0, 0)[1]["properties"]["size"] == t.TEXT_SIZE["title"]
     t.shape("small-default-000.png", "rect", 96, 96, "solid")
-    with pytest.raises(SystemExit, match=r"needs a shape of 256x160 px and images/small-default-000.png is 96x96; "
+    with pytest.raises(SystemExit, match=r"needs a shape of 160x160 px and images/small-default-000.png is 96x96; "
                                          r"draw it at button_size\('重新开始'\)"):
         t.button("Small", "small-default-000.png", "SmallLabel", "继续", 0, 0, longest="重新开始")
     # A hidden button starts with its label hidden.
@@ -570,31 +576,32 @@ def test_template_groups_a_value_with_its_name_and_centres_the_playfield_under_t
     assert (t.GAP_IN, t.GAP_OUT, t.GROUP_RATIO, t.OPTICAL_LIFT) == (8, 32, 1.5, 0.05)
     assert t.GAP_OUT >= t.GROUP_RATIO * t.GAP_IN
     name, value = t.hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-left", longest="999")
-    assert t.box_of(name) == (32, 32, 160, 84) and t.box_of(value) == (32, 92, 192, 195)
-    assert (name["properties"]["size"], value["properties"]["size"]) == (t.TEXT_SIZE["body"], t.TEXT_SIZE["title"])
+    assert t.box_of(name) == (64, 64, 128, 84) and t.box_of(value) == (64, 92, 192, 164)
+    assert (name["properties"]["size"], value["properties"]["size"]) == (t.TEXT_SIZE["name"], t.TEXT_SIZE["number"])
+    assert (name["properties"]["font"], value["properties"]["font"]) == ("Inter-Regular", "InterDisplay-Light")
     best = t.hud_stat("BestLabel", "BestText", "BEST", "top-right", longest="999")
-    assert t.box_of(best[0])[2] == t.box_of(best[1])[2] == 1888
+    assert t.box_of(best[0])[2] == t.box_of(best[1])[2] == 1856
     assert best[1]["properties"]["horizontal-alignment"] == "right" and "Anchor" in best[1]["behaviors"]
     area = t.play_area([name, value, t.hud_text("RoundText", "ROUND 1 / 6", "top-right")])
-    assert area == (32, 195 + 32, 1920 - 64, 1048 - 227)
-    assert t.play_area([t.hud_text("Hint", "Tap", "bottom")])[1::2] == (32, 1080 - 32 - 64 - 32 - 32)
-    assert t.centred(928, 544, area) == (512, 320) and t.centred(928, 544, area, lift=0) == (512, 352)
-    with pytest.raises(SystemExit, match=r"centred\(\): a 2000x100 px box does not fit the 1856x821 px play area"):
+    assert area == (64, 164 + 32, 1920 - 128, 1016 - 196)
+    assert t.play_area([t.hud_text("Hint", "Tap", "bottom")])[1::2] == (64, 1080 - 64 - 32 - 32 - 64)
+    assert t.centred(928, 544, area) == (512, 288) and t.centred(928, 544, area, lift=0) == (512, 320)
+    with pytest.raises(SystemExit, match=r"centred\(\): a 2000x100 px box does not fit the 1792x820 px play area"):
         t.centred(2000, 100, area)
-    board = t.tiledbg_inst("Board", 512, 320, 928, 544, 0, 0)
+    board = t.tiledbg_inst("Board", 512, 288, 928, 544, 0, 0)
     t.spaced([[name, value], [best[0], best[1]], [board]])
     t.balanced([board], area)
     assert capsys.readouterr().out == ""
     # A board 5 px under the number, whose parts are 8 px apart: a box below another's bottom edge is
     # as far from it as that edge, wherever it lies along it.
     assert t.gap((0, 0, 10, 10), (100, 15, 200, 20)) == 5 and t.gap((0, 0, 10, 10), (40, 0, 50, 10)) == 30
-    with pytest.raises(SystemExit, match=r"ScoreLabel \+ ScoreText and Board are 5 px apart, and ScoreLabel \+ "
+    with pytest.raises(SystemExit, match=r"ScoreLabel \+ ScoreText and Board are 4 px apart, and ScoreLabel \+ "
                                          r"ScoreText holds its parts 8 px apart: groups need 1.5 times that"):
-        t.spaced([[name, value], [t.tiledbg_inst("Board", 512, 200, 928, 544, 0, 0)]])
+        t.spaced([[name, value], [t.tiledbg_inst("Board", 512, 168, 928, 544, 0, 0)]])
     # A name a unit above its number, and the board a unit under the number.
     label = t.hud_text("ScoreLabel", "SCORE", "top-left")
-    number = t.hud_text("ScoreText", "0", "top-left", size=t.TEXT_SIZE["title"], dy=3)
-    with pytest.raises(SystemExit, match=r"are 32 px apart, and ScoreLabel \+ ScoreText holds its parts 32 px apart"):
+    number = t.hud_text("ScoreText", "0", "top-left", size=t.TEXT_SIZE["number"], dy=3)
+    with pytest.raises(SystemExit, match=r"are 32 px apart, and ScoreLabel \+ ScoreText holds its parts 64 px apart"):
         t.spaced([[label, number], [t.tiledbg_inst("Board", 512, 288, 928, 544, 0, 0)]])
     # A board centred on the whole screen is off the middle of what the HUD leaves.
     t.balanced([t.tiledbg_inst("Board", 512, 256, 928, 544, 0, 0)], area)
@@ -606,10 +613,11 @@ def test_template_groups_a_value_with_its_name_and_centres_the_playfield_under_t
     t.filled([t.tiledbg_inst("Board", 800, 400, 320, 192, 0, 0)])
     assert capsys.readouterr().out.startswith("warning: layout Game: Board covers 3% of the 1920x1080 screen, under "
                                               "PLAYFIELD_MIN 15%")
-    # The stand-in's board is where centred() puts it.
+    # The stand-in's board and its area are where centred() puts them, under the header and over the keys.
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
-    placed = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "Board")["world"]
-    assert (placed["x"], placed["y"]) == (512, 320)
+    for kind in ("Board", "BoardArea"):
+        placed = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == kind)["world"]
+        assert (placed["x"], placed["y"], placed["width"], placed["height"]) == (512, 256, 928, 544)
 
 
 def test_template_screen_is_named_bands_and_the_stage_sizes_its_main_object():
@@ -617,24 +625,25 @@ def test_template_screen_is_named_bands_and_the_stage_sizes_its_main_object():
     computes every position; fit() sizes the stage's main object to a share of the stage, and
     labelled_bar() keeps a bar's name in front of it."""
     t = template_module()
-    assert t.bands() == {"title": (32, 32, 1856, 128), "status": (32, 160, 1856, 64), "stage": (32, 256, 1856, 672),
-                         "hint": (32, 960, 1856, 64)}
-    assert t.bands(title=False)["status"] == (32, 32, 1856, 64) and t.bands(title=False)["stage"] == (32, 128, 1856, 800)
-    assert t.fit(1, 1) == (12, 12) and t.fit(5, 3) == (21, 12)       # 60% of the stage high, proportions kept
-    assert t.stage_cell(12, 12) == (24, 12)
+    assert t.bands() == {"title": (64, 64, 1792, 64), "status": (64, 128, 1792, 32), "stage": (64, 192, 1792, 736),
+                         "hint": (64, 960, 1792, 32)}
+    assert t.bands(title=False)["status"] == (64, 64, 1792, 32) and t.bands(title=False)["stage"] == (64, 128, 1792, 800)
+    assert t.fit(1, 1) == (13, 13) and t.fit(5, 3) == (23, 13)       # 60% of the stage high, proportions kept
+    assert t.stage_cell(13, 13) == (23, 11)
     score = t.band_text("Score", "Score: 0", "status", "left", longest="Score: 999")
     timer = t.band_text("Timer", "Time: 30", "status", "right")
-    assert (score["world"]["x"], score["world"]["y"]) == (32, 160) and timer["world"]["x"] + timer["world"]["width"] == 1888
+    assert (score["world"]["x"], score["world"]["y"]) == (64, 128) and timer["world"]["x"] + timer["world"]["width"] == 1856
     t.no_overlap([score, timer])
     title = t.band_text("Title", "开关按钮", "title")
-    assert title["properties"]["size"] == t.TEXT_SIZE["title"] and title["world"]["y"] == 32
-    assert t.band_text("Title", "一个很长很长很长很长很长很长很长很长很长很长的标题", "title")["properties"]["size"] == t.TEXT_SIZE["body"]
-    with pytest.raises(SystemExit, match=r"the hint band 1856; it holds about 43 Chinese characters"):
-        t.band_text("Hint", "点" * 60, "hint")
+    assert title["properties"]["size"] == t.TEXT_SIZE["title"] and title["world"]["y"] == 64
+    assert title["properties"]["font"] == "Inter-Medium" and t.band_text("Big", "GO", "stage")["properties"]["size"] == 64
+    assert t.band_text("Title", "标题" * 40, "title")["properties"]["size"] == t.TEXT_SIZE["body"]
+    with pytest.raises(SystemExit, match=r"the hint band 1792; it holds about 96 Chinese characters"):
+        t.band_text("Hint", "点" * 100, "hint")
     with pytest.raises(SystemExit, match=r"'side' is no band; the bands are title, status, stage, hint"):
         t.band_text("Hint", "x", "side")
     name, frame, fill = t.labelled_bar("HpName", "HP", "HpFrame", "HpFill", "top-left", 192)
-    assert name["world"]["x"] == 32 and frame["world"]["x"] - 96 == name["world"]["x"] + name["world"]["width"] + 32
+    assert name["world"]["x"] == 64 and frame["world"]["x"] - 96 == name["world"]["x"] + name["world"]["width"] + 32
     t.no_overlap([name, frame, fill])
 
 
@@ -644,8 +653,8 @@ def test_template_bar_grows_from_its_left_edge_inside_its_frame():
     the instance properties are the editor's, every key in the plugin's schema."""
     t = template_module()
     frame, fill = t.hud_bar("HpFrame", "HpFill", "top-left", 384, dy=3)
-    assert (frame["world"]["x"], frame["world"]["y"], frame["world"]["width"], frame["world"]["height"]) == (224, 144, 384, 32)
-    assert (fill["world"]["x"], fill["world"]["y"], fill["world"]["width"], fill["world"]["height"]) == (34, 144, 380, 28)
+    assert (frame["world"]["x"], frame["world"]["y"], frame["world"]["width"], frame["world"]["height"]) == (256, 176, 384, 32)
+    assert (fill["world"]["x"], fill["world"]["y"], fill["world"]["width"], fill["world"]["height"]) == (66, 176, 380, 28)
     assert (fill["world"]["originX"], fill["world"]["originY"], fill["properties"]["origin"]) == (0, 0.5, "left")
     assert frame["properties"]["origin"] == "center" and "Tween" in fill["behaviors"]
     t.no_overlap([t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999"), frame, fill])
@@ -695,7 +704,7 @@ def test_template_slider_is_a_row_a_finger_holds_with_its_knob_on_the_track(tmp_
     assert knob["instanceVariables"] == {"name": "volume", "value": 50, "lo": 0, "hi": 100, "step": 1}
     assert knob["behaviors"]["DragDrop"]["properties"] == {"axes": "horizontal-only", "enabled": True}
     assert t.box_of(fill) == (448, 232, 832, 248)
-    assert (shown["properties"]["text"], t.box_of(shown)) == ("50", (1312, 160, 1408, 320))
+    assert (shown["properties"]["text"], t.box_of(shown)) == ("50", (1312, 160, 1376, 320))
     assert shown["properties"]["horizontal-alignment"] == "right"
     assert [c["uid"] for c in track["sceneGraphData"]["children"]] == [fill["uid"], knob["uid"], label["uid"],
                                                                          shown["uid"]]
@@ -796,10 +805,11 @@ def test_template_text_input_is_the_form_control_in_the_look():
     assert label["sceneGraphData"]["parent-uid"] == field["uid"]
     with pytest.raises(SystemExit, match=r"kind 'textarea'; one of text, password"):
         t.text_input("note", 0, 0, 8, kind="textarea")
-    assert t.css_px(t.TEXT_SIZE["body"] * t.PX_PER_PT) == "min(2.222vw, 3.951vh)"   # 42.7 px at 1920x1080
+    assert t.css_px(t.TEXT_SIZE["body"] * t.PX_PER_PT) == "min(0.9722vw, 1.728vh)"   # 18.7 px at 1920x1080
     look, start, changed = (b for b in t.text_input_events({"player": "player"}) if b.get("eventType") == "block")
     css = {a["parameters"]["property-name"]: a["parameters"]["value"] for a in look["actions"]}
-    assert css['"font-size"'] == '"min(2.222vw, 3.951vh)"' and css['"color"'] == '"rgb(17, 17, 17)"'
+    assert css['"font-size"'] == '"min(0.9722vw, 1.728vh)"' and css['"color"'] == '"rgb(20, 19, 17)"'
+    assert css['"font-family"'] == '"Inter-Regular, system-ui, sans-serif"'
     assert changed["conditions"][0]["id"] == "on-text-changed"
     assert changed["children"][1]["actions"][0]["parameters"] == {"variable": "player", "value": "TextInput.Text"}
     assert len(t.text_input_events()) == 2
@@ -884,14 +894,14 @@ def test_template_draws_only_the_colours_of_its_palette(built, tmp_path):
         assert {px[:3] for px in row if px[3]} <= set(t.PALETTE.values())
     t.write_png("half.png", 2, 1, lambda x, y: (*t.PALETTE["danger"], 128 if x else 255))   # the shadow's alpha
     t.write_png("clear.png", 1, 1, lambda x, y: (1, 2, 3, 0))                                # a pixel that does not show
-    assert png_pixels(tmp_path / "images" / "half.png") == [[(220, 38, 60, 255), (220, 38, 60, 128)]]
+    assert png_pixels(tmp_path / "images" / "half.png") == [[(224, 69, 43, 255), (224, 69, 43, 128)]]
     with pytest.raises(SystemExit, match=r"images/heart.png: \(230, 40, 60\) at \(1,0\) is no colour of PALETTE, "
-                                         r"nor are 1 more of its colours; the nearest is danger \(220, 38, 60\)\. "
-                                         r"Draw with rgb\('danger'\), or add the colour to PALETTE"):
+                                         r"nor are 1 more of its colours; the nearest is reward \(224, 69, 43\)\. "
+                                         r"Draw with rgb\('reward'\), or add the colour to PALETTE"):
         t.write_png("heart.png", 3, 1, lambda x, y: [(0, 0, 0, 0), (230, 40, 60, 255), (9, 9, 9, 255)][x])
     assert not (tmp_path / "images" / "heart.png").exists()
     t.write_png("gradient.png", 2, 1, lambda x, y: (x * 200, 100, 0, 255), painted=True)     # a painting keeps its colours
-    with pytest.raises(SystemExit, match=r"'crimson' is no role of PALETTE, which has canvas, canvas_alt, solid"):
+    with pytest.raises(SystemExit, match=r"'crimson' is no role of PALETTE, which has canvas, canvas_alt, line, solid"):
         t.rgb("crimson")
     t.bar_images("HpFrame", "HpFill", caps=True)
     edge, middle = png_pixels(tmp_path / "images" / "hpfill.png")[0][0], png_pixels(tmp_path / "images" / "hpfill.png")[8][8]
@@ -907,21 +917,22 @@ def test_template_labels_read_on_what_is_behind_them():
     assert round(t.contrast((255, 255, 255), (0, 0, 0)), 2) == 21 and t.contrast((30, 34, 48), (30, 34, 48)) == 1
     score = t.hud_text("ScoreText", "Score: 0", "top-left", longest="Score: 999")
     assert (score["properties"]["font"], score["properties"]["size"], score["properties"]["color"]) == \
-        ("system-ui", 32, t.rgba(t.PALETTE["ink"]))
+        ("Inter-Regular", 14, t.rgba(t.PALETTE["ink"]))
+    assert score["properties"]["bold"] is False
     assert (t.text_contrast(8), t.text_contrast(17), t.text_contrast(18), t.text_contrast(32)) == (4.5, 4.5, 3, 3)
-    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.8:1 on the checker's darker cell
-    t.hud_text("TimerText", "Time: 30", "top-right", color="dim")          # 32 pt is large-scale: 3:1 is enough
-    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(238, 238, 234\) reads 3\.8:1; "
+    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.3:1 on the checker's darker cell
+    t.hud_text("TimerText", "Time: 30", "top-right", size=32, color="dim")  # 32 pt is large-scale: 3:1 is enough
+    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(223, 221, 215\) reads 3\.3:1; "
                                          r"text of size 12 needs 4\.5:1\. Roles that read on canvas_alt: ink;"):
         t.hud_text("TimerText", "Time: 30", "top-right", size=12, color="dim")
-    t.PALETTE["dim"] = (150, 150, 150)                                   # 2.6:1
+    t.PALETTE["dim"] = (150, 150, 150)                                   # 2.2:1
     with pytest.raises(SystemExit, match=r"text of size 32 needs 3:1"):
-        t.hud_text("TimerText", "Time: 30", "top-right", color="dim")
+        t.hud_text("TimerText", "Time: 30", "top-right", size=32, color="dim")
     t.PALETTE["dim"] = (120, 120, 120)
-    banner = t.hud_text("WinText", "YOU WIN", "center", size=t.TEXT_SIZE["title"], color="dim")
+    banner = t.hud_text("WinText", "YOU WIN", "center", size=t.text_size("display"), color="dim")
     assert banner["properties"]["size"] == 64 and banner["properties"]["color"][:3] == [120 / 255] * 3
-    with pytest.raises(SystemExit, match=r"LivesText: flash \(255, 255, 255\) on canvas \(250, 250, 247\) reads 1\.0:1; "
-                                         r".* Roles that read on canvas: solid, dim, ink, reward, danger;"):
+    with pytest.raises(SystemExit, match=r"LivesText: flash \(255, 255, 255\) on canvas \(236, 234, 228\) reads 1\.2:1; "
+                                         r".* Roles that read on canvas: ink;"):
         t.hud_text("LivesText", "Lives", "top", color="flash", on="canvas")
     game = t.layout("Game", [t.layer("Background", transparent=False), t.layer("UI", parallax=0)], sheet="Game")
     assert [layer["backgroundColor"] for layer in game["layers"]] == [t.rgba(t.PALETTE["canvas"]), [1, 1, 1, 1]]
@@ -937,7 +948,8 @@ def test_template_fills_the_screen_and_samples_a_pixel_art_viewport_nearest():
     p = t.build_project({"properties": {"fullscreenMode": "letterbox-scale"}}, {}, {}, [], {}, [])
     assert (t.PIXEL_ART, p["properties"]["sampling"], p["properties"]["fullscreenMode"]) == (False, "trilinear", "scale-outer")
     small = template_module(VIEW="VIEW_W, VIEW_H = 320, 180")
-    assert (small.UNIT, small.TOUCH, small.PIXEL_ART, small.TEXT_SIZE) == (8, 24, True, {"body": 8, "title": 16})
+    assert (small.UNIT, small.MARGIN, small.TOUCH, small.PIXEL_ART, small.LINE) == (8, 8, 24, True, 1)
+    assert small.TEXT_SIZE == {"tag": 8, "name": 8, "body": 8, "title": 16, "number": 16, "display": 16}
     p = small.build_project({"properties": {"sampling": "trilinear"}}, {}, {}, [], {}, [])
     assert (p["properties"]["sampling"], p["properties"]["fullscreenMode"]) == ("nearest", "integer-scale-outer")
 
@@ -963,16 +975,25 @@ def test_look_manifest_matches_the_template():
 
 
 def test_template_keeps_alpha_pure_and_shapes_on_the_grid(tmp_path):
-    """A drawn image is clear, opaque or the shadow's alpha, with nothing under a clear pixel; a
-    shape covers whole cells and is placed by its cell; on_grid() stops a world instance off it."""
+    """A drawn image holds nothing under a clear pixel; in pixel art it is clear, opaque or the
+    shadow's alpha, while a larger viewport antialiases its edges. A shape covers whole cells and
+    is placed by its cell; on_grid() stops a world instance off it."""
     t = template_module()
     t.ROOT = tmp_path
     t.write_png("clear.png", 1, 1, lambda x, y: (1, 2, 3, 0))
     assert png_pixels(tmp_path / "images" / "clear.png") == [[(0, 0, 0, 0)]]
+    t.write_png("soft.png", 1, 1, lambda x, y: (*t.PALETTE["danger"], 37))           # an antialiased edge
+    edge = png_pixels(tmp_path / "images" / "soft.png")[0][0]
+    assert edge == (*t.PALETTE["danger"], 37)
+    t.shape("dot.png", "circle", 64, 64, "danger")
+    dot = png_pixels(tmp_path / "images" / "dot.png")
+    assert {p[:3] for row in dot for p in row if p[3]} == {t.PALETTE["danger"]} and 0 < dot[9][9][3] < 255
+    small = template_module(VIEW="VIEW_W, VIEW_H = 320, 180")
+    small.ROOT = tmp_path
     with pytest.raises(SystemExit, match=r"images/soft.png: alpha 37 at \(0,0\); a drawn image is clear, opaque "
                                          r"or the shadow's 128"):
-        t.write_png("soft.png", 1, 1, lambda x, y: (*t.PALETTE["danger"], 37))
-    t.write_png("glow.png", 1, 1, lambda x, y: (1, 2, 3, 37), painted=True)
+        small.write_png("soft.png", 1, 1, lambda x, y: (*small.PALETTE["danger"], 37))
+    small.write_png("glow.png", 1, 1, lambda x, y: (1, 2, 3, 37), painted=True)
     with pytest.raises(SystemExit, match=r"box.png: 40x32 is not whole units of 32 px; .* 64x32 here"):
         t.shape("box.png", "rect", 40, 32, "reward")
     t.SHAPE_STYLE.update(shadow_angle=225)                          # a shadow up and to the left
@@ -996,7 +1017,7 @@ def test_template_art_shows_the_stand_in_until_its_picture_is_there(tmp_path):
     f = t.art("gem-default-000.png", "circle", 64, 64, "reward", "a red gem")
     assert t.DRAWN_AS["gem-default-000.png"][0] == "circle" and t.ART["gem-default-000.png"]["subject"] == "a red gem"
     stand_in = (tmp_path / "images" / "gem-default-000.png").read_bytes()
-    assert f["width"] == 64                                         # the plain sheet casts no shadow
+    assert f["width"] == 64                                         # the paper casts no shadow
     t.art("sky-default-000.png", "scene", 128, 64, "canvas", "a night sky")
     assert t.drawn("sky-default-000.png")["width"] == 128           # a flat rectangle, no shadow
     with pytest.raises(SystemExit, match=r"art\('x.png'\): 'star' is no kind; art\(\) takes rect, circle, triangle or scene"):
@@ -1106,8 +1127,9 @@ def test_template_shows_a_hit_as_a_frame_of_the_flash_colour(built, tmp_path):
     rest = png_pixels(built / "images" / "coin-default-000.png")
     hit = png_pixels(built / "images" / "coin-default-001.png")
     t = template_module()
-    middle = len(rest) // 3
+    middle = len(rest) // 2
     assert rest[middle][middle][:3] == t.PALETTE["reward"] and hit[middle][middle][:3] == t.PALETTE["flash"]
+    assert rest[0][0][3] == hit[0][0][3] == 0 and len(rest) == t.TOUCH          # a coin drawn SUBJECT wide in a TOUCH box
     assert [[p[3] for p in row] for row in rest] == [[p[3] for p in row] for row in hit]     # same shape and shadow
     coin = json.loads((built / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
     assert [f["tag"] for f in coin["animations"]["items"][0]["frames"]] == ["", "hit"]
@@ -1165,8 +1187,10 @@ def test_template_writes_a_data_file_lists_it_and_loads_it_at_start(project):
             ('    ], sheet="Game")',
              '    ], sheet="Game", nonworld=[nonworld_inst("CardTable", {"width": 1, "height": 1, "depth": 1}), '
              'nonworld_inst("Cards"), nonworld_inst("Settings")])'),
-            ('[on_start()], [set_var("score", "0"), set_text("ScoreText", q("0")),\n                             set_text("RoundText", f\'{q("ROUND ")} & (beat + 1) & {q(" / ")} & \'\n                                                   f\'tokencount(ROUND_COINS, {q(",")})\'),\n                             set_var("deal", f"floor(random({CELLS}))")], children=[',
-             '[on_start()], steps(("Load the cards", load_data_file("CardTable", "CardTable.json")),\n                             ("Load the settings", load_data_file("Settings", "Settings.json")),\n                             ("Empty the score", [set_var("score", "0"), set_text("ScoreText", q("0")),\n                             set_text("RoundText", f\'{q("ROUND ")} & (beat + 1) & {q(" / ")} & \'\n                                                   f\'tokencount(ROUND_COINS, {q(",")})\'),\n                             set_var("deal", f"floor(random({CELLS}))")])), children=[*table_to_dictionary("CardTable", "Cards"), ')):
+            ('[on_start()], [set_var("score", "0"),',
+             '[on_start()], steps(("Load the cards", load_data_file("CardTable", "CardTable.json")),\n                             ("Load the settings", load_data_file("Settings", "Settings.json")),\n                             ("Empty the score", [set_var("score", "0"),'),
+            ('                             set_var("deal", f"floor(random({CELLS}))")], children=[',
+             '                             set_var("deal", f"floor(random({CELLS}))")])), children=[*table_to_dictionary("CardTable", "Cards"), ')):
         assert text.count(old) == 1, old
         text = text.replace(old, new)
     source.write_text(text, encoding="utf-8")
@@ -1224,3 +1248,111 @@ def test_record_table_stops_on_a_field_outside_fields_and_warns_on_a_misspelt_on
         "if they are one field, write 'name' in 'slime'. Otherwise 'name' reads \"\" for 'slime'",
         "warning: record_table('Enemies'): only record 'slime' has the field 'sped', and 2 records have 'speed'; "
         "if they are one field, write 'speed' in 'slime'. Otherwise 'speed' reads 0 for 'slime'"]
+
+
+def test_template_ships_its_fonts_into_the_project(built, tmp_path):
+    """The generated project holds the font files FONT names in fonts/, listed as the editor lists an
+    imported WOFF, and every Text names one of them by its file name. A font the project lacks stops
+    the run, because its Latin letters would draw in the browser's serif; FONT = "system-ui" ships none."""
+    proj = json.loads((built / "project.c3proj").read_text(encoding="utf-8"))
+    listed = proj["rootFileFolders"]["font"]["items"]
+    assert sorted((e["name"], e["type"]) for e in listed) == [
+        ("Inter-Medium.woff", "application/font-woff"), ("Inter-Regular.woff", "application/font-woff"),
+        ("InterDisplay-Light.woff", "application/font-woff")]
+    for e in listed:
+        assert (built / "fonts" / e["name"]).read_bytes() == (SKILL / "assets" / "fonts" / e["name"]).read_bytes()
+    faces = {i["properties"]["font"] for path in (built / "layouts").glob("*.json")
+             for layer in json.loads(path.read_text(encoding="utf-8"))["layers"] for i in layer["instances"]
+             if "font" in i.get("properties", {})}
+    assert faces and faces <= {Path(e["name"]).stem for e in listed}
+    t = template_module()
+    t.ROOT = tmp_path
+    t.skill_file = lambda rel: None
+    t.FONT = {"regular": "Missing-Face"}
+    with pytest.raises(SystemExit, match=r"FONT names 'Missing-Face', and fonts/ holds no Missing-Face.woff"):
+        t.copy_fonts()
+    (tmp_path / "fonts").mkdir()
+    (tmp_path / "fonts" / "Missing-Face.ttf").write_bytes(b"\0")      # the game's own font, already in fonts/
+    t.copy_fonts()
+    assert t._font_files == ["Missing-Face.ttf"]
+    t._font_files.clear()
+    t.FONT = "system-ui"
+    t.copy_fonts()
+    assert t._font_files == []
+
+
+def test_template_helpers_take_the_look_of_a_game_made_before_it():
+    """A game whose generator predates the paper look keeps FONT as one name and TEXT_SIZE as body and
+    title, and has no TEXT_WEIGHT; the helpers a refresh gives it read all three: every weight is that
+    name, a small kind of text is body and a large one title."""
+    t = template_module()
+    t.FONT, t.TEXT_SIZE, t.TEXT_WEIGHT = "system-ui", {"body": 32, "title": 64}, {}
+    assert t.face("light") == "system-ui" and (t.text_size("tag"), t.text_size("number")) == (32, 64)
+    name, value = t.hud_stat("ScoreLabel", "ScoreText", "SCORE", "top-left")
+    assert (name["properties"]["size"], value["properties"]["size"], value["properties"]["font"]) == (32, 64, "system-ui")
+    assert t.hud_header("TitleText", "RoundTag", "Coins", "Round 1")[1]["properties"]["size"] == 32
+
+
+def test_template_header_keys_and_hints(tmp_path):
+    """hud_header() sets the title and, on its baseline, a tag in tracked capitals; hud_keys() a row of
+    keys in thin ink boxes, every part a child of the first box, which alone carries the Anchor; hints()
+    dims that box on the first input and keeps it dim across a restart in a static local."""
+    t = template_module()
+    t.ROOT = tmp_path
+    title, tag = t.hud_header("TitleText", "RoundTag", "Coins", "Round · 01")
+    assert tag["properties"]["text"] == " ".join("ROUND · 01")
+    assert (title["properties"]["font"], tag["properties"]["font"]) == ("Inter-Medium", "Inter-Regular")
+    assert tag["properties"]["color"] == t.rgba(t.PALETTE["dim"]) and title["properties"]["bold"] is False
+    tb, gb = t.box_of(title), t.box_of(tag)
+    assert gb[0] - tb[2] == round(0.6 * t.TEXT_SIZE["title"] * t.PX_PER_PT) and 0 < tb[3] - gb[3] <= 4
+    assert len(t.hud_header("TitleText", "RoundTag", "Coins")) == 1          # no tag, no second Text
+    assert t.tracked_expr('"Round " & beat') == 'RegexReplace(uppercase("Round " & beat), "(.)(?=.)", "g", "$1 ")'
+    round_ = t.hud_tag("RoundTag", "Round · 01 / 06", longest="Round · 10 / 10")
+    assert round_["properties"]["text"] == "\u2005".join("ROUND · 01 / 06")
+    assert (round_["properties"]["size"], round_["properties"]["color"]) == (t.TEXT_SIZE["tag"], t.rgba(t.PALETTE["dim"]))
+    assert t.box_of(round_)[:2] == (t.MARGIN, t.MARGIN) and "Anchor" in round_["behaviors"]
+    assert t.box_of(t.hud_tag("ModeTag", "Hard", "top-right"))[2] == t.VIEW_W - t.MARGIN
+    t.zone_image("KeyBox", None, "ink")
+    keys = t.hud_keys("KeyBox", "KeyText", "KeyVerb", [("Tap", "collect"), ("R", "restart")])
+    assert [i["type"] for i in keys] == ["KeyBox", "KeyText", "KeyVerb"] * 2
+    root = keys[0]
+    assert set(root["behaviors"]) == {"Anchor", "Tween"} and all("Anchor" not in i["behaviors"] for i in keys[1:])
+    assert [c["uid"] for c in root["sceneGraphData"]["children"]] == [i["uid"] for i in keys[1:]]
+    assert (root["properties"]["fill"], root["properties"]["seams"]) == ("transparent", "exact")
+    assert t.box_of(keys[1]) == t.box_of(keys[0])                     # the key's name centred in its box
+    assert t.box_of(keys[3])[0] - t.box_of(keys[2])[2] == round(24 * t.REF)
+    t.no_overlap(keys)
+    group = t.hints("KeyBox")
+    used, blocks = group["children"][0], [e for e in group["children"] if e["eventType"] == "block"]
+    assert (used["name"], used["type"], used["isStatic"]) == ("used", "boolean", True)
+    assert [c["id"] for c in blocks[0]["conditions"]] == ["on-start-of-layout", "compare-boolean-eventvar"]
+    assert [c["id"] for c in blocks[1]["conditions"]] == ["on-any-touch-start", "compare-boolean-eventvar"]
+    assert blocks[1]["conditions"][1].get("isInverted") is True
+    assert blocks[1]["actions"][1]["parameters"]["end-value"] == str(t.HINT_OPACITY) == "35"
+
+
+def test_template_draws_areas_and_rings_as_lines(tmp_path):
+    """An area is a 9-patch of zone_image(), a LINE px edge in solid round the canvas_alt fill, its parts
+    tiled with exact seams so the edge keeps its width; a slot or a reach is a ring, whole or dashed."""
+    t = template_module()
+    t.ROOT = tmp_path
+    t.zone_image("Field")
+    px = png_pixels(tmp_path / "images" / "field.png")
+    assert len(px) == 2 * t.LINE + 2 and px[0][0][:3] == t.PALETTE["solid"] and px[t.LINE][t.LINE][:3] == t.PALETTE["canvas_alt"]
+    area = t.zone("Field", 2, 3, 10, 6)
+    assert t.box_of(area) == (64, 96, 384, 288)
+    assert {k: area["properties"][k] for k in ("edges", "fill", "seams", "left-margin")} == {
+        "edges": "tile", "fill": "tile", "seams": "exact", "left-margin": t.LINE}
+    assert t.zone_type("Field")["plugin-id"] == "NinePatch"
+    with pytest.raises(SystemExit, match=r"zone\('Lake'\): draw its 9-patch first"):
+        t.zone("Lake", 0, 0, 1, 1)
+    for rel, dash in (("slot.png", 0), ("reach.png", 3 * t.LINE)):
+        f = t.ring(rel, t.units(9), "solid", dash=dash)
+        img = png_pixels(tmp_path / "images" / rel)
+        r = (f["width"] - t.LINE) / 2
+        around = [img[int(f["width"] / 2 + r * math.sin(a / 90 * math.pi))][int(f["width"] / 2 + r * math.cos(a / 90 * math.pi))][3]
+                  for a in range(180)]
+        assert {p[:3] for row in img for p in row if p[3]} == {t.PALETTE["solid"]}
+        assert (min(around) == 0) == bool(dash) and max(around) > 200
+    with pytest.raises(SystemExit, match=r"odd.png: 50 px is not whole units of 32 px"):
+        t.ring("odd.png", 50)

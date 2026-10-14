@@ -2044,5 +2044,5 @@ def test_a_short_text_alone_in_the_middle_of_the_screen_is_drawn_at_title_size(p
     """The judged countdown drawn at body size, the only thing on its screen (2026-10-09). A HUD line in a
     corner, a title-sized number and a sentence pass."""
     out = screen_text(project, change)
-    lines = [w for w in warnings(out) if "title size" in w]
+    lines = [w for w in warnings(out) if "banner size" in w]
     assert (len(lines) == 1 and said in lines[0] and 'Set its "size" to 64' in lines[0] if said else not lines), out

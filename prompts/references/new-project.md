@@ -55,21 +55,35 @@ Construct-Example-Projects, 2026-09-18]
   whole numbers. The generator template holds these as `PALETTE` and
   `rgb()`, the colour check of `write_png()`, `FONT` and `TEXT_SIZE`, the
   contrast check of `hud_text()`, `PIXEL_ART` and `FULLSCREEN`.
-- Until the art arrives, a generated game is a plain sheet: flat shapes on
-  an off-white canvas that fills the screen, without outlines, shadows,
-  cards or panels. Lightness shows the hierarchy, from the canvas through a
-  solid grey to ink. Two accents mark what is collected and what hurts, each
-  at least 3:1 on the canvas by colour alone.
-  Labels are in the platform's own face, `system-ui`, with no font file;
-  a number the player plays for is large and regular under a small dim
-  name. A rectangle is the player or structure, a
-  circle what is collected, a triangle what hurts. Where something is
-  transparent, a mask, or a background still to come, the backdrop is the
-  transparency checker instead. An area or an edge is a striped Tiled
-  Background, and objects stay flat. A level is a run of beats, each asking
-  one thing, with a rest after every hard one. The generator template holds
-  these as `PALETTE`, `shape()`, `PATTERNS`, `area()`, `backdrop()` and
-  `BEATS`; the record is `docs/decisions/greybox-blockout.md`.
+- Until the art arrives, a generated game is paper and ink: flat shapes on
+  a warm paper that fills the screen, without shadows, cards or panels.
+  Lightness shows the hierarchy. The player is the one solid ink mass,
+  structure the faintest thing on the screen, and one accent marks what is
+  collected, what hurts and what is hit, at least 3:1 on the paper by colour
+  alone. A rectangle is the player or structure, a circle what is
+  collected, a triangle what hurts. The player and what it acts on are
+  drawn about 6% of the viewport's shorter side across, small in a large
+  field; what is tapped keeps a finger-sized box around its drawing. An
+  area, a board or a range is drawn as lines: a thin edge over a faint
+  fill, a ring for a slot, a dashed ring for a reach. An area with a rule
+  of its own, a door or lava, is a striped Tiled Background. Where
+  something is transparent, a mask, or a background still to come, the
+  backdrop is the transparency checker instead. A level is a run of beats,
+  each asking one thing, with a rest after every hard one. The generator
+  template holds these as `PALETTE`, `SUBJECT`, `shape()`, `zone()`,
+  `ring()`, `PATTERNS`, `area()`, `backdrop()` and `BEATS`; the records are
+  `docs/decisions/paper-and-ink-look.md` and
+  `docs/decisions/greybox-blockout.md`.
+- Labels are Inter, which the skill ships in three weights; Chinese falls
+  back to the platform's face. A weight is a font file, so a label is never
+  bold. The screen the player plays on shows no game name: the round, the
+  level or the mode is a small tracked tag top left, a number the player
+  plays for is large and light under a small dim name, and the controls are
+  keys in thin ink boxes with their verbs. The keys and verbs dim once the
+  player has used them. The generator template holds these as `FONT`,
+  `TEXT_SIZE`, `hud_tag()`, `hud_stat()`, `hud_keys()` and `hints()`, with
+  `hud_header()` for a menu's or a result screen's title, and copies the
+  font files into `fonts/`.
 - The art arrives through the template's `art()`, in the boxes of the
   stand-ins: from the session's image tool by way of the skill's
   `prepare_art.py`, or from the user. It is not drawn in code, which looks
@@ -79,7 +93,8 @@ Construct-Example-Projects, 2026-09-18]
   examples' x and five sixths of their widths sit on it), 32 px at 1920×1080
   (half of their x, three fifths of their widths). Use whole numbers, angle 0
   unless the object should lean. The HUD is on the parallax-0 layer, against
-  a corner or an edge, one unit inside it (the examples' edge offsets are 0,
+  a corner or an edge, a fifteenth of the shorter side inside it in whole
+  units, two units (64 px) at 1920×1080 (the examples' edge offsets are 0,
   one unit or two). The screen's middle is for the game. On a TV, graphics
   stay 5% inside every edge (EBU R95). A tapped object is at least a finger
   wide: 48 dp (Android accessibility help), 44 pt (Apple HIG,

@@ -187,7 +187,7 @@ Traps of the running game are warnings:
   not known here. Over the official examples: 6 findings in 6 projects;
 - a Text of 12 characters or fewer, on one line, in the middle third of a
   screen that shows nothing but one or two such texts, drawn under the
-  template's title size, 2 UNIT pt: it is what the screen is about, a
+  template's banner size, 2 UNIT pt: it is what the screen is about, a
   countdown or a count. Over the official examples it adds no finding;
 - `find` or `findcase` whose first argument is a one-character text literal
   and whose second is not a literal: `find(text, find)` searches the first,

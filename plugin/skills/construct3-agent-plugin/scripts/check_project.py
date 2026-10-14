@@ -1235,7 +1235,7 @@ class Checker:
     def check_screen_text(self, lname: str, lay: dict) -> None:
         """Warnings on the texts a layout shows as it starts: one whose aligned side touches the screen's edge,
         one that reads under TEXT_CONTRAST:1 against the layer colour behind it, and a short text that is all
-        the screen shows drawn under the template's title size. A text behind which another object, an effect
+        the screen shows drawn under the template's banner size. A text behind which another object, an effect
         or a global layer may lie is left out of the contrast, since what shows there is not known here."""
         data = self.p.data
         vw, vh = data.get("viewportWidth"), data.get("viewportHeight")
@@ -1295,8 +1295,8 @@ class Checker:
             self.warn(f"{here}: {otype} {text!r} stands in the middle of a screen that shows nothing but "
                       f"{'two short texts' if len(texts) > 1 else 'this text'}, so it is what the screen is about, "
                       f"and at {size:g} pt it draws about {round(size * 4 / 3)} px high on a {vh:g} px high "
-                      f"viewport. Set its \"size\" to {2 * unit} or more, the template's title size "
-                      f"(TEXT_SIZE[\"title\"]), and its box to fit")
+                      f"viewport. Set its \"size\" to {2 * unit} or more, the template's banner size "
+                      f"(TEXT_SIZE[\"display\"]), and its box to fit")
 
     def text_at_edge(self, here: str, name: str, world: dict, props: dict, vw: float, vh: float, unit: int) -> None:
         """A text on the screen whose aligned side lies at or past the screen's edge: its first or last letter

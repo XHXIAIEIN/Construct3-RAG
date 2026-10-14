@@ -12,7 +12,7 @@ def png_chunk(tag: bytes, data: bytes) -> bytes:
 
 def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     code, out = tool(project, "check_look")
-    assert code == 0 and out.splitlines()[-1].startswith("ok: 4 images, 3 world instances on a 32 px grid, "
+    assert code == 0 and out.splitlines()[-1].startswith("ok: 6 images, 4 world instances on a 32 px grid, "
                                                           "1 runtime creations"), out
     t = template_module()
     t.ROOT = project
@@ -28,12 +28,15 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     code, out = tool(project, "check_look")
     assert code == 1, out
     assert "alpha.pure: images/dirty.png has 1 clear pixels that hold a colour, the first at (0,0)" in out
-    assert re.search(r"alpha.pure: images/glow.png has alpha 37 at \(0,0\); the project's shadow is 128.*--painted glow.png", out)
+    assert "glow.png" not in out                    # above pixel art an edge keeps its antialiasing
     assert re.search(r"grid.world-placement: layout Objects layer Objects: Coin at \(\d+,\d+\) \d+x\d+ is off the 32 px grid", out)
     assert "grid.runtime-spawn: sheet Game: create Coin at x = random(96, 1728), a raw random()" in out
-    assert out.splitlines()[-1].startswith("4 findings:")
-    _, out = tool(project, "check_look", "--painted", "glow.png")
-    assert "glow.png" not in out and out.splitlines()[-1].startswith("3 findings:")
+    assert out.splitlines()[-1].startswith("3 findings:")
+    # On the grid of pixel art an image is clear, opaque or the shadow, unless it is named as a painting
+    _, out = tool(project, "check_look", "--unit", "8")
+    assert re.search(r"alpha.pure: images/glow.png has alpha 37 at \(0,0\); the project's shadow is \d+.*--painted glow.png", out)
+    _, out = tool(project, "check_look", "--unit", "8", "--painted", "glow.png")
+    assert "glow.png" not in out
     edit(project, "objectTypes/Coin.json", lambda d: d["behaviorTypes"].append(
         {"behaviorId": "Flash", "name": "Flash", "sid": 633333333333333}))
     _, out = tool(project, "check_look", "--painted", "glow.png")

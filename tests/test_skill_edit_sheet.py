@@ -53,7 +53,7 @@ def test_plan_puts_events_in_by_the_numbers_the_sheet_has_now(project):
                          {"id": "set-scale", "objectClass": "Coin", "parameters": {"scale": "1.5"}}]}]},
                      {"after": 8, "events": [{"eventType": "comment", "text": "Countdown."}, TIMER]})
     assert code == 0, out
-    assert out.splitlines()[0] == "Game: 4 operations, 9 events before and 12 now, 8 new sids"
+    assert out.splitlines()[0] == "Game: 4 operations, 12 events before and 15 now, 8 new sids"
     assert out.splitlines()[-1].startswith("ok:") and "open_in_editor" not in out     # the closing check names it
     sheet = printed(project)
     assert ("     global number beat = 0\n         // The round being played, from 0; a global keeps it across the "
@@ -364,7 +364,7 @@ def test_dry_run_checks_and_shows_and_writes_nothing(project):
 
 
 @pytest.mark.parametrize("operation, said", [
-    ({"after": 40, "events": [TIMER]}, "40 is not an event of the sheet, which has 9"),
+    ({"after": 40, "events": [TIMER]}, "40 is not an event of the sheet, which has 12"),
     ({"after": 8}, 'needs "events"'),
     ({"after": 8, "before": 2, "events": [TIMER]}, "an operation is one of"),
     ({"after": 8, "event": [TIMER]}, "an operation is one of"),

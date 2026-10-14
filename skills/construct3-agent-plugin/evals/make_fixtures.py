@@ -335,10 +335,10 @@ def big_sheet() -> dict:
         text = group(f"Wave {n} text", f"第{n}波的提示文字", [
             comment("波次开始时在回合文字上显示第几波，清场时换成清场提示"),
             block([wave_is(n), ace("trigger-once-while-true")],
-                  [ace("set-text", "RoundText", text=f'"第{n}波"')]),
+                  [ace("set-text", "RoundTag", text=f'"第{n}波"')]),
             block([wave_is(n), ace("compare-eventvar", variable="spawnLeft", comparison=0, value="0"),
                    ace("compare-two-values", **{"first-value": "Coin.Count", "comparison": 0, "second-value": "0"})],
-                  [ace("set-text", "RoundText", text='"清场"')]),
+                  [ace("set-text", "RoundTag", text='"清场"')]),
             block([wave_is(n), ace("compare-eventvar", variable="waveScore", comparison=5, value=str(30 + 3 * n))],
                   [ace("set-text", "ScoreLabel", text='"好"')]),
         ])
