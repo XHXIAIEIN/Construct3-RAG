@@ -140,7 +140,7 @@ def test_template_draws_an_accent_that_shows_without_its_outline_and_a_fill_the_
     t.shape("player.png", "rect", 32, 64, "ink", outline=True)                   # the player is ink, its outline too
     t.PALETTE["dim"] = (60, 60, 60)
     with pytest.raises(SystemExit, match=r"shade.png: its dim fill reads 1\.\d:1 against its ink outline, which needs "
-                                         r"3:1 to show; fill it in one of canvas, canvas_alt, line, solid, reward, danger, flash"):
+                                         r"3:1 to show; fill it in one of canvas, canvas_alt, line, solid, reward, danger, pressed, flash"):
         t.shape("shade.png", "rect", 32, 32, "dim", outline=True)
 
 
@@ -156,7 +156,7 @@ def test_template_palette_keeps_the_ratios_of_the_blockout():
                       ("danger", "canvas_alt"): 3.68, ("ink", "solid"): 4.52, ("ink", "reward"): 3.59,
                       ("ink", "danger"): 4.47}
     t.check_palette()
-    assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger"]
+    assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger", "pressed"]
     t.PALETTE["canvas_alt"] = (200, 200, 200)
     with pytest.raises(SystemExit, match=r"PALETTE: canvas .* and canvas_alt .* are 1\.\d\d:1; the backdrop's two greys "
                                          r"stay at most 1\.2:1"):
@@ -1357,38 +1357,29 @@ def test_template_draws_areas_and_rings_as_lines(tmp_path):
         t.ring("odd.png", 50)
 
 
-def test_template_rings_what_the_pointer_is_over_once_the_outline_is_on(tmp_path):
-    """OUTLINE is off and the outline_*() helpers then add nothing, so a game calls them either way. On, the ring
-    of an object is its image grown by 3 px at 1080 and softened, in its side's colour, with a hard 2 px frame at
-    85%; it sits behind the object as its child, off the grid, and its group shows it on hover and pulses it on a
-    touch to 9 px at 0.13 s and 4 px at 0.25 s, back at 0.69 s."""
+
+def test_template_shows_the_pointer_as_colours_once_it_is_on(tmp_path):
+    """POINTER is off and the pointer_*() helpers then add nothing, so a game calls them either way. On, an
+    object's image gets two more frames, the same shape in ink tagged "hover" and in the pressed yellow inside the
+    ink outline tagged "pressed", and its group turns the one the mouse is over the hover colour and back, and a
+    touched one the pressed colour for an instant; hit(obj, frame="pressed") flashes it instead of the hit's."""
     t = template_module()
     t.ROOT = tmp_path
     t.shape("coin-default-000.png", "circle", 160, 160, "reward")
-    assert t.OUTLINE is False
-    t.outline_images("Coin", "coin-default-000.png", "neutral")
-    assert not (tmp_path / "images" / "coinoutline-default-000.png").exists()
-    assert (t.outline_types("Coin"), t.outline_create("Coin", "Game"), t.outline_module("Coin")) == ({}, [], [])
-    t.OUTLINE = True
-    with pytest.raises(SystemExit, match=r"'friend' is no side; the sides are enemy, neutral, own, ally"):
-        t.outline_images("Coin", "coin-default-000.png", "friend")
-    t.outline_images("Coin", "coin-default-000.png", "neutral")
-    soft = png_pixels(tmp_path / "images" / "coinoutline-default-000.png")
-    hard = png_pixels(tmp_path / "images" / "coinoutline-default-001.png")
-    assert len(soft) == len(soft[0]) == len(hard) == 160 + 2 * (3 + 3)          # the ring and its blur
-    middle = len(soft) // 2
-    assert [p[3] for p in soft[middle][:7]] == [9, 38, 94, 161, 217, 246, 255]   # the coin's edge at x 6
-    assert [p[3] for p in hard[middle][:5]] == [0, 0, 0, 0, 255]
-    assert {p[:3] for row in soft for p in row if p[3]} == {t.PALETTE["danger"]}
-    assert {p[:3] for row in hard for p in row if p[3]} == {tuple(round(c * 0.85) for c in t.PALETTE["danger"])}
-    assert sorted(t.outline_types("Coin")) == ["CoinOutline", "Mouse"]
-    coin = t.shape_inst("Coin", "coin-default-000.png", 4, 4)
-    ring, = t.outline_inst(coin)
-    assert (ring["world"]["x"], ring["world"]["width"], ring["properties"]["initially-visible"]) == (208, 172, False)
-    assert ring["sceneGraphData"]["parent-uid"] == coin["uid"] and ring["sceneGraphData"]["flags"]["v"] is False
-    assert [i["type"] for i in t.z_order([coin, ring])] == ["CoinOutline", "Coin"]
-    t.on_grid([coin, ring], "layer Game")
-    assert [a["id"] for a in t.outline_create("Coin", "Game")] == ["create-object", "add-child", "move-to-object"]
+    t.hit_frame("coin-default-000.png")
+    assert t.POINTER is False
+    t.pointer_frames("coin-default-000.png")
+    assert not (tmp_path / "images" / "coin-default-002.png").exists()
+    assert (t.pointer_drawn("coin-default-000.png"), t.pointer_types(), t.pointer_module("Coin")) == ([], {}, [])
+    t.POINTER = True
+    t.pointer_frames("coin-default-000.png")
+    hover = png_pixels(tmp_path / "images" / "coin-default-002.png")
+    pressed = png_pixels(tmp_path / "images" / "coin-default-003.png")
+    middle = len(hover) // 2
+    assert hover[middle][middle][:3] == t.PALETTE["ink"] and pressed[middle][middle][:3] == t.PALETTE["pressed"]
+    assert pressed[middle][1][:3] == t.PALETTE["ink"]                              # its ink outline
+    assert [f["tag"] for f in t.pointer_drawn("coin-default-000.png")] == ["hover", "pressed"]
+    assert sorted(t.pointer_types()) == ["Mouse"]
 
     def aces(node):
         if isinstance(node, dict):
@@ -1399,11 +1390,9 @@ def test_template_rings_what_the_pointer_is_over_once_the_outline_is_on(tmp_path
             for v in node:
                 yield from aces(v)
 
-    group = t.outline_module("Coin", selected="selected")
-    assert {"cursor-is-over-object", "pick-children", "is-boolean-instance-variable-set", "is-playing",
-            "on-touched-object"} <= {a["id"] for a in aces(group)}
-    assert [(a["parameters"]["end-x"], a["parameters"]["time"]) for a in aces(group)
-            if a["id"] == "tween-two-properties"] == [("Coin.Width * 1.0750 + 12", "0.13"),
-                                                      ("Coin.Width * 1.0750 + 2", "0.12"),
-                                                      ("Coin.Width * 1.0750 + 0", "0.44")]
-    assert [a["parameters"]["seconds"] for a in aces(group) if a["id"] == "wait"] == ["0.13", "0.12"]
+    group = t.pointer_module("Coin")
+    frames = [a["parameters"]["frame-number"] for a in aces(group) if a["id"] == "set-animation-frame"]
+    assert frames == ['"hover"', "0", '"pressed"', "0"]
+    assert {"cursor-is-over-object", "compare-animation-frame-tag", "on-touched-object"} <= {a["id"] for a in aces(group)}
+    assert [a["id"] for a in aces(t.pointer_module("Coin", pressed=False))].count("on-touched-object") == 0
+    assert t.hit("Coin", frame="pressed")[-3]["parameters"]["frame-number"] == '"pressed"'

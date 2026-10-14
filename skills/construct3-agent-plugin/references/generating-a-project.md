@@ -373,17 +373,16 @@ habits; they are what makes rerunning safe.
   over the fill, and a reach is a dashed `ring()`. A slot is a disc of
   `canvas_alt` the size of what fills it, and a board of slots has no
   frame.
-- A game that selects or targets units sets `OUTLINE = True`; the
-  template's default is `False`, and the `outline_*()` helpers then add
-  nothing. On, `outline_images(type, file, side)` in `build_images()` draws
-  the ring of the type's image in the colour of `side`, `enemy`,
-  `neutral`, `own` or `ally`; `types |= outline_types(type)` declares
-  `<type>Outline` and the Mouse; `outline_inst(inst)` puts a ring behind a
-  layout instance, and `*outline_create(type, layer)` after `create(type,
-  ...)` gives one to an instance the events create, whose template
-  instance takes `outline_inst()` too; `*outline_module(type,
-  selected="selected")` in the sheet shows it, frame 1 round an instance
-  whose boolean instance variable `selected` is set.
+- A game the player points at things in sets `POINTER = True`; the
+  template's default is `False`, and the `pointer_*()` helpers then add
+  nothing. On, `pointer_frames(file)` in `build_images()`, after
+  `hit_frame(file)`, draws the image's hover frame in ink and its pressed
+  frame in yellow inside the ink outline; `*pointer_drawn(file)` ends the
+  type's animation, `types |= pointer_types()` declares the Mouse, and
+  `*pointer_module(type)` in the sheet turns the hovered one ink and a
+  touched one yellow for an instant. An object a touch already hits, the
+  stand-in's coin, takes `pointer_module(type, pressed=False)` and
+  `hit(type, frame="pressed")`.
   The backdrop is `backdrop("Backdrop")` on a layer at parallax
   1, of `pattern("Backdrop", "plain")`, reaching `SCREEN_PAD` past the
   viewport so the screen shows no edge of it. A popup's dim is laid out
