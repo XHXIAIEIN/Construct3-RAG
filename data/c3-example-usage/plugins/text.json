@@ -7,10 +7,10 @@
   },
   "actions": {
     "append-text": {"examples": 18, "read": [["system-wait", "Event sheet 1", 1, 1], ["json", "Event sheet 1", 3, 4], ["xml", "Event sheet 1", 3, 4]]},
-    "set-font-color": {"examples": 24, "read": [["effects-glass", "Event sheet 1", 1, 1], ["effects-oldtv", "Event sheet 1", 1, 1], ["effects-haze", "Event sheet 1", 1, 1]]},
+    "set-font-color": {"examples": 25, "read": [["effects-glass", "Event sheet 1", 1, 1], ["effects-oldtv", "Event sheet 1", 1, 1], ["effects-haze", "Event sheet 1", 1, 1]]},
     "set-font-face": {"examples": 3, "read": [["cgs-leaderboards", "ShowScoresEvents", 5, 5], ["audio-positioning", "Event sheet 1", 3, 3], ["audio-effects", "Event sheet 1", 19, 19]]},
-    "set-font-size": {"examples": 5, "read": [["gift-guesser", "Code", 11, 11], ["fruit-merger", "Events", 18, 18], ["reveal-the-tiles", "GameEvents", 50, 50]]},
-    "set-text": {"examples": 134, "read": [["effects-glass", "Event sheet 1", 1, 1], ["effects-oldtv", "Event sheet 1", 1, 1], ["sine-behavior-types", "Event sheet 1", 1, 1]]},
+    "set-font-size": {"examples": 6, "read": [["gift-guesser", "Code", 11, 11], ["fruit-merger", "Events", 18, 18], ["reveal-the-tiles", "GameEvents", 50, 50]]},
+    "set-text": {"examples": 143, "read": [["effects-glass", "Event sheet 1", 1, 1], ["effects-oldtv", "Event sheet 1", 1, 1], ["sine-behavior-types", "Event sheet 1", 1, 1]]},
     "typewriter-finish": {"examples": 5, "read": [["custom-visual-novel-engine", "Events", 29, 29], ["visual-novel-sniff-and-fetch", "Events", 6, 6], ["kitty-katcher", "Gameplay", 33, 33]]},
     "typewriter-text": {"examples": 10, "read": [["icons-in-text", "Event sheet 1", 1, 1], ["animated-text-effects", "Event sheet 1", 8, 8], ["kitty-katcher", "Credits", 4, 4]]},
     "update-html": {"examples": 1, "read": [["text-icons-to-html", "Event sheet 1", 1, 1]]}
@@ -18,7 +18,7 @@
   "expressions": {
     "as-html": {"examples": 1, "read": [["text-icons-to-html", "Event sheet 1", 1, 1]]},
     "facesize": {"examples": 2, "read": [["fruit-merger", "Events", 18, 18], ["reveal-the-tiles", "GameEvents", 48, 48]]},
-    "text": {"examples": 25, "read": [["icons-in-text", "Event sheet 1", 1, 1], ["animated-text-effects", "Event sheet 1", 1, 1], ["kitty-katcher", "Credits", 4, 4]]},
+    "text": {"examples": 27, "read": [["icons-in-text", "Event sheet 1", 1, 1], ["animated-text-effects", "Event sheet 1", 1, 1], ["kitty-katcher", "Credits", 4, 4]]},
     "textheight": {"examples": 3, "read": [["flowchart-questionnaire", "Event sheet 1", 5, 5], ["kitty-katcher", "Gameplay", 35, 35], ["text-based-adventure", "Events", 4, 4]]},
     "textwidth": {"examples": 2, "read": [["flowchart-questionnaire", "Event sheet 1", 5, 5], ["kitty-katcher", "Gameplay", 35, 35]]}
   }

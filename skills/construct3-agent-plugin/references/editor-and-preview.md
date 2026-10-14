@@ -110,6 +110,36 @@ which cases to play and how to reach and read them to
   `AnalyserNode` on the same point. [source: `open_in_editor.py`, the
   comment at `--mute-audio`; the user's rule, 2026-09-30, that a test must
   not play sound through their speakers]
+- `Page.captureScreenshot` draws at most 16384 device pixels of a window's
+  height. Past that height the picture starts over with the top of the
+  window or stays blank, and no error is raised. Keep the window no taller
+  than the smaller of 16384 and the `MAX_TEXTURE_SIZE` of a WebGL context,
+  in device pixels, and scroll the page so that the part to capture is at
+  the top. `scripts/screenshot_sheet.py` does both. [observed in the r505
+  editor, Edge 156 headless, 2026-10-14: a 26 238 px picture of a 204-event
+  sheet started over with the sheet's first rows at 16 384 px and ended on
+  event 80; WebGL reported 16384]
+- The editor draws a notice over the top of an event sheet. The notice is a
+  fixed element inside the element that holds the open pane, so it is not a
+  top-level element of the page. Before a capture, hide each fixed, absolute
+  or sticky element that overlaps the area to capture, except the pane and
+  the elements that hold it, as `scripts/screenshot_sheet.py` does.
+  [observed in the r505 editor as a guest, 2026-10-14]
+- Edge started with `__COMPAT_LAYER` in its environment, the Windows
+  application compatibility layer (`DetectorsAppHealth` where this was
+  seen), starts the browser again as its own child, without the layer and
+  with `--edge-skip-compat-layer-relaunch`, then exits with code 0 within a
+  tenth of a second. A script that stops waiting for `DevToolsActivePort`
+  when its process exits gives up on a browser that comes up a moment later
+  and runs on without a parent. A script that waits for that process at the
+  close returns while the browser still answers, so the next start takes a
+  closing browser over. `open_in_editor.py` starts the browser without the
+  variable and waits for the port its full 15 seconds. At the close it waits
+  until the profile's `lockfile` is gone, because the browser holds it open
+  while it runs. [observed in Edge 156 headless, 2026-10-14: 11 of 60 starts
+  failed, each launched process had exited 0 with the browser as its child;
+  with these waits 160 of 160 started, 60 of them with the variable left in,
+  and no `msedge.exe` stayed on the profile after a close]
 - A browser started with `--user-data-dir=\\?\<path>`, the prefix that lifts
   MAX_PATH, writes no cookie file, so a third-party login (GitHub) is gone at
   the next start; `open_in_editor.py` adds the prefix only to a long path.

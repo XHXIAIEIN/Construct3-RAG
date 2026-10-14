@@ -69,7 +69,7 @@ The project skill and the prompts:
 | `project-format-guide.md` | Where each statement of Scirra's project format guide, the one `llm-context.md` links, is written and what checks it, and how its copy in `data/c3-guides/` is kept |
 | `preview-player.md` | Why a preview is played from a JSON plan of steps, and what the steps cover |
 | `runtime-graded-evals.md` | Why the skill's evals play each run's game from a plan beside the file assertions, which cases are held out of tuning, and what each run records |
-| `sheet-screenshot.md` | Why a picture of an event sheet is taken in the editor by `screenshot_sheet.py`, with its columns fitted and the picture cropped to the sheet |
+| `sheet-screenshot.md` | Why a picture of an event sheet is taken in the editor by `screenshot_sheet.py`, with its columns fitted and the picture cropped to the sheet, and why a sheet taller than the browser captures is taken one group at a time |
 | `typescript-definitions-from-the-editor.md` | Why the editor writes a project's own TypeScript definitions, through `open_in_editor.py --typescript`, and when the checker warns that they are stale |
 | `game-design-prototype.md` | Why a new game starts as a design whose rules a local prototype plays before the build, and how the same tests reach the editor |
 | `event-sheet-design-guidance.md` | The event sheet prompts, the style checks and the generator's placement helpers |

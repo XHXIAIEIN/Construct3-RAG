@@ -37,6 +37,8 @@ declare class ILayout extends ConstructEventTarget<LayoutEventMap>
     sampling: SamplingModeOrAutoType;
     readonly activeSampling: SamplingModeType;
 
+    ambientLight: number;
+
     getLayer(nameOrIndex: LayerParameter): IAnyProjectLayer | null;
     getAllLayers(): IAnyProjectLayer[];
     allLayers(): Generator<IAnyProjectLayer>;

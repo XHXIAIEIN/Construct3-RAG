@@ -21,5 +21,7 @@ declare class I3DCameraObjectType<InstType extends IInstance = IInstance> extend
 	getRightVector(): Vec3Arr;
 	getForwardVector(): Vec3Arr;
 	getLookVector(): Vec3Arr;
+
+	/** @deprecated Only applicable for legacy Z axis scale 'Normalized' which is no longer supported. Now always returns 1. */
 	readonly zScale: number;
 }

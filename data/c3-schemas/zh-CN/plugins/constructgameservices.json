@@ -36,8 +36,8 @@
             "any-get-cloud-save": "任意读取完成",
             "get-xp": "获取XP",
             "get-xp-ranks": "获取等级",
-            "get-active-xp-bonuses": "获得当前经验奖励",
-            "get-upcoming-xp-bonuses": "获取即将到来经验奖励",
+            "get-active-xp-bonuses": "获得当前经验值奖励",
+            "get-upcoming-xp-bonuses": "获取即将到来经验值奖励",
             "get-broadcast-channels": "获取广播频道",
             "get-broadcast-messages": "获取广播消息",
             "get-broadcast-message": "获取广播消息",
@@ -94,8 +94,8 @@
             "any-get-cloud-save": "任意获取完成",
             "get-xp": "获取XP",
             "get-xp-ranks": "获取等级",
-            "get-active-xp-bonuses": "获得当前经验奖励",
-            "get-upcoming-xp-bonuses": "获得即将到来的经验奖励",
+            "get-active-xp-bonuses": "获取当前经验值奖励",
+            "get-upcoming-xp-bonuses": "获取即将到来的经验值奖励",
             "get-broadcast-channels": "获取公告频道",
             "get-broadcast-messages": "获取公告消息",
             "get-broadcast-message": "获取公告消息",
@@ -143,10 +143,10 @@
           "name": "类型",
           "desc": "收到的通知类型。",
           "items": {
-            "new-broadcast-message": "新广播消息",
+            "new-broadcast-message": "新公告消息",
             "achievement-awarded": "玩家成就奖励",
-            "xp-changed": "玩家经验值变化",
-            "xp-rank-changed": "玩家经验等级阶段变化"
+            "xp-changed": "经验值变化",
+            "xp-rank-changed": "等级变化"
           }
         }
       },
@@ -165,17 +165,17 @@
       "id": "is-xp-rank-change-promotion",
       "scriptName": "IsXPRankChangePromotion",
       "category": "notifications",
-      "list-name": "经验等级变更是否可晋升\n",
-      "display-text": "XP 等级变更即晋升",
-      "description": "玩家经验等级的变化是否意味着晋升？如果不是，则表示玩家的经验等级被降级了。"
+      "list-name": "即将晋升",
+      "display-text": "即将晋升",
+      "description": "经验值变化时，是否满足晋升所需经验。若不是，则表示玩家被降级了。"
     },
     {
       "id": "is-achievement-progressive",
       "scriptName": "IsAchievementProgressive",
       "category": "achievements",
-      "list-name": "是阶段性成就",
-      "display-text": "成就 [b]{0}[/b]  是阶段性成就",
-      "description": "检测这项成就是否为阶段性成就。",
+      "list-name": "是分步成就",
+      "display-text": "成就 [b]{0}[/b] 是分步成就",
+      "description": "分布成就类型需要玩家逐步取得成就，达成里程碑、阶段。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -188,9 +188,9 @@
       "id": "is-achievement-client-progress-allowed",
       "scriptName": "IsAchievementClientProgressAllowed",
       "category": "achievements",
-      "list-name": "is-achievement-client-progress-allowed",
-      "display-text": "",
-      "description": "",
+      "list-name": "客户端可获得成就进度",
+      "display-text": "客户端可获得成就 [b]{0}[/b] 进度",
+      "description": "检测客户端是否可获得成就或进度。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -203,9 +203,9 @@
       "id": "is-achievement-increment-only",
       "scriptName": "IsAchievementIncrementOnly",
       "category": "achievements",
-      "list-name": "is-achievement-increment-only",
-      "display-text": "",
-      "description": "",
+      "list-name": "仅增量统计",
+      "display-text": "[b]{0}[/b] 仅增量统计",
+      "description": "检测成就的类型是否仅增量统计，此数值只能随着时间增加。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -220,7 +220,7 @@
       "category": "achievements",
       "list-name": "是隐藏成就",
       "display-text": "成就 [b]{0}[/b] 是隐藏成就",
-      "description": "检测该成就是否为隐藏成就",
+      "description": "隐藏成就在达成之前不会显示在用户社区页面中。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -264,7 +264,7 @@
       "scriptName": "IsBroadcastMessageUnread",
       "category": "broadcasts",
       "list-name": "是未读消息",
-      "display-text": "是未读消息 [b]{0}[/b]",
+      "display-text": "[b]{0}[/b] 是未读消息",
       "description": "检查这条消息当前玩家尚未阅读。",
       "params": {
         "messageID": {
@@ -617,7 +617,7 @@
         "value": {
           "type": "number",
           "name": "步进值",
-          "desc": "对于非渐进式成就，应奖励多少枚奖章？对于渐进式成就，应奖励的步进值是多少？"
+          "desc": "对于非阶段性成就，应奖励的奖章数量。对于阶段性成就，应奖励的进度值。"
         }
       },
       "isAsync": true
@@ -709,8 +709,8 @@
       "id": "get-xp-ranks",
       "scriptName": "GetXPRanks",
       "category": "xp",
-      "list-name": "获得所有等级",
-      "display-text": "获得全部经验值排名",
+      "list-name": "获取全部等级",
+      "display-text": "获取全部经验值排名",
       "description": "获取按顺序排列的所有经验排名。",
       "isAsync": true
     },
@@ -718,18 +718,18 @@
       "id": "get-xp-active-bonuses",
       "scriptName": "GetActiveXPBonuses",
       "category": "xp",
-      "list-name": "获得当前经验加成",
-      "display-text": "获得当前经验奖励",
-      "description": "获得当前所有活跃的经验加成。",
+      "list-name": "获取当前经验值加成",
+      "display-text": "获取当前经验值奖励",
+      "description": "获取全部有效经验值加成。",
       "isAsync": true
     },
     {
       "id": "get-xp-upcoming-bonuses",
       "scriptName": "GetUpcomingXPBonuses",
       "category": "xp",
-      "list-name": "获得即将到来的经验值奖励",
-      "display-text": "获取即将到来的经验值奖励，截至到[b]{0}[/b]",
-      "description": "获取所有即将到来的经验值奖励。",
+      "list-name": "获取即将到来的经验值奖励",
+      "display-text": "获取即将到来的经验值奖励 (截至到[b]{0}[/b])",
+      "description": "获取全部即将到来的经验值奖励。",
       "params": {
         "endDate": {
           "type": "number",
@@ -1750,11 +1750,114 @@
       "returnType": "string"
     },
     {
+      "id": "get-new-broadcast-message-channel-id",
+      "scriptName": "NewBroadcastMessageChannelID",
+      "category": "notifications",
+      "translated-name": "新公告频道ID",
+      "description": "新公告的频道ID",
+      "returnType": "string"
+    },
+    {
+      "id": "get-new-broadcast-message-message-id",
+      "scriptName": "NewBroadcastMessageMessageID",
+      "category": "notifications",
+      "translated-name": "新公告消息ID",
+      "description": "新公告的ID",
+      "returnType": "string"
+    },
+    {
+      "id": "get-awarded-achievement-achievement-id",
+      "scriptName": "AwardedAchievementID",
+      "category": "notifications",
+      "translated-name": "本次获得的成就ID",
+      "description": "本次获得的成就 ID。",
+      "returnType": "string"
+    },
+    {
+      "id": "get-awarded-achievement-awarded-count",
+      "scriptName": "AwardedAchievementAwardedCount",
+      "category": "notifications",
+      "translated-name": "本次成就获得次数",
+      "description": "本次获得此成就的次数。",
+      "returnType": "number"
+    },
+    {
+      "id": "get-xp-changed-change",
+      "scriptName": "XPChange",
+      "category": "notifications",
+      "translated-name": "经验值变化量",
+      "description": "要发生变化的经验值",
+      "returnType": "number"
+    },
+    {
+      "id": "get-xp-changed-current-xp",
+      "scriptName": "XPChangeCurrentXP",
+      "category": "notifications",
+      "translated-name": "变化后的经验值",
+      "description": "玩家当前的经验值",
+      "returnType": "number"
+    },
+    {
+      "id": "get-xp-rank-changed-old-rank-id",
+      "scriptName": "XPRankChangeOldRankID",
+      "category": "notifications",
+      "translated-name": "经验等级变化前的等级ID",
+      "description": "旧等级的ID",
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-changed-new-rank-id",
+      "scriptName": "XPRankChangeNewRankID",
+      "category": "notifications",
+      "translated-name": "经验等级变化后的等级ID",
+      "description": "新等级的ID",
+      "returnType": "string"
+    },
+    {
+      "id": "get-connection-closed-code",
+      "scriptName": "ClosedConnectionReasonCode",
+      "category": "notifications",
+      "translated-name": "关闭连接原因的错误代码。",
+      "description": "连接关闭原因的数字代码。",
+      "returnType": "number"
+    },
+    {
+      "id": "get-connection-closed-reason",
+      "scriptName": "ClosedConnectionReason",
+      "category": "notifications",
+      "translated-name": "连接关闭原因",
+      "description": "连接关闭原因的字符串说明。",
+      "returnType": "string"
+    },
+    {
+      "id": "get-total-achievements",
+      "scriptName": "TotalAchievements",
+      "category": "achievements",
+      "translated-name": "成就总数",
+      "description": "成就的总数。",
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-id-at",
+      "scriptName": "AchievementIDAt",
+      "category": "achievements",
+      "translated-name": "获取成就ID",
+      "description": "指定索引处的成就 ID。",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "索引",
+          "desc": "成就的索引。"
+        }
+      },
+      "returnType": "string"
+    },
+    {
       "id": "get-achievement-date-created",
       "scriptName": "AchievementDateCreated",
       "category": "achievements",
-      "translated-name": "get-achievement-date-created",
-      "description": "",
+      "translated-name": "成就创建日期",
+      "description": "成就的创建日期。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1768,8 +1871,8 @@
       "id": "get-achievement-date-created-formatted",
       "scriptName": "AchievementDateCreatedFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-date-created-formatted",
-      "description": "",
+      "translated-name": "获取格式化成就创建日期",
+      "description": "成就的创建日期，并按指定语言环境格式化。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1784,7 +1887,7 @@
       "scriptName": "AchievementName",
       "category": "achievements",
       "translated-name": "成就名称",
-      "description": "",
+      "description": "成就的名称。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1799,7 +1902,7 @@
       "scriptName": "AchievementDescription",
       "category": "achievements",
       "translated-name": "成就描述",
-      "description": "",
+      "description": "成就的描述。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1828,8 +1931,8 @@
       "id": "get-achievement-max-unlocks",
       "scriptName": "AchievementMaxUnlocks",
       "category": "achievements",
-      "translated-name": "get-achievement-max-unlocks",
-      "description": "",
+      "translated-name": "成就最大解锁次数",
+      "description": "此成就可被解锁的最大次数。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1843,8 +1946,8 @@
       "id": "get-achievement-max-unlocks-formatted",
       "scriptName": "AchievementMaxUnlocksFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-max-unlocks-formatted",
-      "description": "",
+      "translated-name": "成就最大解锁次数格式化",
+      "description": "此成就可被解锁的最大次数，并按指定语言环境格式化。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1873,8 +1976,8 @@
       "id": "get-achievement-total-awarded-formatted",
       "scriptName": "AchievementTotalAwardedFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-total-awarded-formatted",
-      "description": "",
+      "translated-name": "成就总解锁次数格式化",
+      "description": "此成就被所有玩家获得的总次数，并按指定语言环境格式化。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1888,8 +1991,8 @@
       "id": "get-achievement-total-unique-players-awarded",
       "scriptName": "AchievementTotalUniquePlayersAwarded",
       "category": "achievements",
-      "translated-name": "get-achievement-total-unique-players-awarded",
-      "description": "",
+      "translated-name": "获得成就的玩家总数",
+      "description": "获得此成就的玩家总数。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1903,8 +2006,8 @@
       "id": "get-achievement-total-unique-players-awarded-formatted",
       "scriptName": "AchievementTotalUniquePlayersAwardedFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-total-unique-players-awarded-formatted",
-      "description": "",
+      "translated-name": "获得成就的玩家总数格式化",
+      "description": "获得此成就的玩家总数，并按指定语言环境格式化。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1919,7 +2022,7 @@
       "scriptName": "AchievementPercentagePlayerBaseOwned",
       "category": "achievements",
       "translated-name": "玩家拥有百分比",
-      "description": "",
+      "description": "获得此成就的玩家占全部玩家的百分比。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1933,7 +2036,7 @@
       "id": "get-achievement-first-awarded",
       "scriptName": "AchievementFirstAwarded",
       "category": "achievements",
-      "translated-name": "get-achievement-first-awarded",
+      "translated-name": "成就首次获得日期",
       "description": "该成就首次被玩家获得的日期。",
       "params": {
         "achievementID": {
@@ -1948,8 +2051,8 @@
       "id": "get-achievement-first-awarded-formatted",
       "scriptName": "AchievementFirstAwardedFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-first-awarded-formatted",
-      "description": "",
+      "translated-name": "成就首次获得日期格式化",
+      "description": "此成就首次被玩家获得的日期，并按指定语言环境格式化。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1963,8 +2066,8 @@
       "id": "get-achievement-last-awarded",
       "scriptName": "AchievementLastAwarded",
       "category": "achievements",
-      "translated-name": "get-achievement-last-awarded",
-      "description": "",
+      "translated-name": "成就上次获得日期",
+      "description": "此成就上次被玩家获得的日期。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1978,8 +2081,8 @@
       "id": "get-achievement-last-awarded-formatted",
       "scriptName": "AchievementLastAwardedFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-last-awarded-formatted",
-      "description": "",
+      "translated-name": "成就上次获得日期格式化",
+      "description": "此成就上次被玩家获得的日期，并按指定语言环境格式化。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -1993,8 +2096,8 @@
       "id": "get-achievement-achieved-logo-url",
       "scriptName": "AchievementAchievedLogoURL",
       "category": "achievements",
-      "translated-name": "get-achievement-achieved-logo-url",
-      "description": "",
+      "translated-name": "成就已解锁图标URL",
+      "description": "成就解锁后所用图标的 URL。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -2003,8 +2106,8 @@
         },
         "width": {
           "type": "number",
-          "name": "width",
-          "desc": ""
+          "name": "宽度",
+          "desc": "请求的图像宽度，以像素为单位。"
         }
       },
       "returnType": "string"
@@ -2013,8 +2116,8 @@
       "id": "get-achievement-unachieved-logo-url",
       "scriptName": "AchievementUnachievedLogoURL",
       "category": "achievements",
-      "translated-name": "get-achievement-unachieved-logo-url",
-      "description": "",
+      "translated-name": "成就未解锁图标URL",
+      "description": "成就未解锁时所用图标的 URL。",
       "params": {
         "achievementID": {
           "type": "string",
@@ -2023,8 +2126,8 @@
         },
         "width": {
           "type": "number",
-          "name": "width",
-          "desc": ""
+          "name": "宽度",
+          "desc": "请求的图像宽度，以像素为单位。"
         }
       },
       "returnType": "string"
@@ -2056,8 +2159,8 @@
       "id": "get-player-achievement-times-awarded-formatted",
       "scriptName": "PlayerAchievementTimesAwardedFormatted",
       "category": "achievements",
-      "translated-name": "get-player-achievement-times-awarded-formatted",
-      "description": "",
+      "translated-name": "获得格式化玩家成就时间",
+      "description": "获得已登录玩家获得有效成就的时间，以地区格式显示。",
       "params": {
         "index": {
           "type": "number",
@@ -2086,13 +2189,13 @@
       "id": "get-player-achievement-first-awarded-formatted",
       "scriptName": "PlayerAchievementFirstAwardedFormatted",
       "category": "achievements",
-      "translated-name": "get-player-achievement-first-awarded-formatted",
-      "description": "",
+      "translated-name": "获取格式化玩家首次获得成就时间",
+      "description": "已登录玩家首次获得的成就，以地区格式显示。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "玩家成就的索引。"
         }
       },
       "returnType": "string"
@@ -2101,13 +2204,13 @@
       "id": "get-player-achievement-last-awarded",
       "scriptName": "PlayerAchievementLastAwarded",
       "category": "achievements",
-      "translated-name": "get-player-achievement-last-awarded",
-      "description": "",
+      "translated-name": "玩家上次获得成就",
+      "description": "已登录玩家上次获得此成就的时间。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "玩家成就的索引。"
         }
       },
       "returnType": "string"
@@ -2116,13 +2219,13 @@
       "id": "get-player-achievement-last-awarded-formatted",
       "scriptName": "PlayerAchievementLastAwardedFormatted",
       "category": "achievements",
-      "translated-name": "get-player-achievement-last-awarded-formatted",
-      "description": "",
+      "translated-name": "玩家上次获得成就时间格式化",
+      "description": "已登录玩家上次获得此成就的时间，并按指定语言环境格式化。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "玩家成就的索引。"
         }
       },
       "returnType": "string"
@@ -2131,13 +2234,13 @@
       "id": "get-player-achievement-progress",
       "scriptName": "PlayerAchievementProgress",
       "category": "achievements",
-      "translated-name": "get-player-achievement-progress",
-      "description": "",
+      "translated-name": "玩家成就进度",
+      "description": "已登录玩家此项成就的当前进度。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "玩家成就的索引。"
         }
       },
       "returnType": "number"
@@ -2146,28 +2249,36 @@
       "id": "get-player-achievement-progress-formatted",
       "scriptName": "PlayerAchievementProgressFormatted",
       "category": "achievements",
-      "translated-name": "get-player-achievement-progress-formatted",
-      "description": "",
+      "translated-name": "获取格式化玩家成就进度",
+      "description": "获取已登录玩家当前成就的进度，以地区格式显示。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "玩家成就的索引。"
         }
       },
       "returnType": "string"
     },
     {
+      "id": "get-achievement-awarded-players-count",
+      "scriptName": "AchievementAwardedPlayersCount",
+      "category": "achievements",
+      "translated-name": "本页已获成就玩家数",
+      "description": "本次查询结果返回的当前页中的玩家数量。",
+      "returnType": "number"
+    },
+    {
       "id": "get-achievement-awarded-players-id-at",
       "scriptName": "AchievementAwardedPlayersIDAt",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-id-at",
-      "description": "",
+      "translated-name": "已获成就玩家ID",
+      "description": "获取已获成就玩家列表中指定索引处玩家的 ID。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "string"
@@ -2176,13 +2287,13 @@
       "id": "get-achievement-awarded-players-player-name-at",
       "scriptName": "AchievementAwardedPlayersPlayerNameAt",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-player-name-at",
-      "description": "",
+      "translated-name": "已获成就玩家名称",
+      "description": "获取已获成就玩家列表中指定索引处玩家的名称。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "string"
@@ -2191,13 +2302,13 @@
       "id": "get-achievement-awarded-players-last-active-at",
       "scriptName": "AchievementAwardedPlayersLastActiveAt",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-last-active-at",
-      "description": "",
+      "translated-name": "已获成就玩家最近活跃时间",
+      "description": "获取已获成就玩家列表中指定索引处玩家最近活跃的日期和时间。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "string"
@@ -2206,18 +2317,18 @@
       "id": "get-achievement-awarded-players-avatar-url-at",
       "scriptName": "AchievementAwardedPlayersAvatarURLAt",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-avatar-url-at",
-      "description": "",
+      "translated-name": "已获成就玩家头像URL",
+      "description": "获取已获成就玩家列表中指定索引处玩家的头像 URL。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         },
         "width": {
           "type": "number",
-          "name": "width",
-          "desc": ""
+          "name": "宽度",
+          "desc": "请求的头像宽度。"
         }
       },
       "returnType": "string"
@@ -2226,13 +2337,13 @@
       "id": "get-achievement-awarded-players-awarded-count-at",
       "scriptName": "AchievementAwardedPlayersAwardedCountAt",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-awarded-count-at",
-      "description": "",
+      "translated-name": "已获成就玩家成就获得次数",
+      "description": "获取已获成就玩家列表中指定索引处玩家获得该成就的次数。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "number"
@@ -2241,13 +2352,13 @@
       "id": "get-achievement-awarded-players-awarded-count-at-formatted",
       "scriptName": "AchievementAwardedPlayersAwardedCountAtFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-awarded-count-at-formatted",
-      "description": "",
+      "translated-name": "已获成就玩家成就获得次数格式化",
+      "description": "获取已获成就玩家列表中指定索引处玩家获得该成就的次数，并按指定语言环境格式化。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "string"
@@ -2256,13 +2367,13 @@
       "id": "get-achievement-awarded-players-first-awarded-at",
       "scriptName": "AchievementAwardedPlayersFirstAwardedAt",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-first-awarded-at",
-      "description": "",
+      "translated-name": "已获成就玩家首次获得成就时间",
+      "description": "获取已获成就玩家列表中指定索引处玩家首次获得该成就的日期和时间。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "string"
@@ -2271,13 +2382,13 @@
       "id": "get-achievement-awarded-players-first-awarded-at-formatted",
       "scriptName": "AchievementAwardedPlayersFirstAwardedAtFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-first-awarded-at-formatted",
-      "description": "",
+      "translated-name": "已获成就玩家首次获得成就时间格式化",
+      "description": "获取已获成就玩家列表中指定索引处玩家首次获得该成就的日期和时间，并按指定语言环境格式化。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "string"
@@ -2286,13 +2397,13 @@
       "id": "get-achievement-awarded-players-last-awarded-at",
       "scriptName": "AchievementAwardedPlayersLastAwardedAt",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-last-awarded-at",
-      "description": "",
+      "translated-name": "已获成就玩家上次获得成就时间",
+      "description": "获取已获成就玩家列表中指定索引处玩家上次获得该成就的日期和时间。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "string"
@@ -2301,13 +2412,13 @@
       "id": "get-achievement-awarded-players-last-awarded-at-formatted",
       "scriptName": "AchievementAwardedPlayersLastAwardedAtFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-last-awarded-at-formatted",
-      "description": "",
+      "translated-name": "已获成就玩家上次获得成就时间格式化",
+      "description": "获取已获成就玩家列表中指定索引处玩家上次获得该成就的日期和时间，并按指定语言环境格式化。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "string"
@@ -2316,13 +2427,13 @@
       "id": "get-achievement-awarded-players-current-progress-at",
       "scriptName": "AchievementAwardedPlayersCurrentProgressAt",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-current-progress-at",
-      "description": "",
+      "translated-name": "获取玩家当前成就进度",
+      "description": "获取已获成就玩家列表中指定索引处玩家再次解锁该成就的当前进度。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "number"
@@ -2331,13 +2442,13 @@
       "id": "get-achievement-awarded-players-current-progress-at-formatted",
       "scriptName": "AchievementAwardedPlayersCurrentProgressAtFormatted",
       "category": "achievements",
-      "translated-name": "get-achievement-awarded-players-current-progress-at-formatted",
-      "description": "",
+      "translated-name": "玩家成就当前进度格式化",
+      "description": "获取已获成就玩家列表中指定索引处玩家再次解锁该成就的当前进度，并按指定语言环境格式化。",
       "params": {
         "index": {
           "type": "number",
           "name": "索引",
-          "desc": ""
+          "desc": "成就的索引。"
         }
       },
       "returnType": "string"
@@ -2346,7 +2457,7 @@
       "id": "get-total-broadcast-channels",
       "scriptName": "TotalBroadcastChannels",
       "category": "broadcasts",
-      "translated-name": "总公告数量",
+      "translated-name": "广播总数量",
       "description": "公告频道的总数量。",
       "returnType": "number"
     },
@@ -2674,7 +2785,7 @@
       "id": "get-broadcast-message-last-rating",
       "scriptName": "BroadcastMessageLastRating",
       "category": "broadcasts",
-      "translated-name": "最后一条消息",
+      "translated-name": "上次评分消息",
       "description": "上次评分的时间。",
       "params": {
         "messageID": {
@@ -2706,7 +2817,7 @@
       "scriptName": "XPLeaderboardScoreID",
       "category": "xp",
       "translated-name": "排行榜分数ID",
-      "description": "排行榜中对应分数记录的ID。",
+      "description": "排行榜对应的分数ID。",
       "returnType": "string"
     },
     {
@@ -2975,13 +3086,13 @@
       "id": "avatar-url",
       "scriptName": "AvatarURL",
       "category": "authentication",
-      "translated-name": "avatar-url",
-      "description": "",
+      "translated-name": "头像地址",
+      "description": "获取当前已登录玩家的头像 URL。",
       "params": {
         "width": {
           "type": "number",
           "name": "宽度",
-          "desc": ""
+          "desc": "请求的头像宽度"
         }
       },
       "returnType": "string"
@@ -3261,7 +3372,7 @@
       "id": "score-history-formatted-score-at",
       "scriptName": "ScoreHistoryFormattedScoreAt",
       "category": "leaderboards",
-      "translated-name": "获取格式化历史排名",
+      "translated-name": "获取格式化分数历史排名分数",
       "description": "获取某项分数的历史得分，以地区格式显示。",
       "params": {
         "index": {
@@ -3291,7 +3402,7 @@
       "id": "score-history-formatted-rank-at",
       "scriptName": "ScoreHistoryFormattedRankAt",
       "category": "leaderboards",
-      "translated-name": "获取格式化历史排名",
+      "translated-name": "获取格式化分数历史排名",
       "description": "获取某项分数的历史排名，以地区格式显示。",
       "params": {
         "index": {
@@ -3511,7 +3622,7 @@
       "id": "score-formatted-date-at",
       "scriptName": "ScoreFormattedDateAt",
       "category": "leaderboards",
-      "translated-name": "获取格式化分数日期",
+      "translated-name": "获取格式化分数创建日期",
       "description": "获取某项分数的创建日期，以地区格式显示。",
       "params": {
         "index": {
@@ -3706,7 +3817,7 @@
       "id": "score-rank-comparison-formatted-score-at",
       "scriptName": "ScoreRankComparisonFormattedScoreAt",
       "category": "leaderboards",
-      "translated-name": "获取格式化排名对比分数",
+      "translated-name": "获取格式化的排名对比分数",
       "description": "获取某项比较分数的历史得分，以地区格式显示。",
       "params": {
         "index": {
@@ -4151,8 +4262,8 @@
       "id": "get-cloud-save-picture-url",
       "scriptName": "CloudSavePictureURL",
       "category": "cloud-save",
-      "translated-name": "get-cloud-save-picture-url",
-      "description": "",
+      "translated-name": "云存储图片地址",
+      "description": "获取云存储关联图片的 URL。",
       "params": {
         "width": {
           "type": "number",

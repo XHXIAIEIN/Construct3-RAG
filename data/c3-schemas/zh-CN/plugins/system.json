@@ -58,17 +58,17 @@
       "category": "angles",
       "list-name": "在顺时针方向",
       "display-text": "{0} 在 {1} 顺时针方向",
-      "description": "比较角度是否是从另一个角度顺时针方向。",
+      "description": "比较角度是不是位于另一个角度的顺时针方向。",
       "params": {
         "angle-1": {
           "type": "number",
-          "name": "角度1",
-          "desc": "需要测试的角度，以度为单位。"
+          "name": "目标角度",
+          "desc": "要判断的角度。"
         },
         "angle-2": {
           "type": "number",
-          "name": "角度2",
-          "desc": "用于测试是否在角度1的顺时针方向的角度。"
+          "name": "参照角度",
+          "desc": "作为判断基准的角度。用于判断目标角度是否在它的顺时针方向。"
         }
       }
     },
@@ -77,7 +77,7 @@
       "scriptName": "IsBetweenAngles",
       "category": "angles",
       "list-name": "在角度范围内",
-      "display-text": "{0} 角度在 {1}° 与 {2}° 之间",
+      "display-text": "{0} 角度在 {1} 与 {2} 之间",
       "description": "比较角度是否位于两角度之间。",
       "params": {
         "angle": {
@@ -547,7 +547,7 @@
       "scriptName": "PickNth",
       "category": "pick-instances",
       "list-name": "按顺序选择",
-      "display-text": "选择第 {1} 个 {0} 实例对象",
+      "display-text": "选择第 {1} 个 {0} 实例",
       "description": "从当前已选取的实例中，选择第n个实例。",
       "params": {
         "object": {
@@ -652,7 +652,7 @@
       "scriptName": "PickByHighestLowestValue",
       "category": "pick-instances",
       "list-name": "按最高/最低值选择",
-      "display-text": "选择 {2} {1}的 {0}  (包含并列结果: [i]{3}[/i])",
+      "display-text": "选择 {2} {1}的{0} (包含并列结果: [i]{3}[/i])",
       "description": "根据表达式计算结果，选中数值最高或最低的实例。",
       "params": {
         "object": {
@@ -887,11 +887,11 @@
       "category": "time",
       "list-name": "每隔 X 秒",
       "display-text": "每 [b]{0}[/b] 秒",
-      "description": "以固定的时间间隔运行操作。",
+      "description": "以固定的间隔执行动作。",
       "params": {
         "interval-seconds": {
           "type": "number",
-          "name": "间隔（秒）",
+          "name": "间隔",
           "desc": "每隔一段时间依次执行每个动作。此时间间隔会受到帧速率的影响，每个动作在每帧不会执行超过一次。",
           "initialValue": "1.0"
         }
@@ -904,7 +904,7 @@
       "category": "time",
       "list-name": "比较时间",
       "display-text": "时间 {0} [b]{1}[/b] 秒",
-      "description": "比较当前时间（启动后的秒数）",
+      "description": "比较当前时间 (启动后的秒数)",
       "params": {
         "comparison": {
           "type": "cmp",
@@ -913,7 +913,7 @@
         },
         "time-seconds": {
           "type": "number",
-          "name": "秒",
+          "name": "时间",
           "desc": "比较自游戏运行以来累计的秒数。",
           "initialValue": "1.0"
         }
@@ -2224,6 +2224,21 @@
       }
     },
     {
+      "id": "set-layout-ambient-light",
+      "scriptName": "SetLayoutAmbientLight",
+      "category": "layout",
+      "list-name": "设置场景环境光",
+      "display-text": "设置场景环境光为 [b]{0}[/b]",
+      "description": "设置当前场景的环境光强度。",
+      "params": {
+        "ambient-light": {
+          "type": "number",
+          "name": "环境光",
+          "desc": "环境光照度，范围为 0-1。"
+        }
+      }
+    },
+    {
       "id": "recreate-initial-objects",
       "scriptName": "RecreateInitialObjects",
       "category": "layout",
@@ -3219,6 +3234,14 @@
       "category": "layout",
       "translated-name": "场景角度",
       "description": "获取场景当前的角度。",
+      "returnType": "number"
+    },
+    {
+      "id": "layoutambientlight",
+      "scriptName": "LayoutAmbientLight",
+      "category": "layout",
+      "translated-name": "场景环境光",
+      "description": "获取布局中当前的环境光照强度。",
       "returnType": "number"
     },
     {
@@ -4831,7 +4854,7 @@
       "id": "hex-color",
       "scriptName": "HexColor",
       "category": "values",
-      "translated-name": "转换颜色值",
+      "translated-name": "HexColor",
       "description": "将十六进制颜色值转换为 RGBA 颜色值格式。",
       "params": {
         "string": {
@@ -4846,7 +4869,7 @@
       "id": "color-to-hex-string",
       "scriptName": "ColorToHexString",
       "category": "values",
-      "translated-name": "转换颜色值",
+      "translated-name": "转换十六进制颜色值",
       "description": "将 RGBA 值生成 CSS 样式的十六进制字符串。",
       "params": {
         "color-value": {

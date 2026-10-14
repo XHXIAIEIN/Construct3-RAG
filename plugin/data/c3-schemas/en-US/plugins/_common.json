@@ -10,6 +10,7 @@
     "collisions": "Collisions",
     "html-element": "HTML element",
     "instance-variables": "Instance variables",
+    "material": "Material",
     "misc": "Misc",
     "size-position": "Size & Position",
     "time": "Time",
@@ -1075,6 +1076,71 @@
       }
     },
     {
+      "id": "set-material-surface-type",
+      "scriptName": "SetMaterialSurfaceType",
+      "category": "material",
+      "list-name": "Set surface type",
+      "display-text": "Set material surface type to [b]{0}[/b]",
+      "description": "Set the material surface type for 3D lighting.",
+      "params": {
+        "surface-type": {
+          "type": "combo",
+          "name": "Surface type",
+          "desc": "The surface type to set.",
+          "items": {
+            "no-lighting": "No lighting",
+            "flat": "Flat",
+            "smooth": "Smooth"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-transmissiveness",
+      "scriptName": "SetTransmissiveness",
+      "category": "material",
+      "list-name": "Set transmissiveness",
+      "display-text": "Set transmissiveness to [b]{0}[/b]",
+      "description": "Set the material transmissiveness property for 3D lighting.",
+      "params": {
+        "transmissiveness": {
+          "type": "number",
+          "name": "Transmissiveness",
+          "desc": "Transmissiveness amount, from 0-100."
+        }
+      }
+    },
+    {
+      "id": "set-metallic",
+      "scriptName": "SetMetallic",
+      "category": "material",
+      "list-name": "Set metallic",
+      "display-text": "Set metallic to [b]{0}[/b]",
+      "description": "Set the material metallic property for 3D lighting.",
+      "params": {
+        "metallic": {
+          "type": "number",
+          "name": "Metallic",
+          "desc": "Metallic amount, from 0-100."
+        }
+      }
+    },
+    {
+      "id": "set-roughness",
+      "scriptName": "SetRoughness",
+      "category": "material",
+      "list-name": "Set roughness",
+      "display-text": "Set roughness to [b]{0}[/b]",
+      "description": "Set the material roughness property for 3D lighting.",
+      "params": {
+        "roughness": {
+          "type": "number",
+          "name": "Roughness",
+          "desc": "Roughness amount, from 0-100."
+        }
+      }
+    },
+    {
       "id": "destroy",
       "scriptName": "Destroy",
       "category": "misc",
@@ -1795,6 +1861,30 @@
       "category": "appearance",
       "translated-name": "Opacity",
       "description": "Get the object's current opacity, from 0 (transparent) to 100 (opaque).",
+      "returnType": "number"
+    },
+    {
+      "id": "transmissiveness",
+      "scriptName": "Transmissiveness",
+      "category": "material",
+      "translated-name": "Transmissiveness",
+      "description": "The material transmissiveness amount, from 0-100.",
+      "returnType": "number"
+    },
+    {
+      "id": "metallic",
+      "scriptName": "Metallic",
+      "category": "material",
+      "translated-name": "Metallic",
+      "description": "The material metallic amount, from 0-100.",
+      "returnType": "number"
+    },
+    {
+      "id": "roughness",
+      "scriptName": "Roughness",
+      "category": "material",
+      "translated-name": "Roughness",
+      "description": "The material roughness amount, from 0-100.",
       "returnType": "number"
     },
     {

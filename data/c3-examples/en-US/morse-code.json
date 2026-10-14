@@ -1,0 +1,26 @@
+{
+  "id": "morse-code",
+  "name": "Morse code",
+  "description": "Choose your Morse code input method, tap out a transmission, and print the decoded message in readable text.",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Gameplay mechanic",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=morse-code"
+}

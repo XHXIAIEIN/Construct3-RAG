@@ -423,6 +423,10 @@ class DevToolsError(Exception):
     pass
 
 
+class NoAnswer(DevToolsError):
+    """A call that the page did not answer within its wait. Any other DevToolsError is a failure that came back."""
+
+
 def browser_path() -> str | None:
     """The Edge, Chrome or Chromium of this machine, where their installers put them."""
     places: list[Path] = []
@@ -527,7 +531,7 @@ class DevTools:
                     if "method" in message:
                         self.events.append(message)
             except socket.timeout:
-                raise DevToolsError(f"{method}: no answer in {wait:g} seconds") from None
+                raise NoAnswer(f"{method}: no answer in {wait:g} seconds") from None
 
     def evaluate(self, expression: str, by_value: bool = True, wait: float = CALL, session: str | None = None):
         r = self.call("Runtime.evaluate", wait, session, expression=expression, awaitPromise=True,
@@ -587,7 +591,7 @@ class Browser:
     own per page, which has no disk cache, is cold every time."""
 
     def __init__(self, exe: str, profile: Path, headed: bool, extra: tuple[str, ...] = ()) -> None:
-        self.profile, self.proc = profile, None
+        self.profile, self.proc, self.devtools = profile, None, None
         profile.mkdir(parents=True, exist_ok=True)
         self.data = user_data_dir(profile)
         for staged in profile.glob("project-*.c3p"):    # left by a run that was stopped
@@ -596,26 +600,64 @@ class Browser:
         # A run that was stopped leaves its browser running on the profile, and a
         # second browser on it hands over to the first and exits: take that one over.
         url = self.devtools_url(port_file)
-        if not url:
+        if url:
+            try:
+                self.connect(url)
+            except (DevToolsError, OSError):    # a closing browser answers on its port, then drops the WebSocket
+                self.devtools = None
+                self.ended(10)
+        if not self.devtools:
             port_file.unlink(missing_ok=True)
             args = [exe, f"--user-data-dir={self.data}", "--remote-debugging-port=0", *QUIET, *extra,
                     "--window-size=1400,900", "about:blank"]
-            self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"],
+            # Edge given a compatibility layer starts the browser again as a child of its own, without the
+            # layer, and exits: the process started here would then say nothing of the browser.
+            env = {k: v for k, v in os.environ.items() if k.upper() != "__COMPAT_LAYER"}
+            self.proc = subprocess.Popen(args if headed else [*args, "--headless=new"], env=env,
                                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            for _ in range(75):
-                url = self.devtools_url(port_file)
-                if url or self.proc.poll() is not None:
-                    break
+            # The port is waited for even once that process has exited: a browser that hands its start
+            # over to another process comes up a moment later.
+            url, end = None, time.monotonic() + 15
+            while not url and time.monotonic() < end:
                 time.sleep(0.2)
-        if not url:
-            self.close()
-            raise DevToolsError(f"{exe} opened no DevTools port in 15 seconds")
-        self.port = int(port_file.read_text().split()[0])
+                url = self.devtools_url(port_file)
+            if not url:
+                code = self.proc.poll()
+                self.proc.kill()
+                self.close()
+                raise DevToolsError(
+                    f"{exe} opened no DevTools port in 15 seconds"
+                    f"{'' if code is None else f' and exited with code {code}'}: end the {Path(exe).name} "
+                    f"processes whose command line names {self.data}, or delete that folder, and run again")
+            try:
+                self.connect(url)
+            except (DevToolsError, OSError):
+                self.close()
+                raise
+        self.lock = threading.Lock()
+
+    def connect(self, url: str) -> None:
         self.devtools = DevTools(url)
+        self.port = urllib.parse.urlsplit(url).port
         # The window the browser started with, closed by the first page that opens.
         self.blank = [t["targetId"] for t in self.devtools.call("Target.getTargets")["targetInfos"]
                       if t["type"] == "page" and t["url"] == "about:blank"]
-        self.lock = threading.Lock()
+
+    def running(self) -> bool:
+        """Whether a browser runs on the profile. On Windows it holds the profile's lockfile open while
+        it runs, and the file goes as it exits; elsewhere its DevTools port answers."""
+        if sys.platform == "win32":
+            return (self.profile / "lockfile").exists()
+        return bool(self.devtools_url(self.profile / "DevToolsActivePort"))
+
+    def ended(self, wait: float) -> bool:
+        """Whether the browser on the profile has ended within `wait` seconds."""
+        end = time.monotonic() + wait
+        while self.running():
+            if time.monotonic() > end:
+                return False
+            time.sleep(0.1)
+        return True
 
     @staticmethod
     def devtools_url(port_file: Path) -> str | None:
@@ -655,6 +697,11 @@ class Browser:
                 self.proc.wait(10)
             except subprocess.TimeoutExpired:
                 self.proc.kill()
+        # A browser taken over is no child of this run. Until it ends, its port still answers, and the
+        # next start would take a closing browser over. Once it has, the port file goes too: on Windows
+        # a refused connection takes 2 seconds to tell.
+        if self.ended(10):
+            (self.profile / "DevToolsActivePort").unlink(missing_ok=True)
         # A session file per run, never restored.
         shutil.rmtree(self.profile / "Default" / "Sessions", ignore_errors=True)
 

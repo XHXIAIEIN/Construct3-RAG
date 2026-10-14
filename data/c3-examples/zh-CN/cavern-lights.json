@@ -1,0 +1,36 @@
+{
+  "id": "cavern-lights",
+  "name": "3D洞穴之光",
+  "description": "在运用 3D 光照的神秘洞穴中，寻找并唤醒五枚古老符文。",
+  "tags": [
+    "新增",
+    "进阶",
+    "功能示例",
+    "解谜",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Light3D",
+      "Model3D",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Sin",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cavern-lights"
+}

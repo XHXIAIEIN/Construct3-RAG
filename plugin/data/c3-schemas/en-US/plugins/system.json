@@ -652,7 +652,7 @@
       "scriptName": "PickByHighestLowestValue",
       "category": "pick-instances",
       "list-name": "Pick by highest/lowest value",
-      "display-text": "Pick {0} by {1} {2} (pick all tied: [i]{3}[/i]",
+      "display-text": "Pick {0} by {1} {2} (pick all tied: [i]{3}[/i])",
       "description": "Pick based on evaluating the highest or lowest expression.",
       "params": {
         "object": {
@@ -2224,6 +2224,21 @@
       }
     },
     {
+      "id": "set-layout-ambient-light",
+      "scriptName": "SetLayoutAmbientLight",
+      "category": "layout",
+      "list-name": "Set layout ambient light",
+      "display-text": "Set layout ambient light to [b]{0}[/b]",
+      "description": "Set the ambient light level of the current layout.",
+      "params": {
+        "ambient-light": {
+          "type": "number",
+          "name": "Ambient light",
+          "desc": "The ambient light level from 0-1."
+        }
+      }
+    },
+    {
       "id": "recreate-initial-objects",
       "scriptName": "RecreateInitialObjects",
       "category": "layout",
@@ -3219,6 +3234,14 @@
       "category": "layout",
       "translated-name": "LayoutAngle",
       "description": "Get the current angle of the layout, in degrees.",
+      "returnType": "number"
+    },
+    {
+      "id": "layoutambientlight",
+      "scriptName": "LayoutAmbientLight",
+      "category": "layout",
+      "translated-name": "LayoutAmbientLight",
+      "description": "Get the current ambient light level of the layout.",
       "returnType": "number"
     },
     {

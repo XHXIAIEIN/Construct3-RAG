@@ -167,9 +167,13 @@ Rules:
   `version` in `scripts/plugin/plugin.json` only for a minor or major
   release (`docs/decisions/plugin-tracks-commits.md`). If a merge leaves
   conflicts in `plugin/`, resolve the sources, run the build, stage
-  `plugin/`, then commit the merge. During a merge the build compares with
-  the commit the merge will share with `origin/main`, so one run writes the
-  right version.
+  `plugin/`, then commit the merge. The end marker line of
+  `skills/construct3-agent-plugin/assets/build_project.py` conflicts
+  whenever both sides changed its helpers, because it carries their stamp.
+  Keep either side, then paste the end line that
+  `tests/test_skill_build_project.py` prints, before the build. During a
+  merge the build compares with the commit the merge will share with
+  `origin/main`, so one run writes the right version.
 - Docs and tests change with the behavior. README: data first, service
   second. `README_CN.md` carries the content of `README.md`; `README.md`
   names no Chinese text or locale besides its link to `README_CN.md`, and

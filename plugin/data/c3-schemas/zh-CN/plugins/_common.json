@@ -16,7 +16,8 @@
     "mesh": "纹理",
     "collisions": "碰撞",
     "template": "模版对象",
-    "3d-rotation": "3D旋转"
+    "3d-rotation": "3D旋转",
+    "material": "材质"
   },
   "conditions": [
     {
@@ -45,13 +46,13 @@
       "scriptName": "IsClockwiseFrom",
       "category": "angle",
       "list-name": "在顺时针方向",
-      "display-text": "角度在 {0} 顺时针方向",
+      "display-text": "在 {0} 顺时针方向",
       "description": "比较对象的角度是否在另一个角度的顺时针方向。",
       "params": {
         "angle": {
           "type": "number",
-          "name": "角度",
-          "desc": "测试对象顺时针方向的角度，以度数为单位。"
+          "name": "参照角度",
+          "desc": "作为参照的角度，用于判断对象角度是否在它顺时针方向。"
         }
       }
     },
@@ -1075,6 +1076,71 @@
       }
     },
     {
+      "id": "set-material-surface-type",
+      "scriptName": "SetMaterialSurfaceType",
+      "category": "material",
+      "list-name": "设置材质表面",
+      "display-text": "设置材质表面类型为[b]{0}[/b]",
+      "description": "设置用于 3D 光照的材质表面类型。",
+      "params": {
+        "surface-type": {
+          "type": "combo",
+          "name": "表面类型",
+          "desc": "要设置的表面类型。",
+          "items": {
+            "no-lighting": "无灯光",
+            "flat": "平面",
+            "smooth": "光滑"
+          }
+        }
+      }
+    },
+    {
+      "id": "set-transmissiveness",
+      "scriptName": "SetTransmissiveness",
+      "category": "material",
+      "list-name": "设置透光率",
+      "display-text": "设置透光率为[b]{0}[/b]",
+      "description": "设置3D光线透射物体材质的强度。可用来模拟玻璃、水面或果冻等半透明且折射光线的材质。",
+      "params": {
+        "transmissiveness": {
+          "type": "number",
+          "name": "透光率",
+          "desc": "透光率强度，从 0 到 100 范围。数值越高，越透光。"
+        }
+      }
+    },
+    {
+      "id": "set-metallic",
+      "scriptName": "SetMetallic",
+      "category": "material",
+      "list-name": "设置金属度",
+      "display-text": "设置金属度为[b]{0}[/b]",
+      "description": "设置材质是否具有漫反射和镜面反射的质感。",
+      "params": {
+        "metallic": {
+          "type": "number",
+          "name": "金属度",
+          "desc": "金属感强度，从 0 到 100 范围。数值越高，金属感越强。"
+        }
+      }
+    },
+    {
+      "id": "set-roughness",
+      "scriptName": "SetRoughness",
+      "category": "material",
+      "list-name": "设置粗糙度",
+      "display-text": "设置粗糙度为[b]{0}[/b]",
+      "description": "控制光的折射和反射的模糊程度。可用来模拟光滑、高光锐利的表面，如镜子、玻璃、塑料、木材、石头、粗布、墙面。",
+      "params": {
+        "roughness": {
+          "type": "number",
+          "name": "粗糙度",
+          "desc": "材质的粗糙程度，从 0 到 100 范围。数值越高，表面越粗糙。"
+        }
+      }
+    },
+    {
       "id": "destroy",
       "scriptName": "Destroy",
       "category": "misc",
@@ -1795,6 +1861,30 @@
       "category": "appearance",
       "translated-name": "不透明度",
       "description": "获取对象不透明度，从0（透明）到100（不透明）",
+      "returnType": "number"
+    },
+    {
+      "id": "transmissiveness",
+      "scriptName": "Transmissiveness",
+      "category": "material",
+      "translated-name": "透光率",
+      "description": "透光率强度，从 0 到 100 范围。数值越高，越透光。",
+      "returnType": "number"
+    },
+    {
+      "id": "metallic",
+      "scriptName": "Metallic",
+      "category": "material",
+      "translated-name": "金属度",
+      "description": "金属感强度，从 0 到 100 范围。数值越高，金属质感越强。",
+      "returnType": "number"
+    },
+    {
+      "id": "roughness",
+      "scriptName": "Roughness",
+      "category": "material",
+      "translated-name": "粗糙度",
+      "description": "材质的粗糙程度，从 0 到 100 范围。数值越高，表面越粗糙。",
       "returnType": "number"
     },
     {

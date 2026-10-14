@@ -1,0 +1,35 @@
+{
+  "id": "magic-cube",
+  "name": "3D魔法",
+  "description": "经典的3D魔方游戏，每个轴都可基于四元数来平滑旋转。你能解开它吗？",
+  "tags": [
+    "新增",
+    "高级",
+    "3D",
+    "游戏模板",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Camera3D",
+      "Model3D",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=magic-cube"
+}

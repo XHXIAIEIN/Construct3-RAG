@@ -82,10 +82,11 @@ If the events define or call a function or a custom action, read
 
 If the events use the Timer behavior, read [pitfalls/timer.md](pitfalls/timer.md).
 
-- *Start timer* on an existing tag restarts it. After *Stop* or a *Once* timer's end its expressions return 0.
+- *Start timer* on an existing tag restarts it. After *Stop*, or after the tick a *Once* timer fires, its expressions return 0.
 - A reset N seconds after the last input (a combo, an idle screen): *Start timer* for N, *Once*, in the input's trigger on every input, and reset in *On timer*. A tick timer that only its own *On timer* restarts under a condition stops for good.
 - A timer is state you start and stop, so list every transition before choosing it.
 - A timer and a tween scheduled to end together end a tick apart.
+- A *Once* timer still counts as running for the rest of the tick its *On timer* fires. If an event below branches on *Is timer running* for that tag, write *Stop timer* first in the *On timer*.
 - One instance cannot time stacked buffs of one kind with Timer tags: no expression names the tag that fired, and a re-cast restarts the tag. Make each shield or buff an instance with its own Timer and amount, a child of its holder; spend them with *Pick children* and *For each (ordered)* by the time left.
 
 ### Wait and time scale
@@ -134,6 +135,7 @@ If the events place, move or rotate objects or read the viewport, read
 
 - The origin (0, 0) is the top-left of the layout and Y grows downwards.
 - Angles are clockwise degrees from 0 facing right. Compare them with `anglediff`, never `<`.
+- `anglelerp` toward an angle that moves reverses its direction of turn, and the result jumps, when that angle passes the opposite of the start. Ease an offset from the moving angle: `aim + anglelerp(startOffset, restOffset, x)`.
 - A sprite is drawn facing right at angle 0. Paint art facing right.
 - A Bullet's angle of motion and the object's angle are two values. At speed 0 *Set angle of motion* does nothing, and *Set speed* from 0 moves right. Set the speed first, then the angle of motion.
 - The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
@@ -153,13 +155,15 @@ If an object chases, follows or walks to another object, read
 ### Input
 
 If the events use Mouse and Touch together, tell a finger from a mouse,
-take a tap anywhere on the screen, hide what can be pressed or dragged,
-close a popup by a tap outside it, read a touch's speed, bind keys, steer a
-movement behavior, or ask the
-browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfalls/input.md).
+follow or aim at the pointer, read it in Mouse *On movement*, take a tap
+anywhere on the screen, hide what can be pressed or dragged, close a popup
+by a tap outside it, read a touch's speed, bind keys, steer a movement
+behavior, or ask the browser for fullscreen, a permission or a picker, read
+[pitfalls/input.md](pitfalls/input.md).
 
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too. Detect the input method with it off.
+- In Mouse *On movement*, `Mouse.X`, `Mouse.Y`, `Touch.X` and `Touch.Y` hold the previous pointer event's position. Follow or aim at the pointer in an *Every tick* event, or for a finger in an *Is in touch* event.
 - Touch and Mouse press an object that is invisible or has collisions disabled. Add *Is visible* to the event or set its layer not interactive.
 - Touch and Mouse pick every overlapping instance under the pointer. Add the button's *Pick top/bottom* (top) as a second condition of the trigger's event so only the front button reacts; a family for buttons of several types.
 - Drag & Drop drags the front instance under the pointer, by layer and then Z, visible or not. Stop drags under a popup with *Set layer interactive* on the pieces' layer or *Set enabled* on the behavior.
@@ -207,6 +211,7 @@ If the events use image points, animations or frames, read
 
 - Image point 0 is the origin. The first point added is 1, and `ImagePointCount` leaves out the origin.
 - *Set animation* to the animation already playing does nothing.
+- A 3D model's *Set progress* does nothing while the clip plays or is paused, and in r505 *Play* of a playing clip leaves it where it is; stop the clip first to start it again. After *Play* switches clips, *Stop* and `stop()` leave the first clip playing. *Play* cuts in one tick unless its *Transition duration* (r505) is set, and a clip cannot cross over into itself, so blended repeats take turns between two copies.
 - Frames used as looks rather than as an animation need the animation's *Speed* at 0.
 - *Set frame* to a frame of another image size resizes the instance and swaps its collision polygon.
 

@@ -1,0 +1,33 @@
+{
+  "id": "sir-cuits",
+  "name": "游戏示例：跳跳宝贝",
+  "description": "帮助库伊茨爵士找到梅查艾拉！放置跳板并利用物理原理闯关。",
+  "tags": [
+    "新增",
+    "进阶",
+    "游戏模板",
+    "平台",
+    "街机"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "LOS",
+      "Physics",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=sir-cuits"
+}

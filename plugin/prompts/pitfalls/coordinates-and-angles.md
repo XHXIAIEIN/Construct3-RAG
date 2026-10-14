@@ -16,6 +16,20 @@ Sources and the rule for adding an entry are in the index,
   tips-and-guides/common-conventions.md "Units";
   system-reference/system-expressions.md "Math";
   system-reference/system-conditions.md "Is between angles"]
+- `anglelerp(a, b, x)` turns from `a` to `b` by the shorter way. If `b`
+  moves while `x` runs from 0 to 1, the direction of turn can reverse. This
+  happens when an angle eases back to a rest angle beside an aim that
+  follows the pointer. In the tick `b` passes the opposite of `a`, the
+  shorter way reverses and the angle jumps by up to 360 × `x` degrees. Ease
+  an offset from the moving angle instead. Store the start offset as
+  `angle - aim`, then write `aim + anglelerp(startOffset, restOffset, x)`.
+  Both offsets stay fixed, so the direction cannot reverse, and the result
+  turns with the aim. [manual: system-reference/system-expressions.md
+  "anglelerp"; the shorter way and its reversal observed in a game project,
+  r495.2 preview, 2026-10-14: a sword easing back to rest beside the aim
+  jumped between 126 and 176 degrees in one tick when the pointer passed the
+  opposite direction early in the ease. With offsets, no tick turned it by
+  more than the aim's turn plus the ease's step]
 - A sprite is drawn facing right at angle 0. So art painted pointing up
   points a quarter turn counter-clockwise of its target after *Set angle
   toward position*.

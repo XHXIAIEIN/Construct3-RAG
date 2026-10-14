@@ -7,9 +7,9 @@
   },
   "actions": {
     "set-acceleration": {"examples": 1, "read": [["glokar", "eEnemies", 21, 21]]},
-    "set-angle-of-motion": {"examples": 68, "read": [["effects-haze", "Event sheet 1", 2, 2], ["poplab", "eTitleScreen", 4, 4], ["blacksmith-forge", "Code", 5, 5]]},
+    "set-angle-of-motion": {"examples": 70, "read": [["effects-haze", "Event sheet 1", 2, 2], ["poplab", "eTitleScreen", 4, 4], ["blacksmith-forge", "Code", 5, 5]]},
     "set-bounce-off-solids": {"examples": 1, "read": [["block-breaking", "MainCode", 84, 84]]},
-    "set-enabled": {"examples": 14, "read": [["multiplayer-pong", "Game events", 24, 24], ["tower-defense-game", "MainCode", 17, 17], ["tesla-twist", "Gameplay", 40, 40]]},
+    "set-enabled": {"examples": 15, "read": [["multiplayer-pong", "Game events", 24, 24], ["tower-defense-game", "MainCode", 17, 17], ["tesla-twist", "Gameplay", 40, 40]]},
     "set-gravity": {"examples": 2, "read": [["cannon-launch", "MainCode", 56, 56], ["pusha-pusha", "Gameplay", 114, 114]]},
     "set-speed": {"examples": 41, "read": [["blacksmith-forge", "Code", 5, 5], ["glokar", "ePowerups", 7, 7], ["fireworks", "Event sheet 1", 7, 7]]}
   },

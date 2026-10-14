@@ -313,6 +313,7 @@
       "category": "3d-camera",
       "translated-name": "ZScale",
       "description": "The scale factor for number of pixels per unit on the Z axis.",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

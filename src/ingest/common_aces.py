@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections import Counter
 from pathlib import Path
 
 from src.lookup.schema_layout import SCHEMA_ACE_TYPES as ACE_TYPES
@@ -374,7 +375,13 @@ def _assert_same_params(first: dict, other: dict) -> None:
 
 INFO_CLASS_ANCHOR = "plugin type 'object' cannot use common ACEs"
 SDK_INFO_ANCHOR = "window.SDK.IPluginInfo=class{"
-PLUGIN_INFO_RE = re.compile(r"(?:const ([\w$]+)=)?this\.p=[\w$]+\.m\((?:self|globalThis)\.v,([\w$]+)\)")
+# ``const t=this.p=X.m(self.v,ID)`` in an addon's constructor: the optional
+# alias, the info property, the factory and the variable that holds the addon
+# id. The minified names change between builds (r495 ``this.p=X.m``, r506
+# ``this.m=X.v``), so the pair most constructors share is taken as the one.
+ADDON_INFO_RE = re.compile(
+    r"(?:const ([\w$]+)=)?this\.([\w$]+)=[\w$]+\.([\w$]+)\((?:self|globalThis)\.[\w$]+,([\w$]+)\)"
+)
 # The head of the _common block: ``function(registrar, plugin info)``.
 BLOCK_HEAD_RE = re.compile(r"function\(([\w$]+),([\w$]+)\)")
 
@@ -419,6 +426,27 @@ def _js_value(token: str) -> bool | str:
 def _call_args(body: str, after_paren: int) -> str:
     """The text between the parentheses of the call whose ``(`` ends at ``after_paren``."""
     return body[after_paren:_group_end(body, after_paren - 1) - 1]
+
+
+def addon_info_matches(bundle_js: str) -> list[re.Match[str]]:
+    """Each addon constructor's ``ADDON_INFO_RE`` match in an editor bundle.
+
+    A method can assign through the same factory shape to another property;
+    only the (property, factory) pair most matches share is the constructors'.
+    """
+    matches = list(ADDON_INFO_RE.finditer(bundle_js))
+    if not matches:
+        return []
+    pair = Counter((m.group(2), m.group(3)) for m in matches).most_common(1)[0][0]
+    return [m for m in matches if (m.group(2), m.group(3)) == pair]
+
+
+def info_receivers(match: re.Match[str]) -> str:
+    """A pattern for what an ``addon_info_matches`` constructor calls the info."""
+    receivers = [rf"this\.{re.escape(match.group(2))}"]
+    if match.group(1):
+        receivers.append(re.escape(match.group(1)))
+    return "(?:" + "|".join(receivers) + ")"
 
 
 def _id_before(bundle_js: str, variable: str, offset: int) -> str | None:
@@ -535,13 +563,13 @@ def extract_plugin_flags(main_js: str, plugins_js: str, lang_common: dict) -> di
     name_of = {field: req.lstrip("!").split("!=")[0].split("=")[0] for _, _, req, field in guards}
 
     plugins: dict[str, dict[str, bool | str]] = {}
-    for m in PLUGIN_INFO_RE.finditer(plugins_js):
-        plugin_id = _id_before(plugins_js, m.group(2), m.start())
+    for m in addon_info_matches(plugins_js):
+        plugin_id = _id_before(plugins_js, m.group(4), m.start())
         if plugin_id is None:
             raise ValueError(f"cannot resolve the plugin id at offset {m.start()} of allEditorPlugins.js")
         if plugin_id in plugins:
             raise ValueError(f"plugin {plugin_id!r} is defined twice in allEditorPlugins.js")
-        receiver = re.escape(m.group(1)) if m.group(1) else r"this\.p"
+        receiver = info_receivers(m)
         body, top = _constructor_body(plugins_js, m.start(), f"plugin {plugin_id!r}")
         flags = {name: initial.get(field, False) for field, name in name_of.items()}
         for call in re.finditer(rf'(?<![\w$.]){receiver}\.([\w$]+)\(', body):

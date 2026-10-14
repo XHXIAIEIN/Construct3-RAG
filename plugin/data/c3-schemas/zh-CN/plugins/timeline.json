@@ -8,7 +8,8 @@
     "by-timeline": "按时间轴",
     "all": "所有时间轴",
     "triggers": "触发器",
-    "misc": "其他"
+    "misc": "其他",
+    "pick-instances": "选择实例"
   },
   "conditions": [
     {
@@ -178,6 +179,54 @@
         }
       },
       "isTrigger": true
+    },
+    {
+      "id": "pick-all-in-timeline",
+      "scriptName": "PickAllInTimeline",
+      "category": "pick-instances",
+      "list-name": "选择时间轴中的全部实例",
+      "display-text": "选择 [b]{0}[/b] 中的全部实例",
+      "description": "选择时间轴中的全部实例。",
+      "params": {
+        "timeline": {
+          "type": "timeline",
+          "name": "时间轴",
+          "desc": "要从中选择实例的时间轴。"
+        }
+      },
+      "isInvertible": false
+    },
+    {
+      "id": "pick-all-in-timeline-by-name",
+      "scriptName": "PickAllInTimelineByName",
+      "category": "pick-instances",
+      "list-name": "选择时间轴中的全部实例（按名称）",
+      "display-text": "选择 [b]{0}[/b] 中的全部实例",
+      "description": "选择时间轴中的全部实例。",
+      "params": {
+        "timeline-name": {
+          "type": "string",
+          "name": "名称",
+          "desc": "要从中选择实例的时间轴名称。"
+        }
+      },
+      "isInvertible": false
+    },
+    {
+      "id": "pick-all-in-timelines-by-tags",
+      "scriptName": "PickAllInTimelinesByTags",
+      "category": "pick-instances",
+      "list-name": "选择带指定标签的时间轴中的全部实例",
+      "display-text": "选择带标签 [b]{0}[/b] 的时间轴中的全部实例",
+      "description": "选择匹配的时间轴中的全部实例。",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "标签",
+          "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
+        }
+      },
+      "isInvertible": false
     }
   ],
   "actions": [
@@ -198,6 +247,39 @@
           "type": "string",
           "name": "标签(可选)",
           "desc": "填写一个字符串，可以是任意内容，用于区分不同的时间轴。使用空格分隔多个标签。"
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "play-timeline-in-range",
+      "scriptName": "PlayTimelineInRange",
+      "category": "by-timeline",
+      "list-name": "播放指定范围",
+      "display-text": "播放 [b]{0}[/b] 标签 [i]{1}[/i] 从 [i]{2}[/i] 到 [i]{3}[/i]",
+      "description": "在指定范围内播放时间轴。如果开始时间晚于结束时间，会调整播放速度。",
+      "params": {
+        "timeline": {
+          "type": "timeline",
+          "name": "时间轴",
+          "desc": "开始播放时间轴动画。"
+        },
+        "tags": {
+          "type": "string",
+          "name": "标签",
+          "desc": "可选。填写一个字符串，可以是任意内容，用于区分不同的时间轴。使用空格分隔多个标签。"
+        },
+        "start": {
+          "type": "any",
+          "name": "开始",
+          "desc": "时间轴开始播放的时间。如果提供以空格分隔的标签列表，则使用第一个匹配关键帧的时间作为开始时间。如果找不到开始时间，则默认从时间轴起点开始播放。",
+          "initialValue": 0
+        },
+        "end": {
+          "type": "any",
+          "name": "结束",
+          "desc": "时间轴结束播放的时间。如果提供以空格分隔的标签列表，则使用第一个匹配关键帧的时间作为结束时间。如果找不到结束时间，则默认在时间轴终点结束播放。",
+          "initialValue": 0
         }
       },
       "isAsync": true
@@ -224,6 +306,39 @@
       "isAsync": true
     },
     {
+      "id": "play-timeline-in-range-by-name",
+      "scriptName": "PlayTimelineInRangeByName",
+      "category": "by-timeline",
+      "list-name": "播放指定范围（按名称）",
+      "display-text": "播放 [b]{0}[/b] 标签 [i]{1}[/i] 从 [i]{2}[/i] 到 [i]{3}[/i]",
+      "description": "在指定范围内播放时间轴。如果开始时间晚于结束时间，会调整播放速度。",
+      "params": {
+        "timeline-name": {
+          "type": "string",
+          "name": "名称",
+          "desc": "要开始播放的时间轴"
+        },
+        "tags": {
+          "type": "string",
+          "name": "标签",
+          "desc": "可选。填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
+        },
+        "start": {
+          "type": "any",
+          "name": "开始",
+          "desc": "时间轴开始播放的时间。如果提供以空格分隔的标签列表，则使用第一个匹配关键帧的时间作为开始时间。如果找不到开始时间，则默认从时间轴起点开始播放。",
+          "initialValue": 0
+        },
+        "end": {
+          "type": "any",
+          "name": "结束",
+          "desc": "时间轴结束播放的时间。如果提供以空格分隔的标签列表，则使用第一个匹配关键帧的时间作为结束时间。如果找不到结束时间，则默认在时间轴终点结束播放。",
+          "initialValue": 0
+        }
+      },
+      "isAsync": true
+    },
+    {
       "id": "pause-timeline-by-tags",
       "scriptName": "PauseTimelineByTags",
       "category": "by-timeline",
@@ -234,7 +349,7 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的时间轴的标签。使用空格分隔多个标签。"
+          "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
         }
       }
     },
@@ -249,7 +364,7 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的时间轴的标签。使用空格分隔多个标签。"
+          "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
         }
       }
     },
@@ -264,7 +379,7 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的时间轴的标签。使用空格分隔多个标签。"
+          "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
         }
       }
     },
@@ -300,7 +415,7 @@
         "tags": {
           "type": "string",
           "name": "标签",
-          "desc": "要操作的时间轴的标签。使用空格分隔多个标签。"
+          "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
         },
         "rate": {
           "type": "number",
@@ -317,6 +432,29 @@
       "list-name": "播放全部",
       "display-text": "播放全部",
       "description": "播放所有尚未播放的时间轴动画。",
+      "isAsync": true
+    },
+    {
+      "id": "play-all-timelines-in-range",
+      "scriptName": "PlayAllTimelinesInRange",
+      "category": "all",
+      "list-name": "全部播放指定范围",
+      "display-text": "播放全部，从 [b]{0}[/b] 到 [b]{1}[/b]",
+      "description": "在指定范围内播放所有尚未播放的时间轴动画。",
+      "params": {
+        "start": {
+          "type": "any",
+          "name": "开始",
+          "desc": "各时间轴开始播放的时间。如果提供以空格分隔的标签列表，则分别使用每个时间轴中第一个匹配关键帧的时间作为开始时间。如果找不到开始时间，则默认从该时间轴起点开始播放。",
+          "initialValue": 0
+        },
+        "end": {
+          "type": "any",
+          "name": "结束",
+          "desc": "各时间轴结束播放的时间。如果提供以空格分隔的标签列表，则分别使用每个时间轴中第一个匹配关键帧的时间作为结束时间。如果找不到结束时间，则默认在该时间轴终点结束播放。",
+          "initialValue": 0
+        }
+      },
       "isAsync": true
     },
     {

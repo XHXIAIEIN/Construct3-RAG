@@ -1,11 +1,7 @@
 {
-  "version": "r495.2",
+  "version": "r506",
   "language": "en-US",
   "plugins": {
-    "advert": {
-      "name": "Mobile advert",
-      "file": "plugins/advert.json"
-    },
     "ninepatch": {
       "name": "9-patch",
       "file": "plugins/ninepatch.json"
@@ -14,21 +10,25 @@
       "name": "System",
       "file": "plugins/system.json"
     },
-    "ajax": {
-      "name": "AJAX",
-      "file": "plugins/ajax.json"
-    },
     "advancedrandom": {
       "name": "Advanced Random",
       "file": "plugins/advancedrandom.json"
     },
-    "audio": {
-      "name": "Audio",
-      "file": "plugins/audio.json"
+    "advert": {
+      "name": "Mobile advert",
+      "file": "plugins/advert.json"
+    },
+    "ajax": {
+      "name": "AJAX",
+      "file": "plugins/ajax.json"
     },
     "arr": {
       "name": "Array",
       "file": "plugins/arr.json"
+    },
+    "audio": {
+      "name": "Audio",
+      "file": "plugins/audio.json"
     },
     "bbcmicrobit": {
       "name": "BBC micro:bit",
@@ -42,13 +42,13 @@
       "name": "Bluetooth",
       "file": "plugins/bluetooth.json"
     },
-    "browser": {
-      "name": "Browser",
-      "file": "plugins/browser.json"
-    },
     "button": {
       "name": "Button",
       "file": "plugins/button.json"
+    },
+    "browser": {
+      "name": "Browser",
+      "file": "plugins/browser.json"
     },
     "camera3d": {
       "name": "3D camera",
@@ -106,10 +106,6 @@
       "name": "Geolocation",
       "file": "plugins/geolocation.json"
     },
-    "iframe": {
-      "name": "iframe",
-      "file": "plugins/iframe.json"
-    },
     "googleplay": {
       "name": "Google Play",
       "file": "plugins/googleplay.json"
@@ -117,6 +113,10 @@
     "htmlelement": {
       "name": "HTML Element",
       "file": "plugins/htmlelement.json"
+    },
+    "iframe": {
+      "name": "iframe",
+      "file": "plugins/iframe.json"
     },
     "cordovaiap": {
       "name": "Mobile IAP",
@@ -138,9 +138,9 @@
       "name": "Keyboard",
       "file": "plugins/keyboard.json"
     },
-    "midi": {
-      "name": "MIDI",
-      "file": "plugins/midi.json"
+    "light3d": {
+      "name": "3D light",
+      "file": "plugins/light3d.json"
     },
     "list": {
       "name": "List",
@@ -149,6 +149,10 @@
     "localstorage": {
       "name": "Local storage",
       "file": "plugins/localstorage.json"
+    },
+    "midi": {
+      "name": "MIDI",
+      "file": "plugins/midi.json"
     },
     "model3d": {
       "name": "3D model",
@@ -170,21 +174,21 @@
       "name": "Platform info",
       "file": "plugins/platforminfo.json"
     },
-    "qrcode": {
-      "name": "QR code",
-      "file": "plugins/qrcode.json"
-    },
     "progressbar": {
       "name": "Progress bar",
       "file": "plugins/progressbar.json"
     },
-    "shape3d": {
-      "name": "3D shape",
-      "file": "plugins/shape3d.json"
+    "qrcode": {
+      "name": "QR code",
+      "file": "plugins/qrcode.json"
     },
     "shadowlight": {
       "name": "Shadow light",
       "file": "plugins/shadowlight.json"
+    },
+    "shape3d": {
+      "name": "3D shape",
+      "file": "plugins/shape3d.json"
     },
     "share": {
       "name": "Share",
@@ -226,33 +230,33 @@
       "name": "Tiled Background",
       "file": "plugins/tiledbg.json"
     },
-    "timeline": {
-      "name": "Timeline controller",
-      "file": "plugins/timeline.json"
-    },
     "tilemap": {
       "name": "Tilemap",
       "file": "plugins/tilemap.json"
+    },
+    "timeline": {
+      "name": "Timeline controller",
+      "file": "plugins/timeline.json"
     },
     "flowchart": {
       "name": "Flowchart controller",
       "file": "plugins/flowchart.json"
     },
-    "touch": {
-      "name": "Touch",
-      "file": "plugins/touch.json"
-    },
     "usermedia": {
       "name": "User Media",
       "file": "plugins/usermedia.json"
     },
-    "video": {
-      "name": "Video",
-      "file": "plugins/video.json"
+    "touch": {
+      "name": "Touch",
+      "file": "plugins/touch.json"
     },
     "c2websocket": {
       "name": "WebSocket",
       "file": "plugins/c2websocket.json"
+    },
+    "video": {
+      "name": "Video",
+      "file": "plugins/video.json"
     },
     "xml": {
       "name": "XML",
@@ -264,13 +268,17 @@
     }
   },
   "behaviors": {
+    "eightdir": {
+      "name": "8 Direction",
+      "file": "behaviors/eightdir.json"
+    },
     "anchor": {
       "name": "Anchor",
       "file": "behaviors/anchor.json"
     },
-    "eightdir": {
-      "name": "8 Direction",
-      "file": "behaviors/eightdir.json"
+    "billboard": {
+      "name": "Billboard",
+      "file": "behaviors/billboard.json"
     },
     "bound": {
       "name": "Bound to",
@@ -279,10 +287,6 @@
     "bullet": {
       "name": "Bullet",
       "file": "behaviors/bullet.json"
-    },
-    "billboard": {
-      "name": "Billboard",
-      "file": "behaviors/billboard.json"
     },
     "car": {
       "name": "Car",
@@ -304,10 +308,6 @@
       "name": "Fade",
       "file": "behaviors/fade.json"
     },
-    "jumpthru": {
-      "name": "Jump-thru",
-      "file": "behaviors/jumpthru.json"
-    },
     "follow": {
       "name": "Follow",
       "file": "behaviors/follow.json"
@@ -316,9 +316,9 @@
       "name": "Flash",
       "file": "behaviors/flash.json"
     },
-    "nosave": {
-      "name": "No save",
-      "file": "behaviors/nosave.json"
+    "jumpthru": {
+      "name": "Jump-thru",
+      "file": "behaviors/jumpthru.json"
     },
     "los": {
       "name": "Line of sight",
@@ -328,17 +328,21 @@
       "name": "Move To",
       "file": "behaviors/moveto.json"
     },
+    "nosave": {
+      "name": "No save",
+      "file": "behaviors/nosave.json"
+    },
     "orbit": {
       "name": "Orbit",
       "file": "behaviors/orbit.json"
     },
-    "persist": {
-      "name": "Persist",
-      "file": "behaviors/persist.json"
-    },
     "pathfinding": {
       "name": "Pathfinding",
       "file": "behaviors/pathfinding.json"
+    },
+    "persist": {
+      "name": "Persist",
+      "file": "behaviors/persist.json"
     },
     "physics": {
       "name": "Physics",
@@ -364,13 +368,13 @@
       "name": "Shadow caster",
       "file": "behaviors/shadowcaster.json"
     },
-    "solid": {
-      "name": "Solid",
-      "file": "behaviors/solid.json"
-    },
     "sin": {
       "name": "Sine",
       "file": "behaviors/sin.json"
+    },
+    "solid": {
+      "name": "Solid",
+      "file": "behaviors/solid.json"
     },
     "tilemovement": {
       "name": "Tile movement",
@@ -380,13 +384,13 @@
       "name": "Timer",
       "file": "behaviors/timer.json"
     },
-    "tween": {
-      "name": "Tween",
-      "file": "behaviors/tween.json"
-    },
     "turret": {
       "name": "Turret",
       "file": "behaviors/turret.json"
+    },
+    "tween": {
+      "name": "Tween",
+      "file": "behaviors/tween.json"
     },
     "wrap": {
       "name": "Wrap",

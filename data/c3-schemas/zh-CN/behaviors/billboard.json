@@ -45,7 +45,7 @@
       "scriptName": "SetEnabled",
       "category": "",
       "list-name": "设置启用状态",
-      "display-text": "设置 {my} 启用 [b]{0}[/b]",
+      "display-text": "启用 {my}: [b]{0}[/b]",
       "description": "启用或禁用此行为。",
       "params": {
         "state": {

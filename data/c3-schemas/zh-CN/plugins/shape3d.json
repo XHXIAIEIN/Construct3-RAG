@@ -419,7 +419,7 @@
       "desc": "自动隐藏背对相机的朝面。"
     },
     "z-origin": {
-      "name": "Z轴原点",
+      "name": "原点Z",
       "desc": "物体位于 Z 轴上的位置。",
       "items": {
         "back": "背面",
@@ -486,6 +486,10 @@
       "subtract-from-instvar",
       "set-boolean-instvar",
       "toggle-boolean-instvar",
+      "set-material-surface-type",
+      "set-transmissiveness",
+      "set-metallic",
+      "set-roughness",
       "destroy",
       "change-tags",
       "set-from-json",
@@ -523,6 +527,9 @@
       "rotation-z",
       "color-value",
       "opacity",
+      "transmissiveness",
+      "metallic",
+      "roughness",
       "count",
       "pickedcount",
       "uid",

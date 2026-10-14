@@ -3,7 +3,6 @@
   "name": "CGS Notifications",
   "description": "An example of using Construct Game Services to receive notifications in real time.",
   "tags": [
-    "New",
     "Intermediate",
     "Feature example"
   ],

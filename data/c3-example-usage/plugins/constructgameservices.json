@@ -1,34 +1,49 @@
 {
   "conditions": {
-    "can-sign-in-persistent": {"examples": 2, "read": [["cgs-cloud-save", "LoginEvents", 15, 15], ["cgs-auth-providers", "Event sheet 1", 19, 19]]},
-    "is-signed-in": {"examples": 2, "read": [["cgs-cloud-save", "GameEvents", 14, 14], ["cgs-leaderboards", "SubmitScoreEvents", 2, 2]]},
+    "can-sign-in-persistent": {"examples": 2, "read": [["cgs-cloud-save", "LoginEvents", 15, 15], ["cgs-auth-providers", "Event sheet 1", 18, 18]]},
+    "is-signed-in": {"examples": 3, "read": [["cgs-notifications", "Event sheet 1", 5, 5], ["cgs-cloud-save", "GameEvents", 14, 14], ["cgs-leaderboards", "SubmitScoreEvents", 2, 2]]},
     "on-create-cloud-save-error": {"examples": 1, "read": [["cgs-cloud-save", "GameEvents", 5, 5]]},
     "on-create-cloud-save-success": {"examples": 1, "read": [["cgs-cloud-save", "GameEvents", 4, 4]]},
-    "on-error": {"examples": 3, "read": [["cgs-leaderboards", "ShowScoresEvents", 3, 3], ["cgs-cloud-save", "LoginEvents", 19, 19], ["cgs-auth-providers", "Event sheet 1", 16, 16]]},
+    "on-error": {"examples": 3, "read": [["cgs-leaderboards", "ShowScoresEvents", 3, 3], ["cgs-cloud-save", "LoginEvents", 19, 19], ["cgs-auth-providers", "Event sheet 1", 15, 15]]},
     "on-get-cloud-save-error": {"examples": 1, "read": [["cgs-cloud-save", "GameEvents", 9, 9]]},
     "on-get-cloud-save-success": {"examples": 1, "read": [["cgs-cloud-save", "GameEvents", 7, 7]]},
-    "on-sign-in-popup-blocked": {"examples": 1, "read": [["cgs-auth-providers", "Event sheet 1", 17, 17]]},
-    "on-success": {"examples": 3, "read": [["cgs-leaderboards", "ShowScoresEvents", 2, 2], ["cgs-cloud-save", "LoginEvents", 18, 18], ["cgs-auth-providers", "Event sheet 1", 15, 15]]}
+    "on-notification-received": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 9, 9]]},
+    "on-sign-in-popup-blocked": {"examples": 1, "read": [["cgs-auth-providers", "Event sheet 1", 16, 16]]},
+    "on-success": {"examples": 4, "read": [["cgs-leaderboards", "ShowScoresEvents", 2, 2], ["cgs-notifications", "Event sheet 1", 4, 4], ["cgs-cloud-save", "LoginEvents", 18, 18]]}
   },
   "actions": {
     "create-cloud-save-text": {"examples": 1, "read": [["cgs-cloud-save", "GameEvents", 3, 3]]},
+    "get-achievement": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 15, 15]]},
+    "get-broadcast-message": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 9, 9]]},
     "get-cloud-save": {"examples": 1, "read": [["cgs-cloud-save", "GameEvents", 6, 6]]},
     "get-leaderboard-scores": {"examples": 1, "read": [["cgs-leaderboards", "ShowScoresEvents", 1, 1]]},
-    "retry-open-sign-in-popup": {"examples": 1, "read": [["cgs-auth-providers", "Event sheet 1", 18, 18]]},
+    "get-xp": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 4, 4]]},
+    "notifications-connect": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 2, 2]]},
+    "retry-open-sign-in-popup": {"examples": 1, "read": [["cgs-auth-providers", "Event sheet 1", 17, 17]]},
     "set-player-name": {"examples": 1, "read": [["cgs-leaderboards", "SubmitScoreEvents", 20, 20]]},
-    "sign-in-persistent": {"examples": 2, "read": [["cgs-cloud-save", "LoginEvents", 17, 17], ["cgs-auth-providers", "Event sheet 1", 21, 21]]},
-    "sign-in-with-provider": {"examples": 3, "read": [["cgs-cloud-save", "LoginEvents", 2, 2], ["cgs-auth-providers", "Event sheet 1", 2, 2], ["cgs-leaderboards", "SubmitScoreEvents", 4, 4]]},
-    "sign-out": {"examples": 1, "read": [["cgs-auth-providers", "Event sheet 1", 24, 24]]},
+    "sign-in-persistent": {"examples": 2, "read": [["cgs-cloud-save", "LoginEvents", 17, 17], ["cgs-auth-providers", "Event sheet 1", 20, 20]]},
+    "sign-in-with-provider": {"examples": 4, "read": [["cgs-notifications", "Event sheet 1", 3, 3], ["cgs-cloud-save", "LoginEvents", 2, 2], ["cgs-auth-providers", "Event sheet 1", 2, 2]]},
+    "sign-out": {"examples": 1, "read": [["cgs-auth-providers", "Event sheet 1", 23, 23]]},
     "submit-score": {"examples": 4, "read": [["cgs-leaderboards", "SubmitScoreEvents", 24, 24], ["airborne-explorer", "GameEvents", 60, 61], ["tick-tock-toppings", "GameEvents", 103, 103]]}
   },
   "expressions": {
     "cloud-save-text": {"examples": 1, "read": [["cgs-cloud-save", "GameEvents", 7, 7]]},
-    "player-id": {"examples": 2, "read": [["cgs-cloud-save", "GameEvents", 13, 13], ["cgs-auth-providers", "Event sheet 1", 15, 15]]},
-    "player-name": {"examples": 2, "read": [["cgs-auth-providers", "Event sheet 1", 15, 15], ["cgs-leaderboards", "SubmitScoreEvents", 2, 2]]},
+    "get-achievement-name": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 16, 16]]},
+    "get-awarded-achievement-achievement-id": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 15, 15]]},
+    "get-awarded-achievement-awarded-count": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 15, 15]]},
+    "get-new-broadcast-message-channel-id": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 9, 9]]},
+    "get-new-broadcast-message-message-id": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 9, 9]]},
+    "get-xp-changed-change": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 12, 12]]},
+    "get-xp-changed-current-xp": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 12, 12]]},
+    "get-xp-rank-changed-new-rank-id": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 13, 13]]},
+    "get-xp-rank-changed-old-rank-id": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 13, 13]]},
+    "player-id": {"examples": 2, "read": [["cgs-cloud-save", "GameEvents", 13, 13], ["cgs-auth-providers", "Event sheet 1", 14, 14]]},
+    "player-name": {"examples": 3, "read": [["cgs-notifications", "Event sheet 1", 4, 4], ["cgs-auth-providers", "Event sheet 1", 14, 14], ["cgs-leaderboards", "SubmitScoreEvents", 2, 2]]},
     "score-count": {"examples": 1, "read": [["cgs-leaderboards", "ShowScoresEvents", 5, 5]]},
     "score-country-at": {"examples": 1, "read": [["cgs-leaderboards", "ShowScoresEvents", 5, 5]]},
     "score-formatted-at": {"examples": 1, "read": [["cgs-leaderboards", "ShowScoresEvents", 5, 5]]},
     "score-formatted-rank-at": {"examples": 1, "read": [["cgs-leaderboards", "ShowScoresEvents", 5, 5]]},
-    "score-player-name-at": {"examples": 1, "read": [["cgs-leaderboards", "ShowScoresEvents", 5, 5]]}
+    "score-player-name-at": {"examples": 1, "read": [["cgs-leaderboards", "ShowScoresEvents", 5, 5]]},
+    "xp": {"examples": 1, "read": [["cgs-notifications", "Event sheet 1", 7, 7]]}
   }
 }

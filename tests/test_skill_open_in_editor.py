@@ -136,6 +136,87 @@ def test_open_in_editor_closes_the_start_up_window_once_when_projects_open_at_on
     assert sorted(sent) == ["Emulation.setFocusEmulationEnabled"] * 2 + ["Page.setWebLifecycleState"] * 2, sent
 
 
+class Connection:
+    """The browser end of a DevTools connection; the URLs in `refused` abort the handshake, as a
+    closing browser's port does."""
+    refused: set[str] = set()
+
+    def __init__(self, url: str, timeout: float = oe.CALL) -> None:
+        if url in self.refused:
+            raise ConnectionAbortedError(10053, "An established connection was aborted")
+        self.url, self.calls = url, []
+
+    def call(self, method: str, wait: float = oe.CALL, session: str | None = None, **params) -> dict:
+        self.calls.append(method)
+        return {"targetInfos": []} if method == "Target.getTargets" else {}
+
+
+def launcher(started: list[dict], exits: bool, port_file=None):
+    class Launched:
+        """The process the browser is started as: one that exits at once, or the browser itself."""
+        pid = 1
+
+        def __init__(self, args: list[str], **kw) -> None:
+            started.append(kw["env"])
+            if port_file:
+                port_file.write_text("9223\n/devtools/browser/new", encoding="utf-8")
+
+        def poll(self) -> int | None:
+            return 0 if exits else None
+
+        def wait(self, timeout: float | None = None) -> int:
+            return 0
+
+        def kill(self) -> None:
+            pass
+    return Launched
+
+
+def test_open_in_editor_waits_for_the_port_of_a_browser_that_hands_its_start_over(tmp_path, monkeypatch):
+    """Edge given a compatibility layer, __COMPAT_LAYER in its environment, starts the browser again
+    as a child of its own and exits with code 0 within a tenth of a second. The start stopped waiting
+    when that process ended, in 11 of 60 starts, and the browser came up a moment later and ran on
+    orphaned (Edge 156 headless, 2026-10-14). The browser is started without the variable, and the
+    port is waited for after the process has exited."""
+    monkeypatch.setenv("__COMPAT_LAYER", "DetectorsAppHealth")
+    started: list[dict] = []
+    monkeypatch.setattr(oe.subprocess, "Popen", launcher(started, exits=True))
+    answers = iter([None, None, None, "ws://127.0.0.1:9223/devtools/browser/new"])
+    monkeypatch.setattr(oe.Browser, "devtools_url", staticmethod(lambda port_file: next(answers, None)))
+    monkeypatch.setattr(oe, "DevTools", Connection)
+    browser = oe.Browser("msedge.exe", tmp_path / "editor-msedge", headed=False)
+    assert browser.port == 9223 and browser.devtools.url.endswith("/new"), browser.devtools.url
+    assert len(started) == 1 and "__COMPAT_LAYER" not in {k.upper() for k in started[0]}, started
+
+
+def test_open_in_editor_starts_its_own_browser_when_the_one_on_the_profile_is_closing(tmp_path, monkeypatch):
+    """A closing browser still answers /json/version on its port, then aborts the WebSocket: a run
+    started right after a close took it for a running one and stopped as "could not be driven"
+    (WinError 10053, 2026-10-14). The run waits for it to end and starts its own; a close waits for
+    the browser to end and removes the port file, which on Windows takes 2 seconds to find dead."""
+    profile = tmp_path / "editor-msedge"
+    profile.mkdir()
+    port_file = profile / "DevToolsActivePort"
+    port_file.write_text("9222\n/devtools/browser/old", encoding="utf-8")
+    started: list[dict] = []
+    monkeypatch.setattr(oe.subprocess, "Popen", launcher(started, exits=False, port_file=port_file))
+    monkeypatch.setattr(oe.Browser, "devtools_url", staticmethod(
+        lambda f: f"ws://127.0.0.1:{f.read_text().split()[0]}/devtools/browser/x" if f.exists() else None))
+    monkeypatch.setattr(Connection, "refused", {"ws://127.0.0.1:9222/devtools/browser/x"})
+    monkeypatch.setattr(oe, "DevTools", Connection)
+    asked: list[str] = []
+
+    def running(self) -> bool:     # the closing browser has ended by the time it is asked
+        asked.append(port_file.read_text().split()[0])
+        return False
+    monkeypatch.setattr(oe.Browser, "running", running)
+    browser = oe.Browser("msedge.exe", profile, headed=False)
+    # it waited for the closing browser before starting its own
+    assert len(started) == 1 and browser.port == 9223 and asked == ["9222"], (started, browser.port, asked)
+    browser.close()
+    assert browser.devtools.calls[-1] == "Browser.close" and not port_file.exists()
+
+
 def test_open_in_editor_keeps_the_results_and_screenshots_in_the_project_by_default(tmp_path):
     """A run piped through tail or head loses the lines it cut, and a run without --shots shows
     nothing: sessions ran the same preview again only to see them (game projects' transcripts,

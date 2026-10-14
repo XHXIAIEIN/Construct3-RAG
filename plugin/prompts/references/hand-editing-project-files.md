@@ -44,8 +44,12 @@ end of this file.
   list. With both files of one script listed, Construct runs the `.js` [manual:
   scripting/using-scripting/typescript-construct.md].
 - `*.uistate.json` files and `uistate` folders hold the state of the editor's
-  interface; deleting them loses nothing else. Palettes and tilemap brushes
-  have folders of their own, `palettes/` and `tilemapBrushes/`.
+  interface; deleting them loses nothing else. A uistate file that exists
+  but lacks a key the editor saves can stop the project from opening: a
+  layout's file without `grid` did, with "Cannot read properties of
+  undefined (reading 'show')". So copy a file the editor saved, or write
+  none. Palettes and tilemap brushes have folders of their own, `palettes/`
+  and `tilemapBrushes/`. [observed in a game project, r505, 2026-10-14]
 - The project property *Preview effects* (Project Properties, Editor) is
   kept in `project.uistate.json` as `"previewEffects"`, not in
   `project.c3proj`. Turned off, the Layout View draws every image without
@@ -54,6 +58,13 @@ end of this file.
   far from the layout and the fog covers everything. The setting stays on
   the machine that saved it. [manual: project-primitives/projects.md
   "Preview effects"; observed in a game project, r505, 2026-10-08]
+- A layout's `layouts/<name>.uistate.json` keeps where its Layout View
+  opens: `view.viewMode`, `"2d"` or `"3d"`, and in `view["3d"]` the
+  `cameraPosition` and `cameraLookAt`. To open a 3D layout at the angle the
+  preview shows, set `viewMode` to `"3d"` and the two vectors to the
+  position and target of the game's 3D Camera. The editor overwrites the
+  file with the user's view at each save, so this sets the first view only.
+  [observed in a game project, r505, 2026-10-14]
 
 ## Encodings
 
@@ -187,6 +198,30 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   values. An instance written with `"originY": 1` over a frame whose origin is
   0.9929 is saved with 0.9929. [observed in a game project, r504, October
   2026: instances whose `initial-frame` is 0, and a folder save]
+- A glTF made with Y up imports on its side, its height along the layout's
+  Y axis. To turn it upright, set the model's default rotation in
+  `3dmodels/<model>.json`: `"rotation": {"0": -90, "1": 0, "2": 0}`, where
+  key `"0"` is the angle about X in degrees. The Layout View and the preview
+  both apply it to every instance. A *Set transform* rotation in *On start
+  of layout* or *On model loaded* runs in the preview only, so the Layout
+  View still shows the model on its side. [manual:
+  project-primitives/3d-model.md "Rotation"; observed in a game project,
+  r505, 2026-10-14]
+- A 3D model instance's `meshes` property maps each mesh name to a boolean:
+  `"meshes": {"Body": true, "Glow": false}`. The instance draws the meshes
+  set to true in the Layout View and from the start of the preview, and
+  *Set mesh enabled* can show the others later. A string, empty or a mesh
+  name, draws every mesh. An array stops the project from opening.
+  [observed in a game project, r505, 2026-10-14]
+- `animations` in `3dmodels/<model>.json` is a list of `[name, clip]` pairs.
+  To add a copy of a clip, append a pair whose clip is the original's with a
+  new `id`, a UUID, and the new `name`, and use the same name in both places:
+  `["Attack2", {"id": "<new UUID>", "name": "Attack2", "duration": ...,
+  "tracks": [...]}]`. The tracks keep their `lookupUUID`, which names the bone
+  they move. The project opens and *Play* plays the copy. [observed in a game
+  project, r505, 2026-10-14: a copy appended by a build script, the folder
+  and its packed `.c3p` opened and previewed, and the copy played from the
+  start on alternate attacks]
 
 ### Object types, families and `project.c3proj`
 

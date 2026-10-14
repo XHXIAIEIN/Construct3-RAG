@@ -51,6 +51,17 @@ def test_a_behavior_is_read_with_the_behavior_setter():
     assert extract_deprecation(MAIN_JS, BEHAVIORS_JS, "behaviors") == {"Pin": False, "Retired": True}
 
 
+def test_the_info_and_its_factory_are_read_under_their_names_of_the_build():
+    # r506 builds the info as const l=this.m=e.v(self.k,s), and a method may
+    # assign through the same shape to another property: the constructors'
+    # pair is the one most of them share.
+    renamed = PLUGINS_JS.replace("this.p", "this.m").replace(".m(self.v,", ".v(self.k,")
+    stray = '{const z=self.t;z.h.X=class{mn(){this.rn=z.v(self.xn,this),this.rn.Fs(!0)}}}'
+    assert extract_deprecation(MAIN_JS, renamed + stray, "plugins") == {
+        "Sprite": False, "NodeWebkit": True, "Keyboard": False, "Function": True,
+    }
+
+
 def test_deprecated_ids_stops_on_an_addon_the_bundle_does_not_construct():
     flags = extract_deprecation(MAIN_JS, PLUGINS_JS, "plugins")
     assert deprecated_ids(flags, {"Sprite", "NodeWebkit"}, "plugins") == {"NodeWebkit"}
@@ -62,6 +73,6 @@ def test_a_bundle_of_another_shape_stops_the_read():
     with pytest.raises(ValueError, match="IBehaviorInfo"):
         deprecated_setter(MAIN_JS.split("window.SDK.IBehaviorInfo")[0], "behaviors")
     with pytest.raises(ValueError, match="no plugin constructor"):
-        extract_deprecation(MAIN_JS, PLUGINS_JS.replace("this.p=", "this.info="), "plugins")
+        extract_deprecation(MAIN_JS, PLUGINS_JS.replace("(self.v,", "(0,"), "plugins")
     with pytest.raises(ValueError, match="calls SetIsDeprecated with"):
         extract_deprecation(MAIN_JS, PLUGINS_JS.replace("t.Fs(!0)", 't.Fs("yes")'), "plugins")

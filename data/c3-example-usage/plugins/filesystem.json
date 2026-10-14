@@ -1,24 +1,28 @@
 {
   "conditions": {
     "has-picker-tag": {"examples": 1, "read": [["file-system-text-editor", "Event sheet 1", 7, 7]]},
-    "is-supported": {"examples": 5, "read": [["taking-screenshots", "Event sheet 1", 3, 3], ["qr-code-maker", "Event sheet 1", 2, 2], ["voice-recorder", "Event sheet 1", 15, 15]]},
-    "on-file-operation-complete": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 5, 5], ["spritefont-maker-js", "Events", 10, 12], ["music-player", "Events", 32, 34]]},
-    "on-file-operation-error": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 6, 6], ["spritefont-maker-js", "Events", 13, 13], ["music-player", "Events", 36, 36]]},
-    "on-picker-complete": {"examples": 7, "read": [["taking-screenshots", "Event sheet 1", 8, 8], ["qr-code-maker", "Event sheet 1", 14, 14], ["file-system-text-editor", "Event sheet 1", 3, 3]]},
-    "on-picker-error": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 4, 4], ["spritefont-maker-js", "Events", 9, 9], ["music-player", "Events", 35, 35]]}
+    "is-supported": {"examples": 6, "read": [["taking-screenshots", "Event sheet 1", 3, 3], ["qr-code-maker", "Event sheet 1", 2, 2], ["voice-recorder", "Event sheet 1", 15, 15]]},
+    "on-file-operation-complete": {"examples": 4, "read": [["file-system-text-editor", "Event sheet 1", 5, 5], ["spritefont-maker-js", "Events", 10, 12], ["music-player", "Events", 32, 34]]},
+    "on-file-operation-error": {"examples": 4, "read": [["file-system-text-editor", "Event sheet 1", 6, 6], ["spritefont-maker-js", "Events", 13, 13], ["music-player", "Events", 36, 36]]},
+    "on-picker-complete": {"examples": 9, "read": [["taking-screenshots", "Event sheet 1", 8, 8], ["qr-code-maker", "Event sheet 1", 14, 14], ["file-system-text-editor", "Event sheet 1", 3, 3]]},
+    "on-picker-error": {"examples": 4, "read": [["file-system-text-editor", "Event sheet 1", 4, 4], ["spritefont-maker-js", "Events", 9, 9], ["music-player", "Events", 35, 35]]}
   },
   "actions": {
-    "add-accept-type": {"examples": 6, "read": [["taking-screenshots", "Event sheet 1", 7, 7], ["qr-code-maker", "Event sheet 1", 13, 13], ["file-system-text-editor", "Event sheet 1", 2, 2]]},
-    "read-binary-file": {"examples": 2, "read": [["spritefont-maker-js", "Events", 8, 8], ["music-player", "Events", 31, 31]]},
-    "read-text-file": {"examples": 1, "read": [["file-system-text-editor", "Event sheet 1", 3, 3]]},
-    "show-folder-picker": {"examples": 1, "read": [["spritefont-maker-js", "Events", 35, 35]]},
-    "show-open-file-picker": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 2, 2], ["spritefont-maker-js", "Events", 7, 7], ["music-player", "Events", 29, 29]]},
-    "show-save-file-picker": {"examples": 5, "read": [["taking-screenshots", "Event sheet 1", 7, 7], ["qr-code-maker", "Event sheet 1", 13, 13], ["file-system-text-editor", "Event sheet 1", 10, 10]]},
+    "add-accept-type": {"examples": 7, "read": [["taking-screenshots", "Event sheet 1", 7, 7], ["qr-code-maker", "Event sheet 1", 13, 13], ["file-system-text-editor", "Event sheet 1", 2, 2]]},
+    "list-content": {"examples": 1, "read": [["3d-file-explorer", "Events", 16, 16]]},
+    "read-binary-file": {"examples": 3, "read": [["spritefont-maker-js", "Events", 8, 8], ["music-player", "Events", 31, 31], ["3d-file-explorer", "Events", 59, 60]]},
+    "read-text-file": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 3, 3], ["bricklet", "ModelStateEvents", 6, 6], ["3d-file-explorer", "Events", 34, 34]]},
+    "show-folder-picker": {"examples": 2, "read": [["spritefont-maker-js", "Events", 35, 35], ["3d-file-explorer", "Events", 8, 8]]},
+    "show-open-file-picker": {"examples": 4, "read": [["file-system-text-editor", "Event sheet 1", 2, 2], ["bricklet", "MainEvents", 14, 14], ["spritefont-maker-js", "Events", 7, 7]]},
+    "show-save-file-picker": {"examples": 6, "read": [["taking-screenshots", "Event sheet 1", 7, 7], ["qr-code-maker", "Event sheet 1", 13, 13], ["file-system-text-editor", "Event sheet 1", 10, 10]]},
     "write-binary-file": {"examples": 5, "read": [["taking-screenshots", "Event sheet 1", 8, 8], ["qr-code-maker", "Event sheet 1", 14, 14], ["voice-recorder", "Event sheet 1", 21, 21]]},
-    "write-text-file": {"examples": 1, "read": [["file-system-text-editor", "Event sheet 1", 11, 11]]}
+    "write-text-file": {"examples": 2, "read": [["file-system-text-editor", "Event sheet 1", 11, 11], ["bricklet", "ModelStateEvents", 14, 14]]}
   },
   "expressions": {
-    "file-name-at": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 3, 3], ["spritefont-maker-js", "Events", 11, 11], ["music-player", "Events", 32, 34]]},
-    "file-text": {"examples": 1, "read": [["file-system-text-editor", "Event sheet 1", 5, 5]]}
+    "file-count": {"examples": 1, "read": [["3d-file-explorer", "Events", 18, 24]]},
+    "file-name-at": {"examples": 4, "read": [["file-system-text-editor", "Event sheet 1", 3, 3], ["spritefont-maker-js", "Events", 11, 11], ["music-player", "Events", 32, 34]]},
+    "file-text": {"examples": 3, "read": [["file-system-text-editor", "Event sheet 1", 5, 5], ["bricklet", "ModelStateEvents", 4, 5], ["3d-file-explorer", "Events", 34, 34]]},
+    "folder-count": {"examples": 1, "read": [["3d-file-explorer", "Events", 18, 24]]},
+    "folder-name-at": {"examples": 1, "read": [["3d-file-explorer", "Events", 20, 20]]}
   }
 }

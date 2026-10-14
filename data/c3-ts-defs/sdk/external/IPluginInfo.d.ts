@@ -51,6 +51,7 @@ declare namespace SDK {
 		SetSupportsEffects(v: boolean): void;
 		SetMustPreDraw(v: boolean): void;
 		SetIs3D(v: boolean): void;
+		SetSupports3DLighting(v: boolean): void;
 		SetSupportsColor(v: boolean): void;
 		SetCanBeBundled(v: boolean): void;
 		SetSupportsColor(v: boolean): void;

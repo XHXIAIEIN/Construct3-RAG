@@ -1750,6 +1750,109 @@
       "returnType": "string"
     },
     {
+      "id": "get-new-broadcast-message-channel-id",
+      "scriptName": "NewBroadcastMessageChannelID",
+      "category": "notifications",
+      "translated-name": "NewBroadcastMessageChannelID",
+      "description": "Channel ID of the new broadcast message",
+      "returnType": "string"
+    },
+    {
+      "id": "get-new-broadcast-message-message-id",
+      "scriptName": "NewBroadcastMessageMessageID",
+      "category": "notifications",
+      "translated-name": "NewBroadcastMessageMessageID",
+      "description": "ID of the new broadcast message",
+      "returnType": "string"
+    },
+    {
+      "id": "get-awarded-achievement-achievement-id",
+      "scriptName": "AwardedAchievementID",
+      "category": "notifications",
+      "translated-name": "AwardedAchievementID",
+      "description": "ID of the achievement awarded",
+      "returnType": "string"
+    },
+    {
+      "id": "get-awarded-achievement-awarded-count",
+      "scriptName": "AwardedAchievementAwardedCount",
+      "category": "notifications",
+      "translated-name": "AwardedAchievementAwardedCount",
+      "description": "How many of this achievement has just been awarded.",
+      "returnType": "number"
+    },
+    {
+      "id": "get-xp-changed-change",
+      "scriptName": "XPChange",
+      "category": "notifications",
+      "translated-name": "XPChange",
+      "description": "How much players XP has just changed by",
+      "returnType": "number"
+    },
+    {
+      "id": "get-xp-changed-current-xp",
+      "scriptName": "XPChangeCurrentXP",
+      "category": "notifications",
+      "translated-name": "XPChangeCurrentXP",
+      "description": "The players current XP",
+      "returnType": "number"
+    },
+    {
+      "id": "get-xp-rank-changed-old-rank-id",
+      "scriptName": "XPRankChangeOldRankID",
+      "category": "notifications",
+      "translated-name": "XPRankChangeOldRankID",
+      "description": "The players old XP rank ID",
+      "returnType": "string"
+    },
+    {
+      "id": "get-xp-rank-changed-new-rank-id",
+      "scriptName": "XPRankChangeNewRankID",
+      "category": "notifications",
+      "translated-name": "XPRankChangeNewRankID",
+      "description": "The players new XP rank ID",
+      "returnType": "string"
+    },
+    {
+      "id": "get-connection-closed-code",
+      "scriptName": "ClosedConnectionReasonCode",
+      "category": "notifications",
+      "translated-name": "ClosedConnectionReasonCode",
+      "description": "The numeric reason code for why the connection closed",
+      "returnType": "number"
+    },
+    {
+      "id": "get-connection-closed-reason",
+      "scriptName": "ClosedConnectionReason",
+      "category": "notifications",
+      "translated-name": "ClosedConnectionReason",
+      "description": "The reason string for why the connection cloed",
+      "returnType": "string"
+    },
+    {
+      "id": "get-total-achievements",
+      "scriptName": "TotalAchievements",
+      "category": "achievements",
+      "translated-name": "TotalAchievements",
+      "description": "Total number of achievements.",
+      "returnType": "number"
+    },
+    {
+      "id": "get-achievement-id-at",
+      "scriptName": "AchievementIDAt",
+      "category": "achievements",
+      "translated-name": "AchievementIDAt",
+      "description": "ID of an achievement at an index",
+      "params": {
+        "index": {
+          "type": "number",
+          "name": "Index",
+          "desc": "Achievement index"
+        }
+      },
+      "returnType": "string"
+    },
+    {
       "id": "get-achievement-date-created",
       "scriptName": "AchievementDateCreated",
       "category": "achievements",
@@ -2156,6 +2259,14 @@
         }
       },
       "returnType": "string"
+    },
+    {
+      "id": "get-achievement-awarded-players-count",
+      "scriptName": "AchievementAwardedPlayersCount",
+      "category": "achievements",
+      "translated-name": "AchievementAwardedPlayersCount",
+      "description": "The total number of players returned in the result set for the requested page.",
+      "returnType": "number"
     },
     {
       "id": "get-achievement-awarded-players-id-at",

@@ -6835,6 +6835,10 @@
               "one": "Import zip",
               "other": "Import {0} zips"
             },
+            "models": {
+              "one": "Import 3D model",
+              "other": "Import {0} 3D models"
+            },
             "import-results": {
               "zip-import-title": "Zip import error",
               "import-title": "Import error",
@@ -6851,7 +6855,8 @@
                 "font": "Fonts",
                 "icon": "Icons",
                 "general": "Files",
-                "svg": "Svg"
+                "svg": "Svg",
+                "model": "3D models"
               },
               "type-error": "The following types could not be imported: [b]{0}[/b]"
             },
@@ -6885,6 +6890,10 @@
               "script-failure": {
                 "one": "The script file could not be used.",
                 "other": "Some of the {0} script files could not be used."
+              },
+              "model-failure": {
+                "one": "The model file could not be used.",
+                "other": "Some of the {0} model files could not be used."
               },
               "files-failure": {
                 "one": "The file could not be used.",
@@ -7081,6 +7090,15 @@
             "caption": "Delete layer",
             "message": "Deleting this layer will also delete all the instances on it. Are you sure you want to delete this layer?"
           },
+          "confirm-replicate-layer": {
+            "caption": "Replicate layer across project",
+            "message": "This will update every layer named [b]{0}[/b] (case-insensitive) across the entire project to match this one, including all its sub-layers. This operation cannot be undone. Consider making a backup of your project first. Are you sure you want to continue?"
+          },
+          "rename-layer-across-project-prompt": {
+            "caption": "Rename layer across project",
+            "message": "Enter a new name for every layer named [b]{0}[/b] in the entire project.",
+            "input-label": "Name"
+          },
           "menu": {
             "add-layer-at-top": "Add layer at top",
             "add-layer-at-bottom": "Add layer at bottom",
@@ -7088,6 +7106,9 @@
             "insert-layer-below": "Insert layer below",
             "insert-sub-layer": "Insert sub-layer",
             "open-original-global-layer-layout": "Open original global layer layout",
+            "project-wide-changes": "Project-wide changes",
+            "replicate-across-project": "Replicate this layer across project",
+            "rename-across-project": "Rename layer across project",
             "show-hide": {
               "name": "Show/hide",
               "items": {
@@ -7174,6 +7195,10 @@
                 "one": "Are you sure you want to delete the selected family?",
                 "other": "Are you sure you want to delete the [b]{0}[/b] selected families?"
               }
+            },
+            "project-files": {
+              "one": "Are you sure you want to delete the selected project file?",
+              "other": "Are you sure you want to delete the [b]{0}[/b] selected project files?"
             },
             "timelines": {
               "one": "Are you sure you want to delete the selected timeline?",
@@ -7306,8 +7331,11 @@
             },
             "model3dItem": {
               "import": "Import",
+              "import-with-options": "Import with options",
               "import-from-folder": "From folder",
               "import-from-file": "From file",
+              "replace": "Replace",
+              "replace-with-options": "Replace with options",
               "duplicate": "Duplicate",
               "help": "Help on 3D model"
             },
@@ -7697,6 +7725,31 @@
               "name": "Tags",
               "desc": "A list of space separated tags."
             },
+            "common-material-properties": {
+              "name": "Material",
+              "desc": "Common properties for the object material, which affects 3D lighting."
+            },
+            "material-surface-type": {
+              "name": "Surface type",
+              "desc": "Whether to render mesh triangles with a flat or smooth appearance.",
+              "items": {
+                "no-lighting": "No lighting",
+                "flat": "Flat",
+                "smooth": "Smooth"
+              }
+            },
+            "transmissiveness": {
+              "name": "Transmissiveness",
+              "desc": "How much light comes through to the opposite side of a lit face."
+            },
+            "metallic": {
+              "name": "Metallic",
+              "desc": "Low values represent a non-metal material (e.g. plastic, wood, stone); high values represent metallic material (e.g. steel, gold)."
+            },
+            "roughness": {
+              "name": "Roughness",
+              "desc": "Low values represent a glossy material; high values represent a matte material."
+            },
             "instance-variables": {
               "name": "Instance variables",
               "name-family": "Family instance variables",
@@ -7996,6 +8049,7 @@
               "desc": "For 3D layers, whether objects are drawn back-to-front by the 2D Z order, or by distance from the camera.",
               "options": {
                 "z-order": "Z order",
+                "z-order-flip": "Z order flip",
                 "camera-distance": "Camera distance"
               }
             },
@@ -8085,6 +8139,10 @@
                 "name": "Y",
                 "desc": "The vanishing point Y in the viewport."
               }
+            },
+            "ambient-light": {
+              "name": "Ambient light",
+              "desc": "When using 3D lighting, the amount of ambient light (minimum light level)."
             },
             "effect-properties": {
               "name": "Effects",
@@ -8614,24 +8672,13 @@
                 "random": "Random"
               }
             },
+            "save-llm-context-file": {
+              "name": "Save LLM context file",
+              "desc": "Save the file llm-context.md with this project to provide context for AI tools."
+            },
             "compatibility-settings": {
               "name": "Compatibility settings",
               "desc": "Settings that exist mainly for backwards compatibility reasons. Usually these settings should not be changed."
-            },
-            "z-axis-scale": {
-              "name": "Z axis scale",
-              "desc": "The scale of units to use on the Z axis for 3D features. 'Regular' uses same units as X/Y axes. 'Normalized' works 0-100 and is deprecated - use 'Regular' mode instead.",
-              "normalized-confirmation": "Z axis scale 'Normalized' is deprecated. In future this mode will be removed in favor of 'Regular' mode. Are you sure you want to change the Z axis scale to 'Normalized'?",
-              "options": {
-                "normalized": "Normalized",
-                "regular": "Regular"
-              },
-              "convert": {
-                "name": "Convert Z axis scale",
-                "desc": "Click to convert the project to Z axis scale 'Regular'.",
-                "link": "Convert to 'Regular'",
-                "confirmation-message": "Converting the project to Z axis scale 'Regular' will affect the Z co-ordinate and depth of all 3D content in all layouts and layers in the project. This cannot be undone. Note this does not affect your event sheets or code which may still need to be manually updated. Do you want to continue?"
-              }
             },
             "editor": {
               "name": "Editor",
@@ -9872,6 +9919,10 @@
               "type": "Scripts",
               "description": "Each script file will be added to the project's [b]Scripts[/b] folder."
             },
+            "models": {
+              "type": "3D models",
+              "description": "Each model file will be imported to the project's [b]3D models[/b] folder."
+            },
             "other": {
               "type": "Files",
               "options": {
@@ -10676,13 +10727,13 @@
           "header-text": "This project uses some deprecated features. These are unsupported and may be removed. Consider updating the project. [a1]Learn more about deprecated features and how to update the project[/a1]",
           "dont-show-again": "Don't show again for this project",
           "items": {
+            "z-axis-scale": "This project used the legacy Z axis scale [i]Normalized[/i]. It has been updated to the modern [i]Regular[/i] mode. You may need to adjust some 3D content.",
             "file-structure": "This project used the legacy [i]Flat[/i] export file structure mode. It has been updated to the modern [i]Folders[/i] mode. You may need to update some file paths.",
             "cordova-ios-scheme": "Project property [i]Cordova iOS scheme[/i] was the legacy [i]file[/i] mode. It has been updated to the modern [i]app[/i] mode. This may reset storage if you previously published this project as an iOS app.",
             "cordova-android-scheme": "Project property [i]Cordova Android scheme[/i] was the legacy [i]file[/i] mode. It has been updated to the modern [i]https[/i] mode. This may reset storage if you previously published this project as an Android app.",
             "classic-scripts": "This project used legacy [i]classic[/i] scripts. Support for this was removed in favor of [i]module[/i] scripts. You may need to update your code to support modules.",
             "deprecated-plugin": "Plugin [b]{0}[/b] ({1}) by [i]{2}[/i] is deprecated",
-            "deprecated-behavior": "Behavior [b]{0}[/b] ({1}) by [i]{2}[/i] is deprecated",
-            "z-axis-scale-normalized": "This project uses the legacy [i]Normalized[/i] Z axis scale. This is deprecated and support for it will be removed in future in favor of [i]Regular[/i] mode."
+            "deprecated-behavior": "Behavior [b]{0}[/b] ({1}) by [i]{2}[/i] is deprecated"
           }
         },
         "edit-custom-ace-block": {
@@ -11197,6 +11248,14 @@
             }
           }
         },
+        "model3dReplace": {
+          "caption": "3D model replace",
+          "message": "Choose which files should replace the contents of each 3D model:",
+          "table": {
+            "model": "3D model",
+            "file": "File"
+          }
+        },
         "objectPicker": {
           "default-caption": "Object picker",
           "default-header": "Pick an object below:",
@@ -11291,7 +11350,9 @@
               "pick-message": {
                 "title": "No 3D models",
                 "message": "The project '{0}' has no 3D models that can be shown here. Create one before using this."
-              }
+              },
+              "mesh": "Mesh",
+              "bone": "Bone"
             },
             "transition": {
               "none-available": "<none - add an ease first>",
@@ -11784,6 +11845,12 @@
           "continue": "No thanks",
           "go-fullscreen": "Go fullscreen"
         },
+        "modelPreview": {
+          "caption": "Model preview",
+          "model-title": "{0} ({1})",
+          "animations": "Animations:",
+          "no-preview": "No preview available"
+        },
         "shell-output": {
           "build-log": "Log"
         },
@@ -12181,7 +12248,12 @@
           "window-caption": "Window caption",
           "resizable-window": "Resizable window",
           "ignore-gpu-blacklist": "Ignore GPU blacklist",
-          "export-for-steam": "Export for Steam",
+          "steam-mode": {
+            "label": "Steam mode",
+            "none": "None",
+            "overlay": "Overlay",
+            "capture": "Capture"
+          },
           "export-for-remote-preview": "Export for Remote Preview",
           "command-line": "Command line options",
           "no-platforms-selected": "No platforms are checked. Please enable at least one platform to export."
@@ -12214,6 +12286,13 @@
         "fontPreview": {
           "caption": "Font preview: {0}",
           "example-text": "The quick brown fox jumps over the lazy dog."
+        },
+        "itemPicker": {
+          "caption": "Item picker",
+          "selected-items": {
+            "one": "Item selected",
+            "other": "Items selected: {0}"
+          }
         },
         "openPopupWindow": {
           "caption": "Popup Blocked",
@@ -13212,6 +13291,14 @@
             "name": "Arcade shooter",
             "description": "Play an elite soldier invading the enemy base."
           },
+          "arcane-express": {
+            "name": "Arcane Express",
+            "description": "Escort a magic crystal through hostile fantasy lands, fight enchanted enemy towers, and use your heroes' abilities to survive and reach the portals."
+          },
+          "arcanigma": {
+            "name": "Arcanigma",
+            "description": "Play as a wizard who phases objects in and out of reality, bending the world around you to solve puzzles and progress through the levels."
+          },
           "archery-range": {
             "name": "Archery range",
             "description": "Test your bow and arrow mastery in a 3D archery range."
@@ -13396,6 +13483,10 @@
             "name": "Car selection screen",
             "description": "An example of a stylish car selection screen for a racing game, with car stats and more."
           },
+          "cargo-yard": {
+            "name": "Cargo Yard",
+            "description": "Sneak through a maze of shipping containers in the cargo yard. Stay in the shadows to escape."
+          },
           "catch-the-rats": {
             "name": "Catch the rats",
             "description": "Compete with a friend to see who can catch the largest number of rats in the sewers using giant cages."
@@ -13407,6 +13498,10 @@
           "cave-bridge": {
             "name": "Cave bridge",
             "description": "Enter and explore the depths of a magical cave, using timeline animations to assemble a bridge."
+          },
+          "cavern-lights": {
+            "name": "Cavern lights",
+            "description": "Find and awaken five ancient runes in mystical cave with 3D lighting."
           },
           "ceiling-trap": {
             "name": "Ceiling trap",
@@ -14093,6 +14188,10 @@
             "name": "Local storage - script",
             "description": "A script-based equivalent to the 'Local storage - high score' example."
           },
+          "magic-cube": {
+            "name": "Magic cube",
+            "description": "A classic magic cube brought to life in 3D, with smooth quaternion-based rotations across all three axes. Can you solve it?"
+          },
           "magic-feather": {
             "name": "Magic feather",
             "description": "A platformer where the player can temporarily fly by grabbing a magic feather."
@@ -14180,6 +14279,10 @@
           "morph-runner": {
             "name": "Morph runner",
             "description": "Traverse through portals to morph into different animals. Navigate tight spaces as a lizard, leap over obstacles as a wolf, or soar above barriers as a bird."
+          },
+          "morse-code": {
+            "name": "Morse code",
+            "description": "Choose your Morse code input method, tap out a transmission, and print the decoded message in readable text."
           },
           "move-along-curved-path": {
             "name": "Move along curved path",
@@ -14615,6 +14718,10 @@
           "sine-behavior-types": {
             "name": "Sine behavior types",
             "description": "Demonstrates each type of Sine movement that the behavior provides."
+          },
+          "sir-cuits": {
+            "name": "Sir Cuits",
+            "description": "Help Sir Cuits find Mecha-ella! Place jump pads and use physics to navigate levels."
           },
           "skeleton-hierarchy": {
             "name": "Skeleton hierarchy",
@@ -15552,6 +15659,7 @@
         "instances-change-mesh": "Change mesh ({0})",
         "instances-remove-mesh": "Remove mesh ({0})",
         "edit-mesh-point": "Edit mesh point",
+        "change-material-properties": "Change material properties ({0})",
         "change-project-file": "Change file '{0}'",
         "load-tilemap": "Load tilemap",
         "change-conditions-inverted": "Conditions inverted ({0})",
@@ -16411,6 +16519,10 @@
             "mesh": {
               "name": "Mesh",
               "description": "The mesh this texture belongs to."
+            },
+            "type": {
+              "name": "Type",
+              "description": "The type of this texture."
             },
             "color": {
               "name": "Color",
@@ -18235,6 +18347,12 @@
               "z-index": "Z Index",
               "collisions-enabled": "Collisions enabled"
             },
+            "material": {
+              "title": "Material",
+              "transmissiveness": "Transmissiveness",
+              "metallic": "Metallic",
+              "roughness": "Roughness"
+            },
             "instance-variables": "Instance variables"
           }
         }
@@ -18411,10 +18529,6 @@
         "new-model3d-name": "3D Model {0}",
         "exceeds-free-limits": "This project exceeds the free edition limits. Some features will be unavailable.",
         "login-tip": "[i]If you've already purchased a plan, [a1]log in to your account[/a1] to use the full features.[/i]",
-        "set-z-axis-scale-notification": {
-          "title": "Z axis scale set to 'Regular'",
-          "message": "This project uses the deprecated Z axis scale 'Normalized', but appears to use only 2D content, so it was automatically updated."
-        },
         "errors": {
           "name-invalid": {
             "title": "Invalid name",
@@ -18728,7 +18842,8 @@
         "import": {
           "picker-caption": "{0}/ model files",
           "picker-message": "Pick a model file from {0}/: ",
-          "confirm": "Import"
+          "confirm": "Import",
+          "selected-zip-files": "selected zip files"
         },
         "errors": {
           "name-used": {
@@ -18746,6 +18861,13 @@
           "external-dependencies": {
             "title": "3d model load error",
             "message": "This single 3d model file has external dependencies. Try packaging it along all related files in a zip file and load that instead."
+          },
+          "misc-load-errors": {
+            "title": "3d models load error",
+            "message": {
+              "one": "3D model file [i]{0}[/i] could not be loaded.",
+              "other": "{1} 3D model files, [i]{0}[/i] could not be loaded."
+            }
           },
           "load-error": {
             "title": "3d model load error",
@@ -18778,6 +18900,10 @@
           "compressed-textures-present": {
             "title": "Compressed textures not supported",
             "message": "The model includes compressed textures which are not supported. If possible re-export the model using uncompressed images (PNG or JPEG)."
+          },
+          "multiple-materials-present": {
+            "title": "Multiple materials not supported",
+            "message": "The model includes multiple materials on some meshes which are not supported."
           }
         }
       },
@@ -19505,12 +19631,167 @@
           }
         }
       },
+      "light3d": {
+        "name": "3D light",
+        "description": "Position a 3D light to affect the ",
+        "help-url": "plugin-reference/3d-light",
+        "properties": {
+          "light-type": {
+            "name": "Light type",
+            "desc": "The type of light.",
+            "items": {
+              "point": "Point",
+              "directional": "Directional",
+              "spot": "Spot"
+            }
+          },
+          "intensity": {
+            "name": "Intensity",
+            "desc": "How bright the light is."
+          },
+          "reference-distance": {
+            "name": "Reference distance",
+            "desc": "For a point or spot light, the distance at which lighting is at the specified intensity."
+          },
+          "radius": {
+            "name": "Radius",
+            "desc": "For a point or spot light, the distance at which lighting reduces to zero."
+          },
+          "attenuation-factor": {
+            "name": "Attenuation factor",
+            "desc": "How much the light intensity reduces with distance. 100% is normal attenuation, 0% means no attenuation (except for light radius)."
+          },
+          "inner-angle": {
+            "name": "Inner angle",
+            "desc": "For a spot light, the inner cone angle."
+          },
+          "outer-angle": {
+            "name": "Outer angle",
+            "desc": "For a spot light, the outer cone angle."
+          },
+          "initially-visible": {
+            "name": "Initially visible",
+            "desc": "Choose whether the object is visible when the layout starts."
+          }
+        },
+        "aceCategories": {
+          "light": "Light"
+        },
+        "conditions": {},
+        "actions": {
+          "set-light-type": {
+            "list-name": "Set light type",
+            "display-text": "Set light type to [i]{0}[/i]",
+            "description": "Set the light type.",
+            "params": {
+              "light-type": {
+                "name": "Intensity",
+                "desc": "The type of light.",
+                "items": {
+                  "point": "Point",
+                  "directional": "Directional",
+                  "spot": "Spot"
+                }
+              }
+            }
+          },
+          "set-intensity": {
+            "list-name": "Set intensity",
+            "display-text": "Set intensity to [i]{0}[/i]",
+            "description": "Set how bright the light is.",
+            "params": {
+              "intensity": {
+                "name": "Intensity",
+                "desc": "The new light intensity."
+              }
+            }
+          },
+          "set-reference-distance": {
+            "list-name": "Set reference distance",
+            "display-text": "Set reference distance to [i]{0}[/i]",
+            "description": "Set the distance at which lighting for a point light is at the specified intensity.",
+            "params": {
+              "reference-distance": {
+                "name": "Reference distance",
+                "desc": "The new reference distance."
+              }
+            }
+          },
+          "set-attenuation-factor": {
+            "list-name": "Set attenuation factor",
+            "display-text": "Set attenuation factor to [i]{0}[/i]",
+            "description": "Set how much the light intensity reduces with distance.",
+            "params": {
+              "attenuation-factor": {
+                "name": "Attenuation factor",
+                "desc": "The new attenuation factor from 0-100."
+              }
+            }
+          },
+          "set-radius": {
+            "list-name": "Set radius",
+            "display-text": "Set radius to [i]{0}[/i]",
+            "description": "Set the distance at which lighting reduces to zero.",
+            "params": {
+              "radius": {
+                "name": "Radius",
+                "desc": "The new radius."
+              }
+            }
+          },
+          "set-spot-angles": {
+            "list-name": "Set spotlight angles",
+            "display-text": "Set spotlight inner angle to [i]{0}[/i] degrees, outer angle to [i]{1}[/i] degrees",
+            "description": "Set the inner and outer cone angles for a spotlight.",
+            "params": {
+              "inner-angle": {
+                "name": "Inner angle",
+                "desc": "Spotlight inner cone angle in degrees."
+              },
+              "outer-angle": {
+                "name": "Outer angle",
+                "desc": "Spotlight outer cone angle in degrees."
+              }
+            }
+          }
+        },
+        "expressions": {
+          "get-intensity": {
+            "description": "The current light intensity.",
+            "translated-name": "Intensity"
+          },
+          "get-reference-distance": {
+            "description": "The current reference distance.",
+            "translated-name": "ReferenceDistance"
+          },
+          "get-attenuation-factor": {
+            "description": "The current attenuation factor from 0-100.",
+            "translated-name": "AttenuationFactor"
+          },
+          "get-radius": {
+            "description": "The current light radius.",
+            "translated-name": "Radius"
+          },
+          "get-inner-angle": {
+            "description": "The spotlight cone inner angle in degrees.",
+            "translated-name": "InnerAngle"
+          },
+          "get-outer-angle": {
+            "description": "The spotlight cone outer angle in degrees.",
+            "translated-name": "OuterAngle"
+          }
+        }
+      },
       "model3d": {
         "name": "3D model",
         "description": "Display a 3D model that has been imported to the project.",
         "help-url": "plugin-reference/3d-model",
         "aceCategories": {
           "3d-model": "3D model",
+          "3d-model-transform": "3D model transform",
+          "3d-model-node-transform": "3D model node transform",
+          "3d-model-animations": "3D model animations",
+          "3d-model-meshes": "3D model meshes",
           "playback": "Playback",
           "collisions": "Collisions",
           "web": "Web",
@@ -19607,7 +19888,7 @@
           },
           "loop": {
             "name": "Loop",
-            "desc": "Check so they animation loops."
+            "desc": "Check so the initial animation loops."
           },
           "enable-collisions": {
             "name": "Enable collisions",
@@ -19623,7 +19904,7 @@
           },
           "axis-scale-mode": {
             "name": "Transform mode",
-            "desc": "How the model transforms along with the instance. \"Fit\" mode preserves the model's proportions. \"Stretch\" mode scales each axis to fit in the instance bounds. \"Legacy\" mode exists for backwards compatibility, the other modes are prefered.",
+            "desc": "How the model transforms along with the instance. \"Fit\" mode preserves the model's proportions. \"Stretch\" mode scales each axis to fit in the instance bounds. \"Legacy\" mode exists for backwards compatibility, the other modes are preferred.",
             "items": {
               "legacy": "Legacy",
               "fit": "Fit",
@@ -19633,6 +19914,24 @@
           "back-face-culling": {
             "name": "Back face culling",
             "desc": "Check to ignore drawing polygon faces which are not visible."
+          },
+          "culling-mode": {
+            "name": "Culling mode",
+            "desc": "Set which polygon faces to cull. \"No culling\", \"Back faces\" and \"Front faces\" are applied to all meshes. \"Model settings\" is the preferred value and applies per mesh culling as set in the imported file.",
+            "items": {
+              "none": "No culling",
+              "back-face": "Back faces",
+              "front-face": "Front faces",
+              "model-settings": "Model settings"
+            }
+          },
+          "blend-mode": {
+            "name": "Animation blend mode",
+            "desc": "Set how poses are blended together when playing multiple animations simultaneously.",
+            "items": {
+              "average": "Average",
+              "mask": "Layered"
+            }
           },
           "editor-properties": {
             "name": "3D model editor properties",
@@ -19668,6 +19967,8 @@
           "legacy": "Legacy",
           "fit": "Fit",
           "stretch": "Stretch",
+          "average": "Average",
+          "mask": "Layered",
           "origin-x-left": "Left",
           "origin-x-middle": "Middle",
           "origin-x-right": "Right",
@@ -19676,7 +19977,11 @@
           "origin-y-bottom": "Bottom",
           "origin-z-back": "Back",
           "origin-z-middle": "Middle",
-          "origin-z-front": "Front"
+          "origin-z-front": "Front",
+          "culling-mode-none": "No culling",
+          "culling-mode-back": "Back faces",
+          "culling-mode-front": "Front faces",
+          "culling-mode-model": "Model settings"
         },
         "actions": {
           "set-model": {
@@ -19694,7 +19999,7 @@
               },
               "animation": {
                 "name": "Animation",
-                "desc": "The animation to play (if the model has any)."
+                "desc": "The animation to play (if the model has any). Will be set as the primary animation."
               },
               "playing": {
                 "name": "Playing",
@@ -19725,7 +20030,7 @@
               },
               "animation": {
                 "name": "Animation",
-                "desc": "The animation to play (if the model has any)."
+                "desc": "The animation to play (if the model has any). Will be set as the primary animation."
               },
               "playing": {
                 "name": "Playing",
@@ -19799,12 +20104,12 @@
           },
           "set-animation": {
             "list-name": "Set animation",
-            "display-text": "Set animation to [b]{0}[/b] (playing: [i]{1}[/i], loop: [i]{2}[/i], progress: [i]{3}[/i])",
-            "description": "Change the animation (if the model has any).",
+            "display-text": "Set animation to [b]{0}[/b] (playing: [i]{1}[/i], loop: [i]{2}[/i], progress: [i]{3}[/i], transition duration: [i]{4}[/i])",
+            "description": "Change the animation (if the model has any). The animation will be set as the primary one.",
             "params": {
               "animation": {
                 "name": "Animation",
-                "desc": "The animation to play (if the model has any)."
+                "desc": "The animation to play (if the model has any). Will be set as the primary animation."
               },
               "playing": {
                 "name": "Playing",
@@ -19817,17 +20122,56 @@
               "progress": {
                 "name": "Progress",
                 "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1]."
+              },
+              "transition-duration": {
+                "name": "Transition duration",
+                "desc": "The amount of time, in seconds, to transition between the last and the new animation."
+              }
+            }
+          },
+          "blend-animation": {
+            "list-name": "Blend animation",
+            "display-text": "Blend animation [b]{0}[/b] (playing: [i]{1}[/i], loop: [i]{2}[/i], progress: [i]{3}[/i], weight: [i]{4}[/i], fade duration: [i]{5}[/i])",
+            "description": "Blend a new animation into the currently playing ones.",
+            "params": {
+              "animation": {
+                "name": "Animation",
+                "desc": "The animation to blend in (if the model has any)."
+              },
+              "playing": {
+                "name": "Playing",
+                "desc": "Choose if the selected animation should start playing immediately."
+              },
+              "looping": {
+                "name": "Loop",
+                "desc": "Choose if the selected animation should loop."
+              },
+              "progress": {
+                "name": "Progress",
+                "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1]."
+              },
+              "target-weight": {
+                "name": "Weight",
+                "desc": "The influence the animation will have in the final pose."
+              },
+              "blend-duration": {
+                "name": "Blend duration",
+                "desc": "The amount of time, in seconds, this animation will take before it is contributing it's total weight."
               }
             }
           },
           "set-progress": {
             "list-name": "Set progress",
-            "display-text": "Set animation progress to [b]{0}[/b]",
-            "description": "Change the progress of the current animation with a value in the range [0-1].",
+            "display-text": "Set progress of animation [i]{1}[/i] to [b]{0}[/b]",
+            "description": "Change the progress of the specified animation with a value in the range [0-1].",
             "params": {
               "progress": {
                 "name": "Progress",
-                "desc": "Choose the progress of the current animation with a value in the range [0-1]."
+                "desc": "Choose the progress of the specified animation with a value in the range [0-1]."
+              },
+              "animation": {
+                "name": "Animation",
+                "desc": "The animation to change the progress of. Leave empty to target the primary animation."
               }
             }
           },
@@ -19901,16 +20245,165 @@
                 "desc": "The type of transformation to do.",
                 "items": {
                   "position": "Offset",
-                  "rotation": "Rotation",
+                  "rotation": "Rotation (Degrees)",
                   "scale": "Scale"
+                }
+              }
+            }
+          },
+          "reset-transform": {
+            "list-name": "Reset transform",
+            "display-text": "Reset [b]{0}[/b] transforms",
+            "description": "Reset the transformation of the model.",
+            "params": {
+              "type": {
+                "name": "Type",
+                "desc": "The type of transformation to reset.",
+                "items": {
+                  "position": "Offset",
+                  "rotation": "Rotation",
+                  "scale": "Scale",
+                  "all": "All"
+                }
+              }
+            }
+          },
+          "set-node-transform": {
+            "list-name": "Set node transform",
+            "display-text": "{5} [b]{6}[/b] X: [i]{2}[/i], Y: [i]{3}[/i], Z: [i]{4}[/i] of [i]{0}[/i]: [i]{1}[/i]",
+            "description": "Set the transformation of a node in the model.",
+            "params": {
+              "model3d-node-type": {
+                "name": "Node type",
+                "desc": "The type of the node to modify.",
+                "items": {
+                  "mesh": "Mesh",
+                  "bone": "Bone"
+                }
+              },
+              "node-name": {
+                "name": "Node name",
+                "desc": "The name of the node to modify."
+              },
+              "x-transform": {
+                "name": "Transform X",
+                "desc": "The transformation value to apply in the X axis."
+              },
+              "y-transform": {
+                "name": "Transform Y",
+                "desc": "The transformation value to apply in the Y axis."
+              },
+              "z-transform": {
+                "name": "Transform Z",
+                "desc": "The transformation value to apply in the Z axis."
+              },
+              "operation": {
+                "name": "Operation",
+                "desc": "The kind of operation to perform.",
+                "items": {
+                  "set": "Set",
+                  "add": "Add",
+                  "sub": "Subtract",
+                  "mul": "Multiply",
+                  "div": "Divide"
+                }
+              },
+              "type": {
+                "name": "Type",
+                "desc": "The type of transformation to do.",
+                "items": {
+                  "position": "Offset",
+                  "rotation": "Rotation (Degrees)",
+                  "scale": "Scale"
+                }
+              }
+            }
+          },
+          "set-node-quaternion": {
+            "list-name": "Set node quaternion",
+            "display-text": "Set X: [i]{2}[/i], Y: [i]{3}[/i], Z: [i]{4}[/i], W: [i]{5}[/i] of [i]{0}[/i]: [i]{1}[/i]",
+            "description": "Set the quaternion of a node in the model.",
+            "params": {
+              "model3d-node-type": {
+                "name": "Node type",
+                "desc": "The type of the node to modify.",
+                "items": {
+                  "mesh": "Mesh",
+                  "bone": "Bone"
+                }
+              },
+              "node-name": {
+                "name": "Node name",
+                "desc": "The name of the node to modify."
+              },
+              "x-component": {
+                "name": "Component X",
+                "desc": "The X component of the quaternion."
+              },
+              "y-component": {
+                "name": "Component Y",
+                "desc": "The Y component of the quaternion."
+              },
+              "z-component": {
+                "name": "Component Z",
+                "desc": "The Z component of the quaternion."
+              },
+              "w-component": {
+                "name": "Component W",
+                "desc": "The W component of the quaternion."
+              }
+            }
+          },
+          "reset-node-transform": {
+            "list-name": "Reset node transform",
+            "display-text": "Reset [b]{2}[/b] of [i]{0}[/i]: [i]{1}[/i] ",
+            "description": "Reset the transformation of a node in the model.",
+            "params": {
+              "model3d-node-type": {
+                "name": "Node type",
+                "desc": "The type of the node to reset.",
+                "items": {
+                  "mesh": "Mesh",
+                  "bone": "Bone"
+                }
+              },
+              "node-name": {
+                "name": "Node name",
+                "desc": "The name of the node to reset."
+              },
+              "type": {
+                "name": "Type",
+                "desc": "The type of transformation to reset.",
+                "items": {
+                  "position": "Offset",
+                  "rotation": "Rotation",
+                  "scale": "Scale",
+                  "all": "All"
+                }
+              }
+            }
+          },
+          "reset-all-node-transform": {
+            "list-name": "Reset all node transforms",
+            "display-text": "Reset [b]{0}[/b] transforms of all nodes",
+            "description": "Reset the transformation of all nodes in the model.",
+            "params": {
+              "type": {
+                "name": "Type",
+                "desc": "The type of transformation to reset.",
+                "items": {
+                  "position": "Offset",
+                  "rotation": "Rotation",
+                  "scale": "Scale",
+                  "all": "All"
                 }
               }
             }
           },
           "set-looping": {
             "list-name": "Set looping",
-            "display-text": "Loop state of current animation: [b]{0}[/b]",
-            "description": "Change the looping state of the current animation.",
+            "display-text": "Set loop state of animation [i]{1}[/i] to [b]{0}[/b]",
+            "description": "Change the looping state of the specified animation.",
             "params": {
               "state": {
                 "name": "Loop",
@@ -19920,6 +20413,10 @@
                   "yes": "Yes",
                   "toggle": "Toggle"
                 }
+              },
+              "animation": {
+                "name": "Animation",
+                "desc": "The animation to change the loop state of. Leave empty to target the primary animation."
               }
             }
           },
@@ -19983,12 +20480,12 @@
           },
           "play": {
             "list-name": "Play",
-            "display-text": "Play animation [b]{0}[/b] (loop: [i]{1}[/i], from progress: [i]{2}[/i])",
-            "description": "Play an animation in the 3D model.",
+            "display-text": "Play animation [b]{0}[/b] (loop: [i]{1}[/i], from progress: [i]{2}[/i], with transition duration: [i]{3}[/i])",
+            "description": "Play an animation in the 3D model. The animation will be set as the primary one.",
             "params": {
               "animation": {
                 "name": "Animation",
-                "desc": "The animation to play. Leave empty to use the current animation."
+                "desc": "The animation to play. Leave empty to play the primary animation."
               },
               "looping": {
                 "name": "Loop",
@@ -19997,23 +20494,54 @@
               "progress": {
                 "name": "Progress",
                 "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1]."
+              },
+              "transition-duration": {
+                "name": "Transition duration",
+                "desc": "The amount of time, in seconds, to transition between the last and the new animation."
+              }
+            }
+          },
+          "blend": {
+            "list-name": "Blend",
+            "display-text": "Blend animation [b]{0}[/b] (loop: [i]{1}[/i], from progress: [i]{2}[/i], with weight: [i]{3}[/i] and fade duration: [i]{4}[/i])",
+            "description": "Blend a new animation into the currently playing ones.",
+            "params": {
+              "animation": {
+                "name": "Animation",
+                "desc": "The animation to blend in."
+              },
+              "looping": {
+                "name": "Loop",
+                "desc": "Choose if the animation should loop."
+              },
+              "progress": {
+                "name": "Progress",
+                "desc": "Choose where the selected animation should start playing from, using a value in the range [0-1]."
+              },
+              "target-weight": {
+                "name": "Weight",
+                "desc": "The influence the animation will have in the final pose."
+              },
+              "blend-duration": {
+                "name": "Blend duration",
+                "desc": "The amount of time, in seconds, this animation will take before it is contributing it's total weight."
               }
             }
           },
           "stop": {
             "list-name": "Stop",
-            "display-text": "Stop current animation",
-            "description": "Stop the current animation in the 3D model and reset progress to 0."
+            "display-text": "Stop all animations",
+            "description": "Stop any animations in the 3D model and reset progress to 0."
           },
           "pause": {
             "list-name": "Pause",
-            "display-text": "Pause current animation",
-            "description": "Pause the current animation in the 3D model at its current progress."
+            "display-text": "Pause all animations",
+            "description": "Pause any animations in the 3D model at the current progress."
           },
           "resume": {
             "list-name": "Resume",
-            "display-text": "Resume current animation",
-            "description": "Resume the current animation in the 3D model from the current progress."
+            "display-text": "Resume all animations",
+            "description": "Resume any animations in the 3D model from the current progress."
           },
           "set-mesh-render-mode": {
             "list-name": "Set mesh render mode",
@@ -20046,6 +20574,21 @@
               }
             }
           },
+          "set-animation-blend-mode": {
+            "list-name": "Set animation blend mode",
+            "display-text": "Set animation blend mode to [b]{0}[/b]",
+            "description": "Set multiple playing animations will blend together.",
+            "params": {
+              "mode": {
+                "name": "Mode",
+                "desc": "How multiple playing animations are blended together.",
+                "items": {
+                  "average": "Average",
+                  "mask": "Layered"
+                }
+              }
+            }
+          },
           "set-backface-culling": {
             "list-name": "Set back face culling",
             "display-text": "[b]{0}[/b] back face culling",
@@ -20062,6 +20605,23 @@
               }
             }
           },
+          "set-culling-mode": {
+            "list-name": "Set culling mode",
+            "display-text": "Set culling mode to [b]\"{0}\"[/b]",
+            "description": "Change the culling mode.",
+            "params": {
+              "state": {
+                "name": "Mode",
+                "desc": "The new culling mode.",
+                "items": {
+                  "none": "No culling",
+                  "back-face": "Back faces",
+                  "front-face": "Front faces",
+                  "model-settings": "Model settings"
+                }
+              }
+            }
+          },
           "set-collisions-enabled": {
             "list-name": "Set collisions enabled",
             "display-text": "Set collisions [b]{0}[/b]",
@@ -20074,6 +20634,21 @@
                   "disabled": "Disabled",
                   "enabled": "Enabled"
                 }
+              }
+            }
+          },
+          "set-mesh-object": {
+            "list-name": "Set mesh object",
+            "display-text": "Use object [b]{1}[/b] for mesh [i]{0}[/i]",
+            "description": "Set an object to use as the source for textures for a mesh.",
+            "params": {
+              "mesh": {
+                "name": "Mesh",
+                "desc": "The mesh that will change it's texture."
+              },
+              "object": {
+                "name": "Object",
+                "desc": "The object to use for the mesh texture."
               }
             }
           }
@@ -20106,13 +20681,25 @@
           },
           "playing": {
             "list-name": "Is playing",
-            "display-text": "Is playing",
-            "description": "Check if the model is playing an animation using delta time."
+            "display-text": "Is [b]{0}[/b] playing",
+            "description": "Check if the model is playing an animation using delta time.",
+            "params": {
+              "animation": {
+                "name": "Animation",
+                "desc": "The animation to check for. Leave empty to check for the primary animation."
+              }
+            }
           },
           "looping": {
             "list-name": "Is looping",
-            "display-text": "Is looping",
-            "description": "Check if the model is looping an animation."
+            "display-text": "Is [b]{0}[/b] looping",
+            "description": "Check if the model is looping an animation.",
+            "params": {
+              "animation": {
+                "name": "Animation",
+                "desc": "The animation to check for. Leave empty to check for the primary animation."
+              }
+            }
           },
           "mesh-render-mode": {
             "list-name": "Render mode",
@@ -20145,6 +20732,21 @@
               }
             }
           },
+          "animation-blend-mode": {
+            "list-name": "Animation blend mode",
+            "display-text": "Animation blend mode is [b]{0}[/b]",
+            "description": "Check the animation blend mode mode.",
+            "params": {
+              "mode": {
+                "name": "Mode",
+                "desc": "How multiple playing animations are being blended together.",
+                "items": {
+                  "average": "Average",
+                  "mask": "Layered"
+                }
+              }
+            }
+          },
           "is-mesh-enabled": {
             "list-name": "Is mesh enabled",
             "display-text": "Is mesh [b]{0}[/b] enabled",
@@ -20165,6 +20767,23 @@
             "list-name": "Is back face culling enabled",
             "display-text": "Is back face culling enabled",
             "description": "Check if back face culling is enabled."
+          },
+          "check-culling-mode": {
+            "list-name": "Culling mode",
+            "display-text": "Is culling mode [b]\"{0}\"[/b]",
+            "description": "Check the culling mode being used.",
+            "params": {
+              "state": {
+                "name": "Mode",
+                "desc": "The culling mode to check for.",
+                "items": {
+                  "none": "No culling",
+                  "back-face": "Back faces",
+                  "front-face": "Front faces",
+                  "model-settings": "Model settings"
+                }
+              }
+            }
           },
           "mesh-exists": {
             "list-name": "Mesh exists",
@@ -20243,8 +20862,12 @@
             "translated-name": "Meshes"
           },
           "animation": {
-            "description": "The current animation. If there is no animation, the expression returns an empty string.",
+            "description": "The primary animation. If there is no animation, the expression returns an empty string. In any animation triggers the expression returns the name of the corresponding animation.",
             "translated-name": "Animation"
+          },
+          "animations": {
+            "description": "A comma separated string with all the active animations. If there are no active animations, the expression returns an empty string.",
+            "translated-name": "Animations"
           },
           "animation-duration": {
             "description": "The duration of an animation in the model.",
@@ -20257,8 +20880,14 @@
             }
           },
           "progress": {
-            "description": "The progress of the current animation in the range [0-1].",
-            "translated-name": "Progress"
+            "description": "The progress of an animation in the range [0-1].",
+            "translated-name": "Progress",
+            "params": {
+              "animation": {
+                "name": "Animation",
+                "desc": "The name the animation to get the progress for. Leave empty to get the progress of the primary animation."
+              }
+            }
           },
           "mesh-count": {
             "description": "The amount of meshes in the model.",
@@ -20297,28 +20926,262 @@
             "translated-name": "CurAnimation"
           },
           "position-x": {
-            "description": "Get the offset in the X axis.",
+            "description": "Get the plugin offset in the X axis.",
             "translated-name": "OffsetX"
           },
           "position-y": {
-            "description": "Get the offset in the Y axis.",
+            "description": "Get the plugin offset in the Y axis.",
             "translated-name": "OffsetY"
           },
           "position-z": {
-            "description": "Get the offset in the Z axis.",
+            "description": "Get the plugin offset in the Z axis.",
             "translated-name": "OffsetZ"
           },
           "scale-x": {
-            "description": "Get the scale in the X axis.",
+            "description": "Get the plugin scale in the X axis.",
             "translated-name": "ScaleX"
           },
           "scale-y": {
-            "description": "Get the scale in the Y axis.",
+            "description": "Get the plugin scale in the Y axis.",
             "translated-name": "ScaleY"
           },
           "scale-z": {
-            "description": "Get the scale in the Z axis.",
+            "description": "Get the plugin scale in the Z axis.",
             "translated-name": "ScaleZ"
+          },
+          "world-position-x": {
+            "description": "Get the model final world position in the X axis.",
+            "translated-name": "ModelX"
+          },
+          "world-position-y": {
+            "description": "Get the model final world position in the Y axis.",
+            "translated-name": "ModelY"
+          },
+          "world-position-z": {
+            "description": "Get the model final world position in the Z axis.",
+            "translated-name": "ModelZ"
+          },
+          "world-rotation-x": {
+            "description": "Get the model final world rotation about the X axis in degrees (Euler rotation).",
+            "translated-name": "ModelRotationX"
+          },
+          "world-rotation-y": {
+            "description": "Get the model final world rotation about the Y axis in degrees (Euler rotation).",
+            "translated-name": "ModelRotationY"
+          },
+          "world-rotation-z": {
+            "description": "Get the model final world rotation about the Z axis in degrees (Euler rotation).",
+            "translated-name": "ModelRotationZ"
+          },
+          "world-quaternion-x": {
+            "description": "Get the model final world quaternion X component.",
+            "translated-name": "ModelQuaternionX"
+          },
+          "world-quaternion-y": {
+            "description": "Get the model final world quaternion Y component.",
+            "translated-name": "ModelQuaternionY"
+          },
+          "world-quaternion-z": {
+            "description": "Get the model final world quaternion Z component.",
+            "translated-name": "ModelQuaternionZ"
+          },
+          "world-quaternion-w": {
+            "description": "Get the model final world quaternion W component.",
+            "translated-name": "ModelQuaternionW"
+          },
+          "world-scale-x": {
+            "description": "Get the model final world scale in the X axis.",
+            "translated-name": "ModelScaleX"
+          },
+          "world-scale-y": {
+            "description": "Get the model final world scale in the Y axis.",
+            "translated-name": "ModelScaleY"
+          },
+          "world-scale-z": {
+            "description": "Get the model final world scale in the Z axis.",
+            "translated-name": "ModelScaleZ"
+          },
+          "world-position-node-x": {
+            "description": "Get a node's final world position in the X axis.",
+            "translated-name": "NodeX",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-position-node-y": {
+            "description": "Get a node's final world position in the Y axis.",
+            "translated-name": "NodeY",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-position-node-z": {
+            "description": "Get a node's final world position in the Z axis.",
+            "translated-name": "NodeZ",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-rotation-node-x": {
+            "description": "Get a node's final world rotation about the the X axis in degrees (Euler rotation).",
+            "translated-name": "NodeRotationX",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-rotation-node-y": {
+            "description": "Get a node's final world rotation about the the Y axis in degrees (Euler rotation).",
+            "translated-name": "NodeRotationY",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-rotation-node-z": {
+            "description": "Get a node's final world rotation about the the Z axis in degrees (Euler rotation).",
+            "translated-name": "NodeRotationZ",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-scale-node-x": {
+            "description": "Get a node's final world scale in the X axis.",
+            "translated-name": "NodeScaleX",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-scale-node-y": {
+            "description": "Get a node's final world scale in the Y axis.",
+            "translated-name": "NodeScaleY",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-scale-node-z": {
+            "description": "Get a node's final world scale in the Z axis.",
+            "translated-name": "NodeScaleZ",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-quaternion-node-x": {
+            "description": "Get a node's final world quaternion X component.",
+            "translated-name": "NodeQuaternionX",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-quaternion-node-y": {
+            "description": "Get a node's final world quaternion Y component.",
+            "translated-name": "NodeQuaternionY",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-quaternion-node-z": {
+            "description": "Get a node's final world quaternion Z component.",
+            "translated-name": "NodeQuaternionZ",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
+          },
+          "world-quaternion-node-w": {
+            "description": "Get a node's final world quaternion W component.",
+            "translated-name": "NodeQuaternionW",
+            "params": {
+              "node-type": {
+                "name": "NodeType",
+                "desc": "The type of the node to target. Valid values are 'mesh' or 'bone'., default to 'mesh' if invalid."
+              },
+              "node-name": {
+                "name": "NodeName",
+                "desc": "The name of the node."
+              }
+            }
           },
           "origin-x": {
             "description": "Get the origin in the X axis.",
@@ -29757,6 +30620,7 @@
           "by-timeline": "By timeline",
           "all": "All timelines",
           "triggers": "Triggers",
+          "pick-instances": "Pick instances",
           "misc": "Miscellaneous"
         },
         "conditions": {
@@ -30006,6 +30870,39 @@
                 }
               }
             }
+          },
+          "pick-all-in-timeline": {
+            "list-name": "Pick all in timeline",
+            "display-text": "Pick all instances in [b]{0}[/b]",
+            "description": "Pick all the instances in a timeline.",
+            "params": {
+              "timeline": {
+                "name": "Timeline",
+                "desc": "The timeline to pick instances from."
+              }
+            }
+          },
+          "pick-all-in-timeline-by-name": {
+            "list-name": "Pick all in timeline (by name)",
+            "display-text": "Pick all instances in [b]{0}[/b]",
+            "description": "Pick all the instances in a timeline.",
+            "params": {
+              "timeline-name": {
+                "name": "Name",
+                "desc": "The name of the timeline to pick instances from."
+              }
+            }
+          },
+          "pick-all-in-timelines-by-tags": {
+            "list-name": "Pick all in tagged timelines",
+            "display-text": "Pick all instances in timelines tagged [b]{0}[/b]",
+            "description": "Pick all the instances in the matched timelines.",
+            "params": {
+              "tags": {
+                "name": "Tags",
+                "desc": "Space separated list of tags to match a timeline."
+              }
+            }
           }
         },
         "actions": {
@@ -30044,6 +30941,67 @@
             "display-text": "Play all",
             "description": "Play all timelines which are not already playing."
           },
+          "play-timeline-in-range": {
+            "list-name": "Play in range",
+            "display-text": "Play [b]{0}[/b] with tags [i]{1}[/i] from [i]{2}[/i] to [i]{3}[/i]",
+            "description": "Play a timeline in the specified range. Playback rate is changed in the case the start time is higher than the end time.",
+            "params": {
+              "timeline": {
+                "name": "Timeline",
+                "desc": "The timeline to start playing."
+              },
+              "tags": {
+                "name": "Tags",
+                "desc": "Optional space separated list of tags to identify a timeline later on."
+              },
+              "start": {
+                "name": "Start",
+                "desc": "The time the timeline will start playback from. If a space separated list of tags is provided, the start time will be that of the first matching keyframe. If a starting time can not be found it defaults to the beginning."
+              },
+              "end": {
+                "name": "End",
+                "desc": "The time the timeline will end playback at. If a space separated list of tags is provided, the end time will be that of the first matching keyframe. If a ending time can not be found it defaults to the ending."
+              }
+            }
+          },
+          "play-timeline-in-range-by-name": {
+            "list-name": "Play in range (by name)",
+            "display-text": "Play [b]{0}[/b] with tags [i]{1}[/i] from [i]{2}[/i] to [i]{3}[/i]",
+            "description": "Play a timeline in the specified range. Playback rate is changed in the case the start time is higher than the end time.",
+            "params": {
+              "timeline-name": {
+                "name": "Name",
+                "desc": "The name of the timeline to start playing."
+              },
+              "tags": {
+                "name": "Tags",
+                "desc": "Optional space separated list of tags to identify a timeline later on."
+              },
+              "start": {
+                "name": "Start",
+                "desc": "The time the timeline will start playback from. If a space separated list of tags is provided, the start time will be that of the first matching keyframe. If a starting time can not be found it defaults to the beginning."
+              },
+              "end": {
+                "name": "End",
+                "desc": "The time the timeline will end playback at. If a space separated list of tags is provided, the end time will be that of the first matching keyframe. If a ending time can not be found it defaults to the ending."
+              }
+            }
+          },
+          "play-all-timelines-in-range": {
+            "list-name": "Play all in range",
+            "display-text": "Play all from [b]{0}[/b] to [b]{1}[/b]",
+            "description": "Play all timelines in the specified range, which are not already playing.",
+            "params": {
+              "start": {
+                "name": "Start",
+                "desc": "The time the timelines will start playback from. If a space separated list of tags is provided, the start time will be that of the first matching keyframe in each timeline. If a starting time can not be found it defaults to the beginning."
+              },
+              "end": {
+                "name": "End",
+                "desc": "The time the timelines will end playback at. If a space separated list of tags is provided, the end time will be that of the first matching keyframe in each timeline. If a ending time can not be found it defaults to the ending."
+              }
+            }
+          },
           "pause-timeline": {
             "list-name": "Pause",
             "display-text": "Pause [b]{0}[/b]",
@@ -30073,7 +31031,7 @@
             "params": {
               "tags": {
                 "name": "Tags",
-                "desc": "Space separated list of timeline tags to change."
+                "desc": "Space separated list of tags to match a timeline."
               }
             }
           },
@@ -30111,7 +31069,7 @@
             "params": {
               "tags": {
                 "name": "Tags",
-                "desc": "Space separated list of timeline tags to change."
+                "desc": "Space separated list of tags to match a timeline."
               }
             }
           },
@@ -30149,7 +31107,7 @@
             "params": {
               "tags": {
                 "name": "Tags",
-                "desc": "Space separated list of timeline tags to change."
+                "desc": "Space separated list of tags to match a timeline."
               }
             }
           },
@@ -30240,7 +31198,7 @@
             "params": {
               "tags": {
                 "name": "Tags",
-                "desc": "Space separated list of timeline tags to change."
+                "desc": "Space separated list of tags to match a timeline."
               },
               "rate": {
                 "name": "Rate",
@@ -42304,7 +43262,7 @@
           },
           "pick-by-highest-lowest-value": {
             "list-name": "Pick by highest/lowest value",
-            "display-text": "Pick {0} by {1} {2} (pick all tied: [i]{3}[/i]",
+            "display-text": "Pick {0} by {1} {2} (pick all tied: [i]{3}[/i])",
             "description": "Pick based on evaluating the highest or lowest expression.",
             "params": {
               "object": {
@@ -43048,6 +44006,17 @@
               "angle": {
                 "name": "Angle",
                 "desc": "The angle to rotate the canvas view to, in degrees."
+              }
+            }
+          },
+          "set-layout-ambient-light": {
+            "list-name": "Set layout ambient light",
+            "display-text": "Set layout ambient light to [b]{0}[/b]",
+            "description": "Set the ambient light level of the current layout.",
+            "params": {
+              "ambient-light": {
+                "name": "Ambient light",
+                "desc": "The ambient light level from 0-1."
               }
             }
           },
@@ -44180,6 +45149,10 @@
           "layoutangle": {
             "description": "Get the current angle of the layout, in degrees.",
             "translated-name": "LayoutAngle"
+          },
+          "layoutambientlight": {
+            "description": "Get the current ambient light level of the layout.",
+            "translated-name": "LayoutAmbientLight"
           },
           "vanishing-point-x": {
             "description": "Get the current vanishing point X in the viewport from 0-100.",
@@ -50564,6 +51537,7 @@
           "collisions": "Collisions",
           "html-element": "HTML element",
           "instance-variables": "Instance variables",
+          "material": "Material",
           "misc": "Misc",
           "size-position": "Size & Position",
           "time": "Time",
@@ -51819,6 +52793,55 @@
                 "desc": "The tag to signal."
               }
             }
+          },
+          "set-material-surface-type": {
+            "list-name": "Set surface type",
+            "display-text": "Set material surface type to [b]{0}[/b]",
+            "description": "Set the material surface type for 3D lighting.",
+            "params": {
+              "surface-type": {
+                "name": "Surface type",
+                "desc": "The surface type to set.",
+                "items": {
+                  "no-lighting": "No lighting",
+                  "flat": "Flat",
+                  "smooth": "Smooth"
+                }
+              }
+            }
+          },
+          "set-transmissiveness": {
+            "list-name": "Set transmissiveness",
+            "display-text": "Set transmissiveness to [b]{0}[/b]",
+            "description": "Set the material transmissiveness property for 3D lighting.",
+            "params": {
+              "transmissiveness": {
+                "name": "Transmissiveness",
+                "desc": "Transmissiveness amount, from 0-100."
+              }
+            }
+          },
+          "set-metallic": {
+            "list-name": "Set metallic",
+            "display-text": "Set metallic to [b]{0}[/b]",
+            "description": "Set the material metallic property for 3D lighting.",
+            "params": {
+              "metallic": {
+                "name": "Metallic",
+                "desc": "Metallic amount, from 0-100."
+              }
+            }
+          },
+          "set-roughness": {
+            "list-name": "Set roughness",
+            "display-text": "Set roughness to [b]{0}[/b]",
+            "description": "Set the material roughness property for 3D lighting.",
+            "params": {
+              "roughness": {
+                "name": "Roughness",
+                "desc": "Roughness amount, from 0-100."
+              }
+            }
           }
         },
         "expressions": {
@@ -52015,6 +53038,18 @@
                 "desc": "0 based index of a tag."
               }
             }
+          },
+          "transmissiveness": {
+            "translated-name": "Transmissiveness",
+            "description": "The material transmissiveness amount, from 0-100."
+          },
+          "metallic": {
+            "translated-name": "Metallic",
+            "description": "The material metallic amount, from 0-100."
+          },
+          "roughness": {
+            "translated-name": "Roughness",
+            "description": "The material roughness amount, from 0-100."
           }
         }
       }

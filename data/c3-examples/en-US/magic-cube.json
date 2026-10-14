@@ -1,0 +1,35 @@
+{
+  "id": "magic-cube",
+  "name": "Magic cube",
+  "description": "A classic magic cube brought to life in 3D, with smooth quaternion-based rotations across all three axes. Can you solve it?",
+  "tags": [
+    "New",
+    "Advanced",
+    "3D",
+    "Game template",
+    "Puzzle"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Arr",
+      "Camera3D",
+      "Model3D",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Sin",
+      "Tween"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=magic-cube"
+}

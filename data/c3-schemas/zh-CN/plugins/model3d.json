@@ -9,7 +9,11 @@
     "collisions": "碰撞",
     "misc": "杂项",
     "web": "网络",
-    "memory-management": "资源内存"
+    "memory-management": "资源内存",
+    "3d-model-transform": "3D模型变换",
+    "3d-model-node-transform": "3D模型节点变换",
+    "3d-model-animations": "3D模型: 动画",
+    "3d-model-meshes": "3D模型: 网格"
   },
   "conditions": [
     {
@@ -29,40 +33,6 @@
       "display-text": "导入模型失败",
       "description": "模型加载发生错误时触发。",
       "isTrigger": true
-    },
-    {
-      "id": "for-each-mesh",
-      "scriptName": "ForEachMesh",
-      "category": "3d-model",
-      "list-name": "遍历网格",
-      "display-text": "遍历网格",
-      "description": "遍历模型中的所有网格。",
-      "isLooping": true
-    },
-    {
-      "id": "for-each-animation",
-      "scriptName": "ForEachAnimation",
-      "category": "3d-model",
-      "list-name": "遍历动画",
-      "display-text": "遍历动画",
-      "description": "遍历模型中的所有动画。",
-      "isLooping": true
-    },
-    {
-      "id": "playing",
-      "scriptName": "IsPlaying",
-      "category": "3d-model",
-      "list-name": "正在播放",
-      "display-text": "正在播放",
-      "description": "检查模型是否正在播放动画。"
-    },
-    {
-      "id": "looping",
-      "scriptName": "IsLooping",
-      "category": "3d-model",
-      "list-name": "正在循环播放",
-      "display-text": "正在循环播放",
-      "description": "检查模型是否正在循环播放动画。"
     },
     {
       "id": "mesh-render-mode",
@@ -88,7 +58,7 @@
       "id": "axis-scale-mode",
       "scriptName": "AxisScaleMode",
       "category": "3d-model",
-      "list-name": "变换模式",
+      "list-name": "设置变换模式",
       "display-text": "使用[b]{0}[/b]变换模式",
       "description": "检查所使用的变换模式。",
       "params": {
@@ -106,27 +76,24 @@
       }
     },
     {
-      "id": "is-mesh-enabled",
-      "scriptName": "IsMeshEnabled",
+      "id": "animation-blend-mode",
+      "scriptName": "AnimationBlendMode",
       "category": "3d-model",
-      "list-name": "网格已启用",
-      "display-text": "网格[b]{0}[/b]已启用",
-      "description": "检查一个网格是否已启用",
+      "list-name": "动画混合模式",
+      "display-text": "动画混合模式为 [b]{0}[/b]",
+      "description": "检查动画混合模式。",
       "params": {
-        "mesh": {
-          "type": "model3d-mesh-string",
-          "name": "网格",
-          "desc": "要检查的网格名称。"
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "多个正在播放的动画如何混合。",
+          "items": {
+            "average": "平均",
+            "mask": "分层"
+          },
+          "initialValue": "average"
         }
       }
-    },
-    {
-      "id": "are-all-meshes-enabled",
-      "scriptName": "AreAllMeshesEnabled",
-      "category": "3d-model",
-      "list-name": "启用所有网格吗",
-      "display-text": "启用所有网格",
-      "description": "检查是否所有网格都已绘制。"
     },
     {
       "id": "is-backface-culling-enabled",
@@ -134,27 +101,76 @@
       "category": "3d-model",
       "list-name": "已启用背面剔除",
       "display-text": "已启用背面剔除",
-      "description": "检查是否启用了背面剔除。"
+      "description": "检查是否启用了背面剔除。",
+      "isDeprecated": true
     },
     {
-      "id": "mesh-exists",
-      "scriptName": "MeshExists",
+      "id": "check-culling-mode",
+      "scriptName": "CheckCullingMode",
       "category": "3d-model",
-      "list-name": "存在网格",
-      "display-text": "存在网格 [b]{0}[/b]",
-      "description": "检查3D模型中是否存在网格",
+      "list-name": "3D模型: 背面剔除",
+      "display-text": "剔除模式是[b]{0}[/b]",
+      "description": "检查所使用的剔除模式。",
       "params": {
-        "mesh": {
-          "type": "model3d-mesh-string",
-          "name": "纹理",
-          "desc": "要检查的网格名称。"
+        "state": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "要检查的剔除模式。",
+          "items": {
+            "none": "关闭",
+            "back-face": "背面",
+            "front-face": "正面",
+            "model-settings": "默认"
+          },
+          "initialValue": "model-settings"
+        }
+      }
+    },
+    {
+      "id": "for-each-animation",
+      "scriptName": "ForEachAnimation",
+      "category": "3d-model-animations",
+      "list-name": "遍历动画",
+      "display-text": "遍历动画",
+      "description": "遍历模型中的所有动画。",
+      "isLooping": true
+    },
+    {
+      "id": "playing",
+      "scriptName": "IsPlaying",
+      "category": "3d-model-animations",
+      "list-name": "正在播放",
+      "display-text": "正在播放动画 [b]{0}[/b]",
+      "description": "检查模型是否正在播放动画。",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "要检查的动画。留空则检查主动画。",
+          "initialValue": ""
+        }
+      }
+    },
+    {
+      "id": "looping",
+      "scriptName": "IsLooping",
+      "category": "3d-model-animations",
+      "list-name": "正在循环播放",
+      "display-text": "正在循环动画 [b]{0}[/b]",
+      "description": "检查模型是否正在循环播放动画。",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "要检查的动画。留空则检查主动画。",
+          "initialValue": ""
         }
       }
     },
     {
       "id": "on-animation-finished",
       "scriptName": "OnAnimationFinished",
-      "category": "3d-model",
+      "category": "3d-model-animations",
       "list-name": "动画播放完成",
       "display-text": "动画 [b]{0}[/b] 播放完成",
       "description": "检查动画是否完成。",
@@ -170,7 +186,7 @@
     {
       "id": "on-animation-looped",
       "scriptName": "OnAnimationLooped",
-      "category": "3d-model",
+      "category": "3d-model-animations",
       "list-name": "动画循环播放完成",
       "display-text": "动画 [b]{0}[/b] 循环播放完成",
       "description": "动画进入循环周期时触发。",
@@ -186,7 +202,7 @@
     {
       "id": "on-any-animation-finished",
       "scriptName": "OnAnyAnimationFinished",
-      "category": "3d-model",
+      "category": "3d-model-animations",
       "list-name": "任意动画播放完成",
       "display-text": "任意动画播放完成",
       "description": "检测任意动画是否播放完成。",
@@ -195,11 +211,58 @@
     {
       "id": "on-any-animation-looped",
       "scriptName": "OnAnyAnimationLooped",
-      "category": "3d-model",
+      "category": "3d-model-animations",
       "list-name": "任意动画循环完成",
       "display-text": "任意动画循环完成",
       "description": "任意动画进入循环播放时触发。",
       "isTrigger": true
+    },
+    {
+      "id": "for-each-mesh",
+      "scriptName": "ForEachMesh",
+      "category": "3d-model-meshes",
+      "list-name": "遍历网格",
+      "display-text": "遍历网格",
+      "description": "遍历模型中的所有网格。",
+      "isLooping": true
+    },
+    {
+      "id": "is-mesh-enabled",
+      "scriptName": "IsMeshEnabled",
+      "category": "3d-model-meshes",
+      "list-name": "已启用网格",
+      "display-text": "已启用网格[b]{0}[/b]",
+      "description": "检查一个网格是否已启用",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "网格",
+          "desc": "要检查的网格名称。"
+        }
+      }
+    },
+    {
+      "id": "are-all-meshes-enabled",
+      "scriptName": "AreAllMeshesEnabled",
+      "category": "3d-model-meshes",
+      "list-name": "已启用网格(全部)",
+      "display-text": "已启用所有网格",
+      "description": "检查是否所有网格都已绘制。"
+    },
+    {
+      "id": "mesh-exists",
+      "scriptName": "MeshExists",
+      "category": "3d-model-meshes",
+      "list-name": "存在网格",
+      "display-text": "存在网格 [b]{0}[/b]",
+      "description": "检查3D模型中是否存在网格",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "纹理",
+          "desc": "要检查的网格名称。"
+        }
+      }
     },
     {
       "id": "collisions-enabled",
@@ -259,7 +322,7 @@
         "animation": {
           "type": "model3d-animation-string",
           "name": "动画",
-          "desc": "如果有动画，设置要播放的动画。"
+          "desc": "要播放的动画，并设为主动画。"
         },
         "playing": {
           "type": "boolean",
@@ -303,7 +366,7 @@
         "animation": {
           "type": "model3d-animation-string",
           "name": "动画",
-          "desc": "如果有动画，设置要播放的动画。"
+          "desc": "要播放的动画，并设为主动画。"
         },
         "playing": {
           "type": "boolean",
@@ -325,142 +388,6 @@
         }
       },
       "isAsync": true
-    },
-    {
-      "id": "set-mesh-enabled",
-      "scriptName": "SetMeshEnabled",
-      "category": "3d-model",
-      "list-name": "启用网格",
-      "display-text": "启用网格 [b]{0}[/b]: {1}",
-      "description": "启用或禁用指定的网格。",
-      "params": {
-        "mesh": {
-          "type": "model3d-mesh-string",
-          "name": "网格",
-          "desc": "要修改的网格。如果模型中找不到该网格，则不进行任何更改。"
-        },
-        "enabled": {
-          "type": "boolean",
-          "name": "启用",
-          "desc": "选择是否显示或隐藏网格中指定的元素。"
-        }
-      }
-    },
-    {
-      "id": "set-all-meshes-enabled",
-      "scriptName": "SetAllMeshesEnabled",
-      "category": "3d-model",
-      "list-name": "启用网格(全部)",
-      "display-text": "启用全部网格: {0}",
-      "description": "启用或禁用模型中的所有网格。",
-      "params": {
-        "enabled": {
-          "type": "boolean",
-          "name": "启用",
-          "desc": "选择是否显示或隐藏所有网格。"
-        }
-      }
-    },
-    {
-      "id": "set-animation",
-      "scriptName": "SetAnimation",
-      "category": "3d-model",
-      "list-name": "设置动画",
-      "display-text": "设置动画为 [b]{0}[/b] (初始播放: [i]{1}[/i], 循环播放: [i]{2}[/i], 播放进度: [i]{3}[/i])",
-      "description": "如果模型存在动画，更改播放的动画。",
-      "params": {
-        "animation": {
-          "type": "model3d-animation-string",
-          "name": "动画",
-          "desc": "如果有动画，设置要播放的动画。"
-        },
-        "playing": {
-          "type": "boolean",
-          "name": "初始播放",
-          "desc": "场景开始时，是否立即播放所选动画。",
-          "initialValue": "false"
-        },
-        "looping": {
-          "type": "boolean",
-          "name": "循环播放",
-          "desc": "所选动画是否循环播放。",
-          "initialValue": "false"
-        },
-        "progress": {
-          "type": "number",
-          "name": "进度",
-          "desc": "所选动画从哪里开始播放，取值区间在 [0-1] 范围。",
-          "initialValue": "0"
-        }
-      }
-    },
-    {
-      "id": "set-progress",
-      "scriptName": "SetProgress",
-      "category": "3d-model",
-      "list-name": "设置进度",
-      "display-text": "设置动画进度为[b]{0}[/b]",
-      "description": "设置当前动画的播放进度在 [0-1] 范围。",
-      "params": {
-        "progress": {
-          "type": "number",
-          "name": "进度",
-          "desc": "设置动画的进度，取值在 [0-1] 范围内。",
-          "initialValue": "0"
-        }
-      }
-    },
-    {
-      "id": "set-transform",
-      "scriptName": "SetTransform",
-      "category": "3d-model",
-      "list-name": "设置变换",
-      "display-text": "{3} [b]{4}[/b] X: [i]{0}[/i], Y: [i]{1}[/i], Z: [i]{2}[/i]",
-      "description": "设置模型属性的变换。",
-      "params": {
-        "x-transform": {
-          "type": "number",
-          "name": "X",
-          "desc": "要应用在 X 轴的变换值。",
-          "initialValue": "0"
-        },
-        "y-transform": {
-          "type": "number",
-          "name": "Y",
-          "desc": "要应用在 Y 轴的变换值。",
-          "initialValue": "0"
-        },
-        "z-transform": {
-          "type": "number",
-          "name": "Z",
-          "desc": "要应用在 Z 轴的变换值。",
-          "initialValue": "0"
-        },
-        "operation": {
-          "type": "combo",
-          "name": "运算",
-          "desc": "要变化的运算方式。",
-          "items": {
-            "set": "设置",
-            "add": "相加",
-            "sub": "相减",
-            "mul": "相乘",
-            "div": "相除"
-          },
-          "initialValue": "set"
-        },
-        "type": {
-          "type": "combo",
-          "name": "类型",
-          "desc": "要变换的方式。",
-          "items": {
-            "position": "偏移",
-            "rotation": "旋转",
-            "scale": "缩放"
-          },
-          "initialValue": "position"
-        }
-      }
     },
     {
       "id": "set-origin",
@@ -496,7 +423,7 @@
         },
         "z-origin": {
           "type": "combo",
-          "name": "Z轴原点",
+          "name": "原点Z",
           "desc": "在 Z 轴的原点值。",
           "items": {
             "back": "背面",
@@ -550,6 +477,26 @@
       }
     },
     {
+      "id": "set-animation-blend-mode",
+      "scriptName": "SetAnimationBlendMode",
+      "category": "3d-model",
+      "list-name": "设置动画混合模式",
+      "display-text": "设置动画混合模式为 [b]{0}[/b]",
+      "description": "设置多个正在播放的动画的混合方式。",
+      "params": {
+        "mode": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "多个正在播放的动画的混合方式。",
+          "items": {
+            "average": "平均",
+            "mask": "分层"
+          },
+          "initialValue": "average"
+        }
+      }
+    },
+    {
       "id": "set-backface-culling",
       "scriptName": "SetBackfaceCulling",
       "category": "3d-model",
@@ -568,15 +515,393 @@
           },
           "initialValue": "disabled"
         }
+      },
+      "isDeprecated": true
+    },
+    {
+      "id": "set-culling-mode",
+      "scriptName": "SetCullingMode",
+      "category": "3d-model",
+      "list-name": "设置剔除模式",
+      "display-text": "设置剔除模式为[b]{0}[/b]",
+      "description": "更改剔除模式。",
+      "params": {
+        "state": {
+          "type": "combo",
+          "name": "模式",
+          "desc": "要设置的剔除模式。",
+          "items": {
+            "none": "关闭",
+            "back-face": "背面",
+            "front-face": "正面",
+            "model-settings": "默认"
+          },
+          "initialValue": "model-settings"
+        }
+      }
+    },
+    {
+      "id": "set-transform",
+      "scriptName": "SetTransform",
+      "category": "3d-model-transform",
+      "list-name": "设置变换",
+      "display-text": "{3} [b]{4}[/b] X: [i]{0}[/i], Y: [i]{1}[/i], Z: [i]{2}[/i]",
+      "description": "设置模型属性的变换。",
+      "params": {
+        "x-transform": {
+          "type": "number",
+          "name": "X",
+          "desc": "要应用在 X 轴的变换值。",
+          "initialValue": "0"
+        },
+        "y-transform": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要应用在 Y 轴的变换值。",
+          "initialValue": "0"
+        },
+        "z-transform": {
+          "type": "number",
+          "name": "Z",
+          "desc": "要应用在 Z 轴的变换值。",
+          "initialValue": "0"
+        },
+        "operation": {
+          "type": "combo",
+          "name": "运算",
+          "desc": "要变化的运算方式。",
+          "items": {
+            "set": "设置",
+            "add": "相加",
+            "sub": "相减",
+            "mul": "相乘",
+            "div": "相除"
+          },
+          "initialValue": "set"
+        },
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "要变换的方式。",
+          "items": {
+            "position": "偏移",
+            "scale": "缩放",
+            "rotation": "角度"
+          },
+          "initialValue": "position"
+        }
+      }
+    },
+    {
+      "id": "reset-transform",
+      "scriptName": "ResetTransform",
+      "category": "3d-model-transform",
+      "list-name": "重置变换",
+      "display-text": "重置变换(类型: [b]{0}[/b])",
+      "description": "重置模型的变换。",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "要重置的转换类型。",
+          "items": {
+            "position": "偏移",
+            "rotation": "旋转",
+            "scale": "缩放",
+            "all": "全部"
+          },
+          "initialValue": "all"
+        }
+      }
+    },
+    {
+      "id": "set-node-transform",
+      "scriptName": "SetNodeTransform",
+      "category": "3d-model-transform",
+      "list-name": "设置节点变换",
+      "display-text": "{5} [b]{6}[/b] X: [i]{2}[/i], Y: [i]{3}[/i], Z: [i]{4}[/i], [i]{0}[/i]: [i]{1}[/i]",
+      "description": "设置模型中节点的变换。",
+      "params": {
+        "model3d-node-type": {
+          "type": "combo",
+          "name": "节点类型",
+          "desc": "要修改的节点类型。",
+          "items": {
+            "mesh": "网格",
+            "bone": "骨骼"
+          },
+          "initialValue": "mesh"
+        },
+        "node-name": {
+          "type": "model3d-node-string",
+          "name": "节点名称",
+          "desc": "要修改的节点名称。"
+        },
+        "x-transform": {
+          "type": "number",
+          "name": "X",
+          "desc": "要应用在 X 轴的变换值。",
+          "initialValue": "0"
+        },
+        "y-transform": {
+          "type": "number",
+          "name": "Y",
+          "desc": "要应用在 Y 轴的变换值。",
+          "initialValue": "0"
+        },
+        "z-transform": {
+          "type": "number",
+          "name": "Z",
+          "desc": "要应用在 Z 轴的变换值。",
+          "initialValue": "0"
+        },
+        "operation": {
+          "type": "combo",
+          "name": "运算",
+          "desc": "要变化的运算方式。",
+          "items": {
+            "set": "设置",
+            "add": "相加",
+            "sub": "相减",
+            "mul": "相乘",
+            "div": "划分"
+          },
+          "initialValue": "set"
+        },
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "要进行的转换类型。",
+          "items": {
+            "position": "偏移",
+            "rotation": "角度",
+            "scale": "缩放"
+          },
+          "initialValue": "position"
+        }
+      }
+    },
+    {
+      "id": "set-node-quaternion",
+      "scriptName": "SetNodeQuaternion",
+      "category": "3d-model-transform",
+      "list-name": "设置节点四元数",
+      "display-text": "设置四元数 (X: [i]{2}[/i], Y: [i]{3}[/i], Z: [i]{4}[/i], W: [i]{5}[/i], [i]{0}[/i]: [i]{1}[/i])",
+      "description": "设置模型中节点的四元数。",
+      "params": {
+        "model3d-node-type": {
+          "type": "combo",
+          "name": "节点类型",
+          "desc": "要修改的节点类型。",
+          "items": {
+            "mesh": "网格",
+            "bone": "骨骼"
+          },
+          "initialValue": "mesh"
+        },
+        "node-name": {
+          "type": "model3d-node-string",
+          "name": "节点名称",
+          "desc": "要修改的节点名称。"
+        },
+        "x-component": {
+          "type": "number",
+          "name": "分量 X",
+          "desc": "四元数的 X 分量。",
+          "initialValue": "0"
+        },
+        "y-component": {
+          "type": "number",
+          "name": "分量 Y",
+          "desc": "四元数的 Y 分量。",
+          "initialValue": "0"
+        },
+        "z-component": {
+          "type": "number",
+          "name": "分量 Z",
+          "desc": "四元数的 Z 分量。",
+          "initialValue": "0"
+        },
+        "w-component": {
+          "type": "number",
+          "name": "分量 W",
+          "desc": "四元数的 W 分量。",
+          "initialValue": "1"
+        }
+      }
+    },
+    {
+      "id": "reset-node-transform",
+      "scriptName": "ResetNodeTransform",
+      "category": "3d-model-transform",
+      "list-name": "重置节点变换",
+      "display-text": "重置 [b]{2}[/b] 的 [i]{0}[/i]: [i]{1}[/i]",
+      "description": "重置模型中节点的变换。",
+      "params": {
+        "model3d-node-type": {
+          "type": "combo",
+          "name": "节点类型",
+          "desc": "要重置的节点类型。",
+          "items": {
+            "mesh": "网格",
+            "bone": "骨骼"
+          },
+          "initialValue": "mesh"
+        },
+        "node-name": {
+          "type": "model3d-node-string",
+          "name": "节点名称",
+          "desc": "要重置的节点名称。"
+        },
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "要重置的转换类型。",
+          "items": {
+            "position": "偏移",
+            "rotation": "旋转",
+            "scale": "缩放",
+            "all": "全部"
+          },
+          "initialValue": "all"
+        }
+      }
+    },
+    {
+      "id": "reset-all-node-transform",
+      "scriptName": "ResetAllNodeTransform",
+      "category": "3d-model-transform",
+      "list-name": "重置所有节点变换",
+      "display-text": "重置全部节点的 [b]{0}[/b] 变换",
+      "description": "重置模型中所有节点的变换。",
+      "params": {
+        "type": {
+          "type": "combo",
+          "name": "类型",
+          "desc": "要重置的转换类型。",
+          "items": {
+            "position": "偏移",
+            "rotation": "旋转",
+            "scale": "缩放",
+            "all": "全部"
+          },
+          "initialValue": "all"
+        }
+      }
+    },
+    {
+      "id": "set-animation",
+      "scriptName": "SetAnimation",
+      "category": "3d-model-animations",
+      "list-name": "设置动画",
+      "display-text": "设置动画为 [b]{0}[/b] (播放:[i]{1}[/i], 循环: [i]{2}[/i], 进度: [i]{3}[/i], 过渡时间: [i]{4}[/i])",
+      "description": "更改播放的动画，并设为主动画。",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "要播放的动画，并设为主动画。"
+        },
+        "playing": {
+          "type": "boolean",
+          "name": "初始播放",
+          "desc": "场景开始时，是否立即播放所选动画。",
+          "initialValue": "false"
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "循环播放",
+          "desc": "所选动画是否循环播放。",
+          "initialValue": "false"
+        },
+        "progress": {
+          "type": "number",
+          "name": "进度",
+          "desc": "所选动画从哪里开始播放，取值区间在 [0-1] 范围。",
+          "initialValue": "0"
+        },
+        "transition-duration": {
+          "type": "number",
+          "name": "过渡时间",
+          "desc": "从上一个动画过渡到新动画所需的时间，以秒为单位。",
+          "initialValue": "0"
+        }
+      }
+    },
+    {
+      "id": "blend-animation",
+      "scriptName": "BlendAnimation",
+      "category": "3d-model-animations",
+      "list-name": "混合动画",
+      "display-text": "混合动画 [b]{0}[/b] (立即播放: [i]{1}[/i], 循环播放: [i]{2}[/i], 动画进度: [i]{3}[/i], 权重: [i]{4}[/i], 时长: [i]{5}[/i])",
+      "description": "将新的动画片段混入当前正在播放的动画中。",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "要混合的动画。"
+        },
+        "playing": {
+          "type": "boolean",
+          "name": "立即播放",
+          "desc": "立即播放所选动画。",
+          "initialValue": "false"
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "循环播放",
+          "desc": "是否循环播放动画。",
+          "initialValue": "false"
+        },
+        "progress": {
+          "type": "number",
+          "name": "进度",
+          "desc": "动画开始播放时的进度，取值范围为 [0-1]。",
+          "initialValue": "0"
+        },
+        "target-weight": {
+          "type": "number",
+          "name": "权重",
+          "desc": "此动画对最终姿态的影响程度。",
+          "initialValue": "1"
+        },
+        "blend-duration": {
+          "type": "number",
+          "name": "混合时长",
+          "desc": "此动画的混合权重达到设定值所需的时间，以秒为单位。",
+          "initialValue": "0"
+        }
+      }
+    },
+    {
+      "id": "set-progress",
+      "scriptName": "SetProgress",
+      "category": "3d-model-animations",
+      "list-name": "设置进度",
+      "display-text": "设置动画 [i]{1}[/i] 播放进度为 [b]{0}[/b]",
+      "description": "更改指定动画的播放进度。",
+      "params": {
+        "progress": {
+          "type": "number",
+          "name": "进度",
+          "desc": "设置指定动画的播放进度，取值范围为 [0-1]。",
+          "initialValue": "0"
+        },
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "要更改进度的动画。留空则指定主动画。",
+          "initialValue": ""
+        }
       }
     },
     {
       "id": "set-looping",
       "scriptName": "SetLooping",
-      "category": "3d-model",
+      "category": "3d-model-animations",
       "list-name": "设置循环",
-      "display-text": "设置动画循环状态: [b]{0}[/b]",
-      "description": "更改当前动画的循环状态。",
+      "display-text": "设置动画 [i]{1}[/i] 循环状态为 [b]{0}[/b]",
+      "description": "更改指定动画的循环状态。",
       "params": {
         "state": {
           "type": "combo",
@@ -588,6 +913,67 @@
             "toggle": "反转"
           },
           "initialValue": "no"
+        },
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "要更改循环状态的动画。留空则指定主动画。",
+          "initialValue": ""
+        }
+      }
+    },
+    {
+      "id": "set-mesh-enabled",
+      "scriptName": "SetMeshEnabled",
+      "category": "3d-model-meshes",
+      "list-name": "启用网格",
+      "display-text": "启用网格 [b]{0}[/b]: {1}",
+      "description": "启用或禁用指定的网格。",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "网格",
+          "desc": "要修改的网格。如果模型中找不到该网格，则不进行任何更改。"
+        },
+        "enabled": {
+          "type": "boolean",
+          "name": "启用",
+          "desc": "选择是否显示或隐藏网格中指定的元素。"
+        }
+      }
+    },
+    {
+      "id": "set-all-meshes-enabled",
+      "scriptName": "SetAllMeshesEnabled",
+      "category": "3d-model-meshes",
+      "list-name": "启用网格(全部)",
+      "display-text": "启用全部网格: {0}",
+      "description": "启用或禁用模型中的所有网格。",
+      "params": {
+        "enabled": {
+          "type": "boolean",
+          "name": "启用",
+          "desc": "选择是否显示或隐藏所有网格。"
+        }
+      }
+    },
+    {
+      "id": "set-mesh-object",
+      "scriptName": "SetMeshObject",
+      "category": "3d-model-meshes",
+      "list-name": "设置网格对象",
+      "display-text": "使用对象 [b]{1}[/b] 为网格 [i]{0}[/i]",
+      "description": "设置用作网格纹理来源的对象。",
+      "params": {
+        "mesh": {
+          "type": "model3d-mesh-string",
+          "name": "网格",
+          "desc": "网格会影响纹理的外观。"
+        },
+        "object": {
+          "type": "object",
+          "name": "对象",
+          "desc": "用于网格纹理的对象。"
         }
       }
     },
@@ -596,13 +982,13 @@
       "scriptName": "Play",
       "category": "playback",
       "list-name": "播放",
-      "display-text": "播放动画[b]{0}[/b] (初始进度: [i]{2}[/i], 循环播放: [i]{1}[/i])",
-      "description": "播放 3D 模型的动画。",
+      "display-text": "播放动画 [b]{0}[/b] (循环播放: [i]{1}[/i], 初始进度: [i]{2}[/i], 过渡时间: [i]{3}[/i])",
+      "description": "播放3D模型中的动画，并设为主动画。",
       "params": {
         "animation": {
           "type": "model3d-animation-string",
           "name": "动画",
-          "desc": "播放动画。留空则使用当前动画。"
+          "desc": "要播放的动画。留空则播放主动画。"
         },
         "looping": {
           "type": "boolean",
@@ -615,6 +1001,51 @@
           "name": "进度",
           "desc": "所选动画应从哪里开始播放，使用区间 [0-1] 的值。",
           "initialValue": "0"
+        },
+        "transition-duration": {
+          "type": "number",
+          "name": "过渡时间",
+          "desc": "从上一个动画过渡到新动画所需的时间，以秒为单位。",
+          "initialValue": "0"
+        }
+      }
+    },
+    {
+      "id": "blend",
+      "scriptName": "Blend",
+      "category": "playback",
+      "list-name": "混合",
+      "display-text": "混合动画 [b]{0}[/b] (循环播放: [i]{1}[/i], 初始进度: [i]{2}[/i], 权重: [i]{3}[/i], 时长: [i]{4}[/i])",
+      "description": "将新的动画片段混入当前正在播放的动画中。",
+      "params": {
+        "animation": {
+          "type": "model3d-animation-string",
+          "name": "动画",
+          "desc": "要混合的动画。"
+        },
+        "looping": {
+          "type": "boolean",
+          "name": "循环播放",
+          "desc": "动画是否循环播放。",
+          "initialValue": "false"
+        },
+        "progress": {
+          "type": "number",
+          "name": "进度",
+          "desc": "所选动画开始播放时的进度，取值范围为 [0-1]。",
+          "initialValue": "0"
+        },
+        "target-weight": {
+          "type": "number",
+          "name": "权重",
+          "desc": "此动画对最终姿态的影响程度。",
+          "initialValue": "1"
+        },
+        "blend-duration": {
+          "type": "number",
+          "name": "时长",
+          "desc": "此动画的混合权重达到设定值所需的时间，以秒为单位。",
+          "initialValue": "0"
         }
       }
     },
@@ -623,24 +1054,24 @@
       "scriptName": "Stop",
       "category": "playback",
       "list-name": "停止播放",
-      "display-text": "停止当前动画",
-      "description": "停止播放当前 3D 模型的动画，并将进度重置为 0。"
+      "display-text": "停止全部动画",
+      "description": "停止播放 3D 模型中的所有动画，并将进度重置为 0。"
     },
     {
       "id": "pause",
       "scriptName": "Pause",
       "category": "playback",
       "list-name": "暂停播放",
-      "display-text": "暂停当前动画",
-      "description": "暂停播放当前 3D 模型的动画。"
+      "display-text": "暂停全部动画",
+      "description": "暂停播放 3D 模型中的所有动画，保留当前进度。"
     },
     {
       "id": "resume",
       "scriptName": "Resume",
       "category": "playback",
       "list-name": "恢复播放",
-      "display-text": "继续播放当前的动画",
-      "description": "恢复 3D 模型当前正在播放的动画进度。"
+      "display-text": "恢复全部动画",
+      "description": "从当前进度恢复播放 3D 模型中的所有动画。"
     },
     {
       "id": "set-collisions-enabled",
@@ -775,7 +1206,15 @@
       "scriptName": "Animation",
       "category": "3d-model",
       "translated-name": "动画",
-      "description": "当前的动画。如果没有动画，将返回一个空字符串。",
+      "description": "主动画的名称。没有动画时，返回空字符串。在任意的动画触发条件中，返回对应动画的名称。",
+      "returnType": "string"
+    },
+    {
+      "id": "animations",
+      "scriptName": "Animations",
+      "category": "3d-model",
+      "translated-name": "动画",
+      "description": "返回模型所有的有效动画名称的字符串，以逗号分隔。没有有效动画时，返回空字符串。",
       "returnType": "string"
     },
     {
@@ -798,7 +1237,14 @@
       "scriptName": "Progress",
       "category": "3d-model",
       "translated-name": "动画进度",
-      "description": "当前动画的播放进度，区间在 [0-1] 范围。",
+      "description": "动画的播放进度，取值范围为 [0-1]。",
+      "params": {
+        "animation": {
+          "type": "string",
+          "name": "动画",
+          "desc": "要获取进度的动画名称。留空则获取主动画的进度。"
+        }
+      },
       "returnType": "number"
     },
     {
@@ -868,7 +1314,7 @@
       "scriptName": "OffsetX",
       "category": "3d-model",
       "translated-name": "X轴偏移",
-      "description": "在 X 轴的偏移量。",
+      "description": "获取对象在 X 轴上的偏移量。",
       "returnType": "number"
     },
     {
@@ -876,7 +1322,7 @@
       "scriptName": "OffsetY",
       "category": "3d-model",
       "translated-name": "Y轴偏移",
-      "description": "在 Y 轴的偏移量。",
+      "description": "获取对象在 Y 轴上的偏移量。",
       "returnType": "number"
     },
     {
@@ -884,7 +1330,7 @@
       "scriptName": "OffsetZ",
       "category": "3d-model",
       "translated-name": "Z轴偏移",
-      "description": "在 Z 轴的偏移量。",
+      "description": "获取对象在 Z 轴上的偏移量。",
       "returnType": "number"
     },
     {
@@ -892,7 +1338,7 @@
       "scriptName": "ScaleX",
       "category": "3d-model",
       "translated-name": "X轴缩放",
-      "description": "在 X 轴的缩放比例。",
+      "description": "获取对象在 X 轴上的缩放量。",
       "returnType": "number"
     },
     {
@@ -900,7 +1346,7 @@
       "scriptName": "ScaleY",
       "category": "3d-model",
       "translated-name": "Y轴缩放",
-      "description": "在 Y 轴的缩放比例。",
+      "description": "获取对象在 Y 轴上的缩放量。",
       "returnType": "number"
     },
     {
@@ -908,7 +1354,7 @@
       "scriptName": "ScaleZ",
       "category": "3d-model",
       "translated-name": "Z轴缩放",
-      "description": "在 Z 轴的缩放比例。",
+      "description": "获取对象在 Z 轴上的缩放量。",
       "returnType": "number"
     },
     {
@@ -931,8 +1377,372 @@
       "id": "origin-z",
       "scriptName": "OriginZ",
       "category": "3d-model",
-      "translated-name": "Z轴原点",
+      "translated-name": "原点Z",
       "description": "获取Z轴原点坐标。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-position-x",
+      "scriptName": "ModelX",
+      "category": "3d-model-transform",
+      "translated-name": "模型坐标X",
+      "description": "获取模型在 X 轴上的世界位置。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-position-y",
+      "scriptName": "ModelY",
+      "category": "3d-model-transform",
+      "translated-name": "模型坐标Y",
+      "description": "获取模型在 Y 轴上的世界位置。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-position-z",
+      "scriptName": "ModelZ",
+      "category": "3d-model-transform",
+      "translated-name": "模型坐标Z",
+      "description": "获取模型在 Z 轴上的世界位置。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-rotation-x",
+      "scriptName": "ModelRotationX",
+      "category": "3d-model-transform",
+      "translated-name": "模型旋转X",
+      "description": "获取模型在 X 轴上的世界旋转角度，以欧拉角表示。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-rotation-y",
+      "scriptName": "ModelRotationY",
+      "category": "3d-model-transform",
+      "translated-name": "模型旋转Y",
+      "description": "获取模型在 Y 轴上的世界旋转角度，以欧拉角表示。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-rotation-z",
+      "scriptName": "ModelRotationZ",
+      "category": "3d-model-transform",
+      "translated-name": "模型旋转Z",
+      "description": "获取模型在 Z 轴上的世界旋转角度，以欧拉角表示。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-quaternion-x",
+      "scriptName": "ModelQuaternionX",
+      "category": "3d-model-transform",
+      "translated-name": "模型四元数X",
+      "description": "获取模型的世界四元素X分量。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-quaternion-y",
+      "scriptName": "ModelQuaternionY",
+      "category": "3d-model-transform",
+      "translated-name": "模型四元数Y",
+      "description": "获取模型的世界四元素Y分量。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-quaternion-z",
+      "scriptName": "ModelQuaternionZ",
+      "category": "3d-model-transform",
+      "translated-name": "模型四元数Z",
+      "description": "获取模型的世界四元素Z分量。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-quaternion-w",
+      "scriptName": "ModelQuaternionW",
+      "category": "3d-model-transform",
+      "translated-name": "模型四元数W",
+      "description": "获取模型的世界四元素W分量。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-scale-x",
+      "scriptName": "ModelScaleX",
+      "category": "3d-model-transform",
+      "translated-name": "模型缩放X",
+      "description": "获取模型在 X 轴上的世界缩放比例。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-scale-y",
+      "scriptName": "ModelScaleY",
+      "category": "3d-model-transform",
+      "translated-name": "模型缩放Y",
+      "description": "获取模型在 Y 轴上的世界缩放比例。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-scale-z",
+      "scriptName": "ModelScaleZ",
+      "category": "3d-model-transform",
+      "translated-name": "模型缩放Z",
+      "description": "获取模型在 Z 轴上的世界缩放比例。",
+      "returnType": "number"
+    },
+    {
+      "id": "world-position-node-x",
+      "scriptName": "NodeX",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点坐标X",
+      "description": "获取节点在 X 轴上的最终世界位置。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-position-node-y",
+      "scriptName": "NodeY",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点坐标Y",
+      "description": "获取节点在 Y 轴上的最终世界位置。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-position-node-z",
+      "scriptName": "NodeZ",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点坐标Z",
+      "description": "获取节点在 Z 轴上的最终世界位置。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-rotation-node-x",
+      "scriptName": "NodeRotationX",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点旋转X",
+      "description": "获取节点绕 X 轴的最终世界旋转角度，以度为单位（欧拉角）。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-rotation-node-y",
+      "scriptName": "NodeRotationY",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点旋转Y",
+      "description": "获取节点绕 Y 轴的最终世界旋转角度，以度为单位（欧拉角）。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-rotation-node-z",
+      "scriptName": "NodeRotationZ",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点旋转Z",
+      "description": "获取节点绕 Z 轴的最终世界旋转角度，以度为单位（欧拉角）。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-scale-node-x",
+      "scriptName": "NodeScaleX",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点缩放X",
+      "description": "获取节点在 X 轴上的最终世界比例。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-scale-node-y",
+      "scriptName": "NodeScaleY",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点缩放Y",
+      "description": "获取节点在 Y 轴上的最终世界比例。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-scale-node-z",
+      "scriptName": "NodeScaleZ",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点缩放Z",
+      "description": "获取节点在 Z 轴上的最终世界比例。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-quaternion-node-x",
+      "scriptName": "NodeQuaternionX",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点四元数X",
+      "description": "获取节点最终世界四元数的 X 分量。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点名称"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-quaternion-node-y",
+      "scriptName": "NodeQuaternionY",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点四元素Y",
+      "description": "获取节点的世界四元数 Y 分量。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-quaternion-node-z",
+      "scriptName": "NodeQuaternionZ",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点四元数Z",
+      "description": "获取节点的世界四元数 Z 分量。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
+      "returnType": "number"
+    },
+    {
+      "id": "world-quaternion-node-w",
+      "scriptName": "NodeQuaternionW",
+      "category": "3d-model-node-transform",
+      "translated-name": "节点四元数W",
+      "description": "获取节点的世界四元数 W  分量。",
+      "params": {
+        "node-type": {
+          "type": "string",
+          "name": "节点类型",
+          "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+        },
+        "node-name": {
+          "type": "string",
+          "name": "节点名称",
+          "desc": "节点的名称。"
+        }
+      },
       "returnType": "number"
     }
   ],
@@ -1011,12 +1821,12 @@
       "separator": ", "
     },
     "scale": {
-      "name": "模型缩放",
+      "name": "缩放",
       "desc": "模型的缩放比例。",
       "separator": ", "
     },
     "3d-model-object": {
-      "name": "3D模型",
+      "name": "模型",
       "desc": "从项目中选择一个3D模型。"
     },
     "meshes": {
@@ -1042,7 +1852,7 @@
       }
     },
     "z-origin": {
-      "name": "Z轴原点",
+      "name": "原点Z",
       "desc": "在 Z 轴上的原点。",
       "items": {
         "back": "底部",
@@ -1052,7 +1862,7 @@
     },
     "loop": {
       "name": "循环播放",
-      "desc": "检查动画是否循环播放。"
+      "desc": "启用后，初始动画将循环播放。"
     },
     "back-face-culling": {
       "name": "背面剔除",
@@ -1063,17 +1873,35 @@
       "desc": "3D模型动画专用设置。"
     },
     "origin": {
-      "name": "模型原点",
+      "name": "原点",
       "desc": "模型的位置原点。",
       "separator": ", "
     },
     "axis-scale-mode": {
       "name": "变换模式",
-      "desc": "模型如何随实例变化。'等比适配' 模式将保持模型比例。'拉伸填满' 模式将缩放每个轴以适应实例的边界框。'兼容旧版'模式仅为向后兼容而存在，建议使用其他模式。",
       "items": {
         "legacy": "兼容旧版",
         "fit": "等比适配",
         "stretch": "拉伸填满"
+      },
+      "desc": "实例缩放时，模型跟随变化的方式。\"保持比例\" 模式可以确保比例不变，适合大部分情况选择。\"拉伸\" 模式会让模型的每个轴按照实例边界进行缩放。\"兼容旧版\" 是为了向后兼容历史版本而保留的。"
+    },
+    "culling-mode": {
+      "name": "剔除模式",
+      "desc": "设置要剔除的多边形面。\"背面\"、\"正面\" 和 \"关闭\" 会应用于所有网格。\"默认\" 为模型文件的推荐选项，它会按照导入文件中的设置，分别对每个网格的应用面剔除。",
+      "items": {
+        "none": "关闭",
+        "back-face": "背面",
+        "front-face": "正面",
+        "model-settings": "默认"
+      }
+    },
+    "blend-mode": {
+      "name": "动画混合模式",
+      "desc": "同时播放多个动画时，各动画姿态的混合方式。",
+      "items": {
+        "average": "平均",
+        "mask": "分层"
       }
     }
   },
@@ -1135,6 +1963,10 @@
       "subtract-from-instvar",
       "set-boolean-instvar",
       "toggle-boolean-instvar",
+      "set-material-surface-type",
+      "set-transmissiveness",
+      "set-metallic",
+      "set-roughness",
       "destroy",
       "change-tags",
       "set-from-json",
@@ -1172,6 +2004,9 @@
       "rotation-z",
       "color-value",
       "opacity",
+      "transmissiveness",
+      "metallic",
+      "roughness",
       "count",
       "pickedcount",
       "uid",

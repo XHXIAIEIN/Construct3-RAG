@@ -1,17 +1,10 @@
 {
-  "version": "r495.2",
+  "version": "r506",
   "languages": [
     "en-US",
     "zh-CN"
   ],
   "plugins": {
-    "advert": {
-      "originalId": "advert",
-      "file": "plugins/advert.json",
-      "conditions": 29,
-      "actions": 14,
-      "expressions": 7
-    },
     "ninepatch": {
       "originalId": "NinePatch",
       "file": "plugins/ninepatch.json",
@@ -23,15 +16,8 @@
       "originalId": "system",
       "file": "plugins/system.json",
       "conditions": 56,
-      "actions": 83,
-      "expressions": 133
-    },
-    "ajax": {
-      "originalId": "AJAX",
-      "file": "plugins/ajax.json",
-      "conditions": 6,
-      "actions": 10,
-      "expressions": 4
+      "actions": 84,
+      "expressions": 134
     },
     "advancedrandom": {
       "originalId": "AdvancedRandom",
@@ -40,18 +26,32 @@
       "actions": 12,
       "expressions": 19
     },
-    "audio": {
-      "originalId": "Audio",
-      "file": "plugins/audio.json",
+    "advert": {
+      "originalId": "advert",
+      "file": "plugins/advert.json",
+      "conditions": 29,
+      "actions": 14,
+      "expressions": 7
+    },
+    "ajax": {
+      "originalId": "AJAX",
+      "file": "plugins/ajax.json",
       "conditions": 6,
-      "actions": 43,
-      "expressions": 14
+      "actions": 10,
+      "expressions": 4
     },
     "arr": {
       "originalId": "Arr",
       "file": "plugins/arr.json",
       "conditions": 8,
       "actions": 15,
+      "expressions": 14
+    },
+    "audio": {
+      "originalId": "Audio",
+      "file": "plugins/audio.json",
+      "conditions": 6,
+      "actions": 43,
       "expressions": 14
     },
     "bbcmicrobit": {
@@ -75,19 +75,19 @@
       "actions": 8,
       "expressions": 12
     },
-    "browser": {
-      "originalId": "Browser",
-      "file": "plugins/browser.json",
-      "conditions": 24,
-      "actions": 30,
-      "expressions": 16
-    },
     "button": {
       "originalId": "Button",
       "file": "plugins/button.json",
       "conditions": 3,
       "actions": 4,
       "expressions": 1
+    },
+    "browser": {
+      "originalId": "Browser",
+      "file": "plugins/browser.json",
+      "conditions": 24,
+      "actions": 30,
+      "expressions": 16
     },
     "camera3d": {
       "originalId": "Camera3D",
@@ -108,7 +108,7 @@
       "file": "plugins/constructgameservices.json",
       "conditions": 24,
       "actions": 58,
-      "expressions": 167
+      "expressions": 180
     },
     "cryptography": {
       "originalId": "Cryptography",
@@ -187,13 +187,6 @@
       "actions": 3,
       "expressions": 9
     },
-    "iframe": {
-      "originalId": "iframe",
-      "file": "plugins/iframe.json",
-      "conditions": 0,
-      "actions": 2,
-      "expressions": 0
-    },
     "googleplay": {
       "originalId": "googleplay",
       "file": "plugins/googleplay.json",
@@ -207,6 +200,13 @@
       "conditions": 4,
       "actions": 9,
       "expressions": 5
+    },
+    "iframe": {
+      "originalId": "iframe",
+      "file": "plugins/iframe.json",
+      "conditions": 0,
+      "actions": 2,
+      "expressions": 0
     },
     "cordovaiap": {
       "originalId": "CORDOVAIAP",
@@ -243,12 +243,12 @@
       "actions": 2,
       "expressions": 3
     },
-    "midi": {
-      "originalId": "MIDI",
-      "file": "plugins/midi.json",
-      "conditions": 15,
-      "actions": 9,
-      "expressions": 22
+    "light3d": {
+      "originalId": "Light3D",
+      "file": "plugins/light3d.json",
+      "conditions": 0,
+      "actions": 6,
+      "expressions": 6
     },
     "list": {
       "originalId": "List",
@@ -264,12 +264,19 @@
       "actions": 10,
       "expressions": 6
     },
+    "midi": {
+      "originalId": "MIDI",
+      "file": "plugins/midi.json",
+      "conditions": 15,
+      "actions": 9,
+      "expressions": 22
+    },
     "model3d": {
       "originalId": "Model3D",
       "file": "plugins/model3d.json",
-      "conditions": 20,
-      "actions": 21,
-      "expressions": 21
+      "conditions": 22,
+      "actions": 31,
+      "expressions": 48
     },
     "mouse": {
       "originalId": "Mouse",
@@ -299,13 +306,6 @@
       "actions": 2,
       "expressions": 26
     },
-    "qrcode": {
-      "originalId": "qrcode",
-      "file": "plugins/qrcode.json",
-      "conditions": 0,
-      "actions": 2,
-      "expressions": 0
-    },
     "progressbar": {
       "originalId": "progressbar",
       "file": "plugins/progressbar.json",
@@ -313,12 +313,12 @@
       "actions": 4,
       "expressions": 2
     },
-    "shape3d": {
-      "originalId": "Shape3D",
-      "file": "plugins/shape3d.json",
-      "conditions": 3,
-      "actions": 7,
-      "expressions": 6
+    "qrcode": {
+      "originalId": "qrcode",
+      "file": "plugins/qrcode.json",
+      "conditions": 0,
+      "actions": 2,
+      "expressions": 0
     },
     "shadowlight": {
       "originalId": "shadowlight",
@@ -326,6 +326,13 @@
       "conditions": 0,
       "actions": 5,
       "expressions": 3
+    },
+    "shape3d": {
+      "originalId": "Shape3D",
+      "file": "plugins/shape3d.json",
+      "conditions": 3,
+      "actions": 7,
+      "expressions": 6
     },
     "share": {
       "originalId": "Share",
@@ -397,19 +404,19 @@
       "actions": 11,
       "expressions": 12
     },
-    "timeline": {
-      "originalId": "Timeline",
-      "file": "plugins/timeline.json",
-      "conditions": 11,
-      "actions": 13,
-      "expressions": 9
-    },
     "tilemap": {
       "originalId": "Tilemap",
       "file": "plugins/tilemap.json",
       "conditions": 5,
       "actions": 18,
       "expressions": 14
+    },
+    "timeline": {
+      "originalId": "Timeline",
+      "file": "plugins/timeline.json",
+      "conditions": 14,
+      "actions": 16,
+      "expressions": 9
     },
     "flowchart": {
       "originalId": "Flowchart",
@@ -418,13 +425,6 @@
       "actions": 12,
       "expressions": 28
     },
-    "touch": {
-      "originalId": "Touch",
-      "file": "plugins/touch.json",
-      "conditions": 19,
-      "actions": 1,
-      "expressions": 32
-    },
     "usermedia": {
       "originalId": "UserMedia",
       "file": "plugins/usermedia.json",
@@ -432,12 +432,12 @@
       "actions": 5,
       "expressions": 8
     },
-    "video": {
-      "originalId": "video",
-      "file": "plugins/video.json",
-      "conditions": 5,
-      "actions": 8,
-      "expressions": 6
+    "touch": {
+      "originalId": "Touch",
+      "file": "plugins/touch.json",
+      "conditions": 19,
+      "actions": 1,
+      "expressions": 32
     },
     "c2websocket": {
       "originalId": "C2WebSocket",
@@ -445,6 +445,13 @@
       "conditions": 8,
       "actions": 4,
       "expressions": 4
+    },
+    "video": {
+      "originalId": "video",
+      "file": "plugins/video.json",
+      "conditions": 5,
+      "actions": 8,
+      "expressions": 6
     },
     "xml": {
       "originalId": "XML",
@@ -456,11 +463,18 @@
     "_common": {
       "file": "plugins/_common.json",
       "conditions": 37,
-      "actions": 52,
-      "expressions": 47
+      "actions": 56,
+      "expressions": 50
     }
   },
   "behaviors": {
+    "eightdir": {
+      "originalId": "EightDir",
+      "file": "behaviors/eightdir.json",
+      "conditions": 4,
+      "actions": 13,
+      "expressions": 7
+    },
     "anchor": {
       "originalId": "Anchor",
       "file": "behaviors/anchor.json",
@@ -468,12 +482,12 @@
       "actions": 1,
       "expressions": 0
     },
-    "eightdir": {
-      "originalId": "EightDir",
-      "file": "behaviors/eightdir.json",
-      "conditions": 4,
-      "actions": 13,
-      "expressions": 7
+    "billboard": {
+      "originalId": "Billboard",
+      "file": "behaviors/billboard.json",
+      "conditions": 1,
+      "actions": 2,
+      "expressions": 3
     },
     "bound": {
       "originalId": "bound",
@@ -488,13 +502,6 @@
       "conditions": 4,
       "actions": 11,
       "expressions": 11
-    },
-    "billboard": {
-      "originalId": "Billboard",
-      "file": "behaviors/billboard.json",
-      "conditions": 1,
-      "actions": 2,
-      "expressions": 3
     },
     "car": {
       "originalId": "Car",
@@ -531,13 +538,6 @@
       "actions": 5,
       "expressions": 3
     },
-    "jumpthru": {
-      "originalId": "jumpthru",
-      "file": "behaviors/jumpthru.json",
-      "conditions": 1,
-      "actions": 1,
-      "expressions": 0
-    },
     "follow": {
       "originalId": "Follow",
       "file": "behaviors/follow.json",
@@ -552,11 +552,11 @@
       "actions": 2,
       "expressions": 0
     },
-    "nosave": {
-      "originalId": "NoSave",
-      "file": "behaviors/nosave.json",
-      "conditions": 0,
-      "actions": 0,
+    "jumpthru": {
+      "originalId": "jumpthru",
+      "file": "behaviors/jumpthru.json",
+      "conditions": 1,
+      "actions": 1,
       "expressions": 0
     },
     "los": {
@@ -573,11 +573,25 @@
       "actions": 14,
       "expressions": 11
     },
+    "nosave": {
+      "originalId": "NoSave",
+      "file": "behaviors/nosave.json",
+      "conditions": 0,
+      "actions": 0,
+      "expressions": 0
+    },
     "orbit": {
       "originalId": "Orbit",
       "file": "behaviors/orbit.json",
       "conditions": 1,
       "actions": 11,
+      "expressions": 11
+    },
+    "pathfinding": {
+      "originalId": "Pathfinding",
+      "file": "behaviors/pathfinding.json",
+      "conditions": 9,
+      "actions": 21,
       "expressions": 11
     },
     "persist": {
@@ -586,13 +600,6 @@
       "conditions": 0,
       "actions": 0,
       "expressions": 0
-    },
-    "pathfinding": {
-      "originalId": "Pathfinding",
-      "file": "behaviors/pathfinding.json",
-      "conditions": 9,
-      "actions": 21,
-      "expressions": 11
     },
     "physics": {
       "originalId": "Physics",
@@ -636,19 +643,19 @@
       "actions": 3,
       "expressions": 2
     },
-    "solid": {
-      "originalId": "solid",
-      "file": "behaviors/solid.json",
-      "conditions": 1,
-      "actions": 2,
-      "expressions": 0
-    },
     "sin": {
       "originalId": "Sin",
       "file": "behaviors/sin.json",
       "conditions": 5,
       "actions": 7,
       "expressions": 4
+    },
+    "solid": {
+      "originalId": "solid",
+      "file": "behaviors/solid.json",
+      "conditions": 1,
+      "actions": 2,
+      "expressions": 0
     },
     "tilemovement": {
       "originalId": "TileMovement",
@@ -664,19 +671,19 @@
       "actions": 5,
       "expressions": 4
     },
-    "tween": {
-      "originalId": "Tween",
-      "file": "behaviors/tween.json",
-      "conditions": 14,
-      "actions": 24,
-      "expressions": 5
-    },
     "turret": {
       "originalId": "Turret",
       "file": "behaviors/turret.json",
       "conditions": 4,
       "actions": 12,
       "expressions": 4
+    },
+    "tween": {
+      "originalId": "Tween",
+      "file": "behaviors/tween.json",
+      "conditions": 14,
+      "actions": 24,
+      "expressions": 5
     },
     "wrap": {
       "originalId": "wrap",
@@ -1036,5 +1043,5 @@
       "category": "distortion"
     }
   },
-  "examples": 493
+  "examples": 500
 }

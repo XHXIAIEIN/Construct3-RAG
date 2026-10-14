@@ -295,7 +295,7 @@
       "category": "achievements",
       "list-name": "增加",
       "display-text": "增加成就 [b]{0}[/b] 达成 [i]{1}[/i] 阶段",
-      "description": "增加分步成就的达成阶段。",
+      "description": "增加阶段成就的进度。",
       "params": {
         "achievement-id": {
           "type": "string",
@@ -305,7 +305,7 @@
         "steps": {
           "type": "number",
           "name": "步骤",
-          "desc": "增加分布成就的步数。"
+          "desc": "要增加的进度值。"
         }
       },
       "isAsync": true
@@ -752,7 +752,7 @@
       "id": "hiscoremybestformattedrank",
       "scriptName": "HiScoreMyBestFormattedRank",
       "category": "hi-scores",
-      "translated-name": "获取格式化个人最佳排名",
+      "translated-name": "获取格式化的个人最佳排名",
       "description": "获取玩家最高得分的格式化后的排名。",
       "returnType": "string"
     },
