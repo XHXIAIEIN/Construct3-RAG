@@ -1065,12 +1065,13 @@ def pointer_module(kind: str, pressed: bool = True) -> list[dict]:
     def tag(name: str, inverted: bool = False) -> dict:
         return cond("compare-animation-frame-tag", kind, {"comparison": 1 if inverted else 0, "tag": q(name)})
 
-    events = event("The one the pointer is over turns the hover colour",
-                   [cond("cursor-is-over-object", "Mouse", {"object": kind}), tag("")],
-                   [act("set-animation-frame", kind, {"frame-number": q("hover")})])
-    events += event("It turns its own colour again once the pointer leaves",
-                    [cond("cursor-is-over-object", "Mouse", {"object": kind}, inverted=True), tag("hover")],
-                    [act("set-animation-frame", kind, {"frame-number": "0"})])
+    # Every hovered one turns back first, then the one under the pointer turns the hover colour, in the same tick:
+    # "NOT Cursor is over" holds only when the pointer is over none of them, so it cannot pick the one left
+    events = event("Each one in the hover colour turns its own colour again",
+                   [tag("hover")], [act("set-animation-frame", kind, {"frame-number": "0"})])
+    events += event("The one the pointer is over turns the hover colour",
+                    [cond("cursor-is-over-object", "Mouse", {"object": kind}), tag("")],
+                    [act("set-animation-frame", kind, {"frame-number": q("hover")})])
     if pressed:
         events += event("A touch turns it the pressed colour for an instant", [on_touched(kind)],
                         [act("set-animation-frame", kind, {"frame-number": q("pressed")}),
@@ -3147,7 +3148,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(checker), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 89483e32c139 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 249f3f241c75 ================
 
 
 # --- the game ---------------------------------------------------------------------------

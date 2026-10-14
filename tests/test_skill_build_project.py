@@ -1392,7 +1392,8 @@ def test_template_shows_the_pointer_as_colours_once_it_is_on(tmp_path):
 
     group = t.pointer_module("Coin")
     frames = [a["parameters"]["frame-number"] for a in aces(group) if a["id"] == "set-animation-frame"]
-    assert frames == ['"hover"', "0", '"pressed"', "0"]
+    assert frames == ["0", '"hover"', '"pressed"', "0"]
     assert {"cursor-is-over-object", "compare-animation-frame-tag", "on-touched-object"} <= {a["id"] for a in aces(group)}
+    assert not any(a.get("isInverted") for a in aces(group))
     assert [a["id"] for a in aces(t.pointer_module("Coin", pressed=False))].count("on-touched-object") == 0
     assert t.hit("Coin", frame="pressed")[-3]["parameters"]["frame-number"] == '"pressed"'
