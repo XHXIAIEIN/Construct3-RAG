@@ -100,8 +100,8 @@ PIXEL_ART = UNIT == 8
 # light direction, proportions and framing, never a subject. For example "flat vector with soft
 # cel shading, thick dark outlines, warm colours, light from the top left, chunky proportions,
 # side view", or "ink wash on rice paper, dry brush edges, cool muted greens, light from above,
-# slender proportions, three-quarter view from above". Every image prompt of the skill's scripts/prepare_art.py starts with it;
-# prepare_art.py --list warns of a dimension it leaves out.
+# slender proportions, three-quarter view from above". Every image prompt of the skill's
+# scripts/prepare_art.py starts with it; prepare_art.py --list warns of a dimension it leaves out.
 ART_STYLE = ""
 
 
@@ -1669,7 +1669,7 @@ def link(parent: dict, *children: dict, size: bool = False) -> None:
     graph = parent.get("sceneGraphData") or {"parent-uid": None, "uid": parent["uid"], "children": [],
                                               "flags": dict(own), "preview": dict(preview)}
     if "children" not in graph:
-        # A child with children of its own, a slider's knob: "children" goes after "uid", as the editor writes it
+        # A child with children of its own, a slider's knob: "children" after "uid", as the editor writes
         graph = {k: v for key, value in graph.items()
                  for k, v in ((key, value), *((("children", []),) if key == "uid" else ()))}
     flags = {**SCENE_FLAGS, "w": size, "h": size}
@@ -2056,8 +2056,8 @@ def text_input(name: str, col: int, row: int, cols: int, text: str = "", placeho
     """A text input named `name` in a TOUCH-high row from cell (col, row): the label `label`, a
     unit, then the field, `cols` units wide. The field holds `text`, or the faint `placeholder`
     when empty. `kind` is text, password, email, number, telephone-number, url or search, which
-    picks the phone's keyboard. text_input_events() gives it the look's font and colours. Returns [field] plus the
-    label when given; put them on one layer.
+    picks the phone's keyboard. text_input_events() gives it the look's font and colours.
+    Returns [field] plus the label when given; put them on one layer.
     The field is an HTML element and draws over every canvas layer: keep popups away from it, or
     hide it while they show."""
     kinds = ("text", "password", "email", "number", "telephone-number", "url", "search")
@@ -2517,7 +2517,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(found[0]), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp b92083d48136 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp fb8f924f8f09 ================
 
 
 # --- the game ---------------------------------------------------------------------------
