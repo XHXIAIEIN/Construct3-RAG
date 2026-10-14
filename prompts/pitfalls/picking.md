@@ -33,6 +33,17 @@ Sources and the rule for adding an entry are in the index,
   stable r495.2 preview, 2026-10-09: *Is overlapping* the door never held,
   at offset (1, 0) it did; runtime: exported c3runtime.js, Platform calls
   `RegisterCollision` after `PushOutSolidAxis`]
+- Bullet *Bounce off object* moves the ball out of the object at once. So
+  an *On collision* with that object in a later event of the same tick
+  finds no overlap and does not run. A sound, a squash, sparks or a hit
+  freeze in their own events with the same *On collision* run only above
+  the event that bounces, or as actions of that event. Put them above it,
+  because the collision events are tested in sheet order. [manual:
+  behavior-reference/bullet.md "Bounce off object"; observed in a pong
+  project, r506 preview, 2026-10-15: feedback groups each with Ball *On
+  collision with* the paddles, below the event that bounces, on a paddle
+  hit the time scale, the paddle's width and the Sparks count did not
+  change; the same groups above it, all three changed]
 - While a dragged or tweening instance has collisions disabled, the slot
   where it will land reads empty until it lands, the slot it is flying back
   to included. The drop events expect that. But an event that fills empty

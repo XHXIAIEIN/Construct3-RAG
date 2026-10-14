@@ -25,6 +25,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 - An instance with collisions disabled fails every overlap and collision test, both ways. Use this for a dragged or tweening instance, not an `isMoving` flag.
 - A Solid blocks while its behavior is enabled, so a door that only plays an open animation keeps blocking. Disable its Solid with *Set enabled*, or destroy it.
 - A Solid stops a Platform object at its edge, so *Is overlapping* stays false against a wall or on the floor. Test touching with *Is overlapping at offset*, 1 pixel towards the Solid; *On collision* still fires.
+- Bullet *Bounce off object* moves the ball out at once, so a later *On collision* with the same object in that tick does not run. Put the feedback events above the bounce.
 - The slot a dragged or tweening instance will land on reads empty until it lands. An event that fills empty slots on its own waits for it.
 - A type and its family are picked separately, so narrowing `Piece` never narrows `Pieces`. Refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
