@@ -125,6 +125,21 @@ which cases to play and how to reach and read them to
   or sticky element that overlaps the area to capture, except the pane and
   the elements that hold it, as `scripts/screenshot_sheet.py` does.
   [observed in the r505 editor as a guest, 2026-10-14]
+- Edge started with `__COMPAT_LAYER` in its environment, the Windows
+  application compatibility layer (`DetectorsAppHealth` where this was
+  seen), starts the browser again as its own child, without the layer and
+  with `--edge-skip-compat-layer-relaunch`, then exits with code 0 within a
+  tenth of a second. A script that stops waiting for `DevToolsActivePort`
+  when its process exits gives up on a browser that comes up a moment later
+  and runs on without a parent. A script that waits for that process at the
+  close returns while the browser still answers, so the next start takes a
+  closing browser over. `open_in_editor.py` starts the browser without the
+  variable and waits for the port its full 15 seconds. At the close it waits
+  until the profile's `lockfile` is gone, because the browser holds it open
+  while it runs. [observed in Edge 156 headless, 2026-10-14: 11 of 60 starts
+  failed, each launched process had exited 0 with the browser as its child;
+  with these waits 160 of 160 started, 60 of them with the variable left in,
+  and no `msedge.exe` stayed on the profile after a close]
 - A browser started with `--user-data-dir=\\?\<path>`, the prefix that lifts
   MAX_PATH, writes no cookie file, so a third-party login (GitHub) is gone at
   the next start; `open_in_editor.py` adds the prefix only to a long path.
