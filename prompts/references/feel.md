@@ -16,6 +16,8 @@ player notices first. Each row names its source in the Example column:
 
 Before adding the sounds that go with these effects, read
 [sound.md](sound.md), which says which sounds play, when and how loud.
+For an attack, its wind-up, animation, cancelling, projectile, sounds,
+hit effect and damage numbers, read [attack-feel.md](attack-feel.md).
 
 | Need | Use | Example |
 |------|-----|---------|

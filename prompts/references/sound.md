@@ -117,9 +117,12 @@ with every stem on, set at −30 LUFS in the game.
   channel into the near one and raises an attack 1.3, 2.3 and 3.2 dB at
   ±10, ±20 and ±30. So keep the loudest sounds within ±10 and off each
   other's cell.
-- Do not retune pitched sounds at random. For variation, use three variants
+- Do not retune pitched sounds at random. For variation, use three to five
+  variants, played from a shuffled list so one never plays twice in a row,
   and a random −1.5 to 0 dB. Retune by whole semitones
-  (`rate = 2^(n/12)`), per play, on a one-off tag.
+  (`rate = 2^(n/12)`), per play, on a one-off tag. An unpitched impact may
+  also take a random rate ([attack-feel.md](attack-feel.md), "Sounds of an
+  attack").
 - Pitched sounds follow the current chord. A scheduled chord reads the
   chord of its cell and retunes to it; an immediate sound uses the notes
   of "Immediate or on the grid". A scale that climbs with the level is the
