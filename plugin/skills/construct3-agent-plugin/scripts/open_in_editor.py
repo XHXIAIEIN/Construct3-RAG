@@ -423,6 +423,10 @@ class DevToolsError(Exception):
     pass
 
 
+class NoAnswer(DevToolsError):
+    """A call that the page did not answer within its wait. Any other DevToolsError is a failure that came back."""
+
+
 def browser_path() -> str | None:
     """The Edge, Chrome or Chromium of this machine, where their installers put them."""
     places: list[Path] = []
@@ -527,7 +531,7 @@ class DevTools:
                     if "method" in message:
                         self.events.append(message)
             except socket.timeout:
-                raise DevToolsError(f"{method}: no answer in {wait:g} seconds") from None
+                raise NoAnswer(f"{method}: no answer in {wait:g} seconds") from None
 
     def evaluate(self, expression: str, by_value: bool = True, wait: float = CALL, session: str | None = None):
         r = self.call("Runtime.evaluate", wait, session, expression=expression, awaitPromise=True,
