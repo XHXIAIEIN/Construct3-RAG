@@ -62,6 +62,32 @@ def test_the_info_and_its_factory_are_read_under_their_names_of_the_build():
     }
 
 
+# Excerpts of the r506 bundles, shortened. r506 builds the info as
+# this.m=X.v(self.Ji,ID), while X.p is another object of the bundle, so the
+# r495 shape this.p=X.m(self.v,ID) matched nothing and the read stopped.
+R506_MAIN_JS = (
+    'window.SDK.IPluginInfo=class{SetIsTiled(t){Ck.get(this).NV(t)}SetIsDeprecated(t){Ck.get(this).pr(t)}};'
+    'window.SDK.IBehaviorInfo=class{SetIsOnlyOneAllowed(t){Fk.get(this).ve(t)}'
+    'SetIsDeprecated(t){Fk.get(this).pr(t)}};'
+)
+R506_PLUGINS_JS = (
+    '{const $o=self.t,Qo=self.lang,Xo="NodeWebkit",Zo=$o.Hi.Aw=class extends $o.qi{constructor(){super(),'
+    '$o.p.dr(!1),$o.p.u("plugins."+Xo.toLowerCase()),this.m=$o.v(self.Ji,Xo),this.m.j(Qo(".name")),'
+    'this.m.$i(!0),this.m.pr(!0),$o.p.re(),$o.p.dr(!0)}}}'
+    '{const yr=self.t,xr=self.lang,Sr="Keyboard",Cr=yr.Hi.Keyboard=class extends yr.qi{constructor(){super(),'
+    'yr.p.u("plugins.keyboard");const t=this.m=yr.v(self.Ji,Sr);t.j(xr(".name")),t.$i(!0),yr.p.re()}}}'
+)
+R506_BEHAVIORS_JS = (
+    '{const ts=self.t,is=self.lang,ss="Pin",ls=ts.o.Kt=class extends ts.h{constructor(){super(),'
+    'ts.p.u("behaviors."+ss.toLowerCase()),this.m=ts.v(self.k,ss),this.m.j(is(".name"))}}}'
+)
+
+
+def test_the_r506_bundles_are_read():
+    assert extract_deprecation(R506_MAIN_JS, R506_PLUGINS_JS, "plugins") == {"NodeWebkit": True, "Keyboard": False}
+    assert extract_deprecation(R506_MAIN_JS, R506_BEHAVIORS_JS, "behaviors") == {"Pin": False}
+
+
 def test_deprecated_ids_stops_on_an_addon_the_bundle_does_not_construct():
     flags = extract_deprecation(MAIN_JS, PLUGINS_JS, "plugins")
     assert deprecated_ids(flags, {"Sprite", "NodeWebkit"}, "plugins") == {"NodeWebkit"}
