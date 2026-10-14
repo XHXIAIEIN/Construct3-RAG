@@ -374,8 +374,24 @@ def grade_find_in_a_big_sheet(run: Path) -> list[tuple[bool, str]]:
             unchanged(run)]
 
 
-VIEW_W, VIEW_H, UNIT, MARGIN, TOUCH = 1920, 1080, 32, 32, 160     # the stand-in's viewport and its grid
+# The stand-in's viewport and grid; MARGIN is the plain sheet's, what margin_of() falls back on
+VIEW_W, VIEW_H, UNIT, MARGIN, TOUCH = 1920, 1080, 32, 32, 160
 HUD_LAYERS = {"ui", "hud"}
+# The HUD types of this skill's stand-in and of the previous one, which a run finds there and does not add
+STAND_IN_HUD = {"ScoreText", "ScoreLabel", "RoundText", "TitleText", "RoundTag", "KeyBox", "KeyText", "KeyVerb"}
+
+
+def margin_of(project: Path) -> int:
+    """The MARGIN the run's generator holds its HUD by, from the settings above its helpers; MARGIN when they
+    cannot be run. Each arm's generator sets its own MARGIN, so each run is graded by its own."""
+    try:
+        path = project / "tools" / "build_project.py"
+        text = path.read_text(encoding="utf-8")
+        settings: dict = {"__file__": str(path)}
+        exec(text.split("# ==== construct3-agent-plugin helpers: begin")[0], settings)
+        return int(settings["MARGIN"])
+    except (OSError, SyntaxError, NameError, KeyError, TypeError, ValueError, ArithmeticError):
+        return MARGIN
 
 
 def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
@@ -392,7 +408,7 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
             len(CASES["lay-out-the-hud"]["assertions"]) - len(results))
     hud = [inst for layer in layout.get("layers", []) if layer.get("name", "").lower() in HUD_LAYERS
            for inst in layer.get("instances", []) if "world" in inst]
-    added = [i for i in hud if i["type"] != "ScoreText"]
+    added = [i for i in hud if i["type"] not in STAND_IN_HUD]
     kinds = sorted({i["type"] for i in added})
     listed = ", ".join(f"{i['type']}@({i['world']['x']},{i['world']['y']} {i['world']['width']}x{i['world']['height']})"
                        for i in hud) or "no instance on a layer named UI or HUD"
@@ -414,8 +430,16 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
         bottoms = [t + i["world"]["height"] for t, i in zip(tops, insts)]
         return min(lefts), min(tops), max(rights), max(bottoms)
 
+    margin = margin_of(project)
+
+    def plugin_of(kind: str) -> str | None:
+        try:
+            return json.loads((project / "objectTypes" / f"{kind}.json").read_text(encoding="utf-8")).get("plugin-id")
+        except (OSError, ValueError):
+            return None
+
     def held(lo: float, hi: float, size: float) -> bool:
-        return abs(lo - MARGIN) <= 0.5 or abs(hi - (size - MARGIN)) <= 0.5 or abs((lo + hi) / 2 - size / 2) <= 0.5
+        return abs(lo - margin) <= 0.5 or abs(hi - (size - margin)) <= 0.5 or abs((lo + hi) / 2 - size / 2) <= 0.5
 
     kinds = {kind: box([i for i in hud if i["type"] == kind]) for kind in sorted({i["type"] for i in hud})}
     loose = []
@@ -425,15 +449,22 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
                       for other, (ol, ot, orr, ob) in kinds.items() if other != kind)
         if not (held(l, r, VIEW_W) and (held(t, b, VIEW_H) or stacked)):
             loose.append(f"{kind} box ({l:g},{t:g})-({r:g},{b:g})")
-    results.append((bool(hud) and not loose, f"boxes neither {MARGIN} px inside an edge, nor centred, nor one unit "
+    results.append((bool(hud) and not loose, f"boxes neither {margin} px inside an edge, nor centred, nor one unit "
                                              f"under a held box: {loose or 'none'}"))
 
     boxes = [(i["type"], *box([i])) for i in hud]
     outside = [f"{k} ({l:g},{t:g})-({r:g},{b:g})" for k, l, t, r, b in boxes if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H]
     results.append((bool(hud) and not outside, f"boxes reaching past the viewport: {outside or 'none'}"))
+    is_text = {i["type"]: plugin_of(i["type"]) == "Text" for i in hud}
+
+    def layered(inner: tuple, outer: tuple) -> bool:
+        """A box inside one that is not a label, a label on its button or key: the template lays these on purpose."""
+        return not is_text[outer[0]] and contains(outer[1:], inner[1:], 0.5)
+
     overlaps = [f"{a[0]} ({a[1]:g},{a[2]:g})-({a[3]:g},{a[4]:g}) and {b[0]} ({b[1]:g},{b[2]:g})-({b[3]:g},{b[4]:g})"
                 for n, a in enumerate(boxes) for b in boxes[n + 1:]
-                if min(a[3], b[3]) - max(a[1], b[1]) > 0.5 and min(a[4], b[4]) - max(a[2], b[2]) > 0.5]
+                if min(a[3], b[3]) - max(a[1], b[1]) > 0.5 and min(a[4], b[4]) - max(a[2], b[2]) > 0.5
+                and not layered(a, b) and not layered(b, a)]
     results.append((bool(hud) and not overlaps, f"overlapping boxes: {overlaps or 'none'}"))
 
     button = [i for i in added if re.search(r"pause|button|btn", i["type"], re.I)]
@@ -441,12 +472,6 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
              if min(i["world"]["width"], i["world"]["height"]) < TOUCH]
     results.append((bool(button) and not small,
                     f"button(s) {[i['type'] for i in button] or 'none found by name'}; under {TOUCH} px: {small or 'none'}"))
-
-    def plugin_of(kind: str) -> str | None:
-        try:
-            return json.loads((project / "objectTypes" / f"{kind}.json").read_text(encoding="utf-8")).get("plugin-id")
-        except (OSError, ValueError):
-            return None
 
     lives = [i for i in added if plugin_of(i["type"]) == "Sprite" and i not in button]
     per_type: dict[str, int] = {}
@@ -848,7 +873,8 @@ def rgb255(colour: list) -> tuple:
 
 
 def one_colour(project: Path, kind: str) -> tuple | None:
-    """The colour of a type whose first image shows one colour, else None."""
+    """The colour of a type whose first image shows one colour and is opaque in its middle, else None: a
+    hollow box, a key's frame, lies round a label and not behind it."""
     try:
         from PIL import Image
     except ImportError:
@@ -856,10 +882,12 @@ def one_colour(project: Path, kind: str) -> tuple | None:
     for png in sorted((project / "images").glob(f"{kind.lower()}*.png")):
         try:
             with Image.open(png) as im:
-                shown = {c[:3] for n, c in (im.convert("RGBA").getcolors(1 << 20) or []) if c[3] == 255}
+                rgba = im.convert("RGBA")
+                shown = {c[:3] for n, c in (rgba.getcolors(1 << 20) or []) if c[3] == 255}
+                middle = rgba.getpixel((rgba.width // 2, rgba.height // 2))[3] == 255
         except OSError:
             continue
-        return next(iter(shown)) if len(shown) == 1 else None
+        return next(iter(shown)) if len(shown) == 1 and middle else None
     return None
 
 

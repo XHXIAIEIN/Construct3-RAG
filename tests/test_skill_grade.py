@@ -563,3 +563,22 @@ def test_trace_counts_whole_sheet_prints_and_print_sheet_characters(tmp_path: Pa
     code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(tmp_path))
     trace = json.loads((tmp_path / "trace.json").read_text(encoding="utf-8"))
     assert code == 0 and trace["print_sheet_chars"] == 1234 and trace["whole_sheet_prints"] == int(whole)
+
+
+def test_the_hud_case_grades_by_the_templates_own_rules(tmp_path: Path, project: Path) -> None:
+    """A run of the HUD case is held to its own generator's MARGIN; a label inside its key's box is laid on
+    purpose, not an overlap; a hollow box lies round a label and not behind it; and the stand-in's own HUD
+    counts as nothing the run added."""
+    pytest.importorskip("PIL")
+    spec = importlib.util.spec_from_file_location("eval_grade", SKILL / "evals" / "grade.py")
+    grader = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(grader)
+    case = tmp_path / "it" / "lay-out-the-hud" / "with_skill"
+    shutil.copytree(project, case / "project")
+    assert grader.margin_of(case / "project") == 64 and grader.margin_of(tmp_path) == grader.MARGIN
+    assert grader.one_colour(case / "project", "KeyBox") is None
+    assert grader.one_colour(case / "project", "Coin") == (224, 69, 43)
+    results = dict(zip(CASES["lay-out-the-hud"]["assertions"], grader.grade_lay_out_the_hud(case)))
+    added, overlap = (next(v for k, v in results.items() if word in k) for word in ("besides", "overlap"))
+    assert added[0] is False and "0 added instance(s)" in added[1]
+    assert overlap == (True, "overlapping boxes: none")
