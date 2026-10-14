@@ -44,6 +44,15 @@ def test_ace_lookup_marks_shared_triggers_and_writes_expressions(built):
     assert "write: Coin.Tween.Progress(tags)  -> number" in out
 
 
+def test_an_expression_is_written_under_its_script_name(skill_only):
+    """The r506 editor refuses ConstructGameServices.MessageTitle, the en-US translated-name,
+    and opens the official cgs-notifications example, which writes BroadcastMessageTitle."""
+    code, out = tool(skill_only, "lookup_ace", "ConstructGameServices", "get-broadcast-message-title")
+    assert code == 0 and "write: <object>.BroadcastMessageTitle(messageID)" in out, out
+    code, out = tool(skill_only, "lookup_ace", "System", "scrollx")
+    assert code == 0 and "write: ScrollX  -> number" in out, out
+
+
 def test_ace_lookup_says_what_each_parameter_is(built):
     # find(text, find): the type says string twice, the schema's desc says which one is searched.
     code, out = tool(built, "lookup_ace", "System", "find")

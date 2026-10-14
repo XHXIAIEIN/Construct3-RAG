@@ -1406,16 +1406,22 @@ class Project:
         return self._schema_cache[key]
 
     def expression_names(self, schema: dict | None) -> dict[str, str]:
-        """ACE id -> the name an expression is written under. A project file holds
-        the English name whatever language the editor runs in, so it is read from
-        en-US: in another locale `translated-name` is wording, `移动速度` for `Speed`."""
+        """ACE id -> the name an expression is written under: its `scriptName`, the
+        CDN's expressionName, the same in every locale. `translated-name` is the
+        editor's wording, and even in en-US it can differ: the editor refuses
+        ConstructGameServices.MessageTitle and reads BroadcastMessageTitle. Where the
+        two differ only in case, the en-US one is kept, ScrollX for scrollx."""
         if not schema:
             return {}
         key = (schema["type"], schema["id"])
         if key not in self._expression_names:
             english = schema if self.locale == "en-US" else \
                 load(self.rag / "data" / "c3-schemas" / "en-US" / f"{schema['type']}s" / f"{schema['id']}.json")
-            self._expression_names[key] = {e["id"]: e["translated-name"] for e in english.get("expressions", [])}
+            names = {}
+            for e in english.get("expressions", []):
+                written = e.get("scriptName") or e["translated-name"]
+                names[e["id"]] = e["translated-name"] if LOWER(e["translated-name"]) == LOWER(written) else written
+            self._expression_names[key] = names
         return self._expression_names[key]
 
     def expressions_of(self, schema: dict | None) -> set[str]:

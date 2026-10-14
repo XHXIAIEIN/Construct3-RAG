@@ -94,8 +94,8 @@ actions.
   `commonAces` lists, so `Text` has no overlap ACEs.
 - If you find nothing, say so, offer the closest match and mark it
   unverified. Never invent a plausible name.
-- Write expressions with the English `translated-name`:
-  `Sprite.AnimationFrame`, not `Sprite.动画帧`. If the user writes localized
+- Write expressions with their `scriptName`, the name `lookup_ace.py`
+  prints after `write:`: `Sprite.AnimationFrame`, not `Sprite.动画帧`. If the user writes localized
   names, keep them unchanged, because they are valid in the user's locale.
 - Write variable names in one language, never mixed: `playerHealth` or
   `玩家生命值`.

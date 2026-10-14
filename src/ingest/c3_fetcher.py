@@ -431,6 +431,10 @@ class C3Fetcher:
                                         param_entry["initialValue"] = p["initialValue"]
                                     params[pid_param] = param_entry
 
+                                # An expression has no scriptName on the CDN; its
+                                # expressionName, the name a project file holds, takes
+                                # the place. The language pack's translated-name can
+                                # differ: MessageTitle for BroadcastMessageTitle.
                                 entry: dict = {
                                     "id": ace_id,
                                     "scriptName": ace.get("scriptName", ace.get("expressionName", "")),
