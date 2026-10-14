@@ -153,13 +153,15 @@ If an object chases, follows or walks to another object, read
 ### Input
 
 If the events use Mouse and Touch together, tell a finger from a mouse,
-take a tap anywhere on the screen, hide what can be pressed or dragged,
-close a popup by a tap outside it, read a touch's speed, bind keys, steer a
-movement behavior, or ask the
-browser for fullscreen, a permission or a picker, read [pitfalls/input.md](pitfalls/input.md).
+follow or aim at the pointer, read it in Mouse *On movement*, take a tap
+anywhere on the screen, hide what can be pressed or dragged, close a popup
+by a tap outside it, read a touch's speed, bind keys, steer a movement
+behavior, or ask the browser for fullscreen, a permission or a picker, read
+[pitfalls/input.md](pitfalls/input.md).
 
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too. Detect the input method with it off.
+- In Mouse *On movement*, `Mouse.X`, `Mouse.Y`, `Touch.X` and `Touch.Y` hold the previous pointer event's position. Follow or aim at the pointer in an *Every tick* event, or for a finger in an *Is in touch* event.
 - Touch and Mouse press an object that is invisible or has collisions disabled. Add *Is visible* to the event or set its layer not interactive.
 - Touch and Mouse pick every overlapping instance under the pointer. Add the button's *Pick top/bottom* (top) as a second condition of the trigger's event so only the front button reacts; a family for buttons of several types.
 - Drag & Drop drags the front instance under the pointer, by layer and then Z, visible or not. Stop drags under a popup with *Set layer interactive* on the pieces' layer or *Set enabled* on the behavior.
