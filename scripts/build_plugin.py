@@ -6,7 +6,7 @@
 
 The plugin folder carries what the construct3-agent-plugin skill reads, under
 the limits of Claude's plugin directory: 512 files or fewer, and every file
-other than an image under 256 KiB. The skill, the schemas, the guides, the
+other than an image or a font under 256 KiB. The skill, the schemas, the guides, the
 prompts and the empty project are copied to the same paths. The TypeScript
 definitions, the examples and the index of their ACEs are written as bundles, which
 skills/construct3-agent-plugin/scripts/c3project.py reads with data_texts;
@@ -61,7 +61,7 @@ ADDON_TEXTS = ("name", "properties", "debugger")
 MAX_FILES = 512
 MAX_SIZE = 256 * 1024
 BUNDLE_SIZE = 240 * 1024     # below MAX_SIZE, so that a bundle stays under it as its files grow a little
-IMAGES = (".png",)
+BINARIES = (".png", ".woff")     # images and fonts, copied byte for byte
 
 
 def tracked(path: str) -> list[str]:
@@ -82,7 +82,7 @@ def copy(src: Path, dst: Path) -> None:
     A checkout made before .gitattributes holds CRLF files; LF keeps its build equal to plugin/."""
     data = src.read_bytes()
     dst.parent.mkdir(parents=True, exist_ok=True)
-    dst.write_bytes(data if src.name.endswith(IMAGES) else data.replace(b"\r\n", b"\n"))
+    dst.write_bytes(data if src.name.endswith(BINARIES) else data.replace(b"\r\n", b"\n"))
 
 
 def dump(bundle: dict[str, str]) -> str:
@@ -211,7 +211,7 @@ def limits(folder: Path) -> list[str]:
     found = files(folder)
     problems = [f"{len(found)} files, more than {MAX_FILES}"] if len(found) > MAX_FILES else []
     for rel, p in found.items():
-        if rel.endswith(IMAGES):
+        if rel.endswith(BINARIES):
             continue
         size = p.stat().st_size
         if size > MAX_SIZE:
