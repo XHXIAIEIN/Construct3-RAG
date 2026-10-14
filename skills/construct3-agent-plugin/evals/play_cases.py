@@ -295,6 +295,11 @@ def readable_on_a_dark_background() -> dict:
 HUD_VIEW = (2340, 1080)     # wider than the project's 16:9, so a corner of the screen is not a corner of the layout
 
 
+# The HUD types of this skill's stand-in and of the previous one: a run finds them in the project, and a check
+# of what the run added leaves them out.
+STAND_IN_HUD = ["ScoreText", "ScoreLabel", "RoundText", "TitleText", "RoundTag", "KeyBox", "KeyText", "KeyVerb"]
+
+
 def lay_out_the_hud() -> dict:
     w, h = HUD_VIEW
     return {"viewport": [w, h], "touch": True, "steps": [
@@ -319,14 +324,15 @@ def lay_out_the_hud() -> dict:
               "const b = vars.hud.find(i => i.text === null && /pause|button|btn/i.test(i.type));",
               f"return {{ok: !!b && b.box.r >= {w - 96} && b.box.b >= {h - 96}, said: b ? `${{b.type}} ${{JSON.stringify(b.box)}} in a {w}x{h} window` : 'no button on the UI layer'}};"),
         check("The lives sit at the top of the window, centred",
-              "const l = vars.hud.filter(i => i.text === null && !/pause|button|btn/i.test(i.type));",
+              f"const l = vars.hud.filter(i => i.text === null && !/pause|button|btn/i.test(i.type) && !{STAND_IN_HUD}.includes(i.type));",
               "if (!l.length) return {ok: false, said: 'no sprite on the UI layer besides the button'};",
               "const left = Math.min(...l.map(i => i.box.l)), right = Math.max(...l.map(i => i.box.r)), top = Math.min(...l.map(i => i.box.t));",
               f"const off = (left + right) / 2 - {w / 2};",
               f"return {{ok: Math.abs(off) <= {w * 0.02} && top <= 96, said: `${{[...new Set(l.map(i => i.type))]}} from x ${{left}} to ${{right}}, ${{off.toFixed(0)}} px off centre, top ${{top}}`}};"),
-        check("The score text stays at the top left of the window",
+        # The stand-in holds the score in a top corner, the left one in the plain sheet and the right one in paper and ink
+        check("The score text stays in its top corner of the window",
               "const s = vars.hud.find(i => i.type === 'ScoreText');",
-              "return {ok: !!s && s.box.l <= 96 && s.box.t <= 160, said: s ? `ScoreText ${JSON.stringify(s.box)}` : 'no ScoreText'};"),
+              f"return {{ok: !!s && (s.box.l <= 96 || s.box.r >= {w - 96}) && s.box.t <= 160, said: s ? `ScoreText ${{JSON.stringify(s.box)}}` : 'no ScoreText'}};"),
     ]}
 
 
@@ -750,7 +756,7 @@ def hearts_checks(result: dict) -> list[tuple[bool, str]]:
         return [(False, got)] * 2
     a, b, boxes = got
     texts = [ints(i["box"], 4) for i in boxes if i["text"]]
-    hearts = [ints(i["box"]) for i in boxes if not i["text"]]
+    hearts = [ints(i["box"]) for i in boxes if not i["text"] and i.get("type") not in STAND_IN_HUD]
     if not hearts:
         return [(False, "no object but text on the UI layer")] * 2
     box = union(hearts)

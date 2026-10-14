@@ -484,7 +484,7 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
 
     with tempfile.TemporaryDirectory() as tmp:
         copy = Path(tmp) / "game"
-        shutil.copytree(project, copy, ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copytree(project, copy, ignore=shutil.ignore_patterns("__pycache__", ".tmp", ".build"))
         try:
             p = subprocess.run([sys.executable, "tools/build_project.py"], cwd=copy, capture_output=True, text=True,
                                encoding="utf-8", timeout=180, env=dict(os.environ, PYTHONIOENCODING="utf-8"))
@@ -641,7 +641,7 @@ def generator_is_source(run: Path) -> tuple[bool, str]:
     project = run / "project"
     with tempfile.TemporaryDirectory() as tmp:
         copy = Path(tmp) / "game"
-        shutil.copytree(project, copy, ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copytree(project, copy, ignore=shutil.ignore_patterns("__pycache__", ".tmp", ".build"))
         try:
             p = subprocess.run([sys.executable, "tools/build_project.py"], cwd=copy, capture_output=True, text=True,
                                encoding="utf-8", timeout=180, env=dict(os.environ, PYTHONIOENCODING="utf-8"))
