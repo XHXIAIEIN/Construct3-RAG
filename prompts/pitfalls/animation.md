@@ -22,21 +22,30 @@ Sources and the rule for adding an entry are in the index,
   use *Start animation* from the beginning. [manual:
   plugin-reference/sprite.md "Set animation"; observed in a game
   project, 2026-09-22]
-- A 3D model's *Play* of the clip already playing leaves it where it is,
-  whatever progress it is given, and so do *Set progress* and the script's
-  `animationProgress`. Each clip keeps its own clock while another plays,
-  so a clip played again also goes on from that clock. An attack that
-  plays its clip every interval while the clip is longer than the interval
-  shows a swing only every other time. To start a playing clip from 0,
-  stop it first: in r505, `setAnimationPlaying(false, clip)` and then
-  `play(clip, 0, transition)`. *Play* cuts to the new clip in one tick
-  unless its *Transition duration* (r505) is set, and a clip cannot cross
-  over into itself. So consecutive attacks that should blend take turns
-  between two copies of the clip. [observed in a game project, r505 beta
-  preview, 2026-10-14: a 2.0 s attack clip played every 1.6 s started at
-  1.603 s on every second attack, a frame-by-frame capture showed the
-  sword jump 57 to 72 px in one tick at each clip change, and after the
-  changes above every attack started at 0 and no frame jumped]
+- A 3D model's *Set progress*, the script's `animationProgress` setter and
+  `setAnimationProgress` change nothing while the clip plays or is paused,
+  although the manual says they set the progress of the current animation.
+  They work once the clip is stopped or has finished. A clip stays playing
+  after *Play* switches to another clip: `isAnimationPlaying` of the first
+  clip stays true. In r505, *Play* of a playing clip also leaves it where
+  it is, whatever progress it is given. An attack that plays a clip longer
+  than its interval then shows a swing only every other time. r506 starts
+  the clip at the given progress. In r505 and r506, to restart a clip,
+  stop it first: the script's `stop()` or `setAnimationPlaying(false,
+  clip)`, then *Play*. *Play* cuts to the new clip in one tick unless its
+  *Transition duration* (r505) is set, and a clip cannot cross over into
+  itself. So consecutive attacks that should blend take turns between two
+  copies of the clip. In r505 and r506 the script's
+  `getAnimationProgress(name)` throws a TypeError; read
+  `animationProgress`. [manual: plugin-reference/3d-model.md "Set
+  progress"; scripting/scripting-reference/plugin-interfaces/3d-model.md
+  "animationProgress"; observed in a minimal project with a generated
+  glTF, r505 beta and r506, 2026-10-14: progress stayed at 0.399 after
+  each setter, and in r505 also after *Play* with progress 0 or 0.25,
+  which in r506 gave 0 and 0.25; and in a game project, r505 beta,
+  2026-10-14: a 2.0 s attack clip played every 1.6 s started at 1.603 s on
+  every second attack, and a frame-by-frame capture showed the sword jump
+  57 to 72 px in one tick at each clip change]
 - Frames used as looks rather than as an animation need the animation's
   *Speed* at 0. A one-frame animation at the default speed 5 shows no
   motion. But with more frames, every created instance plays through them

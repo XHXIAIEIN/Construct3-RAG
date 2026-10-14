@@ -213,6 +213,15 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   *Set mesh enabled* can show the others later. A string, empty or a mesh
   name, draws every mesh. An array stops the project from opening.
   [observed in a game project, r505, 2026-10-14]
+- `animations` in `3dmodels/<model>.json` is a list of `[name, clip]` pairs.
+  To add a copy of a clip, append a pair whose clip is the original's with a
+  new `id`, a UUID, and the new `name`, and use the same name in both places:
+  `["Attack2", {"id": "<new UUID>", "name": "Attack2", "duration": ...,
+  "tracks": [...]}]`. The tracks keep their `lookupUUID`, which names the bone
+  they move. The project opens and *Play* plays the copy. [observed in a game
+  project, r505, 2026-10-14: a copy appended by a build script, the folder
+  and its packed `.c3p` opened and previewed, and the copy played from the
+  start on alternate attacks]
 
 ### Object types, families and `project.c3proj`
 

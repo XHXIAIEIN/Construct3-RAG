@@ -211,7 +211,7 @@ If the events use image points, animations or frames, read
 
 - Image point 0 is the origin. The first point added is 1, and `ImagePointCount` leaves out the origin.
 - *Set animation* to the animation already playing does nothing.
-- A 3D model's *Play* of a playing clip leaves it where it is; stop the clip first to start it from 0. *Play* cuts in one tick unless its *Transition duration* (r505) is set, and a clip cannot cross over into itself, so blended repeats take turns between two copies.
+- A 3D model's *Set progress* does nothing while the clip plays or is paused, and in r505 *Play* of a playing clip leaves it where it is; stop the clip first to start it again. *Play* cuts in one tick unless its *Transition duration* (r505) is set, and a clip cannot cross over into itself, so blended repeats take turns between two copies.
 - Frames used as looks rather than as an animation need the animation's *Speed* at 0.
 - *Set frame* to a frame of another image size resizes the instance and swaps its collision polygon.
 
