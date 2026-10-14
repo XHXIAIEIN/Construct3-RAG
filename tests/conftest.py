@@ -1,10 +1,19 @@
 """The stand-in game the skill's tests share: generated once, copied for a test that changes it."""
+import os
 import shutil
+import tempfile
 from pathlib import Path
 
 import pytest
 
 from tests.skill_helpers import SKILL, run, install, new_project
+
+# The generator's font cache, with stand-ins for Inter's three files: set before any test loads the
+# template, whose HUD picks its fonts as the module loads
+FONT_CACHE = Path(tempfile.mkdtemp(prefix="c3-font-cache-"))
+for _name in ("Inter-Regular", "Inter-Medium", "InterDisplay-Light"):
+    (FONT_CACHE / f"{_name}.woff").write_bytes(b"wOFF" + _name.encode())
+os.environ["CONSTRUCT3_RAG_FONT_CACHE"] = str(FONT_CACHE)
 
 
 @pytest.fixture(scope="session")

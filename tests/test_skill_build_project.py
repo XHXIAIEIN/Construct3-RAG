@@ -14,6 +14,7 @@ from tests.skill_helpers import (
     REPO, SKILL, INSTALLED, EXAMPLES, NEEDS_EXAMPLES, run, tool, check, edit, every_event, warnings, findings,
     template_module, png_pixels, script_module,
 )
+from tests.conftest import FONT_CACHE
 
 c3 = script_module("c3project")
 
@@ -1259,9 +1260,9 @@ def test_record_table_stops_on_a_field_outside_fields_and_warns_on_a_misspelt_on
 
 
 def test_template_ships_its_fonts_into_the_project(built, tmp_path, capsys):
-    """The generated project holds the font files FONT names in fonts/, listed as the editor lists an
-    imported WOFF, and every Text names one of them by its file name. A font in neither fonts/ nor the
-    skill, as with the plugin, which carries none, becomes system-ui with a warning, because a font the
+    """The generated project holds the font files FONT names in fonts/, copied from the user's font
+    cache and listed as the editor lists an imported WOFF, and every Text names one of them by its file
+    name. A font in neither fonts/ nor the cache becomes system-ui with a warning, because a font the
     project lacks draws its Latin letters in the browser's serif; FONT = "system-ui" ships none."""
     proj = json.loads((built / "project.c3proj").read_text(encoding="utf-8"))
     listed = proj["rootFileFolders"]["font"]["items"]
@@ -1269,22 +1270,23 @@ def test_template_ships_its_fonts_into_the_project(built, tmp_path, capsys):
         ("Inter-Medium.woff", "application/font-woff"), ("Inter-Regular.woff", "application/font-woff"),
         ("InterDisplay-Light.woff", "application/font-woff")]
     for e in listed:
-        assert (built / "fonts" / e["name"]).read_bytes() == (SKILL / "assets" / "fonts" / e["name"]).read_bytes()
+        assert (built / "fonts" / e["name"]).read_bytes() == (FONT_CACHE / e["name"]).read_bytes()
     faces = {i["properties"]["font"] for path in (built / "layouts").glob("*.json")
              for layer in json.loads(path.read_text(encoding="utf-8"))["layers"] for i in layer["instances"]
              if "font" in i.get("properties", {})}
     assert faces and faces <= {Path(e["name"]).stem for e in listed}
     t = template_module()
     t.ROOT = tmp_path
-    t.skill_file = lambda rel: None
+    t.font_cache = lambda: tmp_path / "cache"
     t.FONT = {"regular": "Missing-Face", "medium": "Inter-Medium"}
     t.copy_fonts()
     assert t._font_files == [] and t.face("regular") == t.face("medium") == "system-ui"
+    cache = tmp_path / "cache"
     assert capsys.readouterr().out.splitlines() == [
-        "warning: FONT names 'Missing-Face', and neither fonts/ nor the skill's assets/fonts/ holds "
-        "Missing-Face.woff, so its text draws in system-ui; put the font file in fonts/ to use it",
-        "warning: FONT names 'Inter-Medium', and neither fonts/ nor the skill's assets/fonts/ holds "
-        "Inter-Medium.woff, so its text draws in system-ui; put the font file in fonts/ to use it"]
+        f"warning: FONT names 'Missing-Face', and neither fonts/ nor {cache} holds Missing-Face.woff, "
+        f"so its text draws in system-ui; put the font file in fonts/ to use it",
+        f"warning: FONT names 'Inter-Medium', and neither fonts/ nor {cache} holds Inter-Medium.woff, "
+        f"so its text draws in system-ui; put the font file in fonts/ to use it"]
     t.FONT = {"regular": "Missing-Face"}
     (tmp_path / "fonts").mkdir()
     (tmp_path / "fonts" / "Missing-Face.ttf").write_bytes(b"\0")      # the game's own font, already in fonts/
