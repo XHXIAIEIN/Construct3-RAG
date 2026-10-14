@@ -71,8 +71,8 @@ link into `~/.claude/skills/` of `plugin-tracks-commits.md` points at
 
 The build:
 
-- Copies `skills/construct3-agent-plugin/` except `evals/`,
-  `data/c3-schemas/`, `data/c3-guides/`, `prompts/` and
+- Copies `skills/construct3-agent-plugin/` except `evals/` and
+  `assets/fonts/`, `data/c3-schemas/`, `data/c3-guides/`, `prompts/` and
   `data/c3-ts-defs/autocomplete-data.json` to the same paths.
   The skill's scripts find `data/` in the folder above them as they do in
   the clone, and an agent opens a schema at the same relative path.
@@ -121,6 +121,14 @@ The build:
 - Copies `scripts/plugin/agents/` to `agents/`, the sub-agent types Claude
   Code reads from a plugin's folder: `project-worker`, whose tools are the
   ones the skill's scripts need (`project-worker-agent.md`).
+
+The skill's fonts stay out. On 2026-10-15 the directory refused to fetch
+a8ef0ff, the first commit whose `plugin/` held them, with "Files in the
+repository the scanner won't accept"; 44b8add, the commit before them,
+had passed the scan. The three WOFF files of Inter were the only new kind
+of file between the two, and the portal names no file. Without them the
+generator draws every Text in `system-ui` and says so
+(`paper-and-ink-look.md`).
 
 Copied text files are written with LF line endings, as Git stores them, so
 a checkout with CRLF files (`lf-line-endings.md`) builds the same folder as
@@ -186,3 +194,5 @@ overwrites it and the test fails until then.
   should remove. If the icons are the only hold left, the next step is to
   draw placeholder icons in code and bundle no image.
 - The directory changes its file limits.
+- The directory accepts a commit whose plugin holds a font file: the
+  plugin can then carry Inter again.

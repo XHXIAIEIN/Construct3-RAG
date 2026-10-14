@@ -1258,10 +1258,11 @@ def test_record_table_stops_on_a_field_outside_fields_and_warns_on_a_misspelt_on
         "if they are one field, write 'speed' in 'slime'. Otherwise 'speed' reads 0 for 'slime'"]
 
 
-def test_template_ships_its_fonts_into_the_project(built, tmp_path):
+def test_template_ships_its_fonts_into_the_project(built, tmp_path, capsys):
     """The generated project holds the font files FONT names in fonts/, listed as the editor lists an
-    imported WOFF, and every Text names one of them by its file name. A font the project lacks stops
-    the run, because its Latin letters would draw in the browser's serif; FONT = "system-ui" ships none."""
+    imported WOFF, and every Text names one of them by its file name. A font in neither fonts/ nor the
+    skill, as with the plugin, which carries none, becomes system-ui with a warning, because a font the
+    project lacks draws its Latin letters in the browser's serif; FONT = "system-ui" ships none."""
     proj = json.loads((built / "project.c3proj").read_text(encoding="utf-8"))
     listed = proj["rootFileFolders"]["font"]["items"]
     assert sorted((e["name"], e["type"]) for e in listed) == [
@@ -1276,9 +1277,15 @@ def test_template_ships_its_fonts_into_the_project(built, tmp_path):
     t = template_module()
     t.ROOT = tmp_path
     t.skill_file = lambda rel: None
+    t.FONT = {"regular": "Missing-Face", "medium": "Inter-Medium"}
+    t.copy_fonts()
+    assert t._font_files == [] and t.face("regular") == t.face("medium") == "system-ui"
+    assert capsys.readouterr().out.splitlines() == [
+        "warning: FONT names 'Missing-Face', and neither fonts/ nor the skill's assets/fonts/ holds "
+        "Missing-Face.woff, so its text draws in system-ui; put the font file in fonts/ to use it",
+        "warning: FONT names 'Inter-Medium', and neither fonts/ nor the skill's assets/fonts/ holds "
+        "Inter-Medium.woff, so its text draws in system-ui; put the font file in fonts/ to use it"]
     t.FONT = {"regular": "Missing-Face"}
-    with pytest.raises(SystemExit, match=r"FONT names 'Missing-Face', and fonts/ holds no Missing-Face.woff"):
-        t.copy_fonts()
     (tmp_path / "fonts").mkdir()
     (tmp_path / "fonts" / "Missing-Face.ttf").write_bytes(b"\0")      # the game's own font, already in fonts/
     t.copy_fonts()

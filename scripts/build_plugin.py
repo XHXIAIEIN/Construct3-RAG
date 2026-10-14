@@ -48,7 +48,9 @@ MANIFEST = ".claude-plugin/plugin.json"
 # Copied to the same path inside the plugin
 COPIED = (SKILL, "data/c3-schemas", "data/c3-guides", "data/c3-new-project", "prompts",
           "data/c3-ts-defs/autocomplete-data.json")
-LEFT_OUT = (f"{SKILL}/evals/",)
+# The skill's fonts stay out: the directory's scanner refuses a commit whose plugin holds a font file
+# (docs/decisions/plugin-folder.md), and the generator draws in system-ui without them
+LEFT_OUT = (f"{SKILL}/evals/", f"{SKILL}/assets/fonts/")
 # Written as bundles: folder, the files of it to take
 BUNDLED = (("data/c3-ts-defs", "*.d.ts"), ("data/c3-examples/en-US", "*.json"), ("data/c3-examples/zh-CN", "*.json"),
            ("data/c3-example-usage", "*.json"))
@@ -61,7 +63,7 @@ ADDON_TEXTS = ("name", "properties", "debugger")
 MAX_FILES = 512
 MAX_SIZE = 256 * 1024
 BUNDLE_SIZE = 240 * 1024     # below MAX_SIZE, so that a bundle stays under it as its files grow a little
-BINARIES = (".png", ".woff")     # images and fonts, copied byte for byte
+BINARIES = (".png",)     # images, copied byte for byte
 
 
 def tracked(path: str) -> list[str]:
