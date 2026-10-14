@@ -96,6 +96,16 @@ Paths in this table are under `construct3-agent-plugin/`, except explicit
   `tests/test_skill_install.py` until the end line it prints is pasted.
   The blocks `install.py` wrote before the markers are known by their stamps
   in `PAST_BLOCKS` of `scripts/c3project.py`, a closed list.
+- The generator template is read in the game project, by its user and by
+  the agent that writes the game. A comment or a docstring there names what
+  the code does in a short phrase. A parameter gets only what its signature
+  leaves open: unit, range, what stops the run. A trap or a constraint keeps
+  its reason, on a line of its own. The finding that settles a value goes in
+  the record under `docs/decisions/`, because every agent that writes a game
+  reads the whole template. So the template holds no measurement, source or
+  path into this repository. `tests/test_skill_build_project.py` fails on a
+  path into this repository or its records, on "(WCAG" and "(manual:", and
+  on the word "survey".
 - A script that changes a project file checks the result before it writes
   it, writes the whole file or nothing, in the editor's layout (tabs, LF, no
   newline at the end, the editor's keys in the editor's order), and has

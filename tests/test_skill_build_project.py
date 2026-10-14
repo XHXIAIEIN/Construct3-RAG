@@ -37,6 +37,15 @@ def test_template_stamps_its_helpers():
     assert lines[helpers.end] == c3.helpers_end_line(helpers.version, helpers.stamp)
 
 
+def test_template_comments_state_rules_without_sources():
+    """A game's reader acts on the rule a comment states; its evidence and sources stay in
+    docs/decisions/ (skills/AGENTS.md)."""
+    text = (SKILL / "assets" / "build_project.py").read_text(encoding="utf-8")
+    cited = [mark for mark in ("Construct3-RAG/", "decisions/", "evals/", "(WCAG", "(manual:", "survey")
+             if mark in text]
+    assert not cited, f"assets/build_project.py cites {cited}; state the rule and keep the source in the record"
+
+
 def test_template_helpers_read_only_what_every_game_has():
     """A refresh replaces the helpers and keeps the rest of a game's generator, so the helpers import
     the modules they use and read nothing from outside the markers but what every generator has:

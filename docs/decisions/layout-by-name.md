@@ -42,6 +42,12 @@ The numbers with a source are the touch target (44 pt on iOS, 48 dp on
 Android, WCAG 2.5.5) and the text contrast of WCAG 2.2, 1.4.3. The share a
 main object covers is a starting value, tuned on the demos below.
 
+A label's box comes from its Text size, which is in points and drawn at 96 px
+per 72 pt (manual: `plugin-reference/text.md`). Measured in the preview, a
+Chinese character is 1.00 em wide, Latin letters in bold Arial 0.46 to 0.57
+em, and a line 1.05 to 1.17 em high. So `text_ems()` counts 1 em for a wide
+character and 0.6 em for any other, and `LINE_EMS` is 1.2.
+
 Ten one-mechanic demo requests were built through such a spec builder with
 positions as numbers and with names. Each result was played in the editor's
 preview against every clause of the request:
