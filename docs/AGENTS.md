@@ -80,6 +80,7 @@ The project skill and the prompts:
 | `published-game-visual-language.md` | Which visual, motion, camera and pacing rules repeated across published Construct games, and which of them the template took |
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `look-judge-calibration.md` | How often a judge that sees only the screenshots answers `review_look.py`'s questions as a panel of labeller agents does, and why the questions ask what a player sees as a mistake |
+| `paper-and-ink-look.md` | The default look of a generated game: the paper palette, the Inter subset the skill ships, the line-drawn areas, the HUD's type and the subjects' sizes |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
 | `landscape-viewport.md` | Why the generator template starts a game at 1920×1080 landscape, and what follows from it |
 | `fill-the-screen.md` | Why a generated game fills the screen with *Scale outer* or *Integer scale outer*, its HUD held to the screen's edges by Anchor, *Viewport fit* left at *Auto*, which keeps the whole viewport visible on a notched phone, and each layer listed back to front |
