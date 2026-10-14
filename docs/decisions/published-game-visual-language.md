@@ -87,9 +87,9 @@ Option 3. No characters, skins, fonts, shaders, exact palettes, ads or
 progression systems are copied.
 
 The generator template holds these (`greybox-blockout.md`), the outline and
-shadow as switches that its plain-sheet default leaves off:
+shadow as switches that its paper-and-ink default leaves off:
 
-- outline `UNIT / 4`, drawn into the image;
+- outline 2 px at 720 scaled to the viewport, drawn into the image;
 - checker contrast at most 1.2;
 - a hard shadow at 45°, offset 2.7% of the short edge, opacity 0.5, drawn
   into the image;
