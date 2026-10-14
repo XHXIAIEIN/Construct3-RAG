@@ -482,6 +482,13 @@ def main() -> int:
                     if not installer:
                         sys.exit(f"{case['name']} needs a skill: its generator checks with the skill's checker; "
                                  f"lay it out with with_... and old_... arms only")
+                    # The stand-in of the arm's own template, from the seed stand_in() starts with: what
+                    # another template generated would stay beside it, unlisted.
+                    for item in target.iterdir():
+                        if item.name not in (".agents", ".claude", ".git", "AGENTS.md", "CLAUDE.md"):
+                            shutil.rmtree(item) if item.is_dir() else item.unlink()
+                    (target / "project.c3proj").write_text(json.dumps({"uniqueId": "eval", "properties": {}}),
+                                                           encoding="utf-8")
                     (target / "tools").mkdir()
                     shutil.copy(installer.parent.parent / "assets" / "build_project.py", target / "tools" / "build_project.py")
                     run("tools/build_project.py", cwd=target)
