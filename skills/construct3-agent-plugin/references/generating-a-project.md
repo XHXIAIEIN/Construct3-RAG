@@ -346,10 +346,9 @@ habits; they are what makes rerunning safe.
   `TEXT_SIZE["body"]`, a screen's title `TEXT_SIZE["title"]`, the count
   `TEXT_SIZE["number"]` and a banner `TEXT_SIZE["display"]`, each in the
   weight `TEXT_WEIGHT` gives it, a font of `FONT`, never bold. `FONT` names
-  Inter's three files, which the generator copies from the skill's
-  `assets/fonts/` into `fonts/` and lists; a file in neither place draws in
-  `system-ui` with a warning, as in the Claude Code plugin, which carries
-  no fonts; `FONT = "system-ui"` ships none.
+  Inter's three files, which the generator copies from the user's font
+  cache into `fonts/` and lists; a file in neither place draws in
+  `system-ui` with a warning; `FONT = "system-ui"` ships none.
   `hud_text()` stops the run on a colour that reads below 4.5:1 on what is
   behind it, 3:1 from 18 pt up (`text_contrast()`), and names the roles
   that would read there. A

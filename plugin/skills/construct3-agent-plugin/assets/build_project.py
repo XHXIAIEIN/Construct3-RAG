@@ -111,12 +111,11 @@ SQUASH = {
 # while it is off.
 POINTER = False
 POINTER_STYLE = {"hover": "hover", "pressed": "pressed", "seconds": 0.15}
-# Inter in three weights, shipped by the skill in assets/fonts/ under the SIL Open Font License.
-# A weight is a font of its own, named by its file without the extension; build_all() copies the
-# files named here into fonts/ and lists them; a weight whose file is in neither place, as with the
-# Claude Code plugin, which carries no fonts, draws in system-ui. Chinese and other non-Latin text
-# draws in the platform's face. FONT = "system-ui" draws every label in the platform's face and
-# ships no file.
+# Inter in three weights, under the SIL Open Font License. A weight is a font of its own, named by
+# its file without the extension; build_all() copies the files named here from the user's font
+# cache into fonts/ and lists them; a weight whose file is in neither place draws in system-ui.
+# Chinese and other non-Latin text draws in the platform's face. FONT = "system-ui" draws every
+# label in the platform's face and ships no file.
 FONT = {"light": "InterDisplay-Light", "regular": "Inter-Regular", "medium": "Inter-Medium"}
 # Text size in points by kind, scaled to the viewport's shorter side: a tracked tag, the name of a
 # stat or a key, body text and a key's verb, a screen's title, the count the player plays for, a
@@ -150,6 +149,7 @@ ART_STYLE = ""
 import difflib
 import json
 import math
+import os
 import random
 import struct
 import subprocess
@@ -2825,13 +2825,10 @@ def with_files(block: dict, kind: str) -> dict:
 
 def skill_file(rel: str) -> Path | None:
     """The file `rel` of the construct3-agent-plugin skill's folder: in the copy installed in this
-    project under a client's skills folder, else in the one installed once for the user, else in the
-    skill this file is the template of; None when none has it."""
+    project under a client's skills folder, else in the one installed once for the user; None when
+    neither has it."""
     path = f"skills/construct3-agent-plugin/{rel}"
     found = sorted(ROOT.glob(f".*/{path}")) or sorted(Path.home().glob(f".*/{path}"))
-    own = Path(__file__).resolve().parent.parent
-    if not found and (own / "SKILL.md").exists() and (own / rel).exists():
-        found = [own / rel]
     return found[0] if found else None
 
 
@@ -2842,26 +2839,33 @@ FONT_TYPES = {".woff": "application/font-woff", ".ttf": "application/font-sfnt",
 _font_files: list[str] = []
 
 
+def font_cache() -> Path:
+    """The folder of fonts kept once for the user: CONSTRUCT3_RAG_FONT_CACHE, else
+    ~/.cache/construct3-rag/fonts."""
+    return Path(os.environ.get("CONSTRUCT3_RAG_FONT_CACHE") or Path.home() / ".cache" / "construct3-rag" / "fonts")
+
+
 def font_file(name: str) -> Path | None:
-    """The file of the font `name`: in the project's fonts/, else the skill's assets/fonts/ WOFF;
-    None when neither has it, as in the Claude Code plugin, which carries no font files."""
+    """The file of the font `name`: in the project's fonts/, else the WOFF in font_cache(); None
+    when neither has it."""
     held = [ROOT / "fonts" / f"{name}{ext}" for ext in FONT_TYPES if (ROOT / "fonts" / f"{name}{ext}").exists()]
-    return held[0] if held else skill_file(f"assets/fonts/{name}.woff")
+    cached = font_cache() / f"{name}.woff"
+    return held[0] if held else cached if cached.is_file() else None
 
 
 def copy_fonts() -> None:
-    """Puts the file of every font FONT names in fonts/, from the skill's assets/fonts/ when the
-    project lacks it, for build_project() to list. A name with a file in neither place, and no
-    face of PLATFORM_FACES, gets a warning: face() gives its Texts system-ui, because a Text whose
-    font the project lacks draws its Latin letters in the browser's serif."""
+    """Puts the file of every font FONT names in fonts/, from font_cache() when the project lacks
+    it, for build_project() to list. A name with a file in neither place, and no face of
+    PLATFORM_FACES, gets a warning: face() gives its Texts system-ui, because a Text whose font the
+    project lacks draws its Latin letters in the browser's serif."""
     names = [FONT] if isinstance(FONT, str) else list(dict.fromkeys(FONT.values()))
     for name in names:
         if name in PLATFORM_FACES:
             continue
         source = font_file(name)
         if source is None:
-            print(f"warning: FONT names {name!r}, and neither fonts/ nor the skill's assets/fonts/ holds "
-                  f"{name}.woff, so its text draws in system-ui; put the font file in fonts/ to use it")
+            print(f"warning: FONT names {name!r}, and neither fonts/ nor {font_cache()} holds {name}.woff, "
+                  f"so its text draws in system-ui; put the font file in fonts/ to use it")
             continue
         held = ROOT / "fonts" / source.name
         if source != held:
@@ -2976,7 +2980,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(checker), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 733ba29780f5 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp a73a2478169c ================
 
 
 # --- the game ---------------------------------------------------------------------------

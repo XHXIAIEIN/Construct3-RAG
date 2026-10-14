@@ -48,9 +48,7 @@ MANIFEST = ".claude-plugin/plugin.json"
 # Copied to the same path inside the plugin
 COPIED = (SKILL, "data/c3-schemas", "data/c3-guides", "data/c3-new-project", "prompts",
           "data/c3-ts-defs/autocomplete-data.json")
-# The skill's fonts stay out: the directory's scanner refuses a commit whose plugin holds a font file
-# (docs/decisions/plugin-folder.md), and the generator draws in system-ui without them
-LEFT_OUT = (f"{SKILL}/evals/", f"{SKILL}/assets/fonts/")
+LEFT_OUT = (f"{SKILL}/evals/",)
 # Written as bundles: folder, the files of it to take
 BUNDLED = (("data/c3-ts-defs", "*.d.ts"), ("data/c3-examples/en-US", "*.json"), ("data/c3-examples/zh-CN", "*.json"),
            ("data/c3-example-usage", "*.json"))
