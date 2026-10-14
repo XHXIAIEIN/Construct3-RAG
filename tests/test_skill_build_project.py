@@ -152,8 +152,8 @@ def test_template_palette_keeps_the_ratios_of_the_blockout():
     ratios = {pair: round(t.contrast(t.rgb(pair[0]), t.rgb(pair[1])), 2) for pair in (
         ("canvas", "canvas_alt"), ("solid", "canvas_alt"), ("reward", "canvas_alt"), ("danger", "canvas_alt"),
         ("ink", "solid"), ("ink", "reward"), ("ink", "danger"))}
-    assert ratios == {("canvas", "canvas_alt"): 1.13, ("solid", "canvas_alt"): 3.44, ("reward", "canvas_alt"): 3.06,
-                      ("danger", "canvas_alt"): 3.06, ("ink", "solid"): 3.97, ("ink", "reward"): 4.47,
+    assert ratios == {("canvas", "canvas_alt"): 1.13, ("solid", "canvas_alt"): 3.44, ("reward", "canvas_alt"): 3.81,
+                      ("danger", "canvas_alt"): 3.06, ("ink", "solid"): 3.97, ("ink", "reward"): 3.59,
                       ("ink", "danger"): 4.47}
     t.check_palette()
     assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger"]
@@ -525,7 +525,7 @@ def test_template_orders_each_layer_as_an_editor_user_would(built, tmp_path):
     assert ordered[2] is far and ordered[5] is near
     assert t.z_order(ordered) == ordered
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
-    assert [[i["type"] for i in layer["instances"]] for layer in game["layers"]] ==         [["Backdrop", "BoardArea", "Board"], [],
+    assert [[i["type"] for i in layer["instances"]] for layer in game["layers"]] ==         [["Backdrop", "Board"], [],
          ["RoundTag", "ScoreLabel", "ScoreText", "KeyBox", "KeyText", "KeyVerb"]]
 
 
@@ -613,11 +613,10 @@ def test_template_groups_a_value_with_its_name_and_centres_the_playfield_under_t
     t.filled([t.tiledbg_inst("Board", 800, 400, 320, 192, 0, 0)])
     assert capsys.readouterr().out.startswith("warning: layout Game: Board covers 3% of the 1920x1080 screen, under "
                                               "PLAYFIELD_MIN 15%")
-    # The stand-in's board and its area are where centred() puts them, under the header and over the keys.
+    # The stand-in's board is where centred() puts it, under the tag and over the keys.
     game = json.loads((built / "layouts" / "Game.json").read_text(encoding="utf-8"))
-    for kind in ("Board", "BoardArea"):
-        placed = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == kind)["world"]
-        assert (placed["x"], placed["y"], placed["width"], placed["height"]) == (512, 256, 928, 544)
+    placed = next(i for layer in game["layers"] for i in layer["instances"] if i["type"] == "Board")["world"]
+    assert (placed["x"], placed["y"], placed["width"], placed["height"]) == (512, 256, 928, 544)
 
 
 def test_template_screen_is_named_bands_and_the_stage_sizes_its_main_object():
@@ -896,8 +895,8 @@ def test_template_draws_only_the_colours_of_its_palette(built, tmp_path):
     t.write_png("clear.png", 1, 1, lambda x, y: (1, 2, 3, 0))                                # a pixel that does not show
     assert png_pixels(tmp_path / "images" / "half.png") == [[(224, 69, 43, 255), (224, 69, 43, 128)]]
     with pytest.raises(SystemExit, match=r"images/heart.png: \(230, 40, 60\) at \(1,0\) is no colour of PALETTE, "
-                                         r"nor are 1 more of its colours; the nearest is reward \(224, 69, 43\)\. "
-                                         r"Draw with rgb\('reward'\), or add the colour to PALETTE"):
+                                         r"nor are 1 more of its colours; the nearest is danger \(224, 69, 43\)\. "
+                                         r"Draw with rgb\('danger'\), or add the colour to PALETTE"):
         t.write_png("heart.png", 3, 1, lambda x, y: [(0, 0, 0, 0), (230, 40, 60, 255), (9, 9, 9, 255)][x])
     assert not (tmp_path / "images" / "heart.png").exists()
     t.write_png("gradient.png", 2, 1, lambda x, y: (x * 200, 100, 0, 255), painted=True)     # a painting keeps its colours
@@ -1129,7 +1128,7 @@ def test_template_shows_a_hit_as_a_frame_of_the_flash_colour(built, tmp_path):
     t = template_module()
     middle = len(rest) // 2
     assert rest[middle][middle][:3] == t.PALETTE["reward"] and hit[middle][middle][:3] == t.PALETTE["flash"]
-    assert rest[0][0][3] == hit[0][0][3] == 0 and len(rest) == t.TOUCH          # a coin drawn SUBJECT wide in a TOUCH box
+    assert rest[0][0][3] == hit[0][0][3] == 0 and len(rest) == t.TOUCH          # a coin fills its TOUCH box
     assert [[p[3] for p in row] for row in rest] == [[p[3] for p in row] for row in hit]     # same shape and shadow
     coin = json.loads((built / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
     assert [f["tag"] for f in coin["animations"]["items"][0]["frames"]] == ["", "hit"]

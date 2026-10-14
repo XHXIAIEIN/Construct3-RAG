@@ -213,7 +213,7 @@ it. On the stand-in it raises the board one unit.
 `PALETTE` holds the roles of `paper-and-ink-look.md` plus `flash`, the
 fill of a hit. Keep the roles and change values only. The player is `ink`;
 a bar is an `ink` fill in a `solid` frame. A game gives a role a hue of its
-own only where the accent and the shapes leave two things alike. The run
+own only where the palette and the shapes leave two things alike. The run
 stops, naming the roles that would pass, when:
 
 - `canvas` and `canvas_alt` pass 1.2:1, or `solid` falls under 3:1 on

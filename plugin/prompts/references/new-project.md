@@ -58,14 +58,15 @@ Construct-Example-Projects, 2026-09-18]
 - Until the art arrives, a generated game is paper and ink: flat shapes on
   a warm paper that fills the screen, without shadows, cards or panels.
   Lightness shows the hierarchy. The player is the one solid ink mass,
-  structure the faintest thing on the screen, and one accent marks what is
-  collected, what hurts and what is hit, at least 3:1 on the paper by colour
+  structure the faintest thing on the screen. Cobalt marks what is
+  collected and red what hurts, each at least 3:1 on the paper by colour
   alone. A rectangle is the player or structure, a circle what is
-  collected, a triangle what hurts. The player and what it acts on are
-  drawn about 6% of the viewport's shorter side across, small in a large
-  field; what is tapped keeps a finger-sized box around its drawing. An
-  area, a board or a range is drawn as lines: a thin edge over a faint
-  fill, a ring for a slot, a dashed ring for a reach. An area with a rule
+  collected, a triangle what hurts. In an open field the player and what
+  it meets are drawn about 6% of the viewport's shorter side across, small
+  in a large field, and what is tapped keeps a finger-sized box around its
+  drawing; on a board what is tapped fills that box. An area or a range is
+  drawn as lines, a thin edge over a faint fill, and a reach as a dashed
+  ring. A slot is a disc of the faint fill the size of what fills it. An area with a rule
   of its own, a door or lava, is a striped Tiled Background. Where
   something is transparent, a mask, or a background still to come, the
   backdrop is the transparency checker instead. A level is a run of beats,

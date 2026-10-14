@@ -12,7 +12,7 @@ def png_chunk(tag: bytes, data: bytes) -> bytes:
 
 def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     code, out = tool(project, "check_look")
-    assert code == 0 and out.splitlines()[-1].startswith("ok: 6 images, 4 world instances on a 32 px grid, "
+    assert code == 0 and out.splitlines()[-1].startswith("ok: 5 images, 3 world instances on a 32 px grid, "
                                                           "1 runtime creations"), out
     t = template_module()
     t.ROOT = project

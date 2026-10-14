@@ -356,20 +356,23 @@ habits; they are what makes rerunning safe.
 - The stand-in's look is paper and ink: flat shapes on a warm paper, no
   outline and no shadow. `PALETTE` holds `canvas`, the paper, and its faint
   fill `canvas_alt`, `line` for structure the eye
-  reads past, `solid` for edges, `dim`, `ink`, `reward` and `danger`, one
-  accent between them, and `flash`; keep the roles and change values only.
+  reads past, `solid` for edges, `dim`, `ink`, `reward` in cobalt,
+  `danger` in red, and `flash`; keep the roles and change values only.
   `check_palette()` stops the run when the paper and its fill pass 1.2:1 or
   `solid` falls under 3:1 on the fill, and `shape()` stops on an accent
   under 3:1 on `canvas_alt` drawn without an ink outline, or on a fill under
   3:1 against the ink. The player is an ink rectangle, structure a solid
-  one, a pickup a circle, a hazard a triangle. The player, a pickup and a
-  hazard are each drawn `SUBJECT` across; structure takes the size it
-  needs. What is tapped is drawn `inset` inside a `TOUCH` box,
-  `shape(file, kind, TOUCH, TOUCH, role, inset=(TOUCH - SUBJECT) // 2)`. A
-  board, a region or a range is a zone drawn as lines,
-  `zone(type, col, row, cols, rows)` of a `zone_image(type)` and
-  `zone_type(type)`, a `LINE` px edge in `solid` over the fill, and a slot
-  or a reach is a `ring()`, dashed for a reach.
+  one, a pickup a circle, a hazard a triangle. In an open field the
+  player, a pickup and a hazard are each drawn `SUBJECT` across, and one
+  that is tapped is drawn `inset` inside a `TOUCH` box,
+  `shape(file, kind, TOUCH, TOUCH, role, inset=(TOUCH - SUBJECT) // 2)`.
+  What is tapped on a board fills its `TOUCH` box, as the stand-in's
+  coins; structure takes the size it needs. A region or a range is a zone
+  drawn as lines, `zone(type, col, row, cols, rows)` of a
+  `zone_image(type)` and `zone_type(type)`, a `LINE` px edge in `solid`
+  over the fill, and a reach is a dashed `ring()`. A slot is a disc of
+  `canvas_alt` the size of what fills it, and a board of slots has no
+  frame.
   The backdrop is `backdrop("Backdrop")` on a layer at parallax
   1, of `pattern("Backdrop", "plain")`, reaching `SCREEN_PAD` past the
   viewport so the screen shows no edge of it. A popup's dim is laid out

@@ -312,7 +312,7 @@ def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
     assert [(f["width"], f["height"], f["tag"]) for f in frames] == [(160, 160, ""), (160, 160, "hit")]
     assert len(frames[0]["collisionPoly"]["points"]) == 32          # the stand-in's circle
     code, out = tool(project, "check_look")
-    assert code == 0 and out.splitlines()[-1].startswith("ok: 6 images"), out
+    assert code == 0 and out.splitlines()[-1].startswith("ok: 5 images"), out
 
 
 def test_prepare_art_scales_a_picture_without_new_colours():

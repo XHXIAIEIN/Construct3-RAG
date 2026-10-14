@@ -65,12 +65,12 @@ MARGIN = max(1, int(min(VIEW_W, VIEW_H) / 15 / UNIT)) * UNIT
 # phone's ~360 dp, so 48 dp is 48 * shorter side / 360 viewport px, rounded up to a unit:
 # 24 at 320x180, 96 at 720x1280, 160 at 1920x1080, the default.
 TOUCH = math.ceil(48 * min(VIEW_W, VIEW_H) / 360 / UNIT) * UNIT
-# The size the player and what it acts on are drawn at: 6% of the shorter side in whole units, 64 px
-# at 1080, small subjects in a large field. What is tapped keeps a box TOUCH wide around its
-# drawing, shape(..., inset=...), so a finger still hits it.
+# The size the player and what it meets in an open field are drawn at: 6% of the shorter side in
+# whole units, 64 px at 1080, small subjects in a large field. Such a subject that is also tapped
+# keeps a box TOUCH wide around its drawing, shape(..., inset=...), so a finger still hits it.
 SUBJECT = max(UNIT, round(0.06 * min(VIEW_W, VIEW_H) / UNIT) * UNIT)
 
-COIN_SIZE = SUBJECT                        # a coin's drawing, in a box TOUCH wide that a finger hits
+COIN_SIZE = TOUCH                          # a coin is tapped, so it fills the box a finger hits
 
 # --- look -----------------------------------------------------------------------------
 # Decided once, here, as named values: each colour by the role it plays, the text sizes, the
@@ -81,22 +81,21 @@ COIN_SIZE = SUBJECT                        # a coin's drawing, in a box TOUCH wi
 # and 35 its whole art at the median, and their text to one or two colours in two sizes
 # (Construct3-RAG/docs/decisions/game-look-from-design-skills.md).
 # The stand-in is paper and ink: flat shapes on a warm paper that fills the screen, the player and
-# the labels in ink, one accent for what is hit or must be noticed, and areas, ranges and slots
-# drawn as lines, a thin edge over a faint fill. Value carries the hierarchy: the player is the
-# one solid ink mass, structure the faintest thing on the screen. Every fill reads at least 3:1
-# on canvas_alt, so a shape shows without an outline or a shadow; check_palette() and shape()
-# stop the run on one that does not (Construct3-RAG/docs/decisions/paper-and-ink-look.md). The
-# accent marks what is collected and what hurts alike, and the shape tells them apart; a game
-# that needs a second hue gives one of the two roles its own colour.
+# the labels in ink, a cobalt for what is collected and a red for what hurts, areas and ranges
+# drawn as lines, a thin edge over a faint fill, and slots as discs of that fill. Value carries
+# the hierarchy: the player is the one solid ink mass, structure the faintest thing on the screen.
+# Every fill reads at least 3:1 on canvas_alt, so a shape shows without an outline or a shadow;
+# check_palette() and shape() stop the run on one that does not
+# (Construct3-RAG/docs/decisions/paper-and-ink-look.md).
 PALETTE = {
     "canvas": (236, 234, 228),         # the paper: an opaque layer's fill; the checker's light cells
     "canvas_alt": (223, 221, 215),     # 6% ink over the paper: an area's fill; the checker's dark cells
-    "line": (207, 202, 192),           # a slot or a ring drawn as a line; under 3:1, so never the only sign of a thing
+    "line": (207, 202, 192),           # a ring drawn as a line; under 3:1, so never the only sign of a thing
     "solid": (117, 116, 112),          # 55% ink: the edge of an area or a range, structure, a bar's frame
     "dim": (101, 97, 90),              # a secondary label, 4.5:1 on canvas_alt
     "ink": (20, 19, 17),               # the player, labels, a key's box, a bar's fill
-    "reward": (224, 69, 43),           # what the player collects: the one accent
-    "danger": (224, 69, 43),           # what hurts: the same accent, on a triangle
+    "reward": (37, 99, 235),           # what the player collects: cobalt
+    "danger": (224, 69, 43),           # what hurts: red
     "flash": (255, 255, 255),          # the fill of an object for the instant it is hit
 }
 # The outline and the cast shadow of every image shape() draws, one switch for the game. They
@@ -152,7 +151,7 @@ TEXT_SIZE = ({"tag": UNIT, "name": UNIT, "body": UNIT, "title": 2 * UNIT, "numbe
              | {"display": 2 * UNIT})
 TEXT_WEIGHT = {"tag": "regular", "name": "regular", "body": "regular", "title": "medium", "number": "light",
                "display": "medium", "key": "medium"}
-LINE = max(1, round(min(VIEW_W, VIEW_H) / 720))   # px of a line: a slot, an area's edge, a key's box; 2 at 1080
+LINE = max(1, round(min(VIEW_W, VIEW_H) / 720))   # px of a line: a ring, an area's edge, a key's box; 2 at 1080
 # 360 px high or less is pixel art: the project samples Nearest and scales by whole numbers,
 # as the official examples at that size sample, and most scale (FULLSCREEN, build_project()).
 PIXEL_ART = UNIT == 8
@@ -733,7 +732,7 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
     """images/<rel>: a flat `kind` of SHAPES in a box of w x h px in whole units, in the colour of `role`,
     with the outline and shadow of SHAPE_STYLE unless outline or shadow says otherwise for this
     image. `inset` px of the box stay clear on every side, so the drawing is smaller than the box.
-    The box keeps its place on the grid and its collision polygon: a coin drawn SUBJECT wide in a
+    The box keeps its place on the grid and its collision polygon: a pickup drawn SUBJECT wide in a
     TOUCH box takes a finger anywhere in the box, inset=(TOUCH - SUBJECT) // 2. In a viewport taller
     than 360 px the edge is antialiased. Returns the frame for sprite_type(), kept in FRAMES[rel]: its
     origin is (ox, oy) of the box, its collision polygon the shape across the box, and its size
@@ -829,8 +828,9 @@ def drawn(rel: str) -> dict:
 
 
 # --- lines -------------------------------------------------------------------------------
-# Areas, ranges and slots are drawn as lines, LINE px thick; objects stay flat fills. A line takes a
-# role of PALETTE: "line" for structure the eye reads past, a slot or a ring around the play, and
+# Areas and ranges are drawn as lines, LINE px thick; objects stay flat fills, and a slot is a disc of
+# canvas_alt the size of what fills it. A line takes a
+# role of PALETTE: "line" for structure the eye reads past, a ring around the play, and
 # "solid" for an edge that marks where something applies, an area or a reach. An area is a 9-patch
 # of zone_image(), its edge over a canvas_alt fill, laid on grid cells by zone(); a ring or a dashed
 # reach is an image of ring(). Construct3-RAG/docs/decisions/paper-and-ink-look.md.
@@ -853,8 +853,8 @@ def ring_cover(x: float, y: float, cx: float, cy: float, d: float, width: float,
 
 def ring(rel: str, d: int, role: str = "line", width: int = 0, dash: float = 0) -> dict:
     """images/<rel>: a ring `d` px across in whole units, a line `width` px thick, LINE unless given,
-    in the colour of `role`, whole or in dashes `dash` px long: a slot, a ring around the play,
-    or the reach of an attack, ring("reach.png", units(9), "solid", dash=3 * LINE). Returns the
+    in the colour of `role`, whole or in dashes `dash` px long: a ring around the play or the
+    reach of an attack, ring("reach.png", units(9), "solid", dash=3 * LINE). Returns the
     frame for sprite_type(); place an instance with shape_inst(), collisions off for decoration."""
     if d % UNIT:
         sys.exit(f"{rel}: {d} px is not whole units of {UNIT} px; give the ring units(n), "
@@ -969,8 +969,8 @@ def write_wanted() -> None:
 
 # Objects are flat; an area or an edge carries a pattern, a Tiled Background, which repeats its
 # image at any size without stretching it. Each pattern is two roles of PALETTE and one job.
-# A triangle in the accent is one hazard, an area striped in it a hazardous region; a circle in
-# the accent is a pickup, and an ink-striped strip a door or a plate.
+# A triangle in danger is one hazard, an area striped in it a hazardous region; a circle in reward
+# is a pickup, and an ink-striped strip a door or a plate.
 PATTERNS = {
     "plain": ("canvas", "canvas"),         # the paper: the backdrop only
     "checker": ("canvas", "canvas_alt"),   # transparency, a mask, a background to come: the backdrop only
@@ -3034,7 +3034,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(checker), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 4fc7b9636709 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 2bb76353582c ================
 
 
 # --- the game ---------------------------------------------------------------------------
@@ -3057,9 +3057,8 @@ BEATS = [
     beat("climax", 3, ["tap"], coins=10),
     beat("exit", 0, ["tap"], coins=1),
 ]
-# Coins land on a small board in the middle of what the HUD leaves: an area drawn as lines holding
-# COLS x ROWS slots, each a cell TOUCH wide that a finger hits, a unit apart, with a ring the size of
-# a coin's drawing in it. A round deals the cells (deal + i * STRIDE) mod CELLS, which differ for
+# Coins land on a small board in the middle of what the HUD leaves: COLS x ROWS slots, each a disc
+# TOUCH wide that a coin fills and a finger hits, a unit apart. A round deals the cells (deal + i * STRIDE) mod CELLS, which differ for
 # every i below CELLS because STRIDE and CELLS share no factor, so no two coins meet. The run stops
 # on a round that deals more coins than slots.
 COLS, ROWS = 5, 3
@@ -3093,14 +3092,12 @@ def build_files() -> None:
 
 def build_images() -> None:
     pattern("Backdrop", "plain")
-    zone_image("BoardArea")
     zone_image("KeyBox", None, "ink")
-    # One slot of the board, a ring the size of a coin in the middle of a TOUCH cell with a unit of
-    # clear space after it, which the Board's Tiled Background repeats COLS x ROWS times.
+    # One slot of the board, a disc of canvas_alt the size of a coin with a unit of clear space after
+    # it, which the Board's Tiled Background repeats COLS x ROWS times: a ring as thick as it is wide.
     write_png("board.png", PITCH, PITCH, lambda x, y: (
-        *rgb("line"), round(255 * ring_cover(x, y, TOUCH / 2, TOUCH / 2, COIN_SIZE, LINE))))
-    art("coin-default-000.png", "circle", TOUCH, TOUCH, "reward", "a gold coin seen from the front",
-        inset=(TOUCH - COIN_SIZE) // 2)
+        *rgb("canvas_alt"), round(255 * ring_cover(x, y, COIN_SIZE / 2, COIN_SIZE / 2, COIN_SIZE, COIN_SIZE))))
+    art("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward", "a gold coin seen from the front")
     hit_frame("coin-default-000.png")
 
 
@@ -3111,7 +3108,6 @@ def build_object_types() -> tuple[dict, dict, list]:
                                    ivar_def("kind", "string", "Which coin: \"gold\" or \"silver\".")],
                             behaviors=[beh_def("Tween")]),
         "Backdrop": pattern_type("Backdrop"),
-        "BoardArea": zone_type("BoardArea"),
         "Board": image_type("Board", "TiledBg", PITCH, PITCH, 0, 0),
         "RoundTag": text_type("RoundTag"),
         "ScoreLabel": text_type("ScoreLabel"),
@@ -3136,13 +3132,12 @@ def build_layouts() -> dict[str, dict]:
     # A game with something transparent, a mask or a background still to come draws it as
     # pattern("Backdrop", "checker"), as editors show transparency, and its cells are then the
     # ruler: two a unit. An area or an edge in a pattern is area(type, col, row, cols, rows) on the
-    # Game layer. An area, a range or a board is drawn as lines, zone() of a zone_image(), and a slot
-    # or a reach as a ring of ring(). Instances go in in any order: build_all() puts every layer in
-    # z_order().
+    # Game layer. An area or a range is drawn as lines, zone() of a zone_image(), and a reach as a
+    # ring of ring(); a slot is a disc of canvas_alt the size of what fills it, as the Board's.
+    # Instances go in in any order: build_all() puts every layer in z_order().
     game["layers"][0]["instances"].append(backdrop("Backdrop"))
-    area = zone("BoardArea", BOARD_LEFT // UNIT, BOARD_TOP // UNIT, BOARD_W // UNIT, BOARD_H // UNIT)
     board = tiledbg_inst("Board", BOARD_LEFT, BOARD_TOP, BOARD_W, BOARD_H, 0, 0)
-    game["layers"][0]["instances"].extend([area, board])
+    game["layers"][0]["instances"].append(board)
     # The HUD hangs on the edges, MARGIN inside them: a label by hud_text(), repeated items by
     # row(), anything else by anchor(); the middle of the screen is the game's. Each carries the
     # Anchor behavior of anchored(), which hud_text() and hud_bar() give, so it stays at the
@@ -3159,9 +3154,9 @@ def build_layouts() -> dict[str, dict]:
     # types from bar_types() and images from bar_images(), and the sheet sets the fill with
     # set_width("HpFill", bar_width("hp", "HP_MAX", HP_BAR_LENGTH)) or tween_width().
     no_overlap(ui)
-    spaced([*HUD, [area, board]])
-    balanced([area], PLAY_AREA)
-    filled([area])
+    spaced([*HUD, [board]])
+    balanced([board], PLAY_AREA)
+    filled([board])
     # Everything outside the HUD starts on the grid: a shape by shape_inst() on a cell, one
     # created at runtime at grid_random(); on_grid() stops the run on an instance that does not.
     on_grid(game["layers"][1]["instances"], "layer Game")

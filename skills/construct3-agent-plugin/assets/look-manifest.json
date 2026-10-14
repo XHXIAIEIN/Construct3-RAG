@@ -86,7 +86,7 @@
     {
       "id": "lines.areas",
       "status": "adopted",
-      "says": "A board, a region or a range is a zone drawn as lines: a LINE px edge in solid over a canvas_alt fill, a 9-patch tiled at its size; a slot or a ring around the play is a ring in the line grey, a reach a dashed ring.",
+      "says": "A region or a range is a zone drawn as lines: a LINE px edge in solid over a canvas_alt fill, a 9-patch tiled at its size; a ring around the play is a ring in the line grey, a reach a dashed ring. A slot is a disc of canvas_alt the size of what fills it, and a board of slots has no frame.",
       "template": "LINE",
       "value": "max(1, round(min(VIEW_W, VIEW_H) / 720))",
       "helpers": "zone_image(), zone(), ring(), ring_cover()"
@@ -102,7 +102,7 @@
     {
       "id": "subject.size",
       "status": "adopted",
-      "says": "The player and what it acts on are drawn about 6% of the viewport's shorter side across, in whole units, small in a large field; what is tapped keeps a box TOUCH wide around its drawing.",
+      "says": "In an open field the player and what it meets are drawn about 6% of the viewport's shorter side across, in whole units, small in a large field, and one that is tapped keeps a box TOUCH wide around its drawing; what is tapped on a board fills its TOUCH box.",
       "template": "SUBJECT",
       "value": "max(UNIT, round(0.06 * min(VIEW_W, VIEW_H) / UNIT) * UNIT)",
       "helpers": "shape(), art()"
@@ -209,9 +209,9 @@
       "id": "palette.greys",
       "status": "enforced",
       "strict": true,
-      "says": "Paper and ink: the paper and a 6% ink fill, a line grey for structure the eye reads past, a 55% ink grey for edges and structure, dim, ink, and one accent for what is collected and what hurts alike, plus the hit's flash; the player in ink. The paper and its fill at most 1.2:1, solid at least 3:1 on the fill.",
+      "says": "Paper and ink: the paper and a 6% ink fill, a line grey for structure the eye reads past, a 55% ink grey for edges and structure, dim, ink, and a cobalt for what is collected and a red for what hurts, plus the hit's flash; the player in ink. The paper and its fill at most 1.2:1, solid at least 3:1 on the fill.",
       "template": "{role: '#%02X%02X%02X' % colour for role, colour in PALETTE.items()}",
-      "value": "{'canvas': '#ECEAE4', 'canvas_alt': '#DFDDD7', 'line': '#CFCAC0', 'solid': '#757470', 'dim': '#65615A', 'ink': '#141311', 'reward': '#E0452B', 'danger': '#E0452B', 'flash': '#FFFFFF'}",
+      "value": "{'canvas': '#ECEAE4', 'canvas_alt': '#DFDDD7', 'line': '#CFCAC0', 'solid': '#757470', 'dim': '#65615A', 'ink': '#141311', 'reward': '#2563EB', 'danger': '#E0452B', 'flash': '#FFFFFF'}",
       "helpers": "check_palette()"
     },
     {
@@ -337,7 +337,7 @@
     "Copy assets/build_project.py to the project's tools/ and rewrite only the game, above the helpers' begin marker and below their end marker: PROJECT_NAME, PALETTE's values by role, ART_STYLE, BEATS, build_images(), build_object_types(), build_layouts(), the module_*() functions.",
     "Keep SHAPE_STYLE and the helpers between the markers; a helper the game changes is defined again below the end marker. Give every sprite an art() in whole units, which draws its stand-in until its picture arrives, and place it with shape_inst() on a grid cell; create runtime objects at grid_random().",
     "With an image tool in the session: run prepare_art.py --list, make each picture with the prompt it prints, run prepare_art.py, then the generator. Never draw the art in code: it looks worse than the stand-ins and mixes styles.",
-    "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area, a board or a range is drawn as lines, zone() of a zone_image(), and a slot or a reach a ring(); an area with a rule of its own is area() of a pattern(); the backdrop is backdrop() of the plain pattern, or of the checker where something is transparent, a mask or a background still to come.",
+    "Keep PALETTE's roles: a rectangle for the player, in ink, and for structure, in solid; a circle for what is collected, a triangle for what hurts. An area or a range is drawn as lines, zone() of a zone_image(), and a reach a dashed ring(); a slot is a disc of canvas_alt the size of what fills it; an area with a rule of its own is area() of a pattern(); the backdrop is backdrop() of the plain pattern, or of the checker where something is transparent, a mask or a background still to come.",
     "Place the HUD with hud_tag() for the round or the level and no game name, hud_stat() for the count under its name, and hud_keys() with hints() for the controls. Place any other label with hud_text(), hud_bar(), labelled_bar() or band_text(); each holds it to the screen's edges with the Anchor behavior. Place the playfield at centred(w, h, play_area(hud)), and pass the HUD's groups and the playfield to spaced(). An instance placed by anchor() or row() takes behaviors=anchored(where). Lay a popup's dim over screen_box(), on the popup's own layer. Leave FULLSCREEN and z_order() as they are: they fill the screen and order each layer for any game.",
     "Write BEATS for the game's zones or rounds, and read the curve the generator prints; measure every gap of a platformer level with jump().",
     "Give every object that can be hit a hit_frame() after its shape and the Tween behavior, and show a hit with hit(obj), last in its block; never the Flash behavior.",

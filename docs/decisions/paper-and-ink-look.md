@@ -40,7 +40,12 @@ prototype at 1280×720 and decided:
 
 - The look comes from the prototype; its attack timing does not.
 - Areas and ranges are lines; objects are flat fills.
-- One accent, for what is hit or must be noticed.
+- The prototype's red for what hurts or must be noticed. On screenshots of
+  the stand-in, the user took the plain sheet's cobalt for what is
+  collected over the red and over an ink ring with a dot.
+- On the same screenshots the user preferred the plain sheet's coins to the
+  prototype's proportions: each coin fills the box a finger taps, on a disc
+  of the faint fill the same size, and the board has no frame.
 - The control hints dim to 35% after the player's first input.
 - The screen the player plays on shows no game name. The prototype's header
   labelled a demo page; a player needs the round, not the name.
@@ -70,7 +75,8 @@ WCAG 2.2 contrast ratios, the formula of `contrast()` in the template:
 | `solid`, 55% ink over the paper | #757470 | 3.89 | 3.44 |
 | `dim` | #65615A | 5.12 | 4.53 |
 | `ink` | #141311 | 15.43 | 13.67 |
-| the accent | #E0452B | 3.45 | 3.06 |
+| `reward`, the plain sheet's cobalt | #2563EB | 4.30 | 3.81 |
+| `danger`, the prototype's accent | #E0452B | 3.45 | 3.06 |
 
 The prototype's dim, `#8A867D`, reads 3.0:1 on the paper and fails the
 4.5:1 of small text. `#65615A` passes on `canvas_alt`, the surface a label
@@ -157,12 +163,11 @@ because a missing font draws the game's Latin text in a serif face.
 ### The colours
 
 `PALETTE` holds the roles of the contrast table and `flash`, white, the
-fill of a hit frame. One accent serves `reward` and `danger`, and the shape
-tells them apart: a circle is collected, a triangle hurts. So the caution
-stripes, what moves or triggers, are ink on the paper, and the hazard
-stripes keep the accent. A game that needs a second hue gives one of the
-two roles its own colour. `check_palette()`, `shape()` and `readable()`
-keep the checks of `greybox-blockout.md`.
+fill of a hit frame. `reward` is cobalt and `danger` red, and the shape
+tells them apart as well: a circle is collected, a triangle hurts. The
+caution stripes, what moves or triggers, are ink on the paper, and the
+hazard stripes are red. `check_palette()`, `shape()` and `readable()` keep
+the checks of `greybox-blockout.md`.
 
 ### The subjects
 
@@ -170,14 +175,17 @@ The prototype's player and targets set the shape, contrast and proportions
 of what stands on the screen, not a character of the template:
 
 - The player is the one solid ink mass, about 15:1 on the paper. What it
-  acts on takes the accent, 3:1. Structure is the faintest: `line` at
-  1.4:1 for slots and rings, `solid` at 3.9:1 for an edge that marks where
-  something applies, and a fill of 6% ink.
-- A subject is drawn `SUBJECT` across, 6% of the viewport's shorter side
-  in whole units, 64 px at 1080, as the prototype's discs are 44 px at 720.
-  What is tapped keeps a box `TOUCH` wide around its drawing:
-  `shape(..., inset=(TOUCH - SUBJECT) // 2)`, whose collision polygon
-  covers the box.
+  collects is cobalt and what hurts it red, each over 3:1. Structure is the
+  faintest: a fill of 6% ink for areas and slots, `line` at 1.4:1 for
+  rings, and `solid` at 3.9:1 for an edge that marks where something
+  applies.
+- In an open field a subject is drawn `SUBJECT` across, 6% of the
+  viewport's shorter side in whole units, 64 px at 1080, as the
+  prototype's discs are 44 px at 720. One that is tapped keeps a box
+  `TOUCH` wide around its drawing: `shape(..., inset=(TOUCH - SUBJECT) // 2)`,
+  whose collision polygon covers the box.
+- What is tapped on a board fills its `TOUCH` box, 160 px at 1080, on a
+  slot of the same size, as the plain sheet drew its coins.
 - In a viewport taller than 360 px every edge is antialiased: a pixel's
   alpha is the share the shape covers, sampled 4 × 4 where the edge crosses
   it, in a colour of `PALETTE`. Pixel art keeps its hard edges, and
@@ -185,11 +193,12 @@ of what stands on the screen, not a character of the template:
 
 ### Lines
 
-`LINE` is 1 px at 720 scaled to the viewport, 2 px at 1080. A board, a
-region or a range is a zone, `zone()`, a 9-patch of `zone_image()`: a
-`LINE` px edge in `solid` round a `canvas_alt` fill, its parts tiled at
-their size with exact seams. A slot, a ring around the play or a dashed
-reach is `ring()`, its coverage from `ring_cover()`.
+`LINE` is 1 px at 720 scaled to the viewport, 2 px at 1080. A region or a
+range is a zone, `zone()`, a 9-patch of `zone_image()`: a `LINE` px edge in
+`solid` round a `canvas_alt` fill, its parts tiled at their size with exact
+seams. A ring around the play or a dashed reach is `ring()`, its coverage
+from `ring_cover()`. A slot is a disc of `canvas_alt` the size of what
+fills it, and a board of slots has no frame.
 
 ### Type and HUD
 
@@ -225,8 +234,8 @@ bold that Inter lacks.
   Medium, a wide one as 1 em and any other as 0.6 em, so a box fits its
   text in Inter.
 
-The stand-in game shows the round as a tag, the score, one key, and the
-coins on a line-drawn board.
+The stand-in game shows the round as a tag, the score, one key, and
+cobalt coins on a board of faint discs.
 
 ### Left out
 
@@ -235,9 +244,6 @@ out, as the user decided; the hit keeps the template's flash and squash.
 
 ## Open
 
-- Whether the collectible takes the accent, an ink ring with a dot as the
-  prototype's targets, or the cobalt of the plain sheet, and so whether a
-  second accent stays: the user's choice on screenshots.
 - The Chinese fallback was seen on Windows only; on macOS, iOS and Android
   the platform's per-script default decides the face.
 - The text sizes suit a desktop window, the template's audience
