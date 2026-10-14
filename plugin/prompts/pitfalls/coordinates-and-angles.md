@@ -16,6 +16,18 @@ Sources and the rule for adding an entry are in the index,
   tips-and-guides/common-conventions.md "Units";
   system-reference/system-expressions.md "Math";
   system-reference/system-conditions.md "Is between angles"]
+- `anglelerp(a, b, x)` turns from `a` to `b` the shorter way round. If `b`
+  moves while `x` runs from 0 to 1, as when an angle eases back to a rest
+  angle beside an aim that follows the pointer, the shorter way turns round
+  in the tick `b` passes the opposite of `a`, and the angle jumps by up to
+  360 × `x` degrees. Ease the offset from the moving angle instead: store
+  the start as `angle - aim` and write `aim + anglelerp(start, restOffset,
+  x)`. Both ends then stay fixed, and the result turns with the aim.
+  [manual: system-reference/system-expressions.md "anglelerp"; observed in
+  a game project, r495.2 preview, 2026-10-14: a sword easing back to rest
+  beside the aim turned 126 to 176 degrees in one tick when the pointer
+  passed the opposite direction early in the ease; with offsets, no tick
+  turned it more than the aim and the ease did]
 - A sprite is drawn facing right at angle 0. So art painted pointing up
   points a quarter turn counter-clockwise of its target after *Set angle
   toward position*.

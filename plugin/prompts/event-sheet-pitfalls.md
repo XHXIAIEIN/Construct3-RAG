@@ -86,6 +86,7 @@ If the events use the Timer behavior, read [pitfalls/timer.md](pitfalls/timer.md
 - A reset N seconds after the last input (a combo, an idle screen): *Start timer* for N, *Once*, in the input's trigger on every input, and reset in *On timer*. A tick timer that only its own *On timer* restarts under a condition stops for good.
 - A timer is state you start and stop, so list every transition before choosing it.
 - A timer and a tween scheduled to end together end a tick apart.
+- A *Once* timer still counts as running for the rest of the tick its *On timer* fires. If an event below branches on *Is timer running* for that tag, write *Stop timer* first in the *On timer*.
 - One instance cannot time stacked buffs of one kind with Timer tags: no expression names the tag that fired, and a re-cast restarts the tag. Make each shield or buff an instance with its own Timer and amount, a child of its holder; spend them with *Pick children* and *For each (ordered)* by the time left.
 
 ### Wait and time scale
@@ -134,6 +135,7 @@ If the events place, move or rotate objects or read the viewport, read
 
 - The origin (0, 0) is the top-left of the layout and Y grows downwards.
 - Angles are clockwise degrees from 0 facing right. Compare them with `anglediff`, never `<`.
+- `anglelerp` toward an angle that moves turns round, and jumps, when that angle passes the opposite of the start. Ease an offset from the moving angle: `aim + anglelerp(startOffset, restOffset, x)`.
 - A sprite is drawn facing right at angle 0. Paint art facing right.
 - A Bullet's angle of motion and the object's angle are two values. At speed 0 *Set angle of motion* does nothing, and *Set speed* from 0 moves right. Set the speed first, then the angle of motion.
 - The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
