@@ -133,6 +133,16 @@ SQUASH = {
     "land": {"width": 1.2, "height": 0.8, "hold": 0, "seconds": 0.5, "ease": "easeoutelastic"},
     "jump": {"width": 0.7, "height": 1.3, "hold": 0.2, "seconds": 0.75, "ease": "easeoutelastic"},
 }
+# A ring round what the pointer is over or what is selected, in the colour of the object's side, as a published
+# top-down game's UI data draws it: 3 px on hover, softened by three blur passes; 2 px at 85% brightness round a
+# selected object; and a tap pulses it to 9 px at 0.13 s and 4 px at 0.25 s, back to its width at 0.69 s. The px are
+# the screen's at 1080 and scale with the viewport, not with UNIT. An enemy or a neutral object takes the accent,
+# the player's own unit ink, an ally cobalt. Off: a game that selects or targets units turns it on, one with
+# nothing to point at leaves it off, and the outline_*() helpers then add nothing
+# (Construct3-RAG/docs/decisions/paper-and-ink-look.md).
+OUTLINE = False
+OUTLINE_STYLE = {"hover": 3, "blur": 3, "selected": 2, "dim": 0.85, "pulse": ((0.13, 9), (0.25, 4), (0.69, 3)),
+                 "sides": {"enemy": "danger", "neutral": "danger", "own": "ink", "ally": "reward"}}
 # The type is Inter, which the skill ships in three weights under assets/fonts/ with its license
 # (SIL Open Font License 1.1). A weight is a font of its own, named by its file in fonts/ without
 # the extension; build_all() copies the files named here and lists them in project.c3proj. Text
@@ -967,7 +977,220 @@ def write_wanted() -> None:
         print(f"art: all {len(ART)} images from art/")
 
 
-# Objects are flat; an area or an edge carries a pattern, a Tiled Background, which repeats its
+# --- outlines ---------------------------------------------------------------------------------
+# The ring of OUTLINE round an object is a sprite of its own, <Type>Outline: the object's image grown by the ring's
+# width and filled in its side's colour, behind the object as its child, so it moves, turns, scales and is
+# destroyed with it. Frame 0 is the hover ring, soft; frame 1 the selected one, hard and dimmer. outline_images()
+# draws both from the object's image, outline_types() declares the ring and the Mouse that hovers it,
+# outline_inst() puts a ring behind a layout instance, outline_create() gives one to an instance the events
+# create, and outline_module() shows it and plays the pulse. With OUTLINE off each adds nothing, so a game calls
+# them whether it is on or not.
+OUTLINE = globals().get("OUTLINE", False)
+OUTLINE_STYLE = globals().get("OUTLINE_STYLE", {
+    "hover": 3, "blur": 3, "selected": 2, "dim": 0.85, "pulse": ((0.13, 9), (0.25, 4), (0.69, 3)),
+    "sides": {"enemy": "danger", "neutral": "danger", "own": "ink", "ally": "reward"}})
+OUTLINE_OF: dict[str, tuple[str, float, float]] = {}   # by ring type: its object type, and its size over the object's
+
+
+def outline_px(width: float) -> int:
+    """A width in the screen's px at 1080, in the viewport's px: at least 1."""
+    return max(1, round(width * min(VIEW_W, VIEW_H) / 1080))
+
+
+def png_alpha(path: Path) -> tuple[int, int, list[int]]:
+    """Width, height and the alpha of each pixel of an 8-bit RGBA or RGB PNG, which write_png() and
+    prepare_art.py write."""
+    data = path.read_bytes()
+    pos, idat, w, h, kind = 8, b"", 0, 0, 6
+    while pos + 8 <= len(data):
+        n, tag = struct.unpack(">I", data[pos:pos + 4])[0], data[pos + 4:pos + 8]
+        if tag == b"IHDR":
+            w, h, _, kind = struct.unpack(">IIBB", data[pos + 8:pos + 18])
+        elif tag == b"IDAT":
+            idat += data[pos + 8:pos + 8 + n]
+        pos += 12 + n
+    step = 4 if kind == 6 else 3
+    raw, stride, rows, prev = zlib.decompress(idat), w * step, [], bytearray(w * step)
+    for y in range(h):
+        f, line = raw[y * (stride + 1)], bytearray(raw[y * (stride + 1) + 1:(y + 1) * (stride + 1)])
+        for i in range(stride):
+            a, b = line[i - step] if i >= step else 0, prev[i]
+            c = prev[i - step] if i >= step else 0
+            pa, pb, pc = abs(b - c), abs(a - c), abs(a + b - 2 * c)
+            line[i] = (line[i] + (0, a, b, (a + b) // 2, a if pa <= pb and pa <= pc else b if pb <= pc else c)[f]) & 255
+        rows.append(line)
+        prev = line
+    return w, h, [row[x * step + 3] if step == 4 else 255 for row in rows for x in range(w)]
+
+
+def grown(alpha: list[int], w: int, h: int, pad: int, by: float) -> list[float]:
+    """How much of each pixel the opaque part of a w x h alpha covers once grown by `by` px, in a canvas `pad` px
+    wider on every side: a pixel `by` px or nearer is covered, one a pixel further is clear, by the chamfer
+    distance of two passes."""
+    cw, ch, far = w + 2 * pad, h + 2 * pad, 1e9
+    d = [far] * (cw * ch)
+    for y in range(h):
+        for x in range(w):
+            if alpha[y * w + x] >= 128:
+                d[(y + pad) * cw + x + pad] = 0.0
+    diag = math.sqrt(2)
+    for y in range(ch):
+        for x in range(cw):
+            i, v = y * cw + x, d[y * cw + x]
+            if x:
+                v = min(v, d[i - 1] + 1)
+            if y:
+                v = min(v, d[i - cw] + 1, d[i - cw - 1] + diag if x else far, d[i - cw + 1] + diag if x < cw - 1 else far)
+            d[i] = v
+    for y in reversed(range(ch)):
+        for x in reversed(range(cw)):
+            i, v = y * cw + x, d[y * cw + x]
+            if x < cw - 1:
+                v = min(v, d[i + 1] + 1)
+            if y < ch - 1:
+                v = min(v, d[i + cw] + 1, d[i + cw + 1] + diag if x < cw - 1 else far, d[i + cw - 1] + diag if x else far)
+            d[i] = v
+    return [min(1.0, max(0.0, by + 1 - v)) for v in d]
+
+
+def blurred(cover: list[float], w: int, h: int, passes: int) -> list[float]:
+    """`passes` of a 3 x 3 box blur over a w x h coverage, the edge held clear."""
+    for _ in range(passes):
+        cover = [sum(cover[(y + j) * w + x + i] for j in (-1, 0, 1) for i in (-1, 0, 1)
+                     if 0 <= x + i < w and 0 <= y + j < h) / 9 for y in range(h) for x in range(w)]
+    return cover
+
+
+def outline_images(kind: str, rel: str, side: str) -> None:
+    """images/<kind>outline-default-000.png and -001.png, the rings of OUTLINE round the image drawn as
+    images/<rel>, in the colour of `side`, a key of OUTLINE_STYLE["sides"]: frame 0 grown by the hover width and
+    softened, frame 1 grown by the selected width at OUTLINE_STYLE["dim"] of the colour. Both are as large as the
+    soft ring needs, so the ring sprite keeps one size. Call it after the image is drawn."""
+    if not OUTLINE:
+        return
+    sides = OUTLINE_STYLE["sides"]
+    if side not in sides:
+        sys.exit(f"outline_images({kind!r}): {side!r} is no side; the sides are {', '.join(sides)}")
+    if rel not in FRAMES:
+        sys.exit(f"outline_images({kind!r}): draw images/{rel} first, with art() or shape()")
+    w, h, alpha = png_alpha(ROOT / "images" / rel)
+    hover, selected = outline_px(OUTLINE_STYLE["hover"]), outline_px(OUTLINE_STYLE["selected"])
+    passes = 0 if PIXEL_ART else OUTLINE_STYLE["blur"]
+    pad = hover + passes
+    cw, ch = w + 2 * pad, h + 2 * pad
+    soft = blurred(grown(alpha, w, h, pad, hover), cw, ch, passes)
+    hard = grown(alpha, w, h, pad, selected)
+    colour = rgb(sides[side])
+    dim = tuple(round(c * OUTLINE_STYLE["dim"]) for c in colour)
+    name = f"{kind.lower()}outline-default-"
+
+    def alpha_of(cover: float) -> int:
+        return (255 if cover >= 0.5 else 0) if PIXEL_ART else round(255 * cover)
+
+    write_png(name + "000.png", cw, ch, lambda x, y: (*colour, alpha_of(soft[y * cw + x])))
+    # 85% of a role is no colour of PALETTE: the selected ring holds its own
+    write_png(name + "001.png", cw, ch, lambda x, y: (*dim, alpha_of(hard[y * cw + x])), painted=True)
+    f = FRAMES[rel]
+    ox, oy = (pad + f["originX"] * w) / cw, (pad + f["originY"] * h) / ch
+    for n in ("000", "001"):
+        FRAMES[name + n + ".png"] = frame(cw, ch, round(ox, 6), round(oy, 6))
+        PADS[name + n + ".png"] = (0, 0)
+        FILLS[name + n + ".png"] = sides[side]
+    OUTLINE_OF[kind + "Outline"] = (kind, cw / w, ch / h)
+
+
+def outline_types(kind: str) -> dict:
+    """The ring type of outline_images(kind, ...), <kind>Outline, with Tween for the pulse, and the Mouse whose
+    pointer shows it: {} with OUTLINE off. types |= outline_types("Unit")."""
+    if not OUTLINE:
+        return {}
+    name = f"{kind.lower()}outline-default-"
+    return {f"{kind}Outline": sprite_type(f"{kind}Outline", [animation("Default", [drawn(name + "000.png"),
+                                                                                  drawn(name + "001.png")])],
+                                         behaviors=[beh_def("Tween")]),
+            "Mouse": single_global_type("Mouse", "Mouse", {})}
+
+
+def outline_inst(parent: dict) -> list[dict]:
+    """The ring of a layout instance of an outlined type, hidden, centred on it at its scale and linked as its
+    child, so it moves, scales and is destroyed with it; z_order() draws it just behind. [] with OUTLINE off.
+    Put it on the parent's layer: layer.extend([unit, *outline_inst(unit)])."""
+    if not OUTLINE:
+        return []
+    ring = f"{parent['type']}Outline"
+    if ring not in OUTLINE_OF:
+        sys.exit(f"outline_inst({parent['type']}): draw its ring first with outline_images({parent['type']!r}, ...)")
+    _, sx, sy = OUTLINE_OF[ring]
+    pw = parent["world"]
+    f = drawn(f"{parent['type'].lower()}outline-default-000.png")
+    inst = instance(ring, {"initially-visible": False, "initial-animation": "Default", "initial-frame": 0,
+                           "enable-collisions": False, "live-preview": False},
+                    world(pw["x"], pw["y"], round(pw["width"] * sx, 3), round(pw["height"] * sy, 3), f["originX"],
+                          f["originY"]),
+                    behaviors={"Tween": {"properties": {"enabled": True}}})
+    link(parent, inst, size=True)
+    # Its group shows and hides it, so it starts hidden and does not take the parent's visibility
+    inst["properties"]["initially-visible"] = False
+    for graph in (inst["sceneGraphData"], *(c for c in parent["sceneGraphData"]["children"] if c["uid"] == inst["uid"])):
+        graph["flags"]["v"] = False
+    return [inst]
+
+
+def outline_create(kind: str, layer: str) -> list[dict]:
+    """The actions that give an instance the events just created its ring: create it on `layer` at the object,
+    make it the object's child, and draw it behind. Put them after create(kind, ...) in the same block. [] with
+    OUTLINE off. The ring type needs a template instance too: outline_inst() of the object's template."""
+    if not OUTLINE:
+        return []
+    ring = f"{kind}Outline"
+    return [create(ring, layer, f"{kind}.X", f"{kind}.Y"),
+            act("add-child", kind, {"child": ring, "transform-x": True, "transform-y": True,
+                                    "transform-z-elevation": True, "transform-w": True, "transform-h": True,
+                                    "transform-d": True, "transform-a": True, "transform-o": True,
+                                    "transform-visibility": False, "destroy-with-parent": True}),
+            act("move-to-object", ring, {"where": "behind", "object": kind})]
+
+
+def outline_module(kind: str, selected: str | None = None) -> list[dict]:
+    """The group that shows the ring of `kind`: frame 1 round an instance whose boolean instance variable
+    `selected` is set, frame 0 round the one the pointer is over and while a pulse plays, and the pulse on a touch,
+    from the hover width to OUTLINE_STYLE["pulse"]'s widths at their times. [] with OUTLINE off:
+    events = [..., *outline_module("Unit", selected="selected")]."""
+    if not OUTLINE:
+        return []
+    ring = f"{kind}Outline"
+    _, sx, sy = OUTLINE_OF[ring]
+    hover = outline_px(OUTLINE_STYLE["hover"])
+    def pick() -> dict:
+        return cond("pick-children", kind, {"child": ring, "which": "own"})
+
+    def show(n: int) -> list[dict]:
+        return [act("set-animation-frame", ring, {"frame-number": str(n)}), act("set-visible", ring, {"visibility": "visible"})]
+
+    events = event("Hide every ring; the events below show the ones in use", [],
+                   [act("set-visible", ring, {"visibility": "invisible"})])
+    over = [cond("cursor-is-over-object", "Mouse", {"object": kind}), pick()]
+    if selected:
+        chosen = cond("is-boolean-instance-variable-set", kind, {"instance-variable": selected})
+        events += event("A selected one shows the thin ring", [chosen, pick()], show(1))
+        over.insert(1, cond("is-boolean-instance-variable-set", kind, {"instance-variable": selected}, inverted=True))
+    events += event("The one the pointer is over shows the soft ring", over, show(0))
+    events += event("A ring shows while its pulse plays, on a touch screen too",
+                    [cond("is-playing", ring, {"tags": q("pulse")}, beh="Tween")],
+                    [act("set-visible", ring, {"visibility": "visible"})])
+    # Each width is reached at its time, in a straight line from the one before: a tween, then a wait as long
+    pulse, at, last = [], 0.0, 0.0
+    for t, width in OUTLINE_STYLE["pulse"]:
+        if pulse:
+            pulse.append(wait(f"{last:g}"))
+        grow = 2 * (outline_px(width) - hover)
+        last = round(t - at, 4)
+        pulse.append(tween2(ring, "pulse", "size", f"{kind}.Width * {sx:.4f} + {grow}",
+                            f"{kind}.Height * {sy:.4f} + {grow}", f"{last:g}", "noease"))
+        at = t
+    events += event("A touch pulses the ring out and back", [on_touched(kind), pick()], pulse)
+    return [module("Outline", events)]
+
 # image at any size without stretching it. Each pattern is two roles of PALETTE and one job.
 # A triangle in danger is one hazard, an area striped in it a hazardous region; a circle in reward
 # is a pickup, and an ink-striped strip a door or a plate.
@@ -1693,7 +1916,7 @@ def on_grid(instances: list, where: str) -> None:
 
     for inst in instances:
         w = inst.get("world")
-        if not w or w.get("angle"):
+        if not w or w.get("angle") or inst["type"] in OUTLINE_OF:      # a ring is centred on its object
             continue
         left = w["x"] - w.get("originX", 0) * w["width"]
         top = w["y"] - w.get("originY", 0) * w["height"]
@@ -2725,7 +2948,8 @@ def z_order(instances: list) -> list:
     """A layer's instances in the order the Layout View draws them, back to front. The backdrop
     comes first, then the areas of pattern(), then the rest by the Y of their feet, the bottom of
     their box, so a nearer object covers a farther one in a top-down or a side view. Equals keep
-    the order they were placed in. A child of link() follows its parent. A box wholly inside
+    the order they were placed in. A child of link() follows its parent; a ring of outline_inst() goes
+    just behind it. A box wholly inside
     another box follows it, unless the outer box is a label: a fill follows its frame, a label its
     panel, each with what lies inside it in turn. build_all() puts every layer in this order. A
     game that wants another, such as a 3D layer drawn by depth, defines z_order() again below the
@@ -2767,9 +2991,14 @@ def z_order(instances: list) -> list:
     ordered: list[dict] = []
 
     def put(n: int) -> None:
-        ordered.append(instances[n])
-        for c in sorted(after.get(n, []), key=keys.__getitem__):
+        kids = sorted(after.get(n, []), key=keys.__getitem__)
+        rings = [c for c in kids if instances[c]["type"] in OUTLINE_OF]
+        for c in rings:
             put(c)
+        ordered.append(instances[n])
+        for c in kids:
+            if c not in rings:
+                put(c)
 
     for n in sorted((n for n in range(len(instances)) if n not in follows), key=keys.__getitem__):
         put(n)
@@ -3034,7 +3263,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(checker), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 2bb76353582c ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 7a5a6e13cf6c ================
 
 
 # --- the game ---------------------------------------------------------------------------
@@ -3099,6 +3328,8 @@ def build_images() -> None:
         *rgb("canvas_alt"), round(255 * ring_cover(x, y, COIN_SIZE / 2, COIN_SIZE / 2, COIN_SIZE, COIN_SIZE))))
     art("coin-default-000.png", "circle", COIN_SIZE, COIN_SIZE, "reward", "a gold coin seen from the front")
     hit_frame("coin-default-000.png")
+    # The ring round the coin the pointer is over, when OUTLINE is on; a coin is on no one's side
+    outline_images("Coin", "coin-default-000.png", "neutral")
 
 
 def build_object_types() -> tuple[dict, dict, list]:
@@ -3117,6 +3348,7 @@ def build_object_types() -> tuple[dict, dict, list]:
         "KeyVerb": text_type("KeyVerb"),
         "Touch": single_global_type("Touch", "Touch", {"use-mouse-input": True}),
     }
+    types |= outline_types("Coin")
     families = {}
     containers = []
     return types, families, containers
@@ -3162,9 +3394,9 @@ def build_layouts() -> dict[str, dict]:
     on_grid(game["layers"][1]["instances"], "layer Game")
     # Runtime-created objects are copied from a template instance; keep those in a layout that never runs.
     objects = layout("Objects", [layer("Objects")], sheet=None)
-    objects["layers"][0]["instances"].append(
-        shape_inst("Coin", "coin-default-000.png", MARGIN // UNIT, MARGIN // UNIT,
-                   ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN)))
+    coin = shape_inst("Coin", "coin-default-000.png", MARGIN // UNIT, MARGIN // UNIT,
+                      ivars={"value": 1, "kind": "gold"}, behaviors=dict(TWEEN))
+    objects["layers"][0]["instances"].extend([coin, *outline_inst(coin)])
     on_grid(objects["layers"][0]["instances"], "layout Objects")
     return {"Game": game, "Objects": objects}
 
@@ -3188,6 +3420,7 @@ def module_setup() -> dict:
                              f'{BOARD_TOP + TOUCH // 2} + {PITCH} * floor(((deal + (loopindex("i") * {STRIDE})) '
                              f'% {CELLS}) / {COLS})'),
                       set_ivar("Coin", "value", "choose(1, 5)"),
+                      *outline_create("Coin", "Game"),
                   ]),
               ]),
     ])
@@ -3243,6 +3476,7 @@ def build_event_sheet() -> dict:
         module_input(),
         *scoring(),
         module_restart(),
+        *outline_module("Coin"),
         hints("KeyBox"),
     ]
     return {"name": "Game", "events": events, "sid": sid()}

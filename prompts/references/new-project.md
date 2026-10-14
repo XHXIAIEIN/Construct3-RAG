@@ -85,6 +85,12 @@ Construct-Example-Projects, 2026-09-18]
   `TEXT_SIZE`, `hud_tag()`, `hud_stat()`, `hud_keys()` and `hints()`, with
   `hud_header()` for a menu's or a result screen's title, and copies the
   font files into `fonts/`.
+- A game that selects or targets units rings what the pointer is over and
+  what is selected, in the colour of its side: an enemy or a neutral one in
+  the accent, the player's own in ink, an ally in cobalt. The ring is 3 px
+  and soft on hover, 2 px and dimmer when selected, and a tap pulses it. The
+  generator template's switch is `OUTLINE`, off by default; the
+  `outline_*()` helpers draw and play it.
 - The art arrives through the template's `art()`, in the boxes of the
   stand-ins: from the session's image tool by way of the skill's
   `prepare_art.py`, or from the user. It is not drawn in code, which looks

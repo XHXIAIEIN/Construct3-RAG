@@ -1355,3 +1355,55 @@ def test_template_draws_areas_and_rings_as_lines(tmp_path):
         assert (min(around) == 0) == bool(dash) and max(around) > 200
     with pytest.raises(SystemExit, match=r"odd.png: 50 px is not whole units of 32 px"):
         t.ring("odd.png", 50)
+
+
+def test_template_rings_what_the_pointer_is_over_once_the_outline_is_on(tmp_path):
+    """OUTLINE is off and the outline_*() helpers then add nothing, so a game calls them either way. On, the ring
+    of an object is its image grown by 3 px at 1080 and softened, in its side's colour, with a hard 2 px frame at
+    85%; it sits behind the object as its child, off the grid, and its group shows it on hover and pulses it on a
+    touch to 9 px at 0.13 s and 4 px at 0.25 s, back at 0.69 s."""
+    t = template_module()
+    t.ROOT = tmp_path
+    t.shape("coin-default-000.png", "circle", 160, 160, "reward")
+    assert t.OUTLINE is False
+    t.outline_images("Coin", "coin-default-000.png", "neutral")
+    assert not (tmp_path / "images" / "coinoutline-default-000.png").exists()
+    assert (t.outline_types("Coin"), t.outline_create("Coin", "Game"), t.outline_module("Coin")) == ({}, [], [])
+    t.OUTLINE = True
+    with pytest.raises(SystemExit, match=r"'friend' is no side; the sides are enemy, neutral, own, ally"):
+        t.outline_images("Coin", "coin-default-000.png", "friend")
+    t.outline_images("Coin", "coin-default-000.png", "neutral")
+    soft = png_pixels(tmp_path / "images" / "coinoutline-default-000.png")
+    hard = png_pixels(tmp_path / "images" / "coinoutline-default-001.png")
+    assert len(soft) == len(soft[0]) == len(hard) == 160 + 2 * (3 + 3)          # the ring and its blur
+    middle = len(soft) // 2
+    assert [p[3] for p in soft[middle][:7]] == [9, 38, 94, 161, 217, 246, 255]   # the coin's edge at x 6
+    assert [p[3] for p in hard[middle][:5]] == [0, 0, 0, 0, 255]
+    assert {p[:3] for row in soft for p in row if p[3]} == {t.PALETTE["danger"]}
+    assert {p[:3] for row in hard for p in row if p[3]} == {tuple(round(c * 0.85) for c in t.PALETTE["danger"])}
+    assert sorted(t.outline_types("Coin")) == ["CoinOutline", "Mouse"]
+    coin = t.shape_inst("Coin", "coin-default-000.png", 4, 4)
+    ring, = t.outline_inst(coin)
+    assert (ring["world"]["x"], ring["world"]["width"], ring["properties"]["initially-visible"]) == (208, 172, False)
+    assert ring["sceneGraphData"]["parent-uid"] == coin["uid"] and ring["sceneGraphData"]["flags"]["v"] is False
+    assert [i["type"] for i in t.z_order([coin, ring])] == ["CoinOutline", "Coin"]
+    t.on_grid([coin, ring], "layer Game")
+    assert [a["id"] for a in t.outline_create("Coin", "Game")] == ["create-object", "add-child", "move-to-object"]
+
+    def aces(node):
+        if isinstance(node, dict):
+            yield from [node] if "id" in node else []
+            for v in node.values():
+                yield from aces(v)
+        elif isinstance(node, list):
+            for v in node:
+                yield from aces(v)
+
+    group = t.outline_module("Coin", selected="selected")
+    assert {"cursor-is-over-object", "pick-children", "is-boolean-instance-variable-set", "is-playing",
+            "on-touched-object"} <= {a["id"] for a in aces(group)}
+    assert [(a["parameters"]["end-x"], a["parameters"]["time"]) for a in aces(group)
+            if a["id"] == "tween-two-properties"] == [("Coin.Width * 1.0750 + 12", "0.13"),
+                                                      ("Coin.Width * 1.0750 + 2", "0.12"),
+                                                      ("Coin.Width * 1.0750 + 0", "0.44")]
+    assert [a["parameters"]["seconds"] for a in aces(group) if a["id"] == "wait"] == ["0.13", "0.12"]

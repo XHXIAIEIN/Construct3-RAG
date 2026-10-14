@@ -108,6 +108,14 @@
       "helpers": "shape(), art()"
     },
     {
+      "id": "hover.ring",
+      "status": "adopted",
+      "says": "A game that selects or targets units rings what the pointer is over and what is selected, behind the object as its child, in the colour of its side (enemy and neutral the accent, the player's own ink, an ally cobalt): 3 px softened on hover, 2 px at 85% when selected, and a touch pulses it to 9 px at 0.13 s and 4 px at 0.25 s, back at 0.69 s; screen px at 1080. Off by default.",
+      "template": "OUTLINE",
+      "value": "False",
+      "helpers": "outline_images(), outline_types(), outline_inst(), outline_create(), outline_module()"
+    },
+    {
       "id": "pixel-art.sampling",
       "status": "enforced",
       "strict": true,

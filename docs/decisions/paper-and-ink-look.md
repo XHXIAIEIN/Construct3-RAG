@@ -54,6 +54,9 @@ prototype at 1280×720 and decided:
   labelled a demo page; a player needs the round, not the name.
 - The prototype's character is a reference for the shape, contrast and
   proportions of the subjects on the screen, not a part of the template.
+- A ring round what the pointer is over or what is selected goes into the
+  template as an option: its helpers are always there, and it is off
+  unless a game turns it on.
 
 The prototype's values, at 1280×720:
 
@@ -85,6 +88,24 @@ by the formula of `contrast()` in the template:
 The prototype's dim, `#8A867D`, reads 3.0:1 on its paper and fails the
 4.5:1 of small text. `#65615A` passes on `canvas_alt`, the surface a label
 is checked against.
+
+### A hover and selection ring
+
+A published top-down game's UI data, read in third-party research, draws
+a ring around the model, never a box: 3 px on hover, softened by three
+blur passes at full colour; 2 px at 85% brightness round a selected unit;
+a click pulses it to 9 px at 0.13 s and 4 px at 0.25 s, back to its width
+at 0.69 s (straight lines in between, inferred). Its colour is the unit's
+side: enemy and neutral one red, an ally a blue, the player's own unit a
+gold. The px are the screen's at 1080. Construct has no outline among its
+built-in effects; the schema index lists blur, glow and radial blur.
+
+On the white paper the 85% rings read 5.5:1 (`danger`), 19:1 (`ink`) and
+6.6:1 (`reward`), so the thin selected ring holds. In the editor's preview
+(r495.2, Chrome) a ring hid at the start, showed round the coin the mouse
+rested on, grew from 172 to 184 px across 0.12 s of a tap's pulse, sat
+behind its coin, and went with the coin when it was collected, whether
+the coin was placed in the layout or created by the events.
 
 ### Fonts in Construct
 
@@ -240,6 +261,27 @@ bold that Inter lacks.
 
 The stand-in game shows the round as a tag, the score, one key, and
 cobalt coins on a board of faint discs.
+
+### The ring
+
+`OUTLINE` is the switch, `False` in the template: a game that selects or
+targets units sets it, one with nothing to point at leaves it. The values
+are `OUTLINE_STYLE`'s, those of the data at 1920×1080, scaled with the
+viewport's shorter side and not rounded to `UNIT`. The colour follows the
+side: an enemy or a neutral object takes `danger`, the player's own unit
+`ink`, an ally `reward`.
+
+The ring is a sprite of its own, `<Type>Outline`: the object's image grown
+by the ring's width by a distance transform and filled in the side's
+colour, a hover frame softened and a selected frame hard at 85%, which
+holds its own colour outside `PALETTE`. It is the object's child, so it
+moves, scales and is destroyed with it, and it sits just behind it.
+`outline_images()`, `outline_types()`, `outline_inst()`,
+`outline_create()` and `outline_module()` draw, declare, place, create and
+play it; with `OUTLINE` off each adds nothing, so the stand-in calls them
+and generates the same project. The group hides every ring each tick, then
+shows the selected one, the one under the mouse, and one whose pulse plays,
+which a touch starts; a touch screen sees the ring only during the pulse.
 
 ### Left out
 
