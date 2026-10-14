@@ -394,10 +394,35 @@ def margin_of(project: Path) -> int:
         return MARGIN
 
 
+def drawn_box(project: Path, inst: dict) -> tuple[float, float, float, float]:
+    """The part of an instance's box its type's first image draws, the pixels that are not clear, scaled to
+    the box: a small drawing in a box a finger hits lines up by its drawing. The whole box when the image
+    cannot be read or PIL is missing."""
+    whole = box_of(inst)
+    try:
+        from PIL import Image
+    except ImportError:
+        return whole
+    for png in sorted((project / "images").glob(f"{inst['type'].lower()}*.png")):
+        try:
+            with Image.open(png) as im:
+                bounds = im.convert("RGBA").getchannel("A").getbbox()
+                size = im.size
+        except OSError:
+            continue
+        if not bounds:
+            return whole
+        l, t, r, b = whole
+        sx, sy = (r - l) / size[0], (b - t) / size[1]
+        return l + bounds[0] * sx, t + bounds[1] * sy, l + bounds[2] * sx, t + bounds[3] * sy
+    return whole
+
+
 def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
-    """The HUD the run added through the generator: on the UI layer, whole numbers, sizes in
-    units, every type's box held against an edge or centred, the tapped button a finger wide,
-    and tools/build_project.py the source of layouts/Game.json."""
+    """The HUD the run added through the generator: on the UI layer, whole numbers, the sprites it
+    added sized in units and their drawings held against an edge or centred, the tapped button a
+    finger wide, and tools/build_project.py the source of layouts/Game.json. A text's box is measured
+    to its text by the template, so the size and edge rules leave texts and the stand-in's HUD out."""
     project = run / "project"
     code, out = checker(project)
     results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else (out.splitlines() or [''])[-1]}")]
@@ -417,11 +442,19 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
     def whole(v) -> bool:
         return isinstance(v, (int, float)) and float(v).is_integer()
 
+    def plugin_of(kind: str) -> str | None:
+        try:
+            return json.loads((project / "objectTypes" / f"{kind}.json").read_text(encoding="utf-8")).get("plugin-id")
+        except (OSError, ValueError):
+            return None
+
     fractions = [i["type"] for i in hud if not all(whole(i["world"][k]) for k in ("x", "y", "width", "height"))]
     results.append((bool(hud) and not fractions, f"fractional coordinates or sizes on: {fractions or 'none'}"))
-    off = [f"{i['type']} {i['world']['width']}x{i['world']['height']}" for i in hud
+    shapes = [i for i in added if plugin_of(i["type"]) != "Text"]
+    off = [f"{i['type']} {i['world']['width']}x{i['world']['height']}" for i in shapes
            if not all(whole(i["world"][k]) and int(i["world"][k]) % UNIT == 0 for k in ("width", "height"))]
-    results.append((bool(hud) and not off, f"sizes not in {UNIT} px units: {off or 'none'}"))
+    results.append((bool(shapes) and not off, f"{len(shapes)} added non-text instance(s); sizes not in {UNIT} px "
+                                               f"units: {off or 'none'}"))
 
     def box(insts: list) -> tuple[float, float, float, float]:
         lefts = [i["world"]["x"] - i["world"].get("originX", 0) * i["world"]["width"] for i in insts]
@@ -432,25 +465,32 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
 
     margin = margin_of(project)
 
-    def plugin_of(kind: str) -> str | None:
-        try:
-            return json.loads((project / "objectTypes" / f"{kind}.json").read_text(encoding="utf-8")).get("plugin-id")
-        except (OSError, ValueError):
-            return None
-
-    def held(lo: float, hi: float, size: float) -> bool:
-        return abs(lo - margin) <= 0.5 or abs(hi - (size - margin)) <= 0.5 or abs((lo + hi) / 2 - size / 2) <= 0.5
+    def held(lo: float, hi: float, size: float, slack: float = 0.5) -> bool:
+        return abs(lo - margin) <= slack or abs(hi - (size - margin)) <= slack or abs((lo + hi) / 2 - size / 2) <= slack
 
     kinds = {kind: box([i for i in hud if i["type"] == kind]) for kind in sorted({i["type"] for i in hud})}
-    loose = []
-    for kind, (l, t, r, b) in kinds.items():
+    loose, drawn = [], {}
+    for i in shapes:
+        dl, dt, dr, db = drawn_box(project, i)
+        l, t, r, b = drawn.get(i["type"], (dl, dt, dr, db))
+        drawn[i["type"]] = (min(l, dl), min(t, dt), max(r, dr), max(b, db))
+    def lined_up(kind: str, edges: tuple, slack: float) -> bool:
+        l, t, r, b = edges
         # A second row: its top one unit under a box of another type that is itself held to the top or bottom.
-        stacked = any(abs(t - (ob + UNIT)) <= 0.5 and held(ot, ob, VIEW_H)
+        stacked = any(abs(t - (ob + UNIT)) <= slack and held(ot, ob, VIEW_H)
                       for other, (ol, ot, orr, ob) in kinds.items() if other != kind)
-        if not (held(l, r, VIEW_W) and (held(t, b, VIEW_H) or stacked)):
-            loose.append(f"{kind} box ({l:g},{t:g})-({r:g},{b:g})")
-    results.append((bool(hud) and not loose, f"boxes neither {margin} px inside an edge, nor centred, nor one unit "
-                                             f"under a held box: {loose or 'none'}"))
+        return held(l, r, VIEW_W, slack) and (held(t, b, VIEW_H, slack) or stacked)
+
+    # A type lines up by its box, or by its drawing when that is smaller than a box a finger hits. A drawing's
+    # edge is its outermost pixel that is not clear, which an antialiased curve leaves a pixel or two inside the
+    # line it was drawn to.
+    for kind, edges in drawn.items():
+        if not (lined_up(kind, kinds[kind], 0.5) or lined_up(kind, edges, 2)):
+            l, t, r, b = kinds[kind]
+            dl, dt, dr, db = edges
+            loose.append(f"{kind} box ({l:g},{t:g})-({r:g},{b:g}), drawn ({dl:g},{dt:g})-({dr:g},{db:g})")
+    results.append((bool(drawn) and not loose, f"added non-text types neither {margin} px inside an edge, nor centred, "
+                                               f"nor one unit under a held box, by box or drawing: {loose or 'none'}"))
 
     boxes = [(i["type"], *box([i])) for i in hud]
     outside = [f"{k} ({l:g},{t:g})-({r:g},{b:g})" for k, l, t, r, b in boxes if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H]

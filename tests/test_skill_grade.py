@@ -582,3 +582,42 @@ def test_the_hud_case_grades_by_the_templates_own_rules(tmp_path: Path, project:
     added, overlap = (next(v for k, v in results.items() if word in k) for word in ("besides", "overlap"))
     assert added[0] is False and "0 added instance(s)" in added[1]
     assert overlap == (True, "overlapping boxes: none")
+    sizes, edges = (next(v for k, v in results.items() if word in k) for word in ("multiples", "held against"))
+    assert sizes[0] is False and "0 added non-text instance(s)" in sizes[1] and edges[0] is False
+
+
+def test_the_hud_case_lines_a_small_drawing_up_by_what_it_draws(tmp_path: Path, project: Path) -> None:
+    """A sprite the run adds to the HUD is sized in units and lines up by its box or by its drawing: a button
+    drawn 64 px across in the middle of a 160 px box a finger hits has its drawing MARGIN inside the corner,
+    and its box 16 px from the edge. The stand-in's texts are measured to their text and stay out of both."""
+    pytest.importorskip("PIL")
+    from PIL import Image, ImageDraw
+    spec = importlib.util.spec_from_file_location("eval_grade", SKILL / "evals" / "grade.py")
+    grader = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(grader)
+    case = tmp_path / "it" / "lay-out-the-hud" / "with_skill"
+    shutil.copytree(project, case / "project")
+    image = Image.new("RGBA", (160, 160), (0, 0, 0, 0))
+    ImageDraw.Draw(image).ellipse([48, 48, 111, 111], fill=(20, 19, 17, 255))
+    image.save(case / "project" / "images" / "pausebutton-default-000.png")
+    (case / "project" / "objectTypes" / "PauseButton.json").write_text(
+        json.dumps({"name": "PauseButton", "plugin-id": "Sprite"}), encoding="utf-8")
+    path = case / "project" / "layouts" / "Game.json"
+    layout = json.loads(path.read_text(encoding="utf-8"))
+    ui = next(layer for layer in layout["layers"] if layer["name"] == "UI")["instances"]
+    button = json.loads(json.dumps(next(i for i in ui if i["type"] == "KeyBox")))
+    button["type"] = "PauseButton"
+    ui.append(button)
+
+    def graded(x: int, y: int) -> tuple:
+        button["world"].update({"x": x, "y": y, "width": 160, "height": 160, "originX": 0, "originY": 0})
+        path.write_text(json.dumps(layout), encoding="utf-8")
+        results = dict(zip(CASES["lay-out-the-hud"]["assertions"], grader.grade_lay_out_the_hud(case)))
+        return tuple(next(v for k, v in results.items() if word in k) for word in ("multiples", "held against"))
+
+    sizes, edges = graded(1920 - 64 - 112, 1080 - 64 - 112)
+    assert sizes[0] is True and "1 added non-text instance(s)" in sizes[1]
+    assert edges == (True, "added non-text types neither 64 px inside an edge, nor centred, nor one unit under a "
+                           "held box, by box or drawing: none")
+    sizes, edges = graded(1920 - 64 - 112 - 8, 1080 - 64 - 112)
+    assert edges[0] is False and "PauseButton box (1736,904)-(1896,1064), drawn (1784,952)-(1848,1016)" in edges[1]
