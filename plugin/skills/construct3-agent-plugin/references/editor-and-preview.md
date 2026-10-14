@@ -110,6 +110,22 @@ which cases to play and how to reach and read them to
   `AnalyserNode` on the same point. [source: `open_in_editor.py`, the
   comment at `--mute-audio`; the user's rule, 2026-09-30, that a test must
   not play sound through their speakers]
+- Edge started with `__COMPAT_LAYER` in its environment, the application
+  compatibility layer a Windows process passes to the ones it starts
+  (`DetectorsAppHealth` in the session where this was seen), starts the
+  browser again as a child of its own, without the layer and with
+  `--edge-skip-compat-layer-relaunch`, and exits with code 0 within a tenth
+  of a second. A script that stops waiting for `DevToolsActivePort` when the
+  process it started exits gives up on a browser that comes up a moment
+  later and runs on without a parent; one that waits for that process at the
+  close returns while the browser still answers on its port, and the next
+  start takes a closing browser over. `open_in_editor.py` starts the browser
+  without the variable, waits for the port its full time, and at the close
+  waits until the profile's `lockfile`, which the browser holds open while it
+  runs, is gone. [observed in Edge 156 headless, 2026-10-14: 11 of 60 starts
+  failed and every launched process had exited 0 with the browser as its
+  child; with the fix, 160 of 160 starts, 60 of them with the variable put
+  back, and no `msedge.exe` left on the profile after a close]
 - A browser started with `--user-data-dir=\\?\<path>`, the prefix that lifts
   MAX_PATH, writes no cookie file, so a third-party login (GitHub) is gone at
   the next start; `open_in_editor.py` adds the prefix only to a long path.
