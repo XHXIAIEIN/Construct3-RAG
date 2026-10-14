@@ -80,7 +80,7 @@ COIN_SIZE = TOUCH                          # a coin is tapped, so it fills the b
 # examples keep to few colours with hard edges, 9 covering 95% of a project's opaque pixels
 # and 35 its whole art at the median, and their text to one or two colours in two sizes
 # (Construct3-RAG/docs/decisions/game-look-from-design-skills.md).
-# The stand-in is paper and ink: flat shapes on a warm paper that fills the screen, the player and
+# The stand-in is paper and ink: flat shapes on a white paper that fills the screen, the player and
 # the labels in ink, a cobalt for what is collected and a red for what hurts, areas and ranges
 # drawn as lines, a thin edge over a faint fill, and slots as discs of that fill. Value carries
 # the hierarchy: the player is the one solid ink mass, structure the faintest thing on the screen.
@@ -88,10 +88,10 @@ COIN_SIZE = TOUCH                          # a coin is tapped, so it fills the b
 # check_palette() and shape() stop the run on one that does not
 # (Construct3-RAG/docs/decisions/paper-and-ink-look.md).
 PALETTE = {
-    "canvas": (236, 234, 228),         # the paper: an opaque layer's fill; the checker's light cells
-    "canvas_alt": (223, 221, 215),     # 6% ink over the paper: an area's fill; the checker's dark cells
-    "line": (207, 202, 192),           # a ring drawn as a line; under 3:1, so never the only sign of a thing
-    "solid": (117, 116, 112),          # 55% ink: the edge of an area or a range, structure, a bar's frame
+    "canvas": (255, 255, 255),         # the paper: an opaque layer's fill; the checker's light cells
+    "canvas_alt": (241, 241, 241),     # 6% ink over the paper: an area's fill, a slot; the checker's dark cells
+    "line": (220, 220, 219),           # 15% ink: a ring drawn as a line; under 3:1, so never the only sign of a thing
+    "solid": (126, 125, 124),          # 55% ink: the edge of an area or a range, structure, a bar's frame
     "dim": (101, 97, 90),              # a secondary label, 4.5:1 on canvas_alt
     "ink": (20, 19, 17),               # the player, labels, a key's box, a bar's fill
     "reward": (37, 99, 235),           # what the player collects: cobalt

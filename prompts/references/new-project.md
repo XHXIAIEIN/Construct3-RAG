@@ -56,7 +56,7 @@ Construct-Example-Projects, 2026-09-18]
   `rgb()`, the colour check of `write_png()`, `FONT` and `TEXT_SIZE`, the
   contrast check of `hud_text()`, `PIXEL_ART` and `FULLSCREEN`.
 - Until the art arrives, a generated game is paper and ink: flat shapes on
-  a warm paper that fills the screen, without shadows, cards or panels.
+  a white paper that fills the screen, without shadows, cards or panels.
   Lightness shows the hierarchy. The player is the one solid ink mass,
   structure the faintest thing on the screen. Cobalt marks what is
   collected and red what hurts, each at least 3:1 on the paper by colour

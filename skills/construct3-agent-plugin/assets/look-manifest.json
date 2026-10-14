@@ -209,9 +209,9 @@
       "id": "palette.greys",
       "status": "enforced",
       "strict": true,
-      "says": "Paper and ink: the paper and a 6% ink fill, a line grey for structure the eye reads past, a 55% ink grey for edges and structure, dim, ink, and a cobalt for what is collected and a red for what hurts, plus the hit's flash; the player in ink. The paper and its fill at most 1.2:1, solid at least 3:1 on the fill.",
+      "says": "Paper and ink: a white paper and a 6% ink fill, a 15% ink line grey for structure the eye reads past, a 55% ink grey for edges and structure, dim, ink, and a cobalt for what is collected and a red for what hurts, plus the hit's flash; the player in ink. The paper and its fill at most 1.2:1, solid at least 3:1 on the fill.",
       "template": "{role: '#%02X%02X%02X' % colour for role, colour in PALETTE.items()}",
-      "value": "{'canvas': '#ECEAE4', 'canvas_alt': '#DFDDD7', 'line': '#CFCAC0', 'solid': '#757470', 'dim': '#65615A', 'ink': '#141311', 'reward': '#2563EB', 'danger': '#E0452B', 'flash': '#FFFFFF'}",
+      "value": "{'canvas': '#FFFFFF', 'canvas_alt': '#F1F1F1', 'line': '#DCDCDB', 'solid': '#7E7D7C', 'dim': '#65615A', 'ink': '#141311', 'reward': '#2563EB', 'danger': '#E0452B', 'flash': '#FFFFFF'}",
       "helpers": "check_palette()"
     },
     {

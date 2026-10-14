@@ -317,9 +317,13 @@ def lay_out_the_hud() -> dict:
               "  const label = (a.text !== null && b.text === null && inside(a.box, b.box)) || (b.text !== null && a.text === null && inside(b.box, a.box));",
               "  if (x > 1 && y > 1 && !label) hits.push(`${a.type} and ${b.type}`); }));",
               "return {ok: !hits.length, said: hits.length ? `overlapping: ${hits.join('; ')}` : 'no overlap'};"),
-        check("The timer sits in the top-right corner of the window",
-              "const t = vars.hud.find(i => i.text !== null && /time/i.test(i.text));",
-              f"return {{ok: !!t && t.box.r >= {w - 96} && t.box.t <= 96, said: t ? `${{t.type}} ${{JSON.stringify(t.box)}} in a {w}x{h} window` : 'no text on the UI layer says Time'}};"),
+        # The corner opposite the score may hold the stand-in's round, so the timer may stand under it: held to the
+        # window's edge on the other side from the score, in the top fifth
+        check("The timer sits in the top corner opposite the score",
+              "const t = vars.hud.find(i => i.text !== null && /time/i.test(i.text)), s = vars.hud.find(i => i.type === 'ScoreText');",
+              "if (!t || !s) return {ok: false, said: t ? 'no ScoreText' : 'no text on the UI layer says Time'};",
+              f"const left = (s.box.l + s.box.r) / 2 > {w / 2}, edge = left ? t.box.l <= 96 : t.box.r >= {w - 96};",
+              f"return {{ok: edge && t.box.t <= {h // 5}, said: `${{t.type}} ${{JSON.stringify(t.box)}}, ScoreText ${{JSON.stringify(s.box)}} in a {w}x{h} window`}};"),
         check("The pause button sits in the bottom-right corner of the window",
               "const b = vars.hud.find(i => i.text === null && /pause|button|btn/i.test(i.type));",
               f"return {{ok: !!b && b.box.r >= {w - 96} && b.box.b >= {h - 96}, said: b ? `${{b.type}} ${{JSON.stringify(b.box)}} in a {w}x{h} window` : 'no button on the UI layer'}};"),

@@ -353,7 +353,7 @@ habits; they are what makes rerunning safe.
   that would read there. A
   viewport 360 px high or less is pixel art: `PIXEL_ART` has the project
   sample *Nearest* at a whole-number scale.
-- The stand-in's look is paper and ink: flat shapes on a warm paper, no
+- The stand-in's look is paper and ink: flat shapes on a white paper, no
   outline and no shadow. `PALETTE` holds `canvas`, the paper, and its faint
   fill `canvas_alt`, `line` for structure the eye
   reads past, `solid` for edges, `dim`, `ink`, `reward` in cobalt,

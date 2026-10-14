@@ -132,7 +132,7 @@ def test_template_draws_an_accent_that_shows_without_its_outline_and_a_fill_the_
     t.ROOT = tmp_path
     t.shape("spike.png", "triangle", 32, 32, "danger")                          # 3.1:1, shows alone
     t.PALETTE["danger"] = (245, 120, 110)
-    with pytest.raises(SystemExit, match=r"spike.png: danger \(245, 120, 110\) reads 1\.\d\d:1 on canvas_alt, and an "
+    with pytest.raises(SystemExit, match=r"spike.png: danger \(245, 120, 110\) reads 2\.39:1 on canvas_alt, and an "
                                          r"accent without an outline needs 3:1 .* darken danger, or draw it with its outline"):
         t.shape("spike.png", "triangle", 32, 32, "danger")
     t.shape("spike.png", "triangle", 32, 32, "danger", outline=True)
@@ -152,8 +152,8 @@ def test_template_palette_keeps_the_ratios_of_the_blockout():
     ratios = {pair: round(t.contrast(t.rgb(pair[0]), t.rgb(pair[1])), 2) for pair in (
         ("canvas", "canvas_alt"), ("solid", "canvas_alt"), ("reward", "canvas_alt"), ("danger", "canvas_alt"),
         ("ink", "solid"), ("ink", "reward"), ("ink", "danger"))}
-    assert ratios == {("canvas", "canvas_alt"): 1.13, ("solid", "canvas_alt"): 3.44, ("reward", "canvas_alt"): 3.81,
-                      ("danger", "canvas_alt"): 3.06, ("ink", "solid"): 3.97, ("ink", "reward"): 3.59,
+    assert ratios == {("canvas", "canvas_alt"): 1.13, ("solid", "canvas_alt"): 3.64, ("reward", "canvas_alt"): 4.58,
+                      ("danger", "canvas_alt"): 3.68, ("ink", "solid"): 4.52, ("ink", "reward"): 3.59,
                       ("ink", "danger"): 4.47}
     t.check_palette()
     assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger"]
@@ -919,19 +919,19 @@ def test_template_labels_read_on_what_is_behind_them():
         ("Inter-Regular", 14, t.rgba(t.PALETTE["ink"]))
     assert score["properties"]["bold"] is False
     assert (t.text_contrast(8), t.text_contrast(17), t.text_contrast(18), t.text_contrast(32)) == (4.5, 4.5, 3, 3)
-    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.3:1 on the checker's darker cell
+    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.9:1 on the checker's darker cell
     t.hud_text("TimerText", "Time: 30", "top-right", size=32, color="dim")  # 32 pt is large-scale: 3:1 is enough
-    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(223, 221, 215\) reads 3\.3:1; "
-                                         r"text of size 12 needs 4\.5:1\. Roles that read on canvas_alt: ink;"):
+    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(241, 241, 241\) reads 3\.9:1; "
+                                         r"text of size 12 needs 4\.5:1\. Roles that read on canvas_alt: ink, reward;"):
         t.hud_text("TimerText", "Time: 30", "top-right", size=12, color="dim")
-    t.PALETTE["dim"] = (150, 150, 150)                                   # 2.2:1
+    t.PALETTE["dim"] = (150, 150, 150)                                   # 2.6:1
     with pytest.raises(SystemExit, match=r"text of size 32 needs 3:1"):
         t.hud_text("TimerText", "Time: 30", "top-right", size=32, color="dim")
     t.PALETTE["dim"] = (120, 120, 120)
     banner = t.hud_text("WinText", "YOU WIN", "center", size=t.text_size("display"), color="dim")
     assert banner["properties"]["size"] == 64 and banner["properties"]["color"][:3] == [120 / 255] * 3
-    with pytest.raises(SystemExit, match=r"LivesText: flash \(255, 255, 255\) on canvas \(236, 234, 228\) reads 1\.2:1; "
-                                         r".* Roles that read on canvas: ink;"):
+    with pytest.raises(SystemExit, match=r"LivesText: flash \(255, 255, 255\) on canvas \(255, 255, 255\) reads 1\.0:1; "
+                                         r".* Roles that read on canvas: ink, reward;"):
         t.hud_text("LivesText", "Lives", "top", color="flash", on="canvas")
     game = t.layout("Game", [t.layer("Background", transparent=False), t.layer("UI", parallax=0)], sheet="Game")
     assert [layer["backgroundColor"] for layer in game["layers"]] == [t.rgba(t.PALETTE["canvas"]), [1, 1, 1, 1]]

@@ -39,6 +39,9 @@ The user accepted the paper screen, then refined it in a playable
 prototype at 1280×720 and decided:
 
 - The look comes from the prototype; its attack timing does not.
+- The paper is white. On screenshots of the stand-in the user preferred a
+  clean white background to the prototype's warm paper, so every grey is
+  the ink over white.
 - Areas and ranges are lines; objects are flat fills.
 - The prototype's red for what hurts or must be noticed. On screenshots of
   the stand-in, the user took the plain sheet's cobalt for what is
@@ -65,20 +68,21 @@ The prototype's values, at 1280×720:
 
 ### Contrast of the values
 
-WCAG 2.2 contrast ratios, the formula of `contrast()` in the template:
+The template's values on the white paper, with WCAG 2.2 contrast ratios
+by the formula of `contrast()` in the template:
 
 | Role | Colour | On `canvas` | On `canvas_alt` |
 |------|--------|------------:|----------------:|
-| `canvas` | #ECEAE4 | | 1.13 |
-| `canvas_alt`, 6% ink over the paper | #DFDDD7 | 1.13 | |
-| `line` | #CFCAC0 | 1.36 | 1.20 |
-| `solid`, 55% ink over the paper | #757470 | 3.89 | 3.44 |
-| `dim` | #65615A | 5.12 | 4.53 |
-| `ink` | #141311 | 15.43 | 13.67 |
-| `reward`, the plain sheet's cobalt | #2563EB | 4.30 | 3.81 |
-| `danger`, the prototype's accent | #E0452B | 3.45 | 3.06 |
+| `canvas`, the paper | #FFFFFF | | 1.13 |
+| `canvas_alt`, 6% ink over the paper | #F1F1F1 | 1.13 | |
+| `line`, 15% ink | #DCDCDB | 1.37 | 1.21 |
+| `solid`, 55% ink | #7E7D7C | 4.11 | 3.64 |
+| `dim` | #65615A | 6.16 | 5.45 |
+| `ink` | #141311 | 18.57 | 16.44 |
+| `reward`, the plain sheet's cobalt | #2563EB | 5.17 | 4.58 |
+| `danger`, the prototype's accent | #E0452B | 4.15 | 3.68 |
 
-The prototype's dim, `#8A867D`, reads 3.0:1 on the paper and fails the
+The prototype's dim, `#8A867D`, reads 3.0:1 on its paper and fails the
 4.5:1 of small text. `#65615A` passes on `canvas_alt`, the surface a label
 is checked against.
 
@@ -174,10 +178,10 @@ the checks of `greybox-blockout.md`.
 The prototype's player and targets set the shape, contrast and proportions
 of what stands on the screen, not a character of the template:
 
-- The player is the one solid ink mass, about 15:1 on the paper. What it
+- The player is the one solid ink mass, about 18:1 on the paper. What it
   collects is cobalt and what hurts it red, each over 3:1. Structure is the
   faintest: a fill of 6% ink for areas and slots, `line` at 1.4:1 for
-  rings, and `solid` at 3.9:1 for an edge that marks where something
+  rings, and `solid` at 4.1:1 for an edge that marks where something
   applies.
 - In an open field a subject is drawn `SUBJECT` across, 6% of the
   viewport's shorter side in whole units, 64 px at 1080, as the
