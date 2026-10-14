@@ -411,7 +411,9 @@ def reveal_the_gradient() -> dict:
 
 
 # The lives are the number that drops by one twice over round 3 and does not change otherwise. They may be
-# counted across rounds or per round. Between the two drops the score changes once per coin collected, so it
+# counted across rounds or per round, and kept where the runtime does not show them, a static local, or drawn
+# from another count, coins taken: so the hearts that still look like the leftmost one count as a number too
+# (FULL_HEARTS). Between the two drops the score changes once per coin collected, so it
 # changes three times when a life goes every third coin. The count comes from the score, not from the taps,
 # because one touch can take two coins that overlap. A drop belongs to the last tap of the plan before it, and
 # the screenshots before and after that tap show the heart it took.
@@ -427,12 +429,26 @@ vars.livesSeen = Object.keys(start).map(k => `${k.slice(2)}: ${start[k]}${moves(
 return {lives: vars.lives, drops: vars.drops, between: vars.between, after: drops.length ? drops[0].v : null, values: vars.livesSeen};"""
 
 
+# Per sprite type of three or more on the UI layer, besides the stand-in's HUD: how many of its instances look like
+# the leftmost one, by animation, frame, visibility and opacity. The hearts empty from the right, so the leftmost
+# is full while a life is left, and the count is the lives.
+FULL_HEARTS = f"""vars.h.fullHearts = () => {{ const kinds = {{}}, out = {{}}, stand = {json.dumps(STAND_IN_HUD)};
+  for (const i of vars.h.ui()) if (!vars.h.isText(i) && 'animationFrame' in i && !stand.includes(i.objectType.name))
+    (kinds[i.objectType.name] = kinds[i.objectType.name] || []).push(i);
+  const look = i => [i.animationName, i.animationFrame, i.isVisible, Math.round(i.opacity * 100)].join('|');
+  for (const [k, list] of Object.entries(kinds)) if (list.length >= 3) {{
+    const full = look(list.reduce((a, b) => (b.x < a.x ? b : a)));
+    out['h:' + k] = list.filter(i => look(i) === full).length; }}
+  return out; }};"""
+
+
 def lives_as_hearts() -> dict:
     after = [step for k in range(1, 7) for step in (js("vars.r3.push(vars.h.now()); return vars.r3.length"),
                                                     {"tap": {"js": "vars.h.spot('Coin') || {x: 4, y: 4}"}},
                                                     {"wait": 1.0}, {"shot": f"tap{k}"})]
+    numbers = "Object.assign(vars.h.numbers(), vars.h.fullHearts())"
     return {"viewport": [1920, 1080], "touch": True, "steps": [
-        *COINS, js("vars.watch.numbers = () => vars.h.numbers(); vars.r3 = []; return vars.h.numbers()"), {"wait": 0.3},
+        *COINS, js(FULL_HEARTS, f"vars.watch.numbers = () => {numbers}; vars.r3 = []; return {numbers}"), {"wait": 0.3},
         *collect(), *collect(), boxes_step("hearts"), {"shot": "tap0"}, *after,
         {"js": LIVES, "note": "lives drops"},
         check("Every third coin of a round costs one life",

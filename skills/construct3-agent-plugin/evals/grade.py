@@ -640,8 +640,8 @@ def steps_by(rows: list, names: set[str], amount: str) -> list:
     holders = constants_at(rows, amount) | constants_at(rows, magnitude)
     number = re.compile(r"(?<![\w.])-?" + re.escape(magnitude) + r"(?![\w.])")
     holder = re.compile("|".join(map(re.escape, holders)) or r"$^")
-    # A function handed the amount: `AddHealth(10)` whose body adds its parameter.
-    passed = any(number.search(values([a])) for ev, _ in rows for a in ev.get("actions", [])
+    # A function handed the amount, `AddHealth(10)` or `AddHealth(HP_PER_COIN)`, whose body adds its parameter.
+    passed = any(number.search(values([a])) or holder.search(values([a])) for ev, _ in rows for a in ev.get("actions", [])
                  if "callFunction" in a or a.get("id") in ("call-function", "call-custom-action"))
     out = []
     for a in value_actions(rows, names):

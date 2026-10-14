@@ -621,3 +621,28 @@ def test_the_hud_case_lines_a_small_drawing_up_by_what_it_draws(tmp_path: Path, 
                            "held box, by box or drawing: none")
     sizes, edges = graded(1920 - 64 - 112 - 8, 1080 - 64 - 112)
     assert edges[0] is False and "PauseButton box (1736,904)-(1896,1064), drawn (1784,952)-(1848,1016)" in edges[1]
+
+
+def test_a_step_handed_to_a_function_counts_by_the_constant_it_names() -> None:
+    """`Call AddHealth(HP_PER_COIN)`, a constant at 10, whose body sets hp to `clamp(hp + amount, ...)`, adds 10
+    to hp; handed a constant at 5 it does not."""
+    def rows(per_coin: int) -> list:
+        return [({"eventType": "variable", "name": "HP_PER_COIN", "initialValue": per_coin}, []),
+                ({"eventType": "variable", "name": "hp", "initialValue": 40}, []),
+                ({"eventType": "block", "actions": [{"callFunction": "AddHealth", "parameters": ["HP_PER_COIN"]}]}, []),
+                ({"eventType": "function-block", "actions": [
+                    {"id": "set-eventvar-value", "objectClass": "System",
+                     "parameters": {"variable": "hp", "value": "clamp(hp + amount, 0, HP_MAX)"}}]}, [])]
+
+    assert [a["parameters"]["value"] for a in grader.steps_by(rows(10), {"hp"}, "10")] == ["clamp(hp + amount, 0, HP_MAX)"]
+    assert grader.steps_by(rows(5), {"hp"}, "10") == []
+
+
+def test_the_lives_plan_counts_the_hearts_that_still_look_full() -> None:
+    """Lives kept in a static local or drawn from a count of coins are no number the runtime shows, so the lives
+    plan also watches, per sprite type of three or more on the UI layer, how many instances look like the
+    leftmost one, leaving the stand-in's HUD out."""
+    plan = play_cases.plan_for("lives-as-hearts")
+    code = "\n".join(line for step in plan["steps"] if "js" in step for line in step["js"])
+    assert "vars.h.fullHearts = () =>" in code and f"stand = {json.dumps(play_cases.STAND_IN_HUD)}" in code
+    assert "vars.watch.numbers = () => Object.assign(vars.h.numbers(), vars.h.fullHearts())" in code
