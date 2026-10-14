@@ -4,7 +4,8 @@ Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md).
 
 - *Start timer* on an existing tag restarts it. After *Stop timer*, or after
-  a *Once* timer fires, the tag's expressions return 0. Remaining time is
+  the tick in which a *Once* timer fires, the tag's expressions return 0.
+  Remaining time is
   `Duration(tag) - CurrentTime(tag)`. `CurrentTime` resets at every *On
   timer*. [manual: behavior-reference/timer.md]
 - A reset after N seconds without input (inactivity), such as a combo (连击) that
@@ -42,20 +43,20 @@ Sources and the rule for adding an entry are in the index,
   playing* and from the instance whose tween it is. [observed in a game
   project, 2026-09-18]
 - In the tick a *Once* timer fires, it still counts as running for the
-  rest of that tick's events: *Is timer running* is true and `CurrentTime`
-  is at or past `Duration`. The behavior removes it after the events.
-  *On timer* is tested in sheet order, so an event below it that branches
+  rest of that tick's events. The behavior removes it after the events.
+  *On timer* is tested in sheet order. So an event below it that branches
   on *Is timer running* for the same tag takes the running branch once
-  more, now with the state the trigger changed. An attack whose *On timer*
+  more, with the state the trigger changed. An attack whose *On timer*
   flips the side the weapon rests on then draws the follow-through mirrored
   for one tick. Write *Stop timer* for the tag as the first action of its
-  *On timer*, then the change. [manual: behavior-reference/timer.md "after
-  a one-off timer triggers, it no longer exists"; observed in a game
-  project, r495.2 preview, 2026-10-14: a log read after each tick's events
-  showed the timer gone and the sword set to the follow-through pose with
-  the flipped side in the tick the swing's *On timer* ran, 166 degrees from
-  the ticks on either side, at 26 of 26 swing ends; with *Stop timer*
-  first, at none of 27]
+  *On timer*, then make the change. [manual: behavior-reference/timer.md
+  "Is timer running": after *Stop timer* the timer no longer counts as
+  running; observed in a game project, r495.2 preview, 2026-10-14: a log
+  read after each tick's events showed the timer gone, yet in the tick the
+  swing's *On timer* ran, the sword was drawn in the follow-through pose
+  with the flipped side, 166 degrees from its pose in the ticks before and
+  after. This happened at 26 of 26 swing ends, and with *Stop timer* first
+  at none of 27]
 - The Timer behavior has no expression for the tag that fired, and *Start
   timer* on a running tag restarts it. So one instance cannot time several
   stacked buffs of one kind with tags. Shields (护盾) are the usual case:

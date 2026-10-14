@@ -82,7 +82,7 @@ If the events define or call a function or a custom action, read
 
 If the events use the Timer behavior, read [pitfalls/timer.md](pitfalls/timer.md).
 
-- *Start timer* on an existing tag restarts it. After *Stop* or a *Once* timer's end its expressions return 0.
+- *Start timer* on an existing tag restarts it. After *Stop*, or after the tick a *Once* timer fires, its expressions return 0.
 - A reset N seconds after the last input (a combo, an idle screen): *Start timer* for N, *Once*, in the input's trigger on every input, and reset in *On timer*. A tick timer that only its own *On timer* restarts under a condition stops for good.
 - A timer is state you start and stop, so list every transition before choosing it.
 - A timer and a tween scheduled to end together end a tick apart.
@@ -135,7 +135,7 @@ If the events place, move or rotate objects or read the viewport, read
 
 - The origin (0, 0) is the top-left of the layout and Y grows downwards.
 - Angles are clockwise degrees from 0 facing right. Compare them with `anglediff`, never `<`.
-- `anglelerp` toward an angle that moves turns round, and jumps, when that angle passes the opposite of the start. Ease an offset from the moving angle: `aim + anglelerp(startOffset, restOffset, x)`.
+- `anglelerp` toward an angle that moves reverses its direction of turn, and the result jumps, when that angle passes the opposite of the start. Ease an offset from the moving angle: `aim + anglelerp(startOffset, restOffset, x)`.
 - A sprite is drawn facing right at angle 0. Paint art facing right.
 - A Bullet's angle of motion and the object's angle are two values. At speed 0 *Set angle of motion* does nothing, and *Set speed* from 0 moves right. Set the speed first, then the angle of motion.
 - The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
