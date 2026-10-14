@@ -356,8 +356,9 @@ habits; they are what makes rerunning safe.
 - The stand-in's look is paper and ink: flat shapes on a white paper, no
   outline and no shadow. `PALETTE` holds `canvas`, the paper, and its faint
   fill `canvas_alt`, `line` for structure the eye
-  reads past, `solid` for edges, `dim`, `ink`, `reward` in cobalt,
-  `danger` in red, and `flash`; keep the roles and change values only.
+  reads past, `solid` for edges, `dim`, `ink`, `reward` in electric blue,
+  `danger` in deep orange, `hover` in sky blue, `pressed` in amber and
+  `flash`; keep the roles and change values only.
   `check_palette()` stops the run when the paper and its fill pass 1.2:1 or
   `solid` falls under 3:1 on the fill, and `shape()` stops on an accent
   under 3:1 on `canvas_alt` drawn without an ink outline, or on a fill under
@@ -376,11 +377,11 @@ habits; they are what makes rerunning safe.
 - A game the player points at things in sets `POINTER = True`; the
   template's default is `False`, and the `pointer_*()` helpers then add
   nothing. On, `pointer_frames(file)` in `build_images()`, after
-  `hit_frame(file)`, draws the image's hover frame in ink and its pressed
-  frame in yellow inside the ink outline; `*pointer_drawn(file)` ends the
+  `hit_frame(file)`, draws the image's hover frame and its pressed frame,
+  which need not read 3:1 on the paper; `*pointer_drawn(file)` ends the
   type's animation, `types |= pointer_types()` declares the Mouse, and
-  `*pointer_module(type)` in the sheet turns the hovered one ink and a
-  touched one yellow for an instant. An object a touch already hits, the
+  `*pointer_module(type)` in the sheet turns the hovered one sky blue and a
+  touched one amber for an instant. An object a touch already hits, the
   stand-in's coin, takes `pointer_module(type, pressed=False)` and
   `hit(type, frame="pressed")`.
   The backdrop is `backdrop("Backdrop")` on a layer at parallax

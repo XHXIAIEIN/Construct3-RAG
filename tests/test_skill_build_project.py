@@ -132,7 +132,7 @@ def test_template_draws_an_accent_that_shows_without_its_outline_and_a_fill_the_
     t.ROOT = tmp_path
     t.shape("spike.png", "triangle", 32, 32, "danger")                          # 3.1:1, shows alone
     t.PALETTE["danger"] = (245, 120, 110)
-    with pytest.raises(SystemExit, match=r"spike.png: danger \(245, 120, 110\) reads 2\.39:1 on canvas_alt, and an "
+    with pytest.raises(SystemExit, match=r"spike.png: danger \(245, 120, 110\) reads 2\.47:1 on canvas_alt, and an "
                                          r"accent without an outline needs 3:1 .* darken danger, or draw it with its outline"):
         t.shape("spike.png", "triangle", 32, 32, "danger")
     t.shape("spike.png", "triangle", 32, 32, "danger", outline=True)
@@ -140,7 +140,7 @@ def test_template_draws_an_accent_that_shows_without_its_outline_and_a_fill_the_
     t.shape("player.png", "rect", 32, 64, "ink", outline=True)                   # the player is ink, its outline too
     t.PALETTE["dim"] = (60, 60, 60)
     with pytest.raises(SystemExit, match=r"shade.png: its dim fill reads 1\.\d:1 against its ink outline, which needs "
-                                         r"3:1 to show; fill it in one of canvas, canvas_alt, line, solid, reward, danger, pressed, flash"):
+                                         r"3:1 to show; fill it in one of canvas, canvas_alt, line, solid, reward, danger, hover, pressed, flash"):
         t.shape("shade.png", "rect", 32, 32, "dim", outline=True)
 
 
@@ -152,11 +152,11 @@ def test_template_palette_keeps_the_ratios_of_the_blockout():
     ratios = {pair: round(t.contrast(t.rgb(pair[0]), t.rgb(pair[1])), 2) for pair in (
         ("canvas", "canvas_alt"), ("solid", "canvas_alt"), ("reward", "canvas_alt"), ("danger", "canvas_alt"),
         ("ink", "solid"), ("ink", "reward"), ("ink", "danger"))}
-    assert ratios == {("canvas", "canvas_alt"): 1.13, ("solid", "canvas_alt"): 3.64, ("reward", "canvas_alt"): 4.58,
-                      ("danger", "canvas_alt"): 3.68, ("ink", "solid"): 4.52, ("ink", "reward"): 3.59,
-                      ("ink", "danger"): 4.47}
+    assert ratios == {("canvas", "canvas_alt"): 1.09, ("solid", "canvas_alt"): 4.23, ("reward", "canvas_alt"): 4.71,
+                      ("danger", "canvas_alt"): 3.25, ("ink", "solid"): 3.49, ("ink", "reward"): 3.14,
+                      ("ink", "danger"): 4.54}
     t.check_palette()
-    assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger", "pressed"]
+    assert [role for role in t.PALETTE if t.accent(role)] == ["reward", "danger", "hover", "pressed"]
     t.PALETTE["canvas_alt"] = (200, 200, 200)
     with pytest.raises(SystemExit, match=r"PALETTE: canvas .* and canvas_alt .* are 1\.\d\d:1; the backdrop's two greys "
                                          r"stay at most 1\.2:1"):
@@ -807,7 +807,7 @@ def test_template_text_input_is_the_form_control_in_the_look():
     assert t.css_px(t.TEXT_SIZE["body"] * t.PX_PER_PT) == "min(0.9722vw, 1.728vh)"   # 18.7 px at 1920x1080
     look, start, changed = (b for b in t.text_input_events({"player": "player"}) if b.get("eventType") == "block")
     css = {a["parameters"]["property-name"]: a["parameters"]["value"] for a in look["actions"]}
-    assert css['"font-size"'] == '"min(0.9722vw, 1.728vh)"' and css['"color"'] == '"rgb(20, 19, 17)"'
+    assert css['"font-size"'] == '"min(0.9722vw, 1.728vh)"' and css['"color"'] == '"rgb(33, 33, 33)"'
     assert css['"font-family"'] == '"Inter-Regular, system-ui, sans-serif"'
     assert changed["conditions"][0]["id"] == "on-text-changed"
     assert changed["children"][1]["actions"][0]["parameters"] == {"variable": "player", "value": "TextInput.Text"}
@@ -893,9 +893,9 @@ def test_template_draws_only_the_colours_of_its_palette(built, tmp_path):
         assert {px[:3] for px in row if px[3]} <= set(t.PALETTE.values())
     t.write_png("half.png", 2, 1, lambda x, y: (*t.PALETTE["danger"], 128 if x else 255))   # the shadow's alpha
     t.write_png("clear.png", 1, 1, lambda x, y: (1, 2, 3, 0))                                # a pixel that does not show
-    assert png_pixels(tmp_path / "images" / "half.png") == [[(224, 69, 43, 255), (224, 69, 43, 128)]]
+    assert png_pixels(tmp_path / "images" / "half.png") == [[(255, 61, 0, 255), (255, 61, 0, 128)]]
     with pytest.raises(SystemExit, match=r"images/heart.png: \(230, 40, 60\) at \(1,0\) is no colour of PALETTE, "
-                                         r"nor are 1 more of its colours; the nearest is danger \(224, 69, 43\)\. "
+                                         r"nor are 1 more of its colours; the nearest is danger \(255, 61, 0\)\. "
                                          r"Draw with rgb\('danger'\), or add the colour to PALETTE"):
         t.write_png("heart.png", 3, 1, lambda x, y: [(0, 0, 0, 0), (230, 40, 60, 255), (9, 9, 9, 255)][x])
     assert not (tmp_path / "images" / "heart.png").exists()
@@ -919,19 +919,19 @@ def test_template_labels_read_on_what_is_behind_them():
         ("Inter-Regular", 14, t.rgba(t.PALETTE["ink"]))
     assert score["properties"]["bold"] is False
     assert (t.text_contrast(8), t.text_contrast(17), t.text_contrast(18), t.text_contrast(32)) == (4.5, 4.5, 3, 3)
-    t.PALETTE["dim"] = (120, 120, 120)                                   # 3.9:1 on the checker's darker cell
+    t.PALETTE["dim"] = (120, 120, 120)                                   # 4.0:1 on the checker's darker cell
     t.hud_text("TimerText", "Time: 30", "top-right", size=32, color="dim")  # 32 pt is large-scale: 3:1 is enough
-    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(241, 241, 241\) reads 3\.9:1; "
+    with pytest.raises(SystemExit, match=r"TimerText: dim \(120, 120, 120\) on canvas_alt \(245, 245, 245\) reads 4\.0:1; "
                                          r"text of size 12 needs 4\.5:1\. Roles that read on canvas_alt: ink, reward;"):
         t.hud_text("TimerText", "Time: 30", "top-right", size=12, color="dim")
-    t.PALETTE["dim"] = (150, 150, 150)                                   # 2.6:1
+    t.PALETTE["dim"] = (150, 150, 150)                                   # 2.7:1
     with pytest.raises(SystemExit, match=r"text of size 32 needs 3:1"):
         t.hud_text("TimerText", "Time: 30", "top-right", size=32, color="dim")
     t.PALETTE["dim"] = (120, 120, 120)
     banner = t.hud_text("WinText", "YOU WIN", "center", size=t.text_size("display"), color="dim")
     assert banner["properties"]["size"] == 64 and banner["properties"]["color"][:3] == [120 / 255] * 3
     with pytest.raises(SystemExit, match=r"LivesText: flash \(255, 255, 255\) on canvas \(255, 255, 255\) reads 1\.0:1; "
-                                         r".* Roles that read on canvas: ink, reward;"):
+                                         r".* Roles that read on canvas: solid, ink, reward;"):
         t.hud_text("LivesText", "Lives", "top", color="flash", on="canvas")
     game = t.layout("Game", [t.layer("Background", transparent=False), t.layer("UI", parallax=0)], sheet="Game")
     assert [layer["backgroundColor"] for layer in game["layers"]] == [t.rgba(t.PALETTE["canvas"]), [1, 1, 1, 1]]
@@ -1360,8 +1360,8 @@ def test_template_draws_areas_and_rings_as_lines(tmp_path):
 
 def test_template_shows_the_pointer_as_colours_once_it_is_on(tmp_path):
     """POINTER is off and the pointer_*() helpers then add nothing, so a game calls them either way. On, an
-    object's image gets two more frames, the same shape in ink tagged "hover" and in the pressed yellow inside the
-    ink outline tagged "pressed", and its group turns the one the mouse is over the hover colour and back, and a
+    object's image gets two more frames, the same shape in sky blue tagged "hover" and in amber tagged "pressed",
+    which need not read 3:1 on the paper, and its group turns the one the mouse is over the hover colour and back, and a
     touched one the pressed colour for an instant; hit(obj, frame="pressed") flashes it instead of the hit's."""
     t = template_module()
     t.ROOT = tmp_path
@@ -1376,8 +1376,8 @@ def test_template_shows_the_pointer_as_colours_once_it_is_on(tmp_path):
     hover = png_pixels(tmp_path / "images" / "coin-default-002.png")
     pressed = png_pixels(tmp_path / "images" / "coin-default-003.png")
     middle = len(hover) // 2
-    assert hover[middle][middle][:3] == t.PALETTE["ink"] and pressed[middle][middle][:3] == t.PALETTE["pressed"]
-    assert pressed[middle][1][:3] == t.PALETTE["ink"]                              # its ink outline
+    assert {p[:3] for row in hover for p in row if p[3]} == {t.PALETTE["hover"]}
+    assert {p[:3] for row in pressed for p in row if p[3]} == {t.PALETTE["pressed"]}    # no outline of its own
     assert [f["tag"] for f in t.pointer_drawn("coin-default-000.png")] == ["hover", "pressed"]
     assert sorted(t.pointer_types()) == ["Mouse"]
 

@@ -58,9 +58,9 @@ Construct-Example-Projects, 2026-09-18]
 - Until the art arrives, a generated game is paper and ink: flat shapes on
   a white paper that fills the screen, without shadows, cards or panels.
   Lightness shows the hierarchy. The player is the one solid ink mass,
-  structure the faintest thing on the screen. Cobalt marks what is
-  collected and red what hurts, each at least 3:1 on the paper by colour
-  alone. A rectangle is the player or structure, a circle what is
+  structure the faintest thing on the screen. Electric blue marks what is
+  collected and deep orange what hurts, high-saturation hues each at least
+  3:1 on the paper by colour alone. A rectangle is the player or structure, a circle what is
   collected, a triangle what hurts. In an open field the player and what
   it meets are drawn about 6% of the viewport's shorter side across, small
   in a large field, and what is tapped keeps a finger-sized box around its
@@ -86,8 +86,8 @@ Construct-Example-Projects, 2026-09-18]
   `hud_header()` for a menu's or a result screen's title, and copies the
   font files into `fonts/`.
 - A game the player points at things in shows the pointer as colours of
-  the object itself: ink while the mouse is over it, yellow inside its ink
-  outline for an instant when it is touched. The generator template's
+  the object itself: sky blue while the mouse is over it, amber for an
+  instant when it is touched. The generator template's
   switch is `POINTER`, off by default; the `pointer_*()` helpers draw and
   play it.
 - The art arrives through the template's `art()`, in the boxes of the

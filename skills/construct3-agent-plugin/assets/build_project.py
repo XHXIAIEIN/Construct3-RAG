@@ -81,22 +81,25 @@ COIN_SIZE = TOUCH                          # a coin is tapped, so it fills the b
 # and 35 its whole art at the median, and their text to one or two colours in two sizes
 # (Construct3-RAG/docs/decisions/game-look-from-design-skills.md).
 # The stand-in is paper and ink: flat shapes on a white paper that fills the screen, the player and
-# the labels in ink, a cobalt for what is collected and a red for what hurts, areas and ranges
-# drawn as lines, a thin edge over a faint fill, and slots as discs of that fill. Value carries
-# the hierarchy: the player is the one solid ink mass, structure the faintest thing on the screen.
-# Every fill reads at least 3:1 on canvas_alt, so a shape shows without an outline or a shadow;
-# check_palette() and shape() stop the run on one that does not
-# (Construct3-RAG/docs/decisions/paper-and-ink-look.md).
+# the labels in ink, an electric blue for what is collected and a deep orange for what hurts, a sky
+# blue for what the pointer is over and an amber for a press, areas and ranges drawn as lines, a
+# thin edge over a faint fill, and slots as discs of that fill. The hues are a widely used design
+# system's A400 accents, the greys its greys. Value carries the hierarchy: the player is the one
+# solid ink mass, structure the faintest thing on the screen. Every fill reads at least 3:1 on
+# canvas_alt, so a shape shows without an outline or a shadow, except a hover or a press frame,
+# shown only while the object is pointed at or for an instant; check_palette() and shape() stop the
+# run on one that does not (Construct3-RAG/docs/decisions/paper-and-ink-look.md).
 PALETTE = {
     "canvas": (255, 255, 255),         # the paper: an opaque layer's fill; the checker's light cells
-    "canvas_alt": (241, 241, 241),     # 6% ink over the paper: an area's fill, a slot; the checker's dark cells
-    "line": (220, 220, 219),           # 15% ink: a ring drawn as a line; under 3:1, so never the only sign of a thing
-    "solid": (126, 125, 124),          # 55% ink: the edge of an area or a range, structure, a bar's frame
-    "dim": (101, 97, 90),              # a secondary label, 4.5:1 on canvas_alt
-    "ink": (20, 19, 17),               # the player, labels, a key's box, a bar's fill
-    "reward": (37, 99, 235),           # what the player collects: cobalt
-    "danger": (224, 69, 43),           # what hurts: red
-    "pressed": (255, 194, 0),          # what a touch presses, for an instant: yellow, inside the ink outline
+    "canvas_alt": (245, 245, 245),     # the faint fill: an area's, a slot; the checker's dark cells
+    "line": (222, 222, 222),           # 15% ink: a ring drawn as a line; under 3:1, so never the only sign of a thing
+    "solid": (117, 117, 117),          # 62% ink: the edge of an area or a range, structure, a bar's frame
+    "dim": (84, 110, 122),             # a secondary label, blue grey, 4.5:1 on canvas_alt
+    "ink": (33, 33, 33),               # the player, labels, a key's box, a bar's fill
+    "reward": (61, 90, 254),           # what the player collects: electric blue
+    "danger": (255, 61, 0),            # what hurts: deep orange
+    "hover": (0, 176, 255),            # what the pointer is over: sky blue
+    "pressed": (255, 196, 0),          # what a touch presses, for an instant: amber
     "flash": (255, 255, 255),          # the fill of an object for the instant it is hit
 }
 # The outline and the cast shadow of every image shape() draws, one switch for the game. They
@@ -135,12 +138,12 @@ SQUASH = {
     "jump": {"width": 0.7, "height": 1.3, "hold": 0.2, "seconds": 0.75, "ease": "easeoutelastic"},
 }
 # What the pointer is over and what a touch presses show as colours of the object itself: it turns the hover
-# role's colour while the mouse is over it and the pressed role's, yellow, for an instant when it is touched, then
-# its own again. Both are frames of its image, like the hit frame, so it keeps its shape and size. Off: a game the
-# player points at things in turns it on, and the pointer_*() helpers add nothing while it is off
+# role's colour, sky blue, while the mouse is over it and the pressed role's, amber, for an instant when it is
+# touched, then its own again. Both are frames of its image, like the hit frame, so it keeps its shape and size.
+# Off: a game the player points at things in turns it on, and the pointer_*() helpers add nothing while it is off
 # (Construct3-RAG/docs/decisions/paper-and-ink-look.md).
 POINTER = False
-POINTER_STYLE = {"hover": "ink", "pressed": "pressed", "seconds": 0.15}
+POINTER_STYLE = {"hover": "hover", "pressed": "pressed", "seconds": 0.15}
 # The type is Inter, which the skill ships in three weights under assets/fonts/ with its license
 # (SIL Open Font License 1.1). A weight is a font of its own, named by its file in fonts/ without
 # the extension; build_all() copies the files named here and lists them in project.c3proj. Text
@@ -618,9 +621,10 @@ def rgba(colour: tuple, alpha: float = 1) -> list:
 
 
 def accent(role: str) -> bool:
-    """Whether a role of PALETTE is a hue, not a grey: an accent, which shows by its outline."""
+    """Whether a role of PALETTE is a hue, not a grey: an accent, which shows by its outline. A tinted grey,
+    a blue grey of 38 between its channels, stays a grey."""
     c = rgb(role)
-    return max(c) - min(c) > 32
+    return max(c) - min(c) > 48
 
 
 def check_palette() -> None:
@@ -736,7 +740,7 @@ def corners(kind: str) -> list[tuple[float, float]]:
 
 
 def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: float = 0.5,
-          outline: bool | None = None, shadow: bool | None = None, inset: int = 0) -> dict:
+          outline: bool | None = None, shadow: bool | None = None, inset: int = 0, state: bool = False) -> dict:
     """images/<rel>: a flat `kind` of SHAPES in a box of w x h px in whole units, in the colour of `role`,
     with the outline and shadow of SHAPE_STYLE unless outline or shadow says otherwise for this
     image. `inset` px of the box stay clear on every side, so the drawing is smaller than the box.
@@ -745,7 +749,8 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
     than 360 px the edge is antialiased. Returns the frame for sprite_type(), kept in FRAMES[rel]: its
     origin is (ox, oy) of the box, its collision polygon the shape across the box, and its size
     the image's, the shadow included, which is the size an instance of it is written at
-    (drawn(rel))."""
+    (drawn(rel)). state=True is a frame shown only while the object is pointed at or for an instant, a
+    hover or a press, whose colour need not read 3:1 on the paper: the rest frame tells the object apart."""
     if kind not in SHAPES:
         sys.exit(f"{rel}: {kind!r} is no shape; shape() draws {', '.join(SHAPES)}")
     if w % UNIT or h % UNIT:
@@ -757,7 +762,7 @@ def shape(rel: str, kind: str, w: int, h: int, role: str, ox: float = 0.5, oy: f
     style = SHAPE_STYLE
     edge = style["outline_width"] if (style["outline"] if outline is None else outline) else 0
     ratio = contrast(rgb(role), rgb("canvas_alt"))
-    if not edge and accent(role) and ratio < 3:
+    if not edge and accent(role) and ratio < 3 and not state:
         sys.exit(f"{rel}: {role} {PALETTE[role]} reads {ratio:.2f}:1 on canvas_alt, and an accent without an outline "
                  f"needs 3:1 to show (WCAG 2.2, 1.4.11); darken {role}, or draw it with its outline")
     ratio = contrast(rgb(role), rgb(style["outline_role"]))
@@ -988,9 +993,8 @@ POINTED: dict[str, list[str]] = {}         # the hover and pressed frames drawn 
 
 def pointer_frames(rel: str) -> None:
     """The hover and pressed frames of the image shape() drew as images/<rel>, "unit-default-000.png", written
-    as its next frames and tagged "hover" and "pressed": the same shape in POINTER_STYLE's roles, the pressed one
-    inside the ink outline, so a light colour shows on the paper. Draw it after hit_frame(). Nothing with
-    POINTER off."""
+    as its next frames and tagged "hover" and "pressed": the same shape in POINTER_STYLE's roles, which need
+    not read 3:1 on the paper. Draw it after hit_frame(). Nothing with POINTER off."""
     if not POINTER:
         return
     if rel not in DRAWN_AS or not rel.endswith("-000.png"):
@@ -999,7 +1003,7 @@ def pointer_frames(rel: str) -> None:
     base = rel[:-len("000.png")]
     n = len([r for r in FRAMES if r.startswith(base)])
     POINTED[rel] = []
-    for tag, role, edge in (("hover", POINTER_STYLE["hover"], None), ("pressed", POINTER_STYLE["pressed"], True)):
+    for tag, role in (("hover", POINTER_STYLE["hover"]), ("pressed", POINTER_STYLE["pressed"])):
         file = f"{base}{n:03d}.png"
         if DRAWN_AS[rel][0] == "art":
             # the picture's silhouette in the role's colour, from the one prepare_art.py writes beside it
@@ -1012,7 +1016,7 @@ def pointer_frames(rel: str) -> None:
             FRAMES[file] = {**FRAMES[rel], "imageSpriteId": image_id(), "tag": tag}
         else:
             kind, w, h, ox, oy, outline, shadow, inset = DRAWN_AS[rel]
-            shape(file, kind, w, h, role, ox, oy, outline if edge is None else edge, shadow, inset)
+            shape(file, kind, w, h, role, ox, oy, outline, shadow, inset, state=True)
             FRAMES[file]["tag"] = tag
         POINTED[rel].append(file)
         n += 1
@@ -3148,7 +3152,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(checker), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 249f3f241c75 ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp 1196bb01ed45 ================
 
 
 # --- the game ---------------------------------------------------------------------------

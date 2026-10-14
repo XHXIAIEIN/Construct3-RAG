@@ -577,7 +577,7 @@ def test_the_hud_case_grades_by_the_templates_own_rules(tmp_path: Path, project:
     shutil.copytree(project, case / "project")
     assert grader.margin_of(case / "project") == 64 and grader.margin_of(tmp_path) == grader.MARGIN
     assert grader.one_colour(case / "project", "KeyBox") is None
-    assert grader.one_colour(case / "project", "Coin") == (37, 99, 235)
+    assert grader.one_colour(case / "project", "Coin") == (61, 90, 254)
     results = dict(zip(CASES["lay-out-the-hud"]["assertions"], grader.grade_lay_out_the_hud(case)))
     added, overlap = (next(v for k, v in results.items() if word in k) for word in ("besides", "overlap"))
     assert added[0] is False and "0 added instance(s)" in added[1]

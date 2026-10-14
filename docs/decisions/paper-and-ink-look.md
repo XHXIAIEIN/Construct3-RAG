@@ -40,12 +40,15 @@ prototype at 1280×720 and decided:
 
 - The look comes from the prototype; its attack timing does not.
 - The paper is white. On screenshots of the stand-in the user preferred a
-  clean white background to the prototype's warm paper, so every grey is
-  the ink over white.
+  clean white background to the prototype's warm paper.
 - Areas and ranges are lines; objects are flat fills.
-- The prototype's red for what hurts or must be noticed. On screenshots of
-  the stand-in, the user took the plain sheet's cobalt for what is
-  collected over the red and over an ink ring with a dot.
+- The colours are high-saturation hues from a widely used design
+  system's A400 accents: electric blue for what is collected, deep orange
+  for what hurts, sky blue for what the pointer is over, amber for a
+  press, with its greys. The user chose them on screenshots over the
+  plain sheet's cobalt with an ink hover and a yellow press, and over two
+  sets from a flat UI palette collection (purple, pink and warm yellow;
+  bright blue, cyan and warm yellow).
 - On the same screenshots the user preferred the plain sheet's coins to the
   prototype's proportions: each coin fills the box a finger taps, on a disc
   of the faint fill the same size, and the board has no frame.
@@ -55,10 +58,9 @@ prototype at 1280×720 and decided:
 - The prototype's character is a reference for the shape, contrast and
   proportions of the subjects on the screen, not a part of the template.
 - What the pointer is over and what a touch presses show as colours of
-  the object itself, a hover colour and yellow, as an option of the
-  template: its helpers are always there, and it is off unless a game
-  turns it on. A ring round the object, built after a published top-down
-  game's UI, was rejected on screenshots.
+  the object itself, as an option of the template: its helpers are always
+  there, and it is off unless a game turns it on. A ring round the object,
+  built after a published top-down game's UI, was rejected on screenshots.
 
 The prototype's values, at 1280×720:
 
@@ -78,27 +80,32 @@ by the formula of `contrast()` in the template:
 
 | Role | Colour | On `canvas` | On `canvas_alt` |
 |------|--------|------------:|----------------:|
-| `canvas`, the paper | #FFFFFF | | 1.13 |
-| `canvas_alt`, 6% ink over the paper | #F1F1F1 | 1.13 | |
-| `line`, 15% ink | #DCDCDB | 1.37 | 1.21 |
-| `solid`, 55% ink | #7E7D7C | 4.11 | 3.64 |
-| `dim` | #65615A | 6.16 | 5.45 |
-| `ink` | #141311 | 18.57 | 16.44 |
-| `reward`, the plain sheet's cobalt | #2563EB | 5.17 | 4.58 |
-| `danger`, the prototype's accent | #E0452B | 4.15 | 3.68 |
-| `pressed`, yellow | #FFC200 | 1.62 | 1.43 |
+| `canvas`, the paper | #FFFFFF | | 1.09 |
+| `canvas_alt`, the system's lightest grey | #F5F5F5 | 1.09 | |
+| `line`, 15% ink | #DEDEDE | 1.35 | 1.23 |
+| `solid`, 62% ink | #757575 | 4.61 | 4.23 |
+| `dim`, a blue grey | #546E7A | 5.40 | 4.95 |
+| `ink`, the system's darkest grey | #212121 | 16.10 | 14.77 |
+| `reward`, electric blue | #3D5AFE | 5.13 | 4.71 |
+| `danger`, deep orange | #FF3D00 | 3.55 | 3.25 |
+| `hover`, sky blue | #00B0FF | 2.43 | 2.23 |
+| `pressed`, amber | #FFC400 | 1.60 | 1.47 |
 
 The prototype's dim, `#8A867D`, reads 3.0:1 on its paper and fails the
-4.5:1 of small text. `#65615A` passes on `canvas_alt`, the surface a label
-is checked against.
+4.5:1 of small text; the blue grey passes on `canvas_alt`, the surface a
+label is checked against. Sky blue and amber stay under 3:1 on the paper,
+which a state shown only while pointed at or for an instant may.
 
 ### The pointer as colours
 
 In the editor's preview (r495.2, Chrome) with the colours on, a coin
-turned ink while the mouse rested on it and its own cobalt again when the
-mouse left. A tap showed the yellow frame for 76 ms, the hit flash's time,
-then the rest frame and the hover frame while the mouse stayed, until the
-coin shrank away.
+turned the hover colour while the mouse rested on it and its own again
+when the mouse left. A tap showed the pressed frame for 76 ms, the hit
+flash's time, then the rest frame and the hover frame while the mouse
+stayed, until the coin shrank away. With three coins, one the mouse left
+for another stayed in the hover colour while the group turned it back on
+"NOT Cursor is over", which holds only when the mouse is over none of
+them; the group now turns every hovered one back first.
 
 ### Fonts in Construct
 
@@ -181,22 +188,24 @@ because a missing font draws the game's Latin text in a serif face.
 ### The colours
 
 `PALETTE` holds the roles of the contrast table and `flash`, white, the
-fill of a hit frame. `reward` is cobalt and `danger` red, and the shape
-tells them apart as well: a circle is collected, a triangle hurts. The
-caution stripes, what moves or triggers, are ink on the paper, and the
-hazard stripes are red. `check_palette()`, `shape()` and `readable()` keep
-the checks of `greybox-blockout.md`.
+fill of a hit frame. `reward` is electric blue and `danger` deep orange,
+and the shape tells them apart as well: a circle is collected, a triangle
+hurts. The caution stripes, what moves or triggers, are ink on the paper,
+and the hazard stripes are deep orange. `check_palette()`, `shape()` and
+`readable()` keep the checks of `greybox-blockout.md`; `accent()` counts a
+role whose channels differ by more than 48 as a hue, so the blue grey
+stays a grey.
 
 ### The subjects
 
 The prototype's player and targets set the shape, contrast and proportions
 of what stands on the screen, not a character of the template:
 
-- The player is the one solid ink mass, about 18:1 on the paper. What it
-  collects is cobalt and what hurts it red, each over 3:1. Structure is the
-  faintest: a fill of 6% ink for areas and slots, `line` at 1.4:1 for
-  rings, and `solid` at 4.1:1 for an edge that marks where something
-  applies.
+- The player is the one solid ink mass, about 16:1 on the paper. What it
+  collects is electric blue and what hurts it deep orange, each over 3:1.
+  Structure is the faintest: the lightest grey for areas and slots, `line`
+  at 1.4:1 for rings, and `solid` at 4.6:1 for an edge that marks where
+  something applies.
 - In an open field a subject is drawn `SUBJECT` across, 6% of the
   viewport's shorter side in whole units, 64 px at 1080, as the
   prototype's discs are 44 px at 720. One that is tapped keeps a box
@@ -253,19 +262,19 @@ bold that Inter lacks.
   text in Inter.
 
 The stand-in game shows the round as a tag, the score, one key, and
-cobalt coins on a board of faint discs.
+electric blue coins on a board of faint discs.
 
 ### The pointer
 
 `POINTER` is the switch, `False` in the template: a game the player points
-at things in sets it. With it on, an object turns `POINTER_STYLE["hover"]`,
-`ink`, while the mouse is over it, and `pressed`, yellow, for an instant
-when it is touched. Both are frames of its own image after the hit frame,
-tagged `hover` and `pressed`, so it keeps its shape and size; the yellow
-one is drawn inside the ink outline, since yellow reads 1.4:1 on the
-paper's fill. `pointer_frames()`, `pointer_drawn()`, `pointer_types()`
-and `pointer_module()` draw, list, declare and play them, and
-`hit(obj, frame="pressed")` flashes the yellow for a hit a touch makes;
+at things in sets it. With it on, an object turns `hover`, sky blue,
+while the mouse is over it, and `pressed`, amber, for an instant when it
+is touched. Both are frames of its own image after the hit frame, tagged
+`hover` and `pressed`, so it keeps its shape and size; `shape(...,
+state=True)` draws them without the 3:1 check. `pointer_frames()`,
+`pointer_drawn()`, `pointer_types()` and `pointer_module()` draw, list,
+declare and play them, and `hit(obj, frame="pressed")` flashes the amber
+for a hit a touch makes;
 with `POINTER` off each adds nothing, so the stand-in calls them and
 generates the same project. A touch screen has no hover and sees only the
 press.

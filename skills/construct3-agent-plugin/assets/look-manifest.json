@@ -110,7 +110,7 @@
     {
       "id": "pointer.colours",
       "status": "adopted",
-      "says": "A game the player points at things in shows the pointer as colours of the object itself: ink while the mouse is over it, the pressed yellow inside its ink outline for an instant when it is touched, then its own colour; frames of its image, so it keeps its shape. Off by default.",
+      "says": "A game the player points at things in shows the pointer as colours of the object itself: sky blue while the mouse is over it, amber for an instant when it is touched, then its own colour; frames of its image, so it keeps its shape, which need not read 3:1 on the paper. Off by default.",
       "template": "POINTER",
       "value": "False",
       "helpers": "pointer_frames(), pointer_drawn(), pointer_types(), pointer_module(), hit()"
@@ -217,18 +217,18 @@
       "id": "palette.greys",
       "status": "enforced",
       "strict": true,
-      "says": "Paper and ink: a white paper and a 6% ink fill, a 15% ink line grey for structure the eye reads past, a 55% ink grey for edges and structure, dim, ink, and a cobalt for what is collected, a red for what hurts and a yellow for a press, plus the hit's flash; the player in ink. The paper and its fill at most 1.2:1, solid at least 3:1 on the fill.",
+      "says": "Paper and ink: a white paper and a faint grey fill, a 15% ink line grey for structure the eye reads past, a 62% ink grey for edges and structure, a blue grey dim, ink, an electric blue for what is collected, a deep orange for what hurts, a sky blue for what the pointer is over and an amber for a press, plus the hit's flash; the hues a design system's A400 accents. The player in ink. The paper and its fill at most 1.2:1, solid at least 3:1 on the fill.",
       "template": "{role: '#%02X%02X%02X' % colour for role, colour in PALETTE.items()}",
-      "value": "{'canvas': '#FFFFFF', 'canvas_alt': '#F1F1F1', 'line': '#DCDCDB', 'solid': '#7E7D7C', 'dim': '#65615A', 'ink': '#141311', 'reward': '#2563EB', 'danger': '#E0452B', 'pressed': '#FFC200', 'flash': '#FFFFFF'}",
+      "value": "{'canvas': '#FFFFFF', 'canvas_alt': '#F5F5F5', 'line': '#DEDEDE', 'solid': '#757575', 'dim': '#546E7A', 'ink': '#212121', 'reward': '#3D5AFE', 'danger': '#FF3D00', 'hover': '#00B0FF', 'pressed': '#FFC400', 'flash': '#FFFFFF'}",
       "helpers": "check_palette()"
     },
     {
       "id": "colour.accent-contrast",
       "status": "enforced",
       "strict": true,
-      "says": "An accent, a role that is a hue and not a grey, reads at least 3:1 on canvas_alt when drawn without an outline, or is drawn with its ink outline; every outlined fill reads at least 3:1 against the ink.",
+      "says": "An accent, a role that is a hue and not a grey, reads at least 3:1 on canvas_alt when drawn without an outline, or is drawn with its ink outline, except a hover or a press frame; every outlined fill reads at least 3:1 against the ink.",
       "template": "[role for role in PALETTE if accent(role)]",
-      "value": "['reward', 'danger', 'pressed']",
+      "value": "['reward', 'danger', 'hover', 'pressed']",
       "helpers": "accent(), shape()"
     },
     {
