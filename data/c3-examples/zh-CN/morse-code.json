@@ -1,0 +1,26 @@
+{
+  "id": "morse-code",
+  "name": "游戏示例：摩斯电码",
+  "description": "使用摩尔斯电码敲出信息，并将解码后的信息以可读文本的形式打印出来。",
+  "tags": [
+    "新增",
+    "进阶",
+    "玩法机制",
+    "解谜"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Touch"
+    ],
+    "behaviors": [
+      "Timer",
+      "Tween"
+    ],
+    "effects": []
+  },
+  "open": "https://editor.construct.net/#open=morse-code"
+}

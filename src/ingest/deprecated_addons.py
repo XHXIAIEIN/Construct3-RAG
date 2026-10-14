@@ -12,7 +12,8 @@ packs carry no such flag, so the export reads it from the editor bundles:
   builds, so it is looked up each time.
 - ``plugins/allEditorPlugins.js`` and ``behaviors/allEditorBehaviors.js``:
   each addon's constructor, ``this.p=X.m(self.v,ID)`` followed by calls on
-  ``this.p`` such as ``this.p.Fs(!0)``.
+  ``this.p`` such as ``this.p.Fs(!0)``, under names that also change between
+  builds (``common_aces.addon_info_matches``).
 
 Effects need none of this: ``allEffects.json`` has ``is-deprecated``, and
 ACEs have ``isDeprecated`` in ``allAces.json`` and in ``common_aces.json``.
@@ -23,7 +24,9 @@ from __future__ import annotations
 
 import re
 
-from src.ingest.common_aces import _call_args, _constructor_body, _id_before, _js_value, _sdk_class
+from src.ingest.common_aces import (
+    _call_args, _constructor_body, _id_before, _js_value, _sdk_class, addon_info_matches, info_receivers,
+)
 from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 
 ADDON_KINDS = ("plugins", "behaviors")
@@ -33,11 +36,6 @@ SDK_INFO_ANCHORS = {
     "plugins": "window.SDK.IPluginInfo=class{",
     "behaviors": "window.SDK.IBehaviorInfo=class{",
 }
-
-# ``const t=this.p=X.m(self.v,ID)`` in a plugin constructor, ``self.sV`` in a
-# behavior's: the optional alias, then the variable that holds the addon id.
-ADDON_INFO_RE = re.compile(r"(?:const ([\w$]+)=)?this\.p=[\w$]+\.m\((?:self|globalThis)\.[\w$]+,([\w$]+)\)")
-
 
 def deprecated_setter(main_js: str, kind: str) -> str:
     """The minified setter that ``SetIsDeprecated`` of the ``kind`` info class calls."""
@@ -59,16 +57,15 @@ def extract_deprecation(main_js: str, bundle_js: str, kind: str) -> dict[str, bo
     """
     setter = re.escape(deprecated_setter(main_js, kind))
     result: dict[str, bool] = {}
-    for m in ADDON_INFO_RE.finditer(bundle_js):
-        addon_id = _id_before(bundle_js, m.group(2), m.start())
+    for m in addon_info_matches(bundle_js):
+        addon_id = _id_before(bundle_js, m.group(4), m.start())
         if addon_id is None:
             raise ValueError(f"cannot resolve the {kind[:-1]} id at offset {m.start()} of the editor bundle")
         if addon_id in result:
             raise ValueError(f"{kind[:-1]} {addon_id!r} is constructed twice in the editor bundle")
         body, top = _constructor_body(bundle_js, m.start(), f"{kind[:-1]} {addon_id!r}")
-        receivers = r"this\.p" + (f"|{re.escape(m.group(1))}" if m.group(1) else "")
         deprecated = False
-        for call in re.finditer(rf"(?<![\w$.])(?:{receivers})\.{setter}\(", body):
+        for call in re.finditer(rf"(?<![\w$.]){info_receivers(m)}\.{setter}\(", body):
             if not top[call.start()]:
                 continue
             value = _js_value(_call_args(body, call.end()))

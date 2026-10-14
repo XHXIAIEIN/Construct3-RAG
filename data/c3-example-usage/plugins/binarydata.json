@@ -22,6 +22,6 @@
     "get-int8": {"examples": 1, "read": [["bbc-micro-bit-raw", "TemperatureReading", 3, 3]]},
     "get-uint16": {"examples": 1, "read": [["bbc-micro-bit-raw", "MagnetometerReading", 3, 3]]},
     "get-uint8": {"examples": 1, "read": [["bbc-micro-bit-raw", "ChangeLED", 3, 3]]},
-    "get-url": {"examples": 2, "read": [["multiplayer-binary-transfer", "Room events", 30, 30], ["music-player", "Events", 32, 34]]}
+    "get-url": {"examples": 3, "read": [["multiplayer-binary-transfer", "Room events", 30, 30], ["music-player", "Events", 32, 34], ["3d-file-explorer", "Events", 59, 60]]}
   }
 }

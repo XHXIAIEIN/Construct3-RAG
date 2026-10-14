@@ -1,0 +1,39 @@
+{
+  "id": "cargo-yard",
+  "name": "3D逃离工厂",
+  "description": "在巡逻森严的工厂里，悄悄穿过集装箱。尽量待在阴影处以躲避无人机视线。",
+  "tags": [
+    "新增",
+    "进阶",
+    "3D",
+    "游戏模板",
+    "解谜",
+    "策略"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Light3D",
+      "Model3D",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Flash",
+      "MoveTo",
+      "Rotate",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cargo-yard"
+}

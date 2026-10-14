@@ -1,0 +1,39 @@
+{
+  "id": "arcanigma",
+  "name": "Arcanigma",
+  "description": "Play as a wizard who phases objects in and out of reality, bending the world around you to solve puzzles and progress through the levels.",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Game template",
+    "Platformer"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "MoveTo",
+      "Physics",
+      "Platform",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "dodge",
+      "gamma",
+      "hsladjust",
+      "tint"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=arcanigma"
+}

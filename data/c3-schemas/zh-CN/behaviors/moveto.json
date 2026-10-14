@@ -316,7 +316,7 @@
       "scriptName": "SetEnabled",
       "category": "properties",
       "list-name": "设置启用",
-      "display-text": "[b]{0}[/b] {my}",
+      "display-text": "启用 {my}: [b]{0}[/b]",
       "description": "启用或禁用此行为。",
       "params": {
         "enabled": {

@@ -6013,7 +6013,7 @@
           },
           "set-enabled": {
             "list-name": "设置启用",
-            "display-text": "[b]{0}[/b] {my}",
+            "display-text": "启用 {my}: [b]{0}[/b]",
             "description": "启用或禁用此行为。",
             "params": {
               "enabled": {
@@ -6424,7 +6424,7 @@
           },
           "set-enabled": {
             "list-name": "设置启用",
-            "display-text": "[b]{0}[/b] {my}",
+            "display-text": "启用 {my}: [b]{0}[/b]",
             "description": "启用或禁用此行为。",
             "params": {
               "state": {
@@ -6600,7 +6600,7 @@
           },
           "set-enabled": {
             "list-name": "设置启用状态",
-            "display-text": "设置 {my} 启用 [b]{0}[/b]",
+            "display-text": "启用 {my}: [b]{0}[/b]",
             "description": "启用或禁用此行为。",
             "params": {
               "state": {
@@ -6721,13 +6721,13 @@
             "look-in": "查找范围",
             "match-case": "匹配大小写",
             "active-event-sheet": "当前事件表",
-            "all-event-sheets": "所有事件表",
-            "all-project-files": "所有项目文件",
-            "active-flowchart": "当前时间轴",
-            "all-flowcharts": "整个项目的时间轴",
+            "all-event-sheets": "全部事件表",
+            "all-project-files": "全部文件",
+            "active-flowchart": "当前流程图",
+            "all-flowcharts": "全部流程图",
             "active-timeline": "当前时间轴",
-            "all-timelines": "整个项目的时间轴",
-            "all-event-sheets-and-files": "所有事件表/文件/流程图/时间轴"
+            "all-timelines": "全部时间轴",
+            "all-event-sheets-and-files": "全部位置"
           },
           "project-file-location": "第 {0} 行",
           "dictionary-key-location": "字段 [i]{0}[/i]",
@@ -6753,7 +6753,7 @@
               "timeline-keyframe-tags": "关键帧标签"
             }
           },
-          "sheet": "事件表/文件 / 流程图 / 时间轴",
+          "sheet": "路径",
           "short-search-title": "查找结果 ({0})"
         },
         "layers": {
@@ -6783,14 +6783,26 @@
             "insert-layer-above": "添加图层到上方",
             "insert-layer-below": "添加图层到下方",
             "insert-sub-layer": "添加子图层",
-            "open-original-global-layer-layout": "打开原始图层场景"
+            "open-original-global-layer-layout": "打开原始图层场景",
+            "project-wide-changes": "更改整个项目",
+            "replicate-across-project": "用此图层更新整个项目中的同名图层",
+            "rename-across-project": "重命名整个项目中的同名图层"
           },
           "confirm-delete": {
             "caption": "删除层",
             "message": "删除图层也将删除它上面的所有实例对象。你确定要删除图层吗?"
           },
           "global": "全局",
-          "overridden": "被覆盖"
+          "overridden": "被覆盖",
+          "confirm-replicate-layer": {
+            "caption": "更新整个项目中的同名图层",
+            "message": "这会将整个项目中所有名为 [b]{0}[/b] 的图层（不区分大小写）更新为与当前图层一致，包括其所有子图层。此操作无法撤销，建议先备份项目。确定要继续吗？"
+          },
+          "rename-layer-across-project-prompt": {
+            "caption": "重命名整个项目中的同名图层",
+            "message": "为整个项目中所有名为 [b]{0}[/b] 的图层输入新名称。",
+            "input-label": "名称"
+          }
         },
         "project": {
           "title": "项目栏",
@@ -6988,7 +7000,10 @@
               "import-from-folder": "导入文件夹",
               "import-from-file": "导入文件",
               "duplicate": "复制",
-              "help": "查看 3D 模型文档"
+              "help": "查看 3D 模型文档",
+              "import-with-options": "导入选项",
+              "replace": "替换",
+              "replace-with-options": "替换时设置选项"
             },
             "model3dFolderItem": {
               "add-model3d": "创建 3D 模型",
@@ -7035,6 +7050,9 @@
             },
             "models3d": {
               "other": "您确定要删除选定的 [b]{0}[/b] 个 3D 模型吗？"
+            },
+            "project-files": {
+              "other": "您确定要删除选定的 [b]{0}[/b] 个项目文件吗？"
             }
           },
           "files": {
@@ -7394,6 +7412,31 @@
                 "name": "Z",
                 "desc": "绕 Z 轴旋转的角度。"
               }
+            },
+            "common-material-properties": {
+              "name": "材质",
+              "desc": "影响 3D 光照的物体材质的属性。"
+            },
+            "material-surface-type": {
+              "name": "表面类型",
+              "desc": "以平面或平滑外观渲染网格三角形。",
+              "items": {
+                "no-lighting": "无灯光",
+                "flat": "平面",
+                "smooth": "平滑"
+              }
+            },
+            "transmissiveness": {
+              "name": "透光率",
+              "desc": "光线穿过受光面到达另一侧的程度。"
+            },
+            "metallic": {
+              "name": "金属度",
+              "desc": "较低的值表示非金属材质（如塑料、木材、石头）；较高的值表示金属材质（如钢、金）。"
+            },
+            "roughness": {
+              "name": "粗糙度",
+              "desc": "较低的值表示有光泽的材质；较高的值表示哑光材质。"
             }
           },
           "layer": {
@@ -7510,7 +7553,8 @@
               "desc": "针对3D图层，对象显示优先级是按照2D图层的前后顺序绘制，还是按照3D相机视角的距离远近绘制。",
               "options": {
                 "z-order": "图层顺序",
-                "camera-distance": "相机距离"
+                "camera-distance": "相机距离",
+                "z-order-flip": "Z轴顺序翻转"
               }
             },
             "initially-interactive": {
@@ -7671,6 +7715,10 @@
             "pixel-snapping": {
               "name": "像素捕捉",
               "desc": "即使关闭 \"对齐网格\" 选项，也会对齐到 1x1 网格。"
+            },
+            "ambient-light": {
+              "name": "环境光",
+              "desc": "使用 3D 照明时，环境光的最低亮度。"
             }
           },
           "project": {
@@ -7911,21 +7959,6 @@
               },
               "desc": "使用实验性的WebGPU渲染器，这通常会提高性能。若设备不支持，则自动退回到WebGL。"
             },
-            "z-axis-scale": {
-              "name": "Z轴刻度",
-              "options": {
-                "normalized": "归一化",
-                "regular": "标准"
-              },
-              "normalized-confirmation": "Z 轴刻度的 '归一化' 模式现已标记为弃用。未来将移除此模式，取而代之的是 \"标准\" 模式。您想要提前更改为 \"标准\" 模式吗？",
-              "desc": "用于 3D 功能在 Z 轴使用的单位尺度。'归一化' 选项使用与 X/Y 轴相同的单位。'标准' 选项使用 0–100 的范围，但已被弃用—— 请改用 '标准' 模式。",
-              "convert": {
-                "name": "转换 Z 轴比例",
-                "desc": "将项目转换为 '标准' Z 轴比例。",
-                "link": "转换为 '标准'",
-                "confirmation-message": "将项目转换为 Z 轴比例 '标准' 模式将影响项目中所有布局和图层内所有 3D 内容的 Z 坐标和深度。此操作无法撤销。请注意，这不会自动更新您的事件表或代码，相关内容可能仍需手动更新。您要继续吗？"
-              }
-            },
             "fov": {
               "name": "相机FOV",
               "desc": "改变相机前方聚焦的可见区域角度，仅在Z轴刻度为 '常规' 模式下生效。注意，这也将会改变相机默认Z轴刻度。"
@@ -7964,6 +7997,10 @@
             "fixed-framerate": {
               "name": "固定帧率",
               "desc": "目标帧率。实际帧率受硬件性能限制影响。"
+            },
+            "save-llm-context-file": {
+              "name": "保存LLM提示文件",
+              "desc": "将 llm-context.md 文件随此项目一起保存，为 AI 工具提供项目基础上下文。"
             }
           },
           "seconds-suffix": "s",
@@ -9607,6 +9644,9 @@
               },
               "svg-failure": {
                 "other": "有 {0} 个 SVG 文件无法使用。"
+              },
+              "model-failure": {
+                "other": "有 {0} 个模型文件无法使用。"
               }
             },
             "find-in-tree": "在文件夹内查找",
@@ -9631,7 +9671,8 @@
                 "font": "字体",
                 "icon": "图标",
                 "general": "文件",
-                "svg": "SVG"
+                "svg": "SVG",
+                "model": "3D模型"
               },
               "type-error": "以下类型无法导入: [b]{0}[/b]"
             },
@@ -9641,6 +9682,9 @@
             "license": "许可条例",
             "svg": {
               "other": "导入 SVG 文件 ({0}个)"
+            },
+            "models": {
+              "other": "导入 {0} 个 3D 模型"
             }
           },
           "source-not-available-in-free-edition": "此功能在免费版不可用",
@@ -12375,6 +12419,34 @@
           "word-search": {
             "name": "游戏示例：单词速查",
             "description": "你能多快找到列表中的每个单词？"
+          },
+          "magic-cube": {
+            "name": "3D魔法",
+            "description": "经典的3D魔方游戏，每个轴都可基于四元数来平滑旋转。你能解开它吗？"
+          },
+          "morse-code": {
+            "name": "游戏示例：摩斯电码",
+            "description": "使用摩尔斯电码敲出信息，并将解码后的信息以可读文本的形式打印出来。"
+          },
+          "arcane-express": {
+            "name": "3D奥术列车",
+            "description": "护送魔法水晶穿越充满敌意的奇幻世界，与被施了魔法的敌方防御塔战斗，并利用英雄们的能力生存下来，到达传送门。"
+          },
+          "arcanigma": {
+            "name": "游戏示例：幻影秘境",
+            "description": "扮演一位巫师，让物体在现实中显现或消失，改变周围的世界，解开谜题并闯过各个关卡。"
+          },
+          "cavern-lights": {
+            "name": "3D洞穴之光",
+            "description": "在运用 3D 光照的神秘洞穴中，寻找并唤醒五枚古老符文。"
+          },
+          "cargo-yard": {
+            "name": "3D逃离工厂",
+            "description": "在巡逻森严的工厂里，悄悄穿过集装箱。尽量待在阴影处以躲避无人机视线。"
+          },
+          "sir-cuits": {
+            "name": "游戏示例：跳跳宝贝",
+            "description": "帮助库伊茨爵士找到梅查艾拉！放置跳板并利用物理原理闯关。"
           }
         },
         "new": "新建项目",
@@ -13404,7 +13476,9 @@
               "pick-message": {
                 "title": "没有3D模型",
                 "message": "当前项目 '{0}' 中没有任何 3D 模型对象。使用之前先创建一个。"
-              }
+              },
+              "mesh": "网格",
+              "bone": "骨骼"
             }
           },
           "call-tip-templates": {
@@ -14319,12 +14393,17 @@
           "no-platforms-selected": "还没有选择运行平台，请至少选择一种平台进行导出。",
           "export-for-remote-preview": "导出为远程预览",
           "window-caption": "窗口标题栏",
-          "export-for-steam": "导出到 Steam",
           "bundle": {
             "label": "捆绑",
             "none": "无",
             "bundle-assets": "资产",
             "single-file": "单文件"
+          },
+          "steam-mode": {
+            "label": "Steam 支持",
+            "none": "无",
+            "overlay": "浮窗面板",
+            "capture": "游戏录制"
           }
         },
         "wv2ExportReport": {
@@ -14529,7 +14608,7 @@
             "file-structure": "请注意。这个项目的兼容性 '导出文件结构' 使用了早期的 [i]平铺[/i] 模式。此模式已不再受支持，已为您自动更新为现代的 [i]文件夹[/i] 模式。请检查与文件引用相关的事件，如：按文件名播放音频、视频等文件路径。若您的文件被放置在子文件夹中，需补全文件夹名称。如：将 \"file.webm\"  更改为 \"folder/file.webm\"",
             "cordova-ios-scheme": "请注意，这个项目的 [i]Cordova 兼容性属性 'iOS 应用跳转'[/i]  使用了早期的 [i]file:[/i] 协议。此模式已不再受支持，已为您自动更新为现代的 [i]app:[/i] 协议。如果您之前将此项目发布为 iOS 应用，这可能会导致存储空间被重置。",
             "cordova-android-scheme": "请注意，这个项目的 [i]Cordova 兼容性属性 'Android 应用跳转'[/i]  使用了早期的 [i]file:[/i]  协议。此模式已不再受支持，已为您自动更新为现代的 [i]https:[/i] 协议。如果您之前将此项目发布为 Android 应用，这可能会导致存储空间被重置。",
-            "z-axis-scale-normalized": "本项目包含旧版的项目属性, 位于 '兼容性' - 'Z轴刻度' 的[i]归一化[/i]。该模式已被标记为弃用，未来将移除对其的支持，请将其切换为[i]标准[/i]模式。"
+            "z-axis-scale": "本项目使用了旧版本的 Z轴缩放 [i]标准化[/i] 模式。现已更新为现代的 [i]常规[/i] 模式。您可能需要调整一些 3D 内容。"
           },
           "header-text": "这个项目包含了一些已被弃用的功能。这些功能已不受官方支持，并在未来版本中可能被移除。为了保证您的项目可维护性，建议更新项目的部分设置。[a1]了解更多关于已弃用功能以及如何更新项目[/a1]"
         },
@@ -14819,6 +14898,10 @@
             "svg": {
               "type": "SVG",
               "description": "为每个 SVG 文件创建一个对象类型，并将每个文件添加到项目的 [b]文件[/b] 文件夹中。"
+            },
+            "models": {
+              "type": "3D模型",
+              "description": "所有模型文件都将导入到项目的[b]3D模型[/b]文件夹中。"
             }
           }
         },
@@ -14852,6 +14935,26 @@
               "y": "Y",
               "z": "Z"
             }
+          }
+        },
+        "modelPreview": {
+          "caption": "预览模型",
+          "model-title": "{0} ({1})",
+          "animations": "动画:",
+          "no-preview": "暂无预览"
+        },
+        "model3dReplace": {
+          "caption": "替换3D模型",
+          "message": "选择用于替换各个 3D 模型内容的文件：",
+          "table": {
+            "model": "3D模型",
+            "file": "文件"
+          }
+        },
+        "itemPicker": {
+          "caption": "选择一个项目",
+          "selected-items": {
+            "other": "已选择: {0}"
           }
         }
       },
@@ -15701,7 +15804,8 @@
         "link-flowchart-nodes": "连接到流程节点",
         "unlink-flowchart-nodes": "断开流程节点",
         "sort-flowchart-node-outputs": "流程图 - 调整输出值顺序",
-        "switch-language": "切换编程语言"
+        "switch-language": "切换编程语言",
+        "change-material-properties": "改变材质属性 ({0})"
       },
       "cannot-open-popup": "无法打开弹出窗口。如果浏览器警告您有弹出窗口，您将需要批准它，然后再试一次。否则，您可能需要在浏览器权限设置中重新配置，或关闭弹出窗口拦截器，以允许此窗口弹出。",
       "loading-screen": {
@@ -16222,6 +16326,10 @@
               "description-color-only": "导入的文件没有包含纹理数据，也可能未包含有效的 UV 数据，这个网格只能用绘制颜色。",
               "texture": "纹理",
               "color": "颜色"
+            },
+            "type": {
+              "name": "类型",
+              "description": "纹理的类型？"
             }
           }
         }
@@ -17911,7 +18019,13 @@
               "rotation-y": "旋转Y",
               "rotation-z": "旋转Z"
             },
-            "instance-variables": "实例变量"
+            "instance-variables": "实例变量",
+            "material": {
+              "title": "材质",
+              "transmissiveness": "透光率",
+              "metallic": "金属度",
+              "roughness": "粗糙度"
+            }
           },
           "unavailable": "(不可使用)",
           "gpu-profiler": {
@@ -18154,11 +18268,7 @@
           }
         },
         "new-flowchart-name": "流程 {0}",
-        "new-model3d-name": "3D模型 {0}",
-        "set-z-axis-scale-notification": {
-          "title": "Z轴刻度设置为 '常规'",
-          "message": "该项目仅包含 2D 内容，但使用了已弃用的 Z 轴比例 \"标准\" 属性，因此已自动更新。"
-        }
+        "new-model3d-name": "3D模型 {0}"
       },
       "layout": {
         "layer": {
@@ -18632,7 +18742,8 @@
         "import": {
           "picker-caption": "选择文件夹 {0} 模型文件",
           "picker-message": "从文件夹 {0} 选择模型文件:",
-          "confirm": "导入"
+          "confirm": "导入",
+          "selected-zip-files": "选择压缩包文件 (zip)"
         },
         "errors": {
           "name-used": {
@@ -18682,6 +18793,16 @@
           "morph-targets-present": {
             "title": "不支持的变形目标",
             "message": "该模型包含不支持的变形目标动画。"
+          },
+          "misc-load-errors": {
+            "title": "3D模型文件导入失败",
+            "message": {
+              "other": "有 {1} 个3D模型文件 [i]{0}[/i] 导入不成功"
+            }
+          },
+          "multiple-materials-present": {
+            "title": "不支持多重材质",
+            "message": "该模型在某些网格上包含了多重材质，而这些材质不受支持。"
           }
         }
       }
@@ -22931,7 +23052,7 @@
           "increment": {
             "list-name": "增加",
             "display-text": "增加成就 [b]{0}[/b] 达成 [i]{1}[/i] 阶段",
-            "description": "增加分步成就的达成阶段。",
+            "description": "增加阶段成就的进度。",
             "params": {
               "achievement-id": {
                 "name": "成就ID",
@@ -22939,7 +23060,7 @@
               },
               "steps": {
                 "name": "步骤",
-                "desc": "增加分布成就的步数。"
+                "desc": "要增加的进度值。"
               }
             }
           },
@@ -23233,7 +23354,7 @@
           },
           "hiscoremybestformattedrank": {
             "description": "获取玩家最高得分的格式化后的排名。",
-            "translated-name": "获取格式化个人最佳排名"
+            "translated-name": "获取格式化的个人最佳排名"
           },
           "myid": {
             "description": "已登录的玩家ID。",
@@ -28028,21 +28149,21 @@
           "is-clockwise-from": {
             "list-name": "在顺时针方向",
             "display-text": "{0} 在 {1} 顺时针方向",
-            "description": "比较角度是否是从另一个角度顺时针方向。",
+            "description": "比较角度是不是位于另一个角度的顺时针方向。",
             "params": {
               "angle-1": {
-                "name": "角度1",
-                "desc": "需要测试的角度，以度为单位。"
+                "name": "目标角度",
+                "desc": "要判断的角度。"
               },
               "angle-2": {
-                "name": "角度2",
-                "desc": "用于测试是否在角度1的顺时针方向的角度。"
+                "name": "参照角度",
+                "desc": "作为判断基准的角度。用于判断目标角度是否在它的顺时针方向。"
               }
             }
           },
           "is-between-angles": {
             "list-name": "在角度范围内",
-            "display-text": "{0} 角度在 {1}° 与 {2}° 之间",
+            "display-text": "{0} 角度在 {1} 与 {2} 之间",
             "description": "比较角度是否位于两角度之间。",
             "params": {
               "angle": {
@@ -28325,7 +28446,7 @@
           },
           "pick-nth-instance": {
             "list-name": "按顺序选择",
-            "display-text": "选择第 {1} 个 {0} 实例对象",
+            "display-text": "选择第 {1} 个 {0} 实例",
             "description": "从当前已选取的实例中，选择第n个实例。",
             "params": {
               "object": {
@@ -28513,10 +28634,10 @@
           "every-x-seconds": {
             "list-name": "每隔 X 秒",
             "display-text": "每 [b]{0}[/b] 秒",
-            "description": "以固定的时间间隔运行操作。",
+            "description": "以固定的间隔执行动作。",
             "params": {
               "interval-seconds": {
-                "name": "间隔（秒）",
+                "name": "间隔",
                 "desc": "每隔一段时间依次执行每个动作。此时间间隔会受到帧速率的影响，每个动作在每帧不会执行超过一次。"
               }
             }
@@ -28524,14 +28645,14 @@
           "compare-time": {
             "list-name": "比较时间",
             "display-text": "时间 {0} [b]{1}[/b] 秒",
-            "description": "比较当前时间（启动后的秒数）",
+            "description": "比较当前时间 (启动后的秒数)",
             "params": {
               "comparison": {
                 "name": "比较",
                 "desc": "选择一种比较方式。"
               },
               "time-seconds": {
-                "name": "秒",
+                "name": "时间",
                 "desc": "比较自游戏运行以来累计的秒数。"
               }
             }
@@ -28655,8 +28776,8 @@
                 "desc": "当结果出现并列结果时，选中所有并列的实例。否则只选中一个。"
               }
             },
-            "display-text": "选择 {2} {1}的 {0}  (包含并列结果: [i]{3}[/i])",
-            "description": "根据表达式计算结果，选中数值最高或最低的实例。"
+            "description": "根据表达式计算结果，选中数值最高或最低的实例。",
+            "display-text": "选择 {2} {1}的{0} (包含并列结果: [i]{3}[/i])"
           }
         },
         "actions": {
@@ -29938,6 +30059,17 @@
                   "bilinear": "双线性",
                   "trilinear": "三线性"
                 }
+              }
+            }
+          },
+          "set-layout-ambient-light": {
+            "list-name": "设置场景环境光",
+            "display-text": "设置场景环境光为 [b]{0}[/b]",
+            "description": "设置当前场景的环境光强度。",
+            "params": {
+              "ambient-light": {
+                "name": "环境光",
+                "desc": "环境光照度，范围为 0-1。"
               }
             }
           }
@@ -31338,7 +31470,7 @@
             }
           },
           "hex-color": {
-            "translated-name": "转换颜色值",
+            "translated-name": "HexColor",
             "description": "将十六进制颜色值转换为 RGBA 颜色值格式。",
             "params": {
               "string": {
@@ -31348,7 +31480,7 @@
             }
           },
           "color-to-hex-string": {
-            "translated-name": "转换颜色值",
+            "translated-name": "转换十六进制颜色值",
             "description": "将 RGBA 值生成 CSS 样式的十六进制字符串。",
             "params": {
               "color-value": {
@@ -31386,6 +31518,10 @@
               }
             },
             "translated-name": "distance3d"
+          },
+          "layoutambientlight": {
+            "description": "获取布局中当前的环境光照强度。",
+            "translated-name": "场景环境光"
           }
         },
         "description": "提供对 Construc 引擎的生命周期的访问。"
@@ -34262,7 +34398,8 @@
           "mesh": "纹理",
           "collisions": "碰撞",
           "template": "模版对象",
-          "3d-rotation": "3D旋转"
+          "3d-rotation": "3D旋转",
+          "material": "材质"
         },
         "conditions": {
           "is-within-angle": {
@@ -34282,12 +34419,12 @@
           },
           "is-clockwise-from": {
             "list-name": "在顺时针方向",
-            "display-text": "角度在 {0} 顺时针方向",
+            "display-text": "在 {0} 顺时针方向",
             "description": "比较对象的角度是否在另一个角度的顺时针方向。",
             "params": {
               "angle": {
-                "name": "角度",
-                "desc": "测试对象顺时针方向的角度，以度数为单位。"
+                "name": "参照角度",
+                "desc": "作为参照的角度，用于判断对象角度是否在它顺时针方向。"
               }
             }
           },
@@ -35511,6 +35648,55 @@
                 "desc": "绕 Z 轴旋转的角度。"
               }
             }
+          },
+          "set-material-surface-type": {
+            "list-name": "设置材质表面",
+            "display-text": "设置材质表面类型为[b]{0}[/b]",
+            "description": "设置用于 3D 光照的材质表面类型。",
+            "params": {
+              "surface-type": {
+                "name": "表面类型",
+                "desc": "要设置的表面类型。",
+                "items": {
+                  "no-lighting": "无灯光",
+                  "flat": "平面",
+                  "smooth": "光滑"
+                }
+              }
+            }
+          },
+          "set-transmissiveness": {
+            "list-name": "设置透光率",
+            "display-text": "设置透光率为[b]{0}[/b]",
+            "description": "设置3D光线透射物体材质的强度。可用来模拟玻璃、水面或果冻等半透明且折射光线的材质。",
+            "params": {
+              "transmissiveness": {
+                "name": "透光率",
+                "desc": "透光率强度，从 0 到 100 范围。数值越高，越透光。"
+              }
+            }
+          },
+          "set-metallic": {
+            "list-name": "设置金属度",
+            "display-text": "设置金属度为[b]{0}[/b]",
+            "description": "设置材质是否具有漫反射和镜面反射的质感。",
+            "params": {
+              "metallic": {
+                "name": "金属度",
+                "desc": "金属感强度，从 0 到 100 范围。数值越高，金属感越强。"
+              }
+            }
+          },
+          "set-roughness": {
+            "list-name": "设置粗糙度",
+            "display-text": "设置粗糙度为[b]{0}[/b]",
+            "description": "控制光的折射和反射的模糊程度。可用来模拟光滑、高光锐利的表面，如镜子、玻璃、塑料、木材、石头、粗布、墙面。",
+            "params": {
+              "roughness": {
+                "name": "粗糙度",
+                "desc": "材质的粗糙程度，从 0 到 100 范围。数值越高，表面越粗糙。"
+              }
+            }
           }
         },
         "expressions": {
@@ -35707,6 +35893,18 @@
           "rotation-z": {
             "translated-name": "旋转Z",
             "description": "绕Z轴旋转的角度。"
+          },
+          "transmissiveness": {
+            "translated-name": "透光率",
+            "description": "透光率强度，从 0 到 100 范围。数值越高，越透光。"
+          },
+          "metallic": {
+            "translated-name": "金属度",
+            "description": "金属感强度，从 0 到 100 范围。数值越高，金属质感越强。"
+          },
+          "roughness": {
+            "translated-name": "粗糙度",
+            "description": "材质的粗糙程度，从 0 到 100 范围。数值越高，表面越粗糙。"
           }
         }
       },
@@ -39516,7 +39714,8 @@
           "by-timeline": "按时间轴",
           "all": "所有时间轴",
           "triggers": "触发器",
-          "misc": "其他"
+          "misc": "其他",
+          "pick-instances": "选择实例"
         },
         "conditions": {
           "on-any-timeline-started": {
@@ -39659,6 +39858,39 @@
             "list-name": "任意时间轴正在暂停",
             "display-text": "任意时间轴正在暂停",
             "description": "检测是否有任意的时间轴动画正在暂停。"
+          },
+          "pick-all-in-timeline": {
+            "list-name": "选择时间轴中的全部实例",
+            "display-text": "选择 [b]{0}[/b] 中的全部实例",
+            "description": "选择时间轴中的全部实例。",
+            "params": {
+              "timeline": {
+                "name": "时间轴",
+                "desc": "要从中选择实例的时间轴。"
+              }
+            }
+          },
+          "pick-all-in-timeline-by-name": {
+            "list-name": "选择时间轴中的全部实例（按名称）",
+            "display-text": "选择 [b]{0}[/b] 中的全部实例",
+            "description": "选择时间轴中的全部实例。",
+            "params": {
+              "timeline-name": {
+                "name": "名称",
+                "desc": "要从中选择实例的时间轴名称。"
+              }
+            }
+          },
+          "pick-all-in-timelines-by-tags": {
+            "list-name": "选择带指定标签的时间轴中的全部实例",
+            "display-text": "选择带标签 [b]{0}[/b] 的时间轴中的全部实例",
+            "description": "选择匹配的时间轴中的全部实例。",
+            "params": {
+              "tags": {
+                "name": "标签",
+                "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
+              }
+            }
           }
         },
         "actions": {
@@ -39733,7 +39965,7 @@
             "params": {
               "tags": {
                 "name": "标签",
-                "desc": "要操作的时间轴的标签。使用空格分隔多个标签。"
+                "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
               }
             },
             "list-name": "停顿"
@@ -39744,7 +39976,7 @@
             "params": {
               "tags": {
                 "name": "标签",
-                "desc": "要操作的时间轴的标签。使用空格分隔多个标签。"
+                "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
               }
             },
             "list-name": "恢复播放"
@@ -39755,7 +39987,7 @@
             "params": {
               "tags": {
                 "name": "标签",
-                "desc": "要操作的时间轴的标签。使用空格分隔多个标签。"
+                "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
               }
             },
             "list-name": "停止"
@@ -39781,7 +40013,7 @@
             "params": {
               "tags": {
                 "name": "标签",
-                "desc": "要操作的时间轴的标签。使用空格分隔多个标签。"
+                "desc": "填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
               },
               "rate": {
                 "name": "倍速",
@@ -39794,6 +40026,67 @@
             "list-name": "取消设置实例",
             "display-text": "取消设置所有实例",
             "description": "取消设置下一个时间轴在之前设置的所有实例。"
+          },
+          "play-timeline-in-range": {
+            "list-name": "播放指定范围",
+            "display-text": "播放 [b]{0}[/b] 标签 [i]{1}[/i] 从 [i]{2}[/i] 到 [i]{3}[/i]",
+            "description": "在指定范围内播放时间轴。如果开始时间晚于结束时间，会调整播放速度。",
+            "params": {
+              "timeline": {
+                "name": "时间轴",
+                "desc": "开始播放时间轴动画。"
+              },
+              "tags": {
+                "name": "标签",
+                "desc": "可选。填写一个字符串，可以是任意内容，用于区分不同的时间轴。使用空格分隔多个标签。"
+              },
+              "start": {
+                "name": "开始",
+                "desc": "时间轴开始播放的时间。如果提供以空格分隔的标签列表，则使用第一个匹配关键帧的时间作为开始时间。如果找不到开始时间，则默认从时间轴起点开始播放。"
+              },
+              "end": {
+                "name": "结束",
+                "desc": "时间轴结束播放的时间。如果提供以空格分隔的标签列表，则使用第一个匹配关键帧的时间作为结束时间。如果找不到结束时间，则默认在时间轴终点结束播放。"
+              }
+            }
+          },
+          "play-timeline-in-range-by-name": {
+            "list-name": "播放指定范围（按名称）",
+            "display-text": "播放 [b]{0}[/b] 标签 [i]{1}[/i] 从 [i]{2}[/i] 到 [i]{3}[/i]",
+            "description": "在指定范围内播放时间轴。如果开始时间晚于结束时间，会调整播放速度。",
+            "params": {
+              "timeline-name": {
+                "name": "名称",
+                "desc": "要开始播放的时间轴"
+              },
+              "tags": {
+                "name": "标签",
+                "desc": "可选。填写一个字符串，用于区分不同的时间轴。使用空格分隔多个标签。"
+              },
+              "start": {
+                "name": "开始",
+                "desc": "时间轴开始播放的时间。如果提供以空格分隔的标签列表，则使用第一个匹配关键帧的时间作为开始时间。如果找不到开始时间，则默认从时间轴起点开始播放。"
+              },
+              "end": {
+                "name": "结束",
+                "desc": "时间轴结束播放的时间。如果提供以空格分隔的标签列表，则使用第一个匹配关键帧的时间作为结束时间。如果找不到结束时间，则默认在时间轴终点结束播放。"
+              }
+            }
+          },
+          "play-all-timelines-in-range": {
+            "list-name": "全部播放指定范围",
+            "display-text": "播放全部，从 [b]{0}[/b] 到 [b]{1}[/b]",
+            "description": "在指定范围内播放所有尚未播放的时间轴动画。",
+            "params": {
+              "start": {
+                "name": "开始",
+                "desc": "各时间轴开始播放的时间。如果提供以空格分隔的标签列表，则分别使用每个时间轴中第一个匹配关键帧的时间作为开始时间。如果找不到开始时间，则默认从该时间轴起点开始播放。"
+              },
+              "end": {
+                "name": "结束",
+                "desc": "各时间轴结束播放的时间。如果提供以空格分隔的标签列表，则分别使用每个时间轴中第一个匹配关键帧的时间作为结束时间。如果找不到结束时间，则默认在该时间轴终点结束播放。"
+              }
+            }
           }
         },
         "expressions": {
@@ -41248,7 +41541,7 @@
             "desc": "自动隐藏背对相机的朝面。"
           },
           "z-origin": {
-            "name": "Z轴原点",
+            "name": "原点Z",
             "desc": "物体位于 Z 轴上的位置。",
             "items": {
               "back": "背面",
@@ -45527,19 +45820,19 @@
             }
           },
           "get-xp-ranks": {
-            "list-name": "获得所有等级",
+            "list-name": "获取全部等级",
             "description": "获取按顺序排列的所有经验排名。",
-            "display-text": "获得全部经验值排名"
+            "display-text": "获取全部经验值排名"
           },
           "get-xp-active-bonuses": {
-            "list-name": "获得当前经验加成",
-            "description": "获得当前所有活跃的经验加成。",
-            "display-text": "获得当前经验奖励"
+            "list-name": "获取当前经验值加成",
+            "description": "获取全部有效经验值加成。",
+            "display-text": "获取当前经验值奖励"
           },
           "get-xp-upcoming-bonuses": {
-            "list-name": "获得即将到来的经验值奖励",
-            "description": "获取所有即将到来的经验值奖励。",
-            "display-text": "获取即将到来的经验值奖励，截至到[b]{0}[/b]",
+            "list-name": "获取即将到来的经验值奖励",
+            "description": "获取全部即将到来的经验值奖励。",
+            "display-text": "获取即将到来的经验值奖励 (截至到[b]{0}[/b])",
             "params": {
               "endDate": {
                 "name": "结束日期",
@@ -46013,7 +46306,7 @@
               },
               "value": {
                 "name": "步进值",
-                "desc": "对于非渐进式成就，应奖励多少枚奖章？对于渐进式成就，应奖励的步进值是多少？"
+                "desc": "对于非阶段性成就，应奖励的奖章数量。对于阶段性成就，应奖励的进度值。"
               }
             }
           }
@@ -46315,7 +46608,7 @@
           },
           "get-total-broadcast-channels": {
             "description": "公告频道的总数量。",
-            "translated-name": "总公告数量"
+            "translated-name": "广播总数量"
           },
           "get-broadcast-channel-id-at": {
             "description": "索引出的公告频道ID。",
@@ -46509,7 +46802,7 @@
           },
           "get-broadcast-message-last-rating": {
             "description": "上次评分的时间。",
-            "translated-name": "最后一条消息",
+            "translated-name": "上次评分消息",
             "params": {
               "messageID": {
                 "name": "消息ID",
@@ -46518,7 +46811,7 @@
             }
           },
           "xp-leaderboard-score-id": {
-            "description": "排行榜中对应分数记录的ID。",
+            "description": "排行榜对应的分数ID。",
             "translated-name": "排行榜分数ID"
           },
           "xp-rank-id": {
@@ -46709,7 +47002,7 @@
           },
           "score-history-formatted-score-at": {
             "description": "获取某项分数的历史得分，以地区格式显示。",
-            "translated-name": "获取格式化历史排名",
+            "translated-name": "获取格式化分数历史排名分数",
             "params": {
               "index": {
                 "name": "索引",
@@ -46729,7 +47022,7 @@
           },
           "score-history-formatted-rank-at": {
             "description": "获取某项分数的历史排名，以地区格式显示。",
-            "translated-name": "获取格式化历史排名",
+            "translated-name": "获取格式化分数历史排名",
             "params": {
               "index": {
                 "name": "索引",
@@ -46791,7 +47084,7 @@
           },
           "score-formatted-date-at": {
             "description": "获取某项分数的创建日期，以地区格式显示。",
-            "translated-name": "获取格式化分数日期",
+            "translated-name": "获取格式化分数创建日期",
             "params": {
               "index": {
                 "name": "索引",
@@ -46927,7 +47220,7 @@
                 "desc": "此分数位于列表的索引，从 0 开始计数。"
               }
             },
-            "translated-name": "获取格式化排名对比分数"
+            "translated-name": "获取格式化的排名对比分数"
           },
           "score-rank-comparison-rank-at": {
             "description": "此历史分数位于列表的索引，从 0 开始计数。",
@@ -47214,6 +47507,8 @@
             }
           },
           "get-player-achievement-times-awarded-formatted": {
+            "description": "获得已登录玩家获得有效成就的时间，以地区格式显示。",
+            "translated-name": "获得格式化玩家成就时间",
             "params": {
               "index": {
                 "name": "索引",
@@ -47232,41 +47527,112 @@
             }
           },
           "get-player-achievement-first-awarded-formatted": {
+            "description": "已登录玩家首次获得的成就，以地区格式显示。",
+            "translated-name": "获取格式化玩家首次获得成就时间",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "玩家成就的索引。"
               }
             }
           },
           "get-player-achievement-last-awarded": {
+            "description": "已登录玩家上次获得此成就的时间。",
+            "translated-name": "玩家上次获得成就",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "玩家成就的索引。"
               }
             }
           },
           "get-player-achievement-last-awarded-formatted": {
+            "description": "已登录玩家上次获得此成就的时间，并按指定语言环境格式化。",
+            "translated-name": "玩家上次获得成就时间格式化",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "玩家成就的索引。"
               }
             }
           },
           "get-player-achievement-progress": {
+            "description": "已登录玩家此项成就的当前进度。",
+            "translated-name": "玩家成就进度",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "玩家成就的索引。"
               }
             }
           },
           "get-player-achievement-progress-formatted": {
+            "description": "获取已登录玩家当前成就的进度，以地区格式显示。",
+            "translated-name": "获取格式化玩家成就进度",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "玩家成就的索引。"
+              }
+            }
+          },
+          "get-new-broadcast-message-channel-id": {
+            "description": "新公告的频道ID",
+            "translated-name": "新公告频道ID"
+          },
+          "get-new-broadcast-message-message-id": {
+            "description": "新公告的ID",
+            "translated-name": "新公告消息ID"
+          },
+          "get-awarded-achievement-achievement-id": {
+            "description": "本次获得的成就 ID。",
+            "translated-name": "本次获得的成就ID"
+          },
+          "get-awarded-achievement-awarded-count": {
+            "description": "本次获得此成就的次数。",
+            "translated-name": "本次成就获得次数"
+          },
+          "get-xp-changed-change": {
+            "description": "要发生变化的经验值",
+            "translated-name": "经验值变化量"
+          },
+          "get-xp-changed-current-xp": {
+            "description": "玩家当前的经验值",
+            "translated-name": "变化后的经验值"
+          },
+          "get-xp-rank-changed-old-rank-id": {
+            "description": "旧等级的ID",
+            "translated-name": "经验等级变化前的等级ID"
+          },
+          "get-xp-rank-changed-new-rank-id": {
+            "description": "新等级的ID",
+            "translated-name": "经验等级变化后的等级ID"
+          },
+          "get-total-achievements": {
+            "description": "成就的总数。",
+            "translated-name": "成就总数"
+          },
+          "get-connection-closed-code": {
+            "description": "连接关闭原因的数字代码。",
+            "translated-name": "关闭连接原因的错误代码。"
+          },
+          "get-connection-closed-reason": {
+            "description": "连接关闭原因的字符串说明。",
+            "translated-name": "连接关闭原因"
+          },
+          "get-achievement-id-at": {
+            "description": "指定索引处的成就 ID。",
+            "translated-name": "获取成就ID",
+            "params": {
+              "index": {
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-date-created": {
+            "description": "成就的创建日期。",
+            "translated-name": "成就创建日期",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47275,6 +47641,8 @@
             }
           },
           "get-achievement-date-created-formatted": {
+            "description": "成就的创建日期，并按指定语言环境格式化。",
+            "translated-name": "获取格式化成就创建日期",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47283,6 +47651,7 @@
             }
           },
           "get-achievement-name": {
+            "description": "成就的名称。",
             "translated-name": "成就名称",
             "params": {
               "achievementID": {
@@ -47292,6 +47661,7 @@
             }
           },
           "get-achievement-description": {
+            "description": "成就的描述。",
             "translated-name": "成就描述",
             "params": {
               "achievementID": {
@@ -47311,6 +47681,8 @@
             }
           },
           "get-achievement-max-unlocks": {
+            "description": "此成就可被解锁的最大次数。",
+            "translated-name": "成就最大解锁次数",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47319,6 +47691,8 @@
             }
           },
           "get-achievement-max-unlocks-formatted": {
+            "description": "此成就可被解锁的最大次数，并按指定语言环境格式化。",
+            "translated-name": "成就最大解锁次数格式化",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47337,6 +47711,8 @@
             }
           },
           "get-achievement-total-awarded-formatted": {
+            "description": "此成就被所有玩家获得的总次数，并按指定语言环境格式化。",
+            "translated-name": "成就总解锁次数格式化",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47345,6 +47721,8 @@
             }
           },
           "get-achievement-total-unique-players-awarded": {
+            "description": "获得此成就的玩家总数。",
+            "translated-name": "获得成就的玩家总数",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47353,6 +47731,8 @@
             }
           },
           "get-achievement-total-unique-players-awarded-formatted": {
+            "description": "获得此成就的玩家总数，并按指定语言环境格式化。",
+            "translated-name": "获得成就的玩家总数格式化",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47361,6 +47741,7 @@
             }
           },
           "get-achievement-percentage-player-base-owned": {
+            "description": "获得此成就的玩家占全部玩家的百分比。",
             "translated-name": "玩家拥有百分比",
             "params": {
               "achievementID": {
@@ -47371,6 +47752,7 @@
           },
           "get-achievement-first-awarded": {
             "description": "该成就首次被玩家获得的日期。",
+            "translated-name": "成就首次获得日期",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47379,6 +47761,8 @@
             }
           },
           "get-achievement-first-awarded-formatted": {
+            "description": "此成就首次被玩家获得的日期，并按指定语言环境格式化。",
+            "translated-name": "成就首次获得日期格式化",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47387,6 +47771,8 @@
             }
           },
           "get-achievement-last-awarded": {
+            "description": "此成就上次被玩家获得的日期。",
+            "translated-name": "成就上次获得日期",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47395,6 +47781,8 @@
             }
           },
           "get-achievement-last-awarded-formatted": {
+            "description": "此成就上次被玩家获得的日期，并按指定语言环境格式化。",
+            "translated-name": "成就上次获得日期格式化",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47403,113 +47791,174 @@
             }
           },
           "get-achievement-achieved-logo-url": {
+            "description": "成就解锁后所用图标的 URL。",
+            "translated-name": "成就已解锁图标URL",
             "params": {
               "achievementID": {
                 "name": "成就ID",
                 "desc": "成就ID"
+              },
+              "width": {
+                "name": "宽度",
+                "desc": "请求的图像宽度，以像素为单位。"
               }
             }
           },
           "get-achievement-unachieved-logo-url": {
+            "description": "成就未解锁时所用图标的 URL。",
+            "translated-name": "成就未解锁图标URL",
             "params": {
               "achievementID": {
                 "name": "成就ID",
                 "desc": "成就ID"
+              },
+              "width": {
+                "name": "宽度",
+                "desc": "请求的图像宽度，以像素为单位。"
               }
             }
           },
+          "get-achievement-awarded-players-count": {
+            "description": "本次查询结果返回的当前页中的玩家数量。",
+            "translated-name": "本页已获成就玩家数"
+          },
           "get-achievement-awarded-players-id-at": {
+            "description": "获取已获成就玩家列表中指定索引处玩家的 ID。",
+            "translated-name": "已获成就玩家ID",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-player-name-at": {
+            "description": "获取已获成就玩家列表中指定索引处玩家的名称。",
+            "translated-name": "已获成就玩家名称",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-last-active-at": {
+            "description": "获取已获成就玩家列表中指定索引处玩家最近活跃的日期和时间。",
+            "translated-name": "已获成就玩家最近活跃时间",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-avatar-url-at": {
+            "description": "获取已获成就玩家列表中指定索引处玩家的头像 URL。",
+            "translated-name": "已获成就玩家头像URL",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
+              },
+              "width": {
+                "name": "宽度",
+                "desc": "请求的头像宽度。"
               }
             }
           },
           "get-achievement-awarded-players-awarded-count-at": {
+            "description": "获取已获成就玩家列表中指定索引处玩家获得该成就的次数。",
+            "translated-name": "已获成就玩家成就获得次数",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-awarded-count-at-formatted": {
+            "description": "获取已获成就玩家列表中指定索引处玩家获得该成就的次数，并按指定语言环境格式化。",
+            "translated-name": "已获成就玩家成就获得次数格式化",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-first-awarded-at": {
+            "description": "获取已获成就玩家列表中指定索引处玩家首次获得该成就的日期和时间。",
+            "translated-name": "已获成就玩家首次获得成就时间",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-first-awarded-at-formatted": {
+            "description": "获取已获成就玩家列表中指定索引处玩家首次获得该成就的日期和时间，并按指定语言环境格式化。",
+            "translated-name": "已获成就玩家首次获得成就时间格式化",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-last-awarded-at": {
+            "description": "获取已获成就玩家列表中指定索引处玩家上次获得该成就的日期和时间。",
+            "translated-name": "已获成就玩家上次获得成就时间",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-last-awarded-at-formatted": {
+            "description": "获取已获成就玩家列表中指定索引处玩家上次获得该成就的日期和时间，并按指定语言环境格式化。",
+            "translated-name": "已获成就玩家上次获得成就时间格式化",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-current-progress-at": {
+            "description": "获取已获成就玩家列表中指定索引处玩家再次解锁该成就的当前进度。",
+            "translated-name": "获取玩家当前成就进度",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "get-achievement-awarded-players-current-progress-at-formatted": {
+            "description": "获取已获成就玩家列表中指定索引处玩家再次解锁该成就的当前进度，并按指定语言环境格式化。",
+            "translated-name": "玩家成就当前进度格式化",
             "params": {
               "index": {
-                "name": "索引"
+                "name": "索引",
+                "desc": "成就的索引。"
               }
             }
           },
           "avatar-url": {
+            "description": "获取当前已登录玩家的头像 URL。",
+            "translated-name": "头像地址",
             "params": {
               "width": {
-                "name": "宽度"
+                "name": "宽度",
+                "desc": "请求的头像宽度"
               }
             }
           },
           "get-cloud-save-picture-url": {
+            "description": "获取云存储关联图片的 URL。",
+            "translated-name": "云存储图片地址",
             "params": {
               "width": {
                 "name": "宽度",
@@ -47541,8 +47990,8 @@
                   "any-get-cloud-save": "任意读取完成",
                   "get-xp": "获取XP",
                   "get-xp-ranks": "获取等级",
-                  "get-active-xp-bonuses": "获得当前经验奖励",
-                  "get-upcoming-xp-bonuses": "获取即将到来经验奖励",
+                  "get-active-xp-bonuses": "获得当前经验值奖励",
+                  "get-upcoming-xp-bonuses": "获取即将到来经验值奖励",
                   "get-broadcast-channels": "获取广播频道",
                   "get-broadcast-messages": "获取广播消息",
                   "get-broadcast-message": "获取广播消息",
@@ -47594,8 +48043,8 @@
                   "any-get-cloud-save": "任意获取完成",
                   "get-xp": "获取XP",
                   "get-xp-ranks": "获取等级",
-                  "get-active-xp-bonuses": "获得当前经验奖励",
-                  "get-upcoming-xp-bonuses": "获得即将到来的经验奖励",
+                  "get-active-xp-bonuses": "获取当前经验值奖励",
+                  "get-upcoming-xp-bonuses": "获取即将到来的经验值奖励",
                   "get-broadcast-channels": "获取公告频道",
                   "get-broadcast-messages": "获取公告消息",
                   "get-broadcast-message": "获取公告消息",
@@ -47726,7 +48175,7 @@
           "is-broadcast-message-unread": {
             "list-name": "是未读消息",
             "description": "检查这条消息当前玩家尚未阅读。",
-            "display-text": "是未读消息 [b]{0}[/b]",
+            "display-text": "[b]{0}[/b] 是未读消息",
             "params": {
               "messageID": {
                 "name": "消息ID",
@@ -47810,9 +48259,9 @@
             "display-text": "弹出窗口被阻止"
           },
           "is-achievement-progressive": {
-            "list-name": "是阶段性成就",
-            "description": "检测这项成就是否为阶段性成就。",
-            "display-text": "成就 [b]{0}[/b]  是阶段性成就",
+            "list-name": "是分步成就",
+            "description": "分布成就类型需要玩家逐步取得成就，达成里程碑、阶段。",
+            "display-text": "成就 [b]{0}[/b] 是分步成就",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47821,6 +48270,9 @@
             }
           },
           "is-achievement-client-progress-allowed": {
+            "list-name": "客户端可获得成就进度",
+            "description": "检测客户端是否可获得成就或进度。",
+            "display-text": "客户端可获得成就 [b]{0}[/b] 进度",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47829,6 +48281,9 @@
             }
           },
           "is-achievement-increment-only": {
+            "list-name": "仅增量统计",
+            "description": "检测成就的类型是否仅增量统计，此数值只能随着时间增加。",
+            "display-text": "[b]{0}[/b] 仅增量统计",
             "params": {
               "achievementID": {
                 "name": "成就ID",
@@ -47838,7 +48293,7 @@
           },
           "is-achievement-secret": {
             "list-name": "是隐藏成就",
-            "description": "检测该成就是否为隐藏成就",
+            "description": "隐藏成就在达成之前不会显示在用户社区页面中。",
             "display-text": "成就 [b]{0}[/b] 是隐藏成就",
             "params": {
               "achievementID": {
@@ -47856,10 +48311,10 @@
                 "name": "类型",
                 "desc": "收到的通知类型。",
                 "items": {
-                  "new-broadcast-message": "新广播消息",
+                  "new-broadcast-message": "新公告消息",
                   "achievement-awarded": "玩家成就奖励",
-                  "xp-changed": "玩家经验值变化",
-                  "xp-rank-changed": "玩家经验等级阶段变化"
+                  "xp-changed": "经验值变化",
+                  "xp-rank-changed": "等级变化"
                 }
               }
             }
@@ -47870,9 +48325,9 @@
             "display-text": "连接已关闭通知"
           },
           "is-xp-rank-change-promotion": {
-            "list-name": "经验等级变更是否可晋升\n",
-            "description": "玩家经验等级的变化是否意味着晋升？如果不是，则表示玩家的经验等级被降级了。",
-            "display-text": "XP 等级变更即晋升"
+            "list-name": "即将晋升",
+            "description": "经验值变化时，是否满足晋升所需经验。若不是，则表示玩家被降级了。",
+            "display-text": "即将晋升"
           }
         },
         "properties": {
@@ -47938,7 +48393,11 @@
           "collisions": "碰撞",
           "misc": "杂项",
           "web": "网络",
-          "memory-management": "资源内存"
+          "memory-management": "资源内存",
+          "3d-model-transform": "3D模型变换",
+          "3d-model-node-transform": "3D模型节点变换",
+          "3d-model-animations": "3D模型: 动画",
+          "3d-model-meshes": "3D模型: 网格"
         },
         "properties": {
           "animation": {
@@ -48015,12 +48474,12 @@
             "separator": ", "
           },
           "scale": {
-            "name": "模型缩放",
+            "name": "缩放",
             "desc": "模型的缩放比例。",
             "separator": ", "
           },
           "3d-model-object": {
-            "name": "3D模型",
+            "name": "模型",
             "desc": "从项目中选择一个3D模型。"
           },
           "meshes": {
@@ -48046,7 +48505,7 @@
             }
           },
           "z-origin": {
-            "name": "Z轴原点",
+            "name": "原点Z",
             "desc": "在 Z 轴上的原点。",
             "items": {
               "back": "底部",
@@ -48056,7 +48515,7 @@
           },
           "loop": {
             "name": "循环播放",
-            "desc": "检查动画是否循环播放。"
+            "desc": "启用后，初始动画将循环播放。"
           },
           "back-face-culling": {
             "name": "背面剔除",
@@ -48067,17 +48526,35 @@
             "desc": "3D模型动画专用设置。"
           },
           "origin": {
-            "name": "模型原点",
+            "name": "原点",
             "desc": "模型的位置原点。",
             "separator": ", "
           },
           "axis-scale-mode": {
             "name": "变换模式",
-            "desc": "模型如何随实例变化。'等比适配' 模式将保持模型比例。'拉伸填满' 模式将缩放每个轴以适应实例的边界框。'兼容旧版'模式仅为向后兼容而存在，建议使用其他模式。",
             "items": {
               "legacy": "兼容旧版",
               "fit": "等比适配",
               "stretch": "拉伸填满"
+            },
+            "desc": "实例缩放时，模型跟随变化的方式。\"保持比例\" 模式可以确保比例不变，适合大部分情况选择。\"拉伸\" 模式会让模型的每个轴按照实例边界进行缩放。\"兼容旧版\" 是为了向后兼容历史版本而保留的。"
+          },
+          "culling-mode": {
+            "name": "剔除模式",
+            "desc": "设置要剔除的多边形面。\"背面\"、\"正面\" 和 \"关闭\" 会应用于所有网格。\"默认\" 为模型文件的推荐选项，它会按照导入文件中的设置，分别对每个网格的应用面剔除。",
+            "items": {
+              "none": "关闭",
+              "back-face": "背面",
+              "front-face": "正面",
+              "model-settings": "默认"
+            }
+          },
+          "blend-mode": {
+            "name": "动画混合模式",
+            "desc": "同时播放多个动画时，各动画姿态的混合方式。",
+            "items": {
+              "average": "平均",
+              "mask": "分层"
             }
           }
         },
@@ -48099,7 +48576,13 @@
           "origin-z-front": "顶面",
           "legacy": "兼容旧版",
           "fit": "等比适配",
-          "stretch": "拉伸填满"
+          "stretch": "拉伸填满",
+          "culling-mode-none": "关闭剔除",
+          "culling-mode-back": "背面",
+          "culling-mode-front": "正面",
+          "culling-mode-model": "模型设置",
+          "average": "平均",
+          "mask": "分层"
         },
         "actions": {
           "set-model": {
@@ -48110,7 +48593,7 @@
               },
               "animation": {
                 "name": "动画",
-                "desc": "如果有动画，设置要播放的动画。"
+                "desc": "要播放的动画，并设为主动画。"
               },
               "playing": {
                 "name": "初始播放",
@@ -48141,7 +48624,7 @@
               },
               "animation": {
                 "name": "动画",
-                "desc": "如果有动画，设置要播放的动画。"
+                "desc": "要播放的动画，并设为主动画。"
               },
               "playing": {
                 "name": "初始播放",
@@ -48166,11 +48649,10 @@
           },
           "set-animation": {
             "list-name": "设置动画",
-            "description": "如果模型存在动画，更改播放的动画。",
             "params": {
               "animation": {
                 "name": "动画",
-                "desc": "如果有动画，设置要播放的动画。"
+                "desc": "要播放的动画，并设为主动画。"
               },
               "playing": {
                 "name": "初始播放",
@@ -48183,20 +48665,29 @@
               "looping": {
                 "name": "循环播放",
                 "desc": "所选动画是否循环播放。"
+              },
+              "transition-duration": {
+                "name": "过渡时间",
+                "desc": "从上一个动画过渡到新动画所需的时间，以秒为单位。"
               }
             },
-            "display-text": "设置动画为 [b]{0}[/b] (初始播放: [i]{1}[/i], 循环播放: [i]{2}[/i], 播放进度: [i]{3}[/i])"
+            "display-text": "设置动画为 [b]{0}[/b] (播放:[i]{1}[/i], 循环: [i]{2}[/i], 进度: [i]{3}[/i], 过渡时间: [i]{4}[/i])",
+            "description": "更改播放的动画，并设为主动画。"
           },
           "set-progress": {
             "list-name": "设置进度",
-            "display-text": "设置动画进度为[b]{0}[/b]",
-            "description": "设置当前动画的播放进度在 [0-1] 范围。",
             "params": {
               "progress": {
                 "name": "进度",
-                "desc": "设置动画的进度，取值在 [0-1] 范围内。"
+                "desc": "设置指定动画的播放进度，取值范围为 [0-1]。"
+              },
+              "animation": {
+                "name": "动画",
+                "desc": "要更改进度的动画。留空则指定主动画。"
               }
-            }
+            },
+            "display-text": "设置动画 [i]{1}[/i] 播放进度为 [b]{0}[/b]",
+            "description": "更改指定动画的播放进度。"
           },
           "set-transform": {
             "list-name": "设置变换",
@@ -48231,19 +48722,18 @@
                 "desc": "要变换的方式。",
                 "items": {
                   "position": "偏移",
-                  "rotation": "旋转",
-                  "scale": "缩放"
+                  "scale": "缩放",
+                  "rotation": "角度"
                 }
               }
             }
           },
           "play": {
             "list-name": "播放",
-            "description": "播放 3D 模型的动画。",
             "params": {
               "animation": {
                 "name": "动画",
-                "desc": "播放动画。留空则使用当前动画。"
+                "desc": "要播放的动画。留空则播放主动画。"
               },
               "progress": {
                 "name": "进度",
@@ -48252,24 +48742,29 @@
               "looping": {
                 "name": "循环播放",
                 "desc": "设置动画是否进入循环播放。"
+              },
+              "transition-duration": {
+                "name": "过渡时间",
+                "desc": "从上一个动画过渡到新动画所需的时间，以秒为单位。"
               }
             },
-            "display-text": "播放动画[b]{0}[/b] (初始进度: [i]{2}[/i], 循环播放: [i]{1}[/i])"
+            "display-text": "播放动画 [b]{0}[/b] (循环播放: [i]{1}[/i], 初始进度: [i]{2}[/i], 过渡时间: [i]{3}[/i])",
+            "description": "播放3D模型中的动画，并设为主动画。"
           },
           "stop": {
             "list-name": "停止播放",
-            "display-text": "停止当前动画",
-            "description": "停止播放当前 3D 模型的动画，并将进度重置为 0。"
+            "display-text": "停止全部动画",
+            "description": "停止播放 3D 模型中的所有动画，并将进度重置为 0。"
           },
           "pause": {
             "list-name": "暂停播放",
-            "display-text": "暂停当前动画",
-            "description": "暂停播放当前 3D 模型的动画。"
+            "display-text": "暂停全部动画",
+            "description": "暂停播放 3D 模型中的所有动画，保留当前进度。"
           },
           "resume": {
             "list-name": "恢复播放",
-            "display-text": "继续播放当前的动画",
-            "description": "恢复 3D 模型当前正在播放的动画进度。"
+            "display-text": "恢复全部动画",
+            "description": "从当前进度恢复播放 3D 模型中的所有动画。"
           },
           "set-mesh-render-mode": {
             "list-name": "设置网格的渲染模式",
@@ -48353,7 +48848,7 @@
                 }
               },
               "z-origin": {
-                "name": "Z轴原点",
+                "name": "原点Z",
                 "desc": "在 Z 轴的原点值。",
                 "items": {
                   "back": "背面",
@@ -48366,8 +48861,6 @@
           },
           "set-looping": {
             "list-name": "设置循环",
-            "display-text": "设置动画循环状态: [b]{0}[/b]",
-            "description": "更改当前动画的循环状态。",
             "params": {
               "state": {
                 "name": "循环播放",
@@ -48377,8 +48870,14 @@
                   "yes": "启用",
                   "toggle": "反转"
                 }
+              },
+              "animation": {
+                "name": "动画",
+                "desc": "要更改循环状态的动画。留空则指定主动画。"
               }
-            }
+            },
+            "display-text": "设置动画 [i]{1}[/i] 循环状态为 [b]{0}[/b]",
+            "description": "更改指定动画的循环状态。"
           },
           "set-backface-culling": {
             "list-name": "设置背面剔除",
@@ -48469,6 +48968,260 @@
                 "desc": "要卸载动态纹理的网格的字符串名称。留空卸载指定 3D 模型中所有网格中动态纹理。"
               }
             }
+          },
+          "reset-transform": {
+            "list-name": "重置变换",
+            "display-text": "重置变换(类型: [b]{0}[/b])",
+            "description": "重置模型的变换。",
+            "params": {
+              "type": {
+                "name": "类型",
+                "desc": "要重置的转换类型。",
+                "items": {
+                  "position": "偏移",
+                  "rotation": "旋转",
+                  "scale": "缩放",
+                  "all": "全部"
+                }
+              }
+            }
+          },
+          "set-node-transform": {
+            "list-name": "设置节点变换",
+            "display-text": "{5} [b]{6}[/b] X: [i]{2}[/i], Y: [i]{3}[/i], Z: [i]{4}[/i], [i]{0}[/i]: [i]{1}[/i]",
+            "description": "设置模型中节点的变换。",
+            "params": {
+              "model3d-node-type": {
+                "name": "节点类型",
+                "desc": "要修改的节点类型。",
+                "items": {
+                  "mesh": "网格",
+                  "bone": "骨骼"
+                }
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "要修改的节点名称。"
+              },
+              "x-transform": {
+                "name": "X",
+                "desc": "要应用在 X 轴的变换值。"
+              },
+              "y-transform": {
+                "name": "Y",
+                "desc": "要应用在 Y 轴的变换值。"
+              },
+              "z-transform": {
+                "name": "Z",
+                "desc": "要应用在 Z 轴的变换值。"
+              },
+              "operation": {
+                "name": "运算",
+                "desc": "要变化的运算方式。",
+                "items": {
+                  "set": "设置",
+                  "add": "相加",
+                  "sub": "相减",
+                  "mul": "相乘",
+                  "div": "划分"
+                }
+              },
+              "type": {
+                "name": "类型",
+                "desc": "要进行的转换类型。",
+                "items": {
+                  "position": "偏移",
+                  "rotation": "角度",
+                  "scale": "缩放"
+                }
+              }
+            }
+          },
+          "set-node-quaternion": {
+            "list-name": "设置节点四元数",
+            "display-text": "设置四元数 (X: [i]{2}[/i], Y: [i]{3}[/i], Z: [i]{4}[/i], W: [i]{5}[/i], [i]{0}[/i]: [i]{1}[/i])",
+            "description": "设置模型中节点的四元数。",
+            "params": {
+              "model3d-node-type": {
+                "name": "节点类型",
+                "desc": "要修改的节点类型。",
+                "items": {
+                  "mesh": "网格",
+                  "bone": "骨骼"
+                }
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "要修改的节点名称。"
+              },
+              "x-component": {
+                "name": "分量 X",
+                "desc": "四元数的 X 分量。"
+              },
+              "y-component": {
+                "name": "分量 Y",
+                "desc": "四元数的 Y 分量。"
+              },
+              "z-component": {
+                "name": "分量 Z",
+                "desc": "四元数的 Z 分量。"
+              },
+              "w-component": {
+                "name": "分量 W",
+                "desc": "四元数的 W 分量。"
+              }
+            }
+          },
+          "reset-node-transform": {
+            "list-name": "重置节点变换",
+            "display-text": "重置 [b]{2}[/b] 的 [i]{0}[/i]: [i]{1}[/i]",
+            "description": "重置模型中节点的变换。",
+            "params": {
+              "model3d-node-type": {
+                "name": "节点类型",
+                "desc": "要重置的节点类型。",
+                "items": {
+                  "mesh": "网格",
+                  "bone": "骨骼"
+                }
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "要重置的节点名称。"
+              },
+              "type": {
+                "name": "类型",
+                "desc": "要重置的转换类型。",
+                "items": {
+                  "position": "偏移",
+                  "rotation": "旋转",
+                  "scale": "缩放",
+                  "all": "全部"
+                }
+              }
+            }
+          },
+          "reset-all-node-transform": {
+            "list-name": "重置所有节点变换",
+            "display-text": "重置全部节点的 [b]{0}[/b] 变换",
+            "description": "重置模型中所有节点的变换。",
+            "params": {
+              "type": {
+                "name": "类型",
+                "desc": "要重置的转换类型。",
+                "items": {
+                  "position": "偏移",
+                  "rotation": "旋转",
+                  "scale": "缩放",
+                  "all": "全部"
+                }
+              }
+            }
+          },
+          "set-mesh-object": {
+            "list-name": "设置网格对象",
+            "display-text": "使用对象 [b]{1}[/b] 为网格 [i]{0}[/i]",
+            "description": "设置用作网格纹理来源的对象。",
+            "params": {
+              "mesh": {
+                "name": "网格",
+                "desc": "网格会影响纹理的外观。"
+              },
+              "object": {
+                "name": "对象",
+                "desc": "用于网格纹理的对象。"
+              }
+            }
+          },
+          "set-culling-mode": {
+            "list-name": "设置剔除模式",
+            "display-text": "设置剔除模式为[b]{0}[/b]",
+            "description": "更改剔除模式。",
+            "params": {
+              "state": {
+                "name": "模式",
+                "desc": "要设置的剔除模式。",
+                "items": {
+                  "none": "关闭",
+                  "back-face": "背面",
+                  "front-face": "正面",
+                  "model-settings": "默认"
+                }
+              }
+            }
+          },
+          "blend-animation": {
+            "list-name": "混合动画",
+            "display-text": "混合动画 [b]{0}[/b] (立即播放: [i]{1}[/i], 循环播放: [i]{2}[/i], 动画进度: [i]{3}[/i], 权重: [i]{4}[/i], 时长: [i]{5}[/i])",
+            "params": {
+              "animation": {
+                "name": "动画",
+                "desc": "要混合的动画。"
+              },
+              "playing": {
+                "name": "立即播放",
+                "desc": "立即播放所选动画。"
+              },
+              "looping": {
+                "name": "循环播放",
+                "desc": "是否循环播放动画。"
+              },
+              "progress": {
+                "name": "进度",
+                "desc": "动画开始播放时的进度，取值范围为 [0-1]。"
+              },
+              "target-weight": {
+                "name": "权重",
+                "desc": "此动画对最终姿态的影响程度。"
+              },
+              "blend-duration": {
+                "name": "混合时长",
+                "desc": "此动画的混合权重达到设定值所需的时间，以秒为单位。"
+              }
+            },
+            "description": "将新的动画片段混入当前正在播放的动画中。"
+          },
+          "blend": {
+            "list-name": "混合",
+            "display-text": "混合动画 [b]{0}[/b] (循环播放: [i]{1}[/i], 初始进度: [i]{2}[/i], 权重: [i]{3}[/i], 时长: [i]{4}[/i])",
+            "params": {
+              "animation": {
+                "name": "动画",
+                "desc": "要混合的动画。"
+              },
+              "looping": {
+                "name": "循环播放",
+                "desc": "动画是否循环播放。"
+              },
+              "progress": {
+                "name": "进度",
+                "desc": "所选动画开始播放时的进度，取值范围为 [0-1]。"
+              },
+              "target-weight": {
+                "name": "权重",
+                "desc": "此动画对最终姿态的影响程度。"
+              },
+              "blend-duration": {
+                "name": "时长",
+                "desc": "此动画的混合权重达到设定值所需的时间，以秒为单位。"
+              }
+            },
+            "description": "将新的动画片段混入当前正在播放的动画中。"
+          },
+          "set-animation-blend-mode": {
+            "list-name": "设置动画混合模式",
+            "display-text": "设置动画混合模式为 [b]{0}[/b]",
+            "description": "设置多个正在播放的动画的混合方式。",
+            "params": {
+              "mode": {
+                "name": "模式",
+                "desc": "多个正在播放的动画的混合方式。",
+                "items": {
+                  "average": "平均",
+                  "mask": "分层"
+                }
+              }
+            }
           }
         },
         "conditions": {
@@ -48499,8 +49252,14 @@
           },
           "playing": {
             "list-name": "正在播放",
-            "display-text": "正在播放",
-            "description": "检查模型是否正在播放动画。"
+            "description": "检查模型是否正在播放动画。",
+            "params": {
+              "animation": {
+                "name": "动画",
+                "desc": "要检查的动画。留空则检查主动画。"
+              }
+            },
+            "display-text": "正在播放动画 [b]{0}[/b]"
           },
           "mesh-render-mode": {
             "list-name": "检测渲染模式",
@@ -48518,8 +49277,8 @@
             "display-text": "渲染模式为 [b]{0}[/b]"
           },
           "is-mesh-enabled": {
-            "list-name": "网格已启用",
-            "display-text": "网格[b]{0}[/b]已启用",
+            "list-name": "已启用网格",
+            "display-text": "已启用网格[b]{0}[/b]",
             "description": "检查一个网格是否已启用",
             "params": {
               "mesh": {
@@ -48529,8 +49288,8 @@
             }
           },
           "are-all-meshes-enabled": {
-            "list-name": "启用所有网格吗",
-            "display-text": "启用所有网格",
+            "list-name": "已启用网格(全部)",
+            "display-text": "已启用所有网格",
             "description": "检查是否所有网格都已绘制。"
           },
           "mesh-exists": {
@@ -48546,8 +49305,14 @@
           },
           "looping": {
             "list-name": "正在循环播放",
-            "display-text": "正在循环播放",
-            "description": "检查模型是否正在循环播放动画。"
+            "description": "检查模型是否正在循环播放动画。",
+            "params": {
+              "animation": {
+                "name": "动画",
+                "desc": "要检查的动画。留空则检查主动画。"
+              }
+            },
+            "display-text": "正在循环动画 [b]{0}[/b]"
           },
           "is-backface-culling-enabled": {
             "list-name": "已启用背面剔除",
@@ -48587,7 +49352,7 @@
             "description": "任意动画进入循环播放时触发。"
           },
           "axis-scale-mode": {
-            "list-name": "变换模式",
+            "list-name": "设置变换模式",
             "display-text": "使用[b]{0}[/b]变换模式",
             "description": "检查所使用的变换模式。",
             "params": {
@@ -48616,6 +49381,38 @@
             "list-name": "所有纹理已释放",
             "display-text": "所有纹理已释放",
             "description": "动态纹理卸载完成后触发。"
+          },
+          "check-culling-mode": {
+            "display-text": "剔除模式是[b]{0}[/b]",
+            "params": {
+              "state": {
+                "name": "模式",
+                "desc": "要检查的剔除模式。",
+                "items": {
+                  "none": "关闭",
+                  "back-face": "背面",
+                  "front-face": "正面",
+                  "model-settings": "默认"
+                }
+              }
+            },
+            "list-name": "3D模型: 背面剔除",
+            "description": "检查所使用的剔除模式。"
+          },
+          "animation-blend-mode": {
+            "list-name": "动画混合模式",
+            "display-text": "动画混合模式为 [b]{0}[/b]",
+            "description": "检查动画混合模式。",
+            "params": {
+              "mode": {
+                "name": "模式",
+                "desc": "多个正在播放的动画如何混合。",
+                "items": {
+                  "average": "平均",
+                  "mask": "分层"
+                }
+              }
+            }
           }
         },
         "expressions": {
@@ -48628,8 +49425,8 @@
             "description": "当前使用的3D模型。没有则返回空字符串。"
           },
           "animation": {
-            "description": "当前的动画。如果没有动画，将返回一个空字符串。",
-            "translated-name": "动画"
+            "translated-name": "动画",
+            "description": "主动画的名称。没有动画时，返回空字符串。在任意的动画触发条件中，返回对应动画的名称。"
           },
           "animation-duration": {
             "description": "模型正在播放的动画的持续时间，以秒为单位。",
@@ -48642,8 +49439,14 @@
             }
           },
           "progress": {
-            "description": "当前动画的播放进度，区间在 [0-1] 范围。",
-            "translated-name": "动画进度"
+            "translated-name": "动画进度",
+            "params": {
+              "animation": {
+                "name": "动画",
+                "desc": "要获取进度的动画名称。留空则获取主动画的进度。"
+              }
+            },
+            "description": "动画的播放进度，取值范围为 [0-1]。"
           },
           "mesh-count": {
             "description": "模型中的网格数量。",
@@ -48682,28 +49485,28 @@
             "translated-name": "当前动画"
           },
           "position-x": {
-            "description": "在 X 轴的偏移量。",
-            "translated-name": "X轴偏移"
+            "translated-name": "X轴偏移",
+            "description": "获取对象在 X 轴上的偏移量。"
           },
           "position-y": {
-            "description": "在 Y 轴的偏移量。",
-            "translated-name": "Y轴偏移"
+            "translated-name": "Y轴偏移",
+            "description": "获取对象在 Y 轴上的偏移量。"
           },
           "position-z": {
-            "description": "在 Z 轴的偏移量。",
-            "translated-name": "Z轴偏移"
+            "translated-name": "Z轴偏移",
+            "description": "获取对象在 Z 轴上的偏移量。"
           },
           "scale-x": {
-            "description": "在 X 轴的缩放比例。",
-            "translated-name": "X轴缩放"
+            "translated-name": "X轴缩放",
+            "description": "获取对象在 X 轴上的缩放量。"
           },
           "scale-y": {
-            "description": "在 Y 轴的缩放比例。",
-            "translated-name": "Y轴缩放"
+            "translated-name": "Y轴缩放",
+            "description": "获取对象在 Y 轴上的缩放量。"
           },
           "scale-z": {
-            "description": "在 Z 轴的缩放比例。",
-            "translated-name": "Z轴缩放"
+            "translated-name": "Z轴缩放",
+            "description": "获取对象在 Z 轴上的缩放量。"
           },
           "meshes": {
             "description": "一个包含要绘制的所有网格的字符串， 以逗号分隔名称。如果所有网格都已绘制，则返回空字符串。",
@@ -48719,10 +49522,397 @@
           },
           "origin-z": {
             "description": "获取Z轴原点坐标。",
-            "translated-name": "Z轴原点"
+            "translated-name": "原点Z"
+          },
+          "world-position-x": {
+            "description": "获取模型在 X 轴上的世界位置。",
+            "translated-name": "模型坐标X"
+          },
+          "world-position-y": {
+            "description": "获取模型在 Y 轴上的世界位置。",
+            "translated-name": "模型坐标Y"
+          },
+          "world-position-z": {
+            "description": "获取模型在 Z 轴上的世界位置。",
+            "translated-name": "模型坐标Z"
+          },
+          "world-rotation-x": {
+            "description": "获取模型在 X 轴上的世界旋转角度，以欧拉角表示。",
+            "translated-name": "模型旋转X"
+          },
+          "world-rotation-y": {
+            "description": "获取模型在 Y 轴上的世界旋转角度，以欧拉角表示。",
+            "translated-name": "模型旋转Y"
+          },
+          "world-rotation-z": {
+            "description": "获取模型在 Z 轴上的世界旋转角度，以欧拉角表示。",
+            "translated-name": "模型旋转Z"
+          },
+          "world-quaternion-x": {
+            "description": "获取模型的世界四元素X分量。",
+            "translated-name": "模型四元数X"
+          },
+          "world-quaternion-y": {
+            "description": "获取模型的世界四元素Y分量。",
+            "translated-name": "模型四元数Y"
+          },
+          "world-quaternion-z": {
+            "description": "获取模型的世界四元素Z分量。",
+            "translated-name": "模型四元数Z"
+          },
+          "world-quaternion-w": {
+            "description": "获取模型的世界四元素W分量。",
+            "translated-name": "模型四元数W"
+          },
+          "world-scale-x": {
+            "description": "获取模型在 X 轴上的世界缩放比例。",
+            "translated-name": "模型缩放X"
+          },
+          "world-scale-y": {
+            "description": "获取模型在 Y 轴上的世界缩放比例。",
+            "translated-name": "模型缩放Y"
+          },
+          "world-scale-z": {
+            "description": "获取模型在 Z 轴上的世界缩放比例。",
+            "translated-name": "模型缩放Z"
+          },
+          "world-position-node-x": {
+            "description": "获取节点在 X 轴上的最终世界位置。",
+            "translated-name": "节点坐标X",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-position-node-y": {
+            "description": "获取节点在 Y 轴上的最终世界位置。",
+            "translated-name": "节点坐标Y",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-position-node-z": {
+            "description": "获取节点在 Z 轴上的最终世界位置。",
+            "translated-name": "节点坐标Z",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-rotation-node-x": {
+            "description": "获取节点绕 X 轴的最终世界旋转角度，以度为单位（欧拉角）。",
+            "translated-name": "节点旋转X",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-rotation-node-y": {
+            "description": "获取节点绕 Y 轴的最终世界旋转角度，以度为单位（欧拉角）。",
+            "translated-name": "节点旋转Y",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-rotation-node-z": {
+            "description": "获取节点绕 Z 轴的最终世界旋转角度，以度为单位（欧拉角）。",
+            "translated-name": "节点旋转Z",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-scale-node-x": {
+            "description": "获取节点在 X 轴上的最终世界比例。",
+            "translated-name": "节点缩放X",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-scale-node-y": {
+            "description": "获取节点在 Y 轴上的最终世界比例。",
+            "translated-name": "节点缩放Y",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-scale-node-z": {
+            "description": "获取节点在 Z 轴上的最终世界比例。",
+            "translated-name": "节点缩放Z",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-quaternion-node-x": {
+            "description": "获取节点最终世界四元数的 X 分量。",
+            "translated-name": "节点四元数X",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点名称"
+              }
+            }
+          },
+          "world-quaternion-node-y": {
+            "description": "获取节点的世界四元数 Y 分量。",
+            "translated-name": "节点四元素Y",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-quaternion-node-z": {
+            "description": "获取节点的世界四元数 Z 分量。",
+            "translated-name": "节点四元数Z",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "world-quaternion-node-w": {
+            "description": "获取节点的世界四元数 W  分量。",
+            "translated-name": "节点四元数W",
+            "params": {
+              "node-type": {
+                "name": "节点类型",
+                "desc": "要操作的节点类型。有效值为 \"mesh\" (网格) 或 \"bone\"(骨骼)。如果输入无效，默认值为 \"mesh\"。"
+              },
+              "node-name": {
+                "name": "节点名称",
+                "desc": "节点的名称。"
+              }
+            }
+          },
+          "animations": {
+            "description": "返回模型所有的有效动画名称的字符串，以逗号分隔。没有有效动画时，返回空字符串。",
+            "translated-name": "动画"
           }
         },
         "description": "展示项目的 3D 模型。目前仅支持 GLTF 或 GLB 格式。"
+      },
+      "light3d": {
+        "name": "3D光源",
+        "description": "在3D环境中放置一个光源。",
+        "properties": {
+          "light-type": {
+            "name": "光源类型",
+            "desc": "光源的类型。",
+            "items": {
+              "point": "点光源",
+              "directional": "定向光",
+              "spot": "聚光灯"
+            }
+          },
+          "intensity": {
+            "name": "亮度",
+            "desc": "光源的亮度。"
+          },
+          "reference-distance": {
+            "name": "相对距离",
+            "desc": "对于点光源或聚光灯而言，在此距离处的光照亮度。"
+          },
+          "inner-angle": {
+            "name": "内角",
+            "desc": "聚光灯锥体的内锥角。"
+          },
+          "outer-angle": {
+            "name": "外角",
+            "desc": "聚光锥体的外锥角。"
+          },
+          "initially-visible": {
+            "name": "初始可见",
+            "desc": "在场景开始时，对象是否可见。"
+          },
+          "radius": {
+            "name": "半径",
+            "desc": "对于点光源或聚光灯而言，指的是光线强度降为零的距离，即可见范围。"
+          },
+          "attenuation-factor": {
+            "name": "衰减系数",
+            "desc": "光照亮度随距离增加而衰减的程度。100% 表示正常衰减，0% 表示不随距离衰减，但仍受光源半径限制。"
+          }
+        },
+        "aceCategories": {
+          "light": "光源"
+        },
+        "actions": {
+          "set-light-type": {
+            "list-name": "设置光源类型",
+            "display-text": "设置光源类型为 [i]{0}[/i]",
+            "description": "要设置的类型",
+            "params": {
+              "light-type": {
+                "name": "强度",
+                "desc": "光源的类型。",
+                "items": {
+                  "point": "点光源",
+                  "directional": "定向光",
+                  "spot": "聚光灯"
+                }
+              }
+            }
+          },
+          "set-intensity": {
+            "list-name": "设置亮度",
+            "display-text": "设置亮度为 [i]{0}[/i]",
+            "description": "设置光源的亮度。",
+            "params": {
+              "intensity": {
+                "name": "亮度",
+                "desc": "要设置的亮度。"
+              }
+            }
+          },
+          "set-reference-distance": {
+            "list-name": "设置相对距离",
+            "display-text": "设置相对距离为 [i]{0}[/i]",
+            "params": {
+              "reference-distance": {
+                "name": "相对距离",
+                "desc": "光源的相对距离。"
+              }
+            },
+            "description": "设置点光源的光照亮度等于指定值时所对应的距离。"
+          },
+          "set-spot-angles": {
+            "list-name": "设置聚光灯角度",
+            "display-text": "设置聚光灯角度(内锥: [i]{0}[/i], 外锥: [i]{1}[/i])",
+            "description": "设置聚光灯的内锥角和外锥角。",
+            "params": {
+              "inner-angle": {
+                "name": "内角",
+                "desc": "聚光灯的内锥角，以角度为单位。"
+              },
+              "outer-angle": {
+                "name": "外角",
+                "desc": "聚光灯的外锥角，以角度为单位。"
+              }
+            }
+          },
+          "set-radius": {
+            "list-name": "设置半径",
+            "display-text": "设置半径为[i]{0}[/i]",
+            "description": "设置光线的可见范围。",
+            "params": {
+              "radius": {
+                "name": "半径",
+                "desc": "新的半径"
+              }
+            }
+          },
+          "set-attenuation-factor": {
+            "list-name": "设置衰减系数",
+            "display-text": "设置衰减系数为 [i]{0}[/i]",
+            "description": "设置光照亮度随距离增加而衰减的程度。",
+            "params": {
+              "attenuation-factor": {
+                "name": "衰减系数",
+                "desc": "要设置的衰减系数，范围为 0-100。"
+              }
+            }
+          }
+        },
+        "expressions": {
+          "get-intensity": {
+            "description": "当前光照强度。",
+            "translated-name": "亮度"
+          },
+          "get-reference-distance": {
+            "description": "光源当前的相对距离。",
+            "translated-name": "相对距离"
+          },
+          "get-inner-angle": {
+            "description": "聚光灯的内锥角，以角度为单位。",
+            "translated-name": "内角"
+          },
+          "get-outer-angle": {
+            "description": "聚光灯的外锥角，以角度为单位。",
+            "translated-name": "外角"
+          },
+          "get-radius": {
+            "description": "当前的光照半径。",
+            "translated-name": "半径"
+          },
+          "get-attenuation-factor": {
+            "description": "当前的衰减系数，范围为 0-100。",
+            "translated-name": "衰减系数"
+          }
+        }
       }
     },
     "themes": {

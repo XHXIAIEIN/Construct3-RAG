@@ -4,7 +4,15 @@
 declare class ITimelineControllerObjectType<InstType extends IInstance = IInstance> extends IObjectType<InstType>
 {
 	setInstances(instances: IWorldInstance | IWorldInstance[], trackId?: string): void;
-	play(timeline: string | ITimelineState, tags?: string | string[]): ITimelineState;
+	getInstances(timeline: string | ITimelineState): IWorldInstance[] | undefined;
+	
+	play(timeline: string | ITimelineState, tags?: string | string[]): ITimelineState | ITimelineState[];
+	playInRange(
+		timeline: string | ITimelineState,
+		tags?: string | string[],
+		start?: number | string | string[],
+		end?: number | string | string[],
+	): ITimelineState | ITimelineState[];
 
 	allTimelines(): Generator<ITimelineState>;
 	timelinesByTags(tags: string | string[]): Generator<ITimelineState>;

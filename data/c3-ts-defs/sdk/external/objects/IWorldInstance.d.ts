@@ -1,4 +1,7 @@
 declare namespace SDK {
+
+	type IWorldInstanceMaterialSurfaceType = "no-lighting" | "flat" | "smooth";
+
 	class IWorldInstance extends IObjectInstance {
 		GetBoundingBox(): SDK.Rect;
 		GetQuad(): SDK.Quad;
@@ -61,5 +64,14 @@ declare namespace SDK {
 		GetSampling(): SamplingModeOrAutoType;
 
 		GetActiveSampling(): SamplingModeType;
+
+		SetMaterialSurfaceType(m: IWorldInstanceMaterialSurfaceType): void;
+		GetMaterialSurfaceType(): IWorldInstanceMaterialSurfaceType;
+		SetTransmissiveness(t: number): void;
+		GetTransmissiveness(): number;
+		GetMetallic(): number;
+		SetMetallic(m: number): void;
+		GetRoughness(): number;
+		SetRoughness(r: number): void;
 	}
 }

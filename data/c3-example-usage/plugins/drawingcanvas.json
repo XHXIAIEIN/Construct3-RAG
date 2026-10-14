@@ -4,9 +4,9 @@
   },
   "actions": {
     "add-poly-point": {"examples": 3, "read": [["wave-distortion", "MainCode", 46, 46], ["gravitational-field", "MainCode", 13, 13], ["stealth-example", "Event sheet 1", 33, 40]]},
-    "clear-canvas": {"examples": 12, "read": [["raycast-reflections", "Event sheet 1", 1, 1], ["qr-code-maker", "Event sheet 1", 9, 9], ["pixel-data-reader", "Code", 1, 8]]},
+    "clear-canvas": {"examples": 13, "read": [["raycast-reflections", "Event sheet 1", 1, 1], ["qr-code-maker", "Event sheet 1", 9, 9], ["pixel-data-reader", "Code", 1, 8]]},
     "clear-rect": {"examples": 1, "read": [["stealth-example", "Event sheet 1", 38, 45]]},
-    "fill-ellipse": {"examples": 4, "read": [["hidden-objects", "MainCode", 29, 29], ["tilemap-destruction", "MainCode", 33, 33], ["gravitational-field", "MainCode", 15, 15]]},
+    "fill-ellipse": {"examples": 5, "read": [["selene", "MapGenEvents", 14, 14], ["hidden-objects", "MainCode", 29, 29], ["tilemap-destruction", "MainCode", 33, 33]]},
     "fill-linear-gradient": {"examples": 1, "read": [["classic-raycaster", "Code", 25, 29]]},
     "fill-poly": {"examples": 1, "read": [["stealth-example", "Event sheet 1", 35, 35]]},
     "line": {"examples": 3, "read": [["timeline-drawing", "MainEventSheet", 2, 2], ["raycast-reflections", "Event sheet 1", 4, 4], ["classic-raycaster", "Code", 29, 29]]},
@@ -15,10 +15,10 @@
     "line-poly": {"examples": 2, "read": [["wave-distortion", "MainCode", 47, 47], ["stealth-example", "Event sheet 1", 35, 35]]},
     "load-snapshot": {"examples": 2, "read": [["noise-textures", "Event sheet 1", 13, 13], ["planet-generator", "Events", 96, 96]]},
     "outline-ellipse": {"examples": 3, "read": [["hidden-objects", "MainCode", 29, 29], ["gravitational-field", "MainCode", 12, 14], ["galactic-blocks", "MainCode", 90, 90]]},
-    "paste-object": {"examples": 12, "read": [["qr-code-maker", "Event sheet 1", 9, 9], ["pixel-data-reader", "Code", 1, 8], ["fruit-slicing", "Gameplay", 26, 26]]},
+    "paste-object": {"examples": 13, "read": [["qr-code-maker", "Event sheet 1", 9, 9], ["pixel-data-reader", "Code", 1, 8], ["bricklet", "ColorEvents", 31, 31]]},
     "reset-poly": {"examples": 3, "read": [["wave-distortion", "MainCode", 45, 45], ["gravitational-field", "MainCode", 14, 14], ["stealth-example", "Event sheet 1", 33, 40]]},
     "save-image": {"examples": 5, "read": [["mandelbrot-set-js", "SaveImage", 1, 1], ["qr-code-maker", "Event sheet 1", 9, 9], ["layout-transition", "EventsMain", 44, 44]]},
-    "save-snapshot": {"examples": 4, "read": [["noise-textures", "Event sheet 1", 1, 1], ["pixel-data-reader", "Code", 1, 8], ["nail-artist", "Events", 28, 32]]},
+    "save-snapshot": {"examples": 5, "read": [["noise-textures", "Event sheet 1", 1, 1], ["pixel-data-reader", "Code", 1, 8], ["bricklet", "ColorEvents", 31, 31]]},
     "set-drawing-blend": {"examples": 1, "read": [["stealth-example", "Event sheet 1", 47, 47]]},
     "set-resolution-mode": {"examples": 1, "read": [["nail-artist", "Events", 5, 5]]},
     "snapshot-set-pixel": {"examples": 2, "read": [["noise-textures", "Event sheet 1", 12, 12], ["planet-generator", "Events", 95, 95]]}
@@ -26,10 +26,10 @@
   "expressions": {
     "saved-image-url": {"examples": 5, "read": [["mandelbrot-set-js", "SaveImage", 1, 1], ["qr-code-maker", "Event sheet 1", 9, 9], ["layout-transition", "EventsMain", 44, 44]]},
     "snapshot-alpha-at": {"examples": 1, "read": [["nail-artist", "Events", 29, 32]]},
-    "snapshot-blue-at": {"examples": 2, "read": [["pixel-data-reader", "Code", 3, 10], ["nail-artist", "Events", 32, 32]]},
-    "snapshot-green-at": {"examples": 2, "read": [["pixel-data-reader", "Code", 3, 10], ["nail-artist", "Events", 31, 31]]},
+    "snapshot-blue-at": {"examples": 3, "read": [["pixel-data-reader", "Code", 3, 10], ["nail-artist", "Events", 32, 32], ["bricklet", "ControlsEvents", 13, 14]]},
+    "snapshot-green-at": {"examples": 3, "read": [["pixel-data-reader", "Code", 3, 10], ["nail-artist", "Events", 31, 31], ["bricklet", "ControlsEvents", 13, 14]]},
     "snapshot-height": {"examples": 2, "read": [["noise-textures", "Event sheet 1", 5, 12], ["planet-generator", "Events", 88, 95]]},
-    "snapshot-red-at": {"examples": 2, "read": [["pixel-data-reader", "Code", 3, 10], ["nail-artist", "Events", 30, 30]]},
+    "snapshot-red-at": {"examples": 3, "read": [["pixel-data-reader", "Code", 3, 10], ["nail-artist", "Events", 30, 30], ["bricklet", "ControlsEvents", 13, 14]]},
     "snapshot-width": {"examples": 2, "read": [["noise-textures", "Event sheet 1", 4, 11], ["planet-generator", "Events", 87, 94]]},
     "surface-device-height": {"examples": 1, "read": [["qr-code-maker", "Event sheet 1", 9, 9]]},
     "surface-device-width": {"examples": 1, "read": [["qr-code-maker", "Event sheet 1", 9, 9]]}

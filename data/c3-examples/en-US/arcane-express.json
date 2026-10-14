@@ -1,0 +1,59 @@
+{
+  "id": "arcane-express",
+  "name": "Arcane Express",
+  "description": "Escort a magic crystal through hostile fantasy lands, fight enchanted enemy towers, and use your heroes' abilities to survive and reach the portals.",
+  "tags": [
+    "New",
+    "Advanced",
+    "3D",
+    "Demo game",
+    "Adventure",
+    "Strategy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "CSV",
+      "Camera3D",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Model3D",
+      "Mouse",
+      "NinePatch",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Flash",
+      "LOS",
+      "MoveTo",
+      "Pathfinding",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "inverse",
+      "sketch",
+      "tint",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=arcane-express"
+}

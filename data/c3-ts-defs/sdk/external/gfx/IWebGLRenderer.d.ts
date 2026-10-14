@@ -27,6 +27,14 @@ declare namespace SDK.Gfx {
 		SetFrontFaceWinding(m: RendererFrontFaceWinding): void;
 		GetFrontFaceWinding(): RendererFrontFaceWinding;
 
+		SetAlphaTestEnabled(e: boolean): void;
+		IsAlphaTestEnabled(): boolean;
+		SetAlphaThreshold(threshold: number): void;
+		GetAlphaThreshold(): number;
+
+		Set3DLightingEnabled(e: boolean): void;
+		Is3DLightingEnabled(): boolean;
+
 		Rect(r: SDK.Rect): void;
 		Rect2(left: number, top: number, right: number, bottom: number): void;
 
@@ -37,7 +45,7 @@ declare namespace SDK.Gfx {
 		Quad3D(tlx: number, tly: number, tlz: number, trx: number, try_: number, trz: number, brx: number, bry: number, brz: number, blx: number, bly: number, blz: number, r: SDK.Rect): void;
 		Quad3D2(tlx: number, tly: number, tlz: number, trx: number, try_: number, trz: number, brx: number, bry: number, brz: number, blx: number, bly: number, blz: number, uv: SDK.Quad): void;
 
-		DrawMesh(posArr: Float32Array, uvArr: Float32Array, indexArr: Uint16Array, colorArr?: Float32Array): void;
+		DrawMesh(posArr: Float32Array, uvArr: Float32Array, indexArr: Uint16Array, colorArr?: Float32Array, normalArr?: Float32Array): void;
 		CreateMeshData(vertexCount: number, indexCount: number, opts?: CreateMeshDataOptions): SDK.Gfx.IMeshData;
 		DrawMeshData(meshData: SDK.Gfx.IMeshData, indexOffset?: number, indexCount?: number): void;
 

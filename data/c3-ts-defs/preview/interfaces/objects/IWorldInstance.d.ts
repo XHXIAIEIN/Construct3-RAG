@@ -39,6 +39,8 @@ interface GetMeshPointOpts {
 	v: number;
 }
 
+type WorldInstanceMaterialSurfaceType = "no-lighting" | "flat" | "smooth";
+
 /** Represents an instance of an object that appears in a layout.
  * @see {@link https://www.construct.net/make-games/manuals/construct-3/scripting/scripting-reference/object-interfaces/iworldinstance | IWorldInstance documentation } */
 declare class IWorldInstance extends IInstance
@@ -137,4 +139,9 @@ declare class IWorldInstance extends IInstance
 	setMeshPoint(col: number, row: number, opts: SetMeshPointOpts): void;
 	getMeshPoint(col: number, row: number): GetMeshPointOpts;
 	getMeshSize(): Vec2Arr;
+
+	materialSurfaceType: WorldInstanceMaterialSurfaceType;
+	transmissiveness: number;
+	metallic: number;
+	roughness: number;
 }

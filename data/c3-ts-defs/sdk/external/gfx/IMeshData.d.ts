@@ -10,6 +10,7 @@ declare namespace SDK.Gfx {
 		positions: Float32Array;
 		texCoords: Float32Array;
 		colors: Float32Array;
+		normals: Float32Array;
 		indices: Uint16Array | Uint32Array;
 		
 		readonly debugLabel: string;
@@ -17,7 +18,11 @@ declare namespace SDK.Gfx {
 		MarkDataChanged(bufferType: string, start: number, end: number): void;
 		MarkAllVertexDataChanged(start?: number, end?: number): void;
 		MarkIndexDataChanged(start?: number, end?: number): void;
+
+		FillIndices(): void;
 		FillColor(r: number, g: number, b: number, a: number): void;
+		CopyNormalBuffer(normalArr: Float32Array, offset?: number): void;
+		ComputeNormalBuffer(): void;
 
 		Release(): void;
 	}

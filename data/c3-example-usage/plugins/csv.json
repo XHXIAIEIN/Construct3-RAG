@@ -1,0 +1,9 @@
+{
+  "actions": {
+    "generate-csv": {"examples": 1, "read": [["bricklet", "ModelStateEvents", 14, 14]]},
+    "parse-csv": {"examples": 2, "read": [["arcane-express", "CreditsEvents", 9, 13], ["bricklet", "ModelStateEvents", 4, 5]]}
+  },
+  "expressions": {
+    "generated-csv": {"examples": 1, "read": [["bricklet", "ModelStateEvents", 14, 14]]}
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "cavern-lights",
+  "name": "Cavern lights",
+  "description": "Find and awaken five ancient runes in mystical cave with 3D lighting.",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Feature example",
+    "Puzzle",
+    "3D"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Light3D",
+      "Model3D",
+      "Mouse",
+      "Sprite",
+      "Text",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Sin",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cavern-lights"
+}

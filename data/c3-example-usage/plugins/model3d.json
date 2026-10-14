@@ -1,0 +1,22 @@
+{
+  "conditions": {
+    "on-animation-finished": {"examples": 1, "read": [["arcane-express", "CharacterEvents", 77, 77]]}
+  },
+  "actions": {
+    "play": {"examples": 1, "read": [["cargo-yard", "Events", 38, 38]]},
+    "set-all-meshes-enabled": {"examples": 1, "read": [["breach", "NodesLinksEvents", 140, 140]]},
+    "set-animation": {"examples": 2, "read": [["arcane-express", "MainMenuEvents", 54, 58], ["alien-interception", "GameEvents", 87, 87]]},
+    "set-animation-blend-mode": {"examples": 1, "read": [["cargo-yard", "Events", 5, 10]]},
+    "set-collisions-enabled": {"examples": 1, "read": [["penalties", "Events", 38, 38]]},
+    "set-mesh-object": {"examples": 2, "read": [["cavern-lights", "Events", 3, 3], ["cargo-yard", "Events", 6, 6]]},
+    "set-model": {"examples": 1, "read": [["breach", "NodesLinksEvents", 94, 94]]},
+    "set-model-by-name": {"examples": 4, "read": [["breach", "CreditsEvents", 3, 9], ["pushout-mahjong", "Events", 48, 48], ["alien-interception", "GameEvents", 41, 41]]},
+    "set-transform": {"examples": 4, "read": [["arcane-express", "ObstaclesEvents", 7, 7], ["breach", "CreditsEvents", 3, 9], ["pushout-mahjong", "Events", 49, 49]]},
+    "stop": {"examples": 1, "read": [["arcane-express", "CharacterEvents", 17, 20]]}
+  },
+  "expressions": {
+    "animation": {"examples": 2, "read": [["cargo-yard", "Events", 37, 39], ["arcane-express", "CharacterEvents", 70, 73]]},
+    "name": {"examples": 1, "read": [["arcane-express", "MainMenuEvents", 61, 61]]},
+    "progress": {"examples": 1, "read": [["arcane-express", "CharacterEvents", 81, 81]]}
+  }
+}

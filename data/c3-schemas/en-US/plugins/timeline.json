@@ -8,6 +8,7 @@
     "by-timeline": "By timeline",
     "all": "All timelines",
     "triggers": "Triggers",
+    "pick-instances": "Pick instances",
     "misc": "Miscellaneous"
   },
   "conditions": [
@@ -178,6 +179,54 @@
         }
       },
       "isTrigger": true
+    },
+    {
+      "id": "pick-all-in-timeline",
+      "scriptName": "PickAllInTimeline",
+      "category": "pick-instances",
+      "list-name": "Pick all in timeline",
+      "display-text": "Pick all instances in [b]{0}[/b]",
+      "description": "Pick all the instances in a timeline.",
+      "params": {
+        "timeline": {
+          "type": "timeline",
+          "name": "Timeline",
+          "desc": "The timeline to pick instances from."
+        }
+      },
+      "isInvertible": false
+    },
+    {
+      "id": "pick-all-in-timeline-by-name",
+      "scriptName": "PickAllInTimelineByName",
+      "category": "pick-instances",
+      "list-name": "Pick all in timeline (by name)",
+      "display-text": "Pick all instances in [b]{0}[/b]",
+      "description": "Pick all the instances in a timeline.",
+      "params": {
+        "timeline-name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "The name of the timeline to pick instances from."
+        }
+      },
+      "isInvertible": false
+    },
+    {
+      "id": "pick-all-in-timelines-by-tags",
+      "scriptName": "PickAllInTimelinesByTags",
+      "category": "pick-instances",
+      "list-name": "Pick all in tagged timelines",
+      "display-text": "Pick all instances in timelines tagged [b]{0}[/b]",
+      "description": "Pick all the instances in the matched timelines.",
+      "params": {
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Space separated list of tags to match a timeline."
+        }
+      },
+      "isInvertible": false
     }
   ],
   "actions": [
@@ -198,6 +247,39 @@
           "type": "string",
           "name": "Tags",
           "desc": "Optional space separated list of tags to identify a timeline later on."
+        }
+      },
+      "isAsync": true
+    },
+    {
+      "id": "play-timeline-in-range",
+      "scriptName": "PlayTimelineInRange",
+      "category": "by-timeline",
+      "list-name": "Play in range",
+      "display-text": "Play [b]{0}[/b] with tags [i]{1}[/i] from [i]{2}[/i] to [i]{3}[/i]",
+      "description": "Play a timeline in the specified range. Playback rate is changed in the case the start time is higher than the end time.",
+      "params": {
+        "timeline": {
+          "type": "timeline",
+          "name": "Timeline",
+          "desc": "The timeline to start playing."
+        },
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Optional space separated list of tags to identify a timeline later on."
+        },
+        "start": {
+          "type": "any",
+          "name": "Start",
+          "desc": "The time the timeline will start playback from. If a space separated list of tags is provided, the start time will be that of the first matching keyframe. If a starting time can not be found it defaults to the beginning.",
+          "initialValue": 0
+        },
+        "end": {
+          "type": "any",
+          "name": "End",
+          "desc": "The time the timeline will end playback at. If a space separated list of tags is provided, the end time will be that of the first matching keyframe. If a ending time can not be found it defaults to the ending.",
+          "initialValue": 0
         }
       },
       "isAsync": true
@@ -224,6 +306,39 @@
       "isAsync": true
     },
     {
+      "id": "play-timeline-in-range-by-name",
+      "scriptName": "PlayTimelineInRangeByName",
+      "category": "by-timeline",
+      "list-name": "Play in range (by name)",
+      "display-text": "Play [b]{0}[/b] with tags [i]{1}[/i] from [i]{2}[/i] to [i]{3}[/i]",
+      "description": "Play a timeline in the specified range. Playback rate is changed in the case the start time is higher than the end time.",
+      "params": {
+        "timeline-name": {
+          "type": "string",
+          "name": "Name",
+          "desc": "The name of the timeline to start playing."
+        },
+        "tags": {
+          "type": "string",
+          "name": "Tags",
+          "desc": "Optional space separated list of tags to identify a timeline later on."
+        },
+        "start": {
+          "type": "any",
+          "name": "Start",
+          "desc": "The time the timeline will start playback from. If a space separated list of tags is provided, the start time will be that of the first matching keyframe. If a starting time can not be found it defaults to the beginning.",
+          "initialValue": 0
+        },
+        "end": {
+          "type": "any",
+          "name": "End",
+          "desc": "The time the timeline will end playback at. If a space separated list of tags is provided, the end time will be that of the first matching keyframe. If a ending time can not be found it defaults to the ending.",
+          "initialValue": 0
+        }
+      },
+      "isAsync": true
+    },
+    {
       "id": "pause-timeline-by-tags",
       "scriptName": "PauseTimelineByTags",
       "category": "by-timeline",
@@ -234,7 +349,7 @@
         "tags": {
           "type": "string",
           "name": "Tags",
-          "desc": "Space separated list of timeline tags to change."
+          "desc": "Space separated list of tags to match a timeline."
         }
       }
     },
@@ -249,7 +364,7 @@
         "tags": {
           "type": "string",
           "name": "Tags",
-          "desc": "Space separated list of timeline tags to change."
+          "desc": "Space separated list of tags to match a timeline."
         }
       }
     },
@@ -264,7 +379,7 @@
         "tags": {
           "type": "string",
           "name": "Tags",
-          "desc": "Space separated list of timeline tags to change."
+          "desc": "Space separated list of tags to match a timeline."
         }
       }
     },
@@ -300,7 +415,7 @@
         "tags": {
           "type": "string",
           "name": "Tags",
-          "desc": "Space separated list of timeline tags to change."
+          "desc": "Space separated list of tags to match a timeline."
         },
         "rate": {
           "type": "number",
@@ -317,6 +432,29 @@
       "list-name": "Play all",
       "display-text": "Play all",
       "description": "Play all timelines which are not already playing.",
+      "isAsync": true
+    },
+    {
+      "id": "play-all-timelines-in-range",
+      "scriptName": "PlayAllTimelinesInRange",
+      "category": "all",
+      "list-name": "Play all in range",
+      "display-text": "Play all from [b]{0}[/b] to [b]{1}[/b]",
+      "description": "Play all timelines in the specified range, which are not already playing.",
+      "params": {
+        "start": {
+          "type": "any",
+          "name": "Start",
+          "desc": "The time the timelines will start playback from. If a space separated list of tags is provided, the start time will be that of the first matching keyframe in each timeline. If a starting time can not be found it defaults to the beginning.",
+          "initialValue": 0
+        },
+        "end": {
+          "type": "any",
+          "name": "End",
+          "desc": "The time the timelines will end playback at. If a space separated list of tags is provided, the end time will be that of the first matching keyframe in each timeline. If a ending time can not be found it defaults to the ending.",
+          "initialValue": 0
+        }
+      },
       "isAsync": true
     },
     {

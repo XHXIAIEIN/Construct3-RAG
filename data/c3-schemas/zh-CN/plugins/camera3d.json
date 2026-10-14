@@ -313,6 +313,7 @@
       "category": "3d-camera",
       "translated-name": "Z轴刻度",
       "description": "影响在Z轴方向中，每个像素的缩放比例。",
+      "isDeprecated": true,
       "returnType": "number"
     },
     {

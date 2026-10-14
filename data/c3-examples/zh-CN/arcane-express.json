@@ -1,0 +1,59 @@
+{
+  "id": "arcane-express",
+  "name": "3D奥术列车",
+  "description": "护送魔法水晶穿越充满敌意的奇幻世界，与被施了魔法的敌方防御塔战斗，并利用英雄们的能力生存下来，到达传送门。",
+  "tags": [
+    "新增",
+    "高级",
+    "3D",
+    "完整游戏",
+    "冒险",
+    "策略"
+  ],
+  "used-addons": {
+    "plugins": [
+      "AJAX",
+      "Arr",
+      "Audio",
+      "CSV",
+      "Camera3D",
+      "Dictionary",
+      "Keyboard",
+      "LocalStorage",
+      "Model3D",
+      "Mouse",
+      "NinePatch",
+      "PlatformInfo",
+      "Shape3D",
+      "Sprite",
+      "Text",
+      "TiledBg",
+      "Timeline"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Flash",
+      "LOS",
+      "MoveTo",
+      "Pathfinding",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "blurhorizontal",
+      "blurvertical",
+      "dodge",
+      "glowhorizontal",
+      "glowvertical",
+      "hsladjust",
+      "inverse",
+      "sketch",
+      "tint",
+      "warpobject"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=arcane-express"
+}

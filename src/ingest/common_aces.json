@@ -1,11 +1,11 @@
 {
   "_source": {
     "file": "main.js",
-    "url": "https://editor.construct.net/r495-2/main.js",
+    "url": "https://editor.construct.net/r506/main.js",
     "block": "the function that registers plugins._common in the editor bundle",
     "plugins": "plugins/allEditorPlugins.js, the constructor of each built-in plugin",
-    "release": "r495.2",
-    "extracted": "2026-09-28",
+    "release": "r506",
+    "extracted": "2026-10-14",
     "script": "scripts/extract_common_aces.py"
   },
   "categories": {
@@ -519,6 +519,73 @@
         }
       ],
       "expressions": []
+    },
+    "material": {
+      "conditions": [],
+      "actions": [
+        {
+          "id": "set-material-surface-type",
+          "scriptName": "SetMaterialSurfaceType",
+          "params": [
+            {
+              "id": "surface-type",
+              "type": "combo",
+              "items": [
+                "no-lighting",
+                "flat",
+                "smooth"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "set-transmissiveness",
+          "scriptName": "SetTransmissiveness",
+          "params": [
+            {
+              "id": "transmissiveness",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-metallic",
+          "scriptName": "SetMetallic",
+          "params": [
+            {
+              "id": "metallic",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "id": "set-roughness",
+          "scriptName": "SetRoughness",
+          "params": [
+            {
+              "id": "roughness",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "expressions": [
+        {
+          "id": "transmissiveness",
+          "expressionName": "Transmissiveness",
+          "returnType": "number"
+        },
+        {
+          "id": "metallic",
+          "expressionName": "Metallic",
+          "returnType": "number"
+        },
+        {
+          "id": "roughness",
+          "expressionName": "Roughness",
+          "returnType": "number"
+        }
+      ]
     },
     "misc": {
       "conditions": [
@@ -1451,7 +1518,8 @@
             {
               "id": "transform-d",
               "type": "boolean",
-              "initialValue": "true"
+              "initialValue": "true",
+              "newParamInitialValue": "false"
             },
             {
               "id": "transform-a",
@@ -1985,6 +2053,30 @@
           "!SetIsSingleGlobal"
         ]
       ],
+      "set-material-surface-type": [
+        [
+          "!SetIsSingleGlobal",
+          "SetSupports3DLighting"
+        ]
+      ],
+      "set-transmissiveness": [
+        [
+          "!SetIsSingleGlobal",
+          "SetSupports3DLighting"
+        ]
+      ],
+      "set-metallic": [
+        [
+          "!SetIsSingleGlobal",
+          "SetSupports3DLighting"
+        ]
+      ],
+      "set-roughness": [
+        [
+          "!SetIsSingleGlobal",
+          "SetSupports3DLighting"
+        ]
+      ],
       "destroy": [
         [
           "!SetIsSingleGlobal"
@@ -2207,6 +2299,24 @@
           "AddCommonAppearanceACEs"
         ]
       ],
+      "transmissiveness": [
+        [
+          "!SetIsSingleGlobal",
+          "SetSupports3DLighting"
+        ]
+      ],
+      "metallic": [
+        [
+          "!SetIsSingleGlobal",
+          "SetSupports3DLighting"
+        ]
+      ],
+      "roughness": [
+        [
+          "!SetIsSingleGlobal",
+          "SetSupports3DLighting"
+        ]
+      ],
       "count": [
         [
           "!SetIsSingleGlobal"
@@ -2408,6 +2518,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2430,6 +2541,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2452,6 +2564,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2474,6 +2587,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2496,6 +2610,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2518,6 +2633,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2540,6 +2656,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2562,6 +2679,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2584,6 +2702,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2606,6 +2725,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2628,6 +2748,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2650,6 +2771,7 @@
       "SetIs3D": true,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2672,6 +2794,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2694,6 +2817,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2716,6 +2840,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2738,6 +2863,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2760,6 +2886,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2782,6 +2909,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2804,6 +2932,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2826,6 +2955,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -2848,6 +2978,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2870,6 +3001,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2892,6 +3024,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2914,6 +3047,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2936,6 +3070,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2958,6 +3093,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -2980,6 +3116,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3002,6 +3139,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3024,6 +3162,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3046,6 +3185,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3068,6 +3208,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3090,6 +3231,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3112,6 +3254,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3134,6 +3277,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3156,6 +3300,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3178,10 +3323,34 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
       "SetSupportsZElevation": false,
+      "editor:is-enabled": false,
+      "editor:is-focused": false,
+      "editor:is-visible": false,
+      "editor:on-collision-with-another-object": false,
+      "editor:set-mesh-size": false,
+      "editor:template-name": false
+    },
+    "Light3D": {
+      "AddCommon3DRotationACEs": true,
+      "AddCommonAngleACEs": false,
+      "AddCommonAppearanceACEs": true,
+      "AddCommonPositionACEs": true,
+      "AddCommonSceneGraphACEs": true,
+      "AddCommonSizeACEs": false,
+      "AddCommonZOrderACEs": false,
+      "SetIs3D": true,
+      "SetIsSingleGlobal": false,
+      "SetPluginType": "world",
+      "SetSupports3DLighting": false,
+      "SetSupportsChangingSampling": false,
+      "SetSupportsColor": true,
+      "SetSupportsEffects": false,
+      "SetSupportsZElevation": true,
       "editor:is-enabled": false,
       "editor:is-focused": false,
       "editor:is-visible": false,
@@ -3200,6 +3369,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3222,6 +3392,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3244,6 +3415,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3266,6 +3438,7 @@
       "SetIs3D": true,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -3288,6 +3461,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3310,6 +3484,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3332,6 +3507,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -3354,6 +3530,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3376,6 +3553,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -3398,6 +3576,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3420,6 +3599,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3442,6 +3622,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3464,6 +3645,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": true,
@@ -3486,6 +3668,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3508,6 +3691,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": true,
@@ -3530,6 +3714,7 @@
       "SetIs3D": true,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -3552,6 +3737,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3574,6 +3760,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3596,6 +3783,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3618,6 +3806,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3640,6 +3829,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -3662,6 +3852,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -3684,6 +3875,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -3706,6 +3898,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3728,6 +3921,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": false,
       "SetSupportsEffects": true,
@@ -3750,6 +3944,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3772,6 +3967,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -3794,6 +3990,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": true,
       "SetSupportsEffects": true,
@@ -3816,6 +4013,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3838,6 +4036,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3860,6 +4059,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3882,6 +4082,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": false,
       "SetSupportsEffects": true,
@@ -3904,6 +4105,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "world",
+      "SetSupports3DLighting": true,
       "SetSupportsChangingSampling": true,
       "SetSupportsColor": false,
       "SetSupportsEffects": true,
@@ -3926,6 +4128,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3948,6 +4151,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": true,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,
@@ -3970,6 +4174,7 @@
       "SetIs3D": false,
       "SetIsSingleGlobal": false,
       "SetPluginType": "object",
+      "SetSupports3DLighting": false,
       "SetSupportsChangingSampling": false,
       "SetSupportsColor": false,
       "SetSupportsEffects": false,

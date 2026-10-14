@@ -1,0 +1,33 @@
+{
+  "id": "sir-cuits",
+  "name": "Sir Cuits",
+  "description": "Help Sir Cuits find Mecha-ella! Place jump pads and use physics to navigate levels.",
+  "tags": [
+    "New",
+    "Intermediate",
+    "Game template",
+    "Platformer",
+    "Arcade"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "LOS",
+      "Physics",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween"
+    ],
+    "effects": [
+      "hsladjust"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=sir-cuits"
+}

@@ -1754,6 +1754,48 @@
 				},
 				"name": "Keyboard"
 			},
+			"light3d": {
+				"name": "3D light",
+				"properties": {
+					"attenuation-factor": {
+						"desc": "How much the light intensity reduces with distance. 100% is normal attenuation, 0% means no attenuation (except for light radius).",
+						"name": "Attenuation factor"
+					},
+					"initially-visible": {
+						"desc": "Choose whether the object is visible when the layout starts.",
+						"name": "Initially visible"
+					},
+					"inner-angle": {
+						"desc": "For a spot light, the inner cone angle.",
+						"name": "Inner angle"
+					},
+					"intensity": {
+						"desc": "How bright the light is.",
+						"name": "Intensity"
+					},
+					"light-type": {
+						"desc": "The type of light.",
+						"items": {
+							"directional": "Directional",
+							"point": "Point",
+							"spot": "Spot"
+						},
+						"name": "Light type"
+					},
+					"outer-angle": {
+						"desc": "For a spot light, the outer cone angle.",
+						"name": "Outer angle"
+					},
+					"radius": {
+						"desc": "For a point or spot light, the distance at which lighting reduces to zero.",
+						"name": "Radius"
+					},
+					"reference-distance": {
+						"desc": "For a point or spot light, the distance at which lighting is at the specified intensity.",
+						"name": "Reference distance"
+					}
+				}
+			},
 			"list": {
 				"debugger": {
 					"item-count": "Item count",
@@ -1817,11 +1859,17 @@
 			},
 			"model3d": {
 				"debugger": {
+					"average": "Average",
+					"culling-mode-back": "Back faces",
+					"culling-mode-front": "Front faces",
+					"culling-mode-model": "Model settings",
+					"culling-mode-none": "No culling",
 					"fit": "Fit",
 					"hierarchy": "Model hierarchy",
 					"isolate": "Isolated",
 					"legacy": "Legacy",
 					"looping": "Looping",
+					"mask": "Layered",
 					"origin-x-left": "Left",
 					"origin-x-middle": "Middle",
 					"origin-x-right": "Right",
@@ -1851,7 +1899,7 @@
 						"name": "3D model animation properties"
 					},
 					"axis-scale-mode": {
-						"desc": "How the model transforms along with the instance. \"Fit\" mode preserves the model's proportions. \"Stretch\" mode scales each axis to fit in the instance bounds. \"Legacy\" mode exists for backwards compatibility, the other modes are prefered.",
+						"desc": "How the model transforms along with the instance. \"Fit\" mode preserves the model's proportions. \"Stretch\" mode scales each axis to fit in the instance bounds. \"Legacy\" mode exists for backwards compatibility, the other modes are preferred.",
 						"items": {
 							"fit": "Fit",
 							"legacy": "Legacy",
@@ -1863,6 +1911,14 @@
 						"desc": "Check to ignore drawing polygon faces which are not visible.",
 						"name": "Back face culling"
 					},
+					"blend-mode": {
+						"desc": "Set how poses are blended together when playing multiple animations simultaneously.",
+						"items": {
+							"average": "Average",
+							"mask": "Layered"
+						},
+						"name": "Animation blend mode"
+					},
 					"bounding-box": {
 						"desc": "Show the bounding box of the current mesh in the editor.",
 						"name": "Show bounding box"
@@ -1870,6 +1926,16 @@
 					"bounding-box-color": {
 						"desc": "The color of the bouding box in the editor.",
 						"name": "Bounding box color"
+					},
+					"culling-mode": {
+						"desc": "Set which polygon faces to cull. \"No culling\", \"Back faces\" and \"Front faces\" are applied to all meshes. \"Model settings\" is the preferred value and applies per mesh culling as set in the imported file.",
+						"items": {
+							"back-face": "Back faces",
+							"front-face": "Front faces",
+							"model-settings": "Model settings",
+							"none": "No culling"
+						},
+						"name": "Culling mode"
 					},
 					"editor-properties": {
 						"desc": "Settings which only affect how 3D model instances are used in the editor.",
@@ -1896,7 +1962,7 @@
 						"name": "Preview"
 					},
 					"loop": {
-						"desc": "Check so they animation loops.",
+						"desc": "Check so the initial animation loops.",
 						"name": "Loop"
 					},
 					"mesh-render-mode": {
@@ -3402,6 +3468,10 @@
 								"auto": "Auto"
 							}
 						},
+						"save-llm-context-file": {
+							"desc": "Save the file llm-context.md with this project to provide context for AI tools.",
+							"name": "Save LLM context file"
+						},
 						"splash-color": {
 							"desc": "The background color of the splash screen, which appears when run as a web app.",
 							"name": "Splash color"
@@ -3466,21 +3536,6 @@
 							"desc": "The website associated with this project.",
 							"name": "Website",
 							"placeholder": "https://www.example.com"
-						},
-						"z-axis-scale": {
-							"convert": {
-								"confirmation-message": "Converting the project to Z axis scale 'Regular' will affect the Z co-ordinate and depth of all 3D content in all layouts and layers in the project. This cannot be undone. Note this does not affect your event sheets or code which may still need to be manually updated. Do you want to continue?",
-								"desc": "Click to convert the project to Z axis scale 'Regular'.",
-								"link": "Convert to 'Regular'",
-								"name": "Convert Z axis scale"
-							},
-							"desc": "The scale of units to use on the Z axis for 3D features. 'Regular' uses same units as X/Y axes. 'Normalized' works 0-100 and is deprecated - use 'Regular' mode instead.",
-							"name": "Z axis scale",
-							"normalized-confirmation": "Z axis scale 'Normalized' is deprecated. In future this mode will be removed in favor of 'Regular' mode. Are you sure you want to change the Z axis scale to 'Normalized'?",
-							"options": {
-								"normalized": "Normalized",
-								"regular": "Regular"
-							}
 						}
 					}
 				},

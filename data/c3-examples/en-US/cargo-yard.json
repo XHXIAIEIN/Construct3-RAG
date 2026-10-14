@@ -1,0 +1,39 @@
+{
+  "id": "cargo-yard",
+  "name": "Cargo Yard",
+  "description": "Sneak through a maze of shipping containers in the cargo yard. Stay in the shadows to escape.",
+  "tags": [
+    "New",
+    "Intermediate",
+    "3D",
+    "Game template",
+    "Puzzle",
+    "Strategy"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Camera3D",
+      "Keyboard",
+      "Light3D",
+      "Model3D",
+      "Mouse",
+      "Shape3D",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "EightDir",
+      "Flash",
+      "MoveTo",
+      "Rotate",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "fogexponential"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=cargo-yard"
+}

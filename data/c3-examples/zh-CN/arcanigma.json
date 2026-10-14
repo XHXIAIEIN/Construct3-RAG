@@ -1,0 +1,39 @@
+{
+  "id": "arcanigma",
+  "name": "游戏示例：幻影秘境",
+  "description": "扮演一位巫师，让物体在现实中显现或消失，改变周围的世界，解开谜题并闯过各个关卡。",
+  "tags": [
+    "新增",
+    "进阶",
+    "游戏模板",
+    "平台"
+  ],
+  "used-addons": {
+    "plugins": [
+      "Keyboard",
+      "Mouse",
+      "Particles",
+      "Sprite",
+      "Spritefont2",
+      "TiledBg"
+    ],
+    "behaviors": [
+      "Bullet",
+      "MoveTo",
+      "Physics",
+      "Platform",
+      "Rotate",
+      "Sin",
+      "Timer",
+      "Tween",
+      "solid"
+    ],
+    "effects": [
+      "dodge",
+      "gamma",
+      "hsladjust",
+      "tint"
+    ]
+  },
+  "open": "https://editor.construct.net/#open=arcanigma"
+}

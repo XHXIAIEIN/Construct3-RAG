@@ -1,5 +1,5 @@
 {
-  "version": "r495.2",
+  "version": "r506",
   "language": "en-US",
   "addons": {
     "plugins": {
@@ -274,6 +274,14 @@
           }
         }
       },
+      "camera3d": {
+        "expressions": {
+          "z-scale": {
+            "translated-name": "ZScale",
+            "description": "The scale factor for number of pixels per unit on the Z axis."
+          }
+        }
+      },
       "constructgameservices": {
         "actions": {
           "set-player-id": {
@@ -457,7 +465,17 @@
         }
       },
       "model3d": {
+        "conditions": {
+          "is-backface-culling-enabled": {
+            "list-name": "Is back face culling enabled",
+            "description": "Check if back face culling is enabled."
+          }
+        },
         "actions": {
+          "set-backface-culling": {
+            "list-name": "Set back face culling",
+            "description": "Change the back face culling state."
+          },
           "set-mesh": {
             "list-name": "Set mesh",
             "description": "Change the displayed mesh."
