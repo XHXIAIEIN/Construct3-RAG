@@ -31,6 +31,9 @@ export const meta = {
 //   examples: '<folder>'        the official examples for scripts/output_diff.py; default the example-projects
 //                                folder of the Construct-Example-Projects clone beside this one.
 //   projects: ['<folder>']      game projects for sweep_outputs.py, which compares them besides the examples.
+//   writing: ['<file>']         writing rules that rewritten text and code comments follow besides the repository's
+//                                own; default the soul-voice skill's SKILL.md and references/writing.md under
+//                                ~/.claude/skills/, each where it exists; [] for none.
 //   forbidden: ['<name>']       names that must not appear in tracked files. Pass them from your notes, or keep
 //                                them one per line in .local/polish/forbidden.txt; never write them here, because this
 //                                file is tracked in a public repository.
@@ -67,6 +70,8 @@ const MERGE = A.merge !== false
 const PATHS = Array.isArray(A.paths) ? A.paths.map(p => String(p).replace(/\\/g, '/').replace(/^\.\//, '')) : []
 const PROJECTS = Array.isArray(A.projects) ? A.projects.map(p => String(p).replace(/\\/g, '/')) : []
 const FORBIDDEN = Array.isArray(A.forbidden) ? A.forbidden.map(String) : []
+const WRITING = Array.isArray(A.writing) ? A.writing.map(p => String(p).replace(/\\/g, '/'))
+  : ['~/.claude/skills/soul-voice/SKILL.md', '~/.claude/skills/soul-voice/references/writing.md']
 
 // ---------------------------------------------------------------- what may change
 
@@ -302,6 +307,10 @@ ${NO_MERGE}`
 const OTHERS_FAILURE = 'A failure in a file outside the unit is another agent\'s unfinished edit: run the test again a minute later, and if it still fails, list it under unverified, not as the unit\'s failure.'
 
 const abs = (pre, paths) => paths.map(p => `${pre.worktree}/${p}`)
+
+// The writing rules live outside the repository; Bash expands ~, which Read does not.
+const catCmd = p => p.startsWith('~/') ? `cat ~/"${p.slice(2)}"` : `cat "${p}"`
+const writingRules = what => WRITING.length ? `Writing rules besides the repository's: of a SKILL.md, the "Sentences" section; of any other file, all of it. Read each file that exists, with ${WRITING.map(p => `\`${catCmd(p)}\``).join(' and ')}, and apply the rules to ${what}. Where they differ from the repository's rules, the repository's hold: the language of each file, the guarded passages, and the text the evals measured.` : ''
 
 // ---------------------------------------------------------------- schemas
 
@@ -684,6 +693,8 @@ Read first: each file in full; the root AGENTS.md and the AGENTS.md of every dir
 
 ${TEXT_RULES}
 
+${writingRules('every sentence you rewrite')}
+
 Official guidance for this kind of file. Apply it to the form of what the file says; a change it calls for that would add a rule or new content is a proposal:
 ${standardsFor(std, unit)}
 
@@ -726,7 +737,7 @@ Tests of the unit: ${unit.tests.length ? JSON.stringify(unit.tests) : 'none; com
 2. ${edit.length ? `Invoke the Skill tool with skill "simplify" and these args, which the skill reads as its review target (plain text, no backticks):
    "Files: ${abs(pre, edit).join(', ')}. Review ${range}. Other files in this worktree carry other agents' uncommitted work: leave them alone.${clusterText}${foundText} Behavior stays identical: command-line flags and their help text, every module docstring that argparse prints, everything printed on stdout and stderr, exit codes, the files written and their format. Before renaming or removing any name, private ones included, grep the whole repository, JSON files included, and keep the name if anything outside the file uses it. No new dependency.${unit.paths.some(p => p.startsWith('tests/')) ? ' A test pins an expectation: never remove or weaken an assertion.' : ''}${guardedText}"
    If the Skill tool or the skill is not available, do the same review yourself on its questions (reuse of existing helpers, simpler code, efficiency, code at the right level) and say so in skill_used.` : `Invoke no skill, because simplify edits and code-review needs a diff. Review ${range} yourself on the questions of the simplify skill (reuse of existing helpers, simpler code, efficiency, code at the right level), under the same rule that behavior stays identical, and return each change as a proposal.`}
-3. Problems the cross-file sweeps found in these files: ${found.length ? JSON.stringify(found) : '(none)'}. ${edit.length ? 'Fix each one that a change keeping behavior resolves, a rule of an AGENTS.md that the code breaks included, if the skill left it. A change to printed text, a public name or behavior is a proposal, and so is a module docstring that the script passes to argparse, because argparse prints it.' : 'Return a fix for each as a proposal.'}
+3. Problems the cross-file sweeps found in these files: ${found.length ? JSON.stringify(found) : '(none)'}. ${edit.length ? `Fix each one that a change keeping behavior resolves, a rule of an AGENTS.md that the code breaks included, if the skill left it. A change to printed text, a public name or behavior is a proposal, and so is a module docstring that the script passes to argparse, because argparse prints it.${WRITING.length ? ` Then tidy the comments and docstrings of your files. ${writingRules('each comment and docstring, above all the section on comments')} A comment keeps the language of its file.` : ''}` : 'Return a fix for each as a proposal.'}
 4. ${unit.tests.length ? `Run \`cd "${pre.worktree}" && python -m pytest -q -p no:cacheprovider ${unit.tests.join(' ')}\`` : 'Run no tests'} and \`cd "${pre.worktree}" && python -m compileall -q ${unit.paths.join(' ')}\`. Fix what you broke; a file you cannot fix goes back with \`git -C "${pre.worktree}" checkout HEAD -- <file>\`. ${OTHERS_FAILURE}
 5. If you or the skill edited a file outside the unit, undo those edits with Edit; you know them from your own calls. Never run checkout on another unit's file, because another agent may be editing it.
 
