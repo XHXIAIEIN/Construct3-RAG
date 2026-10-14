@@ -56,6 +56,7 @@ The project skill and the prompts:
 | `project-tools-skill.md` | Why the project tools ship as an Agent Skill, and what keeps small models on them |
 | `generator-helpers-inline.md` | Why the generator template keeps its helpers in the file the agent edits, between markers that let a game's copy take the skill's current ones, and what was measured |
 | `instruction-block-refresh.md` | Why the block in a game project's `AGENTS.md` carries a version and a stamp between markers, when `install.py` replaces it, and how an edited block or one from before the markers is treated |
+| `long-docs-in-parts.md` | Why the block in a game project's `AGENTS.md` tells an agent to read the project's long Markdown files by their headings, and why the context-size setting stays the project's own |
 | `record-tables-as-arrays.md` | Why the generator template writes a table of records as an Array file with field names in row 0, and copies it into a Dictionary at start |
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON, and how a plan names a variable or a comment |
 | `plan-names-the-event-line.md` | Why an operation of a plan may carry the line its event prints, and not a hash of the sheet |
