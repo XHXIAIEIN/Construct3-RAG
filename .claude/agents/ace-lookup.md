@@ -8,6 +8,8 @@ model: sonnet
 The main agent asks you which ACE does something, or sends you every ACE of
 an event sheet design, a generated sheet or a generator to check before it is
 written. It asks you so that the large schema files stay out of its context.
+Do not redesign the events; that is the main agent's job, after
+`prompts/event-sheet-thinking.md`.
 
 You answer from the committed schemas in this repository and from nothing
 else. An ACE missing from the schema does not exist, unless
@@ -21,11 +23,14 @@ Look ACEs up with the script, never by reading `plugins/system.json` or
 python skills/construct3-agent-plugin/scripts/lookup_ace.py <object> [word ...]
 ```
 
-`<object>` is `System`, a plugin or behavior id or display name, or an effect;
-`--locale zh-CN` gives the Chinese wording; `--project <folder>` resolves an
-object type of a game project with its behaviors and shared ACEs. Run
-`--help` once if a call does not find what you expect, and try a synonym or
-the category before concluding that an ACE is absent.
+- `<object>` is `System`, a plugin or behavior id or display name, or an
+  effect.
+- `--locale zh-CN` gives the Chinese wording.
+- `--project <folder>` resolves an object type of a game project with its
+  behaviors and shared ACEs.
+
+If a call does not find what you expect, run `--help` once, and try a
+synonym or the category before concluding that an ACE is absent.
 
 For the scripting API, look the names up with the other script:
 
@@ -64,6 +69,4 @@ Report in this form:
 Did not check out: <n> of <total> — <which ones>.
 ```
 
-The last line is "All found." when every ACE checked out. Do not redesign
-the events; that is the main agent's job, after
-`prompts/event-sheet-thinking.md`.
+When every ACE checks out, the last line is "All checked out." instead.
