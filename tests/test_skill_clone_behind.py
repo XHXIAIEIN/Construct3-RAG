@@ -92,6 +92,7 @@ def test_fetched_once_a_period(clones):
 def test_offline_or_untracked_says_nothing(clones, monkeypatch):
     mine, other = clones
     push_one(other)
+    # Behind before the check fetches, so offline has to skip the comparison too
     git(mine, "fetch", "-q")
     monkeypatch.setenv("CONSTRUCT3_RAG_OFFLINE", "1")
     assert c3.clone_behind(mine) is None
@@ -99,6 +100,6 @@ def test_offline_or_untracked_says_nothing(clones, monkeypatch):
         monkeypatch.setenv("CONSTRUCT3_RAG_OFFLINE", value)
         assert c3.clone_behind(mine) is not None, value
     monkeypatch.delenv("CONSTRUCT3_RAG_OFFLINE")
-    git(mine, "switch", "-q", "--detach")
+    git(mine, "switch", "-q", "--detach")  # no upstream
     assert c3.clone_behind(mine) is None
-    assert c3.clone_behind(mine.parent) is None
+    assert c3.clone_behind(mine.parent) is None  # not a clone
