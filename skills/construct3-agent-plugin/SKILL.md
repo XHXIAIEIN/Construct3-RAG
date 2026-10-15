@@ -89,16 +89,12 @@ opened once before it is handed over.
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game above and below its helpers, which stay the skill's between two markers |
 | `assets/runtime-probe.js` | Evaluated in a running preview by a script of the agent's, reads the game's state: positions, variables, animations, behaviors. Read [references/reading-the-runtime.md](references/reading-the-runtime.md) before checking what an event did in the preview |
 
-Each prints its options and examples with `--help`. The scripts that print
-schema wording (`lookup_ace.py`, `print_sheet.py`, `check_project.py`,
-`edit_sheet.py`, `review_design.py`) take `--locale zh-CN` for the editor's
-Chinese names and wording; ids are the same in every locale.
-`search_guides.py` takes it for the examples' names; its pitfalls are English.
-`open_in_editor.py` and `preview_project.py` take it for the names of the
-inspector values they print. The others print no schema wording. A harness
-cuts long tool output without saying where, so a script whose output can run
-long stops at about 10 000 characters and its last line says how to get the
-rest; `--limit 0` prints everything, for a file or a pipe.
+Each prints its options and examples with `--help`. A script that prints
+the editor's wording prints it in Chinese with `--locale zh-CN`; ids are the
+same in every locale. A harness cuts long tool output without saying where,
+so a script whose output can run long stops at about 10 000 characters and
+its last line says how to get the rest; `--limit 0` prints everything, for a
+file or a pipe.
 
 ## Look an ACE up before writing it
 
@@ -163,37 +159,6 @@ The numbers are the editor's: the margin of the event sheet and the
 in JSON line numbers, and read a screenshot or a pasted Find result back the
 same way. `--outline` adds each event's sid, the string to search the JSON
 for.
-
-## Built-ins before variables
-
-Before a variable, an *Every tick* or an *Every X seconds* for a mechanic,
-write the built-in that already keeps it:
-
-- A delay, a countdown, a cooldown: the Timer behavior, *Start timer* and
-  *On timer*; the time left is `Duration(tag) - CurrentTime(tag)`.
-- How many of a type are left: `Coin.Count`, not a variable counted up and
-  down beside it.
-- A move, scale, fade or colour change over a known time: the Tween behavior
-  and *On any finished*.
-- One step after another inside one interaction: *Wait* in the same block.
-- A phase that switches a slice of the sheet on and off: a group and *Set
-  group active*; a pause is *Set time scale* 0.
-- A panel or popup: a layer of its own and *Set layer visible*.
-
-The rest, with what each replaces, is the Native first table of
-`Construct3-RAG/prompts/event-sheet-thinking.md`.
-
-## Write TypeScript
-
-Before writing a script, look up each API it calls,
-`python scripts/lookup_script_api.py IRuntime.callFunction`, and read an
-official example on the same topic whose folder ends in `-ts`. Look a call
-up before saying that one in the user's script does not exist. The
-project's own types, such as `InstanceType.Coin` with its behaviors and
-instance variables, are in `scripts/ts-defs/`, which the editor writes and
-the lookup reads:
-`python scripts/open_in_editor.py --typescript`, again after adding an
-object, a behavior or a variable. `check_project.py` says when one is missing.
 
 ## Change a sheet with a plan
 
@@ -330,9 +295,10 @@ which instances a condition picks, what order triggers fire in and what a
 tick later looks like are the preview's to judge. Design with
 `Construct3-RAG/prompts/event-sheet-thinking.md` and the pitfalls
 `scripts/search_guides.py` prints for the interaction's words first. The
-design guide also says what a new project takes instead of a superseded
-feature (a Tween on Opacity for Fade, a hierarchy for Pin, instance tags for
-the Solid behavior's own), and before events go
+design guide also names the built-in to write before a variable or an
+*Every tick* (its Native first table) and what a new project takes instead
+of a superseded feature (a Tween on Opacity for Fade, a hierarchy for Pin,
+instance tags for the Solid behavior's own), and before events go
 into a sheet read `Construct3-RAG/prompts/event-sheet-style.md`, the shape
 the official examples give a sheet, which the style warnings enforce only in
 part. What the preview teaches goes, with its source, where "Adding an
@@ -371,29 +337,3 @@ When another model writes the generator, give it the `deliver` steps of
 `assets/look-manifest.json`, then run its `confirm` steps on the result,
 `scripts/check_look.py` among them. A rule whose status is `open` is the
 user's to decide.
-
-## Gotchas
-
-- A parameter is written by its type, which `lookup_ace.py` prints beside
-  it. An expression parameter is a string holding an expression: a number is
-  `"100"`, a text carries inner quotes, `"\"hello\""`. Every other type is
-  bare, or a JSON number or boolean: `"start"`, never `"\"start\""`.
-- A variable's `initialValue` is text: `"0"`, and `"true"` or `"false"` for
-  a boolean, which the editor reads by comparing to `"true"`. A layout
-  instance writes its instance variables as JSON values (`1`, `true`) and
-  its `world.angle` in radians. Angles in events are degrees, 0 faces right
-  and they grow clockwise; the origin is the top-left and Y grows downwards.
-- One trigger per event and per branch of sub-events. A function or a custom
-  action counts as one and holds none: react to *On tween finished* in a
-  top-level event of its own that calls the next function.
-- A Solid blocks while its behavior is enabled, whatever its animation or
-  visibility. A door that opens gets Solid *Set enabled* to disabled, or is
-  destroyed.
-- A name is chosen once: every event that uses it changes with it. Names are
-  plain words without spaces or punctuation, an instance variable starts
-  with a letter, an object is not named like a system expression (`Floor`,
-  `Time`, `Random`), an instance variable not like an expression of its
-  object (`Angle`, `Width`, `Count`).
-- An instance variable or a behavior added to a type or a family goes into
-  every instance of it in every layout. A type created at runtime has a
-  template instance in some layout.
