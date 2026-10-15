@@ -34,7 +34,7 @@ than an image or a font over 256 KiB, or a script that refers to a bundled
 image.
 
 The skill reads these parts of the repository outside its own folder, by the
-paths in its scripts, `SKILL.md`, `references/` and the game-project block:
+paths in its scripts, `SKILL.md`, `references/` and the Construct 3 block:
 
 | Part | Read by | Kept as |
 |------|---------|---------|
@@ -44,10 +44,8 @@ paths in its scripts, `SKILL.md`, `references/` and the game-project block:
 | `data/c3-example-usage/` | `lookup_ace.py` | one bundle, from about a hundred small files |
 | `data/c3-lang/` | `check_project.py`, two subtrees of about 10 KiB; `open_in_editor.py`, `preview_project.py` and agents, the texts of the plugins and behaviors that label a preview's inspector values (`reading-the-runtime.md`) | the two subtrees and those texts, about 100 KiB per locale |
 | `data/c3-guides/`, `prompts/` | agents, from `SKILL.md` and the block | their files |
+| `data/c3-new-project/` | `new_project.py`; `check_project.py` names its `project.c3proj` for a project file without a `properties` block | its files, the icons included |
 | `skills/construct3-agent-plugin/` except `evals/` | | its files |
-
-The keys of a preview's inspector values all lie under `text.plugins.<id>`
-and `text.behaviors.<id>`, in `name`, `properties` and `debugger`.
 
 Copied as they are, these parts come to well over 512 files, most of them
 the examples. The schemas fit as files, and agents open them by path, so
@@ -71,9 +69,9 @@ link into `~/.claude/skills/` of `plugin-tracks-commits.md` points at
 
 The build:
 
-- Copies `skills/construct3-agent-plugin/` except `evals/` and
-  `assets/fonts/`, `data/c3-schemas/`, `data/c3-guides/`, `prompts/` and
-  `data/c3-ts-defs/autocomplete-data.json` to the same paths.
+- Copies `skills/construct3-agent-plugin/` without `evals/`, and copies
+  `data/c3-schemas/`, `data/c3-guides/`, `prompts/` and
+  `data/c3-ts-defs/autocomplete-data.json`, all to the same paths.
   The skill's scripts find `data/` in the folder above them as they do in
   the clone, and an agent opens a schema at the same relative path.
 - Writes `data/c3-ts-defs/` except `sdk/`, each locale of
@@ -87,11 +85,11 @@ The build:
 - Writes `data/c3-lang/{locale}.json` with the two subtrees that
   `check_project.py` reads. It also keeps the `name`, `properties` and
   `debugger` texts of every plugin and behavior, at the same JSON paths.
-  The keys of a preview's inspector values are paths into those texts,
-  such as `behaviors.platform.debugger.vector-x`. `open_in_editor.py
-  --state` and a `state` step of `preview_project.py` print each value
-  under its text, and `reading-the-runtime.md` sends an agent that reads
-  `inspector` itself to the language pack for the label.
+  Every key of a preview's inspector values is a path into those texts
+  below `text`, such as `behaviors.platform.debugger.vector-x`.
+  `open_in_editor.py --state` and a `state` step of `preview_project.py`
+  print each value under its text, and `reading-the-runtime.md` sends an
+  agent that reads `inspector` itself to the language pack for the label.
 - Copies `data/c3-new-project/`, Construct's icons included. A new project
   is made by `new_project.py` of the skill, which copies the empty project
   and gives it its own name and `uniqueId`. The clone and the plugin start a
@@ -195,4 +193,4 @@ overwrites it and the test fails until then.
   draw placeholder icons in code and bundle no image.
 - The directory changes its file limits.
 - The directory accepts a commit whose plugin holds a font file: the
-  plugin can then carry Inter again.
+  plugin can then carry Inter.

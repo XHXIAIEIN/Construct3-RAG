@@ -25,8 +25,7 @@ measured with `evals/token_share.py --files`:
 | ace-lookup, Bash, Read, Grep and Glob | 2 | 12 800 |
 
 In one production game project, most sub-agent responses came from
-general-purpose and workflow sub-agents, and every eval run was
-general-purpose.
+general-purpose and workflow sub-agents.
 
 A comparison on one eval case ran three Haiku runs an arm, graded with
 `grade.py --play`, in a Linux container off the owner's machine. The
@@ -80,6 +79,5 @@ route within the spread of general-purpose runs: then evals start their
 runs as this type. A route that falls short of the general-purpose runs',
 there or in a week of production transcripts read with `token_share.py`,
 means a tool the scripts need is missing from the list, or the prompt is
-steering the route again. A game project without
-the plugin that delegates sheet changes is the case for writing the
-definition from `install.py`.
+steering the route again. A game project without the plugin that delegates
+sheet changes is the case for writing the definition from `install.py`.
