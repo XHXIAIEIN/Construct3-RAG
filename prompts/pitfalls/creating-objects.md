@@ -43,6 +43,34 @@ Sources and the rule for adding an entry are in the index,
   2026-10-02: the Laser of the official example families, its one layout
   instance removed, was created 52×27 and visible with Bullet speed 0; with
   the instance kept, speed 400]
+- With an empty template name, *Create object* copies the first instance
+  of the type listed in the first layout, in project order, that holds
+  one. The current layout and the uids play no part. So a type placed in
+  several layouts, or several times in one, is created with that one
+  instance's frame, size and opacity. An edit to that instance in the
+  editor changes every runtime creation, and a template instance in a
+  later layout is never read. Mark one instance as a template and name it
+  in *Create object*. With *Create hierarchy* on, the new instance also
+  gets that template's children. A name no template has falls back to the
+  first instance. [manual: system-reference/system-actions.md "Create
+  object", "rather than an arbitrary instance";
+  project-primitives/objects/templates.md "Runtime actions"; observed in a
+  minimal project, r506.2 preview, 2026-10-16: the first layout held two
+  instances of a type on one layer and the second layout one. Creation in
+  either layout copied the instance that came first in the first layout's
+  file, 64×64 opaque at frame 0 or 128×128 half-opaque at frame 1 as the
+  two were swapped, never the second layout's own 32×32 one, which had the
+  lowest uid. The named template copied the named instance]
+- *Create hierarchy* creates the children on the layer the new parent is
+  created on, not on the layers the template's children sit on. So a
+  template whose children sit on another layer creates in a layout without
+  that layer, and the children are on the parent's layer there; children
+  that must sit on a layer of their own are moved there after the
+  creation, with *Move to layer*. [observed in a minimal project, r506.2
+  preview, 2026-10-16: a parent whose child sat on the layer "Parts",
+  created with *Create hierarchy* on the layer "Game" in that layout and in
+  a layout without "Parts", got its child on "Game" both times, with no
+  error]
 - A layout loads the images of the objects placed in it when it starts. An
   object created only by events, its template kept in a layout that never
   runs, loads its images when it is created: the game keeps running and the
