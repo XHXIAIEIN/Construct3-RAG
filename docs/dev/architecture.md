@@ -12,11 +12,11 @@ Construct3-RAG is a versioned, bilingual Construct 3 reference dataset first.
 The lookup service is an optional access layer over that data, and Direct Lookup
 is all it does: deterministic, offline, with no model and no database behind it.
 
-The `construct3-agent-plugin` skill under `skills/` is outside this layout:
-its scripts read `data/c3-schemas/` directly and run from a copy inside a
-game project with neither `src/` nor the service. How the Claude Code plugin
-gets the skill and its data: `docs/decisions/plugin-folder.md`. Before
-changing the skill, read `skills/AGENTS.md`.
+The `construct3-agent-plugin` skill under `skills/` is outside this layout: its
+scripts read `data/c3-schemas/` directly and run from a copy inside a game
+project with neither `src/` nor the service. Before changing how the Claude
+Code plugin gets the skill and its data, read `docs/decisions/plugin-folder.md`.
+Before changing the skill, read `skills/AGENTS.md`.
 
 The project follows four dependency rules:
 
@@ -34,7 +34,7 @@ src/
   application/         Search workflow, its stages and its lookup port
   domain/              Lookup intent, match and result records
   lookup/              Direct Lookup: the engine, query classification and four indexes
-  ingest/              CDN fetch and export, deprecation flags, Scirra's guides
+  ingest/              CDN fetch and export, the shared ACEs from the editor bundle, deprecation flags, Scirra's guides
   locale/              Query vocabulary, grammar and aliases per locale
   settings/            Immutable, grouped settings loader
   requirements.txt     The service's dependencies; reading data/ needs none
@@ -74,7 +74,8 @@ Explicit maintenance path:
 
 scripts/init.py -----> ingest/c3_fetcher.py -----> data/
                  \---> scripts/example_usage.py -> data/c3-example-usage/
-                 \---> ingest/guides.py --------> data/c3-guides/
+                 \---> ingest/guides.py ---------> data/c3-guides/
+                 \---> scripts/build_plugin.py --> plugin/
 ```
 
 Static boundary tests keep `application` and `lookup` from importing
@@ -131,7 +132,7 @@ Direct Lookup is deliberately conservative:
   response carries no `lookup` section, and reading the manual or the examples
   is the caller's; a question word alone (怎么, 如何, 怎样) declines nothing;
 - directed aliases are scoped, single-hop, and deterministic; a rule may also
-  name the ACEs in its scope that its trigger never means, such as the Z-order
+  name the ACEs in its scope that its trigger never means, such as the Z order
   actions for a bare move;
 - `_common` ACEs are searched and listed only for those the plugin's
   `commonAces` lists, and a complete list includes them;
@@ -159,13 +160,9 @@ display names; it must list exactly the manifest's ids, and
 reads the committed dataset, or the directory `C3_SCHEMA_DIR` names. A refresh
 replaces `data/` itself, so the cache is never read at query time.
 
-No ordinary import or query refreshes the CDN. `scripts/init.py` fetches,
-exports into the cache, and replaces the `data/` directories. It then
-rebuilds `data/c3-example-usage/` from the examples clone when the clone
-lies beside the repository, and writes each of Scirra's guides whose text
-changed; the update workflow runs the
-same script, `--guides-only` every week, then `scripts/schema_diff.py` for
-the body of its pull request.
+No ordinary import or query refreshes the CDN. Before changing what
+`scripts/init.py` or the update workflow fetches, replaces or rebuilds, read
+`docs/dev/data-pipeline.md`.
 
 ## Known limits
 

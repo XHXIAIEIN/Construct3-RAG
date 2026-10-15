@@ -31,7 +31,7 @@ This downloads the exports listed in the local
 `.local/docs/evidence/c3-reference-games/catalog.json`, decodes them, builds image contact
 sheets and writes the aggregate reports.
 
-Run one stage when the downloads already exist:
+When the downloads already exist, run one stage:
 
 ```bash
 python -m scripts.reference_games decode
@@ -90,16 +90,16 @@ localized data in the language pack’s order. An export stores a combo as an
 index into the order of the editor’s ACE definition, so the schema’s order
 cannot decode it.
 
-Read Tween’s one-property list from the sampled game’s runtime. Its order
-changed across Construct releases. Applying the current editor order to an old
-export shifts every property after Y: a width tween can be mislabeled as Z, an
-opacity tween as depth, and a color tween as angle. Validate suspicious labels
-against tags and end values: opacity commonly ends at 0, while color ends at an
-`rgb` expression or packed color value.
+Read Tween’s one-property list from the sampled game’s runtime, because its
+order differs between Construct releases. The editor order of a later release,
+applied to an earlier export, shifts every property after Y: a width tween can
+be mislabeled as Z, an opacity tween as depth, and a color tween as angle.
+Validate suspicious labels against tags and end values: opacity commonly ends
+at 0, while color ends at an `rgb` expression or packed color value.
 
 Construct 2 and Construct 3 share enough project-array structure to recover
-objects, layouts, groups and literals. Do not claim readable action semantics
-when the runtime reference table cannot be recovered.
+objects, layouts, groups and literals. If the runtime reference table cannot be
+recovered, do not claim readable action semantics.
 
 ## Update the catalog
 

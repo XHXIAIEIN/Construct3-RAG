@@ -10,13 +10,15 @@ deprecation filter), [Scirra's Guides](#scirras-guides),
 | Source | Origin | Format | Updates |
 |--------|--------|--------|---------|
 | ACE definitions | `editor.construct.net/{ver}/plugins/allAces.json`, `behaviors/allAces.json` | JSON | Each C3 release |
-| Language (en/zh) | `editor.construct.net/{ver}/loader/lang/precompiled-{lang}.json` | JSON | Each C3 release |
+| Language (en/zh) | `editor.construct.net/{ver}/loader/lang/precompiled-{locale}.json` | JSON | Each C3 release |
 | Effects | `editor.construct.net/{ver}/effects/allEffects.json` | JSON | Each C3 release |
 | Example metadata | `editor.construct.net/{ver}/media/example-project-data.json` | JSON | Each C3 release |
 | TypeScript definitions | the `.d.ts` files that `editor.construct.net/{ver}/offline.json` lists, and `media/autocomplete-data.json` | TypeScript, JSON | Each C3 release |
-| Shared world-object ACEs | `editor.construct.net/{ver}/main.js` of the latest stable release, extracted by `scripts/extract_common_aces.py` into `src/ingest/common_aces.json` | JSON | When a release adds a shared ACE |
+| Shared world-object ACEs | `editor.construct.net/{ver}/main.js` and `plugins/allEditorPlugins.js` of the latest stable release, extracted by `scripts/extract_common_aces.py` into `src/ingest/common_aces.json` | JSON | When a release adds a shared ACE |
 | Deprecated plugins and behaviors | `editor.construct.net/{ver}/main.js`, `plugins/allEditorPlugins.js`, `behaviors/allEditorBehaviors.js`, read by `src/ingest/deprecated_addons.py` | JS | Each C3 release |
 | Scirra's guide "Construct's project format" | `www.construct.net/en/tutorials/constructs-project-format-3275`, read by `src/ingest/guides.py` | HTML page | When Scirra edits it; fetched every week |
+| Example usage | the event sheets of the `Construct-Example-Projects` clone, read by `scripts/example_usage.py` ([Example Usage](#example-usage)) | JSON | When the clone is pulled; the update workflow keeps the committed index |
+| Empty project | **Project** > **New** in the editor, saved by hand as a folder (`data/AGENTS.md`, "Changing the data") | Project folder | When a release changes what the editor writes |
 
 `{ver}` is the release's CDN directory: the release name, with the dot of a
 patch release written as a dash, `r495-2` for r495.2. `versions.json`, which
@@ -25,8 +27,7 @@ names the current Beta, Stable and LTS releases, is the one file at the root.
 The manual, the Addon SDK samples and the example projects are separate clones
 (`Construct3-Manual`, `Construct-Addon-SDK`, `Construct-Example-Projects`);
 `AGENTS.md` section 2 says where an agent finds them. The pipeline copies
-none of them. It reads one: the event sheets of the example projects, for
-the index of [Example Usage](#example-usage).
+none of them and reads only the event sheets of the example projects.
 
 ## CDN Fetching (C3Fetcher)
 
@@ -176,9 +177,9 @@ left out. The file is written only when its text differs from the committed
 one, so a week with no edit commits nothing.
 
 A fetch that fails, or a page without the article, keeps the committed copy
-and logs a warning; the rest of the refresh goes on. When construct.net
-answers the script with a browser check (HTTP 403), the copy is refreshed by
-hand from the page saved in a browser:
+and logs a warning; the rest of the refresh goes on. If construct.net
+answers the script with a browser check (HTTP 403), save the page in a
+browser and refresh the copy from it:
 
 ```bash
 python scripts/init.py --guides-only --guide-html <saved page>
