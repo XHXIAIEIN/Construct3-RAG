@@ -82,6 +82,7 @@ The project skill and the prompts:
 | `published-game-visual-language.md` | Which visual, motion, camera and pacing rules repeated across published Construct games, and which of them the template took |
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `look-judge-calibration.md` | How often a judge that sees only the screenshots answers `review_look.py`'s questions as a panel of labeller agents does, and why the questions ask what a player sees as a mistake |
+| `file-types-in-project-c3proj.md` | Which `type` the editor records per extension in `project.c3proj`, measured over the official examples, and how the generator and the checker use the table |
 | `paper-and-ink-look.md` | The default look of a generated game: the paper palette, the Inter subset the generator takes from the user's font cache, the line-drawn areas, the HUD's type and the subjects' sizes |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
 | `landscape-viewport.md` | Why the generator template starts a game at 1920×1080 landscape, and what follows from it |

@@ -435,6 +435,11 @@ def shortest(obj):
 # A table of records (cards, enemies, levels, loot) is a data file, not events: a Dictionary or
 # Array file under files/, loaded once at start. build_files() writes them.
 _general_files: list[dict] = []
+# The "type" the editor records for a file in Files, by extension; any other extension is octet-stream.
+GENERAL_TYPES = {".css": "text/css", ".csv": "text/csv", ".glb": "application/octet-stream",
+                 ".html": "text/html", ".js": "application/javascript", ".json": "application/json",
+                 ".png": "image/png", ".svg": "image/svg+xml", ".ts": "application/typescript",
+                 ".txt": "text/plain", ".wasm": "application/wasm", ".xml": "text/xml"}
 _ajax_used = False
 
 
@@ -444,7 +449,7 @@ def general_file(name: str, text: str) -> str:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="\n") as f:
         f.write(text)
-    kind = "application/json" if name.endswith(".json") else "text/plain"
+    kind = GENERAL_TYPES.get(Path(name).suffix.lower(), "application/octet-stream")
     global _general_files
     _general_files = [e for e in _general_files if e["name"] != name]
     _general_files.append({"name": name, "type": kind, "sid": sid(), "file-info": {"purpose": "none"}})
@@ -2980,7 +2985,7 @@ def build_and_check() -> None:
     sys.exit(subprocess.run([sys.executable, str(checker), "--project", str(ROOT), "--style"]).returncode)
 
 
-# ==== construct3-agent-plugin helpers: end; version 2026-10-14, stamp a73a2478169c ================
+# ==== construct3-agent-plugin helpers: end; version 2026-10-15, stamp f6adb8c1cc66 ================
 
 
 # --- the game ---------------------------------------------------------------------------
