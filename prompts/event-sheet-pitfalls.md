@@ -134,6 +134,7 @@ Dictionary or JSON, read [pitfalls/expressions.md](pitfalls/expressions.md).
 - `tokencount("", ",")` is 1, so a loop over an empty list runs once on an empty token. Test `list ≠ ""` before the loop.
 - A non-static local resets every tick, so a trigger of a later tick (*On timer*, AJAX *On completed*) reads its initial value. Make it static, or use a global or an instance variable.
 - A text set into a number variable is parsed: `"12px"` stores 12, `"abc"` stores NaN, not 0, which fails every comparison. Convert with `int()` or `float()` first.
+- A local's declaration resets it when the tick reaches it, so a value set by an event above the declaration is gone below it; a static local keeps it. Declare a local above the first event that writes it.
 
 ### Coordinates and angles
 

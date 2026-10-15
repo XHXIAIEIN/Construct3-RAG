@@ -165,3 +165,16 @@ Sources and the rule for adding an entry are in the index,
   to `"abc"` held NaN, `numStr & ""` read `"NaN"`, `numStr = 0` and
   `numStr < 1` both read 0, `numStr + 1` NaN; `"12"` and `"12px"` stored
   12, `"1.5"` 1.5]
+- A local is visible to every event at its level, before or after its
+  declaration, but the declaration is an event of its own: when the tick
+  reaches it, a local that is not static is set back to its initial value.
+  So a value written by an event above the declaration is gone for the
+  events below it, in a group and among sub-events alike, and nothing
+  warns. A static local keeps its value through its declaration. Declare a
+  local above the first event that writes it. [manual:
+  project-primitives/events/variables.md "Local variables", which says only
+  that events at the same level can access it; observed in a minimal
+  project, r506.2 preview, 2026-10-16: an event above the declaration set a
+  group's local to 5 and read 5, the event below the declaration read 0
+  every tick, the same among the sub-events of one event; a static local
+  counted up above its declaration read the same count below it]
