@@ -4,7 +4,7 @@ This page writes one interaction twice: natively, then as the program
 transcribed into events that an agent tends to draft first, with each smell
 named. Read it if the events drag pieces onto slots or a grid to merge,
 swap, move or return them. Also read it if a draft has hit the smell table
-of [../event-sheet-thinking.md](../event-sheet-thinking.md) and you want to
+of [event-sheet-thinking.md](../event-sheet-thinking.md) and you want to
 see which construct each smell came from.
 
 ## Native

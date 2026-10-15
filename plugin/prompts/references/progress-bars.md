@@ -18,11 +18,11 @@ Wherever the value changes, one action sets one property of one object:
 `LENGTH` is a global constant (`POWERBARLENGTH = 68`, `FuelBarScaledWidth =
 64`) or the frame's width. Clamp the expression, as berry-harvester and
 template-monk-fight do, so a value past its maximum never grows the bar past
-the frame. The bar's origin sits on the edge it grows from. Every filling bar
-in the examples has (0, 0) or (0, 0.5). A cover that hides from the right has
+the frame. Put the bar's origin on the edge it grows from, because at origin
+0.5 the bar grows both ways from the middle. Every filling bar in the
+examples has (0, 0) or (0, 0.5). A cover that hides from the right has
 (1, 0.5) (flatland-golf `PowerBarCover`), and a meter that rises has (0.5, 1)
-(test-your-might `MightLevelBar`). At origin 0.5 the bar grows both ways from
-the middle.
+(test-your-might `MightLevelBar`).
 
 To slide a change, Tween the same property: car-selection-screen `StatusBar:
 Tween "ChangeWidth" property Width to (14 * Units) + 4 in 0.25 seconds
@@ -61,8 +61,8 @@ LENGTH`, so the colour changes where the growing fill crosses the line, not
 2026-10-07: three bars, a heal landing grew all three fills in the same 0.3 s]
 
 A second value drawn inside the fill, such as poison that will drain the
-health or damage not yet applied, is a second bar of the same object type
-over the fill, origin on the left, with `X` at `frame.X + (hp - poison) /
+health or damage not yet applied, is a part: a second bar of the same object
+type over the fill, origin on the left, with `X` at `Frame.X + (hp - poison) /
 maxHp × LENGTH` and `width` at `poison / maxHp × LENGTH`, so it ends
 where the fill ends. Clamp the poison to `hp - 1` where it is added, so
 draining alone never kills. Drain it with a Timer: *On timer* takes 1 from
@@ -72,7 +72,7 @@ against a ladder of thresholds every tick. [a studied project, 2026-10-06]
 
 A heal on its way is a part of the same kind as the poison part. It starts
 where the fill ends, at `Fill.X + Fill.Width`, and ends at `hp +
-min(incomingHeal, maxHp - hp)` as a share of the bar, `frame.X + (hp +
+min(incomingHeal, maxHp - hp)` as a share of the bar, `Frame.X + (hp +
 min(incomingHeal, maxHp - hp)) / maxHp × LENGTH`. It is drawn behind the fill.
 It shortens as the fill grows into it, and it is continuous when a pending
 heal lands, because its far end stays where it was. Incoming damage is the
@@ -97,7 +97,7 @@ upper tier]
 
 ## Ticks at a fixed value step
 
-A Tiled Background's *Set image scale X* scales the tile pitch and the line
+A Tiled Background's *Set image X scale* scales the tile pitch and the line
 drawn in the tile together, so one tile image cannot draw ticks spaced by
 value at one width. A tenth of the scale draws a line a tenth as wide, and a
 line under a pixel wide shows faint and uneven. Make each tick a Sprite and
@@ -114,19 +114,22 @@ the thickness of the frame's border:
 3. In the loop, create a tick on the frame's layer, with `Frame.LayerName` as
    the layer parameter, at X `round(Frame.X + pad + (Frame.Width - 2 * pad) *
    loopindex("i") * step / Frame.maxHp)`. Set its height from the frame's
-   inner height, then *Add child* of the frame with destroy with parent on.
+   inner height, then make it a child of the frame with *Add child* and
+   destroy with parent on.
 
 Call the action at layout start and whenever the maximum changes. For a
 thicker tick at every 1000, set the width to `(loopindex("i") * step) % 1000
-= 0 ? 4 : 2`. Keep the parentheses, because `%` is applied before `*`.
+= 0 ? 4 : 2`. Keep the parentheses, because `%` is applied before `*`
+([pitfalls/expressions.md](../pitfalls/expressions.md)).
 
 A Drawing Canvas over the fill draws the same ticks as one object per bar: a
 *Dashed line* through it as thick as the canvas, its dash length half the
 spacing, then *Set drawing blend* to *Destination out* and the same line 2 px
-further right, which leaves a 2 px tick at each step. The canvas clears
-whenever its display resolution changes, as on a window resize, so it must
-redraw in *On resolution changed* as well as when the maximum changes. At a
-pixel ratio of 1, a tick at a fractional X covers 3 pixels.
+further right, which leaves a 2 px tick at each step. When the display
+resolution changes, as on a window resize, the canvas shows its drawing
+stretched, and its next draw clears it. So draw the ticks again in *On
+resolution changed* as well as when the maximum changes. At a pixel ratio of
+1, a tick at a fractional X covers 3 pixels.
 [manual: plugin-reference/tiled-background.md "Set image X scale",
 plugin-reference/drawing-canvas.md "Handling resizing and resolution";
 observed in a minimal project, stable editor preview, 2026-10-07: a 32 px
@@ -147,14 +150,15 @@ and 2000 for 3000; the Drawing Canvas drew 2 and 29 ticks for 300 and 3000]
 | A bar with caps, borders or rounded ends that must survive any length | 9-patch for the fill and for the frame, *Set size* or Tween *Width* | The corners keep their size, and the middle stretches or tiles. The manual calls it "useful for representing things like progress bars with special artwork at the end of the bar". The width must not go negative | car-selection-screen `StatusBar` in `StatusBarBackground`, both 9-patch, Tween *Width* 0.25 s |
 | A count of icons: hearts, stars, bullets | One Tiled Background of the full icon at `count × icon width`, over one Tiled Background of the empty icon at `max × icon width` | Two objects show any count, and one constant changes the maximum | tower-defense-game `Hearts` and `HeartsBackground`, 8×8 tiles, `Set width to 8 * PlayerBase.HeathPoints` |
 | The same, when each icon animates on its own | Instances of one Sprite with an index variable, picked by `Pick Life by evaluating Life.lifeID > lives` and destroyed or tweened away. Or one Sprite whose animation frame is the count | Each icon can fall, flash or fade. A frame strip needs one image per count | family-tree `Life` (Tween Y then destroy) with `LifeSpot` under it, tile-matcher `Life` |
-| Icons that show a fraction: a quarter heart, half a shield | A row of icon Sprites, and over it a cover: a Sprite of a 1×1 image in the empty colour, blend mode *Source in*, origin (1, 0) at the row's right end, on a layer with *Force own texture*. Tween its *Width* to `(max − value) × (icon width + gap)` | The cover changes only the icon pixels under it, so one rectangle empties any fraction of any number of icons. A second cover with a slower tween is the damage ghost | No official example; a user-shared project, 2026-10-06: `ui_hpbar` (black, *Source in*) over a row of `ui_heart` |
+| Icons that show a fraction: a quarter heart, half a shield | A row of icon Sprites, and over it a cover: a Sprite of a 1×1 image in the empty colour, blend mode *Source in*, origin (1, 0) at the row's right end, on a layer with *Force own texture*. Tween its *Width* to `(max − value) × (icon width + gap)` | The cover changes only the icon pixels under it, so one rectangle empties any fraction of any number of icons. A second cover with a slower tween is the damage ghost | No official example; a user-shared project, 2026-10-06: a black cover with *Source in* over a row of hearts |
 | A gauge with a needle | A needle Sprite, *Set angle* from the value | One object, one angle | rally-drifting `SpeedometerPointer` |
 | A ring or arc that fills | A frame strip, one frame per step, its animation frame set from the value. For any fraction, a mesh on a ring texture: *Set mesh size*, then *Set mesh point* for the outer and inner points along the arc (`plugins/_common.json`). Or two half-ring Sprites rotated behind a cover | The frame strip is the cheapest; the mesh shows any fraction | None drives one. The examples use blend-mode masks (*Destination out* holes) for light and darkness, not for bars |
 
 ## A bar on each of many objects
 
 Each enemy or player with its own bar needs the bar to follow its object and
-go with it. Two ways:
+go with it. Use a container for one bar per object, and a hierarchy for a HUD
+of several parts whose count changes:
 
 - **Container.** Put the bar in the object's container. It is created,
   picked and destroyed with its object, and an event on the object reaches
@@ -171,9 +175,6 @@ go with it. Two ways:
   value, creates the missing icons and destroys the extra ones. To stagger
   their appear tween, start a Timer on each icon for `loopindex × step`
   seconds. [a user-shared project, 2026-10-06]
-
-Use the container for one bar per object. Use the hierarchy for a HUD of
-several parts whose count changes.
 
 A child is placed in layout coordinates, so on a HUD layer with parallax 0
 it follows its object only while the camera stands still. To keep a bar on
