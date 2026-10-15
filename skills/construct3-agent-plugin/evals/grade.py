@@ -128,7 +128,7 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
     timers = [ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and ev["name"] not in ORIGINAL_GLOBALS]
     # The Timer behavior is the other way, the one event-sheet-thinking.md names for a countdown: started for 30
     # seconds, restarting on On timer, the time left read from its expressions.
-    holders = {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and str(ev.get("initialValue")) == "30"}
+    holders = variables_starting_at(rows, "30")
     acts = [(a, conditions_over(ev, above)) for ev, above in rows for a in ev.get("actions", [])]
     started = [a for a, conds in acts if a.get("id") == "start-timer"
                and str(a.get("parameters", {}).get("duration", "")).strip() in {"30", "30.0", *holders}]
@@ -221,10 +221,7 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
                     f"{values(by_value[1]) or 'no condition'}" if by_value else
                     f"{len(sized)} size or scale action(s) on Coin, none reads value"))
 
-    original = json.loads((run / "fixture.json").read_text(encoding="utf-8")).get("eventSheets/Game.json.sids", [])
-    have = {ev.get("sid") for ev, _ in rows}
-    lost = [s for s in original if s not in have]
-    results.append((bool(original) and not lost, f"{len(original) - len(lost)} of {len(original)} original event sids present"))
+    results.append(original_sids(run, rows, "Game.json"))
 
     # Restart layout keeps global variables (Construct3-Manual system-reference/system-actions.md): a countdown
     # set only by its declaration is still 0 once the layout has restarted, and never runs 30 seconds again.
@@ -377,8 +374,6 @@ def grade_find_in_a_big_sheet(run: Path) -> list[tuple[bool, str]]:
 # The stand-in's viewport and grid; MARGIN is the plain sheet's, what margin_of() falls back on
 VIEW_W, VIEW_H, UNIT, MARGIN, TOUCH = 1920, 1080, 32, 32, 160
 HUD_LAYERS = {"ui", "hud"}
-# The HUD types of this skill's stand-in and of the previous one, which a run finds there and does not add
-STAND_IN_HUD = {"ScoreText", "ScoreLabel", "RoundText", "TitleText", "RoundTag", "KeyBox", "KeyText", "KeyVerb"}
 
 
 def margin_of(project: Path) -> int:
@@ -431,9 +426,8 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
     except (OSError, ValueError):
         return results + [(False, "layouts/Game.json is not readable JSON")] * (
             len(CASES["lay-out-the-hud"]["assertions"]) - len(results))
-    hud = [inst for layer in layout.get("layers", []) if layer.get("name", "").lower() in HUD_LAYERS
-           for inst in layer.get("instances", []) if "world" in inst]
-    added = [i for i in hud if i["type"] not in STAND_IN_HUD]
+    hud = hud_of(layout)
+    added = [i for i in hud if i["type"] not in play_cases.STAND_IN_HUD]
     kinds = sorted({i["type"] for i in added})
     listed = ", ".join(f"{i['type']}@({i['world']['x']},{i['world']['y']} {i['world']['width']}x{i['world']['height']})"
                        for i in hud) or "no instance on a layer named UI or HUD"
@@ -442,60 +436,48 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
     def whole(v) -> bool:
         return isinstance(v, (int, float)) and float(v).is_integer()
 
-    def plugin_of(kind: str) -> str | None:
-        try:
-            return json.loads((project / "objectTypes" / f"{kind}.json").read_text(encoding="utf-8")).get("plugin-id")
-        except (OSError, ValueError):
-            return None
-
     fractions = [i["type"] for i in hud if not all(whole(i["world"][k]) for k in ("x", "y", "width", "height"))]
     results.append((bool(hud) and not fractions, f"fractional coordinates or sizes on: {fractions or 'none'}"))
-    shapes = [i for i in added if plugin_of(i["type"]) != "Text"]
+    shapes = [i for i in added if plugin_id(project, i["type"]) != "Text"]
     off = [f"{i['type']} {i['world']['width']}x{i['world']['height']}" for i in shapes
            if not all(whole(i["world"][k]) and int(i["world"][k]) % UNIT == 0 for k in ("width", "height"))]
     results.append((bool(shapes) and not off, f"{len(shapes)} added non-text instance(s); sizes not in {UNIT} px "
                                                f"units: {off or 'none'}"))
-
-    def box(insts: list) -> tuple[float, float, float, float]:
-        lefts = [i["world"]["x"] - i["world"].get("originX", 0) * i["world"]["width"] for i in insts]
-        tops = [i["world"]["y"] - i["world"].get("originY", 0) * i["world"]["height"] for i in insts]
-        rights = [l + i["world"]["width"] for l, i in zip(lefts, insts)]
-        bottoms = [t + i["world"]["height"] for t, i in zip(tops, insts)]
-        return min(lefts), min(tops), max(rights), max(bottoms)
 
     margin = margin_of(project)
 
     def held(lo: float, hi: float, size: float, slack: float = 0.5) -> bool:
         return abs(lo - margin) <= slack or abs(hi - (size - margin)) <= slack or abs((lo + hi) / 2 - size / 2) <= slack
 
-    kinds = {kind: box([i for i in hud if i["type"] == kind]) for kind in sorted({i["type"] for i in hud})}
+    type_boxes = {kind: box_around([i for i in hud if i["type"] == kind]) for kind in sorted({i["type"] for i in hud})}
     loose, drawn = [], {}
     for i in shapes:
         dl, dt, dr, db = drawn_box(project, i)
         l, t, r, b = drawn.get(i["type"], (dl, dt, dr, db))
         drawn[i["type"]] = (min(l, dl), min(t, dt), max(r, dr), max(b, db))
+
     def lined_up(kind: str, edges: tuple, slack: float) -> bool:
         l, t, r, b = edges
         # A second row: its top one unit under a box of another type that is itself held to the top or bottom.
         stacked = any(abs(t - (ob + UNIT)) <= slack and held(ot, ob, VIEW_H)
-                      for other, (ol, ot, orr, ob) in kinds.items() if other != kind)
+                      for other, (ol, ot, orr, ob) in type_boxes.items() if other != kind)
         return held(l, r, VIEW_W, slack) and (held(t, b, VIEW_H, slack) or stacked)
 
     # A type lines up by its box, or by its drawing when that is smaller than a box a finger hits. A drawing's
     # edge is its outermost pixel that is not clear, which an antialiased curve leaves a pixel or two inside the
     # line it was drawn to.
     for kind, edges in drawn.items():
-        if not (lined_up(kind, kinds[kind], 0.5) or lined_up(kind, edges, 2)):
-            l, t, r, b = kinds[kind]
+        if not (lined_up(kind, type_boxes[kind], 0.5) or lined_up(kind, edges, 2)):
+            l, t, r, b = type_boxes[kind]
             dl, dt, dr, db = edges
             loose.append(f"{kind} box ({l:g},{t:g})-({r:g},{b:g}), drawn ({dl:g},{dt:g})-({dr:g},{db:g})")
     results.append((bool(drawn) and not loose, f"added non-text types neither {margin} px inside an edge, nor centred, "
                                                f"nor one unit under a held box, by box or drawing: {loose or 'none'}"))
 
-    boxes = [(i["type"], *box([i])) for i in hud]
+    boxes = [(i["type"], *box_of(i)) for i in hud]
     outside = [f"{k} ({l:g},{t:g})-({r:g},{b:g})" for k, l, t, r, b in boxes if l < 0 or t < 0 or r > VIEW_W or b > VIEW_H]
     results.append((bool(hud) and not outside, f"boxes reaching past the viewport: {outside or 'none'}"))
-    is_text = {i["type"]: plugin_of(i["type"]) == "Text" for i in hud}
+    is_text = {i["type"]: plugin_id(project, i["type"]) == "Text" for i in hud}
 
     def layered(inner: tuple, outer: tuple) -> bool:
         """A box inside one that is not a label, a label on its button or key: the template lays these on purpose."""
@@ -513,7 +495,7 @@ def grade_lay_out_the_hud(run: Path) -> list[tuple[bool, str]]:
     results.append((bool(button) and not small,
                     f"button(s) {[i['type'] for i in button] or 'none found by name'}; under {TOUCH} px: {small or 'none'}"))
 
-    lives = [i for i in added if plugin_of(i["type"]) == "Sprite" and i not in button]
+    lives = [i for i in added if plugin_id(project, i["type"]) == "Sprite" and i not in button]
     per_type: dict[str, int] = {}
     for i in lives:
         per_type[i["type"]] = per_type.get(i["type"], 0) + 1
@@ -542,13 +524,18 @@ WIDTH_ACTIONS = {"set-width", "set-size", "set-scale"}
 TWEEN_SIZE = {"width", "size", "scale", "offsetwidth", "offsetscalex"}      # the Tween combo's keys, lower-cased
 
 
+def hud_of(layout: dict) -> list:
+    """The instances on the layout's UI or HUD layer."""
+    return [inst for layer in layout.get("layers", []) if layer.get("name", "").lower() in HUD_LAYERS
+            for inst in layer.get("instances", []) if "world" in inst]
+
+
 def hud_instances(project: Path) -> list:
     try:
         layout = json.loads((project / "layouts" / "Game.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return []
-    return [inst for layer in layout.get("layers", []) if layer.get("name", "").lower() in HUD_LAYERS
-            for inst in layer.get("instances", []) if "world" in inst]
+    return hud_of(layout)
 
 
 def box_of(inst: dict) -> tuple[float, float, float, float]:
@@ -556,6 +543,12 @@ def box_of(inst: dict) -> tuple[float, float, float, float]:
     left = w["x"] - w.get("originX", 0) * w["width"]
     top = w["y"] - w.get("originY", 0) * w["height"]
     return left, top, left + w["width"], top + w["height"]
+
+
+def box_around(insts: list) -> tuple[float, float, float, float]:
+    """The box around the instances' boxes."""
+    boxes = [box_of(i) for i in insts]
+    return min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes)
 
 
 def contains(outer: tuple, inner: tuple, slack: float = 1) -> bool:
@@ -592,8 +585,7 @@ def sheet_rows(project: Path) -> list:
 
 
 def variables_starting_at(rows: list, initial: str) -> set[str]:
-    names = {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and str(ev.get("initialValue")) == initial}
-    return names
+    return {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and str(ev.get("initialValue")) == initial}
 
 
 def ivars_starting_at(project: Path, initial) -> set[str]:
@@ -629,15 +621,11 @@ def value_actions(rows: list, names: set[str], ids: set[str] = SET_VALUE) -> lis
     return [a for ev, _ in rows for a in ev.get("actions", []) if a.get("id") in ids and pat.search(values([a]))]
 
 
-def constants_at(rows: list, initial: str) -> set[str]:
-    return {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable" and str(ev.get("initialValue")) == initial}
-
-
 def steps_by(rows: list, names: set[str], amount: str) -> list:
     """Actions that move one of the names by `amount`: a literal, a variable holding it, or the
     same with the sign in the action (`Add -1`, `Subtract 1`, `Set x - 1`)."""
     magnitude = amount.lstrip("-")
-    holders = constants_at(rows, amount) | constants_at(rows, magnitude)
+    holders = variables_starting_at(rows, amount) | variables_starting_at(rows, magnitude)
     number = re.compile(r"(?<![\w.])-?" + re.escape(magnitude) + r"(?![\w.])")
     holder = re.compile("|".join(map(re.escape, holders)) or r"$^")
     # A function handed the amount, `AddHealth(10)` or `AddHealth(HP_PER_COIN)`, whose body adds its parameter.
@@ -699,6 +687,14 @@ def checker_line(project: Path) -> tuple[bool, str]:
     code, out = checker(project)
     lines = out.splitlines() or [""]
     return code == 0, f"exit {code}: {lines[0] if code else lines[-1]}"
+
+
+def checker_and_warnings(project: Path) -> list[tuple[bool, str]]:
+    """Whether the checker passes, and whether it prints no warning line."""
+    code, out = checker(project)
+    warnings = [line for line in out.splitlines() if line.startswith("warning:")]
+    return [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
+            (not warnings, warnings[0] if warnings else "no warning line")]
 
 
 def grade_show_hp_as_a_bar(run: Path) -> list[tuple[bool, str]]:
@@ -897,8 +893,7 @@ def grade_lives_as_hearts(run: Path) -> list[tuple[bool, str]]:
     results.append((bool(lives) and len(literal_compares) <= 2, f"literal numbers the count is compared with: {sorted(literal_compares) or 'none'}"))
     texts = [i for i in hud if i["type"] in ("ScoreText", "TimerText") or plugin_id(project, i["type"]) == "Text"]
     if hearts:
-        boxes_ = [box_of(i) for i in hearts]
-        l, t, r, b = min(x[0] for x in boxes_), min(x[1] for x in boxes_), max(x[2] for x in boxes_), max(x[3] for x in boxes_)
+        l, t, r, b = box_around(hearts)
         centred = abs((l + r) / 2 - VIEW_W / 2) <= 0.5
         inside = l >= 0 and t >= 0 and r <= VIEW_W and b <= VIEW_H
         clear = not any(min(r, box_of(x)[2]) - max(l, box_of(x)[0]) > 0.5 and min(b, box_of(x)[3]) - max(t, box_of(x)[1]) > 0.5 for x in texts)
@@ -986,7 +981,7 @@ def grade_readable_on_a_dark_background(run: Path) -> list[tuple[bool, str]]:
     shown, source = background_colours(layout, project)
     dark = bool(shown) and all(abs(a - b) <= 40 for colour in shown for a, b in zip(colour, NAVY))
     results.append((dark, f"{source}: {sorted(shown) or 'no colour'}"))
-    hud = hud_instances(project)
+    hud = hud_of(layout)
     texts = [i for i in hud if plugin_id(project, i["type"]) == "Text"]
     # The first round deals fewer coins than six; the label starts from the count, not a number.
     left = [i for i in texts if re.search(r"left", str(i["properties"].get("text", "")), re.I)]
@@ -1011,8 +1006,8 @@ def grade_readable_on_a_dark_background(run: Path) -> list[tuple[bool, str]]:
     verdicts, ok = [], bool(texts) and bool(shown)
     for i in texts:
         fg = rgb255(i["properties"].get("color", [1, 1, 1, 1]))
-        panel = next((one_colour(project, j["type"]) for j in hud if j is not i and plugin_id(project, j["type"]) != "Text"
-                      and contains(box_of(j), box_of(i)) and one_colour(project, j["type"])), None)
+        panel = next((colour for j in hud if j is not i and plugin_id(project, j["type"]) != "Text"
+                      and contains(box_of(j), box_of(i)) and (colour := one_colour(project, j["type"]))), None)
         behind = {panel} if panel else shown
         ratio = min((contrast(fg, b) for b in behind), default=0)
         ok = ok and ratio >= 4.5
@@ -1066,7 +1061,8 @@ def grade_walk_with_wasd(run: Path) -> list[tuple[bool, str]]:
         if not moves:
             continue
         # Key is down takes the key as a code, Key code is down as an expression.
-        keys = [c.get("parameters", {}).get("key") for c in conds if c.get("id") == "key-is-down"] +             [int(k) for c in conds if c.get("id") == "key-code-is-down"
+        keys = [c.get("parameters", {}).get("key") for c in conds if c.get("id") == "key-is-down"] + \
+            [int(k) for c in conds if c.get("id") == "key-code-is-down"
              if (k := str(c.get("parameters", {}).get("keycode", "")).strip()).isdigit()]
         triggers = [c for c in conds if is_trigger(c)]
         for a in moves:
@@ -1097,21 +1093,21 @@ def seconds_of(a: dict) -> float:
         return 0.0
 
 
+# Conditions that keep a Start timer from running in every tick, besides a trigger
+PACED = {"trigger-once-while-true", "every-x-seconds", "is-timer-running"}
+
+
 def grade_countdown_between_rounds(run: Path) -> list[tuple[bool, str]]:
     """The countdown starts once when the round ends, shows 3, 2 and 1, and the restart waits for it."""
     project = run / "project"
-    code, out = checker(project)
-    warnings = [line for line in out.splitlines() if line.startswith("warning:")]
-    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
-               (not warnings, warnings[0] if warnings else "no warning line")]
+    results = checker_and_warnings(project)
     events = sheet_of(project)
     if events is None:
         return results + [(False, "eventSheets/Game.json is not readable JSON")] * 4
     rows = list(walk(events))
     is_trigger = triggered(project)
-    paced = {"trigger-once-while-true", "every-x-seconds", "is-timer-running"}
     starts = [(a, conditions_over(ev, above)) for ev, above in rows for a in ev.get("actions", []) if a.get("id") == "start-timer"]
-    every_tick = [a for a, conds in starts if not any(is_trigger(c) or c.get("id") in paced for c in conds)]
+    every_tick = [a for a, conds in starts if not any(is_trigger(c) or c.get("id") in PACED for c in conds)]
     results.append((not every_tick, f"{len(starts)} Start timer, {len(every_tick)} in an event that runs every tick"
                     + (": " + "; ".join(values([a]) for a in every_tick) if every_tick else "")))
 
@@ -1146,6 +1142,15 @@ def grade_countdown_between_rounds(run: Path) -> list[tuple[bool, str]]:
 SEEDED = re.compile(r"^6(?:333|444|555)\d{11}$")     # the sids make_fixtures.py gives the entries it seeds
 
 
+def game_sids(run: Path, rows: list) -> tuple[bool, str]:
+    """Whether every event of the fixture's Game.json is still there, the seeded ones left out."""
+    original = json.loads((run / "fixture.json").read_text(encoding="utf-8")).get("eventSheets/Game.json.sids", [])
+    game = [s for s in original if not SEEDED.match(str(s))]
+    have = {ev.get("sid") for ev, _ in rows}
+    lost = [s for s in game if s not in have]
+    return bool(game) and not lost, f"{len(game) - len(lost)} of {len(game)} game event sids present"
+
+
 def grade_fix_wasd_twitch(run: Path) -> list[tuple[bool, str]]:
     """The seeded On key pressed events walk for one tick a press; the fix holds each key with Key is down.
     The checks are walk-with-wasd's, with the seeded events counted as the run's own."""
@@ -1167,30 +1172,22 @@ def grade_fix_next_round(run: Path) -> list[tuple[bool, str]]:
     """The seeded round end starts its Timer in every tick; the fix starts it once, and Restart layout
     and Set beat still run once per round."""
     project = run / "project"
-    code, out = checker(project)
-    warnings = [line for line in out.splitlines() if line.startswith("warning:")]
-    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
-               (not warnings, warnings[0] if warnings else "no warning line")]
+    results = checker_and_warnings(project)
     events = sheet_of(project)
     if events is None:
         return results + [(False, "eventSheets/Game.json is not readable JSON")] * 3
     rows = list(walk(events))
     is_trigger = triggered(project)
-    paced = {"trigger-once-while-true", "every-x-seconds", "is-timer-running"}
     acts = [(a, conditions_over(ev, above)) for ev, above in rows for a in ev.get("actions", [])]
     every_tick = [a for a, conds in acts if a.get("id") == "start-timer"
-                  and not any(is_trigger(c) or c.get("id") in paced for c in conds)]
+                  and not any(is_trigger(c) or c.get("id") in PACED for c in conds)]
     results.append((not every_tick, f"{sum(a.get('id') == 'start-timer' for a, _ in acts)} Start timer, "
                     f"{len(every_tick)} in an event that runs every tick"))
     once = [(a, conds) for a, conds in acts if a.get("id") == "restart-layout"
             or (a.get("id") == "set-eventvar-value" and a.get("parameters", {}).get("variable") == "beat")]
     loose = [a["id"] for a, conds in once if not any(is_trigger(c) or c.get("id") == "trigger-once-while-true" for c in conds)]
     results.append((bool(once) and not loose, f"{len(once)} Restart layout or Set beat, every tick: {loose or 'none'}"))
-    original = json.loads((run / "fixture.json").read_text(encoding="utf-8")).get("eventSheets/Game.json.sids", [])
-    game = [s for s in original if not SEEDED.match(str(s))]
-    have = {ev.get("sid") for ev, _ in rows}
-    lost = [s for s in game if s not in have]
-    results.append((bool(game) and not lost, f"{len(game) - len(lost)} of {len(game)} game event sids present"))
+    results.append(game_sids(run, rows))
     return results
 
 
@@ -1202,10 +1199,7 @@ def grade_fix_turn_flip(run: Path) -> list[tuple[bool, str]]:
     branch or another trigger's, in the custom action or function the tap calls, or in an event that resets
     a variable it tests."""
     project = run / "project"
-    code, out = checker(project)
-    warnings = [line for line in out.splitlines() if line.startswith("warning:")]
-    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
-               (not warnings, warnings[0] if warnings else "no warning line")]
+    results = checker_and_warnings(project)
     events = sheet_of(project)
     if events is None:
         return results + [(False, "eventSheets/Game.json is not readable JSON")] * 2
@@ -1226,11 +1220,7 @@ def grade_fix_turn_flip(run: Path) -> list[tuple[bool, str]]:
             (once if in_block or any(is_trigger(c) for c in conds) or tested & reset else every_tick).append(values([a]))
     results.append((bool(once) and not every_tick, f"side changes once per tap: {once or 'nowhere'}"
                     + (f"; in every tick: {every_tick}" if every_tick else "")))
-    original = json.loads((run / "fixture.json").read_text(encoding="utf-8")).get("eventSheets/Game.json.sids", [])
-    game = [s for s in original if not SEEDED.match(str(s))]
-    have = {ev.get("sid") for ev, _ in rows}
-    lost = [s for s in game if s not in have]
-    results.append((bool(game) and not lost, f"{len(game) - len(lost)} of {len(game)} game event sids present"))
+    results.append(game_sids(run, rows))
     return results
 
 
@@ -1247,10 +1237,7 @@ def grade_two_player_turns(run: Path) -> list[tuple[bool, str]]:
     which also runs once under Trigger once or Every X seconds. One flip sits under the tap or in a function or
     custom action. A change under On start of layout is not read."""
     project = run / "project"
-    code, out = checker(project)
-    warnings = [line for line in out.splitlines() if line.startswith("warning:")]
-    results = [(code == 0, f"exit {code}: {out.splitlines()[0] if code else out.splitlines()[-1]}"),
-               (not warnings, warnings[0] if warnings else "no warning line")]
+    results = checker_and_warnings(project)
     events = sheet_of(project)
     if events is None:
         return results + [(False, "eventSheets/Game.json is not readable JSON")] * 3
@@ -1448,7 +1435,7 @@ GRADERS = {"add-countdown": grade_add_countdown, "fix-load-errors": grade_fix_lo
            "coins-in-a-ring": lambda run: grade_kept(run, own_warnings=False)}
 
 
-# The route columns trace.py counts from a transcript, after the four cost columns it always gave.
+# The columns trace.py counts from a transcript: four cost columns, then the route columns.
 TRACE_COLUMNS = ("tool_calls", "lost_calls", "turns", "output_tokens", "read_skill_md", "first_script", "chain_depth",
                  "chain_end", "chain_reached", "chain_attempts", "preview_failed", "help_reads", "repeat_help",
                  "plan_refusals", "hand_edits", "lookups_before_first_edit", "data_reads", "other_clone_reads",

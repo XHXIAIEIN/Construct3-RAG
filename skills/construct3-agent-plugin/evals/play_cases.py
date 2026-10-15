@@ -295,8 +295,8 @@ def readable_on_a_dark_background() -> dict:
 HUD_VIEW = (2340, 1080)     # wider than the project's 16:9, so a corner of the screen is not a corner of the layout
 
 
-# The HUD types of this skill's stand-in and of the previous one: a run finds them in the project, and a check
-# of what the run added leaves them out.
+# The HUD types of this skill's stand-in and of the previous one: a run finds them in the project, and the checks
+# of what the run added, here and in grade.py, leave them out.
 STAND_IN_HUD = ["ScoreText", "ScoreLabel", "RoundText", "TitleText", "RoundTag", "KeyBox", "KeyText", "KeyVerb"]
 
 
@@ -786,9 +786,9 @@ def hearts_checks(result: dict) -> list[tuple[bool, str]]:
     fifth = (box[2] - box[0]) / 5
     slot = (box[0] + fifth * left - 2, box[0] + fifth * (left + 1) + 2) if isinstance(left, (int, float)) else (0, 0)
     stray = [p for p in diff if not slot[0] <= p[0] <= slot[1]]
-    xs0 = [x for x, _ in diff]
-    where = (not stray, f"{len(diff)} pixels changed in the hearts' box x {box[0]} to {box[2]}, from x {min(xs0)} to "
-                        f"{max(xs0)}; the slot of heart {left + 1 if isinstance(left, (int, float)) else '?'} is x "
+    xs, ys2 = [x for x, _ in diff], [y for _, y in diff]
+    where = (not stray, f"{len(diff)} pixels changed in the hearts' box x {box[0]} to {box[2]}, from x {min(xs)} to "
+                        f"{max(xs)}; the slot of heart {left + 1 if isinstance(left, (int, float)) else '?'} is x "
                         f"{slot[0]:.0f} to {slot[1]:.0f}" + (f"; {len(stray)} outside it" if stray else ""))
     # The backdrop beside the hearts, left of their box or right of it, outside every UI box.
     ys = range(box[1], box[3])
@@ -800,7 +800,6 @@ def hearts_checks(result: dict) -> list[tuple[bool, str]]:
         return [where, (False, "no backdrop beside the hearts to compare with")]
     pb = b.load()
     back = {pb[p] for p in band}
-    xs, ys2 = [x for x, _ in diff], [y for _, y in diff]
     spot = [(x, y) for x in range(min(xs), max(xs) + 1) for y in range(min(ys2), max(ys2) + 1)]
     drawn = [p for p in spot if min(max(abs(c - d) for c, d in zip(pb[p], k)) for k in back) > 24]
     share = len(drawn) / len(spot)
