@@ -248,6 +248,6 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | Project and skill audit findings, reproduction boundaries and repair priorities | `docs/dev/skills-audit.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
-| Why features were kept or removed | `docs/decisions/` |
+| Why features were kept or removed | `docs/decisions/README.md`, the index of the records |
 | Delegating an ACE lookup or check to a Claude Code sub-agent | `.claude/agents/ace-lookup.md` |
 | Polishing instruction files, docs, records, prompts and code in one verified run; start it when no other session edits the repository | `.claude/workflows/polish.js` |
