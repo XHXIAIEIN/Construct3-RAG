@@ -1,13 +1,13 @@
-"""Fetch Construct 3 data from official CDN with local caching.
+"""Fetch Construct 3 data from the official CDN into a local cache.
 
-Cache expires every Wednesday 08:00 Beijing time (UTC+8), aligned with
-Scirra's typical Tuesday-evening (UK time) release schedule. Within one
-cache period, each file is fetched from CDN at most once.
+The cache expires every Wednesday at 08:00 Beijing time (UTC+8), after
+Scirra's usual Tuesday-evening release in the UK. Within one cache period,
+each file is fetched from the CDN at most once.
 
 Endpoints:
     plugins/allAces.json         — all plugin ACE definitions
     behaviors/allAces.json       — all behavior ACE definitions
-    effects/allEffects.json      — all effects + shader code
+    effects/allEffects.json      — all effects and their shader code
     loader/lang/precompiled-{locale}.json — bilingual names/descriptions
     media/example-project-data.json      — example project metadata
     plugins/pluginList.json      — plugin ID → path mapping
@@ -125,16 +125,16 @@ def _check_body(path: str, raw: bytes) -> None:
 
 
 def _cache_expired(cache_path: Path) -> bool:
-    """Check if cache file is from before the most recent Wednesday 08:00 Beijing time.
+    """Whether ``cache_path`` is missing or older than the last Wednesday 08:00 Beijing time.
 
-    Scirra (UK-based) releases updates on Tuesday evenings.
-    Wednesday 08:00 CST = Wednesday 00:00 UTC, giving them a full evening.
+    Scirra, in the UK, releases on Tuesday evenings. Wednesday 08:00 in
+    Beijing is Wednesday 00:00 UTC, after the whole evening.
     """
     if not cache_path.exists():
         return True
     mtime = datetime.fromtimestamp(cache_path.stat().st_mtime, tz=_BEIJING)
     now = datetime.now(_BEIJING)
-    # Find the most recent Wednesday 08:00 Beijing time (weekday 2 = Wednesday)
+    # Last Wednesday 08:00 in Beijing; weekday 2 is Wednesday
     days_since_wed = (now.weekday() - 2) % 7
     last_wed = now.replace(hour=8, minute=0, second=0, microsecond=0) - timedelta(days=days_since_wed)
     if last_wed > now:
@@ -143,7 +143,7 @@ def _cache_expired(cache_path: Path) -> bool:
 
 
 def _http_get(url: str) -> bytes:
-    """Fetch URL with browser User-Agent (CDN returns 403 without it).
+    """Fetch ``url`` with a browser User-Agent, without which the CDN answers 403.
 
     Retries an HTTP 5xx, a connection error or a timeout ``_RETRIES`` times;
     raises the last error after that, and a 4xx at once.
@@ -203,7 +203,7 @@ def _swap_in(stage: Path, targets: dict[str, Path]) -> None:
 
 
 def _strip_bom(raw: bytes) -> bytes:
-    """Remove UTF-8 BOM if present."""
+    """``raw`` without its UTF-8 BOM, if it has one."""
     return raw[3:] if raw[:3] == b"\xef\xbb\xbf" else raw
 
 
@@ -239,7 +239,7 @@ class C3Fetcher:
         version: str,
         base_url: str = "https://editor.construct.net",
         cache_dir: Path | None = None,
-    ):
+    ) -> None:
         # The name labels data/ and keys the cache; r495-2, the directory's
         # spelling, would label the data with a release versions.json never names.
         if not _RELEASE_NAME.fullmatch(version):
@@ -278,15 +278,29 @@ class C3Fetcher:
             raise
 
     def fetch(self, path: str, force: bool = False) -> dict | list:
-        """Fetch a JSON endpoint, using local cache if fresh.
+        """Fetch a JSON endpoint, from the cache while it is fresh.
 
         Args:
-            path: Relative path under the release directory (e.g. "plugins/allAces.json")
-            force: Skip cache and always fetch from CDN
+            path: The path under the release directory, such as "plugins/allAces.json"
+            force: Skip the cache and fetch from the CDN
         """
         return json.loads(_strip_bom(self.fetch_raw(path, force)))
 
-    # ── Schema export (per-language, CDN-native field names) ─────────────
+    def fetch_raw(self, path: str, force: bool = False) -> bytes:
+        """Fetch ``path`` as bytes, from the cache while it is fresh; ``force`` skips the cache.
+
+        Raises ``ValueError`` and caches nothing when the body is not what the
+        endpoint serves (``_check_body``).
+        """
+        cache_path = self.cache_dir / path.replace("/", "_")
+        if not force and cache_path.exists() and not _cache_expired(cache_path):
+            return cache_path.read_bytes()
+        raw = self._download(path)
+        _check_body(path, raw)
+        _write_atomic(cache_path, raw)
+        return raw
+
+    # ── Exports ───────────────────────────────────────────────────────────
 
     def export_schemas(self) -> Path:
         """Generate per-language schema files from CDN data.
@@ -347,7 +361,7 @@ class C3Fetcher:
             aces_data["plugins"] = {**aces_data["plugins"], COMMON_ADDON_ID: common_aces}
         # Which of them each built-in plugin gets: Text has no set-default-color.
         # A plugin the extract does not know gets no list, and a reader
-        # offers it every shared ACE as before.
+        # offers it every shared ACE.
         common_of = load_common_availability()
 
         type_map = {"plugins": "plugin", "behaviors": "behavior"}
@@ -355,7 +369,7 @@ class C3Fetcher:
         # own _index.json with display names, so one locale can be read alone.
         index_data: dict = {
             "version": self.version,
-            "languages": sorted(lang_texts.keys()),
+            "languages": sorted(lang_texts),
             "plugins": {}, "behaviors": {}, "effects": {},
         }
         locale_index: dict[str, dict] = {
@@ -378,8 +392,8 @@ class C3Fetcher:
                 zh_p = lang_texts["zh-CN"].get(addon_type, {}).get(pid_lower, {})
                 if not zh_p:
                     continue
-                # zh-CN has no name for _common; keep the value the locale
-                # index has always carried (docs/decisions/schema-index-per-locale-split.md).
+                # zh-CN has no name for _common, so it gets COMMON_ADDON_NAME
+                # (docs/decisions/schema-index-per-locale-split.md).
                 fallback_name = COMMON_ADDON_NAME if plugin_id == COMMON_ADDON_ID else plugin_id
 
                 for lang, text in lang_texts.items():
@@ -566,35 +580,26 @@ class C3Fetcher:
         # data/c3-examples is replaced whole, so a skipped export would empty it.
         examples_raw = self.fetch_examples()
 
-        # Per-lang data sources:
-        #   - ui.start-page.projects.{id} → {name, description}  (localized title/desc)
-        #   - ui.example-browser.filters   → tag label translations
-        lang_projects: dict[str, dict] = {}
-        tag_maps: dict[str, dict[str, str]] = {}
         for lang, text in lang_texts.items():
-            lang_projects[lang] = text.get("ui", {}).get("start-page", {}).get("projects", {})
-            filters = text.get("ui", {}).get("example-browser", {}).get("filters", {})
-            tmap: dict[str, str] = {}
-            for section_key in ("level", "category", "genre", "tag"):
-                section = filters.get(section_key, {})
-                for k, v in section.items():
-                    if k != "section-title" and isinstance(v, str):
-                        tmap[k] = v
-            tag_maps[lang] = tmap
-
-        for lang in lang_texts:
+            ui = text.get("ui", {})
+            # Each example's localized name and description
+            projects = ui.get("start-page", {}).get("projects", {})
+            # The localized label of each tag
+            filters = ui.get("example-browser", {}).get("filters", {})
+            tmap = {
+                k: v
+                for section_key in ("level", "category", "genre", "tag")
+                for k, v in filters.get(section_key, {}).items()
+                if k != "section-title" and isinstance(v, str)
+            }
             out_dir = examples_dir / lang
             out_dir.mkdir(parents=True, exist_ok=True)
-            tmap = tag_maps.get(lang, {})
-            projects = lang_projects.get(lang, {})
             for ex in examples_raw:
                 eid = ex.get("id", "")
                 if not eid:
                     continue
                 lp = projects.get(eid, {})
-                entry: dict = {"id": eid}
-                # Localized name and description from lang
-                entry["name"] = lp.get("name", ex.get("name", eid))
+                entry: dict = {"id": eid, "name": lp.get("name", ex.get("name", eid))}
                 if lp.get("description"):
                     entry["description"] = lp["description"]
                 if ex.get("tags"):
@@ -602,9 +607,7 @@ class C3Fetcher:
                 if ex.get("used-addons"):
                     entry["used-addons"] = ex["used-addons"]
                 entry["open"] = f"https://editor.construct.net/#open={eid}"
-                (out_dir / f"{eid}.json").write_text(
-                    json.dumps(entry, ensure_ascii=False, indent=2), encoding="utf-8",
-                )
+                _write_json(out_dir / f"{eid}.json", entry)
 
         index_data["examples"] = len(examples_raw)
         logger.info(f"[CDN] Exported {len(examples_raw)} examples (per-language)")
@@ -624,32 +627,29 @@ class C3Fetcher:
         return schemas_dir
 
     def export_terms(self) -> list[dict]:
-        """Export CDN lang data as term entries for c3_terms indexing.
+        """The en-US and zh-CN language packs as bilingual terms for ``TermIndex(terms=...)``.
 
-        Flattens the nested precompiled-zh-CN.json + en-US.json into
-        TermEntry-compatible dicts: {term_key, path, category, term_type, zh, en}.
+        Each string of the nested packs becomes one dict: term_key, path,
+        category, term_type, zh, en and full_text.
         """
         en_text = self.fetch_lang("en-US").get("text", {})
         zh_text = self.fetch_lang("zh-CN").get("text", {})
 
-        terms = []
+        terms: list[dict] = []
 
-        def _flatten(en_obj, zh_obj, path_parts):
+        def _flatten(en_obj: object, zh_obj: object, path_parts: list[str]) -> None:
             if isinstance(en_obj, str):
                 zh_val = zh_obj if isinstance(zh_obj, str) else en_obj
                 if en_obj.strip() and zh_val.strip():
-                    term_key = "text." + ".".join(path_parts)
-                    # Detect category and term_type from path
-                    category = path_parts[0] if path_parts else "unknown"
-                    term_type = "unknown"
-                    for p in path_parts:
-                        if p in ("actions", "conditions", "expressions", "properties", "params"):
-                            term_type = p
-                            break
+                    term_type = next(
+                        (p for p in path_parts
+                         if p in ("actions", "conditions", "expressions", "properties", "params")),
+                        "unknown",
+                    )
                     terms.append({
-                        "term_key": term_key,
-                        "path": ["text"] + list(path_parts),
-                        "category": category,
+                        "term_key": "text." + ".".join(path_parts),
+                        "path": ["text", *path_parts],
+                        "category": path_parts[0] if path_parts else "unknown",
                         "term_type": term_type,
                         "zh": zh_val,
                         "en": en_obj,
@@ -658,45 +658,30 @@ class C3Fetcher:
             elif isinstance(en_obj, dict):
                 zh_dict = zh_obj if isinstance(zh_obj, dict) else {}
                 for k, v in en_obj.items():
-                    _flatten(v, zh_dict.get(k, v), list(path_parts) + [k])
+                    _flatten(v, zh_dict.get(k, v), [*path_parts, k])
 
         _flatten(en_text, zh_text, [])
         logger.info(f"[CDN] Exported {len(terms)} translation terms")
         return terms
 
-    def fetch_raw(self, path: str, force: bool = False) -> bytes:
-        """Fetch a raw file (text/binary), using local cache if fresh.
-
-        Raises ``ValueError`` and caches nothing when the body is not what the
-        endpoint serves (``_check_body``).
-        """
-        cache_path = self.cache_dir / path.replace("/", "_")
-        if not force and cache_path.exists() and not _cache_expired(cache_path):
-            return cache_path.read_bytes()
-        raw = self._download(path)
-        _check_body(path, raw)
-        _write_atomic(cache_path, raw)
-        return raw
-
     def export_ts_defs(self) -> Path:
-        """Download TypeScript definitions from CDN and save to ts-defs directory.
+        """Download the release's TypeScript definitions into the cache's ``ts-defs`` folder.
 
-        Uses offline.json to discover .d.ts file paths, downloads each once
-        and caches locally. Adds a small delay between requests to avoid
-        overwhelming the CDN.
+        The .d.ts files are those offline.json lists. Each is downloaded once,
+        with a short pause after each download to spare the CDN.
 
-        Returns the ts-defs output directory path. Raises ``RuntimeError``
-        naming every file that failed, after trying them all, and writes no
-        marker then: ``export_to_data`` replaces ``data/c3-ts-defs`` whole, so
-        a missing file would drop out of the commit. The next run fetches only
-        the files still missing.
+        Returns the ts-defs folder. Raises ``RuntimeError`` naming every file
+        that failed, after trying them all, and writes no marker then:
+        ``export_to_data`` replaces ``data/c3-ts-defs`` whole, so a missing
+        file would drop out of the commit. The next run fetches only the
+        files still missing.
         """
         ts_dir = self.cache_dir / "ts-defs"
         marker = ts_dir / ".exported"
         if marker.exists() and not _cache_expired(marker):
             return ts_dir
 
-        # Get file list from offline.json
+        # The .d.ts files of the release
         offline = self.fetch(ENDPOINTS["offline"])
         dts_paths = [f for f in offline.get("fileList", []) if f.endswith(".d.ts")]
         logger.info(f"[CDN] Found {len(dts_paths)} .d.ts files")
@@ -714,16 +699,13 @@ class C3Fetcher:
             try:
                 _write_atomic(out_path, _strip_bom(self.fetch_raw(dts_path)))
                 fetched += 1
-                # Throttle: 100ms between requests to be respectful
-                if fetched % 10 == 0:
-                    time.sleep(1)
-                elif fetched > 0:
-                    time.sleep(0.1)
+                # Pause 0.1 s after a download, 1 s after every tenth
+                time.sleep(1 if fetched % 10 == 0 else 0.1)
             except OSError as e:  # URLError and the 404 FileNotFoundError included
                 logger.warning(f"[CDN] Failed to fetch {dts_path}: {e}")
                 failed.append(dts_path)
 
-        # Also fetch autocomplete-data.json
+        # The scripting class listing
         try:
             autocomplete = self.fetch(ENDPOINTS["autocomplete"])
             _write_atomic(
@@ -742,6 +724,24 @@ class C3Fetcher:
         marker.write_text(self.version)
         logger.info(f"[CDN] Exported {fetched} new .d.ts files to {ts_dir}")
         return ts_dir
+
+    def export_lang(self, locales: tuple[str, ...] = SCHEMA_LOCALES) -> Path:
+        """Save the raw precompiled language packs as readable JSON.
+
+        The CDN serves them minified on one line. Re-serialising with
+        indentation and without ASCII escaping puts every string on its own
+        line, so two releases can be compared with a plain text diff.
+
+        Returns the output directory containing ``{locale}.json`` files.
+        """
+        out_dir = self.cache_dir / "lang"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        for locale in locales:
+            data = self.fetch_lang(locale)
+            (out_dir / f"{locale}.json").write_text(
+                json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+            )
+        return out_dir
 
     def export_to_data(self, data_dir: Path) -> dict[str, Path]:
         """Refresh the committed ``data/`` layout from the exports.
@@ -792,13 +792,10 @@ class C3Fetcher:
     def _stage(stage: Path, schemas_dir: Path, lang_dir: Path, ts_dir: Path) -> None:
         """Copy the exports into ``stage`` as data/ lays them out; a missing
         export leaves its folder out, for ``_missing_from`` to name."""
-        def hidden(_dir: str, names: list[str]) -> list[str]:
-            return [n for n in names if n.startswith(".")]
-
         for name, source in (("c3-schemas", schemas_dir), ("c3-examples", schemas_dir.parent / "examples"),
                              ("c3-lang", lang_dir)):
             if source.is_dir():
-                shutil.copytree(source, stage / name, ignore=hidden)
+                shutil.copytree(source, stage / name, ignore=shutil.ignore_patterns(".*"))
         # ts-defs: only the interface files and the class listing, not the
         # download bookkeeping the export leaves beside them.
         ts_stage = stage / "c3-ts-defs"
@@ -823,7 +820,7 @@ class C3Fetcher:
         missing += [rel for rel in expected if not (stage / rel).is_file()]
         return missing
 
-    # ── Convenience methods ──────────────────────────────────────────────
+    # ── Endpoints ─────────────────────────────────────────────────────────
 
     def fetch_all_aces(self) -> dict:
         """Return {"plugins": {...}, "behaviors": {...}} ACE definitions."""
@@ -833,26 +830,8 @@ class C3Fetcher:
         }
 
     def fetch_lang(self, locale: str = "en-US") -> dict:
-        """Fetch precompiled language file (en-US or zh-CN)."""
+        """Fetch the precompiled language pack of ``locale``, en-US or zh-CN."""
         return self.fetch(ENDPOINTS["lang"].format(locale=locale))
-
-    def export_lang(self, locales: tuple[str, ...] = SCHEMA_LOCALES) -> Path:
-        """Save the raw precompiled language packs as readable JSON.
-
-        The CDN serves them minified on one line. Re-serialising with
-        indentation and without ASCII escaping puts every string on its own
-        line, so two releases can be compared with a plain text diff.
-
-        Returns the output directory containing ``{locale}.json`` files.
-        """
-        out_dir = self.cache_dir / "lang"
-        out_dir.mkdir(parents=True, exist_ok=True)
-        for locale in locales:
-            data = self.fetch_lang(locale)
-            (out_dir / f"{locale}.json").write_text(
-                json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
-            )
-        return out_dir
 
     def fetch_effects(self) -> list:
         """Fetch all effect definitions."""
@@ -869,13 +848,13 @@ class C3Fetcher:
         }
 
     def fetch_examples(self) -> list:
-        """Fetch example project metadata list."""
+        """Fetch the metadata list of the example projects."""
         return _unwrap(self.fetch(ENDPOINTS["examples"]), "projects")
 
     def fetch_plugin_list(self) -> dict:
-        """Fetch plugin ID → path mapping."""
+        """Fetch the map from plugin id to path."""
         return _unwrap(self.fetch(ENDPOINTS["plugin_list"]), "pluginList")
 
     def fetch_behavior_list(self) -> dict:
-        """Fetch behavior ID → path mapping."""
+        """Fetch the map from behavior id to path."""
         return _unwrap(self.fetch(ENDPOINTS["behavior_list"]), "behaviorList")
