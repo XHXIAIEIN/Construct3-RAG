@@ -11,15 +11,23 @@
 | `example_usage.py` | Index which official examples use each condition, action and expression, from the event sheets of the `Construct-Example-Projects` clone, into `data/c3-example-usage/`; without the clone the committed index stays (`docs/decisions/example-usage-index.md`) | `python scripts/example_usage.py`; `--clone <folder>` for a clone elsewhere |
 | `check_c3_version.py` | Compare the release `data/` holds with the latest stable release on the CDN | `python scripts/check_c3_version.py` |
 | `schema_diff.py` | Report what changed between two schema snapshots and which tracked files quote an id the change broke; the body of the update pull request | `python scripts/schema_diff.py [--base <rev or folder>] [--target <rev or folder>]` |
-| `output_diff.py` | Run the skill's read-only tools over every official example and the game projects of `--projects`, `print_sheet.py` also at its own limit, two plans `edit_sheet.py` refuses, a fixed list of lookups, every script's `--help`, `new_project.py` and the generator template with a ref's scripts and with the working tree's, and list the cases whose output differs. Nothing is written to the repository. Before changing a skill script, read the `skills/AGENTS.md` Rules bullet "A change to a script is compared, old against new" | `python scripts/output_diff.py [REF]`; `--only print_sheet`, `--limit 20` for a quick run |
+| `output_diff.py` | Run the skill's tools and generators with a git ref's scripts and with the working tree's, and list the cases whose output differs. The tools that read a project run over every official example and the game projects of `--projects`; `--help` names every case. Nothing is written to the repository. Before changing a skill script, read the `skills/AGENTS.md` Rules bullet "A change to a script is compared, old against new" | `python scripts/output_diff.py [REF]`; `--only print_sheet`, `--limit 20` for a quick run |
 | `extract_common_aces.py` | Regenerate `src/ingest/common_aces.json` (shared world-object ACEs) from the editor bundle | `python scripts/extract_common_aces.py` |
 | `measure_examples.py` | Measure the official examples for a number before the template or a check takes it: the player's height, the HUD's share of the screen, popup tweens, Sine idle motion (`docs/decisions/borrowed-numbers.md`) | `python scripts/measure_examples.py <actors\|hud\|popups\|sine> --examples <example-projects> [--out .local/docs/evidence/borrowed-numbers/<measure>.json]` |
 | `reference_games/` | Download public Construct exports into `.local`, decode their event data, build contact sheets and compare motion statistics | `python -m scripts.reference_games <fetch|decode|atlas|report|all>` |
 | `plugin/` | The plugin's manifest, README, icon and `agents/`, its sub-agent types, that `build_plugin.py` copies into `plugin/`; `version` in `plugin.json` is the floor the build never goes below, raised by hand for a minor or major release (`docs/decisions/plugin-tracks-commits.md`) | edit, then `python scripts/build_plugin.py` |
 
-`init.py` and `setup.py` read the canonical `en-US`/`zh-CN` schema layout from
-`src/lookup/schema_layout.py`; do not duplicate locale directory names in new scripts.
+## Rules
 
-Checks: after `init.py`, compare counts and structure in
-`data/c3-schemas/_index.json`; `.github/workflows/update.yml` calls `init.py`
-and must use the exporter's standard directories.
+- `src/lookup/schema_layout.py` holds the canonical schema layout, with the
+  locales `en-US` and `zh-CN`, and `init.py` and `setup.py` read it from
+  there. In a script you add, take the locale directory names from that
+  module instead of writing them again.
+
+## Checks
+
+- After `init.py`, compare the counts and structure in
+  `data/c3-schemas/_index.json` with the committed copy:
+  `python scripts/schema_diff.py` reports the difference from `HEAD`.
+- `.github/workflows/update.yml` calls `init.py` and must use the exporter's
+  standard directories.
