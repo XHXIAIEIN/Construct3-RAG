@@ -7,6 +7,7 @@ import threading
 import time
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -17,41 +18,49 @@ from tests.skill_helpers import REPO, SKILL, INSTALLED, SHEET, edit, run, script
 OPENED = {"project": "Game", "status": "opened", "title": "Game - Construct 3",
           "editor": "https://editor.construct.net/", "dialogs": [], "warnings": [], "exception": ""}
 
+# The copy installed in the stand-in game, and the clone's copy
+SCRIPT = f"{INSTALLED}/scripts/open_in_editor.py"
+CLONE_SCRIPT = SKILL / "scripts" / "open_in_editor.py"
+
 
 oe = script_module("open_in_editor")
 
 
+def editor_text(locale: str) -> dict:
+    """The editor's strings in `locale`, from the language pack this repository keeps."""
+    return json.loads((REPO / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))["text"]
+
+
 def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in(project, tmp_path):
     """Offline: finding the project, packing it, and the steps for an agent's own browser tool."""
-    script = f"{INSTALLED}/scripts/open_in_editor.py"
     (project / ".git").mkdir()
     (project / ".git" / "HEAD").write_text("ref: refs/heads/main", encoding="utf-8")
     worktree = project / ".claude" / "worktrees" / "a"     # an agent's copies, 2.2 GB in a game
     worktree.mkdir(parents=True)
     (worktree / "project.c3proj").write_text("{}", encoding="utf-8")
-    code, out = run(project, script, "--help")
+    code, out = run(project, SCRIPT, "--help")
     assert code == 0 and "exit codes:" in out and "--steps" in out, out
     empty = tmp_path / "empty"
     empty.mkdir()
     # the clone's copy: an installed one falls back to the project it is installed in
-    code, out = run(empty, SKILL / "scripts" / "open_in_editor.py")
+    code, out = run(empty, CLONE_SCRIPT)
     assert code == 2 and "no project.c3proj or .c3p found" in out and "--project" in out, out
 
-    code, out = run(project, script, "--browser", str(tmp_path / "no-browser.exe"))
+    code, out = run(project, SCRIPT, "--browser", str(tmp_path / "no-browser.exe"))
     assert code == 2 and "could not be driven" in out and "--steps" in out, out
 
-    code, out = run(project, script, "--steps")
+    code, out = run(project, SCRIPT, "--steps")
     c3p = project / ".tmp" / "open-in-editor.c3p"
     assert code == 3 and str(c3p) in out and 'the input "Project to open"' in out, out
     assert (project / ".tmp" / ".gitignore").read_text(encoding="utf-8") == "*\n"
     assert "\nSETUP:\nasync () => {\n" in out and "\nRESULT:\nasync () => {\n" in out
     assert "https://editor.construct.net/" in out
 
-    code, out = run(project, script, "--steps", "--preview")
+    code, out = run(project, SCRIPT, "--steps", "--preview")
     assert code == 3 and out.rstrip().endswith("read the console of the preview window it opens."), out
-    code, out = run(project, script, "--steps", "--state", "Player")
+    code, out = run(project, SCRIPT, "--steps", "--state", "Player")
     assert code == 3 and out.rstrip().endswith("as references/reading-the-runtime.md says."), out
-    code, out = run(project, script, "--steps", "--typescript")
+    code, out = run(project, SCRIPT, "--steps", "--typescript")
     assert code == 2 and "TypeScript > Update TypeScript definitions" in out, out
 
     with zipfile.ZipFile(c3p) as packed:
@@ -76,7 +85,7 @@ def test_open_in_editor_keeps_the_preview_indexeddb_inside_max_path(tmp_path):
 
     project = tmp_path / "p"
     project.mkdir()
-    code, out = run(project, SKILL / "scripts" / "open_in_editor.py", "--help")
+    code, out = run(project, CLONE_SCRIPT, "--help")
     assert code == 0 and "--profile FOLDER" in out, out
 
 
@@ -132,7 +141,7 @@ def test_open_in_editor_closes_the_start_up_window_once_when_projects_open_at_on
         opened = list(pool.map(lambda _: driven.page(oe.EDITOR)[0], range(2)))
     assert browser.closed == ["start-up"], browser.closed
     assert sorted(browser.pages) == sorted(opened), browser.pages
-    # Each page is kept active, so a --headed window the user minimizes still opens the project
+    # each page is kept active, so a --headed window the user minimizes still opens the project
     assert sorted(sent) == ["Emulation.setFocusEmulationEnabled"] * 2 + ["Page.setWebLifecycleState"] * 2, sent
 
 
@@ -151,7 +160,7 @@ class Connection:
         return {"targetInfos": []} if method == "Target.getTargets" else {}
 
 
-def launcher(started: list[dict], exits: bool, port_file=None):
+def launcher(started: list[dict], exits: bool, port_file: Path | None = None) -> type:
     class Launched:
         """The process the browser is started as: one that exits at once, or the browser itself."""
         pid = 1
@@ -254,8 +263,8 @@ def test_open_in_editor_reports_a_notice_over_the_opened_project_as_a_warning():
 
 def test_open_in_editor_writes_the_typescript_definitions_the_editor_wrote(tmp_path):
     """Save as project folder, then Set up TypeScript for external editor, wrote 57 files under
-    scripts/ts-defs of a game project, a class per object type among them (2026-10-04, r495-2). They go over
-    the ones there; a tsconfig.json the project has is the user's and stays."""
+    scripts/ts-defs of a game project, a class per object type among them (2026-10-04, r495-2).
+    They go over the ones there; a tsconfig.json the project has is the user's and stays."""
 
     class Page:
         def evaluate(self, expression, wait=None):
@@ -287,7 +296,7 @@ def test_open_in_editor_finds_the_typescript_menus_by_the_keys_of_their_labels()
     keys = re.findall(r"'((?:main-menu|ui\.bars)\.[\w.-]+)'", oe.TYPESCRIPT_JS)
     assert len(keys) == 6, keys
     for locale in ("en-US", "zh-CN"):
-        text = json.loads((REPO / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8"))["text"]
+        text = editor_text(locale)
         for key in keys:
             node = text
             for part in key.split("."):
@@ -390,7 +399,7 @@ def test_open_in_editor_prints_the_state_the_game_left():
 def test_open_in_editor_names_the_debuggers_values_in_the_locale_and_keeps_a_key_the_pack_lacks():
     """--locale zh-CN gives the editor's Chinese names. A key the language pack lacks, such as
     a third-party addon's, keeps its last word."""
-    zh = json.loads((REPO / "data" / "c3-lang" / "zh-CN.json").read_text(encoding="utf-8"))["text"]
+    zh = editor_text("zh-CN")
     platform = zh["behaviors"]["platform"]
     state = {"globalVars": {}, "counts": {"Player": 1}, "objects": {"Player": {"count": 1, "instances": [PLAYER]}}}
     lines = opened_with({"state": state}, "zh-CN")
@@ -406,8 +415,7 @@ def test_open_in_editor_names_the_debuggers_values_in_the_locale_and_keeps_a_key
 
 
 def test_open_in_editor_refuses_a_locale_the_clone_has_no_language_pack_for(project, tmp_path):
-    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--state", "Player", "--locale", "xx-XX",
-                    "--browser", str(tmp_path / "no-browser.exe"))
+    code, out = run(project, SCRIPT, "--state", "Player", "--locale", "xx-XX", "--browser", str(tmp_path / "no-browser.exe"))
     assert code == 2 and "no language pack for --locale xx-XX; the clone has: en-US, zh-CN" in out, out
 
 
@@ -421,10 +429,9 @@ def test_state_says_in_one_line_when_no_clone_names_the_inspector_values(project
     note = ("note: Construct3-RAG not found, so each inspector value shows the last word of its key, not its name "
             "in --locale zh-CN. Set CONSTRUCT3_RAG to the clone's folder, or write the line "
             "'- Construct3-RAG: <folder>' in the project's AGENTS.md, then run again.")
-    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--state", "Player", "--locale", "zh-CN",
-                    "--browser", browser)
+    code, out = run(project, SCRIPT, "--state", "Player", "--locale", "zh-CN", "--browser", browser)
     assert code == 2 and out.splitlines()[0] == note and "could not be driven" in out, out
-    code, out = run(project, f"{INSTALLED}/scripts/open_in_editor.py", "--preview", "--browser", browser)
+    code, out = run(project, SCRIPT, "--preview", "--browser", browser)
     assert code == 2 and "note:" not in out, out
     plan = tmp_path / "plan.json"
     for steps, noted in (([{"wait": 1}, {"state": ["Player"]}], True), ([{"wait": 1}], False)):
@@ -459,7 +466,7 @@ def test_open_in_editor_says_what_a_passing_preview_left_untested_only_when_it_p
     assert lines[1] == "  preview: layout 'Game', runtime in the worker, 597 ticks in 4.4 s, 1 error", lines
 
 
-def refused(project, dialog: str, **more) -> dict:
+def refused(project: Path, dialog: str, **more) -> dict:
     """The result of a project the editor refused, as open_one returns it."""
     return {**OPENED, "project": str(project), "status": "failed", "title": "", "release": "r495.2",
             "dialogs": [dialog], **more}
@@ -467,7 +474,7 @@ def refused(project, dialog: str, **more) -> dict:
 
 def test_a_refusal_the_checker_passed_is_offered_as_a_report_without_the_projects_names(project):
     """The checker lacks a rule the editor applies: the user decides whether the repository hears of it."""
-    home = str(oe.Path.home())
+    home = str(Path.home())
     result = refused(project, 'Invalid expressions: Game, event 5, condition 1: Type mismatch in Coin.value & "Bonus"',
                      exception=f"Error: ScoreText at {home}\\editor.js:1\n    at stack")
     offer = oe.failure_report(result)
