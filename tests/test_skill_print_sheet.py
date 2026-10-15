@@ -9,7 +9,8 @@ from pathlib import Path
 import pytest
 
 from tests.skill_helpers import (
-    REPO, INSTALLED, SHEET, SKILL, git, tool, streams, check, edit, block, events, script_module,
+    REPO, INSTALLED, SHEET, SKILL, EXAMPLES, NEEDS_EXAMPLES, git, run, tool, streams, check, edit, block, events,
+    script_module,
 )
 
 
@@ -144,12 +145,26 @@ def test_print_refuses_a_range_it_cannot_read(built, span, said):
     assert code == 1 and said in out
 
 
-def test_print_without_a_name_lists_the_sheets_that_do_not_fit(project):
+def with_menu_sheet(project: Path, folder: str | None = None) -> Path:
+    """The stand-in game with a second sheet, a copy of Game that no layout runs, in a sheet folder when named."""
     shutil.copy(project / SHEET, project / "eventSheets" / "Menu.json")
-    edit(project, "project.c3proj", lambda data: data["eventSheets"]["items"].append("Menu"))
+
+    def list_it(data: dict) -> None:
+        if folder:
+            data["eventSheets"]["subfolders"].append({"name": folder, "items": ["Menu"], "subfolders": []})
+        else:
+            data["eventSheets"]["items"].append("Menu")
+    edit(project, "project.c3proj", list_it)
+    return project
+
+
+def test_print_without_a_name_prints_the_map_when_the_sheets_do_not_fit(project):
+    """A project over the limit prints the map, which says which sheet holds a feature."""
+    with_menu_sheet(project)
     code, out = tool(project, "print_sheet", "--limit", "900")
     assert code == 0
-    assert "2 event sheets" in out and re.search(r"Game +12 events +\d+ characters", out) and "-> " not in out
+    assert out.startswith("== Coins: 2 sheets, 24 events, 2 layouts.") and "-> " not in out
+    assert re.search(r"\n  Game +12 events +\d+ chars; layouts Game; ", out)
     code, out = tool(project, "print_sheet")
     assert code == 0 and "== Game\n" in out and "== Menu\n" in out
 
@@ -403,6 +418,86 @@ def test_find_stops_at_the_limit_and_names_the_part_that_continues(project):
 def test_find_takes_no_outline_show_or_since(built):
     p = streams(built, f"{INSTALLED}/scripts/print_sheet.py", "--rag", str(REPO), "--find", "score", "--outline")
     assert p.returncode == 2 and "--find prints events as the sheet words them" in p.stderr
+
+
+def test_find_ends_each_sheet_with_the_layouts_that_run_it(project):
+    """A trigger fires only in a sheet the running layout runs, by its own sheet or an include, so the block says
+    which layouts run the sheet."""
+    with_menu_sheet(project)
+    code, out = tool(project, "print_sheet", "--find", "AddScore")
+    blocks = out.split("== ")[1:]
+    assert code == 0 and len(blocks) == 2
+    assert blocks[0].splitlines()[-1] == "-- layouts that run Game, by their own sheet or an include: Game"
+    assert blocks[1].splitlines()[-1] == ("-- no layout runs Menu: its triggers do not fire, and a function it defines "
+                                          "runs when another sheet calls it")
+
+
+KIWI = EXAMPLES / "kiwi-story"      # 14 sheets: eMain includes nine, and four layouts' own sheets include eMain
+
+
+def kiwi_map(*args: str) -> tuple[int, str]:
+    return run(SKILL, SKILL / "scripts" / "print_sheet.py", "--project", str(KIWI), "--rag", str(REPO), "--map", *args)
+
+
+@NEEDS_EXAMPLES
+def test_map_names_the_layouts_that_run_each_sheet_through_includes():
+    """One line per sheet: the layouts whose own sheet is it or includes it, at any depth, the sheets that include
+    it, what it defines, and the objects it names most, System and the functions object left out."""
+    code, out = kiwi_map()
+    lines = out.splitlines()
+    assert code == 0 and len(out) < 10_000 and len(lines) == 16 and not any("->" in line for line in lines)
+    assert lines[0].startswith("== KiwiStory: 14 sheets, 219 events, 10 layouts. ")
+    assert ("  ePlayer         50 events    7470 chars; layouts TitleScreen, Options, 0_Intro, 1_Forest, 2_Cave, "
+            "3_Temple; included by eMain; functions Player_Move, Player_Turn, Player_Jump, Player_Fall, Player_Hurt; "
+            "objects Player_Base, Player_Mask, Keyboard, Gamepad, Audio") in lines
+    assert "  eCredits         3 events     493 chars; layouts Credits; includes eMusic; objects SpriteFont, EndingSprite" in lines
+    assert any(line.startswith("  eGlobal ") and "globals GameStarted, CurrentMenu, MenuLock, CameraZone_UID" in line
+               for line in lines)
+    assert not any("System" in line.split(";", 1)[1] for line in lines[1:-1])
+    assert lines[-1].startswith("-- a sheet no layout runs: its triggers do not fire") and "--find NAME" in lines[-1]
+
+
+@NEEDS_EXAMPLES
+def test_map_cuts_the_object_lists_first_and_then_stops_naming_the_rest():
+    """As the limit falls, the objects go first, then the repeated layouts become counts, then the names of what a
+    sheet defines; past that the map stops, and its last line names the --map command for the sheets left."""
+    code, whole = kiwi_map("--limit", "0")
+    assert code == 0 and "objects Player_Base, Player_Mask, Keyboard, Gamepad, Audio" in whole
+    stages, stopped = [], None
+    for limit in range(len(whole) - 1, 1200, -150):
+        code, out = kiwi_map("--limit", str(limit))
+        assert code == 0 and len(out) <= limit, (limit, len(out))
+        stages.append((limit, "; objects " in out, "layouts TitleScreen, Options" in out,
+                       "functions Player_Move, Player_Turn" in out, out.splitlines()[-1].startswith("-- stopped")))
+        if stages[-1][-1] and stopped is None:
+            stopped = out
+    for before, after in zip(stages, stages[1:]):       # what a stage cut stays cut at a smaller limit
+        assert all(not b or a for a, b in zip(before[1:4], after[1:4])), (before, after)
+    assert not stages[-1][1] and not stages[-1][2] and not stages[-1][3] and stages[-1][4], stages[-1]
+    gone = [next(i for i, stage in enumerate(stages) if not stage[k]) for k in (1, 2, 3)]
+    assert gone[0] <= gone[1] <= gone[2] <= next(i for i, stage in enumerate(stages) if stage[4]), stages
+    assert any(not stage[1] and stage[2] and stage[3] for stage in stages), stages    # a stage with only the objects cut
+    last = stopped.splitlines()[-1]
+    rest = re.search(r"The rest: python \S+ (.*?) --map ", last).group(1).split()
+    assert rest and rest[-1] == "eCamera" and "eMain" not in rest
+    code, out = kiwi_map(*rest)
+    assert code == 0 and out.startswith(f"== KiwiStory: {len(rest)} of its 14 sheets (219 events in all), 10 layouts.")
+    assert sum(1 for line in out.splitlines() if line.startswith("  ")) == len(rest)
+
+
+def test_map_groups_the_sheets_by_folder_and_says_when_no_layout_runs_one(project):
+    with_menu_sheet(project, folder="Menus")
+    code, out = tool(project, "print_sheet", "--map")
+    lines = out.splitlines()
+    assert code == 0 and lines[2] == "[Menus]" and lines[3].startswith("  Menu ") and "no layout runs it" in lines[3]
+    assert lines[1].startswith("  Game ") and "; layouts Game; " in lines[1]
+    # Two copies of one sheet: every object both touch is left out, and the header says so
+    assert "which every sheet touches, left out)" in lines[0] and "; objects " not in out
+
+
+def test_map_takes_no_find_events_outline_show_or_since(built):
+    p = streams(built, f"{INSTALLED}/scripts/print_sheet.py", "--rag", str(REPO), "--map", "--outline")
+    assert p.returncode == 2 and "--map prints one line per sheet" in p.stderr
 
 
 def test_the_big_sheet_fixture_is_long_and_passes_the_checker(project):

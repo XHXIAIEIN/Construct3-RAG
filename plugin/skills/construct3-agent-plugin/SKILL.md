@@ -68,7 +68,7 @@ opened once before it is handed over.
 | `scripts/lookup_ace.py OBJECT [WORD ...]` | Conditions, actions and expressions of an object of the project, of `System`, or of a plugin or behavior, each with its parameters, the JSON to write and the commands that print the official examples using it; or an effect by id or name, with its parameters |
 | `scripts/lookup_script_api.py NAME ...` | The scripting API: an interface with its members (`IRuntime`, `Sprite`, `Timer`), or a member with its declaration, its interface and its file and line (`callFunction`, `ISpriteInstance.x`, inherited members included) |
 | `scripts/search_guides.py WORD ...` | The pitfall entries that hold the words, in full, and the official examples that do, with the command that prints their events; for an interaction, a timing, a pick or a movement before writing its events, and for events that do not behave as expected |
-| `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--find NAME` for the events that use a variable, function or object, `--outline` for numbers and sids only, `--show N` for one event as JSON, `--since COMMIT` for the events added, changed, moved and removed since a commit |
+| `scripts/print_sheet.py [SHEET ...] [--events A-B]` | A sheet, or a range of its events, as the editor words it, under the editor's event numbers; `--map` for one line per sheet with the layouts that run it, the sheets that include it, what it defines and the objects it touches most, `--find NAME` for the events that use a variable, function or object, `--outline` for numbers and sids only, `--show N` for one event as JSON, `--since COMMIT` for the events added, changed, moved and removed since a commit |
 | `scripts/print_layout.py [LAYOUT ...] [--layer NAME]` | Layers bottom to top and each instance in Z order with its box, size, opacity and text, and the object a text lies on; read it to say where things are, and after generating a layout, where `on no object` marks a label off its button |
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed, variables and comments by name; checked before anything is written; `--new` creates the sheet first |
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules, and a warning for a string shaped like a key, which a web export ships to every player; exit 0 when the last line starts with `ok:`. `--style` adds the warnings of the official examples' style, for a project the agent wrote. For a project someone asks about, pass `--review` to this and to `print_sheet.py`: they then end with what a review reports |
@@ -159,6 +159,12 @@ The numbers are the editor's: the margin of the event sheet and the
 in JSON line numbers, and read a screenshot or a pasted Find result back the
 same way. `--outline` adds each event's sid, the string to search the JSON
 for.
+
+In a project of several sheets, find where a feature lives before printing a
+sheet: `--map` for the sheets, `--find NAME` for the events that use a name.
+A trigger fires only in a sheet the running layout runs, by its own sheet or
+an include. So a sheet that no layout runs needs an include before its
+triggers work.
 
 ## Change a sheet with a plan
 

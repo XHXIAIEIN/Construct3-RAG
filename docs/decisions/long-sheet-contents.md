@@ -78,6 +78,10 @@ name, and a search of the sheet's JSON.
 `--outline` keeps the first 30 characters of a comment: the outline is read
 for its numbers and sids.
 
+Without a sheet name, a project whose sheets together pass the limit prints
+the map of its sheets (`sheet-map.md`): one line per sheet with its events,
+its size and the layouts that run it.
+
 `scripts/output_diff.py` compares `print_sheet_limit`, the print at the
 script's own limit, so a change to the list shows in its report.
 

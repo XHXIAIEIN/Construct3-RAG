@@ -1,6 +1,6 @@
 """Print an event sheet as the editor words it, under the editor's event numbers.
 
-    python scripts/print_sheet.py [SHEET ...] [--events A-B] [--outline] [--show N] [--find NAME]
+    python scripts/print_sheet.py [SHEET ...] [--events A-B] [--outline] [--show N] [--find NAME] [--map]
                                   [--limit CHARS] [--project FOLDER] [--rag FOLDER] [--locale en-US]
 
 Conditions and actions are worded from the schema's display-text, in the
@@ -53,7 +53,22 @@ print a part of it. A part printed with --events starts with the events it
 sits in, marked [context] and without their actions; one over the limit
 stops at an event, and the last line gives the --events range that
 continues. Without a sheet name, a project whose sheets do not fit the
-limit prints the list of its sheets instead.
+limit prints its map instead.
+
+--map prints the map of the project's sheets, one line per sheet under the
+folder project.c3proj keeps it in. A line gives the sheet's events and its
+size as events; the layouts that run it; the sheets that include it; the
+sheets it includes; the functions and custom actions it defines; the globals
+it declares; and the objects it touches most, in conditions, actions and
+expressions. A layout runs its own sheet and every sheet that one includes,
+through any depth. System, the functions object and an object every sheet
+touches are left out of the objects. A trigger fires only in a sheet some
+layout runs. So a sheet no layout runs says so, and each sheet's block of
+--find ends with the layouts that run it. The map stays under the limit in
+stages: the object lists go first, then more than three layouts become a
+count, then the names of what a sheet defines, then the includes. When the
+lines still do not fit, the last line names the --map command for the
+sheets left. With sheet names, --map prints their lines alone.
 """
 import argparse
 import collections
@@ -325,15 +340,18 @@ def show(sheet: dict, name: str, n: int, limit: int) -> int:
     return 0
 
 
-def again(args: argparse.Namespace, sheets: list[str], events: str | None, find: str | None = None) -> str:
+def again(args: argparse.Namespace, sheets: list[str], events: str | None, find: str | None = None,
+          mapped: bool | None = None) -> str:
     """The command that prints sheets, or a range of one, with the options of this run; with find, the events that
-    use that name (NAME, as written, when the command is an example to fill in)."""
+    use that name (NAME, as written, when the command is an example to fill in); with mapped, their map."""
     find = find if find is not None else args.find
+    mapped = getattr(args, "map", False) if mapped is None else mapped
     words = ["python", c3.quoted(sys.argv[0]), *map(c3.quoted, sheets)]
     words += ["--since", c3.quoted(args.since)] if args.since else []
     words += ["--find", c3.quoted(find)] if find else []
+    words += ["--map"] if mapped and not find else []
     words += ["--events", events] if events else []
-    words += ["--outline"] if args.outline and not find else []
+    words += ["--outline"] if args.outline and not find and not mapped else []
     for flag, default in (("project", None), ("rag", None), ("locale", "en-US"), ("limit", c3.LIMIT)):
         if getattr(args, flag) != default:
             words += [f"--{flag}", c3.quoted(getattr(args, flag))]
@@ -506,18 +524,21 @@ def print_found(args: argparse.Namespace, project: c3.Project, sheets: dict[str,
     pattern = re.compile(rf"(?<!{IDENTIFIER}){re.escape(args.find)}(?!{IDENTIFIER})", re.IGNORECASE)
     first, last = events_range(args.events)
     room = args.limit - 600 if args.limit else None     # the last line names a whole command
+    runs = runs_on(sheets, project.load_listed("layouts"))
     none: list[str] = []
     for k, name in enumerate(names):
         rows = list(sheet_rows(project, sheets[name]["events"], [0]))
-        lines, count, stopped = found(rows, pattern, first, last, room)
+        where = layouts_line(name, runs[name])
+        lines, count, stopped = found(rows, pattern, first, last, room - len(where) - 1 if room is not None else None)
         if not count:
             none.append(name)
             continue
         print(f"== {name}: {count} event{'s' if count != 1 else ''} use{'' if count != 1 else 's'} {args.find}, "
               f"each under the events it sits in, marked [context] and printed without their actions")
         print("\n".join(lines))
+        print(where)
         if room is not None:
-            room -= printed_length(lines)
+            room -= printed_length([*lines, where])
         rest = names[k + 1:]
         if stopped is not None or (rest and room is not None and room <= 0):
             print(stopped_line(args, name, stopped, last, rest))
@@ -529,6 +550,188 @@ def print_found(args: argparse.Namespace, project: c3.Project, sheets: dict[str,
         return 1
     if none:
         print(f"no event uses {args.find} in {', '.join(none)}")
+    return 0
+
+
+# --- --map: the sheets of a project, the layouts that run them and what each holds -------------------------
+IDENTIFIER_WORD = re.compile(rf"[^\W\d]{IDENTIFIER}*")
+
+
+class SheetFacts(NamedTuple):
+    folder: str                 # the folder project.c3proj keeps the sheet in, "" at the root
+    events: int
+    includes: list[str]         # the sheets it includes, at any depth of its groups
+    included_by: list[str]
+    layouts: list[str]          # the layouts that run it: their own sheet is it or includes it
+    functions: list[str]
+    custom_actions: list[str]
+    globals: list[str]          # the variables at its root, which are global
+    objects: collections.Counter    # object -> uses in its conditions, actions and expressions
+
+
+def includes_of(events: list) -> list[str]:
+    out = []
+    for ev in events:
+        if ev.get("eventType") == "include" and ev.get("includeSheet"):
+            out.append(ev["includeSheet"])
+        out += includes_of(ev.get("children", []))
+    return out
+
+
+def runs_on(sheets: dict[str, dict], layouts: dict[str, dict]) -> dict[str, list[str]]:
+    """Sheet -> the layouts that run it, in project order: a layout runs its own sheet and, through any depth of
+    includes, every sheet that one includes. A trigger fires only in a sheet the running layout runs."""
+    includes = {name: includes_of(sheet.get("events", [])) for name, sheet in sheets.items()}
+    runs: dict[str, list[str]] = {name: [] for name in sheets}
+    for layout_name, layout in layouts.items():
+        queue = [layout.get("eventSheet")]
+        seen: set[str] = set()
+        while queue:
+            name = queue.pop()
+            if name in seen or name not in sheets:
+                continue
+            seen.add(name)
+            runs[name].append(layout_name)
+            queue += includes[name]
+    return runs
+
+
+def touched(project: c3.Project, events: list) -> collections.Counter:
+    """Object -> how often the events name it: as the object of a condition or action, or in an expression."""
+    counts: collections.Counter = collections.Counter()
+    for ev in c3.numbered_events(events):
+        if ev.get("eventType") not in ("block", *FUNCTION_BLOCKS):
+            continue
+        for kind in ("conditions", "actions"):
+            for ace in ev.get(kind, []):
+                if ace.get("objectClass"):
+                    counts[ace["objectClass"]] += 1
+                for text in strings_of(ace.get("parameters")):
+                    for word in IDENTIFIER_WORD.findall(text):
+                        name = project.objects_lower.get(c3.LOWER(word))
+                        if name:
+                            counts[name] += 1
+    return counts
+
+
+def sheet_facts(project: c3.Project, sheets: dict[str, dict], layouts: dict[str, dict]) -> dict[str, SheetFacts]:
+    runs = runs_on(sheets, layouts)
+    folders = {name: folder.as_posix() if folder.parts else ""
+               for name, folder in c3.folder_items(project.data.get("eventSheets", {}))}
+    included_by: dict[str, list[str]] = {name: [] for name in sheets}
+    for name, sheet in sheets.items():
+        for inner in includes_of(sheet.get("events", [])):
+            if inner in included_by and name not in included_by[inner]:
+                included_by[inner].append(name)
+    facts = {}
+    for name, sheet in sheets.items():
+        events = sheet.get("events", [])
+        blocks = [ev for ev in c3.numbered_events(events) if ev.get("eventType") in FUNCTION_BLOCKS]
+        facts[name] = SheetFacts(
+            folder=folders.get(name, ""), events=numbered_below(events),
+            includes=list(dict.fromkeys(includes_of(events))), included_by=included_by[name], layouts=runs[name],
+            functions=[ev["functionName"] for ev in blocks if ev.get("eventType") == "function-block"],
+            custom_actions=[f"{ev.get('objectClass')}.{ev.get('aceName')}" for ev in blocks
+                            if ev.get("eventType") == "custom-ace-block"],
+            globals=[ev["name"] for ev in events if ev.get("eventType") == "variable" and ev.get("name")],
+            objects=touched(project, events))
+    return facts
+
+
+def layouts_line(name: str, layouts: list[str]) -> str:
+    """The last line of a sheet's block under --find: where its events run."""
+    if layouts:
+        return f"-- layouts that run {name}, by their own sheet or an include: {', '.join(layouts)}"
+    return (f"-- no layout runs {name}: its triggers do not fire, and a function it defines runs when another "
+            f"sheet calls it")
+
+
+CUT_LEVELS = ((0, 5), (0, 3), (0, 0), (1, 0), (2, 0), (3, 0))      # (level, objects shown), in the order tried
+
+
+def map_line(name: str, f: SheetFacts, size: int, width: int, level: int, left_out: set[str],
+             shown: int) -> str:
+    """One sheet's line. shown: the objects it names, the most used first. level: 0 whole; 1 more than three
+    layouts as a count, since most lines repeat them; 2 what it defines as counts too; 3 the includes as well.
+    The names of what a sheet defines go late, because they say where a feature lives."""
+    def named(label: str, items: list[str], many: str, at: int, over: int) -> str:
+        if not items:
+            return ""
+        if level >= at and len(items) > over:
+            return f"{len(items)} {many}"
+        return f"{label} {', '.join(items)}"
+
+    parts = [f"{name:<{width}} {f.events:>4} event{'s' if f.events != 1 else ' '} {size:>7} chars"]
+    parts.append(named("layouts", f.layouts, "layouts", 1, 3) or "no layout runs it")
+    parts.append(named("included by", f.included_by, "sheets include it", 3, 3))
+    parts.append(named("includes", f.includes, "includes", 3, 3))
+    parts.append(named("functions", f.functions, "functions", 2, 1))
+    parts.append(named("custom actions", f.custom_actions, "custom actions", 2, 1))
+    parts.append(named("globals", f.globals, "globals", 2, 1))
+    objects = [o for o, _ in f.objects.most_common() if o not in left_out][:shown]
+    parts.append(f"objects {', '.join(objects)}" if objects else "")
+    return "; ".join(p for p in parts if p)
+
+
+def print_map(args: argparse.Namespace, project: c3.Project, sheets: dict[str, dict], names: list[str],
+              sizes: dict[str, int], room: int | None) -> int:
+    """--map, and what a project over the limit prints without a sheet name: one line per sheet under its folder,
+    cut to fit room by the stages of map_line, then stopped at the limit with the command for the rest."""
+    layouts = project.load_listed("layouts")
+    facts = sheet_facts(project, sheets, layouts)
+    touching = [f.objects for f in facts.values() if f.objects]
+    everywhere = set.intersection(*(set(o) for o in touching)) if touching else set()
+    left_out = {"System", project.functions_object} | everywhere
+    chosen = [n for n in sheets if n in names]       # project order
+    total = sum(f.events for f in facts.values())
+    which = (f"{len(chosen)} of its {len(sheets)} sheets ({total} events in all)" if len(chosen) < len(sheets)
+             else f"{len(sheets)} sheets, {total} events")
+    left = sorted(everywhere - {"System", project.functions_object})
+    head = (f"== {project.data.get('name') or project.root.name}: {which}, {len(layouts)} layouts. Each line: a "
+            f"sheet, its events and its size as events; the layouts that run it, by their own sheet or an include; "
+            f"the sheets that include it; the sheets it includes; its functions, custom actions and globals; the "
+            f"objects it touches most (System"
+            + (f", {project.functions_object} and {', '.join(left)}, which every sheet touches," if left
+               else f" and {project.functions_object}") + " left out).")
+    width = min(28, max(len(n) for n in chosen))
+    folders = {}
+    for name in chosen:
+        folders.setdefault(facts[name].folder, []).append(name)
+
+    def lines_at(level: int, shown: int) -> list[tuple[str | None, str]]:
+        out: list[tuple[str | None, str]] = []
+        for folder, inside in folders.items():
+            if folder:
+                out.append((None, f"[{folder}]"))
+            out += [(name, "  " + map_line(name, facts[name], sizes[name], width, level, left_out, shown))
+                    for name in inside]
+        return out
+
+    end = (f"-- a sheet no layout runs: its triggers do not fire, and its functions run when called. One sheet as "
+           f"events: {again(args, chosen[:1], None, mapped=False)}. The events that use a name, each sheet's block "
+           f"ending with the layouts that run it: {again(args, [], None, find='NAME')}")
+    lines = lines_at(*CUT_LEVELS[0])
+    for stage in CUT_LEVELS[1:]:
+        if room is None or printed_length([head, *(line for _, line in lines), end]) <= room:
+            break
+        lines = lines_at(*stage)
+    print(head)
+    if room is not None and printed_length([head, *(line for _, line in lines), end]) > room:
+        # Stop after the lines that fit with the command for the rest, which leaves at least one sheet
+        for k in range(len(lines) - 1, -1, -1):
+            kept = lines[:k]
+            if kept and kept[-1][0] is None:        # a folder line with nothing under it
+                continue
+            rest = [name for name, _ in lines[k:] if name]
+            stop = (f"-- stopped at the limit of {args.limit} characters (--limit) after {len(kept)} lines. "
+                    f"The rest: {again(args, rest, None, mapped=True)}")
+            if printed_length([head, *(line for _, line in kept), stop]) <= room or not kept:
+                break
+        print("\n".join(line for _, line in kept))
+        print(stop)
+        return 0
+    print("\n".join(line for _, line in lines))
+    print(end)
     return 0
 
 
@@ -854,6 +1057,7 @@ def main() -> int:
         "  python scripts/print_sheet.py --outline Game        numbers and sids, to find the JSON behind a number\n"
         "  python scripts/print_sheet.py Game --show 5         event 5 as JSON\n"
         "  python scripts/print_sheet.py --find score          the events that use score, under the events they sit in\n"
+        "  python scripts/print_sheet.py --map                 one line per sheet: the layouts that run it, what it holds\n"
         "  python scripts/print_sheet.py --project <Construct-Example-Projects>/example-projects/template-snake\n"
         "  python scripts/print_sheet.py Game --locale zh-CN   the editor's Chinese wording\n"
         "  python scripts/print_sheet.py --review              a project someone asked about\n"
@@ -876,9 +1080,15 @@ def main() -> int:
     ap.add_argument("--find", metavar="NAME",
                     help="print only the events that use this variable, function or object, each under the events "
                          "it sits in; with --events, only those in the range")
+    ap.add_argument("--map", action="store_true",
+                    help="print the map of the sheets instead: one line per sheet with the layouts that run it, the "
+                         "sheets that include it, what it defines and the objects it touches most")
     args = ap.parse_args()
     if args.find is not None and (args.outline or args.show is not None or args.since is not None):
         ap.error("--find prints events as the sheet words them; it does not take --outline, --show or --since")
+    if args.map and (args.find is not None or args.outline or args.show is not None or args.since is not None
+                     or args.events):
+        ap.error("--map prints one line per sheet; it does not take --find, --events, --outline, --show or --since")
     if args.find is not None and not args.find.strip():
         ap.error("--find takes the name of a variable, a function or an object")
     c3.utf8_output()
@@ -938,16 +1148,10 @@ def main() -> int:
     note = None if args.outline else naming_note([line for name in names for line in whole[name]])
     reserved = (len(note) + 70 if note else 0) + (len(c3.REVIEW) + 1 if args.review else 0)
     fits = not args.limit or sum(size.values()) + reserved <= args.limit
-    if not fits and not args.sheets and len(names) > 1:
-        print(f"{len(names)} event sheets, {sum(size.values())} characters as events, over the limit of "
-              f"{args.limit} (--limit). Name the ones to read:")
-        for name in names:
-            includes = [ev.get("includeSheet", "") for ev in sheets[name]["events"] if ev.get("eventType") == "include"]
-            print(f"  {name:<28} {totals[name]:>4} events {size[name]:>7} characters"
-                  + (f"   includes {', '.join(includes)}" if includes else ""))
-        print(f"for example: {again(args, names[:1], None)}\n"
-              f"A sheet over the limit prints in parts; the last line of a part names the next.")
-        return 0
+    if args.map or (not fits and not args.sheets and len(names) > 1):
+        # A cut print of the sheets names nothing of the rest; the map says which sheet holds a feature and
+        # which layouts run it.
+        return print_map(args, project, sheets, names, size, args.limit or None)
 
     room = None if fits else args.limit - 600 - reserved   # the title, the note and a whole command to close
     if not fits and not args.events and len(names) == 1:

@@ -62,6 +62,7 @@ The project skill and the prompts:
 | `plan-names-the-event-line.md` | Why an operation of a plan may carry the line its event prints, and not a hash of the sheet |
 | `remove-event-sheet-assistant.md` | Why no prompt or script gives a format for events entered by hand, and where its name check and naming rule went |
 | `long-sheet-contents.md` | What `print_sheet.py` prints for a sheet over its limit, what `--find` matches, and why an outline keeps a comment's first 30 characters |
+| `sheet-map.md` | Why `print_sheet.py --map` prints one line per sheet with the layouts that run it and what it defines, how the map is cut to the limit, and why each sheet's block of `--find` ends with the layouts that run it |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
 | `fix-loop-cap.md` | Why the checker counts the changes to each finding's place and stops the fix loop after two, and what it keeps in the project to count them |
 | `editor-refusal-report.md` | What the report of a refusal the checker passed holds, what it leaves out, and why the user sends it |
