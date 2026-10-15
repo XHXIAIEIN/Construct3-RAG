@@ -17,6 +17,12 @@ the name, properties and debugger texts of every plugin and behavior,
 because the keys of a preview's inspector values point into them. Why:
 docs/decisions/plugin-folder.md.
 
+skills/menu/ holds one thin skill per user-facing script, copied to
+plugin/skills/<name>/, so that the plugin's / menu lists the scripts; each runs
+its script and is never loaded into the model's context on its own. The build
+fails when a script and the menu disagree. Why:
+docs/decisions/plugin-script-menu.md.
+
 The build also sets the version in .claude-plugin/plugin.json. The published
 plugin is the one at the commit that HEAD shares with origin/main, or at HEAD
 without that ref. During a merge, it is the one at the commit that the merge
@@ -27,7 +33,7 @@ scripts/plugin/plugin.json is the floor, raised by hand for a minor or major
 release. The build reads Git locally and never fetches. Why:
 docs/decisions/plugin-tracks-commits.md.
 
-exit codes: 0 built or equal, 1 plugin/ differs or breaks a limit
+exit codes: 0 built or equal, 1 plugin/ differs, breaks a limit or disagrees with the menu
 """
 import argparse
 import contextlib
@@ -49,6 +55,10 @@ from src.lookup.schema_layout import SCHEMA_LOCALES  # noqa: E402
 OUT = ROOT / "plugin"
 SOURCES = ROOT / "scripts" / "plugin"          # the manifest, README, icon and agents of the plugin
 SKILL = "skills/construct3-agent-plugin"
+MENU = "skills/menu"           # the thin skills of the / menu: MENU/<name>/SKILL.md goes to skills/<name>/SKILL.md
+# The scripts with no menu skill: modules the scripts import, and install.py, which copies the skill into a
+# game project, a copy a plugin user does not need (docs/decisions/plugin-tracks-commits.md)
+NOT_IN_MENU = frozenset({"c3project", "design_review", "game_model", "install"})
 MANIFEST = ".claude-plugin/plugin.json"
 
 # Copied to the same path inside the plugin
@@ -141,6 +151,25 @@ def lang_subset(locale: str) -> str:
     return json.dumps(out, ensure_ascii=False, indent="\t", sort_keys=True) + "\n"
 
 
+def menu_skills() -> dict[str, str]:
+    """The thin skills of the / menu: the script's stem for each skill name, from the folders of MENU."""
+    folders = sorted({PurePosixPath(rel).parts[2] for rel in tracked(MENU) if rel.endswith("/SKILL.md")})
+    return {name: name.replace("-", "_") for name in folders}
+
+
+def menu_problems() -> list[str]:
+    """Where the scripts and the / menu disagree: a user-facing script without a menu skill, a menu skill whose
+    script does not exist, or a menu skill for a script NOT_IN_MENU leaves out."""
+    scripts = {PurePosixPath(rel).stem for rel in tracked(f"{SKILL}/scripts") if rel.endswith(".py")}
+    menu = menu_skills()
+    out = [f"{SKILL}/scripts/{stem}.py has no {MENU}/{stem.replace('_', '-')}/SKILL.md"
+           for stem in sorted(scripts - NOT_IN_MENU - set(menu.values()))]
+    out += [f"{MENU}/{name}/SKILL.md names no script: {SKILL}/scripts/{stem}.py" for name, stem in menu.items()
+            if stem not in scripts]
+    out += [f"{MENU}/{name}/SKILL.md: {stem}.py is NOT_IN_MENU" for name, stem in menu.items() if stem in NOT_IN_MENU]
+    return out
+
+
 def build(out: Path) -> None:
     for part in COPIED:
         for rel in tracked(part):
@@ -148,6 +177,8 @@ def build(out: Path) -> None:
                 reindent(ROOT / rel, out / rel)
             else:
                 copy(ROOT / rel, out / rel)
+    for rel in tracked(MENU):
+        copy(ROOT / rel, out / "skills" / PurePosixPath(rel).relative_to(MENU))
     for folder, pattern in BUNDLED:
         for rel, text in bundles(folder, pattern):
             write(out / rel, text)
@@ -272,7 +303,7 @@ def rebuild() -> list[str]:
         if OUT.exists():
             shutil.rmtree(OUT)
         shutil.copytree(fresh, OUT)
-    return limits(OUT)
+    return limits(OUT) + menu_problems()
 
 
 def version_in(folder: Path) -> str | None:
@@ -283,7 +314,7 @@ def version_in(folder: Path) -> str | None:
 def check() -> list[str]:
     """How plugin/ differs from a fresh build, and what in the build breaks the limits."""
     with fresh_build() as (fresh, version):
-        problems = limits(fresh) + differences(fresh, OUT)
+        problems = limits(fresh) + menu_problems() + differences(fresh, OUT)
     committed = version_in(OUT)
     if committed != version:
         problems.append(f"version: {committed} in plugin/, {version} in a fresh build")
@@ -293,7 +324,7 @@ def check() -> list[str]:
 def main() -> int:
     ap = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                  description="Build plugin/, the Claude Code plugin, from the skill and the data it reads.",
-                                 epilog="exit codes: 0 built or equal, 1 plugin/ differs or breaks a limit")
+                                 epilog="exit codes: 0 built or equal, 1 plugin/ differs, breaks a limit or disagrees with the menu")
     ap.add_argument("--check", action="store_true", help="compare plugin/ with a fresh build, write nothing")
     args = ap.parse_args()
     problems = check() if args.check else rebuild()

@@ -16,7 +16,10 @@ The `construct3-agent-plugin` skill under `skills/` is outside this layout: its
 scripts read `data/c3-schemas/` directly and run from a copy inside a game
 project with neither `src/` nor the service. Before changing how the Claude
 Code plugin gets the skill and its data, read `docs/decisions/plugin-folder.md`.
-Before changing the skill, read `skills/AGENTS.md`.
+`skills/menu/` holds the thin skills that give the plugin's `/` menu one row
+per script; the model's own route is the one skill
+(`docs/decisions/plugin-script-menu.md`). Before changing the skill, read
+`skills/AGENTS.md`.
 
 The project follows four dependency rules:
 

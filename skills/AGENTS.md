@@ -3,9 +3,12 @@
 Agent Skills in the open format of <https://agentskills.io/specification>:
 one folder per skill, a `SKILL.md` with `name` and `description`, and
 `scripts/`, `references/` and `assets/` beside it.
-`construct3-agent-plugin/` is the one skill here: the project tools for a
+`construct3-agent-plugin/` is the skill here: the project tools for a
 Construct 3 folder project, listed under "Scripts" in its `SKILL.md`, and
-the Construct 3 block for the project's instruction file.
+the Construct 3 block for the project's instruction file. `menu/` holds one
+thin skill per user-facing script of it, and `run.py`, which they run their
+script through. They give the Claude Code plugin's `/` menu one row per
+script and never load on their own (`docs/decisions/plugin-script-menu.md`).
 
 The skill's folder here is the source of two copies. A game project holds
 one, which the skill's `scripts/install.py` makes and refreshes, and that
@@ -26,7 +29,8 @@ table are under `construct3-agent-plugin/`, except the `Construct3-RAG/`,
 | Apply an event edit | `scripts/edit_sheet.py SHEET PLAN.json --dry-run` checks the whole project with the changed sheet in place of its file | `check_project.py`, `print_sheet.py`, `tests/test_skill_edit_sheet.py` | It refuses a plan that adds a problem but can leave the problems already there, so keep the final full `check_project.py` run and its fix-loop record |
 | Open or play a game | `scripts/open_in_editor.py --preview`; `scripts/preview_project.py PLAN.json` drives inputs and reads state | `references/editor-and-preview.md`, `evals/play_cases.py`, `tests/test_skill_preview_project.py` | Opening without input tests startup. Reaching a scene directly does not test the path to it |
 | Ship the skill to a game | `scripts/install.py --project FOLDER` mirrors the skill except `evals/` | `assets/game-project-block.md`, `c3project.py`, `tests/test_skill_install.py` | An edited Construct 3 block and edited generator helpers keep their edits until `--replace-edited-block` or `--replace-edited-helpers` replaces them |
-| Ship the plugin | `Construct3-RAG/scripts/build_plugin.py` builds `Construct3-RAG/plugin/` from the skill, the data and the prompts | `tests/test_plugin_folder.py`, `docs/decisions/plugin-folder.md`, `docs/decisions/plugin-tracks-commits.md` | Edit the sources, then build. The build sets the version from the plugin at the commit HEAD shares with `origin/main` |
+| Ship the plugin | `Construct3-RAG/scripts/build_plugin.py` builds `Construct3-RAG/plugin/` from the skill, the menu, the data and the prompts | `tests/test_plugin_folder.py`, `docs/decisions/plugin-folder.md`, `docs/decisions/plugin-tracks-commits.md` | Edit the sources, then build. The build sets the version from the plugin at the commit HEAD shares with `origin/main` |
+| Give a script a row in the plugin's `/` menu | `Construct3-RAG/skills/menu/<name>/SKILL.md`, `name` the script's stem with hyphens, runs the script with the user's arguments through `Construct3-RAG/skills/menu/run.py` and goes to `plugin/skills/<name>/` | `tests/test_plugin_folder.py`, `docs/decisions/plugin-script-menu.md` | `disable-model-invocation: true`, so the row costs the model nothing; a description in the third person; an `argument-hint` made of groups of the script's usage line, in double quotes, because a hint that starts with `[` is a sequence to a YAML parser. The body teaches nothing, because the main skill does. A script without a row fails the build unless `NOT_IN_MENU` of `build_plugin.py` names it. These two fields are Claude Code's, outside the open format, so the reference validator fails on a row by design and the test pins its frontmatter instead |
 
 ## Rules
 

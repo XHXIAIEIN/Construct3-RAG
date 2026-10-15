@@ -9,9 +9,10 @@ import sys
 from pathlib import Path
 
 from scripts import build_plugin
-from tests.skill_helpers import REPO, SKILL
+from tests.skill_helpers import REPO, SKILL, run, streams
 
 PLUGIN = REPO / "plugin"
+MENU = REPO / "skills" / "menu"
 NAMED = re.compile(r"Construct3-RAG/((?:data|prompts)/[A-Za-z0-9_./-]*[A-Za-z0-9_/])")
 
 
@@ -129,6 +130,73 @@ def test_scripts_in_the_plugin_read_the_bundled_data_and_print_what_opens(tmp_pa
     pitfalls = re.findall(r"^(.+\.md):\d+$", out, re.M)
     assert pitfalls and all(Path(p).is_file() and Path(p).is_relative_to(plugin) for p in pitfalls), out
     assert "\n  https://editor.construct.net/#open=3d-platformer\n" in out and "beside Construct3-RAG" not in out, out
+
+
+def groups(usage: str) -> list[str]:
+    """The groups of a usage line, split at the spaces outside brackets: 'OBJECT [WORD ...] [--sheets NAME [NAME ...]]'
+    gives three."""
+    out, depth, current = [], 0, ""
+    for ch in usage:
+        if ch == " " and depth == 0:
+            if current:
+                out.append(current)
+            current = ""
+            continue
+        depth += (ch == "[") - (ch == "]")
+        current += ch
+    return out + [current] if current else out
+
+
+def positionals(groups_: list[str]) -> list[str]:
+    return [g for g in groups_ if not g.startswith(("[-", "-"))]
+
+
+def test_every_user_facing_script_has_one_menu_skill_whose_hint_is_its_usage_line(tmp_path):
+    """The plugin's / menu lists one thin skill per user-facing script, under skills/<name>/ beside the main
+    skill (docs/decisions/plugin-script-menu.md). Each is kept out of the model's context
+    (disable-model-invocation), runs its script through skills/run.py with the user's arguments, and sends a
+    session without the main skill to its SKILL.md. Its argument-hint is made of groups of the script's own
+    usage line: the positional ones in the script's order, and flags the script takes."""
+    assert build_plugin.menu_problems() == []
+    menu = build_plugin.menu_skills()
+    scripts = {p.stem for p in (SKILL / "scripts").glob("*.py")} - build_plugin.NOT_IN_MENU
+    assert set(menu.values()) == scripts and len(menu) == len(scripts)
+    for name, stem in menu.items():
+        source = MENU / name / "SKILL.md"
+        text = source.read_bytes().decode("ascii")
+        head, body = text.split("\n---\n", 1)
+        fields = dict(line.split(": ", 1) for line in head.removeprefix("---\n").splitlines())
+        assert fields["name"] == name and re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", name) and len(name) <= 64
+        assert fields["disable-model-invocation"] == "true", name
+        assert 0 < len(fields["description"]) <= 1024 and not re.search(r": | #", fields["description"]), name
+        # Pre-approved for both tools Claude Code may run the injected command through: with the PowerShell
+        # tool on, Windows runs it through PowerShell, which Bash(python *) does not cover
+        assert fields["allowed-tools"] == "Bash(python *) PowerShell(python *)", name
+        assert f'!`python "${{CLAUDE_PLUGIN_ROOT}}/skills/run.py" {stem} $ARGUMENTS`' in body, name
+        assert "construct3:construct3-agent-plugin" in body and "${CLAUDE_PLUGIN_ROOT}/skills/construct3-agent-plugin/SKILL.md" in body
+        assert len(body.strip().splitlines()) <= 5, f"{name}: the body teaches nothing, the main skill does"
+        code, out = run(tmp_path, SKILL / "scripts" / f"{stem}.py", "--help")
+        assert code == 0, out
+        usage = groups(" ".join(re.match(r"usage: \S+ (.*?)\n\n", out, re.S).group(1).split()))
+        # Quoted: a hint that starts with [ is a flow sequence to a YAML parser, and the text after it an error
+        assert re.fullmatch(r'"[^"]+"', fields["argument-hint"]), f"{name}: the hint is not a quoted string"
+        hint = groups(fields["argument-hint"].strip('"'))
+        assert hint and positionals(hint) == positionals(usage), f"{name}: {fields['argument-hint']!r} against {usage}"
+        assert not set(hint) - set(usage), f"{name}: {sorted(set(hint) - set(usage))} is no group of the usage line"
+        assert (PLUGIN / "skills" / name / "SKILL.md").read_bytes() == source.read_bytes()
+    assert (PLUGIN / "skills" / "run.py").read_bytes() == (MENU / "run.py").read_bytes().replace(b"\r\n", b"\n")
+
+
+def test_the_menu_runner_passes_the_output_through_and_exits_zero(tmp_path):
+    """Claude Code aborts a skill whose injected command exits non-zero, and the scripts exit non-zero on a
+    finding, a miss or a usage error, which the user asked to see. run.py prints what the script printed,
+    then the exit code, and exits 0 itself."""
+    p = streams(tmp_path, MENU / "run.py", "lookup_ace", "--help")
+    assert p.returncode == 0 and p.stdout.startswith("usage: lookup_ace.py") and p.stdout.rstrip().endswith("exit code 0"), p.stdout
+    p = streams(tmp_path, MENU / "run.py", "check_project")     # no project in tmp_path: the script exits 1, on stderr
+    assert p.returncode == 0 and "no project.c3proj" in p.stderr and p.stdout.rstrip() == "exit code 1", p.stdout + p.stderr
+    p = streams(tmp_path, MENU / "run.py", "no_such_script")
+    assert p.returncode == 0 and "no script" in p.stderr, p.stdout + p.stderr
 
 
 def test_the_plugin_agent_carries_only_the_tools_the_scripts_need():
