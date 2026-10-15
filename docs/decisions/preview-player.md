@@ -123,9 +123,9 @@ Option 3, `scripts/preview_project.py PLAN.json`.
 - The run's output tells the agent what the page does for the user, so the
   agent points the user to it: a part that looks wrong comes back as a task.
 - The review page follows the design language of the host UI kits (the
-  MCP Apps Figma kit and its design guidelines): one warm neutral scale
-  for structure, one accent for what the page marks and selects, one
-  info color for data and red for what failed; a closed set of radii,
+  MCP Apps Figma kit and its design guidelines): one neutral grey scale
+  for structure, one blue accent for what the page marks and selects, a
+  softer blue for data and red for what failed; a closed set of radii,
   borders, type sizes and weights; short transitions on standard easing;
   light and dark declared together. The selected part is dimensioned on
   the timeline and the marks for its ends over the playhead, the
@@ -138,10 +138,10 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   network, so it opens offline as the recording does. The token names
   are the host kits' (--color-background-*, --font-text-*-size,
   --border-radius-*), the values this dense tool calls for. The earlier
-  technical drawing, its blue marks and compact ruled panels, gave way
-  to this on the user's ask of 2026-10-13; a before/after rendering of
-  one recording through both templates is the evidence, and it is kept
-  beside the demo of the page.
+  technical drawing's compact ruled panels gave way to these radii,
+  spacing and hairlines on the user's ask of 2026-10-13. Its white ground
+  and blue marks stayed, on the user's ask of 2026-10-15, after a warm
+  paper palette with a coral accent was tried and rejected.
 - The runtime is reached through `assets/runtime-probe.js`, the same file
   `open_in_editor.py --state` and an agent's own script use, documented in
   `references/reading-the-runtime.md`.

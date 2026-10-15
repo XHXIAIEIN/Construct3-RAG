@@ -124,6 +124,9 @@ comment above it: in the shape above, `Coin.Collect()` has the description
 | Group | Title Case with spaces, description empty | `Player Controls`, `Sort Z-Order` |
 | Layout, layer, sheet | PascalCase | `MainMenu`, `ObjectRepository`, `HUD`, `GameEvents` |
 
+Write each name in one language, never mixed: `playerHealth` or `玩家生命值`,
+not `player生命值`.
+
 ## Project
 
 To generate a project, add a layout, layer, event sheet, group or object

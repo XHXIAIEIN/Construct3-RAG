@@ -169,11 +169,12 @@ python skills/construct3-agent-plugin/scripts/lookup_ace.py System wait --locale
 
 ## 事件表提示词
 
-如果要做一个帮用户写事件表的助手，把这三份文件一起作为它的 system prompt：
+如果要做一个帮用户写事件表的助手，把这两份文件一起作为它的 system prompt：
 
 - [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md)：怎样用 Construct 的思路组织事件，比如选择、家族、关联和 `Else`。
-- [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md)：输出格式，以及每个名称都要和数据核对。
 - [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md)：凭直觉容易写错的运行时行为，一条一行。`prompts/pitfalls/` 里是每条背后的案例和出处，按主题分文件。事件涉及哪个主题，就读那个主题的文件。
+
+助手写下的每个名称都用 `skills/construct3-agent-plugin/scripts/lookup_ace.py` 核对，它会打印每个条件、动作和表达式及其参数。
 
 把事件写进项目时，参考 [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md)。它整理了官方示例写事件表的方式：事件组和组内变量、注释、命名、界面文字。只有部分任务用到的材料放在 `prompts/references/`。任务需要时，上面这几份文件会指过去。
 

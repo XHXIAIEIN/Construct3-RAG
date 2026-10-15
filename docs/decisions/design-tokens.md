@@ -1,6 +1,6 @@
 # Design Tokens for the Tool Pages
 
-Date: 2026-10-13
+Date: 2026-10-13; palette revised 2026-10-15
 
 ## Problem
 
@@ -33,15 +33,17 @@ names, not values, and no page invents a grey.
 - `modelcontextprotocol/ext-apps`, `examples/basic-host/src/host-styles.ts`,
   holds the full table the host pages declare, which is where the tiered
   background, tiered border and accent family above were read.
-- Anthropic's brand guidance is warm paper and ink with a coral accent,
-  which gives the warm neutrals below their hue rather than a flat grey.
+- The first palette took Anthropic's brand colours, warm paper and ink
+  with a coral accent. The user kept the structure it came with (radii,
+  spacing, the focus ring, the contrast floor) and rejected the colours on
+  2026-10-15: the pages went back to the white ground, grey rules and blue
+  marks of the template before the redesign, now on the token layer.
 - The host application's own implementation, as read off its shipped styles
   and kept in the user's notes (Tailwind CSS, native `@keyframes` for the
   CPU-cheap animation, Framer Motion's spring model for the interactive):
-  its two signature animations, its numerals practice and its clay
-  `#d97757` are in "Motion" and rule 7 below. Its clay is this record's
-  `--color-accent`, and its quiet loop runs on this record's `--ease`, so
-  the implementation confirms both values.
+  its two signature animations and its numerals practice are in "Motion"
+  and rule 7 below, and its standard easing is the `--ease` this record
+  carries.
 - The preview and watched values are read on these pages, not a game, so
   density matters: the review page holds a frame strip, a step list and
   watched values beside each other without shrinking their type, and its
@@ -50,7 +52,8 @@ names, not values, and no page invents a grey.
   faint text tokens at 2.44 to 3.53:1, below the 4.5:1 a text token owes,
   while the older template had been at 5.2 and 5.6. The faint was a
   regression, so each token was re-picked for its own surface and theme
-  until the minimum on any surface it lands on was past 4.5:1.
+  until the minimum on any surface it lands on was past 4.5:1. The grey
+  palette was measured the same way.
 
 ## Decision
 
@@ -64,23 +67,23 @@ host kit's name and the local value, and that is the whole contract.
 
 | Token | Value | Used for |
 |-------|-------|----------|
-| `--color-background-primary` | `#faf9f5` | the page |
+| `--color-background-primary` | `#fafafa` | the page |
 | `--color-background-secondary` | `#ffffff` | a panel, a card |
-| `--color-background-tertiary` | `#f2f0e8` | an inset, a well, a track |
-| `--color-text-primary` | `#141413` | body text, values |
-| `--color-text-secondary` | `#6b6963` | notes, labels, metadata |
-| `--color-text-tertiary` | `#77746d` | ruler ticks and frame numbers; 4.66:1 at worst, the faintest a text token may be |
-| `--color-border-tertiary` | `#e7e4da` | the hairline a panel is ruled by |
-| `--color-border-primary` | `#d6d2c5` | a panel's edge, a control's edge |
+| `--color-background-tertiary` | `#f1f2f4` | an inset, a well, a track |
+| `--color-text-primary` | `#1b1b1b` | body text, values |
+| `--color-text-secondary` | `#5f6368` | notes, labels, metadata |
+| `--color-text-tertiary` | `#6b6f76` | ruler ticks and frame numbers; 4.51:1 at worst, the faintest a text token may be |
+| `--color-border-tertiary` | `#e4e6ea` | the hairline a panel is ruled by |
+| `--color-border-primary` | `#d0d3d9` | a panel's edge, a control's edge |
 
 ### Accents and semantic colours, light
 
 | Token | Value | Used for |
 |-------|-------|----------|
-| `--color-accent` | `#d97757` | what is selected or marked |
-| `--color-accent-text` | `#b85a3d` | accent as text, where 4.5:1 needs the darker step |
-| `--color-accent-tint` | `#f6e8df` | a selection's wash |
-| `--color-accent-wash` | `#faf0e9` | the lightest accent surface |
+| `--color-accent` | `#1f5fbf` | what is selected or marked |
+| `--color-accent-text` | `#1f5fbf` | accent as text; the light accent passes 4.5:1 as it is |
+| `--color-accent-tint` | `#e2ebf8` | a selection's wash |
+| `--color-accent-wash` | `#eff4fc` | the lightest accent surface |
 | `--color-info` | `#6a9bcc` | data marks |
 | `--color-info-text` | `#3f6d9e` | a link, a copied note |
 | `--color-info-tint` | `#e8eff7` | a data mark's surface |
@@ -91,22 +94,23 @@ host kit's name and the local value, and that is the whole contract.
 
 ### The dark palette
 
-Declared under `@media (prefers-color-scheme: dark)`, same names, warm
-charcoal instead of paper:
+Declared under `@media (prefers-color-scheme: dark)`, same names, neutral
+charcoal instead of white:
 
 | Token | Value |
 |-------|-------|
-| `--color-background-primary` | `#171716` |
-| `--color-background-secondary` | `#201f1e` |
-| `--color-background-tertiary` | `#282826` |
-| `--color-text-primary` | `#f2f0e9` |
-| `--color-text-secondary` | `#a6a39a` |
-| `--color-text-tertiary` | `#8b8981` on the review page, `#94928a` on the playground; each at or above 4.7:1 on every surface it lands on |
-| `--color-border-tertiary` | `#2e2e2c` |
-| `--color-border-primary` | `#3c3c39` |
-| `--color-accent`, `--color-accent-text` | `#e08a6c` |
-| `--color-accent-tint` | `#35241c` |
-| `--color-accent-wash` | `#2c221b` |
+| `--color-background-primary` | `#161718` |
+| `--color-background-secondary` | `#1e1f22` |
+| `--color-background-tertiary` | `#26282b` |
+| `--color-text-primary` | `#e8e9eb` |
+| `--color-text-secondary` | `#a3a6ac` |
+| `--color-text-tertiary` | `#8e9198`, at or above 4.6:1 on every surface it lands on |
+| `--color-border-tertiary` | `#2c2e32` |
+| `--color-border-primary` | `#3b3e43` |
+| `--color-accent` | `#5b8def` |
+| `--color-accent-text` | `#7ba3f2`, the lighter step for accent as text |
+| `--color-accent-tint` | `#1d2a42` |
+| `--color-accent-wash` | `#1a2333` |
 | `--color-info`, `--color-info-text` | `#8fb3d9` |
 | `--color-info-tint` | `#1e2937` |
 | `--color-info-strong` | `#33506e` |
@@ -114,8 +118,8 @@ charcoal instead of paper:
 | `--color-danger-tint` | `#38201b` |
 
 The playground adds, for its own readers: `--color-accent-hover`
-`#e08a6c`, `--color-border-secondary` `#4c4c47`, `--color-grid-dot`
-`#262623`, `--color-success` `#7fc8a0` with `-tint` `#1e2f24` and
+`#7ba3f2`, `--color-border-secondary` `#4a4d53`, `--color-grid-dot`
+`#232528`, `--color-success` `#7fc8a0` with `-tint` `#1e2f24` and
 `-strong` `#2f6a44`, `--color-warning` `#e8c85a` with `-tint` `#35241c`,
 `--color-danger-strong` `#7c332a`, and the syntax family
 `--color-syntax-string` `#8fce9a`, `--color-syntax-number` `#c3aae8`,
@@ -154,13 +158,10 @@ duration and easing, and neither is a compromise between them:
 | Family | Duration | Easing | What it does |
 |--------|----------|--------|--------------|
 | Reveal | 90ms | `cubic-bezier(.215, .61, .355, 1)` (easeOutQuart) | text arriving glyph by glyph: opacity 0 to 1 and `blur(6px)` to `blur(0)`, each glyph `calc(var(--i, 0) * 30ms)` after the one before it |
-| Quiet | 1.9s, loop | `cubic-bezier(0.4, 0, 0.2, 1)` | the thinking indicator: three 3px dots in the clay accent `#d97757`, rising 2px and settling back, 0, 0.15s and 0.3s apart |
+| Quiet | 1.9s, loop | `cubic-bezier(0.4, 0, 0.2, 1)` | the thinking indicator: three 3px dots in the accent, rising 2px and settling back, 0, 0.15s and 0.3s apart |
 
-Both easings and the clay are values this record already carried, which is
-the cross-check that the palette and the motion pacing here are the host's
-own rather than a local invention: `--color-accent` `#d97757` and `--ease`
-`cubic-bezier(0.4, 0, 0.2, 1)` are what the implementation uses, clay for
-its quiet dots and standard easing for the loop that carries them.
+The quiet family's easing is the `--ease` these pages already declare, so
+the ordinary transitions and the host's loop share one curve.
 
 Neither page has a state those families serve: no page streams text, so
 there is no reveal to run, and no page thinks aloud, so there is no quiet
@@ -178,9 +179,10 @@ here, the pages' own fallback.
 
 1. A theme is a palette change. Light and dark are declared together, so
    dark is a second `:root` and never a second sheet to keep in step.
-2. One accent marks what is selected; blue marks data and red marks what
-   failed. The page's own marks use the accent, so a selection reads as
-   this page's, and a failed step is the only red.
+2. One accent, a saturated blue, marks what is selected; a softer steel
+   blue (`--color-info`) marks data and red marks what failed. The two
+   blues differ in saturation, so a selection drawn over the timeline's
+   step spans stays apart from them, and a failed step is the only red.
 3. Rows are ruled by hairlines, not striped. `--color-border-tertiary`
    between rows and `--color-border-primary` at the edge; no zebra.
 4. Keyboard focus is always visible:

@@ -60,6 +60,7 @@ The project skill and the prompts:
 | `record-tables-as-arrays.md` | Why the generator template writes a table of records as an Array file with field names in row 0, and copies it into a Dictionary at start |
 | `edit-sheet-script.md` | Why events enter a sheet through a checked plan instead of hand-edited JSON, and how a plan names a variable or a comment |
 | `plan-names-the-event-line.md` | Why an operation of a plan may carry the line its event prints, and not a hash of the sheet |
+| `remove-event-sheet-assistant.md` | Why no prompt or script gives a format for events entered by hand, and where its name check and naming rule went |
 | `long-sheet-contents.md` | What `print_sheet.py` prints for a sheet over its limit, what `--find` matches, and why an outline keeps a comment's first 30 characters |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
 | `fix-loop-cap.md` | Why the checker counts the changes to each finding's place and stops the fix loop after two, and what it keeps in the project to count them |
