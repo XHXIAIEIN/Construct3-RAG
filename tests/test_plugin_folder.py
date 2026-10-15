@@ -39,6 +39,26 @@ def test_the_build_writes_text_files_with_lf_and_an_image_byte_for_byte(tmp_path
     assert (out / "icon.png").read_bytes() == icon
 
 
+def test_the_schemas_are_the_source_json_with_an_indent_of_one():
+    """An agent opens a schema in the plugin by the path it has in the clone and reads the same JSON;
+    the one-space indent keeps the folder under the directory's size limit."""
+    rel = "data/c3-schemas/en-US/plugins/sprite.json"
+    source = (REPO / rel).read_text(encoding="utf-8")
+    built = (PLUGIN / rel).read_text(encoding="utf-8")
+    assert json.loads(built) == json.loads(source)
+    assert built.startswith('{\n "') and source.startswith('{\n  "')
+    assert len(built) < len(source)
+
+
+def test_the_limits_hold_the_folder_size(tmp_path, monkeypatch):
+    folder = tmp_path / "plugin"
+    folder.mkdir()
+    (folder / "a.json").write_bytes(b"{}\n" * 10)
+    assert build_plugin.limits(folder) == []
+    monkeypatch.setattr(build_plugin, "MAX_TOTAL", 29)
+    assert build_plugin.limits(folder) == ["30 bytes in all, more than 29"]
+
+
 def test_every_data_and_prompt_file_the_skill_names_is_in_the_plugin():
     """SKILL.md tells a plugin user that such a path lies under the plugin's folder, so it names a file
     there, not one that only a bundle holds."""

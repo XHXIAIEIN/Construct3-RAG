@@ -1,285 +1,285 @@
 {
-  "id": "light3d",
-  "name": "3D light",
-  "description": "Position a 3D light to affect the ",
-  "type": "plugin",
-  "aceCategories": {
-    "light": "Light"
-  },
-  "conditions": [],
-  "actions": [
-    {
-      "id": "set-light-type",
-      "scriptName": "SetLightType",
-      "category": "light",
-      "list-name": "Set light type",
-      "display-text": "Set light type to [i]{0}[/i]",
-      "description": "Set the light type.",
-      "params": {
-        "light-type": {
-          "type": "combo",
-          "name": "Intensity",
-          "desc": "The type of light.",
-          "items": {
-            "point": "Point",
-            "directional": "Directional",
-            "spot": "Spot"
-          }
-        }
-      }
-    },
-    {
-      "id": "set-intensity",
-      "scriptName": "SetIntensity",
-      "category": "light",
-      "list-name": "Set intensity",
-      "display-text": "Set intensity to [i]{0}[/i]",
-      "description": "Set how bright the light is.",
-      "params": {
-        "intensity": {
-          "type": "number",
-          "name": "Intensity",
-          "desc": "The new light intensity."
-        }
-      }
-    },
-    {
-      "id": "set-reference-distance",
-      "scriptName": "SetReferenceDistance",
-      "category": "light",
-      "list-name": "Set reference distance",
-      "display-text": "Set reference distance to [i]{0}[/i]",
-      "description": "Set the distance at which lighting for a point light is at the specified intensity.",
-      "params": {
-        "reference-distance": {
-          "type": "number",
-          "name": "Reference distance",
-          "desc": "The new reference distance."
-        }
-      }
-    },
-    {
-      "id": "set-attenuation-factor",
-      "scriptName": "SetAttenuationFactor",
-      "category": "light",
-      "list-name": "Set attenuation factor",
-      "display-text": "Set attenuation factor to [i]{0}[/i]",
-      "description": "Set how much the light intensity reduces with distance.",
-      "params": {
-        "attenuation-factor": {
-          "type": "number",
-          "name": "Attenuation factor",
-          "desc": "The new attenuation factor from 0-100."
-        }
-      }
-    },
-    {
-      "id": "set-radius",
-      "scriptName": "SetRadius",
-      "category": "light",
-      "list-name": "Set radius",
-      "display-text": "Set radius to [i]{0}[/i]",
-      "description": "Set the distance at which lighting reduces to zero.",
-      "params": {
-        "radius": {
-          "type": "number",
-          "name": "Radius",
-          "desc": "The new radius."
-        }
-      }
-    },
-    {
-      "id": "set-spot-angles",
-      "scriptName": "SetSpotAngles",
-      "category": "light",
-      "list-name": "Set spotlight angles",
-      "display-text": "Set spotlight inner angle to [i]{0}[/i] degrees, outer angle to [i]{1}[/i] degrees",
-      "description": "Set the inner and outer cone angles for a spotlight.",
-      "params": {
-        "inner-angle": {
-          "type": "number",
-          "name": "Inner angle",
-          "desc": "Spotlight inner cone angle in degrees."
-        },
-        "outer-angle": {
-          "type": "number",
-          "name": "Outer angle",
-          "desc": "Spotlight outer cone angle in degrees."
-        }
-      }
-    }
-  ],
-  "expressions": [
-    {
-      "id": "get-intensity",
-      "scriptName": "Intensity",
-      "category": "light",
-      "translated-name": "Intensity",
-      "description": "The current light intensity.",
-      "returnType": "number"
-    },
-    {
-      "id": "get-reference-distance",
-      "scriptName": "ReferenceDistance",
-      "category": "light",
-      "translated-name": "ReferenceDistance",
-      "description": "The current reference distance.",
-      "returnType": "number"
-    },
-    {
-      "id": "get-attenuation-factor",
-      "scriptName": "AttenuationFactor",
-      "category": "light",
-      "translated-name": "AttenuationFactor",
-      "description": "The current attenuation factor from 0-100.",
-      "returnType": "number"
-    },
-    {
-      "id": "get-radius",
-      "scriptName": "Radius",
-      "category": "light",
-      "translated-name": "Radius",
-      "description": "The current light radius.",
-      "returnType": "number"
-    },
-    {
-      "id": "get-inner-angle",
-      "scriptName": "InnerAngle",
-      "category": "light",
-      "translated-name": "InnerAngle",
-      "description": "The spotlight cone inner angle in degrees.",
-      "returnType": "number"
-    },
-    {
-      "id": "get-outer-angle",
-      "scriptName": "OuterAngle",
-      "category": "light",
-      "translated-name": "OuterAngle",
-      "description": "The spotlight cone outer angle in degrees.",
-      "returnType": "number"
-    }
-  ],
-  "properties": {
+ "id": "light3d",
+ "name": "3D light",
+ "description": "Position a 3D light to affect the ",
+ "type": "plugin",
+ "aceCategories": {
+  "light": "Light"
+ },
+ "conditions": [],
+ "actions": [
+  {
+   "id": "set-light-type",
+   "scriptName": "SetLightType",
+   "category": "light",
+   "list-name": "Set light type",
+   "display-text": "Set light type to [i]{0}[/i]",
+   "description": "Set the light type.",
+   "params": {
     "light-type": {
-      "name": "Light type",
-      "desc": "The type of light.",
-      "items": {
-        "point": "Point",
-        "directional": "Directional",
-        "spot": "Spot"
-      }
-    },
+     "type": "combo",
+     "name": "Intensity",
+     "desc": "The type of light.",
+     "items": {
+      "point": "Point",
+      "directional": "Directional",
+      "spot": "Spot"
+     }
+    }
+   }
+  },
+  {
+   "id": "set-intensity",
+   "scriptName": "SetIntensity",
+   "category": "light",
+   "list-name": "Set intensity",
+   "display-text": "Set intensity to [i]{0}[/i]",
+   "description": "Set how bright the light is.",
+   "params": {
     "intensity": {
-      "name": "Intensity",
-      "desc": "How bright the light is."
-    },
+     "type": "number",
+     "name": "Intensity",
+     "desc": "The new light intensity."
+    }
+   }
+  },
+  {
+   "id": "set-reference-distance",
+   "scriptName": "SetReferenceDistance",
+   "category": "light",
+   "list-name": "Set reference distance",
+   "display-text": "Set reference distance to [i]{0}[/i]",
+   "description": "Set the distance at which lighting for a point light is at the specified intensity.",
+   "params": {
     "reference-distance": {
-      "name": "Reference distance",
-      "desc": "For a point or spot light, the distance at which lighting is at the specified intensity."
-    },
-    "radius": {
-      "name": "Radius",
-      "desc": "For a point or spot light, the distance at which lighting reduces to zero."
-    },
+     "type": "number",
+     "name": "Reference distance",
+     "desc": "The new reference distance."
+    }
+   }
+  },
+  {
+   "id": "set-attenuation-factor",
+   "scriptName": "SetAttenuationFactor",
+   "category": "light",
+   "list-name": "Set attenuation factor",
+   "display-text": "Set attenuation factor to [i]{0}[/i]",
+   "description": "Set how much the light intensity reduces with distance.",
+   "params": {
     "attenuation-factor": {
-      "name": "Attenuation factor",
-      "desc": "How much the light intensity reduces with distance. 100% is normal attenuation, 0% means no attenuation (except for light radius)."
-    },
+     "type": "number",
+     "name": "Attenuation factor",
+     "desc": "The new attenuation factor from 0-100."
+    }
+   }
+  },
+  {
+   "id": "set-radius",
+   "scriptName": "SetRadius",
+   "category": "light",
+   "list-name": "Set radius",
+   "display-text": "Set radius to [i]{0}[/i]",
+   "description": "Set the distance at which lighting reduces to zero.",
+   "params": {
+    "radius": {
+     "type": "number",
+     "name": "Radius",
+     "desc": "The new radius."
+    }
+   }
+  },
+  {
+   "id": "set-spot-angles",
+   "scriptName": "SetSpotAngles",
+   "category": "light",
+   "list-name": "Set spotlight angles",
+   "display-text": "Set spotlight inner angle to [i]{0}[/i] degrees, outer angle to [i]{1}[/i] degrees",
+   "description": "Set the inner and outer cone angles for a spotlight.",
+   "params": {
     "inner-angle": {
-      "name": "Inner angle",
-      "desc": "For a spot light, the inner cone angle."
+     "type": "number",
+     "name": "Inner angle",
+     "desc": "Spotlight inner cone angle in degrees."
     },
     "outer-angle": {
-      "name": "Outer angle",
-      "desc": "For a spot light, the outer cone angle."
-    },
-    "initially-visible": {
-      "name": "Initially visible",
-      "desc": "Choose whether the object is visible when the layout starts."
+     "type": "number",
+     "name": "Outer angle",
+     "desc": "Spotlight outer cone angle in degrees."
     }
-  },
-  "commonAces": {
-    "conditions": [
-      "is-visible",
-      "compare-opacity",
-      "compare-instance-variable",
-      "is-boolean-instance-variable-set",
-      "pick-highestlowest",
-      "pick-by-unique-id",
-      "has-tags",
-      "on-created",
-      "on-destroyed",
-      "on-instance-signal",
-      "compare-x",
-      "compare-y",
-      "is-on-screen",
-      "is-outside-layout",
-      "pick-nearestfurthest",
-      "compare-z-elevation",
-      "on-hierarchy-ready",
-      "has-parent",
-      "has-children",
-      "pick-parent",
-      "pick-children",
-      "pick-nth-child",
-      "compare-child-count"
-    ],
-    "actions": [
-      "set-quaternion",
-      "set-rotation-euler",
-      "set-visible",
-      "set-opacity",
-      "set-default-color",
-      "set-instvar-value",
-      "add-to-instvar",
-      "subtract-from-instvar",
-      "set-boolean-instvar",
-      "toggle-boolean-instvar",
-      "destroy",
-      "change-tags",
-      "set-from-json",
-      "instance-signal",
-      "instance-wait-for-signal",
-      "set-x",
-      "set-y",
-      "set-position",
-      "set-position-to-another-object",
-      "move-at-angle",
-      "set-position-3d",
-      "set-z-elevation",
-      "add-child",
-      "remove-child",
-      "remove-from-parent"
-    ],
-    "expressions": [
-      "quaternion-x",
-      "quaternion-y",
-      "quaternion-z",
-      "quaternion-w",
-      "rotation-x",
-      "rotation-y",
-      "rotation-z",
-      "color-value",
-      "opacity",
-      "count",
-      "pickedcount",
-      "uid",
-      "iid",
-      "asjson",
-      "objecttypename",
-      "get-tags",
-      "get-tags-count",
-      "get-tag-at",
-      "x",
-      "y",
-      "dt",
-      "z",
-      "total-z",
-      "z-elevation",
-      "total-z-elevation",
-      "parent-uid",
-      "child-count",
-      "all-child-count"
-    ]
+   }
   }
+ ],
+ "expressions": [
+  {
+   "id": "get-intensity",
+   "scriptName": "Intensity",
+   "category": "light",
+   "translated-name": "Intensity",
+   "description": "The current light intensity.",
+   "returnType": "number"
+  },
+  {
+   "id": "get-reference-distance",
+   "scriptName": "ReferenceDistance",
+   "category": "light",
+   "translated-name": "ReferenceDistance",
+   "description": "The current reference distance.",
+   "returnType": "number"
+  },
+  {
+   "id": "get-attenuation-factor",
+   "scriptName": "AttenuationFactor",
+   "category": "light",
+   "translated-name": "AttenuationFactor",
+   "description": "The current attenuation factor from 0-100.",
+   "returnType": "number"
+  },
+  {
+   "id": "get-radius",
+   "scriptName": "Radius",
+   "category": "light",
+   "translated-name": "Radius",
+   "description": "The current light radius.",
+   "returnType": "number"
+  },
+  {
+   "id": "get-inner-angle",
+   "scriptName": "InnerAngle",
+   "category": "light",
+   "translated-name": "InnerAngle",
+   "description": "The spotlight cone inner angle in degrees.",
+   "returnType": "number"
+  },
+  {
+   "id": "get-outer-angle",
+   "scriptName": "OuterAngle",
+   "category": "light",
+   "translated-name": "OuterAngle",
+   "description": "The spotlight cone outer angle in degrees.",
+   "returnType": "number"
+  }
+ ],
+ "properties": {
+  "light-type": {
+   "name": "Light type",
+   "desc": "The type of light.",
+   "items": {
+    "point": "Point",
+    "directional": "Directional",
+    "spot": "Spot"
+   }
+  },
+  "intensity": {
+   "name": "Intensity",
+   "desc": "How bright the light is."
+  },
+  "reference-distance": {
+   "name": "Reference distance",
+   "desc": "For a point or spot light, the distance at which lighting is at the specified intensity."
+  },
+  "radius": {
+   "name": "Radius",
+   "desc": "For a point or spot light, the distance at which lighting reduces to zero."
+  },
+  "attenuation-factor": {
+   "name": "Attenuation factor",
+   "desc": "How much the light intensity reduces with distance. 100% is normal attenuation, 0% means no attenuation (except for light radius)."
+  },
+  "inner-angle": {
+   "name": "Inner angle",
+   "desc": "For a spot light, the inner cone angle."
+  },
+  "outer-angle": {
+   "name": "Outer angle",
+   "desc": "For a spot light, the outer cone angle."
+  },
+  "initially-visible": {
+   "name": "Initially visible",
+   "desc": "Choose whether the object is visible when the layout starts."
+  }
+ },
+ "commonAces": {
+  "conditions": [
+   "is-visible",
+   "compare-opacity",
+   "compare-instance-variable",
+   "is-boolean-instance-variable-set",
+   "pick-highestlowest",
+   "pick-by-unique-id",
+   "has-tags",
+   "on-created",
+   "on-destroyed",
+   "on-instance-signal",
+   "compare-x",
+   "compare-y",
+   "is-on-screen",
+   "is-outside-layout",
+   "pick-nearestfurthest",
+   "compare-z-elevation",
+   "on-hierarchy-ready",
+   "has-parent",
+   "has-children",
+   "pick-parent",
+   "pick-children",
+   "pick-nth-child",
+   "compare-child-count"
+  ],
+  "actions": [
+   "set-quaternion",
+   "set-rotation-euler",
+   "set-visible",
+   "set-opacity",
+   "set-default-color",
+   "set-instvar-value",
+   "add-to-instvar",
+   "subtract-from-instvar",
+   "set-boolean-instvar",
+   "toggle-boolean-instvar",
+   "destroy",
+   "change-tags",
+   "set-from-json",
+   "instance-signal",
+   "instance-wait-for-signal",
+   "set-x",
+   "set-y",
+   "set-position",
+   "set-position-to-another-object",
+   "move-at-angle",
+   "set-position-3d",
+   "set-z-elevation",
+   "add-child",
+   "remove-child",
+   "remove-from-parent"
+  ],
+  "expressions": [
+   "quaternion-x",
+   "quaternion-y",
+   "quaternion-z",
+   "quaternion-w",
+   "rotation-x",
+   "rotation-y",
+   "rotation-z",
+   "color-value",
+   "opacity",
+   "count",
+   "pickedcount",
+   "uid",
+   "iid",
+   "asjson",
+   "objecttypename",
+   "get-tags",
+   "get-tags-count",
+   "get-tag-at",
+   "x",
+   "y",
+   "dt",
+   "z",
+   "total-z",
+   "z-elevation",
+   "total-z-elevation",
+   "parent-uid",
+   "child-count",
+   "all-child-count"
+  ]
+ }
 }

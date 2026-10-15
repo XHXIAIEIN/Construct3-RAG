@@ -5,9 +5,11 @@
     python scripts/build_plugin.py --check    fail when plugin/ differs from a fresh build
 
 The plugin folder carries what the construct3-agent-plugin skill reads, under
-the limits of Claude's plugin directory: 512 files or fewer, and every file
-other than an image or a font under 256 KiB. The skill, the schemas, the guides, the
-prompts and the empty project are copied to the same paths. The TypeScript
+the limits of Claude's plugin directory: 512 files or fewer, every file
+other than an image or a font under 256 KiB, and the folder under 7 MB in
+all. The skill, the schemas, the guides, the prompts and the empty project
+are copied to the same paths; a schema is written with an indent of one
+space, which keeps the folder under its size limit. The TypeScript
 definitions, the examples and the index of their ACEs are written as bundles, which
 skills/construct3-agent-plugin/scripts/c3project.py reads with data_texts;
 the language packs keep the parts check_project.py reads. They also keep
@@ -64,8 +66,11 @@ ADDON_TEXTS = ("name", "properties", "debugger")
 
 MAX_FILES = 512
 MAX_SIZE = 256 * 1024
+# The directory's limit on the folder, read off its scans: 6,908,884 bytes passed, 7,107,992 did not
+MAX_TOTAL = 7_000_000
 BUNDLE_SIZE = 240 * 1024     # below MAX_SIZE, so that a bundle stays under it as its files grow a little
 BINARIES = (".png",)     # images, copied byte for byte
+SCHEMAS = "data/c3-schemas"     # copied with an indent of one space, 400 KiB less than the two of the source
 
 
 def tracked(path: str) -> list[str]:
@@ -87,6 +92,12 @@ def copy(src: Path, dst: Path) -> None:
     data = src.read_bytes()
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_bytes(data if src.name.endswith(BINARIES) else data.replace(b"\r\n", b"\n"))
+
+
+def reindent(src: Path, dst: Path) -> None:
+    """src at dst as the same JSON with an indent of one space, which an agent reads as it reads the source."""
+    text = src.read_text(encoding="utf-8-sig")
+    write(dst, json.dumps(json.loads(text), ensure_ascii=False, indent=1) + "\n")
 
 
 def dump(bundle: dict[str, str]) -> str:
@@ -133,7 +144,10 @@ def lang_subset(locale: str) -> str:
 def build(out: Path) -> None:
     for part in COPIED:
         for rel in tracked(part):
-            copy(ROOT / rel, out / rel)
+            if part == SCHEMAS and rel.endswith(".json"):
+                reindent(ROOT / rel, out / rel)
+            else:
+                copy(ROOT / rel, out / rel)
     for folder, pattern in BUNDLED:
         for rel, text in bundles(folder, pattern):
             write(out / rel, text)
@@ -216,6 +230,9 @@ def limits(folder: Path) -> list[str]:
     """What breaks the directory's limits on the plugin folder."""
     found = files(folder)
     problems = [f"{len(found)} files, more than {MAX_FILES}"] if len(found) > MAX_FILES else []
+    total = sum(p.stat().st_size for p in found.values())
+    if total > MAX_TOTAL:
+        problems.append(f"{total:,} bytes in all, more than {MAX_TOTAL:,}")
     for rel, p in found.items():
         if rel.endswith(BINARIES):
             continue

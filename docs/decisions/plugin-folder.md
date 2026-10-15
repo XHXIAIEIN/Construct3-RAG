@@ -33,6 +33,17 @@ holds a version whose plugin folder has more than 512 files, a file other
 than an image or a font over 256 KiB, or a script that refers to a bundled
 image.
 
+The folder has a size limit too, which the checklist does not state. On
+2026-10-14 and 2026-10-15 the directory refused to fetch four commits in a
+row with "Files in the repository the scanner won't accept", a message
+that names OS metadata files, symbolic links, submodules, special files
+and "a plugin folder over the size limit". None of the commits held a file
+of the first four kinds. The commit before them, 44b8add, had passed the
+scan with 6,908,884 bytes in `plugin/`; the four refused commits held
+7,107,992 to 7,199,082. One of them held the skill's three WOFF fonts and
+three held none, so the fonts were not the cause. The limit lies between
+the two figures, so the build takes it as 7,000,000 bytes.
+
 The skill reads these parts of the repository outside its own folder, by the
 paths in its scripts, `SKILL.md`, `references/` and the Construct 3 block:
 
@@ -73,7 +84,10 @@ The build:
   `data/c3-schemas/`, `data/c3-guides/`, `prompts/` and
   `data/c3-ts-defs/autocomplete-data.json`, all to the same paths.
   The skill's scripts find `data/` in the folder above them as they do in
-  the clone, and an agent opens a schema at the same relative path.
+  the clone, and an agent opens a schema at the same relative path. A
+  schema is written as the same JSON with an indent of one space instead
+  of the source's two, which takes 400 KiB off the folder and changes
+  nothing an agent or a script reads.
 - Writes `data/c3-ts-defs/` except `sdk/`, each locale of
   `data/c3-examples/`, and `data/c3-example-usage/`, as bundles: JSON
   objects from relative path to file content, each under 256 KiB. One
@@ -108,7 +122,8 @@ The build:
   goes at the plugin root, because the plugin manifest reference ("Manifest
   file") keeps only `plugin.json` in `.claude-plugin/`. `plugin.json` names
   it in `icon`, which Claude's directory reads for the listing and Claude
-  Code ignores. No text of the plugin writes the icon's path in backticks
+  Code ignores. The icon is 512 px square, 50 KiB; at 1024 px it was
+  160 KiB. No text of the plugin writes the icon's path in backticks
   or a code block, which the checklist holds for a reviewer. The README
   describes the plugin route only, and states what the plugin runs and what
   reaches the network: the checker's fetch of a clone, and the browser that
@@ -120,13 +135,11 @@ The build:
   Code reads from a plugin's folder: `project-worker`, whose tools are the
   ones the skill's scripts need (`project-worker-agent.md`).
 
-The skill's fonts stay out. On 2026-10-15 the directory refused to fetch
-a8ef0ff, the first commit whose `plugin/` held them, with "Files in the
-repository the scanner won't accept"; 44b8add, the commit before them,
-had passed the scan. The three WOFF files of Inter were the only new kind
-of file between the two, and the portal names no file. Without them the
-generator draws every Text in `system-ui` and says so
-(`paper-and-ink-look.md`).
+The skill's fonts stay out. The refusal of a8ef0ff, the first commit whose
+`plugin/` held them, came from the folder's size ("Evidence"), of which
+the fonts' 91 KiB were a part. The generator takes Inter from the user's
+font cache and draws a missing font in `system-ui`
+(`paper-and-ink-look.md`), so the plugin has no need of them.
 
 Copied text files are written with LF line endings, as Git stores them, so
 a checkout with CRLF files (`lf-line-endings.md`) builds the same folder as
@@ -150,10 +163,12 @@ The scripts print a file of this repository by its absolute path. A
 TypeScript declaration that the plugin holds only in a bundle is printed as
 the `lookup_script_api.py` command that prints it.
 
-The result stays under 512 files. A test builds the folder into a temporary
-directory and fails when the result differs from `plugin/`, has more than
-512 files, holds a binary file other than a PNG or a file over 256 KiB other
-than an image, names in `icon` a file it does not hold, or lacks a file or
+The result stays under 512 files and 7,000,000 bytes; on 2026-10-15 it
+was 473 files and 6,621,995 bytes. A test builds the folder into a
+temporary directory and fails when the result differs from `plugin/`, has
+more than 512 files or more than 7,000,000 bytes in all, holds a binary
+file other than a PNG or a file over 256 KiB other than an image, names in
+`icon` a file it does not hold, or lacks a file or
 folder under `data/` or `prompts/` that `SKILL.md`, `references/` or the
 game-project block names as `Construct3-RAG/<path>`. Another runs the
 plugin's scripts with no clone, and fails when a pitfall path that
@@ -170,7 +185,8 @@ overwrites it and the test fails until then.
 
 - A change to the skill or the data is two diffs in one commit, the source
   and the build. Git stores identical content once, so the copied files add
-  no size; the bundles add a blob on each change.
+  no size; the bundles and the reindented schemas add a blob on each
+  change.
 - In the plugin, the TypeScript definitions and the examples are read
   through their scripts only. The clone keeps them as files.
 - The checker's clone-behind check (`clone-update-check.md`) looks for
@@ -180,8 +196,9 @@ overwrites it and the test fails until then.
 - The icons are bundled images that `new_project.py` copies, which the
   checklist holds for a reviewer when a script refers to them. The script
   copies the empty project as a folder and names no image file.
-- The room under 512 files shrinks with each new addon, which adds one
-  schema file per locale.
+- The room under 512 files and under 7,000,000 bytes shrinks with each new
+  addon, which adds one schema file per locale, and with each release,
+  whose data grows.
 
 ## Re-evaluate when
 
@@ -191,6 +208,12 @@ overwrites it and the test fails until then.
 - Re-validation of the built folder still reports a hold that this layout
   should remove. If the icons are the only hold left, the next step is to
   draw placeholder icons in code and bundle no image.
-- The directory changes its file limits.
-- The directory accepts a commit whose plugin holds a font file: the
-  plugin can then carry Inter.
+- The plugin folder nears 7,000,000 bytes. The next cuts, in order: the
+  bundles without their indent, which saves little; the empty project's
+  icons drawn in code, 140 KiB; the schemas without the fields no script
+  or agent reads, which needs a survey of what the skill's text and the
+  scripts read first.
+- The directory changes its limits, or states the size limit, which this
+  record reads off two scans.
+- A reason appears for the plugin to carry Inter: its 91 KiB fit under
+  the limit.

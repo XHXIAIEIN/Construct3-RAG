@@ -1,285 +1,285 @@
 {
-  "id": "light3d",
-  "name": "3D光源",
-  "description": "在3D环境中放置一个光源。",
-  "type": "plugin",
-  "aceCategories": {
-    "light": "光源"
-  },
-  "conditions": [],
-  "actions": [
-    {
-      "id": "set-light-type",
-      "scriptName": "SetLightType",
-      "category": "light",
-      "list-name": "设置光源类型",
-      "display-text": "设置光源类型为 [i]{0}[/i]",
-      "description": "要设置的类型",
-      "params": {
-        "light-type": {
-          "type": "combo",
-          "name": "强度",
-          "desc": "光源的类型。",
-          "items": {
-            "point": "点光源",
-            "directional": "定向光",
-            "spot": "聚光灯"
-          }
-        }
-      }
-    },
-    {
-      "id": "set-intensity",
-      "scriptName": "SetIntensity",
-      "category": "light",
-      "list-name": "设置亮度",
-      "display-text": "设置亮度为 [i]{0}[/i]",
-      "description": "设置光源的亮度。",
-      "params": {
-        "intensity": {
-          "type": "number",
-          "name": "亮度",
-          "desc": "要设置的亮度。"
-        }
-      }
-    },
-    {
-      "id": "set-reference-distance",
-      "scriptName": "SetReferenceDistance",
-      "category": "light",
-      "list-name": "设置相对距离",
-      "display-text": "设置相对距离为 [i]{0}[/i]",
-      "description": "设置点光源的光照亮度等于指定值时所对应的距离。",
-      "params": {
-        "reference-distance": {
-          "type": "number",
-          "name": "相对距离",
-          "desc": "光源的相对距离。"
-        }
-      }
-    },
-    {
-      "id": "set-attenuation-factor",
-      "scriptName": "SetAttenuationFactor",
-      "category": "light",
-      "list-name": "设置衰减系数",
-      "display-text": "设置衰减系数为 [i]{0}[/i]",
-      "description": "设置光照亮度随距离增加而衰减的程度。",
-      "params": {
-        "attenuation-factor": {
-          "type": "number",
-          "name": "衰减系数",
-          "desc": "要设置的衰减系数，范围为 0-100。"
-        }
-      }
-    },
-    {
-      "id": "set-radius",
-      "scriptName": "SetRadius",
-      "category": "light",
-      "list-name": "设置半径",
-      "display-text": "设置半径为[i]{0}[/i]",
-      "description": "设置光线的可见范围。",
-      "params": {
-        "radius": {
-          "type": "number",
-          "name": "半径",
-          "desc": "新的半径"
-        }
-      }
-    },
-    {
-      "id": "set-spot-angles",
-      "scriptName": "SetSpotAngles",
-      "category": "light",
-      "list-name": "设置聚光灯角度",
-      "display-text": "设置聚光灯角度(内锥: [i]{0}[/i], 外锥: [i]{1}[/i])",
-      "description": "设置聚光灯的内锥角和外锥角。",
-      "params": {
-        "inner-angle": {
-          "type": "number",
-          "name": "内角",
-          "desc": "聚光灯的内锥角，以角度为单位。"
-        },
-        "outer-angle": {
-          "type": "number",
-          "name": "外角",
-          "desc": "聚光灯的外锥角，以角度为单位。"
-        }
-      }
-    }
-  ],
-  "expressions": [
-    {
-      "id": "get-intensity",
-      "scriptName": "Intensity",
-      "category": "light",
-      "translated-name": "亮度",
-      "description": "当前光照强度。",
-      "returnType": "number"
-    },
-    {
-      "id": "get-reference-distance",
-      "scriptName": "ReferenceDistance",
-      "category": "light",
-      "translated-name": "相对距离",
-      "description": "光源当前的相对距离。",
-      "returnType": "number"
-    },
-    {
-      "id": "get-attenuation-factor",
-      "scriptName": "AttenuationFactor",
-      "category": "light",
-      "translated-name": "衰减系数",
-      "description": "当前的衰减系数，范围为 0-100。",
-      "returnType": "number"
-    },
-    {
-      "id": "get-radius",
-      "scriptName": "Radius",
-      "category": "light",
-      "translated-name": "半径",
-      "description": "当前的光照半径。",
-      "returnType": "number"
-    },
-    {
-      "id": "get-inner-angle",
-      "scriptName": "InnerAngle",
-      "category": "light",
-      "translated-name": "内角",
-      "description": "聚光灯的内锥角，以角度为单位。",
-      "returnType": "number"
-    },
-    {
-      "id": "get-outer-angle",
-      "scriptName": "OuterAngle",
-      "category": "light",
-      "translated-name": "外角",
-      "description": "聚光灯的外锥角，以角度为单位。",
-      "returnType": "number"
-    }
-  ],
-  "properties": {
+ "id": "light3d",
+ "name": "3D光源",
+ "description": "在3D环境中放置一个光源。",
+ "type": "plugin",
+ "aceCategories": {
+  "light": "光源"
+ },
+ "conditions": [],
+ "actions": [
+  {
+   "id": "set-light-type",
+   "scriptName": "SetLightType",
+   "category": "light",
+   "list-name": "设置光源类型",
+   "display-text": "设置光源类型为 [i]{0}[/i]",
+   "description": "要设置的类型",
+   "params": {
     "light-type": {
-      "name": "光源类型",
-      "desc": "光源的类型。",
-      "items": {
-        "point": "点光源",
-        "directional": "定向光",
-        "spot": "聚光灯"
-      }
-    },
+     "type": "combo",
+     "name": "强度",
+     "desc": "光源的类型。",
+     "items": {
+      "point": "点光源",
+      "directional": "定向光",
+      "spot": "聚光灯"
+     }
+    }
+   }
+  },
+  {
+   "id": "set-intensity",
+   "scriptName": "SetIntensity",
+   "category": "light",
+   "list-name": "设置亮度",
+   "display-text": "设置亮度为 [i]{0}[/i]",
+   "description": "设置光源的亮度。",
+   "params": {
     "intensity": {
-      "name": "亮度",
-      "desc": "光源的亮度。"
-    },
+     "type": "number",
+     "name": "亮度",
+     "desc": "要设置的亮度。"
+    }
+   }
+  },
+  {
+   "id": "set-reference-distance",
+   "scriptName": "SetReferenceDistance",
+   "category": "light",
+   "list-name": "设置相对距离",
+   "display-text": "设置相对距离为 [i]{0}[/i]",
+   "description": "设置点光源的光照亮度等于指定值时所对应的距离。",
+   "params": {
     "reference-distance": {
-      "name": "相对距离",
-      "desc": "对于点光源或聚光灯而言，在此距离处的光照亮度。"
-    },
+     "type": "number",
+     "name": "相对距离",
+     "desc": "光源的相对距离。"
+    }
+   }
+  },
+  {
+   "id": "set-attenuation-factor",
+   "scriptName": "SetAttenuationFactor",
+   "category": "light",
+   "list-name": "设置衰减系数",
+   "display-text": "设置衰减系数为 [i]{0}[/i]",
+   "description": "设置光照亮度随距离增加而衰减的程度。",
+   "params": {
+    "attenuation-factor": {
+     "type": "number",
+     "name": "衰减系数",
+     "desc": "要设置的衰减系数，范围为 0-100。"
+    }
+   }
+  },
+  {
+   "id": "set-radius",
+   "scriptName": "SetRadius",
+   "category": "light",
+   "list-name": "设置半径",
+   "display-text": "设置半径为[i]{0}[/i]",
+   "description": "设置光线的可见范围。",
+   "params": {
+    "radius": {
+     "type": "number",
+     "name": "半径",
+     "desc": "新的半径"
+    }
+   }
+  },
+  {
+   "id": "set-spot-angles",
+   "scriptName": "SetSpotAngles",
+   "category": "light",
+   "list-name": "设置聚光灯角度",
+   "display-text": "设置聚光灯角度(内锥: [i]{0}[/i], 外锥: [i]{1}[/i])",
+   "description": "设置聚光灯的内锥角和外锥角。",
+   "params": {
     "inner-angle": {
-      "name": "内角",
-      "desc": "聚光灯锥体的内锥角。"
+     "type": "number",
+     "name": "内角",
+     "desc": "聚光灯的内锥角，以角度为单位。"
     },
     "outer-angle": {
-      "name": "外角",
-      "desc": "聚光锥体的外锥角。"
-    },
-    "initially-visible": {
-      "name": "初始可见",
-      "desc": "在场景开始时，对象是否可见。"
-    },
-    "radius": {
-      "name": "半径",
-      "desc": "对于点光源或聚光灯而言，指的是光线强度降为零的距离，即可见范围。"
-    },
-    "attenuation-factor": {
-      "name": "衰减系数",
-      "desc": "光照亮度随距离增加而衰减的程度。100% 表示正常衰减，0% 表示不随距离衰减，但仍受光源半径限制。"
+     "type": "number",
+     "name": "外角",
+     "desc": "聚光灯的外锥角，以角度为单位。"
     }
-  },
-  "commonAces": {
-    "conditions": [
-      "is-visible",
-      "compare-opacity",
-      "compare-instance-variable",
-      "is-boolean-instance-variable-set",
-      "pick-highestlowest",
-      "pick-by-unique-id",
-      "has-tags",
-      "on-created",
-      "on-destroyed",
-      "on-instance-signal",
-      "compare-x",
-      "compare-y",
-      "is-on-screen",
-      "is-outside-layout",
-      "pick-nearestfurthest",
-      "compare-z-elevation",
-      "on-hierarchy-ready",
-      "has-parent",
-      "has-children",
-      "pick-parent",
-      "pick-children",
-      "pick-nth-child",
-      "compare-child-count"
-    ],
-    "actions": [
-      "set-quaternion",
-      "set-rotation-euler",
-      "set-visible",
-      "set-opacity",
-      "set-default-color",
-      "set-instvar-value",
-      "add-to-instvar",
-      "subtract-from-instvar",
-      "set-boolean-instvar",
-      "toggle-boolean-instvar",
-      "destroy",
-      "change-tags",
-      "set-from-json",
-      "instance-signal",
-      "instance-wait-for-signal",
-      "set-x",
-      "set-y",
-      "set-position",
-      "set-position-to-another-object",
-      "move-at-angle",
-      "set-position-3d",
-      "set-z-elevation",
-      "add-child",
-      "remove-child",
-      "remove-from-parent"
-    ],
-    "expressions": [
-      "quaternion-x",
-      "quaternion-y",
-      "quaternion-z",
-      "quaternion-w",
-      "rotation-x",
-      "rotation-y",
-      "rotation-z",
-      "color-value",
-      "opacity",
-      "count",
-      "pickedcount",
-      "uid",
-      "iid",
-      "asjson",
-      "objecttypename",
-      "get-tags",
-      "get-tags-count",
-      "get-tag-at",
-      "x",
-      "y",
-      "dt",
-      "z",
-      "total-z",
-      "z-elevation",
-      "total-z-elevation",
-      "parent-uid",
-      "child-count",
-      "all-child-count"
-    ]
+   }
   }
+ ],
+ "expressions": [
+  {
+   "id": "get-intensity",
+   "scriptName": "Intensity",
+   "category": "light",
+   "translated-name": "亮度",
+   "description": "当前光照强度。",
+   "returnType": "number"
+  },
+  {
+   "id": "get-reference-distance",
+   "scriptName": "ReferenceDistance",
+   "category": "light",
+   "translated-name": "相对距离",
+   "description": "光源当前的相对距离。",
+   "returnType": "number"
+  },
+  {
+   "id": "get-attenuation-factor",
+   "scriptName": "AttenuationFactor",
+   "category": "light",
+   "translated-name": "衰减系数",
+   "description": "当前的衰减系数，范围为 0-100。",
+   "returnType": "number"
+  },
+  {
+   "id": "get-radius",
+   "scriptName": "Radius",
+   "category": "light",
+   "translated-name": "半径",
+   "description": "当前的光照半径。",
+   "returnType": "number"
+  },
+  {
+   "id": "get-inner-angle",
+   "scriptName": "InnerAngle",
+   "category": "light",
+   "translated-name": "内角",
+   "description": "聚光灯的内锥角，以角度为单位。",
+   "returnType": "number"
+  },
+  {
+   "id": "get-outer-angle",
+   "scriptName": "OuterAngle",
+   "category": "light",
+   "translated-name": "外角",
+   "description": "聚光灯的外锥角，以角度为单位。",
+   "returnType": "number"
+  }
+ ],
+ "properties": {
+  "light-type": {
+   "name": "光源类型",
+   "desc": "光源的类型。",
+   "items": {
+    "point": "点光源",
+    "directional": "定向光",
+    "spot": "聚光灯"
+   }
+  },
+  "intensity": {
+   "name": "亮度",
+   "desc": "光源的亮度。"
+  },
+  "reference-distance": {
+   "name": "相对距离",
+   "desc": "对于点光源或聚光灯而言，在此距离处的光照亮度。"
+  },
+  "inner-angle": {
+   "name": "内角",
+   "desc": "聚光灯锥体的内锥角。"
+  },
+  "outer-angle": {
+   "name": "外角",
+   "desc": "聚光锥体的外锥角。"
+  },
+  "initially-visible": {
+   "name": "初始可见",
+   "desc": "在场景开始时，对象是否可见。"
+  },
+  "radius": {
+   "name": "半径",
+   "desc": "对于点光源或聚光灯而言，指的是光线强度降为零的距离，即可见范围。"
+  },
+  "attenuation-factor": {
+   "name": "衰减系数",
+   "desc": "光照亮度随距离增加而衰减的程度。100% 表示正常衰减，0% 表示不随距离衰减，但仍受光源半径限制。"
+  }
+ },
+ "commonAces": {
+  "conditions": [
+   "is-visible",
+   "compare-opacity",
+   "compare-instance-variable",
+   "is-boolean-instance-variable-set",
+   "pick-highestlowest",
+   "pick-by-unique-id",
+   "has-tags",
+   "on-created",
+   "on-destroyed",
+   "on-instance-signal",
+   "compare-x",
+   "compare-y",
+   "is-on-screen",
+   "is-outside-layout",
+   "pick-nearestfurthest",
+   "compare-z-elevation",
+   "on-hierarchy-ready",
+   "has-parent",
+   "has-children",
+   "pick-parent",
+   "pick-children",
+   "pick-nth-child",
+   "compare-child-count"
+  ],
+  "actions": [
+   "set-quaternion",
+   "set-rotation-euler",
+   "set-visible",
+   "set-opacity",
+   "set-default-color",
+   "set-instvar-value",
+   "add-to-instvar",
+   "subtract-from-instvar",
+   "set-boolean-instvar",
+   "toggle-boolean-instvar",
+   "destroy",
+   "change-tags",
+   "set-from-json",
+   "instance-signal",
+   "instance-wait-for-signal",
+   "set-x",
+   "set-y",
+   "set-position",
+   "set-position-to-another-object",
+   "move-at-angle",
+   "set-position-3d",
+   "set-z-elevation",
+   "add-child",
+   "remove-child",
+   "remove-from-parent"
+  ],
+  "expressions": [
+   "quaternion-x",
+   "quaternion-y",
+   "quaternion-z",
+   "quaternion-w",
+   "rotation-x",
+   "rotation-y",
+   "rotation-z",
+   "color-value",
+   "opacity",
+   "count",
+   "pickedcount",
+   "uid",
+   "iid",
+   "asjson",
+   "objecttypename",
+   "get-tags",
+   "get-tags-count",
+   "get-tag-at",
+   "x",
+   "y",
+   "dt",
+   "z",
+   "total-z",
+   "z-elevation",
+   "total-z-elevation",
+   "parent-uid",
+   "child-count",
+   "all-child-count"
+  ]
+ }
 }
