@@ -1,14 +1,16 @@
-"""Architecture checks for the split deterministic Lookup boundary."""
+"""The boundaries of the lookup.
 
-from __future__ import annotations
+The engine runs from the schema directory it is given, without the settings,
+and a caller reads an index through its public methods only.
+"""
 
 import json
 import subprocess
 import sys
 from pathlib import Path
 
-from src.lookup.examples_index import ExamplesIndex as CanonicalExamplesIndex
-from src.lookup.term_index import TermIndex as CanonicalTermIndex
+from src.lookup.examples_index import ExamplesIndex
+from src.lookup.term_index import TermIndex
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -58,7 +60,7 @@ def test_term_index_uses_schema_public_iteration_only():
                 },
             )
 
-    index = CanonicalTermIndex()
+    index = TermIndex()
     index.load_from_schema(PublicSchemaView())
 
     assert index.search("销毁")[0]["key"] == "plugins.sprite.actions.destroy"
@@ -81,7 +83,7 @@ def test_examples_fallback_is_available_without_private_index_access(tmp_path):
         ),
         encoding="utf-8",
     )
-    index = CanonicalExamplesIndex(index_path=index_path)
+    index = ExamplesIndex(index_path=index_path)
 
     assert index.matching_tags("tween") == ["behavior-tween"]
     assert index.search_fallback("tween")[0]["slug"] == "tween-demo"

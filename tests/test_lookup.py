@@ -1,23 +1,18 @@
-"""
-Tests for the query router and Direct Lookup.
-Uses the resolved committed/cache schema dataset but no external services.
+"""Direct Lookup: the schema index, the intent classifier, the engine and the examples index.
+
+The tests run offline on the schema directory that the settings name.
 """
 import json
 
 import pytest
 
-from src.domain.lookup import LookupIntent
+from src.domain.lookup import LookupIntent, LookupResponse
 from src.lookup.examples_index import ExamplesIndex
 from src.lookup.intent import IntentClassifier
 from src.lookup.schema_index import SchemaIndex
 from src.lookup.service import LookupEngine
-from src.lookup.term_index import TermIndex
 from src.settings import load_settings
 
-
-# ---------------------------------------------------------------------------
-# Fixtures
-# ---------------------------------------------------------------------------
 
 SCHEMA_DIR = load_settings().schema.directory
 
@@ -29,191 +24,160 @@ def engine() -> LookupEngine:
 
 
 @pytest.fixture(scope="module")
-def schema_index(engine) -> SchemaIndex:
+def schema_index(engine: LookupEngine) -> SchemaIndex:
     """The engine's index of the configured schema dataset."""
     return engine.schema_index
 
 
 @pytest.fixture(scope="module")
-def classifier(engine) -> IntentClassifier:
+def classifier(engine: LookupEngine) -> IntentClassifier:
     return engine.classifier
 
 
 @pytest.fixture(scope="module")
-def examples_index(engine) -> ExamplesIndex:
+def examples_index(engine: LookupEngine) -> ExamplesIndex:
     return engine.examples_index
 
 
 CAVE_BRIDGE = {"title": "Cave Bridge", "slug": "cave-bridge", "genres": ["adventure"], "behaviors": ["Tween"]}
 
 
-def result_keys(response) -> list[tuple[str, str, str, str]]:
-    """Return stable result identities in production rank order."""
+def result_keys(response: LookupResponse) -> list[tuple[str, str, str, str]]:
+    """The stable key of each match, in rank order."""
     return [
         (match.collection, match.plugin_id, match.ace_type, match.ace_id)
         for match in response.matches
     ]
 
 
-# ---------------------------------------------------------------------------
-# TestSchemaIndex
-# ---------------------------------------------------------------------------
-
 class TestSchemaIndex:
     def test_load_plugins(self, schema_index):
-        idx = schema_index
-        pids, bids = idx.get_all_ids()
+        pids, bids = schema_index.get_all_ids()
         assert len(pids) >= 60, f"Expected >= 60 plugins, got {len(pids)}"
         assert len(bids) >= 20, f"Expected >= 20 behaviors, got {len(bids)}"
 
     def test_resolve_by_id(self, schema_index):
-        idx = schema_index
-        result = idx.resolve_name("sprite")
+        result = schema_index.resolve_name("sprite")
         assert result is not None
         assert result[0] == "sprite"
         assert result[1] is False  # not a behavior
 
     def test_resolve_by_english_name(self, schema_index):
-        idx = schema_index
-        result = idx.resolve_name("Sprite")
+        result = schema_index.resolve_name("Sprite")
         assert result is not None
         assert result[0] == "sprite"
 
     def test_resolve_by_chinese_name(self, schema_index):
-        idx = schema_index
-        result = idx.resolve_name("精灵")
+        result = schema_index.resolve_name("精灵")
         assert result is not None
         assert result[0] == "sprite"
 
     def test_resolve_case_insensitive(self, schema_index):
-        idx = schema_index
-        result = idx.resolve_name("SPRITE")
+        result = schema_index.resolve_name("SPRITE")
         assert result is not None
         assert result[0] == "sprite"
 
     def test_resolve_behavior(self, schema_index):
-        idx = schema_index
-        result = idx.resolve_name("bullet")
+        result = schema_index.resolve_name("bullet")
         assert result is not None
         pid, is_beh = result
         assert pid == "bullet"
         assert is_beh is True
 
     def test_resolve_behavior_chinese(self, schema_index):
-        idx = schema_index
-        result = idx.resolve_name("子弹")
+        result = schema_index.resolve_name("子弹")
         assert result is not None
         pid, is_beh = result
         assert pid == "bullet"
         assert is_beh is True
 
     def test_resolve_nonexistent(self, schema_index):
-        idx = schema_index
-        result = idx.resolve_name("nonexistent_plugin_xyz")
+        result = schema_index.resolve_name("nonexistent_plugin_xyz")
         assert result is None
 
     def test_get_ace_list(self, schema_index):
-        idx = schema_index
-        actions = idx.get_ace_list("sprite", "actions")
+        actions = schema_index.get_ace_list("sprite", "actions")
         assert len(actions) > 0
         assert "name_zh" in actions[0]
 
     def test_get_properties(self, schema_index):
-        idx = schema_index
-        props = idx.get_ace_list("sprite", "properties")
+        props = schema_index.get_ace_list("sprite", "properties")
         assert len(props) > 0
 
 
-# ---------------------------------------------------------------------------
-# TestIntentClassifier
-# ---------------------------------------------------------------------------
-
 class TestIntentClassifier:
-    """Test deterministic grammar and schema-name classification."""
+    """Classification by the query grammar and the schema names."""
 
     def test_ace_list_sprite_actions(self, classifier):
-        c = classifier
-        intent = c.classify("Sprite 有哪些 action")
+        intent = classifier.classify("Sprite 有哪些 action")
         assert intent is not None
         assert intent.intent_type == "ace_list"
         assert intent.plugin_id == "sprite"
         assert intent.ace_type == "actions"
 
     def test_ace_list_chinese(self, classifier):
-        c = classifier
-        intent = c.classify("精灵 有哪些 动作")
+        intent = classifier.classify("精灵 有哪些 动作")
         assert intent is not None
         assert intent.intent_type == "ace_list"
         assert intent.plugin_id == "sprite"
         assert intent.ace_type == "actions"
 
     def test_ace_list_conditions(self, classifier):
-        c = classifier
-        intent = c.classify("Sprite 有哪些 condition")
+        intent = classifier.classify("Sprite 有哪些 condition")
         assert intent is not None
         assert intent.ace_type == "conditions"
 
     def test_ace_list_expressions(self, classifier):
-        c = classifier
-        intent = c.classify("列出 Sprite 的 expression")
+        intent = classifier.classify("列出 Sprite 的 expression")
         assert intent is not None
         assert intent.ace_type == "expressions"
 
     def test_prop_list(self, classifier):
-        c = classifier
-        intent = c.classify("Sprite 有哪些 属性")
+        intent = classifier.classify("Sprite 有哪些 属性")
         assert intent is not None
         assert intent.intent_type == "prop_list"
         assert intent.ace_type == "properties"
 
     def test_behavior_ace_list(self, classifier):
-        c = classifier
-        intent = c.classify("Bullet 有哪些 action")
+        intent = classifier.classify("Bullet 有哪些 action")
         assert intent is not None
         assert intent.plugin_id == "bullet"
         assert intent.is_behavior is True
 
     def test_term_translate_zh(self, classifier):
-        c = classifier
-        intent = c.classify("翻译 Destroy")
+        intent = classifier.classify("翻译 Destroy")
         assert intent is not None
         assert intent.intent_type == "term_translate"
         assert "Destroy" in intent.term
 
     def test_term_translate_en(self, classifier):
-        c = classifier
-        intent = c.classify("Destroy 中文是什么")
+        intent = classifier.classify("Destroy 中文是什么")
         assert intent is not None
         assert intent.intent_type == "term_translate"
 
     def test_not_lookup_general_question(self, classifier):
-        """General questions should NOT be classified as lookup."""
-        c = classifier
-        intent = c.classify("如何实现存档系统？")
+        """A general question gets no lookup intent."""
+        intent = classifier.classify("如何实现存档系统？")
         assert intent is None
 
     def test_not_lookup_how_to(self, classifier):
-        c = classifier
-        intent = c.classify("怎么做一个平台跳跃游戏？")
+        intent = classifier.classify("怎么做一个平台跳跃游戏？")
         assert intent is None
 
     def test_not_lookup_explanation(self, classifier):
-        c = classifier
-        intent = c.classify("Sprite 和 Tiled Background 有什么区别？")
+        intent = classifier.classify("Sprite 和 Tiled Background 有什么区别？")
         assert intent is None
 
     def test_ace_list_suffix_pattern(self, classifier):
-        """Test 'Sprite action 列表' pattern."""
-        c = classifier
-        intent = c.classify("Sprite action 列表")
+        """'Sprite action 列表' → ace_list."""
+        intent = classifier.classify("Sprite action 列表")
         assert intent is not None
         assert intent.intent_type == "ace_list"
         assert intent.ace_type == "actions"
 
     def test_ace_detail_usage_query(self, classifier):
         """'Sprite 的 Destroy 怎么用' → ace_detail."""
-        c = classifier
-        intent = c.classify("Sprite 的 Destroy 怎么用")
+        intent = classifier.classify("Sprite 的 Destroy 怎么用")
         assert intent is not None
         assert intent.intent_type == "ace_detail"
         assert intent.plugin_id == "sprite"
@@ -221,34 +185,27 @@ class TestIntentClassifier:
 
     def test_ace_detail_params_query(self, classifier):
         """'Sprite 的 Set animation 参数是什么' → ace_detail."""
-        c = classifier
-        intent = c.classify("Sprite 的 Set animation 参数是什么")
+        intent = classifier.classify("Sprite 的 Set animation 参数是什么")
         assert intent is not None
         assert intent.intent_type == "ace_detail"
         assert intent.plugin_id == "sprite"
 
     def test_unknown_compound_entity_does_not_resolve(self, classifier):
         """A registered name embedded in an unknown ASCII identifier is not an entity."""
-        c = classifier
-        intent = c.classify("QuantumSprite 有哪些 actions")
+        intent = classifier.classify("QuantumSprite 有哪些 actions")
         assert intent is None
 
     def test_prop_list_via_canshu_keyword(self, classifier):
         """'Platform 行为有哪些主要参数' → prop_list."""
-        c = classifier
-        intent = c.classify("Platform 行为有哪些主要参数")
+        intent = classifier.classify("Platform 行为有哪些主要参数")
         assert intent is not None
         assert intent.intent_type == "prop_list"
         assert intent.plugin_id == "platform"
         assert intent.ace_type == "properties"
 
 
-# ---------------------------------------------------------------------------
-# TestLookupEngine — ace_detail formatting
-# ---------------------------------------------------------------------------
-
 class TestLookupEngineDetail:
-    """Tests for structured ace_detail lookup responses."""
+    """Structured ace_detail responses."""
 
     def test_ace_detail_returns_structured_match(self, engine):
         resp = engine.try_lookup("Sprite 的 Set animation 怎么用")
@@ -260,17 +217,13 @@ class TestLookupEngineDetail:
         assert "animation" in resp.context.lower()
 
     def test_ace_detail_nonexistent_ace_falls_through(self, engine):
-        """Query with valid plugin but non-matching ACE name returns None."""
+        """A plugin with an ACE name that it lacks is declined."""
         resp = engine.try_lookup("Sprite 的 NonexistentAce12345 怎么用")
         assert resp is None
 
 
-# ---------------------------------------------------------------------------
-# TestLookupEngine
-# ---------------------------------------------------------------------------
-
 class TestLookupEngine:
-    """End-to-end tests: query to structured lookup response."""
+    """From a query to a structured lookup response."""
 
     def test_ace_list_returns_compact_format(self, engine):
         resp = engine.try_lookup("Sprite 有哪些 action")
@@ -339,12 +292,8 @@ class TestLookupEngine:
         assert resp.elapsed_ms >= 0
 
 
-# ---------------------------------------------------------------------------
-# TestKeywordInfer — scoped entity-plus-topic query tests
-# ---------------------------------------------------------------------------
-
 class TestKeywordInfer:
-    """Test narrow entity-plus-topic lookup without broad category expansion."""
+    """An addon and a topic answer with the ACEs of that topic only."""
 
     def test_sprite_collision(self, engine):
         """A collision topic returns the shared condition and Sprite's own action."""
@@ -482,23 +431,18 @@ class TestKeywordInfer:
         assert "跳跃" in resp.context
 
     def test_no_plugin_no_trigger(self, engine):
-        """Query with ACE keyword but no plugin → should not trigger."""
+        """A topic without an addon that names the object is declined."""
         resp = engine.try_lookup("碰撞检测")
-        assert resp is None  # no addon names the object
+        assert resp is None
 
     def test_classifier_keeps_every_ace_type_for_a_noun_topic(self, classifier):
         """Collision names no ACE type: Sprite has collision conditions and actions."""
-        c = classifier
-        intent = c.classify("Sprite 碰撞")
+        intent = classifier.classify("Sprite 碰撞")
         assert intent is not None
         assert intent.intent_type == "ace_search"
         assert intent.ace_type == "conditions,actions,expressions"
         assert "碰撞" in intent.filter_term
 
-
-# ---------------------------------------------------------------------------
-# TestExamplesIndex
-# ---------------------------------------------------------------------------
 
 class TestExamplesIndex:
     def test_search_by_behavior_tag(self, examples_index):
@@ -554,13 +498,9 @@ class TestExamplesIndex:
         )
 
 
-# ---------------------------------------------------------------------------
-# TestACEExampleAttach
-# ---------------------------------------------------------------------------
-
 class TestACEExampleAttach:
     def test_ace_list_appends_examples(self, tmp_path):
-        """ACE list result should include related examples from a supplied index."""
+        """An ACE list includes the related examples of a supplied index."""
         index_file = tmp_path / "examples_index.json"
         index_file.write_text(json.dumps({
             "behavior-Tween": [
@@ -600,10 +540,6 @@ class TestACEExampleAttach:
         assert index.search(["plugin-SPRITE"])[0]["title"] == "Demo"
 
 
-# ---------------------------------------------------------------------------
-# TestScriptingLookup
-# ---------------------------------------------------------------------------
-
 class TestScriptingLookup:
     def test_qualified_class_member_is_top_result(self, engine):
         resp = engine.try_lookup("IRuntime.callFunction")
@@ -613,10 +549,6 @@ class TestScriptingLookup:
             "script_api", "IRuntime", "script_api", "callFunction"
         )
 
-
-# ---------------------------------------------------------------------------
-# TestLookupResponseStructure
-# ---------------------------------------------------------------------------
 
 class TestLookupResponseStructure:
     def test_ace_search_returns_matches(self, engine):
@@ -651,10 +583,6 @@ class TestLookupResponseStructure:
         assert isinstance(resp.context, str)
         assert len(resp.context) > 0
 
-
-# ---------------------------------------------------------------------------
-# TestEffectLookup
-# ---------------------------------------------------------------------------
 
 class TestEffectLookup:
     def test_effect_answers_with_its_parameters_in_both_languages(self, engine):

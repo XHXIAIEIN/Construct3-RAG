@@ -20,6 +20,7 @@ _NAMES = {
 
 
 def _make_schema(root: Path, version: str = "r1") -> Path:
+    """Write a complete two-locale schema of one plugin, one behavior and one effect."""
     entries = {
         "plugins": {"sprite": {"file": "plugins/sprite.json"}},
         "behaviors": {"platform": {"file": "behaviors/platform.json"}},
@@ -146,7 +147,7 @@ def test_schema_counts_uses_canonical_locale_names(tmp_path):
 
 
 def test_bundled_schema_is_self_contained_and_loadable():
-    """A clean checkout must not need the developer cache for Direct Lookup."""
+    """Direct Lookup runs from the schema committed in a clean checkout."""
     bundled = Path(__file__).parents[1] / "data" / "c3-schemas"
     assert schema_is_complete(bundled)
 

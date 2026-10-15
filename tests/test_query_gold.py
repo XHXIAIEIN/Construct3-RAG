@@ -21,7 +21,8 @@ from src.settings import load_settings
 
 
 GOLD = Path(__file__).with_name("fixtures") / "query_gold.jsonl"
-SCHEMAS = GOLD.parents[2] / "data" / "c3-schemas" / "en-US"
+ROOT = GOLD.parents[2]
+SCHEMAS = ROOT / "data" / "c3-schemas" / "en-US"
 KEY = ("collection", "plugin_id", "ace_type", "ace_id")
 DEFAULT_WITHIN = 5
 FIELDS = {
@@ -59,7 +60,14 @@ def _schema_list_size(case: dict[str, Any]) -> int:
     )
 
 
+def _source_paths(case: dict[str, Any]) -> list[str]:
+    """The case's ``source_path``: one path or a list of them."""
+    paths = case.get("source_path", [])
+    return [paths] if isinstance(paths, str) else paths
+
+
 def _entity(intent: LookupIntent | None, response: LookupResponse | None) -> dict[str, str] | None:
+    """The addon or script class that the lookup took the query to name."""
     if intent is not None and intent.plugin_id:
         kind = intent.entity_kind or ("behavior" if intent.is_behavior else "plugin")
         return {"kind": kind, "id": intent.plugin_id}
@@ -100,12 +108,11 @@ def test_every_case_uses_only_the_documented_fields_and_a_unique_id():
 
 
 def test_every_source_path_exists():
-    root = GOLD.parents[2]
     missing = [
         (case["id"], path)
         for case in CASES
-        for path in ([case["source_path"]] if isinstance(case.get("source_path"), str) else case.get("source_path", []))
-        if not (root / path).exists()
+        for path in _source_paths(case)
+        if not (ROOT / path).exists()
     ]
     assert missing == []
 
