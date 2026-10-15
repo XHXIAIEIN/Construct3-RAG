@@ -35,6 +35,8 @@ import os
 import re
 import sys
 import unicodedata
+from collections import Counter
+from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import NamedTuple
 
@@ -192,7 +194,7 @@ def next_name(name: str) -> str:
     return stem + (str(int(number) + 1) if number else "2")
 
 
-def free_name(name: str, taken) -> str:
+def free_name(name: str, taken: Iterable) -> str:
     """The name the editor gives a variable, parameter or function it renames: next_name,
     repeated until no name taken matches it without case (Amount3 when amount2 is taken)."""
     low = {LOWER(t) for t in taken if isinstance(t, str)}
@@ -256,6 +258,7 @@ SOLID_CHANGES = {"destroy", "set-x", "set-y", "set-position", "set-position-to-a
                  "set-tile-range", "set-tile-with-brush", "erase-tile-with-brush", "set-tile-with-brush-by-name",
                  "erase-tile-with-brush-by-name", "set-tile-with-patch-brush", "erase-tile-with-patch-brush",
                  "set-tile-with-patch-brush-by-name", "erase-tile-with-patch-brush-by-name"}
+REGENERATE = {"regenerate-obstacle-map", "regenerate-region", "regenerate-region-around-object"}
 # Is overlapping between a Platform object and a Solid (Construct3-RAG/prompts/pitfalls/picking.md): the
 # Platform behavior pushes its object out of every enabled Solid each tick, so the two touch and do not overlap.
 # On collision still fires, because the behavior registers the collision as it pushes out (exported c3runtime.js,
@@ -275,7 +278,6 @@ PLAIN_PICKS = {"pick-nth-instance", "pick-random-instance", "pick-all", "for-eac
 REMOVERS = {"destroy", "wrap", "bound", "fade", "tween"}
 PLACINGS = {"set-x", "set-y", "set-position", "set-position-to-another-object"}
 USED_DESTROY = '{"type": "behavior", "id": "destroy", "name": "Destroy outside layout", "author": "Scirra", "bundled": false}'
-REGENERATE = {"regenerate-obstacle-map", "regenerate-region", "regenerate-region-around-object"}
 # A Drag & Drop object dropped on another, tested by overlap or collision or snapped onto it, is drawn under
 # it when the layout puts it lower in the Z order: on a lower layer, or listed before it on the same layer
 # (manual: project-primitives/objects/instances.md "Z index", 0 is the bottom; layers.md: a layer's own
@@ -288,8 +290,9 @@ RESTACKS = {"move-to-top", "move-to-bottom", "move-to-layer", "move-to-object", 
 # A found path is there only after On path found: Move along path, and the node expressions, in the same
 # actions as Find path read the previous path, unless Wait for previous actions to complete stands between.
 PATH_NODES = re.compile(r"(\w+)\s*\.\s*(\w+)\s*\.\s*(?:nodecount|nodexat|nodeyat)\b", re.I)
+TRIGGER_ONCE = "trigger-once-while-true"       # the id of System Trigger once
 # Conditions that keep an event from running every tick, beside the triggers.
-PACING = {("system", "every-x-seconds"), ("system", "trigger-once-while-true")}
+PACING = {("system", "every-x-seconds"), ("system", TRIGGER_ONCE)}
 # Simulate control holds a control for the tick it runs in (manual: behavior-reference.md "Custom controls", the
 # input events must be continually true), so under a trigger the object moves one tick and stops. Behavior id ->
 # the controls held, None for all. A Platform jump starts on one tick, and Tile movement takes one tick as a move
@@ -423,7 +426,7 @@ def arguments_from(expr: str, i: int) -> list[str]:
         i = j + 1
 
 
-def outside_literals(expr: str, matches) -> list:
+def outside_literals(expr: str, matches: Iterable[re.Match]) -> list[re.Match]:
     """The regex matches that do not start inside a text literal of expr."""
     literals = [m.span() for m in STRING_LITERAL.finditer(expr)]
     return [m for m in matches if not any(a < m.start() < b for a, b in literals)]
@@ -467,6 +470,11 @@ def bare_name_in(code: str, name: str) -> bool:
     return re.search(rf"(?<![\w$.]){re.escape(name)}(?![\w$])(?!\s*:(?!:))", code) is not None
 
 
+def member_types(families: dict, obj: str) -> list[str]:
+    """The object types a family stands for, or the object type itself."""
+    return families[obj].get("members", []) if obj in families else [obj]
+
+
 def replaced_in_own_text(sheets: dict, families: dict) -> dict[str, set[str]]:
     """Object type -> the parts of its own text that a Set text replaces, "###" for
     replace(Self.Text, "###", ProjectVersion): a layout text that holds them is a template the events fill in.
@@ -484,7 +492,7 @@ def replaced_in_own_text(sheets: dict, families: dict) -> dict[str, set[str]]:
                     continue
                 for m in OWN_TEXT_REPLACED.finditer(text):
                     if m.group(1).lower() in ("self", obj.lower()):
-                        for t in families[obj].get("members", []) if obj in families else [obj]:
+                        for t in member_types(families, obj):
                             found.setdefault(t, set()).add(unquote(m.group(2)))
             if isinstance(ev.get("children"), list):
                 walk(ev["children"])
@@ -521,6 +529,11 @@ def bare(value, options) -> str:
     return ""
 
 
+def first_few(names: list[str], n: int) -> str:
+    """The first n names, joined with commas, and how many more there are."""
+    return ", ".join(names[:n]) + (f" and {len(names) - n} more" if len(names) > n else "")
+
+
 def number_of(value) -> float | None:
     """A parameter written as a plain number, "1" or 1.0; None for any other expression."""
     try:
@@ -547,7 +560,7 @@ def hex_colour(c: list) -> str:
     return "#" + "".join(f"{round(min(max(float(v), 0), 1) * 255):02x}" for v in c[:3])
 
 
-def layer_instances(layers: list):
+def layer_instances(layers: list) -> Iterator[dict]:
     """Every instance on these layers and their sublayers, in the order the file lists them."""
     for layer in layers if isinstance(layers, list) else []:
         if isinstance(layer, dict):
@@ -555,7 +568,7 @@ def layer_instances(layers: list):
             yield from layer_instances(layer.get("subLayers"))
 
 
-def frames_of(folder, prefix=""):
+def frames_of(folder: dict, prefix: str = "") -> Iterator[tuple[str, dict]]:
     """(file name without its extension, frame) for every frame of an animations folder."""
     for anim in folder.get("items", []):
         for i, fr in enumerate(anim["frames"]):
@@ -570,7 +583,7 @@ STYLE_LADDER = 5   # sibling events of one shape, their conditions and actions t
 COUNTDOWN_ON_INSTANCE = ("subtract-from-instvar", "add-to-instvar", "set-instvar-value")
 
 
-def declarations(events: list):
+def declarations(events: list) -> Iterator[dict]:
     """Every variable and function parameter declared in a list of events and its sub-events."""
     for ev in events:
         if not isinstance(ev, dict):
@@ -594,7 +607,7 @@ class Holder(NamedTuple):
 
 
 class Checker:
-    """The checks in the order run() calls them. A later one reads what an
+    """The checks in the order check() calls them. A later one reads what an
     earlier one collected: the layers and template instances of the layouts,
     the functions and groups of every sheet."""
 
@@ -1359,7 +1372,7 @@ class Checker:
                 declared[LOWER(name)] = (label, name)
         plugin = p.schema("plugins", p.plugin_of[obj])
         expressions = p.expressions_of(plugin)
-        members = p.families[obj].get("members", []) if obj in p.families else [obj]
+        members = member_types(p.families, obj)
         if any(m in self.world_types for m in members):
             expressions |= p.common_expressions_of(plugin)
         for key, (label, _) in declared.items():
@@ -1401,12 +1414,13 @@ class Checker:
         found = [m.group(0) for m in C_OPERATOR.finditer(text)]
         if found:
             # Rewrite outside the string literals only: "a == b" as text is valid.
+            def construct_operators(code: str) -> str:
+                return C_OPERATOR.sub(lambda m: C_OPERATORS.get(m.group(0), m.group(0)), code)
             parts, last = [], 0
             for lit in STRING_LITERAL.finditer(expr):
-                parts += [C_OPERATOR.sub(lambda m: C_OPERATORS.get(m.group(0), m.group(0)), expr[last:lit.start()]),
-                          lit.group(0)]
+                parts += [construct_operators(expr[last:lit.start()]), lit.group(0)]
                 last = lit.end()
-            parts.append(C_OPERATOR.sub(lambda m: C_OPERATORS.get(m.group(0), m.group(0)), expr[last:]))
+            parts.append(construct_operators(expr[last:]))
             fixed = "".join(parts)
             ops = list(dict.fromkeys(found))
             hint = (f"; write {fixed!r}" if "!" not in found
@@ -1431,11 +1445,12 @@ class Checker:
                 names = p.expression_names(p.system)
                 mapped = [e for e in p.system.get("expressions", [])
                           if c3.is_functions_ace(e) and LOWER(names.get(e["id"], "")) == LOWER(member)]
-                if mapped and LOWER(member) not in {LOWER(f) for f in self.functions}:
+                defined = LOWER(member) in {LOWER(f) for f in self.functions}
+                if mapped and not defined:
                     # Functions.CallMapped is an expression of the Functions object, not a function of the project
                     self.check_arguments(where, f"{obj}.{member}", [(p.system, {"expressions": mapped})], member,
                                          text, m.end(2))
-                elif LOWER(member) not in {LOWER(f) for f in self.functions}:
+                elif not defined:
                     self.err(f"{where}: {obj}.{member} is not a defined function")
                 elif self.returns.get(LOWER(member)) == "none":
                     self.err(f"{where}: {obj}.{member} has no return type, and the editor stops with \"The function "
@@ -1524,9 +1539,8 @@ class Checker:
     def check_find(self, where: str, expr: str) -> None:
         """find or findcase with a one-character literal first and an expression second:
         a one-character text holds nothing longer, so the literal is the text searched for."""
-        literals = [m.span() for m in STRING_LITERAL.finditer(expr)]
-        for m in FIND_CALL.finditer(expr):
-            if any(a < m.start() < b for a, b in literals) or len(unquote(m.group(2))) != 1:
+        for m in outside_literals(expr, FIND_CALL.finditer(expr)):
+            if len(unquote(m.group(2))) != 1:
                 continue
             second = argument_at(expr, m.end())
             if not second or STRING_LITERAL.fullmatch(second):
@@ -1682,7 +1696,7 @@ class Checker:
             name = unquote(name) if is_literal(name) else name
             if not isinstance(name, str) or LOWER(name) not in {LOWER(s) for s in stems}:
                 near = closest(Path(name).stem, stems) if isinstance(name, str) else ""
-                shown = ", ".join(stems[:8]) + (f" and {len(stems) - 8} more" if len(stems) > 8 else "")
+                shown = first_few(stems, 8)
                 listed = f"; the project has {shown}" if stems else "; the project has none"
                 self.err(f"{where}: {key}={value!r} is not a sound or music file of the project; the editor stops "
                          f"with \"missing file {name!r}\". Write the file's name without its extension"
@@ -1692,8 +1706,7 @@ class Checker:
             # other name the editor stops with "cannot find function 'FnRed'" (r495.2, 2026-10-09).
             # declared_functions() has read every sheet before the walk, so a later block counts.
             if not isinstance(value, str) or LOWER(value) not in {LOWER(f) for f in self.functions}:
-                shown = ", ".join(list(self.functions)[:8]) + (
-                    f" and {len(self.functions) - 8} more" if len(self.functions) > 8 else "")
+                shown = first_few(list(self.functions), 8)
                 listed = f"; the project has {shown}" if self.functions else "; the project has none"
                 self.err(f"{where}: {key}={value!r} is not a function of the project; the editor stops with "
                          f"\"cannot find function {value!r}\". Add a function block named {value} or name one "
@@ -1869,7 +1882,7 @@ class Checker:
             self.check_effect_name(where, obj, ace_id, params)
         if kind == "actions" and ace_id in SPRITE_FONT_TEXT and isinstance(params.get("text"), str) \
                 and p.plugin_of[obj].lower() == "spritefont2":
-            members = p.families[obj].get("members", []) if obj in p.families else [obj]
+            members = member_types(p.families, obj)
             sets = [self.font_sets[m] for m in members if m in self.font_sets]
             if sets:
                 charset, bbcode = set().union(*(s for s, _ in sets)), any(b for _, b in sets)
@@ -1938,7 +1951,7 @@ class Checker:
                      f"editor stops with 'cannot add another trigger to event branch'. One event per trigger, or an "
                      f"OR block")
         for c, e in zip(conds, entries):
-            # Both are mended in the one condition, so they name it, as check_ace does.
+            # Both findings are fixed in the condition itself, so they name it, as check_ace does.
             its = f"{where} condition {next(i for i, x in enumerate(ev['conditions'], 1) if x is c)}"
             if c.get("isInverted") and (e.get("isTrigger") or e.get("isLooping") or e.get("isInvertible") is False):
                 kind = "a trigger" if e.get("isTrigger") else "a loop" if e.get("isLooping") else "this condition"
@@ -2213,7 +2226,7 @@ class Checker:
             if entry.get("isTrigger") if entry else str(c.get("id", "")).startswith("on-"):
                 kinds.add("trigger")
             elif (self.p.plugin_of.get(c.get("objectClass"), "").lower(), c.get("id")) in PACING:
-                kinds.add("once" if c.get("id") == "trigger-once-while-true" else "every")
+                kinds.add("once" if c.get("id") == TRIGGER_ONCE else "every")
         return kinds
 
     def paces(self, ev: dict) -> bool:
@@ -2327,12 +2340,12 @@ class Checker:
         actions = [a for ev in line for a in ev.get("actions", []) if isinstance(a, dict)]
         changed = {str(params_of(a).get(SETS[a["id"]], "")).lower() for a in actions if a.get("id") in SETS}
         changed |= {str(a.get("objectClass")).lower() for a in actions if a.get("id") == "destroy"}
-        changed |= {str(self.made_by(a)).lower() for a in actions if self.made_by(a)}
+        changed |= {made.lower() for made in map(self.made_by, actions) if made}
         if changed & self.words_of(list(held)) or any("callFunction" in a or "customAction" in a for a in actions) \
                 or any(a.get("objectClass") == "System" and a.get("id") in LEAVES for a in actions):
             return
         tag = params_of(action).get("tag", '""')
-        once = json.dumps({"id": "trigger-once-while-true", "objectClass": "System"})
+        once = json.dumps({"id": TRIGGER_ONCE, "objectClass": "System"})
         self.p.findings.style_finding(
             "timer", f"{where}: Start timer {tag} runs every tick. No trigger, Every X seconds or Trigger once is in "
                      f"its event or above it, and its actions leave its conditions true. So the timer starts over each "
@@ -2378,8 +2391,9 @@ class Checker:
                 return None
             if a.get("id") in SETS:
                 out.add(str(params_of(a).get(SETS[a["id"]], "")).lower())
-            if a.get("id") == "destroy" or self.made_by(a):
-                out.add(str(self.made_by(a) or a.get("objectClass")).lower())
+            made = self.made_by(a)
+            if a.get("id") == "destroy" or made:
+                out.add(str(made or a.get("objectClass")).lower())
             hit = self.called(a)
             if hit and id(hit[1]) not in seen:
                 seen.add(id(hit[1]))
@@ -2393,7 +2407,7 @@ class Checker:
     def tests_a_value(c: dict) -> bool:
         """Whether a condition tests a value that holds until an event changes it, a variable or Count, or is
         Else or Trigger once; an input, an overlap, a position or a function changes as the game plays."""
-        if c.get("objectClass") == "System" and c.get("id") in ("else", "trigger-once-while-true"):
+        if c.get("objectClass") == "System" and c.get("id") in ("else", TRIGGER_ONCE):
             return True
         moving = any(m.group(2).lower() != "count" for value in params_of(c).values() if isinstance(value, str)
                      for m in OBJECT_EXPRESSION.finditer(value))
@@ -2503,7 +2517,7 @@ class Checker:
             return
         test = json.dumps([{"id": "compare-two-values", "objectClass": "System",
                             "parameters": {"first-value": f"{obj}.Count", "comparison": 0, "second-value": "0"}},
-                           {"id": "trigger-once-while-true", "objectClass": "System"}])
+                           {"id": TRIGGER_ONCE, "objectClass": "System"}])
         self.p.findings.style_finding(
             "count", f"{where}: {obj}.Count = 0 is false here even when the last {obj} is gone. {gone[obj]} destroys "
                      f"it earlier in this top-level event, and a destroyed instance counts in Count until that event "
@@ -2535,8 +2549,9 @@ class Checker:
             if other and other[0] == obj and other[1] == var and other[2] != value:
                 self.p.findings.style_finding(
                     "narrowed", f"{where}: {obj}.{params_of(c).get('instance-variable')} = {value} below "
-                                f"{obj}.{params_of(e).get('instance-variable')} = {other[2]} in the same event never holds: each condition keeps only the {obj} "
-                                f"the conditions above it kept, so no instance passes both. To test that several "
+                                f"{obj}.{params_of(e).get('instance-variable')} = {other[2]} in the same event never "
+                                f"holds: each condition keeps only the {obj} the conditions above it kept, so no "
+                                f"instance passes both. To test that several "
                                 f"instances agree, narrow once and count: {obj}: Row = 0, {obj}: Value = 1, then "
                                 f"System: {obj}.PickedCount = 3, or keep the values in an Array and compare its cells")
                 return
@@ -2753,8 +2768,8 @@ class Checker:
         p = self.p
         actions = [a for acts, _ in self.action_lists for a in acts if isinstance(a, dict)]
         for t in sorted(p.types):
-            if "bullet" not in {v.lower() for v in p.behaviors_of(t).values()} \
-                    or {v.lower() for v in p.behaviors_of(t).values()} & REMOVERS:
+            behaviors = {v.lower() for v in p.behaviors_of(t).values()}
+            if "bullet" not in behaviors or behaviors & REMOVERS:
                 continue
             names = self.names_of(t)
             if not any(self.made_by(a) in names for a in actions) \
@@ -3010,10 +3025,11 @@ class Checker:
         of the events with two or more case sub-events 84% have a comment above
         at least one case (docs/decisions/event-sheet-design-guidance.md,
         2026-09-22). edit_sheet.py refuses a plan whose new events raise the
-        ones whose fix is one comment or one deleted condition, and prints the others; check_project.py
-        reports them all over the whole project when asked, which suits a
-        project the agent wrote. Every tick beside another condition adds
-        nothing: an event without a trigger is tested every tick. A ladder of sibling events is check_ladder."""
+        warnings whose fix is one comment or one deleted condition, and prints
+        the others; check_project.py reports them all over the whole project
+        when asked, which suits a project the agent wrote. Every tick beside
+        another condition adds nothing: an event without a trigger is tested
+        every tick. A ladder of sibling events is check_ladder."""
         actions = ev.get("actions", [])
         run = longest = 0
         for a in actions:
@@ -3280,9 +3296,9 @@ class Checker:
             elif isinstance(ev.get("name"), str):
                 globals_[ev["name"]] = ev
         # The order the editor reads variables and parameters in: sheet by sheet, each event before its sub-events.
-        self.load_order = {id(v): i for i, v in enumerate(
-            v for s in self.sheets.values() for v in declarations(s["events"]))}
-        self.variable_names = {v.get("name") for s in self.sheets.values() for v in declarations(s["events"])}
+        variables = [v for s in self.sheets.values() for v in declarations(s["events"])]
+        self.load_order = {id(v): i for i, v in enumerate(variables)}
+        self.variable_names = {v.get("name") for v in variables}
         for sname, sheet in self.sheets.items():
             # A plan's sheet has numbers the file does not have yet: no operation can address them.
             self.numbers_on_disk = sname not in self.unsaved
@@ -3485,23 +3501,26 @@ class Checker:
 
     # --- uniqueness, project files, addons ----------------------------------------------------
     def check_uniqueness(self) -> None:
-        sids, ace_sids, uids = self.sids, self.ace_sids, self.uids
+        def repeated(values: list[int]) -> set[int]:
+            return {v for v, n in Counter(values).items() if n > 1}
+
         # Only an object class sid stops the editor
         shared = {s: names for s, names in self.class_sids.items() if len(names) > 1}
         for s, names in sorted(shared.items()):
             self.err(f"{' and '.join(names)} share the sid {s}; the editor stops with \"object class sid "
                      f"already in use\": give all but one a new 15-digit sid no other entry of the project has")
-        dup_sids = sorted(({s for s in sids if sids.count(s) > 1} | (set(sids) & set(ace_sids))) - set(shared))
+        dup_sids = sorted((repeated(self.sids) | (set(self.sids) & set(self.ace_sids))) - set(shared))
         if dup_sids:
             self.warn(f"duplicate sids: {dup_sids[:5]}{' ...' if len(dup_sids) > 5 else ''}; the editor opens the "
                       f"project; to make them unique, search the project's JSON for each sid and give all but one "
                       f"entry a new 15-digit sid")
-        dup_ace_sids = sorted({s for s in ace_sids if ace_sids.count(s) > 1})
+        dup_ace_sids = sorted(repeated(self.ace_sids))
         if dup_ace_sids:
             self.warn(f"conditions or actions sharing a sid (pasted in the editor?): "
                       f"{dup_ace_sids[:5]}{' ...' if len(dup_ace_sids) > 5 else ''}")
         # The editor renumbers all but one of the instances that share a uid
-        dup_uids = sorted({u for u in uids if uids.count(u) > 1})
+        # list.count, not Counter: a single-global object's uid is not checked as an integer, so it may be unhashable
+        dup_uids = sorted({u for u in self.uids if self.uids.count(u) > 1})
         if dup_uids:
             self.err(f"duplicate uids: {dup_uids[:5]}{' ...' if len(dup_uids) > 5 else ''}; the editor gives all "
                      f"but one of them another uid, so a hierarchy link or a Pick by UID written for one may reach "
@@ -3581,7 +3600,7 @@ class Checker:
         declared = set(re.findall(r"\w+", defs.read_text(encoding="utf-8", errors="replace")))
         missing = sorted(n for n in (*p.types, *p.families) if n not in declared)
         if missing:
-            shown = ", ".join(missing[:5]) + (f" and {len(missing) - 5} more" if len(missing) > 5 else "")
+            shown = first_few(missing, 5)
             self.warn(f"scripts/ts-defs/instanceTypes.d.ts does not declare {shown}, so TypeScript checked against "
                       f"it does not know InstanceType.{missing[0]}. Have the editor write them again: "
                       f"{script_command(p.root, 'open_in_editor.py', ' --typescript')}")
