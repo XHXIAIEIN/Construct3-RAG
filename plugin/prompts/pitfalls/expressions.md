@@ -121,3 +121,47 @@ Sources and the rule for adding an entry are in the index,
   plugin-reference/json.md "Escaping",
   project-primitives/events/expressions.md on double quotes; observation in
   a studied project, 2026-10-06]
+- A variable at the root of a sheet, outside every group and event, is a
+  global: every sheet of every layout reads it, included or not, and it
+  keeps its value between layouts. Only a variable inside a group or under
+  an event is local. So a variable meant for one sheet goes into a group at
+  the top of that sheet, *static* if it must keep its value from tick to
+  tick. [manual: project-primitives/events/variables.md "Variables at the
+  root level of the event sheet ... become global variables", "Global
+  variables"; observed in a minimal project, r506.2 preview, 2026-10-16: a
+  root variable of a sheet no layout uses read its value from the layout's
+  sheet]
+- `tokencount("", ",")` is 1, not 0, and `tokencount("a,", ",")` is 2: the
+  count is the separators plus one, whatever the text. So *Repeat
+  tokencount(list, ",")* over an empty list runs once, with `tokenat`
+  reading `""`. Test `list ≠ ""` among the event's conditions before the
+  loop, or skip an empty token inside it. [manual:
+  system-reference/system-expressions.md "tokencount", which gives only a
+  non-empty example; observed in a minimal project, r506.2 preview,
+  2026-10-16: `tokencount("", ",")` read 1, `tokencount("a", ",")` 1,
+  `tokencount("a,b", ",")` 2 and `tokencount("a,", ",")` 2]
+- A local that is not static resets to its initial value whenever its scope
+  is entered, and a group's scope is entered every tick. So a value set in
+  one trigger is gone when a trigger of a later tick reads it: Timer *On
+  timer*, AJAX *On completed*, JSON *On parse success*, a tween's *On
+  finished*. The later trigger reads the initial value, and nothing warns;
+  in the setting trigger's own tick the value is still there. Make the
+  local static, or keep the value in a global or an instance variable.
+  [manual: project-primitives/events/variables.md "Static and constant
+  variables", "reset to their initial value whenever entering their scope
+  (usually every tick)"; observed in a minimal project, r506.2 preview,
+  2026-10-16: a group's local set to 5 in *On start of layout* read 5 in
+  the same event and 0 in *On timer* 0.3 s later, while a static local
+  beside it read 5]
+- *Set value* on a number variable, global, local or instance, with a text
+  parses it: a text that starts with a number stores that number, `"12"`
+  and `"12px"` 12, `"1.5"` 1.5, and a text that starts with none, such as
+  `"abc"`, stores NaN, not 0. NaN prints as `NaN`, fails every comparison,
+  `= 0` and `< 1` included, and `NaN + 1` is NaN, so a `= 0` guard never
+  catches it and it spreads through every sum. Convert the text first with
+  `int(text)` or `float(text)`, which give 0 for a text without a number,
+  or declare the variable as text. [observed in a minimal project, r506.2
+  preview, 2026-10-16: a number global and a number instance variable set
+  to `"abc"` held NaN, `numStr & ""` read `"NaN"`, `numStr = 0` and
+  `numStr < 1` both read 0, `numStr + 1` NaN; `"12"` and `"12px"` stored
+  12, `"1.5"` 1.5]
