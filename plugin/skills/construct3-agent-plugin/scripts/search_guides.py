@@ -54,6 +54,7 @@ def pitfalls(rag: Path) -> list[tuple[str, int, str]]:
 
 
 def examples(rag: Path, locale: str) -> list[dict]:
+    """The entries of data/c3-examples/{locale}/, one per official example."""
     return [json.loads(text) for text in c3.data_texts(rag, f"data/c3-examples/{locale}", "*.json").values()]
 
 
@@ -68,12 +69,13 @@ def example_text(e: dict) -> str:
 def ranked(items: list, text_of: Callable[[object], str], words: list[str]) -> list:
     """The items that hold at least one word: the ones with the most of the words first, then the ones that
     repeat them most, so the entry about the words outranks one that names them in passing."""
+    lowered = [w.lower() for w in words]
     scored = []     # (words held, times they occur, position, item)
     for n, item in enumerate(items):
         text = text_of(item).lower()
-        held = sum(w.lower() in text for w in words)
+        held = sum(w in text for w in lowered)
         if held:
-            scored.append((held, sum(text.count(w.lower()) for w in words), n, item))
+            scored.append((held, sum(text.count(w) for w in lowered), n, item))
     scored.sort(key=lambda s: (-s[0], -s[1], s[2]))
     best = scored[0][0] if scored else 0
     return [item for held, _, _, item in scored if held == best or held >= 2]
@@ -113,7 +115,7 @@ def main() -> int:
                          f"clones it, and each example then gets the command that reads its events)")
         for e in found_examples:
             lines.append(f"{e['id']}: {e.get('name', '')}. {e.get('description', '')}")
-            # an example written in both languages is two folders, <id>-js and <id>-ts
+            # An example written in both languages is two folders, <id>-js and <id>-ts
             folders = [f for f in (clone / f"{e['id']}{end}" for end in ("", "-js", "-ts")) if f.is_dir()]
             lines += [f"  {c3.script_command(f, 'print_sheet.py')}" for f in folders] or [f"  {e.get('open', '')}"]
     if not lines:

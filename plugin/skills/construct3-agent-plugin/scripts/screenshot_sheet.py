@@ -402,27 +402,17 @@ def main() -> int:
         pp.ignored_folder(project / pp.BUILD)
     out = (args.out or (project / pp.BUILD / "sheets")).resolve()
     out.mkdir(parents=True, exist_ok=True)
-    editor = f"{oe.EDITOR}{args.release.strip('/')}/" if args.release else oe.EDITOR
-    profile = (args.profile.resolve() if args.profile else oe.scratch(project)) / f"editor-{Path(exe).stem.lower()}"
-    try:
-        browser = oe.Browser(exe, profile, headed=False,
-                              extra=(*BROWSER_ARGS, SCHEME_ARG.format(0 if args.dark else 1)))
-    except (oe.DevToolsError, OSError) as e:
-        print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
+    editor = oe.release_url(args.release)
+
+    def then(browser: oe.Browser, target: str, page: oe.DevTools) -> dict:
+        return capture(browser, target, page, sheet, args.group, args.scale, out, titles, wait)
+
+    result = oe.drive(exe, oe.profile_folder(args.profile and args.profile.resolve(), project, exe), False,
+                      lambda b: oe.open_one(b, editor, project, b.profile / "project-sheet.c3p", None,
+                                            bool(args.release), then),
+                      extra=(*BROWSER_ARGS, SCHEME_ARG.format(0 if args.dark else 1)))
+    if result is None:
         return 2
-    try:
-        result = oe.open_one(browser, editor, project, profile / "project-sheet.c3p", None, bool(args.release),
-                             lambda b, t, p: capture(b, t, p, sheet, args.group, args.scale, out,
-                                                             titles, wait))
-    except oe.EditorNotLoaded as e:
-        print(f"the editor did not load: {e}. Check the network connection and --release, and run again.",
-              file=sys.stderr)
-        return 2
-    except (oe.DevToolsError, OSError) as e:
-        print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
-        return 2
-    finally:
-        browser.close()
     print("\n".join(oe.report({k: v for k, v in result.items() if k != "preview"})))
     shot = result.get("preview") or {}
     for line in shot.get("lines", []):

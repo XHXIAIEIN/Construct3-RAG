@@ -75,6 +75,7 @@ import zipfile
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from typing import TypeVar
 
 import c3project as c3
 import check_project
@@ -714,7 +715,7 @@ def keep_active(page) -> None:
     the active lifecycle state thaws a page the browser froze. Both hold as long as the
     connection or session that set them stays open. A minimized window then reports visible
     but draws nothing: a click misses what the page shows after it, and a screenshot never
-    comes, so it is restored as well."""
+    comes, so a script that may meet one restores it first, as export_project.py does."""
     page.call("Emulation.setFocusEmulationEnabled", enabled=True)
     page.call("Page.setWebLifecycleState", state="active")
 
@@ -738,6 +739,19 @@ def load(page: DevTools, editor: str) -> None:
         raise EditorNotLoaded(f"{editor} did not finish loading in 30 seconds")
     if where[2] >= 400:
         raise EditorNotLoaded(f"{editor} answered HTTP {where[2]}")
+
+
+def set_up(page: DevTools) -> None:
+    """Run SETUP in the editor's page; EditorNotLoaded says what kept the page from getting ready."""
+    ready = page.evaluate(f"({SETUP_JS})()", wait=SETUP_WAIT)
+    if ready != "ready":
+        raise EditorNotLoaded(ready)
+
+
+def put_file(page: DevTools, path: Path) -> None:
+    """Put a file on the input SETUP added, which drops it on the editor."""
+    field = page.evaluate("document.querySelector('input[aria-label=\"Project to open\"]')", by_value=False)
+    page.call("DOM.setFileInputFiles", files=[str(path)], objectId=field["objectId"])
 
 
 def message_text(event: dict) -> str | None:
@@ -989,12 +1003,9 @@ def open_one(browser: Browser, editor: str, project: Path, staged: Path, shot: P
         editor = page.evaluate("location.origin + location.pathname")
         major, minor = (page.evaluate(RELEASE_JS) + [0, 0])[:2]
         release = release_name(major * 100 + minor) if major else ""
-        ready = page.evaluate(f"({SETUP_JS})()", wait=SETUP_WAIT)
-        if ready != "ready":
-            raise EditorNotLoaded(ready)
+        set_up(page)
         started = time.monotonic()
-        field = page.evaluate("document.querySelector('input[aria-label=\"Project to open\"]')", by_value=False)
-        page.call("DOM.setFileInputFiles", files=[str(staged)], objectId=field["objectId"])
+        put_file(page, staged)
         result = page.evaluate(f"({RESULT_JS})()", wait=RESULT_WAIT)
         if shot:
             shot.write_bytes(base64.b64decode(page.call("Page.captureScreenshot")["data"]))
@@ -1070,11 +1081,8 @@ def install_addon(browser: Browser, editor: str, addon: Path) -> dict:
     target, page = browser.page(editor)
     try:
         load(page, editor)
-        ready = page.evaluate(f"({SETUP_JS})()", wait=SETUP_WAIT)
-        if ready != "ready":
-            raise EditorNotLoaded(ready)
-        field = page.evaluate("document.querySelector('input[aria-label=\"Project to open\"]')", by_value=False)
-        page.call("DOM.setFileInputFiles", files=[str(addon)], objectId=field["objectId"])
+        set_up(page)
+        put_file(page, addon)
         result = page.evaluate(f"({INSTALL_JS})()", wait=RESULT_WAIT)
     finally:
         page.ws.close()
@@ -1112,12 +1120,17 @@ def untested(ran: dict) -> str:
     return f"; it ran without input{f' for {wall:.1f} s' if wall is not None else ''}, so what a player does is untested"
 
 
+def opened_lines(result: dict) -> list[str]:
+    """The first lines of a project that opened: its title, the editor, and each notice the editor showed."""
+    return [f"opened   {result['project']}  ({result['title']}, {result['editor']})",
+            *(f"  warning: {w}" for w in result.get("warnings", []))]
+
+
 def report(result: dict, label: Callable[[str], str] = key_name) -> list[str]:
     if result["status"] == "error":
         return [f"error    {result['project']}: {result['exception']}"]
     if result["status"] == "opened":
-        lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
-        lines += [f"  warning: {w}" for w in result.get("warnings", [])]
+        lines = opened_lines(result)
         ts = result.get("typescript")
         if ts and "error" in ts:
             lines.append(f"  typescript: not written, {ts['error']}")
@@ -1358,10 +1371,55 @@ def failure_report(result: dict) -> list[str]:
             f"the file"]
 
 
+# --- the browser start and the output that every script driving the editor shares ---------------
+T = TypeVar("T")
+
+
+def release_url(release: str | None) -> str:
+    """The editor of --release, as its URL spells it; the current stable release without one."""
+    return f"{EDITOR}{release.strip('/')}/" if release else EDITOR
+
+
+def profile_folder(profile: Path | None, project: Path, exe: str) -> Path:
+    """The browser profile, in --profile or else the project's .tmp/. One per browser: Chrome does not load
+    a profile Edge has written. A relative --profile stays relative; the caller resolves it."""
+    return (profile or scratch(project)) / f"editor-{Path(exe).stem.lower()}"
+
+
+def drive(exe: str, profile: Path, headed: bool, work: Callable[[Browser], T],
+          extra: tuple[str, ...] = ()) -> T | None:
+    """Start the browser on `profile`, run `work` with it, and close it. Returns what `work` returned, or
+    None once it has printed why the browser or the editor could not be used, which is exit code 2."""
+    browser = None
+    try:
+        browser = Browser(exe, profile, headed, extra)
+        return work(browser)
+    except EditorNotLoaded as e:
+        print(f"the editor did not load: {e}. Check the network connection and --release, and run again.",
+              file=sys.stderr)
+    except (DevToolsError, OSError) as e:
+        print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
+    finally:
+        if browser is not None:
+            browser.close()
+    return None
+
+
+def print_part(lines: list[str], limit: int, printed: int) -> tuple[int, int]:
+    """Print the lines of one result that fit in the `limit` characters that several results share, of
+    which `printed` are spent; a `limit` of 0 prints every line. Returns how many lines it printed and the
+    characters spent in all."""
+    shown = c3.fitting(lines, max(1, limit - printed) if limit else 0)
+    if shown:
+        text = "\n".join(lines[:shown])
+        print(text, flush=True)
+        printed += len(text) + 1
+    return shown, printed
+
+
 def run(projects: list[Path], editor: str, exe: str, args, label: Callable[[str], str] = key_name) -> list[dict]:
     first = projects[0] if projects[0].is_dir() else projects[0].parent
-    # One profile per browser: Chrome does not load a profile Edge has written.
-    browser = Browser(exe, (args.profile or scratch(first)) / f"editor-{Path(exe).stem.lower()}", args.headed)
+    browser = Browser(exe, profile_folder(args.profile, first, exe), args.headed)
     results: list[dict] = []
     for addon in args.install_addon:
         try:
@@ -1398,11 +1456,7 @@ def run(projects: list[Path], editor: str, exe: str, args, label: Callable[[str]
         with lock:
             results.append(result)
             lines = report(result, label)
-            shown = c3.fitting(lines, max(1, args.limit - printed) if args.limit else 0)
-            if shown:
-                text = "\n".join(lines[:shown])
-                print(text, flush=True)
-                printed += len(text) + 1
+            shown, printed = print_part(lines, args.limit, printed)
             if shown < len(lines):
                 result["unprinted"] = True
 
@@ -1475,7 +1529,7 @@ def main() -> int:
         print(f"no project.c3proj or .c3p found under {where}; run this in the project folder or pass "
               f"--project <folder>", file=sys.stderr)
         return 2
-    editor = f"{EDITOR}{args.release.strip('/')}/" if args.release else EDITOR
+    editor = release_url(args.release)
 
     # A browser tool opens one project at a time, as the agent's own step.
     exe = args.browser or browser_path()

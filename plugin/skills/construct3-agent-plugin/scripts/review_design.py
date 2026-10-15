@@ -50,6 +50,7 @@ import re
 import sys
 from collections import Counter
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Callable, Iterator
 
 import c3project as c3
@@ -87,15 +88,18 @@ GUARD_SIZE = 3              # conditions shared
 GUARD_EVENTS = 3            # events sharing them
 IDLE_INVERTED = 3           # inverted conditions in one event
 PAIR_MAX = 4                # siblings of one shape; 5 or more is check_project --style's ladder
-TRIGGER_SIBLINGS = 3
+TRIGGER_SIBLINGS = 3        # sibling events that start with one trigger
 GLOBALS_ELSEWHERE = 10      # globals a layout's sheet declares and only other sheets use
-DATA_ACTIONS = 20
+DATA_ACTIONS = 20           # actions of one kind with literal values in one event
 REPEATED_CALL = 30          # characters of a call written twice in one expression
 DEEP = 5                    # parentheses deep, together with a repeated call
 SHOWN = 8                   # events a question names before "and N more"
+CLOSING = 600               # characters kept for the cut line, the summary and next, about 500 together
 
+# Parameter types that hold an expression
 EXPRESSION_TYPES = {"any", "number", "string", "layer", "animation", "animationframe", "groupname", "objecteffect",
                     "layereffect", "layouteffect"}
+# Parameters that hold a name, for an ACE the schemas do not list
 NAME_KEYS = {"variable", "instance-variable", "object", "layout", "comparison", "key"}
 NUMBER_LITERAL = re.compile(r"(?<![\w.])\d+(?:\.\d+)?(?:e[+-]?\d+)?(?![\w.])", re.I)
 IDENT = re.compile(r"(?<![\w.])([A-Za-z_]\w*)(?!\s*\()")
@@ -105,9 +109,11 @@ MEMBER = re.compile(r"\s*(\w+)\s*\.\s*\w+\s*")          # Object.Field: the obje
 PAREN = {"(": 1, ")": -1}                               # what a character adds to the parentheses depth
 SCRATCH = re.compile(r"(?i)^(tmp|temp|scratch)[a-z]?\d*$")
 UID_OF = re.compile(r"(?i)^\s*(\w+)\s*\.\s*uid\s*$")
+# System actions that write an event variable, and conditions that test one
 WRITES = {"set-eventvar-value", "add-to-eventvar", "subtract-from-eventvar", "set-boolean-eventvar",
           "toggle-boolean-eventvar"}
 READS = {"compare-eventvar", "compare-boolean-eventvar"}
+# Array actions that set a cell, with their index parameters
 ARRAY_SETS = {"set-at-x": ("x",), "set-at-xy": ("x", "y"), "set-at-xyz": ("x", "y", "z")}
 SETS_ON_INSTANCES = re.compile(r"^(set-|add-to-|subtract-from-|toggle-)")
 
@@ -150,13 +156,13 @@ CLASSES = {
 class Ev:
     """One row of a sheet, with the editor's number and what it sits in."""
     sheet: str
-    n: int
+    n: int                      # the event number print_sheet.py prints
     ev: dict
     depth: int
     parent: "Ev | None"
     group: str | None           # the title of the innermost group
     function: str | None        # the function or custom action it is part of
-    siblings: list
+    siblings: list              # the event list that holds this row
     scope: frozenset            # lower-case names of the locals and parameters visible here
     children: list = field(default_factory=list)
 
@@ -203,14 +209,13 @@ def walk(sheet: str, events: list, counter: list[int] | None = None, parent: Ev 
         et = raw.get("eventType")
         if et in NUMBERED:
             counter[0] += 1
+        # A comment, a variable or an include takes the number of the event after it
         n = counter[0] if et in NUMBERED else counter[0] + 1
         inner_group = raw.get("title") if et == "group" else group
         inner_function, inner_scope = function, scope
-        if et == "function-block":
-            inner_function = raw.get("functionName")
-        elif et == "custom-ace-block":
-            inner_function = f"{raw.get('objectClass')}.{raw.get('aceName')}"
         if et in ("function-block", "custom-ace-block"):
+            inner_function = (raw.get("functionName") if et == "function-block"
+                              else f"{raw.get('objectClass')}.{raw.get('aceName')}")
             inner_scope = scope | {str(fp.get("name", "")).lower() for fp in raw.get("functionParameters", [])}
         e = Ev(sheet, n, raw, depth, parent, group, function, events, scope)
         if parent:
@@ -251,7 +256,7 @@ def params_of(ace: dict) -> dict:
 
 
 def key(ace: dict) -> tuple:
-    """A condition or action with everything that makes it what it is."""
+    """What makes two conditions or actions the same: object, behavior, id, inversion and parameters."""
     return (ace.get("objectClass"), ace.get("behaviorType"), ace.get("id") or ace.get("callFunction"),
             bool(ace.get("isInverted")), json.dumps(ace.get("parameters"), sort_keys=True, ensure_ascii=False))
 
@@ -307,6 +312,7 @@ class Design:
         return [e for e in self.rows[sheet] if e.kind == "block"]
 
     def say(self, kind: str, ace: dict) -> str:
+        """The editor's wording of a condition or action, else its object and id."""
         if self.words:
             try:
                 return self.words(kind, ace)
@@ -340,7 +346,7 @@ def finding(rule: str, e: Ev | None, line: str, sheet: str | None = None, events
             "events": events or ([e.n] if e else []), "line": line, "short": short}
 
 
-# --- a: conditions per event -------------------------------------------------------------
+# --- conditions: many conditions in one event --------------------------------------------
 def conditions_rule(d: Design) -> list[dict]:
     """An event with many conditions besides its trigger reads as several sentences in
     one; an OR block lists alternatives and is left out."""
@@ -359,7 +365,7 @@ def conditions_rule(d: Design) -> list[dict]:
     return out
 
 
-# --- b: a guard repeated across events ---------------------------------------------------
+# --- guard: a guard repeated across events -----------------------------------------------
 def guard_rule(d: Design) -> list[dict]:
     """The same conditions of objects, three or more, in three or more events of a sheet:
     a guard written again in each event instead of once above them."""
@@ -374,6 +380,7 @@ def guard_rule(d: Design) -> list[dict]:
                 sets[e] = own
         by_combo: dict[frozenset, list[Ev]] = {}
         for e, own in sets.items():
+            # The first 12 conditions: at most 220 combinations of 3
             for combo in itertools.combinations(sorted(own, key=str)[:12], GUARD_SIZE):
                 by_combo.setdefault(frozenset(combo), []).append(e)
         seen: set[tuple[frozenset, frozenset]] = set()
@@ -394,7 +401,8 @@ def guard_rule(d: Design) -> list[dict]:
                 f"event or a group with these conditions and the events as its sub-events, or one condition "
                 f"that says the same, such as a state instance variable on {guard[0].get('objectClass')}",
                 events=[x.n for x in evs]))
-    # one finding per guard: the largest set first, its smaller copies on the same events dropped
+    # One finding per guard: the largest set first, its smaller copies on the same events dropped
+    # The line joins the shared conditions with "; ", so a larger set has more ";" in it
     out.sort(key=lambda f: -f["line"].count(";"))
     kept: list[dict] = []
     for f in out:
@@ -403,8 +411,10 @@ def guard_rule(d: Design) -> list[dict]:
     return kept
 
 
-# --- c: an "is it free" test spread over inverted conditions -----------------------------
+# --- idle: an "is it free" test spread over inverted conditions --------------------------
 def idle_rule(d: Design) -> list[dict]:
+    """Inverted conditions that test whether an instance is free: three or more on one object,
+    or of three or more kinds."""
     out = []
     for sheet in d.rows:
         for e in d.blocks(sheet):
@@ -428,8 +438,10 @@ def idle_rule(d: Design) -> list[dict]:
     return out
 
 
-# --- d: two to four siblings that differ only by constants ------------------------------
+# --- pair: two to four siblings that differ only by constants ----------------------------
 def shape_of(d: Design, ev: dict, exact: bool) -> tuple:
+    """An event, its conditions, actions and sub-events, with the numbers and texts of its
+    expressions kept when exact, else replaced."""
     def ace(kind: str, a: dict) -> tuple:
         values = d.expressions(kind, a)
         params = a.get("parameters")
@@ -484,8 +496,9 @@ def pair_rule(d: Design) -> list[dict]:
     return out
 
 
-# --- e: one trigger heading several sibling events ---------------------------------------
+# --- trigger: one trigger heading several sibling events ---------------------------------
 def trigger_rule(d: Design) -> list[dict]:
+    """Sibling events that start with one trigger and test more than it: the cases of one decision."""
     out = []
     globals_ = d.globals()
 
@@ -503,7 +516,7 @@ def trigger_rule(d: Design) -> list[dict]:
                 t = d.trigger(e)
                 if t is not None and not e.ev.get("isOrBlock"):
                     by_trigger.setdefault(key(t), []).append(e)
-            for t_key, same in by_trigger.items():
+            for same in by_trigger.values():
                 # Events that only run actions on one trigger are each a step with a comment, as the
                 # examples write On start of layout; the ones that test more are cases of one decision.
                 cases = [e for e in same if d.filters(e)]
@@ -522,7 +535,7 @@ def trigger_rule(d: Design) -> list[dict]:
     return out
 
 
-# --- f: one fact written into an Array and an instance variable --------------------------
+# --- twice: one fact written into an Array and an instance variable ----------------------
 def twice_rule(d: Design) -> list[dict]:
     out = []
     for e in d.all_rows():
@@ -547,9 +560,10 @@ def twice_rule(d: Design) -> list[dict]:
     return out
 
 
-# --- g: globals --------------------------------------------------------------------------
+# --- global: where each global is read and written ---------------------------------------
 @dataclass
 class Use:
+    """One read or write of a global."""
     e: Ev
     write: bool
 
@@ -585,7 +599,7 @@ def global_rule(d: Design) -> list[dict]:
         name = var.get("name")
         place = f"sheet {sheet}, global {name}"
         written = [u for u in us if u.write]
-        if not us or not written:
+        if not written:
             continue
         functions = {u.e.function for u in us}
         groups = {u.e.group for u in us}
@@ -629,15 +643,19 @@ def global_rule(d: Design) -> list[dict]:
 
 
 def describe_owners(us: list[Use]) -> str:
+    """The functions, else the events, of these uses, four at most."""
     owners = sorted({u.e.function or f"sheet {u.e.sheet} event {u.e.n}" for u in us})
-    return ", ".join(owners[:4]) + (" ..." if len(owners) > 4 else "") if owners else "nowhere"
+    if not owners:
+        return "nowhere"
+    return ", ".join(owners[:4]) + (" ..." if len(owners) > 4 else "")
 
 
 def globals_count(d: Design) -> dict[str, int]:
+    """The globals each sheet declares, constants included."""
     return {sheet: sum(1 for e in rows if e.depth == 0 and e.kind == "variable") for sheet, rows in d.rows.items()}
 
 
-# --- h: a link kept as a UID -------------------------------------------------------------
+# --- uid: a link kept as a UID -----------------------------------------------------------
 def uid_rule(d: Design) -> list[dict]:
     out = []
     picks: dict[str, list[Ev]] = {}
@@ -653,11 +671,10 @@ def uid_rule(d: Design) -> list[dict]:
             params = params_of(a)
             m = UID_OF.match(str(params.get("value", "")))
             var = str(params.get("instance-variable", ""))
-            if a.get("id") != "set-instvar-value" or not m or var.lower() not in picks:
+            target = (a.get("objectClass"), var)
+            if a.get("id") != "set-instvar-value" or not m or var.lower() not in picks or target in seen:
                 continue
-            if (a.get("objectClass"), var) in seen:
-                continue
-            seen.add((a.get("objectClass"), var))
+            seen.add(target)
             where = picks[var.lower()][0]
             made = any(b.get("id") in ("create-object", "spawn-another-object") and m.group(1).lower() in
                        {str(v).lower() for v in params_of(b).values()} for b in e.actions)
@@ -669,7 +686,7 @@ def uid_rule(d: Design) -> list[dict]:
     return out
 
 
-# --- i: a table written as actions -------------------------------------------------------
+# --- data: a table written as actions ----------------------------------------------------
 def data_rule(d: Design) -> list[dict]:
     out = []
     for e in d.all_rows():
@@ -686,7 +703,7 @@ def data_rule(d: Design) -> list[dict]:
     return out
 
 
-# --- j: resets a restart already makes ---------------------------------------------------
+# --- restart: resets a restart already makes ---------------------------------------------
 def restart_rule(d: Design) -> list[dict]:
     """On start of layout picks all of a type and sets it, on a layout the events enter
     again by Restart layout or Go to layout: the layout's own instances come back as the
@@ -732,7 +749,7 @@ def restart_rule(d: Design) -> list[dict]:
     return out
 
 
-# --- k: an expression that should be a function ------------------------------------------
+# --- expression: an expression that should be a function ---------------------------------
 def calls(expr: str) -> list[str]:
     """Every call in an expression, as written from its name to its closing parenthesis,
     without spaces; texts in it are kept, so Get("a") and Get("b") are two calls."""
@@ -748,6 +765,7 @@ def calls(expr: str) -> list[str]:
 
 
 def nesting(expr: str) -> int:
+    """How many parentheses deep an expression goes."""
     depth = deepest = 0
     for ch in expr:
         depth += PAREN.get(ch, 0)
@@ -777,7 +795,8 @@ def expression_rule(d: Design) -> list[dict]:
     return out
 
 
-# --- l: a part placed once beside an object that moves without it ----------------------
+# --- follow: a part placed once beside an object that moves without it -------------------
+# Actions that move an object, and the properties a tween moves
 MOVES = {"set-position", "set-x", "set-y", "move-forward", "move-at-angle", "set-position-to-another-object",
          "set-position-3d"}
 TWEEN_MOVES = {"position", "offsetx", "offsety"}
@@ -844,13 +863,13 @@ def follow_rule(d: Design) -> list[dict]:
             for owner in owners:
                 if owner in d.types and owner != part:
                     placed.setdefault((owner, part), []).append(e)
-    children, pinned = has_parent(d), {n for n, t in d.types.items()
-                                for b in t.get("behaviorTypes", []) if b.get("behaviorId") == "Pin"}
+    children = has_parent(d)
+    pinned = {n for n, t in d.types.items() for b in t.get("behaviorTypes", []) if b.get("behaviorId") == "Pin"}
     together = together_made(d)
     left: dict[tuple[int, str], tuple[Ev, list[str], Ev]] = {}     # (row, owner) -> row, parts, placing row
     for (owner, part), where in placed.items():
-        if (owner, part) not in together or part in children or part in pinned \
-                or any(every_tick(d, e) for e in where):
+        if ((owner, part) not in together or part in children or part in pinned
+                or any(every_tick(d, e) for e in where)):
             continue
         for e in d.all_rows():
             if not any(a.get("objectClass") == owner and moves(a) for a in e.actions):
@@ -983,8 +1002,11 @@ def main() -> int:
                   "no project file was edited", file=sys.stderr)
             return 2
     lines, asked = report(found, sheets, project.root)
-    room = args.limit - sum(len(q) + 1 for q in asked) - 600 if args.limit else 0
-    shown = c3.fitting(lines, max(room, 1)) if args.limit else len(lines)
+    # The questions and the closing lines print whole; the findings fill what is left
+    shown = len(lines)
+    if args.limit:
+        room = args.limit - sum(len(q) + 1 for q in asked) - CLOSING
+        shown = c3.fitting(lines, max(room, 1))
     if lines[:shown]:
         print("\n".join(lines[:shown]))
     if shown < len(lines):

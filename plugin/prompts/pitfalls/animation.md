@@ -16,26 +16,26 @@ Sources and the rule for adding an entry are in the index,
   origin centred, points P1 and P2 at its left and right edges:
   `ImagePointCount` 2, index 0 400, 1 350, 2 450, 2026-09-23]
 - *Set animation* to the animation already playing does nothing, even when
-  set to play from the beginning. So an `anim` variable, compared before
-  every *Set animation* to keep the animation from restarting, is not
-  needed. Set the animation from the state in one event. To restart it,
-  use *Start animation* from the beginning. [manual:
+  set to play from the beginning. So set the animation from the state in
+  one event, without an `anim` variable compared before every *Set
+  animation* to keep the animation from restarting. To restart it, use
+  *Start animation* from the beginning. [manual:
   plugin-reference/sprite.md "Set animation"; observed in a game
   project, 2026-09-22]
 - A 3D model's *Set progress*, the script's `animationProgress` setter and
   `setAnimationProgress` change nothing while the clip plays or is paused,
   although the manual says they set the progress of the current animation.
-  They work once the clip is stopped or has finished. A clip stays playing
-  after *Play* switches to another clip, and *Stop* then stops only the
-  new one, although its description says it stops any animations: *Is
-  playing* with the first clip's name and `isAnimationPlaying` stay true,
-  and so does the script's `isPlaying`. In r505, *Play* of a playing clip
-  also leaves it where it is, whatever progress it is given. An attack
-  that plays a clip longer than its interval then shows a swing only every
-  other time. r506 starts the clip at the given progress. To restart a
-  clip in r505 and r506, stop it, then *Play* it. *Stop* and the script's
-  `stop()` stop the clip played last. `setAnimationPlaying(false, clip)`
-  also stops it. *Play* cuts to the new clip in one tick unless its
+  They work once the clip is stopped or has finished. In r505, *Play* of a
+  playing clip also leaves it where it is, whatever progress it is given.
+  An attack that plays a clip longer than its interval then shows a swing
+  only every other time. r506 starts the clip at the given progress. To
+  restart a clip in r505 and r506, stop it with *Stop*, the script's
+  `stop()` or `setAnimationPlaying(false, clip)`, then *Play* it. A clip
+  stays playing after *Play* switches to another clip, and *Stop* and
+  `stop()` then stop only the clip played last, although the description
+  of *Stop* says it stops any animations: *Is playing* with the first
+  clip's name and `isAnimationPlaying` stay true, and so does the script's
+  `isPlaying`. *Play* cuts to the new clip in one tick unless its
   *Transition duration* (r505) is set, and a clip cannot cross over into
   itself. So consecutive attacks that should blend take turns between two
   copies of the clip. In r505 and r506 the script's

@@ -91,6 +91,7 @@ def layout_lines(p: c3.Project, name: str, layout: dict, only_layer: str | None)
             obj = inst.get("type", "?")
             b = c3.box(world)
             shown = shown_layer and (inst.get("properties") or {}).get("initially-visible", True) is not False
+            text = text_of(inst)
             if listed:
                 plugin = p.plugin_of.get(obj, "?")
                 notes = []
@@ -103,7 +104,6 @@ def layout_lines(p: c3.Project, name: str, layout: dict, only_layer: str | None)
                     notes.append(f"angle {number(math.degrees(world['angle']))} degrees, box unrotated")
                 if b[2] <= 0 or b[3] <= 0 or b[0] >= lw or b[1] >= lh:
                     notes.append("outside the layout")
-                text = text_of(inst)
                 if text is not None:
                     shown_text = re.sub(r"\s+", " ", text).strip()
                     notes.append(f'text "{shown_text[:60]}{"..." if len(shown_text) > 60 else ""}"')
@@ -112,7 +112,7 @@ def layout_lines(p: c3.Project, name: str, layout: dict, only_layer: str | None)
                     notes.append(f"on {under[-1]}" if under else "on no object")
                 rows.append((obj, plugin, b, f"{number(world.get('width', 0))} x {number(world.get('height', 0))}"
                              + (f"  [{'; '.join(notes)}]" if notes else "")))
-            if text_of(inst) is None:
+            if text is None:
                 below.append((obj, b, shown))
         if listed:
             lines += rows_lines(rows, pad)

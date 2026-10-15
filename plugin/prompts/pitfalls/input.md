@@ -58,8 +58,9 @@ Sources and the rule for adding an entry are in the index,
   `Touch.Y` in this trigger are one pointer event behind too. To follow or
   aim at the pointer, set the position or angle in an *Every tick* event
   that reads `Mouse.X` and `Mouse.Y`. For a finger, use an event with *Is in
-  touch* that reads `Touch.X` and `Touch.Y`. *MovementX* and *MovementY* in
-  the trigger hold the amount of the current move. [runtime: r495.2
+  touch* that reads `Touch.X` and `Touch.Y`. `Mouse.MovementX` and
+  `Mouse.MovementY` in the trigger hold the amount of the current move.
+  [runtime: r495.2
   preview, `Plugins.Mouse.Instance._OnPointerMove` calls the private method
   that triggers `OnMovement` before it sets `_mouseXcanvas` and
   `_mouseYcanvas`; manual: plugin-reference/mouse.md "On movement",
@@ -158,11 +159,12 @@ Sources and the rule for adding an entry are in the index,
 - A game that moves with W, A, S and D alone is hard to control on an AZERTY
   keyboard. There those letters sit elsewhere and ZQSD takes their place.
   Give every direction its arrow key too, in an OR block with the letter or
-  in its own event. The arrow keys work on most layouts. The same holds for
-  any control chosen for where its key sits. The 8 Direction, Platform and
-  Car behaviors move with the arrow keys while *Default controls* is on. A
-  project that turns it off to simulate controls from letters adds the arrows
-  itself. [manual: plugin-reference/keyboard.md, the note on keyboard
+  in its own event. The arrow keys work on most keyboard layouts. The same
+  holds for any control chosen for where its key sits. The 8 Direction,
+  Platform and Car behaviors move with the arrow keys while *Default
+  controls* is on. A project that turns it off to simulate controls from
+  letters adds the arrows itself.
+  [manual: plugin-reference/keyboard.md, the note on keyboard
   layouts; behavior-reference/8-direction.md, platform.md and car.md "Default
   controls"; example: detecting-input-method, `Game events` 5 to 8: each
   direction an OR block of its arrow key and its letter, simulating 8

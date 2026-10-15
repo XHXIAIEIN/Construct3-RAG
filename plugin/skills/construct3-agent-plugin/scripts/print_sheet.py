@@ -4,28 +4,30 @@
                                   [--limit CHARS] [--project FOLDER] [--rag FOLDER] [--locale en-US]
 
 Conditions and actions are worded from the schema's display-text, in the
-locale of --locale, at about a quarter of the JSON's length; one the editor
+locale of --locale, at about a quarter of the JSON's length. One the editor
 has deprecated ends in [deprecated], and the schema may not word it. One the
 editor has disabled ends in [condition disabled] or [action disabled]: the
-event runs as if that line were not there, and its other lines run. A disabled event or group ends its first line in [event disabled],
-so that it does not read as a disabled first condition. It reads any
-folder project, an official example included. An event without conditions
-reads (every tick) at the top of the sheet, in a group or not, and (runs
-with its parent) as a sub-event, which runs each time the event it sits in
-runs: once per call in a function, once per trigger under a trigger (the
-manual's project-primitives/events/sub-events).
+event runs as if that line were not there, and its other lines run. A
+disabled event or group ends its first line in [event disabled], so that it
+does not read as a disabled first condition. The script reads any folder
+project, an official example included. An event without conditions reads
+(every tick) at the top of the sheet, in a group or not, and (runs with its
+parent) as a sub-event, which runs each time the event it sits in runs:
+once per call in a function, once per trigger under a trigger (the manual's
+project-primitives/events/sub-events).
 
 A row's number is the count of blocks, groups, function blocks, custom
 action blocks and script blocks before it in the sheet, sub-events included,
-plus one: the number in the editor's margin and in its Find results. A variable, comment
-or include takes no number of its own and belongs to the next one, so a
-plan of edit_sheet.py names a variable by its name and a comment by words of
-its text. A print that shows a variable, except --outline, ends with the
-line that says how. A group's description and a variable's comment print
-as // lines under it, in the column of the actions, not of the comments: a
-plan changes them with "set" on the group's number or the variable's name,
-{"event": 4, "set": {"description": "..."}} or
+plus one: the number in the editor's margin and in its Find results. A
+variable, comment or include takes no number of its own and belongs to the
+next one, so a plan of edit_sheet.py names a variable by its name and a
+comment by words of its text. A print that shows a variable, except
+--outline, ends with the line that says how. A group's description and a
+variable's comment print as // lines under it, in the column of the actions,
+not of the comments. A plan changes them with "set" on the group's number
+or the variable's name: {"event": 4, "set": {"description": "..."}} or
 {"variable": "score", "set": {"comment": "..."}}.
+
 --outline prints the numbering alone, with the sid of each event, which is
 the string to search the sheet's JSON for, and a comment's first 30
 characters. --show N prints one event as JSON, for a plan of edit_sheet.py
@@ -57,6 +59,7 @@ import argparse
 import collections
 import difflib
 import io
+import itertools
 import json
 import re
 import subprocess
@@ -64,7 +67,7 @@ import sys
 import tarfile
 import tempfile
 from pathlib import Path, PurePosixPath
-from typing import Iterator, NamedTuple
+from typing import Callable, Iterable, Iterator, NamedTuple
 
 import c3project as c3
 from c3project import NUMBERED, STRING_LITERAL, describe
@@ -72,10 +75,21 @@ from c3project import NUMBERED, STRING_LITERAL, describe
 COMPARISONS = ("=", "≠", "<", "≤", ">", "≥")
 VARIABLE_ROW = re.compile(r"\s*(?:global|local)(?: constant)?(?: static)? (?:number|string|boolean) (\S+) = (.*)")
 OUTLINE_COMMENT = 30    # characters of a comment's first line --outline keeps: a CJK character is about a token
+FUNCTION_BLOCKS = ("function-block", "custom-ace-block")
 
 
 def cut(text: str, n: int) -> str:
     return text if len(text) <= n else text[:n].rstrip() + "…"
+
+
+def printed_length(lines: Iterable[str]) -> int:
+    """The characters the lines take printed, a newline after each."""
+    return sum(len(line) + 1 for line in lines)
+
+
+def within(number: int, first: int, last: int | None) -> bool:
+    """Whether an event number lies in the range of --events; last None runs to the end."""
+    return first <= number and (last is None or number <= last)
 
 
 class Row(NamedTuple):
@@ -98,7 +112,7 @@ def outline_rows(events: list, counter: list[int], above: tuple = ()) -> Iterato
             text = f"group {ev.get('title', '')}"
         elif et == "include":
             text = f"include {ev.get('includeSheet', '')}"
-        elif et in ("function-block", "custom-ace-block"):
+        elif et in FUNCTION_BLOCKS:
             text = "function " + (ev.get("functionName") or f"{ev['objectClass']}.{ev['aceName']}")
         elif et == "script":
             text = "script"
@@ -215,26 +229,35 @@ def sheet_rows(p: c3.Project, events: list, counter: list[int], above: tuple = (
             head = [f"{number}{pad}{group_line(ev)}"]
             body = remarks(ev.get("description"), pad)
         else:
-            lines = []
-            if et in ("function-block", "custom-ace-block"):
-                lines.append(function_line(ev))
+            lines = [function_line(ev)] if et in FUNCTION_BLOCKS else []
             lines += [wording(p, "conditions", c) + (" [condition disabled]" if c.get("disabled") else "")
                       for c in ev.get("conditions", [])]
+            lines = lines or [unconditional]
             joiner = "OR " if ev.get("isOrBlock") else ""
+            # Mark the sub-events on the last line
             # Indenting alone did not tell a model that the event below belonged to this one:
             # it removed a trigger with no actions as empty, and its sub-events went with it.
-            below = numbered_below(ev.get("children", [])) if et not in ("function-block", "custom-ace-block") else 0
-            nested = f"  [sub-event{'s' if below > 1 else ''} {counter[0] + 1}" \
-                + (f"-{counter[0] + below}]" if below > 1 else "]") if below else ""
+            below = numbered_below(ev.get("children", [])) if et not in FUNCTION_BLOCKS else 0
+            nested = (f"  [sub-event{'s' if below > 1 else ''} {span_text(counter[0] + 1, counter[0] + below)}]"
+                      if below else "")
             head = [f"{number if i == 0 else '     '}{pad}{joiner if i else ''}{line}"
                     + (" [event disabled]" if ev.get("disabled") and i == 0 else "")
-                    + (nested if i == len(lines or [unconditional]) - 1 else "")
-                    for i, line in enumerate(lines or [unconditional])]
+                    + (nested if i == len(lines) - 1 else "")
+                    for i, line in enumerate(lines)]
             body = [f"     {pad}    -> {wording(p, 'actions', a)}" + (" [action disabled]" if a.get("disabled") else "")
                     for a in ev.get("actions", [])]
         row = Row(counter[0] if et in NUMBERED else counter[0] + 1, head, body, above, ev)
         yield row
         yield from sheet_rows(p, ev.get("children", []), counter, (*above, row), top and et == "group")
+
+
+def with_context(row: Row, shown: set[int]) -> list[str]:
+    """A row's lines under the heads of the rows it sits in that have not printed yet, marked [context].
+    Adds the ids of the row and the rows it sits in to shown."""
+    lines = [line + ("  [context]" if i == 0 else "") for a in row.above if id(a) not in shown
+             for i, line in enumerate(a.head)] + row.head + row.body
+    shown.update(id(a) for a in (*row.above, row))
+    return lines
 
 
 def part(rows: list[Row], first: int, last: int | None, room: int | None) -> tuple[list[str], int | None]:
@@ -244,25 +267,14 @@ def part(rows: list[Row], first: int, last: int | None, room: int | None) -> tup
     variables above an event with it, so the number printing stopped before is
     always past the first: a continuation from it advances. Returns the lines
     and that number, None when the range was printed whole."""
-    # The rows of one event number, its comments and variables and then the event.
-    groups: list[tuple[int, list[Row]]] = []
-    for row in rows:
-        if row.number < first or (last is not None and row.number > last):
-            continue
-        if groups and groups[-1][0] == row.number:
-            groups[-1][1].append(row)
-        else:
-            groups.append((row.number, [row]))
     lines: list[str] = []
     shown: set[int] = set()
     used = 0
-    for number, group in groups:
-        new: list[str] = []
-        for row in group:
-            new += [line + ("  [context]" if i == 0 else "") for a in row.above if id(a) not in shown
-                    for i, line in enumerate(a.head)] + row.head + row.body
-            shown.update(id(a) for a in (*row.above, row))
-        size = sum(len(line) + 1 for line in new)
+    # The rows of one event number: its comments and variables, then the event
+    for number, group in itertools.groupby((row for row in rows if within(row.number, first, last)),
+                                           key=lambda row: row.number):
+        new = [line for row in group for line in with_context(row, shown)]
+        size = printed_length(new)
         if room is not None and lines and used + size > room:
             return lines, number
         lines += new
@@ -284,6 +296,7 @@ def naming_note(lines: list[str]) -> str | None:
 
 
 def events_range(spec: str | None) -> tuple[int, int | None]:
+    """The first and last event number of --events; last None runs to the end."""
     if spec is None:
         return 1, None
     m = re.fullmatch(r"(\d*)(-?)(\d*)", spec.strip())
@@ -299,7 +312,7 @@ def events_range(spec: str | None) -> tuple[int, int | None]:
 def show(sheet: dict, name: str, n: int, limit: int) -> int:
     """Event n as JSON, two spaces deep: what edit_sheet.py takes back under "replace"."""
     events = list(c3.numbered_events(sheet["events"]))
-    # A miss answers the model: on stdout, with the exit code it had on stderr.
+    # A miss answers the model: on stdout, with the exit code of an error
     if not 1 <= n <= len(events):
         print(f"sheet {name} has {len(events)} events; --show {n} is not one of them")
         return 1
@@ -312,7 +325,7 @@ def show(sheet: dict, name: str, n: int, limit: int) -> int:
     return 0
 
 
-def again(args, sheets: list[str], events: str | None, find: str | None = None) -> str:
+def again(args: argparse.Namespace, sheets: list[str], events: str | None, find: str | None = None) -> str:
     """The command that prints sheets, or a range of one, with the options of this run; with find, the events that
     use that name (NAME, as written, when the command is an example to fill in)."""
     find = find if find is not None else args.find
@@ -327,8 +340,18 @@ def again(args, sheets: list[str], events: str | None, find: str | None = None) 
     return " ".join(words)
 
 
+def stopped_line(args: argparse.Namespace, name: str, stopped: int | None, last: int | None, rest: list[str],
+                 total: int | None = None) -> str:
+    """The last line of a print cut at --limit: the event it stopped before, of total events when given, and the
+    commands that print the rest of sheet name and then the sheets of rest."""
+    more = [again(args, [name], f"{stopped}-{last or ''}")] if stopped else []
+    more += [again(args, rest, None)] if rest else []
+    where = (f", before event {stopped}" + (f" of {total}" if total is not None else "")) if stopped else ""
+    return f"-- stopped at the limit of {args.limit} characters (--limit){where}. The rest: {'  then  '.join(more)}"
+
+
 # --- a sheet over the limit: its groups and functions; --find: the events that use a name -----------------
-BLOCKS = ("group", "function-block", "custom-ace-block")
+BLOCKS = ("group", *FUNCTION_BLOCKS)
 
 
 def spans(events: list) -> tuple[list[tuple[int, int, int, str]], list[tuple[int, int]]]:
@@ -338,9 +361,9 @@ def spans(events: list) -> tuple[list[tuple[int, int, int, str]], list[tuple[int
     loose: list[tuple[int, int]] = []
     counter = 0
 
-    def walk(rows: list, depth: int, inside: bool) -> None:
+    def walk(level: list, depth: int, inside: bool) -> None:
         nonlocal counter
-        for ev in rows:
+        for ev in level:
             et = ev.get("eventType")
             if et not in NUMBERED:
                 continue
@@ -365,7 +388,7 @@ def span_text(first: int, last: int) -> str:
     return f"{first}-{last}" if last > first else str(first)
 
 
-def contents(args, name: str, rows: list[Row], events: list, total: int, size: int,
+def contents(args: argparse.Namespace, name: str, rows: list[Row], events: list, total: int, size: int,
              room: int) -> tuple[list[str], str]:
     """What prints instead of a sheet over the limit: one line per group and function with the events it spans,
     the deeper groups left out while the list is over room; and the span of an --events example."""
@@ -382,7 +405,7 @@ def contents(args, name: str, rows: list[Row], events: list, total: int, size: i
         return out
 
     def chars(lines: list[tuple[int, str]]) -> int:
-        return sum(len(line) + 1 for _, line in lines) + sum(len(line) + 1 for line in tail)
+        return printed_length(line for _, line in lines) + printed_length(tail)
 
     lines = listing(depth)
     while depth and chars(lines) > room:
@@ -409,7 +432,7 @@ def contents(args, name: str, rows: list[Row], events: list, total: int, size: i
     return [head, *(line for _, line in lines), *tail], example
 
 
-def contents_end(args, name: str, example: str) -> str:
+def contents_end(args: argparse.Namespace, name: str, example: str) -> str:
     return (f"-- print one part, a group or a function, by its events: {again(args, [name], example)}; "
             f"the events that use a variable, a function or an object, with the events they sit in: "
             f"{again(args, [name], None, find='NAME')}")
@@ -448,17 +471,15 @@ def found(rows: list[Row], pattern: re.Pattern, first: int, last: int | None,
     """The rows that use the name, each under the heads of the rows it sits in, marked [context], within the
     numbers first to last, cut before the row that would pass room characters. Returns the lines, the number of
     rows that use it in the range, and the number printing stopped before."""
-    hits = [row for row in rows if first <= row.number and (last is None or row.number <= last) and uses(row.event, pattern)]
+    hits = [row for row in rows if within(row.number, first, last) and uses(row.event, pattern)]
     lines: list[str] = []
     shown: set[int] = set()
     used = 0
     for row in hits:
-        new = [line + ("  [context]" if i == 0 else "") for a in row.above if id(a) not in shown
-               for i, line in enumerate(a.head)] + row.head + row.body
-        size = sum(len(line) + 1 for line in new)
+        new = with_context(row, shown)
+        size = printed_length(new)
         if room is not None and lines and used + size > room:
             return lines, len(hits), row.number
-        shown.update(id(a) for a in (*row.above, row))
         lines += new
         used += size
     return lines, len(hits), None
@@ -480,7 +501,7 @@ def names_in(project: c3.Project, sheets: dict[str, dict]) -> set[str]:
     return out
 
 
-def print_found(args, project: c3.Project, sheets: dict[str, dict], names: list[str]) -> int:
+def print_found(args: argparse.Namespace, project: c3.Project, sheets: dict[str, dict], names: list[str]) -> int:
     """--find: per sheet, the events that use the name, under the events they sit in."""
     pattern = re.compile(rf"(?<!{IDENTIFIER}){re.escape(args.find)}(?!{IDENTIFIER})", re.IGNORECASE)
     first, last = events_range(args.events)
@@ -496,13 +517,10 @@ def print_found(args, project: c3.Project, sheets: dict[str, dict], names: list[
               f"each under the events it sits in, marked [context] and printed without their actions")
         print("\n".join(lines))
         if room is not None:
-            room -= sum(len(line) + 1 for line in lines)
+            room -= printed_length(lines)
         rest = names[k + 1:]
         if stopped is not None or (rest and room is not None and room <= 0):
-            more = [again(args, [name], f"{stopped}-{last or ''}")] if stopped else []
-            more += [again(args, rest, None)] if rest else []
-            print(f"-- stopped at the limit of {args.limit} characters (--limit)"
-                  + (f", before event {stopped}" if stopped else "") + f". The rest: {'  then  '.join(more)}")
+            print(stopped_line(args, name, stopped, last, rest))
             return 0
     if len(none) == len(names):
         # A miss answers the model: on stdout, with the names that come near.
@@ -567,7 +585,7 @@ def project_at(p: c3.Project, commit: str, into: Path) -> c3.Project | None:
         return None
 
 
-def content(obj):
+def content(obj: object) -> object:
     """An event's own content, to compare: without its sub-events, and without the sids, which a generator
     run gives anew from its first changed line on."""
     if isinstance(obj, dict):
@@ -582,7 +600,7 @@ def matched(old: list[Row], new: list[Row]) -> dict[int, int]:
     anew, as a generator run does, and a sid does not identify one event."""
     keys = {id(row): json.dumps(content(row.event), sort_keys=True, ensure_ascii=False) for row in (*old, *new)}
 
-    def sid(row: Row):
+    def sid(row: Row) -> int | None:
         s = row.event.get("sid")
         return s if isinstance(s, int) else None
 
@@ -616,7 +634,7 @@ def matched(old: list[Row], new: list[Row]) -> dict[int, int]:
     at_old = {id(r): k for k, r in enumerate(old)}
     at_new = {id(r): k for k, r in enumerate(new)}
 
-    def place(rows: list[Row], k: int, at: dict, to_new) -> tuple:
+    def place(rows: list[Row], k: int, at: dict[int, int], to_new: Callable[[int], int | None]) -> tuple:
         after = next((to_new(m) for m in range(k + 1, len(rows)) if to_new(m) is not None), len(new))
         parent = to_new(at[id(rows[k].above[-1])]) if rows[k].above else -1
         return after, parent, rows[k].event.get("eventType")
@@ -631,9 +649,9 @@ def matched(old: list[Row], new: list[Row]) -> dict[int, int]:
         here = spots.get(place(new, j, at_new, lambda m: m if m in taken else None), [])
         lines = compared(new[j])
         for i in here:
-            if difflib.SequenceMatcher(a=compared(old[i]), b=lines, autojunk=False).ratio() >= 0.5 \
-                    or difflib.SequenceMatcher(a="\n".join(compared(old[i])), b="\n".join(lines),
-                                               autojunk=False).ratio() >= 0.6:
+            was = compared(old[i])
+            if difflib.SequenceMatcher(a=was, b=lines, autojunk=False).ratio() >= 0.5 \
+                    or difflib.SequenceMatcher(a="\n".join(was), b="\n".join(lines), autojunk=False).ratio() >= 0.6:
                 pairs[i] = j
                 here.remove(i)
                 break
@@ -649,18 +667,18 @@ def moved(old: list[Row], new: list[Row], pairs: dict[int, int]) -> set[int]:
     out, siblings = set(), {}
     for i, j in sorted(pairs.items(), key=lambda pair: pair[1]):
         po, pn = parent_old[i], parent_new[j]
-        if (pairs.get(po) if po is not None else None) != pn or (po is None) != (pn is None):
+        if pairs.get(po) != pn or (po is None) != (pn is None):
             out.add(j)
         else:
             siblings.setdefault(pn, []).append((i, j))
     for kids in siblings.values():
-        # the longest increasing run of old indexes, in new order
+        # The longest increasing run of old indexes, in new order
         best: list[list[tuple[int, int]]] = []
         for pair in kids:
             longest = max((run for run in best if run[-1][0] < pair[0]), key=len, default=[])
             best.append([*longest, pair])
         keep = set(max(best, key=len, default=[]))
-        out.update(j for pair in kids if pair not in keep for _, j in [pair])
+        out.update(j for i, j in kids if (i, j) not in keep)
     return out
 
 
@@ -689,7 +707,7 @@ def changes(old: list[Row], new: list[Row], since: str) -> tuple[list[tuple[int,
                                  removed=len(old) - len(pairs))
     shown: set[int] = set()     # new rows whose first line is printed, as a change or as context
 
-    def context(chain) -> list[str]:
+    def context(chain: Iterable[Row]) -> list[str]:
         lines = []
         for above in chain:
             if at_new[id(above)] not in shown:
@@ -769,7 +787,7 @@ def changes(old: list[Row], new: list[Row], since: str) -> tuple[list[tuple[int,
     return chunks, counts
 
 
-def print_since(args, project: c3.Project, sheets: dict[str, dict]) -> int:
+def print_since(args: argparse.Namespace, project: c3.Project, sheets: dict[str, dict]) -> int:
     """The events added, changed, moved and removed since --since, sheet by sheet, as the editor words them."""
     commit, short = commit_of(project.root, args.since)
     since = short if short.startswith(args.since) else f"{args.since} ({short})"
@@ -788,17 +806,15 @@ def print_since(args, project: c3.Project, sheets: dict[str, dict]) -> int:
         same: list[str] = []
         for k, name in enumerate(names):
             if room is not None and room <= 0:
-                print(f"-- stopped at the limit of {args.limit} characters (--limit). The rest: "
-                      f"{again(args, names[k:], None)}")
+                print(stopped_line(args, name, None, last, names[k:]))
                 return 0
             if name not in sheets:
-                line = (f"== {name}: removed since {since}, with its "
-                        f"{sum(1 for _ in c3.numbered_events(old_sheets[name]['events']))} events")
+                line = f"== {name}: removed since {since}, with its {numbered_below(old_sheets[name]['events'])} events"
                 print(line)
                 room = room and room - len(line) - 1
                 continue
             new = list(sheet_rows(project, sheets[name]["events"], [0]))
-            total = sum(1 for _ in c3.numbered_events(sheets[name]["events"]))
+            total = numbered_below(sheets[name]["events"])
             if name in old_sheets:
                 chunks, counts = changes(list(sheet_rows(then, old_sheets[name]["events"], [0])), new, args.since)
                 if not chunks:
@@ -814,14 +830,11 @@ def print_since(args, project: c3.Project, sheets: dict[str, dict]) -> int:
             print(head)
             used = len(head) + 1
             for n, lines in chunks:
-                if n < first or (last is not None and n > last):
+                if not within(n, first, last):
                     continue
-                size = sum(len(line) + 1 for line in lines)
+                size = printed_length(lines)
                 if room is not None and used + size > room and used > len(head) + 1:
-                    more = [again(args, [name], f"{n}-{last or ''}")] + (
-                        [again(args, names[k + 1:], None)] if names[k + 1:] else [])
-                    print(f"-- stopped at the limit of {args.limit} characters (--limit), before event {n} of "
-                          f"{total}. The rest: {'  then  '.join(more)}")
+                    print(stopped_line(args, name, n, last, names[k + 1:], total))
                     return 0
                 print("\n".join(lines))
                 used += size
@@ -875,10 +888,11 @@ def main() -> int:
     c3.note_drift(project.rag)
 
     sheets = project.load_listed("eventSheets")
+    files = project.listed_files("eventSheets")
     if args.since is not None:
         if args.outline or args.show is not None:
             sys.exit("--since prints what changed, as events; --outline and --show read the sheet as it is on disk")
-        for name, path in project.listed_files("eventSheets").items():
+        for name, path in files.items():
             if path and name in (args.sheets or sheets):
                 c3.stamp(path)
         return print_since(args, project, sheets)
@@ -895,7 +909,6 @@ def main() -> int:
     names = args.sheets or list(sheets)
     if (args.events or args.show is not None) and len(names) != 1:
         sys.exit(f"--events and --show read one sheet; name it: {', '.join(sheets)}")
-    files = project.listed_files("eventSheets")
     for name in names:
         c3.stamp(files[name])
     if args.show is not None:
@@ -920,7 +933,7 @@ def main() -> int:
         return 1        # an answer: on stdout
 
     whole = {name: part(rows[name], first, last, None)[0] for name in names}
-    size = {name: sum(len(line) + 1 for line in [f"== {name}", *whole[name]]) for name in names}
+    size = {name: printed_length([f"== {name}", *whole[name]]) for name in names}
     # The line on naming a variable, with room for a longer name or value than this one's in a part.
     note = None if args.outline else naming_note([line for name in names for line in whole[name]])
     reserved = (len(note) + 70 if note else 0) + (len(c3.REVIEW) + 1 if args.review else 0)
@@ -951,15 +964,15 @@ def main() -> int:
         return 0
     shown: list[str] = []
     for i, name in enumerate(names):
-        lines, stopped = part(rows[name], first, last, room)
-        whole = stopped is None and not args.events
+        lines, stopped = (whole[name], None) if room is None else part(rows[name], first, last, room)
         until = min(stopped - 1 if stopped else last or totals[name], totals[name])
-        print(f"== {name}" if whole else f"== {name}: events {first}-{until} of {totals[name]}"
+        print(f"== {name}" if stopped is None and not args.events
+              else f"== {name}: events {first}-{until} of {totals[name]}"
               + ("; a [context] row is an event these sit in, without its actions" if first > 1 else ""))
         if lines:
             print("\n".join(lines))
         if room is not None:
-            room -= sum(len(line) + 1 for line in lines)
+            room -= printed_length(lines)
         rest = names[i + 1:]
         shown += lines
         said = note and (not rest or stopped is not None or (room is not None and room <= 0)) and naming_note(shown)
@@ -968,11 +981,7 @@ def main() -> int:
         if stopped is not None or (rest and room is not None and room <= 0):
             if args.review:
                 print(c3.REVIEW)        # above the line that names the rest, which stays the last
-            more = [again(args, [name], f"{stopped}-{last or ''}")] if stopped else []
-            more += [again(args, rest, None)] if rest else []
-            print(f"-- stopped at the limit of {args.limit} characters (--limit)"
-                  + (f", before event {stopped} of {totals[name]}" if stopped else "")
-                  + f". The rest: {'  then  '.join(more)}")
+            print(stopped_line(args, name, stopped, last, rest, totals[name]))
             break
     else:
         if args.review:

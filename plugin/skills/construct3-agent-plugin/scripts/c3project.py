@@ -5,8 +5,8 @@ schema entry behind a condition or an action, what the editor has
 deprecated, the helpers of a game's generator against the template's, and
 the Construct 3 block of its instruction file against the skill's.
 
-Not a command. check_project.py, print_sheet.py and lookup_ace.py import it
-from the folder they sit in.
+Not a command: the other scripts of this skill import it from the folder they
+sit in.
 """
 import argparse
 import ast
@@ -504,8 +504,13 @@ def skill_files(skill_dir: Path) -> dict[str, Path]:
 STAMPS = Path(tempfile.gettempdir()) / "construct3-sheet-stamps"
 
 
+def path_key(path: Path) -> str:
+    """The file name a stamp of path takes in the temp folder: the same for every spelling of the path."""
+    return hashlib.sha1(str(path.resolve()).lower().encode()).hexdigest()[:20]
+
+
 def stamp_of(sheet: Path) -> Path:
-    return STAMPS / hashlib.sha1(str(sheet.resolve()).lower().encode()).hexdigest()[:20]
+    return STAMPS / path_key(sheet)
 
 
 def stamp(sheet: Path) -> None:
@@ -598,7 +603,7 @@ def clone_behind(rag: Path) -> tuple[str, bool] | None:
     upstream = git_out(rag, "rev-parse", "--abbrev-ref", "@{u}")
     if not upstream:        # detached, or a branch that tracks nothing
         return None
-    stamp_file = FETCH_STAMPS / hashlib.sha1(str(rag.resolve()).lower().encode()).hexdigest()[:20]
+    stamp_file = FETCH_STAMPS / path_key(rag)
     try:
         due = time.time() - stamp_file.stat().st_mtime > FETCH_EVERY
     except OSError:
@@ -759,10 +764,7 @@ def shipped_strings(root: Path, data: dict, sheets: dict[str, dict]) -> Iterator
 
 def entropy(text: str) -> float:
     """Bits per character of text, from how often each character comes."""
-    counts: dict[str, int] = {}
-    for c in text:
-        counts[c] = counts.get(c, 0) + 1
-    return -sum(n / len(text) * math.log2(n / len(text)) for n in counts.values())
+    return -sum(n / len(text) * math.log2(n / len(text)) for n in Counter(text).values())
 
 
 def key_shape(s: Shipped) -> tuple[str, str] | None:
@@ -1317,10 +1319,7 @@ class Project:
         """How often each number is written as a literal in the code of a script; comments and
         strings do not count."""
         code = SCRIPT_TEXT.sub(" ", (self.root / path).read_text(encoding="utf-8", errors="replace"))
-        counts: dict[float, int] = {}
-        for m in SCRIPT_NUMBER.finditer(code):
-            counts[float(m.group(0))] = counts.get(float(m.group(0)), 0) + 1
-        return counts
+        return dict(Counter(float(m.group(0)) for m in SCRIPT_NUMBER.finditer(code)))
 
     def load_listed(self, kind: str) -> dict[str, dict]:
         out = {}
@@ -1506,33 +1505,25 @@ class Project:
     def families_of(self, obj: str) -> list[str]:
         return [f for f, d in self.families.items() if obj in d.get("members", [])]
 
+    def definitions_of(self, obj: str) -> Iterator[dict]:
+        """The files that give obj its instance variables and behaviors, a later one winning a name:
+        an object type's own file, then its families' files; a family's own file."""
+        if obj in self.types:
+            yield self.types[obj]
+            yield from (self.families[f] for f in self.families_of(obj))
+        if obj in self.families:
+            yield self.families[obj]
+
     def ivar_types_of(self, obj: str) -> dict[str, str]:
         """instance variable name -> type, family variables included for member types."""
-        ivars = {}
-        if obj in self.types:
-            ivars.update({v["name"]: v["type"] for v in self.types[obj].get("instanceVariables", [])})
-            for f in self.families_of(obj):
-                ivars.update({v["name"]: v["type"] for v in self.families[f].get("instanceVariables", [])})
-        if obj in self.families:
-            ivars.update({v["name"]: v["type"] for v in self.families[obj].get("instanceVariables", [])})
-        return ivars
+        return {v["name"]: v["type"] for d in self.definitions_of(obj) for v in d.get("instanceVariables", [])}
 
     def ivars_of(self, obj: str) -> set[str]:
         return set(self.ivar_types_of(obj))
 
     def behaviors_of(self, obj: str) -> dict[str, str]:
         """behavior name -> behavior id, family behaviors included for member types."""
-        names = {}
-        if obj in self.types:
-            for b in self.types[obj].get("behaviorTypes", []):
-                names[b["name"]] = b["behaviorId"]
-            for f in self.families_of(obj):
-                for b in self.families[f].get("behaviorTypes", []):
-                    names[b["name"]] = b["behaviorId"]
-        if obj in self.families:
-            for b in self.families[obj].get("behaviorTypes", []):
-                names[b["name"]] = b["behaviorId"]
-        return names
+        return {b["name"]: b["behaviorId"] for d in self.definitions_of(obj) for b in d.get("behaviorTypes", [])}
 
     def animations_of(self, obj: str) -> set[str] | None:
         """Animation names of a Sprite type, or the union over a family's members. None: not a Sprite."""

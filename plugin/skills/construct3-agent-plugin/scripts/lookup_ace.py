@@ -37,9 +37,9 @@ an id from an old project does not read as a typo.
 The schema files run to thousands of lines, more than most tools read at
 once, and an ACE below the cut looks as if it did not exist; this prints the
 part that was asked for. Six matches or fewer print in full, each parameter
-with what it is and the way it is written; more print one line each, and more than fit
---limit print as counts per category. When no entry has every word, the
-entries that have some of them are listed.
+with what it is and the way it is written; more print one line each, and
+more than fit --limit print as counts per category. When no entry has every
+word, the entries that have some of them are listed.
 
 An entry printed in full ends with the number of official examples that use
 it, from `Construct3-RAG/data/c3-example-usage/`, and the print_sheet.py
@@ -49,11 +49,13 @@ entry that no example uses prints no count.
 """
 import json
 import sys
+from pathlib import Path
 
 import c3project as c3
 from c3project import LOWER, closest, squash
 
 KINDS = ("conditions", "actions", "expressions")
+FULL = 6            # matches that print in full with the JSON to write; the messages say "six"
 PARAM_LINE = 150    # a longer parameter line puts the way to write the value on a line of its own
 
 # How each parameter type is written in an event sheet file, and a value that loads.
@@ -150,8 +152,8 @@ def sources_of(p: c3.Project, target: str) -> list[tuple[str, str | None, dict]]
             print(f"{entry.get('originalId', addon_id)} ({entry.get('name', addon_id)}) is a deprecated "
                   f"{kind[:-1]}: {c3.DEPRECATED}. The clone has no schema for it; do not add it to a project")
             sys.exit(1)
-        names = [v.get("name", k) for kind in ("plugins", "behaviors", "effects")
-                 for k, v in c3.load(p.schemas / "_index.json").get(kind, {}).items()]
+        index = c3.load(p.schemas / "_index.json")
+        names = [v.get("name", k) for kind in ("plugins", "behaviors", "effects") for k, v in index.get(kind, {}).items()]
         print(f"{target!r} is not an object of this project, System, or the id or display name of a plugin, "
               f"behavior or effect" + closest(target, [*p.plugin_of, *names, *p.index["plugins"],
                                                         *p.index["behaviors"], *p.index["effects"]]))
@@ -175,6 +177,7 @@ def shared_matches(p: c3.Project, words: list[str], plugins: list[dict]) -> list
 
 
 def brief(owner: str, behavior: str | None, addon: str, kind: str, it: dict) -> str:
+    """One line per entry: kind, id, title, where it comes from and the parameter names."""
     params = it.get("params") or {}
     return (f"{kind[:-1]:<10} {it['id']:<34} {title_of(it)}{via(behavior, addon)}"
             + (f"  ({', '.join(params)})" if params else "") + ("  <deprecated>" if it.get("isDeprecated") else ""))
@@ -182,9 +185,11 @@ def brief(owner: str, behavior: str | None, addon: str, kind: str, it: dict) -> 
 
 def in_full(owner: str, behavior: str | None, addon: str, kind: str, it: dict, written: str | None = None) -> list[str]:
     """written: the name an expression has in a project file, English in every locale."""
-    flags = [f for f in ("isTrigger", "isLooping", "isAsync") if it.get(f)] + \
-            (["not invertible"] if it.get("isInvertible") is False else []) + \
-            (["deprecated"] if it.get("isDeprecated") else [])
+    flags = [f for f in ("isTrigger", "isLooping", "isAsync") if it.get(f)]
+    if it.get("isInvertible") is False:
+        flags.append("not invertible")
+    if it.get("isDeprecated"):
+        flags.append("deprecated")
     params = it.get("params") or {}
     lines = [f"{kind[:-1]} {it['id']} - {title_of(it)}{via(behavior, addon)}" + (f"  <{', '.join(flags)}>" if flags else ""),
              f"  {it.get('description', '')}"]
@@ -238,7 +243,7 @@ class Usage:
     Construct-Example-Projects clone that scripts/example_usage.py builds. Without the index,
     nothing of it is printed."""
 
-    def __init__(self, rag) -> None:
+    def __init__(self, rag: Path) -> None:
         self.rag = rag
         self.examples = c3.siblings_folder(rag) / c3.EXAMPLES_CLONE / "example-projects"
         self._files: dict[str, dict] = {}
@@ -422,6 +427,12 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
                 # combo value, and a search of the names alone answers that Tween has no color.
                 param_text.append(squash(" ".join([*params, *(str(v) for spec in params.values()
                                                               for v in (spec.get("items") or {}).values())])))
+
+    def print_entries(chosen: list[tuple]) -> None:
+        """Prints each (owner, behavior, addon, kind, entry) in full, an expression under its name in a project file."""
+        print_in_full([in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)
+                       for e in chosen], [e[4]["id"] for e in chosen], limit, usage, usage.tails(chosen))
+
     if not entries:
         obj = p.objects_lower.get(LOWER(target))
         retired = p.deprecated_addon("plugins", p.plugin_of[obj]) if obj else None
@@ -429,7 +440,7 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
             print(f"{target} is a {retired.get('originalId')} ({retired.get('name')}) object, a deprecated plugin: "
                   f"{c3.DEPRECATED}. The clone has no schema for it: nothing to look up")
             return 1
-        # Destroy outside, Wrap, Bound to layout, No save: a model told "third-party" leaves the behavior out.
+        # Destroy outside, Bound to layout, No save, Persist: a model told "third-party" leaves the behavior out.
         for _, _, s in sources:
             if not s:
                 continue        # no schema at all: a third-party addon, not one without ACEs
@@ -452,7 +463,7 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
     wider = [all(squash(w) in e[1] for w in words) for e in entries]
     found = [e[2:] for e, n in zip(entries, named) if n]
     by_category = [e[2:] for e, n, w in zip(entries, named, wider) if w and not n]
-    if not found or len(found) > 6:
+    if not found or len(found) > FULL:
         found, by_category = [e[2:] for e, w in zip(entries, wider) if w], []
     found.sort(key=lambda e: bool(e[4].get("isDeprecated")))     # the current ones first
 
@@ -471,24 +482,19 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         shared = [] if any(s.get("id") == "_common" for _, _, s in sources) else shared_matches(p, words, plugins)
         in_params = [e[2:] for e, t in zip(entries, param_text) if all(squash(w) in t for w in words)]
         if shared or in_params:
-            # The entry before the miss: a model that stops at the first line read "nothing under
-            # Sprite has every word of 'color'" as a Sprite having no color action, and went to
-            # the manual, which does not list the shared ACEs either, to confirm it.
+            # The entries before the miss: a model that reads only the first line took "nothing under
+            # Sprite has every word of 'color'" for a Sprite without a color action.
             if shared:
                 print(f"{target} has these, in plugins/_common.json rather than in its own plugin:" if plugins
                       else "every world object has these, in plugins/_common.json rather than in its own plugin:")
                 # <Object>, not the <object> a parameter of that type is written with.
-                common = [("<Object>", None, "_common", kind, it) for kind, it in shared]
-                print_in_full([in_full(*e) for e in common], [it["id"] for _, it in shared], limit,
-                              usage, usage.tails(common))
+                print_entries([("<Object>", None, "_common", kind, it) for kind, it in shared])
                 print(f"<Object> is {'a ' + target + ' object' if plugins else 'any object'} of the project; "
                       f"lookup_ace.py <Object> {query} writes its name in")
             if in_params:
                 print(f"no name under {target} has every word of {query!r}; a parameter of these takes it as a value:")
-                if len(in_params) <= 6:
-                    print_in_full([in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)
-                                   for e in in_params], [e[4]["id"] for e in in_params], limit,
-                                  usage, usage.tails(in_params))
+                if len(in_params) <= FULL:
+                    print_entries(in_params)
                 else:
                     for e in in_params[:20]:
                         print("  " + brief(*e))
@@ -502,8 +508,7 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
         # would print nothing, and PowerShell wraps every stderr line in an error record.
         print(f"nothing under {target} has every word of {query!r}")
         if any("一" <= ch <= "鿿" for w in words for ch in w):
-            # 2026-10-09: a model guessed 时间尺度 for 时间速率 and looked it up on thirteen objects in Chinese;
-            # time scale finds it at once, and the hit prints the zh-CN name to give the user.
+            # A guessed Chinese name, 时间尺度 for 时间速率, misses on every object; time scale finds it at once.
             print("a Chinese word matches only a name that holds it as written: translate it into the English "
                   "term and look up again (时间尺度 -> time scale finds 设置时间速率); "
                   "the hit prints the zh-CN name to give the user")
@@ -519,9 +524,8 @@ def ace_lookup(p: c3.Project, target: str, words: list[str], limit: int) -> int:
             print((near.lstrip("; ") + "\n" if near else "") + f"categories, each a word too: {', '.join(categories)}")
         return 1
 
-    if len(found) <= 6:
-        print_in_full([in_full(*e, written.get((e[1], e[2], e[4]["id"])) if e[3] == "expressions" else None)
-                       for e in found], [e[4]["id"] for e in found], limit, usage, usage.tails(found))
+    if len(found) <= FULL:
+        print_entries(found)
         if by_category:
             print(f"by category, not by name: {', '.join(e[4]['id'] for e in by_category[:20])}"
                   + (" ..." if len(by_category) > 20 else ""))

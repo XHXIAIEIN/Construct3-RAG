@@ -66,11 +66,11 @@ import c3project as c3
 
 RAW_TYPES = (".png", ".jpg", ".jpeg", ".webp")
 KEYS = {"magenta": (255, 0, 255), "green": (0, 255, 0)}
-# a subject in these colours is asked for on green, so the key does not eat it
+# a subject in these colours is asked for on green, because a cut on magenta would remove its colour too
 NEAR_MAGENTA = ("pink", "magenta", "purple", "violet", "fuchsia", "lilac", "lavender", "rose", "粉", "紫", "品红")
 # Words in a subject that the prompt or ART_STYLE already decides, in English and Chinese. A word
-# after "no", "without", "无" or "不含" is not counted: "无文字" asks for what the prompt asks for.
-# docs/decisions/art-from-the-image-tool.md records what they were measured on.
+# after a negation such as "without" or "无" is not counted: "无文字" asks for what the prompt asks
+# for. docs/decisions/art-from-the-image-tool.md records what they were measured on.
 NAMES = {
     "background": ("background", "backdrop", "scenery", "背景"),
     "shadow": ("shadow", "阴影", "影子", "投影"),
@@ -105,6 +105,7 @@ DIMENSIONS = {
                 "angle", "全身", "半身", "正面", "侧面", "侧视", "俯视", "俯瞰", "等距", "视角", "特写", "构图",
                 "四分之三"),
 }
+# A text that ends in a negation: "no", "not", "without" or "free of" and up to two words, or a Chinese one
 NEGATION = re.compile(r"(?:\b(?:no|not|without|free of)\b(?:\W+\w+){0,2}\W*|无|不含|没有|不带|不要|去掉)$")
 # Colour and element words: subjects the same without them come out as one figure in several colours.
 COLOUR_WORDS = ("red", "green", "blue", "yellow", "orange", "purple", "pink", "violet", "white", "black", "grey",
@@ -113,8 +114,10 @@ COLOUR_WORDS = ("red", "green", "blue", "yellow", "orange", "purple", "pink", "v
                 "lightning", "thunder", "wind", "鎏金", "红", "绿", "蓝", "黄", "橙", "紫", "粉", "白", "黑", "灰",
                 "褐", "棕", "金", "银", "青", "赤", "翠", "湛", "碧", "色", "暗", "深", "浅", "亮", "木", "水", "火",
                 "土", "冰", "雷", "毒")
-VARIANTS = 3                               # subjects that differ only in colour or element words: a warning
-RATIOS = ((1, 1), (4, 3), (3, 4), (3, 2), (2, 3), (16, 9), (9, 16), (2, 1), (1, 2))
+# Any of them, the longest first so that 鎏金 matches before 金; an English word matches as a whole word
+COLOURED = re.compile("|".join(rf"\b{w}\b" if w.isascii() else w for w in sorted(COLOUR_WORDS, key=len, reverse=True)))
+VARIANTS = 3                               # this many subjects that differ only in colour or element words: a warning
+RATIOS = ((1, 1), (4, 3), (3, 4), (3, 2), (2, 3), (16, 9), (9, 16), (2, 1), (1, 2))      # the ratios a prompt names
 # RGB distances from the background colour, the key as the model painted it. NEAR: background
 # that joins the edge. POCKET: a gap in the subject, anywhere, when it also lies within KEYLINE of
 # the key made darker or lighter. docs/decisions/art-from-the-image-tool.md has the measurements.
@@ -151,8 +154,8 @@ class Unusable(Exception):
 
 
 def key_for(item: dict, style: str) -> tuple[str, tuple]:
-    """The key colour a sprite is asked for on: the one its last refusal named, else green for a
-    subject in pink or purple, else magenta."""
+    """The key colour a sprite is asked for on: the one its last refusal named, else green when its
+    subject or ART_STYLE names a colour of NEAR_MAGENTA, else magenta."""
     words = f"{item['subject']} {style}".lower()
     name = item.get("key") or ("green" if any(w in words for w in NEAR_MAGENTA) else "magenta")
     return name, KEYS[name]
@@ -177,6 +180,7 @@ def again_on(name: str) -> str:
 
 
 def ratio(w: int, h: int) -> str:
+    """The ratio of RATIOS nearest to w:h, as "4:3"."""
     a, b = min(RATIOS, key=lambda r: abs(math.log(r[0] / r[1]) - math.log(w / h)))
     return f"{a}:{b}"
 
@@ -201,6 +205,7 @@ def prompt(item: dict, style: str, reference: bool = False) -> str:
 
 
 def raw_of(root: Path, rel: str) -> Path | None:
+    """The newest picture in art/raw/ for the file name rel, in any of RAW_TYPES."""
     found = [root / "art" / "raw" / (stem_of(rel) + ext) for ext in RAW_TYPES]
     found = [p for p in found if p.exists()]
     return max(found, key=lambda p: p.stat().st_mtime) if found else None
@@ -260,9 +265,11 @@ def named(subject: str, words, whole: bool = True) -> list[str]:
     low = subject.lower()
     found = []
     for w in words:
-        pattern = re.escape(w) if not w.isascii() else rf"\b{re.escape(w)}" + (r"s?\b" if whole else "")
-        found += [m.group() for m in re.finditer(pattern + ("" if whole else r"\w*"), low)
-                  if not NEGATION.search(low[:m.start()])][:1]
+        start = rf"\b{re.escape(w)}" if w.isascii() else re.escape(w)
+        end = (r"s?\b" if w.isascii() else "") if whole else r"\w*"
+        hit = next((m for m in re.finditer(start + end, low) if not NEGATION.search(low[:m.start()])), None)
+        if hit:
+            found.append(hit.group())
     return found
 
 
@@ -318,9 +325,10 @@ def warnings(items: list[dict], style: str) -> list[str]:
         if found := [stem(item) for item in among if named(item["subject"], NAMES[words])]:
             out.append(f"warning: {listed(found)}: the subject names {what}. {why}")
     styles = {}
+    unnamed = [w for w in STYLE_WORDS if w not in style.lower()]
     for item in items:
-        for w in STYLE_WORDS:
-            if w not in style.lower() and (written := named(item["subject"], [w], whole=False)):
+        for w in unnamed:
+            if written := named(item["subject"], [w], whole=False):
                 styles.setdefault(written[0], []).append(stem(item))
     for word, found in styles.items():
         out.append(f"warning: {listed(found)}: the subject names the drawing style \"{word}\", and ART_STYLE does "
@@ -328,10 +336,7 @@ def warnings(items: list[dict], style: str) -> list[str]:
                    f"subject")
     groups = {}
     for item in items:
-        bare = item["subject"].lower()
-        for w in sorted(COLOUR_WORDS, key=len, reverse=True):
-            bare = re.sub(rf"\b{w}\b" if w.isascii() else w, "", bare)
-        bare = re.sub(r"\b(?:a|an|the)\b|[\W_]+", "", bare)
+        bare = re.sub(r"\b(?:a|an|the)\b|[\W_]+", "", COLOURED.sub("", item["subject"].lower()))
         groups.setdefault((item["kind"], item["width"], item["height"], bare), []).append(stem(item))
     if same := [listed(found) for found in groups.values() if len(found) >= VARIANTS]:
         out.append(f"warning: {'; '.join(same)}: the subjects differ only in colour or element words, so each group "
@@ -447,7 +452,8 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
     e_bg = lean(bg)
     norm = br * br + bgr * bgr + bb * bb
 
-    def shade(c) -> tuple[float, float]:       # how far a colour is from the key darker or lighter, and how much
+    def shade(c) -> tuple[float, float]:
+        """How far c lies from the key made darker or lighter, and how much darker or lighter: 1 is the key."""
         s = (c[0] * br + c[1] * bgr + c[2] * bb) / norm
         return math.sqrt((c[0] - s * br) ** 2 + (c[1] - s * bgr) ** 2 + (c[2] - s * bb) ** 2), s
 
@@ -536,7 +542,8 @@ def cut_out(img, key: tuple) -> tuple[object, str]:
         inner.update(reached)
         loose = [i for i in loose if i not in reached]
 
-    def on_line(o, b, s) -> float | None:      # o as a blend of b and s: how much of s, or None
+    def on_line(o, b, s) -> float | None:
+        """o as a blend of b and s: the share of s, or None when o lies LINE or more off that line."""
         v = [s[k] - b[k] for k in range(3)]
         t = sum((o[k] - b[k]) * v[k] for k in range(3)) / max(1, sum(x * x for x in v))
         return t if sum((o[k] - b[k] - t * v[k]) ** 2 for k in range(3)) < LINE ** 2 else None
@@ -647,20 +654,18 @@ def save(img, path: Path) -> None:
     img.save(path, pnginfo=info)
 
 
-def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
-    """Fits one picture; returns its line and any note on it."""
+def prepare(root: Path, item: dict, wanted: dict, raw: Path) -> list[str]:
+    """Fits the picture raw into the box of item; returns its line and any note on it. Raises
+    Unusable when the picture cannot be used."""
     from PIL import Image
     rel, w, h = item["file"], item["width"], item["height"]
     stem = stem_of(rel)
-    raw = raw_of(root, rel)
     try:
         img = Image.open(raw)
         img.load()
     except OSError as e:
         raise Unusable(f"Pillow cannot read it ({e}); save it again as PNG or JPEG")
     rw, rh = img.size
-    pixel_art = wanted.get("pixel_art", False)
-    notes = []
     if item["kind"] == "scene":
         s = max(w / rw, h / rh)
         big = img.convert("RGB").resize((max(w, round(rw * s)), max(h, round(rh * s))), Image.LANCZOS)
@@ -678,6 +683,7 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
         raise Unusable(f"nothing is left of the subject once the background is removed ({how})",
                        "make the subject in colours far from the background",
                        f"Draw the subject in colours far from {key_name}.")
+    notes = []
     if solid[0] == 0 or solid[1] == 0 or solid[2] == cut.width or solid[3] == cut.height:
         notes.append(f"  note: the subject touches the picture's edge and may be cut off; make it whole, with room "
                      f"around it")
@@ -685,8 +691,10 @@ def prepare(root: Path, item: dict, wanted: dict) -> list[str]:
     subject = cut.crop(box)
     f = min(w / subject.width, h / subject.height)
     sw, sh = max(1, round(subject.width * f)), max(1, round(subject.height * f))
+    pixel_art = wanted.get("pixel_art", False)
     subject = resample(subject, (sw, sh), Image.BOX if pixel_art else Image.HAMMING)
-    if pixel_art:      # Nearest sampling shows a soft edge as a fringe: an edge is in or out
+    if pixel_art:
+        # Each edge pixel in or out, because nearest sampling shows a soft edge as a fringe
         subject.putalpha(subject.getchannel("A").point(lambda a: 255 if a >= 128 else 0))
     canvas = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     oy = item.get("origin", [0.5, 0.5])[1]
@@ -717,18 +725,15 @@ def main() -> int:
                          "make, and what is ready")
     args = ap.parse_args()
     root = c3.find_project(args.project)
-    wanted_path = (root or Path.cwd()) / "art" / "wanted.json"
+    where = root or Path.cwd()
+    wanted_path = where / "art" / "wanted.json"
     if root is None or not wanted_path.exists():
-        print(f"no art/wanted.json in {root or Path.cwd()}: give every sprite an art() in build_images() of "
+        print(f"no art/wanted.json in {where}: give every sprite an art() in build_images() of "
               f"tools/build_project.py and run it, which writes the list", file=sys.stderr)
         return 2
     wanted = json.loads(wanted_path.read_text(encoding="utf-8"))
-    skill_dir = Path(__file__).resolve().parent.parent
-    try:
-        skill_dir = skill_dir.relative_to(root)
-    except ValueError:
-        pass
-    skill = skill_dir.as_posix()
+    # The skill as the commands print it: relative to the project when it is inside it
+    skill = (c3.SKILL_DIR.relative_to(root) if c3.SKILL_DIR.is_relative_to(root) else c3.SKILL_DIR).as_posix()
     failed = 0
     if args.list:
         (root / "art" / "raw").mkdir(parents=True, exist_ok=True)      # where the pictures are saved
@@ -755,7 +760,7 @@ def main() -> int:
                     waiting += 1
                 continue
             try:
-                out += prepare(root, with_refusal(item, refused), wanted)
+                out += prepare(root, with_refusal(item, refused), wanted, raw)
                 done += 1
                 refused.pop(rel, None)
             except Unusable as e:

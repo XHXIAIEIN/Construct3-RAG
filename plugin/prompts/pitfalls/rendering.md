@@ -64,7 +64,6 @@ Sources and the rule for adding an entry are in the index,
   last 17 px beside the right border, and a 1 px lighter line ran along the
   top inside edge; two flat Tiled Backgrounds in its place kept the row at 90
   up to the border; *Nearest* was not played]
-
 - Drawing Canvas *Fill polygon* with *Convex* off draws nothing if two
   consecutive points of the polygon coincide, including a closing point that
   repeats the first one. The rest of the sheet runs on, with no error logged.
@@ -149,20 +148,21 @@ Sources and the rule for adding an entry are in the index,
 - A Text object draws its text into a texture of its own. A change of text or
   font size redraws and re-uploads that texture on the next frame. So a *Set
   font size* every tick during a pop tween redraws the text and uploads a
-  texture every frame, at the device's full resolution. In a merge game, each
-  damage number that popped this way was redrawn every frame: 175 texture
-  uploads a second at 144 Hz, most of the Text cost of the whole game. *Set
-  text* to the string already shown costs nothing, because the runtime
-  compares and returns. Animate a number by moving its finished texture
-  (position, angle, opacity). Or draw it with a Sprite Font and tween its
-  *Scale*, which redraws nothing: with that tween, the same game redrew no
-  damage number and no countdown. *Set resolution mode* to *Fixed* only
-  stops redraws caused by the display scale, not by the font size.
+  texture every frame, at the device's full resolution. In one game project,
+  each damage number that popped this way was redrawn every frame: 175
+  texture uploads a second at 144 Hz, most of the Text cost of the whole
+  game. *Set text* to the string already shown costs nothing, because the
+  runtime compares and returns. Animate a number by moving its finished
+  texture (position, angle, opacity). Or draw it with a Sprite Font and
+  tween its *Scale*, which redraws nothing: with that tween, the same
+  project redrew no damage number and no countdown. *Set resolution mode*
+  to *Fixed* only stops redraws caused by the display scale, not by the
+  font size.
   [manual: plugin-reference/text.md "Set resolution
   mode"; observed in a game project, r504 export, runtime `_SetText` source
   and a counter on `_OnBeforeRender`, 2026-09-30]
 - A Sprite Font draws each character as its whole cell of the image, then
-  moves on by the character's width from *Spacing data*. So a glyph is drawn
+  moves on by the character's width from *Spacing data*. So paint each glyph
   against the left edge of its cell. An outline that reaches past that width
   into the next cell stays whole, and the next character is drawn over it. The
   font's colour and *Set color* tint every pixel, the outline as well. So bake
@@ -179,11 +179,11 @@ Sources and the rule for adding an entry are in the index,
   *Scale* property and *Set scale* do not scale it, and nothing is added
   after the last character. `TextWidth` is in layout pixels after the scale:
   the widths from *Spacing data* times the scale, plus the spacing between
-  characters.
-  So two characters 20 px wide at a scale of 1/3 read 13.33 at spacing 0. The
-  spacing is the same between every pair of characters, so a wide spacing
-  splits a number of several digits into digits that read apart. Keep the
-  spacing at 0 and put a space character where a gap is wanted. [observed in
+  characters. So two characters 20 px wide at a scale of 1/3 read 13.33 at
+  spacing 0. The spacing is the same between every pair of characters, so a
+  wide spacing splits a number of several digits into digits that read
+  apart. Keep the spacing at 0 and put a space character where a gap is
+  wanted. [observed in
   a game project, r504 preview, 2026-10-05: a three-character string at scale
   1/3 read `TextWidth` 72.33 at spacing 0 and 92.33 at spacing 10, and one
   character read the same at both]

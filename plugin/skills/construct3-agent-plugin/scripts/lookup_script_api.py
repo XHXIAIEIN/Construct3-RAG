@@ -32,7 +32,7 @@ from c3project import closest, squash
 DECLARATION = re.compile(
     r"^\s*(?:export\s+)?(?:declare\s+)?(?:abstract\s+)?(class|interface|namespace|type|function|const|enum)\s+([\w$]+)")
 MEMBER = re.compile(r"^\s*(?:(?:readonly|static|get|set|async|abstract)\s+)*([\w$]+)\s*[?]?\s*[<(:]")
-# the suffixes an addon's interface carries after its name: Timer is ITimerBehaviorInstance
+# The suffixes an addon's interface carries after its name: Timer is ITimerBehaviorInstance
 SUFFIXES = ("behaviorinstance", "instance", "behaviortype", "objecttype", "behaviors", "behavior", "plugin", "")
 FULL = 6    # this many member hits or fewer print with their doc comment
 # The declarations that hold members and answer to an addon's name; a type alias, function or const does not.
@@ -111,12 +111,12 @@ def parse(text: str, shown: str) -> list[Declaration]:
             doc = [] if not line else doc
             continue
         code = re.sub(r"//.*$", "", re.sub(r"\"[^\"]*\"|'[^']*'", '""', line))
+        m = DECLARATION.match(line)
         while stack and stack[-1][2] and depth <= stack[-1][1]:
             stack.pop()
-        if stack and not stack[-1][2] and DECLARATION.match(line):
+        if stack and not stack[-1][2] and m:
             stack.pop()         # a type alias on one line, which opens no body
         top = stack[-1] if stack else None
-        m = DECLARATION.match(line)
         if m and (top is None or top[0].kind == "namespace" and depth == top[1] + 1):
             head = without_generics(line)
             extends = re.search(r"\bextends\s+(.+?)(?:\bimplements\b|\{|$)", head)
@@ -194,12 +194,13 @@ def heading(d: Declaration) -> list[str]:
     return [f"{d.kind} {d.name}   {where(d)}", f"  {d.header}"]
 
 
-def print_declaration(d: Declaration) -> list[str]:
+def declaration_lines(d: Declaration) -> list[str]:
+    """A class, interface or namespace with its members, and the notes on their sizes and types."""
     lines = heading(d)
     sizes = [SIZE_NOTES.get((d.name, m.name)) for m in d.members]
     for i, m in enumerate(d.members):
         lines += [f"  {m.text}", *notes(m.text)]
-        # members side by side that measure the same size share one line, under the last of them
+        # Members side by side that measure the same size share one line, under the last of them
         if sizes[i] and (i + 1 == len(sizes) or sizes[i + 1] != sizes[i]):
             lines.append(f"  -- {sizes[i]}")
     if d.extends:
@@ -208,7 +209,8 @@ def print_declaration(d: Declaration) -> list[str]:
     return lines
 
 
-def print_members(hits: list[tuple[Declaration, Member]]) -> list[str]:
+def member_lines(hits: list[tuple[Declaration, Member]]) -> list[str]:
+    """Each member with its place and notes; with FULL hits or fewer, its doc comment too."""
     lines = []
     for d, m in hits:
         lines.append(f"{d.name}.{m.name}   {where(d, m)}")
@@ -233,7 +235,7 @@ def lookup(decls: list[Declaration], query: str) -> tuple[list[str], bool]:
             line = ancestors(by_name, target)
             hits = [(d, m) for d in line for m in d.members if m.name.lower() == member.lower()]
             if hits:
-                return print_members(hits), True
+                return member_lines(hits), True
             names = sorted({m.name for d in line for m in d.members})
             return [f"{target} and the interfaces it extends declare no {member!r}{closest(member, names)}; "
                     f"lookup_script_api.py {target} lists its members"], False
@@ -245,10 +247,10 @@ def lookup(decls: list[Declaration], query: str) -> tuple[list[str], bool]:
     named = [d for d in decls if d.kind in TYPES and key in addon_keys(d.name)]
     named += [d for d in decls if d.kind not in TYPES and squash(d.name) == key]
     for d in named:
-        lines += print_declaration(d) if d.kind in TYPES else [*heading(d), *notes(d.header)]
+        lines += declaration_lines(d) if d.kind in TYPES else [*heading(d), *notes(d.header)]
     exact = [(d, m) for d in decls for m in d.members if m.name.lower() == query.lower()]
     if exact:
-        lines += print_members(exact)
+        lines += member_lines(exact)
     if lines:
         return lines, True
     near = [(d, m) for d in decls for m in d.members if key and key in squash(m.name)]

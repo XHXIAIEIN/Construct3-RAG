@@ -17,14 +17,14 @@ Sources and the rule for adding an entry are in the index,
   system-reference/system-expressions.md "Math";
   system-reference/system-conditions.md "Is between angles"]
 - `anglelerp(a, b, x)` turns from `a` to `b` by the shorter way. If `b`
-  moves while `x` runs from 0 to 1, the direction of turn can reverse. This
-  happens when an angle eases back to a rest angle beside an aim that
-  follows the pointer. In the tick `b` passes the opposite of `a`, the
-  shorter way reverses and the angle jumps by up to 360 × `x` degrees. Ease
-  an offset from the moving angle instead. Store the start offset as
-  `angle - aim`, then write `aim + anglelerp(startOffset, restOffset, x)`.
-  Both offsets stay fixed, so the direction cannot reverse, and the result
-  turns with the aim. [manual: system-reference/system-expressions.md
+  moves while `x` runs from 0 to 1, as when an angle eases back to a rest
+  angle beside an aim that follows the pointer, the direction of turn can
+  reverse. In the tick `b` passes the opposite of `a`, the shorter way
+  reverses and the angle jumps by up to 360 × `x` degrees. Ease an offset
+  from the moving angle instead: store the start offset as `angle - aim`,
+  then write `aim + anglelerp(startOffset, restOffset, x)`. Both offsets
+  stay fixed, so the direction cannot reverse, and the result turns with
+  the aim. [manual: system-reference/system-expressions.md
   "anglelerp"; the shorter way and its reversal observed in a game project,
   r495.2 preview, 2026-10-14: a sword easing back to rest beside the aim
   jumped between 126 and 176 degrees in one tick when the pointer passed the
@@ -32,9 +32,9 @@ Sources and the rule for adding an entry are in the index,
   more than the aim's turn plus the ease's step]
 - A sprite is drawn facing right at angle 0. So art painted pointing up
   points a quarter turn counter-clockwise of its target after *Set angle
-  toward position*.
-  Paint it facing right, or add the same 90 in every *Set angle*. Do not add a
-  different correction in each event. [consequence of the same convention;
+  toward position*. Paint it facing right, or add the same 90 degrees in
+  every *Set angle*. Do not add a different correction in each event.
+  [consequence of the same convention;
   Rotate's speed is positive clockwise: manual behavior-reference/rotate.md
   "Speed"]
 - A Bullet's angle of motion and the object's angle are two values. They
@@ -82,11 +82,11 @@ Sources and the rule for adding an entry are in the index,
   longer side, split evenly. A parallax 0, 0 layer is centred on the original
   viewport too. So a HUD placed at the top of the viewport stays at the top
   of the design area, not at the top of a taller screen, and the layout
-  beyond the viewport shows on the sides. In a layout of the viewport's
-  size, the game stays centred only with *Unbounded scrolling* on. Bounded,
-  the camera keeps the layout's left and top edges on the screen's, so the
-  game slides left or up from the centred HUD. Pin an edge HUD with the Anchor
-  behavior on that layer. If a backdrop must reach the screen's sides, give
+  beyond the viewport shows on the sides. Pin an edge HUD with the Anchor
+  behavior on that layer. In a layout of the viewport's size, the game stays
+  centred only with *Unbounded scrolling* on. Bounded, the camera keeps the
+  layout's left and top edges on the screen's, so the game slides left or up
+  from the centred HUD. If a backdrop must reach the screen's sides, give
   it Anchor with *Left edge* Viewport left and *Right edge* Viewport right.
   The right edge resizes it to the screen's width, so lay it out a little
   wider than the viewport, not thousands of pixels past the layout. A shaking

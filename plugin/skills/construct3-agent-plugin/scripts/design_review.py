@@ -1,6 +1,9 @@
-"""Prepare complete design questions and validate answers against live inputs."""
+"""The design questions of review_design.py --prepare with their evidence, and the check of saved
+answers against the current project."""
 from __future__ import annotations
 
+import argparse
+import functools
 import hashlib
 import json
 import os
@@ -8,20 +11,43 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import c3project as c3
 import print_sheet
 
+if TYPE_CHECKING:
+    # review_design.py imports this module
+    from review_design import Design, Ev
+
 FORMAT = 1
 VERDICTS = {"pass", "needs_change", "insufficient_evidence"}
+# Characters of --limit kept for the lines printed around the batch list
+AROUND_BATCHES = 900
+ANSWER_FORMAT = [{"id": "copy the question id", "input_version": "copy its input_version",
+                  "verdict": "pass | needs_change | insufficient_evidence",
+                  "evidence": [{"id": "copy an evidence id", "quote": "copy a short exact excerpt"}],
+                  "reason": "why the evidence supports the verdict",
+                  "suggestions": [{"sheet": "copy a target sheet", "sid": 123, "text": "describe the scoped change"}]}]
 
 
 def digest(value: object) -> str:
+    """SHA-256 of value as JSON with sorted keys."""
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
 
 
+@functools.cache
+def evidence_id(source: str) -> str:
+    return "E" + digest(source)[:16]
+
+
+@functools.cache
+def whole_word(name: str, flags: int = 0) -> re.Pattern[str]:
+    return re.compile(rf"\b{re.escape(name)}\b", flags)
+
+
 def save(path: Path, value: object, *, compact: bool = False) -> None:
-    """Replace one complete artifact; interrupted runs keep the previous one."""
+    """Write value as JSON over path through a draft; an interrupted run keeps the previous file."""
     path.parent.mkdir(parents=True, exist_ok=True)
     draft = path.with_suffix(path.suffix + ".tmp")
     draft.write_text(json.dumps(value, ensure_ascii=False, indent=None if compact else 2,
@@ -30,6 +56,7 @@ def save(path: Path, value: object, *, compact: bool = False) -> None:
 
 
 def rules(p: c3.Project) -> dict:
+    """Hashes of the scripts and prompts that shape a question; a change invalidates saved answers."""
     scripts = Path(__file__).parent
     paths = [scripts / name for name in ("review_design.py", "design_review.py", "print_sheet.py", "c3project.py")]
     paths += [p.rag / "prompts" / name for name in ("event-sheet-thinking.md", "event-sheet-style.md")]
@@ -37,13 +64,18 @@ def rules(p: c3.Project) -> dict:
             for path in paths}
 
 
-def own(row) -> dict:
+def own(row: Ev) -> dict:
+    """An event without its children."""
     return {k: v for k, v in row.ev.items() if k != "children"}
 
 
-def context(d, seeds: list) -> tuple[list, list[str]]:
-    """Follow shared state and calls; dynamic calls widen to every sheet."""
-    rows = list(d.all_rows())
+def families_with(p: c3.Project, name: str) -> list[str]:
+    """The families of an object, or the family the name stands for."""
+    return p.families_of(name) + ([name] if name in p.families else [])
+
+
+def mentions(rows: list[Ev]) -> dict[Ev, set[str]]:
+    """The globals, functions and custom actions each row names or calls, in lower case."""
     symbols = {str(e.ev.get("name", "")).lower() for e in rows if e.kind == "variable" and e.depth == 0}
     symbols |= {str(e.ev.get("functionName", "")).lower() for e in rows if e.kind == "function-block"}
     symbols |= {str(e.ev.get("aceName", "")).lower() for e in rows if e.kind == "custom-ace-block"}
@@ -53,6 +85,13 @@ def context(d, seeds: list) -> tuple[list, list[str]]:
     for e in rows:
         tokens[e].update(str(a.get("callFunction", a.get("customAction", ""))).lower()
                          for a in e.actions if a.get("callFunction") or a.get("customAction"))
+    return tokens
+
+
+def context(d: Design, seeds: list[Ev], tokens: dict[Ev, set[str]]) -> tuple[list[Ev], list[str]]:
+    """The rows the seeds depend on through shared names, calls and includes, and what stays
+    unresolved; a dynamic call takes every row."""
+    rows = list(d.all_rows())
     selected = set(seeds)
     for e in seeds:
         selected.update(r for r in rows if r.parent is e.parent and r.sheet == e.sheet
@@ -72,8 +111,8 @@ def context(d, seeds: list) -> tuple[list, list[str]]:
                 selected.update(rows)
             if e.kind == "include":
                 selected.update(r for r in rows if r.sheet == e.ev.get("includeSheet"))
-            if e.kind == "include" and e.ev.get("includeSheet") not in d.sheets:
-                missing.append(f"Included sheet {e.ev.get('includeSheet')!r} is missing")
+                if e.ev.get("includeSheet") not in d.sheets:
+                    missing.append(f"Included sheet {e.ev.get('includeSheet')!r} is missing")
             for ace in [*e.conditions, *e.actions]:
                 called = ace.get("callFunction")
                 if called and called not in functions:
@@ -81,15 +120,15 @@ def context(d, seeds: list) -> tuple[list, list[str]]:
                 if "mapped" in str(ace.get("id", "")):
                     selected.update(rows)
                     missing.append("Mapped function target is unresolved; verify the dispatch at runtime")
-        used = set().union(*(tokens[e] for e in selected)) if selected else set()
+        used = set().union(*(tokens[e] for e in selected))
         selected.update(e for e in rows if tokens[e] & used)
         if before == selected:
             break
     return [e for e in rows if e in selected], sorted(set(missing))
 
 
-def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: dict) -> dict:
-    """Keep deterministic findings separate from the questions a reader judges."""
+def packets(p: c3.Project, d: Design, found: list[dict], sheets: list[str], questions: dict) -> dict:
+    """The questions of the sheets, each with its evidence, apart from the findings the rules decide."""
     candidates = [f for f in found if f["sheet"] in sheets]
     specs = [f for f in candidates if f["ask"]]
     for sheet in sheets:
@@ -100,6 +139,10 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
     printed = {name: {id(r.event): r for r in print_sheet.sheet_rows(p, s.get("events", []), [0])}
                for name, s in d.sheets.items()}
     version = rules(p)
+    rows = list(d.all_rows())
+    tokens = mentions(rows)
+    global_names = [r.ev.get("name", "") for r in rows if r.kind == "variable" and r.depth == 0]
+    named: dict[Ev, set[str]] = {}      # the objects each row names, read on first use
     out = []
     for spec in specs:
         sheet = spec["sheet"]
@@ -107,15 +150,17 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
         if not seeds:
             seeds = list(d.rows[sheet])
         broad = not spec["events"]
-        selected, missing = context(d, seeds)
+        selected, missing = context(d, seeds, tokens)
         missing += list(p.findings.errors)
         evidence = []
+        added = set()
         relations = []
         dependencies = {"project.c3proj": digest(p.data)}
 
         def add(source: str, text: str, value: object) -> None:
-            key = "E" + digest(source)[:16]
-            if not any(e["id"] == key for e in evidence):
+            key = evidence_id(source)
+            if key not in added:
+                added.add(key)
                 evidence.append({"id": key, "source": source, "text": text})
                 dependencies[source] = digest(value)
 
@@ -124,7 +169,7 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
 
         def relate(kind: str, caller: object, target: object, source: str) -> None:
             relations.append({"kind": kind, "from": caller, "to": target,
-                              "evidence": "E" + digest(source)[:16], "origin": "project_format"})
+                              "evidence": evidence_id(source), "origin": "project_format"})
 
         for e in selected:
             sid = e.ev.get("sid")
@@ -139,8 +184,10 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
             caller = {"sheet": e.sheet, "sid": sid}
             if e.kind == "include":
                 relate("includes_sheet", caller, e.ev.get("includeSheet"), source)
-            text = json.dumps(own(e))
-            used_objects.update(name for name in p.plugin_of if re.search(rf"\b{re.escape(name)}\b", text))
+            if e not in named:
+                text = json.dumps(own(e))
+                named[e] = {name for name in p.plugin_of if whole_word(name).search(text)}
+            used_objects.update(named[e])
             for kind, aces in (("conditions", e.conditions), ("actions", e.actions)):
                 for ace in aces:
                     if ace.get("callFunction"):
@@ -148,11 +195,10 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
                         continue
                     if "customAction" in ace:
                         owner = ace.get("customActionObjectClass", ace.get("objectClass"))
-                        blocks = [r for r in selected if r.kind == "custom-ace-block"
-                                  and r.ev.get("aceName") == ace["customAction"]
-                                  and r.ev.get("objectClass") in [owner, *p.families_of(owner)]]
+                        defined = any(r.kind == "custom-ace-block" and r.ev.get("aceName") == ace["customAction"]
+                                      and r.ev.get("objectClass") in [owner, *p.families_of(owner)] for r in selected)
                         relate("calls_custom_action", caller, {"object": owner, "action": ace["customAction"]}, source)
-                        if not blocks:
+                        if not defined:
                             missing.append(f"Custom action {owner}.{ace['customAction']} is missing")
                         continue
                     if ace.get("type") in {"comment", "script"}:
@@ -171,10 +217,12 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
                     if isinstance(params, dict) and ace.get("id") in {"compare-eventvar", "compare-boolean-eventvar"}:
                         relate("reads_variable", caller, params.get("variable"), source)
                     for expression in d.expressions(kind, ace).values():
-                        for name in [r.ev.get("name", "") for r in d.all_rows() if r.kind == "variable" and r.depth == 0]:
-                            if name.lower() not in e.scope and re.search(rf"\b{re.escape(name)}\b", rd_blank(expression), re.I):
+                        # Skip names inside text literals
+                        plain = c3.STRING_LITERAL.sub(" ", expression)
+                        for name in global_names:
+                            if name.lower() not in e.scope and whole_word(name, re.I).search(plain):
                                 relate("reads_variable", caller, name, source)
-                        for called in re.findall(rf"\b{re.escape(p.functions_object)}\.(\w+)", rd_blank(expression)):
+                        for called in re.findall(rf"\b{re.escape(p.functions_object)}\.(\w+)", plain):
                             if called in {r.ev.get("functionName") for r in selected if r.kind == "function-block"}:
                                 relate("calls_function_expression", caller, called, source)
                             else:
@@ -190,40 +238,44 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
                             facts["params"] = {name: {k: v for k, v in param.items() if k in {"type", "items"}}
                                                for name, param in facts["params"].items()}
                         add(ace_source, json.dumps(facts, ensure_ascii=False, sort_keys=True), entry)
-        # Container members share picking even when only one member is named.
+        # Add family and container members
+        # Container members share picking even when only one member is named
+        containers = p.data.get("containers", [])
         changed = True
         while changed:
             before_objects = set(used_objects)
             for name in list(used_objects):
-                for family in p.families_of(name) + ([name] if name in p.families else []):
+                for family in families_with(p, name):
                     used_objects.update(p.families[family].get("members", []))
-            for container in p.data.get("containers", []):
+            for container in containers:
                 members = container.get("members", [])
                 if used_objects.intersection(members):
                     used_objects.update(members)
                     source = "project.c3proj#containers"
-                    add(source, json.dumps(p.data.get("containers", []), ensure_ascii=False), p.data.get("containers", []))
+                    add(source, json.dumps(containers, ensure_ascii=False), containers)
                     for member in members:
                         relate("container_member", members, member, source)
             changed = used_objects != before_objects
         for name in sorted(used_objects):
             if name in p.types:
                 add(f"objectTypes/{name}", json.dumps(p.types[name], ensure_ascii=False), p.types[name])
-            for family in p.families_of(name) + ([name] if name in p.families else []):
+            for family in families_with(p, name):
                 add(f"families/{family}", json.dumps(p.families[family], ensure_ascii=False), p.families[family])
                 for member in p.families[family].get("members", []):
                     relate("contains_member", family, member, f"families/{family}")
                     if member in p.types:
                         add(f"objectTypes/{member}", json.dumps(p.types[member], ensure_ascii=False), p.types[member])
-        # Layouts establish picking, initial values and hierarchy links.
+        # Layouts establish picking, initial values and hierarchy links
+        selected_sheets = {e.sheet for e in selected}
         for name, layout in d.layouts.items():
-            if layout.get("eventSheet") in {e.sheet for e in selected} or any(
+            if layout.get("eventSheet") in selected_sheets or any(
                     inst.get("type") in used_objects for layer in layout.get("layers", [])
                     for inst in layer.get("instances", [])):
                 add(f"layouts/{name}", json.dumps(layout, ensure_ascii=False), layout)
                 relate("runs_sheet", name, layout.get("eventSheet"), f"layouts/{name}")
         for path in p.script_files():
-            add(path.as_posix(), (p.root / path).read_text(encoding="utf-8"), (p.root / path).read_text(encoding="utf-8"))
+            script = (p.root / path).read_text(encoding="utf-8")
+            add(path.as_posix(), script, script)
             missing.append("Script imports and runtime effects are unresolved; verify them in the preview")
         guide = p.rag / "prompts" / "event-sheet-thinking.md"
         if guide.exists():
@@ -246,7 +298,7 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
                 "preserve": "Existing player inputs, selected instances, state transitions and timing",
                 "missing": sorted(set(missing)), "dependencies": dependencies,
                 "rules": version, "schema_version": p.index.get("version"), "locale": p.locale}
-        # Event numbers locate an edit, but do not invalidate an unchanged judgement.
+        # Event numbers locate an edit, but do not invalidate an unchanged judgement
         item["input_version"] = digest({k: item[k] for k in
                                         ("dependencies", "rules", "schema_version", "locale", "question", "missing")})
         out.append(item)
@@ -255,25 +307,25 @@ def packets(p: c3.Project, d, found: list[dict], sheets: list[str], questions: d
             "runtime": "pending: run the full checker, open the editor and drive the target input"}
 
 
-def rd_blank(expression: str) -> str:
-    return c3.STRING_LITERAL.sub(" ", expression)
-
-
 def batch_document(items: list[dict]) -> dict:
-    """Share identical evidence within one complete batch."""
-    evidence = {e["id"]: e for q in items for e in q["evidence"]}
-    scopes = {digest(q["targets"])[:20]: q["targets"] for q in items}
-    relations = {digest(q["relations"])[:20]: q["relations"] for q in items}
-    rulesets = {digest(q["rules"])[:20]: q["rules"] for q in items}
-    groups = {digest([e["id"] for e in q["evidence"]])[:20]: [e["id"] for e in q["evidence"]] for q in items}
+    """One batch file: what its questions share, written once and named by its digest."""
     common_keys = ("criterion", "verdicts", "impact", "preserve", "schema_version", "locale")
     common = {k: items[0][k] for k in common_keys if all(q[k] == items[0][k] for q in items)} if items else {}
-    return {"format": FORMAT, "evidence": list(evidence.values()),
-            "review": common,
+    shared = {"dependencies", "rules", "targets", "relations", "evidence", *common}
+    evidence, groups, scopes, relations, rulesets, questions = {}, {}, {}, {}, {}, []
+    for q in items:
+        ids = [e["id"] for e in q["evidence"]]
+        refs = {"evidence": digest(ids)[:20], "scope": digest(q["targets"])[:20],
+                "relations": digest(q["relations"])[:20], "rules": digest(q["rules"])[:20]}
+        evidence.update((e["id"], e) for e in q["evidence"])
+        groups[refs["evidence"]] = ids
+        scopes[refs["scope"]] = q["targets"]
+        relations[refs["relations"]] = q["relations"]
+        rulesets[refs["rules"]] = q["rules"]
+        questions.append({**{k: v for k, v in q.items() if k not in shared}, **refs})
+    return {"format": FORMAT, "evidence": list(evidence.values()), "review": common,
             "evidence_groups": groups, "scopes": scopes, "relations": relations, "rules": rulesets,
-            "questions": [{**{k: v for k, v in q.items() if k not in {"dependencies", "rules", "targets", "relations", "evidence", *common}},
-                           "evidence": digest([e["id"] for e in q["evidence"]])[:20], "scope": digest(q["targets"])[:20],
-                           "relations": digest(q["relations"])[:20], "rules": digest(q["rules"])[:20]} for q in items]}
+            "questions": questions}
 
 
 def validate(items: list[dict], answers: object, complete: bool = True) -> list[dict]:
@@ -327,9 +379,10 @@ def validate(items: list[dict], answers: object, complete: bool = True) -> list[
     return answers
 
 
-def run(p, d, found, sheets, questions, args) -> int:
-    folder = Path(args.prepare)
-    folder = (p.root / folder).resolve() if not folder.is_absolute() else folder.resolve()
+def run(p: c3.Project, d: Design, found: list[dict], sheets: list[str], questions: dict,
+        args: argparse.Namespace) -> int:
+    """--prepare: the checker when --check asks for it, then the questions in the folder."""
+    folder = (p.root / args.prepare).resolve()
     if not folder.is_relative_to((p.root / ".tmp").resolve()) or not folder.is_relative_to(p.root.resolve()):
         raise ValueError("--prepare must name a folder under the game's .tmp/, such as .tmp/design-review")
     if args.check:
@@ -339,32 +392,32 @@ def run(p, d, found, sheets, questions, args) -> int:
     return prepare(p, d, found, sheets, questions, args, folder)
 
 
-def run_check(p, args, folder: Path) -> int:
-    """Run the complete checker and retain its failure evidence."""
-    if args.check:
-        command = [sys.executable, str(Path(__file__).with_name("check_project.py")), "--project", str(p.root),
-                   "--rag", str(p.rag), "--locale", p.locale, "--limit", "0"]
-        if args.style:
-            command.append("--style")
-        try:
-            result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", timeout=120)
-        except subprocess.TimeoutExpired as error:
-            save(folder / "check.json", {"command": command, "status": "timeout", "seconds": error.timeout})
-            raise ValueError("checker timed out; read check.json and rerun check_project.py") from error
-        save(folder / "check.json", {"command": command, "exit": result.returncode,
-                                   "stdout": result.stdout, "stderr": result.stderr})
-        lines = (result.stdout + result.stderr).splitlines()
-        count = c3.fitting(lines, args.limit) if args.limit else len(lines)
-        print("\n".join(lines[:count]))
-        print(f"check: exit {result.returncode}; complete log {folder / 'check.json'}")
-        if result.returncode:
-            print("stopped before design questions: fix checker findings, then repeat --check")
-            return result.returncode
+def run_check(p: c3.Project, args: argparse.Namespace, folder: Path) -> int:
+    """Run the full checker, print its result and keep its complete log in check.json."""
+    command = [sys.executable, str(Path(__file__).with_name("check_project.py")), "--project", str(p.root),
+               "--rag", str(p.rag), "--locale", p.locale, "--limit", "0"]
+    if args.style:
+        command.append("--style")
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", timeout=120)
+    except subprocess.TimeoutExpired as error:
+        save(folder / "check.json", {"command": command, "status": "timeout", "seconds": error.timeout})
+        raise ValueError("checker timed out; read check.json and rerun check_project.py") from error
+    save(folder / "check.json", {"command": command, "exit": result.returncode,
+                               "stdout": result.stdout, "stderr": result.stderr})
+    lines = (result.stdout + result.stderr).splitlines()
+    print("\n".join(lines[:c3.fitting(lines, args.limit)]))
+    print(f"check: exit {result.returncode}; complete log {folder / 'check.json'}")
+    if result.returncode:
+        print("stopped before design questions: fix checker findings, then repeat --check")
+        return result.returncode
     return 0
 
 
-def prepare(p, d, found, sheets, questions, args, folder: Path) -> int:
-    # Re-read after the checker, and refuse a save during preparation.
+def prepare(p: c3.Project, d: Design, found: list[dict], sheets: list[str], questions: dict,
+            args: argparse.Namespace, folder: Path) -> int:
+    """Write the question batches, and validate and save the answers --answers names."""
+    # Re-read after the checker, and refuse a save during preparation
     import review_design as review
     before = source_snapshot(p.root)
     p = c3.Project(p.root, p.rag, p.locale, c3.Findings())
@@ -379,25 +432,26 @@ def prepare(p, d, found, sheets, questions, args, folder: Path) -> int:
                 or not isinstance(cache.get("answers"), list):
             raise ValueError("accepted.json belongs to another project; use another --prepare folder")
         seen = set()
-        for answer in cache.get("answers", []):
+        for answer in cache["answers"]:
             try:
                 validate(bundle["questions"], [answer], complete=False)
-                if answer["id"] in seen:
-                    raise ValueError("duplicate cached answer")
-                seen.add(answer["id"])
             except ValueError as error:
                 invalidated.append(str(error))
                 continue
+            if answer["id"] in seen:
+                invalidated.append("duplicate cached answer")
+                continue
+            seen.add(answer["id"])
             if answer["verdict"] != "insufficient_evidence":
                 accepted.append(answer)
     reused = {a["id"] for a in accepted}
     pending = [q for q in bundle["questions"] if q["id"] not in reused]
-    batches, batch, size = [], [], 0
+    # A batch closes before the question that would take it past --limit
+    batches, batch = [], []
     for item in pending:
-        size = len(json.dumps(batch_document([*batch, item]), ensure_ascii=False))
-        if batch and args.limit and size > args.limit:
+        if batch and args.limit and len(json.dumps(batch_document([*batch, item]), ensure_ascii=False)) > args.limit:
             batches.append(batch)
-            batch, size = [], 0
+            batch = []
         batch.append(item)
     if batch:
         batches.append(batch)
@@ -415,20 +469,17 @@ def prepare(p, d, found, sheets, questions, args, folder: Path) -> int:
     bundle["invalidated"] = invalidated
     bundle["accepted"] = accepted
     generation = digest(bundle)[:20]
-    for n, batch in enumerate(batches, 1):
-        save(folder / generation / f"batch-{n}.json", batch_document(batch), compact=True)
     bundle["batches"] = [f"{generation}/batch-{n}.json" for n in range(1, len(batches) + 1)]
+    for name, batch in zip(bundle["batches"], batches):
+        save(folder / name, batch_document(batch), compact=True)
     manifest = {**bundle, "questions": [{k: q[k] for k in ("id", "location", "input_version", "missing")}
                                         for q in bundle["questions"]]}
     save(folder / "current.json", manifest)
-    save(folder / "answer-format.json", [{"id": "copy the question id", "input_version": "copy its input_version",
-          "verdict": "pass | needs_change | insufficient_evidence", "evidence": [{"id": "copy an evidence id",
-          "quote": "copy a short exact excerpt"}], "reason": "why the evidence supports the verdict",
-          "suggestions": [{"sheet": "copy a target sheet", "sid": 123, "text": "describe the scoped change"}]}])
+    save(folder / "answer-format.json", ANSWER_FORMAT)
     print(f"design: {len(bundle['findings'])} deterministic findings; {len(pending)} questions; {len(reused)} reused")
     print(f"prepared: {folder / 'current.json'}; {len(batches)} complete batches (large questions stay whole)")
     lines = [f"batch {n}: {folder / name}" for n, name in enumerate(bundle["batches"], 1)]
-    shown = c3.fitting(lines, max(1, args.limit - 900)) if args.limit else len(lines)
+    shown = c3.fitting(lines, max(1, args.limit - AROUND_BATCHES)) if args.limit else len(lines)
     print("\n".join(lines[:shown]))
     if shown < len(lines):
         print(f"{len(lines) - shown} batches remain; current.json lists every batch")
@@ -442,7 +493,9 @@ def prepare(p, d, found, sheets, questions, args, folder: Path) -> int:
 
 
 def source_snapshot(root: Path) -> dict:
+    """Hashes of the project files the questions read, by path; the editor's .uistate.json files stay out."""
     paths = [root / "project.c3proj"]
     for name in ("eventSheets", "layouts", "objectTypes", "families", "scripts"):
-        paths.extend(p for p in (root / name).rglob("*") if p.is_file() and not p.name.endswith(".uistate.json"))
-    return {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths if p.is_file()}
+        paths.extend(path for path in (root / name).rglob("*") if not path.name.endswith(".uistate.json"))
+    return {path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in paths if path.is_file()}

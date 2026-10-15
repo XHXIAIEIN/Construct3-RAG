@@ -1,15 +1,16 @@
 # Construct3
 
-Construct3 lets Claude make and change [Construct 3](https://www.construct.net) games saved as folder projects. It carries every condition, action, expression and effect as the Construct 3 editor defines them, in English and Chinese, and the `construct3-agent-plugin` skill with the scripts that use them. With the skill, Claude:
+Construct3 lets Claude make and change [Construct 3](https://www.construct.net) games saved as folder projects. It carries every condition, action, expression and effect as the Construct 3 editor defines them, in English and Chinese. It also carries the `construct3-agent-plugin` skill, whose scripts use them. With the skill, Claude:
 
-- looks up the exact JSON of a condition, action or expression before writing it, and the scripting API of a plugin or behavior;
-- prints an event sheet as events, changes it from a checked plan, and generates a whole project from a script;
-- checks a project against the rules the editor applies when it opens one, and starts a new project from the empty one the editor saves;
+- looks up the exact JSON of a condition, action or expression before writing it, and the scripting API of a Construct plugin or behavior;
+- prints an event sheet as events and changes it from a checked plan;
+- starts a new project from the empty one the editor saves, or generates a whole project from a script;
+- checks a project against the rules the editor applies when it opens one;
 - opens the project in the Construct 3 editor, previews it and exports it.
 
 ## Use
 
-Install the plugin, then ask Claude for a change to a Construct 3 project in its folder, for example "add a double jump" or "why does the editor refuse to open this project". The skill loads on its own for such a request. To start a game, ask for a new project in an empty folder.
+Install the plugin, then ask Claude about a Construct 3 project in its folder: a change such as "add a double jump", or a problem such as "why does the editor refuse to open this project". The skill loads on its own for such a request. To start a game, ask for a new project in an empty folder.
 
 The scripts need Python 3.10 or later. Cutting pictures out of an image tool's output needs Pillow.
 

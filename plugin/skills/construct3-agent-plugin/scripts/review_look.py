@@ -394,11 +394,7 @@ def review(only: list[str] | None, settle: float, viewport: list[int] | None, sh
                     "the runtime loaded but did not tick for 3 seconds" if stalled
                     else "the preview window opened but no runtime was found in it in 30 seconds"]}
             session = live[0]
-            for s in sessions:
-                try:
-                    win.call("Runtime.enable", session=s)
-                except oe.DevToolsError:    # a worker that ended since
-                    pass
+            play.enable(win, sessions)
             win.evaluate("0")
             first_errors = oe.runtime_errors(win)
             names = win.evaluate("c3probe.runtime.getAllLayouts().map(l => l.name)", session=session)
@@ -511,8 +507,7 @@ def brief(result: dict) -> str:
 def report(result: dict) -> list[str]:
     if result["status"] != "opened":
         return oe.report(result)
-    lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
-    lines += [f"  warning: {w}" for w in result.get("warnings", [])]
+    lines = oe.opened_lines(result)
     ran = result.get("preview") or {"started": False, "errors": ["no preview"]}
     if not ran["started"]:
         return lines + [f"  preview did not run: {e}" for e in ran["errors"]]
@@ -605,49 +600,37 @@ def main() -> int:
               "the project with open_in_editor.py --steps and take a screenshot of each layout with a browser tool "
               "of this session.")
         return 3
-    editor = f"{oe.EDITOR}{args.release.strip('/')}/" if args.release else oe.EDITOR
+    editor = oe.release_url(args.release)
     out, base = oe.kept(args.out, args.shots, projects[0], "review-look.json", "look")
-    try:
-        browser = oe.Browser(exe, (args.profile or oe.scratch(projects[0])) / f"editor-{Path(exe).stem.lower()}",
-                             args.headed)
-    except (oe.DevToolsError, OSError) as e:
-        print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
-        return 2
-    results, printed = [], 0
-    try:
+
+    def visit(browser: oe.Browser) -> list[dict]:
+        """Review each project in turn. Its result is written and printed as it ends, so the results stay
+        when a later project stops the run."""
+        results, printed = [], 0
         for project in projects:
             shots = base if len(projects) == 1 else base / project.name
             shots.mkdir(parents=True, exist_ok=True)
             data = c3.load(project / "project.c3proj")
             view = args.viewport or [data.get("viewportWidth"), data.get("viewportHeight")]
             view = view if all(isinstance(n, int) and n > 0 for n in view) else None
-            try:
-                result = oe.open_one(browser, editor, project, browser.profile / "project-look.c3p", None,
-                                     bool(args.release), review(args.layouts, args.settle, view, shots))
-            except oe.EditorNotLoaded as e:
-                print(f"the editor did not load: {e}. Check the network connection and --release, and run again.",
-                      file=sys.stderr)
-                return 2
+            result = oe.open_one(browser, editor, project, browser.profile / "project-look.c3p", None,
+                                 bool(args.release), review(args.layouts, args.settle, view, shots))
             result["places"] = unmeasured(project, args.design)
             if any(shows_something(d) for d in (result.get("preview") or {}).get("layouts", [])):
                 result["brief"] = str(shots / "brief.md")
                 (shots / "brief.md").write_text(brief(result), encoding="utf-8")
             results.append(result)
             out.write_text(json.dumps(results if len(projects) > 1 else result, ensure_ascii=False, indent=1),
-                           encoding="utf-8")       # kept as each project ends, should a later one stop the run
+                           encoding="utf-8")
             lines = report(result)
-            shown = c3.fitting(lines, max(1, args.limit - printed) if args.limit else 0)
-            if shown:
-                text = "\n".join(lines[:shown])
-                print(text, flush=True)
-                printed += len(text) + 1
+            shown, printed = oe.print_part(lines, args.limit, printed)
             if shown < len(lines):
                 print(f"{len(lines) - shown} lines not printed: {out} keeps everything, --limit 0 prints it")
-    except (oe.DevToolsError, OSError) as e:
-        print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
+        return results
+
+    results = oe.drive(exe, oe.profile_folder(args.profile, projects[0], exe), args.headed, visit)
+    if results is None:
         return 2
-    finally:
-        browser.close()
     found, errors, _ = map(sum, zip(*(counts(r) for r in results)))
     print(look_line(results, args.settle, out, base))
     if any(r["status"] != "opened" for r in results):

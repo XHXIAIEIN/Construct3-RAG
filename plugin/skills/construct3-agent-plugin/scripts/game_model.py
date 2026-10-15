@@ -36,14 +36,17 @@ import math
 import random as _random
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
-TICK = 1 / 60
+TICK = 1 / 60               # seconds of one tick, at the runtime's 60 ticks a second
 AFTER_INPUT = 0.15          # seconds the game runs after each input, in the prototype and in the editor
 SETTLE = 1.0                # seconds a test runs after its last step before its last expects are read again
-OPS_MAX = 50_000            # actions one test may run before it counts as a loop
+OPS_MAX = 50_000            # effects one test may run before it counts as a loop
+# A small game: what a small model can keep consistent and the prototype can explain
 TESTS_MAX = 6
-STATE_MAX = 10              # a small game: what a small model can keep consistent, and the prototype explain
-RULES_MAX = 14
+STATE_MAX = 10
+RULES_MAX = 14              # sub-rules counted
 STEPS_MAX = 60              # steps of one test
 WAIT_MAX = 20.0             # seconds one test may wait in all
 IDLE = 120.0                # seconds the prototype plays without input: a win in that time is won by waiting
@@ -67,6 +70,10 @@ class ModelError(Exception):
     """An expression or an effect that cannot be read or run; the message says what to write."""
 
 
+class DesignUnreadable(Exception):
+    """A design file that cannot be read as JSON; the message names the file and what to write."""
+
+
 class Unplaced:
     """The position of a tap the prototype does not know: on an object, or at a point given in shares."""
 
@@ -88,6 +95,7 @@ WRONG_OPS = {"!=": "<>", "==": "=", "&&": "&", "||": "|"}
 
 
 def tokens(text: str) -> list[tuple[str, str]]:
+    """The expression's tokens as (kind, text)."""
     out, pos = [], 0
     text = str(text)
     while pos < len(text):
@@ -124,6 +132,8 @@ ARRAY_FUNCS = ("InARow", "count")    # their first argument is an Array's name
 
 
 class Parser:
+    """One expression read into a tree of Nodes, operators bound by LEVELS."""
+
     def __init__(self, text: str) -> None:
         self.text = str(text)
         self.toks = tokens(self.text)
@@ -270,6 +280,7 @@ def is_text(v) -> bool:
 
 
 def num(v) -> float:
+    """A value as a number; a text that is no number is 0."""
     if isinstance(v, str):
         try:
             return float(v)
@@ -279,12 +290,14 @@ def num(v) -> float:
 
 
 def show(v) -> str:
+    """A value as a finding prints it: a whole number without .0, a text in quotes."""
     if isinstance(v, float) and v == int(v):
         return str(int(v))
     return json.dumps(v, ensure_ascii=False) if isinstance(v, str) else str(v)
 
 
 def in_a_row(grid: list[list[float]], n: int, value) -> bool:
+    """Whether n cells in a line across, down or on a diagonal hold value."""
     w = len(grid)
     h = len(grid[0]) if w else 0
     for x in range(w):
@@ -309,7 +322,7 @@ class Rule:
     children: list["Rule"]
     otherwise: bool
     feedback: str
-    every: float | None = None
+    every: float | None = None      # seconds between runs of an "every N" rule
 
 
 @dataclass
@@ -328,6 +341,14 @@ class State:
     def seen(self) -> bool:
         """Whether the player sees this row: a property of an instance on screen, or a count of instances."""
         return bool(self.shown) or "." in self.stored_in and self.stored_in.rsplit(".", 1)[1] in SEEN
+
+
+def read_design(path: Path) -> Any:
+    """The design file's JSON, with or without a byte order mark."""
+    try:
+        return json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError) as e:
+        raise DesignUnreadable(f"{path}: {e}. Write the design as JSON, as references/designing-a-game.md shows.") from e
 
 
 class Design:
@@ -362,6 +383,7 @@ class Design:
         return self.win is not None or self.lose is not None
 
     def text(self, key: str, what: str) -> str:
+        """The key's text, stripped; a text under 3 characters is a problem that says what to write."""
         v = self.data.get(key)
         if not isinstance(v, str) or len(v.strip()) < 3:
             self.bad(key, f"missing; {what}")
@@ -369,6 +391,7 @@ class Design:
         return v.strip()
 
     def keys(self, item, allowed: set, path: str) -> bool:
+        """Whether the item is an object; each key outside allowed is a problem."""
         if not isinstance(item, dict):
             self.bad(path, f"is {type(item).__name__}; it is an object with the keys {', '.join(sorted(allowed))}")
             return False
@@ -384,6 +407,7 @@ class Design:
             return None
 
     def read(self) -> None:
+        """Read every table; each gap is a problem."""
         d = self.data
         self.keys(d, DESIGN_KEYS, "design")
         self.text("game", "the game's name as the player sees it")
@@ -636,6 +660,7 @@ class Design:
                      f"leave it out: the input carries no arguments")
 
     def read_rule(self, r, path: str, top: bool) -> Rule | None:
+        """The rule with its sub-rules, or None when it is not an object."""
         if not self.keys(r, RULE_KEYS, path):
             return None
         rid = r.get("id")
@@ -890,8 +915,9 @@ def effect(text) -> tuple:
 
 # The player's words for a tap that lands anywhere on the screen rather than on one thing in it: "tap the
 # screen", "tap anywhere", "点击屏幕", "点屏幕任意处". "tap a dot on the screen", "anywhere on the board",
-# "点一下屏幕下方的提示" and "点菜单任意位置" name a part of it. An input bound to an object with these words
-# built an invisible Sprite as the tap area, which takes only the taps inside it (2026-10-09 hosted-model batch)
+# "点一下屏幕下方的提示" and "点菜单任意位置" name a part of it.
+# A model that binds such an input to an object builds an invisible Sprite as the tap area, which takes only the
+# taps inside it (2026-10-09 hosted-model batch)
 SCREEN_WIDE = re.compile(
     r"\banywhere\b(?!\s+(?:on|in|inside|within)\s+(?!(?:the\s+)?(?:screen|window)\b)\w)"
     r"|\b(?:tap|taps|tapping|click|clicks|clicking|touch|touches|touching|press|presses|pressing)\s+(?:on\s+)?"
@@ -917,6 +943,7 @@ def in_region(point, region) -> bool:
 
 
 def how_tapped(inp: dict) -> str:
+    """The input's tap in words, for a finding."""
     tap = inp["game"].get("tap")
     if inp["kind"] == "object":
         return f"a tap on {tap}"
@@ -986,6 +1013,7 @@ def place(key: str, text: str) -> Place:
 
 
 def screen_places(design: "Design") -> list[Place]:
+    """The design's screen entries, each read for its place."""
     screen = design.data.get("screen")
     if not isinstance(screen, dict):
         return []
@@ -1011,8 +1039,9 @@ def screen_objects(key: str, design: "Design", types) -> list[str]:
     when it names none."""
     types = list(types)
     flat = {re.sub(r"[^a-z0-9]", "", t.lower()): t for t in types}
-    if re.sub(r"[^a-z0-9]", "", key.lower()) in flat:
-        return [flat[re.sub(r"[^a-z0-9]", "", key.lower())]]
+    bare = re.sub(r"[^a-z0-9]", "", key.lower())
+    if bare in flat:
+        return [flat[bare]]
     st = design.state.get(key)
     if st and st.stored_in not in ("global", "Array"):
         obj = st.shown[0] if st.shown else st.stored_in.split(".", 1)[0]
@@ -1154,6 +1183,7 @@ class Sim:
         return None
 
     def unplaced(self, name: str) -> str:
+        """Why the running rule cannot read the tap's position, and what to write."""
         rule = self.rule
         if not self.tap:
             return f"rule {rule} reads {name}, the position of a tap the prototype does not know"
@@ -1168,6 +1198,8 @@ class Sim:
 
     # rules
     def run(self, r: Rule, scope: dict, from_effect: int = 0) -> bool:
+        """Run the rule's effects from from_effect on, then its sub-rules; a wait defers the rest. From the first
+        effect it runs only when its conditions hold. Returns whether it ran."""
         self.rule = r.id
         if from_effect == 0:
             if not all(truth(self.ev(c, scope)) for c in r.when):
@@ -1192,11 +1224,11 @@ class Sim:
                 old = self.values[name]
                 self.values[name] = v if op == "=" else (num(old) + num(v) if op == "+=" else num(old) - num(v))
             else:
-                grid = self.arrays[name]
-                idx = [int(math.floor(num(self.ev(a, scope)))) for a in index] + [0]
-                if 0 <= idx[0] < len(grid) and 0 <= idx[1] < len(grid[0]):
-                    old = grid[idx[0]][idx[1]]
-                    grid[idx[0]][idx[1]] = num(v) if op == "=" and not is_text(v) else (
+                cell = self.cell(name, index, scope)
+                if cell:
+                    grid, x, y = cell
+                    old = grid[x][y]
+                    grid[x][y] = num(v) if op == "=" and not is_text(v) else (
                         v if op == "=" else num(old) + num(v) if op == "+=" else num(old) - num(v))
             self.set_by.pop(name, None)
             self.set_by[name] = r.id
@@ -1262,6 +1294,7 @@ class Sim:
             self.settling = False
 
     def tick(self) -> None:
+        """One tick: the rules fired by tick or every N, the Waits that are due, then a restart a rule asked for."""
         before = self.t
         self.t += TICK
         for r in self.d.rules:
@@ -1304,6 +1337,7 @@ class Sim:
             self.tick()
 
     def watch(self) -> None:
+        """Note a win or a lose that holds now."""
         if self.d.win and truth(self.ev(self.d.win, {})):
             self.won = True
         if self.d.lose and truth(self.ev(self.d.lose, {})):
@@ -1316,18 +1350,21 @@ class Sim:
 
 
 def truth(v) -> bool:
+    """A value as a condition; a text is refused."""
     if isinstance(v, str):
         raise ModelError(f"the text {v!r} stands where a condition is tested; a condition compares: x = \"text\"")
     return v != 0
 
 
 def show_plain(v) -> str:
+    """A value as the runtime writes it in a text: 3, 2.5, abc."""
     if isinstance(v, float):
         return str(int(v)) if v == int(v) else f"{v:g}"
     return str(v)
 
 
 def binop(op: str, a, b):
+    """The value of a binary operator as the event sheet computes it."""
     if op in ("=", "<>"):
         same = (a == b) if is_text(a) == is_text(b) else show_plain(a) == show_plain(b)
         return 1.0 if same == (op == "=") else 0.0
