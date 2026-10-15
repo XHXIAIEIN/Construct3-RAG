@@ -1,8 +1,9 @@
 # Hand-editing Construct project files
 
-Read this to write or change `eventSheets/*.json`, `layouts/*.json`,
-`objectTypes/**/*.json`, `families/*.json`, `project.c3proj` or clipboard
-payloads without the editor. Put events into a sheet with the
+Read this before you write or change `eventSheets/*.json`, `layouts/*.json`,
+`objectTypes/**/*.json`, `families/*.json`, `timelines/**/*.json`,
+`3dmodels/**/*.json`, `project.c3proj` or clipboard payloads without the
+editor. Put events into a sheet with the
 `construct3-agent-plugin` skill's `scripts/edit_sheet.py`. It takes them as a
 plan, gives them their sids and checks the result before it writes. This file
 says how to write each entry of such a plan or of a hand edit. Clipboard
@@ -110,10 +111,10 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
 - Everything that is not an expression has no inner quotes: a combo item
   (`"mouse-button": "left"`, `"loop": "no"`), an object, a layout, a variable,
   an ease id (`"ease": "easeoutback"`, the ids under `ui/bars/timeline/eases`
-  in `data/c3-lang/en-US.json`). A quoted combo value is not an error to the
-  editor: it silently keeps the default. A key is its key code as a JSON number
-  (`"key": 32`); a string stops the load with `expected finite number`. A JSON
-  string `"false"` in a boolean parameter reads as true.
+  in `data/c3-lang/en-US.json`). The editor loads a quoted combo value without
+  an error and keeps the combo's default item. A key is its key code as a JSON
+  number (`"key": 32`); a string stops the load with `expected finite number`.
+  A JSON string `"false"` in a boolean parameter reads as true.
 - An event variable's `initialValue` is text whatever its `type`: `"0"`,
   `"hello"` without inner quotes, and for a boolean `"true"` or `"false"`,
   lowercase. The editor reads a boolean by comparing the text to `"true"`, so a
@@ -326,10 +327,10 @@ game project the editor r504 opened and previewed on 2026-09-30.
   "id": "Timeline", "name": "Timeline controller", "author": "Scirra",
   "bundled": false}`.
 - An instance track names one instance in a layout: `worldInstance` is its uid,
-  `objectType` its type and `project` the project's `uniqueId`. A template
-  instance in a layout that never runs works, because *Set instance* puts the
-  runtime instance in its place. `id` is the track ID that
-  *Set instance* names.
+  `objectType` its type and `project` the project's `uniqueId`. `id` is the
+  track ID that *Set instance* names. A template instance in a layout that
+  never runs works, because *Set instance* puts the runtime instance in its
+  place.
 - A property keyframe holds `value` and `rValue`, read in relative mode, and
   `aValue`, read in absolute mode. Angles are in radians. An `angle` addon
   gives the direction of the segment that starts at that keyframe, `closest`,
