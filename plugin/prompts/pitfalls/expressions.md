@@ -104,7 +104,11 @@ Sources and the rule for adding an entry are in the index,
   then read it in the others. Unless it is static, it resets to its initial
   value every time the scope is entered. [manual:
   project-primitives/events/variables.md "Local variables", "Static and
-  constant variables"; example: galactic-blocks, group Controls, `StoredY`]
+  constant variables"; example: galactic-blocks, group Controls, `StoredY`;
+  observed in a minimal project, r506.2 editor, 2026-10-16: an event whose
+  own action set a local declared among its sub-events stopped the open
+  with `cannot find event variable`, and `check_project.py` refuses it as
+  not in scope]
 - *Set mesh point* in *Relative* mode adds to the point's current position,
   not to its default, so a per-tick derivation accumulates. Derive with
   *Absolute* and normalised coordinates (0..1 across the object box, values

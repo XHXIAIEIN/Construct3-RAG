@@ -100,6 +100,29 @@ Sources and the rule for adding an entry are in the index,
   event uses the family. [manual: plugin-reference/common-features/common-conditions.md
   "Pick top/bottom"; runtime: the `TestAndSelectCanvasPointOverlap` of the
   entry above selects each instance that contains the point]
+- A popup turns the layer under it off with *Set layer interactive* while
+  it is open. The events of one trigger run one after the other on the
+  same input, and each *On tap object* tests its object's layer as it
+  runs. So if the close event turns the layer under the popup on again in
+  its own action list, a later *On tap object* event of a button under
+  the popup fires on the same tap: the press goes through. Put *Wait 0*
+  before *Set layer interactive*, so the layer turns on in the next tick,
+  after every event of that tap has run. The wait protects only the events
+  of the same trigger. A close on *On touched object* runs at the press,
+  and a button's *On tap object* under it fires at the release, ticks
+  later, when the layer is on again. So give the close and the buttons
+  one trigger, *On tap object* for both. The button's event above the
+  close event in the same sheet does not fire on that tap either. [manual:
+  project-primitives/events/how-events-work.md "Events run top to bottom";
+  runtime: exported c3runtime.js r504, the `TestAndSelectCanvasPointOverlap`
+  of the entry on invisible instances above tests the layer as the
+  condition runs; observed in a minimal project, r506.2 preview,
+  2026-10-16: a tap on a close button over a button of the lower layer,
+  which the close event turned on at once, counted on both buttons. With
+  *Wait 0* before *Set layer interactive* it counted on the close button
+  alone, and so with the lower button's event above the close event. With
+  the close on *On touched object* and *Wait 0*, the lower button's *On
+  tap object* counted and its *On touched object* did not]
 - Drag & Drop starts one drag per press, on the front instance under the
   pointer: the one on the highest layer, then the one highest in Z order on
   that layer. It considers only instances whose behavior is enabled and

@@ -23,11 +23,21 @@ Sources and the rule for adding an entry are in the index,
   complete") waits only for asynchronous actions, marked with an icon in the
   editor: Tween actions, AJAX requests, Local Storage, *Snapshot canvas*.
   Other actions before it are already done. A function call counts only if
-  the function is marked *Asynchronous* and itself ends with *Wait for
-  previous actions*. [manual: system-reference/system-actions.md "Wait for
-  previous actions to complete", project-primitives/events/functions.md
-  "Asynchronous functions"; example: avalanche, sheets Stalagmite and
-  Credits]
+  the function is marked *Asynchronous* (`functionIsAsync` in the sheet).
+  The caller then waits for the function's own *Wait* actions. It waits
+  for the asynchronous actions in the function only if the function ends
+  with *Wait for previous actions*. The mark changes nothing in the
+  function itself: a function without it runs its *Wait* and what follows
+  the same, but the caller's *Wait for previous actions* returns at once.
+  So mark a function *Asynchronous* when a caller must wait for what it
+  does after a *Wait*. [manual:
+  system-reference/system-actions.md "Wait for previous actions to
+  complete", project-primitives/events/functions.md "Asynchronous
+  functions"; example: avalanche, sheets Stalagmite and Credits; observed in
+  a minimal project, r506.2 preview, 2026-10-16: a function with *Wait 0.5*
+  then *Set value*, called before *Wait for previous actions* and a read of
+  the value, gave the read 0 with the flag off and 1 with it on, and set
+  the value half a second later either way]
 - A *Wait* delays only the actions after it in its own block and that block's
   sub-events. A sibling event, or the next sub-event of the same parent, runs
   at once. So with a *Wait for previous actions* alone in sub-event 1 and

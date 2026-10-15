@@ -99,7 +99,7 @@ group turned off to pause, read
 
 - *Wait* does not stop a loop, so the remaining iterations run in the same tick.
 - A *Wait* keeps the instances its event picked: *Wait 2 seconds* then *Destroy* destroys the instance that started it, with no UID stored.
-- *Wait for previous actions* waits only for asynchronous actions.
+- *Wait for previous actions* waits only for asynchronous actions. It waits for the *Wait* actions in a function only when the function is marked *Asynchronous*, and the mark changes nothing inside the function.
 - A *Wait* delays only the rest of its own block and its sub-events. Sibling events run at once.
 - A *Wait* with *Use time scale* on never ends while the time scale is 0.
 - *Wait 0* resumes at the start of the next tick, not at the end of the event or sheet. Leave it out unless a trigger fires before the tick applies what it reports.
@@ -174,6 +174,7 @@ behavior, or ask the browser for fullscreen, a permission or a picker, read
 - In Mouse *On movement*, `Mouse.X`, `Mouse.Y`, `Touch.X` and `Touch.Y` hold the previous pointer event's position. Follow or aim at the pointer in *Every tick*, or in *Is in touch* for a finger.
 - Touch and Mouse press an object that is invisible or has collisions disabled. Add *Is visible* to the event or set its layer not interactive.
 - Touch and Mouse pick every instance under the pointer. Add the button's *Pick top/bottom* (top) to the trigger's event, through a family for buttons of several types.
+- The *On tap object* events of one tap run in order and test the layer as they run, so a close event that turns the layer under the popup on again lets the *On tap object* of a button under it fire on the same tap. Give the close and the buttons one trigger, and put *Wait 0* before *Set layer interactive*.
 - Drag & Drop drags the front instance under the pointer, by layer and then Z, visible or not. Stop drags under a popup with *Set layer interactive* on the pieces' layer or the behavior's *Set enabled*.
 - Touch speed reads 0 after about 50 ms without a move, so a flick tested in *On any touch end* passes only for a release made in motion.
 - *Simulate control* acts only in the tick it runs. Put it in an event whose condition stays true while the control is held: *Key is down*, not *On key pressed*.
@@ -291,6 +292,8 @@ Sprite, read [pitfalls/creating-objects.md](pitfalls/creating-objects.md).
 - A part in both the parent's container and its template hierarchy is created once. Put it in both to have it picked with the parent and follow it.
 - *Create object* runs once per event, however many instances are picked.
 - A runtime-created instance copies an existing instance or template, and without one its behavior properties read 0. Keep one per object in a layout that never runs.
+- With an empty template name, *Create object* copies the first instance of the type in the first layout of the project that holds one, so a template instance in a later layout is never read. Mark it as a template and name it in *Create object*.
+- *Create hierarchy* creates the children on the new parent's layer, whatever layers the template's children sit on. Move a child to its own layer after the creation.
 - An object created only by events loads its images when created and draws nothing until they arrive, so a screen-sized picture shows late. Call *Load object images* for it in *On start of layout*.
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
 - A created instance is found outside its own event only by UID, until the top-level event ends.
@@ -303,6 +306,7 @@ If the events restart a layout or go to one, such as a new round, read
 [pitfalls/restarting-a-layout.md](pitfalls/restarting-a-layout.md).
 
 - *Restart layout* and *Go to layout* keep every global variable and static local at its current value.
+- A global layer shares its content, not its state: each layout starts it with the visibility and interactivity of its properties and its instances as placed. Write the layer's state under *On start of layout* from global variables.
 
 ### Storage and export
 
