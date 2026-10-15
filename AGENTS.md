@@ -5,9 +5,10 @@
 This repository holds bilingual Construct 3 reference data under `data/`,
 which an agent reads directly. It also holds an optional lookup service in
 `src/` and, in `skills/`, an agent skill that carries the project tools into
-a game project. Do not write the Construct 3 version or the counts into
-text, because every data refresh changes them; read them from
-`data/c3-schemas/_index.json`.
+a game project. The Construct 3 version and the counts stay in
+`data/c3-schemas/_index.json`, because every data refresh changes them.
+A reply reads them from there, and a document names the file instead of the
+numbers.
 
 The priorities, in order:
 
