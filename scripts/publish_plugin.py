@@ -137,7 +137,7 @@ def main() -> int:
     if args.no_push:
         print(f"committed version {version} in {clone}, not pushed")
         return 0
-    git(clone, "push", "-q")
+    git(clone, "push", "-q", "-u", "origin", "HEAD")     # -u: a fresh clone of an empty repository has no upstream
     print(f"published version {version} to {REPOSITORY}")
     return 0
 
