@@ -1,8 +1,9 @@
 """pack_project.py: a project saved as a .c3p, a .zip or a project folder, in the layout the editor opens."""
+import json
 import zipfile
 from pathlib import Path
 
-from tests.skill_helpers import SHEET, tool
+from tests.skill_helpers import SHEET, tool, check, edit, events
 
 
 def names(path: Path) -> list[str]:
@@ -109,3 +110,55 @@ def test_bundled_addons_are_packed(project, tmp_path):
     code, out = tool(project, "pack_project", "--out", str(bundled))
     assert code == 0 and "addons/effect/Custom_Glow.c3addon" in names(bundled), out
     assert "addons/" not in out.split("left out:")[-1], out
+
+
+def test_a_folder_project_is_packed_only_after_the_checker_passed_its_files(project, tmp_path):
+    """The project fixture holds the record of a passing check_project.py run, so the pack succeeds.
+    Nothing is written, and the line says what to run, in three cases: no record, a change to a
+    checked file after the run, and a run that found a problem. --unchecked packs anyway and says
+    so. An archive needs no record."""
+    record = project / ".tmp" / "check-project.json"
+    kept = json.loads(record.read_text(encoding="utf-8"))
+    assert kept["problems"] == 0 and kept["project"], kept
+    c3p = default_pack(project)
+    code, out = tool(project, "pack_project")
+    assert code == 0 and "unchecked" not in out, out
+
+    record.unlink()
+    c3p.unlink()
+    code, out = tool(project, "pack_project")
+    assert code == 3 and not c3p.exists(), out
+    assert out.startswith("not packed: check_project.py has not run on this project. Run python ") and "check_project.py" in out, out
+    assert out.rstrip().endswith("and pack again, or pass --unchecked to pack the files as they are"), out
+
+    code, out = check(project)
+    assert code == 0 and record.is_file(), out
+    edit(project, SHEET, lambda sheet: sheet["events"].append({"eventType": "comment", "text": "later"}))
+    commented = (project / SHEET).read_text(encoding="utf-8")
+    code, out = tool(project, "pack_project")
+    assert code == 3 and "the project files changed after the last check_project.py run" in out, out
+    assert not c3p.exists()
+
+    def misspell(sheet):
+        events(sheet)["add_score"]["actions"][0]["id"] = "add-to-x"
+    edit(project, SHEET, misspell)
+    code, out = check(project)
+    assert code == 1, out
+    code, out = tool(project, "pack_project")
+    assert code == 3 and "the last check_project.py run found 1 problem(s)" in out and not c3p.exists(), out
+
+    code, out = tool(project, "pack_project", "--unchecked")
+    assert code == 0 and c3p.is_file(), out
+    assert "unchecked: the last check_project.py run found 1 problem(s). The pack holds files that check_project.py " \
+           "has not passed" in out and "next: python " in out, out
+
+    folder = tmp_path / "unpacked"
+    code, out = tool(project, "pack_project", str(c3p), "--out", str(folder))
+    assert code == 0 and "unchecked" not in out and (folder / SHEET).is_file(), out
+
+    (project / SHEET).write_text(commented, encoding="utf-8")
+    code, out = check(project)
+    assert code == 0, out
+    c3p.unlink()
+    code, out = tool(project, "pack_project")
+    assert code == 0 and c3p.is_file() and "unchecked" not in out, out

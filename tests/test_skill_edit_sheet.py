@@ -602,7 +602,8 @@ def test_new_leaves_no_draft_when_a_file_cannot_take_its_place(project, monkeypa
     assert edit_sheet.main() == 1
     out = capsys.readouterr().out
     assert "could not be written" in out and "nothing was written" in out, out
-    assert sorted(p.relative_to(project).as_posix() for p in project.rglob("*.tmp")) == []
+    # the project's .tmp/ folder, where the checker keeps its record, matches the pattern and is no draft
+    assert sorted(p.relative_to(project).as_posix() for p in project.rglob("*.tmp") if p.is_file()) == []
     assert all(p.read_bytes() == raw for p, raw in files.items()) and not (project / SHEET).exists()
 
 

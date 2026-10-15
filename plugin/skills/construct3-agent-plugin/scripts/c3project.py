@@ -363,6 +363,30 @@ def find_project(given: str | None) -> Path | None:
     return above(Path.cwd(), "project.c3proj") or above(SKILL_DIR, "project.c3proj")
 
 
+# --- the checker's record ------------------------------------------------------------------
+# The checker's last run, in the project's .tmp/: its findings and a digest of the files it checked.
+# check_project.py counts changes against it (docs/decisions/fix-loop-cap.md), and pack_project.py
+# packs a folder project only against a passing one (docs/decisions/pack-after-check.md).
+RECORD = "check-project.json"
+# The folders whose files project.c3proj lists by name, one JSON file each. The editor reads only
+# what the project lists and ignores any other file there. scripts/ is left out of the digest and
+# of the unlisted-file check, since the editor keeps unlisted TypeScript copies and definitions in
+# it for an external editor.
+RESOURCE_FOLDERS = ("objectTypes", "families", "layouts", "eventSheets", "timelines", "flowcharts")
+
+
+def project_digest(root: Path) -> str:
+    """A digest of project.c3proj and every JSON file of the folders the editor reads: what the
+    checker's findings depend on. The record holds it, and a pack compares it with the files."""
+    files = [root / "project.c3proj"] + sorted(f for folder in RESOURCE_FOLDERS
+                                               for f in (root / folder).rglob("*.json"))
+    h = hashlib.sha256()
+    for f in files:
+        if f.is_file():
+            h.update(f.relative_to(root).as_posix().encode("utf-8") + b"\0" + f.read_bytes())
+    return h.hexdigest()[:16]
+
+
 # --- the commands a script prints ---------------------------------------------------------
 # One form for every command a script prints for the agent to run next, from the current
 # directory: the script by its path relative to it, or absolute, and --project only when
