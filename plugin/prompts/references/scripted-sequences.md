@@ -5,7 +5,7 @@ from a data file, so that a designer edits the file and the events stay the
 same. Read it before writing a boss fight with scripted attacks, a cutscene
 of several cues, or dialogue with pauses, colours and a voice. Design first
 with [event-sheet-thinking.md](../event-sheet-thinking.md); this page expands
-its rows "a sequence scripted in data" and the smell "a cue list or dialogue
+its row "a sequence scripted in data" and its smell "a cue list or dialogue
 markup read with `mid`". Its mechanisms come from the official examples
 named in each section and from a studied project read on 2026-10-06, marked
 `studied`.
@@ -94,9 +94,9 @@ the sequence until the tween ends.
    name, clears it, and calls that cue through the map, which sets `running`
    back to 1.
 3. A motion of several tweens, one per edge of a box, keeps a progress latch
-   per tween, set to 1 in its *On finished*, and resumes when every latch is
-   1. Clearing the stored name makes the resume run once, whichever tween
-   ends last ([feel.md](feel.md), "An arena box").
+   per tween, set to 1 in its *On finished*, and resumes when every latch
+   is 1. Clearing the stored name makes the resume run once, whichever
+   tween ends last ([feel.md](feel.md), "An arena box").
 
 [studied]
 
@@ -133,7 +133,8 @@ is the skip. Use it when the line needs no pause and no voice.
   sum of `CharacterWidth` of the characters before it. The link to the line
   is the hierarchy, not a UID stored on the glyph
   ([event-sheet-thinking.md](../event-sheet-thinking.md), rule 1). [studied]
-- **Arguments in a line.** `StringSub("{0} takes {1} damage", name, n)`
+- **Arguments in a line.** Build the line with
+  `StringSub("{0} takes {1} damage", name, n)`
   ([event-sheet-style.md](../event-sheet-style.md), "UI text"), so a
   translator reorders the arguments by moving `{0}` and `{1}`. [manual:
   system-reference/system-expressions.md "StringSub"]
@@ -145,14 +146,14 @@ language with a `locale` key and a `strings` object. Load each with the
 plugin's *Load from JSON*, the string taken from `AJAX.LastData`, then *Set
 locale* and read `Lookup(path)`, where a dot steps into a nested object.
 The plugin also formats numbers and plurals for the locale. The examples'
-simpler form is an Array project file with one row per language and one
-column per string, read as `Strings.At(language, index)` when the language
-changes. A hand-written JSON with one root per language and a lookup
-function that returns the key when *Has key* fails works too, and then a
-missing translation shows its key on screen, where a tester sees it. In
-that JSON, a key with a dot in it must be escaped in the path ([pitfalls:
-Expressions](../pitfalls/expressions.md)); keys without dots avoid it. A
-font per language is a Sprite Font per language, its widths in *Spacing
+simpler form is an Array project file with one column per language and one
+row per string, read as `Strings.At(language, index)` when the language
+changes. A hand-written JSON with one root per language also works, read
+through a lookup function that returns the key when *Has key* fails. A
+missing translation then shows its key on screen, where a tester sees it.
+If a key in that JSON holds a dot, escape the dot in the path ([pitfalls:
+Expressions](../pitfalls/expressions.md)); keys without dots need none.
+A font per language is a Sprite Font per language, its widths in *Spacing
 data* ([pitfalls: Rendering](../pitfalls/rendering.md)). [manual:
 plugin-reference/internationalization.md "The translation file", "Looking up
 localized strings"; examples: internationalization, languages-from-json

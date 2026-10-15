@@ -6,8 +6,8 @@ user says their game is too loud, too busy, or that every sound is the
 same. It adds to the Audio plugin's runtime facts in
 [pitfalls: Audio](../pitfalls/audio.md). The rules come from a game
 project with automatic combat, drag-and-drop merging and three music
-stems. It verified them in an r504 preview and an offline mix, 2026-09-30
-to 2026-10-02. Its numbers are starting points, not constants.
+stems. An r504 preview and an offline mix verified them, 2026-09-30 to
+2026-10-02. The numbers are starting points, not constants.
 
 ## One entry for every sound
 
@@ -20,11 +20,11 @@ the sound sheet throughout and the four gameplay sheets in about 130
 lines.
 
 - If every moment plays its own file at once, the entry needs no map.
-  Name the files after the moments and play them with Audio *Play by
-  name*, as the official examples do.
+  Name the files after the moments and play them with Audio
+  *Play (by name)*, as the official examples do.
 - If moments follow different rules, such as at once, on the grid, at most
   once in a gap, or one reward per cell, the entry is a function
-  `cue(name, x, a, b)` that runs *Call mapped function* on map `"cue"`
+  `cue(name, x, a, b)`. It runs *Call mapped function* on map `"cue"`
   with the string `name`, forwarding from index 0. Each rule is one
   function with the same four parameters, so it reads `name` and serves
   every moment mapped to it: one function for the immediate sounds, one
@@ -62,11 +62,11 @@ music. The role decides the rule:
   that cell, or two files start on one sample and their peaks add. Claim
   the cell when its time is first known, as the stage is laid out, not in
   the frame it plays: impacts are queued for their cell before then.
-- Music stems duck only for the Key tier, through a gain effect on the
-  music tags, not *Set volume*, which the stems' fades use. Merge
-  overlapping ducks into one release (the deeper depth, the later
-  release), because *Set effect parameter* cancels the ramp still running.
-  Hits never duck: five a second make the music pulse.
+- Music stems duck only for the Key tier ("Tiers and loudness"), through a
+  gain effect on the music tags, not *Set volume*, which the stems' fades
+  use. Merge overlapping ducks into one release (the deeper depth, the
+  later release), because *Set effect parameter* cancels the ramp still
+  running. Hits never duck: five a second make the music pulse.
 
 ## Immediate or on the grid
 
@@ -124,10 +124,11 @@ with every stem on, set at −30 LUFS in the game.
   also take a random rate ([attack-feel.md](attack-feel.md), "Sounds of an
   attack").
 - Pitched sounds follow the current chord. A scheduled chord reads the
-  chord of its cell and retunes to it; an immediate sound uses the notes
-  of "Immediate or on the grid". A scale that climbs with the level is the
-  cheapest success sound in games, and the game uses a different root
-  each time.
+  chord of its cell and retunes to it; an immediate sound uses only the
+  notes every chord of the progression allows
+  ("Immediate or on the grid"). A scale that climbs with the level is the
+  cheapest success sound in games, and the game uses a different root each
+  time.
 
 ## Bands
 
@@ -173,10 +174,10 @@ with every stem on, set at −30 LUFS in the game.
 ## Memory for several songs
 
 A file in the Sounds folder is held decoded once it loads, as 32-bit
-samples at the audio context's rate. A second takes the rate × 4 bytes × the
-channels: 192 KB in mono at 48 kHz, the rate of the Edge preview measured.
-An 18 s mono stem takes about 3.5 MB, so several songs of several stems
-each, all preloaded, take tens of MB. A file in the Music
+samples at the audio context's rate. One second of sound takes the rate ×
+4 bytes × the channels: 192 KB in mono at 48 kHz, the rate of the Edge
+preview measured. An 18 s mono stem takes about 3.5 MB, so several songs
+of several stems each, all preloaded, take tens of MB. A file in the Music
 folder streams instead, but it cannot be scheduled on the grid
 ([pitfalls: Audio](../pitfalls/audio.md)). To hold only the effects and
 the songs in use:
@@ -191,7 +192,7 @@ the songs in use:
    because an unload stops every instance still playing the file.
 
 A preview can list what is decoded at a moment; see "Reading one value" in
-`Construct3-RAG/skills/construct3-agent-plugin/references/reading-the-runtime.md`.
+[reading-the-runtime.md](../../skills/construct3-agent-plugin/references/reading-the-runtime.md).
 [manual: plugin-reference/audio.md "Preloading sounds", "Categorise audio
 files correctly"; Web Audio spec, AudioBuffer: 32-bit linear PCM;
 pitfalls/audio.md, the decoding entry and the unload entry; observed in a minimal project, r504
@@ -213,14 +214,16 @@ channel at 48 kHz]
      it; impacts no more than one per cell.
 - Preview. The browser runs with `--mute-audio`, so record a sound inside
   the page to hear or measure it; see
-  `Construct3-RAG/skills/construct3-agent-plugin/references/editor-and-preview.md`.
+  [editor-and-preview.md](../../skills/construct3-agent-plugin/references/editor-and-preview.md).
   A debug global that logs the beat at each pass shows the grid keeps
   time: at pass n the beat read `32n − 1.67` within a frame over 62 s.
-- On the device: *Use worker* off for sample-accurate scheduling,
-  `Audio.OutputLatency` read and recorded, resume after five seconds in the
-  background, the first touch before the audio clock runs, the loudness on
-  the speaker and in headphones. Each is a row in the project's own risk
-  table with a pass mark and what to change when it fails.
+- On the device. Each item is a row in the project's own risk table, with
+  a pass mark and what to change when it fails:
+  - *Use worker* set to *No*, for sample-accurate scheduling
+  - `Audio.OutputLatency`, read and recorded
+  - resume after five seconds in the background
+  - the first touch before the audio clock runs
+  - the loudness on the speaker and in headphones
 
 [manual: plugin-reference/audio.md "Schedule next play", "Autoplay
 restrictions", "Tags"; pitfalls/audio.md; observed in a game project, r504
