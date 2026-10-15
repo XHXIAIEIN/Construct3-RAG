@@ -2,7 +2,8 @@
 
 Everything under `data/` is committed and readable without the service.
 `data/c3-schemas/_index.json` records the Construct version, the exported
-locales, and per-addon ACE counts. Treat it as the source of truth.
+locales and the ACE counts of each addon, and is the source of truth for
+them.
 
 ## Contents
 
@@ -43,7 +44,7 @@ data/
     behaviors/**/*.d.ts            behavior instance interfaces
     preview/**/*.d.ts              runtime base interfaces; interfaces/sdk/ for addons
     sdk/**/*.d.ts                  addon SDK interfaces of the editor
-  c3-new-project/                  the editor's empty project, copied by scripts/bootstrap.py
+  c3-new-project/                  the editor's empty project, copied by the skill's new_project.py
   c3-guides/
     constructs-project-format.md   Scirra's guide to the project folder
 ```
@@ -124,7 +125,8 @@ id from an old project can be told from one that never existed:
 Addon keys are the lowercase ids of the index. `current` is the addon's ACE
 of the same kind and English name that is not deprecated and is in the
 schema, when there is exactly one. The editor carries no other link from a
-deprecated ACE to its successor. Text a locale's pack lacks is the English.
+deprecated ACE to its successor. Where a locale's language pack lacks a
+text, the file gives the English one.
 The flags come from the editor: `SetIsDeprecated` in the plugin and behavior
 bundles, `is-deprecated` in `allEffects.json`, `isDeprecated` in
 `allAces.json` (`docs/decisions/deprecated-addons-from-editor.md`).
@@ -160,7 +162,7 @@ Each file describes one addon. Field names match the official CDN.
 | `isInvertible` | conditions | `false` where the editor does not allow invert: `Else`, `Trigger once` and the conditions that only pick, such as `Pick all`, `Pick by comparison`, `Pick nearest/furthest` and `Pick children`. Absent means invertible, unless the condition is a trigger or a loop. |
 | `isCompatibleWithTriggers` | conditions | `false` for `Else`, `Trigger once` and `Every X seconds`, which the editor keeps out of a triggered branch. Absent means compatible. |
 | `isAsync` | actions | `true` for actions that can be awaited. Absent otherwise. |
-| `isDeprecated` | all | `true` for an ACE the editor no longer offers and keeps only so that old projects open, such as System `rgb` and Pin `pin-to-object`. Absent otherwise. `{locale}/_deprecated.json` names the current ACE of the same name, where there is exactly one. |
+| `isDeprecated` | all | `true` for an ACE the editor hides from its dialogs and keeps only so that old projects open, such as System `rgb` and Pin `pin-to-object`. Absent otherwise. `{locale}/_deprecated.json` names the current ACE of the same name, where there is exactly one. |
 | `returnType` | expressions | `number`, `string`, or `any`. |
 | `isVariadicParameters` | expressions | `true` when a call may pass more arguments than `params` lists: `max` and `choose` any number, `random` a second, Array `At` a Y and a Z index, Mouse and Touch `X` and `Y` a layer. Absent means exactly the parameters `params` lists. |
 
@@ -208,26 +210,27 @@ whose info asks for it, so a Text has no `set-default-color` and an Array no
 "commonAces": {"conditions": ["compare-instance-variable", ...], "actions": [...], "expressions": [...]}
 ```
 
-An id missing there is refused by the editor on that plugin. The file has
+The editor refuses an id missing there on that plugin. `_common.json` has
 the same fields as a plugin file, including parameter `type`, combo `items`
 and the editor `category` (`collisions`, `hierarchy`, `instance-variables`
-...); its structure comes from the editor bundle, see
-`docs/dev/data-pipeline.md`.
+...). Its structure comes from the editor bundle
+(`docs/dev/data-pipeline.md`).
 
 `_common.json` also carries the properties every world instance has, which
 the properties bar groups under *Common*: position, size, angle, colour,
-opacity, blend mode, UID and tags. Their text is the properties bar's, and
-each entry's `written` field says where the value is in a project file,
-because the two do not always agree: the bar shows an angle in degrees and
-an opacity from 0 to 100, while a layout file stores `world.angle` in
+opacity, blend mode, UID and tags. Their text is the properties bar's. Each
+entry's `written` field says where the value is in a project file, because
+the bar and the file do not always agree: the bar shows an angle in degrees
+and an opacity from 0 to 100, while a layout file stores `world.angle` in
 radians and keeps the opacity in the fourth component of `world.color`.
-`world.originX` and `world.originY` are in the file as well, the origin
-normalized to the image (0.5 centres it, and a value outside 0 to 1 places
-it outside the image), but they have no properties bar row: the origin is
-set per animation frame in the animations editor. Rows that are not stored
-on the instance are left out; the layer and the Z index are its place in the
-layout, and instance variables, behaviors and effects have blocks of their
-own. See `docs/decisions/common-instance-properties.md`.
+
+A layout file also holds `world.originX` and `world.originY`, the origin
+normalized to the image: 0.5 centres it, and a value outside 0 to 1 places
+it outside the image. They have no properties bar row, because the origin is
+set per animation frame in the animations editor. `_common.json` leaves out
+the properties bar rows that are not stored on the instance: the layer and
+the Z index are the instance's place in the layout, and instance variables,
+behaviors and effects have blocks of their own. See `docs/decisions/common-instance-properties.md`.
 
 ### Worked example
 
@@ -347,10 +350,16 @@ git diff <old-commit> -- data/c3-lang/zh-CN.json
 
 ## Scripting interfaces
 
-`autocomplete-data.json` maps a class name such as `ISpriteInstance` to its
-methods and properties. The matching `.d.ts` file under `c3-ts-defs/` holds
-full signatures and documentation comments. Look up the class first, then
-open the `.d.ts` file for the plugin or behavior directory with the same name.
+`autocomplete-data.json` holds the lists `keywords` and `globals`, and a
+`properties` object that maps a class name such as `ISpriteInstance` to the
+names of its methods and properties. The `.d.ts` file named after the class
+holds the full signatures and documentation comments, in the directory of
+its plugin or behavior:
+`data/c3-ts-defs/plugins/general/sprite/c3runtime/ISpriteInstance.d.ts`.
+Look up the class first, then open its `.d.ts` file.
+`python skills/construct3-agent-plugin/scripts/lookup_script_api.py NAME`
+prints an interface with its members, or a member with its declaration and
+the file and line it is on.
 
 ## Guides
 

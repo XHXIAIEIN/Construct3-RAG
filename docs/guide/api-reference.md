@@ -17,7 +17,7 @@ another port (`docs/guide/quick-start.md`).
 |--------|------|-------------|
 | GET | `/health` | Service status |
 | POST | `/search` | Direct Lookup |
-| GET | `/playground` | Test UI |
+| GET | `/playground` | The playground: a page that sends `/health` and `/search` requests and shows the responses |
 
 ---
 
