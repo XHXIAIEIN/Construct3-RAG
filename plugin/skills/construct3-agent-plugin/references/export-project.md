@@ -10,6 +10,10 @@ stops, or before passing it `--attach`. A lesson from an export goes under
 python scripts/export_project.py --bump
 ```
 
+A project handed over as a `.c3p` is packed by `scripts/pack_project.py`,
+which refuses files that `check_project.py` has not passed as they are.
+`export_project.py` reads no such record: the editor's load is its check.
+
 The script opens the project in the editor of the release that saved it,
 with only the files the editor reads, as `scripts/pack_project.py` packs them.
 The editor exports it to Web (HTML5) as a zip with Offline support,

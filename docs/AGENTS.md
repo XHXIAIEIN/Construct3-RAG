@@ -65,6 +65,7 @@ The project skill and the prompts:
 | `sheet-map.md` | Why `print_sheet.py --map` prints one line per sheet with the layouts that run it and what it defines, how the map is cut to the limit, and why each sheet's block of `--find` ends with the layouts that run it |
 | `checker-editor-load-rules.md` | How the checker learns the editor's load rules, and the editor opener that checks the rest |
 | `fix-loop-cap.md` | Why the checker counts the changes to each finding's place and stops the fix loop after two, and what it keeps in the project to count them |
+| `pack-after-check.md` | Why `pack_project.py` packs a folder project only when the checker's record holds the digest of its files and a problem count of 0, what the digest covers, and what `--unchecked` does |
 | `editor-refusal-report.md` | What the report of a refusal the checker passed holds, what it leaves out, and why the user sends it |
 | `secret-scan.md` | Which strings shaped like a key the checker warns of and the export stops on, and how one meant to be public is marked |
 | `clone-update-check.md` | Why the checker fetches the clone and fails when it is behind its upstream, and how plugin users get updates |

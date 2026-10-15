@@ -1882,15 +1882,32 @@ def test_a_change_elsewhere_and_a_new_finding_count_apart(project):
     assert json.loads((project / ".tmp" / "check-project.json").read_text(encoding="utf-8"))["findings"] == []
 
 
-def test_review_and_the_evals_keep_no_record(project, monkeypatch):
+def test_a_passing_run_keeps_a_record_the_pack_reads(project):
+    """A run with no problem writes the record: the digest of the files and a problem count of 0.
+    pack_project.py reads it (tests/test_skill_pack_project.py)."""
+    record = project / ".tmp" / "check-project.json"
+    record.unlink()
+    code, out = check(project)
+    assert code == 0, out
+    kept = json.loads(record.read_text(encoding="utf-8"))
+    assert kept["problems"] == 0 and kept["findings"] == [] and len(kept["project"]) == 16, kept
+    out = findings(project, misspell("add-to-x"))
+    assert out.splitlines()[-1] == "1 problem(s)", out
+    assert json.loads(record.read_text(encoding="utf-8"))["problems"] == 1
+
+
+def test_review_and_the_evals_leave_the_record_as_it_was(project, monkeypatch):
+    """A --review run, and a run under CONSTRUCT3_RAG_NO_RECORD, leave the fixture's record unchanged."""
+    record = project / ".tmp" / "check-project.json"
+    before = record.read_bytes()
     edit(project, SHEET, misspell("add-to-x"))
     check(project, "--review")
-    assert not (project / ".tmp" / "check-project.json").exists()
+    assert record.read_bytes() == before
     monkeypatch.setenv("CONSTRUCT3_RAG_NO_RECORD", "1")
     for _ in range(2):
         code, out = check(project)
         assert code == 1 and "nothing changed" not in out
-    assert not (project / ".tmp" / "check-project.json").exists()
+    assert record.read_bytes() == before
 
 
 # --- what a web export ships --------------------------------------------------------------------

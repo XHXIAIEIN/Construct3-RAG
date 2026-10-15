@@ -15,12 +15,14 @@ number the editor prints in the margin; print_sheet.py prints that numbering.
 Under --limit the findings that fit are printed and the rest counted; the
 last line, `ok:` or the number of problems, always prints.
 
-Each run keeps its findings in .tmp/check-project.json, so that the next run
-counts the changes to each one: a change to the event, layer or file that a
-finding names, after which the finding is still there. After two changes,
-the last line starts with `stop:`. The agent does not change that place a
-third time, and the finding goes to the user. A run with nothing changed
-counts no change and says so. --review keeps no record.
+Each run keeps its findings in .tmp/check-project.json, with a digest of the
+files it checked and the number of problems, so that the next run counts the
+changes to each finding: a change to the event, layer or file that a finding
+names, after which the finding is still there. After two changes, the last
+line starts with `stop:`. The agent does not change that place a third time,
+and the finding goes to the user. A run with nothing changed counts no change
+and says so. pack_project.py packs a folder project only when the record holds
+the digest of the files now and 0 problems. --review keeps no record.
 
 Exit 0: no errors; warnings do not fail the run. Exit 1: findings, or the
 project or the clone was not found. Exit 2: the run stopped, because a
@@ -43,7 +45,8 @@ from typing import NamedTuple
 import c3project as c3
 import pack_project as pp
 from c3project import (
-    LOWER, NUMBERED, STRING_LITERAL, closest, describe, folder_items, open_command, script_command, shown_path, squash,
+    LOWER, NUMBERED, RECORD, RESOURCE_FOLDERS, STRING_LITERAL, closest, describe, folder_items, open_command,
+    project_digest, script_command, shown_path, squash,
 )
 
 # Names. The editor passes every name through a filter when it opens the
@@ -63,10 +66,6 @@ FUNCTION_RETURN_TYPES = ("none", "number", "string", "any")
 # "Construct's project format" lists them.
 ROOT_FILE_FOLDERS = {"general": "files", "icon": "icons", "sound": "sounds", "music": "music",
                      "video": "videos", "font": "fonts", "script": "scripts"}
-# The folders whose files project.c3proj lists by name, one JSON file each. The editor reads only
-# what the project lists and ignores any other file there; scripts/ is left out of that check,
-# since the editor keeps unlisted TypeScript copies and definitions in it for an external editor.
-RESOURCE_FOLDERS = ("objectTypes", "families", "layouts", "eventSheets", "timelines", "flowcharts")
 UNLISTED_ROOT_FILES = ("general", "icon", "sound", "music", "video", "font")
 # Sound and music are WebM Opus; the editor converts what it imports.
 AUDIO_TYPE = "audio/webm; codecs=opus"
@@ -79,10 +78,9 @@ GENERAL_TYPES = {".css": ("text/css",), ".csv": ("text/csv",), ".glb": ("applica
                  ".ts": ("application/typescript",), ".txt": ("text/plain",), ".wasm": ("application/wasm",),
                  ".xml": ("text/xml",)}
 DESIGN = Path("tools") / "design.json"     # where references/designing-a-game.md writes the design
-# The findings of the last run, kept in the project's .tmp/ so that the fix loop stops after CAP
-# changes that left one finding standing (docs/decisions/fix-loop-cap.md). CONSTRUCT3_RAG_NO_RECORD=1
-# keeps no record, for the evals that run the checker over many projects at once.
-RECORD = "check-project.json"
+# The fix loop stops after CAP changes that left one finding standing. The findings of the last run
+# are c3.RECORD in the project's .tmp/ (docs/decisions/fix-loop-cap.md).
+# CONSTRUCT3_RAG_NO_RECORD=1 keeps no record, for the evals that run the checker over many projects at once.
 CAP = 2
 PLACES = {"sheet": "eventSheets", "layout": "layouts", "object type": "objectTypes", "family": "families"}
 EVENT_PLACE = re.compile(r" event (\d+) \(sid ([^)]*)\)")
@@ -3792,23 +3790,13 @@ def finding_place(p: c3.Project, finding: str) -> dict | None:
             "part": part, "words": plain(message), "digest": digest(own_part(node))}
 
 
-def project_digest(p: c3.Project) -> str:
-    """A digest of project.c3proj and every JSON file of the folders the editor reads."""
-    files = [p.root / "project.c3proj"] + sorted(f for folder in RESOURCE_FOLDERS
-                                                 for f in (p.root / folder).rglob("*.json"))
-    h = hashlib.sha256()
-    for f in files:
-        if f.is_file():
-            h.update(f.relative_to(p.root).as_posix().encode("utf-8") + b"\0" + f.read_bytes())
-    return h.hexdigest()[:16]
-
-
 def fix_loop(p: c3.Project, errors: list[str]) -> tuple[list[str], list[str]]:
     """Count the changes to each finding's place against the record of the last run, and keep the
-    new record. A change counts when the place differs from the last run and the finding is still
-    there. A rerun with nothing changed counts none and says so; a finding fixed, or a new one,
-    starts from none. Returns the notes, and a stop line for each finding that CAP changes left
-    standing. Nothing in the project is undone: which change to keep is the user's call."""
+    new record: the digest of the files, the number of problems and the findings with a place. A
+    change counts when the place differs from the last run and the finding is still there. A rerun
+    with nothing changed counts none and says so; a finding fixed, or a new one, starts from none.
+    Returns the notes, and a stop line for each finding that CAP changes left standing. Nothing in
+    the project is undone: which change to keep is the user's call."""
     record = p.root / pp.SCRATCH / RECORD
     try:
         last = json.loads(record.read_text(encoding="utf-8"))
@@ -3819,7 +3807,7 @@ def fix_loop(p: c3.Project, errors: list[str]) -> tuple[list[str], list[str]]:
     def key(e: dict, by: str) -> tuple:
         return e.get("file"), by, e.get(by), e.get("part"), e.get("words")
     earlier = {key(e, by): e for e in before if isinstance(e, dict) for by in ("sid", "event")}
-    now, entries, seen = project_digest(p), [], set()
+    now, entries, seen = project_digest(p.root), [], set()
     for finding in errors:
         place = finding_place(p, finding)
         if place is None or key(place, "sid") in seen:
@@ -3829,10 +3817,9 @@ def fix_loop(p: c3.Project, errors: list[str]) -> tuple[list[str], list[str]]:
         was = was or earlier.get(key(place, "event"))
         changes = was.get("changes", 0) + (was.get("digest") != place["digest"]) if was else 0
         entries.append({**place, "finding": finding, "changes": changes})
-    if errors or record.exists():
-        pp.ignored_folder(record.parent)
-        record.write_text(json.dumps({"project": now, "findings": entries}, ensure_ascii=False, indent=1),
-                          encoding="utf-8")
+    pp.ignored_folder(record.parent)
+    record.write_text(json.dumps({"project": now, "problems": len(errors), "findings": entries},
+                                 ensure_ascii=False, indent=1), encoding="utf-8")
     generated = (p.root / c3.GENERATOR).is_file()
     notes = []
     if errors and last.get("project") == now:

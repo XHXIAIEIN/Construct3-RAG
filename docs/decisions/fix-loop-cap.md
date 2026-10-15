@@ -48,8 +48,10 @@ Option 3 (`CAP` in `check_project.py`).
   sublayers, or else the whole file. A change counts when that place differs
   from the last run and the finding is still there.
 - Each run writes its findings, place digests and counts to the project's
-  `.tmp/check-project.json`, beside a `.gitignore` of `*`. A finding that is
-  fixed leaves the record, so a new one starts from none.
+  `.tmp/check-project.json`, beside a `.gitignore` of `*`, with a digest of
+  the files it checked and the number of problems. A finding that is fixed
+  leaves the record, so a new one starts from none. `pack_project.py` reads
+  the same record before it packs a folder project (`pack-after-check.md`).
 - After two changes, the last line starts with `stop:`. It forbids a third
   change at the place, names the finding, says that `git diff` shows the
   changes, and gives the finding to the user. Nothing is undone, because

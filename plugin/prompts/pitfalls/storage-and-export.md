@@ -15,6 +15,18 @@ Sources and the rule for adding an entry are in the index,
   `PostBroadcastMessage` delays 3000 ms, `GetCacheNameToUse` keeps the old
   cache while `clients.matchAll()` finds more than one; r503 export,
   2026-09-28]
+- An *On update ready* that reloads the page by itself can reload it in a
+  loop. While another tab of the game is open, the reload starts the old
+  version again, which finds the same update and fires *On update ready*
+  once more. Mark the reload in the URL: set the hash to `updated` with
+  *Set hash*, then *Reload*. In *On start of layout*, a `Browser.Hash` of
+  `#updated` means the page came from that reload, so record it in a
+  variable and clear the hash. When *On update ready* fires with the record
+  set, ask the player to reload instead. [manual:
+  plugin-reference/browser.md "Set hash" (does not reload the page),
+  "Hash" (includes the `#`); derived from the cache rule of the entry
+  above; the guard written so in a game project, r503, 2026-09-28, where
+  the loop was not reproduced]
 - In a project with the Browser object, the browser's own install banner
   never shows. On every page load the Browser object calls
   `preventDefault()` on `beforeinstallprompt` and holds the event for

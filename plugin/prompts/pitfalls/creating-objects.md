@@ -99,15 +99,33 @@ Sources and the rule for adding an entry are in the index,
   *Pick random instance*, *Compare instance variable*, overlap) finds it among
   all instances until the top-level event that created it has ended, or the
   outermost trigger. So a function called after the creating function in the
-  same event does not see the new instances. Create and initialise in one
-  event, pass `UID` to functions, or pick from a later top-level event or
-  trigger. *Wait 0* is not needed and runs a tick later (see [Wait and time
+  same event does not see the new instances. *Pick children*, *Pick parent*
+  and *Pick nth child* are the exception: while the type they pick is not
+  narrowed, they add the instances still waiting to be created, and `Count`
+  counts them. Fix the order in one of these ways:
+  - If the later function acts on the instances that were there before,
+    such as sliding a queue of cards along, call it before the creation.
+  - If it needs values of the new instance, set them in the creating
+    function while the new instance is picked, or pass `UID`.
+  - Otherwise pick from a later top-level event or trigger.
+
+  *Wait 0* is not needed and runs a tick later (see [Wait and time
   scale](wait-and-time-scale.md)). `check_project.py` warns if one list of
   actions creates instances, directly or through a function, and then calls a
   function that picks them by a condition. [Ashley in
   Scirra/Construct-bugs#3554 (2019) and #5178 (2021); runtime: exported
   c3runtime.js r503, `EventSheet.Run` calls `FlushPendingInstances()` after
-  each top-level event, `_ExecuteTrigger` after the outermost trigger]
+  each top-level event, `_ExecuteTrigger` after the outermost trigger;
+  exported c3runtime.js r504, `PickChildren`, `PickParent`, `PickNthChild`
+  and `Count` add `instancesPendingCreateForObjectClass` when the picked
+  type's SOL is select-all, and no other condition in the file reads that
+  list; observed in a game
+  project, r504 preview, 2026-10-05: two enemies created when a third died
+  were not found by the overlap test that restarted the attackers in the
+  same event, so an attacker stopped; observed in a game project, 2026-10-15:
+  calling the function that slides the existing cards before the one that
+  creates the new card cleared both `check_project.py` warnings, and the
+  queue moved as before]
 - When a hierarchy is created, the order of its instances' *On created* is
   not fixed. In one instance's *On created*, the others may not have run
   theirs yet, so code there cannot rely on how the rest of the hierarchy is

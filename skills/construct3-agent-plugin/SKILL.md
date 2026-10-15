@@ -82,7 +82,7 @@ opened once before it is handed over.
 | `scripts/screenshot_sheet.py [SHEET] [--group TITLE]` | A picture of an event sheet or one group of it as the editor shows it, in English, cropped to the sheet with each column as wide as its longest line, for a forum post, a bug report or a doc; into `.build/sheets/` |
 | `scripts/advanced_random.py SEED` | The numbers an Advanced Random object gives after *Update seed* SEED, computed offline as the plugin computes them, for odds and for replaying a run from its seeds; it also imports as a module. `--check` compares them with the plugin's own code run in node: run it after a Construct update before trusting the numbers |
 | `scripts/export_project.py` | Export the project to Web (HTML5) in the editor into `--to`, `--bump` raising its version; a string shaped like a key stops it first. The editor exports for a subscribed account, which the user logs in to: read [references/export-project.md](references/export-project.md) before the first export of a project, when the script stops, or before passing `--attach` |
-| `scripts/pack_project.py` | Save the project as a .c3p or .zip, or a .c3p or .zip as a project folder, with project.c3proj at the root of the archive as the editor needs it and only the files the editor saves; what it leaves out it names. Any project handed over as a file, a bug report's attachment among them, is packed with it, `--open` opens the result once in the editor |
+| `scripts/pack_project.py` | Save the project as a .c3p or .zip, or a .c3p or .zip as a project folder, with project.c3proj at the root of the archive as the editor needs it and only the files the editor saves; what it leaves out it names. Any project handed over as a file, a bug report's attachment among them, is packed with it. The script packs a folder project only after the checker passed its files as they are; `--unchecked` packs them anyway, for a project the user wants as it is. `--open` opens the result once in the editor |
 | `scripts/prepare_art.py` | The art from the image tool of this session: `--list` prints the next step toward the pictures the generator's `art()` asks for, ending in a prompt for each; without it, each picture saved in `art/raw/` is cut out of its background and fitted to its box, for the generator to take in place of the stand-in. Needs Pillow |
 | `scripts/new_project.py FOLDER` | A new game project in an empty FOLDER, copied from the empty project the editor saves for Project > New under the folder's name and its own uniqueId; for a game that has no project yet |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy from the clone and with it the Construct 3 block of the project's `AGENTS.md` and the helpers of its `tools/build_project.py`; `--block-only` and `--helpers-only` refresh one of those alone, for a project that holds no copy |
@@ -294,7 +294,9 @@ not held to this. `--dry-run` does all of that and writes nothing.
 In the hand-over, name the last of these steps that passed: checked,
 reviewed, opened, previewed, played or looked. Then say what that step
 leaves untested. The passing lines from opened on say it; after a check or
-a review, the game has not run.
+a review, the game has not run. A project handed over as a file is packed
+after the last check, because `pack_project.py` refuses files that the
+check has not passed.
 
 `ok:` is about the files, not the game. The checker cannot run the events:
 which instances a condition picks, what order triggers fire in and what a
