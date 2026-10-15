@@ -77,14 +77,15 @@ Option 2 as the default, and option 3 as the step after it.
   refused `Com1`, `Floor`, `self`, `Random`, `true` and `system` with
   `The name Floor is reserved and cannot be used as a name`. Its Create
   new object type dialog refused each with `This name is already taken`.
-  Both took `Ground2`. The finding gives the new name and the message. A variable is not an object: globals named `self` and `Com1`
+  Both took `Ground2`. The finding gives the new name and the message. A
+  variable is not an object: globals named `self` and `Com1`
   opened and previewed in both releases. `Set Com1 to self` read the
   variable `self`, and in an object's own action `self + Self.Width`
   read the variable and then the object. The checker had refused the bare
-  `self` there as `Invalid use of 'self'`; it reads a bare `self` as a
-  variable of that name in scope. No official example or game folder
-  names an object this way, and the sweep changed no output. The probes
-  and what the editor printed are in
+  `self` there as `Invalid use of 'self'`; with a variable of that name in
+  scope, it reads a bare `self` as the variable. No official example or
+  game folder names an object this way, and the sweep changed no output.
+  The probes and what the editor printed are in
   `.local/docs/evidence/skill-evals/construct3-agent-plugin/reserved-names-2026-10-04/`.
 - Text literals were probed on 2026-10-03 in a text and a number parameter:
   an empty parameter stopped the editor with `Empty expression`, an
@@ -128,8 +129,8 @@ Option 2 as the default, and option 3 as the step after it.
   text against those values and warns that the properties are missing,
   since they fit the editor's own font image and a drawn one is mapped cell
   by cell from them. Every Sprite Font instance in the official examples
-  writes all four. An effect action naming
-  an effect its target lacks is in two examples. A preview of a copy with an
+  writes all four. An effect action naming an effect its target lacks is in
+  two examples. A preview of a copy with an
   object effect action and a layout effect action naming a missing effect
   raised no error and ran the action after them. A layer action and a
   family's action accept the effects of the layer in any layout and of the
@@ -142,7 +143,7 @@ Option 2 as the default, and option 3 as the step after it.
   sid opened and previewed, so any other repeated sid is a warning; official
   examples that repeat such a sid open in the editor. Two instances with one
   uid opened too, but the preview showed one of them under another uid: the
-  editor renumbers it, and a hierarchy link or a *Pick by UID* written for
+  editor renumbers it, and a hierarchy link or a *Pick by unique ID* written for
   one may reach the other, so a repeated uid is an error, as a name the
   editor changes silently is.
 - A repeated `imageSpriteId` stops the r504 editor with `id already in
@@ -278,8 +279,8 @@ Option 2 as the default, and option 3 as the step after it.
   wrong one. No official example declares any of these, and the sweep
   changed no finding. The probes and what the editor printed are in
   `.local/docs/evidence/skill-evals/construct3-agent-plugin/case-insensitive-names-2026-10-05/`.
-- Two expression rules were added after a game project met them and minimal
-  projects reproduced them in the r504 editor on 2026-10-02, each beside a
+- Two expression rules come from a game project, and minimal projects
+  reproduced them in the r504 editor on 2026-10-02, each beside a
   corrected copy that opened. A function parameter named like a system
   expression is read as that expression, as a variable is: a parameter
   `round` in `"第 " & round & " 轮"` stopped the editor with `'round' does
@@ -303,10 +304,11 @@ Option 2 as the default, and option 3 as the step after it.
 - The same project's `project.c3proj`, copied from the editor's new project,
   listed `Timeline 1` and `Flowchart 1` without the `timelines/` and
   `flowcharts/` folders; the editor stopped with `missing file path
-  'timelines\Timeline 1.json'`. The checker read the files of object
-  types, families, layouts and sheets but not of these two lists, and
-  refuses a listed timeline or flowchart without its file. The generator
-  template writes neither, so it keeps only the names that have a file.
+  'timelines\Timeline 1.json'`. The checker had read the files of object
+  types, families, layouts and sheets but not of these two lists; it reads
+  them too and refuses a listed timeline or flowchart without its file.
+  The generator template writes neither, so it keeps only the names that
+  have a file.
   None of the 524 official examples has the finding.
 - A sheet of the same project wrote `LocalStorage.ItemValue("best")`; the
   editor stopped with `Incorrect parameters: 'LocalStorage.ItemValue' does
@@ -338,9 +340,11 @@ Option 2 as the default, and option 3 as the step after it.
   stop for a key the editor always writes: that stop is the checker's own
   read failing, and it hides every other finding. The sweep added no
   finding on the examples or the game folders.
-- The next three rules were probed on 2026-10-04 in scratch projects, each
-  beside a copy that opened, in the stable r495.2 editor and in r504. No
-  official example writes any of them.
+
+The three rules below were probed on 2026-10-04 in scratch projects, each
+beside a copy that opened, in the stable r495.2 editor and in r504. No
+official example writes any of them.
+
 - A Sprite frame whose `collisionPoly` held two points, an empty list or an
   odd count of numbers opened. The preview then stopped on the editor's
   crash report, `assertion failure: must have at least three points in a
@@ -350,10 +354,10 @@ Option 2 as the default, and option 3 as the step after it.
   report in two runs, once as its Export dialog opened, and the copy with a
   whole polygon exported. In the headless editor as a guest the same project
   exported, and in a logged-in r504 editor it exported and the report came
-  as the copy closed, so the report does not always stop an export. A frame without
-  `collisionPoly` previewed with the whole image as its polygon. Two points
-  on a Tiled Background's `image` opened and previewed, so the rule covers
-  animation frames.
+  as the copy closed, so the report does not always stop an export. A frame
+  without `collisionPoly` previewed with the whole image as its polygon. Two
+  points on a Tiled Background's `image` opened and previewed, so the rule
+  covers animation frames.
 - An object type or a family whose `instanceVariables`, `behaviorTypes` or
   `effectTypes` was a folder, `{"items": [], "subfolders": []}`, stopped
   the open with `TypeError: ... is not iterable`. The checker names the key
@@ -371,14 +375,14 @@ bytes.
 ### The editor opener
 
 The editor checks what the checker does not, the types of an expression
-among them. `scripts/open_in_editor.py` drops the project on
+among them. The skill's `scripts/open_in_editor.py` drops the project on
 editor.construct.net as a `.c3p` and reads the answer: `opened`, or `failed`
 with the editor's dialogs and the exceptions it logged. `--preview` then
 presses F5, lets the layout run for 5 seconds and prints each uncaught
 exception and console error with its place, `Event sheet 1, event 3,
 action 1`, the numbering `print_sheet.py` uses. `--state` adds what the
-game holds at the end, read through `assets/runtime-probe.js`: global
-variables, instance counts and the instances of the types named.
+game holds at the end, read through the skill's `assets/runtime-probe.js`:
+global variables, instance counts and the instances of the types named.
 
 - Agents come with different browser tools or none, and no Python package
   is on every machine. The script starts the machine's Edge, Chrome or
@@ -395,7 +399,7 @@ variables, instance counts and the instances of the types named.
   notice. `#deprecatedFeaturesDialog` is one: it lists what the editor
   updated or will drop, the legacy Flat export file structure or the
   Normalized Z axis scale, over a project whose title has turned to its
-  name. Over the official examples (2026-10-02, stable r495-2) 56 of 524
+  name. Over the official examples (2026-10-02, stable r495.2) 56 of 524
   were reported `failed` for that dialog alone; they are `opened` with the
   notice as a `warning:` line, and no other result changed. The notice
   is closed so that `--preview` can go on. The title alone does not decide:
@@ -404,8 +408,9 @@ variables, instance counts and the instances of the types named.
   `.local/docs/evidence/skill-evals/construct3-agent-plugin/opened-2026-10-02/`.
 - A project saved by a newer release than the stable editor opens in
   `editor.construct.net/beta`; `--release` pins one.
-- The browser profile lives in `.tmp/editor-browser` of the project, with a
-  `.gitignore` of `*`. With the editor's scripts cached a run takes about 4
+- The browser profile lives in `.tmp/editor-<browser>` of the project, such
+  as `.tmp/editor-msedge`, and `.tmp/` holds a `.gitignore` of `*`.
+  With the editor's scripts cached a run takes about 4
   seconds; cold, 10 to 40. Background features are switched off, so the
   profile holds the editor's cache alone. Past about 177 characters the
   files of its IndexedDB exceed MAX_PATH, so a longer profile path is passed

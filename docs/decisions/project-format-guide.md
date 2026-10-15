@@ -86,7 +86,7 @@ no attempt to pass the check.
 ## Re-evaluate when
 
 - The guide's last-updated date moves: compare it with the table.
-- The weekly fetch gets the page: the refresh from a saved page goes.
+- The weekly fetch gets the page: remove the refresh from a saved page.
 - The browser check also refuses a page saved from a browser: the refresh
   needs another source.
 - The official examples include projects saved by r477 or later: what the
