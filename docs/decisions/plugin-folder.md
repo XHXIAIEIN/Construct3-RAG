@@ -78,7 +78,9 @@ repository, and the result is committed. The marketplace entry's source is
 `plugin-tracks-commits.md` points at `<clone>/plugin`. The directory
 submission's plugin path is the repository root, as its settings page
 shows, and only a new submission can change it; the root's
-`.claude-plugin/marketplace.json` is what names `./plugin` there.
+`.claude-plugin/marketplace.json` is what names `./plugin` there. The
+folder is also published to the plugin's own repository
+(`plugin-repository.md`).
 
 The build:
 

@@ -78,6 +78,10 @@ scripts/init.py -----> ingest/c3_fetcher.py -----> data/
                  \---> scripts/build_plugin.py --> plugin/
 ```
 
+After a push to `main` that changes `plugin/`,
+`.github/workflows/publish-plugin.yml` runs `scripts/publish_plugin.py`,
+which pushes the folder to the plugin's repository, Construct3-Agent-Skills.
+
 Static boundary tests keep `application` and `lookup` from importing
 `ingest`, keep the module graph acyclic, and check that importing the service
 loads no model or vector package.

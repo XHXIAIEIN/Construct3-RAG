@@ -5,25 +5,24 @@
 	"author": {
 		"name": "XHXIAIEIN"
 	},
-	"homepage": "https://github.com/XHXIAIEIN/Construct3-RAG",
-	"repository": "https://github.com/XHXIAIEIN/Construct3-RAG",
+	"homepage": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills",
+	"repository": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills",
+	"documentationUrl": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills#readme",
+	"supportUrl": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills/issues",
 	"license": "MIT",
 	"icon": "./icon.png",
 	"keywords": [
 		"construct3",
-		"construct-3",
+		"construct",
+		"construct3-agent-skills",
 		"gamedev",
-		"game-development",
 		"make-games",
 		"web-games",
-		"html5-games",
 		"low-code",
 		"no-code",
 		"event-sheets",
-		"javascript",
-		"typescript",
 		"2d-games",
 		"3d-games",
-		"project-validation"
+		"agent-skills"
 	]
 }

@@ -49,14 +49,14 @@ In Claude Code, the `construct3` plugin replaces the two commands. Use one or th
 The plugin is the [`plugin/`](plugin/README.md) folder, which `scripts/build_plugin.py` builds from the skill and the data it reads, so the schemas come with it. The scripts run from the plugin's folder. Install the plugin in one of three ways:
 
 - From Claude's directory, for the versions that Anthropic has reviewed. On claude.ai, open **Customize** > **Plugins**. Search for Construct3 and select **Add**. Claude Code downloads the plugin as `construct3@synced` at its next start, if it is signed in to the same account. Each version waits for a review, so this copy can be some commits behind the repository.
-- From this repository, to follow its released versions:
+- From the plugin's own repository, [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills), to follow the released versions. Its `plugin/` is this `plugin/`. A workflow pushes it there after each push to `main` that changes it.
 
   ```bash
-  claude plugin marketplace add XHXIAIEIN/Construct3-RAG
-  claude plugin install construct3@construct3-rag
+  claude plugin marketplace add XHXIAIEIN/Construct3-Agent-Skills
+  claude plugin install construct3@construct3-agent-skills
   ```
 
-  To bring Claude Code's copy up to the version in the repository's `plugin.json`, run `claude plugin update construct3@construct3-rag`. A change to the plugin's skill, data or prompts raises that version. Claude Code updates it on its own only when auto-update is on for the marketplace, and auto-update is off by default for a marketplace that Anthropic does not run. To turn it on, run `/plugin` in a session, open the **Marketplaces** tab, select `construct3-rag`, then select **Enable auto-update**. An update applies from the next session.
+  To bring Claude Code's copy up to the version in that repository's `plugin.json`, run `claude plugin update construct3@construct3-agent-skills`. A change to the plugin's skill, data or prompts raises that version. Claude Code updates it on its own only when auto-update is on for the marketplace, and auto-update is off by default for a marketplace that Anthropic does not run. To turn it on, run `/plugin` in a session, open the **Marketplaces** tab, select `construct3-agent-skills`, then select **Enable auto-update**. An update applies from the next session.
 - From a clone that you have, so that the next session uses what `git pull` fetched: link the clone into Claude Code's skills folder.
   - PowerShell: `New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <the clone>/plugin`
   - Other shells: `ln -s <the clone>/plugin ~/.claude/skills/construct3`
@@ -204,7 +204,7 @@ python scripts/setup.py          # http://localhost:8765/playground
 ```
 AGENTS.md               AI agent entry point
 .claude-plugin/         Claude Code marketplace manifest
-plugin/                 The Claude Code plugin, built by scripts/build_plugin.py
+plugin/                 The Claude Code plugin, built by scripts/build_plugin.py and published to Construct3-Agent-Skills
 .claude/                Claude Code ACE lookup sub-agent and polish workflow
 data/                   Committed reference data, read directly
   c3-schemas/           ACE definitions and effects, one folder per locale

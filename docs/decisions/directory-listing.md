@@ -57,7 +57,12 @@ publishes each version.
 - The directory serves the version a reviewer last published, which can
   be behind main by as long as a review takes. The README says so.
 
+- A second submission, from the plugin's own repository
+  Construct3-Agent-Skills, is planned (`plugin-repository.md`). This
+  listing stays until that one is live.
+
 ## Re-evaluate when
 
 - The portal offers auto-publish for this plugin.
 - Re-validation of `plugin/` still reports a hold (`plugin-folder.md`).
+- The submission from Construct3-Agent-Skills is live: delist this one.

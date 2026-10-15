@@ -261,7 +261,9 @@ there, and the end of the log when a check failed, are added to the pull
 request's body. The workflow enables auto-merge only when the checks passed,
 the report watches no mentioned id and no guide changed, and every other check
 on the pull request passed within 10 minutes; otherwise the pull request waits
-for a person. See `docs/decisions/release-schema-diff.md`.
+for a person. See `docs/decisions/release-schema-diff.md`. Once the merge
+reaches `main`, `.github/workflows/publish-plugin.yml` pushes the rebuilt
+`plugin/` to the plugin's repository (`docs/decisions/plugin-repository.md`).
 
 The workflow fails, and GitHub sends its failure email, when the version
 check cannot read the CDN or the refresh stops; `data/` is then not

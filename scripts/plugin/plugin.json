@@ -1,11 +1,13 @@
 {
 	"name": "construct3",
-	"version": "1.1.0",
+	"version": "1.0.0",
 	"description": "Make Construct 3 games: look up conditions, actions and expressions, read and write event sheets, and check that the project opens in the editor.",
 	"author": { "name": "XHXIAIEIN" },
-	"homepage": "https://github.com/XHXIAIEIN/Construct3-RAG",
-	"repository": "https://github.com/XHXIAIEIN/Construct3-RAG",
+	"homepage": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills",
+	"repository": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills",
+	"documentationUrl": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills#readme",
+	"supportUrl": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills/issues",
 	"license": "MIT",
 	"icon": "./icon.png",
-	"keywords": ["construct3", "construct-3", "gamedev", "game-development", "make-games", "web-games", "html5-games", "low-code", "no-code", "event-sheets", "javascript", "typescript", "2d-games", "3d-games", "project-validation"]
+	"keywords": ["construct3", "construct", "construct3-agent-skills", "gamedev", "make-games", "web-games", "low-code", "no-code", "event-sheets", "2d-games", "3d-games", "agent-skills"]
 }

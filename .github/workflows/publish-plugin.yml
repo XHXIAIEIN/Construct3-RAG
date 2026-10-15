@@ -1,0 +1,42 @@
+name: Publish plugin
+
+# Pushes plugin/ to Construct3-Agent-Skills, the plugin's own repository,
+# after each push to main that changes it. The deploy key of that
+# repository is the secret PLUGIN_DEPLOY_KEY. Why:
+# docs/decisions/plugin-repository.md.
+on:
+  push:
+    branches: [main]
+    paths:
+      - plugin/**
+      - scripts/publish_plugin.py
+      - .github/workflows/publish-plugin.yml
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Clone the plugin repository with its deploy key
+        env:
+          DEPLOY_KEY: ${{ secrets.PLUGIN_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+          git clone --quiet --depth 1 git@github.com:XHXIAIEIN/Construct3-Agent-Skills.git "$RUNNER_TEMP/plugin-repo"
+          git -C "$RUNNER_TEMP/plugin-repo" config user.name 'github-actions[bot]'
+          git -C "$RUNNER_TEMP/plugin-repo" config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Publish
+        run: python scripts/publish_plugin.py --clone "$RUNNER_TEMP/plugin-repo"
