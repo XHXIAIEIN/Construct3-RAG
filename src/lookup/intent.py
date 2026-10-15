@@ -67,54 +67,49 @@ def expand_cjk_tokens(tokens: Iterable[str]) -> set[str]:
 
 
 class IntentClassifier:
-    """
-    Deterministic rule and schema-name classifier.
-    """
+    """Deterministic rule and schema-name classifier."""
 
-    def __init__(
-        self,
-        schema_index: SchemaIndex,
-    ):
+    def __init__(self, schema_index: SchemaIndex) -> None:
         self.schema = schema_index
 
     def classify(self, query: str) -> LookupIntent | None:
+        """Classify a query by explicit grammar and the schema's names.
+
+        ``None`` and a ``declined`` intent decline: the query asks for a
+        reading of the manual or the examples, which is the caller's job, not
+        a lookup. A ``declined`` intent keeps the entity it recognised.
         """
-        Classify a query using explicit grammar and versioned schema names.
-        Returns LookupIntent if matched. None, or the ``declined`` intent,
-        declines: the query asks for a reading of the manual or the examples,
-        which is the caller's, not for a lookup. A ``declined`` intent keeps
-        the entity it recognised.
-        """
-        # Explicit translation is checked before conceptual blockers because
-        # valid phrases such as "数组英文是什么" contain "是什么".
+        # Translation before the decline markers
+        # A valid phrase such as "数组英文是什么" holds "是什么".
         intent = self._detect_translation(query)
         if intent:
             logger.info("[Lookup] explicit translation hit")
             return intent
 
-        # Exact list/detail grammar is also authoritative even when the ACE
-        # wording includes "参数是什么".
+        # List and detail grammar before the decline markers
+        # ACE wording such as "参数是什么" holds a marker.
         intent = self._rule_based(query)
         if intent:
-            logger.info(f"[Lookup] rule hit: {intent.intent_type} plugin={intent.plugin_id}")
+            logger.info("[Lookup] rule hit: %s plugin=%s", intent.intent_type, intent.plugin_id)
             return intent
 
         if self._declines(query):
             return None
 
-        # Example-find detection
         intent = self._detect_example_find(query)
         if intent:
-            logger.info(f"[Lookup] example_find hit: tags={intent.matched_tags}")
+            logger.info("[Lookup] example_find hit: tags=%s", intent.matched_tags)
             return intent
 
-        # Keyword inference (plugin + topic → ace_search)
+        # Entity plus topic: ACE search
         intent = self._keyword_infer(query)
         if intent:
             if intent.intent_type != "declined":
                 logger.info(
-                    f"[Lookup] topic hit: ace_search plugin={intent.plugin_id} "
-                    f"ace_type={intent.ace_type} filter={intent.filter_term}"
+                    "[Lookup] topic hit: ace_search plugin=%s ace_type=%s filter=%s",
+                    intent.plugin_id,
+                    intent.ace_type,
+                    intent.filter_term,
                 )
             return intent
 
@@ -172,8 +167,6 @@ class IntentClassifier:
                 )
         return None
 
-    # -- Example-find detection -------------------------------------------
-
     def _detect_example_find(self, query: str) -> LookupIntent | None:
         """Detect example-seeking queries like '有没有Tween的示例'."""
         q_lower = query.lower()
@@ -195,12 +188,8 @@ class IntentClassifier:
             confidence=0.7 if matched_tags else 0.5,
         )
 
-    # -- Explicit rule grammar --------------------------------------------
-
     def _rule_based(self, query: str) -> LookupIntent | None:
-        """Match query against known regex patterns."""
-
-        # Try list patterns
+        """Match the query against the list and detail grammar."""
         for pat in _LIST_PATTERNS:
             m = pat.search(query)
             if not m:
@@ -222,7 +211,8 @@ class IntentClassifier:
                     confidence=0.95,
                 )
 
-        # Try detail patterns (last, as they're most greedy)
+        # Detail patterns last
+        # They are the most greedy.
         for pat in _DETAIL_PATTERNS:
             m = pat.search(query)
             if not m:
@@ -243,8 +233,6 @@ class IntentClassifier:
 
         return None
 
-    # -- Exact entity plus topic inference --------------------------------
-
     def _keyword_infer(self, query: str) -> LookupIntent | None:
         """Infer a narrow ACE search from an exact entity span plus topic."""
         entity = self.schema.find_name_in_query(query)
@@ -252,8 +240,8 @@ class IntentClassifier:
             return None
         plugin_id, is_behavior, start, end = entity
 
-        # Remove only the matched entity span. This handles compact Chinese
-        # forms such as "数组排序" while preserving the topic "排序".
+        # Cut out only the entity span, then the role words
+        # Compact Chinese such as "数组排序" keeps its topic "排序".
         remainder = f"{query[:start]} {query[end:]}"
         remainder = re.sub(
             ENTITY_ROLE_TOKEN_PATTERN_ZH_EN,
@@ -262,8 +250,8 @@ class IntentClassifier:
             flags=re.IGNORECASE,
         )
 
-        # Tokenize topic — split on particles, then on the CJK ↔ ASCII
-        # boundary: "Sprite字体" → ["Sprite", "字体"].
+        # Split on particles, then between CJK and ASCII: "Sprite字体" gives
+        # "Sprite" and "字体"
         remaining_tokens = [
             part
             for token in re.split(QUERY_PARTICLE_SPLIT_PATTERN_ZH, remainder)
@@ -272,25 +260,26 @@ class IntentClassifier:
             if part
         ]
 
-        # Ambiguity check: if plugin name is a common English word and
-        # remaining tokens are all generic, skip lookup (e.g. "custom action")
+        # A plugin name that is a common English word, with only generic
+        # words beside it, as in "custom action": no lookup
         if plugin_id in AMBIGUOUS_PLUGIN_IDS_EN:
             remaining_lower = {t.lower() for t in remaining_tokens}
             if remaining_lower and remaining_lower <= GENERIC_QUERY_WORDS_EN:
                 return None
 
-        # Count meaningful tokens to detect complex multi-concept queries.
-        # Skip words and single-char noise are filtered out.
+        # Topic words, what the ACE names must hold
+        # Question words and single characters such as 让 are the phrasing.
         useful_tokens = [
             t
             for t in remaining_tokens
             if t.lower() not in _HOWTO_NOISE_LOWER and len(t) > 1
         ]
+        # More than three topic words: a multi-concept question
         if len(useful_tokens) > 3:
-            return None  # complex multi-concept query: decline
+            return None
 
+        # Bare entity name such as "Sprite": every ACE list
         if not useful_tokens:
-            # Bare plugin name (e.g. "Sprite") → return ace_list for all types
             return LookupIntent(
                 intent_type="ace_list",
                 plugin_id=plugin_id,
@@ -299,8 +288,6 @@ class IntentClassifier:
                 tier=1,
                 confidence=0.90,
             )
-        # The topic is what the ACE names must hold: question words and
-        # single characters such as 让 are the phrasing, not the topic.
         filter_term = " ".join(useful_tokens)
 
         compact_topic = re.sub(r"\s+", "", filter_term).lower()
@@ -313,7 +300,7 @@ class IntentClassifier:
                 confidence=0.90,
             )
 
-        # Infer ACE types from the topic tokens (narrow search if possible)
+        # The ACE types the topic names, else all of them
         ace_types = _infer_ace_types(expand_cjk_tokens(remaining_tokens)) or list(
             SCHEMA_ACE_TYPES
         )
