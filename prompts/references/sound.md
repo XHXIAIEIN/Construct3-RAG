@@ -159,9 +159,12 @@ with every stem on, set at −30 LUFS in the game.
   Instruments*), clicks above 1.5 kHz and attacks under 3 ms. A hard look
   inverts the choices.
 - Normalise each file to its tier's loudness, limit the peak to the
-  ceiling, then encode WebM Opus: 96 kbps stereo for effects and the stereo
-  stem, 64 kbps mono for the rest. A file encoded to an exact length
-  decodes to that length at 48 kHz in Chrome.
+  ceiling, then encode WebM Opus (ffmpeg `libopus`): 96 kbps stereo for
+  effects and the stereo stem, 64 kbps mono for the rest. Chrome decodes a
+  file encoded to an exact length to that length at 48 kHz and to one
+  sample less at 44.1 kHz, with the encoder's pre-skip removed. Music
+  rescheduled on the grid, as the next item says, does not depend on that
+  length. [observed with a test page, Chrome 155, 2026-09-30]
 - Music is one pass plus the reverb tail, rescheduled on the grid each
   pass rather than looped, so a stem can join on a bar. Render each note
   on its own and add it at an integer sample. Process the whole stem only
@@ -195,9 +198,10 @@ A preview can list what is decoded at a moment; see "Reading one value" in
 [reading-the-runtime.md](../../skills/construct3-agent-plugin/references/reading-the-runtime.md).
 [manual: plugin-reference/audio.md "Preloading sounds", "Categorise audio
 files correctly"; Web Audio spec, AudioBuffer: 32-bit linear PCM;
-pitfalls/audio.md, the decoding entry and the unload entry; observed in a minimal project, r504
-preview in Edge, 2026-10-05: a mono file of the Sounds folder decoded to one
-channel at 48 kHz]
+pitfalls/audio.md, the unload entry; observed in Edge 155, 2026-10-02: a
+64 kb/s mono stem decoded to 1 channel of 998,400 samples; observed in a
+minimal project, r504 preview in Edge, 2026-10-05: a mono file of the
+Sounds folder decoded to one channel at 48 kHz]
 
 ## Checking
 

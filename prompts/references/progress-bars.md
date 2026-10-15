@@ -154,6 +154,21 @@ and 2000 for 3000; the Drawing Canvas drew 2 and 29 ticks for 300 and 3000]
 | A gauge with a needle | A needle Sprite, *Set angle* from the value | One object, one angle | rally-drifting `SpeedometerPointer` |
 | A ring or arc that fills | A frame strip, one frame per step, its animation frame set from the value. For any fraction, a mesh on a ring texture: *Set mesh size*, then *Set mesh point* for the outer and inner points along the arc (`plugins/_common.json`). Or two half-ring Sprites rotated behind a cover | The frame strip is the cheapest; the mesh shows any fraction | None drives one. The examples use blend-mode masks (*Destination out* holes) for light and darkness, not for bars |
 
+A 9-patch whose border colour differs from its inside shows a seam where a
+far-stretched middle meets the border. With the default, bilinear,
+sampling, the last half texel of the stretched middle blends with the
+border's texel. So the band next to the border takes some of its colour,
+and a 1 px line of another tone runs along the inside edge. Give such a
+9-patch *Nearest* sampling, or build a flat bar from a flat Tiled
+Background frame with a flat Tiled Background inside it. [manual:
+project-primitives/objects/instances.md "Sampling",
+project-primitives/projects.md "Sampling"; observed in a minimal project,
+stable editor preview, 2026-10-07: a 16 × 16 image with a 2 px dark border
+and a grey inside, stretched to 448 × 32, darkened from 90 to 63 over the
+last 17 px beside the right border, and a 1 px lighter line ran along the
+top inside edge; two flat Tiled Backgrounds in its place kept the row at 90
+up to the border; *Nearest* was not played]
+
 ## A bar on each of many objects
 
 Each enemy or player with its own bar needs the bar to follow its object and

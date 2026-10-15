@@ -32,6 +32,15 @@ inline, in both arms. Tokens were 1 to 6 % lower in every cell, within the
 spread of two runs. Runs and grading:
 `.local/docs/evidence/prompt-trim-2026-09-29/`.
 
+The mechanics behind a Native first row move the same way, and the row
+keeps the built-ins and a link. With the menu row's navigation in
+`references/menus.md` and the stacked-items row cut to what
+`pitfalls/timer.md` does not hold, Haiku runs scored the same as runs on
+the guide before the cut. The tasks were a key-driven menu, a stacked-shield
+design and the trigger-in-function task. Every menu run on the cut guide
+opened `menus.md`, every shield run opened `timer.md`, and no run put a
+trigger inside a function. Runs and grading: `.local/docs/evidence/prompt-cut-2026-10-15/`.
+
 ## Options
 
 1. Keep both files whole. Every design task reads 35 KB.
@@ -56,9 +65,10 @@ read-when line, so step 3 of "Before proposing a structure" and the readers
 in the skill and the root `AGENTS.md` still find them.
 
 A Native first row names the built-in and what to write. A row whose
-examples need more than that links to the file that holds them
-(`prompts/references/progress-bars.md`, `prompts/pitfalls/input.md`), so
-the table grows by rows, not by the examples behind them.
+examples or mechanics need more than that links to the file that holds them
+(`prompts/references/progress-bars.md`, `prompts/pitfalls/input.md`, and
+`prompts/references/menus.md` for how a menu's cursor moves), so the table
+grows by rows, not by what lies behind them.
 
 ## Re-evaluate when
 
@@ -66,6 +76,7 @@ the table grows by rows, not by the examples behind them.
   it without opening `new-project.md`: reword the read-when line, then bring
   the part it missed back inline.
 - A task names one of the effects and the run skips `feel.md`: the same.
-- `event-sheet-thinking.md` grows back to about 20 KB, or
-  `event-sheet-style.md` to 15 KB: look for the next section whose reader is
-  a visible kind of task.
+- `event-sheet-thinking.md` passes about 28 KB, or `event-sheet-style.md`
+  15 KB: look for the next section whose reader is a visible kind of task.
+  What keeps the guide above 20 KB is Native first, the smell table and the
+  rules, which every design task reads while it drafts.

@@ -30,7 +30,7 @@ project.
 | `prompts/event-sheet-pitfalls.md` | Runtime facts intuition gets wrong: every pitfall as a one-line conclusion, with its fix, under a when-to-read line |
 | `prompts/pitfalls/` | One file per topic of the index, each pitfall with its cases and its source |
 | `prompts/event-sheet-style.md` | How the official examples organise, name and comment a sheet |
-| `prompts/references/` | Material needed only sometimes, each named by the task that needs it: a new project's sheets, layers, objects and look; feel, and an attack's timing, animation and hit effects; the slot case, native and as a program; hand-editing project JSON; bars and life counters; sounds and placeholder audio; sequences and dialogue run from a data file |
+| `prompts/references/` | Material needed only sometimes, each named by the task that needs it: a new project's sheets, layers, objects and look; feel, and an attack's timing, animation and hit effects; the slot case, native and as a program; hand-editing project JSON; bars and life counters; sounds and placeholder audio; sequences and dialogue run from a data file; menus steered by keys or a gamepad |
 
 `AGENTS.md` section 3 is the SOP. In a game project, the block of
 `skills/construct3-agent-plugin/assets/game-project-block.md` sends the

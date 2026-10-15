@@ -23,25 +23,25 @@ children, overlap and collision tests, or sub-events that rely on the
 parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 
 - An instance with collisions disabled fails every overlap and collision test, both ways. Use this for a dragged or tweening instance, not an `isMoving` flag.
-- A Solid blocks while its behavior is enabled, so a door that only plays an open animation keeps blocking. Disable its Solid with *Set enabled*, or destroy it.
-- A Solid stops a Platform object at its edge, so *Is overlapping* stays false against a wall or on the floor. Test touching with *Is overlapping at offset*, 1 pixel towards the Solid; *On collision* still fires.
-- Bullet *Bounce off object* moves the ball out at once, so a later *On collision* with the same object in that tick does not run. Put the feedback events above the bounce.
+- A Solid blocks while enabled, so a door that only plays an open animation keeps blocking. Disable its Solid with *Set enabled*, or destroy it.
+- A Solid stops a Platform object at its edge, so *Is overlapping* stays false. Test touching with *Is overlapping at offset* 1 pixel towards the Solid; *On collision* still fires.
+- Bullet *Bounce off object* moves the ball out at once, so a later *On collision* with that object in the tick does not run. Put feedback events above the bounce.
 - The slot a dragged or tweening instance will land on reads empty until it lands. An event that fills empty slots on its own waits for it.
 - A type and its family are picked separately, so narrowing `Piece` never narrows `Pieces`. Refer to the name the caller narrowed.
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
 - Picking a family never picks a type's container. Pick the type from the family in a sub-event, `Enemy: Pick by unique ID Enemies.UID`, one per member type.
-- An expression that names another member of a container reads the member of the same instance, in an action and in a condition. A custom action called with a parameter of such an expression needs *For each* first, so each instance passes its own value.
-- *Pick children* picks only among the child type's current picks, which its container may have narrowed. Give the child type a family of its own with the one member and pick through it.
+- An expression that names another member of a container reads the same instance's member. A custom action given such an expression as a parameter needs *For each* first, so each instance passes its own value.
+- *Pick children* picks only among the child type's current picks, which a container may have narrowed. Pick through a family whose one member is the child type.
 - *Pick parent* with *Own* looks one level up only. A grandparent needs *All*, or the event silently picks nothing.
 - A Dictionary or JSON in a container gives each instance its own copy. Use it instead of a growing list of instance variables.
 - Sub-events run after the parent's actions, so their conditions see what those actions changed.
-- A hierarchy child can be on another layer than its parent and stay its child. So a lifted parent can be drawn above everything while its parts stay under an outline.
+- A hierarchy child can be on another layer than its parent, so a lifted parent can be drawn above everything while its parts stay under an outline.
 - `ChildCount`, *Compare child count* and *Has children* count children of every type. Count one type with *Pick children* plus `PickedCount`.
 - A destroyed instance still counts in `Count` until the top-level event ends. Test "none left" in a top-level event of its own.
 - A pick of no instance stops its event, *Pick all* included, so `PickedCount = 0` never holds below a pick of that type. Test "none left" with `Count = 0` in an event that does not pick the type.
 - A destroyed child still counts as a child until the top-level event ends. Count from a later top-level event or with *Pick children* plus `PickedCount`.
-- Turret *Add object to target* takes the whole type or family, whatever the event picked. To target only some instances, leave it out and run *Acquire target* on one picked instance.
-- A condition holds when one instance passes it, and the next tests only those kept. So `Row = 0` then `Column = 0` then `Column = 1` never holds, and `Value ≠ 0` means any, not all. Narrow once and compare `PickedCount`.
+- Turret *Add object to target* takes the whole type or family, whatever is picked. To target some instances, leave it out and run *Acquire target* on one picked instance.
+- Each condition keeps only the instances that pass it, so `Column = 0` then `Column = 1` never holds, and `Value ≠ 0` means any, not all. Narrow once and compare `PickedCount`.
 
 ### Triggers and Else
 
@@ -54,13 +54,13 @@ variable that flips, read
 - The editor treats *On collision with another object*, Timer *On timer* and the Gamepad button conditions as triggers, with every rule above, but the runtime tests them in sheet order.
 - A trigger, a loop, *Else*, *Trigger once* and the conditions that only pick cannot be inverted. For "not on collision", invert *Is overlapping*.
 - *Trigger once* and *Every X seconds* do nothing useful under a trigger, and the editor does not offer them there.
-- An event runs every tick unless a trigger, *Every X seconds* or *Trigger once* is in it or above it, so a variable it flips with *Toggle* or `3 - x` changes on every tick. Flip it in the event whose trigger causes the change, or in a sub-event of it, such as a pause flag in *On key pressed*; a timeout flips it in the event that tests the time left and sets the time back there; *Trigger once* flips it once when the conditions turn true, not once per input.
+- An event runs every tick unless a trigger, *Every X seconds* or *Trigger once* is in it or above it, so a variable it flips with *Toggle* or `3 - x` flips every tick. Flip it under the trigger that causes the change, such as a pause flag in *On key pressed*; a timeout flips it where the time left is tested, and sets the time back there. *Trigger once* flips once each time the conditions turn true, not once per input.
 - Events with the same trigger run in order on one input, so a switch written as two of them ("frame 0: set 1", "frame 1: set 0") sets itself back. Write one event with the trigger and the cases as sub-events, the second starting with *Else*.
 - A trigger can fire with several instances picked, Timer *On timer* included. If a *Pick nearest* or a function call is written for one, add *For each* after the trigger.
 - Else is decided per block, not per instance. Branch per instance with a second event and the inverted condition, or override a default.
 - Else does not narrow. It cannot directly follow a trigger block, only a normal sub-event inside one.
 - Touch *On tap* skips a tap within 666 ms and 25 px of the one before it, which fires *On double-tap*. A button that counts every press uses *On touched object* (start).
-- One tap fires *On any touch start*, then *On touched object*, then *On tap* at the release, whatever the sheet's order. A restart on *On tap*, or on *On touched object* in a later event, fires on the tap that ends the game, so make it test a value that the end sets after a *Wait*.
+- One tap fires *On any touch start*, *On touched object*, then *On tap* at the release, whatever the sheet's order. So a restart on *On tap*, or on *On touched object* in a later event, fires on the tap that ends the game: make it test a value the end sets after a *Wait*.
 
 ### Functions
 
@@ -73,7 +73,7 @@ If the events define or call a function or a custom action, read
 - With *Copy picked*, type and family picks are copied separately. Logic on the caller's picks is a custom action.
 - A custom action runs once with all the caller's picks, and a System condition in it reads the first. If it decides per instance, put *For each* first.
 - Parameters are bare identifiers in expressions: `OffsetX`, not `Functions.OffsetX`.
-- If a parameter and a variable of its function's group have names that differ only in case, the editor renames the one that comes later in the sheet. A parameter after the variable is renamed, so the function reads the variable. Name them apart by more than case (`launchSpeed` beside `SPEED`).
+- If a parameter and a variable of the function's group differ only in case, the editor renames the later one, and a renamed parameter leaves the function reading the variable. Name them apart by more than case (`launchSpeed` beside `SPEED`).
 - If two functions, or two custom actions of one object, have names that differ only in case, the editor renames the second, and every call runs the first. Name them apart by more than case.
 - A function without parameters is called without parentheses: `Functions.name`, not `Functions.name()`.
 - The deprecated Function plugin's call by a string is a function map in built-in functions: *Map function to string*, then *Call mapped function* with the string, or `Functions.CallMapped` for a value.
@@ -88,7 +88,7 @@ If the events use the Timer behavior, read [pitfalls/timer.md](pitfalls/timer.md
 - A timer is state you start and stop, so list every transition before choosing it.
 - A timer and a tween scheduled to end together end a tick apart.
 - A *Once* timer still counts as running for the rest of the tick its *On timer* fires. If an event below branches on *Is timer running* for that tag, write *Stop timer* first in the *On timer*.
-- One instance cannot time stacked buffs of one kind with Timer tags: no expression names the tag that fired, and a re-cast restarts the tag. Make each shield or buff an instance with its own Timer and amount, a child of its holder; spend them with *Pick children* and *For each (ordered)* by the time left.
+- Timer tags cannot time stacked buffs of one kind on one instance: no expression names the tag that fired, and a re-cast restarts the tag. Make each shield or buff an instance with its own Timer and amount, a child of its holder; spend them with *Pick children* and *For each (ordered)* by the time left.
 
 ### Wait and time scale
 
@@ -105,24 +105,25 @@ group turned off to pause, read
 - Deactivating a group stops its events, not its behaviors, timers or tweens, so it does not pause.
 - *Set time scale* 0 stops animations too. To keep one playing through a pause (an ultimate, a cutscene), *Set object time scale* 1 on it, and restore both in the Sprite's *On finished*.
 - A hit stop is *Set time scale* 0.1, *Wait*, *Set time scale* 1. A smooth ramp is a value tween.
-- Of two overlapping *Wait* hit stops, the shorter ends both. Count the stops under way, and restore the time scale when the count is back to 0. A `wallclocktime` deadline runs on another clock than the *Wait* and leaves the game slowed.
+- Of two overlapping *Wait* hit stops, the shorter ends both. Count the stops under way and restore the time scale when the count is back to 0, not at a `wallclocktime` deadline, which runs on another clock and leaves the game slowed.
 - A hit stop slows tweens and `dt` too. If a tween must end on an audio beat, set its object's time scale to 1 and restore it in *On finished*. If a blend must keep real time, use `dt / timescale`.
 - Scroll To *Shake* replaces the running shake and is scaled by the object's time scale. Call it only if the new magnitude is not smaller than the remaining one. To shake through a hit stop, set the camera object's time scale to 1.
 
 ### Expressions
 
-If you write expressions or name and place variables, read
-[pitfalls/expressions.md](pitfalls/expressions.md).
+If you write expressions, name and place variables, or store values in a
+Dictionary or JSON, read [pitfalls/expressions.md](pitfalls/expressions.md).
 
 - `Self` has no object in a System condition or action, and the editor refuses the project.
 - A variable or function parameter named like a system expression (`mid`, `left`, `max`, `round`) is read as the expression.
-- Variable names ignore case. A local hides a global of the same name inside its scope. If two locals share a name and one is in the other's scope, the editor renames the later one (`STEP2`), and every use refers to the other one. Give each variable a name that differs from the others in its scope by more than case.
+- Variable names ignore case, and a local hides a global of the same name inside its scope. Of two locals named alike where one is in the other's scope, the editor renames the later one (`STEP2`), and every use refers to the other. Name each variable apart from the others in its scope by more than case.
 - `lerp(a, b, 0.1)` each tick depends on the framerate. Write `lerp(a, b, 1 - f^dt)`.
 - If the factor comes from the engine, such as a tween's value, `lerp` needs no time of its own.
 - `lerp` and `unlerp` do not clamp.
 - `%` keeps the sign of the left operand, so `-1 % 5` is `-1`.
 - `%` is applied before `*`, so `a * b % c` is `a * (b % c)`. Write `(a * b) % c`.
 - There is no null, and a missing value reads as 0. Ask *Has key* or the size first.
+- Dictionary *Set key* ignores a missing key. Write with *Add key*.
 - JSON `Type(path)` is `"undefined"` for a missing path, so it can test presence inside an expression.
 - *For* counts down when its end is below its start. Before `For 0 to count - 1`, test the count, or start ≤ end.
 - A local variable at sub-event level is visible to its siblings, not to the parent's own actions.
@@ -136,13 +137,13 @@ If the events place, move or rotate objects or read the viewport, read
 
 - The origin (0, 0) is the top-left of the layout and Y grows downwards.
 - Angles are clockwise degrees from 0 facing right. Compare them with `anglediff`, never `<`.
-- `anglelerp` toward an angle that moves reverses its direction of turn, and the result jumps, when that angle passes the opposite of the start. Ease an offset from the moving angle: `aim + anglelerp(startOffset, restOffset, x)`.
+- `anglelerp` toward a moving angle jumps when that angle passes the opposite of the start. Ease an offset from the moving angle instead: `aim + anglelerp(startOffset, restOffset, x)`.
 - A sprite is drawn facing right at angle 0. Paint art facing right.
 - A Bullet's angle of motion and the object's angle are two values. At speed 0 *Set angle of motion* does nothing, and *Set speed* from 0 moves right. Set the speed first, then the angle of motion.
 - The origin is image point 0, at the centre by default, so a sprite at the layout's edge shows half.
 - Tile movement's *Set grid position* takes a column and a row, not pixels. Convert a position with `round((X - offset X) / grid width)`.
 - `ViewportLeft` and the rest take a layer. `LayoutWidth` and `ViewportWidth(layer)` differ.
-- *Scale outer* keeps a parallax-0 HUD centred on the design area. Pin a screen-edge HUD with Anchor. Stretch a backdrop to the screen with Anchor's left and right edges. In a one-screen layout, turn on *Unbounded scrolling* so the game stays centred too.
+- *Scale outer* keeps a parallax-0 HUD centred on the design area. Pin a screen-edge HUD with Anchor, and stretch a backdrop to the screen with Anchor's left and right edges. In a one-screen layout, turn on *Unbounded scrolling* so the game stays centred too.
 - Drag & Drop moves the instance only on pointer moves. Put a trailing or lifted look on a child.
 
 ### Moving toward a target
@@ -150,7 +151,7 @@ If the events place, move or rotate objects or read the viewport, read
 If an object chases, follows or walks to another object, read
 [pitfalls/movement.md](pitfalls/movement.md).
 
-- 8 Direction has no move-toward action and does not avoid walls. Chase with Move To (*Move to object* repeated, since it takes the target's position once) on open ground, Pathfinding (*Find path* every second or so, *Move along path* in *On path found*) around walls.
+- 8 Direction cannot move toward a target or steer around walls. Chase on open ground with Move To, repeating *Move to object*, since it takes the target's position once; around walls with Pathfinding, *Find path* every second or so and *Move along path* in *On path found*.
 - Follow replays the target's path after a delay. Use it for a trailing companion, not a chasing enemy.
 
 ### Input
@@ -164,19 +165,19 @@ behavior, or ask the browser for fullscreen, a permission or a picker, read
 
 - Mouse ignores fingers. Tell a finger drag from a mouse drag by *Mouse button is down* per tick, not in *On drag start*.
 - Touch with *Use mouse input* on fires for clicks too. Detect the input method with it off.
-- In Mouse *On movement*, `Mouse.X`, `Mouse.Y`, `Touch.X` and `Touch.Y` hold the previous pointer event's position. Follow or aim at the pointer in an *Every tick* event, or for a finger in an *Is in touch* event.
+- In Mouse *On movement*, `Mouse.X`, `Mouse.Y`, `Touch.X` and `Touch.Y` hold the previous pointer event's position. Follow or aim at the pointer in *Every tick*, or in *Is in touch* for a finger.
 - Touch and Mouse press an object that is invisible or has collisions disabled. Add *Is visible* to the event or set its layer not interactive.
-- Touch and Mouse pick every overlapping instance under the pointer. Add the button's *Pick top/bottom* (top) as a second condition of the trigger's event so only the front button reacts; a family for buttons of several types.
-- Drag & Drop drags the front instance under the pointer, by layer and then Z, visible or not. Stop drags under a popup with *Set layer interactive* on the pieces' layer or *Set enabled* on the behavior.
-- Touch speed reads 0 once the finger has been still for about 50 ms, and the release adds no move. So a flick tested in *On any touch end* passes only for a release made in motion.
+- Touch and Mouse pick every instance under the pointer. Add the button's *Pick top/bottom* (top) to the trigger's event, through a family for buttons of several types.
+- Drag & Drop drags the front instance under the pointer, by layer and then Z, visible or not. Stop drags under a popup with *Set layer interactive* on the pieces' layer or the behavior's *Set enabled*.
+- Touch speed reads 0 after about 50 ms without a move, so a flick tested in *On any touch end* passes only for a release made in motion.
 - *Simulate control* acts only in the tick it runs. Put it in an event whose condition stays true while the control is held: *Key is down*, not *On key pressed*.
-- Platform's *Simulate control* Jump does nothing in the air with *Double jump* off. Jump from the air, as in coyote time, with *Set vector Y* to `-Self.Platform.JumpStrength`. *On jump* does not fire for it, so run there what *On jump* would run.
-- Every instance with *Default controls* on moves with the arrow keys. Turn it off on each instance the player does not steer, such as a pushed crate, and move it with *Simulate control*.
+- Platform's *Simulate control* Jump does nothing in the air with *Double jump* off. Jump from the air, as in coyote time, with *Set vector Y* to `-Self.Platform.JumpStrength`, and run there what *On jump* would run, since it does not fire.
+- Every instance with *Default controls* on moves with the arrow keys. Turn it off on each one the player does not steer, such as a pushed crate, and move that with *Simulate control*.
 - W, A, S and D alone do not fit an AZERTY keyboard. Give each direction its arrow key too.
-- Until the player touches, clicks or presses a key, the browser refuses *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests whose manual page asks for a user input trigger. Put them in an *On tap*, *On click* or *On key pressed* event.
+- Put *Request fullscreen*, *Request permission*, *Request wake lock* and the other requests that need a user input trigger in an *On tap*, *On click* or *On key pressed* event, or the browser refuses them.
 - Keyboard and Gamepad are separate conditions. Write both into one input object with a value per control and its last-tick copy, and read a press as `confirm > lastConfirm`.
-- A tap anywhere on the screen is *On any touch start* with no object. *On touched* an invisible Sprite as the tap area misses every tap outside its box.
-- Under *Scale outer* a dim sized to the design area leaves strips uncovered, and a tap on them misses *On touched* the dim. Size the cover 8000×8000 and close on *On any touch start* with *NOT Is touching* the panel and its buttons.
+- A tap anywhere on the screen is *On any touch start* with no object. An invisible Sprite as the tap area misses taps outside its box.
+- Under *Scale outer* a dim sized to the design area leaves strips where a tap misses it. Size the cover 8000×8000, and close on *On any touch start* with *NOT Is touching* the panel and its buttons.
 
 ### Audio
 
@@ -200,10 +201,8 @@ files, read
 - *Fade volume* also reaches instances scheduled but not started, so fading a one-off tag to -100 dB cancels a play scheduled ahead.
 - On resume every suspended sound restarts at once. Run *Stop all* in *On resumed* and restart the schedule.
 - Stereo pan mixes a stereo sound's channels, +2.3 dB at ±20. Narrow the pan of loud sounds and keep them off each other's grid point.
-- Dictionary *Set key* ignores a missing key. Write with *Add key*.
 - *Play by name* looks a sound up by its folder path, `Board/spawn`. Keep sounds played by computed names out of folders.
 - A sound is heard `OutputLatency` after its scheduled time.
-- A WebM Opus file encoded to an exact length decodes to that length at 48 kHz in Chrome, and a mono file to one channel.
 
 ### Animation
 
@@ -212,7 +211,7 @@ If the events use image points, animations or frames, read
 
 - Image point 0 is the origin. The first point added is 1, and `ImagePointCount` leaves out the origin.
 - *Set animation* to the animation already playing does nothing.
-- A 3D model's *Set progress* does nothing while the clip plays or is paused, and in r505 *Play* of a playing clip leaves it where it is; stop the clip first to start it again. After *Play* switches clips, *Stop* and `stop()` leave the first clip playing. *Play* cuts in one tick unless its *Transition duration* (r505) is set, and a clip cannot cross over into itself, so blended repeats take turns between two copies.
+- A 3D model's *Set progress* does nothing while the clip plays or is paused, and in r505 *Play* of the playing clip leaves it where it is: *Stop* it first to restart it. After *Play* switches clips, *Stop* and `stop()` leave the first one playing. *Play* cuts in one tick unless *Transition duration* (r505) is set, and a clip cannot cross into itself, so blended repeats alternate two copies.
 - Frames used as looks rather than as an animation need the animation's *Speed* at 0.
 - *Set frame* to a frame of another image size resizes the instance and swaps its collision polygon.
 
@@ -227,7 +226,6 @@ polygons or blend modes, or drop a dragged object onto another, read
 - *Set width* stretches a Sprite, repeats a Tiled Background and stretches a 9-patch's middle.
 - A Tiled Background's or 9-patch's image scale is a percentage in events and a fraction in the layout file, so multiply the fraction by 100. A growing Y offset moves the image down, so scroll upward with a falling offset. A 9-patch pops as one piece only if its image scale changes with its size.
 - A bar grows from its origin. Put the origin on the edge it grows from.
-- A 9-patch stretched far, with a border colour unlike its inside, blends the border into the middle at the seam. Give it *Nearest* sampling, or build flat art from two flat Tiled Backgrounds.
 - Drawing Canvas *Fill polygon* with *Convex* off draws nothing when two consecutive points coincide. Repeat no point.
 - A blend mode changes only the pixels under the object's own quad, and the layer needs *Force own texture*.
 - A Text object draws only the lines that fit its height. Size the box for the longest text.
@@ -240,7 +238,6 @@ polygons or blend modes, or drop a dragged object onto another, read
 - A Sprite Font's *Character spacing* is in layout pixels, not scaled by *Scale*, and only between characters. `TextWidth` includes it. Keep it 0 and put a space character where a gap is wanted.
 - *Set canvas size* also sets the project's window size, so a 4:3 game inside 16:9 shows more layout. *Scroll to position* back to the centre and cover the extra width with bars.
 - A Sprite Font's widths go in *Spacing data*, which the Layout View shows; *Set character width* is for a width that changes at runtime. A full-width space needs its own width.
-- A third-party effect without WebGPU support puts the whole project on WebGL. Read Platform Info `Renderer` in a preview.
 
 ### Tween
 
@@ -256,7 +253,7 @@ an event tests a value every tick to start a tween, read
 - `Tween.Value(tag)` reads 0 once the tween ends. Animate a channel as what is left of it, from the full amount to 0.
 - A property tween adds each tick's change. A *Set* on that property while it plays is kept, and the tween's rest adds to it. Guard it with *NOT Is playing*.
 - *Stop* releases a tween at the end of the tick. `Value(tag)` reads the stopped value until then.
-- A width tween can end a hair short of its end value, so `Width < target` starts a tween of no distance again and again, and that empty tween blocks a real one for 0.3 s. Start the tween on `Width < target - 0.5`, and set the width to `target` in an event on `Width < target` and `NOT Is playing`. A trail tested with `Width > target` takes the same two events.
+- A width tween can end a hair short, so `Width < target` restarts a tween of no distance that blocks a real one for 0.3 s. Start the tween on `Width < target - 0.5`, and set the width to `target` on `Width < target` and `NOT Is playing`; the same two events for a trail tested with `>`.
 
 ### Timeline
 
@@ -319,7 +316,7 @@ exported for the web or uses File System, read [pitfalls/storage-and-export.md](
 If the events draw at random and a seed must reproduce the result, such as
 a daily challenge or a replayable run, read [pitfalls/random.md](pitfalls/random.md).
 
-- Advanced Random's `Random`, weighted draws and permutation tables share one sequence, and *Update seed* restarts it. Set the seed to the run's seed, the use and a counter before each draw, so one kind of draw does not shift another. Such a run replays offline with `advanced_random.py`; after a Construct update, run its `--check` before trusting the numbers.
+- Advanced Random's `Random`, weighted draws and permutation tables share one sequence, and *Update seed* restarts it. Seed each draw from the run's seed, its use and a counter, so one kind of draw does not shift another. Such a run replays offline with `advanced_random.py`; after a Construct update, run its `--check` before trusting the numbers.
 - `random()`, `choose()` and *Pick random instance* ignore the seed while *Replace system random* is off. Write a seeded draw as `floor(AdvancedRandom.Random * n)`, or *Pick nth instance* of `floor(AdvancedRandom.Random * PickedCount)`.
 
 ## Adding an entry

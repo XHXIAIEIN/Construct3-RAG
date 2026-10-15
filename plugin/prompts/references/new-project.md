@@ -212,6 +212,12 @@ Construct-Example-Projects, 2026-09-18]
 - Behaviors and Particles objects make the feel: Tween on almost
   everything, fades included (Tween on opacity), Timer, Sine, Flash, Rotate
   and Bullet. The effects used are Adjust HSL, Glow, Blur and Warp object.
+- A third-party effect that does not support WebGPU makes the whole project
+  render with WebGL, whatever *Enable WebGPU* says. Before adding one, read
+  Platform Info `Renderer` in a preview, and prefer the built-in effect of
+  the same purpose where one exists. [manual:
+  project-primitives/projects.md "Enable WebGPU";
+  plugins/platforminfo.json `renderer`]
 - Families serve Z order (`ZOrderables`) and enemies. Containers hold the
   collision and graphics pair, and an enemy with its parts. The player's
   instance variables are `hp`, `maxHp`, `dead`.

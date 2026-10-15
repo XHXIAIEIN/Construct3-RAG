@@ -158,10 +158,6 @@ which runs Web Audio).
   [runtime: main.js `createStereoPanner` per instance; Web Audio spec,
   StereoPannerNode stereo-input algorithm; observed in an offline mix of a
   game project's rules, 2026-09-30]
-- Dictionary *Set key* changes only an existing key and silently ignores
-  a missing one. *Add key* creates or overwrites, so write gates and
-  counters with *Add key*. [runtime: c3runtime.js
-  `SetKey(t,e){this._data.has(t)&&...}`, `AddKey`]
 - The runtime finds a sound by its path below the Sounds or Music folder,
   without the extension. So the file `spawn` in the folder `Board` is
   `Board/spawn`, and *Play (by name)* with `"spawn"` finds and plays
@@ -180,11 +176,3 @@ which runs Web Audio).
   immediate plays too. [runtime: c3runtime.js `OutputLatency`, main.js tick
   reports `outputLatency`; observed 0.04 s in a headless Chrome r504
   preview, 2026-09-30]
-- In Chrome 155, `decodeAudioData` decodes a WebM Opus file encoded to an
-  exact length (ffmpeg `libopus`, 96 kb/s) to exactly the source's sample
-  count at 48 kHz. At 44.1 kHz it is one sample short. Decoding removes the
-  encoder's pre-skip. Loops re-scheduled on a grid do not depend on this
-  length. A mono file decodes to one channel, so it takes half the decoded
-  memory of the same length in stereo: 192 KB a second at 48 kHz. [observed
-  with a test page, Chrome 155, 2026-09-30; mono: Edge 155, 2026-10-02, a 64
-  kb/s mono stem decoded to 1 channel of 998,400 samples]

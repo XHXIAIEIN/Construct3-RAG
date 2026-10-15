@@ -61,8 +61,7 @@ rules. Each group is a `###` heading, a when-to-read line linking
 `prompts/pitfalls/<topic>.md`, and one conclusion line per entry in the
 topic file's order, Picking and Triggers and Else included. A conclusion
 keeps the fix: "a tween's *On finished* is a top-level event of its own
-that calls the next function", not only "no trigger inside a function". The
-index is about 14.5 KB.
+that calls the next function", not only "no trigger inside a function".
 
 A pitfall is a runtime behaviour of events that changes which events an
 agent writes: without the line, the agent would write them wrong. Other
@@ -81,7 +80,10 @@ every place that routes a lesson (the root `AGENTS.md`, the
 By that test, where the preview starts and how a script drags in it went to
 `editor-and-preview.md`, and the Local Storage key that a rewritten
 `project.c3proj` must keep went to `hand-editing-project-files.md`; the
-group they left is *Storage and export*. A sprite drawn facing right
+group they left is *Storage and export*. How a WebM Opus file decodes went
+to `prompts/references/sound.md`, the seam of a far-stretched 9-patch to
+`progress-bars.md`, and the renderer that a third-party effect forces to
+`new-project.md`. A sprite drawn facing right
 stays: given art that faces up, the agent writes every *Set angle* wrong
 without it. An entry the checker also enforces stays too, since the prompts
 serve as a system prompt where no checker runs.
@@ -93,9 +95,14 @@ differ in number, or when an entry has no source.
 
 ## Re-evaluate when
 
-- The index passes about 20 KB: first move out what fails the scope test,
+- The index passes about 35 KB: first move out what fails the scope test,
   then shorten conclusion lines, or merge groups that are always read
-  together.
+  together. With one conclusion line per pitfall that keeps its fix, the
+  size follows the number of pitfalls, and the index has about twice as
+  many as when 20 KB was the mark. So before the next cut, measure whether
+  a group whose when-to-read line names a feature the task shows, such as
+  Audio or Timeline, is opened from that line without its conclusion lines.
+  The sizes behind this are in `.local/docs/evidence/prompt-cut-2026-10-15/`.
 - An agent writes a sheet that breaks a Picking or Triggers and Else entry
   whose fix its conclusion line states: the two groups are read by
   nearly every sheet and are not opened, so bring the entry back in full
