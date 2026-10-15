@@ -6,7 +6,7 @@ Schema: Construct 3 r495.2
 ## Problem
 
 The service had an optional full mode: semantic retrieval over the schemas,
-the manual and the example projects, which asked for Docker with Qdrant, an
+the manual and the example projects. It asked for Docker with Qdrant, an
 embedding model, a reranker, the sibling clones and an index build. The
 default path never called it. The maintainer decided that the project asks
 no one for Docker or a model.

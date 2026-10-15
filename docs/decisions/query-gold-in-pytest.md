@@ -66,6 +66,6 @@ but the set kept its shape:
 
 - A change to the lookup is to be tuned by rank rather than pinned case by
   case: measure it in a script outside `tests/`, from the same gold set.
-- Agents ask for effects by a word the cue list lacks: add it to
+- Agents ask for effects by an effect word the catalog lacks: add it to
   `query.effect_keywords` in `src/locale/catalog.json`, from a failing gold
   case.

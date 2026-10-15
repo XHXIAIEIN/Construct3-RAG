@@ -59,8 +59,8 @@ wrong answer that followed:
 
 ## Re-evaluate when
 
-- A verb that stays in `intent_keywords` hides a correct answer of another
-  type: remove it, starting from a failing gold case.
+- A verb in `intent_keywords` hides a correct answer of another type:
+  remove it, starting from a failing gold case.
 - Equal-score ordering puts a trigger before the action a query asks for, as
   in `JSON parse`, often enough to matter: measure an order by rank outside
   `tests/`, from the gold set, as `query-gold-in-pytest.md` says.

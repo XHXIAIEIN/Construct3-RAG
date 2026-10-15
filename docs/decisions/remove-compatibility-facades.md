@@ -31,6 +31,7 @@ retrieval pipeline had no element that used them.
 
 ## Re-evaluate when
 
-A caller needs to see how a query was classified beyond the intent, addon and
-keywords that `debug.lookup` reports: add a field to the response, documented
-in `docs/guide/api-reference.md`, rather than a side channel.
+A caller needs to see how a query was classified beyond what `debug.lookup`
+reports (`plugin`, `tier`, `confidence`, `intent`, `keywords`): add a field
+to the response, documented in `docs/guide/api-reference.md`, rather than a
+side channel.
