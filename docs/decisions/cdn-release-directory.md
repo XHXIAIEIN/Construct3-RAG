@@ -57,12 +57,12 @@ Probed with GET; HEAD returns 405 on some paths.
 Option 3. `release_directory()` in `src/ingest/c3_fetcher.py` turns the
 release name into its directory, `r495.2` into `r495-2`, and
 `C3Fetcher.url()` builds every request from it. `fetch()` and `fetch_raw()`
-read nothing else: a 404 raises `FileNotFoundError` with the URL and the
-release, and stops the refresh (`update-fails-visibly.md`). `versions.json` stays at
-the root, read by `latest_stable_version()`.
+request no other URL: a 404 raises `FileNotFoundError` with the URL and the
+release, and stops the refresh (`update-fails-visibly.md`).
+`latest_stable_version()` reads `versions.json` from the root.
 
 The release name labels everything else: the `version` of `_index.json`,
-the cache directory `.cache/c3-cdn/r495.2/` and the refresh pull request.
+the cache directory `.cache/c3-cdn/r495.2/` and the update pull request.
 `C3Fetcher` refuses a name outside the `r503` and `r495.2` forms. `r495-2`,
 the directory's spelling, would fetch the right files and label them with a
 release `versions.json` never names.

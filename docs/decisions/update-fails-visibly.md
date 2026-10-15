@@ -50,14 +50,14 @@ Option 3.
 - `scripts/check_c3_version.py --github-output` is the workflow's version
   check. It exits 1 and writes no output when the CDN cannot be read, so no
   data step runs. The step continues on error so that a changed guide still
-  opens its pull request, and the last step of the job fails it.
+  opens its pull request, and the job's last step then fails the job.
 - `fetch_raw()` checks a body before it caches it: a JSON endpoint must
   parse and have its top-level type and key (`fileList` for `offline.json`,
   `text` for a language pack), and a `.d.ts` or `.js` must not be an HTML
   page. A refused body raises `ValueError` with the path and its first 80
   bytes, and nothing is cached.
 - `_http_get()` retries an HTTP 5xx, a connection error and a timeout
-  twice, one second apart. A 4xx is not retried; a 404 stays the
+  twice, one second apart. A 4xx is not retried; a 404 raises the
   `FileNotFoundError` of `cdn-release-directory.md`.
 - A failed examples export, a failed `.d.ts` or autocomplete listing, and an
   `offline.json` that lists no `.d.ts` stop the export with no marker.
@@ -68,10 +68,10 @@ Option 3.
   rename puts back the targets already moved. A missing item raises
   `RuntimeError` naming it, and `data/` stays as it was.
 
-What stays as it was: a guide that cannot be fetched keeps its committed
-copy (`project-format-guide.md`), and the checks of a release that is
-exported but fails them still open a pull request that waits for a person
-(`release-schema-diff.md`).
+Two failures are outside the exporter's check: a guide that cannot be
+fetched keeps its committed copy (`project-format-guide.md`), and a release
+that is exported but fails the checks still gets its pull request, which
+waits for a person (`release-schema-diff.md`).
 
 ## Re-evaluate when
 

@@ -38,7 +38,7 @@ overstates what one release does; the kinds of change are what matter.
 ## Decision
 
 The third. `scripts/schema_diff.py` writes the report against the data on
-`main` and sets `needs_review`; the workflow uses the report as the pull
+`main` and sets `needs_review`; the workflow puts the report in the pull
 request body and skips auto-merge when `needs_review` is true.
 
 What counts as breaking: a parameter removed, added or retyped, a combo item

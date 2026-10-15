@@ -4,12 +4,12 @@ Date: 2026-10-08
 
 ## Problem
 
-`lookup_ace.py` gives an ACE's id, parameters and the JSON to write. It does
-not show the events around a real use: the trigger it sits under, what
-follows a *Wait*, which sub-events read its result. The official examples
-hold those shapes, and `print_sheet.py` reads them as events.
-`search_guides.py` finds an example by the words of its topic. An agent that
-holds an ACE therefore has no way to an event that uses it.
+`lookup_ace.py` gave an ACE's id, parameters and the JSON to write, but not
+the events around a real use: the trigger it sits under, what follows a
+*Wait*, which sub-events read its result. The official examples hold those
+shapes, and `print_sheet.py` reads them as events. `search_guides.py` finds
+an example by the words of its topic. An agent that held an ACE therefore
+had no way to reach an event that used it.
 
 ## Evidence
 
@@ -30,12 +30,13 @@ whether agents run the printed commands.
 ## Decision
 
 `scripts/example_usage.py` reads every event sheet of the clone and writes
-`data/c3-example-usage/`: one file per plugin and behavior, keyed by its
-schema id, and `_source.json` with the clone's commit. For each condition,
-action and expression a file gives `examples`, the number of examples that
-use it, and `read`, up to three uses as example folder, sheet, and the first
-and last event as `print_sheet.py` numbers them. The same commit of the
-clone gives the same files. The format is in `docs/guide/data-format.md`.
+`data/c3-example-usage/`: one file per plugin and behavior that an example
+uses, keyed by its schema id, and `_source.json` with the clone's commit.
+For each condition, action and expression a file gives `examples`, the
+number of examples that use it, and `read`, up to three uses as example
+folder, sheet, and the first and last event as `print_sheet.py` numbers
+them. The same commit of the clone gives the same files. The format is in
+`docs/guide/data-format.md`.
 
 - The key is the addon id, not an object name. A lookup through an object
   of the project, the plugin's name or a behavior's name therefore reads
@@ -60,12 +61,13 @@ clone gives the same files. The format is in `docs/guide/data-format.md`.
 
 `lookup_ace.py` prints the count after each entry it prints in full, and the
 `print_sheet.py` commands under it when the clone lies beside
-Construct3-RAG. Without the clone, the count stays and one line gives the
-command that clones it. An entry that no example uses prints no count. A
-list of seven or more entries prints one line each and no counts, since the
-agent narrows it first. An entry that fits `--limit` only without these
-lines prints without them, because the limit protects the output a harness
-reads. Without the index, the lookup prints the entries alone.
+Construct3-RAG. Without the clone, it prints the count without commands,
+and one line gives the command that clones it. An entry that no example
+uses prints no count. A list of seven or more entries prints one line each
+and no counts, since the agent narrows it first. An entry that fits
+`--limit` only without these lines prints without them, because the limit
+protects the output a harness reads. Without the index, the lookup prints
+the entries alone.
 
 `plugin/` carries the index as one bundle (`plugin-folder.md`).
 
