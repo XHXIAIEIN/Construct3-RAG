@@ -322,11 +322,14 @@ Option 2 as the default, and option 3 as the step after it.
   among them; the export keeps the flag, and a call to one may pass more
   than `params` lists. With the flag, the examples give one finding, a
   call with too few arguments: the 3D model's `Progress` took none until
-  r506 gave it an animation parameter, and arcane-express, saved with
-  r495.2, calls `CharModel.Progress` with none. On 2026-10-15 the r506
-  editor refused that example with `Incorrect parameters:
-  'CharModel.Progress' does not accept 0 parameters`, and the r495.2
-  editor opened it.
+  r502 gave it an animation parameter, and the clone's arcane-express,
+  saved with r495.2, calls `CharModel.Progress` with none. On 2026-10-15
+  r506 and r506.2 refused that copy with `Incorrect parameters:
+  'CharModel.Progress' does not accept 0 parameters`, and r495.2 opened
+  it. The editor does not convert the old call: a project with
+  `Progress` opens in r501 and not in r506.2, and one with `Progress("")`
+  the other way round. Scirra patched the copy the editor's start page
+  opens (Construct-bugs 9310); the clone's copy predates that patch.
 - Two keys a Haiku eval left out on 2026-10-03, in projects the checker
   passed, stopped the editor; a copy with the key added opened and
   previewed. A Sprite Font type with no `image`, and one written with

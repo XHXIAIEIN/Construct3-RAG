@@ -412,8 +412,8 @@ the editor opens those projects. Each rule of the table above became an
 error only after such a run added no finding. One example broke a rule
 later, when a release added an animation parameter to the 3D model's
 `Progress` expression. arcane-express calls `CharModel.Progress` without
-it, so the editor of that release refuses the project with the checker's
-message. `Construct3-RAG/tests/test_skill_check_project.py` breaks the
+it, so the editor refuses the project from that release on, with the
+checker's message. `Construct3-RAG/tests/test_skill_check_project.py` breaks the
 stand-in game one rule at a time and reads the finding.
 
 A new rule takes the same two steps: find the editor's message in its
