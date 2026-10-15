@@ -12,20 +12,28 @@ import pytest
 from tests.skill_helpers import REPO, SKILL, run, script_module, folder_project
 
 REFERENCE = SKILL / "references" / "designing-a-game.md"
+SCRIPTS = SKILL / "scripts"
+# The head of a play's result when the editor opened the project
+OPENED = {"status": "opened", "project": "p", "title": "t", "editor": "e"}
+
+
+def example_id() -> str:
+    """The id of a real example project, the first by name."""
+    return min(p.stem for p in (REPO / "data" / "c3-examples" / "en-US").glob("*.json"))
 
 
 def example() -> dict:
     """The design the reference shows, with a real example id."""
     block = re.search(r"```json\n(.*?)```", REFERENCE.read_text(encoding="utf-8"), re.S).group(1)
     design = json.loads(block)
-    design["reference"]["example"] = sorted(p.stem for p in (REPO / "data" / "c3-examples" / "en-US").glob("*.json"))[0]
+    design["reference"]["example"] = example_id()
     return design
 
 
 def check(tmp_path, design) -> tuple[int, str]:
     path = tmp_path / "design.json"
     path.write_text(json.dumps(design, ensure_ascii=False), encoding="utf-8")
-    return run(tmp_path, SKILL / "scripts" / "check_design.py", str(path), "--rag", str(REPO))
+    return run(tmp_path, SCRIPTS / "check_design.py", str(path), "--rag", str(REPO))
 
 
 def test_check_design_passes_the_reference_example_and_prints_its_tables(tmp_path):
@@ -140,8 +148,8 @@ def test_check_design_reads_the_sheet_syntax_and_says_what_to_write(tmp_path):
 
 
 def test_the_prototype_runs_events_as_the_runtime_does():
-    """Else after a sibling that ran is skipped, a Wait defers the sub-events too, & joins text and is a
-    logical and on numbers, At() outside an Array is 0, comparisons give 1 or 0."""
+    """Else after a sibling that ran is skipped; a Wait defers the sub-events too; & joins text and is a
+    logical and on numbers; At() outside an Array is 0; comparisons give 1 or 0."""
     gm = script_module("game_model")
     design = gm.Design({
         "game": "probe", "request": "one tap", "later": ["nothing left out"], "core_loop": "one tap",
@@ -180,6 +188,7 @@ def write_project(root, globals_, types, placed, viewport=(720, 1280)):
 
 
 def whack_project(root):
+    """The reference's whack-a-mole as a project: the Mole in hole 4, one Hole, the texts on the UI layer."""
     write_project(root, {"score": ("number", "0"), "escapes": ("number", "0"), "over": ("number", "0")},
                   {"Mole": ("Sprite", ["hole"]), "Hole": ("Sprite", ["index"]), "Message": ("Text", []),
                    "ScoreText": ("Text", []), "Touch": ("Touch", [])},
@@ -189,16 +198,22 @@ def whack_project(root):
                    {"type": "ScoreText", "layer": "UI", "world": {"x": 0, "y": 0}, "properties": {"text": "Score: 0"}}])
 
 
-def test_play_design_writes_one_plan_per_test_and_taps_by_instance_variables(tmp_path):
+def play(tmp_path, data, *args):
+    """play_design --plan-only on data into plans.json, against the project in game, made as the whack-a-mole
+    if missing."""
     design = tmp_path / "design.json"
-    design.write_text(json.dumps(example()), encoding="utf-8")
-    whack_project(tmp_path / "game")
-    plans = tmp_path / "plans.json"
-    code, out = run(tmp_path, SKILL / "scripts" / "play_design.py", str(design), "--project", str(tmp_path / "game"),
-                    "--plan-only", str(plans))
+    design.write_text(json.dumps(data), encoding="utf-8")
+    if not (tmp_path / "game").exists():
+        whack_project(tmp_path / "game")
+    return design, run(tmp_path, SCRIPTS / "play_design.py", str(design), "--project", str(tmp_path / "game"),
+                       "--plan-only", str(tmp_path / "plans.json"), *args)
+
+
+def test_play_design_writes_one_plan_per_test_and_taps_by_instance_variables(tmp_path):
+    _, (code, out) = play(tmp_path, example())
     assert code == 0, out
     assert "wrote 5 plans" in out
-    written = json.loads(plans.read_text(encoding="utf-8"))
+    written = json.loads((tmp_path / "plans.json").read_text(encoding="utf-8"))
     hit = written[1]["steps"]
     assert hit[0] == {"wait": 0.4}
     assert "H.put(\"Mole\", \"hole\", 4.0);" in hit[1]["js"]
@@ -206,15 +221,6 @@ def test_play_design_writes_one_plan_per_test_and_taps_by_instance_variables(tmp
     assert "H.eq(H.v(runtime.globalVars[\"score\"]), 1.0)" in hit[4]["js"]
     again = written[4]["steps"]
     assert {"tap": {"x": 360.0, "y": 1152.0, "layer": "UI"}} in again
-
-
-def play(tmp_path, data, *args):
-    design = tmp_path / "design.json"
-    design.write_text(json.dumps(data), encoding="utf-8")
-    if not (tmp_path / "game").exists():
-        whack_project(tmp_path / "game")
-    return design, run(tmp_path, SKILL / "scripts" / "play_design.py", str(design), "--project", str(tmp_path / "game"),
-                       "--plan-only", str(tmp_path / "plans.json"), *args)
 
 
 def test_play_design_refuses_a_name_the_project_lacks(tmp_path):
@@ -253,12 +259,12 @@ def test_play_design_finds_a_play_area_off_the_middle():
     pd = script_module("play_design")
     layers = {"Game": {"parallax": [1, 1], "shown": True, "view": [0, 0, 720, 1280]}}
     board = {"type": "Board", "uid": 3, "layer": "Game", "box": [0, 300, 480, 780], "shown": True, "angle": 0, "root": 3}
-    found = pd.centre_findings({"viewport": [720, 1280], "layers": layers, "instances": [board]})
+    snap = {"viewport": [720, 1280], "layers": layers, "instances": [board]}
+    found = pd.centre_findings(snap)
     assert [f["rule"] for f in found] == ["centre"]
     assert "has its middle at x 240 and the screen's is at 360" in found[0]["line"]
     board["box"] = [120, 300, 600, 780]
-    assert pd.centre_findings({"viewport": [720, 1280], "layers": layers, "instances": [board]}) == []
-
+    assert pd.centre_findings(snap) == []
 
 
 def test_a_screen_place_is_read_in_its_words_and_names_an_object():
@@ -294,8 +300,9 @@ def test_play_design_finds_an_object_outside_the_place_the_design_names():
                                    560 + 200 * (n // 3)]) for n in range(9)]
     score = inst(1, "ScoreText", [20, 20, 400, 80], "HUD", text="Score: 0", textSize=[150, 40], align=["left", "top"])
     message = inst(2, "Message", [60, 300, 660, 360], "HUD", text="Tap", textSize=[60, 40], align=["center", "center"])
-    found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
-                                      {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
+    types = ["ScoreText", "Hole", "Mole", "Message"]
+    snap = {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]}
+    found, notes = pd.screen_findings(design, types, snap)
     assert [f["uids"] for f in found] == [[2]]
     assert found[0]["line"] == ('screen.message "below the holes": Message uid 2 "Tap" has its middle at (360, 330) '
                                 "on layer 'HUD', and the design's place wants it at y > 960 (below Hole) on that layer: "
@@ -305,15 +312,14 @@ def test_play_design_finds_an_object_outside_the_place_the_design_names():
                      "Lives names no object: write the key as the object type's name"]
     score["box"] = [400, 20, 700, 80]
     message["box"] = [60, 1100, 660, 1160]
-    found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
-                                      {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
+    found, notes = pd.screen_findings(design, types, snap)
     assert [f["uids"] for f in found] == [[1]]
     assert ("has its middle at (475, 40) on layer 'HUD', and the design's place wants it at x 0 to 240 on that layer"
             in found[0]["line"])
     message["shown"] = False
-    found, notes = pd.screen_findings(design, ["ScoreText", "Hole", "Mole", "Message"],
-                                      {"viewport": [720, 1280], "layers": layers, "instances": [score, message, *holes]})
+    found, notes = pd.screen_findings(design, types, snap)
     assert notes[0] == "2 of 5 checked (score, holes)" and notes[-1] == "message has no instance on the first screen"
+
 
 def test_play_design_prints_the_screen_places_under_the_first_screen():
     gm, pd = script_module("game_model"), script_module("play_design")
@@ -321,13 +327,14 @@ def test_play_design_prints_the_screen_places_under_the_first_screen():
     layers = {"HUD": {"parallax": [0, 0], "shown": True, "view": [0, 0, 720, 1280]}}
     score = {"type": "ScoreText", "uid": 1, "layer": "HUD", "box": [20, 20, 200, 80], "shown": True, "angle": 0, "root": 1}
     snap = {"viewport": [720, 1280], "layers": layers, "instances": [score]}
-    result = {"status": "opened", "project": "p", "title": "t", "editor": "e", "preview": {"plans": [
+    result = {**OPENED, "preview": {"plans": [
         {"started": True, "errors": [], "steps": [{"ok": True}, {"ok": True, "value": snap}, {"ok": True}]}]}}
     lines, code = pd.report(design, [], result, ["ScoreText", "Hole"])
     assert code == 1
     assert lines[1] == ("  first screen: 1 finding; places: 1 of 2 checked (score); review_look.py asks about holes, "
                         "whose words before the first comma are not a place")
     assert lines[2].startswith('    screen: screen.score "top-right": ScoreText uid 1 has its middle at (110, 50)')
+
 
 def test_check_design_prints_which_screen_places_play_design_measures(tmp_path):
     design = example()
@@ -420,10 +427,7 @@ def test_a_design_reads_its_state_not_the_game_and_taps_the_screen_where_an_argu
     design["tests"][3]["steps"][3] = {"do": "again", "x": 100}
     code, out = check(tmp_path, design)
     assert code == 0, out
-    (tmp_path / "design.json").write_text(json.dumps(design), encoding="utf-8")
-    whack_project(tmp_path / "game")
-    code, out = run(tmp_path, SKILL / "scripts" / "play_design.py", str(tmp_path / "design.json"), "--project",
-                    str(tmp_path / "game"), "--plan-only", str(tmp_path / "plans.json"))
+    _, (code, out) = play(tmp_path, design)
     assert code == 0, out
     assert {"tap": {"x": 100.0, "y": 1024.0}} in json.loads((tmp_path / "plans.json").read_text(encoding="utf-8"))[4]["steps"]
 
@@ -449,8 +453,7 @@ def board_game(stones: bool = True) -> dict:
     return {
         "game": "Five", "request": "two players place stones in turn and five in a row wins", "later": ["sound"],
         "core_loop": "Two players place stones in turn; five in a row wins",
-        "reference": {"example": sorted(p.stem for p in (REPO / "data" / "c3-examples" / "en-US").glob("*.json"))[0],
-                      "takes": "a board of cells tapped by their col and row"},
+        "reference": {"example": example_id(), "takes": "a board of cells tapped by their col and row"},
         "screen": {"board": "centre", "status": "below the board"},
         "state": state,
         "inputs": [{"name": "place", "player": "tap an empty crossing", "args": ["c", "r"],
@@ -556,7 +559,7 @@ def test_a_game_over_at_launch_is_refused_though_a_fixture_steps_past_it(tmp_pat
 def test_a_win_that_comes_without_input_is_refused_unless_the_design_says_waiting_wins(tmp_path):
     """The prototype plays on without input; a win before the lose names the rule that set what it reads."""
     design = example()
-    design.update(win="over = 1", lose="none")      # three escapes now win: a player who does nothing wins
+    design.update(win="over = 1", lose="none")      # three escapes win: a player who does nothing wins
     code, out = check(tmp_path, design)
     assert code == 1
     assert ("win: over = 1 holds after 3.0 s without any input: rule lose (a sub-rule of escape), fired by every 1, "
@@ -594,20 +597,16 @@ def test_play_design_counts_the_instances_shown_from_the_layout_and_in_the_runti
     design["rules"][1]["do"].append("blacks += turn = 1 ? 1 : 0")
     design["tests"][0]["steps"].append({"expect": "blacks = 1"})
     assert check(tmp_path, design)[0] == 0
-    path = tmp_path / "design.json"
-    path.write_text(json.dumps(design), encoding="utf-8")
     hidden = [{"type": "Stone", "world": {"x": 0, "y": 0}, "properties": {"initially-visible": False}}] * 3
     shown = [{"type": "Stone", "world": {"x": 0, "y": 0}, "properties": {"initial-frame": 1}}]
     stone_project(tmp_path / "game", hidden + shown)
-    code, out = run(tmp_path, SKILL / "scripts" / "play_design.py", str(path), "--project", str(tmp_path / "game"),
-                    "--plan-only", str(tmp_path / "plans.json"))
+    _, (code, out) = play(tmp_path, design)
     assert code == 1
     assert "stones starts as 1 in the project (Stone.shown) and 0 in the design" in out
     assert "blacks starts as 1 in the project (Stone.shown(frame=1)) and 0 in the design" in out
     shutil.rmtree(tmp_path / "game")
     stone_project(tmp_path / "game", hidden)
-    code, out = run(tmp_path, SKILL / "scripts" / "play_design.py", str(path), "--project", str(tmp_path / "game"),
-                    "--plan-only", str(tmp_path / "plans.json"))
+    _, (code, out) = play(tmp_path, design)
     assert code == 0, out
     plans = json.loads((tmp_path / "plans.json").read_text(encoding="utf-8"))
     assert any('H.shown("Stone", null)' in s.get("js", "") for s in plans[1]["steps"])
@@ -726,14 +725,9 @@ def test_a_region_belongs_to_a_tap_on_a_point_and_holds_it(tmp_path):
 def test_play_design_reads_the_last_expects_again_after_the_settle(tmp_path):
     """The plan ends with the settle and the expects the prototype still held then; a timer's change is left out.
     A settled expect that fails in the game is named as a change after the last step."""
-    design = tmp_path / "design.json"
-    design.write_text(json.dumps(example()), encoding="utf-8")
-    whack_project(tmp_path / "game")
-    plans = tmp_path / "plans.json"
-    code, out = run(tmp_path, SKILL / "scripts" / "play_design.py", str(design), "--project", str(tmp_path / "game"),
-                    "--plan-only", str(plans))
+    _, (code, out) = play(tmp_path, example())
     assert code == 0, out
-    written = json.loads(plans.read_text(encoding="utf-8"))
+    written = json.loads((tmp_path / "plans.json").read_text(encoding="utf-8"))
     hit = written[1]["steps"]
     at = hit.index({"wait": 1.0, "note": "settle"})
     again = hit[at + 1:]
@@ -747,8 +741,7 @@ def test_play_design_reads_the_last_expects_again_after_the_settle(tmp_path):
     steps = [{"ok": True, "value": {"ok": not (o and o["kind"] == "settled" and o["text"] == "score = 1"),
                                     "seen": {"score": 0}}} for o in origin]
     runs = [{"started": True, "steps": [{"ok": True}, {"ok": True, "value": {}}]}, {"started": True, "steps": steps}]
-    lines, code = pd.report(data, [origin], {"status": "opened", "project": "p", "title": "t", "editor": "e",
-                                             "preview": {"plans": runs}})
+    lines, code = pd.report(data, [origin], {**OPENED, "preview": {"plans": runs}})
     assert code == 1
     assert ("FAIL  a hit scores: tests[0].steps[2] expect score = 1: held at its step and is false 1 s after the "
             "test's last step in the game") in "\n".join(lines)
@@ -764,8 +757,7 @@ def test_a_failed_play_says_to_fix_the_game_not_the_test(tmp_path, monkeypatch, 
     failed = {"started": True, "steps": [{"ok": True}] * 3 + [{"ok": True, "value": {"ok": False, "seen": {"score": 0}}}]}
     first = {"started": True, "steps": [{"ok": True}, {"ok": True, "value": {}}]}
     monkeypatch.setattr(pd.oe, "browser_path", lambda: "browser")
-    monkeypatch.setattr(pd, "run_all", lambda *a: {"status": "opened", "project": "p", "title": "t", "editor": "e",
-                                                   "preview": {"plans": [first, failed]}})
+    monkeypatch.setattr(pd, "run_all", lambda *a: {**OPENED, "preview": {"plans": [first, failed]}})
     monkeypatch.setattr(sys, "argv", ["play_design.py", str(design), "--project", str(tmp_path / "game"),
                                       "--out", str(tmp_path / "result.json")])
     assert pd.main() == 1
@@ -784,31 +776,29 @@ def test_a_passing_play_says_what_the_tests_left_untested(tmp_path):
     runs = [{"started": True, "steps": [{"ok": True}, {"ok": True, "value": {}}]}]
     runs += [{"started": True, "steps": [{"ok": True, "value": {"ok": True, "seen": {}}} for _ in origin]}
              for origin in meta]
-    lines, code = pd.report(data, meta, {"status": "opened", "project": "p", "title": "t", "editor": "e",
-                                         "preview": {"plans": runs}})
+    lines, code = pd.report(data, meta, {**OPENED, "preview": {"plans": runs}})
     assert code == 0, lines
     assert lines[-1] == (f"  played: {len(data.tests)} of {len(data.tests)} tests pass, 0 findings on the first "
                          f"screen, 0 runtime errors; what the tests of the design do not play is untested")
 
 
 def test_play_design_keeps_the_reason_a_preview_did_not_run_and_counts_the_runs_it_lacks():
-    """A preview that could not start comes back without plans; its own error says why and what to do, and the
-    report printed "no preview" instead. Test runs the result lacks were zipped away: a result without them said
-    "0 of N tests pass" with exit 0. They are now not evaluated, each a problem."""
+    """A preview that could not start comes back without plans, and the report prints its error, which says why
+    and what to do. Each test that the result has no run for is not evaluated and counts as a problem. A zip of
+    tests and runs would drop it, and the report would read "0 of N tests pass" with exit 0."""
     pd, gm = script_module("play_design"), script_module("game_model")
     design = gm.Design(example())
-    head = {"status": "opened", "project": "p", "title": "t", "editor": "e"}
     why = "the browser profile C:/x is 300 characters long: copy the project to a shorter folder"
-    lines, code = pd.report(design, [], {**head, "preview": {"started": False, "layout": None, "runtime": None,
-                                                             "errors": [why]}})
+    lines, code = pd.report(design, [], {**OPENED, "preview": {"started": False, "layout": None, "runtime": None,
+                                                               "errors": [why]}})
     assert code == 1 and lines[-1] == f"  preview did not run: {why}"
     first = {"started": True, "errors": [], "steps": [{"ok": True}, {"ok": True, "value": {}}, {"ok": True}]}
     n = len(design.tests)
-    lines, code = pd.report(design, [[None]] * n, {**head, "preview": {"plans": [first]}})
+    lines, code = pd.report(design, [[None]] * n, {**OPENED, "preview": {"plans": [first]}})
     assert code == 1
     assert [line for line in lines if "not evaluated" in line and "played" not in line] == [
         f"    not evaluated  {t['name']}: the preview returned 0 test runs for {n} tests; play it again" for t in design.tests]
     assert lines[-1].startswith(f"  played: 0 of {n} tests pass, {n} not evaluated, ")
     one = {"started": True, "errors": [], "steps": []}
-    lines, code = pd.report(design, [[]] * n, {**head, "preview": {"plans": [first] + [one] * (n + 1)}})
+    lines, code = pd.report(design, [[]] * n, {**OPENED, "preview": {"plans": [first] + [one] * (n + 1)}})
     assert code == 1 and f"  runs: the preview returned {n + 1} test runs for {n} tests" in "\n".join(lines)
