@@ -9,11 +9,11 @@ eases" in
 - A numeric property track in *Relative* mode changes its property by the step
   of each tick, `Offset…(value − last value)`. The last value starts at 0 when
   playback starts forward. So a keyframe's value is an offset from the
-  instance's value when playback began, not a position. On a hierarchy child
-  with the timeline's *Transform* on, X, Y and angle are offsets in the
-  parent's frame. So the child keeps following a parent that events move every
-  tick, and two relative timelines on one instance add up. An event that sets
-  the same property every tick keeps only that tick's step of the timeline.
+  instance's value when playback began, not a position, and two relative
+  timelines on one instance add up. An event that sets the same property every
+  tick keeps only that tick's step of the timeline. On a hierarchy child with
+  the timeline's *Transform* on, X, Y and angle are offsets in the parent's
+  frame, so the child keeps following a parent that events move every tick.
   Animate a part's position and angle relative to its parent, and leave its
   size to events. Author each move to start and end at 0, so that layered and
   replayed moves leave no offset. [runtime: exported c3runtime.js r504,
@@ -79,7 +79,7 @@ eases" in
   a timeline that is not playing; *Set time* 0 works in both]
 - *Set time* pauses a playing timeline at the time it sets. After a *Play* in
   the same action list, it takes the timeline off the schedule and applies the
-  pose. *Play* then *Set time* thus creates an instance's copy without
+  pose. So *Play* then *Set time* creates an instance's copy without
   playing it. *Set time* triggers *On time set*, never *On keyframe
   reached*. So moving the playhead across a tagged keyframe with *Set time*
   does not run its events. [runtime: exported
@@ -163,11 +163,11 @@ eases" in
   the same run]
 - A negative playback rate fires *On keyframe reached* for every tagged
   keyframe it passes on the way back, with the same tags as the forward pass.
-  A cheer rewound at −4 re-ran its `catch` and `jump` events, and a rewound
-  raise re-fired its spark burst. The keyframe trigger cannot read the
-  playback rate. So if an event must run only on the forward pass, make it
-  test a flag (`rewinding`): the event that starts the rewind sets it, and
-  the forward *Resume* clears it. [runtime: exported c3runtime.js r504,
+  So a move rewound at −4 runs its keyframe events again, such as a jump or a
+  burst of sparks. The keyframe trigger cannot read the playback rate, so if
+  an event must run only on the forward pass, make it test a flag
+  (`rewinding`): the event that starts the rewind sets it, and the forward
+  *Resume* clears it. [runtime: exported c3runtime.js r504,
   `TrackState.MaybeTriggerKeyframeReachedConditions` has an `else` branch for
   `!IsForwardPlayBack()` that calls `OnKeyframeReached` for the keyframe at or
   above the new time; observed in a game project, r504 preview, 2026-10-02]
