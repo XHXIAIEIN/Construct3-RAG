@@ -31,10 +31,11 @@ project.
 | `prompts/pitfalls/` | One file per topic of the index, each pitfall with its cases and its source |
 | `prompts/event-sheet-assistant.md` | Output format and name verification |
 | `prompts/event-sheet-style.md` | How the official examples organise, name and comment a sheet |
-| `prompts/references/` | Material needed only sometimes, each named by the task that needs it: a new project's sheets, layers, objects and look; feel; the slot case, native and as a program; hand-editing project JSON; bars and life counters; sounds and placeholder audio |
+| `prompts/references/` | Material needed only sometimes, each named by the task that needs it: a new project's sheets, layers, objects and look; feel, and an attack's timing, animation and hit effects; the slot case, native and as a program; hand-editing project JSON; bars and life counters; sounds and placeholder audio; sequences and dialogue run from a data file |
 
-`AGENTS.md` section 3 is the SOP; the game project reaches it through the
-block of `skills/construct3-agent-plugin/assets/game-project-block.md`.
+`AGENTS.md` section 3 is the SOP. In a game project, the block of
+`skills/construct3-agent-plugin/assets/game-project-block.md` sends the
+agent to `event-sheet-thinking.md` before it decides what the events are.
 
 How the prompts are kept:
 

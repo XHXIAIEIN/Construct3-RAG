@@ -43,7 +43,7 @@ repair task remain unmeasured for every path.
 
 Scripted validation replays use synthetic answers and establish transport
 size and invalidation only. Raw input, answers, commands and failure logs:
-`.local/docs/evidence/skill-evals/rag-tool-flow/` for the first default,
+`.local/docs/evidence/skill-evals/rag-tool-flow/` for the first complete batch,
 `.local/docs/evidence/skill-evals/rag-review-scope/` for the scoping.
 
 ## Options
@@ -59,8 +59,9 @@ size and invalidation only. Raw input, answers, commands and failure logs:
 
 Use `review_design.py --check --limit 0` in the skill's repair loop.
 It runs the full checker, records its complete result and stops on failure.
-Read every design question and its required evidence with `print_sheet.py`.
-Select changed sheets with `--sheets` when the task supplies them.
+Select changed sheets with `review_design.py --sheets NAME` when the task
+supplies them. Read every design question and its required evidence with
+`print_sheet.py`.
 
 Use optional `--prepare .tmp/design-review --resume` for shared dependency
 evidence or saved judgements. Prepare relations from current project files
@@ -79,17 +80,19 @@ Keep the plain reviewer compatible. Validate answer identity, version,
 citations and suggestion scope; semantic correctness belongs to the reader.
 Saved suggestions do not edit a project. `edit_sheet.py` checks copied
 printed lines and event numbers before applying a complete plan.
-The final full checker, editor, target input and visual review still run.
-Static reuse cannot establish a runtime or visual result.
+A reused judgement replaces none of the final runs: the full checker, the
+editor, the target input and the visual review. Static reuse cannot
+establish a runtime or visual result.
 
-The maintenance task table points to sources, tests and existing contracts.
-The current source determines behavior.
+Before changing the review, read its row in the task table of
+`skills/AGENTS.md`, "Change a project tool", which names its sources, tests
+and contracts. The source decides what the tool does.
 
 ## Re-evaluate when
 
 The skill's change to this default owes its eval iteration (`skills/AGENTS.md`,
 "Evals"); its route counts and lost calls decide whether the default stays.
 Measure complete repair tasks with repeated clean model runs before choosing
-complete packets as the default. Record actual tokens and cost when exposed
+complete batches as the default. Record actual tokens and cost when exposed
 by the model session. Extend relation parsing with a real project
 representation and a regression case for each dependency it adds.
