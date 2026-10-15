@@ -1,13 +1,16 @@
-"""preview_project.py: the plan, checked before the editor opens, and the report."""
+"""preview_project.py: the plan, checked before the editor opens, the steps it plays, the recording and the report."""
 import json
 import os
 import re
+from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from tests.skill_helpers import INSTALLED, run, script_module
 
 pp = script_module("preview_project")
+SCRIPT = f"{INSTALLED}/scripts/preview_project.py"
 
 
 def test_preview_project_keeps_the_result_in_the_project_by_default(tmp_path):
@@ -31,7 +34,7 @@ def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
         {"drag": "Ball", "to": "Ball", "through": [{"x": 1, "y": 2}], "rest": 0},
         {"key": []}, {"key": ["ShiftLeft", "F13"]}, {"key": ["a", "KeyA"]}, {"key": ["ShiftLeft", "ArrowRight"]}],
         "keep_saves": True, "pixel_ratio": 0}), encoding="utf-8")
-    code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "plan.json")
+    code, out = run(project, SCRIPT, "plan.json")
     assert code == 2, out
     for expected in ("the plan has 'speed'", "step 1 has none of", "closest: tap", 'step 2 (drag) needs "to"',
                      "step 3 (key): 'F13'", "step 4 (wait) takes seconds", "step 5 (shot) takes a file name",
@@ -49,7 +52,7 @@ def test_preview_project_refuses_a_wrong_plan_before_opening_anything(project):
     assert "has 'keep_saves'" not in out and "has 'pixel_ratio'" not in out, out
     assert not (project / ".tmp" / "preview").exists()
 
-    code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "--help")
+    code, out = run(project, SCRIPT, "--help")
     assert code == 0 and "TARGET is where to press" in out and "exit codes:" in out, out
 
 
@@ -72,9 +75,9 @@ def test_preview_project_reads_a_step_of_code_and_a_key_as_the_page_needs_them()
 def test_preview_project_holds_keys_together_with_their_modifiers(monkeypatch, tmp_path):
     """Keys pressed in order and released in reverse; each event carries the Shift
     that is down at that moment. A single key carries no modifier."""
-    game = pp.Game(None, None, False, (430, 932), "", None, tmp_path)
     sent = []
-    monkeypatch.setattr(game, "win", type("Win", (), {"call": lambda self, method, **e: sent.append(e)})())
+    win = SimpleNamespace(call=lambda method, **e: sent.append(e))
+    game = pp.Game(win, None, False, (430, 932), "", None, tmp_path)
     monkeypatch.setattr(pp.time, "sleep", lambda s: None)
     step = {"key": ["ShiftLeft", "ArrowRight"], "seconds": 1}
     assert pp.do_step(game, step, 3, tmp_path) == ("held 1 s", None)
@@ -147,6 +150,14 @@ def test_preview_project_drags_through_its_waypoints_and_can_release_moving(monk
     assert ("touchMove", 300, 200) in sent and ("touchMove", 100, 200) in sent and slept[-1] == 0
 
 
+def opened(steps: list[dict], planned: int, seconds: float, touch: bool = False) -> dict:
+    """The result of a run that opened the project and played `steps` in the page's runtime."""
+    return {"project": "Game", "status": "opened", "title": "Game - Construct 3",
+            "editor": "https://editor.construct.net/", "dialogs": [], "exception": "",
+            "preview": {"started": True, "layout": "Game", "runtime": "page", "viewport": [430, 932],
+                        "touch": touch, "errors": [], "steps": steps, "planned": planned, "seconds": seconds}}
+
+
 def test_preview_project_reports_each_step_with_the_errors_it_caused():
     """One line per step; a runtime error under the step it followed; a failed step
     ends the list and says why."""
@@ -155,10 +166,7 @@ def test_preview_project_reports_each_step_with_the_errors_it_caused():
              {"step": 2, "line": "2 state Piece", "ok": True, "said": "", "errors": [],
               "state": {"globalVars": {"coins": 30}, "counts": {"Piece": 1}, "objects": {}}},
              {"step": 3, "line": "3 until vars.done", "ok": False, "said": "still false after 10 s", "errors": []}]
-    lines = pp.report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
-                       "editor": "https://editor.construct.net/", "dialogs": [], "exception": "",
-                       "preview": {"started": True, "layout": "Game", "runtime": "page", "viewport": [430, 932],
-                                   "touch": True, "errors": [], "steps": steps, "planned": 4, "seconds": 3.94}})
+    lines = pp.report(opened(steps, 4, 3.94, touch=True))
     assert lines[1:] == [
         "  preview: layout 'Game' at the end, runtime in the page, viewport 430x932, touch",
         "  1 tap Button (buy): at (352, 882)",
@@ -173,26 +181,20 @@ def test_preview_project_reports_each_step_with_the_errors_it_caused():
 
 def test_preview_project_says_what_a_passing_plan_left_untested():
     steps = [{"step": 1, "line": "1 tap Button (buy)", "ok": True, "said": "at (352, 882)", "errors": []}]
-    lines = pp.report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
-                       "editor": "https://editor.construct.net/", "dialogs": [], "exception": "",
-                       "preview": {"started": True, "layout": "Game", "runtime": "page", "viewport": [430, 932],
-                                   "touch": False, "errors": [], "steps": steps, "planned": 1, "seconds": 1.2}})
+    lines = pp.report(opened(steps, 1, 1.2))
     assert lines[-1] == "  ran: 1 of 1 steps in 1.2 s, no runtime errors; what the steps of the plan do not do is untested"
 
 
 def test_preview_project_prints_an_error_raised_every_tick_once_with_its_count():
-    """An error raised every tick comes hundreds of times; printed once a line it pushed a different
-    error past the output's limit in a probe. Each distinct error is one line, in the order it
-    first came, with how many times it came; the total stays in the ran line."""
+    """An error raised every tick comes hundreds of times, and a line for each pushes a different
+    error past the output's limit. Each distinct error is one line, in the order it first came,
+    with how many times it came; the total stays in the ran line."""
     root = "Game, event 10, action 1: TypeError: Cannot read properties of null (reading 'limit')"
     tick = "Game, event 11, action 1: TypeError: Cannot read properties of undefined (reading 'push')"
     other = "Game, event 12, action 1: RangeError: a separate failure"
     errors = [root + "\n    at stack", *[tick] * 300, other, *[tick] * 200, other]
     steps = [{"step": 1, "line": "1 wait 5 s", "ok": True, "said": "ok", "errors": errors}]
-    lines = pp.report({"project": "Game", "status": "opened", "title": "Game - Construct 3",
-                       "editor": "https://editor.construct.net/", "dialogs": [], "exception": "",
-                       "preview": {"started": True, "layout": "Game", "runtime": "page", "viewport": [430, 932],
-                                   "touch": False, "errors": [], "steps": steps, "planned": 1, "seconds": 5.1}})
+    lines = pp.report(opened(steps, 1, 5.1))
     assert lines[2:] == [
         "  1 wait 5 s: ok",
         f"    runtime: {root}",
@@ -205,17 +207,19 @@ def test_preview_project_prints_an_error_raised_every_tick_once_with_its_count()
 class ReloadingGame:
     """A game whose page reloads: each step's outcomes in turn, and what reloaded() answers after each try."""
 
-    def __init__(self, outcomes, reloads):
+    def __init__(self, outcomes: list, reloads: list) -> None:
         self.outcomes, self.reloads, self.win, self.recording, self.tries = outcomes, reloads, None, None, []
 
-    def reloaded(self):
+    def reloaded(self) -> float | None:
         back = self.reloads.pop(0)
         if isinstance(back, Exception):
             raise back
         return back
 
 
-def play_reloading(monkeypatch, tmp_path, steps, outcomes, reloads):
+def play_reloading(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, steps: list[dict], outcomes: list,
+                   reloads: list) -> tuple[ReloadingGame, list[dict]]:
+    """play_steps on a ReloadingGame, each try of a step kept in its tries."""
     game = ReloadingGame(outcomes, reloads)
 
     def do_step(game, step, n, shots):
@@ -326,14 +330,17 @@ def test_preview_project_joins_the_sheet_frames_into_one_image(tmp_path, monkeyp
     image = pytest.importorskip("PIL.Image", reason="Pillow is not installed; pip install pillow")
     if not pillow and not (pp.shutil.which("ffmpeg") and pp.shutil.which("ffprobe")):
         pytest.skip("ffmpeg is not installed")
-    paths = []
-    for k in range(7):
-        paths.append(tmp_path / f"{k + 1:04d}.jpg")
-        image.new("RGB", (430, 932), (k * 30, 0, 0)).save(paths[-1])
+    paths = [tmp_path / f"{k + 1:04d}.jpg" for k in range(7)]
+    for k, path in enumerate(paths):
+        image.new("RGB", (430, 932), (k * 30, 0, 0)).save(path)
     if not pillow:
         real = __import__
-        monkeypatch.setattr("builtins.__import__", lambda name, *a, **k: (_ for _ in ()).throw(ImportError(name))
-                            if name.startswith("PIL") else real(name, *a, **k))
+
+        def no_pillow(name, *args, **kwargs):
+            if name.startswith("PIL"):
+                raise ImportError(name)
+            return real(name, *args, **kwargs)
+        monkeypatch.setattr("builtins.__import__", no_pillow)
     made = pp.make_sheet(paths, [k / 10 for k in range(7)], tmp_path / "02-merge-sheet.png")
     monkeypatch.undo()
     assert made == str(tmp_path / "02-merge-sheet.png")
@@ -404,10 +411,10 @@ def test_preview_project_keeps_a_plan_in_the_project_and_needs_one_to_replay(pro
     assert kept == project / "tools" / "plans" / "merge-two.json"
     assert kept.read_bytes() == plan.read_bytes()
     assert pp.kept_plans(project) == [kept]
-    code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "plan.json", "--keep", "a b")
+    code, out = run(project, SCRIPT, "plan.json", "--keep", "a b")
     assert code == 2 and "--keep takes a NAME of letters, digits, - and _" in out, out
-    code, out = run(project, f"{INSTALLED}/scripts/preview_project.py")
+    code, out = run(project, SCRIPT)
     assert code == 2 and "give a PLAN.json to play, or --all" in out, out
     kept.unlink()
-    code, out = run(project, f"{INSTALLED}/scripts/preview_project.py", "--all")
+    code, out = run(project, SCRIPT, "--all")
     assert code in (2, 3) and ("no kept plan in" in out or "no Edge, Chrome or Chromium" in out), out
