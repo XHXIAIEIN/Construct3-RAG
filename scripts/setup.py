@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""One-command setup for Construct3-RAG.
+"""Install the dependencies of the lookup service and start it.
 
 Usage:
-    python scripts/setup.py                 # install deps, start the lookup service
-    python scripts/setup.py --refresh-data  # explicitly refresh Construct data
-    python scripts/setup.py --version <release>  # refresh data/ from a specific release
+    python scripts/setup.py                      # install deps, start the lookup service
+    python scripts/setup.py --refresh-data       # refresh data/ from the CDN first
+    python scripts/setup.py --version <release>  # refresh data/ from this release first
 """
 import argparse
 import subprocess
@@ -22,9 +22,9 @@ from scripts.init import refresh
 SETTINGS = load_settings()
 
 
-def run(cmd: list[str], check: bool = True, **kw: Any) -> subprocess.CompletedProcess:
+def run(cmd: list[str], **kw: Any) -> subprocess.CompletedProcess:
     print(f"  $ {' '.join(cmd)}")
-    return subprocess.run(cmd, check=check, **kw)
+    return subprocess.run(cmd, check=True, **kw)
 
 
 def check_python() -> None:
@@ -44,7 +44,7 @@ def install_deps() -> None:
 
 
 def report_local_schema() -> None:
-    """Report the already available deterministic lookup dataset."""
+    """Print the release and addon counts of the schemas in data/."""
     schema_dir = SETTINGS.schema.directory
     counts = schema_counts(schema_dir)
     actual_version = schema_version(schema_dir) or "unknown version"

@@ -21,6 +21,7 @@ Usage:
 """
 import argparse
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -39,7 +40,7 @@ def _ace_count(addons: dict) -> int:
     )
 
 
-def refresh_guides(data_dir: Path, saved: list[Path]) -> None:
+def refresh_guides(data_dir: Path, saved: Sequence[Path]) -> None:
     """Write each guide whose text changed; report what happened to each."""
     from src.ingest import guides
 
@@ -47,7 +48,7 @@ def refresh_guides(data_dir: Path, saved: list[Path]) -> None:
         print(f"  {guides.GUIDES_DIR}/{name}.md: {outcome}")
 
 
-def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
+def refresh(version: str | None = None, saved: Sequence[Path] = ()) -> None:
     """Fetch one release, the latest stable by default, replace data/, then refresh the guides."""
     from src.settings import load_settings
     from src.ingest.c3_fetcher import C3Fetcher, latest_stable_version
@@ -64,12 +65,10 @@ def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
         cache_dir=settings.schema.cache_dir,
     )
 
-    # 1. Fetch core data
     print("[1/7] Fetching ACE definitions...")
     aces = fetcher.fetch_all_aces()
-    p_count, b_count = _ace_count(aces["plugins"]), _ace_count(aces["behaviors"])
-    print(f"  {len(aces['plugins'])} plugins ({p_count} ACEs)")
-    print(f"  {len(aces['behaviors'])} behaviors ({b_count} ACEs)")
+    for kind in ("plugins", "behaviors"):
+        print(f"  {len(aces[kind])} {kind} ({_ace_count(aces[kind])} ACEs)")
 
     print("[2/7] Fetching language data...")
     packs = {locale: fetcher.fetch_lang(locale) for locale in SCHEMA_LOCALES}
@@ -84,7 +83,7 @@ def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
     examples = fetcher.fetch_examples()
     print(f"  {len(examples)} example projects")
 
-    # 2. Export, then replace the committed copies
+    # Export into the cache, then replace the committed copies in data/
     print("[5/7] Exporting schemas, language packs, and TypeScript definitions...")
     targets = fetcher.export_to_data(settings.paths.data_dir)
     counts = schema_counts(targets["c3-schemas"])
@@ -94,16 +93,15 @@ def refresh(version: str | None = None, saved: list[Path] = ()) -> None:
     print(f"  language packs: {', '.join(sorted(p.stem for p in targets['c3-lang'].glob('*.json')))}")
     print(f"  ts-defs: {len(list(targets['c3-ts-defs'].rglob('*.d.ts')))} files")
 
-    # 3. Which official examples use each ACE: from the examples clone, not the CDN
+    # Read from the Construct-Example-Projects clone beside this repository
     print("[6/7] Indexing the official examples' ACEs...")
     import example_usage
     print(f"  {example_usage.refresh()}")
 
-    # 4. Scirra's guides: pages, not release data
+    # Pages on construct.net, outside the release
     print("[7/7] Fetching Scirra's guides...")
     refresh_guides(settings.paths.data_dir, saved)
 
-    # 5. Summary
     print(f"\n{'='*50}")
     print(f"  Construct 3 {version} — data refreshed")
     print(f"  Cache: {fetcher.cache_dir}")

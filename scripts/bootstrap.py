@@ -5,11 +5,11 @@ project, and the skill inside it.
     python scripts/bootstrap.py --project MyGame    # ... and install the skill in MyGame beside them;
                                                     # a folder that does not exist yet gets the empty project
 
-Clones Construct3-Manual, Construct-Example-Projects, Construct-Addon-SDK and
-the empty project into the folder that holds this repository, each one only
-when it is not there yet, then runs the skill's install.py on the project.
-Safe to run again: a clone already present is left as it is, and install.py
-refreshes rather than overwrites.
+Clones Construct3-Manual, Construct-Example-Projects and Construct-Addon-SDK
+into the folder that holds this repository, each one only when it is not
+there yet. A missing or empty project folder gets a copy of the empty project,
+then the skill's install.py runs on the project. Safe to run again: a clone
+already present is left as it is, and install.py refreshes rather than overwrites.
 """
 import argparse
 import shutil

@@ -46,7 +46,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print("\nRefresh with `python scripts/init.py`, then review `git diff --stat data/`.")
     if args.github_output:
-        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+        with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as out:
             print(f"current={current}", f"latest={latest}", f"changed={str(latest != current).lower()}",
                   sep="\n", file=out)
     return 0
