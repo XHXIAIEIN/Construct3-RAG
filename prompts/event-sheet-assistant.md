@@ -8,12 +8,11 @@ touch). If events go into a project's `eventSheets/*.json`, write them with
 the `construct3-agent-plugin` skill instead
 ([SKILL.md](../skills/construct3-agent-plugin/SKILL.md)). The rules below
 on names apply to both. Before events go into a project, read
-[event-sheet-style.md](event-sheet-style.md), which says how the official
-examples group, name and comment a sheet.
+[event-sheet-style.md](event-sheet-style.md).
 
 ## Locale
 
-Read the schemas of the user's language, in `data/c3-schemas/{lang}/`;
+Read the schemas of the user's language, in `data/c3-schemas/{locale}/`;
 `data/c3-schemas/_index.json` → `languages` lists the directories
 (`en-US`, `zh-CN`). Ids and structure are identical across languages; only
 the text differs.
@@ -77,14 +76,19 @@ actions.
 - Design first with the rules and smell table of `event-sheet-thinking.md`,
   then write.
 - Use only Names that exist in the schema, as `list-name` in
-  `data/c3-schemas/{lang}/plugins/{id}.json` or `behaviors/{id}.json`. Look
-  up the part instead of reading the file, because `plugins/system.json`
-  and `plugins/_common.json` are longer than a file reader returns at once.
-  An ACE below the cut then looks missing. `python
-  <Construct3-RAG>/skills/construct3-agent-plugin/scripts/lookup_ace.py System
-  wait` prints the matching conditions, actions and expressions of `System`
-  with their parameters. It also takes a plugin or behavior by id or
-  display name.
+  `data/c3-schemas/{locale}/plugins/{id}.json` or `behaviors/{id}.json`.
+  Look up the part instead of reading the file, because
+  `plugins/system.json` and `plugins/_common.json` are longer than a file
+  reader returns at once, and an ACE below the cut then looks missing. This
+  command prints the matching conditions, actions and expressions of
+  `System` with their parameters:
+
+  ```bash
+  python <Construct3-RAG>/skills/construct3-agent-plugin/scripts/lookup_ace.py System wait
+  ```
+
+  In place of `System`, it also takes a plugin or behavior by id or display
+  name.
 - ACEs that all world objects share (overlap, collisions, instance
   variables, hierarchy, UID, nearest, Z order) are in `plugins/_common.json`,
   not in the plugin's file. If you run the lookup in a game project's
@@ -105,15 +109,16 @@ actions.
 
 ## Where data lives
 
-All paths are under `data/`; `{lang}` is the user's locale, as in Locale.
+All paths are under `data/`; `{locale}` is the directory of the user's
+language, as in Locale.
 
 | Need | File |
 |------|------|
 | Plugin, behavior, effect list | `c3-schemas/_index.json` |
-| Addon id from its localized name | `c3-schemas/{lang}/_index.json` |
-| ACE definitions | `c3-schemas/{lang}/plugins/{id}.json`, `behaviors/{id}.json` |
-| ACEs shared by all world objects | `c3-schemas/{lang}/plugins/_common.json` |
-| Whether an addon or ACE is deprecated, and the current ACE of the same name | `c3-schemas/{lang}/_deprecated.json`; a deprecated ACE the schema kept also has `isDeprecated` |
-| Effect parameters | `c3-schemas/{lang}/effects/{id}.json` |
-| Example projects | `c3-examples/{lang}/{id}.json`; event sheets in `<Construct-Example-Projects>/example-projects/{id}/eventSheets/` if that repository is cloned alongside |
+| Addon id from its localized name | `c3-schemas/{locale}/_index.json` |
+| ACE definitions | `c3-schemas/{locale}/plugins/{id}.json`, `behaviors/{id}.json` |
+| ACEs shared by all world objects | `c3-schemas/{locale}/plugins/_common.json` |
+| Whether an addon or ACE is deprecated, and the current ACE of the same name | `c3-schemas/{locale}/_deprecated.json`; a deprecated ACE the schema kept also has `isDeprecated` |
+| Effect parameters | `c3-schemas/{locale}/effects/{id}.json` |
+| Example projects | `c3-examples/{locale}/{id}.json`; event sheets in `<Construct-Example-Projects>/example-projects/{id}/eventSheets/` if that repository is cloned alongside |
 | TypeScript API | `c3-ts-defs/autocomplete-data.json`, then the matching `.d.ts` |

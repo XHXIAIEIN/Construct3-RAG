@@ -33,31 +33,35 @@ to the right column's shape, not just enough to silence it.
 Here is a sheet as `print_sheet.py` prints it.
 
 ```
-     // Coins. Tap a coin to collect it; when the last one is gone the layout restarts.
+     // Coins. Tap a coin to collect it; when the last one is gone the layout restarts
      // Settings
-     global constant number COIN_COUNT = 6          // Coins dealt at the start
+     global constant number COIN_COUNT = 6
+         // Coins dealt at the start
      // Gameplay variables
-     global number score = 0                        // Points collected this round
+     global number score = 0
+         // Points collected this round
    1 group Setup
        // Empty the score and deal the coins
    2   System: On start of layout
            -> System: Set score to 0
-           -> ScoreText: Set text to "Score: 0"
+           -> TextScore: Set text to "Score: 0"
            -> // Deal the coins
            -> ...
    3 group Player
-       static number touchStartX = 0                // Where the swipe began
+       local static number touchStartX = 0
+           // Where the swipe began
        // Only while the player can act
    4   Player: NOT Is dead
-       System: Is tutorial (inverted)
+       System: NOT Is tutorial  [sub-events 5-6]
          // Jump
-   5     Keyboard: On Space pressed
+   5     Keyboard: On 32 pressed
              -> Player: Jump()
          // Dash
-   6     Keyboard: On Right pressed
+   6     Keyboard: On 39 pressed
              -> Player: Dash()
+   7 group Coins
        // Shrink the coin away and score it
-   7   Coin: Collect()             (custom action, description "Shrink the coin away and score it")
+   8   custom action Coin.Collect()
 ```
 
 Constants go under `Settings`, shared state under `Gameplay variables`,
@@ -67,6 +71,14 @@ group, with a comment above it. A group holds its variables, then its
 functions and custom actions, then its events. A trigger has its filter
 conditions in the same block and its branches in sub-events, one comment
 each. Two levels of sub-events cover almost every event in the examples.
+
+To see these conventions in a whole sheet before writing, print an example:
+
+```bash
+python <Construct3-RAG>/skills/construct3-agent-plugin/scripts/print_sheet.py --project <Construct-Example-Projects>/example-projects/samuroof Game
+```
+
+`labyrinth`, `eventide` and `digiautos` show the same conventions.
 
 ## Comments
 
@@ -93,7 +105,8 @@ put one. Keep the period between two sentences.
 | The sheet | One line on what it covers | `This is the main gameplay event sheet. Each game component has a dedicated event sheet` |
 
 A function's or custom action's description is the sentence of the
-comment above it, as `Coin: Collect()` shows in the shape above.
+comment above it: in the shape above, `Coin.Collect()` has the description
+`Shrink the coin away and score it`.
 
 ## Names
 
@@ -136,8 +149,3 @@ breaks a line, pass `newline` as a value:
 never call `StringSub`, but this repository does, because the template
 reads as the text it shows. [manual: system-reference/system-expressions.md
 "StringSub"]
-
-To see it all before writing, print an example: `python
-<Construct3-RAG>/skills/construct3-agent-plugin/scripts/print_sheet.py --project
-<Construct-Example-Projects>/example-projects/samuroof Game`; labyrinth,
-eventide and digiautos show the same conventions.
