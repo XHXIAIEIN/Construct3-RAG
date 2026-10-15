@@ -24,4 +24,4 @@ The plugin also adds the sub-agent type `construct3:project-worker`, for a chang
 
 ## Source
 
-The plugin is built from [Construct3-RAG](https://github.com/XHXIAIEIN/Construct3-RAG), which also holds the data pipeline, the tests and the decision records. License: MIT.
+The plugin is built from [Construct3-RAG](https://github.com/XHXIAIEIN/Construct3-RAG), which also holds the data pipeline, the tests and the decision records. A workflow there pushes the built folder to [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) after each change. License: MIT.

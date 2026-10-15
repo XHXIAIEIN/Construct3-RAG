@@ -49,14 +49,14 @@ Construct3-RAG 让 AI agent 制作和修改以项目文件夹保存的 [Construc
 plugin 是 [`plugin/`](plugin/README.md) 文件夹，由 `scripts/build_plugin.py` 从 skill 和它读取的数据构建，所以 schemas 一起带上。脚本直接在 plugin 的文件夹里运行。plugin 有三种装法：
 
 - 从 Claude 目录安装，得到 Anthropic 审核过的版本。在 claude.ai 打开 **Customize** > **Plugins**。搜索 Construct3，点 **Add**。如果 Claude Code 用同一账号登录，它下次启动时会下载这个 plugin，名为 `construct3@synced`。每个版本都要等审核，所以这份可能比本仓库落后几个提交。
-- 从本仓库安装，跟上发布的版本：
+- 从 plugin 自己的仓库 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) 安装，跟上发布的版本。它的 `plugin/` 就是这里的 `plugin/`。`main` 上每次改动 `plugin/` 的推送之后，工作流把它推过去。
 
   ```bash
-  claude plugin marketplace add XHXIAIEIN/Construct3-RAG
-  claude plugin install construct3@construct3-rag
+  claude plugin marketplace add XHXIAIEIN/Construct3-Agent-Skills
+  claude plugin install construct3@construct3-agent-skills
   ```
 
-  要把 Claude Code 存的副本更新到本仓库 `plugin.json` 里的版本，运行 `claude plugin update construct3@construct3-rag`。plugin 的 skill、数据或 prompts 有改动，这个版本就会提高。只有 marketplace 打开了自动更新，Claude Code 才会自己更新它；不由 Anthropic 运营的 marketplace 默认不开自动更新。要打开它，在会话里运行 `/plugin`，打开 **Marketplaces** 标签，选 `construct3-rag`，再选 **Enable auto-update**。更新从下一个会话起生效。
+  要把 Claude Code 存的副本更新到那个仓库 `plugin.json` 里的版本，运行 `claude plugin update construct3@construct3-agent-skills`。plugin 的 skill、数据或 prompts 有改动，这个版本就会提高。只有 marketplace 打开了自动更新，Claude Code 才会自己更新它；不由 Anthropic 运营的 marketplace 默认不开自动更新。要打开它，在会话里运行 `/plugin`，打开 **Marketplaces** 标签，选 `construct3-agent-skills`，再选 **Enable auto-update**。更新从下一个会话起生效。
 - 从已有的 clone 安装，让下一个会话用上 `git pull` 拉下来的文件：把 clone 链接到 Claude Code 的 skills 文件夹。
   - PowerShell：`New-Item -ItemType Junction -Path ~/.claude/skills/construct3 -Target <clone 路径>/plugin`
   - 其他 shell：`ln -s <clone 路径>/plugin ~/.claude/skills/construct3`
@@ -204,7 +204,7 @@ python scripts/setup.py          # http://localhost:8765/playground
 ```
 AGENTS.md               AI agent 入口
 .claude-plugin/         Claude Code marketplace 的清单
-plugin/                 Claude Code plugin，由 scripts/build_plugin.py 构建
+plugin/                 Claude Code plugin，由 scripts/build_plugin.py 构建，发布到 Construct3-Agent-Skills
 .claude/                Claude Code 的 ACE 查找子 agent 和 polish 工作流
 data/                   提交在仓库里的参考数据，直接读取
   c3-schemas/           ACE 定义和滤镜，每种语言一个文件夹
