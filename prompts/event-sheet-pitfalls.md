@@ -78,6 +78,7 @@ If the events define or call a function or a custom action, read
 - A function without parameters is called without parentheses: `Functions.name`, not `Functions.name()`.
 - The deprecated Function plugin's call by a string is a function map in built-in functions: *Map function to string*, then *Call mapped function* with the string, or `Functions.CallMapped` for a value.
 - *Call mapped function* forwards from its index only to a mapped function; the default gets every parameter from 0. A call that finds nothing to run only warns in the console. Give the default the caller's whole parameter list.
+- A function is called from any sheet, included or not. A trigger runs only in a sheet the layout uses or includes, and elsewhere does nothing without an error. Include the sheet when the function waits on one of its triggers.
 
 ### Timer
 
@@ -129,6 +130,11 @@ Dictionary or JSON, read [pitfalls/expressions.md](pitfalls/expressions.md).
 - A local variable at sub-event level is visible to its siblings, not to the parent's own actions.
 - *Set mesh point* in *Relative* mode adds to the current position, so deriving it every tick accumulates.
 - JSON reads a dot in a path as a step into a nested key. Escape a dot inside a key as `\.` in the path, or keep dots out of keys; a Dictionary reads keys whole.
+- A variable at the root of a sheet is a global, read from every sheet and kept between layouts; only one in a group or under an event is local. A variable meant for one sheet goes in a group.
+- `tokencount("", ",")` is 1, so a loop over an empty list runs once on an empty token. Test `list ≠ ""` before the loop.
+- A non-static local resets every tick, so a trigger of a later tick (*On timer*, AJAX *On completed*) reads its initial value. Make it static, or use a global or an instance variable.
+- A text set into a number variable is parsed: `"12px"` stores 12, `"abc"` stores NaN, not 0, which fails every comparison. Convert with `int()` or `float()` first.
+- A local's declaration resets it when the tick reaches it, so a value set by an event above the declaration is gone below it; a static local keeps it. Declare a local above the first event that writes it.
 
 ### Coordinates and angles
 
