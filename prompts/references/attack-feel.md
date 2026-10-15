@@ -3,8 +3,8 @@
 An attack feels right when its wind-up, its animation, its sounds and its
 hit effect land on the same moments. This file gives the numbers and the
 Construct way for each, for an action game with a click-to-attack hero, a
-melee swing or a ranged shot. The general effects (shake, hit stop,
-squash) are in [feel.md](feel.md), and the loudness and the mix are in
+melee swing or a ranged shot. For the general effects (shake, hit stop,
+squash), read [feel.md](feel.md), and for the loudness and the mix,
 [sound.md](sound.md).
 
 The numbers come from a studied published action game. Each rule ends
@@ -29,7 +29,8 @@ says so.
   share of 18 to 20 % by default. Use 25 to 30 % for a heavy weapon, and
   16 to 18 % for a ranged or caster hero. [derived]
 - A base attack speed of 0.625 to 0.7 a second gives a cycle of 1.4 to
-  1.6 s and a `baseWindup` of 0.25 to 0.35 s. [derived]
+  1.6 s and a wind-up at that speed, `baseWindup`, of 0.25 to 0.35 s.
+  [derived]
 - Deal the damage, or launch the projectile, when the wind-up ends, not
   when the animation ends. A melee hit lands at that moment, with no delay
   for distance. [data, derived]
@@ -58,7 +59,7 @@ says so.
 - Put the release frame where `baseWindup` ends: frame 8 to 11 at 30 fps.
   Most of the game's attacks match this within ±20 %. [derived]
 - Scale the playback so the release frame lands on the current wind-up:
-  Sprite *Set speed* to `Self.OriginalAnimationSpeed × baseWindup /
+  Sprite *Set speed* to `Self.OriginalAnimationSpeed * baseWindup /
   windup`. Then the next attack cuts the recovery: at about 90 % of it at
   the base attack speed, and at about 45 % at 2 attacks a second.
   [derived, inferred]
@@ -86,7 +87,7 @@ says so.
   0.1 s from an attack to idle or run, and from an empowered strike to a
   basic attack. These are the commonest values in the game's animation
   graphs. Set them in 3D Model *Set animation*, *Transition duration*.
-  How to restart a clip that is playing is in
+  To restart a clip that is playing, read
   [pitfalls: Animation](../pitfalls/animation.md). [derived]
 
 ## Cancelling and resets
@@ -96,7 +97,7 @@ says so.
 - Ignore move orders in the last 0.033 s of the wind-up and for 0.033 s
   after the release, so a late click does not cancel the hit. At 60 Hz
   this is two ticks. Read the time left as
-  `Self.Timer.Duration("windup") − Self.Timer.CurrentTime("windup")`.
+  `Self.Timer.Duration("windup") - Self.Timer.CurrentTime("windup")`.
   [data, documented]
 - A skill that resets the attack does *Stop timer* "cycle", so the next
   attack can start at once. A reset during the wind-up also cancels that
@@ -116,10 +117,11 @@ says so.
   1.0 s, and buffs, dashes and skills centred on the hero take none. Time
   the effect of the skill by its cast-time timer, and let the animation
   only show it. [data, derived]
-- Keep a skill pressed during its cooldown or a lock, and cast it the
-  moment it is ready, if that is at most 0.5 s away. Otherwise drop the
-  press. Fast combo skills use 0.05 to 0.3 s. Never queue a basic attack.
-  Store the window as a number on each skill. [data]
+- If a skill is pressed during its cooldown or a lock and will be ready
+  within 0.5 s, keep the press and cast the skill the moment it is ready.
+  Otherwise drop the press. Fast combo skills use a window of 0.05 to
+  0.3 s, so store the window as a number on each skill. Never queue a
+  basic attack. [data]
 
 ## Projectiles
 
@@ -173,8 +175,9 @@ says so.
   its own tag. [data]
 - Lengths: a swing 0.4 to 0.7 s, a hit 0.7 to 1.2 s, a critical layer 1.0
   to 1.6 s, a skill cast 2.3 to 3.3 s. [data]
-- Do not *Stop* the last hit sound when the next one plays. A hit outlasts
-  the shortest attack interval, so the two overlap. [derived]
+- Let the last hit sound play to its end when the next one plays, and do
+  not *Stop* it. A hit outlasts the shortest attack interval, so the two
+  overlap. [derived]
 - One moment can play several layers with delays. An empowered strike can
   start its wind-up sound at once and a longer impact 0.2 to 0.25 s later,
   about 0.1 s before the damage, with no separate hit sound. [data;
@@ -233,8 +236,8 @@ says so.
 - Merge damage over time and rapid hits into one number. A new hit within
   0.35 to 1.3 s adds to it and extends its life. Show at most 20 numbers,
   and queue the rest 0.2 s apart. [data]
-- The ghost of a health bar, the part that shows a loss and then closes,
-  is in [progress-bars.md](progress-bars.md).
+- For the ghost of a health bar, the part that shows a loss and then
+  closes, read [progress-bars.md](progress-bars.md).
 
 ## Orders and the view
 
