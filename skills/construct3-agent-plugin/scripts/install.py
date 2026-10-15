@@ -32,11 +32,37 @@ FORMER_NAMES = ("construct3-project",)     # the skill's folder before it was re
 RAG_KEY = re.compile(r"^[ \t>*-]*Construct3-RAG\s*[:=]", re.M)
 
 
+def word(s: str) -> str:
+    """s as one word of a printed command: quoted when it holds a space."""
+    return f'"{s}"' if " " in s else s
+
+
+def text_of(path: Path) -> str:
+    """The text of a file, or "" when there is none."""
+    return path.read_text(encoding="utf-8") if path.exists() else ""
+
+
+def append(path: Path, before: str, text: str) -> None:
+    """Write text into path below before, its present text, with a blank line between them."""
+    path.write_text((before.rstrip("\n") + "\n\n" if before.strip() else "") + text, encoding="utf-8", newline="\n")
+
+
+def names_clone(text: str) -> bool:
+    """Whether the Construct3-RAG line of an instruction file leads to a clone."""
+    found = c3.rag_line(text)
+    return bool(found) and c3.is_clone(Path(found))
+
+
+def copies(project: Path, skill: str = SKILL) -> list[Path]:
+    """The project's copies of a skill, one per skills directory."""
+    return sorted(p.parent for p in project.glob(f".*/skills/{skill}/SKILL.md"))
+
+
 def new_project(folder: str) -> str:
-    """install.py fills a project; new_project.py of this skill creates one first."""
-    folder = f'"{folder}"' if " " in folder else folder      # or the placeholder <folder>, which stays bare
+    """The end of a "no project.c3proj" message: the command that starts a project in folder."""
+    # word(), not c3.quoted(): the placeholder <folder> stays bare
     return (f". To start a new project, run python {c3.quoted((SKILL_DIR / 'scripts' / 'new_project.py').as_posix())} "
-            f"{folder}")
+            f"{word(folder)}")
 
 
 def targets(project: Path | None, into: str | None) -> list[Path]:
@@ -53,12 +79,11 @@ def targets(project: Path | None, into: str | None) -> list[Path]:
         sys.exit(f"no project.c3proj in {Path.cwd()} or above it; run this from the game project, pass "
                  f"--project <folder>, or pass an absolute --into such as ~/.agents/skills"
                  f"{new_project('<folder>')}")
-    held = sorted(p.parent for p in project.glob(f".*/skills/{SKILL}/SKILL.md"))
-    return held or [project / DEFAULT_INTO / SKILL]
+    return copies(project) or [project / DEFAULT_INTO / SKILL]
 
 
 def mirror(source: Path, target: Path, dry_run: bool) -> str:
-    """Make target hold exactly the files of source; a file the skill no longer has goes."""
+    """Make target hold exactly the files of source: copy each file that differs, remove each one source lacks."""
     wanted, have = c3.skill_files(source), c3.skill_files(target) if target.exists() else {}
     written = [rel for rel, path in wanted.items() if rel not in have or not c3.same_text(path, have[rel])]
     removed = [rel for rel in have if rel not in wanted]
@@ -71,8 +96,7 @@ def mirror(source: Path, target: Path, dry_run: bool) -> str:
     if not written and not removed:
         return f"{len(wanted)} files, already current"
     wrote, gone = ("would write", "would remove") if dry_run else ("wrote", "removed")
-    parts = ([f"{wrote} {', '.join(written)}"] if written else []) + ([f"{gone} {', '.join(removed)}"] if removed else [])
-    return "; ".join(parts)
+    return "; ".join(f"{verb} {', '.join(rels)}" for verb, rels in ((wrote, written), (gone, removed)) if rels)
 
 
 def shown(path: Path, project: Path | None) -> str:
@@ -95,8 +119,8 @@ def add_block(project: Path, rag: Path, skill_path: str, replace_edited: bool, d
         return notes
     notes = []
     row = f"`{skill_path}/SKILL.md`"
-    for name in ("AGENTS.md", "CLAUDE.md"):
-        text = (project / name).read_text(encoding="utf-8") if (project / name).exists() else ""
+    for name in c3.INSTRUCTION_FILES:
+        text = text_of(project / name)
         if not RAG_KEY.search(text):
             continue
         notes += clone_note(project / name, rag)
@@ -113,9 +137,9 @@ def add_block(project: Path, rag: Path, skill_path: str, replace_edited: bool, d
 
     block = "\n".join(c3.block_lines(rag, skill_path)) + "\n"
     agents = project / "AGENTS.md"
-    before = agents.read_text(encoding="utf-8") if agents.exists() else ""
+    before = text_of(agents)
     if not dry_run:
-        agents.write_text((before.rstrip("\n") + "\n\n" if before.strip() else "") + block, encoding="utf-8", newline="\n")
+        append(agents, before, block)
     did = "added" if before.strip() else "created with"
     notes.append(f"AGENTS.md: {'would be ' if dry_run else ''}{did} the Construct 3 block, "
                  f"Construct3-RAG: {rag.as_posix()}")
@@ -132,20 +156,18 @@ def lead_claude_md(project: Path, dry_run: bool) -> list[str]:
     instead of AGENTS.md when both exist: one line there leads to the block in
     AGENTS.md, whether this run wrote the block or found it."""
     claude = project / "CLAUDE.md"
-    had = claude.read_text(encoding="utf-8") if claude.exists() else ""
+    had = text_of(claude)
     if "@AGENTS.md" in had or RAG_KEY.search(had):
         return []
     if not dry_run:
-        claude.write_text((had.rstrip("\n") + "\n\n" if had.strip() else "") + "@AGENTS.md\n",
-                          encoding="utf-8", newline="\n")
+        append(claude, had, "@AGENTS.md\n")
     return [f"CLAUDE.md: {'would be ' if dry_run else ''}{'added' if had.strip() else 'created with'} "
             f"the line @AGENTS.md, which Claude Code follows to the block"]
 
 
 def clone_note(path: Path, rag: Path) -> list[str]:
     """The line to write when the instruction file's Construct3-RAG line does not reach the clone."""
-    found = c3.rag_line(path.read_text(encoding="utf-8", errors="replace")) if path.exists() else None
-    if found and c3.is_clone(Path(found)):
+    if path.exists() and names_clone(path.read_text(encoding="utf-8", errors="replace")):
         return []
     return [f"{path.name}: its Construct3-RAG line does not lead to the clone; "
             f"the line to write is '- Construct3-RAG: {rag.as_posix()}'"]
@@ -191,11 +213,8 @@ def refresh_block(project: Path, rag: Path, found: c3.BlockState, skill_path: st
 def unnamed_clone(project: Path, rag: Path) -> list[str]:
     """--no-block on a project whose instruction files do not lead to the clone:
     the copied scripts would stop at 'Construct3-RAG not found', so say how they find it."""
-    for name in ("AGENTS.md", "CLAUDE.md"):
-        text = (project / name).read_text(encoding="utf-8") if (project / name).exists() else ""
-        found = c3.rag_line(text)
-        if found and c3.is_clone(Path(found)):
-            return []
+    if any(names_clone(text_of(project / name)) for name in c3.INSTRUCTION_FILES):
+        return []
     return [f"no instruction file of the project names the clone, and --no-block adds none: the scripts take "
             f"--rag {rag.as_posix()} or CONSTRUCT3_RAG set to it; keep that path where your client stores "
             f"notes between sessions"]
@@ -203,10 +222,8 @@ def unnamed_clone(project: Path, rag: Path) -> list[str]:
 
 def again(flag: str) -> str:
     """This run's command with flag in place of any earlier use of it."""
-    def quoted(s: str) -> str:
-        return f'"{s}"' if " " in s else s
     kept = [a for a in sys.argv[1:] if a.split("=")[0] != flag.split("=")[0]]
-    return " ".join(["python", quoted(Path(__file__).resolve().as_posix()), *map(quoted, kept), flag])
+    return " ".join(["python", word(Path(__file__).resolve().as_posix()), *map(word, kept), flag])
 
 
 def generator(project: Path, rag: Path, replace_edited: str | None, dry_run: bool) -> tuple[bool, list[str]]:
@@ -240,18 +257,17 @@ def generator(project: Path, rag: Path, replace_edited: str | None, dry_run: boo
             return False, [f"{name}: {lost}; its helpers were left as they are"]
         taken = {n.strip() for n in (replace_edited or "").split(",")}
         lost = [entry for entry in lost if entry[0] not in taken]
-    if h.state == "edited" and replace_edited is None:
-        changed = f" ({', '.join(n for n, _, _ in lost)})" if copied and lost else ""
-        return False, [f"{name}: its helpers, between the markers, were edited there, so they were left as they "
-                       f"are. Copy each helper changed there{changed} below the end marker, where a def of the same "
-                       f"name replaces the one between the markers, then run {again('--replace-edited-helpers')}"]
-    if h.state == "edited" and lost and copied:
-        return False, [f"{name}: replacing its helpers would lose these, which were edited there and have no def "
-                       f"of the same name below the end marker; nothing was written:",
-                       *(f"  {n}: here {here!r}, as copied {was!r}" for n, here, was in lost),
-                       f"Copy each one below the end marker, where it replaces the skill's, then run "
-                       f"{again('--replace-edited-helpers')}"]
-    if h.state == "edited":
+        if replace_edited is None:
+            changed = f" ({', '.join(n for n, _, _ in lost)})" if copied and lost else ""
+            return False, [f"{name}: its helpers, between the markers, were edited there, so they were left as they "
+                           f"are. Copy each helper changed there{changed} below the end marker, where a def of the same "
+                           f"name replaces the one between the markers, then run {again('--replace-edited-helpers')}"]
+        if lost and copied:
+            return False, [f"{name}: replacing its helpers would lose these, which were edited there and have no def "
+                           f"of the same name below the end marker; nothing was written:",
+                           *(f"  {n}: here {here!r}, as copied {was!r}" for n, here, was in lost),
+                           f"Copy each one below the end marker, where it replaces the skill's, then run "
+                           f"{again('--replace-edited-helpers')}"]
         if lost:
             return False, [f"{name}: replacing its helpers would lose these, which differ from the skill's and "
                            f"have no def of the same name below the end marker; nothing was written:",
@@ -279,12 +295,11 @@ def earlier_tools(project: Path, skill_path: str) -> list[str]:
         notes.append("tools/build-project.py: it ends by running the checker beside it; replace its last lines "
                      "with those of assets/build_project.py, which run the skill's checker")
     for former in FORMER_NAMES:
-        for copy in sorted(p.parent for p in project.glob(f".*/skills/{former}/SKILL.md")):
+        for copy in copies(project, former):
             notes.append(f"{shown(copy, project)}: a copy of this skill under its former name, which nothing "
                          f"refreshes and a client lists beside {SKILL}; remove the folder when the user agrees")
-        for name in ("AGENTS.md", "CLAUDE.md"):
-            path = project / name
-            if path.exists() and f"/{former}/" in path.read_text(encoding="utf-8"):
+        for name in c3.INSTRUCTION_FILES:
+            if f"/{former}/" in text_of(project / name):
                 notes.append(f"{name}: names the skill's former folder {former}; write {skill_path} in place of "
                              f"each path to it")
     return notes
@@ -361,12 +376,11 @@ def main() -> int:
                      f"--project <folder>")
         current, lines = True, []
         if args.block_only:
-            # the folder of the project's copy of the skill; without a copy, the one the block names
-            held = args.into or any(project.glob(f".*/skills/{SKILL}/SKILL.md"))
-            ok, notes = refresh_block(project, rag, c3.instruction_block(project),
-                                      shown(targets(project, args.into)[0], project) if held else None,
-                                      args.replace_edited_block, args.dry_run)
-            current, lines = current and ok, lines + notes
+            # The folder of the project's copy of the skill; without a copy, the one the block names
+            held = args.into or copies(project)
+            current, lines = refresh_block(project, rag, c3.instruction_block(project),
+                                           shown(targets(project, args.into)[0], project) if held else None,
+                                           args.replace_edited_block, args.dry_run)
         if args.helpers_only:
             ok, notes = generator(project, rag, args.replace_edited_helpers, args.dry_run)
             current = current and ok
@@ -379,16 +393,17 @@ def main() -> int:
     places = targets(project, args.into)
     for target in places:
         print(f"{shown(target, project)}: {mirror(SKILL_DIR, target, args.dry_run)}")
+    skill_path = shown(places[0], project)
     if project:
         notes = unnamed_clone(project, rag) if args.no_block else \
-            add_block(project, rag, shown(places[0], project), args.replace_edited_block, args.dry_run)
+            add_block(project, rag, skill_path, args.replace_edited_block, args.dry_run)
         refreshed = generator(project, rag, args.replace_edited_helpers, args.dry_run)[1]
-        for note in refreshed + notes + earlier_tools(project, shown(places[0], project)):
+        for note in refreshed + notes + earlier_tools(project, skill_path):
             print(note)
     if args.dry_run:
         print("dry run: nothing was written")
     else:
-        print(f"ok: read {shown(places[0], project)}/SKILL.md")
+        print(f"ok: read {skill_path}/SKILL.md")
     return 0
 
 

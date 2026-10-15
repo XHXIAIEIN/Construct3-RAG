@@ -24,6 +24,11 @@ import c3project as c3
 TEMPLATE = "data/c3-new-project"
 
 
+def check_args(target: Path) -> str:
+    """What follows python in the command that checks the project at target."""
+    return f"{(c3.SKILL_DIR / 'scripts' / 'check_project.py').as_posix()} --project \"{target}\""
+
+
 def unique_id() -> str:
     """The shape the editor writes: eleven lowercase letters and digits."""
     return "".join(random.choices(string.ascii_lowercase + string.digits, k=11))
@@ -67,15 +72,14 @@ def main() -> int:
     c3.utf8_output()
     target = Path(args.folder).expanduser().resolve()
     if (target / "project.c3proj").exists():
-        print(f"{target.name}: {target} already holds project.c3proj; "
-              f"next, python {(c3.SKILL_DIR / 'scripts' / 'check_project.py').as_posix()} --project \"{target}\"")
+        print(f"{target.name}: {target} already holds project.c3proj; next, python {check_args(target)}")
         return 0
     line = new_project(c3.find_rag(None, args.rag) / TEMPLATE, target, args.dry_run)
     print(line)
     if "not created" in line or "not empty" in line:
         return 1
     if not args.dry_run:
-        print(f"ok: next, python {(c3.SKILL_DIR / 'scripts' / 'check_project.py').as_posix()} --project \"{target}\"")
+        print(f"ok: next, python {check_args(target)}")
     return 0
 
 

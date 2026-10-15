@@ -67,7 +67,7 @@ exit codes: 0 written (and opened, with --open); 1 written, but the editor did n
 
 
 class Refused(Exception):
-    pass
+    """A source or an --out this script does not use; the message says why."""
 
 
 def from_folder(project: Path) -> dict[str, Path]:
@@ -84,8 +84,11 @@ def editor_files(files: dict, keep: tuple[str, ...]) -> tuple[dict, list[str]]:
     left: list[str] = []
     for name, data in files.items():
         top, _, rest = name.partition("/")
-        if (rest and top in folders) or (not rest and (top in EDITOR_ROOT_FILES or top.endswith(".uistate.json")
-                                                       or top in keep)):
+        if rest:
+            wanted = top in folders
+        else:
+            wanted = top in EDITOR_ROOT_FILES or top.endswith(".uistate.json") or top in keep
+        if wanted:
             kept[name] = data
         elif (shown := top + ("/" if rest else "")) not in left:
             left.append(shown)
@@ -106,8 +109,8 @@ def from_archive(archive: Path) -> dict[str, bytes]:
         prefix = tops.pop() + "/"
         entries = {n[len(prefix):]: b for n, b in entries.items() if n.startswith(prefix)}
     for name in entries:
-        parts = PurePosixPath(name).parts
-        if PurePosixPath(name).is_absolute() or ".." in parts:
+        path = PurePosixPath(name)
+        if path.is_absolute() or ".." in path.parts:
             raise Refused(f"{archive} names a path outside itself: {name}")
     return entries
 
@@ -140,8 +143,8 @@ def write_folder(out: Path, files: dict[str, bytes | Path]) -> None:
 
 
 def ignored_folder(path: Path) -> Path:
-    """path, a folder of the project, made when missing and given a .gitignore of * so that Git
-    commits nothing in it."""
+    """path, a folder of the project, made when missing, with a .gitignore of * that keeps its
+    contents out of Git."""
     path.mkdir(exist_ok=True)
     if not (path / ".gitignore").exists():
         (path / ".gitignore").write_text("*\n", encoding="utf-8")
@@ -149,6 +152,7 @@ def ignored_folder(path: Path) -> Path:
 
 
 def default_out(source: Path, is_archive: bool) -> Path:
+    """Where the pack goes without --out: a folder beside the archive, or .build/<folder>.c3p of the project."""
     if is_archive:
         return source.with_suffix("")
     return ignored_folder(source / BUILD) / f"{source.name}.c3p"
@@ -191,11 +195,11 @@ def main() -> int:
     if not is_archive and not (source / "project.c3proj").is_file():
         print(f"{source} holds no project.c3proj", file=sys.stderr)
         return 2
-    out = (args.out if args.out and args.out.is_absolute() else Path.cwd() / args.out).resolve() if args.out \
-        else default_out(source, is_archive)
+    out = args.out.resolve() if args.out else default_out(source, is_archive)
+    to_archive = out.suffix.lower() in ARCHIVES
     try:
         files, left = editor_files(from_archive(source) if is_archive else from_folder(source), tuple(args.keep))
-        if out.suffix.lower() in ARCHIVES:
+        if to_archive:
             write_archive(out, files)
             print(f"packed {len(files)} files into {out}, project.c3proj at the root")
         else:
@@ -208,10 +212,10 @@ def main() -> int:
         print(note)
     if left:
         print(f"left out: {', '.join(left)} (--keep NAME packs one)")
-    if os.name == "nt" and len(str(out)) >= MAX_PATH and out.suffix.lower() in ARCHIVES:
+    if os.name == "nt" and len(str(out)) >= MAX_PATH and to_archive:
         print(f"warning: the path is {len(str(out))} characters, past Windows' {MAX_PATH}: a browser handed this "
               f"file arrives with 0 bytes and no error; pass an --out in a shorter folder before uploading it")
-    if out.suffix.lower() not in ARCHIVES:
+    if not to_archive:
         return 0
     opener = Path(__file__).with_name("open_in_editor.py")
     if not args.open:
