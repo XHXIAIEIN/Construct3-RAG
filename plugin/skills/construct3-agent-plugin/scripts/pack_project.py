@@ -1,7 +1,7 @@
 """Save a project as a .c3p, a .zip or a project folder, in the layout the editor opens.
 
     python scripts/pack_project.py [SOURCE] [--project FOLDER] [--out FILE.c3p | FILE.zip | FOLDER]
-                                   [--keep NAME ...] [--open]
+                                   [--keep NAME ...] [--open] [--unchecked]
 
 A .c3p is a zip of the project folder's contents with project.c3proj at the
 root of the archive. A zip that holds the folder itself, the files one level
@@ -21,11 +21,18 @@ eventSheets, images, videos, 3dmodels, palettes, tilemapBrushes, addons for
 bundled addons, ...). Anything else at the top, the agent's skill copy,
 AGENTS.md, a tools/ generator, an export, is left out and named in the
 output; --keep NAME puts one back.
+
+A folder project is packed only after check_project.py passed its files as
+they are. The record of its last run, .tmp/check-project.json, must hold the
+digest that the files have at present and a problem count of 0. Otherwise
+nothing is written, and the line says what to run. --unchecked packs the
+files anyway and says so. An archive is repacked or unpacked without a record.
 """
 from __future__ import annotations
 
 import argparse
 import io
+import json
 import os
 import subprocess
 import sys
@@ -55,14 +62,18 @@ EPILOG = """examples:
   python scripts/pack_project.py --out repro.zip --open          a bug report's attachment, opened once in the editor
   python scripts/pack_project.py downloaded.c3p --out game       a .c3p as a project folder
   python scripts/pack_project.py nested.zip --out fixed.zip      a zip with the folder inside, repacked at the root
+  python scripts/pack_project.py --unchecked                     the files as they are, though check_project.py has not passed them
 
 output:
   packed <n> files into <file>, project.c3proj at the root
   left out: AGENTS.md, .agents/, tools/
   next: python scripts/open_in_editor.py <file>
+  not packed: <why>. Run python scripts/check_project.py and pack again, or pass --unchecked ...
+  unchecked: <why>. The pack holds files that check_project.py has not passed
 
 exit codes: 0 written (and opened, with --open); 1 written, but the editor did not open it;
-2 no project, no project.c3proj in the archive, or --out names a folder that is not empty
+2 no project, no project.c3proj in the archive, or --out names a folder that is not empty;
+3 check_project.py has not passed the project's files as they are (--unchecked packs them)
 """
 
 
@@ -151,6 +162,22 @@ def ignored_folder(path: Path) -> Path:
     return path
 
 
+def unchecked(project: Path) -> str | None:
+    """Why check_project.py has not passed the project's files as they are, or None when the record of
+    its last run holds the digest the files have at present and a problem count of 0. The checker owns
+    the record, and c3project.py the digest."""
+    try:
+        last = json.loads((project / SCRATCH / c3.RECORD).read_text(encoding="utf-8"))
+        digest, problems = last["project"], last["problems"]
+    except (OSError, ValueError, TypeError, KeyError):
+        return "check_project.py has not run on this project"
+    if digest != c3.project_digest(project):
+        return "the project files changed after the last check_project.py run"
+    if problems:
+        return f"the last check_project.py run found {problems} problem(s)"
+    return None
+
+
 def default_out(source: Path, is_archive: bool) -> Path:
     """Where the pack goes without --out: a folder beside the archive, or .build/<folder>.c3p of the project."""
     if is_archive:
@@ -183,6 +210,8 @@ def main() -> int:
                     help="a top-level file or folder of the project to pack although the editor does not save it")
     ap.add_argument("--open", action="store_true",
                     help="open the written .c3p or .zip in the editor with open_in_editor.py")
+    ap.add_argument("--unchecked", action="store_true",
+                    help="pack the folder project although check_project.py has not passed its files as they are")
     ap.add_argument("--rag", help=argparse.SUPPRESS)
     args = ap.parse_args()
 
@@ -195,6 +224,11 @@ def main() -> int:
     if not is_archive and not (source / "project.c3proj").is_file():
         print(f"{source} holds no project.c3proj", file=sys.stderr)
         return 2
+    why = None if is_archive else unchecked(source)
+    if why and not args.unchecked:
+        print(f"not packed: {why}. Run {c3.script_command(source, 'check_project.py')} and pack again, or pass "
+              f"--unchecked to pack the files as they are", file=sys.stderr)
+        return 3
     out = args.out.resolve() if args.out else default_out(source, is_archive)
     to_archive = out.suffix.lower() in ARCHIVES
     try:
@@ -208,6 +242,8 @@ def main() -> int:
     except Refused as e:
         print(e, file=sys.stderr)
         return 2
+    if why:
+        print(f"unchecked: {why}. The pack holds files that check_project.py has not passed")
     if not is_archive and (note := committed_note(out, source)):
         print(note)
     if left:

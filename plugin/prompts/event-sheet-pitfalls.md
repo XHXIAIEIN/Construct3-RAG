@@ -31,6 +31,7 @@ parent's picks, read [pitfalls/picking.md](pitfalls/picking.md).
 - Container members are created, destroyed and picked together. Hierarchy children are not picked with their parent. Use *Pick children*.
 - Picking a family never picks a type's container. Pick the type from the family in a sub-event, `Enemy: Pick by unique ID Enemies.UID`, one per member type.
 - An expression that names another member of a container reads the same instance's member. A custom action given such an expression as a parameter needs *For each* first, so each instance passes its own value.
+- A picking condition reads its type and its container members from each candidate in turn, not from the outer event's pick. Store the outer value in a local before *Pick by evaluate* and compare with the local.
 - *Pick children* picks only among the child type's current picks, which a container may have narrowed. Pick through a family whose one member is the child type.
 - *Pick parent* with *Own* looks one level up only. A grandparent needs *All*, or the event silently picks nothing.
 - A Dictionary or JSON in a container gives each instance its own copy. Use it instead of a growing list of instance variables.
@@ -296,7 +297,7 @@ Sprite, read [pitfalls/creating-objects.md](pitfalls/creating-objects.md).
 - *Create hierarchy* creates the children on the new parent's layer, whatever layers the template's children sit on. Move a child to its own layer after the creation.
 - An object created only by events loads its images when created and draws nothing until they arrive, so a screen-sized picture shows late. Call *Load object images* for it in *On start of layout*.
 - A Particles object given a Sprite spawns real instances that are not the emitter's children.
-- A created instance is found outside its own event only by UID, until the top-level event ends.
+- A created instance is found outside its own event only by UID, *Pick children* and `Count`, until the top-level event ends. Call a function that acts on the older instances before the creation, or set the new one's values while it is picked.
 - The instances of a new hierarchy run *On created* in no fixed order. Initialise the hierarchy in *On hierarchy ready* of its root, which fires once all of them have.
 - A fired bullet that misses flies on outside the layout forever, since its hit events destroy only the ones that hit. Give it the Destroy outside behavior.
 
@@ -314,6 +315,7 @@ If the project saves data, loads several data files with AJAX, is
 exported for the web or uses File System, read [pitfalls/storage-and-export.md](pitfalls/storage-and-export.md).
 
 - A web export looks for an update only when the page loads.
+- An automatic reload in *On update ready* loops while another tab of the game is open. Set the hash to `updated` before *Reload*, and prompt instead when the page starts with it.
 - The Browser object holds back the browser's install banner. Offer installing with *Request install* after *On install available*.
 - File System writes only through a picker tag. The known folders exist only in desktop exports.
 - No tag names the Construct project folder. Save to `<current-app-data>`.

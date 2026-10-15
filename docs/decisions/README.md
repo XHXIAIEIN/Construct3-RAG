@@ -2,6 +2,8 @@ This folder holds the decision records: the evidence, the options and the trade-
 A new record is added below as its own title, with the date of its `Date:` line, newest first.
 
 - [The Type the Editor Records for a Listed File](file-types-in-project-c3proj.md) — 2026-10-16
+- [One Run at a Time Holds a Browser Profile](profile-lock.md) — 2026-10-16
+- [A Pack Carries a Passing Check](pack-after-check.md) — 2026-10-16
 - [A Map of the Sheets: Which Layouts Run Each, and What It Holds](sheet-map.md) — 2026-10-16
 - [The Check Loop Stays Inside the First 5000 Tokens of SKILL.md](skill-body-budget.md) — 2026-10-16
 - [The Plugin Has Its Own Repository](plugin-repository.md) — 2026-10-15

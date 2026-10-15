@@ -92,7 +92,9 @@ output:
   brief: if you can start a sub-agent, give it .tmp/look/brief.md as its whole task ...
 
 exit codes: 0 every layout was visited with no finding and no runtime error; 1 a finding, a runtime error,
-or the project did not open; 2 the project or the editor could not be used; 3 no browser here
+or the project did not open; 2 the project or the editor could not be used; 3 no browser here; 5 another run
+holds the browser profile, named in the line with its pid: wait for it to end, or pass --profile for a profile
+of this run's own
 """
 
 # Pixels of slack before a text, an overlap or a box on screen counts.
@@ -628,7 +630,11 @@ def main() -> int:
                 print(f"{len(lines) - shown} lines not printed: {out} keeps everything, --limit 0 prints it")
         return results
 
-    results = oe.drive(exe, oe.profile_folder(args.profile, projects[0], exe), args.headed, visit)
+    try:
+        results = oe.drive(exe, oe.profile_folder(args.profile, projects[0], exe), args.headed, visit)
+    except oe.ProfileBusy as e:
+        print(e, file=sys.stderr)
+        return oe.BUSY
     if results is None:
         return 2
     found, errors, _ = map(sum, zip(*(counts(r) for r in results)))

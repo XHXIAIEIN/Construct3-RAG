@@ -81,7 +81,7 @@ once before it is handed over.
 | `scripts/screenshot_sheet.py [SHEET] [--group TITLE]` | A picture of an event sheet or one group of it as the editor shows it, for a forum post, a bug report or a doc |
 | `scripts/advanced_random.py SEED` | The numbers an Advanced Random object gives after *Update seed* SEED, computed offline as the plugin does |
 | `scripts/export_project.py` | Export the project to Web (HTML5) in the editor into `--to`; a string shaped like a key stops it first. The editor exports for a subscribed account the user logs in to: read [references/export-project.md](references/export-project.md) before the first export, when the script stops, or before `--attach` |
-| `scripts/pack_project.py` | Save the project as a .c3p or .zip, or a .c3p or .zip as a project folder, with project.c3proj at the archive's root as the editor needs it; a project handed over as a file is packed with it, and `--open` opens the result once in the editor |
+| `scripts/pack_project.py` | Save the project as a .c3p or .zip, or a .c3p or .zip as a project folder, with project.c3proj at the archive's root as the editor needs it; a project handed over as a file is packed with it, only after the checker passed its files as they are (`--unchecked` packs them anyway), and `--open` opens the result once in the editor |
 | `scripts/prepare_art.py` | The art from the image tool of this session: `--list` prints the next step toward the pictures the generator's `art()` asks for; without it, each picture saved in `art/raw/` is cut out and fitted to its box. Needs Pillow |
 | `scripts/new_project.py FOLDER` | A new game project in an empty FOLDER, copied from the empty project the editor saves for Project > New; for a game that has no project yet |
 | `scripts/install.py` | Install this skill in a game project, or refresh a copy, the Construct 3 block of the project's `AGENTS.md` and the helpers of its `tools/build_project.py` from the clone |
@@ -140,6 +140,8 @@ In the hand-over, name the last of these steps that passed: checked,
 reviewed, opened, previewed, played or looked. Then say what that step
 leaves untested. After a check or a review, the game has not run: `ok:` is
 about the files, not the game, because the checker cannot run the events.
+A project handed over as a file is packed after the last check, because
+`pack_project.py` refuses files that the check has not passed.
 
 Before you design an interaction, read
 `Construct3-RAG/prompts/event-sheet-thinking.md` and run

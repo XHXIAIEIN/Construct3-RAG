@@ -323,9 +323,14 @@ always writes stops the run with the key and the place, exit code 2. An
 exception that no project file causes also stops the run with exit code 2,
 and the line says that the error is the script's: leave the project as it is
 and give the line to the user. Each run keeps its findings in
-`.tmp/check-project.json`; when two changes to a finding's place leave it
+`.tmp/check-project.json`, with a digest of the files it checked and the
+number of problems; when two changes to a finding's place leave it
 standing, the last line starts with `stop:`
-(`Construct3-RAG/docs/decisions/fix-loop-cap.md`). A long report prints the
+(`Construct3-RAG/docs/decisions/fix-loop-cap.md`).
+
+`pack_project.py` reads the same record. It packs a folder project only
+when the record holds the digest the files have at present and a problem
+count of 0 (`Construct3-RAG/docs/decisions/pack-after-check.md`). A long report prints the
 findings that fit 10 000 characters, warnings in at most a third of them and
 problems in the rest, and counts what it left out: fix those and run again,
 or pass `--limit 0`.

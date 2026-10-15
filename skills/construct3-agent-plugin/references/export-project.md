@@ -10,6 +10,10 @@ stops, or before passing it `--attach`. A lesson from an export goes under
 python scripts/export_project.py --bump
 ```
 
+A project handed over as a `.c3p` is packed by `scripts/pack_project.py`,
+which refuses files that `check_project.py` has not passed as they are.
+`export_project.py` reads no such record: the editor's load is its check.
+
 The script opens the project in the editor of the release that saved it,
 with only the files the editor reads, as `scripts/pack_project.py` packs them.
 The editor exports it to Web (HTML5) as a zip with Offline support,
@@ -17,7 +21,9 @@ Deduplicate images and Optimize images on, and the script unpacks the zip
 into `--to`, replacing what was there. Without `--to` the export goes to
 `.build/web`, where the products go and Git ignores them. The browser
 profile stays in `.tmp/` of the project's main clone, so every worktree of
-the project exports in the same window, with the same login.
+the project exports in the same window, with the same login. One export at
+a time holds that profile. A second export started meanwhile ends with exit
+5 and the pid of the first. Run it again when the first has ended.
 
 `--to` is a new or empty folder or one that holds an earlier export: the
 script refuses the project, a folder above it, a drive's root and a folder
