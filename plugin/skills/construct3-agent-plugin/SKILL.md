@@ -73,14 +73,14 @@ opened once before it is handed over.
 | `scripts/edit_sheet.py SHEET PLAN.json` | Events put into a sheet, moved, replaced or removed by their numbers, conditions and actions added, changed or removed, variables and comments by name; checked before anything is written; `--new` creates the sheet first |
 | `scripts/check_project.py` | Every project file against the schemas and the editor's load rules, and a warning for a string shaped like a key, which a web export ships to every player; exit 0 when the last line starts with `ok:`. `--style` adds the warnings of the official examples' style, for a project the agent wrote. For a project someone asks about, pass `--review` to this and to `print_sheet.py`: they then end with what a review reports |
 | `scripts/review_design.py` | `--check` runs the full checker, then design findings and questions. Optional `--prepare FOLDER --resume` supplies complete evidence batches and validates saved judgements with `--answers FILE`. Read [references/design-review.md](references/design-review.md) before preparing or resuming a review |
-| `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then runs the game for a few seconds and prints its errors, each with its event, and `--state [TYPE ...]` what it holds at the end. `--install-addon FILE.c3addon` first installs a custom addon the project uses. A refusal of a project the checker passes ends with a report for the user to send, which goes out only at the user's word. It drives the Edge, Chrome or Chromium of the machine headless, 4 to 7 seconds a run once its profile holds the editor and 7 to 40 the first time; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
-| `scripts/preview_project.py PLAN.json` | Preview the project and play it from a plan: tap, hold and drag the game's instances by name, press keys, wait `until` an expression holds, read the state, take screenshots and record the window; one line per step with the runtime errors it caused. Each run starts from a first launch, with no save. `--keep NAME` keeps a plan that passes in `tools/plans/`, and `--all` replays every kept plan. `--help` describes the plan |
+| `scripts/open_in_editor.py` | Open the project in the Construct 3 editor and print `opened`, or `failed` with the editor's message; exit 0 when it opened. `--preview` then previews it for 5 seconds, of which the game runs about 4, and prints the ticks the runtime ran and its errors, each with its event; `--state [TYPE ...]` adds what the game holds at the end: global variables, instance counts, and the instances of the types named. `--typescript` has the editor write the project's TypeScript definitions into `scripts/ts-defs/`. `--install-addon FILE.c3addon` first installs a custom addon the project uses, or prints the editor's refusal. A refusal of a project the checker passes ends with a report for the user to send, which goes out only at the user's word. It drives the Edge, Chrome or Chromium of the machine headless, 4 to 7 seconds a run once its profile holds the editor and 7 to 40 the first time; without one, or with `--steps`, it prints the same check as steps for a browser tool of the agent's |
+| `scripts/preview_project.py PLAN.json` | Preview the project and play it from a plan: tap, hold and drag the game's instances by name, press keys, wait `until` an expression holds, run JavaScript against the runtime, read the state, take screenshots and record the window between steps, a recording with a contact sheet of its key frames to judge the motion from and a page to review it frame by frame beside the steps and the values it watched; one line per step with the runtime errors it caused. Each run starts from a first launch, with no save. `--keep NAME` keeps a plan that passes in `tools/plans/`, and `--all` replays every kept plan. `--help` describes the plan |
 | `scripts/check_design.py DESIGN.json` | A new game's design before any project file: refuses a gap by its path (no request in the user's words or an empty `later` list, state nobody writes or reads, an input without feedback or that changes nothing the player sees, no restart of a game that ends, a win without input), then plays its acceptance tests on the rules as a prototype, without the editor, and names the failed step with the values the state held |
 | `scripts/play_design.py DESIGN.json` | The same tests played in the editor on the game built from the design, one preview each, after the names and start values the design gives are checked against the project files; then the first screen, its texts, frames and counts of instances shown against the prototype and its layout faults. Each failure names the test, the step and the rules to compare |
 | `scripts/review_look.py` | Preview the project, visit every layout and print a screenshot of each, the faults the runtime shows on it, and fixed yes/no questions to answer from the screenshots |
 | `scripts/check_look.py` | The strict rules of `assets/look-manifest.json` on a project built from `assets/build_project.py`, after the generator's check ends with `ok:`: alpha, the grid, hit and squash, the screen fill; `--painted FILE ...` names a picture that keeps its soft edges |
 | `scripts/screenshot_sheet.py [SHEET] [--group TITLE]` | A picture of an event sheet or one group of it as the editor shows it, in English, cropped to the sheet with each column as wide as its longest line, for a forum post, a bug report or a doc; into `.build/sheets/` |
-| `scripts/advanced_random.py SEED` | The numbers an Advanced Random object gives after *Update seed* SEED, computed offline as the plugin computes them, for odds and for replaying a run from its seeds; it also imports as a module. `--check` compares them with the plugin's own code run in node: run it after a Construct update before trusting the numbers |
+| `scripts/advanced_random.py SEED` | The numbers an Advanced Random object gives after *Update seed* SEED, computed offline as the plugin computes them: the first `--count` Random values, or with `--table JSON` the draws of WeightedByName from that table; for odds, and for replaying a run from its seeds. It imports as a module for a script that replays every draw. `--check` runs the plugin's code from the project's export, or with `--preview` from the editor's preview, with node and compares every value; run it after a Construct update before trusting the numbers |
 | `scripts/export_project.py` | Export the project to Web (HTML5) in the editor into `--to`, `--bump` raising its version; a string shaped like a key stops it first. The editor exports for a subscribed account, which the user logs in to: read [references/export-project.md](references/export-project.md) before the first export of a project, when the script stops, or before passing `--attach` |
 | `scripts/pack_project.py` | Save the project as a .c3p or .zip, or a .c3p or .zip as a project folder, with project.c3proj at the root of the archive as the editor needs it and only the files the editor saves; what it leaves out it names. Any project handed over as a file, a bug report's attachment among them, is packed with it, `--open` opens the result once in the editor |
 | `scripts/prepare_art.py` | The art from the image tool of this session: `--list` prints the next step toward the pictures the generator's `art()` asks for, ending in a prompt for each; without it, each picture saved in `art/raw/` is cut out of its background and fitted to its box, for the generator to take in place of the stand-in. Needs Pillow |
@@ -89,12 +89,16 @@ opened once before it is handed over.
 | `assets/build_project.py` | Template of a generator, copied to the project's `tools/` and rewritten for the game above and below its helpers, which stay the skill's between two markers |
 | `assets/runtime-probe.js` | Evaluated in a running preview by a script of the agent's, reads the game's state: positions, variables, animations, behaviors. Read [references/reading-the-runtime.md](references/reading-the-runtime.md) before checking what an event did in the preview |
 
-Each prints its options and examples with `--help`. A script that prints
-the editor's wording prints it in Chinese with `--locale zh-CN`; ids are the
-same in every locale. A harness cuts long tool output without saying where,
-so a script whose output can run long stops at about 10 000 characters and
-its last line says how to get the rest; `--limit 0` prints everything, for a
-file or a pipe.
+Each prints its options and examples with `--help`. The scripts that print
+schema wording (`lookup_ace.py`, `print_sheet.py`, `check_project.py`,
+`edit_sheet.py`, `review_design.py`) take `--locale zh-CN` for the editor's
+Chinese names and wording; ids are the same in every locale.
+`search_guides.py` takes it for the examples' names; its pitfalls are English.
+`open_in_editor.py` and `preview_project.py` take it for the names of the
+inspector values they print. The others print no schema wording. A harness
+cuts long tool output without saying where, so a script whose output can run
+long stops at about 10 000 characters and its last line says how to get the
+rest; `--limit 0` prints everything, for a file or a pipe.
 
 ## Look an ACE up before writing it
 
@@ -159,6 +163,37 @@ The numbers are the editor's: the margin of the event sheet and the
 in JSON line numbers, and read a screenshot or a pasted Find result back the
 same way. `--outline` adds each event's sid, the string to search the JSON
 for.
+
+## Built-ins before variables
+
+Before a variable, an *Every tick* or an *Every X seconds* for a mechanic,
+write the built-in that already keeps it:
+
+- A delay, a countdown, a cooldown: the Timer behavior, *Start timer* and
+  *On timer*; the time left is `Duration(tag) - CurrentTime(tag)`.
+- How many of a type are left: `Coin.Count`, not a variable counted up and
+  down beside it.
+- A move, scale, fade or colour change over a known time: the Tween behavior
+  and *On any finished*.
+- One step after another inside one interaction: *Wait* in the same block.
+- A phase that switches a slice of the sheet on and off: a group and *Set
+  group active*; a pause is *Set time scale* 0.
+- A panel or popup: a layer of its own and *Set layer visible*.
+
+The rest, with what each replaces, is the Native first table of
+`Construct3-RAG/prompts/event-sheet-thinking.md`.
+
+## Write TypeScript
+
+Before writing a script, look up each API it calls,
+`python scripts/lookup_script_api.py IRuntime.callFunction`, and read an
+official example on the same topic whose folder ends in `-ts`. Look a call
+up before saying that one in the user's script does not exist. The
+project's own types, such as `InstanceType.Coin` with its behaviors and
+instance variables, are in `scripts/ts-defs/`, which the editor writes and
+the lookup reads:
+`python scripts/open_in_editor.py --typescript`, again after adding an
+object, a behavior or a variable. `check_project.py` says when one is missing.
 
 ## Change a sheet with a plan
 
@@ -249,30 +284,35 @@ not held to this. `--dry-run` does all of that and writes nothing.
    the optional complete batches. Validate batch answers with
    `python scripts/review_design.py --prepare .tmp/design-review --answers FILE`.
    Use `edit_sheet.py` for changes, then repeat step 2.
-5. Open and preview it in the editor: run `python scripts/check_project.py`
-   as the final complete file check, then
+5. Open and preview it in the editor:
+   run `python scripts/check_project.py` as the final complete file check,
+   then
    `python scripts/open_in_editor.py --preview`.
    The browser runs headless, so the user sees no window and may think
    the editor never opened: show them the saved screenshot,
    `.tmp/shots/000-<project>.png`, with the result, attached or read with
-   the image tool of this session, every time the script runs.
+   the image tool of this session, every time the script runs. Every
+   result is also kept in `.tmp/open-in-editor.json`: read a cut-off one
+   there instead of running the project again.
    `--headed` shows the window instead, when the user asks to watch.
-   `opened` with `preview: ... no errors` passes, and step 6 follows.
-   `failed` prints the editor's dialog, which names the place as
-   `Game, event 12, condition 1`, event 12 of sheet Game as `print_sheet.py`
-   numbers it; a `runtime:` line names it as `Event sheet 1, event 3,
-   action 1`. Fix either as a finding and go back to step 2. The preview
-   runs the layout the editor opens on without input, for the seconds its
-   `preview:` line gives: it catches what breaks on start, not what a
-   player does later. Add `--state Player Enemy` to see whether the events
-   that run on start left the variables and instances they should. What a
-   player does, a drag, a merge, a jump, is checked by playing it:
-   `python scripts/preview_project.py PLAN.json`, with a plan that does it
-   and waits `until` the result holds. When `tools/plans/` holds kept
-   plans, replay them after every change with
+   `opened` with
+   `preview: ... no errors` passes, and step 6 follows. `failed` prints the editor's
+   dialog, which names the place as `Game, event 12, condition 1`, event 12
+   of sheet Game as `print_sheet.py` numbers it; a `runtime:` line names it
+   as `Event sheet 1, event 3, action 1`. Fix either as a finding and go
+   back to step 2. The preview runs the layout the editor opens on without
+   input, for the seconds its `preview:` line gives: it catches what breaks
+   on start, not what a player does later. Add `--state Player Enemy` to
+   see whether the events that run on start left the variables and
+   instances they should. What a player does, a drag, a merge, a jump, is
+   checked by playing it: `python scripts/preview_project.py PLAN.json`,
+   with a plan that does it and waits `until` the result holds. When
+   `tools/plans/` holds kept plans, replay them after every change with
    `python scripts/preview_project.py --all`. Read
    [references/verifying-a-change.md](references/verifying-a-change.md)
-   before writing the plan, and
+   before writing the plan: the cases to play, how to reach each scene and
+   what to read, by kind of game, how a bug's plan fails before the fix, and
+   how a word of feel becomes a number. Read
    [references/editor-and-preview.md](references/editor-and-preview.md)
    before previewing a game that starts on another layout, or before
    driving the preview with input from a script.
@@ -295,10 +335,9 @@ which instances a condition picks, what order triggers fire in and what a
 tick later looks like are the preview's to judge. Design with
 `Construct3-RAG/prompts/event-sheet-thinking.md` and the pitfalls
 `scripts/search_guides.py` prints for the interaction's words first. The
-design guide also names the built-in to write before a variable or an
-*Every tick* (its Native first table) and what a new project takes instead
-of a superseded feature (a Tween on Opacity for Fade, a hierarchy for Pin,
-instance tags for the Solid behavior's own), and before events go
+design guide also says what a new project takes instead of a superseded
+feature (a Tween on Opacity for Fade, a hierarchy for Pin, instance tags for
+the Solid behavior's own), and before events go
 into a sheet read `Construct3-RAG/prompts/event-sheet-style.md`, the shape
 the official examples give a sheet, which the style warnings enforce only in
 part. What the preview teaches goes, with its source, where "Adding an
@@ -319,7 +358,8 @@ its first project file. When the agent owns the project and the user
 reviews it in the editor, write it as one Python generator instead of JSON
 by hand. Read
 [references/generating-a-project.md](references/generating-a-project.md)
-before writing it. The
+before writing it: set-up in the editor, the build and check loop, one
+function per group of the sheet, the habits that keep a rerun safe. The
 generator checks what it wrote with `--style`, so every event is held to the
 style of the official examples. Its helpers lie between two markers, and
 `scripts/install.py` brings them up to date: write the game's settings above
@@ -337,3 +377,29 @@ When another model writes the generator, give it the `deliver` steps of
 `assets/look-manifest.json`, then run its `confirm` steps on the result,
 `scripts/check_look.py` among them. A rule whose status is `open` is the
 user's to decide.
+
+## Gotchas
+
+- A parameter is written by its type, which `lookup_ace.py` prints beside
+  it. An expression parameter is a string holding an expression: a number is
+  `"100"`, a text carries inner quotes, `"\"hello\""`. Every other type is
+  bare, or a JSON number or boolean: `"start"`, never `"\"start\""`.
+- A variable's `initialValue` is text: `"0"`, and `"true"` or `"false"` for
+  a boolean, which the editor reads by comparing to `"true"`. A layout
+  instance writes its instance variables as JSON values (`1`, `true`) and
+  its `world.angle` in radians. Angles in events are degrees, 0 faces right
+  and they grow clockwise; the origin is the top-left and Y grows downwards.
+- One trigger per event and per branch of sub-events. A function or a custom
+  action counts as one and holds none: react to *On tween finished* in a
+  top-level event of its own that calls the next function.
+- A Solid blocks while its behavior is enabled, whatever its animation or
+  visibility. A door that opens gets Solid *Set enabled* to disabled, or is
+  destroyed.
+- A name is chosen once: every event that uses it changes with it. Names are
+  plain words without spaces or punctuation, an instance variable starts
+  with a letter, an object is not named like a system expression (`Floor`,
+  `Time`, `Random`), an instance variable not like an expression of its
+  object (`Angle`, `Width`, `Count`).
+- An instance variable or a behavior added to a type or a family goes into
+  every instance of it in every layout. A type created at runtime has a
+  template instance in some layout.
