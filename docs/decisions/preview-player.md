@@ -38,9 +38,15 @@ that caused them.
 Option 3, `scripts/preview_project.py PLAN.json`.
 
 - Steps: `tap`, `hold`, `drag`, `key`, `wait`, `until`, `js`, `state`,
-  `shot`, one per object, with `note` for a label. A plan sets the
-  `viewport` and whether presses are `touch`. The first failing step stops
-  the run, since later steps assume it.
+  `shot` and `record`, one per object, with `note` for a label. A plan sets
+  the `viewport`, whether presses are `touch`, and the `pixel_ratio` its
+  screenshots are taken at. The first failing step stops the run, since
+  later steps assume it.
+- A run starts from a first launch. The browser profile is kept between
+  runs for its cache, so the run clears the preview's Local Storage and
+  IndexedDB, where a game keeps its save; otherwise one run's save would
+  change the next run's start. A plan with `keep_saves` keeps them, to play
+  a returning player.
 - A `key` step holds one key or a list of keys, such as
   `["ShiftLeft", "ArrowRight"]`. The keys go down in order and come up in
   reverse. Each key event carries the modifier bits of the Shift, Control
@@ -56,8 +62,9 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   with the scripting `runtime`, a `vars` object kept between steps and
   `wait`. They are the way out for what the step kinds do not cover, such as
   calling a function of the project to set a scene up.
-- The output is one line per step, then the runtime errors logged during it;
-  `--out` keeps every value read. A failed step leaves a screenshot.
+- The output is one line per step, then the runtime errors logged during it.
+  The result file, `.tmp/preview-project.json` or the one `--out` names,
+  keeps every value read, and a failed step leaves a screenshot.
 - `record` keeps screenshots of the window, taken one after another on a
   connection of its own, and joins them into an .mp4 with ffmpeg or a .gif
   with Pillow where one is installed; the frames stay for the agent to read.
@@ -135,16 +142,12 @@ Option 3, `scripts/preview_project.py PLAN.json`.
   to this on the user's ask of 2026-10-13; a before/after rendering of
   one recording through both templates is the evidence, and it is kept
   beside the demo of the page.
-- A run starts from a first launch: the browser profile is kept between runs
-  for its cache, and with it the preview's Local Storage and IndexedDB, where
-  a game keeps its save, so one run's save changed the next run's start.
-  `keep_saves` keeps them for a returning player.
 - The runtime is reached through `assets/runtime-probe.js`, the same file
   `open_in_editor.py --state` and an agent's own script use, documented in
   `references/reading-the-runtime.md`.
-- `open_in_editor.py` keeps opening the project, `--preview` and `--state`,
-  and the browser and editor functions both scripts share; the preview
-  player imports them, as `export_project.py` does.
+- `open_in_editor.py` owns opening the project, `--preview`, `--state`, and
+  the browser and editor functions both scripts share; `preview_project.py`
+  imports them, as `export_project.py` does.
 
 Not covered: two fingers at once, a gamepad, and what a sound sounds like.
 `references/editor-and-preview.md` says how a script of one's own does the

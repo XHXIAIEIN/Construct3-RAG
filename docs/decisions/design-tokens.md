@@ -11,7 +11,7 @@ playground (`src/interfaces/http/playground.html`). The review page had grown
 a palette of one-off greys, type at three sizes with no weight discipline,
 zebra-striped rows and borders drawn as full rules on every edge; the
 playground removed its outlines without a `:focus-visible` in their place, so
-a keyboard lost every focus, set type at 9 to 13px with no set, and drew
+keyboard focus was invisible; it set type at 9 to 13px on no scale, and drew
 borders darker than their surface at 1.56:1, which is no border at all. The
 user's verdict on the review page was that the layout and colour lacked
 taste, and the ask named where to learn the rest: the host UI kits Anthropic
@@ -39,9 +39,9 @@ names, not values, and no page invents a grey.
   and kept in the user's notes (Tailwind CSS, native `@keyframes` for the
   CPU-cheap animation, Framer Motion's spring model for the interactive):
   its two signature animations, its numerals practice and its clay
-  `#d97757` are in "Motion" and rule 7 below. It is the same coral and the
-  same standard easing this record carries, so the two agree by
-  measurement, not by coincidence.
+  `#d97757` are in "Motion" and rule 7 below. Its clay is this record's
+  `--color-accent`, and its quiet loop runs on this record's `--ease`, so
+  the implementation confirms both values.
 - The preview and watched values are read on these pages, not a game, so
   density matters: the review page holds a frame strip, a step list and
   watched values beside each other without shrinking their type, and its
@@ -206,8 +206,8 @@ here, the pages' own fallback.
 
 - Before changing any UI, grep `docs/decisions/`. A visual rule written
   there is a contract, not a preference; when a change covers one, the
-  record is revised in place with the reason and the evidence, as
-  `docs/decisions/preview-player.md` was for this one.
+  record is revised in place with the reason and the evidence. The review
+  page's rules are in this record and in `docs/decisions/preview-player.md`.
 - Renaming a token is not a find-and-replace. Use a boundary-aware pattern
   such as `(?<![a-z0-9-])--token(?![a-z0-9-])`, and do a compound name in a
   second pass, since `--accent-text` contains `--accent`; the review page's
@@ -219,11 +219,13 @@ here, the pages' own fallback.
 - The template ships in two copies that are kept equal:
   `skills/construct3-agent-plugin/assets/` is the source and
   `plugin/skills/construct3-agent-plugin/assets/` is written by the build;
-  change the source, then build or copy and diff.
-- Verify a change the way this one was: `node --check` for the script, a
-  computed-style probe that reads every declared token's resolved value,
-  screenshots of every entry state in both themes through a real browser
-  with no page errors, and the pytest suites that read the template
+  change the source, then run `python scripts/build_plugin.py`, because
+  the build also sets the plugin's version, which a copy by hand leaves
+  as it was.
+- Verify a change with `node --check` for the script, a computed-style
+  probe that reads every declared token's resolved value, screenshots of
+  every entry state in both themes through a real browser with no page
+  errors, and the pytest suites that read the template
   (`tests/test_skill_preview_project.py`, `tests/test_skill_review_look.py`).
 - A token nothing uses is deleted, not kept for later.
 
