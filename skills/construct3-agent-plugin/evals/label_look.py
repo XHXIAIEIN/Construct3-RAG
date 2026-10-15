@@ -51,6 +51,7 @@ import review_look as rl            # noqa: E402
 SHIP = "Would you ship this screen as it looks?"
 # A line of a labeller's or an adjudicator's reply: the question's key, the answer and the reason.
 LINE = re.compile(r"^\W*(?:q(?:uestion)?\s*)?(?P<q>\d+|ship)\s*[:.)\-][\s*]*(?P<a>yes|no)\b\W*(?P<why>.*)$", re.I)
+# What counts as a fault, in the labeller's brief and the adjudicator's
 GUIDE = ("Answer yes only for what a player would see as a mistake: art layered on purpose is none, such as a "
          "character in front of the ground or scenery that runs past the edge of the screen. If the picture "
          "does not show it, answer no.")
@@ -87,10 +88,12 @@ def load_set(path: Path) -> list[dict]:
 
 
 def shuffled(key: str) -> str:
+    """A sort key that orders keys by their hash, the same order on every run."""
     return hashlib.sha256(key.encode()).hexdigest()
 
 
 def labeller_brief(shot: Path) -> str:
+    """The brief.md of a labeller for one screenshot."""
     lines = ["# Label a screenshot", "",
              "You label screenshots of games for a test of an automatic reviewer. Your answers are the reference "
              "it is scored against, so look at every part of the picture before you answer.", "",
@@ -109,7 +112,8 @@ def prepare(shots: list[dict], folder: Path) -> dict[str, str]:
     folder = folder.resolve()
     index = {}
     for n, s in enumerate(sorted(shots, key=lambda s: shuffled(s["id"])), 1):
-        key, place = f"s{n:02d}", folder / f"s{n:02d}"
+        key = f"s{n:02d}"
+        place = folder / key
         if place.exists():
             shutil.rmtree(place)
         place.mkdir(parents=True)
@@ -132,11 +136,14 @@ def read_reply(path: Path) -> dict[str, tuple[bool, str]]:
 
 
 def adjudicator_brief(shot: Path, disputed: list[tuple[str, list[tuple[bool, str]]]], key: str) -> str:
+    """The brief.md of an adjudicator: each disputed question with the labellers' answers under letters, in an
+    order shuffled per question."""
+    wording = questions()
     lines = ["# Second look", "", f"Open this screenshot of a game with your image tool: {shot}", "",
              "Several labellers answered questions about it and did not agree. Any of them may be wrong. Judge "
              f"only from the picture and the words of each question. {GUIDE}", ""]
     for q, answers in disputed:
-        lines += [f"Question {q}: {questions()[q]}", ""]
+        lines += [f"Question {q}: {wording[q]}", ""]
         order = sorted(range(len(answers)), key=lambda i: shuffled(f"{key}{q}{i}"))
         for letter, i in zip("ABCDEFGH", order):
             yes, why = answers[i]
@@ -156,8 +163,9 @@ def merge(folder: Path, index: dict[str, str], replies: list[Path], verdicts: Pa
     missing: list[str] = []
     for key, sid in index.items():
         files = [r / f"{key}-1.txt" for r in replies]
-        missing += [f"no reply {f}" for f in files if not f.is_file()]
-        if not all(f.is_file() for f in files):
+        absent = [f for f in files if not f.is_file()]
+        missing += [f"no reply {f}" for f in absent]
+        if absent:
             continue
         got = [read_reply(f) for f in files]
         settled, disputed = {}, []

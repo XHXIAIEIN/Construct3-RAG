@@ -23,8 +23,15 @@ import random
 import sys
 from pathlib import Path
 
+# Most reassignments counted one by one; above it, this many are sampled
 EXACT_UP_TO = 200_000
+# Fixed, so that a sampled p is the same on every run
 SEED = 0
+
+
+def has_both_arms(runs: list[tuple[str, float]], arm: str) -> bool:
+    """Whether a case holds runs of the arm and of the other arm."""
+    return {a == arm for a, _ in runs} == {True, False}
 
 
 def permutation_test(by_task: dict[str, list[tuple[str, float]]], arm: str, direction: str = "up",
@@ -33,7 +40,7 @@ def permutation_test(by_task: dict[str, list[tuple[str, float]]], arm: str, dire
     other arm's, over the cases), the one-sided p in the direction, the reassignments counted and whether all
     of them were."""
     sign = 1 if direction == "up" else -1
-    tasks = {t: lst for t, lst in by_task.items() if {a == arm for a, _ in lst} == {True, False}}
+    tasks = {t: lst for t, lst in by_task.items() if has_both_arms(lst, arm)}
     if not tasks:
         raise ValueError("no case holds runs of both arms")
     observed = sum(v if a == arm else -v for lst in tasks.values() for a, v in lst)
@@ -65,6 +72,7 @@ def runs_of(benchmark: dict, metric: str, arms: list[str], cases: list[str] | No
 
 
 def said(test: dict, metric: str, arms: list[str], direction: str, cases: int) -> str:
+    """The line that reports a test, as compare.py and grade.py print it."""
     return (f"{metric} {direction}: {arms[0]} - {arms[1]} = {test['observed']:+g} over {cases} case"
             f"{'' if cases == 1 else 's'}, one-sided p = {test['p']:.3f} "
             f"({'exact' if test['exact'] else 'sampled'}, {test['permutations']} reassignments)")
@@ -86,7 +94,7 @@ def main() -> int:
     except ValueError as e:
         print(f"{e}: {args.metric} between {args.arms[0]} and {args.arms[1]} in {args.benchmark}", file=sys.stderr)
         return 1
-    both = sum(1 for lst in by_task.values() if {a == args.arms[0] for a, _ in lst} == {True, False})
+    both = sum(has_both_arms(lst, args.arms[0]) for lst in by_task.values())
     print(said(test, args.metric, args.arms, args.direction, both))
     return 0
 

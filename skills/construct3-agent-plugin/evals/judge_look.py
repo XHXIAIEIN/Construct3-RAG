@@ -33,7 +33,6 @@ Exit codes: 0 done, 1 some run got no reply, 2 bad arguments, no labels, or no c
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -72,27 +71,28 @@ def prepare(shots: list[dict], folder: Path) -> dict[str, dict]:
     groups: dict[str, list[dict]] = {}
     for s in shots:
         groups.setdefault(s["brief"], []).append(s)
-    order = sorted(groups, key=lambda b: hashlib.sha256(b.encode()).hexdigest())
     index = {}
-    for n, brief in enumerate(order, 1):
+    for n, brief in enumerate(sorted(groups, key=ll.shuffled), 1):
         key, group = f"b{n:02d}", groups[brief]
+        shown = names(group)
         place = folder / key
         if place.exists():
             shutil.rmtree(place)
         place.mkdir(parents=True)
         layouts = []
-        for s, name in zip(group, names(group)):
+        for s, name in zip(group, shown):
             shot = place / f"{rl.file_name(name)}.png"
             shutil.copyfile(s["path"], shot)
             layouts.append({"layout": name, "shot": str(shot)})
         (place / "brief.md").write_text(rl.brief({"preview": {"layouts": layouts}, "places": []}), encoding="utf-8")
-        index[key] = {"brief": brief, "shots": [s["id"] for s in group], "names": names(group)}
+        index[key] = {"brief": brief, "shots": [s["id"] for s in group], "names": shown}
     (folder / "index.json").write_text(json.dumps(index, indent=1), encoding="utf-8")
     return index
 
 
 def judge(client: str, model: str, place: Path, timeout: int) -> dict:
-    """One run of `claude -p` on the brief in place: its reply and what it cost."""
+    """One run of `claude -p` on the brief in place: its reply and what it cost, or the error that left it
+    without a reply."""
     cmd = [*client.split(), "-p", (place / "brief.md").read_text(encoding="utf-8"), "--model", model,
            "--safe-mode", "--tools", "Read", "--output-format", "json", "--no-session-persistence"]
     env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}     # set inside a session, it refuses a nested one
@@ -118,12 +118,13 @@ def judge(client: str, model: str, place: Path, timeout: int) -> dict:
                                                  "cache_creation_input_tokens")}}
 
 
-def run(args, index: dict) -> int:
+def run(args: argparse.Namespace, index: dict) -> int:
+    """Judges every run of a brief that has no reply in --out yet; 1 when a run got none."""
     args.out.mkdir(parents=True, exist_ok=True)
     jobs = [(key, r) for key in index for r in range(1, args.runs + 1) if not (args.out / f"{key}-{r}.txt").is_file()]
     print(f"{len(jobs)} runs of {args.model} to make, {args.jobs} at a time, into {args.out}", flush=True)
 
-    def one(job):
+    def one(job: tuple[str, int]) -> tuple[str, int, dict]:
         key, r = job
         got = judge(args.client, args.model, args.briefs / key, args.timeout)
         if "reply" in got:
@@ -143,14 +144,15 @@ def run(args, index: dict) -> int:
 def parse(reply: str, ids: list[str], shown: list[str]) -> dict[str, dict[str, bool]]:
     """The answers of a reply by screenshot id and question number."""
     by_name = {n.lower(): i for i, n in zip(ids, shown)}
+    # Longest first, so that a line about "Big map" is not taken for "Map"
+    longest_first = sorted(by_name, key=len, reverse=True)
     out: dict[str, dict[str, bool]] = {}
     for line in reply.splitlines():
         m = ANSWER.match(line.strip())
         if not m:
             continue
         shot = m["shot"].strip(" *`#").lower()
-        sid = by_name.get(shot) or next((v for k, v in sorted(by_name.items(), key=lambda kv: -len(kv[0]))
-                                         if shot.endswith(k)), None)
+        sid = by_name.get(shot) or next((by_name[k] for k in longest_first if shot.endswith(k)), None)
         if sid is None and len(ids) == 1:
             sid = ids[0]
         if sid:
@@ -173,7 +175,7 @@ def score(replies: Path, index: dict, labels: dict) -> dict:
     pairs: dict[str, list] = {q: [] for q in numbered + ["across", "ship"]}
     unanswered, rows = [], []
     for f in sorted(replies.glob("b*-*.txt")):
-        key, run_no = f.stem.rsplit("-", 1)
+        key = f.stem.rsplit("-", 1)[0]
         if key not in index:
             continue
         ids, shown = index[key]["shots"], index[key]["names"]
@@ -181,12 +183,13 @@ def score(replies: Path, index: dict, labels: dict) -> dict:
         for sid in ids:
             said, mine = answers.get(sid, {}), labels.get(sid, {})
             rows.append({"shot": sid, "reply": f.name, "judge": said, "labels": mine})
-            if not all(q in said for q in numbered):
+            complete = all(q in said for q in numbered)
+            if not complete:
                 unanswered.append(f"{f.name}: {sid}")
             for q in numbered:
                 if q in said and q in mine:
                     pairs[q].append((mine[q], said[q]))
-            if "ship" in mine and all(q in said for q in numbered):
+            if "ship" in mine and complete:
                 pairs["ship"].append((not mine["ship"], any(said[q] for q in numbered)))
         mine = labels.get(f"across:{index[key]['brief']}", {})
         said = [a[across] for a in answers.values() if across in a]
@@ -196,6 +199,23 @@ def score(replies: Path, index: dict, labels: dict) -> dict:
            if not sid.startswith("across:") and "ship" in m and all(q in m for q in numbered)]
     return {"questions": {q: agreement(p) for q, p in pairs.items()}, "own": agreement(own),
             "unanswered": unanswered, "rows": rows}
+
+
+def read_labels(paths: list[Path]) -> tuple[dict[str, dict], dict[str, str]]:
+    """The labels of the files in turn, a later answer over an earlier one, and the wording of each question
+    they answer; SystemExit names a file that cannot be read."""
+    labels: dict[str, dict] = {}
+    wording: dict[str, str] = {}
+    for path in paths:
+        try:
+            kept = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            raise SystemExit(f"{path}: no labels to score against ({e}); label the set with evals/label_look.py first")
+        answered = {k for got in kept.get("labels", {}).values() for k in got}
+        wording.update({k: q for k, q in kept.get("questions", {}).items() if k in answered})
+        for sid, got in kept.get("labels", {}).items():
+            labels.setdefault(sid, {}).update(got)
+    return labels, wording
 
 
 def print_score(result: dict, wording: dict[str, str]) -> None:
@@ -237,19 +257,11 @@ def main() -> int:
     print(f"{len(index)} briefs in {args.briefs}, each a folder with its brief.md")
     if args.score:
         paths = args.labels or [args.set.parent / "labels.json"]
-        labels: dict[str, dict] = {}
-        wording: dict[str, str] = {}
-        for path in paths:
-            try:
-                kept = json.loads(path.read_text(encoding="utf-8"))
-            except (OSError, ValueError) as e:
-                print(f"{path}: no labels to score against ({e}); label the set with evals/label_look.py first",
-                      file=sys.stderr)
-                return 2
-            answered = {k for got in kept.get("labels", {}).values() for k in got}
-            wording.update({k: q for k, q in kept.get("questions", {}).items() if k in answered})
-            for sid, got in kept.get("labels", {}).items():
-                labels.setdefault(sid, {}).update(got)
+        try:
+            labels, wording = read_labels(paths)
+        except SystemExit as e:
+            print(e, file=sys.stderr)
+            return 2
         changed = [k for k, q in ll.questions().items() if wording.get(k, q) != q]
         if changed:
             print(f"warning: questions {', '.join(changed)} read differently now than when they were labelled")
