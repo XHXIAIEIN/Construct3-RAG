@@ -4,12 +4,12 @@ Date: 2026-10-04
 
 ## Problem
 
-The generator template, `assets/build_project.py`, is one file: the helpers
-(one per ACE, the images, the grid, the layouts, the checks that stop a run)
-and a stand-in game. An agent copies it into a game's `tools/` and rewrites
-the game in it, so every copy keeps the helpers of the day it was made. Four
-generated games read on 2026-10-04 each lacked helpers added since, among
-them the guards that print the number to write.
+The generator template, `skills/construct3-agent-plugin/assets/build_project.py`,
+is one file: the helpers (one per ACE, the images, the grid, the layouts, the
+checks that stop a run) and a stand-in game. An agent copies it into a
+game's `tools/` and rewrites the game in it, so every copy keeps the helpers
+of the day it was made. Four generated games read on 2026-10-04 each lacked
+helpers added since, among them the guards that print the number to write.
 
 Task: games receive the helpers' fixes, and small models stay as good at
 changing a generated game as they are with the template.
