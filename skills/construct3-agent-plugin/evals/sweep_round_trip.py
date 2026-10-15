@@ -44,6 +44,8 @@ import c3project as c3  # noqa: E402
 import edit_sheet  # noqa: E402
 import print_sheet  # noqa: E402
 
+# Left out of the --cli copy of a project
+# Media hold most of an example's bytes, and the round trip changes event sheets only
 MEDIA = ("*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg", "*.webm", "*.ogg", "*.m4a", "*.mp3", "*.mp4",
          "*.wav", "*.opus", "*.woff", "*.woff2", "*.ttf", "*.otf", "*.zip", "*.glb", "*.gltf", "*.bin")
 
@@ -72,6 +74,7 @@ def round_trip(sheet: dict, n: int) -> str:
 
 
 def in_process(projects: list[Path]) -> tuple[int, int, list[str]]:
+    """Every event of every sheet put back in this process: how many sheets and events, and a line per change."""
     sheets = events = 0
     changed = []
     for project in projects:
@@ -83,7 +86,7 @@ def in_process(projects: list[Path]) -> tuple[int, int, list[str]]:
             if json.dumps(sheet, indent="\t", ensure_ascii=False) != text:
                 changed.append(f"{where}: not laid out as the editor writes it, so any plan rewrites it")
                 continue
-            for n in range(1, sum(1 for _ in c3.numbered_events(sheet["events"])) + 1):
+            for n, _ in enumerate(c3.numbered_events(sheet["events"]), 1):
                 events += 1
                 try:
                     after = round_trip(sheet, n)
@@ -101,14 +104,16 @@ def cli(project: Path, rag: Path) -> list[str]:
     with tempfile.TemporaryDirectory() as tmp:
         copy = Path(tmp) / project.name
         shutil.copytree(project, copy, ignore=shutil.ignore_patterns(*MEDIA))
+        plan = Path(tmp) / "plan.json"
         env = dict(os.environ, PYTHONIOENCODING="utf-8", CONSTRUCT3_RAG_OFFLINE="1")
 
         def run(*args: str) -> subprocess.CompletedProcess:
             return subprocess.run([sys.executable, *args, "--project", str(copy), "--rag", str(rag)], env=env,
                                   capture_output=True, text=True, encoding="utf-8", timeout=120)
         for path in sheet_files(copy):
-            path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
-            before = path.read_bytes()
+            # LF line ends, as the repository of the examples stores them
+            before = path.read_bytes().replace(b"\r\n", b"\n")
+            path.write_bytes(before)
             sheet = json.loads(before.decode("utf-8-sig"))
             where = f"{project.name}/{path.name} event 1 (cli)"
             if not any(True for _ in c3.numbered_events(sheet["events"])):
@@ -117,13 +122,12 @@ def cli(project: Path, rag: Path) -> list[str]:
             if shown.returncode != 0:
                 changed.append(f"{where}: print_sheet.py exit {shown.returncode}: {(shown.stdout + shown.stderr)[-200:]}")
                 continue
-            plan = Path(tmp) / "plan.json"
             plan.write_text(json.dumps([{"replace": 1, "events": [json.loads(shown.stdout)]}]), encoding="utf-8")
             edited = run(str(SCRIPTS / "edit_sheet.py"), sheet["name"], str(plan))
             if edited.returncode != 0:
                 changed.append(f"{where}: edit_sheet.py exit {edited.returncode}: {(edited.stdout + edited.stderr)[-200:]}")
-            elif path.read_bytes() != before:
-                changed.append(f"{where}: {first_change(before.decode('utf-8-sig'), path.read_bytes().decode('utf-8'))}")
+            elif (after := path.read_bytes()) != before:
+                changed.append(f"{where}: {first_change(before.decode('utf-8-sig'), after.decode('utf-8'))}")
     return changed
 
 

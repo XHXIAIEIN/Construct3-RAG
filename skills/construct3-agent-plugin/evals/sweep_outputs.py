@@ -37,6 +37,10 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent / "scripts"))
+import c3project as c3  # noqa: E402
+
+# The runs on each project: the word that starts a run's key, then the script and its flags
 COMMANDS = {"check": ["check_project.py"], "style": ["check_project.py", "--style"], "print": ["print_sheet.py"],
             "outline": ["print_sheet.py", "--outline"], "layout": ["print_layout.py"], "review": ["review_design.py"]}
 # A plan every project takes: a comment, a variable and an event that uses it, at the end of its first sheet.
@@ -44,6 +48,7 @@ PLAN = [{"into": 0, "events": [
     {"eventType": "comment", "text": "sweep"}, {"eventType": "variable", "name": "SweepProbe"},
     {"eventType": "block", "conditions": [], "actions": [
         {"id": "add-to-eventvar", "objectClass": "System", "parameters": {"variable": "SweepProbe", "value": "1"}}]}]}]
+# Hits and misses: a misspelt word, part of a name, an addon that does not exist
 LOOKUPS = [["System"], ["System", "wait"], ["System", "action"], ["System", "expression"], ["System", "every"],
            ["System", "timer"], ["System", "for", "each"], ["Sprite"], ["Sprite", "scale", "size"],
            ["Sprite", "animation"], ["Sprite", "color"], ["Sprite", "aniamtion"], ["Text", "set"],
@@ -53,8 +58,8 @@ LOOKUPS = [["System"], ["System", "wait"], ["System", "action"], ["System", "exp
            ["NW.js"], ["Mouse", "set-cursor-style"]]
 
 
-def run(scripts: Path, args: list[str], extra: list[str]) -> dict:
-    rag = scripts.parent.parent.parent
+def run(scripts: Path, rag: Path, args: list[str], extra: list[str]) -> dict:
+    """The exit code of one script run, and the hash and the length in characters of its stdout and stderr."""
     p = subprocess.run([sys.executable, str(scripts / args[0]), *args[1:], "--rag", str(rag), *extra],
                        capture_output=True, env=dict(os.environ, PYTHONIOENCODING="utf-8", CONSTRUCT3_RAG_NO_RECORD="1"))
     out, err = (s.replace(b"\r\n", b"\n") for s in (p.stdout, p.stderr))
@@ -63,15 +68,16 @@ def run(scripts: Path, args: list[str], extra: list[str]) -> dict:
 
 
 def first_sheet(project: Path) -> str | None:
-    def names(folder: dict) -> list[str]:
-        return list(folder.get("items", [])) + [n for sub in folder.get("subfolders", []) for n in names(sub)]
-    listed = names(json.loads((project / "project.c3proj").read_text(encoding="utf-8")).get("eventSheets", {}))
-    return listed[0] if listed else None
+    """The name of the first event sheet that project.c3proj lists."""
+    data = json.loads((project / "project.c3proj").read_text(encoding="utf-8"))
+    listed = c3.folder_items(data.get("eventSheets", {}))
+    return listed[0][0] if listed else None
 
 
 def record(args: argparse.Namespace) -> int:
     scripts = Path(args.scripts).resolve() if args.scripts else HERE.parent / "scripts"
-    if not (scripts.parent.parent.parent / "data" / "c3-schemas" / "_index.json").exists():
+    rag = scripts.parent.parent.parent
+    if not c3.is_clone(rag):
         print(f"{scripts} is not skills/<skill>/scripts of a checkout of the clone: no data/c3-schemas three "
               f"folders up", file=sys.stderr)
         return 2
@@ -89,13 +95,14 @@ def record(args: argparse.Namespace) -> int:
         plan.write_text(json.dumps(PLAN), encoding="utf-8")
         jobs += [(f"edit {p.name}", ["edit_sheet.py", sheet, str(plan), "--dry-run", "--project", str(p)])
                  for p in projects if (sheet := first_sheet(p))]
-        results = dict(zip((key for key, _ in jobs), pool.map(lambda job: run(scripts, job[1], extra), jobs)))
+        results = dict(zip((key for key, _ in jobs), pool.map(lambda job: run(scripts, rag, job[1], extra), jobs)))
     Path(args.out).write_text(json.dumps({"scripts": str(scripts), "runs": results}, indent=1) + "\n", encoding="utf-8")
     print(f"{len(results)} runs over {len(projects)} projects written to {args.out}")
     return 0
 
 
 def sizes(runs: dict) -> str:
+    """Per script, the runs that print more than 10 000 and 30 000 characters on stdout, and the longest."""
     by_command: dict[str, list[int]] = {}
     for key, r in runs.items():
         by_command.setdefault(key.split(" ")[0], []).append(r["stdout_chars"])

@@ -48,12 +48,13 @@ import tempfile
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from typing import IO
 
 SKILL = Path(__file__).resolve().parent.parent.name
 
 
 class ClientError(RuntimeError):
-    pass
+    """The client cannot answer any query: main() writes no result and exits 2."""
 
 
 def loads_skill(tool: dict) -> bool:
@@ -97,7 +98,7 @@ def run_once(client: str, query: str, project: Path, model: str | None, max_tool
             print(f"  left behind: {tmp}, which a process of the run may still hold: {e}", file=sys.stderr)
 
 
-def watch(cmd: list[str], copy: Path, env: dict, err, client: str, max_tools: int,
+def watch(cmd: list[str], copy: Path, env: dict[str, str], err: IO[str], client: str, max_tools: int,
           timeout: int) -> tuple[str, str]:
     """What ended a run of cmd in copy, and a sentence when a process it started still held its output
     after the run was stopped. The client runs in a process group of its own, so that stopping it at
@@ -215,18 +216,19 @@ def main() -> int:
                 for _ in range(args.runs)]
         ends = {status: sum(s == status for s, _ in runs) for status in (*ANSWERED, *NO_ANSWER)}
         answered, hits = sum(ends[s] for s in ANSWERED), ends["triggered"]
-        rate = hits / answered if answered else None
-        passed = rate is not None and (rate >= args.threshold) == item["should_trigger"]
+        trigger_rate = hits / answered if answered else None
+        passed = trigger_rate is not None and (trigger_rate >= args.threshold) == item["should_trigger"]
         print(f"  {hits}/{answered} {'ok  ' if passed else 'FAIL'} "
               f"{'should' if item['should_trigger'] else 'should not'}: {item['query'][:80]}"
               + "".join(f"; {ends[s]} {s}" for s in NO_ANSWER if ends[s]), file=sys.stderr)
         return {**item, "triggers": hits, "runs": args.runs, "answered": answered,
-                "trigger_rate": None if rate is None else round(rate, 3), "pass": passed,
+                "trigger_rate": None if trigger_rate is None else round(trigger_rate, 3), "pass": passed,
                 "ends": {s: n for s, n in ends.items() if n},
                 "stderr": [e for s, e in runs if s in NO_ANSWER and e]}
 
     try:
-        run_once(args.client, queries[0]["query"], project, args.model, 1, args.timeout)    # fail before sixty runs do
+        # One run first: a client that cannot answer stops here, before the parallel runs
+        run_once(args.client, queries[0]["query"], project, args.model, 1, args.timeout)
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
             results = list(pool.map(rate, queries))
     except ClientError as e:
