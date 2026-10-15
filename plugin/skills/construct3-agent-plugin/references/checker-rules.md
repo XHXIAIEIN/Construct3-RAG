@@ -405,13 +405,16 @@ the project, and `scripts/open_in_editor.py` prints its message, such as
 
 ## How the rules were confirmed
 
-Run over the official example projects, the checker fails a few, on
-parameters that a later release changed and on layers and animations the
-examples name but do not have; each is a real finding, not a false one.
-None of them breaks an editor rule of the table above, which is how each
-rule was confirmed before it became an error.
-`Construct3-RAG/tests/test_skill_check_project.py` breaks the stand-in game
-one rule at a time and reads the finding.
+Run over the official example projects, the checker fails a few, and each
+finding is real, not a false one. Most name layers and animations that the
+example does not have, or a parameter value that a later release removed;
+the editor opens those projects. Each rule of the table above became an
+error only after such a run added no finding. One example broke a rule
+later, when a release added an animation parameter to the 3D model's
+`Progress` expression. arcane-express calls `CharModel.Progress` without
+it, so the editor of that release refuses the project with the checker's
+message. `Construct3-RAG/tests/test_skill_check_project.py` breaks the
+stand-in game one rule at a time and reads the finding.
 
 A new rule takes the same two steps: find the editor's message in its
 project model, run the rule over the official examples, and only then make

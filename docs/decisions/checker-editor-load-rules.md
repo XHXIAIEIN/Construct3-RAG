@@ -320,8 +320,13 @@ Option 2 as the default, and option 3 as the step after it.
   "HUD")`. The editor marks these expressions `isVariadicParameters` in
   `plugins/allAces.json`, 20 of them, `max`, `min`, `choose` and `random`
   among them; the export keeps the flag, and a call to one may pass more
-  than `params` lists. With the flag, the 524 examples give no
-  finding. The message for too few arguments was not probed.
+  than `params` lists. With the flag, the examples give one finding, a
+  call with too few arguments: the 3D model's `Progress` took none until
+  r506 gave it an animation parameter, and arcane-express, saved with
+  r495.2, calls `CharModel.Progress` with none. On 2026-10-15 the r506
+  editor refused that example with `Incorrect parameters:
+  'CharModel.Progress' does not accept 0 parameters`, and the r495.2
+  editor opened it.
 - Two keys a Haiku eval left out on 2026-10-03, in projects the checker
   passed, stopped the editor; a copy with the key added opened and
   previewed. A Sprite Font type with no `image`, and one written with
