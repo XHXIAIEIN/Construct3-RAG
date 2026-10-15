@@ -7,6 +7,8 @@
 	},
 	"homepage": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills",
 	"repository": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills",
+	"documentationUrl": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills#readme",
+	"supportUrl": "https://github.com/XHXIAIEIN/Construct3-Agent-Skills/issues",
 	"license": "MIT",
 	"icon": "./icon.png",
 	"keywords": [
