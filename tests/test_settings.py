@@ -1,6 +1,4 @@
-"""Typed settings regression tests."""
-
-from __future__ import annotations
+"""The immutable settings tree that load_settings() builds from an environment mapping."""
 
 import inspect
 import json

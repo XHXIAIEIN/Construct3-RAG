@@ -1,4 +1,4 @@
-"""Tests for API response models — no external services required."""
+"""The HTTP request and response models, and the presenter that fills a response."""
 import pytest
 from pydantic import ValidationError
 

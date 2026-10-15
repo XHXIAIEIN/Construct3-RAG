@@ -1,4 +1,4 @@
-"""Regression tests for runtime module compatibility and dependency boundaries."""
+"""What src/ and the data scripts may import, and the search workflow apart from HTTP."""
 
 import ast
 import subprocess
@@ -9,13 +9,13 @@ from unittest.mock import MagicMock
 import pytest
 
 from src.application.models import SearchCommand, SearchExecution
-from src.interfaces.http.models import SearchRequest
 from src.application.search import (
     InvalidSearchRequestError,
     SearchStage,
     SearchWorkflow,
     detect_language,
 )
+from src.interfaces.http.models import SearchRequest
 
 
 _SRC_ROOT = Path(__file__).parents[1] / "src"
@@ -67,23 +67,14 @@ def _module_imports(module: str, path: Path, known: set[str]) -> set[str]:
     return targets
 
 
-@pytest.mark.parametrize(
-    ("package", "forbidden"),
-    [
-        ("application", ("src.ingest",)),
-        ("lookup", ("src.ingest",)),
-    ],
-)
-def test_canonical_packages_do_not_import_compatibility_or_maintenance_layers(
-    package,
-    forbidden,
-):
+@pytest.mark.parametrize("package", ["application", "lookup"])
+def test_service_packages_do_not_import_ingest(package):
     package_root = _SRC_ROOT / package
     violations = sorted(
         f"{path.relative_to(_SRC_ROOT)} -> {target}"
         for module, path in _source_modules().items()
         if path.is_relative_to(package_root)
-        for target in _module_imports(module, path, set(forbidden))
+        for target in _module_imports(module, path, {"src.ingest"})
     )
     assert violations == []
 

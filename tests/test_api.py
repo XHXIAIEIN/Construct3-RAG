@@ -1,4 +1,4 @@
-"""Tests for the FastAPI lookup service (no external services needed)."""
+"""The FastAPI lookup service: its routes, its OpenAPI schema and the playground page."""
 import dataclasses
 import subprocess
 import sys
@@ -43,24 +43,16 @@ def test_playground_uses_current_nested_search_contract():
     assert "<span>${data.ms}ms</span>" in html
 
 
-# ---------------------------------------------------------------------------
-# Fixtures
-# ---------------------------------------------------------------------------
-
 @pytest.fixture
 def client(monkeypatch: pytest.MonkeyPatch) -> Iterator[tuple[TestClient, MagicMock]]:
-    """Create a test client with a mocked lookup engine."""
+    """The test client and its mocked lookup engine, which finds no match unless a test sets one."""
     mock_lookup = MagicMock()
-    mock_lookup.try_lookup.return_value = None  # default: no match
+    mock_lookup.try_lookup.return_value = None
     monkeypatch.setattr(src.api, "_lookup_engine", mock_lookup)
 
     with TestClient(src.api.app) as c:
         yield c, mock_lookup
 
-
-# ---------------------------------------------------------------------------
-# /health
-# ---------------------------------------------------------------------------
 
 def test_health_reports_the_committed_schema_as_ready(client):
     c, _ = client
@@ -84,10 +76,6 @@ def test_health_says_how_to_get_missing_schema_data(client, tmp_path, monkeypatc
     assert data["schema_ready"] is False
     assert "scripts/init.py" in data["message"]
 
-
-# ---------------------------------------------------------------------------
-# /search — lookup route
-# ---------------------------------------------------------------------------
 
 def test_search_routes_to_lookup(client):
     c, lookup = client
@@ -231,10 +219,6 @@ def test_debug_reports_the_lookup_intent_and_timing(client):
     }
 
 
-# ---------------------------------------------------------------------------
-# /search — response structure
-# ---------------------------------------------------------------------------
-
 def test_search_response_structure(client):
     c, _ = client
     resp = c.post("/search", json={"query": "Sprite"})
@@ -254,10 +238,6 @@ def test_openapi_describes_typed_lookup_items_only():
     }
     assert set(schemas["HealthResponse"]["properties"]) == {"status", "schema_ready", "message"}
 
-
-# ---------------------------------------------------------------------------
-# /search — validation
-# ---------------------------------------------------------------------------
 
 @pytest.mark.parametrize(
     "payload",
