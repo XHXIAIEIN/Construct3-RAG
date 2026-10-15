@@ -56,10 +56,10 @@ which runs Web Audio).
 - In a browser, no sound is heard until the player first touches, clicks
   or presses a key. The Audio object queues the sounds played before then
   and starts them at that input. So a sound played in *On start of layout*
-  needs no events of its own. Open a web game on a "tap anywhere to start"
-  screen whose tap goes to the game, so the game's music and sounds play
-  from its first frame. Put *Request fullscreen*, and the other requests
-  that the browser grants only after input, on the same tap
+  needs no event that waits for the input. Open a web game on a "tap
+  anywhere to start" screen whose tap goes to the game, so the game's music
+  and sounds play from its first frame. Put *Request fullscreen*, and the
+  other requests that the browser grants only after input, on the same tap
   ([input.md](input.md)). Music played on that screen starts at the same
   tap, as the game begins. So a track meant for the title screen needs a
   screen that waits for a second tap. A mobile app export has no such limit,
@@ -125,9 +125,9 @@ which runs Web Audio).
   was created with. [runtime: c3runtime.js `AddDelayEffect` divides by 100;
   main.js `C3AudioDelayFX` node graph and `SetParam` cases 0, 4, 5]
 - *Fade volume* ramps the gain linearly from its current value. It also
-  reaches instances scheduled but not started yet. So if a layer
-  is faded in just before its next scheduled pass, that pass starts faded
-  in. To cancel a one-shot scheduled ahead, fade its one-off tag to -100 dB
+  reaches instances scheduled but not started yet. So if a layer is faded
+  in just before its next scheduled pass, that pass starts faded in. To
+  cancel a one-shot scheduled ahead, fade its one-off tag to -100 dB
   before it starts. [runtime: main.js instance `FadeVolume`,
   `linearRampToValueAtTime`, and `FadeVolume` over
   `audioInstancesMatchingTags`; observed in a game project, r504 export in
@@ -148,12 +148,13 @@ which runs Web Audio).
   one channel into the other: at ±20 the near channel gets the far one at
   cos(0.4π) ≈ 0.31. So a file limited to −3 dBFS can peak near −1 dBFS, and
   two loud sounds on the same grid point sum above 0 dBFS. A transient that is
-  the same in both channels rises by 1 + sin(|pan| / 100 × 90°): 1.3 dB at ±10, 2.3
-  dB at ±20, 3.2 dB at ±30. Without a master limiter, do not rely on per-file
-  ceilings. Keep loud transients off each other's grid point: if two would
-  share one, let one replace the other. Narrow the pan of the loudest sounds.
-  A pan of ±10 instead of ±20 gave a −3 dBFS kill the same headroom as a −4
-  dBFS file ceiling. That ceiling would have cost the kill 0.5 dB of loudness.
+  the same in both channels rises by 1 + sin(|pan| / 100 × 90°): 1.3 dB at
+  ±10, 2.3 dB at ±20, 3.2 dB at ±30. Without a master limiter, do not rely on
+  per-file ceilings. Keep loud transients off each other's grid point: if two
+  would share one, let one replace the other. Narrow the pan of the loudest
+  sounds. A pan of ±10 instead of ±20 gave a kill sound at −3 dBFS the same
+  headroom as a −4 dBFS file ceiling. That ceiling would have cost the kill
+  sound 0.5 dB of loudness.
   [runtime: main.js `createStereoPanner` per instance; Web Audio spec,
   StereoPannerNode stereo-input algorithm; observed in an offline mix of a
   game project's rules, 2026-09-30]
@@ -162,12 +163,13 @@ which runs Web Audio).
   counters with *Add key*. [runtime: c3runtime.js
   `SetKey(t,e){this._data.has(t)&&...}`, `AddKey`]
 - The runtime finds a sound by its path below the Sounds or Music folder,
-  without the extension. So a file in the folder `Board` is `Board/spawn`,
-  and *Play (by name)* with `"spawn"` finds and plays nothing, with no
-  error. If a game builds sound names in expressions, keep those files at
-  the top of the folder, or put the folder path in every name with
-  matching case. Timeline *Play (by name)* differs: it finds a timeline in
-  a folder by its bare name. [runtime: c3runtime.js `PlayByName` calls
+  without the extension. So the file `spawn` in the folder `Board` is
+  `Board/spawn`, and *Play (by name)* with `"spawn"` finds and plays
+  nothing, with no error. If a game builds sound names in expressions,
+  keep those files at the top of the folder, or put the folder path in
+  every name with matching case. Timeline *Play (by name)* differs: it
+  finds a timeline in a folder by its bare name.
+  [runtime: c3runtime.js `PlayByName` calls
   `GetProjectAudioFileUrl`, whose `_audioFiles` map held `"Board/spawn"`,
   and `GetTimelineByName` reads `_timelinesByName` by the lowercased bare
   name; observed in a game project, r504 preview, 2026-10-02: after sounds
