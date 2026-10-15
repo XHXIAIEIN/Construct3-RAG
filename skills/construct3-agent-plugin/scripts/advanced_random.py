@@ -53,9 +53,9 @@ import sys
 import time
 from pathlib import Path
 
-M64 = (1 << 64) - 1
-GOLDEN = 0x9E3779B97F4A7C15
-TWO53 = float(1 << 53)
+M64 = (1 << 64) - 1             # splitmix64 and xoshiro256** work on unsigned 64-bit integers
+GOLDEN = 0x9E3779B97F4A7C15     # the increment of splitmix64
+TWO53 = float(1 << 53)          # Random keeps the top 53 bits, the precision of a double
 NOISE_DRAWS = 256 * 2 + 256     # the gradients, two numbers each, then the noise permutation
 
 EPILOG = """examples:
@@ -110,7 +110,7 @@ def random_seed(length: int = 10) -> str:
     return "".join(chr(round(25 * _random.random()) + 65) for _ in range(length))
 
 
-def _strict_equal(a, b) -> bool:
+def _strict_equal(a: object, b: object) -> bool:
     """JavaScript's ===: a text never equals a number, 7 equals 7.0."""
     return isinstance(a, str) == isinstance(b, str) and a == b
 
@@ -136,7 +136,7 @@ class ProbabilityTable:
                 self.total -= w
                 return
 
-    def sample(self, roll):
+    def sample(self, roll: float):
         acc = 0
         for w, v in self.items:
             acc += w
@@ -257,14 +257,14 @@ class AdvancedRandom:
 
 # --- --check: the plugin's own code, run by node ----------------------------------------------
 class ShapeChanged(Exception):
-    """The runtime code no longer has the parts this script reads."""
+    """The runtime code lacks a part that this script reads."""
 
 
 CASES = ["ABCDEFGHIJ", "", "seed:stage:12", "QWERTYUIOP:card:137", "种子🙂", "x" * 300]
 TABLE = [[3, "dango1"], [1.5, "dango2"], [0.25, "sword"], [2, 7]]
-# The same steps for every seed, as actions and expressions of the plugin. Creating tables
-# between two Random steps shows that it draws nothing; the pool's removals that its running
-# total weight is kept as the runtime keeps it.
+# Every seed runs these steps, the actions and expressions of the plugin.
+# The tables created between two Random steps show that creating a table draws nothing, and the
+# removals from the pool show that its total weight is kept as the runtime keeps it.
 STEPS = [
     ["random", 50],
     ["table_json", "Loot", json.dumps(TABLE)],
@@ -338,6 +338,13 @@ process.stdout.write(JSON.stringify({out}));
 """
 
 
+# The steps that are actions: they return nothing, so the harness records null for them.
+ACTIONS = {"table_json": AdvancedRandom.table_from_json, "table": AdvancedRandom.create_table,
+           "set_table": AdvancedRandom.set_table, "add": AdvancedRandom.add_entry,
+           "remove": AdvancedRandom.remove_entry, "perm": AdvancedRandom.create_permutation,
+           "shuffle": AdvancedRandom.shuffle_permutation}
+
+
 def run_here(case: str) -> list:
     """The STEPS on this module, in the shape the harness returns."""
     r = AdvancedRandom(case)
@@ -346,11 +353,8 @@ def run_here(case: str) -> list:
         a, b = (args + [None, None])[:2]
         if op == "random":
             got.append([r.random() for _ in range(a)])
-        elif op in ("table_json", "table", "set_table", "add", "remove", "perm", "shuffle"):
-            {"table_json": lambda: r.table_from_json(a, b), "table": lambda: r.create_table(a),
-             "set_table": lambda: r.set_table(a), "add": lambda: r.add_entry(a, b),
-             "remove": lambda: r.remove_entry(a, b), "perm": lambda: r.create_permutation(a, b),
-             "shuffle": r.shuffle_permutation}[op]()
+        elif op in ACTIONS:
+            ACTIONS[op](r, *args)
             got.append(None)
         elif op == "weighted":
             got.append([r.weighted() for _ in range(a)])
@@ -377,10 +381,10 @@ def pick_sources(files: dict[str, str]) -> list[tuple[str, str]]:
     the plugin's runtime.js, which defines the plugin, then its other files."""
     table = [(n, code) for n, code in files.items() if TABLE_FILE.search(n)]
     plugin = [(n, code) for n, code in files.items() if PLUGIN_FILE.search(n)]
-    plugin.sort(key=lambda f: PLUGIN_FILE.search(f[0]).group(1).lower() != "runtime.js")
+    plugin.sort(key=lambda f: not f[0].lower().endswith("/runtime.js"))
     lacking = [what for what, found in (("lib/misc/probability.js", table),
                                         ("plugins/AdvancedRandom/c3runtime/runtime.js",
-                                         [f for f in plugin if f[0].lower().endswith("/runtime.js")]))
+                                         plugin and plugin[0][0].lower().endswith("/runtime.js")))
                if not found]
     if lacking:
         raise ShapeChanged(f"no file {' or '.join(lacking)} among {len(files)} runtime files")
@@ -393,13 +397,12 @@ def export_sources(c3runtime: Path) -> list[tuple[str, str]]:
     marks = list(SECTION.finditer(text))
     if not marks:
         raise ShapeChanged(f"{c3runtime} holds no `// <path>.js` section headers, so its files cannot be told apart")
-    files = {m.group(1): text[m.start():marks[i + 1].start() if i + 1 < len(marks) else len(text)]
-             for i, m in enumerate(marks)}
-    return pick_sources(files)
+    ends = [m.start() for m in marks[1:]] + [len(text)]
+    return pick_sources({m.group(1): text[m.start():end] for m, end in zip(marks, ends)})
 
 
 def compare(sources: list[tuple[str, str]], node: str) -> tuple[list[str], int]:
-    """The differences between the plugin's code run by node and this module, and the values compared."""
+    """The differences between the plugin's code, run by node, and this module, and the number of values compared."""
     script = "\n".join([HARNESS_HEAD, f"const CASES = {json.dumps(CASES)}, STEPS = {json.dumps(STEPS)};",
                         # each file in a block of its own, as the export wraps it: a preview loads
                         # each as a script, and two of them declare `const C3` at the top
@@ -496,7 +499,12 @@ def preview_sources(project: Path, release: str | None, exe: str | None) -> tupl
     return pick_sources(ran["files"]), f"the preview of the editor {where.group(1) if where else result['editor']}"
 
 
-def check(args) -> int:
+# What --check prints for a ShapeChanged, with exit code 1.
+SHAPE_CHANGED = ("the runtime code no longer has the shape this script reads: {}. Read the plugin's code and update "
+                 "advanced_random.py before trusting its numbers")
+
+
+def check(args: argparse.Namespace) -> int:
     import c3project as c3
     node = shutil.which("node")
     if not node:
@@ -506,6 +514,7 @@ def check(args) -> int:
     project = c3.find_project(args.project)
     note = None
     try:
+        export = find_export(project) if project and not (args.runtime or args.preview) else None
         if args.runtime:
             runtime = Path(args.runtime)
             if not runtime.is_file():
@@ -513,7 +522,7 @@ def check(args) -> int:
                       file=sys.stderr)
                 return 2
             sources, where = export_sources(runtime), str(runtime)
-        elif args.preview or not (project and find_export(project)):
+        elif export is None:
             if not project:
                 print("no project.c3proj found from here upward, so there is no export or preview to compare with: "
                       "pass --project <folder> or --runtime <c3runtime.js>", file=sys.stderr)
@@ -522,16 +531,14 @@ def check(args) -> int:
                 print(f"no Web export below {project}, so the plugin's code is taken from the editor's preview")
             sources, where = preview_sources(project, args.release, args.browser)
         else:
-            runtime = find_export(project)
-            sources, where = export_sources(runtime), str(runtime)
-            made = time.strftime("%Y-%m-%d %H:%M", time.localtime(runtime.stat().st_mtime))
-            where += f" (exported {made})"
-            if (project / "project.c3proj").stat().st_mtime > runtime.stat().st_mtime:
+            sources, where = export_sources(export), str(export)
+            exported = export.stat().st_mtime
+            where += f" (exported {time.strftime('%Y-%m-%d %H:%M', time.localtime(exported))})"
+            if (project / "project.c3proj").stat().st_mtime > exported:
                 note = ("project.c3proj changed after this export, which runs the release it was made with: if the "
                         "editor was updated since, run --check --preview to compare what the editor runs now")
     except ShapeChanged as e:
-        print(f"the runtime code no longer has the shape this script reads: {e}. Read the plugin's code and update "
-              f"advanced_random.py before trusting its numbers")
+        print(SHAPE_CHANGED.format(e))
         return 1
     except (RuntimeError, OSError) as e:
         print(f"no runtime to compare with: {e}", file=sys.stderr)
@@ -540,8 +547,7 @@ def check(args) -> int:
     try:
         differences, values = compare(sources, node)
     except ShapeChanged as e:
-        print(f"the runtime code no longer has the shape this script reads: {e}. Read the plugin's code and update "
-              f"advanced_random.py before trusting its numbers")
+        print(SHAPE_CHANGED.format(e))
         return 1
     for line in differences:
         print(line)
