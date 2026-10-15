@@ -67,10 +67,9 @@ EPILOG = """examples:
 --attach uses a Chrome or Edge the user has open: turn remote debugging on at
 chrome://inspect/#remote-debugging (edge://inspect/#remote-debugging) and pass the
 address it shows, a port, an http:// or ws:// address, or the DevToolsActivePort
-file of the browser's user data folder. Given a port that does not answer
-/json/version, as a browser debugged from that page does not, the script looks for
-the DevToolsActivePort with that port in the user data folders of Chrome, Chromium
-and Edge. It works in an editor tab that shows the start page and is new enough,
+file of the browser's user data folder. A browser debugged from that page does not
+answer /json/version on its port, so pass its DevToolsActivePort file; the script
+reads no folder of the user's browsers on its own. It works in an editor tab that shows the start page and is new enough,
 never in one with a project open, which may hold the user's unsaved work; without
 one it opens a tab and closes it after the export, or when the run stops. A tab of the
 user's is left on the start page either way.
@@ -152,15 +151,6 @@ def show_window(b: oe.Browser, target: str, state: str) -> None:
     b.devtools.call("Browser.setWindowBounds", windowId=window, bounds={"windowState": state})
 
 
-# --attach with a port alone: where Chrome, Chromium and Edge keep DevToolsActivePort
-USER_DATA = [Path.home() / "AppData/Local" / d / "User Data" for d in (
-    "Google/Chrome", "Google/Chrome Beta", "Google/Chrome Dev", "Google/Chrome SxS", "Chromium",
-    "Microsoft/Edge", "Microsoft/Edge Beta", "Microsoft/Edge Dev", "Microsoft/Edge SxS")] + \
-    [Path.home() / "Library/Application Support" / d for d in (
-        "Google/Chrome", "Google/Chrome Beta", "Google/Chrome Canary", "Chromium", "Microsoft Edge")] + \
-    [Path.home() / ".config" / d for d in ("google-chrome", "google-chrome-beta", "chromium", "microsoft-edge")]
-
-
 ALLOW_WAIT = 60     # seconds the user has to allow remote debugging when the browser asks
 
 
@@ -190,13 +180,10 @@ def attach(spec: str) -> oe.DevTools:
     try:
         with urllib.request.urlopen(f"http://127.0.0.1:{port}/json/version", timeout=5) as r:
             return connect(json.load(r)["webSocketDebuggerUrl"])
-    except OSError:     # remote debugging turned on at chrome://inspect does not answer it
-        pass
-    for active in (d / "DevToolsActivePort" for d in USER_DATA):
-        if active.is_file() and active.read_text().split()[:1] == [port]:
-            return attach(str(active))
-    raise ValueError(f"nothing answers at 127.0.0.1:{port}, and no DevToolsActivePort of the usual browsers "
-                     f"names that port; pass --attach the DevToolsActivePort file of the browser's user data folder")
+    except OSError as e:     # remote debugging turned on at chrome://inspect does not answer it
+        raise ValueError(f"nothing answers at 127.0.0.1:{port}/json/version ({e}); pass --attach the "
+                         f"DevToolsActivePort file of the browser's user data folder, which names the port "
+                         f"and the ws:// path") from e
 
 
 class SessionPage:

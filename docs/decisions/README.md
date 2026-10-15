@@ -1,6 +1,7 @@
 This folder holds the decision records: the evidence, the options and the trade-offs behind a product choice.
 A new record is added below as its own title, with the date of its `Date:` line, newest first.
 
+- [--attach Names the Browser; the Script Reads No Browser Folder of the User's](attach-names-the-browser.md) — 2026-10-16
 - [The Type the Editor Records for a Listed File](file-types-in-project-c3proj.md) — 2026-10-16
 - [One Run at a Time Holds a Browser Profile](profile-lock.md) — 2026-10-16
 - [A Pack Carries a Passing Check](pack-after-check.md) — 2026-10-16

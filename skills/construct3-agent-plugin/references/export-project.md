@@ -67,7 +67,10 @@ chrome-devtools MCP's browser: pass `--attach 127.0.0.1:9222`, or just the
 port. The user turns remote debugging on at
 `chrome://inspect/#remote-debugging` (`edge://` for Edge), which shows the
 address, and allows the connection when the browser asks; the script waits
-60 seconds for that.
+60 seconds for that. A browser debugged from that page does not answer
+`/json/version` on its port: pass the `DevToolsActivePort` file of its user
+data folder instead, which the error names. The script reads no folder of
+the user's browsers on its own.
 
 The script never touches a tab with a project open, since it may hold
 unsaved work. It uses an editor tab on the start page, or opens one and
