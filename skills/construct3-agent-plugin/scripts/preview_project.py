@@ -142,6 +142,7 @@ STEPS = ("tap", "hold", "drag", "key", "wait", "until", "js", "state", "shot", "
 KEPT = Path("tools") / "plans"
 FIELDS = {"tap": set(), "hold": {"seconds"}, "drag": {"to", "seconds", "through", "rest"}, "key": {"seconds"}, "wait": set(),
           "until": {"timeout"}, "js": {"timeout"}, "state": set(), "shot": set(), "record": {"watch"}}
+# Seconds a hold, a drag and a key press last when the step gives none.
 PRESS = {"hold": 0.5, "drag": 0.4, "key": 0.1}
 # Seconds the preview window gets to take the plan's viewport.
 RESIZE = 5
@@ -634,6 +635,7 @@ def make_video(frames: list[Path], seconds: list[float], video: Path) -> str | N
     return str(gif)
 
 
+# A recording's contact sheet: at most 12 frames, at most 1600 px a side, 4 px between the frames.
 SHEET_CELLS, SHEET_SIDE, SHEET_GAP = 12, 1600, 4
 
 
@@ -1028,8 +1030,7 @@ def attempt(game: Game, step: dict, n: int, shots: Path) -> tuple[bool, str, dic
 def report(result: dict, label: Callable[[str], str] = oe.key_name) -> list[str]:
     if result["status"] != "opened":
         return oe.report(result, label)
-    lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
-    lines += [f"  warning: {w}" for w in result.get("warnings", [])]
+    lines = oe.opened_lines(result)
     ran = result.get("preview")
     if not ran or not ran["started"]:
         return lines + [f"  preview did not run: {e}" for e in (ran or {}).get("errors", ["no preview"])]
@@ -1063,6 +1064,15 @@ def where(out: Path, shots: Path) -> str:
     return f"full result in {out}, screenshots in {shots}"
 
 
+def print_report(lines: list[str], limit: int, out: Path, shots: Path) -> None:
+    """Print the lines that fit in --limit, how many did not, and where the whole result is."""
+    shown = c3.fitting(lines, limit)
+    print("\n".join(lines[:shown]))
+    if shown < len(lines):
+        print(f"{len(lines) - shown} lines not printed: {out} keeps everything, --limit 0 prints it")
+    print(where(out, shots))
+
+
 def kept_plans(project: Path) -> list[Path]:
     folder = project / KEPT
     return sorted(folder.glob("*.json")) if folder.is_dir() else []
@@ -1093,8 +1103,7 @@ def replay_report(result: dict, refused: dict[str, list[str]],
     failed."""
     if result["status"] != "opened":
         return oe.report(result, label), len(refused) + 1
-    lines = [f"opened   {result['project']}  ({result['title']}, {result['editor']})"]
-    lines += [f"  warning: {w}" for w in result.get("warnings", [])]
+    lines = oe.opened_lines(result)
     ran = (result.get("preview") or {}).get("plans", {})
     failed, errors = 0, 0
     for name in sorted(set(ran) | set(refused)):
@@ -1146,34 +1155,17 @@ def replay(args: argparse.Namespace, project: Path, exe: str, editor: str) -> in
     out, shots = oe.kept(args.out, args.shots, project, "preview-plans.json", "preview-plans")
     shots.mkdir(parents=True, exist_ok=True)
     if plans:
-        try:
-            browser = oe.Browser(exe, (args.profile or oe.scratch(project)) / f"editor-{Path(exe).stem.lower()}",
-                                 args.headed)
-        except (oe.DevToolsError, OSError) as e:
-            print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
+        result = oe.drive(exe, oe.profile_folder(args.profile, project, exe), args.headed,
+                          lambda b: oe.open_one(b, editor, project, b.profile / "project-play.c3p", None,
+                                                bool(args.release), play_all(plans, shots, project)))
+        if result is None:
             return 2
-        try:
-            result = oe.open_one(browser, editor, project, browser.profile / "project-play.c3p", None,
-                                 bool(args.release), play_all(plans, shots, project))
-        except oe.EditorNotLoaded as e:
-            print(f"the editor did not load: {e}. Check the network connection and --release, and run again.",
-                  file=sys.stderr)
-            return 2
-        except (oe.DevToolsError, OSError) as e:
-            print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
-            return 2
-        finally:
-            browser.close()
     else:
         result = {"status": "opened", "project": str(project), "title": "not opened: every kept plan is refused",
                   "editor": "-", "preview": {"plans": {}}}
     out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
     lines, failed = replay_report(result, refused)
-    shown = c3.fitting(lines, args.limit)
-    print("\n".join(lines[:shown]))
-    if shown < len(lines):
-        print(f"{len(lines) - shown} lines not printed: {out} keeps everything, --limit 0 prints it")
-    print(where(out, shots))
+    print_report(lines, args.limit, out, shots)
     if result["status"] != "opened":
         print(oe.NEXT)
     elif failed:
@@ -1228,7 +1220,7 @@ def main() -> int:
             print("no Edge, Chrome or Chromium found here, and replaying the kept plans needs one this script can "
                   "drive: install one, or play each plan in tools/plans with a browser tool of this session.")
             return 3
-        return replay(args, project, exe, f"{oe.EDITOR}{args.release.strip('/')}/" if args.release else oe.EDITOR)
+        return replay(args, project, exe, oe.release_url(args.release))
     try:
         plan, problems = check_plan(json.loads(args.plan.read_text(encoding="utf-8")))
     except (OSError, ValueError) as e:
@@ -1256,33 +1248,16 @@ def main() -> int:
         print("no Edge, Chrome or Chromium found here, and a plan needs one this script can drive: install one, or "
               "drive the preview with a browser tool of this session as references/reading-the-runtime.md says.")
         return 3
-    editor = f"{oe.EDITOR}{args.release.strip('/')}/" if args.release else oe.EDITOR
+    editor = oe.release_url(args.release)
     out, shots = kept(args.out, args.shots, project)
     shots.mkdir(parents=True, exist_ok=True)
-    try:
-        browser = oe.Browser(exe, (args.profile or oe.scratch(project)) / f"editor-{Path(exe).stem.lower()}", args.headed)
-    except (oe.DevToolsError, OSError) as e:
-        print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
+    result = oe.drive(exe, oe.profile_folder(args.profile, project, exe), args.headed,
+                      lambda b: oe.open_one(b, editor, project, b.profile / "project-play.c3p", None,
+                                            bool(args.release), play(plan, shots, project)))
+    if result is None:
         return 2
-    try:
-        result = oe.open_one(browser, editor, project, browser.profile / "project-play.c3p", None, bool(args.release),
-                             play(plan, shots, project))
-    except oe.EditorNotLoaded as e:
-        print(f"the editor did not load: {e}. Check the network connection and --release, and run again.",
-              file=sys.stderr)
-        return 2
-    except (oe.DevToolsError, OSError) as e:
-        print(f"{exe} could not be driven: {e}. Pass another browser with --browser.", file=sys.stderr)
-        return 2
-    finally:
-        browser.close()
     out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
-    lines = report(result, label)
-    shown = c3.fitting(lines, args.limit)
-    print("\n".join(lines[:shown]))
-    if shown < len(lines):
-        print(f"{len(lines) - shown} lines not printed: {out} keeps everything, --limit 0 prints it")
-    print(where(out, shots))
+    print_report(report(result, label), args.limit, out, shots)
     ran = result.get("preview") or {}
     failed = [d for d in ran.get("steps", []) if not d["ok"]]
     errors = ran.get("started") and (ran["errors"] or any(d["errors"] for d in ran["steps"]))

@@ -107,12 +107,17 @@ def on_grid(v: float, unit: int) -> bool:
     return abs(v / unit - round(v / unit)) < 1e-6
 
 
+def json_files(root: Path, *folders: str) -> list[Path]:
+    """The JSON files under these folders of the project, folder by folder and sorted, without the
+    .uistate.json files the editor writes beside them."""
+    return [path for folder in folders for path in sorted((root / folder).rglob("*.json"))
+            if not path.name.endswith(".uistate.json")]
+
+
 def check_grid(root: Path, unit: int, out: list[str]) -> int:
     """grid.world-placement over layouts/; returns how many instances were checked."""
     checked = 0
-    for path in sorted((root / "layouts").rglob("*.json")):
-        if path.name.endswith(".uistate.json"):
-            continue
+    for path in json_files(root, "layouts"):
         layout = c3.load(path)
         for layer, _ in c3.layers_of(layout.get("layers", [])):
             if layer.get("parallaxX", 1) == 0 and layer.get("parallaxY", 1) == 0:
@@ -149,9 +154,7 @@ def actions_of(node):
 def check_spawn(root: Path, out: list[str]) -> int:
     """grid.runtime-spawn over eventSheets/; returns how many create actions were read."""
     read = 0
-    for path in sorted((root / "eventSheets").rglob("*.json")):
-        if path.name.endswith(".uistate.json"):
-            continue
+    for path in json_files(root, "eventSheets"):
         sheet = c3.load(path)
         for a in actions_of(sheet.get("events", [])):
             if a.get("id") != "create-object":
@@ -167,28 +170,25 @@ def check_spawn(root: Path, out: list[str]) -> int:
     return read
 
 
+# The behaviors that make an object collide, so a squash of its size moves its collision box.
 COLLIDING = ("Platform", "EightDir", "Physics", "Car", "solid", "jumpthru")
 
 
 def colliding_items(root: Path) -> dict[str, list[str]]:
     """Object types and families by name, with the behaviors that make them collide."""
     found = {}
-    for kind in ("objectTypes", "families"):
-        for path in sorted((root / kind).rglob("*.json")):
-            if not path.name.endswith(".uistate.json"):
-                item = c3.load(path)
-                ids = [b.get("behaviorId") for b in item.get("behaviorTypes", []) if b.get("behaviorId") in COLLIDING]
-                if ids:
-                    found[item.get("name", path.stem)] = ids
+    for path in json_files(root, "objectTypes", "families"):
+        item = c3.load(path)
+        ids = [b.get("behaviorId") for b in item.get("behaviorTypes", []) if b.get("behaviorId") in COLLIDING]
+        if ids:
+            found[item.get("name", path.stem)] = ids
     return found
 
 
 def check_squash(root: Path, out: list[str]) -> None:
     """motion.squash-art over eventSheets/."""
     colliding = colliding_items(root)
-    for path in sorted((root / "eventSheets").rglob("*.json")):
-        if path.name.endswith(".uistate.json"):
-            continue
+    for path in json_files(root, "eventSheets"):
         sheet = c3.load(path)
         for a in actions_of(sheet.get("events", [])):
             obj = a.get("objectClass")
@@ -200,16 +200,13 @@ def check_squash(root: Path, out: list[str]) -> None:
 
 def check_hit(root: Path, out: list[str]) -> None:
     """motion.hit over objectTypes/ and families/."""
-    for kind in ("objectTypes", "families"):
-        for path in sorted((root / kind).rglob("*.json")):
-            if path.name.endswith(".uistate.json"):
-                continue
-            item = c3.load(path)
-            for b in item.get("behaviorTypes", []):
-                if b.get("behaviorId") == "Flash":
-                    out.append(f"motion.hit: {item.get('name', path.stem)} has the Flash behavior "
-                               f"{b.get('name')}; a hit shows as a colour for an instant: draw a hit frame with "
-                               f"hit_frame() and show it with hit_flash(), then remove the behavior")
+    for path in json_files(root, "objectTypes", "families"):
+        item = c3.load(path)
+        for b in item.get("behaviorTypes", []):
+            if b.get("behaviorId") == "Flash":
+                out.append(f"motion.hit: {item.get('name', path.stem)} has the Flash behavior "
+                           f"{b.get('name')}; a hit shows as a colour for an instant: draw a hit frame with "
+                           f"hit_frame() and show it with hit_flash(), then remove the behavior")
 
 
 def check_screen(project: dict, warned: list[str]) -> None:
@@ -245,8 +242,7 @@ def check_safe_area(root: Path, project: dict, warned: list[str]) -> None:
         elif isinstance(node, list):
             for item in node:
                 yield from expressions(item)
-    texts = [e for f in (root / "eventSheets").rglob("*.json") if not f.name.endswith(".uistate.json")
-             for e in expressions(c3.load(f))]
+    texts = [e for f in json_files(root, "eventSheets") for e in expressions(c3.load(f))]
     texts += [f.read_text(encoding="utf-8", errors="replace") for f in (root / "scripts").rglob("*.[jt]s")]
     if any(SAFE_AREA.search(t) for t in texts):
         return
