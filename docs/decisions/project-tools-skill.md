@@ -29,17 +29,18 @@ the checker, and `AGENTS.md` section 2 sends every agent to the ACE lookup.
 
 ## Decision
 
-Option 3. TRAE reads `.trae/skills/` and `.agents/skills/`, Deep Code
-`.deepcode/skills/` and `.agents/skills/`, Claude Code `.claude/skills/`. A
-project used with the Claude Code plugin holds no copy
-(`plugin-tracks-commits.md`).
+Option 3. TRAE reads `.trae/skills/` and, once enabled in its settings,
+`.agents/skills/`; Deep Code reads `.deepcode/skills/` and `.agents/skills/`;
+Claude Code reads `.claude/skills/`. A project used with the Claude Code
+plugin holds no copy (`plugin-tracks-commits.md`).
 
 - `skills/construct3-agent-plugin/`: `SKILL.md`; `scripts/`, one script per
-  intent, each named in `SKILL.md`, over the shared `c3project.py`, and
-  `check_design.py` and `play_design.py` also over `game_model.py`;
+  intent, each named in `SKILL.md`, over the shared `c3project.py`;
+  `check_design.py`, `play_design.py` and `review_look.py` also over
+  `game_model.py`, and `review_design.py` over `design_review.py`;
   `references/`; `assets/`, among them `build_project.py`, the generator
-  template, and `game-project-block.md`, the block for the project's
-  instruction file; `evals/`, which stays in this repository.
+  template, and `game-project-block.md`, the Construct 3 block of the
+  project's instruction file; `evals/`, which stays in this repository.
 - `install.py` copies the folder into `.agents/skills/`, or the folder
   `--into` names, refreshes every copy the project holds when run again, and
   appends the block to `AGENTS.md` with the clone's path filled in when no
@@ -48,12 +49,16 @@ project used with the Claude Code plugin holds no copy
   not edited it (`instruction-block-refresh.md`). Installing is the agent's
   step, by the maintainer's call; `--no-block` and `--dry-run` serve a user
   who wants it otherwise.
-- A copy compares its files with the clone's on every run. While it differs,
-  the first line of every script's output is the command that refreshes it.
+- While a copy differs from the clone's files, the checker reports the
+  command that refreshes it as an error (`clone-update-check.md`).
+  `lookup_ace.py`, `lookup_script_api.py`, `search_guides.py`,
+  `print_sheet.py`, `edit_sheet.py` and `review_design.py` print the command
+  as their first line and go on.
 - The generator is copied into the game as `tools/build_project.py` and
   finds the checker in a skills folder of the project or of the user's home
   folder. `install.py` replaces its helpers, between two markers, with the
-  skill's current ones (`generator-helpers-inline.md`).
+  skill's current ones while the game has not edited them
+  (`generator-helpers-inline.md`).
 
 ## What holds the design in place
 
@@ -69,10 +74,12 @@ Each of these was a failure seen in an eval run or a game project.
   is current.
 - `SKILL.md` is ASCII. The reference validator and plain clients read it
   with the locale's codec, and a UTF-8 sign does not decode under cp936.
-- Every script writes UTF-8 whatever the code page, and stops at `--limit`,
-  10 000 characters by default, with a last line that says how to get the
-  rest. A third of the official examples print a sheet longer than that, and
-  a harness cuts long output, not always saying so.
+- Every script writes UTF-8 whatever the code page. Every script except
+  `install.py`, `new_project.py`, `pack_project.py`, `export_project.py` and
+  `screenshot_sheet.py` stops at `--limit`, 10 000 characters by default,
+  with a last line that says how to get the rest. A third of the official
+  examples print a sheet longer than that, and a harness cuts long output,
+  not always saying so.
 - A miss prints on stdout, like a hit, and lists what comes near. PowerShell
   wraps each line of stderr in an error record, and a harness that shows
   stdout alone shows nothing. A lookup that missed under System or a plugin
@@ -81,9 +88,9 @@ Each of these was a failure seen in an eval run or a game project.
 - An object name is an exact id or display name, or the run stops with the
   nearest ones: a near match once read `Platform` as Platform Info.
 - Small models skip the API lookup that `SKILL.md` asks for before a
-  script is written. So a passing check of a project with scripts ends by
-  saying to look up each API that a written or changed script calls, with
-  the `lookup_script_api.py` command. The lines of `edit_sheet.py` and
+  script is written. So the ok line of a passing check of a project with
+  scripts says to look up each API that a written or changed script calls,
+  with the `lookup_script_api.py` command. The lines of `edit_sheet.py` and
   `--review` leave it out, since they change no script. A run that reads
   the line after its edit looks up the APIs it wrote and rewrites a size it
   copied. A run that reads it before its edit does not act on it.
@@ -132,6 +139,13 @@ Each of these was a failure seen in an eval run or a game project.
   also names up to three objects that have an instance in that layout whose
   width and height the script writes, with the instance's width and height
   to read instead.
+- The size clause is on the ok line, not in a finding: the editor accepts
+  the script, and a style finding is a warning behind `--style`, which runs
+  do not pass, so a finding would reach no run. Like the note on looking up
+  APIs, the clause is left out of the lines of `edit_sheet.py` and
+  `--review`, which change no script. The ok line says that the check does
+  not run or type-check the scripts, because the check reads their code for
+  numbers.
 - The size clause was measured over the 174 scripts of the 119 official
   examples that have scripts. No script writes both sizes of a layout. One
   script writes the side of a square layout once, so a square counts only
@@ -143,12 +157,6 @@ Each of these was a failure seen in an eval run or a game project.
   In the 14 scripts of the game projects, the clause names none. Of the 32
   final scripts of the `script-shift-and-edges` runs of iterations 47 to 51,
   it names 10, and each of the 10 copies the layout's size.
-- The size clause is part of the ok line. The editor accepts the script,
-  and a style finding is a warning behind `--style`, which runs do not
-  pass, so a finding would reach no run. Like the note on looking up APIs,
-  the clause is left out of the lines of `edit_sheet.py` and `--review`,
-  which change no script. The ok line says that the check does not run or
-  type-check the scripts, because the check reads their code for numbers.
 - Runs act on the size clause. In iteration 52 of `script-shift-and-edges`
   with Haiku, 3 of 12 runs with the clause copied the layout's size in
   their first edit. All 3 met the clause when they ran the check. 2 of
@@ -193,7 +201,8 @@ Each of these was a failure seen in an eval run or a game project.
 ## Re-evaluate when
 
 - An agent loses the end of a printed sheet to truncation, or a harness in
-  use cuts below 10 000 characters: lower `LIMIT` in `scripts/c3project.py`.
+  use cuts below 10 000 characters: lower `LIMIT` in
+  `skills/construct3-agent-plugin/scripts/c3project.py`.
 - A run started from the block edits a sheet's JSON by hand: read its trace
   for what it opened instead of `SKILL.md`.
 - A harness in use reads neither `.agents/skills/` nor the block: name its

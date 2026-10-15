@@ -36,8 +36,10 @@ Construct3-RAG at <clone> is 3 commits behind origin/main, so the scripts lack t
   again and fails offline, which would leave the check failing with no
   command that clears it.
 - A copy that differs from the clone it was made from is an error of the
-  checker too, with the `install.py` command. The other scripts print it as
-  their first line and go on.
+  checker too, with the `install.py` command. `lookup_ace.py`,
+  `lookup_script_api.py`, `search_guides.py`, `print_sheet.py`,
+  `edit_sheet.py` and `review_design.py` print that command as their first
+  line and go on.
 - A clone that holds commits or uncommitted changes of its own gets a
   warning instead, which names them and asks the agent to tell the user. A
   pull there could merge into the user's work or refuse over it, and an
@@ -79,12 +81,12 @@ user turns on the marketplace's auto-update. The user can also run
 - The checker is not fully offline. The network rule of `AGENTS.md`
   section 5 covers the data path and the lookup service; this fetch is
   limited to the checker and can be turned off.
-- The checker does not pull: the clone belongs to the user, and the line
-  hands the pull to the agent only where it fast-forwards a clone with no
-  work of its own.
+- The checker fetches but does not move the clone's branch: the clone
+  belongs to the user, and the line hands the fast-forward to the agent
+  only for a clone with no work of its own.
 - A clone behind its upstream fails a check whose project is sound. The
-  failure lasts one round trip, the pull and the refresh, and the check
-  that follows reads the project with the current rules.
+  failure lasts one round trip, the fast-forward and the refresh, and the
+  check that follows reads the project with the current rules.
 - An eval run follows the line too, so fixtures come from a clone that does
   not trail its upstream (`skills/AGENTS.md`, "Evals").
 - Only Construct3-RAG is checked. The sibling clones change rarely, and
