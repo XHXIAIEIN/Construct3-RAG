@@ -42,14 +42,21 @@ table are under `construct3-agent-plugin/`, except the `Construct3-RAG/`,
   what the skill does and when to use it, at most 1024 characters, on one
   line and without `: `, so that a client with a plain frontmatter parser
   reads it too.
-- `SKILL.md` stays under 500 lines and the 5000 tokens the specification
-  recommends for what loads on activation. Every run reads all of it before
-  its first command, so it holds only what every activation needs and no
-  script says at the moment it matters. A new script or feature gets one
-  row in the table of scripts and, when it needs more, one sentence saying
-  when to read its file in `references/`; what a script prints when it is
-  needed is not repeated. Evidence: `docs/decisions/project-tools-skill.md`,
-  "What holds the design in place".
+- `SKILL.md` stays under the 500 lines that Anthropic's skill guidance
+  gives (<https://code.claude.com/docs/en/skills>, "Add supporting files").
+  Everything through "Check after every change" stays inside the first
+  5000 tokens of the body, because after a compaction Claude Code
+  re-attaches each invoked skill with only its first 5000 tokens (the same
+  page, "Skill content lifecycle"). So the check loop comes before the
+  sections that teach the tools, whose output teaches them again.
+  `tests/test_skill_spec.py` holds both limits; the token estimate and its
+  source are in `docs/decisions/skill-body-budget.md`. Every run reads all
+  of it before its first command, so it holds only what every activation
+  needs and no script says at the moment it matters. A new script or
+  feature gets one row in the table of scripts and, when it needs more, one
+  sentence saying when to read its file in `references/`; what a script
+  prints when it is needed is not repeated. Evidence:
+  `docs/decisions/project-tools-skill.md`, "What holds the design in place".
 - Paths inside the skill are relative to its folder. A file of this
   repository is written `Construct3-RAG/<path>`, as the Construct 3 block
   writes it; a relative link out of the folder breaks in a copy.

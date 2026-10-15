@@ -40,7 +40,49 @@ def test_skill_name_and_description_meet_the_specification():
 
 
 def test_skill_body_stays_within_what_is_loaded_on_activation():
+    """Anthropic's skill guidance: keep SKILL.md under 500 lines (https://code.claude.com/docs/en/skills)."""
     assert len(SKILL_MD.read_text(encoding="utf-8").splitlines()) < 500
+
+
+# After a compaction Claude Code re-attaches the most recent invocation of each skill with only its first
+# 5000 tokens, and the re-attached skills share 25,000 tokens, filled from the most recently invoked one
+# (https://code.claude.com/docs/en/skills, "Skill content lifecycle"). The sections through this one are
+# what every change needs after a compaction; the ones after it teach tools whose output teaches it again.
+RE_ATTACHED_TOKENS = 5000
+LAST_SECTION_EVERY_CHANGE_NEEDS = "## Check after every change"
+CHARS_PER_TOKEN = 2.7
+
+
+def estimated_tokens(text: str) -> int:
+    return round(len(text) / CHARS_PER_TOKEN)
+
+
+def test_the_check_loop_survives_a_compaction():
+    """The last section every change needs ends inside the first 5000 tokens of the body.
+    The count Claude Code cuts at is Claude's, whose tokenizer is not published, so the test estimates it.
+    Anthropic's glossary gives about 3.5 English characters a token before Claude 4.7 and about 30 percent
+    more tokens since (https://platform.claude.com/docs/en/about-claude/glossary, "Tokens"): 3.5 / 1.3 = 2.7.
+    tiktoken's cl100k_base counts about a third fewer on this text and is printed beside the estimate when
+    it is importable, for comparison with earlier measurements. A fixed ratio miscounts a run of links or a
+    table of flags by some percent, so the budget holds a section's end, not the body's, and a failure names
+    the line of the cut and the sections after it (docs/decisions/skill-body-budget.md)."""
+    text = SKILL_MD.read_text(encoding="utf-8")
+    body = text.split("---\n", 2)[2]
+    headings = [m.start() for m in re.finditer(r"^## ", body, re.M)]
+    start = body.index(LAST_SECTION_EVERY_CHANGE_NEEDS)
+    end = next((h for h in headings if h > start), len(body))
+    cut = round(RE_ATTACHED_TOKENS * CHARS_PER_TOKEN)
+    cut_line = text.count("\n", 0, len(text) - len(body) + cut) + 1
+    lost = [line for line in body[cut:].splitlines() if line.startswith("## ")]
+    try:
+        import tiktoken
+        compared = f", {len(tiktoken.get_encoding('cl100k_base').encode(body))} by cl100k_base"
+    except ImportError:
+        compared = ""
+    report = (f"the body is about {estimated_tokens(body)} tokens{compared}; the first {RE_ATTACHED_TOKENS} end at "
+              f"line {cut_line}, and {', '.join(lost) or 'no section'} falls after them")
+    assert end <= cut, f"{LAST_SECTION_EVERY_CHANGE_NEEDS!r} ends about {estimated_tokens(body[:end])} tokens in: {report}"
+    print(report)
 
 
 def test_skill_md_reads_under_any_locale_codec():
