@@ -122,7 +122,7 @@ and the probe showed no other.
 The borrowed rule preloads the images of every object that events create.
 The manual says that a layout loads the images of the objects placed in
 it. An object created only by events loads its images when it is created,
-while the game keeps running (`tips-and-guides/memory-usage.md`). The
+which can cause a momentary pause (`tips-and-guides/memory-usage.md`). The
 template keeps its coin in a layout that never runs and creates it on the
 game's layout, which is that case.
 
@@ -170,12 +170,12 @@ has neither failures nor a spread of sizes, so it relates nothing.
 ### Safe area and notch
 
 The borrowed rule asks about edge controls under a notch. The project
-property *Viewport fit* decides where they go. *Auto*, the property's
-default, adds borders so that the whole viewport is visible on a screen
-with a notch. *Cover* draws under the notch and the rounded corners
-(manual: `project-primitives/projects.md`). PlatformInfo's
-`SafeAreaInsetTop` and the other three insets give the hidden edges in
-CSS pixels.
+property *Viewport fit* decides whether the game draws there. *Auto*,
+the property's default, adds borders so that the whole viewport is
+visible on a screen with a notch. *Cover* draws under the notch and the
+rounded corners (manual: `project-primitives/projects.md`).
+PlatformInfo's `SafeAreaInsetTop` and the other three insets give the
+hidden edges in CSS pixels.
 
 The template's stand-in game was made portrait, 1080×1920. It was
 previewed at 430×932 with a safe-area inset of 59 CSS px at the top, which

@@ -6,7 +6,7 @@ Schema: Construct 3 r495.2
 ## Problem
 
 A settings screen, a name entry or a tuning panel needs a slider, a toggle
-and a text box. Drawn by each game, they sit off the grid, in their own
+and a text input. Drawn by each game, they sit off the grid, in their own
 colours, and often work for the mouse only.
 
 Task: each control as one helper call in the template, in the template's

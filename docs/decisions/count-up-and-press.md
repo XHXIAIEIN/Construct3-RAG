@@ -6,11 +6,11 @@ Schema: Construct 3 r495.2
 ## Problem
 
 A score that counts to its new value and a button that presses under the
-finger each have a trap in Construct. A count driven by *Tween (value)*
-reads 0 once the tween ends (`prompts/pitfalls/tween.md`), so a count that
-keeps reading the tween ends on 0. A press needs two events, the touch's
-start and its end. A label linked to its button by position only keeps its
-full size while the button squashes.
+finger each have a trap in Construct. The value of a *Tween (value)* reads
+0 once the tween ends (`prompts/pitfalls/tween.md`), so a count that keeps
+reading it ends on 0. A press needs two events, the touch's start and its
+end. A label linked to its button by position only keeps its full size
+while the button squashes.
 
 Task: a helper for each in the generator template, with numbers measured
 on the official examples.
@@ -55,8 +55,8 @@ Scripts, the probe and its recordings: `.local/docs/evidence/ui-recipes/`.
 
 1. Leave both to the game: each run writes its own, and the count that ends
    on 0 comes back.
-2. A row in `prompts/references/feel.md` alone: prose reaches the model that
-   reads it, and the helper is what the template's games call.
+2. A row in `prompts/references/feel.md` alone: prose reaches only the
+   model that reads it, while the template's games call helpers.
 3. Helpers in the template, the numbers from the examples, a row in
    `feel.md` for a game written without the template.
 
