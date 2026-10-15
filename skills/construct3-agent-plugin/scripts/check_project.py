@@ -1661,7 +1661,8 @@ class Checker:
                 self.err(f"{where}: {key} should be a JSON boolean, not {value!r}")
         elif ptype in ("combo", "combo-grouped"):
             if items and value not in items:
-                self.err(f"{where}: {key}={value!r} is not one of {list(items)}{bare(value, items)}")
+                self.err(f"{where}: {key}={value!r} is not one of {list(items)}{bare(value, items)}; the editor "
+                         f"opens the project and silently keeps the default item instead")
         elif ptype == "keyb":
             if not isinstance(value, int) or isinstance(value, bool):
                 self.err(f"{where}: {key}={value!r} should be a key code, a JSON number such as 32 for Space or "

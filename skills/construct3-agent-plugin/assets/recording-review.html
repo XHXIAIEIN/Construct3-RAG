@@ -11,16 +11,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Recording review</title>
 <style>
-  /* Design tokens, in the manner of the host UI kits: one warm neutral scale for
+  /* Design tokens, in the manner of the host UI kits: one neutral grey scale for
      structure, one accent for what is selected, one info color for data, one for
      what failed. Every value below is declared for light and for dark together,
      so a theme is a change of palette, never a second sheet to keep in step. */
   :root {
     color-scheme: light;
-    --color-background-primary: #faf9f5; --color-background-secondary: #ffffff; --color-background-tertiary: #f2f0e8;
-    --color-text-primary: #141413; --color-text-secondary: #6b6963; --color-text-tertiary: #77746d;
-    --color-border-tertiary: #e7e4da; --color-border-primary: #d6d2c5;
-    --color-accent: #d97757; --color-accent-text: #b85a3d; --color-accent-tint: #f6e8df; --color-accent-wash: #faf0e9;
+    --color-background-primary: #fafafa; --color-background-secondary: #ffffff; --color-background-tertiary: #f1f2f4;
+    --color-text-primary: #1b1b1b; --color-text-secondary: #5f6368; --color-text-tertiary: #6b6f76;
+    --color-border-tertiary: #e4e6ea; --color-border-primary: #d0d3d9;
+    --color-accent: #1f5fbf; --color-accent-text: #1f5fbf; --color-accent-tint: #e2ebf8; --color-accent-wash: #eff4fc;
     --color-info: #6a9bcc; --color-info-text: #3f6d9e; --color-info-tint: #e8eff7; --color-info-strong: #bcd2e8;
     --color-danger: #bf3a2b; --color-danger-tint: #f9e7e2;
     --color-stage: #000000;
@@ -36,16 +36,16 @@
     --border-radius-sm: 4px; --border-radius-md: 6px; --border-radius-lg: 8px;
     /* Motion: one short duration, standard easing, never in the way. */
     --dur-1: 120ms; --ease: cubic-bezier(0.4, 0, 0.2, 1);
-    --shadow-hairline: 0 1px 2px rgba(20, 20, 19, 0.06);
-    --shadow-sm: 0 1px 3px rgba(20, 20, 19, 0.08), 0 1px 2px -1px rgba(20, 20, 19, 0.06);
+    --shadow-hairline: 0 1px 2px rgba(15, 17, 20, 0.06);
+    --shadow-sm: 0 1px 3px rgba(15, 17, 20, 0.08), 0 1px 2px -1px rgba(15, 17, 20, 0.06);
   }
   @media (prefers-color-scheme: dark) {
     :root {
       color-scheme: dark;
-      --color-background-primary: #171716; --color-background-secondary: #201f1e; --color-background-tertiary: #282826;
-      --color-text-primary: #f2f0e9; --color-text-secondary: #a6a39a; --color-text-tertiary: #8b8981;
-      --color-border-tertiary: #2e2e2c; --color-border-primary: #3c3c39;
-      --color-accent: #e08a6c; --color-accent-text: #e08a6c; --color-accent-tint: #35241c; --color-accent-wash: #2c221b;
+      --color-background-primary: #161718; --color-background-secondary: #1e1f22; --color-background-tertiary: #26282b;
+      --color-text-primary: #e8e9eb; --color-text-secondary: #a3a6ac; --color-text-tertiary: #8e9198;
+      --color-border-tertiary: #2c2e32; --color-border-primary: #3b3e43;
+      --color-accent: #5b8def; --color-accent-text: #7ba3f2; --color-accent-tint: #1d2a42; --color-accent-wash: #1a2333;
       --color-info: #8fb3d9; --color-info-text: #8fb3d9; --color-info-tint: #1e2937; --color-info-strong: #33506e;
       --color-danger: #e06a5c; --color-danger-tint: #38201b;
       --shadow-hairline: 0 1px 2px rgba(0, 0, 0, 0.4);

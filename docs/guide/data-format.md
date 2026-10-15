@@ -149,8 +149,8 @@ Each file describes one addon. Field names match the official CDN.
 | `id` | all | Stable ACE id. Identical across locales. |
 | `list-name` | conditions, actions | Name shown in the add condition or action dialog. |
 | `display-text` | conditions, actions | Template shown in the event sheet, for example `Set animation to {0}`. |
-| `translated-name` | expressions | In `en-US` the expression identifier, for example `AnimationFrame`, which is the name a project file holds; in another locale the localized name, `动画帧`. |
-| `scriptName` | all | JavaScript API name. Identical across locales. |
+| `translated-name` | expressions | The name the editor shows: in `en-US` mostly the identifier, `AnimationFrame`, in another locale the localized name, `动画帧`. A project file holds `scriptName` instead. |
+| `scriptName` | all | Identical across locales. For a condition or action, the JavaScript API name. For an expression, the CDN's `expressionName`, the name a project file holds: Construct Game Services writes `BroadcastMessageTitle` where the `en-US` `translated-name` is `MessageTitle`, and the editor refuses the latter. |
 | `category` | all | Key into `aceCategories`. Identical across locales. |
 | `description` | all | Tooltip or help text. |
 | `params` | all | Parameter map keyed by parameter id, described below. |

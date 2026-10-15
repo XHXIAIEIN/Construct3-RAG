@@ -47,9 +47,11 @@ Fields that decide correctness:
   `{locale}/_deprecated.json` lists every deprecated ACE, kept in the schema
   or not, with the current ACE of the same name where there is exactly one,
   and every deprecated addon, which has no schema file.
-- An expression's `translated-name` is localized like any other text. The
-  name a project file holds is the `en-US` one, `AnimationFrame`, whatever
-  the locale; match the two files by `id`.
+- An expression's `translated-name` is the editor's wording, localized like
+  any other text. The name a project file holds is its `scriptName`, the
+  CDN's `expressionName`, the same in every locale. The two agree but for
+  case in most addons; Construct Game Services differs in 67, where the
+  editor reads `BroadcastMessageTitle` and refuses `MessageTitle`.
 - `properties` carry text only. Effects have `parameters` (`float`,
   `percent`, `color`) and no ACEs.
 - A world object's full ACE list is its plugin file plus the part of
