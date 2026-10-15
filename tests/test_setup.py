@@ -1,4 +1,5 @@
-"""Product-boundary tests for the setup launcher."""
+"""The steps scripts/setup.py takes: the schemas in data/ unless a refresh is asked for, then the
+lookup service."""
 
 from __future__ import annotations
 
@@ -10,7 +11,7 @@ import scripts.setup as setup
 
 
 def _main_steps(monkeypatch: pytest.MonkeyPatch, *flags: str) -> list[tuple]:
-    """Run ``setup.main()`` with every step stubbed; return the steps it took, in order."""
+    """The steps ``setup.main()`` takes with these flags, in order, each step stubbed."""
     calls: list[tuple] = []
     monkeypatch.setattr(sys, "argv", ["setup.py", "--skip-deps", *flags])
     monkeypatch.setattr(setup, "check_python", lambda: None)
@@ -38,15 +39,11 @@ def test_explicit_refresh_fetches_before_lookup_server(monkeypatch):
 
 
 def test_start_server_runs_uvicorn_with_reload(monkeypatch):
-    captured: dict = {}
-
-    def fake_run(command, **kwargs):
-        captured["command"] = command
-        captured.update(kwargs)
-
-    monkeypatch.setattr(setup, "run", fake_run)
+    commands: list[list[str]] = []
+    monkeypatch.setattr(setup, "run", lambda command, **kwargs: commands.append(command))
 
     setup.start_server(port=9000)
 
-    assert captured["command"][-1] == "--reload"
-    assert "9000" in captured["command"]
+    command = commands[-1]
+    assert command[-1] == "--reload"
+    assert "9000" in command

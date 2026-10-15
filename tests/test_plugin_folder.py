@@ -112,9 +112,9 @@ def test_scripts_in_the_plugin_read_the_bundled_data_and_print_what_opens(tmp_pa
 
 
 def test_the_plugin_agent_carries_only_the_tools_the_scripts_need():
-    """A general-purpose sub-agent starts with every tool and server of the session, about 42 000 tokens before
-    its first step; the plugin's agent type names the tools the skill's scripts are run and read with
-    (docs/decisions/project-worker-agent.md). A plain frontmatter parser reads it: no ': ' in a value."""
+    """A general-purpose sub-agent starts with every tool and server of the session; the plugin's agent
+    type names only the tools the skill's scripts are run and read with (docs/decisions/project-worker-agent.md,
+    which measures the cost). A plain frontmatter parser reads it, so no value holds ': '."""
     agent = PLUGIN / "agents" / "project-worker.md"
     text = agent.read_text(encoding="utf-8")
     head, body = text.split("\n---\n", 1)

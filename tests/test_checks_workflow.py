@@ -1,9 +1,9 @@
 """A failed check fails the job of .github/workflows/checks.yml.
 
 The run step continues on error, so the Report step after it can read the log.
-The job then fails only if its last step exits 1. If that step goes, or
-`set -o pipefail` goes (the run step would then take the exit code of `tee`,
-not of the checks), a failing check passes the job."""
+The job then fails only if its last step exits 1. The run step also needs
+`set -o pipefail`, because without it the step takes the exit code of `tee`,
+not of the checks. Without either one, a failing check passes the job."""
 
 from __future__ import annotations
 
