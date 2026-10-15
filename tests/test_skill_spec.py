@@ -1,5 +1,5 @@
-"""The construct3-agent-plugin skill as the Agent Skills format defines it, and the trigger evaluation of its
-description against a stand-in for the client."""
+"""The construct3-agent-plugin skill as the Agent Skills format defines it, the trigger evaluation of its
+description against a stand-in for the client, and trace.py over a written transcript."""
 import json
 import os
 import re
@@ -56,13 +56,14 @@ def test_every_file_the_skill_names_is_in_it():
 
 
 def test_every_file_of_the_clone_the_skill_names_exists():
-    """A copy of the skill reaches these through the project's Construct3-RAG line; a rename here breaks them in silence."""
+    """A copy of the skill reaches these through the project's Construct3-RAG line; a file renamed here breaks them
+    and nothing else reports it."""
     for name, text in skill_docs():
         for rel in set(re.findall(r"Construct3-RAG/([\w./-]+\.\w+)", text)):
             assert (REPO / rel).is_file(), f"{name} names Construct3-RAG/{rel}"
 
 
-# the browser's, where the skill says how one is started or starts itself again
+# Browser flags, named where the skill says how the browser is started or starts itself again
 OTHER_PROGRAMS = {"--mute-audio", "--user-data-dir", "--edge-skip-compat-layer-relaunch"}
 
 
@@ -73,7 +74,7 @@ def test_every_flag_the_skill_names_is_one_its_script_takes(tmp_path):
     a harness cuts longer tool output, not always at the end and not always saying so. The size is measured
     at the 80 columns streams() pins, because argparse wraps the text at the width it finds."""
     takes: dict[str, set[str]] = {}
-    over = []
+    over: list[str] = []
     for script in sorted((SKILL / "scripts").glob("*.py")):
         if script.stem != "c3project":
             code, out = run(tmp_path, script, "--help")
@@ -144,6 +145,8 @@ else:
 
 
 def trigger_eval(tmp_path: Path, queries: list[dict], *extra: str) -> tuple[int, str, Path]:
+    """run_trigger_eval.py, two runs a query, with FAKE_CLIENT as the client in a game that holds the skill:
+    the exit code, the output and the report's path."""
     root = new_project(tmp_path / "game")
     code, out = install(root, "--into", ".claude/skills", "--no-block")
     assert code == 0, out
@@ -188,6 +191,7 @@ def test_trigger_eval_leaves_a_run_without_an_answer_out_of_the_rate(tmp_path):
 
 
 def running(pid: int) -> bool:
+    # On Windows signal 0 is CTRL_C_EVENT: os.kill(pid, 0) sends a Ctrl+C instead of probing
     if sys.platform == "win32":
         out = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True, text=True,
                              timeout=60).stdout
@@ -225,10 +229,20 @@ def test_trigger_eval_stops_a_timed_out_run_with_its_children(tmp_path, monkeypa
 
 @pytest.mark.parametrize("query, said", [("signed out", "Failed to authenticate"), ("silent", "no assistant or result event")])
 def test_trigger_eval_writes_nothing_when_the_client_cannot_answer(tmp_path, query, said):
-    """A client that is signed out has not declined to trigger: no rate of 0 is recorded for it."""
+    """A client that is signed out, or prints no event the runner reads, has not declined to trigger: no rate of 0
+    is recorded for it."""
     code, out, report = trigger_eval(tmp_path, [{"query": query, "should_trigger": True}])
     assert code == 2 and "no result written" in out and said in out
     assert not report.exists()
+
+
+def run_trace(tmp_path: Path, entries: list[dict], out: Path) -> tuple[str, dict]:
+    """trace.py over a transcript of these entries: what it printed and the trace.json it wrote into out."""
+    transcript = tmp_path / "agent.jsonl"
+    transcript.write_text("\n".join(json.dumps(e) for e in entries), encoding="utf-8")
+    code, said = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(out))
+    assert code == 0, said
+    return said, json.loads((out / "trace.json").read_text(encoding="utf-8"))
 
 
 @pytest.mark.parametrize("name, given, error, loaded", [
@@ -240,17 +254,14 @@ def test_trigger_eval_writes_nothing_when_the_client_cannot_answer(tmp_path, que
     ("Skill", {"skill": "pdf"}, False, False),
 ])
 def test_trace_counts_a_read_of_this_skill_that_came_back(tmp_path, name, given, error, loaded):
-    """read_skill_md of trace.json is the trigger of run_trigger_eval.py: this skill's Skill call or SKILL.md,
-    with a result that is no error (the audit of 2026-10-07 found the Skill call missed and another skill's
-    SKILL.md counted)."""
-    transcript = tmp_path / "agent.jsonl"
-    transcript.write_text("\n".join(json.dumps(e) for e in [
+    """read_skill_md of trace.json is the trigger of run_trigger_eval.py: this skill's Skill call or a Read of its
+    SKILL.md, with a result that is no error (the audit of 2026-10-07 found the Skill call missed and another
+    skill's SKILL.md counted)."""
+    _, trace = run_trace(tmp_path, [
         {"message": {"content": [{"type": "tool_use", "id": "t", "name": name, "input": given}]}},
         {"message": {"content": [{"type": "tool_result", "tool_use_id": "t", "is_error": error, "content": "text"}]}},
-    ]), encoding="utf-8")
-    code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(tmp_path))
-    assert code == 0, out
-    assert json.loads((tmp_path / "trace.json").read_text(encoding="utf-8"))["read_skill_md"] is loaded
+    ], tmp_path)
+    assert trace["read_skill_md"] is loaded
 
 
 def test_trace_lists_writes_outside_the_run_folder(tmp_path):
@@ -269,13 +280,9 @@ def test_trace_lists_writes_outside_the_run_folder(tmp_path):
         ("Bash", {"command": f"cat {tmp_path.as_posix()}/clone/data/c3-schemas/_index.json"}),
         ("Read", {"file_path": f"{tmp_path.as_posix()}/clone/AGENTS.md"}),
     ]
-    transcript = tmp_path / "agent.jsonl"
-    transcript.write_text("\n".join(json.dumps({"message": {"content": [
-        {"type": "tool_use", "id": f"t{n}", "name": name, "input": given}]}}) for n, (name, given) in enumerate(calls)),
-        encoding="utf-8")
-    code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(run_dir))
-    assert code == 0, out
-    trace = json.loads((run_dir / "trace.json").read_text(encoding="utf-8"))
+    out, trace = run_trace(tmp_path, [{"message": {"content": [
+        {"type": "tool_use", "id": f"t{n}", "name": name, "input": given}]}} for n, (name, given) in enumerate(calls)],
+        run_dir)
     assert [(w["tool"], Path(w["path"])) for w in trace["outside"]] == [
         ("Write", Path(elsewhere)), ("Bash", tmp_path / "scratch" / "out.txt"),
         ("PowerShell", tmp_path / "clone" / "Game.json")]
