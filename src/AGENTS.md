@@ -84,10 +84,10 @@ Canonical offline Direct Lookup implementation:
 | `handlers.py` | Intent-specific execution handlers |
 | `formatting.py` | Pure result formatting helpers |
 | `intent.py` | Deterministic query classification |
-| `schema_index.py` | Plugin, behavior, ACE, and schema metadata index |
+| `schema_index.py` | Plugin, behavior, effect, ACE, and schema metadata index |
 | `schema_layout.py` | Schema locale/layout validation and path selection, shared with `application/`, `ingest/`, `settings/` and `scripts/` |
 | `scripting_index.py` | Scripting API index |
-| `term_index.py` | Curated terminology index built through public schema contracts |
+| `term_index.py` | Bilingual term index of addon and ACE names, built from the schemas through `SchemaIndex.iter_schemas()` |
 | `examples_index.py` | Example lookup and public fallback-tag queries |
 
 Indexes expose public loading and query contracts. Callers must not inspect
@@ -98,40 +98,44 @@ another index's private fields.
 CDN fetch and export.
 
 `c3_fetcher.py` fetches the CDN into the cache and exports the schema,
-example, language-pack, and ts-defs trees there; `export_to_data()` then
-replaces the matching `data/` directories, which is what the runtime reads.
-The shared world-object ACEs are
-not on the CDN endpoints it reads; `common_aces.py` loads them from
-`common_aces.json`, an extract of the editor bundle kept next to it, and
-`export_schemas()` merges that entry like any plugin. Which plugins and
-behaviors are deprecated is not on them either; `deprecated_addons.py` reads
-it from the editor bundles on every export, the export leaves those addons
-out, and it writes `{locale}/_deprecated.json` with every deprecated addon
-and ACE for the skill's scripts to name.
+example, language-pack, and ts-defs trees there. `export_to_data()` then
+replaces the matching `data/` directories, which the runtime reads.
 
-`guides.py` is not CDN data: it fetches Scirra's guides, the project format
-guide that the editor's `llm-context.md` links among them, and writes each
-as Markdown to `data/c3-guides/` when its text changed. A failed fetch keeps
-the committed copy and logs a warning; only `scripts/init.py` calls it.
+Two things are not on the CDN endpoints `c3_fetcher.py` reads:
+
+- The shared world-object ACEs: `common_aces.py` loads them from
+  `common_aces.json`, an extract of the editor bundle kept next to it, and
+  `export_schemas()` merges that entry like any plugin.
+- Which plugins and behaviors are deprecated: `deprecated_addons.py` reads it
+  from the editor bundles on every export. The export leaves those addons out
+  and writes `{locale}/_deprecated.json` with every deprecated addon and ACE,
+  for the skill's scripts to name.
+
+`guides.py` fetches pages of construct.net, not CDN data: Scirra's guides,
+among them the project format guide that the editor's `llm-context.md` links.
+It writes each guide as Markdown to `data/c3-guides/` when its text changed.
+A failed fetch keeps the committed copy and logs a warning; only
+`scripts/init.py` calls it.
 
 ### `settings/`
 
 `__init__.py` owns `load_settings()` and the immutable, grouped `AppSettings`
-tree. It reads the process environment and nothing else but the version in
-the schema directory's `_index.json`, which is the release the service
-reports. There is no `.env` file and no version setting: a refresh fetches
-the latest stable release unless `--version` names another.
+tree. It reads the process environment and one value from a file: the
+version in the schema directory's `_index.json`, which is the release the
+service reports. There is no `.env` file and no version setting: a data
+refresh (`scripts/init.py`) fetches the latest stable release unless
+`--version` names another.
 
-`settings/__init__.py` reads that version through
-`src.lookup.schema_layout.schema_version`, so `settings` depends on that
-one leaf of `lookup/`; nothing in `lookup/` depends back on `settings`.
+`load_settings()` reads that version through
+`src.lookup.schema_layout.schema_version`, so `settings` depends on that one
+leaf of `lookup/`; nothing in `lookup/` depends back on `settings`.
 
 ### `locale/`
 
 Language-dependent lookup resources. All language data belongs in one JSON
 catalog where translations sit side by side under stable concept IDs. Python
 only loads, validates, merges, and formats that data. Query grammar and narrow
-aliases do not belong in parser or transport control flow.
+aliases belong in the catalog too, not in parser or transport control flow.
 
 Every maintained catalog resource must colocate four fields with its values:
 `purpose`, `source`, `consumers`, and `tests`. A stable key without provenance
