@@ -4,8 +4,8 @@
 
 Bilingual Construct 3 reference data under `data/`, read directly, plus an
 optional lookup service in `src/`, and an agent skill in `skills/` that
-carries the project tools into a game project. Version and counts:
-`data/c3-schemas/_index.json`, never hardcoded.
+carries the project tools into a game project. The version and the counts
+are in `data/c3-schemas/_index.json`; never hardcode them.
 
 Priorities, in order: exact addon, ACE and scripting lookup; citable
 English and Chinese data; example projects by topic; works from the
@@ -27,8 +27,9 @@ it, still opens old projects that use it, and a new project should not.
 2. File: `data/c3-schemas/{locale}/{file}`, locale from `languages`
    (`en-US`, `zh-CN`).
 3. ACE: by `id`, `list-name` (conditions, actions) or `translated-name`
-   (expressions). `display-text` is the event sheet wording, `params` the
-   parameters, `scriptName` the scripting name.
+   (expressions). `display-text` is the event sheet wording and `params`
+   the parameters. `scriptName` is the JavaScript name of a condition or
+   action, and the name a project file holds for an expression.
 
 | Question | Where |
 |----------|-------|
@@ -71,11 +72,10 @@ it"). Given an effect's id or name, it prints the effect's parameters.
 
 ## 3. SOP: design event sheet logic
 
-Interactions, data storage, timing, animation: read and follow
-`prompts/event-sheet-thinking.md`, then verify names with section 2.
+Before designing interactions, data storage, timing or animation, read and
+follow `prompts/event-sheet-thinking.md`, then verify the names with
+section 2.
 
-- UID links between objects, `Pick all` followed by a pick from a stored
-  link, or a timer, tween or table rebuilt from variables: redesign.
 - A runtime behaviour of events learned from a project, one that changes
   which events are written, goes into the topic file of its group under
   `prompts/pitfalls/`, with its source, and its conclusion goes into
@@ -88,12 +88,13 @@ Interactions, data storage, timing, animation: read and follow
 
 ## 4. Use from another project
 
-A game project reaches this repository through two things it holds: the
-`construct3-agent-plugin` skill, a copy of `skills/construct3-agent-plugin/`,
-and, in its instruction file, the block of
-`skills/construct3-agent-plugin/assets/game-project-block.md`, whose
-`Construct3-RAG:` line locates the schemas. Before placing the block by
-hand or changing it, read `prompts/game-project-AGENTS.md`.
+A game project reaches this repository through two things it holds. One
+is the `construct3-agent-plugin` skill, a copy of
+`skills/construct3-agent-plugin/`. The other is the block of
+`skills/construct3-agent-plugin/assets/game-project-block.md` in its
+instruction file; the block's `Construct3-RAG:` line locates the schemas.
+Before placing the block by hand or changing it, read
+`prompts/game-project-AGENTS.md`.
 
 - Claude Code with the `construct3` plugin enabled (the skill is listed as
   `construct3:construct3-agent-plugin`): the project needs no copy. Its
@@ -142,9 +143,10 @@ Before editing:
 3. Classify the feature: default, optional, experimental, legacy.
 4. Significant feature or refactor: write down the user task, whether the
    default path calls it today, the evidence (queries, logs, benchmark) and
-   why the simpler option, or reading the data directly, does not do. Then
-   keep, simplify, rewrite or delete. No evidence: baseline and experiment
-   first, production path untouched.
+   why the simpler option, or reading the data directly, is not enough.
+   Then keep, simplify, rewrite or delete it. Without evidence, run a
+   baseline and an experiment first, and leave the production path
+   untouched.
 
 Rules:
 

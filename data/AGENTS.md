@@ -11,8 +11,8 @@ scripts in `skills/construct3-agent-plugin/` read it for a game project.
 | `c3-schemas/{locale}/` | Schema files per locale (`en-US`, `zh-CN`): `plugins/`, `behaviors/`, `effects/` |
 | `c3-schemas/{locale}/_deprecated.json` | What the editor has deprecated: addons and ACEs, kept in the schema or not |
 | `c3-examples/{locale}/` | Example projects: id (the file name), name, description, tags, used-addons, open URL |
-| `c3-example-usage/` | Which official examples use each ACE, per plugin and behavior id: the count and up to three uses as folder, sheet and events. Built from the `Construct-Example-Projects` clone; `_source.json` names its commit |
-| `c3-lang/{locale}.json` | Raw CDN language pack, pretty printed. Source text behind the schemas; diff it between releases. |
+| `c3-example-usage/` | Which official examples use each ACE, per plugin and behavior id: the count and up to three uses as folder, sheet and events |
+| `c3-lang/{locale}.json` | Raw CDN language pack, pretty printed: the source text behind the schemas; diff it between releases |
 | `c3-ts-defs/autocomplete-data.json` | Scripting class to method and property listings |
 | `c3-ts-defs/**/*.d.ts` | Full TypeScript interface signatures |
 | `c3-new-project/` | The empty project the editor saves for **Project** > **New** (Event sheet start) as a project folder, without its `*.uistate.json`; `scripts/bootstrap.py` copies it for a new game project |
@@ -38,22 +38,21 @@ Fields that decide correctness:
 - `isLooping` marks a loop, `isInvertible: false` a condition that cannot be
   inverted, `isCompatibleWithTriggers: false` one the editor keeps out of a
   triggered branch.
-- `isAsync` marks an awaitable action, `returnType` an expression's type;
-  `scriptName` is the JavaScript name. An expression call passes exactly
-  its `params`, or more when it has `isVariadicParameters`: `random(1, 5)`,
-  `Mouse.X("HUD")`.
-- `isDeprecated` marks an ACE the editor hides from its dialogs and keeps
-  only so that old projects open; a new event does not use it.
-  `{locale}/_deprecated.json` lists every deprecated ACE, kept in the schema
-  or not, with the current ACE of the same name where there is exactly one,
-  and every deprecated addon, which has no schema file.
+- `isAsync` marks an awaitable action; `scriptName` is the JavaScript name
+  of a condition or action.
+- `returnType` is an expression's type. An expression call passes exactly
+  its `params`, or more when it has `isVariadicParameters`, as
+  `random(1, 5)` and `Mouse.X("HUD")` do.
 - An expression's `translated-name` is the editor's wording, localized like
   any other text. The name a project file holds is its `scriptName`, the
   CDN's `expressionName`, the same in every locale. The two agree but for
   case in most addons; Construct Game Services differs in 67, where the
   editor reads `BroadcastMessageTitle` and refuses `MessageTitle`.
-- `properties` carry text only. Effects have `parameters` (`float`,
-  `percent`, `color`) and no ACEs.
+- `isDeprecated` marks an ACE the editor hides from its dialogs and keeps
+  only so that old projects open; a new event does not use it.
+  `{locale}/_deprecated.json` lists every deprecated ACE, kept in the schema
+  or not, with the current ACE of the same name where there is exactly one,
+  and every deprecated addon, which has no schema file.
 - A world object's full ACE list is its plugin file plus the part of
   `plugins/_common.json` its plugin file lists under `commonAces`. Text has
   no `set-default-color`; the editor refuses one on a Text.
@@ -62,6 +61,8 @@ Fields that decide correctness:
   project file: the properties bar and the file disagree on more than one,
   `world.angle` being radians where the bar shows degrees, and the opacity
   being `world.color[3]` with no key of its own.
+- `properties` carry text only.
+- Effects have `parameters` (`float`, `percent`, `color`) and no ACEs.
 
 ## Changing the data
 
@@ -70,12 +71,14 @@ never the output. `c3-new-project/` is the exception: it is replaced by hand
 with a new empty project saved from the editor as a folder, with UID
 allocation set to Random (`docs/decisions/random-uid-allocation.md`), when a release
 changes what the editor writes (`savedWithRelease` says which one saved it).
+
 `c3-guides/` is fetched every week by the update workflow and written only
-when a guide's text changed (`src/ingest/guides.py`).
-`c3-example-usage/` is built from the `Construct-Example-Projects` clone
-beside this repository, by `scripts/init.py` or alone by
-`python scripts/example_usage.py`. The update workflow has no clone, so it
-keeps the committed copy. When construct.net
-answers the script with a browser check, the copy stays as committed; save
+when a guide's text changed (`src/ingest/guides.py`). When construct.net
+answers the fetch with a browser check, the guide stays as committed; save
 the page from a browser and run
 `python scripts/init.py --guides-only --guide-html <saved page>`.
+
+`c3-example-usage/` is built from the `Construct-Example-Projects` clone
+beside this repository, by `scripts/init.py` or alone by
+`python scripts/example_usage.py`, and `_source.json` names the clone's
+commit. The update workflow has no clone, so it keeps the committed copy.
