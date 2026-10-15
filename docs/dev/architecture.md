@@ -12,11 +12,10 @@ Construct3-RAG is a versioned, bilingual Construct 3 reference dataset first.
 The lookup service is an optional access layer over that data, and Direct Lookup
 is all it does: deterministic, offline, with no model and no database behind it.
 
-The `construct3-agent-plugin` skill under `skills/` is outside this layout: its
-scripts read `data/c3-schemas/` directly and run from a copy inside a game
-project with neither `src/` nor the service. Before changing how the Claude
-Code plugin gets the skill and its data, read `docs/decisions/plugin-folder.md`.
-Before changing the skill, read `skills/AGENTS.md`.
+The `construct3-agent-plugin` skill, the prompts and the Claude Code plugin
+live in Construct3-Agent-Skills (`docs/decisions/skill-in-agent-skills.md`).
+Its scripts read `data/c3-schemas/` directly, from a clone of this repository
+beside that one, with neither `src/` nor the service.
 
 The project follows four dependency rules:
 
@@ -75,12 +74,10 @@ Explicit maintenance path:
 scripts/init.py -----> ingest/c3_fetcher.py -----> data/
                  \---> scripts/example_usage.py -> data/c3-example-usage/
                  \---> ingest/guides.py ---------> data/c3-guides/
-                 \---> scripts/build_plugin.py --> plugin/
 ```
 
-After a push to `main` that changes `plugin/`,
-`.github/workflows/publish-plugin.yml` runs `scripts/publish_plugin.py`,
-which pushes the folder to the plugin's repository, Construct3-Agent-Skills.
+A workflow of Construct3-Agent-Skills builds its plugin from `data/` every
+day and pushes the build when the data changed.
 
 Static boundary tests keep `application` and `lookup` from importing
 `ingest`, keep the module graph acyclic, and check that importing the service

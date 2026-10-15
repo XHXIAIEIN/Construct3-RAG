@@ -189,8 +189,8 @@ python scripts/init.py --guides-only --guide-html <saved page>
 `--guides-only` refreshes them alone, which the update workflow runs every
 week before it checks for a release. A changed guide opens a pull request,
 which waits for a person: compare it with
-`docs/decisions/project-format-guide.md`. Nothing reads the network on import
-or on a query.
+`docs/decisions/project-format-guide.md` of Construct3-Agent-Skills. Nothing
+reads the network on import or on a query.
 
 ## Example Usage
 
@@ -199,17 +199,18 @@ official examples use each condition, action and expression
 (`docs/guide/data-format.md`, "Example usage"). It reads the event sheets of
 every project in the `Construct-Example-Projects` clone beside this
 repository, or in `--clone`. It resolves each object to its plugin and
-behaviors through the project's object types and families, as the skill's
-scripts do. The folder is replaced whole, so an addon that no example in
+behaviors through the project's object types and families with the skill's
+own reader, `c3project.py` of the Construct3-Agent-Skills clone beside this
+repository; `CONSTRUCT3_AGENT_SKILLS` names a clone elsewhere. The folder is replaced whole, so an addon that no example in
 the clone uses leaves it. The same commit of the clone gives the same bytes.
 
-`scripts/init.py` runs it after the CDN export. Without the clone it keeps
-the committed index and prints the command that clones it. The update
+`scripts/init.py` runs it after the CDN export. Without either clone it
+keeps the committed index and prints the command that clones the missing
+one. The update
 workflow has no clone, so a release leaves the index as committed;
 `_source.json` names the commit it was built from. After you pull the
 clone, run `python scripts/example_usage.py`. Review
-`git diff data/c3-example-usage`. Then build `plugin/` again. See
-`docs/decisions/example-usage-index.md`.
+`git diff data/c3-example-usage`. See `docs/decisions/example-usage-index.md`.
 
 ## Version Update
 
@@ -218,12 +219,11 @@ clone, run `python scripts/example_usage.py`. Review
 the CDN's `versions.json`, and exits 1 when it cannot read it. When Construct 3 releases a new version:
 
 ```bash
-# Fetch the latest stable release (or --version <release>), replace data/,
-# then build plugin/ again from it
+# Fetch the latest stable release (or --version <release>) and replace data/
 python scripts/init.py
 
 # What the release changed against the committed data, and which tracked
-# files quote an id it broke; review them, then commit data/ and plugin/
+# files quote an id it broke; review them, then commit data/
 python scripts/schema_diff.py
 ```
 
@@ -235,8 +235,10 @@ retyped, combo items) and the flags `scriptName`, `isTrigger`, `isLooping`,
 removal, a deprecation, or a change an event written for the old release can
 trip on (a parameter removed, added or retyped, a combo item gone, a flag that
 had a value and changed) is watched: the script lists every quoted or
-backticked mention of the id in tracked prompts, skill files, code and docs.
-Tests are not scanned, since the suite fails on its own.
+backticked mention of the id in tracked code and docs. Tests are not
+scanned, since the suite fails on its own. The prompts and the skill, which
+quote ids too, are in Construct3-Agent-Skills; its daily refresh builds the
+plugin from the merged data, and its checks run on that build.
 
 `C3Fetcher.export_to_data()` is the one place that maps the cache onto
 `data/`: it replaces `c3-schemas`, `c3-examples`, `c3-lang`, and `c3-ts-defs`
@@ -255,15 +257,15 @@ opens a pull request with the result and the `schema_diff.py` report, against
 the data on `main`, as its body. A pull request opened with `GITHUB_TOKEN`
 starts no other workflow, so the update workflow then calls
 `.github/workflows/checks.yml`, the checks of `AGENTS.md` (pytest with `-rs`,
-compileall, `build_plugin.py --check`) that also run on every push to `main`
+compileall) that also run on every push to `main`
 and every pull request, on the pull request's commit. The tests that skipped
 there, and the end of the log when a check failed, are added to the pull
 request's body. The workflow enables auto-merge only when the checks passed,
 the report watches no mentioned id and no guide changed, and every other check
 on the pull request passed within 10 minutes; otherwise the pull request waits
 for a person. See `docs/decisions/release-schema-diff.md`. Once the merge
-reaches `main`, `.github/workflows/publish-plugin.yml` pushes the rebuilt
-`plugin/` to the plugin's repository (`docs/decisions/plugin-repository.md`).
+reaches `main`, the daily refresh workflow of Construct3-Agent-Skills builds
+its plugin from it (`docs/decisions/skill-in-agent-skills.md`).
 
 The workflow fails, and GitHub sends its failure email, when the version
 check cannot read the CDN or the refresh stops; `data/` is then not

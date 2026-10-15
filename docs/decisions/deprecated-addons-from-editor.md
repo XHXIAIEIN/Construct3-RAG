@@ -136,8 +136,8 @@ packs' descriptions name none. The skill's scripts read the list:
   marked and with `current`, and lists a left-out one that has every word.
 - `check_project.py` makes a deprecated addon, ACE or expression a warning,
   once per ACE or expression at its first use with the count of the others.
-  The editor opens those projects, so by `checker-rules.md` they are no
-  errors; the left-out ones were. Over the 524 official examples the checker
+  The editor opens those projects, so by the skill's `checker-rules.md`
+  (Construct3-Agent-Skills) they are no errors; the left-out ones were. Over the 524 official examples the checker
   passes 508 instead of 493: the 15 failed only on deprecated ACEs, Mouse
   `set-cursor-style`, Audio `advanced-audio-supported`, Multiplayer
   `sync-object`, System `set-minimum-framerate` and Browser `ExecJS` among

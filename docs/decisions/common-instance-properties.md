@@ -93,6 +93,6 @@ so no localized text, and is documented in `docs/guide/data-format.md`
 instead of being given an invented name.
 
 `check_project.py` does not check an instance against these entries, because a
-check becomes an error only after the two steps in
-`skills/construct3-agent-plugin/references/checker-rules.md`, and no editor
+check becomes an error only after the two steps in the skill's
+`references/checker-rules.md` (Construct3-Agent-Skills), and no editor
 message is recorded for an instance's colour or blend mode written wrong.

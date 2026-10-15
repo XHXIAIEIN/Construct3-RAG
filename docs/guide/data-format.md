@@ -357,9 +357,9 @@ holds the full signatures and documentation comments, in the directory of
 its plugin or behavior:
 `data/c3-ts-defs/plugins/general/sprite/c3runtime/ISpriteInstance.d.ts`.
 Look up the class first, then open its `.d.ts` file.
-`python skills/construct3-agent-plugin/scripts/lookup_script_api.py NAME`
-prints an interface with its members, or a member with its declaration and
-the file and line it is on.
+`lookup_script_api.py NAME` of the Construct3-Agent-Skills clone beside this
+repository, run with `--rag .`, prints an interface with its members, or a
+member with its declaration and the file and line it is on.
 
 ## Guides
 

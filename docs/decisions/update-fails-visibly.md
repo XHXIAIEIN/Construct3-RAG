@@ -69,7 +69,8 @@ Option 3.
   `RuntimeError` naming it, and `data/` stays as it was.
 
 Two failures are outside the exporter's check: a guide that cannot be
-fetched keeps its committed copy (`project-format-guide.md`), and a release
+fetched keeps its committed copy (`project-format-guide.md` of
+Construct3-Agent-Skills), and a release
 that is exported but fails the checks still gets its pull request, which
 waits for a person (`release-schema-diff.md`).
 

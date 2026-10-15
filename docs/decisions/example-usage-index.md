@@ -54,9 +54,11 @@ them. The same commit of the clone gives the same files. The format is in
 - An example written in both languages is two folders, `<id>-js` and
   `<id>-ts`, with the same events. It counts once, read from the `-js`
   folder.
-- `scripts/init.py` rebuilds the index after the CDN export, from the clone
-  beside this repository. The update workflow has no clone, so it keeps the
-  committed index. When the clone gets new commits,
+- `scripts/init.py` rebuilds the index after the CDN export, from the
+  examples clone beside this repository, with the skill's reader of event
+  sheets from the Construct3-Agent-Skills clone beside it. The update
+  workflow has neither clone, so it keeps the committed index. When the
+  examples clone gets new commits,
   `python scripts/example_usage.py` rebuilds the index from them.
 
 `lookup_ace.py` prints the count after each entry it prints in full, and the
@@ -69,7 +71,8 @@ and no counts, since the agent narrows it first. An entry that fits
 protects the output a harness reads. Without the index, the lookup prints
 the entries alone.
 
-`plugin/` carries the index as one bundle (`plugin-folder.md`).
+The Claude Code plugin, built in Construct3-Agent-Skills, carries the index
+as one bundle.
 
 ## Re-evaluate when
 

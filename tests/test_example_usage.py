@@ -2,8 +2,28 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from scripts import example_usage
-from tests.skill_helpers import folder_project
+
+if example_usage.c3 is None:
+    pytest.skip(example_usage.NO_SKILL, allow_module_level=True)
+
+
+def folder_project(root: Path, sheets: dict[str, list], types: dict[str, dict], layouts: dict[str, dict],
+                   **project) -> Path:
+    """The smallest folder project the skill's reader opens: eventSheets/<name>.json from `events`,
+    objectTypes/<name>.json and layouts/<name>.json from the rest of their files, each named first, and
+    project.c3proj listing them with the keys of `project`."""
+    files = {"eventSheets": {name: {"events": events} for name, events in sheets.items()},
+             "objectTypes": types, "layouts": layouts}
+    for folder, named in files.items():
+        (root / folder).mkdir(parents=True, exist_ok=True)
+        for name, data in named.items():
+            (root / folder / f"{name}.json").write_text(json.dumps({"name": name, **data}), encoding="utf-8")
+    listing = {folder: {"items": list(named), "subfolders": []} for folder, named in files.items()}
+    (root / "project.c3proj").write_text(json.dumps({"name": root.name, **project, **listing}), encoding="utf-8")
+    return root
 
 
 def example(clone: Path, name: str, events: list) -> None:

@@ -1,6 +1,6 @@
 name: Checks
 
-# The checks of AGENTS.md, section 5, on every push to main and every pull
+# The checks of AGENTS.md, section 4, on every push to main and every pull
 # request. The update workflow calls this one for the pull request it opens:
 # a pull request opened with GITHUB_TOKEN starts no workflow of its own.
 on:
@@ -35,9 +35,16 @@ jobs:
         with:
           python-version: '3.12'
 
-      # The service's requirements and Pillow, which prepare_art.py and its
-      # tests need. The sibling clones are not cloned, so the tests that
-      # read them skip, and the report lists every skip.
+      # scripts/example_usage.py reads event sheets with the skill of
+      # Construct3-Agent-Skills, cloned beside the checkout as on a machine
+      # (docs/decisions/skill-in-agent-skills.md). The Construct-Example-Projects,
+      # Construct3-Manual and Construct-Addon-SDK clones are not cloned, so the
+      # tests that read them skip, and the report lists every skip.
+      - name: Clone Construct3-Agent-Skills beside this repository
+        run: git clone --quiet --depth 1 https://github.com/XHXIAIEIN/Construct3-Agent-Skills "$GITHUB_WORKSPACE/../Construct3-Agent-Skills"
+
+      # The service's requirements and Pillow, which the reference-games
+      # tools need.
       - name: Install the requirements of the tests
         run: pip install -r src/requirements.txt pytest httpx pillow
 
@@ -50,8 +57,7 @@ jobs:
           set -o pipefail
           {
             python -m pytest -q -rs
-            python -m compileall -q src scripts tests skills
-            python scripts/build_plugin.py --check
+            python -m compileall -q src scripts tests
           } 2>&1 | tee "$RUNNER_TEMP/checks.log"
 
       - name: Report

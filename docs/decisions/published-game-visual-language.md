@@ -86,7 +86,8 @@ separate beat.
 Option 3. No characters, skins, fonts, shaders, exact palettes, ads or
 progression systems are copied.
 
-The generator template holds these (`greybox-blockout.md`), the outline and
+The generator template holds these (`greybox-blockout.md` of
+Construct3-Agent-Skills), the outline and
 shadow as switches that its paper-and-ink default leaves off:
 
 - outline 2 px at 720 scaled to the viewport, drawn into the image;

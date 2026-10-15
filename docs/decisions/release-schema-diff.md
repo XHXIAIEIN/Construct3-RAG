@@ -9,8 +9,9 @@ The update workflow refreshed `data/` for a new Construct release, opened a
 pull request whose body was the two release names, and merged it once checks
 passed. Nobody saw which addons and ACEs the release added, removed,
 deprecated or changed. The repository quotes ACE ids in many places outside
-`data/`: the prompts and pitfalls, the `construct3-agent-plugin` skill's checker,
-generator and references, the lookup's aliases, the docs. A release that
+`data/`: the lookup's aliases, the docs, and in Construct3-Agent-Skills the
+prompts and pitfalls and the `construct3-agent-plugin` skill's checker,
+generator and references. A release that
 removes or retypes one of them leaves those places wrong with no failing
 check, since only the tests are run and most of these files have none.
 
@@ -49,9 +50,12 @@ a field the old export did not record are reported but do not hold the
 merge: the watched files quote ids, and none of those changes an id's
 meaning in an event.
 
-Mentions are found by the id between quotes or backticks, not by display
-names: ids are what code and the prompts' examples quote, and names are
-reworded between releases without effect. Tests are not scanned, since the
+Mentions are found in `src/`, `scripts/`, `docs/` and `AGENTS.md`, by the
+id between quotes or backticks, not by display names: ids are what code and
+docs quote, and names are reworded between releases without effect. The
+prompts and the skill quote ids too; they are in Construct3-Agent-Skills,
+whose daily refresh builds the plugin on the merged data and runs the
+skill's tests on it (`skill-in-agent-skills.md`). Tests are not scanned, since the
 suite runs in the pull request and fails on its own. A short id such as `x`
 may match a quote that is not about the ACE; the report says an id shared by
 several addons may belong to another one, and a person decides.

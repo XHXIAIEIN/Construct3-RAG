@@ -1,0 +1,96 @@
+# The Skill, the Prompts and the Plugin Live in Construct3-Agent-Skills
+
+Date: 2026-10-16
+
+## Problem
+
+This repository held two things with different readers and cadences. One
+was the Construct 3 reference data with its update pipeline and lookup
+service. The other was the `construct3-agent-plugin` skill with its
+prompts, its tests and the Claude Code plugin built from them. Most of the
+tests and most of the decision records were the skill's. A person who
+looked the plugin up landed in the repository of the data pipeline. The
+plugin's own repository, Construct3-Agent-Skills, was a mirror that a
+workflow pushed after each change, and a mirror falls behind when its
+workflow does not run.
+
+The owner decided that the sources should live with the plugin. This
+repository keeps the data, the pipeline and the service, and points agents
+at the other repository as it points at the Construct3-Manual clone.
+
+## Evidence
+
+- No skill script or skill test imported the service. The build imported
+  one tuple from `src/lookup/schema_layout.py`, the two locales, which the
+  data's index also states.
+- The skill reads `data/` from the folder its `Construct3-RAG:` line names.
+  It finds the sibling clones beside the clone that holds it. A clone of
+  this repository beside Construct3-Agent-Skills is read the same way.
+- The directory listing submitted from this repository reads the plugin
+  from the repository root, through `.claude-plugin/marketplace.json` and
+  `plugin/`. Only a new submission can change that, and a delisted plugin
+  stops updating for the people who installed it.
+
+## Options
+
+- Keep the sources here and the mirror there. One build and one test
+  suite, but the plugin's repository stays a copy, and a change to the
+  skill is made in one repository and shipped from another.
+- Move the sources there and give that repository a clone of this one
+  beside it for the data. Each repository holds one thing; the build and
+  the skill's tests need the second clone.
+- Move the sources there with this repository as a Git submodule. A pinned
+  data commit, but every checkout carries this repository's history, and a
+  data refresh is a submodule bump plus a build.
+
+## Decision
+
+The second option. The skill, `prompts/`, the plugin's sources, the skill's
+tests, the build and the records of those live in Construct3-Agent-Skills.
+Its build reads `data/` from a clone of this repository beside it, and its
+daily workflow rebuilds the plugin when the data changed. The history of
+the moved files up to the move is in this repository's Git history.
+
+This repository keeps:
+
+- `data/`, `src/`, `scripts/init.py` and the update workflow, the docs and
+  the records of those, and `scripts/reference_games/`, the study of
+  published games, with its record.
+- `README.md`, `README_CN.md` and `AGENTS.md`, which send an agent that
+  wants to make a game to Construct3-Agent-Skills, and keep the data
+  lookup here. Section 2 of `AGENTS.md` runs `lookup_ace.py` from the
+  sibling clone's `plugin/` with `--rag .`, so the long schema files are
+  still read through the script, against this clone's data.
+- `scripts/example_usage.py`, which indexes the official examples with the
+  skill's reader of event sheets, `c3project.py` of the sibling clone's
+  `plugin/`. Without that clone it keeps the committed index.
+- `plugin/` as it was last built here, frozen, and
+  `.claude-plugin/marketplace.json`, until the directory submission from
+  Construct3-Agent-Skills is live. No test or build touches the folder
+  here. The frozen version is the last one the listing from this
+  repository serves.
+- `.claude/agents/ace-lookup.md`, which runs the sibling clone's script.
+
+The update pull request builds no plugin, and `schema_diff.py` scans
+`src/`, `scripts/`, `docs/` and `AGENTS.md` for the ids a release broke.
+The prompts and the skill, which quote ids too, are checked by the other
+repository's checks on the plugin built from the merged data.
+
+## Trade-offs
+
+- An ACE lookup in this repository needs the Construct3-Agent-Skills clone
+  beside it. Without it, an agent reads the schema files directly and has
+  to read `plugins/system.json` and `plugins/_common.json` in parts.
+- A release that breaks an id quoted in a prompt or a skill file is found
+  by the other repository's daily refresh, a day after the merge here,
+  instead of in this repository's update pull request.
+- The frozen `plugin/` keeps built files and a marketplace manifest that
+  name a plugin this repository does not build.
+
+## Re-evaluate when
+
+- The directory submission from Construct3-Agent-Skills is live: delist
+  the listing from this repository, and delete `plugin/` and
+  `.claude-plugin/` here.
+- The update pull request should report the ids a release breaks in the
+  prompts and the skill: have `schema_diff.py` scan the sibling clone too.

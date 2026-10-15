@@ -51,7 +51,7 @@ ACE_FLAGS = (
 )
 # Tracked text that may name an ACE or addon id. Tests are left out, since the
 # suite fails on its own, and so is the generated source of _common.
-MENTION_ROOTS = ("prompts", "skills", "src", "scripts", "docs", "AGENTS.md")
+MENTION_ROOTS = ("src", "scripts", "docs", "AGENTS.md")
 MENTION_SUFFIXES = {".md", ".py", ".json", ".jsonl", ".txt", ".yml", ".yaml"}
 MENTION_EXCLUDED = {"src/ingest/common_aces.json"}
 COMMON_NAME = "Every world object"  # _common.json carries a placeholder name

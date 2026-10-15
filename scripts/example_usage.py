@@ -19,10 +19,12 @@ The index is read offline by the skill's lookup_ace.py. It is rebuilt from the
 clone only, so the same commit gives the same files; scripts/init.py runs it
 after the CDN export, and without a clone it keeps the committed index.
 
-exit codes: 0 written or kept, 1 the folder given to --clone has no example-projects/
+exit codes: 0 written or kept, 1 the folder given to --clone has no example-projects/, or no
+Construct3-Agent-Skills clone beside this repository, whose skill reads the sheets
 """
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -31,9 +33,36 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "skills" / "construct3-agent-plugin" / "scripts"))
-import c3project as c3  # noqa: E402
 from src.lookup.schema_layout import PRIMARY_SCHEMA_LOCALE, SCHEMA_ACE_TYPES  # noqa: E402
+
+AGENT_SKILLS = "Construct3-Agent-Skills"
+AGENT_SKILLS_URL = "https://github.com/XHXIAIEIN/Construct3-Agent-Skills"
+
+
+def main_working_tree() -> Path:
+    """The main working tree of this clone: a worktree lies inside it, and the sibling clones beside it."""
+    p = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                       capture_output=True, text=True, encoding="utf-8")
+    return Path(p.stdout.strip()).parent if p.returncode == 0 and p.stdout.strip() else ROOT
+
+
+def agent_skills_clone() -> Path:
+    """The Construct3-Agent-Skills clone: CONSTRUCT3_AGENT_SKILLS, else beside the main working tree."""
+    given = os.environ.get("CONSTRUCT3_AGENT_SKILLS")
+    return Path(given) if given else main_working_tree().parent / AGENT_SKILLS
+
+
+# The index is built with the skill's reader of event sheets, c3project.py, which lives in the plugin folder of
+# the Construct3-Agent-Skills clone (docs/decisions/skill-in-agent-skills.md). Without the clone, refresh() keeps
+# the committed index and says what to clone.
+SKILL_SCRIPTS = agent_skills_clone() / "plugin" / "skills" / "construct3-agent-plugin" / "scripts"
+if (SKILL_SCRIPTS / "c3project.py").is_file():
+    sys.path.insert(0, str(SKILL_SCRIPTS))
+    import c3project as c3  # noqa: E402
+else:
+    c3 = None
+NO_SKILL = (f"no {AGENT_SKILLS} clone at {agent_skills_clone()}, whose skill reads the event sheets: kept the "
+            f"committed index; git clone {AGENT_SKILLS_URL} \"{agent_skills_clone().as_posix()}\" clones it")
 
 OUT = ROOT / "data" / "c3-example-usage"
 SOURCE = "_source.json"     # the clone and commit the index was built from
@@ -235,10 +264,12 @@ def write(files: dict[str, dict], out: Path = OUT) -> None:
 
 def refresh(clone: Path | None = None, out: Path = OUT) -> str:
     """Rebuild the index from clone, the sibling clone by default; what happened, in a sentence."""
-    clone = clone or c3.siblings_folder(ROOT) / c3.EXAMPLES_CLONE
+    if c3 is None:
+        return NO_SKILL
+    clone = clone or main_working_tree().parent / c3.EXAMPLES_CLONE
     if not (clone / "example-projects").is_dir():
         return (f"no {c3.EXAMPLES_CLONE} clone at {clone}: kept the committed index; "
-                f"{c3.examples_clone_command(ROOT)} clones it")
+                f"git clone --depth 1 {c3.EXAMPLES_URL} \"{clone.as_posix()}\" clones it")
     files = build(clone)
     write(files, out)
     source = files[SOURCE]
@@ -249,8 +280,10 @@ def refresh(clone: Path | None = None, out: Path = OUT) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Index which official examples use each condition, action and "
                                              "expression, into data/c3-example-usage/")
-    ap.add_argument("--clone", type=Path, help=f"the {c3.EXAMPLES_CLONE} clone (default: beside this repository)")
+    ap.add_argument("--clone", type=Path, help="the Construct-Example-Projects clone (default: beside this repository)")
     args = ap.parse_args()
+    if c3 is None:
+        sys.exit(NO_SKILL)
     if args.clone and not (args.clone / "example-projects").is_dir():
         sys.exit(f"no example-projects folder in {args.clone}: pass the folder of the {c3.EXAMPLES_CLONE} clone")
     print(f"data/c3-example-usage/: {refresh(args.clone)}")

@@ -47,8 +47,8 @@ names. A refresh replaces `data/c3-schemas`, `data/c3-examples`,
 `data/c3-lang` and `data/c3-ts-defs` with the release's export. Then it
 rebuilds `data/c3-example-usage` from the `Construct-Example-Projects` clone,
 when the clone lies beside this repository, and writes each guide in
-`data/c3-guides/` whose text changed. Only `init.py` then builds `plugin/`
-again. Review the result with `git diff` before committing.
+`data/c3-guides/` whose text changed. Review the result with `git diff`
+before committing.
 
 ## Test
 

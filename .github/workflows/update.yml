@@ -36,7 +36,7 @@ jobs:
           python scripts/init.py --guides-only
           if [ -n "$(git status --porcelain -- data/c3-guides)" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "A guide under data/c3-guides/ changed: compare it with docs/decisions/project-format-guide.md before merging." > "$RUNNER_TEMP/guides.md"
+            echo "A guide under data/c3-guides/ changed: compare it with docs/decisions/project-format-guide.md of Construct3-Agent-Skills before merging." > "$RUNNER_TEMP/guides.md"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
@@ -61,8 +61,8 @@ jobs:
           python scripts/init.py --version "${{ steps.check.outputs.latest }}"
 
       # What the release changed, against the data on main, as the PR body.
-      # needs_review is true when a prompt, the skill, the code or a doc quotes
-      # an id the release removed, deprecated or changed in a breaking way.
+      # needs_review is true when the code or a doc quotes an id the release
+      # removed, deprecated or changed in a breaking way.
       - name: Report schema changes
         if: steps.check.outputs.changed == 'true'
         id: diff
