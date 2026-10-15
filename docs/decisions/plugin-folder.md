@@ -126,10 +126,11 @@ The build:
   goes at the plugin root, because the plugin manifest reference ("Manifest
   file") keeps only `plugin.json` in `.claude-plugin/`. `plugin.json` names
   it in `icon`, which Claude's directory reads for the listing and Claude
-  Code ignores. The icon is a drawing of this repository's own: an event
-  sheet of three events in the paper-and-ink colours, on the 24-unit grid
-  of 2-unit blocks that the editor's built-in addon icons use, 512 px
-  square and 3 KiB. Construct's logo is Scirra's mark and stays out of the
+  Code ignores. The icon is a flat-vector portrait of the maintainer's
+  English bulldog in front of a dark blue tiled wall, generated from a
+  photo with a local image model and regenerated region by region until
+  the dog's own markings, lids and teeth read at 32 px; 512 px square and
+  about 330 KiB. Construct's logo is Scirra's mark and stays out of the
   listing. No text of the
   plugin writes the icon's path in backticks
   or a code block, which the checklist holds for a reviewer. The README
