@@ -33,13 +33,16 @@ A new keyword, alias or routing rule starts from a failing case here.
 
 ## Skill tests
 
-The evals of the `construct3-agent-plugin` skill are not here. They run agents,
+The evals of the `construct3-agent-plugin` skill run agents,
 not the service, and live with the skill: `skills/AGENTS.md`, "Evals".
-`test_skill_spec.py` tests the skill's format and, against a stand-in client,
-the trigger runner `run_trigger_eval.py`. `test_skill_grade.py` grades
-recorded answers from `fixtures/restart_event_answers/` with `grade.py` and
-pins what `grading.json` says. The skill's tests share `skill_helpers.py`
-and, in `conftest.py`, the stand-in game, generated once a run.
+`test_skill_spec.py` tests the skill's format, the trigger runner
+`run_trigger_eval.py` against a stand-in client, and `trace.py` on a written
+transcript. `test_skill_grade.py` grades recorded answers from
+`fixtures/restart_event_answers/` and runs built from the stand-in game with
+`grade.py`, pins what `grading.json` says, and tests `trace.py`,
+`make_fixtures.py` and `play_cases.py` beside it. The skill's tests share
+`skill_helpers.py` and, in `conftest.py`, the stand-in game, generated once a
+run.
 
 ## Commands
 
