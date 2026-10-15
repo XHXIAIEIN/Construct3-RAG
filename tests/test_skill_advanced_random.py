@@ -5,15 +5,12 @@ Web export and the preview of the r505 editor, 2026-10-07.
 """
 import json
 import shutil
-import sys
 
 import pytest
 
-from tests.skill_helpers import SKILL, run
+from tests.skill_helpers import SKILL, run, script_module
 
-sys.path.insert(0, str(SKILL / "scripts"))
-import advanced_random as ar  # noqa: E402
-
+ar = script_module("advanced_random")
 SCRIPT = SKILL / "scripts" / "advanced_random.py"
 
 

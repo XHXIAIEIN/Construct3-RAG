@@ -10,8 +10,11 @@ import importlib.util
 import json
 import os
 import shutil
+import struct
 import subprocess
 import sys
+import types
+import zlib
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -126,17 +129,28 @@ def add_addon(project: Path, kind: str, addon_id: str, name: str) -> None:
         {"type": kind, "id": addon_id, "name": name, "author": "Scirra", "bundled": False}))
 
 
+def add_global_object(root: Path, plugin: str) -> None:
+    """A single-global object of `plugin`, named after it, in the stand-in game."""
+    (root / "objectTypes" / f"{plugin}.json").write_text(json.dumps({
+        "name": plugin, "plugin-id": plugin, "sid": 3,
+        "singleglobal-inst": {"type": plugin, "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
+    edit(root, "project.c3proj", lambda p: p["objectTypes"]["items"].append(plugin))
+    add_addon(root, "plugin", plugin, plugin)
+
+
 def add_keyboard(root: Path, key) -> None:
     """A Keyboard object in the stand-in game, and an event on `key` pressed."""
-    (root / "objectTypes" / "Keyboard.json").write_text(json.dumps({
-        "name": "Keyboard", "plugin-id": "Keyboard", "sid": 3,
-        "singleglobal-inst": {"type": "Keyboard", "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
-
-    def project_file(p):
-        p["objectTypes"]["items"].append("Keyboard")
-        p["usedAddons"].append({"type": "plugin", "id": "Keyboard", "name": "Keyboard", "author": "Scirra", "bundled": False})
-    edit(root, "project.c3proj", project_file)
+    add_global_object(root, "Keyboard")
     edit(root, SHEET, lambda s: s["events"].append(block([cond("on-key-pressed", "Keyboard", {"key": key})])))
+
+
+def solid_backdrop(project: Path) -> None:
+    """Backdrop gets Solid, on its type and on its instance in the Game layout."""
+    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
+        {"behaviorId": "solid", "name": "Solid", "sid": 12}))
+    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"][0].setdefault("behaviors", {}).update(
+        Solid={"properties": {}}))
+    add_addon(project, "behavior", "solid", "Solid")
 
 
 def pathfinding_coin(project: Path, obstacles: str = "solids") -> None:
@@ -145,12 +159,26 @@ def pathfinding_coin(project: Path, obstacles: str = "solids") -> None:
         {"behaviorId": "Pathfinding", "name": "Pathfinding", "sid": 11}))
     edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["behaviors"].update(
         Pathfinding={"properties": {"obstacles": obstacles}}))
-    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
-        {"behaviorId": "solid", "name": "Solid", "sid": 12}))
-    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"][0].setdefault("behaviors", {}).update(
-        Solid={"properties": {}}))
     add_addon(project, "behavior", "Pathfinding", "Pathfinding")
-    add_addon(project, "behavior", "solid", "Solid")
+    solid_backdrop(project)
+
+
+def coin_copy(project: Path, name: str, behavior: str) -> dict:
+    """Coin copied as `name`, with the behavior `behavior` alone and no instance variables: its type, numbered
+    from 9000, its images and its entry in project.c3proj. Returns the type."""
+    copied = json.loads((project / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
+    ids = iter(range(9000, 9100))
+    copied.update(name=name, sid=9100, behaviorTypes=[{"behaviorId": behavior, "name": behavior, "sid": 9101}],
+                  instanceVariables=[])
+    for anim in copied["animations"]["items"]:
+        anim["sid"] = next(ids)
+        for frame in anim["frames"]:
+            frame["imageSpriteId"] = next(ids)
+    (project / "objectTypes" / f"{name}.json").write_text(json.dumps(copied), encoding="utf-8")
+    for image in (project / "images").glob("coin-*.png"):
+        (project / "images" / image.name.replace("coin-", f"{name.lower()}-")).write_bytes(image.read_bytes())
+    edit(project, "project.c3proj", lambda d: d["objectTypes"]["items"].append(name))
+    return copied
 
 
 def cond(ace_id: str, obj: str = "System", params: dict | None = None, **extra) -> dict:
@@ -214,7 +242,6 @@ def plan(root: Path, *operations: dict, flags: tuple[str, ...] = ()) -> tuple[in
 def template_module(**replace: str):
     """assets/build_project.py as a module, its source changed by `replace` first
     (VIEW="VIEW_W, VIEW_H = 320, 180" for another viewport)."""
-    import types
     source = (SKILL / "assets" / "build_project.py").read_text(encoding="utf-8")
     view = replace.get("VIEW")
     if view:
@@ -226,10 +253,17 @@ def template_module(**replace: str):
     return t
 
 
+def png(w: int, h: int, pixel) -> bytes:
+    """An RGBA PNG whose pixel at (x, y) is pixel(x, y)."""
+    def chunk(tag: bytes, body: bytes) -> bytes:
+        return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", zlib.crc32(tag + body))
+    raw = b"".join(b"\0" + b"".join(bytes(pixel(x, y)) for x in range(w)) for y in range(h))
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
+
+
 def png_pixels(path: Path) -> list[list[tuple]]:
     """The RGBA rows of a PNG the template wrote: 8-bit RGBA, one IDAT, filter 0 on every row."""
-    import struct
-    import zlib
     data = path.read_bytes()
     w, h = struct.unpack(">II", data[16:24])
     idat = data.index(b"IDAT")

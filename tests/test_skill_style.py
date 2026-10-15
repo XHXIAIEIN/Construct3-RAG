@@ -6,7 +6,8 @@ import re
 from pathlib import Path
 
 from tests.skill_helpers import (
-    SHEET, check, edit, cond, block, events, findings, warnings, plan, add_addon, add_keyboard, pathfinding_coin,
+    SHEET, check, edit, cond, block, events, findings, warnings, plan, add_addon, add_keyboard, coin_copy,
+    pathfinding_coin,
 )
 
 
@@ -480,18 +481,7 @@ def test_style_names_sibling_events_dispatching_on_find(project):
 def platform_hero_and_solid_backdrop(project: Path) -> None:
     """Hero, a copy of Coin without its behaviors, walks with Platform, and nothing else moves it; Backdrop is
     Solid, and no event switches it off."""
-    hero = json.loads((project / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
-    ids = iter(range(9000, 9100))
-    hero.update(name="Hero", sid=9100, behaviorTypes=[{"behaviorId": "Platform", "name": "Platform", "sid": 9101}],
-                instanceVariables=[])
-    for anim in hero["animations"]["items"]:
-        anim["sid"] = next(ids)
-        for frame in anim["frames"]:
-            frame["imageSpriteId"] = next(ids)
-    (project / "objectTypes" / "Hero.json").write_text(json.dumps(hero), encoding="utf-8")
-    for image in (project / "images").glob("coin-*.png"):
-        (project / "images" / image.name.replace("coin-", "hero-")).write_bytes(image.read_bytes())
-    edit(project, "project.c3proj", lambda d: d["objectTypes"]["items"].append("Hero"))
+    hero = coin_copy(project, "Hero", "Platform")
     edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
         {"behaviorId": "solid", "name": "Solid", "sid": 9102}))
 

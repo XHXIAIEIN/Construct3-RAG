@@ -1,18 +1,15 @@
 """evals/label_look.py and evals/judge_look.py on a set of stand-in screenshots: the labellers' briefs, how
 their replies become labels, the briefs a judge gets, how a reply is read and how it is scored."""
 import json
-import sys
 from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import SKILL
+from tests.skill_helpers import SKILL, script_module
 
-sys.path.insert(0, str(SKILL / "evals"))
-sys.path.insert(0, str(SKILL / "scripts"))
-import judge_look as jl  # noqa: E402
-import label_look as ll  # noqa: E402
-import review_look as rl  # noqa: E402
+jl = script_module("judge_look", SKILL / "evals")
+ll = script_module("label_look", SKILL / "evals")
+rl = script_module("review_look")
 
 PNG = bytes.fromhex("89504e470d0a1a0a0000000d4948445200000001000000010806000000"
                     "1f15c4890000000d49444154789c6360000002000154a24f5d0000000049454e44ae426082")

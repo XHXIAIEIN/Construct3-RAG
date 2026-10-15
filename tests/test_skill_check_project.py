@@ -11,7 +11,8 @@ import pytest
 
 from tests.skill_helpers import (
     REPO, SKILL, INSTALLED, SHEET, run, tool, check, edit, cond, block, events, every_event, collect_tween, warnings,
-    findings, plan, add_addon, add_keyboard, pathfinding_coin, EXAMPLES, NEEDS_EXAMPLES,
+    findings, plan, add_addon, add_global_object, add_keyboard, coin_copy, pathfinding_coin, solid_backdrop, EXAMPLES,
+    NEEDS_EXAMPLES,
 )
 
 
@@ -263,7 +264,7 @@ def test_trigger_and_loop_cannot_be_inverted(project, role, what):
     lambda s: events(s)["input"].update(children=[block([cond("trigger-once-while-true")])]),
 ])
 def test_trigger_once_in_a_triggered_branch_is_a_warning(project, place):
-    """Official examples do it, so it opens; the editor's own dialog no longer offers it."""
+    """Official examples do it, so it opens; the editor's own dialog does not offer it."""
     out = findings(project, place)
     assert "System:trigger-once-while-true is in a branch run by the trigger Touch:on-touched-object" in out
     assert out.rstrip().splitlines()[-1].startswith("ok:")
@@ -326,20 +327,13 @@ def test_key_written_as_a_name(project):
 
 def add_audio(project: Path, stems: list[str]) -> None:
     """The Audio object and one sound file per stem, listed in project.c3proj."""
-    (project / "objectTypes" / "Audio.json").write_text(json.dumps({
-        "name": "Audio", "plugin-id": "Audio", "sid": 3,
-        "singleglobal-inst": {"type": "Audio", "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
+    add_global_object(project, "Audio")
     (project / "sounds").mkdir(exist_ok=True)
     for stem in stems:
         (project / "sounds" / f"{stem}.webm").write_bytes(b"")
-
-    def project_file(p):
-        p["objectTypes"]["items"].append("Audio")
-        p["usedAddons"].append({"type": "plugin", "id": "Audio", "name": "Audio", "author": "Scirra", "bundled": False})
-        p.setdefault("rootFileFolders", {})["sound"] = {"items": [
-            {"name": f"{stem}.webm", "type": "audio/webm; codecs=opus", "sid": 500 + i, "file-info": {"purpose": "none"}}
-            for i, stem in enumerate(stems)], "subfolders": []}
-    edit(project, "project.c3proj", project_file)
+    edit(project, "project.c3proj", lambda p: p.setdefault("rootFileFolders", {}).update(sound={"items": [
+        {"name": f"{stem}.webm", "type": "audio/webm; codecs=opus", "sid": 500 + i, "file-info": {"purpose": "none"}}
+        for i, stem in enumerate(stems)], "subfolders": []}))
 
 
 def play(value) -> dict:
@@ -439,8 +433,7 @@ def test_two_variables_of_one_scope_with_one_name_are_refused(project, where, na
     def change(sheet):
         if where == "parameters":
             events(sheet)["add_score"]["functionParameters"] += [
-                {"name": n, "type": "number", "initialValue": "0", "comment": "", "sid": 900000000000030 + i}
-                for i, n in enumerate(names)]
+                number_param(n, 900000000000030 + i) for i, n in enumerate(names)]
             return
         declared = [number_variable(n, n == "PHASE", 900000000000030 + i) for i, n in enumerate(names)]
         if where == "globals":
@@ -772,8 +765,7 @@ def test_a_function_parameter_named_like_a_system_expression_is_refused(project)
     """A parameter round used as "第 " & round & " 轮" stopped the editor with "'round' does not
     accept 0 parameters" (r504, 2026-10-02); roundNo opened."""
     def change(sheet):
-        events(sheet)["add_score"]["functionParameters"].append(
-            {"name": "round", "type": "number", "initialValue": "0", "comment": "", "sid": 900000000000008})
+        events(sheet)["add_score"]["functionParameters"].append(number_param("round", 900000000000008))
     out = findings(project, change)
     assert "parameter round: the name is that of the system expression round" in out
     assert "not as the parameter" in out
@@ -806,8 +798,7 @@ def test_a_local_that_hides_a_global_by_case_is_named(project):
         children = events(sheet)["setup"].setdefault("children", [])
         children.insert(0, {"eventType": "variable", "name": "SCORE", "type": "string", "initialValue": "",
                             "comment": "", "isStatic": False, "isConstant": False, "sid": 900000000000005})
-        events(sheet)["add_score"]["functionParameters"].append(
-            {"name": "Score", "type": "number", "initialValue": "0", "comment": "", "sid": 900000000000006})
+        events(sheet)["add_score"]["functionParameters"].append(number_param("Score", 900000000000006))
         children.insert(0, {"eventType": "variable", "name": "scoreText", "type": "string", "initialValue": "",
                             "comment": "", "isStatic": False, "isConstant": False, "sid": 900000000000007})
     out = findings(project, change)
@@ -1126,14 +1117,7 @@ TAPPED = cond("on-touched-object", "Touch", {"object": "Coin", "type": "start"})
 ])
 def test_an_action_the_browser_allows_only_after_input_is_named_outside_it(project, event, warned):
     """The manual asks for Request fullscreen in a user input trigger; a function may be called from one."""
-    (project / "objectTypes" / "Browser.json").write_text(json.dumps({
-        "name": "Browser", "plugin-id": "Browser", "sid": 3,
-        "singleglobal-inst": {"type": "Browser", "properties": {}, "uid": 900, "sid": 4, "tags": ""}}), encoding="utf-8")
-
-    def project_file(p):
-        p["objectTypes"]["items"].append("Browser")
-        p["usedAddons"].append({"type": "plugin", "id": "Browser", "name": "Browser", "author": "Scirra", "bundled": False})
-    edit(project, "project.c3proj", project_file)
+    add_global_object(project, "Browser")
     out = findings(project, lambda s: s["events"].append(event))
     said = [w for w in warnings(out) if "the browser refuses it there" in w and "plugin-reference/browser.md" in w]
     assert bool(said) == warned and out.splitlines()[-1].startswith("ok:"), out
@@ -1187,18 +1171,7 @@ BULLET_PROPERTIES = {"speed": 400, "acceleration": 0, "gravity": 0, "bounce-off-
 def shot_type(project: Path) -> None:
     """Shot, a copy of Coin with the Bullet behavior alone, placed in the Objects layout as the model for
     the Shots the events create."""
-    shot = json.loads((project / "objectTypes" / "Coin.json").read_text(encoding="utf-8"))
-    ids = iter(range(9000, 9100))
-    shot.update(name="Shot", sid=9100, behaviorTypes=[{"behaviorId": "Bullet", "name": "Bullet", "sid": 9101}],
-                instanceVariables=[])
-    for anim in shot["animations"]["items"]:
-        anim["sid"] = next(ids)
-        for frame in anim["frames"]:
-            frame["imageSpriteId"] = next(ids)
-    (project / "objectTypes" / "Shot.json").write_text(json.dumps(shot), encoding="utf-8")
-    for image in (project / "images").glob("coin-*.png"):
-        (project / "images" / image.name.replace("coin-", "shot-")).write_bytes(image.read_bytes())
-    edit(project, "project.c3proj", lambda d: d["objectTypes"]["items"].append("Shot"))
+    shot = coin_copy(project, "Shot", "Bullet")
 
     def place(d):
         layer = d["layers"][0]
@@ -1254,11 +1227,7 @@ def test_a_bullet_that_hits_a_solid_or_has_destroy_outside_is_not_named(project)
     edit(project, "objectTypes/Shot.json", lambda t: t["behaviorTypes"].pop())
     edit(project, "layouts/Objects.json", lambda d: next(i for i in d["layers"][0]["instances"] if i["type"] == "Shot")
          ["behaviors"].pop("DestroyOutsideLayout"))
-    edit(project, "objectTypes/Backdrop.json", lambda t: t["behaviorTypes"].append(
-        {"behaviorId": "solid", "name": "Solid", "sid": 12}))
-    edit(project, "layouts/Game.json", lambda d: d["layers"][0]["instances"][0].setdefault("behaviors", {}).update(
-        Solid={"properties": {}}))
-    add_addon(project, "behavior", "solid", "Solid")
+    solid_backdrop(project)
     out = findings(project, lambda s: s["events"].append(HIT_BACKDROP))
     assert_one_warning(out, STRAY, None)
 
@@ -1320,7 +1289,7 @@ CREATE_COIN = {"id": "create-object", "objectClass": "System", "sid": 31, "param
     "object-to-create": "Coin", "layer": '"Game"', "x": "0", "y": "0", "create-hierarchy": False,
     "template-name": '""'}}
 COIN_X = {"id": "set-x", "objectClass": "Coin", "sid": 32, "parameters": {"x": "loopindex * 40"}}
-UID_PARAM = [{"name": "uid", "type": "number", "initialValue": "0", "comment": "", "sid": 33}]
+UID_PARAM = [number_param("uid", 33)]
 # DealCoins creates Coins through MakeCoin, in a loop, as a card game draws its hand.
 DEAL = [function("MakeCoin", 34, [CREATE_COIN]),
         function("DealCoins", 35, [], [block([cond("repeat", params={"count": "3"})], [call("MakeCoin", 36)])])]

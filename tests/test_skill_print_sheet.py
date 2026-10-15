@@ -8,18 +8,16 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, INSTALLED, SHEET, SKILL, tool, streams, check, edit, block, events, script_module
+from tests.skill_helpers import (
+    REPO, INSTALLED, SHEET, SKILL, git, tool, streams, check, edit, block, events, script_module,
+)
 
 
 def committed(root: Path) -> None:
     """The project's files in a commit of a repository of its own, as a game project keeps them."""
-    def git(*args: str) -> None:
-        p = subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
-                           capture_output=True, text=True)
-        assert p.returncode == 0, p.stderr
-    git("init", "-q")
-    git("add", "project.c3proj", "eventSheets", "objectTypes")
-    git("commit", "-qm", "before")
+    git(root, "init", "-q")
+    git(root, "add", "project.c3proj", "eventSheets", "objectTypes")
+    git(root, "commit", "-qm", "before")
 
 
 def test_a_miss_of_print_sheet_prints_on_stdout(project):

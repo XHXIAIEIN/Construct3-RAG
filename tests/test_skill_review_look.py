@@ -1,9 +1,7 @@
 """review_look.py: the mechanical findings over the instances a layout holds, and
 what the run prints. The browser is not started: the checks are pure functions
 of what LOOK_JS reads from the runtime."""
-import sys
-
-from tests.skill_helpers import SKILL, INSTALLED, run, script_module
+from tests.skill_helpers import SKILL, INSTALLED, png, run, script_module
 
 LAYERS = {"Game": {"parallax": [1, 1], "shown": True, "view": [0, 0, 1280, 720]},
           "UI": {"parallax": [0, 0], "shown": True, "view": [0, 0, 1280, 720]}}
@@ -201,25 +199,9 @@ def test_review_look_says_what_a_clean_run_left_unseen():
     assert "unseen" not in rl.look_line([found], 1.0, ".tmp/review-look.json", ".tmp/look")
 
 
-def png(w, h, pixel) -> bytes:
-    """An RGBA PNG whose pixel at (x, y) is pixel(x, y)."""
-    import struct
-    import zlib
-
-    def chunk(tag, body):
-        return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", zlib.crc32(tag + body))
-    raw = b"".join(b"\0" + b"".join(bytes(pixel(x, y)) for x in range(w)) for y in range(h))
-    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0))
-            + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
-
-
 def test_a_screenshot_of_one_colour_dark_or_clear_is_blank():
     """Over 601 screenshots of games the most one-coloured one that showed something was 99.03%."""
-    sys.path.insert(0, str(SKILL / "scripts"))
-    try:
-        import c3project as c3
-    finally:
-        sys.path.pop(0)
+    c3 = script_module("c3project")
     assert c3.blank_share(png(100, 100, lambda x, y: (30, 90, 200, 255))) == 1
     assert c3.blank_share(png(100, 100, lambda x, y: ((x * 7 + y) % 16, 0, 5, 255))) == 1      # near black, noisy
     assert c3.blank_share(png(100, 100, lambda x, y: (x % 255, y, 9, x % 15))) == 1           # clear

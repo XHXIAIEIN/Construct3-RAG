@@ -13,7 +13,9 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import REPO, SKILL, INSTALLED, run, check, install, new_project, warnings, script_module
+from tests.skill_helpers import (
+    REPO, SKILL, INSTALLED, NEEDS_GIT, git, run, check, install, new_project, warnings, script_module,
+)
 
 c3 = script_module("c3project")
 
@@ -444,12 +446,6 @@ def test_replacing_edited_helpers_refuses_while_an_edit_would_be_lost(project):
     assert game["snap"].__doc__ == "v moved to the grid line under it."
 
 
-def git(folder: Path, *args: str) -> str:
-    return subprocess.run(["git", "-C", str(folder), "-c", "user.name=t", "-c", "user.email=t@t",
-                           "-c", "core.autocrlf=false", *args],
-                          check=True, capture_output=True, text=True, encoding="utf-8").stdout
-
-
 def older_template() -> list[str]:
     """The template as older_generator() copies it, before the game changes anything."""
     lines = list(TEMPLATE)
@@ -468,11 +464,13 @@ def clone_with_history(folder: Path) -> Path:
     index = folder / "data" / "c3-schemas" / "_index.json"
     index.parent.mkdir(parents=True)
     shutil.copy(REPO / "data" / "c3-schemas" / "_index.json", index)
-    git(folder, "init", "-q")
+    # Line ends committed as written, whatever core.autocrlf the machine sets
+    as_written = ("-c", "core.autocrlf=false")
+    git(folder, *as_written, "init", "-q")
     for k, lines in enumerate([["# before the markers"], older_template(), TEMPLATE]):
         (skill / "assets" / "build_project.py").write_bytes("\n".join(lines).encode("utf-8"))
-        git(folder, "add", "-A")
-        git(folder, "commit", "-q", "-m", f"template {k}")
+        git(folder, *as_written, "add", "-A")
+        git(folder, *as_written, "commit", "-q", "-m", f"template {k}")
     return folder
 
 
@@ -480,7 +478,7 @@ SNAP_BELOW = ('def snap(v: float) -> int:\n    """v moved to the grid line under
               '    return int(v // UNIT) * UNIT\n\n\nif __name__ == "__main__":')
 
 
-@pytest.mark.skipif(not shutil.which("git"), reason="needs git")
+@NEEDS_GIT
 def test_with_the_clones_history_only_the_helpers_the_game_edited_block(tmp_path):
     """The clone's history holds the template the game's part was copied from, so a helper is the
     game's edit only when it differs from that template's: units(), which differs because the
@@ -504,7 +502,7 @@ def test_with_the_clones_history_only_the_helpers_the_game_edited_block(tmp_path
     assert game["snap"].__doc__ == "v moved to the grid line under it."
 
 
-@pytest.mark.skipif(not shutil.which("git"), reason="needs git")
+@NEEDS_GIT
 def test_copied_template_is_the_newest_commit_whose_part_has_the_stamp(tmp_path):
     stamp = c3.helpers_in(older_template()).stamp
     assert c3.copied_template(tmp_path, stamp) is None                  # no .git

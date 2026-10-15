@@ -1,6 +1,5 @@
 """export_project.py: the version an export carries, where its runtime starts, and what a run
 that stops leaves in the editor."""
-import importlib.util
 import io
 import json
 import sys
@@ -9,21 +8,9 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import INSTALLED, SHEET, SKILL, edit, events, run
+from tests.skill_helpers import INSTALLED, SHEET, edit, events, run, script_module
 
 SCRIPT = f"{INSTALLED}/scripts/export_project.py"
-
-
-def load(scripts: Path):
-    """export_project as a module, with the scripts beside it importable."""
-    sys.path.insert(0, str(scripts))
-    try:
-        spec = importlib.util.spec_from_file_location("export_project", scripts / "export_project.py")
-        export = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(export)
-    finally:
-        sys.path.remove(str(scripts))
-    return export
 
 
 def test_export_bumps_the_last_export_and_carries_a_hand_edit(project):
@@ -65,7 +52,7 @@ def test_export_refuses_a_folder_it_would_empty_of_other_files(project, tmp_path
     for to in ("export/web", str(empty), str(tmp_path / "new")):
         code, out = run(project, SCRIPT, "--to", to, "--dry-run")
         assert code == 0 and "would export" in out, (to, out)
-    export = load(SKILL / "scripts")
+    export = script_module("export_project")
     assert export.refused_folder(tmp_path / "game", Path(tmp_path.anchor)) == "it is the root of a drive"
 
 
@@ -74,7 +61,7 @@ def test_export_hands_the_editor_the_version_to_export(project):
     that the export carries it unchanged, and Use worker Auto; it holds only the
     files the editor reads: no export folder, .tmp or the worktrees under .claude (a game's .c3p was
     1.8 GB, 2026-10-03)."""
-    export = load(project / INSTALLED / "scripts")
+    export = script_module("export_project", project / INSTALLED / "scripts")
     path = project / "project.c3proj"
     path.write_text(path.read_text(encoding="utf-8").replace('"autoIncrementVersion": false',
                                                              '"autoIncrementVersion": true')
@@ -113,7 +100,7 @@ class Tab:
 def stopped_run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, opened: bool, stop_in: str) -> tuple:
     """export_project.run over --attach, stopped in open_project or in export; the module, the
     browser connection, the tab and the pages close_project was given, once run has raised."""
-    export = load(SKILL / "scripts")
+    export = script_module("export_project")
     browser, tab, closed = Tab("browser"), Tab(), []
 
     def stop(*args):
@@ -155,7 +142,7 @@ def test_a_crashed_editor_is_restarted_to_close_the_copy(capsys):
     came back each time the menu opened, so the copy could not be closed (2026-10-04, r495-2).
     Restart reloads the editor once the page's question about leaving is answered, which the
     DevTools protocol sees only after Page.enable; the editor was back on its start page in 3 s."""
-    export = load(SKILL / "scripts")
+    export = script_module("export_project")
 
     class Crashed(Tab):
         reloaded = pressed = False
@@ -190,7 +177,7 @@ def test_a_crashed_editor_is_restarted_to_close_the_copy(capsys):
 
 def test_export_reads_where_the_runtime_starts(tmp_path):
     """The end of an r504 export's scripts/main.js, worker off and on."""
-    export = load(SKILL / "scripts")
+    export = script_module("export_project")
     main = tmp_path / "scripts" / "main.js"
     main.parent.mkdir()
     for flag, expected in (("false", False), ("true", True)):
@@ -214,7 +201,7 @@ def test_a_failed_unpack_keeps_the_earlier_export(monkeypatch, tmp_path):
     """The new export is extracted beside the folder and checked before it takes the folder's place,
     so an extraction that fails, a version that differs and a swap that fails leave the earlier export
     as it was (the audit of 2026-10-07 lost it to a failed extraction)."""
-    export = load(SKILL / "scripts")
+    export = script_module("export_project")
     web = tmp_path / "web"
     web.mkdir()
     (web / "data.json").write_text(json.dumps({"project": ["Coins", "1.0.0.0"]}), encoding="utf-8")
@@ -280,10 +267,10 @@ def test_export_stops_on_a_key_it_would_ship_and_names_the_hosts(project):
 
 
 def test_an_export_whose_version_cannot_be_written_says_where_it_is_and_how_to_set_it(monkeypatch, project, capsys):
-    """The export is put in place first and the version written after it, on purpose; a project.c3proj that
-    cannot be written then stopped the run with a traceback, the export installed with the new version and the
-    project left on the old one. The run now names both and how to set the version, with exit code 4."""
-    export = load(SKILL / "scripts")
+    """The export is put in place first and the version written after it, on purpose. When project.c3proj
+    cannot be written, the run names the version of the export and that of the project, and how to set it,
+    with exit code 4."""
+    export = script_module("export_project")
     path = project / "project.c3proj"
     before = path.read_bytes()
     old = export.project_version(project)

@@ -1,13 +1,7 @@
 """check_look.py: the look's rules, read off the images, layouts and sheets of a project."""
 import re
-import struct
-import zlib
 
-from tests.skill_helpers import tool, edit, template_module, cond, block
-
-
-def png_chunk(tag: bytes, data: bytes) -> bytes:
-    return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+from tests.skill_helpers import tool, edit, template_module, cond, block, png
 
 
 def test_check_look_passes_the_stand_in_and_names_each_fault(project):
@@ -18,9 +12,7 @@ def test_check_look_passes_the_stand_in_and_names_each_fault(project):
     t.ROOT = project
     t.write_png("smudge.png", 2, 1, lambda x, y: [(9, 9, 9, 0), (*t.PALETTE["danger"], 128)][x])
     t.write_png("glow.png", 1, 1, lambda x, y: (*t.PALETTE["danger"], 37), painted=True)
-    (project / "images" / "dirty.png").write_bytes(      # a clear pixel with a colour under it
-        b"\x89PNG\r\n\x1a\n" + png_chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0))
-        + png_chunk(b"IDAT", zlib.compress(bytes([0, 9, 9, 9, 0]))) + png_chunk(b"IEND", b""))
+    (project / "images" / "dirty.png").write_bytes(png(1, 1, lambda x, y: (9, 9, 9, 0)))    # a clear pixel with a colour under it
     edit(project, "layouts/Objects.json", lambda d: d["layers"][0]["instances"][0]["world"].update(x=150))
     sheet = project / "eventSheets" / "Game.json"
     sheet.write_text(re.sub(r'"x": "(?:[^"\\]|\\.)*loopindex(?:[^"\\]|\\.)*"', '"x": "random(96, 1728)"',

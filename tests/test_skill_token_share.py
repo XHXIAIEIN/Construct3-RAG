@@ -6,10 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from tests.skill_helpers import SKILL
+from tests.skill_helpers import SKILL, script_module
 
-sys.path.insert(0, str(SKILL / "evals"))
-import token_share  # noqa: E402
+token_share = script_module("token_share", SKILL / "evals")
 
 PRINT = {"command": "python scripts/print_sheet.py --outline"}
 READ_SKILL = {"file_path": "/game/.agents/skills/construct3-agent-plugin/SKILL.md"}
