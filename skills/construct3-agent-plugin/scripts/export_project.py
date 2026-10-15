@@ -95,7 +95,7 @@ CHUNK = 3 << 20         # bytes of the zip read from the page per call
 SLOW = 3                # how much longer the pauses between clicks are with --slow or after a missed step
 KEYS_SHOWN = 20         # strings shaped like a key named before the rest are counted
 HOSTS_SHOWN = 10        # hosts named before the rest are counted
-pace = 1.0
+pace = 1.0              # factor of every pause between clicks: SLOW with --slow or after a missed step
 
 
 class Stop(Exception):
@@ -144,8 +144,9 @@ def own_page(b: oe.Browser, url: str) -> tuple[str, oe.DevTools]:
 
 
 def show_window(b: oe.Browser, target: str, state: str) -> None:
-    """normal or minimized. A minimized window draws nothing, so clicks miss what the editor
-    shows next: it is restored before an export, and minimized after it, out of the way."""
+    """Set the window of target to state, normal or minimized. A minimized window draws nothing,
+    so a click misses what the editor shows next: run() restores it before an export and
+    minimizes it after."""
     window = b.devtools.call("Browser.getWindowForTarget", targetId=target)["windowId"]
     b.devtools.call("Browser.setWindowBounds", windowId=window, bounds={"windowState": state})
 
@@ -163,7 +164,8 @@ ALLOW_WAIT = 60     # seconds the user has to allow remote debugging when the br
 
 
 def connect(url: str) -> oe.DevTools:
-    """A browser debugged from chrome://inspect holds the connection until the user allows it."""
+    """The browser-wide connection at url, up to ALLOW_WAIT seconds: a browser debugged from
+    chrome://inspect holds the connection until the user allows it."""
     print("if the browser asks whether to allow remote debugging, allow it", flush=True)
     try:
         return oe.DevTools(url, ALLOW_WAIT)
@@ -212,6 +214,10 @@ class SessionPage:
         return self.devtools.evaluate(expression, by_value, wait, self.session)
 
 
+# The editor page a run drives: in the script's own window, or a tab of the user's browser
+Page = oe.DevTools | SessionPage
+
+
 # The start page's title begins with one of these; with a project open it is "<name> - Construct 3"
 START_TITLES = ("Game Making Software", "Construct 3")
 
@@ -248,14 +254,16 @@ ACCOUNT_JS = r"""(() => {
 })()"""
 
 
-def account(page) -> dict:
+def account(page: Page) -> dict:
     try:
-        return page.evaluate(ACCOUNT_JS) or {"name": "", "paid": False}
+        shown = page.evaluate(ACCOUNT_JS)
     except oe.DevToolsError:    # the page reloads as the user logs in
-        return {"name": "", "paid": False}
+        shown = None
+    return shown or {"name": "", "paid": False}
 
 
-def settled_account(page, seconds: float) -> dict:
+def settled_account(page: Page, seconds: float) -> dict:
+    """The account once it has shown the same for `seconds`."""
     last, since = account(page), time.time()
     while time.time() - since < seconds:
         time.sleep(1)
@@ -265,7 +273,7 @@ def settled_account(page, seconds: float) -> dict:
     return last
 
 
-def wait_for_login(page) -> str:
+def wait_for_login(page: Page) -> str:
     who = settled_account(page, 5)
     if not who["paid"]:
         print("log in to a Construct account with a subscription in the editor window: Menu > Account > "
@@ -276,11 +284,13 @@ def wait_for_login(page) -> str:
                 raise Stop(f"no account with a subscription in {LOGIN_WAIT // 60} minutes (the editor shows "
                            f"{who['name'] or 'nothing'}); log in in the window, which stays open, and run again")
             time.sleep(2)
-            who = settled_account(page, 5) if account(page)["paid"] else account(page)
+            who = account(page)
+            if who["paid"]:
+                who = settled_account(page, 5)
     return who["name"]
 
 
-def click(page, x: float, y: float) -> None:
+def click(page: Page, x: float, y: float) -> None:
     page.call("Input.dispatchMouseEvent", type="mouseMoved", x=x, y=y)
     pause(0.1)
     for kind in ("mousePressed", "mouseReleased"):
@@ -299,20 +309,28 @@ FIND_JS = r"""((scope, text) => {
   return [r.x + r.width / 2, r.y + r.height / 2];
 })"""
 
+# The topmost open dialog, its id and text
 DIALOG_JS = r"""(() => {
   const d = [...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog').pop();
   return d ? {id: d.id, text: d.innerText.trim().replace(/\s+/g, ' ').slice(0, 600)} : null;
 })()"""
 
-# Closes what a run that stopped left open
+# Close every open dialog by its close, Cancel or OK button
 DISMISS_JS = r"""[...document.querySelectorAll('dialog[open]')].filter(d => d.id != 'progressDialog')
   .forEach(d => d.querySelector('ui-close-button, .cancelButton, .okButton')?.click())"""
 
 
-def press(page, scope: str, text: str, settle: float = 0.3) -> None:
+def find(page: Page, scope: str, text: str) -> list[float] | None:
+    """The centre of `text` in the menu or the topmost dialog, None while it is not shown; scope is
+    "menu" or "dialog"."""
+    return page.evaluate(f"{FIND_JS}({json.dumps(scope)}, {json.dumps(text)})")
+
+
+def press(page: Page, scope: str, text: str, settle: float = 0.3) -> None:
+    """Click `text` once it shows, then pause `settle` seconds; Missed after UI_WAIT seconds."""
     deadline = time.time() + UI_WAIT
     while time.time() < deadline:
-        at = page.evaluate(f"{FIND_JS}({json.dumps(scope)}, {json.dumps(text)})")
+        at = find(page, scope, text)
         if at:
             click(page, *at)
             pause(settle)
@@ -321,7 +339,7 @@ def press(page, scope: str, text: str, settle: float = 0.3) -> None:
     raise Missed(f"no '{text}' in the editor; it shows {json.dumps(page.evaluate(DIALOG_JS))}")
 
 
-def open_menu(page) -> None:
+def open_menu(page: Page) -> None:
     at = page.evaluate("(() => { const r = document.getElementById('mainMenuButton').getBoundingClientRect(); "
                        "return [r.x + r.width / 2, r.y + r.height / 2]; })()")
     click(page, *at)
@@ -333,7 +351,7 @@ def project_title(project: Path) -> str:
     return json.loads((project / "project.c3proj").read_text(encoding="utf-8-sig"))["name"] + " - "
 
 
-def project_open(page) -> bool:
+def project_open(page: Page) -> bool:
     return not page.evaluate("document.title").startswith(START_TITLES)
 
 
@@ -341,7 +359,7 @@ CRASH_JS = "!!document.querySelector('#crashReportDialog[open]')"
 RESTART_WAIT = 60       # seconds the editor has to load again after Restart
 
 
-def restart(page) -> None:
+def restart(page: Page) -> None:
     """Press Restart on the editor's crash report, the report's one way out: a crashed editor shows
     it again as soon as the menu opens. The editor reloads after the page's own question about
     leaving, which is answered Leave, since the project is the script's copy."""
@@ -368,7 +386,7 @@ def restart(page) -> None:
     raise Stop(f"the editor did not load again in {RESTART_WAIT} seconds after Restart; reload its tab by hand")
 
 
-def close_project(page) -> None:
+def close_project(page: Page) -> None:
     """Close the project open in the editor without saving. The page is one the script drives, on
     the start page when the run began, so the project is a copy the script handed over: this run's,
     or one a run that stopped left open. A crashed editor is restarted instead."""
@@ -390,7 +408,7 @@ def close_project(page) -> None:
         if page.evaluate(CRASH_JS):
             restart(page)
             return
-        if page.evaluate(FIND_JS + "('dialog', \"Don't save\")"):
+        if find(page, "dialog", "Don't save"):
             press(page, "dialog", "Don't save", 0.3)
         time.sleep(0.2)
     raise Stop(f"the project did not close; the editor shows {json.dumps(page.evaluate(DIALOG_JS))}; close it "
@@ -403,7 +421,7 @@ UNSET_JS = r"""(() => { clearInterval(window.__c3Keep);
   document.querySelectorAll('input[aria-label="Project to open"]').forEach(i => i.remove()); })()"""
 
 
-def discard(page, devtools: oe.DevTools | None, opened: bool) -> None:
+def discard(page: Page, devtools: oe.DevTools | None, opened: bool) -> None:
     """Undo what a run that stopped did in the editor, so that it leaves no copy open: a tab the
     script opened in the user's browser is closed; in the user's own tab or the script's window,
     the copy is closed without saving and the dialogs and the file input are taken away. The page
@@ -460,7 +478,7 @@ ZIP_JS = r"""(async () => {
 })()"""
 
 
-def export(page) -> bytes:
+def export(page: Page) -> bytes:
     """Project > Export > Web (HTML5); the zip it makes."""
     open_menu(page)
     press(page, "menu", "Project", 0.2)
@@ -491,7 +509,7 @@ def export(page) -> bytes:
     return data
 
 
-def slow_down(page) -> None:
+def slow_down(page: Page) -> None:
     """Pauses SLOW times longer, and the editor back to no menu and no dialog."""
     global pace
     pace = SLOW
@@ -508,6 +526,7 @@ VERSION_FORMAT = re.compile(r"\d{1,2}(\.\d{1,2}){2,3}")
 
 
 def project_version(project: Path) -> str:
+    """The Version of project.c3proj; "" when it has no version line."""
     found = VERSION_RE.search((project / "project.c3proj").read_text(encoding="utf-8"))
     return found.group(2) if found else ""
 
@@ -524,7 +543,7 @@ def bumped(project: Path, folder: Path) -> str:
     """The last number of the export in folder plus one, a number past 99 carrying into the one
     before; the project's version when that is greater, as after a hand edit that starts a new line."""
     def parts(v: str) -> list[int]:
-        return [int(x) for x in v.split(".")] if VERSION_FORMAT.fullmatch(v or "") else []
+        return [int(x) for x in v.split(".")] if VERSION_FORMAT.fullmatch(v) else []
     last = parts((exported_versions(folder) or [""])[0])
     if last:
         last[-1] += 1
@@ -671,9 +690,9 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
         discard(page, devtools, opened)
         staged.unlink(missing_ok=True)
         raise
-    # Close the project, so that this editor and one the user has open elsewhere do not both
-    # change it. The script's own window is minimized and keeps its login for the next run; in the
-    # user's browser a tab the script opened is closed and the user's own is left on the start page
+    # Close the copy, then minimize the script's window or close the tab the script opened
+    # An editor here and one the user has open elsewhere would both change the project. The minimized
+    # window keeps its login for the next run, and a tab of the user's stays on the start page.
     close_project(page)
     if not spec:
         show_window(b, target, "minimized")
@@ -687,10 +706,9 @@ def run(project: Path, folder: Path, version: str, spec: str | None, exe: str | 
 def write_version(project: Path, version: str) -> None:
     """The version the export carries, into project.c3proj, once the export is in place: an export that stopped
     leaves the project's version as it was. Raises OSError when the file cannot be written."""
-    path = project / "project.c3proj"
-    text = path.read_text(encoding="utf-8")
     if project_version(project) != version:
-        path.write_bytes(with_version(text, version).encode("utf-8"))
+        path = project / "project.c3proj"
+        path.write_bytes(with_version(path.read_text(encoding="utf-8"), version).encode("utf-8"))
 
 
 def shipped_check(project: Path) -> tuple[list[str], str | None]:
@@ -743,7 +761,7 @@ def main() -> int:
               f"empty folder, or the folder of an earlier export, such as the default .build/web", file=sys.stderr)
         return 2
     version = args.version or (bumped(project, folder) if args.bump else project_version(project))
-    if not VERSION_FORMAT.fullmatch(version or ""):
+    if not VERSION_FORMAT.fullmatch(version):
         print(f"the version to export is '{version}', not 3 or 4 numbers of 0 to 99; pass --version 1.0.0.0 or "
               f"set Version in the project properties", file=sys.stderr)
         return 2
@@ -758,15 +776,16 @@ def main() -> int:
     if hosts:
         print(hosts)
     if args.dry_run:
+        current = project_version(project)
         print(f"would export {version} in {editor_url(project)} into {folder}; project.c3proj version "
-              f"{project_version(project)}{f' -> {version}' if version != project_version(project) else ''}")
+              f"{current}{f' -> {version}' if version != current else ''}")
         return 0
     if not args.to:
         pp.ignored_folder(project / pp.BUILD)       # where the products go, which Git ignores
     if args.slow:
         global pace
         pace = SLOW
-    exe = None if args.attach else (oe.browser_path())
+    exe = None if args.attach else oe.browser_path()
     if not args.attach and not exe:
         print("no Edge, Chrome or Chromium found here; export in the editor by hand, or pass --attach",
               file=sys.stderr)
