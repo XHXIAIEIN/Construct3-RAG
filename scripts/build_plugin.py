@@ -40,6 +40,10 @@ from collections.abc import Iterator
 from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from src.lookup.schema_layout import SCHEMA_LOCALES  # noqa: E402
+
 OUT = ROOT / "plugin"
 SOURCES = ROOT / "scripts" / "plugin"          # the manifest, README, icon and agents of the plugin
 SKILL = "skills/construct3-agent-plugin"
@@ -109,6 +113,8 @@ def bundles(folder: str, pattern: str) -> list[tuple[str, str]]:
 
 
 def lang_subset(locale: str) -> str:
+    """The plugin's copy of a language pack, as text: the parts at LANG_KEYS, and ADDON_TEXTS of every
+    plugin and behavior."""
     pack = json.loads((ROOT / "data" / "c3-lang" / f"{locale}.json").read_text(encoding="utf-8-sig"))
     out: dict[str, dict] = {}
     for keys in LANG_KEYS:
@@ -131,13 +137,13 @@ def build(out: Path) -> None:
     for folder, pattern in BUNDLED:
         for rel, text in bundles(folder, pattern):
             write(out / rel, text)
-    for locale in ("en-US", "zh-CN"):
+    for locale in SCHEMA_LOCALES:
         write(out / "data" / "c3-lang" / f"{locale}.json", lang_subset(locale))
     copy(SOURCES / "plugin.json", out / MANIFEST)
     # The listing icon, which plugin.json names in "icon"; .claude-plugin/ holds the manifest only
     copy(SOURCES / "icon.png", out / "icon.png")
     copy(SOURCES / "README.md", out / "README.md")
-    # The plugin's subagent types: a file under agents/ is one, read by Claude Code from the plugin's folder
+    # The plugin's sub-agent types: a file under agents/ is one, read by Claude Code from the plugin's folder
     for agent in sorted((SOURCES / "agents").glob("*.md")):
         copy(agent, out / "agents" / agent.name)
     copy(ROOT / "LICENSE", out / "LICENSE")

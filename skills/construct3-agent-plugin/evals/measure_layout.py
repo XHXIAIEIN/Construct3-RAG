@@ -21,24 +21,17 @@ import sys
 from pathlib import Path
 
 RAG = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(RAG))
+
+from scripts.measure_examples import box_on_screen, examples_meta, layers_in, load  # noqa: E402
+
 STORES = re.compile(r"repositor|bank|objects|template", re.I)
 
 
 def games(rag: Path) -> list[str]:
     """The ids of the examples tagged as 2D games."""
-    ids = []
-    for f in sorted((rag / "data" / "c3-examples" / "en-US").glob("*.json")):
-        meta = json.loads(f.read_text(encoding="utf-8"))
-        tags = set(meta.get("tags", []))
-        if tags & {"Game template", "Demo game"} and "3D" not in tags:
-            ids.append(meta["id"])
-    return ids
-
-
-def layers_in(layers: list):
-    for lay in layers:
-        yield lay
-        yield from layers_in(lay.get("subLayers", []))
+    return [gid for gid, meta in examples_meta(rag).items()
+            if {"Game template", "Demo game"} & set(meta.get("tags", []))]
 
 
 def content(layout: dict, vw: float, vh: float) -> list[tuple[str, tuple, float]]:
@@ -51,12 +44,11 @@ def content(layout: dict, vw: float, vh: float) -> list[tuple[str, tuple, float]
             props, w = inst.get("properties", {}), inst.get("world")
             if props.get("initially-visible") is False or "text" in props or not w or w.get("angle"):
                 continue
-            left = w["x"] - w.get("originX", 0) * w["width"]     # a mirrored instance has a negative size
-            top = w["y"] - w.get("originY", 0) * w["height"]
-            left, top = min(left, left + w["width"]), min(top, top + w["height"])
-            box = (max(left, 0), max(top, 0), min(left + abs(w["width"]), vw), min(top + abs(w["height"]), vh))
+            box = box_on_screen(w, vw, vh)
+            if not box:
+                continue
             bw, bh = box[2] - box[0], box[3] - box[1]
-            if bw <= 0 or bh <= 0 or (bw >= 0.8 * vw and bh >= 0.8 * vh):
+            if bw >= 0.8 * vw and bh >= 0.8 * vh:
                 continue
             found.append((inst["type"], box, bw * bh))
     return found
@@ -68,7 +60,7 @@ def measure(examples: Path, rag: Path) -> list[dict]:
         proj = examples / gid / "project.c3proj"
         if not proj.is_file():
             continue
-        p = json.loads(proj.read_text(encoding="utf-8-sig"))
+        p = load(proj)
         vw, vh = p["viewportWidth"], p["viewportHeight"]
         for f in sorted((examples / gid / "layouts").glob("*.json")):
             lay = json.loads(f.read_text(encoding="utf-8"))

@@ -33,6 +33,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
 
 SKILL = Path(__file__).resolve().parent.parent
@@ -47,6 +48,22 @@ def run(*cmd: str, cwd: Path) -> str:
     if p.returncode:
         sys.exit(f"{' '.join(cmd)} failed in {cwd}:\n{p.stdout}{p.stderr}")
     return p.stdout
+
+
+def read_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write_json(path: Path, data: dict) -> None:
+    """data in the editor's layout: tab indents, LF, no newline at the end."""
+    path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+
+
+def edit_json(path: Path, change: Callable[[dict], object]) -> None:
+    """The JSON file at path, changed in place by change."""
+    data = read_json(path)
+    change(data)
+    write_json(path, data)
 
 
 def stand_in(root: Path) -> Path:
@@ -69,7 +86,7 @@ def seed_load_errors(root: Path) -> None:
     """Five mistakes the editor refuses, each one a small model has made
     (Construct3-RAG/docs/decisions/checker-editor-load-rules.md)."""
     path = root / "eventSheets" / "Game.json"
-    sheet = json.loads(path.read_text(encoding="utf-8"))
+    sheet = read_json(path)
     rows = sheet["events"]
     groups = {e.get("title"): e for e in rows if e["eventType"] == "group"}
     collect = next(e for e in rows if e["eventType"] == "custom-ace-block")
@@ -93,14 +110,14 @@ def seed_load_errors(root: Path) -> None:
     del tween["behaviorType"]                                                             # a behavior action without it
     next(a for a in add_score["actions"] if a.get("id") == "set-text")["id"] = "set-txt"  # a misspelt id
     first_block(groups["Setup"])["conditions"][0]["isInverted"] = True                  # an inverted trigger
-    path.write_text(json.dumps(sheet, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+    write_json(path, sheet)
 
 
 def seed_key_pressed(root: Path) -> None:
     """W, A, S and D under Keyboard On key pressed, each simulating its 8 Direction control on Player:
     the player moves for the one tick of each press (docs/decisions/event-sheet-design-guidance.md)."""
     path = root / "eventSheets" / "event sheet 1.json"
-    sheet = json.loads(path.read_text(encoding="utf-8"))
+    sheet = read_json(path)
     sid = iter(range(633333333333301, 633333333333399))
     for key, control in ((87, "up"), (65, "left"), (83, "down"), (68, "right")):
         sheet["events"] += [
@@ -109,26 +126,21 @@ def seed_key_pressed(root: Path) -> None:
              "conditions": [{"id": "on-key-pressed", "objectClass": "Keyboard", "sid": next(sid), "parameters": {"key": key}}],
              "actions": [{"id": "simulate-control", "objectClass": "Player", "sid": next(sid), "behaviorType": "8Direction",
                           "parameters": {"control": control}}]}]
-    path.write_text(json.dumps(sheet, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+    write_json(path, sheet)
 
 
 def seed_timer_restart(root: Path) -> None:
     """The round ends on a Timer started with no trigger: Coin.Count = 0 -> ScoreText Start timer, which
     starts the timer over each tick, so On timer never restarts the layout
     (docs/decisions/event-sheet-design-guidance.md)."""
-    def edit(rel: str, change) -> None:
-        path = root / rel
-        data = json.loads(path.read_text(encoding="utf-8"))
-        change(data)
-        path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
-
-    edit("objectTypes/ScoreText.json", lambda t: t["behaviorTypes"].append({"behaviorId": "Timer", "name": "Timer",
-                                                                            "sid": 644444444444401}))
-    edit("layouts/Game.json", lambda d: next(i for layer in d["layers"] for i in layer["instances"]
-                                             if i["type"] == "ScoreText").setdefault("behaviors", {}).update(
-        Timer={"properties": {}}))
-    edit("project.c3proj", lambda p: p["usedAddons"].append({"type": "behavior", "id": "Timer", "name": "Timer",
-                                                             "author": "Scirra", "bundled": False}))
+    edit_json(root / "objectTypes" / "ScoreText.json",
+              lambda t: t["behaviorTypes"].append({"behaviorId": "Timer", "name": "Timer", "sid": 644444444444401}))
+    edit_json(root / "layouts" / "Game.json",
+              lambda d: next(i for layer in d["layers"] for i in layer["instances"]
+                             if i["type"] == "ScoreText").setdefault("behaviors", {}).update(Timer={"properties": {}}))
+    edit_json(root / "project.c3proj",
+              lambda p: p["usedAddons"].append({"type": "behavior", "id": "Timer", "name": "Timer",
+                                                "author": "Scirra", "bundled": False}))
 
     def round_end(sheet: dict) -> None:
         restart = next(e for e in sheet["events"] if e.get("eventType") == "group" and e.get("title") == "Restart")
@@ -145,7 +157,7 @@ def seed_timer_restart(root: Path) -> None:
             {"eventType": "block", "sid": 644444444444406,
              "conditions": [{"id": "on-timer", **timer, "sid": 644444444444407, "parameters": {"tag": "\"next\""}}],
              "actions": [a for a in old["actions"] if a["id"] != "wait"]}]
-    edit("eventSheets/Game.json", round_end)
+    edit_json(root / "eventSheets" / "Game.json", round_end)
 
 
 def seed_turn_flip(root: Path) -> None:
@@ -153,7 +165,7 @@ def seed_turn_flip(root: Path) -> None:
     Coin.Count = 0 / Else -> Set side to 3 - side runs in every tick while coins are left, so the turn
     flips every tick (docs/decisions/event-sheet-design-guidance.md)."""
     path = root / "eventSheets" / "Game.json"
-    sheet = json.loads(path.read_text(encoding="utf-8"))
+    sheet = read_json(path)
     rows = sheet["events"]
     at = next(i for i, e in enumerate(rows) if e.get("eventType") == "variable" and e.get("name") == "beat") + 1
     rows.insert(at, {"eventType": "variable", "name": "side", "type": "number", "initialValue": "1",
@@ -177,60 +189,48 @@ def seed_turn_flip(root: Path) -> None:
                                    "parameters": {"variable": "side", "value": "3 - side"}},
                                   {**text, "sid": 655555555555511,
                                    "parameters": {"text": "\"Player \" & side & \" to tap. Score: \" & score"}}]}]})
-    path.write_text(json.dumps(sheet, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
+    write_json(path, sheet)
 
 
 def seed_no_solid(root: Path) -> None:
     """SolidBarrier without its Solid behavior, on the type and on every instance, and in the used addons when
     no other type uses it: the player's 8 Direction walks through the walls that stop it in the example."""
-    def edit(path: Path, change) -> None:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        change(data)
-        path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
-
-    types = {p: json.loads(p.read_text(encoding="utf-8")) for p in (root / "objectTypes").glob("*.json")}
+    types = {p: read_json(p) for p in (root / "objectTypes").glob("*.json")}
     wall = next(p for p, t in types.items() if t.get("name") == "SolidBarrier")
-    edit(wall, lambda t: t.update(behaviorTypes=[b for b in t["behaviorTypes"] if b["behaviorId"] != "solid"]))
+    edit_json(wall, lambda t: t.update(behaviorTypes=[b for b in t["behaviorTypes"] if b["behaviorId"] != "solid"]))
     for path in (root / "layouts").glob("*.json"):
         if not path.name.endswith(".uistate.json"):
-            edit(path, lambda d: [i.get("behaviors", {}).pop("Solid", None) for layer in d["layers"]
-                                  for i in layer["instances"] if i["type"] == "SolidBarrier"])
+            edit_json(path, lambda d: [i.get("behaviors", {}).pop("Solid", None) for layer in d["layers"]
+                                       for i in layer["instances"] if i["type"] == "SolidBarrier"])
     if not any(b["behaviorId"] == "solid" for p, t in types.items() if p != wall for b in t.get("behaviorTypes", [])):
-        edit(root / "project.c3proj", lambda p: p.update(usedAddons=[a for a in p["usedAddons"] if a["id"] != "solid"]))
+        edit_json(root / "project.c3proj",
+                  lambda p: p.update(usedAddons=[a for a in p["usedAddons"] if a["id"] != "solid"]))
 
 
 def seed_door(root: Path) -> None:
     """A Door, a TiledBg with Solid standing on the first floor between the player and the floor's end, and a
     Key, a Sprite with no behaviors behind the player: the platformer template with the art of a locked door
     and no events for it."""
-    def load(path: Path) -> dict:
-        return json.loads(path.read_text(encoding="utf-8"))
-
-    def save(path: Path, data: dict) -> None:
-        path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
-
     types = root / "objectTypes"
-    all_types = [load(p) for p in types.glob("*.json")]
+    all_types = [read_json(p) for p in types.glob("*.json")]
     sprite_ids = [t["image"]["imageSpriteId"] for t in all_types if "image" in t] + \
                  [f["imageSpriteId"] for t in all_types for a in t.get("animations", {}).get("items", []) for f in a["frames"]]
-    door = load(types / "solidtile.json")
+    door = read_json(types / "solidtile.json")
     door.update(name="Door", sid=6666000000001)
     door["behaviorTypes"][0]["sid"] = 6666000000002
     door["image"]["imageSpriteId"] = max(sprite_ids) + 1
-    save(types / "door.json", door)
+    write_json(types / "door.json", door)
     shutil.copy(root / "images" / "solidtile.png", root / "images" / "door.png")
-    key = load(types / "player.json")
+    key = read_json(types / "player.json")
     key.update(name="Key", sid=6666000000003, behaviorTypes=[])
     key["animations"]["items"][0]["sid"] = 6666000000004
     key["animations"]["items"][0]["frames"][0]["imageSpriteId"] = max(sprite_ids) + 2
-    save(types / "key.json", key)
+    write_json(types / "key.json", key)
     shutil.copy(root / "images" / "player-default-000.png", root / "images" / "key-default-000.png")
 
-    project = load(root / "project.c3proj")
-    project["objectTypes"]["items"] += ["Door", "Key"]
-    save(root / "project.c3proj", project)
+    edit_json(root / "project.c3proj", lambda p: p["objectTypes"]["items"].extend(["Door", "Key"]))
     layout_path = root / "layouts" / "layout 1.json"
-    layout = load(layout_path)
+    layout = read_json(layout_path)
     game = next(layer for layer in layout["layers"] if layer["name"] == "Game")
     # Single-global objects (Keyboard) keep their uid in their object type file.
     uid = max([i["uid"] for layer in layout["layers"] for i in layer["instances"]]
@@ -242,7 +242,7 @@ def seed_door(root: Path) -> None:
          "world": {**tile["world"], "x": 288, "y": 704, "width": 32, "height": 64, "color": [0.6, 0.35, 0.15, 1]}},
         {**json.loads(json.dumps(player)), "type": "Key", "uid": uid + 2, "behaviors": {},
          "world": {**player["world"], "x": 80, "y": 768, "width": 24, "height": 24, "color": [1, 0.85, 0.2, 1]}}]
-    save(layout_path, layout)
+    write_json(layout_path, layout)
 
 
 BIG_SHEET = "Waves"
@@ -369,14 +369,8 @@ def big_sheet() -> dict:
 def seed_big_sheet(root: Path) -> None:
     """A second sheet of 400 and more events beside the stand-in's own, listed in project.c3proj and used by no
     layout, so the coins game plays as before; the case reads it."""
-    def save(path: Path, data: dict) -> None:
-        path.write_text(json.dumps(data, indent="\t", ensure_ascii=False), encoding="utf-8", newline="\n")
-
-    save(root / "eventSheets" / f"{BIG_SHEET}.json", big_sheet())
-    path = root / "project.c3proj"
-    project = json.loads(path.read_text(encoding="utf-8"))
-    project["eventSheets"]["items"].append(BIG_SHEET)
-    save(path, project)
+    write_json(root / "eventSheets" / f"{BIG_SHEET}.json", big_sheet())
+    edit_json(root / "project.c3proj", lambda p: p["eventSheets"]["items"].append(BIG_SHEET))
 
 
 # fixture -> (the fixture it starts from, the fault written into it). The seeded entries' sids start
@@ -401,8 +395,7 @@ def digest(project: Path) -> dict:
                  and not {".agents", "__pycache__", "tools", ".git", ".tmp"} & set(p.parts)}
     for path in sorted((project / "eventSheets").rglob("*.json")):
         if not path.name.endswith(".uistate.json"):
-            sheet = json.loads(path.read_text(encoding="utf-8"))
-            out[f"{path.relative_to(project).as_posix()}.sids"] = sids(sheet["events"])
+            out[f"{path.relative_to(project).as_posix()}.sids"] = sids(read_json(path)["events"])
     return out
 
 

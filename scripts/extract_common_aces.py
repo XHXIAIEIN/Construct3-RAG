@@ -39,7 +39,7 @@ from src.ingest.common_aces import (
     extract_common_requirements,
     extract_plugin_flags,
 )
-from src.lookup.schema_layout import SCHEMA_ACE_TYPES
+from src.lookup.schema_layout import PRIMARY_SCHEMA_LOCALE, SCHEMA_ACE_TYPES
 
 
 def _bundle_text(fetcher: C3Fetcher, local: Path | None, endpoint: str) -> str:
@@ -65,9 +65,9 @@ def main() -> None:
         base_url=settings.schema.cdn_base,
         cache_dir=settings.schema.cache_dir,
     )
-    lang_common = fetcher.fetch_lang("en-US").get("text", {}).get("plugins", {}).get(COMMON_ADDON_ID, {})
+    lang_common = fetcher.fetch_lang(PRIMARY_SCHEMA_LOCALE).get("text", {}).get("plugins", {}).get(COMMON_ADDON_ID, {})
     if not lang_common:
-        sys.exit("en-US language pack has no plugins._common section")
+        sys.exit(f"{PRIMARY_SCHEMA_LOCALE} language pack has no plugins._common section")
 
     main_js = _bundle_text(fetcher, args.main_js, "main_js")
     plugins_js = _bundle_text(fetcher, args.plugins_js, "plugin_js")

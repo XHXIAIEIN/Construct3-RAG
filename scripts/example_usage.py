@@ -30,12 +30,13 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "skills" / "construct3-agent-plugin" / "scripts"))
 import c3project as c3  # noqa: E402
+from src.lookup.schema_layout import PRIMARY_SCHEMA_LOCALE, SCHEMA_ACE_TYPES  # noqa: E402
 
 OUT = ROOT / "data" / "c3-example-usage"
 SOURCE = "_source.json"     # the clone and commit the index was built from
-KINDS = ("conditions", "actions", "expressions")
 SHOWN = 3           # the uses kept per ACE, the ones lookup_ace.py prints
 SPAN = 8            # the most events of one use printed: the event and its first sub-events
 # Parameter types written as an expression string (lookup_ace.py, WRITING); the others are names or ids
@@ -68,7 +69,7 @@ class Example:
     """One example project and the keys of the ACEs its sheets use."""
 
     def __init__(self, folder: Path, rag: Path) -> None:
-        self.p = c3.Project(folder, rag, "en-US", c3.Findings())
+        self.p = c3.Project(folder, rag, PRIMARY_SCHEMA_LOCALE, c3.Findings())
 
     def key(self, kind: str, ace: dict) -> tuple[str, str, str, str] | None:
         """(plugins or behaviors, addon id, kind, ACE id) of a condition or action; None when
@@ -207,7 +208,7 @@ def commit_of(clone: Path) -> str | None:
 def dump(content: dict) -> str:
     """An addon's file with one ACE per line: a diff between two clones shows the ACEs whose uses changed."""
     lines = ["{"]
-    kinds = [k for k in KINDS if k in content]
+    kinds = [k for k in SCHEMA_ACE_TYPES if k in content]
     for i, kind in enumerate(kinds):
         lines.append(f'  "{kind}": {{')
         aces = content[kind]
@@ -242,7 +243,7 @@ def refresh(clone: Path | None = None, out: Path = OUT) -> str:
     write(files, out)
     source = files[SOURCE]
     return (f"{source['examples']} examples at {str(source['commit'])[:12]}, "
-            f"{sum(len(f.get(k, {})) for f in files.values() for k in KINDS)} ACEs in {len(files) - 1} files")
+            f"{sum(len(f.get(k, {})) for f in files.values() for k in SCHEMA_ACE_TYPES)} ACEs in {len(files) - 1} files")
 
 
 def main() -> int:

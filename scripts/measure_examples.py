@@ -62,6 +62,7 @@ def load(path: Path) -> dict:
 
 
 def layers_in(layers: list):
+    """Every layer, each followed by its sub-layers."""
     for lay in layers:
         yield lay
         yield from layers_in(lay.get("subLayers", []))
@@ -78,6 +79,17 @@ def instances(folder: Path):
 
 def visible(layer: dict, inst: dict) -> bool:
     return layer.get("isInitiallyVisible", True) and inst.get("properties", {}).get("initially-visible", True) is not False
+
+
+def box_on_screen(w: dict, vw: float, vh: float) -> tuple[float, float, float, float] | None:
+    """An instance's box clipped to the viewport, from its world properties w; None off the screen.
+    Layout coordinates stand for screen coordinates: a layer that does not scroll, or a one-screen layout."""
+    left = w["x"] - w.get("originX", 0) * w["width"]
+    top = w["y"] - w.get("originY", 0) * w["height"]
+    # A mirrored or flipped instance has a negative size
+    left, top = min(left, left + w["width"]), min(top, top + w["height"])
+    box = (max(left, 0), max(top, 0), min(left + abs(w["width"]), vw), min(top + abs(w["height"]), vh))
+    return box if box[2] > box[0] and box[3] > box[1] else None
 
 
 def quantiles(values: list[float]) -> str:
@@ -185,15 +197,6 @@ def report_actors(rows: list[dict]) -> None:
 # A layout that is a menu or a screen between rounds, not play.
 NOT_PLAY = re.compile(r"menu|title|start|splash|load|intro|over|win|lose|credit|setting|option|shop|select|pause|"
                       r"repositor|bank|objects|template|tutorial|help|end", re.I)
-
-
-def box_on_screen(w: dict, vw: float, vh: float) -> tuple[float, float, float, float] | None:
-    """The instance's box clipped to the viewport, for a layer that does not scroll."""
-    left = w["x"] - w.get("originX", 0) * w["width"]
-    top = w["y"] - w.get("originY", 0) * w["height"]
-    left, top = min(left, left + w["width"]), min(top, top + w["height"])
-    box = (max(left, 0), max(top, 0), min(left + abs(w["width"]), vw), min(top + abs(w["height"]), vh))
-    return box if box[2] > box[0] and box[3] > box[1] else None
 
 
 def union_share(boxes: list, vw: float, vh: float, cell: float) -> float:

@@ -20,9 +20,11 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Iterator
 
+from src.lookup.schema_layout import PRIMARY_SCHEMA_LOCALE
+
 from .catalog import DECODED, REPO
 
-SCHEMAS = REPO / "data" / "c3-schemas" / "en-US"
+SCHEMAS = REPO / "data" / "c3-schemas" / PRIMARY_SCHEMA_LOCALE
 # Where an export keeps its runtime, in the order searched; the worker build adds workermain.js.
 RUNTIME_FILES = ("scripts/c3runtime.js", "scripts/c3main.js")
 
@@ -60,6 +62,7 @@ def runtime_sources(game: Path, names: tuple[str, ...]) -> Iterator[str]:
 
 
 def balanced(src: str, start: int) -> str:
+    """The bracketed text that opens at ``src[start]``, brackets inside strings ignored."""
     depth, i, quote, esc = 0, start, None, False
     while i < len(src):
         c = src[i]
@@ -83,6 +86,7 @@ def balanced(src: str, start: int) -> str:
 
 
 def split_top(body: str) -> list[str]:
+    """``body`` split at its top-level commas, strings and bracketed parts kept whole."""
     out, cur, depth, quote, esc = [], [], 0, None, False
     for c in body:
         if quote:
@@ -111,6 +115,7 @@ def split_top(body: str) -> list[str]:
 
 
 def runtime_tables(game: Path) -> tuple[list[str] | None, list[str] | None]:
+    """The object reference table and the expression functions of the first runtime file that has either."""
     for src in runtime_sources(game, (*RUNTIME_FILES, "scripts/workermain.js")):
         refs = funcs = None
         m = re.search(r"C3_GetObjectRefTable\s*=\s*function\s*\(\)\s*\{\s*return\s*", src)

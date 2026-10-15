@@ -8,6 +8,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from src.lookup.schema_layout import PRIMARY_SCHEMA_LOCALE
+
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +18,9 @@ _MINIMAL_DEMO_TAGS = frozenset({"Feature example", "Barebones template"})
 
 
 class ExamplesIndex:
-    """Build and query an addon/tag index without a generated side file."""
+    """Index of the examples by addon and tag, built from their metadata files."""
 
-    _EXAMPLES_DIR = Path(__file__).resolve().parents[2] / "data" / "c3-examples" / "en-US"
+    _EXAMPLES_DIR = Path(__file__).resolve().parents[2] / "data" / "c3-examples" / PRIMARY_SCHEMA_LOCALE
 
     def __init__(
         self,
