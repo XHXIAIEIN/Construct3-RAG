@@ -34,11 +34,13 @@ def test_examples_take_the_locale_and_a_miss_says_what_to_try(built):
 def fake_rag(folder: Path, snake: bool = False) -> Path:
     """A folder that the scripts take for Construct3-RAG. With snake, it also holds the metadata file of the
     snake example."""
-    (folder / "data" / "c3-schemas").mkdir(parents=True)
-    (folder / "data" / "c3-schemas" / "_index.json").write_text("{}", encoding="utf-8")
+    schemas = folder / "data" / "c3-schemas"
+    schemas.mkdir(parents=True)
+    (schemas / "_index.json").write_text("{}", encoding="utf-8")
     if snake:
-        (folder / "data" / "c3-examples" / "en-US").mkdir(parents=True)
-        (folder / "data" / "c3-examples" / "en-US" / "template-snake.json").write_text(
+        examples = folder / "data" / "c3-examples" / "en-US"
+        examples.mkdir(parents=True)
+        (examples / "template-snake.json").write_text(
             json.dumps({"id": "template-snake", "name": "Snake", "description": "A snake game.",
                         "open": "https://editor.construct.net/#open=template-snake"}), encoding="utf-8")
     return folder
@@ -81,14 +83,17 @@ def test_examples_are_found_beside_the_main_working_tree_from_a_git_worktree(tmp
 
 
 def test_examples_without_the_clone_say_how_to_get_it(tmp_path):
-    """Without the examples clone each example shows its editor URL, and one line names the clone."""
+    """Without the examples clone each example shows its editor URL, and one line gives the command that
+    clones it: the clone's bootstrap.py, or git clone from a folder that holds no bootstrap.py."""
     rag = fake_rag(tmp_path / "Construct3-RAG", snake=True)
-    (rag / "scripts").mkdir()
-    (rag / "scripts" / "bootstrap.py").write_text("", encoding="utf-8")
+    bootstrap = rag / "scripts" / "bootstrap.py"
+    bootstrap.parent.mkdir()
+    bootstrap.write_text("", encoding="utf-8")
+    clone = tmp_path / "Construct-Example-Projects"
     out = snake_output(rag, tmp_path)
     assert "https://editor.construct.net/#open=template-snake" in out, out
-    assert (f"(no Construct-Example-Projects clone at {tmp_path / 'Construct-Example-Projects'}; "
-            f"python {(rag / 'scripts' / 'bootstrap.py').as_posix()} clones it") in out, out
+    assert (f"(no Construct-Example-Projects clone at {clone}; "
+            f"python {bootstrap.as_posix()} clones it") in out, out
     plugin = fake_rag(tmp_path / "Plugin", snake=True)
     assert (f'git clone --depth 1 https://github.com/Scirra/Construct-Example-Projects '
-            f'"{(tmp_path / "Construct-Example-Projects").as_posix()}" clones it') in snake_output(plugin, tmp_path)
+            f'"{clone.as_posix()}" clones it') in snake_output(plugin, tmp_path)
