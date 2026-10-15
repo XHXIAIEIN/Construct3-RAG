@@ -1415,3 +1415,18 @@ def test_template_shows_the_pointer_as_colours_once_it_is_on(tmp_path):
     assert not any(a.get("isInverted") for a in aces(group))
     assert [a["id"] for a in aces(t.pointer_module("Coin", pressed=False))].count("on-touched-object") == 0
     assert t.hit("Coin", frame="pressed")[-3]["parameters"]["frame-number"] == '"pressed"'
+
+
+def test_a_data_file_is_listed_with_the_type_the_editor_writes_for_its_extension(tmp_path):
+    """GENERAL_TYPES is the table of docs/decisions/file-types-in-project-c3proj.md; the checker holds the
+    same table, and an extension the examples never saved is octet-stream."""
+    template = template_module()
+    checker = script_module("check_project")
+    assert {ext: (kind,) for ext, kind in template.GENERAL_TYPES.items()} == {
+        ext: kinds[:1] for ext, kinds in checker.GENERAL_TYPES.items()}
+    template.ROOT = tmp_path
+    template._general_files.clear()
+    for name in ("Cards.json", "notes.TXT", "photo.jpg"):
+        template.general_file(name, "")
+    assert [(e["name"], e["type"]) for e in template._general_files] == [
+        ("Cards.json", "application/json"), ("notes.TXT", "text/plain"), ("photo.jpg", "application/octet-stream")]

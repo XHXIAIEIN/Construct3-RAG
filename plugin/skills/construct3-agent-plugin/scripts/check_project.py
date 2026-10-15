@@ -70,6 +70,14 @@ RESOURCE_FOLDERS = ("objectTypes", "families", "layouts", "eventSheets", "timeli
 UNLISTED_ROOT_FILES = ("general", "icon", "sound", "music", "video", "font")
 # Sound and music are WebM Opus; the editor converts what it imports.
 AUDIO_TYPE = "audio/webm; codecs=opus"
+# The "type" the editor wrote for a file of Files in the official examples, by extension, with every
+# type it wrote (docs/decisions/file-types-in-project-c3proj.md). An extension the examples never saved
+# has no entry, and nothing is said about it.
+GENERAL_TYPES = {".css": ("text/css",), ".csv": ("text/csv",), ".glb": ("application/octet-stream",),
+                 ".html": ("text/html",), ".js": ("application/javascript", "text/javascript"),
+                 ".json": ("application/json",), ".png": ("image/png",), ".svg": ("image/svg+xml",),
+                 ".ts": ("application/typescript",), ".txt": ("text/plain",), ".wasm": ("application/wasm",),
+                 ".xml": ("text/xml",)}
 DESIGN = Path("tools") / "design.json"     # where references/designing-a-game.md writes the design
 # The findings of the last run, kept in the project's .tmp/ so that the fix loop stops after CAP
 # changes that left one finding standing (docs/decisions/fix-loop-cap.md). CONSTRUCT3_RAG_NO_RECORD=1
@@ -3550,6 +3558,12 @@ class Checker:
                               f"are in; the editor opens it, and whether it plays depends on the browser. Encode it, "
                               f"ffmpeg -i {fname} -c:a libopus {stem}.webm, and list {stem}.webm with \"type\": "
                               f"\"{AUDIO_TYPE}\", or import the file in the editor, which converts it")
+        for item, _folder in folder_items(root_files.get("general", {})):
+            known = GENERAL_TYPES.get(LOWER(Path(item["name"]).suffix)) if isinstance(item, dict) else None
+            if known and item.get("type") not in known:
+                self.warn(f"general file {item['name']} is listed with type \"{item.get('type')}\"; the editor "
+                          f"wrote \"{known[0]}\" for {Path(item['name']).suffix} in the official examples. It opens "
+                          f"the project; to match, set \"type\" to \"{known[0]}\"")
         self.check_scripts(root_files.get("script", {}))
         self.check_ts_defs()
         self.check_unlisted(root_files)

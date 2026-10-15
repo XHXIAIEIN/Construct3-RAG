@@ -651,6 +651,26 @@ def test_sound_or_music_that_is_not_webm_opus_is_named(project):
         'which converts it'], out
 
 
+def test_a_general_file_whose_type_differs_from_the_examples_is_named(project):
+    """The editor wrote one type per extension in the official examples, and .js two
+    (docs/decisions/file-types-in-project-c3proj.md); the editor opens a project with another type, so
+    a mismatch is a warning, and an extension the examples never saved is not named."""
+    (project / "files").mkdir(exist_ok=True)
+    names = ("levels.json", "notes.txt", "worker.js", "worklet.js", "photo.jpg")
+    for name in names:
+        (project / "files" / name).write_bytes(b"")
+    types = ("text/plain", "text/plain", "text/javascript", "text/x-javascript", "application/octet-stream")
+    out = findings(project, lambda d: d.setdefault("rootFileFolders", {}).update(general={"items": [
+        {"name": n, "type": t, "sid": 5 + i, "file-info": {"purpose": "none"}}
+        for i, (n, t) in enumerate(zip(names, types))], "subfolders": []}), "project.c3proj")
+    assert [w for w in warnings(out) if "general file" in w] == [
+        'warning: general file levels.json is listed with type "text/plain"; the editor wrote "application/json" '
+        'for .json in the official examples. It opens the project; to match, set "type" to "application/json"',
+        'warning: general file worklet.js is listed with type "text/x-javascript"; the editor wrote '
+        '"application/javascript" for .js in the official examples. It opens the project; to match, set "type" to '
+        '"application/javascript"'], out
+
+
 def test_a_script_listed_as_both_ts_and_js_is_named(project):
     """Construct runs the .js and ignores the .ts of one script
     [manual: scripting/using-scripting/typescript-construct.md]."""
