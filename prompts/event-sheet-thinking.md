@@ -1,8 +1,7 @@
 # Construct 3 Event Sheet — Design Guide
 
 This guide decides what the events are before you write them.
-[event-sheet-assistant.md](event-sheet-assistant.md) says how to write an
-event down. [event-sheet-pitfalls.md](event-sheet-pitfalls.md) lists the
+[event-sheet-pitfalls.md](event-sheet-pitfalls.md) lists the
 runtime facts that intuition gets wrong, one line each. It names the topic
 file under `pitfalls/` to open for each group that the events touch.
 Before the events go into a project or a generator, read
@@ -243,9 +242,13 @@ If a draft matches one row, redesign it instead of patching it.
 5. Write the draft. Before you show it, check it against the smell table
    and the [pitfalls](event-sheet-pitfalls.md), with the topic file of each
    group that it touches.
-6. Only then verify the names with `lookup_ace.py`, as
-   [event-sheet-assistant.md](event-sheet-assistant.md) says. ACEs that all
-   world objects share are in `plugins/_common.json`.
+6. Only then verify every name: `python
+   <Construct3-RAG>/skills/construct3-agent-plugin/scripts/lookup_ace.py
+   OBJECT WORDS` prints the matching conditions, actions and expressions of
+   a plugin or behavior, with their parameters and the JSON to write, and
+   the ACEs that all world objects share with them. If it finds nothing, say
+   so and mark the closest match unverified; never write a name it did not
+   print.
 
 ## Worked case: pieces on a slot grid
 

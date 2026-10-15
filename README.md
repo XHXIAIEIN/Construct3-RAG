@@ -162,11 +162,12 @@ The same `id` in another locale has that language's `list-name`, `display-text` 
 
 ## Event sheet prompts
 
-To build an assistant that writes event sheets, load these three files together as its system prompt:
+To build an assistant that writes event sheets, load these two files together as its system prompt:
 
 - [`prompts/event-sheet-thinking.md`](prompts/event-sheet-thinking.md): how to structure events in Construct terms, such as picking, families, containers and `Else`.
-- [`prompts/event-sheet-assistant.md`](prompts/event-sheet-assistant.md): the output format, and a check of every name against the data.
 - [`prompts/event-sheet-pitfalls.md`](prompts/event-sheet-pitfalls.md): runtime behavior that intuition gets wrong, one line each. `prompts/pitfalls/` holds the cases and sources behind the lines, one file per topic. When the events touch a topic, read the file of that topic.
+
+The assistant checks every name it writes with `skills/construct3-agent-plugin/scripts/lookup_ace.py`, which prints each condition, action and expression with its parameters.
 
 For events written into a project, [`prompts/event-sheet-style.md`](prompts/event-sheet-style.md) describes how the official examples write a sheet: groups and their variables, comments, names and UI text. `prompts/references/` holds material that only some tasks need. The files above point to it when a task needs it.
 

@@ -121,7 +121,7 @@ const GUARD_RULES = `Guarded text needs more than a polish to change: an eval it
 - Any sentence, path or heading a test asserts: grep tests/ for the file's name and its distinctive sentences.
 - A heading, a section number or a file name that another file cites, above all text that ships into game projects (skills/<skill>/assets/game-project-block.md, SKILL.md, references) or that scripts print.
 - In prompts/pitfalls/: the number and order of top-level entries and each entry's bracketed source, because the index holds one conclusion line per entry in the same order.
-- In prompts/event-sheet-style.md, prompts/event-sheet-assistant.md and prompts/game-project-AGENTS.md: what a record or an eval pins (the habits mapped to the checks, the output-format example, the account of the block's step 1).
+- In prompts/event-sheet-style.md and prompts/game-project-AGENTS.md: what a record or an eval pins (the habits mapped to the checks, the account of the block's step 1).
 - In decision records: the Date and Schema lines; measured eval results that settle a decision (pass rates, run counts), never rounded or dropped; decisions the user took, reworded at most, never reversed or softened; quoted editor and script messages; what a record names as removed, renamed or replaced, and its account of the state before the change (remove-*.md and any other record), which name files that are gone on purpose; licence attributions.
 - In Markdown code examples: the calls, which must name helpers that exist; a broken one gets a proposal, not a silent change of the example.
 - In code: names that a test patches or imports, names that JSON files such as src/locale/catalog.json cite, wrappers an AGENTS.md orders kept, and every string a test asserts.
