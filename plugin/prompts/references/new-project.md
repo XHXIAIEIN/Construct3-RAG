@@ -1,29 +1,32 @@
 # A new project: sheets, layers, objects and look
 
-Read this to generate a project or add a layout, layer, event sheet, group or
-object type to one. It shows how the official examples lay out a project: its
-sheets and groups, then its viewport, colours, grid, HUD, folders, layers and
-objects. Design the events first with
+Read this before you generate a project, add a layout, layer, event sheet,
+group or object type to one, or decide how the game looks. It shows how the
+official examples split a project into sheets, groups, folders and layers
+and build its objects. It also gives a generated game's viewport, look,
+grid, HUD and motion, and the generator template's helpers that hold them.
+Design the events first with
 [event-sheet-thinking.md](../event-sheet-thinking.md).
 
 ## Sheets and groups
 
-The official examples always split events the same way (groups in 237 of 432,
+The official examples split events in one way (groups in 237 of 432,
 several sheets in 48, includes in 14). Before writing into a project, read
 [event-sheet-style.md](../event-sheet-style.md) for what goes inside a group
 and how to name and comment it.
 
-- One layout has one sheet, with groups by subsystem named as in the
-  examples: *Setup* (`On start of layout`), *Player*, *Controls*, *Camera*,
-  *Tutorial*, *Game over*, *Restart* (the restart key and *Restart layout*).
+- A game of one layout has one sheet, with groups by subsystem named as in
+  the examples: *Setup* (`On start of layout`), *Player*, *Controls*,
+  *Camera*, *Tutorial*, *Game over*, *Restart* (the restart key and
+  *Restart layout*).
 - With a second layout, each screen gets its own sheet (*Menu*, *Game*,
   *Credits*); levels share one (samuroof: Level1 to Level5 use *Game*). A
   subsystem several screens need, or one that outgrows the sheet, moves to
   its own sheet (*Player*, *Enemies*, *HUD*, *Camera*, *Effects*, *Sound*),
   which the screen's sheet includes (kiwi-story: eMain includes nine).
-- Globals are project-wide wherever declared. Declare them on one sheet
-  (*Globals*) so they can be found, as kiwi-story, samuroof and kitty-katcher
-  do.
+- Declare the global variables on one sheet, *Globals*, so that they can be
+  found, as kiwi-story, samuroof and kitty-katcher do. A global is
+  project-wide on whichever sheet declares it.
 - If a phase begins later, its group starts inactive: a tutorial, a boss
   enabled on entry, debug tools (19 examples). Deactivating a group stops its
   events and nothing else, so it is not a pause.
@@ -176,37 +179,39 @@ Construct-Example-Projects, 2026-09-18]
 
 ## Objects
 
-- Collision is apart from graphics. `PlayerCollision` is an invisible
-  one-colour Sprite with Platform or 8 Direction, and `PlayerGraphics` holds
-  the animations and no behavior. The two are a container; *PlayerCollision:
-  On created* sets the graphics' position and calls *Add child* (X, Y,
-  destroy with parent). From then on the graphics follow the collision
-  body, so no event copies the body's position to the graphics. Enemies
-  too: `EnemyCollision` with `EnemyAnimations`.
-  Ground is a Tilemap with Solid (`GroundCollision`) under the art
-  (`Background`, a Tiled Background). A shadow is a child Sprite
-  (`PlayerShadow`). Use a hierarchy, not Pin.
-- Movement behaviors run with *Default controls* off; the input events call
+- Collision and graphics are separate objects. `PlayerCollision` is an
+  invisible one-colour Sprite with Platform or 8 Direction, and
+  `PlayerGraphics` holds the animations and no behavior. The two are a
+  container, and *PlayerCollision: On created* sets the graphics' position
+  and calls *Add child* (X, Y, destroy with parent). The graphics then
+  follow the collision body, so no event copies the body's position to
+  them. Enemies are built the same way: `EnemyCollision` with
+  `EnemyAnimations`. A shadow is a child Sprite (`PlayerShadow`). Use a
+  hierarchy, not Pin.
+- Ground is a Tilemap with Solid (`GroundCollision`) under the art
+  (`Background`, a Tiled Background).
+- Movement behaviors run with *Default controls* off. The input events call
   *Simulate control* under Keyboard *Key is down*, which is true every tick
   the key is held. Under *On key pressed* the player moves for one tick
   ([pitfalls: Input](../pitfalls/input.md)).
 - What has no picture is an invisible 16×16 one-colour Sprite, stretched over
   its area if it has one. `GameManager` holds the Timers and value Tweens the
-  sheet reads. `Camera` has Scroll To (or Scroll To on `PlayerCollision`).
-  `Trigger`, `TeleportTrigger`, `FinishLine`, `SpawnPoint`, `InvisibleWall`
-  with Solid are tested with *On collision* or *Is overlapping* and told
-  apart by an instance variable.
+  sheet reads. `Camera` carries Scroll To, or `PlayerCollision` carries it
+  instead. `Trigger`, `TeleportTrigger`, `FinishLine`, `SpawnPoint`,
+  `InvisibleWall` with Solid are tested with *On collision* or *Is
+  overlapping* and told apart by an instance variable.
 - `Fader` is a viewport-sized one-colour Tiled Background on the top layer,
   with Tween on opacity. *On finished* runs *Go to layout* or *Restart
   layout*.
 - A light is a one-colour Sprite with *Additive* blend, soft-edged by a Glow
   or Blur effect. Darkness is a `Darkness` sprite or layer with *Destination
   out* holes, on a layer with *Force own texture*.
-- Two games of three use Sprite Font for text, the third the Text plugin. No
-  project uses both.
-- Behaviors make the feel: Tween on almost everything, a fade included (Tween
-  on Opacity), Timer, Sine, Flash, Rotate, Bullet, Particles. The effects
-  used are HSL adjust, Glow, Blur, Warp object.
+- Two games of three use Sprite font for text, the third the Text plugin,
+  and no project uses both. The generator template's labels are Text
+  objects in Inter.
+- Behaviors and Particles objects make the feel: Tween on almost
+  everything, fades included (Tween on opacity), Timer, Sine, Flash, Rotate
+  and Bullet. The effects used are Adjust HSL, Glow, Blur and Warp object.
 - Families serve Z order (`ZOrderables`) and enemies. Containers hold the
   collision and graphics pair, and an enemy with its parts. The player's
   instance variables are `hp`, `maxHp`, `dead`.
