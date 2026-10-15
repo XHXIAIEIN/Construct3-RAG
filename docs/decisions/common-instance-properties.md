@@ -1,4 +1,4 @@
-# The Shared Instance Properties Carry Where They Are Written
+# The Shared Instance Properties Say Where a Project File Writes Them
 
 Date: 2026-09-22
 Schema: Construct 3 r495.2
@@ -92,7 +92,7 @@ have blocks of their own; the origin is in the file but has no bar row and
 so no localized text, and is documented in `docs/guide/data-format.md`
 instead of being given an invented name.
 
-`check_project.py` does not read these properties, because a check becomes an
-error only after the two steps in
+`check_project.py` does not check an instance against these entries, because a
+check becomes an error only after the two steps in
 `skills/construct3-agent-plugin/references/checker-rules.md`, and no editor
 message is recorded for an instance's colour or blend mode written wrong.

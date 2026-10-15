@@ -45,10 +45,12 @@ the ACE counts, effect `category`, and `examples`. `supported_languages` is
 removed. Each locale directory gets `_index.json` with `version`,
 `language`, and `{name, file}` per addon, keyed by the same ids as the root.
 
-`schema_layout.schema_is_complete` also requires every locale index to
-exist and to list exactly the manifest's ids with non-empty names, so a
-snapshot missing one side fails selection instead of loading half named.
-`schema_index.py` builds its effect name map from the locale indexes.
+`schema_is_complete` in `src/lookup/schema_layout.py` also requires every
+locale index to exist and to list exactly the manifest's ids with non-empty
+names. A refresh whose export lacks one side therefore stops and leaves
+`data/` as committed, and the service's health check reports such a
+directory as missing its schema data. `src/lookup/schema_index.py` builds its
+effect name map from the locale indexes.
 
 One visible data change: the zh-CN name of `_common` used to be `公共`, a
 constant the exporter substituted because the zh-CN language pack has no name

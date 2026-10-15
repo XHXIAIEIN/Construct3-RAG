@@ -16,13 +16,13 @@ of `Sprite` but not of `compare-instance-variable`, `pick-children` or
 
 ## Evidence
 
-None of the CDN payloads the fetcher already reads contains the shared ACEs:
-`plugins/allAces.json`, `behaviors/allAces.json`, `offline.json` and
-`media/autocomplete-data.json` were searched for the ids. `offline.json` lists
+The shared ACEs are not in `plugins/allAces.json`, `behaviors/allAces.json`,
+`offline.json` or `media/autocomplete-data.json`, the payloads of the fetcher
+that were searched for their ids. `offline.json` lists
 `preview/events/commonACEs.js`, but that is the runtime implementation and
-carries no parameter types. The definitions are registered in the editor
-bundle `main.js`, in the function that follows the string
-`"plugins._common"`, as object literals in the `allAces` shape:
+carries no parameter types. The editor bundle `main.js` registers the
+definitions in the function that follows the string `"plugins._common"`, as
+object literals in the `allAces` shape:
 
 ```js
 t.Qcs({id:"compare-instance-variable",c2id:-7,scriptName:"CompareInstanceVar",
@@ -63,7 +63,7 @@ and `returnType`. Parameters keep the editor's order, which is what the
 A language pack that names a shared ACE or parameter the file does not define
 stops the export with the missing ids instead of writing untyped parameters.
 `tests/test_common_aces.py` makes the same check against the committed packs,
-so the gap is caught before a sync PR as well.
+so the gap is caught before the update pull request as well.
 
 Two consequences outside `_common.json`:
 
@@ -99,12 +99,12 @@ found first.
 ## Re-evaluate when
 
 - `scripts/init.py` stops with the coverage error after a release: run the
-  extraction script, review the diff, commit it with the data sync.
+  extraction script, review the diff, commit it with the refreshed data.
 - `window.SDK.IPluginInfo` is renamed, or a plugin's constructor stops
   building its info the way the script expects: it fails on the anchor or
   on the plugin id.
 - The anchor or the literal shape disappears from `main.js`. The script then
   fails on the anchor count or on JSON conversion; option 1 is not a fallback,
   the block has to be located again.
-- Scirra publishes the shared ACEs on a CDN endpoint. Then the file and the
-  script should go and the exporter read the endpoint like `allAces.json`.
+- Scirra publishes the shared ACEs on a CDN endpoint: delete the file and the
+  script, and have the exporter read the endpoint like `allAces.json`.

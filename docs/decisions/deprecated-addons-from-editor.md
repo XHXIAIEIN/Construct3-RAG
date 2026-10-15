@@ -73,8 +73,8 @@ for that effect.
 ## Decision
 
 Option 2. `src/ingest/deprecated_addons.py` finds the setter behind
-`SetIsDeprecated` in each SDK class of `main.js` and reads it from every
-constructor in the bundle; `C3Fetcher.fetch_addon_deprecation()` fetches the
+`SetIsDeprecated` in each SDK class of `main.js` and reads its call in every
+constructor of the bundle; `C3Fetcher.fetch_addon_deprecation()` fetches the
 three files from the release directory, through the same cache as
 `allAces.json`.
 `export_schemas()` leaves out an addon the editor marks deprecated and an
