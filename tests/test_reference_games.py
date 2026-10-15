@@ -1,3 +1,4 @@
+"""scripts/reference_games: where the game list lives, and the Tween property order the decoder reads from an export."""
 from pathlib import Path
 
 import pytest

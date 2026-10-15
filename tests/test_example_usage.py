@@ -3,22 +3,15 @@ import json
 from pathlib import Path
 
 from scripts import example_usage
+from tests.skill_helpers import folder_project
 
 
 def example(clone: Path, name: str, events: list) -> None:
     """An example project with a Sprite object Player that has the Platform behavior, and one sheet, Game."""
-    root = clone / "example-projects" / name
-    (root / "objectTypes").mkdir(parents=True)
-    (root / "eventSheets").mkdir()
-    (root / "project.c3proj").write_text(json.dumps({
-        "objectTypes": {"items": ["Player"], "subfolders": []},
-        "families": {"items": [], "subfolders": []},
-        "eventSheets": {"items": ["Game"], "subfolders": []}}), encoding="utf-8")
-    (root / "objectTypes" / "Player.json").write_text(json.dumps({
-        "name": "Player", "plugin-id": "Sprite",
-        "behaviorTypes": [{"behaviorId": "Platform", "name": "Platform"}],
-        "instanceVariables": [{"name": "hp", "type": "number"}]}), encoding="utf-8")
-    (root / "eventSheets" / "Game.json").write_text(json.dumps({"name": "Game", "events": events}), encoding="utf-8")
+    player = {"plugin-id": "Sprite", "behaviorTypes": [{"behaviorId": "Platform", "name": "Platform"}],
+              "instanceVariables": [{"name": "hp", "type": "number"}]}
+    folder_project(clone / "example-projects" / name, {"Game": events}, {"Player": player}, {},
+                   families={"items": [], "subfolders": []})
 
 
 EVERY_TICK = {"id": "every-tick", "objectClass": "System"}
@@ -69,11 +62,15 @@ def test_the_index_replaces_the_folder_and_writes_the_same_bytes_twice(tmp_path)
     folder, out = clone(tmp_path), tmp_path / "data" / "c3-example-usage"
     (out / "plugins").mkdir(parents=True)
     (out / "plugins" / "gone.json").write_text("{}", encoding="utf-8")
+
+    def written() -> dict[str, bytes]:
+        return {p.relative_to(out).as_posix(): p.read_bytes() for p in out.rglob("*.json")}
+
     example_usage.refresh(folder, out)
-    first = {p.relative_to(out).as_posix(): p.read_bytes() for p in sorted(out.rglob("*.json"))}
+    first = written()
     assert "plugins/gone.json" not in first and "behaviors/platform.json" in first
     example_usage.refresh(folder, out)
-    assert {p.relative_to(out).as_posix(): p.read_bytes() for p in sorted(out.rglob("*.json"))} == first
+    assert written() == first
     assert json.loads(first["plugins/system.json"])["conditions"]["every-tick"]["examples"] == 2
 
 
