@@ -66,13 +66,15 @@ layout*. The reset goes before the text that shows the value, or the text
 shows the last round's values at the start of the next.
 
 The countdown itself shows the limit of a guide. `event-sheet-thinking.md`
-names the Timer behavior for a countdown, and the runs do not open it: they
-count a global down under *Every 1 seconds*. So the route to the Timer is
-in what they read. `SKILL.md` has a section, "Built-ins before variables",
-drawn from the Native first table and rule 2 of the thinking guide, and
-`check_project.py --style` has a `countdown` kind, below. Runs still count
-by hand: the warning shows under the plan, and they go on to
-`check_project.py` without `--style`, which ends in `ok:`. The
+names the Timer behavior for a countdown, and runs that did not open it
+counted a global down under *Every 1 seconds*. `check_project.py --style`
+has a `countdown` kind for that form, below: the warning shows under the
+plan, and runs go on to `check_project.py` without `--style`, which ends in
+`ok:`. A section of `SKILL.md`, "Built-ins before variables", drawn from the
+Native first table and rule 2 of the guide, did not move them either. In
+iterations 64 and 65 (2026-10-15, Haiku) all 12 `add-countdown` runs
+started a Timer, 6 with the section and 6 without it, so `SKILL.md` names
+the Native first table in one clause instead. The
 `add-countdown` case grades either form, a Timer started for 30 seconds
 under *On start of layout* with *On timer* restarting the layout, or a
 variable set back on start. The plan example in `SKILL.md` and in

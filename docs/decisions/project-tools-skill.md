@@ -176,6 +176,15 @@ Each of these was a failure seen in an eval run or a game project.
   `fix-load-errors`, three runs an arm: 47 of 48 assertions against 48 of
   48, the one miss a `replace` that dropped the sids of the sub-events it
   rewrote, as in runs before the change).
+- On the same rule, iterations 64 and 65 (2026-10-15, Haiku,
+  `add-countdown`, `double-jump` and `show-hp-as-a-bar`, three runs a cell)
+  took out the built-ins list, the TypeScript paragraph, the gotchas that
+  had come back, and what three Scripts rows and step 5 repeated from
+  `--help`: about 930 tokens. Against the text that keeps them, the cut lost
+  no more calls (2.0 against 2.2 a run, one-sided p 0.81) and as many runs
+  passed every assertion (7 of 9 each). How far the check chain got swung
+  between batches on the same text: `review_look` in 6 of 9 runs in
+  iteration 64, 3 of 9 in iteration 65.
 
 ## Open
 
