@@ -1,0 +1,63 @@
+This folder holds the decision records: the evidence, the options and the trade-offs behind a product choice.
+A new record is added below as its own title, with the date of its `Date:` line, newest first.
+
+- [The Plugin Has Its Own Repository](plugin-repository.md) — 2026-10-15
+- [The Hand-Entry Format Prompt Is Removed](remove-event-sheet-assistant.md) — 2026-10-15
+- [A Game Project's Long Documents Are Read in Parts](long-docs-in-parts.md) — 2026-10-14
+- [A long sheet prints its groups, and --find names the events that use a name](long-sheet-contents.md) — 2026-10-14
+- [Paper and Ink: The Generator Template's Default Look](paper-and-ink-look.md) — 2026-10-14
+- [A sub-agent type that carries only the tools the scripts need](project-worker-agent.md) — 2026-10-14
+- [A picture of an event sheet comes from the editor, fitted and cropped](sheet-screenshot.md) — 2026-10-14
+- [Design Tokens for the Tool Pages](design-tokens.md) — 2026-10-13
+- [Lightweight review and optional complete evidence](design-review-packets.md) — 2026-10-10
+- [Numbers and Rules from Other Agent Frameworks, Measured Here First](borrowed-numbers.md) — 2026-10-08
+- [Count-up and Press: A Score That Counts and a Button That Presses](count-up-and-press.md) — 2026-10-08
+- [A refusal the checker passed becomes a report the user sends](editor-refusal-report.md) — 2026-10-08
+- [An Index Says Which Official Examples Use Each ACE](example-usage-index.md) — 2026-10-08
+- [A Generated Game Fills the Screen, and Its Layers Read in Order](fill-the-screen.md) — 2026-10-08
+- [The Fix Loop Stops After Two Changes Leave a Finding Standing](fix-loop-cap.md) — 2026-10-08
+- [Input Controls: A Slider, a Toggle and a Text Input in the Template](input-controls.md) — 2026-10-08
+- [The Construct 3 Block Is Versioned and Refreshed in Place](instruction-block-refresh.md) — 2026-10-08
+- [The Generator Template's Viewport: 1920×1080 Landscape](landscape-viewport.md) — 2026-10-08
+- [Look Questions Measured Against Agent Labels](look-judge-calibration.md) — 2026-10-08
+- [An Operation of a Plan May Carry the Line Its Event Prints](plan-names-the-event-line.md) — 2026-10-08
+- [Skill Evals Are Graded by Playing the Result](runtime-graded-evals.md) — 2026-10-08
+- [A key a web export would ship is a warning, and stops the export](secret-scan.md) — 2026-10-08
+- [The Data Update Fails Instead of Committing Less](update-fails-visibly.md) — 2026-10-07
+- [Art from the Image Tool](art-from-the-image-tool.md) — 2026-10-06
+- [Layout by Name: Components, Bands and Computed Checks](layout-by-name.md) — 2026-10-06
+- [The Plugin Is a Folder Built From the Repository](plugin-folder.md) — 2026-10-05
+- [The Plugin's Version and Why a Project Needs No Copy](plugin-tracks-commits.md) — 2026-10-05
+- [The products of a game project go in `.build/`](build-folder.md) — 2026-10-04
+- [A Clone Behind Its Upstream Fails the Check](clone-update-check.md) — 2026-10-04
+- [A New Game Is a Checked Design, Played as a Prototype Before It Is Built](game-design-prototype.md) — 2026-10-04
+- [The Game's Look: What Design Skills Do, and What the Generator Takes](game-look-from-design-skills.md) — 2026-10-04
+- [The Generator Template Keeps Its Helpers, Refreshed in Place](generator-helpers-inline.md) — 2026-10-04
+- [A Table of Records Is an Array File, Copied into a Dictionary at Start](record-tables-as-arrays.md) — 2026-10-04
+- [A project's TypeScript definitions come from the editor](typescript-definitions-from-the-editor.md) — 2026-10-04
+- [The Plugin Is Listed in Claude's Directory](directory-listing.md) — 2026-10-03
+- [Scirra's Project Format Guide Is a Source of Rules](project-format-guide.md) — 2026-10-03
+- [New Projects Allocate Uids at Random](random-uid-allocation.md) — 2026-10-03
+- [Every Text File Is LF, in the Repository and in Every Checkout](lf-line-endings.md) — 2026-10-02
+- [A Preview Is Played from a Plan of Steps](preview-player.md) — 2026-10-02
+- [The Update Pull Request Reports the Release and Waits When It Breaks a Quoted Id](release-schema-diff.md) — 2026-10-02
+- [The Skill Is `construct3-agent-plugin`, the Plugin `construct3`](skill-and-plugin-names.md) — 2026-10-02
+- [Design and Style Prompts Keep What Every Task Reads](prompt-references-by-task.md) — 2026-09-30
+- [The Pitfalls Are an Index with Topic Files](pitfalls-index-and-topics.md) — 2026-09-29
+- [A Release Is Fetched From Its Own CDN Directory](cdn-release-directory.md) — 2026-09-28
+- [Deprecated Addons and ACEs From the Editor](deprecated-addons-from-editor.md) — 2026-09-28
+- [A Topic Search Keeps Every ACE Type a Noun Could Mean](topic-search-ace-types.md) — 2026-09-28
+- [Published Construct Games as Visual and Game-Feel Evidence](published-game-visual-language.md) — 2026-09-27
+- [The Gold Set Runs in pytest, and Effects Are Looked Up](query-gold-in-pytest.md) — 2026-09-27
+- [Greybox Blockout: The Stand-in Look and the Level's Pacing](greybox-blockout.md) — 2026-09-26
+- [Compatibility Facades and the Request Trace Are Removed](remove-compatibility-facades.md) — 2026-09-26
+- [The Construct Release Comes From the Data, Not From a Setting](version-from-data-manifest.md) — 2026-09-26
+- [Setting a Machine Up from the URL Alone](bootstrap-from-the-url.md) — 2026-09-22
+- [The Shared Instance Properties Say Where a Project File Writes Them](common-instance-properties.md) — 2026-09-22
+- [Events Go into a Sheet through a Checked Plan](edit-sheet-script.md) — 2026-09-22
+- [The Service Is Direct Lookup Only](remove-qdrant-full-mode.md) — 2026-09-22
+- [The Checker Applies the Editor's Own Load Rules](checker-editor-load-rules.md) — 2026-09-21
+- [The Project Tools Ship as an Agent Skill](project-tools-skill.md) — 2026-09-21
+- [Shared ACE Definitions From the Editor Bundle](common-aces-from-editor-bundle.md) — 2026-09-18
+- [Event Sheet Design Guidance](event-sheet-design-guidance.md) — 2026-09-07
+- [Schema Index Split by Locale](schema-index-per-locale-split.md) — 2026-09-07
