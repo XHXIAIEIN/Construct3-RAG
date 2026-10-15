@@ -22,7 +22,7 @@ def write(path: Path, text: str) -> None:
 
 def test_a_folder_project_is_packed_with_project_c3proj_at_the_root(project, tmp_path):
     """The editor refuses a zip that holds the folder ("Check it is a valid Construct 3 single-file
-    (.c3p) project", r504, 2026-10-02); what it does not save stays out and is named."""
+    (.c3p) project", r504, 2026-10-02). What the editor does not save stays out and is named."""
     code, out = tool(project, "pack_project")
     c3p = default_pack(project)
     assert code == 0 and f"into {c3p}, project.c3proj at the root" in out, out
@@ -41,8 +41,8 @@ def test_a_folder_project_is_packed_with_project_c3proj_at_the_root(project, tmp
 
 
 def test_build_and_tmp_stay_out_of_the_pack(project):
-    """A pack made before, an export and the scratch are neither packed nor named as left out, and
-    an --out in the project outside .build/ is written with a note that Git commits it."""
+    """An earlier pack, an export and the scratch files are neither packed nor named as left out.
+    An --out in the project outside .build/ is written, with a note that Git commits it."""
     for rel in (".build/old.c3p", ".build/web/index.html", ".tmp/shots/a.png"):
         write(project / rel, "x")
     code, out = tool(project, "pack_project")
@@ -58,8 +58,8 @@ def test_build_and_tmp_stay_out_of_the_pack(project):
 
 def test_every_folder_the_project_format_guide_names_is_packed(project):
     """Scirra's guide "Construct's project format" names videos, 3dmodels, palettes and
-    tilemapBrushes beside the folders the official examples hold, and the editor writes
-    llm-context.md into every project."""
+    tilemapBrushes beside the folders of the official examples. The editor writes llm-context.md
+    into every project."""
     kept = ["videos/clip.webm", "3dmodels/Model.json", "palettes/Palette 1.json", "tilemapBrushes/Brush.json",
             "llm-context.md"]
     for rel in kept:
@@ -82,17 +82,20 @@ def test_an_archive_with_the_folder_inside_is_repacked_and_unpacked(project, tmp
     assert not any(n.startswith("game/") for n in packed)
 
     folder = tmp_path / "unpacked"
-    code, out = tool(project, "pack_project", str(fixed), "--out", str(folder))
+    unpack = ("pack_project", str(fixed), "--out", str(folder))
+    code, out = tool(project, *unpack)
     assert code == 0 and (folder / "project.c3proj").is_file() and (folder / SHEET).is_file(), out
-    code, out = tool(project, "pack_project", str(fixed), "--out", str(folder))
+    code, out = tool(project, *unpack)
     assert code == 2 and "is not an empty folder" in out, out
 
-    (tmp_path / "other.zip").write_bytes(b"not a zip")
-    code, out = tool(project, "pack_project", str(tmp_path / "other.zip"))
+    not_zip = tmp_path / "other.zip"
+    not_zip.write_bytes(b"not a zip")
+    code, out = tool(project, "pack_project", str(not_zip))
     assert code == 2 and "is not a zip" in out, out
-    with zipfile.ZipFile(tmp_path / "empty.zip", "w") as z:
+    no_project = tmp_path / "empty.zip"
+    with zipfile.ZipFile(no_project, "w") as z:
         z.writestr("readme.txt", "")
-    code, out = tool(project, "pack_project", str(tmp_path / "empty.zip"))
+    code, out = tool(project, "pack_project", str(no_project))
     assert code == 2 and "holds no project.c3proj" in out and "Traceback" not in out, out
 
 
