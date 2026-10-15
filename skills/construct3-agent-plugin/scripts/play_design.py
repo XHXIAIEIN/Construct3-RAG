@@ -43,6 +43,7 @@ from __future__ import annotations
 import json
 import sys
 import time
+from collections.abc import Iterable
 from pathlib import Path
 
 import c3project as c3
@@ -129,7 +130,14 @@ class Binding(Exception):
 
 
 def js_num(v: float) -> str:
+    """A number as a JavaScript literal; NaN and the infinities as 0."""
     return repr(float(v)) if v == v and abs(v) != float("inf") else "0"
+
+
+def xy_js(index: list[gm.Node], design: gm.Design) -> tuple[str, str]:
+    """An Array cell's column and row as JavaScript; with one index the row is 0."""
+    x, y = (compile_expr(a, design) for a in (index + [gm.Node("num", 0.0)])[:2])
+    return x, y
 
 
 def compile_expr(node: gm.Node, design: gm.Design) -> str:
@@ -142,7 +150,7 @@ def compile_expr(node: gm.Node, design: gm.Design) -> str:
     if k == "name":
         return read(node.value, design)
     if k == "at":
-        x, y = (compile_expr(a, design) for a in (node.args + [gm.Node("num", 0.0)])[:2])
+        x, y = xy_js(node.args, design)
         return f"H.at({json.dumps(node.value)}, {x}, {y})"
     if k == "prop":
         return f"H.arr({json.dumps(node.value[0])}).{'width' if node.value[1] == 'Width' else 'height'}"
@@ -195,11 +203,13 @@ def compile_expr(node: gm.Node, design: gm.Design) -> str:
 
 
 def split(where: str) -> tuple[str, str]:
+    """The object and the property of "Object.prop"."""
     obj, _, prop = where.partition(".")
     return obj, prop
 
 
 def read(name: str, design: gm.Design) -> str:
+    """JavaScript that reads the state row where the design stores it."""
     st = design.state[name]
     if st.stored_in == "global":
         return f"H.v(runtime.globalVars[{json.dumps(name)}])"
@@ -211,13 +221,14 @@ def read(name: str, design: gm.Design) -> str:
 
 
 def write(eff: tuple, design: gm.Design) -> str:
+    """JavaScript that runs a test's fixture, a set effect, in the running game."""
     (name, index), op, value = eff[1], eff[2], eff[3]
     st = design.state[name]
     if st.shown:
         raise Binding(f"{name} counts instances; a fixture cannot write it")
     v = compile_expr(value, design)
     if index is not None:
-        x, y = (compile_expr(a, design) for a in (index + [gm.Node("num", 0.0)])[:2])
+        x, y = xy_js(index, design)
         old = f"H.at({json.dumps(name)}, {x}, {y})"
         new = v if op == "=" else f"(Number({old}) {op[0]} Number({v}))"
         return f"H.setAt({json.dumps(name)}, {x}, {y}, {new});"
@@ -247,18 +258,22 @@ class Model:
                 for ev in c3.load(path).get("events", []):
                     if ev.get("eventType") == "variable":
                         self.globals[ev["name"]] = ev
-        self.hud: str | None = None
+        self.hud: str | None = None                 # the first layer that does not scroll
         self.placed: dict[str, list[dict]] = {}     # the instances of the layout the game starts on, by type
         self.seen: dict[str, list[dict]] = {}       # those of them the first screen shows, on a shown layer
-        first = self.c3proj.get("firstLayout") or next((n for n, _ in c3.folder_items(self.c3proj.get("layouts", {}))), None)
-        for name, sub in c3.folder_items(self.c3proj.get("layouts", {})):
-            if name == first and (project / "layouts" / sub / f"{name}.json").exists():
-                for layer in c3.load(project / "layouts" / sub / f"{name}.json").get("layers", []):
+        layouts = c3.folder_items(self.c3proj.get("layouts", {}))
+        first = self.c3proj.get("firstLayout") or next((n for n, _ in layouts), None)
+        for name, sub in layouts:
+            path = project / "layouts" / sub / f"{name}.json"
+            if name == first and path.exists():
+                for layer in c3.load(path).get("layers", []):
                     if layer.get("parallaxX") == 0 and layer.get("parallaxY") == 0 and not self.hud:
                         self.hud = layer["name"]
                     for inst in layer.get("instances", []):
                         self.placed.setdefault(inst.get("type"), []).append(inst)
-                        if layer.get("isInitiallyVisible", True) is not False and                                 (inst.get("properties") or {}).get("initially-visible", True) is not False and                                 ((inst.get("world") or {}).get("color") or [1, 1, 1, 1])[3] > 0:
+                        if (layer.get("isInitiallyVisible", True) is not False
+                                and (inst.get("properties") or {}).get("initially-visible", True) is not False
+                                and ((inst.get("world") or {}).get("color") or [1, 1, 1, 1])[3] > 0):
                             self.seen.setdefault(inst.get("type"), []).append(inst)
         self.size = (int(self.c3proj.get("viewportWidth", 854)), int(self.c3proj.get("viewportHeight", 480)))
 
@@ -340,9 +355,10 @@ def starts(design: gm.Design, model: Model) -> tuple[list[str], dict[str, object
     for n, st in design.state.items():
         if st.kind == "array":
             continue
-        if st.stored_in != "global" and not st.shown and not model.placed.get(split(st.stored_in)[0]):
+        obj = split(st.stored_in)[0]
+        if st.stored_in != "global" and not st.shown and not model.placed.get(obj):
             out.append(f"{st.path}: {n} is kept in {st.stored_in}, and the layout the game starts on has no "
-                       f"{split(st.stored_in)[0]} instance; place one there")
+                       f"{obj} instance; place one there")
             continue
         got = first_value(st, model)
         if got is not None and not same(got, st.start):
@@ -395,16 +411,26 @@ def launch_values(design: gm.Design) -> dict:
     return {"rows": rows, "ends": ends}
 
 
+def caught(js: str) -> str:
+    """The JavaScript expression's value, or the message of the error it throws."""
+    return f"(() => {{ try {{ return {js}; }} catch (e) {{ return e.message; }} }})()"
+
+
+def values_js(names: Iterable[str], design: gm.Design) -> str:
+    """The entries of an object literal that holds each state row's value in the running game."""
+    return ", ".join(f"{json.dumps(n)}: {caught(read(n, design))}" for n in names)
+
+
 def launch_js(design: gm.Design, still: dict) -> str:
     """JavaScript that reads those rows and the win and the lose in the running game."""
-    rows = ", ".join(f"{json.dumps(n)}: (() => {{ try {{ return {read(n, design)}; }} catch (e) {{ return e.message; }} }})()"
-                     for n in still["rows"])
-    ends = ", ".join(f"{k}: (() => {{ try {{ return H.t({compile_expr(design.win if k == 'win' else design.lose, design)})"
-                     f" ? 1 : 0; }} catch (e) {{ return e.message; }} }})()" for k in still["ends"])
+    rows = values_js(still["rows"], design)
+    ends = ", ".join(f"{k}: " + caught(f"H.t({compile_expr(design.win if k == 'win' else design.lose, design)}) ? 1 : 0")
+                     for k in still["ends"])
     return f"{HELPERS}\nreturn {{rows: {{{rows}}}, ends: {{{ends}}}}};"
 
 
 def first_screen_plan(design: gm.Design, model: Model) -> dict:
+    """The plan that previews the game without input: the look of its first screen, then what it shows."""
     return {"viewport": list(model.size), "touch": True, "steps": [
         {"wait": 0.6},
         {"js": f"return await {look.LOOK_JS};", "note": "look"},
@@ -430,16 +456,16 @@ def launch_findings(design: gm.Design, got: dict) -> list[str]:
         now = (got.get("rows") or {}).get(n)
         if now is None or not same(now, v):
             st = design.state[n]
-            out.append(f"{st.path}: {n} is {gm.show(now) if not isinstance(now, (dict, list)) else now} on the first "
+            out.append(f"{st.path}: {n} is {gm.show(now)} on the first "
                        f"screen of the game ({st.stored_in}) and {gm.show(v)} in the prototype. Compare the start "
                        f"rules' events and where the project starts it with the design")
     return out
 
 
 def expect_js(node: gm.Node, design: gm.Design) -> str:
+    """JavaScript that tests the expect in the running game and returns the values of the rows it reads."""
     names = sorted(n for n in gm.names_in(node) if n in design.state and design.state[n].kind != "array")
-    seen = ", ".join(f"{json.dumps(n)}: (() => {{ try {{ return {read(n, design)}; }} catch (e) {{ return e.message; }} }})()"
-                     for n in names)
+    seen = values_js(names, design)
     return (f"{HELPERS}\nlet ok;\ntry {{ ok = H.t({compile_expr(node, design)}); }} "
             f"catch (e) {{ ok = e.message; }}\nreturn {{ok, seen: {{{seen}}}}};")
 
@@ -487,11 +513,8 @@ def test_plan(test: dict, design: gm.Design, model: Model, stable: list[dict] = 
 
 
 def writers(design: gm.Design, names: set[str]) -> list[str]:
-    out = []
-    for r in design.all_rules():
-        if any(e[0] == "set" and e[1][0] in names for e in r.do) and r.id not in out:
-            out.append(r.id)
-    return out
+    """The ids of the rules whose effects change one of the names."""
+    return list(dict.fromkeys(r.id for r in design.all_rules() if cd.sets(r, names)))
 
 
 # --- the first screen ---------------------------------------------------------------------
@@ -598,6 +621,7 @@ def screen_findings(design: gm.Design, types, snap: dict) -> tuple[list[dict], l
 
 
 def same(game_value, design_value) -> bool:
+    """Whether the game's value is the design's; a number within 0.5 of it is."""
     if isinstance(design_value, float) and isinstance(game_value, (int, float)) and not isinstance(game_value, bool):
         return abs(game_value - design_value) < 0.5
     return gm.show_plain(game_value) == gm.show_plain(design_value)
@@ -622,6 +646,7 @@ def run_all(project: Path, plans: list[dict], exe: str, profile: Path | None, sh
 
 
 def report(design: gm.Design, plans_meta: list, result: dict, types=()) -> tuple[list[str], int]:
+    """The lines of the first screen's findings and the tests' results, and the exit code."""
     lines: list[str] = []
     if result["status"] != "opened":
         return oe.report(result), 1
@@ -683,9 +708,8 @@ def report(design: gm.Design, plans_meta: list, result: dict, types=()) -> tuple
             if s and s["kind"] in ("expect", "settled"):
                 got = d.get("value") or {}
                 if got.get("ok") is not True:
-                    seen = ", ".join(f"{n} = {gm.show(v) if not isinstance(v, (dict, list)) else v}"
-                                     for n, v in (got.get("seen") or {}).items())
-                    why = f"{got['ok']}" if isinstance(got.get("ok"), str) else "false in the game, true in the prototype"
+                    seen = ", ".join(f"{n} = {gm.show(v)}" for n, v in (got.get("seen") or {}).items())
+                    why = got["ok"] if isinstance(got.get("ok"), str) else "false in the game, true in the prototype"
                     if s["kind"] == "settled" and not isinstance(got.get("ok"), str):
                         why = (f"held at its step and is false {gm.SETTLE:g} s after the test's last step in the game, "
                                f"and still holds then in the prototype. An event changed it later than the design does: "
@@ -693,8 +717,7 @@ def report(design: gm.Design, plans_meta: list, result: dict, types=()) -> tuple
                                f"after On touched object)")
                     rules = writers(design, gm.names_in(s["node"]))
                     if s["kind"] == "settled":
-                        rules += [r.id for r in design.all_rules()
-                                  if r.id not in rules and any(e[0] == "restart" for e in r.do)]
+                        rules += [r.id for r in design.all_rules() if r.id not in rules and cd.restarts(r)]
                     failed = (f"{s['path']} expect {s['text']}: {why}" + (f"; {seen}" if seen else "") +
                               (f". Compare the events of rule{'s' if len(rules) > 1 else ''} {', '.join(rules)} with "
                                f"the design: print_sheet.py prints them" if rules else ""))
@@ -735,9 +758,9 @@ def main() -> int:
     ap.add_argument("--out", type=Path, help="the whole result as JSON (default: .tmp/play-design.json in the project)")
     args = ap.parse_args()
     try:
-        data = json.loads(args.design.read_text(encoding="utf-8-sig"))
-    except (OSError, ValueError) as e:
-        print(f"{args.design}: {e}. Write the design as JSON, as references/designing-a-game.md shows.", file=sys.stderr)
+        data = gm.read_design(args.design)
+    except gm.DesignUnreadable as e:
+        print(e, file=sys.stderr)
         return 2
     design = gm.Design(data)
     if design.problems:

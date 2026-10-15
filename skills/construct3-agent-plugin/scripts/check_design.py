@@ -33,7 +33,6 @@ event, then play the same tests in the editor with play_design.py.
 """
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -82,6 +81,7 @@ def sets(rule: gm.Rule, names: set[str]) -> bool:
 
 
 def restarts(rule: gm.Rule) -> bool:
+    """Whether an effect of the rule restarts the game."""
     return any(e[0] == "restart" for e in rule.do)
 
 
@@ -322,9 +322,14 @@ def idle(design: gm.Design, sim: gm.Sim) -> None:
                                      f"outlasting a timer; drop it")
 
 
+def parent_rules(design: gm.Design) -> dict[str, gm.Rule]:
+    """Each sub-rule's id and the rule it is a sub-rule of."""
+    return {c.id: r for r in design.all_rules() for c in r.children}
+
+
 def top_rule(design: gm.Design, rid: str) -> gm.Rule:
     """The top-level rule whose sub-rules hold the rule, or the rule itself."""
-    parents = {c.id: r for r in design.all_rules() for c in r.children}
+    parents = parent_rules(design)
     rule = design.by_id[rid]
     while rule.id in parents:
         rule = parents[rule.id]
@@ -378,27 +383,26 @@ def run_test(design: gm.Design, t: dict) -> dict:
     stable: list[dict] = []
     cover = {"ran": dict(sim.ran), "won": sim.won, "lost": sim.lost, "restarts": sim.restarts,
              "after_restart": list(sim.after_restart)}       # coverage counts the steps, not the settle
-    if failed or not tail:
-        return {"sim": sim, "cover": cover, "failed": failed, "stable": stable}
-    try:
-        sim.settle()
-    except gm.ModelError as e:
-        failed = (t["path"], f"in the {gm.SETTLE:g} s after the last step the prototype stopped: {e}")
-        return {"sim": sim, "cover": cover, "failed": failed, "stable": stable}
-    for step in tail:
-        if gm.truth(sim.ev(step["node"], {})):
-            stable.append(step)
-            continue
-        late = [(n, *sim.late[n]) for n in sorted(gm.names_in(step["node"])) if n in sim.late]
-        if late and not failed:
-            n, rid, said = late[0]
-            failed = (step["path"], f"expect {step['text']} held at its step and is false {gm.SETTLE:g} s after the "
-                                    f"test's last step; {seen_text(sim, step['node'])}. {n} was changed by {said}: the "
-                                    f"player sees that, and a test that ends sooner does not. If the step should not "
-                                    f"start that restart, give rule {rid} a condition that is false then, such as a "
-                                    f"state that the end sets after a wait, or a \"region\" for a tap on the screen "
-                                    f"that the other tap lies outside. If the change is meant, end the test after it "
-                                    f"with a wait, then expects of the state it leaves")
+    if tail and not failed:
+        try:
+            sim.settle()
+        except gm.ModelError as e:
+            failed = (t["path"], f"in the {gm.SETTLE:g} s after the last step the prototype stopped: {e}")
+        else:
+            for step in tail:
+                if gm.truth(sim.ev(step["node"], {})):
+                    stable.append(step)
+                    continue
+                late = [(n, *sim.late[n]) for n in sorted(gm.names_in(step["node"])) if n in sim.late]
+                if late and not failed:
+                    n, rid, said = late[0]
+                    failed = (step["path"], f"expect {step['text']} held at its step and is false {gm.SETTLE:g} s after the "
+                                            f"test's last step; {seen_text(sim, step['node'])}. {n} was changed by {said}: the "
+                                            f"player sees that, and a test that ends sooner does not. If the step should not "
+                                            f"start that restart, give rule {rid} a condition that is false then, such as a "
+                                            f"state that the end sets after a wait, or a \"region\" for a tap on the screen "
+                                            f"that the other tap lies outside. If the change is meant, end the test after it "
+                                            f"with a wait, then expects of the state it leaves")
     return {"sim": sim, "cover": cover, "failed": failed, "stable": stable}
 
 
@@ -459,8 +463,7 @@ def play(design: gm.Design) -> list[str]:
                                f"conditions hold" + (", then an expect on what it changed" if r.do else ""))
     expected = {n for t in design.tests for st in t["steps"] if st["kind"] == "expect" for n in gm.names_in(st["node"])}
     for n, st in design.state.items():
-        if st.stored_in.endswith(".text") and n not in expected and any(
-                e[0] == "set" and e[1][0] == n for r in design.all_rules() for e in r.do):
+        if st.stored_in.endswith(".text") and n not in expected and any(sets(r, {n}) for r in design.all_rules()):
             design.bad(st.path, f"no test expects {n}, the text the player reads: after the step that changes it, add "
                                 f"an expect on what it must say, such as {{\"expect\": \"find({n}, \\\"...\\\") >= 0\"}}")
     for name, i in design.inputs.items():
@@ -481,10 +484,7 @@ def why_not(design: gm.Design, sim: gm.Sim, node: gm.Node) -> str:
     """For a failed expect: the rules that change what it reads and did not run in the test, each with its
     conditions, and the parents' conditions, as they stand now."""
     names = gm.names_in(node)
-    parents: dict[str, gm.Rule] = {}
-    for r in design.all_rules():
-        for c in r.children:
-            parents[c.id] = r
+    parents = parent_rules(design)
     said = []
     for r in design.all_rules():
         if sim.ran.get(r.id) and sets(r, names):
@@ -553,6 +553,7 @@ def tables(design: gm.Design) -> list[str]:
 
 
 def reference(design: gm.Design, rag: Path | None) -> None:
+    """Refuse a reference example that is no official example; without the clone it is not checked."""
     ref = design.data.get("reference")
     if not rag or not isinstance(ref, dict) or not isinstance(ref.get("example"), str):
         return
@@ -568,9 +569,9 @@ def main() -> int:
     ap.add_argument("design", type=Path, metavar="DESIGN.json")
     args = ap.parse_args()
     try:
-        data = json.loads(args.design.read_text(encoding="utf-8-sig"))
-    except (OSError, ValueError) as e:
-        print(f"{args.design}: {e}. Write the design as JSON, as references/designing-a-game.md shows.", file=sys.stderr)
+        data = gm.read_design(args.design)
+    except gm.DesignUnreadable as e:
+        print(e, file=sys.stderr)
         return 2
     root, rag = c3.find_project(args.project), None
     try:
