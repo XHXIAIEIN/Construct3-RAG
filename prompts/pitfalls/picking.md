@@ -104,7 +104,7 @@ Sources and the rule for adding an entry are in the index,
   target's body was not picked until the pick went through a one-member
   family]
 - *Pick parent* with *Which* set to *Own* looks only one level up. With
-  `Robot → Arm → Hand`, `Hands: Pick parent Robot (own)` picks nothing,
+  `Robot → Arm → Hand`, `Hand: Pick parent Robot (own)` picks nothing,
   because `Hand`'s own parent is `Arm`. Then the event's actions never run,
   and no error shows. If the parent you name is not the direct one, set
   *Which* to *All*. *Pick children* with *All* works the same way down the

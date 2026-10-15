@@ -72,7 +72,7 @@ Sources and the rule for adding an entry are in the index,
   `check_project.py` refuses both. [minimal projects, r495.2 and r504
   editors, 2026-10-05]
 - If a function has no parameters, call it in an expression without
-  parentheses: `Functions.settling`, not `Functions.settling()`. With the
+  parentheses: `Functions.gridFull`, not `Functions.gridFull()`. With the
   empty pair, the editor refuses the whole project with `Syntax error: ')'
   can't go here` and names each condition with the pair. `check_project.py`
   refuses it. [observed in a game project, r504 editor, 2026-10-01; in a
@@ -82,8 +82,8 @@ Sources and the rule for adding an entry are in the index,
   parameters as `Function.Param(n)`. The built-in functions have named,
   typed parameters, and a return value read as the expression
   `Functions.Name(...)`. A call by a string goes through a function map.
-  *Map function to string* once per name, and *Map default function* for a
-  string that no entry holds. Then *Call mapped function* with the string
+  Run *Map function to string* once per name, and *Map default function*
+  for a string that no entry holds. Then *Call mapped function* with the string
   calls the function, forwarding the calling function's parameters from an
   index, and `Functions.CallMapped(map, string, ...)` returns its value. A
   migration gives each function its parameters and maps each name that the

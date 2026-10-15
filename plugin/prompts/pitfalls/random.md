@@ -4,18 +4,18 @@ Sources and the rule for adding an entry are in the index,
 [event-sheet-pitfalls.md](../event-sheet-pitfalls.md).
 
 - Advanced Random has one number sequence. `Random`, `Weighted`,
-  `WeightedByName` and *Create permutation table* all take numbers from it:
-  a weighted draw takes one number, and a permutation table is shuffled
-  from it when it is created. *Create probability table* (also from JSON)
-  and *Add probability entry* take none. *Update seed* with a string starts the
-  sequence again from the start of that seed, so the same string gives the
-  same numbers, weighted draws and permutation every time. So two kinds of
-  draws that share the sequence shift each other: one more card drawn
-  changes every enemy after it. To make each kind reproducible on its own,
-  set the seed before each draw to the run's seed, the use and a counter,
-  `RunSeed & ":card:" & CardDraws`, and save the counter with the run.
-  A permutation table of length n, 2 or more, takes n numbers, and *Shuffle
-  permutation table* takes n again; *Remove probability entry* takes none.
+  `WeightedByName` and *Create permutation table* all take numbers from it.
+  A weighted draw takes one number. A permutation table of length n, 2 or
+  more, is shuffled with n numbers when it is created, and *Shuffle
+  permutation table* takes n again. *Create probability table* (also from
+  JSON), *Add probability entry* and *Remove probability entry* take none.
+  So two kinds of draws that share the sequence shift each other: one more
+  card drawn changes every enemy after it. *Update seed* with a string
+  starts the sequence again from the start of that seed, so the same string
+  gives the same numbers, weighted draws and permutation every time. To make
+  each kind reproducible on its own, set the seed before each draw to the
+  run's seed, the use and a counter, `GameSeed & ":card:" & CardsDrawn`, and
+  save the counter with the run.
   A script that sets the same seeds and makes the same draws in the same
   order gets the numbers the game got, so such a run is reproduced
   offline: `advanced_random.py` of the `construct3-agent-plugin` skill

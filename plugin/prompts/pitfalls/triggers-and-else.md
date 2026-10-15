@@ -67,7 +67,8 @@ Sources and the rule for adding an entry are in the index,
 - Else is decided per block: it runs only if the previous sibling ran for
   no instance. With three picked and one passing, Else does not run for
   the other two. To branch per instance, use a second event with the
-  inverted condition, or the default-then-override pattern.
+  inverted condition, or set a default for every instance first and
+  override it in an event for those that pass.
   [manual: system-reference/system-conditions.md "Else"]
 - Else does not narrow; it starts from the parent's picks. It cannot
   directly follow a trigger block, only a normal sub-event inside one.
