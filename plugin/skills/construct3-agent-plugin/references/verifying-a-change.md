@@ -66,6 +66,16 @@ about the editor or the preview goes to `editor-and-preview.md`.
    events add up as enemies spawn, drove a progress ratio near -20000 and a
    low-pass frequency computed from it to 0, logging a RangeError per call
    that the same steps without the write did not]
+   `runtime.callFunction(name, ...params)` takes every parameter the
+   function declares, in the sheet's order. Fewer throw `not enough
+   function parameters passed for 'X' (1 passed, 4 expected)`, and a name
+   no function has throws `cannot find function name 'X'`. Either stops
+   the step. Read the declaration with `print_sheet.py` first. [observed in
+   a game project, r504 preview, 2026-10-05:
+   `runtime.callFunction('createBase', 8)` threw the first error, and the
+   same call with all four parameters made three pieces; observed in a game
+   project, preview, 2026-10-03: a call of `checkStageClear`, which the
+   sheet did not define, threw the second]
 4. **Meet the conditions that start the flow.** Read the trigger chain of
    the event under test back to its first trigger: a countdown that a touch
    starts, an audio clock that stands still until the first input, a

@@ -91,6 +91,19 @@ Sources and the rule for adding an entry are in the index,
   `Fill: Width < target - 0.5`, which starts a tween. One tick later the
   first two were at their targets and the third was growing. A read of any
   one frame would have tweened the first fill or set the third at once]
+- A condition that picks a type evaluates its expression once for each
+  candidate. In it, the type's own name and every member of its container
+  read the candidate under test, not the instance an outer event picked.
+  So in `For each enemyBase`, a sub-event `Pick all enemyBase`, then
+  `Pick enemyBase by evaluating abs(enemyBase.X -
+  EnemyStats.Get("swapTo")) < 30` compares each enemy with its own
+  `swapTo`, with `EnemyStats` in `enemyBase`'s container. To compare every
+  candidate with one value, store the value in a local variable before the
+  pick, `toX = EnemyStats.Get("swapTo")`, and write `abs(enemyBase.X - toX)
+  < 30`. [manual: system-reference/system-conditions.md "Pick by evaluate";
+  observed in a game project, r504 preview, 2026-10-05: the enemy in the
+  target column was not picked and stayed, and with the target X stored in
+  a local first it moved]
 - *Pick children* picks only among the child type's instances already picked.
   A child type in the parent's container is narrowed as soon as the parent
   is. In `Piece: On drop`, `PieceArt` is in `Piece`'s container and is
