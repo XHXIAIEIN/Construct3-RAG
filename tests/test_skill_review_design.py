@@ -1,49 +1,48 @@
 """review_design.py: each kept rule on a small project that has the shape and on one that
 has the sound form beside it, and what the run prints. The rules are pure functions of
 the parsed sheets; the projects are written here, the smallest the Project class reads."""
+from collections.abc import Sequence
 from pathlib import Path
 
 from tests.skill_helpers import REPO, SKILL, edit, run, streams, script_module, folder_project
 
 SCRIPT = SKILL / "scripts" / "review_design.py"
+# Fifteen-digit sids, as the editor writes them
 SID = iter(range(100_000_000_000_001, 100_000_000_099_999))
-
-
 c3, rd = script_module("c3project"), script_module("review_design")
 
 
 # --- writing a project ---------------------------------------------------------------------
-def c(ace_id, obj="System", inverted=False, **params):
-    return {"id": ace_id, "objectClass": obj, "sid": next(SID), "parameters": params,
-            **({"isInverted": True} if inverted else {})}
-
-
-def a(ace_id, obj="System", **params):
+def a(ace_id: str, obj: str = "System", **params) -> dict:
     return {"id": ace_id, "objectClass": obj, "sid": next(SID), "parameters": params}
 
 
-def ev(conditions, actions=(), children=()):
+def c(ace_id: str, obj: str = "System", inverted: bool = False, **params) -> dict:
+    return {**a(ace_id, obj, **params), **({"isInverted": True} if inverted else {})}
+
+
+def ev(conditions: Sequence[dict], actions: Sequence[dict] = (), children: Sequence[dict] = ()) -> dict:
     return {"eventType": "block", "sid": next(SID), "conditions": list(conditions), "actions": list(actions),
             **({"children": list(children)} if children else {})}
 
 
-def var(name, value="0", kind="number"):
+def var(name: str, value: str = "0", kind: str = "number") -> dict:
     return {"eventType": "variable", "name": name, "type": kind, "initialValue": value, "comment": "",
             "isStatic": False, "isConstant": False, "sid": next(SID)}
 
 
-def function(name, children, params=()):
+def function(name: str, children: Sequence[dict], params: Sequence[dict] = ()) -> dict:
     return {"eventType": "function-block", "functionName": name, "functionDescription": "", "functionCategory": "",
             "functionReturnType": "none", "functionCopyPicked": False, "functionIsAsync": False,
             "functionParameters": list(params), "conditions": [], "actions": [], "children": list(children),
             "sid": next(SID)}
 
 
-def setv(name, value):
+def setv(name: str, value: str) -> dict:
     return a("set-eventvar-value", variable=name, value=value)
 
 
-def create(obj, x, y):
+def create(obj: str, x: str, y: str) -> dict:
     return a("create-object", **{"object-to-create": obj, "layer": '"Game"', "x": x, "y": y,
                                  "create-hierarchy": False, "template-name": '""'})
 
@@ -61,25 +60,26 @@ def write(root: Path, sheets: dict, types: dict, layouts: dict | None = None) ->
         families={"items": [], "subfolders": []})
 
 
-def found(root: Path) -> list[tuple]:
-    """(rule, variant, ask, sheet, event) of every candidate a rule kept."""
+def found(root: Path, rule: str) -> list[tuple]:
+    """(rule, variant, ask, sheet, event) of every candidate `rule` kept, findings and questions."""
     d = rd.Design.of(c3.Project(root, REPO, "en-US", c3.Findings()))
-    return [(f["rule"], f["variant"], f["ask"], f["sheet"], f["event"]) for f in rd.review(d)]
+    return [(f["rule"], f["variant"], f["ask"], f["sheet"], f["event"]) for f in rd.review(d) if f["rule"] == rule]
 
 
 def findings(root: Path, rule: str) -> list[tuple]:
-    return [f for f in found(root) if f[0] == rule and f[2] is None]
+    """The candidates of `rule` with no question to ask."""
+    return [f for f in found(root, rule) if f[2] is None]
 
 
 # --- tic-tac-toe: one trigger split by globals, one fact twice, resets a restart makes ---------
 CELL_TYPES = {"Cell": ("Sprite", ["Value", "Column", "Row"]), "Board": ("Arr", []), "Mouse": ("Mouse", [])}
 
 
-def clicked():
+def clicked() -> dict:
     return c("on-object-clicked", "Mouse", **{"mouse-button": "left", "click-type": "clicked", "object-clicked": "Cell"})
 
 
-def move(player, symbol, other):
+def move(player: int, symbol: str, other: int) -> dict:
     return ev([clicked(), c("compare-boolean-eventvar", inverted=True, variable="GameOver"),
                c("compare-instance-variable", "Cell", **{"instance-variable": "Value", "comparison": 0, "value": "0"}),
                c("compare-at-xy", "Board", x="Cell.Column", y="Cell.Row", comparison=0, value="0"),
@@ -140,12 +140,12 @@ def test_resets_on_a_layout_never_entered_again(tmp_path):
 
 
 def test_tictactoe_pair_is_a_question(tmp_path):
-    asked = [f for f in found(tictactoe(tmp_path)) if f[0] == "pair"]
+    asked = found(tictactoe(tmp_path), "pair")
     assert asked == [("pair", "global", "value", "Game", 4)], asked
 
 
 # --- a card game: scratch globals, globals on a layout's sheet, UID links, a table in actions ----
-def card_game(root: Path, scratch="TMP", table=25) -> Path:
+def card_game(root: Path, scratch: str = "TMP", table: int = 25) -> Path:
     shared = [var(f"G{n}") for n in range(12)]
     menu = [*shared, var(scratch), ev([c("on-start-of-layout")],
                                       [a("add-key", "CardTable", key=f'"c{n}"', value=f'"card {n}|{n}"')
@@ -184,7 +184,7 @@ def test_a_uid_kept_without_the_create_is_a_question(tmp_path):
         actions[:] = [x for x in actions if x["id"] != "create-object"]
     root = card_game(tmp_path)
     edit(root, "eventSheets/Combat.json", drop_create)
-    assert [f for f in found(root) if f[0] == "uid"] == [("uid", "kept", "link", "Combat", 2)]
+    assert found(root, "uid") == [("uid", "kept", "link", "Combat", 2)]
 
 
 def test_card_game_table_written_as_actions(tmp_path):
@@ -192,13 +192,13 @@ def test_card_game_table_written_as_actions(tmp_path):
     assert findings(card_game(tmp_path / "small", table=19), "data") == []
 
 
-# --- a merge game: many conditions, a guard repeated, a repeated deep call ---------------------
-def guard():
+# --- pieces on slots: many conditions, a guard repeated, a repeated deep call -----------------
+def guard() -> list[dict]:
     return [c("is-enabled", "Piece"), c("is-dragging", "Piece", inverted=True),
             c("is-any-playing", "Piece", inverted=True)]
 
 
-def merge_game(root: Path, conditions=12, repeat=True) -> Path:
+def pieces_game(root: Path, conditions: int = 12, repeat: bool = True) -> Path:
     tests = [c("compare-two-values", **{"first-value": f"Piece.X + {n}", "comparison": 2, "second-value": "0"})
              for n in range(conditions)]
     long = 'clamp(Piece.level * (1 - Piece.X / 1000), 0, 1)'
@@ -212,21 +212,21 @@ def merge_game(root: Path, conditions=12, repeat=True) -> Path:
     return write(root, {"Pieces": events}, {"Piece": ("Sprite", ["level"])})
 
 
-def test_merge_game_twelve_conditions_is_a_finding_and_six_a_question(tmp_path):
-    assert findings(merge_game(tmp_path), "conditions") == [("conditions", "many", None, "Pieces", 1)]
-    asked = [f for f in found(merge_game(tmp_path / "six", conditions=6)) if f[0] == "conditions"]
+def test_pieces_game_twelve_conditions_is_a_finding_and_six_a_question(tmp_path):
+    assert findings(pieces_game(tmp_path), "conditions") == [("conditions", "many", None, "Pieces", 1)]
+    asked = found(pieces_game(tmp_path / "six", conditions=6), "conditions")
     assert asked[0] == ("conditions", "some", "split", "Pieces", 1)
     assert {f[2] for f in asked} == {"split"}, asked     # the guard events hold 4 each
 
 
-def test_merge_game_guard_repeated_in_three_events(tmp_path):
-    assert findings(merge_game(tmp_path), "guard") == [("guard", "", None, "Pieces", 2)]
-    assert findings(merge_game(tmp_path / "once", repeat=False), "guard") == []
+def test_pieces_game_guard_repeated_in_three_events(tmp_path):
+    assert findings(pieces_game(tmp_path), "guard") == [("guard", "", None, "Pieces", 2)]
+    assert findings(pieces_game(tmp_path / "once", repeat=False), "guard") == []
 
 
-def test_merge_game_expression_that_repeats_a_long_call(tmp_path):
-    assert findings(merge_game(tmp_path), "expression") == [("expression", "", None, "Pieces", 5)]
-    assert findings(merge_game(tmp_path / "plain", repeat=False), "expression") == []
+def test_pieces_game_expression_that_repeats_a_long_call(tmp_path):
+    assert findings(pieces_game(tmp_path), "expression") == [("expression", "", None, "Pieces", 5)]
+    assert findings(pieces_game(tmp_path / "plain", repeat=False), "expression") == []
 
 
 def test_expression_shape_keeps_texts_apart():
@@ -280,7 +280,8 @@ def test_review_without_a_project(tmp_path):
 # --- a label placed once beside a card that moves without it -----------------------------------
 def hand(root: Path, link: bool = False, container: bool = True) -> Path:
     """A card drawn with its label set from its position, then laid out again by a function
-    that moves the card alone; `link` adds the label as the card's child where it is made."""
+    that moves the card alone; `link` adds the label as the card's child where it is made,
+    and `container` puts the two in a container."""
     draw = [create("Card", "640", "600"), a("set-position", "CardLabel", x="Card.X - 60", y="Card.Y - 74")]
     if link:
         draw.append(a("add-child", "Card", child="CardLabel"))
