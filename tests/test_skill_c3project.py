@@ -1,4 +1,4 @@
-"""c3project.py: what the skill's scripts share. The one form of every command a script prints for the agent
+"""c3project.py, what the skill's scripts share: the one form of every command a script prints for the agent
 to run next, from the current directory."""
 from tests.skill_helpers import REPO, SKILL, new_project, script_module
 
