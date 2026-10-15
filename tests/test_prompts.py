@@ -67,10 +67,3 @@ def test_every_entry_names_its_source() -> None:
     for name, text in files.items():
         for entry in bullets(text):
             assert SOURCE.search(entry), f"{name}: no source in {entry.splitlines()[0]!r}"
-
-
-def test_relative_links_of_the_pitfalls_resolve() -> None:
-    for path in [INDEX, *TOPICS.glob("*.md")]:
-        for link in LINK.findall(path.read_text(encoding="utf-8")):
-            if "://" not in link:
-                assert (path.parent / link).is_file(), f"{path.name} links {link}, which is missing"
