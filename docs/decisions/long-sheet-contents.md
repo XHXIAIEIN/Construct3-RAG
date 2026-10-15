@@ -6,17 +6,19 @@ Date: 2026-10-14
 
 `print_sheet.py` stopped a sheet longer than its limit, about 10 000
 characters, after the first part and named the `--events` range that went
-on. That part says nothing about where the rest of the sheet is. A model
-looking for one event of a sheet of a few hundred then printed the whole
-sheet with `--limit 0`, or its whole outline, where every comment printed
-in full; in Chinese a comment costs about a token a character. A result over
-about 30 000 characters is kept by the harness in a file, with its first
-2 000 characters shown, and the model reads that file again in pieces.
+on. That part says nothing about where the rest of the sheet is. So a
+model looking for one event of a sheet of a few hundred events printed the
+whole sheet with `--limit 0`, or its whole outline, where every comment
+printed in full; in Chinese a comment costs about a token a character. A
+result over about 30 000 characters is kept by the harness in a file, with
+its first 2 000 characters shown, and the model reads that file again in
+pieces.
 
 ## Evidence
 
 Shares of the whole cost of one production game's Claude Code transcripts,
-425 sessions and subagents, measured with `evals/token_share.py`:
+425 sessions and sub-agents, measured with
+`skills/construct3-agent-plugin/evals/token_share.py`:
 
 | What was read | Share |
 |---------------|-------|
@@ -59,18 +61,19 @@ the counts over the official examples in
 ## Decision
 
 A sheet over the limit, printed whole and alone, prints one line per group,
-function and custom action, by name, with the event numbers it spans,
-nested groups indented, the deepest left out while the list would pass the
-limit; then the `--events` command of its first group and the `--find`
-command. A sheet that fits prints its events, and `--events` prints a part
-and names the next one.
+function and custom action: its name and the event numbers it spans.
+Nested groups are indented, and the deepest are left out while the list
+would pass the limit. The list ends with the `--events` command of its
+first group or function and the `--find` command. A sheet that fits prints
+its events, and `--events` prints a part and names the next one.
 
 `--find NAME` prints the events whose conditions, actions, parameters or
-expressions name it, in any case, without quoted text, comments and
-descriptions, each under the first lines of the events it sits in, marked
-`[context]`; with `--events` it reads one range, and a long result stops
-at an event and names the range that continues. It replaces a whole print
-read for one name, and a search of the sheet's JSON.
+expressions name it, in upper or lower case. A name in quoted text, a
+comment or a description does not count. Each event prints under the first
+lines of the events it sits in, which are marked `[context]`. With
+`--events` it reads one range, and a long result stops at an event and
+names the range that continues. It replaces a whole print read for one
+name, and a search of the sheet's JSON.
 
 `--outline` keeps the first 30 characters of a comment: the outline is read
 for its numbers and sids.
@@ -88,9 +91,10 @@ is `print_sheet_chars` of `trace.py`, the characters the calls that ran
 
 ## Re-evaluate when
 
-Runs that pass `--limit 0` before their first print never meet the list:
-then the lever is the sentence of `SKILL.md` that offers `--limit 0` for a
-file or a pipe. Once runs on the user's machine or `token_share.py` over the
-production transcripts of a later week can be read, whole-sheet prints that
-do not fall, or more calls per run on sheets just over the limit, bring
-back the first part for a sheet under twice the limit, the list only above.
+- Runs that pass `--limit 0` before their first print never meet the list:
+  change the sentence of `SKILL.md` that offers `--limit 0` for a file or a
+  pipe.
+- Runs on the user's machine, or `token_share.py` over a later week of the
+  production transcripts, show whole-sheet prints that do not fall, or more
+  calls per run on sheets just over the limit: bring back the first part
+  for a sheet under twice the limit, and print the list only above that.

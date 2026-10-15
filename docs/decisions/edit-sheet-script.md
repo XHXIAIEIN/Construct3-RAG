@@ -108,10 +108,11 @@ variables and comments.
 - A plan's numbers come from a print. `print_sheet.py` keeps the hash of each
   sheet it prints in the system's temporary folder, not in the project, and
   a plan is refused when the sheet no longer matches it: a save in the
-  editor in between can move the events the numbers name. A written plan
-  keeps the new hash. An operation that names an event by its number may
-  also carry the line the print shows for that event, which catches a
-  number from an older print or a miscount (`plan-names-the-event-line.md`).
+  editor in between can move the events the numbers name. A plan that is
+  written stores the hash of the sheet it wrote. An operation that names an
+  event by its number may also carry the line the print shows for that
+  event, which catches a number from an older print or a miscount
+  (`plan-names-the-event-line.md`).
 - Output: what each operation did, the changed events as the editor words
   them under their new numbers, new warnings, and the checker's last line.
   A `note:` names each action the plan did not touch that still writes an
@@ -134,8 +135,9 @@ variables and comments.
 - A stray key turns up in a hand-edited sheet: a checker warning for a key
   the editor never writes for that kind of event, after a run over the
   examples that adds no finding.
-- Runs that read the note still leave the second place: print the whole
-  sheet after a plan, not only what changed.
+- Runs that read the note on an older form of a text still leave the action
+  it names unchanged: print the whole sheet after a plan, not only what
+  changed.
 - Runs still tune a value in its formulas when a constant holds it, after
   the print's line: a checker warning for a plan that multiplies every read
   of a constant by the same factor.

@@ -50,8 +50,9 @@ For a sheet taller than one capture:
 ## Decision
 
 The third option, as `scripts/screenshot_sheet.py`, and for a sheet taller
-than one capture, the second. It reuses `open_one()` of `open_in_editor.py`,
-which gained `extra` browser flags for it.
+than one capture, the second. It opens the project with `Browser` and
+`open_one()` of `open_in_editor.py`, and passes its own browser flags
+through the `extra` argument of `Browser`.
 
 - The sheet is the visible `ui-pane.eventSheetViewPane`; its
   `ui-body.eventSheetView` scrolls and holds `div.eventSheetRootView`, the
@@ -94,7 +95,8 @@ which gained `extra` browser flags for it.
 
 ## Re-evaluate when
 
-The editor renames the pane, body or root classes or the
-`--conditions-column-size` variable (the script then stops with the sheet
-not showing), the browser captures a window taller than its largest
-texture, or Construct gains its own export of a sheet as an image.
+- The editor renames the pane, body or root classes or the
+  `--conditions-column-size` variable: the script then stops with the sheet
+  not showing.
+- The browser captures a window taller than its largest texture.
+- Construct gains its own export of a sheet as an image.

@@ -1,4 +1,4 @@
-# A Plan Names Each Event by Its Number and Its Printed Line
+# An Operation of a Plan May Carry the Line Its Event Prints
 
 Date: 2026-10-08
 Schema: Construct 3 r495.2

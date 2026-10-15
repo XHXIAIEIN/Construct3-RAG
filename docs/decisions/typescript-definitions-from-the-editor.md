@@ -21,7 +21,8 @@ their 10 to 12 object types.
   browser, but the editor's generator copied by hand, and every change to
   it in a release missed.
 - Ask the user to run the menu command whenever an object is added: the
-  definitions are right, but every new object stops the agent on the user.
+  definitions are right, but every new object makes the agent stop and wait
+  for the user.
 - Have the editor write them: open the project as `open_in_editor.py`
   does, save it as a project folder into the page's origin-private file
   system, run *Set up TypeScript for external editor* from the Scripts
