@@ -1,14 +1,16 @@
-"""Load the locale catalog and expose validated runtime resources.
+"""Load ``catalog.json`` and expose its validated query resources.
 
-All language-dependent values live side by side in ``catalog.json``. This
-module contains only validation, locale merging, typed rule models, and format
-adapters required by production callers.
+The catalog keeps the values of every locale side by side under stable concept
+IDs. This module validates them, joins the locales in query locale order, and
+builds the keyword sets, regex patterns and directed alias rules that
+``src.lookup`` reads.
 """
 
 from __future__ import annotations
 
 import json
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -34,14 +36,14 @@ _QUERY = CATALOG["query"]
 
 
 def _localized(value: Any, path: str) -> dict[str, Any]:
-    """Validate and return one mapping containing every supported locale."""
+    """Return ``value`` after checking that it maps exactly the supported locales."""
     if not isinstance(value, dict) or set(value) != _LOCALE_SET:
         raise ValueError(f"{path} must define exactly {sorted(_LOCALE_SET)}")
     return value
 
 
 def _validate_metadata(resource: dict[str, Any], path: str) -> None:
-    """Reject anonymous resources that do not explain provenance and usage."""
+    """Check the purpose, source, consumers and tests fields of one catalog resource."""
     required = {"purpose", "source", "consumers", "tests"}
     missing = required - set(resource)
     if missing:
@@ -68,6 +70,16 @@ def _query_list(*keys: str) -> tuple[Any, ...]:
         value = value[key]
     localized = _localized(value, ".".join(("query", *keys)))
     return tuple(item for locale in QUERY_LOCALE_ORDER for item in localized[locale])
+
+
+def _casefolded_values(*keys: str) -> tuple[str, ...]:
+    """Return the casefolded ``query.<keys>.values`` lists, joined in query locale order."""
+    return tuple(value.casefold() for value in _query_list(*keys, "values"))
+
+
+def _alternation(words: Iterable[str]) -> str:
+    """Join ``words`` into one regex alternation that matches each word literally."""
+    return "|".join(map(re.escape, words))
 
 
 _ACE_TYPES = _QUERY["ace_types"]
@@ -116,13 +128,13 @@ ACE_TYPE_ALIASES: dict[str, str] = {
     for alias in _query_list("ace_types", ace_type, "aliases")
 }
 
-_ACE_TYPE_PATTERN = "|".join(
-    re.escape(alias)
-    for alias in sorted(ACE_TYPE_ALIASES, key=lambda value: (-len(value), value))
+_ACE_TYPE_PATTERN = _alternation(
+    sorted(ACE_TYPE_ALIASES, key=lambda value: (-len(value), value))
 )
 
 
 def _grammar_patterns(intent: str) -> tuple[str, ...]:
+    """Return the ``intent`` patterns of every locale with ``{ace_type}`` filled in."""
     return tuple(
         rule["patterns"][locale].format(ace_type=_ACE_TYPE_PATTERN)
         for locale in QUERY_LOCALE_ORDER
@@ -141,15 +153,9 @@ HOWTO_HARD_SKIP_ZH: frozenset[str] = frozenset(
 HOWTO_SOFT_SKIP_ZH: frozenset[str] = frozenset(
     _query_list("howto", "soft_skip", "values")
 )
-DECLINE_MARKERS_EN: tuple[str, ...] = tuple(
-    marker.casefold() for marker in _query_list("howto", "decline_markers", "values")
-)
-EXAMPLE_QUERY_KEYWORDS_ZH_EN: tuple[str, ...] = tuple(
-    keyword.casefold() for keyword in _query_list("example_keywords", "values")
-)
-EFFECT_QUERY_KEYWORDS_ZH_EN: tuple[str, ...] = tuple(
-    keyword.casefold() for keyword in _query_list("effect_keywords", "values")
-)
+DECLINE_MARKERS_EN: tuple[str, ...] = _casefolded_values("howto", "decline_markers")
+EXAMPLE_QUERY_KEYWORDS_ZH_EN: tuple[str, ...] = _casefolded_values("example_keywords")
+EFFECT_QUERY_KEYWORDS_ZH_EN: tuple[str, ...] = _casefolded_values("effect_keywords")
 
 _PARTICLE_PATTERNS = _query_list("tokenization", "particle_split_patterns", "values")
 QUERY_PARTICLE_SPLIT_PATTERN_ZH = (
@@ -163,28 +169,24 @@ CJK_ASCII_BOUNDARY_PATTERN = (
 )
 
 _ROLE_WORDS = _query_list("tokenization", "entity_role_words", "values")
-_ASCII_ROLE_WORDS = tuple(
-    word
-    for word in _QUERY["tokenization"]["entity_role_words"]["values"]["en-US"]
-    if word.isascii()
-)
+_ASCII_ROLE_WORDS = tuple(word for word in _ROLE_WORDS if word.isascii())
 _NON_ASCII_ROLE_WORDS = tuple(word for word in _ROLE_WORDS if not word.isascii())
-_ROLE_ALTERNATION = "|".join(map(re.escape, _ROLE_WORDS))
-ENTITY_ROLE_SUFFIX_PATTERN_ZH_EN = rf"(?:\s*(?:{_ROLE_ALTERNATION}))\s*$"
+ENTITY_ROLE_SUFFIX_PATTERN_ZH_EN = rf"(?:\s*(?:{_alternation(_ROLE_WORDS)}))\s*$"
+# Word boundaries around ASCII role words only
+# re counts Chinese characters as word characters, so no \b falls inside a Chinese phrase
 ENTITY_ROLE_TOKEN_PATTERN_ZH_EN = "|".join(filter(None, (
-    rf"\b(?:{'|'.join(map(re.escape, _ASCII_ROLE_WORDS))})\b" if _ASCII_ROLE_WORDS else "",
-    rf"(?:{'|'.join(map(re.escape, _NON_ASCII_ROLE_WORDS))})" if _NON_ASCII_ROLE_WORDS else "",
+    rf"\b(?:{_alternation(_ASCII_ROLE_WORDS)})\b" if _ASCII_ROLE_WORDS else "",
+    rf"(?:{_alternation(_NON_ASCII_ROLE_WORDS)})" if _NON_ASCII_ROLE_WORDS else "",
 )))
 
 AMBIGUOUS_PLUGIN_IDS_EN: frozenset[str] = frozenset(
-    value.casefold() for value in _query_list("ambiguity", "plugin_ids", "values")
+    _casefolded_values("ambiguity", "plugin_ids")
 )
 GENERIC_QUERY_WORDS_EN: frozenset[str] = frozenset(
-    value.casefold()
-    for value in _query_list("ambiguity", "generic_query_words", "values")
+    _casefolded_values("ambiguity", "generic_query_words")
 )
 AMBIGUOUS_BARE_TOPICS_ZH_EN: frozenset[str] = frozenset(
-    value.casefold() for value in _query_list("ambiguity", "bare_topics", "values")
+    _casefolded_values("ambiguity", "bare_topics")
 )
 
 
