@@ -8,20 +8,20 @@
 *{margin:0;padding:0;box-sizing:border-box}
 ::-webkit-scrollbar{width:7px;height:7px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#3c3f3b99;border-radius:var(--border-radius-sm)}
-::-webkit-scrollbar-thumb:hover{background:#55554f}
-*{scrollbar-width:thin;scrollbar-color:#3c3f3b99 transparent}
+::-webkit-scrollbar-thumb{background:#3b3e4399;border-radius:var(--border-radius-sm)}
+::-webkit-scrollbar-thumb:hover{background:#52555b}
+*{scrollbar-width:thin;scrollbar-color:#3b3e4399 transparent}
 
 /* Design tokens in the manner of the host UI kits, the dark side of the same
-   scale the recording review uses: one warm neutral scale for structure, one
+   scale the recording review uses: one neutral grey scale for structure, one
    accent for what is chosen, one info color for data, one for what failed,
    and the syntax palette the JSON views read by. */
 :root{
-  --color-background-primary:#171716;--color-background-secondary:#201f1e;--color-background-tertiary:#282826;
-  --color-text-primary:#f2f0e9;--color-text-secondary:#a6a39a;--color-text-tertiary:#94928a;
-  --color-border-primary:#3c3c39;--color-border-secondary:#4c4c47;
-  --color-accent:#d97757;--color-accent-hover:#e08a6c;--color-accent-wash:#2c221b;
-  --color-grid-dot:#262623;
+  --color-background-primary:#161718;--color-background-secondary:#1e1f22;--color-background-tertiary:#26282b;
+  --color-text-primary:#e8e9eb;--color-text-secondary:#a3a6ac;--color-text-tertiary:#8e9198;
+  --color-border-primary:#3b3e43;--color-border-secondary:#4a4d53;
+  --color-accent:#5b8def;--color-accent-hover:#7ba3f2;--color-accent-wash:#1a2333;
+  --color-grid-dot:#232528;
   --color-info:#8fb3d9;--color-info-tint:#1d2937;
   --color-success:#7fc8a0;--color-success-tint:#1e2f24;--color-success-strong:#2f6a44;
   --color-warning:#e8c85a;--color-warning-tint:#35241c;
@@ -91,7 +91,7 @@ body{font-family:var(--font-sans);background:var(--color-background-primary);col
 .json-editor{width:100%;padding:8px;background:var(--color-background-tertiary);color:var(--color-syntax-string);border:none;border-left:2px solid transparent;border-radius:var(--border-radius-sm);font:var(--font-text-sm-size)/1.5 var(--font-mono);resize:none;outline:none;tab-size:2;min-height:80px;max-height:250px;overflow-y:auto;field-sizing:content}
 .json-editor.valid{border-left-color:var(--color-success)}
 .json-editor.invalid{border-left-color:var(--color-danger);color:var(--color-danger)}
-.json-editor::selection{background:rgba(217,119,87,.3)}
+.json-editor::selection{background:rgba(91,141,239,.3)}
 
 /* Presets */
 .preset-btn{padding:2px 6px;background:var(--color-background-tertiary);border:1px solid var(--color-border-primary);border-radius:var(--border-radius-sm);color:var(--color-text-secondary);font-size:var(--font-text-xs-size);cursor:pointer;white-space:nowrap;transition:background-color var(--dur-1) var(--ease),color var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease)}
