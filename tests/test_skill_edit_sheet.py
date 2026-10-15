@@ -4,6 +4,7 @@ import json
 import os
 import re
 import shutil
+import sys
 from pathlib import Path
 
 import pytest
@@ -35,6 +36,22 @@ def all_events(root: Path) -> list[dict]:
     return list(every_event(sheet_on_disk(root)["events"]))
 
 
+def write_plan(root: Path, *operations: dict) -> None:
+    """plan.json in the project folder, for a run that plan() does not make."""
+    (root / "plan.json").write_text(json.dumps(list(operations)), encoding="utf-8")
+
+
+def without_a_sheet(project: Path) -> list[Path]:
+    """The stand-in game made a project of scripts: its sheet is deleted, project.c3proj lists none and no
+    layout runs one. Returns the layouts."""
+    layouts = list((project / "layouts").glob("*.json"))
+    (project / SHEET).unlink()
+    edit(project, "project.c3proj", lambda p: p["eventSheets"].update(items=[]))
+    for path in layouts:
+        edit(project, path.relative_to(project).as_posix(), lambda lay: lay.update(eventSheet=None))
+    return layouts
+
+
 SET_TIME = {"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Time: " & timeLeft'}}
 
 
@@ -54,7 +71,7 @@ def test_plan_puts_events_in_by_the_numbers_the_sheet_has_now(project):
                      {"after": 8, "events": [{"eventType": "comment", "text": "Countdown."}, TIMER]})
     assert code == 0, out
     assert out.splitlines()[0] == "Game: 4 operations, 12 events before and 15 now, 8 new sids"
-    assert out.splitlines()[-1].startswith("ok:") and "open_in_editor" not in out     # the closing check names it
+    assert out.splitlines()[-1].startswith("ok:") and "open_in_editor" not in out     # check_project.py prints it
     sheet = printed(project)
     assert ("     global number beat = 0\n         // The round being played, from 0; a global keeps it across the "
             "restart\n     global number deal = 0\n         // The grid cell this round's first coin lands on; "
@@ -264,7 +281,7 @@ def put_back(root: Path, sheet: str, path: Path, n: int, script=tool) -> tuple[b
     """Event n of a sheet printed with --show and replaced by what was printed: the file after, and what the plan said."""
     code, shown = script(root, "print_sheet", sheet, "--show", str(n), "--limit", "0")
     assert code == 0, shown
-    (root / "plan.json").write_text(json.dumps([{"replace": n, "events": [json.loads(shown)]}]), encoding="utf-8")
+    write_plan(root, {"replace": n, "events": [json.loads(shown)]})
     code, out = script(root, "edit_sheet", sheet, "plan.json")
     assert code == 0, out
     return path.read_bytes(), out
@@ -303,7 +320,7 @@ def test_an_event_of_an_official_example_put_back_leaves_its_sheet_byte_for_byte
 
 
 def test_removing_an_event_names_the_sub_events_that_go_with_it(project):
-    # A model removed a trigger with no actions as empty; the summary's event count alone did not stop it.
+    """A model removed a trigger with no actions as empty; the summary's event count alone did not stop it."""
     code, out = plan(project, {"remove": 4})
     assert code == 0, out
     assert re.search(r"-- event 4 removed with its sub-events? 5(-\d+)?, \d+ actions? in all", out), out
@@ -524,18 +541,14 @@ def test_print_says_how_a_plan_names_a_variable(project):
     assert lines[-1].startswith('-- a variable or comment has no number, so a plan of edit_sheet.py names it. '
                                 'A variable: {"variable": "ROUND_COINS", "set": {"initialValue": "1,3,6,2,10,1"}}; '
                                 'a value a constant holds is changed there')
-    (project / "plan.json").write_text(json.dumps([json.loads(re.search(r"(\{\"variable\".*?\}\})", lines[-1]).group(1))]))
+    write_plan(project, json.loads(re.search(r"(\{\"variable\".*?\}\})", lines[-1]).group(1)))
     assert tool(project, "edit_sheet", "Game", "plan.json", "--dry-run")[0] == 0
     assert "has no number" not in tool(project, "print_sheet", "Game", "--events", "4-5")[1]
 
 
 def test_new_makes_the_sheet_a_project_without_one_runs(project):
     """A project of scripts has no sheet for a plan to change: --new lists one and sets it on the layouts that have none."""
-    layouts = list((project / "layouts").glob("*.json"))
-    (project / SHEET).unlink()
-    edit(project, "project.c3proj", lambda p: p["eventSheets"].update(items=[]))
-    for path in layouts:
-        edit(project, path.relative_to(project).as_posix(), lambda lay: lay.update(eventSheet=None))
+    layouts = without_a_sheet(project)
     start = {"into": 0, "events": [{"eventType": "comment", "text": "Score from zero."}, {
         "eventType": "block", "conditions": [{"id": "on-start-of-layout", "objectClass": "System"}],
         "actions": [{"id": "set-text", "objectClass": "ScoreText", "parameters": {"text": '"Score: 0"'}}]}]}
@@ -556,11 +569,7 @@ def test_new_puts_back_what_it_wrote_when_a_later_file_fails(project, blocked):
     """--new writes the sheet, project.c3proj and the layouts that run it; a write that fails, here on a folder
     where its draft goes, leaves every file as it was, and the same plan runs once the way is clear (the audit
     of 2026-10-07 left a sheet that project.c3proj did not list, which the plan then refused)."""
-    layouts = list((project / "layouts").glob("*.json"))
-    (project / SHEET).unlink()
-    edit(project, "project.c3proj", lambda p: p["eventSheets"].update(items=[]))
-    for path in layouts:
-        edit(project, path.relative_to(project).as_posix(), lambda lay: lay.update(eventSheet=None))
+    layouts = without_a_sheet(project)
     files = {p: p.read_bytes() for p in (project / "project.c3proj", *layouts)}
     folder = project / (f"layouts/{layouts[-1].name}.tmp" if blocked == "layout" else blocked)
     folder.mkdir()
@@ -577,15 +586,9 @@ def test_new_leaves_no_draft_when_a_file_cannot_take_its_place(project, monkeypa
     """Each file is written as a draft beside it that then takes its place. On Windows a read-only layout
     refuses that last step: the files were put back and the run said nothing was written, but the layout's
     draft stayed beside it."""
-    import sys
-    layouts = list((project / "layouts").glob("*.json"))
-    (project / SHEET).unlink()
-    edit(project, "project.c3proj", lambda p: p["eventSheets"].update(items=[]))
-    for path in layouts:
-        edit(project, path.relative_to(project).as_posix(), lambda lay: lay.update(eventSheet=None))
+    layouts = without_a_sheet(project)
     files = {p: p.read_bytes() for p in (project / "project.c3proj", *layouts)}
-    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [
-        {"eventType": "comment", "text": "Score from zero."}]}]), encoding="utf-8")
+    write_plan(project, {"into": 0, "events": [{"eventType": "comment", "text": "Score from zero."}]})
     edit_sheet = script_module("edit_sheet", project / INSTALLED / "scripts")
     replace = os.replace
 
@@ -605,8 +608,7 @@ def test_new_leaves_no_draft_when_a_file_cannot_take_its_place(project, monkeypa
 
 def test_a_new_sheet_beside_others_says_no_layout_runs_it(project):
     layouts = {p: p.read_bytes() for p in (project / "layouts").glob("*.json")}
-    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "variable", "name": "menuShown"}]}]),
-                                       encoding="utf-8")
+    write_plan(project, {"into": 0, "events": [{"eventType": "variable", "name": "menuShown"}]})
     code, out = tool(project, "edit_sheet", "Menu", "plan.json", "--new")
     assert code == 0 and "run by no layout" in out, out
     assert (project / "eventSheets" / "Menu.json").is_file()
@@ -629,6 +631,7 @@ def test_a_generated_project_is_told_the_change_belongs_in_the_generator(project
 
 STALE = {"event": 6, "line": "function AddScore(points: number)", "add-actions": [
     {"id": "wait", "objectClass": "System", "parameters": {"seconds": "0"}}]}
+END_COMMENT = {"into": 0, "events": [{"eventType": "comment", "text": "End."}]}
 
 
 def test_a_plan_from_an_older_print_is_refused_with_where_its_line_is_now(project):
@@ -659,9 +662,9 @@ def test_a_line_is_found_as_print_sheet_prints_it_or_in_part(project, line):
 
 def test_a_line_copied_from_a_print_in_another_locale_names_the_event(project):
     """A print with --locale zh-CN words the line in Chinese; the plan runs without --locale."""
-    printed = tool(project, "print_sheet", "Game", "--events", "5", "--locale", "zh-CN")[1]
-    line = next(row for row in printed.splitlines() if row.startswith("   5 "))[5:].strip()
-    assert line != "Touch: On touched Coin (start)", printed
+    in_chinese = tool(project, "print_sheet", "Game", "--events", "5", "--locale", "zh-CN")[1]
+    line = next(row for row in in_chinese.splitlines() if row.startswith("   5 "))[5:].strip()
+    assert line != "Touch: On touched Coin (start)", in_chinese
     code, out = plan(project, {"event": 5, "line": line, "action": 1, "set": {"disabled": True}}, flags=("--dry-run",))
     assert code == 0, out
 
@@ -669,8 +672,8 @@ def test_a_line_copied_from_a_print_in_another_locale_names_the_event(project):
 def test_a_plan_without_lines_is_carried_out_and_noted(project):
     """A plan without lines, such as one made from a finding's place, which names no line, is carried out with a
     note."""
-    code, out = plan(project, {"event": 7, "add-actions": STALE["add-actions"]}, {"remove": 5},
-                     {"into": 0, "events": [{"eventType": "comment", "text": "End."}]}, flags=("--dry-run",))
+    code, out = plan(project, {"event": 7, "add-actions": STALE["add-actions"]}, {"remove": 5}, END_COMMENT,
+                     flags=("--dry-run",))
     assert code == 0 and ('note: operations 1 and 2 named events by number alone. Add "line" to each: the line '
                           'print_sheet.py prints for its event, as in {"event": 7, "line": "function AddScore(points: '
                           'number)", ...}. A number from an older print is then refused instead of changing another '
@@ -691,17 +694,17 @@ def test_help_teaches_line_on_the_plan_example(project):
 
 
 # --- every refusal on stdout --------------------------------------------------------------------
-def refused(root: Path, *args: str, said: str) -> None:
+def refused(root: Path, *args: str, said: str) -> str:
     """edit_sheet.py refuses with said on stdout, nothing on stderr and exit code 1: a refusal answers the
     model, and on stderr a harness that shows stdout alone showed nothing, while PowerShell wrapped each
-    line in an error record."""
+    line in an error record. Returns that stdout."""
     p = streams(root, f"{INSTALLED}/scripts/edit_sheet.py", "--rag", str(REPO), *args)
     assert p.returncode == 1 and p.stderr == "" and said in p.stdout, (args, p.stdout, p.stderr)
+    return p.stdout
 
 
 def test_a_sheet_the_plan_cannot_name_is_refused_on_stdout(project):
-    comment = [{"into": 0, "events": [{"eventType": "comment", "text": "End."}]}]
-    (project / "plan.json").write_text(json.dumps(comment), encoding="utf-8")
+    write_plan(project, END_COMMENT)
     refused(project, "bad/name", "plan.json", "--new", said="'bad/name' cannot be a file name")
     (project / "eventSheets" / "Extra.json").write_text('{"name": "Extra", "events": [], "sid": 1}', encoding="utf-8")
     refused(project, "Extra", "plan.json", "--new",
@@ -710,36 +713,30 @@ def test_a_sheet_the_plan_cannot_name_is_refused_on_stdout(project):
 
 
 def test_a_plan_that_cannot_be_read_is_refused_on_stdout(project):
-    refused(project, "Game", "missing.json", said="missing.json: ")
-    assert "PLAN.json is a file with the operations as a JSON list" in \
-        streams(project, f"{INSTALLED}/scripts/edit_sheet.py", "--rag", str(REPO), "Game", "missing.json").stdout
+    out = refused(project, "Game", "missing.json", said="missing.json: ")
+    assert "PLAN.json is a file with the operations as a JSON list" in out, out
     (project / "plan.json").write_text("{", encoding="utf-8")
     refused(project, "Game", "plan.json", said="plan.json is not valid JSON, line 1 column 2")
-    (project / "plan.json").write_text(json.dumps([{"event": 1, "line": "no such line", "set": {"disabled": True}}]),
-                                       encoding="utf-8")
-    refused(project, "Game", "plan.json", said='operation 1 (event 1): no event prints "no such line" now')
-    p = streams(project, f"{INSTALLED}/scripts/edit_sheet.py", "--rag", str(REPO), "Game", "plan.json")
-    assert p.stdout.endswith("nothing was written\n"), p.stdout
+    write_plan(project, {"event": 1, "line": "no such line", "set": {"disabled": True}})
+    out = refused(project, "Game", "plan.json", said='operation 1 (event 1): no event prints "no such line" now')
+    assert out.endswith("nothing was written\n"), out
 
 
 def test_a_new_sheet_that_cannot_be_written_is_refused_on_stdout(project):
     """A folder where the draft of the new sheet goes stops the write; the project is put back as it was."""
-    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "comment", "text": "End."}]}]),
-                                       encoding="utf-8")
+    write_plan(project, END_COMMENT)
     (project / "eventSheets" / "Menu.json.tmp").mkdir()
     before = (project / "project.c3proj").read_bytes()
-    refused(project, "Menu", "plan.json", "--new", said="Menu: a file could not be written: ")
-    assert "the files written before it are put back: nothing was written" in \
-        streams(project, f"{INSTALLED}/scripts/edit_sheet.py", "--rag", str(REPO), "Menu", "plan.json", "--new").stdout
+    out = refused(project, "Menu", "plan.json", "--new", said="Menu: a file could not be written: ")
+    assert "the files written before it are put back: nothing was written" in out, out
     assert (project / "project.c3proj").read_bytes() == before and not (project / "eventSheets" / "Menu.json").exists()
 
 
 def test_a_sheet_that_changes_while_the_plan_is_applied_is_refused_on_stdout(project):
     """The editor saves the sheet between the read and the write: the plan is laid out, then the file is found
     changed. Reached by a save made from inside the run, since nothing outside it can hit that moment."""
-    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "comment", "text": "End."}]}]),
-                                       encoding="utf-8")
-    code = (
+    write_plan(project, END_COMMENT)
+    program = (
         "import pathlib, sys\n"
         f"sys.path.insert(0, {str(SKILL / 'scripts')!r})\n"
         "import edit_sheet\n"
@@ -750,14 +747,13 @@ def test_a_sheet_that_changes_while_the_plan_is_applied_is_refused_on_stdout(pro
         "edit_sheet.laid_out = saved_in_the_editor\n"
         f"sys.argv = ['edit_sheet.py', 'Game', 'plan.json', '--project', {str(project)!r}, '--rag', {str(REPO)!r}]\n"
         "sys.exit(edit_sheet.main())\n")
-    p = streams(project, "-c", code)
+    p = streams(project, "-c", program)
     assert p.returncode == 1 and p.stderr == "", (p.stdout, p.stderr)
     assert p.stdout.endswith("Game changed on disk while the plan was applied; run it again\nnothing was written\n"), p.stdout
 
 
 def test_a_sheet_saved_after_it_was_printed_is_refused_on_stdout(project):
-    (project / "plan.json").write_text(json.dumps([{"into": 0, "events": [{"eventType": "comment", "text": "End."}]}]),
-                                       encoding="utf-8")
+    write_plan(project, END_COMMENT)
     tool(project, "print_sheet", "Game")
     edit(project, SHEET, lambda s: s["events"].insert(0, {"eventType": "comment", "text": "Saved in the editor."}))
     refused(project, "Game", "plan.json", "--dry-run", said="Game changed on disk after print_sheet.py printed it")
