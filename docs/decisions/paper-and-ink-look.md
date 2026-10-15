@@ -136,7 +136,7 @@ tiled at their size with exact seams drew every edge at its width.
 
 A generated puzzle game of the user's, portrait at 720×1280, took the look
 in its own generator: paper, glass drawn as a line of ink, its liquids the
-only colour. Its HUD is an HTML Element, which drew the shipped fonts by
+only colour. Its HUD is an HTML Element, which drew the project's fonts by
 the same names as a Text does. At twice the prototype's px the HUD read at
 a phone's size in the preview.
 
@@ -146,7 +146,7 @@ a phone's size in the preview.
 2. **Paper and ink in the platform face.** No file to ship, but every
    reference ships its own font, and the platform face changes the look on
    every system.
-3. **Paper and ink with a subset of Inter shipped by the skill.** Chosen.
+3. **Paper and ink with a subset of Inter.** Chosen.
 4. **The dark direction.** The user picked paper.
 5. **A Chinese font subset as well.** A subset depends on the game's text
    and must be rebuilt when the text changes, and a full Chinese face is
@@ -161,8 +161,11 @@ Option 3, as the default of `skills/construct3-agent-plugin/assets/build_project
 
 ### The font
 
-The skill ships Inter in three weights under `assets/fonts/`, with its SIL
-Open Font License 1.1 text:
+The generator takes Inter in three weights from the user's font cache: the
+folder that `CONSTRUCT3_RAG_FONT_CACHE` names, or else
+`~/.cache/construct3-rag/fonts`. The repository and the plugin carry no
+font file (`plugin-folder.md`). Inter is released with its SIL
+Open Font License 1.1 text, and each weight is a subset of that release:
 
 | File | Weight | Used for |
 |------|--------|----------|
@@ -181,13 +184,13 @@ the minus, and keeps the copyright and license entries of the name table:
 python -m fontTools.subset extras/ttf/Inter-Regular.ttf --unicodes="U+0020-007E,U+00A0-00FF,U+0152-0153,U+2002-200A,U+2013-2014,U+2018-201A,U+201C-201E,U+2022,U+2026,U+2030,U+2039-203A,U+20AC,U+2122,U+2190-2193,U+2212" --name-IDs="*" --flavor=woff --output-file=Inter-Regular.woff
 ```
 
-The template copies the files `FONT` names into the project's `fonts/` and
-lists them in `project.c3proj`. A weight whose file is in neither place
-draws in `system-ui`, and the run prints a warning that names the file,
-because a Text whose font the project lacks draws its Latin text in a serif
-face. This is the case in the Claude Code plugin, which carries no font
-files (`plugin-folder.md`): there a game takes the look in the platform's
-face until its `fonts/` holds the three files.
+The template copies each file that `FONT` names from the font cache into
+the project's `fonts/`, unless `fonts/` holds it already, and lists it in
+`project.c3proj`. A weight whose file is in neither place draws in
+`system-ui`, and the run prints a warning that names the file, because a
+Text whose font the project lacks draws its Latin text in a serif face. So
+on a machine whose font cache lacks the files, a game takes the look in the
+platform's face until its `fonts/` holds the three files.
 
 ### The colours
 
@@ -278,10 +281,9 @@ is touched. Both are frames of its own image after the hit frame, tagged
 state=True)` draws them without the 3:1 check. `pointer_frames()`,
 `pointer_drawn()`, `pointer_types()` and `pointer_module()` draw, list,
 declare and play them, and `hit(obj, frame="pressed")` flashes the amber
-for a hit a touch makes;
-with `POINTER` off each adds nothing, so the stand-in calls them and
-generates the same project. A touch screen has no hover and sees only the
-press.
+for a hit a touch makes. With `POINTER` off each adds nothing, so the
+stand-in calls them and generates the same project. A touch screen has no
+hover and sees only the press.
 
 ### Left out
 

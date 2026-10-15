@@ -176,7 +176,7 @@ from the boxes the generator writes.
 | `OPTICAL_LIFT` | 0.05 of the play area's height: how far the playfield is raised above its middle |
 
 - `hud_stat()` puts a value under its name as one group, each box one line
-  high, so a caller no longer places the second line with `dy`.
+  high, so a caller does not place the second line with `dy`.
 - `play_area(hud)` is the viewport, `MARGIN` inside it, less the HUD's boxes
   and `GAP_OUT` around them; `centred(w, h, area)` puts a box in its middle
   on the grid, raised by `OPTICAL_LIFT`.

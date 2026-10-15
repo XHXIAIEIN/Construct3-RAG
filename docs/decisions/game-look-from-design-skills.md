@@ -123,10 +123,9 @@ Option 3, with one bullet of option 2 in
   *Integer scale outer*, which fills the screen (`fill-the-screen.md`).
 - `layer()` fills an opaque layer from a role, `canvas` unless named.
 
-Option 5, as a mechanical report and a fixed checklist, after the editor's
-preview became reachable: `scripts/review_look.py` previews the project,
-visits every layout through the runtime, takes a screenshot of each and
-prints
+Option 5, as a mechanical report and a fixed checklist:
+`scripts/review_look.py` previews the project in the editor, visits every
+layout through the runtime, takes a screenshot of each and prints
 
 - one line per measured fault, naming the layout, the object type, the UID
   and what to change: a text its box cuts, instances of one type on one box,
