@@ -1,4 +1,5 @@
-"""--review of print_sheet.py and check_project.py: a project someone asked about ends with what a review reports."""
+"""--review of print_sheet.py and check_project.py: on a project someone asked about, the output
+ends with what a review reports."""
 from tests.skill_helpers import check, tool
 
 
