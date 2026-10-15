@@ -94,12 +94,19 @@ def walk(events: list, above: tuple = ()):
         yield from walk(ev.get("children", []), (*above, ev))
 
 
+def params(ace: dict) -> dict:
+    """The named parameters of a condition or action; a function or custom action call lists its arguments
+    instead, and names none."""
+    p = ace.get("parameters")
+    return p if isinstance(p, dict) else {}
+
+
 def values(aces: list) -> str:
     """Every parameter value of some conditions or actions, as one searchable string."""
     out = []
     for a in aces:
-        params = a.get("parameters", {})
-        out += [str(v) for v in (params.values() if isinstance(params, dict) else params)]
+        given = a.get("parameters", {})
+        out += [str(v) for v in (given.values() if isinstance(given, dict) else given)]
     return " | ".join(out)
 
 
@@ -131,18 +138,18 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
     holders = variables_starting_at(rows, "30")
     acts = [(a, conditions_over(ev, above)) for ev, above in rows for a in ev.get("actions", [])]
     started = [a for a, conds in acts if a.get("id") == "start-timer"
-               and str(a.get("parameters", {}).get("duration", "")).strip() in {"30", "30.0", *holders}]
+               and str(params(a).get("duration", "")).strip() in {"30", "30.0", *holders}]
     tags = {str(a["parameters"].get("tag", "")) for a in started}
     names = re.compile("|".join([*map(re.escape, timers), r"\b(?:Duration|CurrentTime|TotalTime|NormalizedProgress)\s*\("])
                        if timers or started else r"$^", re.I)
 
     # A Timer started for 1 second, Regular, fires On timer once a second: the variable it takes 1 from counts down.
     ticks = {str(a["parameters"].get("tag", "")) for a, _ in acts if a.get("id") == "start-timer"
-             and str(a.get("parameters", {}).get("duration", "")).strip() in {"1", "1.0"}
+             and str(params(a).get("duration", "")).strip() in {"1", "1.0"}
              and str(a["parameters"].get("type", "")).lower() == "regular"}
 
     def by_one(a: dict) -> bool:
-        p = a.get("parameters", {})
+        p = params(a)
         value = str(p.get("value", "")).strip()
         return (a.get("id") == "subtract-from-eventvar" and value in ("1", "1.0")
                 or a.get("id") == "add-to-eventvar" and value in ("-1", "-1.0")
@@ -155,7 +162,7 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
     for ev, above, a in ticking:
         conds = conditions_over(ev, above)
         every = [c for c in conds if c.get("id") == "every-x-seconds"]
-        on_tick = any(c.get("id") == "on-timer" and str(c.get("parameters", {}).get("tag", "")) in ticks for c in conds)
+        on_tick = any(c.get("id") == "on-timer" and str(params(c).get("tag", "")) in ticks for c in conds)
         worded = "; ".join(c.get("id", "?") + "(" + values([c]) + ")" for c in conds) or "no condition"
         seen = f"{worded} -> {a['id']}({values([a])})"
         if (any(values([c]).strip() in ("1", "1.0") for c in every) or re.search(r"\bdt\b", values([a]), re.I)
@@ -173,7 +180,7 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
         None when no condition is such a comparison."""
         verdicts = []
         for c in conds:
-            p = c.get("parameters", {})
+            p = params(c)
             if c.get("id") == "compare-eventvar":
                 left, right = str(p.get("variable", "")), str(p.get("value", ""))
             elif c.get("id") == "compare-two-values":
@@ -197,7 +204,7 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
     restarts = [(ev, above) for ev, above in rows if any(a.get("id") == "restart-layout" for a in ev.get("actions", []))]
     hit = next((ev for ev, above in restarts if names.search(values(conditions_over(ev, above)))
                 and runs_out(conditions_over(ev, above)) is not False
-                or any(c.get("id") == "on-timer" and str(c.get("parameters", {}).get("tag", "")) in tags
+                or any(c.get("id") == "on-timer" and str(params(c).get("tag", "")) in tags
                        for c in conditions_over(ev, above))), None)
     backwards = [ev for ev, above in restarts if runs_out(conditions_over(ev, above)) is False]
     results.append((hit is not None, f"restart-layout under {values(hit['conditions'])}" if hit else
@@ -227,7 +234,7 @@ def grade_add_countdown(run: Path) -> list[tuple[bool, str]]:
     # set only by its declaration is still 0 once the layout has restarted, and never runs 30 seconds again.
     # A Timer started under On start of layout starts over with it: Start timer on a running tag restarts it.
     def starts_over(a: dict) -> bool:
-        p = a.get("parameters", {})
+        p = params(a)
         value = str(p.get("value", "")).strip()
         return a.get("id") == "reset-global-variables" or (
             a.get("id") == "set-eventvar-value" and p.get("variable") in timers
@@ -282,7 +289,7 @@ def grade_fix_load_errors(run: Path) -> list[tuple[bool, str]]:
     results.append((bool(on_collect) and not in_broken, f"AddScore called from: {on_collect or 'nowhere on collect'}"
                     + (" (still inside Collect, under the trigger)" if in_broken else "")))
     kept = [a for a in (collect or {}).get("actions", []) if a.get("id") == "tween-two-properties"
-            and "collect" in str(a.get("parameters", {}).get("tags", ""))]
+            and "collect" in str(params(a).get("tags", ""))]
     results.append((bool(kept), f"tween actions in Collect tagged collect: {len(kept)}"))
     return results
 
@@ -645,7 +652,7 @@ def aliases_of(rows: list, names: set[str]) -> set[str]:
     pat = re.compile("|".join(map(re.escape, names)) or r"$^")
     for ev, _ in rows:
         for a in ev.get("actions", []):
-            p = a.get("parameters", {})
+            p = params(a)
             if a.get("id") in ("set-eventvar-value", "set-instvar-value") and pat.search(str(p.get("value", ""))):
                 out.add(p.get("variable") or p.get("instance-variable") or "")
     return {n for n in out if n}
@@ -657,9 +664,9 @@ def width_drivers(rows: list, names: set[str]) -> dict[str, list]:
     out: dict[str, list] = {}
     for ev, _ in rows:
         for a in ev.get("actions", []):
-            params = a.get("parameters", {})
+            given = params(a)
             is_width = a.get("id") in WIDTH_ACTIONS or (a.get("id") == "tween-one-property"
-                                                       and str(params.get("property", "")).lower() in TWEEN_SIZE)
+                                                       and str(given.get("property", "")).lower() in TWEEN_SIZE)
             if is_width and pat.search(values([a])):
                 out.setdefault(a.get("objectClass"), []).append(a)
     return out
@@ -791,7 +798,7 @@ def grade_reveal_the_gradient(run: Path) -> list[tuple[bool, str]]:
     results.append((bool(shown), f"gradient images: {sorted(grads) or 'none'}; shown on the UI layer by: {sorted({i['type'] for i in shown}) or 'none'}"))
     drivers = width_drivers(rows, hp)
     all_width = {a.get("objectClass") for ev, _ in rows for a in ev.get("actions", []) if a.get("id") in WIDTH_ACTIONS
-                 or (a.get("id") == "tween-one-property" and str(a.get("parameters", {}).get("property", "")).lower() in TWEEN_SIZE)}
+                 or (a.get("id") == "tween-one-property" and str(params(a).get("property", "")).lower() in TWEEN_SIZE)}
     verdicts = []
     ok = False
     hp_pat = re.compile("|".join(map(re.escape, hp)) or r"$^")
@@ -863,7 +870,7 @@ def grade_lives_as_hearts(run: Path) -> list[tuple[bool, str]]:
     SHOWS = ("destroy", "set-visible", "set-animation-frame", "set-animation", "set-opacity")
     by_pick = [(ev, c) for ev, _ in rows for c in ev.get("conditions", [])
                if c.get("id") in ("pick-by-evaluate", "compare-instance-variable", "evaluate-expression", "compare-eventvar", "compare-two-values")
-               and (pat.search(values([c])) or re.search(r"index|idx|slot|loopindex", values([c]) + str(c.get("parameters", {}).get("instance-variable", "")), re.I))
+               and (pat.search(values([c])) or re.search(r"index|idx|slot|loopindex", values([c]) + str(params(c).get("instance-variable", "")), re.I))
                and any(a.get("id") in SHOWS for a in ev.get("actions", []))]
     how = [k for k, v in (("width", by_width), ("frame", by_frame), ("pick", by_pick)) if v]
     results.append((bool(how), f"driven by the count through: {how or 'nothing'}"))
@@ -887,7 +894,7 @@ def grade_lives_as_hearts(run: Path) -> list[tuple[bool, str]]:
         for c in ev.get("conditions", []):
             if pat.search(values([c])):
                 # The operator is a number too ("comparison": 4 is "greater or equal"); only the operands count.
-                operands = " | ".join(str(v) for k, v in c.get("parameters", {}).items() if k != "comparison")
+                operands = " | ".join(str(v) for k, v in params(c).items() if k != "comparison")
                 literal_compares |= set(re.findall(r"(?<![\w.])\d+(?![\w.])", operands))
     literal_compares -= {"0", "1"}
     results.append((bool(lives) and len(literal_compares) <= 2, f"literal numbers the count is compared with: {sorted(literal_compares) or 'none'}"))
@@ -986,7 +993,7 @@ def grade_readable_on_a_dark_background(run: Path) -> list[tuple[bool, str]]:
     # The first round deals fewer coins than six; the label starts from the count, not a number.
     left = [i for i in texts if re.search(r"left", str(i["properties"].get("text", "")), re.I)]
     rows = sheet_rows(project)
-    changed = {a.get("parameters", {}).get("variable") or a.get("parameters", {}).get("instance-variable")
+    changed = {params(a).get("variable") or params(a).get("instance-variable")
                for ev, _ in rows for a in ev.get("actions", []) if a.get("id") in SET_VALUE}
     setters = [a for ev, _ in rows for a in ev.get("actions", []) if a.get("id") == "set-text"
                and a.get("objectClass") in {i["type"] for i in left}]
@@ -1061,12 +1068,12 @@ def grade_walk_with_wasd(run: Path) -> list[tuple[bool, str]]:
         if not moves:
             continue
         # Key is down takes the key as a code, Key code is down as an expression.
-        keys = [c.get("parameters", {}).get("key") for c in conds if c.get("id") == "key-is-down"] + \
+        keys = [params(c).get("key") for c in conds if c.get("id") == "key-is-down"] + \
             [int(k) for c in conds if c.get("id") == "key-code-is-down"
-             if (k := str(c.get("parameters", {}).get("keycode", "")).strip()).isdigit()]
+             if (k := str(params(c).get("keycode", "")).strip()).isdigit()]
         triggers = [c for c in conds if is_trigger(c)]
         for a in moves:
-            control = a.get("parameters", {}).get("control")
+            control = params(a).get("control")
             if triggers:
                 pressed.append(f"{control} under {triggers[0].get('id')}")
                 continue
@@ -1088,7 +1095,7 @@ def grade_walk_with_wasd(run: Path) -> list[tuple[bool, str]]:
 
 def seconds_of(a: dict) -> float:
     try:
-        return float(str(a.get("parameters", {}).get("seconds", "")).strip())
+        return float(str(params(a).get("seconds", "")).strip())
     except ValueError:
         return 0.0
 
@@ -1184,7 +1191,7 @@ def grade_fix_next_round(run: Path) -> list[tuple[bool, str]]:
     results.append((not every_tick, f"{sum(a.get('id') == 'start-timer' for a, _ in acts)} Start timer, "
                     f"{len(every_tick)} in an event that runs every tick"))
     once = [(a, conds) for a, conds in acts if a.get("id") == "restart-layout"
-            or (a.get("id") == "set-eventvar-value" and a.get("parameters", {}).get("variable") == "beat")]
+            or (a.get("id") == "set-eventvar-value" and params(a).get("variable") == "beat")]
     loose = [a["id"] for a, conds in once if not any(is_trigger(c) or c.get("id") == "trigger-once-while-true" for c in conds)]
     results.append((bool(once) and not loose, f"{len(once)} Restart layout or Set beat, every tick: {loose or 'none'}"))
     results.append(game_sids(run, rows))
@@ -1208,14 +1215,14 @@ def grade_fix_turn_flip(run: Path) -> list[tuple[bool, str]]:
     once, every_tick = [], []
     for ev, above in rows:
         for a in ev.get("actions", []):
-            params = a.get("parameters") if isinstance(a.get("parameters"), dict) else {}
-            if params.get("variable") != "side" or a.get("id") not in TURN_CHANGES \
-                    or (a.get("id") == "set-eventvar-value" and str(params.get("value")).strip() == "1"):
+            given = params(a)
+            if given.get("variable") != "side" or a.get("id") not in TURN_CHANGES \
+                    or (a.get("id") == "set-eventvar-value" and str(given.get("value")).strip() == "1"):
                 continue
             conds = conditions_over(ev, above)
             in_block = any(e.get("eventType") in ("function-block", "custom-ace-block") for e in (*above, ev))
-            tested = {c.get("parameters", {}).get("variable") for c in conds if c.get("id") == "compare-eventvar"}
-            reset = {b.get("parameters", {}).get("variable") for e in (*above, ev) for b in e.get("actions", [])
+            tested = {params(c).get("variable") for c in conds if c.get("id") == "compare-eventvar"}
+            reset = {params(b).get("variable") for e in (*above, ev) for b in e.get("actions", [])
                      if b.get("id") == "set-eventvar-value"} - {"side"}
             (once if in_block or any(is_trigger(c) for c in conds) or tested & reset else every_tick).append(values([a]))
     results.append((bool(once) and not every_tick, f"side changes once per tap: {once or 'nowhere'}"
@@ -1250,7 +1257,7 @@ def grade_two_player_turns(run: Path) -> list[tuple[bool, str]]:
 
     new = {ev["name"] for ev, _ in rows if ev.get("eventType") == "variable"} - ORIGINAL_GLOBALS
     turns = {n for n in new if (TURN_NAME.search(n) or reads(n, values(texts))) and not NOT_TURN.search(n)}
-    sets_in = {ev.get("functionName"): {a.get("parameters", {}).get("variable") for e, _ in walk([ev])
+    sets_in = {ev.get("functionName"): {params(a).get("variable") for e, _ in walk([ev])
                                         for a in e.get("actions", []) if a.get("id") == "set-eventvar-value"}
                for ev, _ in rows if ev.get("eventType") == "function-block"}
     is_trigger = triggered(project)
@@ -1260,19 +1267,19 @@ def grade_two_player_turns(run: Path) -> list[tuple[bool, str]]:
         if any(c.get("id") == "on-start-of-layout" for c in conds):
             continue
         for a in ev.get("actions", []):
-            params = a.get("parameters") if isinstance(a.get("parameters"), dict) else {}
-            name = params.get("variable")
+            given = params(a)
+            name = given.get("variable")
             if name not in turns or a.get("id") not in TURN_CHANGES:
                 continue
             in_block = any(e.get("eventType") in ("function-block", "custom-ace-block") for e in (*above, ev))
             # the variables its conditions test, and those its branch or the functions it calls set
-            tested = {c.get("parameters", {}).get("variable") for c in conds if c.get("id") == "compare-eventvar"}
+            tested = {params(c).get("variable") for c in conds if c.get("id") == "compare-eventvar"}
             tested |= {w for c in conds if c.get("id") in ("compare-two-values", "evaluate-expression")
                        for w in re.findall(r"[A-Za-z_]\w*", values([c]))}
             branch = [b for e in (*above, ev) for b in e.get("actions", [])]
-            reset = {b.get("parameters", {}).get("variable") for b in branch if b.get("id") == "set-eventvar-value"}
+            reset = {params(b).get("variable") for b in branch if b.get("id") == "set-eventvar-value"}
             reset = (reset | {v for b in branch for v in sets_in.get(b.get("callFunction"), ())}) - {name}
-            flip = a.get("id") != "set-eventvar-value" or reads(name, str(params.get("value", ""))) or name in tested
+            flip = a.get("id") != "set-eventvar-value" or reads(name, str(given.get("value", ""))) or name in tested
             # Trigger once runs a reset once, but a flip once a round
             paced = any(is_trigger(c) for c in conds) or (not flip and any(
                 c.get("id") in ("trigger-once-while-true", "every-x-seconds") for c in conds))

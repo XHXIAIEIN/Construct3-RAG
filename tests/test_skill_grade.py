@@ -150,6 +150,16 @@ def test_the_restart_reads_the_countdown_running_out(tmp_path: Path, project: Pa
     assert result["passed"] is restarts, result
 
 
+def test_a_function_call_on_start_is_graded_with_the_countdown(tmp_path: Path, project: Path) -> None:
+    """A call of a function lists its arguments, not named parameters: iteration 65's add-countdown/with_skill
+    called ShowScore under On start of layout, and the grader stopped on the list."""
+    add_countdown(project, {"callFunction": "ShowScore", "sid": 101, "parameters": []}, [])
+    case = project_case(tmp_path, project, "add-countdown")
+    grade_iteration(tmp_path)
+    graded = read_json(case / "grading.json")["assertion_results"]
+    assert any(g["text"].startswith("An event restarts the layout") for g in graded), graded
+
+
 def test_a_run_that_wrote_outside_its_folder_is_not_scored(tmp_path: Path) -> None:
     """Its grade would count work that is not in its project, or that another run reads."""
     case = tmp_path / "it" / "name-the-restart-event" / "with_skill"
