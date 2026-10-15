@@ -94,7 +94,7 @@ def check_common_coverage(categories: dict[str, dict[str, list[dict]]], lang_com
 # project file and the unit when the properties bar shows another one. Where
 # the two disagree the file wins, and a reader that has only the bar's text
 # writes degrees into a field of radians. The keys and their values were
-# measured over the 33 225 world instances of the official examples
+# measured over the world instances of the official examples
 # (docs/decisions/common-instance-properties.md); the names match
 # ``IWorldInstance`` of ``data/c3-ts-defs/``.
 #
@@ -500,9 +500,11 @@ def _sdk_names(main_js: str) -> dict[str, str]:
         r'([A-Z]\w*)\([\w,]*\)\{[\w$]+\.get\(this\)\.([\w$]+)\(', _sdk_class(main_js, SDK_INFO_ANCHOR))}
 
 
-def _common_guards(main_js: str, lang_common: dict) -> tuple[list[tuple[int, str, dict]], list[tuple[int, int, str, str]]]:
+def _common_guards(
+    main_js: str, lang_common: dict,
+) -> tuple[list[tuple[int, str, dict]], list[tuple[int, int, str, str, str]]]:
     """The registrations of the _common block and its guards, each guard as
-    ``(start, end, requirement, field of the info class)``."""
+    ``(start, end, requirement, field of the info class, flag name)``."""
     head, body = _function_body(main_js, _bundle_anchor(main_js))
     params = BLOCK_HEAD_RE.match(main_js, head)
     if params is None:
@@ -529,7 +531,7 @@ def _common_guards(main_js: str, lang_common: dict) -> tuple[list[tuple[int, str
             requirement = f"{name}{'=' if equal else '!='}{m.group(1)}"
         else:
             requirement = ("!" if negate else "") + name
-        guards.append((start, end, requirement, field))
+        guards.append((start, end, requirement, field, name))
     return registrations, guards
 
 
@@ -545,7 +547,7 @@ def extract_common_requirements(main_js: str, lang_common: dict) -> dict[str, di
     registrations, guards = _common_guards(main_js, lang_common)
     result: dict[str, dict[str, list[list[str]]]] = {t: {} for t in ACE_TYPES}
     for pos, ace_type, ace in registrations:
-        needs = [req for start, end, req, _ in guards if start <= pos < end]
+        needs = [req for start, end, req, _, _ in guards if start <= pos < end]
         result[ace_type].setdefault(ace["id"], []).append(needs)
     return result
 
@@ -560,7 +562,7 @@ def extract_plugin_flags(main_js: str, plugins_js: str, lang_common: dict) -> di
     """
     _, guards = _common_guards(main_js, lang_common)
     setters, _, initial = _info_class(main_js)
-    name_of = {field: req.lstrip("!").split("!=")[0].split("=")[0] for _, _, req, field in guards}
+    name_of = {field: name for _, _, _, field, name in guards}
 
     plugins: dict[str, dict[str, bool | str]] = {}
     for m in addon_info_matches(plugins_js):
@@ -583,6 +585,7 @@ def extract_plugin_flags(main_js: str, plugins_js: str, lang_common: dict) -> di
 
 
 def requirement_holds(requirement: str, flags: dict[str, bool | str]) -> bool:
+    """Whether a plugin with ``flags`` meets one requirement of ``extract_common_requirements``."""
     if "!=" in requirement:
         name, value = requirement.split("!=", 1)
         return flags.get(name) != value

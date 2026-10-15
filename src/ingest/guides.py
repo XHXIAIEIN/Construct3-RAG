@@ -18,7 +18,7 @@ from __future__ import annotations
 import logging
 import re
 import urllib.request
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from html.parser import HTMLParser
@@ -52,24 +52,18 @@ class _Node:
     def classes(self) -> set[str]:
         return set(self.attrs.get("class", "").split())
 
-    def find(self, match: Callable[[_Node], bool]) -> _Node | None:
+    def descendants(self) -> Iterator[_Node]:
+        """The elements under this one in document order."""
         for child in self.children:
             if isinstance(child, _Node):
-                if match(child):
-                    return child
-                hit = child.find(match)
-                if hit is not None:
-                    return hit
-        return None
+                yield child
+                yield from child.descendants()
+
+    def find(self, match: Callable[[_Node], bool]) -> _Node | None:
+        return next((node for node in self.descendants() if match(node)), None)
 
     def find_all(self, match: Callable[[_Node], bool]) -> list[_Node]:
-        out: list[_Node] = []
-        for child in self.children:
-            if isinstance(child, _Node):
-                if match(child):
-                    out.append(child)
-                out.extend(child.find_all(match))
-        return out
+        return [node for node in self.descendants() if match(node)]
 
     def text(self) -> str:
         return " ".join("".join(c if isinstance(c, str) else " " + c.text() + " " for c in self.children).split())

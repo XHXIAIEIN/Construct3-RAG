@@ -25,7 +25,14 @@ from __future__ import annotations
 import re
 
 from src.ingest.common_aces import (
-    _call_args, _constructor_body, _id_before, _js_value, _sdk_class, addon_info_matches, info_receivers,
+    SDK_INFO_ANCHOR,
+    _call_args,
+    _constructor_body,
+    _id_before,
+    _js_value,
+    _sdk_class,
+    addon_info_matches,
+    info_receivers,
 )
 from src.lookup.schema_layout import SCHEMA_ACE_TYPES
 
@@ -33,9 +40,10 @@ ADDON_KINDS = ("plugins", "behaviors")
 
 # The public info classes of the Addon SDK, one per kind.
 SDK_INFO_ANCHORS = {
-    "plugins": "window.SDK.IPluginInfo=class{",
+    "plugins": SDK_INFO_ANCHOR,
     "behaviors": "window.SDK.IBehaviorInfo=class{",
 }
+
 
 def deprecated_setter(main_js: str, kind: str) -> str:
     """The minified setter that ``SetIsDeprecated`` of the ``kind`` info class calls."""
@@ -56,25 +64,26 @@ def extract_deprecation(main_js: str, bundle_js: str, kind: str) -> dict[str, bo
     be a literal boolean.
     """
     setter = re.escape(deprecated_setter(main_js, kind))
+    noun = kind[:-1]
     result: dict[str, bool] = {}
     for m in addon_info_matches(bundle_js):
         addon_id = _id_before(bundle_js, m.group(4), m.start())
         if addon_id is None:
-            raise ValueError(f"cannot resolve the {kind[:-1]} id at offset {m.start()} of the editor bundle")
+            raise ValueError(f"cannot resolve the {noun} id at offset {m.start()} of the editor bundle")
         if addon_id in result:
-            raise ValueError(f"{kind[:-1]} {addon_id!r} is constructed twice in the editor bundle")
-        body, top = _constructor_body(bundle_js, m.start(), f"{kind[:-1]} {addon_id!r}")
+            raise ValueError(f"{noun} {addon_id!r} is constructed twice in the editor bundle")
+        body, top = _constructor_body(bundle_js, m.start(), f"{noun} {addon_id!r}")
         deprecated = False
         for call in re.finditer(rf"(?<![\w$.]){info_receivers(m)}\.{setter}\(", body):
             if not top[call.start()]:
                 continue
             value = _js_value(_call_args(body, call.end()))
             if not isinstance(value, bool):
-                raise ValueError(f"{kind[:-1]} {addon_id!r} calls SetIsDeprecated with {value!r}")
+                raise ValueError(f"{noun} {addon_id!r} calls SetIsDeprecated with {value!r}")
             deprecated = value
         result[addon_id] = deprecated
     if not result:
-        raise ValueError(f"no {kind[:-1]} constructor found in the editor bundle")
+        raise ValueError(f"no {noun} constructor found in the editor bundle")
     return result
 
 
