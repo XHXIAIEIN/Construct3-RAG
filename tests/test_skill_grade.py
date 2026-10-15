@@ -1,8 +1,9 @@
-"""evals/grade.py on runs of its cases: what grading.json says about each.
+"""evals/grade.py and the eval scripts beside it on runs of the skill's cases: what grading.json, benchmark.json
+and trace.json say about a run.
 
-The answers in fixtures/restart_event_answers/ are runs' answer.md files of the name-the-restart-event case,
-with their run folder replaced by <run>. The project of each of those runs is empty and so is its fixture.json,
-so the third assertion passes throughout. An add-countdown run is the stand-in game with the events it wrote.
+The answers in fixtures/restart_event_answers/ are answer.md files of name-the-restart-event runs, with their run
+folder replaced by <run>. Each of those runs has an empty project and an empty fixture.json, so the third assertion
+passes throughout. An add-countdown run is the stand-in game with the events it wrote.
 """
 import importlib.util
 import json
@@ -15,20 +16,55 @@ import pytest
 
 from tests.skill_helpers import SKILL, SHEET, run
 
+sys.path.insert(0, str(SKILL / "evals"))
+sys.path.insert(0, str(SKILL / "scripts"))
+import grade as grader  # noqa: E402
+import make_fixtures  # noqa: E402
+import play_cases  # noqa: E402
+import preview_project  # noqa: E402
+import compare  # noqa: E402
+
+# evals/trace.py by its path: the standard library has a module named trace.
+tracer = importlib.util.module_from_spec(spec := importlib.util.spec_from_file_location("eval_trace", SKILL / "evals" / "trace.py"))
+spec.loader.exec_module(tracer)
+
 ANSWERS = Path(__file__).parent / "fixtures" / "restart_event_answers"
 CHINESE_ALL_THREE = "**事件 9**（Restart 组）：Coin.Count = 0，仅触发一次。触发后等待 1 秒，再重载场景。\n"
+CASES = {c["name"]: c for c in json.loads((SKILL / "evals" / "evals.json").read_text(encoding="utf-8"))["evals"]}
 
 
-def grade(tmp_path: Path, answer: str) -> list[bool]:
-    case = tmp_path / "it" / "name-the-restart-event" / "with_skill"
+def read_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def answer_case(case: Path, answer: str) -> None:
+    """A name-the-restart-event run at case: answer as its answer.md, an empty project and an empty fixture.json."""
     (case / "project").mkdir(parents=True)
     (case / "outputs").mkdir()
     (case / "fixture.json").write_text("{}", encoding="utf-8")
     (case / "outputs" / "answer.md").write_text(answer, encoding="utf-8")
+
+
+def project_case(tmp_path: Path, project: Path, name: str) -> Path:
+    """The with_skill run of case name in the iteration tmp_path/it: a copy of project and an empty fixture.json."""
+    case = tmp_path / "it" / name / "with_skill"
+    shutil.copytree(project, case / "project")
+    (case / "fixture.json").write_text("{}", encoding="utf-8")
+    return case
+
+
+def grade_iteration(tmp_path: Path) -> str:
+    """What grade.py prints on the iteration tmp_path/it, which it grades without an error."""
     code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
     assert code == 0, out
-    graded = json.loads((case / "grading.json").read_text(encoding="utf-8"))["assertion_results"]
-    return [g["passed"] for g in graded]
+    return out
+
+
+def grade(tmp_path: Path, answer: str) -> list[bool]:
+    case = tmp_path / "it" / "name-the-restart-event" / "with_skill"
+    answer_case(case, answer)
+    grade_iteration(tmp_path)
+    return [g["passed"] for g in read_json(case / "grading.json")["assertion_results"]]
 
 
 @pytest.mark.parametrize(("name", "passed"), [
@@ -52,31 +88,34 @@ def test_group_number_first_fails(tmp_path: Path) -> None:
                            "Event 9 is inside it.\n")[0] is False
 
 
+def add_countdown(project: Path, first_on_start: dict, setup_events: list[dict]) -> None:
+    """The stand-in's sheet with a global Countdown from 30, first_on_start as the first action of On start of
+    layout, and setup_events at the end of the Setup group."""
+    path = project / SHEET
+    sheet = read_json(path)
+    sheet["events"].insert(0, {"eventType": "variable", "name": "Countdown", "type": "number", "initialValue": "30",
+                               "comment": "", "isStatic": False, "isConstant": False, "sid": 767136845493875})
+    setup = next(g for g in sheet["events"] if g.get("title") == "Setup")
+    start = next(ev for ev in setup["children"] if any(c["id"] == "on-start-of-layout" for c in ev.get("conditions", [])))
+    start["actions"].insert(0, first_on_start)
+    setup["children"] += setup_events
+    path.write_text(json.dumps(sheet, indent="\t"), encoding="utf-8")
+
+
 @pytest.mark.parametrize(("kind", "counts"), [("regular", True), ("once", False)])
 def test_a_countdown_on_a_one_second_timer_loses_one_per_second(tmp_path: Path, project: Path, kind: str,
                                                                 counts: bool) -> None:
     """The add-countdown run of 2026-10-06 (with_q35_lean_2) started ScoreText's Timer "tick" for 1 second, Regular,
     under On start of layout, and took 1 from Countdown under On timer "tick". A Once timer fires a single time."""
-    path = project / SHEET
-    sheet = json.loads(path.read_text(encoding="utf-8"))
-    sheet["events"].insert(0, {"eventType": "variable", "name": "Countdown", "type": "number", "initialValue": "30",
-                               "comment": "", "isStatic": False, "isConstant": False, "sid": 767136845493875})
-    setup = next(g for g in sheet["events"] if g.get("title") == "Setup")
-    start = next(ev for ev in setup["children"] if any(c["id"] == "on-start-of-layout" for c in ev.get("conditions", [])))
-    start["actions"].insert(0, {"id": "start-timer", "objectClass": "ScoreText", "sid": 101, "behaviorType": "Timer",
-                                "parameters": {"duration": "1", "type": kind, "tag": '"tick"'}})
-    setup["children"].append({"eventType": "block", "sid": 102, "conditions": [
-        {"id": "on-timer", "objectClass": "ScoreText", "sid": 103, "behaviorType": "Timer", "parameters": {"tag": '"tick"'}}],
-        "actions": [{"id": "set-eventvar-value", "objectClass": "System", "sid": 104,
-                     "parameters": {"variable": "Countdown", "value": "Countdown - 1"}}]})
-    path.write_text(json.dumps(sheet, indent="\t"), encoding="utf-8")
-    case = tmp_path / "it" / "add-countdown" / "with_skill"
-    shutil.copytree(project, case / "project")
-    (case / "fixture.json").write_text("{}", encoding="utf-8")
-
-    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
-    assert code == 0, out
-    graded = json.loads((case / "grading.json").read_text(encoding="utf-8"))["assertion_results"]
+    add_countdown(project, {"id": "start-timer", "objectClass": "ScoreText", "sid": 101, "behaviorType": "Timer",
+                            "parameters": {"duration": "1", "type": kind, "tag": '"tick"'}}, [
+        {"eventType": "block", "sid": 102, "conditions": [
+            {"id": "on-timer", "objectClass": "ScoreText", "sid": 103, "behaviorType": "Timer", "parameters": {"tag": '"tick"'}}],
+         "actions": [{"id": "set-eventvar-value", "objectClass": "System", "sid": 104,
+                      "parameters": {"variable": "Countdown", "value": "Countdown - 1"}}]}])
+    case = project_case(tmp_path, project, "add-countdown")
+    grade_iteration(tmp_path)
+    graded = read_json(case / "grading.json")["assertion_results"]
     result = next(g for g in graded if g["text"].startswith("The countdown loses one per second"))
     assert result["passed"] is counts, result
     assert 'on-timer("tick") -> set-eventvar-value(Countdown | Countdown - 1)' in result["evidence"]
@@ -93,32 +132,20 @@ def test_the_restart_reads_the_countdown_running_out(tmp_path: Path, project: Pa
                                                      inverted: bool, restarts: bool) -> None:
     """A countdown from 30 that loses dt every tick, set back on start of layout and shown in ScoreText, restarts
     the layout under a comparison of the countdown: it passes only when the comparison holds at 0 and not at 30."""
-    path = project / SHEET
-    sheet = json.loads(path.read_text(encoding="utf-8"))
-    sheet["events"].insert(0, {"eventType": "variable", "name": "Countdown", "type": "number", "initialValue": "30",
-                               "comment": "", "isStatic": False, "isConstant": False, "sid": 767136845493875})
-    setup = next(g for g in sheet["events"] if g.get("title") == "Setup")
-    start = next(ev for ev in setup["children"] if any(c["id"] == "on-start-of-layout" for c in ev.get("conditions", [])))
-    start["actions"].insert(0, {"id": "set-eventvar-value", "objectClass": "System", "sid": 101,
-                                "parameters": {"variable": "Countdown", "value": "30"}})
     restart = {"id": "compare-eventvar", "objectClass": "System", "sid": 105,
                "parameters": {"variable": "Countdown", "comparison": comparison, "value": value}}
     if inverted:
         restart["isInverted"] = True
-    setup["children"] += [
+    add_countdown(project, {"id": "set-eventvar-value", "objectClass": "System", "sid": 101,
+                            "parameters": {"variable": "Countdown", "value": "30"}}, [
         {"eventType": "block", "sid": 102, "conditions": [{"id": "every-tick", "objectClass": "System", "sid": 103}],
          "actions": [{"id": "subtract-from-eventvar", "objectClass": "System", "sid": 104,
                       "parameters": {"variable": "Countdown", "value": "dt"}}]},
         {"eventType": "block", "sid": 106, "conditions": [restart],
-         "actions": [{"id": "restart-layout", "objectClass": "System", "sid": 107}]}]
-    path.write_text(json.dumps(sheet, indent="\t"), encoding="utf-8")
-    case = tmp_path / "it" / "add-countdown" / "with_skill"
-    shutil.copytree(project, case / "project")
-    (case / "fixture.json").write_text("{}", encoding="utf-8")
-
-    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
-    assert code == 0, out
-    graded = json.loads((case / "grading.json").read_text(encoding="utf-8"))["assertion_results"]
+         "actions": [{"id": "restart-layout", "objectClass": "System", "sid": 107}]}])
+    case = project_case(tmp_path, project, "add-countdown")
+    grade_iteration(tmp_path)
+    graded = read_json(case / "grading.json")["assertion_results"]
     result = next(g for g in graded if g["text"].startswith("An event restarts the layout"))
     assert result["passed"] is restarts, result
 
@@ -126,35 +153,16 @@ def test_the_restart_reads_the_countdown_running_out(tmp_path: Path, project: Pa
 def test_a_run_that_wrote_outside_its_folder_is_not_scored(tmp_path: Path) -> None:
     """Its grade would count work that is not in its project, or that another run reads."""
     case = tmp_path / "it" / "name-the-restart-event" / "with_skill"
-    (case / "project").mkdir(parents=True)
-    (case / "outputs").mkdir()
-    (case / "fixture.json").write_text("{}", encoding="utf-8")
-    (case / "outputs" / "answer.md").write_text(CHINESE_ALL_THREE, encoding="utf-8")
+    answer_case(case, CHINESE_ALL_THREE)
     elsewhere = str(tmp_path / "scratchpad" / "plan.json")
     (case / "trace.json").write_text(json.dumps({"tool_calls": 3, "lost_calls": 0, "outside": [
         {"tool": "Write", "path": elsewhere}], "outside_reads": []}), encoding="utf-8")
-    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
-    assert code == 0, out
+    out = grade_iteration(tmp_path)
     assert f"name-the-restart-event/with_skill: void, not scored: it wrote outside its folder: {elsewhere}" in out
-    assert json.loads((case / "grading.json").read_text(encoding="utf-8")) == {
-        "void": f"it wrote outside its folder: {elsewhere}"}
-    benchmark = json.loads((tmp_path / "it" / "benchmark.json").read_text(encoding="utf-8"))
+    assert read_json(case / "grading.json") == {"void": f"it wrote outside its folder: {elsewhere}"}
+    benchmark = read_json(tmp_path / "it" / "benchmark.json")
     assert benchmark["void_runs"] == [{"run": "name-the-restart-event/with_skill",
                                        "reason": f"it wrote outside its folder: {elsewhere}"}]
-
-
-sys.path.insert(0, str(SKILL / "evals"))
-sys.path.insert(0, str(SKILL / "scripts"))
-import grade as grader  # noqa: E402
-import make_fixtures  # noqa: E402
-import play_cases  # noqa: E402
-import preview_project  # noqa: E402
-
-# evals/trace.py by its path: the standard library has a module named trace.
-tracer = importlib.util.module_from_spec(spec := importlib.util.spec_from_file_location("eval_trace", SKILL / "evals" / "trace.py"))
-spec.loader.exec_module(tracer)
-
-CASES = {c["name"]: c for c in json.loads((SKILL / "evals" / "evals.json").read_text(encoding="utf-8"))["evals"]}
 
 
 @pytest.mark.parametrize("name", sorted(play_cases.PLANS))
@@ -200,13 +208,10 @@ def played(case: Path, oks: list[bool]) -> None:
 
 
 def test_runtime_checks_are_graded_from_the_played_result(tmp_path: Path, project: Path) -> None:
-    case = tmp_path / "it" / "fix-next-round" / "with_skill"
-    shutil.copytree(project, case / "project")
-    (case / "fixture.json").write_text("{}", encoding="utf-8")
+    case = project_case(tmp_path, project, "fix-next-round")
     played(case, [True, False])
-    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
-    assert code == 0, out
-    grading = json.loads((case / "grading.json").read_text(encoding="utf-8"))
+    out = grade_iteration(tmp_path)
+    grading = read_json(case / "grading.json")
     runtime = [(g["passed"], g["evidence"]) for g in grading["assertion_results"] if g["level"] == "runtime"]
     checks = [n for n, s in enumerate(play_cases.plan_for("fix-next-round")["steps"], 1)
               if s.get("note", "").startswith(play_cases.CHECK)]
@@ -218,26 +223,20 @@ def test_runtime_checks_are_graded_from_the_played_result(tmp_path: Path, projec
 def test_an_unplayed_plan_is_not_scored(tmp_path: Path, project: Path) -> None:
     """Grading without --play compares with iterations graded before the plans: the runtime checks are listed
     and left out of the scores."""
-    case = tmp_path / "it" / "fix-next-round" / "with_skill"
-    shutil.copytree(project, case / "project")
-    (case / "fixture.json").write_text("{}", encoding="utf-8")
-    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
-    assert code == 0, out
-    grading = json.loads((case / "grading.json").read_text(encoding="utf-8"))
+    case = project_case(tmp_path, project, "fix-next-round")
+    grade_iteration(tmp_path)
+    grading = read_json(case / "grading.json")
     assert grading["summary"]["runtime"] == "not played"
     assert grading["summary"]["total"] == len(CASES["fix-next-round"]["assertions"])
     assert {g["passed"] for g in grading["assertion_results"] if g["level"] == "runtime"} == {None}
 
 
 def test_a_held_out_case_is_aggregated_apart_and_its_failures_are_not_printed(tmp_path: Path, project: Path) -> None:
-    case = tmp_path / "it" / "coins-in-a-ring" / "with_skill"
-    shutil.copytree(project, case / "project")
-    (case / "fixture.json").write_text("{}", encoding="utf-8")
+    case = project_case(tmp_path, project, "coins-in-a-ring")
     played(case, [False, False, True])
-    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"))
-    assert code == 0, out
+    out = grade_iteration(tmp_path)
     assert "coins-in-a-ring/with_skill: held out, " in out and "FAIL" not in out
-    benchmark = json.loads((tmp_path / "it" / "benchmark.json").read_text(encoding="utf-8"))
+    benchmark = read_json(tmp_path / "it" / "benchmark.json")
     assert "coins-in-a-ring" not in benchmark["by_case"] and "coins-in-a-ring" in benchmark["held_out"]["by_case"]
     code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(tmp_path / "it"), "--show-held-out")
     assert "FAIL [runtime] Round 2's three coins sit evenly" in out
@@ -297,8 +296,7 @@ def screenshots(tmp_path: Path, fill: Callable[[int, float], tuple], lit: tuple[
     for name, part in zip(("before", "after"), lit):
         im = Image.new("RGB", (500, 100), (2, 48, 71))
         for x in range(50, 50 + int(400 * part)):
-            for y in range(40, 60):
-                im.putpixel((x, y), fill(x - 50, part))
+            im.paste(fill(x - 50, part), (x, 40, x + 1, 60))
         im.save(tmp_path / f"{name}.png")
         shots.append(tmp_path / f"{name}.png")
     box = [{"type": "Bar", "text": False, "box": {"l": 50, "t": 40, "r": 450, "b": 60}}]
@@ -382,7 +380,7 @@ def test_trace_counts_the_route_of_a_run(tmp_path: Path) -> None:
     transcript = transcript_of(tmp_path / "agent.jsonl", calls)
     code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(run_dir))
     assert code == 0, out
-    trace = json.loads((run_dir / "trace.json").read_text(encoding="utf-8"))
+    trace = read_json(run_dir / "trace.json")
     assert {k: trace[k] for k in grader.TRACE_COLUMNS} == {
         "tool_calls": 16, "lost_calls": 4, "turns": 0, "output_tokens": 0, "read_skill_md": True,
         "first_script": "check_project", "chain_depth": 4, "chain_end": "preview_project", "chain_reached": "preview_project",
@@ -438,15 +436,12 @@ def test_trace_reads_relative_to_the_cd_of_a_command(tmp_path: Path, command: st
 def restart_runs(tmp_path: Path, depths: dict[str, list[int]]) -> Path:
     """An iteration of name-the-restart-event runs that all pass, each traced with the chain depth given."""
     iteration = tmp_path / "it"
+    answer = (ANSWERS / "english_all_three.md").read_text(encoding="utf-8")
     ends = {1: "check_project", 2: "review_design", 4: "preview_project", 5: "review_look"}
     for arm, cell in depths.items():
         for n, depth in enumerate(cell):
             case = iteration / "name-the-restart-event" / (arm if n == 0 else f"{arm}_{n + 1}")
-            (case / "project").mkdir(parents=True)
-            (case / "outputs").mkdir()
-            (case / "fixture.json").write_text("{}", encoding="utf-8")
-            (case / "outputs" / "answer.md").write_text((ANSWERS / "english_all_three.md").read_text(encoding="utf-8"),
-                                                        encoding="utf-8")
+            answer_case(case, answer)
             (case / "trace.json").write_text(json.dumps({
                 "tool_calls": 20 + depth, "lost_calls": 1, "turns": 15, "output_tokens": 3000, "read_skill_md": True,
                 "first_script": "check_project", "chain_depth": depth, "chain_end": ends[depth],
@@ -465,11 +460,10 @@ def test_grade_carries_the_route_columns_and_decides_on_one(tmp_path: Path) -> N
     (iteration / "decision.json").write_text(json.dumps({
         "cases": ["name-the-restart-event"], "metric": "chain_depth", "direction": "up", "n_per_cell": 3,
         "guards": {"pass_rate": "not down"}, "concurrency": 3}), encoding="utf-8")
-    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(iteration))
-    assert code == 0, out
+    out = grade_iteration(tmp_path)
     assert ("decision: chain_depth up: with_skill - old_skill = +10 over 1 case, one-sided p = 0.050 (exact, 20 "
             "reassignments); guard pass_rate not down holds (1.0 vs 1.0); verdict: holds at alpha 0.05, 3 runs at once") in out
-    benchmark = json.loads((iteration / "benchmark.json").read_text(encoding="utf-8"))
+    benchmark = read_json(iteration / "benchmark.json")
     with_skill = benchmark["by_case"]["name-the-restart-event"]["with_skill"]
     assert with_skill["chain_depth"] == {"mean": 4.667, "runs": 3, "stddev": 0.577}
     assert with_skill["chain_end"] == {"preview_project": 1, "review_look": 2} and with_skill["first_script"] == {"check_project": 3}
@@ -490,10 +484,9 @@ def test_grade_says_underpowered_and_aggregates_all_the_same(tmp_path: Path) -> 
     iteration = restart_runs(tmp_path, {"with_skill": [5, 5, 4], "old_skill": [1, 2]})
     (iteration / "decision.json").write_text(json.dumps({
         "cases": ["name-the-restart-event"], "metric": "chain_depth", "direction": "up", "n_per_cell": 3}), encoding="utf-8")
-    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(iteration))
-    assert code == 0, out
+    out = grade_iteration(tmp_path)
     assert "underpowered: name-the-restart-event/old_skill: 2 of 3; no verdict on chain_depth" in out
-    benchmark = json.loads((iteration / "benchmark.json").read_text(encoding="utf-8"))
+    benchmark = read_json(iteration / "benchmark.json")
     assert benchmark["decision"]["verdict"] == "underpowered"
     assert benchmark["by_case"]["name-the-restart-event"]["old_skill"]["chain_depth"]["mean"] == 1.5
 
@@ -506,15 +499,11 @@ def test_grade_writes_the_benchmark_when_decision_json_cannot_be_read(tmp_path: 
     """A misspelled key or a broken file costs the verdict, not the aggregation."""
     iteration = restart_runs(tmp_path, {"with_skill": [5, 5, 4], "old_skill": [1, 2, 1]})
     (iteration / "decision.json").write_text(text, encoding="utf-8")
-    code, out = run(tmp_path, SKILL / "evals" / "grade.py", str(iteration))
-    assert code == 0, out
+    out = grade_iteration(tmp_path)
     assert f"decision.json: {error}" in out and "benchmark written without a verdict" in out
-    benchmark = json.loads((iteration / "benchmark.json").read_text(encoding="utf-8"))
+    benchmark = read_json(iteration / "benchmark.json")
     assert benchmark["decision"]["verdict"] == "not read" and benchmark["decision"]["error"].startswith(error)
     assert benchmark["by_case"]["name-the-restart-event"]["with_skill"]["chain_depth"]["mean"] == 4.667
-
-
-import compare  # noqa: E402
 
 
 def test_the_permutation_test_reassigns_within_each_case() -> None:
@@ -533,18 +522,18 @@ def test_the_permutation_test_reassigns_within_each_case() -> None:
 def test_find_in_a_big_sheet_grades_the_event_and_the_bonus(tmp_path: Path) -> None:
     """Wave 17's bonus is event 284 of the fixture's sheet, GiveBonus(454); the wave and the bonus written near
     "event" are not taken for event numbers."""
-    run = tmp_path / "run"
-    (run / "project").mkdir(parents=True)
-    (run / "outputs").mkdir()
-    (run / "project" / "project.c3proj").write_text("{}", encoding="utf-8")
-    (run / "fixture.json").write_text(json.dumps(make_fixtures.digest(run / "project")), encoding="utf-8")
-    answer = run / "outputs" / "answer.md"
+    run_dir = tmp_path / "run"
+    (run_dir / "project").mkdir(parents=True)
+    (run_dir / "outputs").mkdir()
+    (run_dir / "project" / "project.c3proj").write_text("{}", encoding="utf-8")
+    (run_dir / "fixture.json").write_text(json.dumps(make_fixtures.digest(run_dir / "project")), encoding="utf-8")
+    answer = run_dir / "outputs" / "answer.md"
     answer.write_text("Event 284, in the group Wave 17 score (event 280), pays the bonus of wave 17: it calls "
                       "GiveBonus(454), event 410, so the bonus is 454 points.\n\n## Commands run\n"
                       "python scripts/print_sheet.py Waves --events 1-17", encoding="utf-8")
-    assert [ok for ok, _ in grader.grade_find_in_a_big_sheet(run)] == [True, True, True, True]
+    assert [ok for ok, _ in grader.grade_find_in_a_big_sheet(run_dir)] == [True, True, True, True]
     answer.write_text("Event 300 pays it: 380 points.", encoding="utf-8")
-    assert [ok for ok, _ in grader.grade_find_in_a_big_sheet(run)] == [False, False, False, True]
+    assert [ok for ok, _ in grader.grade_find_in_a_big_sheet(run_dir)] == [False, False, False, True]
     assert make_fixtures.wave_bonus(make_fixtures.BIG_SHEET_FOCUS) == 454 and "coins-big-sheet" in make_fixtures.SEEDS
 
 
@@ -561,8 +550,14 @@ def test_trace_counts_whole_sheet_prints_and_print_sheet_characters(tmp_path: Pa
     how often a run asked for whole sheets past the limit."""
     transcript = transcript_of(tmp_path / "agent.jsonl", [("Bash", {"command": command}, "x" * 1234, False)])
     code, out = run(tmp_path, SKILL / "evals" / "trace.py", str(transcript), "--out", str(tmp_path))
-    trace = json.loads((tmp_path / "trace.json").read_text(encoding="utf-8"))
+    trace = read_json(tmp_path / "trace.json")
     assert code == 0 and trace["print_sheet_chars"] == 1234 and trace["whole_sheet_prints"] == int(whole)
+
+
+def hud_results(case: Path, *words: str) -> tuple:
+    """grade_lay_out_the_hud on case: the (passed, evidence) of the HUD case's first assertion holding each word."""
+    results = dict(zip(CASES["lay-out-the-hud"]["assertions"], grader.grade_lay_out_the_hud(case)))
+    return tuple(next(v for k, v in results.items() if word in k) for word in words)
 
 
 def test_the_hud_case_grades_by_the_templates_own_rules(tmp_path: Path, project: Path) -> None:
@@ -570,19 +565,14 @@ def test_the_hud_case_grades_by_the_templates_own_rules(tmp_path: Path, project:
     purpose, not an overlap; a hollow box lies round a label and not behind it; and the stand-in's own HUD
     counts as nothing the run added."""
     pytest.importorskip("PIL")
-    spec = importlib.util.spec_from_file_location("eval_grade", SKILL / "evals" / "grade.py")
-    grader = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(grader)
     case = tmp_path / "it" / "lay-out-the-hud" / "with_skill"
     shutil.copytree(project, case / "project")
     assert grader.margin_of(case / "project") == 64 and grader.margin_of(tmp_path) == grader.MARGIN
     assert grader.one_colour(case / "project", "KeyBox") is None
     assert grader.one_colour(case / "project", "Coin") == (61, 90, 254)
-    results = dict(zip(CASES["lay-out-the-hud"]["assertions"], grader.grade_lay_out_the_hud(case)))
-    added, overlap = (next(v for k, v in results.items() if word in k) for word in ("besides", "overlap"))
+    added, overlap, sizes, edges = hud_results(case, "besides", "overlap", "multiples", "held against")
     assert added[0] is False and "0 added instance(s)" in added[1]
     assert overlap == (True, "overlapping boxes: none")
-    sizes, edges = (next(v for k, v in results.items() if word in k) for word in ("multiples", "held against"))
     assert sizes[0] is False and "0 added non-text instance(s)" in sizes[1] and edges[0] is False
 
 
@@ -592,9 +582,6 @@ def test_the_hud_case_lines_a_small_drawing_up_by_what_it_draws(tmp_path: Path, 
     and its box 16 px from the edge. The stand-in's texts are measured to their text and stay out of both."""
     pytest.importorskip("PIL")
     from PIL import Image, ImageDraw
-    spec = importlib.util.spec_from_file_location("eval_grade", SKILL / "evals" / "grade.py")
-    grader = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(grader)
     case = tmp_path / "it" / "lay-out-the-hud" / "with_skill"
     shutil.copytree(project, case / "project")
     image = Image.new("RGBA", (160, 160), (0, 0, 0, 0))
@@ -612,8 +599,7 @@ def test_the_hud_case_lines_a_small_drawing_up_by_what_it_draws(tmp_path: Path, 
     def graded(x: int, y: int) -> tuple:
         button["world"].update({"x": x, "y": y, "width": 160, "height": 160, "originX": 0, "originY": 0})
         path.write_text(json.dumps(layout), encoding="utf-8")
-        results = dict(zip(CASES["lay-out-the-hud"]["assertions"], grader.grade_lay_out_the_hud(case)))
-        return tuple(next(v for k, v in results.items() if word in k) for word in ("multiples", "held against"))
+        return hud_results(case, "multiples", "held against")
 
     sizes, edges = graded(1920 - 64 - 112, 1080 - 64 - 112)
     assert sizes[0] is True and "1 added non-text instance(s)" in sizes[1]
