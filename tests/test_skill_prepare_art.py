@@ -23,13 +23,15 @@ GREEN_HEART = (17, 207, 99)                                       # 92 from the 
 PAINTED = {"magenta": (250, 4, 240), "green": (6, 246, 10)}      # the key as a model paints it
 POCKET = {"magenta": (215, 40, 200), "green": (40, 200, 35)}     # the key seen through a gap, about 60 off
 RING = (20, 128, 32, 140)                                         # the gap, in pixels
-SPILL = [(70, 60), (90, 56), (80, 66)]                          # 2x2 spots of key light in the hair
+# the pixels of key light in the hair, three 2x2 spots
+SPILL = [(x + dx, y + dy) for x, y in ((70, 60), (90, 56), (80, 66)) for dx in (0, 1) for dy in (0, 1)]
 
 
 def picture(path: Path, bg: tuple[int, int, int] = MAGENTA, r: int = 200, shadow: bool = True,
             stripes: bool = False) -> None:
     """A picture as an image model makes one: a gold coin with soft edges on a key colour that
-    is not quite flat, a darker patch of that colour under it, saved as a JPEG."""
+    is not quite flat, a darker patch of that colour under it, saved as a JPEG. `r` is the coin's
+    radius in pixels; `stripes` lays coloured bars across the whole picture."""
     img = Image.new("RGB", (512, 512), bg)
     d = ImageDraw.Draw(img)
     for y in range(0, 512, 8):
@@ -49,7 +51,8 @@ def picture(path: Path, bg: tuple[int, int, int] = MAGENTA, r: int = 200, shadow
     img.filter(ImageFilter.SMOOTH).save(path, quality=85)
 
 
-def figure(key: str, spill: bool = True, hair: tuple | None = None, gap: bool = True) -> tuple:
+def figure(key: str, spill: bool = True, hair: tuple[int, int, int] | None = None,
+           gap: bool = True) -> tuple[Image.Image, Image.Image]:
     """A figure whose matte is known, (truth, picture): drawn at SS times its size and box-reduced,
     so its edge has every alpha, then laid over the key as a model paints it. A face with white
     eye highlights over a white shirt, a hair cap with strands 0.5 to 2 px wide, a ring of hair
@@ -61,7 +64,7 @@ def figure(key: str, spill: bool = True, hair: tuple | None = None, gap: bool = 
     big = Image.new("RGBA", (w * SS, h * SS), (0, 0, 0, 0))
     d = ImageDraw.Draw(big)
 
-    def at(*v):
+    def at(*v: float) -> list[int]:
         return [round(x * SS) for x in v]
 
     d.ellipse(at(33.8, 73.8, 126.2, 166.2), fill=OUTLINE)
@@ -88,21 +91,15 @@ def figure(key: str, spill: bool = True, hair: tuple | None = None, gap: bool = 
     back = Image.new("RGB", (w, h), PAINTED[key])
     if gap:
         ImageDraw.Draw(back).ellipse([RING[0] - 1, RING[1] - 1, RING[2] + 1, RING[3] + 1], fill=POCKET[key])
-    fg, bg = truth.tobytes(), back.tobytes()
-    out = bytearray(w * h * 3)
-    for i in range(w * h):
-        a = fg[4 * i + 3] / 255
-        for c in range(3):
-            out[3 * i + c] = round(a * fg[4 * i + c] + (1 - a) * bg[3 * i + c])
-    pic = Image.frombytes("RGB", (w, h), bytes(out))
+    pic = Image.composite(truth.convert("RGB"), back, truth.getchannel("A"))
     if spill:
         px, tr = pic.load(), truth.load()
-        for x, y in ((sx + dx, sy + dy) for sx, sy in SPILL for dx in (0, 1) for dy in (0, 1)):
+        for x, y in SPILL:
             px[x, y] = tuple(round(0.6 * a + 0.4 * b) for a, b in zip(tr[x, y][:3], PAINTED[key]))
     return truth, pic
 
 
-def new_colours(src, out) -> list:
+def new_colours(src: Image.Image, out: Image.Image) -> list[tuple[int, int]]:
     """The pixels of `out`, a scaled `src`, shown (alpha >= 38) in a colour more than one level
     outside the range of the shown source pixels under them."""
     sp, op = src.load(), out.load()
@@ -120,19 +117,19 @@ def new_colours(src, out) -> list:
     return bad
 
 
-def leaning(img, key: tuple) -> tuple[int, int]:
+def leaning(img: Image.Image, key: tuple[int, int, int]) -> tuple[int, int]:
     """The shown pixels within 3 px of a clear one that lean to the key by more than 40, and all
     shown pixels there."""
+    # counted apart from prepare_art.fringe, so that a fault there cannot pass its own test
     px = img.load()
-    near = Image.frombytes("L", img.size, bytes(255 if a == 0 else 0 for a in img.getchannel("A").tobytes()))
-    near = near.filter(ImageFilter.MaxFilter(7)).load()
+    near = img.getchannel("A").point(lambda a: 255 if a == 0 else 0).filter(ImageFilter.MaxFilter(7)).load()
     on = [k for k in range(3) if key[k]]
     off = [k for k in range(3) if not key[k]]
     shown = [px[x, y] for y in range(img.height) for x in range(img.width) if near[x, y] and px[x, y][3] >= 32]
     return sum(min(p[k] for k in on) - max(p[k] for k in off) > 40 for p in shown), len(shown)
 
 
-def matte(truth, cut) -> tuple[float, int]:
+def matte(truth: Image.Image, cut: Image.Image) -> tuple[float, int]:
     """The mean alpha error in levels, and the pixels at least half covered in the truth that are
     shown in a colour more than 40 off it."""
     t, c = truth.load(), cut.load()
@@ -299,9 +296,9 @@ def test_prepare_art_cuts_out_a_picture_and_the_generator_takes_it(project):
     assert not fringe, f"the key or its shadow is left: {fringe[:5]}"
     assert all(px[x, y] == (0, 0, 0, 0) for x in range(160) for y in range(160) if not px[x, y][3])
     assert any(0 < p[3] < 255 for p in shown), "the edge is blended"
-    hit = Image.open(project / "art" / "coin-default-000.hit.png").load()
-    assert all(hit[x, y][3] == px[x, y][3] for x in range(160) for y in range(160))
-    assert hit[48, 48] == (255, 255, 255, 255)
+    hit = Image.open(project / "art" / "coin-default-000.hit.png")
+    assert hit.getchannel("A").tobytes() == img.getchannel("A").tobytes()
+    assert hit.getpixel((48, 48)) == (255, 255, 255, 255)
 
     code, out = run(project, "tools/build_project.py")
     assert code == 0 and "art: all 1 images from art/" in out, out
@@ -400,7 +397,7 @@ def test_prepare_art_unmixes_the_edge_by_how_much_key_it_holds():
     and tinted."""
     for key in KEYS:
         truth, pic = figure(key, spill=False, gap=False)
-        cut, how = prepare_art.cut_out(pic, KEYS[key])
+        cut, _ = prepare_art.cut_out(pic, KEYS[key])
         err, off = matte(truth, cut)
         assert err < 1 and off <= 10, (key, err, off)
         assert leaning(cut, KEYS[key])[0] == 0, key
@@ -417,7 +414,7 @@ def test_prepare_art_clears_gaps_and_key_light_and_keeps_colours_near_the_key():
         hole = [(x, y) for x in range(RING[0] + 1, RING[2] - 1) for y in range(RING[1] + 1, RING[3] - 1)
                 if truth.getpixel((x, y))[3] == 0]
         assert hole and all(cut.getpixel(p)[3] == 0 for p in hole), key
-        for x, y in ((sx + dx, sy + dy) for sx, sy in SPILL for dx in (0, 1) for dy in (0, 1)):
+        for x, y in SPILL:
             assert max(abs(a - b) for a, b in zip(cut.getpixel((x, y)), truth.getpixel((x, y)))) <= 24, (key, x, y)
         # a hot-pink heart under magenta, 94 from the key, and a green one under green: untouched
         heart = HOT_PINK if key == "magenta" else GREEN_HEART
@@ -426,7 +423,7 @@ def test_prepare_art_clears_gaps_and_key_light_and_keeps_colours_near_the_key():
 
 
 def test_prepare_art_refuses_a_cut_that_leaves_the_key_on_the_edge():
-    truth, pic = figure("magenta", hair=HOT_PINK)
+    _, pic = figure("magenta", hair=HOT_PINK)
     with pytest.raises(prepare_art.Unusable, match=r"pixels along the subject's edge lean to magenta: a fringe "
                                                    r"the cut left, or a subject too near the key; make it again on "
                                                    r"a flat green #00FF00 background") as refused:
@@ -435,7 +432,7 @@ def test_prepare_art_refuses_a_cut_that_leaves_the_key_on_the_edge():
     record = {"x.png": {"pictures": ["0"], "tell": refused.value.tell, "key": refused.value.key}}
     text = prepare_art.prompt(prepare_art.with_refusal(item, record), "")
     assert "on a flat green #00FF00 background" in text and "Keep magenta out of the subject and its edge" in text
-    truth, pic = figure("green", hair=HOT_PINK)          # made again as the line says
+    _, pic = figure("green", hair=HOT_PINK)              # made again as the line says
     cut, how = prepare_art.cut_out(pic, KEYS["magenta"])
     assert how.startswith("background #06F60A") and leaning(cut, KEYS["green"])[0] == 0
 
@@ -453,6 +450,6 @@ def test_prepare_art_cuts_real_pictures():
     for path in pictures:
         img = Image.open(path).convert("RGB")
         key = KEYS["magenta" if img.getpixel((0, 0))[0] > 128 else "green"]
-        cut, how = prepare_art.cut_out(img, key)
+        cut, _ = prepare_art.cut_out(img, key)
         left, band = leaning(cut, key)
         assert left <= band / 1000, (path.name, left, band)
