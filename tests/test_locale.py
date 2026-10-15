@@ -1,4 +1,4 @@
-"""Contracts for aligned locale JSON consumed by production lookup paths."""
+"""src/locale/resources.py: the query resources of catalog.json that src.lookup reads, every locale side by side."""
 
 import json
 import re

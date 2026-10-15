@@ -12,6 +12,7 @@ PROMPTS = REPO / "prompts"
 INDEX = PROMPTS / "event-sheet-pitfalls.md"
 TOPICS = PROMPTS / "pitfalls"
 
+# The .md file a Markdown link points at, without its anchor
 LINK = re.compile(r"\]\(([^)#\s]+\.md)(?:#[^)]*)?\)")
 # A source is a bracketed span that is not a Markdown link's text.
 SOURCE = re.compile(r"\[[^\]]+\](?!\()")
@@ -31,7 +32,7 @@ def bullets(text: str) -> list[str]:
 
 
 def index_groups() -> dict[str, tuple[str, int]]:
-    """Topic group of the index to (linked topic file, conclusion lines)."""
+    """Each topic group of the index: its linked topic file and how many conclusion lines it has."""
     text = INDEX.read_text(encoding="utf-8")
     topics = text.split("\n## Topics\n", 1)[1].split("\n## ", 1)[0]
     groups: dict[str, tuple[str, int]] = {}
@@ -39,7 +40,7 @@ def index_groups() -> dict[str, tuple[str, int]]:
         title, body = block.split("\n", 1)
         links = [link for link in LINK.findall(body) if link.startswith("pitfalls/")]
         assert len(links) == 1, f"group {title!r} links {links}, not one topic file"
-        groups[title] = (links[0], sum(line.startswith("- ") for line in body.splitlines()))
+        groups[title] = (links[0], len(bullets(body)))
     return groups
 
 
