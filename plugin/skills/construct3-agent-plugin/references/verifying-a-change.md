@@ -50,8 +50,8 @@ about the editor or the preview goes to `editor-and-preview.md`.
    that passes there, or fails at an earlier step, has not reached the
    bug. A fix played against it shows nothing, so change the plan until it
    fails as reported. Then change the events and play the same plan until
-   it passes. [design: docs/decisions/preview-player.md, the bullet on a
-   bug's plan]
+   it passes. [design: `Construct3-RAG/docs/decisions/preview-player.md`,
+   the bullet on a bug's plan]
 3. **Reach each scene the way the game does.** Play to it when that is
    short; otherwise call the game's own functions with
    `runtime.callFunction`, which run the events that keep related values in
@@ -60,12 +60,12 @@ about the editor or the preview goes to `editor-and-preview.md`.
    lets the game's own expressions compute what play never produces, and
    the runtime errors that follow are the plan's. Rerun the same steps
    without the write before blaming the events. [observed in a game
-   project, r504 preview, 2026-10-02: pieces made with the game's
-   `createBase` behaved as bought ones; an enemy's hp set to 10^6 through a
-   JSON instance's `setJsonDataCopy`, above the stage total the events add
-   up as enemies spawn, drove a progress ratio near -20000 and a low-pass
-   frequency computed from it to 0, logging a RangeError per call that the
-   same steps without the write did not]
+   project, r504 preview, 2026-10-02: pieces made by calling the game's own
+   creation function behaved as bought ones; an enemy's hp set to 10^6
+   through a JSON instance's `setJsonDataCopy`, above the stage total the
+   events add up as enemies spawn, drove a progress ratio near -20000 and a
+   low-pass frequency computed from it to 0, logging a RangeError per call
+   that the same steps without the write did not]
 4. **Meet the conditions that start the flow.** Read the trigger chain of
    the event under test back to its first trigger: a countdown that a touch
    starts, an audio clock that stands still until the first input, a
@@ -87,9 +87,9 @@ about the editor or the preview goes to `editor-and-preview.md`.
    Wait with `until` on the result, not a fixed
    `wait`, so a slow run does not fail and a fast one does not hide a
    second firing. [observed in a game project, r504 preview, 2026-10-02:
-   a guide hand that fades in, presses and drags was read as "from bench
-   slot 3 to battle slot 0" from the first two samples less than 0.5 px
-   apart and the last sample after 1.5 s]
+   a guide hand that fades in, presses and drags was read as a drag
+   between two slots from the first two samples less than 0.5 px apart and
+   the last sample after 1.5 s]
 6. **Turn a word of feel into a number.** Floaty, slow, sluggish or heavy
    names no value to change. Name the variable behind the word: a jump's
    gravity and strength, a tween's duration and ease, a speed, a delay.
@@ -100,7 +100,8 @@ about the editor or the preview goes to `editor-and-preview.md`.
    for the effect in `Construct3-RAG/prompts/references/feel.md` where
    there is one, otherwise from the user. The change is done when the
    recording measures the target, not when the motion looks better.
-   [design: docs/decisions/preview-player.md, the bullet on a word of feel]
+   [design: `Construct3-RAG/docs/decisions/preview-player.md`, the bullet
+   on a word of feel]
 7. **Keep what the run logs apart from what the change did.** A run that
    logs no error and never reached the event says nothing; a run that logs
    an error after a direct write may say nothing about the events either.
@@ -117,8 +118,8 @@ about the editor or the preview goes to `editor-and-preview.md`.
    which part looks off, or that neither settles it. The recording's review
    page, `NN-NAME.html`, then goes to the user for what is left to the eye: they play it frame by
    frame, select a part that looks wrong and copy it back as a task.
-   [design: docs/decisions/preview-player.md, the bullets on
-   `record` and the review page]
+   [design: `Construct3-RAG/docs/decisions/preview-player.md`, the bullets
+   on `record` and the review page]
 8. **Keep the plan, and replay every kept plan after each change.** Once a
    plan passes, run it again with `--keep NAME`. It is copied to
    `tools/plans/NAME.json` in the project, beside the generator and the
@@ -128,7 +129,8 @@ about the editor or the preview goes to `editor-and-preview.md`.
    one that fails. Fix the events the failing step reads, not the plan,
    because the plan passed when its change was made. Change a kept plan
    only when the game was meant to change what it checks.
-   [design: docs/decisions/preview-player.md, the bullet on kept plans]
+   [design: `Construct3-RAG/docs/decisions/preview-player.md`, the bullet
+   on kept plans]
 
 ## The look of each layout
 
@@ -141,29 +143,29 @@ box (`stacked`), overlaps on the HUD and texts over texts (`overlap`), a HUD
 instance the screen's edge cuts (`edge`), and a type whose kinds show one
 frame (`frame`). None of them fires on the official examples. Fix every one.
 
-What a measurement cannot judge, the script asks: one list of yes/no
+The script asks what a measurement cannot judge, in one list of yes/no
 questions about what a player sees as a mistake: text cut, too small, too
-faint or partly hidden, an object over a text, a button or a card's face,
-the HUD cut by the screen's edge, a stand-in or an object drawn in a style
-of its own, a backdrop that catches the eye before what the player acts on,
-kinds that look alike, and decoration repeated on every layout, and, when
-the project has a design, the screen entries that `play_design.py` cannot
+faint or partly hidden; an object over a text, a button or a card's face;
+the HUD cut by the screen's edge; a stand-in or an object drawn in a style
+of its own; a backdrop that catches the eye before what the player acts on;
+kinds that look alike; decoration repeated on every layout; and, when the
+project has a design, the screen entries that `play_design.py` cannot
 measure. Art layered on purpose, such as scenery running past the edge, is
-no mistake. The agent that wrote the
-events reads its own screenshots by what it meant them to show. So the
-script also writes the screenshots and the questions into `brief.md` beside
-them, for a reviewer that has not seen the project. Where you can start a
-sub-agent, give it the brief as its whole task, and for each yes in its
-reply name the layout and the object type at the place it describes.
-Otherwise open each screenshot with the image tool, answer each question
-from the picture, and name the same for each yes. A question answered from
-memory of the events, not from the picture, is not answered.
+no mistake. The agent that wrote the events reads its own screenshots by
+what it meant them to show, so the script also writes the screenshots and
+the questions into `brief.md` beside them, for a reviewer that has not seen
+the project. Where you can start a sub-agent, give it the brief as its
+whole task, and for each yes in its reply name the layout and the object
+type at the place it describes. Otherwise open each screenshot with the
+image tool, answer each question from the picture, and name the same for
+each yes. A question answered from memory of the events, not from the
+picture, is not answered.
 
 A layout reached by `goToLayout` starts without what the game's flow sets up
 before it, and one whose start events leave at once is printed as left for
 the layout they went to. Play to such a scene with a plan of
 `scripts/preview_project.py` and a `shot` step, and answer the same
-questions about that screenshot. [observed in a generated card game, r495-2
+questions about that screenshot. [observed in a generated card game, r495.2
 preview, 2026-10-04: the combat layout, reached directly, went to the ending
 at once; played to by a plan, the same checks over its instances found the
 names, descriptions and costs of five cards stacked on one card, in a
@@ -178,9 +180,9 @@ instead; fix every one. A rule is a finding only where it finds next to
 nothing in the 524 official examples, every example hit read; what the
 examples also write becomes a question that names its events. Measured on
 2026-10-04 with `evals/measure_design.py`, over the examples, a generated
-card game, a merge game and a tic-tac-toe sheet:
+card game, an editor-made game project and a tic-tac-toe sheet:
 
-| Rule | Finding at | Examples | Card | Merge | Tic-tac-toe |
+| Rule | Finding at | Examples | Card | Editor-made | Tic-tac-toe |
 |------|------------|----------|------|-------|-------------|
 | `conditions` | 12 or more conditions besides the trigger; the examples' most is 11 | 0 | 0 | 1 | 0 |
 | `guard` | the same 3 or more conditions of objects in 3 or more events of a sheet | 5 in 5 projects | 0 | 5 | 0 |
@@ -200,15 +202,16 @@ hits press Space in sibling events told apart by booleans, the shape of the
 tic-tac-toe sheet. The card game's `uid` hits were replaced by a container
 while it was measured.
 
-The `follow` rule was added later and measured the same way. Its two example hits
-are in ceiling-trap: the rail path is placed at the trap once and stays while the
-trap stomps down it, which is the design there. The card game's three hits move the
-cards in the hand layout, the aim and the play while their name, cost and text labels
-stay where the cards were drawn. Spawned parts that start at an object and then move
-on their own, such as projectiles, are not made with the object, and the rule leaves them.
+The `follow` rule was measured the same way. Its two example hits are in
+ceiling-trap: the rail path is placed at the trap once and stays while the
+trap stomps down it, which is the design there. The card game's three hits
+move the cards in the hand layout, the aim and the play while their name,
+cost and text labels stay where the cards were drawn. Spawned parts that
+start at an object and then move on their own, such as projectiles, are not
+made with the object, and the rule leaves them.
 
 The questions name the events of what the examples write as well: 4 to 11
-conditions (231 events in 76 example projects, 71 in the merge game),
+conditions (231 events in 76 example projects, 71 in the editor-made game),
 sibling events of one trigger that test more than it (5 in 4), sibling
 events that differ only in their numbers and texts (53 in 27; the style
 ladder of `check_project.py --style` takes 5 or more), 3 or more inverted
@@ -216,7 +219,7 @@ conditions (34 in 21), a global one function or one group reads and writes
 (262 in 92), and a UID kept in an instance variable (19 in 16). A question
 is answered from `print_sheet.py` for the events it names, never from
 memory of the plan. Two candidates were dropped: a global that several
-functions write and others read (20 in 6 examples, 15 in the merge game,
+functions write and others read (20 in 6 examples, 15 in the editor-made game,
 all of them game state), and 10 or more globals on a layout's sheet (45
 examples; the examples keep shared globals on a sheet with no layout,
 samuroof `Globals`). An event of 6 or more conditions stays a question and
@@ -259,7 +262,8 @@ kinds takes the rows of each.
 - Sound: the preview runs muted, and a sound is checked by recording it in
   the page, as [editor-and-preview.md](editor-and-preview.md) describes. The
   audio clock does not run until the first release, click or key, so a plan
-  that checks music sends one first. [Construct3-RAG
-  `prompts/pitfalls/audio.md`, the bullet on the audio clock]
+  that checks music sends one first.
+  [`Construct3-RAG/prompts/pitfalls/audio.md`, the bullet on the audio
+  clock]
 - Layouts: the preview starts on the layout open in the editor, not the
   project's first layout. [editor-and-preview.md, the first bullet]

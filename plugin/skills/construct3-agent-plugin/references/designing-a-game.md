@@ -111,7 +111,8 @@ shows before the build and a bug in the events after it.
   screen or anywhere. A design reads only its own state and
   the arguments: a basket's position is a state row stored in `Basket.x`, not
   `Basket.X` in a rule.
-- Every tap is also a tap on the screen: a screen input fires on every tap,
+
+  Every tap is also a tap on the screen: a screen input fires on every tap,
   a tap on an object included, before the object's rules. So a tap on a
   Hole also runs the rules of `again`, first. To limit a tap on a point to a
   part of the screen, give it `"region": [x0, y0, x1, y1]`, as shares. The
@@ -138,7 +139,8 @@ shows before the build and a bug in the events after it.
   on the first screen, before the player does anything. A demo of one
   mechanic (a toggle, a countdown, a drag that snaps) writes `"none"` for
   both: it never ends, so it needs no restart rule and no test restarts it.
-- A player who does nothing must not win. The prototype plays on from the
+
+  A player who does nothing must not win. The prototype plays on from the
   first screen without input for up to 120 s, and refuses a win that comes
   before the lose, with the rule that set what the win reads. A game won by
   outlasting a timer, where the rules do not model the danger (a rock to
@@ -217,7 +219,7 @@ restart that leaves one as it was.
 | an input `{"tap": "screen", "args": {"x": "x"}}` | Touch *On any touch start*; the argument is `Touch.X` |
 | an input `{"key": ...}` | Keyboard *On key pressed* |
 | a condition | *Compare variable*, *Compare two values* or the instance's own condition |
-| `name = expr` | *Set value*, *Set text*, *Set instance variable*, *Set X* by where `name` is stored |
+| `name = expr` | System *Set value*, *Set text*, the object's *Set value*, *Set X* by where `name` is stored |
 | `stones += 1` on `Stone.shown` | System *Create object* Stone, or *Set visible* on the Stone the event picked, such as the one on the tapped Cell; never an action on every Stone |
 | `Grid.At(x, y) = v` | Array *Set value at (x, y)* |
 | `InARow(Grid, n, v)` | two *For* loops over the Array and one *Compare two values* that tests the four directions |

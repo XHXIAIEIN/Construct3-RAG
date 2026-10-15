@@ -2,11 +2,10 @@
 
 `assets/build_project.py` is a generator for a project an agent writes end to
 end: object types, families, layouts, event sheets, images and the index in
-`project.c3proj`, produced from one Python file. It came out of a puzzle game
-an agent wrote end to end (r502, September 2026), where the event sheet grew
-past what hand-editing JSON can keep consistent: every rerun produces the
-whole project, and `scripts/check_project.py` catches the mistakes the editor
-would otherwise report one at a time.
+`project.c3proj`, produced from one Python file. It is for an event sheet
+that grows past what hand-editing JSON can keep consistent: every rerun
+produces the whole project, and `scripts/check_project.py` catches the
+mistakes the editor would otherwise report one at a time.
 
 The file has three parts. The game's settings come first: `PROJECT_NAME`,
 `VIEW_W` and `VIEW_H`, the grid, `PALETTE` and the rest of the look. The
@@ -24,16 +23,21 @@ overwrites the files it produces.
 
 ## Set up
 
+A game that has no project yet can start from
+`python scripts/new_project.py <folder>`, the empty project the editor
+saves for **Menu** > **Project** > **New**, in place of step 1.
+
 1. In Construct, create the project (**Menu** > **Project** > **New**) and
    save it as a folder (**Menu** > **Project** > **Save As** > **Save as
-   project folder**). `project.c3proj` now has the `uniqueId`, icons and
-   scripts the generator keeps. A folder the editor never saved holds none of
-   the properties it reads before it opens a file; the generator fills those
-   with the editor's defaults, and the game's own values are set in the
-   Properties Bar with the project selected in the Project Bar. The editor's
-   `Layout 1` and `Event sheet 1` are left in place but no longer listed once
-   the generator has run; delete the two files or give the generated ones
-   those names.
+   project folder**). The save gives `project.c3proj` the `uniqueId`, icons
+   and scripts that the generator keeps. A folder the editor never saved
+   holds none of the properties the editor reads before it opens a file; the
+   generator fills those with the editor's defaults, and the game's own
+   values are set in the Properties Bar with the project selected in the
+   Project Bar. The `project.c3proj` the generator writes lists only the
+   layouts and the sheet it builds, so the editor's `Layout 1` and
+   `Event sheet 1` stay on disk unlisted: delete the two files or give the
+   generated ones those names.
 2. Copy `assets/build_project.py` to `tools/build_project.py` in the project.
    The generator belongs to the game and is committed with it; the checker
    stays in the skill. The helpers between its markers stay the skill's:
@@ -61,10 +65,11 @@ overwrites the files it produces.
 The plan holds a state table before it holds any event: one row per piece
 of state the game keeps. For a new game the table is the `state` of its
 design, which `scripts/check_design.py` checks with the rules and tests
-around it (`designing-a-game.md` beside this file). Every later session follows the data model the
-plan fixes. A generated card game planned 40 globals, scratch `TMP` shared
-between functions, piles as comma-separated strings and each card as a
-17-field string, and every refactor after it fought that plan.
+around it (`designing-a-game.md` beside this file). Every later session
+follows the data model the plan fixes. A generated card game planned 40
+globals, a scratch global shared between functions, piles as
+comma-separated strings and each card as a 17-field string, and every
+refactor after it fought that plan.
 
 | State | Owner | Lifetime | Written by | Read by | Stored in |
 |-------|-------|----------|------------|---------|-----------|
@@ -139,12 +144,15 @@ above. Then:
    Warnings do not fail the run; read them anyway, a generated project should
    have none. Then read the sheet once as events, `python
    scripts/print_sheet.py`, before anyone opens the editor.
-3. Open and preview it, `python scripts/open_in_editor.py --preview`, until
-   it prints `opened` and `preview: ... no errors`. A `failed` or a
-   `runtime:` line names the sheet and event at fault: fix the generator,
-   not the JSON, and run both again. A game with a design then plays its
-   tests, `python scripts/play_design.py tools/design.json`, until every
-   test passes in the editor as it passed in the prototype.
+3. Follow steps 2 to 6 of SKILL.md, "Check after every change", from the
+   design review, `python scripts/review_design.py --check --style --limit 0`,
+   to a `python scripts/review_look.py` run with no finding and every answer
+   no. In step 5 a game with a design also plays its tests,
+   `python scripts/play_design.py tools/design.json`, until every test
+   passes in the editor as it passed in the prototype. Fix what a step
+   finds, a `failed` or a `runtime:` line included, in the generator, not
+   with `edit_sheet.py` or in the JSON; then run the generator again and
+   repeat from the design review.
 4. Hand over: ask the user to open the folder (**Menu** > **Project** >
    **Open**, the local project folder option) and to preview, and say what
    to look at. When no tool of the session could open it, ask for the text
@@ -168,7 +176,8 @@ that running the generator discards edits made in the editor.
 ## Writing the generator
 
 The stand-in game in `assets/build_project.py` shows the shape. Keep these
-habits; they are what makes rerunning safe.
+habits, and write each part of the game with the helpers they name, whose
+parameters are in the template.
 
 - Write the game above the begin marker and below the end marker. A helper
   the game changes is defined again below the end marker, where a def or a
@@ -211,8 +220,8 @@ habits; they are what makes rerunning safe.
 - Behaviors are referred to by the name given on the object, not the
   behavior id: `beh_def("Sin", "Shake")` and `beh_def("Sin", "Rock")` are
   two behaviors, and a helper takes `beh="Shake"`. The id is the editor's
-  spelling from `data/c3-schemas/_index.json` (`originalId`): `Sin`, not
-  `Sine`; `EightDir`, `TiledBg`, `Arr`, `Json`, `solid`.
+  spelling from `Construct3-RAG/data/c3-schemas/_index.json` (`originalId`):
+  `Sin`, not `Sine`; `EightDir`, `TiledBg`, `Arr`, `Json`, `solid`.
 - A `block()` has one trigger, as its first condition, and `func()` and
   `custom_action()` hold none. A function that starts a tween and must react
   to its end ends there; the reaction is a top-level `on_tween_finished`
@@ -223,52 +232,62 @@ habits; they are what makes rerunning safe.
   object (`Angle`, `Width`, `Count`).
 - Every runtime-created type has a template instance in a layout that never
   runs (`Objects` in the stand-in).
+- Before placing, sizing or colouring anything on the screen, read
+  `Construct3-RAG/prompts/references/new-project.md`, "Viewport, look and
+  HUD": the layout and the paper-and-ink look that the helpers below draw
+  until the art arrives, with the numbers behind them.
 - Positions and sizes are whole units of the placement grid, never numbers
-  picked one by one: `units(n)` for a size, `snap(v)` for a coordinate,
-  `anchor("top-left", w, h, ox, oy)` for a HUD element held against an
-  edge or corner, `MARGIN` inside the viewport, with the instance's origin
-  passed so the point returned is the one the file stores. A HUD label is
-  `hud_text(type, text, where, longest=...)`: its box fits its longest text,
-  and it reads towards the side it hangs on. A printable ASCII character
-  counts at its width in Inter Medium, a Chinese, Japanese, Korean or
-  full-width one at 1 em and any other at 0.6 em (`text_ems()`), where 1 em
-  is the size times `PX_PER_PT` (4/3) in px because a Text's size is in
-  points. Repeated items, hearts or stars,
-  are `row(where, n, w, h)`, spaced so they never touch. A second row on
-  the same edge is `dy` in units on the same call, `dy=3` under a 2-unit
-  label. A value under its name, the score under SCORE, is one group,
-  `hud_stat(name_type, value_type, name, where, longest=...)`: the name in
-  `TEXT_SIZE["name"]`, `GAP_IN` above the value in `TEXT_SIZE["number"]`
-  and the light weight. What the player is on, a round, a level or a mode, is
-  `hud_tag(type, text)` top left, a small tracked tag, and the events set it
-  with `tracked_expr()`; the screen the player plays on shows no game name,
-  and `hud_header()` puts a title before a tag on a menu or a result
-  screen. The controls are
-  `hud_keys(box_type, key_type, verb_type, [(key, verb), ...])` bottom
-  left, a key in a thin ink box with its verb beside it, and `hints(box_type)`
-  is the group that dims the keys once the player has used them. The playfield
-  goes in the middle of what the HUD leaves, `centred(w, h, play_area(hud))`,
-  at least `GAP_OUT` from it. `spaced(groups)` stops the run when two groups
-  sit closer than 1.5 times the gap inside either. `balanced(content,
-  area)` warns when the playfield is off that middle, and `filled(content)`
-  when it covers less than `PLAYFIELD_MIN`, 15%, of the screen.
-  The UI layer's instances go through `no_overlap()`, which stops
-  the run naming every pair of boxes that meet, with the `dy` that clears
-  them, and every box past the viewport. A value shown as a bar, health,
-  fuel, progress, a row of hearts, is
-  `hud_bar(frame, fill, where, length)`: a frame and,
-  inside it, a fill whose origin is its left edge, both Tiled Backgrounds
-  from `bar_types()` and `bar_images()` (9-patches with `caps=True`); the
-  sheet sets the fill in the one place the value changes,
-  `set_width(fill, bar_width(value, maximum, LENGTH))`, or slides it with
-  `tween_width()`. A bar with its name in front of it is
-  `labelled_bar(label, text, frame, fill, where, length)`. The project
-  fills the screen: `FULLSCREEN` is *Scale outer*, or *Integer scale
-  outer* for pixel art. The screen then shows more than the viewport on its
-  longer side. These helpers and `band_text()` hold their element to the screen's
-  edge with the Anchor behavior of `anchored(where)`; an instance placed
-  by `anchor()` or `row()` takes `behaviors=anchored(where)`, and the run
-  gives its type the behavior.
+  picked one by one. `UNIT` follows the viewport (8 px for pixel art, 32 px
+  otherwise), and `TOUCH` is the smallest object a finger taps at that
+  viewport; a tapped sprite is at least `TOUCH` wide. `units(n)` gives a
+  size, `snap(v)` a coordinate, and `anchor("top-left", w, h, ox, oy)` a HUD
+  element held against an edge or corner, `MARGIN` inside the viewport,
+  with the instance's origin passed so the point returned is the one the
+  file stores. A shape is whole units wide and high, and `shape_inst(type,
+  file, col, row)` places it by the grid cell of its top-left corner;
+  `on_grid()` stops the run on a world instance off the grid, and an object
+  created at runtime goes to `grid_random(lo, hi)`, never a raw `random()`.
+- A HUD label is `hud_text(type, text, where, longest=...)`: its box fits
+  its longest text, and it reads towards the side it hangs on. A printable
+  ASCII character counts at its width in Inter Medium, a Chinese, Japanese,
+  Korean or full-width one at 1 em and any other at 0.6 em (`text_ems()`),
+  where 1 em is the size times `PX_PER_PT` (4/3) in px because a Text's
+  size is in points. Repeated items, hearts or stars, are `row(where, n, w,
+  h)`, spaced so they never touch. A second row on the same edge is `dy` in
+  units on the same call, `dy=3` under a 2-unit label. A value under its
+  name, the score under SCORE, is one group, `hud_stat(name_type,
+  value_type, name, where, longest=...)`: the name in `TEXT_SIZE["name"]`,
+  `GAP_IN` above the value in `TEXT_SIZE["number"]` and the light weight.
+  What the player is on, a round, a level or a mode, is `hud_tag(type,
+  text)` top left, a small tracked tag, and the events set it with
+  `tracked_expr()`. On a menu or a result screen, `hud_header()` puts a
+  title before a tag. The controls are `hud_keys(box_type, key_type,
+  verb_type, [(key, verb), ...])` bottom left, and `hints(box_type)` is the
+  group that dims the keys once the player has used them.
+- The playfield goes in the middle of what the HUD leaves, `centred(w, h,
+  play_area(hud))`, at least `GAP_OUT` from it. `spaced(groups)` stops the
+  run when two groups sit closer than `GROUP_RATIO` times the gap inside
+  either. `balanced(content, area)` warns when the playfield is off that
+  middle, and `filled(content)` when it covers less than `PLAYFIELD_MIN` of
+  the screen. The UI layer's instances go through `no_overlap()`, which
+  stops the run naming every pair of boxes that meet, with the `dy` that
+  clears them, and every box past the viewport.
+- A value shown as a bar, health, fuel, progress, a row of hearts, is
+  `hud_bar(frame, fill, where, length)`: a frame and, inside it, a fill
+  whose origin is its left edge, both Tiled Backgrounds from `bar_types()`
+  and `bar_images()` (9-patches with `caps=True`); the sheet sets the fill
+  in the one place the value changes, `set_width(fill, bar_width(value,
+  maximum, LENGTH))`, or slides it with `tween_width()`. A bar with its
+  name in front of it is `labelled_bar(label, text, frame, fill, where,
+  length)`.
+- The project fills the screen: `FULLSCREEN` is *Scale outer*, or *Integer
+  scale outer* for pixel art, so the screen shows more than the viewport on
+  its longer side. A viewport 360 px high or less is pixel art:
+  `PIXEL_ART` has the project sample *Nearest* at a whole-number scale. The
+  HUD helpers and `band_text()` hold their element to the screen's edge
+  with the Anchor behavior of `anchored(where)`; an instance placed by
+  `anchor()` or `row()` takes `behaviors=anchored(where)`, and the run gives
+  its type the behavior.
 - A number that counts to its new value takes `count_up(text, value)` in
   the actions where the value changes, and `counting(text, value)` among a
   module's events. The Text shows the number alone and has the Tween
@@ -302,103 +321,88 @@ habits; they are what makes rerunning safe.
   `band_text(type, text, band, align)` puts a label in one. `fit(w, h)`
   sizes the stage's main object to `STAGE_SHARE` of the stage with its
   proportions, and `stage_cell(cols, rows)` centres it there.
-- `UNIT` follows the viewport (8 px for pixel art, 32 px otherwise), and
-  `TOUCH` is the smallest object a finger taps at that viewport; a tapped
-  sprite is at least `TOUCH` wide.
-  The middle of the screen is the game's; the HUD lives on the edges. The
-  counts behind the grid are in
-  `Construct3-RAG/prompts/references/new-project.md`.
 - Colours are roles of `PALETTE`, named once at the top with the game's own
-  colours. The images `write_png()` draws, the labels and the layers take
-  them by role through `rgb()`, and a pixel of any other colour stops the
-  run with the nearest role: a new object reuses the game's colours or adds
-  one under the role it plays. A painting, a gradient or a photograph,
-  passes `painted=True`. A sprite is `art(file, kind, w, h, role, subject)`
-  in `build_images()`. It takes the picture `art/<file>` when it is there,
-  which `scripts/prepare_art.py` fits to the box; until then it draws the
+  colours: `canvas`, the paper, and its faint fill `canvas_alt`, `line` for
+  structure the eye reads past, `solid` for edges, `dim`, `ink`, the
+  accents `reward`, `danger`, `hover` and `pressed`, and `flash`. Keep these
+  roles and change their values. The images `write_png()` draws, the labels
+  and the layers take them by role through `rgb()`, and a pixel of any other
+  colour stops the run with the nearest role: a new object reuses the
+  game's colours or adds one under the role it plays. A painting, a
+  gradient or a photograph passes `painted=True`. `check_palette()` stops
+  the run when the paper and its fill pass 1.2:1 or `solid` falls under 3:1
+  on the fill.
+- A sprite is `art(file, kind, w, h, role, subject)` in `build_images()`. It
+  takes the picture `art/<file>` when it is there, which
+  `scripts/prepare_art.py` fits to the box; until then it draws the
   stand-in. Both have the same box, origin and collision polygon, so the
-  layouts and events do not change when the art arrives. `subject` says
-  in words what the picture shows, for its prompt. Kind `"scene"` is an
-  opaque backdrop that fills its box. A stand-in is
-  `shape(file, kind, w, h, role)`: a rectangle,
-  circle or triangle with the outline and cast shadow of `SHAPE_STYLE`
-  drawn into the image, since Construct's effects have neither. The type
-  takes `drawn(file)` as its frame and an instance is that frame's size,
-  the shadow included; a sprite that rotates is drawn with `shadow=False`.
-  A shape is whole units wide and high, and `shape_inst(type, file, col,
-  row)` places it by the grid cell of its top-left corner; `on_grid()`
-  stops the run on a world instance off the grid, and an object created at
-  runtime goes to `grid_random(lo, hi)`, never a raw `random()`. A
-  pixel-art image holds three alpha values, clear, opaque and the shadow's;
-  in a viewport taller than 360 px the edges are antialiased. A clear pixel
-  is written with no colour under it. A hit shows as a colour:
-  `hit_frame(file)` draws the shape's second frame in the `flash` role,
-  tagged `hit`, and `hit_flash(obj)` gives the actions that show it for
-  `HIT_FLASH["seconds"]` and return to frame 0. `squash(obj, kind)` sets
-  the share of the image's size that `SQUASH` gives for `"hit"`, `"land"`
-  or `"jump"`, and `SQUASH_PRESS` for `"press"` unless `SQUASH` has one,
-  holds it and tweens back, and `hit(obj)` gives the hit's squash
-  with the flash, last in their block, as the coin's `Collect` does; the
-  object needs the Tween behavior. The Flash behavior stops the run. A
-  squash acts on the art, never on an object that collides: a player is an
-  invisible mask with Platform and its art, drawn with `shape(..., oy=1)`,
-  pinned to it, and the run stops on a squash of the mask. A label is
-  `TEXT_SIZE["body"]`, a screen's title `TEXT_SIZE["title"]`, the count
-  `TEXT_SIZE["number"]` and a banner `TEXT_SIZE["display"]`, each in the
-  weight `TEXT_WEIGHT` gives it, a font of `FONT`, never bold. `FONT` names
-  Inter's three files, which the generator copies from the user's font
-  cache into `fonts/` and lists; a file in neither place draws in
-  `system-ui` with a warning; `FONT = "system-ui"` ships none.
-  `hud_text()` stops the run on a colour that reads below 4.5:1 on what is
-  behind it, 3:1 from 18 pt up (`text_contrast()`), and names the roles
-  that would read there. A
-  viewport 360 px high or less is pixel art: `PIXEL_ART` has the project
-  sample *Nearest* at a whole-number scale.
-- The stand-in's look is paper and ink: flat shapes on a white paper, no
-  outline and no shadow. `PALETTE` holds `canvas`, the paper, and its faint
-  fill `canvas_alt`, `line` for structure the eye
-  reads past, `solid` for edges, `dim`, `ink`, `reward` in electric blue,
-  `danger` in deep orange, `hover` in sky blue, `pressed` in amber and
-  `flash`; keep the roles and change values only.
-  `check_palette()` stops the run when the paper and its fill pass 1.2:1 or
-  `solid` falls under 3:1 on the fill, and `shape()` stops on an accent
-  under 3:1 on `canvas_alt` drawn without an ink outline, or on a fill under
-  3:1 against the ink. The player is an ink rectangle, structure a solid
-  one, a pickup a circle, a hazard a triangle. In an open field the
-  player, a pickup and a hazard are each drawn `SUBJECT` across, and one
-  that is tapped is drawn `inset` inside a `TOUCH` box,
+  layouts and events do not change when the art arrives. `subject` says in
+  words what the picture shows, for its prompt. Kind `"scene"` is an opaque
+  backdrop that fills its box.
+- A stand-in is `shape(file, kind, w, h, role)`: a flat rectangle, circle
+  or triangle. `SHAPE_STYLE` can draw an outline and a cast shadow into the
+  image, since Construct's effects have neither; both are off by default.
+  The type takes `drawn(file)` as its frame and an instance is that frame's
+  size, the shadow included; a sprite that rotates is drawn with
+  `shadow=False`. `shape()` stops on an accent under 3:1 on `canvas_alt`
+  drawn without an ink outline, or on a fill under 3:1 against the ink. In
+  an open field the player, a pickup and a hazard are each drawn `SUBJECT`
+  across, and one that is tapped is drawn `inset` inside a `TOUCH` box,
   `shape(file, kind, TOUCH, TOUCH, role, inset=(TOUCH - SUBJECT) // 2)`.
-  What is tapped on a board fills its `TOUCH` box, as the stand-in's
-  coins; structure takes the size it needs. A region or a range is a zone
-  drawn as lines, `zone(type, col, row, cols, rows)` of a
-  `zone_image(type)` and `zone_type(type)`, a `LINE` px edge in `solid`
-  over the fill, and a reach is a dashed `ring()`. A slot is a disc of
-  `canvas_alt` the size of what fills it, and a board of slots has no
+  What is tapped on a board fills its `TOUCH` box, as the stand-in's coins;
+  structure takes the size it needs. A pixel-art image holds three alpha
+  values, clear, opaque and the shadow's; in a viewport taller than 360 px
+  the edges are antialiased. A clear pixel is written with no colour under
+  it.
+- A region or a range is a zone drawn as lines, `zone(type, col, row, cols,
+  rows)` of a `zone_image(type)` and `zone_type(type)`, a `LINE` px edge in
+  `solid` over the fill, and a reach is a dashed `ring()`. A slot is a disc
+  of `canvas_alt` the size of what fills it, and a board of slots has no
   frame.
+- A hit shows as a colour: `hit_frame(file)` draws the shape's second frame
+  in the `flash` role, tagged `hit`, and `hit_flash(obj)` gives the actions
+  that show it for `HIT_FLASH["seconds"]` and return to frame 0.
+  `squash(obj, kind)` sets the share of the image's size that `SQUASH`
+  gives for `"hit"`, `"land"` or `"jump"`, and `SQUASH_PRESS` for `"press"`
+  unless `SQUASH` has one, holds it and tweens back, and `hit(obj)` gives
+  the hit's squash with the flash, last in their block, as the coin's
+  `Collect` does; the object needs the Tween behavior. The Flash behavior
+  stops the run. A squash acts on the art, never on an object that
+  collides: a player is an invisible mask with Platform and its art, drawn
+  with `shape(..., oy=1)`, pinned to it, and the run stops on a squash of
+  the mask.
+- A label is `TEXT_SIZE["body"]`, a screen's title `TEXT_SIZE["title"]`, the
+  count `TEXT_SIZE["number"]` and a banner `TEXT_SIZE["display"]`, each in
+  the weight `TEXT_WEIGHT` gives it, a font of `FONT`, never bold. `FONT`
+  names Inter's three files, which the generator copies from the user's
+  font cache into `fonts/` and lists; a file in neither place draws in
+  `system-ui` with a warning; `FONT = "system-ui"` ships none. `hud_text()`
+  stops the run on a colour that reads below 4.5:1 on what is behind it,
+  3:1 from 18 pt up (`text_contrast()`), and names the roles that would
+  read there.
 - A game the player points at things in sets `POINTER = True`; the
   template's default is `False`, and the `pointer_*()` helpers then add
   nothing. On, `pointer_frames(file)` in `build_images()`, after
   `hit_frame(file)`, draws the image's hover frame and its pressed frame,
   which need not read 3:1 on the paper; `*pointer_drawn(file)` ends the
   type's animation, `types |= pointer_types()` declares the Mouse, and
-  `*pointer_module(type)` in the sheet turns the hovered one sky blue and a
-  touched one amber for an instant. An object a touch already hits, the
-  stand-in's coin, takes `pointer_module(type, pressed=False)` and
-  `hit(type, frame="pressed")`.
-  The backdrop is `backdrop("Backdrop")` on a layer at parallax
-  1, of `pattern("Backdrop", "plain")`, reaching `SCREEN_PAD` past the
-  viewport so the screen shows no edge of it. A popup's dim is laid out
-  over `screen_box()` on the popup's own layer. A game with something transparent,
-  a mask or a background still to come draws it as `"checker"` instead,
-  as editors show transparency; its cells, two to a unit, are then the
-  ruler, so draw no grid. An area with a rule of its own is
-  `area(type, col, row, cols, rows)` of a type whose tile `pattern(name,
+  `*pointer_module(type)` in the sheet shows the hovered one's hover frame
+  and, for an instant, a touched one's pressed frame. An object a touch
+  already hits, the stand-in's coin, takes `pointer_module(type,
+  pressed=False)` and `hit(type, frame="pressed")`.
+- The backdrop is `backdrop("Backdrop")` on a layer at parallax 1, of
+  `pattern("Backdrop", "plain")`, reaching `SCREEN_PAD` past the viewport so
+  the screen shows no edge of it. A popup's dim is laid out over
+  `screen_box()` on the popup's own layer. A game with something
+  transparent, a mask or a background still to come draws it as
+  `"checker"` instead, as editors show transparency; its cells, two to a
+  unit, are then the ruler, so draw no grid. An area with a rule of its own
+  is `area(type, col, row, cols, rows)` of a type whose tile `pattern(name,
   kind)` drew in `build_images()` and `pattern_type(name)` declares: `low`
   stripes for a harmless special surface, `caution`, ink stripes, for what
   moves or triggers, `hazard`, accent stripes, for what hurts, the last two
-  on strips and small zones
-  only. `tiledbg_inst()` offsets a pattern so neighbouring pieces meet
-  without a seam.
+  on strips and small zones only. `tiledbg_inst()` offsets a pattern so
+  neighbouring pieces meet without a seam.
 - `BEATS` paces the game: one beat per camera zone of a level, or per
   round, wave or window of time in a one-screen game, as the stand-in's
   rounds are. A beat is `beat(type, intensity, mechanics, holds=...)` plus
@@ -444,8 +448,8 @@ habits; they are what makes rerunning safe.
           variables=[var("P_SPEED", "number", 200, "Run speed", const=True)],
           procedures=[*procedure("Jump when on the floor", custom_action("Player", "Jump", [...]))],
           events=[
-              *event("Jump", [on_key("Space")], [call_custom("Player", "Jump")]),
-              cases([on_touch_end()], [
+              *event("Jump", [cond("on-key-pressed", "Keyboard", {"key": 32})], [call_custom("Player", "Jump")]),
+              cases([cond("on-any-touch-end", "Touch")], [
                   ("Swipe right: dash", [cmp2("Touch.X - touchStartX", GT, "SWIPE")], [call_custom("Player", "Dash")]),
                   ("Swipe left: slow", [cmp2("touchStartX - Touch.X", GT, "SWIPE")], [call_custom("Player", "Slow")]),
                   ("Otherwise a tap: jump", None, [call_custom("Player", "Jump")]),

@@ -11,30 +11,36 @@ user says so.
 For every condition and action: the object or family exists, the behavior is
 on it, the ACE id is in the plugin's, the behavior's or the part of the
 shared world object schema the plugin's `commonAces` lists, the parameter
-keys are the schema's, a combo value is one of
-its items, a comparison is an integer 0 to 5, a boolean is a JSON boolean.
-Expressions are scanned for object, behavior, expression, instance variable,
-function, global, local and parameter names, case-insensitively, as the
-editor reads them. Layout instances must carry every instance variable and
-behavior block of their type and only properties the schema has. Layers,
-layouts, animations, groups, timelines, flowcharts, project files, images and
-called functions and custom actions must exist, with the right parameter
-count, and so must the function a *Map function* or *Map default function*
-names, matched without case. An image is `images/<object type>-<animation>-<frame, three
-digits>.png`, or `images/<object type>.png` for a single image, in lower
-case; one imported in a lossy format and not edited since keeps that format,
-which the entry's `fileType` names. Its size is not compared with the
-entry's `width` and `height`: the editor takes the size from the file. Two object types or families with one sid are an error: the editor
-stops with `object class sid already in use`. Any other repeated sid is a
-warning: a project whose events, instances, layers or animations repeat
-one opens and previews. Two instances with one uid are an error: the
-editor opens them but gives all but one another uid, so a hierarchy link
-or a *Pick by UID* written for one may reach the other. A missing schema (a
-third-party addon) is a warning, and its ACEs pass unchecked. So is what the
-editor has deprecated, from `Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`:
-an addon, and an ACE or expression, once each at its first use with the count
-of the others, and the current ACE of the same name when there is one. The
-editor opens a project that uses them, and a new event should not.
+keys are the schema's, a combo value is one of its items, a comparison is an
+integer 0 to 5, a boolean is a JSON boolean. Expressions are scanned for
+object, behavior, expression, instance variable, function, global, local and
+parameter names, case-insensitively, as the editor reads them. Layout
+instances must carry every instance variable and behavior block of their
+type and only properties the schema has. Layers, layouts, animations,
+groups, timelines, flowcharts, project files and images must exist. So must
+a called function or custom action, with the right parameter count, and the
+function a *Map function to string* or *Map default function* names,
+matched without case.
+
+An image is `images/<object type>-<animation>-<frame, three digits>.png`, or
+`images/<object type>.png` for a single image, in lower case; one imported
+in a lossy format and not edited since keeps that format, which the entry's
+`fileType` names. Its size is not compared with the entry's `width` and
+`height`: the editor takes the size from the file.
+
+Two object types or families with one sid are an error: the editor stops
+with `object class sid already in use`. Any other repeated sid is a warning:
+a project whose events, instances, layers or animations repeat one opens and
+previews. Two instances with one uid are an error: the editor opens them but
+gives all but one another uid, so a hierarchy link or a *Pick by unique ID*
+written for one may reach the other.
+
+A missing schema (a third-party addon) is a warning, and its ACEs pass
+unchecked. So is what the editor has deprecated, from
+`Construct3-RAG/data/c3-schemas/{locale}/_deprecated.json`: an addon, and an
+ACE or expression, once each at its first use with the count of the others,
+and the current ACE of the same name when there is one. The editor opens a
+project that uses them, and a new event should not.
 
 What a project folder holds, the files `project.c3proj` lists, their names
 and formats, is stated in Scirra's guide to the project format, kept in
@@ -102,6 +108,17 @@ Traps of the running game are warnings:
   alone, with conditions that test values, the flip happens once each time
   they turn true, not once per input: a warning that `edit_sheet.py` does
   not refuse, since a flip once a round is sound;
+- an event whose first condition is the same trigger as that of an earlier
+  event in its list, and whose other conditions test a value that the
+  earlier event's actions or sub-events change: a variable, an instance
+  variable, or an object's animation, animation frame or visibility. Both
+  events run on the same input, this one after the other's actions, so it
+  sees the value just set and can set it back: a switch written as
+  "frame 0: set 1" and "frame 1: set 0" never stays switched
+  [`Construct3-RAG/prompts/pitfalls/triggers-and-else.md`]. The finding
+  writes one event with the trigger and the cases as its sub-events, the
+  second starting with *Else*. A change after a *Wait* passes, since the
+  later event runs before it;
 - *Simulate control* of a Platform's left or right, or of any 8 Direction or
   Car control, in a branch with a trigger: the control holds for the tick
   it runs in, so the object moves one tick and stops [manual:
@@ -124,6 +141,15 @@ Traps of the running game are warnings:
   that picks no X stops its event, and *Pick all* is false when no X
   exists, so the test never holds [manual:
   project-primitives/events/how-events-work.md];
+- two conditions of one branch that test the same instance variable of X
+  for equality with two different literal values, `X: v = 1` below
+  `X: v = 0`: each condition keeps only the X the conditions above it kept,
+  so no instance passes both, and the event never runs
+  [`Construct3-RAG/prompts/pitfalls/picking.md`]. The finding says to
+  narrow once and count, `X: Row = 0`, `X: Value = 1`, then
+  `System: X.PickedCount = 3`, or to keep the values in an Array. A
+  *Pick all* of X between the two, and an OR block, pass. Over the official
+  examples it adds no finding;
 - *Is overlapping* between an object with Platform and a Solid: the
   behavior pushes its object out of every enabled Solid each tick, so the
   two touch and the test never holds
@@ -213,14 +239,15 @@ Traps of the running game are warnings:
 every tick. For them, a condition of an addon without a schema counts as a
 trigger when its id starts with `on-`.
 
-`edit_sheet.py` refuses the findings on *Find path*, *Start timer*, a
-timer that stops for good, *Simulate control*, `Count`, `PickedCount`, a
-variable flipped every tick, *Is overlapping* a Solid from a Platform
-object and a dragged object drawn under its target in an event a plan
-creates, as it refuses the style findings below; in
-the user's own events they stay warnings. A gesture action, a *Find path*,
-a *Start timer*, a *Simulate control* or a flip in a function passes, since
-a trigger or an event that runs every tick may call it.
+In an event a plan creates, `edit_sheet.py` refuses the findings on *Find
+path*, *Start timer*, a timer that stops for good, *Simulate control*,
+`Count`, `PickedCount`, two values of one instance variable in one branch,
+a variable flipped every tick, a test of what an earlier event with the
+same trigger sets, *Is overlapping* a Solid from a Platform object and a
+dragged object drawn under its target, as it refuses the style findings
+below. In the user's own events they stay warnings. A gesture action, a
+*Find path*, a *Start timer*, a *Simulate control* or a flip in a function
+passes, since a trigger or an event that runs every tick may call it.
 
 ## The rules the editor applies on opening and before preview
 
@@ -246,7 +273,7 @@ How each was read from the editor and confirmed:
 | A local variable or function parameter is not named like a global of another type, compared without case: the nearest scope wins, so a text `count` hides a number `COUNT` in its event and sub-events. One of the same type under another case is a warning: the project opens, and the global's name refers to the local there | `Type mismatch: - does not work with 'string' and 'number'`, for `COUNT - 1` below a text local `count` |
 | No two functions, and no two custom actions of one object, share a name, compared without case | the project opens, and the editor renames the second, `Beep` to `Beep2`; a call by either name runs the first |
 | A shared ACE of `plugins/_common.json` is used only on a plugin whose `commonAces` lists it: Text has no `set-default-color`, its colour is `set-font-color` | `missing action id 'set-default-color'` |
-| `Self` stands only in a parameter of an object's own condition or action; in a System one (*For each ordered*, *Pick by comparison*, *Set variable*) it names nothing, and the finding writes the expression with the object the ACE names. A variable or parameter named `self` in scope is what a bare `self` reads; `self.X` is still Self | `Invalid use of 'self'` |
+| `Self` stands only in a parameter of an object's own condition or action; in a System one (*For each (ordered)*, *Pick by comparison*, *Set value*) it names nothing, and the finding writes the expression with the object the ACE names. A variable or parameter named `self` in scope is what a bare `self` reads; `self.X` is still Self | `Invalid use of 'self'` |
 | A name has no spaces or punctuation; an instance variable name starts with a letter | the editor renames it silently, and the events that use it fail with `cannot find object` |
 | An instance variable, behavior or effect is not named like another one on the object or its families, compared without case, nor like an expression of the object (`Angle`, `Width`, `Count`, `Text`) | `name 'HP' already in object class 'Enemy' namespace`, for instance variables `hp` and `HP` |
 | An expression uses Construct's operators: `=` compares, `<>` is not equal, `&` is and, `\|` is or, `^` is power; `==`, `!=`, `&&`, `\|\|`, `**` and `!` stand only inside a text literal | `Syntax error: '=' can't go here`, `Syntax error: '*' can't go here`, `Syntax error: Unknown character` |
@@ -281,7 +308,7 @@ How each was read from the editor and confirmed:
 | A layout instance's `world.angle` is in radians, within a full turn | an angle written in degrees turns the instance some other way; every official example stays within 2π |
 
 *Trigger once* or *Every X seconds* in a triggered branch is a warning: the
-editor no longer offers them there, and official examples that do it still
+editor does not offer them there, and official examples that do it still
 open.
 
 ## What a finding says
@@ -371,20 +398,20 @@ editor and the preview judge those; the observations in
 `Construct3-RAG/prompts/event-sheet-pitfalls.md` and in
 `editor-and-preview.md` beside this file came from previewing, not from the
 checker. Expression syntax beyond those operators, argument types, and
-`function` and `template` parameters are not checked either.
-The editor checks the types in an expression as it opens the project, and
-`scripts/open_in_editor.py` prints its message, such as `Type mismatch: -
-does not work with 'string' and 'number'`.
+whether a `template` parameter names a template of the object are not
+checked either. The editor checks the types in an expression as it opens
+the project, and `scripts/open_in_editor.py` prints its message, such as
+`Type mismatch: - does not work with 'string' and 'number'`.
 
 ## How the rules were confirmed
 
-Run over the official example projects (saved r168 to r472), the checker
-fails a few, on parameters that a later release changed and on layers and
-animations the examples name but no longer have; each is a real finding,
-not a false one. None of them breaks an editor rule
-of the table above, which is how each rule was confirmed before it became an
-error. `Construct3-RAG/tests/test_skill_check_project.py` breaks the
-stand-in game one rule at a time and reads the finding.
+Run over the official example projects, the checker fails a few, on
+parameters that a later release changed and on layers and animations the
+examples name but do not have; each is a real finding, not a false one.
+None of them breaks an editor rule of the table above, which is how each
+rule was confirmed before it became an error.
+`Construct3-RAG/tests/test_skill_check_project.py` breaks the stand-in game
+one rule at a time and reads the finding.
 
 A new rule takes the same two steps: find the editor's message in its
 project model, run the rule over the official examples, and only then make

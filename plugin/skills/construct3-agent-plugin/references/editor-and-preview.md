@@ -4,12 +4,15 @@ Read this before previewing a project that starts on a layout other than the
 one open in the editor, or before driving a preview with input from a script.
 `scripts/preview_project.py` sends taps, holds, drags and keys as the bullets
 below describe; a script of the agent's own needs them for what it does not
-cover, such as two fingers at once. A lesson from the editor, the preview or a script driving them goes here with
-its source, one bullet each: fact, consequence, source. A runtime behaviour
-that changes which events are written goes to
+cover, such as two fingers at once. A lesson from the editor, the preview or
+a script driving them goes here with its source, under the heading of its
+topic, one bullet each: fact, consequence, source. A runtime behaviour that
+changes which events are written goes to
 `Construct3-RAG/prompts/event-sheet-pitfalls.md` instead, and a lesson about
 which cases to play and how to reach and read them to
 [verifying-a-change.md](verifying-a-change.md).
+
+## Starting a preview and sending input
 
 - *Preview* (F5, the toolbar button) starts from the layout open in the
   editor, not from the project's first layout; only *Preview project* uses
@@ -43,6 +46,9 @@ which cases to play and how to reach and read them to
   in Edge, 2026-10-01: a finger held the buy button and bought six cards,
   then a second finger, added in a `touchStart` listing both, dragged a
   piece]
+
+## Window size and visibility
+
 - `Emulation.setDeviceMetricsOverride` answers before the page has resized:
   `innerWidth` and `innerHeight` read right after it can still be the
   window's own size, for up to 0.4 seconds, while the runtime already places
@@ -57,11 +63,12 @@ which cases to play and how to reach and read them to
 - An emulated size belongs to the page, not to the DevTools connection that
   set it, and closing any connection that set one clears it: the window goes
   back to its own size in the middle of a run, while the screenshots of the
-  connection that set it still come out at the emulated size. A second
-  connection that takes screenshots sets the override all the same, since
-  without one a headed window captures at the display's scale, and stays open
-  until the window closes; `scripts/preview_project.py` keeps its recorder's
-  open that way. [observed in an r504 preview of a game project and a popup
+  connection that set it still come out at the emulated size. Let a second
+  connection that takes screenshots set the override as well, because
+  without it a headed window captures at the display's scale, and keep that
+  connection open until the window closes, so that closing it does not
+  clear the size; `scripts/preview_project.py` keeps its recorder's open
+  that way. [observed in an r504 preview of a game project and a popup
   opened with `window.open`, Edge headless and headed, 2026-10-02: once a
   recording's connection closed, the page reported 778x511, a piece aimed at
   (448, 304) lay outside the 430x932 the run had set, and the screenshots
@@ -78,14 +85,9 @@ which cases to play and how to reach and read them to
   restored while it runs. A headless window is never covered. [observed in
   exports through `export_project.py`, r504 editor in Edge, 2026-10-03; see
   [export-project.md](export-project.md), "What the editor does"]
-- A preview run for five seconds without input shows that the layout
-  starts; it says nothing about an event that waits for a drop, a merge or
-  a deployment. Such an event is verified by playing it, a plan of
-  `scripts/preview_project.py` that drags and then waits `until` the flow
-  has run through, before it is handed over. [observed in a game
-  project, r504 preview, 2026-09-30: a *Pick parent* with *Own* that could
-  not reach a grandparent passed the five-second preview and left a piece
-  idle on its battle slot at the first drag by hand]
+
+## What a preview run shows
+
 - The editor checks some project data only as it builds a preview. A
   Sprite frame whose collision polygon has fewer than three points opens,
   and at F5 the editor shows its crash report, "Oops! Something went
@@ -110,6 +112,9 @@ which cases to play and how to reach and read them to
   `AnalyserNode` on the same point. [source: `open_in_editor.py`, the
   comment at `--mute-audio`; the user's rule, 2026-09-30, that a test must
   not play sound through their speakers]
+
+## Screenshots of the editor
+
 - `Page.captureScreenshot` draws at most 16384 device pixels of a window's
   height. Past that height the picture starts over with the top of the
   window or stays blank, and no error is raised. Keep the window no taller
@@ -125,6 +130,9 @@ which cases to play and how to reach and read them to
   or sticky element that overlaps the area to capture, except the pane and
   the elements that hold it, as `scripts/screenshot_sheet.py` does.
   [observed in the r505 editor as a guest, 2026-10-14]
+
+## The browser and the files it is handed
+
 - Edge started with `__COMPAT_LAYER` in its environment, the Windows
   application compatibility layer (`DetectorsAppHealth` where this was
   seen), starts the browser again as its own child, without the layer and
@@ -167,6 +175,9 @@ which cases to play and how to reach and read them to
   `pack_project.py` warns when it writes such a path. [observed in Chrome
   154, 2026-10-02: a 73 KB zip at a 273-character path arrived as 0 bytes,
   the same file under `%TEMP%` whole]
+
+## Addons and effects
+
 - Bundle addons is a project setting for developing an addon: the test
   project carries the addon, so a fresh browser profile opens it and
   previews the addon's latest build. A game project leaves it off, as the
@@ -187,8 +198,10 @@ which cases to play and how to reach and read them to
   `effect.fx` and `effect.wgsl`. The lang file keys a parameter by its `id`
   exactly, case included, else the Properties Bar shows `[???]`; the
   built-ins write ids in kebab case. The editor's own effects, their
-  `addon.json`, GLSL and WGSL, are in `.cache/c3-cdn/<release>/effects_allEffects.json`
-  of the Construct3-RAG clone. [r504 `main.js`, the addon installer;
+  `addon.json`, GLSL and WGSL, are in
+  `Construct3-RAG/.cache/c3-cdn/<release>/effects_allEffects.json` once
+  the clone has fetched that release from the CDN.
+  [r504 `main.js`, the addon installer;
   observed installing an effect addon, 2026-10-03]
 - An effect that counts its pixels by `pixelSize` changes with the editor's
   zoom and the window size, since a texel of the drawn rect is a screen
@@ -198,6 +211,9 @@ which cases to play and how to reach and read them to
   (`c3_srcOriginToNorm` in WGSL), its size `abs(layoutEnd - layoutStart)`.
   [r495.2 effect sources; observed in r504 previews at 640x400 and
   1400x860, 2026-10-03: the same cells, scaled]
+
+## Stable and beta editors
+
 - The stable editor, `https://editor.construct.net/`, and the beta,
   `https://editor.construct.net/beta`, which redirects to the latest beta
   release, are two releases. One save in the beta raises the project's

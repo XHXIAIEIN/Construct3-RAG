@@ -11,17 +11,20 @@ python scripts/export_project.py --bump
 ```
 
 The script opens the project in the editor of the release that saved it,
-with only the files the editor reads, as `scripts/pack_project.py` packs them,
-exports it to Web (HTML5) as a zip with Offline support, Deduplicate images
-and Optimize images on, and unpacks the zip into `--to`, replacing what was
-there. Without `--to` the export goes to `.build/web`, where the products
-go and Git ignores them; the browser profile stays in `.tmp/`. `--to` is a
-new or empty folder or one that holds an earlier export: the script refuses
-the project, a folder above it, a drive's root and a folder of other files
-with exit 2, before it opens anything. The zip is extracted beside `--to`,
-into `<folder>.new`, and takes the folder's place only when it carries the
-version to export; when the extraction, the check or the swap fails, the
-earlier export stays as it was.
+with only the files the editor reads, as `scripts/pack_project.py` packs them.
+The editor exports it to Web (HTML5) as a zip with Offline support,
+Deduplicate images and Optimize images on, and the script unpacks the zip
+into `--to`, replacing what was there. Without `--to` the export goes to
+`.build/web`, where the products go and Git ignores them. The browser
+profile stays in `.tmp/` of the project's main clone, so every worktree of
+the project exports in the same window, with the same login.
+
+`--to` is a new or empty folder or one that holds an earlier export: the
+script refuses the project, a folder above it, a drive's root and a folder
+of other files with exit 2, before it opens anything. The zip is extracted
+beside `--to`, into `<folder>.new`, and takes the folder's place only when
+it carries the version to export; when the extraction, the check or the
+swap fails, the earlier export stays as it was.
 
 The copy handed to the editor sets *Use worker* to Auto, so the engine
 decides: a worker, unless the project has a script or an addon without worker
@@ -32,9 +35,11 @@ where the export's runtime starts, read from the main.js it holds.
 The version: `--bump` takes the export already in `--to` and adds one to its
 last number, or takes the project's Version when that is greater;
 `--version 1.2.0.0` names it; without either the export carries the
-project's Version. The script writes the version into `project.c3proj` too,
-so the project and its export agree. `--dry-run` prints the version, the
-editor and the folder, and opens nothing.
+project's Version. The copy handed to the editor has *Auto-increment
+version* off, so the export carries that version unchanged. The script
+writes the version into `project.c3proj` too, so the project and its export
+agree. `--dry-run` prints the version, the editor and the folder, and opens
+nothing.
 
 The export ships every string of the project to every player. Before the
 browser starts, the script reads them as `scripts/check_project.py` does,
@@ -85,9 +90,12 @@ closes it after the export or when the run stops.
   browser starts: each line names the place. Move each key to a server that
   the game calls. If a key is meant to be public, write `allow-secret` where
   the line says. Then run the same command again.
-- Exit 2: a bad flag, project or editor page.
+- Exit 2: a flag or version that cannot be used, no project, a `--to` the
+  script refuses, or an editor page that did not load.
 - Exit 3: no Edge, Chrome or Chromium. Export by hand in the editor, or
   attach to a browser.
+- Exit 4: exported, but `project.c3proj` could not be written and keeps its
+  old version; the last line says how to set it.
 
 After an export by hand, set `project.c3proj` back to the exported version,
 or export again with the script (the *Auto-increment version* bullet below).
@@ -109,7 +117,6 @@ or export again with the script (the *Auto-increment version* bullet below).
   as the copy closed; the run restarted that tab and closed it. A run that
   stopped in `open_project` closed the tab it had opened. In a headless
   editor, Restart pressed this way reloaded in about 3 seconds]
-
 - The login lives in the open page only, in no cookie or storage; a reload
   or browser restart shows Guest. So the script never reloads the page and
   closes the project instead of the browser. [r504 editor in Edge,

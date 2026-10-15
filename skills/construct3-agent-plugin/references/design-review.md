@@ -16,7 +16,7 @@ Use the sheets changed by the task. Shared variables and calls can bring
 other sheets into their questions. Without `--sheets`, every sheet is reviewed.
 `--check` runs the full checker first and stops on failure.
 `check.json` keeps its complete stdout, stderr, command and exit code.
-Pass `--style` for a project the agent wrote.
+Pass `--style` with `--check` for a project the agent wrote.
 
 Read the findings in `current.json`, then the batches it lists.
 Each batch contains its own evidence, scopes, relations and rule versions.
@@ -65,7 +65,9 @@ Relevant layouts retain complete initial values, hierarchy and instance data.
 Lexical closure can include extra events; it is a conservative dependency scope.
 Relations marked `project_format` come from explicit event or project fields.
 Their evidence keys identify the actual source in the batch.
-Unresolved mapped calls and scripts require evidence and widen the scope.
+Unresolved mapped calls and scripts widen the scope and enter the question's
+`missing` list; a question whose `missing` list is not empty accepts only
+`insufficient_evidence`.
 The absence of a relation does not prove the absence of an effect.
 
 An interrupted preparation keeps complete earlier batches.
