@@ -15,7 +15,7 @@ def test_layout_prints_layers_and_instances(built):
 
 
 def test_a_label_off_its_button_says_so(project):
-    # A generated menu had its labels 100 px above the button and the panel; nothing said so.
+    # A generated menu can put its labels 100 px above the button and the panel
     path = project / "layouts" / "Game.json"
     layout = json.loads(path.read_text(encoding="utf-8"))
     layer = layout["layers"][-1]
