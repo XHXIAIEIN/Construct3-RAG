@@ -74,9 +74,11 @@ they stay as files.
 
 `plugin/` is the plugin. `scripts/build_plugin.py` builds it from the
 repository, and the result is committed. The marketplace entry's source is
-`./plugin`, the directory submission's plugin path is `plugin`, and the
-link into `~/.claude/skills/` of `plugin-tracks-commits.md` points at
-`<clone>/plugin`.
+`./plugin`, and the link into `~/.claude/skills/` of
+`plugin-tracks-commits.md` points at `<clone>/plugin`. The directory
+submission's plugin path is the repository root, as its settings page
+shows, and only a new submission can change it; the root's
+`.claude-plugin/marketplace.json` is what names `./plugin` there.
 
 The build:
 
