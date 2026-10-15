@@ -223,6 +223,76 @@ official examples (`docs/decisions/checker-editor-load-rules.md`).
   project, r505, 2026-10-14: a copy appended by a build script, the folder
   and its packed `.c3p` opened and previewed, and the copy played from the
   start on alternate attacks]
+- An instance that is a template, or a replica of one (the *Template*
+  section of the Properties Bar), carries a `template` block between
+  `behaviors` and `effects`. Any other instance has no such key, and
+  `project.c3proj` holds nothing about templates. The block's keys, in
+  order: `mode`, `templateName`, `sourceTemplateName`,
+  `replicaHierarchyInSyncWithTemplate`, `templatePropagateHierarchyChanges`,
+  `replicaIgnoreTemplateHierarchyChanges`, `components`, `replicasUIDs`. A
+  template has `"mode": "template"` and its name in `templateName`;
+  `sourceTemplateName` is `""`, or the name of the template it was made from
+  (`Air1` from `Air0` from `Floor0`). A replica has `"mode": "replica"`,
+  `templateName` `""` and the template's name in `sourceTemplateName`.
+  `replicaHierarchyInSyncWithTemplate` and
+  `replicaIgnoreTemplateHierarchyChanges` are `false` in every example;
+  `templatePropagateHierarchyChanges` is `true` or `false`. The last two are
+  the manual's *Propagate hierarchy* and *Ignore hierarchy propagation*.
+  `replicasUIDs` is `null` in every example, on templates and replicas
+  alike. `components` lists five entries by `id`: `plugin`,
+  `instance-variable`, `behavior`, `effect` and `world-instance`, each with
+  `component`, a list of `{"key": ..., "state": [...]}`. For `plugin` the
+  one entry's key is `"plugin"` and `state` holds `[name, boolean]` pairs
+  over the plugin's property ids. For `world-instance` the key is
+  `"world-instance"` and the pairs run over `x`, `y`, `z`, `w`, `h`, `a`,
+  `o`, `c`, `sx`, `sy`, `bm`, `twpx`, `twpy`, `twpz`, `twpw`, `twph`,
+  `twpa`, `dwp` and `ssm`. For `behavior` and `effect` there is one entry
+  per behavior or effect, keyed by its name, with pairs over its property
+  ids (`["enabled", true]` for a behavior, `["<<effect-template-enable>>",
+  true]` and the parameter names for an effect); an instance without
+  behaviors or effects has `[]` there. For `instance-variable` the state is
+  a list of `{"iv": name, "state": boolean}` objects. `x` and `y` are
+  `false` in every block and the rest mostly `true`: a replica of `Tree1`
+  has `z` `false`, a template made from `Floor0` has `w`, `h`, `sx` and `sy`
+  `false`. The manual says a replica takes each property from its template
+  until the replica's own value is edited, and that position stays the
+  replica's own; so the boolean reads as whether the property follows the
+  template, which the editor was not watched doing. Files saved by r288 to
+  r290 have `"mode": "none"` blocks with the lists as JSON strings and
+  without the booleans and `replicasUIDs`. A few example replicas have
+  `sourceTemplateName` `""` and a few templates an empty `templateName`;
+  what the editor shows for those, and for a replica whose template is gone,
+  is not observed. The *Create object* and *Create object (by name)* actions
+  name a template in `template-name`, an expression string with the name in
+  inner quotes, `"\"Air1\""`, and `"\"\""` for none; written `""` the
+  project does not open. The manual says a name no template has is treated
+  as none. The "template instance" the checks and the pitfalls speak of is
+  any instance of the object in a layout, which a *Create object* without a
+  template name copies; it needs no `template` block. [manual:
+  project-primitives/objects/templates.md; examples airborne-explorer
+  `ObjectRepository` and `GameEvents`, avalanche `ObjectRepository` and
+  `MainMenu`, berry-harvester, arcane-express `Game`; the `"none"` blocks in
+  animated-svg, html-element and html-menu]
+- Every layer carries `overriden`, `0` or `1`, right after `name`, and
+  `global`, a boolean, near the end. The layer whose *Global* property is on
+  has `"global": true` and `"overriden": 0`. A layer of the same name in
+  another layout of the project has `"global": false` and `"overriden": 1`,
+  and so does each of its sub-layers when the global layer has sub-layers.
+  In the examples every layer with `overriden` 1 has a same-named global
+  layer in another layout. The overriden layer keeps its own `sid`, the full
+  set of layer properties (in the compared examples with the global layer's
+  values), its `subLayers` and its own `instances` with their own uids: the
+  three HUD instances of each level of kiwi-story, nine on the `UI` layer of
+  each level of rat-purrsuit. The manual says the global layer's instances
+  and properties are used in its place, in the editor and at runtime; that
+  the kept instances never show is not observed here. Whether the editor
+  sets `overriden` itself when a layer is made global or renamed, and what
+  it does with a `1` whose global layer is gone, is not observed either, so
+  a hand edit writes both sides. [manual: project-primitives/layers.md
+  "Global layers"; examples fuji-leaper `Level6` (`Holder`, global, with
+  sub-layers `Link` and `Mask`) and `Level1`, kiwi-story `GlobalLayers` and
+  `1_Forest`, rat-purrsuit `Level1` and `Level2`, avalanche `Level1` and
+  `Level2`]
 
 ### Object types, families and `project.c3proj`
 
