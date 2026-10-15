@@ -33,18 +33,23 @@ either way, so an agent without skill support reaches it too.
 
 The text is
 [`skills/construct3-agent-plugin/assets/game-project-block.md`](../skills/construct3-agent-plugin/assets/game-project-block.md).
-To place it by hand, copy it into the project's `AGENTS.md`, with its two
-marker lines. Then fill in the one path at the top: this clone, or a
-symlink in the project that points to it. Replace `<path-to>` in place, or
-keep it and add a line `- path-to = <folder>` above it for the folder that
-holds the clones; the skill's scripts read both. The block expects the `Construct3-Manual`,
-`Construct-Example-Projects` and `Construct-Addon-SDK` clones beside this
-repository, where the README places them; a clone kept elsewhere gets its
-own line. Leave the rest of the block as it is.
+To place it by hand:
+
+1. Copy it into the project's `AGENTS.md`, with its two marker lines.
+2. Fill in the one path at the top: this clone, or a symlink in the
+   project that points to it. Replace `<path-to>` in place, or keep it and
+   add a line `- path-to = <folder>` above it for the folder that holds the
+   clones; the skill's scripts read both.
+3. The block expects the `Construct3-Manual`, `Construct-Example-Projects`
+   and `Construct-Addon-SDK` clones beside this repository, where the
+   README places them. Give a clone kept elsewhere its own line.
+4. Leave the rest of the block as it is, because `install.py` refreshes
+   only an unedited block ("Refreshing the block").
 
 If the path is left unfilled, the checker in the block's first step stops
-and says what to write. The block holds no instructions for a case that
-`install.py` cannot produce, because every session of the project reads it.
+and says what to write. When you change the block, leave out instructions
+for a case that `install.py` cannot produce, such as an unfilled path,
+because every session of the project reads the block.
 
 Claude Code 2.1.277 and later read `AGENTS.md` if the project has no
 `CLAUDE.md` (<https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md>).
@@ -72,12 +77,6 @@ and "The project folder" in
 applies what it states about the files. If the agent adds, renames or moves
 a file of the project, the block sends the agent to both.
 
-The block loads no other file at startup; the agent reads each one when its
-work needs it. If the agent keeps skipping them, add this line at the end:
-`@<path-to>/Construct3-RAG/prompts/event-sheet-thinking.md`. Claude Code
-then inlines that file into every session of the project, at the cost of
-its full length each time. Other tools ignore the line.
-
 The block ends with a rule for the project's own long Markdown files, such
 as design documents: list the headings, then read the section the work
 needs. A file read whole stays in the context and is read again on every
@@ -86,6 +85,13 @@ documents were the largest single cost after the context itself
 (`docs/decisions/long-docs-in-parts.md`). The rule names this project's
 files only; the files of this repository that the table names are read
 whole, because each one says what to read next.
+
+The block loads no other file at startup; the agent reads each one when its
+work needs it. If the agent keeps skipping those files, add this line below
+the block's end marker:
+`@<path-to>/Construct3-RAG/prompts/event-sheet-thinking.md`. Claude Code
+then inlines that file into every session of the project, at the cost of
+its full length each time. Other tools ignore the line.
 
 ## Refreshing the block
 
@@ -109,7 +115,7 @@ one that `install.py` wrote; any other text is the project's
 
 On a machine with only this clone, run this repository's
 `scripts/bootstrap.py --project <folder>`. It clones the three repositories
-above beside this one if they are missing, creates the folder as an empty
-project, copied from `data/c3-new-project`, if it does not exist, and runs
-`install.py`. The README's first section gives it to a reader who has only
-the URL.
+above beside this one if they are missing. If the folder does not exist, it
+creates it as an empty project, a copy of `data/c3-new-project`. Then it
+runs `install.py` on the folder. The README's first section gives the clone
+command and this one to a reader who has only the URL.
