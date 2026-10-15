@@ -1,10 +1,8 @@
 """lookup_ace.py: the conditions, actions and expressions to write, with their parameters."""
 import json
-import os
 import re
 import shutil
 import subprocess
-import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -118,7 +116,7 @@ def test_ace_lookup_needs_no_project_and_takes_a_display_name(skill_only):
 
 
 def test_a_behavior_without_aces_is_named_as_one_and_how_to_add(skill_only):
-    """A model shooting blocks looked Destroy outside up, read that the clone had no schema for a third-party
+    """A model shooting blocks looked up Destroy outside, read that the clone had no schema for a third-party
     addon, and left its bullets flying forever (2026-10-09 batch, ask 06)."""
     code, out = tool(skill_only, "lookup_ace", "Destroy outside")
     assert code == 0 and "third-party" not in out, out
@@ -258,11 +256,9 @@ def test_ace_lookup_prints_a_miss_on_stdout(built):
     """The miss and what comes near are the answer. On stderr, a harness that shows stdout
     alone printed nothing, and PowerShell wrapped each line in a NativeCommandError record,
     which is how two Doubao runs read it."""
-    env = dict(os.environ, PYTHONIOENCODING="utf-8")
 
     def lookup(*words: str) -> subprocess.CompletedProcess:     # tool() joins stdout and stderr
-        return subprocess.run([sys.executable, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), *words],
-                              cwd=built, env=env, capture_output=True, text=True, encoding="utf-8")
+        return streams(built, f"{INSTALLED}/scripts/lookup_ace.py", "--rag", str(REPO), *words)
     p = lookup("Sprite", "aniamtion")
     assert p.returncode == 1
     assert p.stdout.startswith("nothing under Sprite has every word of 'aniamtion'\n") and "set-animation" in p.stdout
@@ -353,13 +349,15 @@ def usage_rag(folder: Path, index: bool = True, examples: bool = True) -> tuple[
     """A Construct3-RAG folder with the System and shared schemas. index: add an index in which two examples
     use Wait. examples: create the Construct-Example-Projects folder beside it. Returns (rag, example-projects)."""
     rag = folder / "Construct3-RAG"
+    schemas = rag / "data" / "c3-schemas"
     for rel in ("_index.json", "en-US/_index.json", "en-US/_deprecated.json", "en-US/plugins/system.json",
                 "en-US/plugins/_common.json"):
-        (rag / "data" / "c3-schemas" / rel).parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy(REPO / "data" / "c3-schemas" / rel, rag / "data" / "c3-schemas" / rel)
+        (schemas / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(REPO / "data" / "c3-schemas" / rel, schemas / rel)
     if index:
-        (rag / "data" / "c3-example-usage" / "plugins").mkdir(parents=True)
-        (rag / "data" / "c3-example-usage" / "plugins" / "system.json").write_text(json.dumps({"actions": {"wait": {
+        usage = rag / "data" / "c3-example-usage" / "plugins"
+        usage.mkdir(parents=True)
+        (usage / "system.json").write_text(json.dumps({"actions": {"wait": {
             "examples": 2, "read": [["kiwi", "Main", 3, 4], ["poplab", "Event sheet 1", 1, 1]]}}}), encoding="utf-8")
     projects = folder / "Construct-Example-Projects" / "example-projects"
     if examples:
@@ -367,8 +365,8 @@ def usage_rag(folder: Path, index: bool = True, examples: bool = True) -> tuple[
     return rag, projects
 
 
-def lookup_wait(rag: Path, cwd: Path) -> str:
-    code, out = run(cwd, SKILL / "scripts" / "lookup_ace.py", "System", "wait", "--rag", str(rag))
+def lookup_wait(rag: Path, cwd: Path, *flags: str) -> str:
+    code, out = run(cwd, SKILL / "scripts" / "lookup_ace.py", "System", "wait", *flags, "--rag", str(rag))
     assert code == 0, out
     return out
 
@@ -402,13 +400,13 @@ def test_without_the_index_the_lookup_prints_no_count(tmp_path):
 
 def test_the_commands_of_the_examples_are_left_out_of_an_entry_that_fits_only_without_them(tmp_path):
     rag, _ = usage_rag(tmp_path)
-    code, out = run(tmp_path, SKILL / "scripts" / "lookup_ace.py", "System", "wait", "--limit", "700", "--rag", str(rag))
-    assert code == 0 and out.startswith("action wait - Wait [system]") and "official example" not in out
+    out = lookup_wait(rag, tmp_path, "--limit", "700")
+    assert out.startswith("action wait - Wait [system]") and "official example" not in out
     assert out.splitlines()[-1].startswith("2 more did not fit 700 characters (--limit): ")
 
 
 def test_the_note_on_a_missing_clone_counts_against_the_limit(tmp_path):
     rag, _ = usage_rag(tmp_path, examples=False)
     for limit in ("900", "1100", "1500"):
-        code, out = run(tmp_path, SKILL / "scripts" / "lookup_ace.py", "System", "wait", "--limit", limit, "--rag", str(rag))
-        assert code == 0 and len(out) <= int(limit), (limit, out)
+        out = lookup_wait(rag, tmp_path, "--limit", limit)
+        assert len(out) <= int(limit), (limit, out)
