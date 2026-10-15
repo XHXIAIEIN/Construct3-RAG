@@ -60,8 +60,9 @@ generator.
 
 print_sheet.py SHEET --show N prints event N as JSON, to change and put back
 with "replace". Its entries keep their keys, in their order, and their sids,
-so an event put back unchanged leaves the file byte for byte as it was. The file is written as the editor writes it: tabs, LF, no
-byte order mark, no newline at the end, under the name it has on disk.
+so an event put back unchanged leaves the file byte for byte as it was. The
+file is written as the editor writes it: tabs, LF, no byte order mark, no
+newline at the end, under the name it has on disk.
 
 exit codes: 0 written, or a dry run that would be; 1 nothing written: the plan
 cannot be read, names an event, variable or comment the sheet does not have,
@@ -224,12 +225,13 @@ def assign(entry: dict, values: dict, name: str, fixed: tuple[str, ...]) -> None
     in_order(entry)
 
 
-def known_keys(given: dict, known: list, where: str, what: str) -> None:
-    """Refuse a key the editor does not read; it would drop the key with its value."""
+def known_keys(given: dict, known: list, where: str, what: str,
+               hint: str = "; the editor would drop it with its value") -> None:
+    """Refuse a key the editor does not read. hint ends the refusal."""
     for key in given:
         if key not in known:
             raise PlanError(f"{where}: {key!r} is not a key of {what}, which has: {', '.join(known)}"
-                            + c3.closest(key, known, n=1) + "; the editor would drop it with its value")
+                            + c3.closest(key, known, n=1) + hint)
 
 
 def new_ace(ace, where: str, own: dict | None = None) -> dict:
@@ -259,11 +261,7 @@ def new_event(ev, where: str, own: dict | None = None) -> dict:
                         f"and actions is a 'block'")
     out = filled(ev, EVENTS[kind], f"{where}, a {kind}", own)
     known = [key for key, _ in EVENTS[kind]] + list(RARE_KEYS.get(kind, ()))
-    for key in ev:
-        if key not in known:        # the editor drops a key it does not know, and what it held with it
-            raise PlanError(f"{where}: {key!r} is not a key of a {kind}, which has: {', '.join(known)}"
-                            + c3.closest(key, known, n=1)
-                            + ("; its sub-events are its 'children'" if "children" in known else ""))
+    known_keys(ev, known, where, f"a {kind}", "; its sub-events are its 'children'" if "children" in known else "")
     for key in ("conditions", "actions"):
         if key in out:
             out[key] = [new_ace(a, f"{where} {key[:-1]} {i}", own)
@@ -311,7 +309,7 @@ def sids_of(obj) -> list[int]:
 
 
 def give_sids(obj, used: set[int], again: collections.Counter | None = None) -> int:
-    """A sid for every new entry that has none the project is free of; returns how many were given.
+    """Give a sid the project does not use to each entry whose sid is empty, invalid or taken; return how many.
     again: how many times each sid may stand in obj, for an event put back in its own place,
     which holds a sid more than once when the editor saved it so."""
     given = 0
@@ -424,9 +422,10 @@ class Plan:
         return target
 
     def forget(self, taken: list[dict], said: str) -> None:
-        numbers = {id(ev): n for n, ev in self.by_number.items()}
+        """Events taken out, and the ones inside them, with which operation took them, for an operation after it."""
         for top in taken:
-            held = f"{said} event {numbers[id(top)]}, which held it" if id(top) in numbers else said + " the event that held it"
+            n = self.number_of(top)
+            held = f"{said} event {n}, which held it" if n else said + " the event that held it"
             self.gone[id(top)] = said + " it"
             stack = list(top.get("children", []))
             while stack:
@@ -480,14 +479,18 @@ class Plan:
         i = with_comments(siblings, i) if where == "before" else i + 1
         siblings[i:i] = events
 
-    def take(self, n: int, op: str, comments: bool) -> list[dict]:
-        siblings, i = self.place(self.event(n, op), n, op)
-        first = with_comments(siblings, i) if comments else i
-        taken = siblings[first:i + 1]
-        del siblings[first:i + 1]
+    def cut(self, siblings: list, first: int, end: int) -> list[dict]:
+        """siblings[first:end] taken out of the sheet."""
+        taken = siblings[first:end]
+        del siblings[first:end]
         if not siblings:
             drop_empty_children(self.sheet["events"], siblings)
         return taken
+
+    def take(self, n: int, op: str) -> list[dict]:
+        """Event n and the comments directly above it, taken out of the sheet."""
+        siblings, i = self.place(self.event(n, op), n, op)
+        return self.cut(siblings, with_comments(siblings, i), i + 1)
 
     def new_events(self, op: dict, name: str, own: dict | None = None) -> list[dict]:
         if not op.get("events"):
@@ -624,9 +627,7 @@ class Plan:
         if "remove" in op:
             if op["remove"] is not True:
                 raise PlanError(f"{name}: \"remove\" is true")
-            del siblings[at]
-            if not siblings:
-                drop_empty_children(self.sheet["events"], siblings)
+            self.cut(siblings, at, at + 1)
             self.used -= set(sids_of(row))
             if kind == "variable":
                 self.unnamed[key] = f"operation {i} removed it"
@@ -713,18 +714,15 @@ class Plan:
             self.sids_given += give_sids(events, self.used, again)
             self.done.append((f"event {n} replaced by {count(events, 'event')}", events))
         elif verb == "remove":
-            taken = self.take(n, name, comments=True)
+            taken = self.take(n, name)
             self.forget(taken, f"operation {i} removed")
             self.used -= set(sids_of(taken))
             below = print_sheet.numbered_below(taken[0].get("children", []))
-            gone = (f" with its sub-event{'s' if below > 1 else ''} {n + 1}" + (f"-{n + below}" if below > 1 else "")
-                    + f", {count(list(actions_in([taken[0]])), 'action')} in all") if below else ""
-            self.done.append((f"event {n} removed{gone}"
-                              + (f", with {count(taken[1:], 'comment')} above it" if taken[1:] else ""), []))
-            gone = f" and its sub-event{'s' if below > 1 else ''} {n + 1}" + (f"-{n + below}" if below > 1 else "") \
-                + f", {count(list(actions_in([taken[0]])), 'action')} in all" if below else ""
-            self.done.append((f"event {n}{gone} removed"
-                              + (f", with {count(taken[1:], 'comment')} above it" if taken[1:] else ""), []))
+            s = "s" if below > 1 else ""
+            subs = f"{print_sheet.span_text(n + 1, n + below)}, {count(list(actions_in([taken[0]])), 'action')} in all"
+            comments = f", with {count(taken[1:], 'comment')} above it" if taken[1:] else ""
+            self.done.append((f"event {n} removed" + (f" with its sub-event{s} {subs}" if below else "") + comments, []))
+            self.done.append((f"event {n}" + (f" and its sub-event{s} {subs}" if below else "") + f" removed{comments}", []))
         elif verb == "move":
             where = [k for k in PLACES if k in op]
             if len(where) != 1:
@@ -733,7 +731,7 @@ class Plan:
             target = self.event(op[where[0]], name, zero=where[0] == "into")
             if target is not None and (target is moved or place_of(moved.get("children", []), target)):
                 raise PlanError(f"{name}: event {op[where[0]]} is event {n} or inside it")
-            taken = self.take(n, name, comments=True)
+            taken = self.take(n, name)
             self.put(taken, where[0], op[where[0]], name)
             self.done.append((f"event {n} moved {where[0]} event {op[where[0]]}", taken))
         elif {"condition", "action", "set", "remove"} & set(op):
@@ -926,8 +924,9 @@ def main() -> int:
     project = c3.Project.open(args, findings)
     c3.note_drift(project.rag)
 
-    # A refusal answers the model, so it prints on stdout with exit code 1: on stderr, a harness that shows
-    # stdout alone showed nothing, and PowerShell wrapped each line in an error record.
+    # Refusals on stdout, exit code 1
+    # A refusal answers the model: a harness that shows stdout alone hides stderr, and PowerShell wraps each
+    # stderr line in an error record.
     sheets = project.listed_files("eventSheets")
     path = sheets.get(args.sheet)
     new = args.new and path is None and args.sheet not in sheets
@@ -946,7 +945,7 @@ def main() -> int:
               f"sheet")
         return 1
     if new:
-        # The keys and order of a sheet the editor makes; its sid is one the project's checked sids are free of.
+        # A sheet as the editor makes it, with a sid no checked entry of the project uses
         raw, on_disk = b"", ""
         sheet = {"name": args.sheet, "events": [], "sid": 0}
         give_sids(sheet, set(findings_of(project, args.locale, {})[0].sids))
@@ -999,14 +998,11 @@ def main() -> int:
     after, found_after = findings_of(project, args.locale, {args.sheet: plan.sheet})
     known = {without_number(e) for e in found_before.errors}
     added = [e for e in found_after.errors if without_number(e) not in known]
-    # An event the plan created, without a comment above it, with eight actions in a row
-    # and no comment action, or with case sub-events and no comment above any of them, is
-    # refused like a problem: the fix is one comment, and a
-    # warning was not acted on in half the small-model runs of 2026-09-22
-    # (event-sheet-design-guidance.md). An event the plan moved or extended is the user's;
-    # a finding on it prints as a warning below. A Find path every tick is refused too: in the Haiku
-    # runs of 2026-10-03 both arms wrote one, and the run warned four times kept it as intentional.
-    # The other traps of the running game are refused too (event-sheet-design-guidance.md).
+    # A REFUSED_STYLE finding on an event the plan created is a problem too
+    # Each fix is one comment, condition or move, and small models leave such a warning in place: half the
+    # small-model runs of 2026-09-22 did not act on it, and a Haiku run of 2026-10-03 warned four times kept
+    # its every-tick Find path as intentional (event-sheet-design-guidance.md). An event the plan moved or
+    # extended is the user's, so a finding on it prints as a warning below.
     known_style = {without_number(m) for _, m in found_before.style}
     added += [m for kind, m in found_after.style if kind in REFUSED_STYLE and without_number(m) not in known_style
               and (sid := SID_IN.search(m)) and int(sid.group(1)) not in existing]
@@ -1027,8 +1023,9 @@ def main() -> int:
         return 1
 
     layout = laid_out(plan.sheet)
-    # A new sheet runs only on a layout that names it. In a project without sheets every layout gets it; beside
-    # other sheets a layout without one is kept so (a layout that only holds objects), and the person chooses.
+    # Layouts a new sheet runs on
+    # A sheet runs only on a layout that names it. In a project without sheets every layout gets it. Beside
+    # other sheets, a layout without one may only hold objects, so it stays as it is and the user chooses.
     runs_on = ({name: p for name, p in project.listed_files("layouts").items()
                 if p and not json.loads(p.read_text(encoding="utf-8-sig")).get("eventSheet")}
                if new and not sheets else {})
@@ -1038,7 +1035,7 @@ def main() -> int:
             return 1
         # A new sheet writes three kinds of file; one that fails puts back those written before it, so that the
         # project is as it was and the same plan runs again.
-        before = {p: p.read_bytes() for p in (project.root / "project.c3proj", *runs_on.values())} if new else {}
+        saved = {p: p.read_bytes() for p in (project.root / "project.c3proj", *runs_on.values())} if new else {}
         try:
             path.parent.mkdir(exist_ok=True)
             draft = path.with_name(path.name + ".tmp")
@@ -1055,7 +1052,7 @@ def main() -> int:
         except OSError as e:
             if not new:
                 raise
-            left = put_back(path, before)
+            left = put_back(path, saved)
             print(f"{args.sheet}: a file could not be written: {e}\n"
                   + (f"these could not be put back as they were: {', '.join(left)}; restore them from Git"
                      if left else "the files written before it are put back: nothing was written"))
@@ -1081,7 +1078,7 @@ def main() -> int:
             continue
         first, last = min(a for a, _ in shown), min(max(b for _, b in shown), total)
         lines, stopped = print_sheet.part(rows, first, last, room)
-        print(f"-- {said}: now event{'s' if last > first else ''} {first}{f'-{last}' if last > first else ''}"
+        print(f"-- {said}: now event{'s' if last > first else ''} {print_sheet.span_text(first, last)}"
               + (f"; shown up to {stopped - 1}, the rest with print_sheet.py" if stopped else ""))
         if room is None or room > 0:
             print("\n".join(lines))
