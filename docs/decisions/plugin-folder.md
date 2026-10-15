@@ -126,8 +126,12 @@ The build:
   goes at the plugin root, because the plugin manifest reference ("Manifest
   file") keeps only `plugin.json` in `.claude-plugin/`. `plugin.json` names
   it in `icon`, which Claude's directory reads for the listing and Claude
-  Code ignores. The icon is 512 px square, 50 KiB; at 1024 px it was
-  160 KiB. No text of the plugin writes the icon's path in backticks
+  Code ignores. The icon is a drawing of this repository's own: an event
+  sheet of three events in the paper-and-ink colours, on the 24-unit grid
+  of 2-unit blocks that the editor's built-in addon icons use, 512 px
+  square and 3 KiB. Construct's logo is Scirra's mark and stays out of the
+  listing. No text of the
+  plugin writes the icon's path in backticks
   or a code block, which the checklist holds for a reviewer. The README
   describes the plugin route only, and states what the plugin runs and what
   reaches the network: the checker's fetch of a clone, and the browser that
