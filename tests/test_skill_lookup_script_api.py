@@ -1,7 +1,7 @@
 """lookup_script_api.py: the scripting API's interfaces and members, with the file and line of each."""
 from tests.skill_helpers import REPO, install, new_project, tool
 
-TS_DEFS = f"{REPO.as_posix()}/data/c3-ts-defs"    # the header line prints the declaration's file as a posix path
+TS_DEFS = f"{REPO.as_posix()}/data/c3-ts-defs"    # the header line names the declaration's file by its posix path
 
 
 def test_an_addon_by_name_prints_its_interface_and_what_it_extends(built):
@@ -13,7 +13,7 @@ def test_an_addon_by_name_prints_its_interface_and_what_it_extends(built):
 
 
 def test_a_member_prints_its_interface_declaration_and_doc(built):
-    """A member of an instance, such as runtime.callFunction, prints its interface, declaration and doc comment."""
+    """runtime.callFunction, as a script writes it: the instance's member is found on its interface."""
     code, out = tool(built, "lookup_script_api", "runtime.callFunction")
     assert code == 0
     assert out.startswith(f"IRuntime.callFunction   {TS_DEFS}/preview/interfaces/IRuntime.d.ts:")
@@ -72,8 +72,8 @@ declare namespace InstanceType {
 
 
 def test_the_project_types_the_editor_wrote_are_searched(tmp_path):
-    """open_in_editor.py --typescript writes the project's objects, as the editor words them, beside a copy of
-    the whole API, which is read from the clone alone."""
+    """open_in_editor.py --typescript has the editor write the project's objects beside a copy of the whole API.
+    The script reads the objects there and the API from the clone alone."""
     root = new_project(tmp_path / "game")
     assert install(root)[0] == 0
     defs = root / "scripts" / "ts-defs"
