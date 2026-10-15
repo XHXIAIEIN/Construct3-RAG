@@ -79,6 +79,11 @@ Sources and the rule for adding an entry are in the index,
   "Get", "GetDefault", "Has key"; plugin-reference/function.md
   "ReturnValue"; behavior-reference/timer.md "CurrentTime";
   system-reference/system-expressions.md "int", "float"]
+- Dictionary *Set key* changes only an existing key and silently ignores
+  a missing one. *Add key* creates or overwrites, so write gates and
+  counters with *Add key*. [manual: plugin-reference/dictionary.md
+  "Add key", "Set key"; runtime: `scripts/c3runtime.js` of an exported
+  r503/r504 web build, `SetKey(t,e){this._data.has(t)&&...}`, `AddKey`]
 - JSON `Type(path)` reads `"undefined"` for a path that is not there, and
   `"array"`, `"object"`, `"number"`, `"string"`, `"boolean"` or `"null"`
   otherwise. So an expression can test presence, while *Has key* works only
