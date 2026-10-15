@@ -64,7 +64,7 @@ def test_the_info_and_its_factory_are_read_under_their_names_of_the_build():
 
 # Excerpts of the r506 bundles, shortened. r506 builds the info as
 # this.m=X.v(self.Ji,ID), while X.p is another object of the bundle, so the
-# r495 shape this.p=X.m(self.v,ID) matched nothing and the read stopped.
+# r495 shape this.p=X.m(self.v,ID) matches nothing there and stops the read.
 R506_MAIN_JS = (
     'window.SDK.IPluginInfo=class{SetIsTiled(t){Ck.get(this).NV(t)}SetIsDeprecated(t){Ck.get(this).pr(t)}};'
     'window.SDK.IBehaviorInfo=class{SetIsOnlyOneAllowed(t){Fk.get(this).ve(t)}'

@@ -300,9 +300,8 @@ def test_exported_common_schema_is_typed_and_structurally_identical_across_local
 
 @pytest.mark.parametrize("locale", LOCALES)
 def test_shared_properties_are_named_in_every_locale(locale):
-    """Their text is under ui.bars.properties.instance; the plugins._common
-    entry of the language pack has ACE text only, which is why the export
-    left the properties empty."""
+    """Their text is under ui.bars.properties.instance: the plugins._common
+    entry of the language pack holds ACE text only."""
     pack = _lang_pack(locale)
     assert "properties" not in pack["text"]["plugins"]["_common"]
     built = build_common_properties(pack["text"])
@@ -317,9 +316,9 @@ def test_build_stops_when_the_pack_has_no_text_for_a_property():
 
 
 def test_exported_common_schema_carries_the_instance_properties():
-    """An id is the key a project file holds, as it is for a plugin's own
-    properties, and `written` says where, the properties bar and the file
-    disagreeing on the angle and the opacity
+    """An id is the key a project file holds, as for a plugin's own
+    properties. `written` says where the file keeps the value, because the
+    properties bar and the file disagree on the angle and the opacity
     (docs/decisions/common-instance-properties.md)."""
     files = {locale: _exported_common(locale)["properties"] for locale in LOCALES}
     for locale, props in files.items():

@@ -1,4 +1,5 @@
-"""Tests for C3Fetcher — CDN access layer with weekly cache expiry."""
+"""C3Fetcher: CDN reads with a weekly cache and retries, and the exports it
+writes to the cache and to data/."""
 import json
 import os
 import re
@@ -28,13 +29,13 @@ def test_fetch_caches_locally(fetcher):
     mock_data = {"pluginList": {"Sprite": {"path": "general/sprite"}}}
     with patch.object(fetcher, "_http_get", return_value=json.dumps(mock_data).encode()):
         assert fetcher.fetch("plugins/pluginList.json") == mock_data
-    # Second call should use cache, not HTTP
+    # The second call reads the cache
     with patch.object(fetcher, "_http_get", side_effect=Exception("should not be called")):
         assert fetcher.fetch("plugins/pluginList.json") == mock_data
 
 
 def test_fetch_force_bypasses_cache(fetcher):
-    """force=True always hits HTTP even if cache exists."""
+    """force=True fetches the file again over a cached copy."""
     data_v1 = {"v": 1}
     data_v2 = {"v": 2}
     with patch.object(fetcher, "_http_get", return_value=json.dumps(data_v1).encode()):
@@ -102,7 +103,7 @@ def test_release_is_named_as_versions_json_names_it(tmp_path, version):
 
 
 def test_latest_stable_version():
-    """Detect latest stable version from versions.json."""
+    """The release of the Stable branch in versions.json."""
     mock_versions = [
         {"branchName": "Beta", "releaseName": "r477"},
         {"branchName": "Stable", "releaseName": "r476"},
@@ -130,19 +131,19 @@ def test_cache_expired_old_file(tmp_path):
 
 
 def test_cache_fresh_file(tmp_path):
-    """Cache files written just now should not be expired."""
+    """A cache file written just now is fresh."""
     cache_file = tmp_path / "test_cache"
     cache_file.write_text("fresh")
     assert _cache_expired(cache_file) is False
 
 
 def test_cache_nonexistent_file(tmp_path):
-    """Non-existent file counts as expired."""
+    """A missing file counts as expired."""
     assert _cache_expired(tmp_path / "nope") is True
 
 
 def test_fetch_all_aces(fetcher):
-    """Convenience method returns joined plugin + behavior ACEs."""
+    """fetch_all_aces returns the plugin and the behavior ACEs together."""
     mock_plugin_aces = {"Sprite": {"": {"conditions": [{"id": "c1"}]}}}
     mock_behavior_aces = {"Platform": {"": {"actions": [{"id": "a1"}]}}}
     with patch.object(fetcher, "fetch", side_effect=[mock_plugin_aces, mock_behavior_aces]):
@@ -174,7 +175,7 @@ def test_export_lang_writes_readable_json_per_locale(fetcher):
         "zh-CN": {"languageTag": "zh-CN", "text": {"plugins": {"sprite": {"name": "精灵"}}}},
     }
     with patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": payload[locale]):
-        out_dir = fetcher.export_lang(("en-US", "zh-CN"))
+        out_dir = fetcher.export_lang(LOCALES)
 
     assert out_dir == fetcher.cache_dir / "lang"
     assert sorted(p.name for p in out_dir.glob("*.json")) == ["en-US.json", "zh-CN.json"]
@@ -195,9 +196,11 @@ def _editor_flags(aces: dict, deprecated: tuple[str, ...] = ()) -> dict:
 
 
 def _export_with(fetcher: C3Fetcher, texts: dict[str, dict], aces: dict | None = None,
-                 effects: list[dict] | None = None, flags: dict | None = None) -> Path:
+                 effects: list[dict] | None = None, flags: dict | None = None,
+                 examples_error: Exception | None = None) -> Path:
     """Run export_schemas on these CDN files: ``texts`` holds the language pack
-    of each locale, and ``flags`` default to the editor deprecating no addon."""
+    of each locale, ``flags`` default to the editor deprecating no addon, and
+    ``examples_error`` is what reading the example list raises."""
     if aces is None:
         aces = {"plugins": {}, "behaviors": {}}
     if flags is None:
@@ -207,16 +210,16 @@ def _export_with(fetcher: C3Fetcher, texts: dict[str, dict], aces: dict | None =
         patch.object(fetcher, "fetch_addon_deprecation", return_value=flags),
         patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": texts[locale]),
         patch.object(fetcher, "fetch_effects", return_value=effects or []),
-        patch.object(fetcher, "fetch_examples", return_value=[]),
+        patch.object(fetcher, "fetch_examples", return_value=[], side_effect=examples_error),
     ):
         return fetcher.export_schemas()
 
 
 def _instance_properties() -> dict:
-    """What a pack holds for the shared world-instance properties. A real one
-    has it under ui.bars.properties.instance, not in its _common entry, which
-    is why the export reads both; a pack missing a path stops the export
-    (tests/test_common_aces.py)."""
+    """What a pack holds for the shared world-instance properties. A real pack
+    keeps their text under ui.bars.properties.instance and the shared ACE text
+    under plugins._common, so the export reads both; a pack missing a path
+    stops the export (tests/test_common_aces.py)."""
     instance: dict = {}
     for prop_id, path, _ in COMMON_PROPERTIES:
         node = instance
@@ -379,7 +382,7 @@ def test_export_marks_every_condition_the_editor_treats_as_a_trigger(fetcher):
 
 def test_export_keeps_the_default_the_editor_fills_in(fetcher):
     """Wait's "use time scale" is ticked when the action is added; a template that
-    wrote false made every Wait ignore the time scale."""
+    writes false makes every Wait ignore the time scale."""
     aces = {"plugins": {"system": {"time": {"conditions": [], "expressions": [], "actions": [
         {"id": "wait", "scriptName": "Wait", "params": [
             {"id": "seconds", "type": "number", "initialValue": "1.0"},
@@ -412,7 +415,7 @@ def test_export_marks_an_expression_that_takes_more_arguments_than_it_lists(fetc
 
 
 def test_export_leaves_out_what_the_editor_deprecates_though_translated(fetcher):
-    """NW.js and the old Warp are still in both language packs; the editor's
+    """NW.js and the old Warp are in both language packs; the editor's
     flags, not the packs, keep them out of every file and index."""
     aces = {
         "plugins": {pid: {"general": {"conditions": [], "actions": [{"id": "act", "scriptName": "Act"}],
@@ -574,12 +577,21 @@ def _committed_data(tmp_path: Path) -> Path:
 
 
 def _export_to_data(fetcher: C3Fetcher, cache: dict[str, Path], data_dir: Path) -> dict[str, Path]:
-    with patch.object(fetcher, "export_schemas", return_value=cache["schemas"]),          patch.object(fetcher, "export_lang", return_value=cache["lang"]),          patch.object(fetcher, "export_ts_defs", return_value=cache["ts"]),          patch.object(fetcher, "_http_get", side_effect=AssertionError("no CDN call")):
+    with (
+        patch.object(fetcher, "export_schemas", return_value=cache["schemas"]),
+        patch.object(fetcher, "export_lang", return_value=cache["lang"]),
+        patch.object(fetcher, "export_ts_defs", return_value=cache["ts"]),
+        patch.object(fetcher, "_http_get", side_effect=AssertionError("no CDN call")),
+    ):
         return fetcher.export_to_data(data_dir)
 
 
 def _left_as_it_was(data_dir: Path) -> bool:
-    return sorted(p.relative_to(data_dir).as_posix() for p in data_dir.rglob("*") if p.is_file()) ==         sorted(f"{name}/before.txt" for name in _TARGETS) and         sorted(p.name for p in data_dir.parent.iterdir()) == ["data", "r476"]
+    return (
+        sorted(p.relative_to(data_dir).as_posix() for p in data_dir.rglob("*") if p.is_file())
+        == sorted(f"{name}/before.txt" for name in _TARGETS)
+        and sorted(p.name for p in data_dir.parent.iterdir()) == ["data", "r476"]
+    )
 
 
 def test_export_to_data_replaces_committed_directories_without_cache_markers(fetcher, tmp_path):
@@ -655,16 +667,27 @@ def test_a_failed_swap_removes_a_target_that_was_not_there(fetcher, tmp_path):
     assert all((data_dir / name / "before.txt").exists() for name in ("c3-lang", "c3-schemas", "c3-ts-defs"))
 
 
+def test_export_to_data_creates_a_data_folder_that_is_not_there(fetcher, tmp_path):
+    cache = _full_cache(fetcher)
+    data_dir = tmp_path / "fresh" / "data"
+    _export_to_data(fetcher, cache, data_dir)
+    assert sorted(p.name for p in data_dir.iterdir()) == sorted(_TARGETS)
+    assert sorted(p.name for p in data_dir.parent.iterdir()) == ["data"]
+
+
 def test_export_schemas_stops_without_a_marker_when_the_examples_fail(fetcher):
-    with patch.object(fetcher, "fetch_examples", side_effect=ValueError("[CDN] media/example-project-data.json: not JSON")),          pytest.raises(ValueError, match="example-project-data"):
-        with patch.object(fetcher, "fetch_all_aces", return_value=_SPRITE_ACES),              patch.object(fetcher, "fetch_addon_deprecation", return_value=_editor_flags(_SPRITE_ACES)),              patch.object(fetcher, "fetch_lang", side_effect=lambda locale="en-US": _SPRITE_TEXTS[locale]),              patch.object(fetcher, "fetch_effects", return_value=_SPRITE_EFFECTS):
-            fetcher.export_schemas()
+    not_json = ValueError("[CDN] media/example-project-data.json: not JSON")
+    with pytest.raises(ValueError, match="example-project-data"):
+        _export_with(fetcher, _SPRITE_TEXTS, aces=_SPRITE_ACES, effects=_SPRITE_EFFECTS, examples_error=not_json)
     assert not (fetcher.cache_dir / "schemas" / ".exported").exists()
 
 
 def test_export_ts_defs_stops_when_offline_json_lists_no_definitions(fetcher):
     listing = json.dumps({"fileList": ["main.js"]}).encode()
-    with patch.object(fetcher, "_http_get", return_value=listing),          pytest.raises(RuntimeError, match="offline.json lists no .d.ts"):
+    with (
+        patch.object(fetcher, "_http_get", return_value=listing),
+        pytest.raises(RuntimeError, match="offline.json lists no .d.ts"),
+    ):
         fetcher.export_ts_defs()
     assert not (fetcher.cache_dir / "ts-defs" / ".exported").exists()
 
@@ -759,6 +782,12 @@ def _status(code: int):
     return urllib.error.HTTPError("https://cdn", code, "status", None, None)
 
 
+def _response(body: bytes) -> MagicMock:
+    response = MagicMock()
+    response.__enter__.return_value.read.return_value = body
+    return response
+
+
 @pytest.mark.parametrize("transient", [_status(503), urllib.error.URLError("connection reset"), TimeoutError("timed out")])
 def test_a_transient_failure_is_retried(transient, caplog):
     body = b'{"fileList": []}'
@@ -784,17 +813,3 @@ def test_a_client_error_is_not_retried(code):
         with pytest.raises(urllib.error.HTTPError):
             _http_get("https://cdn/offline.json")
     assert urlopen.call_count == 1
-
-
-def _response(body: bytes) -> MagicMock:
-    response = MagicMock()
-    response.__enter__.return_value.read.return_value = body
-    return response
-
-
-def test_export_to_data_creates_a_data_folder_that_is_not_there(fetcher, tmp_path):
-    cache = _full_cache(fetcher)
-    data_dir = tmp_path / "fresh" / "data"
-    _export_to_data(fetcher, cache, data_dir)
-    assert sorted(p.name for p in data_dir.iterdir()) == sorted(_TARGETS)
-    assert sorted(p.name for p in data_dir.parent.iterdir()) == ["data"]
