@@ -68,22 +68,23 @@ The project skill and the prompts:
 | `clone-update-check.md` | Why the checker fetches the clone and fails when it is behind its upstream, and how plugin users get updates |
 | `project-format-guide.md` | Where each statement of Scirra's project format guide, the one `llm-context.md` links, is written and what checks it, and how its copy in `data/c3-guides/` is kept |
 | `preview-player.md` | Why a preview is played from a JSON plan of steps, and what the steps cover |
+| `design-tokens.md` | Which tokens the recording review page and the API playground declare for palette, type, radii and motion, why they take the host UI kits' names with this repository's values, and the contrast every text token owes |
 | `runtime-graded-evals.md` | Why the skill's evals play each run's game from a plan beside the file assertions, which cases are held out of tuning, and what each run records |
 | `sheet-screenshot.md` | Why a picture of an event sheet is taken in the editor by `screenshot_sheet.py`, with its columns fitted and the picture cropped to the sheet, and why a sheet taller than the browser captures is taken one group at a time |
 | `typescript-definitions-from-the-editor.md` | Why the editor writes a project's own TypeScript definitions, through `open_in_editor.py --typescript`, and when the checker warns that they are stale |
 | `game-design-prototype.md` | Why a new game starts as a design whose rules a local prototype plays before the build, and how the same tests reach the editor |
 | `event-sheet-design-guidance.md` | The event sheet prompts, the style checks and the generator's placement helpers |
-| `design-review-packets.md` | Why design questions carry evidence, how static judgements are reused, and which runtime checks still run |
+| `design-review-packets.md` | Why the design review prints its questions by default and prepares their complete evidence only with `--prepare`, how saved judgements are reused, and which checks a reused judgement does not replace |
 | `pitfalls-index-and-topics.md` | Why the pitfalls are an index of one-line conclusions with a topic file per group, and which lessons belong in them |
 | `prompt-references-by-task.md` | Which parts of the design and style prompts live in `prompts/references/`, why Native first stays inline, and what a row of Native first holds |
-| `borrowed-numbers.md` | Which numbers and rules of other agent frameworks were measured here before the template or a check took them, and the result for each: player height, HUD share, popups, idle motion, coyote time, images of created objects, an editor open while files change, design size, safe area, the first runtime error |
+| `borrowed-numbers.md` | Which numbers and rules of other agent frameworks were measured here before the template or a check took them, and the result for each |
 | `published-game-visual-language.md` | Which visual, motion, camera and pacing rules repeated across published Construct games, and which of them the template took |
 | `game-look-from-design-skills.md` | What the design and game-art skills on GitHub do to steady an agent's output, and the palette, text and pixel-art defaults the generator template took from them |
 | `look-judge-calibration.md` | How often a judge that sees only the screenshots answers `review_look.py`'s questions as a panel of labeller agents does, and why the questions ask what a player sees as a mistake |
-| `paper-and-ink-look.md` | The default look of a generated game: the paper palette, the Inter subset the skill ships, the line-drawn areas, the HUD's type and the subjects' sizes |
+| `paper-and-ink-look.md` | The default look of a generated game: the paper palette, the Inter subset the generator takes from the user's font cache, the line-drawn areas, the HUD's type and the subjects' sizes |
 | `greybox-blockout.md` | The blockout look a generated game has before its art, and the grids and pacing its level is laid out by |
 | `landscape-viewport.md` | Why the generator template starts a game at 1920×1080 landscape, and what follows from it |
-| `fill-the-screen.md` | Why a generated game fills the screen with *Scale outer* or *Integer scale outer*, its HUD held to the screen's edges by Anchor, *Viewport fit* left at *Auto*, which keeps the whole viewport visible on a notched phone, and each layer listed back to front |
+| `fill-the-screen.md` | Why a generated game fills the screen at any aspect ratio, how its HUD keeps to the screen's edges and clear of a notch, and the back-to-front order of each layer's instances |
 | `layout-by-name.md` | Why a generated screen is laid out by names, a button with its label, named bands and a main object sized to the stage, with the positions computed and checked as numbers |
 | `count-up-and-press.md` | Why a generated score counts to its new value and a button presses under the finger, and the numbers each takes |
 | `input-controls.md` | Why a generated slider and toggle are drawn on the canvas and a text input is the Text input form control, and how each is placed, drawn and read |
