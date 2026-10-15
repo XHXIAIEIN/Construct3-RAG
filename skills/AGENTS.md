@@ -2,40 +2,40 @@
 
 Agent Skills in the open format of <https://agentskills.io/specification>:
 one folder per skill, a `SKILL.md` with `name` and `description`, and
-`scripts/`, `references/` and `assets/` beside it. The folder here is the
-source. A game project holds a copy of it, made and refreshed by the skill's
-`scripts/install.py`, and the copy reports when it differs from the source.
-`plugin/`, the Claude Code plugin, holds another copy, which
-`scripts/build_plugin.py` writes and `tests/test_plugin_folder.py` keeps
-equal to this folder.
-
+`scripts/`, `references/` and `assets/` beside it.
 `construct3-agent-plugin/` is the one skill here: the project tools for a
 Construct 3 folder project, listed under "Scripts" in its `SKILL.md`, and
-the block for the project's instruction file.
+the Construct 3 block for the project's instruction file.
+
+The skill's folder here is the source of two copies. A game project holds
+one, which the skill's `scripts/install.py` makes and refreshes, and that
+copy reports when it differs from the source. `plugin/`, the Claude Code
+plugin, holds the other: `scripts/build_plugin.py` writes it, and
+`tests/test_plugin_folder.py` keeps it equal to a fresh build.
 
 ## Change a project tool
 
-Read the row for the task, then the named source and its tests.
-These pointers locate contracts; the current source determines behavior.
+Read the row of the task, then the source and the tests it names. The rows
+locate the contracts; the source decides what a tool does. Paths in the
+table are under `construct3-agent-plugin/`, except the `Construct3-RAG/`,
+`tests/` and `docs/` paths, which start at the repository root.
 
 | Task | Responsibility and interface | Read together | Constraint and source |
 |------|------------------------------|---------------|-----------------------|
-| Check or resume a design review | `scripts/review_design.py --check` prints findings and questions; optional `--prepare FOLDER --resume` supplies evidence and saved judgements | `design_review.py`, `print_sheet.py`, `c3project.py`, `tests/test_skill_design_review.py`, `references/design-review.md` | Versions protect judgements; printed lines protect edits. `docs/decisions/plan-names-the-event-line.md` |
-| Apply an event edit | `scripts/edit_sheet.py SHEET PLAN.json --dry-run` checks the whole project with an unsaved sheet | `check_project.py`, `print_sheet.py`, `tests/test_skill_edit_sheet.py` | It refuses added problems but can leave existing ones. Keep the final full checker and its fix-loop record |
+| Check or resume a design review | `scripts/review_design.py --check` prints findings and questions; optional `--prepare FOLDER --resume` supplies evidence and saved judgements | `design_review.py`, `print_sheet.py`, `c3project.py`, `tests/test_skill_design_review.py`, `references/design-review.md` | A saved judgement is reused only while its input version matches; an edit carries the line `print_sheet.py` printed for its event. `docs/decisions/plan-names-the-event-line.md` |
+| Apply an event edit | `scripts/edit_sheet.py SHEET PLAN.json --dry-run` checks the whole project with the changed sheet in place of its file | `check_project.py`, `print_sheet.py`, `tests/test_skill_edit_sheet.py` | It refuses a plan that adds a problem but can leave the problems already there, so keep the final full `check_project.py` run and its fix-loop record |
 | Open or play a game | `scripts/open_in_editor.py --preview`; `scripts/preview_project.py PLAN.json` drives inputs and reads state | `references/editor-and-preview.md`, `evals/play_cases.py`, `tests/test_skill_preview_project.py` | Opening without input tests startup. Reaching a scene directly does not test the path to it |
-| Ship the skill to a game | `scripts/install.py --project FOLDER` mirrors the skill except `evals/` | `assets/game-project-block.md`, `c3project.py`, `tests/test_skill_install.py` | Edited instruction blocks and generator helpers retain their edits until explicitly replaced |
-| Ship the plugin | `Construct3-RAG/scripts/build_plugin.py` builds the skill, data and prompts | `tests/test_plugin_folder.py`, `docs/decisions/plugin-folder.md`, `docs/decisions/plugin-tracks-commits.md` | Change sources and build the generated folder. Its version follows the commit baseline |
-
-Paths in this table are under `construct3-agent-plugin/`, except explicit
-`Construct3-RAG/`, `tests/` and `docs/` paths, which start at the repository root.
+| Ship the skill to a game | `scripts/install.py --project FOLDER` mirrors the skill except `evals/` | `assets/game-project-block.md`, `c3project.py`, `tests/test_skill_install.py` | An edited Construct 3 block and edited generator helpers keep their edits until `--replace-edited-block` or `--replace-edited-helpers` replaces them |
+| Ship the plugin | `Construct3-RAG/scripts/build_plugin.py` builds `Construct3-RAG/plugin/` from the skill, the data and the prompts | `tests/test_plugin_folder.py`, `docs/decisions/plugin-folder.md`, `docs/decisions/plugin-tracks-commits.md` | Edit the sources, then build. The build sets the version from the plugin at the commit HEAD shares with `origin/main` |
 
 ## Rules
 
 - The folder is what ships: `install.py` mirrors every file in it into the
-  game project, except `evals/`, which tests the skill from here. Nothing
-  else lives in it, no scratch files, outputs or notes. What an eval run
-  leaves goes to `.local/docs/evidence/skill-evals/<skill>/iteration-N/`,
-  which Git ignores (`docs/AGENTS.md`).
+  game project, except `evals/`, which tests the skill from here. Keep
+  everything else out of it, scratch files, outputs and notes included:
+  what an eval run leaves goes to
+  `.local/docs/evidence/skill-evals/<skill>/iteration-N/`, which Git
+  ignores (`docs/AGENTS.md`).
 - `SKILL.md` is ASCII: the reference validator and plain clients read it
   with the locale's codec, and under cp936 a UTF-8 sign stops them.
 - `name` is the folder's name, lowercase with hyphens. `description` says
@@ -51,26 +51,26 @@ Paths in this table are under `construct3-agent-plugin/`, except explicit
   needed is not repeated. Evidence: `docs/decisions/project-tools-skill.md`,
   "What holds the design in place".
 - Paths inside the skill are relative to its folder. A file of this
-  repository is written `Construct3-RAG/<path>`, as the block in the game
-  project writes it; a relative link out of the folder breaks in a copy.
+  repository is written `Construct3-RAG/<path>`, as the Construct 3 block
+  writes it; a relative link out of the folder breaks in a copy.
   The plugin bullet of `SKILL.md` says where such a path lies in the plugin,
   so the skill's text names no file that the plugin holds only in a bundle.
   A script prints a file of this repository by its absolute path. It prints
   a TypeScript declaration that the plugin holds only in a bundle as the
   `lookup_script_api.py` command that prints it
   (`docs/decisions/plugin-folder.md`).
-- Scripts use the standard library, except `prepare_art.py`, which needs
-  Pillow to read, cut out and resample pictures, and `preview_project.py`,
-  where Pillow is optional: it numbers the frames of a recording's contact
-  sheet, which ffmpeg alone tiles unnumbered, and joins a recording into a
-  GIF when ffmpeg is missing (`open_in_editor.py`
-  drives the machine's Edge or Chrome over the DevTools protocol, and prints
-  its check as steps for the agent's own browser tool where there is
-  neither), take everything from flags,
-  never prompt, print `--help` with examples and exit codes, and say in
-  every error what to write or run next. They find the project from the
-  current directory upward and this repository through the project's
-  `Construct3-RAG:` line; what they share is in `scripts/c3project.py`.
+- Scripts use the standard library. `prepare_art.py` also needs Pillow to
+  read, cut out and resample pictures. In `preview_project.py` Pillow is
+  optional: it numbers the frames of a recording's contact sheet, which
+  ffmpeg alone tiles unnumbered, and joins a recording into a GIF when
+  ffmpeg is missing. `open_in_editor.py` drives the machine's Edge or Chrome
+  over the DevTools protocol; where there is neither, it prints its check as
+  steps for the agent's own browser tool.
+- Scripts take everything from flags, never prompt, print `--help` with
+  examples and exit codes, and say in every error what to write or run
+  next. They find the project from the current directory upward and this
+  repository through the project's `Construct3-RAG:` line; what they share
+  is in `scripts/c3project.py`.
 - What a script prints is read by a harness, not a terminal. It is UTF-8
   whatever the code page (`utf8_output`), and it stops at `--limit`, about
   10 000 characters, with a last line that says how to get the rest: a
@@ -109,21 +109,21 @@ Paths in this table are under `construct3-agent-plugin/`, except explicit
 - A script that changes a project file checks the result before it writes
   it, writes the whole file or nothing, in the editor's layout (tabs, LF, no
   newline at the end, the editor's keys in the editor's order), and has
-  `--dry-run`. `edit_sheet.py` is the one that does all of that; its
-  templates are the keys the editor writes per kind of event, in order. Two
-  more write `project.c3proj` and take `--dry-run`: `new_project.py` sets
-  the name and `uniqueId` of the copied template and leaves the check to
-  `check_project.py`; `export_project.py` replaces the version line once
-  the export carries it.
+  `--dry-run`. `edit_sheet.py` does all of that; its templates are the keys
+  the editor writes per kind of event, in order. Two more write
+  `project.c3proj` and take `--dry-run`: `new_project.py` sets the name and
+  `uniqueId` of the copied template and leaves the check to
+  `check_project.py`; `export_project.py` replaces the version line once the
+  export carries it.
 - The skill's text and its scripts' own wording are English; `--locale`
   switches the schema wording a script prints, not the script's own.
-- A rule about what a project file must hold is read from the editor's loader
-  as a whole call chain, not from the one message a user pasted: the next
-  assertion in the same function costs another round trip through them. What
-  the editor writes into every project is measured from the official examples,
-  and `tests/test_skill_build_project.py` compares the generated project with
-  that measurement, so a key missing from the generator fails here instead of
-  in the editor.
+- Read a rule about what a project file must hold from the whole call chain
+  of the editor's loader, not from the one message a user pasted, because
+  the next assertion in the same function costs another round trip through
+  the user. What the editor writes into every project is measured from the
+  official examples, and `tests/test_skill_build_project.py` compares the
+  generated project with that measurement, so a key missing from the
+  generator fails here instead of in the editor.
 - Scirra's guide
   [Construct's project format](https://www.construct.net/en/tutorials/constructs-project-format-3275),
   kept in `data/c3-guides/constructs-project-format.md`,
