@@ -65,6 +65,10 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
+SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
+sys.path.insert(0, str(SCRIPTS))
+import c3project as c3  # noqa: E402
+
 INPUT, WRITE_5M, WRITE_1H, READ, OUT = 1.0, 1.25, 2.0, 0.1, 5.0
 NEW_CONTEXT = 0.7            # a context under this share of the previous one starts a new context
 CALL_OVERHEAD = 20           # the tokens a tool_use block adds around its input
@@ -72,7 +76,7 @@ NOT_SENT = {"prompt_snapshot", "deferred_tools_record", "credential_org", "comma
             "remote_session_change", "model", "frame-link"}     # attachments the transcript keeps, the model never reads
 SCRIPT = re.compile(r"(?:scripts|tools)[/\\](\w+)\.py")
 CJK = re.compile(r"[　-鿿＀-￯]")
-SKILL_SCRIPTS = frozenset(p.stem for p in (Path(__file__).resolve().parent.parent / "scripts").glob("*.py"))
+SKILL_SCRIPTS = frozenset(p.stem for p in SCRIPTS.glob("*.py"))
 
 
 def text_tokens(s: str) -> float:
@@ -488,8 +492,7 @@ def main() -> int:
     ap.add_argument("--targets", action="store_true", help="also group the items by the file or folder they read")
     ap.add_argument("--files", action="store_true", help="also print one line per transcript")
     args = ap.parse_args()
-    for stream in (sys.stdout, sys.stderr):
-        stream.reconfigure(encoding="utf-8", errors="replace")
+    c3.utf8_output()
 
     share = measure(transcripts(args.transcripts))
     if not share.responses:

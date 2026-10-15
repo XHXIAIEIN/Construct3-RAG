@@ -84,6 +84,7 @@ import os
 import re
 import shutil
 import sys
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
@@ -320,16 +321,20 @@ def reads_skill_md(command: str) -> bool:
                for words in split_shell(command)[0])
 
 
+def base_of(folder: Path) -> str:
+    """folder as within and parts_below compare a path with it: absolute, case-normalized, no trailing slash."""
+    return os.path.normcase(os.path.abspath(folder)).rstrip("\\/")
+
+
 def within(path: str, folder: Path) -> bool:
-    base = os.path.normcase(os.path.abspath(folder)).rstrip("\\/")
+    base = base_of(folder)
     path = os.path.normcase(path)
     return path == base or path.startswith(base + os.sep)
 
 
 def parts_below(path: str, folder: Path) -> list[str]:
     """The parts of path below folder, which holds it."""
-    base = os.path.normcase(os.path.abspath(folder)).rstrip("\\/")
-    return [p for p in re.split(r"[\\/]", os.path.normcase(path)[len(base):]) if p]
+    return [p for p in re.split(r"[\\/]", os.path.normcase(path)[len(base_of(folder)):]) if p]
 
 
 def outside(calls: list[dict], root: Path) -> tuple[list[dict], list[dict]]:
@@ -491,7 +496,7 @@ def whole_sheet(args: list[str]) -> bool:
     """A print_sheet.py call that asked for whole sheets past its limit: --limit 0 without a part, a name to find,
     one event or the changes since a commit."""
     words = [a.strip("\"'") for a in args]
-    unlimited = any(w in ("--limit=0",) for w in words) or any(
+    unlimited = "--limit=0" in words or any(
         w == "--limit" and n + 1 < len(words) and words[n + 1] == "0" for n, w in enumerate(words))
     return unlimited and not {"--events", "--find", "--show", "--since"} & {w.split("=")[0] for w in words}
 
@@ -504,11 +509,7 @@ def summary(calls: list[dict], root: Path | None = None) -> dict:
         counts = by_tool.setdefault(c["tool"], {"calls": 0, "failed": 0})
         counts["calls"] += 1
         counts["failed"] += c["failed"]
-    helps: dict[str, int] = {}
-    for c in calls:
-        for name, args in scripts_of(c):
-            if HELP & set(args):
-                helps[name] = helps.get(name, 0) + 1
+    helps = dict(Counter(name for c in calls for name, args in scripts_of(c) if HELP & set(args)))
     first_script = next((n for c in calls for n, _ in scripts_of(c)), None)
     before_first = next((n for n, c in enumerate(calls) if scripts_of(c)), len(calls))
     out = {"tool_calls": len(calls), "lost_calls": sum(is_lost(c) for c in calls), "by_tool": by_tool,
@@ -547,8 +548,7 @@ def main() -> int:
     ap.add_argument("--full", action="store_true", help="print commands and results unshortened")
     ap.add_argument("--list", metavar="SESSION_DIR", help="print the subagent transcripts of a session with their descriptions")
     args = ap.parse_args()
-    for stream in (sys.stdout, sys.stderr):
-        stream.reconfigure(encoding="utf-8", errors="replace")
+    c3project.utf8_output()
 
     if args.list:
         for meta in sorted(Path(args.list).glob("subagents/agent-*.meta.json")):
