@@ -1,4 +1,4 @@
-"""Map transport-independent search outcomes to typed HTTP responses."""
+"""Map HTTP requests to application commands and outcomes to HTTP responses."""
 
 from __future__ import annotations
 
@@ -76,9 +76,8 @@ def _present_lookup(
     if result is None or not result.matches:
         return None
 
-    # The committed Lookup schema is bilingual (en-US/zh-CN). Japanese and
-    # Korean are valid language hints, but must not relabel Chinese lookup
-    # text as if it were a ja/ko translation.
+    # The schemas hold English and Chinese only: a ja or ko request gets no
+    # Chinese text labelled as its own language.
     include_localized = lang == "zh"
     include_scripts = command.scope in {"scripts", "js", "ts", "all"}
     include_display = command.scope in {"eventsheet", "all"}
@@ -88,8 +87,8 @@ def _present_lookup(
         for match in result.matches:
             name = match.script_name if include_scripts else match.en.name
             grouped_names.setdefault(match.ace_type, []).append(name)
-        # Properties, effects, terms and examples have no ACE names to list;
-        # they are answered with the full matches rather than an empty section.
+        # Properties, effects, terms and examples have no ACE names to list,
+        # so they get the full matches below instead of an empty section.
         if any(grouped_names.get(kind) for kind in ("condition", "action", "expression")):
             return LookupSection(
                 conditions=grouped_names.get("condition") or None,
@@ -172,7 +171,7 @@ def _present_debug(outcome: SearchOutcome) -> DebugInfo:
 
 
 def present_search_outcome(outcome: SearchOutcome) -> SearchResponse:
-    """Build the public response without mutating internal workflow state."""
+    """Build the HTTP response from a search outcome; the outcome stays unchanged."""
     return SearchResponse(
         query=outcome.command.query,
         lang=outcome.lang,

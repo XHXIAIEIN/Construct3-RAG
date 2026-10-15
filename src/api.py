@@ -1,13 +1,14 @@
 """FastAPI composition root for the optional Construct 3 lookup service.
 
-The HTTP layer owns routing and dependency construction only.  Request/response
-contracts live in :mod:`src.interfaces.http.models`; the search SOP lives in
-:mod:`src.application.search`.
+This module holds the routes and builds their dependencies. The request and
+response contracts live in :mod:`src.interfaces.http.models`, the search
+workflow in :mod:`src.application.search`.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
@@ -22,6 +23,9 @@ from src.interfaces.http.presenters import (
     request_to_command,
 )
 
+if TYPE_CHECKING:
+    from src.lookup.service import LookupEngine
+
 SETTINGS = load_settings()
 
 app = FastAPI(
@@ -30,12 +34,12 @@ app = FastAPI(
     version="1.0.0",
 )
 
-_lookup_engine = None
+_lookup_engine: LookupEngine | None = None
 _PLAYGROUND_HTML = Path(__file__).parent / "interfaces" / "http" / "playground.html"
 
 
-def _get_lookup_engine():
-    """Construct the offline deterministic lookup adapter lazily."""
+def _get_lookup_engine() -> LookupEngine:
+    """Build the lookup engine on the first search and keep it."""
     global _lookup_engine
     if _lookup_engine is None:
         from src.lookup.service import LookupEngine

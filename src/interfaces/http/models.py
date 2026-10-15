@@ -1,14 +1,12 @@
-"""Pydantic contracts exposed by the optional HTTP search service."""
+"""Pydantic contracts exposed by the optional HTTP lookup service."""
 
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-LanguageCode = Literal["en", "zh", "ja", "ko"]
-SearchMode = Literal["auto", "lookup", "list"]
-SearchScope = Literal["eventsheet", "scripts", "js", "ts", "all"]
+from src.application.models import LanguageCode, SearchMode, SearchScope
 
 
 class SearchRequest(BaseModel):
@@ -133,13 +131,10 @@ __all__ = [
     "ACEParam",
     "DebugInfo",
     "HealthResponse",
-    "LanguageCode",
     "LookupDebug",
     "LookupItemResult",
     "LookupMatchResult",
     "LookupSection",
-    "SearchMode",
     "SearchRequest",
     "SearchResponse",
-    "SearchScope",
 ]

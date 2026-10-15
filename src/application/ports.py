@@ -1,4 +1,7 @@
-"""Structural ports implemented by the lookup runtime adapter."""
+"""The lookup interface that the search workflow calls.
+
+``src.lookup.service.LookupEngine`` implements it.
+"""
 
 from __future__ import annotations
 

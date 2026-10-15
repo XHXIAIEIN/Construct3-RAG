@@ -1,14 +1,15 @@
-"""Transport-independent search application workflow.
+"""Transport-independent search workflow.
 
-The canonical SOP is explicit and request-local:
+:meth:`SearchWorkflow.execute` runs one search command through three stages:
 
 ``initialize -> lookup -> respond``
 
 Validation runs inside ``initialize``; it is not a stage of its own.
 
-HTTP conversion is delegated to :mod:`src.interfaces.http.presenters`. The
-legacy :meth:`SearchWorkflow.run` method remains as a thin compatibility wrapper;
-new callers should pass a :class:`SearchCommand` to :meth:`execute`.
+:mod:`src.interfaces.http.presenters` converts to and from HTTP.
+:meth:`SearchWorkflow.run` is the compatibility wrapper for callers that hold
+an HTTP ``SearchRequest``; other callers pass a :class:`SearchCommand` to
+:meth:`SearchWorkflow.execute`.
 """
 
 from __future__ import annotations
@@ -39,11 +40,11 @@ def _elapsed_ms(started_at: float) -> float:
 
 
 class InvalidSearchRequestError(ValueError):
-    """Raised when a direct application command violates the search contract."""
+    """A search command with a blank query or an unsupported language."""
 
 
 def detect_language(query: str) -> LanguageCode:
-    """Detect Chinese, Japanese, Korean, or default English text."""
+    """Language of the query's first Chinese, Japanese or Korean character, else English."""
     for char in query:
         codepoint = ord(char)
         if 0x4E00 <= codepoint <= 0x9FFF:
@@ -56,13 +57,13 @@ def detect_language(query: str) -> LanguageCode:
 
 
 class SearchWorkflow:
-    """Execute search policy against the typed lookup port."""
+    """Run search commands against the lookup port."""
 
     def __init__(self, *, get_lookup_engine: LookupProvider) -> None:
         self._get_lookup_engine = get_lookup_engine
 
     def run(self, request: SearchRequest) -> SearchResponse:
-        """Compatibility entry point accepting the historical HTTP request model."""
+        """Run an HTTP request through :meth:`execute` and present the outcome."""
         from src.interfaces.http.presenters import (
             present_search_outcome,
             request_to_command,
@@ -71,7 +72,7 @@ class SearchWorkflow:
         return present_search_outcome(self.execute(request_to_command(request)))
 
     def execute(self, command: SearchCommand) -> SearchOutcome:
-        """Run the canonical SOP and return transport-independent state."""
+        """Validate the command, run the lookup and return the outcome."""
         started_at = time.perf_counter()
         execution = SearchExecution(
             command=command,

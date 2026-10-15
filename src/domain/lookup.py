@@ -1,8 +1,7 @@
-"""Pure data contracts for deterministic lookup.
+"""Records of a deterministic lookup: the intent, the matches and the response.
 
-This module intentionally contains no schema loading, query parsing, formatting,
-or transport behavior.  Those responsibilities belong to the lookup engine and
-application workflow.
+Schema loading, query parsing and formatting belong in :mod:`src.lookup`, and
+transport in :mod:`src.interfaces.http`.
 """
 
 from __future__ import annotations
@@ -30,7 +29,7 @@ class LookupIntent:
 
 @dataclass
 class ACELocale:
-    """Localized text for one ACE entry."""
+    """Text of one ACE in one language."""
 
     name: str = ""
     desc: str = ""
@@ -59,7 +58,7 @@ class LookupMatch:
 
 @dataclass
 class LookupResponse:
-    """Result returned by the deterministic lookup service."""
+    """Result of one lookup: the intent and its matches."""
 
     intent: LookupIntent
     matches: list[LookupMatch] = field(default_factory=list)

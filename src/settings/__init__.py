@@ -1,9 +1,9 @@
-"""Typed, side-effect-controlled application settings.
+"""Immutable application settings, built by :func:`load_settings`.
 
-Importing this module only defines immutable data structures and parsers.
-Call :func:`load_settings` explicitly to read an environment mapping. The
-Construct release is the one the schema directory's ``_index.json`` records;
-a data refresh asks the CDN for its target instead.
+Importing this module defines the settings types and reads nothing.
+:func:`load_settings` reads an environment mapping and the Construct release
+that the schema directory's ``_index.json`` records; a data refresh asks the
+CDN for its target release instead.
 """
 
 from __future__ import annotations
@@ -46,11 +46,11 @@ def load_settings(
     environ: Mapping[str, str] | None = None,
     base_dir: Path | None = None,
 ) -> AppSettings:
-    """Build an immutable settings tree from explicit inputs.
+    """Build the settings tree from an environment mapping and a repository root.
 
-    ``environ=None`` reads the current process environment. Passing an empty
-    mapping deliberately ignores it, which keeps tests and library callers
-    deterministic. The only filesystem read is the schema manifest's version.
+    ``environ=None`` reads the process environment; an empty mapping ignores it,
+    which keeps tests and library callers deterministic. ``base_dir`` defaults
+    to this checkout. The only file read is the version in the schema manifest.
     """
     source = os.environ if environ is None else environ
     root = Path(base_dir) if base_dir is not None else Path(__file__).parents[2]

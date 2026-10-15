@@ -8,6 +8,7 @@ from typing import Literal
 
 from src.domain.lookup import LookupResponse
 
+# Also the values POST /search accepts: a change here is a public API change
 LanguageCode = Literal["en", "zh", "ja", "ko"]
 SearchMode = Literal["auto", "lookup", "list"]
 SearchScope = Literal["eventsheet", "scripts", "js", "ts", "all"]
@@ -31,7 +32,7 @@ class SearchCommand:
 
 @dataclass
 class SearchExecution:
-    """Mutable request-local state; it contains no HTTP/Pydantic models."""
+    """State of one search while it runs; it holds no HTTP or Pydantic models."""
 
     command: SearchCommand
     lang: LanguageCode
