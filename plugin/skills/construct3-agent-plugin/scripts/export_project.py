@@ -85,7 +85,8 @@ starts, or the export did not finish: no subscription within 5 minutes,
 the project did not open, or a dialog stopped it; the copy is closed, the window is left
 open, and a run again goes on in it; 2 no project, a flag that cannot be used, a --to that
 holds the project or files other than an export, or the editor did not load; 3 no Edge, Chrome or Chromium here;
-4 exported, but project.c3proj could not be written and keeps its old version, which the last line says how to set
+4 exported, but project.c3proj could not be written and keeps its old version, which the last line says how to set;
+5 another run holds the browser profile, named in the line with its pid: wait for it to end, then run again
 """
 
 LOGIN_WAIT = 300        # seconds the user has to log in
@@ -798,6 +799,9 @@ def main() -> int:
     except oe.EditorNotLoaded as e:
         print(f"the editor did not load: {e}; check the network connection and run again", file=sys.stderr)
         return 2
+    except oe.ProfileBusy as e:
+        print(f"not exported: {e.wait()}", file=sys.stderr)
+        return oe.BUSY
     except (Stop, oe.DevToolsError) as e:
         print(f"not exported: {e}")
         return 1

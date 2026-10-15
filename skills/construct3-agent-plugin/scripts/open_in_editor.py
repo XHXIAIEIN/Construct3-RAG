@@ -82,6 +82,11 @@ import check_project
 import pack_project as pp
 import print_sheet
 
+if sys.platform == "win32":
+    import msvcrt
+else:
+    import fcntl
+
 EPILOG = """examples:
   python scripts/open_in_editor.py
   python scripts/open_in_editor.py --project "D:/Games/Snake" --release r502
@@ -116,7 +121,8 @@ output, one entry per addon with --install-addon, then one per project:
 exit codes: 0 every project opened, and with --preview ran without errors; 1 at least one did not, or an
 --install-addon was refused; 2 no project
 found, the editor did not load, or --locale has no language pack; 3 no browser here, or --steps: the steps
-for a browser tool were printed instead, the project is not opened yet
+for a browser tool were printed instead, the project is not opened yet; 5 another run holds the browser
+profile, named in the line with its pid: wait for it to end, or pass --profile for a profile of this run's own
 """
 
 EDITOR = "https://editor.construct.net/"
@@ -582,6 +588,63 @@ def too_deep(data: str) -> bool:
     return sys.platform == "win32" and len(data) + INDEXEDDB >= MAX_PATH
 
 
+class ProfileBusy(Exception):
+    """Another run holds the browser profile. str() names it and offers --profile; wait() is for
+    a script without that flag."""
+
+    def __init__(self, profile: Path, holder: str) -> None:
+        self.profile, self.holder = profile, holder
+        super().__init__(f"another run holds the browser profile {profile} ({holder}): wait for it to end, "
+                         f"or pass --profile FOLDER to run on a profile of this run's own")
+
+    def wait(self) -> str:
+        return f"another run holds the browser profile {self.profile} ({self.holder}): wait for it to end, then run again"
+
+
+BUSY = 5            # exit code of a run refused because another holds the profile
+LOCK = "run.lock"   # in the profile: the holder's line, then the locked byte
+LOCKED_AT = 4096    # the locked byte, after the holder's line
+
+
+def hold(profile: Path):
+    """Take a non-blocking OS lock on the profile's run.lock for the life of the process. Raises
+    ProfileBusy, before any browser starts, when another process holds it. Returns the open file
+    for release(). The holder's pid, script and start time are the file's first line, below the
+    locked byte, so a refused run reads the line while the byte stays locked."""
+    # Keep the holder's line: opening for write must not truncate it
+    fd = os.open(profile / LOCK, os.O_RDWR | os.O_CREAT, 0o644)
+    held = os.fdopen(fd, "r+b")
+    try:
+        if sys.platform == "win32":
+            held.seek(LOCKED_AT)
+            msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+        else:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        held.seek(0)
+        holder = held.read().decode("utf-8", "replace").strip() or "a run that wrote no line"
+        held.close()
+        raise ProfileBusy(profile, holder) from None
+    held.seek(0)
+    held.truncate()
+    held.write(f"pid {os.getpid()}, {Path(sys.argv[0]).name}, since {time.strftime('%Y-%m-%d %H:%M:%S')}".encode())
+    held.flush()
+    return held
+
+
+def release(held) -> None:
+    """Unlock and close what hold() returned. The file stays: the lock, not the file, says a run holds it."""
+    try:
+        if sys.platform == "win32":
+            held.seek(LOCKED_AT)
+            msvcrt.locking(held.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            fcntl.flock(held.fileno(), fcntl.LOCK_UN)
+    except (OSError, ValueError):   # closed already
+        pass
+    held.close()
+
+
 class Browser:
     """The machine's browser with a profile of its own and a DevTools port the
     system picks, written by the browser to DevToolsActivePort in the profile.
@@ -589,11 +652,16 @@ class Browser:
     The profile is kept between runs. The editor is some megabytes of scripts,
     and a page in the profile reads them from its disk cache: a run then takes
     about 4 seconds against 20 to 40 from a cold profile, and a context of its
-    own per page, which has no disk cache, is cold every time."""
+    own per page, which has no disk cache, is cold every time.
+
+    One run at a time holds the profile, through hold(): a second run on it is
+    refused with ProfileBusy. The lock goes with the process, so the browser
+    that a stopped run left on the profile is taken over."""
 
     def __init__(self, exe: str, profile: Path, headed: bool, extra: tuple[str, ...] = ()) -> None:
-        self.profile, self.proc, self.devtools = profile, None, None
+        self.profile, self.proc, self.devtools, self.held = profile, None, None, None
         profile.mkdir(parents=True, exist_ok=True)
+        self.held = hold(profile)
         self.data = user_data_dir(profile)
         for staged in profile.glob("project-*.c3p"):    # left by a run that was stopped
             staged.unlink(missing_ok=True)
@@ -705,6 +773,9 @@ class Browser:
             (self.profile / "DevToolsActivePort").unlink(missing_ok=True)
         # A session file per run, never restored.
         shutil.rmtree(self.profile / "Default" / "Sessions", ignore_errors=True)
+        if self.held:
+            release(self.held)
+            self.held = None
 
 
 def keep_active(page) -> None:
@@ -1389,7 +1460,8 @@ def profile_folder(profile: Path | None, project: Path, exe: str) -> Path:
 def drive(exe: str, profile: Path, headed: bool, work: Callable[[Browser], T],
           extra: tuple[str, ...] = ()) -> T | None:
     """Start the browser on `profile`, run `work` with it, and close it. Returns what `work` returned, or
-    None once it has printed why the browser or the editor could not be used, which is exit code 2."""
+    None once it has printed why the browser or the editor could not be used, which is exit code 2.
+    ProfileBusy, another run on the profile, passes through for the caller to print with exit BUSY."""
     browser = None
     try:
         browser = Browser(exe, profile, headed, extra)
@@ -1575,6 +1647,9 @@ def main() -> int:
         results = run(projects, editor, exe, args, label)
     except AddonRefused:
         return 1
+    except ProfileBusy as e:
+        print(e, file=sys.stderr)
+        return BUSY
     except EditorNotLoaded as e:
         print(f"the editor did not load: {e}. Check the network connection and --release, and run again; "
               f"without a connection, ask the user to open the project in Construct 3 and paste the text of the "

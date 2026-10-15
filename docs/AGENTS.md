@@ -70,6 +70,7 @@ The project skill and the prompts:
 | `clone-update-check.md` | Why the checker fetches the clone and fails when it is behind its upstream, and how plugin users get updates |
 | `project-format-guide.md` | Where each statement of Scirra's project format guide, the one `llm-context.md` links, is written and what checks it, and how its copy in `data/c3-guides/` is kept |
 | `preview-player.md` | Why a preview is played from a JSON plan of steps, and what the steps cover |
+| `profile-lock.md` | Why one run at a time holds a browser profile, how the lock is taken and released, and what a refused run prints |
 | `design-tokens.md` | Which tokens the recording review page and the API playground declare for palette, type, radii and motion, why they take the host UI kits' names with this repository's values, and the contrast every text token owes |
 | `runtime-graded-evals.md` | Why the skill's evals play each run's game from a plan beside the file assertions, which cases are held out of tuning, and what each run records |
 | `sheet-screenshot.md` | Why a picture of an event sheet is taken in the editor by `screenshot_sheet.py`, with its columns fitted and the picture cropped to the sheet, and why a sheet taller than the browser captures is taken one group at a time |

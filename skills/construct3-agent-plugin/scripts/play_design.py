@@ -76,7 +76,8 @@ output:
   played: 2 of 3 tests pass, 2 findings on the first screen, 0 runtime errors
 
 exit codes: 0 every test passes and the first screen has no finding; 1 a test failed, a finding, a runtime
-error, or the project did not open; 2 the design, the project or the editor could not be used; 3 no browser
+error, or the project did not open; 2 the design, the project or the editor could not be used; 3 no browser;
+5 another run holds the browser profile, named in the line with its pid: wait for it to end, or pass --profile
 """
 
 TAP_PAUSE = gm.AFTER_INPUT
@@ -816,6 +817,9 @@ def main() -> int:
     began = time.monotonic()
     try:
         result = run_all(project, plans, exe, args.profile, shots)
+    except oe.ProfileBusy as e:
+        print(e, file=sys.stderr)
+        return oe.BUSY
     except oe.EditorNotLoaded as e:
         print(f"the editor did not load: {e}. Check the network connection and run again.", file=sys.stderr)
         return 2

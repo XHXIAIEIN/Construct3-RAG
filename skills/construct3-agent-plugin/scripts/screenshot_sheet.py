@@ -49,7 +49,8 @@ output:
 
 exit codes: 0 every picture written; 1 the editor refused the project, a sheet or group was not found
 in it, or a picture was not taken (the line says why); 2 the flags, the project or the browser could
-not be used; 3 no Edge, Chrome or Chromium here"""
+not be used; 3 no Edge, Chrome or Chromium here; 5 another run holds the browser profile, named in the
+line with its pid: wait for it to end, or pass --profile"""
 
 WIDTH = 2600            # CSS px of the window: room for both columns at their caps beside the editor's panes
 HEIGHT = 1000           # the least height of the window, which grows to a taller picture
@@ -407,10 +408,14 @@ def main() -> int:
     def then(browser: oe.Browser, target: str, page: oe.DevTools) -> dict:
         return capture(browser, target, page, sheet, args.group, args.scale, out, titles, wait)
 
-    result = oe.drive(exe, oe.profile_folder(args.profile and args.profile.resolve(), project, exe), False,
-                      lambda b: oe.open_one(b, editor, project, b.profile / "project-sheet.c3p", None,
-                                            bool(args.release), then),
-                      extra=(*BROWSER_ARGS, SCHEME_ARG.format(0 if args.dark else 1)))
+    try:
+        result = oe.drive(exe, oe.profile_folder(args.profile and args.profile.resolve(), project, exe), False,
+                          lambda b: oe.open_one(b, editor, project, b.profile / "project-sheet.c3p", None,
+                                                bool(args.release), then),
+                          extra=(*BROWSER_ARGS, SCHEME_ARG.format(0 if args.dark else 1)))
+    except oe.ProfileBusy as e:
+        print(e, file=sys.stderr)
+        return oe.BUSY
     if result is None:
         return 2
     print("\n".join(oe.report({k: v for k, v in result.items() if k != "preview"})))

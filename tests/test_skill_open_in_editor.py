@@ -2,6 +2,7 @@
 import itertools
 import json
 import re
+import subprocess
 import sys
 import threading
 import time
@@ -68,6 +69,36 @@ def test_open_in_editor_hands_the_editor_the_project_the_current_directory_is_in
     assert "project.c3proj" in names and SHEET in names
     # only the files the editor reads: the skill's copy and the worktrees under .claude stay out
     assert not any(n.startswith((".git/", ".tmp/", ".claude/", ".agents/")) for n in names), names
+
+
+def test_open_in_editor_refuses_the_profile_another_run_holds(project, tmp_path):
+    """Two runs 0.5 s apart on one profile took over each other's browser, and the second failed
+    with "Target.closeTarget: No target with given id found", blaming the network with exit 2
+    (Edge 156 headless, 2026-10-16). A second run on a profile another run holds is refused with
+    exit 5 and the holder's pid, before any browser starts. The lock goes with the process, so the
+    profile is free once the holder ends."""
+    profile = tmp_path / "profiles"
+    exe = tmp_path / "no-browser.exe"
+    folder = oe.profile_folder(profile, project, str(exe))
+    holder = subprocess.Popen(
+        [sys.executable, "-c",
+         f"import sys; sys.path.insert(0, {str(SKILL / 'scripts')!r})\n"
+         f"from pathlib import Path\n"
+         f"import open_in_editor as oe\n"
+         f"folder = Path({str(folder)!r}); folder.mkdir(parents=True)\n"
+         f"held = oe.hold(folder); print('held', flush=True); sys.stdin.readline()"],
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+    try:
+        assert holder.stdout.readline().strip() == "held"
+        code, out = run(project, SCRIPT, "--browser", str(exe), "--profile", str(profile))
+        assert code == 5 and f"another run holds the browser profile {folder} (pid {holder.pid}, " in out, out
+        assert "wait for it to end, or pass --profile" in out and "could not be driven" not in out, out
+    finally:
+        holder.communicate("\n", timeout=30)
+    # the holder has ended: the lock went with it, and the run goes on to the browser it was given
+    code, out = run(project, SCRIPT, "--browser", str(exe), "--profile", str(profile))
+    assert code == 2 and "could not be driven" in out, out
+    assert (folder / oe.LOCK).read_text(encoding="utf-8").startswith("pid "), "the run wrote its own line"
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="MAX_PATH is Windows'")

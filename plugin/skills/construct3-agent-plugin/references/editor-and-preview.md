@@ -148,6 +148,19 @@ which cases to play and how to reach and read them to
   failed, each launched process had exited 0 with the browser as its child;
   with these waits 160 of 160 started, 60 of them with the variable left in,
   and no `msedge.exe` stayed on the profile after a close]
+- One run at a time holds a browser profile. Every script that drives the
+  browser takes an OS lock on the profile's `run.lock` for the life of its
+  process. A second run on the profile ends with exit 5 and the holder's
+  pid, before it starts or takes over anything. Wait for the holder, or
+  give the run `--profile FOLDER` of its own; a new profile loads the
+  editor cold once, 20 to 40 seconds, and is warm after. The lock goes with
+  the process, so the browser that a stopped run left on the profile is
+  still taken over. [observed in Edge 156 headless, 2026-10-16: two runs
+  0.5 s apart on one profile. The second took the first's browser over, and
+  the first's close ended it under the second, which failed with
+  "Target.closeTarget: No target with given id found" and blamed the
+  network, exit 2. With the lock, the second is refused with the first's
+  pid and the first opens. `Construct3-RAG/docs/decisions/profile-lock.md`]
 - A browser started with `--user-data-dir=\\?\<path>`, the prefix that lifts
   MAX_PATH, writes no cookie file, so a third-party login (GitHub) is gone at
   the next start; `open_in_editor.py` adds the prefix only to a long path.

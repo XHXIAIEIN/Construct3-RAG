@@ -17,7 +17,9 @@ Deduplicate images and Optimize images on, and the script unpacks the zip
 into `--to`, replacing what was there. Without `--to` the export goes to
 `.build/web`, where the products go and Git ignores them. The browser
 profile stays in `.tmp/` of the project's main clone, so every worktree of
-the project exports in the same window, with the same login.
+the project exports in the same window, with the same login. One export at
+a time holds that profile. A second export started meanwhile ends with exit
+5 and the pid of the first. Run it again when the first has ended.
 
 `--to` is a new or empty folder or one that holds an earlier export: the
 script refuses the project, a folder above it, a drive's root and a folder

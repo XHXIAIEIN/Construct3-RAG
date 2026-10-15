@@ -134,7 +134,8 @@ output:
 
 exit codes: 0 every step ran and the game logged no error (--all: in every kept plan); 1 a step failed, the
 game logged an error, or the project did not open; 2 the plan, the project, the editor or --locale could not be
-used, or --all found no kept plan; 3 no browser here
+used, or --all found no kept plan; 3 no browser here; 5 another run holds the browser profile, named in the line
+with its pid: wait for it to end, or pass --profile for a profile of this run's own
 """
 
 STEPS = ("tap", "hold", "drag", "key", "wait", "until", "js", "state", "shot", "record")
@@ -1155,9 +1156,13 @@ def replay(args: argparse.Namespace, project: Path, exe: str, editor: str) -> in
     out, shots = oe.kept(args.out, args.shots, project, "preview-plans.json", "preview-plans")
     shots.mkdir(parents=True, exist_ok=True)
     if plans:
-        result = oe.drive(exe, oe.profile_folder(args.profile, project, exe), args.headed,
-                          lambda b: oe.open_one(b, editor, project, b.profile / "project-play.c3p", None,
-                                                bool(args.release), play_all(plans, shots, project)))
+        try:
+            result = oe.drive(exe, oe.profile_folder(args.profile, project, exe), args.headed,
+                              lambda b: oe.open_one(b, editor, project, b.profile / "project-play.c3p", None,
+                                                    bool(args.release), play_all(plans, shots, project)))
+        except oe.ProfileBusy as e:
+            print(e, file=sys.stderr)
+            return oe.BUSY
         if result is None:
             return 2
     else:
@@ -1251,9 +1256,13 @@ def main() -> int:
     editor = oe.release_url(args.release)
     out, shots = kept(args.out, args.shots, project)
     shots.mkdir(parents=True, exist_ok=True)
-    result = oe.drive(exe, oe.profile_folder(args.profile, project, exe), args.headed,
-                      lambda b: oe.open_one(b, editor, project, b.profile / "project-play.c3p", None,
-                                            bool(args.release), play(plan, shots, project)))
+    try:
+        result = oe.drive(exe, oe.profile_folder(args.profile, project, exe), args.headed,
+                          lambda b: oe.open_one(b, editor, project, b.profile / "project-play.c3p", None,
+                                                bool(args.release), play(plan, shots, project)))
+    except oe.ProfileBusy as e:
+        print(e, file=sys.stderr)
+        return oe.BUSY
     if result is None:
         return 2
     out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")

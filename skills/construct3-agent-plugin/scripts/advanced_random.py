@@ -76,7 +76,8 @@ output:
 
 exit codes: 0 printed, or --check found every value the same; 1 --check found a difference, or the
 runtime code no longer has the shape this script reads; 2 a flag that cannot be used, no runtime
-found, no node, or the preview did not run
+found, no node, or the preview did not run; 5 another run holds the browser profile, named in the
+line with its pid: wait for it to end, then run again
 """
 
 
@@ -540,6 +541,9 @@ def check(args: argparse.Namespace) -> int:
     except ShapeChanged as e:
         print(SHAPE_CHANGED.format(e))
         return 1
+    except oe.ProfileBusy as e:
+        print(e.wait(), file=sys.stderr)
+        return oe.BUSY
     except (RuntimeError, OSError) as e:
         print(f"no runtime to compare with: {e}", file=sys.stderr)
         return 2
