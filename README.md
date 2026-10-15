@@ -85,6 +85,7 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 - `preview_project.py` plays a preview from a plan of taps, drags, key presses and waits. It takes screenshots and records parts of the run. You can review a recording frame by frame and give a part of it to the agent as a task. A plan that passes can be kept in the project, and after each later change every kept plan is replayed.
 - `review_look.py` previews the project, visits every layout and takes a screenshot of each. It reports what the runtime shows wrong there, such as a text that its box cuts or instances stacked on one spot. Then it asks fixed questions to answer from the screenshots, and writes them with the screenshots into a brief for a sub-agent that has not seen the project.
 - `screenshot_sheet.py` takes a picture of an event sheet, or of one group in it, as the editor shows it, for a forum post, a bug report or a document. The picture is in English and cropped to the sheet, and each column is as wide as its longest line. If a sheet is too tall for one picture, the script says so and names the groups to take one at a time with `--group`; a lower `--scale` fits a taller sheet.
+- `advanced_random.py` computes the numbers that an Advanced Random object gives after *Update seed*, without the editor: its Random values, or the draws from a probability table. The agent uses them to design odds and to replay a run. With `--check`, the script runs the plugin's own code in Node.js and compares every value. The code comes from the project's Web export or from `--runtime`. With `--preview`, or when the project has no Web export, it comes from the editor's preview.
 - `export_project.py` makes the editor export the project to Web (HTML5), with your subscribed account.
 - `pack_project.py` saves the project as a `.c3p` or `.zip` that the editor opens. It also unpacks a `.c3p` or `.zip` into a project folder.
 - `new_project.py` starts a game project in an empty folder from the empty project that the editor saves for **Project** > **New**.
@@ -93,24 +94,30 @@ If you also add the copy from Claude's directory, Claude Code loads the plugin f
 
 ### What the skill's scripts read, write and reach
 
-The skill's scripts read this repository's `data/` and the projects and files that you give them. They run on the Python standard library, except `prepare_art.py`, which needs Pillow. They reach the network in two ways: `check_project.py` fetches the clone's upstream, and the editor scripts open the Construct 3 editor and its preview in a browser on your machine.
+The skill's scripts read this repository's `data/` and the projects and files that you give them. They run on the Python standard library, except `prepare_art.py`, which needs Pillow, and `advanced_random.py --check`, which runs the plugin's code in Node.js. They reach the network in two ways: `check_project.py` fetches the clone's upstream, and the editor scripts open the Construct 3 editor and its preview in a browser on your machine.
 
-- **Read only**: `lookup_ace.py`, `lookup_script_api.py`, `search_guides.py`, `check_project.py`, `review_design.py`, `check_design.py`, `check_look.py` and `print_sheet.py`. `print_sheet.py` keeps a hash of each sheet that it prints, in `construct3-sheet-stamps/` of the system's temporary folder. With this hash, `edit_sheet.py` notices a save made between the print and the edit. `check_project.py` runs `git fetch` in the clone at most once an hour, to say when the clone is behind its upstream. If `CONSTRUCT3_RAG_OFFLINE` is `1`, it skips the fetch and says so.
+- **Read only**: `lookup_ace.py`, `lookup_script_api.py`, `search_guides.py`, `check_design.py`, `check_look.py`, `print_sheet.py`, `print_layout.py` and `advanced_random.py`. `print_sheet.py` keeps a hash of each sheet that it prints, in `construct3-sheet-stamps/` of the system's temporary folder. With this hash, `edit_sheet.py` notices a save made between the print and the edit.
 - **Writing files**:
-  - `edit_sheet.py` writes the event sheets that you give it, and their hashes beside those of `print_sheet.py`.
-  - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. The block in `AGENTS.md` and the helpers in `tools/build_project.py` each sit between two markers. `install.py` replaces either with the skill's when it is an older version that nobody edited there, and keeps the rest of the file. `--dry-run` shows the changes first.
+  - `edit_sheet.py` writes the event sheets that you give it, and their hashes beside those of `print_sheet.py`. With `--new`, it also lists the new sheet in `project.c3proj`. In a project with no other sheet, it also sets the new sheet on each layout that has none.
+  - `check_project.py` keeps the findings of its last run in the project's `.tmp/check-project.json`. From this record, the next run counts the changes to each finding's place, and it stops the fix loop after two changes that left the finding standing. With `--review`, it keeps no record. `check_project.py` also runs `git fetch` in the clone at most once an hour, to say when the clone is behind its upstream. If `CONSTRUCT3_RAG_OFFLINE` is `1`, it skips the fetch and says so.
+  - `review_design.py` writes under the project's `.tmp/` only with `--check` or `--prepare`. `--check` keeps the complete output of `check_project.py` in `.tmp/design-review/check.json`, or in the `--prepare` folder. `--prepare` saves the question batches and the judgements in its folder, which must lie under `.tmp/`.
   - `play_design.py --adopt-starts` writes the start values of the project into the design file, when the prototype still passes with them.
   - `prepare_art.py` writes the fitted pictures into the project's `art/`. It reads the pictures in `art/raw/` and changes none of them.
+  - `open_in_editor.py --typescript` has the editor write the project's TypeScript definitions into `scripts/ts-defs/`, and `scripts/tsconfig.json` when the project has none.
+  - `preview_project.py --keep NAME` keeps a plan that passed as the project's `tools/plans/NAME.json`.
   - `screenshot_sheet.py` writes its pictures in the project's `.build/sheets/`, or in the folder that `--out` names.
   - `pack_project.py` writes the archive or folder that `--out` names. By default, it writes a `.c3p` in the project's `.build/`, the folder for build products. When it unpacks, it writes a folder beside the archive by default.
-  - The agent copies `assets/build_project.py` to the project's `tools/` and adapts it to the game. When it runs, the copy rewrites the project files that it generates, then runs `check_project.py`.
-- **Opening the editor**: `open_in_editor.py`, `preview_project.py`, `play_design.py`, `review_look.py`, `screenshot_sheet.py` and `pack_project.py --open` start Edge, Chrome or Chromium on the machine.
-  - The browser runs headless unless you add `--headed`. It uses a profile of its own in the project's `.tmp/`, unless `--profile` names another folder.
+  - `new_project.py` copies the editor's empty project into a new or empty folder. It writes the folder's name and a `uniqueId` of its own into `project.c3proj`, and runs `git init` there when Git is installed.
+  - `install.py` writes the skill's copy, the block in `AGENTS.md` and the line in `CLAUDE.md`. In the copy, it deletes the files that the clone's skill does not have. An absolute `--into`, such as `~/.agents/skills`, puts the copy outside the project. The block in `AGENTS.md` and the helpers in `tools/build_project.py` each sit between two markers. `install.py` replaces either with the skill's when it is an older version that nobody edited there, and keeps the rest of the file. `--dry-run` shows the changes first.
+  - The agent copies `assets/build_project.py` to the project's `tools/` and adapts it to the game. When it runs, the copy rewrites the project files that it generates. It also copies into `fonts/` each font file that `FONT` names and the project lacks, from the user's font cache: the folder that `CONSTRUCT3_RAG_FONT_CACHE` names, or else `~/.cache/construct3-rag/fonts`. Then it runs `check_project.py`.
+- **Opening the editor**: `open_in_editor.py`, `preview_project.py`, `play_design.py`, `review_look.py`, `screenshot_sheet.py`, `pack_project.py --open` and `advanced_random.py --check` start Edge, Chrome or Chromium on the machine. `advanced_random.py --check` starts one only with `--preview`, or when it has neither `--runtime` nor a Web export of the project.
+  - The browser runs headless. `open_in_editor.py`, `preview_project.py` and `review_look.py` show it with `--headed`.
+  - The browser uses a profile of its own in the project's `.tmp/`. Every script here except `pack_project.py --open` and `advanced_random.py` takes `--profile` to name another folder.
   - The browser opens `https://editor.construct.net/`, the editor that Scirra serves. A preview opens `https://preview.construct.net`. The scripts pass the project to the editor page inside the browser, so the project files stay on your machine.
-  - The scripts drive the browser over a DevTools port on `127.0.0.1`. The `js` and `until` steps of a plan run JavaScript in the preview. `--install-addon` installs a `.c3addon` in the editor of that profile.
+  - The scripts drive the browser over a DevTools port on `127.0.0.1`. The `js` and `until` steps of a plan run JavaScript in the preview. `open_in_editor.py --install-addon` installs a `.c3addon` in the editor of that profile.
   - Results, screenshots and recordings go to the project's `.tmp/`. If ffmpeg is installed, a recording becomes a video. Otherwise, if Pillow is installed, it becomes a GIF. Either one also joins its key frames into a contact sheet for the agent to judge the motion from.
   - Before each run, `preview_project.py` clears the saves that earlier previews left in its profile, unless the plan sets `keep_saves`.
-  - If the machine has none of these browsers, the scripts start nothing. They print the steps for a browser tool of the agent instead.
+  - If the machine has none of these browsers, the scripts start nothing. They print the steps for a browser tool of the agent instead, and `advanced_random.py` names `--runtime`, which reads the plugin's code from an export.
 - **Exporting**: `export_project.py` drives the same editor in a visible browser.
   - The browser profile is in `.tmp/` of the main clone of the Git repository that holds the project, which the script finds with `git`. If no Git repository holds the project, the profile is in the project's `.tmp/`.
   - The script replaces the contents of the folder that `--to` names with the export. The default folder is the project's `.build/web`. If the exported version differs from the version in `project.c3proj`, the script writes the exported version into `project.c3proj`.
@@ -212,12 +219,12 @@ prompts/                LLM system prompts
 skills/                 Agent Skills, installed into a game project
   construct3-agent-plugin/   The project tools of "What the skill does"
 src/                    Optional lookup service (see src/AGENTS.md)
-scripts/                Bootstrap, plugin build, lookup service setup, data refresh, version check, schema diff, published-game analyzer
+scripts/                Bootstrap, plugin build, lookup service setup, data refresh and maintenance tools (see scripts/AGENTS.md)
 tests/                  Offline pytest suite
 docs/guide/             User docs
 docs/dev/               Contributor docs
 docs/decisions/         Decision records
-.github/workflows/      Data update automation
+.github/workflows/      Checks on every push to main and every pull request, data update automation
 ```
 
 ## Credits

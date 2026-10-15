@@ -85,6 +85,7 @@ plugin 是 [`plugin/`](plugin/README.md) 文件夹，由 `scripts/build_plugin.p
 - `preview_project.py` 按一份点击、拖动、按键和等待的计划操作预览。它会截图，也会录下运行的片段。录像可以逐帧回看，其中一段可以作为任务交给 agent。通过的计划可以存进项目，之后每次改动都把存下的计划全部重放一遍。
 - `review_look.py` 预览项目，逐个进入每个场景并截图。它报告运行时能看出的问题，比如文字被文本框截断、多个实例叠在同一位置。然后它给出一组固定的问题，看着截图回答；问题和截图也写进一份 brief，交给没看过项目的子 agent 回答。
 - `screenshot_sheet.py` 按编辑器里的样子，给事件表或其中一个事件组截图，用于论坛回帖、bug 报告或文档。截图是英文界面，只裁事件表本身，每一列的宽度正好放下它最长的一行。事件表太高、一张图放不下时，脚本会说明，并列出可以用 `--group` 逐个截的事件组；`--scale` 调低后能放下更高的事件表。
+- `advanced_random.py` 不用编辑器，算出高级随机对象在“更新随机种子”之后给出的数：“生成随机数”的值，或者从概率表里抽出的结果。agent 用它们设计概率、重放一局。加 `--check` 时，脚本用 Node.js 运行插件自己的代码，逐个比对两边的值。代码取自项目的 Web 导出或 `--runtime` 指定的文件；加 `--preview` 或项目没有 Web 导出时，取自编辑器的预览。
 - `export_project.py` 用你的订阅账号，让编辑器把项目导出为 Web (HTML5)。
 - `pack_project.py` 把项目保存成编辑器能打开的 `.c3p` 或 `.zip`。它也能把 `.c3p` 或 `.zip` 解成项目文件夹。
 - `new_project.py` 在空文件夹里新建游戏项目，内容来自编辑器 **项目** > **新建** 保存的空项目。
@@ -93,24 +94,30 @@ plugin 是 [`plugin/`](plugin/README.md) 文件夹，由 `scripts/build_plugin.p
 
 ### skill 的脚本读写和访问的范围
 
-skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。除了需要 Pillow 的 `prepare_art.py`，它们只用 Python 标准库。它们只在两处联网：`check_project.py` 从 clone 的上游仓库 fetch，打开编辑器的脚本在你电脑上的浏览器里打开 Construct 3 编辑器和它的预览。
+skill 的脚本读取本仓库的 `data/`，以及你指定的项目和文件。除了需要 Pillow 的 `prepare_art.py` 和用 Node.js 运行插件代码的 `advanced_random.py --check`，它们只用 Python 标准库。它们只在两处联网：`check_project.py` 从 clone 的上游仓库 fetch，打开编辑器的脚本在你电脑上的浏览器里打开 Construct 3 编辑器和它的预览。
 
-- **只读**：`lookup_ace.py`、`lookup_script_api.py`、`search_guides.py`、`check_project.py`、`review_design.py`、`check_design.py`、`check_look.py` 和 `print_sheet.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。`check_project.py` 最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。`CONSTRUCT3_RAG_OFFLINE` 为 `1` 时，它不 fetch，并在输出里说明。
+- **只读**：`lookup_ace.py`、`lookup_script_api.py`、`search_guides.py`、`check_design.py`、`check_look.py`、`print_sheet.py`、`print_layout.py` 和 `advanced_random.py`。`print_sheet.py` 把打印过的每个事件表的哈希记在系统临时文件夹的 `construct3-sheet-stamps/` 里。`edit_sheet.py` 靠这个哈希发现打印之后、修改之前有没有保存过。
 - **写文件**：
-  - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。
-  - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。`AGENTS.md` 里的说明和 `tools/build_project.py` 里的辅助函数都放在两行标记之间，如果是旧版本、又没人改过，它会换成 skill 当前的版本，文件其余部分不动。加 `--dry-run` 可以先看会改什么。
+  - `edit_sheet.py` 写入你指定的事件表，它们的哈希也记在 `print_sheet.py` 记的地方。加 `--new` 时，它还把新事件表列进 `project.c3proj`。项目里没有别的事件表时，它还把新事件表设给每个没有事件表的场景。
+  - `check_project.py` 把上一次运行的问题记在项目的 `.tmp/check-project.json`。下一次运行据此数出每条问题所在的位置改过几次，改了两次问题还在时，它停下修复循环。加 `--review` 时不记。`check_project.py` 还最多每小时在 clone 里运行一次 `git fetch`，用来提示 clone 落后于上游仓库。`CONSTRUCT3_RAG_OFFLINE` 为 `1` 时，它不 fetch，并在输出里说明。
+  - `review_design.py` 只在加 `--check` 或 `--prepare` 时写入项目的 `.tmp/`。`--check` 把 `check_project.py` 的完整输出存到 `.tmp/design-review/check.json`，或 `--prepare` 指定的文件夹。`--prepare` 把问题批次和判断保存在它的文件夹里，这个文件夹必须在 `.tmp/` 下。
   - `play_design.py --adopt-starts` 在原型用项目的初始值仍然通过时，把这些初始值写回设计文件。
   - `prepare_art.py` 把处理好的图写进项目的 `art/`。它读取 `art/raw/` 里的原图，不改动它们。
+  - `open_in_editor.py --typescript` 让编辑器把项目的 TypeScript 类型定义写进 `scripts/ts-defs/`，项目没有 `scripts/tsconfig.json` 时也写一份。
+  - `preview_project.py --keep NAME` 把通过的计划存为项目的 `tools/plans/NAME.json`。
   - `screenshot_sheet.py` 把截图写到项目的 `.build/sheets/`，或 `--out` 指定的文件夹。
   - `pack_project.py` 写入 `--out` 指定的压缩包或文件夹。默认写到项目 `.build/` 下的一个 `.c3p`，这个文件夹专放构建产物。解包时，默认写到压缩包旁边的文件夹。
-  - agent 把 `assets/build_project.py` 复制到项目的 `tools/`，按游戏改写。这份副本运行时，会重写它生成的项目文件，然后运行 `check_project.py`。
-- **打开编辑器**：`open_in_editor.py`、`preview_project.py`、`play_design.py`、`review_look.py`、`screenshot_sheet.py` 和 `pack_project.py --open` 启动本机的 Edge、Chrome 或 Chromium。
-  - 浏览器默认无头运行，加 `--headed` 才显示窗口。它使用项目 `.tmp/` 下单独的配置目录，`--profile` 可以换到别的文件夹。
+  - `new_project.py` 把编辑器的空项目复制进一个新的或空的文件夹。它把文件夹名和一个独有的 `uniqueId` 写进 `project.c3proj`；装了 Git 时，还在那里运行 `git init`。
+  - `install.py` 写入 skill 副本、`AGENTS.md` 里的说明和 `CLAUDE.md` 里的那一行。clone 里的 skill 没有的文件，它会从副本里删掉。`--into` 写绝对路径（比如 `~/.agents/skills`）时，副本装在项目之外。`AGENTS.md` 里的说明和 `tools/build_project.py` 里的辅助函数都放在两行标记之间，如果是旧版本、又没人改过，它会换成 skill 当前的版本，文件其余部分不动。加 `--dry-run` 可以先看会改什么。
+  - agent 把 `assets/build_project.py` 复制到项目的 `tools/`，按游戏改写。这份副本运行时，会重写它生成的项目文件。`FONT` 指定、项目里还没有的字体文件，它从用户的字体缓存复制到 `fonts/`，缓存是 `CONSTRUCT3_RAG_FONT_CACHE` 指定的文件夹，没有指定时是 `~/.cache/construct3-rag/fonts`。然后它运行 `check_project.py`。
+- **打开编辑器**：`open_in_editor.py`、`preview_project.py`、`play_design.py`、`review_look.py`、`screenshot_sheet.py`、`pack_project.py --open` 和 `advanced_random.py --check` 启动本机的 Edge、Chrome 或 Chromium。`advanced_random.py --check` 只在加 `--preview`，或者既没有 `--runtime` 也没有项目的 Web 导出时，才启动浏览器。
+  - 浏览器无头运行。`open_in_editor.py`、`preview_project.py` 和 `review_look.py` 加 `--headed` 才显示窗口。
+  - 浏览器使用项目 `.tmp/` 下单独的配置目录。除了 `pack_project.py --open` 和 `advanced_random.py`，这里的脚本都可以用 `--profile` 换到别的文件夹。
   - 浏览器打开 Scirra 提供的编辑器 `https://editor.construct.net/`，预览时还会打开 `https://preview.construct.net`。脚本在浏览器里把项目交给编辑器页面，所以项目文件留在你的电脑上。
-  - 脚本通过 `127.0.0.1` 上的 DevTools 端口控制浏览器。计划里的 `js` 和 `until` 步骤会在预览里运行 JavaScript。`--install-addon` 会把 `.c3addon` 装进这个配置目录里的编辑器。
+  - 脚本通过 `127.0.0.1` 上的 DevTools 端口控制浏览器。计划里的 `js` 和 `until` 步骤会在预览里运行 JavaScript。`open_in_editor.py --install-addon` 会把 `.c3addon` 装进这个配置目录里的编辑器。
   - 结果、截图和录像保存在项目的 `.tmp/`。如果装了 ffmpeg，录像合成视频；否则如果装了 Pillow，录像合成 GIF。两者任一还会把录像的关键帧拼成一张联系表，供 agent 判断动效。
   - 每次运行前，`preview_project.py` 会清掉之前预览留在配置目录里的存档，除非计划里设了 `keep_saves`。
-  - 如果本机没有这几种浏览器，脚本什么也不启动，而是打印步骤，交给 agent 自己的浏览器工具。
+  - 如果本机没有这几种浏览器，脚本什么也不启动，而是打印步骤，交给 agent 自己的浏览器工具；`advanced_random.py` 则提示改用 `--runtime`，从导出里读插件的代码。
 - **导出**：`export_project.py` 在有界面的浏览器里操作同一个编辑器。
   - 浏览器的配置目录放在项目所在 Git 仓库的主 clone 的 `.tmp/` 下，脚本用 `git` 查出这个位置。如果项目不在 Git 仓库里，配置目录放在项目的 `.tmp/` 下。
   - 脚本用导出结果替换 `--to` 指定文件夹里原有的内容。默认文件夹是项目的 `.build/web`。如果导出的版本号和 `project.c3proj` 里的不同，脚本会把导出的版本号写回 `project.c3proj`。
@@ -212,12 +219,12 @@ prompts/                LLM system prompt
 skills/                 Agent Skills，装进游戏项目使用
   construct3-agent-plugin/   项目工具，见“skill 能做什么”
 src/                    可选的查找服务（见 src/AGENTS.md）
-scripts/                安装、plugin 构建、查找服务启动、数据更新、版本检查、schema 对比、已发布游戏分析
+scripts/                安装、plugin 构建、查找服务启动、数据更新和维护脚本（见 scripts/AGENTS.md）
 tests/                  离线 pytest 测试
 docs/guide/             使用文档
 docs/dev/               开发文档
 docs/decisions/         决策记录
-.github/workflows/      数据自动更新
+.github/workflows/      每次推送到 main 和每个 pull request 的检查，数据自动更新
 ```
 
 ## 致谢
