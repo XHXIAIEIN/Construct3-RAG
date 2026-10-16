@@ -2,7 +2,7 @@
 
 [English](README.md) | **中文**
 
-Construct3-RAG 是给 AI agent 用的 [Construct 3](https://www.construct.net) 参考数据。它按编辑器的定义收录所有条件、动作、表达式和滤镜，中英双语，都是 agent 直接读取的 JSON 文件。它还放着示例索引、编辑器的语言包、脚本 API 的 TypeScript 定义和 Scirra 的项目格式指南，以及每个版本从编辑器 CDN 刷新它们的管线。
+Construct3-RAG 是给 AI agent 用的 [Construct 3](https://editor.construct.net/) 参考数据。它按编辑器的定义收录所有条件、动作、表达式和滤镜，中英双语，都是 agent 直接读取的 JSON 文件。它还放着示例索引、编辑器的语言包、脚本 API 的 TypeScript 定义和 Scirra 的项目格式指南。管线在每个版本从编辑器 CDN 刷新它们。
 
 用这些数据做游戏的工具，也就是 `construct3-agent-plugin` skill、它的 prompts 和 Claude Code plugin `construct3`，放在 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills)。那个仓库用本仓库的 clone 构建它的 plugin。
 
@@ -73,7 +73,7 @@ python $HOME/Construct3/Construct3-Agent-Skills/scripts/bootstrap.py --project M
 
 [docs/guide/data-format.md](docs/guide/data-format.md) 解释每个字段，并带一个完整例子。[`AGENTS.md`](AGENTS.md) 第 2 节是 agent 查找时遵循的流程，包括已弃用的 ACE 和示例项目。
 
-`System` 和共有 ACE 的文件 `plugins/system.json`、`plugins/_common.json` 太长，多数文件工具一次读不完。这种工具只显示文件的前一部分，后面的 ACE 看起来就像不存在。把 Construct3-Agent-Skills clone 到本仓库旁边，它的查找脚本能整个读完，`--rag .` 让它读本 clone 的数据：
+`System` 和共有 ACE 的文件 `plugins/system.json`、`plugins/_common.json` 太长，多数文件工具一次读不完。这种工具只显示文件的前一部分，后面的 ACE 看起来就像不存在。把 Construct3-Agent-Skills clone 到本仓库旁边。它的查找脚本能整个读完，`--rag .` 让它读本 clone 的数据：
 
 ```bash
 python ../Construct3-Agent-Skills/plugin/skills/construct3-agent-plugin/scripts/lookup_ace.py --rag . System wait
