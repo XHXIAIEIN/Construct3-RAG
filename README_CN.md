@@ -2,7 +2,7 @@
 
 [English](README.md) | **中文**
 
-Construct3-RAG 是给 AI agent 用的 [Construct 3](https://editor.construct.net/) 参考数据。它按编辑器的定义收录所有条件、动作、表达式和滤镜，中英双语，都是 agent 直接读取的 JSON 文件。它还放着示例索引、编辑器的语言包、脚本 API 的 TypeScript 定义和 Scirra 的项目格式指南。管线在每个版本从编辑器 CDN 刷新它们。
+Construct3-RAG 是给 AI agent 用的 [Construct 3](https://editor.construct.net/)（[推荐链接](https://www.construct.net/a/260259?t=construct3)）参考数据。它按编辑器的定义收录所有条件、动作、表达式和滤镜，中英双语，都是 agent 直接读取的 JSON 文件。它还放着示例索引、编辑器的语言包、脚本 API 的 TypeScript 定义和 Scirra 的项目格式指南。管线在每个版本从编辑器 CDN 刷新它们。
 
 用这些数据做游戏的工具，也就是 `construct3-agent-plugin` skill、它的 prompts 和 Claude Code plugin `construct3`，放在 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills)。那个仓库用本仓库的 clone 构建它的 plugin。
 

@@ -2,7 +2,7 @@
 
 **English** | [中文](README_CN.md)
 
-Construct3-RAG is the reference data of [Construct 3](https://editor.construct.net/) for AI agents. It holds every condition, action, expression and effect as the editor defines them, in two languages, as JSON files that an agent reads directly. It also holds the example index, the editor's language packs, the TypeScript definitions of the scripting API and Scirra's guide to the project format. A pipeline refreshes them from the editor's CDN each release.
+Construct3-RAG is the reference data of [Construct 3](https://editor.construct.net/) ([affiliate link](https://www.construct.net/a/260259?t=construct3)) for AI agents. It holds every condition, action, expression and effect as the editor defines them, in two languages, as JSON files that an agent reads directly. It also holds the example index, the editor's language packs, the TypeScript definitions of the scripting API and Scirra's guide to the project format. A pipeline refreshes them from the editor's CDN each release.
 
 The tools that make games from this data, the `construct3-agent-plugin` skill, its prompts and the Claude Code plugin `construct3`, live in [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills). That repository builds its plugin from a clone of this one.
 
