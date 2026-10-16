@@ -12,6 +12,8 @@ Construct3 lets Claude make and change [Construct 3](https://www.construct.net) 
 
 Install the plugin, then ask Claude about a Construct 3 project in its folder: a change such as "add a double jump", or a problem such as "why does the editor refuse to open this project". The skill loads on its own for such a request. To start a game, ask for a new project in an empty folder.
 
+The `/` menu lists each script as a row of its own, `/construct3:lookup-ace`, `/construct3:print-sheet`, `/construct3:check-project` and so on. Type a row with the script's arguments after it, such as `/construct3:lookup-ace System wait`. This runs the script and gives Claude its output. These rows load nothing into Claude's context until they are typed; the skill loads on its own for a request in words.
+
 The scripts need Python 3.10 or later. Cutting pictures out of an image tool's output needs Pillow.
 
 The plugin also adds the sub-agent type `construct3:project-worker`, for a change or a lookup that the main agent hands over. It has only the tools the scripts need (shell, file reading and editing, search and the skill), so it starts with a fraction of the context a general-purpose sub-agent starts with.
