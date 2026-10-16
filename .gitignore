@@ -9,12 +9,7 @@ __pycache__/
 # CDN cache (auto-generated, weekly expiry)
 .cache/
 
-# Local dev resources (C3 source, manual data, debug logs)
-.local/
-
-# IDE / OS
-.idea/
-.vscode/
+# OS
 .DS_Store
 *.swp
 
@@ -26,6 +21,26 @@ __pycache__/
 *.log
 .log/
 
+# Local dev resources (C3 source, manual data, debug logs)
+.local/
+
+# Temporary / working files
+tmp/
+.tmp/
+.trash/
+.remember/
+
+# Git worktrees
+.worktrees/
+
+# IDE
+.idea/
+.vscode/
+.codex/
+.cursor/
+.trae/
+.workbuddy-ai/
+
 # Claude Code
 .claude/settings.local.json
 
@@ -33,14 +48,6 @@ __pycache__/
 .gradio/
 .mcp.json
 .playwright-mcp/
-
-# Git worktrees
-.worktrees/
-
-# Temporary / working files
-tmp/
-.trash/
-.remember/
 
 # A staging folder export_to_data left beside data/ when its run was killed
 /.data-staging-*/
