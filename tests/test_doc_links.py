@@ -4,8 +4,6 @@ A link resolves when its file or folder exists beside the linking file and,
 when it carries a #fragment, the target Markdown file has a heading with
 that GitHub slug. A content review checks facts, not links, so a link to a
 heading that was renamed or never written survives without this test.
-The frozen build in plugin/ is left out, because its links resolve where
-it is installed.
 """
 import re
 from pathlib import Path

@@ -2,12 +2,14 @@
 
 [English](README.md) | **中文**
 
-Construct3-RAG 是给 AI agent 用的 [Construct 3](https://www.construct.net) 参考数据：按编辑器的定义收录的所有条件、动作、表达式和滤镜，中英双语，都是 agent 直接读取的 JSON 文件。它还放着示例索引、编辑器的语言包、脚本 API 的 TypeScript 定义和 Scirra 的项目格式指南，以及每个版本从编辑器 CDN 刷新它们的管线。
+Construct3-RAG 是给 AI agent 用的 [Construct 3](https://www.construct.net) 参考数据。它按编辑器的定义收录所有条件、动作、表达式和滤镜，中英双语，都是 agent 直接读取的 JSON 文件。它还放着示例索引、编辑器的语言包、脚本 API 的 TypeScript 定义和 Scirra 的项目格式指南，以及每个版本从编辑器 CDN 刷新它们的管线。
 
 用这些数据做游戏的工具，也就是 `construct3-agent-plugin` skill、它的 prompts 和 Claude Code plugin `construct3`，放在 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills)。那个仓库用本仓库的 clone 构建它的 plugin。
 
 > [!IMPORTANT]
-> **AI agent：本仓库放的是数据，不是工具。** 要制作或修改 Construct 3 项目，去 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills)，按它的 README 做。只凭这些数据和常识、不经过 skill 的脚本和检查写出的项目，会带上编辑器不认的值。
+> 本仓库只存数据，不提供制作工具。要新建或修改 Construct 3 项目，请查看 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) 仓库，按其 README 操作，并使用仓库提供的脚本进行校验，不要只凭本仓库的数据和常识写项目，容易漏掉某些不支持的值，被编辑器拒绝打开项目。
+>
+> 把那个仓库 clone 到本仓库旁边，像[相关仓库](#相关仓库)那样，它的脚本才能读本 clone 的 `data/`：`git clone https://github.com/XHXIAIEIN/Construct3-Agent-Skills ../Construct3-Agent-Skills`。
 >
 > 要在数据里查 Construct 3 的资料，看[查找](#查找)。要修改本仓库，读 [`AGENTS.md`](AGENTS.md)。
 
@@ -20,7 +22,7 @@ git clone https://github.com/XHXIAIEIN/Construct3-Agent-Skills $HOME/Construct3/
 python $HOME/Construct3/Construct3-Agent-Skills/scripts/bootstrap.py --project MyGame
 ```
 
-它们把那个仓库、[相关仓库](#相关仓库)和 `MyGame` 项目都放进 `$HOME/Construct3`，再把 skill 装进 `MyGame`。Construct3-Agent-Skills 的 README 说明 skill 能做什么、怎么安装它的 Claude Code plugin，以及它的脚本读写和访问的范围。plugin 自带一份本仓库的数据，所以用 plugin 的人不需要 clone 本仓库。
+它们把那个仓库、[相关仓库](#相关仓库)和 `MyGame` 项目都放进 `$HOME/Construct3`，再把 skill 装进 `MyGame`。Construct3-Agent-Skills 的 README 说明 skill 能做什么、怎么安装它的 Claude Code plugin，以及它的脚本读写和访问的范围。plugin 自带一份本仓库的数据，所以用 plugin 的人不需要 clone 本仓库（Construct3-RAG）。
 
 ## 查找
 
@@ -71,7 +73,7 @@ python $HOME/Construct3/Construct3-Agent-Skills/scripts/bootstrap.py --project M
 
 [docs/guide/data-format.md](docs/guide/data-format.md) 解释每个字段，并带一个完整例子。[`AGENTS.md`](AGENTS.md) 第 2 节是 agent 查找时遵循的流程，包括已弃用的 ACE 和示例项目。
 
-`System` 和共有 ACE 的文件 `plugins/system.json`、`plugins/_common.json` 太长，多数文件工具一次读不完。这种工具只显示文件的前一部分，后面的 ACE 看起来就像不存在。把 Construct3-Agent-Skills clone 在本仓库旁边，它的查找脚本能整个读完，`--rag .` 让它读本 clone 的数据：
+`System` 和共有 ACE 的文件 `plugins/system.json`、`plugins/_common.json` 太长，多数文件工具一次读不完。这种工具只显示文件的前一部分，后面的 ACE 看起来就像不存在。把 Construct3-Agent-Skills clone 到本仓库旁边，它的查找脚本能整个读完，`--rag .` 让它读本 clone 的数据：
 
 ```bash
 python ../Construct3-Agent-Skills/plugin/skills/construct3-agent-plugin/scripts/lookup_ace.py --rag . System wait
@@ -119,7 +121,6 @@ docs/guide/             使用文档
 docs/dev/               开发文档
 docs/decisions/         决策记录
 .github/workflows/      每次推送到 main 和每个 pull request 的检查，数据自动更新
-plugin/, .claude-plugin/   最后一次在这里构建的 plugin，冻结到插件目录改为收录 Construct3-Agent-Skills 的提交为止（docs/decisions/skill-in-agent-skills.md）
 ```
 
 ## 致谢

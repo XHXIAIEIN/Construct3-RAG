@@ -26,10 +26,6 @@ at the other repository as it points at the Construct3-Manual clone.
 - The skill reads `data/` from the folder its `Construct3-RAG:` line names.
   It finds the sibling clones beside the clone that holds it. A clone of
   this repository beside Construct3-Agent-Skills is read the same way.
-- The directory listing submitted from this repository reads the plugin
-  from the repository root, through `.claude-plugin/marketplace.json` and
-  `plugin/`. Only a new submission can change that, and a delisted plugin
-  stops updating for the people who installed it.
 
 ## Options
 
@@ -64,12 +60,11 @@ This repository keeps:
 - `scripts/example_usage.py`, which indexes the official examples with the
   skill's reader of event sheets, `c3project.py` of the sibling clone's
   `plugin/`. Without that clone it keeps the committed index.
-- `plugin/` as it was last built here, frozen, and
-  `.claude-plugin/marketplace.json`, until the directory submission from
-  Construct3-Agent-Skills is live. No test or build touches the folder
-  here. The frozen version is the last one the listing from this
-  repository serves.
 - `.claude/agents/ace-lookup.md`, which runs the sibling clone's script.
+
+The listing that serves the plugin, and its marketplace manifest, belong to
+Construct3-Agent-Skills, whose records cover the submission and the
+version.
 
 The update pull request builds no plugin, and `schema_diff.py` scans
 `src/`, `scripts/`, `docs/` and `AGENTS.md` for the ids a release broke.
@@ -84,13 +79,8 @@ repository's checks on the plugin built from the merged data.
 - A release that breaks an id quoted in a prompt or a skill file is found
   by the other repository's daily refresh, a day after the merge here,
   instead of in this repository's update pull request.
-- The frozen `plugin/` keeps built files and a marketplace manifest that
-  name a plugin this repository does not build.
 
 ## Re-evaluate when
 
-- The directory submission from Construct3-Agent-Skills is live: delist
-  the listing from this repository, and delete `plugin/` and
-  `.claude-plugin/` here.
 - The update pull request should report the ids a release breaks in the
   prompts and the skill: have `schema_diff.py` scan the sibling clone too.

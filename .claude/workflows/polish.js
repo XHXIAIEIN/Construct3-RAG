@@ -43,9 +43,9 @@ export const meta = {
 // - Other sessions work in this repository most of the time. A file that another worktree, branch, stash or
 //   uncommitted change holds is left out and carried to the next run, so the merge meets no conflict and no
 //   session merges into rewritten text.
-// - Files whose change needs a decision get proposals in the report, not edits. They are listed in
-//   WHOLE_GUARDS below, so that no agent can drop one. The skill and the prompts, whose text the evals
-//   measure, live in Construct3-Agent-Skills and are not polished here.
+// - Files whose change needs a decision get proposals in the report, not edits, and WHOLE_GUARDS below
+//   holds them so that no agent can drop one. It is empty here: the skill and the prompts, whose text
+//   the evals measure, live in Construct3-Agent-Skills and are not polished here.
 // - This file is never polished: no check runs it, and a broken template literal would stop the next run.
 //   A person updates it from the report's guidance differences.
 // - Text units edit one worktree in parallel; code units run one at a time, because their tests import each
@@ -75,16 +75,14 @@ const NEVER = [
   [/^data\/(?!AGENTS\.md$)/, 'scripts/init.py and the CDN pipeline generate data/, and data/c3-guides/ is Scirra\'s text'],
   [/^src\/ingest\/common_aces\.json$/, 'scripts/extract_common_aces.py generates it'],
   [/^tests\/fixtures\//, 'gold cases and fixtures'],
-  [/^skills\/[^/]+\/evals\/[^/]+\.json$/, 'eval cases and trigger queries'],
   [/^\.claude\/workflows\//, 'the workflow itself: no check runs it, so a person changes it from the report'],
   [/^\.github\//, 'the update pipeline'],
   [/^(LICENSE|\.gitignore|\.gitattributes)$/, 'licence and git configuration'],
   [/\.(png|jpe?g|webp|gif|ico|svg|html|json|js|css|ts)$/i, 'data, pages and assets that are not prose or Python'],
 ]
-// Whole files whose change needs an eval, a measurement or a decision: proposals only.
-const WHOLE_GUARDS = [
-  [/^(\.claude-plugin|plugin)\//, 'docs/decisions/skill-in-agent-skills.md: the frozen plugin and its marketplace manifest stay until the directory lists the plugin from Construct3-Agent-Skills'],
-]
+// Whole files whose change needs an eval, a measurement or a decision: proposals only. Empty here: the
+// skill and the prompts, whose text the evals measure, live in Construct3-Agent-Skills.
+const WHOLE_GUARDS = []
 // Passages every run keeps, besides those the guard agents find.
 const FIXED_PASSAGES = [
   { path: 'AGENTS.md', what: 'the section numbers and section 2\'s route to lookup_ace.py', rule: 'decision records and Construct3-Agent-Skills cite them' },
@@ -107,7 +105,7 @@ const UNIT_RULES = `A unit is a set of files that must stay consistent with each
 - records (text): docs/decisions/, in batches of up to six records that share a group of the table in docs/AGENTS.md.
 - agents (text): .claude/agents/.
 - code: scripts/ in batches by topic; scripts/reference_games/; src/ by package; tests/ in batches by the module they test.
-Leave out data/ (except data/AGENTS.md), plugin/ (the frozen build), tests/fixtures/, .github/, .claude/workflows/, generated files, and files that are not Markdown or Python, with the reason for each group under excluded.`
+Leave out data/ (except data/AGENTS.md), tests/fixtures/, .github/, .claude/workflows/, generated files, and files that are not Markdown or Python, with the reason for each group under excluded.`
 
 const GUARD_RULES = `Guarded text needs more than a polish to change: an eval iteration, a measurement or a decision. A run proposes edits to it and changes nothing. Kinds of guarded passage:
 - Whatever a decision record, an AGENTS.md or an eval says must not change without an eval, a measurement or a decision.
@@ -225,15 +223,6 @@ subagent:
 - concrete-thresholds: a reporting bar with concrete criteria, not "important"; or report everything with confidence and severity and filter in a separate step [pbp: the Claude Opus 4.8 page][bp]
 - review-against-criteria: a reviewing agent gets the work, the criteria and what counts as a finding, and flags only correctness or requirement gaps [bp]
 - condensed-return: return a condensed result of about 1,000 to 2,000 tokens, not the exploration [ctx][sub]
-plugin:
-- layout: only plugin.json and marketplace.json in .claude-plugin/ [plug]
-- dot-slash-paths: component paths start with ./, exist and stay inside the plugin root [plug]
-- names-match: the marketplace entry name equals plugin.json's name [plug]
-- plugin-name: a kebab-case name that does not pose as one of Anthropic's own plugins [plug]
-- stable-name: displayName changes the shown name; the renames map handles a rename or a removal [plug]
-- version-one-place: version in one place, never both; once set, raise it on every release; without it users track commits [plug]
-- no-plugin-claude-md: a CLAUDE.md at the plugin root is not loaded; use a skill [plug]
-- validate-plugin: claude plugin validate after every edit, --strict in CI [plug]
 script-cli:
 - help: --help with a one-line purpose, the flags, examples and exit codes [scripts]
 - no-prompts: input from flags, never an interactive prompt [scripts]
@@ -258,7 +247,6 @@ const STANDARDS_SOURCES = `[mem] https://code.claude.com/docs/en/memory
 [bp] https://code.claude.com/docs/en/best-practices
 [lc] https://code.claude.com/docs/en/large-codebases
 [sub] https://code.claude.com/docs/en/sub-agents
-[plug] https://code.claude.com/docs/en/plugins-reference and https://code.claude.com/docs/en/plugin-marketplaces
 [ccsk] https://code.claude.com/docs/en/skills
 [agentsmd] https://agents.md
 [skbp] https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices

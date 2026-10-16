@@ -2,12 +2,14 @@
 
 **English** | [中文](README_CN.md)
 
-Construct3-RAG is the reference data of [Construct 3](https://www.construct.net) for AI agents: every condition, action, expression and effect as the editor defines them, in two languages, as JSON files that an agent reads directly. It also holds the example index, the editor's language packs, the TypeScript definitions of the scripting API and Scirra's guide to the project format, and the pipeline that refreshes them from the editor's CDN each release.
+Construct3-RAG is the reference data of [Construct 3](https://www.construct.net) for AI agents. It holds every condition, action, expression and effect as the editor defines them, in two languages, as JSON files that an agent reads directly. It also holds the example index, the editor's language packs, the TypeScript definitions of the scripting API and Scirra's guide to the project format, and the pipeline that refreshes them from the editor's CDN each release.
 
 The tools that make games from this data, the `construct3-agent-plugin` skill, its prompts and the Claude Code plugin `construct3`, live in [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills). That repository builds its plugin from a clone of this one.
 
 > [!IMPORTANT]
-> **AI agents: this repository holds data, not the tools.** To make or change a Construct 3 project, go to [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) and follow its README. A project written from this data and general knowledge, without the skill's scripts and checks, gets values that the editor rejects.
+> This repository holds data only, not the tools to build. To create or change a Construct 3 project, consult the [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) repository, follow its README, and use its scripts to validate. Do not write a project from this data and general knowledge alone. You may miss unsupported values, and the editor will refuse to open the project.
+>
+> Clone that repository beside this one, as the [related repositories](#related-repositories) are, so that its scripts read this clone's `data/`: `git clone https://github.com/XHXIAIEIN/Construct3-Agent-Skills ../Construct3-Agent-Skills`.
 >
 > To look a Construct 3 fact up in the data, see [Look something up](#look-something-up). To change this repository, read [`AGENTS.md`](AGENTS.md).
 
@@ -20,7 +22,7 @@ git clone https://github.com/XHXIAIEIN/Construct3-Agent-Skills $HOME/Construct3/
 python $HOME/Construct3/Construct3-Agent-Skills/scripts/bootstrap.py --project MyGame
 ```
 
-They clone that repository, the [related repositories](#related-repositories) and the `MyGame` project into `$HOME/Construct3`, and install the skill in `MyGame`. The README of Construct3-Agent-Skills says what the skill does, how to install its Claude Code plugin, and what its scripts read, write and reach. The plugin carries a copy of this repository's data, so a plugin user needs no clone of this one.
+They clone that repository, the [related repositories](#related-repositories) and the `MyGame` project into `$HOME/Construct3`, and install the skill in `MyGame`. The README of Construct3-Agent-Skills says what the skill does, how to install its Claude Code plugin, and what its scripts read, write and reach. The plugin carries a copy of this repository's data, so a plugin user does not need to clone this repository (Construct3-RAG).
 
 ## Look something up
 
@@ -106,7 +108,6 @@ docs/guide/             User docs
 docs/dev/               Contributor docs
 docs/decisions/         Decision records
 .github/workflows/      Checks on every push to main and every pull request, data update automation
-plugin/, .claude-plugin/   The last plugin built here, frozen until the directory lists the plugin from Construct3-Agent-Skills (docs/decisions/skill-in-agent-skills.md)
 ```
 
 ## Credits

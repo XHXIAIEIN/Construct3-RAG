@@ -53,7 +53,7 @@ The repositories:
 
 | Record | What it settles |
 |--------|-----------------|
-| `skill-in-agent-skills.md` | Why the `construct3-agent-plugin` skill, the prompts, the plugin and their tests and records live in Construct3-Agent-Skills, what stays here, and why `plugin/` is frozen here for now |
+| `skill-in-agent-skills.md` | Why the `construct3-agent-plugin` skill, the prompts, the plugin and their tests and records live in Construct3-Agent-Skills, and what stays here |
 
 The reference study of published games:
 

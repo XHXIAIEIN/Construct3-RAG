@@ -13,9 +13,15 @@ The tools that make games from this data live in
 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills):
 the `construct3-agent-plugin` skill, the event sheet prompts, the Claude
 Code plugin `construct3` built from them, and their tests and decision
-records. That repository is cloned beside this one, as the
-`Construct3-Manual`, `Construct-Example-Projects` and `Construct-Addon-SDK`
-clones are. Its build reads this clone's `data/`. Why:
+records. Clone that repository beside this one, as the `Construct3-Manual`,
+`Construct-Example-Projects` and `Construct-Addon-SDK` clones are, before
+you run a script of the skill:
+
+```bash
+git clone https://github.com/XHXIAIEIN/Construct3-Agent-Skills ../Construct3-Agent-Skills
+```
+
+Its build reads this clone's `data/`. Why:
 `docs/decisions/skill-in-agent-skills.md`.
 
 The priorities, in order:
@@ -137,10 +143,6 @@ Rules:
   Its daily workflow builds the plugin from this repository's `main` and
   runs the skill's tests on the build. A change that renames or removes a
   field the skill reads is made in both repositories, the skill first.
-- `plugin/` and `.claude-plugin/` are the last plugin built here, frozen.
-  No build, test or doc here reads them. They go when Claude's directory
-  lists the plugin from Construct3-Agent-Skills
-  (`docs/decisions/skill-in-agent-skills.md`).
 - Docs and tests change with the behavior. The README puts the data first
   and the service second. `README_CN.md` carries the content of `README.md`;
   `README.md` names no Chinese text or locale besides its link to
