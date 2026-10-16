@@ -41,7 +41,7 @@ at the other repository as it points at the Construct3-Manual clone.
 
 ## Decision
 
-The second option. The skill, `prompts/`, the plugin's sources, the skill's
+The second option. The skill, `plugin/prompts/`, the plugin's sources, the skill's
 tests, the build and the records of those live in Construct3-Agent-Skills.
 Its build reads `data/` from a clone of this repository beside it, and its
 daily workflow rebuilds the plugin when the data changed. The history of
