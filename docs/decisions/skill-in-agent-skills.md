@@ -41,8 +41,12 @@ at the other repository as it points at the Construct3-Manual clone.
 
 ## Decision
 
-The second option. The skill, `plugin/prompts/`, the plugin's sources, the skill's
-tests, the build and the records of those live in Construct3-Agent-Skills.
+The second option. The skill, the plugin's sources, the skill's tests, the
+build and the records of those live in Construct3-Agent-Skills. The event
+sheet guides, which moved there as `plugin/prompts/`, have since moved again
+to their own repository, Construct3-Cookbook (`guides/`), so that a new
+pitfall reaches users without a plugin release (Construct3-Agent-Skills'
+`docs/decisions/guides-in-cookbook.md`).
 Its build reads `data/` from a clone of this repository beside it, and its
 daily workflow rebuilds the plugin when the data changed. The history of
 the moved files up to the move is in this repository's Git history.

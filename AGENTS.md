@@ -70,7 +70,7 @@ project should not use it.
 | Translation of a string, editor text outside the schemas | `data/c3-lang/{locale}.json`, `text` |
 | What a project folder holds: what `project.c3proj` lists, image file names, the formats of sounds, fonts and icons, which files the editor ignores | `data/c3-guides/constructs-project-format.md`, Scirra's guide that the `llm-context.md` of every project links |
 | What a field means | `data/AGENTS.md`; the full reference is `docs/guide/data-format.md` |
-| How to write an event, design event sheet logic, check or change a game project | Construct3-Agent-Skills: its `AGENTS.md`, `plugin/prompts/` and the skill |
+| How to write an event, design event sheet logic, check or change a game project | Construct3-Agent-Skills: its `AGENTS.md` and the skill; the event sheet guides and pitfalls are in the Construct3-Cookbook clone, `guides/` |
 
 The structural fields (`id`, `scriptName`, `category`, `params.*.type`) are
 identical across locales. To the user, an ACE is its `display-text` in their
@@ -188,7 +188,7 @@ python -m pytest tests/test_query_gold.py -q   # Direct Lookup gold set
 | Install and run | `docs/guide/quick-start.md` |
 | HTTP API | `docs/guide/api-reference.md` |
 | Data files and fields | `docs/guide/data-format.md` |
-| Make or change a game, design event sheet logic, the skill's tools and their evals, the Claude Code plugin | Construct3-Agent-Skills, cloned beside this repository: its `README.md`, `AGENTS.md`, `plugin/prompts/` and `docs/decisions/` |
+| Make or change a game, design event sheet logic, the skill's tools and their evals, the Claude Code plugin | Construct3-Agent-Skills, cloned beside this repository: its `README.md`, `AGENTS.md` and `docs/decisions/`; the event sheet guides are in Construct3-Cookbook, `guides/` |
 | The visual language of published games, their motion statistics and the reproducible analyzer | `docs/decisions/published-game-visual-language.md`, `docs/dev/published-game-analysis.md`, `scripts/reference_games/` |
 | Architecture and package boundaries | `docs/dev/architecture.md`, `src/AGENTS.md` |
 | CDN fetch, export, update workflow | `docs/dev/data-pipeline.md`, `.github/workflows/update.yml` |
