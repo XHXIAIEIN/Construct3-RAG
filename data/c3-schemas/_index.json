@@ -1,5 +1,5 @@
 {
-  "version": "r506",
+  "version": "r506.3",
   "languages": [
     "en-US",
     "zh-CN"
@@ -19,13 +19,6 @@
       "actions": 84,
       "expressions": 134
     },
-    "advancedrandom": {
-      "originalId": "AdvancedRandom",
-      "file": "plugins/advancedrandom.json",
-      "conditions": 0,
-      "actions": 12,
-      "expressions": 19
-    },
     "advert": {
       "originalId": "advert",
       "file": "plugins/advert.json",
@@ -40,18 +33,18 @@
       "actions": 10,
       "expressions": 4
     },
+    "advancedrandom": {
+      "originalId": "AdvancedRandom",
+      "file": "plugins/advancedrandom.json",
+      "conditions": 0,
+      "actions": 12,
+      "expressions": 19
+    },
     "arr": {
       "originalId": "Arr",
       "file": "plugins/arr.json",
       "conditions": 8,
       "actions": 15,
-      "expressions": 14
-    },
-    "audio": {
-      "originalId": "Audio",
-      "file": "plugins/audio.json",
-      "conditions": 6,
-      "actions": 43,
       "expressions": 14
     },
     "bbcmicrobit": {
@@ -60,6 +53,13 @@
       "conditions": 9,
       "actions": 6,
       "expressions": 9
+    },
+    "audio": {
+      "originalId": "Audio",
+      "file": "plugins/audio.json",
+      "conditions": 6,
+      "actions": 43,
+      "expressions": 14
     },
     "binarydata": {
       "originalId": "BinaryData",
@@ -201,19 +201,19 @@
       "actions": 9,
       "expressions": 5
     },
-    "iframe": {
-      "originalId": "iframe",
-      "file": "plugins/iframe.json",
-      "conditions": 0,
-      "actions": 2,
-      "expressions": 0
-    },
     "cordovaiap": {
       "originalId": "CORDOVAIAP",
       "file": "plugins/cordovaiap.json",
       "conditions": 14,
       "actions": 4,
       "expressions": 6
+    },
+    "iframe": {
+      "originalId": "iframe",
+      "file": "plugins/iframe.json",
+      "conditions": 0,
+      "actions": 2,
+      "expressions": 0
     },
     "instantgames": {
       "originalId": "InstantGames",
@@ -334,19 +334,19 @@
       "actions": 7,
       "expressions": 6
     },
-    "share": {
-      "originalId": "Share",
-      "file": "plugins/share.json",
-      "conditions": 4,
-      "actions": 4,
-      "expressions": 0
-    },
     "sliderbar": {
       "originalId": "sliderbar",
       "file": "plugins/sliderbar.json",
       "conditions": 4,
       "actions": 5,
       "expressions": 4
+    },
+    "share": {
+      "originalId": "Share",
+      "file": "plugins/share.json",
+      "conditions": 4,
+      "actions": 4,
+      "expressions": 0
     },
     "speechrecognition": {
       "originalId": "SpeechRecognition",
@@ -425,13 +425,6 @@
       "actions": 12,
       "expressions": 28
     },
-    "usermedia": {
-      "originalId": "UserMedia",
-      "file": "plugins/usermedia.json",
-      "conditions": 4,
-      "actions": 5,
-      "expressions": 8
-    },
     "touch": {
       "originalId": "Touch",
       "file": "plugins/touch.json",
@@ -439,12 +432,12 @@
       "actions": 1,
       "expressions": 32
     },
-    "c2websocket": {
-      "originalId": "C2WebSocket",
-      "file": "plugins/c2websocket.json",
-      "conditions": 8,
-      "actions": 4,
-      "expressions": 4
+    "usermedia": {
+      "originalId": "UserMedia",
+      "file": "plugins/usermedia.json",
+      "conditions": 4,
+      "actions": 5,
+      "expressions": 8
     },
     "video": {
       "originalId": "video",
@@ -452,6 +445,13 @@
       "conditions": 5,
       "actions": 8,
       "expressions": 6
+    },
+    "c2websocket": {
+      "originalId": "C2WebSocket",
+      "file": "plugins/c2websocket.json",
+      "conditions": 8,
+      "actions": 4,
+      "expressions": 4
     },
     "xml": {
       "originalId": "XML",
@@ -587,13 +587,6 @@
       "actions": 11,
       "expressions": 11
     },
-    "pathfinding": {
-      "originalId": "Pathfinding",
-      "file": "behaviors/pathfinding.json",
-      "conditions": 9,
-      "actions": 21,
-      "expressions": 11
-    },
     "persist": {
       "originalId": "Persist",
       "file": "behaviors/persist.json",
@@ -601,12 +594,12 @@
       "actions": 0,
       "expressions": 0
     },
-    "physics": {
-      "originalId": "Physics",
-      "file": "behaviors/physics.json",
-      "conditions": 6,
-      "actions": 32,
-      "expressions": 14
+    "pathfinding": {
+      "originalId": "Pathfinding",
+      "file": "behaviors/pathfinding.json",
+      "conditions": 9,
+      "actions": 21,
+      "expressions": 11
     },
     "pin": {
       "originalId": "Pin",
@@ -614,6 +607,13 @@
       "conditions": 2,
       "actions": 7,
       "expressions": 1
+    },
+    "physics": {
+      "originalId": "Physics",
+      "file": "behaviors/physics.json",
+      "conditions": 6,
+      "actions": 32,
+      "expressions": 14
     },
     "platform": {
       "originalId": "Platform",

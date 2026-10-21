@@ -1,5 +1,5 @@
 {
-  "version": "r506",
+  "version": "r506.3",
   "language": "zh-CN",
   "plugins": {
     "ninepatch": {
@@ -10,10 +10,6 @@
       "name": "系统",
       "file": "plugins/system.json"
     },
-    "advancedrandom": {
-      "name": "高级随机",
-      "file": "plugins/advancedrandom.json"
-    },
     "advert": {
       "name": "激励广告",
       "file": "plugins/advert.json"
@@ -22,17 +18,21 @@
       "name": "AJAX",
       "file": "plugins/ajax.json"
     },
+    "advancedrandom": {
+      "name": "高级随机",
+      "file": "plugins/advancedrandom.json"
+    },
     "arr": {
       "name": "数组",
       "file": "plugins/arr.json"
     },
-    "audio": {
-      "name": "音频",
-      "file": "plugins/audio.json"
-    },
     "bbcmicrobit": {
       "name": "BBC micro:bit",
       "file": "plugins/bbcmicrobit.json"
+    },
+    "audio": {
+      "name": "音频",
+      "file": "plugins/audio.json"
     },
     "binarydata": {
       "name": "二进制",
@@ -114,13 +114,13 @@
       "name": "HTML",
       "file": "plugins/htmlelement.json"
     },
-    "iframe": {
-      "name": "内嵌网页",
-      "file": "plugins/iframe.json"
-    },
     "cordovaiap": {
       "name": "应用内购",
       "file": "plugins/cordovaiap.json"
+    },
+    "iframe": {
+      "name": "内嵌网页",
+      "file": "plugins/iframe.json"
     },
     "instantgames": {
       "name": "Instant Games",
@@ -190,13 +190,13 @@
       "name": "3D形状",
       "file": "plugins/shape3d.json"
     },
-    "share": {
-      "name": "分享",
-      "file": "plugins/share.json"
-    },
     "sliderbar": {
       "name": "滑动条",
       "file": "plugins/sliderbar.json"
+    },
+    "share": {
+      "name": "分享",
+      "file": "plugins/share.json"
     },
     "speechrecognition": {
       "name": "语音识别",
@@ -242,21 +242,21 @@
       "name": "流程图",
       "file": "plugins/flowchart.json"
     },
-    "usermedia": {
-      "name": "用户媒体",
-      "file": "plugins/usermedia.json"
-    },
     "touch": {
       "name": "触控",
       "file": "plugins/touch.json"
     },
-    "c2websocket": {
-      "name": "WebSocket",
-      "file": "plugins/c2websocket.json"
+    "usermedia": {
+      "name": "用户媒体",
+      "file": "plugins/usermedia.json"
     },
     "video": {
       "name": "视频",
       "file": "plugins/video.json"
+    },
+    "c2websocket": {
+      "name": "WebSocket",
+      "file": "plugins/c2websocket.json"
     },
     "xml": {
       "name": "XML",
@@ -336,21 +336,21 @@
       "name": "环绕",
       "file": "behaviors/orbit.json"
     },
-    "pathfinding": {
-      "name": "寻路",
-      "file": "behaviors/pathfinding.json"
-    },
     "persist": {
       "name": "持久化",
       "file": "behaviors/persist.json"
     },
-    "physics": {
-      "name": "物理",
-      "file": "behaviors/physics.json"
+    "pathfinding": {
+      "name": "寻路",
+      "file": "behaviors/pathfinding.json"
     },
     "pin": {
       "name": "固定",
       "file": "behaviors/pin.json"
+    },
+    "physics": {
+      "name": "物理",
+      "file": "behaviors/physics.json"
     },
     "platform": {
       "name": "平台",
