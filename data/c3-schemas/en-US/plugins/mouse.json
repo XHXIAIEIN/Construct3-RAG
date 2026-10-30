@@ -226,7 +226,34 @@
         "cursor-style": {
           "type": "combo-grouped",
           "name": "Cursor style",
-          "desc": "Choose the cursor style to set."
+          "desc": "Choose the cursor style to set.",
+          "items": {
+            "normal": "Normal",
+            "all-scroll": "All scroll",
+            "none": "None",
+            "help": "Help",
+            "pointer": "Pointer",
+            "progress": "Progress",
+            "wait": "Wait",
+            "cell": "Cell",
+            "crosshair": "Crosshair",
+            "text": "Text",
+            "vertical-text": "Vertical text",
+            "alias": "Alias",
+            "copy": "Copy",
+            "move": "Move",
+            "not-allowed": "Not allowed",
+            "grab": "Grab",
+            "grabbing": "Grabbing",
+            "col-resize": "Column resize",
+            "row-resize": "Row resize",
+            "ew-resize": "EW resize",
+            "ns-resize": "NS resize",
+            "nesw-resize": "NESW resize",
+            "nwse-resize": "NWSE resize",
+            "zoom-in": "Zoom in",
+            "zoom-out": "Zoom out"
+          }
         }
       }
     },

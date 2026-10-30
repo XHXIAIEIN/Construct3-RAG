@@ -439,6 +439,13 @@ class C3Fetcher:
                                     if "items" in p:
                                         # Item labels from lang, else the ids label themselves
                                         param_entry["items"] = l_param.get("items") or {k: k for k in p["items"]}
+                                    elif "itemGroups" in p:
+                                        # A combo-grouped parameter stores one item id, as a combo
+                                        # does; the groups only arrange the editor's list
+                                        labels = {k: v for g in l_param.get("itemGroups", {}).values()
+                                                  for k, v in g.get("items", {}).items()}
+                                        param_entry["items"] = {k: labels.get(k, k)
+                                                                for g in p["itemGroups"] for k in g["items"]}
                                     # The value the editor fills in when the ACE is added:
                                     # Wait's "use time scale" is ticked, "true".
                                     if p.get("initialValue") is not None:
