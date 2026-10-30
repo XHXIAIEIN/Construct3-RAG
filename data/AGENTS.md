@@ -31,8 +31,9 @@ Fields that decide correctness:
 - `display-text` is the event sheet wording; `{0}` is the first entry of
   `params`, `{1}` the second, and so on; `[b]` and `[i]` are display markup.
 - `params.*.type` is the editor type (`number`, `string`, `object`, `combo`,
-  `animation`, `instancevar`, `cmp`...); a `combo` lists its choices in
-  `items` as stable id to localized label.
+  `animation`, `instancevar`, `cmp`...); a `combo` or a `combo-grouped`
+  lists its choices in `items` as stable id to localized label, and a
+  project file stores the id.
 - `isTrigger` marks a trigger condition, `On collision` and `On timer`
   included: one per event branch, none inside a function, never inverted, no
   `Else` after it.

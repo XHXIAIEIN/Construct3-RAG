@@ -226,7 +226,34 @@
         "cursor-style": {
           "type": "combo-grouped",
           "name": "光标样式",
-          "desc": "选择要设置的光标样式。"
+          "desc": "选择要设置的光标样式。",
+          "items": {
+            "normal": "普通",
+            "all-scroll": "自由滚动",
+            "none": "无",
+            "help": "帮助",
+            "pointer": "手型",
+            "progress": "忙碌",
+            "wait": "等待",
+            "cell": "单元格",
+            "crosshair": "十字框选",
+            "text": "文本",
+            "vertical-text": "竖排文本",
+            "alias": "快捷方式",
+            "copy": "复制",
+            "move": "移动",
+            "not-allowed": "禁止",
+            "grab": "可抓取",
+            "grabbing": "正在抓取",
+            "col-resize": "调整列",
+            "row-resize": "调整行",
+            "ew-resize": "左右调整",
+            "ns-resize": "上下调整",
+            "nesw-resize": "右边缘调整",
+            "nwse-resize": "左边缘调整",
+            "zoom-in": "放大",
+            "zoom-out": "缩小"
+          }
         }
       }
     },

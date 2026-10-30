@@ -399,6 +399,35 @@ def test_export_keeps_the_default_the_editor_fills_in(fetcher):
             {"seconds": "1.0", "use-timescale": "true", "note": None}
 
 
+def test_export_lists_the_items_of_a_grouped_combo_in_the_editor_order(fetcher):
+    """A project file stores a grouped combo's item id, as for a combo, and the runtime
+    indexes the items across the groups: Set cursor style's "grabbing" is 16, not a value."""
+    aces = {"plugins": {"Mouse": {"cursor": {"conditions": [], "expressions": [], "actions": [
+        {"id": "set-cursor-style2", "scriptName": "SetCursor2", "params": [
+            {"id": "cursor-style", "type": "combo-grouped", "itemGroups": [
+                {"id": "general", "items": ["normal", "none"]},
+                {"id": "drag-and-drop", "items": ["grab", "grabbing"]},
+            ]},
+        ]},
+    ]}}}, "behaviors": {}}
+
+    def text(normal, grabbing):
+        groups = {"general": {"name": "G", "items": {"normal": normal, "none": "-"}},
+                  "drag-and-drop": {"name": "D", "items": {"grab": "+", "grabbing": grabbing}}}
+        return {"text": {"plugins": {"mouse": {"name": "Mouse", "actions": {"set-cursor-style2": {
+            "list-name": "Set cursor style", "params": {"cursor-style": {"name": "Cursor style",
+                                                                         "itemGroups": groups}}}}}}}}
+
+    schemas_dir = _export_with(fetcher, {"en-US": text("Normal", "Grabbing"), "zh-CN": text("正常", "抓取中")},
+                               aces=aces)
+
+    for locale, labels in (("en-US", ("Normal", "Grabbing")), ("zh-CN", ("正常", "抓取中"))):
+        param = _read_json(schemas_dir / locale / "plugins" / "mouse.json")["actions"][0]["params"]["cursor-style"]
+        assert param["type"] == "combo-grouped"
+        assert list(param["items"].items()) == \
+            [("normal", labels[0]), ("none", "-"), ("grab", "+"), ("grabbing", labels[1])]
+
+
 def test_export_marks_an_expression_that_takes_more_arguments_than_it_lists(fetcher):
     """Mouse.X takes an optional layer and max any number of values; the parameters
     alone would make Mouse.X("HUD") read as a wrong call."""
