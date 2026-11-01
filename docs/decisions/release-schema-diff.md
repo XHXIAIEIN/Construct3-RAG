@@ -54,8 +54,8 @@ Mentions are found in `src/`, `scripts/`, `docs/` and `AGENTS.md`, by the
 id between quotes or backticks, not by display names: ids are what code and
 docs quote, and names are reworded between releases without effect. The
 prompts and the skill quote ids too; they are in Construct3-Agent-Skills,
-whose daily refresh builds the plugin on the merged data and runs the
-skill's tests on it (`skill-in-agent-skills.md`). Tests are not scanned, since the
+whose tests run on this repository's `main` only for a push to that
+repository's `main` or a pull request there (`skill-in-agent-skills.md`). Tests are not scanned, since the
 suite runs in the pull request and fails on its own. A short id such as `x`
 may match a quote that is not about the ACE; the report says an id shared by
 several addons may belong to another one, and a person decides.

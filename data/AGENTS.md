@@ -3,7 +3,12 @@
 Committed Construct 3 reference data, read directly or through the lookup
 service in `src/`. The prompts and the `construct3-agent-plugin` skill of
 Construct3-Agent-Skills point to its files and read it for a game project.
-The Claude Code plugin built there carries a copy of this folder.
+The skill reads this folder from a clone at run time; the plugin holds no
+copy. An English user's clone is sparse: unless `--locales zh-CN` is
+given, the clone command that the skill's `setup.py` prints checks it out
+without every path that contains `zh-CN` (`'/*' '!*zh-CN*'`). So a
+file of the Chinese locale keeps `zh-CN` in its path, and a file that every
+locale needs keeps it out of its path.
 
 | Path | Content |
 |------|---------|

@@ -21,8 +21,8 @@ you run a script of the skill:
 git clone https://github.com/XHXIAIEIN/Construct3-Agent-Skills ../Construct3-Agent-Skills
 ```
 
-Its build reads this clone's `data/`. Why:
-`docs/decisions/skill-in-agent-skills.md`.
+Its scripts read this clone's `data/` at run time, and the plugin holds
+no copy of it. Why: `docs/decisions/skill-in-agent-skills.md`.
 
 The priorities, in order:
 
@@ -82,8 +82,8 @@ returns the same data (`docs/guide/api-reference.md`).
 `plugins/system.json` and `plugins/_common.json` run to thousands of lines. A
 reader that stops at 2000 lines shows only part of them, so an ACE below the
 cut looks missing. Ask the sibling clone's script for the part instead.
-`--rag .` makes it read this clone's data, which can be newer than the
-plugin's copy:
+`--rag .` makes it read this clone's data, not a clone that
+`CONSTRUCT3_RAG` or the home folder names:
 
 ```bash
 python ../Construct3-Agent-Skills/plugin/skills/construct3-agent-plugin/scripts/lookup_ace.py --rag . System wait
@@ -100,12 +100,17 @@ read the schema file in parts with Grep and Read.
 
 ## 3. Use from a game project
 
-A game project reaches this data through Construct3-Agent-Skills: its
-`plugin/` folder carries a built copy of `data/`, and the skill's scripts
-find it through the project's `Construct3-RAG:` line, `--rag` or
-`CONSTRUCT3_RAG`. Section 4 of that repository's `AGENTS.md` says how to
-install the skill or the plugin. A game project needs no clone of this
-repository.
+A game project reaches this data through the skill of
+Construct3-Agent-Skills, whose scripts read a clone of this repository at
+run time. The plugin holds no copy of `data/`, so every machine that runs
+the skill needs the clone. The scripts find it through `--rag`,
+`CONSTRUCT3_RAG`, the project's `Construct3-RAG:` line, the home folder
+(`~/Construct3`, or the folder `CONSTRUCT3_HOME` names), or beside the
+Construct3-Agent-Skills clone. The skill's `setup.py` prints the command
+that clones it into the home folder. Without `--locales zh-CN`, that clone leaves
+out the zh-CN files. The skill's `check_project.py` pulls the clone when it
+is behind its upstream and holds no work of its own. Section 4 of that
+repository's `AGENTS.md` says how to install the skill or the plugin.
 
 ## 4. Change code or data
 
@@ -139,10 +144,14 @@ Rules:
   reason in `docs/decisions/`.
 - Use type hints and `pathlib.Path`, and log specific exceptions at the
   boundary.
-- A change to `data/` reaches the plugin through Construct3-Agent-Skills.
-  Its daily workflow builds the plugin from this repository's `main` and
-  runs the skill's tests on the build. A change that renames or removes a
-  field the skill reads is made in both repositories, the skill first.
+- A change to `data/` reaches the skill's users without a plugin release,
+  when `check_project.py` pulls their clone. The checks of
+  Construct3-Agent-Skills run on this repository's `main` only for a push
+  to that repository's `main` or a pull request there, so nothing tests
+  the skill against a data change here. Before you merge a change to a field or a path that the skill
+  reads, run that repository's tests with `CONSTRUCT3_RAG` set to this
+  clone. A change that renames or removes such a field is made in both
+  repositories, the skill first.
 - Docs and tests change with the behavior. The README puts the data first
   and the service second. `README_CN.md` carries the content of `README.md`;
   `README.md` names no Chinese text or locale besides its link to

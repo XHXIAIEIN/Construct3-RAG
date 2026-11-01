@@ -47,8 +47,9 @@ sheet guides, which moved there as `plugin/prompts/`, have since moved again
 to their own repository, Construct3-Cookbook (`guides/`), so that a new
 pitfall reaches users without a plugin release (Construct3-Agent-Skills'
 `docs/decisions/guides-in-cookbook.md`).
-Its build reads `data/` from a clone of this repository beside it, and its
-daily workflow rebuilds the plugin when the data changed. The history of
+Its scripts read `data/` from a clone of this repository at run time, and
+the plugin holds no copy (Construct3-Agent-Skills'
+`docs/decisions/plugin-reads-the-clones.md`). The history of
 the moved files up to the move is in this repository's Git history.
 
 This repository keeps:
@@ -73,16 +74,18 @@ version.
 The update pull request builds no plugin, and `schema_diff.py` scans
 `src/`, `scripts/`, `docs/` and `AGENTS.md` for the ids a release broke.
 The prompts and the skill, which quote ids too, are checked by the other
-repository's checks on the plugin built from the merged data.
+repository's tests, which run on this repository's `main` only for a push
+to that repository's `main` or a pull request there.
 
 ## Trade-offs
 
 - An ACE lookup in this repository needs the Construct3-Agent-Skills clone
   beside it. Without it, an agent reads the schema files directly and has
   to read `plugins/system.json` and `plugins/_common.json` in parts.
-- A release that breaks an id quoted in a prompt or a skill file is found
-  by the other repository's daily refresh, a day after the merge here,
-  instead of in this repository's update pull request.
+- A release that breaks an id quoted in a prompt or a skill file reaches
+  the skill's users with their next pull of this clone. It is found only
+  when someone runs the other repository's tests on the merged data, not in
+  this repository's update pull request.
 
 ## Re-evaluate when
 

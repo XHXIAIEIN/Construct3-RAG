@@ -4,7 +4,7 @@
 
 Construct3-RAG 是给 AI agent 用的 [Construct 3](https://editor.construct.net/)（[推荐链接](https://www.construct.net/a/260259?t=construct3)）参考数据。它按编辑器的定义收录所有条件、动作、表达式和滤镜，中英双语，都是 agent 直接读取的 JSON 文件。它还放着示例索引、编辑器的语言包、脚本 API 的 TypeScript 定义和 Scirra 的项目格式指南。管线在每个版本从编辑器 CDN 刷新它们。
 
-用这些数据做游戏的工具，也就是 `construct3-agent-plugin` skill、它的 prompts 和 Claude Code plugin `construct3`，放在 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills)。那个仓库用本仓库的 clone 构建它的 plugin。
+用这些数据做游戏的工具，也就是 `construct3-agent-plugin` skill、它的 prompts 和 Claude Code plugin `construct3`，放在 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills)。它的脚本在运行时读本仓库的 clone，plugin 里不带这份数据。
 
 > [!IMPORTANT]
 > 本仓库只存数据，不提供制作工具。要新建或修改 Construct 3 项目，请查看 [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) 仓库，按其 README 操作，并使用仓库提供的脚本进行校验，不要只凭本仓库的数据和常识写项目，容易漏掉某些不支持的值，被编辑器拒绝打开项目。
@@ -22,7 +22,7 @@ git clone https://github.com/XHXIAIEIN/Construct3-Agent-Skills $HOME/Construct3/
 python $HOME/Construct3/Construct3-Agent-Skills/scripts/bootstrap.py --project MyGame
 ```
 
-它们把那个仓库、[相关仓库](#相关仓库)和 `MyGame` 项目都放进 `$HOME/Construct3`，再把 skill 装进 `MyGame`。Construct3-Agent-Skills 的 README 说明 skill 能做什么、怎么安装它的 Claude Code plugin，以及它的脚本读写和访问的范围。plugin 自带一份本仓库的数据，所以用 plugin 的人不需要 clone 本仓库（Construct3-RAG）。
+它们把那个仓库、本仓库、Construct3-Cookbook、Construct3-Manual 和 `MyGame` 项目都放进 `$HOME/Construct3`，再把 skill 装进 `MyGame`。本仓库的 clone 不含中文文件，除非第二条命令加上 `--locales zh-CN`。Construct3-Agent-Skills 的 README 说明 skill 能做什么、怎么安装它的 Claude Code plugin，以及它的脚本读写和访问的范围。用 plugin 的人也需要这些 clone：skill 的 `setup.py` 会打印把它们 clone 进 `$HOME/Construct3` 的命令。
 
 ## 查找
 
@@ -85,7 +85,8 @@ python ../Construct3-Agent-Skills/plugin/skills/construct3-agent-plugin/scripts/
 
 | 仓库 | 内容 | 和本仓库的关系 |
 |---|---|---|
-| [XHXIAIEIN/Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) | `construct3-agent-plugin` skill、事件表 prompts 和 Claude Code plugin | 为游戏项目读取这些数据的工具；它的 plugin 用本仓库的 clone 构建 |
+| [XHXIAIEIN/Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) | `construct3-agent-plugin` skill、事件表 prompts 和 Claude Code plugin | 为游戏项目读取这些数据的工具，读的是本仓库的 clone |
+| [XHXIAIEIN/Construct3-Cookbook](https://github.com/XHXIAIEIN/Construct3-Cookbook) | 事件系统的坑、事件设计和配方 | skill 写事件前读这些指南；本仓库的数据给出指南里用到的名称和参数 |
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | 官方手册、Addon SDK 指南和 Game Services 文档，Markdown 格式 | `data/c3-schemas/` 给出名称和参数，手册说明它们的作用 |
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Construct 案例库里的所有示例，以项目文件夹形式保存 | `data/c3-examples/` 是示例的元数据，`data/c3-example-usage/` 记录每个 ACE 被哪些示例用到，项目本身在那个仓库里 |
 | [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | 自定义插件、行为、滤镜和主题的模板和文档 | `data/c3-ts-defs/sdk/` 是类型定义，SDK 讲怎么用 |

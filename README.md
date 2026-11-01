@@ -4,7 +4,7 @@
 
 Construct3-RAG is the reference data of [Construct 3](https://editor.construct.net/) ([affiliate link](https://www.construct.net/a/260259?t=construct3)) for AI agents. It holds every condition, action, expression and effect as the editor defines them, in two languages, as JSON files that an agent reads directly. It also holds the example index, the editor's language packs, the TypeScript definitions of the scripting API and Scirra's guide to the project format. A pipeline refreshes them from the editor's CDN each release.
 
-The tools that make games from this data, the `construct3-agent-plugin` skill, its prompts and the Claude Code plugin `construct3`, live in [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills). That repository builds its plugin from a clone of this one.
+The tools that make games from this data, the `construct3-agent-plugin` skill, its prompts and the Claude Code plugin `construct3`, live in [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills). Its scripts read a clone of this repository at run time, and the plugin holds no copy of the data.
 
 > [!IMPORTANT]
 > This repository holds data only, not the tools to build. To create or change a Construct 3 project, consult the [Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) repository, follow its README, and use its scripts to validate. Do not write a project from this data and general knowledge alone. You may miss unsupported values, and the editor will refuse to open the project.
@@ -22,7 +22,7 @@ git clone https://github.com/XHXIAIEIN/Construct3-Agent-Skills $HOME/Construct3/
 python $HOME/Construct3/Construct3-Agent-Skills/scripts/bootstrap.py --project MyGame
 ```
 
-They clone that repository, the [related repositories](#related-repositories) and the `MyGame` project into `$HOME/Construct3`, and install the skill in `MyGame`. The README of Construct3-Agent-Skills says what the skill does, how to install its Claude Code plugin, and what its scripts read, write and reach. The plugin carries a copy of this repository's data, so a plugin user does not need to clone this repository (Construct3-RAG).
+They clone that repository, this one, Construct3-Cookbook, Construct3-Manual and the `MyGame` project into `$HOME/Construct3`, and install the skill in `MyGame`. The clone of this repository leaves out the Chinese files unless the second command adds `--locales zh-CN`. The README of Construct3-Agent-Skills says what the skill does, how to install its Claude Code plugin, and what its scripts read, write and reach. A plugin user needs the same clones: the skill's `setup.py` prints the commands that clone them into `$HOME/Construct3`.
 
 ## Look something up
 
@@ -72,7 +72,8 @@ It prints each match with its parameters, its wording and the JSON to write, and
 
 | Repository | Content | How it fits |
 |---|---|---|
-| [XHXIAIEIN/Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) | The `construct3-agent-plugin` skill, the event sheet prompts and the Claude Code plugin | The tools that read this data for a game project; its plugin is built from a clone of this repository. |
+| [XHXIAIEIN/Construct3-Agent-Skills](https://github.com/XHXIAIEIN/Construct3-Agent-Skills) | The `construct3-agent-plugin` skill, the event sheet prompts and the Claude Code plugin | The tools that read this data for a game project, from a clone of this repository. |
+| [XHXIAIEIN/Construct3-Cookbook](https://github.com/XHXIAIEIN/Construct3-Cookbook) | The pitfalls of the event system, event design and recipes | The skill reads these guides before it writes events; this data gives the names and parameters they use. |
 | [XHXIAIEIN/Construct3-Manual](https://github.com/XHXIAIEIN/Construct3-Manual) | The official manual, the Addon SDK guide and the Game Services docs, as Markdown | `data/c3-schemas/` gives the names and parameters; the manual says what they do. |
 | [Scirra/Construct-Example-Projects](https://github.com/Scirra/Construct-Example-Projects) | Every example from the Construct example browser, saved as a folder project | `data/c3-examples/` holds the metadata, and `data/c3-example-usage/` holds which examples use each ACE; the projects are in that repository. |
 | [Scirra/Construct-Addon-SDK](https://github.com/Scirra/Construct-Addon-SDK) | Templates and documentation for custom plugins, behaviors, effects and themes | `data/c3-ts-defs/sdk/` holds the typed interface; the SDK shows how to use it. |

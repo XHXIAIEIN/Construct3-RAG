@@ -71,8 +71,8 @@ and no counts, since the agent narrows it first. An entry that fits
 protects the output a harness reads. Without the index, the lookup prints
 the entries alone.
 
-The Claude Code plugin, built in Construct3-Agent-Skills, carries the index
-as one bundle.
+The skill of Construct3-Agent-Skills reads the index from a clone of this
+repository.
 
 ## Re-evaluate when
 
