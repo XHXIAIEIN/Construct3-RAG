@@ -1,14 +1,18 @@
 {
-  "version": "r506.3",
+  "version": "r506.4",
   "language": "zh-CN",
   "plugins": {
+    "system": {
+      "name": "系统",
+      "file": "plugins/system.json"
+    },
     "ninepatch": {
       "name": "九宫图",
       "file": "plugins/ninepatch.json"
     },
-    "system": {
-      "name": "系统",
-      "file": "plugins/system.json"
+    "advancedrandom": {
+      "name": "高级随机",
+      "file": "plugins/advancedrandom.json"
     },
     "advert": {
       "name": "激励广告",
@@ -18,21 +22,17 @@
       "name": "AJAX",
       "file": "plugins/ajax.json"
     },
-    "advancedrandom": {
-      "name": "高级随机",
-      "file": "plugins/advancedrandom.json"
-    },
     "arr": {
       "name": "数组",
       "file": "plugins/arr.json"
     },
-    "bbcmicrobit": {
-      "name": "BBC micro:bit",
-      "file": "plugins/bbcmicrobit.json"
-    },
     "audio": {
       "name": "音频",
       "file": "plugins/audio.json"
+    },
+    "bbcmicrobit": {
+      "name": "BBC micro:bit",
+      "file": "plugins/bbcmicrobit.json"
     },
     "binarydata": {
       "name": "二进制",
@@ -54,25 +54,21 @@
       "name": "3D相机",
       "file": "plugins/camera3d.json"
     },
-    "clipboard": {
-      "name": "剪贴板",
-      "file": "plugins/clipboard.json"
-    },
-    "constructgameservices": {
-      "name": "游戏服务",
-      "file": "plugins/constructgameservices.json"
-    },
     "cryptography": {
       "name": "密码学",
       "file": "plugins/cryptography.json"
+    },
+    "clipboard": {
+      "name": "剪贴板",
+      "file": "plugins/clipboard.json"
     },
     "csv": {
       "name": "CSV",
       "file": "plugins/csv.json"
     },
-    "date": {
-      "name": "日期",
-      "file": "plugins/date.json"
+    "constructgameservices": {
+      "name": "游戏服务",
+      "file": "plugins/constructgameservices.json"
     },
     "dictionary": {
       "name": "字典",
@@ -82,17 +78,21 @@
       "name": "画布",
       "file": "plugins/drawingcanvas.json"
     },
+    "date": {
+      "name": "日期",
+      "file": "plugins/date.json"
+    },
     "facebook": {
       "name": "Facebook",
       "file": "plugins/facebook.json"
     },
-    "filechooser": {
-      "name": "文件选择",
-      "file": "plugins/filechooser.json"
-    },
     "filesystem": {
       "name": "文件系统",
       "file": "plugins/filesystem.json"
+    },
+    "filechooser": {
+      "name": "文件选择",
+      "file": "plugins/filechooser.json"
     },
     "gamepad": {
       "name": "手柄",
@@ -106,21 +106,21 @@
       "name": "地理位置",
       "file": "plugins/geolocation.json"
     },
-    "googleplay": {
-      "name": "Google Play",
-      "file": "plugins/googleplay.json"
+    "iframe": {
+      "name": "内嵌网页",
+      "file": "plugins/iframe.json"
     },
     "htmlelement": {
       "name": "HTML",
       "file": "plugins/htmlelement.json"
     },
+    "googleplay": {
+      "name": "Google Play",
+      "file": "plugins/googleplay.json"
+    },
     "cordovaiap": {
       "name": "应用内购",
       "file": "plugins/cordovaiap.json"
-    },
-    "iframe": {
-      "name": "内嵌网页",
-      "file": "plugins/iframe.json"
     },
     "instantgames": {
       "name": "Instant Games",
@@ -146,13 +146,13 @@
       "name": "列表",
       "file": "plugins/list.json"
     },
-    "localstorage": {
-      "name": "本地存储",
-      "file": "plugins/localstorage.json"
-    },
     "midi": {
       "name": "MIDI",
       "file": "plugins/midi.json"
+    },
+    "localstorage": {
+      "name": "本地存储",
+      "file": "plugins/localstorage.json"
     },
     "model3d": {
       "name": "3D模型",
@@ -190,13 +190,13 @@
       "name": "3D形状",
       "file": "plugins/shape3d.json"
     },
-    "sliderbar": {
-      "name": "滑动条",
-      "file": "plugins/sliderbar.json"
-    },
     "share": {
       "name": "分享",
       "file": "plugins/share.json"
+    },
+    "sliderbar": {
+      "name": "滑动条",
+      "file": "plugins/sliderbar.json"
     },
     "speechrecognition": {
       "name": "语音识别",
@@ -214,13 +214,13 @@
       "name": "位图字体",
       "file": "plugins/spritefont2.json"
     },
-    "svgpicture": {
-      "name": "矢量图",
-      "file": "plugins/svgpicture.json"
-    },
     "text": {
       "name": "文本",
       "file": "plugins/text.json"
+    },
+    "svgpicture": {
+      "name": "矢量图",
+      "file": "plugins/svgpicture.json"
     },
     "textbox": {
       "name": "输入框",
@@ -250,13 +250,13 @@
       "name": "用户媒体",
       "file": "plugins/usermedia.json"
     },
-    "video": {
-      "name": "视频",
-      "file": "plugins/video.json"
-    },
     "c2websocket": {
       "name": "WebSocket",
       "file": "plugins/c2websocket.json"
+    },
+    "video": {
+      "name": "视频",
+      "file": "plugins/video.json"
     },
     "xml": {
       "name": "XML",
@@ -268,21 +268,21 @@
     }
   },
   "behaviors": {
-    "eightdir": {
-      "name": "八方向",
-      "file": "behaviors/eightdir.json"
-    },
     "anchor": {
       "name": "锚点",
       "file": "behaviors/anchor.json"
     },
-    "billboard": {
-      "name": "展示板",
-      "file": "behaviors/billboard.json"
+    "eightdir": {
+      "name": "八方向",
+      "file": "behaviors/eightdir.json"
     },
     "bound": {
       "name": "边界约束",
       "file": "behaviors/bound.json"
+    },
+    "billboard": {
+      "name": "展示板",
+      "file": "behaviors/billboard.json"
     },
     "bullet": {
       "name": "子弹",
@@ -292,21 +292,25 @@
       "name": "车辆",
       "file": "behaviors/car.json"
     },
+    "destroy": {
+      "name": "出界销毁",
+      "file": "behaviors/destroy.json"
+    },
     "custom": {
       "name": "自定义移动",
       "file": "behaviors/custom.json"
     },
-    "destroy": {
-      "name": "出界销毁",
-      "file": "behaviors/destroy.json"
+    "fade": {
+      "name": "淡入淡出",
+      "file": "behaviors/fade.json"
     },
     "dragndrop": {
       "name": "拖放",
       "file": "behaviors/dragndrop.json"
     },
-    "fade": {
-      "name": "淡入淡出",
-      "file": "behaviors/fade.json"
+    "jumpthru": {
+      "name": "跳跃穿透",
+      "file": "behaviors/jumpthru.json"
     },
     "follow": {
       "name": "轨迹跟随",
@@ -316,21 +320,17 @@
       "name": "闪烁",
       "file": "behaviors/flash.json"
     },
-    "jumpthru": {
-      "name": "跳跃穿透",
-      "file": "behaviors/jumpthru.json"
-    },
-    "los": {
-      "name": "视线",
-      "file": "behaviors/los.json"
+    "nosave": {
+      "name": "不存档",
+      "file": "behaviors/nosave.json"
     },
     "moveto": {
       "name": "移动到",
       "file": "behaviors/moveto.json"
     },
-    "nosave": {
-      "name": "不存档",
-      "file": "behaviors/nosave.json"
+    "los": {
+      "name": "视线",
+      "file": "behaviors/los.json"
     },
     "orbit": {
       "name": "环绕",
@@ -344,13 +344,13 @@
       "name": "寻路",
       "file": "behaviors/pathfinding.json"
     },
-    "pin": {
-      "name": "固定",
-      "file": "behaviors/pin.json"
-    },
     "physics": {
       "name": "物理",
       "file": "behaviors/physics.json"
+    },
+    "pin": {
+      "name": "固定",
+      "file": "behaviors/pin.json"
     },
     "platform": {
       "name": "平台",
@@ -364,21 +364,25 @@
       "name": "镜头跟随",
       "file": "behaviors/scrollto.json"
     },
+    "solid": {
+      "name": "实体",
+      "file": "behaviors/solid.json"
+    },
     "shadowcaster": {
       "name": "投影对象",
       "file": "behaviors/shadowcaster.json"
+    },
+    "tilemovement": {
+      "name": "网格移动",
+      "file": "behaviors/tilemovement.json"
     },
     "sin": {
       "name": "正弦运动",
       "file": "behaviors/sin.json"
     },
-    "solid": {
-      "name": "实体",
-      "file": "behaviors/solid.json"
-    },
-    "tilemovement": {
-      "name": "网格移动",
-      "file": "behaviors/tilemovement.json"
+    "wrap": {
+      "name": "边界穿梭",
+      "file": "behaviors/wrap.json"
     },
     "timer": {
       "name": "计时器",
@@ -391,10 +395,6 @@
     "tween": {
       "name": "补间动画",
       "file": "behaviors/tween.json"
-    },
-    "wrap": {
-      "name": "边界穿梭",
-      "file": "behaviors/wrap.json"
     }
   },
   "effects": {

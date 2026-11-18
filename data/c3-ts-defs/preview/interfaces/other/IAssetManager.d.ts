@@ -22,7 +22,7 @@ declare class IAssetManager
     fetchBlob(url: string): Promise<Blob>;
     fetchArrayBuffer(url: string): Promise<ArrayBuffer>;
     getProjectFileUrl(url: string): Promise<string>;
-    getMediaFileUrl(url: string): Promise<string>;
+    getMediaFileUrl(url: string): string;
     readonly mediaFolder: string;
     
     /**
